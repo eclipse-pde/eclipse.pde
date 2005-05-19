@@ -402,6 +402,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		if (fData.getLibraryName() != null) {
 			IPluginLibrary library = model.getPluginFactory().createLibrary();
 			library.setName(fData.getLibraryName());
+			library.setExported(!fData.hasBundleStructure());
 			pluginBase.add(library);
 		}
 	}
