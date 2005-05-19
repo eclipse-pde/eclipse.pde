@@ -41,7 +41,7 @@ public class BuildPluginAction extends BaseBuildAction {
 		generator.setStateExtraData(TargetPlatform.getBundleClasspaths(TargetPlatform.getPDEState()));
 		generator.setBuildingOSGi(PDECore.getDefault().getModelManager().isOSGiRuntime());
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
-		generator.setElements(new String[] { "plugin@" +model.getPluginBase().getId() });
+		generator.setElements(new String[] { "plugin@" +model.getPluginBase().getId() }); //$NON-NLS-1$
 		
 		generator.generate();
 	}
