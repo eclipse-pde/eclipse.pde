@@ -64,7 +64,7 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 		}
 	}
 	
-	public void xtestMultiSegmentOutputFolder() {
+	public void testMultiSegmentOutputFolder() {
 		try {
 			playScript(Catalog.BASIC_JAVA_PLUGIN_4);
 			verifyProject(true, null, "src", "bin/abc");
