@@ -97,7 +97,7 @@ class LogReader {
 					writer = new PrintWriter(swriter, true);
 					writerState = SESSION_STATE;
 					updateCurrentSession(session);
-					if (currentSession.equals(session) && !memento.getString(LogView.P_SHOW_ALL_SESSIONS).equals("true")) //$NON-NLS-1$
+					if (!currentSession.equals(session) && !memento.getString(LogView.P_SHOW_ALL_SESSIONS).equals("true")) //$NON-NLS-1$
 						entries.clear();
 				} else if (state == ENTRY_STATE) {
 					LogEntry entry = new LogEntry();
