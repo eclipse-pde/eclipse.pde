@@ -21,10 +21,9 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.views.properties.*;
 import org.osgi.framework.*;
-public class RegistryBrowser extends ViewPart
-implements
-BundleListener,
-IRegistryChangeListener {
+public class RegistryBrowser extends ViewPart 
+							 implements BundleListener, IRegistryChangeListener {
+	
 	public static final String SHOW_RUNNING_PLUGINS = "RegistryView.showRunning.label"; //$NON-NLS-1$
 	public static final String REGISTRY_ORIENTATION = "RegistryView.orientation"; //$NON-NLS-1$
 	public static final int VERTICAL_ORIENTATION = 1;
@@ -44,18 +43,13 @@ IRegistryChangeListener {
 	private Action collapseAllAction;
 	private Action[] toggleViewAction;
 	private DrillDownAdapter drillDownAdapter;
-
-	// title bar
-	private Label titleLabel;
 	
 	//attributes view
 	private SashForm fSashForm;
 	private PropertySheetPage fPropertySheet;
 	
-	// parent composite
+	// single-pane control
 	private Composite mainView;
-	// tree view composite
-	private Composite treeView;
 	
 	/*
 	 * customized DrillDownAdapter which modifies enabled state of showing active/inactive
@@ -116,58 +110,37 @@ IRegistryChangeListener {
 	}
 	
 	public void createPartControl(Composite parent) {
-		mainView = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = layout.marginWidth = 0;
-		mainView.setLayout(layout);
-		mainView.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		
-		createLabel(mainView); // create lable
-		createSashForm(mainView); // create the sashform that will contain the tree viewer & text viewer
-		
+		// create the sash form that will contain the tree viewer & text viewer
+		fSashForm = new SashForm(parent, SWT.HORIZONTAL);
+		fSashForm.setLayout(new GridLayout());
+		fSashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+		setSashForm(fSashForm);
 		makeActions();
+		createTreeViewer();
+		createAttributesViewer();
 		fillToolBar();
 		treeViewer.refresh();
 		setViewOrientation(orientation);
-		titleLabel.setText(((RegistryBrowserContentProvider)treeViewer.getContentProvider()).getTitleSummary());
+		setContentDescription(((RegistryBrowserContentProvider)treeViewer.getContentProvider()).getTitleSummary());
 		
 		Platform.getExtensionRegistry().addRegistryChangeListener(this);
 		PDERuntimePlugin.getDefault().getBundleContext().addBundleListener(this);
 	}
-	
-	private void createLabel(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 3;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		titleLabel = new Label(composite, SWT.NONE);
-		titleLabel.setLayoutData(new GridData(GridData.FILL));
-	}
-	
-	private void createSashForm(Composite parent) {
-		fSashForm = new SashForm(parent, SWT.HORIZONTAL);
-		fSashForm.setLayout(new GridLayout());
-		fSashForm.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		createTreeViewer(fSashForm);
-		createAttributesViewer(fSashForm);
-	}
-	
-	private void createTreeViewer(Composite parent) {
-		treeView = new Composite(parent, SWT.NONE);
+	private void createTreeViewer() {
+		mainView = new Composite(getSashForm(), SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 0;
-		treeView.setLayout(layout);
-		treeView.setLayoutData(new GridData(GridData.FILL_BOTH));
+		mainView.setLayout(layout);
+		mainView.setLayoutData(new GridData(GridData.FILL_BOTH));	
 		
-		Tree tree = new Tree(treeView, SWT.FLAT);
+		Tree tree = new Tree(mainView, SWT.FLAT);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		tree.setLayoutData(gd);
 		treeViewer = new TreeViewer(tree);
 		boolean showRunning = memento.getString(SHOW_RUNNING_PLUGINS).equals("true") ? true : false; //$NON-NLS-1$
 		treeViewer.setContentProvider(new RegistryBrowserContentProvider(treeViewer, showRunning));
-		treeViewer.setLabelProvider(new RegistryBrowserLabelProvider(treeViewer));
+		treeViewer
+		.setLabelProvider(new RegistryBrowserLabelProvider(treeViewer));
 		treeViewer.setUseHashlookup(true);
 		treeViewer.setSorter(new ViewerSorter() {
 		});
@@ -209,8 +182,8 @@ IRegistryChangeListener {
 	/* 
 	 * add attributes viewer 
 	 */
-	protected void createAttributesViewer(Composite parent) {
-		Composite composite = new Composite(parent, SWT.FLAT);
+	protected void createAttributesViewer() {
+		Composite composite = new Composite(getSashForm(), SWT.FLAT);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
 		layout.numColumns = 2;
@@ -263,7 +236,9 @@ IRegistryChangeListener {
 	public TreeViewer getTreeViewer() {
 		return treeViewer;
 	}
-	
+	protected SashForm getSashForm() {
+		return fSashForm;
+	}
 	public void saveState(IMemento memento) {
 		if (memento == null || this.memento == null || treeViewer == null)
 			return;
@@ -286,6 +261,9 @@ IRegistryChangeListener {
 					new Object()));
 	}
 	
+	private void setSashForm(SashForm sashForm) {
+		fSashForm = sashForm;
+	}
 	public void setFocus() {
 		treeViewer.getTree().setFocus();
 	}
@@ -420,16 +398,16 @@ IRegistryChangeListener {
 	}
 	
 	public void setViewOrientation(int viewOrientation){
-		setLastSashWeights(fSashForm.getWeights());
+		setLastSashWeights(getSashForm().getWeights());
 		if (viewOrientation == SINGLE_PANE_ORIENTATION){
-			fSashForm.setMaximizedControl(treeView);
+			getSashForm().setMaximizedControl(mainView);
 		} else {
 			if (viewOrientation == VERTICAL_ORIENTATION)
-				fSashForm.setOrientation(SWT.VERTICAL);
+				getSashForm().setOrientation(SWT.VERTICAL);
 			else
-				fSashForm.setOrientation(SWT.HORIZONTAL);
-			fSashForm.setMaximizedControl(null);
-			fSashForm.setWeights(getLastSashWeights(viewOrientation));
+				getSashForm().setOrientation(SWT.HORIZONTAL);
+			getSashForm().setMaximizedControl(null);
+			getSashForm().setWeights(getLastSashWeights(viewOrientation));
 		}
 		orientation = viewOrientation;
 	}
@@ -447,6 +425,6 @@ IRegistryChangeListener {
 	public void updateTitle(){
 		if (treeViewer == null || treeViewer.getContentProvider() == null)
 			return;
-		titleLabel.setText(((RegistryBrowserContentProvider)treeViewer.getContentProvider()).getTitleSummary());
+		setContentDescription(((RegistryBrowserContentProvider)treeViewer.getContentProvider()).getTitleSummary());
 	}
 }
