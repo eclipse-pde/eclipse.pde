@@ -17,20 +17,20 @@ import java.io.RandomAccessFile;
 
 public class TailInputStream extends InputStream {
 
-	RandomAccessFile raf;
+	private RandomAccessFile fRaf;
 
-	long tail;
+	private long fTail;
 
 	public TailInputStream(File file, long maxLength) throws IOException {
 		super();
-		tail = maxLength;
-		raf = new RandomAccessFile(file, "r"); //$NON-NLS-1$
+		fTail = maxLength;
+		fRaf = new RandomAccessFile(file, "r"); //$NON-NLS-1$
 		skipHead(file);
 	}
 
 	private void skipHead(File file) throws IOException {
-		if (file.length() > tail) {
-			raf.seek(file.length() - tail);
+		if (file.length() > fTail) {
+			fRaf.seek(file.length() - fTail);
 			// skip bytes until a new line to be sure we start from a beginnng of valid UTF-8 character
 			int c= read();
 			while(c!='\n' && c!='r' && c!=-1){
@@ -42,7 +42,7 @@ public class TailInputStream extends InputStream {
 
 	public int read() throws IOException {
 		byte[] b = new byte[1];
-		int len = raf.read(b, 0, 1);
+		int len = fRaf.read(b, 0, 1);
 		if (len < 0) {
 			return len;
 		}
@@ -50,15 +50,15 @@ public class TailInputStream extends InputStream {
 	}
 
 	public int read(byte[] b) throws IOException {
-		return raf.read(b, 0, b.length);
+		return fRaf.read(b, 0, b.length);
 	}
 
 	public int read(byte[] b, int off, int len) throws IOException {
-		return raf.read(b, off, len);
+		return fRaf.read(b, off, len);
 	}
 
 	public void close() throws IOException {
-		raf.close();
+		fRaf.close();
 	}
 
 }
