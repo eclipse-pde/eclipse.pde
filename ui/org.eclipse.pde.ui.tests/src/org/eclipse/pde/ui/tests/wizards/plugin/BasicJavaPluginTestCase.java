@@ -46,8 +46,8 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 		try {
 			playScript(Catalog.BASIC_JAVA_PLUGIN_2);
 			verifyProject(false);
-			verifyPluginModel(null, ".", false);
-			verifyBuildProperties(false, ".", "src", "bin");
+			verifyPluginModel(null, "xyz.jar", false);
+			verifyBuildProperties(false, "xyz.jar", "src", "bin");
 		} catch (CoreException e) {
 			fail("testMinimalJavaPluginWithManifest:" + e);
 		}

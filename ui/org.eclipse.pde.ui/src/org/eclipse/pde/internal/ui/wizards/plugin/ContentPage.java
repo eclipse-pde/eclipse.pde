@@ -149,7 +149,7 @@ public abstract class ContentPage extends WizardPage {
 	}
 
 	private void presetLibraryField(String id){
-		if (fData.getTargetVersion().equals(ICoreConstants.TARGET31)) {
+		if (fData.getTargetVersion().equals(ICoreConstants.TARGET31) && fData.hasBundleStructure()) {
 			fLibraryText.setText(""); //$NON-NLS-1$
 			return;
 		}
