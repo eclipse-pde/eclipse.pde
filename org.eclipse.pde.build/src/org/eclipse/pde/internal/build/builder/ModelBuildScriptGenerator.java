@@ -203,6 +203,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				properties.setProperty(PROPERTY_OUTPUT_PREFIX + EXPANDED_DOT, outputValue);
 				properties.remove(PROPERTY_OUTPUT_PREFIX + DOT);
 			}
+			String excludedFromJar = properties.getProperty(PROPERTY_EXCLUDE_PREFIX + DOT);
+			if (outputValue != null) {
+				properties.setProperty(PROPERTY_EXCLUDE_PREFIX + EXPANDED_DOT, excludedFromJar);
+				properties.remove(PROPERTY_EXCLUDE_PREFIX + DOT);
+			}
 			String buildOrder = properties.getProperty(PROPERTY_JAR_ORDER);
 			if (buildOrder != null) {
 				String[] order = Utils.getArrayFromString(buildOrder);
