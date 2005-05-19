@@ -54,12 +54,12 @@ public class LogViewLabelProvider
 	public String getColumnText(Object element, int columnIndex) {
 		LogEntry entry = (LogEntry) element;
 		switch (columnIndex) {
-			case 0 :
-				return entry.getMessage();
-			case 1 :
-				return entry.getPluginId();
-			case 2 :
-				return entry.getDate();
+		case 0:
+			return entry.getMessage() != null ? entry.getMessage() : ""; //$NON-NLS-1$
+		case 1:
+			return entry.getPluginId() != null ? entry.getPluginId() : ""; //$NON-NLS-1$
+		case 2:
+			return entry.getDate() != null ? entry.getDate() : ""; //$NON-NLS-1$
 		}
 		return ""; //$NON-NLS-1$
 	}

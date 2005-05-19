@@ -98,17 +98,26 @@ public class EventDetailsDialog extends Dialog {
 		isAtEndOfLog = false;
 	}
 	
-	private void resetChildIndex(){
-		for (int i = 0; i<entryChildren.length; i++){
-			if (entryChildren[i].getMessage().equals(entry.getMessage())
-					&& entryChildren[i].getDate().equals(entry.getDate())
-					&& entryChildren[i].getPluginId().equals(entry.getPluginId())
-					&& entryChildren[i].getSeverity() == entry.getSeverity() 
-					&& entryChildren[i].getSeverityText().equals(entry.getSeverityText())){
+	private void resetChildIndex() {
+		for (int i = 0; i < entryChildren.length; i++) {
+			if (equal(entryChildren[i].getMessage(), entry.getMessage())
+					&& equal(entryChildren[i].getDate(), entry.getDate())
+					&& equal(entryChildren[i].getPluginId(), entry
+							.getPluginId())
+					&& entryChildren[i].getSeverity() == entry.getSeverity()
+					&& equal(entryChildren[i].getSeverityText(), entry
+							.getSeverityText())) {
 				childIndex = i;
 				break;
 			}
 		}
+	}
+	
+	private boolean equal(String str1, String str2) {
+		if (str1 == null) {
+			return str1 == str2;
+		}
+		return str1.equals(str2);
 	}
 	
 	private void createImages(){
@@ -317,10 +326,10 @@ public class EventDetailsDialog extends Dialog {
 
 		resetTotalElementCount();
 		
-		dateLabel.setText(entry.getDate());
+		dateLabel.setText(entry.getDate() != null ? entry.getDate() : ""); //$NON-NLS-1$
 		severityImageLabel.setImage(labelProvider.getColumnImage(entry, 0));
 		severityLabel.setText(entry.getSeverityText());
-		msgText.setText(entry.getMessage());
+		msgText.setText(entry.getMessage() != null ? entry.getMessage() : ""); //$NON-NLS-1$
 		String stack = entry.getStack();
 		if (stack != null) {
 			stackTraceText.setText(stack);
