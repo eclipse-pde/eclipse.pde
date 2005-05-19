@@ -45,7 +45,7 @@ public class ModifiedTextCellEditor extends TextCellEditor {
 	
 	public void dispose() {
 		Control c = getControl();
-		if (c!=null && traverseListener!=null) {
+		if (c!=null && !c.isDisposed() && traverseListener!=null) {
 			c.removeListener(SWT.Traverse, traverseListener);
 		}
 		super.dispose();
