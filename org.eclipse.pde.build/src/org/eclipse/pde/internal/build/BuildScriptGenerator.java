@@ -53,7 +53,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	private boolean generateAssembleScript = true;
 
 	/** flag indicating if missing properties file should be logged */
-	private boolean ignoreMissingPropertiesFile = false;
+	private boolean ignoreMissingPropertiesFile = true;
 
 	private static final String PROPERTY_ARCHIVESFORMAT = "archivesFormat"; //$NON-NLS-1$
 

@@ -33,7 +33,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	private boolean includePlatformIndependent = true;
 
 	/** flag indicating whether or not the missing properties file should be logged */ 
-	private boolean ignoreMissingPropertiesFile = false;
+	private boolean ignoreMissingPropertiesFile = true;
 
 	abstract protected Properties getBuildProperties() throws CoreException;
 
@@ -223,6 +223,8 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	 * @return Returns the ignoreMissingPropertiesFile.
 	 */
 	public boolean isIgnoreMissingPropertiesFile() {
+		if (BundleHelper.getDefault().isDebugging())
+			return false;
 		return ignoreMissingPropertiesFile;
 	}
 	
