@@ -104,15 +104,15 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			IBuildModelFactory factory = model.getFactory();
 
 			// BIN.INCLUDES
-			IBuildEntry binEntry = factory
-					.createEntry(IBuildEntry.BIN_INCLUDES);
+			IBuildEntry binEntry = factory.createEntry(IBuildEntry.BIN_INCLUDES);
 			fillBinIncludes(project, binEntry);
-			String libraryName = fData.getLibraryName();
-			if (!fData.isSimple() && libraryName != null) {
+			String srcFolder = fData.getSourceFolderName();
+			if (!fData.isSimple() && srcFolder != null) {
+				String libraryName = fData.getLibraryName();
+				if (libraryName == null)
+					libraryName = "."; //$NON-NLS-1$
 				// SOURCE.<LIBRARY_NAME>
-				IBuildEntry entry = factory.createEntry(IBuildEntry.JAR_PREFIX
-						+ libraryName);
-				String srcFolder = fData.getSourceFolderName().trim();
+				IBuildEntry entry = factory.createEntry(IBuildEntry.JAR_PREFIX + libraryName);
 				if (srcFolder.length() > 0)
 					entry.addToken(new Path(srcFolder).addTrailingSeparator()
 							.toString());
@@ -272,20 +272,19 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	protected void fillBinIncludes(IProject project, IBuildEntry binEntry)
 			throws CoreException {
 		if (!fData.hasBundleStructure() || fContentWizard != null)
-			binEntry
-					.addToken(fData instanceof IFragmentFieldData ? "fragment.xml" //$NON-NLS-1$
+			binEntry.addToken(fData instanceof IFragmentFieldData ? "fragment.xml" //$NON-NLS-1$
 							: "plugin.xml"); //$NON-NLS-1$
 		if (fData.hasBundleStructure())
 			binEntry.addToken("META-INF/"); //$NON-NLS-1$
-		String libraryName = fData.getLibraryName();
-		if (!fData.isSimple() && libraryName != null) {
-			binEntry.addToken(libraryName);
-			if (fContentWizard != null) {
-				String[] files = fContentWizard.getNewFiles();
-				for (int j = 0; j < files.length; j++) {
-					if (!binEntry.contains(files[j]))
-						binEntry.addToken(files[j]);
-				}
+		if (!fData.isSimple()) {
+			String libraryName = fData.getLibraryName();
+			binEntry.addToken(libraryName == null ? "." : libraryName); //$NON-NLS-1$
+		}
+		if (fContentWizard != null) {
+			String[] files = fContentWizard.getNewFiles();
+			for (int j = 0; j < files.length; j++) {
+				if (!binEntry.contains(files[j]))
+					binEntry.addToken(files[j]);
 			}
 		}
 	}
@@ -399,9 +398,13 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	protected void setPluginLibraries(WorkspacePluginModelBase model)
 			throws CoreException {
 		PluginBase pluginBase = (PluginBase) fModel.getPluginBase();
-		if (fData.getLibraryName() != null) {
+		String libraryName = fData.getLibraryName();
+		if (libraryName == null && !fData.hasBundleStructure()) {
+			libraryName = "."; //$NON-NLS-1$
+		}
+		if (libraryName != null) {
 			IPluginLibrary library = model.getPluginFactory().createLibrary();
-			library.setName(fData.getLibraryName());
+			library.setName(libraryName);
 			library.setExported(!fData.hasBundleStructure());
 			pluginBase.add(library);
 		}

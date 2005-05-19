@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
@@ -271,7 +272,7 @@ public class PluginContentPage extends ContentPage {
 		setMessage(null);
 		String errorMessage = validateProperties();
 		if (errorMessage == null && !fData.isSimple()) {
-			if (fLibraryText.getText().trim().length() == 0) {
+			if (fLibraryText.getText().trim().length() == 0 && fData.getTargetVersion().equals(ICoreConstants.TARGET21)) {
 				errorMessage = PDEUIMessages.PluginContentPage_noLibrary; //$NON-NLS-1$
 			}	
 		}

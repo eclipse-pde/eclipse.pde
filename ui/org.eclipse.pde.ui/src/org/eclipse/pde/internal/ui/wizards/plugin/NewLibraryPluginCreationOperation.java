@@ -148,7 +148,11 @@ public class NewLibraryPluginCreationOperation extends
 
 	protected void fillBinIncludes(IProject project, IBuildEntry binEntry)
 			throws CoreException {
-		super.fillBinIncludes(project, binEntry);
+		if (fData.hasBundleStructure())
+			binEntry.addToken("META-INF/"); //$NON-NLS-1$
+		else
+			binEntry.addToken("plugin.xml"); //$NON-NLS-1$
+
 		if (fData.isUnzipLibraries()) {
 			IResource[] resources = project.members(false);
 			for (int j = 0; j < resources.length; j++) {

@@ -35,8 +35,8 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 		try {
 			playScript(Catalog.BASIC_JAVA_PLUGIN_1);
 			verifyProject(true);
-			verifyPluginModel(null, "xyz.jar");
-			verifyBuildProperties(true, "xyz.jar", "src", "bin");
+			verifyPluginModel(null, ".", true);
+			verifyBuildProperties(true, ".", "src", "bin");
 		} catch (CoreException e) {
 			fail("testMinimalJavaPlugin:" + e);
 		}
@@ -46,8 +46,8 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 		try {
 			playScript(Catalog.BASIC_JAVA_PLUGIN_2);
 			verifyProject(false);
-			verifyPluginModel(null, "xyz.jar");
-			verifyBuildProperties(false, "xyz.jar", "src", "bin");
+			verifyPluginModel(null, ".", false);
+			verifyBuildProperties(false, ".", "src", "bin");
 		} catch (CoreException e) {
 			fail("testMinimalJavaPluginWithManifest:" + e);
 		}
@@ -57,8 +57,8 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 		try {
 			playScript(Catalog.BASIC_JAVA_PLUGIN_3);
 			verifyProject(true, null, "src/abc", "bin");
-			verifyPluginModel(null, "xyz.jar");
-			verifyBuildProperties(true, "xyz.jar", "src/abc", "bin");
+			verifyPluginModel(null, ".", true);
+			verifyBuildProperties(true, ".", "src/abc", "bin");
 		} catch (CoreException e) {
 			fail("testMultiSegmentSourceFolder:" + e);
 		}
@@ -68,31 +68,19 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 		try {
 			playScript(Catalog.BASIC_JAVA_PLUGIN_4);
 			verifyProject(true, null, "src", "bin/abc");
-			verifyPluginModel(null, "xyz.jar");
-			verifyBuildProperties(true, "xyz.jar", "src", "bin/abc");
+			verifyPluginModel(null, ".", true);
+			verifyBuildProperties(true, ".", "src", "bin/abc");
 		} catch (CoreException e) {
 			fail("testMultiSegmentOutputFolder:" + e);
 		}
-	}
-	
-	
-	public void testPluginWithDot() {
-		try {
-			playScript(Catalog.BASIC_JAVA_PLUGIN_5);
-			verifyProject(true);
-			verifyPluginModel(null, ".");
-			verifyBuildProperties(true, ".", "src", "bin");
-		} catch (CoreException e) {
-			fail("testPluginWithDot:" + e);
-		}	
 	}
 	
 	public void testUIPlugin() {
 		try {
 			playScript(Catalog.BASIC_JAVA_PLUGIN_6);
 			verifyProject(true, "com.example.xyz.XyzPlugin", "src", "bin");
-			verifyPluginModel("com.example.xyz.XyzPlugin", "xyz.jar");
-			verifyBuildProperties(true, "xyz.jar", "src", "bin");
+			verifyPluginModel("com.example.xyz.XyzPlugin", ".", true);
+			verifyBuildProperties(true, ".", "src", "bin");
 			verifyType(true, "com.example.xyz.XyzPlugin");
 		} catch (CoreException e) {
 			fail("testUIPlugin:" + e);
@@ -103,8 +91,8 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 		try {
 			playScript(Catalog.BASIC_JAVA_PLUGIN_7);
 			verifyProject(true, "com.example.xyz.XyzPlugin", "src", "bin");
-			verifyPluginModel("com.example.xyz.XyzPlugin", "xyz.jar");
-			verifyBuildProperties(true, "xyz.jar", "src", "bin");
+			verifyPluginModel("com.example.xyz.XyzPlugin", ".", true);
+			verifyBuildProperties(true, ".", "src", "bin");
 			verifyType(false, "com.example.xyz.XyzPlugin");
 		} catch (CoreException e) {
 			fail("testNonUIPlugin:" + e);
@@ -186,7 +174,7 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 
 	}
 	
-	private void verifyPluginModel(String className, String libraryName) {
+	private void verifyPluginModel(String className, String libraryName, boolean bundle) {
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(getProject());
 		assertTrue("Model is not found.", model != null);
 		IPlugin plugin = (IPlugin)model.getPluginBase();
@@ -198,8 +186,9 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 			assertNull(plugin.getClassName());
 		else
 			assertEquals(className, plugin.getClassName());
-		assertEquals(1, plugin.getLibraries().length);
-		assertEquals(libraryName, plugin.getLibraries()[0].getName());
+		assertEquals(bundle ? 0 : 1, plugin.getLibraries().length);
+		if (!bundle)
+			assertEquals(libraryName, plugin.getLibraries()[0].getName());
 		assertEquals(0, plugin.getExtensionPoints().length);
 		assertEquals(0, plugin.getExtensions().length);
 	}
