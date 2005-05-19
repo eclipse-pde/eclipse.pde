@@ -176,7 +176,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		String extPoint = Platform.PI_RUNTIME + "." + e.getHref().toString(); //$NON-NLS-1$
 		IPluginExtensionPoint point = PDECore.getDefault().findExtensionPoint(extPoint);
 		if (point != null)
-			new ShowDescriptionAction(point).run();
+			new ShowDescriptionAction(point, true).run();
 	}
 
 	private void handleBrowse() {

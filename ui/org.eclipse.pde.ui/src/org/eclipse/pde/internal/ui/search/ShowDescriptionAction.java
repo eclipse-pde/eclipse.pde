@@ -40,9 +40,15 @@ public class ShowDescriptionAction extends Action {
 	private String fPointID;
 	private ISchema fSchema;
 	private File fPreviewFile;
+	private boolean forceExternal;
 
 	public ShowDescriptionAction(IPluginExtensionPoint point) {
+		this(point, false);
+	}
+	
+	public ShowDescriptionAction(IPluginExtensionPoint point, boolean forceExternal) {
 		setExtensionPoint(point);
+		this.forceExternal = forceExternal;
 	}
 	
 	public ShowDescriptionAction(ISchema schema) {
@@ -97,7 +103,7 @@ public class ShowDescriptionAction extends Action {
 			transformer.transform(fSchema, printWriter); 
 			os.flush();
 			os.close();
-			showURL(fPreviewFile);
+			showURL(fPreviewFile, forceExternal);
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
 		}
@@ -113,16 +119,21 @@ public class ShowDescriptionAction extends Action {
 		return null;
 	}
 	
-	private void showURL(File file) {
+	private void showURL(File file, boolean forceExternal) {
 		try {
-			IWorkbenchBrowserSupport support = PlatformUI.getWorkbench()
-					.getBrowserSupport();
-			IWebBrowser browser = support.createBrowser(
-					IWorkbenchBrowserSupport.AS_EDITOR
-							| IWorkbenchBrowserSupport.STATUS,
-					"org.eclipse.pde", fPointID, fPointID); //$NON-NLS-1$
+			IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
 			URL url = file.toURL();
-			browser.openURL(url); //$NON-NLS-1$
+			
+			if (forceExternal) {
+				IWebBrowser browser = support.getExternalBrowser();
+				browser.openURL(url); //$NON-NLS-1$
+			} else {
+				IWebBrowser browser = support.createBrowser(
+						IWorkbenchBrowserSupport.AS_EDITOR
+								| IWorkbenchBrowserSupport.STATUS,
+						"org.eclipse.pde", fPointID, fPointID); //$NON-NLS-1$
+				browser.openURL(url); //$NON-NLS-1$
+			}
 		} catch (MalformedURLException e) {
 			PDEPlugin.logException(e);
 		}
