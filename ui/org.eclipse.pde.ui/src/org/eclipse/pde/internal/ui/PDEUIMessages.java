@@ -765,6 +765,7 @@ public class PDEUIMessages extends NLS {
 	public static String ContentPage_badpversion;
 	public static String ContentPage_fragment;
 	public static String ContentPage_plugin;
+	public static String ContentPage_illegalCharactersInID;
 	public static String WizardListSelectionPage_title;
 	public static String WizardListSelectionPage_desc;
 	public static String WizardListSelectionPage_label;

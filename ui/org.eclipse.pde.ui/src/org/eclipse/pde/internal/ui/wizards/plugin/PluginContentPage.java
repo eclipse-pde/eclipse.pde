@@ -269,7 +269,6 @@ public class PluginContentPage extends ContentPage {
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#validatePage()
 	 */
 	protected void validatePage() {
-		setMessage(null);
 		String errorMessage = validateProperties();
 		if (errorMessage == null && !fData.isSimple()) {
 			if (fLibraryText.getText().trim().length() == 0 && fData.getTargetVersion().equals(ICoreConstants.TARGET21)) {

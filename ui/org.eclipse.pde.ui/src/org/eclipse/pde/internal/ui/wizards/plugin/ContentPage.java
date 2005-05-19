@@ -68,6 +68,15 @@ public abstract class ContentPage extends WizardPage {
 	protected abstract void validatePage();
 
 	protected String validateProperties() {
+		if (!fInitialized) {
+			if (!fIdText.getText().trim().equals(fProjectProvider.getProjectName())) 
+				setMessage(PDEUIMessages.ContentPage_illegalCharactersInID, INFORMATION);
+			else
+				setMessage(null);
+			return null;
+		}
+		
+		setMessage(null);
 		String errorMessage = validateId();
 		if (errorMessage != null)
 			return errorMessage;
@@ -79,9 +88,6 @@ public abstract class ContentPage extends WizardPage {
 		} else if (fNameText.getText().trim().length() == 0) {
 			errorMessage = PDEUIMessages.ContentPage_noname; //$NON-NLS-1$
 		}
-		
-		if (errorMessage != null)
-			return errorMessage;
 		
 		return errorMessage;
 	}
