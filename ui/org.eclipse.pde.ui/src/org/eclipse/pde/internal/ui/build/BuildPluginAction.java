@@ -13,40 +13,37 @@ package org.eclipse.pde.internal.ui.build;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.*;
-
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
-import org.eclipse.pde.internal.build.builder.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.build.BuildScriptGenerator;
+import org.eclipse.pde.internal.core.ClasspathHelper;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
 
 public class BuildPluginAction extends BaseBuildAction {
 
 	protected void makeScripts(IProgressMonitor monitor)
 		throws InvocationTargetException, CoreException {
 	
-		ModelBuildScriptGenerator generator = new ModelBuildScriptGenerator();
-		ModelBuildScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
-		ModelBuildScriptGenerator.setForceUpdateJar(AbstractScriptGenerator.getForceUpdateJarFormat());
-		ModelBuildScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());
+		BuildScriptGenerator generator = new BuildScriptGenerator();
+		BuildScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
+		BuildScriptGenerator.setForceUpdateJar(AbstractScriptGenerator.getForceUpdateJarFormat());
+		BuildScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());
 		
 		IProject project = fManifestFile.getProject();
 		generator.setWorkingDirectory(project.getLocation().toOSString());
 		String url = ClasspathHelper.getDevEntriesProperties(project.getLocation().addTrailingSeparator().toString() + "dev.properties", false); //$NON-NLS-1$
-		generator.setDevEntries(new DevClassPathHelper(url));
+		generator.setDevEntries(url);
 		generator.setPDEState(TargetPlatform.getState());
 		generator.setNextId(TargetPlatform.getPDEState().getNextId());
 		generator.setStateExtraData(TargetPlatform.getBundleClasspaths(TargetPlatform.getPDEState()));
 		generator.setBuildingOSGi(PDECore.getDefault().getModelManager().isOSGiRuntime());
-		try {
-			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
-			if (model != null) {
-				generator.setModelId(model.getPluginBase().getId());
-				generator.generate();
-			}
-		} catch (CoreException e) {
-			throw new InvocationTargetException(e);
-		}
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
+		generator.setElements(new String[] { "plugin@" +model.getPluginBase().getId() });
+		
+		generator.generate();
 	}
 
 }
