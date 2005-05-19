@@ -25,6 +25,7 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_SOURCE_PREFIX = "source."; //$NON-NLS-1$
 	public static final String PROPERTY_OUTPUT_PREFIX = "output."; //$NON-NLS-1$
 	public static final String PROPERTY_EXTRAPATH_PREFIX = "extra."; //$NON-NLS-1$	
+	public static final String PROPERTY_EXCLUDE_PREFIX = "exclude.";  //$NON-NLS-1$
 	public static final String PROPERTY_JAR_SUFFIX = ".jar"; //$NON-NLS-1$
 	public static final String PROPERTY_MANIFEST_PREFIX = "manifest."; //$NON-NLS-1$
 

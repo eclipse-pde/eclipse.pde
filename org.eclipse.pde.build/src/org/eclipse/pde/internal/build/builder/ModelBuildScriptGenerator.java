@@ -39,14 +39,16 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		private String[] source;
 		private String[] output;
 		private String[] extraClasspath;
+		private String excludedFromJar;
 		private byte type;
 
-		protected CompiledEntry(String entryName, String[] entrySource, String[] entryOutput, String[] entryExtraClasspath, byte entryType) {
+		protected CompiledEntry(String entryName, String[] entrySource, String[] entryOutput, String[] entryExtraClasspath, String excludedFromJar, byte entryType) {
 			this.name = entryName;
 			this.source = entrySource;
 			this.output = entryOutput;
 			this.extraClasspath = entryExtraClasspath;
 			this.type = entryType;
+			this.excludedFromJar = excludedFromJar;
 		}
 
 		protected String getName(boolean resolved) {
@@ -73,6 +75,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		public byte getType() {
 			return type;
+		}
+
+		public String getExcludedFromJar() {
+			return excludedFromJar;
 		}
 	}
 
@@ -775,7 +781,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printComment("Copy necessary resources"); //$NON-NLS-1$
 		FileSet[] fileSets = new FileSet[sources.length];
 		for (int i = 0; i < sources.length; i++)
-			fileSets[i] = new FileSet(sources[i], null, null, null, "**/*.java, **/package.htm*", null, null); //$NON-NLS-1$
+			fileSets[i] = new FileSet(sources[i], null, null, null, "**/*.java, **/package.htm*" + ',' + entry.getExcludedFromJar(), null, null); //$NON-NLS-1$
+
 		script.printCopyTask(null, destdir, fileSets, true, false);
 
 		String jarLocation = getJARLocation(entry.getName(true));
@@ -823,7 +830,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			}
 			String[] output = Utils.getArrayFromString(properties.getProperty(PROPERTY_OUTPUT_PREFIX + key));
 			String[] extraClasspath = Utils.getArrayFromString(properties.getProperty(PROPERTY_EXTRAPATH_PREFIX + key));
-			CompiledEntry newEntry = new CompiledEntry(key, source, output, extraClasspath, key.endsWith(PROPERTY_JAR_SUFFIX) ? CompiledEntry.JAR : CompiledEntry.FOLDER);
+			String excludedFromJar = properties.getProperty(PROPERTY_EXCLUDE_PREFIX + key);
+			CompiledEntry newEntry = new CompiledEntry(key, source, output, extraClasspath, excludedFromJar, key.endsWith(PROPERTY_JAR_SUFFIX) ? CompiledEntry.JAR : CompiledEntry.FOLDER);
 			result.add(newEntry);
 		}
 		return (CompiledEntry[]) result.toArray(new CompiledEntry[result.size()]);
