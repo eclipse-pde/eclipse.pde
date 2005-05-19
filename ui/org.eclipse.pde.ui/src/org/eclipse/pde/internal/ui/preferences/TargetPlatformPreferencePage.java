@@ -78,6 +78,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	
 	public void dispose() {
 		fPluginsBlock.dispose();
+		fSourceBlock.dispose();
 		super.dispose();
 	}
 

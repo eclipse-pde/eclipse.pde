@@ -60,6 +60,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 
 public class SourceBlock implements IHyperlinkListener {	
+	private Image fFolderImage;
 	private TreeViewer fTreeViewer;
 	private Image fExtensionImage;
 	private Image fUserImage;
@@ -119,13 +120,12 @@ public class SourceBlock implements IHyperlinkListener {
 			}
 			return super.getText(obj);
 		}
-
 		public Image getImage(Object obj) {
-			if (obj instanceof SourceLocation) {
-				return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
-			}
+			if (obj instanceof SourceLocation)
+				return fFolderImage;
+		
 			return obj.equals(fUserNode)? fUserImage : fExtensionImage;
-		}
+		}	
 	}
 
 	public SourceBlock() {
@@ -144,7 +144,8 @@ public class SourceBlock implements IHyperlinkListener {
 				PDEPluginImages.DESC_SOURCE_ATTACHMENT_OBJ,
 				new ImageDescriptor[][] { { PDEPluginImages.DESC_DOC_CO }
 		});
-		fUserImage = userDesc.createImage();		
+		fUserImage = userDesc.createImage();
+		fFolderImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 	}
 	
 	public void resetExtensionLocations(IPluginModelBase[] models) {
@@ -165,6 +166,7 @@ public class SourceBlock implements IHyperlinkListener {
 	public void dispose() {
 		fExtensionImage.dispose();
 		fUserImage.dispose();
+		fFolderImage.dispose();
 	}
 
 	/**
