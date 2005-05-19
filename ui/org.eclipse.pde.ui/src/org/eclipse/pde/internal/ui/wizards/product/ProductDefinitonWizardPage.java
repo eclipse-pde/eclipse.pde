@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.product;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
@@ -60,7 +61,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		toolkit.dispose();
 		setControl(comp);
 		setPageComplete(false);
-		
+		Dialog.applyDialogFont(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IHelpContextIds.PRODUCT_DEFINITIONS_WIZARD);
 	}
 	
@@ -69,6 +70,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		text.setText(content, true, false);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = span;
+		gd.widthHint = 400;
 		text.setLayoutData(gd);
 		text.setBackground(null);
 		text.addHyperlinkListener(this);
