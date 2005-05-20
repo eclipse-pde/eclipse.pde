@@ -22,13 +22,13 @@ public class GenericVersionReplacer extends Task {
 	private static final String FRAGMENT = "fragment.xml"; //$NON-NLS-1$
 	private static final String PLUGIN = "plugin.xml"; //$NON-NLS-1$
 	private static final String MANIFEST = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
-	private String path;
+	private String rootPath;
 	private String version;
 
 	public void execute() {
-		File root = new File(path);
+		File root = new File(rootPath);
 		if (root.exists() && root.isFile() && root.getName().equals(MANIFEST)) {
-			callManifestModifier(path);
+			callManifestModifier(rootPath);
 			return;
 		}
 
@@ -66,7 +66,7 @@ public class GenericVersionReplacer extends Task {
 	 * @param location path to the folder containing the file that needs to be replaced or the file path 
 	 */
 	public void setPath(String location) {
-		this.path = location;
+		this.rootPath = location;
 	}
 
 	/**
