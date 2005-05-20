@@ -204,7 +204,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				properties.remove(PROPERTY_OUTPUT_PREFIX + DOT);
 			}
 			String excludedFromJar = properties.getProperty(PROPERTY_EXCLUDE_PREFIX + DOT);
-			if (outputValue != null) {
+			if (excludedFromJar != null) {
 				properties.setProperty(PROPERTY_EXCLUDE_PREFIX + EXPANDED_DOT, excludedFromJar);
 				properties.remove(PROPERTY_EXCLUDE_PREFIX + DOT);
 			}
