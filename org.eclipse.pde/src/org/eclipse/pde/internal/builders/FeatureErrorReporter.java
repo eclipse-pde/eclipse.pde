@@ -19,6 +19,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.w3c.dom.*;
 
 
@@ -111,6 +112,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 					reportUnknownAttribute(plugin, name, CompilerFlags.ERROR);
 				}
 			}
+			validateUnpack(plugin);
 		}
 	}
 
@@ -403,6 +405,34 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	protected void reportExclusiveAttributes(Element element, String attName1, String attName2, int severity) {
 		String message = NLS.bind(PDEMessages.Builders_Feature_exclusiveAttributes, (new String[] {attName1, attName2}));
 		report(message, getLine(element, attName2), severity);
+	}
+
+	private void validateUnpack(Element parent) {
+		int severity = CompilerFlags.getFlag(fProject,
+				CompilerFlags.F_UNRESOLVED_PLUGINS);
+		if (severity == CompilerFlags.IGNORE) {
+			return;
+		}
+		if( severity == CompilerFlags.ERROR){
+			// this might not be an error, so max the flag at WARNING level.
+			severity = CompilerFlags.WARNING;
+		}
+		String unpack = parent.getAttribute("unpack"); //$NON-NLS-1$
+		if ("false".equals(unpack)) //$NON-NLS-1$
+			return;
+		IPluginModel pModel = PDECore.getDefault().getModelManager()
+				.findPluginModel(parent.getAttribute("id")); //$NON-NLS-1$
+		if (pModel == null) {
+			return;
+		}
+		if(!CoreUtility.guessUnpack(pModel.getBundleDescription())){
+						String message = NLS
+						.bind(
+								PDEMessages.Builders_Feature_missingUnpackFalse,
+								(new String[] {
+										parent.getAttribute("id"), "unpack=\"false\"" })); //$NON-NLS-1$ //$NON-NLS-2$			
+				report(message, getLine(parent), severity);
+		}
 	}
 
 }
