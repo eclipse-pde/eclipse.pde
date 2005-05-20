@@ -118,5 +118,12 @@ public class PluginAttribute extends PluginObjectNode
 	public String write() {
 		return getName() + "=\"" + getWritableString(getValue()) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 	}
+
+	public String getWritableString(String source) {
+		return super
+				.getWritableString(source)
+				.replaceAll("\\r", "&#x0D;") //$NON-NLS-1$ //$NON-NLS-2$
+				.replaceAll("\\n", "&#x0A;"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 	
 }
