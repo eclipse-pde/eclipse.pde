@@ -166,7 +166,6 @@ public class SourceBlock implements IHyperlinkListener {
 	public void dispose() {
 		fExtensionImage.dispose();
 		fUserImage.dispose();
-		fFolderImage.dispose();
 	}
 
 	/**
