@@ -133,35 +133,6 @@ public class PluginClassCodeGenerator {
 		writer.println("\t\treturn plugin;"); //$NON-NLS-1$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
-		writer.println("\t/**"); //$NON-NLS-1$
-		writer.println("\t * Returns the string from the plugin's resource bundle,"); //$NON-NLS-1$
-		writer.println("\t * or 'key' if not found."); //$NON-NLS-1$
-		writer.println("\t */"); //$NON-NLS-1$
-		writer.println("\tpublic static String getResourceString(String key) {"); //$NON-NLS-1$
-		writer.println("\t\tResourceBundle bundle = " + className //$NON-NLS-1$
-				+ ".getDefault().getResourceBundle();"); //$NON-NLS-1$
-		writer.println("\t\ttry {"); //$NON-NLS-1$
-		writer.println("\t\t\treturn (bundle != null) ? bundle.getString(key) : key;"); //$NON-NLS-1$
-		writer.println("\t\t} catch (MissingResourceException e) {"); //$NON-NLS-1$
-		writer.println("\t\t\treturn key;"); //$NON-NLS-1$
-		writer.println("\t\t}"); //$NON-NLS-1$
-		writer.println("\t}"); //$NON-NLS-1$
-		writer.println();
-		writer.println("\t/**"); //$NON-NLS-1$
-		writer.println("\t * Returns the plugin's resource bundle,"); //$NON-NLS-1$
-		writer.println("\t */"); //$NON-NLS-1$
-		writer.println("\tpublic ResourceBundle getResourceBundle() {"); //$NON-NLS-1$
-		writer.println("\t\ttry {"); //$NON-NLS-1$
-		writer.println("\t\t\tif (resourceBundle == null)"); //$NON-NLS-1$
-		writer.println("\t\t\t\tresourceBundle = ResourceBundle.getBundle(\"" //$NON-NLS-1$
-				+ packageName + "." + className + "Resources\");"); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println("\t\t} catch (MissingResourceException x) {"); //$NON-NLS-1$
-		writer.println("\t\t\tresourceBundle = null;"); //$NON-NLS-1$
-		writer.println("\t\t}"); //$NON-NLS-1$
-		writer.println("\t\treturn resourceBundle;"); //$NON-NLS-1$
-		writer.println("\t}"); //$NON-NLS-1$
-		writer.println();
-		
 		if (fPluginData.isUIPlugin()) {
 			writer.println("\t/**"); //$NON-NLS-1$
 		    writer.println("\t * Returns an image descriptor for the image file at the given"); //$NON-NLS-1$
