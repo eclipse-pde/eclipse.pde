@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -23,9 +25,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.IPluginModelListener;
 import org.eclipse.pde.internal.core.ModelEntry;
@@ -183,11 +187,37 @@ public class PluginSection extends TableSection implements
 			FeaturePlugin fplugin = (FeaturePlugin) model.getFactory()
 					.createPlugin();
 			fplugin.loadFrom(candidate.getPluginBase());
+			fplugin.setUnpack(doUnpack(candidate));
 			added[i] = fplugin;
 		}
 		feature.addPlugins(added);
 	}
 
+    private boolean doUnpack(IPluginModelBase modelBase) {
+		BundleDescription bundle = modelBase.getBundleDescription();
+		if (new File(bundle.getLocation()).isFile())
+			return false;
+
+		if (PDECore.getWorkspace().getRoot().getContainerForLocation(
+				new Path(bundle.getLocation())) == null)
+			return true;
+
+		IPluginModelBase model = PDECore.getDefault().getModelManager()
+				.findModel(bundle);
+		if (model == null)
+			return true;
+		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+		if (libraries.length == 0
+				&& PDECore.getDefault().getModelManager().isOSGiRuntime())
+			return false;
+
+		for (int i = 0; i < libraries.length; i++) {
+			if (libraries[i].getName().equals(".")) //$NON-NLS-1$
+				return false;
+		}
+		return true;
+	}
+    
 	private boolean canAdd(IPluginModelBase candidate) {
 		IPluginBase plugin = candidate.getPluginBase();
 
