@@ -106,7 +106,9 @@ public class PluginVersionReplaceTask extends Task {
 			versionFound = true;
 		}
 		try {
-			transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(pluginFilePath));
+			OutputStreamWriter w = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(pluginFilePath)), "UTF-8"); //$NON-NLS-1$
+			w.write(buffer.toString());
+			w.close();
 		} catch (FileNotFoundException e) {
 			// ignore
 		} catch (IOException e) {
@@ -132,7 +134,7 @@ public class PluginVersionReplaceTask extends Task {
 	}
 
 	private StringBuffer readFile(File targetName) throws IOException {
-		InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(targetName)));
+		InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(targetName)), "UTF-8"); //$NON-NLS-1$
 		StringBuffer result = new StringBuffer();
 		char[] buf = new char[4096];
 		int count;
