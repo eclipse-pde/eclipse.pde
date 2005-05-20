@@ -27,7 +27,8 @@ public class ManifestModifier extends Task {
 	private Map newValues = new HashMap();
 	private static String DELIM = "#|"; //$NON-NLS-1$
 	private Manifest manifest = null;
-
+	private boolean contentChanged = false;
+	
 	/**
 	 * Indicate new values to add to the manifest. The format of the parameter is key|value#key|value#...
 	 * If a value is specified to null, the key will be removed from the manifest. 
@@ -53,6 +54,9 @@ public class ManifestModifier extends Task {
 	}
 
 	private void writeManifest() {
+		if (!contentChanged)
+			return;
+		
 		OutputStream os = null;
 		try {
 			os = new BufferedOutputStream(new FileOutputStream(manifestLocation));
@@ -93,12 +97,14 @@ public class ManifestModifier extends Task {
 	}
 
 	private void changeValue(String key, String value) {
-		//		log("key : " + key + " becomes " + value, Project.MSG_VERBOSE);
+		if (manifest.getMainAttributes().getValue(key).equals(value))
+			return;
+		contentChanged = true;
 		manifest.getMainAttributes().put(new Attributes.Name(key), value);
 	}
 
 	private void removeAttribute(String key) {
-		//		log("key : " + key + " removed", Project.MSG_VERBOSE);
+		contentChanged = true;
 		manifest.getMainAttributes().remove(new Attributes.Name(key));
 	}
 
