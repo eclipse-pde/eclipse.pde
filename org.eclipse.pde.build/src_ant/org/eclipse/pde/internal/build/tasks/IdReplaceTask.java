@@ -21,6 +21,7 @@ import org.apache.tools.ant.Task;
  * @since 3.0
  */
 public class IdReplaceTask extends Task {
+	private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
 	private static final String FEATURE = "feature";//$NON-NLS-1$
 	private static final String ID = "id";//$NON-NLS-1$
 	private static final String VERSION = "version";//$NON-NLS-1$
@@ -228,7 +229,7 @@ public class IdReplaceTask extends Task {
 			return;
 		
 		try {	
-			OutputStreamWriter w = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(featureFilePath)), "UTF-8"); //$NON-NLS-1$
+			OutputStreamWriter w = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(featureFilePath)), UTF_8);
 			w.write(buffer.toString());
 			w.close();
 		} catch (FileNotFoundException e) {
@@ -256,7 +257,7 @@ public class IdReplaceTask extends Task {
 	}
 
 	private StringBuffer readFile(File targetName) throws IOException {
-		InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(targetName)), "UTF-8"); //$NON-NLS-1$
+		InputStreamReader reader = new InputStreamReader(new BufferedInputStream(new FileInputStream(targetName)), UTF_8);
 		StringBuffer result = new StringBuffer();
 		char[] buf = new char[4096];
 		int count;
