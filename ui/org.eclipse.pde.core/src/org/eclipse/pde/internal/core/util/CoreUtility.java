@@ -14,11 +14,15 @@ import java.io.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.plugin.PluginExtension;
 import org.eclipse.pde.internal.core.plugin.PluginExtensionPoint;
 import org.w3c.dom.Document;
@@ -154,6 +158,32 @@ public class CoreUtility {
 		return child;	
 	}
 	
-
+    public static boolean guessUnpack(BundleDescription bundle) {
+		if (bundle == null) {
+			return true;
+		}
+		if (new File(bundle.getLocation()).isFile()) {
+			return false;
+		}
+		if (PDECore.getWorkspace().getRoot().getContainerForLocation(
+				new Path(bundle.getLocation())) == null) {
+			return true;
+		}
+		IPluginModelBase model = PDECore.getDefault().getModelManager()
+				.findModel(bundle);
+		if (model == null) {
+			return true;
+		}
+		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+		if (libraries.length == 0
+				&& PDECore.getDefault().getModelManager().isOSGiRuntime()) {
+			return false;
+		}
+		for (int i = 0; i < libraries.length; i++) {
+			if (libraries[i].getName().equals(".")) //$NON-NLS-1$
+				return false;
+		}
+		return true;
+	}
 
 }

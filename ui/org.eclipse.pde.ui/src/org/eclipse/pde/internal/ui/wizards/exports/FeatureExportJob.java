@@ -52,7 +52,6 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.BuildScriptGenerator;
@@ -685,7 +684,9 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
                         	plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
                             plugin.setAttribute("version", "0.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
                             if (!fUseJarFormat) {
-                                plugin.setAttribute("unpack", Boolean.toString(doUnpack(bundle))); //$NON-NLS-1$
+                                plugin
+										.setAttribute(
+												"unpack", Boolean.toString(CoreUtility.guessUnpack(bundle))); //$NON-NLS-1$
                              }
                             root.appendChild(plugin);
                          }
@@ -699,28 +700,5 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		} catch (ParserConfigurationException e1) {
 		}      	
     }
-
-    private boolean doUnpack(BundleDescription bundle) {
-        if (new File(bundle.getLocation()).isFile())
-            return false;
-        
-        if (PDECore.getWorkspace().getRoot().getContainerForLocation(new Path(bundle.getLocation())) == null)
-        	return true;
-        	
-        IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(bundle);
-        if (model == null)
-        	return true;
-        IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-        if (libraries.length == 0 && PDECore.getDefault().getModelManager().isOSGiRuntime())
-            return false;
-        
-        for (int i = 0; i < libraries.length; i++) {
-            if (libraries[i].getName().equals(".")) //$NON-NLS-1$
-                return false;
-        }
-        return true;
-    }
-
-
 
 }
