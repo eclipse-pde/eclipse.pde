@@ -10,12 +10,11 @@ Require-Bundle:
  org.eclipse.update.core,
  org.apache.ant,
  org.eclipse.core.runtime.compatibility;optional=true
-Provide-Package: 
- org.eclipse.pde.internal.build.site,
- org.eclipse.pde.internal.build.packager,
- org.eclipse.pde.internal.build,
- org.eclipse.pde.internal.build.ant,
- org.eclipse.pde.internal.build.builder
+Provide-Package: org.eclipse.pde.internal.build;x-friends:="org.eclipse.pde.ui",
+ org.eclipse.pde.internal.build.ant;x-friends:="org.eclipse.pde.ui",
+ org.eclipse.pde.internal.build.builder;x-friends:="org.eclipse.pde.ui",
+ org.eclipse.pde.internal.build.packager;x-friends:="org.eclipse.pde.ui",
+ org.eclipse.pde.internal.build.site;x-friends:="org.eclipse.pde.ui"
 Bundle-Localization: plugin
 Eclipse-AutoStart: true
 Eclipse-AutoStop: true
