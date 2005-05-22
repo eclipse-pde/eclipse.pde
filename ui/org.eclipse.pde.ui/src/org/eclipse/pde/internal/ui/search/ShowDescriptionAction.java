@@ -41,6 +41,10 @@ public class ShowDescriptionAction extends Action {
 	private ISchema fSchema;
 	private File fPreviewFile;
 	private boolean forceExternal;
+	
+	public ShowDescriptionAction(String pointID) {
+		fPointID = pointID;
+	}
 
 	public ShowDescriptionAction(IPluginExtensionPoint point) {
 		this(point, false);

@@ -164,45 +164,43 @@ public class ExtensionPointsSection extends TableSection {
 		};
 		newAction.setEnabled(isEditable());
 		manager.add(newAction);
+		
+		if (selection.isEmpty()) {
+			getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
+			return;
+		}
 
-		if (!selection.isEmpty()) {
-			Object object = ((IStructuredSelection) selection)
-					.getFirstElement();
-			final IPluginExtensionPoint point = (IPluginExtensionPoint) object;
-
-			if (point.getSchema() != null) {
-				final IEditorInput input = getPage().getEditor()
-						.getEditorInput();
-				if (input instanceof IFileEditorInput
-						|| input instanceof SystemFileEditorInput) {
-
-					Action openSchemaAction = new Action(PDEUIMessages.ManifestEditor_DetailExtensionPointSection_openSchema) {
-						public void run() {
-							handleOpenSchema(point);
-						}
-					};
-					manager.add(openSchemaAction);
-				}
+		Object object = ((IStructuredSelection) selection).getFirstElement();
+		final IPluginExtensionPoint point = (IPluginExtensionPoint) object;
+		if (point.getSchema() != null) {
+			final IEditorInput input = getPage().getEditor().getEditorInput();
+			if (input instanceof IFileEditorInput || input instanceof SystemFileEditorInput) {
+				Action openSchemaAction = new Action(PDEUIMessages.ManifestEditor_DetailExtensionPointSection_openSchema) {
+					public void run() {
+						handleOpenSchema(point);
+					}
+				};
+				manager.add(openSchemaAction);
 			}
-
-			manager.add(new Separator());
-
-			Action deleteAction = new Action(PDEUIMessages.Actions_delete_label) {
-				public void run() {
-					handleDelete();
-				}
-			};
-			deleteAction.setEnabled(isEditable());
-			manager.add(deleteAction);
 		}
-		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
-				manager);
 		manager.add(new Separator());
-		if (!selection.isEmpty()) {
-			PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
-			actionGroup.setContext(new ActionContext(selection));
-			actionGroup.fillContextMenu(manager);
-		}
+		
+		Action deleteAction = new Action(PDEUIMessages.Actions_delete_label) {
+			public void run() {
+				handleDelete();
+			}
+		};
+		deleteAction.setEnabled(isEditable());
+		manager.add(deleteAction);
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
+		manager.add(new Separator());
+		
+		IBaseModel model = getPage().getPDEEditor().getAggregateModel();
+		String pluginID = ((IPluginModelBase)model).getPluginBase().getId();
+		manager.add(new FindReferencesAction(point, pluginID));
+		Action action = new ShowDescriptionAction(pluginID + "." + point.getId()); //$NON-NLS-1$
+		action.setText(PDEUIMessages.ExtensionPointsSection_showDescription);
+		manager.add(action);
 	}
 
 	protected void buttonSelected(int index) {

@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.*;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.*;
@@ -235,12 +236,13 @@ public class ExtensionPointDetails extends PDEDetails {
 				PDEPluginImages.DESC_PSEARCH_OBJ));
 		fRichText.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
+				IBaseModel model = getPage().getPDEEditor().getAggregateModel();
+				String pluginID = ((IPluginModelBase)model).getPluginBase().getId();
+				String pointID = pluginID + "." + fInput.getId(); //$NON-NLS-1$
 				if (e.getHref().equals("search")) { //$NON-NLS-1$
-					FindReferencesAction pluginReferencesAction = new FindReferencesAction(fInput);
-					pluginReferencesAction.run();
+					new FindReferencesAction(fInput, pluginID).run();
 				} else {
-					ShowDescriptionAction showDescAction = new ShowDescriptionAction(fInput);
-					showDescAction.run();
+					new ShowDescriptionAction(pointID).run();
 				}
 			}
 		});

@@ -19,10 +19,16 @@ import org.eclipse.search.ui.*;
 public class FindReferencesAction extends BaseSearchAction {
 	
 	private Object fSelectedObject;
+	private String fPluginID;
 	
 	public FindReferencesAction(Object object) {
+		this(object, null);
+	}
+	
+	public FindReferencesAction(Object object, String pluginID) {
 		super(PDEUIMessages.SearchAction_references);
 		fSelectedObject = object;
+		fPluginID = pluginID;
 	}
 	
 	protected ISearchQuery createSearchQuery() {
@@ -34,6 +40,8 @@ public class FindReferencesAction extends BaseSearchAction {
 			input.setSearchElement(PluginSearchInput.ELEMENT_EXTENSION_POINT);
 			IPluginModelBase model = ((IPluginExtensionPoint) fSelectedObject).getPluginModel();
 			String id = model.getPluginBase().getId();
+			if (id == null || id.trim().length() == 0)
+				id = fPluginID;
 			if (id == null || id.trim().length() == 0)
 				id = "*"; //$NON-NLS-1$
 			input.setSearchString(

@@ -1953,4 +1953,6 @@ public class PDEUIMessages extends NLS {
 	public static String ExportPackageVisibilitySection_unconditional;
 
 	public static String ExportPackageSection_props;
+
+	public static String ExtensionPointsSection_showDescription;
 }
