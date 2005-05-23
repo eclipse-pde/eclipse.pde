@@ -1,14 +1,20 @@
-/* Using a page style */
-.page_style {	text-align: center;	}
-
 /* Give some space for main div.*/
-#content {
+#page-content {
+	text-align: center;
 	margin-top:100px;
-	width:20em;
-	text-align: left;	} 
+	}
 
-/* Setup anchors. Set the background 
-picture and layout the text. */
+/* satisfy Mozilla */	
+div > div#page-content {
+	padding-left:30%;
+	}
+
+#links {
+	text-align:left;
+	width:20em;
+	} 
+
+/* Set the background picture and layout the text. */
 a {
 	display:block;
 	margin-bottom:20px;
@@ -25,3 +31,4 @@ a span  {
 	}
 	
 	
+

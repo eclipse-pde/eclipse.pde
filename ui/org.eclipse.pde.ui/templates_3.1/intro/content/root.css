@@ -1,22 +1,28 @@
-
 img {
 	width: 48px;
 	height: 48px;
 	vertical-align: middle;
 	}
-	
+
+/* Give some space for main div.*/	
 .page-style {
 	text-align: center;
+	margin-top:100px;
+	}
+	
+/* satisfy Mozilla */	
+body > div.page-style {
+	padding-left:30%;
 	}
 
-/* Give some space for main div.*/
+
 #content {
-	margin-top:100px;
+	text-align:left;
 	width:20em;
-	text-align: left;
 	} 
 
 
 
 
 		
+

@@ -227,7 +227,7 @@ public class IntroTemplate extends PDETemplateSection {
 		IPluginElement implementationElement = factory
 				.createElement(presentationElement);
 		implementationElement.setName("implementation"); //$NON-NLS-1$
-        implementationElement.setAttribute("os", "win32"); //$NON-NLS-1$ //$NON-NLS-2$
+        implementationElement.setAttribute("os", "win32,linux,macosx"); //$NON-NLS-1$ //$NON-NLS-2$
         if ( ((PluginBase)plugin).getTargetVersion().equals("3.0")) {   //$NON-NLS-1$
             implementationElement.setAttribute("style", "content/shared.css");  //$NON-NLS-1$//$NON-NLS-2$
         }
