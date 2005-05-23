@@ -75,6 +75,7 @@ public class SampleWizard extends Wizard
 		namesPage= new ProjectNamesPage(this);
 		lastPage = new ReviewPage(this);
 		setNeedsProgressMonitor(true);
+        setWindowTitle(PDEUIMessages.ShowSampleAction_title); //$NON-NLS-1$
 	}
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
