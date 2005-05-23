@@ -35,8 +35,10 @@ public class SampleOperation implements IRunnableWithProgress {
 	private IFile sampleManifest;
 
 	private IOverwriteQuery query;
-
-	private boolean noToAll;
+    
+    private boolean yesToAll;
+    
+    private boolean cancel;
 
 	private IProject[] createdProjects;
 
@@ -83,6 +85,9 @@ public class SampleOperation implements IRunnableWithProgress {
 						if (file != null) {
 							createdProjects[i] = file.getProject();
 						}
+                        if(cancel)
+                            // if user has cancelled operation, exit.
+                            break;
 					}
 					}
 					catch (InterruptedException e) {
@@ -123,30 +128,34 @@ public class SampleOperation implements IRunnableWithProgress {
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject project = root.getProject(name);
 		boolean skip = false;
-		if (project.exists()) {
-			if (noToAll)
-				skip = true;
-			else {
-				String returnId = query.queryOverwrite(project.getFullPath()
-						.toString());
-				if (returnId.equals(IOverwriteQuery.NO_ALL)) {
-					noToAll = true;
-					skip = true;
-				} else if (returnId.equals(IOverwriteQuery.NO)) {
-					skip = true;
-				}
-			}
-			if (!skip) {
-				project.delete(true, true, new SubProgressMonitor(monitor, 1));
-				project = root.getProject(name);
-			} else
-				monitor.worked(1);
-		}
-		if (skip) {
-			monitor.worked(3);
-			IFile manifest = project.getFile(SAMPLE_PROPERTIES);
-			return manifest;
-		}
+        if (project.exists()) {
+            if (!yesToAll) {
+                String returnId = query.queryOverwrite(project.getFullPath()
+                    .toString());
+                if (returnId.equals(IOverwriteQuery.ALL)) {
+                    yesToAll = true;
+                    skip = false;
+                } else if (returnId.equals(IOverwriteQuery.YES)) {
+                    skip = false;
+                }  else if (returnId.equals(IOverwriteQuery.NO)) {
+                    skip = true;
+                } else if (returnId.equals(IOverwriteQuery.CANCEL)) {
+                    skip = true;
+                    cancel = true;
+                }
+            }
+            if (!skip) {
+                project.delete(true, true, new SubProgressMonitor(monitor, 1));
+                project = root.getProject(name);
+            } else
+                monitor.worked(1);
+        }
+        if (skip) {
+            monitor.worked(3);
+            IFile manifest = project.getFile(SAMPLE_PROPERTIES);
+            return manifest;
+        }
+        
 		project.create(new SubProgressMonitor(monitor, 1));
 		project.open(new NullProgressMonitor());
 		Bundle bundle = Platform.getBundle(sample.getNamespace());
