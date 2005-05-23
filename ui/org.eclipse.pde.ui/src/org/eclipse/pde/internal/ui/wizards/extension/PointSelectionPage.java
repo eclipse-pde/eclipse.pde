@@ -536,7 +536,7 @@ public class PointSelectionPage
 	
 	private String getFullId(IPluginExtensionPoint point) {
 		if (point instanceof PluginExtensionPointNode) {
-			return fModel.getPluginBase().getId() + "." + point.getId();
+			return fModel.getPluginBase().getId() + "." + point.getId(); //$NON-NLS-1$
 		}
 		return point.getFullId();
 	}
