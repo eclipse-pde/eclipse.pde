@@ -35,7 +35,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginImport;
@@ -49,6 +48,7 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.elements.ElementLabelProvider;
+import org.eclipse.pde.internal.ui.model.plugin.PluginExtensionPointNode;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.BaseWizardSelectionPage;
@@ -82,26 +82,31 @@ public class PointSelectionPage
 	extends BaseWizardSelectionPage {
 	private TableViewer fPointListViewer;
 	private TableViewer fTemplateViewer;
-	private IPluginBase fPluginBase;
+	
+	private IPluginModelBase fModel;
 	private Button fFilterCheck;
 	private IPluginExtensionPoint fCurrentPoint;
 	private HashSet fAvailableImports;
-	private Action showDetailsAction;
-	private IProject project;
-	private Label templateLabel;
-	private ExtensionTreeSelectionPage wizardsPage;
+	private Action fShowDetailsSection;
+	private IProject fProject;
+	private Label fTemplateLabel;
+	private ExtensionTreeSelectionPage fWizardsPage;
 	
 	private IPluginExtension fNewExtension;
 	private ShowDescriptionAction fShowDescriptionAction;
-	private WizardCollectionElement templateCollection;
-	private WizardCollectionElement wizardCollection;
-	private NewExtensionWizard wizard;
+	private WizardCollectionElement fTemplateCollection;
+	private WizardCollectionElement fWizardCollection;
+	private NewExtensionWizard fWizard;
 	
 	class PointFilter extends ViewerFilter {
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (!fFilterCheck.getSelection())
 				return true;
+			
 			IPluginExtensionPoint point = (IPluginExtensionPoint) element;
+			if (point instanceof PluginExtensionPointNode)
+				return true;
+			
 			return fAvailableImports.contains(point.getPluginBase().getId());
 		}
 	}
@@ -110,41 +115,42 @@ public class PointSelectionPage
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IPluginExtensionPoint){
 				IPluginExtensionPoint point = (IPluginExtensionPoint)inputElement;
+				String pointID = getFullId(point);
 				ArrayList result = new ArrayList();
-				if (templateCollection.getWizards() != null) {
-					Object[] wizards = templateCollection.getWizards().getChildren();
+				if (fTemplateCollection.getWizards() != null) {
+					Object[] wizards = fTemplateCollection.getWizards().getChildren();
 					for (int i = 0; i<wizards.length; i++){
 						String wizardContributorId = ((WizardElement)wizards[i]).getContributingId();
-						if (wizardContributorId == null || point == null || point.getFullId() == null)
+						if (wizardContributorId == null || pointID == null)
 							continue;
-						if (wizards[i] instanceof WizardElement && wizardContributorId.equals(point.getFullId()))
+						if (wizards[i] instanceof WizardElement && wizardContributorId.equals(pointID))
 							result.add(wizards[i]);
 					}
 					return result.toArray();
 				}
 			}
 			return new Object[0];
-		}
-		
+		}	
 	}
 	
 	class PointContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			HashSet extPoints = new HashSet();
+			ArrayList extPoints = new ArrayList();
 			PluginModelManager manager = (PluginModelManager)parent;
 			IPluginModelBase[] plugins = manager.getPlugins();
 			for (int i = 0; i < plugins.length; i++) {
 				IPluginExtensionPoint[] points = plugins[i].getPluginBase().getExtensionPoints();
-				if (plugins[i].getPluginBase().getId().equals(fPluginBase.getId()))
+				String id = plugins[i].getPluginBase().getId();
+				if (id.equals(fModel.getPluginBase().getId()))
 					continue;
 				for (int j = 0; j < points.length; j++)
 					extPoints.add(points[j]);
 			}
 			
-			IPluginExtensionPoint[] points = fPluginBase.getExtensionPoints();
-			for (int i = 0; i<points.length; i++)
+			IPluginExtensionPoint[] points = fModel.getPluginBase().getExtensionPoints();
+			for (int i = 0; i < points.length; i++)
 				extPoints.add(points[i]);
 			
 			return extPoints.toArray();
@@ -158,10 +164,12 @@ public class PointSelectionPage
 			return getColumnText(obj, 0);
 		}
 		public String getColumnText(Object obj, int index) {
+			IPluginExtensionPoint extPoint = (IPluginExtensionPoint)obj;
 			PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
 			if (provider.isFullNameModeEnabled())
-				return provider.getText(obj);
-			return ((IPluginExtensionPoint) obj).getFullId();
+				return provider.getText(extPoint);
+			
+			return getFullId(extPoint);
 		}
 		
 		public Image getImage(Object obj) {
@@ -171,6 +179,7 @@ public class PointSelectionPage
 		public Image getColumnImage(Object obj, int index) {
 			IPluginExtensionPoint exp = (IPluginExtensionPoint) obj;
 			int flag =
+				exp instanceof PluginExtensionPointNode || 
 				fAvailableImports.contains(exp.getPluginBase().getId())
 					? 0
 					: SharedLabelProvider.F_WARNING;
@@ -184,14 +193,14 @@ public class PointSelectionPage
 		}
 	}
 
-	public PointSelectionPage(IProject project, IPluginBase model, WizardCollectionElement element, WizardCollectionElement templates, NewExtensionWizard wizard) {
+	public PointSelectionPage(IProject project, IPluginModelBase model, WizardCollectionElement element, WizardCollectionElement templates, NewExtensionWizard wizard) {
 		super("pointSelectionPage", PDEUIMessages.NewExtensionWizard_PointSelectionPage_title); //$NON-NLS-1$ //$NON-NLS-2$
-		this.fPluginBase = model;
-		this.wizardCollection = element;
-		this.templateCollection = templates;
-		this.wizard= wizard;
-		this.project=project;
-		fAvailableImports = PluginSelectionDialog.getExistingImports(model);
+		this.fModel = model;
+		this.fWizardCollection = element;
+		this.fTemplateCollection = templates;
+		this.fWizard= wizard;
+		this.fProject=project;
+		fAvailableImports = PluginSelectionDialog.getExistingImports(model.getPluginBase());
 		setTitle(PDEUIMessages.NewExtensionWizard_PointSelectionPage_title); //$NON-NLS-1$
 		setDescription(PDEUIMessages.NewExtensionWizard_PointSelectionPage_desc); //$NON-NLS-1$
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
@@ -239,10 +248,10 @@ public class PointSelectionPage
 		fPointListViewer.addDoubleClickListener(new IDoubleClickListener(){
 			public void doubleClick(DoubleClickEvent event) {
 				if (canFinish()){
-					wizard.performFinish();
-					wizard.getShell().close();
-					wizard.dispose();
-					wizard.setContainer(null);
+					fWizard.performFinish();
+					fWizard.getShell().close();
+					fWizard.dispose();
+					fWizard.setContainer(null);
 				}
 			}
 		});
@@ -261,10 +270,10 @@ public class PointSelectionPage
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		templateComposite.setLayoutData(gd);
 		
-		templateLabel = new Label(templateComposite, SWT.NONE);
-		templateLabel.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_title); //$NON-NLS-1$
+		fTemplateLabel = new Label(templateComposite, SWT.NONE);
+		fTemplateLabel.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_title); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		templateLabel.setLayoutData(gd);
+		fTemplateLabel.setLayoutData(gd);
 		
 		SashForm templateSashForm = new SashForm(templateComposite, SWT.HORIZONTAL);
 		templateSashForm.setLayout(new GridLayout());
@@ -333,12 +342,12 @@ public class PointSelectionPage
 			IHelpContextIds.ADD_EXTENSIONS_SCHEMA_BASED);
 	}
 	private Control createWizardsPage(Composite parent) {
-		wizardsPage = new ExtensionTreeSelectionPage(wizardCollection, null, PDEUIMessages.PointSelectionPage_categories); //$NON-NLS-1$
-		wizardsPage.createControl(parent);
-		wizardsPage.setWizard(wizard);
-		wizardsPage.getSelectionProvider().addSelectionChangedListener(this);
-		wizardsPage.init(project, fPluginBase);
-		return wizardsPage.getControl();
+		fWizardsPage = new ExtensionTreeSelectionPage(fWizardCollection, null, PDEUIMessages.PointSelectionPage_categories); //$NON-NLS-1$
+		fWizardsPage.createControl(parent);
+		fWizardsPage.setWizard(fWizard);
+		fWizardsPage.getSelectionProvider().addSelectionChangedListener(this);
+		fWizardsPage.init(fProject, fModel.getPluginBase());
+		return fWizardsPage.getControl();
 	}
 	private void createMenuManager(){
 		MenuManager mgr = new MenuManager();
@@ -355,10 +364,10 @@ public class PointSelectionPage
 		control.setMenu(menu);
 	}
 	private void fillContextMenu(IMenuManager mgr){
-		mgr.add(showDetailsAction);
+		mgr.add(fShowDetailsSection);
 		ISelection selection = fPointListViewer.getSelection();
 		IPluginExtensionPoint point = (IPluginExtensionPoint)((IStructuredSelection)selection).getFirstElement();
-		showDetailsAction.setEnabled(point != null);
+		fShowDetailsSection.setEnabled(point != null);
 		
 	}
 	
@@ -392,26 +401,24 @@ public class PointSelectionPage
 
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
-		wizardsPage.dispose();
+		fWizardsPage.dispose();
 		super.dispose();
 	}
 
 	public boolean finish() {
 		String point = fCurrentPoint.getFullId();
 		
-		//wizard.getEditor().ensurePluginContextPresence();
 		try {
 			IPluginExtension extension =
-				fPluginBase.getModel().getFactory().createExtension();
+				fModel.getFactory().createExtension();
 			extension.setPoint(point);
-			fPluginBase.add(extension);
+			fModel.getPluginBase().add(extension);
 			
 			String pluginID = fCurrentPoint.getPluginBase().getId();
 			if (!fAvailableImports.contains(pluginID)) {
-				IPluginModelBase modelBase = ((IPluginModelBase) fPluginBase.getModel());
-				IPluginImport importNode = modelBase.getPluginFactory().createImport();
+				IPluginImport importNode = fModel.getPluginFactory().createImport();
 				importNode.setId(pluginID);
-				fPluginBase.add(importNode);
+				fModel.getPluginBase().add(importNode);
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -442,12 +449,12 @@ public class PointSelectionPage
 	}
 	
 	private void makeActions(){
-		showDetailsAction = new Action(){
+		fShowDetailsSection = new Action(){
 			public void run(){
 				doShowDescription();
 			}
 		};
-		showDetailsAction.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_showDetails); //$NON-NLS-1$
+		fShowDetailsSection.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_showDetails); //$NON-NLS-1$
 	}
 	
 	public void selectionChanged(SelectionChangedEvent event) {
@@ -468,7 +475,7 @@ public class PointSelectionPage
 							INFORMATION);
 					setDescription(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_pluginDescription, fCurrentPoint.getFullId())); //$NON-NLS-1$
 					setDescriptionText(""); //$NON-NLS-1$
-					templateLabel.setText(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_label, fCurrentPoint.getFullId())); //$NON-NLS-1$
+					fTemplateLabel.setText(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_label, fCurrentPoint.getFullId())); //$NON-NLS-1$
 					setSelectedNode(null);
 					setPageComplete(true);
 				} else if (ssel.getFirstElement() instanceof WizardElement) {
@@ -498,7 +505,7 @@ public class PointSelectionPage
 		}
 		else {
 			// wizard page
-			ISelectionProvider provider = wizardsPage.getSelectionProvider();
+			ISelectionProvider provider = fWizardsPage.getSelectionProvider();
 			selectionChanged(new SelectionChangedEvent(provider, provider.getSelection()));
 		}
 	}
@@ -510,7 +517,7 @@ public class PointSelectionPage
 		return new WizardNode(this, element) {
 			public IBasePluginWizard createWizard() throws CoreException {
 				IExtensionWizard wizard = createWizard(wizardElement);
-				wizard.init(project, fPluginBase.getPluginModel());
+				wizard.init(fProject, fModel);
 				return wizard;
 			}
 			protected IExtensionWizard createWizard(WizardElement element)
@@ -525,5 +532,12 @@ public class PointSelectionPage
 				return (IExtensionWizard) element.createExecutableExtension();
 			}
 		};
+	}
+	
+	private String getFullId(IPluginExtensionPoint point) {
+		if (point instanceof PluginExtensionPointNode) {
+			return fModel.getPluginBase().getId() + "." + point.getId();
+		}
+		return point.getFullId();
 	}
 }

@@ -18,31 +18,30 @@ import org.eclipse.pde.internal.ui.*;
 
 public class NewExtensionWizard extends NewWizard {
 	public static final String PLUGIN_POINT = "newExtension"; //$NON-NLS-1$
-	private PointSelectionPage pointPage;
-	private IPluginModelBase model;
-	private IProject project;
-	private ManifestEditor editor;
-	private WizardCollectionElement wizardCollection;
+	private PointSelectionPage fPointPage;
+	private IPluginModelBase fModel;
+	private IProject fProject;
+	private ManifestEditor fEditor;
+	private WizardCollectionElement fWizardCollection;
 	
 	public NewExtensionWizard(IProject project, IPluginModelBase model, ManifestEditor editor) {
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWEX_WIZ);
-		this.model = model;
-		this.project = project;
-		this.editor = editor;
+		fModel = model;
+		fProject = project;
+		fEditor = editor;
 		setForcePreviousAndNextButtons(true);
 		setWindowTitle(PDEUIMessages.NewExtensionWizard_wtitle);
-		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		loadWizardCollection();
 	}
 	public void addPages() {
-		pointPage =
-			new PointSelectionPage(project, model.getPluginBase(), wizardCollection, getTemplates(), this);
-		addPage(pointPage);
+		fPointPage =
+			new PointSelectionPage(fProject, fModel, fWizardCollection, getTemplates(), this);
+		addPage(fPointPage);
 	}
 	private void loadWizardCollection() {
 		NewExtensionRegistryReader reader = new NewExtensionRegistryReader();
-		wizardCollection = (WizardCollectionElement) reader.readRegistry(
+		fWizardCollection = (WizardCollectionElement) reader.readRegistry(
 				PDEPlugin.getPluginId(),
 				PLUGIN_POINT,
 				false);
@@ -50,7 +49,7 @@ public class NewExtensionWizard extends NewWizard {
 	
 	public WizardCollectionElement getTemplates() {
 		WizardCollectionElement templateCollection = new WizardCollectionElement("", "", null); //$NON-NLS-1$ //$NON-NLS-2$
-		collectTemplates(wizardCollection.getChildren(), templateCollection);
+		collectTemplates(fWizardCollection.getChildren(), templateCollection);
 		return templateCollection;
 	}
 	
@@ -69,17 +68,13 @@ public class NewExtensionWizard extends NewWizard {
 		}
 	}
 	public boolean performFinish() {
-		if (pointPage.canFinish())
-			return pointPage.finish();
+		if (fPointPage.canFinish())
+			return fPointPage.finish();
 		return true;
 	}
 	
 	public ManifestEditor getEditor() {
-		return editor;
+		return fEditor;
 	}
 
-	public void dispose() {
-		super.dispose();
-		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
-	}
 }
