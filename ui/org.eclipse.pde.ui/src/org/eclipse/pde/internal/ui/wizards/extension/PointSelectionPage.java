@@ -406,7 +406,7 @@ public class PointSelectionPage
 	}
 
 	public boolean finish() {
-		String point = fCurrentPoint.getFullId();
+		String point = getFullId(fCurrentPoint);
 		
 		try {
 			IPluginExtension extension =
@@ -415,7 +415,7 @@ public class PointSelectionPage
 			fModel.getPluginBase().add(extension);
 			
 			String pluginID = fCurrentPoint.getPluginBase().getId();
-			if (!fAvailableImports.contains(pluginID)) {
+			if (!(fCurrentPoint instanceof PluginExtensionPointNode) && !fAvailableImports.contains(pluginID)) {
 				IPluginImport importNode = fModel.getPluginFactory().createImport();
 				importNode.setId(pluginID);
 				fModel.getPluginBase().add(importNode);
@@ -467,7 +467,7 @@ public class PointSelectionPage
 				if (ssel.getFirstElement() instanceof IPluginExtensionPoint){
 					fCurrentPoint = (IPluginExtensionPoint) ssel.getFirstElement();
 					fTemplateViewer.setInput(fCurrentPoint);
-					if (fAvailableImports.contains(fCurrentPoint.getPluginBase().getId()))
+					if (fCurrentPoint instanceof PluginExtensionPointNode || fAvailableImports.contains(fCurrentPoint.getPluginBase().getId()))
 						setMessage(null);
 					else
 						setMessage(

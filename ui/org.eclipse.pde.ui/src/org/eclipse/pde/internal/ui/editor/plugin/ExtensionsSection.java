@@ -37,9 +37,6 @@ import org.eclipse.ui.actions.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.part.*;
 
-/**
- *
- */
 public class ExtensionsSection extends TreeSection
 		implements
 			IModelChangedListener {
