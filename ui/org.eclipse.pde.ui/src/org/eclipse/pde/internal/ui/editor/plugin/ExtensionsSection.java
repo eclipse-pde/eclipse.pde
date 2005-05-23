@@ -348,14 +348,12 @@ public class ExtensionsSection extends TreeSection
 		BusyIndicator.showWhile(extensionTree.getTree().getDisplay(),
 				new Runnable() {
 					public void run() {
+						((ManifestEditor)getPage().getEditor()).ensurePluginContextPresence();
 						NewExtensionWizard wizard = new NewExtensionWizard(
 								project, (IPluginModelBase) getPage()
 										.getModel(), (ManifestEditor) getPage()
 										.getPDEEditor()) {
 							public boolean performFinish() {
-								((ManifestEditor) ExtensionsSection.this
-										.getPage().getEditor())
-										.ensurePluginContextPresence();
 								return super.performFinish();
 							}
 						};
