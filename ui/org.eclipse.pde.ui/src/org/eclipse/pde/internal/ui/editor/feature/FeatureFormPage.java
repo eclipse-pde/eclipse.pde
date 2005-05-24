@@ -111,8 +111,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		managedForm.addPart(fSpecSection);
 		managedForm.addPart(fPortabilitySection);
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),
-				IHelpContextIds.MANIFEST_FEATURE_OVERVIEW);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),IHelpContextIds.MANIFEST_FEATURE_OVERVIEW);
 		initialize();
 	}
 

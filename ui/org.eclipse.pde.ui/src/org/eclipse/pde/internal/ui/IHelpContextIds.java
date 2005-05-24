@@ -43,7 +43,6 @@ public interface IHelpContextIds {
  	public static final String NEW_PROJECT_CODE_GEN_PAGE = PREFIX + "new_project_code_gen_page"; //$NON-NLS-1$
 
  	
- 	// JUST ADDED ------------ ( DELETE ME )
 	public static final String ADVANCED_PLUGIN_EXPORT = PREFIX + "advanced_plugin_export_page"; //$NON-NLS-1$
 	public static final String CROSS_PLATFORM_EXPORT = PREFIX + "cross_platform_export_page"; //$NON-NLS-1$
 	public static final String LIBRARY_PLUGIN_JARS = PREFIX + "library_plugin_jars"; //$NON-NLS-1$
@@ -147,6 +146,8 @@ public interface IHelpContextIds {
  	public static final String MANIFEST_FEATURE_INFO = PREFIX + "manifest_feature_info"; //$NON-NLS-1$
  	public static final String MANIFEST_FEATURE_CONTENT = PREFIX + "manifest_feature_content"; //$NON-NLS-1$
  	public static final String MANIFEST_FEATURE_ADVANCED = PREFIX + "manifest_feature_advanced"; //$NON-NLS-1$
+ 	public static final String MANIFEST_FEATURE_DEPENDENCIES = PREFIX + "manifest_feature_dependencies"; //$NON-NLS-1$
+ 	public static final String MANIFEST_FEATURE_INSTALLATION = PREFIX + "manifest_feature_installation"; //$NON-NLS-1$
  	
  	public static final String FEATURE_SYNCHRONIZE_VERSIONS = PREFIX + "feature_synchronize_versions"; //$NON-NLS-1$
 

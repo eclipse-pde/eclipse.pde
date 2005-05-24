@@ -77,8 +77,7 @@ public class FeatureAdvancedPage extends PDEFormPage {
 		managedForm.addPart(fDataDetailsSection);
 		managedForm.addPart(fDataPortabilitySection);
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),
-				IHelpContextIds.MANIFEST_FEATURE_OVERVIEW);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),IHelpContextIds.MANIFEST_FEATURE_INSTALLATION);
 
 		form.setText(PDEUIMessages.FeatureEditor_AdvancedPage_heading);
 		fDataSection.fireSelection();

@@ -78,8 +78,7 @@ public class FeatureDependenciesPage extends PDEFormPage {
 		fMatchSection.getSection().setLayoutData(gd);
 		managedForm.addPart(fRequiresSection);
 		managedForm.addPart(fMatchSection);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),
-				IHelpContextIds.MANIFEST_FEATURE_CONTENT);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),IHelpContextIds.MANIFEST_FEATURE_DEPENDENCIES);
 		initialize();
 		fRequiresSection.fireSelection();
 	}
