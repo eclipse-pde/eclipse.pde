@@ -221,7 +221,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			List params = new ArrayList(3);
 			params.add("-R"); //$NON-NLS-1$
 			params.add("."); //$NON-NLS-1$
-			params.add(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE));
+			params.add('\'' + Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '\'');
 			String rootFileFolder = Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$
 			script.printExecTask("cp", rootFileFolder + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER),  params, null); //$NON-NLS-1$
 			script.printDeleteTask(rootFileFolder, null, null);
@@ -302,7 +302,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH));
 		List args = new ArrayList(2);
 		args.add("-rf"); //$NON-NLS-1$
-		args.add(Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP));
+		args.add('\'' + Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '\'');
 		script.printExecTask("rm", null, args, null); //$NON-NLS-1$
 	}
 
@@ -546,12 +546,12 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			return;
 
 		List parameters = new ArrayList(1);
-		parameters.add("-r -q ${zipargs} " + Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + " . "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		parameters.add("-r -q ${zipargs} '" + Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + "' . "); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printExecTask("zip", Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING), parameters, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 
 	private void createZipExecCommand(List parameters) {
-		parameters.add(0, "-r -q " + Utils.getPropertyFormat(PROPERTY_ZIP_ARGS) + ' ' + Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH)); //$NON-NLS-1$
+		parameters.add(0, "-r -q " + Utils.getPropertyFormat(PROPERTY_ZIP_ARGS) + " '" + Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + '\''); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printExecTask("zip", Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), parameters, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
@@ -564,15 +564,15 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		//Need to do the copy using cp because of the link
 		List parameters = new ArrayList(2);
 		if (rootFileProviders.size() > 0) {
-			parameters.add("-r " + Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + ' ' + Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP)); //$NON-NLS-1$ //$NON-NLS-2$  
+			parameters.add("-r '" + Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + "' '" + Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '\''); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$  
 			script.printExecTask("cp", Utils.getPropertyFormat(PROPERTY_BASEDIR), parameters, null); //$NON-NLS-1$
 
 			parameters.clear();
-			parameters.add("-rf " + Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING)); //$NON-NLS-1$ //$NON-NLS-2$
+			parameters.add("-rf '" + Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '\''); //$NON-NLS-1$ //$NON-NLS-2$
 			script.printExecTask("rm", Utils.getPropertyFormat(PROPERTY_BASEDIR), parameters, null); //$NON-NLS-1$
 		}
 		parameters.clear();
-		parameters.add(Utils.getPropertyFormat(PROPERTY_TAR_ARGS) + " -cvf "  + Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + ' ' + Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + ' '); //$NON-NLS-1$
+		parameters.add(Utils.getPropertyFormat(PROPERTY_TAR_ARGS) + "-cvf '" + Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + "' " + Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + ' '); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printExecTask("tar", Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), parameters, null); //$NON-NLS-1$ 
 	}
 
