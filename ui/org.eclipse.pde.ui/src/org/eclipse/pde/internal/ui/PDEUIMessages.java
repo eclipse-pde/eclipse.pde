@@ -241,6 +241,8 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureExportJob_name;
 	public static String FeatureExportJob_error;
 
+	public static String BuildSiteJob_refresh;
+	
 	public static String FeatureEditor_RequiresSection_title;
 	public static String FeatureEditor_RequiresSection_desc;
 	public static String FeatureEditor_RequiresSection_sync;

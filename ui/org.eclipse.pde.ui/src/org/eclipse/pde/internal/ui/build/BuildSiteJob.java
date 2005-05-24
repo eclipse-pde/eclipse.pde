@@ -25,8 +25,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.pde.internal.core.PDECore;
@@ -78,7 +80,7 @@ public class BuildSiteJob extends FeatureExportJob {
 			public void done(IJobChangeEvent event) {
 				BuildSiteJob.this.removeJobChangeListener(this);
 				super.done(event);
-				refresh(monitor);
+				refresh();
 				fDisplay.asyncExec(new Runnable() {
 					public void run() {
 						updateSiteFeatureVersions();
@@ -299,11 +301,17 @@ public class BuildSiteJob extends FeatureExportJob {
 		return time;
 	}
 
-	private void refresh(IProgressMonitor monitor) {
-		try {
-			fSiteContainer.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-		} catch (CoreException e) {
-		}
+	private void refresh() {
+		new Job(PDEUIMessages.BuildSiteJob_refresh){
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					fSiteContainer.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+				} catch (CoreException e) {
+				}
+				return Status.OK_STATUS;
+			}
+		}.schedule();
+		
 	}
 
 	/*
