@@ -928,16 +928,15 @@ public class PluginsView extends ViewPart {
 		IConfigurationElement config = getConfigurationElement();
 		if (config == null)
 			return;
-		String viewName = config.getAttribute("name"); //$NON-NLS-1$
+		
 		if (newInput == null
 			|| newInput.equals(PDECore.getDefault().getModelManager())) {
+			setContentDescription("");
 			// restore old
-			setContentDescription(viewName);
 			setTitleToolTip(getTitle());
 		} else {
-			String name =
-				((LabelProvider) treeViewer.getLabelProvider()).getText(
-					newInput);
+			String viewName = config.getAttribute("name"); //$NON-NLS-1$
+			String name = ((LabelProvider) treeViewer.getLabelProvider()).getText(newInput);
 			setContentDescription(viewName + ": " + name); //$NON-NLS-1$
 			setTitleToolTip(getInputPath(newInput));
 		}
