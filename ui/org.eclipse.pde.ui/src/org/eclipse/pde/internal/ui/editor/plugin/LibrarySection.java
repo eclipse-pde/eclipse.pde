@@ -99,8 +99,8 @@ public class LibrarySection extends TableSection implements IModelChangedListene
         IPluginModelBase model = (IPluginModelBase)getPage().getPDEEditor().getAggregateModel();
         if (isBundle()) {
            return (model.isFragmentModel())
-               ? PDEUIMessages.LibrarySection_fragment
-               : PDEUIMessages.LibrarySection_plugin;
+               ? PDEUIMessages.ClasspathSection_fragment
+               : PDEUIMessages.ClasspathSection_plugin;
         }      
         return (model.isFragmentModel())
                     ? PDEUIMessages.ManifestEditor_LibrarySection_fdesc
@@ -320,7 +320,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		Class[] acceptedClasses = new Class[] { IFile.class };
 		dialog.setValidator(new LibrarySelectionValidator(acceptedClasses, true));
 		dialog.setTitle(PDEUIMessages.BuildEditor_ClasspathSection_jarsTitle); //$NON-NLS-1$
-		dialog.setMessage(PDEUIMessages.LibrarySection_jarsMessage); //$NON-NLS-1$
+		dialog.setMessage(PDEUIMessages.ClasspathSection_jarsMessage); //$NON-NLS-1$
 		IPluginLibrary[] libraries = ((IPluginModelBase)getPage().getModel()).getPluginBase().getLibraries();
 		HashSet set = new HashSet();
 		for (int i = 0; i < libraries.length; i++) {

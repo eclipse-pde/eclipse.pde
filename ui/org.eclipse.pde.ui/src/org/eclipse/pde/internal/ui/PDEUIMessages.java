@@ -1692,8 +1692,8 @@ public class PDEUIMessages extends NLS {
 	public static String MailNewWizard_title;
 	public static String MatchSection_desc;
 	public static String MailTemplate_desc;
-	public static String LibrarySection_jarsMessage;
-	public static String LibrarySection_rename;
+	public static String ClasspathSection_jarsMessage;
+	public static String ClasspathSection_rename;
 	public static String OverviewPage_successfulSync;
 	public static String OverviewPage_exportingTitle;
 	public static String OverviewPage_content;
@@ -1934,9 +1934,9 @@ public class PDEUIMessages extends NLS {
 
 	public static String RequiresSection_properties;
 
-	public static String LibrarySection_fragment;
+	public static String ClasspathSection_fragment;
 
-	public static String LibrarySection_plugin;
+	public static String ClasspathSection_plugin;
 
 	public static String EnvironmentBlock_jreTitle;
 
