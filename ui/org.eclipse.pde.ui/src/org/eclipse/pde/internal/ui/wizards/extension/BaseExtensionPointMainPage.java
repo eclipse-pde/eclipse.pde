@@ -19,7 +19,6 @@ import java.io.UnsupportedEncodingException;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -81,7 +80,6 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	public static final String SCHEMA_DIR = "schema"; //$NON-NLS-1$
 
 	private IContainer fContainer;
-	private IProject fProject;
 	protected Text fIdText;
 	protected Text fPluginIdText;
 	protected Text fNameText;
@@ -93,11 +91,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	protected Button fFindLocationButton;
 	public BaseExtensionPointMainPage(IContainer container) {
 		super("newExtensionPoint"); //$NON-NLS-1$
-		this.fContainer = container;
-		if (container != null)
-			this.fProject = container.getProject();
-		else
-			this.fProject = null;
+		fContainer = container;
 	}
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
@@ -118,7 +112,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			fPluginIdText.setLayoutData(gd);
 			fPluginIdText.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
-					validatePage(true);
+					validatePage();
 				}
 			});
 			fPluginBrowseButton = new Button(container, SWT.PUSH);
@@ -146,7 +140,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 				fSchemaText
 						.setText(getSchemaLocation()
 								+ (getSchemaLocation().length() > 0 ? "/" : "") + fIdText.getText() + ".exsd"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				validatePage(false);
+				validatePage();
 			}
 		});
 		label = new Label(container, SWT.NONE);
@@ -157,7 +151,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		fNameText.setLayoutData(gd);
 		fNameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				validatePage(false);
+				validatePage();
 			}
 		});
 		if (isPluginIdNeeded() && !isPluginIdFinal()){
@@ -170,7 +164,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			fSchemaLocationText.setLayoutData(gd);
 			fSchemaLocationText.addModifyListener(new ModifyListener(){
 				public void modifyText(ModifyEvent e){
-					validatePage(true);
+					validatePage();
 				}
 			});
 			fFindLocationButton = new Button(container, SWT.PUSH);
@@ -194,7 +188,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		fSchemaText.setLayoutData(gd);
 		fSchemaText.addModifyListener(new ModifyListener(){
 			public void modifyText(ModifyEvent e){
-				validatePage(false);
+				validatePage();
 			}
 		});
 		if (isSharedSchemaSwitchNeeded()) {
@@ -215,7 +209,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		else
 			fIdText.setFocus();
 		setControl(container);
-		validatePage(false);
+		validatePage();
 		Dialog.applyDialogFont(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.NEW_SCHEMA);
 	}
@@ -405,8 +399,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
         return fIdText.getText().length()>0 && !IdUtil.isValidExtensionPointId(fIdText.getText());
     }
 
-	private void validatePage(boolean hasContainerChanged) {
-		if (hasContainerChanged && !validateContainer())
+	private void validatePage() {
+		if (!validateContainer())
 			return;
 		boolean isFilled = checkFieldsFilled();
 		String message = null;
@@ -423,25 +417,21 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	}
 	private boolean validateContainer() {
 		if (isPluginIdNeeded() && !isPluginIdFinal()){
-			String newContainerName = fSchemaLocationText.getText();
-			IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
-			IPath workspacePath = root.getLocation();
-			if (newContainerName.startsWith(workspacePath.toString()))
-				newContainerName = newContainerName.replaceFirst(workspacePath.toString(), ""); //$NON-NLS-1$
+			String newContainerName = fSchemaLocationText.getText().trim();
 			if (newContainerName.length() == 0){
 				handleInvalidContainer();
 				return false;
 			}
-			if (root.exists(new Path(newContainerName)))
-				fContainer = root.getContainerForLocation(workspacePath.append(newContainerName));
-			else if (fProject != null && fProject.exists(new Path(newContainerName)))
-				fContainer = root.getContainerForLocation(fProject.getLocation().append(newContainerName));
-			else{
-				handleInvalidContainer();
-				return false;
+			IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
+			IResource resource = root.findMember(new Path(newContainerName));
+			if (resource instanceof IContainer) {
+				fContainer = (IContainer)resource;
+				handleValidContainer();
+				return true;
 			}
-			handleValidContainer();
-			return true;
+			fContainer = null;
+			handleInvalidContainer();
+			return false;		
 		}
 		
 		boolean exists = fContainer != null && fContainer.exists();
@@ -478,15 +468,13 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if (element instanceof IFile)
 					return false;
-				else if (isPluginIdFinal())
-					return ((IResource)element).getProject().equals(fProject);
 				return true;
 			}
 		});
 		
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
-		dialog.setInitialSelection(fProject);
+		dialog.setInitialSelection(fContainer);
 		if (dialog.open() == Window.OK) {
 			Object[] elements = dialog.getResult();
 			if (elements.length >0){
