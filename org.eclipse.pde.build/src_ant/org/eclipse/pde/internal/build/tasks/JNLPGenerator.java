@@ -232,8 +232,8 @@ public class JNLPGenerator extends DefaultHandler {
 			out.println("\t\t<vendor>" + provider + "</vendor>");
 		if (description != null)
 			out.println("\t\t<description>" + description + "</description>");
+		out.println("\t\t<offline-allowed/>");
 		out.println("\t</information>");
-		out.println("\t<offline-allowed/>");
 		out.println("\t<security>");
 		out.println("\t\t<all-permissions/>");
 		out.println("\t</security>");
