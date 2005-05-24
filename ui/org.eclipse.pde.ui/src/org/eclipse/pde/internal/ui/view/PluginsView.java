@@ -931,7 +931,7 @@ public class PluginsView extends ViewPart {
 		
 		if (newInput == null
 			|| newInput.equals(PDECore.getDefault().getModelManager())) {
-			setContentDescription("");
+			setContentDescription(""); //$NON-NLS-1$
 			// restore old
 			setTitleToolTip(getTitle());
 		} else {

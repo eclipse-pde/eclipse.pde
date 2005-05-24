@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
@@ -530,14 +529,9 @@ public class DependenciesView extends PageBookView implements
 	}
 
 	void updateTitle(Object newInput) {
-		if (newInput == null
-				|| newInput.equals(PDECore.getDefault().getModelManager())) {
-			IConfigurationElement config = getConfigurationElement();
-			if (config == null)
-				return;
-			String viewName = config.getAttribute("name"); //$NON-NLS-1$
-			setContentDescription(viewName);
-		} else {
+		if (newInput == null) {
+			setContentDescription(""); //$NON-NLS-1$
+		} else if (!newInput.equals(PDECore.getDefault().getModelManager())) {
 			String name = PDEPlugin.getDefault().getLabelProvider().getText(
 					newInput);
 			String title;
