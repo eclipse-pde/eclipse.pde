@@ -404,6 +404,10 @@ public class BundlePluginBase
 		if (extensions == null)
 			return;
 		extensions.add(extension);
+		
+		// reset singleton
+		if (getExtensions().length == 1 && getExtensionPoints().length == 0)
+			setId(getId());
 	}
 
 	/*
@@ -416,6 +420,10 @@ public class BundlePluginBase
 		if (extensions == null)
 			return;
 		extensions.add(point);
+		
+		//reset singleton
+		if (getExtensions().length == 0 && getExtensionPoints().length == 1)
+			setId(getId());
 	}
 
 	/*
@@ -458,6 +466,9 @@ public class BundlePluginBase
 		IExtensions extensions = getExtensionsRoot();
 		if (extensions != null) {
 			extensions.remove(extension);
+			// reset singleton directive
+			if (getExtensions().length == 0 && getExtensionPoints().length == 0)
+				setId(getId());
 		}
 	}
 
@@ -471,6 +482,9 @@ public class BundlePluginBase
 		IExtensions extensions = getExtensionsRoot();
 		if (extensions != null) {
 			extensions.remove(extensionPoint);
+			// reset singleton directive
+			if (getExtensions().length == 0 && getExtensionPoints().length == 0)
+				setId(getId());
 		}
 	}
 
@@ -525,9 +539,13 @@ public class BundlePluginBase
 		if (bundle != null) {
 			String old = getId();
 			StringBuffer buffer = new StringBuffer(id);
-			String params = getParameters(Constants.BUNDLE_SYMBOLICNAME);
-			if (params != null && params.trim().length() > 0) 
-				buffer.append(params);
+			boolean singleton = getExtensionPoints().length > 0 | getExtensions().length > 0;
+			if (singleton) {
+				buffer.append("; singleton");
+				if (getBundleManifestVersion(bundle) >= 2)
+					buffer.append(":");
+				buffer.append("=true");
+			}
 			bundle.setHeader(Constants.BUNDLE_SYMBOLICNAME, buffer.toString());
 			model.fireModelObjectChanged(this, IPluginBase.P_ID, old, id);
 		}
