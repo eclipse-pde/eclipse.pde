@@ -36,7 +36,6 @@ import org.eclipse.pde.internal.ui.editor.build.BuildPage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.editor.IFormPage;
 
 public class FeatureOutlinePage extends FormOutlinePage {
@@ -98,19 +97,6 @@ public class FeatureOutlinePage extends FormOutlinePage {
 
 	protected ITreeContentProvider createContentProvider() {
 		return new ContentProvider();
-	}
-
-	public void createControl(Composite parent) {
-		super.createControl(parent);
-		IFeatureModel model = (IFeatureModel) editor.getAggregateModel();
-		model.addModelChangedListener(this);
-	}
-
-	public void dispose() {
-		super.dispose();
-		IFeatureModel model = (IFeatureModel) editor.getAggregateModel();
-		if (model != null)
-			model.removeModelChangedListener(this);
 	}
 
 	public String getParentPageId(Object item) {
@@ -184,6 +170,9 @@ public class FeatureOutlinePage extends FormOutlinePage {
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
+		if (treeViewer.getControl().isDisposed()) {
+			return;
+		}
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			treeViewer.refresh();
 			return;

@@ -107,10 +107,10 @@ public class FormOutlinePage extends ContentOutlinePage
 		return new BasicLabelProvider();
 	}
 	public void dispose() {
-		super.dispose();
 		IBaseModel model = editor.getAggregateModel();
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider)model).removeModelChangedListener(this);
+		super.dispose();
 	}
 	
 	public Control getControl() {
