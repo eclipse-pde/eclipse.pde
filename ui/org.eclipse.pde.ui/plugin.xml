@@ -1249,7 +1249,7 @@
                      </objectState>
                      <not>
                         <objectState
-                              name="sessionProperty"
+                              name="persistentProperty"
                               value="org.eclipse.team.core.repository">
                         </objectState>
                      </not>
