@@ -272,24 +272,25 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		generateJnlp = value;
 	}
 
+	private class ArchiveTable extends HashMap {
+		private static final long serialVersionUID = -3063402400461435816L;
+		public ArchiveTable(int size) {
+			super(size);
+		}
+		public  Object get(Object arg0) {
+			Object result = super.get(arg0);
+			if (result == null)
+				result = IXMLConstants.FORMAT_ANTZIP;
+			return result;
+		}
+	}
 	public void setArchivesFormat(String archivesFormatAsString) throws CoreException {
-		if (Utils.getPropertyFormat(PROPERTY_ARCHIVESFORMAT).equalsIgnoreCase(archivesFormatAsString)) { //$NON-NLS-1$
-			//Set backward compatible values
-			archivesFormatAsString = "win32, win32, x86 - zip & " + //$NON-NLS-1$
-					"linux, gtk, x86 - tar & " + //$NON-NLS-1$
-					"linux, gtk64, x86_64 - tar & " + //$NON-NLS-1$
-					"linux, gtk, ppc - tar & " + //$NON-NLS-1$
-					"linux, motif, x86- tar  & " + //$NON-NLS-1$
-					"solaris, motif, sparc- zip  & " + //$NON-NLS-1$
-					"solaris, gtk, sparc - zip & " + //$NON-NLS-1$
-					"aix, motif, ppc - zip & " + //$NON-NLS-1$
-					"hpux, motif, PA_RISC - zip &" + //$NON-NLS-1$
-					"macosx, carbon, ppc - tar & " + //$NON-NLS-1$
-					"qnx, photon, x86 - zip & " + //$NON-NLS-1$
-					"*, *, * - zip"; //$NON-NLS-1$
+		if (Utils.getPropertyFormat(PROPERTY_ARCHIVESFORMAT).equalsIgnoreCase(archivesFormatAsString)) {
+			archivesFormat = new ArchiveTable(0);
+			return;
 		}
 
-		archivesFormat = new HashMap(getConfigInfos().size());
+		archivesFormat = new ArchiveTable(getConfigInfos().size());
 		String[] configs = Utils.getArrayFromStringWithBlank(archivesFormatAsString, "&"); //$NON-NLS-1$
 		for (int i = 0; i < configs.length; i++) {
 			String[] configElements = Utils.getArrayFromStringWithBlank(configs[i], ","); //$NON-NLS-1$
