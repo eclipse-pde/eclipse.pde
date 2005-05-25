@@ -635,7 +635,7 @@ public class WorkspaceModelManager
 				if (project.getFile(".options").exists()) //$NON-NLS-1$
 					PDECore.getDefault().getTracingOptionsManager().reset();
 			}
-		} else if (isFeatureProject(project)) {
+		} else if (isFeatureProject(project) && !fFeatureModels.containsKey(project)) {
 			model = createFeatureModel(project.getFile("feature.xml")); //$NON-NLS-1$
 			if (model != null) {
 				fFeatureModels.put(project, model);
