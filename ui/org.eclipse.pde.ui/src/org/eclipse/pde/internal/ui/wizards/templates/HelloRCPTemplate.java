@@ -48,7 +48,7 @@ public class HelloRCPTemplate extends PDETemplateSection {
 		
 		addOption(KEY_APPLICATION_CLASS, PDEUIMessages.HelloRCPTemplate_appClass, "Application", 0); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		addOption(KEY_PERSPECTIVE_NAME, "Pe&rspective Name:", (String) null, 0); 					 //$NON-NLS-1$
+		addOption(KEY_PERSPECTIVE_NAME, PDEUIMessages.HelloRCPTemplate_perspective, (String) null, 0); 	
 	}
 	
 	protected void initializeFields(IFieldData data) {
