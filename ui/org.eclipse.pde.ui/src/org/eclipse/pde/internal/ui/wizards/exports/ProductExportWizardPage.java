@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -66,7 +69,8 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		createConfigurationSection(container);
-		createSynchronizationSection(container);		
+		createSynchronizationSection(container);
+		checkForProductFile(container);
 	}
 	
 	protected void initializeTopSection() {
@@ -174,7 +178,7 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 			IPath path = new Path(configLocation);
 			IResource resource = PDEPlugin.getWorkspace().getRoot().findMember(path);
 			if (resource == null || !(resource instanceof IFile)) {
-				errorMessage = PDEUIMessages.ProductExportWizardPage_productNotExists;				 //$NON-NLS-1$
+				errorMessage = PDEUIMessages.ProductExportWizardPage_productNotExists; //$NON-NLS-1$
 			} else if (!path.lastSegment().endsWith(".product")) { //$NON-NLS-1$
 				errorMessage = PDEUIMessages.ProductExportWizardPage_wrongExtension; //$NON-NLS-1$
 			}
@@ -203,6 +207,8 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 		dialog.setMessage(PDEUIMessages.ProductExportWizardPage_productSelection); //$NON-NLS-1$
 		dialog.addFilter(new FileExtensionFilter("product"));  //$NON-NLS-1$
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
+		IFile product = getProductFile();
+		if (product != null) dialog.setInitialSelection(product);
 
 		if (dialog.open() == ElementTreeSelectionDialog.OK) {
 			IFile file = (IFile)dialog.getFirstResult();
@@ -212,7 +218,29 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 			fProductCombo.setText(value);
 		}
 	}
-
+	
+	private void checkForProductFile(Composite container) {
+		IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();
+		if (projects.length == 0) return;
+		
+		try {
+			IResource[] members = projects[0].members();
+			for (int i = 0; i < members.length; i++) {
+				if (members[i] instanceof IContainer)
+					continue;
+				String name = members[i].getName();
+				if (name.endsWith(".product")) { //$NON-NLS-1$
+					String path = members[i].getFullPath().toString();
+					if (fProductCombo.indexOf(path) == -1)
+						fProductCombo.add(path, 0);
+					fProductCombo.setText(path);
+					return;
+				}
+			}
+		} catch (CoreException e) {}
+	}
+	
+	
 	protected void hookHelpContext(Control control) {
 	}
 	
@@ -233,7 +261,9 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 	}
 	
 	public IFile getProductFile() {
-		IPath path = new Path(fProductCombo.getText().trim());
+		String product = fProductCombo.getText().trim();
+		if (product.equals("")) return null;
+		IPath path = new Path(product);
 		return PDEPlugin.getWorkspace().getRoot().getFile(path);
 	}
     
