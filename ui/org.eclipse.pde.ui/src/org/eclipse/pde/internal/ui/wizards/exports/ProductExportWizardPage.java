@@ -262,7 +262,7 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 	
 	public IFile getProductFile() {
 		String product = fProductCombo.getText().trim();
-		if (product.equals("")) return null;
+		if (product.equals("")) return null; //$NON-NLS-1$
 		IPath path = new Path(product);
 		return PDEPlugin.getWorkspace().getRoot().getFile(path);
 	}
