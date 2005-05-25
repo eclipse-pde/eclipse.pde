@@ -1472,6 +1472,7 @@ public class PDEUIMessages extends NLS {
 	public static String PluginsView_CollapseAllAction_label;
 	public static String PluginsView_CollapseAllAction_description;
 	public static String PluginsView_CollapseAllAction_tooltip;
+	public static String PluginsView_SelectAllAction_label;
 
 	public static String PluginSection_open;
 	public static String PluginsView_unableToOpen;

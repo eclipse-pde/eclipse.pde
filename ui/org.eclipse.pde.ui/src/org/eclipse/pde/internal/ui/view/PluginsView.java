@@ -92,6 +92,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 
@@ -116,6 +117,7 @@ public class PluginsView extends ViewPart {
 	private Action selectInJavaSearchAction;
 	private Action addToJavaSearchAction;
 	private Action removeFromJavaSearchAction;
+	private Action selectAllAction;
     private CollapseAllAction collapseAllAction;
 	private ShowInWorkspaceAction showInNavigatorAction;
 	private ShowInWorkspaceAction showInPackagesAction;
@@ -228,6 +230,7 @@ public class PluginsView extends ViewPart {
 		initFilters();
 		IActionBars actionBars = getViewSite().getActionBars();
 		contributeToActionBars(actionBars);
+		registerGlobalActions(actionBars);
 		hookContextMenu();
 		hookDoubleClickAction();
 		treeViewer
@@ -260,6 +263,11 @@ public class PluginsView extends ViewPart {
  		drillDownAdapter.addNavigationActions(manager);
         manager.add(new Separator());
         manager.add(collapseAllAction);
+	}
+	
+	private void registerGlobalActions(IActionBars actionBars) {
+			actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(),
+                selectAllAction);
 	}
 	private void makeActions() {
 		clipboard = new Clipboard(treeViewer.getTree().getDisplay());
@@ -360,13 +368,22 @@ public class PluginsView extends ViewPart {
 			}
 		};
 		selectDependentAction.setText(PDEUIMessages.PluginsView_dependentPlugins); //$NON-NLS-1$
+		
 		selectInJavaSearchAction = new Action() {
 			public void run() {
 				handleSelectInJavaSearch();
 			}
 		};
 		selectInJavaSearchAction.setText(PDEUIMessages.PluginsView_pluginsInJavaSearch); //$NON-NLS-1$
-
+		
+		selectAllAction = new Action() {
+	        public void run() {
+	            super.run();
+	            treeViewer.getTree().selectAll();
+	        }
+		};
+		selectAllAction.setText(PDEUIMessages.PluginsView_SelectAllAction_label); //$NON-NLS-1$
+		
 		addToJavaSearchAction = new Action() {
 			public void run() {
 				handleJavaSearch(true);
@@ -392,6 +409,7 @@ public class PluginsView extends ViewPart {
 
 		openClassFileAction = new OpenAction(getViewSite());
 	}
+
 	private FileAdapter getSelectedFile() {
 		Object obj = getSelectedObject();
 		if (obj instanceof FileAdapter)
@@ -507,6 +525,7 @@ public class PluginsView extends ViewPart {
 		if (selection.size() > 0)
 			selectionMenu.add(selectDependentAction);
 		selectionMenu.add(selectInJavaSearchAction);
+		selectionMenu.add(selectAllAction);
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -909,7 +928,7 @@ public class PluginsView extends ViewPart {
 		}
 		getViewSite().getActionBars().getStatusLineManager().setMessage(text);
 	}
-
+	
 	private void hookDoubleClickAction() {
 		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
