@@ -85,7 +85,6 @@ public class PluginClassCodeGenerator {
 			writer.println("import org.eclipse.core.runtime.Plugin;"); //$NON-NLS-1$
 		}
 		writer.println("import org.osgi.framework.BundleContext;"); //$NON-NLS-1$
-		writer.println("import java.util.*;"); //$NON-NLS-1$
 		writer.println();
 		writer.println("/**"); //$NON-NLS-1$
 		writer.println(" * The main plugin class to be used in the desktop."); //$NON-NLS-1$
@@ -96,8 +95,6 @@ public class PluginClassCodeGenerator {
 			writer.println("public class " + className + " extends Plugin {"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("\t//The shared instance."); //$NON-NLS-1$
 		writer.println("\tprivate static " + className + " plugin;"); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println("\t//Resource bundle."); //$NON-NLS-1$
-		writer.println("\tprivate ResourceBundle resourceBundle;"); //$NON-NLS-1$
 		writer.println("\t"); //$NON-NLS-1$
 		writer.println("\t/**"); //$NON-NLS-1$
 		writer.println("\t * The constructor."); //$NON-NLS-1$
@@ -122,7 +119,6 @@ public class PluginClassCodeGenerator {
 		writer.println("\tpublic void stop(BundleContext context) throws Exception {"); //$NON-NLS-1$
 		writer.println("\t\tsuper.stop(context);"); //$NON-NLS-1$
 		writer.println("\t\tplugin = null;"); //$NON-NLS-1$
-		writer.println("\t\tresourceBundle = null;"); //$NON-NLS-1$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
 
