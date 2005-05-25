@@ -583,73 +583,37 @@
             description="%EclipseApplicationShortcut.description.debug"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.pde.ui.runtimeWorkbenchShortcut.debug">
-      </command>
-      <keyBinding
-            keySequence="M3+M2+D E"
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.pde.ui.runtimeWorkbenchShortcut.debug"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>      
+      </command>    
       <command
             name="%EclipseApplicationShortcut.description.run"
             description="%EclipseApplicationShortcut.description.run"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.pde.ui.runtimeWorkbenchShortcut.run">
-      </command>
-      <keyBinding
-            keySequence="M3+M2+X E"
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.pde.ui.runtimeWorkbenchShortcut.run"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>      
+      </command>    
       <command
             name="%JUnitApplicationShortcut.description.debug"
             description="%JUnitApplicationShortcut.description.debug"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.pde.ui.junitWorkbenchShortcut.debug">
-      </command>
-      <keyBinding
-            keySequence="M3+M2+D P"
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.pde.ui.junitWorkbenchShortcut.debug"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>      
+      </command>    
       <command
             name="%JUnitApplicationShortcut.description.run"
             description="%JUnitApplicationShortcut.description.run"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.pde.ui.junitWorkbenchShortcut.run">
-      </command>
-      <keyBinding
-            keySequence="M3+M2+X P"
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.pde.ui.junitWorkbenchShortcut.run"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>      
+      </command>     
       <command
             name="%SWTApplicationShortcut.description.debug"
             description="%SWTApplicationShortcut.description.debug"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.pde.ui.swtLaunchShortcut.debug">
-      </command>
-      <keyBinding
-            keySequence="M3+M2+D S"
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.pde.ui.swtLaunchShortcut.debug"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>      
+      </command>    
       <command
             name="%SWTApplicationShortcut.description.run"
             description="%SWTApplicationShortcut.description.run"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.pde.ui.swtLaunchShortcut.run">
-      </command>
-      <keyBinding
-            keySequence="M3+M2+X S"
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.pde.ui.swtLaunchShortcut.run"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>      
+      </command>    
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -1459,5 +1423,38 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.pde.internal.ui.preferences.PreferenceInitializer"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            sequence="M3+M2+D E"
+            commandId="org.eclipse.pde.ui.runtimeWorkbenchShortcut.debug"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>      
+      <key
+            sequence="M3+M2+X E"
+            commandId="org.eclipse.pde.ui.runtimeWorkbenchShortcut.run"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>      
+      <key
+            sequence="M3+M2+D P"
+            commandId="org.eclipse.pde.ui.junitWorkbenchShortcut.debug"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>      
+      <key
+            sequence="M3+M2+X P"
+            commandId="org.eclipse.pde.ui.junitWorkbenchShortcut.run"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>      
+      <key
+            sequence="M3+M2+D S"
+            commandId="org.eclipse.pde.ui.swtLaunchShortcut.debug"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>      
+      <key
+            sequence="M3+M2+X S"
+            commandId="org.eclipse.pde.ui.swtLaunchShortcut.run"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>   
    </extension>
 </plugin>
