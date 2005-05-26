@@ -28,7 +28,7 @@ import org.eclipse.update.standalone.InstallCommand;
 
 public class ShowSampleAction extends Action implements IIntroAction {
 	private static final String SAMPLE_FEATURE_ID = "org.eclipse.sdk.samples"; //$NON-NLS-1$
-	private static final String SAMPLE_FEATURE_VERSION = "3.0.0"; //$NON-NLS-1$
+	private static final String SAMPLE_FEATURE_VERSION = "3.1.0"; //$NON-NLS-1$
 	private static final String UPDATE_SITE = "http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/pde-ui-home/samples/"; //$NON-NLS-1$
 	private String sampleId;
 	/**
