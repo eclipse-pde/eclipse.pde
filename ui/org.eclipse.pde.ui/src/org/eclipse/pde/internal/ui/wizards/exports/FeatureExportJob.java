@@ -520,6 +520,8 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		}
 		if (buildModel != null) {
 			IBuild build = buildModel.getBuild();
+			if (build == null)
+				return false;
 			IBuildEntry entry = build.getEntry("custom"); //$NON-NLS-1$
 			if (entry != null) {
 				String[] tokens = entry.getTokens();
