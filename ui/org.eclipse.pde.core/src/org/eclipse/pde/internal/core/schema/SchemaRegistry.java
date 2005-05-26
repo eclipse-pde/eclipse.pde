@@ -77,7 +77,10 @@ public class SchemaRegistry {
 		String schema = point.getSchema();
 		if (schema == null || schema.trim().length() == 0)
 			return null;
-		File file = new File(point.getModel().getInstallLocation(), schema);
+		String location = point.getModel().getInstallLocation();
+		if (location == null)
+			return null;
+		File file = new File(location, schema);
 		// try in the external plugin, if we did not find anything in workspace
 		if (!file.exists() && point.getModel().getUnderlyingResource() != null) {
 			String pluginID = point.getPluginBase().getId();

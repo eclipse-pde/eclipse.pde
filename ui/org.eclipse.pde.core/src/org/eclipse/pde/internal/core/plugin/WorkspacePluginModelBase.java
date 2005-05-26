@@ -83,7 +83,8 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase
 	}
 
 	public String getInstallLocation() {
-		return fUnderlyingResource.getLocation().removeLastSegments(1).addTrailingSeparator().toOSString();
+		IPath path = fUnderlyingResource.getLocation();
+		return path == null ? null : path.removeLastSegments(1).addTrailingSeparator().toOSString();
 	}
 
 	public IResource getUnderlyingResource() {
