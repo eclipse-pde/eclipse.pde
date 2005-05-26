@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.jface.dialogs.IDialogSettings;
 
 public class UpdateBuildpathWizard extends Wizard {
@@ -40,6 +41,7 @@ public class UpdateBuildpathWizard extends Wizard {
 	}
 	
 	public boolean performFinish() {
+		PlatformUI.getWorkbench().saveAllEditors(true);
 		Object [] finalSelected = page1.getSelected();
 		page1.storeSettings();
 		IPluginModelBase [] modelArray = new IPluginModelBase[finalSelected.length];
