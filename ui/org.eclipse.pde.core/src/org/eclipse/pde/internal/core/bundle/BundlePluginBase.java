@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.bundle;
 
 import java.io.*;
-import java.io.PrintWriter;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -23,7 +22,6 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.osgi.framework.*;
-import org.osgi.framework.Constants;
 
 public class BundlePluginBase
 	extends PlatformObject
@@ -538,10 +536,10 @@ public class BundlePluginBase
 			StringBuffer buffer = new StringBuffer(id);
 			boolean singleton = getExtensionPoints().length > 0 | getExtensions().length > 0;
 			if (singleton) {
-				buffer.append("; singleton");
+				buffer.append("; singleton"); //$NON-NLS-1$
 				if (getBundleManifestVersion(bundle) >= 2)
-					buffer.append(":");
-				buffer.append("=true");
+					buffer.append(":"); //$NON-NLS-1$
+				buffer.append("=true"); //$NON-NLS-1$
 			}
 			bundle.setHeader(Constants.BUNDLE_SYMBOLICNAME, buffer.toString());
 			model.fireModelObjectChanged(this, IPluginBase.P_ID, old, id);
