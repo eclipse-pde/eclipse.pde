@@ -386,6 +386,9 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				value = value.substring(0, index);
 
 			IType javaType = javaProject.findType(value);
+			if (javaType == null && value.indexOf('$') != -1)
+				javaType = javaProject.findType(value.replace('$', '.'));
+		
 			if (javaType == null) {
 				report(NLS.bind(PDEMessages.Builders_Manifest_class, (new String[] { value, attr.getName() })), getLine(
 						element, attr.getName()), severity);
