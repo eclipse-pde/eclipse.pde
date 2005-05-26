@@ -41,7 +41,9 @@ public class UpdateBuildpathWizard extends Wizard {
 	}
 	
 	public boolean performFinish() {
-		PlatformUI.getWorkbench().saveAllEditors(true);
+		if (!PlatformUI.getWorkbench().saveAllEditors(true))
+			return false;
+		
 		Object [] finalSelected = page1.getSelected();
 		page1.storeSettings();
 		IPluginModelBase [] modelArray = new IPluginModelBase[finalSelected.length];
