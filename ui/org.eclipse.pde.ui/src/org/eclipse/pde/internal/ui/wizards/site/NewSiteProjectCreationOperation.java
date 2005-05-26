@@ -128,6 +128,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 		writer.println("<html>"); //$NON-NLS-1$
 		writer.println("<head>"); //$NON-NLS-1$
 		writer.println("<title>"+fProject.getName()+"</title>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">"); //$NON-NLS-1$
 		writer.println("<style>@import url(\""+fWebLocation+"/site.css\");</style>"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("<script type=\"text/javascript\">"); //$NON-NLS-1$
 		writer.println("	var returnval = 0;"); //$NON-NLS-1$
@@ -213,7 +214,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 		StringWriter swriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(swriter);
 		writer.println("<xsl:stylesheet version = '1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl=\"urn:schemas-microsoft-com:xslt\">"); //$NON-NLS-1$
-		writer.println("<xsl:output method=\"html\" encoding=\"ISO-8859-1\"/>"); //$NON-NLS-1$
+		writer.println("<xsl:output method=\"html\" encoding=\"UTF-8\"/>"); //$NON-NLS-1$
 		writer.println("<xsl:key name=\"cat\" match=\"category\" use=\"@name\"/>"); //$NON-NLS-1$
 		writer.println("<xsl:template match=\"/\">"); //$NON-NLS-1$
 		writer.println("<xsl:for-each select=\"site\">"); //$NON-NLS-1$
