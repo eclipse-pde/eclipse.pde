@@ -28,5 +28,15 @@
             class="org.eclipse.pde.internal.core.ExternalJavaSearchInitializer"
             id="org.eclipse.pde.core.externalJavaSearch"/>
    </extension>
-
+   <extension
+         point="org.eclipse.team.core.fileTypes">
+      <fileTypes
+            type="text"
+            extension="ini">
+      </fileTypes>
+      <fileTypes
+            type="text"
+            extension="product">
+      </fileTypes>
+   </extension>
 </plugin>
