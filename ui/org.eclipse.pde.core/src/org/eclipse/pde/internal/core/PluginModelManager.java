@@ -217,7 +217,7 @@ public class PluginModelManager implements IAdaptable {
 				IPluginModelBase model = (IPluginModelBase) removed[i];
 				IPluginBase plugin = model.getPluginBase();
 				ModelEntry entry = updateTable(plugin.getId(), model, false, delta);
-				if (entry != null && model.getUnderlyingResource() != null || entry.isInJavaSearch())
+				if (entry != null && (model.getUnderlyingResource() != null || entry.isInJavaSearch()))
 					javaSearchAffected = true;
 			
 				changedPlugins.add(plugin);
@@ -230,7 +230,7 @@ public class PluginModelManager implements IAdaptable {
 				IPluginModelBase model = (IPluginModelBase) added[i];
 				IPluginBase plugin = model.getPluginBase();
 				ModelEntry entry = updateTable(plugin.getId(), model, true, delta);
-				if (entry != null && model.getUnderlyingResource() != null || entry.isInJavaSearch())
+				if (entry != null && (model.getUnderlyingResource() != null  || entry.isInJavaSearch()))
 					javaSearchAffected = true;
 				
 				changedPlugins.add(plugin);
@@ -264,7 +264,7 @@ public class PluginModelManager implements IAdaptable {
 					entry = updateTable(newID, model, true, delta);
 					oldIds.add(oldID);
 				}
-				if (entry != null && model.getUnderlyingResource() != null || entry.isInJavaSearch())
+				if (entry != null && (model.getUnderlyingResource() != null || entry.isInJavaSearch()))
 					javaSearchAffected = true;
 				changedPlugins.add(model.getPluginBase());
 			}
