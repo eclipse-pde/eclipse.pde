@@ -79,7 +79,7 @@ public class PDEClasspathContainer {
 					if (model != null)
 						path = getPath(model, expandedName);
 				}
-				if (path != null)
+				if (path != null && !path.toFile().isDirectory())
 					addLibraryEntry(path, ClasspathUtilCore.getSourceAnnotation(model, expandedName), rules, entries);
 			}		
 		}

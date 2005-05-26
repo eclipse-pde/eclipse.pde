@@ -45,15 +45,15 @@ public class ClasspathUtilCore {
 		return JavaCore.newContainerEntry(new Path("org.eclipse.jdt.launching.JRE_CONTAINER")); //$NON-NLS-1$
 	}
 	
-	public static void addLibraries(IPluginModelBase model, boolean isExported, boolean useInclusionPatterns, ArrayList result) throws CoreException {
+	public static void addLibraries(IPluginModelBase model, ArrayList result) throws CoreException {
 		if (new File(model.getInstallLocation()).isFile()) {
-			addJARdPlugin(model, isExported, useInclusionPatterns, result);
+			addJARdPlugin(model, result);
 		} else {
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 			for (int i = 0; i < libraries.length; i++) {
 				if (IPluginLibrary.RESOURCE.equals(libraries[i].getType()))
 					continue;
-				IClasspathEntry entry = createLibraryEntry(libraries[i], isExported, useInclusionPatterns);
+				IClasspathEntry entry = createLibraryEntry(libraries[i]);
 				if (entry != null && !result.contains(entry)) {
 					result.add(entry);
 				}
@@ -61,8 +61,7 @@ public class ClasspathUtilCore {
 		}
 	}
 	
-	private static void addJARdPlugin(IPluginModelBase model,
-			boolean isExported, boolean useInclusionPatterns, ArrayList result)
+	private static void addJARdPlugin(IPluginModelBase model, ArrayList result)
 			throws CoreException {
 		
 		IPath sourcePath = getSourceAnnotation(model, "."); //$NON-NLS-1$
@@ -73,16 +72,13 @@ public class ClasspathUtilCore {
 						new Path(model.getInstallLocation()), 
 						sourcePath, 
 						null, 
-						isExported);
+						false);
 		if (entry != null && !result.contains(entry)) {
 			result.add(entry);
 		}
 	}
 
-	protected static IClasspathEntry createLibraryEntry(
-		IPluginLibrary library,
-		boolean exported,
-		boolean useInclusionPatterns) {
+	protected static IClasspathEntry createLibraryEntry(IPluginLibrary library) {
 		
 		IClasspathEntry entry = null;
 		try {
@@ -99,11 +95,16 @@ public class ClasspathUtilCore {
 					return null;
 				path = getPath(model, expandedName);
 			}
+			
+			// classpath must not contain entries referencing external folders
+			if (model.getUnderlyingResource() == null && path.toFile().isDirectory())
+				return null;
+			
 			entry = JavaCore.newLibraryEntry(
 					path, 
 					getSourceAnnotation(model, expandedName),
 					null, 
-					exported);		
+					false);		
 		} catch (CoreException e) {
 		}
 		return entry;
