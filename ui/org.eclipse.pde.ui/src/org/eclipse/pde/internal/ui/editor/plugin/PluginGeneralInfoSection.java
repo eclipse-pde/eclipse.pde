@@ -12,11 +12,9 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -37,15 +35,12 @@ import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.ide.IDE;
 
 public class PluginGeneralInfoSection extends GeneralInfoSection {
 
@@ -80,16 +75,25 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 			}
 			public void linkActivated(HyperlinkEvent e) {
 				String value = fClassEntry.getValue();
-				if (value.length() > 0 && doesClassExist(value))
-					doOpenClass();
-				else {
-					JavaAttributeWizard wizard = new JavaAttributeWizard(createJavaAttributeValue());
-					WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
-					dialog.create();
-					SWTUtil.setDialogSize(dialog, 400, 500);
-					if (dialog.open() == WizardDialog.OK) {
-						fClassEntry.setValue(wizard.getClassNameWithArgs());
+				IProject project = getPage().getPDEEditor().getCommonProject();
+				try {
+					if (project.hasNature(JavaCore.NATURE_ID)) {
+						IJavaProject javaProject = JavaCore.create(project);
+						IJavaElement element = javaProject.findType(value.replace('$', '.'));
+						if (element != null)
+							JavaUI.openInEditor(element);
+						else {
+							JavaAttributeWizard wizard = new JavaAttributeWizard(createJavaAttributeValue());
+							WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+							dialog.create();
+							SWTUtil.setDialogSize(dialog, 400, 500);
+							if (dialog.open() == WizardDialog.OK) {
+								fClassEntry.setValue(wizard.getClassNameWithArgs());
+							}
+						}
 					}
+				} catch (PartInitException e1) {
+				} catch (CoreException e1) {
 				}
 			}
 			public void browseButtonSelected(FormEntry entry) {
@@ -97,31 +101,6 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 			}
 		});
 		fClassEntry.setEditable(isEditable());
-	}
-	
-	private void doOpenClass() {
-		String name = fClassEntry.getValue();
-		IProject project = getPage().getPDEEditor().getCommonProject();
-		String path = name.replace('.', '/') + ".java"; //$NON-NLS-1$
-		try {
-			if (project.hasNature(JavaCore.NATURE_ID)) {
-				IJavaProject javaProject = JavaCore.create(project);
-				JavaUI.openInEditor(javaProject.findElement(new Path(path)));
-			} else {
-				IResource resource = project.findMember(new Path(path));
-				if (resource != null && resource instanceof IFile) {
-					IWorkbenchPage page = PDEPlugin.getActivePage();
-					IDE.openEditor(page, (IFile) resource, true);
-				}
-			}
-		} catch (PartInitException e) {
-			PDEPlugin.logException(e);
-		} catch (JavaModelException e) {
-			// nothing
-			Display.getCurrent().beep();
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
 	}
 	
 	private void doOpenSelectionDialog() {
@@ -139,7 +118,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 				dialog.setTitle(PDEUIMessages.GeneralInfoSection_selectionTitle); //$NON-NLS-1$
 				if (dialog.open() == SelectionDialog.OK) {
 					IType type = (IType) dialog.getResult()[0];
-					fClassEntry.setValue(type.getFullyQualifiedName('.'));
+					fClassEntry.setValue(type.getFullyQualifiedName('$'));
 				}
 			}
 		} catch (CoreException e) {
@@ -165,24 +144,6 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		return (IPackageFragmentRoot[]) result.toArray(new IPackageFragmentRoot[result.size()]);
 	}
 
-	private boolean doesClassExist(String className) {
-		IProject project = getPage().getPDEEditor().getCommonProject();
-		String path = className.replace('.', '/') + ".java"; //$NON-NLS-1$
-		try {
-			if (project.hasNature(JavaCore.NATURE_ID)) {
-				IJavaProject javaProject = JavaCore.create(project);
-				IJavaElement result = javaProject.findElement(new Path(path));
-				return result != null;
-			} 		
-			IResource resource = project.findMember(new Path(path));
-			return resource != null;
-		} catch (JavaModelException e) {
-			return false;
-		} catch (CoreException e) {
-			return false;
-		}
-	}
-	
 	private JavaAttributeValue createJavaAttributeValue() {
 		IProject project = getPage().getPDEEditor().getCommonProject();
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();

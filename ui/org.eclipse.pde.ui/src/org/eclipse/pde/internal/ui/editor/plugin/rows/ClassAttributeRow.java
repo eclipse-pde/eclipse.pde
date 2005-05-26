@@ -43,7 +43,7 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 	 */
 	protected void openReference() {
 		String name = text.getText();
-		name = trimNonAlphaChars(name);
+		name = trimNonAlphaChars(name).replace('$', '.');
 		IProject project = part.getPage().getPDEEditor().getCommonProject();
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
@@ -137,7 +137,7 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 				dialog.setTitle(PDEUIMessages.ClassAttributeRow_dialogTitle); //$NON-NLS-1$
 				if (dialog.open() == SelectionDialog.OK) {
 					IType type = (IType) dialog.getResult()[0];
-					text.setText(type.getFullyQualifiedName('.'));
+					text.setText(type.getFullyQualifiedName('$'));
 				}
 			}
 		} catch (CoreException e) {
