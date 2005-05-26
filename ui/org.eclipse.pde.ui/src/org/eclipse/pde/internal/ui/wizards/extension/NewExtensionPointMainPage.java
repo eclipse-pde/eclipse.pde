@@ -49,6 +49,7 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 		return true;
 	}
 	public boolean finish() {
+		setPageComplete(false);
 		final String id = fIdText.getText();
 		final String name = fNameText.getText();
 		final String schema = fSchemaText.getText();
