@@ -328,9 +328,12 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (header == null) {
 			return;
 		}
-		Version v = new Version(header.getValue());
-		if (v.getMajor() >= 2) {
-			fEclipse3_1 = true;
+		try {
+			Version v = new Version(header.getValue());
+			if (v.getMajor() >= 2) {
+				fEclipse3_1 = true;
+			}
+		} catch (NumberFormatException nfe) {
 		}
 	}
 
