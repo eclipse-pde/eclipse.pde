@@ -72,6 +72,7 @@ public class DependenciesViewPageContentProvider extends DefaultContentProvider
 					// Don't know exactly what change -
 					// the safest way out is to refresh
 					fViewer.refresh();
+					fView.updateTitle(fView.getInput());
 					return;
 				}
 				if ((kind & PluginModelDelta.REMOVED) != 0) {

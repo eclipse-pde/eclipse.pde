@@ -63,6 +63,7 @@ public abstract class BundleModel
 	public void load(BundleDescription desc, PDEState state) {
 		long id = desc.getBundleId();
 		Properties properties = new Properties();
+		properties.put(Constants.BUNDLE_SYMBOLICNAME, desc.getSymbolicName());
 		String value = state.getPluginName(id);
 		if (value != null)
 			properties.put(Constants.BUNDLE_NAME, value);

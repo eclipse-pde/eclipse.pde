@@ -523,9 +523,6 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.IIdentifiable#getId()
 	 */
 	public String getId() {
-		BundleDescription desc = model.getBundleDescription();
-		if (desc != null) 
-			return desc.getSymbolicName();
 		return parseSingleValuedHeader(Constants.BUNDLE_SYMBOLICNAME);
 	}
 	

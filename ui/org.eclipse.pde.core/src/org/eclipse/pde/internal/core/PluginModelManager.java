@@ -10,15 +10,34 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.osgi.service.resolver.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.jdt.core.IClasspathContainer;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelProviderEvent;
+import org.eclipse.pde.core.IModelProviderListener;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class PluginModelManager implements IAdaptable {
 	private static final String OSGI_RUNTIME ="org.eclipse.osgi"; //$NON-NLS-1$
@@ -188,9 +207,9 @@ public class PluginModelManager implements IAdaptable {
 	private void handleModelsChanged(IModelProviderEvent e) {
 		PluginModelDelta delta = new PluginModelDelta();
 		ArrayList changedPlugins = new ArrayList();
-		ArrayList oldIds=new ArrayList();
-		boolean javaSearchAffected=false;
+		boolean javaSearchAffected = false;
 
+		ArrayList oldIds = new ArrayList();
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_REMOVED) != 0) {
 			IModel[] removed = e.getRemovedModels();
 			for (int i = 0; i < removed.length; i++) {
@@ -198,10 +217,9 @@ public class PluginModelManager implements IAdaptable {
 				IPluginModelBase model = (IPluginModelBase) removed[i];
 				IPluginBase plugin = model.getPluginBase();
 				ModelEntry entry = updateTable(plugin.getId(), model, false, delta);
-				if (entry!=null) {
-					if (model.getUnderlyingResource()!=null || entry.isInJavaSearch())
-						javaSearchAffected=true;
-				}
+				if (entry != null && model.getUnderlyingResource() != null || entry.isInJavaSearch())
+					javaSearchAffected = true;
+			
 				changedPlugins.add(plugin);
 			}
 		}
@@ -212,10 +230,9 @@ public class PluginModelManager implements IAdaptable {
 				IPluginModelBase model = (IPluginModelBase) added[i];
 				IPluginBase plugin = model.getPluginBase();
 				ModelEntry entry = updateTable(plugin.getId(), model, true, delta);
-				if (entry!=null) {
-					if (model.getUnderlyingResource()!=null || entry.isInJavaSearch())
-						javaSearchAffected=true;
-				}
+				if (entry != null && model.getUnderlyingResource() != null || entry.isInJavaSearch())
+					javaSearchAffected = true;
+				
 				changedPlugins.add(plugin);
 			}
 		}
@@ -224,43 +241,32 @@ public class PluginModelManager implements IAdaptable {
 			for (int i = 0; i < changed.length; i++) {
 				if (!(changed[i] instanceof IPluginModelBase)) continue;
 				IPluginModelBase model = (IPluginModelBase) changed[i];
-				boolean workspace = model.getUnderlyingResource()!=null;
-				fState.addBundle(model, true);
-				IPluginBase plugin = model.getPluginBase();
-				String id = plugin.getId();
-				if (id != null) {
-					ModelEntry entry = (ModelEntry)getEntryTable().get(plugin.getId());
-					String oldId=null;
-
-					if (entry!=null) {
-						if (workspace && model!=entry.getWorkspaceModel()) {
-							//Two possible cases:
-							// 1) wrong slot - id changed
-							// 2) correct slot but plugin->bundle change (e vice versa)
-							if (isBundlePluginSwap(model, entry)) {
-								if (entry.isInJavaSearch())
-									javaSearchAffected=true;
-								delta.addEntry(entry, PluginModelDelta.CHANGED);					
-							}
-							else
-								oldId=handleIdChange(id, model, entry, delta);
-						}
-						else {
-							if (workspace || entry.isInJavaSearch())
-								javaSearchAffected=true;
-							delta.addEntry(entry, PluginModelDelta.CHANGED);
-						}
-						changedPlugins.add(plugin);
-					}
-					else if (workspace) {
-						// model change, entry does not exist - must be
-						// id change
-						oldId=handleIdChange(id, model, null, delta);
-						changedPlugins.add(plugin);
-					}
-					if (oldId!=null)
-						oldIds.add(oldId);
+				BundleDescription desc = model.getBundleDescription();
+				String oldID = desc == null ? null : desc.getSymbolicName();
+				String newID = model.getPluginBase().getId();
+				
+				if (oldID == null && newID == null)
+					continue;
+				
+				ModelEntry entry = null;
+				if (oldID == null && newID != null) {
+					entry = updateTable(newID, model, true, delta);
+				} else if (oldID != null && newID == null) {
+					entry = updateTable(oldID, model, false, delta);
+					model.setBundleDescription(null);
+					oldIds.add(oldID);
+				} else if (oldID.equals(newID)) {
+					fState.addBundle(model, true);
+					entry = (ModelEntry)getEntryTable().get(oldID);
+					delta.addEntry(entry, PluginModelDelta.CHANGED);		
+				} else {
+					entry = updateTable(oldID, model, false, delta);
+					entry = updateTable(newID, model, true, delta);
+					oldIds.add(oldID);
 				}
+				if (entry != null && model.getUnderlyingResource() != null || entry.isInJavaSearch())
+					javaSearchAffected = true;
+				changedPlugins.add(model.getPluginBase());
 			}
 		}
 		
@@ -272,72 +278,14 @@ public class PluginModelManager implements IAdaptable {
 		fireDelta(delta);
 	}
 	
-	private boolean isBundlePluginSwap(IPluginModelBase model, ModelEntry entry) {
-		IPluginModelBase workspaceModel = entry.getWorkspaceModel();
-		if (workspaceModel==null) return false;
-		boolean swap=false;
-		if (model instanceof IBundlePluginModelBase && !(workspaceModel instanceof IBundlePluginModelBase))
-			swap=true;
-		else
-			if (!(model instanceof IBundlePluginModelBase) && workspaceModel instanceof IBundlePluginModelBase)
-			swap=true;
-		if (swap)
-			entry.setWorkspaceModel(model);
-		return swap;
-	}
-	
-	private ModelEntry findOldEntry(IPluginModelBase model) {
-		Collection values = getEntryTable().values();
-
-		for (Iterator iter = values.iterator(); iter.hasNext();) {
-			ModelEntry entry = (ModelEntry) iter.next();
-			IPluginModelBase candidate = entry.getWorkspaceModel();
-			if (model == candidate)
-				return entry;
-		}
-		return null;
-	}
-
-	private String handleIdChange(String newId, IPluginModelBase model, ModelEntry newEntry, PluginModelDelta delta) {
-		ModelEntry oldEntry = findOldEntry(model);
-		String oldId=null;
-		// we must remove the model from the old entry
-		if (oldEntry!=null) {
-			oldEntry.setWorkspaceModel(null);
-			if (oldEntry.isEmpty()) {
-				// remove the old entry completely
-				getEntryTable().remove(oldEntry.getId());
-				delta.addEntry(oldEntry, PluginModelDelta.REMOVED);
-			}
-			else {
-				// just notify that the old entry has changed
-				delta.addEntry(oldEntry, PluginModelDelta.CHANGED);
-			}
-			oldId = oldEntry.getId();
-		}
-		// add the model to the new entry; if does not exist, create
-		if (newEntry!=null) {
-			// change the workspace model of the new entry
-			newEntry.setWorkspaceModel(model);
-			delta.addEntry(newEntry, PluginModelDelta.CHANGED);
-		}
-		else {
-			// create the new entry
-			newEntry = new ModelEntry(this, newId);
-			getEntryTable().put(newId, newEntry);
-			delta.addEntry(newEntry, PluginModelDelta.ADDED);
-		}
-		return oldId;
-	}
-
 	private ModelEntry updateTable(
 		String id,
 		IPluginModelBase model,
 		boolean added,
 		PluginModelDelta delta) {
-		boolean workspace = model.getUnderlyingResource()!=null;
 		if (id == null)
 			return null;
+		boolean workspace = model.getUnderlyingResource()!=null;
 		Map entries = getEntryTable();
 		ModelEntry entry = (ModelEntry) entries.get(id);
 		int kind = 0;
@@ -369,7 +317,7 @@ public class PluginModelManager implements IAdaptable {
 			if (added) {
 				addWorkspaceBundleToState(model, true);
 			} else {
-				removeWorkspaceBundleFromState(model);
+				removeWorkspaceBundleFromState(model, id);
 			}
 		}
 		if (kind==0) kind = PluginModelDelta.CHANGED;
@@ -498,14 +446,14 @@ public class PluginModelManager implements IAdaptable {
 		fState.addBundle(model, update);		
 	}
 	
-	private void removeWorkspaceBundleFromState(IPluginModelBase model) {
+	private void removeWorkspaceBundleFromState(IPluginModelBase model, String id) {
 		BundleDescription description = model.getBundleDescription();
 		if (description == null)
 			return;
 		
 		fState.removeBundleDescription(description);
 		
-		ModelEntry entry = findEntry(model.getPluginBase().getId());
+		ModelEntry entry = findEntry(id);
 		IPluginModelBase external = entry == null ? null : entry.getExternalModel();
 		if (external != null) {
 			fState.addBundleDescription(external.getBundleDescription());
