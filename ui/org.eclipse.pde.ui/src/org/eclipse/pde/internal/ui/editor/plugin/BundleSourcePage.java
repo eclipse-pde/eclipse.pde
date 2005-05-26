@@ -79,23 +79,16 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		IBundleModel model = (IBundleModel) getInputContext().getModel();
 		Dictionary manifest = ((Bundle) model.getBundle()).getHeaders();
 		int offset = selection.getOffset();
-		IDocumentRange[] keys = new IDocumentRange[manifest.size()];
-		int i = 0;
-		for (Enumeration elements = manifest.keys(); elements.hasMoreElements();) {
-			keys[i++] = (IDocumentRange) manifest.get(elements.nextElement());
-		}
-		IDocumentRange node = findBuildNode(keys, offset);
-		return node;
-	}
+		
+		for (Enumeration elements = manifest.elements(); elements.hasMoreElements();) {
+		    IDocumentRange node = (IDocumentRange) elements.nextElement();
 
-	private IDocumentRange findBuildNode(IDocumentRange[] nodes, int offset) {
-		for (int i = 0; i < nodes.length; i++) {
-			IDocumentRange node = nodes[i];
-			if (offset >= node.getOffset()
-					&& offset < node.getOffset() + node.getLength()) {
-				return node;
-			}
+		    if (offset >= node.getOffset() &&
+		        offset < node.getOffset() + node.getLength()) {
+		        return node;
+		    }
 		}
 		return null;
 	}
+
 }
