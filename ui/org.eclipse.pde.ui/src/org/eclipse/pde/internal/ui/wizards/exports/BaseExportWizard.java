@@ -36,6 +36,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.w3c.dom.Document;
 
 public abstract class BaseExportWizard
@@ -101,6 +102,8 @@ public abstract class BaseExportWizard
 	 */
 	public boolean performFinish() {
 		saveSettings();
+		if (!PlatformUI.getWorkbench().saveAllEditors(true))
+			return false;
 		
 		if (fPage1.doGenerateAntFile())
 			generateAntBuildFile(fPage1.getAntBuildFileName());
