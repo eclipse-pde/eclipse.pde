@@ -11,9 +11,9 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.zip.ZipFile;
+import java.util.Dictionary;
+import java.util.Enumeration;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -123,20 +123,15 @@ public class ClasspathUtilCore {
 			return true;
 		if (model.getUnderlyingResource() == null) {
 			File file = new File(model.getInstallLocation());
-			if (file.isDirectory())
-				return new File(file, "META-INF/MANIFEST.MF").exists(); //$NON-NLS-1$
-			ZipFile jarFile = null;
-			try {
-				jarFile = new ZipFile(file, ZipFile.OPEN_READ);
-				return jarFile.getEntry("META-INF/MANIFEST.MF") != null; //$NON-NLS-1$
-			} catch (IOException e) {
-			} finally {
-				try {
-					if (jarFile != null)
-						jarFile.close();
-				} catch (IOException e) {
-				}
+			Dictionary manifest = MinimalState.loadManifest(file);
+			if (manifest == null)
+				return false;
+			Enumeration keys = manifest.keys();
+			while (keys.hasMoreElements()) {
+				if (keys.nextElement().toString().equals("Bundle-SymbolicName"))
+					return true;
 			}
+			return false;
 		}
 		return false;
 	}

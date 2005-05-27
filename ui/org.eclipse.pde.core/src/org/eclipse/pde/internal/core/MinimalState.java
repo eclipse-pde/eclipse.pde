@@ -172,7 +172,7 @@ public class MinimalState {
 		}
 	}
 
-	private Dictionary loadManifest(File bundleLocation) {
+	public static Dictionary loadManifest(File bundleLocation) {
 		ZipFile jarFile = null;
 		InputStream manifestStream = null;
 		try {
@@ -213,7 +213,7 @@ public class MinimalState {
 		}
 	}
 
-	private Properties manifestToProperties(Attributes d) {
+	private static Properties manifestToProperties(Attributes d) {
 		Iterator iter = d.keySet().iterator();
 		Properties result = new Properties();
 		while (iter.hasNext()) {
