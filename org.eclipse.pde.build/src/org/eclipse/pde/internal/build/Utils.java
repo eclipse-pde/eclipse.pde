@@ -470,6 +470,8 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	}
 
 	public static int isStringIn(String[] searched, String toSearch) {
+		if (searched == null || toSearch == null)
+			return -1;
 		for (int i = 0; i < searched.length; i++) {
 			if (toSearch.startsWith(searched[i]))
 				return i;
