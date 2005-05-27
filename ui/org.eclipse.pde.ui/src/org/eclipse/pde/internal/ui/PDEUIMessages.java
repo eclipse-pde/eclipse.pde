@@ -280,7 +280,6 @@ public class PDEUIMessages extends NLS {
 	public static String ManifestEditor_DetailChildrenSection_bodyText;
 
 	public static String ManifestEditor_DetailExtensionPointSection_title;
-	public static String ManifestEditor_DetailExtensionPointSection_desc;
 	public static String ManifestEditor_DetailExtensionPointSection_new;
 	public static String ManifestEditor_DetailExtensionPointSection_newExtensionPoint;
 	public static String ManifestEditor_DetailExtensionPointSection_openSchema;
