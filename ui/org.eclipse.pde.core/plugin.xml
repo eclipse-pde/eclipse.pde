@@ -39,4 +39,13 @@
             extension="product">
       </fileTypes>
    </extension>
+   <extension point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+      		namespace="org.eclipse.pde.core"
+            properties="PluginNature"
+            type="org.eclipse.core.runtime.IAdaptable"
+            class="org.eclipse.pde.internal.core.ResourceExtender"
+            id="org.eclipse.pde.core.IResourceExtender">
+      </propertyTester>
+   </extension>
 </plugin>

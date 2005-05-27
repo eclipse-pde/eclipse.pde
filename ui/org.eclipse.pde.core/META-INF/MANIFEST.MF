@@ -28,5 +28,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.jdt.core,
  org.eclipse.team.core,
- org.eclipse.update.configurator
+ org.eclipse.update.configurator,
+ org.eclipse.core.expressions
 Eclipse-AutoStart: true
