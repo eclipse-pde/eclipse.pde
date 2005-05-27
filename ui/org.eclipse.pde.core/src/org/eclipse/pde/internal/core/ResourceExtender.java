@@ -18,31 +18,36 @@ import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * ResourceExtender provides property testers for the XML expression language
- * evaluation. We provide a copy in Debug so that launch shortcuts can add
+ * evaluation. We provide a copy in PDE so that launch shortcuts can add
  * contextual launch enablement that does not require their plugins to be
- * loaded. Copied from
- * org.eclipse.jdt.internal.corext.refactoring.participants.xml.ResourceExtender
+ * loaded.
  */
 public class ResourceExtender extends PropertyTester {
 
-    private static final String PDE_NATURE = "PluginNature"; //$NON-NLS-1$
+	private static final String PDE_NATURE = "PluginNature"; //$NON-NLS-1$
 
-    /* (non-Javadoc)
-     * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
-     */
-    public boolean test(Object receiver, String method, Object[] args, Object expectedValue) {
-        IResource resource = (IResource) ((IAdaptable) receiver).getAdapter(IResource.class);
-        if (resource != null) {
-        	if (PDE_NATURE.equals(method)) {
-                try {
-                    IProject proj = resource.getProject();
-                    return proj.isAccessible() && proj.hasNature("org.eclipse.pde.PluginNature"); //$NON-NLS-1$
-                } catch (CoreException e) {
-                    return true;
-                }
-            }
-        }
-        return true;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object,
+	 *      java.lang.String, java.lang.Object[], java.lang.Object)
+	 */
+	public boolean test(Object receiver, String method, Object[] args,
+			Object expectedValue) {
+		IResource resource = (IResource) ((IAdaptable) receiver)
+				.getAdapter(IResource.class);
+		if (resource != null) {
+			if (PDE_NATURE.equals(method)) {
+				try {
+					IProject proj = resource.getProject();
+					return proj.isAccessible()
+							&& proj.hasNature("org.eclipse.pde.PluginNature"); //$NON-NLS-1$
+				} catch (CoreException e) {
+					return true;
+				}
+			}
+		}
+		return true;
+	}
 
 }
