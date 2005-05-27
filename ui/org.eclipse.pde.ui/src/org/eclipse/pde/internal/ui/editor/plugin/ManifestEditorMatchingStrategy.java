@@ -17,6 +17,7 @@ import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorMatchingStrategy;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.ResourceUtil;
 
@@ -25,7 +26,7 @@ public class ManifestEditorMatchingStrategy implements IEditorMatchingStrategy {
 
     public boolean matches(IEditorReference editorRef, IEditorInput input) {    	
         IFile inputFile = ResourceUtil.getFile(input);
-        if (inputFile != null) {
+        if (inputFile != null && input instanceof IFileEditorInput) {
             String path = inputFile.getProjectRelativePath().toString();
             if (path.equals("plugin.xml") || path.equals("fragment.xml")  //$NON-NLS-1$ //$NON-NLS-2$
             		|| path.equals("META-INF/MANIFEST.MF") || path.equals("build.properties")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
