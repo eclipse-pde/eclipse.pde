@@ -47,6 +47,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.build.IBuild;
@@ -104,6 +105,8 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	protected static String FEATURE_POST_PROCESSING = "features.postProcessingSteps.properties"; //$NON-NLS-1$
 	protected static String PLUGIN_POST_PROCESSING = "plugins.postProcessingSteps.properties"; //$NON-NLS-1$
 	protected String[][] fTargets;
+	
+	private State fStateCopy;
 
 	private static int fNumberErrors;
 
@@ -395,11 +398,34 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		else
 			format = config + '-' + IXMLConstants.FORMAT_ANTZIP;
 		generator.setArchivesFormat(format);
-		generator.setPDEState(TargetPlatform.getState());
-		generator.setNextId(TargetPlatform.getPDEState().getNextId());
+		setState(generator, os, ws, arch);
 		generator.setStateExtraData(TargetPlatform.getBundleClasspaths(TargetPlatform.getPDEState()));
 		AbstractScriptGenerator.setForceUpdateJar(false);
 		AbstractScriptGenerator.setEmbeddedSource(fExportSource);		
+	}
+	
+	private void setState(BuildScriptGenerator generator, String os, String ws, String arch) {
+		State main = TargetPlatform.getState();
+		if (os.equals(TargetPlatform.getOS()) 
+				&& ws.equals(TargetPlatform.getWS())
+				&& arch.equals(TargetPlatform.getOSArch())) {
+			generator.setPDEState(main);
+		} else {			
+			if (fStateCopy == null) {
+				fStateCopy = main.getFactory().createState(main);
+				fStateCopy.setResolver(Platform.getPlatformAdmin().getResolver());
+				fStateCopy.setPlatformProperties(main.getPlatformProperties()[0]);
+			}
+			
+			Dictionary properties = fStateCopy.getPlatformProperties()[0];
+			properties.put("osgi.os", os); //$NON-NLS-1$
+			properties.put("osgi.ws", ws); //$NON-NLS-1$
+			properties.put("osgi.arch", arch); //$NON-NLS-1$
+			fStateCopy.setPlatformProperties(properties);
+			fStateCopy.resolve(false);
+			generator.setPDEState(fStateCopy);
+		}
+		generator.setNextId(TargetPlatform.getPDEState().getNextId());
 	}
 
 	private String getDevProperties() {
