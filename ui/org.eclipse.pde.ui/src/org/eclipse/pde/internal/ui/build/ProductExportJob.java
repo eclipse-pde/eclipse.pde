@@ -310,7 +310,7 @@ public class ProductExportJob extends FeatureExportJob {
             if (location != null)
             	writer.println("osgi.splashPath=" + location); //$NON-NLS-1$
             writer.println("eclipse.product=" + fProduct.getId()); //$NON-NLS-1$
-            if (fProduct.useFeatures()) {
+            if (fProduct.useFeatures() || fProduct.containsPlugin("org.eclipse.update.configurator")) { //$NON-NLS-1$
                 writer.println("osgi.bundles=" +  "org.eclipse.core.runtime@2:start,org.eclipse.update.configurator@3:start"); //$NON-NLS-1$ //$NON-NLS-2$
             } else {
                 writer.println("osgi.bundles=" + getPluginList(config)); //$NON-NLS-1$
