@@ -364,8 +364,6 @@ public class ProductExportJob extends FeatureExportJob {
 					buffer.append(id);
 					if ("org.eclipse.core.runtime".equals(id)) //$NON-NLS-1$
 						buffer.append("@2:start"); //$NON-NLS-1$
-				    if ("org.eclipse.update.configurator".equals(id)) //$NON-NLS-1$
-				        buffer.append("@3:start"); //$NON-NLS-1$
 				}
 			} catch (InvalidSyntaxException e) {
 			}
