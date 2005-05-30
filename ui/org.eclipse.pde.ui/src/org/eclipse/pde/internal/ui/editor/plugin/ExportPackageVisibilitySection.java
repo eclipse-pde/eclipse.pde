@@ -247,15 +247,23 @@ public class ExportPackageVisibilitySection extends TableSection
 	public void selectionChanged(IFormPart source, ISelection selection) {
         List list = ((IStructuredSelection)selection).toList();
         if (list.size() > 0) {
-            ExportPackageObject[] objects = (ExportPackageObject[])list.toArray(new ExportPackageObject[list.size()]);
-            ExportPackageObject first = objects[0];
-            for (int i = 1; i < objects.length; i++) {
-            	if (!first.hasSameVisibility(objects[i])) {
+            Object[] objects = list.toArray();
+            ExportPackageObject first = null;
+            for (int i = 0; i < objects.length; i++) {
+            	if (!(objects[i] instanceof ExportPackageObject)) {
+            		update(null);
+            		return;
+            	}
+            	if (first == null) {
+            		first = (ExportPackageObject)objects[i];
+            		continue;
+            	}
+            	if (!first.hasSameVisibility((ExportPackageObject)objects[i])) {
             		update(null);
             		return;
             	}
             }
-            update(objects);
+            update((ExportPackageObject[])list.toArray(new ExportPackageObject[list.size()]));
         } else {
             update(null);
         }
