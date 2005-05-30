@@ -93,6 +93,7 @@ public class PluginClassCodeGenerator {
 			writer.println("public class " + className + " extends AbstractUIPlugin {"); //$NON-NLS-1$ //$NON-NLS-2$
 		else
 			writer.println("public class " + className + " extends Plugin {"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println();
 		writer.println("\t//The shared instance."); //$NON-NLS-1$
 		writer.println("\tprivate static " + className + " plugin;"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("\t"); //$NON-NLS-1$
@@ -100,7 +101,6 @@ public class PluginClassCodeGenerator {
 		writer.println("\t * The constructor."); //$NON-NLS-1$
 		writer.println("\t */"); //$NON-NLS-1$
 		writer.println("\tpublic " + className + "() {"); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println("\t\tsuper();"); //$NON-NLS-1$
 		writer.println("\t\tplugin = this;"); //$NON-NLS-1$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
