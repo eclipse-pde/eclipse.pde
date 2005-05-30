@@ -27,6 +27,8 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.ClasspathComputer;
@@ -34,6 +36,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPluginConverter;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -191,6 +194,19 @@ public class ConvertedProjectsPage extends WizardPage  {
 		CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
 		if (!WorkspaceModelManager.isPluginProject(project))
 			createManifestFile(project.getFile("plugin.xml"), monitor); //$NON-NLS-1$
+		IFile buildFile = project.getFile("build.properties"); //$NON-NLS-1$
+		if (!buildFile.exists()) {
+			WorkspaceBuildModel model = new WorkspaceBuildModel(buildFile);
+			IBuild build = model.getBuild(true);
+			IBuildEntry entry = model.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
+			if (project.getFile("plugin.xml").exists()) //$NON-NLS-1$
+				entry.addToken("plugin.xml"); //$NON-NLS-1$
+			if (project.getFile("META-INF/MANIFEST.MF").exists()) //$NON-NLS-1$
+				entry.addToken("META-INF/"); //$NON-NLS-1$
+			if (entry.getTokens().length > 0)
+				build.add(entry);
+			model.save();
+		}
 	}
 	
 	private void convertProjects(
