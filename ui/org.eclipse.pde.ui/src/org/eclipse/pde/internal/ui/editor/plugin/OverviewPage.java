@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -19,6 +20,7 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.build.*;
@@ -26,11 +28,13 @@ import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.launcher.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.IProgressService;
 
 
@@ -215,9 +219,18 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			getEditor().setActivePage(ExtensionsPage.PAGE_ID);
 		else if (href.equals("ex-points")) //$NON-NLS-1$
 			getEditor().setActivePage(ExtensionPointsPage.PAGE_ID);
-		else if (href.equals("build")) //$NON-NLS-1$
-			getEditor().setActivePage(BuildPage.PAGE_ID);
-		else if (href.equals("action.run")) { //$NON-NLS-1$ {
+		else if (href.equals("build")) { //$NON-NLS-1$
+			if (!getPDEEditor().hasInputContext(BuildInputContext.CONTEXT_ID)) {
+				if (!MessageDialog.openQuestion(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OverviewPage_buildTitle, PDEUIMessages.OverviewPage_buildQuestion)) 
+					return;
+				IFile file = getPDEEditor().getCommonProject().getFile("build.properties"); //$NON-NLS-1$
+				WorkspaceBuildModel model = new WorkspaceBuildModel(file);
+				model.save();
+				IEditorInput in = new FileEditorInput(file);
+				getPDEEditor().getContextManager().putContext(in, new BuildInputContext(getPDEEditor(), in, false));
+			} 
+			getEditor().setActivePage(BuildPage.PAGE_ID);	
+		} else if (href.equals("action.run")) { //$NON-NLS-1$ {
 			getEditor().doSave(null);
 			getLaunchShortcut().run((IPluginModelBase)getModel());
 		} else if (href.equals("action.debug")) { //$NON-NLS-1$

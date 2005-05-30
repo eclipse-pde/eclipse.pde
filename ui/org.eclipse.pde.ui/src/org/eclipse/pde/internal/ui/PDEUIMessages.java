@@ -1959,4 +1959,8 @@ public class PDEUIMessages extends NLS {
 	public static String ExtensionPointsSection_showDescription;
 
 	public static String HelloRCPTemplate_perspective;
+
+	public static String OverviewPage_buildTitle;
+
+	public static String OverviewPage_buildQuestion;
 }
