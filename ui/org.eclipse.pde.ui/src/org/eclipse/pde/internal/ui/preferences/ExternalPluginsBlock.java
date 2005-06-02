@@ -241,7 +241,6 @@ public class ExternalPluginsBlock {
 			fPage.getSourceBlock().resetExtensionLocations(getAllModels());
 		}
 		fPage.resetNeedsReload();
-		PDECore.getDefault().getFeatureModelManager().targetReloaded();
 	}
 
 	public void initialize() {
@@ -270,6 +269,10 @@ public class ExternalPluginsBlock {
 					EclipseHomeInitializer.resetEclipseHomeVariable();
 				updateModels();
 				computeDelta();
+				if (fReloaded){
+					PDECore.getDefault().getFeatureModelManager()
+							.targetReloaded();
+				}
 			}
 		});
 	}
