@@ -155,7 +155,7 @@ public class FeatureImport
 		if (getVersion() != null) {
 			writer.print(" version=\"" + getVersion() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (!fPatch && fMatch != NONE) {
+		if (!fPatch && fMatch != NONE && fMatch != COMPATIBLE) {
 			writer.print(" match=\"" + RULE_NAME_TABLE[fMatch] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (fIdMatch == PREFIX) {

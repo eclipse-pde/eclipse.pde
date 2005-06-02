@@ -19,6 +19,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.osgi.framework.Constants;
@@ -84,7 +85,10 @@ public class PluginImport
 		this.reexported = importModel.isExported();
 		this.optional = importModel.isOptional();
 		VersionRange versionRange = importModel.getVersionRange();
-		if (versionRange != null) {
+		if (versionRange == null || VersionRange.emptyRange.equals(versionRange)) {
+			this.version = null;
+			match = IMatchRules.NONE;
+		} else {
 			this.version = versionRange.getMinimum() != null ? versionRange.getMinimum().toString() : null;
 			match = PluginBase.getMatchRule(versionRange);
 		}
@@ -194,7 +198,7 @@ public class PluginImport
 			writer.print(" optional=\"true\""); //$NON-NLS-1$
 		if (version != null && version.length() > 0)
 			writer.print(" version=\"" + version + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (match != NONE) {
+		if (match != NONE && match != COMPATIBLE) {
 			String matchValue = RULE_NAME_TABLE[match];
 			writer.print(" match=\"" + matchValue + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}

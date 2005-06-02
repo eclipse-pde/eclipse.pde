@@ -279,6 +279,9 @@ public class Feature extends VersionableObject implements IFeature {
 		IPluginImport[] pluginImports = plugin.getImports();
 		for (int i = 0; i < pluginImports.length; i++) {
 			IPluginImport pluginImport = pluginImports[i];
+			if (pluginImport.isOptional()) {
+				continue;
+			}
 			String id = pluginImport.getId();
 			String version = pluginImport.getVersion();
 			int match = pluginImport.getMatch();

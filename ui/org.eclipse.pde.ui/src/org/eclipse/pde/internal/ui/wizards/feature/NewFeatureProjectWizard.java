@@ -275,7 +275,7 @@ public class NewFeatureProjectWizard extends NewWizard
 			added[i] = fplugin;
 		}
 		feature.addPlugins(added);
-		feature.computeImports();
+		//feature.computeImports();
 		IFeatureInstallHandler handler = feature.getInstallHandler();
 		if (handler != null) {		
 			handler.setLibrary(data.library);
