@@ -937,7 +937,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	private void generateSourceFeatureScripts() throws CoreException {
 		FeatureBuildScriptGenerator sourceScriptGenerator = new FeatureBuildScriptGenerator(sourceFeatureFullName, null, assemblyData);
-		sourceScriptGenerator.setGenerateIncludedFeatures(false);
+		sourceScriptGenerator.setGenerateIncludedFeatures(true);
 		sourceScriptGenerator.setAnalyseChildren(true);
 		sourceScriptGenerator.setSourceToGather(sourceToGather);
 		sourceScriptGenerator.setBinaryFeatureGeneration(true);
