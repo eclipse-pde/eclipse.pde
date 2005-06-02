@@ -169,9 +169,9 @@ public class ConvertSchemaToHTML extends Task {
 
 		ExternalPluginModelBase model = null;
 		try {
-			if (file.getName().toLowerCase().equals("fragment.xml")) //$NON-NLS-1$
+			if (file.getName().toLowerCase(Locale.ENGLISH).equals("fragment.xml")) //$NON-NLS-1$
 				model = new ExternalFragmentModel();
-			else if (file.getName().toLowerCase().equals("plugin.xml")) //$NON-NLS-1$
+			else if (file.getName().toLowerCase(Locale.ENGLISH).equals("plugin.xml")) //$NON-NLS-1$
 				model = new ExternalPluginModel();
 			else {
 				System.out.println(

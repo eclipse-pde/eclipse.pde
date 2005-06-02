@@ -97,7 +97,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 	
 	private boolean isManifestFile(IFile file) {
 		return file.getParent().equals(file.getProject())
-				&& file.getName().toLowerCase().equals("feature.xml"); //$NON-NLS-1$
+				&& file.getName().toLowerCase(Locale.ENGLISH).equals("feature.xml"); //$NON-NLS-1$
 	}
 	
 

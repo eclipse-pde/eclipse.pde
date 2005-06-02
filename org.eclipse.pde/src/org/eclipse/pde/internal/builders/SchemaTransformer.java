@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.builders;
 
 import java.io.*;
 import java.net.*;
+import java.util.Locale;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.ischema.*;
@@ -312,7 +313,7 @@ public class SchemaTransformer {
 		if (type != null)
 			restriction = type.getRestriction();
 		String typeName =
-			type != null ? type.getName().toLowerCase() : "string"; //$NON-NLS-1$
+			type != null ? type.getName().toLowerCase(Locale.ENGLISH) : "string"; //$NON-NLS-1$
 		if (typeName.equals("boolean")) { //$NON-NLS-1$
 			fWriter.print("(true | false) "); //$NON-NLS-1$
 			choices = true;
@@ -349,13 +350,13 @@ public class SchemaTransformer {
 	private boolean isPreEnd(String text, int loc) {
 		if (loc + 5 >= text.length())
 			return false;
-		return (text.substring(loc, loc + 6).toLowerCase().equals("</pre>")); //$NON-NLS-1$
+		return (text.substring(loc, loc + 6).toLowerCase(Locale.ENGLISH).equals("</pre>")); //$NON-NLS-1$
 	}
 	
 	private boolean isPreStart(String text, int loc) {
 		if (loc + 4 >= text.length())
 			return false;
-		return (text.substring(loc, loc + 5).toLowerCase().equals("<pre>")); //$NON-NLS-1$
+		return (text.substring(loc, loc + 5).toLowerCase(Locale.ENGLISH).equals("<pre>")); //$NON-NLS-1$
 	}
 
 	private int calculateMaxAttributeWidth(ISchemaAttribute[] attributes) {
