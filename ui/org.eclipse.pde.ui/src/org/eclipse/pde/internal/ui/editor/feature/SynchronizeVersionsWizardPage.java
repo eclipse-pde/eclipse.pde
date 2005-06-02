@@ -62,13 +62,13 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.osgi.framework.Constants;
 
 public class SynchronizeVersionsWizardPage extends WizardPage {
+	public static final int USE_PLUGINS_AT_BUILD = 0;
 	public static final int USE_FEATURE = 1;
 	public static final int USE_PLUGINS = 2;
-	public static final int USE_REFERENCES = 3;
 	private FeatureEditor fFeatureEditor;
+	private Button fUsePluginsAtBuildButton;
 	private Button fUseComponentButton;
 	private Button fUsePluginsButton;
-	private Button fUseReferencesButton;
 
 	private static final String PREFIX =
 		PDEPlugin.getPluginId() + ".synchronizeVersions."; //$NON-NLS-1$
@@ -91,20 +91,20 @@ public void createControl(Composite parent) {
 	group.setLayoutData(gd);
 	group.setText(PDEUIMessages.VersionSyncWizard_group);
 
-	fUseComponentButton = new Button(group, SWT.RADIO);
-	fUseComponentButton.setText(PDEUIMessages.VersionSyncWizard_useComponent);
+	fUsePluginsAtBuildButton = new Button(group, SWT.RADIO);
+	fUsePluginsAtBuildButton.setText(PDEUIMessages.VersionSyncWizard_usePluginsAtBuild);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
-	fUseComponentButton.setLayoutData(gd);
-
+	fUsePluginsAtBuildButton.setLayoutData(gd);
+	
 	fUsePluginsButton = new Button(group, SWT.RADIO);
 	fUsePluginsButton.setText(PDEUIMessages.VersionSyncWizard_usePlugins);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
 	fUsePluginsButton.setLayoutData(gd);
 	
-	fUseReferencesButton = new Button(group, SWT.RADIO);
-	fUseReferencesButton.setText(PDEUIMessages.VersionSyncWizard_useReferences);
+	fUseComponentButton = new Button(group, SWT.RADIO);
+	fUseComponentButton.setText(PDEUIMessages.VersionSyncWizard_useComponent);
 	gd = new GridData(GridData.FILL_HORIZONTAL);
-	fUseReferencesButton.setLayoutData(gd);  
+	fUseComponentButton.setLayoutData(gd);
 
 	setControl(container);
 	Dialog.applyDialogFont(container);
@@ -258,13 +258,13 @@ private void loadSettings() {
 			case USE_PLUGINS :
 				fUsePluginsButton.setSelection(true);
 				break;
-			case USE_REFERENCES :
-				fUseReferencesButton.setSelection(true);
+			default: // USE_PLUGINS_AT_BUILD
+				fUsePluginsAtBuildButton.setSelection(true);
 				break;
 		}
 	}
 	else 
-	   fUseComponentButton.setSelection(true);
+	   fUsePluginsAtBuildButton.setSelection(true);
 }
 private void runOperation(int mode, IProgressMonitor monitor)
 	throws CoreException, BadLocationException {
@@ -281,13 +281,12 @@ private void runOperation(int mode, IProgressMonitor monitor)
 private int saveSettings() {
 	IDialogSettings settings = getDialogSettings();
 
-	int mode = USE_FEATURE;
+	int mode = USE_PLUGINS_AT_BUILD;
 
-	if (fUsePluginsButton.getSelection())
+	if (fUseComponentButton.getSelection())
+		mode = USE_FEATURE;
+	else if (fUsePluginsButton.getSelection())
 		mode = USE_PLUGINS;
-	else
-		if (fUseReferencesButton.getSelection())
-			mode = USE_REFERENCES;
 	settings.put(PROP_SYNCHRO_MODE, mode);
 	return mode;
 }
@@ -299,26 +298,32 @@ private void synchronizeVersion(
 	throws CoreException,
 	BadLocationException{
 	String id = ref.getId();
-	IPluginModelBase modelBase = findModel(id);
 	
-	if (modelBase == null)
-		return;
-	if (mode == USE_PLUGINS) {
+	if (mode == USE_PLUGINS_AT_BUILD) {
+		if (!"0.0.0".equals(ref.getVersion())) { //$NON-NLS-1$
+			ref.setVersion("0.0.0"); //$NON-NLS-1$
+		}
+	} else if (mode == USE_PLUGINS) {
+		IPluginModelBase modelBase = PDECore.getDefault().getModelManager()
+		.findModel(id);
+		if (modelBase == null) {
+			return;
+		}
 		String baseVersion = modelBase.getPluginBase().getVersion();
 		if (!ref.getVersion().equals(baseVersion)) {
 			ref.setVersion(baseVersion);
 		}
-	} else {
-		String targetVersion = featureVersion;
-		if (mode == USE_REFERENCES)
-			targetVersion = ref.getVersion();
-		else
-			ref.setVersion(targetVersion);
-		
-		String baseVersion = modelBase.getPluginBase().getVersion();
-		if (!targetVersion.equals(baseVersion)) {
-			forceVersion(targetVersion, modelBase, monitor);
+	} else /* mode == USE_FEATURE */{
+		IPluginModelBase modelBase = findModel(id);
+		if (modelBase == null) {
+			return;
 		}
+		ref.setVersion(featureVersion);
+		String baseVersion = modelBase.getPluginBase().getVersion();
+		if (!featureVersion.equals(baseVersion)) {
+			forceVersion(featureVersion, modelBase, monitor);
+		}
+		
 	}
 	monitor.worked(1);
 }

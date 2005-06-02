@@ -889,7 +889,7 @@ public class PDEUIMessages extends NLS {
 	public static String VersionSyncWizard_group;
 	public static String VersionSyncWizard_useComponent;
 	public static String VersionSyncWizard_usePlugins;
-	public static String VersionSyncWizard_useReferences;
+	public static String VersionSyncWizard_usePluginsAtBuild;
 	public static String VersionSyncWizard_synchronizing;
 
 	public static String JavaAttributeWizard_wtitle;

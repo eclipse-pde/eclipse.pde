@@ -269,6 +269,7 @@ public class NewFeatureProjectWizard extends NewWizard
 			FeaturePlugin fplugin = (FeaturePlugin) model.getFactory()
 					.createPlugin();
 			fplugin.loadFrom(plugin);
+			fplugin.setVersion("0.0.0"); //$NON-NLS-1$
 			fplugin.setUnpack(CoreUtility.guessUnpack(plugin.getPluginModel()
 					.getBundleDescription()));
 			added[i] = fplugin;

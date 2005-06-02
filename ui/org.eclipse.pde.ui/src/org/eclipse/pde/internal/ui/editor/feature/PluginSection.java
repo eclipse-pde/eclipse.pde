@@ -184,6 +184,7 @@ public class PluginSection extends TableSection implements
 			FeaturePlugin fplugin = (FeaturePlugin) model.getFactory()
 					.createPlugin();
 			fplugin.loadFrom(candidate.getPluginBase());
+			fplugin.setVersion("0.0.0"); //$NON-NLS-1$
 			fplugin.setUnpack(CoreUtility.guessUnpack(candidate
 					.getBundleDescription()));
 			added[i] = fplugin;
