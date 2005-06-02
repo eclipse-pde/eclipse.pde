@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
@@ -149,13 +150,29 @@ public class FragmentContentPage extends ContentPage {
 							IPluginModel model = (IPluginModel) dialog.getFirstResult();
 							IPlugin plugin = model.getPlugin();
 							fPluginIdText.setText(plugin.getId());
-							fPluginVersion.setText(plugin.getVersion());
+							fPluginVersion
+											.setText(computeInitialPluginVersion(plugin
+													.getVersion()));
 						}
 					}
 				});
 			}
 		});
 		SWTUtil.setButtonDimensionHint(browse);
+	}
+	
+	private String computeInitialPluginVersion(String pluginVersion) {
+		if (pluginVersion != null
+				&& PluginVersionIdentifier.validateVersion(pluginVersion)
+						.isOK()) {
+			PluginVersionIdentifier pvi = new PluginVersionIdentifier(
+					pluginVersion);
+			if ("qualifier".equals(pvi.getQualifierComponent())) { //$NON-NLS-1$
+				return pvi.getMajorComponent() + "." + pvi.getMinorComponent() //$NON-NLS-1$
+						+ "." + pvi.getServiceComponent(); //$NON-NLS-1$
+			}
+		}
+		return pluginVersion;
 	}
 
 	public void updateData() {
