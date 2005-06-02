@@ -241,6 +241,7 @@ public class ExternalPluginsBlock {
 			fPage.getSourceBlock().resetExtensionLocations(getAllModels());
 		}
 		fPage.resetNeedsReload();
+		PDECore.getDefault().getFeatureModelManager().targetReloaded();
 	}
 
 	public void initialize() {

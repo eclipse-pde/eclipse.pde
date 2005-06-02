@@ -42,6 +42,8 @@ public class FeatureModelManager {
 	private FeatureTable fInactiveModels;
 
 	private ExternalFeatureModelManager fExternalManager;
+	
+	private boolean fReloadExternalNeeded = false;
 
 	private WorkspaceModelManager fWorkspaceManager;
 
@@ -67,8 +69,13 @@ public class FeatureModelManager {
 	}
 
 	private synchronized void init() {
-		if (fActiveModels != null)
+		if (fActiveModels != null) {
+			if (fReloadExternalNeeded) {
+				fReloadExternalNeeded = false;
+				fExternalManager.reload();
+			}
 			return;
+		}
 		
 		fActiveModels = new FeatureTable();
 		fInactiveModels = new FeatureTable();
@@ -89,6 +96,7 @@ public class FeatureModelManager {
 
 		fExternalManager = new ExternalFeatureModelManager();
 		fExternalManager.addModelProviderListener(fProviderListener);
+		fReloadExternalNeeded = false;
 		fExternalManager.startup();
 	}
 
@@ -361,6 +369,10 @@ public class FeatureModelManager {
 	public void removeFeatureModelListener(IFeatureModelListener listener) {
 		if (fListeners.contains(listener))
 			fListeners.remove(listener);
+	}
+
+	public void targetReloaded() {
+		fReloadExternalNeeded = true;
 	}
 
 }

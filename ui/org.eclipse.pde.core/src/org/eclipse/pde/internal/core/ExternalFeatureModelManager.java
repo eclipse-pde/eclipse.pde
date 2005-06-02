@@ -188,4 +188,8 @@ public class ExternalFeatureModelManager implements
 		fPref.addPropertyChangeListener(this);
 		loadModels(fPref.getString(ICoreConstants.PLATFORM_PATH));
 	}
+	
+	public synchronized void reload() {
+		loadModels(fPref.getString(ICoreConstants.PLATFORM_PATH));
+	}
 }
