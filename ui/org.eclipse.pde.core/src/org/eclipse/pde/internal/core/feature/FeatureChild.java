@@ -77,7 +77,7 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		id = feature.getId();
 		fVersion = feature.getVersion();
 		fOptional = false;
-		fName = feature.getLabel();
+		fName = null;
 	}
 	/**
 	 * @see IFeatureChild#getVersion()
