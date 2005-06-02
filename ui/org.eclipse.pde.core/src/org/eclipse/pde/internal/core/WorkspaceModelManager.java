@@ -249,7 +249,7 @@ public class WorkspaceModelManager
 	
 	private void handleFileRemoved(IFile file) {
 		IModel model = getWorkspaceModel(file);
-		String fileName = file.getName().toLowerCase();
+		String fileName = file.getName().toLowerCase(Locale.ENGLISH);
 		if (model != null) {
 			if (model instanceof IBundlePluginModelBase) {
 				IBundlePluginModelBase bModel = (IBundlePluginModelBase)model;
@@ -328,7 +328,7 @@ public class WorkspaceModelManager
 	private boolean isSupportedFile(IFile file) {
 		if (isBundleManifestFile(file))
 			return true;
-		String name = file.getName().toLowerCase();
+		String name = file.getName().toLowerCase(Locale.ENGLISH);
 		if (!name.equals("plugin.xml") && !name.equals("fragment.xml") //$NON-NLS-1$ //$NON-NLS-2$
 				&& !name.equals("feature.xml")) //$NON-NLS-1$
 			return false;

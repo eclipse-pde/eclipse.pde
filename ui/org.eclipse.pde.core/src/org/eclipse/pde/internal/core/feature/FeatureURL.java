@@ -59,7 +59,7 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				String tag = child.getNodeName().toLowerCase();
+				String tag = child.getNodeName().toLowerCase(Locale.ENGLISH);
 				int urlType = -1;
 				if (tag.equals("update")) { //$NON-NLS-1$
 					urlType = IFeatureURLElement.UPDATE;

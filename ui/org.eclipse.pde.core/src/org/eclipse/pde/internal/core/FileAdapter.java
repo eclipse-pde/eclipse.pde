@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.*;
+import java.util.Locale;
 
 import org.eclipse.core.runtime.*;
 
@@ -35,7 +36,7 @@ public class FileAdapter extends PlatformObject {
 		return (fileName.equals("plugin.xml") || fileName.equals("fragment.xml") || fileName.equalsIgnoreCase("manifest.mf")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	public boolean isSchema() {
-		String fileName = file.getName().toLowerCase();
+		String fileName = file.getName().toLowerCase(Locale.ENGLISH);
 		return fileName.endsWith(".mxsd") || fileName.endsWith(".exsd"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 			

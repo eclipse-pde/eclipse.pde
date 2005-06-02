@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 import java.io.*;
+import java.util.Locale;
 import java.util.zip.*;
 
 import org.eclipse.core.resources.*;
@@ -41,7 +42,7 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 		IFile buildFile = null;
 		IFile pluginFile = null;
 		boolean fragment = false;
-		String name = file.getName().toLowerCase();
+		String name = file.getName().toLowerCase(Locale.ENGLISH);
 		if (name.equals("manifest.mf")) { //$NON-NLS-1$
 			manifestFile = file;
 			buildFile = project.getFile("build.properties"); //$NON-NLS-1$
@@ -179,7 +180,7 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 		File manifestFile = null;
 		File buildFile = null;
 		File pluginFile = null;
-		String name = file.getName().toLowerCase();
+		String name = file.getName().toLowerCase(Locale.ENGLISH);
 		if (name.equals("manifest.mf")) { //$NON-NLS-1$
 			manifestFile = file;
 			File dir = file.getParentFile().getParentFile();
@@ -233,7 +234,7 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 			return;
 		}
 		
-		String name = input.getName().toLowerCase();
+		String name = input.getName().toLowerCase(Locale.ENGLISH);
 		if (name.startsWith("manifest.mf")) { //$NON-NLS-1$
 			manager
 					.putContext(input,

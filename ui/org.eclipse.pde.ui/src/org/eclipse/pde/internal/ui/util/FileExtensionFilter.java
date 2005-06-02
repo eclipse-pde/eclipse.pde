@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
+import java.util.Locale;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
@@ -25,7 +27,7 @@ public class FileExtensionFilter extends ViewerFilter {
 
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		if (element instanceof IFile) {
-			return ((IFile)element).getName().toLowerCase().endsWith("." + fTargetExtension); //$NON-NLS-1$
+			return ((IFile)element).getName().toLowerCase(Locale.ENGLISH).endsWith("." + fTargetExtension); //$NON-NLS-1$
 		}
 
 		if (element instanceof IContainer){ // i.e. IProject, IFolder

@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import java.io.File;
+import java.util.Locale;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.pde.core.*;
@@ -77,7 +78,7 @@ public class ProductEditor extends PDEFormEditor {
 	 */
 	protected void createStorageContexts(InputContextManager manager,
 			IStorageEditorInput input) {
-		if (input.getName().toLowerCase().endsWith(".prod")) { //$NON-NLS-1$
+		if (input.getName().toLowerCase(Locale.ENGLISH).endsWith(".prod")) { //$NON-NLS-1$
 			manager.putContext(input, new ProductInputContext(this, input, true));
 		}
 	}

@@ -225,7 +225,7 @@ public class Site extends SiteObject implements ISite {
 	}
 
 	protected void parseChild(Node child) {
-		String tag = child.getNodeName().toLowerCase();
+		String tag = child.getNodeName().toLowerCase(Locale.ENGLISH);
 		if (tag.equals("feature")) { //$NON-NLS-1$
 			ISiteFeature feature = getModel().getFactory().createFeature();
 			((SiteFeature) feature).parse(child);

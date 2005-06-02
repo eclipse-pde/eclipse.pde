@@ -155,7 +155,7 @@ public class TracingPropertySource {
 			String masterValue = fMasterOptions.getProperty(key);
 			PropertyEditor editor;
 			if (value != null)
-				lvalue = value.toLowerCase();
+				lvalue = value.toLowerCase(Locale.ENGLISH);
 			if (lvalue != null
 					&& (lvalue.equals("true") || lvalue.equals("false"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				editor = new BooleanEditor(shortKey, shortKey);

@@ -75,7 +75,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 
 	protected void setTestPluginName(String[] args) {
 		for (int i = 0; i < args.length; i++) {
-			if (args[i].toLowerCase().equals("-testpluginname")) { //$NON-NLS-1$
+			if (args[i].toLowerCase(Locale.ENGLISH).equals("-testpluginname")) { //$NON-NLS-1$
 				if (i < args.length - 1)
 					fTestPluginName = args[i + 1];
 				return;

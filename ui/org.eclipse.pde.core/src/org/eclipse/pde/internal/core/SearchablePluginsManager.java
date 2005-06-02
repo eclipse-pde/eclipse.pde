@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -332,7 +333,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 
 	public Object createAdapterChild(FileAdapter parent, File file) {
 		if (file.isDirectory() == false) {
-			String name = file.getName().toLowerCase();
+			String name = file.getName().toLowerCase(Locale.ENGLISH);
 			if (name.endsWith(".jar")) { //$NON-NLS-1$
 				IPackageFragmentRoot root = findPackageFragmentRoot(file
 						.getAbsolutePath());

@@ -18,6 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Set;
 
 import org.eclipse.core.resources.IStorage;
@@ -535,7 +536,7 @@ public class PluginsView extends ViewPart {
 		String editorId = adapter.getEditorId();
 
 		String fileName = adapter.getFile().getName();
-		String lcFileName = fileName.toLowerCase();
+		String lcFileName = fileName.toLowerCase(Locale.ENGLISH);
 		ImageDescriptor desc =
 			PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(
 				fileName);

@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core.plugin;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.Locale;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -118,12 +119,12 @@ public class PluginImport
 		String version = getNodeAttribute(node, "version"); //$NON-NLS-1$
 		String match = getNodeAttribute(node, "match"); //$NON-NLS-1$
 		boolean reexport =
-			export != null && export.toLowerCase().equals("true"); //$NON-NLS-1$
+			export != null && export.toLowerCase(Locale.ENGLISH).equals("true"); //$NON-NLS-1$
 		boolean optional =
-			option != null && option.toLowerCase().equals("true"); //$NON-NLS-1$
+			option != null && option.toLowerCase(Locale.ENGLISH).equals("true"); //$NON-NLS-1$
 		this.match = NONE;
 		if (match != null) {
-			String lmatch = match.toLowerCase();
+			String lmatch = match.toLowerCase(Locale.ENGLISH);
 			if (lmatch.equals("exact")) //$NON-NLS-1$
 				lmatch = RULE_EQUIVALENT;
 			for (int i = 0; i < RULE_NAME_TABLE.length; i++) {

@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.feature;
 
 import java.io.File;
+import java.util.Locale;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -62,7 +63,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		IFile buildFile = null;
 		IFile featureFile = null;
 
-		String name = file.getName().toLowerCase();
+		String name = file.getName().toLowerCase(Locale.ENGLISH);
 		if (name.equals("feature.xml")) { //$NON-NLS-1$
 			featureFile = file;
 			buildFile = project.getFile("build.properties"); //$NON-NLS-1$
@@ -134,7 +135,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		File file = (File) input.getAdapter(File.class);
 		File buildFile = null;
 		File featureFile = null;
-		String name = file.getName().toLowerCase();
+		String name = file.getName().toLowerCase(Locale.ENGLISH);
 		if (name.equals("feature.xml")) { //$NON-NLS-1$
 			featureFile = file;
 			File dir = file.getParentFile();
@@ -168,7 +169,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 
 	protected void createStorageContexts(InputContextManager manager,
 			IStorageEditorInput input) {
-		String name = input.getName().toLowerCase();
+		String name = input.getName().toLowerCase(Locale.ENGLISH);
 		if (name.equals("build.properties")) { //$NON-NLS-1$
 			manager.putContext(input, new BuildInputContext(this, input, true));
 		} else if (name.startsWith("feature.xml")) { //$NON-NLS-1$

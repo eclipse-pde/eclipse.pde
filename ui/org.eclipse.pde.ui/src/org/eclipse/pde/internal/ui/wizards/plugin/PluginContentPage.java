@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
+import java.util.Locale;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IStatus;
@@ -247,7 +248,7 @@ public class PluginContentPage extends ContentPage {
                 else if (ch == '.'){
                     status = JavaConventions.validatePackageName(buffer.toString());
                     if (status.getSeverity() == IStatus.ERROR)
-                        buffer.append(suffix.toLowerCase());
+                        buffer.append(suffix.toLowerCase(Locale.ENGLISH));
 					buffer.append(ch);
                 }
 			}
@@ -258,7 +259,7 @@ public class PluginContentPage extends ContentPage {
 			if (!tok.hasMoreTokens()){
                 status = JavaConventions.validatePackageName(buffer.toString());
                 if (status.getSeverity() == IStatus.ERROR)
-                    buffer.append(suffix.toLowerCase());
+                    buffer.append(suffix.toLowerCase(Locale.ENGLISH));
 				buffer.append("." + Character.toUpperCase(token.charAt(0)) + token.substring(1) + suffix); //$NON-NLS-1$ //$NON-NLS-2$
             }
 		}

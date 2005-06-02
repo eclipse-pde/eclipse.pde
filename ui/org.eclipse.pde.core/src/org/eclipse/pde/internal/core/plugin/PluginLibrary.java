@@ -95,7 +95,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				String tag = child.getNodeName().toLowerCase();
+				String tag = child.getNodeName().toLowerCase(Locale.ENGLISH);
 				if (tag.equals("export")) { //$NON-NLS-1$
 					String ename = getNodeAttribute(child, "name"); //$NON-NLS-1$
 					if (ename != null) {

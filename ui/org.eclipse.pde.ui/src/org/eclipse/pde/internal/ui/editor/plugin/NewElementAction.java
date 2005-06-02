@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.Hashtable;
+import java.util.Locale;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -152,7 +153,7 @@ public class NewElementAction extends Action {
 				else if (ch == '.') {
 					status = JavaConventions.validatePackageName(buffer.toString());
 					if (status.getSeverity() == IStatus.ERROR)
-						buffer.append(className.toLowerCase());
+						buffer.append(className.toLowerCase(Locale.ENGLISH));
 					buffer.append(ch);
 				}
 			}
@@ -160,7 +161,7 @@ public class NewElementAction extends Action {
 
 		status = JavaConventions.validatePackageName(buffer.toString());
 		if (status.getSeverity() == IStatus.ERROR)
-			buffer.append(className.toLowerCase());
+			buffer.append(className.toLowerCase(Locale.ENGLISH));
 
 		return buffer.toString();
 	}

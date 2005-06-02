@@ -843,7 +843,7 @@ public class Schema extends PlatformObject implements ISchema {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				String nodeName = child.getNodeName().toLowerCase();
+				String nodeName = child.getNodeName().toLowerCase(Locale.ENGLISH);
 				if (nodeName.equals("element")) { //$NON-NLS-1$
 					ISchemaElement element = processElement(this, child);
 					fElements.addElement(element);

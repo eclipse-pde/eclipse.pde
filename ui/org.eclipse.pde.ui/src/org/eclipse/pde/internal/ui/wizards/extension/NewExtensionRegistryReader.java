@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.extension;
 
+import java.util.Locale;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.*;
@@ -186,7 +187,7 @@ public class NewExtensionRegistryReader {
 			WizardElement wizard = createWizardElement(element);
 			if (shortcutsOnly) {
 				String shortcut = element.getAttribute(ATT_SHORTCUTTABLE);
-				if (shortcut != null && shortcut.toLowerCase().equals("true")) { //$NON-NLS-1$
+				if (shortcut != null && shortcut.toLowerCase(Locale.ENGLISH).equals("true")) { //$NON-NLS-1$
 					result.add(wizard);
 				}
 			} else

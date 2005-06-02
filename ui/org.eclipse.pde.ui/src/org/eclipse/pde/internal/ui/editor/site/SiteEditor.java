@@ -13,6 +13,7 @@
  */
 package org.eclipse.pde.internal.ui.editor.site;
 import java.io.File;
+import java.util.Locale;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IMenuManager;
@@ -43,7 +44,7 @@ public class SiteEditor extends MultiSourceEditor {
 			IFileEditorInput input) {
 		IFile file = input.getFile();
 		IFile siteFile = null;
-		String name = file.getName().toLowerCase();
+		String name = file.getName().toLowerCase(Locale.ENGLISH);
 		if (name.equals("site.xml")) { //$NON-NLS-1$
 			siteFile = file;
 			if (siteFile.exists()) {
@@ -107,7 +108,7 @@ public class SiteEditor extends MultiSourceEditor {
 		File file = (File) input.getAdapter(File.class);
 		File siteFile = null;
 
-		String name = file.getName().toLowerCase();
+		String name = file.getName().toLowerCase(Locale.ENGLISH);
 		if (name.equals("site.xml")) { //$NON-NLS-1$
 			siteFile = file;
 			if (siteFile.exists()) {
@@ -120,7 +121,7 @@ public class SiteEditor extends MultiSourceEditor {
 
 	protected void createStorageContexts(InputContextManager manager,
 			IStorageEditorInput input) {
-		String name = input.getName().toLowerCase();
+		String name = input.getName().toLowerCase(Locale.ENGLISH);
 		if (name.startsWith("site.xml")) { //$NON-NLS-1$
 			manager.putContext(input,
 							new SiteInputContext(this, input, true));

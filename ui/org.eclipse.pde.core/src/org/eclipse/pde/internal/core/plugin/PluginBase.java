@@ -176,7 +176,7 @@ public abstract class PluginBase
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE
-				&& child.getNodeName().toLowerCase().equals("library")) { //$NON-NLS-1$
+				&& child.getNodeName().toLowerCase(Locale.ENGLISH).equals("library")) { //$NON-NLS-1$
 				PluginLibrary library = new PluginLibrary();
 				library.setModel(getModel());
 				library.setInTheModel(true);
@@ -213,7 +213,7 @@ public abstract class PluginBase
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE
-				&& child.getNodeName().toLowerCase().equals("import")) { //$NON-NLS-1$
+				&& child.getNodeName().toLowerCase(Locale.ENGLISH).equals("import")) { //$NON-NLS-1$
 				PluginImport importElement = new PluginImport();
 				importElement.setModel(getModel());
 				importElement.setInTheModel(true);
@@ -224,7 +224,7 @@ public abstract class PluginBase
 		}
 	}
 	protected void processChild(Node child) {
-		String name = child.getNodeName().toLowerCase();
+		String name = child.getNodeName().toLowerCase(Locale.ENGLISH);
 		if (name.equals("runtime")) { //$NON-NLS-1$
 			loadRuntime(child);
 		} else if (name.equals("requires")) { //$NON-NLS-1$

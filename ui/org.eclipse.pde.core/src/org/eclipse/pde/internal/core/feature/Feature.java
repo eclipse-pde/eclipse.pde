@@ -154,7 +154,7 @@ public class Feature extends VersionableObject implements IFeature {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				String tag = child.getNodeName().toLowerCase();
+				String tag = child.getNodeName().toLowerCase(Locale.ENGLISH);
 				if (tag.equals("description")) { //$NON-NLS-1$
 					IFeatureInfo info = getModel().getFactory().createInfo(
 							IFeature.INFO_DESCRIPTION);
