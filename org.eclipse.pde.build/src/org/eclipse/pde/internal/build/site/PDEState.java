@@ -153,16 +153,21 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		ManifestElement[] versionInfo = ManifestElement.parseHeader(Constants.BUNDLE_VERSION, (String) manifest.get(Constants.BUNDLE_VERSION));
 		if (versionInfo != null) {
 			if (versionInfo[0].getValue().endsWith(PROPERTY_QUALIFIER)) {
-				try {
-					String qualifierInfo = AbstractScriptGenerator.readProperties(bundleLocation.getAbsolutePath(), IPDEBuildConstants.PROPERTIES_FILE, IStatus.INFO).getProperty(PROPERTY_QUALIFIER);
-					//TODO Log a warning when no qualifier has been found in the manifest, or if the qualifierInfo is null
-					if (qualifierInfo != null)
-						manifest.put(PROPERTY_QUALIFIER, qualifierInfo);
-				} catch (CoreException e1) {
-					//Ignore
-				}
+				manifest.put(PROPERTY_QUALIFIER,  getQualifierPropery(bundleLocation.getAbsolutePath()));
 			}
 		}
+	}
+
+	private String getQualifierPropery(String bundleLocation) {
+		String qualifierInfo = null;
+		try {
+			qualifierInfo = AbstractScriptGenerator.readProperties(bundleLocation, IPDEBuildConstants.PROPERTIES_FILE, IStatus.INFO).getProperty(PROPERTY_QUALIFIER);
+		} catch (CoreException e) {
+			//ignore
+		}
+		if (qualifierInfo == null)
+			qualifierInfo = PROPERTY_CONTEXT;
+		return qualifierInfo;
 	}
 
 	//Return a dictionary representing a manifest. The data may result from plugin.xml conversion  
@@ -610,14 +615,8 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		for (int i = 0; i < resolvedBundles.length; i++) {
 			if (resolvedBundles[i].getVersion().getQualifier().equals(PROPERTY_QUALIFIER)) {
 				BundleDescription b = resolvedBundles[i];
-				String qualifierInfo;
-				try {
-					qualifierInfo = AbstractScriptGenerator.readProperties(b.getLocation(), IPDEBuildConstants.PROPERTIES_FILE, IStatus.INFO).getProperty(PROPERTY_QUALIFIER);
-				} catch (CoreException e) {
-					continue;
-				}
 				unqualifiedBundles.add(state.removeBundle(b.getBundleId())); //We keep the removed bundle so we can reinsert it in the state when we are done
-				String newVersion = QualifierReplacer.replaceQualifierInVersion(b.getVersion().toString(), b.getSymbolicName(), qualifierInfo, null);
+				String newVersion = QualifierReplacer.replaceQualifierInVersion(b.getVersion().toString(), b.getSymbolicName(), getQualifierPropery(b.getLocation()), null);
 				
 				//Here it is important to reuse the same bundle id than the bundle we are removing so that we don't loose the information about the classpath
 				BundleDescription newBundle = state.getFactory().createBundleDescription(b.getBundleId(), b.getSymbolicName(), new Version(newVersion), b.getLocation(), b.getRequiredBundles(), b.getHost(), b.getImportPackages(), b.getExportPackages(), null, b.isSingleton());
