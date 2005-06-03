@@ -257,7 +257,9 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
             if (!IdUtil.isValidExtensionPointId(idAttr.getValue())) {
                 String message = NLS.bind(PDEMessages.Builders_Manifest_extensionPointId_value, idAttr.getValue());
                 report(message, getLine(element, idAttr.getName()),
-                        CompilerFlags.ERROR);
+						isValidExtensionPointId30(idAttr.getValue())
+								? CompilerFlags.WARNING
+								: CompilerFlags.ERROR);
             }
         }
 
@@ -283,7 +285,28 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		}
 	}
 		
-	protected void validateTranslatableString(Element element, Attr attr, boolean shouldTranslate) {
+	/**
+	 * Relaxed version of dUtil.isValidExtensionPointId.
+	 * It allows "-" character.
+	 * @param name
+	 * @return
+	 */
+    public static boolean isValidExtensionPointId30(String name) {
+        if (name.length() <= 0) {
+            return false;
+        }
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if ((c < 'A' || 'Z' < c) && (c < 'a' || 'z' < c)
+                    && (c < '0' || '9' < c) && c != '_'
+    					&& c != '-') {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    protected void validateTranslatableString(Element element, Attr attr, boolean shouldTranslate) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_NOT_EXTERNALIZED);
 		if (severity == CompilerFlags.IGNORE)
 			return;
