@@ -60,7 +60,10 @@ public class DescriptionSection extends PDESection {
 
 		fDescEntry = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_DescriptionSection_descLabel, //$NON-NLS-1$
 				SWT.WRAP | SWT.MULTI);
-		fDescEntry.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 200;
+		gd.heightHint = 64;
+		fDescEntry.getText().setLayoutData(gd);
 		fDescEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				setDescriptionText(text.getValue());
