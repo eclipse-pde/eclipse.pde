@@ -249,9 +249,6 @@ public abstract class DependenciesViewPage extends Page {
 			public void run() {
 				handleDoubleClick();
 			}
-
-			public void update(Object object) {
-			}
 		};
 		fOpenAction.setText(PDEUIMessages.DependenciesView_open); //$NON-NLS-1$
 
