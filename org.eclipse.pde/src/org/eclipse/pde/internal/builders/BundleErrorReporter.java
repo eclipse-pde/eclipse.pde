@@ -1033,11 +1033,14 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			if (!isCheckUnresolvedImports()) {
 				return;
 			}
+			
+			int severity = getRequireBundleSeverity(requireBundleElements[i]);
+
 			/* This id does not exist in the PDE target platform */
 			if (!availableBundlesMap.containsKey(requireBundleStmt)) {
 				message = NLS.bind(PDEMessages.BundleErrorReporter_NotExistPDE, requireBundleStmt); //$NON-NLS-1$
 				report(message, getPackageLine(header, requireBundleElements[i]),
-						CompilerFlags.P_UNRESOLVED_IMPORTS);
+						severity);
 				continue;
 			}
 			IPluginModelBase availableModel = (IPluginModelBase) availableBundlesMap
@@ -1046,7 +1049,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				/* This is a fragment */
 				message = NLS.bind(PDEMessages.BundleErrorReporter_IsFragment, requireBundleStmt); //$NON-NLS-1$
 				report(message, getPackageLine(header, requireBundleElements[i]),
-						CompilerFlags.P_UNRESOLVED_IMPORTS);
+						severity);
 				continue;
 			}
 			String requiredVersionRange = requireBundleElements[i]
@@ -1060,11 +1063,24 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				if (!versionRange.isIncluded(new Version(availableVersion))) {
 					message = NLS.bind(PDEMessages.BundleErrorReporter_BundleRangeInvalidInBundleVersion, requireBundleStmt); //$NON-NLS-1$
 					report(message, getPackageLine(header, requireBundleElements[i]),
-							CompilerFlags.P_UNRESOLVED_IMPORTS);
+							severity);
 				}
 
 			}
 		}
+	}
+
+	private int getRequireBundleSeverity(ManifestElement requireBundleElement) {
+		boolean optional = Constants.RESOLUTION_OPTIONAL
+				.equals(requireBundleElement
+						.getDirective(Constants.RESOLUTION_DIRECTIVE))
+				|| "true".equals(requireBundleElement //$NON-NLS-1$
+						.getAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE));
+		int severity = CompilerFlags.getFlag(fProject,
+				CompilerFlags.P_UNRESOLVED_IMPORTS);
+		if (optional && severity == CompilerFlags.ERROR) //$NON-NLS-1$ //$NON-NLS-2$
+			severity = CompilerFlags.WARNING;
+		return severity;
 	}
 
 	private void validateResolutionDirective(IHeader header,
