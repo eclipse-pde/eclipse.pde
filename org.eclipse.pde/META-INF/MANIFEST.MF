@@ -13,9 +13,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.pde.core;visibility:=reexport,
  org.eclipse.core.resources,
  org.eclipse.jdt.core,
- org.eclipse.ant.core,
  org.eclipse.text,
- org.eclipse.core.filebuffers,
- org.eclipse.ui.intro;resolution:=optional,
- org.eclipse.ui.cheatsheets;resolution:=optional
+ org.eclipse.core.filebuffers
 Eclipse-AutoStart: true;exceptions="org.eclipse.pde.internal.content"
