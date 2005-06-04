@@ -153,12 +153,12 @@ public class SourceBlock implements IHyperlinkListener {
 		fTreeViewer.refresh(fSystemNode);
 	}
 
-	private String encodeSourceLocations(Object[] locations) {
+	private String encodeSourceLocations() {
 		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < locations.length; i++) {
+		for (int i = 0; i < fUserLocations.size(); i++) {
 			if (i > 0)
 				buf.append(File.pathSeparatorChar);
-			buf.append(((SourceLocation) locations[i]).getPath().toOSString());
+			buf.append(((SourceLocation) fUserLocations.get(i)).getPath().toOSString());
 		}
 		return buf.toString();
 	}
@@ -173,9 +173,14 @@ public class SourceBlock implements IHyperlinkListener {
 	 */
 	public boolean performOk() {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
-		preferences.setValue(ICoreConstants.P_SOURCE_LOCATIONS, encodeSourceLocations(fUserLocations.toArray()));
+		preferences.setValue(ICoreConstants.P_SOURCE_LOCATIONS, encodeSourceLocations());
 		PDECore.getDefault().getSourceLocationManager().setExtensionLocations(fExtensionLocations);
 		return true;
+	}
+	
+	public void performDefaults() {
+		fUserLocations.clear();
+		fTreeViewer.refresh();
 	}
 
 	protected void handleAdd() {

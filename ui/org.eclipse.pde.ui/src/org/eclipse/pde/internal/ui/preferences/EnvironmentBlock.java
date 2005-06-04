@@ -48,7 +48,6 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 	private TreeSet fWSChoices;
 	private TreeSet fArchChoices;
 	private Combo fJRECombo;
-	//private Button fStrictButton;
 
 	public EnvironmentBlock() {
 		preferences = PDECore.getDefault().getPluginPreferences();
@@ -89,10 +88,11 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 
 	public Control createContents(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
-		container.setLayout(new GridLayout());
+		GridLayout layout = new GridLayout();
+		layout.verticalSpacing = 15;
+		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		//createRuntimeGroup(container);
 		createTargetEnvironmentGroup(container);
 		createJREGroup(container);
 		
@@ -101,17 +101,6 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 		return container;
 	}
 	
-	/*private void createRuntimeGroup(Composite container) {
-		Group group = new Group(container, SWT.NULL);
-		group.setLayout(new GridLayout());
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText("Self-hosting Mode");
-		
-		fStrictButton = new Button(group, SWT.CHECK);
-		fStrictButton.setText("Self-host in strict mode to enforce inter-plugin code access restrictions");
-		fStrictButton.setSelection(preferences.getBoolean(ICoreConstants.STRICT_MODE));
-	}*/
-
 	private void createJREGroup(Composite container) {
 		Group group = new Group(container, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -190,7 +179,6 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		//fStrictButton.setSelection(preferences.getDefaultBoolean(ICoreConstants.STRICT_MODE));
 		fOSCombo.setText(preferences.getDefaultString(OS));
 		fWSCombo.setText(preferences.getDefaultString(WS));
 		fNLCombo.setText(expandLocaleName(preferences.getDefaultString(NL)));

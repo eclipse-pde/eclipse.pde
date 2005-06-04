@@ -199,6 +199,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		fHomeText.setText(ExternalModelManager.computeDefaultPlatformPath());
 		fPluginsBlock.handleReload();
 		fEnvironmentBlock.performDefaults();
+		fSourceBlock.performDefaults();
 		super.performDefaults();
 	}
 
