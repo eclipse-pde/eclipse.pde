@@ -19,7 +19,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -157,7 +156,8 @@ public class LibraryPluginJarsPage extends WizardPage {
 						PDEPluginImages.DESC_JAR_LIB_OBJ);
 			}
 		});
-		fTableViewer.setSorter(new ViewerSorter());
+		// should not sort, bug 98401
+		//fTableViewer.setSorter(new ViewerSorter()); 
 		data = new GridData(GridData.FILL_BOTH);
 		fTableViewer.getControl().setLayoutData(data);
 		fTableViewer.setInput(fJarPaths);

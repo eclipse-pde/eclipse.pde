@@ -122,7 +122,7 @@ public class NewLibraryPluginCreationOperation extends
 			InvocationTargetException, InterruptedException {
 		// copy jars
 		String[] paths = fData.getLibraryPaths();
-		for (int i = 0; i < paths.length; i++) {
+		for (int i = paths.length - 1; i >= 0; i--) {
 			File jarFile = new File(paths[i]);
 			if (fData.isUnzipLibraries()) {
 				importJar(jarFile, project, monitor);
