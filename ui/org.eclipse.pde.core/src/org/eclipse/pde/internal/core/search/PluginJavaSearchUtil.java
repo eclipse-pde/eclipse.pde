@@ -45,21 +45,6 @@ public class PluginJavaSearchUtil {
 		}
 	}
 	
-	public static boolean provideExtensionPoint(IPluginModelBase model, IPlugin[] plugins) {
-		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			String extPoint = extensions[i].getPoint();
-			for (int j = 0; j < plugins.length; j++) {
-				IPluginExtensionPoint[] points = plugins[j].getExtensionPoints();			
-				for (int k = 0; k < points.length; k++) {
-					if (extPoint.equals(points[k].getFullId()))
-						return true;
-				}
-			}
-		}
-		return false;
-	}
-	
 	public static IPackageFragment[] collectPackageFragments(
 		IPluginBase[] plugins,
 		IJavaProject parentProject,

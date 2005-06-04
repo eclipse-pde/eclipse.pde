@@ -80,8 +80,6 @@ public class UnusedDependenciesJob extends Job {
 	
 	private boolean isUnused(IPluginImport plugin, SubProgressMonitor monitor) {
 		IPlugin[] plugins = PluginJavaSearchUtil.getPluginImports(plugin);
-		if (PluginJavaSearchUtil.provideExtensionPoint(fModel, plugins))
-			return false;
 		return !provideJavaClasses(plugins, monitor);
 	}
 	
