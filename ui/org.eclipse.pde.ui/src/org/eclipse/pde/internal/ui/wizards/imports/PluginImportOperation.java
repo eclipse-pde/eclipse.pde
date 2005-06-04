@@ -122,17 +122,16 @@ public class PluginImportOperation extends JarImportOperation {
 					multiStatus.merge(e.getStatus());
 				}
 				if (monitor.isCanceled()) {
+					setClasspaths(new SubProgressMonitor(monitor, 1));
 					throw new OperationCanceledException();
 				}
 			}
-			if (!multiStatus.isOK()) {
-				throw new CoreException(multiStatus);
-			}
-		} finally {
 			setClasspaths(new SubProgressMonitor(monitor, 1));
-			if (!ResourcesPlugin.getWorkspace().isAutoBuilding() && fForceAutobuild) {
+			if (!ResourcesPlugin.getWorkspace().isAutoBuilding() && fForceAutobuild)
 				runBuildJob();
-			}
+			if (!multiStatus.isOK())
+				throw new CoreException(multiStatus);
+		} finally {
 			monitor.done();
 		}
 	}
@@ -145,7 +144,7 @@ public class PluginImportOperation extends JarImportOperation {
 
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					PDEPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, monitor);
+					PDEPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 				} catch (CoreException e) {
 				}
 				return Status.OK_STATUS;
