@@ -84,6 +84,8 @@ public abstract class PluginBase
 		fVersion = bundleDesc.getVersion().toString();
 		fName = state.getPluginName(bundleDesc.getBundleId());
 		fProviderName = state.getProviderName(bundleDesc.getBundleId());
+		if (!state.isLegacy(bundleDesc.getBundleId()))
+			fSchemaVersion = "3.0"; //$NON-NLS-1$
 		loadRuntime(bundleDesc, state);
 		loadImports(bundleDesc);		
 		if (!ignoreExtensions) {

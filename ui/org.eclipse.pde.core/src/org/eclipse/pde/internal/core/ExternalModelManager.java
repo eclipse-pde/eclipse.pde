@@ -120,7 +120,7 @@ public class ExternalModelManager {
 		}
 	}
 	
-	protected void setModels(IPluginModelBase[] models) {
+	public void setModels(IPluginModelBase[] models) {
 		fModels = models;
 	}
 

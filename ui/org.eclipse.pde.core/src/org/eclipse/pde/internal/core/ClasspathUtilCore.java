@@ -128,7 +128,7 @@ public class ClasspathUtilCore {
 				return false;
 			Enumeration keys = manifest.keys();
 			while (keys.hasMoreElements()) {
-				if (keys.nextElement().toString().equals("Bundle-SymbolicName"))
+				if (keys.nextElement().toString().equals("Bundle-SymbolicName")) //$NON-NLS-1$
 					return true;
 			}
 			return false;

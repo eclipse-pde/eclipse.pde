@@ -67,6 +67,7 @@ public class PDEState extends MinimalState {
 		String providerName;
 		String className;
 		boolean hasExtensibleAPI;
+		boolean legacy;
 		String[] libraries;
 		String project;
 	}
@@ -239,6 +240,7 @@ public class PDEState extends MinimalState {
 		info.className	= element.getAttribute("class"); //$NON-NLS-1$
 		info.hasExtensibleAPI = "true".equals(element.getAttribute("hasExtensibleAPI")); //$NON-NLS-1$ //$NON-NLS-2$
 		info.project = element.getAttribute("project"); //$NON-NLS-1$
+		info.legacy = "true".equals(element.getAttribute("legacy")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		NodeList libs = element.getChildNodes(); //$NON-NLS-1$
 		ArrayList list = new ArrayList(libs.getLength());
@@ -499,7 +501,12 @@ public class PDEState extends MinimalState {
 		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? false : info.hasExtensibleAPI;		
 	}
-	
+
+	public boolean isLegacy(long bundleID) {
+		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
+		return info == null ? false : info.legacy;		
+	}
+
 	public String getPluginName(long bundleID) {
 		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? null : info.name;
@@ -601,6 +608,8 @@ public class PDEState extends MinimalState {
 					element.setAttribute("name", plugin.getName()); //$NON-NLS-1$
 				if (plugin instanceof IPlugin && ClasspathUtilCore.hasExtensibleAPI((IPlugin)plugin))
 					element.setAttribute("hasExtensibleAPI", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+				if (plugin.getSchemaVersion() == null)
+					element.setAttribute("legacy", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 				IPluginLibrary[] libraries = plugin.getLibraries();
 				for (int j = 0; j < libraries.length; j++) {
 						Element lib = doc.createElement("library"); //$NON-NLS-1$

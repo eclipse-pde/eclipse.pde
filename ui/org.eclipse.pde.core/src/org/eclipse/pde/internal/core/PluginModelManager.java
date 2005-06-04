@@ -407,8 +407,6 @@ public class PluginModelManager implements IAdaptable {
 	
 	public void setState(PDEState state) {
 		fState = state;
-		fExternalManager.setModels(state.getTargetModels());
-		addWorkspaceBundlesToNewState();
 	}
 
 	private void addToTable(IPluginModelBase[] models, boolean workspace) {

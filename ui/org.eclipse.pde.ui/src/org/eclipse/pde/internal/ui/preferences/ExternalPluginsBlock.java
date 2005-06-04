@@ -20,6 +20,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
@@ -267,12 +268,25 @@ public class ExternalPluginsBlock {
 				savePreferences();
 				if (fReloaded)
 					EclipseHomeInitializer.resetEclipseHomeVariable();
+				if (fReloaded) {
+					IPluginModelBase[] models = PDECore.getDefault().getModelManager().getWorkspaceModels();
+					for (int i = 0; i < models.length; i++) {
+						BundleDescription bundle = models[i].getBundleDescription();
+						if (bundle == null)
+							continue;
+						BundleDescription[] conflicts = fCurrentState.getState().getBundles(bundle.getSymbolicName());
+						for (int j = 0; j < conflicts.length; j++)
+							fCurrentState.getState().removeBundle(conflicts[j]);
+						fCurrentState.addBundle(models[i], false);
+					}
+					if (models.length > 0)
+						fCurrentState.resolveState(true);
+					PDECore.getDefault().getExternalModelManager().setModels(fCurrentState.getTargetModels());
+					PDECore.getDefault().getModelManager().setState(fCurrentState);
+					PDECore.getDefault().getFeatureModelManager().targetReloaded();				
+				}
 				updateModels();
 				computeDelta();
-				if (fReloaded){
-					PDECore.getDefault().getFeatureModelManager()
-							.targetReloaded();
-				}
 			}
 		});
 	}
@@ -300,10 +314,6 @@ public class ExternalPluginsBlock {
 		while (iter.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase) iter.next();
 			model.setEnabled(fTablePart.getTableViewer().getChecked(model));
-		}
-
-		if (fReloaded) {
-			PDECore.getDefault().getModelManager().setState(fCurrentState);
 		}
 	}
 	
