@@ -274,12 +274,16 @@ public class RegistryBrowser extends ViewPart
 	public void bundleChanged(BundleEvent event) {
 		if (treeViewer == null)
 			return;
+		Tree tree = treeViewer.getTree();
+		if (tree.isDisposed())
+			return;
+		
 		final RegistryBrowserContentProvider provider = ((RegistryBrowserContentProvider) treeViewer.getContentProvider());
 		final IPluginDescriptor descriptor = Platform.getPluginRegistry().getPluginDescriptor(event.getBundle().getSymbolicName());
 		if (descriptor == null)
 			return;
 		final PluginObjectAdapter adapter = new PluginObjectAdapter(descriptor);
-		treeViewer.getTree().getDisplay().asyncExec(new Runnable() {
+		tree.getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				if (treeViewer == null || treeViewer.getTree() == null || treeViewer.getTree().isDisposed())
 					return;
