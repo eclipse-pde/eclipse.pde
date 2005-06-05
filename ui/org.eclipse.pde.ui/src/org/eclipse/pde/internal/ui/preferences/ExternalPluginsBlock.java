@@ -51,14 +51,15 @@ public class ExternalPluginsBlock {
 
 	
 	class ReloadOperation implements IRunnableWithProgress {
-		private URL[] pluginPaths;
+		private String location;
 		
-		public ReloadOperation(URL[] pluginPaths) {
-			 this.pluginPaths = pluginPaths;
+		public ReloadOperation(String platformPath) {
+			this.location = platformPath;
 		}
 			
 		public void run(IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {	
+			URL[] pluginPaths = PluginPathFinder.getPluginPaths(location);
 			fCurrentState = new PDEState(pluginPaths, true, monitor);
 			fModels = fCurrentState.getModels();		
 		}
@@ -228,8 +229,7 @@ public class ExternalPluginsBlock {
 	protected void handleReload() {
 		String platformPath = fPage.getPlatformPath();
 		if (platformPath != null && platformPath.length() > 0) {
-			URL[] pluginPaths = PluginPathFinder.getPluginPaths(platformPath);
-			ReloadOperation op = new ReloadOperation(pluginPaths);
+			ReloadOperation op = new ReloadOperation(platformPath);
 			try {
 				PlatformUI.getWorkbench().getProgressService().run(true, false, op);
 			} catch (InvocationTargetException e) {
