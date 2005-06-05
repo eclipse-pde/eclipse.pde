@@ -54,6 +54,7 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 	private Combo fJRECombo;
 	
 	private static boolean LOCALES_INITIALIZED = false;
+	private String fDefaultJRE;
 
 	public EnvironmentBlock() {
 		preferences = PDECore.getDefault().getPluginPreferences();
@@ -149,12 +150,8 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 		fJRECombo = new Combo(group, SWT.SINGLE|SWT.READ_ONLY);
 		fJRECombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fJRECombo.setItems(LauncherUtils.getVMInstallNames());
-		
-		String vm = preferences.getString(ICoreConstants.TARGET_JRE);
-		if (vm.length() == 0 || fJRECombo.indexOf(vm) == -1)
-			fJRECombo.setText(LauncherUtils.getDefaultVMInstallName());
-		else 
-			fJRECombo.setText(vm);
+		fDefaultJRE = LauncherUtils.getDefaultVMInstallName();
+		fJRECombo.setText(fDefaultJRE);
 		
 		label = new Label(group, SWT.WRAP);
 		label.setText(PDEUIMessages.EnvironmentBlock_jreNote); //$NON-NLS-1$
@@ -228,9 +225,12 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 	}
 	
 	private void applyJREGroup() {
-		preferences.setValue(ICoreConstants.TARGET_JRE, fJRECombo.getText());
 		try {
-			JavaRuntime.setDefaultVMInstall(LauncherUtils.getVMInstall(fJRECombo.getText()), null);
+			if (!fDefaultJRE.equals(LauncherUtils.getDefaultVMInstallName()))
+				return;
+			
+			if (!LauncherUtils.getDefaultVMInstallName().equals(fJRECombo.getText()))
+				JavaRuntime.setDefaultVMInstall(LauncherUtils.getVMInstall(fJRECombo.getText()), null);
 		} catch (CoreException e) {
 		}
 	}
