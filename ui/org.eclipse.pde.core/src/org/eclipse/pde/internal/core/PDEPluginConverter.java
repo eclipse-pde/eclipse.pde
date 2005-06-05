@@ -79,11 +79,13 @@ public class PDEPluginConverter {
 				tracker.open();
 				PluginConverter converter = (PluginConverter) tracker.getService();
 				converter.writeManifest(new File(file.getLocation().toOSString()), prop, false);
+				file.refreshLocal(1, null);
 				tracker.close();
 			} catch (FileNotFoundException e) {
 			} catch (IOException e) {
 			} catch (BundleException e) {
 			} catch (PluginConversionException e) {
+			} catch (CoreException e) {
 			} finally {
 				try {
 					if (manifestStream != null)
