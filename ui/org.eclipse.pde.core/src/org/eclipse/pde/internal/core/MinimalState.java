@@ -462,7 +462,7 @@ public class MinimalState {
 			throw new IllegalArgumentException();
 		if (unsatisfied instanceof ImportPackageSpecification)
 			return "Missing imported package: " + toString(unsatisfied); //$NON-NLS-1$
-		if (unsatisfied instanceof BundleSpecification)
+		if (unsatisfied instanceof BundleSpecification && !((BundleSpecification)unsatisfied).isOptional())
 			return "Missing required plug-in: " + toString(unsatisfied); //$NON-NLS-1$
 		if (unsatisfied instanceof HostSpecification)
 			return "Missing Fragment Host: " + toString(unsatisfied); //$NON-NLS-1$
