@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -47,6 +48,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 public class FeatureImportWizardDetailedPage extends WizardPage {
 
 	private FeatureImportWizardFirstPage fFirstPage;
+	private boolean fIsOtherLocation;
 	private IPath fDropLocation;
 	private CheckboxTableViewer fFeatureViewer;
 	private TablePart fTablePart;
@@ -86,13 +88,16 @@ public class FeatureImportWizardDetailedPage extends WizardPage {
 		setDescription(PDEUIMessages.FeatureImportWizard_DetailedPage_desc); //$NON-NLS-1$
 
 		fFirstPage = firstPage;
+		fIsOtherLocation = false;
 		fDropLocation = null;
 		fTablePart = new TablePart(PDEUIMessages.FeatureImportWizard_DetailedPage_featureList); //$NON-NLS-1$
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
-	private void initializeFields(IPath dropLocation) {
-		if (!dropLocation.equals(this.fDropLocation)) {
+	private void initializeFields(boolean isOtherLocation, IPath dropLocation) {
+		if (isOtherLocation != fIsOtherLocation
+				|| !dropLocation.equals(this.fDropLocation)) {
+			this.fIsOtherLocation = fFirstPage.isOtherLocation();
 			this.fDropLocation = dropLocation;
 			fModels = null;
 		}
@@ -135,7 +140,7 @@ public class FeatureImportWizardDetailedPage extends WizardPage {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
-			initializeFields(fFirstPage.getDropLocation());
+			initializeFields(fFirstPage.isOtherLocation(), fFirstPage.getDropLocation());
 		}
 	}
 
@@ -185,10 +190,21 @@ public class FeatureImportWizardDetailedPage extends WizardPage {
 						IProgressMonitor.UNKNOWN);
 
 					try {
-						MultiStatus errors =
-							doLoadFeatures(result, createPath(home), monitor);
-						if (errors != null && errors.getChildren().length > 0) {
-							PDEPlugin.log(errors);
+						if (!fIsOtherLocation) {
+							IFeatureModel[] allModels = PDECore.getDefault()
+									.getFeatureModelManager().getModels();
+							for (int i = 0; i < allModels.length; i++) {
+								if (allModels[i].getUnderlyingResource() == null) {
+									result.add(allModels[i]);
+								}
+							}
+						} else {
+							MultiStatus errors = doLoadFeatures(result,
+									createPath(home), monitor);
+							if (errors != null
+									&& errors.getChildren().length > 0) {
+								PDEPlugin.log(errors);
+							}
 						}
 						fModels =
 							(IFeatureModel[]) result.toArray(
