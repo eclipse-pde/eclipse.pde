@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -61,6 +62,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	private boolean fNeedsReload = false;
 	private String fOriginalText;
 	private int fIndex;
+	private TabFolder fTabFolder;
 	
 	/**
 	 * MainPreferencePage constructor comment.
@@ -130,15 +132,27 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		});
 		
 		
-		TabFolder folder = new TabFolder(container, SWT.NONE);
+		fTabFolder = new TabFolder(container, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 3;
-		folder.setLayoutData(gd);
+		fTabFolder.setLayoutData(gd);
 		
-		createPluginsTab(folder);
-		createEnvironmentTab(folder);
-		createSourceTab(folder);
-		folder.setSelection(fIndex);
+		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+			public void run() {	
+			createPluginsTab(fTabFolder);
+			createEnvironmentTab(fTabFolder);
+			createSourceTab(fTabFolder);
+			fTabFolder.setSelection(fIndex);
+			}
+		});
+		
+		fTabFolder.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (fTabFolder.getSelectionIndex() == ENVIRONMENT_INDEX) {
+					fEnvironmentBlock.updateChoices();
+				}
+			}
+		});
 		
 		Dialog.applyDialogFont(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.TARGET_PLATFORM_PREFERENCE_PAGE);

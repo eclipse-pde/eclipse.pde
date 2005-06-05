@@ -10,20 +10,24 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.IEnvironmentVariables;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
 import org.eclipse.swt.SWT;
@@ -48,6 +52,8 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 	private TreeSet fWSChoices;
 	private TreeSet fArchChoices;
 	private Combo fJRECombo;
+	
+	private static boolean LOCALES_INITIALIZED = false;
 
 	public EnvironmentBlock() {
 		preferences = PDECore.getDefault().getPluginPreferences();
@@ -73,10 +79,38 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 		addExtraChoices(fArchChoices, preferences.getString(ARCH_EXTRA));
 		
 		fNLChoices = new TreeSet();
+		if (LOCALES_INITIALIZED) {
+			initializeAllLocales();
+		} else {
+			fNLChoices.add(expandLocaleName(preferences.getString(NL)));
+		}
+	}
+	
+	protected void updateChoices() {
+		if (LOCALES_INITIALIZED)
+			return;
+		final String current = fNLCombo.getText();
+		try {
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) {
+					initializeAllLocales();
+					LOCALES_INITIALIZED = true;
+				}
+			});
+		} catch (InvocationTargetException e) {
+			PDEPlugin.log(e);
+		} catch (InterruptedException e) {
+			PDEPlugin.log(e);
+		}
+		fNLCombo.setItems((String[])fNLChoices.toArray(new String[fNLChoices.size()]));
+		fNLCombo.setText(current);
+	}
+	
+	private void initializeAllLocales() {
 		String[] nl = getLocales();
 		for (int i = 0; i < nl.length; i++)
 			fNLChoices.add(nl[i]);
-		addExtraChoices(fNLChoices, preferences.getString(NL_EXTRA));
+		addExtraChoices(fNLChoices, preferences.getString(NL_EXTRA));	
 	}
 	
 	private void addExtraChoices(Set set, String preference) {
@@ -275,7 +309,11 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 		String[] result = new String[locales.length];
 		for (int i = 0; i < locales.length; i++) {
 			Locale locale = locales[i];
-			result[i] = locale.toString() + " - " + locale.getDisplayName(); //$NON-NLS-1$
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(locale.toString());
+			buffer.append(" - "); //$NON-NLS-1$
+			buffer.append(locale.getDisplayName());
+			result[i] = buffer.toString();
 		}
 		return result;
 	}
