@@ -10,17 +10,38 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Properties;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.*;
-import org.eclipse.jdt.launching.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
+import org.eclipse.jdt.launching.ExecutionArguments;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.VMRunnerConfiguration;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ClasspathHelper;
+import org.eclipse.pde.internal.core.ExternalModelManager;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDelegate 
 			implements ILauncherSettings {
@@ -33,13 +54,32 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 		ILaunchConfiguration configuration,
 		String mode,
 		ILaunch launch,
-		IProgressMonitor monitor)
+		final IProgressMonitor monitor)
 		throws CoreException {
 		try {
 			fConfigDir = null;
 			monitor.beginTask("", 5); //$NON-NLS-1$
 			
 			String workspace = configuration.getAttribute(LOCATION + "0", LauncherUtils.getDefaultPath().append("runtime-workbench-workspace").toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
+			File file = new File(workspace, ".metadata/.lock"); //$NON-NLS-1$
+			if (file.exists() && file.isFile()) {
+				monitor.setCanceled(true);
+				LauncherUtils.getDisplay().syncExec(new Runnable() {
+					public void run() {
+						MessageDialog dialog = new MessageDialog(
+								LauncherUtils.getDisplay().getActiveShell(), 
+								PDEUIMessages.JUnitLaunchConfiguration_cantLock, 
+								null,
+								PDEUIMessages.JUnitLaunchConfiguration_cantLockMessage, 
+								MessageDialog.ERROR, 
+								new String[]{IDialogConstants.OK_LABEL}, 
+								0);
+						dialog.open();
+					}
+				});
+				return;
+			}
+			
 			// Clear workspace and prompt, if necessary
 			if (!LauncherUtils.clearWorkspace(configuration, workspace, new SubProgressMonitor(monitor, 1))) {
 				monitor.setCanceled(true);

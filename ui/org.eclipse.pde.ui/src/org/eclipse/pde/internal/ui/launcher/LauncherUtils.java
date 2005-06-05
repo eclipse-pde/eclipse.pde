@@ -337,7 +337,7 @@ public class LauncherUtils {
 		return result[0];
 	}
 	
-	private static Display getDisplay() {
+	public static Display getDisplay() {
 		Display display = Display.getCurrent();
 		if (display == null) {
 			display = Display.getDefault();
