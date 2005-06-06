@@ -383,8 +383,8 @@ public class FeatureSpecSection extends PDESection {
 
 	private boolean verifySetVersion(IFeature feature, String value) {
 		try {
-			PluginVersionIdentifier pvi = new PluginVersionIdentifier(value);
-			feature.setVersion(pvi.toString());
+			if (PluginVersionIdentifier.validateVersion(value).isOK())
+				feature.setVersion(value);
 		} catch (Exception e) {
 			return false;
 		}
@@ -393,8 +393,8 @@ public class FeatureSpecSection extends PDESection {
 
 	private boolean verifySetVersion(IFeatureImport featureImport, String value) {
 		try {
-			PluginVersionIdentifier pvi = new PluginVersionIdentifier(value);
-			featureImport.setVersion(pvi.toString());
+			if (PluginVersionIdentifier.validateVersion(value).isOK())
+				featureImport.setVersion(value);
 		} catch (Exception e) {
 			return false;
 		}

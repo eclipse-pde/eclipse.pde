@@ -11,7 +11,6 @@
 
 package org.eclipse.pde.internal.ui.wizards.feature;
 
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Composite;
@@ -52,13 +51,7 @@ public class FeatureSpecPage extends BaseFeatureSpecPage {
 	public FeatureData getFeatureData() {
 		FeatureData data = new FeatureData();
 		data.id = featureIdText.getText();
-		try {
-			PluginVersionIdentifier pvi = new PluginVersionIdentifier(featureVersionText
-					.getText());
-			data.version = pvi.toString();
-		} catch (NumberFormatException e) {
-			data.version = featureVersionText.getText();
-		}
+		data.version = featureVersionText.getText();
 		data.provider = featureProviderText.getText();
 		data.name = featureNameText.getText();
 		data.library = getInstallHandlerLibrary();
