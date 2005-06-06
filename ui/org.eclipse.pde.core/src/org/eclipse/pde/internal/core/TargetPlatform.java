@@ -10,18 +10,41 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.TreeSet;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.feature.*;
-import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.update.configurator.*;
+import org.eclipse.update.configurator.ConfiguratorUtils;
+import org.eclipse.update.configurator.IPlatformConfiguration;
 
 public class TargetPlatform implements IEnvironmentVariables {
 
@@ -32,7 +55,10 @@ public class TargetPlatform implements IEnvironmentVariables {
 		private IPath path;
 
 		public LocalSite(IPath path) {
-			this.path = path;
+			if (path.getDevice() != null)
+				this.path = path.setDevice(path.getDevice().toUpperCase(Locale.ENGLISH));
+			else
+				this.path = path;
 			plugins = new ArrayList();
 		}
 
@@ -186,7 +212,8 @@ public class TargetPlatform implements IEnvironmentVariables {
 		IPluginModelBase bootModel = (IPluginModelBase)pluginMap.get(BOOT_ID);	
 		URL configURL = new URL("file:" + configFile.getPath()); //$NON-NLS-1$
 		createConfigurationEntries(platformConfiguration, bootModel, sites);
-		createFeatureEntries(platformConfiguration, pluginMap, primaryFeatureId);
+		if (primaryFeatureId != null)
+			createFeatureEntries(platformConfiguration, pluginMap, primaryFeatureId);
 		platformConfiguration.refresh();
 		platformConfiguration.save(configURL);
 
@@ -270,91 +297,33 @@ public class TargetPlatform implements IEnvironmentVariables {
 	private static void createFeatureEntries(
 		IPlatformConfiguration config,
 		Map pluginMap,
-		String primaryFeatureId)
+		String brandingPluginID)
 		throws MalformedURLException {
-		IPath targetPath = ExternalModelManager.getEclipseHome();
 
-		if (primaryFeatureId == null)
-			return;
 		// We have primary feature Id.
-		IFeatureModel featureModel =
-			loadPrimaryFeatureModel(targetPath, primaryFeatureId);
+		IFeatureModel featureModel = PDECore.getDefault().getFeatureModelManager().findFeatureModel(brandingPluginID);
 		if (featureModel == null)
 			return;
+		
 		IFeature feature = featureModel.getFeature();
 		String featureVersion = feature.getVersion();
-		String pluginId = primaryFeatureId;
-		IPluginModelBase primaryPlugin = (IPluginModelBase)pluginMap.get(pluginId);
+		IPluginModelBase primaryPlugin = (IPluginModelBase)pluginMap.get(brandingPluginID);
 		if (primaryPlugin == null)
 			return;
+		
 		URL pluginURL = new URL("file:" + primaryPlugin.getInstallLocation()); //$NON-NLS-1$
 		URL[] root = new URL[] { pluginURL };
 		IPlatformConfiguration.IFeatureEntry featureEntry =
 			config.createFeatureEntry(
-				primaryFeatureId,
+				brandingPluginID,
 				featureVersion,
-				pluginId,
+				brandingPluginID,
 				primaryPlugin.getPluginBase().getVersion(),
 				true,
 				null,
 				root);
 		config.configureFeatureEntry(featureEntry);
-		featureModel.dispose();
 	}
-
-	private static IFeatureModel loadPrimaryFeatureModel(
-		IPath targetPath,
-		String featureId) {
-		File mainFeatureDir = targetPath.append("features").toFile(); //$NON-NLS-1$
-		if (mainFeatureDir.exists() == false || !mainFeatureDir.isDirectory())
-			return null;
-		File[] featureDirs = mainFeatureDir.listFiles();
-
-		PluginVersionIdentifier bestVid = null;
-		File bestDir = null;
-
-		for (int i = 0; i < featureDirs.length; i++) {
-			File featureDir = featureDirs[i];
-			String name = featureDir.getName();
-			if (featureDir.isDirectory() && name.startsWith(featureId)) {
-				int loc = name.lastIndexOf("_"); //$NON-NLS-1$
-				if (loc == -1)
-					continue;
-				String version = name.substring(loc + 1);
-				PluginVersionIdentifier vid =
-					new PluginVersionIdentifier(version);
-				if (bestVid == null || vid.isGreaterThan(bestVid)) {
-					bestVid = vid;
-					bestDir = featureDir;
-				}
-			}
-		}
-		if (bestVid == null)
-			return null;
-		// We have a feature and know the version
-		File manifest = new File(bestDir, "feature.xml"); //$NON-NLS-1$
-		ExternalFeatureModel model = new ExternalFeatureModel();
-		model.setInstallLocation(bestDir.getAbsolutePath());
-
-		InputStream stream = null;
-		boolean error = false;
-		try {
-			stream = new FileInputStream(manifest);
-			model.load(stream, false);
-		} catch (Exception e) {
-			error = true;
-		}
-		if (stream != null) {
-			try {
-				stream.close();
-			} catch (IOException e) {
-			}
-		}
-		if (error || !model.isLoaded())
-			return null;
-		return model;
-	}
-
 
 	public static String getOS() {
 		String value = getProperty(OS);
