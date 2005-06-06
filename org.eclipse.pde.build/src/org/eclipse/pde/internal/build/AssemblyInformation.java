@@ -122,11 +122,15 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		// the features that are contained into this config
 		private ArrayList features = new ArrayList(7);
 		// indicate whether root files needs to be copied and where they are coming from
-		private Collection rootFileProviders = new HashSet(7);
+		private LinkedList rootFileProviders = new LinkedList();
 
 		public void addRootFileProvider(IFeature feature) {
+			if (rootFileProviders.contains(feature))
+				return;
 			for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
 				BuildTimeFeature featureDescriptor = (BuildTimeFeature) iter.next();
+				if (feature == featureDescriptor)
+					return;
 				if (((BuildTimeFeature) feature).getFeatureIdentifier().equals(featureDescriptor.getFeatureIdentifier()) && ((BuildTimeFeature) feature).getFeatureVersion().equals(featureDescriptor.getFeatureVersion()))
 					return;
 			}
