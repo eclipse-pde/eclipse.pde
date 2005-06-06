@@ -82,7 +82,14 @@ public class JavaElementChangeListener implements IElementChangedListener {
 		boolean interestingElement = element instanceof IPackageFragment
 				|| element instanceof IPackageFragmentRoot;
 
-		return interestingElement && interestingKind;
+		if (interestingElement && interestingKind)
+			return true;
+		
+		if (kind == IJavaElementDelta.CHANGED && element instanceof IPackageFragmentRoot) {
+			IPackageFragmentRoot root = (IPackageFragmentRoot)element;
+			return root.isArchive();
+		}
+		return false;
 	}
 	
 	private boolean ignoreDelta(IJavaElementDelta delta) {
