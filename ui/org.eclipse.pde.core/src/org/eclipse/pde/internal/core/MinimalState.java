@@ -103,12 +103,13 @@ public class MinimalState {
 		}
 	}
 	
-	public void addBundle(IPluginModelBase model, long bundleId) {
+	public BundleDescription addBundle(IPluginModelBase model, long bundleId) {
 		try {
-			addBundle(new File(model.getInstallLocation()), false, -1);
+			return addBundle(new File(model.getInstallLocation()), false, -1);
 		} catch (PluginConversionException e) {
 		} catch (CoreException e) {
 		}
+		return null;
 	}
 
 	public BundleDescription addBundle(Dictionary manifest, File bundleLocation, boolean keepLibraries, long bundleId) {
