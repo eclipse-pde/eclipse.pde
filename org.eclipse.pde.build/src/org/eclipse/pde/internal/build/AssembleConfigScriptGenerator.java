@@ -34,7 +34,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	protected Collection rootFileProviders;
 	protected Properties pluginsPostProcessingSteps;
 	protected Properties featuresPostProcessingSteps;
-	protected ArrayList addedByPermissions;	//contains the list of files and folders that have been added to an archive by permission management
+	protected ArrayList addedByPermissions = new ArrayList();	//contains the list of files and folders that have been added to an archive by permission management
 	
 	private static final String PROPERTY_SOURCE = "source"; //$NON-NLS-1$
 	private static final String PROPERTY_ELEMENT_NAME = "elementName"; //$NON-NLS-1$
@@ -605,13 +605,12 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printZipTask(Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, rootFiles);
 	}
 
-	private FileSet[] generatePermissions(boolean zip) {
+	protected FileSet[] generatePermissions(boolean zip) {
 		String configInfix = configInfo.toString("."); //$NON-NLS-1$
 		String prefixPermissions = ROOT_PREFIX + configInfix + '.' + PERMISSIONS + '.';
 		String commonPermissions = ROOT_PREFIX + PERMISSIONS + '.';
 		ArrayList fileSets = new ArrayList();
-		addedByPermissions = new ArrayList();
-		
+
 		for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
 			Properties featureProperties = null;
 			try {

@@ -86,4 +86,9 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 	protected void generateGatherSourceCalls() {
 		//In the packager, we do not gather source
 	}
+	
+	protected FileSet[] generatePermissions(boolean zip) {
+		//In the packager there is nothing to do since, the features we are packaging are pre-built and do not have a build.properties
+		return new FileSet[0];
+	}
 }
