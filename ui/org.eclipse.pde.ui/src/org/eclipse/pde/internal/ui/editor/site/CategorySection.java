@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -48,6 +50,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.build.BuildSiteJob;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.TreeSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TreePart;
@@ -65,13 +68,14 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.part.FileEditorInput;
 
 public class CategorySection extends TreeSection implements
 		IFeatureModelListener {
@@ -395,11 +399,17 @@ public class CategorySection extends TreeSection implements
 		if (selected instanceof SiteFeatureAdapter) {
 			IFeature feature = findFeature(((SiteFeatureAdapter) selected).feature);
 			if (feature != null) {
-				IFile file = (IFile) feature.getModel().getUnderlyingResource();
-				if (file != null && file.exists()) {
-					IWorkbenchPage page = PDEPlugin.getActivePage();
+				if (feature != null) {
+					IEditorInput input = null;
+					IResource resource = feature.getModel().getUnderlyingResource();
+					if (resource != null)
+						input = new FileEditorInput((IFile) resource);
+					else
+						input = new SystemFileEditorInput(new File(feature
+								.getModel().getInstallLocation(), "feature.xml")); //$NON-NLS-1$
 					try {
-						IDE.openEditor(page, file, true);
+						IDE.openEditor(PDEPlugin.getActivePage(), input,
+								PDEPlugin.FEATURE_EDITOR_ID, true);
 					} catch (PartInitException e) {
 					}
 				}
