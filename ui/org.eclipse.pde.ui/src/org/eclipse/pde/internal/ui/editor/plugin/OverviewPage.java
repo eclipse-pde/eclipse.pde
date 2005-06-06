@@ -288,7 +288,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			IRunnableWithProgress op = new CreateManifestOperation(model);
 			IProgressService service = PlatformUI.getWorkbench().getProgressService();
 			editor.doSave(null);
-			service.runInUI(service, op, model.getUnderlyingResource().getProject());
+			service.runInUI(service, op, PDEPlugin.getWorkspace().getRoot());
             updateBuildProperties();
 		} catch (InvocationTargetException e) {
 			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OverviewPage_error, e.getCause().getMessage()); //$NON-NLS-1$
