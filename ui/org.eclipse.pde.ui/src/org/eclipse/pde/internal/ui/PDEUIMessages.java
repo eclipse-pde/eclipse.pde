@@ -1963,8 +1963,4 @@ public class PDEUIMessages extends NLS {
 	public static String OverviewPage_buildTitle;
 
 	public static String OverviewPage_buildQuestion;
-
-	public static String JUnitLaunchConfiguration_cantLock;
-
-	public static String JUnitLaunchConfiguration_cantLockMessage;
 }

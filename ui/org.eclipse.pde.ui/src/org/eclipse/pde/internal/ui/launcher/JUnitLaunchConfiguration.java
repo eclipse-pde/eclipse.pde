@@ -5,23 +5,48 @@ package org.eclipse.pde.internal.ui.launcher;
  * All Rights Reserved.
  */
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration;
-import org.eclipse.jdt.launching.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jdt.launching.ExecutionArguments;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.SocketUtil;
+import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.update.configurator.*;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ClasspathHelper;
+import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEState;
+import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.update.configurator.ConfiguratorUtils;
 
 /**
  * Launch configuration delegate for a plain JUnit test.
@@ -49,24 +74,6 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			monitor.worked(1);
 			
 			String workspace = configuration.getAttribute(LOCATION + "0", getDefaultWorkspace(configuration)); //$NON-NLS-1$
-			File file = new File(workspace, ".metadata/.lock"); //$NON-NLS-1$
-			if (file.exists() && file.isFile()) {
-				monitor.setCanceled(true);
-				LauncherUtils.getDisplay().syncExec(new Runnable() {
-					public void run() {
-						MessageDialog dialog = new MessageDialog(
-								LauncherUtils.getDisplay().getActiveShell(), 
-								PDEUIMessages.JUnitLaunchConfiguration_cantLock, 
-								null,
-								PDEUIMessages.JUnitLaunchConfiguration_cantLockMessage, 
-								MessageDialog.ERROR, 
-								new String[]{IDialogConstants.OK_LABEL}, 
-								0);
-						dialog.open();
-					}
-				});
-				return;
-			}
 			if (!LauncherUtils.clearWorkspace(configuration, workspace, new SubProgressMonitor(monitor, 1))) {
 				monitor.setCanceled(true);
 				return;
@@ -199,15 +206,27 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		programArgs.add(targetWorkspace);
 		
 		// Create the platform configuration for the runtime workbench
-		String brandingPlugin = LauncherUtils.getBrandingPluginID(configuration);
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
+			String productID = LauncherUtils.getProductID(configuration);
 			LauncherUtils.createConfigIniFile(configuration,
-					brandingPlugin, pluginMap, getConfigDir(configuration));
+					productID, pluginMap, getConfigDir(configuration));
+			TargetPlatform.createPlatformConfigurationArea(
+					pluginMap,
+					getConfigDir(configuration),
+					LauncherUtils.getContributingPlugin(productID));
+		} else {
+			TargetPlatform.createPlatformConfigurationArea(
+					pluginMap,
+					getConfigDir(configuration),
+					LauncherUtils.getPrimaryPlugin());
+			// Pre-OSGi platforms need the location of org.eclipse.core.boot specified
+			IPluginModelBase bootModel = (IPluginModelBase)pluginMap.get("org.eclipse.core.boot"); //$NON-NLS-1$
+			String bootPath = LauncherUtils.getBootPath(bootModel);
+			if (bootPath != null && !bootPath.endsWith(".jar")) { //$NON-NLS-1$
+				programArgs.add("-boot"); //$NON-NLS-1$
+				programArgs.add("file:" + bootPath); //$NON-NLS-1$
+			}			
 		}
-		TargetPlatform.createPlatformConfigurationArea(
-			pluginMap,
-			getConfigDir(configuration),
-			brandingPlugin);
 		
 		programArgs.add("-configuration"); //$NON-NLS-1$
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
@@ -215,16 +234,6 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		else
 			programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).append("platform.cfg").toString()); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			// Pre-OSGi platforms need the location of org.eclipse.core.boot specified
-			IPluginModelBase bootModel = (IPluginModelBase)pluginMap.get("org.eclipse.core.boot"); //$NON-NLS-1$
-			String bootPath = LauncherUtils.getBootPath(bootModel);
-			if (bootPath != null && !bootPath.endsWith(".jar")) { //$NON-NLS-1$
-				programArgs.add("-boot"); //$NON-NLS-1$
-				programArgs.add("file:" + bootPath); //$NON-NLS-1$
-			}
-		}
-
 		// Specify the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime())

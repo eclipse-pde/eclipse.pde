@@ -32,8 +32,6 @@ import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.ExternalModelManager;
@@ -61,25 +59,6 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 			monitor.beginTask("", 5); //$NON-NLS-1$
 			
 			String workspace = configuration.getAttribute(LOCATION + "0", LauncherUtils.getDefaultPath().append("runtime-workbench-workspace").toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
-			File file = new File(workspace, ".metadata/.lock"); //$NON-NLS-1$
-			if (file.exists() && file.isFile()) {
-				monitor.setCanceled(true);
-				LauncherUtils.getDisplay().syncExec(new Runnable() {
-					public void run() {
-						MessageDialog dialog = new MessageDialog(
-								LauncherUtils.getDisplay().getActiveShell(), 
-								PDEUIMessages.JUnitLaunchConfiguration_cantLock, 
-								null,
-								PDEUIMessages.JUnitLaunchConfiguration_cantLockMessage, 
-								MessageDialog.ERROR, 
-								new String[]{IDialogConstants.OK_LABEL}, 
-								0);
-						dialog.open();
-					}
-				});
-				return;
-			}
-			
 			// Clear workspace and prompt, if necessary
 			if (!LauncherUtils.clearWorkspace(configuration, workspace, new SubProgressMonitor(monitor, 1))) {
 				monitor.setCanceled(true);
@@ -184,34 +163,39 @@ public class WorkbenchLaunchConfigurationDelegate extends LaunchConfigurationDel
 			if (pluginMap == null) 
 				return null;
 				
-			String brandingPlugin = LauncherUtils.getBrandingPluginID(configuration);
 			if (isOSGI) {
+				String productID = LauncherUtils.getProductID(configuration);
 				Properties prop = LauncherUtils.createConfigIniFile(configuration,
-						brandingPlugin, pluginMap, getConfigDir(configuration));
+						productID, pluginMap, getConfigDir(configuration));
 				showSplash = prop.containsKey("osgi.splashPath") || prop.containsKey("splashLocation"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			TargetPlatform.createPlatformConfigurationArea(
-					pluginMap,
-					getConfigDir(configuration),
-					brandingPlugin);
-			programArgs.add("-configuration"); //$NON-NLS-1$
-			if (isOSGI)
-				programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
-			else
-				programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).append("platform.cfg").toString()); //$NON-NLS-1$ //$NON-NLS-2$
-			
-			if (!isOSGI) {
-				if (brandingPlugin != null) {
+				TargetPlatform.createPlatformConfigurationArea(
+						pluginMap,
+						getConfigDir(configuration),
+						LauncherUtils.getContributingPlugin(productID));
+			} else {
+				String primaryPlugin = LauncherUtils.getPrimaryPlugin();
+				TargetPlatform.createPlatformConfigurationArea(
+						pluginMap,
+						getConfigDir(configuration),
+						primaryPlugin);
+				if (primaryPlugin != null) {
 					programArgs.add("-feature"); //$NON-NLS-1$
-					programArgs.add(brandingPlugin);					
+					programArgs.add(primaryPlugin);					
 				}
 				IPluginModelBase bootModel = (IPluginModelBase)pluginMap.get("org.eclipse.core.boot"); //$NON-NLS-1$
 				String bootPath = LauncherUtils.getBootPath(bootModel);
 				if (bootPath != null && !bootPath.endsWith(".jar")) { //$NON-NLS-1$
 					programArgs.add("-boot"); //$NON-NLS-1$
 					programArgs.add("file:" + bootPath); //$NON-NLS-1$
-				}
+				}				
 			}
+			
+			programArgs.add("-configuration"); //$NON-NLS-1$
+			if (isOSGI)
+				programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
+			else
+				programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).append("platform.cfg").toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			
             // add the output folder names
             programArgs.add("-dev"); //$NON-NLS-1$
             if (PDECore.getDefault().getModelManager().isOSGiRuntime())

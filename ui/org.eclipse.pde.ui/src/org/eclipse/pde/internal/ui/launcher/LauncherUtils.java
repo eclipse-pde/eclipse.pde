@@ -19,6 +19,7 @@ import org.eclipse.debug.core.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
@@ -496,33 +497,41 @@ public class LauncherUtils {
 		}
 		return optionsFileName;
 	}
-
-	public static String getBrandingPluginID(ILaunchConfiguration configuration) throws CoreException {
-		boolean isOSGi = PDECore.getDefault().getModelManager().isOSGiRuntime();
+	
+	public static String getPrimaryPlugin() {
+		Properties properties = TargetPlatform.getConfigIniProperties("install.ini");		
+		return properties == null ? null : properties.getProperty("feature.default.id");		
+	}
+	
+	public static String getContributingPlugin(String productID) {
+		if (productID == null)
+			return null;
+		int index = productID.lastIndexOf('.');
+		return index == -1 ? productID : productID.substring(0, index);
+	}
+	
+	public static String getProductID(ILaunchConfiguration configuration) throws CoreException {
 		String result = null;
-		if (isOSGi) {
-			if (configuration.getAttribute(ILauncherSettings.USE_PRODUCT, false)) {
-				// return the product id.  The TargetPlatform class will parse the plug-in ID
-				result = configuration.getAttribute(ILauncherSettings.PRODUCT, (String)null);
-			} else {
-				// find the product associated with the application, and return its contributing plug-in
-				String appID = configuration.getAttribute(ILauncherSettings.APPLICATION, getDefaultApplicationName());
-				IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
-				for (int i = 0; i < plugins.length; i++) {
-					String id = plugins[i].getPluginBase().getId();
-					IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
-					for (int j = 0; j < extensions.length; j++) {
-						String point = extensions[j].getPoint();
-						if (point != null && point.equals("org.eclipse.core.runtime.products")) {//$NON-NLS-1$
-							IPluginObject[] children = extensions[j].getChildren();
-							if (children.length != 1)
-								continue;
-							if (!"product".equals(children[0].getName())) //$NON-NLS-1$
-								continue;
-							if (appID.equals(((IPluginElement)children[0]).getAttribute("application").getValue())) { //$NON-NLS-1$
-								result = id;
-								break;
-							}
+		if (configuration.getAttribute(ILauncherSettings.USE_PRODUCT, false)) {
+			result = configuration.getAttribute(ILauncherSettings.PRODUCT, (String)null);
+		} else {
+			// find the product associated with the application, and return its contributing plug-in
+			String appID = configuration.getAttribute(ILauncherSettings.APPLICATION, getDefaultApplicationName());
+			IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
+			for (int i = 0; i < plugins.length; i++) {
+				String id = plugins[i].getPluginBase().getId();
+				IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
+				for (int j = 0; j < extensions.length; j++) {
+					String point = extensions[j].getPoint();
+					if (point != null && point.equals("org.eclipse.core.runtime.products")) {//$NON-NLS-1$
+						IPluginObject[] children = extensions[j].getChildren();
+						if (children.length != 1)
+							continue;
+						if (!"product".equals(children[0].getName())) //$NON-NLS-1$
+							continue;
+						if (appID.equals(((IPluginElement)children[0]).getAttribute("application").getValue())) { //$NON-NLS-1$
+							result = id;
+							break;
 						}
 					}
 				}
@@ -531,11 +540,8 @@ public class LauncherUtils {
 		if (result != null)
 			return result;
 		
-		String filename = isOSGi ? "configuration/config.ini" : "install.ini";		 //$NON-NLS-1$ //$NON-NLS-2$
-		Properties properties = TargetPlatform.getConfigIniProperties(filename);		
-
-		String property = isOSGi ? "eclipse.product" : "feature.default.id"; //$NON-NLS-1$ //$NON-NLS-2$
-		return (properties == null) ? null : properties.getProperty(property);
+		Properties properties = TargetPlatform.getConfigIniProperties("configuration/config.ini");		
+		return properties == null ? null : properties.getProperty("eclipse.product");
 	}
 
 	public static String getDefaultApplicationName() {
@@ -547,21 +553,54 @@ public class LauncherUtils {
 		return (appName != null) ? appName : "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 	}
 	
-	public static Properties createConfigIniFile(ILaunchConfiguration configuration, String brandingID, Map map, File directory) throws CoreException {
+	private static void addSplashLocation(Properties properties, String productID, Map map)  {
+		Properties targetConfig = TargetPlatform.getConfigIniProperties("configuration/config.ini");
+		String targetProduct = targetConfig == null ? null : targetConfig.getProperty("eclipse.product");
+		String targetSplash = targetConfig == null ? null : targetConfig.getProperty("osgi.splashPath");
+		ArrayList locations = new ArrayList();
+		if (!productID.equals(targetProduct) || targetSplash == null) {
+			String plugin = getContributingPlugin(productID);
+			locations.add(plugin);
+			IPluginModelBase model = (IPluginModelBase)map.get(plugin);
+			if (model != null) {
+				BundleDescription desc = model.getBundleDescription();
+				if (desc != null) {
+					BundleDescription[] fragments = desc.getFragments();
+					for (int i = 0; i < fragments.length; i++)
+						locations.add(fragments[i].getSymbolicName());
+				}
+			}
+		} else {
+			StringTokenizer tok = new StringTokenizer(targetSplash, ",");
+			while (tok.hasMoreTokens())
+				locations.add(tok.nextToken());			
+		}
+		
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < locations.size(); i++) {
+			String location = (String)locations.get(i);
+			if (location.startsWith("platform:/base/plugins/")) { //$NON-NLS-1$
+				location = location.replaceFirst("platform:/base/plugins/", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			String url = TargetPlatform.getBundleURL(location, map);
+			if (url == null)
+				continue;
+			if (buffer.length() > 0)
+				buffer.append(",");
+			buffer.append(url);
+		}
+		if (buffer.length() > 0)
+			properties.setProperty("osgi.splashPath", buffer.toString());
+	}
+	
+	public static Properties createConfigIniFile(ILaunchConfiguration configuration, String productID, Map map, File directory) throws CoreException {
 		Properties properties = new Properties();
 		if (configuration.getAttribute(ILauncherSettings.CONFIG_GENERATE_DEFAULT, true)) {
 			properties.setProperty("osgi.install.area", "file:" + ExternalModelManager.getEclipseHome().toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 			properties.setProperty("osgi.configuration.cascaded", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			properties.setProperty("osgi.framework", "org.eclipse.osgi"); //$NON-NLS-1$ //$NON-NLS-2$
-			if (brandingID != null) {
-				if (!map.containsKey(brandingID)) {
-					int index = brandingID.lastIndexOf('.');
-					if (index != -1)
-						brandingID = brandingID.substring(0, index);
-				}
-				if (map.containsKey(brandingID))
-					properties.setProperty("osgi.splashPath", brandingID); //$NON-NLS-1$
-			}
+			if (productID != null)
+				addSplashLocation(properties, productID, map);
 			if (map.containsKey("org.eclipse.update.configurator")) { //$NON-NLS-1$
 				properties.setProperty("osgi.bundles", "org.eclipse.core.runtime@2:start,org.eclipse.update.configurator@3:start"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
@@ -627,24 +666,6 @@ public class LauncherUtils {
 				properties.setProperty("osgi.framework", url); //$NON-NLS-1$
 		}
 		
-		String brandingID = properties.getProperty("osgi.splashPath"); //$NON-NLS-1$
-		if (brandingID != null) {
-			if (brandingID.startsWith("platform:/base/plugins/")) { //$NON-NLS-1$
-				brandingID.replaceFirst("platform:/base/plugins/", ""); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			String splashPath = TargetPlatform.getBundleURL(brandingID, map);
-			if (splashPath == null) {
-				int index = brandingID.lastIndexOf('.');
-				if (index != -1) {
-					String id = brandingID.substring(0, index);
-					splashPath = TargetPlatform.getBundleURL(id, map);
-				}
-			}
-			if (splashPath != null) {
-				properties.setProperty("osgi.splashPath", splashPath); //$NON-NLS-1$
-			}
-		}
-
 		String bundles = properties.getProperty("osgi.bundles"); //$NON-NLS-1$
 		if (bundles != null) {
 			StringBuffer buffer = new StringBuffer();
