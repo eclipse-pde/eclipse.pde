@@ -14,6 +14,7 @@ import java.io.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
@@ -159,26 +160,33 @@ public class CoreUtility {
 	}
 	
     public static boolean guessUnpack(BundleDescription bundle) {
-		if (bundle == null) {
+		if (bundle == null)
 			return true;
-		}
-		if (new File(bundle.getLocation()).isFile()) {
+	
+		if (new File(bundle.getLocation()).isFile()) 
 			return false;
-		}
-		if (PDECore.getWorkspace().getRoot().getContainerForLocation(
-				new Path(bundle.getLocation())) == null) {
+		
+		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
+		IContainer container = root.getContainerForLocation(new Path(bundle.getLocation()));
+		if (container == null) 
 			return true;
-		}
-		IPluginModelBase model = PDECore.getDefault().getModelManager()
-				.findModel(bundle);
-		if (model == null) {
+		
+		if (container instanceof IProject) {
+			try {
+				if (!((IProject)container).hasNature(JavaCore.NATURE_ID)) 
+					return true;
+			} catch (CoreException e) {
+			}
+		}		
+		
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(bundle);
+		if (model == null)
 			return true;
-		}
+	
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-		if (libraries.length == 0
-				&& PDECore.getDefault().getModelManager().isOSGiRuntime()) {
+		if (libraries.length == 0 && PDECore.getDefault().getModelManager().isOSGiRuntime())
 			return false;
-		}
+	
 		for (int i = 0; i < libraries.length; i++) {
 			if (libraries[i].getName().equals(".")) //$NON-NLS-1$
 				return false;
