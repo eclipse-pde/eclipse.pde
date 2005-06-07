@@ -84,7 +84,7 @@ public class BuildPage extends PDEFormPage {
 		});
 		
 		runtimeSection = new RuntimeInfoSection(this, form.getBody());
-		gd = new GridData(GridData.FILL_BOTH);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		runtimeSection.getSection().setLayoutData(gd);
 		
