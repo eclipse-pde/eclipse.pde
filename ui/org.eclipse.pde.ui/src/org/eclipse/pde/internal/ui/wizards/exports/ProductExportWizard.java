@@ -11,17 +11,24 @@
 package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.iproduct.IProductFeature;
+import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.build.FeatureExportInfo;
 import org.eclipse.pde.internal.ui.build.ProductExportJob;
 import org.eclipse.pde.internal.ui.wizards.product.SynchronizationOperation;
 import org.eclipse.ui.progress.IProgressConstants;
@@ -68,18 +75,50 @@ public class ProductExportWizard extends BaseExportWizard {
 
 	protected void scheduleExportJob() {
 		ProductExportWizardPage page = (ProductExportWizardPage)fPage1;
-		String[][] targets = fPage2 == null ? null : fPage2.getTargets();
-		ProductExportJob job = new ProductExportJob(
-										fProductModel, 
-										page.getRootDirectory(), 
-										page.doExportToDirectory(),
-										page.doExportSource(), 
-										page.getDestination(), 
-										page.getFileName(),
-										targets);
+		
+		FeatureExportInfo info = new FeatureExportInfo();
+		info.toDirectory = page.doExportToDirectory();
+		info.exportSource = page.doExportSource();
+		info.destinationDirectory = page.getDestination();
+		info.zipFileName = page.getFileName();
+		info.targets = fPage2 == null ? null : fPage2.getTargets();
+		info.javacSource = page.getJavacSource();
+		info.javacTarget = page.getJavacTarget();
+		if (fProductModel.getProduct().useFeatures())
+			info.items = getFeatureModels();
+		else
+			info.items = getPluginModels();
+		
+		ProductExportJob job = new ProductExportJob(info, fProductModel, page.getRootDirectory());
 		job.setUser(true);
 		job.schedule();
 		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_FEATURE_OBJ);
+	}
+	
+	private IFeatureModel[] getFeatureModels() {
+		ArrayList list = new ArrayList();
+		FeatureModelManager manager = PDECore.getDefault()
+				.getFeatureModelManager();
+		IProductFeature[] features = fProductModel.getProduct().getFeatures();
+		for (int i = 0; i < features.length; i++) {
+			IFeatureModel model = manager.findFeatureModel(features[i].getId(),
+					features[i].getVersion());
+			if (model != null)
+				list.add(model);
+		}
+		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
+	}
+
+	private BundleDescription[] getPluginModels() {
+		ArrayList list = new ArrayList();
+		State state = TargetPlatform.getState();
+		IProductPlugin[] plugins = fProductModel.getProduct().getPlugins();
+		for (int i = 0; i < plugins.length; i++) {
+			BundleDescription bundle = state.getBundle(plugins[i].getId(), null);
+			if (bundle != null)
+				list.add(bundle);
+		}
+		return (BundleDescription[]) list.toArray(new BundleDescription[list.size()]);
 	}
 	
 	protected boolean performPreliminaryChecks() {

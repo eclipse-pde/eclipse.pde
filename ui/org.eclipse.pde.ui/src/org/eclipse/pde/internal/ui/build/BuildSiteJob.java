@@ -41,7 +41,6 @@ import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob;
 import org.eclipse.swt.widgets.Display;
 
 public class BuildSiteJob extends FeatureExportJob {
@@ -57,11 +56,19 @@ public class BuildSiteJob extends FeatureExportJob {
 	private long fBuildTime;
 
 	private String fFeatureLocation;
+	
+	private static FeatureExportInfo getInfo(ISiteModel siteModel, IFeatureModel[] models) {
+		FeatureExportInfo info = new FeatureExportInfo();
+		info.useJarFormat = true;
+		info.toDirectory = true;
+		info.destinationDirectory = siteModel.getUnderlyingResource().getParent().getLocation().toOSString();
+		info.items = models;
+		return info;
+	}
 
 	public BuildSiteJob(Display display, IFeatureModel[] models,
-			ISiteModel siteModel) {
-		super(true, true, false, siteModel.getUnderlyingResource()
-				.getParent().getLocation().toOSString(), null, models);
+			ISiteModel siteModel) {		
+		super(getInfo(siteModel, models));
 		fDisplay = display;
 		fFeaturemodels = models;
 		fSiteModel = siteModel;
@@ -98,41 +105,34 @@ public class BuildSiteJob extends FeatureExportJob {
 	 */
 	protected void doExports(IProgressMonitor monitor)
 			throws InvocationTargetException, CoreException {
-		String[][] configurations = fTargets;
-		if (configurations == null)
-			configurations = new String[][] { { TargetPlatform.getOS(),
-					TargetPlatform.getWS(), TargetPlatform.getOSArch(),
-					TargetPlatform.getNL() } };
-		for (int i = 0; i < configurations.length; i++) {
-			try {
-				String[] config = configurations[i];
-				monitor.beginTask("", 10); //$NON-NLS-1$
-				// create a feature to wrap all plug-ins and features
-				String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
-				fFeatureLocation = fBuildTempLocation + File.separator
-						+ featureID;
-				createFeature(featureID, fFeatureLocation, config, false);
-				createBuildPropertiesFile(fFeatureLocation);
-				if (fUseJarFormat)
-					if (fUseJarFormat) {
-						createPostProcessingFile(new File(fFeatureLocation,
-								FEATURE_POST_PROCESSING));
-						createPostProcessingFile(new File(fFeatureLocation,
-								PLUGIN_POST_PROCESSING));
-					}
-				doExport(featureID, null, fFeatureLocation, config[0],
-						config[1], config[2],
-						new SubProgressMonitor(monitor, 7));
-			} catch (IOException e) {
-			} finally {
-				for (int j = 0; j < fItems.length; j++) {
-					deleteBuildFiles(fItems[j]);
-				}
-				cleanup(fTargets == null ? null : configurations[i],
-						new SubProgressMonitor(monitor, 3));
-				monitor.done();
+		String[] config = { TargetPlatform.getOS(),
+				TargetPlatform.getWS(), TargetPlatform.getOSArch(),
+				TargetPlatform.getNL() };
+		try {
+			monitor.beginTask("", 10); //$NON-NLS-1$
+			// create a feature to wrap all plug-ins and features
+			String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
+			fFeatureLocation = fBuildTempLocation + File.separator
+					+ featureID;
+			createFeature(featureID, fFeatureLocation, config, false);
+			createBuildPropertiesFile(fFeatureLocation);
+			if (fInfo.useJarFormat) {
+				createPostProcessingFile(new File(fFeatureLocation,
+						FEATURE_POST_PROCESSING));
+				createPostProcessingFile(new File(fFeatureLocation,
+						PLUGIN_POST_PROCESSING));
 			}
-		}
+			doExport(featureID, null, fFeatureLocation, config[0],
+					config[1], config[2],
+					new SubProgressMonitor(monitor, 7));
+		} catch (IOException e) {
+		} finally {
+			for (int j = 0; j < fInfo.items.length; j++) {
+				deleteBuildFiles(fInfo.items[j]);
+			}
+			cleanup(null, new SubProgressMonitor(monitor, 3));
+			monitor.done();
+		}	
 	}
 
 	/*

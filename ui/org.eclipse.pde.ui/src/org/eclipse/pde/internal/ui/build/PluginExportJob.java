@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.wizards.exports;
+package org.eclipse.pde.internal.ui.build;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,26 +27,9 @@ public class PluginExportJob extends FeatureExportJob {
 
 	private String fFeatureLocation;
 
-	public PluginExportJob(
-			boolean toDirectory,
-			boolean useJarFormat,
-			boolean exportSource,
-			String destination,
-			String zipFileName,
-			Object[] items) {
-			this(toDirectory, useJarFormat, exportSource, destination, zipFileName, items, null);
-		}
-
-	public PluginExportJob(
-			boolean toDirectory,
-			boolean useJarFormat,
-			boolean exportSource,
-			String destination,
-			String zipFileName,
-			Object[] items,
-			String[] signingInfo) {
-			super(toDirectory, useJarFormat, exportSource, destination, zipFileName, items, signingInfo, null, null);
-		}
+	public PluginExportJob(FeatureExportInfo info) {
+		super(info);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob#doExports(org.eclipse.core.runtime.IProgressMonitor)
@@ -61,15 +44,15 @@ public class PluginExportJob extends FeatureExportJob {
 			String[] config = new String[] {TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), TargetPlatform.getNL() };
 			createFeature(featureID, fFeatureLocation, config, false);
 			createBuildPropertiesFile(fFeatureLocation);
-			if (fUseJarFormat)
+			if (fInfo.useJarFormat)
 				createPostProcessingFile(new File(fFeatureLocation, PLUGIN_POST_PROCESSING));
 			doExport(featureID, null, fFeatureLocation, TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), 
                     new SubProgressMonitor(monitor, 7));
 		} catch (IOException e) {
 		} finally {
-			for (int i = 0; i < fItems.length; i++) {
-				if (fItems[i] instanceof IPluginModelBase)
-					deleteBuildFiles(fItems[i]);
+			for (int i = 0; i < fInfo.items.length; i++) {
+				if (fInfo.items[i] instanceof IPluginModelBase)
+					deleteBuildFiles(fInfo.items[i]);
 			}
 			cleanup(null, new SubProgressMonitor(monitor, 3));
 			monitor.done();

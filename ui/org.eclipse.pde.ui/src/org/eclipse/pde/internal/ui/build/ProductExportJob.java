@@ -18,7 +18,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -32,28 +31,21 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.BuildScriptGenerator;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.core.ExternalModelManager;
-import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
 import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
-import org.eclipse.pde.internal.core.iproduct.IProductFeature;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
-import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 
@@ -65,51 +57,16 @@ public class ProductExportJob extends FeatureExportJob {
 	
 	private IProduct fProduct;
 
-	public ProductExportJob(IProductModel model, String productRoot, boolean toDirectory, boolean exportSource, String destination, String zipFileName, String[][] targets) {
-		super(PDEUIMessages.ProductExportJob_jobName); //$NON-NLS-1$
+	public ProductExportJob(FeatureExportInfo info, IProductModel model, String productRoot) {
+		super(info);
 		fProduct = model.getProduct();
-		fExportToDirectory = toDirectory;
-		fExportSource = exportSource;
-		fDestinationDirectory = destination;
-		fZipFilename = zipFileName;
 		fRoot = productRoot;
-		fTargets = targets;
-		if (fProduct.useFeatures()) {
-			fItems = getFeatureModels();
-		} else {
-			fItems = getPluginModels();
-		}
 	}
 
-	private IFeatureModel[] getFeatureModels() {
-		ArrayList list = new ArrayList();
-		FeatureModelManager manager = PDECore.getDefault()
-				.getFeatureModelManager();
-		IProductFeature[] features = fProduct.getFeatures();
-		for (int i = 0; i < features.length; i++) {
-			IFeatureModel model = manager.findFeatureModel(features[i].getId(),
-					features[i].getVersion());
-			if (model != null)
-				list.add(model);
-		}
-		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
-	}
-
-	private BundleDescription[] getPluginModels() {
-		ArrayList list = new ArrayList();
-		State state = TargetPlatform.getState();
-		IProductPlugin[] plugins = fProduct.getPlugins();
-		for (int i = 0; i < plugins.length; i++) {
-			BundleDescription bundle = state.getBundle(plugins[i].getId(), null);
-			if (bundle != null)
-				list.add(bundle);
-		}
-		return (BundleDescription[]) list.toArray(new BundleDescription[list.size()]);
-	}
 
 	protected void doExports(IProgressMonitor monitor)
 			throws InvocationTargetException, CoreException {
-		String[][] configurations = fTargets;
+		String[][] configurations = fInfo.targets;
 		if (configurations == null)
 			configurations = new String[][] { {TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), TargetPlatform.getNL() } };
         monitor.beginTask("", 10 * configurations.length); //$NON-NLS-1$
@@ -133,10 +90,10 @@ public class ProductExportJob extends FeatureExportJob {
 	                        new SubProgressMonitor(monitor, 7));
 			} catch (IOException e) {
 			} finally {
-				for (int j = 0; j < fItems.length; j++) {
-					deleteBuildFiles(fItems[j]);
+				for (int j = 0; j < fInfo.items.length; j++) {
+					deleteBuildFiles(fInfo.items[j]);
 				}
-				cleanup(fTargets == null ? null : configurations[i], new SubProgressMonitor(monitor, 3));
+				cleanup(fInfo.targets == null ? null : configurations[i], new SubProgressMonitor(monitor, 3));
 			}
 		}
 		monitor.done();
@@ -351,12 +308,12 @@ public class ProductExportJob extends FeatureExportJob {
 
         BundleContext context = PDEPlugin.getDefault().getBundleContext();
 
-		for (int i = 0; i < fItems.length; i++) {
-			BundleDescription bundle = (BundleDescription)fItems[i];
+		for (int i = 0; i < fInfo.items.length; i++) {
+			BundleDescription bundle = (BundleDescription)fInfo.items[i];
             String filterSpec = bundle.getPlatformFilter();
             try {
 				if (filterSpec == null|| context.createFilter(filterSpec).match(environment)) {			
-					String id = ((BundleDescription)fItems[i]).getSymbolicName();				
+					String id = ((BundleDescription)fInfo.items[i]).getSymbolicName();				
 					if ("org.eclipse.osgi".equals(id)) //$NON-NLS-1$
 						continue;
 					if (buffer.length() > 0)

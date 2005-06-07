@@ -14,6 +14,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -34,6 +35,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 
 
 public abstract class BaseExportWizardPage extends ExportWizardPage  {
@@ -44,6 +46,10 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 	private static final String S_ZIP_FILENAME = "zipFileName"; //$NON-NLS-1$
 	private static final String S_SAVE_AS_ANT = "saveAsAnt"; //$NON-NLS-1$
 	private static final String S_ANT_FILENAME = "antFileName"; //$NON-NLS-1$
+	private static final String S_JAVAC_TARGET = "javacTarget"; //$NON-NLS-1$
+	private static final String S_JAVAC_SOURCE = "javacSource"; //$NON-NLS-1$
+	
+	private static String[] COMPILER_LEVELS = new String[] {"1.1", "1.2", "1.3", "1.4", "5.0"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		
 	private Button fDirectoryButton;
 	private Combo fDirectoryCombo;
@@ -60,6 +66,8 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 	private Button fSaveAsAntButton;
 	private String fZipExtension = ".zip"; //$NON-NLS-1$
 	private Button fJarButton;
+	private Combo fJavacSource;
+	private Combo fJavacTarget;
 
 	
 	public BaseExportWizardPage(String name) {
@@ -77,6 +85,7 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 		
 		createTopSection(container);
 		createExportDestinationSection(container);
+		createCompilerOptionsSection(container);
 		createOptionsSection(container);
 		
 		Dialog.applyDialogFont(container);
@@ -84,6 +93,7 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 		// load settings
 		IDialogSettings settings = getDialogSettings();
 		initializeTopSection();
+		initializeCompilerOptionsSection(settings);
 		initializeExportOptions(settings);
 		initializeDestinationSection(settings);
 		pageChanged();
@@ -99,6 +109,40 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 	protected abstract void createTopSection(Composite parent);
 	
 	protected abstract void initializeTopSection();
+	
+	private void createCompilerOptionsSection(Composite parent) {
+		Group group = new Group(parent, SWT.NONE);
+		group.setText(PDEUIMessages.BaseExportWizardPage_compilerOptions);
+		group.setLayout(new GridLayout(5, false));
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		Label label = new Label(group, SWT.NONE);
+		label.setText(PDEUIMessages.BaseExportWizardPage_javacTarget);
+		
+		fJavacTarget = new Combo(group, SWT.READ_ONLY);
+		fJavacTarget.setItems(COMPILER_LEVELS);
+		
+		label = new Label(group, SWT.NONE);
+		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		label = new Label(group, SWT.NONE);
+		label.setText(PDEUIMessages.BaseExportWizardPage_javacSource);
+		
+		fJavacSource = new Combo(group, SWT.READ_ONLY);
+		fJavacSource.setItems(COMPILER_LEVELS);
+	}
+	
+	private void initializeCompilerOptionsSection(IDialogSettings settings) {
+		String target = settings.get(S_JAVAC_TARGET);
+		if (target == null)
+			target = JavaCore.getPlugin().getPluginPreferences().getString(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM);
+		fJavacTarget.setText(target);
+		
+		String source = settings.get(S_JAVAC_SOURCE);
+		if (source == null)
+			source = JavaCore.getPlugin().getPluginPreferences().getString(JavaCore.COMPILER_SOURCE);
+		fJavacSource.setText(source);		
+	}
 	
 	private void createExportDestinationSection(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
@@ -354,6 +398,9 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
         
 		settings.put(S_EXPORT_DIRECTORY, fDirectoryButton.getSelection());		
 		settings.put(S_EXPORT_SOURCE, fIncludeSource.getSelection());
+		
+		settings.put(S_JAVAC_SOURCE, fJavacSource.getText());
+		settings.put(S_JAVAC_TARGET, fJavacTarget.getText());
         
         if (fSaveAsAntButton != null)
             settings.put(S_SAVE_AS_ANT, fSaveAsAntButton.getSelection());
@@ -422,6 +469,14 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 		
 	public boolean doGenerateAntFile() {
 		return fSaveAsAntButton != null && fSaveAsAntButton.getSelection();
+	}
+	
+	public String getJavacTarget() {
+		return fJavacTarget.getText();
+	}
+	
+	public String getJavacSource() {
+		return fJavacSource.getText();
 	}
 	
 	public String getAntBuildFileName() {

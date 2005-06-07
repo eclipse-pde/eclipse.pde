@@ -98,7 +98,7 @@ public abstract class ExportWizardPageWithTable extends BaseExportWizardPage {
 		
 		fExportPart.createControl(composite);
 		GridData gd = (GridData) fExportPart.getControl().getLayoutData();
-		gd.heightHint = 150;
+		gd.heightHint = 125;
 		gd.widthHint = 150;
 		gd.horizontalSpan = 2;		
 

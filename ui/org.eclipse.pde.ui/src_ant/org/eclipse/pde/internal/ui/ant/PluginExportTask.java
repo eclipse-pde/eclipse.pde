@@ -10,23 +10,34 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.ant;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.wizards.exports.*;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.pde.core.plugin.IMatchRules;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.ui.build.FeatureExportInfo;
+import org.eclipse.pde.internal.ui.build.PluginExportJob;
 
 public class PluginExportTask extends BaseExportTask {
-	protected IPluginModelBase[] fModels = new IPluginModelBase[0];
+	protected IPluginModelBase[] fPlugins = new IPluginModelBase[0];
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.ant.BaseExportTask#getExportJob()
 	 */
 	protected Job getExportJob() {
-		return new PluginExportJob(
-				fToDirectory, fUseJarFormat, fExportSource,
-				fDestination, fZipFilename, fModels);
+		FeatureExportInfo info = new FeatureExportInfo();
+		info.toDirectory = fToDirectory;
+		info.useJarFormat = fUseJarFormat;
+		info.exportSource = fExportSource;
+		info.destinationDirectory = fDestination;
+		info.zipFileName = fZipFilename;
+		info.items = fPlugins;
+		info.javacSource = fJavacSource;
+		info.javacTarget = fJavacTarget;
+		return new PluginExportJob(info);
 	}
 	
 	public void setPlugins(String plugins) {
@@ -39,7 +50,7 @@ public class PluginExportTask extends BaseExportTask {
 			if (model != null && model.getUnderlyingResource() != null)
 				models.add(model);
 		}
-		fModels = (IPluginModelBase[])models.toArray(new IPluginModelBase[models.size()]);
+		fPlugins = (IPluginModelBase[])models.toArray(new IPluginModelBase[models.size()]);
 	}
 	
 }

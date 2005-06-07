@@ -499,8 +499,8 @@ public class LauncherUtils {
 	}
 	
 	public static String getPrimaryPlugin() {
-		Properties properties = TargetPlatform.getConfigIniProperties("install.ini");		
-		return properties == null ? null : properties.getProperty("feature.default.id");		
+		Properties properties = TargetPlatform.getConfigIniProperties("install.ini");		 //$NON-NLS-1$
+		return properties == null ? null : properties.getProperty("feature.default.id");		 //$NON-NLS-1$
 	}
 	
 	public static String getContributingPlugin(String productID) {
@@ -540,8 +540,8 @@ public class LauncherUtils {
 		if (result != null)
 			return result;
 		
-		Properties properties = TargetPlatform.getConfigIniProperties("configuration/config.ini");		
-		return properties == null ? null : properties.getProperty("eclipse.product");
+		Properties properties = TargetPlatform.getConfigIniProperties("configuration/config.ini");		 //$NON-NLS-1$
+		return properties == null ? null : properties.getProperty("eclipse.product"); //$NON-NLS-1$
 	}
 
 	public static String getDefaultApplicationName() {
@@ -554,9 +554,9 @@ public class LauncherUtils {
 	}
 	
 	private static void addSplashLocation(Properties properties, String productID, Map map)  {
-		Properties targetConfig = TargetPlatform.getConfigIniProperties("configuration/config.ini");
-		String targetProduct = targetConfig == null ? null : targetConfig.getProperty("eclipse.product");
-		String targetSplash = targetConfig == null ? null : targetConfig.getProperty("osgi.splashPath");
+		Properties targetConfig = TargetPlatform.getConfigIniProperties("configuration/config.ini"); //$NON-NLS-1$
+		String targetProduct = targetConfig == null ? null : targetConfig.getProperty("eclipse.product"); //$NON-NLS-1$
+		String targetSplash = targetConfig == null ? null : targetConfig.getProperty("osgi.splashPath"); //$NON-NLS-1$
 		ArrayList locations = new ArrayList();
 		if (!productID.equals(targetProduct) || targetSplash == null) {
 			String plugin = getContributingPlugin(productID);
@@ -571,7 +571,7 @@ public class LauncherUtils {
 				}
 			}
 		} else {
-			StringTokenizer tok = new StringTokenizer(targetSplash, ",");
+			StringTokenizer tok = new StringTokenizer(targetSplash, ","); //$NON-NLS-1$
 			while (tok.hasMoreTokens())
 				locations.add(tok.nextToken());			
 		}
@@ -586,11 +586,11 @@ public class LauncherUtils {
 			if (url == null)
 				continue;
 			if (buffer.length() > 0)
-				buffer.append(",");
+				buffer.append(","); //$NON-NLS-1$
 			buffer.append(url);
 		}
 		if (buffer.length() > 0)
-			properties.setProperty("osgi.splashPath", buffer.toString());
+			properties.setProperty("osgi.splashPath", buffer.toString()); //$NON-NLS-1$
 	}
 	
 	public static Properties createConfigIniFile(ILaunchConfiguration configuration, String productID, Map map, File directory) throws CoreException {

@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.ui.ant;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
-import org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob;
+import org.eclipse.pde.internal.ui.build.FeatureExportJob;
 
 public class ExportBuildListener implements BuildListener {
 	

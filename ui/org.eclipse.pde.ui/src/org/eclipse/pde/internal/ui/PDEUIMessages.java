@@ -1963,4 +1963,10 @@ public class PDEUIMessages extends NLS {
 	public static String OverviewPage_buildTitle;
 
 	public static String OverviewPage_buildQuestion;
+
+	public static String BaseExportWizardPage_compilerOptions;
+
+	public static String BaseExportWizardPage_javacTarget;
+
+	public static String BaseExportWizardPage_javacSource;
 }

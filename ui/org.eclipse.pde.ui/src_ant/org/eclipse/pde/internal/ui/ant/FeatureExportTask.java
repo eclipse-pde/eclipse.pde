@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.ant;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.wizards.exports.*;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.ui.build.FeatureExportInfo;
+import org.eclipse.pde.internal.ui.build.FeatureExportJob;
 
 public class FeatureExportTask extends BaseExportTask {
 	private IFeatureModel[] fFeatures = new IFeatureModel[0];
@@ -24,9 +27,16 @@ public class FeatureExportTask extends BaseExportTask {
 	 * @see org.eclipse.pde.internal.ui.ant.BaseExportTask#getExportJob()
 	 */
 	protected Job getExportJob() {
-		return new FeatureExportJob(
-				fToDirectory, fUseJarFormat, fExportSource,
-				fDestination, fZipFilename, fFeatures);
+		FeatureExportInfo info = new FeatureExportInfo();
+		info.toDirectory = fToDirectory;
+		info.useJarFormat = fUseJarFormat;
+		info.exportSource = fExportSource;
+		info.destinationDirectory = fDestination;
+		info.zipFileName = fZipFilename;
+		info.items = fFeatures;
+		info.javacSource = fJavacSource;
+		info.javacTarget = fJavacTarget;
+		return new FeatureExportJob(info);
 	}
 	
 	public void setFeatures(String features) {

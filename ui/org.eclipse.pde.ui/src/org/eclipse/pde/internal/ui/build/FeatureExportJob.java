@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.wizards.exports;
+package org.eclipse.pde.internal.ui.build;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -73,7 +73,6 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.build.BaseBuildAction;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
@@ -82,31 +81,22 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class FeatureExportJob extends Job implements IPreferenceConstants {
-
+	
 	// write to the ant build listener log
 	private static boolean fHasErrors;
-
-	// Export options specified in the wizard
-	protected boolean fExportToDirectory;
-	protected boolean fUseJarFormat;
-	protected boolean fExportSource;
-	protected String fDestinationDirectory;
-	protected String fZipFilename;
-	protected Object[] fItems;
 
 	// Location where the build takes place
 	protected String fBuildTempLocation;
 	private String fDevProperties;
 
 	protected HashMap fAntBuildProperties;
-	private String[] fSigningInfo = null;
-	private String[] fJnlpInfo = null;
 
 	protected static String FEATURE_POST_PROCESSING = "features.postProcessingSteps.properties"; //$NON-NLS-1$
 	protected static String PLUGIN_POST_PROCESSING = "plugins.postProcessingSteps.properties"; //$NON-NLS-1$
-	protected String[][] fTargets;
 	
 	private State fStateCopy;
+
+	protected FeatureExportInfo fInfo;
 
 	private static int fNumberErrors;
 
@@ -127,29 +117,11 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		}
 	}
 
-	public FeatureExportJob(String name) {
-		super(name);
-		fBuildTempLocation = PDEPlugin.getDefault().getStateLocation().append("temp").toString(); //$NON-NLS-1$
-		setRule(new SchedulingRule());
-	}
-	
-	public FeatureExportJob(boolean toDirectory, boolean useJarFormat, boolean exportSource, String destination, String zipFileName, Object[] items, String[] signingInfo, String[] jnlpInfo, String[][] targets) {
+	public FeatureExportJob(FeatureExportInfo info) {
 		super(PDEUIMessages.FeatureExportJob_name); //$NON-NLS-1$
-		fExportToDirectory = toDirectory;
-		fUseJarFormat = useJarFormat;
-		fExportSource = exportSource;
-		fDestinationDirectory = destination;
-		fZipFilename = zipFileName;
-		fItems = items;
-		fSigningInfo = signingInfo;
-		fJnlpInfo = jnlpInfo;
-		fTargets = targets;
+		fInfo = info;
 		fBuildTempLocation = PDEPlugin.getDefault().getStateLocation().append("temp").toString(); //$NON-NLS-1$
 		setRule(new SchedulingRule());
-	}
-
-	public FeatureExportJob(boolean toDirectory, boolean useJarFormat, boolean exportSource, String destination, String zipFileName, Object[] items) {
-		this(toDirectory, useJarFormat, exportSource, destination, zipFileName, items, null, null, null);
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
@@ -196,17 +168,17 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 
 	protected void doExports(IProgressMonitor monitor) throws InvocationTargetException, CoreException {
 		createDestination();
-		String[][] configurations = fTargets;
+		String[][] configurations = fInfo.targets;
 		if (configurations == null)
 			configurations = new String[][] { null };
 		
-		monitor.beginTask("", configurations.length * fItems.length * 10); //$NON-NLS-1$
+		monitor.beginTask("", configurations.length * fInfo.items.length * 10); //$NON-NLS-1$
 		for (int i = 0; i < configurations.length; i++) {
 			try {
-				for (int j = 0; j < fItems.length; j++) {
+				for (int j = 0; j < fInfo.items.length; j++) {
 					if (monitor.isCanceled())
 						throw new OperationCanceledException();
-					doExport((IFeatureModel) fItems[j], configurations[i], new SubProgressMonitor(monitor, 9));
+					doExport((IFeatureModel) fInfo.items[j], configurations[i], new SubProgressMonitor(monitor, 9));
 				}
 			} finally {
 				cleanup(configurations[i], new SubProgressMonitor(monitor, 1));
@@ -218,7 +190,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	private void doExport(IFeatureModel model, String os, String ws, String arch, IProgressMonitor monitor) throws CoreException, InvocationTargetException {
 		try {
 			String location = model.getInstallLocation();
-			if (fUseJarFormat) {
+			if (fInfo.useJarFormat) {
 				createPostProcessingFile(new File(location, FEATURE_POST_PROCESSING));
 				createPostProcessingFile(new File(location, PLUGIN_POST_PROCESSING));
 			}
@@ -269,7 +241,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	}
 
 	private void createDestination() throws InvocationTargetException {
-		File file = new File(fDestinationDirectory);
+		File file = new File(fInfo.destinationDirectory);
 		if (!file.exists() || !file.isDirectory()) {
 			if (!file.mkdirs())
 				throw new InvocationTargetException(new Exception(PDEUIMessages.ExportWizard_badDirectory)); //$NON-NLS-1$
@@ -277,9 +249,9 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	}
 
 	private void createDestination(String os, String ws, String arch) throws InvocationTargetException {
-		if (!fExportToDirectory)
+		if (!fInfo.toDirectory)
 			return;
-		File file = new File(fDestinationDirectory, os + '.' + ws + '.' + arch);
+		File file = new File(fInfo.destinationDirectory, os + '.' + ws + '.' + arch);
 		if (!file.exists() || !file.isDirectory()) {
 			if (!file.mkdirs())
 				throw new InvocationTargetException(new Exception(PDEUIMessages.ExportWizard_badDirectory)); //$NON-NLS-1$
@@ -327,14 +299,14 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	protected HashMap createAntBuildProperties(String os, String ws, String arch) {
 		if (fAntBuildProperties == null) {
 			fAntBuildProperties = new HashMap(15);
-			if (fSigningInfo != null) {
-				fAntBuildProperties.put("sign.alias", fSigningInfo[0]); //$NON-NLS-1$
-				fAntBuildProperties.put("sign.keystore", fSigningInfo[1]); //$NON-NLS-1$
-				fAntBuildProperties.put("sign.storepass", fSigningInfo[2]); //$NON-NLS-1$
+			if (fInfo.signingInfo != null) {
+				fAntBuildProperties.put("sign.alias", fInfo.signingInfo[0]); //$NON-NLS-1$
+				fAntBuildProperties.put("sign.keystore", fInfo.signingInfo[1]); //$NON-NLS-1$
+				fAntBuildProperties.put("sign.storepass", fInfo.signingInfo[2]); //$NON-NLS-1$
 			}
-			if (fJnlpInfo != null) {
-				fAntBuildProperties.put("jnlp.codebase", fJnlpInfo[0]); //$NON-NLS-1$
-				fAntBuildProperties.put("jnlp.j2se", fJnlpInfo[1]); //$NON-NLS-1$
+			if (fInfo.jnlpInfo != null) {
+				fAntBuildProperties.put("jnlp.codebase", fInfo.jnlpInfo[0]); //$NON-NLS-1$
+				fAntBuildProperties.put("jnlp.j2se", fInfo.jnlpInfo[1]); //$NON-NLS-1$
 			}
 
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_BUILD_TEMP, fBuildTempLocation + "/destination"); //$NON-NLS-1$
@@ -351,8 +323,10 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, "true"); //$NON-NLS-1$
 
 			Preferences pref = JavaCore.getPlugin().getPluginPreferences();
-			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_SOURCE, pref.getString(JavaCore.COMPILER_SOURCE));
-			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_TARGET, pref.getString(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM));
+			String source = fInfo.javacSource == null ?  pref.getString(JavaCore.COMPILER_SOURCE) : fInfo.javacSource; 
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_SOURCE, source);
+			String target = fInfo.javacTarget == null ? pref.getString(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM) : fInfo.javacTarget;
+			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_TARGET, target);
 
 			// for the assembler...
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_BUILD_DIRECTORY, fBuildTempLocation + "/assemblyLocation"); //$NON-NLS-1$
@@ -361,16 +335,16 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 			String prefix = Platform.getOS().equals("macosx") ? "." : ""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_PREFIX, prefix);
 
-			if (!fExportToDirectory) {
-				String filename = fZipFilename;
-				if (fTargets != null) {
+			if (!fInfo.toDirectory) {
+				String filename = fInfo.zipFileName;
+				if (fInfo.targets != null) {
 					int i = filename.lastIndexOf('.');
 					filename = filename.substring(0, i) + '.' + os + '.' + ws + '.' + arch + filename.substring(i);
 				}
-				fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_FULLPATH, fDestinationDirectory + File.separator + filename);
+				fAntBuildProperties.put(IXMLConstants.PROPERTY_ARCHIVE_FULLPATH, fInfo.destinationDirectory + File.separator + filename);
 			} else {
-				String dir = fDestinationDirectory;
-				if (fTargets != null)
+				String dir = fInfo.destinationDirectory;
+				if (fInfo.targets != null)
 					dir += File.separatorChar + os + '.' + ws + '.' + arch;
 				fAntBuildProperties.put(IXMLConstants.PROPERTY_ASSEMBLY_TMP, dir);
 			}
@@ -388,12 +362,12 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		generator.setPluginPath(getPaths());
 		generator.setReportResolutionErrors(false);
 		generator.setIgnoreMissingPropertiesFile(true);
-		generator.setSignJars(fSigningInfo != null);
-		generator.setGenerateJnlp(fJnlpInfo != null);
+		generator.setSignJars(fInfo.signingInfo != null);
+		generator.setGenerateJnlp(fInfo.jnlpInfo != null);
 		String config = os + ',' + ws + ',' + arch;
 		AbstractScriptGenerator.setConfigInfo(config);  //This needs to be set before we set the format
 		String format;
-		if (fExportToDirectory)
+		if (fInfo.toDirectory)
 			format = config + '-' + IXMLConstants.FORMAT_FOLDER;
 		else
 			format = config + '-' + IXMLConstants.FORMAT_ANTZIP;
@@ -401,7 +375,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		setState(generator, os, ws, arch);
 		generator.setStateExtraData(TargetPlatform.getBundleClasspaths(TargetPlatform.getPDEState()));
 		AbstractScriptGenerator.setForceUpdateJar(false);
-		AbstractScriptGenerator.setEmbeddedSource(fExportSource);		
+		AbstractScriptGenerator.setEmbeddedSource(fInfo.exportSource);		
 	}
 	
 	private void setState(BuildScriptGenerator generator, String os, String ws, String arch) {
@@ -442,7 +416,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		runner.setBuildFileLocation(location);
 		runner.addBuildListener("org.eclipse.pde.internal.ui.ant.ExportBuildListener"); //$NON-NLS-1$
 		runner.setExecutionTargets(targets);
-		if (fSigningInfo != null) {
+		if (fInfo.signingInfo != null) {
 			AntCorePreferences preferences = AntCorePlugin.getPlugin().getPreferences();
 			IAntClasspathEntry entry = preferences.getToolsJarEntry();
 			if (entry != null) {
@@ -478,7 +452,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	}
 
 	private String[] getBuildExecutionTargets() {
-		if (fExportSource)
+		if (fInfo.exportSource)
 			return new String[] {"build.jars", "build.sources"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return new String[] {"build.jars"}; //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -593,7 +567,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 				target = doc.createElement("target"); //$NON-NLS-1$
 				target.setAttribute("name", "zip.logs"); //$NON-NLS-1$ //$NON-NLS-2$
 				child = doc.createElement("zip"); //$NON-NLS-1$
-				child.setAttribute("zipfile", fDestinationDirectory + logName(config)); //$NON-NLS-1$
+				child.setAttribute("zipfile", fInfo.destinationDirectory + logName(config)); //$NON-NLS-1$
 				child.setAttribute("basedir", fBuildTempLocation + "/pde.logs"); //$NON-NLS-1$ //$NON-NLS-2$
 				target.appendChild(child);
 				root.appendChild(target);
@@ -654,7 +628,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	}
 
 	protected String getLogFoundMessage() {
-		return NLS.bind(PDEUIMessages.ExportJob_error_message, fDestinationDirectory); 
+		return NLS.bind(PDEUIMessages.ExportJob_error_message, fInfo.destinationDirectory); 
 	}
     
     protected void createFeature(String featureID, String featureLocation, String[] config, boolean includeLauncher) throws IOException {
@@ -687,21 +661,21 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
             environment.put("osgi.nl", config[3]); //$NON-NLS-1$
 
             BundleContext context = PDEPlugin.getDefault().getBundleContext();
-            for (int i = 0; i < fItems.length; i++) {
-            	if (fItems[i] instanceof IFeatureModel) {
-                    IFeature feature = ((IFeatureModel) fItems[i]).getFeature();
+            for (int i = 0; i < fInfo.items.length; i++) {
+            	if (fInfo.items[i] instanceof IFeatureModel) {
+                    IFeature feature = ((IFeatureModel) fInfo.items[i]).getFeature();
   					Element includes = doc.createElement("includes"); //$NON-NLS-1$
  					includes.setAttribute("id", feature.getId()); //$NON-NLS-1$
  					includes.setAttribute("version", feature.getVersion()); //$NON-NLS-1$
  					root.appendChild(includes);
                 } else {
 	            	BundleDescription bundle = null;
-	                if (fItems[i] instanceof IPluginModelBase) {
-	                	bundle = ((IPluginModelBase)fItems[i]).getBundleDescription();
+	                if (fInfo.items[i] instanceof IPluginModelBase) {
+	                	bundle = ((IPluginModelBase)fInfo.items[i]).getBundleDescription();
 	                }
 	                if (bundle == null) {
-	                	if (fItems[i] instanceof BundleDescription)
-	                		bundle = (BundleDescription)fItems[i];
+	                	if (fInfo.items[i] instanceof BundleDescription)
+	                		bundle = (BundleDescription)fInfo.items[i];
 	                }
 	                if (bundle == null)
 	                	continue;
@@ -711,10 +685,8 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
                         	Element plugin = doc.createElement("plugin"); //$NON-NLS-1$
                         	plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
                             plugin.setAttribute("version", "0.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
-                            if (!fUseJarFormat) {
-                                plugin
-										.setAttribute(
-												"unpack", Boolean.toString(CoreUtility.guessUnpack(bundle))); //$NON-NLS-1$
+                            if (!fInfo.useJarFormat) {
+                                plugin.setAttribute("unpack", Boolean.toString(CoreUtility.guessUnpack(bundle))); //$NON-NLS-1$
                              }
                             root.appendChild(plugin);
                          }

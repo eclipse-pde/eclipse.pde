@@ -20,6 +20,8 @@ public abstract class BaseExportTask extends Task {
 	protected boolean fToDirectory;
 	protected boolean fUseJarFormat;
 	protected boolean fExportSource;
+	protected String fJavacTarget;
+	protected String fJavacSource;
 
 	public BaseExportTask() {
 	}
@@ -55,6 +57,14 @@ public abstract class BaseExportTask extends Task {
 	
 	public void setFilename(String filename) {
 		fZipFilename = filename;
+	}
+	
+	public void setTarget(String target) {
+		fJavacTarget = target;
+	}
+	
+	public void setSource(String source) {
+		fJavacSource = source;
 	}
 	
 	protected abstract Job getExportJob();

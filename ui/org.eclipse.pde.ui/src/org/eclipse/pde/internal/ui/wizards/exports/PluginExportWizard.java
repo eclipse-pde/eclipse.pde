@@ -16,6 +16,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.build.FeatureExportInfo;
+import org.eclipse.pde.internal.ui.build.PluginExportJob;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -44,16 +46,18 @@ public class PluginExportWizard extends BaseExportWizard {
 	}
 	
 	protected void scheduleExportJob() {
-		String[] signingInfo = fPage1.useJARFormat() ? fPage2.getSigningInfo() : null;
-		PluginExportJob job =
-			new PluginExportJob(
-				fPage1.doExportToDirectory(),
-				fPage1.useJARFormat(),
-				fPage1.doExportSource(),
-				fPage1.getDestination(),
-				fPage1.getFileName(),
-				((ExportWizardPageWithTable)fPage1).getSelectedItems(),
-				signingInfo);
+		FeatureExportInfo info = new FeatureExportInfo();
+		info.toDirectory = fPage1.doExportToDirectory();
+		info.useJarFormat = fPage1.useJARFormat();
+		info.exportSource = fPage1.doExportSource();
+		info.destinationDirectory = fPage1.getDestination();
+		info.zipFileName = fPage1.getFileName();
+		info.javacSource = fPage1.getJavacSource();
+		info.javacTarget = fPage1.getJavacTarget();
+		info.items = ((ExportWizardPageWithTable)fPage1).getSelectedItems();
+		info.signingInfo = fPage1.useJARFormat() ? fPage2.getSigningInfo() : null;
+		
+		PluginExportJob job = new PluginExportJob(info);
 		job.setUser(true);
 		job.schedule();
 		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_PLUGIN_OBJ);
@@ -81,6 +85,8 @@ public class PluginExportWizard extends BaseExportWizard {
 			export.setAttribute("exportType", getExportOperation());  //$NON-NLS-1$
 			export.setAttribute("useJARFormat", Boolean.toString(fPage1.useJARFormat()));  //$NON-NLS-1$
 			export.setAttribute("exportSource", Boolean.toString(fPage1.doExportSource()));  //$NON-NLS-1$
+			export.setAttribute("source", fPage1.getJavacSource()); //$NON-NLS-1$
+			export.setAttribute("target", fPage1.getJavacTarget()); //$NON-NLS-1$
 			target.appendChild(export);
 			return doc;
 		} catch (DOMException e) {

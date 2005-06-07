@@ -18,6 +18,8 @@ import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.build.FeatureExportInfo;
+import org.eclipse.pde.internal.ui.build.FeatureExportJob;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -56,19 +58,19 @@ public class FeatureExportWizard extends BaseExportWizard {
 	}
 	
 	protected void scheduleExportJob() {
-		String[] signingInfo = fPage1.useJARFormat() ? fPage3.getSigningInfo() : null;
-		String[] jnlpInfo = fPage1.useJARFormat() ? fPage3.getJNLPInfo() : null;
-		FeatureExportJob job =
-			new FeatureExportJob(
-				fPage1.doExportToDirectory(),
-				fPage1.useJARFormat(),
-				fPage1.doExportSource(),
-				fPage1.getDestination(),
-				fPage1.getFileName(),
-				((ExportWizardPageWithTable)fPage1).getSelectedItems(),
-				signingInfo,
-				jnlpInfo,
-				null);
+		FeatureExportInfo info = new FeatureExportInfo();
+		info.toDirectory = fPage1.doExportToDirectory();
+		info.useJarFormat = fPage1.useJARFormat();
+		info.exportSource = fPage1.doExportSource();
+		info.destinationDirectory = fPage1.getDestination();
+		info.zipFileName = fPage1.getFileName();
+		info.javacSource = fPage1.getJavacSource();
+		info.javacTarget = fPage1.getJavacTarget();
+		info.items = ((ExportWizardPageWithTable)fPage1).getSelectedItems();
+		info.signingInfo = fPage1.useJARFormat() ? fPage3.getSigningInfo() : null;
+		info.jnlpInfo = fPage1.useJARFormat() ? fPage3.getJNLPInfo() : null;
+		
+		FeatureExportJob job = new FeatureExportJob(info);
 		job.setUser(true);
 		job.schedule();
 		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_FEATURE_OBJ);
@@ -96,6 +98,8 @@ public class FeatureExportWizard extends BaseExportWizard {
 			export.setAttribute("exportType", getExportOperation());  //$NON-NLS-1$
 			export.setAttribute("useJARFormat", Boolean.toString(fPage1.useJARFormat())); //$NON-NLS-1$
 			export.setAttribute("exportSource", Boolean.toString(fPage1.doExportSource())); //$NON-NLS-1$
+			export.setAttribute("source", fPage1.getJavacSource()); //$NON-NLS-1$
+			export.setAttribute("target", fPage1.getJavacTarget()); //$NON-NLS-1$
 			return doc;
 		} catch (DOMException e) {
 		} catch (FactoryConfigurationError e) {
