@@ -15,6 +15,7 @@ import java.util.Locale;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IBaseModel;
@@ -43,16 +44,48 @@ import org.eclipse.swt.dnd.RTFTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IShowEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.IFormPage;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput {
+
+	public static void openFeatureEditor(IFeature feature) {
+		if(feature!=null){
+			IFeatureModel model = feature.getModel();
+			openFeatureEditor(model);
+		} else {
+			Display.getCurrent().beep();
+		}
+	}
+
+	public static void openFeatureEditor(IFeatureModel model) {
+		if (model != null) {
+			IResource resource = model.getUnderlyingResource();
+			try {
+				IEditorInput input = null;
+				if (resource != null)
+					input = new FileEditorInput((IFile) resource);
+				else
+					input = new SystemFileEditorInput(new File(model
+							.getInstallLocation(), "feature.xml")); //$NON-NLS-1$
+				IDE.openEditor(PDEPlugin.getActivePage(), input,
+						PDEPlugin.FEATURE_EDITOR_ID, true);
+			} catch (PartInitException e) {
+			}
+		} else {
+			Display.getCurrent().beep();
+		}
+
+	}
+
 	public FeatureEditor() {
 	}
 

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.io.File;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -24,14 +22,11 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureData;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.part.FileEditorInput;
 
 public class OpenReferenceAction extends SelectionProviderAction {
 	public OpenReferenceAction(ISelectionProvider provider) {
@@ -64,20 +59,7 @@ public class OpenReferenceAction extends SelectionProviderAction {
 		} else if (obj instanceof IFeatureChild) {
 			IFeatureChild included = (IFeatureChild) obj;
 			IFeature feature = ((FeatureChild) included).getReferencedFeature();
-			if (feature != null) {
-				IEditorInput input = null;
-				IResource resource = feature.getModel().getUnderlyingResource();
-				if (resource != null)
-					input = new FileEditorInput((IFile) resource);
-				else
-					input = new SystemFileEditorInput(new File(feature
-							.getModel().getInstallLocation(), "feature.xml")); //$NON-NLS-1$
-				try {
-					IDE.openEditor(PDEPlugin.getActivePage(), input,
-							PDEPlugin.FEATURE_EDITOR_ID, true);
-				} catch (PartInitException e) {
-				}
-			}
+			FeatureEditor.openFeatureEditor(feature);
 		}
 	}
 

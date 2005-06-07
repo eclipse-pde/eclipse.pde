@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
 
-import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
@@ -24,6 +22,7 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.feature.FeatureEditor;
 import org.eclipse.pde.internal.ui.elements.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.pde.internal.ui.util.*;
@@ -32,12 +31,8 @@ import org.eclipse.pde.internal.ui.wizards.feature.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.ide.*;
-import org.eclipse.ui.part.*;
-
 
 public class FeatureSection extends TableSection {
 	
@@ -249,18 +244,7 @@ public class FeatureSection extends TableSection {
 			IProductFeature feature = (IProductFeature)selection.getFirstElement();
 			FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 			IFeatureModel model = manager.findFeatureModel(feature.getId(), feature.getVersion());
-			if (model != null) {
-				IResource resource = model.getUnderlyingResource();
-				try {
-					IEditorInput input = null;
-					if (resource != null) 
-						input = new FileEditorInput((IFile)resource);
-					else
-						input = new SystemFileEditorInput(new File(model.getInstallLocation(), "feature.xml"));			 //$NON-NLS-1$
-					IDE.openEditor(PDEPlugin.getActivePage(), input, PDEPlugin.FEATURE_EDITOR_ID, true);
-				} catch (PartInitException e) {
-				}
-			}
+			FeatureEditor.openFeatureEditor(model);
 		}
 	}
 
