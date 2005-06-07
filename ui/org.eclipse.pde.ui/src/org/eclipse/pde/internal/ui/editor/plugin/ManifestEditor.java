@@ -9,26 +9,56 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Locale;
-import java.util.zip.*;
+import java.util.zip.ZipFile;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.build.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.build.*;
-import org.eclipse.pde.internal.ui.editor.context.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.views.properties.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.build.IBuildObject;
+import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
+import org.eclipse.pde.internal.ui.IPreferenceConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
+import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
+import org.eclipse.pde.internal.ui.editor.JarEntryFile;
+import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.PDESourcePage;
+import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
+import org.eclipse.pde.internal.ui.editor.build.BuildPage;
+import org.eclipse.pde.internal.ui.editor.build.BuildSourcePage;
+import org.eclipse.pde.internal.ui.editor.context.InputContext;
+import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IShowEditorInput;
+import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 public class ManifestEditor extends MultiSourceEditor implements IShowEditorInput {
     
@@ -134,7 +164,27 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 		model.save();
 		IEditorInput in = new FileEditorInput(file);
 		inputContextManager.putContext(in, new PluginInputContext(this, in, false, false));
+
+		updateBuildProperties(name);
 	}
+	
+    private void updateBuildProperties(String filename) {
+        try {
+         InputContext context = inputContextManager.findContext(BuildInputContext.CONTEXT_ID);
+         if (context != null) {
+                IBuildModel buildModel = (IBuildModel)context.getModel();
+                IBuild build = buildModel.getBuild();
+                IBuildEntry entry = build.getEntry("bin.includes"); //$NON-NLS-1$
+                if (entry == null) {
+                    entry = buildModel.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
+                    build.add(entry);
+                } 
+                if (!entry.contains(filename))
+                    entry.addToken(filename); 
+            }
+         } catch (CoreException e) {
+         }
+     }
 
 	public boolean monitoredFileRemoved(IFile file) {
 		//TODO may need to check with the user if there
