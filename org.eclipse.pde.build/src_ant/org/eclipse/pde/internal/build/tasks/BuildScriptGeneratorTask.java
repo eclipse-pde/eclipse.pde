@@ -75,6 +75,7 @@ public class BuildScriptGeneratorTask extends Task {
 	}
 
 	public void run() throws CoreException {
+		generator.setReportResolutionErrors(true);
 		generator.generate();
 	}
 
