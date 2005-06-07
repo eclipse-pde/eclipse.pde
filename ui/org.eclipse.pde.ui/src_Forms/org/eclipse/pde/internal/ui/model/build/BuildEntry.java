@@ -75,18 +75,18 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	 */
 	public void setName(String name) {
 		String oldName = fName;
-		fName = name;
 		if (getModel() != null){
 			try {
 				IBuild build = getModel().getBuild();
-				IBuildEntry entry = build.getEntry(oldName);
-				build.remove(entry);
-				build.add(entry);
+				build.remove(this);
+				fName = name;
+				build.add(this);
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
 			getModel().fireModelObjectChanged(this, getName(), oldName, name);
-		}
+		} else
+			fName = name;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getOffset()
