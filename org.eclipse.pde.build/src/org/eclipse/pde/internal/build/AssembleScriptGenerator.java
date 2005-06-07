@@ -39,7 +39,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	public void generate() throws CoreException {
 		try {
 			openScript(directory, getScriptName());
-			script.printProjectDeclaration("Assemble All Config of " + featureId, TARGET_MAIN, null); //$NON-NLS-1$
+			printProjectDeclaration();
 			generateMainTarget();
 			script.printProjectEnd();
 		} finally {
@@ -48,6 +48,10 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		}
 	}
 
+	protected void printProjectDeclaration() {
+		script.printProjectDeclaration("Assemble All Config of " + featureId, TARGET_MAIN, null); //$NON-NLS-1$
+	}
+	
 	protected void generateMainTarget() throws CoreException {
 		script.printTargetDeclaration(TARGET_MAIN, null, null, null, null);
 		for (Iterator iter = getConfigInfos().iterator(); iter.hasNext();)

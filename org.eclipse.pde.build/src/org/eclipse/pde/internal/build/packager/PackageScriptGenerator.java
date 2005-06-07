@@ -22,11 +22,17 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 		super(directory, assemblageInformation, featureId);
 	}
 	
+	protected void printProjectDeclaration() {
+		script.printProjectDeclaration("Package all config of " + featureId, TARGET_MAIN, null); //$NON-NLS-1$
+	}
+	
 	protected AssembleConfigScriptGenerator getConfigScriptGenerator() {
 		return new PackageConfigScriptGenerator();
 	}
 	
 	protected String getScriptName() {
+		if (backwardCompatibleName)
+			return "package" + '.' + DEFAULT_ASSEMBLE_ALL;
 		return "package" + '.' + (featureId.equals("") ? "" : featureId + '.') + DEFAULT_ASSEMBLE_ALL;
 	}
 	
@@ -56,6 +62,8 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 	}
 	
 	private String computeBackwardCompatibleName(Config configInfo) {
+		if (backwardCompatibleName)
+			return DEFAULT_ASSEMBLE_NAME + (configInfo.equals(Config.genericConfig()) ? "" : ('.' + configInfo.toStringReplacingAny(".", ANY_STRING)) + (backwardCompatibleName ? ".xml" : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		return DEFAULT_ASSEMBLE_NAME + (featureId.equals("") ? "" : ('.' + featureId)) + (configInfo.equals(Config.genericConfig()) ? "" : ('.' + configInfo.toStringReplacingAny(".", ANY_STRING)) + (backwardCompatibleName ? ".xml" : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 	}
 }
