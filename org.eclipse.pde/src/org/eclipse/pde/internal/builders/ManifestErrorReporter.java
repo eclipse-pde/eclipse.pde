@@ -128,7 +128,7 @@ public class ManifestErrorReporter extends XMLErrorReporter {
         if (!IdUtil.isValidPluginId(attr.getValue())) {
             String message = NLS.bind(PDEMessages.Builders_Manifest_pluginId_value, attr.getValue(), attr.getName());
             report(message, getLine(element, attr.getName()),
-                    CompilerFlags.ERROR);
+                    CompilerFlags.WARNING);
             return false;
         }
         return true;

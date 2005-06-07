@@ -921,7 +921,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		String message;
 		if (!IdUtil.isValidPluginId(value)) {
 			message = PDEMessages.BundleErrorReporter_InvalidSymbolicName; //$NON-NLS-1$
-			report(message, header.getLineNumber() + 1, CompilerFlags.ERROR);
+			report(message, header.getLineNumber() + 1, CompilerFlags.WARNING);
 			return false;
 		}
 		return true;
