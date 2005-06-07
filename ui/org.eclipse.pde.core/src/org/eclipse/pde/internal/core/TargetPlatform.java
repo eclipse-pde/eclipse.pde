@@ -254,6 +254,8 @@ public class TargetPlatform implements IEnvironmentVariables {
 		IPath path,
 		IPluginModelBase model,
 		ArrayList sites) {
+		if (path.getDevice() != null)
+			path = path.setDevice(path.getDevice().toUpperCase(Locale.ENGLISH));
 		for (int i = 0; i < sites.size(); i++) {
 			LocalSite localSite = (LocalSite) sites.get(i);
 			if (localSite.getPath().equals(path)) {
