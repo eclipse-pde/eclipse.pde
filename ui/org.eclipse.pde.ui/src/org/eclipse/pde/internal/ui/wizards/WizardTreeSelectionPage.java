@@ -188,6 +188,10 @@ public abstract class WizardTreeSelectionPage
 	protected void initializeViewers() {
 		categoryTreeViewer.setInput(wizardCategories);
 		wizardSelectionViewer.addSelectionChangedListener(this);
+		Object[] categories = wizardCategories.getChildren();
+		if (categories.length > 0)
+			categoryTreeViewer.setSelection(new StructuredSelection(
+					categories[0]));
 		categoryTreeViewer.getTree().setFocus();
 	}
 	public void selectionChanged(SelectionChangedEvent selectionEvent) {
