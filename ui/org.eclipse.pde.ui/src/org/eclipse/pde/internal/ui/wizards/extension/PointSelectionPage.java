@@ -21,6 +21,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -415,10 +416,22 @@ public class PointSelectionPage
 			fModel.getPluginBase().add(extension);
 			
 			String pluginID = fCurrentPoint.getPluginBase().getId();
-			if (!(fCurrentPoint instanceof PluginExtensionPointNode) && !fAvailableImports.contains(pluginID)) {
-				IPluginImport importNode = fModel.getPluginFactory().createImport();
-				importNode.setId(pluginID);
-				fModel.getPluginBase().add(importNode);
+			if (!(fCurrentPoint instanceof PluginExtensionPointNode)
+					&& !fAvailableImports.contains(pluginID)) {
+				if (MessageDialog
+						.openQuestion(
+								getShell(),
+								PDEUIMessages.NewExtensionWizard_PointSelectionPage_dependencyTitle,
+								NLS
+										.bind(
+												PDEUIMessages.NewExtensionWizard_PointSelectionPage_dependencyMessage,
+												new String[] { pluginID,
+														fCurrentPoint.getId() }))) {
+					IPluginImport importNode = fModel.getPluginFactory()
+							.createImport();
+					importNode.setId(pluginID);
+					fModel.getPluginBase().add(importNode);
+				}
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -467,12 +480,6 @@ public class PointSelectionPage
 				if (ssel.getFirstElement() instanceof IPluginExtensionPoint){
 					fCurrentPoint = (IPluginExtensionPoint) ssel.getFirstElement();
 					fTemplateViewer.setInput(fCurrentPoint);
-					if (fCurrentPoint instanceof PluginExtensionPointNode || fAvailableImports.contains(fCurrentPoint.getPluginBase().getId()))
-						setMessage(null);
-					else
-						setMessage(
-							PDEUIMessages.NewExtensionWizard_PointSelectionPage_message, //$NON-NLS-1$
-							INFORMATION);
 					setDescription(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_pluginDescription, fCurrentPoint.getFullId())); //$NON-NLS-1$
 					setDescriptionText(""); //$NON-NLS-1$
 					fTemplateLabel.setText(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_label, fCurrentPoint.getFullId())); //$NON-NLS-1$

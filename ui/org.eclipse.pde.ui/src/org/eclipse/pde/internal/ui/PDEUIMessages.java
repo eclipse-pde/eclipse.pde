@@ -962,7 +962,8 @@ public class PDEUIMessages extends NLS {
 	public static String NewExtensionTemplateWizard_generating;
 	public static String NewExtensionWizard_PointSelectionPage_filterCheck;
 	public static String NewExtensionWizard_PointSelectionPage_descButton;
-	public static String NewExtensionWizard_PointSelectionPage_message;
+	public static String NewExtensionWizard_PointSelectionPage_dependencyTitle;
+	public static String NewExtensionWizard_PointSelectionPage_dependencyMessage;
 	public static String NewExtensionWizard_PointSelectionPage_availExtPoints_label;
 	public static String NewExtensionWizard_PointSelectionPage_contributedTemplates_title;
 	public static String NewExtensionWizard_PointSelectionPage_contributedTemplates_label;

@@ -239,7 +239,7 @@ public class HelpTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		return new IPluginReference[] {new PluginReference("org.eclipse.help", null, 0)}; //$NON-NLS-1$
+		return new IPluginReference[0];
 	}
 	
 	/* (non-Javadoc)
