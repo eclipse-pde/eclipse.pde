@@ -1,11 +1,15 @@
 /* Shared style applied to all pages */
 /* trick to get desired scroll bar behavior on all browsers */ 
-html {
+html,body {
 	overflow:auto;
 	border:0px;
 	height:100%;
-	}
-
+	} 
+	
+html > body {
+	height: auto;
+	overflow: visible;
+}
 	
 body {	
 	margin-left:14px;
