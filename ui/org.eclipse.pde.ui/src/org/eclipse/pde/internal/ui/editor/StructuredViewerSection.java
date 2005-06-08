@@ -14,6 +14,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.parts.*;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -101,7 +102,7 @@ public abstract class StructuredViewerSection extends PDESection {
 		if (objects!=null && objects.length>0) {
 			return canPaste(target, objects);
 		}
-		return false;
+		return clipboard.getContents(TextTransfer.getInstance()) != null;
 	}
 	protected ISelection getViewerSelection() {
 		return viewerPart.getViewer().getSelection();
