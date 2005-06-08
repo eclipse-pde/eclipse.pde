@@ -375,36 +375,35 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		else
 			format = config + '-' + IXMLConstants.FORMAT_ANTZIP;
 		generator.setArchivesFormat(format);
-		setState(generator, os, ws, arch);
+		generator.setPDEState(getState(os, ws, arch));
+		generator.setNextId(TargetPlatform.getPDEState().getNextId());
 		generator.setStateExtraData(TargetPlatform.getBundleClasspaths(TargetPlatform.getPDEState()));
 		AbstractScriptGenerator.setForceUpdateJar(false);
 		AbstractScriptGenerator.setEmbeddedSource(fInfo.exportSource);		
 	}
 	
-	private void setState(BuildScriptGenerator generator, String os, String ws, String arch) {
+	protected State getState(String os, String ws, String arch) {
 		State main = TargetPlatform.getState();
 		if (os.equals(TargetPlatform.getOS()) 
 				&& ws.equals(TargetPlatform.getWS())
 				&& arch.equals(TargetPlatform.getOSArch())) {
-			generator.setPDEState(main);
-		} else {			
-			if (fStateCopy == null) {
-				fStateCopy = main.getFactory().createState(main);
-				fStateCopy.setResolver(Platform.getPlatformAdmin().getResolver());
-				fStateCopy.setPlatformProperties(main.getPlatformProperties()[0]);
-			}
-			
-			Dictionary properties = fStateCopy.getPlatformProperties()[0];
-			properties.put("osgi.os", os); //$NON-NLS-1$
-			properties.put("osgi.ws", ws); //$NON-NLS-1$
-			properties.put("osgi.arch", arch); //$NON-NLS-1$
-			fStateCopy.setPlatformProperties(properties);
-			fStateCopy.resolve(false);
-			generator.setPDEState(fStateCopy);
+			return main;
+		} 			
+		if (fStateCopy == null) {
+			fStateCopy = main.getFactory().createState(main);
+			fStateCopy.setResolver(Platform.getPlatformAdmin().getResolver());
+			fStateCopy.setPlatformProperties(main.getPlatformProperties()[0]);
 		}
-		generator.setNextId(TargetPlatform.getPDEState().getNextId());
+			
+		Dictionary properties = fStateCopy.getPlatformProperties()[0];
+		properties.put("osgi.os", os); //$NON-NLS-1$
+		properties.put("osgi.ws", ws); //$NON-NLS-1$
+		properties.put("osgi.arch", arch); //$NON-NLS-1$
+		fStateCopy.setPlatformProperties(properties);
+		fStateCopy.resolve(false);
+		return fStateCopy;
 	}
-
+	
 	private String getDevProperties() {
 		if (fDevProperties == null) {
 			fDevProperties = ClasspathHelper.getDevEntriesProperties(fBuildTempLocation + "/dev.properties", false); //$NON-NLS-1$

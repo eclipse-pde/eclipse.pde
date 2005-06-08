@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.BuildScriptGenerator;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
@@ -261,7 +262,7 @@ public class ProductExportJob extends FeatureExportJob {
 		} 
         try {
             writer = new PrintWriter(new FileWriter(new File(dir, "config.ini"))); //$NON-NLS-1$
-            String location = getSplashLocation();
+            String location = getSplashLocation(config[0], config[1], config[2]);
             writer.println("#Product Runtime Configuration File"); //$NON-NLS-1$
             writer.println();
             if (location != null)
@@ -280,16 +281,34 @@ public class ProductExportJob extends FeatureExportJob {
         }
 	}
 	
-	private String getSplashLocation() {
+	private String getSplashLocation(String os, String ws, String arch) {
 		ISplashInfo info = fProduct.getSplashInfo();
-		String location = null;
+		String plugin = null;
 		if (info != null) {
-			location = info.getLocation();
+			plugin = info.getLocation();
 		}
-		if (location == null)
-			location = getBrandingPlugin();
+		if (plugin == null)
+			plugin = getBrandingPlugin();
 		
-		return location == null ? null : "platform:/base/plugins/" + location; //$NON-NLS-1$
+		if (plugin == null)
+			return null;
+		
+		StringBuffer buffer = new StringBuffer("platform:/base/plugins/");
+		buffer.append(plugin);
+		
+		State state = getState(os, ws, arch);
+		BundleDescription bundle = state.getBundle(plugin, null);
+		if (bundle != null) {
+			BundleDescription[] fragments = bundle.getFragments();
+			for (int i = 0; i < fragments.length; i++) {
+				String id = fragments[i].getSymbolicName();
+				if (fProduct.containsPlugin(id)) {
+					buffer.append(",platform:/base/plugins/");
+					buffer.append(id);
+				}
+			}
+		}	
+		return buffer.toString();
 	}
 	
 	private String getBrandingPlugin() {
