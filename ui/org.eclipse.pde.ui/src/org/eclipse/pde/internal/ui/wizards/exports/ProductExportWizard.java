@@ -90,8 +90,8 @@ public class ProductExportWizard extends BaseExportWizard {
 			info.items = getPluginModels();
 		
 		String rootDirectory = page.getRootDirectory();
-		if ("".equals(rootDirectory.trim())) //$NON-NLS-1 //$NON-NLS-1$
-			rootDirectory = "."; //$NON-NLS-1 //$NON-NLS-1$
+		if ("".equals(rootDirectory.trim())) //$NON-NLS-1$
+			rootDirectory = ".";  //$NON-NLS-1$
 		ProductExportJob job = new ProductExportJob(info, fProductModel, rootDirectory);
 		job.setUser(true);
 		job.schedule();

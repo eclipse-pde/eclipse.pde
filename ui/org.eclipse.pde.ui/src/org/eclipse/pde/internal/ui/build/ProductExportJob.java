@@ -293,7 +293,7 @@ public class ProductExportJob extends FeatureExportJob {
 		if (plugin == null)
 			return null;
 		
-		StringBuffer buffer = new StringBuffer("platform:/base/plugins/");
+		StringBuffer buffer = new StringBuffer("platform:/base/plugins/"); //$NON-NLS-1$
 		buffer.append(plugin);
 		
 		State state = getState(os, ws, arch);
@@ -303,7 +303,7 @@ public class ProductExportJob extends FeatureExportJob {
 			for (int i = 0; i < fragments.length; i++) {
 				String id = fragments[i].getSymbolicName();
 				if (fProduct.containsPlugin(id)) {
-					buffer.append(",platform:/base/plugins/");
+					buffer.append(",platform:/base/plugins/"); //$NON-NLS-1$
 					buffer.append(id);
 				}
 			}

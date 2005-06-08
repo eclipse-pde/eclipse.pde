@@ -103,7 +103,7 @@ public class SplashSection extends PDESection {
 	
 	private void handleBrowse() {
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getDefault().getLabelProvider());
-		dialog.setElements(PDECore.getDefault().getModelManager().getWorkspaceModels());
+		dialog.setElements(PDECore.getDefault().getModelManager().getAllPlugins());
 		dialog.setMultipleSelection(false);
 		dialog.setTitle(PDEUIMessages.SplashSection_selection); //$NON-NLS-1$
 		dialog.setMessage(PDEUIMessages.SplashSection_message); //$NON-NLS-1$
