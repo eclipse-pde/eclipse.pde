@@ -96,7 +96,7 @@ public class DependencyExtentOperation {
 		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
 			if (fullID.equals(extensions[i].getPoint())) {
-				int line = ((ISourceObject)point).getStartLine();
+				int line = ((ISourceObject)extensions[i]).getStartLine()-1;
 				if (line >= 0) {
 					fSearchResult.addMatch(new Match(point, Match.UNIT_LINE, line, 1));
 					break;
