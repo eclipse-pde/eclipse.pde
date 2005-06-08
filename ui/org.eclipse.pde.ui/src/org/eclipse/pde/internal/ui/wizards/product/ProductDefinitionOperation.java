@@ -286,7 +286,11 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 		synchronizeChild(element, IProductConstants.ABOUT_TEXT, getAboutText());
 		synchronizeChild(element, IProductConstants.WINDOW_IMAGES, getWindowImagesString());
 		
-		return new ReplaceEdit(element.getOffset(), element.getLength(), element.write(false));
+		String oldText = fDocument.get(element.getOffset(), element.getLength());
+		String newText = element.write(false);
+		if (oldText.equals(newText))
+			return null;
+		return new ReplaceEdit(element.getOffset(), element.getLength(), newText);
 	}
 	
 	private void synchronizeChild(IPluginElement element, String propertyName, String value) throws CoreException {
