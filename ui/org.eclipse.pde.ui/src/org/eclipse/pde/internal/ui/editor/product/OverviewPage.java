@@ -138,11 +138,13 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	public void linkActivated(HyperlinkEvent e) {
 		String href = (String) e.getHref();
 		if (href.equals("action.debug")) { //$NON-NLS-1$
+			handleSynchronize(false);
 			new LaunchAction(getProduct(), getFilePath(), ILaunchManager.DEBUG_MODE).run();
 		} else if (href.equals("action.run")) { //$NON-NLS-1$
+			handleSynchronize(false);
 			new LaunchAction(getProduct(), getFilePath(), ILaunchManager.RUN_MODE).run();
 		} else if (href.equals("action.synchronize")) { //$NON-NLS-1$
-			handleSynchronize();
+			handleSynchronize(true);
 		} else if (href.equals("action.export")) { //$NON-NLS-1$
 			if (getPDEEditor().isDirty())
 				getPDEEditor().doSave(null);
@@ -164,15 +166,14 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		return getProduct().getId();
 	}
 	
-	private void handleSynchronize() {
+	private void handleSynchronize(boolean alert) {
 		try {
 			IProgressService service = PlatformUI.getWorkbench().getProgressService();
 			SynchronizationOperation op = new SynchronizationOperation(getProduct(), getSite().getShell());
 			service.runInUI(service, op, PDEPlugin.getWorkspace().getRoot());
-			MessageDialog.openInformation(getSite().getShell(), PDEUIMessages.OverviewPage_sync, PDEUIMessages.OverviewPage_successfulSync); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {		
-			MessageDialog.openError(getSite().getShell(), "Synchronize", e.getTargetException().getMessage()); //$NON-NLS-1$
+			if (alert) MessageDialog.openError(getSite().getShell(), "Synchronize", e.getTargetException().getMessage()); //$NON-NLS-1$
 		}
 	}
 	
