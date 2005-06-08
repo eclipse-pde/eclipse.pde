@@ -117,19 +117,20 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Label label = new Label(group, SWT.NONE);
-		label.setText(PDEUIMessages.BaseExportWizardPage_javacTarget);
+		label.setText(PDEUIMessages.BaseExportWizardPage_javacSource);
 		
-		fJavacTarget = new Combo(group, SWT.READ_ONLY);
-		fJavacTarget.setItems(COMPILER_LEVELS);
+		fJavacSource = new Combo(group, SWT.READ_ONLY);
+		fJavacSource.setItems(COMPILER_LEVELS);
 		
 		label = new Label(group, SWT.NONE);
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		label = new Label(group, SWT.NONE);
-		label.setText(PDEUIMessages.BaseExportWizardPage_javacSource);
+		label.setText(PDEUIMessages.BaseExportWizardPage_javacTarget);
 		
-		fJavacSource = new Combo(group, SWT.READ_ONLY);
-		fJavacSource.setItems(COMPILER_LEVELS);
+		fJavacTarget = new Combo(group, SWT.READ_ONLY);
+		fJavacTarget.setItems(COMPILER_LEVELS);
+		
 	}
 	
 	private void initializeCompilerOptionsSection(IDialogSettings settings) {
