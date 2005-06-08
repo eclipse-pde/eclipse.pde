@@ -25,11 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
@@ -44,8 +40,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Display;
 
 public class BuildSiteJob extends FeatureExportJob {
-
-	private Display fDisplay;
 
 	private IFeatureModel[] fFeaturemodels;
 
@@ -69,7 +63,6 @@ public class BuildSiteJob extends FeatureExportJob {
 	public BuildSiteJob(Display display, IFeatureModel[] models,
 			ISiteModel siteModel) {		
 		super(getInfo(siteModel, models));
-		fDisplay = display;
 		fFeaturemodels = models;
 		fSiteModel = siteModel;
 		fSiteContainer = siteModel.getUnderlyingResource().getParent();
@@ -82,20 +75,15 @@ public class BuildSiteJob extends FeatureExportJob {
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected IStatus run(final IProgressMonitor monitor) {
-		fBuildTime = touchSite(monitor);
-		this.addJobChangeListener(new JobChangeAdapter() {
-			public void done(IJobChangeEvent event) {
-				BuildSiteJob.this.removeJobChangeListener(this);
-				super.done(event);
-				refresh();
-				fDisplay.asyncExec(new Runnable() {
-					public void run() {
-						updateSiteFeatureVersions();
-					}
-				});
-			}
-		});
-		return super.run(monitor);
+		fBuildTime = System.currentTimeMillis();
+		IStatus status = super.run(monitor);
+		try {
+			fSiteContainer.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			updateSiteFeatureVersions();
+		} catch (CoreException ce) {
+			PDECore.logException(ce);
+		}
+		return status;
 	}
 
 	/*
@@ -291,31 +279,6 @@ public class BuildSiteJob extends FeatureExportJob {
 		}
 
 		return newestName.substring(id.length() + 1, newestName.length() - 4);
-	}
-
-	/**
-	 * @param monitor
-	 * @return time site was touched
-	 */
-	private long touchSite(IProgressMonitor monitor) {
-		File file = new File(fSiteContainer.getLocation().toOSString(),
-				"site.xml"); //$NON-NLS-1$
-		long time = System.currentTimeMillis();
-		file.setLastModified(time);
-		return time;
-	}
-
-	private void refresh() {
-		new Job(PDEUIMessages.BuildSiteJob_refresh){
-			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					fSiteContainer.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-				} catch (CoreException e) {
-				}
-				return Status.OK_STATUS;
-			}
-		}.schedule();
-		
 	}
 
 	/*
