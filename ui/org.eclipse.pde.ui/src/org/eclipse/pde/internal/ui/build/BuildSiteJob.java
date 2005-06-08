@@ -185,6 +185,9 @@ public class BuildSiteJob extends FeatureExportJob {
 							pvi);
 					if (reVersionCandidate != null) {
 						reVersionCandidate.setVersion(newVersion);
+						reVersionCandidate
+								.setURL("features/" + feature.getId() + "_" //$NON-NLS-1$ //$NON-NLS-2$
+										+ newVersion + ".jar"); //$NON-NLS-1$
 					}
 				}
 			}
@@ -268,7 +271,8 @@ public class BuildSiteJob extends FeatureExportJob {
 		String newestName = null;
 		long newestTime = 0;
 		for (int i = 0; i < featureJars.length; i++) {
-			long jarTime = featureJars[i].getModificationStamp();
+			File file = new File(featureJars[i].getLocation().toOSString());
+			long jarTime = file.lastModified();
 			String jarName = featureJars[i].getName();
 			
 			if (jarTime < fBuildTime) {
