@@ -122,8 +122,10 @@ public class ClasspathUtilCore {
 		if (model instanceof IBundlePluginModelBase)
 			return true;
 		if (model.getUnderlyingResource() == null) {
-			File file = new File(model.getInstallLocation());
-			Dictionary manifest = MinimalState.loadManifest(file);
+			File location = new File(model.getInstallLocation());
+			if (location.isDirectory() && !new File(location, "META-INF/MANIFEST.MF").exists())
+				return false;					
+			Dictionary manifest = MinimalState.loadManifest(location);
 			if (manifest == null)
 				return false;
 			Enumeration keys = manifest.keys();
