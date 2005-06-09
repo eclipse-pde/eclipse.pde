@@ -174,20 +174,17 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		
 		monitor.beginTask("", configurations.length * fInfo.items.length * 10); //$NON-NLS-1$
 		for (int i = 0; i < configurations.length; i++) {
-			try {
-				for (int j = 0; j < fInfo.items.length; j++) {
-					if (monitor.isCanceled())
-						throw new OperationCanceledException();
-					try {
-						doExport((IFeatureModel) fInfo.items[j], configurations[i], new SubProgressMonitor(monitor, 9));
-					} finally {
-						cleanup(configurations[i], new SubProgressMonitor(monitor, 1));
-					}
+			for (int j = 0; j < fInfo.items.length; j++) {
+				if (monitor.isCanceled())
+					throw new OperationCanceledException();
+				try {
+					doExport((IFeatureModel) fInfo.items[j], configurations[i], new SubProgressMonitor(monitor, 9));
+				} finally {
+					cleanup(configurations[i], new SubProgressMonitor(monitor, 1));
 				}
-			} finally {
-				monitor.done();
 			}
 		}
+		monitor.done();
 	}
 
 	private void doExport(IFeatureModel model, String os, String ws, String arch, IProgressMonitor monitor) throws CoreException, InvocationTargetException {
