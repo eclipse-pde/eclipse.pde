@@ -545,7 +545,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 
 		File scriptFile = null;
 		try {
-			scriptFile = createScriptFile();
+			scriptFile = createScriptFile("zip.xml");
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			Document doc = factory.newDocumentBuilder().newDocument();
 			
@@ -591,9 +591,9 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		}
 	}
 
-	private File createScriptFile() throws IOException {
+	protected File createScriptFile(String filename) throws IOException {
 		String path = PDEPlugin.getDefault().getStateLocation().toOSString();
-		File zip = new File(path, "zip.xml"); //$NON-NLS-1$
+		File zip = new File(path, filename); //$NON-NLS-1$
 		if (zip.exists()) {
 			zip.delete();
 			zip.createNewFile();
