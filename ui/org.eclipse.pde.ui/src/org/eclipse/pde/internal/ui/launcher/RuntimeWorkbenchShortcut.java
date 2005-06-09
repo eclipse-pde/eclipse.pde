@@ -323,24 +323,11 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 				findPlugin(((IFragmentModel) model).getFragment().getPluginId());
 			addPluginAndDependencies(parent, map);
 		} else {
-			boolean addFragments = false;
-			IPluginLibrary[] libs = model.getPluginBase().getLibraries();
-			for (int i = 0; i < libs.length; i++) {
-				if (ClasspathUtilCore.containsVariables(libs[i].getName())) {
-					addFragments = true;
-					break;
-				}
-			}
-            if (!addFragments) {
-                IPlugin plugin = ((IPluginModel)model).getPlugin();
-                addFragments = ClasspathUtilCore.hasExtensibleAPI(plugin);
-            }
-            
- 			if (addFragments) {
-				IFragmentModel[] fragments = findFragments(model.getPluginBase());
-				for (int i = 0; i < fragments.length; i++) {
+			IFragmentModel[] fragments = findFragments(model.getPluginBase());
+			for (int i = 0; i < fragments.length; i++) {
+				String fragmentID = fragments[i].getPluginBase().getId();
+				if (!"org.eclipse.ui.workbench.compatibility".equals(fragmentID))
 					addPluginAndDependencies(fragments[i], map);
-				}
 			}
 		}
 
