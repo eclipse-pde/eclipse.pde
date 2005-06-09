@@ -16,28 +16,20 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.osgi.framework.adaptor.core.AbstractFrameworkAdaptor;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -47,7 +39,6 @@ import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
-import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
 import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
@@ -58,8 +49,6 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 public class ProductExportJob extends FeatureExportJob {
 	
@@ -85,8 +74,8 @@ public class ProductExportJob extends FeatureExportJob {
 		for (int i = 0; i < configurations.length; i++) {
 			try {
 				String[] config = configurations[i];
-				if (config[0].equals("macosx") && fInfo.targets == null)
-					createMacScript(config, new SubProgressMonitor(monitor, 1));
+				//if (config[0].equals("macosx") && fInfo.targets == null)
+					//createMacScript(config, new SubProgressMonitor(monitor, 1));
 				// create a feature to wrap all plug-ins and features
 				String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
 				fFeatureLocation = fBuildTempLocation + File.separator + featureID;
@@ -464,7 +453,7 @@ public class ProductExportJob extends FeatureExportJob {
 			generator.setProduct(fProduct.getModel().getInstallLocation());
 	}
 	
-	private void createMacScript(String[] config, IProgressMonitor monitor) {
+	/*private void createMacScript(String[] config, IProgressMonitor monitor) {
 		URL url = PDEPlugin.getDefault().getBundle().getEntry("macosx/Info.plist");
 		if (url == null)
 			return;
@@ -547,7 +536,7 @@ public class ProductExportJob extends FeatureExportJob {
 				scriptFile.delete();
 			monitor.done();
 		}	
-	}
+	}*/
 	
 
 	
