@@ -19,6 +19,7 @@ public class LogViewLabelProvider
 	extends LabelProvider
 	implements ITableLabelProvider {
 	private Image infoImage;
+	private Image okImage;
 	private Image errorImage;
 	private Image warningImage;
 	private Image errorWithStackImage;
@@ -27,11 +28,13 @@ public class LogViewLabelProvider
 		errorImage = PDERuntimePluginImages.DESC_ERROR_ST_OBJ.createImage();
 		warningImage = PDERuntimePluginImages.DESC_WARNING_ST_OBJ.createImage();
 		infoImage = PDERuntimePluginImages.DESC_INFO_ST_OBJ.createImage();
+		okImage = PDERuntimePluginImages.DESC_OK_ST_OBJ.createImage();
 		errorWithStackImage = PDERuntimePluginImages.DESC_ERROR_STACK_OBJ.createImage();
 	}
 	public void dispose() {
 		errorImage.dispose();
 		infoImage.dispose();
+		okImage.dispose();
 		warningImage.dispose();
 		errorWithStackImage.dispose();
 		super.dispose();
@@ -42,6 +45,8 @@ public class LogViewLabelProvider
 			switch (entry.getSeverity()) {
 				case IStatus.INFO :
 					return infoImage;
+				case IStatus.OK :
+					return okImage;
 				case IStatus.WARNING :
 					return warningImage;
 				default :

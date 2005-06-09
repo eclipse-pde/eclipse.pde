@@ -118,6 +118,8 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 				return PDERuntimeMessages.LogView_severity_warning;
 			case IStatus.INFO :
 				return PDERuntimeMessages.LogView_severity_info;
+			case IStatus.OK :
+				return PDERuntimeMessages.LogView_severity_ok;
 		}
 		return "?"; //$NON-NLS-1$
 	}

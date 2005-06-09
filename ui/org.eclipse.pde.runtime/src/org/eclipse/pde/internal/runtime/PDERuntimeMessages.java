@@ -35,6 +35,7 @@ public class PDERuntimeMessages extends NLS {
 	public static String LogView_severity_error;
 	public static String LogView_severity_warning;
 	public static String LogView_severity_info;
+	public static String LogView_severity_ok;
 	public static String LogView_confirmDelete_title;
 	public static String LogView_confirmDelete_message;
 	public static String LogView_confirmOverwrite_message;
