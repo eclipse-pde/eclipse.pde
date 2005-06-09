@@ -64,6 +64,8 @@ public class FeatureExportWizard extends BaseExportWizard {
 		info.exportSource = fPage1.doExportSource();
 		info.destinationDirectory = fPage1.getDestination();
 		info.zipFileName = fPage1.getFileName();
+		info.targets = fPage2 == null ? null : 
+			fPage1.doMultiPlatform() ? fPage2.getTargets() : null;
 		info.javacSource = fPage1.getJavacSource();
 		info.javacTarget = fPage1.getJavacTarget();
 		info.items = ((ExportWizardPageWithTable)fPage1).getSelectedItems();

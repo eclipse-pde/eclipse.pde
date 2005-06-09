@@ -191,6 +191,9 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 	}
 	
 	public IWizardPage getNextPage() {
+		if (!doMultiPlatform()) {
+			return null;
+		}
 		return getWizard().getNextPage(this);
 	}
 	

@@ -92,4 +92,7 @@ public class PluginExportWizardPage extends ExportWizardPageWithTable {
 		return PDEUIMessages.BaseExportWizardPage_packageJARs; //$NON-NLS-1$
 	}
 				
+    protected boolean addMultiplatformSection() {
+		return false;
+	}
 }

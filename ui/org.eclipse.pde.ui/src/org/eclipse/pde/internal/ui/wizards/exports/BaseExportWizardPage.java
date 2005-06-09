@@ -18,6 +18,9 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.pde.internal.core.FeatureModelManager;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -42,6 +45,7 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 	private static final String S_JAR_FORMAT = "exportUpdate"; //$NON-NLS-1$
 	private static final String S_EXPORT_DIRECTORY = "exportDirectory";	 //$NON-NLS-1$
 	private static final String S_EXPORT_SOURCE="exportSource"; //$NON-NLS-1$
+	private static final String S_MULTI_PLATFORM="multiplatform"; //$NON-NLS-1$
 	private static final String S_DESTINATION = "destination"; //$NON-NLS-1$
 	private static final String S_ZIP_FILENAME = "zipFileName"; //$NON-NLS-1$
 	private static final String S_SAVE_AS_ANT = "saveAsAnt"; //$NON-NLS-1$
@@ -60,6 +64,8 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 	private Button fBrowseFile;
 	
 	private Button fIncludeSource;
+
+	private Button fMultiPlatform;
 
 	private Combo fAntCombo;
 	private Button fBrowseAnt;
@@ -199,6 +205,14 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
     		});
         }
         
+        if (addMultiplatformSection()) {
+			fMultiPlatform = new Button(comp, SWT.CHECK);
+			fMultiPlatform.setText(PDEUIMessages.ExportWizard_multi_platform);
+			gd = new GridData();
+			gd.horizontalSpan = 3;
+			fMultiPlatform.setLayoutData(gd);
+		}
+        
 		if (addAntSection())
             createAntSection(comp);
 		return comp;
@@ -301,6 +315,14 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
     			}
     		});	
         }
+
+        if (addMultiplatformSection()) {
+			fMultiPlatform.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					pageChanged();
+				}
+			});
+		}
 	}
 
 	private void chooseFile(Combo combo, String filter) {
@@ -365,6 +387,9 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
     		fAntCombo.setEnabled(fSaveAsAntButton.getSelection());
     		fBrowseAnt.setEnabled(fSaveAsAntButton.getSelection());
         }
+        if (addMultiplatformSection()) {
+    		fMultiPlatform.setSelection(settings.getBoolean(S_MULTI_PLATFORM));
+        }
 	}
 	
 	private void initializeDestinationSection(IDialogSettings settings) {
@@ -396,6 +421,8 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 		IDialogSettings settings = getDialogSettings();	
         if (fJarButton != null)
             settings.put(S_JAR_FORMAT, fJarButton.getSelection());
+        if (fMultiPlatform != null)
+            settings.put(S_MULTI_PLATFORM, fMultiPlatform.getSelection());
         
 		settings.put(S_EXPORT_DIRECTORY, fDirectoryButton.getSelection());		
 		settings.put(S_EXPORT_SOURCE, fIncludeSource.getSelection());
@@ -435,6 +462,9 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 		return fJarButton != null && fJarButton.getSelection();
 	}
 	
+    public boolean doMultiPlatform(){
+    	return fMultiPlatform!=null && fMultiPlatform.getSelection();
+    }
 	public String getFileName() {
 		if (fArchiveFileButton.getSelection()) {
 			String path = fArchiveCombo.getText();
@@ -485,7 +515,19 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 	}
 	
 	public IWizardPage getNextPage() {
-		return (fJarButton != null && fJarButton.getSelection()) ? super.getNextPage() : null;
+		IWizardPage crossPlatformPage = getWizard().getPage("environment"); //$NON-NLS-1$
+		if (crossPlatformPage != null && doMultiPlatform()) {
+			return crossPlatformPage;
+
+		}
+		IWizardPage advancedPage = getWizard().getPage("feature-sign"); //$NON-NLS-1$
+		if (advancedPage == null)
+			advancedPage = getWizard().getPage("plugin-sign"); //$NON-NLS-1$
+		if (advancedPage != null && useJARFormat()) {
+			return advancedPage;
+
+		}
+		return null;
 	}
     
     protected boolean addAntSection() {
@@ -495,5 +537,13 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
     protected boolean addJARFormatSection() {
         return true;
     }
+
+    protected boolean addMultiplatformSection() {
+		FeatureModelManager manager = PDECore.getDefault()
+				.getFeatureModelManager();
+		IFeatureModel model = manager
+				.findFeatureModel("org.eclipse.platform.launchers"); //$NON-NLS-1$
+		return model != null;
+	}
 	
 }

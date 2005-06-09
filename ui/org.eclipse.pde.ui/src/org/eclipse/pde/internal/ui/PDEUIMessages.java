@@ -1556,6 +1556,7 @@ public class PDEUIMessages extends NLS {
 	public static String ExportWizard_Plugin_description;
 	public static String ExportWizard_archive;
 	public static String ExportWizard_includeSource;
+	public static String ExportWizard_multi_platform;
 	public static String ExportWizard_destination;
 	public static String ExportWizard_options;
 	public static String ExportWizard_directory;

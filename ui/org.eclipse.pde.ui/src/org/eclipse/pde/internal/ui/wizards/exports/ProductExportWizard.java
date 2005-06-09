@@ -81,7 +81,8 @@ public class ProductExportWizard extends BaseExportWizard {
 		info.exportSource = page.doExportSource();
 		info.destinationDirectory = page.getDestination();
 		info.zipFileName = page.getFileName();
-		info.targets = fPage2 == null ? null : fPage2.getTargets();
+		info.targets = fPage2 == null ? null : 
+				page.doMultiPlatform() ? fPage2.getTargets() : null;
 		info.javacSource = page.getJavacSource();
 		info.javacTarget = page.getJavacTarget();
 		if (fProductModel.getProduct().useFeatures())
