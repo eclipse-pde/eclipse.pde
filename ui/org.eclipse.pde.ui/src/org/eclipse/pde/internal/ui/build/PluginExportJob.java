@@ -19,6 +19,7 @@ import java.util.Properties;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
@@ -88,6 +89,12 @@ public class PluginExportJob extends FeatureExportJob {
 		} catch (IOException e) {
 			PDECore.logException(e);
 		}
+	}
+    protected boolean isUnpack(BundleDescription bundle) {
+		if (fInfo.items.length <= 1) {
+			return !fInfo.useJarFormat;
+		}
+		return super.isUnpack(bundle);
 	}
 	
 }

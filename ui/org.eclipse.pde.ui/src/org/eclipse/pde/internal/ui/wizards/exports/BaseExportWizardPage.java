@@ -356,7 +356,11 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 		}
 	}
 
-	protected abstract void pageChanged();
+	protected void pageChanged() {
+		if (fJarButton != null) {
+			fJarButton.setEnabled(isEnableJarButton());
+		}
+	}
 	
 	protected String validateBottomSections() {
 		String message = null;
@@ -372,7 +376,10 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 		return message;
 	}
 	
-	
+	protected boolean isEnableJarButton(){
+		return true;
+	}
+
 	private boolean isButtonSelected(Button button) {
 		return button != null && !button.isDisposed() && button.getSelection();
 	}
@@ -380,7 +387,7 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 	protected void initializeExportOptions(IDialogSettings settings) {		
 		fIncludeSource.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
         if (fJarButton != null)
-            fJarButton.setSelection(settings.getBoolean(S_JAR_FORMAT));
+            fJarButton.setSelection(getInitialJarButtonSelection(settings));
         if (addAntSection()) {
     		fSaveAsAntButton.setSelection(settings.getBoolean(S_SAVE_AS_ANT));
     		initializeCombo(settings, S_ANT_FILENAME, fAntCombo);
@@ -390,6 +397,10 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
         if (addMultiplatformSection()) {
     		fMultiPlatform.setSelection(settings.getBoolean(S_MULTI_PLATFORM));
         }
+	}
+	
+	protected boolean getInitialJarButtonSelection(IDialogSettings settings){
+        return settings.getBoolean(S_JAR_FORMAT);
 	}
 	
 	private void initializeDestinationSection(IDialogSettings settings) {
@@ -459,7 +470,7 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 	}
 	
 	public boolean useJARFormat() {
-		return fJarButton != null && fJarButton.getSelection();
+		return fJarButton != null && fJarButton.isEnabled() && fJarButton.getSelection();
 	}
 	
     public boolean doMultiPlatform(){
@@ -523,10 +534,10 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 		IWizardPage advancedPage = getWizard().getPage("feature-sign"); //$NON-NLS-1$
 		if (advancedPage == null)
 			advancedPage = getWizard().getPage("plugin-sign"); //$NON-NLS-1$
-		if (advancedPage != null && useJARFormat()) {
+		if (advancedPage != null && isEnableJarButton() && useJARFormat()) {
 			return advancedPage;
-
 		}
+		
 		return null;
 	}
     

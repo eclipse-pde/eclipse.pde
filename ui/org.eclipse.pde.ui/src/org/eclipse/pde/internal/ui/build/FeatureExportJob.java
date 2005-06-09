@@ -545,7 +545,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 
 		File scriptFile = null;
 		try {
-			scriptFile = createScriptFile("zip.xml");
+			scriptFile = createScriptFile("zip.xml"); //$NON-NLS-1$
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			Document doc = factory.newDocumentBuilder().newDocument();
 			
@@ -685,7 +685,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
                         	plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
                             plugin.setAttribute("version", "0.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
                             if (!fInfo.useJarFormat) {
-                                plugin.setAttribute("unpack", Boolean.toString(CoreUtility.guessUnpack(bundle))); //$NON-NLS-1$
+                                plugin.setAttribute("unpack", Boolean.toString(isUnpack(bundle))); //$NON-NLS-1$
                              }
                             root.appendChild(plugin);
                          }
@@ -699,5 +699,8 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		} catch (ParserConfigurationException e1) {
 		}      	
     }
-
+    
+    protected boolean isUnpack(BundleDescription bundle){
+    	return CoreUtility.guessUnpack(bundle);
+    }
 }

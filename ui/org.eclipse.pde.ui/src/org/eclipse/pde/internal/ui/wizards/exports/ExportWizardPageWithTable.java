@@ -173,6 +173,7 @@ public abstract class ExportWizardPageWithTable extends BaseExportWizardPage {
 	public abstract Object[] getListElements();
 	
 	protected void pageChanged() {
+		super.pageChanged();
 		String message = fExportPart.getSelectionCount() > 0 
 							? null 
 				            : PDEUIMessages.ExportWizard_status_noselection; //$NON-NLS-1$

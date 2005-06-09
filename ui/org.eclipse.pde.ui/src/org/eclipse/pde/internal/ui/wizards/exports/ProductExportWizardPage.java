@@ -169,6 +169,7 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 	}
 
 	protected void pageChanged() {
+		super.pageChanged();
 		String errorMessage = null;
 		String message = null;
 		String configLocation = fProductCombo.getText().trim();
