@@ -315,7 +315,7 @@ public class PluginModelManager implements IAdaptable {
 		}
 		if (workspace) {
 			if (added) {
-				addWorkspaceBundleToState(model, true);
+				addWorkspaceBundleToState(model);
 			} else {
 				removeWorkspaceBundleFromState(model, id);
 			}
@@ -430,18 +430,18 @@ public class PluginModelManager implements IAdaptable {
 	private void addWorkspaceBundlesToNewState() {
 		IPluginModelBase[] models = fWorkspaceManager.getAllModels();
 		for (int i = 0; i < models.length; i++) {
-			addWorkspaceBundleToState(models[i], false);
+			addWorkspaceBundleToState(models[i]);
 		}
 		fState.resolveState(true);
 	}
 	
-	private void addWorkspaceBundleToState(IPluginModelBase model, boolean update) {
+	private void addWorkspaceBundleToState(IPluginModelBase model) {
 		ModelEntry entry = findEntry(model.getPluginBase().getId());
 		IPluginModelBase external = entry == null ? null : entry.getExternalModel();
 		if (external != null) {
 			fState.removeBundleDescription(external.getBundleDescription());
 		}
-		fState.addBundle(model, update);		
+		fState.addBundle(model, false);		
 	}
 	
 	private void removeWorkspaceBundleFromState(IPluginModelBase model, String id) {
