@@ -196,7 +196,7 @@ public class CrossPlatformExportPage extends ExportWizardPage {
 	public IWizardPage getNextPage() {
 		BaseExportWizardPage firstPage = (BaseExportWizardPage) getWizard()
 				.getPages()[0];
-		if (firstPage != null && !firstPage.doMultiPlatform()) {
+		if (firstPage != null && !firstPage.useJARFormat()) {
 			return null;
 		}
 		return super.getNextPage();
