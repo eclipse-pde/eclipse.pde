@@ -275,10 +275,10 @@ public class ExportPackageVisibilitySection extends TableSection
 
         ExportPackageObject object = objects == null ? null : objects[0];
         fVisibleButton.setEnabled(object != null && isEditable());
-        fVisibleButton.setSelection(fVisibleButton.getEnabled() && !object.isInternal());
+        fVisibleButton.setSelection(objects != null && !object.isInternal());
 
         fInternalButton.setEnabled(object != null && isEditable());
-        fInternalButton.setSelection(fInternalButton.getEnabled() && object.isInternal());
+        fInternalButton.setSelection(objects != null && object.isInternal());
         
         getTablePart().setButtonEnabled(0, fInternalButton.getSelection());
         getTablePart().setButtonEnabled(1, fInternalButton.getSelection());
