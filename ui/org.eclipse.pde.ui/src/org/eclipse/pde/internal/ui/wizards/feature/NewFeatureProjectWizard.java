@@ -284,19 +284,19 @@ public class NewFeatureProjectWizard extends NewWizard
 		IFeatureInfo info = model.getFactory().createInfo(IFeature.INFO_COPYRIGHT);
 		feature.setFeatureInfo(info, IFeature.INFO_COPYRIGHT);
 		
-		info.setURL("http://www.yourdomain.com/copyright"); //$NON-NLS-1$
+		info.setURL("http://www.example.com/copyright"); //$NON-NLS-1$
 		info.setDescription(PDEUIMessages.NewFeatureWizard_sampleCopyrightDesc); //$NON-NLS-1$
 		
 		info = model.getFactory().createInfo(IFeature.INFO_LICENSE);
 		feature.setFeatureInfo(info, IFeature.INFO_LICENSE);
 		
-		info.setURL("http://www.yourdomain.com/license"); //$NON-NLS-1$
+		info.setURL("http://www.example.com/license"); //$NON-NLS-1$
 		info.setDescription(PDEUIMessages.NewFeatureWizard_sampleLicenseDesc); //$NON-NLS-1$
 
 		info = model.getFactory().createInfo(IFeature.INFO_DESCRIPTION);
 		feature.setFeatureInfo(info, IFeature.INFO_DESCRIPTION);
 		
-		info.setURL("http://www.yourdomain.com/description"); //$NON-NLS-1$
+		info.setURL("http://www.example.com/description"); //$NON-NLS-1$
 		info.setDescription(PDEUIMessages.NewFeatureWizard_sampleDescriptionDesc); //$NON-NLS-1$
 
 		// Save the model
