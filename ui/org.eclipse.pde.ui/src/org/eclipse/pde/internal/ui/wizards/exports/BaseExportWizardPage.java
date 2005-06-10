@@ -141,13 +141,19 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 	
 	private void initializeCompilerOptionsSection(IDialogSettings settings) {
 		String target = settings.get(S_JAVAC_TARGET);
-		if (target == null)
+		if (target == null) {
 			target = JavaCore.getPlugin().getPluginPreferences().getString(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM);
+			if (target.equals("1.5")) //$NON-NLS-1$
+				target = "5.0"; //$NON-NLS-1$
+		}
 		fJavacTarget.setText(target);
 		
 		String source = settings.get(S_JAVAC_SOURCE);
-		if (source == null)
+		if (source == null) {
 			source = JavaCore.getPlugin().getPluginPreferences().getString(JavaCore.COMPILER_SOURCE);
+			if (source.equals("1.5")) //$NON-NLS-1$
+				source = "5.0"; //$NON-NLS-1$
+		}
 		fJavacSource.setText(source);		
 	}
 	
@@ -514,11 +520,13 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 	}
 	
 	public String getJavacTarget() {
-		return fJavacTarget.getText();
+		String target = fJavacTarget.getText();
+		return target.equals("5.0") ? "1.5" : target; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public String getJavacSource() {
-		return fJavacSource.getText();
+		String source = fJavacSource.getText();
+		return source.equals("5.0") ? "1.5" : source; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public String getAntBuildFileName() {

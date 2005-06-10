@@ -12,11 +12,9 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import java.io.*;
 import java.util.*;
-import java.util.ArrayList;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -28,7 +26,6 @@ import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -326,7 +323,7 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 			IFragmentModel[] fragments = findFragments(model.getPluginBase());
 			for (int i = 0; i < fragments.length; i++) {
 				String fragmentID = fragments[i].getPluginBase().getId();
-				if (!"org.eclipse.ui.workbench.compatibility".equals(fragmentID))
+				if (!"org.eclipse.ui.workbench.compatibility".equals(fragmentID)) //$NON-NLS-1$
 					addPluginAndDependencies(fragments[i], map);
 			}
 		}

@@ -140,10 +140,10 @@ public class ProductExportJob extends FeatureExportJob {
 			properties.put("root.permissions.755", getLauncherName()); //$NON-NLS-1$
 			if (TargetPlatform.getWS().equals("motif") && TargetPlatform.getOS().equals("linux")) { //$NON-NLS-1$ //$NON-NLS-2$
 				properties.put("root.linux.motif.x86.permissions.755", "libXm.so.2"); //$NON-NLS-1$ //$NON-NLS-2$
-			} else if (TargetPlatform.getOS().equals("macosx")) {
+			} else if (TargetPlatform.getOS().equals("macosx")) { //$NON-NLS-1$
 				properties.put(
-						"root.macosx.carbon.ppc.permissions.755" , 
-						"${launcherName}.app/Contents/MacOS/${launcherName}");
+						"root.macosx.carbon.ppc.permissions.755" ,  //$NON-NLS-1$
+						"${launcherName}.app/Contents/MacOS/${launcherName}"); //$NON-NLS-1$
 			}
 		}
 		save(new File(file, "build.properties"), properties, "Build Configuration"); //$NON-NLS-1$ //$NON-NLS-2$
