@@ -134,6 +134,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			Iterator iter = map.keySet().iterator();
 			while (iter.hasNext()) {
 				String symbolicName = iter.next().toString();
+				if (symbolicName.equals(desc.getSymbolicName()))
+					continue;
 				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(symbolicName);
 				if (model != null && model.isEnabled())
 					addDependencyViaImportPackage(model.getBundleDescription(), added, map, entries);
