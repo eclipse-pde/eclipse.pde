@@ -236,7 +236,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		String firstPageId = super.computeInitialPageId();
 		if (firstPageId == null) {
 			InputContext primary = inputContextManager.getPrimaryContext();
-			if (primary.getId().equals(FeatureInputContext.CONTEXT_ID))
+			if (primary != null && FeatureInputContext.CONTEXT_ID.equals(primary.getId()))
 				firstPageId = FeatureFormPage.PAGE_ID;
 			if (firstPageId == null)
 				firstPageId = FeatureFormPage.PAGE_ID;

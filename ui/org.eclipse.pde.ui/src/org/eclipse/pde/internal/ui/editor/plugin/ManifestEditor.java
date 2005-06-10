@@ -360,12 +360,12 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 		String firstPageId = super.computeInitialPageId();
 		if (firstPageId == null) {
 			InputContext primary = inputContextManager.getPrimaryContext();
-			boolean isBundle = inputContextManager
-					.hasContext(BundleInputContext.CONTEXT_ID);
-			if (primary.getId().equals(BuildInputContext.CONTEXT_ID))
+			if (primary == null)
+				return null;
+			if (BuildInputContext.CONTEXT_ID.equals(primary.getId()))
 				firstPageId = BuildPage.PAGE_ID;
-			else if (primary.getId().equals(PluginInputContext.CONTEXT_ID)) {
-				if (isBundle)
+			else if (PluginInputContext.CONTEXT_ID.equals(primary.getId())) {
+				if (inputContextManager.hasContext(BundleInputContext.CONTEXT_ID))
 					firstPageId = ExtensionsPage.PAGE_ID;
 				else
 					firstPageId = OverviewPage.PAGE_ID;
