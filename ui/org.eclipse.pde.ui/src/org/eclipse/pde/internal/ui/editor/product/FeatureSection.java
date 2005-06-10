@@ -72,6 +72,8 @@ public class FeatureSection extends TableSection {
 		fFeatureTable = tablePart.getTableViewer();
 		fFeatureTable.setContentProvider(new ContentProvider());
 		fFeatureTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		GridData data = (GridData)tablePart.getControl().getLayoutData();
+		data.minimumWidth = 200;
 		fFeatureTable.setInput(PDECore.getDefault().getFeatureModelManager());
 		
 		tablePart.setButtonEnabled(0, isEditable());

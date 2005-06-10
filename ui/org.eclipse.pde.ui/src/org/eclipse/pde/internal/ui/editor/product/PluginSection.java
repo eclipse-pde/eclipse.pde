@@ -114,6 +114,8 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 				return super.compare(viewer, p1.getId(), p2.getId());
 			}
 		});
+		GridData data = (GridData)tablePart.getControl().getLayoutData();
+		data.minimumWidth = 200;
 		fPluginTable.setInput(PDECore.getDefault().getModelManager());
 		
 		tablePart.setButtonEnabled(0, isEditable());
