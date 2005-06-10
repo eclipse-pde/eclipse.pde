@@ -39,7 +39,7 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 public class ClasspathComputer {
 	
 	public static void setClasspath(IProject project, IPluginModelBase model) throws CoreException {
-		IClasspathEntry[] entries = getClasspath(project, model, true);
+		IClasspathEntry[] entries = getClasspath(project, model, false);
 		JavaCore.create(project).setRawClasspath(entries, null);
 	}
 	
