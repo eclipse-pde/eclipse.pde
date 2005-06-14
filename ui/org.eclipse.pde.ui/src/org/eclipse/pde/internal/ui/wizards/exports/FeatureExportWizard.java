@@ -47,6 +47,7 @@ public class FeatureExportWizard extends BaseExportWizard {
 		}	
 		fPage3 = new AdvancedFeatureExportPage();
 		addPage(fPage3);
+		((FeatureExportWizardPage)fPage1).setFeaturePage(fPage3);
 	}
 
 	protected BaseExportWizardPage createPage1() {

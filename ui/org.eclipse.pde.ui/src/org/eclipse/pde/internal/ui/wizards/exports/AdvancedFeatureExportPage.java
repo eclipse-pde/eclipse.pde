@@ -35,7 +35,9 @@ public class AdvancedFeatureExportPage extends AdvancedPluginExportPage {
 	private Label fVersionLabel;
 	private Text fVersionText;
 	private Button fButton;
-
+	private Group jnlpGroup;
+	
+	
 	public AdvancedFeatureExportPage() {
 		super("feature-sign"); //$NON-NLS-1$
 	}
@@ -45,12 +47,12 @@ public class AdvancedFeatureExportPage extends AdvancedPluginExportPage {
 	}
 	
 	protected void createJNLPSection(Composite parent) {
-		Group group = new Group(parent, SWT.NONE);
-		group.setText(PDEUIMessages.AdvancedFeatureExportPage_jnlp); //$NON-NLS-1$
-		group.setLayout(new GridLayout(2, false));
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		jnlpGroup = new Group(parent, SWT.NONE);
+		jnlpGroup.setText(PDEUIMessages.AdvancedFeatureExportPage_jnlp); //$NON-NLS-1$
+		jnlpGroup.setLayout(new GridLayout(2, false));
+		jnlpGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		fButton = createbutton(group, PDEUIMessages.AdvancedFeatureExportPage_createJNLP); //$NON-NLS-1$
+		fButton = createbutton(jnlpGroup, PDEUIMessages.AdvancedFeatureExportPage_createJNLP); //$NON-NLS-1$
 		fButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean selected = fButton.getSelection();
@@ -59,12 +61,12 @@ public class AdvancedFeatureExportPage extends AdvancedPluginExportPage {
 			}
 		});
 
-		fURLLabel = createLabel(group, PDEUIMessages.AdvancedFeatureExportPage_siteURL);		 //$NON-NLS-1$
-		fURLText = createText(group);
+		fURLLabel = createLabel(jnlpGroup, PDEUIMessages.AdvancedFeatureExportPage_siteURL);		 //$NON-NLS-1$
+		fURLText = createText(jnlpGroup);
 		fURLText.setText(getString(S_URL));
 		
-		fVersionLabel = createLabel(group, PDEUIMessages.AdvancedFeatureExportPage_jreVersion);	 //$NON-NLS-1$
-		fVersionText = createText(group);
+		fVersionLabel = createLabel(jnlpGroup, PDEUIMessages.AdvancedFeatureExportPage_jreVersion);	 //$NON-NLS-1$
+		fVersionText = createText(jnlpGroup);
 		fVersionText.setText(getString(S_JRE));
 		
 		fButton.setSelection(getDialogSettings().getBoolean(S_JNLP));
@@ -81,10 +83,17 @@ public class AdvancedFeatureExportPage extends AdvancedPluginExportPage {
 	protected void validatePage() {
 		if (!isCurrentPage())
 			return;
-		super.validatePage();
+		forceValidatePage(false);
+	}
+	
+	protected void forceValidatePage(boolean forceSuper) {
+		if (forceSuper) super.forceValidatePage();
+		else super.validatePage();
+			
 		if (isPageComplete()) {
 			String error = null;
-			if (fButton.getSelection()) {
+			
+			if (jnlpGroup.getVisible() && fButton.getSelection()) {
 				if (fURLText.getText().trim().length() == 0) {
 					error = PDEUIMessages.AdvancedFeatureExportPage_noSite; //$NON-NLS-1$
 				} else if (fVersionText.getText().trim().length() == 0) {
@@ -93,6 +102,9 @@ public class AdvancedFeatureExportPage extends AdvancedPluginExportPage {
 			}
 			setErrorMessage(error);
 			setPageComplete(error == null);
+			// setPageComplete does not update buttons since we are checking a different page
+			// and so we must updateButtons explicitly.
+			if (forceSuper) getContainer().updateButtons();
 		}
 	}
 	
@@ -105,11 +117,15 @@ public class AdvancedFeatureExportPage extends AdvancedPluginExportPage {
 	}
 	
 	public String[] getJNLPInfo() {
-		if (fButton.getSelection()) {
+		if (jnlpGroup.getVisible() && fButton.getSelection()) {
 			return new String[] { fURLText.getText().trim(),
 					fVersionText.getText().trim() };
 		}
 		return null;
 	}
 
+	public void hideJNLP(boolean hide) {
+        jnlpGroup.setVisible(!hide);
+        fButton.setEnabled(!hide);
+    }
 }

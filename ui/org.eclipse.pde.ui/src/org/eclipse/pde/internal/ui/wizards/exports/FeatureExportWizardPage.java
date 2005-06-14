@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
@@ -25,6 +26,8 @@ import org.eclipse.ui.PlatformUI;
 
 
 public class FeatureExportWizardPage extends ExportWizardPageWithTable {
+	
+	private AdvancedFeatureExportPage featurePage;
 	
 	public FeatureExportWizardPage(IStructuredSelection selection) {
 		super(
@@ -63,5 +66,22 @@ public class FeatureExportWizardPage extends ExportWizardPageWithTable {
 	
 	protected String getJarButtonText() {
 		return PDEUIMessages.BaseExportWizardPage_fPackageJARs; //$NON-NLS-1$
+	}
+	
+	protected void setFeaturePage(AdvancedFeatureExportPage fPage) {
+		featurePage = fPage;
+	}
+	
+	protected void pageUpdate(boolean hideJNLP) {
+		featurePage.hideJNLP(hideJNLP);
+		if (isPageComplete() || getErrorMessage() == null) {
+			featurePage.forceValidatePage(true);
+		}
+	}
+	
+	public IWizardPage getNextPage() {
+		String exportType = ((BaseExportWizard)getWizard()).getExportOperation();
+		featurePage.hideJNLP(exportType.equals("zip")); //$NON-NLS-1$
+		return super.getNextPage();
 	}
 }

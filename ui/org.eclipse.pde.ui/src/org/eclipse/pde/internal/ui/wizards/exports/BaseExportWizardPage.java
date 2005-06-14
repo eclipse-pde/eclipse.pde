@@ -255,6 +255,7 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 				fDirectoryCombo.setEnabled(!enabled);
 				fBrowseDirectory.setEnabled(!enabled);
 				pageChanged();
+				pageUpdate(enabled);
 			}}
 		);
 			
@@ -331,6 +332,8 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 		}
 	}
 
+
+
 	private void chooseFile(Combo combo, String filter) {
 		FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
 		String path = fArchiveCombo.getText();
@@ -362,6 +365,8 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 		}
 	}
 
+	protected void pageUpdate(boolean archive) {
+	}
 	protected void pageChanged() {
 		if (fJarButton != null) {
 			fJarButton.setEnabled(isEnableJarButton());

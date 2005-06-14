@@ -144,6 +144,10 @@ public class AdvancedPluginExportPage extends ExportWizardPage {
 	protected void validatePage() {
 		if (!isCurrentPage())
 			return;
+		forceValidatePage();
+	}
+	
+	protected void forceValidatePage() {
 		String error = null;
 		if (fButton.getSelection()) {
 			if (fKeystoreText.getText().trim().length() == 0) {
