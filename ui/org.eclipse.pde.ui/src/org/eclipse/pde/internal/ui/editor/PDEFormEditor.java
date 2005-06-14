@@ -132,6 +132,10 @@ public abstract class PDEFormEditor extends FormEditor
 			PDEFormEditorContributor contributor = editor.getContributor();
 			return contributor.getSourceContributor();
 		}
+		
+		public IWorkbenchPart getPart() {
+			return getMultiPageEditor();
+		}
 	}
 	/**
 	 *  
