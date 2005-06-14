@@ -178,6 +178,7 @@ public class IncludedFeaturesSection extends TableSection implements
 			FeatureChild child = (FeatureChild) model.getFactory()
 					.createChild();
 			child.loadFrom(candidate.getFeature());
+			child.setVersion("0.0.0"); //$NON-NLS-1$
 			added[i] = child;
 		}
 		feature.addIncludedFeatures(added);

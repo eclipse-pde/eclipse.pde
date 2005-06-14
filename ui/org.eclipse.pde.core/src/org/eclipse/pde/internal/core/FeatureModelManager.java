@@ -130,6 +130,9 @@ public class FeatureModelManager {
 				return models[i];
 			}
 		}
+		if (models.length == 0 && "0.0.0".equals(version)) { //$NON-NLS-1$
+			return findFeatureModel(id);
+		}
 		return null;
 	}
 
