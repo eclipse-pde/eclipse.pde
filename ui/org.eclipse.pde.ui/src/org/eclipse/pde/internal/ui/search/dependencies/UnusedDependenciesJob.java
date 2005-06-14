@@ -92,7 +92,8 @@ public class UnusedDependenciesJob extends Job {
 			IJavaProject jProject = JavaCore.create(project);
 			IPackageFragment[] packageFragments = PluginJavaSearchUtil.collectPackageFragments(plugins, jProject, true);
 			SearchEngine engine = new SearchEngine();
-			monitor.beginTask("", packageFragments.length); //$NON-NLS-1$
+			IJavaSearchScope searchScope = PluginJavaSearchUtil.createSeachScope(jProject);
+			monitor.beginTask("", packageFragments.length*2); //$NON-NLS-1$
 			for (int i = 0; i < packageFragments.length; i++) {
 				IPackageFragment pkgFragment = packageFragments[i];
 				if (pkgFragment.hasChildren()) {
@@ -100,13 +101,18 @@ public class UnusedDependenciesJob extends Job {
 					engine.search(
 							SearchPattern.createPattern(pkgFragment, IJavaSearchConstants.REFERENCES),
 							new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()},
-							PluginJavaSearchUtil.createSeachScope(jProject), 
+							searchScope,
 							requestor, 
 							new SubProgressMonitor(monitor, 1));
-					if (requestor.foundMatches()) 
-						return true;
+					if (requestor.foundMatches()) {
+						if (provideJavaClasses(packageFragments[i], engine,
+								searchScope, new SubProgressMonitor(monitor, 1))) {
+							return true;
+						}
+					} else
+						monitor.worked(1);
 				} else {
-					monitor.worked(1);
+					monitor.worked(2);
 				}
 			}	
 		} catch (CoreException e) {
@@ -115,7 +121,42 @@ public class UnusedDependenciesJob extends Job {
 		}
 		return false;
 	}
-	
+
+	private boolean provideJavaClasses(IPackageFragment packageFragment,
+			SearchEngine engine, IJavaSearchScope searchScope,
+			IProgressMonitor monitor) throws JavaModelException, CoreException {
+		Requestor requestor;
+		IJavaElement[] children = packageFragment.getChildren();
+		monitor.beginTask("", children.length); //$NON-NLS-1$
+
+		try {
+			for (int j = 0; j < children.length; j++) {
+				IType[] types = null;
+				if (children[j] instanceof ICompilationUnit) {
+					types = ((ICompilationUnit) children[j]).getAllTypes();
+				} else if (children[j] instanceof IClassFile) {
+					types = new IType[] { ((IClassFile) children[j]).getType() };
+				}
+				if (types != null) {
+					for (int t = 0; t < types.length; t++) {
+						requestor = new Requestor();
+						engine.search(SearchPattern.createPattern(types[t],
+								IJavaSearchConstants.REFERENCES),
+								new SearchParticipant[] { SearchEngine
+										.getDefaultSearchParticipant() },
+								searchScope, requestor, new SubProgressMonitor(
+										monitor, 1));
+						if (requestor.foundMatches()) {
+							return true;
+						}
+					}
+				}
+			}
+		} finally {
+			monitor.done();
+		}
+		return false;
+	}
 	
 	private Action getShowResultsAction(IPluginImport[] unused) {
 		return new ShowResultsAction(unused, fReadOnly);
