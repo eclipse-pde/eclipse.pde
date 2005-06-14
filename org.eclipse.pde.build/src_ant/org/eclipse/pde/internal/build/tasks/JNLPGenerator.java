@@ -160,8 +160,18 @@ public class JNLPGenerator extends DefaultHandler {
 	private String convertOS(String os) {
 		if (os == null)
 			return null;
-		if (os.equals("win32"))
-			return "Windows";
+		if ("win32".equalsIgnoreCase(os)) //$NON-NLS-1$
+			return "Windows"; //$NON-NLS-1$
+		if ("macosx".equalsIgnoreCase(os)) //$NON-NLS-1$
+			return "Mac"; //$NON-NLS-1$
+		if ("linux".equalsIgnoreCase(os)) //$NON-NLS-1$
+			return "Linux"; //$NON-NLS-1$
+		if ("solaris".equalsIgnoreCase(os)) //$NON-NLS-1$
+			return "Solaris"; //$NON-NLS-1$
+		if ("hpux".equalsIgnoreCase(os)) //$NON-NLS-1$
+			return "HP-UX"; //$NON-NLS-1$
+		if ("aix".equalsIgnoreCase(os)) //$NON-NLS-1$
+			return "AIX"; //$NON-NLS-1$
 		return os;
 	}
 
