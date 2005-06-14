@@ -123,7 +123,7 @@ public class ClasspathUtilCore {
 			return true;
 		if (model.getUnderlyingResource() == null) {
 			File location = new File(model.getInstallLocation());
-			if (location.isDirectory() && !new File(location, "META-INF/MANIFEST.MF").exists())
+			if (location.isDirectory() && !new File(location, "META-INF/MANIFEST.MF").exists()) //$NON-NLS-1$
 				return false;					
 			Dictionary manifest = MinimalState.loadManifest(location);
 			if (manifest == null)

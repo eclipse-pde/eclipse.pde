@@ -10,21 +10,30 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import org.eclipse.pde.internal.core.iproduct.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
+import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.core.iproduct.IProductModel;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.parts.FormEntry;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
 
 public class ArgumentsSection extends PDESection {
 
-	private Text fProgramArgs;
-	private Text fVMArgs;
-	private boolean fBlockNotification;
+	private FormEntry fProgramArgs;
+	private FormEntry fVMArgs;
 
 	public ArgumentsSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
@@ -39,47 +48,47 @@ public class ArgumentsSection extends PDESection {
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(new GridLayout());
 		
-		Label label = toolkit.createLabel(client, PDEUIMessages.ArgumentsSection_program); //$NON-NLS-1$
-		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		
-		fProgramArgs = toolkit.createText(client, "", SWT.MULTI); //$NON-NLS-1$
-		fProgramArgs.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fProgramArgs.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (!fBlockNotification)
-					fireSaveNeeded();
+		fProgramArgs = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_program, SWT.MULTI|SWT.WRAP); //$NON-NLS-1$
+		fProgramArgs.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
+		fProgramArgs.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			public void textValueChanged(FormEntry entry) {
+				getLauncherArguments().setProgramArguments(entry.getValue());
 			}
 		});
+		fProgramArgs.setEditable(isEditable());
 		
-		label = toolkit.createLabel(client, PDEUIMessages.ArgumentsSection_vm); //$NON-NLS-1$
-		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		
-		fVMArgs = toolkit.createText(client, "", SWT.MULTI); //$NON-NLS-1$
-		fVMArgs.setLayoutData(new GridData(GridData.FILL_BOTH));		
-		fVMArgs.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (!fBlockNotification)
-					fireSaveNeeded();
+		fVMArgs = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_vm, SWT.MULTI|SWT.WRAP); //$NON-NLS-1$
+		fVMArgs.getText().setLayoutData(new GridData(GridData.FILL_BOTH));		
+		fVMArgs.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			public void textValueChanged(FormEntry entry) {
+				getLauncherArguments().setVMArguments(entry.getValue());
 			}
 		});
+		fVMArgs.setEditable(isEditable());
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);	
 	}
 	
 	public void refresh() {
-		fBlockNotification = true;
-		IArgumentsInfo info = getLauncherArguments();
-		fProgramArgs.setText(info.getProgramArguments());
-		fVMArgs.setText(info.getVMArguments());
+		fProgramArgs.setValue(getLauncherArguments().getProgramArguments(), true);
+		fVMArgs.setValue(getLauncherArguments().getVMArguments(), true);
 		super.refresh();
-		fBlockNotification = false;
 	}
 	
 	public void commit(boolean onSave) {
-		getLauncherArguments().setProgramArguments(fProgramArgs.getText().trim());
-		getLauncherArguments().setVMArguments(fVMArgs.getText().trim());
+		fProgramArgs.commit();
+		fVMArgs.commit();
 		super.commit(onSave);
+	}
+	
+	public void cancelEdit() {
+		fProgramArgs.cancelEdit();
+		fVMArgs.cancelEdit();
+		super.cancelEdit();
 	}
 	
 	private IArgumentsInfo getLauncherArguments() {
@@ -98,6 +107,13 @@ public class ArgumentsSection extends PDESection {
 	private IProductModel getModel() {
 		return (IProductModel)getPage().getPDEEditor().getAggregateModel();
 	}
-	
 
+	public boolean canPaste(Clipboard clipboard) {
+		Display d = getSection().getDisplay();
+		Control c = d.getFocusControl();
+		if (c instanceof Text)
+			return true;
+		return false;
+	}
+	
 }
