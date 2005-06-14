@@ -149,6 +149,8 @@ public class BrandingIron implements IXMLConstants {
 		if (! launcher.exists())
 			launcher = new File(initialRoot +  "/MacOS/eclipse");
 		File targetFile = new File(targetLauncher, name);
+		if (targetFile.equals(launcher))
+			return;
 		try {
 			copy(launcher, targetFile);
 		} catch (IOException e) {
@@ -189,8 +191,9 @@ public class BrandingIron implements IXMLConstants {
 		int iconPos = scan(buffer, 0, ICON_NAME);
 		if (iconPos != -1)
 			buffer.replace(iconPos, iconPos + ICON_NAME.length(), iconName);
+		File target = null;
 		try {
-			File target = new File(targetRoot, "Info.plist");
+			target = new File(targetRoot, "Info.plist");
 			transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(target));
 		} catch (FileNotFoundException e) {
 			System.out.println("Impossible to brand info.plist file"); //$NON-NLS-1$
@@ -199,7 +202,8 @@ public class BrandingIron implements IXMLConstants {
 			System.out.println("Impossible to brand info.plist file"); //$NON-NLS-1$
 			return;
 		}
-		infoPList.delete();
+		if (! infoPList.equals(target))
+			infoPList.delete();
 	}
 
 	/**
