@@ -10,45 +10,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.build;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Properties;
-import java.util.StringTokenizer;
-
+import java.net.URL;
+import java.util.*;
+import javax.xml.parsers.*;
+import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.framework.adaptor.core.AbstractFrameworkAdaptor;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.build.BuildScriptGenerator;
-import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
-import org.eclipse.pde.internal.build.IXMLConstants;
-import org.eclipse.pde.internal.core.ExternalModelManager;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
-import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
-import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
-import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
+import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
-import org.eclipse.pde.internal.core.iproduct.IProductModel;
-import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class ProductExportJob extends FeatureExportJob {
 	
@@ -64,7 +47,6 @@ public class ProductExportJob extends FeatureExportJob {
 		fRoot = productRoot;
 	}
 
-
 	protected void doExports(IProgressMonitor monitor)
 			throws InvocationTargetException, CoreException {
 		String[][] configurations = fInfo.targets;
@@ -74,8 +56,8 @@ public class ProductExportJob extends FeatureExportJob {
 		for (int i = 0; i < configurations.length; i++) {
 			try {
 				String[] config = configurations[i];
-				//if (config[0].equals("macosx") && fInfo.targets == null)
-					//createMacScript(config, new SubProgressMonitor(monitor, 1));
+				if (config[0].equals("macosx") && fInfo.targets == null) //$NON-NLS-1$
+					createMacScript(config, new SubProgressMonitor(monitor, 1));
 				// create a feature to wrap all plug-ins and features
 				String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
 				fFeatureLocation = fBuildTempLocation + File.separator + featureID;
@@ -157,20 +139,22 @@ public class ProductExportJob extends FeatureExportJob {
 			if (homeDir.exists() && homeDir.isDirectory()) {
 				buffer.append("absolute:file:"); //$NON-NLS-1$
 				buffer.append(new File(homeDir, "startup.jar").getAbsolutePath()); //$NON-NLS-1$
-				File file = new File(homeDir, "eclipse"); //$NON-NLS-1$
-				if (file.exists()) {
-					buffer.append(",absolute:file:"); //$NON-NLS-1$
-					buffer.append(file.getAbsolutePath()); //$NON-NLS-1$
-				}				
-				file = new File(homeDir, "eclipse.exe"); //$NON-NLS-1$
-				if (file.exists()) {
-					buffer.append(",absolute:file:"); //$NON-NLS-1$
-					buffer.append(file.getAbsolutePath()); //$NON-NLS-1$
-				}
-				file = new File(homeDir, "libXm.so.2"); //$NON-NLS-1$
-				if (file.exists()) {
-					buffer.append(",absolute:file:"); //$NON-NLS-1$
-					buffer.append(file.getAbsolutePath()); //$NON-NLS-1$
+				if (!TargetPlatform.getOS().equals("macosx")) { //$NON-NLS-1$
+					File file = new File(homeDir, "eclipse"); //$NON-NLS-1$
+					if (file.exists()) {
+						buffer.append(",absolute:file:"); //$NON-NLS-1$
+						buffer.append(file.getAbsolutePath()); //$NON-NLS-1$
+					}				
+					file = new File(homeDir, "eclipse.exe"); //$NON-NLS-1$
+					if (file.exists()) {
+						buffer.append(",absolute:file:"); //$NON-NLS-1$
+						buffer.append(file.getAbsolutePath()); //$NON-NLS-1$
+					}
+					file = new File(homeDir, "libXm.so.2"); //$NON-NLS-1$
+					if (file.exists()) {
+						buffer.append(",absolute:file:"); //$NON-NLS-1$
+						buffer.append(file.getAbsolutePath()); //$NON-NLS-1$
+					}
 				}
 			}	
 		}
@@ -453,8 +437,8 @@ public class ProductExportJob extends FeatureExportJob {
 			generator.setProduct(fProduct.getModel().getInstallLocation());
 	}
 	
-	/*private void createMacScript(String[] config, IProgressMonitor monitor) {
-		URL url = PDEPlugin.getDefault().getBundle().getEntry("macosx/Info.plist");
+	private void createMacScript(String[] config, IProgressMonitor monitor) {
+		URL url = PDEPlugin.getDefault().getBundle().getEntry("macosx/Info.plist");  //$NON-NLS-1$
 		if (url == null)
 			return;
 
@@ -464,11 +448,11 @@ public class ProductExportJob extends FeatureExportJob {
 		String location = PDEPlugin.getDefault().getStateLocation().toOSString();
 		try {
 			in = url.openStream();
-			File dir = new File(location, "Eclipse.app/Contents");
+			File dir = new File(location, "Eclipse.app/Contents"); //$NON-NLS-1$
 			dir.mkdirs();
-			plist = new File(dir, "Info.plist");
+			plist = new File(dir, "Info.plist"); //$NON-NLS-1$
 			AbstractFrameworkAdaptor.readFile(in, plist);
-			scriptFile = createScriptFile("macbuild.xml");
+			scriptFile = createScriptFile("macbuild.xml"); //$NON-NLS-1$
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			Document doc = factory.newDocumentBuilder().newDocument();
 			
@@ -477,9 +461,9 @@ public class ProductExportJob extends FeatureExportJob {
 			root.setAttribute("default", "default"); //$NON-NLS-1$ //$NON-NLS-2$
 			doc.appendChild(root);
 			
-			Element property = doc.createElement("property");
-			property.setAttribute("name", "eclipse.base");
-			property.setAttribute("value", "${assemblyTempDir}/${collectingFolder}");
+			Element property = doc.createElement("property"); //$NON-NLS-1$
+			property.setAttribute("name", "eclipse.base"); //$NON-NLS-1$ //$NON-NLS-2$
+			property.setAttribute("value", "${assemblyTempDir}/${collectingFolder}"); //$NON-NLS-1$ //$NON-NLS-2$
 			root.appendChild(property);
 			
 			Element target = doc.createElement("target"); //$NON-NLS-1$
@@ -487,19 +471,19 @@ public class ProductExportJob extends FeatureExportJob {
 			root.appendChild(target);
 			
 			Element copy = doc.createElement("copy"); //$NON-NLS-1$
-			copy.setAttribute("todir", "${eclipse.base}/${collectingFolder}"); 
-			copy.setAttribute("failonerror", "false");
-			copy.setAttribute("overwrite", "true");
+			copy.setAttribute("todir", "${eclipse.base}/macosx.carbon.ppc/${collectingFolder}");  //$NON-NLS-1$ //$NON-NLS-2$
+			copy.setAttribute("failonerror", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			copy.setAttribute("overwrite", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 			target.appendChild(copy);
 			
-			Element fileset = doc.createElement("fileset");
-			fileset.setAttribute("dir", "${installFolder}");
-			fileset.setAttribute("includes", "Eclipse.app/Contents/MacOS/eclipse");
+			Element fileset = doc.createElement("fileset"); //$NON-NLS-1$
+			fileset.setAttribute("dir", "${installFolder}"); //$NON-NLS-1$ //$NON-NLS-2$
+			fileset.setAttribute("includes", "Eclipse.app/Contents/MacOS/eclipse"); //$NON-NLS-1$ //$NON-NLS-2$
 			copy.appendChild(fileset);
 			
-			fileset = doc.createElement("fileset");
-			fileset.setAttribute("dir", "${template}");
-			fileset.setAttribute("includes", "Eclipse.app/Contents/Info.plist");
+			fileset = doc.createElement("fileset"); //$NON-NLS-1$
+			fileset.setAttribute("dir", "${template}"); //$NON-NLS-1$ //$NON-NLS-2$
+			fileset.setAttribute("includes", "Eclipse.app/Contents/Info.plist"); //$NON-NLS-1$ //$NON-NLS-2$
 			copy.appendChild(fileset);
 							
 			XMLPrintHandler.writeFile(doc, scriptFile);
@@ -512,31 +496,29 @@ public class ProductExportJob extends FeatureExportJob {
 			} else {
 				map.put(IXMLConstants.PROPERTY_ASSEMBLY_TMP, fInfo.destinationDirectory);
 			}
-			map.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, ".");
-			map.put("installFolder", ExternalModelManager.getEclipseHome().toOSString());
-			map.put("template", location);
+			map.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, fRoot); //$NON-NLS-1$
+			map.put("installFolder", ExternalModelManager.getEclipseHome().toOSString()); //$NON-NLS-1$
+			map.put("template", location); //$NON-NLS-1$
 			runner.addUserProperties(map);
 			runner.setBuildFileLocation(scriptFile.getAbsolutePath());
-			runner.setExecutionTargets(new String[] {"default"});
+			runner.setExecutionTargets(new String[] {"default"}); //$NON-NLS-1$
 			runner.run(new SubProgressMonitor(monitor, 1));
 		} catch (FactoryConfigurationError e) {
 		} catch (ParserConfigurationException e) {
 		} catch (CoreException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
 		} finally {
 			try {
 				if (in != null)
 					in.close();
 			} catch (IOException e) {
 			}
-			CoreUtility.deleteContent(new File(location, "Eclipse.app"));		
+			CoreUtility.deleteContent(new File(location, "Eclipse.app"));		 //$NON-NLS-1$
 			if (scriptFile != null && scriptFile.exists())
 				scriptFile.delete();
 			monitor.done();
 		}	
-	}*/
+	}
 	
 
 	
