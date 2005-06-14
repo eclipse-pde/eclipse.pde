@@ -436,7 +436,10 @@ public class PluginModelManager implements IAdaptable {
 	}
 	
 	private void addWorkspaceBundleToState(IPluginModelBase model) {
-		ModelEntry entry = findEntry(model.getPluginBase().getId());
+		String id = model.getPluginBase().getId();
+		if (id == null)
+			return;
+		ModelEntry entry = findEntry(id);
 		IPluginModelBase external = entry == null ? null : entry.getExternalModel();
 		if (external != null) {
 			fState.removeBundleDescription(external.getBundleDescription());
