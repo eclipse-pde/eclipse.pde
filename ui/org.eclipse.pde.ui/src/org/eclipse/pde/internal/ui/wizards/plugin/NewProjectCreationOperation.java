@@ -311,10 +311,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		IClasspathEntry[] entries = new IClasspathEntry[internalClassPathEntries.length + 2];
 		System.arraycopy(internalClassPathEntries, 0, entries, 0,
 				internalClassPathEntries.length);
-		entries[entries.length - 2] = ClasspathUtilCore
-				.createContainerEntry();
-		entries[entries.length - 1] = ClasspathUtilCore
-				.createJREEntry();
+		entries[entries.length - 2] = ClasspathUtilCore.createJREEntry();
+		entries[entries.length - 1] = ClasspathUtilCore.createContainerEntry();
 		return entries;
 	}
 

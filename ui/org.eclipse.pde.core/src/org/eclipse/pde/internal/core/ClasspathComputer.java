@@ -50,11 +50,11 @@ public class ClasspathComputer {
 		// add own libraries/source
 		addSourceAndLibraries(project, model, clear, result);
 	
-		// add pde container
-		result.add(ClasspathUtilCore.createContainerEntry());
-
 		// add JRE
 		result.add(ClasspathUtilCore.createJREEntry());
+
+		// add pde container
+		result.add(ClasspathUtilCore.createContainerEntry());
 
 		IClasspathEntry[] entries = (IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
 		IJavaProject javaProject = JavaCore.create(project);
