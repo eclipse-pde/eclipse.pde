@@ -159,6 +159,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 		section.setClient(container);
         GridData gd = new GridData(GridData.FILL_BOTH);
         gd.verticalSpan = 2;
+        gd.minimumWidth = 300;
 		section.setLayoutData(gd);
         makeActions();
         

@@ -36,7 +36,6 @@ public class RuntimePage extends PDEFormPage {
 		layout.marginWidth = 10;
 		layout.horizontalSpacing = 10;
 		layout.verticalSpacing = 20;
-		layout.makeColumnsEqualWidth = true;
         form.getBody().setLayout(layout);
 		
         if (isBundle()) {
