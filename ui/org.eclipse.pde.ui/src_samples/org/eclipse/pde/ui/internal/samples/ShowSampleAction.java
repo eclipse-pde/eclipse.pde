@@ -19,11 +19,11 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.intro.config.*;
 import org.eclipse.update.configurator.*;
-import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.standalone.InstallCommand;
 
 public class ShowSampleAction extends Action implements IIntroAction {
@@ -41,26 +41,37 @@ public class ShowSampleAction extends Action implements IIntroAction {
 		sampleId = params.getProperty("id"); //$NON-NLS-1$
 		if (sampleId == null)
 			return;
-		if (!ensureSampleFeaturePresent())
-			return;
-		SampleWizard wizard = new SampleWizard();
-		try {
-			wizard.setInitializationData(null, "class", sampleId); //$NON-NLS-1$
-			wizard.setSampleEditorNeeded(false);
-			wizard.setSwitchPerspective(false);
-			wizard.setSelectRevealEnabled(false);
-			wizard.setActivitiesEnabled(false);
-			WizardDialog dialog = new WizardDialog(PDEPlugin
-					.getActiveWorkbenchShell(), wizard);
-			dialog.create();
-			dialog.setPageSize(450, 500);
-			if (dialog.open() == WizardDialog.OK) {
-				switchToSampleStandby(wizard);
-			}
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		}
+        
+         Runnable r= new Runnable() {
+                public void run() {
+		    if (!ensureSampleFeaturePresent())
+		        return;
+        
+                SampleWizard wizard = new SampleWizard();
+                try {
+                    wizard.setInitializationData(null, "class", sampleId); //$NON-NLS-1$
+                    wizard.setSampleEditorNeeded(false);
+                    wizard.setSwitchPerspective(false);
+                    wizard.setSelectRevealEnabled(false);
+                    wizard.setActivitiesEnabled(false);
+                    WizardDialog dialog = new WizardDialog(PDEPlugin
+                            .getActiveWorkbenchShell(), wizard);
+                    dialog.create();
+                    dialog.setPageSize(450, 500);
+                    if (dialog.open() == WizardDialog.OK) {
+                        switchToSampleStandby(wizard);
+                    }
+                } catch (CoreException e) {
+                    PDEPlugin.logException(e);
+                }
+            }
+        };
+        
+        Shell currentShell = PlatformUI.getWorkbench()
+            .getActiveWorkbenchWindow().getShell();
+        currentShell.getDisplay().asyncExec(r);
 	}
+    
 	private void switchToSampleStandby(SampleWizard wizard) {
 		StringBuffer url = new StringBuffer();
 		url.append("http://org.eclipse.ui.intro/showStandby?"); //$NON-NLS-1$
