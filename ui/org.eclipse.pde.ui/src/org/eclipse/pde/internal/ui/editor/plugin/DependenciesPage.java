@@ -30,19 +30,19 @@ public class DependenciesPage extends PDEFormPage {
 	
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
+		boolean isBundle = isBundle();
 		ScrolledForm form = managedForm.getForm();
 		form.setText(PDEUIMessages.DependenciesPage_title); //$NON-NLS-1$
 		Composite body = form.getBody();
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth = true;
 		layout.marginWidth = 10;
 		layout.verticalSpacing = 20;
 		layout.horizontalSpacing = 10;
+		layout.makeColumnsEqualWidth = isBundle;
 		body.setLayout(layout);
 		
 		managedForm.addPart(new RequiresSection(this, body, getRequiredSectionLabels()));		
-		boolean isBundle = isBundle();
 		if (isBundle)
 			managedForm.addPart(new ImportPackageSection(this, body));
 		else
@@ -52,6 +52,8 @@ public class DependenciesPage extends PDEFormPage {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
 		if (isBundle)
 			gd.horizontalSpan = 2;
+		else
+			gd.widthHint = 150;
 		section.getSection().setLayoutData(gd);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_PLUGIN_DEPENDENCIES);
 	}

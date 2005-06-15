@@ -92,6 +92,7 @@ public class RequiresSection
 		makeActions();
 		section.setClient(container);
 		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.minimumWidth = 250;
 		if (!isBundle())
 			gd.verticalSpan = 2;
 		section.setLayoutData(gd);
