@@ -159,7 +159,9 @@ public class ProductExportJob extends FeatureExportJob {
 			}	
 		}
 		// add content of temp folder (.eclipseproduct, configuration/config.ini)
-		buffer.append(",/temp/"); //$NON-NLS-1$
+		if (buffer.length() > 0)
+			buffer.append(","); //$NON-NLS-1$
+		buffer.append("/temp/"); //$NON-NLS-1$
 		return buffer.toString();
 	}
 	
