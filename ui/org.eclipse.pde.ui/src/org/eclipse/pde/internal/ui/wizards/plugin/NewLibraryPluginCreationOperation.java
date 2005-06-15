@@ -38,7 +38,9 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModelFactory;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -224,13 +226,19 @@ public class NewLibraryPluginCreationOperation extends
 						});
 				op.run(monitor);
 			} finally {
-				input.close();
+				if (input != null)
+					input.close();
 			}
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					PDEPlugin.PLUGIN_ID, IStatus.OK,
-					PDEUIMessages.NewProjectCreationOperation_errorImportingJar
-							+ jar, e));
+			throw new CoreException(
+					new Status(
+							IStatus.ERROR,
+							PDEPlugin.PLUGIN_ID,
+							IStatus.OK,
+							NLS
+									.bind(
+											PDEUIMessages.NewProjectCreationOperation_errorImportingJar,
+											jar), e));
 		}
 	}
 
@@ -297,6 +305,22 @@ public class NewLibraryPluginCreationOperation extends
 				library.setExported(true);
 				pluginBase.add(library);
 			}
+		}
+	}
+
+	protected void createSourceOutputBuildEntries(WorkspaceBuildModel model,
+			IBuildModelFactory factory) throws CoreException {
+		if (fData.isUnzipLibraries()) {
+			// SOURCE.<LIBRARY_NAME>
+			IBuildEntry entry = factory.createEntry(IBuildEntry.JAR_PREFIX
+					+ "."); //$NON-NLS-1$
+			entry.addToken("."); //$NON-NLS-1$
+			model.getBuild().add(entry);
+
+			// OUTPUT.<LIBRARY_NAME>
+			entry = factory.createEntry(IBuildEntry.OUTPUT_PREFIX + "."); //$NON-NLS-1$
+			entry.addToken("."); //$NON-NLS-1$
+			model.getBuild().add(entry);
 		}
 	}
 

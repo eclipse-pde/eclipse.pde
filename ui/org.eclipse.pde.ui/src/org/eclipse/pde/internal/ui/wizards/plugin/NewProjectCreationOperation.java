@@ -106,33 +106,39 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			// BIN.INCLUDES
 			IBuildEntry binEntry = factory.createEntry(IBuildEntry.BIN_INCLUDES);
 			fillBinIncludes(project, binEntry);
-			String srcFolder = fData.getSourceFolderName();
-			if (!fData.isSimple() && srcFolder != null) {
-				String libraryName = fData.getLibraryName();
-				if (libraryName == null)
-					libraryName = "."; //$NON-NLS-1$
-				// SOURCE.<LIBRARY_NAME>
-				IBuildEntry entry = factory.createEntry(IBuildEntry.JAR_PREFIX + libraryName);
-				if (srcFolder.length() > 0)
-					entry.addToken(new Path(srcFolder).addTrailingSeparator()
-							.toString());
-				else
-					entry.addToken("."); //$NON-NLS-1$
-				model.getBuild().add(entry);
-
-				// OUTPUT.<LIBRARY_NAME>
-				entry = factory.createEntry(IBuildEntry.OUTPUT_PREFIX
-						+ libraryName);
-				String outputFolder = fData.getOutputFolderName().trim();
-				if (outputFolder.length() > 0)
-					entry.addToken(new Path(outputFolder)
-							.addTrailingSeparator().toString());
-				else
-					entry.addToken("."); //$NON-NLS-1$
-				model.getBuild().add(entry);
-			}
+			createSourceOutputBuildEntries(model, factory);
 			model.getBuild().add(binEntry);
 			model.save();
+		}
+	}
+
+	protected void createSourceOutputBuildEntries(WorkspaceBuildModel model,
+			IBuildModelFactory factory) throws CoreException {
+		String srcFolder = fData.getSourceFolderName();
+		if (!fData.isSimple() && srcFolder != null) {
+			String libraryName = fData.getLibraryName();
+			if (libraryName == null)
+				libraryName = "."; //$NON-NLS-1$
+			// SOURCE.<LIBRARY_NAME>
+			IBuildEntry entry = factory.createEntry(IBuildEntry.JAR_PREFIX
+					+ libraryName);
+			if (srcFolder.length() > 0)
+				entry.addToken(new Path(srcFolder).addTrailingSeparator()
+						.toString());
+			else
+				entry.addToken("."); //$NON-NLS-1$
+			model.getBuild().add(entry);
+
+			// OUTPUT.<LIBRARY_NAME>
+			entry = factory
+					.createEntry(IBuildEntry.OUTPUT_PREFIX + libraryName);
+			String outputFolder = fData.getOutputFolderName().trim();
+			if (outputFolder.length() > 0)
+				entry.addToken(new Path(outputFolder).addTrailingSeparator()
+						.toString());
+			else
+				entry.addToken("."); //$NON-NLS-1$
+			model.getBuild().add(entry);
 		}
 	}
 

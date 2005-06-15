@@ -36,7 +36,7 @@ public class LibraryPluginTestCase extends NewProjectTest {
 			playScript(Catalog.LIBRARY_PLUGIN_1);
 			verifyProject(false, "pdeuiant.jar", "bin");
 			verifyPluginModel(null, "pdeuiant.jar");
-			verifyBuildProperties(false, "pdeuiant.jar");
+			verifyBuildProperties(false, false, "pdeuiant.jar");
 		} catch (CoreException e) {
 			fail("testLibrariesFromWorkspacePlugin:" + e);
 		}
@@ -47,7 +47,7 @@ public class LibraryPluginTestCase extends NewProjectTest {
 			playScript(Catalog.LIBRARY_PLUGIN_2);
 			verifyProject(true, "pdeuiant.jar", "bin");
 			verifyPluginModel(null, "pdeuiant.jar");
-			verifyBuildProperties(true, "pdeuiant.jar");
+			verifyBuildProperties(true, false, "pdeuiant.jar");
 		} catch (CoreException e) {
 			fail("testLibrariesFromWorkspacePluginWithManifest:" + e);
 		}
@@ -58,7 +58,7 @@ public class LibraryPluginTestCase extends NewProjectTest {
 			playScript(Catalog.LIBRARY_PLUGIN_3);
 			verifyProject(false, ".", "bin");
 			verifyPluginModel(null, ".");
-			verifyBuildProperties(false, ".");
+			verifyBuildProperties(false, true, ".");
 		} catch (CoreException e) {
 			fail("testLibrariesFromWorkspacePlugin:" + e);
 		}
@@ -69,7 +69,7 @@ public class LibraryPluginTestCase extends NewProjectTest {
 			playScript(Catalog.LIBRARY_PLUGIN_4);
 			verifyProject(true, ".", "bin");
 			verifyPluginModel(null, ".");
-			verifyBuildProperties(true, ".");
+			verifyBuildProperties(true, true, ".");
 		} catch (CoreException e) {
 			fail("testLibrariesFromWorkspacePluginWithManifest:" + e);
 		}
@@ -162,7 +162,7 @@ public class LibraryPluginTestCase extends NewProjectTest {
 		assertEquals(0, plugin.getExtensions().length);
 	}
 
-	private void verifyBuildProperties(boolean isBundle, String libraryName) {
+	private void verifyBuildProperties(boolean isBundle, boolean isUnzip, String libraryName) {
 		IFile buildFile = getProject().getFile("build.properties"); //$NON-NLS-1$
 		assertTrue("Build.properties does not exist.", buildFile.exists());
 		
@@ -174,7 +174,7 @@ public class LibraryPluginTestCase extends NewProjectTest {
 		}
 		
 		IBuild build = model.getBuild();
-		assertEquals(1, build.getBuildEntries().length);
+		assertEquals(isUnzip ? 3 : 1, build.getBuildEntries().length);
 		
 		// verify bin.includes
 		IBuildEntry entry = build.getEntry("bin.includes");
@@ -186,6 +186,21 @@ public class LibraryPluginTestCase extends NewProjectTest {
 			assertEquals("org/", tokens[1]);
 		else
 			assertEquals(libraryName, tokens[1]);
+		
+		if (isUnzip) {
+			entry = build.getEntry("source..");
+			assertNotNull(entry);
+			tokens = entry.getTokens();
+			assertEquals(1, tokens.length);
+			assertEquals(".", tokens[0]);
+
+			entry = build.getEntry("output..");
+			assertNotNull(entry);
+			tokens = entry.getTokens();
+			assertEquals(1, tokens.length);
+			assertEquals(".", tokens[0]);
+			
+		}
 		
 	}
 
