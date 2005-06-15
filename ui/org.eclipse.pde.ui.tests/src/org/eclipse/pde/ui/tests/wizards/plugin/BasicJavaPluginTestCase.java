@@ -157,17 +157,18 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 		assertEquals(IClasspathEntry.CPE_SOURCE, entry.getEntryKind());
 		assertEquals(new Path(getProjectName()).append(srcFolder).makeAbsolute(), entry.getPath());
 		
-		// verify PDE container 
+		// verify JRE container
 		entry = entries[1];
 		assertEquals(IClasspathEntry.CPE_CONTAINER, entry.getEntryKind());
-		assertEquals(new Path(PDECore.CLASSPATH_CONTAINER_ID), entry.getPath());
-		IPackageFragmentRoot[] roots = jProject.findPackageFragmentRoots(entry);
-		assertEquals(className == null, roots.length == 0);
+		assertEquals(new Path(JavaRuntime.JRE_CONTAINER), entry.getPath());
 		
-		// verify JRE container
+		// verify PDE container 
 		entry = entries[2];
 		assertEquals(IClasspathEntry.CPE_CONTAINER, entry.getEntryKind());
-		assertEquals(new Path(JavaRuntime.JRE_CONTAINER), entry.getPath());
+		assertEquals(new Path(PDECore.CLASSPATH_CONTAINER_ID), entry.getPath());
+		
+		IPackageFragmentRoot[] roots = jProject.findPackageFragmentRoots(entry);
+		assertEquals(className == null, roots.length == 0);
 		
 		// verify no errors
 		assertEquals(0, getProject().findMarkers(null, true, IResource.DEPTH_INFINITE).length);

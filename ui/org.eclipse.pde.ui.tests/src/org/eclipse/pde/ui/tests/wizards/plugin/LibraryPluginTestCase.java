@@ -129,15 +129,15 @@ public class LibraryPluginTestCase extends NewProjectTest {
 		assertEquals(IClasspathEntry.CPE_LIBRARY, entry.getEntryKind());
 		assertEquals(new Path(getProjectName()).append(libName).makeAbsolute(), entry.getPath());
 		
-		// verify PDE container 
+		// verify JRE container
 		entry = entries[1];
 		assertEquals(IClasspathEntry.CPE_CONTAINER, entry.getEntryKind());
-		assertEquals(new Path(PDECore.CLASSPATH_CONTAINER_ID), entry.getPath());
+		assertEquals(new Path(JavaRuntime.JRE_CONTAINER), entry.getPath());
 		
-		// verify JRE container
+		// verify PDE container 
 		entry = entries[2];
 		assertEquals(IClasspathEntry.CPE_CONTAINER, entry.getEntryKind());
-		assertEquals(new Path(JavaRuntime.JRE_CONTAINER), entry.getPath());
+		assertEquals(new Path(PDECore.CLASSPATH_CONTAINER_ID), entry.getPath());
 		
 		// verify no errors
 		assertEquals(0, getProject().findMarkers(null, true, IResource.DEPTH_INFINITE).length);
