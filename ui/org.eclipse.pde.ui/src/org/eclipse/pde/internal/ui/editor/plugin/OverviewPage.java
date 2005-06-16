@@ -290,6 +290,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			editor.doSave(null);
 			service.runInUI(service, op, PDEPlugin.getWorkspace().getRoot());
             updateBuildProperties();
+            editor.doSave(null);
 		} catch (InvocationTargetException e) {
 			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OverviewPage_error, e.getCause().getMessage()); //$NON-NLS-1$
 		} catch (InterruptedException e) {
