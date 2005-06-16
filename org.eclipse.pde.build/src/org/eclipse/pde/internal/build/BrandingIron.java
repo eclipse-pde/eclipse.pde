@@ -149,9 +149,16 @@ public class BrandingIron implements IXMLConstants {
 		if (! launcher.exists())
 			launcher = new File(initialRoot +  "/MacOS/eclipse");
 		File targetFile = new File(targetLauncher, name);
-		if (targetFile.equals(launcher))
-			return;
 		try {
+			if (targetFile.getCanonicalFile().equals(launcher.getCanonicalFile())) {
+				try {
+					//Force the executable bit on the exe because it has been lost when copying the file
+					Runtime.getRuntime().exec("chmod 755 " + targetFile.getAbsolutePath());
+				} catch (IOException e) {
+					//ignore
+				}
+				return;
+			}
 			copy(launcher, targetFile);
 		} catch (IOException e) {
 			System.out.println("Could not copy macosx launcher");
@@ -202,8 +209,12 @@ public class BrandingIron implements IXMLConstants {
 			System.out.println("Impossible to brand info.plist file"); //$NON-NLS-1$
 			return;
 		}
-		if (! infoPList.equals(target))
-			infoPList.delete();
+		try {
+			if (!infoPList.getCanonicalFile().equals(target.getCanonicalFile()))
+				infoPList.delete();
+		} catch (IOException e) {
+			//ignore
+		}
 	}
 
 	/**
