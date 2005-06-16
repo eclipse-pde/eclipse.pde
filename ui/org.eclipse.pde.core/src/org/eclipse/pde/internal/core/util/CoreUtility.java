@@ -98,7 +98,7 @@ public class CoreUtility {
 		if (text == null || text.trim().length() == 0)
 			return ""; //$NON-NLS-1$
 		
-		text = text.replaceAll("[\\r|\\n|\\f|\\t]", " "); //$NON-NLS-1$ //$NON-NLS-2$
+		text = text.replaceAll("\\r|\\n|\\f|\\t", " "); //$NON-NLS-1$ //$NON-NLS-2$
 		return text.replaceAll("\\s+", " "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
