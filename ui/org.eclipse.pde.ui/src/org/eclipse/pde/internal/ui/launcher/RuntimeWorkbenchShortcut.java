@@ -260,6 +260,8 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 	}
 	
 	private String getProduct(String appName) {
+		if (appName == null)
+			return TargetPlatform.getDefaultProduct();
 		if (fModel != null && appName != null) {
 			IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
