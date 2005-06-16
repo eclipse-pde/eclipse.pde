@@ -496,15 +496,15 @@
             id="org.eclipse.pde.ui.schemaEditor">
             <contentTypeBinding contentTypeId="org.eclipse.pde.schema"/>
       </editor>
-      <editor
-            default="true"
-            name="%editors.buildProperties.name"
-            icon="icons/obj16/build_exec.gif"
-            filenames="build.properties"
-            contributorClass="org.eclipse.pde.internal.ui.editor.build.BuildEditorContributor"
-            class="org.eclipse.pde.internal.ui.editor.build.BuildEditor"
-            id="org.eclipse.pde.ui.buildEditor">
-      </editor>
+	  <editor
+	        default="true"
+			name="%editors.buildProperties.name"
+			icon="icons/obj16/build_exec.gif"
+			contributorClass="org.eclipse.pde.internal.ui.editor.build.BuildEditorContributor"
+			class="org.eclipse.pde.internal.ui.editor.build.BuildEditor"
+			id="org.eclipse.pde.ui.buildEditor">
+			<contentTypeBinding contentTypeId="org.eclipse.pde.buildProperties"/>
+	  </editor>
       <editor
             default="true"
             name="%editors.featureManifest.name"
