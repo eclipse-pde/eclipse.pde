@@ -136,6 +136,13 @@
             name="%cheatsheet.updates.name">
          <description>%cheatsheet.updates.desc</description>
       </cheatsheet>
+      <cheatsheet
+            category="org.eclipse.pde"
+            contentFile="$nl$/cheatsheets/rcpapp.xml"
+            id="org.eclipse.pde.rcpapp"
+            name="%cheatsheet.rcpApp.name">
+         <description>%cheatsheet.rcpApp.desc</description>
+      </cheatsheet>
       <category
             id="org.eclipse.pde"
             name="%cheatsheet.category.pde"/>
