@@ -79,7 +79,6 @@
    </extension>
    <extension
          id="Build"
-         name="PDE Build Application"
          point="org.eclipse.core.runtime.applications">
       <application>
          <run class="org.eclipse.pde.internal.build.BuildApplication"/>
