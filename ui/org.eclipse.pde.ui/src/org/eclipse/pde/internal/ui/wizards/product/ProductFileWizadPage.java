@@ -52,6 +52,12 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 		fGroup.setLayout(new GridLayout(2, false));
 		fGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
+		fBasicButton = new Button(fGroup, SWT.RADIO);
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		fBasicButton.setLayoutData(gd);
+		fBasicButton.setText(PDEUIMessages.ProductFileWizadPage_basic); //$NON-NLS-1$
+		
 		fProductButton = new Button(fGroup, SWT.RADIO);
 		fProductButton.setText(PDEUIMessages.ProductFileWizadPage_existingProduct); //$NON-NLS-1$
 		fProductButton.addSelectionListener(new SelectionAdapter() {
@@ -76,31 +82,24 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 		fLaunchConfigCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fLaunchConfigCombo.setItems(getLaunchConfigurations());
 		
-		fBasicButton = new Button(fGroup, SWT.RADIO);
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		fBasicButton.setLayoutData(gd);
-		fBasicButton.setText(PDEUIMessages.ProductFileWizadPage_basic); //$NON-NLS-1$
-		
 		initializeState();
 	}
 	
 	private void initializeState() {
+		fBasicButton.setSelection(true);
+		
 		int count = fProductCombo.getItemCount();
 		fProductButton.setEnabled(count > 0);
-		fProductButton.setSelection(count > 0);
-		fProductCombo.setEnabled(count > 0);
+		fProductCombo.setEnabled(count > 0 && fProductButton.getSelection());
 		if (count > 0)
 			fProductCombo.setText(fProductCombo.getItem(0));
 		
 		count = fLaunchConfigCombo.getItemCount();
 		fLaunchConfigButton.setEnabled(count > 0);
-		fLaunchConfigButton.setSelection(count > 0 && !fProductButton.getSelection());
 		fLaunchConfigCombo.setEnabled(count > 0 && fLaunchConfigButton.getSelection());
 		if (count > 0)
 			fLaunchConfigCombo.setText(fLaunchConfigCombo.getItem(0));
 		
-		fBasicButton.setSelection(!fProductButton.getSelection() && !fLaunchConfigButton.getSelection());
 	}
 	
 	/* (non-Javadoc)
