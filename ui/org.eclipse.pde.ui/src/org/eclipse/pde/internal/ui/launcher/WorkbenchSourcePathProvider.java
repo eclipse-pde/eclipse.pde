@@ -105,7 +105,7 @@ public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 					IPackageFragmentRoot[] roots = project
 							.getPackageFragmentRoots();
 					for (int j = 0; j < roots.length; j++) {
-						if (!isJRELibrary(roots[j])) {
+						if (roots[j].getKind() == IPackageFragmentRoot.K_BINARY && !isJRELibrary(roots[j])) {
 							IRuntimeClasspathEntry rte = JavaRuntime
 									.newArchiveRuntimeClasspathEntry(roots[j]
 											.getPath());
