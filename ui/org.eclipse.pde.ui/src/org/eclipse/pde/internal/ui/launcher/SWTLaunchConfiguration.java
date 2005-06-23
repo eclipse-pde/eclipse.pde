@@ -145,7 +145,7 @@ public class SWTLaunchConfiguration extends
 		String[] vmArgs = execArgs.getVMArgumentsArray();
 		for (int i = vmArgs.length - 1; i >= 0; i--) {
 			if (vmArgs[i].startsWith("-Djava.library.path")) { //$NON-NLS-1$
-				vmArgs[i] +=  ";" + location; //$NON-NLS-1$
+				vmArgs[i] +=  File.pathSeparatorChar + location; 
 				return vmArgs;
 			}
 		}
