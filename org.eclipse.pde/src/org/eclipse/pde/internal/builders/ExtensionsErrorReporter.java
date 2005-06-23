@@ -10,7 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+import javax.xml.parsers.FactoryConfigurationError;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -327,6 +333,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	}
 	
 	private boolean resourceExists(String location) {
+		String bundleJar=null;
 		IPath path = new Path(location);
 		if ("platform:".equals(path.getDevice()) && path.segmentCount() > 2) { //$NON-NLS-1$
 			if ("plugin".equals(path.segment(0))) { //$NON-NLS-1$
@@ -334,12 +341,32 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(id);
 				if (model != null && model.isEnabled()) {
 					path = path.setDevice(null).removeFirstSegments(2);
-					path = new Path(model.getInstallLocation()).append(path);
+					String bundleLocation = model.getInstallLocation();
+					if(bundleLocation.endsWith(".jar")){
+						bundleJar=bundleLocation;
+					} else {
+						path = new Path(model.getInstallLocation()).append(path);
+					}
 					location = path.toString();
 				}
 			}
-		}		
-		
+		} else if (path.getDevice()==null && path.segmentCount() > 3 && "platform:".equals(path.segment(0))){ //$NON-NLS-1$
+			if ("plugin".equals(path.segment(1))) { //$NON-NLS-1$
+				String id = path.segment(2);
+				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(id);
+				if (model != null && model.isEnabled()) {
+					path = path.removeFirstSegments(3);
+					String bundleLocation = model.getInstallLocation();
+					if(bundleLocation.endsWith(".jar")){
+						bundleJar=bundleLocation;
+					} else {
+						path = new Path(model.getInstallLocation()).append(path);
+					}
+					location = path.toString();
+				}
+			}
+		}
+
 		ArrayList paths = new ArrayList();		
 		if (location.indexOf("$nl$") != -1) { //$NON-NLS-1$
 			StringTokenizer tokenizer = new StringTokenizer(TargetPlatform.getNL(), "_");	 //$NON-NLS-1$
@@ -358,17 +385,40 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		}
 		
 		for (int i = 0; i < paths.size(); i++) {
-			IPath currPath = new Path(paths.get(i).toString());
-			if (currPath.isAbsolute() && currPath.toFile().exists())
-				return true;
-			if (fFile.getProject().findMember(currPath) != null)
-				return true;
+			if (bundleJar == null) {
+				IPath currPath = new Path(paths.get(i).toString());
+				if (currPath.isAbsolute() && currPath.toFile().exists())
+					return true;
+				if (fFile.getProject().findMember(currPath) != null)
+					return true;
+			} else {
+				if (jarContainsResource(bundleJar, paths.get(i).toString()))
+					return true;
+			}
 		}
 		
 		return false;
 	}
 
-
+	private boolean jarContainsResource(String path, String resource) {
+		ZipFile jarFile = null;
+		try {
+			File file = new File(path);
+			jarFile = new ZipFile(file, ZipFile.OPEN_READ);
+			ZipEntry resourceEntry = jarFile.getEntry(resource); //$NON-NLS-1$
+			if (resourceEntry != null)
+				return true;
+		} catch (IOException e) {
+		} catch (FactoryConfigurationError e) {
+		} finally {
+			try {
+				if (jarFile != null)
+					jarFile.close();
+			} catch (IOException e2) {
+			}
+		}
+		return false;
+	}
 
 	protected void validateJavaAttribute(Element element, Attr attr) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_CLASS);
