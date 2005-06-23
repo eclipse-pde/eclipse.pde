@@ -39,7 +39,7 @@
 	</item>
     
 	<item
-		href="/org.eclipse.pde.doc.user/guide/pde_manifest_extensions.htm"
+		href="/org.eclipse.pde.doc.user/guide/product_wizard.htm"
 		title="Defining a product configuration">
 		<action 
 			pluginId="org.eclipse.pde.ui"
@@ -68,8 +68,8 @@
 	</item>
 
 	<item
-		href="/org.eclipse.pde.doc.user/guide/pde_deploy.htm"
-		title="Deploying a Rich Client Application">
+		href="/org.eclipse.pde.doc.user/guide/product_export.htm"
+		title="Exporting a Rich Client Application">
 		<description>
 			The product configuration editor also allows you to export RCP
 			applications.
