@@ -602,6 +602,18 @@
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.pde.ui.junitWorkbenchShortcut.run">
       </command>     
+      <command
+            name="%SWTApplicationShortcut.description.debug"
+            description="%SWTApplicationShortcut.description.debug"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.pde.ui.swtLaunchShortcut.debug">
+      </command>    
+      <command
+            name="%SWTApplicationShortcut.description.run"
+            description="%SWTApplicationShortcut.description.run"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.pde.ui.swtLaunchShortcut.run">
+      </command>    
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -962,6 +974,14 @@
       </launchConfigurationType>
       <launchConfigurationType
             sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
+            name="%launcher.swt.name"
+            sourcePathComputerId="org.eclipse.pde.ui.swtSourcePathComputer"
+            delegate="org.eclipse.pde.internal.ui.launcher.SWTLaunchConfiguration"
+            modes="run, debug"
+            id="org.eclipse.pde.ui.swtLaunchConfig">
+      </launchConfigurationType>
+      <launchConfigurationType
+            sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
             name="%launcher.junit.name"
             sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"
             delegate="org.eclipse.pde.internal.ui.launcher.JUnitLaunchConfiguration"
@@ -985,6 +1005,11 @@
             id="org.eclipse.pde.ui.runtimeWorkbenchLaunchImage">
       </launchConfigurationTypeImage>
       <launchConfigurationTypeImage
+            icon="icons/obj16/swt_launcher.gif"
+            configTypeID="org.eclipse.pde.ui.swtLaunchConfig"
+            id="org.eclipse.pde.ui.swtLaunchImage">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
             icon="icons/obj16/julaunchpgn.gif"
             configTypeID="org.eclipse.pde.ui.JunitLaunchConfig"
             id="org.eclipse.pde.ui.JunitLaunchImage">
@@ -1003,6 +1028,20 @@
          </launchMode>
          <launchMode
                description="%workbenchLauncherTabGroup.description.run"
+               mode="run">
+         </launchMode>
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            type="org.eclipse.pde.ui.swtLaunchConfig"
+            class="org.eclipse.pde.internal.ui.launcher.SWTLauncherTabGroup"
+            id="org.eclipse.pde.ui.launcher.swtLauncherTabGroup">
+         <launchMode
+               description="%swtLauncherTabGroup.description.debug"
+               perspective="org.eclipse.debug.ui.DebugPerspective"
+               mode="debug">
+         </launchMode>
+         <launchMode
+               description="%swtLauncherTabGroup.description.run"
                mode="run">
          </launchMode>
       </launchConfigurationTabGroup>
@@ -1111,6 +1150,40 @@
          </perspective>
          <perspective
                id="org.eclipse.pde.PDEPerspective">
+         </perspective>
+      </shortcut>
+      <shortcut
+            label="%launcher.swt.name"
+            icon="icons/obj16/swt_launcher.gif"
+            modes="run, debug"
+            class="org.eclipse.pde.internal.ui.launcher.SWTApplicationLaunchShortcut"
+            id="org.eclipse.pde.ui.swtLaunchShortcut">
+         <contextualLaunch>
+           <enablement>
+             <with variable="selection">
+               <count value="1"/>
+               <iterate>
+                 <or>
+                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.java"/>
+                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.class"/>
+                   <adapt type="org.eclipse.jdt.core.IJavaElement"/>
+                 </or>
+                 <test property="org.eclipse.jdt.debug.ui.hasMainType"/>
+               </iterate>
+             </with>
+           </enablement>
+  		 </contextualLaunch>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaHierarchyPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaBrowsingPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.debug.ui.DebugPerspective">
          </perspective>
       </shortcut>
    </extension>
@@ -1295,6 +1368,12 @@
             id="org.eclipse.pde.ui.workbenchClasspathProvider">
       </classpathProvider>
    </extension>
+   <extension point="org.eclipse.debug.core.sourcePathComputers">
+   		<sourcePathComputer
+   			id="org.eclipse.pde.ui.swtSourcePathComputer"
+   			class="org.eclipse.pde.internal.ui.launcher.SWTSourcePathComputer">
+   		</sourcePathComputer>
+   </extension>
    <extension
          point="org.eclipse.ui.intro.configExtension">
       <standbyContentPart
@@ -1367,5 +1446,15 @@
             commandId="org.eclipse.pde.ui.junitWorkbenchShortcut.run"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>      
+      <key
+            sequence="M3+M2+D S"
+            commandId="org.eclipse.pde.ui.swtLaunchShortcut.debug"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>      
+      <key
+            sequence="M3+M2+X S"
+            commandId="org.eclipse.pde.ui.swtLaunchShortcut.run"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>   
    </extension>
 </plugin>
