@@ -14,7 +14,7 @@
 	</intro>
 
 	<item
-		href="/org.eclipse.pde.doc.user/guide/pde_creating.htm" 
+		href="/org.eclipse.pde.doc.user/guide/rcp_project.htm" 
 		title="Creating a New Plug-in Project">
 		<action
 			pluginId="org.eclipse.pde.ui"
@@ -39,7 +39,7 @@
 	</item>
     
 	<item
-		href="/org.eclipse.pde.doc.user/guide/product_wizard.htm"
+		href="/org.eclipse.pde.doc.user/guide/product_configuration.htm"
 		title="Defining a product configuration">
 		<action 
 			pluginId="org.eclipse.pde.ui"

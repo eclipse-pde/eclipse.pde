@@ -342,7 +342,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				if (model != null && model.isEnabled()) {
 					path = path.setDevice(null).removeFirstSegments(2);
 					String bundleLocation = model.getInstallLocation();
-					if(bundleLocation.endsWith(".jar")){
+					if(bundleLocation.endsWith(".jar")){ //$NON-NLS-1$
 						bundleJar=bundleLocation;
 					} else {
 						path = new Path(model.getInstallLocation()).append(path);
@@ -357,7 +357,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				if (model != null && model.isEnabled()) {
 					path = path.removeFirstSegments(3);
 					String bundleLocation = model.getInstallLocation();
-					if(bundleLocation.endsWith(".jar")){
+					if(bundleLocation.endsWith(".jar")){ //$NON-NLS-1$
 						bundleJar=bundleLocation;
 					} else {
 						path = new Path(model.getInstallLocation()).append(path);
