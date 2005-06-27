@@ -41,7 +41,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
@@ -539,11 +538,10 @@ public class PluginImportOperation extends JarImportOperation {
 		if (desc != null) {
 			if (desc.getExportPackages().length > 0)
 				return true;
-			BundleSpecification[] specs = desc.getRequiredBundles();
-			for (int i = 0; i < specs.length; i++) {
-				if (specs[i].isExported())
-					return true;
-			}
+			if (desc.getRequiredBundles().length > 0)
+				return true;
+			if (desc.getImportPackages().length > 0)
+				return true;
 		}		
 		return false;
 	}
