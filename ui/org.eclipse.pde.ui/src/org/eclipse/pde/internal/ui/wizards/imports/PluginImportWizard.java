@@ -199,6 +199,6 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	}
 	
 	public boolean canFinish() {
-		return page1.getNextPage().isPageComplete();
+		return !page1.isCurrentPage() && page1.getNextPage().isPageComplete();
 	}
 }

@@ -470,4 +470,8 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		}
 		return models;
 	}
+	
+	public boolean isCurrentPage() {
+		return super.isCurrentPage();
+	}
 }
