@@ -194,7 +194,9 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		});
 		deselectAllButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(deselectAllButton);
-			
+		setPageComplete(false);
+		setMessage(PDEUIMessages.PluginWorkingSet_message);
+		
 		initialize();
 		Dialog.applyDialogFont(composite);
 		

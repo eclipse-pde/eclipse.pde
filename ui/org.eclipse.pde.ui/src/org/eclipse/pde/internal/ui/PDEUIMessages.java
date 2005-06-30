@@ -1969,4 +1969,6 @@ public class PDEUIMessages extends NLS {
 	public static String BaseExportWizardPage_javacTarget;
 
 	public static String BaseExportWizardPage_javacSource;
+
+	public static String PluginWorkingSet_message;
 }
