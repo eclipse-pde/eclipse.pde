@@ -10,20 +10,35 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.io.*;
-import java.util.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.program.*;
-import org.eclipse.swt.widgets.*;
+import java.io.File;
+import java.util.ArrayList;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchListener;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.pde.internal.runtime.logview.LogView;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Display;
+
 
 public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
     private ArrayList managedLaunches;
     // maximum log file size
     public static final long MAX_FILE_LENGTH = 1024 * 1024;
+    // different ways to open the error log
+    public static final int OPEN_IN_ERROR_LOG_VIEW = 0;
+    public static final int OPEN_IN_SYSTEM_EDITOR = 1;
 
     public LaunchListener() {
         managedLaunches = new ArrayList();
@@ -135,36 +150,26 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
                     public void run() {
                         try {
                             File log = getMostRecentLogFile(launch);
-                            if (log != null
-                                    && MessageDialog
-                                            .openQuestion(
-                                                    PDEPlugin.getActiveWorkbenchShell(),
-                                                    PDEUIMessages.Launcher_error_title, //$NON-NLS-1$
-                                                    PDEUIMessages.Launcher_error_code13)) { //$NON-NLS-1$
-                                if (log.exists()) {
-                                    if (log.length() > MAX_FILE_LENGTH) {
-                                        OpenLogDialog openDialog = new OpenLogDialog(
-                                                PDEPlugin.getActiveWorkbenchShell(), log);
-                                        openDialog.create();
-                                        openDialog.open();
-                                    } else {
-                                        boolean canLaunch = Program.launch(log
-                                                .getAbsolutePath());
-                                        if (!canLaunch) {
-                                            Program p = Program.findProgram(".txt"); //$NON-NLS-1$
-                                            if (p != null)
-                                                p.execute(log.getAbsolutePath());
-                                            else {
-                                                OpenLogDialog openDialog = new OpenLogDialog(
-                                                        PDEPlugin
-                                                                .getActiveWorkbenchShell(),
-                                                        log);
-                                                openDialog.create();
-                                                openDialog.open();
-                                            }
-                                        }
-                                    }
-                                }
+                            if (log != null && log.exists()) {
+                        		MessageDialog dialog = new MessageDialog(
+                            		PDEPlugin.getActiveWorkbenchShell(),
+                            		PDEUIMessages.Launcher_error_title, //$NON-NLS-1$
+                            		null, // accept the default window icon
+                            		PDEUIMessages.Launcher_error_code13, //$NON-NLS-1$
+                            		MessageDialog.ERROR,
+                            		new String[] {
+                            			PDEUIMessages.Launcher_error_displayInLogView,
+                            			PDEUIMessages.Launcher_error_displayInSystemEditor,
+                            			PDEUIMessages.Launcher_error_displayNo}, 
+                            		OPEN_IN_ERROR_LOG_VIEW);
+                        		int dialog_value = dialog.open();
+                            	if (dialog_value == OPEN_IN_ERROR_LOG_VIEW) {
+                            		LogView errlog = (LogView)PDEPlugin.getActivePage()
+                            				.showView("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$
+                            		errlog.handleImportPath(log.getAbsolutePath());
+                            	} else if (dialog_value == OPEN_IN_SYSTEM_EDITOR) {
+                            		openSystemEditor(log);
+                            	} 
                             }
                         } catch (CoreException e) {
                         }
@@ -172,6 +177,23 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
                 });
             }
         }
+    }
+    
+    private void openSystemEditor(File log) {
+    	boolean canLaunch = false;
+    	if (log.length() <= MAX_FILE_LENGTH) {
+            canLaunch = Program.launch(log.getAbsolutePath());
+            if (!canLaunch) {
+                Program p = Program.findProgram(".txt"); //$NON-NLS-1$
+                if (p != null)
+                    canLaunch = p.execute(log.getAbsolutePath());
+            }
+    	}
+    	if (!canLaunch) {
+	        OpenLogDialog dialog = new OpenLogDialog(PDEPlugin.getActiveWorkbenchShell(), log);
+	        dialog.create();
+	        dialog.open();
+    	}
     }
 
     private File getMostRecentLogFile(ILaunch launch) throws CoreException {

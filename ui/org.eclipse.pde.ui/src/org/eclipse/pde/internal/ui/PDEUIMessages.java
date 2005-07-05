@@ -643,6 +643,9 @@ public class PDEUIMessages extends NLS {
 	public static String LauncherSection_tiny;
 	public static String Launcher_error_code13;
 	public static String Launcher_error_code15;
+	public static String Launcher_error_displayInLogView;
+	public static String Launcher_error_displayInSystemEditor;
+	public static String Launcher_error_displayNo;
 	public static String LauncherSection_browse;
 	public static String LauncherSection_title;
 	public static String LauncherSection_label;

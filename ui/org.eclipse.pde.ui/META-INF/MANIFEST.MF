@@ -70,5 +70,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.intro,
  org.eclipse.ui.cheatsheets,
  org.eclipse.update.configurator,
- org.eclipse.help.base
+ org.eclipse.help.base,
+ org.eclipse.pde.runtime
 Eclipse-AutoStart: true

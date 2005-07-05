@@ -417,12 +417,16 @@ public class LogView extends ViewPart implements ILogListener {
         super.dispose();
     }
 
+    
     private void handleImport() {
         FileDialog dialog = new FileDialog(getViewSite().getShell());
         dialog.setFilterExtensions(new String[] { "*.log" }); //$NON-NLS-1$
         if (fDirectory != null)
             dialog.setFilterPath(fDirectory);
-        String path = dialog.open();
+        handleImportPath(dialog.open());
+    }
+    
+    public void handleImportPath(String path) {
         if (path != null && new Path(path).toFile().exists()) {
             fInputFile = new Path(path).toFile();
             fDirectory = fInputFile.getParent();
