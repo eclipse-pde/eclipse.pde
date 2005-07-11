@@ -70,7 +70,8 @@ public class PluginHandler extends DefaultHandler {
 	private boolean isInterestingExtension(Element element) {
 		String point = element.getAttribute("point"); //$NON-NLS-1$
 		return "org.eclipse.pde.core.source".equals(point)  //$NON-NLS-1$
-				|| "org.eclipse.core.runtime.products".equals(point); //$NON-NLS-1$
+				|| "org.eclipse.core.runtime.products".equals(point) //$NON-NLS-1$
+				|| "org.eclipse.pde.core.javadoc".equals(point); //$NON-NLS-1$
 	}
 		
 	public void endElement(String uri, String localName, String qName) throws SAXException {

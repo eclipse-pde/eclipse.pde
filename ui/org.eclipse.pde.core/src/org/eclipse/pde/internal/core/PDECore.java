@@ -170,25 +170,22 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		return isDevLaunchMode;
 	}
 
-	// External model manager
-	private PluginModelManager modelManager;
-	//private boolean modelsLocked = false;
+	private PluginModelManager fModelManager;
+	private ExternalModelManager fExternalModelManager;
+	private WorkspaceModelManager fWorkspaceModelManager;
+	private FeatureModelManager fFeatureModelManager;
 
 	// Schema registry
-	private SchemaRegistry schemaRegistry;
+	private SchemaRegistry fSchemaRegistry;
 
-	// User-defined attachments manager
-	private SourceAttachmentManager sourceAttachmentManager;
-	private SourceLocationManager sourceLocationManager;
+	private SourceLocationManager fSourceLocationManager;
+	private JavadocLocationManager fJavadocLocationManager;
 
 	// Tracing options manager
-	private TracingOptionsManager tracingOptionsManager;
-	private BundleContext context;
-	private ServiceTracker tracker;
-	private ExternalModelManager externalModelManager;
-	private WorkspaceModelManager workspaceModelManager;
+	private TracingOptionsManager fTracingOptionsManager;
+	private BundleContext fBundleContext;
+	private ServiceTracker fTracker;
 	private JavaElementChangeListener fJavaElementChangeListener;
-	private FeatureModelManager fFeatureModelManager;
 
 	public PDECore() {
 		inst = this;
@@ -296,11 +293,11 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 
 	public ExternalModelManager getExternalModelManager() {
 		initializeModels();
-		return externalModelManager;
+		return fExternalModelManager;
 	}
 	public PluginModelManager getModelManager() {
 		initializeModels();
-		return modelManager;
+		return fModelManager;
 	}
 	
 	public FeatureModelManager getFeatureModelManager() {
@@ -315,30 +312,31 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	}
 	
 	public SchemaRegistry getSchemaRegistry() {
-		if (schemaRegistry == null)
-			schemaRegistry = new SchemaRegistry();
-		return schemaRegistry;
+		if (fSchemaRegistry == null)
+			fSchemaRegistry = new SchemaRegistry();
+		return fSchemaRegistry;
 	}
 
-	public SourceAttachmentManager getSourceAttachmentManager() {
-		if (sourceAttachmentManager == null)
-			sourceAttachmentManager = new SourceAttachmentManager();
-		return sourceAttachmentManager;
-	}
 	public SourceLocationManager getSourceLocationManager() {
-		if (sourceLocationManager == null)
-			sourceLocationManager = new SourceLocationManager();
-		return sourceLocationManager;
+		if (fSourceLocationManager == null)
+			fSourceLocationManager = new SourceLocationManager();
+		return fSourceLocationManager;
+	}
+	
+	public JavadocLocationManager getJavadocLocationManager() {
+		if (fJavadocLocationManager == null)
+			fJavadocLocationManager = new JavadocLocationManager();
+		return fJavadocLocationManager;
 	}
 
 	public TracingOptionsManager getTracingOptionsManager() {
-		if (tracingOptionsManager == null)
-			tracingOptionsManager = new TracingOptionsManager();
-		return tracingOptionsManager;
+		if (fTracingOptionsManager == null)
+			fTracingOptionsManager = new TracingOptionsManager();
+		return fTracingOptionsManager;
 	}
 	public WorkspaceModelManager getWorkspaceModelManager() {
 		initializeModels();
-		return workspaceModelManager;
+		return fWorkspaceModelManager;
 	}
 
 	/**
@@ -371,31 +369,31 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	}
 
 	private synchronized void initializeModels() {
-		if (modelManager != null && externalModelManager != null && workspaceModelManager != null)
+		if (fModelManager != null && fExternalModelManager != null && fWorkspaceModelManager != null)
 			return;
-		externalModelManager = new ExternalModelManager();
-		workspaceModelManager = new WorkspaceModelManager();
-		modelManager = new PluginModelManager(workspaceModelManager, externalModelManager);
-		fFeatureModelManager = new FeatureModelManager(workspaceModelManager);
+		fExternalModelManager = new ExternalModelManager();
+		fWorkspaceModelManager = new WorkspaceModelManager();
+		fModelManager = new PluginModelManager(fWorkspaceModelManager, fExternalModelManager);
+		fFeatureModelManager = new FeatureModelManager(fWorkspaceModelManager);
 	}
 
 	public void releasePlatform() {
-		if (tracker == null)
+		if (fTracker == null)
 			return;
-		tracker.close();
-		tracker = null;
+		fTracker.close();
+		fTracker = null;
 	}
 	
 	public PlatformAdmin acquirePlatform() {
-		if (tracker==null) {
-			tracker = new ServiceTracker(context, PlatformAdmin.class.getName(), null);
-			tracker.open();
+		if (fTracker==null) {
+			fTracker = new ServiceTracker(fBundleContext, PlatformAdmin.class.getName(), null);
+			fTracker.open();
 		}
-		PlatformAdmin result = (PlatformAdmin)tracker.getService();
+		PlatformAdmin result = (PlatformAdmin)fTracker.getService();
 		while (result == null) {
 			try {
-				tracker.waitForService(1000);
-				result = (PlatformAdmin) tracker.getService();
+				fTracker.waitForService(1000);
+				result = (PlatformAdmin) fTracker.getService();
 			} catch (InterruptedException ie) {
 			}
 		}
@@ -408,12 +406,12 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		this.context = context;
+		this.fBundleContext = context;
 		fJavaElementChangeListener = new JavaElementChangeListener();
 	}
 
 	public BundleContext getBundleContext() {
-		return this.context;
+		return this.fBundleContext;
 	}
 
 	public void stop(BundleContext context) throws CoreException {
@@ -422,25 +420,25 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 			fJavaElementChangeListener.shutdown();
 			fJavaElementChangeListener = null;
 		}
-		if (schemaRegistry != null) {
-			schemaRegistry.shutdown();
-			schemaRegistry = null;
+		if (fSchemaRegistry != null) {
+			fSchemaRegistry.shutdown();
+			fSchemaRegistry = null;
 		}
-		if (modelManager != null) {
-			modelManager.shutdown();
-			modelManager = null;
+		if (fModelManager != null) {
+			fModelManager.shutdown();
+			fModelManager = null;
 		}
 		if (fFeatureModelManager!=null) {
 			fFeatureModelManager.shutdown();
 			fFeatureModelManager = null;
 		}
-		if (externalModelManager!=null) {
-			externalModelManager.shutdown();
-			externalModelManager=null;
+		if (fExternalModelManager!=null) {
+			fExternalModelManager.shutdown();
+			fExternalModelManager=null;
 		}
-		if (workspaceModelManager!=null) {
-			workspaceModelManager.shutdown();
-			workspaceModelManager = null;
+		if (fWorkspaceModelManager!=null) {
+			fWorkspaceModelManager.shutdown();
+			fWorkspaceModelManager = null;
 		}
 	}
 }

@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -22,6 +19,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IAccessRule;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModelStatus;
 import org.eclipse.jdt.core.IJavaProject;
@@ -33,8 +32,8 @@ import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.team.core.RepositoryProvider;
 
 public class ClasspathComputer {
 	
@@ -46,7 +45,7 @@ public class ClasspathComputer {
 	public static IClasspathEntry[] getClasspath(IProject project, IPluginModelBase model, boolean clear) throws CoreException {
 
 		ArrayList result = new ArrayList();
-		
+				
 		// add own libraries/source
 		addSourceAndLibraries(project, model, clear, result);
 	
@@ -88,6 +87,7 @@ public class ClasspathComputer {
 		}
 
 		IBuild build = getBuild(project);
+		IClasspathAttribute[] attrs = getClasspathAttributes(project, model);
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 		for (int i = 0; i < libraries.length; i++) {
 			IBuildEntry buildEntry = build == null ? null : build.getEntry("source." + libraries[i].getName()); //$NON-NLS-1$
@@ -95,9 +95,9 @@ public class ClasspathComputer {
 				addSourceFolder(buildEntry, project, paths, result);
 			} else {
 				if (libraries[i].getName().equals(".")) //$NON-NLS-1$
-					addJARdPlugin(project, getFilename(model), result);
+					addJARdPlugin(project, getFilename(model), attrs, result);
 				else
-					addLibraryEntry(project, libraries[i], libraries[i].isExported(), result);
+					addLibraryEntry(project, libraries[i], libraries[i].isExported(), attrs, result);
 			}
 		}
 		if (libraries.length == 0) {
@@ -106,10 +106,23 @@ public class ClasspathComputer {
 				if (buildEntry != null) {
 					addSourceFolder(buildEntry, project, paths, result);
 				}
-			} else if (isBundle(model)) {
-				addJARdPlugin(project, getFilename(model), result);
+			} else if (ClasspathUtilCore.isBundle(model)) {
+				addJARdPlugin(project, getFilename(model), attrs, result);
 			}
 		}
+	}
+	
+	private static IClasspathAttribute[] getClasspathAttributes(IProject project, IPluginModelBase model) {
+		IClasspathAttribute[] attributes = new IClasspathAttribute[0];
+		if (!RepositoryProvider.isShared(project)) {			
+			JavadocLocationManager manager = PDECore.getDefault().getJavadocLocationManager();
+			String javadoc = manager.getJavadocLocation(model);
+			if (javadoc != null) {
+				attributes = new IClasspathAttribute[] 
+				   {JavaCore.newClasspathAttribute(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, javadoc)};
+			}
+		}
+		return attributes;
 	}
 	
 	private static void addSourceFolder(IBuildEntry buildEntry, IProject project, HashSet paths, ArrayList result) throws CoreException {
@@ -148,7 +161,7 @@ public class ClasspathComputer {
 		return (buildModel != null) ? buildModel.getBuild() : null;
 	}
 	
-	private static void addLibraryEntry(IProject project, IPluginLibrary library, boolean exported, ArrayList result) {
+	private static void addLibraryEntry(IProject project, IPluginLibrary library, boolean exported, IClasspathAttribute[] attrs, ArrayList result) {
 		String name = ClasspathUtilCore.expandLibraryName(library.getName());
 		IResource jarFile = project.findMember(name);
 		if (jarFile != null) {
@@ -156,20 +169,20 @@ public class ClasspathComputer {
 			if (resource == null)
 				resource = project.findMember(new Path(getSourceZipName(name)).lastSegment());
 			IPath srcAttachment = resource != null ? resource.getFullPath() : null;
-			IClasspathEntry entry = JavaCore.newLibraryEntry(jarFile.getFullPath(), srcAttachment, null, exported);
+			IClasspathEntry entry = JavaCore.newLibraryEntry(jarFile.getFullPath(), srcAttachment, null, new IAccessRule[0], attrs, exported);
 			if (!result.contains(entry))
 				result.add(entry);
 		}
 	}
 
-	private static void addJARdPlugin(IProject project, String filename, ArrayList result) {		
+	private static void addJARdPlugin(IProject project, String filename, IClasspathAttribute[] attrs, ArrayList result) {		
 		String name = ClasspathUtilCore.expandLibraryName(filename);
 		IResource jarFile = project.findMember(name);
 		if (jarFile != null) {
 			IResource resource = project.findMember(getSourceZipName(name));
 			IPath srcAttachment = resource != null ? resource.getFullPath() : jarFile.getFullPath();
 			IClasspathEntry entry =
-				JavaCore.newLibraryEntry(jarFile.getFullPath(), srcAttachment, null, true);
+				JavaCore.newLibraryEntry(jarFile.getFullPath(), srcAttachment, null, new IAccessRule[0], attrs, true);
 			if (!result.contains(entry))
 				result.add(entry);
 		}
@@ -180,28 +193,4 @@ public class ClasspathComputer {
 		return (dot != -1) ? libraryName.substring(0, dot) + "src.zip" : libraryName;	 //$NON-NLS-1$
 	}
 	
-	public static boolean isBundle(IPluginModelBase model) {
-		if (model instanceof IBundlePluginModelBase)
-			return true;
-		if (model.getUnderlyingResource() == null) {
-			File file = new File(model.getInstallLocation());
-			if (file.isDirectory())
-				return new File(file, "META-INF/MANIFEST.MF").exists(); //$NON-NLS-1$
-			ZipFile jarFile = null;
-			try {
-				jarFile = new ZipFile(file, ZipFile.OPEN_READ);
-				return jarFile.getEntry("META-INF/MANIFEST.MF") != null; //$NON-NLS-1$
-			} catch (IOException e) {
-			} finally {
-				try {
-					if (jarFile != null)
-						jarFile.close();
-				} catch (IOException e) {
-				}
-			}
-		}
-		return false;
-	}
-
-
 }

@@ -11,6 +11,10 @@
 package org.eclipse.pde.internal.core.util;
 
 import java.io.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+import javax.xml.parsers.FactoryConfigurationError;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -193,5 +197,23 @@ public class CoreUtility {
 		}
 		return true;
 	}
-
+    
+	public static boolean jarContainsResource(File file, String resource, boolean directory) {
+		ZipFile jarFile = null;
+		try {
+			jarFile = new ZipFile(file, ZipFile.OPEN_READ);
+			ZipEntry resourceEntry = jarFile.getEntry(resource); //$NON-NLS-1$
+			if (resourceEntry != null)
+				return directory ? resourceEntry.isDirectory() : true;
+		} catch (IOException e) {
+		} catch (FactoryConfigurationError e) {
+		} finally {
+			try {
+				if (jarFile != null)
+					jarFile.close();
+			} catch (IOException e2) {
+			}
+		}
+		return false;
+	}
 }

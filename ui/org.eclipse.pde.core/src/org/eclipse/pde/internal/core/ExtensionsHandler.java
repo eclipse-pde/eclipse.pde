@@ -83,7 +83,9 @@ public class ExtensionsHandler extends DefaultHandler {
 
 		fParent.appendChild(extension);
 		
-		if ("org.eclipse.pde.core.source".equals(point) || "org.eclipse.core.runtime.products".equals(point)) //$NON-NLS-1$ //$NON-NLS-2$
+		if ("org.eclipse.pde.core.source".equals(point)  //$NON-NLS-1$
+				|| "org.eclipse.core.runtime.products".equals(point) //$NON-NLS-1$
+				|| "org.eclipse.pde.core.javadoc".equals(point))  //$NON-NLS-1$
 			fOpenElements.push(extension);
 	}
 

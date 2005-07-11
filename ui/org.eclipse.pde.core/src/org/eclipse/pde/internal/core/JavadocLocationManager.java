@@ -10,79 +10,115 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.pde.core.plugin.IPluginAttribute;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 
 public class JavadocLocationManager {
 	
-	/*private static String JAVADOC_ID = "org.eclipse.pde.core.javadoc"; //$NON-NLS-1$
-	
+	public static final String JAVADOC_ID = "org.eclipse.pde.core.javadoc"; //$NON-NLS-1$
+
 	private HashMap fLocations;
 	
-	public URL getJavadocLocation(IPluginModelBase model) {
-		URL url = model.getResourceURL("doc"); //$NON-NLS-1$
-		if (url == null) {
-			String id = model.getPluginBase().getId();
-			if (id != null)
-				url = (URL)getLocations().get(id);
-		}
-		return url;
+	public String getJavadocLocation(IPluginModelBase model) {
+		File file = new File(model.getInstallLocation());			
+		if (file.isDirectory()) {
+			File doc = new File(file, "doc"); //$NON-NLS-1$
+			if (doc.exists())
+				return doc.getAbsolutePath();
+		} else if (CoreUtility.jarContainsResource(file, "doc", true)) { //$NON-NLS-1$
+			return file.getAbsolutePath() + "!/doc"; //$NON-NLS-1$
+		}		
+		return getEntry(model);
 	}
 
-	private void processExtensions(ModelEntry entry, boolean useExternal) {
-		IPluginModelBase model = useExternal ? entry.getExternalModel() : entry.getActiveModel();		
-		if (model == null)
-			return;
-		
-		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-		for (int j = 0; j < extensions.length; j++) {
-			IPluginExtension extension = extensions[j];
-			if (JAVADOC_ID.equals(extension.getPoint())) {
-				int origLength = fLocations.size();
-				//processExtension(extension);
-				if (fLocations.size() == origLength && model.getUnderlyingResource() != null) {
-					processExtensions(entry, true);					
-				}
-			}
-		}		
+	private String getEntry(IPluginModelBase model) {
+		initialize();
+		String id = model.getPluginBase().getId();
+		if (id == null)
+			return null;
+		Iterator iter = fLocations.keySet().iterator();
+		while (iter.hasNext()) {
+			String location = iter.next().toString();
+			Set set = (Set)fLocations.get(location);
+			if (set.contains(id))
+				return location;
+		}
+		return null;
 	}
 	
-	/*private void processExtension(IPluginExtension extension) {
+	private synchronized void initialize() {
+		if (fLocations != null) return;
+		fLocations = new HashMap();
+		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getExternalModels();
+		for (int i = 0; i < models.length; i++) {
+			IPluginExtension[] extensions = models[i].getPluginBase().getExtensions();
+			for (int j = 0; j < extensions.length; j++) {
+				if (JAVADOC_ID.equals(extensions[j].getPoint())) //$NON-NLS-1$
+					processExtension(extensions[j]);
+			}				
+		}
+	}
+
+	private void processExtension(IPluginExtension extension) {
 		IPluginObject[] children = extension.getChildren();
-		for (int j = 0; j < children.length; j++) {
-			if (children[j].getName().equals("javadoc")) { //$NON-NLS-1$
-				IPluginElement element = (IPluginElement) children[j];
-				String pluginID = getAttribute(element, "plugin"); //$NON-NLS-1$
-				String path = getAttribute(element, "path"); //$NON-NLS-1$
-				if (pluginID != null && path != null) {
-					ISharedPluginModel model = extension.getModel();
-					URL url = model.getResourceURL(path);
-					if (url != null) {
-						getLocations().put(pluginID, url);
-					}
+		for (int i = 0; i < children.length; i++) {
+			if (children[i].getName().equals("javadoc")) { //$NON-NLS-1$
+				IPluginElement javadoc = (IPluginElement) children[i];
+				IPluginAttribute attr = javadoc.getAttribute("path"); //$NON-NLS-1$
+				String path = (attr == null) ? null : attr.getValue();
+				if (path == null)
+					continue;
+				attr = javadoc.getAttribute("archive"); //$NON-NLS-1$
+				boolean archive = attr == null ? false : "true".equals(attr.getValue()); //$NON-NLS-1$
+				String location = extension.getModel().getInstallLocation();
+				if (new File(location).isFile()) {
+					location += "!/" + path; //$NON-NLS-1$
+					archive = true;
+				} else {
+					location += "/" + path; //$NON-NLS-1$
 				}
+				processPlugins(new Path(location), archive, javadoc.getChildren());
 			}
 		}
 	}
 	
-	private String getAttribute(IPluginElement element, String attrName) {
-		IPluginAttribute attr = element.getAttribute(attrName);
-		return attr == null ? null : attr.getValue();
+	private void processPlugins(IPath path, boolean archive, IPluginObject[] plugins) {
+		for (int i = 0; i < plugins.length; i++) {
+			if (plugins[i].getName().equals("plugin")) { //$NON-NLS-1$
+				IPluginElement plugin = (IPluginElement)plugins[i];
+				IPluginAttribute attr = plugin.getAttribute("id"); //$NON-NLS-1$
+				String id = attr == null ? null : attr.getValue();
+				if (id == null)
+					continue;
+				StringBuffer buffer = new StringBuffer();
+				if (archive)
+					buffer.append("jar:"); //$NON-NLS-1$
+				buffer.append("file:/"); //$NON-NLS-1$
+				buffer.append(path.toString());
+				Set set = (Set)fLocations.get(buffer.toString());
+				if (set == null) {
+					set = new HashSet();
+					fLocations.put(buffer.toString(), set);
+				}
+				set.add(id);
+			}
+		}		
 	}
 	
 	public void reset() {
 		fLocations = null;
 	}
-	
-	private synchronized Map getLocations() {
-		initialize();
-		return fLocations;
-	}
-	
-	private void initialize() {
-		if (fLocations == null)
-			return;
-		ModelEntry[] entries = PDECore.getDefault().getModelManager().getEntries();
-		for (int i = 0; i < entries.length; i++)
-			processExtensions(entries[i], false);
-	}*/
 
 }

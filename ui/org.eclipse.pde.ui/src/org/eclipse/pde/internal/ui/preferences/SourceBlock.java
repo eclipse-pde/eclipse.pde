@@ -175,6 +175,7 @@ public class SourceBlock implements IHyperlinkListener {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		preferences.setValue(ICoreConstants.P_SOURCE_LOCATIONS, encodeSourceLocations());
 		PDECore.getDefault().getSourceLocationManager().setExtensionLocations(fExtensionLocations);
+		PDECore.getDefault().getJavadocLocationManager().reset();
 		return true;
 	}
 	

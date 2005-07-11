@@ -44,17 +44,32 @@
 
    <element name="javadoc">
       <complexType>
-         <attribute name="plugin" type="string" use="required">
-            <annotation>
-               <documentation>
-                  the id of the plug-in whose javadoc location is specified by the &lt;code&gt;path&lt;/code&gt; attribute
-               </documentation>
-            </annotation>
-         </attribute>
+         <sequence>
+            <element ref="plugin" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="path" type="string" use="required">
             <annotation>
                <documentation>
                   the relative path of the javadoc location.  This location can be a directory, a file or a path inside a zip file.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="archive" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  an optional attribute indicating if the javadoc is located inside an archive.  If not specified, the default is &lt;code&gt;false&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="plugin">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the id of the plug-in whose javadoc location is specified by the &lt;code&gt;path&lt;/code&gt; attribute
                </documentation>
             </annotation>
          </attribute>
@@ -66,7 +81,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         3.1
+         3.2
       </documentation>
    </annotation>
 
@@ -78,11 +93,14 @@
          The following is an example of the &lt;code&gt;javadoc&lt;/code&gt; extension:
 &lt;pre&gt;
  &lt;extension point=&quot;org.eclipse.pde.core.javadoc&quot;&gt;
-     &lt;javadoc plugin=&quot;com.example.abc&quot; path=&quot;doc.zip!/references/api/&quot; /&gt;
+     &lt;javadoc path=&quot;doc.zip!/references/api/&quot; archive=&quot;true&quot;/&gt;
+        &lt;plugin id=&quot;com.example.abc&quot;/&gt;
+        &lt;plugin id=&quot;com.example.xyz&quot;/&gt;
+     &lt;/javadoc&gt;
   &lt;/extension&gt;
 &lt;/pre&gt;
 
-In the example above, the plug-in whose id is &lt;code&gt;com.example.abc&lt;/code&gt; has its javadoc located in a &lt;code&gt;references/api/&lt;/code&gt; directory inside a &lt;code&gt;doc.zip&lt;/code&gt; zip file.
+In the example above, the javadoc for two plug-ins: &lt;code&gt;com.example.abc&lt;/code&gt; and &lt;code&gt;com.example.xyz&lt;/code&gt; have their javadoc located in a &lt;code&gt;references/api/&lt;/code&gt; directory inside a &lt;code&gt;doc.zip&lt;/code&gt; ZIP file.
       </documentation>
    </annotation>
 
