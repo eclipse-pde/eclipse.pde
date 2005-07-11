@@ -11,25 +11,47 @@
 package org.eclipse.pde.internal.builders;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.StringTokenizer;
 
-import javax.xml.parsers.FactoryConfigurationError;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.core.schema.*;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.PDEMessages;
+import org.eclipse.pde.internal.core.AbstractModel;
+import org.eclipse.pde.internal.core.NLResourceHelper;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
+import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaEnumeration;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
+import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
+import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
+import org.eclipse.pde.internal.core.ischema.ISchemaType;
+import org.eclipse.pde.internal.core.schema.SchemaRegistry;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.IdUtil;
-import org.w3c.dom.*;
-import org.xml.sax.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	
@@ -392,31 +414,11 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				if (fFile.getProject().findMember(currPath) != null)
 					return true;
 			} else {
-				if (jarContainsResource(bundleJar, paths.get(i).toString()))
+				if (CoreUtility.jarContainsResource(new File(bundleJar), paths.get(i).toString(), false))
 					return true;
 			}
 		}
 		
-		return false;
-	}
-
-	private boolean jarContainsResource(String path, String resource) {
-		ZipFile jarFile = null;
-		try {
-			File file = new File(path);
-			jarFile = new ZipFile(file, ZipFile.OPEN_READ);
-			ZipEntry resourceEntry = jarFile.getEntry(resource); //$NON-NLS-1$
-			if (resourceEntry != null)
-				return true;
-		} catch (IOException e) {
-		} catch (FactoryConfigurationError e) {
-		} finally {
-			try {
-				if (jarFile != null)
-					jarFile.close();
-			} catch (IOException e2) {
-			}
-		}
 		return false;
 	}
 
