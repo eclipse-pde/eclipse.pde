@@ -50,14 +50,14 @@
          <attribute name="path" type="string" use="required">
             <annotation>
                <documentation>
-                  the relative path of the javadoc location.  This location can be a directory, a file or a path inside a zip file.
+                  The &lt;code&gt;path&lt;/code&gt; is a URL or a path that is relative to the plug-in declaring the extension.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="archive" type="boolean" use="default" value="false">
             <annotation>
                <documentation>
-                  an optional attribute indicating if the javadoc is located inside an archive.  If not specified, the default is &lt;code&gt;false&lt;/code&gt;.
+                  an optional attribute indicating if the javadoc is located inside an archive.  If not specified, the default is &lt;code&gt;false&lt;/code&gt;.  This attribute should be used only if the &lt;code&gt;path&lt;/code&gt; attribute specifies a relative path.  This attribute has no effect if the &lt;code&gt;path&lt;/code&gt; attribute specifies a URL.
                </documentation>
             </annotation>
          </attribute>
@@ -95,12 +95,24 @@
  &lt;extension point=&quot;org.eclipse.pde.core.javadoc&quot;&gt;
      &lt;javadoc path=&quot;doc.zip!/references/api/&quot; archive=&quot;true&quot;/&gt;
         &lt;plugin id=&quot;com.example.abc&quot;/&gt;
-        &lt;plugin id=&quot;com.example.xyz&quot;/&gt;
+        &lt;plugin id=&quot;com.example.def&quot;/&gt;
      &lt;/javadoc&gt;
+     
+     &lt;javadoc path=&quot;http://www.sample-url.org/doc/&quot;/&gt;
+        &lt;plugin id=&quot;com.example.ghi&quot;/&gt;
+     &lt;/javadoc&gt;
+     
+     &lt;javadoc path=&quot;doc/&quot;/&gt;
+        &lt;plugin id=&quot;com.example.jkl&quot;/&gt;
+     &lt;/javadoc&gt;     
   &lt;/extension&gt;
 &lt;/pre&gt;
 
-In the example above, the javadoc for two plug-ins: &lt;code&gt;com.example.abc&lt;/code&gt; and &lt;code&gt;com.example.xyz&lt;/code&gt; have their javadoc located in a &lt;code&gt;references/api/&lt;/code&gt; directory inside a &lt;code&gt;doc.zip&lt;/code&gt; ZIP file.
+In this example, the javadoc for two plug-ins: &lt;code&gt;com.example.abc&lt;/code&gt; and &lt;code&gt;com.example.xyz&lt;/code&gt; have their javadoc located in a &lt;code&gt;references/api/&lt;/code&gt; directory inside a &lt;code&gt;doc.zip&lt;/code&gt; ZIP file in the plug-in declaring this extension.
+
+The javadoc for plug-in &lt;code&gt;com.example.ghi&lt;/code&gt; is located at &lt;code&gt;http://www.sample-url.org/doc/&lt;/code&gt;.
+
+The javadoc for plug-in &lt;code&gt;com.example.jkl&lt;/code&gt; is located in directory &lt;code&gt;doc&lt;/code&gt; relative to the location of the plug-in declaring this extension.
       </documentation>
    </annotation>
 
@@ -127,7 +139,7 @@ In the example above, the javadoc for two plug-ins: &lt;code&gt;com.example.abc&
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2004 IBM Corporation and others.
+         Copyright (c) 2005 IBM Corporation and others.
 &lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 

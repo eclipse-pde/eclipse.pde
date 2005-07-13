@@ -11,12 +11,13 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
@@ -80,21 +81,26 @@ public class JavadocLocationManager {
 				String path = (attr == null) ? null : attr.getValue();
 				if (path == null)
 					continue;
-				attr = javadoc.getAttribute("archive"); //$NON-NLS-1$
-				boolean archive = attr == null ? false : "true".equals(attr.getValue()); //$NON-NLS-1$
-				String location = extension.getModel().getInstallLocation();
-				if (new File(location).isFile()) {
-					location += "!/" + path; //$NON-NLS-1$
-					archive = true;
-				} else {
-					location += "/" + path; //$NON-NLS-1$
+				try {
+					new URL(path);
+					processPlugins(path, javadoc.getChildren());
+				} catch (MalformedURLException e) {
+					attr = javadoc.getAttribute("archive"); //$NON-NLS-1$
+					boolean archive = attr == null ? false : "true".equals(attr.getValue()); //$NON-NLS-1$
+					StringBuffer buffer = new StringBuffer("file:/"); //$NON-NLS-1$
+					buffer.append(new Path(extension.getModel().getInstallLocation()).toPortableString());
+					if (new File(path).isFile()) {
+						buffer.append("/!"); //$NON-NLS-1$
+						archive = true;
+					}
+					buffer.append(path);				
+					processPlugins(archive ? "jar:" + buffer.toString() : buffer.toString(), javadoc.getChildren()); //$NON-NLS-1$
 				}
-				processPlugins(new Path(location), archive, javadoc.getChildren());
 			}
 		}
 	}
 	
-	private void processPlugins(IPath path, boolean archive, IPluginObject[] plugins) {
+	private void processPlugins(String path, IPluginObject[] plugins) {
 		for (int i = 0; i < plugins.length; i++) {
 			if (plugins[i].getName().equals("plugin")) { //$NON-NLS-1$
 				IPluginElement plugin = (IPluginElement)plugins[i];
@@ -102,15 +108,10 @@ public class JavadocLocationManager {
 				String id = attr == null ? null : attr.getValue();
 				if (id == null)
 					continue;
-				StringBuffer buffer = new StringBuffer();
-				if (archive)
-					buffer.append("jar:"); //$NON-NLS-1$
-				buffer.append("file:/"); //$NON-NLS-1$
-				buffer.append(path.toString());
-				Set set = (Set)fLocations.get(buffer.toString());
+				Set set = (Set)fLocations.get(path);
 				if (set == null) {
 					set = new HashSet();
-					fLocations.put(buffer.toString(), set);
+					fLocations.put(path, set);
 				}
 				set.add(id);
 			}
