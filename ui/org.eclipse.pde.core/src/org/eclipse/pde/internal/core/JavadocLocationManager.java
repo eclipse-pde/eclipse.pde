@@ -36,9 +36,9 @@ public class JavadocLocationManager {
 		File file = new File(model.getInstallLocation());			
 		if (file.isDirectory()) {
 			File doc = new File(file, "doc"); //$NON-NLS-1$
-			if (doc.exists())
+			if (new File(doc, "package-list").exists()) //$NON-NLS-1$
 				return doc.getAbsolutePath();
-		} else if (CoreUtility.jarContainsResource(file, "doc", true)) { //$NON-NLS-1$
+		} else if (CoreUtility.jarContainsResource(file, "doc/package-list", false)) { //$NON-NLS-1$
 			return file.getAbsolutePath() + "!/doc"; //$NON-NLS-1$
 		}		
 		return getEntry(model);
