@@ -485,7 +485,7 @@ IModelChangedListener {
 				return;
 			if (!newValue.startsWith(IBuildEntry.JAR_PREFIX))
 				newValue = IBuildEntry.JAR_PREFIX + newValue;
-			if (!newValue.endsWith(".jar") && !newValue.endsWith("/") && !newValue.equals(".")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (!newValue.endsWith(".jar") && !newValue.endsWith("/") && !newValue.equals(IBuildEntry.JAR_PREFIX + ".")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				newValue +="/"; //$NON-NLS-1$
 			
 			// jars.compile.order
