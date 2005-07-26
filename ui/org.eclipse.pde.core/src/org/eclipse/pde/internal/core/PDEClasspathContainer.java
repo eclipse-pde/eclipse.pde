@@ -113,7 +113,7 @@ public class PDEClasspathContainer {
 		return accessRules;
 	}
 	
-	private synchronized IAccessRule getAccessibleRule(IPath path) {
+	private static synchronized IAccessRule getAccessibleRule(IPath path) {
 		IAccessRule rule = (IAccessRule)ACCESSIBLE_RULES.get(path);
 		if (rule == null) {
 			rule = JavaCore.newAccessRule(path, IAccessRule.K_ACCESSIBLE);
@@ -122,7 +122,7 @@ public class PDEClasspathContainer {
 		return rule;
 	}
 	
-	private synchronized IAccessRule getDiscouragedRule(IPath path) {
+	private static synchronized IAccessRule getDiscouragedRule(IPath path) {
 		IAccessRule rule = (IAccessRule)DISCOURAGED_RULES.get(path);
 		if (rule == null) {
 			rule = JavaCore.newAccessRule(path, IAccessRule.K_DISCOURAGED);
