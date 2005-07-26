@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -194,7 +195,7 @@ public class PluginContentPage extends ContentPage {
 	    fYesButton.setText(PDEUIMessages.PluginContentPage_yes); //$NON-NLS-1$
 	    fYesButton.setSelection(false);
 	    gd = new GridData();
-	    gd.widthHint = 50;
+	    gd.widthHint = getButtonWidthHint(fYesButton);
 	    fYesButton.setLayoutData(gd);
 	    fYesButton.addSelectionListener(new SelectionAdapter() {
 	    	public void widgetSelected(SelectionEvent e) {
@@ -207,7 +208,7 @@ public class PluginContentPage extends ContentPage {
 	    fNoButton.setText(PDEUIMessages.PluginContentPage_no); //$NON-NLS-1$
 	    fNoButton.setSelection(true);
 	    gd = new GridData();
-	    gd.widthHint = 50;
+	    gd.widthHint = getButtonWidthHint(fNoButton);
 	    fNoButton.setLayoutData(gd);		
 	}
 	
@@ -293,5 +294,12 @@ public class PluginContentPage extends ContentPage {
 	 */
 	protected String getNameFieldQualifier() {
 		return PDEUIMessages.ContentPage_plugin; //$NON-NLS-1$
+	}
+	
+	private static int getButtonWidthHint(Button button) {
+		if (button.getFont().equals(JFaceResources.getDefaultFont()))
+			button.setFont(JFaceResources.getDialogFont());
+		return Math.max(50,
+				button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	}
 }
