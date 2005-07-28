@@ -148,15 +148,8 @@ public class PDERuntimePluginImages {
 		return PLUGIN_REGISTRY.get(key);
 	}
 	private static URL makeIconURL(String prefix, String name) {
-		String path = prefix + name;
-		URL url = null;
-		try {
-			URL baseURL = Platform.resolve(PDERuntimePlugin.getDefault().getBundle().getEntry("/")); //$NON-NLS-1$
-			url = new URL(baseURL, path);
-		} catch (Exception e) {
-			return null;
-		}
-		return url;
+		String path = "$nl$/" + prefix + name; //$NON-NLS-1$
+		return Platform.find(PDERuntimePlugin.getDefault().getBundle(), new Path(path));
 	}
 	public static Image manage(String key, ImageDescriptor desc) {
 		Image image = desc.createImage();
