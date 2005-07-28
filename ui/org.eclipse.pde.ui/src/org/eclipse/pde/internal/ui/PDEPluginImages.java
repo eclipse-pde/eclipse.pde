@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.ui;
 
 import java.net.*;
 
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.graphics.Image;
 
@@ -21,8 +23,6 @@ import org.eclipse.swt.graphics.Image;
 public class PDEPluginImages {
 
 	private static final String NAME_PREFIX= PDEPlugin.getPluginId()+"."; //$NON-NLS-1$
-
-	private final static URL BASE_URL = PDEPlugin.getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
 
 	private static ImageRegistry PLUGIN_REGISTRY;
 	
@@ -243,15 +243,8 @@ private static final void initialize() {
 }
 
 private static URL makeImageURL(String prefix, String name) {
-	String path = prefix + name;
-	URL url = null;
-	try {
-		url = new URL(BASE_URL, path);
-	}
-	catch (MalformedURLException e) {
-		return null;
-	}
-	return url;
+	String path = "$nl$/" + prefix + name; //$NON-NLS-1$
+	return Platform.find(PDEPlugin.getDefault().getBundle(), new Path(path));
 }
 
 public static Image manage(String key, ImageDescriptor desc) {
