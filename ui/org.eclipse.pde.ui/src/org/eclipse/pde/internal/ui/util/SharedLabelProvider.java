@@ -186,12 +186,24 @@ public class SharedLabelProvider
 				File file = new File(pluginLocation, relativePath);
 				if (file.exists()) 
 					stream = new FileInputStream(file);
+				else if (relativePath.length() > 5
+						&& relativePath.startsWith("$nl$/")) { //$NON-NLS-1$
+					file = new File(pluginLocation, relativePath.substring(5));
+					if (file.exists())
+						stream = new FileInputStream(file);
+				}
 			} else {
 					jarFile = new ZipFile(pluginLocation, ZipFile.OPEN_READ);
 					ZipEntry manifestEntry = jarFile.getEntry(relativePath);
 					if (manifestEntry != null) {
 						stream = jarFile.getInputStream(manifestEntry);
+					} else if (relativePath.length() > 5
+						&& relativePath.startsWith("$nl$/")) { //$NON-NLS-1$
+					manifestEntry = jarFile.getEntry(relativePath.substring(5));
+					if (manifestEntry != null) {
+						stream = jarFile.getInputStream(manifestEntry);
 					}
+				}
 			}
 			if (stream != null) {
 				ImageDescriptor desc = ImageDescriptor.createFromImageData(new ImageData(stream));

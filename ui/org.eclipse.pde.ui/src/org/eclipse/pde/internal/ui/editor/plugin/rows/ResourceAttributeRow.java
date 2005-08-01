@@ -48,14 +48,29 @@ public class ResourceAttributeRow extends ReferenceAttributeRow {
 			} catch (PartInitException e) {
 				PDEPlugin.logException(e);
 			}
-		} else {
-			Display.getCurrent().beep();
-		}
+			return;
+		} 
+		file = getNLFile();
+		if (file != null && file.exists()) {
+			try {
+				IDE.openEditor(PDEPlugin.getActivePage(), file, true);
+			} catch (PartInitException e) {
+				PDEPlugin.logException(e);
+			}
+			return;
+		} 
+		Display.getCurrent().beep();
 	}
 	private IFile getFile() {
 		String value = text.getText();
 		if (value.length()==0) return null;
 		IPath path = getProject().getFullPath().append(value);
+		return getProject().getWorkspace().getRoot().getFile(path);
+	}
+	private IFile getNLFile() {
+		String value = text.getText();
+		if (value.length() <= 5 || !value.startsWith("$nl$/"))return null; //$NON-NLS-1$
+		IPath path = getProject().getFullPath().append(value.substring(5));
 		return getProject().getWorkspace().getRoot().getFile(path);
 	}
 	/*
