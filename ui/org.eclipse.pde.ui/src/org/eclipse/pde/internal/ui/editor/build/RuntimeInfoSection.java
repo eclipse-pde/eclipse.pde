@@ -690,7 +690,7 @@ IModelChangedListener {
 		IBuildModel model = getBuildModel();
 		IProject project = model.getUnderlyingResource().getProject();
 		IPath libPath;
-		if (libName.equals(".")) //$NON-NLS-1$
+		if (libName.equals(".") || libName.equals("./") || libName.equals(".\\")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			libPath = null;
 		else 
 			libPath = project.getFile(libName).getProjectRelativePath();
