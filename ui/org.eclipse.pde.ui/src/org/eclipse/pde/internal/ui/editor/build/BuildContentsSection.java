@@ -277,7 +277,9 @@ public abstract class BuildContentsSection extends TableSection
 				while (iter.hasNext()) {
 					String resource = iter.next().toString();
 					boolean isIncluded = includes.contains(resource);
-					if (resource.lastIndexOf(Path.SEPARATOR) == resource
+					if (resource.equals(".") || resource.equals("./") || resource.equals(".\\")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						// ignore - should be root directory
+					} else if (resource.lastIndexOf(Path.SEPARATOR) == resource
 							.length() - 1) {
 						IFolder folder = fProject.getFolder(resource);
 						fTreeViewer.setSubtreeChecked(folder, isIncluded);
@@ -289,8 +291,6 @@ public abstract class BuildContentsSection extends TableSection
 					} else if (resource.startsWith("*.")) { //$NON-NLS-1$
 						if (isIncluded)
 							fileExt.add(resource.substring(2));
-					} else if (resource.equals(".")){ //$NON-NLS-1$
-						//ignore - should be root directory
 					} else {
 						IFile file = fProject.getFile(resource);
 						fTreeViewer.setChecked(file, isIncluded);
