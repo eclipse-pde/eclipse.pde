@@ -164,7 +164,7 @@ public abstract class GeneralInfoSection extends PDESection {
 	}
 	
 	private void createPlatformFilterEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
-		fPlatformFilterEntry = new FormEntry(client, toolkit, PDEUIMessages.GeneralInfoSection_platformFilter, null, false);//$NON-NLS-1$
+		fPlatformFilterEntry = new FormEntry(client, toolkit, PDEUIMessages.GeneralInfoSection_platformFilter, null, false);
 		fPlatformFilterEntry.setFormEntryListener(new FormEntryAdapter(this,actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getBundle().setHeader(PLATFORM_FILTER, fPlatformFilterEntry.getValue());
