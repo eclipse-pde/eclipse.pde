@@ -1679,6 +1679,7 @@ public class PDEUIMessages extends NLS {
 	public static String GeneralInfoSection_name;
 	public static String GeneralInfoSection_class;
 	public static String GeneralInfoSection_browse;
+	public static String GeneralInfoSection_platformFilter;
 	public static String GeneralInfoSection_selectionTitle;
 	public static String RequiresSection_title;
 	public static String RequiresSection_fDesc;
