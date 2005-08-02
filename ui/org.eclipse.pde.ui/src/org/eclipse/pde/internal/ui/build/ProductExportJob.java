@@ -65,7 +65,7 @@ public class ProductExportJob extends FeatureExportJob {
 				createBuildPropertiesFile(fFeatureLocation);
 				createConfigIniFile(config);
 				createEclipseProductFile();
-				createLauncherIniFile();
+				createLauncherIniFile(config[0]);
 				doExport(featureID, 
 	                        null, 
 	                        fFeatureLocation, 
@@ -178,7 +178,7 @@ public class ProductExportJob extends FeatureExportJob {
 		save(new File(dir, ".eclipseproduct"), properties, "Eclipse Product File"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
-	private void createLauncherIniFile() {
+	private void createLauncherIniFile(String os) {
 		String programArgs = getProgramArguments();
 		String vmArgs = getVMArguments();
 		
@@ -189,19 +189,27 @@ public class ProductExportJob extends FeatureExportJob {
 		if (!dir.exists() || !dir.isDirectory())
 			dir.mkdirs();
 		
+		String lineDelimiter = Platform.OS_WIN32.equals(os)?"\r\n":"\n"; //$NON-NLS-1$ //$NON-NLS-2$
+		
 		PrintWriter writer = null;
 		try {
 			writer = new PrintWriter(new FileWriter(new File(dir, getLauncherName() + ".ini"))); //$NON-NLS-1$
 			if (programArgs.length() > 0) {
 				StringTokenizer tokenizer = new StringTokenizer(programArgs);
-				while (tokenizer.hasMoreTokens())
-					writer.println(tokenizer.nextToken());
+				while (tokenizer.hasMoreTokens()){
+					writer.print(tokenizer.nextToken());
+					writer.print(lineDelimiter);
+				}
 			}
 			if (vmArgs.length() > 0) {
-				writer.println("-vmargs"); //$NON-NLS-1$
+				writer.print("-vmargs"); //$NON-NLS-1$
+				writer.print(lineDelimiter);
 				StringTokenizer tokenizer = new StringTokenizer(vmArgs);
-				while (tokenizer.hasMoreTokens())
-					writer.println(tokenizer.nextToken());
+				while (tokenizer.hasMoreTokens()){
+					writer.print(tokenizer.nextToken());
+					writer.print(lineDelimiter);
+				}
+
 			}	
 		} catch (IOException e) {
 		} finally {
