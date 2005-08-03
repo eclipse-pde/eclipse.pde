@@ -12,14 +12,14 @@
       </category>
       <view
             name="%views.registry.name"
-            icon="icons/eview16/registry.gif"
+            icon="$nl$/icons/eview16/registry.gif"
             category="org.eclipse.pde.runtime"
             class="org.eclipse.pde.internal.runtime.registry.RegistryBrowser"
             id="org.eclipse.pde.runtime.RegistryBrowser">
       </view>
       <view
             name="%views.errorLog.name"
-            icon="icons/eview16/error_log.gif"
+            icon="$nl$/icons/eview16/error_log.gif"
             category="org.eclipse.pde.runtime"
             class="org.eclipse.pde.internal.runtime.logview.LogView"
             id="org.eclipse.pde.runtime.LogView">
