@@ -133,7 +133,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 								if (tagName.endsWith("/")) { //$NON-NLS-1$
 									tagName = getTagName(tagName.substring(0, tagName.length() - 1));
 									if (forbiddenEndTag(tagName)) {
-										report(NLS.bind(PDEMessages.Builders_Schema_forbiddenEndTag, tagName), lineNumber, flag); //$NON-NLS-1$
+										report(NLS.bind(PDEMessages.Builders_Schema_forbiddenEndTag, tagName), lineNumber, flag); 
 										errorReported = true;
 									}
 								} else if (tagName.startsWith("/")) { //$NON-NLS-1$
@@ -153,7 +153,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 										}
 									}
 									if (stack.isEmpty() && !found) {
-										report(NLS.bind(PDEMessages.Builders_Schema_noMatchingStartTag, tagName), lineNumber, flag); //$NON-NLS-1$
+										report(NLS.bind(PDEMessages.Builders_Schema_noMatchingStartTag, tagName), lineNumber, flag); 
 										errorReported = true;
 									}
 								} else {
@@ -219,11 +219,11 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 		Attr use = element.getAttributeNode("use"); //$NON-NLS-1$
 		Attr value = element.getAttributeNode("value"); //$NON-NLS-1$
 		if (use != null && "default".equals(use.getValue()) && value == null) { //$NON-NLS-1$
-			report(NLS.bind(PDEMessages.Builders_Schema_valueRequired, element.getNodeName()),  //$NON-NLS-1$
+			report(NLS.bind(PDEMessages.Builders_Schema_valueRequired, element.getNodeName()),  
 					getLine(element),
 					CompilerFlags.ERROR);
 		} else if (use == null && value != null) {
-			report(NLS.bind(PDEMessages.Builders_Schema_valueNotRequired, element.getNodeName()),  //$NON-NLS-1$
+			report(NLS.bind(PDEMessages.Builders_Schema_valueNotRequired, element.getNodeName()),  
 					getLine(element),
 					CompilerFlags.ERROR);
 		}

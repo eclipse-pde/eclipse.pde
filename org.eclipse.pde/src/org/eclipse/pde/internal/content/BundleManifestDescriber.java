@@ -24,7 +24,7 @@ import org.osgi.framework.Constants;
 public class BundleManifestDescriber implements ITextContentDescriber {
 
 	private final static String[] HEADERS = {Constants.BUNDLE_MANIFESTVERSION, Constants.BUNDLE_NAME, Constants.BUNDLE_VERSION, Constants.BUNDLE_SYMBOLICNAME, Constants.BUNDLE_VENDOR, Constants.BUNDLE_ACTIVATOR};
-	private final static int LINES = 50; //$NON-NLS-1$
+	private final static int LINES = 50; 
 
 	private final static QualifiedName[] SUPPORTED_OPTIONS = {IContentDescription.BYTE_ORDER_MARK};
 

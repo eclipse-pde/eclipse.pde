@@ -150,8 +150,8 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 				} else if (name.equals("match")) { //$NON-NLS-1$
 					if (element.getAttributeNode("patch") != null) { //$NON-NLS-1$
 						report(
-								NLS.bind(PDEMessages.Builders_Feature_patchedMatch, attr.getValue()), //$NON-NLS-1$
-								getLine(element, attr.getValue()), //$NON-NLS-1$
+								NLS.bind(PDEMessages.Builders_Feature_patchedMatch, attr.getValue()), 
+								getLine(element, attr.getValue()), 
 								CompilerFlags.ERROR);
 					} else {
 						validateMatch(element, attr);
@@ -159,13 +159,13 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 				} else if (name.equals("patch")) { //$NON-NLS-1$
 					if ("true".equalsIgnoreCase(attr.getValue()) && feature == null) { //$NON-NLS-1$
 						report(
-								NLS.bind(PDEMessages.Builders_Feature_patchPlugin, attr.getValue()), //$NON-NLS-1$
-								getLine(element, attr.getValue()), //$NON-NLS-1$
+								NLS.bind(PDEMessages.Builders_Feature_patchPlugin, attr.getValue()), 
+								getLine(element, attr.getValue()), 
 								CompilerFlags.ERROR);
 					} else if ("true".equalsIgnoreCase(attr.getValue()) && element.getAttributeNode("version") == null) { //$NON-NLS-1$ //$NON-NLS-2$
 						report(
-								NLS.bind(PDEMessages.Builders_Feature_patchedVersion, attr.getValue()), //$NON-NLS-1$
-								getLine(element, attr.getValue()), //$NON-NLS-1$
+								NLS.bind(PDEMessages.Builders_Feature_patchedVersion, attr.getValue()), 
+								getLine(element, attr.getValue()), 
 								CompilerFlags.ERROR);
 					} else {
 						validateBoolean(element, attr);
@@ -358,15 +358,15 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			if (!attrs.contains(name)) {
 				reportUnknownAttribute(element, name, CompilerFlags.ERROR);
 			} else if (name.equals("id")){ //$NON-NLS-1$
-				validatePluginID(element, (Attr)attributes.item(i)); //$NON-NLS-1$
+				validatePluginID(element, (Attr)attributes.item(i)); 
 			} else if (name.equals("primary") || name.equals("exclusive")){ //$NON-NLS-1$ //$NON-NLS-2$
 				validateBoolean(element, (Attr)attributes.item(i));
 			} else if (name.equals("version")) { //$NON-NLS-1$
 				validateVersionAttribute(element, (Attr)attributes.item(i));
 			}
-			if (name.equals("primary")){ //$NON-NLS-1$ //$NON-NLS-2$
+			if (name.equals("primary")){ //$NON-NLS-1$ 
 				reportDeprecatedAttribute(element, (Attr)attributes.item(i));
-			} else if (name.equals("plugin")){ //$NON-NLS-1$ //$NON-NLS-2$
+			} else if (name.equals("plugin")){ //$NON-NLS-1$ 
 				validatePluginID(element, (Attr)attributes.item(i), false);
 			}
 		}
@@ -384,7 +384,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 					|| !model.isEnabled() 
 					|| (isFragment && !model.isFragmentModel())
 					|| (!isFragment && model.isFragmentModel())) {
-				report(NLS.bind(PDEMessages.Builders_Feature_reference, id),  //$NON-NLS-1$
+				report(NLS.bind(PDEMessages.Builders_Feature_reference, id),  
 						getLine(element, attr.getName()),
 						severity);
 			}
@@ -396,7 +396,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 		if (severity != CompilerFlags.IGNORE) {
 			IFeature feature = PDECore.getDefault().findFeature(attr.getValue());	
 			if (feature == null) {
-				report(NLS.bind(PDEMessages.Builders_Feature_freference, attr.getValue()),  //$NON-NLS-1$
+				report(NLS.bind(PDEMessages.Builders_Feature_freference, attr.getValue()),  
 						getLine(element, attr.getName()),
 						severity);
 			}

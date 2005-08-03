@@ -118,7 +118,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		if (point == null) {
 			int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNRESOLVED_EX_POINTS);
 			if (severity != CompilerFlags.IGNORE) {
-				report(NLS.bind(PDEMessages.Builders_Manifest_ex_point, pointID), //$NON-NLS-1$
+				report(NLS.bind(PDEMessages.Builders_Manifest_ex_point, pointID), 
 					getLine(element, "point"), severity); //$NON-NLS-1$
 			}
 		} else {
@@ -317,11 +317,11 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		String value = attr.getValue();
 		if (shouldTranslate) {
 			if (!value.startsWith("%")) { //$NON-NLS-1$
-				report(NLS.bind(PDEMessages.Builders_Manifest_non_ext_attribute, attr.getName()), getLine(element, attr.getName()), severity); //$NON-NLS-1$
+				report(NLS.bind(PDEMessages.Builders_Manifest_non_ext_attribute, attr.getName()), getLine(element, attr.getName()), severity); 
 			} else if (fModel != null && fModel instanceof AbstractModel) {
 				NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
 				if (helper == null || !helper.resourceExists(value)) {
-					report(NLS.bind(PDEMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(element, attr.getName()), severity); //$NON-NLS-1$
+					report(NLS.bind(PDEMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(element, attr.getName()), severity); 
 				}
 			}
 		} 
@@ -335,11 +335,11 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		if (value == null)
 			return;
 		if (!value.startsWith("%")) { //$NON-NLS-1$
-			report(NLS.bind(PDEMessages.Builders_Manifest_non_ext_element, element.getNodeName()), getLine(element), severity); //$NON-NLS-1$
+			report(NLS.bind(PDEMessages.Builders_Manifest_non_ext_element, element.getNodeName()), getLine(element), severity); 
 		} else if (fModel != null && fModel instanceof AbstractModel) {
 			NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
 			if (helper == null || !helper.resourceExists(value)) {
-				report(NLS.bind(PDEMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(element), severity); //$NON-NLS-1$
+				report(NLS.bind(PDEMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(element), severity); 
 			}
 		}
 	}
@@ -347,7 +347,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	protected void validateResourceAttribute(Element element, Attr attr) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_RESOURCE);
 		if (severity != CompilerFlags.IGNORE && !resourceExists(attr.getValue())) {
-			report(NLS.bind(PDEMessages.Builders_Manifest_resource, (new String[] { attr.getValue(), attr.getName() })),  //$NON-NLS-1$
+			report(NLS.bind(PDEMessages.Builders_Manifest_resource, (new String[] { attr.getValue(), attr.getName() })),  
 							getLine(element,
 							attr.getName()), 
 							severity);
@@ -470,7 +470,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	
 	protected void reportUnusedElement(Element element, int severity) {
 		Node parent = element.getParentNode();
-			report(NLS.bind(PDEMessages.Builders_Manifest_unused_element, (new String[] { //$NON-NLS-1$
+			report(NLS.bind(PDEMessages.Builders_Manifest_unused_element, (new String[] { 
 			element.getNodeName(), parent.getNodeName() })),
 					getLine(element), severity);
 	}

@@ -59,7 +59,7 @@ public class JarManifestHeader implements IHeader {
 				} catch (BundleException be) {
 					fManifestElements = new ManifestElement[0];
 					if (fErrorReporter != null) {
-						String message = NLS.bind(PDEMessages.BundleErrorReporter_parseHeader, getName()); //$NON-NLS-1$
+						String message = NLS.bind(PDEMessages.BundleErrorReporter_parseHeader, getName()); 
 						fErrorReporter.report(message, getLineNumber() + 1,
 								CompilerFlags.ERROR);
 					}

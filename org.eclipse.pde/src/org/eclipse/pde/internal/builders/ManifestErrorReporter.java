@@ -33,16 +33,16 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 	protected void reportIllegalElement(Element element, int severity) {
 		Node parent = element.getParentNode();
 		if (parent == null || parent instanceof org.w3c.dom.Document) {
-			report(PDEMessages.Builders_Manifest_illegalRoot, getLine(element), severity); //$NON-NLS-1$
+			report(PDEMessages.Builders_Manifest_illegalRoot, getLine(element), severity); 
 		} else {
-			report(NLS.bind(PDEMessages.Builders_Manifest_child, (new String[] { //$NON-NLS-1$
+			report(NLS.bind(PDEMessages.Builders_Manifest_child, (new String[] { 
 			element.getNodeName(), parent.getNodeName() })),
 					getLine(element), severity);
 		}
 	}
 	
 	protected void reportMissingRequiredAttribute(Element element, String attName, int severity) {
-		String message = NLS.bind(PDEMessages.Builders_Manifest_missingRequired, (new String[] { attName, element.getNodeName() })); //$NON-NLS-1$			
+		String message = NLS.bind(PDEMessages.Builders_Manifest_missingRequired, (new String[] { attName, element.getNodeName() })); //			
 		report(message, getLine(element), severity);
 	}
 
@@ -94,7 +94,7 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 	}
 
 	private void reportMissingElementContent(Element element) {
-		report(NLS.bind(PDEMessages.Builders_Feature_empty, element //$NON-NLS-1$
+		report(NLS.bind(PDEMessages.Builders_Feature_empty, element 
 		.getNodeName()), getLine(element), CompilerFlags.ERROR);
 	}
 	
@@ -115,7 +115,7 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 				value = "file:" + value; //$NON-NLS-1$
 			new URL(value);
 		} catch (MalformedURLException e) {
-			report(NLS.bind(PDEMessages.Builders_Feature_badURL, attName), getLine(element, attName), CompilerFlags.ERROR); //$NON-NLS-1$
+			report(NLS.bind(PDEMessages.Builders_Feature_badURL, attName), getLine(element, attName), CompilerFlags.ERROR); 
 		}
 	}
 	

@@ -66,7 +66,7 @@ public class ConvertSchemaToHTML extends Task {
 				XMLDefaultHandler handler = new XMLDefaultHandler();
 				fParser.parse(schemaFile, handler);
 
-				URL url =  schemaFile.toURL(); //$NON-NLS-1$
+				URL url =  schemaFile.toURL(); 
 				SchemaDescriptor desc = new SchemaDescriptor(extPoints[i].getFullId(), url);
 				schema = (Schema)desc.getSchema(false);
 					
@@ -150,7 +150,7 @@ public class ConvertSchemaToHTML extends Task {
 	private IPluginModelBase readManifestFile() {
 		if (manifest == null) {
 			System.out.println(
-				NLS.bind(PDEMessages.Builders_Convert_missingAttribute, "manifest")); //$NON-NLS-1$ //$NON-NLS-2$
+				NLS.bind(PDEMessages.Builders_Convert_missingAttribute, "manifest")); //$NON-NLS-1$ 
 			return null;
 		}
 		
@@ -175,7 +175,7 @@ public class ConvertSchemaToHTML extends Task {
 				model = new ExternalPluginModel();
 			else {
 				System.out.println(
-						NLS.bind(PDEMessages.Builders_Convert_illegalValue, "manifest")); //$NON-NLS-1$ //$NON-NLS-2$
+						NLS.bind(PDEMessages.Builders_Convert_illegalValue, "manifest")); //$NON-NLS-1$ 
 				return null;
 			}
 
@@ -211,7 +211,7 @@ public class ConvertSchemaToHTML extends Task {
 			valid = false;
 		} else if (!new Path(destination).isValidPath(destination)) {
 			System.out.println(
-					NLS.bind(PDEMessages.Builders_Convert_illegalValue, "destination")); //$NON-NLS-1$ //$NON-NLS-2$
+					NLS.bind(PDEMessages.Builders_Convert_illegalValue, "destination")); //$NON-NLS-1$ 
 			valid = false;
 		}
 		return valid;

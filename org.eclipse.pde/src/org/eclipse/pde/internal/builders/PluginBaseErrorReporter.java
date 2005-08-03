@@ -157,7 +157,7 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 		if (severity != CompilerFlags.IGNORE) {
 			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(attr.getValue());
 			if (model == null || !model.isEnabled()) {
-				report(NLS.bind(PDEMessages.Builders_Manifest_dependency, attr.getValue()),  //$NON-NLS-1$
+				report(NLS.bind(PDEMessages.Builders_Manifest_dependency, attr.getValue()),  
 						getLine(element, attr.getName()),
 						severity);
 			}

@@ -71,7 +71,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			new VersionRange(versionRangeString);
 		} catch (IllegalArgumentException e) {
 			return new Status(IStatus.ERROR, PDE.PLUGIN_ID, IStatus.ERROR, 
-					PDEMessages.BundleErrorReporter_invalidVersionRangeFormat, e); //$NON-NLS-1$
+					PDEMessages.BundleErrorReporter_invalidVersionRangeFormat, e); 
 		}
 
 		// need to do our extra checks for each piece of the versionRange
@@ -347,7 +347,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		String message;
 		if (fFragment) {
 			/* Fragment bundles must not specify a Bundle Activator */
-			message = PDEMessages.BundleErrorReporter_fragmentActivator; //$NON-NLS-1$
+			message = PDEMessages.BundleErrorReporter_fragmentActivator; 
 			report(message, header.getLineNumber() + 1, CompilerFlags.ERROR);
 			return;
 		}
@@ -369,7 +369,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					if (type == null || !type.exists()) {
 						message = NLS.bind(
 								PDEMessages.BundleErrorReporter_NoExist,
-								activator); //$NON-NLS-1$
+								activator); 
 						report(message, getLine(header, activator),
 								CompilerFlags.P_UNKNOWN_CLASS);
 						return;
@@ -382,7 +382,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						message = NLS
 								.bind(
 										PDEMessages.BundleErrorReporter_externalClass,
-										activator); //$NON-NLS-1$
+										activator); 
 						report(message, getLine(header, activator),
 								CompilerFlags.P_UNKNOWN_CLASS);
 						return;
@@ -392,7 +392,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						message = NLS
 								.bind(
 										PDEMessages.BundleErrorReporter_unresolvedCompatibilityActivator,
-										activator); //$NON-NLS-1$
+										activator); 
 						report(message, getLine(header, activator),
 								CompilerFlags.P_UNKNOWN_CLASS);
 						return;
@@ -413,14 +413,14 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		String message;
 		if (fFragment) {
 			/* Fragment bundles must not specify Plugin Class */
-			message = PDEMessages.BundleErrorReporter_fragmentActivator; //$NON-NLS-1$
+			message = PDEMessages.BundleErrorReporter_fragmentActivator; 
 			report(message, header.getLineNumber() + 1, CompilerFlags.ERROR);
 			return;
 		}
 		if (!fCompatibilityActivator) {
 			if (!fCompatibility) {
 				// rename Plugin-Class to Bundle-Activator
-				message = PDEMessages.BundleErrorReporter_unusedPluginClass; //$NON-NLS-1$
+				message = PDEMessages.BundleErrorReporter_unusedPluginClass; 
 				report(message, header.getLineNumber() + 1, CompilerFlags.WARNING);
 			}
 		}
@@ -441,7 +441,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				/* Plugin class type does not exist */
 				if (type == null || !type.exists()) {
 					message = NLS.bind(PDEMessages.BundleErrorReporter_NoExist,
-							pluginClass); //$NON-NLS-1$
+							pluginClass); 
 					report(message, getLine(header, pluginClass),
 							CompilerFlags.P_UNKNOWN_CLASS);
 					return;
@@ -453,7 +453,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				if (pfroot != null && pfroot.isExternal()) {
 					message = NLS.bind(
 							PDEMessages.BundleErrorReporter_externalClass,
-							pluginClass); //$NON-NLS-1$
+							pluginClass); 
 					report(message, getLine(header, pluginClass),
 							CompilerFlags.P_UNKNOWN_CLASS);
 					return;
@@ -474,7 +474,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		String message = null;
 		if (classpath.trim().length() == 0) {
 			/* It is defined but it is an empty string */
-			message = PDEMessages.BundleErrorReporter_ClasspathNotEmpty; //$NON-NLS-1$
+			message = PDEMessages.BundleErrorReporter_ClasspathNotEmpty; 
 			report(message, header.getLineNumber() + 1, CompilerFlags.ERROR);
 			return;
 		}
@@ -493,13 +493,13 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		String message;
 		if (header == null) {
 			report(
-					NLS.bind(PDEMessages.BundleErrorReporter_headerMissing, Constants.BUNDLE_SYMBOLICNAME), 1, //$NON-NLS-1$
+					NLS.bind(PDEMessages.BundleErrorReporter_headerMissing, Constants.BUNDLE_SYMBOLICNAME), 1, 
 					CompilerFlags.ERROR);
 			return false;
 		}
 		String symbolicName = header.getValue();
 		if ((symbolicName.trim()).length() == 0) {
-			message = PDEMessages.BundleErrorReporter_NoSymbolicName; //$NON-NLS-1$
+			message = PDEMessages.BundleErrorReporter_NoSymbolicName; 
 			report(message, header.getLineNumber() + 1, CompilerFlags.ERROR);
 			return false;
 		}
@@ -521,7 +521,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		IHeader header = (IHeader) fHeaders.get(Constants.BUNDLE_VERSION);
 		if (header == null) {
 			report(
-					NLS.bind(PDEMessages.BundleErrorReporter_headerMissing, Constants.BUNDLE_VERSION), 1, //$NON-NLS-1$
+					NLS.bind(PDEMessages.BundleErrorReporter_headerMissing, Constants.BUNDLE_VERSION), 1, 
 					CompilerFlags.ERROR);
 			return;
 		}
@@ -538,9 +538,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		String versionRange = element
 				.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
 		if (versionRange != null && !validateVersionRange(versionRange).isOK()) {
-			String message = NLS.bind(PDEMessages.BundleErrorReporter_InvalidFormatInBundleVersion, element.getValue()); //$NON-NLS-1$
+			String message = NLS.bind(PDEMessages.BundleErrorReporter_InvalidFormatInBundleVersion, element.getValue()); 
 			report(message, getPackageLine(header, element),
-					CompilerFlags.ERROR); //$NON-NLS-1$
+					CompilerFlags.ERROR); 
 		}
 	}
 
@@ -615,9 +615,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					exportPackageStmt);
 			/* The exported package cannot be default package. */
 			if (f != null && f.isDefaultPackage()) {
-				message = PDEMessages.BundleErrorReporter_CannotExportDefaultPackage; //$NON-NLS-1$
+				message = PDEMessages.BundleErrorReporter_CannotExportDefaultPackage; 
 				report(message, getPackageLine(header, exportPackageElements[i]),
-						CompilerFlags.P_UNRESOLVED_IMPORTS); //$NON-NLS-1$
+						CompilerFlags.P_UNRESOLVED_IMPORTS); 
 				continue;
 			}
 
@@ -626,9 +626,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				if (!(getHostPackages().containsKey(exportPackageStmt) || fHasExtensibleApi
 						&& getFragmentsPackages()
 								.containsKey(exportPackageStmt))) {
-					message = NLS.bind(PDEMessages.BundleErrorReporter_NotExistInProject, exportPackageStmt); //$NON-NLS-1$
+					message = NLS.bind(PDEMessages.BundleErrorReporter_NotExistInProject, exportPackageStmt); 
 					report(message, getPackageLine(header, exportPackageElements[i]),
-							CompilerFlags.P_UNRESOLVED_IMPORTS); //$NON-NLS-1$
+							CompilerFlags.P_UNRESOLVED_IMPORTS); 
 					continue;
 				}
 			}
@@ -650,8 +650,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		IHeader header = (IHeader) fHeaders.get(Constants.FRAGMENT_HOST);
 		String message;
 		if (header == null) {
-			if (isCheckNoRequiredAttr() && fHasFragment_Xml) { //$NON-NLS-1$
-				message = PDEMessages.BundleErrorReporter_HostNeeded; //$NON-NLS-1$
+			if (isCheckNoRequiredAttr() && fHasFragment_Xml) { 
+				message = PDEMessages.BundleErrorReporter_HostNeeded; 
 				report(message, 1, CompilerFlags.P_NO_REQUIRED_ATT);
 			}
 			return;
@@ -660,7 +660,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		fFragment = true;
 		ManifestElement[] fragmentHostElements = header.getElements();
 		if (isCheckNoRequiredAttr() && fragmentHostElements.length == 0) {
-			message = PDEMessages.BundleErrorReporter_HostNeeded; //$NON-NLS-1$
+			message = PDEMessages.BundleErrorReporter_HostNeeded; 
 			report(message, 1, CompilerFlags.P_NO_REQUIRED_ATT);
 			return;
 		}
@@ -680,14 +680,14 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				/*
 				 * Host bundle does not exist in the PDE target platform.
 				 */
-				message = NLS.bind(PDEMessages.BundleErrorReporter_HostNotExistPDE, fragmentHostStmt); //$NON-NLS-1$
+				message = NLS.bind(PDEMessages.BundleErrorReporter_HostNotExistPDE, fragmentHostStmt); 
 				report(message, getLine(header, fragmentHostStmt),
 						CompilerFlags.P_UNRESOLVED_IMPORTS);
 				return;
 			}
 			if (availableModel instanceof IFragmentModel) {
 				/* The host is a fragment */
-				message = NLS.bind(PDEMessages.BundleErrorReporter_HostIsFragment, fragmentHostStmt); //$NON-NLS-1$
+				message = NLS.bind(PDEMessages.BundleErrorReporter_HostIsFragment, fragmentHostStmt); 
 				report(message, getLine(header, fragmentHostStmt),
 						CompilerFlags.P_UNRESOLVED_IMPORTS);
 				return;
@@ -701,7 +701,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				VersionRange versionRange = new VersionRange(
 						requiredVersionRange);
 				if (!versionRange.isIncluded(new Version(availableVersion))) {
-					message = NLS.bind(PDEMessages.BundleErrorReporter_BundleRangeInvalidInBundleVersion, fragmentHostStmt); //$NON-NLS-1$
+					message = NLS.bind(PDEMessages.BundleErrorReporter_BundleRangeInvalidInBundleVersion, fragmentHostStmt); 
 					report(message, getLine(header, requiredVersionRange),
 							CompilerFlags.P_UNRESOLVED_IMPORTS);
 				}
@@ -737,7 +737,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 			if (!availableExportedPackagesMap.containsKey(importPackageStmt)) {
 				/* No bundle exports this package */
-				message = NLS.bind(PDEMessages.BundleErrorReporter_PackageNotExported, importPackageStmt); //$NON-NLS-1$
+				message = NLS.bind(PDEMessages.BundleErrorReporter_PackageNotExported, importPackageStmt); 
 				report(message, getPackageLine(header, importPackageElements[i]),
 						CompilerFlags.P_UNRESOLVED_IMPORTS);
 				continue;
@@ -751,7 +751,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						.get(importPackageStmt);
 				if (epd.getVersion() != null
 						&& !range.isIncluded(epd.getVersion())) {
-					message = NLS.bind(PDEMessages.BundleErrorReporter_VersionNotInRange, (new String[] { importPackageStmt, requiredVersion })); //$NON-NLS-1$
+					message = NLS.bind(PDEMessages.BundleErrorReporter_VersionNotInRange, (new String[] { importPackageStmt, requiredVersion })); 
 					report(message, getPackageLine(header, importPackageElements[i]),
 							CompilerFlags.P_UNRESOLVED_IMPORTS);
 					continue;
@@ -909,7 +909,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				message = NLS
 						.bind(
 								PDEMessages.BundleErrorReporter_deprecated_attribute_optional,
-								ICoreConstants.OPTIONAL_ATTRIBUTE); //$NON-NLS-1$
+								ICoreConstants.OPTIONAL_ATTRIBUTE); 
 				report(
 						message,
 						getLine(header, ICoreConstants.OPTIONAL_ATTRIBUTE + "="), CompilerFlags.P_DEPRECATED); //$NON-NLS-1$
@@ -920,7 +920,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	private boolean validatePluginId(IHeader header, String value) {
 		String message;
 		if (!IdUtil.isValidPluginId(value)) {
-			message = PDEMessages.BundleErrorReporter_InvalidSymbolicName; //$NON-NLS-1$
+			message = PDEMessages.BundleErrorReporter_InvalidSymbolicName; 
 			report(message, header.getLineNumber() + 1, CompilerFlags.WARNING);
 			return false;
 		}
@@ -937,7 +937,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			message = NLS
 					.bind(
 							PDEMessages.BundleErrorReporter_deprecated_header_Provide_Package,
-							ICoreConstants.PROVIDE_PACKAGE); //$NON-NLS-1$
+							ICoreConstants.PROVIDE_PACKAGE); 
 			report(message, header.getLineNumber() + 1,
 					CompilerFlags.P_DEPRECATED);
 		}
@@ -962,9 +962,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					exportPackageStmt);
 			/* The exported package cannot be default package. */
 			if (f != null && f.isDefaultPackage()) {
-				message = PDEMessages.BundleErrorReporter_CannotExportDefaultPackage; //$NON-NLS-1$
+				message = PDEMessages.BundleErrorReporter_CannotExportDefaultPackage; 
 				report(message, getPackageLine(header, exportPackageElements[i]),
-						CompilerFlags.P_UNRESOLVED_IMPORTS); //$NON-NLS-1$
+						CompilerFlags.P_UNRESOLVED_IMPORTS); 
 				continue;
 			}
 
@@ -973,9 +973,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				if (!(getHostPackages().containsKey(exportPackageStmt) || fHasExtensibleApi
 						&& getFragmentsPackages()
 								.containsKey(exportPackageStmt))) {
-					message = NLS.bind(PDEMessages.BundleErrorReporter_NotExistInProject, exportPackageStmt); //$NON-NLS-1$
+					message = NLS.bind(PDEMessages.BundleErrorReporter_NotExistInProject, exportPackageStmt); 
 					report(message, getPackageLine(header, exportPackageElements[i]),
-							CompilerFlags.P_UNRESOLVED_IMPORTS); //$NON-NLS-1$
+							CompilerFlags.P_UNRESOLVED_IMPORTS); 
 					continue;
 				}
 			}
@@ -995,7 +995,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				message = NLS
 						.bind(
 								PDEMessages.BundleErrorReporter_deprecated_attribute_reprovide,
-								ICoreConstants.REPROVIDE_ATTRIBUTE); //$NON-NLS-1$
+								ICoreConstants.REPROVIDE_ATTRIBUTE); 
 				report(message,
 						getLine(header, ICoreConstants.REPROVIDE_ATTRIBUTE
 								+ "="), CompilerFlags.P_DEPRECATED); //$NON-NLS-1$
@@ -1038,7 +1038,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 			/* This id does not exist in the PDE target platform */
 			if (!availableBundlesMap.containsKey(requireBundleStmt)) {
-				message = NLS.bind(PDEMessages.BundleErrorReporter_NotExistPDE, requireBundleStmt); //$NON-NLS-1$
+				message = NLS.bind(PDEMessages.BundleErrorReporter_NotExistPDE, requireBundleStmt); 
 				report(message, getPackageLine(header, requireBundleElements[i]),
 						severity);
 				continue;
@@ -1047,7 +1047,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					.get(requireBundleStmt);
 			if (!(availableModel instanceof IPluginModel)) {
 				/* This is a fragment */
-				message = NLS.bind(PDEMessages.BundleErrorReporter_IsFragment, requireBundleStmt); //$NON-NLS-1$
+				message = NLS.bind(PDEMessages.BundleErrorReporter_IsFragment, requireBundleStmt); 
 				report(message, getPackageLine(header, requireBundleElements[i]),
 						severity);
 				continue;
@@ -1061,7 +1061,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				String availableVersion = availableModel.getPluginBase()
 						.getVersion();
 				if (!versionRange.isIncluded(new Version(availableVersion))) {
-					message = NLS.bind(PDEMessages.BundleErrorReporter_BundleRangeInvalidInBundleVersion, requireBundleStmt); //$NON-NLS-1$
+					message = NLS.bind(PDEMessages.BundleErrorReporter_BundleRangeInvalidInBundleVersion, requireBundleStmt); 
 					report(message, getPackageLine(header, requireBundleElements[i]),
 							severity);
 				}
@@ -1078,7 +1078,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						.getAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE));
 		int severity = CompilerFlags.getFlag(fProject,
 				CompilerFlags.P_UNRESOLVED_IMPORTS);
-		if (optional && severity == CompilerFlags.ERROR) //$NON-NLS-1$ //$NON-NLS-2$
+		if (optional && severity == CompilerFlags.ERROR) // 
 			severity = CompilerFlags.WARNING;
 		return severity;
 	}
@@ -1103,7 +1103,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (fHasExtensions) {
 			if (!fEclipse3_1) {
 				if (!"true".equals(singletonAttr)) { //$NON-NLS-1$
-					message = NLS.bind(PDEMessages.BundleErrorReporter_singletonAttrRequired, ICoreConstants.SINGLETON_ATTRIBUTE); //$NON-NLS-1$
+					message = NLS.bind(PDEMessages.BundleErrorReporter_singletonAttrRequired, ICoreConstants.SINGLETON_ATTRIBUTE); 
 					report(message, header.getLineNumber() + 1,
 							CompilerFlags.ERROR);
 				}
@@ -1114,7 +1114,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				message = NLS
 						.bind(
 								PDEMessages.BundleErrorReporter_deprecated_attribute_singleton,
-								ICoreConstants.SINGLETON_ATTRIBUTE); //$NON-NLS-1$
+								ICoreConstants.SINGLETON_ATTRIBUTE); 
 				report(message,
 						getLine(header, ICoreConstants.SINGLETON_ATTRIBUTE
 								+ "="), CompilerFlags.P_DEPRECATED); //$NON-NLS-1$
@@ -1131,7 +1131,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (fHasExtensions) {
 			if (fEclipse3_1) {
 				if (!"true".equals(singletonDir)) { //$NON-NLS-1$
-					String message = NLS.bind(PDEMessages.BundleErrorReporter_singletonRequired, Constants.SINGLETON_DIRECTIVE); //$NON-NLS-1$
+					String message = NLS.bind(PDEMessages.BundleErrorReporter_singletonRequired, Constants.SINGLETON_DIRECTIVE); 
 					report(message, header.getLineNumber() + 1,
 							CompilerFlags.ERROR);
 				}
@@ -1140,7 +1140,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 		if (isCheckUnknownAttr()) {
 			if (!fEclipse3_1 && singletonDir != null) {
-				String message = NLS.bind(PDEMessages.BundleErrorReporter_UnknownDirective, Constants.SINGLETON_DIRECTIVE); //$NON-NLS-1$
+				String message = NLS.bind(PDEMessages.BundleErrorReporter_UnknownDirective, Constants.SINGLETON_DIRECTIVE); 
 				report(message, getLine(header, Constants.SINGLETON_DIRECTIVE
 						+ ":="), //$NON-NLS-1$
 						CompilerFlags.P_UNKNOWN_ATTRIBUTE);
@@ -1157,17 +1157,17 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		IStatus status = validateVersionString(version);
 		if(!status.isOK()){
 			report(status.getMessage(), getPackageLine(header, element),
-					CompilerFlags.ERROR); //$NON-NLS-1$
+					CompilerFlags.ERROR); 
 		}
 		if (isCheckDeprecated()) {
 			if (fEclipse3_1 && version != null) {
 				String message = NLS
 						.bind(
 								PDEMessages.BundleErrorReporter_deprecated_attribute_specification_version,
-								ICoreConstants.PACKAGE_SPECIFICATION_VERSION); //$NON-NLS-1$
+								ICoreConstants.PACKAGE_SPECIFICATION_VERSION); 
 				report(message,
 						getPackageLine(header,
-								element), CompilerFlags.P_DEPRECATED); //$NON-NLS-1$
+								element), CompilerFlags.P_DEPRECATED); 
 			}
 		}
 	}
@@ -1181,7 +1181,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				: validateVersionString(version);
 		if(!status.isOK()) {
 			report(status.getMessage(), getPackageLine(header, element),
-					CompilerFlags.ERROR); //$NON-NLS-1$
+					CompilerFlags.ERROR); 
 		}
 	}
 
@@ -1210,9 +1210,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 		}
 		String message = NLS.bind(PDEMessages.BundleErrorReporter_dir_value,
-				(new String[] { internal, ICoreConstants.INTERNAL_DIRECTIVE })); //$NON-NLS-1$
+				(new String[] { internal, ICoreConstants.INTERNAL_DIRECTIVE })); 
 		report(message, getPackageLine(header, element),
-				CompilerFlags.ERROR); //$NON-NLS-1$
+				CompilerFlags.ERROR); 
 	}
 
 	private void validateX_FriendsDirective(IHeader header,
@@ -1224,9 +1224,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			String message = NLS.bind(
 					PDEMessages.BundleErrorReporter_directive_hasNoEffectWith_,
 					new String[] { ICoreConstants.FRIENDS_DIRECTIVE,
-							ICoreConstants.INTERNAL_DIRECTIVE }); //$NON-NLS-1$
+							ICoreConstants.INTERNAL_DIRECTIVE }); 
 			report(message, getPackageLine(header, element),
-					CompilerFlags.WARNING); //$NON-NLS-1$
+					CompilerFlags.WARNING); 
 		}
 	}
 

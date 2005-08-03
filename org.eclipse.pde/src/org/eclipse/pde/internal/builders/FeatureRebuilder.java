@@ -101,7 +101,7 @@ public class FeatureRebuilder implements IFeatureModelListener,
 		if (!fAutoBuilding) {
 			return;
 		}
-		Job buildJob = new Job(PDEMessages.FeatureConsistencyTrigger_JobName) { //$NON-NLS-1$
+		Job buildJob = new Job(PDEMessages.FeatureConsistencyTrigger_JobName) { 
 			/*
 			 * (non-Javadoc)
 			 * 
