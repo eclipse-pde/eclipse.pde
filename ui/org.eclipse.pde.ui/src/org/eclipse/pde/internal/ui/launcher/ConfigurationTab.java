@@ -96,7 +96,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	
 	private void createConfigAreaGroup(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		group.setText(PDEUIMessages.ConfigurationTab_configAreaGroup); //$NON-NLS-1$
+		group.setText(PDEUIMessages.ConfigurationTab_configAreaGroup); 
 		group.setLayout(new GridLayout(3, false));
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
@@ -104,7 +104,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		fUseDefaultLocationButton.setLayoutData(gd);
-		fUseDefaultLocationButton.setText(PDEUIMessages.ConfigurationTab_useDefaultLoc); //$NON-NLS-1$
+		fUseDefaultLocationButton.setText(PDEUIMessages.ConfigurationTab_useDefaultLoc); 
 		fUseDefaultLocationButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean selected = fUseDefaultLocationButton.getSelection();
@@ -120,7 +120,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		});
 		
 		fConfigAreaLabel = new Label(group, SWT.NONE);
-		fConfigAreaLabel.setText(PDEUIMessages.ConfigurationTab_configLog); //$NON-NLS-1$
+		fConfigAreaLabel.setText(PDEUIMessages.ConfigurationTab_configLog); 
 		gd = new GridData();
 		gd.horizontalIndent = 20;
 		fConfigAreaLabel.setLayoutData(gd);
@@ -137,7 +137,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		});
 		
 		fConfigAreaBrowse = new Button(group, SWT.PUSH);
-		fConfigAreaBrowse.setText(PDEUIMessages.ConfigurationTab_configBrowse); //$NON-NLS-1$
+		fConfigAreaBrowse.setText(PDEUIMessages.ConfigurationTab_configBrowse); 
 		fConfigAreaBrowse.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(fConfigAreaBrowse);
 		fConfigAreaBrowse.addSelectionListener(new SelectionAdapter() {
@@ -147,7 +147,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		});
 
 		fClearConfig = new Button(group, SWT.CHECK);
-		fClearConfig.setText(PDEUIMessages.ConfigurationTab_clearArea); //$NON-NLS-1$
+		fClearConfig.setText(PDEUIMessages.ConfigurationTab_clearArea); 
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fClearConfig.setLayoutData(gd);
@@ -161,8 +161,8 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	protected void handleBrowseDirectory() {
 		DirectoryDialog dialog = new DirectoryDialog(getControl().getShell());
 		dialog.setFilterPath(fConfigAreaText.getText().trim());
-		dialog.setText(PDEUIMessages.ConfigurationTab_configLocTitle); //$NON-NLS-1$
-		dialog.setMessage(PDEUIMessages.ConfigurationTab_configLocMessage); //$NON-NLS-1$
+		dialog.setText(PDEUIMessages.ConfigurationTab_configLocTitle); 
+		dialog.setMessage(PDEUIMessages.ConfigurationTab_configLocMessage); 
 		String res = dialog.open();
 		if (res != null)
 			fConfigAreaText.setText(res);
@@ -170,19 +170,19 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 
 	protected void updateStatus() {
 		if (!fUseDefaultLocationButton.getSelection() && fConfigAreaText.getText().trim().length() == 0) {
-			updateStatus(createStatus(IStatus.ERROR, PDEUIMessages.ConfigurationTab_noConfigLoc)); //$NON-NLS-1$
+			updateStatus(createStatus(IStatus.ERROR, PDEUIMessages.ConfigurationTab_noConfigLoc)); 
 			return;
 		}
 		
 		if (fUseTemplateButton.getSelection()) {
 			String location = fTemplateLocationText.getText().trim();
 			if (location.length() == 0) {
-				updateStatus(createStatus(IStatus.ERROR, PDEUIMessages.ConfigurationTab_noTemplateLoc)); //$NON-NLS-1$
+				updateStatus(createStatus(IStatus.ERROR, PDEUIMessages.ConfigurationTab_noTemplateLoc)); 
 				return;
 			}
 			File file = new File(location);
 			if (!file.exists() || !file.isFile()) {
-				updateStatus(createStatus(IStatus.ERROR, PDEUIMessages.ConfigurationTab_templateNotExists)); //$NON-NLS-1$
+				updateStatus(createStatus(IStatus.ERROR, PDEUIMessages.ConfigurationTab_templateNotExists)); 
 				return;
 			}
 		}
@@ -191,12 +191,12 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 
 	private void createConfigFileGroup(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		group.setText(PDEUIMessages.ConfigurationTab_configFileGroup); //$NON-NLS-1$
+		group.setText(PDEUIMessages.ConfigurationTab_configFileGroup); 
 		group.setLayout(new GridLayout(3, false));
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fGenerateFileButton = new Button(group, SWT.RADIO);
-		fGenerateFileButton.setText(PDEUIMessages.ConfigurationTab_defaultConfigIni); //$NON-NLS-1$
+		fGenerateFileButton.setText(PDEUIMessages.ConfigurationTab_defaultConfigIni); 
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		fGenerateFileButton.setLayoutData(gd);
@@ -211,13 +211,13 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		});
 		
 		fUseTemplateButton = new Button(group, SWT.RADIO);
-		fUseTemplateButton.setText(PDEUIMessages.ConfigurationTab_existingConfigIni); //$NON-NLS-1$
+		fUseTemplateButton.setText(PDEUIMessages.ConfigurationTab_existingConfigIni); 
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fUseTemplateButton.setLayoutData(gd);
 		
 		fTemplateLocationLabel = new Label(group, SWT.NONE);
-		fTemplateLocationLabel.setText(PDEUIMessages.ConfigurationTab_templateLoc); //$NON-NLS-1$
+		fTemplateLocationLabel.setText(PDEUIMessages.ConfigurationTab_templateLoc); 
 		gd = new GridData();
 		gd.horizontalIndent = 20;
 		fTemplateLocationLabel.setLayoutData(gd);
@@ -234,7 +234,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 		});
 		
 		fTemplateLocationBrowse = new Button(group, SWT.PUSH);
-		fTemplateLocationBrowse.setText(PDEUIMessages.ConfigurationTab_templateBrowse); //$NON-NLS-1$
+		fTemplateLocationBrowse.setText(PDEUIMessages.ConfigurationTab_templateBrowse); 
 		fTemplateLocationBrowse.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(fTemplateLocationBrowse);		
 		fTemplateLocationBrowse.addSelectionListener(new SelectionAdapter() {
@@ -261,8 +261,8 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 			}
 		});
 		dialog.setAllowMultiple(false);
-		dialog.setTitle(PDEUIMessages.ConfigurationTab_fileSelection); //$NON-NLS-1$
-		dialog.setMessage(PDEUIMessages.ConfigurationTab_fileDialogMessage); //$NON-NLS-1$
+		dialog.setTitle(PDEUIMessages.ConfigurationTab_fileSelection); 
+		dialog.setMessage(PDEUIMessages.ConfigurationTab_fileDialogMessage); 
 		dialog.setValidator(new ISelectionStatusValidator() {
 			public IStatus validate(Object[] selection) {
 				if (selection != null && selection.length > 0
@@ -341,7 +341,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements ILauncherSe
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return PDEUIMessages.ConfigurationTab_name; //$NON-NLS-1$
+		return PDEUIMessages.ConfigurationTab_name; 
 	}
 	
 	/* (non-Javadoc)

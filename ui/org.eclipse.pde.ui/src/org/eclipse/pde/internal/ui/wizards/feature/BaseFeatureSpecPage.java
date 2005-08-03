@@ -84,7 +84,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			patchPropertiesGroup.setLayoutData(gd);
-			patchPropertiesGroup.setText(PDEUIMessages.NewFeatureWizard_SpecPage_patchProperties); //$NON-NLS-1$
+			patchPropertiesGroup.setText(PDEUIMessages.NewFeatureWizard_SpecPage_patchProperties); 
 			Label label = new Label(patchPropertiesGroup, SWT.NULL);
 			label.setText(PDEUIMessages.NewFeaturePatch_SpecPage_id);
 			patchIdText = new Text(patchPropertiesGroup, SWT.BORDER);
@@ -124,7 +124,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		customHandlerGroup.setLayoutData(gd);
-		customHandlerGroup.setText(PDEUIMessages.BaseFeatureSpecPage_customGroup); //$NON-NLS-1$
+		customHandlerGroup.setText(PDEUIMessages.BaseFeatureSpecPage_customGroup); 
 
 		customChoice = new Button(customHandlerGroup, SWT.CHECK);
 		if (!isPatch())
@@ -204,7 +204,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 		featurePropertiesGroup.setLayoutData(gd);
 		
 		if (isPatch()){
-			featurePropertiesGroup.setText(PDEUIMessages.BaseFeatureSpecPage_patchGroup_title); //$NON-NLS-1$
+			featurePropertiesGroup.setText(PDEUIMessages.BaseFeatureSpecPage_patchGroup_title); 
 						
 			Label label = new Label(featurePropertiesGroup, SWT.NULL);
 			label.setText(PDEUIMessages.NewFeatureWizard_SpecPage_id);
@@ -226,7 +226,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 			featureIdText.addModifyListener(listener);
 			
 			browseButton = new Button(patchcontainer, SWT.PUSH);
-			browseButton.setText(PDEUIMessages.BaseFeatureSpecPage_browse); //$NON-NLS-1$
+			browseButton.setText(PDEUIMessages.BaseFeatureSpecPage_browse); 
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 			browseButton.setLayoutData(gd);
 			browseButton.addSelectionListener(new SelectionAdapter() {
@@ -249,7 +249,7 @@ public abstract class BaseFeatureSpecPage extends WizardPage {
 			});
 			SWTUtil.setButtonDimensionHint(browseButton);
 		} else {
-			featurePropertiesGroup.setText(PDEUIMessages.BaseFeatureSpecPage_featurePropertiesGroup_title); //$NON-NLS-1$
+			featurePropertiesGroup.setText(PDEUIMessages.BaseFeatureSpecPage_featurePropertiesGroup_title); 
 			
 			Label label = new Label(featurePropertiesGroup, SWT.NULL);
 			label.setText(PDEUIMessages.NewFeatureWizard_SpecPage_id);

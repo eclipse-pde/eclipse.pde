@@ -87,17 +87,17 @@ public abstract class BaseBuildAction
 	private void doBuild(IProgressMonitor monitor) throws CoreException,
 			InvocationTargetException {
 		monitor.beginTask(
-				PDEUIMessages.BuildAction_Validate, 4); //$NON-NLS-1$
+				PDEUIMessages.BuildAction_Validate, 4); 
 		if (!ensureValid(fManifestFile, monitor)) {
 			monitor.done();
 			return;
 		}
 		monitor.worked(1);
 		monitor
-				.setTaskName(PDEUIMessages.BuildAction_Generate); //$NON-NLS-1$
+				.setTaskName(PDEUIMessages.BuildAction_Generate); 
 		makeScripts(monitor);
 		monitor.worked(1);
-		monitor.setTaskName(PDEUIMessages.BuildAction_Update); //$NON-NLS-1$
+		monitor.setTaskName(PDEUIMessages.BuildAction_Update); 
 		refreshLocal(monitor);
 		monitor.worked(1);
 		setDefaultValues();
@@ -122,8 +122,8 @@ public abstract class BaseBuildAction
 			MessageDialog
 					.openError(
 							null,
-							PDEUIMessages.BuildAction_ErrorDialog_Title, //$NON-NLS-1$
-							PDEUIMessages.BuildAction_ErrorDialog_Message); //$NON-NLS-1$
+							PDEUIMessages.BuildAction_ErrorDialog_Title, 
+							PDEUIMessages.BuildAction_ErrorDialog_Message); 
 			return false;
 		}
 		return true;
@@ -183,7 +183,7 @@ public abstract class BaseBuildAction
 			properties.put("eclipse.running", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			properties.put(IXMLConstants.PROPERTY_JAVAC_FAIL_ON_ERROR, "false"); //$NON-NLS-1$
-			properties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			properties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$  
 			properties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, "true"); //$NON-NLS-1$
 			
 			if (!project.hasNature(JavaCore.NATURE_ID)) {

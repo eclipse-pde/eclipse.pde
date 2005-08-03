@@ -144,7 +144,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			// Wrap everything else in a core exception.
 			String message = e.getMessage();
 			if (message==null || message.length() == 0)
-				message = PDECoreMessages.TargetPlatform_exceptionThrown; //$NON-NLS-1$
+				message = PDECoreMessages.TargetPlatform_exceptionThrown; 
 			throw new CoreException(
 				new Status(
 					IStatus.ERROR,

@@ -29,7 +29,7 @@ public class ProductDefinitionWizard extends Wizard {
 		fProduct = product;
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_DEFCON_WIZ);
 		setNeedsProgressMonitor(true);
-		setWindowTitle(PDEUIMessages.ProductDefinitionWizard_title);  //$NON-NLS-1$
+		setWindowTitle(PDEUIMessages.ProductDefinitionWizard_title);  
 	}
 	
 	public void addPages() {
@@ -49,7 +49,7 @@ public class ProductDefinitionWizard extends Wizard {
 							fPluginId, fProductId, fApplication, 
 							getContainer().getShell()));
 		} catch (InvocationTargetException e) {
-			MessageDialog.openError(getContainer().getShell(), PDEUIMessages.ProductDefinitionWizard_error, e.getTargetException().getMessage()); //$NON-NLS-1$
+			MessageDialog.openError(getContainer().getShell(), PDEUIMessages.ProductDefinitionWizard_error, e.getTargetException().getMessage()); 
 			return false;
 		} catch (InterruptedException e) {
 			return false;

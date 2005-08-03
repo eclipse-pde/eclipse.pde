@@ -67,7 +67,7 @@ public class InstalledJREsPreferenceNode implements IPreferenceNode {
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelText()
 	 */
 	public String getLabelText() {
-		return PDEUIMessages.BasicLauncherTab_jrePreferencePage; //$NON-NLS-1$
+		return PDEUIMessages.BasicLauncherTab_jrePreferencePage; 
 	}
 
 	/* (non-Javadoc)

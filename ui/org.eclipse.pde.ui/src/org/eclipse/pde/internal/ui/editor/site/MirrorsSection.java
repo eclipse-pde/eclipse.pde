@@ -39,10 +39,10 @@ public class MirrorsSection extends PDESection {
 		super(page, parent, Section.DESCRIPTION | ExpandableComposite.TWISTIE);
 		getSection()
 				.setText(
-						PDEUIMessages.SiteEditor_MirrorsSection_header); //$NON-NLS-1$
+						PDEUIMessages.SiteEditor_MirrorsSection_header); 
 		getSection()
 				.setDescription(
-						PDEUIMessages.SiteEditor_MirrorsSection_desc); //$NON-NLS-1$
+						PDEUIMessages.SiteEditor_MirrorsSection_desc); 
 		createClient(getSection(), page.getManagedForm().getToolkit());		
 	}
 	public void commit(boolean onSave) {
@@ -55,7 +55,7 @@ public class MirrorsSection extends PDESection {
 		layout.numColumns = 2;
 		layout.verticalSpacing = 10;
 		container.setLayout(layout);
-		fMirrorsURLEntry = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_MirrorsSection_urlLabel, //$NON-NLS-1$
+		fMirrorsURLEntry = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_MirrorsSection_urlLabel, 
 				null, false);
 		fMirrorsURLEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {

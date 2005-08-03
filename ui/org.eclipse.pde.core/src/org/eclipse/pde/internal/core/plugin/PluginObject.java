@@ -38,7 +38,7 @@ public abstract class PluginObject
 	}
 	protected void ensureModelEditable() throws CoreException {
 		if (!fModel.isEditable()) {
-			throwCoreException(PDECoreMessages.PluginObject_readOnlyChange); //$NON-NLS-1$
+			throwCoreException(PDECoreMessages.PluginObject_readOnlyChange); 
 		}
 	}
 

@@ -65,8 +65,8 @@ public class ProductInfoSection extends PDESection {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText(PDEUIMessages.ProductInfoSection_title); //$NON-NLS-1$
-		section.setDescription(PDEUIMessages.ProductInfoSection_desc); //$NON-NLS-1$
+		section.setText(PDEUIMessages.ProductInfoSection_title); 
+		section.setDescription(PDEUIMessages.ProductInfoSection_desc); 
 
 		Composite client = toolkit.createComposite(section);
 		TableWrapLayout layout = new TableWrapLayout();
@@ -90,7 +90,7 @@ public class ProductInfoSection extends PDESection {
 	
 	private void createNameEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
 		createLabel(client, toolkit, ""); //$NON-NLS-1$
-		createLabel(client, toolkit, PDEUIMessages.ProductInfoSection_titleLabel); //$NON-NLS-1$
+		createLabel(client, toolkit, PDEUIMessages.ProductInfoSection_titleLabel); 
 
 		fNameEntry = new FormEntry(client, toolkit, "Product Name:", null, false); //$NON-NLS-1$
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
@@ -104,9 +104,9 @@ public class ProductInfoSection extends PDESection {
 	}
 	
 	private void createIdEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
-		createLabel(client, toolkit, PDEUIMessages.ProductInfoSection_prodIdLabel); //$NON-NLS-1$
+		createLabel(client, toolkit, PDEUIMessages.ProductInfoSection_prodIdLabel); 
 
-		Label label = toolkit.createLabel(client, PDEUIMessages.ProductInfoSection_id); //$NON-NLS-1$
+		Label label = toolkit.createLabel(client, PDEUIMessages.ProductInfoSection_id); 
 		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		TableWrapData td = new TableWrapData();
 		td.valign = TableWrapData.MIDDLE;
@@ -125,7 +125,7 @@ public class ProductInfoSection extends PDESection {
 			}
 		});
 		
-		Button button = toolkit.createButton(client, PDEUIMessages.ProductInfoSection_new, SWT.PUSH); //$NON-NLS-1$
+		Button button = toolkit.createButton(client, PDEUIMessages.ProductInfoSection_new, SWT.PUSH); 
 		button.setEnabled(isEditable());
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -152,9 +152,9 @@ public class ProductInfoSection extends PDESection {
 
 	private void createApplicationEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
 		createLabel(client, toolkit, ""); //$NON-NLS-1$
-		createLabel(client, toolkit, PDEUIMessages.ProductInfoSection_appLabel); //$NON-NLS-1$
+		createLabel(client, toolkit, PDEUIMessages.ProductInfoSection_appLabel); 
 		
-		Label label = toolkit.createLabel(client, PDEUIMessages.ProductInfoSection_app, SWT.WRAP); //$NON-NLS-1$
+		Label label = toolkit.createLabel(client, PDEUIMessages.ProductInfoSection_app, SWT.WRAP); 
 		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		TableWrapData td = new TableWrapData();
 		td.valign = TableWrapData.MIDDLE;
@@ -180,7 +180,7 @@ public class ProductInfoSection extends PDESection {
 	private void createConfigurationOption(Composite client, FormToolkit toolkit) {
 		createLabel(client, toolkit, ""); //$NON-NLS-1$
 		FormText text = toolkit.createFormText(client, true);
-		text.setText(PDEUIMessages.Product_overview_configuration, true, true); //$NON-NLS-1$
+		text.setText(PDEUIMessages.Product_overview_configuration, true, true); 
 		TableWrapData gd = new TableWrapData(TableWrapData.FILL);
 		gd.colspan = NUM_COLUMNS;
 		text.setLayoutData(gd);

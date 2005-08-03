@@ -295,7 +295,7 @@ public abstract class PluginBase
 		int index1 = fLibraries.indexOf(l1);
 		int index2 = fLibraries.indexOf(l2);
 		if (index1 == -1 || index2 == -1)
-			throwCoreException(PDECoreMessages.PluginBase_librariesNotFoundException); //$NON-NLS-1$
+			throwCoreException(PDECoreMessages.PluginBase_librariesNotFoundException); 
 		fLibraries.set(index2, l1);
 		fLibraries.set(index1, l2);
 		firePropertyChanged(this, P_LIBRARY_ORDER, l1, l2);
@@ -310,7 +310,7 @@ public abstract class PluginBase
 		int index1 = fImports.indexOf(import1);
 		int index2 = fImports.indexOf(import2);
 		if (index1 == -1 || index2 == -1)
-			throwCoreException(PDECoreMessages.PluginBase_importsNotFoundException); //$NON-NLS-1$
+			throwCoreException(PDECoreMessages.PluginBase_importsNotFoundException); 
 		fImports.set(index2, import1);
 		fImports.set(index1, import2);
 		firePropertyChanged(this, P_IMPORT_ORDER, import1, import2);

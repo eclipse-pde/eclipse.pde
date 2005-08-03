@@ -84,7 +84,7 @@ public class CompilersPropertyPage extends PropertyPage {
 		useWorkspaceButton = new Button(composite, SWT.RADIO);
 		useWorkspaceButton.addSelectionListener(listener);
 		useWorkspaceButton
-				.setText(PDEUIMessages.CompilersPropertyPage_useworkspacesettings_label); //$NON-NLS-1$
+				.setText(PDEUIMessages.CompilersPropertyPage_useworkspacesettings_label); 
 		GridData gd = new GridData();
 		gd.horizontalSpan = 1;
 		gd.horizontalAlignment = GridData.FILL;
@@ -98,7 +98,7 @@ public class CompilersPropertyPage extends PropertyPage {
 		// Change Workspace Settings push button
 		changeWorkspaceSettingsButton = new Button(composite, SWT.PUSH);
 		changeWorkspaceSettingsButton
-				.setText(PDEUIMessages.CompilersPropertyPage_useworkspacesettings_change); //$NON-NLS-1$
+				.setText(PDEUIMessages.CompilersPropertyPage_useworkspacesettings_change); 
 		changeWorkspaceSettingsButton.addSelectionListener(listener);
 		gd = new GridData();
 		gd.horizontalSpan = 1;
@@ -110,7 +110,7 @@ public class CompilersPropertyPage extends PropertyPage {
 		useProjectButton = new Button(composite, SWT.RADIO);
 		useProjectButton.addSelectionListener(listener);
 		useProjectButton
-				.setText(PDEUIMessages.CompilersPropertyPage_useprojectsettings_label); //$NON-NLS-1$
+				.setText(PDEUIMessages.CompilersPropertyPage_useprojectsettings_label); 
 		gd = new GridData();
 		gd.horizontalSpan = 1;
 		gd.horizontalAlignment = GridData.FILL;

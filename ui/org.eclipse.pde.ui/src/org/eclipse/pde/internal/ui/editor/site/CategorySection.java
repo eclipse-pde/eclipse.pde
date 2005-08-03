@@ -155,15 +155,15 @@ public class CategorySection extends TreeSection implements
 
 	public CategorySection(PDEFormPage formPage, Composite parent) {
 		super(formPage, parent, Section.DESCRIPTION, new String[] {
-				PDEUIMessages.CategorySection_new, //$NON-NLS-1$
-				PDEUIMessages.CategorySection_add, //$NON-NLS-1$
-				null, PDEUIMessages.CategorySection_environment, //$NON-NLS-1$
-					null, PDEUIMessages.CategorySection_build, //$NON-NLS-1$
-				PDEUIMessages.CategorySection_buildAll }); //$NON-NLS-1$
+				PDEUIMessages.CategorySection_new, 
+				PDEUIMessages.CategorySection_add, 
+				null, PDEUIMessages.CategorySection_environment, 
+					null, PDEUIMessages.CategorySection_build, 
+				PDEUIMessages.CategorySection_buildAll }); 
 		getSection().setText(
-				PDEUIMessages.CategorySection_title); //$NON-NLS-1$
+				PDEUIMessages.CategorySection_title); 
 		getSection().setDescription(
-				PDEUIMessages.CategorySection_desc); //$NON-NLS-1$
+				PDEUIMessages.CategorySection_desc); 
 	}
 
 	/*
@@ -511,7 +511,7 @@ public class CategorySection extends TreeSection implements
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
-		Action removeAction = new Action(PDEUIMessages.CategorySection_remove) { //$NON-NLS-1$
+		Action removeAction = new Action(PDEUIMessages.CategorySection_remove) { 
 			public void run() {
 				doGlobalAction(ActionFactory.DELETE.getId());
 			}
@@ -533,7 +533,7 @@ public class CategorySection extends TreeSection implements
 				manager.add(synchronizeAction);
 				synchronizeAction.setEnabled(isEditable());
 
-				Action buildAction = new Action(PDEUIMessages.CategorySection_build) { //$NON-NLS-1$
+				Action buildAction = new Action(PDEUIMessages.CategorySection_build) { 
 							public void run() {
 								handleBuild(new ISiteFeature[] { adapter.feature });
 							}

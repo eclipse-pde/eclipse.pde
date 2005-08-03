@@ -70,7 +70,7 @@ public class ExtensionsPage extends PDEFormPage {
 					section.handleCollapseAll();
 				}
 			};
-			collapseAction.setToolTipText(PDEUIMessages.ExtensionsPage_collapseAll); //$NON-NLS-1$
+			collapseAction.setToolTipText(PDEUIMessages.ExtensionsPage_collapseAll); 
 			collapseAction.setImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL);
 			form.getToolBarManager().add(collapseAction);
 			super.createToolBarActions(managedForm);
@@ -82,13 +82,13 @@ public class ExtensionsPage extends PDEFormPage {
 	 * @param title
 	 */
 	public ExtensionsPage(FormEditor editor) {
-		super(editor, PAGE_ID, PDEUIMessages.ExtensionsPage_tabName);  //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEUIMessages.ExtensionsPage_tabName);  
 		block = new ExtensionsBlock();
 	}
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
-		form.setText(PDEUIMessages.ExtensionsPage_title); //$NON-NLS-1$
+		form.setText(PDEUIMessages.ExtensionsPage_title); 
 		block.createContent(managedForm);
 		BodyTextSection bodyTextSection = new BodyTextSection(this, form.getBody());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);

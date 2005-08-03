@@ -35,25 +35,25 @@ public class MailTemplate extends PDETemplateSection {
 	
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_RCP_MAIL);
-		page.setTitle(PDEUIMessages.MailTemplate_title); //$NON-NLS-1$
-		page.setDescription(PDEUIMessages.MailTemplate_desc); //$NON-NLS-1$
+		page.setTitle(PDEUIMessages.MailTemplate_title); 
+		page.setDescription(PDEUIMessages.MailTemplate_desc); 
 		wizard.addPage(page);
 		markPagesAdded();
 	}
 
 	
 	private void createOptions() {	
-		addOption(KEY_PRODUCT_NAME, PDEUIMessages.MailTemplate_productName, "RCP Product", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption(KEY_PRODUCT_NAME, PDEUIMessages.MailTemplate_productName, "RCP Product", 0); //$NON-NLS-1$ 
 		
-		addOption(KEY_PRODUCT_ID, PDEUIMessages.MailTemplate_productID, "product", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption(KEY_PRODUCT_ID, PDEUIMessages.MailTemplate_productID, "product", 0); //$NON-NLS-1$ 
 		
-		addOption(KEY_APPLICATION_ID, PDEUIMessages.MailTemplate_appId, "application", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption(KEY_APPLICATION_ID, PDEUIMessages.MailTemplate_appId, "application", 0); //$NON-NLS-1$ 
 		
-		addOption(KEY_PERSPECTIVE_NAME, PDEUIMessages.MailTemplate_perspectiveName, (String)null, 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption(KEY_PERSPECTIVE_NAME, PDEUIMessages.MailTemplate_perspectiveName, (String)null, 0); // 
 		
-		addOption(KEY_PACKAGE_NAME, PDEUIMessages.MailTemplate_packageName, (String) null, 0); //$NON-NLS-1$		
+		addOption(KEY_PACKAGE_NAME, PDEUIMessages.MailTemplate_packageName, (String) null, 0); //		
 
-		addOption(KEY_APPLICATION_CLASS, PDEUIMessages.MailTemplate_appClass, "Application", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		addOption(KEY_APPLICATION_CLASS, PDEUIMessages.MailTemplate_appClass, "Application", 0); //$NON-NLS-1$ 
 	}
 	
 	protected void initializeFields(IFieldData data) {

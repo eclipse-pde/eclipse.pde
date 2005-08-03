@@ -59,6 +59,6 @@ public class SchemaEditorContributor extends PDEFormEditorContributor {
 		super.makeActions();
 		previewAction = new PreviewAction();
 		previewAction.setText(
-			PDEUIMessages.SchemaEditorContributor_previewAction); //$NON-NLS-1$
+			PDEUIMessages.SchemaEditorContributor_previewAction); 
 	}
 }

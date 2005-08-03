@@ -52,18 +52,18 @@ public class FilterDialog extends Dialog {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 275;
 		group.setLayoutData(gd);
-		group.setText(PDERuntimeMessages.LogView_FilterDialog_eventTypes); //$NON-NLS-1$
+		group.setText(PDERuntimeMessages.LogView_FilterDialog_eventTypes); 
 		
 		infoButton = new Button(group, SWT.CHECK);
-		infoButton.setText(PDERuntimeMessages.LogView_FilterDialog_information); //$NON-NLS-1$
+		infoButton.setText(PDERuntimeMessages.LogView_FilterDialog_information); 
 		infoButton.setSelection(memento.getString(LogView.P_LOG_INFO).equals("true")); //$NON-NLS-1$
 		
 		warningButton = new Button(group, SWT.CHECK);
-		warningButton.setText(PDERuntimeMessages.LogView_FilterDialog_warning); //$NON-NLS-1$
+		warningButton.setText(PDERuntimeMessages.LogView_FilterDialog_warning); 
 		warningButton.setSelection(memento.getString(LogView.P_LOG_WARNING).equals("true")); //$NON-NLS-1$
 		
 		errorButton = new Button(group, SWT.CHECK);
-		errorButton.setText(PDERuntimeMessages.LogView_FilterDialog_error); //$NON-NLS-1$
+		errorButton.setText(PDERuntimeMessages.LogView_FilterDialog_error); 
 		errorButton.setSelection(memento.getString(LogView.P_LOG_ERROR).equals("true"));		 //$NON-NLS-1$
 	}
 	
@@ -75,7 +75,7 @@ public class FilterDialog extends Dialog {
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		limit = new Button(comp, SWT.CHECK);
-		limit.setText(PDERuntimeMessages.LogView_FilterDialog_limitTo); //$NON-NLS-1$
+		limit.setText(PDERuntimeMessages.LogView_FilterDialog_limitTo); 
 		limit.setSelection(memento.getString(LogView.P_USE_LIMIT).equals("true")); //$NON-NLS-1$
 		limit.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
@@ -106,16 +106,16 @@ public class FilterDialog extends Dialog {
 		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Label label = new Label(container, SWT.NONE);
-		label.setText(PDERuntimeMessages.LogView_FilterDialog_eventsLogged); //$NON-NLS-1$
+		label.setText(PDERuntimeMessages.LogView_FilterDialog_eventsLogged); 
 		
 		showAllButton = new Button(container, SWT.RADIO);
-		showAllButton.setText(PDERuntimeMessages.LogView_FilterDialog_allSessions); //$NON-NLS-1$
+		showAllButton.setText(PDERuntimeMessages.LogView_FilterDialog_allSessions); 
 		GridData gd = new GridData();
 		gd.horizontalIndent = 20;
 		showAllButton.setLayoutData(gd);
 		
 		Button button = new Button(container, SWT.RADIO);
-		button.setText(PDERuntimeMessages.LogView_FilterDialog_recentSession); //$NON-NLS-1$
+		button.setText(PDERuntimeMessages.LogView_FilterDialog_recentSession); 
 		gd = new GridData();
 		gd.horizontalIndent = 20;
 		button.setLayoutData(gd);

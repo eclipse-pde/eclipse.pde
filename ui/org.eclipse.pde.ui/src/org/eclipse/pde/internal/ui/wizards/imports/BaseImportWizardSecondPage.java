@@ -69,7 +69,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Label label = new Label(container, SWT.NONE);
-		label.setText(PDEUIMessages.ImportWizard_DetailedPage_importList); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ImportWizard_DetailedPage_importList); 
 
 		Table table = new Table(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -92,7 +92,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		composite.setLayoutData(gd);
 		
 		fAddFragmentsButton = new Button(composite, SWT.CHECK);
-		fAddFragmentsButton.setText(PDEUIMessages.ImportWizard_SecondPage_addFragments); //$NON-NLS-1$
+		fAddFragmentsButton.setText(PDEUIMessages.ImportWizard_SecondPage_addFragments); 
 		fAddFragmentsButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		if (getDialogSettings().get(SETTINGS_ADD_FRAGMENTS) != null)
 			fAddFragmentsButton.setSelection(getDialogSettings().getBoolean(SETTINGS_ADD_FRAGMENTS));

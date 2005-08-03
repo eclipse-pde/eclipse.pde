@@ -70,14 +70,14 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	
 	private void createProjectTypeGroup(Composite container) {
 		Group group = new Group(container, SWT.NONE);
-		group.setText(PDEUIMessages.ProjectStructurePage_settings); //$NON-NLS-1$
+		group.setText(PDEUIMessages.ProjectStructurePage_settings); 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	
 		fJavaButton = createButton(group);
-		fJavaButton.setText(PDEUIMessages.ProjectStructurePage_java); //$NON-NLS-1$
+		fJavaButton.setText(PDEUIMessages.ProjectStructurePage_java); 
 		fJavaButton.setSelection(true);
 		fJavaButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
@@ -90,21 +90,21 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 			}
 		});
 		
-		fSourceLabel = createLabel(group, PDEUIMessages.ProjectStructurePage_source); //$NON-NLS-1$
+		fSourceLabel = createLabel(group, PDEUIMessages.ProjectStructurePage_source); 
 		fSourceText = createText(group);
 		IPreferenceStore store = PreferenceConstants.getPreferenceStore();
 		fSourceText.setText(store.getString(PreferenceConstants.SRCBIN_SRCNAME));
 		
-		fOutputlabel = createLabel(group, PDEUIMessages.ProjectStructurePage_output); //$NON-NLS-1$
+		fOutputlabel = createLabel(group, PDEUIMessages.ProjectStructurePage_output); 
 		fOutputText = createText(group);		
 		fOutputText.setText(store.getString(PreferenceConstants.SRCBIN_BINNAME));
 	}
 	private void createFormatGroup(Composite container) {
 		Group group = new Group(container, SWT.NONE);
 		if (fIsFragment)
-			group.setText(PDEUIMessages.ProjectStructurePage_fformat); //$NON-NLS-1$
+			group.setText(PDEUIMessages.ProjectStructurePage_fformat); 
 		else
-			group.setText(PDEUIMessages.ProjectStructurePage_pformat); //$NON-NLS-1$			
+			group.setText(PDEUIMessages.ProjectStructurePage_pformat); //			
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		group.setLayout(layout);
@@ -112,9 +112,9 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		
 		Label label = new Label(group, SWT.NONE);
 		if (fIsFragment) {
-			label.setText(PDEUIMessages.ProjectStructurePage_fTarget); //$NON-NLS-1$
+			label.setText(PDEUIMessages.ProjectStructurePage_fTarget); 
 		} else {
-			label.setText(PDEUIMessages.ProjectStructurePage_pTarget); //$NON-NLS-1$
+			label.setText(PDEUIMessages.ProjectStructurePage_pTarget); 
 		}
 		fTargetCombo = new Combo(group, SWT.READ_ONLY|SWT.SINGLE);
 		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET31, ICoreConstants.TARGET30, ICoreConstants.TARGET21});
@@ -128,7 +128,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 			}
 		});		
 		fBundleCheck = new Button(group, SWT.CHECK);
-		fBundleCheck.setText(PDEUIMessages.ProjectStructurePage_bundle); //$NON-NLS-1$
+		fBundleCheck.setText(PDEUIMessages.ProjectStructurePage_bundle); 
 		updateBundleCheck();
 	}
 	

@@ -25,7 +25,7 @@ public class BrandingPage extends PDEFormPage {
 	public static final String PAGE_ID = "branding"; //$NON-NLS-1$
 
 	public BrandingPage(FormEditor editor) {
-		super(editor, PAGE_ID, PDEUIMessages.BrandingPage_title); //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEUIMessages.BrandingPage_title); 
 	}
 	
 	/* (non-Javadoc)
@@ -35,7 +35,7 @@ public class BrandingPage extends PDEFormPage {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		form.setText(PDEUIMessages.BrandingPage_title);  //$NON-NLS-1$
+		form.setText(PDEUIMessages.BrandingPage_title);  
 		fillBody(managedForm, toolkit);
 		managedForm.refresh();
 		

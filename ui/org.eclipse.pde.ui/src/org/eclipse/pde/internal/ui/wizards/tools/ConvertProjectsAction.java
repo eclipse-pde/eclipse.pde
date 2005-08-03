@@ -48,7 +48,7 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 			MessageDialog
 					.openInformation(
 							this.getDisplay().getActiveShell(),
-							PDEUIMessages.ConvertProjectsAction_find, PDEUIMessages.ConvertProjectsAction_none); //$NON-NLS-1$ //$NON-NLS-2$
+							PDEUIMessages.ConvertProjectsAction_find, PDEUIMessages.ConvertProjectsAction_none); // 
 			return;
 		}
 

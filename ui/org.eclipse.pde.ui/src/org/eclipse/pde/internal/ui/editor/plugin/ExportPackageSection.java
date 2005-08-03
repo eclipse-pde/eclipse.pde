@@ -356,13 +356,13 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 	}
     
     private void makeActions() {
-        fAddAction = new Action(PDEUIMessages.RequiresSection_add) { //$NON-NLS-1$
+        fAddAction = new Action(PDEUIMessages.RequiresSection_add) { 
             public void run() {
                 handleAdd();
             }
         };
         fAddAction.setEnabled(isEditable());
-        fRemoveAction = new Action(PDEUIMessages.RequiresSection_delete) { //$NON-NLS-1$
+        fRemoveAction = new Action(PDEUIMessages.RequiresSection_delete) { 
             public void run() {
                 handleRemove();
             }

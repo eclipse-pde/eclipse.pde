@@ -22,7 +22,7 @@ public class MailNewWizard extends NewPluginTemplateWizard {
 	 */
 	public void init(IFieldData data) {
 		super.init(data);
-		setWindowTitle(PDEUIMessages.MailNewWizard_title); //$NON-NLS-1$
+		setWindowTitle(PDEUIMessages.MailNewWizard_title); 
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.NewPluginTemplateWizard#createTemplateSections()

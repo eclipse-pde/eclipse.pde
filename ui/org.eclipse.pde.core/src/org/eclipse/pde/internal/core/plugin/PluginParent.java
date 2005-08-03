@@ -80,7 +80,7 @@ public abstract class PluginParent extends IdentifiablePluginObject implements
 		int index1 = fChildren.indexOf(child1);
 		int index2 = fChildren.indexOf(child2);
 		if (index1 == -1 || index2 == -1)
-			throwCoreException(PDECoreMessages.PluginParent_siblingsNotFoundException); //$NON-NLS-1$
+			throwCoreException(PDECoreMessages.PluginParent_siblingsNotFoundException); 
 		fChildren.set(index2, child1);
 		fChildren.set(index1, child2);
 		firePropertyChanged(this, P_SIBLING_ORDER, child1, child2);

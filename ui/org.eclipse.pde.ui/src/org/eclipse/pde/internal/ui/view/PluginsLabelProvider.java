@@ -119,7 +119,7 @@ public class PluginsLabelProvider extends LabelProvider {
 		IPluginModelBase model = entry.getActiveModel();
 		String text = sharedProvider.getText(model);
 		if (model.isEnabled() == false)
-			text = NLS.bind(PDEUIMessages.PluginsView_disabled, text); //$NON-NLS-1$
+			text = NLS.bind(PDEUIMessages.PluginsView_disabled, text); 
 		return text;
 	}
 

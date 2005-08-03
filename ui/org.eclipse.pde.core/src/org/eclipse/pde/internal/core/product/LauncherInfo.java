@@ -170,13 +170,13 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 	private void writeMac(String indent, PrintWriter writer) {
 		String icon = (String)fIcons.get(MACOSX_ICON);
 		if (icon != null && icon.length() > 0)
-			writer.println(indent + "<macosx icon=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			writer.println(indent + "<macosx icon=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ 
 	}
 
 	private void writeLinux(String indent, PrintWriter writer) {
 		String icon = (String)fIcons.get(LINUX_ICON);
 		if (icon != null && icon.length() > 0)
-			writer.println(indent + "<linux icon=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			writer.println(indent + "<linux icon=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ 
 	}
 
 }

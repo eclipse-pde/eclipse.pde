@@ -71,12 +71,12 @@ public class RequiresSection
 
 	public RequiresSection(DependenciesPage page, Composite parent, String[] labels) {
 		super(page, parent, Section.DESCRIPTION, labels);
-		getSection().setText(PDEUIMessages.RequiresSection_title); //$NON-NLS-1$
+		getSection().setText(PDEUIMessages.RequiresSection_title); 
 		boolean fragment = ((IPluginModelBase)getPage().getModel()).isFragmentModel();
 		if (fragment)
-			getSection().setDescription(PDEUIMessages.RequiresSection_fDesc); //$NON-NLS-1$
+			getSection().setDescription(PDEUIMessages.RequiresSection_fDesc); 
 		else
-			getSection().setDescription(PDEUIMessages.RequiresSection_desc); //$NON-NLS-1$
+			getSection().setDescription(PDEUIMessages.RequiresSection_desc); 
 		getTablePart().setEditable(false);
 	}
 
@@ -347,17 +347,17 @@ public class RequiresSection
 	}
 
 	private void makeActions() {
-		fAddAction = new Action(PDEUIMessages.RequiresSection_add) { //$NON-NLS-1$
+		fAddAction = new Action(PDEUIMessages.RequiresSection_add) { 
 			public void run() {
 				handleAdd();
 			}
 		};
-		fOpenAction = new Action(PDEUIMessages.RequiresSection_open) { //$NON-NLS-1$
+		fOpenAction = new Action(PDEUIMessages.RequiresSection_open) { 
 			public void run() {
 				handleOpen(fImportViewer.getSelection());
 			}
 		};
-		fRemoveAction = new Action(PDEUIMessages.RequiresSection_delete) { //$NON-NLS-1$
+		fRemoveAction = new Action(PDEUIMessages.RequiresSection_delete) { 
 			public void run() {
 				handleRemove();
 			}

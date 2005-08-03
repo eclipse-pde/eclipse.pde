@@ -211,7 +211,7 @@ public class MinimalState {
 		} catch (IOException e) {
 			PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR,
 					PDECoreMessages.PDEState_invalidFormat + bundleLocation.toString(),
-					null)); //$NON-NLS-1$
+					null)); 
 			return null;
 		} finally {
 			try {
@@ -440,7 +440,7 @@ public class MinimalState {
 
 	protected void logResolutionErrors() {
 		MultiStatus errors = new MultiStatus(PDECore.getPluginId(), 1,
-				PDECoreMessages.ExternalModelManager_scanningProblems, //$NON-NLS-1$
+				PDECoreMessages.ExternalModelManager_scanningProblems, 
 				null);
 
 		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();

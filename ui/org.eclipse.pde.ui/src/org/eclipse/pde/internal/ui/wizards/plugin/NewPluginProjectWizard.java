@@ -39,7 +39,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	public NewPluginProjectWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
-		setWindowTitle(PDEUIMessages.NewProjectWizard_title); //$NON-NLS-1$
+		setWindowTitle(PDEUIMessages.NewProjectWizard_title); 
 		setNeedsProgressMonitor(true);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fPluginData = new PluginFieldData();
@@ -50,8 +50,8 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	 */
 	public void addPages() {
 		fMainPage = new NewProjectCreationPage("main", fPluginData, false); //$NON-NLS-1$
-		fMainPage.setTitle(PDEUIMessages.NewProjectWizard_MainPage_title); //$NON-NLS-1$
-		fMainPage.setDescription(PDEUIMessages.NewProjectWizard_MainPage_desc); //$NON-NLS-1$
+		fMainPage.setTitle(PDEUIMessages.NewProjectWizard_MainPage_title); 
+		fMainPage.setDescription(PDEUIMessages.NewProjectWizard_MainPage_desc); 
 		String pname = getDefaultValue(DEF_PROJECT_NAME);
 		if (pname!=null)
 			fMainPage.setInitialProjectName(pname);
@@ -71,7 +71,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		
 		fContentPage = new PluginContentPage("page2", fProjectProvider, fMainPage, fPluginData); //$NON-NLS-1$
         
-		fWizardListPage = new TemplateListSelectionPage(getAvailableCodegenWizards(), fContentPage, PDEUIMessages.WizardListSelectionPage_templates); //$NON-NLS-1$
+		fWizardListPage = new TemplateListSelectionPage(getAvailableCodegenWizards(), fContentPage, PDEUIMessages.WizardListSelectionPage_templates); 
 		String tid = getDefaultValue(DEF_TEMPLATE_ID);
 		if (tid!=null)
 			fWizardListPage.setInitialTemplateId(tid);

@@ -84,13 +84,13 @@ public class FeatureImportWizardDetailedPage extends WizardPage {
 
 	public FeatureImportWizardDetailedPage(FeatureImportWizardFirstPage firstPage) {
 		super("FeatureImportWizardDetailedPage"); //$NON-NLS-1$
-		setTitle(PDEUIMessages.FeatureImportWizard_DetailedPage_title); //$NON-NLS-1$
-		setDescription(PDEUIMessages.FeatureImportWizard_DetailedPage_desc); //$NON-NLS-1$
+		setTitle(PDEUIMessages.FeatureImportWizard_DetailedPage_title); 
+		setDescription(PDEUIMessages.FeatureImportWizard_DetailedPage_desc); 
 
 		fFirstPage = firstPage;
 		fIsOtherLocation = false;
 		fDropLocation = null;
-		fTablePart = new TablePart(PDEUIMessages.FeatureImportWizard_DetailedPage_featureList); //$NON-NLS-1$
+		fTablePart = new TablePart(PDEUIMessages.FeatureImportWizard_DetailedPage_featureList); 
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
@@ -106,7 +106,7 @@ public class FeatureImportWizardDetailedPage extends WizardPage {
 			IRunnableWithProgress op = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
 					monitor.beginTask(
-						PDEUIMessages.FeatureImportWizard_messages_updating, //$NON-NLS-1$
+						PDEUIMessages.FeatureImportWizard_messages_updating, 
 						IProgressMonitor.UNKNOWN);
 					fFeatureViewer
 						.getControl()
@@ -186,7 +186,7 @@ public class FeatureImportWizardDetailedPage extends WizardPage {
 				public void run(IProgressMonitor monitor)
 					throws InvocationTargetException {
 					monitor.beginTask(
-						PDEUIMessages.FeatureImportWizard_messages_loadingFile, //$NON-NLS-1$
+						PDEUIMessages.FeatureImportWizard_messages_loadingFile, 
 						IProgressMonitor.UNKNOWN);
 
 					try {
@@ -245,7 +245,7 @@ public class FeatureImportWizardDetailedPage extends WizardPage {
 		File[] dirs = path.listFiles();
 		if (dirs == null)
 			return null;
-		monitor.beginTask(PDEUIMessages.FeatureImportWizard_DetailedPage_loading, dirs.length); //$NON-NLS-1$
+		monitor.beginTask(PDEUIMessages.FeatureImportWizard_DetailedPage_loading, dirs.length); 
 		ArrayList resultStatus = new ArrayList();
 		for (int i = 0; i < dirs.length; i++) {
 			File dir = dirs[i];
@@ -267,7 +267,7 @@ public class FeatureImportWizardDetailedPage extends WizardPage {
 					PDEPlugin.PLUGIN_ID,
 					IStatus.OK,
 					children,
-					PDEUIMessages.FeatureImportWizard_DetailedPage_problemsLoading, //$NON-NLS-1$
+					PDEUIMessages.FeatureImportWizard_DetailedPage_problemsLoading, 
 					null);
 			return multiStatus;
 		}
@@ -324,7 +324,7 @@ public class FeatureImportWizardDetailedPage extends WizardPage {
 	private void dialogChanged() {
 		String message = null;
 		if (fFeatureViewer != null && fFeatureViewer.getTable().getItemCount() == 0) {
-			message = PDEUIMessages.FeatureImportWizard_messages_noFeatures; //$NON-NLS-1$
+			message = PDEUIMessages.FeatureImportWizard_messages_noFeatures; 
 		}
 		setMessage(message, WizardPage.INFORMATION);
 		setPageComplete(fTablePart.getSelectionCount() > 0);

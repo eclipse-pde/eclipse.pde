@@ -32,10 +32,10 @@ public class DescriptionSection extends PDESection {
 		super(page, parent, Section.DESCRIPTION);
 		getSection()
 				.setText(
-						PDEUIMessages.SiteEditor_DescriptionSection_header); //$NON-NLS-1$
+						PDEUIMessages.SiteEditor_DescriptionSection_header); 
 		getSection()
 				.setDescription(
-						PDEUIMessages.SiteEditor_DescriptionSection_desc); //$NON-NLS-1$
+						PDEUIMessages.SiteEditor_DescriptionSection_desc); 
 		createClient(getSection(), page.getManagedForm().getToolkit());		
 	}
 	public void commit(boolean onSave) {
@@ -49,7 +49,7 @@ public class DescriptionSection extends PDESection {
 		layout.numColumns = 2;
 		layout.verticalSpacing = 10;
 		container.setLayout(layout);
-		fURLEntry = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_DescriptionSection_urlLabel, //$NON-NLS-1$
+		fURLEntry = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_DescriptionSection_urlLabel, 
 				null, false);
 		fURLEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
@@ -58,7 +58,7 @@ public class DescriptionSection extends PDESection {
 		});
 		fURLEntry.setEditable(isEditable());
 
-		fDescEntry = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_DescriptionSection_descLabel, //$NON-NLS-1$
+		fDescEntry = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_DescriptionSection_descLabel, 
 				SWT.WRAP | SWT.MULTI);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 200;

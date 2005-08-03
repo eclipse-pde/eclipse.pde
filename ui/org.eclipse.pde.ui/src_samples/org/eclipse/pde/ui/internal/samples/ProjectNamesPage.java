@@ -37,8 +37,8 @@ public class ProjectNamesPage extends WizardPage {
 	public ProjectNamesPage(SampleWizard wizard) {
 		super("projects"); //$NON-NLS-1$
 		this.wizard = wizard;
-		setTitle(PDEUIMessages.ProjectNamesPage_title); //$NON-NLS-1$
-		setDescription(PDEUIMessages.ProjectNamesPage_desc); //$NON-NLS-1$
+		setTitle(PDEUIMessages.ProjectNamesPage_title); 
+		setDescription(PDEUIMessages.ProjectNamesPage_desc); 
 	}
 	public void setVisible(boolean visible) {
 		setPageComplete(wizard.getSelection()!=null);
@@ -64,11 +64,11 @@ public class ProjectNamesPage extends WizardPage {
 			}
 			// create entries
 			if (projects.length==1) {
-				createEntry(PDEUIMessages.ProjectNamesPage_projectName, projects[0].getAttribute("name")); //$NON-NLS-1$ //$NON-NLS-2$
+				createEntry(PDEUIMessages.ProjectNamesPage_projectName, projects[0].getAttribute("name")); //$NON-NLS-1$ 
 			}
 			else {
 				for (int i=0; i<projects.length; i++) {
-					String label = NLS.bind(PDEUIMessages.ProjectNamesPage_multiProjectName, ""+(i+1)); //$NON-NLS-1$ //$NON-NLS-2$
+					String label = NLS.bind(PDEUIMessages.ProjectNamesPage_multiProjectName, ""+(i+1)); //$NON-NLS-1$ 
 					createEntry(label, projects[i].getAttribute("name")); //$NON-NLS-1$
 				}
 			}
@@ -76,7 +76,7 @@ public class ProjectNamesPage extends WizardPage {
 			validateEntries();
 		}
 		else {
-			setMessage(PDEUIMessages.ProjectNamesPage_noSampleFound, WizardPage.WARNING); //$NON-NLS-1$
+			setMessage(PDEUIMessages.ProjectNamesPage_noSampleFound, WizardPage.WARNING); 
 		}
 	}
 	public String [] getProjectNames() {
@@ -127,14 +127,14 @@ public class ProjectNamesPage extends WizardPage {
 			}
 		}
 		if (empty) {
-			setErrorMessage(PDEUIMessages.ProjectNamesPage_emptyName); //$NON-NLS-1$
+			setErrorMessage(PDEUIMessages.ProjectNamesPage_emptyName); 
 			setPageComplete(false);
 		}
 		else {
 			int nnames = set.size();
 			int nfields = children.length/2;
 			if (nfields>nnames) {
-				setErrorMessage(PDEUIMessages.ProjectNamesPage_duplicateNames); //$NON-NLS-1$
+				setErrorMessage(PDEUIMessages.ProjectNamesPage_duplicateNames); 
 				setPageComplete(false);
 			}
 			else {

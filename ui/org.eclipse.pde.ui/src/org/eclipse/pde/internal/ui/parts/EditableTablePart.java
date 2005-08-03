@@ -26,7 +26,7 @@ public class EditableTablePart extends TablePart {
 	
 	class RenameAction extends Action {
 		public RenameAction() {
-			super(PDEUIMessages.EditableTablePart_renameAction); //$NON-NLS-1$
+			super(PDEUIMessages.EditableTablePart_renameAction); 
 		}
 		public void run() {
 			doRename();
@@ -82,7 +82,7 @@ public class EditableTablePart extends TablePart {
 			String oldName = obj.toString();
 			RenameDialog dialog = new RenameDialog(getControl().getShell(), oldName);
 			dialog.create();
-			dialog.getShell().setText(PDEUIMessages.EditableTablePart_renameTitle); //$NON-NLS-1$
+			dialog.getShell().setText(PDEUIMessages.EditableTablePart_renameTitle); 
 			dialog.getShell().setSize(300, 150);
 			if (dialog.open()==Dialog.OK) {
 				entryModified(obj, dialog.getNewName());

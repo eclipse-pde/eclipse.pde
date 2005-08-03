@@ -36,7 +36,7 @@ public class ExtensionDetails extends PDEDetails {
 	private FormText rtext;
 
 	private static final String RTEXT_DATA =
-		PDEUIMessages.ExtensionDetails_extensionPointLinks; //$NON-NLS-1$
+		PDEUIMessages.ExtensionDetails_extensionPointLinks; 
 	/**
 	 * 
 	 */
@@ -60,8 +60,8 @@ public class ExtensionDetails extends PDEDetails {
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		section.marginHeight = 5;		
 		section.marginWidth = 5;
-		section.setText(PDEUIMessages.ExtensionDetails_title); //$NON-NLS-1$
-		section.setDescription(PDEUIMessages.ExtensionDetails_desc); //$NON-NLS-1$
+		section.setText(PDEUIMessages.ExtensionDetails_title); 
+		section.setDescription(PDEUIMessages.ExtensionDetails_desc); 
 		TableWrapData td = new TableWrapData(TableWrapData.FILL, TableWrapData.TOP);
 		td.grabHorizontal = true;
 		section.setLayoutData(td);
@@ -76,7 +76,7 @@ public class ExtensionDetails extends PDEDetails {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 
-		id = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_id, null, false); //$NON-NLS-1$
+		id = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_id, null, false); 
 		id.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (input!=null)
@@ -88,7 +88,7 @@ public class ExtensionDetails extends PDEDetails {
 			}
 		});
 		
-		name = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_name, null, false); //$NON-NLS-1$
+		name = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_name, null, false); 
 		name.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (input!=null)
@@ -100,7 +100,7 @@ public class ExtensionDetails extends PDEDetails {
 			}
 		});
 		
-		point = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_point, null, false); //$NON-NLS-1$
+		point = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_point, null, false); 
 		point.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (input!=null)
@@ -233,8 +233,8 @@ public class ExtensionDetails extends PDEDetails {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
 	}
 	private void showNoExtensionPointMessage() {
-		String title = PDEUIMessages.ExtensionDetails_noPoint_title; //$NON-NLS-1$
-		String message = NLS.bind(PDEUIMessages.ShowDescriptionAction_noPoint_desc, input.getPoint()); //$NON-NLS-1$
+		String title = PDEUIMessages.ExtensionDetails_noPoint_title; 
+		String message = NLS.bind(PDEUIMessages.ShowDescriptionAction_noPoint_desc, input.getPoint()); 
 		
 		MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title, message);
 	}

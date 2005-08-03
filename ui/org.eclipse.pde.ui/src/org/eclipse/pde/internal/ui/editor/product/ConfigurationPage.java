@@ -28,7 +28,7 @@ public class ConfigurationPage extends PDEFormPage {
 	private boolean fUseFeatures;
 
 	public ConfigurationPage(FormEditor editor, boolean useFeatures) {
-		super(editor, useFeatures ? FEATURE_ID : PLUGIN_ID, PDEUIMessages.Product_ConfigurationPage_title); //$NON-NLS-1$
+		super(editor, useFeatures ? FEATURE_ID : PLUGIN_ID, PDEUIMessages.Product_ConfigurationPage_title); 
 		fUseFeatures = useFeatures;
 	}
 	
@@ -39,7 +39,7 @@ public class ConfigurationPage extends PDEFormPage {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		form.setText(PDEUIMessages.Product_ConfigurationPage_title);  //$NON-NLS-1$
+		form.setText(PDEUIMessages.Product_ConfigurationPage_title);  
 		fillBody(managedForm, toolkit);
 		managedForm.refresh();
 		

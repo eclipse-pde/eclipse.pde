@@ -27,13 +27,13 @@ public class ToggleLinkWithEditorAction extends Action {
 	PDEFormEditor fEditor;
 
 	public ToggleLinkWithEditorAction(PDEFormEditor editor) {
-		super(PDEUIMessages.ToggleLinkWithEditorAction_label); //$NON-NLS-1$
+		super(PDEUIMessages.ToggleLinkWithEditorAction_label); 
 		boolean isLinkingEnabled = PDEPlugin.getDefault().getPreferenceStore()
 				.getBoolean("ToggleLinkWithEditorAction.isChecked"); //$NON-NLS-1$
 		setChecked(isLinkingEnabled);
 		fEditor = editor;
-		setToolTipText(PDEUIMessages.ToggleLinkWithEditorAction_toolTip); //$NON-NLS-1$
-		setDescription(PDEUIMessages.ToggleLinkWithEditorAction_description); //$NON-NLS-1$
+		setToolTipText(PDEUIMessages.ToggleLinkWithEditorAction_toolTip); 
+		setDescription(PDEUIMessages.ToggleLinkWithEditorAction_description); 
 		setImageDescriptor(PDEPluginImages.DESC_LINK_WITH_EDITOR);
 		setDisabledImageDescriptor(PDEPluginImages.DESC_LINK_WITH_EDITOR_DISABLED);
 	}

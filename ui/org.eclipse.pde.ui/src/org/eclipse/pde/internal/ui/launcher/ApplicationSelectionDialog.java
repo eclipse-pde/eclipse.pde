@@ -52,9 +52,9 @@ public class ApplicationSelectionDialog extends Dialog {
 
 		Label label = new Label(container, SWT.NONE);
 		if (fMode.equals(ILaunchManager.DEBUG_MODE))
-			label.setText(PDEUIMessages.ApplicationSelectionDialog_debug); //$NON-NLS-1$
+			label.setText(PDEUIMessages.ApplicationSelectionDialog_debug); 
 		else 
-			label.setText(PDEUIMessages.ApplicationSelectionDialog_run); //$NON-NLS-1$
+			label.setText(PDEUIMessages.ApplicationSelectionDialog_run); 
 				
 		applicationCombo = new Combo(container, SWT.READ_ONLY|SWT.DROP_DOWN);
 		applicationCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -66,7 +66,7 @@ public class ApplicationSelectionDialog extends Dialog {
 		
 		applicationCombo.setText(applicationCombo.getItem(0));
 		
-		getShell().setText(fMode.equals(ILaunchManager.DEBUG_MODE) ? PDEUIMessages.ApplicationSelectionDialog_dtitle : PDEUIMessages.ApplicationSelectionDialog_rtitle); //$NON-NLS-1$ //$NON-NLS-2$
+		getShell().setText(fMode.equals(ILaunchManager.DEBUG_MODE) ? PDEUIMessages.ApplicationSelectionDialog_dtitle : PDEUIMessages.ApplicationSelectionDialog_rtitle); // 
 		Dialog.applyDialogFont(container);
 		return container;
 	}

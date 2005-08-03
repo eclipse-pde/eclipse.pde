@@ -26,8 +26,8 @@ public class PluginSelectionDialog extends ElementListSelectionDialog {
 	
 	public PluginSelectionDialog(Shell parentShell, IPluginModelBase[] models, boolean multipleSelection) {
 		super(parentShell, PDEPlugin.getDefault().getLabelProvider());
-		setTitle(PDEUIMessages.PluginSelectionDialog_title); //$NON-NLS-1$
-		setMessage(PDEUIMessages.PluginSelectionDialog_message); //$NON-NLS-1$
+		setTitle(PDEUIMessages.PluginSelectionDialog_title); 
+		setMessage(PDEUIMessages.PluginSelectionDialog_message); 
 		setElements(models);
 		setMultipleSelection(multipleSelection);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);

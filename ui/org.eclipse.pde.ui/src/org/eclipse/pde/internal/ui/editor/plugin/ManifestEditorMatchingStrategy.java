@@ -29,7 +29,7 @@ public class ManifestEditorMatchingStrategy implements IEditorMatchingStrategy {
         if (inputFile != null && input instanceof IFileEditorInput) {
             String path = inputFile.getProjectRelativePath().toString();
             if (path.equals("plugin.xml") || path.equals("fragment.xml")  //$NON-NLS-1$ //$NON-NLS-2$
-            		|| path.equals("META-INF/MANIFEST.MF") || path.equals("build.properties")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            		|| path.equals("META-INF/MANIFEST.MF") || path.equals("build.properties")) { //$NON-NLS-1$ //$NON-NLS-2$ 
                 try {
                     IFile editorFile = ResourceUtil.getFile(editorRef.getEditorInput());
                     return editorFile != null && inputFile.getProject().equals(editorFile.getProject());

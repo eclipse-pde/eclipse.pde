@@ -186,11 +186,11 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 		IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
 		dialog.setElements(configs);
-		dialog.setTitle(PDEUIMessages.RuntimeWorkbenchShortcut_title);  //$NON-NLS-1$
+		dialog.setTitle(PDEUIMessages.RuntimeWorkbenchShortcut_title);  
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			dialog.setMessage(PDEUIMessages.RuntimeWorkbenchShortcut_select_debug); //$NON-NLS-1$
+			dialog.setMessage(PDEUIMessages.RuntimeWorkbenchShortcut_select_debug); 
 		} else {
-			dialog.setMessage(PDEUIMessages.RuntimeWorkbenchShortcut_select_run);  //$NON-NLS-1$
+			dialog.setMessage(PDEUIMessages.RuntimeWorkbenchShortcut_select_run);  
 		}
 		dialog.setMultipleSelection(false);
 		int result= dialog.open();
@@ -209,7 +209,7 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 		try {
 			ILaunchConfigurationType configType = getWorkbenchLaunchConfigType();
 			String computedName = getComputedName(configType.getName());
-			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);  //$NON-NLS-1$
+			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);  
 			wc.setAttribute(ILauncherSettings.LOCATION + "0", getDefaultWorkspaceLocation(computedName)); //$NON-NLS-1$
 			wc.setAttribute(ILauncherSettings.VMARGS, ""); //$NON-NLS-1$
 			wc.setAttribute(ILauncherSettings.PROGARGS, ""); //$NON-NLS-1$

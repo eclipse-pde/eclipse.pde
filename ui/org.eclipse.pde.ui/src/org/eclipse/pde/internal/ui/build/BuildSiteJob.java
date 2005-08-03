@@ -254,7 +254,7 @@ public class BuildSiteJob extends FeatureExportJob {
 		Pattern pattern = PatternConstructor.createPattern(id + "_" //$NON-NLS-1$
 				+ major + "." //$NON-NLS-1$
 				+ minor + "." //$NON-NLS-1$
-				+ service + "*.jar", true); //$NON-NLS-1$ //$NON-NLS-2$
+				+ service + "*.jar", true); //$NON-NLS-1$ 
 		// finding the newest feature archive
 		String newestName = null;
 		long newestTime = 0;
@@ -287,6 +287,6 @@ public class BuildSiteJob extends FeatureExportJob {
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob#getLogFoundMessage()
 	 */
 	protected String getLogFoundMessage() {
-		return PDEUIMessages.BuildSiteJob_message; //$NON-NLS-1$
+		return PDEUIMessages.BuildSiteJob_message; 
 	}
 }

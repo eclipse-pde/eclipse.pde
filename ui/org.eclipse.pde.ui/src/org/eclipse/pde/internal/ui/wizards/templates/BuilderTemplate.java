@@ -162,7 +162,7 @@ public class BuilderTemplate extends PDETemplateSection {
 		IPluginExtension extension2 = createExtension(
 				"org.eclipse.core.resources.natures", true); //$NON-NLS-1$
 		extension2.setId(getStringOption(KEY_NATURE_ID));
-		extension2.setName(getStringOption(KEY_NATURE_NAME)); //$NON-NLS-1$
+		extension2.setName(getStringOption(KEY_NATURE_NAME)); 
 
 		IPluginElement runtime = factory.createElement(extension2);
 		runtime.setName("runtime"); //$NON-NLS-1$

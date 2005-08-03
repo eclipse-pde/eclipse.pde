@@ -81,7 +81,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getDescription()
 	 */
 	public String getDescription() {
-		return PDECoreMessages.RequiredPluginsClasspathContainer_description; //$NON-NLS-1$
+		return PDECoreMessages.RequiredPluginsClasspathContainer_description; 
 	}
 	
 	/**
@@ -346,7 +346,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				}
 				if (path.segmentCount() >= 3 && "..".equals(path.segment(0))) { //$NON-NLS-1$
 					path = path.removeFirstSegments(1);
-					path = Path.fromPortableString("platform:/plugin/").append(path); //$NON-NLS-1$ //$NON-NLS-2$
+					path = Path.fromPortableString("platform:/plugin/").append(path); //$NON-NLS-1$ 
 				} else {
 					continue;
 				}

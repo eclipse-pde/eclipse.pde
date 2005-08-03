@@ -202,8 +202,8 @@ public class PluginDetailsSection extends PDESection implements IFormPart,
 
 		} else {
 			fNameText.setValue(null);
-			fdownloadSizeText.setValue(null, true); //$NON-NLS-1$
-			fInstallSizeText.setValue(null, true); //$NON-NLS-1$
+			fdownloadSizeText.setValue(null, true); 
+			fInstallSizeText.setValue(null, true); 
 			fBlockNotification = true;
 			fUnpackButton.setSelection(true);
 			fBlockNotification = false;

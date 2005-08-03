@@ -46,7 +46,7 @@ public class CreateManifestOperation implements IRunnableWithProgress{
 	private void handleConvert() throws CoreException {
 		IProject project = fModel.getUnderlyingResource().getProject();
 		String target = PDECore.getDefault().getModelManager().getTargetVersion();
-		PDEPluginConverter.convertToOSGIFormat(project, target, ClasspathHelper.getDevDictionary(fModel), new NullProgressMonitor()); //$NON-NLS-1$
+		PDEPluginConverter.convertToOSGIFormat(project, target, ClasspathHelper.getDevDictionary(fModel), new NullProgressMonitor()); 
 		
 	}
 	

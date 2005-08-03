@@ -52,8 +52,8 @@ public class FragmentContentPage extends ContentPage {
 	public FragmentContentPage(String pageName, IProjectProvider provider,
 			NewProjectCreationPage page, AbstractFieldData data) {
 		super(pageName, provider, page, data);
-		setTitle(PDEUIMessages.ContentPage_ftitle); //$NON-NLS-1$
-		setDescription(PDEUIMessages.ContentPage_fdesc); //$NON-NLS-1$
+		setTitle(PDEUIMessages.ContentPage_ftitle); 
+		setDescription(PDEUIMessages.ContentPage_fdesc); 
 	}
 	
 	/* (non-Javadoc)
@@ -77,26 +77,26 @@ public class FragmentContentPage extends ContentPage {
 		Group propertiesGroup = new Group(container, SWT.NONE);
 		propertiesGroup.setLayout(new GridLayout(2, false));
 		propertiesGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		propertiesGroup.setText(PDEUIMessages.ContentPage_fGroup); //$NON-NLS-1$
+		propertiesGroup.setText(PDEUIMessages.ContentPage_fGroup); 
 
 		Label label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.ContentPage_fid); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ContentPage_fid); 
 		fIdText = createText(propertiesGroup, propertiesListener);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.ContentPage_fversion); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ContentPage_fversion); 
 		fVersionText = createText(propertiesGroup, propertiesListener);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.ContentPage_fname); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ContentPage_fname); 
 		fNameText = createText(propertiesGroup, propertiesListener);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.ContentPage_fprovider); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ContentPage_fprovider); 
 		fProviderText = createText(propertiesGroup, propertiesListener);
 
 		fLibraryLabel = new Label(propertiesGroup, SWT.NONE);
-		fLibraryLabel.setText(PDEUIMessages.ProjectStructurePage_library); //$NON-NLS-1$
+		fLibraryLabel.setText(PDEUIMessages.ProjectStructurePage_library); 
 		fLibraryText = createText(propertiesGroup, propertiesListener);
 	}
 
@@ -104,18 +104,18 @@ public class FragmentContentPage extends ContentPage {
 		Group parentGroup = new Group(container, SWT.NONE);
 		parentGroup.setLayout(new GridLayout(2, false));
 		parentGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		parentGroup.setText(PDEUIMessages.ContentPage_parentPluginGroup); //$NON-NLS-1$
+		parentGroup.setText(PDEUIMessages.ContentPage_parentPluginGroup); 
 
 		Label label = new Label(parentGroup, SWT.NONE);
-		label.setText(PDEUIMessages.FragmentContentPage_pid); //$NON-NLS-1$
+		label.setText(PDEUIMessages.FragmentContentPage_pid); 
 		createPluginIdContainer(parentGroup);
 		
 		label = new Label(parentGroup, SWT.NONE);
-		label.setText(PDEUIMessages.FragmentContentPage_pversion); //$NON-NLS-1$
+		label.setText(PDEUIMessages.FragmentContentPage_pversion); 
 		fPluginVersion = createText(parentGroup, listener);
 		
 		label = new Label(parentGroup, SWT.NONE);
-		label.setText(PDEUIMessages.ContentPage_matchRule); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ContentPage_matchRule); 
 		
 		fMatchCombo = new Combo(parentGroup, SWT.READ_ONLY | SWT.BORDER);
 		fMatchCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -137,7 +137,7 @@ public class FragmentContentPage extends ContentPage {
 		fPluginIdText = createText(container, listener);
 
 		Button browse = new Button(container, SWT.PUSH);
-		browse.setText(PDEUIMessages.ContentPage_browse); //$NON-NLS-1$
+		browse.setText(PDEUIMessages.ContentPage_browse); 
 		browse.setLayoutData(new GridData());
 		browse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -190,13 +190,13 @@ public class FragmentContentPage extends ContentPage {
 		if (errorMessage == null) {
 			String pluginID = fPluginIdText.getText().trim();
 			if (pluginID.length() == 0) {
-				errorMessage = PDEUIMessages.ContentPage_nopid; //$NON-NLS-1$
+				errorMessage = PDEUIMessages.ContentPage_nopid; 
 			} else if (PDECore.getDefault().getModelManager().findEntry(pluginID) == null) {
-				errorMessage = PDEUIMessages.ContentPage_pluginNotFound; //$NON-NLS-1$
+				errorMessage = PDEUIMessages.ContentPage_pluginNotFound; 
 			} else if (fPluginVersion.getText().trim().length() == 0) {
-				errorMessage = PDEUIMessages.ContentPage_nopversion; //$NON-NLS-1$
+				errorMessage = PDEUIMessages.ContentPage_nopversion; 
 			} else if (!isVersionValid(fPluginVersion.getText().trim())) {
-				errorMessage = PDEUIMessages.ContentPage_badpversion; //$NON-NLS-1$
+				errorMessage = PDEUIMessages.ContentPage_badpversion; 
 			}
 		}
 		if (fInitialized)
@@ -208,7 +208,7 @@ public class FragmentContentPage extends ContentPage {
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#getNameFieldQualifier()
 	 */
 	protected String getNameFieldQualifier() {
-		return PDEUIMessages.ContentPage_fragment; //$NON-NLS-1$
+		return PDEUIMessages.ContentPage_fragment; 
 	}
 	
 	/* (non-Javadoc)

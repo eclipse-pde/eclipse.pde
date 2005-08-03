@@ -142,23 +142,23 @@ public class AdvancedLauncherTab
 
 		fUseDefaultRadio = new Button(composite, SWT.RADIO);
 		fUseDefaultRadio.setText(
-			PDEUIMessages.AdvancedLauncherTab_useDefault); //$NON-NLS-1$
+			PDEUIMessages.AdvancedLauncherTab_useDefault); 
 
 		if (fShowFeatures) {
 			fUseFeaturesRadio = new Button(composite, SWT.RADIO);
 			fUseFeaturesRadio.setText(
-				PDEUIMessages.AdvancedLauncherTab_useFeatures); //$NON-NLS-1$
+				PDEUIMessages.AdvancedLauncherTab_useFeatures); 
 		}
 
 		fUseListRadio = new Button(composite, SWT.RADIO);
-		fUseListRadio.setText(PDEUIMessages.AdvancedLauncherTab_useList); //$NON-NLS-1$
+		fUseListRadio.setText(PDEUIMessages.AdvancedLauncherTab_useList); 
 
 		createPluginList(composite);
 		
 		createSeparator(composite, 1);
 		
 		Button button = new Button(composite, SWT.PUSH);
-		button.setText(PDEUIMessages.AdvancedLauncherTab_validatePlugins); //$NON-NLS-1$
+		button.setText(PDEUIMessages.AdvancedLauncherTab_validatePlugins); 
 		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		button.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
@@ -324,19 +324,19 @@ public class AdvancedLauncherTab
 		createButtonContainer(composite);
 		
 		fIncludeFragmentsButton = new Button(composite, SWT.CHECK);
-		fIncludeFragmentsButton.setText(PDEUIMessages.AdvancedLauncherTab_includeFragments); //$NON-NLS-1$
+		fIncludeFragmentsButton.setText(PDEUIMessages.AdvancedLauncherTab_includeFragments); 
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fIncludeFragmentsButton.setLayoutData(gd);
 		
 		fIncludeOptionalButton = new Button(composite, SWT.CHECK);
-		fIncludeOptionalButton.setText(PDEUIMessages.AdvancedLauncherTab_includeOptional); //$NON-NLS-1$
+		fIncludeOptionalButton.setText(PDEUIMessages.AdvancedLauncherTab_includeOptional); 
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fIncludeOptionalButton.setLayoutData(gd);
 		
 		fAddWorkspaceButton = new Button(composite, SWT.CHECK);
-		fAddWorkspaceButton.setText(PDEUIMessages.AdvancedLauncherTab_addNew); //$NON-NLS-1$
+		fAddWorkspaceButton.setText(PDEUIMessages.AdvancedLauncherTab_addNew); 
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fAddWorkspaceButton.setLayoutData(gd);
@@ -499,11 +499,11 @@ public class AdvancedLauncherTab
 
 		fWorkspacePlugins =
 			new NamedElement(
-				PDEUIMessages.AdvancedLauncherTab_workspacePlugins, //$NON-NLS-1$
+				PDEUIMessages.AdvancedLauncherTab_workspacePlugins, 
 				pluginsImage);
 		fExternalPlugins =
 			new NamedElement(
-				PDEUIMessages.AdvancedLauncherTab_externalPlugins, //$NON-NLS-1$
+				PDEUIMessages.AdvancedLauncherTab_externalPlugins, 
 				pluginsImage);
 	}
 
@@ -516,28 +516,28 @@ public class AdvancedLauncherTab
 
 		
 		fSelectAllButton = new Button(composite, SWT.PUSH);
-		fSelectAllButton.setText(PDEUIMessages.AdvancedLauncherTab_selectAll); //$NON-NLS-1$
+		fSelectAllButton.setText(PDEUIMessages.AdvancedLauncherTab_selectAll); 
 		fSelectAllButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(fSelectAllButton);
 		
 		fDeselectButton = new Button(composite, SWT.PUSH);
-		fDeselectButton.setText(PDEUIMessages.AdvancedLauncherTab_deselectAll); //$NON-NLS-1$
+		fDeselectButton.setText(PDEUIMessages.AdvancedLauncherTab_deselectAll); 
 		fDeselectButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(fDeselectButton);
 		
 		fWorkingSetButton = new Button(composite, SWT.PUSH);
-		fWorkingSetButton.setText(PDEUIMessages.AdvancedLauncherTab_workingSet); //$NON-NLS-1$
+		fWorkingSetButton.setText(PDEUIMessages.AdvancedLauncherTab_workingSet); 
 		fWorkingSetButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(fWorkingSetButton);
 
 		fAddRequiredButton = new Button(composite, SWT.PUSH);
-		fAddRequiredButton.setText(PDEUIMessages.AdvancedLauncherTab_subset); //$NON-NLS-1$
+		fAddRequiredButton.setText(PDEUIMessages.AdvancedLauncherTab_subset); 
 		fAddRequiredButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(fAddRequiredButton);
 
 		fDefaultsButton = new Button(composite, SWT.PUSH);
 		fDefaultsButton.setText(
-			PDEUIMessages.AdvancedLauncherTab_defaults); //$NON-NLS-1$
+			PDEUIMessages.AdvancedLauncherTab_defaults); 
 		fDefaultsButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(fDefaultsButton);
 	}
@@ -703,7 +703,7 @@ public class AdvancedLauncherTab
 			if (op.hasErrors())
 				new PluginStatusDialog(getControl().getShell(), op).open();
 			else
-				MessageDialog.openInformation(getControl().getShell(), PDEUIMessages.AdvancedLauncherTab_pluginValidation, PDEUIMessages.AdvancedLauncherTab_noProblems); //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialog.openInformation(getControl().getShell(), PDEUIMessages.AdvancedLauncherTab_pluginValidation, PDEUIMessages.AdvancedLauncherTab_noProblems); // 
 		}
 	}
 	
@@ -785,13 +785,13 @@ public class AdvancedLauncherTab
 				|| !featurePath.toFile().exists())
 				return createStatus(
 					IStatus.ERROR,
-					PDEUIMessages.AdvancedLauncherTab_error_featureSetup); //$NON-NLS-1$
+					PDEUIMessages.AdvancedLauncherTab_error_featureSetup); 
 		} 
 		return createStatus(IStatus.OK, ""); //$NON-NLS-1$
 	}
 
 	public String getName() {
-		return PDEUIMessages.AdvancedLauncherTab_name; //$NON-NLS-1$
+		return PDEUIMessages.AdvancedLauncherTab_name; 
 	}
 
 	public Image getImage() {

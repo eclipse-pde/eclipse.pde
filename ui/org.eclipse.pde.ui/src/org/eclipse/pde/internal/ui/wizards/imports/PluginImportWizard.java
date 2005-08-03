@@ -46,7 +46,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_PLUGIN_IMPORT_WIZ);
-		setWindowTitle(PDEUIMessages.ImportWizard_title); //$NON-NLS-1$
+		setWindowTitle(PDEUIMessages.ImportWizard_title); 
 	}
 
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
@@ -129,7 +129,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		public ReplaceDialog(Shell parentShell, String dialogMessage) {
 			super(
 				parentShell,
-				PDEUIMessages.ImportWizard_messages_title, //$NON-NLS-1$
+				PDEUIMessages.ImportWizard_messages_title, 
 				null,
 				dialogMessage,
 				MessageDialog.QUESTION,
@@ -137,7 +137,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 					IDialogConstants.YES_LABEL,
 					IDialogConstants.YES_TO_ALL_LABEL,
 					IDialogConstants.NO_LABEL,
-					PDEUIMessages.ImportWizard_noToAll, //$NON-NLS-1$
+					PDEUIMessages.ImportWizard_noToAll, 
 					IDialogConstants.CANCEL_LABEL },
 				0);
 		}
@@ -164,7 +164,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			}
 
 			final String message =
-				NLS.bind(PDEUIMessages.ImportWizard_messages_exists, project.getName()); //$NON-NLS-1$
+				NLS.bind(PDEUIMessages.ImportWizard_messages_exists, project.getName()); 
 			final int[] result = { IReplaceQuery.CANCEL };
 			shell.getDisplay().syncExec(new Runnable() {
 				public void run() {

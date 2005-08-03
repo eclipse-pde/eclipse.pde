@@ -124,7 +124,7 @@ public class NewSiteProjectTest extends TestCase {
 				EXISTING_PROJECT_NAME);
 		IPath path = Platform.getLocation();
 		try {
-			createSite(project, path, null); //$NON-NLS-1$
+			createSite(project, path, null); 
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("testExistingSiteProject: " + e); //$NON-NLS-1$
@@ -145,7 +145,7 @@ public class NewSiteProjectTest extends TestCase {
 				projectName);
 		IPath path = Platform.getLocation();
 		try {
-			createSite(project, path, null); //$NON-NLS-1$
+			createSite(project, path, null); 
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("testSiteProject: " + e); //$NON-NLS-1$

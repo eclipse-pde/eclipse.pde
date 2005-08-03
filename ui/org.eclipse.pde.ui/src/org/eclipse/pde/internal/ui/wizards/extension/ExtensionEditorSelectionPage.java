@@ -33,9 +33,9 @@ public class ExtensionEditorSelectionPage extends WizardListSelectionPage {
 	 * @param message
 	 */
 	public ExtensionEditorSelectionPage(ElementList wizards) {
-		super(wizards, PDEUIMessages.ExtensionEditorSelectionPage_message);  //$NON-NLS-1$
-		setTitle(PDEUIMessages.ExtensionEditorSelectionPage_title); //$NON-NLS-1$
-		setDescription(PDEUIMessages.ExtensionEditorSelectionPage_desc); //$NON-NLS-1$
+		super(wizards, PDEUIMessages.ExtensionEditorSelectionPage_message);  
+		setTitle(PDEUIMessages.ExtensionEditorSelectionPage_title); 
+		setDescription(PDEUIMessages.ExtensionEditorSelectionPage_desc); 
 	}
 	public void init(IProject project, IPluginBase pluginBase, IStructuredSelection selection) {
 		this.fProject = project;

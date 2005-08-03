@@ -195,15 +195,15 @@ public class PointSelectionPage
 	}
 
 	public PointSelectionPage(IProject project, IPluginModelBase model, WizardCollectionElement element, WizardCollectionElement templates, NewExtensionWizard wizard) {
-		super("pointSelectionPage", PDEUIMessages.NewExtensionWizard_PointSelectionPage_title); //$NON-NLS-1$ //$NON-NLS-2$
+		super("pointSelectionPage", PDEUIMessages.NewExtensionWizard_PointSelectionPage_title); //$NON-NLS-1$ 
 		this.fModel = model;
 		this.fWizardCollection = element;
 		this.fTemplateCollection = templates;
 		this.fWizard= wizard;
 		this.fProject=project;
 		fAvailableImports = PluginSelectionDialog.getExistingImports(model.getPluginBase());
-		setTitle(PDEUIMessages.NewExtensionWizard_PointSelectionPage_title); //$NON-NLS-1$
-		setDescription(PDEUIMessages.NewExtensionWizard_PointSelectionPage_desc); //$NON-NLS-1$
+		setTitle(PDEUIMessages.NewExtensionWizard_PointSelectionPage_title); 
+		setDescription(PDEUIMessages.NewExtensionWizard_PointSelectionPage_desc); 
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		makeActions();
 	}
@@ -212,9 +212,9 @@ public class PointSelectionPage
 		// tab folder
 		final TabFolder tabFolder = new TabFolder(parent, SWT.FLAT);
 		TabItem firstTab = new TabItem(tabFolder, SWT.NULL);
-		firstTab.setText(PDEUIMessages.PointSelectionPage_tab1); //$NON-NLS-1$
+		firstTab.setText(PDEUIMessages.PointSelectionPage_tab1); 
 		TabItem secondTab = new TabItem(tabFolder, SWT.NULL);
-		secondTab.setText(PDEUIMessages.PointSelectionPage_tab2); //$NON-NLS-1$
+		secondTab.setText(PDEUIMessages.PointSelectionPage_tab2); 
 		secondTab.setControl(createWizardsPage(tabFolder));
 		tabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -237,7 +237,7 @@ public class PointSelectionPage
 		pointContainer.setLayoutData(gd);
 
 		Label pointLabel = new Label(pointContainer, SWT.NONE);
-		pointLabel.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_availExtPoints_label); //$NON-NLS-1$
+		pointLabel.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_availExtPoints_label); 
 		
 		fPointListViewer =
 			new TableViewer(
@@ -272,7 +272,7 @@ public class PointSelectionPage
 		templateComposite.setLayoutData(gd);
 		
 		fTemplateLabel = new Label(templateComposite, SWT.NONE);
-		fTemplateLabel.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_title); //$NON-NLS-1$
+		fTemplateLabel.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_title); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fTemplateLabel.setLayoutData(gd);
 		
@@ -323,7 +323,7 @@ public class PointSelectionPage
 
 		
 		fFilterCheck = new Button(outerContainer, SWT.CHECK);
-		fFilterCheck.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_filterCheck); //$NON-NLS-1$
+		fFilterCheck.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_filterCheck); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fFilterCheck.setLayoutData(gd);
 		fFilterCheck.setSelection(true);
@@ -343,7 +343,7 @@ public class PointSelectionPage
 			IHelpContextIds.ADD_EXTENSIONS_SCHEMA_BASED);
 	}
 	private Control createWizardsPage(Composite parent) {
-		fWizardsPage = new ExtensionTreeSelectionPage(fWizardCollection, null, PDEUIMessages.PointSelectionPage_categories); //$NON-NLS-1$
+		fWizardsPage = new ExtensionTreeSelectionPage(fWizardCollection, null, PDEUIMessages.PointSelectionPage_categories); 
 		fWizardsPage.createControl(parent);
 		fWizardsPage.setWizard(fWizard);
 		fWizardsPage.getSelectionProvider().addSelectionChangedListener(this);
@@ -467,7 +467,7 @@ public class PointSelectionPage
 				doShowDescription();
 			}
 		};
-		fShowDetailsSection.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_showDetails); //$NON-NLS-1$
+		fShowDetailsSection.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_showDetails); 
 	}
 	
 	public void selectionChanged(SelectionChangedEvent event) {
@@ -480,16 +480,16 @@ public class PointSelectionPage
 				if (ssel.getFirstElement() instanceof IPluginExtensionPoint){
 					fCurrentPoint = (IPluginExtensionPoint) ssel.getFirstElement();
 					fTemplateViewer.setInput(fCurrentPoint);
-					setDescription(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_pluginDescription, fCurrentPoint.getFullId())); //$NON-NLS-1$
+					setDescription(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_pluginDescription, fCurrentPoint.getFullId())); 
 					setDescriptionText(""); //$NON-NLS-1$
-					fTemplateLabel.setText(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_label, fCurrentPoint.getFullId())); //$NON-NLS-1$
+					fTemplateLabel.setText(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_label, fCurrentPoint.getFullId())); 
 					setSelectedNode(null);
 					setPageComplete(true);
 				} else if (ssel.getFirstElement() instanceof WizardElement) {
 					WizardElement wizardSelection = (WizardElement)ssel.getFirstElement();
 					setSelectedNode(createWizardNode(wizardSelection));
 					setDescriptionText(wizardSelection.getDescription());
-					setDescription(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_templateDescription, wizardSelection.getLabel())); //$NON-NLS-1$
+					setDescription(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_templateDescription, wizardSelection.getLabel())); 
 					setPageComplete(false);
 				}
 			}

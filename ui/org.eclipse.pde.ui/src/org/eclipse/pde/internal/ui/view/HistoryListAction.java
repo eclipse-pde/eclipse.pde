@@ -25,7 +25,7 @@ public class HistoryListAction extends Action {
 
 	public HistoryListAction(DependenciesView view) {
 		fView = view;
-		setText(PDEUIMessages.HistoryListAction_label); //$NON-NLS-1$
+		setText(PDEUIMessages.HistoryListAction_label); 
 		setImageDescriptor(PDEPluginImages.DESC_HISTORY_LIST);
 		setDisabledImageDescriptor(PDEPluginImages.DESC_HISTORY_LIST_DISABLED);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IHelpContextIds.HISTORY_LIST_ACTION);

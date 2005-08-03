@@ -111,8 +111,8 @@ public class RequiredPluginsContainerPage
 	 */
 	public RequiredPluginsContainerPage() {
 		super("requiredPluginsContainerPage"); //$NON-NLS-1$
-		setTitle(PDEUIMessages.RequiredPluginsContainerPage_title); //$NON-NLS-1$
-		setDescription(PDEUIMessages.RequiredPluginsContainerPage_desc); //$NON-NLS-1$
+		setTitle(PDEUIMessages.RequiredPluginsContainerPage_title); 
+		setDescription(PDEUIMessages.RequiredPluginsContainerPage_desc); 
 		projectImage =
 			PlatformUI.getWorkbench().getSharedImages().getImage(
 				IDE.SharedImages.IMG_OBJ_PROJECT);
@@ -134,7 +134,7 @@ public class RequiredPluginsContainerPage
 		Composite container = new Composite(parent, SWT.NULL);
 		container.setLayout(new GridLayout());
 		Label label = new Label(container, SWT.NULL);
-		label.setText(PDEUIMessages.RequiredPluginsContainerPage_label); //$NON-NLS-1$
+		label.setText(PDEUIMessages.RequiredPluginsContainerPage_label); 
 		viewer =
 			new TableViewer(
 				container,

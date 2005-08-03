@@ -104,7 +104,7 @@ public class NewExtensionTemplateWizard
 
 	protected void doFinish(IProgressMonitor monitor) throws CoreException {
 		int totalWork = section.getNumberOfWorkUnits();
-		monitor.beginTask(PDEUIMessages.NewExtensionTemplateWizard_generating, totalWork); //$NON-NLS-1$
+		monitor.beginTask(PDEUIMessages.NewExtensionTemplateWizard_generating, totalWork); 
 		updateDependencies();
 		section.execute(project, model, monitor); // nsteps
 	}

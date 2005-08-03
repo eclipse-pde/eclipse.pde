@@ -51,7 +51,7 @@ public class ExternalJavaSearchClasspathContainer implements IClasspathContainer
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getDescription()
 	 */
 	public String getDescription() {
-		return PDECoreMessages.ExternalJavaSearchClasspathContainer_description; //$NON-NLS-1$
+		return PDECoreMessages.ExternalJavaSearchClasspathContainer_description; 
 	}
 
 	public int getKind() {

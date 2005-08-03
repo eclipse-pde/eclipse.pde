@@ -52,13 +52,13 @@ public class ExtensionPointsPage extends PDEFormPage {
 	 * @param title
 	 */
 	public ExtensionPointsPage(FormEditor editor) {
-		super(editor, PAGE_ID, PDEUIMessages.ExtensionPointsPage_tabName);  //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEUIMessages.ExtensionPointsPage_tabName);  
 		block = new ExtensionPointsBlock();
 	}
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
-		form.setText(PDEUIMessages.ExtensionPointsPage_title); //$NON-NLS-1$
+		form.setText(PDEUIMessages.ExtensionPointsPage_title); 
 		block.createContent(managedForm);
 		extensionPointsSection.fireSelection();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_PLUGIN_EXT_POINTS);

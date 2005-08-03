@@ -282,8 +282,8 @@ public class BuildClasspathSection
 	private void initializeDialogSettings(ElementTreeSelectionDialog dialog){
 		Class[] acceptedClasses = new Class[] { IFile.class };
 		dialog.setValidator(new ElementSelectionValidator(acceptedClasses, true));
-		dialog.setTitle(PDEUIMessages.BuildEditor_ClasspathSection_jarsTitle); //$NON-NLS-1$
-		dialog.setMessage(PDEUIMessages.BuildEditor_ClasspathSection_jarsDesc); //$NON-NLS-1$
+		dialog.setTitle(PDEUIMessages.BuildEditor_ClasspathSection_jarsTitle); 
+		dialog.setMessage(PDEUIMessages.BuildEditor_ClasspathSection_jarsDesc); 
 		dialog.addFilter(new JARFileFilter());
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));

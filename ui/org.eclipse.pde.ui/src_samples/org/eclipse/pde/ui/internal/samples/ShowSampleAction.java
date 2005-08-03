@@ -111,8 +111,8 @@ public class ShowSampleAction extends Action implements IIntroAction {
 		if (MessageDialog
 				.openQuestion(
 						PDEPlugin.getActiveWorkbenchShell(),
-						PDEUIMessages.ShowSampleAction_msgTitle, //$NON-NLS-1$
-						PDEUIMessages.ShowSampleAction_msgDesc)) { //$NON-NLS-1$
+						PDEUIMessages.ShowSampleAction_msgTitle, 
+						PDEUIMessages.ShowSampleAction_msgDesc)) { 
 			return downloadFeature();
 		}
 		return false;

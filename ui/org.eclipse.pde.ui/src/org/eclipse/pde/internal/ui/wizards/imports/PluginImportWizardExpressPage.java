@@ -114,8 +114,8 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	public PluginImportWizardExpressPage(String pageName, PluginImportWizardFirstPage page, IStructuredSelection selection) {
 		super(pageName, page);
 		this.initialSelection = selection;
-		setTitle(PDEUIMessages.ImportWizard_expressPage_title); //$NON-NLS-1$
-		setMessage(PDEUIMessages.ImportWizard_expressPage_desc); //$NON-NLS-1$
+		setTitle(PDEUIMessages.ImportWizard_expressPage_title); 
+		setMessage(PDEUIMessages.ImportWizard_expressPage_desc); 
 	}
 
 	public void createControl(Composite parent) {
@@ -153,7 +153,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		
 		tablePart =
 			new TablePart(
-				PDEUIMessages.ImportWizard_expressPage_nonBinary, //$NON-NLS-1$
+				PDEUIMessages.ImportWizard_expressPage_nonBinary, 
 				new String[] {
 					PDEUIMessages.WizardCheckboxTablePart_selectAll,
 					PDEUIMessages.WizardCheckboxTablePart_deselectAll});

@@ -141,14 +141,14 @@ public class CompilersConfigurationBlock {
 		};
 
 		String[] choices = new String[] {
-				PDEUIMessages.CompilersConfigurationBlock_error, PDEUIMessages.CompilersConfigurationBlock_warning, PDEUIMessages.CompilersConfigurationBlock_ignore }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				PDEUIMessages.CompilersConfigurationBlock_error, PDEUIMessages.CompilersConfigurationBlock_warning, PDEUIMessages.CompilersConfigurationBlock_ignore }; //  
 		
 		if (project != null) { // property page
 			try {
 				if (project.hasNature(PDE.PLUGIN_NATURE)) {
 					fPluginPage = createPage(
 							container,
-							PDEUIMessages.CompilersConfigurationBlock_plugins, CompilerFlags.PLUGIN_FLAGS, choices); //$NON-NLS-1$
+							PDEUIMessages.CompilersConfigurationBlock_plugins, CompilerFlags.PLUGIN_FLAGS, choices); 
 
 				}
 			} catch (CoreException ce) {
@@ -161,13 +161,13 @@ public class CompilersConfigurationBlock {
 
 			fPluginPage = createPage(
 					folder,
-					PDEUIMessages.CompilersConfigurationBlock_plugins, CompilerFlags.PLUGIN_FLAGS, choices); //$NON-NLS-1$
+					PDEUIMessages.CompilersConfigurationBlock_plugins, CompilerFlags.PLUGIN_FLAGS, choices); 
 			fSchemaPage = createPage(
 					folder,
-					PDEUIMessages.CompilersConfigurationBlock_schemas, CompilerFlags.SCHEMA_FLAGS, choices); //$NON-NLS-1$
+					PDEUIMessages.CompilersConfigurationBlock_schemas, CompilerFlags.SCHEMA_FLAGS, choices); 
 			fFeaturePage = createPage(
 					folder,
-					PDEUIMessages.CompilersConfigurationBlock_features, CompilerFlags.FEATURE_FLAGS, choices); //$NON-NLS-1$
+					PDEUIMessages.CompilersConfigurationBlock_features, CompilerFlags.FEATURE_FLAGS, choices); 
 			// createPage(folder,
 			// PDEPlugin.getResourceString("CompilersConfigurationBlock.sites"),
 			// CompilerFlags.SITE_FLAGS, choices); //$NON-NLS-1$
@@ -215,7 +215,7 @@ public class CompilersConfigurationBlock {
 			new Label(page, SWT.NULL).setLayoutData(new GridData());
 			GridData sgd = new GridData();
 			Label slabel = new Label(page, SWT.NULL);
-			slabel.setText(PDEUIMessages.CompilersConfigurationBlock_label); //$NON-NLS-1$
+			slabel.setText(PDEUIMessages.CompilersConfigurationBlock_label); 
 			sgd.horizontalSpan = 2;
 			slabel.setLayoutData(sgd);
 
@@ -246,9 +246,9 @@ public class CompilersConfigurationBlock {
 
 		String labelText;
 		if (index == CompilerFlags.SCHEMA_FLAGS)
-			labelText = PDEUIMessages.CompilersConfigurationBlock_altlabel; //$NON-NLS-1$
+			labelText = PDEUIMessages.CompilersConfigurationBlock_altlabel; 
 		else
-			labelText = PDEUIMessages.CompilersConfigurationBlock_label; //$NON-NLS-1$
+			labelText = PDEUIMessages.CompilersConfigurationBlock_label; 
 		group.setText(labelText);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
@@ -276,9 +276,9 @@ public class CompilersConfigurationBlock {
 		Label label = new Label(page, SWT.NULL);
 		String labelText;
 		if (index == CompilerFlags.SCHEMA_FLAGS)
-			labelText = PDEUIMessages.CompilersConfigurationBlock_altlabel; //$NON-NLS-1$
+			labelText = PDEUIMessages.CompilersConfigurationBlock_altlabel; 
 		else
-			labelText = PDEUIMessages.CompilersConfigurationBlock_label; //$NON-NLS-1$
+			labelText = PDEUIMessages.CompilersConfigurationBlock_label; 
 		label.setText(labelText);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
@@ -293,7 +293,7 @@ public class CompilersConfigurationBlock {
 	}
 
 	private void doFullBuild() {
-		Job buildJob = new Job(PDEUIMessages.CompilersConfigurationBlock_building) { //$NON-NLS-1$
+		Job buildJob = new Job(PDEUIMessages.CompilersConfigurationBlock_building) { 
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -431,11 +431,11 @@ public class CompilersConfigurationBlock {
 			String title;
 			String message;
 			if (project != null) {
-				title = PDEUIMessages.CompilersConfigurationBlock_rebuild_title; //$NON-NLS-1$
-				message = PDEUIMessages.CompilersConfigurationBlock_rebuild_message; //$NON-NLS-1$
+				title = PDEUIMessages.CompilersConfigurationBlock_rebuild_title; 
+				message = PDEUIMessages.CompilersConfigurationBlock_rebuild_message; 
 			} else {
-				title = PDEUIMessages.CompilersConfigurationBlock_rebuild_many_title; //$NON-NLS-1$
-				message = PDEUIMessages.CompilersConfigurationBlock_rebuild_many_message; //$NON-NLS-1$
+				title = PDEUIMessages.CompilersConfigurationBlock_rebuild_many_title; 
+				message = PDEUIMessages.CompilersConfigurationBlock_rebuild_many_message; 
 
 			}
 

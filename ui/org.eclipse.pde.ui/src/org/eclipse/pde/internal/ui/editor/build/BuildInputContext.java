@@ -106,7 +106,7 @@ public class BuildInputContext extends InputContext {
 			try {
 				if (doc.getLineDelimiter(doc.getNumberOfLines() - 1) == null
 						&& doc.getLineLength(doc.getNumberOfLines() - 1) > 0) {
-					preTermination = getLineDelimiter(); //$NON-NLS-1$
+					preTermination = getLineDelimiter(); 
 				}
 			} catch (BadLocationException ble) {
 			}

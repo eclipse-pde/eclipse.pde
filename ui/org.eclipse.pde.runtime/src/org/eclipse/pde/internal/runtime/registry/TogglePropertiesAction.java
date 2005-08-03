@@ -32,21 +32,21 @@ public class TogglePropertiesAction extends Action {
 		setOrientation(orientation);
 				
 		if (orientation == RegistryBrowser.VERTICAL_ORIENTATION) {
-			setText(PDERuntimeMessages.RegistryView_verticalOrientation_label);  //$NON-NLS-1$
-			setToolTipText(PDERuntimeMessages.RegistryView_verticalOrientation_tooltip);  //$NON-NLS-1$
-			setDescription(PDERuntimeMessages.RegistryView_verticalOrientation_desc);  //$NON-NLS-1$
+			setText(PDERuntimeMessages.RegistryView_verticalOrientation_label);  
+			setToolTipText(PDERuntimeMessages.RegistryView_verticalOrientation_tooltip);  
+			setDescription(PDERuntimeMessages.RegistryView_verticalOrientation_desc);  
 			setImageDescriptor(PDERuntimePluginImages.DESC_VERTICAL_VIEW);
 			setDisabledImageDescriptor(PDERuntimePluginImages.DESC_VERTICAL_VIEW_DISABLED);
 		} else if (orientation == RegistryBrowser.HORIZONTAL_ORIENTATION) {
-			setText(PDERuntimeMessages.RegistryView_horizontalOrientation_label);  //$NON-NLS-1$
-			setToolTipText(PDERuntimeMessages.RegistryView_horizontalOrientation_tooltip);  //$NON-NLS-1$
-			setDescription(PDERuntimeMessages.RegistryView_horizontalOrientation_desc);  //$NON-NLS-1$
+			setText(PDERuntimeMessages.RegistryView_horizontalOrientation_label);  
+			setToolTipText(PDERuntimeMessages.RegistryView_horizontalOrientation_tooltip);  
+			setDescription(PDERuntimeMessages.RegistryView_horizontalOrientation_desc);  
 			setImageDescriptor(PDERuntimePluginImages.DESC_HORIZONTAL_VIEW);
 			setDisabledImageDescriptor(PDERuntimePluginImages.DESC_HORIZONTAL_VIEW_DISABLED);
 		} else {
 			setText(PDERuntimeMessages.RegistryView_showPropertiesSheet_label);
-			setToolTipText(PDERuntimeMessages.RegistryView_showPropertiesSheet_tooltip);  //$NON-NLS-1$
-			setDescription(PDERuntimeMessages.RegistryView_showPropertiesSheet_desc);  //$NON-NLS-1$
+			setToolTipText(PDERuntimeMessages.RegistryView_showPropertiesSheet_tooltip);  
+			setDescription(PDERuntimeMessages.RegistryView_showPropertiesSheet_desc);  
 			setImageDescriptor(PDERuntimePluginImages.DESC_HIDE_PANE);
 		} 		
 

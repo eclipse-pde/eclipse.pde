@@ -25,14 +25,14 @@ public class DependenciesPage extends PDEFormPage {
 	public static final String PAGE_ID = "dependencies"; //$NON-NLS-1$
 	
 	public DependenciesPage(FormEditor editor) {
-		super(editor, PAGE_ID, PDEUIMessages.DependenciesPage_tabName);  //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEUIMessages.DependenciesPage_tabName);  
 	}
 	
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		boolean isBundle = isBundle();
 		ScrolledForm form = managedForm.getForm();
-		form.setText(PDEUIMessages.DependenciesPage_title); //$NON-NLS-1$
+		form.setText(PDEUIMessages.DependenciesPage_title); 
 		Composite body = form.getBody();
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;

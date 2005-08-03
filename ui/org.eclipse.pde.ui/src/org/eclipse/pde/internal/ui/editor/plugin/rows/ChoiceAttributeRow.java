@@ -71,7 +71,7 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 		blockNotification=true;
 		String value = getValue();
 		if (value!= null && isValid(value))
-			combo.setText(value); //$NON-NLS-1$
+			combo.setText(value); 
 		else if (getUse()==ISchemaAttribute.REQUIRED)
 			combo.setText(getValidValue());
 		else

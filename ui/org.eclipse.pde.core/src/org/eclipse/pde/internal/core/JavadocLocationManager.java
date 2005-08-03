@@ -66,7 +66,7 @@ public class JavadocLocationManager {
 		for (int i = 0; i < models.length; i++) {
 			IPluginExtension[] extensions = models[i].getPluginBase().getExtensions();
 			for (int j = 0; j < extensions.length; j++) {
-				if (JAVADOC_ID.equals(extensions[j].getPoint())) //$NON-NLS-1$
+				if (JAVADOC_ID.equals(extensions[j].getPoint())) 
 					processExtension(extensions[j]);
 			}				
 		}

@@ -49,7 +49,7 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements
 	public NewLibraryPluginProjectWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_JAR_TO_PLUGIN_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
-		setWindowTitle(PDEUIMessages.NewLibraryPluginProjectWizard_title); //$NON-NLS-1$
+		setWindowTitle(PDEUIMessages.NewLibraryPluginProjectWizard_title); 
 		setNeedsProgressMonitor(true);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fPluginData = new LibraryPluginFieldData();

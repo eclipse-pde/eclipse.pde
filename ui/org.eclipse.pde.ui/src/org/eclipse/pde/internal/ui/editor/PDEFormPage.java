@@ -57,7 +57,7 @@ public abstract class PDEFormPage extends FormPage {
 					});
 				}
 			};
-			helpAction.setToolTipText(PDEUIMessages.PDEFormPage_help); //$NON-NLS-1$
+			helpAction.setToolTipText(PDEUIMessages.PDEFormPage_help); 
 			helpAction.setImageDescriptor(PDEPluginImages.DESC_HELP);
 			manager.add(helpAction);
 			form.updateToolBar();

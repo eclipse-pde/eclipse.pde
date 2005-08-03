@@ -47,7 +47,7 @@ public class LauncherSection extends PDESection {
 	class IconEntry extends FormEntry {
 		String fIconId;
 		public IconEntry(Composite parent, FormToolkit toolkit, String labelText, String iconId) {
-			super(parent, toolkit, labelText, PDEUIMessages.LauncherSection_browse, isEditable(), 20); //$NON-NLS-1$
+			super(parent, toolkit, labelText, PDEUIMessages.LauncherSection_browse, isEditable(), 20); 
 			fIconId = iconId;
 			addEntryFormListener();
 			setEditable(isEditable());
@@ -80,8 +80,8 @@ public class LauncherSection extends PDESection {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText(PDEUIMessages.LauncherSection_title); //$NON-NLS-1$
-		section.setDescription(PDEUIMessages.LauncherSection_desc); //$NON-NLS-1$
+		section.setText(PDEUIMessages.LauncherSection_title); 
+		section.setDescription(PDEUIMessages.LauncherSection_desc); 
 
 		Composite client = toolkit.createComposite(section);
 		TableWrapLayout layout = new TableWrapLayout();
@@ -89,7 +89,7 @@ public class LauncherSection extends PDESection {
 		client.setLayout(layout);
 		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-		fNameEntry = new FormEntry(client, toolkit, PDEUIMessages.LauncherSection_launcherName, null, false); //$NON-NLS-1$
+		fNameEntry = new FormEntry(client, toolkit, PDEUIMessages.LauncherSection_launcherName, null, false); 
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getLauncherInfo().setLauncherName(entry.getValue());
@@ -98,7 +98,7 @@ public class LauncherSection extends PDESection {
 		fNameEntry.setEditable(isEditable());
 		
 		createLabel(client, toolkit, "", 2);	 //$NON-NLS-1$
-		createLabel(client, toolkit, PDEUIMessages.LauncherSection_label, 2); //$NON-NLS-1$
+		createLabel(client, toolkit, PDEUIMessages.LauncherSection_label, 2); 
 		
 		addLinuxSection(client, toolkit);
 		addMacSection(client, toolkit);
@@ -115,7 +115,7 @@ public class LauncherSection extends PDESection {
 	private void addWin32Section(Composite parent, FormToolkit toolkit) {
 		Composite comp = createComposite(parent, toolkit, "win32"); //$NON-NLS-1$
 		
-		fIcoButton = toolkit.createButton(comp, PDEUIMessages.LauncherSection_ico, SWT.RADIO); //$NON-NLS-1$
+		fIcoButton = toolkit.createButton(comp, PDEUIMessages.LauncherSection_ico, SWT.RADIO); 
 		TableWrapData gd = new TableWrapData();
 		gd.colspan = 3;
 		fIcoButton.setLayoutData(gd);
@@ -128,25 +128,25 @@ public class LauncherSection extends PDESection {
 		});
 		fIcoButton.setEnabled(isEditable());
 		
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_file, ILauncherInfo.P_ICO_PATH)); //$NON-NLS-1$
+		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_file, ILauncherInfo.P_ICO_PATH)); 
 		
-		fBmpButton = toolkit.createButton(comp, PDEUIMessages.LauncherSection_bmpImages, SWT.RADIO); //$NON-NLS-1$
+		fBmpButton = toolkit.createButton(comp, PDEUIMessages.LauncherSection_bmpImages, SWT.RADIO); 
 		gd = new TableWrapData();
 		gd.colspan = 3;
 		fBmpButton.setLayoutData(gd);
 		fBmpButton.setEnabled(isEditable());
 		
-		final Label label = toolkit.createLabel(comp, PDEUIMessages.LauncherSection_bmpImagesText, SWT.WRAP); //$NON-NLS-1$
+		final Label label = toolkit.createLabel(comp, PDEUIMessages.LauncherSection_bmpImagesText, SWT.WRAP); 
 		gd = new TableWrapData();
 		gd.colspan = 3;
 		label.setLayoutData(gd);
 
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_Low16, ILauncherInfo.WIN32_16_LOW)); //$NON-NLS-1$
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_High16, ILauncherInfo.WIN32_16_HIGH)); //$NON-NLS-1$
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_32Low, ILauncherInfo.WIN32_32_LOW)); //$NON-NLS-1$
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_32High, ILauncherInfo.WIN32_32_HIGH)); //$NON-NLS-1$
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_48Low, ILauncherInfo.WIN32_48_LOW)); //$NON-NLS-1$
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_48High, ILauncherInfo.WIN32_48_HIGH)); //$NON-NLS-1$
+		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_Low16, ILauncherInfo.WIN32_16_LOW)); 
+		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_High16, ILauncherInfo.WIN32_16_HIGH)); 
+		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_32Low, ILauncherInfo.WIN32_32_LOW)); 
+		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_32High, ILauncherInfo.WIN32_32_HIGH)); 
+		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_48Low, ILauncherInfo.WIN32_48_LOW)); 
+		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_48High, ILauncherInfo.WIN32_48_HIGH)); 
 
 		toolkit.paintBordersFor(comp);
 	}
@@ -168,27 +168,27 @@ public class LauncherSection extends PDESection {
 	
 	private void addLinuxSection(Composite parent, FormToolkit toolkit) {
 		Composite comp = createComposite(parent, toolkit, "linux"); //$NON-NLS-1$
-		createLabel(comp, toolkit, PDEUIMessages.LauncherSection_linuxLabel, 3);	 //$NON-NLS-1$
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_icon, ILauncherInfo.LINUX_ICON)); //$NON-NLS-1$
+		createLabel(comp, toolkit, PDEUIMessages.LauncherSection_linuxLabel, 3);	 
+		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_icon, ILauncherInfo.LINUX_ICON)); 
 		toolkit.paintBordersFor(comp);
 	}
 
 	private void addSolarisSection(Composite parent, FormToolkit toolkit) {
 		Composite comp = createComposite(parent, toolkit, "solaris"); //$NON-NLS-1$
-		createLabel(comp, toolkit, PDEUIMessages.LauncherSection_solarisLabel, 3); //$NON-NLS-1$
+		createLabel(comp, toolkit, PDEUIMessages.LauncherSection_solarisLabel, 3); 
 
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_large, ILauncherInfo.SOLARIS_LARGE)); //$NON-NLS-1$
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_medium, ILauncherInfo.SOLARIS_MEDIUM)); //$NON-NLS-1$
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_small, ILauncherInfo.SOLARIS_SMALL)); //$NON-NLS-1$
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_tiny, ILauncherInfo.SOLARIS_TINY)); //$NON-NLS-1$
+		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_large, ILauncherInfo.SOLARIS_LARGE)); 
+		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_medium, ILauncherInfo.SOLARIS_MEDIUM)); 
+		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_small, ILauncherInfo.SOLARIS_SMALL)); 
+		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_tiny, ILauncherInfo.SOLARIS_TINY)); 
 		
 		toolkit.paintBordersFor(comp);
 	}
 	
 	private void addMacSection(Composite parent, FormToolkit toolkit) {
 		Composite comp = createComposite(parent, toolkit, "macosx");		 //$NON-NLS-1$
-		createLabel(comp, toolkit, PDEUIMessages.LauncherSection_macLabel, 3);		 //$NON-NLS-1$
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_file, ILauncherInfo.MACOSX_ICON)); //$NON-NLS-1$
+		createLabel(comp, toolkit, PDEUIMessages.LauncherSection_macLabel, 3);		 
+		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_file, ILauncherInfo.MACOSX_ICON)); 
 		toolkit.paintBordersFor(comp);
 	}
 	
@@ -280,9 +280,9 @@ public class LauncherSection extends PDESection {
 				
 		dialog.setValidator(new FileValidator());
 		dialog.setAllowMultiple(false);
-		dialog.setTitle(PDEUIMessages.LauncherSection_dialogTitle);  //$NON-NLS-1$
+		dialog.setTitle(PDEUIMessages.LauncherSection_dialogTitle);  
 		String extension = getExtension(entry.getIconId());
-		dialog.setMessage(PDEUIMessages.LauncherSection_dialogMessage); //$NON-NLS-1$
+		dialog.setMessage(PDEUIMessages.LauncherSection_dialogMessage); 
 		dialog.addFilter(new FileExtensionFilter(extension)); 
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 
@@ -296,7 +296,7 @@ public class LauncherSection extends PDESection {
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 		Path path = new Path(value);
 		if(path.isEmpty()){
-			MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_emptyPath); //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_emptyPath); // 
 			return;
 		}
 		IResource resource = root.findMember(new Path(value));
@@ -304,7 +304,7 @@ public class LauncherSection extends PDESection {
 			if (resource != null && resource instanceof IFile)
 				IDE.openEditor(PDEPlugin.getActivePage(), (IFile)resource, true);
 			else
-				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_warning); //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_warning); // 
 		} catch (PartInitException e) {
 		}			
 	}

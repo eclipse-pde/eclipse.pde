@@ -56,7 +56,7 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 		control.setLayout(layout);
 		
 		Group webGroup = new Group(control, SWT.NULL);
-		webGroup.setText(PDEUIMessages.NewSiteProjectCreationPage_webTitle); //$NON-NLS-1$
+		webGroup.setText(PDEUIMessages.NewSiteProjectCreationPage_webTitle); 
 		
 		initializeDialogUnits(parent);
 		layout = new GridLayout();
@@ -116,7 +116,7 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 		if (!super.validatePage())
 			return false;
 		String webLocation = getWebLocation();
-		if (webLocation != null && webLocation.trim().length() == 0){ //$NON-NLS-1$
+		if (webLocation != null && webLocation.trim().length() == 0){ 
 			setErrorMessage(PDEUIMessages.SiteHTML_webError);
 			return false;
 		}

@@ -48,7 +48,7 @@ public class DependencyExtentQuery implements ISearchQuery {
 	 * @see org.eclipse.search.ui.ISearchQuery#getLabel()
 	 */
 	public String getLabel() {
-		return PDEUIMessages.DependencyExtentQuery_label + " " + fImportID; //$NON-NLS-1$ //$NON-NLS-2$
+		return PDEUIMessages.DependencyExtentQuery_label + " " + fImportID; //$NON-NLS-1$ 
 	}
 
 	/* (non-Javadoc)

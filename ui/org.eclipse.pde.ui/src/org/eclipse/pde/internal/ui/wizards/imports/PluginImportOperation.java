@@ -136,7 +136,7 @@ public class PluginImportOperation extends JarImportOperation {
 	}
 	
 	private void runBuildJob() {
-		Job buildJob = new Job(PDEUIMessages.CompilersConfigurationBlock_building) { //$NON-NLS-1$
+		Job buildJob = new Job(PDEUIMessages.CompilersConfigurationBlock_building) { 
 			public boolean belongsTo(Object family) {
 				return ResourcesPlugin.FAMILY_AUTO_BUILD == family;
 			}
@@ -222,7 +222,7 @@ public class PluginImportOperation extends JarImportOperation {
 		} else {
 			File[] items = new File(model.getInstallLocation()).listFiles();
 			if (items != null) {
-				monitor.beginTask(PDEUIMessages.PluginImportOperation_linking, items.length + 1); //$NON-NLS-1$
+				monitor.beginTask(PDEUIMessages.PluginImportOperation_linking, items.length + 1); 
 				for (int i = 0; i < items.length; i++) {
 					File sourceFile = items[i];
 					String name = sourceFile.getName();
@@ -311,7 +311,7 @@ public class PluginImportOperation extends JarImportOperation {
 					if (srcZip != null) {
 						String jarName = libraries[i].equals(".") ? "" : libraryPath.removeFileExtension().lastSegment(); //$NON-NLS-1$ //$NON-NLS-2$
 						String folder = addBuildEntry(buildModel, "source." + libraries[i], "src" + (jarName.length() == 0 ? "/" : "-" + jarName + "/")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-						IFolder dest = jarFile.getProject().getFolder(folder); //$NON-NLS-1$
+						IFolder dest = jarFile.getProject().getFolder(folder); 
 						if (!dest.exists()) {
 							dest.create(true, true, null);
 						}

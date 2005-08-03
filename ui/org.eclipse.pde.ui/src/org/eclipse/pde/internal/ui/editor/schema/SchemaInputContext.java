@@ -75,7 +75,7 @@ public class SchemaInputContext extends XMLInputContext {
 		
 	private IBaseModel createExternalModel(SystemFileEditorInput input) {
 		File file = (File)input.getAdapter(File.class);
-		SchemaDescriptor sd = new SchemaDescriptor(file); //$NON-NLS-1$
+		SchemaDescriptor sd = new SchemaDescriptor(file); 
 
 		ISchema schema = sd.getSchema(false);
 		if (schema.isValid() == false)

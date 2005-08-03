@@ -28,7 +28,7 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class NewElementAction extends Action {
-	public static final String UNKNOWN_ELEMENT_TAG = PDEUIMessages.NewElementAction_generic; //$NON-NLS-1$
+	public static final String UNKNOWN_ELEMENT_TAG = PDEUIMessages.NewElementAction_generic; 
 
 	private ISchemaElement elementInfo;
 

@@ -91,7 +91,7 @@ public class FeatureOutlinePage extends FormOutlinePage {
 		super(editor);
 		Image folderImage = PDEPlugin.getDefault().getLabelProvider().get(
 				PDEPluginImages.DESC_DOC_SECTION_OBJ);
-		fDiscoveryUrls = new NamedElement(PDEUIMessages.FeatureOutlinePage_discoverUrls, //$NON-NLS-1$
+		fDiscoveryUrls = new NamedElement(PDEUIMessages.FeatureOutlinePage_discoverUrls, 
 				folderImage);
 	}
 

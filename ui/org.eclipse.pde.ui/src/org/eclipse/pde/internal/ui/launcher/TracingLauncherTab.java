@@ -90,7 +90,7 @@ public class TracingLauncherTab extends AbstractLauncherTab
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		fSelectAllButton = new Button(container, SWT.PUSH);
-		fSelectAllButton.setText(PDEUIMessages.TracingLauncherTab_selectAll); //$NON-NLS-1$
+		fSelectAllButton.setText(PDEUIMessages.TracingLauncherTab_selectAll); 
 		fSelectAllButton.setLayoutData(new GridData(
 				GridData.HORIZONTAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fSelectAllButton);
@@ -101,7 +101,7 @@ public class TracingLauncherTab extends AbstractLauncherTab
 			}
 		});
 		fDeselectAllButton = new Button(container, SWT.PUSH);
-		fDeselectAllButton.setText(PDEUIMessages.TracinglauncherTab_deselectAll); //$NON-NLS-1$
+		fDeselectAllButton.setText(PDEUIMessages.TracinglauncherTab_deselectAll); 
 		fDeselectAllButton.setLayoutData(new GridData(
 				GridData.HORIZONTAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fDeselectAllButton);
@@ -114,7 +114,7 @@ public class TracingLauncherTab extends AbstractLauncherTab
 	}
 	private void createEnableTracingButton(Composite container) {
 		fTracingCheck = new Button(container, SWT.CHECK);
-		fTracingCheck.setText(PDEUIMessages.TracingLauncherTab_tracing); //$NON-NLS-1$
+		fTracingCheck.setText(PDEUIMessages.TracingLauncherTab_tracing); 
 		fTracingCheck.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fTracingCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -136,7 +136,7 @@ public class TracingLauncherTab extends AbstractLauncherTab
 		composite.setLayout(layout);
 		Label label = new Label(composite, SWT.NULL);
 		label
-				.setText(PDEUIMessages.TracingLauncherTab_plugins); //$NON-NLS-1$
+				.setText(PDEUIMessages.TracingLauncherTab_plugins); 
 		fPluginViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
 		fPluginViewer.setContentProvider(new ArrayContentProvider());
 		fPluginViewer.setLabelProvider(PDEPlugin.getDefault()
@@ -351,7 +351,7 @@ public class TracingLauncherTab extends AbstractLauncherTab
 		config.setAttribute(TRACING_CHECKED, TRACING_NONE);
 	}
 	private void updatePropertyLabel(IPluginModelBase model) {
-		String text = (model == null) ? PDEUIMessages.TracingLauncherTab_options : PDEPlugin //$NON-NLS-1$
+		String text = (model == null) ? PDEUIMessages.TracingLauncherTab_options : PDEPlugin 
 				.getDefault().getLabelProvider().getText(model);
 		fPropertyLabel.setText(text);
 	}
@@ -369,7 +369,7 @@ public class TracingLauncherTab extends AbstractLauncherTab
 		updatePropertyLabel(model);
 	}
 	public String getName() {
-		return PDEUIMessages.TracingLauncherTab_name; //$NON-NLS-1$
+		return PDEUIMessages.TracingLauncherTab_name; 
 	}
 	public Image getImage() {
 		return fImage;

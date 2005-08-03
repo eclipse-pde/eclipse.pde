@@ -98,9 +98,9 @@ public class ResourceAttributeRow extends ReferenceAttributeRow {
 		});
 		dialog.setAllowMultiple(false);
 		dialog
-				.setTitle(PDEUIMessages.ResourceAttributeCellEditor_title); //$NON-NLS-1$
+				.setTitle(PDEUIMessages.ResourceAttributeCellEditor_title); 
 		dialog
-				.setMessage(PDEUIMessages.ResourceAttributeCellEditor_message); //$NON-NLS-1$
+				.setMessage(PDEUIMessages.ResourceAttributeCellEditor_message); 
 		dialog.setValidator(new ISelectionStatusValidator() {
 			public IStatus validate(Object[] selection) {
 				if (selection != null && selection.length > 0

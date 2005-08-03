@@ -123,7 +123,7 @@ public abstract class AbstractExtensions
 		int index1 = fExtensions.indexOf(e1);
 		int index2 = fExtensions.indexOf(e2);
 		if (index1 == -1 || index2 == -1)
-			throwCoreException(PDECoreMessages.AbstractExtensions_extensionsNotFoundException); //$NON-NLS-1$
+			throwCoreException(PDECoreMessages.AbstractExtensions_extensionsNotFoundException); 
 		fExtensions.set(index2, e1);
 		fExtensions.set(index2, e2);
 		firePropertyChanged(this, P_EXTENSION_ORDER, e1, e2);

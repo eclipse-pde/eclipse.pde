@@ -43,16 +43,16 @@ public class AdvancedFeatureExportPage extends AdvancedPluginExportPage {
 	}
 	
 	protected String getDescriptionText() {
-		return PDEUIMessages.AdvancedFeatureExportPage_desc; //$NON-NLS-1$
+		return PDEUIMessages.AdvancedFeatureExportPage_desc; 
 	}
 	
 	protected void createJNLPSection(Composite parent) {
 		jnlpGroup = new Group(parent, SWT.NONE);
-		jnlpGroup.setText(PDEUIMessages.AdvancedFeatureExportPage_jnlp); //$NON-NLS-1$
+		jnlpGroup.setText(PDEUIMessages.AdvancedFeatureExportPage_jnlp); 
 		jnlpGroup.setLayout(new GridLayout(2, false));
 		jnlpGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		fButton = createbutton(jnlpGroup, PDEUIMessages.AdvancedFeatureExportPage_createJNLP); //$NON-NLS-1$
+		fButton = createbutton(jnlpGroup, PDEUIMessages.AdvancedFeatureExportPage_createJNLP); 
 		fButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean selected = fButton.getSelection();
@@ -61,11 +61,11 @@ public class AdvancedFeatureExportPage extends AdvancedPluginExportPage {
 			}
 		});
 
-		fURLLabel = createLabel(jnlpGroup, PDEUIMessages.AdvancedFeatureExportPage_siteURL);		 //$NON-NLS-1$
+		fURLLabel = createLabel(jnlpGroup, PDEUIMessages.AdvancedFeatureExportPage_siteURL);		 
 		fURLText = createText(jnlpGroup);
 		fURLText.setText(getString(S_URL));
 		
-		fVersionLabel = createLabel(jnlpGroup, PDEUIMessages.AdvancedFeatureExportPage_jreVersion);	 //$NON-NLS-1$
+		fVersionLabel = createLabel(jnlpGroup, PDEUIMessages.AdvancedFeatureExportPage_jreVersion);	 
 		fVersionText = createText(jnlpGroup);
 		fVersionText.setText(getString(S_JRE));
 		
@@ -95,9 +95,9 @@ public class AdvancedFeatureExportPage extends AdvancedPluginExportPage {
 			
 			if (jnlpGroup.getVisible() && fButton.getSelection()) {
 				if (fURLText.getText().trim().length() == 0) {
-					error = PDEUIMessages.AdvancedFeatureExportPage_noSite; //$NON-NLS-1$
+					error = PDEUIMessages.AdvancedFeatureExportPage_noSite; 
 				} else if (fVersionText.getText().trim().length() == 0) {
-					error = PDEUIMessages.AdvancedFeatureExportPage_noVersion; //$NON-NLS-1$
+					error = PDEUIMessages.AdvancedFeatureExportPage_noVersion; 
 				}
 			}
 			setErrorMessage(error);

@@ -117,8 +117,8 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		update((IPluginReference) null);
 		
 		section.setClient(container);		
-		section.setText(PDEUIMessages.MatchSection_title); //$NON-NLS-1$
-		section.setDescription(PDEUIMessages.MatchSection_desc); //$NON-NLS-1$
+		section.setText(PDEUIMessages.MatchSection_title); 
+		section.setDescription(PDEUIMessages.MatchSection_desc); 
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING));
 	}
 	

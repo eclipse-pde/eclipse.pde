@@ -49,7 +49,7 @@ public class MigrationAction implements IObjectActionDelegate {
 			MessageDialog
 					.openInformation(
 							this.getDisplay().getActiveShell(),
-							PDEUIMessages.MigrationAction_find, PDEUIMessages.MigrationAction_none);//$NON-NLS-1$ //$NON-NLS-2$
+							PDEUIMessages.MigrationAction_find, PDEUIMessages.MigrationAction_none);// 
 			return;
 		}
 

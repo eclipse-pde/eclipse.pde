@@ -106,7 +106,7 @@ public class BasicLauncherTab
 	
 	private void createProgramSection(Composite composite) {
 		Group group = new Group(composite, SWT.NONE);
-		group.setText(PDEUIMessages.BasicLauncherTab_programToRun); //$NON-NLS-1$
+		group.setText(PDEUIMessages.BasicLauncherTab_programToRun); 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		group.setLayout(layout);
@@ -118,14 +118,14 @@ public class BasicLauncherTab
 
 	protected void createWorkspaceDataSection(Composite composite) {
 		Group group = new Group(composite, SWT.NONE);
-		group.setText(PDEUIMessages.BasicLauncherTab_workspace); //$NON-NLS-1$
+		group.setText(PDEUIMessages.BasicLauncherTab_workspace); 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Label label = new Label(group, SWT.NULL);
-		label.setText(PDEUIMessages.BasicLauncherTab_location); //$NON-NLS-1$
+		label.setText(PDEUIMessages.BasicLauncherTab_location); 
 
 		fWorkspaceCombo = new Combo(group, SWT.DROP_DOWN);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -146,7 +146,7 @@ public class BasicLauncherTab
 		});
 
 		fBrowseButton = new Button(group, SWT.PUSH);
-		fBrowseButton.setText(PDEUIMessages.BasicLauncherTab_browse); //$NON-NLS-1$
+		fBrowseButton.setText(PDEUIMessages.BasicLauncherTab_browse); 
 		fBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		fBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -165,7 +165,7 @@ public class BasicLauncherTab
 		SWTUtil.setButtonDimensionHint(fBrowseButton);
 
 		fClearWorkspaceCheck = new Button(group, SWT.CHECK);
-		fClearWorkspaceCheck.setText(PDEUIMessages.BasicLauncherTab_clear); //$NON-NLS-1$
+		fClearWorkspaceCheck.setText(PDEUIMessages.BasicLauncherTab_clear); 
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fClearWorkspaceCheck.setLayoutData(gd);
@@ -177,7 +177,7 @@ public class BasicLauncherTab
 		});
 		
 		fAskClearCheck = new Button(group, SWT.CHECK);
-		fAskClearCheck.setText(PDEUIMessages.BasicLauncherTab_askClear); //$NON-NLS-1$
+		fAskClearCheck.setText(PDEUIMessages.BasicLauncherTab_askClear); 
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fAskClearCheck.setLayoutData(gd);
@@ -190,7 +190,7 @@ public class BasicLauncherTab
 	
 	protected void createCommandLineSettingsSection(Composite composite) {
 		Group group = new Group(composite, SWT.NONE);
-		group.setText(PDEUIMessages.BasicLauncherTab_commandLineSettings); //$NON-NLS-1$
+		group.setText(PDEUIMessages.BasicLauncherTab_commandLineSettings); 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		group.setLayout(layout);
@@ -205,7 +205,7 @@ public class BasicLauncherTab
 	
 	protected void createProductSection(Composite parent) {
 		fProductButton = new Button(parent, SWT.RADIO);
-		fProductButton.setText(PDEUIMessages.BasicLauncherTab_runProduct); //$NON-NLS-1$
+		fProductButton.setText(PDEUIMessages.BasicLauncherTab_runProduct); 
 		fProductButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean selected = fProductButton.getSelection();
@@ -227,7 +227,7 @@ public class BasicLauncherTab
 	
 	protected void createApplicationSection(Composite parent) {
 		fApplicationButton = new Button(parent, SWT.RADIO);
-		fApplicationButton.setText(PDEUIMessages.BasicLauncherTab_runApplication); //$NON-NLS-1$
+		fApplicationButton.setText(PDEUIMessages.BasicLauncherTab_runApplication); 
 			
 		fApplicationCombo = new Combo(parent, SWT.READ_ONLY|SWT.DROP_DOWN);
 		fApplicationCombo.setItems(getApplicationNames());
@@ -249,7 +249,7 @@ public class BasicLauncherTab
 		
 	protected void createJRESection(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(PDEUIMessages.BasicLauncherTab_jre); //$NON-NLS-1$
+		label.setText(PDEUIMessages.BasicLauncherTab_jre); 
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -268,7 +268,7 @@ public class BasicLauncherTab
 		});
 		
 		Button button = new Button(composite, SWT.PUSH);
-		button.setText(PDEUIMessages.BasicLauncherTab_installedJREs); //$NON-NLS-1$
+		button.setText(PDEUIMessages.BasicLauncherTab_installedJREs); 
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String currentVM = fJreCombo.getText();
@@ -303,7 +303,7 @@ public class BasicLauncherTab
 	
 	protected void createJavaExecutableSection(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(PDEUIMessages.BasicLauncherTab_javaExec); //$NON-NLS-1$
+		label.setText(PDEUIMessages.BasicLauncherTab_javaExec); 
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -314,7 +314,7 @@ public class BasicLauncherTab
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fJavawButton = new Button(composite, SWT.RADIO);
-		fJavawButton.setText(PDEUIMessages.BasicLauncherTab_javaExecDefault); //$NON-NLS-1$ 
+		fJavawButton.setText(PDEUIMessages.BasicLauncherTab_javaExecDefault); // 
 		fJavawButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
@@ -332,7 +332,7 @@ public class BasicLauncherTab
 	
 	protected void createVMArgsSection(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(PDEUIMessages.BasicLauncherTab_vmArgs); //$NON-NLS-1$
+		label.setText(PDEUIMessages.BasicLauncherTab_vmArgs); 
 		
 		fVmArgsText = new Text(parent, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -348,7 +348,7 @@ public class BasicLauncherTab
 	
 	protected void createProgArgsSection(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(PDEUIMessages.BasicLauncherTab_programArgs); //$NON-NLS-1$
+		label.setText(PDEUIMessages.BasicLauncherTab_programArgs); 
 
 		fProgArgsText = new Text(parent, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -364,7 +364,7 @@ public class BasicLauncherTab
 		
 	private void createBootstrapEntriesSection(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(PDEUIMessages.BasicLauncherTab_bootstrap); //$NON-NLS-1$
+		label.setText(PDEUIMessages.BasicLauncherTab_bootstrap); 
 		
 		fBootstrap = new Text(parent, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -516,7 +516,7 @@ public class BasicLauncherTab
 		String product = TargetPlatform.getDefaultProduct();
 		if (product != null) {
 			config.setAttribute(USE_PRODUCT, true);
-			config.setAttribute(PRODUCT, product); //$NON-NLS-1$
+			config.setAttribute(PRODUCT, product); 
 		}
 	}
 	
@@ -599,8 +599,8 @@ public class BasicLauncherTab
 	private IPath chooseWorkspaceLocation() {
 		DirectoryDialog dialog = new DirectoryDialog(getControl().getShell());
 		dialog.setFilterPath(fWorkspaceCombo.getText());
-		dialog.setText(PDEUIMessages.BasicLauncherTab_workspace_title); //$NON-NLS-1$
-		dialog.setMessage(PDEUIMessages.BasicLauncherTab_workspace_message); //$NON-NLS-1$
+		dialog.setText(PDEUIMessages.BasicLauncherTab_workspace_title); 
+		dialog.setMessage(PDEUIMessages.BasicLauncherTab_workspace_message); 
 		String res = dialog.open();
 		return res != null ? new Path(res) : null;
 	}
@@ -609,7 +609,7 @@ public class BasicLauncherTab
 		if (fJreCombo.getSelectionIndex() == -1) {
 			return createStatus(
 				IStatus.ERROR,
-				PDEUIMessages.BasicLauncherTab_noJRE); //$NON-NLS-1$
+				PDEUIMessages.BasicLauncherTab_noJRE); 
 		}
 		return createStatus(IStatus.OK, ""); //$NON-NLS-1$
 	}
@@ -619,14 +619,14 @@ public class BasicLauncherTab
 		if (!Path.ROOT.isValidPath(location)) {
 			return createStatus(
 				IStatus.ERROR,
-				PDEUIMessages.BasicLauncherTab_invalidWorkspace); //$NON-NLS-1$
+				PDEUIMessages.BasicLauncherTab_invalidWorkspace); 
 		}
 		
 		IPath curr = new Path(location);
 		if (curr.segmentCount() == 0 && curr.getDevice() == null) {
 			return createStatus(
 				IStatus.ERROR,
-				PDEUIMessages.BasicLauncherTab_noWorkspace); //$NON-NLS-1$
+				PDEUIMessages.BasicLauncherTab_noWorkspace); 
 		}
 
 		return createStatus(IStatus.OK, ""); //$NON-NLS-1$

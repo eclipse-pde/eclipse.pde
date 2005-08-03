@@ -51,7 +51,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	}
 	
 	protected String getSectionDescription() {
-		return PDEUIMessages.ManifestEditor_PluginSpecSection_desc; //$NON-NLS-1$
+		return PDEUIMessages.ManifestEditor_PluginSpecSection_desc; 
 	}
 	
 	protected void createSpecificControls(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
@@ -62,8 +62,8 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		fClassEntry = new FormEntry(
 							client,
 							toolkit,
-							PDEUIMessages.GeneralInfoSection_class,  //$NON-NLS-1$
-							PDEUIMessages.GeneralInfoSection_browse, //$NON-NLS-1$ 
+							PDEUIMessages.GeneralInfoSection_class,  
+							PDEUIMessages.GeneralInfoSection_browse, // 
 							isEditable());
 		fClassEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
@@ -115,7 +115,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 						IJavaElementSearchConstants.CONSIDER_CLASSES, 
 						false,
 						""); //$NON-NLS-1$
-				dialog.setTitle(PDEUIMessages.GeneralInfoSection_selectionTitle); //$NON-NLS-1$
+				dialog.setTitle(PDEUIMessages.GeneralInfoSection_selectionTitle); 
 				if (dialog.open() == SelectionDialog.OK) {
 					IType type = (IType) dialog.getResult()[0];
 					fClassEntry.setValue(type.getFullyQualifiedName('$'));

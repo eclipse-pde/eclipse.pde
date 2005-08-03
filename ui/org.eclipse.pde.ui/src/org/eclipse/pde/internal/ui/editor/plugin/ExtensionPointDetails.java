@@ -44,8 +44,8 @@ public class ExtensionPointDetails extends PDEDetails {
 	private FormText fRichText;
 	private String fRichTextData;
 
-	private static final String SCHEMA_RTEXT_DATA = PDEUIMessages.ExtensionPointDetails_schemaLinks; //$NON-NLS-1$
-	private static final String NO_SCHEMA_RTEXT_DATA = PDEUIMessages.ExtensionPointDetails_noSchemaLinks; //$NON-NLS-1$
+	private static final String SCHEMA_RTEXT_DATA = PDEUIMessages.ExtensionPointDetails_schemaLinks; 
+	private static final String NO_SCHEMA_RTEXT_DATA = PDEUIMessages.ExtensionPointDetails_noSchemaLinks; 
 	public ExtensionPointDetails() {
 	}
 	public String getContextId() {
@@ -78,9 +78,9 @@ public class ExtensionPointDetails extends PDEDetails {
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		section.marginHeight = 5;
 		section.marginWidth = 5;
-		section.setText(PDEUIMessages.ExtensionPointDetails_title); //$NON-NLS-1$
+		section.setText(PDEUIMessages.ExtensionPointDetails_title); 
 		section
-				.setDescription(PDEUIMessages.ExtensionPointDetails_desc); //$NON-NLS-1$
+				.setDescription(PDEUIMessages.ExtensionPointDetails_desc); 
 		TableWrapData td = new TableWrapData(TableWrapData.FILL,
 				TableWrapData.TOP);
 		td.grabHorizontal = true;
@@ -96,7 +96,7 @@ public class ExtensionPointDetails extends PDEDetails {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		
-		fIdEntry = new FormEntry(client, toolkit, PDEUIMessages.ExtensionPointDetails_id, null, false); //$NON-NLS-1$
+		fIdEntry = new FormEntry(client, toolkit, PDEUIMessages.ExtensionPointDetails_id, null, false); 
 		fIdEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (fInput != null) {
@@ -108,7 +108,7 @@ public class ExtensionPointDetails extends PDEDetails {
 				}
 			}
 		});
-		fNameEntry = new FormEntry(client, toolkit, PDEUIMessages.ExtensionPointDetails_name, null, false); //$NON-NLS-1$
+		fNameEntry = new FormEntry(client, toolkit, PDEUIMessages.ExtensionPointDetails_name, null, false); 
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (fInput != null)
@@ -120,7 +120,7 @@ public class ExtensionPointDetails extends PDEDetails {
 			}
 		});
 		boolean editable = getPage().getModel().isEditable();
-		fSchemaEntry = new FormEntry(client, toolkit, PDEUIMessages.ExtensionPointDetails_schema, PDEUIMessages.ExtensionPointDetails_browse, editable); //$NON-NLS-1$ //$NON-NLS-2$
+		fSchemaEntry = new FormEntry(client, toolkit, PDEUIMessages.ExtensionPointDetails_schema, PDEUIMessages.ExtensionPointDetails_browse, editable); // 
 		fSchemaEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (fInput != null) {
@@ -153,8 +153,8 @@ public class ExtensionPointDetails extends PDEDetails {
 						PDEPlugin.getActiveWorkbenchShell(),
 						new WorkbenchLabelProvider(),
 						new WorkbenchContentProvider());
-				dialog.setTitle(PDEUIMessages.ManifestEditor_ExtensionPointDetails_schemaLocation_title); //$NON-NLS-1$
-				dialog.setMessage(PDEUIMessages.ManifestEditor_ExtensionPointDetails_schemaLocation_desc); //$NON-NLS-1$
+				dialog.setTitle(PDEUIMessages.ManifestEditor_ExtensionPointDetails_schemaLocation_title); 
+				dialog.setMessage(PDEUIMessages.ManifestEditor_ExtensionPointDetails_schemaLocation_desc); 
 				dialog.setDoubleClickSelects(false);
 				dialog.setAllowMultiple(false);
 				dialog.addFilter(new ViewerFilter(){
@@ -189,7 +189,7 @@ public class ExtensionPointDetails extends PDEDetails {
 									IStatus.ERROR,
 									pluginName,
 									IStatus.ERROR,
-									PDEUIMessages.ManifestEditor_ExtensionPointDetails_validate_errorStatus, //$NON-NLS-1$
+									PDEUIMessages.ManifestEditor_ExtensionPointDetails_validate_errorStatus, 
 									null);
 						IFile file = (IFile) selection[0];
 						String ext = file.getFullPath().getFileExtension();
@@ -200,7 +200,7 @@ public class ExtensionPointDetails extends PDEDetails {
 								IStatus.ERROR,
 								pluginName,
 								IStatus.ERROR,
-								PDEUIMessages.ManifestEditor_ExtensionPointDetails_validate_errorStatus, //$NON-NLS-1$
+								PDEUIMessages.ManifestEditor_ExtensionPointDetails_validate_errorStatus, 
 								null);
 					}
 				});

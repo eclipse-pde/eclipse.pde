@@ -220,8 +220,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 		// start task
 		monitor.beginTask(PDEUIMessages.NewProjectCreationOperation_creating,
-				getNumberOfWorkUnits()); //$NON-NLS-1$
-		monitor.subTask(PDEUIMessages.NewProjectCreationOperation_project); //$NON-NLS-1$
+				getNumberOfWorkUnits()); 
+		monitor.subTask(PDEUIMessages.NewProjectCreationOperation_project); 
 
 		// create project
 		IProject project = createProject();
@@ -230,7 +230,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		// set classpath if project has a Java nature
 		if (project.hasNature(JavaCore.NATURE_ID)) {
 			monitor
-					.subTask(PDEUIMessages.NewProjectCreationOperation_setClasspath); //$NON-NLS-1$
+					.subTask(PDEUIMessages.NewProjectCreationOperation_setClasspath); 
 			setClasspath(project, fData);
 			monitor.worked(1);
 		}
@@ -245,13 +245,13 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			}
 		}
 		// generate the manifest file
-		monitor.subTask(PDEUIMessages.NewProjectCreationOperation_manifestFile); //$NON-NLS-1$
+		monitor.subTask(PDEUIMessages.NewProjectCreationOperation_manifestFile); 
 		createManifest(project);
 		monitor.worked(1);
 
 		// generate the build.properties file
 		monitor
-				.subTask(PDEUIMessages.NewProjectCreationOperation_buildPropertiesFile); //$NON-NLS-1$
+				.subTask(PDEUIMessages.NewProjectCreationOperation_buildPropertiesFile); 
 		createBuildPropertiesFile(project);
 		monitor.worked(1);
 

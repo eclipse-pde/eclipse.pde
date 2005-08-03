@@ -103,7 +103,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		instText = toolkit.createFormText(form.getBody(), true);
 		instText.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		StringBuffer buf = new StringBuffer();
-		buf.append(PDEUIMessages.SampleStandbyContent_content); //$NON-NLS-1$
+		buf.append(PDEUIMessages.SampleStandbyContent_content); 
 		instText.setText(buf.toString(), true, false);
 		instText.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
@@ -258,7 +258,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 				.getChildren("description") : null; //$NON-NLS-1$
 		if (descConfig != null && descConfig.length == 1) {
 			String desc = descConfig[0].getValue();
-			String content = NLS.bind(PDEUIMessages.SampleStandbyContent_desc, (desc != null ? desc : "")); //$NON-NLS-1$ //$NON-NLS-2$
+			String content = NLS.bind(PDEUIMessages.SampleStandbyContent_desc, (desc != null ? desc : "")); //$NON-NLS-1$ 
 			helpURL = descConfig[0].getAttribute("helpHref"); //$NON-NLS-1$
 			moreLink.setVisible(helpURL != null);
 			descText.setText(content, true, false);

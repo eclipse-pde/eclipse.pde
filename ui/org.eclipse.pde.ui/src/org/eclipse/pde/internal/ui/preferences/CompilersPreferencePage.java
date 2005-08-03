@@ -30,9 +30,9 @@ public class CompilersPreferencePage extends PreferencePage implements
 	 */
 	public CompilersPreferencePage() {
 		super();
-		setDescription(PDEUIMessages.CompilersPreferencePage_desc); //$NON-NLS-1$
+		setDescription(PDEUIMessages.CompilersPreferencePage_desc); 
 		// only used when page is shown programatically
-		setTitle(PDEUIMessages.CompilersPreferencePage_title); //$NON-NLS-1$
+		setTitle(PDEUIMessages.CompilersPreferencePage_title); 
 
 		configurationBlock = new CompilersConfigurationBlock(null);
 	}

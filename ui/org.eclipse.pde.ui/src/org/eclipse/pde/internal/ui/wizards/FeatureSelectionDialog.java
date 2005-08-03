@@ -27,8 +27,8 @@ public class FeatureSelectionDialog extends ElementListSelectionDialog {
 	public FeatureSelectionDialog(Shell parent, IFeatureModel[] models,
 			boolean multiSelect) {
 		super(parent, PDEPlugin.getDefault().getLabelProvider());
-		setTitle(PDEUIMessages.FeatureSelectionDialog_title); //$NON-NLS-1$
-		setMessage(PDEUIMessages.FeatureSelectionDialog_message); //$NON-NLS-1$
+		setTitle(PDEUIMessages.FeatureSelectionDialog_title); 
+		setMessage(PDEUIMessages.FeatureSelectionDialog_message); 
 		setElements(models);
 		setMultipleSelection(multiSelect);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);

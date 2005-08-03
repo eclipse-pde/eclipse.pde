@@ -71,7 +71,7 @@ public class PopupMenuTemplate extends PDETemplateSection {
 		addOption(
 			KEY_ACTION_CLASS,
 			PDEUIMessages.PopupMenuTemplate_actionClass,
-			PDEUIMessages.PopupMenuTemplate_newAction, //$NON-NLS-1$
+			PDEUIMessages.PopupMenuTemplate_newAction, 
 			0);
 		addOption(
 			KEY_SELECTION,

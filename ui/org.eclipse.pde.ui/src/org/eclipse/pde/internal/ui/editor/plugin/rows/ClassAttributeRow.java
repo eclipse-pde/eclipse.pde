@@ -134,7 +134,7 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 						IJavaElementSearchConstants.CONSIDER_ALL_TYPES, 
                         false,
 						""); //$NON-NLS-1$
-				dialog.setTitle(PDEUIMessages.ClassAttributeRow_dialogTitle); //$NON-NLS-1$
+				dialog.setTitle(PDEUIMessages.ClassAttributeRow_dialogTitle); 
 				if (dialog.open() == SelectionDialog.OK) {
 					IType type = (IType) dialog.getResult()[0];
 					text.setText(type.getFullyQualifiedName('$'));

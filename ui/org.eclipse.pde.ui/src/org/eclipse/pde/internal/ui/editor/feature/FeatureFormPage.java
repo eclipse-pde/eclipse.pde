@@ -127,7 +127,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		Section section = createStaticSection(parent, toolkit);
 		FormText text;
 		section
-				.setText(PDEUIMessages.FeatureEditor_InfoPage_ContentSection_title); //$NON-NLS-1$
+				.setText(PDEUIMessages.FeatureEditor_InfoPage_ContentSection_title); 
 		text = createClient(section, PDEUIMessages.FeatureEditor_InfoPage_ContentSection_text, toolkit);
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, //$NON-NLS-1$
@@ -139,7 +139,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 			Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(parent, toolkit);
 		section
-				.setText(PDEUIMessages.FeatureEditor_InfoPage_PackagingSection_title); //$NON-NLS-1$
+				.setText(PDEUIMessages.FeatureEditor_InfoPage_PackagingSection_title); 
 		// ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
 		// toolkit.adapt(info, true, true);
 		// Image image =
@@ -162,7 +162,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 			Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(parent, toolkit);
 		section
-				.setText(PDEUIMessages.FeatureEditor_InfoPage_PublishingSection_title); //$NON-NLS-1$
+				.setText(PDEUIMessages.FeatureEditor_InfoPage_PublishingSection_title); 
 		// ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
 		// toolkit.adapt(info, true, true);
 		// Image image =

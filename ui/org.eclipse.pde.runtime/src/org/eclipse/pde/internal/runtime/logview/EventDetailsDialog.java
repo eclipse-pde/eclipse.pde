@@ -551,21 +551,21 @@ public class EventDetailsDialog extends Dialog {
 		textContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Label label = new Label(textContainer, SWT.NONE);
-		label.setText(PDERuntimeMessages.EventDetailsDialog_date); //$NON-NLS-1$
+		label.setText(PDERuntimeMessages.EventDetailsDialog_date); 
 		dateLabel = new Label(textContainer, SWT.NULL);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		dateLabel.setLayoutData(gd);
 
 		label = new Label(textContainer, SWT.NONE);
-		label.setText(PDERuntimeMessages.EventDetailsDialog_severity); //$NON-NLS-1$
+		label.setText(PDERuntimeMessages.EventDetailsDialog_severity); 
 		severityImageLabel = new Label(textContainer, SWT.NULL);
 		severityLabel = new Label(textContainer, SWT.NULL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		severityLabel.setLayoutData(gd);
 
 		label = new Label(textContainer, SWT.NONE);
-		label.setText(PDERuntimeMessages.EventDetailsDialog_message); //$NON-NLS-1$
+		label.setText(PDERuntimeMessages.EventDetailsDialog_message); 
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
 		msgText = new Text(textContainer, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP | SWT.BORDER);
@@ -588,7 +588,7 @@ public class EventDetailsDialog extends Dialog {
 		container.setLayoutData(gd);
 
 		Label label = new Label(container, SWT.NULL);
-		label.setText(PDERuntimeMessages.EventDetailsDialog_exception); //$NON-NLS-1$
+		label.setText(PDERuntimeMessages.EventDetailsDialog_exception); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		label.setLayoutData(gd);
@@ -616,7 +616,7 @@ public class EventDetailsDialog extends Dialog {
 		line.setLayoutData(gd);
 		
 		Label label = new Label(container, SWT.NONE);
-		label.setText(PDERuntimeMessages.EventDetailsDialog_session); //$NON-NLS-1$
+		label.setText(PDERuntimeMessages.EventDetailsDialog_session); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(gd);
 		sessionDataText = new Text(container, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL );

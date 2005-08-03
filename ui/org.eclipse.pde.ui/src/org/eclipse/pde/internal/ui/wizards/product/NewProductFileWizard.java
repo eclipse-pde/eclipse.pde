@@ -29,7 +29,7 @@ public class NewProductFileWizard extends BasicNewResourceWizard {
 	 */
 	public void addPages() {
 		fMainPage = new ProductFileWizadPage("product", getSelection()); //$NON-NLS-1$
-		fMainPage.setTitle(PDEUIMessages.NewProductFileWizard_title); //$NON-NLS-1$
+		fMainPage.setTitle(PDEUIMessages.NewProductFileWizard_title); 
 		addPage(fMainPage);
 	}
 
@@ -63,7 +63,7 @@ public class NewProductFileWizard extends BasicNewResourceWizard {
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		super.init(workbench, currentSelection);
-		setWindowTitle(PDEUIMessages.NewProductFileWizard_windowTitle); //$NON-NLS-1$
+		setWindowTitle(PDEUIMessages.NewProductFileWizard_windowTitle); 
 		setNeedsProgressMonitor(true);
 	}
 	

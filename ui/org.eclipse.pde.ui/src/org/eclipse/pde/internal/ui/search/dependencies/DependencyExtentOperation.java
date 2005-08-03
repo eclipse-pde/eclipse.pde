@@ -73,7 +73,7 @@ public class DependencyExtentOperation {
 	
 	public void execute(IProgressMonitor monitor) {
 		IPlugin[] plugins = PluginJavaSearchUtil.getPluginImports(fImportID);
-		monitor.beginTask(PDEUIMessages.DependencyExtentOperation_searching + " " + fImportID + "...", 10);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		monitor.beginTask(PDEUIMessages.DependencyExtentOperation_searching + " " + fImportID + "...", 10);  //$NON-NLS-1$//$NON-NLS-2$ 
 		checkForJavaDependencies(plugins, new SubProgressMonitor(monitor, 9));
 		for (int i = 0; i < plugins.length; i++) {
 			checkForExtensionPointsUsed(plugins[i]);
@@ -118,7 +118,7 @@ public class DependencyExtentOperation {
 				if (monitor.isCanceled())
 					break;
 				IPackageFragment pkgFragment = packageFragments[i];
-				monitor.subTask(PDEUIMessages.DependencyExtentOperation_inspecting + " " + pkgFragment.getElementName()); //$NON-NLS-1$ //$NON-NLS-2$
+				monitor.subTask(PDEUIMessages.DependencyExtentOperation_inspecting + " " + pkgFragment.getElementName()); //$NON-NLS-1$ 
 				if (pkgFragment.hasChildren()) {
 					IJavaElement[] children = pkgFragment.getChildren();
 					for (int j = 0; j < children.length; j++) {

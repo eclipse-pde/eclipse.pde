@@ -43,8 +43,8 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 		if (fUnupdated.length == 0) {
 			MessageDialog.openInformation(
 					PDEPlugin.getActiveWorkbenchShell(),
-					PDEUIMessages.UpdateClasspathAction_find,  //$NON-NLS-1$
-					PDEUIMessages.UpdateClasspathAction_none); //$NON-NLS-1$
+					PDEUIMessages.UpdateClasspathAction_find,  
+					PDEUIMessages.UpdateClasspathAction_none); 
 			return;
 		}
 		if (fSelection instanceof IStructuredSelection) {

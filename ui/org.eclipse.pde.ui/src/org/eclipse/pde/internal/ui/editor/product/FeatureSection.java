@@ -45,17 +45,17 @@ public class FeatureSection extends TableSection {
 	private TableViewer fFeatureTable;
 
 	public FeatureSection(PDEFormPage formPage, Composite parent) {
-		super(formPage, parent, Section.DESCRIPTION, getButtonLabels()); //$NON-NLS-1$
+		super(formPage, parent, Section.DESCRIPTION, getButtonLabels()); 
 	}
 	
 	private static String[] getButtonLabels() {
 		String[] labels = new String[6];
-		labels[0] = PDEUIMessages.Product_FeatureSection_add; //$NON-NLS-1$
-		labels[1] = PDEUIMessages.Product_FeatureSection_remove; //$NON-NLS-1$
-		labels[2] = PDEUIMessages.Product_PluginSection_removeAll; //$NON-NLS-1$
+		labels[0] = PDEUIMessages.Product_FeatureSection_add; 
+		labels[1] = PDEUIMessages.Product_FeatureSection_remove; 
+		labels[2] = PDEUIMessages.Product_PluginSection_removeAll; 
 		labels[3] = null;
 		labels[4] = null;
-		labels[5] = PDEUIMessages.Product_FeatureSection_newFeature; //$NON-NLS-1$
+		labels[5] = PDEUIMessages.Product_FeatureSection_newFeature; 
 		return labels;
 	}
 
@@ -86,8 +86,8 @@ public class FeatureSection extends TableSection {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.verticalSpan = 2;
 		section.setLayoutData(gd);
-		section.setText(PDEUIMessages.Product_FeatureSection_title); //$NON-NLS-1$
-		section.setDescription(PDEUIMessages.Product_FeatureSection_desc); //$NON-NLS-1$		
+		section.setText(PDEUIMessages.Product_FeatureSection_title); 
+		section.setDescription(PDEUIMessages.Product_FeatureSection_desc); //		
 
 		getModel().addModelChangedListener(this);	
 	}
@@ -210,7 +210,7 @@ public class FeatureSection extends TableSection {
 		if (ssel == null)
 			return;
 		
-		Action openAction = new Action(PDEUIMessages.Product_FeatureSection_open) { //$NON-NLS-1$
+		Action openAction = new Action(PDEUIMessages.Product_FeatureSection_open) { 
 			public void run() {
 				handleDoubleClick((IStructuredSelection)fFeatureTable.getSelection());
 			}
@@ -220,7 +220,7 @@ public class FeatureSection extends TableSection {
 		
 		manager.add(new Separator());
 		
-		Action removeAction = new Action(PDEUIMessages.Product_FeatureSection_remove) { //$NON-NLS-1$
+		Action removeAction = new Action(PDEUIMessages.Product_FeatureSection_remove) { 
 			public void run() {
 				handleDelete();
 			}
@@ -228,7 +228,7 @@ public class FeatureSection extends TableSection {
 		removeAction.setEnabled(isEditable() && ssel.size() > 0);
 		manager.add(removeAction);
 		
-		Action removeAll = new Action(PDEUIMessages.FeatureSection_removeAll) { //$NON-NLS-1$
+		Action removeAll = new Action(PDEUIMessages.FeatureSection_removeAll) { 
 			public void run() {
 				handleRemoveAll();
 			}

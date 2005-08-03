@@ -159,41 +159,41 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 	
 	private void createExportDestinationSection(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
-		group.setText(PDEUIMessages.ExportWizard_destination); //$NON-NLS-1$
+		group.setText(PDEUIMessages.ExportWizard_destination); 
 		group.setLayout(new GridLayout(3, false));
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fArchiveFileButton = new Button(group, SWT.RADIO);
-		fArchiveFileButton.setText(PDEUIMessages.ExportWizard_archive); //$NON-NLS-1$
+		fArchiveFileButton.setText(PDEUIMessages.ExportWizard_archive); 
 		
 		fArchiveCombo = new Combo(group, SWT.BORDER);
 		fArchiveCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fBrowseFile = new Button(group, SWT.PUSH);
-		fBrowseFile.setText(PDEUIMessages.ExportWizard_browse); //$NON-NLS-1$
+		fBrowseFile.setText(PDEUIMessages.ExportWizard_browse); 
 		fBrowseFile.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(fBrowseFile);		
 
 		fDirectoryButton = new Button(group, SWT.RADIO);
-		fDirectoryButton.setText(PDEUIMessages.ExportWizard_directory); //$NON-NLS-1$
+		fDirectoryButton.setText(PDEUIMessages.ExportWizard_directory); 
 
 		fDirectoryCombo = new Combo(group, SWT.BORDER);
 		fDirectoryCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fBrowseDirectory = new Button(group, SWT.PUSH);
-		fBrowseDirectory.setText(PDEUIMessages.ExportWizard_browse); //$NON-NLS-1$
+		fBrowseDirectory.setText(PDEUIMessages.ExportWizard_browse); 
 		fBrowseDirectory.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(fBrowseDirectory);
 	}
 	
 	protected Composite createOptionsSection(Composite parent) {
 		Group comp = new Group(parent, SWT.NONE);
-		comp.setText(PDEUIMessages.ExportWizard_options); //$NON-NLS-1$
+		comp.setText(PDEUIMessages.ExportWizard_options); 
 		comp.setLayout(new GridLayout(3, false));
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 									
 		fIncludeSource = new Button(comp, SWT.CHECK);
-		fIncludeSource.setText(PDEUIMessages.ExportWizard_includeSource); //$NON-NLS-1$
+		fIncludeSource.setText(PDEUIMessages.ExportWizard_includeSource); 
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		fIncludeSource.setLayoutData(gd);
@@ -226,13 +226,13 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 	
 	protected void createAntSection(Composite comp) {
 		fSaveAsAntButton = new Button(comp, SWT.CHECK);
-		fSaveAsAntButton.setText(PDEUIMessages.ExportWizard_antCheck); //$NON-NLS-1$
+		fSaveAsAntButton.setText(PDEUIMessages.ExportWizard_antCheck); 
 		
 		fAntCombo = new Combo(comp, SWT.NONE);
 		fAntCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fBrowseAnt = new Button(comp, SWT.PUSH);
-		fBrowseAnt.setText(PDEUIMessages.ExportWizard_browse2); //$NON-NLS-1$
+		fBrowseAnt.setText(PDEUIMessages.ExportWizard_browse2); 
 		fBrowseAnt.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(fBrowseAnt);		
 	}
@@ -355,8 +355,8 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 		if (path.trim().length() == 0)
 			path = PDEPlugin.getWorkspace().getRoot().getLocation().toString();
 		dialog.setFilterPath(path);
-		dialog.setText(PDEUIMessages.ExportWizard_dialog_title); //$NON-NLS-1$
-		dialog.setMessage(PDEUIMessages.ExportWizard_dialog_message); //$NON-NLS-1$
+		dialog.setText(PDEUIMessages.ExportWizard_dialog_title); 
+		dialog.setMessage(PDEUIMessages.ExportWizard_dialog_message); 
 		String res = dialog.open();
 		if (res != null) {
 			if (fDirectoryCombo.indexOf(res) == -1)
@@ -376,13 +376,13 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 	protected String validateBottomSections() {
 		String message = null;
 		if (isButtonSelected(fArchiveFileButton) && fArchiveCombo.getText().trim().length() == 0) {
-			message = PDEUIMessages.ExportWizard_status_nofile; //$NON-NLS-1$
+			message = PDEUIMessages.ExportWizard_status_nofile; 
 		}
 		if (isButtonSelected(fDirectoryButton) && fDirectoryCombo.getText().trim().length() == 0) {
-			message = PDEUIMessages.ExportWizard_status_nodirectory; //$NON-NLS-1$
+			message = PDEUIMessages.ExportWizard_status_nodirectory; 
 		}
 		if (isButtonSelected(fSaveAsAntButton) && fAntCombo.getText().trim().length() == 0) {
-			message = PDEUIMessages.ExportWizard_status_noantfile; //$NON-NLS-1$
+			message = PDEUIMessages.ExportWizard_status_noantfile; 
 		}
 		return message;
 	}

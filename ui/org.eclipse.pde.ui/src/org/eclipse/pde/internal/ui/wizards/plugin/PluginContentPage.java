@@ -62,8 +62,8 @@ public class PluginContentPage extends ContentPage {
 	public PluginContentPage(String pageName, IProjectProvider provider,
 			NewProjectCreationPage page,AbstractFieldData data) {
 		super(pageName, provider, page, data);
-		setTitle(PDEUIMessages.ContentPage_title); //$NON-NLS-1$
-		setDescription(PDEUIMessages.ContentPage_desc); //$NON-NLS-1$
+		setTitle(PDEUIMessages.ContentPage_title); 
+		setDescription(PDEUIMessages.ContentPage_desc); 
 	}
 	
 	/* (non-Javadoc)
@@ -86,26 +86,26 @@ public class PluginContentPage extends ContentPage {
 		Group propertiesGroup = new Group(container, SWT.NONE);
 		propertiesGroup.setLayout(new GridLayout(2, false));
 		propertiesGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		propertiesGroup.setText(PDEUIMessages.ContentPage_pGroup); //$NON-NLS-1$
+		propertiesGroup.setText(PDEUIMessages.ContentPage_pGroup); 
 
 		Label label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.ContentPage_pid); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ContentPage_pid); 
 		fIdText = createText(propertiesGroup, propertiesListener);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.ContentPage_pversion); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ContentPage_pversion); 
 		fVersionText = createText(propertiesGroup, propertiesListener);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.ContentPage_pname); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ContentPage_pname); 
 		fNameText = createText(propertiesGroup, propertiesListener);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.ContentPage_pprovider); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ContentPage_pprovider); 
 		fProviderText = createText(propertiesGroup, propertiesListener);
 
 		fLibraryLabel = new Label(propertiesGroup, SWT.NONE);
-		fLibraryLabel.setText(PDEUIMessages.ProjectStructurePage_library); //$NON-NLS-1$
+		fLibraryLabel.setText(PDEUIMessages.ProjectStructurePage_library); 
 		fLibraryText = createText(propertiesGroup, propertiesListener);
 	}
 
@@ -115,10 +115,10 @@ public class PluginContentPage extends ContentPage {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		classGroup.setLayoutData(gd);
-		classGroup.setText(PDEUIMessages.ContentPage_pClassGroup); //$NON-NLS-1$
+		classGroup.setText(PDEUIMessages.ContentPage_pClassGroup); 
 
 		fGenerateClass = new Button(classGroup, SWT.CHECK);
-		fGenerateClass.setText(PDEUIMessages.ContentPage_generate); //$NON-NLS-1$
+		fGenerateClass.setText(PDEUIMessages.ContentPage_generate); 
 		fGenerateClass.setSelection(true);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
@@ -135,14 +135,14 @@ public class PluginContentPage extends ContentPage {
 		});
 
 		fClassLabel = new Label(classGroup, SWT.NONE);
-		fClassLabel.setText(PDEUIMessages.ContentPage_classname); //$NON-NLS-1$
+		fClassLabel.setText(PDEUIMessages.ContentPage_classname); 
 		gd = new GridData();
 		gd.horizontalIndent = 20;
 		fClassLabel.setLayoutData(gd);
 		fClassText = createText(classGroup, classListener);
 
 		fUIPlugin = new Button(classGroup, SWT.CHECK);
-		fUIPlugin.setText(PDEUIMessages.ContentPage_uicontribution); //$NON-NLS-1$
+		fUIPlugin.setText(PDEUIMessages.ContentPage_uicontribution); 
 		fUIPlugin.setSelection(true);
 		gd = new GridData();
 		gd.horizontalIndent = 20;
@@ -173,7 +173,7 @@ public class PluginContentPage extends ContentPage {
 	    fRCPGroup = new Group(container, SWT.NONE);
 	    fRCPGroup.setLayout(new GridLayout(2, false));
 	    fRCPGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    fRCPGroup.setText(PDEUIMessages.PluginContentPage_rcpGroup); //$NON-NLS-1$
+	    fRCPGroup.setText(PDEUIMessages.PluginContentPage_rcpGroup); 
 	    
 	    createRCPQuestion(fRCPGroup, 2);    
 	}
@@ -188,11 +188,11 @@ public class PluginContentPage extends ContentPage {
 	    comp.setLayoutData(gd);
 	    
 	    fLabel = new Label(comp, SWT.NONE);
-	    fLabel.setText(PDEUIMessages.PluginContentPage_appQuestion); //$NON-NLS-1$
+	    fLabel.setText(PDEUIMessages.PluginContentPage_appQuestion); 
 	    fLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    
 	    fYesButton = new Button(comp, SWT.RADIO);
-	    fYesButton.setText(PDEUIMessages.PluginContentPage_yes); //$NON-NLS-1$
+	    fYesButton.setText(PDEUIMessages.PluginContentPage_yes); 
 	    fYesButton.setSelection(false);
 	    gd = new GridData();
 	    gd.widthHint = getButtonWidthHint(fYesButton);
@@ -205,7 +205,7 @@ public class PluginContentPage extends ContentPage {
 	    });
 	    
 	    fNoButton = new Button(comp, SWT.RADIO);
-	    fNoButton.setText(PDEUIMessages.PluginContentPage_no); //$NON-NLS-1$
+	    fNoButton.setText(PDEUIMessages.PluginContentPage_no); 
 	    fNoButton.setSelection(true);
 	    gd = new GridData();
 	    gd.widthHint = getButtonWidthHint(fNoButton);
@@ -261,7 +261,7 @@ public class PluginContentPage extends ContentPage {
                 status = JavaConventions.validatePackageName(buffer.toString());
                 if (status.getSeverity() == IStatus.ERROR)
                     buffer.append(suffix.toLowerCase(Locale.ENGLISH));
-				buffer.append("." + Character.toUpperCase(token.charAt(0)) + token.substring(1) + suffix); //$NON-NLS-1$ //$NON-NLS-2$
+				buffer.append("." + Character.toUpperCase(token.charAt(0)) + token.substring(1) + suffix); //$NON-NLS-1$ 
             }
 		}
 		text.setText(buffer.toString());
@@ -274,7 +274,7 @@ public class PluginContentPage extends ContentPage {
 		String errorMessage = validateProperties();
 		if (errorMessage == null && !fData.isSimple()) {
 			if (fLibraryText.getText().trim().length() == 0 && fData.getTargetVersion().equals(ICoreConstants.TARGET21)) {
-				errorMessage = PDEUIMessages.PluginContentPage_noLibrary; //$NON-NLS-1$
+				errorMessage = PDEUIMessages.PluginContentPage_noLibrary; 
 			}	
 		}
 		if (errorMessage == null && fGenerateClass.isEnabled() && fGenerateClass.getSelection()) {
@@ -293,7 +293,7 @@ public class PluginContentPage extends ContentPage {
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#getNameFieldQualifier()
 	 */
 	protected String getNameFieldQualifier() {
-		return PDEUIMessages.ContentPage_plugin; //$NON-NLS-1$
+		return PDEUIMessages.ContentPage_plugin; 
 	}
 	
 	private static int getButtonWidthHint(Button button) {

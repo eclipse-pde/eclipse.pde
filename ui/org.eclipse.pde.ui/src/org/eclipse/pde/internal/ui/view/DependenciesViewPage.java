@@ -58,7 +58,7 @@ public abstract class DependenciesViewPage extends Page {
 			setEnabled(object != null);
 			String name = ((LabelProvider) fViewer.getLabelProvider())
 					.getText(object);
-			setText(NLS.bind(PDEUIMessages.DependenciesViewPage_focusOnSelection, name)); //$NON-NLS-1$
+			setText(NLS.bind(PDEUIMessages.DependenciesViewPage_focusOnSelection, name)); 
 		}
 	}
 
@@ -250,7 +250,7 @@ public abstract class DependenciesViewPage extends Page {
 				handleDoubleClick();
 			}
 		};
-		fOpenAction.setText(PDEUIMessages.DependenciesView_open); //$NON-NLS-1$
+		fOpenAction.setText(PDEUIMessages.DependenciesView_open); 
 
 		fFocusOnSelectionAction = new FocusOnSelectionAction();
 
@@ -259,7 +259,7 @@ public abstract class DependenciesViewPage extends Page {
 				handleFocusOn();
 			}
 		};
-		fFocusOnAction.setText(PDEUIMessages.DependenciesViewPage_focusOn); //$NON-NLS-1$
+		fFocusOnAction.setText(PDEUIMessages.DependenciesViewPage_focusOn); 
 	}
 
 	/*

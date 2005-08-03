@@ -29,9 +29,9 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 	class CollapseAllAction extends Action {
 		public CollapseAllAction() {
 			super();
-			setText(PDEUIMessages.DependenciesViewTreePage_CollapseAllAction_label); //$NON-NLS-1$
-			setDescription(PDEUIMessages.DependenciesViewTreePage_CollapseAllAction_description); //$NON-NLS-1$
-			setToolTipText(PDEUIMessages.DependenciesViewTreePage_CollapseAllAction_tooltip); //$NON-NLS-1$
+			setText(PDEUIMessages.DependenciesViewTreePage_CollapseAllAction_label); 
+			setDescription(PDEUIMessages.DependenciesViewTreePage_CollapseAllAction_description); 
+			setToolTipText(PDEUIMessages.DependenciesViewTreePage_CollapseAllAction_tooltip); 
 			setImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL);
 			setDisabledImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL);
 		}

@@ -48,7 +48,7 @@ public final class OpenLogDialog extends Dialog {
      */
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText(PDERuntimeMessages.OpenLogDialog_title); //$NON-NLS-1$
+        newShell.setText(PDERuntimeMessages.OpenLogDialog_title); 
         readConfiguration();
     }
 
@@ -212,11 +212,11 @@ public final class OpenLogDialog extends Dialog {
                     InterruptedException {
                 monitor
                         .beginTask(
-                                PDERuntimeMessages.OpenLogDialog_message, IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+                                PDERuntimeMessages.OpenLogDialog_message, IProgressMonitor.UNKNOWN); 
                 try {
                     readLargeFile(writer);
                 } catch (IOException e) {
-                    writer.println(PDERuntimeMessages.OpenLogDialog_cannotDisplay); //$NON-NLS-1$
+                    writer.println(PDERuntimeMessages.OpenLogDialog_cannotDisplay); 
                 }
             }
         };
@@ -234,11 +234,11 @@ public final class OpenLogDialog extends Dialog {
                     InterruptedException {
                 monitor
                         .beginTask(
-                                PDERuntimeMessages.OpenLogDialog_message, IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+                                PDERuntimeMessages.OpenLogDialog_message, IProgressMonitor.UNKNOWN); 
                 try {
                     readFile(writer);
                 } catch (IOException e) {
-                    writer.println(PDERuntimeMessages.OpenLogDialog_cannotDisplay); //$NON-NLS-1$
+                    writer.println(PDERuntimeMessages.OpenLogDialog_cannotDisplay); 
                 }
             }
         };

@@ -46,14 +46,14 @@ public class WindowImagesSection extends PDESection {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText(PDEUIMessages.WindowImagesSection_title); //$NON-NLS-1$
-		section.setDescription(PDEUIMessages.WindowImagesSection_desc); //$NON-NLS-1$
+		section.setText(PDEUIMessages.WindowImagesSection_title); 
+		section.setDescription(PDEUIMessages.WindowImagesSection_desc); 
 
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(new GridLayout(3, false));
 		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-		fImage16 = new FormEntry(client, toolkit, PDEUIMessages.WindowImagesSection_small, PDEUIMessages.WindowImagesSection_browse, isEditable()); //$NON-NLS-1$ //$NON-NLS-2$
+		fImage16 = new FormEntry(client, toolkit, PDEUIMessages.WindowImagesSection_small, PDEUIMessages.WindowImagesSection_browse, isEditable()); // 
 		fImage16.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getWindowImages().setSmallImagePath(entry.getValue());
@@ -67,7 +67,7 @@ public class WindowImagesSection extends PDESection {
 		});
 		fImage16.setEditable(isEditable());
 		
-		fImage32 = new FormEntry(client, toolkit, PDEUIMessages.WindowImagesSection_large, PDEUIMessages.WindowImagesSection_browse, isEditable()); //$NON-NLS-1$ //$NON-NLS-2$
+		fImage32 = new FormEntry(client, toolkit, PDEUIMessages.WindowImagesSection_large, PDEUIMessages.WindowImagesSection_browse, isEditable()); // 
 		fImage32.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getWindowImages().setLargeImagePath(entry.getValue());
@@ -131,8 +131,8 @@ public class WindowImagesSection extends PDESection {
 				
 		dialog.setValidator(new FileValidator());
 		dialog.setAllowMultiple(false);
-		dialog.setTitle(PDEUIMessages.WindowImagesSection_dialogTitle);  //$NON-NLS-1$
-		dialog.setMessage(PDEUIMessages.WindowImagesSection_dialogMessage); //$NON-NLS-1$
+		dialog.setTitle(PDEUIMessages.WindowImagesSection_dialogTitle);  
+		dialog.setMessage(PDEUIMessages.WindowImagesSection_dialogMessage); 
 		dialog.addFilter(new FileExtensionFilter("gif")); //$NON-NLS-1$
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 
@@ -146,7 +146,7 @@ public class WindowImagesSection extends PDESection {
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 		IPath path = new Path(value);
 		if(path.isEmpty()){
-			MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_emptyPath); //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_emptyPath); // 
 			return;
 		}
 		if (!path.isAbsolute()) {
@@ -157,7 +157,7 @@ public class WindowImagesSection extends PDESection {
 			if (resource != null && resource instanceof IFile)
 				IDE.openEditor(PDEPlugin.getActivePage(), (IFile)resource, true);
 			else
-				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_warning); //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_warning); // 
 		} catch (PartInitException e) {
 		}			
 	}

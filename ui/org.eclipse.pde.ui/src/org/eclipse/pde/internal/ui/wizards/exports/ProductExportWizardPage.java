@@ -57,8 +57,8 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 	public ProductExportWizardPage(IStructuredSelection selection) {
 		super("productExport"); //$NON-NLS-1$
 		fSelection = selection;
-		setTitle(PDEUIMessages.ProductExportWizardPage_title); //$NON-NLS-1$
-		setDescription(PDEUIMessages.ProductExportWizardPage_desc); //$NON-NLS-1$
+		setTitle(PDEUIMessages.ProductExportWizardPage_title); 
+		setDescription(PDEUIMessages.ProductExportWizardPage_desc); 
 	}
 
 	protected void createTopSection(Composite parent) {
@@ -100,16 +100,16 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 		Group group = new Group(parent, SWT.NONE);
 		group.setLayout(new GridLayout(3, false));
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(PDEUIMessages.ProductExportWizardPage_productGroup); //$NON-NLS-1$
+		group.setText(PDEUIMessages.ProductExportWizardPage_productGroup); 
 		
 		Label label = new Label(group, SWT.NONE);
-		label.setText(PDEUIMessages.ProductExportWizardPage_config); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ProductExportWizardPage_config); 
 		
 		fProductCombo = new Combo(group, SWT.BORDER);
 		fProductCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Button browse = new Button(group, SWT.PUSH);
-		browse.setText(PDEUIMessages.ProductExportWizardPage_browse); //$NON-NLS-1$
+		browse.setText(PDEUIMessages.ProductExportWizardPage_browse); 
 		browse.setLayoutData(new GridData());
 		browse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -119,7 +119,7 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 		SWTUtil.setButtonDimensionHint(browse);
 		
 		label = new Label(group, SWT.NONE);
-		label.setText(PDEUIMessages.ProductExportWizardPage_root); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ProductExportWizardPage_root); 
 		
 		fProductRootText = new Text(group, SWT.SINGLE|SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -133,23 +133,23 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 		layout.verticalSpacing = 7;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(PDEUIMessages.ProductExportWizardPage_sync); //$NON-NLS-1$
+		group.setText(PDEUIMessages.ProductExportWizardPage_sync); 
 		
 		Label label = new Label(group, SWT.WRAP);
-		label.setText(PDEUIMessages.ProductExportWizardPage_syncText); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ProductExportWizardPage_syncText); 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 400;
 		label.setLayoutData(gd);
 		
 		fSyncButton = new Button(group, SWT.CHECK);
-		fSyncButton.setText(PDEUIMessages.ProductExportWizardPage_syncButton); //$NON-NLS-1$
+		fSyncButton.setText(PDEUIMessages.ProductExportWizardPage_syncButton); 
 		gd = new GridData();
 		gd.horizontalIndent = 20;
 		fSyncButton.setLayoutData(gd);
 	}
 	
 	protected String getJarButtonText() {
-		return PDEUIMessages.BaseExportWizardPage_packageJARs; //$NON-NLS-1$
+		return PDEUIMessages.BaseExportWizardPage_packageJARs; 
 	}
 	
 	protected void hookListeners() {
@@ -174,14 +174,14 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 		String message = null;
 		String configLocation = fProductCombo.getText().trim();
 		if (configLocation.length() == 0) {
-			message = PDEUIMessages.ProductExportWizardPage_noProduct; //$NON-NLS-1$
+			message = PDEUIMessages.ProductExportWizardPage_noProduct; 
 		} else {
 			IPath path = new Path(configLocation);
 			IResource resource = PDEPlugin.getWorkspace().getRoot().findMember(path);
 			if (resource == null || !(resource instanceof IFile)) {
-				errorMessage = PDEUIMessages.ProductExportWizardPage_productNotExists; //$NON-NLS-1$
+				errorMessage = PDEUIMessages.ProductExportWizardPage_productNotExists; 
 			} else if (!path.lastSegment().endsWith(".product")) { //$NON-NLS-1$
-				errorMessage = PDEUIMessages.ProductExportWizardPage_wrongExtension; //$NON-NLS-1$
+				errorMessage = PDEUIMessages.ProductExportWizardPage_wrongExtension; 
 			}
 		}
 		if (message == null && errorMessage == null)
@@ -207,8 +207,8 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 				
 		dialog.setValidator(new FileValidator());
 		dialog.setAllowMultiple(false);
-		dialog.setTitle(PDEUIMessages.ProductExportWizardPage_fileSelection); //$NON-NLS-1$
-		dialog.setMessage(PDEUIMessages.ProductExportWizardPage_productSelection); //$NON-NLS-1$
+		dialog.setTitle(PDEUIMessages.ProductExportWizardPage_fileSelection); 
+		dialog.setMessage(PDEUIMessages.ProductExportWizardPage_productSelection); 
 		dialog.addFilter(new FileExtensionFilter("product"));  //$NON-NLS-1$
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 		IFile product = getProductFile();

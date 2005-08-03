@@ -81,8 +81,8 @@ public class HistoryAction extends Action {
 		setImageDescriptor(getImageDescriptor(elementName));
 		setDisabledImageDescriptor(PDEPluginImages.DESC_PLUGIN_OBJ);
 
-		setDescription(NLS.bind(PDEUIMessages.HistoryAction_description, elementName)); //$NON-NLS-1$
-		setToolTipText(NLS.bind(PDEUIMessages.HistoryAction_tooltip, elementName)); //$NON-NLS-1$
+		setDescription(NLS.bind(PDEUIMessages.HistoryAction_description, elementName)); 
+		setToolTipText(NLS.bind(PDEUIMessages.HistoryAction_tooltip, elementName)); 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IHelpContextIds.HISTORY_ACTION);
 	}
 

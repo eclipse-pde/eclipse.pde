@@ -96,14 +96,14 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 			monitor = new NullProgressMonitor();
 		}
 		monitor.beginTask(
-			PDEUIMessages.FeatureImportWizard_operation_creating, //$NON-NLS-1$
+			PDEUIMessages.FeatureImportWizard_operation_creating, 
 			fModels.length);
 		try {
 			MultiStatus multiStatus =
 				new MultiStatus(
 					PDEPlugin.getPluginId(),
 					IStatus.OK,
-					PDEUIMessages.FeatureImportWizard_operation_multiProblem, //$NON-NLS-1$
+					PDEUIMessages.FeatureImportWizard_operation_multiProblem, 
 					null);
 			for (int i = 0; i < fModels.length; i++) {
 				try {

@@ -75,7 +75,7 @@ public class NewLibraryPluginCreationOperation extends
 		String jarName = jarFile.getName();
 		IFile file = project.getFile(jarName);
 		monitor.subTask(NLS.bind(
-				PDEUIMessages.NewProjectCreationOperation_copyingJar, jarName)); //$NON-NLS-1$
+				PDEUIMessages.NewProjectCreationOperation_copyingJar, jarName)); 
 		InputStream in = null;
 		try {
 			in = new FileInputStream(jarFile);
@@ -280,7 +280,7 @@ public class NewLibraryPluginCreationOperation extends
 			if (".".equals(packages[i].getName())) { //$NON-NLS-1$
 				header.removePackage(packages[i]);
 				return new ReplaceEdit(header.getOffset(), header.getLength(),
-						header.write() + newLine); //$NON-NLS-1$
+						header.write() + newLine); 
 			}
 		}
 		return null;

@@ -48,7 +48,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 	}
 	
 	protected String getSectionDescription() {
-		return PDEUIMessages.ManifestEditor_PluginSpecSection_fdesc; //$NON-NLS-1$
+		return PDEUIMessages.ManifestEditor_PluginSpecSection_fdesc; 
 	}
 	
 	protected void createSpecificControls(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
@@ -62,8 +62,8 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		fPluginIdEntry = new FormEntry(
 				parent,
 				toolkit,
-				PDEUIMessages.GeneralInfoSection_pluginId,  //$NON-NLS-1$
-				PDEUIMessages.GeneralInfoSection_browse, //$NON-NLS-1$ 
+				PDEUIMessages.GeneralInfoSection_pluginId,  
+				PDEUIMessages.GeneralInfoSection_browse, // 
 				isEditable());
 		fPluginIdEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {

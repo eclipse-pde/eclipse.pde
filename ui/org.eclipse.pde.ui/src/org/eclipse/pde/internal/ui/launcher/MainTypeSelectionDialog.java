@@ -47,9 +47,9 @@ public class MainTypeSelectionDialog extends TwoPaneElementSelector {
 
 		Assert.isNotNull(types);
 		fTypes= types;
-		setMessage(PDEUIMessages.MainTypeSelectionDialog_chooseType);		 //$NON-NLS-1$
-		setUpperListLabel(PDEUIMessages.MainTypeSelectionDialog_matching); //$NON-NLS-1$
-		setLowerListLabel(PDEUIMessages.MainTypeSelectionDialog_qualifier);  //$NON-NLS-1$
+		setMessage(PDEUIMessages.MainTypeSelectionDialog_chooseType);		 
+		setUpperListLabel(PDEUIMessages.MainTypeSelectionDialog_matching); 
+		setLowerListLabel(PDEUIMessages.MainTypeSelectionDialog_qualifier);  
 	}
 
 	/**

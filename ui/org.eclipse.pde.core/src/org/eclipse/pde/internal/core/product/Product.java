@@ -142,7 +142,7 @@ public class Product extends ProductObject implements IProduct {
 		}
 		
 		writer.println();
-		writer.println(indent + "   <plugins>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		writer.println(indent + "   <plugins>"); //$NON-NLS-1$  
 		Iterator iter = fPlugins.values().iterator();
 		while (iter.hasNext()) {
 			IProductPlugin plugin = (IProductPlugin)iter.next();
@@ -190,9 +190,9 @@ public class Product extends ProductObject implements IProduct {
 		if (node.getNodeType() == Node.ELEMENT_NODE 
 				&& node.getNodeName().equals("product")) { //$NON-NLS-1$
 			Element element = (Element)node;
-			fApplication = element.getAttribute(P_APPLICATION); //$NON-NLS-1$
-			fId = element.getAttribute(P_ID); //$NON-NLS-1$
-			fName = element.getAttribute(P_NAME); //$NON-NLS-1$
+			fApplication = element.getAttribute(P_APPLICATION); 
+			fId = element.getAttribute(P_ID); 
+			fName = element.getAttribute(P_NAME); 
 			fUseFeatures = "true".equals(element.getAttribute(P_USEFEATURES)); //$NON-NLS-1$
 			NodeList children = node.getChildNodes();
 			IProductModelFactory factory = getModel().getFactory();

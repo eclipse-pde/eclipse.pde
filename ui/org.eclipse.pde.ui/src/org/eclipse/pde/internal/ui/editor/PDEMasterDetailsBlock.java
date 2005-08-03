@@ -49,7 +49,7 @@ public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {
 			}
 		};
 		haction.setChecked(true);
-		haction.setToolTipText(PDEUIMessages.DetailsBlock_horizontal); //$NON-NLS-1$
+		haction.setToolTipText(PDEUIMessages.DetailsBlock_horizontal); 
 		haction.setImageDescriptor(PDEPluginImages.DESC_HORIZONTAL);
 		haction.setDisabledImageDescriptor(PDEPluginImages.DESC_HORIZONTAL_DISABLED);
 
@@ -60,7 +60,7 @@ public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {
 			}
 		};
 		vaction.setChecked(false);
-		vaction.setToolTipText(PDEUIMessages.DetailsBlock_vertical); //$NON-NLS-1$
+		vaction.setToolTipText(PDEUIMessages.DetailsBlock_vertical); 
 		vaction.setImageDescriptor(PDEPluginImages.DESC_VERTICAL);
 		vaction.setDisabledImageDescriptor(PDEPluginImages.DESC_VERTICAL_DISABLED);
 		form.getToolBarManager().add(haction);

@@ -157,7 +157,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			if (sibling.getOffset() > -1) {
 				node.setLineIndent(sibling.getLineIndent());
 				String sep = TextUtilities.getDefaultLineDelimiter(getDocumentProvider().getDocument(getInput()));
-				return new InsertEdit(sibling.getOffset() + sibling.getLength(), sep + node.write(true)); //$NON-NLS-1$
+				return new InsertEdit(sibling.getOffset() + sibling.getLength(), sep + node.write(true)); 
 			}
 			sibling = sibling.getPreviousSibling();
 		}
@@ -169,7 +169,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		int length = getNextPosition(getDocumentProvider().getDocument(getInput()), offset, '>');
 		node.setLineIndent(node.getParentNode().getLineIndent() + 3);
 		String sep = TextUtilities.getDefaultLineDelimiter(getDocumentProvider().getDocument(getInput()));
-		return new InsertEdit(offset+ length + 1, sep + node.write(true));	 //$NON-NLS-1$
+		return new InsertEdit(offset+ length + 1, sep + node.write(true));	 
 	}
 	
 
@@ -289,7 +289,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				// add text as first child
 				changedObject = parent;
 				String sep = TextUtilities.getDefaultLineDelimiter(getDocumentProvider().getDocument(getInput()));
-				StringBuffer buffer = new StringBuffer(sep); //$NON-NLS-1$
+				StringBuffer buffer = new StringBuffer(sep); 
 				for (int i = 0; i < parent.getLineIndent(); i++) 
 					buffer.append(" "); //$NON-NLS-1$
 				buffer.append("   " + getWritableString(textNode.getText())); //$NON-NLS-1$

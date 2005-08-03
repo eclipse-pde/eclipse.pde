@@ -35,8 +35,8 @@ public class ShowResultsAction extends Action {
 		if (fUnusedImports.length == 0) {
 			MessageDialog.openInformation(
 				PDEPlugin.getActiveWorkbenchShell(),
-				PDEUIMessages.UnusedDependencies_title, //$NON-NLS-1$
-				PDEUIMessages.UnusedDependencies_notFound); //$NON-NLS-1$
+				PDEUIMessages.UnusedDependencies_title, 
+				PDEUIMessages.UnusedDependencies_notFound); 
 		} else {
 			Dialog dialog;
 			if (fReadOnly) {
@@ -49,7 +49,7 @@ public class ShowResultsAction extends Action {
 			}
 			dialog.create();
 			dialog.getShell().setText(
-				PDEUIMessages.UnusedDependencies_title); //$NON-NLS-1$
+				PDEUIMessages.UnusedDependencies_title); 
 			dialog.open();
 		} 
 	}

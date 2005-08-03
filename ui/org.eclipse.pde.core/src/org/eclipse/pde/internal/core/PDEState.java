@@ -242,7 +242,7 @@ public class PDEState extends MinimalState {
 		info.project = element.getAttribute("project"); //$NON-NLS-1$
 		info.legacy = "true".equals(element.getAttribute("legacy")); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		NodeList libs = element.getChildNodes(); //$NON-NLS-1$
+		NodeList libs = element.getChildNodes(); 
 		ArrayList list = new ArrayList(libs.getLength());
 		for (int i = 0; i < libs.getLength(); i++) {
 			if (libs.item(i).getNodeType() == Node.ELEMENT_NODE) {
@@ -693,7 +693,7 @@ public class PDEState extends MinimalState {
 					String name = child.getName();
 					if (name.endsWith(extension)
 							&& name.length() > extension.length()
-							&& !name.equals(Long.toString(latest) + extension)) { //$NON-NLS-1$
+							&& !name.equals(Long.toString(latest) + extension)) { 
 						CoreUtility.deleteContent(child);
 					}
 				}

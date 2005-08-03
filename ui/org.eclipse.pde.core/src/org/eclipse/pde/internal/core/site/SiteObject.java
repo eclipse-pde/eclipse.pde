@@ -36,7 +36,7 @@ public abstract class SiteObject
 
 	protected void ensureModelEditable() throws CoreException {
 		if (!model.isEditable()) {
-			throwCoreException(PDECoreMessages.SiteObject_readOnlyChange); //$NON-NLS-1$
+			throwCoreException(PDECoreMessages.SiteObject_readOnlyChange); 
 		}
 	}
 	protected void firePropertyChanged(

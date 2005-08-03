@@ -170,11 +170,11 @@ public class PDEMultiPageContentOutline extends Page
 		public SortingAction() {
 			super();
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IHelpContextIds.OUTLINE_SORT_ACTION);
-			setText(PDEUIMessages.PDEMultiPageContentOutline_SortingAction_label); //$NON-NLS-1$
+			setText(PDEUIMessages.PDEMultiPageContentOutline_SortingAction_label); 
 			setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO);
 			setDisabledImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO_DISABLED);
-			setToolTipText(PDEUIMessages.PDEMultiPageContentOutline_SortingAction_tooltip); //$NON-NLS-1$
-			setDescription(PDEUIMessages.PDEMultiPageContentOutline_SortingAction_description); //$NON-NLS-1$
+			setToolTipText(PDEUIMessages.PDEMultiPageContentOutline_SortingAction_tooltip); 
+			setDescription(PDEUIMessages.PDEMultiPageContentOutline_SortingAction_description); 
 			setChecked(sortingOn);
 		}
 		

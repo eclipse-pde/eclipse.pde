@@ -34,15 +34,15 @@ public class EditorPreferencePage
 	public EditorPreferencePage() {
 		super(GRID);
 		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
-		setDescription(PDEUIMessages.EditorPreferencePage_desc); //$NON-NLS-1$
+		setDescription(PDEUIMessages.EditorPreferencePage_desc); 
 	}
 	
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(P_USE_SOURCE_PAGE, 
-				PDEUIMessages.EditorPreferencePage_useSourcePage, //$NON-NLS-1$
+				PDEUIMessages.EditorPreferencePage_useSourcePage, 
 				getFieldEditorParent()));
 		addLabel("", 2); //$NON-NLS-1$
-		addLabel(PDEUIMessages.EditorPreferencePage_colorSettings, 2); //$NON-NLS-1$
+		addLabel(PDEUIMessages.EditorPreferencePage_colorSettings, 2); 
 		addSourceColorFields();
 	}
 	
@@ -68,27 +68,27 @@ public class EditorPreferencePage
 		addField(
 			new ColorFieldEditor(
 				IPDEColorConstants.P_DEFAULT,
-				PDEUIMessages.EditorPreferencePage_text, //$NON-NLS-1$
+				PDEUIMessages.EditorPreferencePage_text, 
 				getFieldEditorParent()));
 		addField(
 			new ColorFieldEditor(
 				IPDEColorConstants.P_PROC_INSTR,
-				PDEUIMessages.EditorPreferencePage_proc, //$NON-NLS-1$
+				PDEUIMessages.EditorPreferencePage_proc, 
 				getFieldEditorParent()));
 		addField(
 			new ColorFieldEditor(
 				IPDEColorConstants.P_STRING,
-				PDEUIMessages.EditorPreferencePage_string, //$NON-NLS-1$
+				PDEUIMessages.EditorPreferencePage_string, 
 				getFieldEditorParent()));
 		addField(
 			new ColorFieldEditor(
 				IPDEColorConstants.P_TAG,
-				PDEUIMessages.EditorPreferencePage_tag, //$NON-NLS-1$
+				PDEUIMessages.EditorPreferencePage_tag, 
 				getFieldEditorParent()));
 		addField(
 			new ColorFieldEditor(
 				IPDEColorConstants.P_XML_COMMENT,
-				PDEUIMessages.EditorPreferencePage_comment, //$NON-NLS-1$
+				PDEUIMessages.EditorPreferencePage_comment, 
 				getFieldEditorParent()));
 	}
 

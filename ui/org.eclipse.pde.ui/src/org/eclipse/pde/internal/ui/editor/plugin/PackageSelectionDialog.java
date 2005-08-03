@@ -72,7 +72,7 @@ public class PackageSelectionDialog extends ElementListSelectionDialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Control control = super.createDialogArea(parent);
-		getShell().setText(PDEUIMessages.PackageSelectionDialog_title); //$NON-NLS-1$
+		getShell().setText(PDEUIMessages.PackageSelectionDialog_title); 
 		return control;
 	}
 }

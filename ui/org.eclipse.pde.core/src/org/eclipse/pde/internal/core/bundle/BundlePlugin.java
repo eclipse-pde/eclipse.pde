@@ -57,7 +57,7 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 	}
 
 	public boolean hasExtensibleAPI() {
-		return "true".equals(parseSingleValuedHeader(ICoreConstants.EXTENSIBLE_API)); //$NON-NLS-1$ //$NON-NLS-2$
+		return "true".equals(parseSingleValuedHeader(ICoreConstants.EXTENSIBLE_API)); //$NON-NLS-1$ 
 	}
 	
 }

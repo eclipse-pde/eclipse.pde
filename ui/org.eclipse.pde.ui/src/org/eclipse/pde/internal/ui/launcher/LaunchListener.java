@@ -138,8 +138,8 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
                 Display.getDefault().asyncExec(new Runnable() {
                     public void run() {
                         MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(),
-                                PDEUIMessages.Launcher_error_title, //$NON-NLS-1$
-                                PDEUIMessages.Launcher_error_code15); //$NON-NLS-1$
+                                PDEUIMessages.Launcher_error_title, 
+                                PDEUIMessages.Launcher_error_code15); 
                     }
                 });
                 return;
@@ -153,9 +153,9 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
                             if (log != null && log.exists()) {
                         		MessageDialog dialog = new MessageDialog(
                             		PDEPlugin.getActiveWorkbenchShell(),
-                            		PDEUIMessages.Launcher_error_title, //$NON-NLS-1$
+                            		PDEUIMessages.Launcher_error_title, 
                             		null, // accept the default window icon
-                            		PDEUIMessages.Launcher_error_code13, //$NON-NLS-1$
+                            		PDEUIMessages.Launcher_error_code13, 
                             		MessageDialog.ERROR,
                             		new String[] {
                             			PDEUIMessages.Launcher_error_displayInLogView,

@@ -35,7 +35,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_FEATURE_IMPORT_WIZ);
-		setWindowTitle(PDEUIMessages.FeatureImportWizard_title); //$NON-NLS-1$
+		setWindowTitle(PDEUIMessages.FeatureImportWizard_title); 
 	}
 
 	/*
@@ -139,7 +139,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 					IDialogConstants.YES_LABEL,
 					IDialogConstants.YES_TO_ALL_LABEL,
 					IDialogConstants.NO_LABEL,
-					PDEUIMessages.FeatureImportWizard_noToAll, //$NON-NLS-1$
+					PDEUIMessages.FeatureImportWizard_noToAll, 
 					IDialogConstants.CANCEL_LABEL },
 				0);
 		}

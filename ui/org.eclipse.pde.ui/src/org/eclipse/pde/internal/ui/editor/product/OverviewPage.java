@@ -45,7 +45,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	public static final String PAGE_ID = "overview"; //$NON-NLS-1$
 
 	public OverviewPage(FormEditor editor) {
-		super(editor, PAGE_ID, PDEUIMessages.OverviewPage_title); //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEUIMessages.OverviewPage_title); 
 	}
 	
 	/* (non-Javadoc)
@@ -55,7 +55,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		form.setText(PDEUIMessages.OverviewPage_title);  //$NON-NLS-1$
+		form.setText(PDEUIMessages.OverviewPage_title);  
 		fillBody(managedForm, toolkit);
 		managedForm.refresh();
 		
@@ -86,8 +86,8 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	private void createTestingSection(Composite parent, FormToolkit toolkit) {
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR);
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
-		section.setText(PDEUIMessages.Product_OverviewPage_testing); //$NON-NLS-1$
-		FormText text = createClient(section, PDEUIMessages.Product_overview_testing, toolkit); //$NON-NLS-1$
+		section.setText(PDEUIMessages.Product_OverviewPage_testing); 
+		FormText text = createClient(section, PDEUIMessages.Product_overview_testing, toolkit); 
 		text.setImage("run", getImage(PDEPluginImages.DESC_RUN_EXC)); //$NON-NLS-1$
 		text.setImage("debug", getImage(PDEPluginImages.DESC_DEBUG_EXC)); //$NON-NLS-1$
 		text.addHyperlinkListener(this);
@@ -98,8 +98,8 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	private void createExportingSection(Composite parent, FormToolkit toolkit) {
 		Section section = toolkit.createSection(parent, Section.TITLE_BAR);
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
-		section.setText(PDEUIMessages.OverviewPage_exportingTitle); //$NON-NLS-1$
-		FormText text = createClient(section, PDEUIMessages.Product_overview_exporting, toolkit); //$NON-NLS-1$
+		section.setText(PDEUIMessages.OverviewPage_exportingTitle); 
+		FormText text = createClient(section, PDEUIMessages.Product_overview_exporting, toolkit); 
 		text.addHyperlinkListener(this);
 		section.setClient(text);
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));		

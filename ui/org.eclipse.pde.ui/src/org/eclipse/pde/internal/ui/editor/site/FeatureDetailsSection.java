@@ -137,7 +137,7 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 						MessageDialog
 								.openError(
 										PDEPlugin.getActiveWorkbenchShell(),
-										PDEUIMessages.FeatureDetailsSection_requiredURL_title, //$NON-NLS-1$
+										PDEUIMessages.FeatureDetailsSection_requiredURL_title, 
 												PDEUIMessages.FeatureDetailsSection_requiredURL);
 					} else {
 						applyValue(PROPERTY_URL, text.getValue());

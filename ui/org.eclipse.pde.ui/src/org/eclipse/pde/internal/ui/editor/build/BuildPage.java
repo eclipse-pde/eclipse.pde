@@ -43,7 +43,7 @@ public class BuildPage extends PDEFormPage {
 	private Button customButton;
 	
 	public BuildPage(FormEditor editor) {
-		super(editor, PAGE_ID, PDEUIMessages.BuildPage_name);  //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEUIMessages.BuildPage_name);  
 	}
 
 	protected void createFormContent(IManagedForm mform) {
@@ -174,7 +174,7 @@ public class BuildPage extends PDEFormPage {
 	}
 	
 	private String getCustomText() {
-		return PDEUIMessages.BuildPage_custom; //$NON-NLS-1$
+		return PDEUIMessages.BuildPage_custom; 
 	}
 
 }

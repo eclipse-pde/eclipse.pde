@@ -41,8 +41,8 @@ public class ArgumentsSection extends PDESection {
 	}
 	
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText(PDEUIMessages.ArgumentsSection_title); //$NON-NLS-1$
-		section.setDescription(PDEUIMessages.ArgumentsSection_desc); //$NON-NLS-1$
+		section.setText(PDEUIMessages.ArgumentsSection_title); 
+		section.setDescription(PDEUIMessages.ArgumentsSection_desc); 
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Composite client = toolkit.createComposite(section);
@@ -50,7 +50,7 @@ public class ArgumentsSection extends PDESection {
 		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		
-		fProgramArgs = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_program, SWT.MULTI|SWT.WRAP); //$NON-NLS-1$
+		fProgramArgs = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_program, SWT.MULTI|SWT.WRAP); 
 		fProgramArgs.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fProgramArgs.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
@@ -60,7 +60,7 @@ public class ArgumentsSection extends PDESection {
 		fProgramArgs.setEditable(isEditable());
 		
 		
-		fVMArgs = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_vm, SWT.MULTI|SWT.WRAP); //$NON-NLS-1$
+		fVMArgs = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_vm, SWT.MULTI|SWT.WRAP); 
 		fVMArgs.getText().setLayoutData(new GridData(GridData.FILL_BOTH));		
 		fVMArgs.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {

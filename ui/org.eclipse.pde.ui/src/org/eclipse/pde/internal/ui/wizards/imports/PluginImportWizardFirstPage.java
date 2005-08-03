@@ -93,8 +93,8 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	
 	public PluginImportWizardFirstPage(String name) {
 		super(name);
-		setTitle(PDEUIMessages.ImportWizard_FirstPage_title); //$NON-NLS-1$
-		setMessage(PDEUIMessages.ImportWizard_FirstPage_desc); //$NON-NLS-1$
+		setTitle(PDEUIMessages.ImportWizard_FirstPage_title); 
+		setMessage(PDEUIMessages.ImportWizard_FirstPage_desc); 
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
@@ -116,32 +116,32 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	
 	private void createImportChoicesGroup(Composite container) {
 		Group importChoices = new Group(container, SWT.NONE);
-		importChoices.setText(PDEUIMessages.ImportWizard_FirstPage_importGroup); //$NON-NLS-1$
+		importChoices.setText(PDEUIMessages.ImportWizard_FirstPage_importGroup); 
 		importChoices.setLayout(new GridLayout());
 		importChoices.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 				
 		scanButton = new Button(importChoices, SWT.RADIO);
-		scanButton.setText(PDEUIMessages.ImportWizard_FirstPage_scanAll);		 //$NON-NLS-1$
+		scanButton.setText(PDEUIMessages.ImportWizard_FirstPage_scanAll);		 
 		
 		importButton = new Button(importChoices, SWT.RADIO);
-		importButton.setText(PDEUIMessages.ImportWizard_FirstPage_importPrereqs); //$NON-NLS-1$
+		importButton.setText(PDEUIMessages.ImportWizard_FirstPage_importPrereqs); 
 		
 	}
 	
 	private void createImportOptionsGroup(Composite container) {
 		Group options = new Group(container, SWT.NONE);
-		options.setText(PDEUIMessages.ImportWizard_FirstPage_importAs); //$NON-NLS-1$
+		options.setText(PDEUIMessages.ImportWizard_FirstPage_importAs); 
 		options.setLayout(new GridLayout());
 		options.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		binaryButton = new Button(options, SWT.RADIO);
-		binaryButton.setText(PDEUIMessages.ImportWizard_FirstPage_binary); //$NON-NLS-1$
+		binaryButton.setText(PDEUIMessages.ImportWizard_FirstPage_binary); 
 		
 		binaryWithLinksButton = new Button(options, SWT.RADIO);
-		binaryWithLinksButton.setText(PDEUIMessages.ImportWizard_FirstPage_binaryLinks); //$NON-NLS-1$
+		binaryWithLinksButton.setText(PDEUIMessages.ImportWizard_FirstPage_binaryLinks); 
 		
 		sourceButton = new Button(options, SWT.RADIO);
-		sourceButton.setText(PDEUIMessages.ImportWizard_FirstPage_source); //$NON-NLS-1$
+		sourceButton.setText(PDEUIMessages.ImportWizard_FirstPage_source); 
 	}
 	
 	
@@ -198,7 +198,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	
 	private void createDirectoryGroup(Composite parent) {
 		Group composite = new Group(parent, SWT.NONE);
-		composite.setText(PDEUIMessages.ImportWizard_FirstPage_importFrom); //$NON-NLS-1$
+		composite.setText(PDEUIMessages.ImportWizard_FirstPage_importFrom); 
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
@@ -210,7 +210,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		gd.horizontalSpan = 2;
 		runtimeLocationButton.setLayoutData(gd);
 		
-		runtimeLocationButton.setText(PDEUIMessages.ImportWizard_FirstPage_target); //$NON-NLS-1$
+		runtimeLocationButton.setText(PDEUIMessages.ImportWizard_FirstPage_target); 
 		runtimeLocationButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean selected = runtimeLocationButton.getSelection();
@@ -226,7 +226,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		});
 
 		changeButton = new Button(composite, SWT.PUSH);
-		changeButton.setText(PDEUIMessages.ImportWizard_FirstPage_goToTarget); //$NON-NLS-1$
+		changeButton.setText(PDEUIMessages.ImportWizard_FirstPage_goToTarget); 
 		changeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleChangeTargetPlatform();
@@ -236,7 +236,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		SWTUtil.setButtonDimensionHint(changeButton);
 
 		otherLocationLabel = new Label(composite, SWT.NULL);
-		otherLocationLabel.setText(PDEUIMessages.ImportWizard_FirstPage_otherFolder); //$NON-NLS-1$
+		otherLocationLabel.setText(PDEUIMessages.ImportWizard_FirstPage_otherFolder); 
 
 		dropLocation = new Combo(composite, SWT.DROP_DOWN);
 		dropLocation.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -247,7 +247,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		});
 
 		browseButton = new Button(composite, SWT.PUSH);
-		browseButton.setText(PDEUIMessages.ImportWizard_FirstPage_browse); //$NON-NLS-1$
+		browseButton.setText(PDEUIMessages.ImportWizard_FirstPage_browse); 
 		browseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				IPath chosen = chooseDropLocation();
@@ -259,13 +259,13 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		SWTUtil.setButtonDimensionHint(browseButton);
 
 		Label label = new Label(composite, SWT.NONE);
-		label.setText(PDEUIMessages.ImportWizard_FirstPage_source_label); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ImportWizard_FirstPage_source_label); 
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 		
 		Button sourceLocations = new Button(composite, SWT.PUSH);
-		sourceLocations.setText(PDEUIMessages.ImportWizard_FirstPage_codeLocations); //$NON-NLS-1$
+		sourceLocations.setText(PDEUIMessages.ImportWizard_FirstPage_codeLocations); 
 		sourceLocations.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		sourceLocations.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -276,13 +276,13 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		sourceLocations.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		
 		label = new Label(composite, SWT.WRAP);
-		label.setText(PDEUIMessages.ImportWizard_FirstPage_variables); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ImportWizard_FirstPage_variables); 
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 
 		Button envButton = new Button(composite, SWT.PUSH);
-		envButton.setText(PDEUIMessages.ImportWizard_FirstPage_env); //$NON-NLS-1$
+		envButton.setText(PDEUIMessages.ImportWizard_FirstPage_env); 
 		envButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END| GridData.FILL_HORIZONTAL));
 		envButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -298,8 +298,8 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private IPath chooseDropLocation() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setFilterPath(dropLocation.getText());
-		dialog.setText(PDEUIMessages.ImportWizard_messages_folder_title); //$NON-NLS-1$
-		dialog.setMessage(PDEUIMessages.ImportWizard_messages_folder_message); //$NON-NLS-1$
+		dialog.setText(PDEUIMessages.ImportWizard_messages_folder_title); 
+		dialog.setMessage(PDEUIMessages.ImportWizard_messages_folder_message); 
 		String res = dialog.open();
 		if (res != null) {
 			return new Path(res);
@@ -391,31 +391,31 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		if (!runtimeLocationButton.getSelection()) {
 			IPath curr = new Path(dropLocation.getText());
 			if (curr.segmentCount() == 0 && curr.getDevice() == null) {
-				setErrorMessage(PDEUIMessages.ImportWizard_errors_locationMissing); //$NON-NLS-1$
+				setErrorMessage(PDEUIMessages.ImportWizard_errors_locationMissing); 
 				setPageComplete(false);
 				return;
 			}
 			if (!Path.ROOT.isValidPath(dropLocation.getText())) {
-				setErrorMessage(PDEUIMessages.ImportWizard_errors_buildFolderInvalid); //$NON-NLS-1$
+				setErrorMessage(PDEUIMessages.ImportWizard_errors_buildFolderInvalid); 
 				setPageComplete(false);
 				return;
 			}
 
 			if (!curr.toFile().isDirectory()) {
-				setErrorMessage(PDEUIMessages.ImportWizard_errors_buildFolderMissing); //$NON-NLS-1$
+				setErrorMessage(PDEUIMessages.ImportWizard_errors_buildFolderMissing); 
 				setPageComplete(false);
 				return;
 			}
 			if (!curr.equals(new Path(getTargetHome()))) {
 				setErrorMessage(null);
-				setMessage(PDEUIMessages.ImportWizard_FirstPage_warning, DialogPage.WARNING); //$NON-NLS-1$
+				setMessage(PDEUIMessages.ImportWizard_FirstPage_warning, DialogPage.WARNING); 
 				setPageComplete(true);
 				return;
 			}
 		}
 		setErrorMessage(null);
 		setPageComplete(true);
-		setMessage(PDEUIMessages.ImportWizard_FirstPage_desc); //$NON-NLS-1$
+		setMessage(PDEUIMessages.ImportWizard_FirstPage_desc); 
 	}
 	
 	private void resolveTargetPlatform() {

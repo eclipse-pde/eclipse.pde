@@ -25,7 +25,7 @@ public class OpenProjectWizardAction extends Action implements ICheatSheetAction
 	 * @param text
 	 */
 	public OpenProjectWizardAction() {
-		super(PDEUIMessages.Actions_Site_OpenProjectWizardAction); //$NON-NLS-1$
+		super(PDEUIMessages.Actions_Site_OpenProjectWizardAction); 
 	}
 	
 	/**

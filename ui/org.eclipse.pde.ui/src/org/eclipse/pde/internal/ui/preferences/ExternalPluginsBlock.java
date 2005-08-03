@@ -145,8 +145,8 @@ public class ExternalPluginsBlock {
 				null,
 				PDEUIMessages.WizardCheckboxTablePart_selectAll,
 				PDEUIMessages.WizardCheckboxTablePart_deselectAll,
-				PDEUIMessages.ExternalPluginsBlock_workingSet, //$NON-NLS-1$
-				PDEUIMessages.ExternalPluginsBlock_addRequired, //$NON-NLS-1$
+				PDEUIMessages.ExternalPluginsBlock_workingSet, 
+				PDEUIMessages.ExternalPluginsBlock_addRequired, 
 				PDEUIMessages.ExternalPluginsBlock_workspace};
 		fTablePart = new TablePart(buttonLabels);
 		fTablePart.setSelectAllIndex(3);
@@ -202,7 +202,7 @@ public class ExternalPluginsBlock {
 		gd.heightHint = 100;
 				
 		fIncludeFragments = new Button(container, SWT.CHECK);
-		fIncludeFragments.setText(PDEUIMessages.ExternalPluginsBlock_includeFragments); //$NON-NLS-1$
+		fIncludeFragments.setText(PDEUIMessages.ExternalPluginsBlock_includeFragments); 
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		gd.verticalIndent = 5;

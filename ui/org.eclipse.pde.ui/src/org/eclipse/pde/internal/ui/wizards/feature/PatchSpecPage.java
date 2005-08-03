@@ -26,8 +26,8 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 
 	public PatchSpecPage(WizardNewProjectCreationPage mainPage) {
 		super(mainPage, true);
-		setTitle(PDEUIMessages.PatchSpec_title); //$NON-NLS-1$
-		setDescription(PDEUIMessages.PatchSpec_desc); //$NON-NLS-1$
+		setTitle(PDEUIMessages.PatchSpec_title); 
+		setDescription(PDEUIMessages.PatchSpec_desc); 
 	}
 	
 	/* (non-Javadoc)
@@ -79,7 +79,7 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 			return;
 		}
 		
-		setMessage(NLS.bind(PDEUIMessages.NewFeaturePatch_SpecPage_notFound, featureIdText.getText()), IMessageProvider.WARNING); //$NON-NLS-1$
+		setMessage(NLS.bind(PDEUIMessages.NewFeaturePatch_SpecPage_notFound, featureIdText.getText()), IMessageProvider.WARNING); 
 		setErrorMessage(null);
 		getContainer().updateButtons();
 		return;

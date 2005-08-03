@@ -319,8 +319,8 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 				
 		Class[] acceptedClasses = new Class[] { IFile.class };
 		dialog.setValidator(new LibrarySelectionValidator(acceptedClasses, true));
-		dialog.setTitle(PDEUIMessages.BuildEditor_ClasspathSection_jarsTitle); //$NON-NLS-1$
-		dialog.setMessage(PDEUIMessages.ClasspathSection_jarsMessage); //$NON-NLS-1$
+		dialog.setTitle(PDEUIMessages.BuildEditor_ClasspathSection_jarsTitle); 
+		dialog.setMessage(PDEUIMessages.ClasspathSection_jarsMessage); 
 		IPluginLibrary[] libraries = ((IPluginModelBase)getPage().getModel()).getPluginBase().getLibraries();
 		HashSet set = new HashSet();
 		for (int i = 0; i < libraries.length; i++) {

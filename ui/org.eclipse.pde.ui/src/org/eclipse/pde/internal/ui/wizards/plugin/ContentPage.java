@@ -82,11 +82,11 @@ public abstract class ContentPage extends WizardPage {
 			return errorMessage;
 		
 		if (fVersionText.getText().trim().length() == 0) {
-			errorMessage = PDEUIMessages.ContentPage_noversion; //$NON-NLS-1$
+			errorMessage = PDEUIMessages.ContentPage_noversion; 
 		} else if (!isVersionValid(fVersionText.getText().trim())) {
-			errorMessage = PDEUIMessages.ContentPage_badversion; //$NON-NLS-1$
+			errorMessage = PDEUIMessages.ContentPage_badversion; 
 		} else if (fNameText.getText().trim().length() == 0) {
-			errorMessage = PDEUIMessages.ContentPage_noname; //$NON-NLS-1$
+			errorMessage = PDEUIMessages.ContentPage_noname; 
 		}
 		
 		return errorMessage;
@@ -95,10 +95,10 @@ public abstract class ContentPage extends WizardPage {
 	private String validateId() {
 		String id = fIdText.getText().trim();
 		if (id.length() == 0)
-			return PDEUIMessages.ContentPage_noid; //$NON-NLS-1$
+			return PDEUIMessages.ContentPage_noid; 
 
 		if (!IdUtil.isValidPluginId(id)) {
-			return PDEUIMessages.ContentPage_invalidId; //$NON-NLS-1$
+			return PDEUIMessages.ContentPage_invalidId; 
 		}
 		return null;
 	}

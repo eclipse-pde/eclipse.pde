@@ -31,8 +31,8 @@ public class ReviewPage extends WizardPage {
 	public ReviewPage(SampleWizard wizard) {
 		super("last"); //$NON-NLS-1$
 		this.wizard = wizard;
-		setTitle(PDEUIMessages.ReviewPage_title); //$NON-NLS-1$
-		setDescription(PDEUIMessages.ReviewPage_desc); //$NON-NLS-1$
+		setTitle(PDEUIMessages.ReviewPage_title); 
+		setDescription(PDEUIMessages.ReviewPage_desc); 
 	}
 	public void setVisible(boolean visible) {
 		setPageComplete(wizard.getSelection()!=null);			
@@ -49,12 +49,12 @@ public class ReviewPage extends WizardPage {
 			setMessage(null);
 			IConfigurationElement [] desc = selection.getChildren("description");  //$NON-NLS-1$
 			if (desc.length==1)
-				buf.append(NLS.bind(PDEUIMessages.ReviewPage_descContent, (new String[]{selection.getAttribute("name"), desc[0].getValue()}))); //$NON-NLS-1$ //$NON-NLS-2$
+				buf.append(NLS.bind(PDEUIMessages.ReviewPage_descContent, (new String[]{selection.getAttribute("name"), desc[0].getValue()}))); //$NON-NLS-1$ 
 			else
-				buf.append(NLS.bind(PDEUIMessages.ReviewPage_content, selection.getAttribute("name"))); //$NON-NLS-1$ //$NON-NLS-2$
+				buf.append(NLS.bind(PDEUIMessages.ReviewPage_content, selection.getAttribute("name"))); //$NON-NLS-1$ 
 		}
 		else {
-			setMessage(PDEUIMessages.ReviewPage_noSampleFound, WizardPage.WARNING); //$NON-NLS-1$
+			setMessage(PDEUIMessages.ReviewPage_noSampleFound, WizardPage.WARNING); 
 		}
 		buf.append("</form>"); //$NON-NLS-1$
 		formText.setText(buf.toString());

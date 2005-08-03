@@ -49,7 +49,7 @@ public class UnusedImportsDialog extends Dialog {
 		this.unused = unused;
 		checkboxTablePart =
 			new WizardCheckboxTablePart(
-				PDEUIMessages.UnusedDependencies_remove); //$NON-NLS-1$
+				PDEUIMessages.UnusedDependencies_remove); 
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {

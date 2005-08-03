@@ -202,7 +202,7 @@ public class CoreUtility {
 		ZipFile jarFile = null;
 		try {
 			jarFile = new ZipFile(file, ZipFile.OPEN_READ);
-			ZipEntry resourceEntry = jarFile.getEntry(resource); //$NON-NLS-1$
+			ZipEntry resourceEntry = jarFile.getEntry(resource); 
 			if (resourceEntry != null)
 				return directory ? resourceEntry.isDirectory() : true;
 		} catch (IOException e) {

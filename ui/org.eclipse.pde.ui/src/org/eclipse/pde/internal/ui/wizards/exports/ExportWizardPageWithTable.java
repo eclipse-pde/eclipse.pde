@@ -83,8 +83,8 @@ public abstract class ExportWizardPageWithTable extends BaseExportWizardPage {
 					PDEUIMessages.WizardCheckboxTablePart_selectAll,
 					PDEUIMessages.WizardCheckboxTablePart_deselectAll,
 					null,
-					PDEUIMessages.ExportWizard_workingSet }); //$NON-NLS-1$
-		setDescription(PDEUIMessages.ExportWizard_Plugin_description); //$NON-NLS-1$
+					PDEUIMessages.ExportWizard_workingSet }); 
+		setDescription(PDEUIMessages.ExportWizard_Plugin_description); 
 	}
 	
 	protected void createTopSection(Composite parent) {
@@ -167,7 +167,7 @@ public abstract class ExportWizardPageWithTable extends BaseExportWizardPage {
 	protected void validateTopSection() {
 		setMessage(fExportPart.getSelectionCount() > 0 
 						? null 
-						: PDEUIMessages.ExportWizard_status_noselection); //$NON-NLS-1$
+						: PDEUIMessages.ExportWizard_status_noselection); 
 	}
 	
 	public abstract Object[] getListElements();
@@ -176,7 +176,7 @@ public abstract class ExportWizardPageWithTable extends BaseExportWizardPage {
 		super.pageChanged();
 		String message = fExportPart.getSelectionCount() > 0 
 							? null 
-				            : PDEUIMessages.ExportWizard_status_noselection; //$NON-NLS-1$
+				            : PDEUIMessages.ExportWizard_status_noselection; 
 		if (message == null) {
 			message = validateBottomSections();
 		}

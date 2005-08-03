@@ -36,14 +36,14 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	class InvalidNode {
 		public String toString() {
 			if (fInvalidModels.size() > 1)
-				return PDEUIMessages.PluginValidationOperation_invalidPlural; //$NON-NLS-1$
-			return PDEUIMessages.PluginValidationOperation_invalidSingular; //$NON-NLS-1$
+				return PDEUIMessages.PluginValidationOperation_invalidPlural; 
+			return PDEUIMessages.PluginValidationOperation_invalidSingular; 
 		}
 	}
 	
 	class MissingCore {
 		public String toString() {
-			return NLS.bind(PDEUIMessages.PluginValidationOperation_missingCore, getCorePluginID()); //$NON-NLS-1$
+			return NLS.bind(PDEUIMessages.PluginValidationOperation_missingCore, getCorePluginID()); 
 		}
 	}
 	
@@ -51,8 +51,8 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 		public String toString() {
 			String pluginID = getApplicationPlugin();
 			if (getState().getBundles(pluginID).length == 0)
-				return NLS.bind(PDEUIMessages.PluginValidationOperation_missingApp, (new String[] {fApplicationID, pluginID})); //$NON-NLS-1$
-			return NLS.bind(PDEUIMessages.PluginValidationOperation_missingApp2, (new String[] {fApplicationID, pluginID})); //$NON-NLS-1$
+				return NLS.bind(PDEUIMessages.PluginValidationOperation_missingApp, (new String[] {fApplicationID, pluginID})); 
+			return NLS.bind(PDEUIMessages.PluginValidationOperation_missingApp2, (new String[] {fApplicationID, pluginID})); 
 		}
 	}
 	
@@ -60,8 +60,8 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 		public String toString() {
 			String pluginID = getProductPlugin();
 			if (getState().getBundles(pluginID).length == 0)
-				return NLS.bind(PDEUIMessages.PluginValidationOperation_missingProduct, (new String[] {fProductID, pluginID})); //$NON-NLS-1$
-			return NLS.bind(PDEUIMessages.PluginValidationOperation_missingProduct2, (new String[] {fProductID, pluginID})); //$NON-NLS-1$
+				return NLS.bind(PDEUIMessages.PluginValidationOperation_missingProduct, (new String[] {fProductID, pluginID})); 
+			return NLS.bind(PDEUIMessages.PluginValidationOperation_missingProduct2, (new String[] {fProductID, pluginID})); 
 		}
 	}
 	
@@ -82,8 +82,8 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 			if (element instanceof BundleDescription) {
 				String id = ((BundleDescription)element).getSymbolicName();
 				if (((BundleDescription)element).getHost() != null)
-					return NLS.bind(PDEUIMessages.PluginValidationOperation_disableFragment, id); //$NON-NLS-1$
-				return NLS.bind(PDEUIMessages.PluginValidationOperation_disablePlugin, id); //$NON-NLS-1$
+					return NLS.bind(PDEUIMessages.PluginValidationOperation_disableFragment, id); 
+				return NLS.bind(PDEUIMessages.PluginValidationOperation_disablePlugin, id); 
 			}
 			if (element instanceof IPluginModelBase) {
 				IPluginModelBase model = (IPluginModelBase)element;
@@ -137,15 +137,15 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 			String name = constraint.getName();
 			if (constraint instanceof BundleSpecification) {
 				if (state.getBundles(name).length == 0)
-					return NLS.bind(PDEUIMessages.PluginValidationOperation_missingRequired, name); //$NON-NLS-1$
-				return NLS.bind(PDEUIMessages.PluginValidationOperation_disabledRequired, name); //$NON-NLS-1$
+					return NLS.bind(PDEUIMessages.PluginValidationOperation_missingRequired, name); 
+				return NLS.bind(PDEUIMessages.PluginValidationOperation_disabledRequired, name); 
 			}
 			if (constraint instanceof ImportPackageSpecification)
-				return NLS.bind(PDEUIMessages.PluginValidationOperation_missingImport, name); //$NON-NLS-1$
+				return NLS.bind(PDEUIMessages.PluginValidationOperation_missingImport, name); 
 			if (constraint instanceof HostSpecification)  {
 				if (state.getBundles(name).length == 0)
-					return NLS.bind(PDEUIMessages.PluginValidationOperation_missingParent, name); //$NON-NLS-1$
-				return NLS.bind(PDEUIMessages.PluginValidationOperation_disabledParent, name); //$NON-NLS-1$
+					return NLS.bind(PDEUIMessages.PluginValidationOperation_missingParent, name); 
+				return NLS.bind(PDEUIMessages.PluginValidationOperation_disabledParent, name); 
 			}
 			return name;
 		}

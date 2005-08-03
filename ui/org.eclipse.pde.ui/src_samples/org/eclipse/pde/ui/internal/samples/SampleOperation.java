@@ -74,7 +74,7 @@ public class SampleOperation implements IRunnableWithProgress {
 							.getChildren("project"); //$NON-NLS-1$
 					monitor
 							.beginTask(
-									PDEUIMessages.SampleOperation_creating, 4 * projects.length); //$NON-NLS-1$
+									PDEUIMessages.SampleOperation_creating, 4 * projects.length); 
 					createdProjects = new IProject[projects.length];
 					try {
 					for (int i = 0; i < projects.length; i++) {

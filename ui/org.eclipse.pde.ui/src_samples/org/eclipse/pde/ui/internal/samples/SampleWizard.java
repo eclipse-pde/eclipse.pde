@@ -49,8 +49,8 @@ public class SampleWizard extends Wizard
 			final int[] result = {IDialogConstants.CANCEL_ID};
 			getShell().getDisplay().syncExec(new Runnable() {
 				public void run() {
-					String title = PDEUIMessages.SampleWizard_title; //$NON-NLS-1$
-					String msg = NLS.bind(PDEUIMessages.SampleWizard_overwrite, file); //$NON-NLS-1$
+					String title = PDEUIMessages.SampleWizard_title; 
+					String msg = NLS.bind(PDEUIMessages.SampleWizard_overwrite, file); 
 					String[] options = {IDialogConstants.YES_LABEL,
 							IDialogConstants.NO_LABEL,
 							IDialogConstants.YES_TO_ALL_LABEL,
@@ -75,7 +75,7 @@ public class SampleWizard extends Wizard
 		namesPage= new ProjectNamesPage(this);
 		lastPage = new ReviewPage(this);
 		setNeedsProgressMonitor(true);
-        setWindowTitle(PDEUIMessages.ShowSampleAction_title); //$NON-NLS-1$
+        setWindowTitle(PDEUIMessages.ShowSampleAction_title); 
 	}
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);

@@ -54,7 +54,7 @@ public abstract class GeneralInfoSection extends PDESection {
 	 *      org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText(PDEUIMessages.ManifestEditor_PluginSpecSection_title); //$NON-NLS-1$
+		section.setText(PDEUIMessages.ManifestEditor_PluginSpecSection_title); 
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		section.setDescription(getSectionDescription()); 
 		
@@ -108,7 +108,7 @@ public abstract class GeneralInfoSection extends PDESection {
 	}
 	
 	private void createIDEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
-		fIdEntry = new FormEntry(client, toolkit, PDEUIMessages.GeneralInfoSection_id, null, false); //$NON-NLS-1$
+		fIdEntry = new FormEntry(client, toolkit, PDEUIMessages.GeneralInfoSection_id, null, false); 
 		fIdEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				try {
@@ -122,7 +122,7 @@ public abstract class GeneralInfoSection extends PDESection {
 	}
 	
 	private void createVersionEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
-		fVersionEntry = new FormEntry(client, toolkit, PDEUIMessages.GeneralInfoSection_version, null, false); //$NON-NLS-1$
+		fVersionEntry = new FormEntry(client, toolkit, PDEUIMessages.GeneralInfoSection_version, null, false); 
 		fVersionEntry.setFormEntryListener(new FormEntryAdapter(this,actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				try {
@@ -136,7 +136,7 @@ public abstract class GeneralInfoSection extends PDESection {
 	}
 	
 	private void createNameEntry(Composite client, FormToolkit toolkit,IActionBars actionBars) {
-		fNameEntry = new FormEntry(client, toolkit, PDEUIMessages.GeneralInfoSection_name, null, false); //$NON-NLS-1$
+		fNameEntry = new FormEntry(client, toolkit, PDEUIMessages.GeneralInfoSection_name, null, false); 
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				try {
@@ -150,7 +150,7 @@ public abstract class GeneralInfoSection extends PDESection {
 	}
 	
 	private void createProviderEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
-		fProviderEntry = new FormEntry(client, toolkit, PDEUIMessages.GeneralInfoSection_provider, null, false);//$NON-NLS-1$
+		fProviderEntry = new FormEntry(client, toolkit, PDEUIMessages.GeneralInfoSection_provider, null, false);
 		fProviderEntry.setFormEntryListener(new FormEntryAdapter(this,actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				try {

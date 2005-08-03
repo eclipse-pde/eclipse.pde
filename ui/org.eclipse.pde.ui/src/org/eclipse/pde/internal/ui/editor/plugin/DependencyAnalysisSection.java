@@ -36,19 +36,19 @@ public class DependencyAnalysisSection extends PDESection {
 		boolean editable = getPage().getModel().isEditable();
 		if (getPage().getModel() instanceof IPluginModel) {
 			if (editable)
-				return PDEUIMessages.DependencyAnalysisSection_plugin_editable;  //$NON-NLS-1$
-			return PDEUIMessages.DependencyAnalysisSection_plugin_notEditable; //$NON-NLS-1$
+				return PDEUIMessages.DependencyAnalysisSection_plugin_editable;  
+			return PDEUIMessages.DependencyAnalysisSection_plugin_notEditable; 
 		}
 		if (editable)
-			return PDEUIMessages.DependencyAnalysisSection_fragment_editable;  //$NON-NLS-1$
-		return PDEUIMessages.DependencyAnalysisSection_fragment_notEditable; //$NON-NLS-1$
+			return PDEUIMessages.DependencyAnalysisSection_fragment_editable;  
+		return PDEUIMessages.DependencyAnalysisSection_fragment_notEditable; 
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText(PDEUIMessages.DependencyAnalysisSection_title); //$NON-NLS-1$
+		section.setText(PDEUIMessages.DependencyAnalysisSection_title); 
 
 		formText = toolkit.createFormText(section, true);
 		formText.setText(getFormText(), true, false);		
@@ -78,7 +78,7 @@ public class DependencyAnalysisSection extends PDESection {
 			IPlugin plugin = ((IPluginModel)model).getPlugin();
 			DependencyLoop[] loops = DependencyLoopFinder.findLoops(plugin);
 			if (loops.length == 0)
-				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.DependencyAnalysisSection_loops, PDEUIMessages.DependencyAnalysisSection_noCycles); //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.DependencyAnalysisSection_loops, PDEUIMessages.DependencyAnalysisSection_noCycles); // 
 			else {
 				LoopDialog dialog = new LoopDialog(PDEPlugin.getActiveWorkbenchShell(), loops);
 				dialog.open();
@@ -107,8 +107,8 @@ public class DependencyAnalysisSection extends PDESection {
 			} else {
 				MessageDialog.openInformation(
 						PDEPlugin.getActiveWorkbenchShell(), 
-						PDEUIMessages.DependencyAnalysisSection_references,  //$NON-NLS-1$
-						PDEUIMessages.DependencyAnalysisSection_noReferencesFound);  //$NON-NLS-1$
+						PDEUIMessages.DependencyAnalysisSection_references,  
+						PDEUIMessages.DependencyAnalysisSection_noReferencesFound);  
 			}
 		}
 	}

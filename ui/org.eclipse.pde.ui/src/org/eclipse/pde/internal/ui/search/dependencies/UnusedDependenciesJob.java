@@ -67,15 +67,15 @@ public class UnusedDependenciesJob extends Job {
 							+ " " //$NON-NLS-1$
 							+ (list.size() == 1
 								? PDEUIMessages.DependencyExtent_singular
-								: PDEUIMessages.DependencyExtent_plural) //$NON-NLS-1$
+								: PDEUIMessages.DependencyExtent_plural) 
 							+ " " //$NON-NLS-1$
-							+ PDEUIMessages.DependencyExtent_found); //$NON-NLS-1$
+							+ PDEUIMessages.DependencyExtent_found); 
 			}
 			showResults((IPluginImport[])list.toArray(new IPluginImport[list.size()]));
 		} finally {
 			monitor.done();
 		}
-		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, PDEUIMessages.UnusedDependenciesJob_viewResults, null); //$NON-NLS-1$
+		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, PDEUIMessages.UnusedDependenciesJob_viewResults, null); 
 	}
 	
 	private boolean isUnused(IPluginImport plugin, SubProgressMonitor monitor) {

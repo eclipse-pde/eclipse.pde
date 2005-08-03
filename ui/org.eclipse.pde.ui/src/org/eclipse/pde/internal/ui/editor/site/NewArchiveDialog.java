@@ -76,7 +76,7 @@ public class NewArchiveDialog extends StatusDialog {
 		};
 		fPathText.addModifyListener(listener);
 		fUrlText.addModifyListener(listener);
-		setTitle(PDEUIMessages.SiteEditor_NewArchiveDialog_title); //$NON-NLS-1$
+		setTitle(PDEUIMessages.SiteEditor_NewArchiveDialog_title); 
 		Dialog.applyDialogFont(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.NEW_ARCHIVE_DIALOG);
 		return container;
@@ -84,12 +84,12 @@ public class NewArchiveDialog extends StatusDialog {
 
 	private void createEntries(Composite container) {
 		Label label = new Label(container, SWT.NULL);
-		label.setText(PDEUIMessages.SiteEditor_NewArchiveDialog_path); //$NON-NLS-1$
+		label.setText(PDEUIMessages.SiteEditor_NewArchiveDialog_path); 
 		fPathText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		fPathText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		label = new Label(container, SWT.NULL);
-		label.setText(PDEUIMessages.SiteEditor_NewArchiveDialog_url); //$NON-NLS-1$
+		label.setText(PDEUIMessages.SiteEditor_NewArchiveDialog_url); 
 		fUrlText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		fUrlText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -111,7 +111,7 @@ public class NewArchiveDialog extends StatusDialog {
 			status = getEmptyErrorStatus();
 		else {
 			if (hasPath(fPathText.getText()))
-				status = createErrorStatus(PDEUIMessages.NewArchiveDialog_alreadyExists); //$NON-NLS-1$
+				status = createErrorStatus(PDEUIMessages.NewArchiveDialog_alreadyExists); 
 		}
 		if (status == null)
 			status = getOKStatus();
@@ -136,7 +136,7 @@ public class NewArchiveDialog extends StatusDialog {
 
 	private IStatus getEmptyErrorStatus() {
 		if (fErrorStatus == null)
-			fErrorStatus = createErrorStatus(PDEUIMessages.SiteEditor_NewArchiveDialog_error); //$NON-NLS-1$
+			fErrorStatus = createErrorStatus(PDEUIMessages.SiteEditor_NewArchiveDialog_error); 
 		return fErrorStatus;
 	}
 

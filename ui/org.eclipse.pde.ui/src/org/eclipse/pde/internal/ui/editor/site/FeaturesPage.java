@@ -62,14 +62,14 @@ public class FeaturesPage extends PDEFormPage {
 	}
 	
 	public FeaturesPage(PDEFormEditor editor) {
-		super(editor, PAGE_ID, PDEUIMessages.FeaturesPage_title); //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEUIMessages.FeaturesPage_title); 
 		fBlock = new SiteFeaturesBlock();
 	}
 	protected void createFormContent(IManagedForm managedForm) {
 		
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
-		form.setText(PDEUIMessages.FeaturesPage_header); //$NON-NLS-1$
+		form.setText(PDEUIMessages.FeaturesPage_header); 
 		fBlock.createContent(managedForm);
 		fCategorySection.fireSelection();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_SITE_FEATURES);

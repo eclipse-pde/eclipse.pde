@@ -66,7 +66,7 @@ public class ShowDescriptionAction extends Action {
 	
 	public void setExtensionPoint(IPluginExtensionPoint point) {
 		fPointID = point.getFullId();
-		setText(PDEUIMessages.ShowDescriptionAction_label); //$NON-NLS-1$
+		setText(PDEUIMessages.ShowDescriptionAction_label); 
 		fSchema = null;
 	}
 	
@@ -90,8 +90,8 @@ public class ShowDescriptionAction extends Action {
 	}
 	
 	private void showNoSchemaMessage() {
-		String title = PDEUIMessages.ShowDescriptionAction_title; //$NON-NLS-1$
-		String message = NLS.bind(PDEUIMessages.ShowDescriptionAction_noPoint_desc, fPointID); //$NON-NLS-1$ //$NON-NLS-2$
+		String title = PDEUIMessages.ShowDescriptionAction_title; 
+		String message = NLS.bind(PDEUIMessages.ShowDescriptionAction_noPoint_desc, fPointID); // 
 		MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title, message);
 	}
 
@@ -130,13 +130,13 @@ public class ShowDescriptionAction extends Action {
 			
 			if (forceExternal) {
 				IWebBrowser browser = support.getExternalBrowser();
-				browser.openURL(url); //$NON-NLS-1$
+				browser.openURL(url); 
 			} else {
 				IWebBrowser browser = support.createBrowser(
 						IWorkbenchBrowserSupport.AS_EDITOR
 								| IWorkbenchBrowserSupport.STATUS,
 						"org.eclipse.pde", fPointID, fPointID); //$NON-NLS-1$
-				browser.openURL(url); //$NON-NLS-1$
+				browser.openURL(url); 
 			}
 		} catch (MalformedURLException e) {
 			PDEPlugin.logException(e);

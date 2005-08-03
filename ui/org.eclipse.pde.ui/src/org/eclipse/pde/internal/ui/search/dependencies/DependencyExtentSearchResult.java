@@ -109,7 +109,7 @@ public class DependencyExtentSearchResult extends SearchResult implements IEdito
 	 */
 	public String getLabel() {
 		int count = getMatchCount();
-		return fQuery.getLabel() + " - " + count + " " + (count == 1 ? PDEUIMessages.DependencyExtentSearchResult_dependency : PDEUIMessages.DependencyExtentSearchResult_dependencies); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		return fQuery.getLabel() + " - " + count + " " + (count == 1 ? PDEUIMessages.DependencyExtentSearchResult_dependency : PDEUIMessages.DependencyExtentSearchResult_dependencies); //$NON-NLS-1$ //$NON-NLS-2$  
 	}
 
 	/* (non-Javadoc)

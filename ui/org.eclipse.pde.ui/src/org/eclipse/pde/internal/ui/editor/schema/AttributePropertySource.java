@@ -42,12 +42,12 @@ public class AttributePropertySource extends SchemaObjectPropertySource implemen
             ISchemaSimpleType type = att.getType();
             if (type.getName().equals("boolean")) { //$NON-NLS-1$
                 if (!svalue.equals("true") && !svalue.equals("false")) //$NON-NLS-1$ //$NON-NLS-2$
-                    return PDEUIMessages.AttributePropertySource_assertBoolean; //$NON-NLS-1$
+                    return PDEUIMessages.AttributePropertySource_assertBoolean; 
             } else if (type.getName().equals("string") //$NON-NLS-1$
                     && type.getRestriction() != null) {
                 ISchemaRestriction restriction = type.getRestriction();
                 if (restriction.isValueValid(svalue) == false) {
-                    return NLS.bind(PDEUIMessages.AttributePropertySource_invalidRestriction, svalue); //$NON-NLS-1$
+                    return NLS.bind(PDEUIMessages.AttributePropertySource_invalidRestriction, svalue); 
                 }
             }
             return null;
@@ -94,11 +94,11 @@ public class AttributePropertySource extends SchemaObjectPropertySource implemen
         cdesc.setLabelProvider(new ComboProvider(P_TYPE, typeTable));
         descriptors.addElement(cdesc);
         
-        cdesc = createComboBoxPropertyDescriptor(P_TRANSLATABLE, PDEUIMessages.AttributePropertySource_translatable, booleanTable); //$NON-NLS-1$
+        cdesc = createComboBoxPropertyDescriptor(P_TRANSLATABLE, PDEUIMessages.AttributePropertySource_translatable, booleanTable); 
         cdesc.setLabelProvider(new ComboProvider(P_TRANSLATABLE, booleanTable));
         descriptors.addElement(cdesc);
 
-        cdesc = createComboBoxPropertyDescriptor(P_DEPRECATED, PDEUIMessages.AttributePropertySource_deprecated, booleanTable); //$NON-NLS-1$
+        cdesc = createComboBoxPropertyDescriptor(P_DEPRECATED, PDEUIMessages.AttributePropertySource_deprecated, booleanTable); 
         cdesc.setLabelProvider(new ComboProvider(P_DEPRECATED, booleanTable));
         descriptors.addElement(cdesc);
 

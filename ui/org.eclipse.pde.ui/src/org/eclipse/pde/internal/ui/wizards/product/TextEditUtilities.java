@@ -84,7 +84,7 @@ public class TextEditUtilities {
 			if (sibling.getOffset() > -1) {
 				node.setLineIndent(sibling.getLineIndent());
 				String sep = TextUtilities.getDefaultLineDelimiter(doc);
-				return new InsertEdit(sibling.getOffset() + sibling.getLength(), sep + node.write(true)); //$NON-NLS-1$
+				return new InsertEdit(sibling.getOffset() + sibling.getLength(), sep + node.write(true)); 
 			}
 			sibling = sibling.getPreviousSibling();
 		}
@@ -96,7 +96,7 @@ public class TextEditUtilities {
 		int length = getNextPosition(doc, offset, '>');
 		node.setLineIndent(node.getParentNode().getLineIndent() + 3);
 		String sep = TextUtilities.getDefaultLineDelimiter(doc);
-		return new InsertEdit(offset+ length + 1, sep + node.write(true));	 //$NON-NLS-1$
+		return new InsertEdit(offset+ length + 1, sep + node.write(true));	 
 	}
 	
 	private static int getNextPosition(IDocument doc, int offset, char ch) {

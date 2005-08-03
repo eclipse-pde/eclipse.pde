@@ -55,7 +55,7 @@ public abstract class BaseExportWizard
 			PDEPlugin.getDefault().getDialogSettings();
 		setNeedsProgressMonitor(true);
 		setDialogSettings(getSettingsSection(masterSettings));
-		setWindowTitle(PDEUIMessages.BaseExportWizard_wtitle); //$NON-NLS-1$
+		setWindowTitle(PDEUIMessages.BaseExportWizard_wtitle); 
 	}
 
 	public void addPages() {
@@ -115,7 +115,7 @@ public abstract class BaseExportWizard
 			File zipFile = new File(fPage1.getDestination(), fPage1.getFileName());
 			if (zipFile.exists()) {
 				if (!MessageDialog.openQuestion(getContainer().getShell(),
-						PDEUIMessages.BaseExportWizard_confirmReplace_title,  //$NON-NLS-1$
+						PDEUIMessages.BaseExportWizard_confirmReplace_title,  
 						NLS.bind(PDEUIMessages.BaseExportWizard_confirmReplace_desc, zipFile.getAbsolutePath())))
 					return false;
 				zipFile.delete();

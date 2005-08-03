@@ -31,7 +31,7 @@ public class BundleObject implements Serializable {
 	}
 	protected void ensureModelEditable() throws CoreException {
 		if (!model.isEditable()) {
-			throwCoreException(PDECoreMessages.BundleObject_readOnlyException); //$NON-NLS-1$
+			throwCoreException(PDECoreMessages.BundleObject_readOnlyException); 
 		}
 	}
 	public IBundleModel getModel() {

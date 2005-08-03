@@ -45,8 +45,8 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 	
 	public ProductDefinitonWizardPage(String pageName) {
 		super(pageName);
-		setTitle(PDEUIMessages.ProductDefinitonWizardPage_title); //$NON-NLS-1$
-		setDescription(PDEUIMessages.ProductDefinitonWizardPage_desc); //$NON-NLS-1$
+		setTitle(PDEUIMessages.ProductDefinitonWizardPage_title); 
+		setDescription(PDEUIMessages.ProductDefinitonWizardPage_desc); 
 	}
 
 	public void createControl(Composite parent) {
@@ -78,20 +78,20 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 
 	private void createProductGroup(FormToolkit toolkit, Composite comp) {
 		Group group = new Group(comp, SWT.NONE);
-		group.setText(PDEUIMessages.ProductDefinitonWizardPage_productGroup); //$NON-NLS-1$
+		group.setText(PDEUIMessages.ProductDefinitonWizardPage_productGroup); 
 		group.setLayout(new GridLayout(3, false));
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		createFormText(toolkit, group, PDEUIMessages.ProductDefinitonWizardPage_productDefinition, 3); //$NON-NLS-1$
+		createFormText(toolkit, group, PDEUIMessages.ProductDefinitonWizardPage_productDefinition, 3); 
 		Label label = new Label(group, SWT.NONE);
-		label.setText(PDEUIMessages.ProductDefinitonWizardPage_plugin); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ProductDefinitonWizardPage_plugin); 
 		
 		fPluginText = new Text(group, SWT.SINGLE|SWT.BORDER);
 		fPluginText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fPluginText.addModifyListener(fListener);
 		
 		Button button = new Button(group, SWT.PUSH);
-		button.setText(PDEUIMessages.ProductDefinitonWizardPage_browse); //$NON-NLS-1$
+		button.setText(PDEUIMessages.ProductDefinitonWizardPage_browse); 
 		SWTUtil.setButtonDimensionHint(button);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -100,7 +100,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		});
 		
 		label = new Label(group, SWT.NONE);
-		label.setText(PDEUIMessages.ProductDefinitonWizardPage_productId); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ProductDefinitonWizardPage_productId); 
 		
 		fProductText = new Text(group, SWT.SINGLE|SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -112,14 +112,14 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 	
 	private void createApplicationGroup(FormToolkit toolkit, Composite comp) {
 		Group group = new Group(comp, SWT.NONE);
-		group.setText(PDEUIMessages.ProductDefinitonWizardPage_applicationGroup); //$NON-NLS-1$
+		group.setText(PDEUIMessages.ProductDefinitonWizardPage_applicationGroup); 
 		group.setLayout(new GridLayout(2, false));
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		createFormText(toolkit, group, PDEUIMessages.ProductDefinitonWizardPage_applicationDefinition, 2); //$NON-NLS-1$
+		createFormText(toolkit, group, PDEUIMessages.ProductDefinitonWizardPage_applicationDefinition, 2); 
 
 		Label label = new Label(group, SWT.NONE);
-		label.setText(PDEUIMessages.ProductDefinitonWizardPage_application); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ProductDefinitonWizardPage_application); 
 		
 		fApplicationCombo = new Combo(group, SWT.SINGLE|SWT.READ_ONLY);
 		fApplicationCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -139,18 +139,18 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		String error = null;
 		String pluginId = fPluginText.getText().trim();
 		if (pluginId.length() == 0) {
-			error = PDEUIMessages.ProductDefinitonWizardPage_noPluginId; //$NON-NLS-1$
+			error = PDEUIMessages.ProductDefinitonWizardPage_noPluginId; 
 		} else {
 			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginId);
 			if (model == null)
-				error = PDEUIMessages.ProductDefinitonWizardPage_noPlugin; //$NON-NLS-1$
+				error = PDEUIMessages.ProductDefinitonWizardPage_noPlugin; 
 			else if (model.getUnderlyingResource() == null)
-				error = PDEUIMessages.ProductDefinitonWizardPage_notInWorkspace; //$NON-NLS-1$
+				error = PDEUIMessages.ProductDefinitonWizardPage_notInWorkspace; 
 		}
 		if (error == null)
 			error = validateId();
 		if (error == null && getProductNameSet().contains(pluginId + "." + fProductText.getText().trim())) { //$NON-NLS-1$
-			error = PDEUIMessages.ProductDefinitonWizardPage_productExists; //$NON-NLS-1$
+			error = PDEUIMessages.ProductDefinitonWizardPage_productExists; 
 		}
 		setErrorMessage(error);
 		setPageComplete(error == null);
@@ -159,11 +159,11 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 	private String validateId() {
 		String id = fProductText.getText().trim();
 		if (id.length() == 0)
-			return PDEUIMessages.ProductDefinitonWizardPage_noProductID; //$NON-NLS-1$
+			return PDEUIMessages.ProductDefinitonWizardPage_noProductID; 
 
 		for (int i = 0; i<id.length(); i++){
 			if (!id.substring(i,i+1).matches("[a-zA-Z0-9_]")) //$NON-NLS-1$
-				return PDEUIMessages.ProductDefinitonWizardPage_invalidId; //$NON-NLS-1$
+				return PDEUIMessages.ProductDefinitonWizardPage_invalidId; 
 		}
 		return null;
 	}

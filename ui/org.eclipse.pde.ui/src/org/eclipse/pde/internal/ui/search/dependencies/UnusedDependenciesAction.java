@@ -29,7 +29,7 @@ public class UnusedDependenciesAction extends Action {
 	}
 
 	public void run() {
-		Job job = new UnusedDependenciesJob(PDEUIMessages.UnusedDependenciesAction_jobName, fModel, fReadOnly); //$NON-NLS-1$
+		Job job = new UnusedDependenciesJob(PDEUIMessages.UnusedDependenciesAction_jobName, fModel, fReadOnly); 
 		job.setUser(true);
 		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_PSEARCH_OBJ.createImage());
 		job.schedule();

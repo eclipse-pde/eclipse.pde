@@ -65,7 +65,7 @@ public class HistoryListDialog extends StatusDialog {
 
 	public HistoryListDialog(Shell shell, String[] elements) {
 		super(shell);
-		setTitle(PDEUIMessages.HistoryListDialog_title); //$NON-NLS-1$
+		setTitle(PDEUIMessages.HistoryListDialog_title); 
 		fHistoryList.addAll(Arrays.asList(elements));
 	}
 
@@ -103,7 +103,7 @@ public class HistoryListDialog extends StatusDialog {
 		inner.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label label = new Label(inner, SWT.NONE);
-		label.setText(PDEUIMessages.HistoryListDialog_label); //$NON-NLS-1$
+		label.setText(PDEUIMessages.HistoryListDialog_label); 
 
 		Composite container = createListArea(inner);
 
@@ -136,7 +136,7 @@ public class HistoryListDialog extends StatusDialog {
 	 */
 	private void createListButtons(Composite parent) {
 		fRemoveButton = new Button(parent, SWT.PUSH);
-		fRemoveButton.setText(PDEUIMessages.HistoryListDialog_remove_button); //$NON-NLS-1$
+		fRemoveButton.setText(PDEUIMessages.HistoryListDialog_remove_button); 
 		fRemoveButton.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false,
 				false));
 		SWTUtil.setButtonDimensionHint(fRemoveButton);

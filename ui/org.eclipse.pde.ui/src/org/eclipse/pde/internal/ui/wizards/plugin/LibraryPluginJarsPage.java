@@ -62,8 +62,8 @@ public class LibraryPluginJarsPage extends WizardPage {
 	public LibraryPluginJarsPage(String pageName, LibraryPluginFieldData data) {
 		super(pageName);
 		fData = data;
-		setTitle(PDEUIMessages.LibraryPluginJarsPage_title); //$NON-NLS-1$
-		setDescription(PDEUIMessages.LibraryPluginJarsPage_desc); //$NON-NLS-1$
+		setTitle(PDEUIMessages.LibraryPluginJarsPage_title); 
+		setDescription(PDEUIMessages.LibraryPluginJarsPage_desc); 
 	}
 
 	private void chooseFile() {
@@ -92,9 +92,9 @@ public class LibraryPluginJarsPage extends WizardPage {
 		dialog.setValidator(new FileValidator());
 		dialog.setAllowMultiple(true);
 		dialog
-				.setTitle(PDEUIMessages.LibraryPluginJarsPage_SelectionDialog_title); //$NON-NLS-1$
+				.setTitle(PDEUIMessages.LibraryPluginJarsPage_SelectionDialog_title); 
 		dialog
-				.setMessage(PDEUIMessages.LibraryPluginJarsPage_SelectionDialog_message); //$NON-NLS-1$
+				.setMessage(PDEUIMessages.LibraryPluginJarsPage_SelectionDialog_message); 
 		dialog.addFilter(new FileExtensionFilter("jar")); //$NON-NLS-1$
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 
@@ -119,7 +119,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 		control.setLayout(layout);
 
 		Label l = new Label(control, SWT.WRAP);
-		l.setText(PDEUIMessages.LibraryPluginJarsPage_label); //$NON-NLS-1$
+		l.setText(PDEUIMessages.LibraryPluginJarsPage_label); 
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		l.setLayoutData(data);
@@ -180,28 +180,28 @@ public class LibraryPluginJarsPage extends WizardPage {
 		buttons.setLayoutData(data);
 
 		Button browseWorkspace = new Button(buttons, SWT.PUSH);
-		browseWorkspace.setText(PDEUIMessages.LibraryPluginJarsPage_add); //$NON-NLS-1$
+		browseWorkspace.setText(PDEUIMessages.LibraryPluginJarsPage_add); 
 		browseWorkspace.setLayoutData(new GridData(
 				GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(browseWorkspace);
 		browseWorkspace.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				chooseWorkspaceFile(); //$NON-NLS-1$
+				chooseWorkspaceFile(); 
 			}
 		});
 
 		Button browseFile = new Button(buttons, SWT.PUSH);
-		browseFile.setText(PDEUIMessages.LibraryPluginJarsPage_addExternal); //$NON-NLS-1$
+		browseFile.setText(PDEUIMessages.LibraryPluginJarsPage_addExternal); 
 		browseFile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(browseFile);
 		browseFile.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				chooseFile(); //$NON-NLS-1$
+				chooseFile(); 
 			}
 		});
 
 		fRemove = new Button(buttons, SWT.PUSH);
-		fRemove.setText(PDEUIMessages.LibraryPluginJarsPage_remove); //$NON-NLS-1$
+		fRemove.setText(PDEUIMessages.LibraryPluginJarsPage_remove); 
 		fRemove.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(fRemove);
 		fRemove.setEnabled(fJarPaths.size() > 0);

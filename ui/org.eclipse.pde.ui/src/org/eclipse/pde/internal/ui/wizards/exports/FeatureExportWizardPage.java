@@ -33,8 +33,8 @@ public class FeatureExportWizardPage extends ExportWizardPageWithTable {
 		super(
 			selection,
 			"featureExport", //$NON-NLS-1$
-			PDEUIMessages.ExportWizard_Feature_pageBlock); //$NON-NLS-1$
-		setTitle(PDEUIMessages.ExportWizard_Feature_pageTitle); //$NON-NLS-1$
+			PDEUIMessages.ExportWizard_Feature_pageBlock); 
+		setTitle(PDEUIMessages.ExportWizard_Feature_pageTitle); 
 	}
 
 	public Object[] getListElements() {
@@ -65,7 +65,7 @@ public class FeatureExportWizardPage extends ExportWizardPageWithTable {
 	}
 	
 	protected String getJarButtonText() {
-		return PDEUIMessages.BaseExportWizardPage_fPackageJARs; //$NON-NLS-1$
+		return PDEUIMessages.BaseExportWizardPage_fPackageJARs; 
 	}
 	
 	protected void setFeaturePage(AdvancedFeatureExportPage fPage) {

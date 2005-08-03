@@ -207,7 +207,7 @@ public boolean finish() {
 		String newLine = TextUtilities
 		.getDefaultLineDelimiter(((IEditingModel) model)
 				.getDocument());
-		return new ReplaceEdit(header.getOffset(), header.getLength(), header.write() + newLine); //$NON-NLS-1$
+		return new ReplaceEdit(header.getOffset(), header.getLength(), header.write() + newLine); 
 	}
 
 	private TextEdit modifyVersion(PluginModelBase model, String version)

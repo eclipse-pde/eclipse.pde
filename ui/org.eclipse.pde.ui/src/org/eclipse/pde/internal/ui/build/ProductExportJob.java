@@ -143,17 +143,17 @@ public class ProductExportJob extends FeatureExportJob {
 					File file = new File(homeDir, "eclipse"); //$NON-NLS-1$
 					if (file.exists()) {
 						buffer.append(",absolute:file:"); //$NON-NLS-1$
-						buffer.append(file.getAbsolutePath()); //$NON-NLS-1$
+						buffer.append(file.getAbsolutePath()); 
 					}				
 					file = new File(homeDir, "eclipse.exe"); //$NON-NLS-1$
 					if (file.exists()) {
 						buffer.append(",absolute:file:"); //$NON-NLS-1$
-						buffer.append(file.getAbsolutePath()); //$NON-NLS-1$
+						buffer.append(file.getAbsolutePath()); 
 					}
 					file = new File(homeDir, "libXm.so.2"); //$NON-NLS-1$
 					if (file.exists()) {
 						buffer.append(",absolute:file:"); //$NON-NLS-1$
-						buffer.append(file.getAbsolutePath()); //$NON-NLS-1$
+						buffer.append(file.getAbsolutePath()); 
 					}
 				}
 			}	
@@ -273,7 +273,7 @@ public class ProductExportJob extends FeatureExportJob {
             } else {
                 writer.println("osgi.bundles=" + getPluginList(config)); //$NON-NLS-1$
             }
-            writer.println("osgi.bundles.defaultStartLevel=4"); //$NON-NLS-1$ //$NON-NLS-2$		
+            writer.println("osgi.bundles.defaultStartLevel=4"); //$NON-NLS-1$ 		
         } catch (IOException e) {
         } finally {
             if (writer != null)
@@ -506,7 +506,7 @@ public class ProductExportJob extends FeatureExportJob {
 			} else {
 				map.put(IXMLConstants.PROPERTY_ASSEMBLY_TMP, fInfo.destinationDirectory);
 			}
-			map.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, fRoot); //$NON-NLS-1$
+			map.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, fRoot); 
 			map.put("installFolder", ExternalModelManager.getEclipseHome().toOSString()); //$NON-NLS-1$
 			map.put("template", location); //$NON-NLS-1$
 			runner.addUserProperties(map);

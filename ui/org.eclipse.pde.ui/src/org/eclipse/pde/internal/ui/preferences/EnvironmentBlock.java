@@ -145,7 +145,7 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 		group.setText(PDEUIMessages.EnvironmentBlock_jreTitle);
 		
 		Label label = new Label(group, SWT.NONE);
-		label.setText(PDEUIMessages.EnvironmentBlock_jreGroup);  //$NON-NLS-1$
+		label.setText(PDEUIMessages.EnvironmentBlock_jreGroup);  
 		
 		fJRECombo = new Combo(group, SWT.SINGLE|SWT.READ_ONLY);
 		fJRECombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -154,7 +154,7 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 		fJRECombo.setText(fDefaultJRE);
 		
 		label = new Label(group, SWT.WRAP);
-		label.setText(PDEUIMessages.EnvironmentBlock_jreNote); //$NON-NLS-1$
+		label.setText(PDEUIMessages.EnvironmentBlock_jreNote); 
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		gd.horizontalIndent = 25;
@@ -168,7 +168,7 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 		layout.numColumns = 2;
 		group.setLayout(layout);	
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(PDEUIMessages.EnvironmentBlock_targetEnv); //$NON-NLS-1$
+		group.setText(PDEUIMessages.EnvironmentBlock_targetEnv); 
 		
 		initializeChoices();
 		

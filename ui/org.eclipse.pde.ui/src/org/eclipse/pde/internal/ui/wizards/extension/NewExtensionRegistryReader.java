@@ -157,7 +157,7 @@ public class NewExtensionRegistryReader {
 
 		category = new Category(config);
 		if (category.getID() == null || category.getLabel() == null) {
-			System.out.println(PDEUIMessages.NewExtensionRegistryReader_missingProperty); //$NON-NLS-1$
+			System.out.println(PDEUIMessages.NewExtensionRegistryReader_missingProperty); 
 			return;
 		}
 

@@ -30,7 +30,7 @@ public class BuildObject implements IBuildObject {
 
 	protected void ensureModelEditable() throws CoreException {
 		if (!fModel.isEditable()) {
-			throwCoreException(PDECoreMessages.BuildObject_readOnlyException); //$NON-NLS-1$
+			throwCoreException(PDECoreMessages.BuildObject_readOnlyException); 
 		}
 	}
 

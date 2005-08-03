@@ -39,8 +39,8 @@ public class PluginExportWizardPage extends ExportWizardPageWithTable {
 		super(
 			selection,
 			"pluginExport", //$NON-NLS-1$
-			PDEUIMessages.ExportWizard_Plugin_pageBlock); //$NON-NLS-1$
-		setTitle(PDEUIMessages.ExportWizard_Plugin_pageTitle); //$NON-NLS-1$
+			PDEUIMessages.ExportWizard_Plugin_pageBlock); 
+		setTitle(PDEUIMessages.ExportWizard_Plugin_pageTitle); 
 	}
 
 	public Object[] getListElements() {
@@ -92,7 +92,7 @@ public class PluginExportWizardPage extends ExportWizardPageWithTable {
 	}
 	
 	protected String getJarButtonText() {
-		return PDEUIMessages.BaseExportWizardPage_packageJARs; //$NON-NLS-1$
+		return PDEUIMessages.BaseExportWizardPage_packageJARs; 
 	}
 				
     protected boolean addMultiplatformSection() {

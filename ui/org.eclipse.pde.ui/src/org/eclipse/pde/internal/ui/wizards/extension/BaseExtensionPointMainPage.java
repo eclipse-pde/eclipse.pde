@@ -120,8 +120,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			gd.horizontalSpan =1;
 			gd.widthHint = 50;
 			fPluginBrowseButton.setLayoutData(gd);
-			fPluginBrowseButton.setText(PDEUIMessages.BaseExtensionPointMainPage_pluginBrowse); //$NON-NLS-1$
-			fPluginBrowseButton.setToolTipText(PDEUIMessages.BaseExtensionPointMainPage_pluginId_tooltip); //$NON-NLS-1$
+			fPluginBrowseButton.setText(PDEUIMessages.BaseExtensionPointMainPage_pluginBrowse); 
+			fPluginBrowseButton.setToolTipText(PDEUIMessages.BaseExtensionPointMainPage_pluginId_tooltip); 
 			fPluginBrowseButton.addSelectionListener(new SelectionAdapter(){
 				public void widgetSelected(SelectionEvent e) {
 					handlePluginBrowse();
@@ -171,8 +171,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 			gd.widthHint = 50;
 			fFindLocationButton.setLayoutData(gd);
-			fFindLocationButton.setText(PDEUIMessages.BaseExtensionPointMainPage_findBrowse); //$NON-NLS-1$
-			fFindLocationButton.setToolTipText(PDEUIMessages.BaseExtensionPointMainPage_schemaLocation_tooltip); //$NON-NLS-1$
+			fFindLocationButton.setText(PDEUIMessages.BaseExtensionPointMainPage_findBrowse); 
+			fFindLocationButton.setToolTipText(PDEUIMessages.BaseExtensionPointMainPage_schemaLocation_tooltip); 
 			fFindLocationButton.addSelectionListener(new SelectionAdapter(){
 				public void widgetSelected(SelectionEvent e) {
 					handleSchemaLocation();
@@ -220,7 +220,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		EditableSchema schema = new EditableSchema(pluginId, pointId, name, false);
 		schema.setDescription(PDEUIMessages.BaseExtensionPoint_sections_overview);
 		DocumentSection section;
-		section = new DocumentSection(schema, IDocumentSection.SINCE, PDEUIMessages.BaseExtensionPointMainPage_since); //$NON-NLS-1$
+		section = new DocumentSection(schema, IDocumentSection.SINCE, PDEUIMessages.BaseExtensionPointMainPage_since); 
 		section.setDescription(PDEUIMessages.BaseExtensionPoint_sections_since);
 		schema.addDocumentSection(section);
 		SchemaElement element;
@@ -440,7 +440,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		return exists;
 	}
 	private void handleInvalidContainer(){
-		setErrorMessage(PDEUIMessages.BaseExtensionPointMainPage_noContainer); //$NON-NLS-1$
+		setErrorMessage(PDEUIMessages.BaseExtensionPointMainPage_noContainer); 
 		setPageComplete(false);
 	}
 	private void handleValidContainer(){
@@ -460,8 +460,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 				getShell(),
 				new WorkbenchLabelProvider(),
 				new WorkbenchContentProvider());
-		dialog.setTitle(PDEUIMessages.BaseExtensionPointMainPage_schemaLocation_title); //$NON-NLS-1$
-		dialog.setMessage(PDEUIMessages.BaseExtensionPointMainPage_schemaLocation_desc); //$NON-NLS-1$
+		dialog.setTitle(PDEUIMessages.BaseExtensionPointMainPage_schemaLocation_title); 
+		dialog.setMessage(PDEUIMessages.BaseExtensionPointMainPage_schemaLocation_desc); 
 		dialog.setDoubleClickSelects(false);
 		dialog.setAllowMultiple(false);
 		dialog.addFilter(new ViewerFilter(){

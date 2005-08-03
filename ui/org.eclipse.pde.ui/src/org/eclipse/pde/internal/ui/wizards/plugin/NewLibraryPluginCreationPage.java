@@ -85,8 +85,8 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	public NewLibraryPluginCreationPage(String pageName, LibraryPluginFieldData data) {
 		super(pageName);
 		fData = data;
-		setTitle(PDEUIMessages.NewLibraryPluginCreationPage_title); //$NON-NLS-1$
-		setDescription(PDEUIMessages.NewLibraryPluginCreationPage_desc); //$NON-NLS-1$
+		setTitle(PDEUIMessages.NewLibraryPluginCreationPage_title); 
+		setDescription(PDEUIMessages.NewLibraryPluginCreationPage_desc); 
 	}
 
 	protected String computeId() {
@@ -112,14 +112,14 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 
 	private void createFormatGroup(Composite container) {
 		Group group = new Group(container, SWT.NONE);
-		group.setText(PDEUIMessages.NewLibraryPluginCreationPage_pformat); //$NON-NLS-1$			
+		group.setText(PDEUIMessages.NewLibraryPluginCreationPage_pformat); //			
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Label label = new Label(group, SWT.NONE);
-		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pTarget); //$NON-NLS-1$
+		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pTarget); 
 		fTargetCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
 		fTargetCombo.setItems(new String[] { ICoreConstants.TARGET31,
 				ICoreConstants.TARGET30, ICoreConstants.TARGET21 });
@@ -133,12 +133,12 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 			}
 		});
 		fBundleCheck = new Button(group, SWT.CHECK);
-		fBundleCheck.setText(PDEUIMessages.NewLibraryPluginCreationPage_bundle); //$NON-NLS-1$
+		fBundleCheck.setText(PDEUIMessages.NewLibraryPluginCreationPage_bundle); 
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fBundleCheck.setLayoutData(gd);
 		fJarredCheck = new Button(group, SWT.CHECK);
-		fJarredCheck.setText(PDEUIMessages.NewLibraryPluginCreationPage_jarred); //$NON-NLS-1$
+		fJarredCheck.setText(PDEUIMessages.NewLibraryPluginCreationPage_jarred); 
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fJarredCheck.setLayoutData(gd);
@@ -149,25 +149,25 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		Group propertiesGroup = new Group(container, SWT.NONE);
 		propertiesGroup.setLayout(new GridLayout(2, false));
 		propertiesGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		propertiesGroup.setText(PDEUIMessages.NewLibraryPluginCreationPage_pGroup); //$NON-NLS-1$
+		propertiesGroup.setText(PDEUIMessages.NewLibraryPluginCreationPage_pGroup); 
 
 		Label label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pid); //$NON-NLS-1$
+		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pid); 
 		fIdText = createText(propertiesGroup, fPropertiesListener);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pversion); //$NON-NLS-1$
+		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pversion); 
 		fVersionText = createText(propertiesGroup, fPropertiesListener);
 		fPropertiesListener.setBlocked(true);
 		fVersionText.setText("1.0.0"); //$NON-NLS-1$
 		fPropertiesListener.setBlocked(false);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pname); //$NON-NLS-1$
+		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pname); 
 		fNameText = createText(propertiesGroup, fPropertiesListener);
 
 		label = new Label(propertiesGroup, SWT.NONE);
-		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pprovider); //$NON-NLS-1$
+		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pprovider); 
 		fProviderText = createText(propertiesGroup, fPropertiesListener);
 
 	}
@@ -184,7 +184,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	}
 
 	protected String getNameFieldQualifier() {
-		return PDEUIMessages.NewLibraryPluginCreationPage_plugin; //$NON-NLS-1$
+		return PDEUIMessages.NewLibraryPluginCreationPage_plugin; 
 	}
 
 	/*
@@ -265,10 +265,10 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	private String validateId() {
 		String id = fIdText.getText().trim();
 		if (id.length() == 0)
-			return PDEUIMessages.NewLibraryPluginCreationPage_noid; //$NON-NLS-1$
+			return PDEUIMessages.NewLibraryPluginCreationPage_noid; 
 
-		if (!IdUtil.isValidPluginId(id)) { //$NON-NLS-1$
-			return PDEUIMessages.NewLibraryPluginCreationPage_invalidId; //$NON-NLS-1$
+		if (!IdUtil.isValidPluginId(id)) { 
+			return PDEUIMessages.NewLibraryPluginCreationPage_invalidId; 
 		}
 		return null;
 	}
@@ -297,11 +297,11 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 			return errorMessage;
 
 		if (fVersionText.getText().trim().length() == 0) {
-			errorMessage = PDEUIMessages.NewLibraryPluginCreationPage_noversion; //$NON-NLS-1$
+			errorMessage = PDEUIMessages.NewLibraryPluginCreationPage_noversion; 
 		} else if (!isVersionValid(fVersionText.getText().trim())) {
-			errorMessage = PDEUIMessages.ContentPage_badversion; //$NON-NLS-1$
+			errorMessage = PDEUIMessages.ContentPage_badversion; 
 		} else if (fNameText.getText().trim().length() == 0) {
-			errorMessage = PDEUIMessages.NewLibraryPluginCreationPage_noname; //$NON-NLS-1$
+			errorMessage = PDEUIMessages.NewLibraryPluginCreationPage_noname; 
 		}
 
 		if (errorMessage != null)

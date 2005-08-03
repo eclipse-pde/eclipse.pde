@@ -40,7 +40,7 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	
 	public ProductFileWizadPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
-		setDescription(PDEUIMessages.ProductFileWizadPage_title); //$NON-NLS-1$
+		setDescription(PDEUIMessages.ProductFileWizadPage_title); 
 	}
 	
 	/* (non-Javadoc)
@@ -48,7 +48,7 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	 */
 	protected void createAdvancedControls(Composite parent) {
 		fGroup = new Group(parent, SWT.NONE);
-		fGroup.setText(PDEUIMessages.ProductFileWizadPage_groupTitle); //$NON-NLS-1$
+		fGroup.setText(PDEUIMessages.ProductFileWizadPage_groupTitle); 
 		fGroup.setLayout(new GridLayout(2, false));
 		fGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
@@ -56,10 +56,10 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		fBasicButton.setLayoutData(gd);
-		fBasicButton.setText(PDEUIMessages.ProductFileWizadPage_basic); //$NON-NLS-1$
+		fBasicButton.setText(PDEUIMessages.ProductFileWizadPage_basic); 
 		
 		fProductButton = new Button(fGroup, SWT.RADIO);
-		fProductButton.setText(PDEUIMessages.ProductFileWizadPage_existingProduct); //$NON-NLS-1$
+		fProductButton.setText(PDEUIMessages.ProductFileWizadPage_existingProduct); 
 		fProductButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fProductCombo.setEnabled(fProductButton.getSelection());
@@ -71,7 +71,7 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 		fProductCombo.setItems(TargetPlatform.getProductNames());
 		
 		fLaunchConfigButton = new Button(fGroup, SWT.RADIO);
-		fLaunchConfigButton.setText(PDEUIMessages.ProductFileWizadPage_existingLaunchConfig); //$NON-NLS-1$
+		fLaunchConfigButton.setText(PDEUIMessages.ProductFileWizadPage_existingLaunchConfig); 
 		fLaunchConfigButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fLaunchConfigCombo.setEnabled(fLaunchConfigButton.getSelection());
@@ -107,7 +107,7 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	 */
 	protected boolean validatePage() {
 		if (!getFileName().trim().endsWith(".product")) { //$NON-NLS-1$
-			setErrorMessage(PDEUIMessages.ProductFileWizadPage_error); //$NON-NLS-1$
+			setErrorMessage(PDEUIMessages.ProductFileWizadPage_error); 
 			return false;
 		}
 		if (getFileName().trim().length() <= 8) {

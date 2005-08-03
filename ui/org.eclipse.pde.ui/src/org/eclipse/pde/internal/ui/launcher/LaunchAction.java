@@ -194,11 +194,11 @@ public class LaunchAction extends Action {
 		IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), labelProvider);
 		dialog.setElements(configs);
-		dialog.setTitle(PDEUIMessages.RuntimeWorkbenchShortcut_title);  //$NON-NLS-1$
+		dialog.setTitle(PDEUIMessages.RuntimeWorkbenchShortcut_title);  
 		if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
-			dialog.setMessage(PDEUIMessages.RuntimeWorkbenchShortcut_select_debug); //$NON-NLS-1$
+			dialog.setMessage(PDEUIMessages.RuntimeWorkbenchShortcut_select_debug); 
 		} else {
-			dialog.setMessage(PDEUIMessages.RuntimeWorkbenchShortcut_select_run);  //$NON-NLS-1$
+			dialog.setMessage(PDEUIMessages.RuntimeWorkbenchShortcut_select_run);  
 		}
 		dialog.setMultipleSelection(false);
 		int result= dialog.open();
@@ -212,7 +212,7 @@ public class LaunchAction extends Action {
 	private ILaunchConfiguration createConfiguration() throws CoreException {
 		ILaunchConfigurationType configType = getWorkbenchLaunchConfigType();
 		String computedName = getComputedName(new Path(fPath).lastSegment());
-		ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);  //$NON-NLS-1$
+		ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);  
 		wc.setAttribute(ILauncherSettings.LOCATION + "0", RuntimeWorkbenchShortcut.getDefaultWorkspaceLocation(computedName)); //$NON-NLS-1$
 		wc.setAttribute(ILauncherSettings.USEFEATURES, false);
 		wc.setAttribute(ILauncherSettings.USE_DEFAULT, false);

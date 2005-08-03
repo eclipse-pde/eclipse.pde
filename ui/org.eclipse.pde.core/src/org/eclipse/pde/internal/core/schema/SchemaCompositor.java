@@ -33,16 +33,16 @@ public class SchemaCompositor
 		this.kind = kind;
 		switch (kind) {
 			case ALL :
-				fName = PDECoreMessages.SchemaCompositor_all; //$NON-NLS-1$
+				fName = PDECoreMessages.SchemaCompositor_all; 
 				break;
 			case CHOICE :
-				fName = PDECoreMessages.SchemaCompositor_choice; //$NON-NLS-1$
+				fName = PDECoreMessages.SchemaCompositor_choice; 
 				break;
 			case GROUP :
-				fName = PDECoreMessages.SchemaCompositor_group; //$NON-NLS-1$
+				fName = PDECoreMessages.SchemaCompositor_group; 
 				break;
 			case SEQUENCE :
-				fName = PDECoreMessages.SchemaCompositor_sequence; //$NON-NLS-1$
+				fName = PDECoreMessages.SchemaCompositor_sequence; 
 				break;
 		}
 	}
@@ -92,16 +92,16 @@ public class SchemaCompositor
 			this.kind = kind;
 			switch (kind) {
 				case ALL :
-					fName = PDECoreMessages.SchemaCompositor_all; //$NON-NLS-1$
+					fName = PDECoreMessages.SchemaCompositor_all; 
 					break;
 				case CHOICE :
-					fName = PDECoreMessages.SchemaCompositor_choice; //$NON-NLS-1$
+					fName = PDECoreMessages.SchemaCompositor_choice; 
 					break;
 				case GROUP :
-					fName = PDECoreMessages.SchemaCompositor_group; //$NON-NLS-1$
+					fName = PDECoreMessages.SchemaCompositor_group; 
 					break;
 				case SEQUENCE :
-					fName = PDECoreMessages.SchemaCompositor_sequence; //$NON-NLS-1$
+					fName = PDECoreMessages.SchemaCompositor_sequence; 
 					break;
 			}
 			getSchema().fireModelObjectChanged(

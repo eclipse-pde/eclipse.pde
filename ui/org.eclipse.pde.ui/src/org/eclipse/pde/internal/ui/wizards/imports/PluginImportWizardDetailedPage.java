@@ -75,8 +75,8 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	
 	public PluginImportWizardDetailedPage(String pageName, PluginImportWizardFirstPage firstPage) {
 		super(pageName, firstPage);
-		setTitle(PDEUIMessages.ImportWizard_DetailedPage_title); //$NON-NLS-1$
-		setMessage(PDEUIMessages.ImportWizard_DetailedPage_desc); //$NON-NLS-1$
+		setTitle(PDEUIMessages.ImportWizard_DetailedPage_title); 
+		setMessage(PDEUIMessages.ImportWizard_DetailedPage_desc); 
 	}
 
 	public void createControl(Composite parent) {
@@ -136,7 +136,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		container.setLayoutData(new GridData());
 
 		Label label = new Label(container, SWT.NONE);
-		label.setText(PDEUIMessages.ImportWizard_DetailedPage_availableList); //$NON-NLS-1$
+		label.setText(PDEUIMessages.ImportWizard_DetailedPage_availableList); 
 
 		Table table = new Table(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -169,7 +169,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		container.setLayoutData(gd);
 		
 		Button button = new Button(container, SWT.PUSH);
-		button.setText(PDEUIMessages.ImportWizard_DetailedPage_existing); //$NON-NLS-1$
+		button.setText(PDEUIMessages.ImportWizard_DetailedPage_existing); 
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -179,7 +179,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		SWTUtil.setButtonDimensionHint(button);
 
 		button = new Button(container, SWT.PUSH);
-		button.setText(PDEUIMessages.ImportWizard_DetailedPage_existingUnshared); //$NON-NLS-1$
+		button.setText(PDEUIMessages.ImportWizard_DetailedPage_existingUnshared); 
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -189,7 +189,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
-		button.setText(PDEUIMessages.ImportWizard_DetailedPage_add); //$NON-NLS-1$
+		button.setText(PDEUIMessages.ImportWizard_DetailedPage_add); 
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -199,7 +199,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
-		button.setText(PDEUIMessages.ImportWizard_DetailedPage_addAll); //$NON-NLS-1$
+		button.setText(PDEUIMessages.ImportWizard_DetailedPage_addAll); 
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -209,7 +209,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
-		button.setText(PDEUIMessages.ImportWizard_DetailedPage_remove); //$NON-NLS-1$
+		button.setText(PDEUIMessages.ImportWizard_DetailedPage_remove); 
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -219,7 +219,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
-		button.setText(PDEUIMessages.ImportWizard_DetailedPage_removeAll); //$NON-NLS-1$
+		button.setText(PDEUIMessages.ImportWizard_DetailedPage_removeAll); 
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -229,7 +229,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
-		button.setText(PDEUIMessages.ImportWizard_DetailedPage_swap); //$NON-NLS-1$
+		button.setText(PDEUIMessages.ImportWizard_DetailedPage_swap); 
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -239,7 +239,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		SWTUtil.setButtonDimensionHint(button);
 		
 		button = new Button(container, SWT.PUSH);
-		button.setText(PDEUIMessages.ImportWizard_DetailedPage_addRequired); //$NON-NLS-1$
+		button.setText(PDEUIMessages.ImportWizard_DetailedPage_addRequired); 
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -263,10 +263,10 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan=3;
 		container.setLayoutData(gd);
-		container.setText(PDEUIMessages.ImportWizard_DetailedPage_locate); //$NON-NLS-1$
+		container.setText(PDEUIMessages.ImportWizard_DetailedPage_locate); 
 	
 		Label filterLabel = new Label(container, SWT.NONE);
-		filterLabel.setText(PDEUIMessages.ImportWizard_DetailedPage_search); //$NON-NLS-1$
+		filterLabel.setText(PDEUIMessages.ImportWizard_DetailedPage_search); 
 		
 		fFilterText = new Text(container, SWT.BORDER);
 		fFilterText.setText(""); //$NON-NLS-1$

@@ -133,7 +133,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 		ModelEntry[] entries = manager.getEntries();
 		StringBuffer buffer = new StringBuffer();
 
-		monitor.beginTask(PDECoreMessages.SearchablePluginsManager_saving, 3); //$NON-NLS-1$
+		monitor.beginTask(PDECoreMessages.SearchablePluginsManager_saving, 3); 
 
 		int counter = 0;
 

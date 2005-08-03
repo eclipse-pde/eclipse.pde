@@ -83,15 +83,15 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	
 	private static String[] getButtonLabels() {
 		String[] labels = new String[9];
-		labels[0] = PDEUIMessages.Product_PluginSection_add; //$NON-NLS-1$
-		labels[1] = PDEUIMessages.Product_PluginSection_working; //$NON-NLS-1$
-		labels[2] = PDEUIMessages.Product_PluginSection_required; //$NON-NLS-1$
-		labels[3] = PDEUIMessages.PluginSection_remove; //$NON-NLS-1$
-		labels[4] = PDEUIMessages.Product_PluginSection_removeAll; //$NON-NLS-1$
+		labels[0] = PDEUIMessages.Product_PluginSection_add; 
+		labels[1] = PDEUIMessages.Product_PluginSection_working; 
+		labels[2] = PDEUIMessages.Product_PluginSection_required; 
+		labels[3] = PDEUIMessages.PluginSection_remove; 
+		labels[4] = PDEUIMessages.Product_PluginSection_removeAll; 
 		labels[5] = null;
 		labels[6] = null;
-		labels[7] = PDEUIMessages.Product_PluginSection_newPlugin; //$NON-NLS-1$
-		labels[8] = PDEUIMessages.Product_PluginSection_newFragment; //$NON-NLS-1$
+		labels[7] = PDEUIMessages.Product_PluginSection_newPlugin; 
+		labels[8] = PDEUIMessages.Product_PluginSection_newFragment; 
 		return labels;
 	}
 
@@ -131,8 +131,8 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.verticalSpan = 2;
 		section.setLayoutData(gd);
-		section.setText(PDEUIMessages.Product_PluginSection_title); //$NON-NLS-1$
-		section.setDescription(PDEUIMessages.Product_PluginSection_desc); //$NON-NLS-1$
+		section.setText(PDEUIMessages.Product_PluginSection_title); 
+		section.setDescription(PDEUIMessages.Product_PluginSection_desc); 
 		getModel().addModelChangedListener(this);
 	}
 	
@@ -236,7 +236,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		if (ssel == null)
 			return;
 		
-		Action openAction = new Action(PDEUIMessages.PluginSection_open) { //$NON-NLS-1$
+		Action openAction = new Action(PDEUIMessages.PluginSection_open) { 
 			public void run() {
 				handleDoubleClick((IStructuredSelection)fPluginTable.getSelection());
 			}
@@ -246,7 +246,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		
 		manager.add(new Separator());
 		
-		Action removeAction = new Action(PDEUIMessages.PluginSection_remove) { //$NON-NLS-1$
+		Action removeAction = new Action(PDEUIMessages.PluginSection_remove) { 
 			public void run() {
 				handleDelete();
 			}
@@ -254,7 +254,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		removeAction.setEnabled(isEditable() && ssel.size() > 0);
 		manager.add(removeAction);
 		
-		Action removeAll = new Action(PDEUIMessages.PluginSection_removeAll) { //$NON-NLS-1$
+		Action removeAll = new Action(PDEUIMessages.PluginSection_removeAll) { 
 			public void run() {
 				handleRemoveAll();
 			}

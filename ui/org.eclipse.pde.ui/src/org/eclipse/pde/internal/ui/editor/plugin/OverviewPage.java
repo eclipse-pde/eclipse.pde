@@ -44,7 +44,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	private PluginExportAction fExportAction;
 
 	public OverviewPage(FormEditor editor) {
-		super(editor, PAGE_ID, PDEUIMessages.OverviewPage_tabName);  //$NON-NLS-1$
+		super(editor, PAGE_ID, PDEUIMessages.OverviewPage_tabName);  
 	}
 	
 	protected String getHelpResource() {
@@ -55,7 +55,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		form.setText(PDEUIMessages.ManifestEditor_OverviewPage_title); //$NON-NLS-1$
+		form.setText(PDEUIMessages.ManifestEditor_OverviewPage_title); 
 		fillBody(managedForm, toolkit);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_PLUGIN_OVERVIEW);		
 		managedForm.refresh();
@@ -134,7 +134,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	
 	private void createTestingSection(IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit) {
-		Section section = createStaticSection(toolkit, parent, PDEUIMessages.ManifestEditor_TestingSection_title); //$NON-NLS-1$
+		Section section = createStaticSection(toolkit, parent, PDEUIMessages.ManifestEditor_TestingSection_title); 
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		
 		ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
@@ -156,7 +156,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	
 	private void createExportingSection(IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit) {
-		Section section = createStaticSection(toolkit, parent, PDEUIMessages.ManifestEditor_DeployingSection_title); //$NON-NLS-1$
+		Section section = createStaticSection(toolkit, parent, PDEUIMessages.ManifestEditor_DeployingSection_title); 
 		ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
 		toolkit.adapt(info, true, true);
 		info.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_HELP));
@@ -292,7 +292,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
             updateBuildProperties();
             editor.doSave(null);
 		} catch (InvocationTargetException e) {
-			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OverviewPage_error, e.getCause().getMessage()); //$NON-NLS-1$
+			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OverviewPage_error, e.getCause().getMessage()); 
 		} catch (InterruptedException e) {
 		}
 	}

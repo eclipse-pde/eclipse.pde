@@ -44,7 +44,7 @@ public abstract class FeatureObject
 
 	protected void ensureModelEditable() throws CoreException {
 		if (!model.isEditable()) {
-			throwCoreException(PDECoreMessages.FeatureObject_readOnlyChange); //$NON-NLS-1$
+			throwCoreException(PDECoreMessages.FeatureObject_readOnlyChange); 
 		}
 	}
 	protected void firePropertyChanged(

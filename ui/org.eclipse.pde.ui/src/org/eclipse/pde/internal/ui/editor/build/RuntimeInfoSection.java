@@ -60,7 +60,7 @@ IModelChangedListener {
 	class RenameAction extends Action {
 		
 		public RenameAction() {
-			super(PDEUIMessages.EditableTablePart_renameAction); //$NON-NLS-1$
+			super(PDEUIMessages.EditableTablePart_renameAction); 
 		}
 		
 		public void run() {
@@ -570,7 +570,7 @@ IModelChangedListener {
 			RenameDialog dialog = new RenameDialog(fLibraryViewer.getControl()
 					.getShell(), oldName);
 			dialog.create();
-            dialog.setTitle(PDEUIMessages.RuntimeInfoSection_rename); //$NON-NLS-1$
+            dialog.setTitle(PDEUIMessages.RuntimeInfoSection_rename); 
 			dialog.getShell().setSize(300, 150);
 			if (dialog.open() == Dialog.OK) {
 				entryModified(entry, dialog.getNewName());
@@ -766,7 +766,7 @@ IModelChangedListener {
 						getSection().getShell(), libNames,
 						pluginModelBase);
 				dialog.create();
-				dialog.getShell().setText(PDEUIMessages.RuntimeInfoSection_addEntry);  //$NON-NLS-1$
+				dialog.getShell().setText(PDEUIMessages.RuntimeInfoSection_addEntry);  
 				
 				try {
 					if (dialog.open() == Dialog.OK) {
@@ -956,8 +956,8 @@ IModelChangedListener {
 			}
 		});
 		dialog.setAllowMultiple(false);
-		dialog.setTitle(PDEUIMessages.ManifestEditor_JarsSection_dialogTitle); //$NON-NLS-1$
-		dialog.setMessage(PDEUIMessages.ManifestEditor_JarsSection_dialogMessage); //$NON-NLS-1$
+		dialog.setTitle(PDEUIMessages.ManifestEditor_JarsSection_dialogTitle); 
+		dialog.setMessage(PDEUIMessages.ManifestEditor_JarsSection_dialogMessage); 
 		
 		dialog.setValidator(new ISelectionStatusValidator() {
 			
@@ -981,7 +981,7 @@ IModelChangedListener {
 							IStatus.ERROR,
 							PDEPlugin.getPluginId(),
 							IStatus.ERROR,
-							PDEUIMessages.BuildEditor_RuntimeInfoSection_duplicateFolder, //$NON-NLS-1$
+							PDEUIMessages.BuildEditor_RuntimeInfoSection_duplicateFolder, 
 							null);
 				
 				return new Status(IStatus.OK, PDEPlugin.getPluginId(),

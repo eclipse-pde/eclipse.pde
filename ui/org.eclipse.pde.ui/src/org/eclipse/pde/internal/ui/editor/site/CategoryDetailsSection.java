@@ -172,11 +172,11 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 					if (text.getValue().length() <= 0
 							|| alreadyExists(text.getValue())) {
 						setValue(PROPERTY_NAME);
-						String message = PDEUIMessages.CategoryDetails_alreadyExists; //$NON-NLS-1$
+						String message = PDEUIMessages.CategoryDetails_alreadyExists; 
 						MessageDialog
 								.openError(
 										PDEPlugin.getActiveWorkbenchShell(),
-										PDEUIMessages.CategoryDetails_alreadyExists_title, //$NON-NLS-1$
+										PDEUIMessages.CategoryDetails_alreadyExists_title, 
 										message);
 					} else {
 						applyValue(PROPERTY_NAME, text.getValue());

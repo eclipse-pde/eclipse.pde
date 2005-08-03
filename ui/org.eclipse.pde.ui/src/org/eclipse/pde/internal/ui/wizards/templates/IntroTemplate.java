@@ -63,17 +63,17 @@ public class IntroTemplate extends PDETemplateSection {
 
 		// product options
 		addOption(KEY_PRODUCT_ID, PDEUIMessages.IntroTemplate_productID,
-				"product", 0); //$NON-NLS-1$ //$NON-NLS-2$
+				"product", 0); //$NON-NLS-1$ 
 		addOption(KEY_PRODUCT_NAME, PDEUIMessages.IntroTemplate_productName,
 				"My New Product", 0); //$NON-NLS-1$        
 		addOption(KEY_APPLICATION_ID, PDEUIMessages.IntroTemplate_application,
-				"application", 0); //$NON-NLS-1$ //$NON-NLS-2$
+				"application", 0); //$NON-NLS-1$ 
 
         addOption( KEY_GENERATE_DYNAMIC_CONTENT,
                 PDEUIMessages.IntroTemplate_generate,
-                new String[][] { {STATIC_SELECTED, PDEUIMessages.IntroTemplate_generateStaticContent}, //$NON-NLS-1$
-                                 {DYNAMIC_SELECTED, PDEUIMessages.IntroTemplate_generateDynamicContent}}, //$NON-NLS-1$
-                STATIC_SELECTED, 0); //$NON-NLS-1$
+                new String[][] { {STATIC_SELECTED, PDEUIMessages.IntroTemplate_generateStaticContent}, 
+                                 {DYNAMIC_SELECTED, PDEUIMessages.IntroTemplate_generateDynamicContent}}, 
+                STATIC_SELECTED, 0); 
 	}
     
 	public void addPages(Wizard wizard) {

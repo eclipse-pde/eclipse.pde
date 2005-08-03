@@ -43,7 +43,7 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 					IStatus.ERROR,
 					PDEPlugin.getPluginId(),
 					IStatus.ERROR,
-					PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_validationError, //$NON-NLS-1$
+					PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_validationError, 
 					null);
 			return new Status(
 				IStatus.OK,
@@ -86,13 +86,13 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		libraryLabel.setLayoutData(gd);
 		libraryLabel
-				.setText(PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_label); //$NON-NLS-1$
+				.setText(PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_label); 
 		
 		libraryText = new Text(container, SWT.SINGLE|SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		libraryText.setLayoutData(gd);
 		libraryText
-				.setText(PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_default); //$NON-NLS-1$
+				.setText(PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_default); 
 		libraryText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				updateStatus(validator.validate(libraryText.getText()));

@@ -67,13 +67,13 @@ public class ElementPropertySource extends SchemaObjectPropertySource {
 			desc = createTextPropertyDescriptor(P_NAME, PDEUIMessages.SchemaEditor_ElementPR_name);
 			descriptors.addElement(desc);
 			
-            desc = createComboBoxPropertyDescriptor(P_TRANSLATABLE, PDEUIMessages.ElementPropertySource_translatable, booleanTable); //$NON-NLS-1$
+            desc = createComboBoxPropertyDescriptor(P_TRANSLATABLE, PDEUIMessages.ElementPropertySource_translatable, booleanTable); 
             if (desc instanceof ComboBoxPropertyDescriptor)
                 ((ComboBoxPropertyDescriptor) desc).setLabelProvider(new ComboProvider(
                         P_TRANSLATABLE, booleanTable));
             descriptors.addElement(desc);
 
-            desc = createComboBoxPropertyDescriptor(P_DEPRECATED, PDEUIMessages.ElementPropertySource_deprecated, booleanTable); //$NON-NLS-1$
+            desc = createComboBoxPropertyDescriptor(P_DEPRECATED, PDEUIMessages.ElementPropertySource_deprecated, booleanTable); 
             if (desc instanceof ComboBoxPropertyDescriptor)
                 ((ComboBoxPropertyDescriptor) desc).setLabelProvider(new ComboProvider(
                         P_DEPRECATED, booleanTable));
