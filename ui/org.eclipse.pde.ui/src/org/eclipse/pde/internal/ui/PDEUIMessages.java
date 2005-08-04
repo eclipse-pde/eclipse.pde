@@ -1878,7 +1878,9 @@ public class PDEUIMessages extends NLS {
 	public static String Product_FeatureSection_open;
 
 	public static String ImportPackageSection_desc;
+	public static String ImportPackageSection_descFragment;
 	public static String ExportPackageSection_desc;
+	public static String ExportPackageSection_descFragment;
 
 	static {
 		// load message values from bundle file
