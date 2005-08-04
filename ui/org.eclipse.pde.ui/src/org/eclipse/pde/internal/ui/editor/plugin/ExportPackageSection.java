@@ -32,7 +32,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -136,7 +135,10 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
         section.setText(PDEUIMessages.ExportPackageSection_title); 
-        section.setDescription(NLS.bind(PDEUIMessages.ExportPackageSection_desc, isFragment() ? "fragment" : "plug-in"));  //$NON-NLS-1$ //$NON-NLS-2$
+        if (isFragment())
+			section.setDescription(PDEUIMessages.ExportPackageSection_descFragment);
+		else
+			section.setDescription(PDEUIMessages.ExportPackageSection_desc);
 
         Composite container = createClientContainer(section, 2, toolkit);
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);

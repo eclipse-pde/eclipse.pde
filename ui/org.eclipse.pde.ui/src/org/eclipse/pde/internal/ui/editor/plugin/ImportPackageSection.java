@@ -31,7 +31,6 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.State;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.plugin.IPluginImport;
@@ -140,8 +139,11 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	 *      org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-        section.setText(PDEUIMessages.ImportPackageSection_required); 
-        section.setDescription(NLS.bind(PDEUIMessages.ImportPackageSection_desc, isFragment() ? "fragment" : "plug-in"));  //$NON-NLS-1$ //$NON-NLS-2$
+        section.setText(PDEUIMessages.ImportPackageSection_required);
+        if (isFragment())
+			section.setDescription(PDEUIMessages.ImportPackageSection_descFragment);
+		else
+			section.setDescription(PDEUIMessages.ImportPackageSection_desc);
 
         Composite container = createClientContainer(section, 2, toolkit);
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
