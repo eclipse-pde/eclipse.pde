@@ -216,7 +216,7 @@ public class BuilderTemplate extends PDETemplateSection {
 
 		// Marker
 		IPluginExtension extension4 = createExtension(
-				"org.eclipse.core.resources.markers", true); //$NON-NLS-1$
+				"org.eclipse.core.resources.markers", false); //$NON-NLS-1$
 		extension4.setId("xmlProblem"); //$NON-NLS-1$
 		extension4.setName(PDEUIMessages.BuilderTemplate_markerName);
 
