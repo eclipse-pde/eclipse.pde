@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.pde.internal.core.util.PropertiesUtil;
 import org.eclipse.pde.internal.ui.editor.text.AnnotationHover;
 import org.eclipse.pde.internal.ui.editor.text.IReconcilingParticipant;
 import org.eclipse.pde.internal.ui.editor.text.ReconcilingStrategy;
@@ -88,7 +89,9 @@ public abstract class KeyValueSourcePage extends PDESourcePage {
 		int offset = key.getOffset();
 		int length = key.getLength();
 		setHighlightRange(offset, length, true);
-		sourceViewer.setSelectedRange(offset, key.getName().length());
+		int nameLength = PropertiesUtil.createWritableName(key.getName())
+				.length();
+		sourceViewer.setSelectedRange(offset, Math.min(nameLength, length));
 	}
 	
 	/* (non-Javadoc)

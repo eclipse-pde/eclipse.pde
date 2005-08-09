@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.internal.core.util.PropertiesUtil;
 import org.eclipse.pde.internal.ui.model.*;
 
 public class Build implements IBuild {
@@ -112,7 +113,13 @@ public class Build implements IBuild {
 					if (index == -1)
 						index = line.indexOf('\t');
 					String name = (index != -1) ? line.substring(0, index).trim() : line;
-					currentKey = (IDocumentKey)getEntry(name);
+					String propertyKey;
+					try{
+						propertyKey=PropertiesUtil.windEscapeChars(name);
+					}catch(IllegalArgumentException iae){
+						propertyKey = name;
+					}
+					currentKey = (IDocumentKey)getEntry(propertyKey);
 					if (currentKey != null) {
 						while (Character.isSpaceChar(document.getChar(offset))) {
 							offset += 1;
