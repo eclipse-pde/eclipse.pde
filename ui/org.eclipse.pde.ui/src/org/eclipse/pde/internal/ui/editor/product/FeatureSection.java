@@ -78,7 +78,8 @@ public class FeatureSection extends TableSection {
 		
 		tablePart.setButtonEnabled(0, isEditable());
 		tablePart.setButtonEnabled(1, isEditable());
-		tablePart.setButtonEnabled(4, isEditable());
+		tablePart.setButtonEnabled(2, isEditable());
+		tablePart.setButtonEnabled(5, isEditable());
 		
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
