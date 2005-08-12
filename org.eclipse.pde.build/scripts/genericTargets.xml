@@ -18,6 +18,8 @@
 <property name="configs" value="*,*,*"/>
 <property name="fetchTag" value=""/>
 <property name="buildingOSGi" value="true"/>
+<property name="generateJnlp" value="false"/>
+<property name="signJars" value="false"/>
 <!-- ===================================================================== -->
 <!-- Fetch a single element (feature, plugin, fragment) -->
 <!-- ===================================================================== -->
@@ -64,6 +66,8 @@
 		archivesFormat="${archivesFormat}"
 		product="${product}"
 		forceContextQualifier="${forceContextQualifier}"
+		generateJnlp="${generateJnlp}"
+		signJars="${signJars}"
 	/>
 </target>
 
