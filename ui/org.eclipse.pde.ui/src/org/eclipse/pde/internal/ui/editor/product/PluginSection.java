@@ -122,8 +122,10 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		tablePart.setButtonEnabled(1, isEditable());
 		tablePart.setButtonEnabled(2, isEditable());
 		tablePart.setButtonEnabled(3, isEditable());
+		tablePart.setButtonEnabled(4, isEditable());
 		tablePart.setButtonEnabled(6, isEditable());
 		tablePart.setButtonEnabled(7, isEditable());
+		tablePart.setButtonEnabled(8, isEditable());
 		
 		toolkit.paintBordersFor(container);
 		section.setClient(container);

@@ -66,7 +66,7 @@ public class ProductEditor extends PDEFormEditor {
 		File file = (File) input.getAdapter(File.class);
 		if (file != null) {
 			String name = file.getName();
-			if (name.endsWith(".prod")) {  //$NON-NLS-1$
+			if (name.endsWith(".product")) {  //$NON-NLS-1$
 				IEditorInput in = new SystemFileEditorInput(file);
 				manager.putContext(in, new ProductInputContext(this, in, true));
 			}
@@ -78,7 +78,7 @@ public class ProductEditor extends PDEFormEditor {
 	 */
 	protected void createStorageContexts(InputContextManager manager,
 			IStorageEditorInput input) {
-		if (input.getName().toLowerCase(Locale.ENGLISH).endsWith(".prod")) { //$NON-NLS-1$
+		if (input.getName().toLowerCase(Locale.ENGLISH).endsWith(".product")) { //$NON-NLS-1$
 			manager.putContext(input, new ProductInputContext(this, input, true));
 		}
 	}
