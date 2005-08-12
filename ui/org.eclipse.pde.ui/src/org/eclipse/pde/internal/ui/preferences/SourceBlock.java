@@ -230,7 +230,6 @@ public class SourceBlock implements IHyperlinkListener {
 		GridData gd = new GridData(GridData.FILL);
 		gd.horizontalSpan = 2;
 		text.setLayoutData(gd);
-		text.setBackground(null);
 		text.addHyperlinkListener(this);
 		toolkit.dispose();
 
