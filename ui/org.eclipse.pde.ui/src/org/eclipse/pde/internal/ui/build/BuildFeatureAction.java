@@ -71,9 +71,9 @@ public class BuildFeatureAction extends BaseBuildAction {
 		for (int i = 0; i < references.length; i++) {
 			IPluginModelBase refmodel = feature.getReferencedModel(references[i]);
 			if (refmodel != null) {
-				refmodel.getUnderlyingResource().getProject().refreshLocal(
-					IResource.DEPTH_ONE,
-					monitor);
+				IResource resource = refmodel.getUnderlyingResource();
+				if (resource != null)
+					resource.getProject().refreshLocal(IResource.DEPTH_ONE, monitor);
 			}
 		}
 		IFeatureChild[] included = feature.getIncludedFeatures();
