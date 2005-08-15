@@ -75,7 +75,7 @@ public class PluginImport
 		String bundleVersion = element.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
 		if (bundleVersion != null) {
 			VersionRange versionRange = new VersionRange(bundleVersion);
-			this.version = versionRange.getMinimum() != null ? versionRange.getMinimum().toString() : null;
+			this.version = bundleVersion;
 			this.match = PluginBase.getMatchRule(versionRange);
 		}
 	}
