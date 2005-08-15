@@ -98,7 +98,7 @@ public abstract class GeneralInfoSection extends PDESection {
 		return (BundleInputContext) manager.findContext(BundleInputContext.CONTEXT_ID);
 	}
 	
-	private IBundle getBundle() {
+	protected IBundle getBundle() {
 		BundleInputContext context = getBundleContext();
 		if (context != null) {
 			IBundleModel model = (IBundleModel)context.getModel();

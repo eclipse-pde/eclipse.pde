@@ -36,6 +36,18 @@ public class Bundle implements IBundle {
 		Iterator iter = attributes.keySet().iterator();
 		while (iter.hasNext()) {
 			Attributes.Name key = (Attributes.Name) iter.next();
+			if (key.toString().equals(Constants.BUNDLE_MANIFESTVERSION)) {				
+	            String value = (String)attributes.get(key);
+				ManifestHeader header = createHeader(key.toString(), value);
+				fDocumentHeaders.put(key.toString(), header);
+				break;
+			}
+		}
+		iter = attributes.keySet().iterator();
+		while (iter.hasNext()) {
+			Attributes.Name key = (Attributes.Name) iter.next();
+			if (key.toString().equals(Constants.BUNDLE_MANIFESTVERSION))
+				continue;
             String value = (String)attributes.get(key);
 			ManifestHeader header = createHeader(key.toString(), value);
 			fDocumentHeaders.put(key.toString(), header);

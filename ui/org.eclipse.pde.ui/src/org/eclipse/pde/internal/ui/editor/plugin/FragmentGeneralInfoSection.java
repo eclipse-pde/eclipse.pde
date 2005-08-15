@@ -12,11 +12,13 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
@@ -36,6 +38,8 @@ import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 
 public class FragmentGeneralInfoSection extends GeneralInfoSection {
 
@@ -189,10 +193,32 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		IFragment fragment = (IFragment) model.getPluginBase();
 		fPluginIdEntry.setValue(fragment.getPluginId(), true);
-		fPluginVersionEntry.setValue(fragment.getPluginVersion(), true);
+		String hostVersion;
+		if (isBundle())
+			hostVersion = getAttribute(Constants.FRAGMENT_HOST, Constants.BUNDLE_VERSION_ATTRIBUTE);
+		else
+			hostVersion = fragment.getPluginVersion();
+		fPluginVersionEntry.setValue(hostVersion, true);
 		if (fMatchCombo != null)
 			fMatchCombo.select(fragment.getRule());
 		super.refresh();
 	}
+	
+	protected String getAttribute(String header, String attribute) {
+		IBundle bundle = getBundle();
+		if (bundle == null)
+			return null;
+		String value = bundle.getHeader(header);
+		if (value == null)
+			return null;
+		try {
+			ManifestElement[] elements = ManifestElement.parseHeader(header, value);
+			if (elements.length > 0)
+				return elements[0].getAttribute(attribute);
+		} catch (BundleException e) {
+		}
+		return null;
+	}
+
 	
 }
