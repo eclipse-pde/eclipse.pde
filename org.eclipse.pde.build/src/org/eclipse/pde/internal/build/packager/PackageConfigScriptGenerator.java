@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.build.packager;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Properties;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -22,6 +21,8 @@ import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
 
 public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	
+	private Properties packagingProperties;
+
 	protected void generateGatherBinPartsCalls() { //TODO Here we should try to use cp because otherwise we will loose the permissions
 		String excludedFiles = "build.properties, .project, .classpath"; //$NON-NLS-1$
 		for (int i = 0; i < plugins.length; i++) {
@@ -40,10 +41,17 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 			script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + FeatureBuildScriptGenerator.getNormalizedName(features[i]), new FileSet[] {new FileSet(featureLocation.toOSString(), null, null, null, null, null, null)}, false, false);
 		}
 		
-		if (rootFileProviders.size() != 0) {
-			//When the root files are copied, it is assumed that are all in a folder called eclipse
-			FileSet rootFiles = new FileSet(Utils.getPropertyFormat("tempDirectory") + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + "/eclipse", null, "**/**", null, null, null, null);
-			String target = Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER);
+		if (packagingProperties.size() != 0) {
+			String filesToPackage = null;
+			filesToPackage = packagingProperties.getProperty(ROOT);
+			if (filesToPackage != null)
+				filesToPackage += ',';
+			filesToPackage += packagingProperties.getProperty(ROOT_PREFIX + configInfo.toString(".")); //$NON-NLS-1$
+			if (filesToPackage == null)
+				filesToPackage = "**/**"; //$NON-NLS-1$
+			
+			FileSet rootFiles = new FileSet(Utils.getPropertyFormat("tempDirectory") + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + "/eclipse", null, filesToPackage, null, null, null, null);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+			String target = Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER); //$NON-NLS-1$
 			script.printCopyTask(null, target, new FileSet[] { rootFiles }, false, false);
 		}
 	}
@@ -57,7 +65,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 	}
 	
 	public void setPackagingPropertiesLocation(String packagingPropertiesLocation) throws CoreException {
-		Properties packagingProperties = new Properties();
+		packagingProperties = new Properties();
 		if (packagingPropertiesLocation == null || packagingPropertiesLocation.equals("")) //$NON-NLS-1$
 			return;
 
@@ -75,11 +83,6 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.exception_readingFile, packagingPropertiesLocation);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));
-		}
-		//Add a marker to trigger
-		if (packagingProperties.size() != 0) {
-			rootFileProviders = new ArrayList(1);
-			rootFileProviders.add("elt");	
 		}
 	}
 	
