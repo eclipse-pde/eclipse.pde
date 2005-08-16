@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 
 public class FileNameFilter extends ViewerFilter {
 
@@ -28,6 +31,9 @@ public class FileNameFilter extends ViewerFilter {
 			return fTargetName.equals(((IFile)element).getName());
 		}
 
+		if (element instanceof IProject && !((IProject)element).isOpen())
+			return false;
+		
 		if (element instanceof IContainer){ // i.e. IProject, IFolder
 			try {
 				IResource[] resources = ((IContainer)element).members();
@@ -36,7 +42,6 @@ public class FileNameFilter extends ViewerFilter {
 						return true;
 				}
 			} catch (CoreException e) {
-				PDEPlugin.logException(e);
 			}
 		}
 		return false;
