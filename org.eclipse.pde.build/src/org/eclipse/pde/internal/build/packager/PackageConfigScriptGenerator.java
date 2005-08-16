@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.build.packager;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Properties;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -43,16 +44,24 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		
 		if (packagingProperties.size() != 0) {
 			String filesToPackage = null;
-			filesToPackage = packagingProperties.getProperty(ROOT);
+			filesToPackage = packagingProperties.getProperty(ROOT, null);
 			if (filesToPackage != null)
 				filesToPackage += ',';
-			filesToPackage += packagingProperties.getProperty(ROOT_PREFIX + configInfo.toString(".")); //$NON-NLS-1$
+			
+			String tmp = packagingProperties.getProperty(ROOT_PREFIX + configInfo.toString("."), null); //$NON-NLS-1$
+			if (tmp != null)
+				filesToPackage += tmp;
+			
 			if (filesToPackage == null)
 				filesToPackage = "**/**"; //$NON-NLS-1$
 			
 			FileSet rootFiles = new FileSet(Utils.getPropertyFormat("tempDirectory") + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + "/eclipse", null, filesToPackage, null, null, null, null);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 			String target = Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER); //$NON-NLS-1$
 			script.printCopyTask(null, target, new FileSet[] { rootFiles }, false, false);
+			
+			//This is need so that the call in assemble config script generator gather the root files 
+			rootFileProviders = new ArrayList(1);
+			rootFileProviders.add("elt"); //$NON-NLS-1$
 		}
 	}
 	
