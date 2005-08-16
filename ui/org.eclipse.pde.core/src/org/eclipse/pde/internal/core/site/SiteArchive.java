@@ -57,9 +57,9 @@ public class SiteArchive extends SiteObject implements ISiteArchive {
 		writer.print(indent);
 		writer.print("<archive"); //$NON-NLS-1$
 		if (path != null)
-			writer.print(" path=\"" + path + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(" path=\"" + SiteObject.getWritableString(path) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (url != null)
-			writer.print(" url=\"" + url + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(" url=\"" + SiteObject.getWritableString(url) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("/>"); //$NON-NLS-1$
 	}
 	public void restoreProperty(String name, Object oldValue, Object newValue)

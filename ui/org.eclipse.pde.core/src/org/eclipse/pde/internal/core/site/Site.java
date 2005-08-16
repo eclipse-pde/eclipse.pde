@@ -318,7 +318,7 @@ public class Site extends SiteObject implements ISite {
 		if (attValue == null || attValue.length() <= 0)
 			return;
 		writer.println();
-		writer.print(indent + attName + "=\"" + attValue + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.print(indent + attName + "=\"" + SiteObject.getWritableString(attValue) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 }

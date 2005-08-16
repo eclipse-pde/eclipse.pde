@@ -91,10 +91,12 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 		writer.print(indent);
 		writer.print("<description"); //$NON-NLS-1$
 		if (url != null && url.length() > 0)
-			writer.print(" url=\""+url+"\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(" url=\"" + //$NON-NLS-1$
+					SiteObject.getWritableString(url) + "\"");  //$NON-NLS-1$
 		writer.println(">"); //$NON-NLS-1$
 		if (text!=null) {
-			writer.println(indent+Site.INDENT+ getNormalizedText(text));
+			writer.println(indent + Site.INDENT +
+					SiteObject.getWritableString(getNormalizedText(text)));
 		}
 		writer.println(indent+"</description>"); //$NON-NLS-1$
 	}

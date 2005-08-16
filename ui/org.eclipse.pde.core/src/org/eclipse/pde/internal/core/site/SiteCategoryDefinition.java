@@ -101,9 +101,9 @@ public class SiteCategoryDefinition
 		writer.print(indent);
 		writer.print("<category-def"); //$NON-NLS-1$
 		if (name != null)
-			writer.print(" name=\"" + name + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(" name=\"" + SiteObject.getWritableString(name) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (label != null)
-			writer.print(" label=\"" + label + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(" label=\"" + SiteObject.getWritableString(label) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (description != null) {
 			writer.println(">"); //$NON-NLS-1$
 			description.write(indent + Site.INDENT, writer);

@@ -51,7 +51,7 @@ public class SiteCategory extends SiteObject implements ISiteCategory {
 		writer.print(indent);
 		writer.print("<category"); //$NON-NLS-1$
 		if (name!=null)
-			writer.print(" name=\""+name+"\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(" name=\"" + SiteObject.getWritableString(name) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("/>"); //$NON-NLS-1$
 	}
 	public void restoreProperty(String name, Object oldValue, Object newValue)
