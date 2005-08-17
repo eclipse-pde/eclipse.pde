@@ -33,7 +33,7 @@ public class ProductDefinitionWizard extends Wizard {
 	}
 	
 	public void addPages() {
-		fMainPage = new ProductDefinitonWizardPage("product"); //$NON-NLS-1$
+		fMainPage = new ProductDefinitonWizardPage("product", fProduct); //$NON-NLS-1$
 		addPage(fMainPage);
 	}
 
@@ -42,6 +42,9 @@ public class ProductDefinitionWizard extends Wizard {
 			fProductId = fMainPage.getProductId();
 			fPluginId = fMainPage.getDefiningPlugin();
 			fApplication = fMainPage.getApplication();
+			String newProductName = fMainPage.getProductName();
+			if (newProductName != null)
+				fProduct.setName(newProductName);
 			getContainer().run(
 					false,
 					true,
@@ -64,6 +67,5 @@ public class ProductDefinitionWizard extends Wizard {
 	public String getApplication() {
 		return fApplication;
 	}
-	
 
 }

@@ -1809,6 +1809,7 @@ public class PDEUIMessages extends NLS {
 	public static String ProductDefinitonWizardPage_plugin;
 	public static String ProductDefinitonWizardPage_browse;
 	public static String ProductDefinitonWizardPage_productId;
+	public static String ProductDefinitonWizardPage_productName;
 	public static String ProductDefinitonWizardPage_noPluginId;
 	public static String ProductDefinitonWizardPage_noPlugin;
 	public static String ProductDefinitonWizardPage_invalidId;
@@ -1983,4 +1984,6 @@ public class PDEUIMessages extends NLS {
 	public static String BaseExportWizardPage_javacSource;
 
 	public static String PluginWorkingSet_message;
+
+	public static String ProductDefinitonWizardPage_noProductName;
 }

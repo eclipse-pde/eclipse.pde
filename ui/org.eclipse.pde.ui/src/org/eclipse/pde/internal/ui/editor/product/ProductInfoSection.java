@@ -76,9 +76,9 @@ public class ProductInfoSection extends PDESection {
 
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		
+		createNameEntry(client, toolkit, actionBars);
 		createIdEntry(client, toolkit, actionBars);
 		createApplicationEntry(client, toolkit, actionBars);
-		createNameEntry(client, toolkit, actionBars);
 		createConfigurationOption(client, toolkit);
 		
 		toolkit.paintBordersFor(client);
@@ -89,7 +89,6 @@ public class ProductInfoSection extends PDESection {
 	}
 	
 	private void createNameEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
-		createLabel(client, toolkit, ""); //$NON-NLS-1$
 		createLabel(client, toolkit, PDEUIMessages.ProductInfoSection_titleLabel); 
 
 		fNameEntry = new FormEntry(client, toolkit, "Product Name:", null, false); //$NON-NLS-1$
@@ -98,12 +97,11 @@ public class ProductInfoSection extends PDESection {
 				getProduct().setName(entry.getValue().trim());
 			}
 		});
-		TableWrapData td = (TableWrapData)fNameEntry.getText().getLayoutData();
-		td.grabHorizontal = false;
 		fNameEntry.setEditable(isEditable());
 	}
 	
 	private void createIdEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
+		createLabel(client, toolkit, ""); //$NON-NLS-1$
 		createLabel(client, toolkit, PDEUIMessages.ProductInfoSection_prodIdLabel); 
 
 		Label label = toolkit.createLabel(client, PDEUIMessages.ProductInfoSection_id); 
@@ -147,6 +145,7 @@ public class ProductInfoSection extends PDESection {
 			String app = wizard.getApplication();
 			fAppCombo.setText(app);
 			getProduct().setApplication(app);
+			fNameEntry.setValue(getProduct().getName());
 		}
 	}
 
