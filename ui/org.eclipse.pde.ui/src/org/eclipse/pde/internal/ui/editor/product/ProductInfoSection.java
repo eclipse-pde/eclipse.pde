@@ -141,12 +141,14 @@ public class ProductInfoSection extends PDESection {
 		dialog.create();
 		if (dialog.open() == WizardDialog.OK) {
 			String id = wizard.getProductId();
+			IProduct product = getProduct();
 			fProductCombo.add(id, 0);
 			fProductCombo.setText(id);
-			getProduct().setId(id);
+			product.setId(id);
 			String app = wizard.getApplication();
 			fAppCombo.setText(app);
-			getProduct().setApplication(app);
+			product.setApplication(app);
+			fNameEntry.setValue(product.getName());
 		}
 	}
 

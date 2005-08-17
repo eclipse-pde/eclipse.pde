@@ -42,6 +42,8 @@ public class ProductDefinitionWizard extends Wizard {
 			fProductId = fMainPage.getProductId();
 			fPluginId = fMainPage.getDefiningPlugin();
 			fApplication = fMainPage.getApplication();
+			if (fProduct.getName() == null || fProduct.getName().equals(""))
+				fProduct.setName(fProductId);
 			getContainer().run(
 					false,
 					true,
