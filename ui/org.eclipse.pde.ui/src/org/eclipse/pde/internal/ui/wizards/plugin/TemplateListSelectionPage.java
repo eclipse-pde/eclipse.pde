@@ -47,10 +47,9 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 				Object element) {
 			PluginFieldData data = (PluginFieldData) fContentPage.getData();
 			boolean simple = data.isSimple();
-			boolean generate = false;
-			boolean ui = false;
-			ui = data.isUIPlugin();
-			generate = data.doGenerateClass();
+			boolean generate = data.doGenerateClass();
+			boolean ui = data.isUIPlugin();
+			boolean rcp = data.isRCPApplicationPlugin();
 			WizardElement welement = (WizardElement)element;
 			IConfigurationElement config = welement.getConfigurationElement();
 			boolean uiFlag = getFlag(config, "ui-content", true); //$NON-NLS-1$
@@ -61,8 +60,9 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 			if (simple && javaFlag) return false;
 			//filter out ui wizards for non-ui plug-ins
 			if (uiFlag && (simple || (generate && !ui))) return false;
-			// filter out non-RCP wizard if RCP option is selected
-			return (data.isRCPApplicationPlugin() == rcpFlag);
+			//filter out non-RCP wizard if RCP option is selected
+			//and non-UI wizards if UI option is selected
+			return (rcp == rcpFlag && ui == uiFlag);
 		}
 		private boolean getFlag(IConfigurationElement config, String name, boolean defaultValue) {
 			String value = config.getAttribute(name);

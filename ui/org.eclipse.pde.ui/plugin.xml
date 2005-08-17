@@ -286,6 +286,17 @@
          </description>
       </wizard>
       <wizard
+            class="org.eclipse.pde.internal.ui.wizards.templates.HelloNonUIRCPNewWizard"
+            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            id="org.eclipse.pde.ui.pluginContent.helloNonUIRCP"
+            name="%pluginContent.helloNonUIRCP.name"
+            rcp="true"
+            ui-content="false">
+         <description>
+         	%pluginContent.helloNonUIRCP.description
+         </description>
+      </wizard>
+      <wizard
             name="%pluginContent.viewRCP.name"
             icon="$nl$/icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.ViewRCPNewWizard"

@@ -127,8 +127,6 @@ public class PluginContentPage extends ContentPage {
 			public void widgetSelected(SelectionEvent e) {
 				fClassLabel.setEnabled(fGenerateClass.getSelection());
 				fClassText.setEnabled(fGenerateClass.getSelection());
-				fUIPlugin.setEnabled(fGenerateClass.getSelection());
-				fRCPGroup.setVisible(!fData.isLegacy() && (!fGenerateClass.getSelection() || fUIPlugin.getSelection()));
 				updateData();
 				validatePage();
 			}
@@ -145,12 +143,10 @@ public class PluginContentPage extends ContentPage {
 		fUIPlugin.setText(PDEUIMessages.ContentPage_uicontribution); 
 		fUIPlugin.setSelection(true);
 		gd = new GridData();
-		gd.horizontalIndent = 20;
 		gd.horizontalSpan = 2;
 		fUIPlugin.setLayoutData(gd);
 		fUIPlugin.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fRCPGroup.setVisible(!fData.isLegacy() && fUIPlugin.getSelection());
 				updateData();
 				validatePage();
 			}
@@ -165,8 +161,7 @@ public class PluginContentPage extends ContentPage {
 		data.setDoGenerateClass(fGenerateClass.isEnabled() && fGenerateClass.getSelection());
 		data.setRCPApplicationPlugin(!fData.isSimple()
 						&& !fData.isLegacy()
-						&& fYesButton.getSelection()
-						&& (fUIPlugin.getSelection() || !fGenerateClass.getSelection()));
+						&& fYesButton.getSelection());
 	}
 	
 	private void createRCPGroup(Composite container){
@@ -221,7 +216,7 @@ public class PluginContentPage extends ContentPage {
 			fGenerateClass.setEnabled(!fData.isSimple());
 			fClassLabel.setEnabled(!fData.isSimple() && fGenerateClass.getSelection());
 			fClassText.setEnabled(!fData.isSimple() && fGenerateClass.getSelection());
-			fUIPlugin.setEnabled(!fData.isSimple() && fGenerateClass.getSelection());
+			fUIPlugin.setEnabled(!fData.isSimple());
 
 			// plugin class group
 			if (((fChangedGroups & P_CLASS_GROUP) == 0)){
@@ -229,8 +224,7 @@ public class PluginContentPage extends ContentPage {
 				presetClassField(fClassText, computeId(), "Plugin"); //$NON-NLS-1$
 				fChangedGroups = oldfChanged;
 			}		
-			fRCPGroup.setVisible(!fData.isLegacy() && !fData.isSimple()
-						&& (fUIPlugin.getSelection() || !fGenerateClass.getSelection()));
+			fRCPGroup.setVisible(!fData.isLegacy() && !fData.isSimple());
     	}
         super.setVisible(visible);
     }

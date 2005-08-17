@@ -1015,6 +1015,12 @@ public class PDEUIMessages extends NLS {
 	public static String HelloRCPTemplate_desc;
 	public static String HelloRCPTemplate_appId;
 	public static String HelloRCPTemplate_appClass;
+	public static String HelloNonUIRCPNewWizard_title;
+	public static String HelloNonUIRCPTemplate_title;
+	public static String HelloNonUIRCPTemplate_desc;
+	public static String HelloNonUIRCPTemplate_appClass;
+	public static String HelloNonUIRCPTemplate_messageText;
+	public static String HelloNonUIRCPTemplate_defaultMessage;
 	public static String HelloWorldTemplate_packageName;
 	public static String HelloWorldTemplate_className;
 	public static String HelloRCPTemplate_windowTitle;
