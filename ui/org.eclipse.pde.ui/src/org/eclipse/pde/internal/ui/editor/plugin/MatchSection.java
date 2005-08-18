@@ -228,6 +228,8 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			else if (changeObject instanceof IPluginReference)
 				input = (IPluginReference) changeObject;
 			update(input);
+		} else {
+			update(null);
 		}
 	}
 	
