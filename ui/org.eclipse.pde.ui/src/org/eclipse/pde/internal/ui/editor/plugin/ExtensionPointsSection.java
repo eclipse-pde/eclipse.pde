@@ -223,8 +223,9 @@ public class ExtensionPointsSection extends TableSection {
 					IFile schemaFile = project.getFile(schema);
 					if (schemaFile.exists())
 						if (MessageDialog.openQuestion(getSection().getShell(),
-								PDEUIMessages.ExtensionPointsSection_title, PDEUIMessages.ExtensionPointsSection_message1
-										+ schemaFile + "?" )) //$NON-NLS-1$
+								PDEUIMessages.ExtensionPointsSection_title,
+								PDEUIMessages.ExtensionPointsSection_message1 + " " //$NON-NLS-1$
+								+ schemaFile.getProjectRelativePath().toString() + "?")) //$NON-NLS-1$
 							schemaFile.delete(true, false,
 									new NullProgressMonitor());
 
