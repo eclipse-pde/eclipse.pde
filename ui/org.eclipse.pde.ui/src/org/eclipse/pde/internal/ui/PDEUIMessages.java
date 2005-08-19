@@ -1986,4 +1986,16 @@ public class PDEUIMessages extends NLS {
 	public static String PluginWorkingSet_message;
 
 	public static String ProductDefinitonWizardPage_noProductName;
+
+	public static String DependencyPropertiesDialog_groupText;
+
+	public static String DependencyPropertiesDialog_comboInclusive;
+
+	public static String DependencyPropertiesDialog_comboExclusive;
+
+	public static String DependencyPropertiesDialog_minimumVersion;
+
+	public static String DependencyPropertiesDialog_maximumVersion;
+
+	public static String DependencyPropertiesDialog_versionRangeError;
 }
