@@ -951,7 +951,8 @@ public class PDEUIMessages extends NLS {
 	public static String GeneralInfoSection_provider;
 	public static String GeneralInfoSection_pluginId;
 	public static String GeneralInfoSection_pluginVersion;
-	public static String GeneralInfoSection_hostVersionRange;
+	public static String GeneralInfoSection_hostMinVersionRange;
+	public static String GeneralInfoSection_hostMaxVersionRange;
 
 	public static String NewWizard_wtitle;
 	public static String NewExtensionWizard_wtitle;

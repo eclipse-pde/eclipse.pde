@@ -70,9 +70,9 @@ public abstract class GeneralInfoSection extends PDESection {
 		createVersionEntry(client, toolkit, actionBars);
 		createNameEntry(client, toolkit, actionBars);
 		createProviderEntry(client, toolkit, actionBars);		
-		createSpecificControls(client, toolkit, actionBars);
 		if (isBundle())
 			createPlatformFilterEntry(client, toolkit, actionBars);
+		createSpecificControls(client, toolkit, actionBars);
 		toolkit.paintBordersFor(client);
 		
 		IBaseModel model = getPage().getModel();

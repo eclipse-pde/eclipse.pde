@@ -44,7 +44,10 @@ import org.osgi.framework.Constants;
 public class FragmentGeneralInfoSection extends GeneralInfoSection {
 
 	private FormEntry fPluginIdEntry;
-	private FormEntry fPluginVersionEntry;
+	private FormEntry fPluginMinVersionEntry;
+	private FormEntry fPluginMaxVersionEntry;
+	private ComboPart fPluginMinVersionBound;
+	private ComboPart fPluginMaxVersionBound;
 	private ComboPart fMatchCombo;
 
 	public FragmentGeneralInfoSection(PDEFormPage page, Composite parent) {
@@ -115,22 +118,90 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 			IPluginModel model = (IPluginModel) dialog.getFirstResult();
 			IPlugin plugin = model.getPlugin();
 			fPluginIdEntry.setValue(plugin.getId());
-			fPluginVersionEntry.setValue(plugin.getVersion());
+			fPluginMinVersionEntry.setValue(plugin.getVersion());
 		}
 	}
 
 	private void createPluginVersionEntry(Composite client,
 			FormToolkit toolkit, IActionBars actionBars) {
-		String labelText;
-		if(isBundle())
-			labelText= PDEUIMessages.GeneralInfoSection_hostVersionRange;
-		else
-			labelText= PDEUIMessages.GeneralInfoSection_pluginVersion;
-		fPluginVersionEntry = new FormEntry(
+		if (isBundle()) {
+			createBundlePluginVersionEntry(client, toolkit, actionBars);
+		} else {
+			createNonBundlePluginVersionEntry(client, toolkit, actionBars);
+		}
+		
+	}
+	
+	private void createBundlePluginVersionEntry(Composite client,
+			FormToolkit toolkit, IActionBars actionBars) {
+
+		String[] items = new String[] {
+				PDEUIMessages.DependencyPropertiesDialog_comboInclusive,
+				PDEUIMessages.DependencyPropertiesDialog_comboExclusive };
+		fPluginMinVersionEntry = new FormEntry(client, toolkit,
+				PDEUIMessages.GeneralInfoSection_hostMinVersionRange, 0, 1); 
+		fPluginMinVersionEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			public void textValueChanged(FormEntry entry) {
+				try {
+					((IFragment) getPluginBase()).setPluginVersion(getVersion());
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
+			}
+			public void textDirty(FormEntry entry) {
+				setMaxFieldsEnabled();
+				super.textDirty(entry);
+			}
+		});
+		fPluginMinVersionBound = new ComboPart();
+		fPluginMinVersionBound.createControl(client, toolkit, SWT.READ_ONLY);
+		fPluginMinVersionBound.getControl().setLayoutData(new TableWrapData(TableWrapData.FILL));
+		fPluginMinVersionBound.setItems(items);
+		fPluginMinVersionBound.getControl().setEnabled(isEditable());
+		fPluginMinVersionBound.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				try {
+					((IFragment) getPluginBase()).setPluginVersion(getVersion());
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
+			}
+		});
+		
+		fPluginMaxVersionEntry = new FormEntry(client, toolkit,
+				PDEUIMessages.GeneralInfoSection_hostMaxVersionRange, 0, 1); 
+		fPluginMaxVersionEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			public void textValueChanged(FormEntry entry) {
+				try {
+					((IFragment) getPluginBase()).setPluginVersion(getVersion());
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
+			}
+		});
+		fPluginMaxVersionBound = new ComboPart();
+		fPluginMaxVersionBound.createControl(client, toolkit, SWT.READ_ONLY);
+		fPluginMaxVersionBound.getControl().setLayoutData(new TableWrapData(TableWrapData.FILL));
+		fPluginMaxVersionBound.setItems(items);
+		fPluginMaxVersionBound.getControl().setEnabled(isEditable());
+		fPluginMaxVersionBound.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				try {
+					((IFragment) getPluginBase()).setPluginVersion(getVersion());
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
+			}			
+		});
+	}
+
+	private void createNonBundlePluginVersionEntry(Composite client,
+			FormToolkit toolkit, IActionBars actionBars) {
+		fPluginMinVersionEntry = new FormEntry(
 				client,
 				toolkit,
-				labelText, null, false); 
-		fPluginVersionEntry.setFormEntryListener(new FormEntryAdapter(this,
+				PDEUIMessages.GeneralInfoSection_pluginVersion, null, false); 
+		fPluginMinVersionEntry.setFormEntryListener(new FormEntryAdapter(this,
 				actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				try {
@@ -140,7 +211,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 				}
 			}
 		});
-		fPluginVersionEntry.setEditable(isEditable());
+		fPluginMinVersionEntry.setEditable(isEditable());
 	}
 	
 	private void createMatchCombo(Composite client, FormToolkit toolkit,
@@ -179,13 +250,15 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 	
 	public void commit(boolean onSave) {
 		fPluginIdEntry.commit();
-		fPluginVersionEntry.commit();
+		fPluginMinVersionEntry.commit();
+		fPluginMaxVersionEntry.commit();
 		super.commit(onSave);
 	}
 	
 	public void cancelEdit() {
 		fPluginIdEntry.cancelEdit();
-		fPluginVersionEntry.cancelEdit();
+		fPluginMinVersionEntry.cancelEdit();
+		fPluginMaxVersionEntry.cancelEdit();
 		super.cancelEdit();
 	}
 	
@@ -193,12 +266,11 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		IFragment fragment = (IFragment) model.getPluginBase();
 		fPluginIdEntry.setValue(fragment.getPluginId(), true);
-		String hostVersion;
-		if (isBundle())
-			hostVersion = getAttribute(Constants.FRAGMENT_HOST, Constants.BUNDLE_VERSION_ATTRIBUTE);
-		else
-			hostVersion = fragment.getPluginVersion();
-		fPluginVersionEntry.setValue(hostVersion, true);
+		if (isBundle()) {
+			refreshVersion();
+		} else {
+			fPluginMinVersionEntry.setValue(fragment.getPluginVersion(), true);
+		}
 		if (fMatchCombo != null)
 			fMatchCombo.select(fragment.getRule());
 		super.refresh();
@@ -220,5 +292,64 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		return null;
 	}
 
+	private void setMaxFieldsEnabled() {
+		boolean enabled = fPluginMinVersionEntry.getText().getText().trim().length() != 0;
+		fPluginMaxVersionEntry.getText().setEnabled(enabled);
+		fPluginMaxVersionBound.getControl().setEnabled(enabled);
+	}
 	
+	private String getVersion() {
+		if (isBundle()) {
+			if (!fPluginMinVersionEntry.getValue().equals(fPluginMaxVersionEntry.getValue()) &&
+					fPluginMaxVersionEntry.getText().getEnabled()) {
+				if (fPluginMaxVersionEntry.getValue().length() == 0)
+					return fPluginMinVersionEntry.getValue();
+				String version;
+				if (fPluginMinVersionBound.getSelectionIndex() == 0)
+					version = "["; //$NON-NLS-1$
+				else
+					version = "("; //$NON-NLS-1$
+				version += fPluginMinVersionEntry.getValue() + "," + fPluginMaxVersionEntry.getValue(); //$NON-NLS-1$
+				if (fPluginMaxVersionBound.getSelectionIndex() == 0)
+					version += "]"; //$NON-NLS-1$
+				else
+					version += ")"; //$NON-NLS-1$
+				return version;
+			}
+		}
+		return fPluginMinVersionEntry.getValue();
+	}
+	
+	private void refreshVersion() {	
+		String version = getAttribute(Constants.FRAGMENT_HOST, Constants.BUNDLE_VERSION_ATTRIBUTE);
+		if (version == null) {
+			setVersionFields("", true, "", false); //$NON-NLS-1$ //$NON-NLS-2$
+			setMaxFieldsEnabled();
+			return;
+		}
+		version = version.trim();
+		int comInd = version.indexOf(","); //$NON-NLS-1$
+		int lastPos = version.length() - 1;
+		char first = version.charAt(0);
+		char last = version.charAt(lastPos);
+		if (comInd == -1) {
+			setVersionFields(version, true, "", false); //$NON-NLS-1$
+		} else if ((first == '[' || first == '(') && 
+				(last == ']' || last == ')')) {
+			version = version.substring(1, lastPos);
+			setVersionFields(
+					version.substring(0, comInd - 1),
+					first == '[',
+					version.substring(comInd),
+					last == ']');
+		}
+		setMaxFieldsEnabled();
+	}
+	
+	private void setVersionFields(String minVersion, boolean minInclusive, String maxVersion, boolean maxInclusive) {
+		fPluginMinVersionEntry.setValue(minVersion, true);
+		fPluginMinVersionBound.select(minInclusive ? 0 : 1);
+		fPluginMaxVersionEntry.setValue(maxVersion, true);
+		fPluginMaxVersionBound.select(maxInclusive ? 0 : 1);
+	}
 }

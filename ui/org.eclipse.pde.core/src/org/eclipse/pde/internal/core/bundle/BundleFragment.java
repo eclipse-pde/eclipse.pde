@@ -29,9 +29,12 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 	 */
 	public String getPluginVersion() {
 		String version = getAttribute(Constants.FRAGMENT_HOST, Constants.BUNDLE_VERSION_ATTRIBUTE);
-		VersionRange versionRange = new VersionRange(version);
-		if (versionRange != null) {
-			return versionRange.getMinimum() != null ? versionRange.getMinimum().toString() : version;
+		try {
+			VersionRange versionRange = new VersionRange(version);
+			if (versionRange != null) {
+				return versionRange.getMinimum() != null ? versionRange.getMinimum().toString() : version;
+			}
+		} catch (NumberFormatException e) {
 		}
 		return version;
 	}

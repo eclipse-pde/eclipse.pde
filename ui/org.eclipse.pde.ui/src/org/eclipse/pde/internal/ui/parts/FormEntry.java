@@ -35,7 +35,7 @@ public class FormEntry {
 	 *  
 	 */
 	public FormEntry(Composite parent, FormToolkit toolkit, String labelText, int style) {
-		createControl(parent, toolkit, labelText, style, null, false, 0);
+		createControl(parent, toolkit, labelText, style, null, false, 0, 0);
 	}
 	
 	/**
@@ -54,8 +54,14 @@ public class FormEntry {
 	
 	public FormEntry(Composite parent, FormToolkit toolkit, String labelText,
 			String browseText, boolean linkLabel, int indent) {
-		createControl(parent, toolkit, labelText, SWT.SINGLE, browseText, linkLabel, indent);
+		createControl(parent, toolkit, labelText, SWT.SINGLE, browseText, linkLabel, indent, 0);
 	}
+	
+	public FormEntry(Composite parent, FormToolkit toolkit, String labelText,
+			int indent, int tcolspan) {
+		createControl(parent, toolkit, labelText, SWT.SINGLE, null, false, indent, tcolspan);
+	}
+	
 	/**
 	 * Create all the controls in the provided parent.
 	 * 
@@ -67,7 +73,7 @@ public class FormEntry {
 	 * @param linkLabel
 	 */
 	private void createControl(Composite parent, FormToolkit toolkit,
-			String labelText, int style, String browseText, boolean linkLabel, int indent) {
+			String labelText, int style, String browseText, boolean linkLabel, int indent, int tcolspan) {
 		if (linkLabel) {
 			Hyperlink link = toolkit.createHyperlink(parent, labelText,
 					SWT.NULL);
@@ -87,22 +93,26 @@ public class FormEntry {
 				}
 			});
 		}
-		fillIntoGrid(parent, indent);
+		fillIntoGrid(parent, indent, tcolspan);
 	}
 	public void setEditable(boolean editable) {
 		text.setEditable(editable);
 		if (browse!=null) 
 			browse.setEnabled(editable);
 	}
-	private void fillIntoGrid(Composite parent, int indent) {
+	private void fillIntoGrid(Composite parent, int indent, int tcolspan) {
 		Layout layout = parent.getLayout();
+		int tspan;
 		if (layout instanceof GridLayout) {
-			GridData gd;
 			int span = ((GridLayout) layout).numColumns;
+			if (tcolspan > 0)
+				tspan = tcolspan;
+			else
+				tspan = browse != null ? span - 2 : span - 1;
+			GridData gd;
 			gd = new GridData(GridData.VERTICAL_ALIGN_CENTER);
 			gd.horizontalIndent = indent;
 			label.setLayoutData(gd);
-			int tspan = browse != null ? span - 2 : span - 1;
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 			gd.horizontalSpan = tspan;
 			gd.grabExcessHorizontalSpace = (tspan == 1);
@@ -113,20 +123,23 @@ public class FormEntry {
 				browse.setLayoutData(gd);
 			}
 		} else if (layout instanceof TableWrapLayout) {
-			TableWrapData td;
 			int span = ((TableWrapLayout) layout).numColumns;
+			if (tcolspan > 0)
+				tspan = tcolspan;
+			else
+				tspan = browse != null ? span - 2 : span - 1;
+			TableWrapData td;
 			td = new TableWrapData();
 			td.valign = TableWrapData.MIDDLE;
 			td.indent = indent;
 			label.setLayoutData(td);
-			int tspan = browse != null ? span - 2 : span - 1;
 			td = new TableWrapData(TableWrapData.FILL);
 			td.colspan = tspan;
 			td.grabHorizontal = (tspan == 1);
 			td.valign = TableWrapData.MIDDLE;
 			text.setLayoutData(td);
 			if (browse != null) {
-				td = new TableWrapData();
+				td = new TableWrapData(TableWrapData.FILL);
 				td.valign = TableWrapData.MIDDLE;
 				browse.setLayoutData(td);
 			}
