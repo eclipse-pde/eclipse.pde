@@ -10,8 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.ui.IContainmentAdapter;
+import org.eclipse.ui.IElementFactory;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPersistableElement;
 
 
 public class PersistablePluginObject extends PlatformObject implements
@@ -19,6 +26,7 @@ public class PersistablePluginObject extends PlatformObject implements
 	
 	public static final String FACTORY_ID = "org.eclipse.pde.ui.elementFactory"; //$NON-NLS-1$	
 	public static final String KEY = "org.eclipse.pde.workingSetKey"; //$NON-NLS-1$
+	private static PluginContainmentAdapter fgContainmentAdapter;
 	
 	private String fPluginID;
 
@@ -56,11 +64,27 @@ public class PersistablePluginObject extends PlatformObject implements
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IPersistableElement.class))
 			return this;
+		if (adapter.equals(IResource.class))
+			return getResource();
+		if (adapter.equals(IContainmentAdapter.class))
+			return getPluginContainmentAdapter();
 		return super.getAdapter(adapter);
+	}
+	
+	public IResource getResource() {
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(fPluginID);
+		IResource resource = (model != null) ? model.getUnderlyingResource() : null;
+		return resource == null ? null : resource.getProject();
 	}
 	
 	public String getPluginID() {
 		return fPluginID;
+	}
+	
+	private static IContainmentAdapter getPluginContainmentAdapter() {
+		if (fgContainmentAdapter == null)
+			fgContainmentAdapter = new PluginContainmentAdapter();
+		return fgContainmentAdapter;
 	}
 
 }

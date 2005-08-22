@@ -227,7 +227,7 @@ public class SourceBlock implements IHyperlinkListener {
 		FormToolkit toolkit = new FormToolkit(parent.getDisplay());	
 		FormText text = toolkit.createFormText(container, true);
 		text.setText(PDEUIMessages.SourceBlock_desc, true, false); 
-		GridData gd = new GridData(GridData.FILL);
+		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		text.setLayoutData(gd);
 		text.addHyperlinkListener(this);
