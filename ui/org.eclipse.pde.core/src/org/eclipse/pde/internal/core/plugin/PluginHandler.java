@@ -15,6 +15,7 @@ import java.util.Stack;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -69,9 +70,7 @@ public class PluginHandler extends DefaultHandler {
 	
 	private boolean isInterestingExtension(Element element) {
 		String point = element.getAttribute("point"); //$NON-NLS-1$
-		return "org.eclipse.pde.core.source".equals(point)  //$NON-NLS-1$
-				|| "org.eclipse.core.runtime.products".equals(point) //$NON-NLS-1$
-				|| "org.eclipse.pde.core.javadoc".equals(point); //$NON-NLS-1$
+		return CoreUtility.isInterestingExtensionPoint(point);
 	}
 		
 	public void endElement(String uri, String localName, String qName) throws SAXException {

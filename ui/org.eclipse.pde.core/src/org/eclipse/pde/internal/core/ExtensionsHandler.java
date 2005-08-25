@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core;
 
 import java.util.*;
 
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
@@ -83,9 +84,7 @@ public class ExtensionsHandler extends DefaultHandler {
 
 		fParent.appendChild(extension);
 		
-		if ("org.eclipse.pde.core.source".equals(point)  //$NON-NLS-1$
-				|| "org.eclipse.core.runtime.products".equals(point) //$NON-NLS-1$
-				|| "org.eclipse.pde.core.javadoc".equals(point))  //$NON-NLS-1$
+		if (CoreUtility.isInterestingExtensionPoint(point))
 			fOpenElements.push(extension);
 	}
 
