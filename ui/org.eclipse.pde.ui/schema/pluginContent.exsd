@@ -128,6 +128,13 @@ represent the wizard.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="pureOSGi" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  Since 3.2.  A boolean flag indicating whether the wizard contributes a pure OSGi bundle.  If set to &lt;code&gt;true&lt;/code&gt;, the wizard will appear in the New Plug-in Project wizard only when the user chooses to create a pure OSGi bundle.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

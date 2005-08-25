@@ -297,6 +297,17 @@
          </description>
       </wizard>
       <wizard
+            class="org.eclipse.pde.internal.ui.wizards.templates.HelloOSGiNewWizard"
+            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            id="org.eclipse.pde.ui.pluginContent.helloOSGi"
+            name="%pluginContent.helloOSGi.name"
+            pureOSGi="true"
+            ui-content="false">
+         <description>
+         	%pluginContent.helloOSGi.description
+         </description>
+      </wizard>
+      <wizard
             name="%pluginContent.viewRCP.name"
             icon="$nl$/icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.ViewRCPNewWizard"
