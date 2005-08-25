@@ -44,6 +44,9 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	private Text fOutputText;
 	private AbstractFieldData fData;
 	private Combo fTargetCombo;
+	private Button fRuntimeDepButton;
+	private Label fTargetLabel;
+	private Button fOSGIButton;
 	
 	public NewProjectCreationPage(String pageName, AbstractFieldData data, boolean isFragment){
 		super(pageName);
@@ -99,23 +102,77 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fOutputText = createText(group);		
 		fOutputText.setText(store.getString(PreferenceConstants.SRCBIN_BINNAME));
 	}
+	
 	private void createFormatGroup(Composite container) {
 		Group group = new Group(container, SWT.NONE);
 		if (fIsFragment)
 			group.setText(PDEUIMessages.ProjectStructurePage_fformat); 
 		else
-			group.setText(PDEUIMessages.ProjectStructurePage_pformat); //			
+			group.setText(PDEUIMessages.ProjectStructurePage_pformat); 			
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		Label label = new Label(group, SWT.NONE);
-		if (fIsFragment) {
-			label.setText(PDEUIMessages.ProjectStructurePage_fTarget); 
-		} else {
-			label.setText(PDEUIMessages.ProjectStructurePage_pTarget); 
-		}
+	    if (fIsFragment)
+	    	createFragmentPart(group);
+	    else
+	    	createPluginPart(group);
+	}
+	
+	private void createPluginPart(Group group) {	    
+		fRuntimeDepButton = new Button(group, SWT.RADIO);
+	    GridData gd = new GridData(GridData.BEGINNING);
+	    gd.horizontalSpan = 2;
+	    fRuntimeDepButton.setLayoutData(gd);
+	    fRuntimeDepButton.setText(PDEUIMessages.NewProjectCreationPage_pDependsOnRuntime);
+	    fRuntimeDepButton.setSelection(true);
+	    fRuntimeDepButton.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				updateRuntimeDependency();
+			}
+		});
+		
+		fTargetLabel = new Label(group, SWT.NONE);
+		fTargetLabel.setText(PDEUIMessages.ProjectStructurePage_pTarget); 
+		gd = new GridData();
+		gd.horizontalIndent = 22;
+		fTargetLabel.setLayoutData(gd);
+		fTargetCombo = new Combo(group, SWT.READ_ONLY|SWT.SINGLE);
+		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET31, ICoreConstants.TARGET30, ICoreConstants.TARGET21});
+		gd = new GridData();
+		gd.minimumWidth = 50;
+		fTargetCombo.setLayoutData(gd);
+		fTargetCombo.setText(PDECore.getDefault().getTargetVersion());
+		fTargetCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateBundleCheck();
+			}
+		});		
+		fBundleCheck = new Button(group, SWT.CHECK);
+		gd = new GridData();
+		gd.horizontalIndent = 22;
+		fBundleCheck.setLayoutData(gd);
+		fBundleCheck.setText(PDEUIMessages.ProjectStructurePage_bundle); 
+		fBundleCheck.setSelection(true);
+		
+	    fOSGIButton = new Button(group, SWT.RADIO);
+	    gd = new GridData(GridData.BEGINNING);
+	    gd.horizontalSpan = 2;
+	    fOSGIButton.setLayoutData(gd);
+	    fOSGIButton.setText(PDEUIMessages.NewProjectCreationPage_pPureOSGi);
+	    fOSGIButton.setSelection(false);
+	    fOSGIButton.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				updateRuntimeDependency();
+			}
+		});
+	}
+	
+	private void createFragmentPart(Group group) {
+		fTargetLabel = new Label(group, SWT.NONE);
+		fTargetLabel.setText(PDEUIMessages.ProjectStructurePage_fTarget); 
+		fTargetLabel.setLayoutData(new GridData());
 		fTargetCombo = new Combo(group, SWT.READ_ONLY|SWT.SINGLE);
 		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET31, ICoreConstants.TARGET30, ICoreConstants.TARGET21});
 		GridData gd = new GridData();
@@ -128,14 +185,23 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 			}
 		});		
 		fBundleCheck = new Button(group, SWT.CHECK);
+		fBundleCheck.setLayoutData(new GridData());
 		fBundleCheck.setText(PDEUIMessages.ProjectStructurePage_bundle); 
-		updateBundleCheck();
+		fBundleCheck.setSelection(true);
 	}
 	
 	private void updateBundleCheck() {
 		boolean legacy = fTargetCombo.getText().equals(ICoreConstants.TARGET21);
 		fBundleCheck.setSelection(!legacy);
 		fBundleCheck.setEnabled(!legacy);
+	}
+	
+	private void updateRuntimeDependency() {
+		boolean depends = fRuntimeDepButton.getSelection();
+		fTargetLabel.setEnabled(depends);
+		fTargetCombo.setEnabled(depends);
+		fBundleCheck.setEnabled(depends);
+		if (depends) updateBundleCheck();
 	}
 	
 	private Button createButton(Composite container) {
@@ -146,12 +212,6 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		return button;		
 	}
 	
-	public boolean hasBundleStructure(){
-		if (fBundleCheck == null)
-			return false;
-		return fBundleCheck.getSelection();
-	}
-
 	private Label createLabel(Composite container, String text) {
 		Label label = new Label(container, SWT.NONE);
 		label.setText(text);
@@ -178,9 +238,16 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fData.setSimple(!fJavaButton.getSelection());
 		fData.setSourceFolderName(fSourceText.getText().trim());
 		fData.setOutputFolderName(fOutputText.getText().trim());
-		fData.setHasBundleStructure(fBundleCheck.isEnabled() && fBundleCheck.getSelection());
 		fData.setLegacy(fTargetCombo.getText().equals("2.1")); //$NON-NLS-1$
 		fData.setTargetVersion(fTargetCombo.getText());
+		fData.setHasBundleStructure(hasBundleStructure());
+		if (!fIsFragment)
+			((PluginFieldData)fData).setPureOSGi(fOSGIButton.getSelection());
+	}
+	
+	private boolean hasBundleStructure() {		
+		return (fBundleCheck.isEnabled() && fBundleCheck.getSelection()) || 
+				(fOSGIButton != null && fOSGIButton.getSelection());
 	}
 	
 }

@@ -50,8 +50,8 @@ public class CoreUtility {
 	public static boolean isInterestingExtensionPoint(String point) {
 		return "org.eclipse.pde.core.source".equals(point)  //$NON-NLS-1$
 				|| "org.eclipse.core.runtime.products".equals(point) //$NON-NLS-1$
-				|| "org.eclipse.pde.core.javadoc".equals(point)
-				|| "org.eclipse.ui.intro".equals(point);
+				|| "org.eclipse.pde.core.javadoc".equals(point) //$NON-NLS-1$
+				|| "org.eclipse.ui.intro".equals(point); //$NON-NLS-1$
 	}
 	
 	public static void createFolder(IFolder folder) throws CoreException {

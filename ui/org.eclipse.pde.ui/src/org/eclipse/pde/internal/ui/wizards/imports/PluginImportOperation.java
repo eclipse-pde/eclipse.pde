@@ -481,7 +481,7 @@ public class PluginImportOperation extends JarImportOperation {
 				}
 			}
 			if (fImportType != IMPORT_WITH_SOURCE) {
-				PDEPluginConverter.modifyManifest(project, model);
+				PDEPluginConverter.modifyBundleClasspathHeader(project, model);
 			}
 			setPermissions(model, project);
 		} catch (IOException e) {

@@ -40,13 +40,50 @@ public class PDEPluginConverter {
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 			tracker.close();
 		} catch (PluginConversionException e) {
-		} catch (CoreException e) {
-		} finally {
+		}  finally {
 			monitor.done();
 		}
 	}
 	
-	public static void modifyManifest(IProject project, IPluginModelBase model) {
+	public static void createPureBundle(IProject project, Set packages, IProgressMonitor monitor) throws CoreException {
+		try {
+			File outputFile = new File(project.getLocation().append(
+					"META-INF/MANIFEST.MF").toOSString()); //$NON-NLS-1$
+			File inputFile = new File(project.getLocation().toOSString());
+			ServiceTracker tracker = new ServiceTracker(PDECore.getDefault()
+					.getBundleContext(), PluginConverter.class.getName(), null);
+			tracker.open();
+			PluginConverter converter = (PluginConverter) tracker.getService();
+			converter.convertManifest(inputFile, outputFile, false, "3.1", true, null); //$NON-NLS-1$
+			
+			InputStream manifestStream = new FileInputStream(outputFile);
+			Manifest manifest = new Manifest(manifestStream);
+			Properties prop = manifestToProperties(manifest.getMainAttributes());
+			prop.remove("Eclipse-AutoStart"); //$NON-NLS-1$
+			StringBuffer buffer = new StringBuffer();
+			Iterator iter = packages.iterator();
+			while (iter.hasNext()) {
+				if (buffer.length() > 0) {
+					buffer.append(","); //$NON-NLS-1$
+					buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
+					buffer.append(" "); //$NON-NLS-1$
+				}
+				buffer.append(iter.next().toString());
+			}
+			if (buffer.length() > 0)
+				prop.put(Constants.IMPORT_PACKAGE, buffer.toString());
+			converter.writeManifest(outputFile, prop, false);
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+			tracker.close();
+		} catch (PluginConversionException e) {
+		} catch (CoreException e) {
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
+		} finally {
+			monitor.done();
+		}
+	}
+	public static void modifyBundleClasspathHeader(IProject project, IPluginModelBase model) {
 		IFile file = project.getFile(JarFile.MANIFEST_NAME);
 		if (file.exists()) {
 			InputStream manifestStream = null;

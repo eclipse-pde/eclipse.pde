@@ -49,7 +49,7 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 			verifyPluginModel(null, "xyz.jar", false);
 			verifyBuildProperties(false, "xyz.jar", "src", "bin");
 		} catch (CoreException e) {
-			fail("testMinimalJavaPluginWithManifest:" + e);
+			fail("testMinimalJavaPluginWithoutManifest:" + e);
 		}
 	}
 	

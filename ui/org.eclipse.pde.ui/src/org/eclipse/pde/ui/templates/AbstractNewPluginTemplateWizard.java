@@ -27,7 +27,7 @@ import org.eclipse.pde.ui.*;
  */
 public abstract class AbstractNewPluginTemplateWizard extends Wizard
 		implements
-			IPluginContentWizard {
+			IBundleContentWizard {
 	private IFieldData data;
 	/**
 	 * Creates a new template wizard.
@@ -148,5 +148,9 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard
 	 */
 	public boolean hasPages() {
 		return getTemplateSections().length > 0;
+	}
+	
+	public String[] getImportPackages() {
+		return new String[0];
 	}
 }

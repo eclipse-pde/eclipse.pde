@@ -1999,4 +1999,8 @@ public class PDEUIMessages extends NLS {
 	public static String DependencyPropertiesDialog_maximumVersion;
 
 	public static String DependencyPropertiesDialog_versionRangeError;
+
+	public static String NewProjectCreationPage_pDependsOnRuntime;
+
+	public static String NewProjectCreationPage_pPureOSGi;
 }

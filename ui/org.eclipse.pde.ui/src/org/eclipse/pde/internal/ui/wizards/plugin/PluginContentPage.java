@@ -170,7 +170,7 @@ public class PluginContentPage extends ContentPage {
 	    fRCPGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    fRCPGroup.setText(PDEUIMessages.PluginContentPage_rcpGroup); 
 	    
-	    createRCPQuestion(fRCPGroup, 2);    
+	    createRCPQuestion(fRCPGroup, 2);
 	}
 	
 	private void createRCPQuestion(Composite parent, int horizontalSpan) {
@@ -213,10 +213,13 @@ public class PluginContentPage extends ContentPage {
     public void setVisible(boolean visible) {
     	if (visible) {
     		fMainPage.updateData();
+    		boolean pureOSGi = ((PluginFieldData)fData).isPureOSGi();
 			fGenerateClass.setEnabled(!fData.isSimple());
 			fClassLabel.setEnabled(!fData.isSimple() && fGenerateClass.getSelection());
 			fClassText.setEnabled(!fData.isSimple() && fGenerateClass.getSelection());
-			fUIPlugin.setEnabled(!fData.isSimple());
+			fUIPlugin.setEnabled(!fData.isSimple() && !pureOSGi);
+			if (pureOSGi)
+				fUIPlugin.setSelection(false);
 
 			// plugin class group
 			if (((fChangedGroups & P_CLASS_GROUP) == 0)){
@@ -224,7 +227,7 @@ public class PluginContentPage extends ContentPage {
 				presetClassField(fClassText, computeId(), "Plugin"); //$NON-NLS-1$
 				fChangedGroups = oldfChanged;
 			}		
-			fRCPGroup.setVisible(!fData.isLegacy() && !fData.isSimple());
+			fRCPGroup.setVisible(!fData.isLegacy() && !fData.isSimple() && !pureOSGi);
     	}
         super.setVisible(visible);
     }
