@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
@@ -85,15 +86,17 @@ public class JavadocLocationManager {
 					new URL(path);
 					processPlugins(path, javadoc.getChildren());
 				} catch (MalformedURLException e) {
+					StringBuffer buffer = new StringBuffer("file:/"); //$NON-NLS-1$
 					attr = javadoc.getAttribute("archive"); //$NON-NLS-1$
 					boolean archive = attr == null ? false : "true".equals(attr.getValue()); //$NON-NLS-1$
-					StringBuffer buffer = new StringBuffer("file:/"); //$NON-NLS-1$
-					buffer.append(new Path(extension.getModel().getInstallLocation()).toPortableString());
-					if (new File(path).isFile()) {
-						buffer.append("/!"); //$NON-NLS-1$
+					IPath modelPath = new Path(extension.getModel().getInstallLocation());
+					buffer.append(modelPath.toPortableString());
+					File file = modelPath.toFile();
+					if (file.exists() && file.isFile()) {
+						buffer.append("!/"); //$NON-NLS-1$
 						archive = true;
 					}
-					buffer.append(path);				
+					buffer.append(path);
 					processPlugins(archive ? "jar:" + buffer.toString() : buffer.toString(), javadoc.getChildren()); //$NON-NLS-1$
 				}
 			}
