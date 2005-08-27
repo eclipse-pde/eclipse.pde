@@ -93,7 +93,7 @@ public class SchemaTransformer {
 			if (bundle != null) {
 				URL entry = bundle.getEntry(resourcePath);
 				if (entry != null)
-					return Platform.resolve(entry);
+					return Platform.asLocalURL(entry);
 			}
 		} catch (IOException e) {
 		}
