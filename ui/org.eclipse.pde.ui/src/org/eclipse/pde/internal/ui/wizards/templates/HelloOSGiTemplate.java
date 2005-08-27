@@ -31,8 +31,8 @@ public class HelloOSGiTemplate extends PDETemplateSection {
 	public HelloOSGiTemplate(HelloOSGiNewWizard wizard) {
 		setPageCount(1);
 		osgiWizard = wizard;
-		addOption(KEY_START_MESSAGE, PDEUIMessages.HelloOSGiTemplate_startMessage, "Hello World!!", 0); //$NON-NLS-2$ //$NON-NLS-1$
-		addOption(KEY_STOP_MESSAGE, PDEUIMessages.HelloOSGiTemplate_stopMessage, "Goodbye World!!", 0); //$NON-NLS-2$ //$NON-NLS-1$
+		addOption(KEY_START_MESSAGE, PDEUIMessages.HelloOSGiTemplate_startMessage, "Hello World!!", 0);  //$NON-NLS-1$
+		addOption(KEY_STOP_MESSAGE, PDEUIMessages.HelloOSGiTemplate_stopMessage, "Goodbye World!!", 0);  //$NON-NLS-1$
 	}
 	
 	public void addPages(Wizard wizard) {

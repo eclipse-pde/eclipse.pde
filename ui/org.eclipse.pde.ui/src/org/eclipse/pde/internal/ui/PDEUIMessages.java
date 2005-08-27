@@ -2002,8 +2002,12 @@ public class PDEUIMessages extends NLS {
 
 	public static String NewProjectCreationPage_pDependsOnRuntime;
 
+	public static String NewProjectCreationPage_fDependsOnRuntime;
+	
 	public static String NewProjectCreationPage_pPureOSGi;
 
+	public static String NewProjectCreationPage_fPureOSGi;
+	
 	public static String HelloOSGiNewWizard_title;
 
 	public static String HelloOSGiTemplate_startMessage;

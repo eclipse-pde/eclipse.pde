@@ -22,7 +22,6 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	private boolean fDoGenerateClass = true;
 	private boolean fRCPAppPlugin = false;
 	private ArrayList templates = new ArrayList();
-	private boolean fPureOSGi;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IPluginFieldData#getClassname()
@@ -74,12 +73,7 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	    return fRCPAppPlugin;
 	}
 	
-	public boolean isPureOSGi() {
-		return fPureOSGi;
-	}
-	public void setPureOSGi(boolean dep) {
-		fPureOSGi = dep;
-	}
+
 
 
 }
