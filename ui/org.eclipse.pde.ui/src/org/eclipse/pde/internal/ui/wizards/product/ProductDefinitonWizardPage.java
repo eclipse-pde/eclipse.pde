@@ -160,12 +160,15 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginId);
 		if (productName != null && productName.length() == 0) {
 			error = PDEUIMessages.ProductDefinitonWizardPage_noProductName;
-		} else if (model == null){ 
-			error = PDEUIMessages.ProductDefinitonWizardPage_noPlugin; 
-		} else if (model.getUnderlyingResource() == null) {
-			error = PDEUIMessages.ProductDefinitonWizardPage_notInWorkspace; 
-		} else if (pluginId.length() == 0) {
-			error = PDEUIMessages.ProductDefinitonWizardPage_noPluginId; 
+		}  
+		if (error == null) {
+			if (pluginId.length() == 0) {
+				error = PDEUIMessages.ProductDefinitonWizardPage_noPluginId; 
+			} else if (model == null){ 
+				error = PDEUIMessages.ProductDefinitonWizardPage_noPlugin; 
+			} else if (model.getUnderlyingResource() == null) {
+				error = PDEUIMessages.ProductDefinitonWizardPage_notInWorkspace; 
+			}
 		}
 		if (error == null)
 			error = validateId();

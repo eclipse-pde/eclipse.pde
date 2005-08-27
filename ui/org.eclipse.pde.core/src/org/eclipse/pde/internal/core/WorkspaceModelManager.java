@@ -296,7 +296,13 @@ public class WorkspaceModelManager
 			if (model instanceof WorkspacePluginModelBase && filename.equals("MANIFEST.MF")) { //$NON-NLS-1$
 				addWorkspaceModel(file.getProject(), true);
 			} else if (model instanceof IBundlePluginModelBase && (filename.equals("plugin.xml") || filename.equals("fragment.xml"))) { //$NON-NLS-1$ //$NON-NLS-2$
-				addWorkspaceModel(file.getProject(), false);
+				WorkspaceExtensionsModel extensions = new WorkspaceExtensionsModel(file);
+				((IBundlePluginModelBase)model).setExtensionsModel(extensions);
+				extensions.setBundleModel((IBundlePluginModelBase)model);
+				loadModel(extensions, false);
+				// no need to fire any notifications if the plugin.xml/fragment.xml
+				// of a bundle is modified.
+				return;
 			}
 		} else if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
 			if (model instanceof IBundlePluginModelBase) {
@@ -308,6 +314,7 @@ public class WorkspaceModelManager
 					if (extensions == null) {
 						extensions = new WorkspaceExtensionsModel(file);
 						((IBundlePluginModelBase)model).setExtensionsModel(extensions);
+						((WorkspaceExtensionsModel)extensions).setBundleModel((IBundlePluginModelBase)model);
 					}
 					loadModel(extensions, reload);
 					// no need to fire any notifications if the plugin.xml/fragment.xml
@@ -374,7 +381,7 @@ public class WorkspaceModelManager
 				fFragmentModels.put(project, models[i]);
 			}
 		}
-				fFeatureModels = Collections.synchronizedMap(new HashMap());
+		fFeatureModels = Collections.synchronizedMap(new HashMap());
 		
 		IWorkspace workspace = PDECore.getWorkspace();
 		IProject[] projects = workspace.getRoot().getProjects();
