@@ -14,10 +14,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -164,27 +162,6 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 			1);
 	}
 	
-	private IFile findManifestFile(Object item) {
-		if (item instanceof IJavaProject)
-			item = ((IJavaProject)item).getProject();
-			
-		if (item instanceof IProject) {
-			IFile file = ((IProject) item).getFile("plugin.xml"); //$NON-NLS-1$
-			if (file.exists())
-				return file;
-			file = ((IProject) item).getFile("fragment.xml"); //$NON-NLS-1$
-			if (file.exists())
-				return file;
-		} else if (item instanceof IFile) {
-			IFile file = (IFile)item;
-			if (file.getName().equals("plugin.xml") //$NON-NLS-1$
-				|| file.getName().equals("fragment.xml")) { //$NON-NLS-1$
-				return file;
-			}
-		}
-		return null;
-	}
-	
 	private int getExternalScope() {
 		if (externalScopeButtons[0].getSelection())
 			return PluginSearchScope.EXTERNAL_SCOPE_ALL;
@@ -242,9 +219,9 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 					(IStructuredSelection) container.getSelection();
 				Iterator iter = selection.iterator();
 				while (iter.hasNext()) {
-					IFile file = findManifestFile(iter.next());
-					if (file != null)
-						result.add(file);
+					Object item = iter.next();
+					if (item instanceof IResource)
+						result.add(((IResource)item).getProject());
 				}
 			}
 		} else if (scope == ISearchPageContainer.WORKING_SET_SCOPE) {
@@ -253,9 +230,9 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 				for (int i = 0; i < workingSets.length; i++) {
 					IAdaptable[] elements = workingSets[i].getElements();
 					for (int j = 0; j < elements.length; j++) {
-						IFile file = findManifestFile(elements[j]);
-						if (file != null)
-							result.add(file);
+						IResource resource = (IResource)elements[j].getAdapter(IResource.class);
+						if (resource != null)
+							result.add(resource.getProject());
 					}
 				}
 			}

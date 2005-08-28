@@ -66,7 +66,7 @@ public class PluginSearchScope {
 	private void addWorkspaceModel(IPluginModelBase candidate, ArrayList result) {
 		if (workspaceScope == SCOPE_WORKSPACE) {
 			result.add(candidate);
-		} else if (selectedResources.contains(candidate.getUnderlyingResource())) {
+		} else if (selectedResources.contains(candidate.getUnderlyingResource().getProject())) {
 				result.add(candidate);
 		}
 	}
