@@ -36,8 +36,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.widgets.FormText;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class ProductIntroWizardPage extends WizardPage {
 
@@ -64,36 +62,26 @@ public class ProductIntroWizardPage extends WizardPage {
 		layout.verticalSpacing = 20;
 		comp.setLayout(layout);
 		
-		FormToolkit toolkit = new FormToolkit(parent.getDisplay());	
-		createProductGroup(toolkit, comp);		
-		
-		toolkit.dispose();
+		createProductGroup(comp);		
+
 		setControl(comp);
 		setPageComplete(false);
 		Dialog.applyDialogFont(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IHelpContextIds.PRODUCT_DEFINITIONS_WIZARD);
 	}
 
-	private void createFormText(FormToolkit toolkit, Composite parent, String content, int span) {
-		FormText text = toolkit.createFormText(parent, false);
-		text.setText(content, true, false);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = span;
-		gd.widthHint = 400;
-		text.setLayoutData(gd);
-	}
-
-	private void createProductGroup(FormToolkit toolkit, Composite comp) {
+	private void createProductGroup(Composite comp) {
 		Group group = new Group(comp, SWT.NONE);
 		group.setText(PDEUIMessages.ProductIntroWizardPage_groupText); 
 		group.setLayout(new GridLayout(3, false));
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		createFormText(toolkit, group, PDEUIMessages.ProductIntroWizardPage_formText, 3); 
-		
-		Label label;
+		Label label = new Label(group, SWT.WRAP);
+		label.setText(PDEUIMessages.ProductIntroWizardPage_formText);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 3;
+		gd.widthHint = 300;
+		label.setLayoutData(gd);
 		
 		label = new Label(group, SWT.NONE);
 		label.setText(PDEUIMessages.ProductIntroWizardPage_targetLabel); 
@@ -115,6 +103,8 @@ public class ProductIntroWizardPage extends WizardPage {
 		label.setText(PDEUIMessages.ProductIntroWizardPage_introLabel); 
 		
 		fIntroIdText = new Text(group, SWT.SINGLE|SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
 		fIntroIdText.setLayoutData(gd);
 		fIntroIdText.addModifyListener(fListener);
 	}
