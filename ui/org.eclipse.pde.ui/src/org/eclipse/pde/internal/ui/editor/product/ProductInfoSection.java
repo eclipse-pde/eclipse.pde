@@ -250,11 +250,19 @@ public class ProductInfoSection extends PDESection {
 	public void refresh() {
 		IProduct product = getProduct();
 		fNameEntry.setValue(product.getName(), true);
-		fProductCombo.setText(product.getId());
+		refreshProductCombo(product.getId());
 		fAppCombo.setText(product.getApplication());
 		fPluginButton.setSelection(!product.useFeatures());
 		fFeatureButton.setSelection(product.useFeatures());
 		super.refresh();
+	}
+	
+	private void refreshProductCombo(String productId) {
+		fProductCombo.setText(productId);
+		if (fProductCombo.getSelectionIndex() == -1) {
+			fProductCombo.add(productId, 0);
+			fProductCombo.setText(productId);
+		}
 	}
 	
 	private IStatusLineManager getStatusLineManager() {
@@ -269,6 +277,4 @@ public class ProductInfoSection extends PDESection {
 			return true;
 		return false;
 	}
-
-
 }

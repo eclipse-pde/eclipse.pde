@@ -47,13 +47,13 @@ public class BrandingPage extends PDEFormPage {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginWidth = 10;
-		layout.verticalSpacing = 20;
+		layout.verticalSpacing = 30;
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 
 		// sections
-		managedForm.addPart(new LauncherSection(this, body));
 		managedForm.addPart(new SplashSection(this, body));	
+		managedForm.addPart(new IntroSection(this, body));
 		managedForm.addPart(new WindowImagesSection(this, body));
 		managedForm.addPart(new AboutSection(this, body));	
 	}

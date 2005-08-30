@@ -2018,7 +2018,48 @@ public class PDEUIMessages extends NLS {
 
 	public static String HelloOSGiTemplate_pageDescription;
 
-	public static String ManifestTypeRenameParticipant_name;
+	public static String IntroSection_sectionText;
 
+	public static String IntroSection_sectionDescription;
+
+	public static String IntroSection_introLabel;
+
+	public static String IntroSection_introInput;
+
+	public static String IntroSection_new;
+
+	public static String IntroSection_undefinedProductId;
+
+	public static String IntroSection_undefinedProductIdMessage;
+
+	public static String ProductIntroWizard_title;
+
+	public static String ProductIntroWizardPage_title;
+
+	public static String ProductIntroWizardPage_description;
+
+	public static String ProductIntroWizardPage_groupText;
+
+	public static String ProductIntroWizardPage_formText;
+
+	public static String ProductIntroWizardPage_targetLabel;
+
+	public static String ProductIntroWizardPage_browse;
+
+	public static String ProductIntroWizardPage_introLabel;
+
+	public static String ProductIntroWizardPage_targetNotSet;
+
+	public static String ProductIntroWizardPage_introNotSet;
+
+	public static String ProductIntroWizardPage_invalidIntroId;
+
+	public static String ProductIntroWizardPage_introIdExists;
+	
+	public static String ManifestTypeRenameParticipant_name;
+	
 	public static String ManifestTypeRenameParticipant_composite;
+
+	public static String LauncherPage_title;
+
 }

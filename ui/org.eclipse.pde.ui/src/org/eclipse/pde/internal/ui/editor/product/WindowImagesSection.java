@@ -38,7 +38,7 @@ public class WindowImagesSection extends PDESection {
 	private FormEntry fImage32;
 
 	public WindowImagesSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION|Section.TWISTIE|Section.EXPANDED);
+		super(page, parent, Section.DESCRIPTION);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 

@@ -32,7 +32,6 @@ public class ProductEditor extends PDEFormEditor {
 
 	private ConfigurationPage fPluginConfigurationPage;
 	private ConfigurationPage fFeatureConfigurationPage;
-	private BrandingPage fBrandingPage;
 
 	/**
 	 * 
@@ -108,9 +107,9 @@ public class ProductEditor extends PDEFormEditor {
 			if (useFeatures())
 				addPage(fFeatureConfigurationPage);
 			else
-				addPage(fPluginConfigurationPage);	
-			fBrandingPage = new BrandingPage(this);
-			addPage(fBrandingPage);
+				addPage(fPluginConfigurationPage);
+			addPage(new LauncherPage(this));
+			addPage(new BrandingPage(this));
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}

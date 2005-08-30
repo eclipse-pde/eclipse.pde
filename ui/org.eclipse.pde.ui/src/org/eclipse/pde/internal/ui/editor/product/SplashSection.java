@@ -30,7 +30,7 @@ public class SplashSection extends PDESection {
 	private FormEntry fPluginEntry;
 
 	public SplashSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION|Section.TWISTIE|Section.EXPANDED);
+		super(page, parent, Section.DESCRIPTION);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 

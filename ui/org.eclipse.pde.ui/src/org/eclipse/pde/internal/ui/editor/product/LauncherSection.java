@@ -108,7 +108,7 @@ public class LauncherSection extends PDESection {
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
-		gd.verticalSpan = 3;
+		gd.verticalSpan = 4;
 		section.setLayoutData(gd);
 	}
 	
