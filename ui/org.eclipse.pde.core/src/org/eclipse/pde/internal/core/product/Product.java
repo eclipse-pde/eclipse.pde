@@ -34,6 +34,7 @@ public class Product extends ProductObject implements IProduct {
 	private ISplashInfo fSplashInfo;
 	private ILauncherInfo fLauncherInfo;
 	private IArgumentsInfo fLauncherArgs;
+	private IIntroInfo fIntroInfo;
 
 	public Product(IProductModel model) {
 		super(model);
@@ -141,6 +142,11 @@ public class Product extends ProductObject implements IProduct {
 			fLauncherInfo.write(indent + "   ", writer); //$NON-NLS-1$
 		}
 		
+		if (fIntroInfo != null) {
+			writer.println();
+			fIntroInfo.write(indent + "   ", writer); //$NON-NLS-1$
+		}
+		
 		writer.println();
 		writer.println(indent + "   <plugins>"); //$NON-NLS-1$  
 		Iterator iter = fPlugins.values().iterator();
@@ -180,6 +186,7 @@ public class Product extends ProductObject implements IProduct {
 		fApplication = null;
 		fId = null;
 		fName = null;
+		fIntroInfo = null;
 		fPlugins.clear();
 	}
 	
@@ -222,6 +229,9 @@ public class Product extends ProductObject implements IProduct {
 					} else if (name.equals("launcherArgs")) { //$NON-NLS-1$
 						fLauncherArgs = factory.createLauncherArguments();
 						fLauncherArgs.parse(child);
+					} else if (name.equals("intro")) { //$NON-NLS-1$
+						fIntroInfo = factory.createIntroInfo();
+						fIntroInfo.parse(child);
 					}
 				}
 			}
@@ -368,6 +378,14 @@ public class Product extends ProductObject implements IProduct {
 
 	public void setLauncherArguments(IArgumentsInfo info) {
 		fLauncherArgs = info;
+	}
+
+	public IIntroInfo getIntroInfo() {
+		return fIntroInfo;
+	}
+
+	public void setIntroInfo(IIntroInfo introInfo) {
+		fIntroInfo = introInfo;
 	}
 
 }

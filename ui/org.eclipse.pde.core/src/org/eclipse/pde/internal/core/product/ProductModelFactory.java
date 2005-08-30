@@ -69,4 +69,8 @@ public class ProductModelFactory implements IProductModelFactory {
 		return new ArgumentsInfo(fModel);
 	}
 
+	public IIntroInfo createIntroInfo() {
+		return new IntroInfo(fModel);
+	}
+
 }

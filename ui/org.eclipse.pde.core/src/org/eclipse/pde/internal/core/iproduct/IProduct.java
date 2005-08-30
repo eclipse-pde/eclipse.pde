@@ -18,6 +18,7 @@ public interface IProduct extends IProductObject {
 	String P_APPLICATION = "application"; //$NON-NLS-1$
 	String P_USEFEATURES = "useFeatures"; //$NON-NLS-1$
 	String P_INCLUDE_FRAGMENTS = "includeFragments"; //$NON-NLS-1$
+	String P_INTRO_ID = "introId"; //$NON-NLS-1$
 	
 	String getId();
 	
@@ -36,6 +37,8 @@ public interface IProduct extends IProductObject {
 	IWindowImages getWindowImages();
 	
 	ISplashInfo getSplashInfo();
+	
+	IIntroInfo getIntroInfo();
 	
 	ILauncherInfo getLauncherInfo();
 	
@@ -66,6 +69,8 @@ public interface IProduct extends IProductObject {
 	void setWindowImages(IWindowImages images);
 	
 	void setSplashInfo(ISplashInfo info);
+	
+	void setIntroInfo(IIntroInfo introInfo);
 	
 	void setLauncherInfo(ILauncherInfo info);
 	

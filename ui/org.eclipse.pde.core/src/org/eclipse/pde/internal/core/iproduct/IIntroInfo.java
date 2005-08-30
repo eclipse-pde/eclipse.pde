@@ -10,27 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.iproduct;
 
-
-public interface IProductModelFactory {
+public interface IIntroInfo extends IProductObject {
 	
-	IProduct createProduct();
+	void setId(String id);
 	
-	IAboutInfo createAboutInfo();
+	String getId();
 	
-	IProductPlugin createPlugin();
-	
-	IProductFeature createFeature();
-	
-	IConfigurationFileInfo createConfigFileInfo();
-	
-	IWindowImages createWindowImages();
-	
-	ISplashInfo createSplashInfo();
-	
-	ILauncherInfo createLauncherInfo();
-	
-	IArgumentsInfo createLauncherArguments();
-	
-	IIntroInfo createIntroInfo();
-
 }
