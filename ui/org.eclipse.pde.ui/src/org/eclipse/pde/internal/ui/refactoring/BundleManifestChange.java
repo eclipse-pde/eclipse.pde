@@ -1,0 +1,91 @@
+/*******************************************************************************
+ * Copyright (c) 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.pde.internal.ui.refactoring;
+
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.TextFileChange;
+import org.eclipse.pde.internal.ui.model.bundle.Bundle;
+import org.eclipse.pde.internal.ui.model.bundle.BundleModel;
+import org.eclipse.pde.internal.ui.model.bundle.ManifestHeader;
+import org.eclipse.text.edits.MultiTextEdit;
+import org.eclipse.text.edits.ReplaceEdit;
+import org.eclipse.text.edits.TextEdit;
+import org.osgi.framework.Constants;
+
+public class BundleManifestChange {
+
+	public static Change createChange(IFile file, IType type, String newName,
+			IProgressMonitor monitor) throws CoreException {
+		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+		try {
+			manager.connect(file.getFullPath(), monitor);
+			ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath());
+
+			IDocument document = buffer.getDocument();
+
+			try {
+				BundleModel model = new BundleModel(document, false);
+				model.load();
+				if (!model.isLoaded())
+					return null;
+
+				MultiTextEdit multiEdit = new MultiTextEdit();
+				Bundle bundle = (Bundle)model.getBundle();
+				TextEdit edit = createHeaderTextEdit(document, bundle.getManifestHeader(Constants.BUNDLE_ACTIVATOR), type, newName);
+				if (edit != null)
+					multiEdit.addChild(edit);
+				
+				edit = createHeaderTextEdit(document, bundle.getManifestHeader("Plugin-Class"), type, newName); //$NON-NLS-1$
+				if (edit != null)
+					multiEdit.addChild(edit);
+				
+				if (multiEdit.hasChildren()) {
+					TextFileChange change = new TextFileChange("", file);
+					change.setEdit(multiEdit);
+					return change;
+				}
+			} catch (CoreException e) {
+				return null;
+			}
+			return null;
+		} finally {
+			manager.disconnect(file.getFullPath(), monitor);
+		}
+	}
+	
+	private static TextEdit createHeaderTextEdit(IDocument doc, ManifestHeader header, IType type, String newName) {
+		if (header != null) {
+			String value = header.getValue();
+			String shortName = type.getElementName();
+			String oldName = type.getFullyQualifiedName('$');
+			if (value != null && value.startsWith(oldName)) {
+				StringBuffer buffer = new StringBuffer(header.getName());
+				buffer.append(": "); //$NON-NLS-1$
+				buffer.append(oldName.substring(0, oldName.length() - shortName.length()));
+				buffer.append(newName);
+				buffer.append(value.substring(oldName.length()));
+				buffer.append(TextUtilities.getDefaultLineDelimiter(doc));
+				return new ReplaceEdit(header.getOffset(), header.getLength(), buffer.toString());
+			}
+		}
+		return null;
+	}
+
+}
