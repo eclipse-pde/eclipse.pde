@@ -57,7 +57,7 @@ public class BundleManifestChange {
 					multiEdit.addChild(edit);
 				
 				if (multiEdit.hasChildren()) {
-					TextFileChange change = new TextFileChange("", file);
+					TextFileChange change = new TextFileChange("", file); //$NON-NLS-1$
 					change.setEdit(multiEdit);
 					return change;
 				}

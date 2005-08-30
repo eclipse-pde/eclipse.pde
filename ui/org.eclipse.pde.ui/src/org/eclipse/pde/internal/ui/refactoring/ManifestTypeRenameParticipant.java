@@ -24,6 +24,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class ManifestTypeRenameParticipant extends RenameParticipant {
 	
@@ -45,7 +46,7 @@ public class ManifestTypeRenameParticipant extends RenameParticipant {
 	}
 
 	public String getName() {
-		return "Manifest Rename Type Participant";
+		return PDEUIMessages.ManifestTypeRenameParticipant_name;
 	}
 
 	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) 
@@ -54,7 +55,7 @@ public class ManifestTypeRenameParticipant extends RenameParticipant {
 	}
 
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		CompositeChange result = new CompositeChange("Rename classes referenced in plug-in manifest files");
+		CompositeChange result = new CompositeChange(PDEUIMessages.ManifestTypeRenameParticipant_composite);
 		addBundleManifestChange(result, pm);
 		addChange(result, "plugin.xml", pm); //$NON-NLS-1$
 		addChange(result, "fragment.xml", pm); //$NON-NLS-1$

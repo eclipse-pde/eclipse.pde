@@ -2017,4 +2017,8 @@ public class PDEUIMessages extends NLS {
 	public static String HelloOSGiTemplate_pageTitle;
 
 	public static String HelloOSGiTemplate_pageDescription;
+
+	public static String ManifestTypeRenameParticipant_name;
+
+	public static String ManifestTypeRenameParticipant_composite;
 }
