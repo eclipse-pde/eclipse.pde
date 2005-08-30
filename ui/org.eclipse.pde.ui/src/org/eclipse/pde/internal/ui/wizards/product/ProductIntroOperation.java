@@ -87,7 +87,6 @@ public class ProductIntroOperation implements IRunnableWithProgress, IVariablePr
 				createNewFile(file);
 			} else {
 				modifyExistingFile(file, monitor);
-				
 			}
 			generateFiles(monitor);
 		} catch (CoreException e) {

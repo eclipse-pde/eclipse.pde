@@ -16,6 +16,19 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
@@ -34,6 +47,9 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.model.bundle.Bundle;
+import org.eclipse.pde.internal.ui.model.bundle.BundleModel;
+import org.eclipse.pde.internal.ui.model.bundle.ManifestHeader;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.wizards.product.ProductIntroWizard;
 import org.eclipse.swt.SWT;
@@ -43,17 +59,23 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.text.edits.InsertEdit;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.ReplaceEdit;
+import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.osgi.framework.Constants;
 
 
 public class IntroSection extends PDESection {
 
 	private ComboPart fIntroCombo;
+	private IResource fManifest;
+	private String[] fAvailableIntroIds;
 	private final static String INTRO_POINT = "org.eclipse.ui.intro"; //$NON-NLS-1$
 
 	public IntroSection(PDEFormPage page, Composite parent) {
@@ -88,8 +110,8 @@ public class IntroSection extends PDESection {
 		td = new TableWrapData(TableWrapData.FILL_GRAB);
 		td.valign = TableWrapData.MIDDLE;
 		fIntroCombo.getControl().setLayoutData(td);
-		String[] intros = getAvailableIntros();
-		if (intros != null ) fIntroCombo.setItems(intros);
+		loadManifestAndIntroIds(false);
+		if (fAvailableIntroIds != null ) fIntroCombo.setItems(fAvailableIntroIds);
 		fIntroCombo.add(""); //$NON-NLS-1$
 		fIntroCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -118,10 +140,10 @@ public class IntroSection extends PDESection {
 			return;
 		}
 		getIntroInfo().setId(fIntroCombo.getSelection());
-		addDependenciesAndPlugins();
+		try { addDependenciesAndPlugins(); } catch (CoreException e) {}
 	}
 
-	private String[] getAvailableIntros() {
+	private void loadManifestAndIntroIds(boolean onlyLoadManifest) {
 		TreeSet result = new TreeSet();
 		String introId;
 		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
@@ -135,6 +157,10 @@ public class IntroSection extends PDESection {
 						IPluginElement element = (IPluginElement)children[k];
 						if ("introProductBinding".equals(element.getName())) {//$NON-NLS-1$
 							if (element.getAttribute("productId").getValue().equals(getProduct().getId())) { //$NON-NLS-1$
+								if (fManifest == null)
+									fManifest = element.getPluginModel().getUnderlyingResource();
+								if (onlyLoadManifest)
+									return;
 								introId = element.getAttribute("introId").getValue(); //$NON-NLS-1$
 								if (introId != null)
 									result.add(introId);
@@ -144,17 +170,18 @@ public class IntroSection extends PDESection {
 				}
 			}
 		}
-		return (String[])result.toArray(new String[result.size()]);
+		fAvailableIntroIds = (String[])result.toArray(new String[result.size()]);
 	}
 	
 	private void handleNewIntro() {
 		boolean needNewProduct = false;
 		if (!productDefined()) {
 			needNewProduct = true;
-			MessageBox mbox = new MessageBox(PDEPlugin.getActiveWorkbenchShell(), SWT.OK|SWT.CANCEL|SWT.ICON_ERROR);
-	        mbox.setText(PDEUIMessages.IntroSection_undefinedProductId);
-	        mbox.setMessage(PDEUIMessages.IntroSection_undefinedProductIdMessage);
-	        if (mbox.open() != SWT.OK)
+			MessageDialog mdiag = new MessageDialog(PDEPlugin.getActiveWorkbenchShell(),
+					PDEUIMessages.IntroSection_undefinedProductId, null, 
+					PDEUIMessages.IntroSection_undefinedProductIdMessage,
+					MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
+	        if (mdiag.open() != MessageDialog.OK)
 	        	return;
 		}
 		ProductIntroWizard wizard = new ProductIntroWizard(getProduct(), needNewProduct);
@@ -165,7 +192,7 @@ public class IntroSection extends PDESection {
 			fIntroCombo.add(id, 0);
 			fIntroCombo.setText(id);
 			getIntroInfo().setId(id);
-			addDependenciesAndPlugins();
+			try { addDependenciesAndPlugins(); } catch (CoreException e) {}
 		}
 	}
 
@@ -196,7 +223,7 @@ public class IntroSection extends PDESection {
 		return !getProduct().getId().equals(""); //$NON-NLS-1$
 	}
 	
-	private void addDependenciesAndPlugins() {
+	private void addDependenciesAndPlugins() throws CoreException {
 		IProduct product = getProduct();
 		IProductModelFactory factory = product.getModel().getFactory();
 		IProductPlugin plugin = factory.createPlugin();
@@ -204,6 +231,8 @@ public class IntroSection extends PDESection {
 		product.addPlugin(plugin);
 		
 		handleAddRequired();
+		if (fManifest == null) loadManifestAndIntroIds(true);
+		if (fManifest != null) addRequiredBundle();
 	}
 	
 	private void handleAddRequired() {
@@ -267,5 +296,54 @@ public class IntroSection extends PDESection {
 				list.add(bundles[i]);
 		}
 		return (BundleDescription[])list.toArray(new BundleDescription[list.size()]);
+	}
+	
+	private void addRequiredBundle() throws CoreException {
+		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+		IPath manifestPath = fManifest.getFullPath();
+		IProgressMonitor monitor = new NullProgressMonitor();
+		try {
+			manager.connect(manifestPath, monitor);
+			ITextFileBuffer buffer = manager.getTextFileBuffer(manifestPath);
+
+			IDocument document = buffer.getDocument();
+			BundleModel model = new BundleModel(document, false);
+			model.load();
+			if (!model.isLoaded())
+				return;
+			Bundle bundle = (Bundle)model.getBundle();
+			TextEdit edit = createAddToHeaderTextEdit(document, bundle, Constants.REQUIRE_BUNDLE);
+			if (edit != null) {
+				edit.apply(document);
+				buffer.commit(monitor, true);
+			}
+		} catch (MalformedTreeException e) {
+		} catch (BadLocationException e) {
+		} finally {
+			manager.disconnect(manifestPath, monitor);
+		}
+	}
+	
+	private TextEdit createAddToHeaderTextEdit(IDocument doc, Bundle bundle, String headerName) {
+		ManifestHeader header = bundle.getManifestHeader(headerName);
+		String lineDelim = TextUtilities.getDefaultLineDelimiter(doc);
+		if (header == null) {
+			String newline = ""; //$NON-NLS-1$
+			try {
+				int len = lineDelim.length();
+				if (!doc.get(doc.getLength() - len, len).equals(lineDelim)) {
+					newline = lineDelim;
+				}
+			} catch (BadLocationException e) {
+			}
+			header = new ManifestHeader(Constants.REQUIRE_BUNDLE, INTRO_POINT, bundle);
+			header.setOffset(doc.getLength());
+			return new InsertEdit(header.getOffset(), newline + header.getFormattedString(lineDelim) + lineDelim); //$NON-NLS-1$
+		} else if (header.getValue().indexOf(INTRO_POINT) == -1) {
+			StringBuffer buffer = new StringBuffer(header.getFormattedString(lineDelim));
+			buffer.append(", " + lineDelim + " " + INTRO_POINT + lineDelim); //$NON-NLS-1$ //$NON-NLS-2$
+			return new ReplaceEdit(header.getOffset(), header.getLength(), buffer.toString());
+		}
+		return null;
 	}
 }

@@ -155,7 +155,9 @@ public class ProductIntroWizardPage extends WizardPage {
 		PluginSelectionDialog dialog = new PluginSelectionDialog(getShell(), PDECore.getDefault().getModelManager().getWorkspaceModels(), false);
 		if (dialog.open() == PluginSelectionDialog.OK) {
 			IPluginModelBase model = (IPluginModelBase)dialog.getFirstResult();
-			fPluginText.setText(model.getPluginBase().getId());
+			String id = model.getPluginBase().getId();
+			fPluginText.setText(id);
+			if (fIntroIdText.getText().length() == 0) fIntroIdText.setText(id + ".intro"); //$NON-NLS-1$
 		}
 	}
 	
