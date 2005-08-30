@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
@@ -86,6 +86,15 @@ public class ProductInfoSection extends PDESection {
 		TableWrapData td = new TableWrapData(TableWrapData.FILL_GRAB);
 		td.colspan = 2;
 		section.setLayoutData(td);
+		
+		getProductModel().addModelChangedListener(this);
+	}
+	
+	public void dispose() {
+		IProductModel model = getProductModel();
+		if (model != null)
+			model.removeModelChangedListener(this);
+		super.dispose();
 	}
 	
 	private void createNameEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
@@ -239,9 +248,12 @@ public class ProductInfoSection extends PDESection {
 		super.cancelEdit();
 	}
 	
+	private IProductModel getProductModel() {
+		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
+	}
+	
 	private IProduct getProduct() {
-		IBaseModel model = getPage().getPDEEditor().getAggregateModel();
-		return ((IProductModel)model).getProduct();
+		return getProductModel().getProduct();
 	}
 	
 	/* (non-Javadoc)
@@ -255,6 +267,20 @@ public class ProductInfoSection extends PDESection {
 		fPluginButton.setSelection(!product.useFeatures());
 		fFeatureButton.setSelection(product.useFeatures());
 		super.refresh();
+	}
+	
+	public void modelChanged(IModelChangedEvent e) {
+		String prop = e.getChangedProperty();
+		if (prop == null)
+			return;
+		if (prop.equals(IProduct.P_ID)) {
+			refreshProductCombo(e.getNewValue().toString());
+		} else if (prop.equals(IProduct.P_NAME)) {
+			fNameEntry.setValue(e.getNewValue().toString(), true);
+		} else  if (prop.equals(IProduct.P_APPLICATION)) {
+			fAppCombo.setText(e.getNewValue().toString());			
+		}
+		super.modelChanged(e);
 	}
 	
 	private void refreshProductCombo(String productId) {
