@@ -128,17 +128,17 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 				product.setAboutInfo(info);
 			}
 			IWindowImages winImages = factory.createWindowImages();
-			String path = prop.getProperty("windowImage"); //$NON-NLS-1$
+			String path = prop.getProperty(IProductConstants.WINDOW_IMAGES);
 			if (path != null) {
-				winImages.setSmallImagePath(path);
-			}
-			path = prop.getProperty(IProductConstants.WINDOW_IMAGES);
-			if (path != null) {
-				StringTokenizer tokenizer = new StringTokenizer(path, ","); //$NON-NLS-1$
-				if (tokenizer.hasMoreTokens())
-					winImages.setSmallImagePath(tokenizer.nextToken());
-				if (tokenizer.hasMoreTokens())
-					winImages.setLargeImagePath(tokenizer.nextToken());
+				StringTokenizer tokenizer = new StringTokenizer(path, ",", true); //$NON-NLS-1$
+				int size = 0;
+				while (tokenizer.hasMoreTokens()) {
+					String token = tokenizer.nextToken();
+					if (token.equals(",")) //$NON-NLS-1$
+						size++;
+					else
+						winImages.setImagePath(token, size);
+				}
 			}
 			product.setWindowImages(winImages);
 		}

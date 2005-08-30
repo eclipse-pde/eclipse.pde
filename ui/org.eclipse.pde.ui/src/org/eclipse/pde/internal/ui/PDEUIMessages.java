@@ -1848,9 +1848,7 @@ public class PDEUIMessages extends NLS {
 	public static String BrandingPage_title;
 	public static String WindowImagesSection_title;
 	public static String WindowImagesSection_desc;
-	public static String WindowImagesSection_small;
 	public static String WindowImagesSection_browse;
-	public static String WindowImagesSection_large;
 	public static String WindowImagesSection_open;
 	public static String WindowImagesSection_warning;
 	public static String WindowImagesSection_emptyPath;
@@ -2061,5 +2059,15 @@ public class PDEUIMessages extends NLS {
 	public static String ManifestTypeRenameParticipant_composite;
 
 	public static String LauncherPage_title;
+
+	public static String WindowImagesSection_16;
+
+	public static String WindowImagesSection_32;
+
+	public static String WindowImagesSection_48;
+
+	public static String WindowImagesSection_64;
+
+	public static String WindowImagesSection_128;
 
 }

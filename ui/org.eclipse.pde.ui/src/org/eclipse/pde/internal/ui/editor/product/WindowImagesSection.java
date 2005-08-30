@@ -36,6 +36,9 @@ public class WindowImagesSection extends PDESection {
 
 	private FormEntry fImage16;
 	private FormEntry fImage32;
+	private FormEntry fImage48;
+	private FormEntry fImage64;
+	private FormEntry fImage128;
 
 	public WindowImagesSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
@@ -53,10 +56,10 @@ public class WindowImagesSection extends PDESection {
 		client.setLayout(new GridLayout(3, false));
 		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-		fImage16 = new FormEntry(client, toolkit, PDEUIMessages.WindowImagesSection_small, PDEUIMessages.WindowImagesSection_browse, isEditable()); // 
+		fImage16 = new FormEntry(client, toolkit, PDEUIMessages.WindowImagesSection_16, PDEUIMessages.WindowImagesSection_browse, isEditable()); // 
 		fImage16.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
-				getWindowImages().setSmallImagePath(entry.getValue());
+				getWindowImages().setImagePath(entry.getValue(), 0);
 			}
 			public void browseButtonSelected(FormEntry entry) {
 				handleBrowse(entry);
@@ -67,10 +70,10 @@ public class WindowImagesSection extends PDESection {
 		});
 		fImage16.setEditable(isEditable());
 		
-		fImage32 = new FormEntry(client, toolkit, PDEUIMessages.WindowImagesSection_large, PDEUIMessages.WindowImagesSection_browse, isEditable()); // 
+		fImage32 = new FormEntry(client, toolkit, PDEUIMessages.WindowImagesSection_32, PDEUIMessages.WindowImagesSection_browse, isEditable()); // 
 		fImage32.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
-				getWindowImages().setLargeImagePath(entry.getValue());
+				getWindowImages().setImagePath(entry.getValue(), 1);
 			}
 			public void browseButtonSelected(FormEntry entry) {
 				handleBrowse(entry);
@@ -81,6 +84,48 @@ public class WindowImagesSection extends PDESection {
 		});
 		fImage32.setEditable(isEditable());
 		
+		fImage48 = new FormEntry(client, toolkit, PDEUIMessages.WindowImagesSection_48, PDEUIMessages.WindowImagesSection_browse, isEditable()); // 
+		fImage48.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			public void textValueChanged(FormEntry entry) {
+				getWindowImages().setImagePath(entry.getValue(), 2);
+			}
+			public void browseButtonSelected(FormEntry entry) {
+				handleBrowse(entry);
+			}
+			public void linkActivated(HyperlinkEvent e) {
+				openImage(fImage48.getValue());
+			}
+		});
+		fImage48.setEditable(isEditable());
+		
+		fImage64 = new FormEntry(client, toolkit, PDEUIMessages.WindowImagesSection_64, PDEUIMessages.WindowImagesSection_browse, isEditable()); // 
+		fImage64.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			public void textValueChanged(FormEntry entry) {
+				getWindowImages().setImagePath(entry.getValue(), 3);
+			}
+			public void browseButtonSelected(FormEntry entry) {
+				handleBrowse(entry);
+			}
+			public void linkActivated(HyperlinkEvent e) {
+				openImage(fImage64.getValue());
+			}
+		});
+		fImage64.setEditable(isEditable());
+		
+		fImage128 = new FormEntry(client, toolkit, PDEUIMessages.WindowImagesSection_128, PDEUIMessages.WindowImagesSection_browse, isEditable()); // 
+		fImage128.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			public void textValueChanged(FormEntry entry) {
+				getWindowImages().setImagePath(entry.getValue(), 4);
+			}
+			public void browseButtonSelected(FormEntry entry) {
+				handleBrowse(entry);
+			}
+			public void linkActivated(HyperlinkEvent e) {
+				openImage(fImage128.getValue());
+			}
+		});
+		fImage128.setEditable(isEditable());
+		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING));
@@ -88,8 +133,11 @@ public class WindowImagesSection extends PDESection {
 	
 	public void refresh() {
 		IWindowImages images = getWindowImages();
-		fImage16.setValue(images.getSmallImagePath(), true);
-		fImage32.setValue(images.getLargeImagePath(), true);
+		fImage16.setValue(images.getImagePath(0), true);
+		fImage32.setValue(images.getImagePath(1), true);
+		fImage48.setValue(images.getImagePath(2), true);
+		fImage64.setValue(images.getImagePath(3), true);
+		fImage128.setValue(images.getImagePath(4), true);
 		super.refresh();
 	}
 
@@ -113,12 +161,18 @@ public class WindowImagesSection extends PDESection {
 	public void commit(boolean onSave) {
 		fImage16.commit();
 		fImage32.commit();
+		fImage48.commit();
+		fImage64.commit();
+		fImage128.commit();
 		super.commit(onSave);
 	}
 	
 	public void cancelEdit() {
 		fImage16.cancelEdit();
 		fImage32.cancelEdit();
+		fImage48.cancelEdit();
+		fImage64.cancelEdit();
+		fImage128.cancelEdit();
 		super.cancelEdit();
 	}
 	

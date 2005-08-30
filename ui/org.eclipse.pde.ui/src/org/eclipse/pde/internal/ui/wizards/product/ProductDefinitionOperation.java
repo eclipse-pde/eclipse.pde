@@ -202,15 +202,28 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 		IWindowImages images = fProduct.getWindowImages();
 		StringBuffer buffer = new StringBuffer();
 		if (images != null) {
-			String image16 = getURL(images.getSmallImagePath());
+			String image16 = getURL(images.getImagePath(0));
 			if (image16 != null)
 				buffer.append(image16);
-
-			String image32 = getURL(images.getLargeImagePath());
-			if (image32 != null) {
-				if (buffer.length() > 0)
-					buffer.append(","); //$NON-NLS-1$
+			buffer.append(","); //$NON-NLS-1$
+			String image32 = getURL(images.getImagePath(1));
+			if (image32 != null) {	
 				buffer.append(image32);
+			}
+			buffer.append(","); //$NON-NLS-1$
+			String image48 = getURL(images.getImagePath(2));
+			if (image48 != null) {
+				buffer.append(image48);
+			}
+			buffer.append(","); //$NON-NLS-1$
+			String image64 = getURL(images.getImagePath(3));
+			if (image64 != null) {
+				buffer.append(image64);
+			}
+			buffer.append(","); //$NON-NLS-1$
+			String image128 = getURL(images.getImagePath(4));
+			if (image128 != null) {
+				buffer.append(image128);
 			}
 		}
 		return buffer.length() == 0 ? null : buffer.toString();
