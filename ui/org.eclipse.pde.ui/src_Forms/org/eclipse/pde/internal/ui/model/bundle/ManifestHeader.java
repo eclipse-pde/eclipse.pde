@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.model.bundle;
 
 import java.io.PrintWriter;
-import java.util.StringTokenizer;
 
 import org.eclipse.pde.internal.core.bundle.BundleObject;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -100,22 +99,4 @@ public class ManifestHeader extends BundleObject implements IDocumentKey {
     
     public void updateValue() {
     }
-    
-    public String getFormattedString(String lineDelim) {
-    	if (getName() == null || getValue() == null)
-    		return null;
-    	StringBuffer buffer = new StringBuffer(getName());
-    	buffer.append(": "); //$NON-NLS-1$
-    	StringTokenizer tokens = new StringTokenizer(getValue(), ","); //$NON-NLS-1$
-    	while (tokens.hasMoreTokens()) {
-    		buffer.append(tokens.nextToken()); 
-    		if (tokens.hasMoreTokens()) {
-	    		buffer.append(","); //$NON-NLS-1$
-	    		buffer.append(lineDelim);
-	    		buffer.append(" "); //$NON-NLS-1$
-    		}
-    	}
-    	return buffer.toString();
-    }
-	
 }

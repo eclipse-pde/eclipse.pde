@@ -61,7 +61,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
-import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -307,12 +306,18 @@ public class IntroSection extends PDESection {
 			ITextFileBuffer buffer = manager.getTextFileBuffer(manifestPath);
 
 			IDocument document = buffer.getDocument();
+			
+			String ld = TextUtilities.getDefaultLineDelimiter(document);
+			TextEdit edit = checkTrailingNewline(document, ld);
+			if (edit != null)
+				edit.apply(document);
+			
 			BundleModel model = new BundleModel(document, false);
 			model.load();
 			if (!model.isLoaded())
 				return;
 			Bundle bundle = (Bundle)model.getBundle();
-			TextEdit edit = createAddToHeaderTextEdit(document, bundle, Constants.REQUIRE_BUNDLE);
+			edit = createAddToHeaderTextEdit(document, bundle, Constants.REQUIRE_BUNDLE, ld);
 			if (edit != null) {
 				edit.apply(document);
 				buffer.commit(monitor, true);
@@ -324,26 +329,25 @@ public class IntroSection extends PDESection {
 		}
 	}
 	
-	private TextEdit createAddToHeaderTextEdit(IDocument doc, Bundle bundle, String headerName) {
+	private TextEdit createAddToHeaderTextEdit(IDocument doc, Bundle bundle, String headerName, String ld) {
 		ManifestHeader header = bundle.getManifestHeader(headerName);
-		String lineDelim = TextUtilities.getDefaultLineDelimiter(doc);
 		if (header == null) {
-			String newline = ""; //$NON-NLS-1$
-			try {
-				int len = lineDelim.length();
-				if (!doc.get(doc.getLength() - len, len).equals(lineDelim)) {
-					newline = lineDelim;
-				}
-			} catch (BadLocationException e) {
-			}
-			header = new ManifestHeader(Constants.REQUIRE_BUNDLE, INTRO_POINT, bundle);
-			header.setOffset(doc.getLength());
-			return new InsertEdit(header.getOffset(), newline + header.getFormattedString(lineDelim) + lineDelim); //$NON-NLS-1$
+			return new InsertEdit(doc.getLength() - 1, Constants.REQUIRE_BUNDLE + ": " + INTRO_POINT + ld); //$NON-NLS-1$
 		} else if (header.getValue().indexOf(INTRO_POINT) == -1) {
-			StringBuffer buffer = new StringBuffer(header.getFormattedString(lineDelim));
-			buffer.append(", " + lineDelim + " " + INTRO_POINT + lineDelim); //$NON-NLS-1$ //$NON-NLS-2$
-			return new ReplaceEdit(header.getOffset(), header.getLength(), buffer.toString());
+			return new InsertEdit(header.getOffset() + header.getLength() - 1, "," + ld + " " + INTRO_POINT); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return null;
 	}
+	
+	private TextEdit checkTrailingNewline(IDocument document, String ld) {
+		try {
+			int len = ld.length();
+			if (!document.get(document.getLength() - len, len).equals(ld)) {
+				return new InsertEdit(document.getLength(), ld);
+			}
+		} catch (BadLocationException e) {
+		}
+		return null;
+	}
+	
 }
