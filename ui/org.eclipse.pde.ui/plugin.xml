@@ -302,6 +302,7 @@
             id="org.eclipse.pde.ui.pluginContent.helloOSGi"
             name="%pluginContent.helloOSGi.name"
             pureOSGi="true"
+            requiresActivator="true"
             ui-content="false">
          <description>
          	%pluginContent.helloOSGi.description
@@ -1479,13 +1480,12 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>   
    </extension>
-   <!--
    <extension
          point="org.eclipse.ltk.core.refactoring.renameParticipants">
       <renameParticipant
             class="org.eclipse.pde.internal.ui.refactoring.ManifestTypeRenameParticipant"
-            id="org.eclipse.pde.ui.manifestRenameParticipant"
-            name="Manifest Rename Participant">
+            id="org.eclipse.pde.ui.manifestTypeRenameParticipant"
+            name="%rename.type.participant">
          <enablement>
             <with
                   variable="element">
@@ -1495,5 +1495,18 @@
             </with>
          </enablement>        
       </renameParticipant>
-   </extension> -->
+      <renameParticipant
+            class="org.eclipse.pde.internal.ui.refactoring.ManifestPackageRenameParticipant"
+            id="org.eclipse.pde.ui.manifestPackageRenameParticipant"
+            name="%rename.package.participant">
+         <enablement>
+            <with
+                  variable="element">
+               <instanceof
+                     value="org.eclipse.jdt.core.IPackageFragment">
+               </instanceof>
+            </with>
+         </enablement>        
+      </renameParticipant>
+   </extension>
 </plugin>

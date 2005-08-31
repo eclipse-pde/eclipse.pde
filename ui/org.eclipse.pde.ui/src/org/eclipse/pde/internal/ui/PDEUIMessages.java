@@ -2054,8 +2054,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String ProductIntroWizardPage_introIdExists;
 	
-	public static String ManifestTypeRenameParticipant_name;
-	
 	public static String ManifestTypeRenameParticipant_composite;
 
 	public static String LauncherPage_title;
@@ -2069,5 +2067,7 @@ public class PDEUIMessages extends NLS {
 	public static String WindowImagesSection_64;
 
 	public static String WindowImagesSection_128;
+
+	public static String ManifestPackageRenameParticipant_packageRename;
 
 }

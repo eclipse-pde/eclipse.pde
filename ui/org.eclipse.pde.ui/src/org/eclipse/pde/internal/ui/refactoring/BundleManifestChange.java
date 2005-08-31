@@ -16,6 +16,8 @@ import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
@@ -31,7 +33,7 @@ import org.osgi.framework.Constants;
 
 public class BundleManifestChange {
 
-	public static Change createChange(IFile file, IType type, String newName,
+	public static Change createChange(IFile file, IJavaElement element, String newName,
 			IProgressMonitor monitor) throws CoreException {
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		try {
@@ -48,11 +50,34 @@ public class BundleManifestChange {
 
 				MultiTextEdit multiEdit = new MultiTextEdit();
 				Bundle bundle = (Bundle)model.getBundle();
-				TextEdit edit = createHeaderTextEdit(document, bundle.getManifestHeader(Constants.BUNDLE_ACTIVATOR), type, newName);
+				
+				TextEdit edit = null;
+				if (element instanceof IType) {
+					edit = createHeaderTextEdit(document, 
+						bundle.getManifestHeader(Constants.BUNDLE_ACTIVATOR), 
+						(IType)element, 
+						newName);
+				} else if (element instanceof IPackageFragment) {
+					edit = createHeaderTextEdit(document, 
+							bundle.getManifestHeader(Constants.BUNDLE_ACTIVATOR), 
+							(IPackageFragment)element, 
+							newName);			
+				}
 				if (edit != null)
 					multiEdit.addChild(edit);
 				
-				edit = createHeaderTextEdit(document, bundle.getManifestHeader("Plugin-Class"), type, newName); //$NON-NLS-1$
+				edit = null;
+				if (element instanceof IType) {
+					edit = createHeaderTextEdit(document, 
+						bundle.getManifestHeader("Plugin-Class"),  //$NON-NLS-1$
+						(IType)element, 
+						newName);
+				} else if (element instanceof IPackageFragment) {
+					edit = createHeaderTextEdit(document, 
+							bundle.getManifestHeader("Plugin-Class"),  //$NON-NLS-1$
+							(IPackageFragment)element, 
+							newName);					
+				}
 				if (edit != null)
 					multiEdit.addChild(edit);
 				
@@ -87,5 +112,22 @@ public class BundleManifestChange {
 		}
 		return null;
 	}
+
+	private static TextEdit createHeaderTextEdit(IDocument doc, ManifestHeader header, IPackageFragment fragment, String newName) {
+		if (header != null) {
+			String value = header.getValue();
+			String oldName = fragment.getElementName();
+			if (value != null && value.startsWith(oldName) && value.lastIndexOf('.') <= oldName.length()) {
+				StringBuffer buffer = new StringBuffer(header.getName());
+				buffer.append(": "); //$NON-NLS-1$
+				buffer.append(newName);
+				buffer.append(value.substring(oldName.length()));
+				buffer.append(TextUtilities.getDefaultLineDelimiter(doc));
+				return new ReplaceEdit(header.getOffset(), header.getLength(), buffer.toString());
+			}
+		}
+		return null;
+	}
+
 
 }

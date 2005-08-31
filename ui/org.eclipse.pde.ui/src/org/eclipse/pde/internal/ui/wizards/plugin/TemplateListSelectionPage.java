@@ -57,14 +57,18 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 			boolean javaFlag = getFlag(config, "java", true); //$NON-NLS-1$
 			boolean rcpFlag = getFlag(config, "rcp", false); //$NON-NLS-1$
 			boolean osgiFlag = getFlag(config, "pureOSGi", false); //$NON-NLS-1$
+			boolean activatorFlag = getFlag(config, "requiresActivator", false); //$NON-NLS-1$
 			
 			//filter out java wizards for simple projects
 			if (simple && javaFlag) return false;
 			//filter out ui wizards for non-ui plug-ins
 			if (uiFlag && (simple || (generate && !ui))) return false;
+			//filter out wizards that require an activator when the user specifies not to generate a class
+			if (activatorFlag && !generate) return false;
 			//filter out non-RCP wizard if RCP option is selected
-			//and non-UI wizards if UI option is selected
-			return (rcp == rcpFlag && ui == uiFlag && osgi == osgiFlag);
+			if (!osgi && (rcp != rcpFlag)) return false;
+			//filter out non-UI wizards if UI option is selected
+			return (osgi == osgiFlag && ui == uiFlag);
 		}
 		private boolean getFlag(IConfigurationElement config, String name, boolean defaultValue) {
 			String value = config.getAttribute(name);

@@ -13,29 +13,35 @@ package org.eclipse.pde.internal.ui.refactoring;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
-public class ManifestTypeRenameParticipant extends PDERenameParticipant {
+public class ManifestPackageRenameParticipant extends PDERenameParticipant {
 	
-
 	protected boolean initialize(Object element) {
-		if (element instanceof IType) {
-			IType type = (IType)element;
-			IJavaProject javaProject = (IJavaProject)type.getAncestor(IJavaElement.JAVA_PROJECT);
-			IProject project = javaProject.getProject();
-			if (WorkspaceModelManager.isPluginProject(project)) {
-				fProject = javaProject.getProject();
-				fElement = type;
-				return true;
+		try {
+			if (element instanceof IPackageFragment) {
+				IPackageFragment fragment = (IPackageFragment)element;
+				if (!fragment.containsJavaResources())
+					return false;
+				IJavaProject javaProject = (IJavaProject)fragment.getAncestor(IJavaElement.JAVA_PROJECT);
+				IProject project = javaProject.getProject();
+				if (WorkspaceModelManager.isPluginProject(project)) {
+					fProject = javaProject.getProject();
+					fElement = fragment;
+					return true;
+				}
 			}
+		} catch (JavaModelException e) {
 		}
 		return false;
 	}
 
 	public String getName() {
-		return PDEUIMessages.ManifestTypeRenameParticipant_composite;
+		return PDEUIMessages.ManifestPackageRenameParticipant_packageRename;
 	}
+
 
 }

@@ -16,6 +16,8 @@ import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ltk.core.refactoring.Change;
@@ -38,10 +40,11 @@ import org.eclipse.pde.internal.ui.model.plugin.PluginModelBase;
 import org.eclipse.pde.internal.ui.model.plugin.PluginNode;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
+import org.eclipse.text.edits.TextEdit;
 
 public class PluginManifestChange {
 
-	public static Change createChange(IFile file, IType type, String newName, IProgressMonitor monitor) 
+	public static Change createChange(IFile file, IJavaElement element, String newName, IProgressMonitor monitor) 
 			throws CoreException {
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		try {
@@ -64,14 +67,15 @@ public class PluginManifestChange {
 				MultiTextEdit multiEdit = new MultiTextEdit();
 				
 				if (model instanceof PluginModel) {
-					PluginNode plugin = (PluginNode)((PluginModel)model).getPlugin();
-					String className = plugin.getClassName();
-					String shortName = type.getElementName();
-					String oldName = type.getFullyQualifiedName('$');
-					if (className != null && className.startsWith(oldName)) {
-						IDocumentAttribute attr = plugin.getDocumentAttribute("class"); //$NON-NLS-1$
-						multiEdit.addChild(new ReplaceEdit(attr.getValueOffset() + oldName.length() - shortName.length() , shortName.length(), newName));
-					}					
+					PluginNode plugin = (PluginNode)model.getPluginBase();
+					IDocumentAttribute attr = plugin.getDocumentAttribute("class"); //$NON-NLS-1$
+					TextEdit edit = null;
+					if (element instanceof IType) 
+						edit = createTextEdit(attr, (IType)element, newName);
+					else if (element instanceof IPackageFragment)
+						edit = createTextEdit(attr, (IPackageFragment)element, newName);
+					if (edit != null)
+						multiEdit.addChild(edit);					
 				}
 				
 				SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
@@ -79,7 +83,7 @@ public class PluginManifestChange {
 				for (int i = 0; i < extensions.length; i++) {
 					ISchema schema = registry.getSchema(extensions[i].getPoint());
 					if (schema != null)
-						addExtensionAttributeEdit(schema, extensions[i], multiEdit, type, newName);
+						addExtensionAttributeEdit(schema, extensions[i], multiEdit, element, newName);
 				}
 				
 				if (multiEdit.hasChildren()) {
@@ -96,7 +100,7 @@ public class PluginManifestChange {
 		}	
 	}
 	
-	private static void addExtensionAttributeEdit(ISchema schema, IPluginParent parent, MultiTextEdit multi, IType type, String newName) {
+	private static void addExtensionAttributeEdit(ISchema schema, IPluginParent parent, MultiTextEdit multi, IJavaElement element, String newName) {
 		IPluginObject[] children = parent.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			IPluginElement child = (IPluginElement)children[i];
@@ -107,18 +111,45 @@ public class PluginManifestChange {
 					IPluginAttribute attr = attributes[j];
 					ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
 					if (attInfo != null && attInfo.getKind() == IMetaAttribute.JAVA) {
-						String value = attr.getValue();
-						String shortName = type.getElementName();
-						String oldName = type.getFullyQualifiedName('$');
-						if (value != null && value.startsWith(oldName)) {
-							IDocumentAttribute docAttr = (IDocumentAttribute)attr;
-							multi.addChild(new ReplaceEdit(docAttr.getValueOffset() + oldName.length() - shortName.length() , shortName.length(), newName));
-						}
+						IDocumentAttribute docAttr = (IDocumentAttribute)attr;
+						TextEdit edit = null;
+						if (element instanceof IType) 
+							edit = createTextEdit(docAttr, (IType)element, newName);
+						else if (element instanceof IPackageFragment)
+							edit = createTextEdit(docAttr, (IPackageFragment)element, newName);
+						if (edit != null)
+							multi.addChild(edit);
 					}
 				}
 			}
-			addExtensionAttributeEdit(schema, child, multi, type, newName);
+			addExtensionAttributeEdit(schema, child, multi, element, newName);
 		}
 	}
 	
+	private static TextEdit createTextEdit(IDocumentAttribute attr, IType type, String newName) {
+		if (attr == null)
+			return null;
+		
+		String value = attr.getAttributeValue();
+		String shortName = type.getElementName();
+		String oldName = type.getFullyQualifiedName('$');
+		if (value != null && value.startsWith(oldName)) {
+			int offset = attr.getValueOffset() + oldName.length() - shortName.length();
+			return new ReplaceEdit(offset , shortName.length(), newName);
+		}
+		return null;
+	}
+
+	private static TextEdit createTextEdit(IDocumentAttribute attr, IPackageFragment packageFragment, String newName) {
+		if (attr == null)
+			return null;
+		
+		String value = attr.getAttributeValue();
+		String oldName = packageFragment.getElementName();
+		if (value != null && value.startsWith(oldName) && value.lastIndexOf('.') <= oldName.length()) {
+			return new ReplaceEdit(attr.getValueOffset(), oldName.length(), newName);
+		}
+		return null;
+	}
+
 }
