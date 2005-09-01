@@ -261,7 +261,7 @@ public class ProductIntroOperation implements IRunnableWithProgress, IVariablePr
 		
 		URL locationUrl = null;
 		try {
-			locationUrl = new URL(PDEPlugin.getDefault().getInstallURL(), "templates_3.0/intro/"); //$NON-NLS-1$
+			locationUrl = new URL(PDEPlugin.getDefault().getInstallURL(), "templates_3.1/intro/"); //$NON-NLS-1$
 		} catch (MalformedURLException e1) { return; }
 		if (locationUrl == null) {
 			return;
