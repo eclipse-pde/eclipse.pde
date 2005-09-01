@@ -115,7 +115,11 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		container.setLayout(layout);
 		container.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		
-		FormText text = createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fContent : PDEUIMessages.OverviewPage_content, toolkit);
+		FormText text;
+		if (((ManifestEditor)getEditor()).isPureOSGiManifest())
+			text = createClient(container, PDEUIMessages.OverviewPage_OSGiContent, toolkit);
+		else
+			text = createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fContent : PDEUIMessages.OverviewPage_content, toolkit);
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, PDELabelProvider.F_EDIT)); //$NON-NLS-1$
 		
@@ -148,7 +152,11 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		});
 		section.setTextClient(info);
 		
-		FormText text = createClient(section, isFragment() ? PDEUIMessages.OverviewPage_fTesting : PDEUIMessages.OverviewPage_testing, toolkit);
+		FormText text;
+		if (((ManifestEditor)getEditor()).isPureOSGiManifest())
+			text = createClient(section, PDEUIMessages.OverviewPage_OSGiTesting, toolkit);
+		else
+			text = createClient(section, isFragment() ? PDEUIMessages.OverviewPage_fTesting : PDEUIMessages.OverviewPage_testing, toolkit);
 		text.setImage("run", lp.get(PDEPluginImages.DESC_RUN_EXC)); //$NON-NLS-1$
 		text.setImage("debug", lp.get(PDEPluginImages.DESC_DEBUG_EXC)); //$NON-NLS-1$
 		section.setClient(text);
@@ -240,6 +248,10 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			getExportAction().run();
 		} else if (href.equals("action.convert")) { //$NON-NLS-1$
 			handleConvert();
+		} else if (href.equals("action.runOSGi")) { //$NON-NLS-1$ {
+			// TODO run osgi launcher
+		} else if (href.equals("action.debugOSGi")) { //$NON-NLS-1$
+			// TODO run osgi launcher in debug
 		}
 	}
 	

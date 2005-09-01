@@ -12,9 +12,11 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.wizards.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.*;
 
@@ -168,6 +170,12 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			}
 			//			superclass and interface
 			if (attInfo == null) {
+				IEclipsePreferences prefs = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
+				if (prefs != null && prefs.getBoolean(PDECore.PURE_OSGI, false)) {
+					initialValues.interfaceName = "org.osgi.framework.BundleActivator"; //$NON-NLS-1$
+					initialValues.interfaceType = findTypeForName(initialValues.interfaceName);
+					return;
+				}
 				initialValues.superClassName = "org.eclipse.core.runtime.Plugin"; //$NON-NLS-1$
 				IPluginImport[] imports = model.getPluginBase().getImports();
 				for (int i = 0; i < imports.length; i++) {

@@ -18,7 +18,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.build.IBuild;
@@ -63,6 +65,7 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 public class ManifestEditor extends MultiSourceEditor implements IShowEditorInput {
     
     private static int BUILD_INDEX = 5;
+    private boolean fPureOSGi;
     
 	protected void createResourceContexts(InputContextManager manager,
 			IFileEditorInput input) {
@@ -106,6 +109,10 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 		manager.monitorFile(project.getFile("plugin.xml")); //$NON-NLS-1$
 		manager.monitorFile(project.getFile("fragment.xml")); //$NON-NLS-1$
 		manager.monitorFile(buildFile);
+		
+		IEclipsePreferences prefs = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
+		if (prefs != null)
+			fPureOSGi = prefs.getBoolean(PDECore.PURE_OSGI, false);
 	}
 	
 	protected InputContextManager createInputContextManager() {
@@ -343,8 +350,10 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 			addPage(new OverviewPage(this));
 			addPage(new DependenciesPage(this));
 			addPage(new RuntimePage(this));
-			addPage(new ExtensionsPage(this));
-			addPage(new ExtensionPointsPage(this));
+			if (!isPureOSGiManifest()) {
+				addPage(new ExtensionsPage(this));
+				addPage(new ExtensionPointsPage(this));
+			}
 			if (inputContextManager.hasContext(BuildInputContext.CONTEXT_ID))
 				addPage(new BuildPage(this));
 		} catch (PartInitException e) {
@@ -539,5 +548,8 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
     	}
     }
 
+    public boolean isPureOSGiManifest() {
+    	return fPureOSGi && !inputContextManager.hasContext(PluginInputContext.CONTEXT_ID);
+    }
 
 }

@@ -35,6 +35,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	private NewProjectCreationPage fMainPage;
 	private ContentPage fContentPage;
 	private TemplateListSelectionPage fWizardListPage;
+	private boolean fPureOSGi;
 
 	public NewPluginProjectWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
@@ -45,11 +46,16 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		fPluginData = new PluginFieldData();
 	}
 	
+	public NewPluginProjectWizard(boolean pureOSGi) {
+		this();
+		fPureOSGi = pureOSGi;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		fMainPage = new NewProjectCreationPage("main", fPluginData, false); //$NON-NLS-1$
+		fMainPage = new NewProjectCreationPage("main", fPluginData, false, fPureOSGi); //$NON-NLS-1$
 		fMainPage.setTitle(PDEUIMessages.NewProjectWizard_MainPage_title); 
 		fMainPage.setDescription(PDEUIMessages.NewProjectWizard_MainPage_desc); 
 		String pname = getDefaultValue(DEF_PROJECT_NAME);

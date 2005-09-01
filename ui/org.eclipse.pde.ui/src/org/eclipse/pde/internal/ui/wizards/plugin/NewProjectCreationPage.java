@@ -47,11 +47,17 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	private Button fRuntimeDepButton;
 	private Label fTargetLabel;
 	private Button fOSGIButton;
+	private boolean fPureOSGiInitSelection;
 	
 	public NewProjectCreationPage(String pageName, AbstractFieldData data, boolean isFragment){
 		super(pageName);
 		fIsFragment = isFragment;
 		fData = data;
+	}
+	
+	protected NewProjectCreationPage(String pageName, AbstractFieldData data, boolean isFragment, boolean pureOSGi) {
+		this(pageName, data, isFragment);
+		fPureOSGiInitSelection = pureOSGi;
 	}
 	
 	public void createControl(Composite parent) {
@@ -123,7 +129,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	    } else {
 	    	fRuntimeDepButton.setText(PDEUIMessages.NewProjectCreationPage_pDependsOnRuntime);	
 	    }
-	    fRuntimeDepButton.setSelection(true);
+	    fRuntimeDepButton.setSelection(!fPureOSGiInitSelection);
 	    fRuntimeDepButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				updateRuntimeDependency();
@@ -162,12 +168,13 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	    } else {
 	    	fOSGIButton.setText(PDEUIMessages.NewProjectCreationPage_pPureOSGi); 	
 	    }
-	    fOSGIButton.setSelection(false);
+	    fOSGIButton.setSelection(fPureOSGiInitSelection);
 	    fOSGIButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				updateRuntimeDependency();
 			}
 		});
+	    updateRuntimeDependency();
 	}
 	
 	private void updateBundleCheck() {

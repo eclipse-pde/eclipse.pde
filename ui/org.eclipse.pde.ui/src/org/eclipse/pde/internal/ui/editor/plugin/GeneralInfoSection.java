@@ -70,7 +70,7 @@ public abstract class GeneralInfoSection extends PDESection {
 		createVersionEntry(client, toolkit, actionBars);
 		createNameEntry(client, toolkit, actionBars);
 		createProviderEntry(client, toolkit, actionBars);		
-		if (isBundle())
+		if (isBundle() && !isPureOSGi())
 			createPlatformFilterEntry(client, toolkit, actionBars);
 		createSpecificControls(client, toolkit, actionBars);
 		toolkit.paintBordersFor(client);
@@ -242,5 +242,9 @@ public abstract class GeneralInfoSection extends PDESection {
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		return (d.getFocusControl() instanceof Text);
+	}
+	
+	public boolean isPureOSGi() {
+		return ((ManifestEditor)getPage().getEditor()).isPureOSGiManifest();
 	}
 }

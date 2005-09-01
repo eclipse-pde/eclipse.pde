@@ -1408,10 +1408,21 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
+            adaptable="true"
+            class="org.eclipse.pde.internal.ui.properties.PluginDevelopmentPage"
+            id="org.eclipse.pde.internal.ui.properties.pluginDevelopmentPage"
+            name="%PropertyPage.pluginDevelopment"
+            objectClass="org.eclipse.core.resources.IProject">
+         <filter
+               name="projectNature"
+               value="org.eclipse.pde.PluginNature"/>
+      </page> 
+      <page
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
             class="org.eclipse.pde.internal.ui.properties.SelfHostingPropertyPage"
             name="%PropertyPage.selfHosting"
+            category="org.eclipse.pde.internal.ui.properties.pluginDevelopmentPage"
             id="org.eclipse.pde.internal.ui.properties.selfHostingPropertyPage">
          <filter
                name="projectNature"
@@ -1423,6 +1434,7 @@
             adaptable="true"
             class="org.eclipse.pde.internal.ui.properties.CompilersPropertyPage"
             name="%PropertyPage.compilers"
+            category="org.eclipse.pde.internal.ui.properties.pluginDevelopmentPage"
             id="org.eclipse.pde.internal.ui.properties.compilersPropertyPage">
          <filter
                name="projectNature"
@@ -1509,4 +1521,33 @@
          </enablement>        
       </renameParticipant>
    </extension>
+  <!-- <extension
+         point="org.eclipse.ltk.core.refactoring.moveParticipants">
+      <moveParticipant
+            class="org.eclipse.pde.internal.ui.refactoring.ManifestTypeMoveParticipant"
+            id="org.eclipse.pde.ui.manifestTypeMoveParticipant"
+            name="%move.type.participant">
+         <enablement>
+            <with
+                  variable="element">
+               <instanceof
+                     value="org.eclipse.jdt.core.IType">
+               </instanceof>
+            </with>
+         </enablement>        
+      </moveParticipant>
+      <moveParticipant
+            class="org.eclipse.pde.internal.ui.refactoring.ManifestPackageMoveParticipant"
+            id="org.eclipse.pde.ui.manifestPackageMoveParticipant"
+            name="%move.package.participant">
+         <enablement>
+            <with
+                  variable="element">
+               <instanceof
+                     value="org.eclipse.jdt.core.IPackageFragment">
+               </instanceof>
+            </with>
+         </enablement>        
+      </moveParticipant>
+   </extension>-->
 </plugin>

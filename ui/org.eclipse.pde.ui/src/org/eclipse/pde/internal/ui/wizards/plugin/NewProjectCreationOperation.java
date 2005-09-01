@@ -18,11 +18,13 @@ import java.util.TreeSet;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -39,6 +41,7 @@ import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPluginConverter;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
@@ -61,6 +64,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ISetSelectionTarget;
+import org.osgi.service.prefs.BackingStoreException;
 
 public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	private IPluginContentWizard fContentWizard;
@@ -258,6 +262,16 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 					new SubProgressMonitor(monitor, 1));
 		}
 
+		IEclipsePreferences pref = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
+		if (pref != null && fData instanceof AbstractFieldData && ((AbstractFieldData)fData).isPureOSGi()) {
+			pref.putBoolean(PDECore.PURE_OSGI, true);
+			try {
+				pref.flush();
+			} catch (BackingStoreException e) {
+				PDEPlugin.logException(e);
+			}	
+		}
+		
 		fModel.save();
 
 		if (fData.hasBundleStructure())

@@ -1709,8 +1709,10 @@ public class PDEUIMessages extends NLS {
 	public static String ClasspathSection_rename;
 	public static String OverviewPage_exportingTitle;
 	public static String OverviewPage_content;
+	public static String OverviewPage_OSGiContent;
 	public static String OverviewPage_osgi;
 	public static String OverviewPage_testing;
+	public static String OverviewPage_OSGiTesting;
 	public static String OverviewPage_tabName;
 	public static String OverviewPage_title;
 	public static String OverviewPage_deploying;
@@ -2070,4 +2072,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String ManifestPackageRenameParticipant_packageRename;
 
+	public static String PluginDevelopmentPage_osgiCheckbox;
+	
 }
