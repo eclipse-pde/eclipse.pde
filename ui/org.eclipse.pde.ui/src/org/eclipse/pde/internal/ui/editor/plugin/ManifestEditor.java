@@ -549,7 +549,9 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
     }
 
     public boolean isPureOSGiManifest() {
-    	return fPureOSGi && !inputContextManager.hasContext(PluginInputContext.CONTEXT_ID);
+    	if (inputContextManager.hasContext(PluginInputContext.CONTEXT_ID))
+    		return false;
+    	return fPureOSGi || !getAggregateModel().isEditable();
     }
 
 }
