@@ -51,13 +51,6 @@ public class PluginDevelopmentPage extends PropertyPage implements
 		return new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
-	protected void performDefaults() {
-		fOSGiButton.setEnabled(false);
-	}
-	
 	public boolean performOk() {
 		Preferences pref = getPreferences((IProject)getElement());
 		if (pref != null) {
