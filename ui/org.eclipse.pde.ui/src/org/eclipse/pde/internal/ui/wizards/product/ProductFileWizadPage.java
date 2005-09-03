@@ -112,10 +112,10 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 			IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
 				String point = extensions[i].getPoint();
-				if ("org.eclipse.core.runtime.products".equals(point)) {
+				if ("org.eclipse.core.runtime.products".equals(point)) { //$NON-NLS-1$
 					String id = extensions[i].getId();
 					if (id != null) {
-						String full = fModel.getPluginBase().getId() + "." + id;
+						String full = fModel.getPluginBase().getId() + "." + id; //$NON-NLS-1$
 						if (fProductCombo.indexOf(full) != -1) {
 							fProductCombo.setText(full);
 							fProductButton.setSelection(true);
