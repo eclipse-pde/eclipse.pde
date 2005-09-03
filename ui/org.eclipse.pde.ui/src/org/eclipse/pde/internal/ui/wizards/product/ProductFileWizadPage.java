@@ -12,11 +12,15 @@ package org.eclipse.pde.internal.ui.wizards.product;
 
 import java.util.*;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.*;
@@ -38,11 +42,25 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	private Combo fLaunchConfigCombo;
 	private Group fGroup;
 	
+	private IPluginModelBase fModel;
+	
 	public ProductFileWizadPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
-		setDescription(PDEUIMessages.ProductFileWizadPage_title); 
+		setDescription(PDEUIMessages.ProductFileWizadPage_title);
+		initializeModel(selection);
 	}
 	
+	private void initializeModel(IStructuredSelection selection) {
+		Object selected = selection.getFirstElement();
+		if (selected instanceof IAdaptable) {
+			IResource resource = (IResource)((IAdaptable)selected).getAdapter(IResource.class);
+			if (resource != null) {
+				IProject project = resource.getProject();
+				fModel = PDECore.getDefault().getModelManager().findModel(project);
+			}
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createAdvancedControls(org.eclipse.swt.widgets.Composite)
 	 */
@@ -86,20 +104,34 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	}
 	
 	private void initializeState() {
-		fBasicButton.setSelection(true);
-		
-		int count = fProductCombo.getItemCount();
-		fProductButton.setEnabled(count > 0);
-		fProductCombo.setEnabled(count > 0 && fProductButton.getSelection());
-		if (count > 0)
-			fProductCombo.setText(fProductCombo.getItem(0));
-		
-		count = fLaunchConfigCombo.getItemCount();
-		fLaunchConfigButton.setEnabled(count > 0);
-		fLaunchConfigCombo.setEnabled(count > 0 && fLaunchConfigButton.getSelection());
-		if (count > 0)
+		fLaunchConfigCombo.setEnabled(false);
+		if (fLaunchConfigCombo.getItemCount() > 0)
 			fLaunchConfigCombo.setText(fLaunchConfigCombo.getItem(0));
 		
+		if (fModel != null && fModel.getPluginBase().getId() != null) {
+			IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
+			for (int i = 0; i < extensions.length; i++) {
+				String point = extensions[i].getPoint();
+				if ("org.eclipse.core.runtime.products".equals(point)) {
+					String id = extensions[i].getId();
+					if (id != null) {
+						String full = fModel.getPluginBase().getId() + "." + id;
+						if (fProductCombo.indexOf(full) != -1) {
+							fProductCombo.setText(full);
+							fProductButton.setSelection(true);
+							return;
+						}
+					}
+				}
+			}
+		}
+		
+		fBasicButton.setSelection(true);
+
+		fProductCombo.setEnabled(false);
+		if (fProductCombo.getItemCount() > 0)
+			fProductCombo.setText(fProductCombo.getItem(0));
+
 	}
 	
 	/* (non-Javadoc)
