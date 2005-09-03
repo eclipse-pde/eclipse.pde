@@ -148,13 +148,9 @@ public class ProductInfoSection extends PDESection {
 		dialog.create();
 		if (dialog.open() == WizardDialog.OK) {
 			String id = wizard.getProductId();
-			fProductCombo.add(id, 0);
-			fProductCombo.setText(id);
-			getProduct().setId(id);
-			String app = wizard.getApplication();
-			fAppCombo.setText(app);
-			getProduct().setApplication(app);
-			fNameEntry.setValue(getProduct().getName());
+			IProduct product = getProduct();
+			product.setId(id);
+			product.setApplication(wizard.getApplication());
 		}
 	}
 
@@ -284,11 +280,9 @@ public class ProductInfoSection extends PDESection {
 	}
 	
 	private void refreshProductCombo(String productId) {
+		if (fProductCombo.indexOf(productId) == -1)
+			fProductCombo.add(productId, 0);		
 		fProductCombo.setText(productId);
-		if (fProductCombo.getSelectionIndex() == -1) {
-			fProductCombo.add(productId, 0);
-			fProductCombo.setText(productId);
-		}
 	}
 	
 	private IStatusLineManager getStatusLineManager() {

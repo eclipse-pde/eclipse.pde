@@ -30,6 +30,13 @@ public class ComboPart {
 			((CCombo) combo).addSelectionListener(listener);
 	}
 	
+	public int indexOf(String item) {
+		if (combo instanceof Combo)
+			return ((Combo) combo).indexOf(item);
+		
+		return ((CCombo) combo).indexOf(item);	
+	}
+	
 	public void addModifyListener(ModifyListener listener) {
 		if (combo instanceof Combo)
 			((Combo) combo).addModifyListener(listener);
