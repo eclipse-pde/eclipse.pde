@@ -150,7 +150,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 			handleAddWorkingSet();
 			break;
 		case 2:
-			handleAddRequired();
+			handleAddRequired(getProduct().getPlugins());
 			break;
 		case 3:
 			handleDelete();
@@ -275,24 +275,27 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 			ManifestEditor.openPluginEditor(((IProductPlugin)object).getId());
 		}
 	}
-
-	private void handleAddRequired() {
-		IProductPlugin[] plugins = getProduct().getPlugins();
+	
+	public static void handleAddRequired(IProductPlugin[] plugins) {
+		if (plugins.length == 0)
+			return;
+		
 		HashSet set = new HashSet();
 		for (int i = 0; i < plugins.length; i++) {
 			addDependencies(TargetPlatform.getState().getBundle(plugins[i].getId(), null), set);
 		}
+		
+		IProduct product = plugins[0].getProduct();
 		BundleDescription[] fragments = getAllFragments();
 		for (int i = 0; i < fragments.length; i++) {
 			String id = fragments[i].getSymbolicName();
 			if (set.contains(id) || "org.eclipse.ui.workbench.compatibility".equals(id)) //$NON-NLS-1$
 				continue;
 			String host = fragments[i].getHost().getName();
-			if (set.contains(host) || getProduct().containsPlugin(host)) {
+			if (set.contains(host) || product.containsPlugin(host)) {
 				addDependencies(fragments[i], set);
 			}
 		}
-		IProduct product = getProduct();
 		IProductModelFactory factory = product.getModel().getFactory();
 		Iterator iter = set.iterator();
 		while (iter.hasNext()) {
@@ -303,7 +306,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		}
 	}
 	
-	private void addDependencies(BundleDescription desc, Set set) {
+	private static void addDependencies(BundleDescription desc, Set set) {
 		if (desc == null)
 			return;
 		
@@ -329,7 +332,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		}
 	}
 	
-	private BundleDescription[] getAllFragments() {
+	private static BundleDescription[] getAllFragments() {
 		ArrayList list = new ArrayList();
 		BundleDescription[] bundles = TargetPlatform.getState().getBundles();
 		for (int i = 0; i < bundles.length; i++) {

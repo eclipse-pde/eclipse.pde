@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -30,14 +26,11 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.IIntroInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
@@ -229,72 +222,9 @@ public class IntroSection extends PDESection {
 		plugin.setId(INTRO_POINT);
 		product.addPlugin(plugin);
 		
-		handleAddRequired();
+		PluginSection.handleAddRequired(new IProductPlugin[] {plugin});
 		if (fManifest == null) loadManifestAndIntroIds(true);
 		if (fManifest != null) addRequiredBundle();
-	}
-	
-	private void handleAddRequired() {
-		IProductPlugin[] plugins = getProduct().getPlugins();
-		HashSet set = new HashSet();
-		for (int i = 0; i < plugins.length; i++) {
-			addDependencies(TargetPlatform.getState().getBundle(plugins[i].getId(), null), set);
-		}
-		BundleDescription[] fragments = getAllFragments();
-		for (int i = 0; i < fragments.length; i++) {
-			String id = fragments[i].getSymbolicName();
-			if (set.contains(id) || "org.eclipse.ui.workbench.compatibility".equals(id)) //$NON-NLS-1$
-				continue;
-			String host = fragments[i].getHost().getName();
-			if (set.contains(host) || getProduct().containsPlugin(host)) {
-				addDependencies(fragments[i], set);
-			}
-		}
-		IProduct product = getProduct();
-		IProductModelFactory factory = product.getModel().getFactory();
-		Iterator iter = set.iterator();
-		while (iter.hasNext()) {
-			String id = iter.next().toString();
-			IProductPlugin plugin = factory.createPlugin();
-			plugin.setId(id);
-			product.addPlugin(plugin);
-		}
-	}
-	
-	private void addDependencies(BundleDescription desc, Set set) {
-		if (desc == null)
-			return;
-		
-		String id = desc.getSymbolicName();
-		if (!set.add(id))
-			return;
-
-		
-		if (desc.getHost() != null) {
-			addDependencies((BundleDescription)desc.getHost().getSupplier(), set);
-		} else {
-			if (desc != null && !"org.eclipse.ui.workbench".equals(desc.getSymbolicName())) { //$NON-NLS-1$
-				BundleDescription[] fragments = desc.getFragments();
-				for (int i = 0; i < fragments.length; i++) {
-					addDependencies(fragments[i], set);
-				}
-			}
-		}
-		
-		BundleSpecification[] requires = desc.getRequiredBundles();
-		for (int i = 0; i < requires.length; i++) {
-			addDependencies((BundleDescription)requires[i].getSupplier(), set);
-		}
-	}
-	
-	private BundleDescription[] getAllFragments() {
-		ArrayList list = new ArrayList();
-		BundleDescription[] bundles = TargetPlatform.getState().getBundles();
-		for (int i = 0; i < bundles.length; i++) {
-			if (bundles[i].getHost() != null)
-				list.add(bundles[i]);
-		}
-		return (BundleDescription[])list.toArray(new BundleDescription[list.size()]);
 	}
 	
 	private void addRequiredBundle() throws CoreException {
