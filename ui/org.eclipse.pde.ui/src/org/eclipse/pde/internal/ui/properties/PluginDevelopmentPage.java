@@ -23,6 +23,7 @@ public class PluginDevelopmentPage extends PropertyPage implements
 	private Button fOSGiButton;
 	
 	public PluginDevelopmentPage() {
+		noDefaultAndApplyButton();
 	}
 
 	protected Control createContents(Composite parent) {
@@ -35,7 +36,6 @@ public class PluginDevelopmentPage extends PropertyPage implements
 		fOSGiButton.setLayoutData(new GridData());
 
 		initialize();
-
 		Dialog.applyDialogFont(composite);
 		return composite;
 	}
