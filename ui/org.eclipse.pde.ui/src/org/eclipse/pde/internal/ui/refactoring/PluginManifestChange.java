@@ -147,7 +147,9 @@ public class PluginManifestChange {
 		String value = attr.getAttributeValue();
 		String oldName = packageFragment.getElementName();
 		if (value != null && value.startsWith(oldName) && value.lastIndexOf('.') <= oldName.length()) {
-			return new ReplaceEdit(attr.getValueOffset(), oldName.length(), newName);
+			int offset = attr.getValueOffset();
+			if (offset >= 0)
+				return new ReplaceEdit(attr.getValueOffset(), oldName.length(), newName);
 		}
 		return null;
 	}
