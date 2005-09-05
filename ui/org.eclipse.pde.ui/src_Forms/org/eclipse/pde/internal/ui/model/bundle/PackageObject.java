@@ -118,6 +118,10 @@ public class PackageObject extends BundleObject {
     public String getName() {
         return fName;
     }
+    
+    public void setName(String name) {
+    	fName = name;
+    }
 
     public void setVersion(String version) {
         String old = fVersion;

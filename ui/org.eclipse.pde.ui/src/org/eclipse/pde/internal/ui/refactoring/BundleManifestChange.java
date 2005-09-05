@@ -23,8 +23,11 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.ui.model.bundle.Bundle;
 import org.eclipse.pde.internal.ui.model.bundle.BundleModel;
+import org.eclipse.pde.internal.ui.model.bundle.ExportPackageHeader;
+import org.eclipse.pde.internal.ui.model.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.ui.model.bundle.ManifestHeader;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
@@ -33,7 +36,7 @@ import org.osgi.framework.Constants;
 
 public class BundleManifestChange {
 
-	public static Change createChange(IFile file, IJavaElement element, String newName,
+	public static Change createRenameChange(IFile file, IJavaElement element, String newName,
 			IProgressMonitor monitor) throws CoreException {
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		try {
@@ -52,34 +55,61 @@ public class BundleManifestChange {
 				Bundle bundle = (Bundle)model.getBundle();
 				
 				TextEdit edit = null;
+
 				if (element instanceof IType) {
-					edit = createHeaderTextEdit(document, 
-						bundle.getManifestHeader(Constants.BUNDLE_ACTIVATOR), 
-						(IType)element, 
-						newName);
-				} else if (element instanceof IPackageFragment) {
+					IType type = (IType)element;
+					
 					edit = createHeaderTextEdit(document, 
 							bundle.getManifestHeader(Constants.BUNDLE_ACTIVATOR), 
-							(IPackageFragment)element, 
-							newName);			
-				}
-				if (edit != null)
-					multiEdit.addChild(edit);
-				
-				edit = null;
-				if (element instanceof IType) {
+							type, 
+							newName);
+					if (edit != null)
+						multiEdit.addChild(edit);
+					
 					edit = createHeaderTextEdit(document, 
 						bundle.getManifestHeader("Plugin-Class"),  //$NON-NLS-1$
 						(IType)element, 
 						newName);
+					if (edit != null)
+						multiEdit.addChild(edit);
 				} else if (element instanceof IPackageFragment) {
+					IPackageFragment fragment = (IPackageFragment)element;
+					
+					edit = createHeaderTextEdit(document, 
+							bundle.getManifestHeader(Constants.BUNDLE_ACTIVATOR), 
+							fragment, 
+							newName);			
+					if (edit != null)
+						multiEdit.addChild(edit);
+
 					edit = createHeaderTextEdit(document, 
 							bundle.getManifestHeader("Plugin-Class"),  //$NON-NLS-1$
-							(IPackageFragment)element, 
+							fragment, 
 							newName);					
+					if (edit != null)
+						multiEdit.addChild(edit);
+					
+					edit = createExportPackageTextEdit(document, 
+							bundle.getManifestHeader(Constants.EXPORT_PACKAGE), 
+							fragment.getElementName(), 
+							newName);
+					if (edit != null)
+						multiEdit.addChild(edit);
+
+					edit = createExportPackageTextEdit(document, 
+							bundle.getManifestHeader(ICoreConstants.PROVIDE_PACKAGE), 
+							fragment.getElementName(), 
+							newName);
+					if (edit != null)
+						multiEdit.addChild(edit);
+
+					edit = createImportPackageTextEdit(document, 
+							bundle.getManifestHeader(Constants.IMPORT_PACKAGE), 
+							fragment.getElementName(), 
+							newName);
+					if (edit != null)
+						multiEdit.addChild(edit);
 				}
-				if (edit != null)
-					multiEdit.addChild(edit);
 				
 				if (multiEdit.hasChildren()) {
 					TextFileChange change = new TextFileChange("", file); //$NON-NLS-1$
@@ -128,6 +158,37 @@ public class BundleManifestChange {
 		}
 		return null;
 	}
+	
+	private static TextEdit createExportPackageTextEdit(IDocument doc, ManifestHeader header, String oldName, String newName) {
+		if (header != null) {
+			ExportPackageHeader exportHeader = 
+				new ExportPackageHeader(
+						header.getName(), 
+						header.getValue(),
+						header.getBundle(),
+						TextUtilities.getDefaultLineDelimiter(doc));
+			if (exportHeader.hasPackage(oldName)) {
+				exportHeader.renamePackage(oldName, newName);
+				return new ReplaceEdit(header.getOffset(), header.getLength(), exportHeader.write());
+			}
+		}
+		return null;
+	}
 
+	private static TextEdit createImportPackageTextEdit(IDocument doc, ManifestHeader header, String oldName, String newName) {
+		if (header != null) {
+			ImportPackageHeader importHeader = 
+				new ImportPackageHeader(
+						header.getName(), 
+						header.getValue(),
+						header.getBundle(),
+						TextUtilities.getDefaultLineDelimiter(doc));
+			if (importHeader.hasPackage(oldName)) {
+				importHeader.renamePackage(oldName, newName);
+				return new ReplaceEdit(header.getOffset(), header.getLength(), importHeader.write());
+			}
+		}
+		return null;
+	}
 
 }

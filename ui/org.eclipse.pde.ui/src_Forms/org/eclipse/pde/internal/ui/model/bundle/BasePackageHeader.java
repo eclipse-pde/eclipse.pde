@@ -26,12 +26,9 @@ public abstract class BasePackageHeader extends ManifestHeader {
     
     protected TreeMap fPackages = new TreeMap();
     
-    protected String fLineDelimiter;
-
 	public BasePackageHeader(String name, String value, IBundle bundle,
 			String lineDelimiter) {
-		super(name, value, bundle);
-		this.fLineDelimiter = lineDelimiter;
+		super(name, value, bundle, lineDelimiter);
 		processValue();
 	}
 
@@ -67,6 +64,18 @@ public abstract class BasePackageHeader extends ManifestHeader {
         return fPackages.containsKey(packageName);
     }
     
+    public void removePackage(String name) {
+    	fPackages.remove(name);
+    }
+    
+    public void renamePackage(String oldName, String newName) {
+    	if (hasPackage(oldName)) {
+    		PackageObject object = (PackageObject)fPackages.remove(oldName);
+    		object.setName(newName);
+    		fPackages.put(newName, object);
+    	}
+    }
+    
     public void updateValue() {
         StringBuffer buffer = new StringBuffer();
         Iterator iter = fPackages.values().iterator();
@@ -74,7 +83,7 @@ public abstract class BasePackageHeader extends ManifestHeader {
             buffer.append(((PackageObject)iter.next()).write());
             if (iter.hasNext()) {
                 buffer.append(","); //$NON-NLS-1$
-                buffer.append(fLineDelimiter);
+                buffer.append(getLineLimiter());
                 buffer.append(" ");  //$NON-NLS-1$
             }
         }

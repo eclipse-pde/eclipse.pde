@@ -24,12 +24,18 @@ public class ManifestHeader extends BundleObject implements IDocumentKey {
 	protected String fName;
 	protected String fValue;
     private IBundle fBundle;
+	private String fLineDelimiter;
     
-    public ManifestHeader(String name, String value, IBundle bundle) {
+    public ManifestHeader(String name, String value, IBundle bundle, String lineDelimiter) {
         fName = name;
         fValue = value;
         fBundle = bundle;
+        fLineDelimiter = lineDelimiter;
         setModel(fBundle.getModel());
+    }
+    
+    protected String getLineLimiter() {
+    	return fLineDelimiter;
     }
 
 	/* (non-Javadoc)
@@ -81,7 +87,7 @@ public class ManifestHeader extends BundleObject implements IDocumentKey {
 	 */
 	public String write() {
         updateValue();
-		return fName + ": " + fValue; //$NON-NLS-1$
+		return fName + ": " + fValue + fLineDelimiter; //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)

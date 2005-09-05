@@ -113,7 +113,7 @@ public class BundleInputContext extends UTF8InputContext {
 			} catch (BadLocationException e) {
 			}
 		}
-		InsertEdit op = new InsertEdit(offset, key.write() + getLineDelimiter()); 
+		InsertEdit op = new InsertEdit(offset, key.write()); 
 		fOperationTable.put(key, op);
 		ops.add(op);
 	}
@@ -130,9 +130,7 @@ public class BundleInputContext extends UTF8InputContext {
 		if (key.getOffset() == -1) {
 			insertKey(key, ops);
 		} else {
-			TextEdit op = new ReplaceEdit(key.getOffset(), key.getLength(), key
-					.write()
-					+ getLineDelimiter()); 
+			TextEdit op = new ReplaceEdit(key.getOffset(), key.getLength(), key.write()); 
 			fOperationTable.put(key, op);
 			ops.add(op);
 		}	

@@ -10,13 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.model.bundle;
 
-import java.util.*;
-import java.util.jar.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ibundle.*;
-import org.eclipse.pde.internal.ui.model.*;
-import org.osgi.framework.*;
+import java.util.Dictionary;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.ui.model.IDocumentKey;
+import org.osgi.framework.Constants;
 
 public class Bundle implements IBundle {
 	
@@ -127,16 +136,13 @@ public class Bundle implements IBundle {
     
     private ManifestHeader createHeader(String key, String value) {
         ManifestHeader header = null;
+       	String newLine = TextUtilities.getDefaultLineDelimiter(fModel.getDocument());
         if (key.equals(Constants.EXPORT_PACKAGE) || key.equals(ICoreConstants.PROVIDE_PACKAGE)) {
-        	String newLine = TextUtilities.getDefaultLineDelimiter(fModel
-					.getDocument());
-			header = new ExportPackageHeader(key, value, this, newLine);
+ 			header = new ExportPackageHeader(key, value, this, newLine);
         } else if (key.equals(Constants.IMPORT_PACKAGE)){
-        	String newLine = TextUtilities.getDefaultLineDelimiter(fModel
-					.getDocument());
-			header = new ImportPackageHeader(key, value, this, newLine);
+ 			header = new ImportPackageHeader(key, value, this, newLine);
         } else {
-            header = new ManifestHeader(key, value, this);
+            header = new ManifestHeader(key, value, this, newLine);
         }
         return header;
     }

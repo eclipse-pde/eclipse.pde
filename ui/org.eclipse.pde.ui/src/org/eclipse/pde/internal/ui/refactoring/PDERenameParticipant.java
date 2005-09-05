@@ -56,7 +56,7 @@ public abstract class PDERenameParticipant extends RenameParticipant {
 			throws CoreException {
 		IFile file = fProject.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
 		if (file.exists()) {
-			Change change = BundleManifestChange.createChange(file,
+			Change change = BundleManifestChange.createRenameChange(file,
 								fElement, getArguments().getNewName(), pm);
 			if (change != null)
 				result.add(change);
