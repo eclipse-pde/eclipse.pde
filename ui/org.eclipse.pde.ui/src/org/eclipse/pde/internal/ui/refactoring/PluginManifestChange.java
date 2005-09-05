@@ -149,7 +149,7 @@ public class PluginManifestChange {
 		if (value != null && value.startsWith(oldName) && value.lastIndexOf('.') <= oldName.length()) {
 			int offset = attr.getValueOffset();
 			if (offset >= 0)
-				return new ReplaceEdit(attr.getValueOffset(), oldName.length(), newName);
+				return new ReplaceEdit(offset, oldName.length(), newName);
 		}
 		return null;
 	}
