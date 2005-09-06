@@ -58,6 +58,7 @@ import org.eclipse.pde.internal.ui.wizards.templates.ControlStack;
 import org.eclipse.pde.ui.templates.IVariableProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.MultiTextEdit;
 
 public class ProductIntroOperation implements IRunnableWithProgress, IVariableProvider {
 
@@ -217,6 +218,7 @@ public class ProductIntroOperation implements IRunnableWithProgress, IVariablePr
 				throw e;
 			}
 			
+			MultiTextEdit multi = new MultiTextEdit();
 			IPluginExtension extension = getExtension(model, INTRO_POINT);
 			if (extension == null) {
 				extension = createIntroExtension(model);
@@ -225,8 +227,7 @@ public class ProductIntroOperation implements IRunnableWithProgress, IVariablePr
 				extension.add(createIntroExtensionContent(extension));
 				extension.add(createIntroBindingExtensionContent(extension));
 			}
-			TextEditUtilities.getInsertOperation((IDocumentNode) extension, fDocument).apply(fDocument);
-			buffer.commit(monitor, true);
+			multi.addChild(TextEditUtilities.getInsertOperation((IDocumentNode) extension, fDocument));
 			
 			extension = getExtension(model, INTRO_CONFIG_POINT);
 			if (extension == null) {
@@ -235,7 +236,9 @@ public class ProductIntroOperation implements IRunnableWithProgress, IVariablePr
 			} else {
 				extension.add(createIntroConfigExtensionContent(extension));
 			}
-			TextEditUtilities.getInsertOperation((IDocumentNode) extension, fDocument).apply(fDocument);
+			multi.addChild(TextEditUtilities.getInsertOperation((IDocumentNode) extension, fDocument));
+			
+			multi.apply(fDocument);
 			buffer.commit(monitor, true);
 			
 		} finally {
