@@ -77,7 +77,7 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 		if (destination instanceof IPackageFragment) {
 			buffer.append(((IPackageFragment)destination).getElementName());
 			if (buffer.length() > 0)
-				buffer.append(".");
+				buffer.append("."); //$NON-NLS-1$
 		}
 		buffer.append(fElement.getElementName());
 		return buffer.toString();

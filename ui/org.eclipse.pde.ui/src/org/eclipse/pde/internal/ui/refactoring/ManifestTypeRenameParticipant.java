@@ -18,7 +18,6 @@ import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class ManifestTypeRenameParticipant extends PDERenameParticipant {
-	
 
 	protected boolean initialize(Object element) {
 		if (element instanceof IType) {
@@ -32,6 +31,19 @@ public class ManifestTypeRenameParticipant extends PDERenameParticipant {
 			}
 		}
 		return false;
+	}
+	
+	protected String getOldName() {
+		return ((IType)fElement).getFullyQualifiedName('$');
+	}
+	
+	protected String getNewName() {
+		IType type = (IType)fElement;
+		String oldName = type.getFullyQualifiedName('$');
+		int index = oldName.lastIndexOf(fElement.getElementName());
+		StringBuffer buffer = new StringBuffer(oldName.substring(0, index));
+		buffer.append(getArguments().getNewName());
+		return buffer.toString();
 	}
 
 	public String getName() {

@@ -64,16 +64,18 @@ public abstract class BasePackageHeader extends ManifestHeader {
         return fPackages.containsKey(packageName);
     }
     
-    public void removePackage(String name) {
-    	fPackages.remove(name);
+    public boolean removePackage(String name) {
+    	return fPackages.remove(name) != null;
     }
     
-    public void renamePackage(String oldName, String newName) {
+    public boolean renamePackage(String oldName, String newName) {
     	if (hasPackage(oldName)) {
     		PackageObject object = (PackageObject)fPackages.remove(oldName);
     		object.setName(newName);
     		fPackages.put(newName, object);
+    		return true;
     	}
+    	return false;
     }
     
     public void updateValue() {

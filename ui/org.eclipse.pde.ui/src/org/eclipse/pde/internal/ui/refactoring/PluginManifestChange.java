@@ -16,9 +16,6 @@ import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
@@ -43,8 +40,8 @@ import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
 
 public class PluginManifestChange {
-
-	public static Change createChange(IFile file, IJavaElement element, String newName, IProgressMonitor monitor) 
+	
+	public static Change createRenameChange(IFile file, String oldName, String newName, IProgressMonitor monitor) 
 			throws CoreException {
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		try {
@@ -69,11 +66,7 @@ public class PluginManifestChange {
 				if (model instanceof PluginModel) {
 					PluginNode plugin = (PluginNode)model.getPluginBase();
 					IDocumentAttribute attr = plugin.getDocumentAttribute("class"); //$NON-NLS-1$
-					TextEdit edit = null;
-					if (element instanceof IType) 
-						edit = createTextEdit(attr, (IType)element, newName);
-					else if (element instanceof IPackageFragment)
-						edit = createTextEdit(attr, (IPackageFragment)element, newName);
+					TextEdit edit = createTextEdit(attr, oldName, newName);
 					if (edit != null)
 						multiEdit.addChild(edit);					
 				}
@@ -83,7 +76,7 @@ public class PluginManifestChange {
 				for (int i = 0; i < extensions.length; i++) {
 					ISchema schema = registry.getSchema(extensions[i].getPoint());
 					if (schema != null)
-						addExtensionAttributeEdit(schema, extensions[i], multiEdit, element, newName);
+						addExtensionAttributeEdit(schema, extensions[i], multiEdit, oldName, newName);
 				}
 				
 				if (multiEdit.hasChildren()) {
@@ -100,7 +93,7 @@ public class PluginManifestChange {
 		}	
 	}
 	
-	private static void addExtensionAttributeEdit(ISchema schema, IPluginParent parent, MultiTextEdit multi, IJavaElement element, String newName) {
+	private static void addExtensionAttributeEdit(ISchema schema, IPluginParent parent, MultiTextEdit multi, String oldName, String newName) {
 		IPluginObject[] children = parent.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			IPluginElement child = (IPluginElement)children[i];
@@ -112,40 +105,21 @@ public class PluginManifestChange {
 					ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
 					if (attInfo != null && attInfo.getKind() == IMetaAttribute.JAVA) {
 						IDocumentAttribute docAttr = (IDocumentAttribute)attr;
-						TextEdit edit = null;
-						if (element instanceof IType) 
-							edit = createTextEdit(docAttr, (IType)element, newName);
-						else if (element instanceof IPackageFragment)
-							edit = createTextEdit(docAttr, (IPackageFragment)element, newName);
+						TextEdit edit = createTextEdit(docAttr, oldName, newName);
 						if (edit != null)
 							multi.addChild(edit);
 					}
 				}
 			}
-			addExtensionAttributeEdit(schema, child, multi, element, newName);
+			addExtensionAttributeEdit(schema, child, multi, oldName, newName);
 		}
 	}
 	
-	private static TextEdit createTextEdit(IDocumentAttribute attr, IType type, String newName) {
+	private static TextEdit createTextEdit(IDocumentAttribute attr, String oldName, String newName) {
 		if (attr == null)
 			return null;
 		
 		String value = attr.getAttributeValue();
-		String shortName = type.getElementName();
-		String oldName = type.getFullyQualifiedName('$');
-		if (value != null && value.startsWith(oldName)) {
-			int offset = attr.getValueOffset() + oldName.length() - shortName.length();
-			return new ReplaceEdit(offset , shortName.length(), newName);
-		}
-		return null;
-	}
-
-	private static TextEdit createTextEdit(IDocumentAttribute attr, IPackageFragment packageFragment, String newName) {
-		if (attr == null)
-			return null;
-		
-		String value = attr.getAttributeValue();
-		String oldName = packageFragment.getElementName();
 		if (value != null && value.startsWith(oldName) && value.lastIndexOf('.') <= oldName.length()) {
 			int offset = attr.getValueOffset();
 			if (offset >= 0)

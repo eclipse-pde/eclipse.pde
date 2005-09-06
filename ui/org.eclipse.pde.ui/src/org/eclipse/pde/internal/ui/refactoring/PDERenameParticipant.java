@@ -34,6 +34,8 @@ public abstract class PDERenameParticipant extends RenameParticipant {
 
 	public Change createChange(IProgressMonitor pm) throws CoreException,
 			OperationCanceledException {
+		if (!getArguments().getUpdateReferences())
+			return null;
 		CompositeChange result = new CompositeChange(getName());
 		addBundleManifestChange(result, pm);
 		addChange(result, "plugin.xml", pm); //$NON-NLS-1$
@@ -45,11 +47,19 @@ public abstract class PDERenameParticipant extends RenameParticipant {
 			throws CoreException {
 		IFile file = fProject.getFile(filename);
 		if (file.exists()) {
-			Change change = PluginManifestChange.createChange(file, fElement,
-					getArguments().getNewName(), pm);
+			Change change = PluginManifestChange.createRenameChange(
+					file, getOldName(), getNewName(), pm);
 			if (change != null)
 				result.add(change);
 		}
+	}
+	
+	protected String getOldName() {
+		return fElement.getElementName();
+	}
+	
+	protected String getNewName() {
+		return getArguments().getNewName();
 	}
 
 	private void addBundleManifestChange(CompositeChange result, IProgressMonitor pm)
@@ -57,7 +67,7 @@ public abstract class PDERenameParticipant extends RenameParticipant {
 		IFile file = fProject.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
 		if (file.exists()) {
 			Change change = BundleManifestChange.createRenameChange(file,
-								fElement, getArguments().getNewName(), pm);
+								fElement, getNewName(), pm);
 			if (change != null)
 				result.add(change);
 		}
