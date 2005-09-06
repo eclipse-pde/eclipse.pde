@@ -132,5 +132,9 @@ public class PackageObject extends BundleObject {
     public ManifestHeader getHeader() {
         return fHeader;
     }
+    
+    public ManifestElement getManifestElement() {
+    	return fElement;
+    }
 
 }

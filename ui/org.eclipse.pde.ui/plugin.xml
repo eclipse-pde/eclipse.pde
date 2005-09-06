@@ -1521,7 +1521,7 @@
          </enablement>        
       </renameParticipant>
    </extension>
-  <!-- <extension
+   <extension
          point="org.eclipse.ltk.core.refactoring.moveParticipants">
       <moveParticipant
             class="org.eclipse.pde.internal.ui.refactoring.ManifestTypeMoveParticipant"
@@ -1549,5 +1549,5 @@
             </with>
          </enablement>        
       </moveParticipant>
-   </extension>-->
+   </extension>
 </plugin>

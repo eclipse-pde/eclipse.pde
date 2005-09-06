@@ -33,9 +33,6 @@ public abstract class PDEMoveParticipant extends MoveParticipant {
 
 	public Change createChange(IProgressMonitor pm) throws CoreException,
 			OperationCanceledException {	
-		if (!getArguments().getUpdateReferences())
-			return null;
-		
 		CompositeChange result = new CompositeChange(getName());
 		addBundleManifestChange(result, pm);
 		if (isInterestingForExtensions()) {
