@@ -10,25 +10,39 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
-import java.util.*;
+import java.util.Set;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.search.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class ProductDefinitonWizardPage extends WizardPage implements IHyperlinkListener {
 
@@ -47,9 +61,12 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 	
 	public ProductDefinitonWizardPage(String pageName, IProduct product) {
 		super(pageName);
-		setTitle(PDEUIMessages.ProductDefinitonWizardPage_title); 
-		setDescription(PDEUIMessages.ProductDefinitonWizardPage_desc); 
 		fProduct = product;
+		setTitle(PDEUIMessages.ProductDefinitonWizardPage_title);
+		if (productNameDefined())
+			setDescription(PDEUIMessages.ProductDefinitonWizardPage_desc);
+		else
+			setDescription(PDEUIMessages.ProductDefinitonWizardPage_descNoName);
 	}
 
 	public void createControl(Composite parent) {
@@ -63,7 +80,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		createApplicationGroup(toolkit, comp);
 		toolkit.dispose();
 		setControl(comp);
-		setPageComplete(false);
+		setPageComplete(isPDEProject() && productNameDefined());
 		Dialog.applyDialogFont(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IHelpContextIds.PRODUCT_DEFINITIONS_WIZARD);
 	}
@@ -91,7 +108,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		
-		if (fProduct.getName() == null || fProduct.getName().equals("")) { //$NON-NLS-1$
+		if (!productNameDefined()) { //$NON-NLS-1$
 			label = new Label(group, SWT.NONE);
 			label.setText(PDEUIMessages.ProductDefinitonWizardPage_productName); 
 			
@@ -105,7 +122,6 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		
 		fPluginText = new Text(group, SWT.SINGLE|SWT.BORDER);
 		fPluginText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fPluginText.addModifyListener(fListener);
 		
 		Button button = new Button(group, SWT.PUSH);
 		button.setText(PDEUIMessages.ProductDefinitonWizardPage_browse); 
@@ -121,6 +137,19 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		
 		fProductText = new Text(group, SWT.SINGLE|SWT.BORDER);
 		fProductText.setLayoutData(gd);
+		
+		if (isPDEProject()) {
+			fPluginText.setText(fProduct.getModel().getUnderlyingResource().getProject().getName());
+			String pluginId = getDefiningPlugin();
+			String productId = "product"; //$NON-NLS-1$
+			String numString = ""; //$NON-NLS-1$
+			int idNum = 1;
+			while (getProductNameSet().contains(pluginId + "." + productId + numString)) { //$NON-NLS-1$
+				numString = Integer.toString(idNum++);
+			}
+			fProductText.setText(productId + numString);
+		}
+		fPluginText.addModifyListener(fListener);
 		fProductText.addModifyListener(fListener);
 		
 	}
@@ -156,12 +185,16 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 	private void validatePage() {
 		String error = null;
 		String productName = getProductName();
-		String pluginId = getDefiningPlugin();
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginId);
 		if (productName != null && productName.length() == 0) {
 			error = PDEUIMessages.ProductDefinitonWizardPage_noProductName;
 		}  
+		validateIdAndProduct(error);
+	}
+	
+	private void validateIdAndProduct(String error) {
 		if (error == null) {
+			String pluginId = getDefiningPlugin();
+			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginId);
 			if (pluginId.length() == 0) {
 				error = PDEUIMessages.ProductDefinitonWizardPage_noPluginId; 
 			} else if (model == null){ 
@@ -169,11 +202,11 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 			} else if (model.getUnderlyingResource() == null) {
 				error = PDEUIMessages.ProductDefinitonWizardPage_notInWorkspace; 
 			}
-		}
-		if (error == null)
-			error = validateId();
-		if (error == null && getProductNameSet().contains(pluginId + "." + fProductText.getText().trim())) { //$NON-NLS-1$
-			error = PDEUIMessages.ProductDefinitonWizardPage_productExists; 
+			if (error == null)
+				error = validateId();
+			if (error == null && getProductNameSet().contains(pluginId + "." + fProductText.getText().trim())) { //$NON-NLS-1$
+				error = PDEUIMessages.ProductDefinitonWizardPage_productExists; 
+			}
 		}
 		setErrorMessage(error);
 		setPageComplete(error == null);
@@ -232,5 +265,14 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 	
 	public String getProductName() {
 		return (fProductName == null) ? null : fProductName.getText().trim();
+	}
+	
+	private boolean productNameDefined() {
+		return (fProduct.getName() != null && !fProduct.getName().equals("")); //$NON-NLS-1$
+	}
+	
+	private boolean isPDEProject() {
+		return (PDECore.getDefault().getModelManager().findModel(
+				fProduct.getModel().getUnderlyingResource().getProject()) != null);
 	}
 }

@@ -101,7 +101,7 @@ public class IntroTemplate extends PDETemplateSection {
         initializeOption(KEY_PERSPECTIVE_NAME, getFormattedPackageName(pluginId) + " Perspective");  //$NON-NLS-1$
         perspectiveName = getFormattedPackageName(pluginId) + ".perspective"; //$NON-NLS-1$
         packageName =  getFormattedPackageName(pluginId) + ".intro"; //$NON-NLS-1$
-        introID = getFormattedPackageName(pluginId) + ".introID"; //$NON-NLS-1$
+        introID = getFormattedPackageName(pluginId) + ".intro"; //$NON-NLS-1$
     }
     public void initializeFields(IPluginModelBase model) {
         // In the new extension wizard, the model exists so 
@@ -112,7 +112,7 @@ public class IntroTemplate extends PDETemplateSection {
         initializeOption(KEY_PERSPECTIVE_NAME, getFormattedPackageName(pluginId) + " Perspective");  //$NON-NLS-1$
         perspectiveName = getFormattedPackageName(pluginId) + ".perspective"; //$NON-NLS-1$
         packageName =  getFormattedPackageName(pluginId) + ".intro"; //$NON-NLS-1$
-        introID = getFormattedPackageName(pluginId) + ".introID"; //$NON-NLS-1$
+        introID = getFormattedPackageName(pluginId) + ".intro"; //$NON-NLS-1$
     }
 
 	public void validateOptions(TemplateOption source) {

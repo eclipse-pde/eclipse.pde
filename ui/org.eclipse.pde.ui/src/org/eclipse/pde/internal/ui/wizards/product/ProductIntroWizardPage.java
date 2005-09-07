@@ -19,6 +19,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -41,7 +42,8 @@ public class ProductIntroWizardPage extends WizardPage {
 
 	private Text fPluginText;
 	private Text fIntroIdText;
-	private String[] introIds;
+	private TreeSet fIntroIds;
+	private IProduct fProduct;
 
 	private ModifyListener fListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
@@ -49,11 +51,12 @@ public class ProductIntroWizardPage extends WizardPage {
 		}
 	};
 	
-	public ProductIntroWizardPage(String pageName) {
+	public ProductIntroWizardPage(String pageName, IProduct product) {
 		super(pageName);
 		setTitle(PDEUIMessages.ProductIntroWizardPage_title); 
 		setDescription(PDEUIMessages.ProductIntroWizardPage_description);
-		introIds = getCurrentIntroIds();
+		fIntroIds = getCurrentIntroIds();
+		fProduct = product;
 	}
 
 	public void createControl(Composite parent) {
@@ -65,7 +68,7 @@ public class ProductIntroWizardPage extends WizardPage {
 		createProductGroup(comp);		
 
 		setControl(comp);
-		setPageComplete(false);
+		setPageComplete(isPDEProject());
 		Dialog.applyDialogFont(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IHelpContextIds.PRODUCT_DEFINITIONS_WIZARD);
 	}
@@ -88,7 +91,6 @@ public class ProductIntroWizardPage extends WizardPage {
 		
 		fPluginText = new Text(group, SWT.SINGLE|SWT.BORDER);
 		fPluginText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fPluginText.addModifyListener(fListener);
 		
 		Button button = new Button(group, SWT.PUSH);
 		button.setText(PDEUIMessages.ProductIntroWizardPage_browse); 
@@ -106,6 +108,13 @@ public class ProductIntroWizardPage extends WizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fIntroIdText.setLayoutData(gd);
+		
+		if (isPDEProject()) {
+			String pluginId = fProduct.getModel().getUnderlyingResource().getProject().getName();
+			fPluginText.setText(pluginId);
+			fIntroIdText.setText(getAvailableIntroId(pluginId));
+		}
+		fPluginText.addModifyListener(fListener);
 		fIntroIdText.addModifyListener(fListener);
 	}
 	
@@ -129,26 +138,27 @@ public class ProductIntroWizardPage extends WizardPage {
 		} else if (pluginId.length() == 0) {
 			error = PDEUIMessages.ProductIntroWizardPage_targetNotSet; 
 		}
-		if (error == null)
-			error = validateId();
-		setErrorMessage(error);
-		setPageComplete(error == null);
+		validateId(error);
+
 	}
 	
-	private String validateId() {
-		String id = fIntroIdText.getText().trim();
-		if (id.length() == 0)
-			return PDEUIMessages.ProductIntroWizardPage_introNotSet; 
-
-		for (int i = 0; i < id.length(); i++){
-			if (!id.substring(i,i+1).matches("[a-zA-Z0-9.]")) //$NON-NLS-1$
-				return PDEUIMessages.ProductIntroWizardPage_invalidIntroId; 
+	private void validateId(String error) {
+		if (error == null) {
+			String id = fIntroIdText.getText().trim();
+			
+			if (id.length() == 0)
+				error = PDEUIMessages.ProductIntroWizardPage_introNotSet; 
+			
+			if (error == null)
+				for (int i = 0; i < id.length(); i++)
+					if (!id.substring(i,i+1).matches("[a-zA-Z0-9.]")) //$NON-NLS-1$
+						error = PDEUIMessages.ProductIntroWizardPage_invalidIntroId; 
+			
+			if (error == null && fIntroIds.contains(id))
+				error = PDEUIMessages.ProductIntroWizardPage_introIdExists;
 		}
-		for (int i = 0; i < introIds.length; i++) {
-			if (introIds[i].equals(id))
-				return PDEUIMessages.ProductIntroWizardPage_introIdExists;
-		}
-		return null;
+		setErrorMessage(error);
+		setPageComplete(error == null);
 	}
 
 	private void handleBrowse() {
@@ -157,12 +167,22 @@ public class ProductIntroWizardPage extends WizardPage {
 			IPluginModelBase model = (IPluginModelBase)dialog.getFirstResult();
 			String id = model.getPluginBase().getId();
 			fPluginText.setText(id);
-			if (fIntroIdText.getText().length() == 0) fIntroIdText.setText(id + ".intro"); //$NON-NLS-1$
+			fIntroIdText.setText(getAvailableIntroId(id)); 
 		}
 	}
 	
 	
-	private String[] getCurrentIntroIds() {
+	private String getAvailableIntroId(String id) {
+		String introId = "intro"; //$NON-NLS-1$
+		String numString = ""; //$NON-NLS-1$
+		int idNum = 1;
+		while (fIntroIds.contains(id + "." + introId + numString)) { //$NON-NLS-1$
+			numString = Integer.toString(idNum++);
+		}
+		return id + "." + introId + numString; //$NON-NLS-1$
+	}
+
+	private TreeSet getCurrentIntroIds() {
 		String introId;
 		TreeSet result = new TreeSet();
 		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
@@ -183,7 +203,7 @@ public class ProductIntroWizardPage extends WizardPage {
 				}
 			}
 		}
-		return (String[])result.toArray(new String[result.size()]);
+		return result;
 	}
 	
 	
@@ -195,4 +215,8 @@ public class ProductIntroWizardPage extends WizardPage {
 		return fIntroIdText.getText().trim();
 	}
 
+	private boolean isPDEProject() {
+		return (PDECore.getDefault().getModelManager().findModel(
+				fProduct.getModel().getUnderlyingResource().getProject()) != null);
+	}
 }

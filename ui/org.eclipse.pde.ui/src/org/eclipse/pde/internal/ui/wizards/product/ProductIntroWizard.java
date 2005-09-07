@@ -42,7 +42,7 @@ public class ProductIntroWizard extends Wizard {
 			fProductDefinitionPage = new ProductDefinitonWizardPage("product", fProduct); //$NON-NLS-1$
 			addPage(fProductDefinitionPage);
 		}
-		fNewIntroPage = new ProductIntroWizardPage("intro"); //$NON-NLS-1$
+		fNewIntroPage = new ProductIntroWizardPage("intro", fProduct); //$NON-NLS-1$
 		addPage(fNewIntroPage);
 	}
 
