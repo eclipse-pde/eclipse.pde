@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.wizards.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.ui.*;
@@ -171,7 +172,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			//			superclass and interface
 			if (attInfo == null) {
 				IEclipsePreferences prefs = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
-				if (prefs != null && prefs.getBoolean(PDECore.PURE_OSGI, false)) {
+				if (prefs != null && !prefs.getBoolean(ICoreConstants.EXTENSIONS_PROPERTY, true)) {
 					initialValues.interfaceName = "org.osgi.framework.BundleActivator"; //$NON-NLS-1$
 					initialValues.interfaceType = findTypeForName(initialValues.interfaceName);
 					return;

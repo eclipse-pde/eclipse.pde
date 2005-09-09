@@ -41,6 +41,7 @@ import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPluginConverter;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
@@ -88,8 +89,15 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 	protected void adjustManifests(IProgressMonitor monitor, IProject project)
 			throws CoreException {
-		if (fData instanceof PluginFieldData && ((PluginFieldData)fData).isPureOSGi()) {
-			PDEPluginConverter.createPureBundle(project, getImportPackagesSet(), new SubProgressMonitor(monitor, 1));
+		String framework = fData instanceof AbstractFieldData 
+								? ((PluginFieldData)fData).getOSGiFramework()
+								: null;
+
+		if (framework != null) {
+			PDEPluginConverter.createBundleForFramework(project, 
+								getImportPackagesSet(), 
+								!framework.equalsIgnoreCase(ICoreConstants.EQUINOX), 
+								new SubProgressMonitor(monitor, 1));
 		} else {
 			PDEPluginConverter.convertToOSGIFormat(project,
 					((AbstractFieldData) fData).getTargetVersion(), null,
@@ -102,7 +110,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			fModel.save();
 		}
 	}
-
+	
 	private void createBuildPropertiesFile(IProject project)
 			throws CoreException {
 		IFile file = project.getFile("build.properties"); //$NON-NLS-1$
@@ -239,8 +247,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			PluginFieldData data = (PluginFieldData) fData;
 
 			// generate top-level Java class if that option is selected
-			if (data.doGenerateClass()
-					&& (!data.isPureOSGi() || fContentWizard == null)) {
+			if (data.doGenerateClass()) {
 				generateTopLevelPluginClass(project, new SubProgressMonitor(
 						monitor, 1));
 			}
@@ -262,14 +269,21 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 					new SubProgressMonitor(monitor, 1));
 		}
 
-		IEclipsePreferences pref = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
-		if (pref != null && fData instanceof AbstractFieldData && ((AbstractFieldData)fData).isPureOSGi()) {
-			pref.putBoolean(PDECore.PURE_OSGI, true);
-			try {
-				pref.flush();
-			} catch (BackingStoreException e) {
-				PDEPlugin.logException(e);
-			}	
+		if (fData instanceof AbstractFieldData) {
+			String framework = ((AbstractFieldData)fData).getOSGiFramework();
+			if (framework != null) {
+				IEclipsePreferences pref = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
+				if (pref != null) {
+					pref.putBoolean(ICoreConstants.EXTENSIONS_PROPERTY, false);
+					if (!ICoreConstants.EQUINOX.equals(framework))
+						pref.putBoolean(ICoreConstants.EQUINOX_PROPERTY, false);
+					try {
+						pref.flush();
+					} catch (BackingStoreException e) {
+						PDEPlugin.logException(e);
+					}	
+				}				
+			}
 		}
 		
 		fModel.save();

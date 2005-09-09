@@ -12,7 +12,6 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.util.Locale;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaConventions;
@@ -213,7 +212,7 @@ public class PluginContentPage extends ContentPage {
     public void setVisible(boolean visible) {
     	if (visible) {
     		fMainPage.updateData();
-    		boolean pureOSGi = ((PluginFieldData)fData).isPureOSGi();
+    		boolean pureOSGi = ((PluginFieldData)fData).getOSGiFramework() != null;
 			fGenerateClass.setEnabled(!fData.isSimple());
 			fClassLabel.setEnabled(!fData.isSimple() && fGenerateClass.getSelection());
 			fClassText.setEnabled(!fData.isSimple() && fGenerateClass.getSelection());
@@ -224,7 +223,7 @@ public class PluginContentPage extends ContentPage {
 			// plugin class group
 			if (((fChangedGroups & P_CLASS_GROUP) == 0)){
 				int oldfChanged = fChangedGroups;
-				presetClassField(fClassText, computeId(), "Plugin"); //$NON-NLS-1$
+				fClassText.setText(computeId().toLowerCase(Locale.ENGLISH) + ".Activator"); //$NON-NLS-1$
 				fChangedGroups = oldfChanged;
 			}		
 			fRCPGroup.setVisible(!fData.isLegacy() && !fData.isSimple() && !pureOSGi);
@@ -232,38 +231,6 @@ public class PluginContentPage extends ContentPage {
         super.setVisible(visible);
     }
     
-	private void presetClassField(Text text, String id, String suffix) {
-		StringBuffer buffer = new StringBuffer();
-        IStatus status;
-		for (int i = 0; i < id.length(); i++) {
-			char ch = id.charAt(i);
-			if (buffer.length() == 0) {
-				if (Character.isJavaIdentifierStart(ch))
-					buffer.append(Character.toLowerCase(ch));
-			} else {
-				if (Character.isJavaIdentifierPart(ch))
-                    buffer.append(ch);
-                else if (ch == '.'){
-                    status = JavaConventions.validatePackageName(buffer.toString());
-                    if (status.getSeverity() == IStatus.ERROR)
-                        buffer.append(suffix.toLowerCase(Locale.ENGLISH));
-					buffer.append(ch);
-                }
-			}
-		}
-		StringTokenizer tok = new StringTokenizer(buffer.toString(), "."); //$NON-NLS-1$
-		while (tok.hasMoreTokens()) {
-			String token = tok.nextToken();
-			if (!tok.hasMoreTokens()){
-                status = JavaConventions.validatePackageName(buffer.toString());
-                if (status.getSeverity() == IStatus.ERROR)
-                    buffer.append(suffix.toLowerCase(Locale.ENGLISH));
-				buffer.append("." + Character.toUpperCase(token.charAt(0)) + token.substring(1) + suffix); //$NON-NLS-1$ 
-            }
-		}
-		text.setText(buffer.toString());
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#validatePage()
 	 */

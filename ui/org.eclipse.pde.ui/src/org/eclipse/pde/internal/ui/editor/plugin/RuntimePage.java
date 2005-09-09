@@ -40,7 +40,7 @@ public class RuntimePage extends PDEFormPage {
 		
         if (isBundle()) {
             mform.addPart(new ExportPackageSection(this, form.getBody()));
-            if (!((ManifestEditor)getEditor()).isPureOSGiManifest())
+            if (((ManifestEditor)getEditor()).isEquinox())
             	mform.addPart(new ExportPackageVisibilitySection(this, form.getBody()));
             mform.addPart(new LibrarySection(this, form.getBody()));
         } else {

@@ -197,7 +197,7 @@ public class ClasspathHelper {
 		if (checkExcluded) {
 			IEclipsePreferences pref = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
 			if (pref != null) {
-				String binExcludes = pref.get(PDECore.SELFHOSTING_BIN_EXLCUDES, ""); //$NON-NLS-1$
+				String binExcludes = pref.get(ICoreConstants.SELFHOSTING_BIN_EXLCUDES, ""); //$NON-NLS-1$
 				StringTokenizer tokenizer = new StringTokenizer(binExcludes, ","); //$NON-NLS-1$
 				while (tokenizer.hasMoreTokens()) {
 					list.add(new Path(tokenizer.nextToken().trim()));

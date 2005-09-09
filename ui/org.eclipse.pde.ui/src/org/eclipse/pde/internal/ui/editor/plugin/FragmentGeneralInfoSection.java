@@ -92,7 +92,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 				handleOpenDialog();
 			}
 			private void createFragmentPlugin() {
-				NewPluginProjectWizard wizard = new NewPluginProjectWizard(isPureOSGi());
+				NewPluginProjectWizard wizard = new NewPluginProjectWizard("Equinox"); //$NON-NLS-1$
 				WizardDialog dialog = new WizardDialog(PDEPlugin
 						.getActiveWorkbenchShell(), wizard);
 				dialog.create();

@@ -35,7 +35,15 @@ public interface ICoreConstants {
 	public final static String TARGET21 = "2.1"; //$NON-NLS-1$
 	public final static String TARGET30 = "3.0"; //$NON-NLS-1$
 	public final static String TARGET31 = "3.1"; //$NON-NLS-1$
-
+	
+	public final static String EQUINOX = "Equinox";
+	public final static String STANDARD = "standard";
+	
+	// project preferences
+	public static final String SELFHOSTING_BIN_EXLCUDES = "selfhosting.binExcludes"; //$NON-NLS-1$
+	public static final String EQUINOX_PROPERTY = "pluginProject.equinox"; //$NON-NLS-1$
+	public static final String EXTENSIONS_PROPERTY = "pluginProject.extensions";
+	
 	// for backwards compatibility with Eclipse 3.0 bundle manifest files
 	public final static String PROVIDE_PACKAGE = "Provide-Package"; //$NON-NLS-1$
 	public final static String REPROVIDE_ATTRIBUTE = "reprovide"; //$NON-NLS-1$

@@ -32,6 +32,7 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.IBuildObject;
 import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
@@ -65,7 +66,8 @@ import org.eclipse.ui.views.properties.IPropertySheetPage;
 public class ManifestEditor extends MultiSourceEditor implements IShowEditorInput {
     
     private static int BUILD_INDEX = 5;
-    private boolean fPureOSGi;
+    private boolean fEquinox = true;
+    private boolean fShowExtensions = true;
     
 	protected void createResourceContexts(InputContextManager manager,
 			IFileEditorInput input) {
@@ -111,8 +113,10 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 		manager.monitorFile(buildFile);
 		
 		IEclipsePreferences prefs = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
-		if (prefs != null)
-			fPureOSGi = prefs.getBoolean(PDECore.PURE_OSGI, false);
+		if (prefs != null) {
+			fShowExtensions = prefs.getBoolean(ICoreConstants.EXTENSIONS_PROPERTY, true);
+			fEquinox = prefs.getBoolean(ICoreConstants.EQUINOX_PROPERTY, true);
+		}
 	}
 	
 	protected InputContextManager createInputContextManager() {
@@ -350,7 +354,7 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 			addPage(new OverviewPage(this));
 			addPage(new DependenciesPage(this));
 			addPage(new RuntimePage(this));
-			if (!isPureOSGiManifest()) {
+			if (showExtensionTabs()) {
 				addPage(new ExtensionsPage(this));
 				addPage(new ExtensionPointsPage(this));
 			}
@@ -547,11 +551,15 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
     			setActivePage(0);
     	}
     }
-
-    public boolean isPureOSGiManifest() {
+    
+    public boolean showExtensionTabs() {
     	if (inputContextManager.hasContext(PluginInputContext.CONTEXT_ID))
-    		return false;
-    	return fPureOSGi || !getAggregateModel().isEditable();
+    		return true;
+    	return fShowExtensions && getAggregateModel().isEditable();
+     }
+
+    public boolean isEquinox() {
+    	return fEquinox;
     }
 
 }

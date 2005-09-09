@@ -51,7 +51,7 @@ public class PluginClassCodeGenerator {
 		PrintWriter writer = new PrintWriter(swriter);
 		if (fPluginData.isLegacy()) {
 			generateLegacyPluginClass(packageName, className, writer);
-		} else if (fPluginData.isPureOSGi()){ 
+		} else if (fPluginData.getOSGiFramework() != null){ 
 			generateActivatorClass(packageName, className, writer);
 		} else {
 			generatePluginClass(packageName, className, writer);
@@ -236,13 +236,15 @@ public class PluginClassCodeGenerator {
 		ArrayList result = new ArrayList();
 		if (fPluginData.isUIPlugin())
 			result.add(new PluginReference("org.eclipse.ui", null, 0)); //$NON-NLS-1$
-		if (!fPluginData.isLegacy() && !fPluginData.isPureOSGi())
+		if (!fPluginData.isLegacy() && fPluginData.getOSGiFramework() == null)
 			result.add(new PluginReference("org.eclipse.core.runtime", null, 0)); //$NON-NLS-1$
 		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
 	}
 	
 	public String[] getImportPackages() {
-		return fPluginData.isPureOSGi() ? new String[] {"org.osgi.framework"} : new String[0]; //$NON-NLS-1$
+		return fPluginData.getOSGiFramework() != null 
+					? new String[] {"org.osgi.framework;version=\"1.3.0\""}  //$NON-NLS-1$
+					: new String[0]; 
 	}
 
 }

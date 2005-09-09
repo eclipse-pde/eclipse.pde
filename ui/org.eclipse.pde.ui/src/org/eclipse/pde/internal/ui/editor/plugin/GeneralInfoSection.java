@@ -70,7 +70,7 @@ public abstract class GeneralInfoSection extends PDESection {
 		createVersionEntry(client, toolkit, actionBars);
 		createNameEntry(client, toolkit, actionBars);
 		createProviderEntry(client, toolkit, actionBars);		
-		if (isBundle() && !isPureOSGi())
+		if (isBundle() && ((ManifestEditor)getPage().getEditor()).isEquinox())
 			createPlatformFilterEntry(client, toolkit, actionBars);
 		createSpecificControls(client, toolkit, actionBars);
 		toolkit.paintBordersFor(client);
@@ -244,7 +244,4 @@ public abstract class GeneralInfoSection extends PDESection {
 		return (d.getFocusControl() instanceof Text);
 	}
 	
-	public boolean isPureOSGi() {
-		return ((ManifestEditor)getPage().getEditor()).isPureOSGiManifest();
-	}
 }

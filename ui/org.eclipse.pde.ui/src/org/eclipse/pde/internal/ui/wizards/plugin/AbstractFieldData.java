@@ -25,7 +25,7 @@ public abstract class AbstractFieldData implements IFieldData {
 	private boolean fHasBundleStructure;
 	private boolean fSimple;
 	private String fTargetVersion = "3.1"; //$NON-NLS-1$
-	private boolean fPureOSGi;
+	private String fFramework;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IFieldData2#getId()
@@ -142,10 +142,10 @@ public abstract class AbstractFieldData implements IFieldData {
 		fTargetVersion = version;
 	}
 	
-	public boolean isPureOSGi() {
-		return fPureOSGi;
+	public String getOSGiFramework() {
+		return fFramework;
 	}
-	public void setPureOSGi(boolean dep) {
-		fPureOSGi = dep;
+	public void setOSGiFramework(String framework) {
+		fFramework = framework;
 	}
 }

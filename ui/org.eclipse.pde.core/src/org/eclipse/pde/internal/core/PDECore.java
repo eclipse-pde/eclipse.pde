@@ -26,8 +26,7 @@ import org.osgi.util.tracker.*;
 
 public class PDECore extends Plugin implements IEnvironmentVariables {
 	public static final String PLUGIN_ID = "org.eclipse.pde.core"; //$NON-NLS-1$
-	public static final String SELFHOSTING_BIN_EXLCUDES = "selfhosting.binExcludes"; //$NON-NLS-1$
-	public static final String PURE_OSGI = "pluginProject.pureOSGi"; //$NON-NLS-1$
+	
 	public static final String BINARY_PROJECT_VALUE = "binary"; //$NON-NLS-1$
 	public static final String BINARY_REPOSITORY_PROVIDER =
 		PLUGIN_ID + "." + "BinaryRepositoryProvider"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -42,10 +41,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 
 	// Shared instance
 	private static PDECore inst;
-	public static final String SITEBUILD_LOG = "build.log"; //$NON-NLS-1$
-	public static final String SITEBUILD_SCRIPTS = "scripts"; //$NON-NLS-1$
-	public static final String SITEBUILD_TEMP_FOLDER = "temp.folder"; //$NON-NLS-1$
-	
+
 	private static boolean isDevLaunchMode = false;
 
 	public static boolean compare(

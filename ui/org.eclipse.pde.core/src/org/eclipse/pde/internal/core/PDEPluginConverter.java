@@ -45,7 +45,7 @@ public class PDEPluginConverter {
 		}
 	}
 	
-	public static void createPureBundle(IProject project, Set packages, IProgressMonitor monitor) throws CoreException {
+	public static void createBundleForFramework(IProject project, Set packages, boolean standard, IProgressMonitor monitor) throws CoreException {
 		try {
 			File outputFile = new File(project.getLocation().append(
 					"META-INF/MANIFEST.MF").toOSString()); //$NON-NLS-1$
@@ -59,7 +59,8 @@ public class PDEPluginConverter {
 			InputStream manifestStream = new FileInputStream(outputFile);
 			Manifest manifest = new Manifest(manifestStream);
 			Properties prop = manifestToProperties(manifest.getMainAttributes());
-			prop.remove("Eclipse-AutoStart"); //$NON-NLS-1$
+			if (standard)
+				prop.remove("Eclipse-AutoStart"); //$NON-NLS-1$
 			StringBuffer buffer = new StringBuffer();
 			Iterator iter = packages.iterator();
 			while (iter.hasNext()) {

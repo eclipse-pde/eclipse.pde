@@ -160,7 +160,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
         GridData gd = new GridData(GridData.FILL_BOTH);
-        if (!((ManifestEditor)getPage().getEditor()).isPureOSGiManifest()) {
+        if (((ManifestEditor)getPage().getEditor()).isEquinox()) {
 	        gd.verticalSpan = 2;
 	        gd.minimumWidth = 300;
         }

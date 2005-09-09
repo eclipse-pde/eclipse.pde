@@ -26,6 +26,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -144,7 +145,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 		fViewer.setAllChecked(true);
 		Preferences pref = getPreferences((IProject)getElement());
 		if (pref != null) {
-			String binExcludes = pref.get(PDECore.SELFHOSTING_BIN_EXLCUDES, ""); //$NON-NLS-1$
+			String binExcludes = pref.get(ICoreConstants.SELFHOSTING_BIN_EXLCUDES, ""); //$NON-NLS-1$
 			StringTokenizer tokenizer = new StringTokenizer(binExcludes, ","); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens()) {
 				String token = tokenizer.nextToken().trim();
@@ -177,9 +178,9 @@ public class SelfHostingPropertyPage extends PropertyPage {
 		}
 		if (pref != null) {
 			if (buffer.length() > 0)
-				pref.put(PDECore.SELFHOSTING_BIN_EXLCUDES, buffer.toString());
+				pref.put(ICoreConstants.SELFHOSTING_BIN_EXLCUDES, buffer.toString());
 			else
-				pref.remove(PDECore.SELFHOSTING_BIN_EXLCUDES);
+				pref.remove(ICoreConstants.SELFHOSTING_BIN_EXLCUDES);
 			
 			try {
 				pref.flush();

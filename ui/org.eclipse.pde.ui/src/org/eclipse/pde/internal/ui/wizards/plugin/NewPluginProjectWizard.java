@@ -46,16 +46,16 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		fPluginData = new PluginFieldData();
 	}
 	
-	public NewPluginProjectWizard(boolean pureOSGi) {
+	public NewPluginProjectWizard(String osgiFramework) {
 		this();
-		fPureOSGi = pureOSGi;
+		fPluginData.setOSGiFramework(osgiFramework);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		fMainPage = new NewProjectCreationPage("main", fPluginData, false, fPureOSGi); //$NON-NLS-1$
+		fMainPage = new NewProjectCreationPage("main", fPluginData, fPureOSGi); //$NON-NLS-1$
 		fMainPage.setTitle(PDEUIMessages.NewProjectWizard_MainPage_title); 
 		fMainPage.setDescription(PDEUIMessages.NewProjectWizard_MainPage_desc); 
 		String pname = getDefaultValue(DEF_PROJECT_NAME);

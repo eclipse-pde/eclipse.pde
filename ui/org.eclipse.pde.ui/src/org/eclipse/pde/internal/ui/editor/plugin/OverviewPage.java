@@ -116,7 +116,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		container.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		
 		FormText text;
-		if (((ManifestEditor)getEditor()).isPureOSGiManifest())
+		if (!((ManifestEditor)getEditor()).showExtensionTabs())
 			text = createClient(container, PDEUIMessages.OverviewPage_OSGiContent, toolkit);
 		else
 			text = createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fContent : PDEUIMessages.OverviewPage_content, toolkit);
@@ -153,7 +153,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		section.setTextClient(info);
 		
 		FormText text;
-		if (((ManifestEditor)getEditor()).isPureOSGiManifest())
+		if (!((ManifestEditor)getEditor()).showExtensionTabs())
 			text = createClient(section, PDEUIMessages.OverviewPage_OSGiTesting, toolkit);
 		else
 			text = createClient(section, isFragment() ? PDEUIMessages.OverviewPage_fTesting : PDEUIMessages.OverviewPage_testing, toolkit);
@@ -248,10 +248,14 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			getExportAction().run();
 		} else if (href.equals("action.convert")) { //$NON-NLS-1$
 			handleConvert();
-		} else if (href.equals("action.runOSGi")) { //$NON-NLS-1$ {
+		} else if (href.equals("action.runEquinox")) { //$NON-NLS-1$ {
 			// TODO run osgi launcher
-		} else if (href.equals("action.debugOSGi")) { //$NON-NLS-1$
+			getEditor().doSave(null);
+			getLaunchShortcut().run((IPluginModelBase)getModel());
+		} else if (href.equals("action.debugEquinox")) { //$NON-NLS-1$
 			// TODO run osgi launcher in debug
+			getEditor().doSave(null);
+			getLaunchShortcut().run((IPluginModelBase)getModel());
 		}
 	}
 	

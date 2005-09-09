@@ -726,7 +726,6 @@ public class PDEUIMessages extends NLS {
 	public static String ProjectStructurePage_fformat;
 	public static String ProjectStructurePage_pTarget;
 	public static String ProjectStructurePage_fTarget;
-	public static String ProjectStructurePage_bundle;
 	public static String ProjectStructurePage_noOutput;
 
 	public static String ProjectNamesPage_projectName;
@@ -2073,6 +2072,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String ManifestPackageRenameParticipant_packageRename;
 
-	public static String PluginDevelopmentPage_osgiCheckbox;
+	public static String NewProjectCreationPage_fFrameworkTarget;
+
+	public static String NewProjectCreationPage_pFrameworkTarget;
+
+	public static String NewProjectCreationPage_standard;
 	
 }

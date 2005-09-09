@@ -50,7 +50,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 			boolean generate = data.doGenerateClass();
 			boolean ui = data.isUIPlugin();
 			boolean rcp = data.isRCPApplicationPlugin();
-			boolean osgi = data.isPureOSGi();
+			boolean osgi = data.getOSGiFramework() != null;
 			WizardElement welement = (WizardElement)element;
 			IConfigurationElement config = welement.getConfigurationElement();
 			boolean uiFlag = getFlag(config, "ui-content", true); //$NON-NLS-1$
