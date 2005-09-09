@@ -174,31 +174,37 @@
          id="selfhosting.import"
          point="org.eclipse.ui.importWizards">
       <wizard
-            name="%PluginImportWizard.label"
-            icon="$nl$/icons/etool16/imp_extplug.gif"
+            category="org.eclipse.pde.ui.PluginDevelopment"
             class="org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizard"
-            id="org.eclipse.pde.ui.PluginImportWizard">
+            icon="$nl$/icons/etool16/imp_extplug.gif"
+            id="org.eclipse.pde.ui.PluginImportWizard"
+            name="%PluginImportWizard.label">
          <description>
             %PluginImportWizard.description
          </description>
       </wizard>
       <wizard
-            name="%FeatureImportWizard.label"
-            icon="$nl$/icons/etool16/imp_extfeat.gif"
+            category="org.eclipse.pde.ui.PluginDevelopment"
             class="org.eclipse.pde.internal.ui.wizards.imports.FeatureImportWizard"
-            id="org.eclipse.pde.ui.FeatureImportWizard">
+            icon="$nl$/icons/etool16/imp_extfeat.gif"
+            id="org.eclipse.pde.ui.FeatureImportWizard"
+            name="%FeatureImportWizard.label">
          <description>
             %FeatureImportWizard.description
          </description>
       </wizard>
+      <category
+            id="org.eclipse.pde.ui.PluginDevelopment"
+            name="%PluginImportExport.category"/>
    </extension>
    <extension
          point="org.eclipse.ui.exportWizards">
       <wizard
-            name="%PluginExportWizard.label"
-            icon="$nl$/icons/etool16/exp_deployplug.gif"
+            category="org.eclipse.pde.ui.PluginDevelopment"
             class="org.eclipse.pde.internal.ui.wizards.exports.PluginExportWizard"
-            id="org.eclipse.pde.ui.pluginExportWizard">
+            icon="$nl$/icons/etool16/exp_deployplug.gif"
+            id="org.eclipse.pde.ui.pluginExportWizard"
+            name="%PluginExportWizard.label">
          <description>
             %PluginExportWizard.description
          </description>
@@ -215,10 +221,11 @@
          </selection>
       </wizard>
       <wizard
-            name="%FeatureExportWizard.label"
-            icon="$nl$/icons/etool16/exp_deployfeat.gif"
+            category="org.eclipse.pde.ui.PluginDevelopment"
             class="org.eclipse.pde.internal.ui.wizards.exports.FeatureExportWizard"
-            id="org.eclipse.pde.ui.featureExportWizard">
+            icon="$nl$/icons/etool16/exp_deployfeat.gif"
+            id="org.eclipse.pde.ui.featureExportWizard"
+            name="%FeatureExportWizard.label">
          <description>
             %FeatureExportWizard.description
          </description>
@@ -231,10 +238,11 @@
          </selection>
       </wizard>
       <wizard
-            name="%ProductExportWizard.label"
-            icon="$nl$/icons/etool16/exp_product.gif"
+            category="org.eclipse.pde.ui.PluginDevelopment"
             class="org.eclipse.pde.internal.ui.wizards.exports.ProductExportWizard"
-            id="org.eclipse.pde.ui.productExportWizard">
+            icon="$nl$/icons/etool16/exp_product.gif"
+            id="org.eclipse.pde.ui.productExportWizard"
+            name="%ProductExportWizard.label">
          <description>
             %ProductExportWizard.description
          </description>
@@ -243,6 +251,9 @@
                class="org.eclipse.core.resources.IFile">
          </selection>
       </wizard>
+      <category
+            id="org.eclipse.pde.ui.PluginDevelopment"
+            name="%PluginImportExport.category"/>
    </extension>
    <extension
          point="org.eclipse.pde.ui.pluginContent">
