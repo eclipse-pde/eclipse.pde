@@ -2077,5 +2077,11 @@ public class PDEUIMessages extends NLS {
 	public static String NewProjectCreationPage_pFrameworkTarget;
 
 	public static String NewProjectCreationPage_standard;
+
+	public static String PluginDevelopmentPage_presentation;
+
+	public static String PluginDevelopmentPage_extensions;
+
+	public static String PluginDevelopmentPage_equinox;
 	
 }

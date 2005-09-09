@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.IEnvironmentVariables;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -218,7 +217,6 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 	}
 
 	public boolean performOk() {
-		applySelfHostingMode();
 		applyTargetEnvironmentGroup();
 		applyJREGroup();
 		return true;
@@ -233,10 +231,6 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 				JavaRuntime.setDefaultVMInstall(LauncherUtils.getVMInstall(fJRECombo.getText()), null);
 		} catch (CoreException e) {
 		}
-	}
-	
-	private void applySelfHostingMode() {
-		preferences.setValue(ICoreConstants.STRICT_MODE, false);
 	}
 	
 	private void applyTargetEnvironmentGroup() {

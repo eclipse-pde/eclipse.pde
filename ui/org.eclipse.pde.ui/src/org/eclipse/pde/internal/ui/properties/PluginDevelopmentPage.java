@@ -6,6 +6,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -34,15 +35,15 @@ public class PluginDevelopmentPage extends PropertyPage implements
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Group group = new Group(composite, SWT.NONE);
-		group.setText("Plug-in Manifest Editor Presentation");
+		group.setText(PDEUIMessages.PluginDevelopmentPage_presentation);
 		group.setLayout(new GridLayout());
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fExtensionButton = new Button(group, SWT.CHECK);
-		fExtensionButton.setText("&Always show the Extensions and Extension Points tabs");
+		fExtensionButton.setText(PDEUIMessages.PluginDevelopmentPage_extensions);
 
 		fEquinoxButton = new Button(group, SWT.CHECK);
-		fEquinoxButton.setText("&Show sections specific to the Equinox OSGi framework");
+		fEquinoxButton.setText(PDEUIMessages.PluginDevelopmentPage_equinox);
 
 		initialize();
 		Dialog.applyDialogFont(composite);

@@ -29,20 +29,16 @@ public interface ICoreConstants {
 	// Target JRE
 	String TARGET_JRE = "targetJRE"; //$NON-NLS-1$
 	
-	// Self-hosting mode
-	String STRICT_MODE = "strictMode"; //$NON-NLS-1$
-
 	public final static String TARGET21 = "2.1"; //$NON-NLS-1$
 	public final static String TARGET30 = "3.0"; //$NON-NLS-1$
 	public final static String TARGET31 = "3.1"; //$NON-NLS-1$
 	
-	public final static String EQUINOX = "Equinox";
-	public final static String STANDARD = "standard";
-	
+	public final static String EQUINOX = "Equinox"; //$NON-NLS-1$
+
 	// project preferences
 	public static final String SELFHOSTING_BIN_EXLCUDES = "selfhosting.binExcludes"; //$NON-NLS-1$
 	public static final String EQUINOX_PROPERTY = "pluginProject.equinox"; //$NON-NLS-1$
-	public static final String EXTENSIONS_PROPERTY = "pluginProject.extensions";
+	public static final String EXTENSIONS_PROPERTY = "pluginProject.extensions"; //$NON-NLS-1$
 	
 	// for backwards compatibility with Eclipse 3.0 bundle manifest files
 	public final static String PROVIDE_PACKAGE = "Provide-Package"; //$NON-NLS-1$
