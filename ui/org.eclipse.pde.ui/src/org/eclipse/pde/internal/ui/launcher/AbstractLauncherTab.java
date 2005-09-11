@@ -84,7 +84,7 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
 	 */
-	protected void updateLaunchConfigurationDialog() {
+	public void updateLaunchConfigurationDialog() {
 		super.updateLaunchConfigurationDialog();
 	}
 		

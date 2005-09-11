@@ -19,32 +19,40 @@ import org.eclipse.debug.ui.EnvironmentTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.sourcelookup.SourceLookupTab;
+import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.ui.launcher.ConfigurationTab;
+import org.eclipse.pde.ui.launcher.MainTab;
+import org.eclipse.pde.ui.launcher.PluginsTab;
+import org.eclipse.pde.ui.launcher.TracingTab;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 
 public class WorkbenchLauncherTabGroup extends AbstractLaunchConfigurationTabGroup {
 
-	/**
-	 * @see ILaunchConfigurationTabGroup#createTabs(ILaunchConfigurationDialog,
-	 *      String)
-	 */
-public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
+		/**
+		 * @see ILaunchConfigurationTabGroup#createTabs(ILaunchConfigurationDialog,
+		 *      String)
+		 */
+	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = null;
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			tabs = new ILaunchConfigurationTab[]{new BasicLauncherTab(),
-					new AdvancedLauncherTab(), new ConfigurationTab(),
-					new TracingLauncherTab(), new EnvironmentTab(),
+			tabs = new ILaunchConfigurationTab[]{new MainTab(),
+					new JavaArgumentsTab(),
+					new PluginsTab(), new ConfigurationTab(),
+					new TracingTab(), new EnvironmentTab(),
 					new SourceLookupTab(), new CommonTab()};
 		} else {
-			tabs = new ILaunchConfigurationTab[]{new BasicLauncherTab(),
-					new AdvancedLauncherTab(), new TracingLauncherTab(),
+			tabs = new ILaunchConfigurationTab[]{new MainTab(),
+					new JavaArgumentsTab(),
+					new PluginsTab(), new TracingTab(),
 					new EnvironmentTab(), new SourceLookupTab(), 
 					new CommonTab()};
 		}
 		setTabs(tabs);
 	}
+
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup#initializeFrom(ILaunchConfiguration)
 	 */

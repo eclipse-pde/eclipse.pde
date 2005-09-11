@@ -2083,5 +2083,7 @@ public class PDEUIMessages extends NLS {
 	public static String PluginDevelopmentPage_extensions;
 
 	public static String PluginDevelopmentPage_equinox;
+
+	public static String MainTab_jreSection;
 	
 }

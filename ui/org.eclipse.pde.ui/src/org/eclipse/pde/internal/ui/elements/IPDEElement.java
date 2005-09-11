@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.elements;
 
-import org.eclipse.swt.graphics.*; 
+import org.eclipse.swt.graphics.*;
 
 public interface IPDEElement {
 
-public Object[] getChildren();
-public Image getImage();
-public String getLabel();
-public Object getParent();
+	public Object[] getChildren();
+
+	public Image getImage();
+
+	public String getLabel();
+
+	public Object getParent();
 }
