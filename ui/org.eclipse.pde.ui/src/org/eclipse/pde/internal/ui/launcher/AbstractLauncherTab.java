@@ -18,10 +18,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.SWT;
 
-/**
- * @version 	1.0
- * @author
- */
 public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab {
 
 	protected void createStartingSpace(Composite parent, int span) {
