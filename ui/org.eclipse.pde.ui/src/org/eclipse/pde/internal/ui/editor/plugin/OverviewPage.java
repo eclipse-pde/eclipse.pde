@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.core.build.IBuild;
@@ -29,6 +30,7 @@ import org.eclipse.pde.internal.ui.launcher.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.*;
@@ -36,6 +38,7 @@ import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.IProgressService;
+import org.osgi.service.prefs.BackingStoreException;
 
 
 public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
@@ -92,6 +95,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		right.setLayout(layout);
 		right.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		createContentSection(managedForm, right, toolkit);
+		createExtensionSection(managedForm, right, toolkit);
         if (isEditable())
     		createExportingSection(managedForm, right, toolkit);
 	}
@@ -115,11 +119,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		container.setLayout(layout);
 		container.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		
-		FormText text;
-		if (!((ManifestEditor)getEditor()).showExtensionTabs())
-			text = createClient(container, PDEUIMessages.OverviewPage_OSGiContent, toolkit);
-		else
-			text = createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fContent : PDEUIMessages.OverviewPage_content, toolkit);
+		FormText text = createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fContent : PDEUIMessages.OverviewPage_content, toolkit);
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, PDELabelProvider.F_EDIT)); //$NON-NLS-1$
 		
@@ -132,6 +132,28 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			}
 			text = createClient(container, content, toolkit);
 		}
+		section.setClient(container);
+		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+	}
+	
+	private void createExtensionSection(IManagedForm managedForm,
+			Composite parent, FormToolkit toolkit) {
+		String sectionTitle = PDEUIMessages.ManifestEditor_ExtensionSection_title;
+		Section section = createStaticSection(
+							toolkit, 
+							parent, 
+							sectionTitle);
+
+		Composite container = toolkit.createComposite(section, SWT.NONE);
+		TableWrapLayout layout = new TableWrapLayout();
+		layout.leftMargin = layout.rightMargin = layout.topMargin = layout.bottomMargin = 0;
+		container.setLayout(layout);
+		container.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		
+		FormText text  = createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fExtensionContent : PDEUIMessages.OverviewPage_extensionContent, toolkit);
+		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
+		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, PDELabelProvider.F_EDIT)); //$NON-NLS-1$
+		
 		section.setClient(container);
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 	}
@@ -223,11 +245,13 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			getEditor().setActivePage(DependenciesPage.PAGE_ID);
 		else if (href.equals("runtime")) //$NON-NLS-1$
 			getEditor().setActivePage(RuntimePage.PAGE_ID);
-		else if (href.equals("extensions")) //$NON-NLS-1$
-			getEditor().setActivePage(ExtensionsPage.PAGE_ID);
-		else if (href.equals("ex-points")) //$NON-NLS-1$
-			getEditor().setActivePage(ExtensionPointsPage.PAGE_ID);
-		else if (href.equals("build")) { //$NON-NLS-1$
+		else if (href.equals("extensions")) { //$NON-NLS-1$
+			if (getEditor().setActivePage(ExtensionsPage.PAGE_ID) == null)
+				activateExtensionPages(ExtensionsPage.PAGE_ID);
+		} else if (href.equals("ex-points")) { //$NON-NLS-1$
+			if (getEditor().setActivePage(ExtensionPointsPage.PAGE_ID) == null)
+				activateExtensionPages(ExtensionPointsPage.PAGE_ID);
+		} else if (href.equals("build")) { //$NON-NLS-1$
 			if (!getPDEEditor().hasInputContext(BuildInputContext.CONTEXT_ID)) {
 				if (!MessageDialog.openQuestion(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OverviewPage_buildTitle, PDEUIMessages.OverviewPage_buildQuestion)) 
 					return;
@@ -331,5 +355,21 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
             throw new InvocationTargetException(e);
         }
     }
-
+    
+    private void activateExtensionPages(String activePageId) {
+    	MessageDialog mdiag = new MessageDialog(PDEPlugin.getActiveWorkbenchShell(),
+				PDEUIMessages.OverviewPage_extensionPageMessageTitle, null, 
+				PDEUIMessages.OverviewPage_extensionPageMessageBody,
+				MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
+        if (mdiag.open() != MessageDialog.OK)
+        	return;
+        try {
+        	ManifestEditor manifestEditor = (ManifestEditor)getEditor();
+        	manifestEditor.addExtensionTabs();
+        	manifestEditor.setShowExtensions(true);
+        	manifestEditor.setActivePage(activePageId);
+		} catch (PartInitException e) {
+		} catch (BackingStoreException e) {
+		}
+    }
 }

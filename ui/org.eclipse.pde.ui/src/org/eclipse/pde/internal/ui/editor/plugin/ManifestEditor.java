@@ -62,12 +62,14 @@ import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
+import org.osgi.service.prefs.BackingStoreException;
 
 public class ManifestEditor extends MultiSourceEditor implements IShowEditorInput {
     
     private static int BUILD_INDEX = 5;
     private boolean fEquinox = true;
     private boolean fShowExtensions = true;
+    private IEclipsePreferences fPrefs;
     
 	protected void createResourceContexts(InputContextManager manager,
 			IFileEditorInput input) {
@@ -112,10 +114,10 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 		manager.monitorFile(project.getFile("fragment.xml")); //$NON-NLS-1$
 		manager.monitorFile(buildFile);
 		
-		IEclipsePreferences prefs = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
-		if (prefs != null) {
-			fShowExtensions = prefs.getBoolean(ICoreConstants.EXTENSIONS_PROPERTY, true);
-			fEquinox = prefs.getBoolean(ICoreConstants.EQUINOX_PROPERTY, true);
+		fPrefs = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
+		if (fPrefs != null) {
+			fShowExtensions = fPrefs.getBoolean(ICoreConstants.EXTENSIONS_PROPERTY, true);
+			fEquinox = fPrefs.getBoolean(ICoreConstants.EQUINOX_PROPERTY, true);
 		}
 	}
 	
@@ -355,8 +357,7 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 			addPage(new DependenciesPage(this));
 			addPage(new RuntimePage(this));
 			if (showExtensionTabs()) {
-				addPage(new ExtensionsPage(this));
-				addPage(new ExtensionPointsPage(this));
+				addExtensionTabs();
 			}
 			if (inputContextManager.hasContext(BuildInputContext.CONTEXT_ID))
 				addPage(new BuildPage(this));
@@ -561,5 +562,15 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
     public boolean isEquinox() {
     	return fEquinox;
     }
-
+    
+    protected void addExtensionTabs() throws PartInitException {
+    	addPage(3, new ExtensionPointsPage(this));
+    	addPage(3, new ExtensionsPage(this));
+    }
+    
+    protected void setShowExtensions(boolean show) throws BackingStoreException {
+    	fPrefs.putBoolean(ICoreConstants.EXTENSIONS_PROPERTY, show);
+    	fPrefs.flush();
+    	fShowExtensions = show;
+    }
 }
