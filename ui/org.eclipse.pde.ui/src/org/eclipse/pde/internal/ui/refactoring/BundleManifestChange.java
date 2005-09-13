@@ -234,7 +234,7 @@ public class BundleManifestChange {
         return (manifestVersion < 2) ? ICoreConstants.PROVIDE_PACKAGE : Constants.EXPORT_PACKAGE;
     }
 
-	private static Bundle getBundle(IFile file, IProgressMonitor monitor) throws CoreException, MalformedTreeException, BadLocationException {
+	public static Bundle getBundle(IFile file, IProgressMonitor monitor) throws CoreException, MalformedTreeException, BadLocationException {
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		manager.connect(file.getFullPath(), monitor);
 		

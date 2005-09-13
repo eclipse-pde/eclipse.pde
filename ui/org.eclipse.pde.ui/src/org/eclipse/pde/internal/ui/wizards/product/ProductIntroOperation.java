@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IExtensionsModelFactory;
 import org.eclipse.pde.core.plugin.IFragmentModel;
@@ -51,14 +52,20 @@ import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.model.IDocumentNode;
+import org.eclipse.pde.internal.ui.model.bundle.Bundle;
+import org.eclipse.pde.internal.ui.model.bundle.ManifestHeader;
 import org.eclipse.pde.internal.ui.model.plugin.FragmentModel;
 import org.eclipse.pde.internal.ui.model.plugin.PluginModel;
 import org.eclipse.pde.internal.ui.model.plugin.PluginModelBase;
+import org.eclipse.pde.internal.ui.refactoring.BundleManifestChange;
 import org.eclipse.pde.internal.ui.wizards.templates.ControlStack;
 import org.eclipse.pde.ui.templates.IVariableProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
+import org.eclipse.text.edits.ReplaceEdit;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 
 public class ProductIntroOperation implements IRunnableWithProgress, IVariableProvider {
 
@@ -78,6 +85,7 @@ public class ProductIntroOperation implements IRunnableWithProgress, IVariablePr
 		fShell = shell;
 		fProduct = product;
 		fPluginId = pluginId;
+		fProject = PDECore.getDefault().getModelManager().findModel(fPluginId).getUnderlyingResource().getProject();
 	}
 
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
@@ -89,6 +97,7 @@ public class ProductIntroOperation implements IRunnableWithProgress, IVariablePr
 			} else {
 				modifyExistingFile(file, monitor);
 			}
+			updateManifest(monitor);
 			generateFiles(monitor);
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
@@ -101,6 +110,45 @@ public class ProductIntroOperation implements IRunnableWithProgress, IVariablePr
 		}
 	}
 
+	private void updateManifest(IProgressMonitor monitor) throws CoreException, MalformedTreeException, BadLocationException {
+		IFile file = fProject.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+		if (file.exists()) {
+			IStatus status = PDEPlugin.getWorkspace().validateEdit(new IFile[] { file }, fShell);
+			if (status.getSeverity() != IStatus.OK)
+				throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, NLS.bind(PDEUIMessages.ProductDefinitionOperation_readOnly, fPluginId), null)); //$NON-NLS-1$ 
+
+			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+			try {
+				manager.connect(file.getFullPath(), monitor);
+				ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath());
+				
+				IDocument document = buffer.getDocument();
+				Bundle bundle = BundleManifestChange.getBundle(file, monitor);
+				if (bundle != null) {
+					ManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
+					ManifestElement[] elements = new ManifestElement[0];
+					if (header != null)
+						elements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, header.getValue());
+					if (elements.length != 0 && elements[0] != null) {
+						String replacement = ProductDefinitionOperation.getModifiedElementString(elements[0], 
+																	  Constants.SINGLETON_DIRECTIVE, 
+																	  "true", //$NON-NLS-1$
+																	  true); //$NON-NLS-1$
+						if (replacement != null) {
+							new ReplaceEdit(header.getOffset(), 
+											header.getLength() - 1,
+											header.getName() + ": " + replacement).apply(document); //$NON-NLS-1$
+							buffer.commit(monitor, true);
+						}
+					}
+				}
+			} catch (BundleException e) {
+			} finally {
+				manager.disconnect(file.getFullPath(), monitor);
+			}
+		}
+	}
+	
 	private IFile getFile() {
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(fPluginId);
 		IProject project = model.getUnderlyingResource().getProject();
@@ -201,7 +249,7 @@ public class ProductIntroOperation implements IRunnableWithProgress, IVariablePr
 			BadLocationException {
 		IStatus status = PDEPlugin.getWorkspace().validateEdit(new IFile[] { file }, fShell);
 		if (status.getSeverity() != IStatus.OK)
-			throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, NLS.bind(PDEUIMessages.ProductDefinitionOperation_readOnly, fIntroId), null)); //$NON-NLS-1$ 
+			throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, NLS.bind(PDEUIMessages.ProductDefinitionOperation_readOnly, fPluginId), null)); //$NON-NLS-1$ 
 
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		try {
@@ -213,7 +261,7 @@ public class ProductIntroOperation implements IRunnableWithProgress, IVariablePr
 			try {
 				model.load();
 				if (!model.isLoaded())
-					throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, NLS.bind(PDEUIMessages.ProductDefinitionOperation_malformed, fIntroId), null)); //$NON-NLS-1$ 
+					throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, NLS.bind(PDEUIMessages.ProductDefinitionOperation_malformed, fPluginId), null)); //$NON-NLS-1$ 
 			} catch (CoreException e) {
 				throw e;
 			}
@@ -260,7 +308,6 @@ public class ProductIntroOperation implements IRunnableWithProgress, IVariablePr
 	
 	protected void generateFiles(IProgressMonitor monitor) throws CoreException {
 		monitor.setTaskName(PDEUIMessages.AbstractTemplateSection_generating);
-		fProject = PDECore.getDefault().getModelManager().findModel(fPluginId).getUnderlyingResource().getProject();
 		
 		URL locationUrl = null;
 		try {
