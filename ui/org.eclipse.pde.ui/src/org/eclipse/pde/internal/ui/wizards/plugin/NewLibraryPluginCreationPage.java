@@ -191,7 +191,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	}
 
 	public boolean hasBundleStructure() {
-		return fTargetCombo.getText().equals("3.1");
+		return fTargetCombo.getText().equals("3.1"); //$NON-NLS-1$
 	}
 
 	protected boolean isVersionValid(String version) {
@@ -231,7 +231,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		fData.setSimple(false);
 		fData.setSourceFolderName(null);
 		fData.setOutputFolderName(null);
-		fData.setHasBundleStructure(fTargetCombo.getText().equals("3.1"));
+		fData.setHasBundleStructure(fTargetCombo.getText().equals("3.1")); //$NON-NLS-1$
 		fData.setLegacy(fTargetCombo.getText().equals("2.1")); //$NON-NLS-1$
 		fData.setTargetVersion(fTargetCombo.getText());
 
