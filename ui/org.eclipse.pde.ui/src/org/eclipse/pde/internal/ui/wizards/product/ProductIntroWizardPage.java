@@ -17,12 +17,14 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
@@ -38,8 +40,12 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
-public class ProductIntroWizardPage extends WizardPage {
+public class ProductIntroWizardPage extends WizardPage implements IHyperlinkListener {
 
 	private Text fPluginText;
 	private Text fIntroIdText;
@@ -80,14 +86,17 @@ public class ProductIntroWizardPage extends WizardPage {
 		group.setLayout(new GridLayout(3, false));
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Label label = new Label(group, SWT.WRAP);
-		label.setText(PDEUIMessages.ProductIntroWizardPage_formText);
+		FormToolkit toolkit = new FormToolkit(group.getDisplay());
+		FormText text = toolkit.createFormText(group, false);
+		text.setText(PDEUIMessages.ProductIntroWizardPage_formText, true, false);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
-		gd.widthHint = 300;
-		label.setLayoutData(gd);
+		gd.widthHint = 400;
+		text.setLayoutData(gd);
+		text.setBackground(null);
+		text.addHyperlinkListener(this);
 		
-		label = new Label(group, SWT.NONE);
+		Label label = new Label(group, SWT.NONE);
 		label.setText(PDEUIMessages.ProductIntroWizardPage_targetLabel); 
 		
 		fPluginText = new Text(group, SWT.SINGLE|SWT.BORDER);
@@ -220,5 +229,19 @@ public class ProductIntroWizardPage extends WizardPage {
 		IProject project = fProduct.getModel().getUnderlyingResource().getProject();
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
 		return (model == null) ? null : model.getPluginBase().getId();
+	}
+
+	public void linkEntered(HyperlinkEvent e) {
+	}
+
+	public void linkExited(HyperlinkEvent e) {
+	}
+
+	public void linkActivated(HyperlinkEvent e) {
+		String extPoint = "org.eclipse.ui." + e.getHref().toString(); //$NON-NLS-1$
+		IPluginExtensionPoint point = PDECore.getDefault().findExtensionPoint(extPoint);
+		if (point != null)
+			new ShowDescriptionAction(point, true).run();
+		
 	}
 }

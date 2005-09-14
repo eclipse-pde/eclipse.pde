@@ -31,6 +31,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.IIntroInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
@@ -68,7 +69,8 @@ public class IntroSection extends PDESection {
 	private ComboPart fIntroCombo;
 	private IResource fManifest;
 	private String[] fAvailableIntroIds;
-	private final static String INTRO_POINT = "org.eclipse.ui.intro"; //$NON-NLS-1$
+	private static final String INTRO_POINT = "org.eclipse.ui.intro"; //$NON-NLS-1$
+	private static final double NEW_INTRO_SUPPORT_VERSION = 3.1;
 
 	public IntroSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
@@ -81,14 +83,15 @@ public class IntroSection extends PDESection {
 		
 		Composite client = toolkit.createComposite(section);
 		TableWrapLayout layout = new TableWrapLayout();
-		layout.numColumns = 3;
+		boolean canCreateNew = Double.parseDouble(TargetPlatform.getTargetVersion()) >= NEW_INTRO_SUPPORT_VERSION;
+		layout.numColumns = canCreateNew ? 3 : 2;
 		layout.topMargin = 5;
 		client.setLayout(layout);
 		
 		
 		Label label = toolkit.createLabel(client, PDEUIMessages.IntroSection_introLabel, SWT.WRAP);
 		TableWrapData td = new TableWrapData();
-		td.colspan = 3;
+		td.colspan = canCreateNew ? 3 : 2;
 		label.setLayoutData(td);
 		
 		Label introLabel = toolkit.createLabel(client, PDEUIMessages.IntroSection_introInput); 
@@ -111,14 +114,17 @@ public class IntroSection extends PDESection {
 			}
 		});
 		
-		Button button = toolkit.createButton(client, PDEUIMessages.IntroSection_new, SWT.PUSH); 
-		button.setEnabled(isEditable());
-		button.setLayoutData(new TableWrapData(TableWrapData.FILL));
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleNewIntro();
-			}
-		});	
+		if (canCreateNew) {
+			Button button = toolkit.createButton(client, PDEUIMessages.IntroSection_new, SWT.PUSH); 
+			button.setEnabled(isEditable());
+			button.setLayoutData(new TableWrapData(TableWrapData.FILL));
+			button.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					handleNewIntro();
+				}
+			});	
+		}
+		
 		fIntroCombo.getControl().setEnabled(isEditable());
 		
 		toolkit.paintBordersFor(client);
