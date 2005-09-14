@@ -261,11 +261,10 @@ public class IntroSection extends PDESection {
 	
 	private TextEdit createAddToHeaderTextEdit(IDocument doc, Bundle bundle, String headerName, String ld) {
 		ManifestHeader header = bundle.getManifestHeader(headerName);
-		if (header == null) {
-			return new InsertEdit(doc.getLength() - 1, Constants.REQUIRE_BUNDLE + ": " + INTRO_POINT + ld); //$NON-NLS-1$
-		} else if (header.getValue().indexOf(INTRO_POINT) == -1) {
+		if (header == null) 
+			return new InsertEdit(doc.getLength(), Constants.REQUIRE_BUNDLE + ": " + INTRO_POINT + ld); //$NON-NLS-1$
+		if (header.getValue().indexOf(INTRO_POINT) == -1)
 			return new InsertEdit(header.getOffset() + header.getLength() - 1, "," + ld + " " + INTRO_POINT); //$NON-NLS-1$ //$NON-NLS-2$
-		}
 		return null;
 	}
 	

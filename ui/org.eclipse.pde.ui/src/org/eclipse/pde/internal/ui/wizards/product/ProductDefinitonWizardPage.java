@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.wizards.product;
 
 import java.util.Set;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.WizardPage;
@@ -80,7 +81,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		createApplicationGroup(toolkit, comp);
 		toolkit.dispose();
 		setControl(comp);
-		setPageComplete(isPDEProject() && productNameDefined());
+		setPageComplete(getPluginId() != null && productNameDefined());
 		Dialog.applyDialogFont(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IHelpContextIds.PRODUCT_DEFINITIONS_WIZARD);
 	}
@@ -138,9 +139,9 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		fProductText = new Text(group, SWT.SINGLE|SWT.BORDER);
 		fProductText.setLayoutData(gd);
 		
-		if (isPDEProject()) {
-			fPluginText.setText(fProduct.getModel().getUnderlyingResource().getProject().getName());
-			String pluginId = getDefiningPlugin();
+		String pluginId = getPluginId();
+		if (pluginId != null) {
+			fPluginText.setText(pluginId);
 			String productId = "product"; //$NON-NLS-1$
 			String numString = ""; //$NON-NLS-1$
 			int idNum = 1;
@@ -271,8 +272,9 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		return (fProduct.getName() != null && !fProduct.getName().equals("")); //$NON-NLS-1$
 	}
 	
-	private boolean isPDEProject() {
-		return (PDECore.getDefault().getModelManager().findModel(
-				fProduct.getModel().getUnderlyingResource().getProject()) != null);
+	private String getPluginId() {
+		IProject project = fProduct.getModel().getUnderlyingResource().getProject();
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
+		return (model == null) ? null : model.getPluginBase().getId();
 	}
 }

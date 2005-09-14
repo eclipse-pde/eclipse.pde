@@ -60,8 +60,6 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		}
 	}
 
-	protected Button fBundleCheck;
-
 	private LibraryPluginFieldData fData;
 
 	protected Text fIdText;
@@ -132,11 +130,6 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 				updateBundleCheck();
 			}
 		});
-		fBundleCheck = new Button(group, SWT.CHECK);
-		fBundleCheck.setText(PDEUIMessages.NewLibraryPluginCreationPage_bundle); 
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		fBundleCheck.setLayoutData(gd);
 		fJarredCheck = new Button(group, SWT.CHECK);
 		fJarredCheck.setText(PDEUIMessages.NewLibraryPluginCreationPage_jarred); 
 		gd = new GridData();
@@ -198,9 +191,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	}
 
 	public boolean hasBundleStructure() {
-		if (fBundleCheck == null)
-			return false;
-		return fBundleCheck.getSelection();
+		return fTargetCombo.getText().equals("3.1");
 	}
 
 	protected boolean isVersionValid(String version) {
@@ -230,8 +221,6 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 
 	private void updateBundleCheck() {
 		boolean legacy = fTargetCombo.getText().equals(ICoreConstants.TARGET21);
-		fBundleCheck.setEnabled(!legacy);
-		fBundleCheck.setSelection(!legacy);
 		fJarredCheck.setEnabled(!legacy);
 		boolean pre31 = fTargetCombo.getText().equals(ICoreConstants.TARGET30)
 				|| fTargetCombo.getText().equals(ICoreConstants.TARGET21);
@@ -242,8 +231,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		fData.setSimple(false);
 		fData.setSourceFolderName(null);
 		fData.setOutputFolderName(null);
-		fData.setHasBundleStructure(fBundleCheck.isEnabled()
-				&& fBundleCheck.getSelection());
+		fData.setHasBundleStructure(fTargetCombo.getText().equals("3.1"));
 		fData.setLegacy(fTargetCombo.getText().equals("2.1")); //$NON-NLS-1$
 		fData.setTargetVersion(fTargetCombo.getText());
 

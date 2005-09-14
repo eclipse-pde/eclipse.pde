@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.wizards.product;
 
 import java.util.TreeSet;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginElement;
@@ -68,7 +69,7 @@ public class ProductIntroWizardPage extends WizardPage {
 		createProductGroup(comp);		
 
 		setControl(comp);
-		setPageComplete(isPDEProject());
+		setPageComplete(getPluginId() != null);
 		Dialog.applyDialogFont(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IHelpContextIds.PRODUCT_DEFINITIONS_WIZARD);
 	}
@@ -109,8 +110,8 @@ public class ProductIntroWizardPage extends WizardPage {
 		gd.horizontalSpan = 2;
 		fIntroIdText.setLayoutData(gd);
 		
-		if (isPDEProject()) {
-			String pluginId = fProduct.getModel().getUnderlyingResource().getProject().getName();
+		String pluginId = getPluginId();
+		if (pluginId != null) {
 			fPluginText.setText(pluginId);
 			fIntroIdText.setText(getAvailableIntroId(pluginId));
 		}
@@ -215,8 +216,9 @@ public class ProductIntroWizardPage extends WizardPage {
 		return fIntroIdText.getText().trim();
 	}
 
-	private boolean isPDEProject() {
-		return (PDECore.getDefault().getModelManager().findModel(
-				fProduct.getModel().getUnderlyingResource().getProject()) != null);
+	private String getPluginId() {
+		IProject project = fProduct.getModel().getUnderlyingResource().getProject();
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
+		return (model == null) ? null : model.getPluginBase().getId();
 	}
 }
