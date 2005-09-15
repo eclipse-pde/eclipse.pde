@@ -90,7 +90,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	protected void adjustManifests(IProgressMonitor monitor, IProject project)
 			throws CoreException {
 		String framework = fData instanceof AbstractFieldData 
-								? ((PluginFieldData)fData).getOSGiFramework()
+								? ((AbstractFieldData)fData).getOSGiFramework()
 								: null;
 
 		if (framework != null) {
