@@ -223,4 +223,34 @@ public class CoreUtility {
 		}
 		return false;
 	}
+	
+	public static void copyFile(IPath originPath, String name, File target) {
+		File source = new File(originPath.toFile(), name);
+		if (source.exists() == false)
+			return;
+		FileInputStream is = null;
+		FileOutputStream os = null;
+		try {
+			is = new FileInputStream(source);
+			os = new FileOutputStream(target);
+			byte[] buf = new byte[1024];
+			long currentLen = 0;
+			int len = is.read(buf);
+			while (len != -1) {
+				currentLen += len;
+				os.write(buf, 0, len);
+				len = is.read(buf);
+			}
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (is != null)
+					is.close();
+				if (os != null)
+					os.close();
+			} catch (IOException e) {
+			}
+		}
+	}
+
 }
