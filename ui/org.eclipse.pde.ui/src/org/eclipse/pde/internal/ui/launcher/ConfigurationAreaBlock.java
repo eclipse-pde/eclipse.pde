@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.launcher;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
@@ -32,6 +31,7 @@ public class ConfigurationAreaBlock extends BaseBlock {
 	private Button fClearConfig;
 	private String fLastEnteredConfigArea;
 	private String fConfigName;
+	private static String DEFAULT_DIR = "${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/"; //$NON-NLS-1$
 
 	public ConfigurationAreaBlock(AbstractLauncherTab tab) {
 		super(tab);
@@ -52,7 +52,7 @@ public class ConfigurationAreaBlock extends BaseBlock {
 			public void widgetSelected(SelectionEvent e) {
 				boolean useDefaultArea = fUseDefaultLocationButton.getSelection();
 				if (useDefaultArea)
-					fLocationText.setText(PDECore.getDefault().getStateLocation().append(fConfigName).toOSString());
+					fLocationText.setText(DEFAULT_DIR + fConfigName);
 				else
 					fLocationText.setText(fLastEnteredConfigArea);
 				enableBrowseSection(!useDefaultArea);
@@ -87,7 +87,7 @@ public class ConfigurationAreaBlock extends BaseBlock {
 		fLastEnteredConfigArea = configuration.getAttribute(IPDELauncherConstants.CONFIG_LOCATION, ""); //$NON-NLS-1$
 
 		if (useDefaultArea)
-			fLocationText.setText(PDECore.getDefault().getStateLocation().append(configuration.getName()).toOSString());
+			fLocationText.setText(DEFAULT_DIR + fConfigName);
 		else
 			fLocationText.setText(fLastEnteredConfigArea);
 	}

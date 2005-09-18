@@ -85,7 +85,9 @@ public abstract class BaseBlock {
 		}
 
 		fLocationText = new Text(parent, SWT.SINGLE|SWT.BORDER);
-		fLocationText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 400;
+		fLocationText.setLayoutData(gd);
 		fLocationText.addModifyListener(fListener);
 	}
 	
