@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
@@ -55,6 +56,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -82,6 +84,8 @@ public abstract class AbstractPluginBlock {
 	private Button fDefaultsButton;
 	
 	private Listener fListener = new Listener();
+
+	private Label fCounter;
 	
 	class Listener extends SelectionAdapter {
 		public void widgetSelected(SelectionEvent e) {
@@ -131,6 +135,14 @@ public abstract class AbstractPluginBlock {
 		fWorkspaceModels = PDECore.getDefault().getModelManager().getWorkspaceModels();
 	}
 	
+	private void updateCounter() {
+		if (fCounter != null) {
+			int checked = fNumExternalChecked + fNumWorkspaceChecked;
+			int total = fWorkspaceModels.length + fExternalModels.length;
+			fCounter.setText(NLS.bind(PDEUIMessages.AbstractPluginBlock_counter, new Integer(checked), new Integer(total)));
+		}
+	}
+
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -218,6 +230,12 @@ public abstract class AbstractPluginBlock {
 		fWorkingSetButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_workingSet); 
 		fAddRequiredButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_subset); 
 		fDefaultsButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_defaults); 
+		
+		Label label = new Label(composite, SWT.NONE);
+		label.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		
+		fCounter = new Label(composite, SWT.NONE);
+		fCounter.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
 	}
 	
 	private Button createButton(Composite composite, String text) {
@@ -361,6 +379,7 @@ public abstract class AbstractPluginBlock {
 			initExternalPluginsState(config);
 		}
 		enableViewer(!defaultSelection);
+		updateCounter();
 		fTab.updateLaunchConfigurationDialog();
 	}
 	
@@ -480,6 +499,7 @@ public abstract class AbstractPluginBlock {
 		config.setAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, fIncludeOptionalButton.getSelection());
 		config.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, fAddWorkspaceButton.getSelection());
 		savePluginState(config);
+		updateCounter();
 	}
 	
 	protected abstract void savePluginState(ILaunchConfigurationWorkingCopy config);

@@ -249,11 +249,11 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 					String id = model.getPluginBase().getId();
 					if (model.getUnderlyingResource() == null) {
 						if (explugins.length() > 0)
-							explugins.append(",");
+							explugins.append(","); //$NON-NLS-1$
 						explugins.append(id);
 					} else {
 						if (wsplugins.length() > 0)
-							wsplugins.append(",");
+							wsplugins.append(","); //$NON-NLS-1$
 						wsplugins.append(id);
 					}
 				}
