@@ -20,6 +20,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration;
 import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchShortcut;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
@@ -56,8 +57,15 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 			wc.setAttribute(JUnitBaseLaunchConfiguration.LAUNCH_CONTAINER_ATTR, container);
 			if (testName.length() > 0)
 				wc.setAttribute(JUnitBaseLaunchConfiguration.TESTNAME_ATTR, testName);	
-			if (!JUnitLaunchConfiguration.requiresUI(wc))
-				wc.setAttribute(IPDELauncherConstants.APPLICATION, JUnitLaunchConfiguration.CORE_APPLICATION);
+			if (JUnitLaunchConfiguration.requiresUI(wc)) {
+				String product = TargetPlatform.getDefaultProduct();
+				if (product != null) {
+					wc.setAttribute(IPDELauncherConstants.USE_PRODUCT, true);
+					wc.setAttribute(IPDELauncherConstants.PRODUCT, product);
+				}
+			} else {
+				wc.setAttribute(IPDELauncherConstants.APPLICATION, JUnitLaunchConfiguration.CORE_APPLICATION);				
+			}
 			config= wc.doSave();		
 		} catch (CoreException ce) {
 			PDEPlugin.log(ce);

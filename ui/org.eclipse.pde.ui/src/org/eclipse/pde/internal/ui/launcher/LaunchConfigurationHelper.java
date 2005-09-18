@@ -97,6 +97,8 @@ public class LaunchConfigurationHelper {
 		if (properties == null)
 			properties = new Properties();
 		setBundleLocations(map, properties);
+		if (!directory.exists())
+			directory.mkdirs();
 		save(new File(directory, "config.ini"), properties); //$NON-NLS-1$
 		return properties;
 	}
