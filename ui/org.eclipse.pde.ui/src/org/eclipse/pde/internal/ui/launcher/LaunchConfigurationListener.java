@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.io.*;
+import java.io.File;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationListener;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 
 
 public class LaunchConfigurationListener implements ILaunchConfigurationListener {
@@ -37,7 +38,7 @@ public class LaunchConfigurationListener implements ILaunchConfigurationListener
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
 		File configDir = new File(PDECore.getDefault().getStateLocation().toOSString(), configuration.getName());
 		if (configDir.exists()) {
-			LauncherUtils.clearConfigArea(configDir, new NullProgressMonitor());
+			CoreUtility.deleteContent(configDir);
 		}
 	}
 

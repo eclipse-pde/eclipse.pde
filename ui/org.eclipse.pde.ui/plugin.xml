@@ -1002,7 +1002,7 @@
             sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
             name="%launchConfigurationType.name"
             sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"
-            delegate="org.eclipse.pde.internal.ui.launcher.WorkbenchLaunchConfigurationDelegate"
+            delegate="org.eclipse.pde.ui.launcher.EclipseApplicationLaunchConfiguration"
             modes="run, debug"
             id="org.eclipse.pde.ui.RuntimeWorkbench">
       </launchConfigurationType>

@@ -28,6 +28,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.internal.runtime.logview.LogView;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 
@@ -199,13 +200,13 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
     private File getMostRecentLogFile(ILaunch launch) throws CoreException {
         File latest = null;
         String workspace = launch.getLaunchConfiguration().getAttribute(
-                ILauncherSettings.LOCATION + "0", ""); //$NON-NLS-1$ //$NON-NLS-2$
+                IPDELauncherConstants.LOCATION, ""); //$NON-NLS-1$ //$NON-NLS-2$
         if (workspace.length() > 0) {
             latest = new File(workspace, ".metadata/.log"); //$NON-NLS-1$
             if (!latest.exists())
                 latest = null;
         }
-        String dir = launch.getAttribute(ILauncherSettings.CONFIG_LOCATION);
+        String dir = launch.getAttribute(IPDELauncherConstants.CONFIG_LOCATION);
         if (dir != null) {
             File configDir = new File(dir);
             File[] children = configDir.listFiles();

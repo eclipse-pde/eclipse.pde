@@ -21,6 +21,7 @@ import org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration;
 import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchShortcut;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
 public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {	
 	
@@ -38,13 +39,14 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 		try {
 			ILaunchConfigurationType configType= getJUnitLaunchConfigType();
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name));
-			wc.setAttribute(ILauncherSettings.LOCATION + "0", getDefaultWorkspaceLocation()); //$NON-NLS-1$
-			wc.setAttribute(ILauncherSettings.VMARGS, ""); //$NON-NLS-1$
-			wc.setAttribute(ILauncherSettings.PROGARGS, ""); //$NON-NLS-1$
-			wc.setAttribute(ILauncherSettings.USE_DEFAULT, true);
-			wc.setAttribute(ILauncherSettings.DOCLEAR, true);
-			wc.setAttribute(ILauncherSettings.ASKCLEAR, false);
-			wc.setAttribute(ILauncherSettings.CONFIG_CLEAR_AREA, true);
+			wc.setAttribute(IPDELauncherConstants.LOCATION, getDefaultWorkspaceLocation()); //$NON-NLS-1$
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$
+			wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
+			wc.setAttribute(IPDELauncherConstants.DOCLEAR, true);
+			wc.setAttribute(IPDELauncherConstants.ASKCLEAR, false);
+			wc.setAttribute(IPDELauncherConstants.TRACING_CHECKED, IPDELauncherConstants.TRACING_NONE);
+			wc.setAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, true);
 			wc.setAttribute(
 				IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
 				"org.eclipse.pde.ui.workbenchClasspathProvider"); //$NON-NLS-1$
@@ -55,7 +57,7 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 			if (testName.length() > 0)
 				wc.setAttribute(JUnitBaseLaunchConfiguration.TESTNAME_ATTR, testName);	
 			if (!JUnitLaunchConfiguration.requiresUI(wc))
-				wc.setAttribute(ILauncherSettings.APPLICATION, JUnitLaunchConfiguration.CORE_APPLICATION);
+				wc.setAttribute(IPDELauncherConstants.APPLICATION, JUnitLaunchConfiguration.CORE_APPLICATION);
 			config= wc.doSave();		
 		} catch (CoreException ce) {
 			PDEPlugin.log(ce);
@@ -64,7 +66,7 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 	}
 	
 	protected String getDefaultWorkspaceLocation() {
-		return LauncherUtils.getDefaultPath().append("junit-workbench-workspace").toOSString();				 //$NON-NLS-1$
+		return LauncherUtils.getDefaultPath().append("junit-workbench-workspace").toPortableString();				 //$NON-NLS-1$
 	}
 	
 }

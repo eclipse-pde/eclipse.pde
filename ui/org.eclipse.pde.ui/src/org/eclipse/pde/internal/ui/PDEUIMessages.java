@@ -522,37 +522,26 @@ public class PDEUIMessages extends NLS {
 
 	public static String AbstractPluginModelBase_error;
 	// Launchers #######################################
-	public static String BasicLauncherTab_name;
-	public static String BasicLauncherTab_workspace;
-	public static String BasicLauncherTab_location;
-	public static String BasicLauncherTab_browse;
-	public static String BasicLauncherTab_clear;
-	public static String BasicLauncherTab_askClear;
+	public static String MainTab_name;
+	public static String WorkspaceDataBlock_workspace;
+	public static String WorkspaceDataBlock_location;
+	public static String WorkspaceDataBlock_clear;
+	public static String WorkspaceDataBlock_askClear;
 	public static String BasicLauncherTab_javaExec;
-	public static String BasicLauncherTab_commandLineSettings;
-	public static String BasicLauncherTab_showSplash;
-	public static String BasicLauncherTab_runProduct;
+	public static String ProgramBlock_runProduct;
 	public static String BasicLauncherTab_jre;
-	public static String BasicLauncherTab_vmArgs;
 	public static String BasicLauncherTab_installedJREs;
 	public static String BasicLauncherTab_jrePreferencePage;
-	public static String BasicLauncherTab_programArgs;
-	public static String BasicLauncherTab_programToRun;
+	public static String ProgramBlock_programToRun;
 	public static String BasicLauncherTab_bootstrap;
-	public static String BasicLauncherTab_restore;
-	public static String BasicLauncherTab_workspace_title;
 	public static String BasicLauncherTab_javaExecDefault;
-	public static String BasicLauncherTab_runApplication;
-	public static String BasicLauncherTab_workspace_message;
+	public static String ProgramBlock_runApplication;
 	public static String BasicLauncherTab_noJRE;
-	public static String BasicLauncherTab_noWorkspace;
-	public static String BasicLauncherTab_invalidWorkspace;
-	public static String JUnitArgumentsTab_applicationName;
-	public static String JUnitArgumentsTab_headless;
+	public static String WorkspaceDataBlock_noWorkspace;
+	public static String JUnitProgramBlock_headless;
 
 	public static String AdvancedLauncherTab_name;
 	public static String AdvancedLauncherTab_workspacePlugins;
-	public static String AdvancedLauncherTab_externalPlugins;
 	public static String AdvancedLauncherTab_validatePlugins;
 	public static String AdvancedLauncherTab_useDefault;
 	public static String AdvancedLauncherTab_useFeatures;
@@ -603,11 +592,7 @@ public class PDEUIMessages extends NLS {
 	public static String ConfigurationSection_file;
 	public static String ConfigurationTab_configBrowse;
 	public static String ConfigurationSection_existing;
-	public static String ConfigurationTab_configLocTitle;
 	public static String ConfigurationTab_configLocMessage;
-	public static String ConfigurationTab_noConfigLoc;
-	public static String ConfigurationTab_noTemplateLoc;
-	public static String ConfigurationTab_templateNotExists;
 	public static String ConfigurationTab_configFileGroup;
 	public static String ConfigurationTab_defaultConfigIni;
 	public static String ConfigurationTab_existingConfigIni;
@@ -2083,12 +2068,24 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginDevelopmentPage_equinox;
 
+	public static String MainTab_jreSection;
+
+	public static String PluginsTab_target;
+
+	public static String BaseBlock_workspace;
+
+	public static String BaseBlock_filesystem;
+
+	public static String BaseBlock_variables;
+
+	public static String BaseBlock_relative;
+
 	public static String OverviewPage_extensionContent;
-	
-	public static String OverviewPage_fExtensionContent;
 
 	public static String OverviewPage_extensionPageMessageTitle;
 
 	public static String OverviewPage_extensionPageMessageBody;
+
+	public static String OverviewPage_fExtensionContent;
 	
 }

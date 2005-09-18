@@ -30,6 +30,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
@@ -157,14 +158,14 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 			ILaunchConfiguration[] configs = manager.getLaunchConfigurations(configType);
 			for (int i = 0; i < configs.length; i++) {
 				if (!DebugUITools.isPrivate(configs[i])) {
-					if (!configs[i].getAttribute(ILauncherSettings.USE_PRODUCT, false)) {
-						String configApp = configs[i].getAttribute(ILauncherSettings.APPLICATION, (String)null);
+					if (!configs[i].getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
+						String configApp = configs[i].getAttribute(IPDELauncherConstants.APPLICATION, (String)null);
 						if ((configApp == null && applicationName == null)
 							|| (configApp != null && applicationName != null && configApp.equals(applicationName))) {
 							result.add(configs[i]);
 						}
 					} else {
-						String thisProduct = configs[i].getAttribute(ILauncherSettings.PRODUCT, (String)null);
+						String thisProduct = configs[i].getAttribute(IPDELauncherConstants.PRODUCT, (String)null);
 						if (thisProduct != null && thisProduct.equals(getProduct(applicationName))) {
 							result.add(configs[i]);
 						}
@@ -210,22 +211,23 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 			ILaunchConfigurationType configType = getWorkbenchLaunchConfigType();
 			String computedName = getComputedName(configType.getName());
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);  
-			wc.setAttribute(ILauncherSettings.LOCATION + "0", getDefaultWorkspaceLocation(computedName)); //$NON-NLS-1$
-			wc.setAttribute(ILauncherSettings.VMARGS, ""); //$NON-NLS-1$
-			wc.setAttribute(ILauncherSettings.PROGARGS, ""); //$NON-NLS-1$
-			wc.setAttribute(ILauncherSettings.USEFEATURES, false);
-			wc.setAttribute(ILauncherSettings.DOCLEAR, false);
-			wc.setAttribute(ILauncherSettings.ASKCLEAR, true);
-			wc.setAttribute(ILauncherSettings.USE_DEFAULT, applicationName == null);
+			wc.setAttribute(IPDELauncherConstants.LOCATION, getDefaultWorkspaceLocation(computedName)); //$NON-NLS-1$
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
+			wc.setAttribute(IPDELauncherConstants.USEFEATURES, false);
+			wc.setAttribute(IPDELauncherConstants.DOCLEAR, false);
+			wc.setAttribute(IPDELauncherConstants.ASKCLEAR, true);
+			wc.setAttribute(IPDELauncherConstants.TRACING_CHECKED, IPDELauncherConstants.TRACING_NONE);
+			wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, applicationName == null);
 			if (applicationName != null) {
 				String product = getProduct(applicationName);
 				if (product == null) {
-					wc.setAttribute(ILauncherSettings.APPLICATION, applicationName);
+					wc.setAttribute(IPDELauncherConstants.APPLICATION, applicationName);
 				} else {
-					wc.setAttribute(ILauncherSettings.USE_PRODUCT, true);
-					wc.setAttribute(ILauncherSettings.PRODUCT, product);
+					wc.setAttribute(IPDELauncherConstants.USE_PRODUCT, true);
+					wc.setAttribute(IPDELauncherConstants.PRODUCT, product);
 				}
-				wc.setAttribute(ILauncherSettings.AUTOMATIC_ADD, false);
+				wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, false);
 				TreeMap map = new TreeMap();
 				addPluginAndDependencies(fModel, map);
 				Object[] models = map.values().toArray();
@@ -240,14 +242,14 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 						wsplugins.append(id + File.pathSeparatorChar);
 					}
 				}
-				wc.setAttribute(ILauncherSettings.WSPROJECT, wsplugins.toString());
-				wc.setAttribute(ILauncherSettings.EXTPLUGINS, explugins.toString());
+				wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, wsplugins.toString());
+				wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, explugins.toString());
 			} else {
 				String defaultProduct = TargetPlatform.getDefaultProduct();
 				if (defaultProduct != null) {
-					wc.setAttribute(ILauncherSettings.USE_DEFAULT, true);
-					wc.setAttribute(ILauncherSettings.USE_PRODUCT, true);
-					wc.setAttribute(ILauncherSettings.PRODUCT, defaultProduct);
+					wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
+					wc.setAttribute(IPDELauncherConstants.USE_PRODUCT, true);
+					wc.setAttribute(IPDELauncherConstants.PRODUCT, defaultProduct);
 				}
 			}
 
@@ -304,7 +306,7 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 	}
 	
 	public static String getDefaultWorkspaceLocation(String uniqueName) {
-		return LauncherUtils.getDefaultPath().append("runtime-" + uniqueName.replaceAll("\\s", "")).toOSString();		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return LauncherUtils.getDefaultPath().append("runtime-" + uniqueName.replaceAll("\\s", "")).toPortableString();		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	public static void addPluginAndDependencies(IPluginModelBase model, TreeMap map) {

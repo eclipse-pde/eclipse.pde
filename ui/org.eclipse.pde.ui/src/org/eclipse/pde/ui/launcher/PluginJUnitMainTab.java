@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,17 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.elements;
+package org.eclipse.pde.ui.launcher;
 
-import org.eclipse.swt.graphics.*;
+import org.eclipse.pde.internal.ui.launcher.JUnitProgramBlock;
 
-public interface IPDEElement {
+public class PluginJUnitMainTab extends MainTab {
 
-	public Object[] getChildren();
-
-	public Image getImage();
-
-	public String getLabel();
-
-	public Object getParent();
+	protected void createProgramBlock() {
+		fProgramBlock = new JUnitProgramBlock(this);
+	}
 }

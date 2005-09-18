@@ -21,8 +21,9 @@ import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.launcher.ILauncherSettings;
-import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
+import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
+import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
+import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
 
 public class ProductFromConfigOperation extends BaseProductCreationOperation {
@@ -42,21 +43,21 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 			return;
 		try {
 			IProductModelFactory factory = product.getModel().getFactory();
-			boolean useProduct = fLaunchConfiguration.getAttribute(ILauncherSettings.USE_PRODUCT, false);
+			boolean useProduct = fLaunchConfiguration.getAttribute(IPDELauncherConstants.USE_PRODUCT, false);
 			if (useProduct) {
-				String id = fLaunchConfiguration.getAttribute(ILauncherSettings.PRODUCT, (String)null);
+				String id = fLaunchConfiguration.getAttribute(IPDELauncherConstants.PRODUCT, (String)null);
 				if (id != null) {
 					initializeProductInfo(factory, product, id);
 				}
 			} else {
-				String appName = fLaunchConfiguration.getAttribute(ILauncherSettings.APPLICATION, LauncherUtils.getDefaultApplicationName());
+				String appName = fLaunchConfiguration.getAttribute(IPDELauncherConstants.APPLICATION, LaunchConfigurationHelper.getDefaultApplicationName());
 				product.setApplication(appName);
 			}
 			addPlugins(factory, product, getSelectedPlugins());
-			if (fLaunchConfiguration.getAttribute(ILauncherSettings.CONFIG_GENERATE_DEFAULT, true)) {
+			if (fLaunchConfiguration.getAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true)) {
 				super.initializeProduct(product);
 			} else {
-				String path = fLaunchConfiguration.getAttribute(ILauncherSettings.CONFIG_TEMPLATE_LOCATION, "/"); //$NON-NLS-1$
+				String path = fLaunchConfiguration.getAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, "/"); //$NON-NLS-1$
 				IContainer container = PDEPlugin.getWorkspace().getRoot().getContainerForLocation(new Path(path));
 				if (container != null) {
 					IConfigurationFileInfo info = factory.createConfigFileInfo();
@@ -73,10 +74,10 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 	
 	private IPluginModelBase[] getSelectedPlugins() {
 		try {
-			if (fLaunchConfiguration.getAttribute(ILauncherSettings.USE_DEFAULT, true)) {
+			if (fLaunchConfiguration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
 				return PDECore.getDefault().getModelManager().getPlugins();
 			}
-			return LauncherUtils.getSelectedPlugins(fLaunchConfiguration);
+			return LaunchPluginValidator.getSelectedPlugins(fLaunchConfiguration);
 		} catch (CoreException e) {
 		}
 		return new IPluginModelBase[0];

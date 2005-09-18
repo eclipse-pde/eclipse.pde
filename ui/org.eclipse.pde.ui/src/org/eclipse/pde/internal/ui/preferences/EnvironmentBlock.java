@@ -28,7 +28,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
+import org.eclipse.pde.internal.ui.launcher.LaunchVMHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -148,8 +148,8 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 		
 		fJRECombo = new Combo(group, SWT.SINGLE|SWT.READ_ONLY);
 		fJRECombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fJRECombo.setItems(LauncherUtils.getVMInstallNames());
-		fDefaultJRE = LauncherUtils.getDefaultVMInstallName();
+		fJRECombo.setItems(LaunchVMHelper.getVMInstallNames());
+		fDefaultJRE = LaunchVMHelper.getDefaultVMInstallName();
 		fJRECombo.setText(fDefaultJRE);
 		
 		label = new Label(group, SWT.WRAP);
@@ -213,7 +213,7 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 		fWSCombo.setText(preferences.getDefaultString(WS));
 		fNLCombo.setText(expandLocaleName(preferences.getDefaultString(NL)));
 		fArchCombo.setText(preferences.getDefaultString(ARCH));
-		fJRECombo.setText(LauncherUtils.getDefaultVMInstallName());
+		fJRECombo.setText(LaunchVMHelper.getDefaultVMInstallName());
 	}
 
 	public boolean performOk() {
@@ -224,11 +224,11 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 	
 	private void applyJREGroup() {
 		try {
-			if (!fDefaultJRE.equals(LauncherUtils.getDefaultVMInstallName()))
+			if (!fDefaultJRE.equals(LaunchVMHelper.getDefaultVMInstallName()))
 				return;
 			
-			if (!LauncherUtils.getDefaultVMInstallName().equals(fJRECombo.getText()))
-				JavaRuntime.setDefaultVMInstall(LauncherUtils.getVMInstall(fJRECombo.getText()), null);
+			if (!LaunchVMHelper.getDefaultVMInstallName().equals(fJRECombo.getText()))
+				JavaRuntime.setDefaultVMInstall(LaunchVMHelper.getVMInstall(fJRECombo.getText()), null);
 		} catch (CoreException e) {
 		}
 	}

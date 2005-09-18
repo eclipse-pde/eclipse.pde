@@ -186,8 +186,12 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 			return result.toArray();
 		}
 	}
+	
+	public PluginValidationOperation(IPluginModelBase[] models) {
+		this(models, null, null);
+	}
+	
 	public PluginValidationOperation(IPluginModelBase[] models, String product, String application) {
-		super();
 		fModels = models;
 		fProductID = product;
 		fApplicationID = application;

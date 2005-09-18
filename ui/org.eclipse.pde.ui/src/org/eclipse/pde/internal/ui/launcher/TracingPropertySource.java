@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,15 +9,30 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.Vector;
+
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.widgets.*;
-/**
- */
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
+
+
 public class TracingPropertySource {
 	private IPluginModelBase fModel;
 	private Vector fDescriptors;
@@ -27,7 +42,7 @@ public class TracingPropertySource {
 	private static final String[] fBooleanChoices = {"false", "true"}; //$NON-NLS-1$ //$NON-NLS-2$
 	private Properties fMasterOptions;
 	private boolean fModified;
-	private TracingLauncherTab fTab;
+	private TracingBlock fBlock;
 	private abstract class PropertyEditor {
 		private String key;
 		private String label;
@@ -47,7 +62,7 @@ public class TracingPropertySource {
 		protected void valueModified(Object value) {
 			fValues.put(getKey(), value);
 			fModified = true;
-			fTab.updateLaunchConfigurationDialog();
+			fBlock.getTab().updateLaunchConfigurationDialog();
 		}
 	}
 	private class BooleanEditor extends PropertyEditor {
@@ -56,7 +71,7 @@ public class TracingPropertySource {
 			super(key, label);
 		}
 		public void create(Composite parent) {
-			checkbox = fTab.getToolkit().createButton(parent, getLabel(),
+			checkbox = fBlock.getToolkit().createButton(parent, getLabel(),
 					SWT.CHECK);
 			TableWrapData td = new TableWrapData();
 			td.colspan = 2;
@@ -82,11 +97,11 @@ public class TracingPropertySource {
 			super(key, label);
 		}
 		public void create(Composite parent) {
-			Label label = fTab.getToolkit().createLabel(parent, getLabel());
+			Label label = fBlock.getToolkit().createLabel(parent, getLabel());
 			TableWrapData td = new TableWrapData();
 			td.valign = TableWrapData.MIDDLE;
 			label.setLayoutData(td);
-			text = fTab.getToolkit().createText(parent, ""); //$NON-NLS-1$
+			text = fBlock.getToolkit().createText(parent, ""); //$NON-NLS-1$
 			td = new TableWrapData(TableWrapData.FILL_GRAB);
 			//gd.widthHint = 100;
 			text.setLayoutData(td);
@@ -106,11 +121,11 @@ public class TracingPropertySource {
 	}
 	public TracingPropertySource(IPluginModelBase model,
 			Properties masterOptions, Hashtable template,
-			TracingLauncherTab tab) {
-		this.fModel = model;
-		this.fMasterOptions = masterOptions;
-		this.fTemplate = template;
-		this.fTab = tab;
+			TracingBlock block) {
+		fModel = model;
+		fMasterOptions = masterOptions;
+		fTemplate = template;
+		fBlock = block;
 		fValues = new Hashtable();
 		fDvalues = new Hashtable();
 	}
@@ -179,7 +194,7 @@ public class TracingPropertySource {
 			editor.initialize();
 			fDescriptors.add(editor);
 			if (bordersNeeded)
-				fTab.getToolkit().paintBordersFor(parent);
+				fBlock.getToolkit().paintBordersFor(parent);
 		}
 	}
 

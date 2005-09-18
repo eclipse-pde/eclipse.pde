@@ -27,6 +27,7 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.ui.dialogs.*;
 
 public class LaunchAction extends Action {
@@ -71,9 +72,9 @@ public class LaunchAction extends Action {
 	}
 
 	private ILaunchConfiguration refreshConfiguration(ILaunchConfigurationWorkingCopy wc) throws CoreException {
-		wc.setAttribute(ILauncherSettings.PRODUCT, fProduct.getId());
-		wc.setAttribute(ILauncherSettings.VMARGS, getVMArguments()); 
-		wc.setAttribute(ILauncherSettings.PROGARGS, getProgramArguments());
+		wc.setAttribute(IPDELauncherConstants.PRODUCT, fProduct.getId());
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, getVMArguments()); 
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, getProgramArguments());
 		StringBuffer wsplugins = new StringBuffer();
 		StringBuffer explugins = new StringBuffer();
 		IPluginModelBase[] models = getModels();
@@ -81,17 +82,19 @@ public class LaunchAction extends Action {
 			IPluginModelBase model = models[i];
 			String id = model.getPluginBase().getId();
 			if (model.getUnderlyingResource() == null) {
-				explugins.append(id + File.pathSeparatorChar);
+				explugins.append(id);
+				explugins.append(",");
 			} else {
-				wsplugins.append(id + File.pathSeparatorChar);
-			}
+				wsplugins.append(id);
+				wsplugins.append(",");
+			}	
 		}
-		wc.setAttribute(ILauncherSettings.WSPROJECT, wsplugins.toString());
-		wc.setAttribute(ILauncherSettings.EXTPLUGINS, explugins.toString());
+		wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, wsplugins.toString());
+		wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, explugins.toString());
 		String configIni = getTemplateConfigIni();
-		wc.setAttribute(ILauncherSettings.CONFIG_GENERATE_DEFAULT, configIni == null);
+		wc.setAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, configIni == null);
 		if (configIni != null)
-			wc.setAttribute(ILauncherSettings.CONFIG_TEMPLATE_LOCATION, configIni);
+			wc.setAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, configIni);
 		return wc.doSave();
 	}
 	
@@ -213,15 +216,15 @@ public class LaunchAction extends Action {
 		ILaunchConfigurationType configType = getWorkbenchLaunchConfigType();
 		String computedName = getComputedName(new Path(fPath).lastSegment());
 		ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);  
-		wc.setAttribute(ILauncherSettings.LOCATION + "0", RuntimeWorkbenchShortcut.getDefaultWorkspaceLocation(computedName)); //$NON-NLS-1$
-		wc.setAttribute(ILauncherSettings.USEFEATURES, false);
-		wc.setAttribute(ILauncherSettings.USE_DEFAULT, false);
-		wc.setAttribute(ILauncherSettings.DOCLEAR, false);
-		wc.setAttribute(ILauncherSettings.ASKCLEAR, true);
-		wc.setAttribute(ILauncherSettings.USE_PRODUCT, true);
-		wc.setAttribute(ILauncherSettings.AUTOMATIC_ADD, false);
+		wc.setAttribute(IPDELauncherConstants.LOCATION, RuntimeWorkbenchShortcut.getDefaultWorkspaceLocation(computedName)); //$NON-NLS-1$
+		wc.setAttribute(IPDELauncherConstants.USEFEATURES, false);
+		wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, false);
+		wc.setAttribute(IPDELauncherConstants.DOCLEAR, false);
+		wc.setAttribute(IPDELauncherConstants.ASKCLEAR, true);
+		wc.setAttribute(IPDELauncherConstants.USE_PRODUCT, true);
+		wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, false);
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, RuntimeWorkbenchShortcut.CLASSPATH_PROVIDER);
-		wc.setAttribute(ILauncherSettings.PRODUCT_FILE, fPath);
+		wc.setAttribute(IPDELauncherConstants.PRODUCT_FILE, fPath);
 		return refreshConfiguration(wc);		
 	}
 	
@@ -237,7 +240,7 @@ public class LaunchAction extends Action {
 		ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
 		for (int i = 0; i < configs.length; i++) {
 			if (!DebugUITools.isPrivate(configs[i])) {
-				String path = configs[i].getAttribute(ILauncherSettings.PRODUCT_FILE, ""); //$NON-NLS-1$
+				String path = configs[i].getAttribute(IPDELauncherConstants.PRODUCT_FILE, ""); //$NON-NLS-1$
 				if (new Path(fPath).equals(new Path(path))) {
 					result.add(configs[i]);
 				}

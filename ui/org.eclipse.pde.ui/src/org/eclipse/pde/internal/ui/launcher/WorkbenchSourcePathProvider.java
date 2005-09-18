@@ -28,6 +28,7 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.StandardSourcePathProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 /**
  * Generates a source lookup path for Runtime Workbench launch configurations.
  */
@@ -48,9 +49,9 @@ public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 		// first on the source lookup path, goes the class libraries for the
 		// JRE
 		String vmInstallName = configuration.getAttribute(
-				ILauncherSettings.VMINSTALL, LauncherUtils
+				IPDELauncherConstants.VMINSTALL, LaunchVMHelper
 						.getDefaultVMInstallName());
-		IVMInstall[] vmInstallations = LauncherUtils.getAllVMInstances();
+		IVMInstall[] vmInstallations = LaunchVMHelper.getAllVMInstances();
 		IVMInstall jre = null;
 		for (int i = 0; i < vmInstallations.length; i++) {
 			if (vmInstallName.equals(vmInstallations[i].getName())) {
@@ -82,7 +83,7 @@ public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 	 */
 	private IProject[] getJavaProjects(ILaunchConfiguration configuration)
 			throws CoreException {
-		IProject[] projects = LauncherUtils.getAffectedProjects(configuration);
+		IProject[] projects = LaunchPluginValidator.getAffectedProjects(configuration);
 		return PDEPlugin.getWorkspace().computeProjectOrder(projects).projects;
 	}
 	/**

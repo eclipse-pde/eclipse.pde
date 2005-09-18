@@ -60,7 +60,7 @@ public class ApplicationSelectionDialog extends Dialog {
 		applicationCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		applicationCombo.setItems(fApplicationNames);
 		
-		String defaultApp = LauncherUtils.getDefaultApplicationName();
+		String defaultApp = LaunchConfigurationHelper.getDefaultApplicationName();
 		if (applicationCombo.indexOf(defaultApp) == -1)
 			applicationCombo.add(defaultApp);
 		
@@ -80,7 +80,7 @@ public class ApplicationSelectionDialog extends Dialog {
 	}
 	
 	public String getSelectedApplication() {
-		if (fSelectedApplication.equals(LauncherUtils.getDefaultApplicationName()))
+		if (fSelectedApplication.equals(LaunchConfigurationHelper.getDefaultApplicationName()))
 			return null;
 		return fSelectedApplication;
 	}
