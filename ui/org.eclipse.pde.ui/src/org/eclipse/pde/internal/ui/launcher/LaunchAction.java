@@ -83,10 +83,10 @@ public class LaunchAction extends Action {
 			String id = model.getPluginBase().getId();
 			if (model.getUnderlyingResource() == null) {
 				explugins.append(id);
-				explugins.append(",");
+				explugins.append(","); //$NON-NLS-1$
 			} else {
 				wsplugins.append(id);
-				wsplugins.append(",");
+				wsplugins.append(","); //$NON-NLS-1$
 			}	
 		}
 		wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, wsplugins.toString());

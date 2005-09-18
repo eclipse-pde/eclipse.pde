@@ -93,7 +93,7 @@ public class WorkspaceDataBlock extends BaseBlock {
 	}
 
 	protected String getName() {
-		return "workspace location";
+		return PDEUIMessages.WorkspaceDataBlock_name;
 	}
 	
 	protected void handleBrowseWorkspace() {

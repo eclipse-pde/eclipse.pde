@@ -46,15 +46,15 @@ public class LaunchPluginValidator {
 			wc = configuration.getWorkingCopy();
 		}
 		
-		String value = configuration.getAttribute("wsproject", (String)null);
+		String value = configuration.getAttribute("wsproject", (String)null); //$NON-NLS-1$
 		if (value != null) {
-			wc.setAttribute("wsproject", (String)null);
+			wc.setAttribute("wsproject", (String)null); //$NON-NLS-1$
 			if (value.indexOf(';') != -1) {
 				value = value.replace(';', ',');
 			} else if (value.indexOf(':') != -1) {
 				value = value.replace(':', ',');
 			}
-			value = (value.length() == 0 || value.equals(","))
+			value = (value.length() == 0 || value.equals(",")) //$NON-NLS-1$
 						? null : value.substring(0, value.length() - 1);
 			
 			boolean automatic = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
@@ -64,14 +64,14 @@ public class LaunchPluginValidator {
 			wc.setAttribute(attr, value);
 		}
 
-		String value2 = configuration.getAttribute("extplugins", (String)null);
+		String value2 = configuration.getAttribute("extplugins", (String)null); //$NON-NLS-1$
 		if (value2 != null) {
-			wc.setAttribute("extplugins", (String)null);
+			wc.setAttribute("extplugins", (String)null); //$NON-NLS-1$
 			if (value2.indexOf(';') != -1)
 				value2 = value2.replace(';', ',');	
 			else if (value2.indexOf(':') != -1)
 				value2 = value2.replace(':', ',');
-			value2 = (value2.length() == 0 || value2.equals(","))
+			value2 = (value2.length() == 0 || value2.equals(",")) //$NON-NLS-1$
 						? null : value2.substring(0, value2.length() - 1);
 			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, value2);
 		}
@@ -119,7 +119,7 @@ public class LaunchPluginValidator {
 		TreeSet set = new TreeSet();
 		String ids = configuration.getAttribute(attribute, (String) null);
 		if (ids != null) {
-			StringTokenizer tok = new StringTokenizer(ids, ",");
+			StringTokenizer tok = new StringTokenizer(ids, ","); //$NON-NLS-1$
 			while (tok.hasMoreTokens())
 				set.add(tok.nextToken());
 		}

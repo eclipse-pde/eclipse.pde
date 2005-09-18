@@ -82,7 +82,7 @@ public class EclipseApplicationLaunchConfiguration extends LaunchConfigurationDe
 			}
 	
 			VMRunnerConfiguration runnerConfig = new VMRunnerConfiguration(
-														"org.eclipse.core.launcher.Main", 
+														"org.eclipse.core.launcher.Main",  //$NON-NLS-1$
 														getClasspath(configuration)); 
 			runnerConfig.setVMArguments(getVMArguments(configuration));
 			runnerConfig.setProgramArguments(programArgs);

@@ -111,7 +111,7 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 	
 
 	protected String getName() {
-		return "template file location";
+		return PDEUIMessages.ConfigurationTemplateBlock_name;
 	}
 		
 	protected void handleBrowseWorkspace() {
@@ -125,7 +125,7 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 		if (file != null)
 			dialog.setInitialSelection(file);
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
-		dialog.addFilter(new FileNameFilter("config.ini"));
+		dialog.addFilter(new FileNameFilter("config.ini")); //$NON-NLS-1$
 		dialog.setAllowMultiple(false);
 		dialog.setTitle(PDEUIMessages.ConfigurationTab_fileSelection); 
 		dialog.setMessage(PDEUIMessages.ConfigurationTab_fileDialogMessage); 
@@ -172,7 +172,7 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 
 	protected void handleBrowseFileSystem() {
 		FileDialog dialog = new FileDialog(fTab.getControl().getShell());
-		dialog.setFilterExtensions(new String[] {"*.ini"});
+		dialog.setFilterExtensions(new String[] {"*.ini"}); //$NON-NLS-1$
 		dialog.setFilterPath(getLocation());
 		dialog.setText(PDEUIMessages.ConfigurationTab_configLocMessage); 
 		String res = dialog.open();

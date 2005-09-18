@@ -46,7 +46,7 @@ public class LaunchArgumentsHelper {
 		String location = configuration.getAttribute(IPDELauncherConstants.LOCATION, (String)null);
 		if (location == null) {
 			// backward compatibility
-			location = configuration.getAttribute(IPDELauncherConstants.LOCATION + "0", (String)null); 
+			location = configuration.getAttribute(IPDELauncherConstants.LOCATION + "0", (String)null);  //$NON-NLS-1$
 			if (location != null) {
 				ILaunchConfigurationWorkingCopy wc = null;
 				if (configuration.isWorkingCopy()) {
@@ -54,7 +54,7 @@ public class LaunchArgumentsHelper {
 				} else {
 					wc = configuration.getWorkingCopy();
 				}
-				wc.setAttribute(IPDELauncherConstants.LOCATION + "0", (String)null);
+				wc.setAttribute(IPDELauncherConstants.LOCATION + "0", (String)null); //$NON-NLS-1$
 				wc.setAttribute(IPDELauncherConstants.LOCATION, location);
 				wc.doSave();
 			}
@@ -64,7 +64,7 @@ public class LaunchArgumentsHelper {
 
 	public static String[] getUserProgramArgumentArray(ILaunchConfiguration configuration) throws CoreException {
 		String args = getUserProgramArguments(configuration);
-		return new ExecutionArguments("", getSubstitutedString(args)).getProgramArgumentsArray();
+		return new ExecutionArguments("", getSubstitutedString(args)).getProgramArgumentsArray(); //$NON-NLS-1$
 	}
 	
 	public static String getUserProgramArguments(ILaunchConfiguration configuration) throws CoreException {
@@ -73,7 +73,7 @@ public class LaunchArgumentsHelper {
 				(String)null);
 		if (args == null) {
 			// backward compatibility
-			args = configuration.getAttribute("progargs", (String)null);
+			args = configuration.getAttribute("progargs", (String)null); //$NON-NLS-1$
 			if (args != null) {
 				ILaunchConfigurationWorkingCopy wc = null;
 				if (configuration.isWorkingCopy()) {
@@ -81,7 +81,7 @@ public class LaunchArgumentsHelper {
 				} else {
 					wc = configuration.getWorkingCopy();
 				}
-				wc.setAttribute("progargs", (String)null);
+				wc.setAttribute("progargs", (String)null); //$NON-NLS-1$
 				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, args);
 				wc.doSave();			
 			}
@@ -91,7 +91,7 @@ public class LaunchArgumentsHelper {
 	
 	public static String[] getUserVMArgumentArray(ILaunchConfiguration configuration) throws CoreException {
 		String args = getUserVMArguments(configuration);
-		return new ExecutionArguments(getSubstitutedString(args), "").getVMArgumentsArray();
+		return new ExecutionArguments(getSubstitutedString(args), "").getVMArgumentsArray(); //$NON-NLS-1$
 	}
 	
 	public static String getUserVMArguments(ILaunchConfiguration configuration) throws CoreException {
@@ -100,7 +100,7 @@ public class LaunchArgumentsHelper {
 				(String)null);
 		if (args == null) {
 			// backward compatibility
-			args = configuration.getAttribute("vmargs", (String)null);
+			args = configuration.getAttribute("vmargs", (String)null); //$NON-NLS-1$
 			if (args != null) {
 				ILaunchConfigurationWorkingCopy wc = null;
 				if (configuration.isWorkingCopy()) {
@@ -108,7 +108,7 @@ public class LaunchArgumentsHelper {
 				} else {
 					wc = configuration.getWorkingCopy();
 				}
-				wc.setAttribute("vmargs", (String)null);
+				wc.setAttribute("vmargs", (String)null); //$NON-NLS-1$
 				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, args);
 				wc.doSave();			
 			}
@@ -216,7 +216,7 @@ public class LaunchArgumentsHelper {
 		
 	private static String getSubstitutedString(String text) throws CoreException {
 		if (text == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		IStringVariableManager mgr = VariablesPlugin.getDefault().getStringVariableManager();
 		return mgr.performStringSubstitution(text);
 	}

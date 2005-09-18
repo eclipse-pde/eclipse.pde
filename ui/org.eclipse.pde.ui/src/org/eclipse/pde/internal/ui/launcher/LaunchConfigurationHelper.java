@@ -79,7 +79,7 @@ public class LaunchConfigurationHelper {
 
 	private static String getSubstitutedString(String text) throws CoreException {
 		if (text == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		IStringVariableManager mgr = VariablesPlugin.getDefault().getStringVariableManager();
 		return mgr.performStringSubstitution(text);
 	}

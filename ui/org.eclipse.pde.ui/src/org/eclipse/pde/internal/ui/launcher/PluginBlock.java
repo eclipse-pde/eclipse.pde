@@ -131,7 +131,7 @@ public class PluginBlock extends AbstractPluginBlock {
 				// Otherwise, save "selected" workspace plugins
 				if (fPluginTreeViewer.getChecked(model) != fAddWorkspaceButton.getSelection()) {
 					if (wbuf.length() > 0)
-						wbuf.append(",");
+						wbuf.append(","); //$NON-NLS-1$
 					wbuf.append(model.getPluginBase().getId());
 				}
 			}
@@ -151,7 +151,7 @@ public class PluginBlock extends AbstractPluginBlock {
 					IPluginModelBase model = (IPluginModelBase) checked[i];
 					if (model.getUnderlyingResource() == null) {
 						if (exbuf.length() > 0)
-							exbuf.append(",");
+							exbuf.append(","); //$NON-NLS-1$
 						exbuf.append(model.getPluginBase().getId());
 					}
 				}

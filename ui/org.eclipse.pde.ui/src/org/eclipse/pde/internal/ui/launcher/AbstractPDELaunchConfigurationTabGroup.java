@@ -55,21 +55,21 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends
 				"org.eclipse.pde.ui.workbenchClasspathProvider"); //$NON-NLS-1$
 		}
 		
-		String value = wc.getAttribute("vmargs", (String)null);
+		String value = wc.getAttribute("vmargs", (String)null); //$NON-NLS-1$
 		if (value != null) {
-			wc.setAttribute("vmargs", (String)null);
+			wc.setAttribute("vmargs", (String)null); //$NON-NLS-1$
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, value);
 		}
 		
-		value = wc.getAttribute("progargs", (String)null);
+		value = wc.getAttribute("progargs", (String)null); //$NON-NLS-1$
 		if (value != null) {
-			wc.setAttribute("progargs", (String)null);
+			wc.setAttribute("progargs", (String)null); //$NON-NLS-1$
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, value);
 		}
 		
-		value = wc.getAttribute(IPDELauncherConstants.LOCATION + "0", (String)null);
+		value = wc.getAttribute(IPDELauncherConstants.LOCATION + "0", (String)null); //$NON-NLS-1$
 		if (value != null) {
-			wc.setAttribute(IPDELauncherConstants.LOCATION + "0", (String)null);
+			wc.setAttribute(IPDELauncherConstants.LOCATION + "0", (String)null); //$NON-NLS-1$
 			wc.setAttribute(IPDELauncherConstants.LOCATION, value);			
 		}
 		

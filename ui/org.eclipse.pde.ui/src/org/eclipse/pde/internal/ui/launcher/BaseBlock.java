@@ -107,8 +107,8 @@ public abstract class BaseBlock {
 	protected void handleBrowseFileSystem() {
 		DirectoryDialog dialog = new DirectoryDialog(fTab.getControl().getShell());
 		dialog.setFilterPath(getLocation());
-		dialog.setText("Directory Selection"); 
-		dialog.setMessage("Choose a directory:"); 
+		dialog.setText(PDEUIMessages.BaseBlock_dirSelection); 
+		dialog.setMessage(PDEUIMessages.BaseBlock_dirChoose); 
 		String result = dialog.open();
 		if (result != null)
 			fLocationText.setText(result);
@@ -164,7 +164,7 @@ public abstract class BaseBlock {
 	
 	public String validate() {
 		return (fLocationText.isEnabled() && getLocation().length() == 0)
-					? NLS.bind("The {0} is not specified", getName())
+					? NLS.bind(PDEUIMessages.BaseBlock_errorMessage, getName())
 					: null;
 	}
 	

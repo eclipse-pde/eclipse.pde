@@ -29,9 +29,9 @@ public interface IPDELauncherConstants {
 	// Plug-ins and Fragments settings
 	String USE_DEFAULT = "default"; //$NON-NLS-1$
 	String USEFEATURES = "usefeatures"; //$NON-NLS-1$
-	String SELECTED_WORKSPACE_PLUGINS = "selected_workspace_plugins";
-	String DESELECTED_WORKSPACE_PLUGINS = "deselected_workspace_plugins";
-	String SELECTED_TARGET_PLUGINS = "selected_target_plugins";
+	String SELECTED_WORKSPACE_PLUGINS = "selected_workspace_plugins"; //$NON-NLS-1$
+	String DESELECTED_WORKSPACE_PLUGINS = "deselected_workspace_plugins"; //$NON-NLS-1$
+	String SELECTED_TARGET_PLUGINS = "selected_target_plugins"; //$NON-NLS-1$
 	String INCLUDE_OPTIONAL = "includeOptional"; //$NON-NLS-1$
 	String AUTOMATIC_ADD = "automaticAdd"; //$NON-NLS-1$
 	

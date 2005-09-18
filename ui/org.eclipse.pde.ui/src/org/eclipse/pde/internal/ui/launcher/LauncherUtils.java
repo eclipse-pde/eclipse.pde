@@ -34,7 +34,7 @@ public class LauncherUtils {
 	}
 	
 	public static IPath getDefaultPath() {
-		return new Path("${system_property:user.home}");
+		return new Path("${system_property:user.home}"); //$NON-NLS-1$
 	}
 	
 	public static Display getDisplay() {

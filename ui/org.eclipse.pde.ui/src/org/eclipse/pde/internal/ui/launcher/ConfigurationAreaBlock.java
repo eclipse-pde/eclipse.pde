@@ -98,7 +98,7 @@ public class ConfigurationAreaBlock extends BaseBlock {
 			fLastEnteredConfigArea = getLocation();
 			configuration.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, fLastEnteredConfigArea);
 		} else {
-			configuration.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, "");
+			configuration.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, PDEUIMessages.ConfigurationAreaBlock_0);
 		}
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, fClearConfig.getSelection());
 	}
@@ -110,7 +110,7 @@ public class ConfigurationAreaBlock extends BaseBlock {
 	}
 	
 	protected String getName() {
-		return "configuration area location";
+		return PDEUIMessages.ConfigurationAreaBlock_name;
 	}
 	
 }

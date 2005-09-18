@@ -2087,5 +2087,19 @@ public class PDEUIMessages extends NLS {
 	public static String OverviewPage_extensionPageMessageBody;
 
 	public static String OverviewPage_fExtensionContent;
+
+	public static String BaseBlock_dirSelection;
+
+	public static String BaseBlock_dirChoose;
+
+	public static String BaseBlock_errorMessage;
+
+	public static String ConfigurationTemplateBlock_name;
+
+	public static String WorkspaceDataBlock_name;
+
+	public static String ConfigurationAreaBlock_0;
+
+	public static String ConfigurationAreaBlock_name;
 	
 }
