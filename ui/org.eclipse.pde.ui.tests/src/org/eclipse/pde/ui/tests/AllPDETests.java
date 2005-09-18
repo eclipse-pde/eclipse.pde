@@ -14,7 +14,6 @@ package org.eclipse.pde.ui.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-
 public class AllPDETests {
 
 	public static Test suite() {

@@ -6,15 +6,13 @@
       </command>
       <shell id="org.eclipse.jface.wizard.WizardDialog" return-code="0">
          <command type="focus" contextId="wizard-page/importExportPage" widgetId="org.eclipse.swt.widgets.TabFolder#1"/>
-         <command type="choice-select" contextId="wizard-page/importExportPage" widgetId="org.eclipse.swt.widgets.TabFolder#1" choiceId="item#0"/>
-         <command type="item-select" contextId="wizard-page/importExportPage" widgetId="org.eclipse.swt.widgets.Table#1">
+         <command type="item-expand" contextId="wizard-page/importExportPage" widgetId="org.eclipse.swt.widgets.Tree#1" value="true">
+            <item path="org.eclipse.pde.ui.PluginDevelopment"/>
+         </command>
+         <command type="default-select" contextId="wizard-page/importExportPage" widgetId="org.eclipse.swt.widgets.Tree#1">
             <item path="org.eclipse.pde.ui.PluginImportWizard"/>
          </command>
-         <command type="select" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=15"/>
          <command type="focus" contextId="wizard-page/first" widgetId="org.eclipse.swt.widgets.Button#1"/>
-         <command type="focus" contextId="wizard-page/first" widgetId="org.eclipse.swt.widgets.Button#8"/>
-         <command type="select" contextId="wizard-page/first" widgetId="org.eclipse.swt.widgets.Button#9" selection="false"/>
-         <command type="select" contextId="wizard-page/first" widgetId="org.eclipse.swt.widgets.Button#8" selection="true"/>
          <command type="select" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=15"/>
          <command type="focus" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=15"/>
          <command type="focus" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=14"/>
@@ -22,7 +20,6 @@
             <item path="org.eclipse.osgi"/>
          </command>
          <command type="select" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=16"/>
-         <command type="wait"/>
          <command type="focus" contextId="wizard" widgetId="org.eclipse.swt.widgets.Button#ButtonId=16"/>
       </shell>
       <command type="focus" contextId="view/org.eclipse.jdt.ui.PackageExplorer" widgetId="org.eclipse.swt.widgets.Tree#1"/>
