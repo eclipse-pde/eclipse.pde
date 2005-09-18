@@ -178,12 +178,14 @@ public class LaunchArgumentsHelper {
 		
 		ArrayList entries = new ArrayList();
 		entries.add(jarPath);
-		StringTokenizer tok = new StringTokenizer(configuration.getAttribute(IPDELauncherConstants.BOOTSTRAP_ENTRIES, ""), ","); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		String bootstrap = configuration.getAttribute(IPDELauncherConstants.BOOTSTRAP_ENTRIES, ""); //$NON-NLS-1$
+		StringTokenizer tok = new StringTokenizer(getSubstitutedString(bootstrap), ","); //$NON-NLS-1$
 		while (tok.hasMoreTokens())
 			entries.add(tok.nextToken().trim());
 		return (String[])entries.toArray(new String[entries.size()]);
 	}
-	
+		
 	private static String getStartupJarPath() throws CoreException {
 		IPlugin plugin = PDECore.getDefault().findPlugin("org.eclipse.platform"); //$NON-NLS-1$
 		if (plugin != null && plugin.getModel().getUnderlyingResource() != null) {
