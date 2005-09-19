@@ -28,6 +28,15 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
+
+/**
+ * A launch configuration tab that displays and edits the main launching arguments
+ * of an Eclipse application.
+ * <p>
+ * This class may be instantiated. This class is not intended to be subclassed by clients.
+ * </p>
+ * @since 3.2
+ */
 public class MainTab extends AbstractLauncherTab implements IPDELauncherConstants {
 	
 	private WorkspaceDataBlock fDataBlock;
@@ -43,11 +52,19 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 		fImage = PDEPluginImages.DESC_MAIN_TAB.createImage();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
+	 */
 	public void dispose() {
 		super.dispose();
 		fImage.dispose();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
+	 */
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -64,6 +81,10 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.LAUNCHER_BASIC);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
 			fDataBlock.initializeFrom(config);
@@ -75,31 +96,55 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		fDataBlock.setDefaults(config);
 		fProgramBlock.setDefaults(config);
 		fJreBlock.setDefaults(config);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		fDataBlock.performApply(config);
 		fProgramBlock.performApply(config);
 		fJreBlock.performApply(config);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
+	 */
 	public String getName() {
 		return PDEUIMessages.MainTab_name;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
+	 */
 	public Image getImage() {
 		return fImage;
 	}
 	
+	/**
+	 * Creates the Program To Run group on the tab
+	 *
+	 */
 	protected void createProgramBlock() {
 		fProgramBlock = new ProgramBlock(this);		
 	}
 
-	public void validatePage() {
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validateTab()
+	 */
+	public void validateTab() {
 		setErrorMessage(fDataBlock.validate());
 	}
 	

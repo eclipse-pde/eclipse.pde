@@ -26,6 +26,14 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
+/**
+ * A launch configuration tab that displays and edits the configuration area
+ * location and template for a PDE launch configuration.
+ * <p>
+ * This class may be instantiated. This class is not intended to be subclassed by clients.
+ * </p>
+ * @since 3.2
+ */
 public class ConfigurationTab extends AbstractLauncherTab implements IPDELauncherConstants {
 	
 	private ConfigurationAreaBlock fConfigurationArea;
@@ -33,16 +41,27 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	private Image fImage;
 	private boolean fJUnitConfig;
 	
+	/**
+	 * Constructor.  Equivalent to ConfigurationTab(false).
+	 * 
+	 * @see #ConfigurationTab(boolean)
+	 */
 	public ConfigurationTab() {
 		this(false);
 	}
 	
+	/**
+	 * Constructor
+	 * 
+	 * @param isJUnitConfig  a flag to indicate if the tab is to be used with a Plug-in JUnit launch configuration.
+	 */
 	public ConfigurationTab(boolean isJUnitConfig) {
 		fImage = PDEPluginImages.DESC_PLUGIN_CONFIG_OBJ.createImage();
 		fConfigurationArea = new ConfigurationAreaBlock(this);
 		fTemplateArea = new ConfigurationTemplateBlock(this);
 		fJUnitConfig = isJUnitConfig;
 	}
+	
 	/*
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -62,13 +81,14 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.LAUNCHER_CONFIGURATION);
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		fConfigurationArea.setDefaults(configuration, fJUnitConfig);
 		fTemplateArea.setDefaults(configuration);
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -87,6 +107,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 		fConfigurationArea.performApply(configuration);
 		fTemplateArea.performApply(configuration);
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
@@ -109,7 +130,13 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 			fImage.dispose();
 	}
 
-	public void validatePage() {
+	/**
+	 * Validates the page and flags an error if the configuration area
+	 * location or the configuration template location does not exist.
+	 * 
+	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validatePage()
+	 */
+	public void validateTab() {
 		String error = fConfigurationArea.validate();
 		if (error == null)
 			error = fTemplateArea.validate();

@@ -44,6 +44,13 @@ import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
 import org.eclipse.pde.internal.ui.launcher.LaunchVMHelper;
 import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
 
+/**
+ * A launch delegate for launching Eclipse applications
+ * <p>
+ * Clients may subclass and instantiate this class.
+ * </p>
+ * @since 3.2
+ */
 public class EclipseApplicationLaunchConfiguration extends LaunchConfigurationDelegate {
 	private File fConfigDir = null;
 	
@@ -107,15 +114,47 @@ public class EclipseApplicationLaunchConfiguration extends LaunchConfigurationDe
 		}
 	}
 	
+	/**
+	 * Returns the VM runner for the given launch mode to use when launching the
+	 * given configuration.
+	 *  
+	 * @param configuration launch configuration
+	 * @param mode launch node
+	 * @return VM runner to use when launching the given configuration in the given mode
+	 * @throws CoreException if a VM runner cannot be determined
+	 */
 	public IVMRunner getVMRunner(ILaunchConfiguration configuration, String mode) throws CoreException {
 		IVMInstall launcher = LaunchVMHelper.createLauncher(configuration);
 		return launcher.getVMRunner(mode);
 	}
 	
+	/**
+	 * Assigns a default source locator to the given launch if a source locator
+	 * has not yet been assigned to it, and the associated launch configuration
+	 * does not specify a source locator.
+	 * 
+	 * @param launch
+	 *            launch object
+	 * @param configuration
+	 *            configuration being launched
+	 * @exception CoreException
+	 *                if unable to set the source locator
+	 */
 	protected void setDefaultSourceLocator(ILaunchConfiguration configuration) throws CoreException {
 		LauncherUtils.setDefaultSourceLocator(configuration);		
 	}
 	
+	/**
+	 * Returns the entries that should appear on boot classpath.
+	 * 
+	 * @param configuration
+	 *            launch configuration
+	 * @return the location of startup.jar and 
+	 * 		the bootstrap classpath specified by the given launch configuration
+	 *        
+	 * @exception CoreException
+	 *                if unable to find startup.jar
+	 */
 	public String[] getClasspath(ILaunchConfiguration configuration) throws CoreException {
 		String[] classpath = LaunchArgumentsHelper.constructClasspath(configuration);
 		if (classpath == null) {
@@ -125,22 +164,81 @@ public class EclipseApplicationLaunchConfiguration extends LaunchConfigurationDe
 		return classpath;
 	}
 	
+	/** 
+	 * Returns an array of environment variables to be used when
+	 * launching the given configuration or <code>null</code> if unspecified.
+	 * 
+	 * @param configuration launch configuration
+	 * @throws CoreException if unable to access associated attribute or if
+	 * unable to resolve a variable in an environment variable's value
+	 */	
 	public String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException {
 		return DebugPlugin.getDefault().getLaunchManager().getEnvironment(configuration);
 	}
 	
+	/**
+	 * Returns the working directory path specified by the given launch
+	 * configuration, or <code>null</code> if none.
+	 * 
+	 * @param configuration
+	 *            launch configuration
+	 * @return the working directory path specified by the given launch
+	 *         configuration, or <code>null</code> if none
+	 * @exception CoreException
+	 *                if unable to retrieve the attribute
+	 */
 	public File getWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
 		return LaunchArgumentsHelper.getWorkingDirectory(configuration);
 	}
 	
+	/**
+	 * Returns the Map of VM-specific attributes specified by the given launch
+	 * configuration, or <code>null</code> if none.
+	 * 
+	 * @param configuration
+	 *            launch configuration
+	 * @return the <code>Map</code> of VM-specific attributes
+	 * @exception CoreException
+	 *                if unable to retrieve the attribute
+	 */
 	public Map getVMSpecificAttributesMap(ILaunchConfiguration configuration) throws CoreException {
 		return LaunchArgumentsHelper.getVMSpecificAttributesMap(configuration);
 	}
 	
+	/**
+	 * Returns the VM arguments specified by the given launch configuration, as
+	 * an array of strings. 
+	 * 
+	 * @param configuration
+	 *            launch configuration
+	 * @return the VM arguments specified by the given launch configuration,
+	 *         possibly an empty array
+	 * @exception CoreException
+	 *                if unable to retrieve the attribute
+	 */
 	public String[] getVMArguments(ILaunchConfiguration configuration) throws CoreException {
 		return LaunchArgumentsHelper.getUserVMArgumentArray(configuration);
 	}
 
+	/**
+	 * Returns the program arguments to launch the Eclipse application with.
+	 * This list is a combination of arguments computed by PDE based on attributes
+	 * specified in the given launch configuration, followed by the program arguments
+	 * that the entered directly into the launch configuration.
+	 * 
+	 * This computation may require user interaction (i.e an answer to a question), etc.
+	 * If the answer is to not proceed, then this method returns null.
+	 * 
+	 * @param configuration
+	 *            launch configuration
+	 * @return the program arguments necessar for launching
+	 * 				 or <code>null</null>
+	 * @exception CoreException
+	 *                if unable to retrieve the attribute or if self-hosting could not
+	 *                proceed due to a bad setup, missing plug-ins, inability to create the
+	 *                necessary configuration files.
+	 *              
+	 */
 	public String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		ArrayList programArgs = new ArrayList();
 		

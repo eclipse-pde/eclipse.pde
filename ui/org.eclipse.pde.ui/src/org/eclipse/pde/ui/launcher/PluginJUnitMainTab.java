@@ -12,8 +12,19 @@ package org.eclipse.pde.ui.launcher;
 
 import org.eclipse.pde.internal.ui.launcher.JUnitProgramBlock;
 
+/**
+ * A launch configuration tab that displays and edits the main launching arguments
+ * of a Plug-in JUnit test.
+ * <p>
+ * This class may be instantiated. This class is not intended to be subclassed by clients.
+ * </p>
+ * @since 3.2
+ */
 public class PluginJUnitMainTab extends MainTab {
 
+	/**
+	 * Overrides the implementation of the basis MainTab.
+	 */
 	protected void createProgramBlock() {
 		fProgramBlock = new JUnitProgramBlock(this);
 	}

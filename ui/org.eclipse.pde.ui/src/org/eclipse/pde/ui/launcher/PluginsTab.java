@@ -29,6 +29,14 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
+/**
+ * A launch configuration tab that displays the different self-hosting modes,
+ * and lets the user customize the list of plug-ins to launch with.
+ * <p>
+ * This class may be instantiated. This class is not intended to be subclassed by clients.
+ * </p>
+ * @since 3.2
+ */
 public class PluginsTab extends AbstractLauncherTab {
 
 	private Button fUseDefaultRadio;
@@ -46,22 +54,42 @@ public class PluginsTab extends AbstractLauncherTab {
 		}
 	}
 
+	/**
+	 * Constructor. Equivalent to PluginsTab(true).
+	 * 
+	 * @see #PluginsTab(boolean)
+	 *
+	 */
 	public PluginsTab() {
 		this(true);
 	}
 
+	/**
+	 * Constructor
+	 * 
+	 * @param showFeatures  a flag indicating if the tab should present the feature-based 
+	 * self-hosting option.
+	 */
 	public PluginsTab(boolean showFeatures) {
 		fShowFeatures = showFeatures;
 		fImage = PDEPluginImages.DESC_REQ_PLUGINS_OBJ.createImage();
 		fPluginBlock = new PluginBlock(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
+	 */
 	public void dispose() {
 		fPluginBlock.dispose();
 		fImage.dispose();
 		super.dispose();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
+	 */
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
@@ -88,44 +116,59 @@ public class PluginsTab extends AbstractLauncherTab {
 	}
 	
 	/*
-	 * (non-Javadoc)
-	 * 
+	 * (non-Javadoc) 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public void initializeFrom(ILaunchConfiguration config) {
+	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			fUseDefaultRadio.setSelection(config.getAttribute(IPDELauncherConstants.USE_DEFAULT, true));
+			fUseDefaultRadio.setSelection(configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true));
 			if (fShowFeatures) {
-				fUseFeaturesRadio.setSelection(config.getAttribute(IPDELauncherConstants.USEFEATURES, false));
+				fUseFeaturesRadio.setSelection(configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false));
 				fUseListRadio.setSelection(!fUseDefaultRadio.getSelection()
 											&& !fUseFeaturesRadio.getSelection());
 			} else {
 				fUseListRadio.setSelection(!fUseDefaultRadio.getSelection());
 			}
-			fPluginBlock.initializeFrom(config, fUseDefaultRadio.getSelection());
+			fPluginBlock.initializeFrom(configuration, fUseDefaultRadio.getSelection());
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
 		}
 	}
 
-	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
+		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 		if (fShowFeatures)
-			config.setAttribute(IPDELauncherConstants.USEFEATURES, false);
-		fPluginBlock.setDefaults(config);
+			configuration.setAttribute(IPDELauncherConstants.USEFEATURES, false);
+		fPluginBlock.setDefaults(configuration);
 	}
 	
-	public void performApply(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(IPDELauncherConstants.USE_DEFAULT, fUseDefaultRadio.getSelection());
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, fUseDefaultRadio.getSelection());
 		if (fShowFeatures)
-			config.setAttribute(IPDELauncherConstants.USEFEATURES, fUseFeaturesRadio.getSelection());
-		fPluginBlock.performApply(config);
+			configuration.setAttribute(IPDELauncherConstants.USEFEATURES, fUseFeaturesRadio.getSelection());
+		fPluginBlock.performApply(configuration);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
+	 */
 	public String getName() {
 		return PDEUIMessages.AdvancedLauncherTab_name; 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
+	 */
 	public Image getImage() {
 		return fImage;
 	}
@@ -133,11 +176,17 @@ public class PluginsTab extends AbstractLauncherTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
-	public void activated(ILaunchConfigurationWorkingCopy config) {
-		fPluginBlock.activated(config, !fShowFeatures);
+	public void activated(ILaunchConfigurationWorkingCopy configuration) {
+		fPluginBlock.activated(configuration, !fShowFeatures);
 	}
 
-	public void validatePage() {
+	/**
+	 * Validates the tab.  If the feature option is chosen, and the workspace is not correctly set up,
+	 * the error message is set.
+	 * 
+	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validateTab()
+	 */
+	public void validateTab() {
 		String errorMessage = null;
 		if (fShowFeatures && fUseFeaturesRadio.getSelection()) {
 			IPath workspacePath = PDEPlugin.getWorkspace().getRoot().getLocation();
