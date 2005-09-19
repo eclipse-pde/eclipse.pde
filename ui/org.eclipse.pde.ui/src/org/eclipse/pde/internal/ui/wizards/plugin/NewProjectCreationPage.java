@@ -137,7 +137,10 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fTargetLabel.setLayoutData(gd);
 		
 		fTargetCombo = new Combo(group, SWT.READ_ONLY|SWT.SINGLE);
-		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET31, ICoreConstants.TARGET30, ICoreConstants.TARGET21});
+		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET32,
+											ICoreConstants.TARGET31, 
+											ICoreConstants.TARGET30, 
+											ICoreConstants.TARGET21});
 		fTargetCombo.setText(PDECore.getDefault().getTargetVersion());
 		
 	    fOSGIButton = createButton(group, SWT.RADIO);

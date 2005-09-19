@@ -32,6 +32,7 @@ public interface ICoreConstants {
 	public final static String TARGET21 = "2.1"; //$NON-NLS-1$
 	public final static String TARGET30 = "3.0"; //$NON-NLS-1$
 	public final static String TARGET31 = "3.1"; //$NON-NLS-1$
+	public final static String TARGET32 = "3.2"; //$NON-NLS-1$
 	
 	public final static String EQUINOX = "Equinox"; //$NON-NLS-1$
 
@@ -49,6 +50,8 @@ public interface ICoreConstants {
 	public final static String PACKAGE_SPECIFICATION_VERSION = "specification-version"; //$NON-NLS-1$
 	public final static String EXTENSIBLE_API = "Eclipse-ExtensibleAPI"; //$NON-NLS-1$
 	public final static String PLUGIN_CLASS = "Plugin-Class"; //$NON-NLS-1$
+	public final static String ECLIPSE_AUTOSTART = "Eclipse-AutoStart"; //$NON-NLS-1$
+	public final static String ECLIPSE_LAZYSTART = "Eclipse-LazyStart"; //$NON-NLS-1$
 
 	public static final String INTERNAL_DIRECTIVE = "x-internal"; //$NON-NLS-1$
 	public static final String FRIENDS_DIRECTIVE = "x-friends"; //$NON-NLS-1$
