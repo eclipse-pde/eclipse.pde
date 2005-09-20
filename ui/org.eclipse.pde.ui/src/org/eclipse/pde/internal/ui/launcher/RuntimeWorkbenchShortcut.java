@@ -222,7 +222,7 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 			ILaunchConfigurationType configType = getWorkbenchLaunchConfigType();
 			String computedName = getComputedName(configType.getName());
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);  
-			wc.setAttribute(IPDELauncherConstants.LOCATION, getDefaultWorkspaceLocation(computedName)); //$NON-NLS-1$
+			wc.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(computedName)); //$NON-NLS-1$
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
 			wc.setAttribute(IPDELauncherConstants.USEFEATURES, false);
@@ -318,10 +318,6 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 	 */
 	protected Shell getShell() {
 		return PDEPlugin.getActiveWorkbenchShell();
-	}
-	
-	public static String getDefaultWorkspaceLocation(String uniqueName) {
-		return LauncherUtils.getDefaultPath().append("runtime-" + uniqueName.replaceAll("\\s", "")).toPortableString();		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	public static void addPluginAndDependencies(IPluginModelBase model, TreeMap map) {

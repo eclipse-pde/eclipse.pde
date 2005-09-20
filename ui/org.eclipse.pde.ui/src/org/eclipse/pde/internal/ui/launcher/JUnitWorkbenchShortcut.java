@@ -39,8 +39,9 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 		ILaunchConfiguration config = null;
 		try {
 			ILaunchConfigurationType configType= getJUnitLaunchConfigType();
-			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name));
-			wc.setAttribute(IPDELauncherConstants.LOCATION, getDefaultWorkspaceLocation()); //$NON-NLS-1$
+			String computedName = DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
+			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);
+			wc.setAttribute(IPDELauncherConstants.LOCATION, getDefaultWorkspaceLocation(wc)); //$NON-NLS-1$
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$
 			wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
@@ -73,8 +74,8 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 		return config;
 	}
 	
-	protected String getDefaultWorkspaceLocation() {
-		return LauncherUtils.getDefaultPath().append("junit-workbench-workspace").toPortableString();				 //$NON-NLS-1$
+	protected String getDefaultWorkspaceLocation(ILaunchConfiguration configuration) {
+		return LaunchArgumentsHelper.getDefaultWorkspaceLocation(configuration.getName());
 	}
 	
 }

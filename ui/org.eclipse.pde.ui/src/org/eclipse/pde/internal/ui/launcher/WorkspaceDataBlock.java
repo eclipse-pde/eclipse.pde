@@ -80,14 +80,15 @@ public class WorkspaceDataBlock extends BaseBlock {
 	
 	public void initializeFrom(ILaunchConfiguration configuration) throws CoreException {
 		fLocationText.setText(configuration.getAttribute(IPDELauncherConstants.LOCATION, 
-														LauncherUtils.getDefaultWorkspace()));
+														LaunchArgumentsHelper.getDefaultWorkspaceLocation(configuration.getName())));
 		fClearWorkspaceCheck.setSelection(configuration.getAttribute(IPDELauncherConstants.DOCLEAR, false));
 		fAskClearCheck.setSelection(configuration.getAttribute(IPDELauncherConstants.ASKCLEAR, true));
 		fAskClearCheck.setEnabled(fClearWorkspaceCheck.getSelection());
 	}
 	
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {		
-		configuration.setAttribute(IPDELauncherConstants.LOCATION, LauncherUtils.getDefaultWorkspace()); //$NON-NLS-1$
+		configuration.setAttribute(IPDELauncherConstants.LOCATION, 
+				LaunchArgumentsHelper.getDefaultWorkspaceLocation(configuration.getName())); 
 		configuration.setAttribute(IPDELauncherConstants.DOCLEAR, false);
 		configuration.setAttribute(IPDELauncherConstants.ASKCLEAR, true);
 	}

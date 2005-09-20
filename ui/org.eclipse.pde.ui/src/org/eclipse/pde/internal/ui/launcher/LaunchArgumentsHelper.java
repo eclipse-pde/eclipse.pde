@@ -223,5 +223,8 @@ public class LaunchArgumentsHelper {
 		return mgr.performStringSubstitution(text);
 	}
 	
+	public static String getDefaultWorkspaceLocation(String uniqueName) {
+		return LauncherUtils.getDefaultPath().append("runtime-" + uniqueName.replaceAll("\\s", "")).toPortableString();		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 
 }

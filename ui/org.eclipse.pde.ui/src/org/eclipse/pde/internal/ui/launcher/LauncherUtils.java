@@ -29,10 +29,6 @@ import org.eclipse.swt.widgets.Display;
 
 public class LauncherUtils {
 	
-	public static String getDefaultWorkspace() {
-		return getDefaultPath().append("runtime-workspace").toPortableString(); //$NON-NLS-1$
-	}
-	
 	public static IPath getDefaultPath() {
 		return new Path("${system_property:user.home}"); //$NON-NLS-1$
 	}

@@ -216,7 +216,7 @@ public class LaunchAction extends Action {
 		ILaunchConfigurationType configType = getWorkbenchLaunchConfigType();
 		String computedName = getComputedName(new Path(fPath).lastSegment());
 		ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);  
-		wc.setAttribute(IPDELauncherConstants.LOCATION, RuntimeWorkbenchShortcut.getDefaultWorkspaceLocation(computedName)); //$NON-NLS-1$
+		wc.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(computedName)); //$NON-NLS-1$
 		wc.setAttribute(IPDELauncherConstants.USEFEATURES, false);
 		wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, false);
 		wc.setAttribute(IPDELauncherConstants.DOCLEAR, false);
