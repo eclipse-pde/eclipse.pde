@@ -140,7 +140,7 @@ public class BooleanSelectionCommand extends MacroCommand {
 		widget.notifyListeners(e.type, e);
 	}
 
-	private Event createMouseEvent(Widget widget, int type) {
+	protected Event createMouseEvent(Widget widget, int type) {
 		Event e = new Event();
 		e.type = type;
 		e.button = 1;

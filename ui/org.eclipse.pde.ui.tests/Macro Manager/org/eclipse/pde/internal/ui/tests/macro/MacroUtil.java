@@ -330,7 +330,7 @@ public class MacroUtil {
 		return getDisplayName(parentItem);
 	}
 
-	private String getContribId(MenuItem menuItem) {
+	protected String getContribId(MenuItem menuItem) {
 		Object data = menuItem.getData();
 		if (data != null && (data instanceof IContributionItem)) {
 			String result = ((IContributionItem) data).getId();

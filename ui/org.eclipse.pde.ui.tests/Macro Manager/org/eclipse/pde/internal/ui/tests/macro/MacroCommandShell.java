@@ -379,7 +379,7 @@ public class MacroCommandShell extends MacroInstruction {
 		return null;
 	}
 
-	private MacroCommand findKeyBinding(WidgetIdentifier wid, Event e) {
+	protected MacroCommand findKeyBinding(WidgetIdentifier wid, Event e) {
 		System.out.println("mask=" + e.stateMask + ", char=" + e.character);
 		java.util.List keyStrokes = MacroUtil.generatePossibleKeyStrokes(e);
 		if (keyStrokes.size() == 0)

@@ -21,7 +21,6 @@ public class StructuredSelectionCommand extends AbstractStructuredCommand {
 	private String type;
 	public static final String DEFAULT_SELECT="default-select";
 	public static final String ITEM_SELECT="item-select";
-	private ArrayList items;
 	
 	public StructuredSelectionCommand(WidgetIdentifier wid, String type) {
 		super(wid);
