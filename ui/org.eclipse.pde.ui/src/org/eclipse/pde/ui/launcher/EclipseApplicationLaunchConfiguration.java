@@ -133,8 +133,6 @@ public class EclipseApplicationLaunchConfiguration extends LaunchConfigurationDe
 	 * has not yet been assigned to it, and the associated launch configuration
 	 * does not specify a source locator.
 	 * 
-	 * @param launch
-	 *            launch object
 	 * @param configuration
 	 *            configuration being launched
 	 * @exception CoreException

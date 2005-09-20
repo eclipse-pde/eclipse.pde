@@ -134,7 +134,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	 * Validates the page and flags an error if the configuration area
 	 * location or the configuration template location does not exist.
 	 * 
-	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validatePage()
+	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validateTab()
 	 */
 	public void validateTab() {
 		String error = fConfigurationArea.validate();
