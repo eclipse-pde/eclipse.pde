@@ -86,7 +86,7 @@ public class LaunchArgumentsHelper {
 				wc.doSave();			
 			}
 		}
-		return args;
+		return args == null ? "" : args;
 	}
 	
 	public static String[] getUserVMArgumentArray(ILaunchConfiguration configuration) throws CoreException {
@@ -113,7 +113,7 @@ public class LaunchArgumentsHelper {
 				wc.doSave();			
 			}
 		}
-		return args;
+		return args == null ? "" : args;
 	}
 	
 	public static File getWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
