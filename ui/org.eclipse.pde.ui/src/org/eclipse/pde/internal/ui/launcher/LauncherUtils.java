@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Display;
 public class LauncherUtils {
 	
 	public static IPath getDefaultPath() {
-		String userHome = System.getProperty("user.home");
+		String userHome = System.getProperty("user.home"); //$NON-NLS-1$
 		if (userHome != null && userHome.length() > 0)
 			return new Path("${system_property:user.home}"); //$NON-NLS-1$
 		return PDEPlugin.getWorkspace().getRoot().getLocation().removeLastSegments(1);
