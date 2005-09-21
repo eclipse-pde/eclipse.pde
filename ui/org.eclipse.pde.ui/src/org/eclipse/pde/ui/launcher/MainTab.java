@@ -39,9 +39,9 @@ import org.eclipse.ui.PlatformUI;
  */
 public class MainTab extends AbstractLauncherTab implements IPDELauncherConstants {
 	
-	private WorkspaceDataBlock fDataBlock;
+	protected WorkspaceDataBlock fDataBlock;
 	protected ProgramBlock fProgramBlock;
-	private JREBlock fJreBlock;
+	protected JREBlock fJreBlock;
 	
 	private Image fImage;
 
@@ -87,7 +87,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	 */
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
-			fDataBlock.initializeFrom(config);
+			fDataBlock.initializeFrom(config, false);
 			fProgramBlock.initializeFrom(config);
 			fJreBlock.initializeFrom(config);
 		} catch (CoreException e) {
@@ -101,7 +101,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-		fDataBlock.setDefaults(config);
+		fDataBlock.setDefaults(config, false);
 		fProgramBlock.setDefaults(config);
 		fJreBlock.setDefaults(config);
 	}

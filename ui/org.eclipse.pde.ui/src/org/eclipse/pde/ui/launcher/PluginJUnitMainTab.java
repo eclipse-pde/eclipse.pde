@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.launcher.JUnitProgramBlock;
 
 /**
@@ -28,4 +32,31 @@ public class PluginJUnitMainTab extends MainTab {
 	protected void createProgramBlock() {
 		fProgramBlock = new JUnitProgramBlock(this);
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void initializeFrom(ILaunchConfiguration config) {
+		try {
+			fDataBlock.initializeFrom(config, true);
+			fProgramBlock.initializeFrom(config);
+			fJreBlock.initializeFrom(config);
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		} finally {
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+		fDataBlock.setDefaults(config, true);
+		fProgramBlock.setDefaults(config);
+		fJreBlock.setDefaults(config);
+	}
+	
+
 }
