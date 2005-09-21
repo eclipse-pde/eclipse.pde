@@ -224,7 +224,7 @@ public class LaunchArgumentsHelper {
 	}
 	
 	public static String getDefaultWorkspaceLocation(String uniqueName) {
-		return LauncherUtils.getDefaultPath().append("runtime-" + uniqueName.replaceAll("\\s", "")).toPortableString();		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return LauncherUtils.getDefaultPath().append("runtime-" + uniqueName.replaceAll("\\s", "")).toString();		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 }
