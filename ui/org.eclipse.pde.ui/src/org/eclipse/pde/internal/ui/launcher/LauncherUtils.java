@@ -23,6 +23,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.widgets.Display;
@@ -30,7 +31,10 @@ import org.eclipse.swt.widgets.Display;
 public class LauncherUtils {
 	
 	public static IPath getDefaultPath() {
-		return new Path("${system_property:user.home}"); //$NON-NLS-1$
+		String userHome = System.getProperty("user.home");
+		if (userHome != null)
+			return new Path("${system_property:user.home}"); //$NON-NLS-1$
+		return PDEPlugin.getWorkspace().getRoot().getLocation().removeLastSegments(1);
 	}
 	
 	public static Display getDisplay() {
