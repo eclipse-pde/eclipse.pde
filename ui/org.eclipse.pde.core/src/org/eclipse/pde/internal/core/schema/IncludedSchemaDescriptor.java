@@ -35,7 +35,7 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 		if (schemaLocation.startsWith("schema://")) { //$NON-NLS-1$
 			// extract plug-in ID
 			IPath path = new Path( schemaLocation.substring(9));
-			return getPluginRelativePath(path.segment(0), path.removeFirstSegments(1));
+			return getPluginRelativePath(path.segment(0), path.removeFirstSegments(1), parentDesc.getSchemaURL());
 		}
 		// parent-relative location
 		URL parentURL = parentDesc.getSchemaURL();
@@ -44,7 +44,7 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 		return new URL(parentURL.getProtocol(), parentURL.getHost(), path.toString());	
 	}
 	
-	private static URL getPluginRelativePath(String pluginID, IPath path) {
+	private static URL getPluginRelativePath(String pluginID, IPath path, URL parentURL) {
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginID);
 		if (model == null)
 			return null;
@@ -58,8 +58,8 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 		try {
 			if (file != null && file.exists() && file.isFile()) {
 				url = file.toURL();
-			} else {
-				file = new File("../" + pluginID, path.toString()); //$NON-NLS-1$
+			} else if (parentURL != null){
+				file = new File(parentURL.getFile(), "../../../" + pluginID + "/" + path.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 				if (file.exists() && file.isFile())
 					url = file.toURL();
 			}
