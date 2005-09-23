@@ -65,7 +65,6 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 			}
 		} catch (MalformedURLException e) {
 		}
-		System.out.println("URL is: " + url);
 		return url;
 	}
 
