@@ -234,5 +234,46 @@ public interface IPDELauncherConstants {
 	 * is associated.
 	 */					
 	String PRODUCT_FILE = "productFile"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key.  The value is a boolean specifying
+	 * if the default Auto-Start for an Equinox Framework launch configuration 
+	 * is <code>true</code> or <code>false</code>
+	 * 
+	 * @see IPDELauncherConstants#DEFAULT_START_LEVEL
+	 */
+	String DEFAULT_AUTO_START = "default_auto_start"; //$NON-NLS-1$
+	
+	/**
+	 * Launch configuration attribute key.  The value is an integer specifying
+	 * the default start level for bundles in an Equinox Framework launch configuration.
+	 * 
+	 * @see IPDELauncherConstants#DEFAULT_AUTO_START
+	 */
+	String DEFAULT_START_LEVEL = "default_start_level"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key.  The value is a comma-separated list
+	 * of workspace bundles to launch with the Equinox framework.
+	 * 
+	 * Each token in the list is of the format:
+	 * <plugin-id>@<start-level>:<auto-start>
+	 * 
+	 * @see IPDELauncherConstants#DEFAULT_AUTO_START
+	 * @see IPDELauncherConstants#DEFAULT_START_LEVEL
+	 */
+	String WORKSPACE_BUNDLES = "workspace_bundles"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key.  The value is a comma-separated list
+	 * of non-workspace bundles to launch with the Equinox framework.
+	 * 
+	 * Each token in the list is of the format:
+	 * <plugin-id>@<start-level>:<auto-start>
+	 * 
+	 * @see IPDELauncherConstants#DEFAULT_AUTO_START
+	 * @see IPDELauncherConstants#DEFAULT_START_LEVEL
+	 */
+	String TARGET_BUNDLES = "target_bundles"; //$NON-NLS-1$
 			
 }

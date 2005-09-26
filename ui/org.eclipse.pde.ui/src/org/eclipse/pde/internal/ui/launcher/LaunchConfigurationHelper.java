@@ -248,10 +248,10 @@ public class LaunchConfigurationHelper {
 		}
 	}
 	
-	private static void save(File file, Properties properties) {
+	public static void save(File file, Properties properties) {
 		try {
 			FileOutputStream stream = new FileOutputStream(file);
-			properties.store(stream, "Eclipse Runtime Configuration File"); //$NON-NLS-1$
+			properties.store(stream, "Configuration File"); //$NON-NLS-1$
 			stream.flush();
 			stream.close();
 		} catch (IOException e) {

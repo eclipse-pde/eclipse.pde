@@ -172,7 +172,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		ArrayList programArgs = new ArrayList();
 		
 		// Get the list of plug-ins to run
-		TreeMap pluginMap = LaunchPluginValidator.getPluginsToRun(configuration);
+		Map pluginMap = LaunchPluginValidator.getPluginsToRun(configuration);
 		if (pluginMap == null)
 			return null;		
 		addRequiredPlugins(pluginMap);
@@ -303,7 +303,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		return (String[]) programArgs.toArray(new String[programArgs.size()]);
 	}
 	
-	protected IPluginModelBase[] addRequiredPlugins(TreeMap pluginMap)
+	protected IPluginModelBase[] addRequiredPlugins(Map pluginMap)
 		throws CoreException {
 		if (!pluginMap.containsKey("org.eclipse.pde.junit.runtime")) { //$NON-NLS-1$
 			pluginMap.put(
@@ -389,7 +389,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		return LauncherUtils.getDefaultPath().append("junit-core-workspace").toPortableString();				 //$NON-NLS-1$
 	}
 	
-	protected String getApplicationName(TreeMap pluginMap, ILaunchConfiguration configuration) {
+	protected String getApplicationName(Map pluginMap, ILaunchConfiguration configuration) {
 		try {
 			String application = configuration.getAttribute(APPLICATION, (String)null);
 			if (CORE_APPLICATION.equals(application)) {

@@ -29,8 +29,17 @@ public class PluginBlock extends AbstractPluginBlock {
 	}
 	
 	public void initializeFrom(ILaunchConfiguration config, boolean defaultSelection) throws CoreException {
+		super.initializeFrom(config);
 		initializeProductFrom(config, defaultSelection);
-		super.initializeFrom(config, defaultSelection);
+		if (defaultSelection) {
+			handleRestoreDefaults();
+		} else {
+			initWorkspacePluginsState(config);
+			initExternalPluginsState(config);
+		}
+		enableViewer(!defaultSelection);
+		updateCounter();
+		fTab.updateLaunchConfigurationDialog();
 	}
 
 	public void activated(ILaunchConfigurationWorkingCopy config, boolean isJUnit) {

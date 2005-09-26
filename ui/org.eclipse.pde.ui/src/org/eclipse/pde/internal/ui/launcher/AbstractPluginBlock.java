@@ -28,6 +28,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
@@ -64,7 +65,7 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
 public abstract class AbstractPluginBlock {
 
-	private AbstractLauncherTab fTab;
+	protected AbstractLauncherTab fTab;
 	
 	protected CheckboxTreeViewer fPluginTreeViewer;
 	protected NamedElement fWorkspacePlugins;
@@ -99,7 +100,7 @@ public abstract class AbstractPluginBlock {
 			} else if (source == fAddRequiredButton) {
 				computeSubset();
 			} else if (source == fDefaultsButton) {
-				computeInitialCheckState();
+				handleRestoreDefaults();
 			}
 			fTab.updateLaunchConfigurationDialog();
 		}
@@ -135,7 +136,7 @@ public abstract class AbstractPluginBlock {
 		fWorkspaceModels = PDECore.getDefault().getModelManager().getWorkspaceModels();
 	}
 	
-	private void updateCounter() {
+	protected void updateCounter() {
 		if (fCounter != null) {
 			int checked = fNumExternalChecked + fNumWorkspaceChecked;
 			int total = fWorkspaceModels.length + fExternalModels.length;
@@ -176,18 +177,20 @@ public abstract class AbstractPluginBlock {
 		SWTUtil.setButtonDimensionHint(button);
 	}
 	
-	private void createPluginViewer(Composite composite) {
-		fPluginTreeViewer = new CheckboxTreeViewer(composite, SWT.BORDER);
+	protected ILabelProvider getLabelProvider() {
+		return PDEPlugin.getDefault().getLabelProvider();
+	}
+	
+	protected void createPluginViewer(Composite composite) {
+		fPluginTreeViewer = new CheckboxTreeViewer(composite, SWT.BORDER|SWT.VIRTUAL| SWT.FULL_SELECTION);
 		fPluginTreeViewer.setContentProvider(new PluginContentProvider());
-		fPluginTreeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		fPluginTreeViewer.setLabelProvider(getLabelProvider());
 		fPluginTreeViewer.setAutoExpandLevel(2);
 		fPluginTreeViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(final CheckStateChangedEvent event) {
 				Object element = event.getElement();
 				if (element instanceof IPluginModelBase) {
-					handleCheckStateChanged(
-						(IPluginModelBase) element,
-						event.getChecked());
+					handleCheckStateChanged(event);
 				} else {
 					handleGroupStateChanged(element, event.getChecked());
 				}
@@ -231,11 +234,9 @@ public abstract class AbstractPluginBlock {
 		fAddRequiredButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_subset); 
 		fDefaultsButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_defaults); 
 		
-		Label label = new Label(composite, SWT.NONE);
-		label.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-		
 		fCounter = new Label(composite, SWT.NONE);
-		fCounter.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
+		fCounter.setLayoutData(new GridData(GridData.FILL_BOTH|GridData.VERTICAL_ALIGN_END));
+		updateCounter();
 	}
 	
 	private Button createButton(Composite composite, String text) {
@@ -247,15 +248,16 @@ public abstract class AbstractPluginBlock {
 		return button;
 	}
 	
-	private void handleCheckStateChanged(IPluginModelBase model, boolean checked) {
+	protected void handleCheckStateChanged(CheckStateChangedEvent event) {
+		IPluginModelBase model = (IPluginModelBase)event.getElement();
 		if (model.getUnderlyingResource() == null) {
-			if (checked) {
+			if (event.getChecked()) {
 				fNumExternalChecked += 1;
 			} else {
 				fNumExternalChecked -= 1;
 			}
 		} else {
-			if (checked) {
+			if (event.getChecked()) {
 				fNumWorkspaceChecked += 1;
 			} else {
 				fNumWorkspaceChecked -= 1;
@@ -328,7 +330,7 @@ public abstract class AbstractPluginBlock {
 				if (entry != null) {
 					IPluginModelBase model = entry.getActiveModel();
 					if (!fPluginTreeViewer.getChecked(model)) {
-						fPluginTreeViewer.setChecked(model, true);
+						setChecked(model, true);
 						if (model.getUnderlyingResource() == null)
 							fNumExternalChecked += 1;
 						else
@@ -338,6 +340,10 @@ public abstract class AbstractPluginBlock {
 			}
 			adjustGroupState();
 		}
+	}
+	
+	protected void setChecked(IPluginModelBase model, boolean checked) {
+		fPluginTreeViewer.setChecked(model, checked);
 	}
 	
 	private String[] getPluginIDs(IWorkingSet[] workingSets) {
@@ -362,7 +368,7 @@ public abstract class AbstractPluginBlock {
 		return (String[])set.toArray(new String[set.size()]);
 	}
 	
-	public void initializeFrom(ILaunchConfiguration config, boolean defaultSelection) throws CoreException {
+	public void initializeFrom(ILaunchConfiguration config) throws CoreException {
 		fIncludeOptionalButton.setSelection(config.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true));
 		fAddWorkspaceButton.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true));
 
@@ -371,16 +377,6 @@ public abstract class AbstractPluginBlock {
 			fPluginTreeViewer.setInput(PDEPlugin.getDefault());
 			fPluginTreeViewer.reveal(fWorkspacePlugins);
 		}
-
-		if (defaultSelection) {
-			computeInitialCheckState();
-		} else {
-			initWorkspacePluginsState(config);
-			initExternalPluginsState(config);
-		}
-		enableViewer(!defaultSelection);
-		updateCounter();
-		fTab.updateLaunchConfigurationDialog();
 	}
 	
 	private void computeSubset() {
@@ -398,7 +394,7 @@ public abstract class AbstractPluginBlock {
 
 		checked = map.values().toArray();
 
-		fPluginTreeViewer.setCheckedElements(map.values().toArray());
+		setCheckedElements(checked);
 		fNumExternalChecked = 0;
 		fNumWorkspaceChecked = 0;
 		for (int i = 0; i < checked.length; i++) {
@@ -408,6 +404,10 @@ public abstract class AbstractPluginBlock {
 				fNumExternalChecked += 1;
 		}
 		adjustGroupState();
+	}
+	
+	protected void setCheckedElements(Object[] checked) {
+		fPluginTreeViewer.setCheckedElements(checked);
 	}
 
 	private void addPluginAndDependencies(IPluginModelBase model, TreeMap map) {
@@ -518,7 +518,9 @@ public abstract class AbstractPluginBlock {
 		fDeselectButton.setEnabled(enable);
 		fIncludeOptionalButton.setEnabled(enable);
 		fAddWorkspaceButton.setEnabled(enable);
+		fCounter.setEnabled(enable);
 	}
+	
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
@@ -527,7 +529,7 @@ public abstract class AbstractPluginBlock {
 		return fPluginTreeViewer.getTree().isEnabled();
 	}
 	
-	protected void computeInitialCheckState() {
+	protected void handleRestoreDefaults() {
 		TreeSet wtable = new TreeSet();
 		fNumWorkspaceChecked = 0;
 		fNumExternalChecked = 0;
@@ -553,9 +555,4 @@ public abstract class AbstractPluginBlock {
 		adjustGroupState();
 	}
 	
-	protected abstract void initExternalPluginsState(ILaunchConfiguration config)
-			throws CoreException;
-
-	protected abstract void initWorkspacePluginsState(ILaunchConfiguration config)
-			throws CoreException;
 }

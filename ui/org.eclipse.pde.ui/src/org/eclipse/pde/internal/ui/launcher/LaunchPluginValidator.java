@@ -126,18 +126,7 @@ public class LaunchPluginValidator {
 		return set;
 	}
 
-	public static TreeMap getPluginsToRun(ILaunchConfiguration config)
-			throws CoreException {
-		TreeMap map = null;
-		ArrayList statusEntries = new ArrayList();
-
-		if (config.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
-			map = validatePlugins(PDECore.getDefault().getModelManager().getPlugins(),
-					statusEntries);
-		} else {
-			map = validatePlugins(getSelectedPlugins(config), statusEntries);
-		}
-
+	public static Map validatePluginsToRun(Map map, ArrayList statusEntries) throws CoreException {
 		final String requiredPlugin;
 		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
 			requiredPlugin = "org.eclipse.osgi"; //$NON-NLS-1$
@@ -170,6 +159,21 @@ public class LaunchPluginValidator {
 			}
 		}
 		return map;
+	}
+	
+	public static Map getPluginsToRun(ILaunchConfiguration config)
+			throws CoreException {
+		TreeMap map = null;
+		ArrayList statusEntries = new ArrayList();
+
+		if (config.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
+			map = validatePlugins(PDECore.getDefault().getModelManager().getPlugins(),
+					statusEntries);
+		} else {
+			map = validatePlugins(getSelectedPlugins(config), statusEntries);
+		}
+
+		return validatePluginsToRun(map, statusEntries);
 	}
 
 	public static IPluginModelBase[] getSelectedPlugins(ILaunchConfiguration config)

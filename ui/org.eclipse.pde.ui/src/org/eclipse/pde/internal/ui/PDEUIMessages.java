@@ -2103,5 +2103,19 @@ public class PDEUIMessages extends NLS {
 	public static String ConfigurationAreaBlock_name;
 
 	public static String AbstractPluginBlock_counter;
+
+	public static String EquinoxPluginBlock_pluginsColumn;
+
+	public static String EquinoxPluginBlock_levelColumn;
+
+	public static String EquinoxPluginBlock_autoColumn;
+
+	public static String EquinoxPluginsTab_defaultStart;
+
+	public static String EquinoxPluginsTab_defaultAuto;
+
+	public static String EquinoxJRETab_jretab;
+
+	public static String EquinoxLaunchConfiguration_oldTarget;
 	
 }

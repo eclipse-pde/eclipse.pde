@@ -22,7 +22,7 @@ import org.eclipse.pde.ui.launcher.MainTab;
 import org.eclipse.pde.ui.launcher.PluginsTab;
 import org.eclipse.pde.ui.launcher.TracingTab;
 
-public class WorkbenchLauncherTabGroup extends AbstractPDELaunchConfigurationTabGroup {
+public class EclipseApplicationLauncherTabGroup extends AbstractPDELaunchConfigurationTabGroup {
 
 	/**
 	 * @see ILaunchConfigurationTabGroup#createTabs(ILaunchConfigurationDialog,
