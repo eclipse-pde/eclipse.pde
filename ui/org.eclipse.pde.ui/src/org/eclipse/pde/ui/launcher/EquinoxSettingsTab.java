@@ -17,6 +17,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.launcher.ConfigurationAreaBlock;
 import org.eclipse.pde.internal.ui.launcher.JREBlock;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -33,18 +34,20 @@ import org.eclipse.ui.PlatformUI;
  * </p>
  * @since 3.2
  */
-public class EquinoxJRETab extends AbstractLauncherTab {
+public class EquinoxSettingsTab extends AbstractLauncherTab {
 	
 	private JREBlock fJREBlock;
+	private ConfigurationAreaBlock fConfigurationBlock;
 	private Image fImage;
 	
 	/**
 	 * Constructor
 	 *
 	 */
-	public EquinoxJRETab() {
-		fImage = PDEPluginImages.DESC_JAVA_LIB_OBJ.createImage();
+	public EquinoxSettingsTab() {
+		fImage = PDEPluginImages.DESC_PLUGIN_CONFIG_OBJ.createImage();
 		fJREBlock = new JREBlock(this);
+		fConfigurationBlock = new ConfigurationAreaBlock(this);
 	}
 	/*
 	/* (non-Javadoc)
@@ -57,6 +60,8 @@ public class EquinoxJRETab extends AbstractLauncherTab {
 		
 		createStartingSpace(container, 1);
 		fJREBlock.createControl(container);
+		createStartingSpace(container, 1);
+		fConfigurationBlock.createControl(container);
 		
 		Dialog.applyDialogFont(container);
 		setControl(container);
@@ -68,6 +73,7 @@ public class EquinoxJRETab extends AbstractLauncherTab {
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		fJREBlock.setDefaults(configuration);
+		fConfigurationBlock.setDefaults(configuration, false);
 	}
 	
 	/* (non-Javadoc)
@@ -76,6 +82,7 @@ public class EquinoxJRETab extends AbstractLauncherTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			fJREBlock.initializeFrom(configuration);
+			fConfigurationBlock.initializeFrom(configuration);
 		} catch (CoreException e) {
 		}
 	}
@@ -85,13 +92,14 @@ public class EquinoxJRETab extends AbstractLauncherTab {
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		fJREBlock.performApply(configuration);
+		fConfigurationBlock.performApply(configuration);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return PDEUIMessages.EquinoxJRETab_jretab; 
+		return PDEUIMessages.EquinoxSettingsTab_name; 
 	}
 	
 	/* (non-Javadoc)

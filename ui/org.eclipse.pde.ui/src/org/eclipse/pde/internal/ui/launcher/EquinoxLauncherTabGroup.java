@@ -17,7 +17,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.sourcelookup.SourceLookupTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
-import org.eclipse.pde.ui.launcher.EquinoxJRETab;
+import org.eclipse.pde.ui.launcher.EquinoxSettingsTab;
 import org.eclipse.pde.ui.launcher.EquinoxPluginsTab;
 import org.eclipse.pde.ui.launcher.TracingTab;
 
@@ -28,7 +28,7 @@ public class EquinoxLauncherTabGroup extends AbstractLaunchConfigurationTabGroup
 			tabs = new ILaunchConfigurationTab[]{
 					new EquinoxPluginsTab(),
 					new JavaArgumentsTab(),
-					new EquinoxJRETab(),
+					new EquinoxSettingsTab(),
 					new TracingTab(), 
 					new EnvironmentTab(),
 					new SourceLookupTab(), 

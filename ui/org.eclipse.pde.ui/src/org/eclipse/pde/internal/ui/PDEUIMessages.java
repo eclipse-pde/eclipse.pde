@@ -2114,7 +2114,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String EquinoxPluginsTab_defaultAuto;
 
-	public static String EquinoxJRETab_jretab;
+	public static String EquinoxSettingsTab_name;
 
 	public static String EquinoxLaunchConfiguration_oldTarget;
 	
