@@ -333,12 +333,20 @@ public class EquinoxPluginBlock extends AbstractPluginBlock {
 	
 	protected void setCheckedElements(Object[] checked) {
 		super.setCheckedElements(checked);
-		TreeItem[] items = fPluginTreeViewer.getTree().getItems();
-		for (int i = 0; i < items.length; i++) {
-			TreeItem child = items[i];
-			if (child.getChecked() == (child.getText(1).length() == 0))
-				resetText(items[i]);
-		}
+		updateGroup(fWorkspacePlugins);
+		updateGroup(fExternalPlugins);
+	}
+	
+	private void updateGroup(Object group) {
+		Widget item = fPluginTreeViewer.testFindItem(group);
+		if (item instanceof TreeItem) {
+			TreeItem[] items = ((TreeItem)item).getItems();
+			for (int i = 0; i < items.length; i++) {
+				TreeItem child = items[i];
+				if (child.getChecked() == (child.getText(1).length() == 0))
+					resetText(items[i]);
+			}
+		}		
 	}
 	
 	private void setText(IPluginModelBase model, String value) {
