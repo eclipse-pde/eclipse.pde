@@ -393,6 +393,8 @@ public class EquinoxPluginBlock extends AbstractPluginBlock {
 	
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		super.setDefaults(config);
+		EquinoxLaunchShortcut.initializePluginState(config, 
+				PDECore.getDefault().getModelManager().getWorkspaceModels());
 	}
 
 }

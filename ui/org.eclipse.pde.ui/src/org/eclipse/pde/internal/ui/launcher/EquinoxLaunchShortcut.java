@@ -142,37 +142,41 @@ public class EquinoxLaunchShortcut implements ILaunchShortcut {
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "-console"); //$NON-NLS-1$
 			wc.setAttribute(IPDELauncherConstants.TRACING_CHECKED, IPDELauncherConstants.TRACING_NONE);
 			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
-			
-			TreeMap map = new TreeMap();
-			for (int i = 0; i < selected.length; i++)
-				RuntimeWorkbenchShortcut.addPluginAndDependencies(selected[i], map);
-			Object[] models = map.values().toArray();
-			StringBuffer wsplugins = new StringBuffer();
-			StringBuffer explugins = new StringBuffer();
-			for (int i = 0; i < models.length; i++) {
-				IPluginModelBase model = (IPluginModelBase)models[i];
-				String id = model.getPluginBase().getId();
-				String value = "org.eclipse.osgi".equals(id) ? "@:" : "@default:default"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				if (model.getUnderlyingResource() == null) {
-					if (explugins.length() > 0)
-						explugins.append(","); //$NON-NLS-1$
-					explugins.append(id);
-					explugins.append(value);
-				} else {
-					if (wsplugins.length() > 0)
-						wsplugins.append(","); //$NON-NLS-1$
-					wsplugins.append(id);
-					wsplugins.append(value);
-				}
-			}
-			wc.setAttribute(IPDELauncherConstants.WORKSPACE_BUNDLES, wsplugins.toString());
-			wc.setAttribute(IPDELauncherConstants.TARGET_BUNDLES, explugins.toString());
+			initializePluginState(wc, selected);
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, CLASSPATH_PROVIDER);
 			config = wc.doSave();		
 		} catch (CoreException ce) {
 			PDEPlugin.logException(ce);
 		} 
 		return config;
+	}
+	
+	public static void initializePluginState(ILaunchConfigurationWorkingCopy wc, IPluginModelBase[] selected) {
+		TreeMap map = new TreeMap();
+		for (int i = 0; i < selected.length; i++)
+			RuntimeWorkbenchShortcut.addPluginAndDependencies(selected[i], map);
+		Object[] models = map.values().toArray();
+		StringBuffer wsplugins = new StringBuffer();
+		StringBuffer explugins = new StringBuffer();
+		for (int i = 0; i < models.length; i++) {
+			IPluginModelBase model = (IPluginModelBase)models[i];
+			String id = model.getPluginBase().getId();
+			String value = "org.eclipse.osgi".equals(id) ? "@:" : "@default:default"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (model.getUnderlyingResource() == null) {
+				if (explugins.length() > 0)
+					explugins.append(","); //$NON-NLS-1$
+				explugins.append(id);
+				explugins.append(value);
+			} else {
+				if (wsplugins.length() > 0)
+					wsplugins.append(","); //$NON-NLS-1$
+				wsplugins.append(id);
+				wsplugins.append(value);
+			}
+		}
+		wc.setAttribute(IPDELauncherConstants.WORKSPACE_BUNDLES, wsplugins.toString());
+		wc.setAttribute(IPDELauncherConstants.TARGET_BUNDLES, explugins.toString());
+		
 	}
 
 	private String getComputedName(String prefix) {
