@@ -14,9 +14,7 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -27,7 +25,6 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
@@ -51,20 +48,7 @@ public class EquinoxLaunchShortcut implements ILaunchShortcut {
 	}
 	
 	public void launch(ISelection selection, String mode) {
-		IPluginModelBase model = null;
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection)selection;
-			if (!ssel.isEmpty()) {
-				Object obj = ssel.getFirstElement();
-				if (obj instanceof IAdaptable) {
-					IResource resource = (IResource)((IAdaptable)obj).getAdapter(IResource.class);
-					if (resource != null) {
-						model = PDECore.getDefault().getModelManager().findModel(resource.getProject());
-					}
-				}
-			}
-		}
-		launch(model, mode);
+		launch((IPluginModelBase)null, mode);
 	}
 
 	public void launch(IEditorPart editor, String mode) {
