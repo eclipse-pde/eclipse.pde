@@ -115,7 +115,7 @@ public class EquinoxPluginBlock extends AbstractPluginBlock {
 				final Spinner spinner = new Spinner(tree, SWT.BORDER);
 				spinner.setMinimum(1);
 				final int defaultLevel = ((EquinoxPluginsTab)fTab).getDefaultStartLevel();
-				int level = "default".equals(item.getText(1))
+				int level = "default".equals(item.getText(1)) //$NON-NLS-1$
 							? defaultLevel
 							: Integer.parseInt(item.getText(1));
 				spinner.setSelection(level);
@@ -124,7 +124,7 @@ public class EquinoxPluginBlock extends AbstractPluginBlock {
 						if (item.getChecked()) {
 							int selection = spinner.getSelection();
 							item.setText(1, defaultLevel == selection 
-												? "default" 
+												? "default"  //$NON-NLS-1$
 												: Integer.toString(selection));
 							fTab.updateLaunchConfigurationDialog();
 						}
@@ -133,7 +133,7 @@ public class EquinoxPluginBlock extends AbstractPluginBlock {
 				editor1.setEditor(spinner, item, 1);
 
 				final CCombo combo = new CCombo(tree, SWT.BORDER | SWT.READ_ONLY);
-				combo.setItems(new String[] { "default", Boolean.toString(true), Boolean.toString(false) });
+				combo.setItems(new String[] { "default", Boolean.toString(true), Boolean.toString(false) }); //$NON-NLS-1$
 				combo.setText(item.getText(2));
 				combo.pack();
 				combo.addSelectionListener(new SelectionAdapter() {
@@ -370,10 +370,10 @@ public class EquinoxPluginBlock extends AbstractPluginBlock {
 		if (item.getChecked()) {
 			IPluginModelBase model = (IPluginModelBase)item.getData();
 			boolean isSystemBundle = "org.eclipse.osgi".equals(model.getPluginBase().getId()); //$NON-NLS-1$
-			if (!"default".equals(item.getText(1)))
-				item.setText(1, isSystemBundle ? "" : "default"); //$NON-NLS-1$
-			if (!"default".equals(item.getText(2)))
-				item.setText(2, isSystemBundle ? "" : "default"); //$NON-NLS-1$
+			if (!"default".equals(item.getText(1))) //$NON-NLS-1$
+				item.setText(1, isSystemBundle ? "" : "default"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (!"default".equals(item.getText(2))) //$NON-NLS-1$
+				item.setText(2, isSystemBundle ? "" : "default"); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
 			if (item.getText(1).length() > 0)
 				item.setText(1, ""); //$NON-NLS-1$
