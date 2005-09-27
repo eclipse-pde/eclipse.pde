@@ -44,6 +44,7 @@ import org.osgi.service.prefs.BackingStoreException;
 public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	public static final String PAGE_ID = "overview"; //$NON-NLS-1$
 	private RuntimeWorkbenchShortcut fLaunchShortcut;
+	private EquinoxLaunchShortcut fEquinoxShortcut;
 	private PluginExportAction fExportAction;
 
 	public OverviewPage(FormEditor editor) {
@@ -275,11 +276,11 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		} else if (href.equals("action.runEquinox")) { //$NON-NLS-1$ {
 			// TODO run osgi launcher
 			getEditor().doSave(null);
-			getLaunchShortcut().run((IPluginModelBase)getModel());
+			getEquinoxShortcut().run((IPluginModelBase)getModel());
 		} else if (href.equals("action.debugEquinox")) { //$NON-NLS-1$
 			// TODO run osgi launcher in debug
 			getEditor().doSave(null);
-			getLaunchShortcut().run((IPluginModelBase)getModel());
+			getEquinoxShortcut().debug((IPluginModelBase)getModel());
 		}
 	}
 	
@@ -309,6 +310,12 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		if (fLaunchShortcut == null)
 			fLaunchShortcut = new RuntimeWorkbenchShortcut();
 		return fLaunchShortcut;
+	}
+	
+	private EquinoxLaunchShortcut getEquinoxShortcut() {
+		if (fEquinoxShortcut == null)
+			fEquinoxShortcut = new EquinoxLaunchShortcut();
+		return fEquinoxShortcut;
 	}
 	
 	private PluginExportAction getExportAction() {

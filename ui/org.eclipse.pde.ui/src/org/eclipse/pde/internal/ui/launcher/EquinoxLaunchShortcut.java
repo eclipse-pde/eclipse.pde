@@ -41,6 +41,14 @@ public class EquinoxLaunchShortcut implements ILaunchShortcut {
 	private static final String CLASSPATH_PROVIDER = "org.eclipse.pde.ui.workbenchClasspathProvider"; //$NON-NLS-1$
 	private static final String CONFIGURATION_TYPE = "org.eclipse.pde.ui.EquinoxLauncher";
 
+	public void run(IPluginModelBase model) {
+		launch(model, ILaunchManager.RUN_MODE);
+	}
+	
+	public void debug(IPluginModelBase model) {
+		launch(model, ILaunchManager.DEBUG_MODE);
+	}
+	
 	public void launch(ISelection selection, String mode) {
 		IPluginModelBase model = null;
 		if (selection instanceof IStructuredSelection) {
