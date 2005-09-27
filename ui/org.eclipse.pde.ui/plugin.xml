@@ -625,6 +625,18 @@
             id="org.eclipse.pde.ui.runtimeWorkbenchShortcut.run">
       </command>    
       <command
+            name="%EquinoxShortcut.description.debug"
+            description="%EquinoxShortcut.description.debug"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.pde.ui.EquinoxLaunchShortcut.debug">
+      </command>    
+      <command
+            name="%EquinoxShortcut.description.run"
+            description="%EquinoxShortcut.description.run"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.pde.ui.EquinoxLaunchShortcut.run">
+      </command>    
+      <command
             name="%JUnitApplicationShortcut.description.debug"
             description="%JUnitApplicationShortcut.description.debug"
             categoryId="org.eclipse.debug.ui.category.run"
@@ -1214,6 +1226,49 @@
          </perspective>
       </shortcut>
       <shortcut
+            label="%Equinox.shortcut.label"
+            icon="$nl$/icons/obj16/bundle_obj.gif"
+            modes="run, debug"
+            class="org.eclipse.pde.internal.ui.launcher.EquinoxLaunchShortcut"
+            id="org.eclipse.pde.ui.EquinoxLaunchShortcut">
+         <enablement>
+           <with variable="selection">
+             <count value="*"/>
+           </with>
+         </enablement>
+         <contextualLaunch>
+            <enablement>
+               <with variable="selection">
+                  <or>
+                  	<and>
+	                  <count value="1"/>
+	                  <iterate>
+		                  <test property="org.eclipse.debug.ui.projectNature" value="org.eclipse.pde.PluginNature"/>
+                   		  <adapt type="org.eclipse.core.resources.IProject"/>
+		              </iterate>
+		            </and>
+		            <count value="0"/>
+		          </or>
+               </with>
+           </enablement>
+         </contextualLaunch>         
+         <perspective
+               id="org.eclipse.jdt.ui.JavaPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaHierarchyPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaBrowsingPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.debug.ui.DebugPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.pde.PDEPerspective">
+         </perspective>
+      </shortcut>
+      <shortcut
             label="%launcher.swt.name"
             icon="$nl$/icons/obj16/swt_launcher.gif"
             modes="run, debug"
@@ -1507,6 +1562,16 @@
       <key
             sequence="M3+M2+X E"
             commandId="org.eclipse.pde.ui.runtimeWorkbenchShortcut.run"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>      
+      <key
+            sequence="M3+M2+D X"
+            commandId="org.eclipse.pde.ui.EquinoxLaunchShortcut.debug"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>      
+      <key
+            sequence="M3+M2+X X"
+            commandId="org.eclipse.pde.ui.EquinoxLaunchShortcut.run"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>      
       <key
