@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.launcher;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -41,12 +42,12 @@ public class EquinoxLaunchShortcut implements ILaunchShortcut {
 	private static final String CLASSPATH_PROVIDER = "org.eclipse.pde.ui.workbenchClasspathProvider"; //$NON-NLS-1$
 	private static final String CONFIGURATION_TYPE = "org.eclipse.pde.ui.EquinoxLauncher";
 
-	public void run(IPluginModelBase model) {
-		launch(model, ILaunchManager.RUN_MODE);
+	public void run(IProject project) {
+		launch(PDECore.getDefault().getModelManager().findModel(project), ILaunchManager.RUN_MODE);
 	}
 	
-	public void debug(IPluginModelBase model) {
-		launch(model, ILaunchManager.DEBUG_MODE);
+	public void debug(IProject project) {
+		launch(PDECore.getDefault().getModelManager().findModel(project), ILaunchManager.DEBUG_MODE);
 	}
 	
 	public void launch(ISelection selection, String mode) {

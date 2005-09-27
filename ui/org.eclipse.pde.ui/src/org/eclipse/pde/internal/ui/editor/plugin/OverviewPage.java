@@ -265,10 +265,10 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			getEditor().setActivePage(BuildPage.PAGE_ID);	
 		} else if (href.equals("action.run")) { //$NON-NLS-1$ {
 			getEditor().doSave(null);
-			getLaunchShortcut().run((IPluginModelBase)getModel());
+			getLaunchShortcut().run(getPDEEditor().getCommonProject());
 		} else if (href.equals("action.debug")) { //$NON-NLS-1$
 			getEditor().doSave(null);
-			getLaunchShortcut().debug((IPluginModelBase)getModel());
+			getLaunchShortcut().debug(getPDEEditor().getCommonProject());
 		} else if (href.equals("export")) { //$NON-NLS-1$
 			getExportAction().run();
 		} else if (href.equals("action.convert")) { //$NON-NLS-1$
@@ -276,11 +276,11 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		} else if (href.equals("action.runEquinox")) { //$NON-NLS-1$ {
 			// TODO run osgi launcher
 			getEditor().doSave(null);
-			getEquinoxShortcut().run((IPluginModelBase)getModel());
+			getEquinoxShortcut().run(getPDEEditor().getCommonProject());
 		} else if (href.equals("action.debugEquinox")) { //$NON-NLS-1$
 			// TODO run osgi launcher in debug
 			getEditor().doSave(null);
-			getEquinoxShortcut().debug((IPluginModelBase)getModel());
+			getEquinoxShortcut().debug(getPDEEditor().getCommonProject());
 		}
 	}
 	
