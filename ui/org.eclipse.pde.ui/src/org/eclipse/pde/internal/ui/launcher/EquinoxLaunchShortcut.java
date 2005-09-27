@@ -40,7 +40,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 public class EquinoxLaunchShortcut implements ILaunchShortcut {
 	
 	private static final String CLASSPATH_PROVIDER = "org.eclipse.pde.ui.workbenchClasspathProvider"; //$NON-NLS-1$
-	private static final String CONFIGURATION_TYPE = "org.eclipse.pde.ui.EquinoxLauncher";
+	private static final String CONFIGURATION_TYPE = "org.eclipse.pde.ui.EquinoxLauncher"; //$NON-NLS-1$
 
 	public void run(IProject project) {
 		launch(PDECore.getDefault().getModelManager().findModel(project), ILaunchManager.RUN_MODE);
@@ -78,7 +78,7 @@ public class EquinoxLaunchShortcut implements ILaunchShortcut {
 			PluginModelManager manager = PDECore.getDefault().getModelManager();
 			IPluginModelBase[] models = (model == null) ? manager.getWorkspaceModels() : new IPluginModelBase[] {model};
             if (models.length == 0) {
-            	IPluginModelBase osgi = manager.findModel("org.eclipse.osgi");
+            	IPluginModelBase osgi = manager.findModel("org.eclipse.osgi"); //$NON-NLS-1$
             	if (osgi != null)
             		models = new IPluginModelBase[] {osgi};
             }
@@ -136,7 +136,7 @@ public class EquinoxLaunchShortcut implements ILaunchShortcut {
 		ILaunchConfiguration config = null;
 		try {
 			ILaunchConfigurationType configType = getLaunchConfigurationType();
-			String computedName = getComputedName("Equinox");
+			String computedName = getComputedName("Equinox"); //$NON-NLS-1$
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);  
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "-console"); //$NON-NLS-1$
@@ -152,7 +152,7 @@ public class EquinoxLaunchShortcut implements ILaunchShortcut {
 			for (int i = 0; i < models.length; i++) {
 				IPluginModelBase model = (IPluginModelBase)models[i];
 				String id = model.getPluginBase().getId();
-				String value = "org.eclipse.osgi".equals(id) ? "@:" : "@default:default";
+				String value = "org.eclipse.osgi".equals(id) ? "@:" : "@default:default"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				if (model.getUnderlyingResource() == null) {
 					if (explugins.length() > 0)
 						explugins.append(","); //$NON-NLS-1$

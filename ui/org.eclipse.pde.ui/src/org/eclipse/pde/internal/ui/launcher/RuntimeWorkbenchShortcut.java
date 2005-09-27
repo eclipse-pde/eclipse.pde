@@ -56,12 +56,12 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 
 	private IPluginModelBase fModel = null;
 	
-	public void run(IPluginModelBase model) {
-		launch(model, ILaunchManager.RUN_MODE);
+	public void run(IProject project) {
+		launch(PDECore.getDefault().getModelManager().findModel(project), ILaunchManager.RUN_MODE);
 	}
 	
-	public void debug(IPluginModelBase model) {
-		launch(model, ILaunchManager.DEBUG_MODE);
+	public void debug(IProject project) {
+		launch(PDECore.getDefault().getModelManager().findModel(project), ILaunchManager.DEBUG_MODE);
 	}
 	
 	/*
