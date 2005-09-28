@@ -182,7 +182,7 @@ public abstract class AbstractPluginBlock {
 	}
 	
 	protected void createPluginViewer(Composite composite) {
-		fPluginTreeViewer = new CheckboxTreeViewer(composite, SWT.BORDER|SWT.VIRTUAL| SWT.FULL_SELECTION);
+		fPluginTreeViewer = new CheckboxTreeViewer(composite, SWT.BORDER|SWT.FULL_SELECTION);
 		fPluginTreeViewer.setContentProvider(new PluginContentProvider());
 		fPluginTreeViewer.setLabelProvider(getLabelProvider());
 		fPluginTreeViewer.setAutoExpandLevel(2);
