@@ -412,8 +412,12 @@ public class TargetPlatform implements IEnvironmentVariables {
 		return PDECore.getDefault().getModelManager().isOSGiRuntime();
 	}
 	
-	public static String getTargetVersion() {
+	public static String getTargetVersionString() {
 		return PDECore.getDefault().getModelManager().getTargetVersion();
+	}
+	
+	public static double getTargetVersion() {
+		return Double.parseDouble(getTargetVersionString());
 	}
 	
 	public static PDEState getPDEState() {
@@ -469,7 +473,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 	 * @return String or null
 	 */
 	public static String getDefaultProduct() {
-		if (ICoreConstants.TARGET21.equals(TargetPlatform.getTargetVersion())) {
+		if (getTargetVersion() < 3.0) {
 			return null;
 		}
 		Properties config = getConfigIniProperties("configuration/config.ini"); //$NON-NLS-1$

@@ -25,7 +25,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.ExternalModelManager;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.util.CoreUtility;
@@ -148,7 +147,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		}
 		
 		if (!programArgs.contains("-nosplash") && showSplash) { //$NON-NLS-1$
-			if (PDECore.getDefault().getTargetVersion().equals(ICoreConstants.TARGET31)) {
+			if (TargetPlatform.getTargetVersion() >= 3.1) {
 				programArgs.add(0, "-launcher");  //$NON-NLS-1$
 				IPath path = ExternalModelManager.getEclipseHome().append("eclipse"); //$NON-NLS-1$
 				programArgs.add(1, path.toOSString()); //This could be the branded launcher if we want (also this does not bring much)

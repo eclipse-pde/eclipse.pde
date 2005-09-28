@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -119,12 +119,12 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		Label label = new Label(group, SWT.NONE);
 		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pTarget); 
 		fTargetCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
-		fTargetCombo.setItems(new String[] { ICoreConstants.TARGET31,
+		fTargetCombo.setItems(new String[] { ICoreConstants.TARGET32, ICoreConstants.TARGET31,
 				ICoreConstants.TARGET30, ICoreConstants.TARGET21 });
 		GridData gd = new GridData();
 		gd.minimumWidth = 50;
 		fTargetCombo.setLayoutData(gd);
-		fTargetCombo.setText(PDECore.getDefault().getTargetVersion());
+		fTargetCombo.setText(TargetPlatform.getTargetVersionString());
 		fTargetCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateBundleCheck();

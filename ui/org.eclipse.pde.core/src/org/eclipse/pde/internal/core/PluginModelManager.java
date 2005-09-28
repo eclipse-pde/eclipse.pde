@@ -85,9 +85,10 @@ public class PluginModelManager implements IAdaptable {
 			int minor = id.getMinorComponent();
 			if (major == 3 && minor == 0)
 				return ICoreConstants.TARGET30;
-		}
-				
-		return ICoreConstants.TARGET31;	
+			if (major == 3 && minor == 1)
+				return ICoreConstants.TARGET31;
+		}			
+		return ICoreConstants.TARGET32;	
 	}
 
 	public Object getAdapter(Class key) {

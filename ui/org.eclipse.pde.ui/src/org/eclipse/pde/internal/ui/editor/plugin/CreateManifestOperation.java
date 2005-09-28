@@ -17,8 +17,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathHelper;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPluginConverter;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.text.edits.DeleteEdit;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
@@ -45,7 +45,7 @@ public class CreateManifestOperation implements IRunnableWithProgress{
 
 	private void handleConvert() throws CoreException {
 		IProject project = fModel.getUnderlyingResource().getProject();
-		String target = PDECore.getDefault().getModelManager().getTargetVersion();
+		String target = TargetPlatform.getTargetVersionString();
 		PDEPluginConverter.convertToOSGIFormat(project, target, ClasspathHelper.getDevDictionary(fModel), new NullProgressMonitor()); 
 		
 	}

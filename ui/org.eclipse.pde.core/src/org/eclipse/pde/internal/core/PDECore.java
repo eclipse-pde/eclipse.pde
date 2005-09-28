@@ -397,10 +397,6 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		return result;
 	}
 	
-	public String getTargetVersion() {
-		return getModelManager().getTargetVersion();
-	}
-	
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		this.fBundleContext = context;

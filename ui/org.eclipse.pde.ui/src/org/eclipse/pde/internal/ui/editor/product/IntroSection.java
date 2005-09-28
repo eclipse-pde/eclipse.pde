@@ -83,7 +83,7 @@ public class IntroSection extends PDESection {
 		
 		Composite client = toolkit.createComposite(section);
 		TableWrapLayout layout = new TableWrapLayout();
-		boolean canCreateNew = Double.parseDouble(TargetPlatform.getTargetVersion()) >= NEW_INTRO_SUPPORT_VERSION;
+		boolean canCreateNew = TargetPlatform.getTargetVersion() >= NEW_INTRO_SUPPORT_VERSION;
 		layout.numColumns = canCreateNew ? 3 : 2;
 		layout.topMargin = 5;
 		client.setLayout(layout);

@@ -14,7 +14,7 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.ui.templates.*;
 import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.osgi.framework.*;
@@ -61,7 +61,7 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
         // workaround to not introduce new API for IPluginBase
         if (plugin instanceof PluginBase)
             return ((PluginBase)plugin).getTargetVersion();
-        return PDECore.getDefault().getTargetVersion();
+        return TargetPlatform.getTargetVersionString();
     }
 	
 	/* (non-Javadoc)

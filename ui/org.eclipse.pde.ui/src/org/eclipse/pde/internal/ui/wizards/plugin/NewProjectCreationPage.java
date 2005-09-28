@@ -14,7 +14,7 @@ import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
@@ -137,8 +137,8 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fTargetLabel.setLayoutData(gd);
 		
 		fTargetCombo = new Combo(group, SWT.READ_ONLY|SWT.SINGLE);
-		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET31, ICoreConstants.TARGET30, ICoreConstants.TARGET21});
-		fTargetCombo.setText(PDECore.getDefault().getTargetVersion());
+		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET32, ICoreConstants.TARGET31, ICoreConstants.TARGET30, ICoreConstants.TARGET21});
+		fTargetCombo.setText(TargetPlatform.getTargetVersionString());
 		
 	    fOSGIButton = createButton(group, SWT.RADIO);
 	    if (fIsFragment)

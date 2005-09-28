@@ -245,8 +245,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				||!fModel.getBundleDescription().isResolved())
 			return null;
 		
-		String version = PDECore.getDefault().getTargetVersion();
-		if (version.equals(ICoreConstants.TARGET21) || version.equals(ICoreConstants.TARGET30))
+		if (TargetPlatform.getTargetVersion() < 3.1)
 			return null;
 		
 		BundleDescription desc = model.getBundleDescription();

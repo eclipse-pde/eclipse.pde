@@ -143,7 +143,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 		plugin.setName(createInitialName(plugin.getId()));
 		plugin.setVersion("1.0.0"); //$NON-NLS-1$
 		model.save();
-		PDEPluginConverter.convertToOSGIFormat(file.getProject(), TargetPlatform.getTargetVersion(), null, new SubProgressMonitor(monitor, 1));
+		PDEPluginConverter.convertToOSGIFormat(file.getProject(), TargetPlatform.getTargetVersionString(), null, new SubProgressMonitor(monitor, 1));
 		file.delete(true, null);
 	}
 	
