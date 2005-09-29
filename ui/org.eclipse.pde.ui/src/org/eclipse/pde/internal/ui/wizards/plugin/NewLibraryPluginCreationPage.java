@@ -172,10 +172,6 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		return text;
 	}
 
-	public String getId() {
-		return fIdText.getText().trim();
-	}
-
 	protected String getNameFieldQualifier() {
 		return PDEUIMessages.NewLibraryPluginCreationPage_plugin; 
 	}
@@ -188,10 +184,6 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	public IWizardPage getNextPage() {
 		updateData();
 		return super.getNextPage();
-	}
-
-	public boolean hasBundleStructure() {
-		return fTargetCombo.getText().equals("3.1"); //$NON-NLS-1$
 	}
 
 	protected boolean isVersionValid(String version) {
@@ -222,17 +214,17 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	private void updateBundleCheck() {
 		boolean legacy = fTargetCombo.getText().equals(ICoreConstants.TARGET21);
 		fJarredCheck.setEnabled(!legacy);
-		boolean pre31 = fTargetCombo.getText().equals(ICoreConstants.TARGET30)
-				|| fTargetCombo.getText().equals(ICoreConstants.TARGET21);
-		fJarredCheck.setSelection(!pre31);
+		double target = Double.parseDouble(fTargetCombo.getText());
+		fJarredCheck.setSelection(target >= 3.1);
 	}
 
 	public void updateData() {
 		fData.setSimple(false);
 		fData.setSourceFolderName(null);
 		fData.setOutputFolderName(null);
-		fData.setHasBundleStructure(fTargetCombo.getText().equals("3.1")); //$NON-NLS-1$
-		fData.setLegacy(fTargetCombo.getText().equals("2.1")); //$NON-NLS-1$
+		double target = Double.parseDouble(fTargetCombo.getText());
+		fData.setHasBundleStructure(target >= 3.1); 
+		fData.setLegacy(fTargetCombo.getText().equals(ICoreConstants.TARGET21));
 		fData.setTargetVersion(fTargetCombo.getText());
 
 		fData.setId(fIdText.getText().trim());
