@@ -15,6 +15,7 @@ import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.graphics.Image;
 
 public class ModelChangeLabelProvider extends PDELabelProvider {
@@ -38,12 +39,13 @@ public class ModelChangeLabelProvider extends PDELabelProvider {
 	private String getObjectText(ModelChangeFile pair) {
 		StringBuffer text = new StringBuffer(pair.getFile().getName());
 		int count = pair.getNumChanges();
-		text.append(" [");
+		text.append(" ["); //$NON-NLS-1$
 		text.append(count);
-		text.append(" instance");
-		if (count != 1)
-			text.append("s");
-		text.append("]");
+		if (count == 1)
+			text.append(PDEUIMessages.ModelChangeLabelProvider_instance);
+		else
+			text.append(PDEUIMessages.ModelChangeLabelProvider_instances);
+		text.append("]"); //$NON-NLS-1$
 
 		return text.toString();
 	}
@@ -63,9 +65,9 @@ public class ModelChangeLabelProvider extends PDELabelProvider {
 
 	private Image getObjectImage(ModelChangeFile file) {
 		String type = file.getFile().getFileExtension();
-		if ("xml".equalsIgnoreCase(type))
+		if ("xml".equalsIgnoreCase(type)) //$NON-NLS-1$
 			return xmlImage;
-		if ("MF".equalsIgnoreCase(type))
+		if ("MF".equalsIgnoreCase(type)) //$NON-NLS-1$
 			return manifestImage;
 		return null;
 	}

@@ -25,7 +25,7 @@ public class ExternalizeStringsLabelProvider  extends LabelProvider implements I
 				return StringHelper.unwindEscapeChars(changeElement.getKey());
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public Image getColumnImage(Object element, int columnIndex) {

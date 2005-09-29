@@ -16,7 +16,7 @@ public class StringHelper {
 							notNewLine = true;
 					}
 					if (!notNewLine)
-						sb.append("\\");
+						sb.append("\\"); //$NON-NLS-1$
 				}
 				sb.append(c);
 			}

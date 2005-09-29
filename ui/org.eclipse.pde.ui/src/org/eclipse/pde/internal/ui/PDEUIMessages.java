@@ -2117,5 +2117,49 @@ public class PDEUIMessages extends NLS {
 	public static String EquinoxSettingsTab_name;
 
 	public static String EquinoxLaunchConfiguration_oldTarget;
+
+	public static String ModelChangeLabelProvider_instance;
+
+	public static String ModelChangeLabelProvider_instances;
+
+	public static String GetNonExternalizedStringsOperation_taskMessage;
+
+	public static String ExternalizeStringsWizard_title;
+
+	public static String GetNonExternalizedStringsAction_allExternalizedTitle;
+
+	public static String GetNonExternalizedStringsAction_allExternalizedMessage;
+
+	public static String ExternalizeStringsWizardPage_pageTitle;
+
+	public static String ExternalizeStringsWizardPage_pageDescription;
+
+	public static String ExternalizeStringsWizardPage_badLocalizationError;
+
+	public static String ExternalizeStringsWizardPage_resourcelabel;
+
+	public static String ExternalizeStringsWizardPage_selectAllButton;
+
+	public static String ExternalizeStringsWizardPage_deselectAllButton;
+
+	public static String ExternalizeStringsWizardPage_projectLabel;
+
+	public static String ExternalizeStringsWizardPage_noUnderlyingResource;
+
+	public static String ExternalizeStringsWizardPage_localizationLabel;
+
+	public static String ExternalizeStringsWizardPage_propertiesLabel;
+
+	public static String ExternalizeStringsWizardPage_sourceLabel;
+
+	public static String ExternalizeStringsWizardPage_keyEmptyError;
+
+	public static String ExternalizeStringsWizardPage_keyCommentError;
+
+	public static String ExternalizeStringsWizardPage_keyError;
+
+	public static String ExternalizeStringsWizardPage_keyDuplicateError;
+
+	public static String ExternalizeStringsWizardPage_keySuggested;
 	
 }

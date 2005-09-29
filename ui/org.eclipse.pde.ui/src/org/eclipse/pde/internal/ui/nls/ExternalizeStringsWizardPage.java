@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.XMLConfiguration;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 import org.eclipse.swt.SWT;
@@ -163,8 +164,8 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 	
 	protected ExternalizeStringsWizardPage(ModelChangeTable changeTable) {
 		super(PAGE_NAME);
-		setTitle("Externalize Strings");
-		setDescription("Externalizing manifest files extracts translatable strings and stores them in a properties file for multi-language support.");
+		setTitle(PDEUIMessages.ExternalizeStringsWizardPage_pageTitle);
+		setDescription(PDEUIMessages.ExternalizeStringsWizardPage_pageDescription);
 		fModelChangeTable = changeTable;
 		fErrorElementFilter = new ViewerFilter() {
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -189,7 +190,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 				} else {
 					setEnabled(fLocalizationText, false);
 					setPageComplete(false);
-					setErrorMessage("A Bundle Localization must consist of a combination of alpha-numeric characters, _ and -.");
+					setErrorMessage(PDEUIMessages.ExternalizeStringsWizardPage_badLocalizationError);
 				}
 			}
 		};
@@ -232,7 +233,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		fileComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label label = new Label(fileComposite, SWT.NONE);
-		label.setText("Resources with non-externalized strings:");
+		label.setText(PDEUIMessages.ExternalizeStringsWizardPage_resourcelabel);
 		fInputViewer = new ContainerCheckedTreeViewer(fileComposite, SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE | SWT.BORDER);
 		fInputViewer.setContentProvider(new ModelChangeContentProvider());
 		fInputViewer.setLabelProvider(new ModelChangeLabelProvider());
@@ -257,7 +258,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fSelectAll = new Button(buttonComposite, SWT.PUSH);
-		fSelectAll.setText("&Select All");
+		fSelectAll.setText(PDEUIMessages.ExternalizeStringsWizardPage_selectAllButton);
 		fSelectAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fSelectAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -265,7 +266,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 			}
 		});
 		fDeselectAll = new Button(buttonComposite, SWT.PUSH);
-		fDeselectAll.setText("&Deselect All");
+		fDeselectAll.setText(PDEUIMessages.ExternalizeStringsWizardPage_deselectAllButton);
 		fDeselectAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fDeselectAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -280,20 +281,20 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		infoComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Label project = new Label(infoComposite, SWT.NONE);
-		project.setText("Selected project:");
+		project.setText(PDEUIMessages.ExternalizeStringsWizardPage_projectLabel);
 		fProjectLabel = new Label(infoComposite, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalIndent = 10;
 		fProjectLabel.setLayoutData(gd);
-		fProjectLabel.setText("No underlying resource selected");
+		fProjectLabel.setText(PDEUIMessages.ExternalizeStringsWizardPage_noUnderlyingResource);
 		
 		Label properties = new Label(infoComposite, SWT.NONE);
-		properties.setText("&Bundle Localization:");
+		properties.setText(PDEUIMessages.ExternalizeStringsWizardPage_localizationLabel);
 		fLocalizationText = new Text(infoComposite, SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalIndent = 10;
 		fLocalizationText.setLayoutData(gd);
-		fLocalizationText.setText("No underlying resource selected");
+		fLocalizationText.setText(PDEUIMessages.ExternalizeStringsWizardPage_noUnderlyingResource);
 		fLocalizationText.addModifyListener(fModifyListener);
 		
 		fInputViewer.setInput(PDEPlugin.getDefault());
@@ -307,7 +308,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		composite.setLayout(new GridLayout());
 				
 		Label label = new Label(composite, SWT.NONE);
-		label.setText("Strings to externalize:"); 
+		label.setText(PDEUIMessages.ExternalizeStringsWizardPage_propertiesLabel); 
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fPropertiesViewer = CheckboxTableViewer.newCheckList(composite, 
@@ -370,7 +371,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		composite.setLayout(new GridLayout());
 
 		Label label = new Label(composite, SWT.NONE);
-		label.setText("Source:");
+		label.setText(PDEUIMessages.ExternalizeStringsWizardPage_sourceLabel);
 		label.setLayoutData(new GridData());
 
 		fSourceViewer = new SourceViewer(composite, null, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
@@ -431,7 +432,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		
 		if (fSourceViewer.getDocument() != null && !fSourceViewer.getDocument().equals(fEmptyDoc))
 			fSourceViewer.unconfigure();
-		if (sourceFile.getFileExtension().equalsIgnoreCase("xml")) {
+		if (sourceFile.getFileExtension().equalsIgnoreCase("xml")) { //$NON-NLS-1$
 			if (fColorManager != null) {
 				fColorManager.dispose();
 			}
@@ -479,16 +480,16 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		if (key.equals(fPreErrorKey)) {
 			error = null;
 		} else if (key.trim().length() < 1) {
-			error = getErrorMessage("New key may not be empty", oldKey);
+			error = getErrorMessage(PDEUIMessages.ExternalizeStringsWizardPage_keyEmptyError, oldKey);
 		} else if (key.charAt(0) == '#' || key.charAt(0) == '!' || key.charAt(0) == '%') {
-			error = getErrorMessage("New key may not begin with #, ! or % characters", oldKey);
-		} else if ((key.indexOf(":") != -1 && key.indexOf("\\:") == -1) ||
-				   (key.indexOf("=") != -1 && key.indexOf("\\=") == -1) ||
-				    key.indexOf(" ") != -1) {
-			error = getErrorMessage("New key may not contain : or = \" \" (space) characters", oldKey);
+			error = getErrorMessage(PDEUIMessages.ExternalizeStringsWizardPage_keyCommentError, oldKey);
+		} else if ((key.indexOf(":") != -1 && key.indexOf("\\:") == -1) || //$NON-NLS-1$ //$NON-NLS-2$
+				   (key.indexOf("=") != -1 && key.indexOf("\\=") == -1) || //$NON-NLS-1$ //$NON-NLS-2$
+				    key.indexOf(" ") != -1) { //$NON-NLS-1$
+			error = getErrorMessage(PDEUIMessages.ExternalizeStringsWizardPage_keyError, oldKey);
 		} else if ((!key.equals(oldKey) || fPreErrorKey != null) &&
 				properties.containsKey(key)) {
-			error = getErrorMessage("New key may not be a duplicate of another key", oldKey);
+			error = getErrorMessage(PDEUIMessages.ExternalizeStringsWizardPage_keyDuplicateError, oldKey);
 		}
 
 		setErrorMessage(error);
@@ -511,7 +512,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 	private String getErrorMessage(String error, String suggestion) {
 		StringBuffer sb = new StringBuffer(error);
 		if (suggestion != null) {
-			sb.append("\n\tsuggested key value: ");
+			sb.append(PDEUIMessages.ExternalizeStringsWizardPage_keySuggested);
 			sb.append(suggestion);
 		}
 		return sb.toString();

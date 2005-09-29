@@ -7,6 +7,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -43,8 +44,8 @@ public class GetNonExternalizedStringsAction
 				});
 			} else
 				MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
-						"Externalize Strings", 
-						"All strings in manifest files have been externalized");
+						PDEUIMessages.GetNonExternalizedStringsAction_allExternalizedTitle, 
+						PDEUIMessages.GetNonExternalizedStringsAction_allExternalizedMessage);
 		}
 	}
 

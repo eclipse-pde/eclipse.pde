@@ -117,7 +117,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_JUNIT_MAIN_TAB = create(PATH_OBJ, "test.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OUTPUT_FOLDER_OBJ = create(PATH_OBJ, "output_folder_attrib.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_SOURCE_ATTACHMENT_OBJ = create(PATH_OBJ, "source_attach_attrib.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FTR_XML_OBJ = create(PATH_OBJ, "ftr_xml_obj.gif"); //$NON-NSL-1$
+	public static final ImageDescriptor DESC_FTR_XML_OBJ = create(PATH_OBJ, "ftr_xml_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OK_TRANSLATE_OBJ = create(PATH_OBJ, "ok_st_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NO_TRANSLATE_OBJ = create(PATH_OBJ, "incomplete_tsk.gif"); //$NON-NLS-1$
 	/**
@@ -222,7 +222,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_PRODUCT_WIZ = create(PATH_WIZBAN, "product_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PRODUCT_EXPORT_WIZ = create(PATH_WIZBAN, "exp_product.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_JAR_TO_PLUGIN_WIZ = create(PATH_WIZBAN, "jarToPlugin_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_EXTSTR_WIZ = create(PATH_WIZBAN, "extstr_wiz.gif"); //$NON-NLS1$
+	public static final ImageDescriptor DESC_EXTSTR_WIZ = create(PATH_WIZBAN, "extstr_wiz.gif"); //$NON-NLS-1$
 
 	/**
 	 * View

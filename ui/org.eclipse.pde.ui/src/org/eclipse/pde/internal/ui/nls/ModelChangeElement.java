@@ -12,11 +12,11 @@ import org.eclipse.pde.internal.ui.model.plugin.PluginExtensionPointNode;
 
 public class ModelChangeElement {
 	
-	private static final String DELIM = ".";
-	private static final String KEY_PREFIX = "%";
+	private static final String DELIM = "."; //$NON-NLS-1$
+	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	
-	private String fValue = "";
-	private String fKey = "";
+	private String fValue = ""; //$NON-NLS-1$
+	private String fKey = ""; //$NON-NLS-1$
 	private int fOffset = 0;
 	private int fLength = 0;
 	private boolean fExternalized = true;
@@ -40,8 +40,8 @@ public class ModelChangeElement {
 		} else if (incoming instanceof PluginExtensionPointNode) {
 			PluginExtensionPointNode extP = (PluginExtensionPointNode)incoming;
 			fValue = extP.getName();
-			generateValidKey("extension-point", "name");
-			IDocumentAttribute attr = extP.getDocumentAttribute("name");
+			generateValidKey("extension-point", "name"); //$NON-NLS-1$ //$NON-NLS-2$
+			IDocumentAttribute attr = extP.getDocumentAttribute("name"); //$NON-NLS-1$
 			fOffset = attr.getValueOffset();
 			fLength = attr.getValueLength();
 		} else if (incoming instanceof ManifestHeader) {

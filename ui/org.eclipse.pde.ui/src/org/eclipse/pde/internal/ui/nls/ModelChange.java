@@ -15,8 +15,8 @@ import org.eclipse.pde.internal.ui.elements.DefaultElement;
 
 public class ModelChange extends DefaultElement {
 	
-	private static final String DEFAULT_LOCALIZATION_PREFIX = "plugin";
-	public static final String LOCALIZATION_FILE_SUFFIX = ".properties";
+	private static final String DEFAULT_LOCALIZATION_PREFIX = "plugin"; //$NON-NLS-1$
+	public static final String LOCALIZATION_FILE_SUFFIX = ".properties"; //$NON-NLS-1$
 	
 	private ModelChangeFile fXMLCoupling;
 	private ModelChangeFile fMFCoupling;
@@ -48,9 +48,9 @@ public class ModelChange extends DefaultElement {
 		if (change == null || file == null)
 			return;
 		String ext = file.getFileExtension();
-		if (ext.equalsIgnoreCase("xml"))
+		if (ext.equalsIgnoreCase("xml")) //$NON-NLS-1$
 			addXMLChange(file, change);
-		else if (ext.equalsIgnoreCase("MF"))
+		else if (ext.equalsIgnoreCase("MF")) //$NON-NLS-1$
 			addMFChange(file, change);
 		else
 			return;

@@ -59,7 +59,7 @@ public class PluginExtensionNode extends PluginParentNode
 			return getResourceString(name);
 		String point = getPoint();
 		ISchema schema = PDECore.getDefault().getSchemaRegistry().getSchema(point);
-		return schema == null ? "" : schema.getName();
+		return schema == null ? "" : schema.getName(); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IIdentifiable#getId()

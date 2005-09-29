@@ -32,6 +32,7 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.model.bundle.Bundle;
 import org.eclipse.pde.internal.ui.model.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.model.bundle.ManifestHeader;
@@ -45,9 +46,9 @@ public class GetNonExternalizedStringsOperation
 		implements IRunnableWithProgress {
 
 	public static final String MANIFEST_LOCATION = 
-		"META-INF/MANIFEST.MF";
+		"META-INF/MANIFEST.MF"; //$NON-NLS-1$
 	private static final String[] PLUGIN_XML_FILES = 
-		new String[] {"plugin.xml", "fragment.xml"};
+		new String[] {"plugin.xml", "fragment.xml"}; //$NON-NLS-1$ //$NON-NLS-2$
 	
 	private ISelection fSelection;
 	private ArrayList fSelectedModels;
@@ -84,7 +85,7 @@ public class GetNonExternalizedStringsOperation
 			fModelChangeTable = new ModelChangeTable();
 			
 			IPluginModelBase[] pluginModels = PDECore.getDefault().getModelManager().getWorkspaceModels();
-			monitor.beginTask("Scanning workspace for non-externalized manifest strings", pluginModels.length);
+			monitor.beginTask(PDEUIMessages.GetNonExternalizedStringsOperation_taskMessage, pluginModels.length);
 			for (int i = 0; i < pluginModels.length; i++) {
 				IProject project = pluginModels[i].getUnderlyingResource().getProject();
 				if (!WorkspaceModelManager.isBinaryPluginProject(project) && !fCanceled) {

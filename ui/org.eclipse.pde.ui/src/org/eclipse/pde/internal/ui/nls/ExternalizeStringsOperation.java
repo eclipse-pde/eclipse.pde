@@ -38,7 +38,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 				IFile pFile = change.getPropertiesFile();
 				if (!pFile.exists()) {
 					IPluginModelBase model = change.getParentModel();
-					String propertiesFileComment = "# properties file for " 
+					String propertiesFileComment = "# properties file for "  //$NON-NLS-1$
 						+ model.getUnderlyingResource().getProject().getName();
 					ByteArrayInputStream pStream = new ByteArrayInputStream(propertiesFileComment.getBytes());
 					pFile.create(pStream, true, monitor);
@@ -86,7 +86,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 							changeElement.getLength(), 
 							changeElement.getExternKey()));
 					pEdit.addChild(new InsertEdit(pDoc.getLength(), 
-							nl + changeElement.getKey() + " = " + 
+							nl + changeElement.getKey() + " = " +  //$NON-NLS-1$
 							StringHelper.preparePropertiesString(changeElement.getValue(), nl.toCharArray())));
 				}
 			}
@@ -116,7 +116,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 				mEdit.apply(mDoc);
 			
 			mEdit = new InsertEdit(mDoc.getLength(), 
-					Constants.BUNDLE_LOCALIZATION + ": " + localization + nl);
+					Constants.BUNDLE_LOCALIZATION + ": " + localization + nl); //$NON-NLS-1$
 			mEdit.apply(mDoc);
 			mBuffer.commit(monitor, true);
 			
