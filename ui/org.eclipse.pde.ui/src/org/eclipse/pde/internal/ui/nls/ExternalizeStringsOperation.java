@@ -87,7 +87,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 							changeElement.getExternKey()));
 					pEdit.addChild(new InsertEdit(pDoc.getLength(), 
 							nl + changeElement.getKey() + " = " + 
-							StringWinder.preparePropertiesString(changeElement.getValue(), nl.toCharArray())));
+							StringHelper.preparePropertiesString(changeElement.getValue(), nl.toCharArray())));
 				}
 			}
 			uEdit.apply(uDoc);
@@ -101,7 +101,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
  	}
 	
 	private void addBundleLocalization(IProject project, String localization, IProgressMonitor monitor) throws CoreException {
-		IFile mFile = project.getFile("META-INF/MANIFEST.MF");
+		IFile mFile = project.getFile(GetNonExternalizedStringsOperation.MANIFEST_LOCATION);
 		if (!mFile.exists()) return;
 		ITextFileBufferManager mManager = FileBuffers.getTextFileBufferManager();
 		try {

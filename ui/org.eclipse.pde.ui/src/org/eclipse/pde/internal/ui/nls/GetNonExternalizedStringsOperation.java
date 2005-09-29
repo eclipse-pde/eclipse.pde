@@ -28,7 +28,6 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
@@ -45,28 +44,20 @@ import org.osgi.framework.Constants;
 public class GetNonExternalizedStringsOperation 
 		implements IRunnableWithProgress {
 
-	private static final String MANIFEST_LOCATION = 
+	public static final String MANIFEST_LOCATION = 
 		"META-INF/MANIFEST.MF";
 	private static final String[] PLUGIN_XML_FILES = 
 		new String[] {"plugin.xml", "fragment.xml"};
-//	private static final String[] FEATURE_XML_FILES = 
-//		new String[] {"feature.xml"};
 	
 	private ISelection fSelection;
 	private ArrayList fSelectedModels;
 	private ModelChangeTable fModelChangeTable;
 	private boolean fCanceled;
 	
-	/**
-	 * The constructor.
-	 */
 	public GetNonExternalizedStringsOperation(ISelection selection) {
 		fSelection = selection;
 	}
 
-	/**
-	 * @see IWorkbenchWindowActionDelegate#run
-	 */
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		
 		if (fSelection instanceof IStructuredSelection) {
@@ -82,8 +73,7 @@ public class GetNonExternalizedStringsOperation
 					project = (IProject) elems[i];
 				}
 				if (project != null
-						&& !WorkspaceModelManager.isBinaryPluginProject(project)
-						&& !WorkspaceModelManager.isBinaryFeatureProject(project)) {
+						&& !WorkspaceModelManager.isBinaryPluginProject(project)) {
 					IPluginModelBase model = manager.findModel(project);
 					if (model != null) {
 						fSelectedModels.add(model);
@@ -94,23 +84,13 @@ public class GetNonExternalizedStringsOperation
 			fModelChangeTable = new ModelChangeTable();
 			
 			IPluginModelBase[] pluginModels = PDECore.getDefault().getModelManager().getWorkspaceModels();
-			IFeatureModel[] featureModels = PDECore.getDefault().getFeatureModelManager().getModels();
-			monitor.beginTask("Scanning workspace for non-externalized manifest strings", featureModels.length + pluginModels.length);
+			monitor.beginTask("Scanning workspace for non-externalized manifest strings", pluginModels.length);
 			for (int i = 0; i < pluginModels.length; i++) {
 				IProject project = pluginModels[i].getUnderlyingResource().getProject();
 				if (!WorkspaceModelManager.isBinaryPluginProject(project) && !fCanceled) {
 					getUnExternalizedStrings(project, new SubProgressMonitor(monitor, 1) , pluginModels[i]);
 				}
 			}
-//			for (int i = 0; i < featureModels.length; i++) {
-//				IResource resource = featureModels[i].getUnderlyingResource();
-//				if (resource != null) {
-//					IProject project = resource.getProject();
-//					if (!WorkspaceModelManager.isBinaryFeatureProject(project) && !fCanceled) {
-//						getUnExternalizedStrings(project, monitor, featureModels[i]);
-//					}
-//				}
-//			}
 			
 		}
 	}
@@ -130,14 +110,6 @@ public class GetNonExternalizedStringsOperation
 					inspectXML(project, member, (IPluginModelBase)model, monitor);
 				} catch (CoreException e) {}
 			}
-//		} else if (model instanceof IFeatureModel) {
-//			String[] xmlFiles = FEATURE_XML_FILES;
-//			for (int i = 0; i < xmlFiles.length && !fCanceled; i++) {
-//				IResource member = project.findMember(xmlFiles[i]);
-//				try {
-//					inspectXML(project, member, (IPluginModelBase)model, monitor);
-//				} catch (CoreException e) {}
-//			}
 		}
 		monitor.done();
 	}

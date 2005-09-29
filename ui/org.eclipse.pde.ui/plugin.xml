@@ -686,14 +686,6 @@
                enablesFor="1"
                id="org.eclipse.pde.ui.BuildFeatureJar">
          </action>
-         <action
-               label="%ExternalizeStrings.label"
-               helpContextId="org.eclipse.pde.doc.user.externalize_strings"
-               class="org.eclipse.pde.internal.ui.nls.GetNonExternalizedStringsAction"
-               menubarPath="org.eclipse.pde.ui.feature.tools/group0"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.ExternalizeStrings">
-         </action> 
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"

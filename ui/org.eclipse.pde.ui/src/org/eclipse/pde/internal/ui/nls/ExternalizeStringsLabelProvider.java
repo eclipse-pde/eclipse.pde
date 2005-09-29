@@ -20,9 +20,9 @@ public class ExternalizeStringsLabelProvider  extends LabelProvider implements I
 		if (element instanceof ModelChangeElement) {
 			ModelChangeElement changeElement = (ModelChangeElement)element;
 			if (columnIndex == ExternalizeStringsWizardPage.VALUE) {
-				return StringWinder.unwindEscapeChars(changeElement.getValue());
+				return StringHelper.unwindEscapeChars(changeElement.getValue());
 			} else if (columnIndex == ExternalizeStringsWizardPage.KEY) {
-				return StringWinder.unwindEscapeChars(changeElement.getKey());
+				return StringHelper.unwindEscapeChars(changeElement.getKey());
 			}
 		}
 		return "";

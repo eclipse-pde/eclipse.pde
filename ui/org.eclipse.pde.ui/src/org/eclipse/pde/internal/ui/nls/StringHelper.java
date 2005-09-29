@@ -1,6 +1,6 @@
 package org.eclipse.pde.internal.ui.nls;
 
-public class StringWinder {
+public class StringHelper {
 	
 	protected static String preparePropertiesString(String s, char[] newLine) {
 		if (s != null) {
@@ -112,4 +112,18 @@ public class StringWinder {
 		}
 		return outBuffer.toString();
 	}
+	
+    protected static boolean isValidLocalization(String name) {
+        if (name.length() <= 0) {
+            return false;
+        }
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if ((c < 'A' || 'Z' < c) && (c < 'a' || 'z' < c)
+                    && (c < '0' || '9' < c) && c != '_' && c != '-') {
+                return false;
+            }
+        }
+        return true;
+    }
 }

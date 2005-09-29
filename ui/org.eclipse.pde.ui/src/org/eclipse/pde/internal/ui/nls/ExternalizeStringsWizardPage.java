@@ -101,11 +101,8 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		}
 	}
 
-	private class CellModifier implements ICellModifier {
+	private class ExternalizeStringsCellModifier implements ICellModifier {
 
-		/**
-		 * @see ICellModifier#canModify(Object, String)
-		 */
 		public boolean canModify(Object element, String property) {
 			return (property != null &&
 					(element instanceof ModelChangeElement) &&
@@ -115,29 +112,23 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 
 		}
 
-		/**
-		 * @see ICellModifier#getValue(Object, String)
-		 */
 		public Object getValue(Object element, String property) {
 			if (element instanceof ModelChangeElement) {
 				ModelChangeElement changeElement = (ModelChangeElement) element;
 				if (TABLE_PROPERTIES[KEY].equals(property)) {
-					return StringWinder.unwindEscapeChars(changeElement.getKey());
+					return StringHelper.unwindEscapeChars(changeElement.getKey());
 				}
 			}
 			return ""; //$NON-NLS-1$
 		}
 
-		/**
-		 * @see ICellModifier#modify(Object, String, Object)
-		 */
 		public void modify(Object element, String property, Object value) {
 			if (element instanceof TableItem) {
 				Object data = ((TableItem) element).getData();
 				if (data instanceof ModelChangeElement) {
 					ModelChangeElement changeElement = (ModelChangeElement) data;
 					if (TABLE_PROPERTIES[KEY].equals(property)) {
-						String newKey = StringWinder.windEscapeChars((String)value);
+						String newKey = StringHelper.windEscapeChars((String)value);
 						validateKey(newKey, changeElement);
 						changeElement.setKey(newKey);
 						fPropertiesViewer.update(data, null);
@@ -186,7 +177,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		fModifyListener = new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				String localization = fLocalizationText.getText();
-				if (isValidLocalization(localization)) {
+				if (StringHelper.isValidLocalization(localization)) {
 					setEnabled(fLocalizationText, true);
 					setPageComplete(hasCheckedElements());
 					setErrorMessage(null);
@@ -266,7 +257,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fSelectAll = new Button(buttonComposite, SWT.PUSH);
-		fSelectAll.setText("Select All");
+		fSelectAll.setText("&Select All");
 		fSelectAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fSelectAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -274,7 +265,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 			}
 		});
 		fDeselectAll = new Button(buttonComposite, SWT.PUSH);
-		fDeselectAll.setText("Deselect All");
+		fDeselectAll.setText("&Deselect All");
 		fDeselectAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fDeselectAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -297,7 +288,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		fProjectLabel.setText("No underlying resource selected");
 		
 		Label properties = new Label(infoComposite, SWT.NONE);
-		properties.setText("Bundle Localization:");
+		properties.setText("&Bundle Localization:");
 		fLocalizationText = new Text(infoComposite, SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalIndent = 10;
@@ -338,7 +329,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		fPropertiesViewer.setUseHashlookup(true);
 		fPropertiesViewer.setCellEditors(createCellEditors());
 		fPropertiesViewer.setColumnProperties(TABLE_PROPERTIES);
-		fPropertiesViewer.setCellModifier(new CellModifier());
+		fPropertiesViewer.setCellModifier(new ExternalizeStringsCellModifier());
 		fPropertiesViewer.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
 				if (fInputViewer.getSelection() instanceof IStructuredSelection) {
@@ -529,20 +520,6 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 	public Object[] getChangeFiles() {
 		return fInputViewer.getCheckedElements();
 	}
-	
-    private boolean isValidLocalization(String name) {
-        if (name.length() <= 0) {
-            return false;
-        }
-        for (int i = 0; i < name.length(); i++) {
-            char c = name.charAt(i);
-            if ((c < 'A' || 'Z' < c) && (c < 'a' || 'z' < c)
-                    && (c < '0' || '9' < c) && c != '_' && c != '-') {
-                return false;
-            }
-        }
-        return true;
-    }
     
     private boolean hasCheckedElements() {
     	return fInputViewer.getCheckedElements().length > 0;
