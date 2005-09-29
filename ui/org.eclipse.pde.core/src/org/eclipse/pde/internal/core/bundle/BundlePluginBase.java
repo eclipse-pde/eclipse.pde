@@ -423,6 +423,10 @@ public class BundlePluginBase
 		if (getExtensions().length == 0 && getExtensionPoints().length == 1)
 			setId(getId());
 	}
+	
+	public String getResourceString(String key) {
+		return model.getResourceString(key);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -604,7 +608,7 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getTranslatedName()
 	 */
 	public String getTranslatedName() {
-		return getName();
+		return getResourceString(getName());
 	}
 
 	/*
@@ -624,16 +628,6 @@ public class BundlePluginBase
 	public IPluginBase getPluginBase() {
 		return this;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.core.plugin.IPluginObject#getResourceString(java.lang.String)
-	 */
-	public String getResourceString(String key) {
-		return key;
-	}
-
 
 	/*
 	 * (non-Javadoc)

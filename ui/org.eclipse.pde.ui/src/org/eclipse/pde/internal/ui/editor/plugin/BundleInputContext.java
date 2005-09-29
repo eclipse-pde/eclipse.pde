@@ -50,8 +50,15 @@ public class BundleInputContext extends UTF8InputContext {
 				model.setCharset(file.getCharset());
 			} else if (input instanceof SystemFileEditorInput){
 				File file = (File)((SystemFileEditorInput)input).getAdapter(File.class);
-				model.setInstallLocation(file.getParent());
+				IPath path = new Path(file.getAbsolutePath()).removeLastSegments(2);
+				model.setInstallLocation(path.addTrailingSeparator().toString());
 				model.setCharset(getDefaultCharset());
+			} else if (input instanceof JarEntryEditorInput){
+				File file = (File)((JarEntryEditorInput)input).getAdapter(File.class);
+				model.setInstallLocation(file.toString());
+				model.setCharset(getDefaultCharset());
+			} else {
+				model.setCharset(getDefaultCharset());				
 			}
 			model.load();
 		}

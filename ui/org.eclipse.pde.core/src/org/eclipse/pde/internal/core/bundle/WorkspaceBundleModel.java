@@ -91,7 +91,7 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 		try {
 			String contents = getContents();
 			ByteArrayInputStream stream = new ByteArrayInputStream(contents
-					.getBytes("8859_1")); //$NON-NLS-1$
+					.getBytes("UTF-8")); //$NON-NLS-1$
 			if (fUnderlyingResource.exists()) {
 				fUnderlyingResource.setContents(stream, false, false, null);
 			} else {

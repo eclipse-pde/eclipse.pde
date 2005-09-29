@@ -260,25 +260,6 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		return findFeature(models, id, version, match);
 	}
 
-	public IFragment[] findFragmentsFor(String id, String version) {
-		IFragmentModel[] models = getModelManager().getFragments();
-		ArrayList list = new ArrayList();
-		for (int i = 0; i < models.length; i++) {
-			if (!models[i].isEnabled())
-				continue;
-			IFragment fragment = models[i].getFragment();
-			if (compare(
-					fragment.getPluginId(),
-					fragment.getPluginVersion(),
-					id,
-					version,
-					fragment.getRule())) {
-				list.add(fragment);
-			}
-		}	
-		return (IFragment[]) list.toArray(new IFragment[list.size()]);
-	}
-
 	public IPlugin findPlugin(String id) {
 		return findPlugin(id, null, 0);
 	}

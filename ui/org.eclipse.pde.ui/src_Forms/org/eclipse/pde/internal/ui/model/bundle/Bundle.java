@@ -165,4 +165,12 @@ public class Bundle implements IBundle {
     public IBundleModel getModel() {
         return fModel;
     }
+
+	public String getLocalization() {
+		return getHeader(Constants.BUNDLE_LOCALIZATION);
+	}
+
+	public void setLocalization(String localization) {
+		setHeader(Constants.BUNDLE_LOCALIZATION, localization);
+	}
 }

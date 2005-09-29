@@ -92,9 +92,9 @@ public class PluginJavaSearchUtil {
 	private static void addLibraryPaths(IPluginModelBase model, ArrayList libraryPaths) {
 		IPluginBase plugin = model.getPluginBase();
 		
-		IFragment[] fragments = new IFragment[0];
+		IFragmentModel[] fragments = new IFragmentModel[0];
 		if (plugin instanceof IPlugin)
-			fragments = PDECore.getDefault().findFragmentsFor(plugin.getId(), plugin.getVersion());
+			fragments = PDEManager.findFragmentsFor(model);
 
 		File file = new File(model.getInstallLocation());
 		if (file.isFile()) {
@@ -115,18 +115,18 @@ public class PluginJavaSearchUtil {
 		}
 		if (plugin instanceof IPlugin && ClasspathUtilCore.hasExtensibleAPI((IPlugin)plugin)) {
 			for (int i = 0; i < fragments.length; i++) {
-				addLibraryPaths((IPluginModelBase)fragments[i].getModel(), libraryPaths);
+				addLibraryPaths(fragments[i], libraryPaths);
 			}
 		}
 	}
 
 	private static void findLibraryInFragments(
-		IFragment[] fragments,
+		IFragmentModel[] fragments,
 		String libraryName,
 		ArrayList libraryPaths) {
 		for (int i = 0; i < fragments.length; i++) {
 			String path =
-				fragments[i].getModel().getInstallLocation()
+				fragments[i].getInstallLocation()
 					+ Path.SEPARATOR
 					+ libraryName;
 			if (new File(path).exists()) {

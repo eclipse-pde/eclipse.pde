@@ -27,6 +27,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEManager;
 
 public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase
 		implements IEditableModel {
@@ -40,7 +41,7 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase
 	private IBuildModel fBuildModel;
 
 	protected NLResourceHelper createNLResourceHelper() {
-		return new NLResourceHelper("plugin" ,getNLLookupLocations()); //$NON-NLS-1$
+		return new NLResourceHelper("plugin" , PDEManager.getNLLookupLocations(this)); //$NON-NLS-1$
 	}
 
 	public URL getNLLookupLocation() {

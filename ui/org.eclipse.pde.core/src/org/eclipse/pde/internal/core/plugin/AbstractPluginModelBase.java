@@ -11,10 +11,6 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.parsers.SAXParser;
 
@@ -24,9 +20,6 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.core.plugin.IExtensions;
 import org.eclipse.pde.core.plugin.IExtensionsModelFactory;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginElement;
@@ -38,7 +31,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.AbstractModel;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEState;
 
 public abstract class AbstractPluginModelBase
@@ -123,51 +115,6 @@ public abstract class AbstractPluginModelBase
 		return false;
 	}
 
-	public abstract URL getNLLookupLocation();
-
-	protected URL[] getNLLookupLocations() {
-		ArrayList list = new ArrayList();
-		URL thisLocation = getNLLookupLocation();
-		if (thisLocation != null)
-			list.add(thisLocation);
-		
-		if (isFragmentModel()) {
-			IFragment fragment = (IFragment)getPluginBase();
-			String parentId = fragment.getPluginId();
-			if (parentId != null) {
-				IPlugin plugin = PDECore.getDefault().findPlugin(parentId);
-				if (plugin != null) {
-					try {
-						list.add(new URL("file:" + plugin.getModel().getInstallLocation())); //$NON-NLS-1$
-					} catch (MalformedURLException e) {
-					}		
-				}	
-			}
-		} else {
-			if (fPluginBase != null) {
-				String id = fPluginBase.getId();
-				String version = fPluginBase.getVersion();
-				addMatchingFragments(PDECore.getDefault().findFragmentsFor(id, version), list);
-			}
-		}		
-		return (URL[])list.toArray(new URL[list.size()]);	
-	}
-
-	private void addMatchingFragments(IFragment[] fragments, List result) {
-		for (int i = 0; i < fragments.length; i++) {
-			IFragment fragment = fragments[i];
-			URL location = ((IFragmentModel)fragment.getModel()).getNLLookupLocation();
-			if (location == null) continue;
-			IPluginLibrary libraries[] = fragment.getLibraries();
-			for (int j = 0; j < libraries.length; j++) {
-				try {
-					result.add(new URL(location, libraries[j].getName()));
-				} catch (MalformedURLException e) {
-				}
-			}
-		}
-	}
-		
 	public void reload(InputStream stream, boolean outOfSync)
 		throws CoreException {
 		load(stream, outOfSync);

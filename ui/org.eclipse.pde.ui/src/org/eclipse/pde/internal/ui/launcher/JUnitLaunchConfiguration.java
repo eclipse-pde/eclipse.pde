@@ -47,6 +47,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEManager;
 import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
@@ -476,10 +477,11 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		if (model instanceof IFragmentModel) {
 			addPluginAndPrereqs(((IFragmentModel) model).getFragment().getPluginId(), map);
 		} else {
-			IFragment[] fragments = PDECore.getDefault().findFragmentsFor(id, model.getPluginBase().getVersion());
+			IFragmentModel[] fragments = PDEManager.findFragmentsFor(model);
 			for (int i = 0; i < fragments.length; i++) {
-				if (!"org.eclipse.ui.workbench.compatibility".equals(fragments[i].getId())) //$NON-NLS-1$
-					addPluginAndPrereqs(fragments[i].getId(), map);
+				IFragment fragment = fragments[i].getFragment();
+				if (!"org.eclipse.ui.workbench.compatibility".equals(fragment.getId())) //$NON-NLS-1$
+					addPluginAndPrereqs(fragment.getId(), map);
 			}
 		}
 	}

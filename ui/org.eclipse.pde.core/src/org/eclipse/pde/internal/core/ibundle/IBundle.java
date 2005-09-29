@@ -18,4 +18,8 @@ public interface IBundle {
     
     IBundleModel getModel();
     
+    String getLocalization();
+    
+    void setLocalization(String localization);
+    
 }

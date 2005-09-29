@@ -45,6 +45,7 @@ import org.eclipse.pde.internal.core.bundle.BundleFragmentModel;
 import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
 import org.eclipse.pde.internal.core.bundle.BundlePluginModelBase;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.ExternalFragmentModel;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
@@ -70,6 +71,7 @@ public class PDEState extends MinimalState {
 		boolean legacy;
 		String[] libraries;
 		String project;
+		String localization;
 	}
 	
 	private URL[] fWorkspaceURLs;
@@ -229,7 +231,7 @@ public class PDEState extends MinimalState {
 		info.className	= className != null ? className : (String)manifest.get(Constants.BUNDLE_ACTIVATOR);	
 		info.libraries = PDEStateHelper.getClasspath(manifest);
 		info.hasExtensibleAPI = "true".equals(manifest.get(ICoreConstants.EXTENSIBLE_API)); //$NON-NLS-1$ 
-		
+		info.localization = (String)manifest.get(Constants.BUNDLE_LOCALIZATION);
 		fPluginInfos.put(Long.toString(desc.getBundleId()), info);
 	}
 	
@@ -241,6 +243,7 @@ public class PDEState extends MinimalState {
 		info.hasExtensibleAPI = "true".equals(element.getAttribute("hasExtensibleAPI")); //$NON-NLS-1$ //$NON-NLS-2$
 		info.project = element.getAttribute("project"); //$NON-NLS-1$
 		info.legacy = "true".equals(element.getAttribute("legacy")); //$NON-NLS-1$ //$NON-NLS-2$
+		info.localization = element.getAttribute("localization"); //$NON-NLS-1$
 		
 		NodeList libs = element.getChildNodes(); 
 		ArrayList list = new ArrayList(libs.getLength());
@@ -300,6 +303,8 @@ public class PDEState extends MinimalState {
 					element.setAttribute("name", info.name); //$NON-NLS-1$
 				if (info.hasExtensibleAPI)
 					element.setAttribute("hasExtensibleAPI", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+				if (info.localization != null)
+					element.setAttribute("localization", info.localization); //$NON-NLS-1$
 				if (info.libraries != null) {
 					for (int i = 0; i < info.libraries.length; i++) {
 						Element lib = doc.createElement("library"); //$NON-NLS-1$
@@ -522,6 +527,11 @@ public class PDEState extends MinimalState {
 		return info == null ? new String[0] : info.libraries;
 	}
 	
+	public String getBundleLocalization(long bundleID) {
+		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
+		return info == null ? null : info.localization;		
+	}
+	
 	public String getProject(long bundleID) {
 		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? null : info.project;		
@@ -610,6 +620,11 @@ public class PDEState extends MinimalState {
 					element.setAttribute("hasExtensibleAPI", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (plugin.getSchemaVersion() == null)
 					element.setAttribute("legacy", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+				if (models[i] instanceof IBundlePluginModelBase) {
+					String localization = ((IBundlePluginModelBase)models[i]).getBundleLocalization();
+					if (localization != null)
+						element.setAttribute("localization", localization); //$NON-NLS-1$
+				}
 				IPluginLibrary[] libraries = plugin.getLibraries();
 				for (int j = 0; j < libraries.length; j++) {
 						Element lib = doc.createElement("library"); //$NON-NLS-1$

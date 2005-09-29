@@ -1,0 +1,80 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.pde.internal.ui.nls;
+
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.ui.PDELabelProvider;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.swt.graphics.Image;
+
+public class ModelChangeLabelProvider extends PDELabelProvider {
+	
+	private Image manifestImage;
+	private Image xmlImage;
+	
+	public ModelChangeLabelProvider() {
+		xmlImage = PDEPluginImages.DESC_PLUGIN_MF_OBJ.createImage();
+		manifestImage = PDEPluginImages.DESC_PAGE_OBJ.createImage();
+	}
+	
+	public String getText(Object obj) {
+		if (obj instanceof ModelChange)
+			return getObjectText(((ModelChange) obj).getParentModel().getPluginBase());
+		if (obj instanceof ModelChangeFile)
+			return getObjectText((ModelChangeFile)obj);
+		return super.getText(obj);
+	}
+	
+	private String getObjectText(ModelChangeFile pair) {
+		StringBuffer text = new StringBuffer(pair.getFile().getName());
+		int count = pair.getNumChanges();
+		text.append(" [");
+		text.append(count);
+		text.append(" instance");
+		if (count != 1)
+			text.append("s");
+		text.append("]");
+
+		return text.toString();
+	}
+
+	public Image getImage(Object obj) {
+		if (obj instanceof ModelChange) {
+			IPluginModelBase model = ((ModelChange)obj).getParentModel();
+			if (model instanceof IPluginModel)
+				return getObjectImage(((IPluginModel) model).getPlugin(), false, false);
+			if (model instanceof IFragmentModel)
+				return getObjectImage(((IFragmentModel) model).getFragment(), false, false);
+		}
+		if (obj instanceof ModelChangeFile)
+			return getObjectImage((ModelChangeFile)obj);
+		return super.getImage(obj);
+	}
+
+	private Image getObjectImage(ModelChangeFile file) {
+		String type = file.getFile().getFileExtension();
+		if ("xml".equalsIgnoreCase(type))
+			return xmlImage;
+		if ("MF".equalsIgnoreCase(type))
+			return manifestImage;
+		return null;
+	}
+	
+	public void dispose() {
+		if (manifestImage != null)
+			manifestImage.dispose();
+		if (xmlImage != null)
+			xmlImage.dispose();
+		super.dispose();
+	}
+}

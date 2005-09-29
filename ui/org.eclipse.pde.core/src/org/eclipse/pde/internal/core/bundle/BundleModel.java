@@ -73,6 +73,9 @@ public abstract class BundleModel
 		value = state.getClassName(id);
 		if (value != null)
 			properties.put(Constants.BUNDLE_ACTIVATOR, value);
+		value = state.getBundleLocalization(id);
+		if (value != null)
+			properties.put(Constants.BUNDLE_LOCALIZATION, value);
 		if (state.hasExtensibleAPI(id))
 			properties.put(ICoreConstants.EXTENSIBLE_API, "true"); //$NON-NLS-1$
 		String[] libraries = state.getLibraryNames(id);

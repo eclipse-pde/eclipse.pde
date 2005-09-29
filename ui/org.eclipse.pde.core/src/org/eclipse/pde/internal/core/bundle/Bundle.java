@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core.bundle;
 
 import java.util.*;
 import org.eclipse.pde.internal.core.ibundle.*;
+import org.osgi.framework.Constants;
 
 public class Bundle extends BundleObject implements IBundle {
     private static final long serialVersionUID = 1L;
@@ -22,7 +23,7 @@ public class Bundle extends BundleObject implements IBundle {
 	 */
 	public void setHeader(String key, String value) {
         if (fProperties == null)
-            return;
+            fProperties = new Properties();
 		Object oldValue = fProperties.get(key);
 		if (value == null || value.trim().length() == 0)
 			fProperties.remove(key);
@@ -42,5 +43,11 @@ public class Bundle extends BundleObject implements IBundle {
 	
 	public void load(Properties properties) {
 		fProperties = properties;
+	}
+	public String getLocalization() {
+		return getHeader(Constants.BUNDLE_LOCALIZATION);
+	}
+	public void setLocalization(String localization) {
+		setHeader(Constants.BUNDLE_LOCALIZATION, localization);
 	}
 }

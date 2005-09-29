@@ -77,4 +77,10 @@ public interface IBundlePluginModelBase extends IPluginModelBase, IEditable {
 	 * that need saving.
 	 */
 	void save();
+	
+	/**
+	 * Returns the bundle localization
+	 * @return the bundle localization
+	 */
+	String getBundleLocalization();
 }

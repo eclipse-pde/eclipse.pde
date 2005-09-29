@@ -25,7 +25,6 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
@@ -190,21 +189,19 @@ public class ClasspathUtilCore {
 	private static IPluginModelBase resolveLibraryInFragments(
 		IPluginLibrary library,
 		String libraryName) {
-		IFragment[] fragments =
-			PDECore.getDefault().findFragmentsFor(
-				library.getPluginBase().getId(),
-				library.getPluginBase().getVersion());
+		IFragmentModel[] fragments =
+			PDEManager.findFragmentsFor(library.getPluginModel());
 
 		for (int i = 0; i < fragments.length; i++) {
-			IPath path = getPath(fragments[i].getPluginModel(), libraryName);
+			IPath path = getPath(fragments[i], libraryName);
 			if (path != null)
-				return fragments[i].getPluginModel();
+				return fragments[i];
 			
 			// the following case is to account for cases when a plugin like org.eclipse.swt.win32 is checked out from
 			// cvs (i.e. it has no library) and org.eclipse.swt is not in the workspace.
 			// we have to find the external swt.win32 fragment to locate the $ws$/swt.jar.
-			if (fragments[i].getModel().getUnderlyingResource() != null) {
-				ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(fragments[i].getId());
+			if (fragments[i].getUnderlyingResource() != null) {
+				ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(fragments[i].getFragment().getId());
 				IPluginModelBase model = entry.getExternalModel();
 				if (model != null && model instanceof IFragmentModel) {
 					path = getPath(model, libraryName);

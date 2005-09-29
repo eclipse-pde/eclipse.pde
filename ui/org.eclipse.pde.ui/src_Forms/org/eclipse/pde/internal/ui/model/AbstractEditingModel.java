@@ -254,7 +254,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	 * @see org.eclipse.pde.core.plugin.ISharedPluginModel#getInstallLocation()
 	 */
 	public String getInstallLocation() {
-		if (fUnderlyingResource != null) {
+		if (fInstallLocation == null && fUnderlyingResource != null) {
 			IPath path = fUnderlyingResource.getProject().getLocation();
 			return path != null ? path.addTrailingSeparator().toString() : null;
 		}

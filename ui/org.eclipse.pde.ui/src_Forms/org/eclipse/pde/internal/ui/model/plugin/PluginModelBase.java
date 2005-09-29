@@ -114,16 +114,12 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getNLLookupLocation()
 	 */
 	public URL getNLLookupLocation() {
-		String installLocation = getInstallLocation();
-		if (installLocation==null) return null;
-		if (installLocation.startsWith("file:") == false) //$NON-NLS-1$
-			installLocation = "file:" + installLocation; //$NON-NLS-1$
 		try {
-			URL url = new URL(installLocation + "/"); //$NON-NLS-1$
-			return url;
+			String installLocation = getInstallLocation();
+			return installLocation == null ? null : new URL("file:" + installLocation); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
-			return null;
 		}
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -137,10 +133,10 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	 * @see org.eclipse.pde.internal.ui.model.AbstractEditingModel#createNLResourceHelper()
 	 */
 	protected NLResourceHelper createNLResourceHelper() {
-		String name = isFragmentModel() ? "fragment" : "plugin"; //$NON-NLS-1$ //$NON-NLS-2$
-		URL lookupLocation = getNLLookupLocation();
-		if (lookupLocation==null) return null;
-		return new NLResourceHelper(name, new URL[] {lookupLocation});
+		URL[] locations = PDEManager.getNLLookupLocations(this);
+		return (locations.length == 0)
+				? null 
+				: new NLResourceHelper("plugin", locations); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

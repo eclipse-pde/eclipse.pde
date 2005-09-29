@@ -55,7 +55,11 @@ public class PluginExtensionNode extends PluginParentNode
 	 */
 	public String getTranslatedName() {
 		String name = getName();
-		return (name == null || name.trim().length() == 0) ? getPoint() : getResourceString(name);
+		if (name != null && name.trim().length() > 0)
+			return getResourceString(name);
+		String point = getPoint();
+		ISchema schema = PDECore.getDefault().getSchemaRegistry().getSchema(point);
+		return schema == null ? "" : schema.getName();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IIdentifiable#getId()

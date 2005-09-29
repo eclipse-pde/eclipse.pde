@@ -10,11 +10,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Stack;
 
-import org.eclipse.jface.text.*;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.FindReplaceDocumentAdapter;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
+import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
 
 public abstract class DocumentHandler extends DefaultHandler {
 
@@ -56,6 +66,10 @@ public abstract class DocumentHandler extends DefaultHandler {
 				IDocumentAttribute attribute = getDocumentAttribute(attName, attValue, node);
 				if (attribute != null) {
 					IRegion region = getAttributeRegion(attName, attValue, nodeOffset);
+					if (region == null) {
+						attValue = CoreUtility.getWritableString(attValue);
+						region = getAttributeRegion(attName, attValue, nodeOffset);
+					}
 					if (region != null) {
 						attribute.setNameOffset(region.getOffset());
 						attribute.setNameLength(attName.length());

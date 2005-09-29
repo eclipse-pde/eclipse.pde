@@ -19,25 +19,27 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.NLResourceHelper;
+import org.eclipse.pde.internal.core.PDEManager;
 import org.eclipse.pde.internal.core.PDEState;
 
 public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 
 	private String fInstallLocation;
 	
-	private String fLocalization = null;
+	private String fLocalization;
 
 	public ExternalPluginModelBase() {
 		super();
 	}
 	
 	protected NLResourceHelper createNLResourceHelper() {
-		return new NLResourceHelper(fLocalization == null ? "plugin" : fLocalization, getNLLookupLocations()); //$NON-NLS-1$
+		return (fLocalization == null)
+			    ? null : new NLResourceHelper(fLocalization, PDEManager.getNLLookupLocations(this)); //$NON-NLS-1$
 	}
 	
 	public URL getNLLookupLocation() {
 		try {
-			return new URL("file:" + getInstallLocation()); //$NON-NLS-1$
+			return new URL("file:" + fInstallLocation); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
 			return null;
 		}
@@ -64,6 +66,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		if (device != null)
 			path = path.setDevice(device.toUpperCase());
 		setInstallLocation(path.toOSString());
+		fLocalization = state.getBundleLocalization(description.getBundleId());
 		super.load(description, state, ignoreExtensions);
 	}
 		
@@ -73,7 +76,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 
 	private File getLocalFile() {
 		File file = new File(getInstallLocation());
-		if (file.isFile() && new Path(file.getAbsolutePath()).getFileExtension().equals("jar")) //$NON-NLS-1$
+		if (file.isFile())
 			return file;
 
 		file = new File(file, "META-INF/MANIFEST.MF"); //$NON-NLS-1$
@@ -93,5 +96,9 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		File file = new File(newInstallLocation);
 		if (file.isDirectory())
 			fInstallLocation += File.separator;
+	}
+	
+	public String getLocalization() {
+		return fLocalization;
 	}
 }
