@@ -54,13 +54,17 @@ public class PDEPluginConverter {
 					.getBundleContext(), PluginConverter.class.getName(), null);
 			tracker.open();
 			PluginConverter converter = (PluginConverter) tracker.getService();
-			converter.convertManifest(inputFile, outputFile, false, "3.1", true, null); //$NON-NLS-1$
+			double version = TargetPlatform.getTargetVersion();
+			String versionString =  version <= 3.1 ? ICoreConstants.TARGET31 : TargetPlatform.getTargetVersionString();
+			converter.convertManifest(inputFile, outputFile, false, versionString, true, null);
 			
 			InputStream manifestStream = new FileInputStream(outputFile);
 			Manifest manifest = new Manifest(manifestStream);
 			Properties prop = manifestToProperties(manifest.getMainAttributes());
-			if (standard)
-				prop.remove("Eclipse-AutoStart"); //$NON-NLS-1$
+			if (standard) {
+				prop.remove(ICoreConstants.ECLIPSE_AUTOSTART); 
+				prop.remove(ICoreConstants.ECLIPSE_LAZYSTART);
+			}
 			StringBuffer buffer = new StringBuffer();
 			Iterator iter = packages.iterator();
 			while (iter.hasNext()) {
