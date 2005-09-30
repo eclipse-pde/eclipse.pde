@@ -64,7 +64,7 @@ public class LogView extends ViewPart implements ILogListener {
     public static int ASCENDING = 1;
     public static int DESCENDING = -1;
     
-    private ArrayList fLogs = new ArrayList();
+    private ArrayList fLogs;
 
     private Clipboard fClipboard;
     
@@ -358,6 +358,7 @@ public class LogView extends ViewPart implements ILogListener {
                             .setComparator(comparator);
                 fMemento.putInteger(P_ORDER_VALUE, MESSAGE_ORDER);
                 fMemento.putInteger(P_ORDER_TYPE, MESSAGE);
+                setColumnSorting(fColumn1, MESSAGE_ORDER);
             }
         });
 
@@ -378,6 +379,7 @@ public class LogView extends ViewPart implements ILogListener {
                             .setComparator(comparator);
                 fMemento.putInteger(P_ORDER_VALUE, PLUGIN_ORDER);
                 fMemento.putInteger(P_ORDER_TYPE, PLUGIN);
+                setColumnSorting(fColumn2, PLUGIN_ORDER);
             }
         });
 
@@ -386,11 +388,7 @@ public class LogView extends ViewPart implements ILogListener {
         fColumn3.setWidth(fMemento.getInteger(P_COLUMN_3).intValue());
         fColumn3.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                if (DATE_ORDER == ASCENDING) {
-                    DATE_ORDER = DESCENDING;
-                } else {
-                    DATE_ORDER = ASCENDING;
-                }
+                DATE_ORDER *= -1;
                 ViewerSorter sorter = getViewerSorter(DATE);
                 fTreeViewer.setSorter(sorter);
                 collator = sorter.getCollator();
@@ -398,6 +396,7 @@ public class LogView extends ViewPart implements ILogListener {
 				((EventDetailsDialogAction) fPropertiesAction).setComparator(comparator);
                 fMemento.putInteger(P_ORDER_VALUE, DATE_ORDER);
                 fMemento.putInteger(P_ORDER_TYPE, DATE);
+                setColumnSorting(fColumn3, DATE_ORDER);
             }
         });
         
@@ -405,10 +404,22 @@ public class LogView extends ViewPart implements ILogListener {
     }
 
 	private void initializeViewerSorter() {
-        ViewerSorter sorter = getViewerSorter(fMemento.getInteger(P_ORDER_TYPE).byteValue());
+		byte orderType = fMemento.getInteger(P_ORDER_TYPE).byteValue();
+        ViewerSorter sorter = getViewerSorter(orderType);
         fTreeViewer.setSorter(sorter);
+        if (orderType == MESSAGE )
+        	setColumnSorting(fColumn1, MESSAGE_ORDER);
+        else if (orderType == PLUGIN)
+        	setColumnSorting(fColumn2, PLUGIN_ORDER);
+        else if (orderType == DATE)
+        	setColumnSorting(fColumn3, DATE_ORDER);
 	}
 
+	private void setColumnSorting(TreeColumn column, int order) {
+		fTree.setSortColumn(column);
+        fTree.setSortDirection(order == ASCENDING ? SWT.UP : SWT.DOWN);
+	}
+	
     public void dispose() {
         writeSettings();
         Platform.removeLogListener(this);
@@ -670,23 +681,23 @@ public class LogView extends ViewPart implements ILogListener {
         switch (type){
         case DATE:
         	DATE_ORDER = this.fMemento.getInteger(P_ORDER_VALUE).intValue();
-        	MESSAGE_ORDER = -1;
-        	PLUGIN_ORDER = -1;
+        	MESSAGE_ORDER = DESCENDING;
+        	PLUGIN_ORDER = DESCENDING;
         	break;
         case MESSAGE:
         	MESSAGE_ORDER = this.fMemento.getInteger(P_ORDER_VALUE).intValue();
-        	DATE_ORDER = -1;
-        	PLUGIN_ORDER = -1;
+        	DATE_ORDER = DESCENDING;
+        	PLUGIN_ORDER = DESCENDING;
         	break;
         case PLUGIN:
         	PLUGIN_ORDER = this.fMemento.getInteger(P_ORDER_VALUE).intValue();
-        	MESSAGE_ORDER = -1;
-        	DATE_ORDER = -1;
+        	MESSAGE_ORDER = DESCENDING;
+        	DATE_ORDER = DESCENDING;
         	break;
 		default:
-			DATE_ORDER = -1;
-			MESSAGE_ORDER = -1;
-			PLUGIN_ORDER = -1;
+			DATE_ORDER = DESCENDING;
+			MESSAGE_ORDER = DESCENDING;
+			PLUGIN_ORDER = DESCENDING;
         }
 		if (collator == null)
 			collator = Collator.getInstance();
@@ -718,7 +729,7 @@ public class LogView extends ViewPart implements ILogListener {
         if (fMemento.getString(P_ACTIVATE) == null)
             fMemento.putString(P_ACTIVATE, "true"); //$NON-NLS-1$
         
-       	fMemento.putInteger(P_ORDER_VALUE, -1);
+       	fMemento.putInteger(P_ORDER_VALUE, DESCENDING);
         fMemento.putInteger(P_ORDER_TYPE, DATE);
     }
 
@@ -860,8 +871,8 @@ public class LogView extends ViewPart implements ILogListener {
 						Date date1 = formatter.parse(((LogEntry) e1).getDate());
 						Date date2 = formatter.parse(((LogEntry) e2).getDate());
 						if (DATE_ORDER == ASCENDING)
-							return date1.before(date2) ? -1 : 1;
-						return date1.after(date2) ? -1 : 1;
+							return date1.before(date2) ? DESCENDING : ASCENDING;
+						return date1.after(date2) ? DESCENDING : ASCENDING;
 					} catch (ParseException e) {
 					}
 					return 0;
@@ -918,8 +929,8 @@ public class LogView extends ViewPart implements ILogListener {
 						Date date1 = formatter.parse(((LogEntry) e1).getDate());
 						Date date2 = formatter.parse(((LogEntry) e2).getDate());
 						if (DATE_ORDER == ASCENDING)
-							return date1.before(date2) ? -1 : 1;
-						return date1.after(date2) ? -1 : 1;
+							return date1.before(date2) ? DESCENDING : ASCENDING;
+						return date1.after(date2) ? DESCENDING : ASCENDING;
 					} catch (ParseException e) {
 					}
 					return 0;
@@ -970,18 +981,18 @@ public class LogView extends ViewPart implements ILogListener {
 			fMemento.putInteger(P_COLUMN_2, p.getInt(P_COLUMN_2) > 0 ? p
 					.getInt(P_COLUMN_2) : 150);
 			fMemento.putInteger(P_COLUMN_3, p.getInt(P_COLUMN_3) > 0 ? p
-					.getInt(P_COLUMN_3) : 300);
+					.getInt(P_COLUMN_3) : 150);
 			fMemento.putString(P_ACTIVATE, p.getBoolean(P_ACTIVATE) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			int order = p.getInt(P_ORDER_VALUE);
-			fMemento.putInteger(P_ORDER_VALUE, order == 0 ? -1 : order);
+			fMemento.putInteger(P_ORDER_VALUE, order == 0 ? DESCENDING : order);
 			fMemento.putInteger(P_ORDER_TYPE, p.getInt(P_ORDER_TYPE));
 		} catch (NumberFormatException e) {
 			fMemento.putInteger(P_LOG_LIMIT, 50);
 			fMemento.putInteger(P_COLUMN_1, 300);
 			fMemento.putInteger(P_COLUMN_2, 150);
 			fMemento.putInteger(P_COLUMN_3, 150);
-			fMemento.putInteger(P_ORDER_TYPE, MESSAGE);
-			fMemento.putInteger(P_ORDER_VALUE, -1);
+			fMemento.putInteger(P_ORDER_TYPE, DATE);
+			fMemento.putInteger(P_ORDER_VALUE, DESCENDING);
 		}
     }
     
@@ -1009,7 +1020,7 @@ public class LogView extends ViewPart implements ILogListener {
         preferences.setValue(P_COLUMN_3, fMemento.getInteger(P_COLUMN_3).intValue());
         preferences.setValue(P_ACTIVATE, fMemento.getString(P_ACTIVATE).equals("true")); //$NON-NLS-1$
         int order = fMemento.getInteger(P_ORDER_VALUE).intValue();
-        preferences.setValue(P_ORDER_VALUE, order == 0 ? -1 : order);
+        preferences.setValue(P_ORDER_VALUE, order == 0 ? DESCENDING : order);
         preferences.setValue(P_ORDER_TYPE, fMemento.getInteger(P_ORDER_TYPE).intValue());
     }
 }
