@@ -41,7 +41,9 @@ import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.PDEMessages;
+import org.eclipse.pde.internal.core.AbstractModel;
 import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
 import org.eclipse.pde.internal.core.util.IdUtil;
@@ -50,6 +52,9 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.Version;
 
 public class BundleErrorReporter extends JarManifestErrorReporter {
+
+	IPluginModelBase fModel;
+	
 	private static final String COMPATIBILITY_PLUGIN = "org.eclipse.core.runtime.compatibility"; //$NON-NLS-1$
 
 	private static final String COMPATIBILITY_ACTIVATOR = "org.eclipse.core.internal.compatibility.PluginActivator"; //$NON-NLS-1$
@@ -484,6 +489,17 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			return;
 		}
 	}
+	
+	private void validateBundleName() {
+		IHeader header = (IHeader) fHeaders.get(Constants.BUNDLE_NAME);
+		if (header == null) {
+			report(
+					NLS.bind(PDEMessages.BundleErrorReporter_headerMissing, Constants.BUNDLE_NAME), 1, 
+					CompilerFlags.ERROR);
+			return;
+		}
+		validateTranslatableString(header, true);
+	}
 
 	/**
 	 * @return boolean false if fatal
@@ -515,6 +531,13 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		validateSingletonDirective(header, elements[0]);
 
 		return true;
+	}
+	
+	private void validateBundleVendor() {
+		IHeader header = (IHeader) fHeaders.get(Constants.BUNDLE_VENDOR);
+		if (header == null) 
+			return;
+		validateTranslatableString(header, true);
 	}
 
 	private void validateBundleVersion() {
@@ -553,17 +576,19 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		readBundleManifestVersion();
 		fHasFragment_Xml = fProject.getFile("fragment.xml").exists(); //$NON-NLS-1$
 
-		IPluginModelBase modelBase = PDECore.getDefault().getModelManager()
+		fModel = PDECore.getDefault().getModelManager()
 				.findModel(fProject);
-		if (modelBase != null) {
-			fHasExtensions = modelBase.getPluginBase().getExtensionPoints().length > 0
-					|| modelBase.getPluginBase().getExtensions().length > 0;
+		if (fModel != null) {
+			fHasExtensions = fModel.getPluginBase().getExtensionPoints().length > 0
+					|| fModel.getPluginBase().getExtensions().length > 0;
 		}
 
 		// sets fPluginId
 		if (!validateBundleSymbolicName()) {
 			return;
 		}
+		validateBundleName();
+		validateBundleVendor();
 		validateBundleVersion();
 		// sets fExtensibleApi
 		validateExtensibleAPI();
@@ -1243,5 +1268,21 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					.getLineNumber() + 1, CompilerFlags.ERROR);
 		}
 	}
-
+	
+	protected void validateTranslatableString(IHeader header, boolean shouldTranslate) {
+		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_NOT_EXTERNALIZED);
+		if (severity == CompilerFlags.IGNORE)
+			return;
+		String value = header.getValue();
+		if (shouldTranslate) {
+			if (!value.startsWith("%")) { //$NON-NLS-1$
+				report(NLS.bind(PDEMessages.Builders_Manifest_non_ext_attribute, header.getName()), getLine(header, value), severity); 
+			} else if (fModel instanceof AbstractModel) {
+				NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
+				if (helper == null || !helper.resourceExists(value)) {
+					report(NLS.bind(PDEMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(header, value), severity); 
+				}
+			}
+		} 
+	}
 }

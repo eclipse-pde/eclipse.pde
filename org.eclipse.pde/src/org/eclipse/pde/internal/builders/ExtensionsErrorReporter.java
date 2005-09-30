@@ -318,7 +318,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		if (shouldTranslate) {
 			if (!value.startsWith("%")) { //$NON-NLS-1$
 				report(NLS.bind(PDEMessages.Builders_Manifest_non_ext_attribute, attr.getName()), getLine(element, attr.getName()), severity); 
-			} else if (fModel != null && fModel instanceof AbstractModel) {
+			} else if (fModel instanceof AbstractModel) {
 				NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
 				if (helper == null || !helper.resourceExists(value)) {
 					report(NLS.bind(PDEMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(element, attr.getName()), severity); 
@@ -336,7 +336,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			return;
 		if (!value.startsWith("%")) { //$NON-NLS-1$
 			report(NLS.bind(PDEMessages.Builders_Manifest_non_ext_element, element.getNodeName()), getLine(element), severity); 
-		} else if (fModel != null && fModel instanceof AbstractModel) {
+		} else if (fModel instanceof AbstractModel) {
 			NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
 			if (helper == null || !helper.resourceExists(value)) {
 				report(NLS.bind(PDEMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(element), severity); 
