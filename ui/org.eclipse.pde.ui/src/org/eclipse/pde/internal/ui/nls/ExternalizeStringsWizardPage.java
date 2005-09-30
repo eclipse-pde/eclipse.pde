@@ -263,6 +263,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		fSelectAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fInputViewer.setCheckedElements(fModelChangeTable.getAllModelChanges().toArray());
+				setPageComplete(hasCheckedElements());
 			}
 		});
 		fDeselectAll = new Button(buttonComposite, SWT.PUSH);
@@ -271,6 +272,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		fDeselectAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fInputViewer.setCheckedElements(new Object[0]);
+				setPageComplete(hasCheckedElements());
 			}
 		});
 		
