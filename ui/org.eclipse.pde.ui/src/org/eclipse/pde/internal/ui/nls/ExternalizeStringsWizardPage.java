@@ -30,8 +30,6 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.XMLConfiguration;
-import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ModifyEvent;
@@ -160,7 +158,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 	private String fPreErrorKey;
 
 	private IDocument fEmptyDoc;
-	private ColorManager fColorManager;
+//	private ColorManager fColorManager;
 	
 	protected ExternalizeStringsWizardPage(ModelChangeTable changeTable) {
 		super(PAGE_NAME);
@@ -196,11 +194,11 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		};
 	}
 	
-	public void dispose() {
-		if (fColorManager != null)
-			fColorManager.dispose();
-		super.dispose();
-	}
+//	public void dispose() {
+//		if (fColorManager != null)
+//			fColorManager.dispose();
+//		super.dispose();
+//	}
 	
 	public void createControl(Composite parent) {
 
@@ -432,15 +430,15 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		TreeItem item = fInputViewer.getTree().getSelection()[0];
 		IPluginModelBase model = ((ModelChange)item.getParentItem().getData()).getParentModel();
 		
-		if (fSourceViewer.getDocument() != null && !fSourceViewer.getDocument().equals(fEmptyDoc))
-			fSourceViewer.unconfigure();
-		if (sourceFile.getFileExtension().equalsIgnoreCase("xml")) { //$NON-NLS-1$
-			if (fColorManager != null) {
-				fColorManager.dispose();
-			}
-			fColorManager = new ColorManager();
-			fSourceViewer.configure(new XMLConfiguration(fColorManager));
-		}
+//		if (fSourceViewer.getDocument() != null && !fSourceViewer.getDocument().equals(fEmptyDoc))
+//			fSourceViewer.unconfigure();
+//		if (sourceFile.getFileExtension().equalsIgnoreCase("xml")) { //$NON-NLS-1$
+//			if (fColorManager != null) {
+//				fColorManager.dispose();
+//			}
+//			fColorManager = new ColorManager();
+//			fSourceViewer.configure(new XMLConfiguration(fColorManager));
+//		}
 		
 		fSourceViewer.setDocument(document);
 		updatePropertiesLabel(model);
