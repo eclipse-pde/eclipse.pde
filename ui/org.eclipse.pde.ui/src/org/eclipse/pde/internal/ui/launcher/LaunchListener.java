@@ -28,7 +28,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.internal.runtime.logview.LogView;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 
@@ -198,29 +197,27 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
     }
 
     private File getMostRecentLogFile(ILaunch launch) throws CoreException {
+    	ILaunchConfiguration configuration = launch.getLaunchConfiguration();
         File latest = null;
-        String workspace = launch.getLaunchConfiguration().getAttribute(
-                IPDELauncherConstants.LOCATION, ""); //$NON-NLS-1$ //$NON-NLS-2$
+        String workspace = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
         if (workspace.length() > 0) {
             latest = new File(workspace, ".metadata/.log"); //$NON-NLS-1$
             if (!latest.exists())
                 latest = null;
         }
-        String dir = launch.getAttribute(IPDELauncherConstants.CONFIG_LOCATION);
-        if (dir != null) {
-            File configDir = new File(dir);
-            File[] children = configDir.listFiles();
-            if (children != null) {
-                for (int i = 0; i < children.length; i++) {
-                    if (!children[i].isDirectory()
-                            && children[i].getName().endsWith(".log")) { //$NON-NLS-1$
-                        if (latest == null
-                                || latest.lastModified() < children[i].lastModified())
-                            latest = children[i];
-                    }
+        File configDir = LaunchConfigurationHelper.getConfigurationLocation(configuration);
+        File[] children = configDir.listFiles();
+        if (children != null) {
+            for (int i = 0; i < children.length; i++) {
+                if (!children[i].isDirectory()
+                        && children[i].getName().endsWith(".log")) { //$NON-NLS-1$
+                    if (latest == null
+                            || latest.lastModified() < children[i].lastModified())
+                        latest = children[i];
                 }
             }
         }
         return latest;
     }
+    
 }

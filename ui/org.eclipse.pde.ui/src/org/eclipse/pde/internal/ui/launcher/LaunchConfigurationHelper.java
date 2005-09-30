@@ -61,6 +61,13 @@ public class LaunchConfigurationHelper {
 	}
 
 	public static File getConfigurationArea(ILaunchConfiguration config) {
+		File dir = getConfigurationLocation(config);
+		if (!dir.exists()) 
+			dir.mkdirs();		
+		return dir;		
+	}
+	
+	public static File getConfigurationLocation(ILaunchConfiguration config) {
 		File dir = new File(PDECore.getDefault().getStateLocation().toOSString(), config.getName());
 		try {
 			if (!config.getAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, true)) {
@@ -72,8 +79,6 @@ public class LaunchConfigurationHelper {
 			}
 		} catch (CoreException e) {
 		}		
-		if (!dir.exists()) 
-			dir.mkdirs();		
 		return dir;		
 	}
 
