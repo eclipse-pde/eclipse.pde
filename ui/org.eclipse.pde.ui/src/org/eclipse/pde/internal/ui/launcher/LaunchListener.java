@@ -167,6 +167,7 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
                             		LogView errlog = (LogView)PDEPlugin.getActivePage()
                             				.showView("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$
                             		errlog.handleImportPath(log.getAbsolutePath());
+                            		errlog.sortByDateDescending();
                             	} else if (dialog_value == OPEN_IN_SYSTEM_EDITOR) {
                             		openSystemEditor(log);
                             	} 
