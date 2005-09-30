@@ -34,7 +34,7 @@ public class ManifestHeader extends BundleObject implements IDocumentKey {
         setModel(fBundle.getModel());
     }
     
-    protected String getLineLimiter() {
+    public String getLineLimiter() {
     	return fLineDelimiter;
     }
 
