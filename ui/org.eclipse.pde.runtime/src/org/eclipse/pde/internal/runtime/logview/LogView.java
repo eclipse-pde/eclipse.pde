@@ -1023,4 +1023,8 @@ public class LogView extends ViewPart implements ILogListener {
         preferences.setValue(P_ORDER_VALUE, order == 0 ? DESCENDING : order);
         preferences.setValue(P_ORDER_TYPE, fMemento.getInteger(P_ORDER_TYPE).intValue());
     }
+    
+    public void sortByDateDescending() {
+    	setColumnSorting(fColumn3, DESCENDING);
+    }
 }
