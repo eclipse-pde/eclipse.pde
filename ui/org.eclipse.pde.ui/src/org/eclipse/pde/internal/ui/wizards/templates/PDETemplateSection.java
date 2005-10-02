@@ -51,9 +51,9 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 		String version = getVersion(model.getPluginBase());
 		if ("3.0".equals(version)) //$NON-NLS-1$
 			return new String[] { "templates_3.0" + "/" + getSectionId() + "/" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if ("3.1".equals(version) || "3.2".equals(version)) //$NON-NLS-1$
+		if ("3.1".equals(version) || "3.2".equals(version)) //$NON-NLS-1$ //$NON-NLS-2$
 			return new String[] { 
-					"templates_3.2" + "/" + getSectionId() + "/",
+					"templates_3.2" + "/" + getSectionId() + "/", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					"templates_3.1" + "/" + getSectionId() + "/", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					"templates_3.0" + "/" + getSectionId() + "/" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return new String[] { "templates" + "/" + getSectionId() + "/" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
