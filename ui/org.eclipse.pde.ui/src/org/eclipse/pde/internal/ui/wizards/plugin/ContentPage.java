@@ -15,7 +15,6 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.*;
@@ -155,7 +154,8 @@ public abstract class ContentPage extends WizardPage {
 	}
 
 	private void presetLibraryField(String id){
-		if (fData.getTargetVersion().equals(ICoreConstants.TARGET31) && fData.hasBundleStructure()) {
+		double version = Double.parseDouble(fData.getTargetVersion());
+		if (version >= 3.1) {
 			fLibraryText.setText(""); //$NON-NLS-1$
 			return;
 		}
