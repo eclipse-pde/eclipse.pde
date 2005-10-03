@@ -141,6 +141,8 @@ public class Bundle implements IBundle {
  			header = new ExportPackageHeader(key, value, this, newLine);
         } else if (key.equals(Constants.IMPORT_PACKAGE)){
  			header = new ImportPackageHeader(key, value, this, newLine);
+        } else if (key.equals(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT)) {
+        	header = new RequiredExecutionEnvironmentHeader(key, value, this, newLine);
         } else {
             header = new ManifestHeader(key, value, this, newLine);
         }
