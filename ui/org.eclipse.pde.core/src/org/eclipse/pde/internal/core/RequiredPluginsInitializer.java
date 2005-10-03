@@ -40,4 +40,15 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 			entry.updateClasspathContainer(true, false);
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#getComparisonID(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
+	 */
+	public Object getComparisonID(IPath containerPath, IJavaProject project) {
+		if (containerPath == null || project == null)
+			return null;
+			
+		return containerPath.segment(0) + "/" + project.getPath().segment(0); //$NON-NLS-1$
+	}
 }
