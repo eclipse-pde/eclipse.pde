@@ -49,9 +49,9 @@ public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 		// first on the source lookup path, goes the class libraries for the
 		// JRE
 		String vmInstallName = configuration.getAttribute(
-				IPDELauncherConstants.VMINSTALL, LaunchVMHelper
+				IPDELauncherConstants.VMINSTALL, VMHelper
 						.getDefaultVMInstallName());
-		IVMInstall[] vmInstallations = LaunchVMHelper.getAllVMInstances();
+		IVMInstall[] vmInstallations = VMHelper.getAllVMInstances();
 		IVMInstall jre = null;
 		for (int i = 0; i < vmInstallations.length; i++) {
 			if (vmInstallName.equals(vmInstallations[i].getName())) {

@@ -14,15 +14,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.preferences.PDEPreferencesUtil;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -91,29 +88,13 @@ public class JREBlock {
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String currentVM = fJreCombo.getText();
-				IPreferenceNode node = new InstalledJREsPreferenceNode();
-				if (showPreferencePage(node)) {
-					fJreCombo.setItems(LaunchVMHelper.getVMInstallNames());
+				String[] pageIDs = new String[] {"org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"}; //$NON-NLS-1$
+				if (PDEPreferencesUtil.showPreferencePage(pageIDs)) {
+					fJreCombo.setItems(VMHelper.getVMInstallNames());
 					fJreCombo.setText(currentVM);
 					if (fJreCombo.getSelectionIndex() == -1)
-						fJreCombo.setText(LaunchVMHelper.getDefaultVMInstallName());
+						fJreCombo.setText(VMHelper.getDefaultVMInstallName());
 				}
-			}
-			private boolean showPreferencePage(final IPreferenceNode targetNode) {
-				PreferenceManager manager = new PreferenceManager();
-				manager.addToRoot(targetNode);
-				final PreferenceDialog dialog =
-					new PreferenceDialog(fTab.getControl().getShell(), manager);
-				final boolean[] result = new boolean[] { false };
-				BusyIndicator.showWhile(fTab.getControl().getDisplay(), new Runnable() {
-					public void run() {
-						dialog.create();
-						dialog.setMessage(targetNode.getLabelText());
-						if (dialog.open() == PreferenceDialog.OK)
-							result[0] = true;
-					}
-				});
-				return result[0];
 			}
 		});
 		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -162,12 +143,12 @@ public class JREBlock {
 		fJavawButton.setSelection(javaCommand.equals("javaw")); //$NON-NLS-1$
 		fJavaButton.setSelection(!fJavawButton.getSelection());
 		
-		fJreCombo.setItems(LaunchVMHelper.getVMInstallNames());
+		fJreCombo.setItems(VMHelper.getVMInstallNames());
 		String vmInstallName =
-			config.getAttribute(IPDELauncherConstants.VMINSTALL, LaunchVMHelper.getDefaultVMInstallName());
+			config.getAttribute(IPDELauncherConstants.VMINSTALL, VMHelper.getDefaultVMInstallName());
 		fJreCombo.setText(vmInstallName);
 		if (fJreCombo.getSelectionIndex() == -1)
-			fJreCombo.setText(LaunchVMHelper.getDefaultVMInstallName());
+			fJreCombo.setText(VMHelper.getDefaultVMInstallName());
 	}
 	
 	private void initializeBootstrapEntriesSection(ILaunchConfiguration config) throws CoreException {
@@ -193,7 +174,7 @@ public class JREBlock {
 			} else {
 				config.setAttribute(
 						IPDELauncherConstants.VMINSTALL,
-					jre.equals(LaunchVMHelper.getDefaultVMInstallName()) ? null : jre);
+					jre.equals(VMHelper.getDefaultVMInstallName()) ? null : jre);
 			}
 		} catch (CoreException e) {
 		}

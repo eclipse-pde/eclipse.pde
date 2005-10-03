@@ -33,7 +33,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
-import org.eclipse.pde.internal.ui.launcher.LaunchVMHelper;
+import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
 
 /**
@@ -173,7 +173,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 					|| !featuresPath.toFile().exists();
 		}
 		if (badStructure) {
-			throw new CoreException(LaunchVMHelper.createErrorStatus(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_badFeatureSetup));
+			throw new CoreException(VMHelper.createErrorStatus(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_badFeatureSetup));
 		}
 		// Ensure important files are present
 		ensureProductFilesExist(getProductPath());		

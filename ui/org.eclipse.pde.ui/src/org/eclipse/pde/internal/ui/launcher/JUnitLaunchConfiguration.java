@@ -112,7 +112,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 	}
 	
 	public IVMRunner getVMRunner(ILaunchConfiguration configuration, String mode) throws CoreException {
-		IVMInstall launcher = LaunchVMHelper.createLauncher(configuration);
+		IVMInstall launcher = VMHelper.createLauncher(configuration);
 		return launcher.getVMRunner(mode);
 	}
 	/*

@@ -707,10 +707,6 @@ public class PDEUIMessages extends NLS {
 	public static String ProjectStructurePage_library;
 	public static String ProjectStructurePage_source;
 	public static String ProjectStructurePage_output;
-	public static String ProjectStructurePage_pformat;
-	public static String ProjectStructurePage_fformat;
-	public static String ProjectStructurePage_pTarget;
-	public static String ProjectStructurePage_fTarget;
 	public static String ProjectStructurePage_noOutput;
 
 	public static String ProjectNamesPage_projectName;
@@ -1986,12 +1982,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String NewProjectCreationPage_pDependsOnRuntime;
 
-	public static String NewProjectCreationPage_fDependsOnRuntime;
-	
 	public static String NewProjectCreationPage_pPureOSGi;
 
-	public static String NewProjectCreationPage_fPureOSGi;
-	
 	public static String HelloOSGiNewWizard_title;
 
 	public static String HelloOSGiTemplate_startMessage;
@@ -2055,10 +2047,6 @@ public class PDEUIMessages extends NLS {
 	public static String WindowImagesSection_128;
 
 	public static String ManifestPackageRenameParticipant_packageRename;
-
-	public static String NewProjectCreationPage_fFrameworkTarget;
-
-	public static String NewProjectCreationPage_pFrameworkTarget;
 
 	public static String NewProjectCreationPage_standard;
 
@@ -2161,5 +2149,15 @@ public class PDEUIMessages extends NLS {
 	public static String ExternalizeStringsWizardPage_keyDuplicateError;
 
 	public static String ExternalizeStringsWizardPage_keySuggested;
+
+	public static String NewProjectCreationPage_target;
+
+	public static String NewProjectCreationPage_ftarget;
+
+	public static String NewProjectCreationPage_ptarget;
+
+	public static String NewProjectCreationPage_fminJRE;
+
+	public static String NewProjectCreationPage_pminJRE;
 	
 }

@@ -32,7 +32,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
-import org.eclipse.pde.internal.ui.launcher.LaunchVMHelper;
+import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
 
 /**
@@ -101,7 +101,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * @throws CoreException if a VM runner cannot be determined
 	 */
 	public IVMRunner getVMRunner(ILaunchConfiguration configuration, String mode) throws CoreException {
-		IVMInstall launcher = LaunchVMHelper.createLauncher(configuration);
+		IVMInstall launcher = VMHelper.createLauncher(configuration);
 		return launcher.getVMRunner(mode);
 	}
 	
@@ -134,7 +134,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		String[] classpath = LaunchArgumentsHelper.constructClasspath(configuration);
 		if (classpath == null) {
 			String message = PDEUIMessages.WorkbenchLauncherConfigurationDelegate_noStartup;
-			throw new CoreException(LaunchVMHelper.createErrorStatus(message));
+			throw new CoreException(VMHelper.createErrorStatus(message));
 		}
 		return classpath;
 	}

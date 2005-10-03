@@ -26,6 +26,7 @@ public abstract class AbstractFieldData implements IFieldData {
 	private boolean fSimple;
 	private String fTargetVersion = "3.1"; //$NON-NLS-1$
 	private String fFramework;
+	private String fJRECompliance;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IFieldData2#getId()
@@ -145,7 +146,17 @@ public abstract class AbstractFieldData implements IFieldData {
 	public String getOSGiFramework() {
 		return fFramework;
 	}
+	
 	public void setOSGiFramework(String framework) {
 		fFramework = framework;
 	}
+	
+	public String getJRECompliance() {
+		return fJRECompliance;
+	}
+	
+	public void setJRECompliance(String compliance) {
+		fJRECompliance = compliance;
+	}
+	
 }

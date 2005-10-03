@@ -31,8 +31,6 @@ import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ExternalModelManager;
@@ -43,12 +41,12 @@ import org.eclipse.pde.internal.core.PluginPathFinder;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.preferences.PDEPreferencesUtil;
 import org.eclipse.pde.internal.ui.preferences.SourceCodeLocationsPreferenceNode;
 import org.eclipse.pde.internal.ui.preferences.TargetEnvironmentPreferenceNode;
 import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferenceNode;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -304,35 +302,18 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	
 	private void handleChangeTargetPlatform() {
 		IPreferenceNode targetNode = new TargetPlatformPreferenceNode();
-		if (showPreferencePage(targetNode))
+		if (PDEPreferencesUtil.showPreferencePage(targetNode))
 			dropLocation.setText(ExternalModelManager.getEclipseHome().toOSString());
 	}
 	
 	private void handleSourceLocations() {
-		showPreferencePage(new SourceCodeLocationsPreferenceNode());
+		PDEPreferencesUtil.showPreferencePage(new SourceCodeLocationsPreferenceNode());
 	}
 	
 	private void handleEnvChange() {
-		showPreferencePage(new TargetEnvironmentPreferenceNode());
+		PDEPreferencesUtil.showPreferencePage(new TargetEnvironmentPreferenceNode());
 	}
 
-	private boolean showPreferencePage(final IPreferenceNode targetNode) {
-		PreferenceManager manager = new PreferenceManager();
-		manager.addToRoot(targetNode);
-		final PreferenceDialog dialog =
-			new PreferenceDialog(getControl().getShell(), manager);
-		final boolean[] result = new boolean[] { false };
-		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
-			public void run() {
-				dialog.create();
-				dialog.setMessage(targetNode.getLabelText());
-				if (dialog.open() == PreferenceDialog.OK)
-					result[0] = true;
-			}
-		});
-		return result[0];
-	}
-	
 	private String getTargetHome() {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		return preferences.getString(ICoreConstants.PLATFORM_PATH);
