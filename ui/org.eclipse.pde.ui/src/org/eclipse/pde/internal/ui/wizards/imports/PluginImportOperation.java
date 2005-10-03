@@ -324,6 +324,8 @@ public class PluginImportOperation extends JarImportOperation {
 						srcZip.delete(true, null);
 						jarFile.delete(true, null);
 					}
+				} else if (name.equals(".") && project.getFolder("src").exists()) { //$NON-NLS-1$ //$NON-NLS-2$
+					addBuildEntry(buildModel, "source..", "src/"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}	
 		}
