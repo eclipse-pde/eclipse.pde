@@ -183,7 +183,11 @@ public class PluginModelManager implements IAdaptable {
 	}
 	
 	public ModelEntry findEntry(String id) {
-		return id == null ? null : (ModelEntry) getEntryTable().get(id);
+		if (id == null)
+			return null;
+		else if (id.equalsIgnoreCase("system.bundle")) //$NON-NLS-1$
+			return (ModelEntry) getEntryTable().get("org.eclipse.osgi"); //$NON-NLS-1$
+		return (ModelEntry) getEntryTable().get(id);
 	}
 	
 	public IPluginModelBase findModel(String id) {

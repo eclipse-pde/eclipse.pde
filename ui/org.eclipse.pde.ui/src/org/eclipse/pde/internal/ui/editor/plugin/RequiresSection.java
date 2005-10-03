@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -18,7 +19,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.plugin.ImportObject;
+import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.TableSection;
@@ -328,7 +329,29 @@ public class RequiresSection
 				result.add(plugins[i]);
 			}
 		}
+
+		if (!existingImports.contains("system.bundle")) //$NON-NLS-1$
+			addSystemBundle(result);
 		return (IPluginModelBase[])result.toArray(new IPluginModelBase[result.size()]);
+	}
+	
+	private void addSystemBundle(java.util.List list) {
+		try {
+			ExternalPluginModel model = new ExternalPluginModel();
+			
+			// Need Install Location to load model.  Giving it org.eclipse.osgi's install location
+			IPluginModelBase osgi = PDECore.getDefault().getModelManager().findModel("org.eclipse.osgi"); //$NON-NLS-1$
+			model.setInstallLocation(osgi.getInstallLocation());
+			
+			// Load model from a String representing the contents of an equivalent plugin.xml file
+			String pluginInfo = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><plugin id=\"system.bundle\" name=\"System Bundle\"></plugin>"; //$NON-NLS-1$
+			InputStream is = new ByteArrayInputStream(pluginInfo.getBytes());
+			model.load(is, false);
+			
+			list.add(model);
+			
+		} catch (CoreException e) {
+		}
 	}
 
 
