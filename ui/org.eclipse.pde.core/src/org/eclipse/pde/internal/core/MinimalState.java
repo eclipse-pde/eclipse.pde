@@ -256,9 +256,15 @@ public class MinimalState {
 		// get the target platform properties
 		Dictionary props = TargetPlatform.getTargetEnvironment();
 		// add the selected java profile
-		String profile = getJavaProfilePackages();
-		if (profile != null)
-			props.put("org.osgi.framework.system.packages", profile); //$NON-NLS-1$
+		Properties profileProps = getJavaProfileProperties();
+		if (profileProps != null) {
+			String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
+			if (systemPackages != null)
+				props.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
+			String ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
+			if (ee != null)
+				props.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, ee);
+		}
 		return props;
 	}
 
@@ -268,7 +274,7 @@ public class MinimalState {
 		return (osgiBundle == null) ? null : new File(osgiBundle.getLocation());
 	}
 
-	private String getJavaProfilePackages() {
+	private Properties getJavaProfileProperties() {
 		// returns the list of packages in the selected java profile
 		if (fJavaProfile == null)
 			return null;
@@ -294,8 +300,7 @@ public class MinimalState {
 			}
 			Properties profile = new Properties();
 			profile.load(is);
-			// return the value of the system packages property
-			return profile.getProperty("org.osgi.framework.system.packages"); //$NON-NLS-1$
+			return profile;
 		} catch (IOException e) {
 			// nothing to do
 		} finally {
