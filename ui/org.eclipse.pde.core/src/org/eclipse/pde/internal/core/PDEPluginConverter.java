@@ -198,10 +198,10 @@ public class PDEPluginConverter {
 	
 	public static String getExecutionEnvironment(String compliance) {
 		if (JavaCore.VERSION_1_5.equals(compliance))
-			return "J2SE-5"; //$NON-NLS-1$
+			return "J2SE-1.5"; //$NON-NLS-1$
 		if (JavaCore.VERSION_1_4.equals(compliance))
-			return "J2SE-4"; //$NON-NLS-1$
-		return JavaCore.VERSION_1_3.equals(compliance) ? "J2SE-3" : null; //$NON-NLS-1$
+			return "J2SE-1.4"; //$NON-NLS-1$
+		return JavaCore.VERSION_1_3.equals(compliance) ? "J2SE-1.3" : null; //$NON-NLS-1$
 	}
 
 }
