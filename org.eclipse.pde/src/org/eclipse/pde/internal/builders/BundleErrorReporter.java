@@ -167,6 +167,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				map.put(element.getId(), plugins[i]);
 			}
 		}
+		
+		if (map.containsKey("org.eclipse.osgi")) //$NON-NLS-1$
+			map.put("system.bundle", map.get("org.eclipse.osgi")); //$NON-NLS-1$ //$NON-NLS-2$
 		return map;
 	}
 
