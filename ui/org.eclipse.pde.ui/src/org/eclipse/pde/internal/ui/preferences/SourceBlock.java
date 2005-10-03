@@ -51,15 +51,12 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.events.IHyperlinkListener;
-import org.eclipse.ui.forms.widgets.FormText;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 
 
-public class SourceBlock implements IHyperlinkListener {	
+public class SourceBlock {	
 	private Image fFolderImage;
 	private TreeViewer fTreeViewer;
 	private Image fExtensionImage;
@@ -224,14 +221,19 @@ public class SourceBlock implements IHyperlinkListener {
 		layout.verticalSpacing = 10;
 		container.setLayout(layout);
 
-		FormToolkit toolkit = new FormToolkit(parent.getDisplay());	
-		FormText text = toolkit.createFormText(container, true);
-		text.setText(PDEUIMessages.SourceBlock_desc, true, false); 
+		Link text = new Link(container, SWT.WRAP);
+		text.setText(PDEUIMessages.SourceBlock_desc); 
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
+		gd.widthHint = 400;
 		text.setLayoutData(gd);
-		text.addHyperlinkListener(this);
-		toolkit.dispose();
+		text.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+			IPluginExtensionPoint point = PDECore.getDefault().findExtensionPoint("org.eclipse.pde.core.source"); //$NON-NLS-1$
+			if (point != null)
+				new ShowDescriptionAction(point, true).run();	
+			}
+		});
 
 		fTreeViewer = new TreeViewer(container, SWT.BORDER);
 		fTreeViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -290,16 +292,4 @@ public class SourceBlock implements IHyperlinkListener {
 		return container;
 	}
 
-	public void linkEntered(HyperlinkEvent e) {
-	}
-
-	public void linkExited(HyperlinkEvent e) {
-	}
-
-	public void linkActivated(HyperlinkEvent e) {
-		IPluginExtensionPoint point = PDECore.getDefault().findExtensionPoint("org.eclipse.pde.core.source"); //$NON-NLS-1$
-		if (point != null)
-			new ShowDescriptionAction(point, true).run();
-	}
-	
 }
