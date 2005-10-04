@@ -113,7 +113,9 @@ public class RequiredExecutionEnvironmentSection extends PDESection {
 			String minJ2ME = header.getMinimumJ2ME();
 			String minJRE = header.getMinimumJRE();
 			if (minJ2ME != null) fJ2MECombo.setText(minJ2ME);
+			else fJ2MECombo.setText(""); //$NON-NLS-1$
 			if (minJRE != null) fJRECombo.setText(minJRE);
+			else fJRECombo.setText(""); //$NON-NLS-1$
 		} else {
 			fJ2MECombo.setText(""); //$NON-NLS-1$
 			fJRECombo.setText(""); //$NON-NLS-1$

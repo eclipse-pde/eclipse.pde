@@ -99,9 +99,9 @@ public class RequiredExecutionEnvironmentHeader extends ManifestHeader {
     }
 
 	public String getUpdatedValue() {
+		StringBuffer sb = new StringBuffer();
 		try {
 			ManifestElement[] elements = ManifestElement.parseHeader(fName, fValue);
-			StringBuffer sb = new StringBuffer();
 			ArrayList nonStandardElements = new ArrayList();
 			for (int i = 0; i < elements.length; i++) {
 				String value = elements[i].getValue();
@@ -112,17 +112,17 @@ public class RequiredExecutionEnvironmentHeader extends ManifestHeader {
 				if (sb.length() > 0) sb.append(", "); //$NON-NLS-1$
 				sb.append((String)nonStandardElements.get(i));
 			}
-			if (fMinJRE != null) {
-				if (sb.length() > 0) sb.append(", "); //$NON-NLS-1$
-				sb.append(fMinJRE);
-			}
-			if (fMinJ2ME != null) {
-				if (sb.length() > 0) sb.append(", "); //$NON-NLS-1$
-				sb.append(fMinJ2ME);
-			}
-			fValue = sb.toString();
 		} catch (BundleException e) {
 		}
+		if (fMinJRE != null) {
+			if (sb.length() > 0) sb.append(", "); //$NON-NLS-1$
+			sb.append(fMinJRE);
+		}
+		if (fMinJ2ME != null) {
+			if (sb.length() > 0) sb.append(", "); //$NON-NLS-1$
+			sb.append(fMinJ2ME);
+		}
+		fValue = sb.toString();
 		return fValue;
 	}
 }
