@@ -33,7 +33,7 @@ public class RequiredExecutionEnvironmentHeader extends ManifestHeader {
     	JRES.add("J2SE-1.5");
     	
     	J2MES.add("CDC-1.0/Foundation-1.0");
-    	J2MES.add("CDC-1.0/Foundation-1.1");
+    	J2MES.add("CDC-1.1/Foundation-1.1");
     }
     
     public static String[] getJRES() {
