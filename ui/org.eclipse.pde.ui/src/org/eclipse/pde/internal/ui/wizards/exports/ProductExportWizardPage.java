@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import org.eclipse.core.internal.resources.ICoreConstants;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -268,6 +269,8 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 		String product = fProductCombo.getText().trim();
 		if (product.equals("")) return null; //$NON-NLS-1$
 		IPath path = new Path(product);
+		if (path.segmentCount() < ICoreConstants.MINIMUM_FILE_SEGMENT_LENGTH)
+			return null;
 		return PDEPlugin.getWorkspace().getRoot().getFile(path);
 	}
     
