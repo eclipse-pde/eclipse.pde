@@ -104,8 +104,8 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		else
 			general = new PluginGeneralInfoSection(this, left);
 		managedForm.addPart(general);		
-//		if (isBundle())
-//			managedForm.addPart(new RequiredExecutionEnvironmentSection(this, left));
+		if (isBundle())
+			managedForm.addPart(new RequiredExecutionEnvironmentSection(this, left));
 		if (isEditable())
     		createTestingSection(managedForm, left, toolkit);
 		

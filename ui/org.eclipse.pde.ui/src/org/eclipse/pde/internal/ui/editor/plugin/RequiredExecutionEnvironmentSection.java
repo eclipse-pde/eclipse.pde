@@ -33,22 +33,14 @@ import org.osgi.framework.Constants;
 
 public class RequiredExecutionEnvironmentSection extends PDESection {
 
-
 	private ComboPart fJRECombo;
 	private ComboPart fJ2MECombo;
-	private RequiredExecutionEnvironmentHeader fHeader;
 	
 	public RequiredExecutionEnvironmentSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.TITLE_BAR);
-		fHeader = (RequiredExecutionEnvironmentHeader)getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.neweditor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section,
-	 *      org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
+
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText("Execution Environment"); 
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
@@ -62,7 +54,8 @@ public class RequiredExecutionEnvironmentSection extends PDESection {
 		
 		createJRECombo(client, toolkit);
 		createCDCJRECombo(client, toolkit);
-		preSelectAndHookListeners();
+		refresh();
+		hookComboListeners();
 		
 		toolkit.paintBordersFor(client);
 		
@@ -113,14 +106,20 @@ public class RequiredExecutionEnvironmentSection extends PDESection {
 		fJ2MECombo.add("", 0); //$NON-NLS-1$
 	}
 	
-	
-	private void preSelectAndHookListeners() {
-		if (fHeader != null) {
-			String minJ2ME = fHeader.getMinimumJ2ME();
-			String minJRE = fHeader.getMinimumJRE();
+	public void refresh() {
+		RequiredExecutionEnvironmentHeader header = getHeader();
+		if (header != null) {
+			String minJ2ME = header.getMinimumJ2ME();
+			String minJRE = header.getMinimumJRE();
 			if (minJ2ME != null) fJ2MECombo.setText(minJ2ME);
 			if (minJRE != null) fJRECombo.setText(minJRE);
+		} else {
+			fJ2MECombo.setText("");
+			fJRECombo.setText("");
 		}
+	}
+	
+	public void hookComboListeners() {
 		fJRECombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleSelection(fJRECombo.getSelection(), true);
@@ -148,16 +147,20 @@ public class RequiredExecutionEnvironmentSection extends PDESection {
 	}
 	
 	private void handleSelection(String newValue, boolean isJRE) {
-		if (fHeader != null) {
+		RequiredExecutionEnvironmentHeader header = getHeader();
+		if (header != null) {
 			if (isJRE)
-				fHeader.updateJRE(newValue);
+				newValue = header.updateJRE(newValue);
 			else
-				fHeader.updateJ2ME(newValue);
-			newValue = fHeader.getUpdatedValue();
+				newValue = header.updateJ2ME(newValue);
 		}
 		getBundle().setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, newValue);
+	}
+	
+	private RequiredExecutionEnvironmentHeader getHeader() {
 		ManifestHeader header = getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 		if (header != null && header instanceof RequiredExecutionEnvironmentHeader)
-			fHeader = (RequiredExecutionEnvironmentHeader) header;
+			return (RequiredExecutionEnvironmentHeader) header;
+		return null;
 	}
 }
