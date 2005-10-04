@@ -325,10 +325,15 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		if (javaProfile == null) {
 			javaProfile = getDefaultJavaProfile();
 		}
-		String profile = getJavaProfilePackages();
-		if (profile != null)
-			properties.put(SYSTEM_PACKAGES, profile);
-
+		Properties profileProps = getJavaProfileProperties();
+		if (profileProps != null) {
+			String systemPackages = profileProps.getProperty(SYSTEM_PACKAGES);
+			if (systemPackages != null)
+				properties.put(SYSTEM_PACKAGES, systemPackages);
+			String ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
+			if (ee != null)
+				properties.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, ee);
+		}
 		state.setPlatformProperties(properties);
 		state.resolve(false);
 	}
@@ -567,7 +572,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		return (String[]) results.toArray(new String[results.size()]);
 	}
 
-	private String getJavaProfilePackages() {
+	private Properties getJavaProfileProperties() {
 		if (javaProfile == null)
 			return null;
 		File location = getOSGiLocation();
@@ -589,7 +594,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			}
 			Properties profile = new Properties();
 			profile.load(is);
-			return profile.getProperty(SYSTEM_PACKAGES);
+			return profile;
 		} catch (IOException e) {
 			// nothing to do
 		} finally {
