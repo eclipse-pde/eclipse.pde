@@ -86,6 +86,7 @@ public class RequiredExecutionEnvironmentSection extends PDESection {
 		fJRECombo.getControl().setLayoutData(td);
 		fJRECombo.setItems(RequiredExecutionEnvironmentHeader.getJRES());
 		fJRECombo.add("", 0); //$NON-NLS-1$
+		fJRECombo.getControl().setEnabled(isEditable());
 	}
 	
 	private void createCDCJRECombo(Composite client, FormToolkit toolkit) {
@@ -109,6 +110,7 @@ public class RequiredExecutionEnvironmentSection extends PDESection {
 		fJ2MECombo.getControl().setLayoutData(td);
 		fJ2MECombo.setItems(RequiredExecutionEnvironmentHeader.getJ2MES());
 		fJ2MECombo.add("", 0); //$NON-NLS-1$
+		fJ2MECombo.getControl().setEnabled(isEditable());
 	}
 	
 	public void refresh() {

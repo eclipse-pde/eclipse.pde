@@ -153,6 +153,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 				super.textDirty(entry);
 			}
 		});
+		fPluginMinVersionEntry.setEditable(isEditable());
 		fPluginMinVersionBound = new ComboPart();
 		fPluginMinVersionBound.createControl(client, toolkit, SWT.READ_ONLY);
 		fPluginMinVersionBound.getControl().setLayoutData(new TableWrapData(TableWrapData.FILL));
@@ -179,6 +180,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 				}
 			}
 		});
+		fPluginMaxVersionEntry.setEditable(isEditable());
 		fPluginMaxVersionBound = new ComboPart();
 		fPluginMaxVersionBound.createControl(client, toolkit, SWT.READ_ONLY);
 		fPluginMaxVersionBound.getControl().setLayoutData(new TableWrapData(TableWrapData.FILL));
@@ -295,7 +297,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 	private void setMaxFieldsEnabled() {
 		boolean enabled = fPluginMinVersionEntry.getText().getText().trim().length() != 0;
 		fPluginMaxVersionEntry.getText().setEnabled(enabled);
-		fPluginMaxVersionBound.getControl().setEnabled(enabled);
+		fPluginMaxVersionBound.getControl().setEnabled(enabled && isEditable());
 	}
 	
 	private String getVersion() {
