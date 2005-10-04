@@ -59,15 +59,19 @@ public class RequiredExecutionEnvironmentHeader extends ManifestHeader {
 	            for (int i = 0; i < TOTAL_JRES; i++) {
 	            	for (int j = 0; j < elements.length; j++) {
 	            		String value = elements[j].getValue();
-	            		if (value.equals(JRES.get(i)) && fMinJRE == null)
+	            		if (value.equals(JRES.get(i))) {
 	            			fMinJRE = value;
+	            			break;
+	            		}
 	            	}
 	            }
 	           	for (int i = 0; i < TOTAL_J2MES; i++) {
 	            	for (int j = 0; j < elements.length; j++) {
 	            		String value = elements[j].getValue();
-	            		if (value.equals(J2MES.get(i)) && fMinJ2ME == null)
+	            		if (value.equals(J2MES.get(i))) {
 	            			fMinJ2ME = value;
+	            			break;
+	            		}
 	            	}
 	            }
 	        }
