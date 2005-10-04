@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangeProvider;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -55,7 +56,6 @@ public class RequiredExecutionEnvironmentSection extends PDESection {
 		
 		createJRECombo(client, toolkit);
 		createCDCJRECombo(client, toolkit);
-		refresh();
 		hookComboListeners();
 		
 		toolkit.paintBordersFor(client);
@@ -68,7 +68,9 @@ public class RequiredExecutionEnvironmentSection extends PDESection {
 	private void createJRECombo(Composite client, FormToolkit toolkit) {
 		TableWrapData twd = new TableWrapData();
 		twd.colspan = 2;
-		Label descLabel = toolkit.createLabel(client, PDEUIMessages.RequiredExecutionEnvironmentSection_minJRE);
+		Label descLabel = toolkit.createLabel(client, 
+				isFragment() ? PDEUIMessages.RequiredExecutionEnvironmentSection_fminJRE
+							 : PDEUIMessages.RequiredExecutionEnvironmentSection_minJRE);
 		descLabel.setLayoutData(twd);
 		
 		Label standardLabel = toolkit.createLabel(client, PDEUIMessages.RequiredExecutionEnvironmentSection_jreProfile); 
@@ -89,7 +91,9 @@ public class RequiredExecutionEnvironmentSection extends PDESection {
 	private void createCDCJRECombo(Composite client, FormToolkit toolkit) {
 		TableWrapData twd = new TableWrapData();
 		twd.colspan = 2;
-		Label descLabel = toolkit.createLabel(client, PDEUIMessages.RequiredExecutionEnvironmentSection_minJ2ME);
+		Label descLabel = toolkit.createLabel(client, 
+											isFragment() ? PDEUIMessages.RequiredExecutionEnvironmentSection_fminJ2ME
+											: PDEUIMessages.RequiredExecutionEnvironmentSection_minJ2ME);
 		descLabel.setLayoutData(twd);
 		
 		Label foundationLabel = toolkit.createLabel(client, PDEUIMessages.RequiredExecutionEnvironmentSection_j2meProfile); 
@@ -166,4 +170,11 @@ public class RequiredExecutionEnvironmentSection extends PDESection {
 			return (RequiredExecutionEnvironmentHeader) header;
 		return null;
 	}
+	
+	private boolean isFragment() {
+		InputContextManager manager = getPage().getPDEEditor().getContextManager();
+		IPluginModelBase model = (IPluginModelBase) manager.getAggregateModel();
+		return model.isFragmentModel();
+	}
+
 }

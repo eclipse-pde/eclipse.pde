@@ -2169,5 +2169,9 @@ public class PDEUIMessages extends NLS {
 	public static String RequiredExecutionEnvironmentSection_minJ2ME;
 
 	public static String RequiredExecutionEnvironmentSection_j2meProfile;
+
+	public static String RequiredExecutionEnvironmentSection_fminJRE;
+
+	public static String RequiredExecutionEnvironmentSection_fminJ2ME;
 	
 }
