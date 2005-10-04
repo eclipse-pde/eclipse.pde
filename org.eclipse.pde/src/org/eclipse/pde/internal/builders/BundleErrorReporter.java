@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +46,7 @@ import org.eclipse.pde.internal.core.AbstractModel;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.osgi.framework.Constants;
@@ -607,6 +609,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		validateProvidePackage(monitor);
 		validateImportPackage(monitor);
 		validateEclipsePlatformFilter();
+		validateAutoStart();
+		validateLazyStart();
 		// validateNativeCode();
 	}
 
@@ -1287,5 +1291,77 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				}
 			}
 		} 
+	}
+	
+	private void validateAutoStart() {
+		IHeader header = (IHeader) fHeaders.get(ICoreConstants.ECLIPSE_AUTOSTART);
+		if (!isValidStartHeader(header))
+			return; // valid start header problems already reported
+		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
+		if (severity == CompilerFlags.IGNORE)
+			return;
+		if (TargetPlatform.getTargetVersion() >= 3.2) {
+			int line = header.getLineNumber();
+			header = (IHeader) fHeaders.get(Constants.BUNDLE_MANIFESTVERSION);
+			if (header != null && header.getValue().equals("2"))
+				report("Eclipse-AutoStart header is deprecated, use Eclipse-LazyStart", line + 1, severity);
+		}
+	}
+	
+	private void validateLazyStart() {
+		IHeader header = (IHeader) fHeaders.get(ICoreConstants.ECLIPSE_LAZYSTART);
+		isValidStartHeader(header);
+	}
+	
+	private boolean isValidStartHeader(IHeader header) {
+		if (header == null)
+			return false;
+		ManifestElement[] elements = header.getElements();
+		if (elements.length == 0) 
+			return true;
+		return (startHeaderElementsValid(header, elements) && 
+				startHeaderAttributesValid(header, elements));
+	}
+	
+	/*
+	 * Should only be called if elements.length > 0
+	 */
+	private boolean startHeaderElementsValid(IHeader header, ManifestElement[] elements) {
+		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_ELEMENT);
+		if (severity == CompilerFlags.IGNORE)
+			return true;
+		if (elements.length > 1) {
+			report(header.getName() + " has too many elements.", header.getLineNumber() + 1, severity);
+			return false;
+		}
+		String[] values = elements[0].getValueComponents();
+		if (values == null ||
+				values.length > 1 ||
+				(!values[0].equals(Boolean.toString(true)) &&
+				 !values[0].equals(Boolean.toString(false)))) {
+			report(header.getName() + "'s value must be 'true' or 'false'", header.getLineNumber() + 1, severity);
+			return false;
+		}
+		return true;
+	}
+	
+	/*
+	 * Should only be called if elements.length > 0
+	 */
+	private boolean startHeaderAttributesValid(IHeader header, ManifestElement[] elements) {
+		int unknwnAttSev = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_ATTRIBUTE);
+		if (unknwnAttSev == CompilerFlags.IGNORE)
+			return true;
+		Enumeration keys = elements[0].getKeys();
+		if (keys != null && keys.hasMoreElements() && !("exceptions".equals(keys.nextElement()))) {
+			report(header.getName() + " has an unknown attribute.", header.getLineNumber() + 1, unknwnAttSev);
+			return false;
+		}
+		Enumeration dirKeys = elements[0].getDirectiveKeys();
+		if (dirKeys != null && dirKeys.hasMoreElements()) {
+			report(header.getName() + " may not have any directives", header.getLineNumber() + 1, unknwnAttSev);
+			return false;
+		}
+		return true;
 	}
 }
