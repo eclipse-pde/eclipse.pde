@@ -2159,5 +2159,15 @@ public class PDEUIMessages extends NLS {
 	public static String NewProjectCreationPage_fminJRE;
 
 	public static String NewProjectCreationPage_pminJRE;
+
+	public static String RequiredExecutionEnvironmentSection_title;
+
+	public static String RequiredExecutionEnvironmentSection_minJRE;
+
+	public static String RequiredExecutionEnvironmentSection_jreProfile;
+
+	public static String RequiredExecutionEnvironmentSection_minJ2ME;
+
+	public static String RequiredExecutionEnvironmentSection_j2meProfile;
 	
 }

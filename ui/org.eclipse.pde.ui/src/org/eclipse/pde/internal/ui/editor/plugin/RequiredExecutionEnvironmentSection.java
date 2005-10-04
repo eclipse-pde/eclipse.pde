@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
@@ -42,7 +43,7 @@ public class RequiredExecutionEnvironmentSection extends PDESection {
 	}
 
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setText("Execution Environment"); 
+		section.setText(PDEUIMessages.RequiredExecutionEnvironmentSection_title); 
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		
 		Composite client = toolkit.createComposite(section);
@@ -67,10 +68,10 @@ public class RequiredExecutionEnvironmentSection extends PDESection {
 	private void createJRECombo(Composite client, FormToolkit toolkit) {
 		TableWrapData twd = new TableWrapData();
 		twd.colspan = 2;
-		Label descLabel = toolkit.createLabel(client, "Specify the minimum JRE level on which this plugin can run:");
+		Label descLabel = toolkit.createLabel(client, PDEUIMessages.RequiredExecutionEnvironmentSection_minJRE);
 		descLabel.setLayoutData(twd);
 		
-		Label standardLabel = toolkit.createLabel(client, "JRE profile:"); 
+		Label standardLabel = toolkit.createLabel(client, PDEUIMessages.RequiredExecutionEnvironmentSection_jreProfile); 
 		standardLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		TableWrapData td = new TableWrapData();
 		td.valign = TableWrapData.MIDDLE;
@@ -88,10 +89,10 @@ public class RequiredExecutionEnvironmentSection extends PDESection {
 	private void createCDCJRECombo(Composite client, FormToolkit toolkit) {
 		TableWrapData twd = new TableWrapData();
 		twd.colspan = 2;
-		Label descLabel = toolkit.createLabel(client, "Specify the J2ME environment on which this plugin can run:");
+		Label descLabel = toolkit.createLabel(client, PDEUIMessages.RequiredExecutionEnvironmentSection_minJ2ME);
 		descLabel.setLayoutData(twd);
 		
-		Label foundationLabel = toolkit.createLabel(client, "J2ME profile:"); 
+		Label foundationLabel = toolkit.createLabel(client, PDEUIMessages.RequiredExecutionEnvironmentSection_j2meProfile); 
 		foundationLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		TableWrapData td = new TableWrapData();
 		td.valign = TableWrapData.MIDDLE;
@@ -114,8 +115,8 @@ public class RequiredExecutionEnvironmentSection extends PDESection {
 			if (minJ2ME != null) fJ2MECombo.setText(minJ2ME);
 			if (minJRE != null) fJRECombo.setText(minJRE);
 		} else {
-			fJ2MECombo.setText("");
-			fJRECombo.setText("");
+			fJ2MECombo.setText(""); //$NON-NLS-1$
+			fJRECombo.setText(""); //$NON-NLS-1$
 		}
 	}
 	

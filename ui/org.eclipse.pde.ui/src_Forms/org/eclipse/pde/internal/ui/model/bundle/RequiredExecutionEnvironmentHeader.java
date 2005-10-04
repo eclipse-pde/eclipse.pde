@@ -24,16 +24,16 @@ public class RequiredExecutionEnvironmentHeader extends ManifestHeader {
     public static final ArrayList JRES = new ArrayList(TOTAL_JRES);
     public static final ArrayList J2MES = new ArrayList(TOTAL_J2MES);
     static {
-    	JRES.add("OSGi/Minimum-1.0");
-    	JRES.add("OSGi/Minimum-1.1");
-    	JRES.add("JRE-1.1");
-    	JRES.add("J2SE-1.2");
-    	JRES.add("J2SE-1.3");
-    	JRES.add("J2SE-1.4");
-    	JRES.add("J2SE-1.5");
+    	JRES.add("OSGi/Minimum-1.0"); //$NON-NLS-1$
+    	JRES.add("OSGi/Minimum-1.1"); //$NON-NLS-1$
+    	JRES.add("JRE-1.1"); //$NON-NLS-1$
+    	JRES.add("J2SE-1.2"); //$NON-NLS-1$
+    	JRES.add("J2SE-1.3"); //$NON-NLS-1$
+    	JRES.add("J2SE-1.4"); //$NON-NLS-1$
+    	JRES.add("J2SE-1.5"); //$NON-NLS-1$
     	
-    	J2MES.add("CDC-1.0/Foundation-1.0");
-    	J2MES.add("CDC-1.1/Foundation-1.1");
+    	J2MES.add("CDC-1.0/Foundation-1.0"); //$NON-NLS-1$
+    	J2MES.add("CDC-1.1/Foundation-1.1"); //$NON-NLS-1$
     }
     
     public static String[] getJRES() {
@@ -87,14 +87,14 @@ public class RequiredExecutionEnvironmentHeader extends ManifestHeader {
     public String updateJRE(String newValue) {
     	if (newValue.equals(fMinJRE))
     		return fValue;
-    	fMinJRE = newValue.equals("") ? null : newValue;
+    	fMinJRE = newValue.equals("") ? null : newValue; //$NON-NLS-1$
     	return getUpdatedValue();
     }
     
     public String updateJ2ME(String newValue) {
     	if (newValue.equals(fMinJ2ME))
     		return fValue;
-    	fMinJ2ME = newValue.equals("") ? null : newValue;
+    	fMinJ2ME = newValue.equals("") ? null : newValue; //$NON-NLS-1$
     	return getUpdatedValue();
     }
 
@@ -109,15 +109,15 @@ public class RequiredExecutionEnvironmentHeader extends ManifestHeader {
 					nonStandardElements.add(value);
 			}
 			for (int i = 0; i < nonStandardElements.size(); i++) {
-				if (sb.length() > 0) sb.append(", ");
+				if (sb.length() > 0) sb.append(", "); //$NON-NLS-1$
 				sb.append((String)nonStandardElements.get(i));
 			}
 			if (fMinJRE != null) {
-				if (sb.length() > 0) sb.append(", ");
+				if (sb.length() > 0) sb.append(", "); //$NON-NLS-1$
 				sb.append(fMinJRE);
 			}
 			if (fMinJ2ME != null) {
-				if (sb.length() > 0) sb.append(", ");
+				if (sb.length() > 0) sb.append(", "); //$NON-NLS-1$
 				sb.append(fMinJ2ME);
 			}
 			fValue = sb.toString();
