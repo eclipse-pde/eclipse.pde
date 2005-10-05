@@ -31,6 +31,7 @@ import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.EquinoxPluginBlock;
@@ -182,6 +183,12 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 					null);
 			throw new CoreException(status);
 		}
+		// clear config area, if necessary
+		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
+			CoreUtility.deleteContent(getConfigDir(configuration));
+		launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());
+			
+		monitor.worked(1);
 	}
 
 }
