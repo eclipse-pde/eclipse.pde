@@ -45,7 +45,7 @@ public class PDEPluginConverter {
 		}
 	}
 	
-	public static void createBundleForFramework(IProject project, Set packages, boolean standard, IProgressMonitor monitor) throws CoreException {
+	public static void createBundleForFramework(IProject project, Set packages, IProgressMonitor monitor) throws CoreException {
 		try {
 			File outputFile = new File(project.getLocation().append(
 					"META-INF/MANIFEST.MF").toOSString()); //$NON-NLS-1$
@@ -61,10 +61,8 @@ public class PDEPluginConverter {
 			InputStream manifestStream = new FileInputStream(outputFile);
 			Manifest manifest = new Manifest(manifestStream);
 			Properties prop = manifestToProperties(manifest.getMainAttributes());
-			if (standard) {
-				prop.remove(ICoreConstants.ECLIPSE_AUTOSTART); 
-				prop.remove(ICoreConstants.ECLIPSE_LAZYSTART);
-			}
+			prop.remove(ICoreConstants.ECLIPSE_AUTOSTART); 
+			prop.remove(ICoreConstants.ECLIPSE_LAZYSTART);
 			StringBuffer buffer = new StringBuffer();
 			Iterator iter = packages.iterator();
 			while (iter.hasNext()) {
@@ -88,6 +86,7 @@ public class PDEPluginConverter {
 			monitor.done();
 		}
 	}
+	
 	public static void modifyBundleClasspathHeader(IProject project, IPluginModelBase model) {
 		IFile file = project.getFile(JarFile.MANIFEST_NAME);
 		if (file.exists()) {

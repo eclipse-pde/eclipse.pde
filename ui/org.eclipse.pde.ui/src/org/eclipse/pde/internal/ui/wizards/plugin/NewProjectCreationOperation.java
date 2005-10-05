@@ -95,7 +95,6 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		if (framework != null) {
 			PDEPluginConverter.createBundleForFramework(project, 
 								getImportPackagesSet(), 
-								!framework.equalsIgnoreCase(ICoreConstants.EQUINOX), 
 								new SubProgressMonitor(monitor, 1));
 		} else {
 			PDEPluginConverter.convertToOSGIFormat(project,
