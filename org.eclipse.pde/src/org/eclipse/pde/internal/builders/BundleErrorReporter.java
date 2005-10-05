@@ -1317,16 +1317,13 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (header == null)
 			return false;
 		ManifestElement[] elements = header.getElements();
-		if (elements.length == 0) 
-			return true;
 		return (startHeaderElementsValid(header, elements) && 
-				startHeaderAttributesValid(header, elements));
+				exceptionsAttributesValid(header, elements));
 	}
 	
-	/*
-	 * Should only be called if elements.length > 0
-	 */
 	private boolean startHeaderElementsValid(IHeader header, ManifestElement[] elements) {
+		if (elements == null || elements.length == 0) 
+			return true;
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_ELEMENT);
 		if (severity == CompilerFlags.IGNORE)
 			return true;
@@ -1345,22 +1342,36 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		return true;
 	}
 	
-	/*
-	 * Should only be called if elements.length > 0
-	 */
-	private boolean startHeaderAttributesValid(IHeader header, ManifestElement[] elements) {
+	private boolean exceptionsAttributesValid(IHeader header, ManifestElement[] elements) {
+		if (elements == null || elements.length == 0) 
+			return true;
 		int unknwnAttSev = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_ATTRIBUTE);
 		if (unknwnAttSev == CompilerFlags.IGNORE)
 			return true;
 		Enumeration keys = elements[0].getKeys();
-		if (keys != null && keys.hasMoreElements() && !("exceptions".equals(keys.nextElement()))) {
-			report(header.getName() + " has an unknown attribute.", header.getLineNumber() + 1, unknwnAttSev);
-			return false;
+		if (keys != null && keys.hasMoreElements()) {
+			String key = (String) keys.nextElement();
+			if ("exceptions".equals(key)) {
+				String[] values = elements[0].getAttributes(key);
+				for (int i = 0; i < values.length; i++) {
+					if (!packageExists(header, values[i]))
+						return false;
+				}
+			}
 		}
-		Enumeration dirKeys = elements[0].getDirectiveKeys();
-		if (dirKeys != null && dirKeys.hasMoreElements()) {
-			report(header.getName() + " may not have any directives", header.getLineNumber() + 1, unknwnAttSev);
-			return false;
+		return true;
+	}
+	
+	private boolean packageExists(IHeader header, String exportPackageStmt) {
+		/* The exported package does not exist in the bundle */
+		if (!getProjectPackages().containsKey(exportPackageStmt)) {
+			if (!(getHostPackages().containsKey(exportPackageStmt) || fHasExtensibleApi
+					&& getFragmentsPackages()
+							.containsKey(exportPackageStmt))) {
+				String message = NLS.bind(PDEMessages.BundleErrorReporter_NotExistInProject, exportPackageStmt); 
+				report(message, header.getLineNumber() + 1, CompilerFlags.P_UNRESOLVED_IMPORTS);
+				return false;
+			}
 		}
 		return true;
 	}

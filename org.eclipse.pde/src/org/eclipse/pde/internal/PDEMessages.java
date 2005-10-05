@@ -120,4 +120,9 @@ public class PDEMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, PDEMessages.class);
 	}
+	public static String BundleErrorReporter_startHeader_autoStartDeprecated;
+
+	public static String BundleErrorReporter_startHeader_tooManyElements;
+
+	public static String BundleErrorReporter_startHeader_illegalValue;
 }
