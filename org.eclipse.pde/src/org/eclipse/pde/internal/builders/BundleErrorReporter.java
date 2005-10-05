@@ -1303,8 +1303,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (TargetPlatform.getTargetVersion() >= 3.2) {
 			int line = header.getLineNumber();
 			header = (IHeader) fHeaders.get(Constants.BUNDLE_MANIFESTVERSION);
-			if (header != null && header.getValue().equals("2"))
-				report("Eclipse-AutoStart header is deprecated, use Eclipse-LazyStart", line + 1, severity);
+			if (header != null && header.getValue().equals("2")) //$NON-NLS-1$
+				report(PDEMessages.BundleErrorReporter_startHeader_autoStartDeprecated, line + 1, severity);
 		}
 	}
 	
@@ -1328,7 +1328,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (severity == CompilerFlags.IGNORE)
 			return true;
 		if (elements.length > 1) {
-			report(header.getName() + " has too many elements.", header.getLineNumber() + 1, severity);
+			report(header.getName() + PDEMessages.BundleErrorReporter_startHeader_tooManyElements, header.getLineNumber() + 1, severity);
 			return false;
 		}
 		String[] values = elements[0].getValueComponents();
@@ -1336,7 +1336,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				values.length > 1 ||
 				(!values[0].equals(Boolean.toString(true)) &&
 				 !values[0].equals(Boolean.toString(false)))) {
-			report(header.getName() + "'s value must be 'true' or 'false'", header.getLineNumber() + 1, severity);
+			report(header.getName() + PDEMessages.BundleErrorReporter_startHeader_illegalValue, header.getLineNumber() + 1, severity);
 			return false;
 		}
 		return true;
@@ -1351,7 +1351,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		Enumeration keys = elements[0].getKeys();
 		if (keys != null && keys.hasMoreElements()) {
 			String key = (String) keys.nextElement();
-			if ("exceptions".equals(key)) {
+			if ("exceptions".equals(key)) { //$NON-NLS-1$
 				String[] values = elements[0].getAttributes(key);
 				for (int i = 0; i < values.length; i++) {
 					if (!packageExists(header, values[i]))
