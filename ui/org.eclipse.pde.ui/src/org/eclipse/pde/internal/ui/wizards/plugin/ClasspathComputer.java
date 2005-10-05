@@ -8,10 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core;
+package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -26,13 +27,20 @@ import org.eclipse.jdt.core.IJavaModelStatus;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.JavadocLocationManager;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.team.core.RepositoryProvider;
 
 public class ClasspathComputer {
@@ -50,10 +58,10 @@ public class ClasspathComputer {
 		addSourceAndLibraries(project, model, clear, result);
 	
 		// add JRE
-		result.add(ClasspathUtilCore.createJREEntry());
+		result.add(createJREEntry(getCompliance(model.getBundleDescription())));
 
 		// add pde container
-		result.add(ClasspathUtilCore.createContainerEntry());
+		result.add(createContainerEntry());
 
 		IClasspathEntry[] entries = (IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
 		IJavaProject javaProject = JavaCore.create(project);
@@ -69,7 +77,7 @@ public class ClasspathComputer {
 		return (IClasspathEntry[])result.toArray(new IClasspathEntry[result.size()]);
 	}
 
-	private static void addSourceAndLibraries(IProject project, IPluginModelBase model, boolean clear, 
+	public static void addSourceAndLibraries(IProject project, IPluginModelBase model, boolean clear, 
 			ArrayList result) throws CoreException {
 		
 		HashSet paths = new HashSet();
@@ -95,7 +103,7 @@ public class ClasspathComputer {
 				addSourceFolder(buildEntry, project, paths, result);
 			} else {
 				if (libraries[i].getName().equals(".")) //$NON-NLS-1$
-					addJARdPlugin(project, getFilename(model), attrs, result);
+					addJARdPlugin(project, ClasspathUtilCore.getFilename(model), attrs, result);
 				else
 					addLibraryEntry(project, libraries[i], libraries[i].isExported(), attrs, result);
 			}
@@ -107,7 +115,7 @@ public class ClasspathComputer {
 					addSourceFolder(buildEntry, project, paths, result);
 				}
 			} else if (ClasspathUtilCore.isBundle(model)) {
-				addJARdPlugin(project, getFilename(model), attrs, result);
+				addJARdPlugin(project, ClasspathUtilCore.getFilename(model), attrs, result);
 			}
 		}
 	}
@@ -138,19 +146,6 @@ public class ClasspathComputer {
 		}	
 	}
 	
-	public static String getFilename(IPluginModelBase model) {
-		StringBuffer buffer = new StringBuffer();
-		String id = model.getPluginBase().getId();
-		if (id != null)
-			buffer.append(id);
-		buffer.append("_"); //$NON-NLS-1$
-		String version = model.getPluginBase().getVersion();
-		if (version != null)
-			buffer.append(version);
-		buffer.append(".jar"); //$NON-NLS-1$
-		return buffer.toString();
-	}
-
 	protected static IBuild getBuild(IProject project) throws CoreException {
 		IFile buildFile = project.getFile("build.properties"); //$NON-NLS-1$
 		IBuildModel buildModel = null;
@@ -193,4 +188,66 @@ public class ClasspathComputer {
 		return (dot != -1) ? libraryName.substring(0, dot) + "src.zip" : libraryName;	 //$NON-NLS-1$
 	}
 	
+	public static void setComplianceOptions(Map map, String compliance) {
+		if (JavaCore.VERSION_1_5.equals(compliance)) {
+			map.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_5);
+			map.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
+			map.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_5);
+			map.put(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR);
+			map.put(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
+		} else if (JavaCore.VERSION_1_4.equals(compliance)) {
+			map.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_4);
+			map.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_3);
+			map.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_2);
+			map.put(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.WARNING);
+			map.put(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.WARNING);
+		} else if (JavaCore.VERSION_1_3.equals(compliance)) {
+			map.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_3);
+			map.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_3);
+			map.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_1);
+			map.put(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.IGNORE);
+			map.put(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.IGNORE);
+		} else {
+			throw new IllegalArgumentException("Unsupported compliance: " + compliance); //$NON-NLS-1$
+		}
+	}
+	
+	public static String getCompliance(BundleDescription desc) {
+		if (desc == null)
+			return null;
+		
+		String[] env = desc.getExecutionEnvironments();
+		if (env.length == 0)
+			return null;
+		
+		double compliance = Double.MAX_VALUE;
+		for (int i = 0; i < env.length; i++) {
+			compliance = Math.min(getComplianceLevel(env[i]), compliance);
+		}
+		return Double.toString(compliance);
+	}
+	
+	private static double getComplianceLevel(String env) {
+		if ("J2SE-1.5".equals(env))
+			return Double.parseDouble(JavaCore.VERSION_1_5);
+		if ("J2SE-1.4".equals(env))
+			return Double.parseDouble(JavaCore.VERSION_1_4);
+		return Double.parseDouble(JavaCore.VERSION_1_3);
+	}
+	
+	public static IClasspathEntry createJREEntry(String compliance) {
+		IPath path = new Path(JavaRuntime.JRE_CONTAINER);		
+		if (compliance != null && !VMHelper.hasMatchingCompliance(JavaRuntime.getDefaultVMInstall(), compliance)) {
+			IVMInstall inst = VMHelper.findMatchingJREInstall(compliance);
+			if (inst != null) {
+				path = path.append(inst.getVMInstallType().getId()).append(inst.getName());
+			}
+		}
+		return JavaCore.newContainerEntry(path);
+	}
+	
+	public static IClasspathEntry createContainerEntry() {
+		return JavaCore.newContainerEntry(new Path(PDECore.CLASSPATH_CONTAINER_ID));
+	}
+
 }

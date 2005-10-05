@@ -36,14 +36,6 @@ import org.eclipse.pde.internal.core.plugin.Plugin;
 
 public class ClasspathUtilCore {
 	
-	public static IClasspathEntry createContainerEntry() {
-		return JavaCore.newContainerEntry(new Path(PDECore.CLASSPATH_CONTAINER_ID));
-	}
-
-	public static IClasspathEntry createJREEntry() {
-		return JavaCore.newContainerEntry(new Path("org.eclipse.jdt.launching.JRE_CONTAINER")); //$NON-NLS-1$
-	}
-	
 	public static void addLibraries(IPluginModelBase model, ArrayList result) throws CoreException {
 		if (new File(model.getInstallLocation()).isFile()) {
 			addJARdPlugin(model, result);
@@ -240,5 +232,18 @@ public class ClasspathUtilCore {
 		}
 		return (buildModel != null) ? buildModel.getBuild() : null;
 	}
-
+	
+	public static String getFilename(IPluginModelBase model) {
+		StringBuffer buffer = new StringBuffer();
+		String id = model.getPluginBase().getId();
+		if (id != null)
+			buffer.append(id);
+		buffer.append("_"); //$NON-NLS-1$
+		String version = model.getPluginBase().getVersion();
+		if (version != null)
+			buffer.append(version);
+		buffer.append(".jar"); //$NON-NLS-1$
+		return buffer.toString();
+	}
+	
 }

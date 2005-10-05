@@ -18,8 +18,6 @@ import java.util.jar.Manifest;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.pluginconversion.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -30,7 +28,6 @@ import org.osgi.util.tracker.*;
 public class PDEPluginConverter {
 	
 	public static void convertToOSGIFormat(IProject project, String target, Dictionary dictionary, IProgressMonitor monitor) throws CoreException {
-		InputStream manifestStream = null;
 		try {
 			File outputFile = new File(project.getLocation().append(
 					"META-INF/MANIFEST.MF").toOSString()); //$NON-NLS-1$
@@ -40,40 +37,15 @@ public class PDEPluginConverter {
 			tracker.open();
 			PluginConverter converter = (PluginConverter) tracker.getService();
 			converter.convertManifest(inputFile, outputFile, false, target, true, dictionary);
-
-			String compliance = getComplianceLevel(project, target);
-			if (compliance != null) {
-				String execution = getExecutionEnvironment(compliance);
-				if (execution != null) {
-					manifestStream = new FileInputStream(outputFile);
-					Manifest manifest = new Manifest(manifestStream);
-					Properties prop = manifestToProperties(manifest.getMainAttributes());
-					prop.put(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, execution);	
-					// pretty-up the Require-Bundle header for the converter
-					String required = prop.getProperty(Constants.REQUIRE_BUNDLE);
-					if (required != null)
-						prop.put(Constants.REQUIRE_BUNDLE, 
-								required.replaceAll(",", "," + System.getProperty("line.separator") + " ")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-					converter.writeManifest(outputFile, prop, false);
-				}
-			}					
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 			tracker.close();
 		} catch (PluginConversionException e) {
-		} catch (FileNotFoundException e) {
-		} catch (IOException e) {
 		}  finally {
-			try {
-				if (manifestStream != null)
-					manifestStream.close();
-			} catch (IOException e) {
-			}
 			monitor.done();
 		}
 	}
 	
 	public static void createBundleForFramework(IProject project, Set packages, boolean standard, IProgressMonitor monitor) throws CoreException {
-		InputStream manifestStream = null;
 		try {
 			File outputFile = new File(project.getLocation().append(
 					"META-INF/MANIFEST.MF").toOSString()); //$NON-NLS-1$
@@ -86,7 +58,7 @@ public class PDEPluginConverter {
 			String versionString =  version <= 3.1 ? ICoreConstants.TARGET31 : TargetPlatform.getTargetVersionString();
 			converter.convertManifest(inputFile, outputFile, false, versionString, true, null);
 			
-			manifestStream = new FileInputStream(outputFile);
+			InputStream manifestStream = new FileInputStream(outputFile);
 			Manifest manifest = new Manifest(manifestStream);
 			Properties prop = manifestToProperties(manifest.getMainAttributes());
 			if (standard) {
@@ -105,12 +77,6 @@ public class PDEPluginConverter {
 			}
 			if (buffer.length() > 0)
 				prop.put(Constants.IMPORT_PACKAGE, buffer.toString());
-			String compliance = getComplianceLevel(project, TargetPlatform.getTargetVersionString());
-			if (compliance != null) {
-				String execution = getExecutionEnvironment(compliance);
-				if (execution != null)
-					prop.put(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, execution);
-			}
 			converter.writeManifest(outputFile, prop, false);
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 			tracker.close();
@@ -119,11 +85,6 @@ public class PDEPluginConverter {
 		} catch (FileNotFoundException e) {
 		} catch (IOException e) {
 		} finally {
-			try {
-				if (manifestStream != null)
-					manifestStream.close();
-			} catch (IOException e) {
-			}
 			monitor.done();
 		}
 	}
@@ -138,7 +99,7 @@ public class PDEPluginConverter {
 				String classpath = prop.getProperty(Constants.BUNDLE_CLASSPATH);
 				if (classpath == null) {
 					prop.put(Constants.BUNDLE_CLASSPATH, 
-							ClasspathComputer.getFilename(model));
+							ClasspathUtilCore.getFilename(model));
 				} else {
 					ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, classpath);
 					StringBuffer buffer = new StringBuffer();
@@ -149,7 +110,7 @@ public class PDEPluginConverter {
 							buffer.append(" "); //$NON-NLS-1$
 						}
 						if (elements[i].getValue().equals(".")) //$NON-NLS-1$
-							buffer.append(ClasspathComputer.getFilename(model));
+							buffer.append(ClasspathUtilCore.getFilename(model));
 						else
 							buffer.append(elements[i].getValue());
 					}
@@ -187,21 +148,4 @@ public class PDEPluginConverter {
 		return result;
 	}
 	
-	public static String getComplianceLevel(IProject project, String target) throws CoreException {
-		double version = Double.parseDouble(target);
-		if (version >= 3.2 && project.hasNature(JavaCore.NATURE_ID)) {
-			IJavaProject jProject = JavaCore.create(project);
-			return jProject.getOption(JavaCore.COMPILER_COMPLIANCE, true);
-		}
-		return null;
-	}
-	
-	public static String getExecutionEnvironment(String compliance) {
-		if (JavaCore.VERSION_1_5.equals(compliance))
-			return "J2SE-1.5"; //$NON-NLS-1$
-		if (JavaCore.VERSION_1_4.equals(compliance))
-			return "J2SE-1.4"; //$NON-NLS-1$
-		return JavaCore.VERSION_1_3.equals(compliance) ? "J2SE-1.3" : null; //$NON-NLS-1$
-	}
-
 }

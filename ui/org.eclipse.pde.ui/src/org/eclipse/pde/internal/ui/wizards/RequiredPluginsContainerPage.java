@@ -26,7 +26,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
@@ -34,6 +33,7 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.wizards.plugin.ClasspathComputer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -200,7 +200,7 @@ public class RequiredPluginsContainerPage
 		}
 
 		if (entry == null) {
-			entry = ClasspathUtilCore.createContainerEntry();
+			entry = ClasspathComputer.createContainerEntry();
 			PluginModelManager mng = PDECore.getDefault().getModelManager();
 			ModelEntry entry = mng.findEntry(javaProject.getProject());
 			if (entry!=null) {
