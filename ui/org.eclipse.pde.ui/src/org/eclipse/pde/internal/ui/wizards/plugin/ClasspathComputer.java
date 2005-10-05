@@ -228,9 +228,9 @@ public class ClasspathComputer {
 	}
 	
 	private static double getComplianceLevel(String env) {
-		if ("J2SE-1.5".equals(env))
+		if ("J2SE-1.5".equals(env)) //$NON-NLS-1$
 			return Double.parseDouble(JavaCore.VERSION_1_5);
-		if ("J2SE-1.4".equals(env))
+		if ("J2SE-1.4".equals(env)) //$NON-NLS-1$
 			return Double.parseDouble(JavaCore.VERSION_1_4);
 		return Double.parseDouble(JavaCore.VERSION_1_3);
 	}

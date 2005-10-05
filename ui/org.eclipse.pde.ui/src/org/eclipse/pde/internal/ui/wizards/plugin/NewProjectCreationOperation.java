@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -30,8 +29,6 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.build.IBuildEntry;
@@ -43,7 +40,6 @@ import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.PDE;
-import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPluginConverter;
@@ -55,7 +51,6 @@ import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.ui.IBundleContentWizard;
 import org.eclipse.pde.ui.IFieldData;
@@ -349,13 +344,14 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		monitor.done();
 	}
 
-	private IClasspathEntry[] getClassPathEntries(IProject project, IFieldData data) {
+	private IClasspathEntry[] getClassPathEntries(IProject project,
+			IFieldData data) {
 		IClasspathEntry[] internalClassPathEntries = getInternalClassPathEntries(
 				project, data);
 		IClasspathEntry[] entries = new IClasspathEntry[internalClassPathEntries.length + 2];
 		System.arraycopy(internalClassPathEntries, 0, entries, 0, internalClassPathEntries.length);
-		entries[entries.length - 2] = getJREEntry(getCompliance(data));
-		entries[entries.length - 1] = ClasspathUtilCore.createContainerEntry();
+		entries[entries.length - 2] = ClasspathComputer.createJREEntry(null);
+		entries[entries.length - 1] = ClasspathComputer.createContainerEntry();
 		return entries;
 	}
 
@@ -432,14 +428,6 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	private void setClasspath(IProject project, IFieldData data)
 			throws JavaModelException, CoreException {
 		IJavaProject javaProject = JavaCore.create(project);
-
-		String compliance = getCompliance(data);
-		if (!compliance.equals(JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE))) {
-			Map options = javaProject.getOptions(false);
-			setComplianceOptions(options, compliance);
-			javaProject.setOptions(options);
-		}
-
 		// Set output folder
 		if (data.getOutputFolderName() != null) {
 			IPath path = project.getFullPath().append(
@@ -448,13 +436,6 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 		IClasspathEntry[] entries = getClassPathEntries(project, data);
 		javaProject.setRawClasspath(entries, null);
-	}
-	
-	private String getCompliance(IFieldData data) {
-		String compliance = null;
-		if (data instanceof AbstractFieldData)
-			compliance = ((AbstractFieldData) data).getJRECompliance();
-		return compliance != null ? compliance : JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE);
 	}
 
 	protected void setPluginLibraries(WorkspacePluginModelBase model)
@@ -493,40 +474,5 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			base.remove(libraries[i]);
 		}
 	}
-	
-	private void setComplianceOptions(Map map, String compliance) {
-		if (JavaCore.VERSION_1_5.equals(compliance)) {
-			map.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_5);
-			map.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
-			map.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_5);
-			map.put(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR);
-			map.put(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
-		} else if (JavaCore.VERSION_1_4.equals(compliance)) {
-			map.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_4);
-			map.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_3);
-			map.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_2);
-			map.put(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.WARNING);
-			map.put(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.WARNING);
-		} else if (JavaCore.VERSION_1_3.equals(compliance)) {
-			map.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_3);
-			map.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_3);
-			map.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_1);
-			map.put(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.IGNORE);
-			map.put(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.IGNORE);
-		} else {
-			throw new IllegalArgumentException("Unsupported compliance: " + compliance); //$NON-NLS-1$
-		}
-	}
-	
-	private IClasspathEntry getJREEntry(String compliance) {
-		IPath path = new Path(JavaRuntime.JRE_CONTAINER);		
-		if (!VMHelper.hasMatchingCompliance(JavaRuntime.getDefaultVMInstall(), compliance)) {
-			IVMInstall inst = VMHelper.findMatchingJREInstall(compliance);
-			if (inst != null) {
-				path = path.append(inst.getVMInstallType().getId()).append(inst.getName());
-			}
-		}
-		return JavaCore.newContainerEntry(path);
-	}
-	
+
 }

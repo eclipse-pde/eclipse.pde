@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -18,8 +17,6 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.launcher.VMHelper;
-import org.eclipse.pde.internal.ui.preferences.PDEPreferencesUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -32,7 +29,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
@@ -50,8 +46,6 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	private Combo fTargetCombo;
 	private Combo fOSGiCombo;
 	private Button fOSGIButton;
-	private Combo fJRECombo;
-	private Link fJRELabel;
 	
 	public NewProjectCreationPage(String pageName, AbstractFieldData data, boolean fragment){
 		super(pageName);
@@ -95,8 +89,6 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 				fSourceText.setEnabled(enabled);
 				fOutputlabel.setEnabled(enabled);
 				fOutputText.setEnabled(enabled);
-				fJRELabel.setEnabled(enabled);
-				fJRECombo.setEnabled(enabled);
 				validatePage();
 			}
 		});
@@ -147,43 +139,6 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fOSGiCombo.setItems(new String[] {ICoreConstants.EQUINOX, PDEUIMessages.NewProjectCreationPage_standard}); 
 		fOSGiCombo.setText(ICoreConstants.EQUINOX);	
 		
-		Composite composite = new Composite(group, SWT.NONE);
-		GridLayout layout = new GridLayout(2, false);
-		layout.marginHeight = layout.marginWidth = 0;
-		composite.setLayout(layout);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		composite.setLayoutData(gd);
-		
-		fJRELabel = new Link(composite, SWT.NONE);
-		if (fFragment)
-			fJRELabel.setText(PDEUIMessages.NewProjectCreationPage_fminJRE);
-		else
-			fJRELabel.setText(PDEUIMessages.NewProjectCreationPage_pminJRE);			
-		fJRELabel.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				String[] pageIDs = 
-					new String[] {
-						"org.eclipse.jdt.debug.ui.preferences.VMPreferencePage", //$NON-NLS-1$
-						"org.eclipse.jdt.ui.preferences.CompliancePreferencePage"}; //$NON-NLS-1$
-				if (PDEPreferencesUtil.showPreferencePage(pageIDs)) {
-					resetJRECombo();
-				}
-			}
-		});
-			
-		fJRECombo = new Combo(composite, SWT.READ_ONLY|SWT.BORDER);
-		resetJRECombo();
-	}
-	
-	private void resetJRECombo() {
-		fJRECombo.setItems(VMHelper.getAvailableComplianceLevels());
-		fJRECombo.setText(getDefaultCompliance());		
-	}
-	
-	private String getDefaultCompliance() {
-		String compliance = JavaCore.getOption(JavaCore.COMPILER_COMPLIANCE);
-		return JavaCore.VERSION_1_5.equals(compliance) ? "5.0" : compliance; //$NON-NLS-1$
 	}
 	
 	private void updateRuntimeDependency() {
@@ -231,17 +186,6 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fData.setTargetVersion(fTargetCombo.getText());
 		fData.setHasBundleStructure(fOSGIButton.getSelection() || Double.parseDouble(fTargetCombo.getText()) >= 3.1);	
 		fData.setOSGiFramework(fOSGIButton.getSelection() ? fOSGiCombo.getText() : null);
-		fData.setJRECompliance(getJREVersion());
-	}
-	
-	private String getJREVersion() {
-		String version = null;
-		if (fJRECombo.isEnabled()) {
-			version = fJRECombo.getText();
-			if ("5.0".equals(version)) //$NON-NLS-1$
-				version = JavaCore.VERSION_1_5;
-		}
-		return version;
 	}
 	
 }

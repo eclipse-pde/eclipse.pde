@@ -230,7 +230,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 		// searchable entries + JRE
 		list.add(JavaCore.newContainerEntry(new Path(
 				PDECore.JAVA_SEARCH_CONTAINER_ID)));
-		list.add(JavaCore.newContainerEntry(new Path("org.eclipse.jdt.launching.JRE_CONTAINER")));
+		list.add(JavaCore.newContainerEntry(new Path("org.eclipse.jdt.launching.JRE_CONTAINER"))); //$NON-NLS-1$
 		try {
 			project.setRawClasspath((IClasspathEntry[]) list
 					.toArray(new IClasspathEntry[list.size()]), monitor);
