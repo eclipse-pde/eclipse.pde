@@ -17,6 +17,7 @@ import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.model.IDocumentKey;
 import org.eclipse.pde.internal.ui.model.IDocumentRange;
 import org.eclipse.pde.internal.ui.model.bundle.*;
 import org.eclipse.swt.graphics.*;
@@ -37,12 +38,13 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			if (parent instanceof BundleModel) {
 				BundleModel model = (BundleModel) parent;
 				Dictionary manifest = ((Bundle)model.getBundle()).getHeaders();
-				Object[] keys = new Object[manifest.size()];
-				int i = 0;
+				ArrayList keys = new ArrayList();
 				for (Enumeration elements = manifest.keys(); elements.hasMoreElements();) {
-					keys[i++] = manifest.get(elements.nextElement());
+					IDocumentKey key = (IDocumentKey) manifest.get(elements.nextElement());
+					if (key.getOffset() > -1)
+						keys.add(key);
 				}
-				return keys;
+				return keys.toArray();
 			}
 			return new Object[0];
 		}

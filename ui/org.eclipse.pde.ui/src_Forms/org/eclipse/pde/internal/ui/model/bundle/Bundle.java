@@ -73,16 +73,6 @@ public class Bundle implements IBundle {
 		}
 	}
 	
-	public void trim() {
-		Iterator iter = fDocumentHeaders.keySet().iterator();
-		while (iter.hasNext()) {
-			String key = iter.next().toString();
-			ManifestHeader header = (ManifestHeader)fDocumentHeaders.get(key);
-			if (header.getOffset() == -1)
-				fDocumentHeaders.remove(key);
-		}
-	}
-	
 	protected void adjustOffsets(IDocument document) {
 		int lines = document.getNumberOfLines();
 		try {
