@@ -115,7 +115,8 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		right.setLayout(layout);
 		right.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		createContentSection(managedForm, right, toolkit);
-		createExtensionSection(managedForm, right, toolkit);
+		if (isEditable() || getPDEEditor().hasInputContext(PluginInputContext.CONTEXT_ID))
+			createExtensionSection(managedForm, right, toolkit);
         if (isEditable())
     		createExportingSection(managedForm, right, toolkit);
 	}
