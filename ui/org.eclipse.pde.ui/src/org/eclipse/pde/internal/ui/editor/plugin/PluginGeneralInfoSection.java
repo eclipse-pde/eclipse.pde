@@ -28,12 +28,23 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.model.bundle.Bundle;
+import org.eclipse.pde.internal.ui.model.bundle.LazyStartHeader;
+import org.eclipse.pde.internal.ui.model.bundle.ManifestHeader;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PartInitException;
@@ -41,10 +52,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.TableWrapData;
 
 public class PluginGeneralInfoSection extends GeneralInfoSection {
 
 	private FormEntry fClassEntry;
+	private Button fLazyStart;
 
 	public PluginGeneralInfoSection(PDEFormPage page, Composite parent) {
 		super(page, parent);
@@ -56,9 +69,30 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	
 	protected void createSpecificControls(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
 		createClassEntry(parent, toolkit, actionBars);		
+		if (isBundle())
+			createLazyStart(parent, toolkit, actionBars);
 	}
 	
-	private void createClassEntry(Composite client, FormToolkit toolkit,IActionBars actionBars) {
+	private void createLazyStart(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
+		fLazyStart = toolkit.createButton(parent, PDEUIMessages.PluginGeneralInfoSection_lazyStart, SWT.CHECK);
+		TableWrapData td = new TableWrapData();
+		td.colspan = 3;
+		fLazyStart.setLayoutData(td);
+		fLazyStart.setEnabled(isEditable());
+		fLazyStart.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				ManifestHeader header = getLazyStartHeader();
+				if (header instanceof LazyStartHeader) {
+					((LazyStartHeader)header).setLazyStart(fLazyStart.getSelection());
+				} else {
+					getBundle().setHeader(getLazyStartHeaderName(), 
+							Boolean.toString(fLazyStart.getSelection()));
+				}
+			}
+		});
+	}
+	
+	private void createClassEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
 		fClassEntry = new FormEntry(
 							client,
 							toolkit,
@@ -164,7 +198,28 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		IPlugin plugin = (IPlugin)model.getPluginBase();
 		fClassEntry.setValue(plugin.getClassName(), true);
+		if (fLazyStart != null) {
+			ManifestHeader header = getLazyStartHeader();
+			if (header instanceof LazyStartHeader) {
+				fLazyStart.setSelection(((LazyStartHeader)header).isLazyStart());
+			}
+		}		
 		super.refresh();
+	}
+	
+	private ManifestHeader getLazyStartHeader() {
+		IBundle bundle = getBundle();
+		if (bundle instanceof Bundle) {
+			return ((Bundle)bundle).getManifestHeader(getLazyStartHeaderName());
+		}
+		return null;
+	}
+	
+	private String getLazyStartHeaderName() {
+		if (TargetPlatform.getTargetVersion() >= 3.2
+				&& BundlePluginBase.getBundleManifestVersion(getBundle()) >= 2)
+			return ICoreConstants.ECLIPSE_LAZYSTART;
+		return ICoreConstants.ECLIPSE_AUTOSTART;
 	}
 
 }

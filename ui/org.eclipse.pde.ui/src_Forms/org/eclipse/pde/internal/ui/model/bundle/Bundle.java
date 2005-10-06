@@ -143,6 +143,8 @@ public class Bundle implements IBundle {
  			header = new ImportPackageHeader(key, value, this, newLine);
         } else if (key.equals(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT)) {
         	header = new RequiredExecutionEnvironmentHeader(key, value, this, newLine);
+        } else if (key.equals(ICoreConstants.ECLIPSE_LAZYSTART) || key.equals(ICoreConstants.ECLIPSE_AUTOSTART)) {
+        	header = new LazyStartHeader(key, value, this, newLine);
         } else {
             header = new ManifestHeader(key, value, this, newLine);
         }

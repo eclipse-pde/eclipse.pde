@@ -2169,5 +2169,7 @@ public class PDEUIMessages extends NLS {
 	public static String RequiredExecutionEnvironmentSection_fminJRE;
 
 	public static String RequiredExecutionEnvironmentSection_fminJ2ME;
+
+	public static String PluginGeneralInfoSection_lazyStart;
 	
 }
