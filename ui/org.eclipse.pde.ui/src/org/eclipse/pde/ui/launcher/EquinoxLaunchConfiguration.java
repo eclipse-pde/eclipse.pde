@@ -87,7 +87,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		int start = configuration.getAttribute(IPDELauncherConstants.DEFAULT_START_LEVEL, 4);
 		properties.put("osgi.bundles.defaultStartLevel", Integer.toString(start)); //$NON-NLS-1$
 		boolean autostart = configuration.getAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, true);
-		String bundles = getBundles(map, workspace, target, start, autostart);
+		String bundles = getBundles(map, workspace, target, autostart);
 		if (bundles.length() > 0)
 			properties.put("osgi.bundles", bundles); //$NON-NLS-1$
 		properties.put("eclipse.ignoreApp", "true"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -95,7 +95,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		LaunchConfigurationHelper.save(new File(getConfigDir(configuration), "config.ini"), properties); //$NON-NLS-1$
 	}
 	
-	private String getBundles(Map plugins, Map workspace, Map target, int defaultStart, boolean defaultAuto) {
+	private String getBundles(Map plugins, Map workspace, Map target, boolean defaultAuto) {
 		StringBuffer buffer = new StringBuffer();
 		Iterator iter = plugins.values().iterator();
 		while (iter.hasNext()) {
@@ -106,7 +106,6 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 					buffer.append(","); //$NON-NLS-1$
 				buffer.append("reference:"); //$NON-NLS-1$
 				buffer.append(TargetPlatform.getBundleURL(id, plugins));
-				buffer.append("@"); //$NON-NLS-1$
 				
 				String data = model.getUnderlyingResource() == null ? target.get(id).toString() : workspace.get(id).toString();
 				int index = data.indexOf(':');
@@ -114,14 +113,16 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 				String auto = index > 0 && index < data.length() - 1 ? data.substring(index + 1) : "default"; //$NON-NLS-1$
 				if ("default".equals(auto)) //$NON-NLS-1$
 					auto = Boolean.toString(defaultAuto);
+				if (!level.equals("default") || "true".equals(auto)) //$NON-NLS-1$ //$NON-NLS-2$
+					buffer.append("@"); //$NON-NLS-1$
 				
-				if (level.equals("default")) { //$NON-NLS-1$
-					buffer.append(Integer.toString(defaultStart));	
-				} else {
+				if (!level.equals("default")) { //$NON-NLS-1$
 					buffer.append(level);
+					if ("true".equals(auto))  //$NON-NLS-1$
+						buffer.append(":"); //$NON-NLS-1$
 				}
 				if ("true".equals(auto)) { //$NON-NLS-1$
-					buffer.append(":start"); //$NON-NLS-1$
+					buffer.append("start"); //$NON-NLS-1$
 				}			
 			}
 		}
