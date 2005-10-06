@@ -190,7 +190,9 @@ public class LaunchPluginValidator {
 		TreeMap map = new TreeMap();
 		IPluginModelBase[] wsmodels = getSelectedWorkspacePlugins(config);
 		for (int i = 0; i < wsmodels.length; i++) {
-			map.put(wsmodels[i].getPluginBase().getId(), wsmodels[i]);
+			String id = wsmodels[i].getPluginBase().getId();
+			if (id != null)
+				map.put(id, wsmodels[i]);
 		}
 
 		Set exModels = parsePlugins(config, IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
