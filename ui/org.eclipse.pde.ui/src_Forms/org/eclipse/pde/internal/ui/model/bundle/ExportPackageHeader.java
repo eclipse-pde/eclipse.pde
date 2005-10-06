@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.model.bundle;
 
+import java.util.Iterator;
+import java.util.Vector;
+
 import org.eclipse.osgi.util.*;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.osgi.framework.*;
@@ -34,6 +37,15 @@ public class ExportPackageHeader extends BasePackageHeader {
             }
         } catch (BundleException e) {
         }
+    }
+    
+    public Vector getPackageNames() {
+        Vector vector = new Vector(fPackages.size());
+        Iterator iter = fPackages.keySet().iterator();
+        for (int i = 0; iter.hasNext(); i++) {
+            vector.add(iter.next().toString());
+        }
+        return vector;
     }
     
     public ExportPackageObject[] getPackages() {

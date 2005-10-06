@@ -291,7 +291,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
                         labelProvider, 
                         JavaCore.create(project), 
                         fHeader == null ? new Vector() : fHeader.getPackageNames(),
-                        "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE)));
+                        "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE))); //$NON-NLS-1$
                 if (dialog.open() == PackageSelectionDialog.OK) {
                     Object[] selected = dialog.getResult();
                     if (fHeader != null) {
