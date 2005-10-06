@@ -2172,6 +2172,4 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginGeneralInfoSection_lazyStart;
 
-	public static String PluginGeneralInfoSection_jreBundle;
-	
 }

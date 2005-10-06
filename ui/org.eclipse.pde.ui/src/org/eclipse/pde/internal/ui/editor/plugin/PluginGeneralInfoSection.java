@@ -58,7 +58,6 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 
 	private FormEntry fClassEntry;
 	private Button fLazyStart;
-	private Button fJREBundle;
 
 	public PluginGeneralInfoSection(PDEFormPage page, Composite parent) {
 		super(page, parent);
@@ -72,25 +71,9 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		createClassEntry(parent, toolkit, actionBars);		
 		if (isBundle()) {
 			createLazyStart(parent, toolkit, actionBars);
-			if (((ManifestEditor)getPage().getEditor()).isEquinox())
-				createJREBundle(parent, toolkit, actionBars);
 		}
 	}
 	
-	private void createJREBundle(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
-		fJREBundle = toolkit.createButton(parent, PDEUIMessages.PluginGeneralInfoSection_jreBundle, SWT.CHECK);
-		TableWrapData td = new TableWrapData();
-		td.colspan = 3;
-		fJREBundle.setLayoutData(td);
-		fJREBundle.setEnabled(isEditable());
-		fJREBundle.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-					getBundle().setHeader(ICoreConstants.ECLIPSE_JREBUNDLE, 
-							fJREBundle.getSelection() ? "true" : ""); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		});
-	}
-
 	private void createLazyStart(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
 		fLazyStart = toolkit.createButton(parent, PDEUIMessages.PluginGeneralInfoSection_lazyStart, SWT.CHECK);
 		TableWrapData td = new TableWrapData();
@@ -220,12 +203,6 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 			ManifestHeader header = getLazyStartHeader();
 			if (header instanceof LazyStartHeader) {
 				fLazyStart.setSelection(((LazyStartHeader)header).isLazyStart());
-			}
-		}
-		if (fJREBundle != null) {
-			IBundle bundle = getBundle();
-			if (bundle != null) {
-				fJREBundle.setSelection("true".equals(bundle.getHeader(ICoreConstants.ECLIPSE_JREBUNDLE))); //$NON-NLS-1$
 			}
 		}
 		super.refresh();
