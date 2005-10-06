@@ -113,17 +113,15 @@ public class EquinoxPluginBlock extends AbstractPluginBlock {
 					return;
 
 				final Spinner spinner = new Spinner(tree, SWT.BORDER);
-				spinner.setMinimum(1);
-				final int defaultLevel = ((EquinoxPluginsTab)fTab).getDefaultStartLevel();
-				int level = "default".equals(item.getText(1)) //$NON-NLS-1$
-							? defaultLevel
-							: Integer.parseInt(item.getText(1));
-				spinner.setSelection(level);
+				spinner.setMinimum(0);
+				String level = item.getText(1);
+				int defaultLevel =  "default".equals(level) ? 0 : Integer.parseInt(level); //$NON-NLS-1$
+				spinner.setSelection(defaultLevel);
 				spinner.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent e) {
 						if (item.getChecked()) {
 							int selection = spinner.getSelection();
-							item.setText(1, defaultLevel == selection 
+							item.setText(1, selection == 0 
 												? "default"  //$NON-NLS-1$
 												: Integer.toString(selection));
 							fTab.updateLaunchConfigurationDialog();
