@@ -125,4 +125,8 @@ public class PDEMessages extends NLS {
 	public static String BundleErrorReporter_startHeader_tooManyElements;
 
 	public static String BundleErrorReporter_startHeader_illegalValue;
+
+	public static String BundleErrorReporter_exportNoJRE;
+
+	public static String BundleErrorReporter_importNoJRE;
 }

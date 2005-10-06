@@ -664,7 +664,14 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					continue;
 				}
 			}
-
+			
+			if (exportPackageStmt.equals("java") || exportPackageStmt.startsWith("java.")) { //$NON-NLS-1$ //$NON-NLS-2$
+				IHeader jreHeader = (IHeader)fHeaders.get(ICoreConstants.ECLIPSE_JREBUNDLE);
+				if (jreHeader == null || !"true".equals(jreHeader.getValue())) { //$NON-NLS-1$
+					message = PDEMessages.BundleErrorReporter_exportNoJRE;
+					report(message, getPackageLine(header, exportPackageElements[i]), CompilerFlags.ERROR);
+				}
+			}
 		}
 	}
 
@@ -787,6 +794,14 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					report(message, getPackageLine(header, importPackageElements[i]),
 							CompilerFlags.P_UNRESOLVED_IMPORTS);
 					continue;
+				}
+			}
+			
+			if (importPackageStmt.equals("java") || importPackageStmt.startsWith("java.")) { //$NON-NLS-1$ //$NON-NLS-2$
+				IHeader jreHeader = (IHeader)fHeaders.get(ICoreConstants.ECLIPSE_JREBUNDLE);
+				if (jreHeader == null || !"true".equals(jreHeader.getValue())) { //$NON-NLS-1$
+					message = PDEMessages.BundleErrorReporter_importNoJRE;
+					report(message, getPackageLine(header, importPackageElements[i]), CompilerFlags.ERROR);
 				}
 			}
 		}
