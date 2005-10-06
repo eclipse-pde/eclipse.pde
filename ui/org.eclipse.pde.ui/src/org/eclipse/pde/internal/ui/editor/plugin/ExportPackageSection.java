@@ -290,7 +290,8 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
                         PDEPlugin.getActiveWorkbenchShell(),
                         labelProvider, 
                         JavaCore.create(project), 
-                        fHeader == null ? new Vector() : fHeader.getPackageNames());
+                        fHeader == null ? new Vector() : fHeader.getPackageNames(),
+                        "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE)));
                 if (dialog.open() == PackageSelectionDialog.OK) {
                     Object[] selected = dialog.getResult();
                     if (fHeader != null) {

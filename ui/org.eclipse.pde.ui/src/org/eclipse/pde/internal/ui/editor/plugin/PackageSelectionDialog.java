@@ -19,23 +19,20 @@ import org.eclipse.ui.dialogs.*;
 
 public class PackageSelectionDialog extends ElementListSelectionDialog {
 
-	public PackageSelectionDialog(Shell parent, ILabelProvider renderer, IJavaProject jProject) {
-		this(parent, renderer, jProject, new Vector());
-	}
 	/**
 	 * @param parent
 	 * @param renderer
 	 */
-	public PackageSelectionDialog(Shell parent, ILabelProvider renderer, IJavaProject jProject, Vector existingPackages) {
+	public PackageSelectionDialog(Shell parent, ILabelProvider renderer, IJavaProject jProject, Vector existingPackages, boolean allowJava) {
 		super(parent, renderer);
-		setElements(jProject, existingPackages);
+		setElements(jProject, existingPackages, allowJava);
 		setMultipleSelection(true);
 		setMessage(PDEUIMessages.PackageSelectionDialog_label);
 	}
 	/**
 	 * 
 	 */
-	private void setElements(IJavaProject jProject, Vector existingPackages) {
+	private void setElements(IJavaProject jProject, Vector existingPackages, boolean allowJava) {
 		HashMap map = new HashMap();
 		try {
 			IPackageFragmentRoot[] roots = getRoots(jProject);
@@ -43,8 +40,11 @@ public class PackageSelectionDialog extends ElementListSelectionDialog {
 				IJavaElement[] children = roots[i].getChildren();
 				for (int j = 0; j < children.length; j++) {
 					IPackageFragment fragment = (IPackageFragment)children[j];
-					if (fragment.hasChildren() && !existingPackages.contains(fragment.getElementName()))
-						map.put(fragment.getElementName(), fragment);
+					String name = fragment.getElementName();
+					if (fragment.hasChildren() && !existingPackages.contains(name)) {
+						if (!name.startsWith("java") || allowJava)
+							map.put(fragment.getElementName(), fragment);
+					}
 				}
 			}
 		} catch (JavaModelException e) {

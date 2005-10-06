@@ -201,7 +201,7 @@ public class LibraryVisibilitySection extends TableSection
 				ILabelProvider labelProvider = new JavaElementLabelProvider();
 				PackageSelectionDialog dialog = new PackageSelectionDialog(
 						fPackageExportViewer.getTable().getShell(),
-						labelProvider, JavaCore.create(project), existing);
+						labelProvider, JavaCore.create(project), existing, true);
 				if (dialog.open() == PackageSelectionDialog.OK) {
 					Object[] elements = dialog.getResult();
 					for (int i = 0; i < elements.length; i++) {
