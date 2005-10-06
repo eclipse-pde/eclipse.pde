@@ -42,7 +42,7 @@ public class PackageSelectionDialog extends ElementListSelectionDialog {
 					IPackageFragment fragment = (IPackageFragment)children[j];
 					String name = fragment.getElementName();
 					if (fragment.hasChildren() && !existingPackages.contains(name)) {
-						if (!name.equals("java") || !name.startsWith("java.") || allowJava) //$NON-NLS-1$
+						if (!name.equals("java") || !name.startsWith("java.") || allowJava) //$NON-NLS-1$ //$NON-NLS-2$
 							map.put(fragment.getElementName(), fragment);
 					}
 				}

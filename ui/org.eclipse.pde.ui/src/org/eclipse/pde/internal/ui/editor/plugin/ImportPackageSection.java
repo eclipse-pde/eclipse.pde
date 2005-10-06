@@ -299,7 +299,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		ArrayList result = new ArrayList();
         Set set = getForbiddenIds();
         
-        boolean allowJava = "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE));
+        boolean allowJava = "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE)); //$NON-NLS-1$
         ExportPackageDescription[] packages = TargetPlatform.getState().getExportedPackages();
         for (int i = 0; i < packages.length; i++) {
         	if (".".equals(packages[i].getName())) //$NON-NLS-1$
@@ -310,7 +310,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 			if (set.contains(packages[i].getExporter().getSymbolicName()))
                 continue;
 			String name = packages[i].getName();
-			if (("java".equals(name) || name.startsWith("java.")) && !allowJava)
+			if (("java".equals(name) || name.startsWith("java.")) && !allowJava) //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
 			if (fHeader == null || !fHeader.hasPackage(packages[i].getName()))
 				result.add(packages[i]);			
