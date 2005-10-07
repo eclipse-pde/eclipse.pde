@@ -312,7 +312,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateGatherSourcesTarget() {
 		script.printTargetDeclaration(TARGET_GATHER_SOURCES, null, null, null, null);
 		Map params = new HashMap(2);
-		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + sourceFeatureFullNameVersionned + '/' + "src"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + sourceFeatureFullNameVersionned + '/' + "src"); //$NON-NLS-1$
 		params.put(PROPERTY_TARGET, TARGET_GATHER_SOURCES);
 		script.printAntCallTask(TARGET_CHILDREN, null, params);
 		script.printTargetEnd();
@@ -328,7 +328,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printMkdirTask(featureTempFolder);
 		Map params = new HashMap(1);
 		params.put(PROPERTY_TARGET, TARGET_GATHER_LOGS);
-		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(featureTempFolder).append(DEFAULT_PLUGIN_LOCATION).toString()); //$NON-NLS-1$
+		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(featureTempFolder).append(DEFAULT_PLUGIN_LOCATION).toString());
 		script.printAntCallTask(TARGET_ALL_CHILDREN, "false", params); //$NON-NLS-1$
 		script.printTargetEnd();
 	}
@@ -351,7 +351,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			String key = (String) entry.getKey();
 			if (key.startsWith(PROPERTY_SOURCE_PREFIX) && key.endsWith(PROPERTY_ZIP_SUFFIX)) {
 				String zipName = key.substring(PROPERTY_SOURCE_PREFIX.length());
-				zips.append(','); //$NON-NLS-1$
+				zips.append(',');
 				zips.append(zipName);
 				generateZipIndividualTarget(zipName, (String) entry.getValue());
 			}
@@ -373,7 +373,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateZipIndividualTarget(String zipName, String source) {
 		script.println();
 		script.printTargetDeclaration(zipName, TARGET_INIT, null, null, null);
-		script.printZipTask(Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + zipName, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + source, false, false, null); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printZipTask(Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + zipName, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + source, false, false, null);
 		script.printTargetEnd();
 	}
 
@@ -383,10 +383,10 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateCleanTarget() {
 		script.println();
 		script.printTargetDeclaration(TARGET_CLEAN, TARGET_INIT, null, null, NLS.bind(Messages.build_feature_clean, featureIdentifier));
-		script.printDeleteTask(null, Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".jar", null); //$NON-NLS-1$ //$NON-NLS-2$
-		script.printDeleteTask(null, Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".bin.dist.zip", null); //$NON-NLS-1$ //$NON-NLS-2$
-		script.printDeleteTask(null, Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".log.zip", null); //$NON-NLS-1$ //$NON-NLS-2$
-		script.printDeleteTask(null, Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".src.zip", null); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printDeleteTask(null, Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".jar", null); //$NON-NLS-1$
+		script.printDeleteTask(null, Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".bin.dist.zip", null); //$NON-NLS-1$
+		script.printDeleteTask(null, Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".log.zip", null); //$NON-NLS-1$
+		script.printDeleteTask(null, Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".src.zip", null); //$NON-NLS-1$
 		script.printDeleteTask(featureTempFolder, null, null);
 		Map params = new HashMap(2);
 		params.put(PROPERTY_TARGET, TARGET_CLEAN);
@@ -405,7 +405,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		Map params = new HashMap(1);
 		params.put(PROPERTY_INCLUDE_CHILDREN, "true"); //$NON-NLS-1$
 		params.put(PROPERTY_TARGET, TARGET_GATHER_LOGS);
-		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(featureTempFolder).append(DEFAULT_PLUGIN_LOCATION).toString()); //$NON-NLS-1$
+		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(featureTempFolder).append(DEFAULT_PLUGIN_LOCATION).toString()); 
 		script.printAntCallTask(TARGET_ALL_CHILDREN, "false", params); //$NON-NLS-1$
 		IPath destination = new Path(Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION)).append(featureFullName + ".log.zip"); //$NON-NLS-1$
 		script.printZipTask(destination.toString(), featureTempFolder, true, false, null);
@@ -424,9 +424,9 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		Map params = new HashMap(1);
 		params.put(PROPERTY_INCLUDE_CHILDREN, "true"); //$NON-NLS-1$
 		params.put(PROPERTY_TARGET, TARGET_GATHER_SOURCES);
-		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, featureTempFolder + '/' + DEFAULT_PLUGIN_LOCATION + '/' + sourceFeatureFullNameVersionned + '/' + "src"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, featureTempFolder + '/' + DEFAULT_PLUGIN_LOCATION + '/' + sourceFeatureFullNameVersionned + '/' + "src"); //$NON-NLS-1$
 		script.printAntCallTask(TARGET_ALL_CHILDREN, null, params);
-		script.printZipTask(Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".src.zip", featureTempFolder, true, false, null); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printZipTask(Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".src.zip", featureTempFolder, true, false, null); //$NON-NLS-1$
 		script.printDeleteTask(featureTempFolder, null, null);
 		script.printTargetEnd();
 	}
@@ -441,11 +441,11 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_FEATURE_BASE, null, null);
 		Map params = new HashMap(1);
 		params.put(PROPERTY_TARGET, TARGET_GATHER_BIN_PARTS);
-		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE)).append(DEFAULT_PLUGIN_LOCATION).toString()); //$NON-NLS-1$
+		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE)).append(DEFAULT_PLUGIN_LOCATION).toString());
 		script.printAntCallTask(TARGET_CHILDREN, null, params);
 		String include = (String) getBuildProperties().get(PROPERTY_BIN_INCLUDES);
 		String exclude = (String) getBuildProperties().get(PROPERTY_BIN_EXCLUDES);
-		String root = Utils.getPropertyFormat(PROPERTY_FEATURE_BASE) + '/' + featureFolderName; //$NON-NLS-1$
+		String root = Utils.getPropertyFormat(PROPERTY_FEATURE_BASE) + '/' + featureFolderName;
 
 		if (include != null) {
 			script.printMkdirTask(root);
@@ -496,7 +496,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateRootFilesAndPermissions() throws CoreException {
 		for (Iterator iter = getConfigInfos().iterator(); iter.hasNext();) {
 			Config aConfig = (Config) iter.next();
-			script.printTargetDeclaration(TARGET_ROOTFILES_PREFIX + aConfig.toString("_"), null, null, null, null); //$NON-NLS-1$ //$NON-NLS-2$
+			script.printTargetDeclaration(TARGET_ROOTFILES_PREFIX + aConfig.toString("_"), null, null, null, null); //$NON-NLS-1$
 			generateCopyRootFiles(aConfig);
 			Utils.generatePermissions(getBuildProperties(), aConfig, PROPERTY_FEATURE_BASE, script);
 			script.printTargetEnd();
@@ -505,19 +505,19 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	private void generateCopyRootFiles(Config aConfig) throws CoreException {
 		String configName;
-		String baseList = getBuildProperties().getProperty(ROOT, ""); //$NON-NLS-1$ //$NON-NLS-2$
-		String fileList = getBuildProperties().getProperty(ROOT_PREFIX + aConfig.toString("."), ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		fileList = (fileList.length() == 0 ? "" : fileList + ',') + baseList; //$NON-NLS-1$ //$NON-NLS-2$
+		String baseList = getBuildProperties().getProperty(ROOT, ""); //$NON-NLS-1$
+		String fileList = getBuildProperties().getProperty(ROOT_PREFIX + aConfig.toString("."), ""); //$NON-NLS-1$ //$NON-NLS-2$
+		fileList = (fileList.length() == 0 ? "" : fileList + ',') + baseList; //$NON-NLS-1$
 		if (fileList.equals("")) //$NON-NLS-1$
 			return;
 
 		assemblyData.addRootFileProvider(aConfig, feature);
 		configName = aConfig.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$
-		script.printMkdirTask(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE) + '/' + configName + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER)); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printMkdirTask(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE) + '/' + configName + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER));
 		String[] files = Utils.getArrayFromString(fileList, ","); //$NON-NLS-1$
 		FileSet[] fileSet = new FileSet[files.length];
 		for (int i = 0; i < files.length; i++) {
-			String fromDir = Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/'; //$NON-NLS-1$
+			String fromDir = Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/';
 			String file = files[i];
 			if (file.startsWith("absolute:")) { //$NON-NLS-1$
 				file = file.substring(9);
@@ -560,7 +560,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		// is really expected.
 		script.printAntCallTask(TARGET_GATHER_BIN_PARTS, "false", params); //$NON-NLS-1$
 		String jar = Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".jar"; //$NON-NLS-1$
-		script.printJarTask(jar, featureTempFolder + '/' + featureFolderName, null); //$NON-NLS-1$ //$NON-NLS-2$ 
+		script.printJarTask(jar, featureTempFolder + '/' + featureFolderName, null);
 		script.printDeleteTask(featureTempFolder, null, null);
 		if (generateJnlp)
 			script.println("<eclipse.jnlpGenerator feature=\"" + jar + "\"  codebase=\"" + Utils.getPropertyFormat("jnlp.codebase") + "\" j2se=\"" + Utils.getPropertyFormat("jnlp.j2se") + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
@@ -580,13 +580,13 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printMkdirTask(featureTempFolder);
 		Map params = new HashMap(1);
 		params.put(PROPERTY_FEATURE_BASE, featureTempFolder);
-		params.put(PROPERTY_INCLUDE_CHILDREN, TRUE); //$NON-NLS-1$
+		params.put(PROPERTY_INCLUDE_CHILDREN, TRUE);
 		params.put(PROPERTY_OS, feature.getOS() == null ? Config.ANY : feature.getOS());
 		params.put(PROPERTY_WS, feature.getWS() == null ? Config.ANY : feature.getWS());
 		params.put(PROPERTY_ARCH, feature.getOSArch() == null ? Config.ANY : feature.getOSArch());
 		params.put(PROPERTY_NL, feature.getNL() == null ? Config.ANY : feature.getNL());
 		script.printAntCallTask(TARGET_GATHER_BIN_PARTS, null, params);
-		script.printZipTask(Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".bin.dist.zip", featureTempFolder, false, false, null); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printZipTask(Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".bin.dist.zip", featureTempFolder, false, false, null); //$NON-NLS-1$
 		script.printDeleteTask(featureTempFolder, null, null);
 		script.printTargetEnd();
 	}
@@ -696,7 +696,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printProjectDeclaration(feature.getVersionedIdentifier().getIdentifier(), TARGET_BUILD_UPDATE_JAR, "."); //$NON-NLS-1$
 		script.println();
 		script.printTargetDeclaration(TARGET_INIT, null, null, null, null);
-		script.printProperty(PROPERTY_FEATURE_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + PROPERTY_FEATURE_TEMP_FOLDER); //$NON-NLS-1$ 
+		script.printProperty(PROPERTY_FEATURE_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + PROPERTY_FEATURE_TEMP_FOLDER);
 		script.printProperty(PROPERTY_FEATURE_DESTINATION, Utils.getPropertyFormat(PROPERTY_BASEDIR));
 		script.printTargetEnd();
 	}
@@ -777,7 +777,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				featureRootLocation = featureRootLocation.substring(0, i);
 		}
 		featureFullName = getNormalizedName(feature);
-		featureFolderName = DEFAULT_FEATURE_LOCATION + '/' + featureFullName; //$NON-NLS-1$
+		featureFolderName = DEFAULT_FEATURE_LOCATION + '/' + featureFullName;
 		sourceFeatureFullName = computeSourceFeatureName(feature, false);
 		sourceFeatureFullNameVersionned = computeSourceFeatureName(feature, true);
 		featureTempFolder = Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER);
@@ -982,7 +982,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		result.setPluginVersion(sourceFeature.getFeatureVersion());
 		sourceFeature.addPluginEntryModel(result);
 		// create the directory for the plugin
-		IPath sourcePluginDirURL = new Path(workingDirectory + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(result, false) ); //$NON-NLS-1$
+		IPath sourcePluginDirURL = new Path(workingDirectory + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(result, false) );
 		File sourcePluginDir = sourcePluginDirURL.toFile();
 		new File(sourcePluginDir, "META-INF").mkdirs();
 
@@ -996,7 +996,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			return null;
 		}
 		try {
-			buffer = readFile(templateManifestURL.openStream()); //$NON-NLS-1$
+			buffer = readFile(templateManifestURL.openStream());
 		} catch (IOException e1) {
 			String message = NLS.bind(Messages.exception_readingFile, templateManifestURL.toExternalForm());
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e1));
@@ -1023,7 +1023,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 
 		//Copy the other files
-		Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplatePlugin", sourcePluginDir.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+		Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplatePlugin", sourcePluginDir.getAbsolutePath()); //$NON-NLS-1$
 		//	If a build.properties file already exist then we use it supposing it is correct.
 		File buildProperty = sourcePluginDirURL.append(PROPERTIES_FILE).toFile();
 		if (!buildProperty.exists()) {
@@ -1036,7 +1036,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			try {
 				OutputStream buildFile = new BufferedOutputStream(new FileOutputStream(buildProperty));
 				try {
-					sourceBuildProperties.store(buildFile, null); //$NON-NLS-1$
+					sourceBuildProperties.store(buildFile, null);
 				} finally {
 					buildFile.close();
 				}
@@ -1063,7 +1063,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		result.setPluginVersion(sourceFeature.getFeatureVersion());
 		sourceFeature.addPluginEntryModel(result);
 		// create the directory for the plugin
-		IPath sourcePluginDirURL = new Path(workingDirectory + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(result, false)); //$NON-NLS-1$ //$NON-NLS-2$
+		IPath sourcePluginDirURL = new Path(workingDirectory + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(result, false));
 		File sourcePluginDir = sourcePluginDirURL.toFile();
 		sourcePluginDir.mkdirs();
 
@@ -1077,7 +1077,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			return null;
 		}
 		try {
-			buffer = readFile(templatePluginURL.openStream()); //$NON-NLS-1$
+			buffer = readFile(templatePluginURL.openStream());
 		} catch (IOException e1) {
 			String message = NLS.bind(Messages.exception_readingFile, templatePluginURL.toExternalForm());
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e1));
@@ -1093,7 +1093,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			String message = NLS.bind(Messages.exception_writingFile, templatePluginURL.toExternalForm());
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e1));
 		}
-		Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplatePlugin", sourcePluginDir.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+		Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplatePlugin", sourcePluginDir.getAbsolutePath()); //$NON-NLS-1$
 		//	If a build.properties file already exist then we use it supposing it is correct.
 		File buildProperty = sourcePluginDirURL.append(PROPERTIES_FILE).toFile();
 		if (!buildProperty.exists()) {
@@ -1105,7 +1105,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			try {
 				OutputStream buildFile = new BufferedOutputStream(new FileOutputStream(buildProperty));
 				try {
-					sourceBuildProperties.store(buildFile, null); //$NON-NLS-1$
+					sourceBuildProperties.store(buildFile, null);
 				} finally {
 					buildFile.close();
 				}
@@ -1123,7 +1123,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	private void create30SourceFragment(PluginEntry fragment, PluginEntry plugin) throws CoreException {
 		// create the directory for the plugin
-		Path sourceFragmentDirURL = new Path(workingDirectory + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(fragment, false)); //$NON-NLS-1$ //$NON-NLS-2$
+		Path sourceFragmentDirURL = new Path(workingDirectory + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(fragment, false));
 		File sourceFragmentDir = new File(sourceFragmentDirURL.toOSString());
 		new File(sourceFragmentDir, "META-INF").mkdirs();
 		try {
@@ -1145,7 +1145,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e1));
 			}
 			
-			StringBuffer buffer = readFile(templateLocation.openStream()); //$NON-NLS-1$
+			StringBuffer buffer = readFile(templateLocation.openStream());
 			//Set the Id of the fragment
 			int beginId = scan(buffer, 0, REPLACED_FRAGMENT_ID);
 			buffer.replace(beginId, beginId + REPLACED_FRAGMENT_ID.length(), fragment.getPluginIdentifier());
@@ -1159,7 +1159,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			beginId = scan(buffer, beginId, REPLACED_PLUGIN_VERSION);
 			buffer.replace(beginId, beginId + REPLACED_PLUGIN_VERSION.length(), plugin.getPluginVersion());
 			Utils.transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(sourceFragmentDirURL.append(DEFAULT_BUNDLE_FILENAME_DESCRIPTOR).toOSString()));
-			Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplateFragment", sourceFragmentDir.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+			Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplateFragment", sourceFragmentDir.getAbsolutePath()); //$NON-NLS-1$
 			File buildProperty = sourceFragmentDirURL.append(PROPERTIES_FILE).toFile();
 			if (!buildProperty.exists()) { //If a build.properties file already exist  then we don't override it.
 				copiedFiles.add(DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR); //Because the fragment.xml is not copied, we need to add it to the file
@@ -1171,7 +1171,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				try {
 					OutputStream buildFile = new BufferedOutputStream(new FileOutputStream(buildProperty));
 					try {
-						sourceBuildProperties.store(buildFile, null); //$NON-NLS-1$
+						sourceBuildProperties.store(buildFile, null);
 					} finally {
 						buildFile.close();
 					}
@@ -1192,7 +1192,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	
 	private void createSourceFragment(PluginEntry fragment, PluginEntry plugin) throws CoreException {
 		// create the directory for the plugin
-		Path sourceFragmentDirURL = new Path(workingDirectory + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(fragment, false)); //$NON-NLS-1$ //$NON-NLS-2$
+		Path sourceFragmentDirURL = new Path(workingDirectory + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(fragment, false));
 		File sourceFragmentDir = new File(sourceFragmentDirURL.toOSString());
 		sourceFragmentDir.mkdirs();
 		try {
@@ -1205,7 +1205,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				return;
 			}
 
-			StringBuffer buffer = readFile(templateLocation.openStream()); //$NON-NLS-1$
+			StringBuffer buffer = readFile(templateLocation.openStream());
 			//Set the Id of the fragment
 			int beginId = scan(buffer, 0, REPLACED_FRAGMENT_ID);
 			buffer.replace(beginId, beginId + REPLACED_FRAGMENT_ID.length(), fragment.getPluginIdentifier());
@@ -1219,7 +1219,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			beginId = scan(buffer, beginId, REPLACED_PLUGIN_VERSION);
 			buffer.replace(beginId, beginId + REPLACED_PLUGIN_VERSION.length(), plugin.getPluginVersion());
 			Utils.transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(sourceFragmentDirURL.append(DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR).toOSString()));
-			Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplateFragment", sourceFragmentDir.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+			Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplateFragment", sourceFragmentDir.getAbsolutePath()); //$NON-NLS-1$
 			File buildProperty = sourceFragmentDirURL.append(PROPERTIES_FILE).toFile();
 			if (!buildProperty.exists()) { //If a build.properties file already exist  then we don't override it.
 				copiedFiles.add(DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR); //Because the fragment.xml is not copied, we need to add it to the file
@@ -1230,7 +1230,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				try {
 					OutputStream buildFile = new BufferedOutputStream(new FileOutputStream(buildProperty));
 					try {
-						sourceBuildProperties.store(buildFile, null); //$NON-NLS-1$
+						sourceBuildProperties.store(buildFile, null);
 					} finally {
 						buildFile.close();
 					}
@@ -1357,11 +1357,11 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	private void writeSourceFeature() throws CoreException {
-		String sourceFeatureDir = workingDirectory + '/' + DEFAULT_FEATURE_LOCATION + '/' + sourceFeatureFullName; //$NON-NLS-1$ //$NON-NLS-2$
+		String sourceFeatureDir = workingDirectory + '/' + DEFAULT_FEATURE_LOCATION + '/' + sourceFeatureFullName;
 		File sourceDir = new File(sourceFeatureDir);
 		sourceDir.mkdirs();
 		// write the source feature to the feature.xml
-		File file = new File(sourceFeatureDir + '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR); //$NON-NLS-1$
+		File file = new File(sourceFeatureDir + '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR);
 		try {
 			SourceFeatureWriter writer = new SourceFeatureWriter(new FileOutputStream(file), sourceFeature, this);
 			try {
@@ -1373,8 +1373,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			String message = NLS.bind(Messages.error_creatingFeature, sourceFeature.getFeatureIdentifier());
 			throw new CoreException(new Status(IStatus.OK, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		}
-		Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplateFeature", sourceFeatureDir); //$NON-NLS-1$ //$NON-NLS-2$
-		File buildProperty = new File(sourceFeatureDir + '/' + PROPERTIES_FILE); //$NON-NLS-1$
+		Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplateFeature", sourceFeatureDir); //$NON-NLS-1$
+		File buildProperty = new File(sourceFeatureDir + '/' + PROPERTIES_FILE);
 		if (buildProperty.exists()) {//If a build.properties file already exist then we don't override it.
 			getSite(false).addFeatureReferenceModel(sourceDir);
 			return;
@@ -1386,7 +1386,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		try {
 			output = new FileOutputStream(buildProperty);
 			try {
-				sourceBuildProperties.store(output, null); //$NON-NLS-1$
+				sourceBuildProperties.store(output, null);
 			} finally {
 				output.close();
 			}
