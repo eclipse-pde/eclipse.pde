@@ -114,6 +114,22 @@ public class AntScript {
 	}
 
 	/**
+	 * Print the <code>available</code> Ant task to this script. This task sets a property
+	 * to the given value if the given file exists at runtime.
+	 * 
+	 * @param property the property to set
+	 * @param file the file to look for
+	 */
+	public void printAvailableTask(String property, String file, String value){
+		printTab();
+		output.print("<available"); //$NON-NLS-1$
+		printAttribute("property", property, true); //$NON-NLS-1$
+		printAttribute("file", file, false); //$NON-NLS-1$
+		printAttribute("value", value, false); //$NON-NLS-1$
+		output.println("/>"); //$NON-NLS-1$
+	}
+	
+	/**
 	 * Print an <code>ant</code> task to this script. This calls Ant on the specified 
 	 * target contained in the specified Ant file with the given parameters.
 	 * 
@@ -125,7 +141,24 @@ public class AntScript {
 	 * 	to the ant target
 	 * @param properties the table of properties
 	 */
-	public void printAntTask(String antfile, String dir, String target, String outputParam, String inheritAll, Map properties) {
+	public void printAntTask(String antfile, String dir, String target, String outputParam, String inheritAll, Map properties ) {
+		printAntTask(antfile, dir, target, outputParam, inheritAll, properties, null );
+	}
+	
+	/**
+	 * Print an <code>ant</code> task to this script. This calls Ant on the specified 
+	 * target contained in the specified Ant file with the given parameters.
+	 * 
+	 * @param antfile the name of the Ant file which contains the target to run
+	 * @param dir the basedir for the target
+	 * @param target the name of the target
+	 * @param outputParam filename to write the output to
+	 * @param inheritAll <code>true</code> if the parameters should be passed on
+	 * 	to the ant target
+	 * @param properties the table of properties
+	 * @param references the table of references
+	 */
+	public void printAntTask(String antfile, String dir, String target, String outputParam, String inheritAll, Map properties, Map references) {
 		printTab();
 		output.print("<ant"); //$NON-NLS-1$
 		printAttribute("antfile", antfile, false); //$NON-NLS-1$
@@ -133,15 +166,30 @@ public class AntScript {
 		printAttribute("target", target, false); //$NON-NLS-1$
 		printAttribute("output", outputParam, false); //$NON-NLS-1$
 		printAttribute("inheritAll", inheritAll, false); //$NON-NLS-1$
-		if (properties == null)
+		if (properties == null && references == null)
 			output.println("/>"); //$NON-NLS-1$
 		else {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
-			Set entries = properties.entrySet();
-			for (Iterator iter = entries.iterator(); iter.hasNext();) {
-				Map.Entry entry = (Map.Entry) iter.next();
-				printProperty((String) entry.getKey(), (String) entry.getValue());
+			if( properties != null ) {
+				Set entries = properties.entrySet();
+				for (Iterator iter = entries.iterator(); iter.hasNext();) {
+					Map.Entry entry = (Map.Entry) iter.next();
+					printProperty((String) entry.getKey(), (String) entry.getValue());
+				}
+			}
+			if( references != null ){
+				Set entries = references.entrySet();
+				for (Iterator iter = entries.iterator(); iter.hasNext();) {
+					Map.Entry entry = (Map.Entry) iter.next();
+					printTab();
+					print("<reference refid=\"" + (String)entry.getKey() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+					if( entry.getValue() != null ){
+						print(" torefid=\"" + (String) entry.getValue() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					print("/>"); //$NON-NLS-1$
+					println();
+				}
 			}
 			indent--;
 			printTab();
@@ -449,6 +497,35 @@ public class AntScript {
 		output.println("/>"); //$NON-NLS-1$
 	}
 
+	/**
+	 * Print a <code>path</code> structure to the Ant Script.
+	 * @param tag   - tag for the structure, normally path or classpath 
+	 * @param id    - id for this structure
+	 * @param paths - list of paths
+	 */
+	public void printPathStructure( String tag, String id, List paths ){
+		printTab();
+		print("<" + tag ); //$NON-NLS-1$
+		if( id != null )
+			print( " id=\"" + id + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		print(">"); //$NON-NLS-1$
+		println();
+		
+		if( paths != null ){
+			indent++;
+			for (Iterator iter = paths.iterator(); iter.hasNext();) {
+				String path = (String) iter.next();
+				printTab();
+				print("<pathelement"); //$NON-NLS-1$
+				printAttribute("path", path, false); //$NON-NLS-1$
+				print("/>"); //$NON-NLS-1$
+				println();
+			}
+			indent--;
+		}
+		printEndTag(tag); //$NON-NLS-1$
+	}
+	
 	/**
 	 * Print a <code>param</code> tag to the Ant script.
 	 * 

@@ -52,6 +52,8 @@ public interface IBuildPropertiesConstants {
 	
 	public static final String PROPERTY_OVERWRITE_ROOTFILES = "overwriteRootFiles";  //$NON-NLS-1$
 	
+	public static final String PROPERTY_CUSTOM_BUILD_CALLBACKS = "customBuildCallbacks"; //$NON-NLS-1$
+	
 	//Internal usage only
 	public static final String SOURCE_PLUGIN = "sourcePlugin"; //$NON-NLS-1$
 }

@@ -25,6 +25,7 @@ import org.eclipse.update.core.IPluginEntry;
  * Generic class for generating scripts for plug-ins and fragments.
  */
 public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
+	private static final String SRC_ZIP = "src.zip"; //$NON-NLS-1$
 	public static final String EXPANDED_DOT = "@dot"; //$NON-NLS-1$
 	public static final String DOT = "."; //$NON-NLS-1$
 
@@ -104,13 +105,13 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	private String propertiesFileName = PROPERTIES_FILE;
 	private String buildScriptFileName = DEFAULT_BUILD_SCRIPT_FILENAME;
+	private String customBuildCallbacks = null;
 	//This list is initialized by the generateBuildJarsTarget
 	private ArrayList compiledJarNames;
 	private boolean dotOnTheClasspath = false;
 	private boolean binaryPlugin = false;
 	private boolean signJars = false;
 
-	
 	/**
 	 * @see AbstractScriptGenerator#generate()
 	 */
@@ -118,7 +119,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		//If it is a binary plugin, then we don't generate scripts
 		if (binaryPlugin)
 			return;
-		
+
 		if (model == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, Messages.error_missingElement, null));
 		}
@@ -166,17 +167,23 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	public static String getNormalizedName(BundleDescription bundle) {
 		return bundle.getSymbolicName() + '_' + bundle.getVersion();
 	}
-	
+
 	private void initializeVariables() throws CoreException {
 		fullName = getNormalizedName(model);
 		pluginZipDestination = PLUGIN_DESTINATION + '/' + fullName + ".zip"; //$NON-NLS-1$ //$NON-NLS-2$
 		pluginUpdateJarDestination = PLUGIN_DESTINATION + '/' + fullName + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
 		String[] classpathInfo = getClasspathEntries(model);
 		dotOnTheClasspath = specialDotProcessing(getBuildProperties(), classpathInfo);
-		
+
 		//Persist this information for use in the assemble script generation
 		Properties bundleProperties = (Properties) model.getUserObject();
 		bundleProperties.put(WITH_DOT, Boolean.valueOf(dotOnTheClasspath));
+
+		customBuildCallbacks = getBuildProperties().getProperty(PROPERTY_CUSTOM_BUILD_CALLBACKS);
+		if (TRUE.equalsIgnoreCase(customBuildCallbacks))
+			customBuildCallbacks = DEFAULT_CUSTOM_BUILD_CALLBACKS_FILE;
+		else if (FALSE.equalsIgnoreCase(customBuildCallbacks))
+			customBuildCallbacks = null;
 	}
 
 	protected static boolean findAndReplaceDot(String[] classpathInfo) {
@@ -274,7 +281,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateBuildJarsTargetForSourceGathering() {
 		script.printTargetDeclaration(TARGET_BUILD_JARS, null, null, null, null);
 		compiledJarNames = new ArrayList(0);
-		
+
 		Config configInfo;
 		if (associatedEntry.getOS() == null && associatedEntry.getWS() == null && associatedEntry.getOSArch() == null)
 			configInfo = Config.genericConfig();
@@ -309,6 +316,15 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		Properties properties = getBuildProperties();
 		CompiledEntry[] availableJars = extractEntriesToCompile(properties);
 		script.printTargetDeclaration(TARGET_CLEAN, TARGET_INIT, null, null, NLS.bind(Messages.build_plugin_clean, model.getSymbolicName()));
+
+		Map params = null;
+		if (customBuildCallbacks != null) {
+			params = new HashMap(3);
+			params.put(PROPERTY_PLUGIN_DESTINATION, PLUGIN_DESTINATION);
+			params.put(PROPERTY_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER));
+			params.put(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
+			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_PRE + TARGET_CLEAN, null, null, params);
+		}
 		for (int i = 0; i < availableJars.length; i++) {
 			String jarName = availableJars[i].getName(true);
 			if (availableJars[i].type == CompiledEntry.JAR) {
@@ -321,6 +337,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printDeleteTask(null, pluginUpdateJarDestination, null);
 		script.printDeleteTask(null, pluginZipDestination, null);
 		script.printDeleteTask(Utils.getPropertyFormat(IXMLConstants.PROPERTY_TEMP_FOLDER), null, null);
+
+		if (customBuildCallbacks != null) {
+			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_POST + TARGET_CLEAN, null, null, params);
+		}
 		script.printTargetEnd();
 	}
 
@@ -332,6 +352,12 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateGatherLogTarget() throws CoreException {
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_LOGS, TARGET_INIT, PROPERTY_DESTINATION_TEMP_FOLDER, null, null);
+		Map params = null;
+		if (customBuildCallbacks != null) {
+			params = new HashMap(1);
+			params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
+			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_PRE + TARGET_GATHER_LOGS, null, null, params);
+		}
 		IPath baseDestination = new Path(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
 		baseDestination = baseDestination.append(fullName);
 		List destinations = new ArrayList(5);
@@ -345,6 +371,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				destinations.add(destination);
 			}
 			script.printCopyTask(getTempJARFolderLocation(name) + ".log", destination.toString(), null, false, false); //$NON-NLS-1$
+		}
+
+		if (customBuildCallbacks != null) {
+			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_POST + TARGET_GATHER_LOGS, null, null, params);
 		}
 		script.printTargetEnd();
 	}
@@ -370,6 +400,13 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateGatherSourcesTarget() throws CoreException {
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION_TEMP_FOLDER, null, null);
+
+		Map params = null;
+		if (customBuildCallbacks != null) {
+			params = new HashMap(1);
+			params.put(PROPERTY_TARGET_FOLDER, Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
+			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_PRE + TARGET_GATHER_SOURCES, null, null, params);
+		}
 		IPath baseDestination = new Path(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
 		baseDestination = baseDestination.append(fullName);
 		List destinations = new ArrayList(5);
@@ -390,16 +427,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
 			script.printCopyTask(null, baseDestination.toString(), new FileSet[] {fileSet}, false, false);
 		}
-		script.printTargetEnd();
-	}
 
-	//Check if the string contains *.jar
-	private boolean containsStarDotJar(String[] strings) {
-		for (int i = 0; i < strings.length; i++) {
-			if (strings[i].trim().equalsIgnoreCase("*.jar")) //$NON-NLS-1$
-				return true;
+		if (customBuildCallbacks != null) {
+			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_POST + TARGET_GATHER_SOURCES, null, null, params);
 		}
-		return false;
+		script.printTargetEnd();
 	}
 
 	/**
@@ -423,14 +455,14 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		String[] splitIncludes = Utils.getArrayFromString(include);
 		String[] fileSetValues = new String[compiledJarNames.size()];
 		int count = 0;
-		
+
 		boolean dotIncluded = false; //This flag indicates if . should be gathered
 		int pos = Utils.isStringIn(splitIncludes, EXPANDED_DOT + '/');
 		if (pos != -1) {
 			splitIncludes[pos] = null;
 			dotIncluded = true;
 		}
-		
+
 		//Iterate over the classpath
 		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
 			CompiledEntry entry = (CompiledEntry) iter.next();
@@ -453,11 +485,20 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 		//General copy of the files listed in the includes
 		if (include != null || exclude != null) {
-			FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, replaceVariables(Utils.getStringFromArray(splitIncludes, ","), true), null, replaceVariables(exclude, true), null, null);
+			FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, replaceVariables(Utils.getStringFromArray(splitIncludes, ","), true), null, replaceVariables(exclude, true), null, null); //$NON-NLS-1$
 			script.printCopyTask(null, root, new FileSet[] {fileSet}, true, false);
 		}
 		generatePermissionProperties(root);
 		genarateIdReplacementCall(destination.toString());
+
+		if (customBuildCallbacks != null) {
+			Map params = new HashMap(3);
+			params.put(PROPERTY_TARGET_FOLDER, root);
+			params.put(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
+			params.put(PROPERTY_BASEDIR, Utils.getPropertyFormat(PROPERTY_BASEDIR));
+			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_POST + TARGET_GATHER_BIN_PARTS, null, null, params);
+		}
+
 		script.printTargetEnd();
 	}
 
@@ -522,7 +563,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printAntCallTask(TARGET_BUILD_JARS, null, null);
 		script.printAntCallTask(TARGET_BUILD_SOURCES, null, null);
 		Map params = new HashMap(1);
-		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/'); //$NON-NLS-1$
+		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/');
 		script.printAntCallTask(TARGET_GATHER_BIN_PARTS, null, params);
 		script.printAntCallTask(TARGET_GATHER_SOURCES, null, params);
 		FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER), null, "**/*.bin.log", null, null, null, null); //$NON-NLS-1$
@@ -542,12 +583,12 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printMkdirTask(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER));
 		script.printAntCallTask(TARGET_BUILD_JARS, null, null);
 		Map params = new HashMap(1);
-		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/'); //$NON-NLS-1$
+		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/');
 		script.printAntCallTask(TARGET_GATHER_BIN_PARTS, null, params);
-		script.printZipTask(pluginUpdateJarDestination, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/' + fullName, false, false, null); //$NON-NLS-1$
+		script.printZipTask(pluginUpdateJarDestination, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/' + fullName, false, false, null);
 		script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
 		if (signJars)
-			script.println("<signjar jar=\"" + pluginUpdateJarDestination + "\" alias=\"" + Utils.getPropertyFormat("sign.alias") + "\" keystore=\"" + Utils.getPropertyFormat("sign.keystore") + "\" storepass=\"" + Utils.getPropertyFormat("sign.storepass") + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
+			script.println("<signjar jar=\"" + pluginUpdateJarDestination + "\" alias=\"" + Utils.getPropertyFormat("sign.alias") + "\" keystore=\"" + Utils.getPropertyFormat("sign.keystore") + "\" storepass=\"" + Utils.getPropertyFormat("sign.storepass") + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ 
 		script.printTargetEnd();
 	}
 
@@ -574,15 +615,21 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * Defines, the XML declaration, Ant project and targets init and initTemplate.
 	 */
 	private void generatePrologue() {
-		script.printProjectDeclaration(model.getSymbolicName(), TARGET_BUILD_JARS, DOT); //$NON-NLS-1$
+		script.printProjectDeclaration(model.getSymbolicName(), TARGET_BUILD_JARS, DOT);
 		script.println();
-		
+
 		script.printProperty(PROPERTY_BASE_WS, Utils.getPropertyFormat(PROPERTY_WS));
 		script.printProperty(PROPERTY_BASE_OS, Utils.getPropertyFormat(PROPERTY_OS));
 		script.printProperty(PROPERTY_BASE_ARCH, Utils.getPropertyFormat(PROPERTY_ARCH));
 		script.printProperty(PROPERTY_BASE_NL, Utils.getPropertyFormat(PROPERTY_NL));
 		script.println();
-		
+
+		if (customBuildCallbacks != null && !customBuildCallbacks.equals(FALSE)) {
+
+			script.printAvailableTask(PROPERTY_CUSTOM_BUILD_CALLBACKS, customBuildCallbacks, customBuildCallbacks);
+			script.println();
+		}
+
 		script.printComment(Messages.build_compilerSetting);
 		script.printProperty(PROPERTY_JAVAC_FAIL_ON_ERROR, "false"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$
@@ -592,12 +639,12 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printProperty(PROPERTY_JAVAC_COMPILERARG, ""); //$NON-NLS-1$  
 		script.println("<path id=\"path_bootclasspath\">"); //$NON-NLS-1$
 		script.println("\t<fileset dir=\"${java.home}/lib\">"); //$NON-NLS-1$
-        script.println("\t\t<include name=\"*.jar\"/>"); //$NON-NLS-1$
+		script.println("\t\t<include name=\"*.jar\"/>"); //$NON-NLS-1$
 		script.println("\t</fileset>"); //$NON-NLS-1$
 		script.println("</path>"); //$NON-NLS-1$
 		script.printPropertyRefid(PROPERTY_BOOTCLASSPATH, "path_bootclasspath"); //$NON-NLS-1$
 		script.println();
-		
+
 		script.printTargetDeclaration(TARGET_INIT, TARGET_PROPERTIES, null, null, null);
 
 		script.println("<condition property=\"" + PROPERTY_PLUGIN_TEMP + "\" value=\"" + Utils.getPropertyFormat(PROPERTY_BUILD_TEMP) + '/' + DEFAULT_PLUGIN_LOCATION + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -736,20 +783,35 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 		script.println();
 		script.printTargetDeclaration(TARGET_BUILD_JARS, TARGET_INIT, null, null, NLS.bind(Messages.build_plugin_buildJars, pluginModel.getSymbolicName()));
+		Map params = null;
+		if (customBuildCallbacks != null) {
+			params = new HashMap(1);
+			params.put(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
+			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_PRE + TARGET_BUILD_JARS, null, null, params);
+		}
 		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
 			String name = ((CompiledEntry) iter.next()).getName(false);
 			script.printAvailableTask(name, replaceVariables(getJARLocation(name), true));
 			script.printAntCallTask(name, null, null);
 		}
+		if (customBuildCallbacks != null) {
+			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_POST + TARGET_BUILD_JARS, null, null, params);
+		}
 		script.printTargetEnd();
 
 		script.println();
 		script.printTargetDeclaration(TARGET_BUILD_SOURCES, TARGET_INIT, null, null, null);
+		if (customBuildCallbacks != null) {
+			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_PRE + TARGET_BUILD_SOURCES, null, null, params);
+		}
 		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
 			String jarName = ((CompiledEntry) iter.next()).getName(false);
 			String srcName = getSRCName(jarName);
 			script.printAvailableTask(srcName, getSRCLocation(jarName));
 			script.printAntCallTask(srcName, null, null);
+		}
+		if (customBuildCallbacks != null) {
+			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_POST + TARGET_BUILD_SOURCES, null, null, params);
 		}
 		script.printTargetEnd();
 	}
@@ -768,9 +830,26 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		String destdir = getTempJARFolderLocation(entry.getName(true));
 		script.printDeleteTask(destdir, null, null);
 		script.printMkdirTask(destdir);
+
+		String[] sources = entry.getSource();
+		Map params = null, references = null;
+		if (customBuildCallbacks != null) {
+			script.printPathStructure("path", name + PROPERTY_CLASSPATH, classpath); //$NON-NLS-1$
+
+			params = new HashMap(2);
+			params.put(PROPERTY_TARGET_FOLDER, destdir);
+			for (int i = 1; i <= sources.length; i++) {
+				params.put(PROPERTY_SOURCE_FOLDER + i, sources[i - 1]);
+			}
+
+			references = new HashMap(1);
+			references.put(name + PROPERTY_CLASSPATH, null);
+			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_PRE + name, null, null, params, references);
+		}
+
 		script.printComment("compile the source code"); //$NON-NLS-1$
 		JavacTask javac = new JavacTask();
-		javac.setClasspath(classpath);
+		javac.setClasspathId(name + PROPERTY_CLASSPATH);
 		javac.setBootClasspath(Utils.getPropertyFormat(PROPERTY_BOOTCLASSPATH));
 		javac.setDestdir(destdir);
 		javac.setFailOnError(Utils.getPropertyFormat(PROPERTY_JAVAC_FAIL_ON_ERROR));
@@ -780,7 +859,6 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		javac.setSource(Utils.getPropertyFormat(PROPERTY_JAVAC_SOURCE));
 		javac.setTarget(Utils.getPropertyFormat(PROPERTY_JAVAC_TARGET));
 		javac.setCompileArgs(Utils.getPropertyFormat(PROPERTY_JAVAC_COMPILERARG));
-		String[] sources = entry.getSource();
 		javac.setSrcdir(sources);
 		script.print(javac);
 		script.printComment("Copy necessary resources"); //$NON-NLS-1$
@@ -800,6 +878,12 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printJarTask(jarLocation, destdir, getEmbeddedManifestFile(entry, destdir));
 		}
 		script.printDeleteTask(destdir, null, null);
+
+		if (customBuildCallbacks != null) {
+			params.clear();
+			params.put(PROPERTY_JAR_LOCATION, jarLocation);
+			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_POST + name, null, null, params, references);
+		}
 		script.printTargetEnd();
 	}
 
@@ -936,11 +1020,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	protected String getSRCName(String jarName) {
 		if (jarName.endsWith(".jar")) { //$NON-NLS-1$
-			return jarName.substring(0, jarName.length() - 4) + "src.zip"; //$NON-NLS-1$
+			return jarName.substring(0, jarName.length() - 4) + SRC_ZIP;
 		}
 		if (jarName.equals(EXPANDED_DOT))
-			return "src.zip";
-		return jarName.replace('/', '.') + "src.zip"; //$NON-NLS-1$
+			return SRC_ZIP;
+		return jarName.replace('/', '.') + SRC_ZIP;
 	}
 
 	/**

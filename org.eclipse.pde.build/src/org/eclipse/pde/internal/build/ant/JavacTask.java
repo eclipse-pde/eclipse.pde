@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.ant;
 
-import java.util.Iterator;
-import java.util.List;
-
 /**
  * Wrapper class for the Ant javac task.
  */
 public class JavacTask implements ITask {
 
-	protected List classpath;
+	protected String classpathId;
 	protected String bootclasspath;
 	protected String destdir;
 	protected String failonerror;
@@ -61,18 +58,7 @@ public class JavacTask implements ITask {
 			script.println("<compilerarg line=\"" + compileArgs + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$
 		}
 
-		script.printStartTag("classpath"); //$NON-NLS-1$
-		script.indent++;
-		for (Iterator iter = classpath.iterator(); iter.hasNext();) {
-			String path = (String) iter.next();
-			script.printTab();
-			script.print("<pathelement"); //$NON-NLS-1$
-			script.printAttribute("path", path, false); //$NON-NLS-1$
-			script.print("/>"); //$NON-NLS-1$
-			script.println();
-		}
-		script.indent--;
-		script.printEndTag("classpath"); //$NON-NLS-1$
+		script.println("<classpath refid=\"" + classpathId + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		for (int i = 0; i < srcdir.length; i++) {
 			script.printTab();
@@ -80,17 +66,16 @@ public class JavacTask implements ITask {
 			script.printQuotes(srcdir[i]);
 			script.println("/>"); //$NON-NLS-1$
 		}
-		script.printEndTag("javac"); //$NON-NLS-1$
 		script.indent--;
+		script.printEndTag("javac"); //$NON-NLS-1$
 	}
 
 	/**
-	 * Set the javac task classpath attribute to be the given value.
-	 * 
-	 * @param classpath the classpath attribute
+	 * Set the javac task classpath refid to be the given value.
+	 * @param classpathId
 	 */
-	public void setClasspath(List classpath) {
-		this.classpath = classpath;
+	public void setClasspathId(String classpathId) {
+		this.classpathId = classpathId;
 	}
 
 	/**
