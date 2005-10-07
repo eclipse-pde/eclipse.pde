@@ -2,6 +2,7 @@ package org.eclipse.pde.internal.ui.nls;
 
 import java.util.Properties;
 
+import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.model.IDocumentAttribute;
 import org.eclipse.pde.internal.ui.model.IDocumentTextNode;
@@ -14,6 +15,7 @@ public class ModelChangeElement {
 	
 	private static final String DELIM = "."; //$NON-NLS-1$
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
+	private static final String FRAGMENT_PREFIX = "f"; //$NON-NLS-1$
 	
 	private String fValue = ""; //$NON-NLS-1$
 	private String fKey = ""; //$NON-NLS-1$
@@ -81,16 +83,17 @@ public class ModelChangeElement {
 	private void generateValidKey(String pre, String mid) {
 		generateValidKey(pre + DELIM + mid);
 	}
-	private void generateValidKey(String pre) {
-		fKey = pre + DELIM + getValidSuffix(pre);
-	}
-	private int getValidSuffix(String key) {
+
+	private void generateValidKey(String key) {
 		int suffix = 0;
 		Properties properties = fParent.getProperties();
-		while (properties.containsKey(key + DELIM + suffix))
+		String newKey = fParent.getParentModel() instanceof IFragmentModel ?
+				key + DELIM + FRAGMENT_PREFIX  :
+				key + DELIM;
+		while (properties.containsKey(newKey + suffix))
 			suffix += 1;
-		properties.setProperty(key + DELIM + suffix, fValue);
-		return suffix;
+		properties.setProperty(newKey + suffix, fValue);
+		fKey = newKey + suffix;
 	}
 	public String getExternKey() {
 		return KEY_PREFIX + fKey;
