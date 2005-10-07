@@ -20,10 +20,12 @@ import org.eclipse.ui.dialogs.ListDialog;
 
 public class ShowResultsAction extends Action {
 	
-	IPluginImport[] fUnusedImports;
+	private IPluginModelBase fModel;
+	Object[] fUnusedImports;
 	private boolean fReadOnly;
 
-	public ShowResultsAction(IPluginImport[] unused, boolean readOnly) {
+	public ShowResultsAction(IPluginModelBase model, Object[] unused, boolean readOnly) {
+		fModel = model;
 		fUnusedImports = unused;
 		fReadOnly = readOnly;
 	}
@@ -43,9 +45,8 @@ public class ShowResultsAction extends Action {
 				// Launched from Dependencies View, show information dialog
 				dialog = getUnusedDependeciesInfoDialog();
 			} else {
-				IPluginModelBase model = (IPluginModelBase)fUnusedImports[0].getModel();
 				dialog = new UnusedImportsDialog(PDEPlugin
-						.getActiveWorkbenchShell(), model, fUnusedImports);
+						.getActiveWorkbenchShell(), fModel, fUnusedImports);
 			}
 			dialog.create();
 			dialog.getShell().setText(
@@ -74,6 +75,7 @@ public class ShowResultsAction extends Action {
 		});
 		dialog.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		dialog.setInput(this);
+		dialog.getTableViewer().setSorter(new UnusedImportsDialog.Sorter());
 		return dialog;
 	}
 }

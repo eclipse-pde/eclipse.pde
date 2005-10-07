@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.ui.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.build.IBuildEntry;
@@ -25,6 +26,7 @@ import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
+import org.eclipse.pde.internal.ui.model.bundle.*;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
@@ -96,6 +98,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof IBuildEntry) {
 			return getObjectText((IBuildEntry)obj);
+		}
+		if (obj instanceof PackageObject) {
+			return getObjectText((PackageObject)obj);
 		}
 		return super.getText(obj);
 	}
@@ -243,6 +248,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public String getObjectText(ISiteCategoryDefinition obj) {
 		return preventNull(obj.getLabel());
 	}
+	public String getObjectText(PackageObject obj) {
+		return preventNull(obj.toString());
+	}
 	public String getObjectText(ISiteCategory obj) {
 		ISiteCategoryDefinition def = obj.getDefinition();
 		if (def != null)
@@ -342,6 +350,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof ISiteCategory) {
 			return getObjectImage((ISiteCategory) obj);
+		}
+		if (obj instanceof PackageObject) {
+			return getObjectImage((PackageObject) obj);
 		}
 		return super.getImage(obj);
 	}
@@ -599,6 +610,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public Image getObjectImage(ISiteCategory obj) {
 		int flags = obj.getDefinition() == null ? F_ERROR : 0;
 		return get(PDEPluginImages.DESC_CATEGORY_OBJ, flags);
+	}
+	public Image getObjectImage(PackageObject obj) {
+		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
 	}
 
 	public boolean isFullNameModeEnabled() {

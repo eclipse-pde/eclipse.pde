@@ -25,7 +25,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -77,17 +76,6 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
             return fHeader == null ? new Object[0] : fHeader.getPackages();
 		}
     }
-    
-	class ExportPackageLabelProvider extends LabelProvider implements
-			ITableLabelProvider {
-		public String getColumnText(Object obj, int index) {
-			return obj.toString();
-		}
-
-		public Image getColumnImage(Object obj, int index) {
-			return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
-		}
-	}
 
 	class ExportPackageDialogLabelProvider extends LabelProvider {
 		public Image getImage(Object element) {
@@ -145,7 +133,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 		TablePart tablePart = getTablePart();
 		fPackageViewer = tablePart.getTableViewer();
 		fPackageViewer.setContentProvider(new ExportPackageContentProvider());
-		fPackageViewer.setLabelProvider(new ExportPackageLabelProvider());
+		fPackageViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fPackageViewer.setSorter(new ViewerSorter() {
             public int compare(Viewer viewer, Object e1, Object e2) {
                 String s1 = e1.toString();
