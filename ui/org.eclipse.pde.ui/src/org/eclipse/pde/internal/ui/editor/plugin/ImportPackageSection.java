@@ -30,6 +30,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.plugin.IPluginImport;
@@ -51,6 +52,7 @@ import org.eclipse.pde.internal.ui.model.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.ui.model.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.ui.model.bundle.PackageObject;
 import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.search.dependencies.UnusedDependenciesAction;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -372,6 +374,9 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         manager.add(new Separator());
         manager.add(fRemoveAction);
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
+		manager.add(new Separator());
+		if (((IModel)getPage().getModel()).getUnderlyingResource()!=null) 
+			manager.add(new UnusedDependenciesAction((IPluginModelBase) getPage().getModel(), false));
         if (!fPackageViewer.getSelection().isEmpty()) {
             manager.add(new Separator());
             manager.add(fPropertiesAction);
