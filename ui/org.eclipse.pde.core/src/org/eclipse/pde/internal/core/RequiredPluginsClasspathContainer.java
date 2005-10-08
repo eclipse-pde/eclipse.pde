@@ -398,6 +398,11 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		if (model != null) {
 			IPath shortPath = path.removeFirstSegments(path.matchingFirstSegments(new Path(model.getInstallLocation())));
 			srcPath = ClasspathUtilCore.getSourceAnnotation(model, shortPath.toString());
+		} else {
+			String filename = ClasspathUtilCore.getSourceZipName(path.lastSegment());
+			IPath candidate = path.removeLastSegments(1).append(filename);
+			if (PDECore.getWorkspace().getRoot().getFile(candidate).exists()) 
+				srcPath = candidate;
 		}
 		IClasspathEntry clsEntry = JavaCore.newLibraryEntry(
 				path,
