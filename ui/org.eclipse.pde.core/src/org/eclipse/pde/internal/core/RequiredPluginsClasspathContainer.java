@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.core;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -32,6 +31,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
+import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
 import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
@@ -131,16 +131,14 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			}
 			
 			// add Import-Package
-			Iterator iter = map.keySet().iterator();
-			while (iter.hasNext()) {
-				String symbolicName = iter.next().toString();
-				if (symbolicName.equals(desc.getSymbolicName()))
-					continue;
-				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(symbolicName);
-				if (model != null && model.isEnabled())
-					addDependencyViaImportPackage(model.getBundleDescription(), added, map, entries);
+			ImportPackageSpecification[] imports = desc.getImportPackages();
+			for (int i = 0; i < imports.length; i++) {
+				BaseDescription supplier = imports[i].getSupplier();
+				if (supplier instanceof ExportPackageDescription) {
+					addDependencyViaImportPackage(((ExportPackageDescription)supplier).getExporter(), added, map, entries);				
+				}
 			}
-
+			
 			addExtraClasspathEntries(added, entries);
 
 			// add implicit dependencies
@@ -189,7 +187,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		return rule;
 	}
 	
-	private void addDependencyViaImportPackage(BundleDescription desc, HashSet added, Map map, ArrayList entries) throws CoreException {
+	protected void addDependencyViaImportPackage(BundleDescription desc, HashSet added, Map map, ArrayList entries) throws CoreException {
 		if (desc == null || !added.add(desc.getSymbolicName()))
 			return;
 
