@@ -44,10 +44,12 @@ public class PDEManager {
 		BundleDescription desc = getBundleDescription(fragment);
 		if (desc != null) {
 			HostSpecification spec = desc.getHost();
-			PluginModelManager manager = PDECore.getDefault().getModelManager();
-			IPluginModelBase host = manager.findModel(spec.getHosts()[0]);
-			if (host instanceof IPluginModel)
-				return (IPluginModel)host;
+			if (spec != null) {
+				PluginModelManager manager = PDECore.getDefault().getModelManager();
+				IPluginModelBase host = manager.findModel(spec.getName());
+				if (host instanceof IPluginModel)
+					return (IPluginModel)host;
+			}
 		}
 		return null;
 	}
