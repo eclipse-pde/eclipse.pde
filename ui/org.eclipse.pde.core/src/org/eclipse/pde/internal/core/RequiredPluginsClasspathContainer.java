@@ -315,6 +315,16 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 					addDependency((BundleDescription)desc, added, map, entries);
 				}
 			}
+			
+			// add Import-Package
+			ImportPackageSpecification[] imports = host.getImportPackages();
+			for (int i = 0; i < imports.length; i++) {
+				BaseDescription supplier = imports[i].getSupplier();
+				if (supplier instanceof ExportPackageDescription) {
+					addDependencyViaImportPackage(((ExportPackageDescription)supplier).getExporter(), added, map, entries);				
+				}
+			}
+
 		}
 	}
 	
