@@ -37,6 +37,7 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 
 public class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements IClasspathContainer {
 
@@ -240,7 +241,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	
 	private Rule[] getInclusions(Map map, IPluginModelBase model) {
 		if ("false".equals(System.getProperty("pde.restriction")) //$NON-NLS-1$ //$NON-NLS-2$
-				||!fModel.getBundleDescription().isResolved())
+				||!fModel.getBundleDescription().isResolved()
+				|| !(fModel instanceof IBundlePluginModelBase))
 			return null;
 		
 		if (TargetPlatform.getTargetVersion() < 3.1)
