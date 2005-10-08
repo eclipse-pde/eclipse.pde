@@ -324,7 +324,6 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 					addDependencyViaImportPackage(((ExportPackageDescription)supplier).getExporter(), added, map, entries);				
 				}
 			}
-
 		}
 	}
 	
