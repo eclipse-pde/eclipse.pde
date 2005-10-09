@@ -225,11 +225,11 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		}
 	}
 	
-	private void addPlugin(BundleDescription desc, boolean useInclusions, Map map, ArrayList entries)
+	private boolean addPlugin(BundleDescription desc, boolean useInclusions, Map map, ArrayList entries)
 			throws CoreException {		
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(desc);
 		if (model == null || !model.isEnabled())
-			return;
+			return false;
 		IResource resource = model.getUnderlyingResource();
 		Rule[] rules = useInclusions ? getInclusions(map, model) : null;
 		if (resource != null) {
@@ -237,6 +237,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		} else {
 			addExternalPlugin(model, rules, entries);
 		}
+		return true;
 	}
 	
 	private Rule[] getInclusions(Map map, IPluginModelBase model) {
@@ -306,22 +307,22 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		if (desc instanceof BundleDescription && added.add(desc.getName())) {
 			BundleDescription host = (BundleDescription)desc;
 			// add host plug-in
-			addPlugin(host, false, map, entries);
-			
-			BundleSpecification[] required = host.getRequiredBundles();
-			for (int i = 0; i < required.length; i++) {
-				desc = getSupplier(required[i]);
-				if (desc != null && desc instanceof BundleDescription) {
-					addDependency((BundleDescription)desc, added, map, entries);
+			if (addPlugin(host, false, map, entries)) {			
+				BundleSpecification[] required = host.getRequiredBundles();
+				for (int i = 0; i < required.length; i++) {
+					desc = getSupplier(required[i]);
+					if (desc != null && desc instanceof BundleDescription) {
+						addDependency((BundleDescription)desc, added, map, entries);
+					}
 				}
-			}
-			
-			// add Import-Package
-			ImportPackageSpecification[] imports = host.getImportPackages();
-			for (int i = 0; i < imports.length; i++) {
-				BaseDescription supplier = imports[i].getSupplier();
-				if (supplier instanceof ExportPackageDescription) {
-					addDependencyViaImportPackage(((ExportPackageDescription)supplier).getExporter(), added, map, entries);				
+				
+				// add Import-Package
+				ImportPackageSpecification[] imports = host.getImportPackages();
+				for (int i = 0; i < imports.length; i++) {
+					BaseDescription supplier = imports[i].getSupplier();
+					if (supplier instanceof ExportPackageDescription) {
+						addDependencyViaImportPackage(((ExportPackageDescription)supplier).getExporter(), added, map, entries);				
+					}
 				}
 			}
 		}

@@ -30,7 +30,9 @@ import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.osgi.service.resolver.BundleDelta;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.StateDelta;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.IModelProviderListener;
@@ -211,10 +213,8 @@ public class PluginModelManager implements IAdaptable {
 	
 	private void handleModelsChanged(IModelProviderEvent e) {
 		PluginModelDelta delta = new PluginModelDelta();
-		ArrayList changedPlugins = new ArrayList();
 		boolean javaSearchAffected = false;
 
-		ArrayList oldIds = new ArrayList();
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_REMOVED) != 0) {
 			IModel[] removed = e.getRemovedModels();
 			for (int i = 0; i < removed.length; i++) {
@@ -223,9 +223,7 @@ public class PluginModelManager implements IAdaptable {
 				IPluginBase plugin = model.getPluginBase();
 				ModelEntry entry = updateTable(plugin.getId(), model, false, delta);
 				if (entry != null && (model.getUnderlyingResource() != null || entry.isInJavaSearch()))
-					javaSearchAffected = true;
-			
-				changedPlugins.add(plugin);
+					javaSearchAffected = true;			
 			}
 		}
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_ADDED) != 0) {
@@ -237,8 +235,6 @@ public class PluginModelManager implements IAdaptable {
 				ModelEntry entry = updateTable(plugin.getId(), model, true, delta);
 				if (entry != null && (model.getUnderlyingResource() != null  || entry.isInJavaSearch()))
 					javaSearchAffected = true;
-				
-				changedPlugins.add(plugin);
 			}
 		}
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_CHANGED) != 0) {
@@ -259,7 +255,6 @@ public class PluginModelManager implements IAdaptable {
 				} else if (oldID != null && newID == null) {
 					entry = updateTable(oldID, model, false, delta);
 					model.setBundleDescription(null);
-					oldIds.add(oldID);
 				} else if (oldID.equals(newID)) {
 					fState.addBundle(model, true);
 					entry = (ModelEntry)getEntryTable().get(oldID);
@@ -267,17 +262,14 @@ public class PluginModelManager implements IAdaptable {
 				} else {
 					entry = updateTable(oldID, model, false, delta);
 					entry = updateTable(newID, model, true, delta);
-					oldIds.add(oldID);
 				}
 				if (entry != null && (model.getUnderlyingResource() != null || entry.isInJavaSearch()))
 					javaSearchAffected = true;
-				changedPlugins.add(model.getPluginBase());
 			}
 		}
 		
-		if (changedPlugins.size() > 0)
-			fState.resolveState(true);
-		updateAffectedEntries((IPluginBase[])changedPlugins.toArray(new IPluginBase[changedPlugins.size()]), oldIds);
+		StateDelta stateDelta =	fState.resolveState(true);
+		updateAffectedEntries(stateDelta);
 		if (javaSearchAffected)
 			fSearchablePluginsManager.updateClasspathContainer();
 		fireDelta(delta);
@@ -298,11 +290,6 @@ public class PluginModelManager implements IAdaptable {
 			entry = new ModelEntry(this, id);
 			entries.put(id, entry);
 			kind = PluginModelDelta.ADDED;
-			try {
-				entry.updateClasspathContainer(false, true);
-			}
-			catch (CoreException e) {
-			}
 		}
 		if (added) {
 			if (workspace)
@@ -330,26 +317,23 @@ public class PluginModelManager implements IAdaptable {
 		return entry;
 	}
 
-	private void updateAffectedEntries(IPluginBase [] changedPlugins, ArrayList oldIds) {
-		// Reset classpath containers for affected entries
-		ModelEntry [] entries = getEntries();
+	private void updateAffectedEntries(StateDelta delta) {	
+		BundleDelta[] deltas = delta.getChanges();
 		Map map = new HashMap();
-
-		for (int i=0; i<entries.length; i++) {
-			ModelEntry entry = entries[i];
-
-			if (entry.isAffected(changedPlugins, oldIds)) {
-				try {
-					if (entry.shouldUpdateClasspathContainer(true, true)) {
-						IProject proj = entry.getWorkspaceModel().getUnderlyingResource().getProject();
-						entry.getClasspathContainer().reset();
-						map.put(JavaCore.create(proj), entry.getClasspathContainer());
-					}
+		for (int i = 0; i < deltas.length; i++) {
+			try {
+				String id = deltas[i].getBundle().getSymbolicName();
+				ModelEntry entry = findEntry(id);
+				if (entry != null && entry.shouldUpdateClasspathContainer(true)) {
+					IProject project = entry.getWorkspaceModel().getUnderlyingResource().getProject();
+					IJavaProject jProject = JavaCore.create(project);
+					if (!map.containsKey(jProject))
+						map.put(jProject, entry.getClasspathContainer(true));
 				}
-				catch (CoreException e) {
-				}
+			} catch (CoreException e) {
 			}
 		}
+			
 		if (map.size() > 0) {
 			try {
 				IJavaProject[] jProjects = (IJavaProject[])map.keySet().toArray(new IJavaProject[map.size()]);

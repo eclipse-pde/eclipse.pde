@@ -236,8 +236,8 @@ public class MinimalState {
 		return result;
 	}
 
-	public void resolveState(boolean incremental) {
-		internalResolveState(incremental);
+	public StateDelta resolveState(boolean incremental) {
+		return internalResolveState(incremental);
 	}
 
 	private synchronized StateDelta internalResolveState(boolean incremental) {

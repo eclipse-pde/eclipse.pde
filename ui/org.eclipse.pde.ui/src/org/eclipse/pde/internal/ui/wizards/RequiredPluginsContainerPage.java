@@ -204,7 +204,7 @@ public class RequiredPluginsContainerPage
 			PluginModelManager mng = PDECore.getDefault().getModelManager();
 			ModelEntry entry = mng.findEntry(javaProject.getProject());
 			if (entry!=null) {
-				IClasspathContainer container = entry.getClasspathContainer();
+				IClasspathContainer container = entry.getClasspathContainer(false);
 				if (container!=null)
 					realEntries = container.getClasspathEntries();
 			}
