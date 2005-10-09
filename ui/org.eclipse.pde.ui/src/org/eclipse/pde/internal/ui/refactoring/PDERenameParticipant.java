@@ -62,12 +62,16 @@ public abstract class PDERenameParticipant extends RenameParticipant {
 		return getArguments().getNewName();
 	}
 
-	private void addBundleManifestChange(CompositeChange result, IProgressMonitor pm)
+	protected void addBundleManifestChange(CompositeChange result, IProgressMonitor pm)
 			throws CoreException {
-		IFile file = fProject.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+		addBundleManifestChange(fProject.getFile("META-INF/MANIFEST.MF"), result, pm); //$NON-NLS-1$
+	}
+	
+	protected void addBundleManifestChange(IFile file, CompositeChange result, 
+			IProgressMonitor pm) throws CoreException {
 		if (file.exists()) {
-			Change change = BundleManifestChange.createRenameChange(file,
-								fElement, getNewName(), pm);
+			Change change = BundleManifestChange.createRenameChange(file, fElement,
+					getNewName(), pm);
 			if (change != null)
 				result.add(change);
 		}
