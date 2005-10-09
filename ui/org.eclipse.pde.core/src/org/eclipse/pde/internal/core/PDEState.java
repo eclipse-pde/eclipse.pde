@@ -31,7 +31,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
@@ -143,12 +145,16 @@ public class PDEState extends MinimalState {
 		fPluginInfos = new HashMap();
 		fMonitor.beginTask(PDECoreMessages.PDEState_readingPlugins, fTargetURLs.length);
 		for (int i = 0; i < fTargetURLs.length; i++) {
+			File file = new File(fTargetURLs[i].getFile());
 			try {
-				File file = new File(fTargetURLs[i].getFile());
 				fMonitor.subTask(file.getName());
 				addBundle(file, true, -1);
 			} catch (PluginConversionException e) {
 			} catch (CoreException e) {
+			} catch (IOException e) {
+				PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR,
+						PDECoreMessages.PDEState_invalidFormat + " " + file.getAbsolutePath(),
+						null)); 
 			} finally {
 				fMonitor.worked(1);
 			}

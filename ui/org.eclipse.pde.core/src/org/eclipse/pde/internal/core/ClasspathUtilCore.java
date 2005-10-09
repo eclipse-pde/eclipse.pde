@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -116,7 +117,11 @@ public class ClasspathUtilCore {
 			File location = new File(model.getInstallLocation());
 			if (location.isDirectory() && !new File(location, "META-INF/MANIFEST.MF").exists()) //$NON-NLS-1$
 				return false;					
-			Dictionary manifest = MinimalState.loadManifest(location);
+			Dictionary manifest = null;
+			try {
+				manifest = MinimalState.loadManifest(location);
+			} catch (IOException e) {
+			}
 			if (manifest == null)
 				return false;
 			Enumeration keys = manifest.keys();

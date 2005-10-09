@@ -109,15 +109,17 @@ public class MinimalState {
 		try {
 			model.setBundleDescription(
 					addBundle(new File(model.getInstallLocation()), false,  bundleId));
+		} catch (IOException e) {			
 		} catch (PluginConversionException e) {
 		} catch (CoreException e) {
 			PDECore.log(e);
-		}
+		} 
 	}
 	
 	public BundleDescription addBundle(IPluginModelBase model, long bundleId) {
 		try {
 			return addBundle(new File(model.getInstallLocation()), false, -1);
+		} catch (IOException e) {			
 		} catch (PluginConversionException e) {
 		} catch (CoreException e) {
 		}
@@ -142,7 +144,7 @@ public class MinimalState {
 		return null;
 	}
 
-	public BundleDescription addBundle(File bundleLocation, boolean keepLibraries, long bundleId) throws PluginConversionException, CoreException {
+	public BundleDescription addBundle(File bundleLocation, boolean keepLibraries, long bundleId) throws PluginConversionException, CoreException, IOException {
 		Dictionary manifest = loadManifest(bundleLocation);
 		if (manifest == null || manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null) {
 			if (!bundleLocation.isFile() 
@@ -185,7 +187,7 @@ public class MinimalState {
 		}
 	}
 
-	public static Dictionary loadManifest(File bundleLocation) {
+	public static Dictionary loadManifest(File bundleLocation) throws IOException {
 		ZipFile jarFile = null;
 		InputStream manifestStream = null;
 		try {
@@ -208,11 +210,6 @@ public class MinimalState {
 		try {
 			Manifest m = new Manifest(manifestStream);
 			return manifestToProperties(m.getMainAttributes());
-		} catch (IOException e) {
-			PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR,
-					PDECoreMessages.PDEState_invalidFormat + bundleLocation.toString(),
-					null)); 
-			return null;
 		} finally {
 			try {
 				manifestStream.close();
