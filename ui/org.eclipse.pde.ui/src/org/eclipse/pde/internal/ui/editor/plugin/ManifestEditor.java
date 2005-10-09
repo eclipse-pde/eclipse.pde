@@ -569,8 +569,10 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
     }
     
     protected void setShowExtensions(boolean show) throws BackingStoreException {
-    	fPrefs.putBoolean(ICoreConstants.EXTENSIONS_PROPERTY, show);
-    	fPrefs.flush();
+    	if (fPrefs != null) {
+	    	fPrefs.putBoolean(ICoreConstants.EXTENSIONS_PROPERTY, show);
+	    	fPrefs.flush();
+    	}
     	fShowExtensions = show;
     }
 }
