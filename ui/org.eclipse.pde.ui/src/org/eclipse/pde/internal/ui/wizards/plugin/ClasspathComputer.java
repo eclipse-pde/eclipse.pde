@@ -87,7 +87,7 @@ public class ClasspathComputer {
 			IClasspathEntry[] entries = JavaCore.create(project).getRawClasspath();
 			for (int i = 0; i < entries.length; i++) {
 				IClasspathEntry entry = entries[i];
-				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE && entry.getPath().segmentCount() > 1) {
+				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 					if (paths.add(entry.getPath()))
 						result.add(entry);
 				}
