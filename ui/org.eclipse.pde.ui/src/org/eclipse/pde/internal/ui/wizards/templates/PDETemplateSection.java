@@ -85,6 +85,6 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 					buffer.append(ch);
 			}
 		}
-		return buffer.toString();
+		return buffer.toString().toLowerCase(Locale.ENGLISH);
 	}
 }
