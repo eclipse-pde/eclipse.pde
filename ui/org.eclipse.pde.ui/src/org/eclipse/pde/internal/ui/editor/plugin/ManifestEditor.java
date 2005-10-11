@@ -540,16 +540,13 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
      * @see org.eclipse.ui.IShowEditorInput#showEditorInput(org.eclipse.ui.IEditorInput)
      */
     public void showEditorInput(IEditorInput editorInput) {
-    	String name = editorInput.getName();
+     	String name = editorInput.getName();
     	if (name.equals("MANIFEST.MF")) { //$NON-NLS-1$
-    		setActivePage(0);
+    		setActivePage(BundleInputContext.CONTEXT_ID);
     	} else if (name.equals("build.properties")) { //$NON-NLS-1$
-    		setActivePage(BUILD_INDEX);
+    		setActivePage(BuildInputContext.CONTEXT_ID);
     	} else {
-    		if (inputContextManager.hasContext(BundleInputContext.CONTEXT_ID))
-    			setActivePage(3);
-    		else
-    			setActivePage(0);
+    		setActivePage(PluginInputContext.CONTEXT_ID);
     	}
     }
     
