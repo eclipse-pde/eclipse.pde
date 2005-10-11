@@ -609,8 +609,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		validateProvidePackage(monitor);
 		validateImportPackage(monitor);
 		validateEclipsePlatformFilter();
-		validateAutoStart();
-		validateLazyStart();
+		//validateAutoStart();
+		//validateLazyStart();
 		// validateNativeCode();
 	}
 
@@ -1308,7 +1308,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		} 
 	}
 	
-	private void validateAutoStart() {
+	protected void validateAutoStart() {
 		IHeader header = (IHeader) fHeaders.get(ICoreConstants.ECLIPSE_AUTOSTART);
 		if (!isValidStartHeader(header))
 			return; // valid start header problems already reported
@@ -1323,7 +1323,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 	}
 	
-	private void validateLazyStart() {
+	protected void validateLazyStart() {
 		IHeader header = (IHeader) fHeaders.get(ICoreConstants.ECLIPSE_LAZYSTART);
 		isValidStartHeader(header);
 	}
