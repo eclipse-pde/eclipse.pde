@@ -211,7 +211,10 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	private ManifestHeader getLazyStartHeader() {
 		IBundle bundle = getBundle();
 		if (bundle instanceof Bundle) {
-			return ((Bundle)bundle).getManifestHeader(getLazyStartHeaderName());
+			ManifestHeader header = ((Bundle)bundle).getManifestHeader(ICoreConstants.ECLIPSE_LAZYSTART);
+			if (header == null)
+				header = ((Bundle)bundle).getManifestHeader(ICoreConstants.ECLIPSE_AUTOSTART);
+			return header;
 		}
 		return null;
 	}
