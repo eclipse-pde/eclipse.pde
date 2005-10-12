@@ -19,11 +19,14 @@ public class PatternConstructor {
 
 	private static final Pattern PATTERN_STAR = Pattern.compile("\\*"); //$NON-NLS-1$
 
+	private static final Pattern PATTERN_LBRACKET = Pattern.compile("\\("); //$NON-NLS-1$
+	
+	private static final Pattern PATTERN_RBRACKET = Pattern.compile("\\)"); //$NON-NLS-1$
 	/*
 	 * Converts user string to regular expres '*' and '?' to regEx variables.
 	 * 
 	 */
-	private static String asRegEx(String pattern) {
+	private static String asRegEx(String pattern, boolean group) {
 		// Replace \ with \\, * with .* and ? with .
 		// Quote remaining characters
 		String result1 = PATTERN_BACK_SLASH.matcher(pattern).replaceAll(
@@ -32,6 +35,12 @@ public class PatternConstructor {
 				"\\\\E.*\\\\Q"); //$NON-NLS-1$
 		String result3 = PATTERN_QUESTION.matcher(result2).replaceAll(
 				"\\\\E.\\\\Q"); //$NON-NLS-1$
+		if (group) {
+			result3 = PATTERN_LBRACKET.matcher(result3).replaceAll(
+					"\\\\E(\\\\Q");
+			result3 = PATTERN_RBRACKET.matcher(result3).replaceAll(
+					"\\\\E)\\\\Q");
+		}
 		return "\\Q" + result3 + "\\E"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
@@ -47,11 +56,17 @@ public class PatternConstructor {
 	 */
 	public static Pattern createPattern(String pattern, boolean isCaseSensitive) {
 		if (isCaseSensitive)
-			return Pattern.compile(asRegEx(pattern));
-		return Pattern.compile(asRegEx(pattern), Pattern.CASE_INSENSITIVE
+			return Pattern.compile(asRegEx(pattern, false));
+		return Pattern.compile(asRegEx(pattern, false), Pattern.CASE_INSENSITIVE
 				| Pattern.UNICODE_CASE);
 	}
-
+	public static Pattern createGroupedPattern(String pattern, boolean isCaseSensitive) {
+		if (isCaseSensitive)
+			return Pattern.compile(asRegEx(pattern, true));
+		return Pattern.compile(asRegEx(pattern, true), Pattern.CASE_INSENSITIVE
+				| Pattern.UNICODE_CASE);
+	}
+	
 	private PatternConstructor() {
 	}
 }
