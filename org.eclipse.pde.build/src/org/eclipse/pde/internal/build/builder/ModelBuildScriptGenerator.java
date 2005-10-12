@@ -830,12 +830,11 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		String destdir = getTempJARFolderLocation(entry.getName(true));
 		script.printDeleteTask(destdir, null, null);
 		script.printMkdirTask(destdir);
+		script.printPathStructure("path", name + PROPERTY_CLASSPATH, classpath); //$NON-NLS-1$
 
 		String[] sources = entry.getSource();
 		Map params = null, references = null;
 		if (customBuildCallbacks != null) {
-			script.printPathStructure("path", name + PROPERTY_CLASSPATH, classpath); //$NON-NLS-1$
-
 			params = new HashMap(2);
 			params.put(PROPERTY_TARGET_FOLDER, destdir);
 			for (int i = 1; i <= sources.length; i++) {
