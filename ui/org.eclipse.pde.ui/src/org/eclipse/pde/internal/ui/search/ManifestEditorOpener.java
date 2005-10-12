@@ -10,33 +10,34 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import org.eclipse.jface.text.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.ui.editor.plugin.*;
-import org.eclipse.search.ui.text.*;
-import org.eclipse.ui.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.FindReplaceDocumentAdapter;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
+import org.eclipse.search.ui.text.Match;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PartInitException;
 
 
 public class ManifestEditorOpener {
 
 	public static IEditorPart open(Match match, boolean activate) throws PartInitException {
 		IEditorPart editorPart = null;
-		Object element = match.getElement();
-		if (element instanceof IPluginObject) {
-			ISharedPluginModel model = ((IPluginObject)element).getModel();
-			if (model instanceof WorkspaceExtensionsModel) {
-				model = ((WorkspaceExtensionsModel)model).getBundlePluginModel();
-			}
-			if (model instanceof IPluginModelBase)
-				editorPart = ManifestEditor.openPluginEditor(((IPluginModelBase)model).getPluginBase());
-		}
+		editorPart = ManifestEditor.open(match.getElement(), true);
 		if (editorPart != null && editorPart instanceof ManifestEditor) {
 			ManifestEditor editor = (ManifestEditor)editorPart;
 			IDocument doc = editor.getDocument(match);
 			if (doc != null) {
 				Match exact = findExactMatch(doc, match);
-				editor.openToSourcePage(element, exact.getOffset(), exact.getLength());
+				editor.openToSourcePage(match.getElement(), exact.getOffset(), exact.getLength());
 			}
 		}
 		return editorPart;

@@ -189,7 +189,7 @@ public abstract class DependenciesViewPage extends Page {
 		if (obj instanceof IPluginImport) {
 			ManifestEditor.openPluginEditor(((IPluginImport) obj).getId());
 		} else if (obj instanceof IPluginBase) {
-			ManifestEditor.openPluginEditor((IPluginBase) obj);
+			ManifestEditor.open((IPluginBase) obj, false);
 		}
 	}
 

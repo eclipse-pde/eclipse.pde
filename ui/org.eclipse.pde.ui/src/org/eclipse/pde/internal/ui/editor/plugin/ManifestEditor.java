@@ -26,18 +26,21 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.IBuildObject;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelProvider;
 import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -53,7 +56,6 @@ import org.eclipse.pde.internal.ui.editor.build.BuildPage;
 import org.eclipse.pde.internal.ui.editor.build.BuildSourcePage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -67,10 +69,85 @@ import org.osgi.service.prefs.BackingStoreException;
 public class ManifestEditor extends MultiSourceEditor implements IShowEditorInput {
     
     private static int BUILD_INDEX = 5;
+	private static boolean SHOW_SOURCE;
     private boolean fEquinox = true;
     private boolean fShowExtensions = true;
     private IEclipsePreferences fPrefs;
     
+	public static IEditorPart openPluginEditor(String id) {
+		return openPluginEditor(PDECore.getDefault().getModelManager().findModel(id));
+	}
+	
+	public static IEditorPart openPluginEditor(IPluginModelBase model) {
+		return openPluginEditor(model, false);
+	}
+	
+	public static IEditorPart openPluginEditor(IPluginModelBase model, boolean source) {
+		return open(model.getPluginBase(), source);
+	}
+	
+	public static IEditorPart open(Object object, boolean source) {
+		SHOW_SOURCE = source;
+		if (object instanceof IPluginObject) {
+			ISharedPluginModel model = ((IPluginObject)object).getModel();
+			if (model instanceof IBundlePluginModelProvider) 
+				model = ((IBundlePluginModelProvider)model).getBundlePluginModel();
+			if (model instanceof IPluginModelBase) {
+				String filename = ((IPluginModelBase)model).isFragmentModel() ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
+				if (!(object instanceof IPluginExtension) && !(object instanceof IPluginExtensionPoint)) {
+					File file = new File(model.getInstallLocation());
+					if (file.isFile()) {
+						if (CoreUtility.jarContainsResource(file, "META-INF/MANIFEST.MF", false)) { //$NON-NLS-1$
+							filename = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
+						} 
+					} else if (new File(file, "META-INF/MANIFEST.MF").exists()) { //$NON-NLS-1$
+						filename = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
+					}
+				}
+				IResource resource = model.getUnderlyingResource();
+				if (resource == null) 
+					return openExternalPlugin(new File(model.getInstallLocation()), filename);
+				return openWorkspacePlugin(resource.getProject().getFile(filename));
+			}
+		}
+		return null;
+	}
+		
+	
+	private static IEditorPart openWorkspacePlugin(IFile pluginFile) {
+		return openEditor(new FileEditorInput(pluginFile));
+	}
+	
+	private static IEditorPart openExternalPlugin(File location, String filename) {
+		IEditorInput input = null;
+		if (location.isFile()) {
+			try {
+				ZipFile zipFile = new ZipFile(location);
+				if (zipFile.getEntry(filename) != null) 
+					input = new JarEntryEditorInput(new JarEntryFile(zipFile, filename));
+			} catch (IOException e) {
+			}			
+		} else {
+			File file = new File(location, filename);
+			if (file.exists())
+				input = new SystemFileEditorInput(file);
+		}
+		return openEditor(input);
+	}
+	
+	public static IEditorPart openEditor(IEditorInput input) {
+		if (input != null) {
+			try {
+				return PDEPlugin.getActivePage().openEditor(
+						input,
+						IPDEUIConstants.MANIFEST_EDITOR_ID);
+			} catch (PartInitException e) {
+				PDEPlugin.logException(e);
+			}
+		}
+		return null;		
+	}
+
 	protected void createResourceContexts(InputContextManager manager,
 			IFileEditorInput input) {
 		IFile file = input.getFile();
@@ -371,6 +448,13 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 
 
 	protected String computeInitialPageId() {
+		if (SHOW_SOURCE) {
+			SHOW_SOURCE = false;
+			InputContext primary = inputContextManager.getPrimaryContext();
+			if (primary != null)
+				return primary.getId();
+		}
+		
 		String firstPageId = super.computeInitialPageId();
 		if (firstPageId == null) {
 			InputContext primary = inputContextManager.getPrimaryContext();
@@ -406,6 +490,7 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 	protected ISortableContentOutlinePage createContentOutline() {
 		return new ManifestOutlinePage(this);
 	}
+	
 	public Object getAdapter(Class key) {
 		//No property sheet needed - block super
 		if (key.equals(IPropertySheetPage.class)) {
@@ -413,85 +498,7 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 		}
 		return super.getAdapter(key);
 	}
-	public static void openPluginEditor(String pluginId) {
-		openPluginEditor(pluginId, null);
-	}
 
-	public static void openPluginEditor(
-		String pluginId,
-		Object object) {
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginId);
-		if (model != null) {
-			openPluginEditor(model.getPluginBase(), object);
-		} else {
-			Display.getCurrent().beep();
-		}
-	}
-
-	public static IEditorPart openPluginEditor(IPluginBase plugin) {
-		return openPluginEditor(plugin, null);
-	}
-	
-	public static IEditorPart openPluginEditor(
-		IPluginBase plugin,
-		Object object) {
-		IEditorPart editor = null;
-		IResource underlyingResource = plugin.getModel().getUnderlyingResource();
-		if (underlyingResource == null) {
-			editor = openExternalPlugin(plugin);
-		} else {
-			editor = openWorkspacePlugin((IFile) underlyingResource, plugin instanceof IFragment);
-		}
-		return editor;
-	}
-	
-	private static IEditorPart openWorkspacePlugin(IFile pluginFile, boolean fragment) {
-		String editorId = PDEPlugin.MANIFEST_EDITOR_ID;
-		try {
-			FileEditorInput input = new FileEditorInput(pluginFile);
-			return PDEPlugin.getActivePage().openEditor(
-				input,
-				editorId);
-		} catch (PartInitException e) {
-			PDEPlugin.logException(e);
-		}
-		return null;
-	}
-	private static ManifestEditor openExternalPlugin(IPluginBase pluginInfo) {
-		boolean isFragment = pluginInfo.getPluginModel().isFragmentModel();
-		String manifest = null;
-		
-		IStorageEditorInput input = null;
-		File pluginLocation = new File(pluginInfo.getModel().getInstallLocation());
-		if (pluginLocation.isFile() && pluginLocation.getName().endsWith(".jar")) { //$NON-NLS-1$
-			try {
-				ZipFile zipFile = new ZipFile(pluginLocation);
-				if (zipFile.getEntry("META-INF/MANIFEST.MF") != null) //$NON-NLS-1$
-					manifest = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
-				else 
-					manifest = isFragment ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
-				input = new JarEntryEditorInput(new JarEntryFile(zipFile, manifest));
-			} catch (Exception e) {
-			}			
-		}
-		
-		if (input == null) {
-			File file = new File(pluginLocation, "META-INF/MANIFEST.MF"); //$NON-NLS-1$
-			if (!file.exists())
-				file = new File(pluginLocation, isFragment ? "fragment.xml" : "plugin.xml"); //$NON-NLS-1$ //$NON-NLS-2$
-			if (file.exists())
-				input = new SystemFileEditorInput(file);
-		}
-		try {
-			if (input != null)
-				return (ManifestEditor) PDEPlugin.getActivePage().openEditor(
-					input,
-					IPDEUIConstants.MANIFEST_EDITOR_ID);
-		} catch (PartInitException e) {
-			PDEPlugin.logException(e);
-		}
-		return null;
-	}
 
 	public String getTitle() {
 		IPluginModelBase model = (IPluginModelBase)getAggregateModel();
@@ -541,12 +548,22 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
      */
     public void showEditorInput(IEditorInput editorInput) {
      	String name = editorInput.getName();
-    	if (name.equals("MANIFEST.MF")) { //$NON-NLS-1$
-    		setActivePage(BundleInputContext.CONTEXT_ID);
-    	} else if (name.equals("build.properties")) { //$NON-NLS-1$
-    		setActivePage(BuildInputContext.CONTEXT_ID);
-    	} else {
-    		setActivePage(PluginInputContext.CONTEXT_ID);
+		String id = getActivePageInstance().getId();
+		if (name.equals("build.properties")) { //$NON-NLS-1$
+    		if (!BuildInputContext.CONTEXT_ID.equals(id))
+    			setActivePage(SHOW_SOURCE ? BuildInputContext.CONTEXT_ID : BuildPage.PAGE_ID);
+    	} else if (name.equals("plugin.xml") || name.equals("fragment.xml")) { //$NON-NLS-1$ //$NON-NLS-2$
+    		if (!PluginInputContext.CONTEXT_ID.equals(id)) {
+    			if (SHOW_SOURCE) {
+    				setActivePage(PluginInputContext.CONTEXT_ID);
+    			} else if (inputContextManager.hasContext(BundleInputContext.CONTEXT_ID)) {
+    				setActivePage(ExtensionsPage.PAGE_ID);
+    			} else {
+    				setActivePage(OverviewPage.PAGE_ID);
+    			}
+    		}
+    	} else if (!BundleInputContext.CONTEXT_ID.equals(id)) {
+			setActivePage(SHOW_SOURCE ? BundleInputContext.CONTEXT_ID : OverviewPage.PAGE_ID);
     	}
     }
     

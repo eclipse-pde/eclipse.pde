@@ -488,7 +488,9 @@ public abstract class PDEFormEditor extends FormEditor
 		InputContext context = inputContextManager.findContext(resource);
 		if (context == null)
 			return;
-		IFormPage page = setActivePage(context.getId());
+		IFormPage page = getActivePageInstance();
+		if (!context.getId().equals(page.getId()))
+			page = setActivePage(context.getId());
 		IDE.gotoMarker(page, marker);
 	}
 	

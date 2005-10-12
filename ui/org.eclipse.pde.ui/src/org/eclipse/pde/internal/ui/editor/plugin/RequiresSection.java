@@ -248,7 +248,7 @@ public class RequiresSection
                 if (obj instanceof ImportObject) {
                     IPlugin plugin = ((ImportObject) obj).getPlugin();
                     if (plugin != null)
-                         ManifestEditor.openPluginEditor(plugin);
+                         ManifestEditor.open(plugin, false);
                 }
 			}
 		}
