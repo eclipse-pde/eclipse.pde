@@ -80,25 +80,22 @@
             class="org.eclipse.pde.ant.ConvertSchemaToHTML">
       </antTask>
    </extension>
+   
    <extension
          point="org.eclipse.ant.core.extraClasspathEntries">
       <extraClasspathEntry
             library="ant_tasks/pde-ant.jar">
       </extraClasspathEntry>
    </extension>
+   
    <extension
          id="validation-marker"
          name="%builders.marker.label"
          point="org.eclipse.core.resources.markers">
-      <super
-            type="org.eclipse.core.resources.problemmarker">
-      </super>
-      <attribute
-            name="point">
-      </attribute>
-      <persistent
-            value="true">
-      </persistent>
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <super type="org.eclipse.core.resources.textmarker"/>
+      <attribute name="id"/>
+      <persistent value="true"/>
    </extension>
    
    <extension
