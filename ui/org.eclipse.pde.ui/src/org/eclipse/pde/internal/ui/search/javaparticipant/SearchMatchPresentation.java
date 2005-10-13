@@ -37,7 +37,7 @@ public class SearchMatchPresentation implements IMatchPresentation {
 				resource = ((SearchHit)element).getResource();
 			}
 			if (resource != null) {
-				return value + " - " + resource.getFullPath().toOSString().substring(1);
+				return value + " - " + resource.getFullPath().toOSString().substring(1); //$NON-NLS-1$
 			}
 			return super.getText(element);
 		}

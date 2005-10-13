@@ -38,6 +38,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.model.AbstractEditingModel;
 import org.eclipse.pde.internal.ui.model.bundle.Bundle;
 import org.eclipse.pde.internal.ui.model.bundle.BundleModel;
@@ -113,7 +114,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		fSearchRequestor = requestor;
 		
 		IPluginModelBase[] pluginModels = PDECore.getDefault().getModelManager().getWorkspaceModels();
-		monitor.beginTask("Searching for types and packages in manifest files", pluginModels.length);
+		monitor.beginTask(PDEUIMessages.ClassSearchParticipant_taskMessage, pluginModels.length);
 		for (int i = 0; i < pluginModels.length; i++) {
 			IProject project = pluginModels[i].getUnderlyingResource().getProject();
 			if (!monitor.isCanceled()) {
@@ -265,12 +266,12 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		return fSearchFor == S_FOR_TYPES ? extractType(value) : extractPackage(value);
 	}
 	private String extractType(String value) {
-		int index = value.lastIndexOf(".");
+		int index = value.lastIndexOf("."); //$NON-NLS-1$
 		if (index == -1 || index == value.length() - 1) return value;
 		return value.substring(index + 1);
 	}
 	private String extractPackage(String value) {
-		int index = value.lastIndexOf(".");
+		int index = value.lastIndexOf("."); //$NON-NLS-1$
 		if (index == -1 || index == value.length() - 1) return value;
 		char afterPeriod = value.charAt(index + 1);
 		if (afterPeriod >= 'A' && afterPeriod <= 'Z')
