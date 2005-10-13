@@ -16,6 +16,8 @@ import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
 
 public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
+	
+	private static IMarkerResolution[] NO_RESOLUTIONS = new IMarkerResolution[0];
 
 	/*
 	 * (non-Javadoc)
@@ -29,7 +31,7 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 			case PDEMarkerFactory.JAVA_PACKAGE__PORTED:
 				return new IMarkerResolution[] {new CreateJREBundleHeaderResolution(AbstractPDEMarkerResolution.CREATE_TYPE)};
 		}
-		return new IMarkerResolution[0];
+		return NO_RESOLUTIONS;
 	}
 
 	/*
