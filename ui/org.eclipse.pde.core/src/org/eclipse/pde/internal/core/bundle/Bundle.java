@@ -50,4 +50,11 @@ public class Bundle extends BundleObject implements IBundle {
 	public void setLocalization(String localization) {
 		setHeader(Constants.BUNDLE_LOCALIZATION, localization);
 	}
+	public void renameHeader(String key, String newKey) {
+		if (fProperties == null)
+			fProperties = new Properties();
+		if (fProperties.containsKey(key)) {
+			fProperties.put(newKey, fProperties.remove(key));
+		}
+	}
 }

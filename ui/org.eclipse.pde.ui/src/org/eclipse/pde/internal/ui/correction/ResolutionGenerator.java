@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.pde.internal.builders.PDEMarkerFactory;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
 
@@ -21,6 +22,11 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 	 * @see org.eclipse.ui.IMarkerResolutionGenerator#getResolutions(org.eclipse.core.resources.IMarker)
 	 */
 	public IMarkerResolution[] getResolutions(IMarker marker) {
+		int problemID = marker.getAttribute("id", -1); //$NON-NLS-1$
+		switch (problemID) {
+			case PDEMarkerFactory.DEPRECATED_AUTOSTART:
+				return new IMarkerResolution[] {new RenameAutostartResolution(2)};
+		}
 		return new IMarkerResolution[0];
 	}
 
@@ -29,7 +35,7 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 	 * @see org.eclipse.ui.IMarkerResolutionGenerator2#hasResolutions(org.eclipse.core.resources.IMarker)
 	 */
 	public boolean hasResolutions(IMarker marker) {
-		return true;
+		return marker.getAttribute("id", -1) > 0; //$NON-NLS-1$
 	}
 
 }

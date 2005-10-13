@@ -1685,4 +1685,12 @@
          </enablement>        
       </moveParticipant>
    </extension>
+   <extension
+         point="org.eclipse.ui.ide.markerResolution">
+      <markerResolutionGenerator
+            markerType="org.eclipse.pde.validation-marker"
+            class="org.eclipse.pde.internal.ui.correction.ResolutionGenerator">
+      </markerResolutionGenerator>
+   </extension>
+   
 </plugin>

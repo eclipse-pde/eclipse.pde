@@ -167,4 +167,13 @@ public class Bundle implements IBundle {
 	public void setLocalization(String localization) {
 		setHeader(Constants.BUNDLE_LOCALIZATION, localization);
 	}
+
+	public void renameHeader(String key, String newKey) {
+		ManifestHeader header = getManifestHeader(key);
+		if (header != null) {
+			header.setName(newKey);
+			fDocumentHeaders.put(newKey, fDocumentHeaders.remove(key));
+		}
+		fModel.fireModelObjectChanged(header, newKey, key, newKey);
+	}
 }

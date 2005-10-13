@@ -153,7 +153,7 @@ public class PDEState extends MinimalState {
 			} catch (CoreException e) {
 			} catch (IOException e) {
 				PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR,
-						PDECoreMessages.PDEState_invalidFormat + " " + file.getAbsolutePath(),
+						PDECoreMessages.PDEState_invalidFormat + " " + file.getAbsolutePath(), //$NON-NLS-1$
 						null)); 
 			} finally {
 				fMonitor.worked(1);

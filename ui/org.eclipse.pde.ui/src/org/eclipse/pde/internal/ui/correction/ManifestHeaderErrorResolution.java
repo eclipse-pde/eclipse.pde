@@ -10,29 +10,62 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IMarkerResolution2;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.model.bundle.BundleModel;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.MultiTextEdit;
+import org.eclipse.text.edits.TextEdit;
 
-public class ManifestHeaderErrorResolution implements IMarkerResolution2 {
-
-	public ManifestHeaderErrorResolution() {
-		super();
-	}
-
-	public String getLabel() {
-		return null;
+public abstract class ManifestHeaderErrorResolution extends AbstractPDEMarkerResolution {	
+	
+	public ManifestHeaderErrorResolution(int type) {
+		super(type);
 	}
 
 	public void run(IMarker marker) {
+		IResource resource = marker.getResource();
+		try {
+			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+			manager.connect(resource.getFullPath(), null);
+			ITextFileBuffer buffer = manager.getTextFileBuffer(resource.getFullPath());
+			IDocument document = buffer.getDocument();		
+			BundleModel model = new BundleModel(document, false);
+			model.load();
+			if (model.isLoaded()) {
+				IModelTextChangeListener listener = new BundleTextChangeListener(null);
+				model.addModelChangedListener(listener);
+				createChange(model);
+				TextEdit[] edits = listener.getTextOperations();
+				if (edits.length > 0) {
+					MultiTextEdit multi = new MultiTextEdit();
+					multi.addChildren(edits);
+					multi.apply(document);
+					buffer.commit(null, true);
+				}
+			}
+		} catch (CoreException e) {
+			PDEPlugin.log(e);
+		} catch (MalformedTreeException e) {
+			PDEPlugin.log(e);
+		} catch (BadLocationException e) {
+			PDEPlugin.log(e);
+		} finally {
+			try {
+				FileBuffers.getTextFileBufferManager().disconnect(resource.getFullPath(), null);
+			} catch (CoreException e) {
+				PDEPlugin.log(e);
+			}
+		}
 	}
-
-	public String getDescription() {
-		return null;
-	}
-
-	public Image getImage() {
-		return null;
-	}
+	
+	protected abstract void createChange(BundleModel model);
 
 }
