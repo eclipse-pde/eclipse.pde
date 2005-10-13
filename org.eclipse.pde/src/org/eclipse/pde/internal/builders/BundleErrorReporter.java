@@ -669,7 +669,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				IHeader jreHeader = (IHeader)fHeaders.get(ICoreConstants.ECLIPSE_JREBUNDLE);
 				if (jreHeader == null || !"true".equals(jreHeader.getValue())) { //$NON-NLS-1$
 					message = PDEMessages.BundleErrorReporter_exportNoJRE;
-					report(message, getPackageLine(header, exportPackageElements[i]), CompilerFlags.ERROR);
+					report(message, getPackageLine(header, exportPackageElements[i]), CompilerFlags.ERROR, PDEMarkerFactory.JAVA_PACKAGE__PORTED);
 				}
 			}
 		}
@@ -801,7 +801,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				IHeader jreHeader = (IHeader)fHeaders.get(ICoreConstants.ECLIPSE_JREBUNDLE);
 				if (jreHeader == null || !"true".equals(jreHeader.getValue())) { //$NON-NLS-1$
 					message = PDEMessages.BundleErrorReporter_importNoJRE;
-					report(message, getPackageLine(header, importPackageElements[i]), CompilerFlags.ERROR);
+					report(message, getPackageLine(header, importPackageElements[i]), CompilerFlags.ERROR, PDEMarkerFactory.JAVA_PACKAGE__PORTED);
 				}
 			}
 		}

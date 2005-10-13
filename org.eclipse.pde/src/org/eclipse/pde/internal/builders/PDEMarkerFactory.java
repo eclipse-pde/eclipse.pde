@@ -18,6 +18,7 @@ public class PDEMarkerFactory implements IMarkerFactory {
 	public static final String MARKER_ID = "org.eclipse.pde.validation-marker"; //$NON-NLS-1$
 
 	public static final int DEPRECATED_AUTOSTART = 1;
+	public static final int JAVA_PACKAGE__PORTED = 2;
 	
 	/**
 	 * @see org.eclipse.pde.internal.builders.IMarkerFactory#createMarker(org.eclipse.core.resources.IFile)
