@@ -15,6 +15,10 @@ import org.eclipse.ui.IMarkerResolution2;
 
 public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 {
 
+	public static final int CREATE_TYPE = 1;
+	public static final int RENAME_TYPE = 2;
+	public static final int REMOVE_TYPE = 3;
+	
 	protected int fType;
 
 	public AbstractPDEMarkerResolution(int type) {

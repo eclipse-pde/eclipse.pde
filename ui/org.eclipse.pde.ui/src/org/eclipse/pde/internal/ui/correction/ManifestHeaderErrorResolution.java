@@ -40,7 +40,7 @@ public abstract class ManifestHeaderErrorResolution extends AbstractPDEMarkerRes
 			BundleModel model = new BundleModel(document, false);
 			model.load();
 			if (model.isLoaded()) {
-				IModelTextChangeListener listener = new BundleTextChangeListener(null);
+				IModelTextChangeListener listener = new BundleTextChangeListener(document);
 				model.addModelChangedListener(listener);
 				createChange(model);
 				TextEdit[] edits = listener.getTextOperations();

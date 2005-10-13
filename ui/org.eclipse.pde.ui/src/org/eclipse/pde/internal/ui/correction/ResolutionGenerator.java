@@ -25,7 +25,9 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		int problemID = marker.getAttribute("id", -1); //$NON-NLS-1$
 		switch (problemID) {
 			case PDEMarkerFactory.DEPRECATED_AUTOSTART:
-				return new IMarkerResolution[] {new RenameAutostartResolution(2)};
+				return new IMarkerResolution[] {new RenameAutostartResolution(AbstractPDEMarkerResolution.RENAME_TYPE)};
+			case PDEMarkerFactory.JAVA_PACKAGE__PORTED:
+				return new IMarkerResolution[] {new CreateJREBundleHeaderResolution(AbstractPDEMarkerResolution.CREATE_TYPE)};
 		}
 		return new IMarkerResolution[0];
 	}

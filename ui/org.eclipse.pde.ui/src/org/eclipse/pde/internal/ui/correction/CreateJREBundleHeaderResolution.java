@@ -14,22 +14,21 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.model.bundle.BundleModel;
 
-public class RenameAutostartResolution extends ManifestHeaderErrorResolution {
+public class CreateJREBundleHeaderResolution extends ManifestHeaderErrorResolution {
 
-	public RenameAutostartResolution(int type) {
+	public CreateJREBundleHeaderResolution(int type) {
 		super(type);
 	}
 
 	public String getDescription() {
-		return PDEUIMessages.RenameAutostartResolution_desc;
+		return PDEUIMessages.CreateJREBundleHeaderResolution_desc;
 	}
 
 	public String getLabel() {
-		return PDEUIMessages.RenameAutostartResolution_label;
+		return PDEUIMessages.CreateJREBundleHeaderResolution_label;
 	}
 
 	protected void createChange(BundleModel model) {
-		model.getBundle().renameHeader(ICoreConstants.ECLIPSE_AUTOSTART, ICoreConstants.ECLIPSE_LAZYSTART);
+		model.getBundle().setHeader(ICoreConstants.ECLIPSE_JREBUNDLE, Boolean.toString(true));
 	}
-	
 }

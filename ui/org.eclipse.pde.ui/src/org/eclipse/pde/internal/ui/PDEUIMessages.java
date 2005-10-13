@@ -2174,4 +2174,12 @@ public class PDEUIMessages extends NLS {
 
 	public static String ClassSearchParticipant_taskMessage;
 
+	public static String CreateJREBundleHeaderResolution_desc;
+
+	public static String CreateJREBundleHeaderResolution_label;
+
+	public static String RenameAutostartResolution_desc;
+
+	public static String RenameAutostartResolution_label;
+
 }
