@@ -1319,7 +1319,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			int line = header.getLineNumber();
 			header = (IHeader) fHeaders.get(Constants.BUNDLE_MANIFESTVERSION);
 			if (header != null && header.getValue().equals("2")) //$NON-NLS-1$
-				report(PDEMessages.BundleErrorReporter_startHeader_autoStartDeprecated, line + 1, severity);
+				report(PDEMessages.BundleErrorReporter_startHeader_autoStartDeprecated, line + 1, severity, PDEMarkerFactory.DEPRECATED_AUTOSTART);
 		}
 	}
 	

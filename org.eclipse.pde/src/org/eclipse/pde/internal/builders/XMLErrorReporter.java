@@ -98,7 +98,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	
 	private IMarkerFactory getMarkerFactory() {
 		if (fMarkerFactory == null)
-			fMarkerFactory = new SchemaMarkerFactory();
+			fMarkerFactory = new PDEMarkerFactory();
 		return fMarkerFactory;
 	}
 
@@ -123,7 +123,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	private void removeFileMarkers() {
 		try {
 			fFile.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ZERO);
-			fFile.deleteMarkers(SchemaMarkerFactory.MARKER_ID, false,
+			fFile.deleteMarkers(PDEMarkerFactory.MARKER_ID, false,
 					IResource.DEPTH_ZERO);
 		} catch (CoreException e) {
 			PDECore.logException(e);

@@ -48,7 +48,7 @@ public class JarManifestErrorReporter {
 	 */
 	protected Map fHeaders;
 
-	private IMarkerFactory fMarkerFactory;
+	private PDEMarkerFactory fMarkerFactory;
 
 	protected IProject fProject = null;
 
@@ -63,9 +63,9 @@ public class JarManifestErrorReporter {
 		fTextDocument = createDocument(file); 
 	}
 
-	private void addMarker(String message, int lineNumber, int severity) {
+	private void addMarker(String message, int lineNumber, int severity, int problemID) {
 		try {
-			IMarker marker = getMarkerFactory().createMarker(fFile);
+			IMarker marker = getMarkerFactory().createMarker(fFile, problemID);
 			marker.setAttribute(IMarker.MESSAGE, message);
 			marker.setAttribute(IMarker.SEVERITY, severity);
 			if (lineNumber == -1)
@@ -160,9 +160,9 @@ public class JarManifestErrorReporter {
 		return header.getLineNumber() + 1;
 	}
 
-	private IMarkerFactory getMarkerFactory() {
+	private PDEMarkerFactory getMarkerFactory() {
 		if (fMarkerFactory == null)
-			fMarkerFactory = new SchemaMarkerFactory();
+			fMarkerFactory = new PDEMarkerFactory();
 		return fMarkerFactory;
 	}
 
@@ -299,18 +299,22 @@ public class JarManifestErrorReporter {
 	private void removeFileMarkers() {
 		try {
 			fFile.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ZERO);
-			fFile.deleteMarkers(SchemaMarkerFactory.MARKER_ID, false,
+			fFile.deleteMarkers(PDEMarkerFactory.MARKER_ID, false,
 					IResource.DEPTH_ZERO);
 		} catch (CoreException e) {
 			PDECore.logException(e);
 		}
 	}
 
-	public void report(String message, int line, int severity) {
+	public void report(String message, int line, int severity, int problemID) {
 		if (severity == CompilerFlags.ERROR)
-			addMarker(message, line, IMarker.SEVERITY_ERROR);
+			addMarker(message, line, IMarker.SEVERITY_ERROR, problemID);
 		else if (severity == CompilerFlags.WARNING)
-			addMarker(message, line, IMarker.SEVERITY_WARNING);
+			addMarker(message, line, IMarker.SEVERITY_WARNING, problemID);
+	}
+
+	public void report(String message, int line, int severity) {
+		report(message, line, severity, -1);
 	}
 
 	protected void report(String message, int line, String compilerFlag) {

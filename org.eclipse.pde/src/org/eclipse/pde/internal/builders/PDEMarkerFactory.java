@@ -13,12 +13,26 @@ package org.eclipse.pde.internal.builders;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
-public class SchemaMarkerFactory implements IMarkerFactory {
+public class PDEMarkerFactory implements IMarkerFactory {
+	
 	public static final String MARKER_ID = "org.eclipse.pde.validation-marker"; //$NON-NLS-1$
+
+	public static final int DEPRECATED_AUTOSTART = 1;
+	
 	/**
 	 * @see org.eclipse.pde.internal.builders.IMarkerFactory#createMarker(org.eclipse.core.resources.IFile)
 	 */
 	public IMarker createMarker(IFile file) throws CoreException {
-		return file.createMarker(MARKER_ID);
+		return createMarker(file, -1);
 	}
+	
+	/**
+	 * @see org.eclipse.pde.internal.builders.IMarkerFactory#createMarker(org.eclipse.core.resources.IFile)
+	 */
+	public IMarker createMarker(IFile file, int id) throws CoreException {
+		IMarker marker = file.createMarker(MARKER_ID);
+		marker.setAttribute("id", id); //$NON-NLS-1$
+		return marker;
+	}
+
 }
