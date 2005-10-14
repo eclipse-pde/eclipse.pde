@@ -23,7 +23,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -82,13 +81,11 @@ public class ClassSearchParticipant implements IQueryParticipant {
 	private static final int S_FOR_TYPES = 0;
 	private static final int S_FOR_PACKAGES = 2;
 	
-	private SearchMatchPresentation fMatchPresentation;
 	private ISearchRequestor fSearchRequestor;
 	private Pattern fSearchPattern;
 	private int fSearchFor;
 	
 	public ClassSearchParticipant() {
-		fMatchPresentation = new SearchMatchPresentation();
 	}
 	
 	public void search(ISearchRequestor requestor,
@@ -118,12 +115,12 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		for (int i = 0; i < pluginModels.length; i++) {
 			IProject project = pluginModels[i].getUnderlyingResource().getProject();
 			if (!monitor.isCanceled()) {
-				searchProject(project, monitor, pluginModels[i].getPluginBase());
+				searchProject(project, monitor);
 			}
 		}
 	}
 
-	private void searchProject(IProject project, IProgressMonitor monitor, IPluginBase base) throws CoreException {
+	private void searchProject(IProject project, IProgressMonitor monitor) throws CoreException {
 		for (int i = 0; i < S_TOTAL; i++) {
 			IFile file = project.getFile(SEARCH_FILES[i]);
 			if (!file.exists()) continue;
@@ -155,13 +152,13 @@ public class ClassSearchParticipant implements IQueryParticipant {
 					for (int j = 0; j < extensions.length; j++) {
 						ISchema schema = registry.getSchema(extensions[j].getPoint());
 						if (schema != null)
-							inspectExtension(schema, extensions[j]);
+							inspectExtension(schema, extensions[j], file);
 					}
 				} else if (i == S_MANIFEST && loadModel instanceof IBundleModel) {
 					loadModel.setUnderlyingResource(file);
 					Bundle bundle = (Bundle)((IBundleModel)loadModel).getBundle();
 					if (bundle != null)
-						inspectBundle(bundle, base);
+						inspectBundle(bundle, file);
 				}
 			} finally {
 				manager.disconnect(file.getFullPath(), monitor);
@@ -169,7 +166,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		}
 	}
 
-	private void inspectExtension(ISchema schema, IPluginParent parent) {
+	private void inspectExtension(ISchema schema, IPluginParent parent, IFile file) {
 		IPluginObject[] children = parent.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			IPluginElement child = (IPluginElement)children[i];
@@ -196,18 +193,16 @@ public class ClassSearchParticipant implements IQueryParticipant {
 							String group = matcher.group(0);
 							int offset = ((PluginAttribute)attr).getValueOffset() + value.indexOf(group) + attr.getValue().indexOf(value);
 							int length = group.length();
-							fSearchRequestor.reportMatch(new Match(
-									new SearchHit(parent, attr.getValue(), fSearchFor == S_FOR_TYPES),
-									Match.UNIT_CHARACTER, offset, length));
+							fSearchRequestor.reportMatch(new Match(file, Match.UNIT_CHARACTER, offset, length));
 						}
 					}
 				}
 			}
-			inspectExtension(schema, child);
+			inspectExtension(schema, child, file);
 		}
 	}
 
-	private void inspectBundle(Bundle bundle, IPluginBase base) {
+	private void inspectBundle(Bundle bundle, IFile file) {
 		for (int i = 0; i < H_TOTAL; i++) {
 			if (fSearchFor == S_FOR_TYPES && (i == H_IMP || i == H_EXP))
 				continue;
@@ -237,9 +232,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 							} catch (CoreException e) {
 								offlen = new int[]{header.getOffset(), header.getLength()};
 							}
-							fSearchRequestor.reportMatch(new Match(
-									new SearchHit(base, elements[j].getValue(), fSearchFor == S_FOR_TYPES),
-									Match.UNIT_CHARACTER, offlen[0], offlen[1]));
+							fSearchRequestor.reportMatch(new Match(file, Match.UNIT_CHARACTER, offlen[0], offlen[1]));
 						}
 					}
 				} catch (BundleException e) {
@@ -265,7 +258,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 				ITextFileBuffer pBuffer = pManager.getTextFileBuffer(file.getFullPath());
 				IDocument pDoc = pBuffer.getDocument();
 				int headerOffset = header.getOffset() + header.getName().length();
-				String headerString = pDoc.get(headerOffset, header.getLength());
+				String headerString = pDoc.get(headerOffset, header.getLength() - header.getName().length());
 				int internalOffset = headerString.indexOf(value, initOff);
 				if (internalOffset != -1) {
 					offset = headerOffset + internalOffset;
@@ -304,6 +297,6 @@ public class ClassSearchParticipant implements IQueryParticipant {
 	}
 
 	public IMatchPresentation getUIParticipant() {
-		return fMatchPresentation;
+		return null;
 	}
 }
