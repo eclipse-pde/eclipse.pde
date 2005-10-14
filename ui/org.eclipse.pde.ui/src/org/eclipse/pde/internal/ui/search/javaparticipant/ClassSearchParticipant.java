@@ -10,6 +10,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
@@ -84,7 +85,6 @@ public class ClassSearchParticipant implements IQueryParticipant {
 	private ISearchRequestor fSearchRequestor;
 	private Pattern fSearchPattern;
 	private int fSearchFor;
-//	private QuerySpecification fQuerySpecification;
 	
 	public ClassSearchParticipant() {
 	}
@@ -110,18 +110,27 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		}
 		fSearchPattern = PatternConstructor.createPattern(search, true);
 		fSearchRequestor = requestor;
-//		fQuerySpecification = querySpecification;
 		
+		IPath[] enclosingPaths = querySpecification.getScope().enclosingProjectsAndJars();
 		IPluginModelBase[] pluginModels = PDECore.getDefault().getModelManager().getWorkspaceModels();
 		monitor.beginTask(PDEUIMessages.ClassSearchParticipant_taskMessage, pluginModels.length);
 		for (int i = 0; i < pluginModels.length; i++) {
 			IProject project = pluginModels[i].getUnderlyingResource().getProject();
-			if (!monitor.isCanceled()) {
+			if (!monitor.isCanceled() && encloses(enclosingPaths, project.getFullPath())) {
 				searchProject(project, monitor);
 			}
 		}
 	}
-
+	
+	private boolean encloses(IPath[] paths, IPath path) {
+		for (int i = 0; i < paths.length; i++) {
+			if (paths[i].equals(path))
+				return true;
+		}
+		return false;
+	}
+	
+	
 	private void searchProject(IProject project, IProgressMonitor monitor) throws CoreException {
 		for (int i = 0; i < S_TOTAL; i++) {
 			IFile file = project.getFile(SEARCH_FILES[i]);
