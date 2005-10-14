@@ -182,8 +182,16 @@ public class ClassSearchParticipant implements IQueryParticipant {
 					if (attInfo != null 
 							&& attInfo.getKind() == IMetaAttribute.JAVA
 							&& attr instanceof PluginAttribute) {
-						String value = getProperValue(attr.getValue());
-						Matcher matcher = fSearchPattern.matcher(value.subSequence(0, value.length()));
+						String value = null;
+						Matcher matcher = null;
+						if (fSearchFor == S_FOR_TYPES) {
+							value = attr.getValue();
+							matcher = getMatcher(value);
+						}
+						if (value == null || (matcher != null && !matcher.matches()) ){
+							value = getProperValue(attr.getValue());
+							matcher = getMatcher(value);
+						}
 						if (matcher.matches()) {
 							String group = matcher.group(0);
 							int offset = ((PluginAttribute)attr).getValueOffset() + value.indexOf(group) + attr.getValue().indexOf(value);
@@ -210,8 +218,16 @@ public class ClassSearchParticipant implements IQueryParticipant {
 					if (elements == null) continue;
 					int initOff = 0;
 					for (int j = 0; j < elements.length; j++) {
-						String value = getProperValue(elements[j].getValue());
-						Matcher matcher = fSearchPattern.matcher(value.subSequence(0, value.length()));
+						String value = null;
+						Matcher matcher = null;
+						if (fSearchFor == S_FOR_TYPES) {
+							value = elements[j].getValue();
+							matcher = getMatcher(value);
+						} 
+						if (value == null || (matcher != null && !matcher.matches()) ){
+							value = getProperValue(elements[j].getValue());
+							matcher = getMatcher(value);
+						} 
 						if (matcher.matches()) {
 							String group = matcher.group(0);
 							int[] offlen;
@@ -232,6 +248,10 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		}
 	}
 	
+	private Matcher getMatcher(String value) {
+		return fSearchPattern.matcher(value.subSequence(0, value.length()));
+	}
+	
 	private int[] getOffsetOfElement(ManifestHeader header, String value, int initOff) throws CoreException {
 		int offset = 0;
 		int length = 0;
@@ -244,7 +264,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 				pManager.connect(file.getFullPath(), monitor);
 				ITextFileBuffer pBuffer = pManager.getTextFileBuffer(file.getFullPath());
 				IDocument pDoc = pBuffer.getDocument();
-				int headerOffset = header.getOffset();
+				int headerOffset = header.getOffset() + header.getName().length();
 				String headerString = pDoc.get(headerOffset, header.getLength());
 				int internalOffset = headerString.indexOf(value, initOff);
 				if (internalOffset != -1) {
