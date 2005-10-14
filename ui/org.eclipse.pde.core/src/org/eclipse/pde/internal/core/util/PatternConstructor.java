@@ -37,9 +37,9 @@ public class PatternConstructor {
 				"\\\\E.\\\\Q"); //$NON-NLS-1$
 		if (group) {
 			result3 = PATTERN_LBRACKET.matcher(result3).replaceAll(
-					"\\\\E(\\\\Q");
+					"\\\\E(\\\\Q"); //$NON-NLS-1$
 			result3 = PATTERN_RBRACKET.matcher(result3).replaceAll(
-					"\\\\E)\\\\Q");
+					"\\\\E)\\\\Q"); //$NON-NLS-1$
 		}
 		return "\\Q" + result3 + "\\E"; //$NON-NLS-1$ //$NON-NLS-2$
 	}

@@ -214,13 +214,19 @@ public class PluginModelManager implements IAdaptable {
 	private void handleModelsChanged(IModelProviderEvent e) {
 		PluginModelDelta delta = new PluginModelDelta();
 		boolean javaSearchAffected = false;
-
+		boolean newState = false;
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_REMOVED) != 0) {
 			IModel[] removed = e.getRemovedModels();
 			for (int i = 0; i < removed.length; i++) {
 				if (!(removed[i] instanceof IPluginModelBase)) continue;
 				IPluginModelBase model = (IPluginModelBase) removed[i];
 				IPluginBase plugin = model.getPluginBase();
+				if (!newState) {
+					BundleDescription desc = model.getBundleDescription();
+					if (desc != null && !fState.getState().equals(desc.getContainingState())) {
+						newState = true;
+					}
+				}
 				ModelEntry entry = updateTable(plugin.getId(), model, false, delta);
 				if (entry != null && (model.getUnderlyingResource() != null || entry.isInJavaSearch()))
 					javaSearchAffected = true;			
@@ -268,7 +274,7 @@ public class PluginModelManager implements IAdaptable {
 			}
 		}
 		
-		StateDelta stateDelta =	fState.resolveState(true);
+		StateDelta stateDelta =	newState ? null : fState.resolveState(true);
 		updateAffectedEntries(stateDelta);
 		if (javaSearchAffected)
 			fSearchablePluginsManager.updateClasspathContainer();
@@ -318,19 +324,35 @@ public class PluginModelManager implements IAdaptable {
 	}
 
 	private void updateAffectedEntries(StateDelta delta) {	
-		BundleDelta[] deltas = delta.getChanges();
 		Map map = new HashMap();
-		for (int i = 0; i < deltas.length; i++) {
-			try {
-				String id = deltas[i].getBundle().getSymbolicName();
-				ModelEntry entry = findEntry(id);
-				if (entry != null && entry.shouldUpdateClasspathContainer(true)) {
-					IProject project = entry.getWorkspaceModel().getUnderlyingResource().getProject();
-					IJavaProject jProject = JavaCore.create(project);
-					if (!map.containsKey(jProject))
-						map.put(jProject, entry.getClasspathContainer(true));
+		if (delta == null) {
+			ModelEntry[] entries = getEntries();
+			for (int i = 0; i < entries.length; i++) {
+				ModelEntry entry = entries[i];
+				try {
+					if (entry != null && entry.shouldUpdateClasspathContainer(true)) {
+						IProject project = entry.getWorkspaceModel().getUnderlyingResource().getProject();
+						IJavaProject jProject = JavaCore.create(project);
+						if (!map.containsKey(jProject))
+							map.put(jProject, entry.getClasspathContainer(true));
+					}
+				} catch (CoreException e) {
+				}				
+			}
+		} else {
+			BundleDelta[] deltas = delta.getChanges();
+			for (int i = 0; i < deltas.length; i++) {
+				try {
+					String id = deltas[i].getBundle().getSymbolicName();
+					ModelEntry entry = findEntry(id);
+					if (entry != null && entry.shouldUpdateClasspathContainer(true)) {
+						IProject project = entry.getWorkspaceModel().getUnderlyingResource().getProject();
+						IJavaProject jProject = JavaCore.create(project);
+						if (!map.containsKey(jProject))
+							map.put(jProject, entry.getClasspathContainer(true));
+					}
+				} catch (CoreException e) {
 				}
-			} catch (CoreException e) {
 			}
 		}
 			
