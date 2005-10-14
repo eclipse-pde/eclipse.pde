@@ -30,6 +30,8 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 				return new IMarkerResolution[] {new RenameAutostartResolution(AbstractPDEMarkerResolution.RENAME_TYPE)};
 			case PDEMarkerFactory.JAVA_PACKAGE__PORTED:
 				return new IMarkerResolution[] {new CreateJREBundleHeaderResolution(AbstractPDEMarkerResolution.CREATE_TYPE)};
+			case PDEMarkerFactory.SINGLETON_NOT_SET:
+				return new IMarkerResolution[] {new AddSingleonAttributeTo(AbstractPDEMarkerResolution.RENAME_TYPE)};
 		}
 		return NO_RESOLUTIONS;
 	}

@@ -2182,4 +2182,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String RenameAutostartResolution_label;
 
+	public static String AddSingleonAttributeTo_desc;
+
+	public static String AddSingleonAttributeTo_label;
+
 }
