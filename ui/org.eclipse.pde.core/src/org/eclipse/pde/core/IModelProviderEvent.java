@@ -28,6 +28,13 @@ public interface IModelProviderEvent {
 	 * Event is sent after the models have been changed.
 	 */
 	int MODELS_CHANGED = 0x4;
+	
+	/**
+	 * Event is sent when the target platform changes
+	 * 
+	 * @since 3.2
+	 */
+	int TARGET_CHANGED = 0x8;
 	/**
 	 * Returns the models that are added
 	 * 

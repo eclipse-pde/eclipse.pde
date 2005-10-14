@@ -162,7 +162,7 @@ public class ExternalPluginsBlock {
 		if (fReloaded) {
 			type =
 				IModelProviderEvent.MODELS_REMOVED
-					| IModelProviderEvent.MODELS_ADDED;
+					| IModelProviderEvent.MODELS_ADDED | IModelProviderEvent.TARGET_CHANGED;
 			removedArray = fInitialModels;
 			addedArray = getAllModels();
 		} else if (fChangedModels.size() > 0) {
