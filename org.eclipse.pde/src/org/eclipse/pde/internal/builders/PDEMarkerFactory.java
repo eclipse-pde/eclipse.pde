@@ -19,6 +19,7 @@ public class PDEMarkerFactory implements IMarkerFactory {
 
 	public static final int DEPRECATED_AUTOSTART = 1;
 	public static final int JAVA_PACKAGE__PORTED = 2;
+	public static final int SINGLETON_NOT_SET = 3;
 	
 	/**
 	 * @see org.eclipse.pde.internal.builders.IMarkerFactory#createMarker(org.eclipse.core.resources.IFile)

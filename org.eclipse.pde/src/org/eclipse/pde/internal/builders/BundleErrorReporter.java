@@ -1180,7 +1180,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				if (!"true".equals(singletonDir)) { //$NON-NLS-1$
 					String message = NLS.bind(PDEMessages.BundleErrorReporter_singletonRequired, Constants.SINGLETON_DIRECTIVE); 
 					report(message, header.getLineNumber() + 1,
-							CompilerFlags.ERROR);
+							CompilerFlags.ERROR,
+							PDEMarkerFactory.SINGLETON_NOT_SET);
 				}
 
 			}
