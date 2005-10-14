@@ -197,7 +197,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 							int offset = ((PluginAttribute)attr).getValueOffset() + value.indexOf(group) + attr.getValue().indexOf(value);
 							int length = group.length();
 							fSearchRequestor.reportMatch(new Match(
-									new SearchHit(parent, value),
+									new SearchHit(parent, attr.getValue(), fSearchFor == S_FOR_TYPES),
 									Match.UNIT_CHARACTER, offset, length));
 						}
 					}
@@ -238,7 +238,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 								offlen = new int[]{header.getOffset(), header.getLength()};
 							}
 							fSearchRequestor.reportMatch(new Match(
-									new SearchHit(base, value),
+									new SearchHit(base, elements[j].getValue(), fSearchFor == S_FOR_TYPES),
 									Match.UNIT_CHARACTER, offlen[0], offlen[1]));
 						}
 					}

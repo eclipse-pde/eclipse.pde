@@ -8,10 +8,12 @@ public class SearchHit {
 	private String fValue;
 	private IPluginObject fPlugObj;
 	private SearchHitAdapter fSearchHitAdapter;
+	private boolean fIsType;
 	
-	public SearchHit(IPluginObject object, String value) {
+	public SearchHit(IPluginObject object, String value, boolean isType) {
 		fValue = value;
 		fPlugObj = object;
+		fIsType = isType;
 		fSearchHitAdapter = new SearchHitAdapter();
 	}
 	public Object getHitElement() {
@@ -30,4 +32,7 @@ public class SearchHit {
 		return null;
 	}
 
+	public boolean isTypeHit() {
+		return fIsType;
+	}
 }

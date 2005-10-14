@@ -16,16 +16,18 @@ public class SearchMatchPresentation implements IMatchPresentation {
 	private ILabelProvider fLabelProvider;
 	
 	private class LabelProvider extends SharedLabelProvider {
-		private Image fImage;
+		private Image fTypeImage;
+		private Image fPackageImage;
 		private Point fImageSize = new Point(22, 16);
 		
 		private LabelProvider() {
-			fImage = new JavaElementImageDescriptor(PDEPluginImages.DESC_CLASS_OBJ, 0, fImageSize).createImage();
+			fTypeImage = new JavaElementImageDescriptor(PDEPluginImages.DESC_CLASS_OBJ, 0, fImageSize).createImage();
+			fPackageImage = new JavaElementImageDescriptor(PDEPluginImages.DESC_PACKAGE_OBJ, 0, fImageSize).createImage();
 		}
 		
 		public Image getImage(Object element) {
 			if (element instanceof SearchHit)
-				return fImage;
+				return ((SearchHit)element).isTypeHit() ? fTypeImage : fPackageImage;
 			return super.getImage(element);
 		}
 
@@ -35,16 +37,16 @@ public class SearchMatchPresentation implements IMatchPresentation {
 			if (element instanceof SearchHit) {
 				value = ((SearchHit)element).getValue();
 				resource = ((SearchHit)element).getResource();
-			}
-			if (resource != null) {
-				return value + " - " + resource.getFullPath().toOSString().substring(1); //$NON-NLS-1$
+				return resource.getFullPath().toOSString().substring(1) + " - " + value; //$NON-NLS-1$
 			}
 			return super.getText(element);
 		}
 		
 		public void dispose() {
-			if (fImage != null && !fImage.isDisposed())
-				fImage.dispose();
+			if (fTypeImage != null && !fTypeImage.isDisposed())
+				fTypeImage.dispose();
+			if (fPackageImage != null && !fPackageImage.isDisposed())
+				fPackageImage.dispose();
 			super.dispose();
 		}
 	}
