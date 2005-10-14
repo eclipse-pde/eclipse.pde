@@ -120,8 +120,6 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_FTR_XML_OBJ = create(PATH_OBJ, "ftr_xml_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OK_TRANSLATE_OBJ = create(PATH_OBJ, "ok_st_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NO_TRANSLATE_OBJ = create(PATH_OBJ, "incomplete_tsk.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_CLASS_OBJ = create(PATH_OBJ, "class_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_PACKAGE_OBJ = create(PATH_OBJ, "package_obj.gif"); //$NON-NLS-1$
 	/**
 	 * OVR16
 	 */

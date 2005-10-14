@@ -84,6 +84,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 	private ISearchRequestor fSearchRequestor;
 	private Pattern fSearchPattern;
 	private int fSearchFor;
+//	private QuerySpecification fQuerySpecification;
 	
 	public ClassSearchParticipant() {
 	}
@@ -109,6 +110,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		}
 		fSearchPattern = PatternConstructor.createPattern(search, true);
 		fSearchRequestor = requestor;
+//		fQuerySpecification = querySpecification;
 		
 		IPluginModelBase[] pluginModels = PDECore.getDefault().getModelManager().getWorkspaceModels();
 		monitor.beginTask(PDEUIMessages.ClassSearchParticipant_taskMessage, pluginModels.length);
@@ -123,7 +125,10 @@ public class ClassSearchParticipant implements IQueryParticipant {
 	private void searchProject(IProject project, IProgressMonitor monitor) throws CoreException {
 		for (int i = 0; i < S_TOTAL; i++) {
 			IFile file = project.getFile(SEARCH_FILES[i]);
-			if (!file.exists()) continue;
+			if (!file.exists() 
+//					|| !fQuerySpecification.getScope().encloses(file.getFullPath().toOSString())
+					)
+				continue;
 			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 			try {
 				manager.connect(file.getFullPath(), monitor);
@@ -151,7 +156,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 					IPluginExtension[] extensions = modelBase.getPluginBase().getExtensions();
 					for (int j = 0; j < extensions.length; j++) {
 						ISchema schema = registry.getSchema(extensions[j].getPoint());
-						if (schema != null)
+						if (schema != null && !monitor.isCanceled())
 							inspectExtension(schema, extensions[j], file);
 					}
 				} else if (i == S_MANIFEST && loadModel instanceof IBundleModel) {
