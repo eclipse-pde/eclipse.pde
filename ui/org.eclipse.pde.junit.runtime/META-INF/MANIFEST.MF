@@ -11,5 +11,5 @@ Require-Bundle: org.eclipse.jdt.junit.runtime,
  org.eclipse.core.runtime,
  org.eclipse.core.runtime.compatibility;resolution:=optional,
  org.eclipse.ui;resolution:=optional
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
 Export-Package: org.eclipse.pde.internal.junit.runtime;x-internal:=true

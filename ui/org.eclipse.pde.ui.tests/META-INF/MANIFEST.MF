@@ -19,4 +19,4 @@ Require-Bundle: org.junit,
  org.eclipse.team.core,
  org.eclipse.jdt.ui,
  org.eclipse.jdt.launching
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true

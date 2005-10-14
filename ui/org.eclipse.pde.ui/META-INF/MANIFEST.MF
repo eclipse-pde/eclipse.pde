@@ -76,4 +76,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.pde.runtime,
  org.eclipse.ltk.core.refactoring,
  org.eclipse.core.variables
-Eclipse-AutoStart: true
+Eclipse-LazyStart: true
