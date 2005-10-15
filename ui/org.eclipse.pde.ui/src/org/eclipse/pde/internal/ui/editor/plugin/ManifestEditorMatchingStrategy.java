@@ -27,15 +27,16 @@ public class ManifestEditorMatchingStrategy implements IEditorMatchingStrategy {
     public boolean matches(IEditorReference editorRef, IEditorInput input) {    	
         IFile inputFile = ResourceUtil.getFile(input);
         if (input instanceof IFileEditorInput) {
-            String path = inputFile.getProjectRelativePath().toString();
-            if (path.equals("plugin.xml") || path.equals("fragment.xml")  //$NON-NLS-1$ //$NON-NLS-2$
-            		|| path.equals("META-INF/MANIFEST.MF") || path.equals("build.properties")) { //$NON-NLS-1$ //$NON-NLS-2$ 
-                try {
+            try {
+	        	if (input.equals(editorRef.getEditorInput()))
+	        		return true;       	
+	            String path = inputFile.getProjectRelativePath().toString();
+	            if (path.equals("build.properties")) { //$NON-NLS-1$ 
                     IFile editorFile = ResourceUtil.getFile(editorRef.getEditorInput());
                     return editorFile != null && inputFile.getProject().equals(editorFile.getProject());
-                } catch (PartInitException e) {
-                    return false;
-                }
+	            }
+            } catch (PartInitException e) {
+                return false;
             }
         } else if (input instanceof SystemFileEditorInput || input instanceof JarEntryEditorInput) {
         	try {
