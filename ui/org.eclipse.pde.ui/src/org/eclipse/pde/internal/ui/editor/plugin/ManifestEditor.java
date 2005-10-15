@@ -531,7 +531,15 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 	 */
 	protected InputContext getInputContext(Object object) {
 		InputContext context = null;
-		if (object instanceof IBuildObject) {
+		if (object instanceof IFile) {
+			String name = ((IFile)object).getName();
+			if (name.equals("plugin.xml") || name.equals("fragment.xml"))
+				context = inputContextManager.findContext(PluginInputContext.CONTEXT_ID);
+			else if (name.equals("MANIFEST.MF"))
+				context = inputContextManager.findContext(BundleInputContext.CONTEXT_ID);
+			else if (name.equals("build.properties"))
+				context = inputContextManager.findContext(BuildInputContext.CONTEXT_ID);
+		} else if (object instanceof IBuildObject) {
 			context = inputContextManager.findContext(BuildInputContext.CONTEXT_ID);
 		} else if (object instanceof IPluginExtensionPoint || object instanceof IPluginExtension) {
 			context = inputContextManager.findContext(PluginInputContext.CONTEXT_ID);
