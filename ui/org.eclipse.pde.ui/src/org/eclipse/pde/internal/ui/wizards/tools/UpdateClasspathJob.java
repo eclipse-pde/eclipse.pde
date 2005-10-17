@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.wizards.tools;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -52,6 +53,10 @@ public class UpdateClasspathJob extends Job {
 					monitor.worked(1);
 					continue;
 				}
+				IProjectDescription projDesc = project.getDescription();
+				if (projDesc == null) continue;
+				projDesc.setReferencedProjects(new IProject[0]);
+				project.setDescription(projDesc, null);
 				ClasspathComputer.setClasspath(project, model);
 				monitor.worked(1);
 				if (monitor.isCanceled())
