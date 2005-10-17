@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -57,6 +59,9 @@ public class UpdateClasspathJob extends Job {
 				if (projDesc == null) continue;
 				projDesc.setReferencedProjects(new IProject[0]);
 				project.setDescription(projDesc, null);
+				IFile file = project.getFile(".project"); //$NON-NLS-1$
+				if (file.exists())
+					file.deleteMarkers(null, true, IResource.DEPTH_INFINITE);
 				ClasspathComputer.setClasspath(project, model);
 				monitor.worked(1);
 				if (monitor.isCanceled())
