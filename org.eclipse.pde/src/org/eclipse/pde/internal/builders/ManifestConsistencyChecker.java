@@ -97,9 +97,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	private void checkProject(IProgressMonitor monitor) {
 		if (monitor.isCanceled())
 			return;
-		monitor.subTask(NLS.bind(PDEMessages.Builders_verifying, ".project"));
+		monitor.subTask(NLS.bind(PDEMessages.Builders_verifying, ".project")); //$NON-NLS-1$
 		IProject project = getProject();
-		IFile file = project.getFile(".project");
+		IFile file = project.getFile(".project"); //$NON-NLS-1$
 		if (!file.exists())
 			return;
 		try {
@@ -108,7 +108,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			if (refProjects != null && refProjects.length > 0) {
 				try {
 					IMarker marker = new PDEMarkerFactory().createMarker(file, PDEMarkerFactory.PROJECT_BUILD_ORDER_ENTRIES);
-					marker.setAttribute(IMarker.MESSAGE, ".project file contains potentially harmfull <project> entries.");
+					marker.setAttribute(IMarker.MESSAGE, PDEMessages.ManifestConsistencyChecker_projectCheck);
 					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 					marker.setAttribute(IMarker.LINE_NUMBER, 5);
 				} catch (CoreException e) {

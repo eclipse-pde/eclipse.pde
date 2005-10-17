@@ -129,4 +129,6 @@ public class PDEMessages extends NLS {
 	public static String BundleErrorReporter_exportNoJRE;
 
 	public static String BundleErrorReporter_importNoJRE;
+
+	public static String ManifestConsistencyChecker_projectCheck;
 }
