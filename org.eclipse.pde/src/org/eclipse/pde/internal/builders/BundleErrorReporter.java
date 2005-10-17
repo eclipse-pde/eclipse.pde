@@ -951,7 +951,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				.getAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE);
 		if (rexport != null) {
 			validateBooleanAttributeValue(header, requireBundleElements,
-					ICoreConstants.OPTIONAL_ATTRIBUTE);
+					ICoreConstants.OPTIONAL_ATTRIBUTE, PDEMarkerFactory.NO_RESOLUTION);
 			if (fEclipse3_1 && isCheckDeprecated()) {
 				message = NLS
 						.bind(
@@ -1037,7 +1037,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				.getAttribute(ICoreConstants.REPROVIDE_ATTRIBUTE);
 		if (rexport != null) {
 			validateBooleanAttributeValue(header, requireBundleElements,
-					ICoreConstants.REPROVIDE_ATTRIBUTE);
+					ICoreConstants.REPROVIDE_ATTRIBUTE, PDEMarkerFactory.NO_RESOLUTION);
 			if (fEclipse3_1 && isCheckDeprecated()) {
 				message = NLS
 						.bind(
@@ -1138,7 +1138,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			validateDirectiveValue(header, requireBundleElement,
 					Constants.RESOLUTION_DIRECTIVE, new String[] {
 							Constants.RESOLUTION_MANDATORY,
-							Constants.RESOLUTION_OPTIONAL });
+							Constants.RESOLUTION_OPTIONAL },
+							PDEMarkerFactory.NO_RESOLUTION);
 		}
 	}
 
@@ -1152,7 +1153,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				if (!"true".equals(singletonAttr)) { //$NON-NLS-1$
 					message = NLS.bind(PDEMessages.BundleErrorReporter_singletonAttrRequired, ICoreConstants.SINGLETON_ATTRIBUTE); 
 					report(message, header.getLineNumber() + 1,
-							CompilerFlags.ERROR);
+							CompilerFlags.ERROR, getSingletonMarkerCode());
 				}
 			}
 		}
@@ -1162,13 +1163,12 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						.bind(
 								PDEMessages.BundleErrorReporter_deprecated_attribute_singleton,
 								ICoreConstants.SINGLETON_ATTRIBUTE); 
-				report(message,
-						getLine(header, ICoreConstants.SINGLETON_ATTRIBUTE
-								+ "="), CompilerFlags.P_DEPRECATED); //$NON-NLS-1$
+				report(message,	getLine(header, ICoreConstants.SINGLETON_ATTRIBUTE + "="), //$NON-NLS-1$
+								CompilerFlags.P_DEPRECATED, getSingletonMarkerCode()); 
 			}
 		}
 		validateBooleanAttributeValue(header, element,
-				ICoreConstants.SINGLETON_ATTRIBUTE);
+				ICoreConstants.SINGLETON_ATTRIBUTE, getSingletonMarkerCode());
 	}
 
 	private void validateSingletonDirective(IHeader header,
@@ -1180,8 +1180,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				if (!"true".equals(singletonDir)) { //$NON-NLS-1$
 					String message = NLS.bind(PDEMessages.BundleErrorReporter_singletonRequired, Constants.SINGLETON_DIRECTIVE); 
 					report(message, header.getLineNumber() + 1,
-							CompilerFlags.ERROR,
-							PDEMarkerFactory.SINGLETON_NOT_SET);
+							CompilerFlags.ERROR, getSingletonMarkerCode());
 				}
 
 			}
@@ -1189,15 +1188,19 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (isCheckUnknownAttr()) {
 			if (!fEclipse3_1 && singletonDir != null) {
 				String message = NLS.bind(PDEMessages.BundleErrorReporter_UnknownDirective, Constants.SINGLETON_DIRECTIVE); 
-				report(message, getLine(header, Constants.SINGLETON_DIRECTIVE
-						+ ":="), //$NON-NLS-1$
-						CompilerFlags.P_UNKNOWN_ATTRIBUTE);
+				report(message, getLine(header, Constants.SINGLETON_DIRECTIVE + ":="), //$NON-NLS-1$
+						CompilerFlags.P_UNKNOWN_ATTRIBUTE, getSingletonMarkerCode());
 			}
 		}
 		validateBooleanDirectiveValue(header, element,
-				Constants.SINGLETON_DIRECTIVE);
+				Constants.SINGLETON_DIRECTIVE, getSingletonMarkerCode());
 	}
 
+	private int getSingletonMarkerCode() {
+		return fEclipse3_1 ? PDEMarkerFactory.SINGLETON_DIR_NOT_SET :
+			PDEMarkerFactory.SINGLETON_ATT_NOT_SET;
+	}
+	
 	private void validateSpecificationVersionAttribute(IHeader header,
 			ManifestElement element) {
 		String version = element
@@ -1241,7 +1244,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			validateDirectiveValue(header, requireBundleElement,
 					Constants.VISIBILITY_DIRECTIVE, new String[] {
 							Constants.VISIBILITY_PRIVATE,
-							Constants.VISIBILITY_REEXPORT });
+							Constants.VISIBILITY_REEXPORT }, 
+							PDEMarkerFactory.NO_RESOLUTION);
 		}
 	}
 

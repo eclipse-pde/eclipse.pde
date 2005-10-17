@@ -17,15 +17,17 @@ public class PDEMarkerFactory implements IMarkerFactory {
 	
 	public static final String MARKER_ID = "org.eclipse.pde.validation-marker"; //$NON-NLS-1$
 
+	public static final int NO_RESOLUTION = -1;
 	public static final int DEPRECATED_AUTOSTART = 1;
 	public static final int JAVA_PACKAGE__PORTED = 2;
-	public static final int SINGLETON_NOT_SET = 3;
+	public static final int SINGLETON_DIR_NOT_SET = 3;
+	public static final int SINGLETON_ATT_NOT_SET = 4;
 	
 	/**
 	 * @see org.eclipse.pde.internal.builders.IMarkerFactory#createMarker(org.eclipse.core.resources.IFile)
 	 */
 	public IMarker createMarker(IFile file) throws CoreException {
-		return createMarker(file, -1);
+		return createMarker(file, NO_RESOLUTION);
 	}
 	
 	/**

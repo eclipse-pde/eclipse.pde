@@ -314,20 +314,24 @@ public class JarManifestErrorReporter {
 	}
 
 	public void report(String message, int line, int severity) {
-		report(message, line, severity, -1);
+		report(message, line, severity, PDEMarkerFactory.NO_RESOLUTION);
 	}
 
-	protected void report(String message, int line, String compilerFlag) {
+	protected void report(String message, int line, String compilerFlag, int problemID) {
 		int severity = CompilerFlags.getFlag(fProject, compilerFlag);
 		if (severity != CompilerFlags.IGNORE) {
-			report(message, line, severity);
+			report(message, line, severity, problemID);
 		}
+	}
+	
+	protected void report(String message, int line, String compilerFlag) {
+		report(message, line, compilerFlag, PDEMarkerFactory.NO_RESOLUTION);
 	}
 
 	protected void reportIllegalAttributeValue(IHeader header, String key,
-			String value) {
+			String value, int problemID) {
 		String msg = NLS.bind(PDEMessages.BundleErrorReporter_att_value, (new String[] { value, key })); 
-		report(msg, getLine(header, key + "="), CompilerFlags.ERROR); //$NON-NLS-1$
+		report(msg, getLine(header, key + "="), CompilerFlags.ERROR, problemID); //$NON-NLS-1$
 	}
 
 	protected void reportIllegalValue(IHeader header) {
@@ -336,13 +340,13 @@ public class JarManifestErrorReporter {
 	}
 
 	protected void reportIllegalDirectiveValue(IHeader header, String key,
-			String value) {
+			String value, int problemID) {
 		String msg = NLS.bind(PDEMessages.BundleErrorReporter_dir_value, (new String[] { value, key })); 
-		report(msg, getLine(header, key + ":="), CompilerFlags.ERROR); //$NON-NLS-1$
+		report(msg, getLine(header, key + ":="), CompilerFlags.ERROR, problemID); //$NON-NLS-1$
 	}
 
-	protected void validateAttributeValue(IHeader header,
-			ManifestElement element, String key, String[] allowedValues) {
+	protected void validateAttributeValue(IHeader header, ManifestElement element,
+			String key, String[] allowedValues, int problemID) {
 		String value = element.getAttribute(key);
 		if (value == null) {
 			return;
@@ -352,17 +356,17 @@ public class JarManifestErrorReporter {
 				return;
 			}
 		}
-		reportIllegalAttributeValue(header, key, value);
+		reportIllegalAttributeValue(header, key, value, problemID);
 	}
 
 	protected void validateBooleanAttributeValue(IHeader header,
-			ManifestElement element, String key) {
-		validateAttributeValue(header, element, key, BOOLEAN_VALUES);
+			ManifestElement element, String key, int problemID) {
+		validateAttributeValue(header, element, key, BOOLEAN_VALUES, problemID);
 	}
 
 	protected void validateBooleanDirectiveValue(IHeader header,
-			ManifestElement element, String key) {
-		validateDirectiveValue(header, element, key, BOOLEAN_VALUES);
+			ManifestElement element, String key, int problemID) {
+		validateDirectiveValue(header, element, key, BOOLEAN_VALUES, problemID);
 	}
 	
 	protected void validateBooleanValue(IHeader header){
@@ -377,8 +381,8 @@ public class JarManifestErrorReporter {
 		parseManifest(fTextDocument, monitor);
 	}
 
-	protected void validateDirectiveValue(IHeader header,
-			ManifestElement element, String key, String[] allowedValues) {
+	protected void validateDirectiveValue(IHeader header, ManifestElement element,
+			String key, String[] allowedValues, int problemID) {
 		String value = element.getDirective(key);
 		if (value == null) {
 			return;
@@ -388,7 +392,7 @@ public class JarManifestErrorReporter {
 				return;
 			}
 		}
-		reportIllegalDirectiveValue(header, key, value);
+		reportIllegalDirectiveValue(header, key, value, problemID);
 	}
 	
 	protected void validateHeaderValue(IHeader header, String[] allowedValues) {
