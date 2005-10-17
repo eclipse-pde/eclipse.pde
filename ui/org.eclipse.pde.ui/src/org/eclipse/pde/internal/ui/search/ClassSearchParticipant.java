@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.ui.search.javaparticipant;
+package org.eclipse.pde.internal.ui.search;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -134,9 +134,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 	private void searchProject(IProject project, IProgressMonitor monitor) throws CoreException {
 		for (int i = 0; i < S_TOTAL; i++) {
 			IFile file = project.getFile(SEARCH_FILES[i]);
-			if (!file.exists() 
-//					|| !fQuerySpecification.getScope().encloses(file.getFullPath().toOSString())
-					)
+			if (!file.exists())
 				continue;
 			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 			try {
