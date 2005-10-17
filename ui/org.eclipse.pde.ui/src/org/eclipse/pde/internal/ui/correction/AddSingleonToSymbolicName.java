@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.model.bundle.Bundle;
@@ -47,7 +48,7 @@ public class AddSingleonToSymbolicName extends ManifestHeaderErrorResolution {
 				return;
 			header.setDirective(Constants.SINGLETON_DIRECTIVE, fisDirective ?
 					new String[] {Boolean.toString(true)} : null);
-			header.setAttribute(Constants.SINGLETON_DIRECTIVE, fisDirective ?
+			header.setAttribute(ICoreConstants.SINGLETON_ATTRIBUTE, fisDirective ?
 					null : new String[] {Boolean.toString(true)});
 		}
 	}
