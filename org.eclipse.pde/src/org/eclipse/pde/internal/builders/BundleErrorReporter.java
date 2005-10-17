@@ -951,7 +951,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				.getAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE);
 		if (rexport != null) {
 			validateBooleanAttributeValue(header, requireBundleElements,
-					ICoreConstants.OPTIONAL_ATTRIBUTE, PDEMarkerFactory.NO_RESOLUTION);
+					ICoreConstants.OPTIONAL_ATTRIBUTE);
 			if (fEclipse3_1 && isCheckDeprecated()) {
 				message = NLS
 						.bind(
@@ -1037,7 +1037,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				.getAttribute(ICoreConstants.REPROVIDE_ATTRIBUTE);
 		if (rexport != null) {
 			validateBooleanAttributeValue(header, requireBundleElements,
-					ICoreConstants.REPROVIDE_ATTRIBUTE, PDEMarkerFactory.NO_RESOLUTION);
+					ICoreConstants.REPROVIDE_ATTRIBUTE);
 			if (fEclipse3_1 && isCheckDeprecated()) {
 				message = NLS
 						.bind(
@@ -1138,8 +1138,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			validateDirectiveValue(header, requireBundleElement,
 					Constants.RESOLUTION_DIRECTIVE, new String[] {
 							Constants.RESOLUTION_MANDATORY,
-							Constants.RESOLUTION_OPTIONAL },
-							PDEMarkerFactory.NO_RESOLUTION);
+							Constants.RESOLUTION_OPTIONAL });
 		}
 	}
 
@@ -1164,11 +1163,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 								PDEMessages.BundleErrorReporter_deprecated_attribute_singleton,
 								ICoreConstants.SINGLETON_ATTRIBUTE); 
 				report(message,	getLine(header, ICoreConstants.SINGLETON_ATTRIBUTE + "="), //$NON-NLS-1$
-								CompilerFlags.P_DEPRECATED, getSingletonMarkerCode()); 
+								CompilerFlags.P_DEPRECATED, getSingletonMarkerCode());
 			}
 		}
-		validateBooleanAttributeValue(header, element,
-				ICoreConstants.SINGLETON_ATTRIBUTE, getSingletonMarkerCode());
 	}
 
 	private void validateSingletonDirective(IHeader header,
@@ -1192,8 +1189,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						CompilerFlags.P_UNKNOWN_ATTRIBUTE, getSingletonMarkerCode());
 			}
 		}
-		validateBooleanDirectiveValue(header, element,
-				Constants.SINGLETON_DIRECTIVE, getSingletonMarkerCode());
 	}
 
 	private int getSingletonMarkerCode() {
@@ -1244,8 +1239,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			validateDirectiveValue(header, requireBundleElement,
 					Constants.VISIBILITY_DIRECTIVE, new String[] {
 							Constants.VISIBILITY_PRIVATE,
-							Constants.VISIBILITY_REEXPORT }, 
-							PDEMarkerFactory.NO_RESOLUTION);
+							Constants.VISIBILITY_REEXPORT });
 		}
 	}
 
