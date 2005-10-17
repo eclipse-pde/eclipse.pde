@@ -45,11 +45,11 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		} else {	
 			IFile manifestFile = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
 			if (manifestFile.exists())
-				checkManifestFileOnly(manifestFile, monitor);
+				checkManifestFile(manifestFile, monitor);
 		}	
 	}
 
-	private void checkManifestFileOnly(IFile file, IProgressMonitor monitor) {
+	private void checkManifestFile(IFile file, IProgressMonitor monitor) {
 		if (monitor.isCanceled())
 			return;
 		String message = NLS.bind(PDEMessages.Builders_verifying, file.getFullPath().toString());
@@ -60,6 +60,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			reporter.validateContent(monitor);
 			monitor.subTask(PDEMessages.Builders_updating);
 		}
+		checkProject(monitor);
 		monitor.done();
 	}
 
@@ -89,7 +90,33 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			bundleReporter.validateContent(monitor);
 			monitor.subTask(PDEMessages.Builders_updating);
 		}
+		checkProject(monitor);
 		monitor.done();
 	}
 	
+	private void checkProject(IProgressMonitor monitor) {
+		if (monitor.isCanceled())
+			return;
+		monitor.subTask(NLS.bind(PDEMessages.Builders_verifying, ".project"));
+		IProject project = getProject();
+		IFile file = project.getFile(".project");
+		if (!file.exists())
+			return;
+		try {
+			file.deleteMarkers(null, true, IResource.DEPTH_INFINITE);
+			IProject[] refProjects = project.getReferencedProjects();
+			if (refProjects != null && refProjects.length > 0) {
+				try {
+					IMarker marker = new PDEMarkerFactory().createMarker(file, PDEMarkerFactory.PROJECT_BUILD_ORDER_ENTRIES);
+					marker.setAttribute(IMarker.MESSAGE, ".project file contains potentially harmfull <project> entries.");
+					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+					marker.setAttribute(IMarker.LINE_NUMBER, 5);
+				} catch (CoreException e) {
+					PDECore.logException(e);
+				}
+			}
+		} catch (CoreException e) {
+		}
+		monitor.done();
+	}
 }
