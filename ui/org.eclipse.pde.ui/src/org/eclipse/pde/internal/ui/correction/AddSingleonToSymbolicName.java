@@ -17,18 +17,25 @@ import org.eclipse.pde.internal.ui.model.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.model.bundle.ManifestHeader;
 import org.osgi.framework.Constants;
 
-public class AddSingleonAttributeTo extends ManifestHeaderErrorResolution {
+public class AddSingleonToSymbolicName extends ManifestHeaderErrorResolution {
 
-	public AddSingleonAttributeTo(int type) {
+	private boolean fisDirective;
+	
+	public AddSingleonToSymbolicName(int type, boolean directive) {
 		super(type);
+		fisDirective = directive;
 	}
 
 	public String getDescription() {
-		return PDEUIMessages.AddSingleonAttributeTo_desc;
+		if (fisDirective)
+			return PDEUIMessages.AddSingleon_dir_desc;
+		return PDEUIMessages.AddSingleon_att_desc;
 	}
 
 	public String getLabel() {
-		return PDEUIMessages.AddSingleonAttributeTo_label;
+		if (fisDirective)
+			return PDEUIMessages.AddSingleon_dir_label;
+		return PDEUIMessages.AddSingleon_att_label;
 	}
 
 	protected void createChange(BundleModel model) {
@@ -38,7 +45,10 @@ public class AddSingleonAttributeTo extends ManifestHeaderErrorResolution {
 			ManifestHeader header = bun.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 			if (header == null)
 				return;
-			header.setDirective(Constants.SINGLETON_DIRECTIVE, new String[] {Boolean.toString(true)});
+			header.setDirective(Constants.SINGLETON_DIRECTIVE, fisDirective ?
+					new String[] {Boolean.toString(true)} : null);
+			header.setAttribute(Constants.SINGLETON_DIRECTIVE, fisDirective ?
+					null : new String[] {Boolean.toString(true)});
 		}
 	}
 }

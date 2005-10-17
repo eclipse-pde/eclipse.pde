@@ -140,8 +140,12 @@ public class ManifestHeader extends BundleObject implements IDocumentKey {
     }
     
     private void setHashtableValue(Hashtable table, String key, String[] value) {
+    	if (key == null) return;
     	String old = fValue;
-    	table.put(key, value);
+    	if (value == null || value.length == 0)
+    		table.remove(key);
+    	else
+    		table.put(key, value);
     	refreshValue();
     	getModel().fireModelObjectChanged(this, fName, old, fValue);
     }

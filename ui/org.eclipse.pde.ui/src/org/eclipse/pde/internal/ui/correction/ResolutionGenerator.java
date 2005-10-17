@@ -24,14 +24,16 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 	 * @see org.eclipse.ui.IMarkerResolutionGenerator#getResolutions(org.eclipse.core.resources.IMarker)
 	 */
 	public IMarkerResolution[] getResolutions(IMarker marker) {
-		int problemID = marker.getAttribute("id", -1); //$NON-NLS-1$
+		int problemID = marker.getAttribute("id", PDEMarkerFactory.NO_RESOLUTION); //$NON-NLS-1$
 		switch (problemID) {
 			case PDEMarkerFactory.DEPRECATED_AUTOSTART:
 				return new IMarkerResolution[] {new RenameAutostartResolution(AbstractPDEMarkerResolution.RENAME_TYPE)};
 			case PDEMarkerFactory.JAVA_PACKAGE__PORTED:
 				return new IMarkerResolution[] {new CreateJREBundleHeaderResolution(AbstractPDEMarkerResolution.CREATE_TYPE)};
-			case PDEMarkerFactory.SINGLETON_NOT_SET:
-				return new IMarkerResolution[] {new AddSingleonAttributeTo(AbstractPDEMarkerResolution.RENAME_TYPE)};
+			case PDEMarkerFactory.SINGLETON_DIR_NOT_SET:
+				return new IMarkerResolution[] {new AddSingleonToSymbolicName(AbstractPDEMarkerResolution.RENAME_TYPE, true)};
+			case PDEMarkerFactory.SINGLETON_ATT_NOT_SET:
+				return new IMarkerResolution[] {new AddSingleonToSymbolicName(AbstractPDEMarkerResolution.RENAME_TYPE, false)};
 		}
 		return NO_RESOLUTIONS;
 	}
@@ -41,7 +43,7 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 	 * @see org.eclipse.ui.IMarkerResolutionGenerator2#hasResolutions(org.eclipse.core.resources.IMarker)
 	 */
 	public boolean hasResolutions(IMarker marker) {
-		return marker.getAttribute("id", -1) > 0; //$NON-NLS-1$
+		return marker.getAttribute("id", PDEMarkerFactory.NO_RESOLUTION) > 0; //$NON-NLS-1$
 	}
 
 }
