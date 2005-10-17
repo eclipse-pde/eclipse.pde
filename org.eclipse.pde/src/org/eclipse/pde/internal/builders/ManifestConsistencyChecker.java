@@ -46,7 +46,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			IFile manifestFile = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
 			if (manifestFile.exists())
 				checkManifestFile(manifestFile, monitor);
-		}	
+		}
+		checkProject(monitor);
 	}
 
 	private void checkManifestFile(IFile file, IProgressMonitor monitor) {
@@ -60,7 +61,6 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			reporter.validateContent(monitor);
 			monitor.subTask(PDEMessages.Builders_updating);
 		}
-		checkProject(monitor);
 		monitor.done();
 	}
 
@@ -90,7 +90,6 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			bundleReporter.validateContent(monitor);
 			monitor.subTask(PDEMessages.Builders_updating);
 		}
-		checkProject(monitor);
 		monitor.done();
 	}
 	
@@ -109,7 +108,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				try {
 					IMarker marker = new PDEMarkerFactory().createMarker(file, PDEMarkerFactory.PROJECT_BUILD_ORDER_ENTRIES);
 					marker.setAttribute(IMarker.MESSAGE, PDEMessages.ManifestConsistencyChecker_projectCheck);
-					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
 					marker.setAttribute(IMarker.LINE_NUMBER, 5);
 				} catch (CoreException e) {
 					PDECore.logException(e);
