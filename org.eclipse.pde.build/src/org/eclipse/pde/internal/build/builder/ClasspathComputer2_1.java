@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.build.site.PDEState;
 
 public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConstants, IXMLConstants, IBuildPropertiesConstants {
 	private ModelBuildScriptGenerator generator;
-
+		
 	public ClasspathComputer2_1(ModelBuildScriptGenerator modelGenerator) {
 		this.generator = modelGenerator;
 	}
@@ -43,16 +43,17 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 	public List getClasspath(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar) throws CoreException {
 		List classpath = new ArrayList(20);
 		List pluginChain = new ArrayList(10);
+		Set addedPlugins=new HashSet(20);
 		String location = generator.getLocation(model);
 
 		//PARENT
 		addPlugin(getPlugin(PI_BOOT, null), classpath, location);
 
 		//SELF
-		addSelf(model, jar, classpath, location, pluginChain);
+		addSelf(model, jar, classpath, location, pluginChain,addedPlugins);
 
 		//PREREQUISITE
-		addPrerequisites(model, classpath, location, pluginChain);
+		addPrerequisites(model, classpath, location, pluginChain,addedPlugins);
 
 		return classpath;
 
@@ -172,13 +173,13 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 			classpath.add(path);
 	}
 
-	private void addSelf(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar, List classpath, String location, List pluginChain) throws CoreException {
+	private void addSelf(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar, List classpath, String location, List pluginChain, Set addedPlugins) throws CoreException {
 		// If model is a fragment, we need to add in the classpath the plugin to which it is related
 		HostSpecification host = model.getHost();
 		if (host != null) {
 			BundleDescription[] hosts = host.getHosts();
 			for(int i=0; i<hosts.length; i++)
-				addPluginAndPrerequisites(hosts[i], classpath, location, pluginChain);
+				addPluginAndPrerequisites(hosts[i], classpath, location, pluginChain, addedPlugins);
 		}
 
 		// Add the libraries
@@ -299,7 +300,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 	}
 
 	//Add the prerequisite of a given plugin (target)
-	private void addPrerequisites(BundleDescription target, List classpath, String baseLocation, List pluginChain) throws CoreException {
+	private void addPrerequisites(BundleDescription target, List classpath, String baseLocation, List pluginChain, Set addedPlugins) throws CoreException {
 
 		if (pluginChain.contains(target)) {
 			if (target == getPlugin(PI_RUNTIME, null))
@@ -308,13 +309,17 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 			for (Iterator iter = pluginChain.iterator(); iter.hasNext();)
 				cycleString += iter.next().toString() + ", "; //$NON-NLS-1$
 			cycleString += target.toString();
-			String message = NLS.bind(Messages.error_pluginCycle, cycleString);
+			String message = NLS.bind(Messages.error_pluginCycle, cycleString);	
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_CLASSPATH_CYCLE, message, null));
 		}
 
-		//	The first prerequisite is ALWAYS runtime
+		if (addedPlugins.contains(target)){
+			return;
+		}
+		
+		//	The first prerequisite is ALWAYS runtime	
 		if (target != getPlugin(PI_RUNTIME, null))
-			addPluginAndPrerequisites(getPlugin(PI_RUNTIME, null), classpath, baseLocation, pluginChain);
+			addPluginAndPrerequisites(getPlugin(PI_RUNTIME, null), classpath, baseLocation, pluginChain,addedPlugins);
 
 		// add libraries from pre-requisite plug-ins.  Don't worry about the export flag
 		// as all required plugins may be required for compilation.
@@ -324,10 +329,12 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 			for (int i = 0; i < requires.length; i++) {
 				BundleDescription plugin = getPlugin(requires[i].getSymbolicName(), requires[i].getVersion().toString());
 				if (plugin != null)
-					addPluginAndPrerequisites(plugin, classpath, baseLocation, pluginChain);
+					addPluginAndPrerequisites(plugin, classpath, baseLocation, pluginChain,addedPlugins);
 			}
 			pluginChain.remove(target);
+			addedPlugins.add(target);
 		}
+		
 	}
 
 	/**
@@ -338,11 +345,12 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 	 * @param classpath 
 	 * @param baseLocation
 	 * @param pluginChain
+	 * @param addedPlugins 
 	 * @throws CoreException
 	 */
-	private void addPluginAndPrerequisites(BundleDescription target, List classpath, String baseLocation, List pluginChain) throws CoreException {
+	private void addPluginAndPrerequisites(BundleDescription target, List classpath, String baseLocation, List pluginChain, Set addedPlugins) throws CoreException {
 		addPlugin(target, classpath, baseLocation);
-		addPrerequisites(target, classpath, baseLocation, pluginChain);
+		addPrerequisites(target, classpath, baseLocation, pluginChain,addedPlugins);
 	}
 
 	/**
