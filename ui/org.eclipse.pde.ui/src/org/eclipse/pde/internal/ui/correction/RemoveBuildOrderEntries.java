@@ -10,29 +10,34 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.ui.model.bundle.BundleModel;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 
-public class RemoveBuildOrderEntries extends ManifestHeaderErrorResolution {
+public class RemoveBuildOrderEntries extends AbstractPDEMarkerResolution {
 
 	public RemoveBuildOrderEntries(int type) {
 		super(type);
 	}
 
 	public String getDescription() {
-		return ".project file contains potentially harmfull <project> entries.";
+		return PDEUIMessages.RemoveBuildOrderEntries_desc;
 	}
 
 	public String getLabel() {
-		return "remove all <project> entries";
+		return PDEUIMessages.RemoveBuildOrderEntries_label;
 	}
 
-	protected void createChange(BundleModel model) {
+	public void run(IMarker marker) {
 		try {
-			IProjectDescription projDesc = model.getUnderlyingResource().getProject().getDescription();
+			IProject project = marker.getResource().getProject();
+			if (project == null) return;
+			IProjectDescription projDesc = project.getDescription();
+			if (projDesc == null) return;
 			projDesc.setReferencedProjects(new IProject[0]);
+			project.setDescription(projDesc, null);
 		} catch (CoreException e) {
 		}
 	}

@@ -2190,4 +2190,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String AddSingleon_att_desc;
 
+	public static String RemoveBuildOrderEntries_desc;
+
+	public static String RemoveBuildOrderEntries_label;
+
 }
