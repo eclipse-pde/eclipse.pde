@@ -35,8 +35,32 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	/** flag indicating whether or not the missing properties file should be logged */ 
 	private boolean ignoreMissingPropertiesFile = true;
 
+	static private Properties executionEnvironmentMappings = null;
+	
 	abstract protected Properties getBuildProperties() throws CoreException;
 
+	static public Properties getExecutionEnvironmentMappings(){
+		if(executionEnvironmentMappings != null)
+			return executionEnvironmentMappings;
+		
+		executionEnvironmentMappings = new Properties();
+		InputStream stream = null;
+		try {
+			stream = BundleHelper.getDefault().getBundle().getEntry("data/env.properties").openStream(); //$NON-NLS-1$
+			executionEnvironmentMappings.load(stream);
+		} catch (IOException e) {
+			//ignore
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException e) {
+				//ignore
+			}
+		}
+		return executionEnvironmentMappings;
+	}
+	
 	public void setDevEntries(String entries) {
 		devEntries = new DevClassPathHelper(entries);
 	}

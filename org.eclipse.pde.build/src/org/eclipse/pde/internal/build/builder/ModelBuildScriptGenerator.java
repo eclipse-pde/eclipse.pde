@@ -170,8 +170,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	private void initializeVariables() throws CoreException {
 		fullName = getNormalizedName(model);
-		pluginZipDestination = PLUGIN_DESTINATION + '/' + fullName + ".zip"; //$NON-NLS-1$ //$NON-NLS-2$
-		pluginUpdateJarDestination = PLUGIN_DESTINATION + '/' + fullName + ".jar"; //$NON-NLS-1$ //$NON-NLS-2$
+		pluginZipDestination = PLUGIN_DESTINATION + '/' + fullName + ".zip"; //$NON-NLS-1$
+		pluginUpdateJarDestination = PLUGIN_DESTINATION + '/' + fullName + ".jar"; //$NON-NLS-1$
 		String[] classpathInfo = getClasspathEntries(model);
 		dotOnTheClasspath = specialDotProcessing(getBuildProperties(), classpathInfo);
 
@@ -625,37 +625,16 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.println();
 
 		if (customBuildCallbacks != null && !customBuildCallbacks.equals(FALSE)) {
-
 			script.printAvailableTask(PROPERTY_CUSTOM_BUILD_CALLBACKS, customBuildCallbacks, customBuildCallbacks);
 			script.println();
 		}
 
-		script.printComment(Messages.build_compilerSetting);
-		script.printProperty(PROPERTY_JAVAC_FAIL_ON_ERROR, "false"); //$NON-NLS-1$
-		script.printProperty(PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$
-		script.printProperty(PROPERTY_JAVAC_VERBOSE, "true"); //$NON-NLS-1$
-		script.printProperty(PROPERTY_JAVAC_SOURCE, "1.3"); //$NON-NLS-1$
-		script.printProperty(PROPERTY_JAVAC_TARGET, "1.2"); //$NON-NLS-1$  
-		script.printProperty(PROPERTY_JAVAC_COMPILERARG, ""); //$NON-NLS-1$  
-		script.println("<path id=\"path_bootclasspath\">"); //$NON-NLS-1$
-		script.println("\t<fileset dir=\"${java.home}/lib\">"); //$NON-NLS-1$
-		script.println("\t\t<include name=\"*.jar\"/>"); //$NON-NLS-1$
-		script.println("\t</fileset>"); //$NON-NLS-1$
-		script.println("</path>"); //$NON-NLS-1$
-		script.printPropertyRefid(PROPERTY_BOOTCLASSPATH, "path_bootclasspath"); //$NON-NLS-1$
-		script.println();
+		generateCompilerSettings();
 
 		script.printTargetDeclaration(TARGET_INIT, TARGET_PROPERTIES, null, null, null);
-
-		script.println("<condition property=\"" + PROPERTY_PLUGIN_TEMP + "\" value=\"" + Utils.getPropertyFormat(PROPERTY_BUILD_TEMP) + '/' + DEFAULT_PLUGIN_LOCATION + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		script.println("\t<isset property=\"" + PROPERTY_BUILD_TEMP + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
-		script.println("</condition>"); //$NON-NLS-1$
-
+		script.printConditionIsSet(PROPERTY_PLUGIN_TEMP, Utils.getPropertyFormat(PROPERTY_BUILD_TEMP) + '/' + DEFAULT_PLUGIN_LOCATION, PROPERTY_BUILD_TEMP);
 		script.printProperty(PROPERTY_PLUGIN_TEMP, Utils.getPropertyFormat(PROPERTY_BASEDIR));
-
-		script.println("<condition property=\"" + PROPERTY_BUILD_RESULT_FOLDER + "\" value=\"" + Utils.getPropertyFormat(PROPERTY_PLUGIN_TEMP) + '/' + new Path(model.getLocation()).lastSegment() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		script.println("\t<isset property=\"" + PROPERTY_BUILD_TEMP + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
-		script.println("</condition>"); //$NON-NLS-1$
+		script.printConditionIsSet(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_PLUGIN_TEMP) + '/' + new Path(model.getLocation()).lastSegment(), PROPERTY_BUILD_TEMP);
 		script.printProperty(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR));
 
 		script.printProperty(PROPERTY_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + PROPERTY_TEMP_FOLDER);
@@ -667,6 +646,62 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.println();
 
 		script.printTargetEnd();
+	}
+
+	private void generateCompilerSettings() {
+		String javacSource = null;
+		String javacTarget = null;
+		try {
+			Properties properties = getBuildProperties();
+			javacSource = properties.getProperty(IBuildPropertiesConstants.PROPERTY_JAVAC_SOURCE);
+			javacTarget = properties.getProperty(IBuildPropertiesConstants.PROPERTY_JAVAC_TARGET);
+		} catch (CoreException e) {
+			//ignore
+		}
+
+		script.printComment(Messages.build_compilerSetting);
+		script.printProperty(PROPERTY_JAVAC_FAIL_ON_ERROR, "false"); //$NON-NLS-1$
+		script.printProperty(PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$
+		script.printProperty(PROPERTY_JAVAC_VERBOSE, "true"); //$NON-NLS-1$
+		if (javacSource == null)
+			script.printProperty(IXMLConstants.PROPERTY_JAVAC_SOURCE, "1.3"); //$NON-NLS-1$
+		if (javacTarget == null)
+			script.printProperty(IXMLConstants.PROPERTY_JAVAC_TARGET, "1.2"); //$NON-NLS-1$  
+		script.printProperty(PROPERTY_JAVAC_COMPILERARG, ""); //$NON-NLS-1$  
+		script.println("<path id=\"path_bootclasspath\">"); //$NON-NLS-1$
+		script.println("\t<fileset dir=\"${java.home}/lib\">"); //$NON-NLS-1$
+		script.println("\t\t<include name=\"*.jar\"/>"); //$NON-NLS-1$
+		script.println("\t</fileset>"); //$NON-NLS-1$
+		script.println("</path>"); //$NON-NLS-1$
+		script.printPropertyRefid(PROPERTY_BOOTCLASSPATH, "path_bootclasspath"); //$NON-NLS-1$		
+
+		if (javacSource != null)
+			script.printProperty(PROPERTY_PLUGIN_JAVAC_SOURCE, javacSource);
+		if (javacTarget != null)
+			script.printProperty(PROPERTY_PLUGIN_JAVAC_TARGET, javacTarget);
+
+		String[] environments = model.getExecutionEnvironments();
+		String bootClasspath, source, target = null;
+		for (int i = 0; i < environments.length; i++) {
+			Properties environmentMappings = getExecutionEnvironmentMappings();
+			bootClasspath = PROPERTY_BOOTCLASSPATH + '.' + environments[i];
+			script.printConditionIsSet(PROPERTY_PLUGIN_BOOTCLASSPATH, Utils.getPropertyFormat(bootClasspath), bootClasspath);
+
+			source = (String) environmentMappings.get(environments[i] + '.' + IXMLConstants.PROPERTY_JAVAC_SOURCE);
+			target = (String) environmentMappings.get(environments[i] + '.' + IXMLConstants.PROPERTY_JAVAC_TARGET);
+			if (javacSource == null && source != null)
+				script.printConditionIsSet(PROPERTY_PLUGIN_JAVAC_SOURCE, source, bootClasspath);
+			if (javacTarget == null && target != null)
+				script.printConditionIsSet(PROPERTY_PLUGIN_JAVAC_TARGET, target, bootClasspath);
+		}
+
+		if (javacSource == null)
+			script.printProperty(PROPERTY_PLUGIN_JAVAC_SOURCE, Utils.getPropertyFormat(IXMLConstants.PROPERTY_JAVAC_SOURCE));
+		if (javacTarget == null)
+			script.printProperty(PROPERTY_PLUGIN_JAVAC_TARGET, Utils.getPropertyFormat(IXMLConstants.PROPERTY_JAVAC_TARGET));
+
+		script.printProperty(PROPERTY_PLUGIN_BOOTCLASSPATH, Utils.getPropertyFormat(PROPERTY_BOOTCLASSPATH));
+		script.println();
 	}
 
 	/**
@@ -849,14 +884,14 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printComment("compile the source code"); //$NON-NLS-1$
 		JavacTask javac = new JavacTask();
 		javac.setClasspathId(name + PROPERTY_CLASSPATH);
-		javac.setBootClasspath(Utils.getPropertyFormat(PROPERTY_BOOTCLASSPATH));
+		javac.setBootClasspath(Utils.getPropertyFormat(PROPERTY_PLUGIN_BOOTCLASSPATH));
 		javac.setDestdir(destdir);
 		javac.setFailOnError(Utils.getPropertyFormat(PROPERTY_JAVAC_FAIL_ON_ERROR));
 		javac.setDebug(Utils.getPropertyFormat(PROPERTY_JAVAC_DEBUG_INFO));
 		javac.setVerbose(Utils.getPropertyFormat(PROPERTY_JAVAC_VERBOSE));
 		javac.setIncludeAntRuntime("no"); //$NON-NLS-1$
-		javac.setSource(Utils.getPropertyFormat(PROPERTY_JAVAC_SOURCE));
-		javac.setTarget(Utils.getPropertyFormat(PROPERTY_JAVAC_TARGET));
+		javac.setSource(Utils.getPropertyFormat(PROPERTY_PLUGIN_JAVAC_SOURCE));
+		javac.setTarget(Utils.getPropertyFormat(PROPERTY_PLUGIN_JAVAC_TARGET));
 		javac.setCompileArgs(Utils.getPropertyFormat(PROPERTY_JAVAC_COMPILERARG));
 		javac.setSrcdir(sources);
 		script.print(javac);

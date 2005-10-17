@@ -765,4 +765,18 @@ public class AntScript {
 		printAttribute("file", file, true); //$NON-NLS-1$
 		output.println("/>"); //$NON-NLS-1$
 	}
+	
+	/**
+	 * Print a <code>Condition</code> task with isset test to the script
+	 * @param property		name of the property to set	
+	 * @param value			value to set the property to
+	 * @param testProperty	name of the property for the isset test
+	 */
+	public void printConditionIsSet(String property, String value, String testProperty) {
+		println("<condition property=\"" + property + "\" value=\"" + value + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		indent++;
+		println("<isset property=\"" + testProperty + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		indent--;
+		printEndTag("condition"); //$NON-NLS-1$
+	}
 }
