@@ -1756,5 +1756,28 @@
             class="org.eclipse.pde.internal.ui.editor.text.ManifestDocumentFactory">
       </factory>
    </extension>
-   
+   <extension
+         point="org.eclipse.core.filebuffers.annotationModelCreation">
+      <factory
+            contentTypeId="org.eclipse.pde.pluginManifest"
+            class="org.eclipse.pde.internal.ui.editor.text.AnnotationModelFactory"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.filebuffers.annotationModelCreation">
+      <factory
+            contentTypeId="org.eclipse.pde.pluginManifest"
+            class="org.eclipse.pde.internal.ui.editor.text.AnnotationModelFactory"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.filebuffers.annotationModelCreation">
+      <factory
+            contentTypeId="org.eclipse.pde.fragmentManifest"
+            class="org.eclipse.pde.internal.ui.editor.text.AnnotationModelFactory"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.filebuffers.annotationModelCreation">
+      <factory
+            contentTypeId="org.eclipse.pde.bundleManifest"
+            class="org.eclipse.pde.internal.ui.editor.text.AnnotationModelFactory"/>
+   </extension>   
 </plugin>
