@@ -16,7 +16,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.pde.internal.ui.editor.SystemFileMarkerAnnotationModel;
-import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
 public class AnnotationModelFactory implements IAnnotationModelFactory {
 
@@ -25,7 +24,7 @@ public class AnnotationModelFactory implements IAnnotationModelFactory {
 		if (file == null) 
 			return new SystemFileMarkerAnnotationModel();
 		
-		return new ResourceMarkerAnnotationModel(file);
+		return new ManifestMarkerAnnotationModel(file);
 	}
 
 }
