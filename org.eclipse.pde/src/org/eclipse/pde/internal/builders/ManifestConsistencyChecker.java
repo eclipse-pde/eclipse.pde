@@ -47,7 +47,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			if (manifestFile.exists())
 				checkManifestFile(manifestFile, monitor);
 		}
-		checkProject(monitor);
+		checkProjectDescription(monitor);
 	}
 
 	private void checkManifestFile(IFile file, IProgressMonitor monitor) {
@@ -93,7 +93,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		monitor.done();
 	}
 	
-	private void checkProject(IProgressMonitor monitor) {
+	private void checkProjectDescription(IProgressMonitor monitor) {
 		if (monitor.isCanceled())
 			return;
 		monitor.subTask(NLS.bind(PDEMessages.Builders_verifying, ".project")); //$NON-NLS-1$
@@ -102,7 +102,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		if (!file.exists())
 			return;
 		try {
-			file.deleteMarkers(null, true, IResource.DEPTH_INFINITE);
+			file.deleteMarkers(PDEMarkerFactory.MARKER_ID, true, IResource.DEPTH_ZERO);
 			IProject[] refProjects = project.getReferencedProjects();
 			if (refProjects != null && refProjects.length > 0) {
 				try {
