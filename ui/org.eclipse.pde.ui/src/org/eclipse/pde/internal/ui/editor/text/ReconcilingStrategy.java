@@ -32,17 +32,15 @@ public class ReconcilingStrategy implements IReconcilingStrategy {
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.reconciler.DirtyRegion, org.eclipse.jface.text.IRegion)
 	 */
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
-		if (fDocument == null)
-			return;
-		notifyParticipants();
+		if (fDocument != null)
+			notifyParticipants();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.IRegion)
 	 */
 	public void reconcile(IRegion partition) {
-		if (fDocument == null)
-			return;
-		notifyParticipants();
+		if (fDocument != null)
+			notifyParticipants();
 	}
 	
 	private synchronized void notifyParticipants() {
