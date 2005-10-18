@@ -103,8 +103,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			return;
 		try {
 			file.deleteMarkers(PDEMarkerFactory.MARKER_ID, true, IResource.DEPTH_ZERO);
-			IProject[] refProjects = project.getReferencedProjects();
-			if (refProjects != null && refProjects.length > 0) {
+			IProject[] refProjects = project.getDescription().getReferencedProjects();
+			if (refProjects.length > 0) {
 				try {
 					IMarker marker = new PDEMarkerFactory().createMarker(file, PDEMarkerFactory.PROJECT_BUILD_ORDER_ENTRIES);
 					marker.setAttribute(IMarker.MESSAGE, PDEMessages.ManifestConsistencyChecker_projectCheck);
