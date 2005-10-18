@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.builders.PDEMarkerFactory;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
@@ -36,6 +37,14 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 				return new IMarkerResolution[] {new AddSingleonToSymbolicName(AbstractPDEMarkerResolution.RENAME_TYPE, false)};
 			case PDEMarkerFactory.PROJECT_BUILD_ORDER_ENTRIES:
 				return new IMarkerResolution[] {new RemoveBuildOrderEntries(AbstractPDEMarkerResolution.REMOVE_TYPE)};
+			case PDEMarkerFactory.EXPORT_PKG_NOT_EXIST:
+				String pkgName = null;
+				try {
+					pkgName = (String)marker.getAttribute("packageName"); //$NON-NLS-1$
+					return new IMarkerResolution[] {new RemoveExportPkgResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, pkgName)};
+				} catch (CoreException e) {
+					return NO_RESOLUTIONS;
+				}
 		}
 		return NO_RESOLUTIONS;
 	}

@@ -705,22 +705,6 @@
             </separator>
          </menu>
          <action
-               label="%PluginSearch.references"
-               helpContextId="org.eclipse.pde.doc.user.find_references"
-               class="org.eclipse.pde.internal.ui.search.FindPluginReferencesAction"
-               menubarPath="org.eclipse.pde.ui.plugin.tools/group0"
-               enablesFor="1"
-               id="org.eclipse.pde.ui.SearchReferences">
-         </action>
-         <action
-               label="%OpenDependenciesAction.label"
-               helpContextId="org.eclipse.pde.doc.user.open_dependencies"
-               class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
-               menubarPath="org.eclipse.pde.ui.plugin.tools/group0"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.OpenDependenciesAction1">
-         </action>
-         <action
                label="%UpdateClasspathAction.label"
                helpContextId="org.eclipse.pde.doc.user.update_classpath"
                class="org.eclipse.pde.internal.ui.wizards.tools.UpdateClasspathAction"
@@ -776,22 +760,6 @@
             </separator>
          </menu>
          <action
-               label="%PluginSearch.references"
-               helpContextId="org.eclipse.pde.doc.user.find_references"
-               class="org.eclipse.pde.internal.ui.search.FindPluginReferencesAction"
-               menubarPath="org.eclipse.pde.ui.manifest.tools/group0"
-               enablesFor="1"
-               id="org.eclipse.pde.ui.SearchReferences">
-         </action>
-         <action
-               label="%OpenDependenciesAction.label"
-               helpContextId="org.eclipse.pde.doc.user.open_dependencies"
-               class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
-               menubarPath="org.eclipse.pde.ui.manifest.tools/group0"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.OpenDependenciesAction3">
-         </action>
-         <action
                label="%UpdateClasspathAction.label"
                helpContextId="org.eclipse.pde.doc.user.update_classpath"
                class="org.eclipse.pde.internal.ui.wizards.tools.UpdateClasspathAction"
@@ -807,6 +775,14 @@
                enablesFor="+"
                id="org.eclipse.pde.ui.ExternalizeStrings">
          </action> 
+         <action
+         	   label="%OrganizeManifest.label"
+         	   helpContextId="org.eclipse.pde.doc.user.organize_manifest"
+               class="org.eclipse.pde.internal.ui.search.OrganizeManifestAction"
+               menubarPath="org.eclipse.pde.ui.manifest.tools/group0"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.OrganizeManifest"> 
+         </action>
          <action
                label="%popupMenus.buildPlugin.label"
                helpContextId="org.eclipse.pde.doc.user.create_plugin_jars"
@@ -841,14 +817,6 @@
                   name="group2">
             </separator>
          </menu>
-         <action
-               label="%OpenDependenciesAction.label"
-               helpContextId="org.eclipse.pde.doc.user.open_dependencies"
-               class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
-               menubarPath="org.eclipse.pde.ui.fragment.tools/group0"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.OpenDependenciesAction2">
-         </action>
          <action
                label="%UpdateClasspathAction.label"
                helpContextId="org.eclipse.pde.doc.user.update_classpath"

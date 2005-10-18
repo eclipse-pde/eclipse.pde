@@ -1373,6 +1373,9 @@ public class PDEUIMessages extends NLS {
 	public static String UnusedDependencies_remove;
 	public static String UnusedDependencies_analyze;
 	public static String UnusedDependencies_unused;
+	public static String RemoveExportPkgs_label;
+	public static String RemoveExportPkgs_description;
+	public static String RemoveExportPkgs_jobName;
 
 	public static String DependenciesView_open;
 	public static String DependenciesView_ShowCalleesAction_label;
@@ -2193,5 +2196,7 @@ public class PDEUIMessages extends NLS {
 	public static String RemoveBuildOrderEntries_desc;
 
 	public static String RemoveBuildOrderEntries_label;
+
+	public static String OrganizeExportPkgJob_ok;
 
 }

@@ -19,7 +19,6 @@ import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 
 public class BundleObject implements Serializable {
@@ -29,11 +28,7 @@ public class BundleObject implements Serializable {
 
 	public BundleObject() {
 	}
-	protected void ensureModelEditable() throws CoreException {
-		if (!model.isEditable()) {
-			throwCoreException(PDECoreMessages.BundleObject_readOnlyException); 
-		}
-	}
+
 	public IBundleModel getModel() {
 		return model;
 	}
@@ -52,28 +47,23 @@ public class BundleObject implements Serializable {
 	}
     
     protected void fireStructureChanged(BundleObject child, int changeType) {
-        if (model.isEditable()) {
             IModelChangedEvent e = new ModelChangedEvent(
                     model, 
                     changeType,
                     new Object[]{child}, 
                     null);
             fireModelChanged(e);
-        }
-    }
+     }
 
     protected void fireModelChanged(IModelChangedEvent e) {
-        if (model.isEditable()) {
-            IModelChangeProvider provider = model;
-            provider.fireModelChanged(e);
-        }
+        IModelChangeProvider provider = model;
+        provider.fireModelChanged(e);
     }
+    
     protected void firePropertyChanged(BundleObject object, String property,
             Object oldValue, Object newValue) {
-        if (model.isEditable()) {
-            IModelChangeProvider provider = model;
-            provider.fireModelObjectChanged(object, property, oldValue, newValue);
-        }
+        IModelChangeProvider provider = model;
+        provider.fireModelObjectChanged(object, property, oldValue, newValue);
     }
 
 

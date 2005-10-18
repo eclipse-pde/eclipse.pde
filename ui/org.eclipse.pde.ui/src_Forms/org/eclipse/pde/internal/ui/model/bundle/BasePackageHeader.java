@@ -44,10 +44,11 @@ public abstract class BasePackageHeader extends ManifestHeader {
         fireStructureChanged(object, IModelChangedEvent.INSERT);
     }
     
-    public void removePackage(PackageObject object) {
-        fPackages.remove(object.getName());
+    public Object removePackage(PackageObject object) {
+        Object value = fPackages.remove(object.getName());
         updateValue();
         fireStructureChanged(object, IModelChangedEvent.REMOVE);
+        return value;
     }
     
     public boolean hasPackage(String packageName) {
@@ -55,7 +56,10 @@ public abstract class BasePackageHeader extends ManifestHeader {
     }
     
     public Object removePackage(String name) {
-    	return fPackages.remove(name);
+    	PackageObject object = (PackageObject) fPackages.remove(name);
+    	updateValue();
+    	fireStructureChanged(object, IModelChangedEvent.REMOVE);
+    	return object;
     }
     
     public boolean isEmpty() {

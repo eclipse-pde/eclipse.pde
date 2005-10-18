@@ -39,7 +39,7 @@ public class PackageObject extends BundleObject {
         fHeader = header;
         fVersion = version;
         fVersionAttribute = versionAttribute;
-        fName = name;
+        fName = name.length() > 0 ? name : "."; //$NON-NLS-1$
         setModel(fHeader.getBundle().getModel());
     }
     
