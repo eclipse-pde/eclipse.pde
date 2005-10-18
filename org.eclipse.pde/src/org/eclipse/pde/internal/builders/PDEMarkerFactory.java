@@ -23,6 +23,7 @@ public class PDEMarkerFactory implements IMarkerFactory {
 	public static final int SINGLETON_DIR_NOT_SET = 3;
 	public static final int SINGLETON_ATT_NOT_SET = 4;
 	public static final int PROJECT_BUILD_ORDER_ENTRIES = 5;
+	public static final int EXPORT_PKG_NOT_EXIST = 6; 
 	
 	/**
 	 * @see org.eclipse.pde.internal.builders.IMarkerFactory#createMarker(org.eclipse.core.resources.IFile)

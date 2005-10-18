@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -654,8 +655,14 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						&& getFragmentsPackages()
 								.containsKey(exportPackageStmt))) {
 					message = NLS.bind(PDEMessages.BundleErrorReporter_NotExistInProject, exportPackageStmt); 
-					report(message, getPackageLine(header, exportPackageElements[i]),
-							CompilerFlags.P_UNRESOLVED_IMPORTS); 
+					IMarker marker = report(message, getPackageLine(header, exportPackageElements[i]),
+							CompilerFlags.P_UNRESOLVED_IMPORTS, PDEMarkerFactory.EXPORT_PKG_NOT_EXIST);
+					try {
+						if (marker != null)
+							marker.setAttribute("packageName", exportPackageStmt); //$NON-NLS-1$
+					} catch (CoreException e) {
+						e.printStackTrace();
+					}
 					continue;
 				}
 			}

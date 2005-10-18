@@ -63,7 +63,7 @@ public class JarManifestErrorReporter {
 		fTextDocument = createDocument(file); 
 	}
 
-	private void addMarker(String message, int lineNumber, int severity, int problemID) {
+	private IMarker addMarker(String message, int lineNumber, int severity, int problemID) {
 		try {
 			IMarker marker = getMarkerFactory().createMarker(fFile, problemID);
 			marker.setAttribute(IMarker.MESSAGE, message);
@@ -74,9 +74,11 @@ public class JarManifestErrorReporter {
 			if (severity == IMarker.SEVERITY_ERROR) {
 				fErrorCount += 1;
 			}
+			return marker;
 		} catch (CoreException e) {
 			PDECore.logException(e);
 		}
+		return null;
 	}
 
 	protected IDocument createDocument(IFile file) {
@@ -306,22 +308,24 @@ public class JarManifestErrorReporter {
 		}
 	}
 
-	public void report(String message, int line, int severity, int problemID) {
+	public IMarker report(String message, int line, int severity, int problemID) {
 		if (severity == CompilerFlags.ERROR)
-			addMarker(message, line, IMarker.SEVERITY_ERROR, problemID);
+			return addMarker(message, line, IMarker.SEVERITY_ERROR, problemID);
 		else if (severity == CompilerFlags.WARNING)
-			addMarker(message, line, IMarker.SEVERITY_WARNING, problemID);
+			return addMarker(message, line, IMarker.SEVERITY_WARNING, problemID);
+		return null;
 	}
 
-	public void report(String message, int line, int severity) {
-		report(message, line, severity, PDEMarkerFactory.NO_RESOLUTION);
+	public IMarker report(String message, int line, int severity) {
+		return report(message, line, severity, PDEMarkerFactory.NO_RESOLUTION);
 	}
 
-	protected void report(String message, int line, String compilerFlag, int problemID) {
+	protected IMarker report(String message, int line, String compilerFlag, int problemID) {
 		int severity = CompilerFlags.getFlag(fProject, compilerFlag);
 		if (severity != CompilerFlags.IGNORE) {
-			report(message, line, severity, problemID);
+			return report(message, line, severity, problemID);
 		}
+		return null;
 	}
 	
 	protected void report(String message, int line, String compilerFlag) {
