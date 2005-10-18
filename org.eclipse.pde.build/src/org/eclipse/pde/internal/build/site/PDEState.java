@@ -139,7 +139,17 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	private void updateVersionNumber(Dictionary manifest) {
-		String newVersion = QualifierReplacer.replaceQualifierInVersion((String) manifest.get(Constants.BUNDLE_VERSION), (String) manifest.get(Constants.BUNDLE_SYMBOLICNAME), (String) manifest.get(PROPERTY_QUALIFIER), repositoryVersions);
+		String newVersion = null;
+		try {
+			String symbolicName = (String) manifest.get(Constants.BUNDLE_SYMBOLICNAME);
+			if (symbolicName == null)
+				return;
+			
+			symbolicName = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, symbolicName)[0].getValue();
+			newVersion = QualifierReplacer.replaceQualifierInVersion((String) manifest.get(Constants.BUNDLE_VERSION), symbolicName, (String) manifest.get(PROPERTY_QUALIFIER), repositoryVersions);
+		} catch (BundleException e) {
+			//ignore
+		}
 		if (newVersion != null)
 			manifest.put(Constants.BUNDLE_VERSION, newVersion);
 	}
