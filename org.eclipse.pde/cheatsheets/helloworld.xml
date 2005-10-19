@@ -19,7 +19,7 @@
 		title="Configuring PDE">
 		<action
 			pluginId="org.eclipse.pde.ui"
-			class="org.eclipse.pde.ui.internal.samples.ShowTargetPlatformAction"/>
+			class="org.eclipse.pde.internal.ui.samples.ShowTargetPlatformAction"/>
 		<description>
 			Select the &quot;Target Platform&quot; page under 
 			Plug-in Development in the Window-&gt;Preferences 
