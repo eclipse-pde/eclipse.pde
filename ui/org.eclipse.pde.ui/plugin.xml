@@ -281,6 +281,7 @@
             icon="$nl$/icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.wizards.templates.MailNewWizard"
             id="org.eclipse.pde.ui.pluginContent.rcpmail"
+            requiresActivator="true"
             rcp="true">
          <description>
             %pluginContent.mail.description
