@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.extension;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -20,9 +21,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -69,7 +67,6 @@ import org.eclipse.pde.ui.IBasePluginWizard;
 import org.eclipse.pde.ui.IExtensionWizard;
 import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -84,7 +81,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.TableItem;
@@ -106,13 +103,13 @@ public class PointSelectionPage
 	private ExtensionTreeSelectionPage fWizardsPage;
 	
 	private IPluginExtension fNewExtension;
-	private ShowDescriptionAction fShowDescriptionAction;
 	private WizardCollectionElement fTemplateCollection;
 	private WizardCollectionElement fWizardCollection;
 	private NewExtensionWizard fWizard;
 	private Text fFilterText;
 	private WildcardFilter fWildCardFilter;
 	private Text fPointDescription;
+	private Link fDescLink;
 	
 	class PointFilter extends ViewerFilter {
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -237,7 +234,6 @@ public class PointSelectionPage
 		setTitle(PDEUIMessages.NewExtensionWizard_PointSelectionPage_title); 
 		setDescription(PDEUIMessages.NewExtensionWizard_PointSelectionPage_desc); 
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
-		makeActions();
 	}
 	
 	public void createControl(Composite parent) {
@@ -318,8 +314,7 @@ public class PointSelectionPage
 		gd.heightHint = 150;
 		fPointListViewer.getTable().setLayoutData(gd);
 
-		Composite templateComposite =
-			new Composite(outerContainer, SWT.NONE);
+		Composite templateComposite = new Composite(outerContainer, SWT.NONE);
 		layout = new GridLayout();
 		layout.marginHeight = 4;
 		layout.marginWidth = 0;
@@ -327,10 +322,18 @@ public class PointSelectionPage
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		templateComposite.setLayoutData(gd);
 		
-		Label descLabel = new Label(templateComposite, SWT.NONE | SWT.WRAP);
-		descLabel.setText(PDEUIMessages.PointSelectionPage_extPointDesc); 
+		fDescLink = new Link(templateComposite, SWT.NONE);
+		fDescLink.setText(NLS.bind(PDEUIMessages.PointSelectionPage_extPointDesc, ""));  //$NON-NLS-1$
+		fDescLink.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (fCurrentPoint != null)
+					new ShowDescriptionAction(fCurrentPoint, true).run();	
+			}
+		});
+		fDescLink.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		fPointDescription = new Text(templateComposite, SWT.NONE | SWT.WRAP | SWT.MULTI | SWT.BORDER | SWT.V_SCROLL);
+		
+		fPointDescription = new Text(templateComposite, SWT.NONE | SWT.WRAP | SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.READ_ONLY);
 		fPointDescription.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_extPointDescription); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 55;
@@ -399,7 +402,6 @@ public class PointSelectionPage
 		});
 		
 		getContainer().getShell().setSize(500, 500);
-		createMenuManager();
 		initialize();
 		setControl(tabFolder);
 		Dialog.applyDialogFont(outerContainer);
@@ -414,27 +416,6 @@ public class PointSelectionPage
 		fWizardsPage.getSelectionProvider().addSelectionChangedListener(this);
 		fWizardsPage.init(fProject, fModel.getPluginBase());
 		return fWizardsPage.getControl();
-	}
-	private void createMenuManager(){
-		MenuManager mgr = new MenuManager();
-		mgr.addMenuListener(new IMenuListener(){
-
-			public void menuAboutToShow(IMenuManager manager) {
-				fillContextMenu(manager);
-			}
-			
-		});
-		mgr.setRemoveAllWhenShown(true);
-		Control control = fPointListViewer.getControl();
-		Menu menu = mgr.createContextMenu(control);
-		control.setMenu(menu);
-	}
-	private void fillContextMenu(IMenuManager mgr){
-		mgr.add(fShowDetailsSection);
-		ISelection selection = fPointListViewer.getSelection();
-		IPluginExtensionPoint point = (IPluginExtensionPoint)((IStructuredSelection)selection).getFirstElement();
-		fShowDetailsSection.setEnabled(point != null);
-		
 	}
 	
 	public void advanceToNextPage() {
@@ -503,18 +484,6 @@ public class PointSelectionPage
 		}
 		return true;
 	}
-
-	private void doShowDescription() {
-		if (fShowDescriptionAction == null)
-			fShowDescriptionAction = new ShowDescriptionAction(fCurrentPoint);
-		else
-			fShowDescriptionAction.setExtensionPoint(fCurrentPoint);
-		BusyIndicator.showWhile(fPointListViewer.getControl().getDisplay(), new Runnable() {
-			public void run() {
-				fShowDescriptionAction.run();
-			}
-		});
-	}
 	
 	public IPluginExtension getNewExtension() {
 		return fNewExtension;
@@ -526,21 +495,13 @@ public class PointSelectionPage
 		fPointListViewer.getTable().setFocus();
 	}
 	
-	private void makeActions(){
-		fShowDetailsSection = new Action(){
-			public void run(){
-				doShowDescription();
-			}
-		};
-		fShowDetailsSection.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_showDetails); 
-	}
-	
 	public void selectionChanged(SelectionChangedEvent event) {
 		
 		ISelection selection = event.getSelection();
 		setDescription(""); //$NON-NLS-1$
 		fTemplateLabel.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_title);
 		fPointDescription.setText(PDEUIMessages.PointSelectionPage_noDescAvailable);
+		fDescLink.setText(NLS.bind(PDEUIMessages.PointSelectionPage_extPointDesc, "")); //$NON-NLS-1$
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 			if (ssel != null && !ssel.isEmpty()) {
@@ -553,7 +514,8 @@ public class PointSelectionPage
 					String schemaName = desc != null ? desc.getName() : fullID;
 					setDescription(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_pluginDescription, schemaName));
 					setDescriptionText(""); //$NON-NLS-1$
-					fTemplateLabel.setText(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_label, fullID));
+					fTemplateLabel.setText(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_label, schemaName.toLowerCase(Locale.ENGLISH)));
+					fDescLink.setText(NLS.bind(PDEUIMessages.PointSelectionPage_extPointDesc, schemaName));
 					if (desc != null)
 						fPointDescription.setText(stripTags(desc.getDescription())); 
 					setSelectedNode(null);
