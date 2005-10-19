@@ -954,6 +954,7 @@ public class PDEUIMessages extends NLS {
 	public static String NewExtensionWizard_PointSelectionPage_showDetails;
 	public static String NewExtensionWizard_PointSelectionPage_templateDescription;
 	public static String NewExtensionWizard_PointSelectionPage_pluginDescription;
+	public static String NewExtensionWizard_PointSelectionPage_extPointDescription;
 
 	public static String ExtensionEditorWizard_wtitle;
 
@@ -2198,5 +2199,9 @@ public class PDEUIMessages extends NLS {
 	public static String RemoveBuildOrderEntries_label;
 
 	public static String OrganizeExportPkgJob_ok;
+
+	public static String PointSelectionPage_extPointDesc;
+
+	public static String PointSelectionPage_noDescAvailable;
 
 }

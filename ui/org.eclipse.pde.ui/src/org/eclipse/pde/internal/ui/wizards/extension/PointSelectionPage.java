@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.extension;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.regex.Pattern;
@@ -44,6 +45,9 @@ import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
+import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
@@ -108,6 +112,7 @@ public class PointSelectionPage
 	private NewExtensionWizard fWizard;
 	private Text fFilterText;
 	private WildcardFilter fWildCardFilter;
+	private Text fPointDescription;
 	
 	class PointFilter extends ViewerFilter {
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -316,13 +321,22 @@ public class PointSelectionPage
 		Composite templateComposite =
 			new Composite(outerContainer, SWT.NONE);
 		layout = new GridLayout();
-		layout.marginHeight = 9;
+		layout.marginHeight = 4;
 		layout.marginWidth = 0;
 		templateComposite.setLayout(layout);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		templateComposite.setLayoutData(gd);
 		
-		fTemplateLabel = new Label(templateComposite, SWT.NONE);
+		Label descLabel = new Label(templateComposite, SWT.NONE | SWT.WRAP);
+		descLabel.setText(PDEUIMessages.PointSelectionPage_extPointDesc); 
+		
+		fPointDescription = new Text(templateComposite, SWT.NONE | SWT.WRAP | SWT.MULTI | SWT.BORDER | SWT.V_SCROLL);
+		fPointDescription.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_extPointDescription); 
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = 55;
+		fPointDescription.setLayoutData(gd);
+		
+		fTemplateLabel = new Label(templateComposite, SWT.NONE | SWT.WRAP);
 		fTemplateLabel.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_title); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fTemplateLabel.setLayoutData(gd);
@@ -525,15 +539,23 @@ public class PointSelectionPage
 		
 		ISelection selection = event.getSelection();
 		setDescription(""); //$NON-NLS-1$
+		fTemplateLabel.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_title);
+		fPointDescription.setText(PDEUIMessages.PointSelectionPage_noDescAvailable);
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 			if (ssel != null && !ssel.isEmpty()) {
 				if (ssel.getFirstElement() instanceof IPluginExtensionPoint){
 					fCurrentPoint = (IPluginExtensionPoint) ssel.getFirstElement();
 					fTemplateViewer.setInput(fCurrentPoint);
-					setDescription(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_pluginDescription, fCurrentPoint.getFullId())); 
+					URL url = SchemaRegistry.getSchemaURL(fCurrentPoint);
+					String fullID = fCurrentPoint.getFullId();
+					ISchema desc = new SchemaDescriptor(fullID, url).getSchema(false);
+					String schemaName = desc != null ? desc.getName() : fullID;
+					setDescription(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_pluginDescription, schemaName));
 					setDescriptionText(""); //$NON-NLS-1$
-					fTemplateLabel.setText(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_label, fCurrentPoint.getFullId())); 
+					fTemplateLabel.setText(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_label, fullID));
+					if (desc != null)
+						fPointDescription.setText(stripTags(desc.getDescription())); 
 					setSelectedNode(null);
 					setPageComplete(true);
 				} else if (ssel.getFirstElement() instanceof WizardElement) {
@@ -597,5 +619,25 @@ public class PointSelectionPage
 			return fModel.getPluginBase().getId() + "." + point.getId(); //$NON-NLS-1$
 		}
 		return point.getFullId();
+	}
+	
+	private String stripTags(String html) {
+		int length = html.length();
+		boolean write = true;
+		char oldChar = ' ';
+		StringBuffer sb = new StringBuffer(length);
+		for (int i = 0; i < length; i++) {
+			char curr = html.charAt(i);
+			if (curr == '<')
+				write = false;
+			else if (curr == '>')
+				write = true;
+			else if (write && curr != '\r' && curr != '\n' && curr != '\t')
+				if (!(curr == ' ') || !(oldChar == curr)) { // skip multiple spaces
+					sb.append(curr);
+					oldChar = curr;
+				}
+		}
+		return sb.toString();
 	}
 }
