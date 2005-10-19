@@ -572,7 +572,7 @@
             default="true"
             icon="$nl$/icons/obj16/build_exec.gif"
             filenames="sample.properties"
-            class="org.eclipse.pde.ui.internal.samples.SampleEditor"
+            class="org.eclipse.pde.internal.ui.samples.SampleEditor"
             id="org.eclipse.pde.ui.sampleEditor">
       </editor>
    </extension>

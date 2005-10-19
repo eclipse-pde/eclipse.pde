@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.ui.internal.samples;
+package org.eclipse.pde.internal.ui.samples;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
