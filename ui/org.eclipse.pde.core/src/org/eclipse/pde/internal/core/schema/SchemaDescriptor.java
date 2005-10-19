@@ -28,9 +28,11 @@ public class SchemaDescriptor implements ISchemaDescriptor {
 	public SchemaDescriptor(String extPointID, URL schemaURL) {
 		fPoint = extPointID;
 		fSchemaURL = schemaURL;
-		File file = new File(fSchemaURL.getFile());
-		if (file.exists())
-			fLastModified = file.lastModified();
+		if (fSchemaURL != null) {
+			File file = new File(fSchemaURL.getFile());
+			if (file.exists())
+				fLastModified = file.lastModified();
+		}
 	}
 	
 	public SchemaDescriptor(IFile file, boolean editable) {
