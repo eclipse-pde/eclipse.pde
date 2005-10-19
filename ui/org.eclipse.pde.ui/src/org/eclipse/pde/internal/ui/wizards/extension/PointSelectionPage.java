@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.ui.wizards.extension;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -42,6 +44,7 @@ import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -64,6 +67,10 @@ import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -77,6 +84,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 public class PointSelectionPage
@@ -98,6 +106,8 @@ public class PointSelectionPage
 	private WizardCollectionElement fTemplateCollection;
 	private WizardCollectionElement fWizardCollection;
 	private NewExtensionWizard fWizard;
+	private Text fFilterText;
+	private WildcardFilter fWildCardFilter;
 	
 	class PointFilter extends ViewerFilter {
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -109,6 +119,22 @@ public class PointSelectionPage
 				return true;
 			
 			return fAvailableImports.contains(point.getPluginBase().getId());
+		}
+	}
+	class WildcardFilter extends ViewerFilter {
+		private String wMatch = "*"; //$NON-NLS-1$
+		protected void setMatchText(String match) {
+			wMatch = match + "*"; //$NON-NLS-1$
+		}
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			String text = ((PointLabelProvider)fPointListViewer.getLabelProvider()).getColumnText(element, 0);
+			Pattern pattern = null;
+			try {
+				pattern = PatternConstructor.createPattern(wMatch, false);
+			} catch (PatternSyntaxException e) {
+				return false;
+			}
+			return pattern != null && pattern.matcher(text.subSequence(0, text.length())).matches();
 		}
 	}
 	
@@ -201,6 +227,7 @@ public class PointSelectionPage
 		this.fTemplateCollection = templates;
 		this.fWizard= wizard;
 		this.fProject=project;
+		fWildCardFilter = new WildcardFilter();
 		fAvailableImports = PluginSelectionDialog.getExistingImports(model.getPluginBase());
 		setTitle(PDEUIMessages.NewExtensionWizard_PointSelectionPage_title); 
 		setDescription(PDEUIMessages.NewExtensionWizard_PointSelectionPage_desc); 
@@ -236,8 +263,32 @@ public class PointSelectionPage
 		gd = new GridData(GridData.FILL_BOTH);
 		pointContainer.setLayoutData(gd);
 
-		Label pointLabel = new Label(pointContainer, SWT.NONE);
-		pointLabel.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_availExtPoints_label); 
+		Composite labelContainer = new Composite(pointContainer, SWT.NONE);
+		layout = new GridLayout(2, false);
+		layout.marginHeight = layout.marginWidth = 0;
+		labelContainer.setLayout(layout);
+		gd = new GridData(GridData.FILL_BOTH);
+		labelContainer.setLayoutData(gd);
+		
+		Label filterLabel = new Label(labelContainer, SWT.NONE);
+		filterLabel.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_availExtPoints_label);
+		gd = new GridData();
+		gd.verticalAlignment = GridData.CENTER;
+		filterLabel.setLayoutData(gd);
+		fFilterText = new Text(labelContainer, SWT.BORDER);
+		fFilterText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        fFilterText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				fWildCardFilter.setMatchText(fFilterText.getText());
+            	fPointListViewer.refresh();
+			}
+        });
+        fFilterText.addKeyListener(new KeyListener() {
+            public void keyPressed(KeyEvent e) {
+                if (e.keyCode == SWT.ARROW_DOWN) fPointListViewer.getControl().setFocus();
+            }
+            public void keyReleased(KeyEvent e) {}
+        });
 		
 		fPointListViewer =
 			new TableViewer(
@@ -256,7 +307,7 @@ public class PointSelectionPage
 				}
 			}
 		});
-
+		fPointListViewer.addFilter(fWildCardFilter);
 		fPointListViewer.setSorter(ListUtil.NAME_SORTER);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 150;
