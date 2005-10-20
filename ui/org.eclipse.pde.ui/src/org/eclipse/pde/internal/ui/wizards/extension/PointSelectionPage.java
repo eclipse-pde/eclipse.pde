@@ -97,7 +97,6 @@ public class PointSelectionPage
 	private Button fFilterCheck;
 	private IPluginExtensionPoint fCurrentPoint;
 	private HashSet fAvailableImports;
-	private Action fShowDetailsSection;
 	private IProject fProject;
 	private Label fTemplateLabel;
 	private ExtensionTreeSelectionPage fWizardsPage;
