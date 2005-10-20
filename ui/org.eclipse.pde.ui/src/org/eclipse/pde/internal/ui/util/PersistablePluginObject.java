@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.ui.IContainmentAdapter;
@@ -68,6 +72,17 @@ public class PersistablePluginObject extends PlatformObject implements
 			return getResource();
 		if (adapter.equals(IContainmentAdapter.class))
 			return getPluginContainmentAdapter();
+		if (adapter.equals(IJavaElement.class)) {
+			IResource res = getResource();
+			if (res instanceof IProject) {
+				IProject project = (IProject) res;
+				try {
+					if (project.hasNature(JavaCore.NATURE_ID))
+						return JavaCore.create(project);
+				} catch (CoreException e) {
+				}
+			}
+		}
 		return super.getAdapter(adapter);
 	}
 	
