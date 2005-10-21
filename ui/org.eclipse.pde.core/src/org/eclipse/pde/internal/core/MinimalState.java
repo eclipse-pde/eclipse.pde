@@ -365,7 +365,14 @@ public class MinimalState {
 			// sort the javaProfiles in descending order
 			Arrays.sort(fJavaProfiles, new Comparator() {
 				public int compare(Object profile1, Object profile2) {
-					return -((String) profile1).compareTo(profile2);
+					// need to make sure J2SE profiles are sorted ahead of all other profiles
+					String p1 = (String) profile1;
+					String p2 = (String) profile2;
+					if (p1.startsWith("J2SE") && !p2.startsWith("J2SE"))
+						return -1;
+					if (!p1.startsWith("J2SE") && p2.startsWith("J2SE"))
+						return 1;
+					return -p1.compareTo(p2);
 				}
 			});
 		// if the selected java profile is set; make sure it is still available
