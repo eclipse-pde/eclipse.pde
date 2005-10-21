@@ -10,10 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
+import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.swt.graphics.Color;
 
 public interface IColorManager {
 
+	public static final String[] PROPERTIES_COLORS = new String[] {
+		PreferenceConstants.PROPERTIES_FILE_COLORING_KEY,
+		PreferenceConstants.PROPERTIES_FILE_COLORING_COMMENT,
+		PreferenceConstants.PROPERTIES_FILE_COLORING_VALUE,
+		PreferenceConstants.PROPERTIES_FILE_COLORING_ASSIGNMENT,
+		PreferenceConstants.PROPERTIES_FILE_COLORING_ARGUMENT,
+	};
+	
 	void dispose();
 	Color getColor(String key);
 }

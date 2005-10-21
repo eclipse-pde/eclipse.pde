@@ -9,15 +9,26 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.pde.internal.ui.model.build.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.editor.KeyValueSourcePage;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.text.ColorManager;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.model.IDocumentRange;
+import org.eclipse.pde.internal.ui.model.build.BuildEntry;
+import org.eclipse.swt.graphics.Image;
 
 public class BuildSourcePage extends KeyValueSourcePage {
 	class BuildOutlineContentProvider extends DefaultContentProvider
@@ -57,8 +68,31 @@ public class BuildSourcePage extends KeyValueSourcePage {
 			return null;
 		}
 	}
+
+	private ColorManager fColorManager;
+	
 	public BuildSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
+		IPreferenceStore store = JavaPlugin.getDefault().getCombinedPreferenceStore();
+		setPreferenceStore(store);
+		fColorManager = ColorManager.getDefault();
+		setSourceViewerConfiguration(new BuildSourceViewerConfiguration(fColorManager, store));
+	}
+	
+	public void dispose() {
+		fColorManager.dispose();
+		super.dispose();
+	}
+	
+	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
+		try {
+			ISourceViewer sourceViewer = getSourceViewer();
+			if (sourceViewer == null)
+				return;
+			((BuildSourceViewerConfiguration) getSourceViewerConfiguration()).handlePropertyChangeEvent(event);
+		} finally {
+			super.handlePreferenceStoreChanged(event);
+		}
 	}
 	
 	protected ILabelProvider createOutlineLabelProvider() {
@@ -84,5 +118,17 @@ public class BuildSourcePage extends KeyValueSourcePage {
 			}
 		}
 		return null;
+	}
+	
+	protected String[] collectContextMenuPreferencePages() {
+		String[] ids= super.collectContextMenuPreferencePages();
+		String[] more= new String[ids.length + 1];
+		more[0]= "org.eclipse.jdt.ui.preferences.PropertiesFileEditorPreferencePage"; //$NON-NLS-1$
+		System.arraycopy(ids, 0, more, 1, ids.length);
+		return more;
+	}
+	
+	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
+		return ((BuildSourceViewerConfiguration)getSourceViewerConfiguration()).affectsTextPresentation(event) || super.affectsTextPresentation(event);
 	}
 }

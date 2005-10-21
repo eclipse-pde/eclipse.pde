@@ -10,12 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
-import org.eclipse.jface.preference.*;
+import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.StringConverter;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 public class ColorManager implements IColorManager, IPDEColorConstants {
@@ -51,6 +58,12 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 		putColor(pstore, P_STRING);
 		putColor(pstore, P_TAG);
 		putColor(pstore, P_XML_COMMENT);
+		pstore = JavaPlugin.getDefault().getCombinedPreferenceStore();
+		for (int i = 0; i < IColorManager.PROPERTIES_COLORS.length; i++) {
+			String property = IColorManager.PROPERTIES_COLORS[i];
+			RGB setting = PreferenceConverter.getColor(pstore, property);
+			fColorTable.put(property, new Color(Display.getCurrent(), setting));
+		}
 	}
 
 	public void dispose() {
@@ -86,5 +99,14 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 				Display.getCurrent().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		}
 		return color;
+	}
+
+	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
+		Object color = event.getNewValue();
+		if (color instanceof String) {
+			RGB setting = StringConverter.asRGB((String)color, null);
+			if (setting != null)
+				fColorTable.put(event.getProperty(), new Color(Display.getCurrent(), setting));
+		}
 	}
 }
