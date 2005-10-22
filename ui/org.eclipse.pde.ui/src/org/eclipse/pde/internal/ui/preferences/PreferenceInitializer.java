@@ -23,7 +23,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer impleme
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		ColorManager.initializeDefaults(store);
-		store.setDefault(P_USE_SOURCE_PAGE, false);
 		store.setDefault(PROP_SHOW_OBJECTS, VALUE_USE_IDS);
 	}
 

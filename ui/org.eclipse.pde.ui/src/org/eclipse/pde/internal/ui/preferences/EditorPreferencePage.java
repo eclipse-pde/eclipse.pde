@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.preferences;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -34,14 +33,9 @@ public class EditorPreferencePage
 	public EditorPreferencePage() {
 		super(GRID);
 		setPreferenceStore(PDEPlugin.getDefault().getPreferenceStore());
-		setDescription(PDEUIMessages.EditorPreferencePage_desc); 
 	}
 	
 	protected void createFieldEditors() {
-		addField(new BooleanFieldEditor(P_USE_SOURCE_PAGE, 
-				PDEUIMessages.EditorPreferencePage_useSourcePage, 
-				getFieldEditorParent()));
-		addLabel("", 2); //$NON-NLS-1$
 		addLabel(PDEUIMessages.EditorPreferencePage_colorSettings, 2); 
 		addSourceColorFields();
 	}
@@ -50,10 +44,6 @@ public class EditorPreferencePage
 		super.createControl(parent);
 		Dialog.applyDialogFont(getControl());
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.EDITOR_PREFERENCE_PAGE);
-	}
-	
-	public static boolean getUseSourcePage() {
-		return PDEPlugin.getDefault().getPreferenceStore().getBoolean(P_USE_SOURCE_PAGE);
 	}
 	
 	private void addLabel(String text, int span) {

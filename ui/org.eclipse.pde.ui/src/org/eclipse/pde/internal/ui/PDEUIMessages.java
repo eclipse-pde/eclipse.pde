@@ -1317,9 +1317,6 @@ public class PDEUIMessages extends NLS {
 	public static String SourcePreferencePage_column_name;
 	public static String SourcePreferencePage_column_path;
 	public static String SourcePreferencePage_dialogMessage;
-	public static String EditorPreferencePage_useSourcePage;
-	public static String EditorPreferencePage_askDefaultPage;
-	public static String EditorPreferencePage_desc;
 	public static String EditorPreferencePage_colorSettings;
 	public static String EditorPreferencePage_text;
 	public static String EditorPreferencePage_proc;
@@ -1327,9 +1324,6 @@ public class PDEUIMessages extends NLS {
 	public static String EditorPreferencePage_tag;
 	public static String EditorPreferencePage_comment;
 	public static String PluginContentPage_yes;
-	public static String DefaultPageDialog_title;
-	public static String DefaultPageDialog_stopAskingButton;
-
 
 	//Search Page###############################
 	public static String SearchPage_searchString;

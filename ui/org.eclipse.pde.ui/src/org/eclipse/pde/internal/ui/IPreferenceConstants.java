@@ -12,9 +12,6 @@ package org.eclipse.pde.internal.ui;
 
 public interface IPreferenceConstants {
 	
-	// editor preference page
-	public static final String P_USE_SOURCE_PAGE = "useSourcePage"; //$NON-NLS-1$
-
 	// Main preference page
 	public static final String PROP_SHOW_OBJECTS =
 		"Preferences.MainPage.showObjects"; //$NON-NLS-1$
