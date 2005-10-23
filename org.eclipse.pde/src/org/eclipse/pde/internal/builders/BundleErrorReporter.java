@@ -147,7 +147,11 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					IJavaElement[] children = roots[i].getChildren();
 					for (int j = 0; j < children.length; j++) {
 						IPackageFragment f = (IPackageFragment) children[j];
-						map.put(f.getElementName(), f);
+						String name = f.getElementName();
+						if (name.equals(""))
+							name = ".";
+						if (f.hasChildren() || f.getNonJavaResources().length > 0)
+							map.put(name, f);
 					}
 				}
 			}
@@ -661,7 +665,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						if (marker != null)
 							marker.setAttribute("packageName", exportPackageStmt); //$NON-NLS-1$
 					} catch (CoreException e) {
-						e.printStackTrace();
 					}
 					continue;
 				}
@@ -776,11 +779,19 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			if (!isCheckUnresolvedImports()) {
 				continue;
 			}
+			
+			int severity = getRequireBundleSeverity(importPackageElements[i]);
+			
 			if (!availableExportedPackagesMap.containsKey(importPackageStmt)) {
 				/* No bundle exports this package */
 				message = NLS.bind(PDEMessages.BundleErrorReporter_PackageNotExported, importPackageStmt); 
-				report(message, getPackageLine(header, importPackageElements[i]),
-						CompilerFlags.P_UNRESOLVED_IMPORTS);
+				IMarker marker = report(message, getPackageLine(header, importPackageElements[i]),
+						severity, PDEMarkerFactory.IMPORT_PKG_NOT_AVAILABLE);
+				try {
+					if (marker != null)
+						marker.setAttribute("packageName", importPackageStmt); //$NON-NLS-1$
+				} catch (CoreException e) {
+				}
 				continue;
 			}
 
@@ -794,7 +805,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						&& !range.isIncluded(epd.getVersion())) {
 					message = NLS.bind(PDEMessages.BundleErrorReporter_VersionNotInRange, (new String[] { importPackageStmt, requiredVersion })); 
 					report(message, getPackageLine(header, importPackageElements[i]),
-							CompilerFlags.P_UNRESOLVED_IMPORTS);
+							severity);
 					continue;
 				}
 			}
@@ -1088,8 +1099,13 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			/* This id does not exist in the PDE target platform */
 			if (!availableBundlesMap.containsKey(requireBundleStmt)) {
 				message = NLS.bind(PDEMessages.BundleErrorReporter_NotExistPDE, requireBundleStmt); 
-				report(message, getPackageLine(header, requireBundleElements[i]),
-						severity);
+				IMarker marker = report(message, getPackageLine(header, requireBundleElements[i]),
+						severity, PDEMarkerFactory.REQ_BUNDLE_NOT_AVAILABLE);
+				try {
+					if (marker != null)
+						marker.setAttribute("bundleId", requireBundleElements[i].getValue()); //$NON-NLS-1$
+				} catch (CoreException e) {
+				}
 				continue;
 			}
 			IPluginModelBase availableModel = (IPluginModelBase) availableBundlesMap
