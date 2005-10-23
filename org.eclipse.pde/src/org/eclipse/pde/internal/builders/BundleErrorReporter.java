@@ -148,8 +148,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					for (int j = 0; j < children.length; j++) {
 						IPackageFragment f = (IPackageFragment) children[j];
 						String name = f.getElementName();
-						if (name.equals(""))
-							name = ".";
+						if (name.equals("")) //$NON-NLS-1$
+							name = "."; //$NON-NLS-1$
 						if (f.hasChildren() || f.getNonJavaResources().length > 0)
 							map.put(name, f);
 					}
