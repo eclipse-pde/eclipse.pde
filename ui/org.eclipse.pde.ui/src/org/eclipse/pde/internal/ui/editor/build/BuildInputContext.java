@@ -16,10 +16,10 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.text.*;
+import org.eclipse.pde.internal.core.text.build.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.*;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.pde.internal.ui.model.build.*;
 import org.eclipse.text.edits.*;
 import org.eclipse.ui.*;
 

@@ -11,8 +11,8 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.model.bundle.BundleModel;
 
 public class RenameAutostartResolution extends ManifestHeaderErrorResolution {
 

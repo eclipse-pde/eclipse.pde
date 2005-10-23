@@ -11,14 +11,20 @@
 
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.views.contentoutline.*;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.pde.internal.core.text.IEditingModel;
+import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.part.IPageSite;
+import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 /**
  * Content outline page for the XML editor.

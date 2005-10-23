@@ -12,14 +12,14 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.text.bundle.Bundle;
+import org.eclipse.pde.internal.core.text.bundle.BundleModel;
+import org.eclipse.pde.internal.core.text.bundle.RequiredExecutionEnvironmentHeader;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
-import org.eclipse.pde.internal.ui.model.bundle.Bundle;
-import org.eclipse.pde.internal.ui.model.bundle.ManifestHeader;
-import org.eclipse.pde.internal.ui.model.bundle.RequiredExecutionEnvironmentHeader;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -116,15 +116,11 @@ public class RequiredExecutionEnvironmentSection extends PDESection {
 	public void refresh() {
 		RequiredExecutionEnvironmentHeader header = getHeader();
 		if (header != null) {
-			String minJ2ME = header.getMinimumJ2ME();
-			String minJRE = header.getMinimumJRE();
-			if (minJ2ME != null) fJ2MECombo.setText(minJ2ME);
-			else fJ2MECombo.setText(""); //$NON-NLS-1$
-			if (minJRE != null) fJRECombo.setText(minJRE);
-			else fJRECombo.setText(""); //$NON-NLS-1$
+			fJRECombo.setText(header.getMinimumJRE());
+			fJ2MECombo.setText(header.getMinimumJ2ME());
 		} else {
-			fJ2MECombo.setText(""); //$NON-NLS-1$
 			fJRECombo.setText(""); //$NON-NLS-1$
+			fJ2MECombo.setText(""); //$NON-NLS-1$
 		}
 	}
 	
@@ -146,11 +142,13 @@ public class RequiredExecutionEnvironmentSection extends PDESection {
 		return (BundleInputContext) manager.findContext(BundleInputContext.CONTEXT_ID);
 	}
 	
+	
 	private Bundle getBundle() {
 		BundleInputContext context = getBundleContext();
 		if (context != null) {
-			IBundleModel model = (IBundleModel)context.getModel();
-			return (Bundle)model.getBundle();
+			BundleModel model = (BundleModel)context.getModel();
+			if (model != null)
+				return (Bundle)model.getBundle();
 		}
 		return null;
 	}
@@ -159,16 +157,16 @@ public class RequiredExecutionEnvironmentSection extends PDESection {
 		RequiredExecutionEnvironmentHeader header = getHeader();
 		if (header != null) {
 			if (isJRE)
-				newValue = header.updateJRE(newValue);
+				header.updateJRE(newValue);
 			else
-				newValue = header.updateJ2ME(newValue);
-		}
-		getBundle().setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, newValue);
+				header.updateJ2ME(newValue);
+		} else
+			getBundle().setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, newValue);
 	}
 	
 	private RequiredExecutionEnvironmentHeader getHeader() {
-		ManifestHeader header = getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-		if (header != null && header instanceof RequiredExecutionEnvironmentHeader)
+		IManifestHeader header = getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
+		if (header instanceof RequiredExecutionEnvironmentHeader)
 			return (RequiredExecutionEnvironmentHeader) header;
 		return null;
 	}

@@ -1,8 +1,8 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.model.bundle.BundleModel;
 import org.eclipse.ui.IMarkerResolution;
 
 public class RemoveExportPkgResolution extends ManifestHeaderErrorResolution

@@ -20,14 +20,14 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.internal.core.text.IDocumentRange;
+import org.eclipse.pde.internal.core.text.build.BuildEntry;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.KeyValueSourcePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
-import org.eclipse.pde.internal.ui.model.IDocumentRange;
-import org.eclipse.pde.internal.ui.model.build.BuildEntry;
 import org.eclipse.swt.graphics.Image;
 
 public class BuildSourcePage extends KeyValueSourcePage {

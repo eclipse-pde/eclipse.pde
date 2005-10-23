@@ -23,15 +23,14 @@ import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.plugin.*;
 
 public abstract class BundlePluginModelBase extends AbstractModel
-		implements
-			IBundlePluginModelBase,
-			IPluginModelFactory {
+		implements IBundlePluginModelBase, IPluginModelFactory {
+	
 	private IBundleModel fBundleModel;
 	private ISharedExtensionsModel fExtensionsModel;
-	private IBundlePluginBase fBundlePluginBase;
+	private BundlePluginBase fBundlePluginBase;
 	private IBuildModel fBuildModel;
 	private BundleDescription fBundleDescription;
-	private boolean enabled;
+	
 	public BundlePluginModelBase() {
 		getPluginBase();
 	}
@@ -133,9 +132,7 @@ public abstract class BundlePluginModelBase extends AbstractModel
 		Object[] objects = event.getChangedObjects();
 		if (objects!= null && objects.length > 0) {
 			if (objects[0] instanceof IPluginImport) {
-				((BundlePluginBase)fBundlePluginBase).updateImports();				
-			} else if (objects[0] instanceof IPluginLibrary) {
-				((BundlePluginBase)fBundlePluginBase).updateLibraries();
+				fBundlePluginBase.updateImport((IPluginImport)objects[0]);				
 			}
 		}
 	}
@@ -263,15 +260,12 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	 * @return Returns the enabled.
 	 */
 	public boolean isEnabled() {
-		return enabled;
+		return true;
 	}
-	/**
-	 * @param enabled
-	 *            The enabled to set.
-	 */
+
 	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
 	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -279,6 +273,7 @@ public abstract class BundlePluginModelBase extends AbstractModel
 	 */
 	protected void updateTimeStamp() {
 	}
+	
 	public IPluginImport createImport() {
 		PluginImport iimport = new PluginImport();
 		iimport.setModel(this);

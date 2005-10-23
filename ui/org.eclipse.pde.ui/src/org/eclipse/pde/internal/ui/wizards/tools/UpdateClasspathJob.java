@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -20,6 +22,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -57,6 +60,9 @@ public class UpdateClasspathJob extends Job {
 				if (projDesc == null) continue;
 				projDesc.setReferencedProjects(new IProject[0]);
 				project.setDescription(projDesc, null);
+				IFile file = project.getFile(".project"); //$NON-NLS-1$
+				if (file.exists())
+					file.deleteMarkers(PDEMarkerFactory.MARKER_ID, true, IResource.DEPTH_ZERO);
 				ClasspathComputer.setClasspath(project, model);
 				monitor.worked(1);
 				if (monitor.isCanceled())

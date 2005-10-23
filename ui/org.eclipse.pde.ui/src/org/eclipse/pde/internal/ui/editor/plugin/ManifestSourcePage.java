@@ -15,11 +15,11 @@ import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.text.*;
+import org.eclipse.pde.internal.core.text.plugin.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.pde.internal.ui.model.plugin.*;
 import org.eclipse.swt.graphics.*;
 
 public class ManifestSourcePage extends XMLSourcePage {

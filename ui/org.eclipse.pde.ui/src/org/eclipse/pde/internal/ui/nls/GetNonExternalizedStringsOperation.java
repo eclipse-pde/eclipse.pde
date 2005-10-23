@@ -28,17 +28,17 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
+import org.eclipse.pde.internal.core.text.bundle.Bundle;
+import org.eclipse.pde.internal.core.text.bundle.BundleModel;
+import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
+import org.eclipse.pde.internal.core.text.plugin.PluginModel;
+import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.model.bundle.Bundle;
-import org.eclipse.pde.internal.ui.model.bundle.BundleModel;
-import org.eclipse.pde.internal.ui.model.bundle.ManifestHeader;
-import org.eclipse.pde.internal.ui.model.plugin.FragmentModel;
-import org.eclipse.pde.internal.ui.model.plugin.PluginModel;
-import org.eclipse.pde.internal.ui.model.plugin.PluginModelBase;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.osgi.framework.Constants;
 
@@ -122,7 +122,7 @@ public class GetNonExternalizedStringsOperation
 			if (isNotTranslated(model.getBundleModel().getBundle().getHeader(Constants.BUNDLE_NAME))) {
 				manifestFile = getManifestFile(project);
 				if (manifestFile != null) {
-					ManifestHeader header = inspectHeader(project, manifestFile, Constants.BUNDLE_NAME, monitor);
+					IManifestHeader header = inspectHeader(project, manifestFile, Constants.BUNDLE_NAME, monitor);
 					if (header != null)
 						fModelChangeTable.addToChangeTable(model, manifestFile, header, fSelectedModels.contains(model));
 				}
@@ -130,7 +130,7 @@ public class GetNonExternalizedStringsOperation
 			if (isNotTranslated(model.getBundleModel().getBundle().getHeader(Constants.BUNDLE_VENDOR))) {
 				if (manifestFile == null) manifestFile = getManifestFile(project);
 				if (manifestFile != null) {
-					ManifestHeader header = inspectHeader(project, manifestFile, Constants.BUNDLE_VENDOR, monitor);
+					IManifestHeader header = inspectHeader(project, manifestFile, Constants.BUNDLE_VENDOR, monitor);
 					if (header != null)
 						fModelChangeTable.addToChangeTable(model, manifestFile, header, fSelectedModels.contains(model));
 				}
@@ -146,8 +146,8 @@ public class GetNonExternalizedStringsOperation
 		return null;
 	}
 	
-	private ManifestHeader inspectHeader(IProject project, IFile file, String headerName, IProgressMonitor monitor) throws CoreException {
-		ManifestHeader header = null;
+	private IManifestHeader inspectHeader(IProject project, IFile file, String headerName, IProgressMonitor monitor) throws CoreException {
+		IManifestHeader header = null;
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		try {
 			manager.connect(file.getFullPath(), monitor);

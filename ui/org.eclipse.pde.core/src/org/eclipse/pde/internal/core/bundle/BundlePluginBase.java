@@ -10,22 +10,47 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bundle;
 
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.util.ArrayList;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.resolver.*;
-import org.eclipse.osgi.util.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ibundle.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.osgi.framework.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.BundleSpecification;
+import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.core.plugin.IExtensions;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDEStateHelper;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.plugin.PluginImport;
+import org.eclipse.pde.internal.core.plugin.PluginLibrary;
+import org.eclipse.pde.internal.core.text.bundle.BundleClasspathHeader;
+import org.eclipse.pde.internal.core.text.bundle.BundleNameHeader;
+import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
+import org.eclipse.pde.internal.core.text.bundle.BundleVendorHeader;
+import org.eclipse.pde.internal.core.text.bundle.BundleVersionHeader;
+import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
+import org.osgi.framework.Version;
 
-public class BundlePluginBase
-	extends PlatformObject
-	implements IBundlePluginBase, Serializable {
+public class BundlePluginBase extends PlatformObject implements IBundlePluginBase, Serializable {
 
 	private static final long serialVersionUID = 1L;
 	protected IBundlePluginModelBase model;
@@ -67,6 +92,11 @@ public class BundlePluginBase
 		}
 		return null;
 	}
+	
+	protected IManifestHeader getManifestHeader(String key) {
+		IBundle bundle = getBundle();
+		return (bundle != null) ? bundle.getManifestHeader(key) : null;
+	}
 
 	public ISharedPluginModel getModel() {
 		return model;
@@ -88,7 +118,7 @@ public class BundlePluginBase
 		}
 		return null;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -97,9 +127,12 @@ public class BundlePluginBase
 	public void add(IPluginLibrary library) throws CoreException {
 		if (libraries != null) {
 			libraries.add(library);
-			IBundle bundle = getBundle();
-			if (bundle != null) 
-				bundle.setHeader(Constants.BUNDLE_CLASSPATH, writeLibraries());
+			Object header = getManifestHeader(Constants.BUNDLE_CLASSPATH);
+			if (header instanceof BundleClasspathHeader) {
+				((BundleClasspathHeader)header).addLibrary(library.getName());
+			} else {
+				getBundle().setHeader(Constants.BUNDLE_CLASSPATH, library.getName());
+			}
 			fireStructureChanged(library, true);
 		}
 	}
@@ -112,45 +145,28 @@ public class BundlePluginBase
 	public void remove(IPluginLibrary library) throws CoreException {
 		if (libraries != null) {
 			libraries.remove(library);
-			IBundle bundle = getBundle();
-			if (bundle != null) 
-				bundle.setHeader(Constants.BUNDLE_CLASSPATH, writeLibraries());
+			Object header = getManifestHeader(Constants.BUNDLE_CLASSPATH);
+			if (header instanceof BundleClasspathHeader) {
+				((BundleClasspathHeader)header).removeLibrary(library.getName());
+			}
 			fireStructureChanged(library, false);
 		}
 	}
 	
-	private String writeLibraries() {
-		StringBuffer buffer = new StringBuffer();
-		if (libraries != null) {
-			for (int i = 0; i < libraries.size(); i++) {
-				IPluginLibrary library = (IPluginLibrary)libraries.get(i);
-				buffer.append(library.getName());
-				if (i < libraries.size() - 1)
-					buffer.append("," + System.getProperty("line.separator") + " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			}
-		}
-		return buffer.toString();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginImport)
 	 */
-	public void add(IPluginImport pluginImport) throws CoreException {
+	public void add(IPluginImport iimport) throws CoreException {
 		if (imports != null) {
-			imports.add(pluginImport);
-			updateImports();
-			fireStructureChanged(pluginImport, true);
-		}
-	}
-	
-	private String writeImports(int bundleManifestVersion) {
-		StringBuffer buffer = new StringBuffer();
-		if (imports != null) {
-			for (int i = 0; i < imports.size(); i++) {
-				IPluginImport iimport = (IPluginImport)imports.get(i);
-				buffer.append(iimport.getId());
+			imports.add(iimport);
+			Object header = getManifestHeader(Constants.REQUIRE_BUNDLE);
+			if (header instanceof RequireBundleHeader) {
+				((RequireBundleHeader)header).addBundle(iimport);
+			} else {
+				StringBuffer buffer = new StringBuffer(iimport.getId());
+				int bundleManifestVersion = getBundleManifestVersion(getBundle());
 				if (iimport.isOptional())
 					if (bundleManifestVersion > 1)
 						buffer.append(";" + Constants.RESOLUTION_DIRECTIVE + ":=" + Constants.RESOLUTION_OPTIONAL); //$NON-NLS-1$ //$NON-NLS-2$
@@ -164,14 +180,12 @@ public class BundlePluginBase
 				String version = iimport.getVersion();
 				if (version != null && version.trim().length() > 0)
 					buffer.append(";" + Constants.BUNDLE_VERSION_ATTRIBUTE + "=\"" + version.trim() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				if (i < imports.size() - 1) {
-					buffer.append("," + System.getProperty("line.separator") + " "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				}
+				getBundle().setHeader(Constants.REQUIRE_BUNDLE, buffer.toString());
 			}
+			fireStructureChanged(iimport, true);
 		}
-		return buffer.toString();
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -180,7 +194,10 @@ public class BundlePluginBase
 	public void remove(IPluginImport pluginImport) throws CoreException {
 		if (imports != null) {
 			imports.remove(pluginImport);
-			updateImports();
+			Object header = getManifestHeader(Constants.REQUIRE_BUNDLE);
+			if (header instanceof RequireBundleHeader) {
+				((RequireBundleHeader)header).removeBundle(pluginImport.getId());
+			}			
 			fireStructureChanged(pluginImport, false);	
 		}
 	}
@@ -278,51 +295,6 @@ public class BundlePluginBase
 		return bundle == null ? null : bundle.getHeader(Constants.BUNDLE_VENDOR);
 	}
 	
-	protected String parseSingleValuedHeader(String header) {
-		IBundle bundle = getBundle();
-		if (bundle == null)
-			return null;
-		String value = bundle.getHeader(header);
-		if (value == null)
-			return null;
-		try {
-			ManifestElement[] elements = ManifestElement.parseHeader(header, value);
-			if (elements.length > 0)
-				return elements[0].getValue();
-		} catch (BundleException e) {
-		}
-		return null;				
-	}
-		
-	protected String getAttribute(String header, String attribute) {
-		IBundle bundle = getBundle();
-		if (bundle == null)
-			return null;
-		String value = bundle.getHeader(header);
-		if (value == null)
-			return null;
-		try {
-			ManifestElement[] elements = ManifestElement.parseHeader(header, value);
-			if (elements.length > 0)
-				return elements[0].getAttribute(attribute);
-		} catch (BundleException e) {
-		}
-		return null;
-	}
-
-	protected String getParameters(String header) {
-		IBundle bundle = getBundle();
-		if (bundle == null)
-			return null;
-		String value = bundle.getHeader(header);
-		if (value == null)
-			return null;
-		int semiColon = value.indexOf(';');
-		if (semiColon < 0)
-			return null;
-		return value.substring(semiColon);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -332,7 +304,11 @@ public class BundlePluginBase
 		IBundle bundle = getBundle();
 		if (bundle != null) {
 			String old = getProviderName();
-			bundle.setHeader(Constants.BUNDLE_VENDOR, providerName);
+			IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_VENDOR);
+			if (header instanceof BundleVendorHeader)
+				((BundleVendorHeader)header).setVendor(providerName);
+			else
+				bundle.setHeader(Constants.BUNDLE_VENDOR, providerName);
 			model.fireModelObjectChanged(this, IPluginBase.P_PROVIDER, old, providerName);			
 		}
 	}
@@ -348,10 +324,9 @@ public class BundlePluginBase
 			Version version = desc.getVersion();
 			return (version != null) ? version.toString() : null;
 		} 
-		return parseSingleValuedHeader(Constants.BUNDLE_VERSION);
+		return getValue(Constants.BUNDLE_VERSION);
 	}
 	
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -361,10 +336,13 @@ public class BundlePluginBase
 		IBundle bundle = getBundle();
 		if (bundle != null) {
 			String old = getVersion();
-			bundle.setHeader(Constants.BUNDLE_VERSION, version);
+			IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_VERSION);
+			if (header instanceof BundleVersionHeader)
+				((BundleVersionHeader)header).setVersionRange(version);
+			else
+				bundle.setHeader(Constants.BUNDLE_VERSION, version);
 			model.fireModelObjectChanged(this, IPluginBase.P_VERSION, old, version);
 		}
-
 	}
 
 	/*
@@ -373,16 +351,16 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#swap(org.eclipse.pde.core.plugin.IPluginLibrary,
 	 *      org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
-	public void swap(IPluginLibrary l1, IPluginLibrary l2)
-		throws CoreException {
+	public void swap(IPluginLibrary l1, IPluginLibrary l2) throws CoreException {
 		if (libraries != null) {
 			int index1 = libraries.indexOf(l1);
 			int index2 = libraries.indexOf(l2);
 			libraries.set(index1, l2);
 			libraries.set(index2, l1);
-			IBundle bundle = getBundle();
-			if (bundle != null) 
-				bundle.setHeader(Constants.BUNDLE_CLASSPATH, writeLibraries());
+			Object header = getManifestHeader(Constants.BUNDLE_CLASSPATH);
+			if (header instanceof BundleClasspathHeader) {
+				((BundleClasspathHeader)header).swap(index1, index2);
+			}
 			model.fireModelObjectChanged(this, P_IMPORT_ORDER, l1, l2);
 		}		
 	}
@@ -405,7 +383,7 @@ public class BundlePluginBase
 		
 		// reset singleton
 		if (getExtensions().length == 1 && getExtensionPoints().length == 0)
-			setId(getId());
+			updateSingleton(true);
 	}
 
 	/*
@@ -421,7 +399,7 @@ public class BundlePluginBase
 		
 		//reset singleton
 		if (getExtensions().length == 0 && getExtensionPoints().length == 1)
-			setId(getId());
+			updateSingleton(true);
 	}
 	
 	public String getResourceString(String key) {
@@ -470,7 +448,7 @@ public class BundlePluginBase
 			extensions.remove(extension);
 			// reset singleton directive
 			if (getExtensions().length == 0 && getExtensionPoints().length == 0)
-				setId(getId());
+				updateSingleton(false);
 		}
 	}
 
@@ -486,8 +464,14 @@ public class BundlePluginBase
 			extensions.remove(extensionPoint);
 			// reset singleton directive
 			if (getExtensions().length == 0 && getExtensionPoints().length == 0)
-				setId(getId());
+				updateSingleton(false);
 		}
+	}
+
+	private void updateSingleton(boolean singleton) {
+		IManifestHeader header = getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
+		if (header instanceof BundleSymbolicNameHeader)
+			((BundleSymbolicNameHeader)header).setSingleton(singleton);
 	}
 
 	/*
@@ -514,7 +498,10 @@ public class BundlePluginBase
 			int index2 = imports.indexOf(import2);
 			imports.set(index1, import2);
 			imports.set(index2, import1);
-			updateImports();
+			Object header = getManifestHeader(Constants.REQUIRE_BUNDLE);
+			if (header instanceof RequireBundleHeader) {
+				((RequireBundleHeader)header).swap(index1, index2);
+			}
 			model.fireModelObjectChanged(this, P_IMPORT_ORDER, import1, import2);
 		}
 	}
@@ -525,9 +512,25 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.IIdentifiable#getId()
 	 */
 	public String getId() {
-		return parseSingleValuedHeader(Constants.BUNDLE_SYMBOLICNAME);
+		return getValue(Constants.BUNDLE_SYMBOLICNAME);
 	}
 	
+	protected String getValue(String key) {
+		IBundle bundle = getBundle();
+		if (bundle == null)
+			return null;
+		String value = bundle.getHeader(key);
+		if (value == null)
+			return null;
+		try {
+			ManifestElement[] elements = ManifestElement.parseHeader(key, value);
+			if (elements.length > 0)
+				return elements[0].getValue();
+		} catch (BundleException e) {
+		}
+		return null;				
+	}
+		
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -537,15 +540,11 @@ public class BundlePluginBase
 		IBundle bundle = getBundle();
 		if (bundle != null) {
 			String old = getId();
-			StringBuffer buffer = new StringBuffer(id);
-			boolean singleton = getExtensionPoints().length > 0 | getExtensions().length > 0;
-			if (singleton) {
-				buffer.append("; singleton"); //$NON-NLS-1$
-				if (getBundleManifestVersion(bundle) >= 2)
-					buffer.append(":"); //$NON-NLS-1$
-				buffer.append("=true"); //$NON-NLS-1$
-			}
-			bundle.setHeader(Constants.BUNDLE_SYMBOLICNAME, buffer.toString());
+			IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
+			if (header instanceof BundleSymbolicNameHeader)
+				((BundleSymbolicNameHeader)header).setId(id);
+			else 
+				bundle.setHeader(Constants.BUNDLE_SYMBOLICNAME, id);
 			model.fireModelObjectChanged(this, IPluginBase.P_ID, old, id);
 		}
 	}
@@ -565,7 +564,7 @@ public class BundlePluginBase
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
 	 */
 	public String getName() {
-		return parseSingleValuedHeader(Constants.BUNDLE_NAME);
+		return getValue(Constants.BUNDLE_NAME);
 	}
 
 	/*
@@ -577,22 +576,15 @@ public class BundlePluginBase
 		IBundle bundle = getBundle();
 		if (bundle != null) {
 			String old = getName();
-			bundle.setHeader(Constants.BUNDLE_NAME, name);
+			IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_NAME);
+			if (header instanceof  BundleNameHeader)
+				((BundleNameHeader)header).setBundleName(name);
+			else
+				bundle.setHeader(Constants.BUNDLE_NAME, name);
 			model.fireModelObjectChanged(this, IPluginBase.P_NAME, old, name);
 		}
 	}
 	
-	public void updateImports() {
-		IBundle bundle = getBundle();
-		if (bundle != null) 
-			bundle.setHeader(Constants.REQUIRE_BUNDLE, writeImports(getBundleManifestVersion(bundle)));		
-	}
-	
-	public void updateLibraries() {
-		IBundle bundle = getBundle();
-		if (bundle != null) 
-			bundle.setHeader(Constants.BUNDLE_CLASSPATH, writeLibraries());				
-	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -665,6 +657,12 @@ public class BundlePluginBase
 		} catch (NumberFormatException e) {
 			return 1; // default to 1
 		}
+	}
+
+	public void updateImport(IPluginImport iimport) {
+		Object header = getManifestHeader(Constants.REQUIRE_BUNDLE);
+		if (header instanceof RequireBundleHeader && imports != null)
+			((RequireBundleHeader)header).updateBundle(imports.indexOf(iimport), iimport);
 	}
 
 }

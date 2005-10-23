@@ -3,13 +3,13 @@ package org.eclipse.pde.internal.ui.nls;
 import java.util.Properties;
 
 import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
+import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
+import org.eclipse.pde.internal.core.text.plugin.PluginAttribute;
+import org.eclipse.pde.internal.core.text.plugin.PluginElementNode;
+import org.eclipse.pde.internal.core.text.plugin.PluginExtensionPointNode;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.ui.model.IDocumentAttribute;
-import org.eclipse.pde.internal.ui.model.IDocumentTextNode;
-import org.eclipse.pde.internal.ui.model.bundle.ManifestHeader;
-import org.eclipse.pde.internal.ui.model.plugin.PluginAttribute;
-import org.eclipse.pde.internal.ui.model.plugin.PluginElementNode;
-import org.eclipse.pde.internal.ui.model.plugin.PluginExtensionPointNode;
 
 public class ModelChangeElement {
 	

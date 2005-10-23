@@ -32,13 +32,13 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.text.bundle.Bundle;
+import org.eclipse.pde.internal.core.text.bundle.LazyStartHeader;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.model.bundle.Bundle;
-import org.eclipse.pde.internal.ui.model.bundle.LazyStartHeader;
-import org.eclipse.pde.internal.ui.model.bundle.ManifestHeader;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -82,7 +82,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		fLazyStart.setEnabled(isEditable());
 		fLazyStart.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				ManifestHeader header = getLazyStartHeader();
+				IManifestHeader header = getLazyStartHeader();
 				if (header instanceof LazyStartHeader) {
 					((LazyStartHeader)header).setLazyStart(fLazyStart.getSelection());
 				} else {
@@ -200,7 +200,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		IPlugin plugin = (IPlugin)model.getPluginBase();
 		fClassEntry.setValue(plugin.getClassName(), true);
 		if (fLazyStart != null) {
-			ManifestHeader header = getLazyStartHeader();
+			IManifestHeader header = getLazyStartHeader();
 			if (header instanceof LazyStartHeader) {
 				fLazyStart.setSelection(((LazyStartHeader)header).isLazyStart());
 			}
@@ -208,12 +208,12 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		super.refresh();
 	}
 	
-	private ManifestHeader getLazyStartHeader() {
+	private IManifestHeader getLazyStartHeader() {
 		IBundle bundle = getBundle();
 		if (bundle instanceof Bundle) {
-			ManifestHeader header = ((Bundle)bundle).getManifestHeader(ICoreConstants.ECLIPSE_LAZYSTART);
+			IManifestHeader header = bundle.getManifestHeader(ICoreConstants.ECLIPSE_LAZYSTART);
 			if (header == null)
-				header = ((Bundle)bundle).getManifestHeader(ICoreConstants.ECLIPSE_AUTOSTART);
+				header = bundle.getManifestHeader(ICoreConstants.ECLIPSE_AUTOSTART);
 			return header;
 		}
 		return null;

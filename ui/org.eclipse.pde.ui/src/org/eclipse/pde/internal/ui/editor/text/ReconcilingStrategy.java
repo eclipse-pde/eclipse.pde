@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.reconciler.*;
+import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 
 public class ReconcilingStrategy implements IReconcilingStrategy {
 	

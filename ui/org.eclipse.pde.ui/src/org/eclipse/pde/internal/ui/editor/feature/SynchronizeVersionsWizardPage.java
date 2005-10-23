@@ -31,23 +31,23 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.core.text.AbstractEditingModel;
+import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IEditingModel;
+import org.eclipse.pde.internal.core.text.bundle.Bundle;
+import org.eclipse.pde.internal.core.text.bundle.BundleModel;
+import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
+import org.eclipse.pde.internal.core.text.plugin.PluginBaseNode;
+import org.eclipse.pde.internal.core.text.plugin.PluginModel;
+import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.model.AbstractEditingModel;
-import org.eclipse.pde.internal.ui.model.IDocumentAttribute;
-import org.eclipse.pde.internal.ui.model.IEditingModel;
-import org.eclipse.pde.internal.ui.model.bundle.Bundle;
-import org.eclipse.pde.internal.ui.model.bundle.BundleModel;
-import org.eclipse.pde.internal.ui.model.bundle.ManifestHeader;
-import org.eclipse.pde.internal.ui.model.plugin.FragmentModel;
-import org.eclipse.pde.internal.ui.model.plugin.PluginBaseNode;
-import org.eclipse.pde.internal.ui.model.plugin.PluginModel;
-import org.eclipse.pde.internal.ui.model.plugin.PluginModelBase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -202,7 +202,7 @@ public boolean finish() {
 
 	private TextEdit modifyVersion(BundleModel model, String targetVersion) {
 		Bundle bundle = (Bundle)model.getBundle();
-		ManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_VERSION);
+		IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_VERSION);
 		header.setValue(targetVersion);
 		return new ReplaceEdit(header.getOffset(), header.getLength(), header.write()); 
 	}

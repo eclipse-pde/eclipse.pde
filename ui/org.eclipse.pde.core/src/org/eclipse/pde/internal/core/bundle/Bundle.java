@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bundle;
 
-import java.util.*;
-import org.eclipse.pde.internal.core.ibundle.*;
+import java.util.Properties;
+
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
 import org.osgi.framework.Constants;
 
 public class Bundle extends BundleObject implements IBundle {
@@ -44,17 +47,24 @@ public class Bundle extends BundleObject implements IBundle {
 	public void load(Properties properties) {
 		fProperties = properties;
 	}
+	
 	public String getLocalization() {
 		return getHeader(Constants.BUNDLE_LOCALIZATION);
 	}
+	
 	public void setLocalization(String localization) {
 		setHeader(Constants.BUNDLE_LOCALIZATION, localization);
 	}
+	
 	public void renameHeader(String key, String newKey) {
 		if (fProperties == null)
 			fProperties = new Properties();
 		if (fProperties.containsKey(key)) {
 			fProperties.put(newKey, fProperties.remove(key));
 		}
+	}
+	
+	public IManifestHeader getManifestHeader(String key) {
+		return new ManifestHeader(key, getHeader(key), this, System.getProperty("line.separator")); //$NON-NLS-1$
 	}
 }

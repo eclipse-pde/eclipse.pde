@@ -40,18 +40,20 @@ import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModelFactory;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.core.text.bundle.BundleModel;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.model.bundle.Bundle;
-import org.eclipse.pde.internal.ui.model.bundle.BundleModel;
-import org.eclipse.pde.internal.ui.model.bundle.ExportPackageHeader;
-import org.eclipse.pde.internal.ui.model.bundle.ExportPackageObject;
+import org.eclipse.pde.internal.ui.correction.BundleTextChangeListener;
+import org.eclipse.pde.internal.ui.correction.IModelTextChangeListener;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.IPluginContentWizard;
-import org.eclipse.text.edits.ReplaceEdit;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
@@ -234,10 +236,7 @@ public class NewLibraryPluginCreationOperation extends
 							IStatus.ERROR,
 							PDEPlugin.PLUGIN_ID,
 							IStatus.OK,
-							NLS
-									.bind(
-											PDEUIMessages.NewProjectCreationOperation_errorImportingJar,
-											jar), e));
+							NLS.bind(PDEUIMessages.NewProjectCreationOperation_errorImportingJar,jar), e));
 		}
 	}
 
@@ -254,34 +253,30 @@ public class NewLibraryPluginCreationOperation extends
 			IDocument document = buffer.getDocument();
 			BundleModel model = new BundleModel(document, false);
 			model.load();
-			TextEdit edit = removeRootExportPackage(model);
-			if (edit != null) {
-				try {
-					edit.apply(document);
-				} catch (BadLocationException e) {
-					PDEPlugin.logException(e);
+			if (model.isLoaded()) {
+				IModelTextChangeListener listener = new BundleTextChangeListener(document);
+				model.addModelChangedListener(listener);
+				IManifestHeader header = model.getBundle().getManifestHeader(Constants.EXPORT_PACKAGE);
+				if (header instanceof ExportPackageHeader) {
+					ExportPackageHeader export = (ExportPackageHeader)header;
+					if (export.hasPackage("."))
+						export.removePackage(".");
 				}
-				buffer.commit(monitor, true);
+				TextEdit[] edits = listener.getTextOperations();
+				if (edits.length > 0) {
+					MultiTextEdit multi = new MultiTextEdit();
+					multi.addChildren(edits);
+					multi.apply(document);
+					buffer.commit(null, true);
+				}
 			}
+		} catch (MalformedTreeException e) {
+			PDEPlugin.log(e);
+		} catch (BadLocationException e) {
+			PDEPlugin.log(e);
 		} finally {
 			manager.disconnect(file.getFullPath(), monitor);
 		}
-
-	}
-
-	private TextEdit removeRootExportPackage(BundleModel model) {
-		Bundle bundle = (Bundle) model.getBundle();
-		ExportPackageHeader header = (ExportPackageHeader) bundle
-				.getManifestHeader(Constants.EXPORT_PACKAGE);
-		ExportPackageObject[] packages = header.getPackages();
-		for (int i = 0; i < packages.length; i++) {
-			if (".".equals(packages[i].getName())) { //$NON-NLS-1$
-				header.removePackage(packages[i]);
-				return new ReplaceEdit(header.getOffset(), header.getLength(),
-						header.write()); 
-			}
-		}
-		return null;
 	}
 
 	protected void setPluginLibraries(WorkspacePluginModelBase model)
@@ -297,8 +292,7 @@ public class NewLibraryPluginCreationOperation extends
 			String[] paths = fData.getLibraryPaths();
 			for (int i = 0; i < paths.length; i++) {
 				File jarFile = new File(paths[i]);
-				IPluginLibrary library = model.getPluginFactory()
-						.createLibrary();
+				IPluginLibrary library = model.getPluginFactory().createLibrary();
 				library.setName(jarFile.getName());
 				library.setExported(true);
 				pluginBase.add(library);

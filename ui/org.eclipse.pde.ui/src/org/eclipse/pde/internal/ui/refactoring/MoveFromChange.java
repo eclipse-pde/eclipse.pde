@@ -13,21 +13,39 @@ package org.eclipse.pde.internal.ui.refactoring;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.pde.internal.core.text.bundle.PDEManifestElement;
+import org.osgi.framework.BundleException;
 
 public class MoveFromChange extends TextFileChange {
 	
-	ManifestElement fElement;
+	PDEManifestElement fElement;
 
 	public MoveFromChange(String name, IFile file) {
 		super(name, file);
 	}
 	
 	public ManifestElement getMovedElement() {
-		return fElement;
+		try {
+			String value = fElement.write();
+			String name = fElement.getHeader().getName();
+			ManifestElement[] elements = ManifestElement.parseHeader(name, value);
+			if (elements.length > 0)
+				return elements[0];
+		} catch (BundleException e) {
+		}
+		return null;
 	}
 	
-	public void setMovedElement(ManifestElement element) {
+	public String getMovedText() {
+		return fElement.write();
+	}
+	
+	public void setMovedElement(PDEManifestElement element) {
 		fElement = element;
+	}
+	
+	public String getPackageName() {
+		return fElement.getValue();
 	}
 
 }

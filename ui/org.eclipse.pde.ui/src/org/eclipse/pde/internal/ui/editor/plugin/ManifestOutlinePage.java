@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
+import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
+import org.eclipse.pde.internal.core.text.bundle.PackageFriend;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.build.*;
-import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
-import org.eclipse.pde.internal.ui.model.bundle.ExportPackageObject;
-import org.eclipse.pde.internal.ui.model.bundle.ImportPackageObject;
-import org.eclipse.pde.internal.ui.model.bundle.PackageFriend;
 
 public class ManifestOutlinePage extends FormOutlinePage {
 	/**

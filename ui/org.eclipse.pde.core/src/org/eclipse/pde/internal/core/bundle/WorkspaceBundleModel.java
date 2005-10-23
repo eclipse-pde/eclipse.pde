@@ -16,6 +16,8 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ibundle.IBundleModelFactory;
+import org.eclipse.pde.internal.core.text.bundle.BundleModelFactory;
 
 public class WorkspaceBundleModel extends BundleModel implements IEditableModel {
 	private static final long serialVersionUID = 1L;
@@ -25,6 +27,8 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 	private boolean fDirty;
 
 	private boolean fEditable = true;
+
+	private IBundleModelFactory fFactory;
 
 	public WorkspaceBundleModel(IFile file) {
 		fUnderlyingResource = file;
@@ -114,5 +118,11 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 
 	public void setEditable(boolean editable) {
 		fEditable = editable;
+	}
+
+	public IBundleModelFactory getFactory() {
+		if (fFactory == null)
+			fFactory = new BundleModelFactory(this);
+		return fFactory;
 	}
 }

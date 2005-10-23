@@ -20,11 +20,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.pde.internal.core.text.IDocumentKey;
+import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
 import org.eclipse.pde.internal.ui.editor.text.AnnotationHover;
-import org.eclipse.pde.internal.ui.editor.text.IReconcilingParticipant;
 import org.eclipse.pde.internal.ui.editor.text.ReconcilingStrategy;
-import org.eclipse.pde.internal.ui.model.IDocumentKey;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
 public abstract class KeyValueSourcePage extends PDESourcePage {

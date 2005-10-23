@@ -23,11 +23,16 @@ Export-Package: org.eclipse.pde.core,
  org.eclipse.pde.internal.core.schema;x-friends:="org.eclipse.pde,org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.search;x-friends:="org.eclipse.pde,org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.site;x-friends:="org.eclipse.pde,org.eclipse.pde.ui",
+ org.eclipse.pde.internal.core.text;x-friends:="org.eclipse.pde,org.eclipse.pde.ui",
+ org.eclipse.pde.internal.core.text.build;x-friends:="org.eclipse.pde,org.eclipse.pde.ui",
+ org.eclipse.pde.internal.core.text.bundle;x-friends:="org.eclipse.pde,org.eclipse.pde.ui",
+ org.eclipse.pde.internal.core.text.plugin;x-friends:="org.eclipse.pde,org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.util;x-friends:="org.eclipse.pde,org.eclipse.pde.ui"
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.jdt.core,
  org.eclipse.team.core,
  org.eclipse.update.configurator,
- org.eclipse.core.expressions
+ org.eclipse.core.expressions,
+ org.eclipse.text
 Eclipse-LazyStart: true

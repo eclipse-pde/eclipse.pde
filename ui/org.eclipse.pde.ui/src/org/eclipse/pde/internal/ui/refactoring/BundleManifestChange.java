@@ -20,45 +20,42 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
-import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.ui.model.bundle.BasePackageHeader;
-import org.eclipse.pde.internal.ui.model.bundle.Bundle;
-import org.eclipse.pde.internal.ui.model.bundle.BundleModel;
-import org.eclipse.pde.internal.ui.model.bundle.ExportPackageHeader;
-import org.eclipse.pde.internal.ui.model.bundle.ExportPackageObject;
-import org.eclipse.pde.internal.ui.model.bundle.ManifestHeader;
-import org.eclipse.pde.internal.ui.model.bundle.PackageObject;
-import org.eclipse.text.edits.DeleteEdit;
-import org.eclipse.text.edits.InsertEdit;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.text.bundle.BasePackageHeader;
+import org.eclipse.pde.internal.core.text.bundle.Bundle;
+import org.eclipse.pde.internal.core.text.bundle.BundleModel;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
+import org.eclipse.pde.internal.core.text.bundle.PDEManifestElement;
+import org.eclipse.pde.internal.core.text.bundle.PackageObject;
+import org.eclipse.pde.internal.ui.correction.BundleTextChangeListener;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
 import org.osgi.framework.Constants;
 
 public class BundleManifestChange {
 	
-	public static Change createMoveToPackageChange(IFile file, ManifestElement element, IProgressMonitor monitor) throws CoreException {
+	public static Change createMoveToPackageChange(IFile file, MoveFromChange change, IProgressMonitor monitor) throws CoreException {
 		try {
 			Bundle bundle = getBundle(file, monitor);
 			if (bundle == null)
 				return null;
+
+			BundleModel model = (BundleModel)bundle.getModel();
+			BundleTextChangeListener listener = new BundleTextChangeListener(model.getDocument());
+			bundle.getModel().addModelChangedListener(listener);
 			
-			TextEdit edit = addPackage(
-					(ExportPackageHeader)bundle.getManifestHeader(getExportedPackageHeader(bundle)),
-					(BundleModel)bundle.getModel(),
-					element);
-			if (edit != null) {
-				TextFileChange change = new TextFileChange("", file); //$NON-NLS-1$
-				change.setEdit(edit);
-				return change;
-			}
+			String headerName = getExportedPackageHeader(bundle);
+			addPackage((ExportPackageHeader)bundle.getManifestHeader(headerName),
+					   (BundleModel)bundle.getModel(),
+					   change);
+			return createChange(listener, file);
 		} catch (CoreException e) {
 		} catch (MalformedTreeException e) {
 		} catch (BadLocationException e) {
@@ -74,23 +71,22 @@ public class BundleManifestChange {
 			if (bundle == null)
 				return null;
 			
-			MultiTextEdit multiEdit = new MultiTextEdit();
+			BundleModel model = (BundleModel)bundle.getModel();
+			BundleTextChangeListener listener = new BundleTextChangeListener(model.getDocument());
+			bundle.getModel().addModelChangedListener(listener);
+			
+			PDEManifestElement export = removePackage(bundle.getManifestHeader(Constants.EXPORT_PACKAGE), 
+													  packageName);
+			PDEManifestElement provide = removePackage(bundle.getManifestHeader(ICoreConstants.PROVIDE_PACKAGE),
+													   packageName);
+			removePackage(bundle.getManifestHeader(Constants.IMPORT_PACKAGE), packageName);
 
-			ManifestElement export = removePackage(bundle.getManifestHeader(Constants.EXPORT_PACKAGE), 
-					packageName, 
-					multiEdit);
-
-			ManifestElement provide = removePackage(bundle.getManifestHeader(ICoreConstants.PROVIDE_PACKAGE),
-					packageName, 
-					multiEdit);
-
-			removePackage(bundle.getManifestHeader(Constants.IMPORT_PACKAGE), 
-					packageName, 
-					multiEdit);
-
-			if (multiEdit.hasChildren()) {
+			TextEdit[] operations = listener.getTextOperations();
+			if (operations.length > 0) {
 				MoveFromChange change = new MoveFromChange("", file); //$NON-NLS-1$
-				change.setEdit(multiEdit);
+				MultiTextEdit edit = new MultiTextEdit();
+				edit.addChildren(operations);
+				change.setEdit(edit);
 				if (export != null)
 					change.setMovedElement(export);
 				else if (provide != null)
@@ -106,7 +102,6 @@ public class BundleManifestChange {
 		return null;
 	}
 
-	
 	public static Change createRenameChange(IFile file, IJavaElement element, String newText,
 			IProgressMonitor monitor) throws CoreException {
 		try {
@@ -114,52 +109,36 @@ public class BundleManifestChange {
 			if (bundle == null)
 				return null;
 			
-			MultiTextEdit multiEdit = new MultiTextEdit();
-			
+			BundleModel model = (BundleModel)bundle.getModel();
+			BundleTextChangeListener listener = new BundleTextChangeListener(model.getDocument());
+			bundle.getModel().addModelChangedListener(listener);		
 			if (element instanceof IType) {
 				String oldText = ((IType)element).getFullyQualifiedName('$');
 				resetHeaderValue(bundle.getManifestHeader(Constants.BUNDLE_ACTIVATOR), 
 						oldText, 
-						newText,
-						multiEdit);
-				
-				resetHeaderValue(bundle.getManifestHeader("Plugin-Class"),  //$NON-NLS-1$
+						newText);				
+				resetHeaderValue(bundle.getManifestHeader(ICoreConstants.PLUGIN_CLASS), 
 						oldText, 
-						newText,
-						multiEdit);
+						newText);
 			} else if (element instanceof IPackageFragment) {
 				String oldText = element.getElementName();				
 				resetHeaderValue(bundle.getManifestHeader(Constants.BUNDLE_ACTIVATOR), 
 						oldText, 
-						newText,
-						multiEdit);			
-
-				resetHeaderValue(bundle.getManifestHeader("Plugin-Class"),  //$NON-NLS-1$
+						newText);			
+				resetHeaderValue(bundle.getManifestHeader(ICoreConstants.PLUGIN_CLASS),  
 						oldText, 
-						newText,
-						multiEdit);					
-				
+						newText);									
 				renamePackage(bundle.getManifestHeader(Constants.EXPORT_PACKAGE), 
 						oldText, 
-						newText,
-						multiEdit);
-
+						newText);
 				renamePackage(bundle.getManifestHeader(ICoreConstants.PROVIDE_PACKAGE),
 						oldText, 
-						newText,
-						multiEdit);
-
+						newText);
 				renamePackage(bundle.getManifestHeader(Constants.IMPORT_PACKAGE), 
 						oldText, 
-						newText,
-						multiEdit);
+						newText);
 			}
-			
-			if (multiEdit.hasChildren()) {
-				TextFileChange change = new TextFileChange("", file); //$NON-NLS-1$
-				change.setEdit(multiEdit);
-				return change;
-			}
+			return createChange(listener, file);
 		} catch (CoreException e) {
 		} catch (MalformedTreeException e) {
 		} catch (BadLocationException e) {
@@ -169,59 +148,54 @@ public class BundleManifestChange {
 		return null;
 	}
 	
-	private static void resetHeaderValue(ManifestHeader header, String oldText, String newText, MultiTextEdit multi) {
+	private static Change createChange(BundleTextChangeListener listener, IFile file) {
+		TextEdit[] operations = listener.getTextOperations();
+		if (operations.length > 0) {
+			TextFileChange change = new TextFileChange("", file); //$NON-NLS-1$
+			MultiTextEdit edit = new MultiTextEdit();
+			edit.addChildren(operations);
+			change.setEdit(edit);
+			return change;
+		}
+		return null;
+	}
+	
+	private static void resetHeaderValue(IManifestHeader header, String oldText, String newText) {
 		if (header != null) {
 			String value = header.getValue();
 			if (value != null && value.startsWith(oldText) && value.lastIndexOf('.') <= oldText.length()) {
 				StringBuffer buffer = new StringBuffer(newText);
 				buffer.append(value.substring(oldText.length()));
 				header.setValue(buffer.toString());
-				multi.addChild(new ReplaceEdit(header.getOffset(), header.getLength(), header.write()));
 			}
 		}
 	}
 	
-	private static void renamePackage(ManifestHeader header, String oldName, String newName, MultiTextEdit multi) {
+	private static void renamePackage(IManifestHeader header, String oldName, String newName) {
 		if (header instanceof BasePackageHeader) {
 			BasePackageHeader bHeader = (BasePackageHeader)header;
-			if (bHeader.renamePackage(oldName, newName))
-				multi.addChild(new ReplaceEdit(header.getOffset(), header.getLength(), bHeader.write()));
+			bHeader.renamePackage(oldName, newName);
 		}	
 	}
 
-	private static ManifestElement removePackage(ManifestHeader header, String name, MultiTextEdit multi) {
-		ManifestElement result = null;
+	private static PDEManifestElement removePackage(IManifestHeader header, String name) {
+		PDEManifestElement result = null;
 		if (header instanceof BasePackageHeader) {
 			BasePackageHeader bHeader = (BasePackageHeader)header;
-			Object obj = bHeader.removePackage(name);
-			if (obj instanceof PackageObject) {
-				if (!bHeader.isEmpty())
-					multi.addChild(new ReplaceEdit(header.getOffset(), header.getLength(), bHeader.write()));
-				else
-					multi.addChild(new DeleteEdit(header.getOffset(), header.getLength()));
-				result = ((PackageObject)obj).getManifestElement();
-			}
+			result = ((PackageObject)bHeader.removePackage(name));
 		}
 		return result;
 	}
 
-	private static TextEdit addPackage(ExportPackageHeader header, BundleModel model, ManifestElement element) {
+	private static void addPackage(ExportPackageHeader header, BundleModel model, MoveFromChange change) {
 		if (header != null) {
-			if (!header.hasPackage(element.getValue())) {
-				header.addPackage(new ExportPackageObject(header, element, getVersionAttribute(header.getBundle())));
-				return new ReplaceEdit(header.getOffset(), header.getLength(), header.write());
+			if (!header.hasPackage(change.getPackageName())) {
+				header.addPackage(new ExportPackageObject(header, change.getMovedElement(), getVersionAttribute(header.getBundle())));
 			}
 		} else {
-			String ld = TextUtilities.getDefaultLineDelimiter(model.getDocument());
-			header = new ExportPackageHeader(
-							getExportedPackageHeader(model.getBundle()), 
-							"",  //$NON-NLS-1$
-							model.getBundle(), 
-							ld);
-			header.addPackage(new ExportPackageObject(header, element, getVersionAttribute(header.getBundle())));
-			return new InsertEdit(model.getDocument().getLength(), header.write()); 
+			IBundle bundle = model.getBundle();
+			bundle.setHeader(getExportedPackageHeader(bundle), change.getMovedText());
 		}
-		return null;
 	}
 	
     private static String getVersionAttribute(IBundle bundle) {

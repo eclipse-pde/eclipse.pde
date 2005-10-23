@@ -15,10 +15,10 @@ import java.util.HashMap;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.ui.model.IDocumentKey;
-import org.eclipse.pde.internal.ui.model.bundle.ManifestHeader;
-import org.eclipse.pde.internal.ui.model.bundle.PackageFriend;
-import org.eclipse.pde.internal.ui.model.bundle.PackageObject;
+import org.eclipse.pde.internal.core.text.IDocumentKey;
+import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
+import org.eclipse.pde.internal.core.text.bundle.PDEManifestElement;
+import org.eclipse.pde.internal.core.text.bundle.PackageFriend;
 import org.eclipse.text.edits.DeleteEdit;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.ReplaceEdit;
@@ -38,8 +38,8 @@ public class BundleTextChangeListener implements IModelTextChangeListener {
 		if (objects != null) {
 			for (int i = 0; i < objects.length; i++) {
 				Object object = objects[i];
-                if (object instanceof PackageObject)
-                    object = ((PackageObject)object).getHeader();
+                if (object instanceof PDEManifestElement)
+                    object = ((PDEManifestElement)object).getHeader();
                 else if (object instanceof PackageFriend)
                     object = ((PackageFriend)object).getHeader();
                 

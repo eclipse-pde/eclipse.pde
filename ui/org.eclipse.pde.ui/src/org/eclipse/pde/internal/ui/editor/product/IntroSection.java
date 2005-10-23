@@ -32,18 +32,20 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.iproduct.IIntroInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
 import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
+import org.eclipse.pde.internal.core.text.bundle.BundleModel;
+import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.correction.BundleTextChangeListener;
+import org.eclipse.pde.internal.ui.correction.IModelTextChangeListener;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.pde.internal.ui.model.bundle.Bundle;
-import org.eclipse.pde.internal.ui.model.bundle.BundleModel;
-import org.eclipse.pde.internal.ui.model.bundle.ManifestHeader;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.wizards.product.ProductIntroWizard;
 import org.eclipse.swt.SWT;
@@ -55,6 +57,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -250,28 +253,29 @@ public class IntroSection extends PDESection {
 			
 			BundleModel model = new BundleModel(document, false);
 			model.load();
-			if (!model.isLoaded())
-				return;
-			Bundle bundle = (Bundle)model.getBundle();
-			edit = createAddToHeaderTextEdit(document, bundle, Constants.REQUIRE_BUNDLE, ld);
-			if (edit != null) {
-				edit.apply(document);
-				buffer.commit(monitor, true);
+			if (model.isLoaded()) {
+				IModelTextChangeListener listener = new BundleTextChangeListener(document);
+				model.addModelChangedListener(listener);
+				IManifestHeader header = model.getBundle().getManifestHeader(Constants.REQUIRE_BUNDLE);
+				if (header instanceof RequireBundleHeader) {
+					((RequireBundleHeader)header).addBundle(INTRO_POINT);
+				} else {
+					model.getBundle().setHeader(Constants.REQUIRE_BUNDLE, INTRO_POINT);
+				}
+				TextEdit[] edits = listener.getTextOperations();
+				if (edits.length > 0) {
+					MultiTextEdit multi = new MultiTextEdit();
+					multi.addChildren(edits);
+					multi.apply(document);
+					buffer.commit(monitor, true);
+				}
+				
 			}
 		} catch (MalformedTreeException e) {
 		} catch (BadLocationException e) {
 		} finally {
 			manager.disconnect(manifestPath, monitor);
 		}
-	}
-	
-	private TextEdit createAddToHeaderTextEdit(IDocument doc, Bundle bundle, String headerName, String ld) {
-		ManifestHeader header = bundle.getManifestHeader(headerName);
-		if (header == null) 
-			return new InsertEdit(doc.getLength(), Constants.REQUIRE_BUNDLE + ": " + INTRO_POINT + ld); //$NON-NLS-1$
-		if (header.getValue().indexOf(INTRO_POINT) == -1)
-			return new InsertEdit(header.getOffset() + header.getLength() - ld.length(), "," + ld + " " + INTRO_POINT); //$NON-NLS-1$ //$NON-NLS-2$
-		return null;
 	}
 	
 	private TextEdit checkTrailingNewline(IDocument document, String ld) {

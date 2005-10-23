@@ -368,9 +368,9 @@ public class MinimalState {
 					// need to make sure J2SE profiles are sorted ahead of all other profiles
 					String p1 = (String) profile1;
 					String p2 = (String) profile2;
-					if (p1.startsWith("J2SE") && !p2.startsWith("J2SE"))
+					if (p1.startsWith("J2SE") && !p2.startsWith("J2SE")) //$NON-NLS-1$ //$NON-NLS-2$
 						return -1;
-					if (!p1.startsWith("J2SE") && p2.startsWith("J2SE"))
+					if (!p1.startsWith("J2SE") && p2.startsWith("J2SE")) //$NON-NLS-1$ //$NON-NLS-2$
 						return 1;
 					return -p1.compareTo(p2);
 				}

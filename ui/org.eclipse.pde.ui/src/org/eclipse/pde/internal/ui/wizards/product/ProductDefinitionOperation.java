@@ -10,52 +10,61 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
-import java.io.*;
-import java.lang.reflect.*;
-import java.util.Enumeration;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.filebuffers.*;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.iproduct.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.model.*;
-import org.eclipse.pde.internal.ui.model.bundle.Bundle;
-import org.eclipse.pde.internal.ui.model.bundle.ManifestHeader;
-import org.eclipse.pde.internal.ui.model.plugin.*;
-import org.eclipse.pde.internal.ui.refactoring.BundleManifestChange;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.text.edits.*;
-import org.eclipse.ui.branding.*;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.Constants;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginAttribute;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
+import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.core.iproduct.IWindowImages;
+import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
+import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
+import org.eclipse.pde.internal.core.text.plugin.PluginElementNode;
+import org.eclipse.pde.internal.core.text.plugin.PluginModel;
+import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.ReplaceEdit;
+import org.eclipse.text.edits.TextEdit;
+import org.eclipse.ui.branding.IProductConstants;
 
-public class ProductDefinitionOperation implements IRunnableWithProgress {
+public class ProductDefinitionOperation extends BaseManifestOperation {
 
-	protected String fPluginId;
 	private String fProductId;
 	private String fApplication;
-	private Shell fShell;
 	private IProduct fProduct;
 	private IDocument fDocument;
 
 	public ProductDefinitionOperation(IProduct product, String pluginId, String productId, String application, Shell shell) {
-		fPluginId = pluginId;
+		super(shell, pluginId);
 		fProductId = productId;
 		fApplication = application;
-		fShell = shell;
 		fProduct = product;
 	}
 	
@@ -68,7 +77,7 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 			} else {
 				modifyExistingFile(file, monitor);
 			}
-			updateManifest(monitor);
+			updateSingleton(monitor);
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} catch (IOException e) {
@@ -78,87 +87,6 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 		} catch (BadLocationException e) {
 			throw new InvocationTargetException(e);
 		}
-	}
-	
-	private void updateManifest(IProgressMonitor monitor) throws CoreException, MalformedTreeException, BadLocationException {
-		IFile file = PDECore.getDefault().getModelManager().findModel(fPluginId).getUnderlyingResource().getProject().getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
-		if (file.exists()) {
-			IStatus status = PDEPlugin.getWorkspace().validateEdit(new IFile[] { file }, fShell);
-			if (status.getSeverity() != IStatus.OK)
-				throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, NLS.bind(PDEUIMessages.ProductDefinitionOperation_readOnly, fPluginId), null)); //$NON-NLS-1$ 
-
-			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-			try {
-				manager.connect(file.getFullPath(), monitor);
-				ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath());
-				
-				IDocument document = buffer.getDocument();
-				Bundle bundle = BundleManifestChange.getBundle(file, monitor);
-				if (bundle != null) {
-					ManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
-					ManifestElement[] elements = new ManifestElement[0];
-					if (header != null)
-						elements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, header.getValue());
-					if (elements.length != 0 && elements[0] != null) {
-						String replacement = getModifiedElementString(elements[0], 
-																	  Constants.SINGLETON_DIRECTIVE, 
-																	  "true", //$NON-NLS-1$
-																	  true); //$NON-NLS-1$
-						if (replacement != null) {
-							new ReplaceEdit(header.getOffset(), 
-											header.getLength() - 1,
-											header.getName() + ": " + replacement).apply(document); //$NON-NLS-1$
-							buffer.commit(monitor, true);
-						}
-					}
-				}
-			} catch (BundleException e) {
-			} finally {
-				manager.disconnect(file.getFullPath(), monitor);
-			}
-		}
-	}
-	
-	protected static String getModifiedElementString(ManifestElement element, String replacementKey, String replacementValue, boolean isDirective) {
-		String singleton = element.getDirective(replacementKey);
-		if (singleton == null || !(singleton.equals(replacementValue))) {
-			StringBuffer headBuffer = new StringBuffer(element.getValue());
-			// append all existing attributes and directives
-			// except for the replacement directive/attribute
-			Enumeration akeys = element.getKeys();
-			while (akeys != null && akeys.hasMoreElements()) {
-				String key = (String)akeys.nextElement();
-				if (!(!isDirective && key.equals(replacementKey))) {
-					headBuffer.append("; "); //$NON-NLS-1$
-					String[] values = element.getAttributes(key);
-					headBuffer.append(key);
-					headBuffer.append("=\""); //$NON-NLS-1$
-					for (int i = 0; i < values.length; i++) {
-						if (i != 0) headBuffer.append(", "); //$NON-NLS-1$
-						headBuffer.append(values[i]);
-					}
-					headBuffer.append("\""); //$NON-NLS-1$
-				}
-			}
-			Enumeration dkeys = element.getDirectiveKeys();
-			while(dkeys != null && dkeys.hasMoreElements()) {
-				String key = (String)dkeys.nextElement();
-				if (!(isDirective && key.equals(replacementKey))) {
-					headBuffer.append("; "); //$NON-NLS-1$
-					headBuffer.append(key);
-					headBuffer.append(":=\""); //$NON-NLS-1$
-					headBuffer.append(element.getDirective(key));
-					headBuffer.append("\""); //$NON-NLS-1$
-				}
-			}
-			headBuffer.append("; "); //$NON-NLS-1$
-			headBuffer.append(replacementKey);
-			headBuffer.append(isDirective ? ":=\"" : "=\""); //$NON-NLS-1$ //$NON-NLS-2$
-			headBuffer.append(replacementValue);
-			headBuffer.append("\""); //$NON-NLS-1$
-			return headBuffer.toString();
-		}		
-		return null;
 	}
 	
 	private IFile getFile() {
@@ -319,7 +247,7 @@ public class ProductDefinitionOperation implements IRunnableWithProgress {
 	}
 	
 	private void modifyExistingFile(IFile file, IProgressMonitor monitor) throws CoreException, IOException, MalformedTreeException, BadLocationException {
-		IStatus status = PDEPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
+		IStatus status = PDEPlugin.getWorkspace().validateEdit(new IFile[] {file}, getShell());
 		if (status.getSeverity() != IStatus.OK)
 			throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, NLS.bind(PDEUIMessages.ProductDefinitionOperation_readOnly, fPluginId), null)); //$NON-NLS-1$ 
 		

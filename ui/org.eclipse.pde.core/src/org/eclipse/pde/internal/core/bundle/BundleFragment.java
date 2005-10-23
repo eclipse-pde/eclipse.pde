@@ -12,8 +12,10 @@ package org.eclipse.pde.internal.core.bundle;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.core.text.bundle.FragmentHostHeader;
 import org.osgi.framework.*;
 
 public class BundleFragment extends BundlePluginBase implements IBundleFragment {
@@ -21,7 +23,7 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 	private static final long serialVersionUID = 1L;
 
 	public String getPluginId() {
-		return parseSingleValuedHeader(Constants.FRAGMENT_HOST);
+		return getValue(Constants.FRAGMENT_HOST);
 	}
 
 	/* (non-Javadoc)
@@ -55,7 +57,12 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 		IBundle bundle = getBundle();
 		if (bundle != null) {
 			String oldValue = getPluginId();
-			bundle.setHeader(Constants.FRAGMENT_HOST, writeFragmentHost(id, getPluginVersion()));
+			IManifestHeader header = getManifestHeader(Constants.FRAGMENT_HOST);
+			if (header instanceof FragmentHostHeader) {
+				((FragmentHostHeader)header).setHostId(id);
+			} else {
+				bundle.setHeader(Constants.FRAGMENT_HOST, writeFragmentHost(id, getPluginVersion()));
+			}
 			model.fireModelObjectChanged(this, P_PLUGIN_ID, oldValue, id);
 		}
 	}
@@ -67,7 +74,12 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 		IBundle bundle = getBundle();
 		if (bundle != null) {
 			String oldValue = getPluginVersion();
-			bundle.setHeader(Constants.FRAGMENT_HOST, writeFragmentHost(getPluginId(), version));
+			IManifestHeader header = getManifestHeader(Constants.FRAGMENT_HOST);
+			if (header instanceof FragmentHostHeader) {
+				((FragmentHostHeader)header).setHostRange(version);
+			} else {
+				bundle.setHeader(Constants.FRAGMENT_HOST, writeFragmentHost(getPluginId(), version));
+			}
 			model.fireModelObjectChanged(this, P_PLUGIN_VERSION, oldValue, version);
 		}
 	}
@@ -87,5 +99,21 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 			buffer.append(";" + Constants.BUNDLE_VERSION_ATTRIBUTE + "=\"" + version.trim() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return buffer.toString();
+	}
+	
+	private String getAttribute(String key, String attribute) {
+		IBundle bundle = getBundle();
+		if (bundle == null)
+			return null;
+		String value = bundle.getHeader(key);
+		if (value == null)
+			return null;
+		try {
+			ManifestElement[] elements = ManifestElement.parseHeader(key, value);
+			if (elements.length > 0)
+				return elements[0].getAttribute(attribute);
+		} catch (BundleException e) {
+		}
+		return null;				
 	}
 }

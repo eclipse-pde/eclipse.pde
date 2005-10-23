@@ -17,6 +17,8 @@ public interface IBundle {
 	void renameHeader(String key, String newKey);
 	
 	String getHeader(String key);
+	
+	IManifestHeader getManifestHeader(String key);
     
     IBundleModel getModel();
     

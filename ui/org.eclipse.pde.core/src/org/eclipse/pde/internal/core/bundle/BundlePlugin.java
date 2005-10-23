@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.text.bundle.BundleActivatorHeader;
 import org.osgi.framework.*;
 
 public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
@@ -26,7 +27,7 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 	 * @see org.eclipse.pde.core.plugin.IPlugin#getClassName()
 	 */
 	public String getClassName() {
-		return parseSingleValuedHeader(getClassHeader());
+		return getValue(getClassHeader());
 	}
 
 	/*
@@ -38,26 +39,27 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 		IBundle bundle = getBundle();
 		if (bundle != null) {
 			String old = getClassName();
-			bundle.setHeader(getClassHeader(), className);
+			String classHeader = getClassHeader();
+			IManifestHeader header = bundle.getManifestHeader(classHeader);
+			if (header instanceof BundleActivatorHeader)
+				((BundleActivatorHeader)header).setClassName(className);
+			else
+				bundle.setHeader(getClassHeader(), className);
 			model.fireModelObjectChanged(this, P_CLASS_NAME, old, className);
 		}
 	}
+	
 	private String getClassHeader() {
-		boolean compatibilityMode = false;
 		IPluginImport[] imports = getImports();
 		for (int i = 0; i < imports.length; i++) {
-			IPluginImport iimport = imports[i];
-			String id = iimport.getId();
-			if (id.equals("org.eclipse.core.runtime.compatibility")) { //$NON-NLS-1$
-				compatibilityMode = true;
-				break;
-			}
+			if ("org.eclipse.core.runtime.compatibility".equals(imports[i].getId()))//$NON-NLS-1$
+				return ICoreConstants.PLUGIN_CLASS;
 		}
-		return compatibilityMode ? "Plugin-Class" : Constants.BUNDLE_ACTIVATOR; //$NON-NLS-1$
+		return Constants.BUNDLE_ACTIVATOR; 
 	}
 
 	public boolean hasExtensibleAPI() {
-		return "true".equals(parseSingleValuedHeader(ICoreConstants.EXTENSIBLE_API)); //$NON-NLS-1$ 
+		return "true".equals(getValue(ICoreConstants.EXTENSIBLE_API)); //$NON-NLS-1$ 
 	}
 	
 }

@@ -14,12 +14,12 @@ import java.util.*;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.text.IDocumentKey;
+import org.eclipse.pde.internal.core.text.IDocumentRange;
+import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.model.IDocumentKey;
-import org.eclipse.pde.internal.ui.model.IDocumentRange;
-import org.eclipse.pde.internal.ui.model.bundle.*;
 import org.eclipse.swt.graphics.*;
 
 public class BundleSourcePage extends KeyValueSourcePage {

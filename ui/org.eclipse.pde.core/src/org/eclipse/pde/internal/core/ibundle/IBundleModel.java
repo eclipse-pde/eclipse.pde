@@ -43,4 +43,6 @@ public interface IBundleModel extends IModel, IModelChangeProvider {
 	 */
 	public boolean isFragmentModel();
 	
+	public IBundleModelFactory getFactory();
+	
 }

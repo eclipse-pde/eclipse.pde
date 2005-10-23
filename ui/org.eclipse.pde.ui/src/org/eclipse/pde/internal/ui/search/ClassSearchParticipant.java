@@ -32,21 +32,22 @@ import org.eclipse.pde.core.plugin.IPluginParent;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
+import org.eclipse.pde.internal.core.text.AbstractEditingModel;
+import org.eclipse.pde.internal.core.text.bundle.Bundle;
+import org.eclipse.pde.internal.core.text.bundle.BundleModel;
+import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
+import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
+import org.eclipse.pde.internal.core.text.plugin.PluginAttribute;
+import org.eclipse.pde.internal.core.text.plugin.PluginModel;
+import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.model.AbstractEditingModel;
-import org.eclipse.pde.internal.ui.model.bundle.Bundle;
-import org.eclipse.pde.internal.ui.model.bundle.BundleModel;
-import org.eclipse.pde.internal.ui.model.bundle.ManifestHeader;
-import org.eclipse.pde.internal.ui.model.plugin.FragmentModel;
-import org.eclipse.pde.internal.ui.model.plugin.PluginAttribute;
-import org.eclipse.pde.internal.ui.model.plugin.PluginModel;
-import org.eclipse.pde.internal.ui.model.plugin.PluginModelBase;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.osgi.framework.BundleException;
@@ -218,7 +219,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		for (int i = 0; i < H_TOTAL; i++) {
 			if (fSearchFor == S_FOR_TYPES && (i == H_IMP || i == H_EXP))
 				continue;
-			ManifestHeader header = bundle.getManifestHeader(SEARCH_HEADERS[i]);
+			IManifestHeader header = bundle.getManifestHeader(SEARCH_HEADERS[i]);
 			if (header != null) {
 				try {
 					ManifestElement[] elements = ManifestElement.parseHeader(header.getName(), header.getValue());
@@ -257,10 +258,10 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		return fSearchPattern.matcher(value.subSequence(0, value.length()));
 	}
 	
-	private int[] getOffsetOfElement(ManifestHeader header, String value, int initOff) throws CoreException {
+	private int[] getOffsetOfElement(IManifestHeader header, String value, int initOff) throws CoreException {
 		int offset = 0;
 		int length = 0;
-		IResource res = header.getModel().getUnderlyingResource();
+		IResource res = ((ManifestHeader)header).getModel().getUnderlyingResource();
 		if (res instanceof IFile) {
 			IFile file = (IFile)res;
 			IProgressMonitor monitor = new NullProgressMonitor();

@@ -10,17 +10,34 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.build.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.model.plugin.*;
-import org.eclipse.pde.internal.ui.model.plugin.PluginObjectNode;
-import org.eclipse.pde.internal.ui.model.plugin.PluginAttribute;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IModelChangeProvider;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.plugin.IPluginAttribute;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.IPluginParent;
+import org.eclipse.pde.internal.core.build.BuildObject;
+import org.eclipse.pde.internal.core.build.IBuildObject;
+import org.eclipse.pde.internal.core.plugin.AttributeChangedEvent;
+import org.eclipse.pde.internal.core.plugin.PluginAttribute;
+import org.eclipse.pde.internal.core.plugin.PluginElement;
+import org.eclipse.pde.internal.core.plugin.PluginObject;
+import org.eclipse.pde.internal.core.text.plugin.PluginElementNode;
+import org.eclipse.pde.internal.core.text.plugin.PluginLibraryNode;
+import org.eclipse.pde.internal.core.text.plugin.PluginObjectNode;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.ModelUndoManager;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 
 /**
  * @version 	1.0
@@ -167,7 +184,7 @@ public class PluginUndoManager extends ModelUndoManager {
 
 	private void executeAttributeChange(AttributeChangedEvent e, boolean undo) {
 		PluginElement element = (PluginElement) e.getChangedObjects()[0];
-		PluginAttribute att = (PluginAttribute) e.getChagedAttribute();
+		PluginAttribute att = (PluginAttribute) e.getChangedAttribute();
 		Object oldValue = e.getOldValue();
 		Object newValue = e.getNewValue();
 		try {

@@ -1,28 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry output="binary" kind="src" path="src_ant">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="src_Forms">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="src_samples">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
-		<attributes>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry output="binary" kind="src" path="src_ant"/>
+	<classpathentry kind="src" path="src_samples"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

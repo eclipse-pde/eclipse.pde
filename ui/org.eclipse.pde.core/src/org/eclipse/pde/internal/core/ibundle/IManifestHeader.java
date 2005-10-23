@@ -11,9 +11,10 @@
 package org.eclipse.pde.internal.core.ibundle;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.pde.internal.core.text.IDocumentKey;
 
 
-public interface IManifestHeader {
+public interface IManifestHeader extends IDocumentKey {
 	
 	/**
 	 * Returns the header key
@@ -24,7 +25,7 @@ public interface IManifestHeader {
 	 * Returns the header value
 	 */	
 	String getValue();
-	
+		
 	/**
 	 * Sets the name of the header
 	 * This method will throw a CoreException if the model
@@ -42,4 +43,11 @@ public interface IManifestHeader {
 	 * @param value the header value
 	 */
 	void setValue(String value);
+	
+	/**
+	 * Forces the header to update its value based on the current components,
+	 * attributes and directives it contains.
+	 * 
+	 */
+	void update();
 }
