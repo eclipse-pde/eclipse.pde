@@ -30,6 +30,8 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.XMLConfiguration;
+import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ModifyEvent;
@@ -158,7 +160,8 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 	private String fPreErrorKey;
 
 	private IDocument fEmptyDoc;
-//	private ColorManager fColorManager;
+	private ColorManager fColorManager;
+	private XMLConfiguration fXMLConfig;
 	
 	protected ExternalizeStringsWizardPage(ModelChangeTable changeTable) {
 		super(PAGE_NAME);
@@ -192,13 +195,14 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 				}
 			}
 		};
+		fColorManager = new ColorManager();
+		fXMLConfig = new XMLConfiguration(fColorManager);
 	}
 	
-//	public void dispose() {
-//		if (fColorManager != null)
-//			fColorManager.dispose();
-//		super.dispose();
-//	}
+	public void dispose() {
+		fColorManager.dispose();
+		super.dispose();
+	}
 	
 	public void createControl(Composite parent) {
 
@@ -374,10 +378,10 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		label.setText(PDEUIMessages.ExternalizeStringsWizardPage_sourceLabel);
 		label.setLayoutData(new GridData());
 
-		fSourceViewer = new SourceViewer(composite, null, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
-		fSourceViewer.getControl().setFont(JFaceResources.getTextFont());
-		fSourceViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		fSourceViewer = new SourceViewer(composite, null, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		fSourceViewer.setEditable(false);
+		fSourceViewer.getTextWidget().setFont(JFaceResources.getTextFont());
+		fSourceViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		fEmptyDoc = new Document();
 		fSourceViewer.setDocument(fEmptyDoc);
@@ -430,15 +434,11 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		TreeItem item = fInputViewer.getTree().getSelection()[0];
 		IPluginModelBase model = ((ModelChange)item.getParentItem().getData()).getParentModel();
 		
-//		if (fSourceViewer.getDocument() != null && !fSourceViewer.getDocument().equals(fEmptyDoc))
-//			fSourceViewer.unconfigure();
-//		if (sourceFile.getFileExtension().equalsIgnoreCase("xml")) { //$NON-NLS-1$
-//			if (fColorManager != null) {
-//				fColorManager.dispose();
-//			}
-//			fColorManager = new ColorManager();
-//			fSourceViewer.configure(new XMLConfiguration(fColorManager));
-//		}
+		if (fSourceViewer.getDocument() != null)
+			fSourceViewer.unconfigure();
+		if (sourceFile.getFileExtension().equalsIgnoreCase("xml")) { //$NON-NLS-1$
+			fSourceViewer.configure(fXMLConfig);
+		}
 		
 		fSourceViewer.setDocument(document);
 		updatePropertiesLabel(model);
@@ -483,7 +483,9 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 			error = getErrorMessage(PDEUIMessages.ExternalizeStringsWizardPage_keyEmptyError, oldKey);
 		} else if (key.charAt(0) == '#' || key.charAt(0) == '!' || key.charAt(0) == '%') {
 			error = getErrorMessage(PDEUIMessages.ExternalizeStringsWizardPage_keyCommentError, oldKey);
-		} else if (key.indexOf(":") != -1 || key.indexOf("=") != -1 || key.indexOf(" ") != -1) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		} else if ((key.indexOf(":") != -1 && key.indexOf("\\:") == -1) || //$NON-NLS-1$ //$NON-NLS-2$
+				   (key.indexOf("=") != -1 && key.indexOf("\\=") == -1) || //$NON-NLS-1$ //$NON-NLS-2$
+				    key.indexOf(" ") != -1) { //$NON-NLS-1$
 			error = getErrorMessage(PDEUIMessages.ExternalizeStringsWizardPage_keyError, oldKey);
 		} else if ((!key.equals(oldKey) || fPreErrorKey != null) &&
 				properties.containsKey(key)) {
