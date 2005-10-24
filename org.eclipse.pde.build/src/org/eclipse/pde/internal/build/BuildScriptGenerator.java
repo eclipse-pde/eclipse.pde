@@ -103,16 +103,14 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 				//Filtering is not required here, since we are only generating the
 				// build for a plugin or a fragment
 				String model = (String) iterator.next();
+				generator.setBuildSiteFactory(null);
 				generator.setModelId(model);
 				
 				generator.setPluginPath(pluginPath);
-				generator.setBuildSiteFactory(null);
 				generator.setDevEntries(devEntries);
 				generator.setCompiledElements(generator.getCompiledElements());
 				generator.setBuildingOSGi(isBuildingOSGi());
 				generator.setSignJars(signJars);
-				generator.generate();
-				
 				generator.generate();
 			}
 		} finally {
