@@ -166,10 +166,12 @@ public class OrganizeManifestJob extends WorkspaceJob {
 							String name = fragment.getElementName();
 							if (name.length() == 0)
 								name = "."; //$NON-NLS-1$
-							if ((fragment.hasChildren() || fragment.getNonJavaResources().length > 0) && !header.hasPackage(name)) {
-								header.addPackage(new ExportPackageObject(header, fragment, Constants.VERSION_ATTRIBUTE));
+							if ((fragment.hasChildren() || fragment.getNonJavaResources().length > 0)){
+								if (!header.hasPackage(name)) 
+									header.addPackage(new ExportPackageObject(header, fragment, Constants.VERSION_ATTRIBUTE));
+								else
+									packages.add(name);
 							}
-							packages.add(name);
 						}
 					}
 				}

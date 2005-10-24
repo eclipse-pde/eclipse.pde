@@ -11,7 +11,11 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.builders.PDEMarkerFactory;
+import org.eclipse.pde.internal.ui.IPreferenceConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
 
@@ -37,22 +41,59 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 			case PDEMarkerFactory.PROJECT_BUILD_ORDER_ENTRIES:
 				return new IMarkerResolution[] {new RemoveStaticProjectReferences(AbstractPDEMarkerResolution.REMOVE_TYPE)};
 			case PDEMarkerFactory.EXPORT_PKG_NOT_EXIST:
-				String packageName = marker.getAttribute("packageName", (String)null); //$NON-NLS-1$
-				if (packageName != null)
-					return new IMarkerResolution[] {new RemoveExportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, packageName)};
-				break;
+				return getUnresolvedExportProposals(marker);
 			case PDEMarkerFactory.IMPORT_PKG_NOT_AVAILABLE:
-				packageName = marker.getAttribute("packageName", (String)null); //$NON-NLS-1$
-				if (packageName != null)
-					return new IMarkerResolution[] {new RemoveImportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, packageName),
-													new OptionalImportPackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE, packageName)};
-				break;
+				return getUnresolvedImportPackageProposals(marker);
 			case PDEMarkerFactory.REQ_BUNDLE_NOT_AVAILABLE:
-				String bundleId = marker.getAttribute("bundleId", (String)null); //$NON-NLS-1$
-				return new IMarkerResolution[] {new RemoveRequireBundleResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, bundleId),
-												new OptionalRequireBundleResolution(AbstractPDEMarkerResolution.RENAME_TYPE, bundleId)};		
+				return getUnresolvedBundle(marker);
 		}
 		return NO_RESOLUTIONS;
+	}
+	
+	private IMarkerResolution[] getUnresolvedExportProposals(IMarker marker) {
+		String packageName = marker.getAttribute("packageName", (String)null); //$NON-NLS-1$
+		if (packageName != null) {
+			IResource res = marker.getResource();
+			if (res != null)
+				return new IMarkerResolution[] {
+						new RemoveExportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, packageName),
+						new OrganizeExportPackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE, res.getProject())};
+		}
+		return NO_RESOLUTIONS;
+	}
+	
+	private IMarkerResolution[] getUnresolvedImportPackageProposals(IMarker marker) {
+		String packageName = marker.getAttribute("packageName", (String)null); //$NON-NLS-1$
+		if (packageName == null)
+			return NO_RESOLUTIONS;
+		
+		boolean optionalPkg = marker.getAttribute("optional", false); //$NON-NLS-1$
+		if (optionalPkg) 
+			return new IMarkerResolution[] {new RemoveImportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, packageName)};
+
+		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		boolean removeImports = store.getString(IPreferenceConstants.PROP_RESOLVE_IMPORTS).equals(IPreferenceConstants.VALUE_REMOVE_IMPORT);
+		return new IMarkerResolution[] {
+				new RemoveImportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, packageName),
+				new OptionalImportPackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE, packageName),
+				new OrganizeImportPackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE, removeImports)};		
+	}
+	
+	private IMarkerResolution[] getUnresolvedBundle(IMarker marker) {
+		String bundleId = marker.getAttribute("bundleId", (String)null); //$NON-NLS-1$
+		if (bundleId == null)
+			return NO_RESOLUTIONS;
+		
+		boolean optionalBundle = marker.getAttribute("optional", false); //$NON-NLS-1$
+		if (optionalBundle) 
+			return new IMarkerResolution[] {new RemoveRequireBundleResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, bundleId)};
+
+		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		boolean removeImports = store.getString(IPreferenceConstants.PROP_RESOLVE_IMPORTS).equals(IPreferenceConstants.VALUE_REMOVE_IMPORT);
+		return new IMarkerResolution[] {
+				new RemoveRequireBundleResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, bundleId),
+				new OptionalRequireBundleResolution(AbstractPDEMarkerResolution.RENAME_TYPE, bundleId),
+				new OrganizeRequireBundleResolution(AbstractPDEMarkerResolution.RENAME_TYPE, removeImports)};		
 	}
 
 	/*

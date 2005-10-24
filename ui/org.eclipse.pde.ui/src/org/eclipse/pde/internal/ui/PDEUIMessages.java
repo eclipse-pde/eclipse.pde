@@ -2226,5 +2226,17 @@ public class PDEUIMessages extends NLS {
 
 	public static String OrganizeManifestAction_name;
 
+	public static String OrganizeRequireBundleResolution_Description;
+
+	public static String OrganizeRequireBundleResolution_Label;
+
+	public static String OrganizeImportPackageResolution_Description;
+
+	public static String OrganizeImportPackageResolution_Label;
+
+	public static String OrganizeExportPackageResolution_Description;
+
+	public static String OrganizeExportPackageResolution_Label;
+
 
 }
