@@ -25,6 +25,10 @@ public class ImportPackageHeader extends BasePackageHeader {
     	return new ImportPackageObject(this, element, getVersionAttribute());
     }
     
+    public ImportPackageObject getPackage(String packageName) {
+    	return (fElementMap == null) ? null : (ImportPackageObject) fElementMap.get(packageName);
+    }
+    
     public ImportPackageObject[] getPackages() {
     	PDEManifestElement[] elements = getElements();
     	ImportPackageObject[] result = new ImportPackageObject[elements.length];

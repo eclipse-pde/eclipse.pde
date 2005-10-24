@@ -31,6 +31,10 @@ public class ExportPackageHeader extends BasePackageHeader {
         return getElementNames();
     }
     
+    public ExportPackageObject getPackage(String packageName) {
+    	return  (fElementMap == null) ? null : (ExportPackageObject) fElementMap.get(packageName);
+    }
+    
     public ExportPackageObject[] getPackages() {
     	PDEManifestElement[] elements = getElements();
     	ExportPackageObject[] result = new ExportPackageObject[elements.length];

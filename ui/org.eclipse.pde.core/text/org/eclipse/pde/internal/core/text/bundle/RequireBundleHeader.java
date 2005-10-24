@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
@@ -33,7 +34,7 @@ public class RequireBundleHeader extends CompositeManifestHeader {
 	}
 	
 	public void addBundle(String id, String version, boolean exported, boolean optional) {
-		PDEManifestElement element = new PDEManifestElement(this, id);
+		RequireBundleObject element = new RequireBundleObject(this, id);
 
 		int bundleManifestVersion = BundlePluginBase.getBundleManifestVersion(getBundle());
 		if (optional)
@@ -56,6 +57,14 @@ public class RequireBundleHeader extends CompositeManifestHeader {
 	
 	public void removeBundle(String id) {
 		removeManifestElement(id);		
+	}
+	
+	public void removeBundle(RequireBundleObject bundle) {
+		removeManifestElement(bundle);
+	}
+	
+	protected PDEManifestElement createElement(ManifestElement element) {
+		return new RequireBundleObject(this, element);
 	}
 	
 	public void updateBundle(int index, IPluginImport iimport) {
@@ -93,6 +102,13 @@ public class RequireBundleHeader extends CompositeManifestHeader {
 			element.setAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE, iimport.getVersion());
 		}
 		update(true);
+	}
+	
+	public RequireBundleObject[] getRequiredBundles() {
+		PDEManifestElement[] elements = getElements();
+		RequireBundleObject[] result = new RequireBundleObject[elements.length];
+    	System.arraycopy(elements, 0, result, 0, elements.length);
+        return result;
 	}
 	
 }
