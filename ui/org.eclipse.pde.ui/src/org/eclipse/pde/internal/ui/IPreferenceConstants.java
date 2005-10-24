@@ -12,11 +12,16 @@ package org.eclipse.pde.internal.ui;
 
 public interface IPreferenceConstants {
 	
-	// Main preference page
+	// Main preference page	
 	public static final String PROP_SHOW_OBJECTS =
 		"Preferences.MainPage.showObjects"; //$NON-NLS-1$
 	public static final String VALUE_USE_IDS = "useIds"; //$NON-NLS-1$
 	public static final String VALUE_USE_NAMES = "useNames"; //$NON-NLS-1$
+	
+	public static final String PROP_RESOLVE_IMPORTS = 
+		"Preferences.MainPage.resolveImports"; //$NON-NLS-1$
+	public static final String VALUE_REMOVE_IMPORT = "removeImport"; //$NON-NLS-1$
+	public static final String VALUE_IMPORT_OPTIONAL = "importOptional"; //$NON-NLS-1$
 	
 	// Editor Outline
 	public static final String PROP_OUTLINE_SORTING = "PDEMultiPageContentOutline.SortingAction.isChecked"; //$NON-NLS-1$

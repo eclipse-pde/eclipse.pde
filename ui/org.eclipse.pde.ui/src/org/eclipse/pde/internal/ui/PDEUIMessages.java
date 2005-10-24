@@ -2192,10 +2192,39 @@ public class PDEUIMessages extends NLS {
 
 	public static String RemoveBuildOrderEntries_label;
 
-	public static String OrganizeExportPkgJob_ok;
-
 	public static String PointSelectionPage_extPointDesc;
 
 	public static String PointSelectionPage_noDescAvailable;
+	
+	public static String MainPreferencePage_ManifestOranizationTitle;
+
+	public static String MainPreferencePage_ResolveImports;
+
+	public static String MainPreferencePage_RemoveImport;
+
+	public static String MainPreferencePage_ImportOptional;
+
+	public static String RemoveRequireBundleResolution_description;
+
+	public static String RemoveRequireBundleResolution_label;
+
+	public static String OptionalRequireBundleResolution_description;
+
+	public static String OptionalRequireBundleResolution_label;
+
+	public static String OrganizeManifestJob_ok;
+
+	public static String OrganizeManifestJob_taskName;
+
+	public static String RemoveImportPkgResolution_description;
+
+	public static String RemoveImportPkgResolution_label;
+
+	public static String OptionalImportPkgResolution_description;
+
+	public static String OptionalImportPkgResolution_label;
+
+	public static String OrganizeManifestAction_name;
+
 
 }

@@ -44,11 +44,11 @@ import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
+import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
+import org.eclipse.pde.internal.core.text.bundle.IModelTextChangeListener;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.correction.BundleTextChangeListener;
-import org.eclipse.pde.internal.ui.correction.IModelTextChangeListener;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.IPluginContentWizard;
@@ -259,8 +259,8 @@ public class NewLibraryPluginCreationOperation extends
 				IManifestHeader header = model.getBundle().getManifestHeader(Constants.EXPORT_PACKAGE);
 				if (header instanceof ExportPackageHeader) {
 					ExportPackageHeader export = (ExportPackageHeader)header;
-					if (export.hasPackage("."))
-						export.removePackage(".");
+					if (export.hasPackage(".")) //$NON-NLS-1$
+						export.removePackage("."); //$NON-NLS-1$
 				}
 				TextEdit[] edits = listener.getTextOperations();
 				if (edits.length > 0) {

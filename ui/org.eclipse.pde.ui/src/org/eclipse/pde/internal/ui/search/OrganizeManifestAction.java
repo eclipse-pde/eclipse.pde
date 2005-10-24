@@ -8,7 +8,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.correction.OrganizeExportPkgJob;
+import org.eclipse.pde.internal.ui.correction.OrganizeManifestJob;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.progress.IProgressConstants;
@@ -44,7 +44,7 @@ public class OrganizeManifestAction implements IWorkbenchWindowActionDelegate {
 	}
 	
 	protected void scheduleJobs(IProject proj) {
-		Job job = new OrganizeExportPkgJob(PDEUIMessages.RemoveExportPkgs_jobName, proj);
+		Job job = new OrganizeManifestJob(PDEUIMessages.OrganizeManifestAction_name, proj);
 		job.setUser(true);
 		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_PSEARCH_OBJ.createImage());
 		job.schedule();
