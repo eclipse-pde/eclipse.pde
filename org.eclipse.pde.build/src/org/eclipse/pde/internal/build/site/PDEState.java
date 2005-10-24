@@ -83,6 +83,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			BundleDescription descriptor;
 			descriptor = factory.createBundleDescription(state, enhancedManifest, bundleLocation.getAbsolutePath(), getNextId());
 			bundleClasspaths.put(new Long(descriptor.getBundleId()), getClasspath(enhancedManifest));
+			rememberQualifierTagPresence(descriptor);
 			if (state.addBundle(descriptor) == true && addedBundle != null)
 				addedBundle.add(descriptor);
 		} catch (BundleException e) {
@@ -91,6 +92,16 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			return false;
 		}
 		return true;
+	}
+
+	private void rememberQualifierTagPresence(BundleDescription descriptor) {
+		Properties bundleProperties = null;
+		bundleProperties = (Properties) descriptor.getUserObject();
+		if (bundleProperties == null) {
+			bundleProperties = new Properties();
+			descriptor.setUserObject(bundleProperties);
+		}
+		bundleProperties.setProperty(PROPERTY_QUALIFIER, "marker"); //$NON-NLS-1$
 	}
 
 	private String[] getClasspath(Dictionary manifest) {
@@ -636,6 +647,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				//Here it is important to reuse the same bundle id than the bundle we are removing so that we don't loose the information about the classpath
 				BundleDescription newBundle = state.getFactory().createBundleDescription(b.getBundleId(), b.getSymbolicName(), new Version(newVersion), b.getLocation(), b.getRequiredBundles(), b.getHost(), b.getImportPackages(), b.getExportPackages(), null, b.isSingleton());
 				state.addBundle(newBundle);
+				rememberQualifierTagPresence(newBundle);
 			}
 		}
 		state.resolve();
