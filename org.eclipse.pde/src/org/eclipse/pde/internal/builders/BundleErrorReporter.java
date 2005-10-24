@@ -780,7 +780,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				continue;
 			}
 			
-			int severity = getRequireBundleSeverity(importPackageElements[i]);
+			boolean optional = isOptional(importPackageElements[i]);
+			int severity = getRequireBundleSeverity(importPackageElements[i], optional);
 			
 			if (!availableExportedPackagesMap.containsKey(importPackageStmt)) {
 				/* No bundle exports this package */
@@ -790,6 +791,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				try {
 					if (marker != null)
 						marker.setAttribute("packageName", importPackageStmt); //$NON-NLS-1$
+					if (optional)
+						marker.setAttribute("optional", true); //$NON-NLS-1$
 				} catch (CoreException e) {
 				}
 				continue;
@@ -1094,7 +1097,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				return;
 			}
 			
-			int severity = getRequireBundleSeverity(requireBundleElements[i]);
+			boolean optional = isOptional(requireBundleElements[i]);
+			int severity = getRequireBundleSeverity(requireBundleElements[i], optional);
 
 			/* This id does not exist in the PDE target platform */
 			if (!availableBundlesMap.containsKey(requireBundleStmt)) {
@@ -1104,6 +1108,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				try {
 					if (marker != null)
 						marker.setAttribute("bundleId", requireBundleElements[i].getValue()); //$NON-NLS-1$
+					if (optional)
+						marker.setAttribute("optional", true); //$NON-NLS-1$
 				} catch (CoreException e) {
 				}
 				continue;
@@ -1134,17 +1140,16 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 		}
 	}
+	
+	private boolean isOptional(ManifestElement element) {
+		return Constants.RESOLUTION_OPTIONAL.equals(element.getDirective(Constants.RESOLUTION_DIRECTIVE))
+					|| "true".equals(element.getAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE)); //$NON-NLS-1$
+	}
 
-	private int getRequireBundleSeverity(ManifestElement requireBundleElement) {
-		boolean optional = Constants.RESOLUTION_OPTIONAL
-				.equals(requireBundleElement
-						.getDirective(Constants.RESOLUTION_DIRECTIVE))
-				|| "true".equals(requireBundleElement //$NON-NLS-1$
-						.getAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE));
-		int severity = CompilerFlags.getFlag(fProject,
-				CompilerFlags.P_UNRESOLVED_IMPORTS);
-		if (optional && severity == CompilerFlags.ERROR) // 
-			severity = CompilerFlags.WARNING;
+	private int getRequireBundleSeverity(ManifestElement requireBundleElement, boolean optional) {
+		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNRESOLVED_IMPORTS);
+		if (optional && severity != CompilerFlags.IGNORE) 
+			severity += 1;
 		return severity;
 	}
 
