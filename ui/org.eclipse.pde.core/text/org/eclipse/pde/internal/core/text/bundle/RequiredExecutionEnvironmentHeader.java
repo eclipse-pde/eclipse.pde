@@ -88,30 +88,42 @@ public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader 
     }
     
     public void updateJRE(String newValue) {
-    	update(fMinJRE, newValue);
-    }
-    
-    public void updateJ2ME(String newValue) {
-    	update(fMinJ2ME, newValue);
-    }
-    
-    private void update(PDEManifestElement element, String newValue) {
-    	if (element != null && newValue.equals(element.getValue()))
+       	if (fMinJRE != null && newValue.equals(fMinJRE.getValue()))
     		return;
     	
     	if (newValue == null || newValue.length() == 0) {
-    		if (element != null) {
-    			removeManifestElement(element);
-    			element = null;
+    		if (fMinJRE != null) {
+    			removeManifestElement(fMinJRE);
+    			fMinJRE = null;
     		}
     	} else {
-    		if (element == null) {
-    			element = new PDEManifestElement(this, newValue);
-    			addManifestElement(element);
+    		if (fMinJRE == null) {
+    			fMinJRE = new PDEManifestElement(this, newValue);
+    			addManifestElement(fMinJRE);
     		} else {
-    			element.setValue(newValue);
+    			fMinJRE.setValue(newValue);
     		}
     	}
     	update(true);
-     }
+    }
+    
+    public void updateJ2ME(String newValue) {
+    	if (fMinJ2ME != null && newValue.equals(fMinJ2ME.getValue()))
+    		return;
+    	
+    	if (newValue == null || newValue.length() == 0) {
+    		if (fMinJ2ME != null) {
+    			removeManifestElement(fMinJ2ME);
+    			fMinJ2ME = null;
+    		}
+    	} else {
+    		if (fMinJ2ME == null) {
+    			fMinJ2ME = new PDEManifestElement(this, newValue);
+    			addManifestElement(fMinJ2ME);
+    		} else {
+    			fMinJ2ME.setValue(newValue);
+    		}
+    	}
+    	update(true);
+    }
 }
