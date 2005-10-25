@@ -41,13 +41,15 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 			ILaunchConfigurationType configType= getJUnitLaunchConfigType();
 			String computedName = DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);
-			wc.setAttribute(IPDELauncherConstants.LOCATION, getDefaultWorkspaceLocation(wc)); //$NON-NLS-1$
+			wc.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultJUnitWorkspaceLocation());
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$
 			wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 			wc.setAttribute(IPDELauncherConstants.DOCLEAR, true);
 			wc.setAttribute(IPDELauncherConstants.ASKCLEAR, false);
 			wc.setAttribute(IPDELauncherConstants.TRACING_CHECKED, IPDELauncherConstants.TRACING_NONE);
+			wc.setAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, false);
+			wc.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, LaunchArgumentsHelper.getDefaultJUnitConfigurationLocation());
 			wc.setAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, true);
 			wc.setAttribute(
 				IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
@@ -72,10 +74,6 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 			PDEPlugin.log(ce);
 		}
 		return config;
-	}
-	
-	protected String getDefaultWorkspaceLocation(ILaunchConfiguration configuration) {
-		return LaunchArgumentsHelper.getDefaultWorkspaceLocation(configuration.getName());
 	}
 	
 }

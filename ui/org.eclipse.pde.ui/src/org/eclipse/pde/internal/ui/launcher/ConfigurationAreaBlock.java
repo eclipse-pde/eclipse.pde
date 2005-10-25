@@ -103,10 +103,13 @@ public class ConfigurationAreaBlock extends BaseBlock {
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, fClearConfig.getSelection());
 	}
 	
-	public void setDefaults(ILaunchConfigurationWorkingCopy configuration, boolean clear) {		
-		configuration.setAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, true);
-		configuration.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, ""); //$NON-NLS-1$
-		configuration.setAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, clear);
+	public void setDefaults(ILaunchConfigurationWorkingCopy configuration, boolean isJUnit) {		
+		configuration.setAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, !isJUnit);
+		configuration.setAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, isJUnit);
+		if (isJUnit) {
+			configuration.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, 
+										DEFAULT_DIR + "pde-junit");  //$NON-NLS-1$
+		}
 	}
 	
 	protected String getName() {
