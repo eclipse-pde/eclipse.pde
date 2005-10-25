@@ -78,17 +78,22 @@ public class WorkspaceDataBlock extends BaseBlock {
 		config.setAttribute(IPDELauncherConstants.ASKCLEAR, fAskClearCheck.getSelection());
 	}
 	
-	public void initializeFrom(ILaunchConfiguration configuration, boolean isJUnit) throws CoreException {
+	public void initializeFrom(ILaunchConfiguration configuration) throws CoreException {
 		fLocationText.setText(configuration.getAttribute(IPDELauncherConstants.LOCATION, 
 														LaunchArgumentsHelper.getDefaultWorkspaceLocation(configuration.getName())));
-		fClearWorkspaceCheck.setSelection(configuration.getAttribute(IPDELauncherConstants.DOCLEAR, isJUnit));
-		fAskClearCheck.setSelection(configuration.getAttribute(IPDELauncherConstants.ASKCLEAR, !isJUnit));
+		fClearWorkspaceCheck.setSelection(configuration.getAttribute(IPDELauncherConstants.DOCLEAR, false));
+		fAskClearCheck.setSelection(configuration.getAttribute(IPDELauncherConstants.ASKCLEAR, true));
 		fAskClearCheck.setEnabled(fClearWorkspaceCheck.getSelection());
 	}
 		
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration, boolean isJUnit) {		
-		configuration.setAttribute(IPDELauncherConstants.LOCATION, 
-				LaunchArgumentsHelper.getDefaultWorkspaceLocation(configuration.getName())); 
+		if (isJUnit) {
+			configuration.setAttribute(IPDELauncherConstants.LOCATION, 
+										LaunchArgumentsHelper.getDefaultJUnitWorkspaceLocation());
+		} else {
+			configuration.setAttribute(IPDELauncherConstants.LOCATION, 
+										LaunchArgumentsHelper.getDefaultWorkspaceLocation(configuration.getName())); 
+		}
 		configuration.setAttribute(IPDELauncherConstants.DOCLEAR, isJUnit);
 		configuration.setAttribute(IPDELauncherConstants.ASKCLEAR, !isJUnit);
 	}

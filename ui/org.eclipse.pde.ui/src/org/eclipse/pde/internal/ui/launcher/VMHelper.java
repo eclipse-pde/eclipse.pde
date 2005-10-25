@@ -11,13 +11,11 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.ArrayList;
-import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -48,29 +46,6 @@ public class VMHelper {
 
 		String version = ((IVMInstall2) inst).getJavaVersion();
 		return version != null && compliance.compareTo(version) <= 0;
-	}
-	
-	public static String[] getAvailableComplianceLevels() {
-		TreeSet set = new TreeSet();
-		IVMInstall[] installs = getAllVMInstances();
-		for (int i = 0; i < installs.length; i++) {
-			if (installs[i] instanceof IVMInstall2) {
-				String version =((IVMInstall2)installs[i]).getJavaVersion();
-				if (version != null) {
-					if (version.startsWith(JavaCore.VERSION_1_5)) {
-						set.add("5.0"); //$NON-NLS-1$
-						set.add(JavaCore.VERSION_1_4);
-						set.add(JavaCore.VERSION_1_3);
-					} else if (version.startsWith(JavaCore.VERSION_1_4)) {
-						set.add(JavaCore.VERSION_1_4);
-						set.add(JavaCore.VERSION_1_3);
-					} else if (version.startsWith(JavaCore.VERSION_1_3)) {
-						set.add(JavaCore.VERSION_1_3);
-					}
-				}			
-			}
-		}
-		return (String[])set.toArray(new String[set.size()]);
 	}
 
 	public static IVMInstall[] getAllVMInstances() {

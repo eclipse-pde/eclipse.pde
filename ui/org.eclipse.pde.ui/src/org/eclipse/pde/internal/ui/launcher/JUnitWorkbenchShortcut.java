@@ -48,7 +48,8 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 			wc.setAttribute(IPDELauncherConstants.DOCLEAR, true);
 			wc.setAttribute(IPDELauncherConstants.ASKCLEAR, false);
 			wc.setAttribute(IPDELauncherConstants.TRACING_CHECKED, IPDELauncherConstants.TRACING_NONE);
-			wc.setAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, false);
+			wc.setAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true);
+			wc.setAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, false);
 			wc.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, LaunchArgumentsHelper.getDefaultJUnitConfigurationLocation());
 			wc.setAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, true);
 			wc.setAttribute(

@@ -226,5 +226,14 @@ public class LaunchArgumentsHelper {
 	public static String getDefaultWorkspaceLocation(String uniqueName) {
 		return LauncherUtils.getDefaultPath().append("runtime-" + uniqueName.replaceAll("\\s", "")).toString();		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
+	
+	public static String getDefaultJUnitWorkspaceLocation() {
+		return LauncherUtils.getDefaultPath().append("junit-workspace").toString(); //$NON-NLS-1$
+	}
+	
+	public static String getDefaultJUnitConfigurationLocation() {
+		return new Path("${workspace_loc}").append("/.metadata/.plugins/org.eclipse.pde.core/pde-junit").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
 
 }
