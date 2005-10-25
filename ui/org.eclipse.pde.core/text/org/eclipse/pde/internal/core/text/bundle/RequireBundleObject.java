@@ -74,7 +74,7 @@ public class RequireBundleObject extends PDEManifestElement {
 		if (bundleManifestVersion > 1)
 			return Constants.RESOLUTION_OPTIONAL.equals(getDirective(Constants.RESOLUTION_DIRECTIVE));
 		
-		return "true".equals(getAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE));
+		return "true".equals(getAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE)); //$NON-NLS-1$
 	}
 	
 	public void setReexported(boolean export) {
@@ -100,7 +100,7 @@ public class RequireBundleObject extends PDEManifestElement {
 		if (bundleManifestVersion > 1)
 			return Constants.VISIBILITY_REEXPORT.equals(getDirective(Constants.VISIBILITY_DIRECTIVE));
 		
-		return "true".equals(getAttribute(ICoreConstants.REPROVIDE_ATTRIBUTE));
+		return "true".equals(getAttribute(ICoreConstants.REPROVIDE_ATTRIBUTE)); //$NON-NLS-1$
 	}
 
 }

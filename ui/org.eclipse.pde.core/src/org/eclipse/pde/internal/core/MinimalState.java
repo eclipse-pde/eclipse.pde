@@ -49,6 +49,7 @@ import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.osgi.service.resolver.VersionConstraint;
 import org.eclipse.osgi.service.resolver.VersionRange;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
@@ -361,20 +362,6 @@ public class MinimalState {
 			fJavaProfiles = getDirJavaProfiles(bundleLocation);
 		else
 			fJavaProfiles = getJarJavaProfiles(bundleLocation);
-		if (fJavaProfiles != null)
-			// sort the javaProfiles in descending order
-			Arrays.sort(fJavaProfiles, new Comparator() {
-				public int compare(Object profile1, Object profile2) {
-					// need to make sure J2SE profiles are sorted ahead of all other profiles
-					String p1 = (String) profile1;
-					String p2 = (String) profile2;
-					if (p1.startsWith("J2SE") && !p2.startsWith("J2SE")) //$NON-NLS-1$ //$NON-NLS-2$
-						return -1;
-					if (!p1.startsWith("J2SE") && p2.startsWith("J2SE")) //$NON-NLS-1$ //$NON-NLS-2$
-						return 1;
-					return -p1.compareTo(p2);
-				}
-			});
 		// if the selected java profile is set; make sure it is still available
 		if (fJavaProfile != null) {
 			if (fJavaProfiles == null)
@@ -387,12 +374,20 @@ public class MinimalState {
 	}
 
 	private String[] getDirJavaProfiles(File bundleLocation) {
+		// try the profile list first
+		File profileList = new File (bundleLocation, "profile.list"); //$NON-NLS-1$
+		if (profileList.exists())
+			try {
+				return getJavaProfiles(new FileInputStream(profileList));
+			} catch (IOException e) {
+				// this should not happen because we just checked if the file exists
+			}
 		String[] profiles = bundleLocation.list(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
 				return name.endsWith(".profile"); //$NON-NLS-1$
 			}
 		});
-		return profiles;
+		return sortProfiles(profiles);
 	}
 
 	private String[] getJarJavaProfiles(File bundleLocation) {
@@ -400,6 +395,14 @@ public class MinimalState {
 		ArrayList results = new ArrayList(6);
 		try {
 			zipFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
+			ZipEntry profileList = zipFile.getEntry("profile.list"); //$NON-NLS-1$
+			if (profileList != null)
+				try {
+					return getJavaProfiles(zipFile.getInputStream(profileList));
+				} catch (IOException e) {
+					// this should not happen, just incase do the default
+				}
+			
 			Enumeration entries = zipFile.entries();
 			while (entries.hasMoreElements()) {
 				String entryName = ((ZipEntry) entries.nextElement()).getName();
@@ -416,7 +419,29 @@ public class MinimalState {
 					// nothing to do
 				}
 		}
-		return (String[]) results.toArray(new String[results.size()]);
+		return sortProfiles((String[]) results.toArray(new String[results.size()]));
+	}
+
+	private String[] getJavaProfiles(InputStream is) throws IOException {
+		Properties props = new Properties();
+		props.load(is);
+		return ManifestElement.getArrayFromList(props.getProperty("java.profiles"), ","); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	private String[] sortProfiles(String[] profiles) {
+		Arrays.sort(profiles, new Comparator() {
+			public int compare(Object profile1, Object profile2) {
+				// need to make sure J2SE profiles are sorted ahead of all other profiles
+				String p1 = (String) profile1;
+				String p2 = (String) profile2;
+				if (p1.startsWith("J2SE") && !p2.startsWith("J2SE")) //$NON-NLS-1$ //$NON-NLS-2$
+					return -1;
+				if (!p1.startsWith("J2SE") && p2.startsWith("J2SE")) //$NON-NLS-1$ //$NON-NLS-2$
+					return 1;
+				return -p1.compareTo(p2);
+			}
+		});
+		return profiles;
 	}
 
 	public void addBundleDescription(BundleDescription toAdd) {
