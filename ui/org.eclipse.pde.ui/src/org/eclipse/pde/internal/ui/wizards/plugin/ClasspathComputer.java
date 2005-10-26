@@ -58,7 +58,9 @@ public class ClasspathComputer {
 		addSourceAndLibraries(project, model, clear, result);
 	
 		// add JRE
-		result.add(createJREEntry(getCompliance(model.getBundleDescription())));
+		String compliance = getCompliance(model.getBundleDescription());
+		result.add(createJREEntry(compliance));
+		setComplianceOptions(JavaCore.create(project), compliance);
 
 		// add pde container
 		result.add(createContainerEntry());
@@ -188,8 +190,19 @@ public class ClasspathComputer {
 		return (dot != -1) ? libraryName.substring(0, dot) + "src.zip" : libraryName;	 //$NON-NLS-1$
 	}
 	
-	public static void setComplianceOptions(Map map, String compliance) {
-		if (JavaCore.VERSION_1_5.equals(compliance)) {
+	public static void setComplianceOptions(IJavaProject project, String compliance) {
+		Map map = project.getOptions(false);		
+		if (compliance == null) {
+			if (map.size() > 0) {
+				map.remove(JavaCore.COMPILER_COMPLIANCE);
+				map.remove(JavaCore.COMPILER_SOURCE);
+				map.remove(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM);
+				map.remove(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER);
+				map.remove(JavaCore.COMPILER_PB_ENUM_IDENTIFIER);	
+			} else {
+				return;
+			}
+		} else if (JavaCore.VERSION_1_5.equals(compliance)) {
 			map.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_5);
 			map.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
 			map.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_5);
@@ -210,6 +223,7 @@ public class ClasspathComputer {
 		} else {
 			throw new IllegalArgumentException("Unsupported compliance: " + compliance); //$NON-NLS-1$
 		}
+		project.setOptions(map);		
 	}
 	
 	public static String getCompliance(BundleDescription desc) {

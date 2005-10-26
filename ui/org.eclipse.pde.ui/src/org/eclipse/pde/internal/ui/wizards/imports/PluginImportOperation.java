@@ -57,6 +57,7 @@ import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.wizards.plugin.ClasspathComputer;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -75,30 +76,33 @@ public class PluginImportOperation extends JarImportOperation {
 
 	private int fImportType;
 
-	private IReplaceQuery fReplaceQuery;
+	private IImportQuery fReplaceQuery;
 	
 	private Hashtable fProjectClasspaths = new Hashtable();
 
 	private boolean fForceAutobuild;
 
-	public interface IReplaceQuery {
+	private IImportQuery fExecutionQuery;
+
+	public interface IImportQuery {
 		public static final int CANCEL = 0;
 
 		public static final int NO = 1;
 
 		public static final int YES = 2;
 
-		int doQuery(IProject project);
+		int doQuery(String message);
 	}
 
-	public PluginImportOperation(IPluginModelBase[] models, int importType, IReplaceQuery replaceQuery) {
+	public PluginImportOperation(IPluginModelBase[] models, int importType, IImportQuery replaceQuery, IImportQuery executionQuery) {
 		fModels = models;
 		fImportType = importType;
 		fReplaceQuery = replaceQuery;
+		fExecutionQuery = executionQuery;
 	}
 
-	public PluginImportOperation(IPluginModelBase[] models, int importType, IReplaceQuery replaceQuery, boolean forceAutobuild) {
-		this(models, importType, replaceQuery);
+	public PluginImportOperation(IPluginModelBase[] models, int importType, IImportQuery replaceQuery, IImportQuery executionQuery, boolean forceAutobuild) {
+		this(models, importType, replaceQuery, executionQuery);
 		fForceAutobuild = forceAutobuild;
 	}
 
@@ -169,6 +173,13 @@ public class PluginImportOperation extends JarImportOperation {
 		String id = model.getPluginBase().getId();
 		monitor.beginTask(NLS.bind(PDEUIMessages.ImportWizard_operation_creating2, id), 6);
 		try {
+			String jreLevel = ClasspathComputer.getCompliance(model.getBundleDescription());
+			if (jreLevel != null && VMHelper.findMatchingJREInstall(jreLevel) == null) {
+				String message = NLS.bind(PDEUIMessages.PluginImportOperation_executionEnvironment, id, jreLevel);
+				if (!queryExecutionEnvironment(message))
+					return;
+			}
+			
 			IProject project = findProject(model.getPluginBase().getId());
 
 			if (project.exists()) {
@@ -513,10 +524,21 @@ public class PluginImportOperation extends JarImportOperation {
 	}
 
 	private boolean queryReplace(IProject project) throws OperationCanceledException {
-		switch (fReplaceQuery.doQuery(project)) {
-			case IReplaceQuery.CANCEL:
+		switch (fReplaceQuery.doQuery(
+				NLS.bind(PDEUIMessages.ImportWizard_messages_exists, project.getName()))) {
+			case IImportQuery.CANCEL:
 				throw new OperationCanceledException();
-			case IReplaceQuery.NO:
+			case IImportQuery.NO:
+				return false;
+		}
+		return true;
+	}
+	
+	private boolean queryExecutionEnvironment(String message) throws OperationCanceledException {
+		switch (fExecutionQuery.doQuery(message)) {
+			case IImportQuery.CANCEL:
+				throw new OperationCanceledException();
+			case IImportQuery.NO:
 				return false;
 		}
 		return true;

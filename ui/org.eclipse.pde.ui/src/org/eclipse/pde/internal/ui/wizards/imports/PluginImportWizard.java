@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -23,15 +22,14 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation.IImportQuery;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation.IReplaceQuery;
 
 public class PluginImportWizard extends Wizard implements IImportWizard {
 
@@ -109,9 +107,10 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
 				try {
-					PluginImportOperation.IReplaceQuery query = new ReplaceQuery(shell);
+					PluginImportOperation.IImportQuery query = new ImportQuery(shell);
+					PluginImportOperation.IImportQuery executionQuery = new ImportQuery(shell);
 					PluginImportOperation op =
-						new PluginImportOperation(models, importType, query, forceAutobuild);
+						new PluginImportOperation(models, importType, query, executionQuery, forceAutobuild);
 					PDEPlugin.getWorkspace().run(op, monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
@@ -143,29 +142,27 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		}
 	}
 
-	private static class ReplaceQuery implements IReplaceQuery {
+	private static class ImportQuery implements IImportQuery {
 		private Shell shell;
-		public ReplaceQuery(Shell shell) {
+		public ImportQuery(Shell shell) {
 			this.shell = shell;
 		}
 
 		private int yesToAll = 0;
 		private int[] RETURNCODES =
 			{
-				IReplaceQuery.YES,
-				IReplaceQuery.YES,
-				IReplaceQuery.NO,
-				IReplaceQuery.NO,
-				IReplaceQuery.CANCEL };
+				IImportQuery.YES,
+				IImportQuery.YES,
+				IImportQuery.NO,
+				IImportQuery.NO,
+				IImportQuery.CANCEL };
 
-		public int doQuery(IProject project) {
+		public int doQuery(final String message) {
 			if (yesToAll != 0) {
-				return yesToAll > 0 ? IReplaceQuery.YES : IReplaceQuery.NO;
+				return yesToAll > 0 ? IImportQuery.YES : IImportQuery.NO;
 			}
 
-			final String message =
-				NLS.bind(PDEUIMessages.ImportWizard_messages_exists, project.getName()); 
-			final int[] result = { IReplaceQuery.CANCEL };
+			final int[] result = { IImportQuery.CANCEL };
 			shell.getDisplay().syncExec(new Runnable() {
 				public void run() {
 					ReplaceDialog dialog = new ReplaceDialog(shell, message);

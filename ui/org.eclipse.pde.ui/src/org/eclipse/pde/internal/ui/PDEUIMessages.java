@@ -2238,5 +2238,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String OrganizeExportPackageResolution_Label;
 
+	public static String PluginImportOperation_executionEnvironment;
+
 
 }
