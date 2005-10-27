@@ -1,6 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-Version: 3.2.0.qualifier
-Bundle-SymbolicName: org.eclipse.pde.build; singleton=true
+Bundle-SymbolicName: org.eclipse.pde.build; singleton:=true
 Bundle-Vendor: %providerName
 Bundle-ClassPath: pdebuild.jar
 Bundle-Activator: org.eclipse.pde.internal.build.BuildActivator
@@ -9,8 +11,8 @@ Require-Bundle:
  org.eclipse.ant.core,
  org.eclipse.update.core,
  org.apache.ant,
- org.eclipse.core.runtime.compatibility;optional=true
-Provide-Package: org.eclipse.pde.internal.build;x-friends:="org.eclipse.pde.ui",
+ org.eclipse.core.runtime.compatibility;resolution:=optional
+Export-Package: org.eclipse.pde.internal.build;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.build.ant;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.build.builder;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.build.packager;x-friends:="org.eclipse.pde.ui",
