@@ -1,7 +1,11 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -25,11 +29,15 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
+import org.eclipse.pde.internal.core.text.bundle.BundleClasspathHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
@@ -141,26 +149,23 @@ public class OrganizeManifestJob extends WorkspaceJob {
 		if (!(bundle instanceof Bundle))
 			return;
 		
-		ExportPackageHeader header = (ExportPackageHeader)((Bundle)bundle).getManifestHeader(Constants.EXPORT_PACKAGE);
+		ExportPackageHeader header = (ExportPackageHeader)bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
 		ExportPackageObject[] currentPkgs;
 		if (header == null) {
 			String newLine = TextUtilities.getDefaultLineDelimiter(((BundleModel)bundle.getModel()).getDocument());
 			header = new ExportPackageHeader(Constants.EXPORT_PACKAGE, "", bundle, newLine); //$NON-NLS-1$
 			currentPkgs = new ExportPackageObject[0];
-		} else  {
+		} else  
 			currentPkgs = header.getPackages();
-		}
-		
 		// Running list of packages in the project
 		Set packages = new HashSet();
 		
-		IJavaProject jp = JavaCore.create(project);
+		IPackageFragmentRoot[] roots = findPackageFragmentRoots(bundle, project);
 		try {
-			IPackageFragmentRoot[] roots = jp.getPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {
 				if (isImmediateRoot(roots[i])) {
 					IJavaElement[] elements = roots[i].getChildren();
-					for (int j = 0; j < elements.length; j++){
+					for (int j = 0; j < elements.length; j++)
 						if (elements[j] instanceof IPackageFragment) {
 							IPackageFragment fragment = (IPackageFragment)elements[j];
 							String name = fragment.getElementName();
@@ -173,17 +178,64 @@ public class OrganizeManifestJob extends WorkspaceJob {
 									packages.add(name);
 							}
 						}
+				}
+			}
+			// Remove packages that don't exist
+			for (int i = 0; i < currentPkgs.length; i++) 
+				if (!packages.contains(currentPkgs[i].getName()))
+					header.removePackage(currentPkgs[i]);
+		} catch (JavaModelException e) {}
+	}
+	
+	private static IPackageFragmentRoot[] findPackageFragmentRoots(IBundle bundle, IProject proj) {
+		IJavaProject jproj = JavaCore.create(proj);
+		BundleClasspathHeader cpHeader = (BundleClasspathHeader)bundle.getManifestHeader(Constants.BUNDLE_CLASSPATH);
+		Vector libs;
+		if (cpHeader == null) 
+			libs = new Vector();
+		else 
+		    libs = cpHeader.getElementNames();
+		if (libs.size() == 0) 
+			libs.add("."); //$NON-NLS-1$
+		
+		List pkgFragRoots = new LinkedList();
+		IBuild build = null;
+		
+		Iterator it = libs.iterator();
+		while (it.hasNext()) {
+			String lib = (String)it.next();
+			IPackageFragmentRoot root = null;
+			if (!lib.equals(".")) //$NON-NLS-1$
+				root = jproj.getPackageFragmentRoot(proj.getFile(lib));
+			if (root != null && root.exists()) {
+				pkgFragRoots.add(root);
+			} else {
+				// Parse build.properties only once
+				if (build == null) 
+					build = getBuild(proj);
+				// if valid build.properties exists.  Do NOT use else statement!  getBuild() could return null.
+				if (build != null) {  
+					IBuildEntry entry = build.getEntry("source." + lib); //$NON-NLS-1$
+					String[] tokens = entry.getTokens();
+					for (int i = 0; i < tokens.length; i++) {
+						root = jproj.getPackageFragmentRoot(proj.getFolder(tokens[i]));
+						if (root != null && root.exists())
+							pkgFragRoots.add(root);
 					}
 				}
 			}
-			
-			// Remove packages that don't exist
-			for (int i = 0; i < currentPkgs.length; i++) {
-				if (!packages.contains(currentPkgs[i].getName()))
-					header.removePackage(currentPkgs[i]);
-			}
-		} catch (JavaModelException e) {
-		} 
+		}
+		return (IPackageFragmentRoot[]) pkgFragRoots.toArray(new IPackageFragmentRoot[pkgFragRoots.size()]);
+	}
+	
+	private final static IBuild getBuild(IProject proj){
+		IFile buildProps = proj.getFile("build.properties"); //$NON-NLS-1$
+		if (buildProps != null) {
+			WorkspaceBuildModel model = new WorkspaceBuildModel(buildProps);
+			if (model != null) 
+				return model.getBuild();
+		}
+		return null;
 	}
 
 	private static boolean isImmediateRoot(IPackageFragmentRoot root) throws JavaModelException {
