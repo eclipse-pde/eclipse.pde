@@ -489,9 +489,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 			error = getErrorMessage(PDEUIMessages.ExternalizeStringsWizardPage_keyEmptyError, oldKey);
 		} else if (key.charAt(0) == '#' || key.charAt(0) == '!' || key.charAt(0) == '%') {
 			error = getErrorMessage(PDEUIMessages.ExternalizeStringsWizardPage_keyCommentError, oldKey);
-		} else if ((key.indexOf(":") != -1 && key.indexOf("\\:") == -1) || //$NON-NLS-1$ //$NON-NLS-2$
-				   (key.indexOf("=") != -1 && key.indexOf("\\=") == -1) || //$NON-NLS-1$ //$NON-NLS-2$
-				    key.indexOf(" ") != -1) { //$NON-NLS-1$
+		} else if (key.indexOf(":") != -1 || key.indexOf("=") != -1 || key.indexOf(" ") != -1) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			error = getErrorMessage(PDEUIMessages.ExternalizeStringsWizardPage_keyError, oldKey);
 		} else if ((!key.equals(oldKey) || fPreErrorKey != null) &&
 				properties.containsKey(key)) {
