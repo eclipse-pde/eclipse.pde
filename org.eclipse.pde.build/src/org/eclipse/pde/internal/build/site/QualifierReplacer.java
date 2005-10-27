@@ -19,14 +19,11 @@ public class QualifierReplacer implements IBuildPropertiesConstants {
 	private static String globalQualifier = null;
 	
 	public static String replaceQualifierInVersion(String version, String id, String replaceTag, Properties newVersions) {
-		if (replaceTag == null)
-			return null;
-
 		if (!version.endsWith(DOT_QUALIFIER))
-			return null;
+			return version;
 
 		String newQualifier = null;
-		if (replaceTag.equalsIgnoreCase(PROPERTY_CONTEXT)) {
+		if (replaceTag == null || replaceTag.equalsIgnoreCase(PROPERTY_CONTEXT)) {
 			if (globalQualifier != null)
 				newQualifier = globalQualifier;
 			

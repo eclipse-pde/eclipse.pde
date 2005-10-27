@@ -1156,8 +1156,9 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			beginId = scan(buffer, beginId, REPLACED_PLUGIN_ID);
 			buffer.replace(beginId, beginId + REPLACED_PLUGIN_ID.length(), plugin.getPluginIdentifier());
 			//		set the version number of the plugin to which the fragment is attached to
+			BundleDescription effectivePlugin = getSite(false).getRegistry().getResolvedBundle(plugin.getVersionedIdentifier().getIdentifier(), plugin.getPluginVersion());
 			beginId = scan(buffer, beginId, REPLACED_PLUGIN_VERSION);
-			buffer.replace(beginId, beginId + REPLACED_PLUGIN_VERSION.length(), plugin.getPluginVersion());
+			buffer.replace(beginId, beginId + REPLACED_PLUGIN_VERSION.length(), effectivePlugin.getVersion().toString());
 			Utils.transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(sourceFragmentDirURL.append(DEFAULT_BUNDLE_FILENAME_DESCRIPTOR).toOSString()));
 			Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplateFragment", sourceFragmentDir.getAbsolutePath()); //$NON-NLS-1$
 			File buildProperty = sourceFragmentDirURL.append(PROPERTIES_FILE).toFile();
