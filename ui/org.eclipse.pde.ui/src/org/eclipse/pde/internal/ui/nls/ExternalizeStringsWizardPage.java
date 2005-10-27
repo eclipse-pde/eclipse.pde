@@ -30,6 +30,9 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.XMLConfiguration;
+import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
+import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -159,8 +162,9 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 	private String fPreErrorKey;
 
 	private IDocument fEmptyDoc;
-//	private ColorManager fColorManager;
-//	private XMLConfiguration fXMLConfig;
+	private ColorManager fColorManager;
+	private XMLConfiguration fXMLConfig;
+	private XMLDocumentSetupParticpant fSetupParticipant;
 	
 	protected ExternalizeStringsWizardPage(ModelChangeTable changeTable) {
 		super(PAGE_NAME);
@@ -194,14 +198,15 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 				}
 			}
 		};
-//		fColorManager = new ColorManager();
-//		fXMLConfig = new XMLConfiguration(fColorManager);
+		fColorManager = new ColorManager();
+		fXMLConfig = new XMLConfiguration(fColorManager);
+		fSetupParticipant = new XMLDocumentSetupParticpant();
 	}
 	
-//	public void dispose() {
-//		fColorManager.dispose();
-//		super.dispose();
-//	}
+	public void dispose() {
+		fColorManager.dispose();
+		super.dispose();
+	}
 	
 	public void createControl(Composite parent) {
 
@@ -434,11 +439,12 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		TreeItem item = fInputViewer.getTree().getSelection()[0];
 		IPluginModelBase model = ((ModelChange)item.getParentItem().getData()).getParentModel();
 		
-//		if (fSourceViewer.getDocument() != null)
-//			fSourceViewer.unconfigure();
-//		if (sourceFile.getFileExtension().equalsIgnoreCase("xml")) { //$NON-NLS-1$
-//			fSourceViewer.configure(fXMLConfig);
-//		}
+		if (fSourceViewer.getDocument() != null)
+			fSourceViewer.unconfigure();
+		if (sourceFile.getFileExtension().equalsIgnoreCase("xml")) { //$NON-NLS-1$
+			fSourceViewer.configure(fXMLConfig);
+			fSetupParticipant.setup(document);
+		}
 		
 		fSourceViewer.setDocument(document);
 		updatePropertiesLabel(model);
