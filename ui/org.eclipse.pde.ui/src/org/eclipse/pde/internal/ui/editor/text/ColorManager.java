@@ -31,7 +31,7 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 	private Map fColorTable = new HashMap(5);
 	private static int counter = 0;
 
-	public ColorManager() {
+	private ColorManager() {
 		initialize();
 	}
 	

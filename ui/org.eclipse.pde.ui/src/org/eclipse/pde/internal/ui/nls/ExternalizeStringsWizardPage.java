@@ -198,7 +198,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 				}
 			}
 		};
-		fColorManager = new ColorManager();
+		fColorManager = ColorManager.getDefault();
 		fXMLConfig = new XMLConfiguration(fColorManager);
 		fSetupParticipant = new XMLDocumentSetupParticpant();
 	}
