@@ -9,10 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.elements;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-/**
- * @version 	1.0
- * @author
- */
-public abstract class DefaultTableProvider extends DefaultContentProvider implements IStructuredContentProvider {
+
+public abstract class DefaultTableProvider extends DefaultContentProvider implements
+		IStructuredContentProvider {
 }

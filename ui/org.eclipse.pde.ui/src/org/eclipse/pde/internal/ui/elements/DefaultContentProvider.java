@@ -10,13 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.elements;
 
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.Viewer;
 
 public class DefaultContentProvider implements IContentProvider {
 
-public DefaultContentProvider() {
-	super();
-}
-public void dispose() {}
-public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+	public DefaultContentProvider() {
+		super();
+	}
+
+	public void dispose() {
+	}
+
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	}
 }
