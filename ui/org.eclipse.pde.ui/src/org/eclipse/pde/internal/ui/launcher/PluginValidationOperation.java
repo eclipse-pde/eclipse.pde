@@ -10,22 +10,37 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.BundleSpecification;
+import org.eclipse.osgi.service.resolver.HostSpecification;
+import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
+import org.eclipse.osgi.service.resolver.ResolverError;
+import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.service.resolver.VersionConstraint;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.MinimalState;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.PDELabelProvider;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.swt.graphics.Image;
 
 
 public class PluginValidationOperation implements IRunnableWithProgress {
+	
+	private static Object[] NO_CHILDREN = new Object[0];
 	
 	private IPluginModelBase[] fModels;
 	private MinimalState fState;
@@ -68,12 +83,10 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	class ConstraintLabelProvider extends PDELabelProvider {
 		
 		private Image fImage;
-		private Image fInfo;
 
 		public ConstraintLabelProvider() {
 			PDEPlugin.getDefault().getLabelProvider().connect(this);
 			fImage = PDEPluginImages.DESC_ERROR_ST_OBJ.createImage();
-			fInfo = PDEPluginImages.DESC_INFO_ST_OBJ.createImage();
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
@@ -85,21 +98,82 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 					return NLS.bind(PDEUIMessages.PluginValidationOperation_disableFragment, id); 
 				return NLS.bind(PDEUIMessages.PluginValidationOperation_disablePlugin, id); 
 			}
+			
+			if (element instanceof ResolverError)
+				return toString((ResolverError)element);
+				
 			if (element instanceof IPluginModelBase) {
 				IPluginModelBase model = (IPluginModelBase)element;
 				return model.getPluginBase().getId();
 			}
 			return element.toString();
 		}
+			
+		private String toString(ResolverError error) {			
+			int type = error.getType();
+			VersionConstraint constraint = error.getUnsatisfiedConstraint();
+			switch (type) {
+			case ResolverError.PLATFORM_FILTER:
+				String filter = error.getBundle().getPlatformFilter();
+				return NLS.bind(PDEUIMessages.PluginValidationOperation_platformFilter, filter);
+			case ResolverError.MISSING_EXECUTION_ENVIRONMENT:
+				String[] ee = error.getBundle().getExecutionEnvironments();
+				return NLS.bind(PDEUIMessages.PluginValidationOperation_ee, ee[0]);
+			case ResolverError.SINGLETON_SELECTION:
+				return PDEUIMessages.PluginValidationOperation_singleton;
+			case ResolverError.IMPORT_PACKAGE_USES_CONFLICT:
+			case ResolverError.MISSING_IMPORT_PACKAGE :
+				return toString((ImportPackageSpecification)constraint, type);
+			case ResolverError.REQUIRE_BUNDLE_USES_CONFLICT:
+			case ResolverError.MISSING_REQUIRE_BUNDLE :
+				return toString((BundleSpecification)constraint, type);
+			case ResolverError.MISSING_FRAGMENT_HOST :
+				return toString((HostSpecification)constraint);	
+			}
+			return error.toString();
+		}
 		
+		private String toString(BundleSpecification spec, int type) {
+			String name = spec.getName();
+			if (type == ResolverError.REQUIRE_BUNDLE_USES_CONFLICT)
+				return NLS.bind(PDEUIMessages.PluginValidationOperation_bundle_uses, spec.getName());
+			
+			BundleDescription[] bundles = getState().getBundles(name);
+			for (int i = 0; i < bundles.length; i++) {
+				if (spec.isSatisfiedBy(bundles[i]) && !bundles[i].isResolved())
+					return NLS.bind(PDEUIMessages.PluginValidationOperation_disabledRequired, name); 
+			}
+			if (bundles.length == 0 || spec.getVersionRange().equals(VersionRange.emptyRange))
+				return NLS.bind(PDEUIMessages.PluginValidationOperation_missingRequired, name); 
+			return NLS.bind(PDEUIMessages.PluginValidationOperation_version, 
+							new String[] {spec.getVersionRange().toString(), spec.getName()});
+		}
+		
+		private String toString(ImportPackageSpecification spec, int type) {
+			if (type == ResolverError.IMPORT_PACKAGE_USES_CONFLICT)
+				return NLS.bind(PDEUIMessages.PluginValidationOperation_import_uses, spec.getName());
+			return NLS.bind(PDEUIMessages.PluginValidationOperation_missingImport, spec.getName()); 
+		}
+		
+		private String toString(HostSpecification spec) {
+			String name = spec.getName();
+			BundleDescription[] bundles = getState().getBundles(name);
+			for (int i = 0; i < bundles.length; i++) {
+				if (spec.isSatisfiedBy(bundles[i]) && !bundles[i].isResolved())
+					return NLS.bind(PDEUIMessages.PluginValidationOperation_disabledParent, name); 
+			}
+			if (bundles.length == 0 || spec.getVersionRange().equals(VersionRange.emptyRange))
+				return NLS.bind(PDEUIMessages.PluginValidationOperation_missingParent, name); 
+			return NLS.bind(PDEUIMessages.PluginValidationOperation_hostVersion, 
+							new String[] {spec.getVersionRange().toString(), spec.getName()});
+		}
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
 		 */
 		public Image getImage(Object element) {
 			if (element instanceof IPluginModelBase)
 				return super.getImage(element);
-			/*if (element instanceof String)
-				return fInfo;*/
 			return fImage;
 		}
 		
@@ -108,7 +182,6 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 		 */
 		public void dispose() {
 			fImage.dispose();
-			fInfo.dispose();
 			PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		}
 	}
@@ -119,38 +192,12 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
 		public Object[] getChildren(Object parent) {
-			ArrayList list = new ArrayList();
-			if (parent instanceof BundleDescription) {
-				StateHelper helper = PDECore.getDefault().acquirePlatform().getStateHelper();		
-				VersionConstraint[] unsatisfiedConstraints = helper.getUnsatisfiedConstraints((BundleDescription)parent);
-				for (int i = 0; i < unsatisfiedConstraints.length; i++) {
-					list.add(toString(unsatisfiedConstraints[i]));
-				}
-			} else if (parent instanceof InvalidNode) {
-				return fInvalidModels.toArray();
-			}
-			return list.toArray();
+			if (parent instanceof BundleDescription)
+				return getState().getResolverErrors((BundleDescription)parent);
+				
+			return (parent instanceof InvalidNode) ? fInvalidModels.toArray() : NO_CHILDREN;
 		}
-		
-		private String toString(VersionConstraint constraint) {
-			State state = getState();
-			String name = constraint.getName();
-			if (constraint instanceof BundleSpecification) {
-				if (state.getBundles(name).length == 0)
-					return NLS.bind(PDEUIMessages.PluginValidationOperation_missingRequired, name); 
-				return NLS.bind(PDEUIMessages.PluginValidationOperation_disabledRequired, name); 
-			}
-			if (constraint instanceof ImportPackageSpecification)
-				return NLS.bind(PDEUIMessages.PluginValidationOperation_missingImport, name); 
-			if (constraint instanceof HostSpecification)  {
-				if (state.getBundles(name).length == 0)
-					return NLS.bind(PDEUIMessages.PluginValidationOperation_missingParent, name); 
-				return NLS.bind(PDEUIMessages.PluginValidationOperation_disabledParent, name); 
-			}
-			return name;
-		}
-
-
+	
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
@@ -170,6 +217,11 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 		 */
 		public Object[] getElements(Object inputElement) {
 			ArrayList result = new ArrayList();
+			BundleDescription[] all = getState().getBundles();
+			for (int i = 0; i < all.length; i++) {
+				if (!all[i].isResolved())
+					result.add(all[i]);
+			}
 			if (isProductMissing())
 				result.add(new MissingProduct());
 			if (isApplicationMissing())
@@ -178,11 +230,6 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 				result.add(new MissingCore());
 			if (fInvalidModels.size() > 0)
 				result.add(new InvalidNode());
-			BundleDescription[] all = getState().getBundles();
-			for (int i = 0; i < all.length; i++) {
-				if (!all[i].isResolved())
-					result.add(all[i]);
-			}
 			return result.toArray();
 		}
 	}

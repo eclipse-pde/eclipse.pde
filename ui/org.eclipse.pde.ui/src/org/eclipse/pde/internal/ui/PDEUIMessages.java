@@ -2240,5 +2240,19 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginImportOperation_executionEnvironment;
 
+	public static String PluginValidationOperation_platformFilter;
+
+	public static String PluginValidationOperation_ee;
+
+	public static String PluginValidationOperation_singleton;
+
+	public static String PluginValidationOperation_bundle_uses;
+
+	public static String PluginValidationOperation_version;
+
+	public static String PluginValidationOperation_import_uses;
+
+	public static String PluginValidationOperation_hostVersion;
+
 
 }

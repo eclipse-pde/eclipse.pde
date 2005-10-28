@@ -54,7 +54,6 @@ public class PluginStatusDialog extends Dialog {
 		TreeViewer treeViewer = new TreeViewer(container);
 		treeViewer.setContentProvider(fOperation.getContentProvider());
 		treeViewer.setLabelProvider(fOperation.getLabelProvider());
-		treeViewer.setSorter(new ViewerSorter());
 		treeViewer.setInput(fOperation.getState());
 		treeViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		
