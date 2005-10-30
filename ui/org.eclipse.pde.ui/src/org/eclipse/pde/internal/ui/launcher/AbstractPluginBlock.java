@@ -12,9 +12,7 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -87,6 +85,8 @@ public abstract class AbstractPluginBlock {
 	private Listener fListener = new Listener();
 
 	private Label fCounter;
+
+	private ILaunchConfiguration fLaunchConfiguration;
 	
 	class Listener extends SelectionAdapter {
 		public void widgetSelected(SelectionEvent e) {
@@ -292,26 +292,7 @@ public abstract class AbstractPluginBlock {
 	}
 	
 	protected PluginValidationOperation createValidationOperation() {
-		return new PluginValidationOperation(getPluginsToValidate());
-	}
-	
-	protected IPluginModelBase[] getPluginsToValidate() {
-		if (!fPluginTreeViewer.getTree().isEnabled())
-			return PDECore.getDefault().getModelManager().getPlugins();
-		
-		Map map = new HashMap();
-		Object[] objects = fPluginTreeViewer.getCheckedElements();
-		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof IPluginModelBase) {
-				IPluginModelBase model = (IPluginModelBase)objects[i];
-				String id = model.getPluginBase().getId();
-				if (id == null)
-					continue;
-				if (!map.containsKey(id) || model.getUnderlyingResource() != null)
-					map.put(id, model);
-			}
-		}
-		return (IPluginModelBase[])map.values().toArray(new IPluginModelBase[map.size()]);
+		return new PluginValidationOperation(fLaunchConfiguration);
 	}
 	
 	protected void toggleGroups(boolean select) {
@@ -369,6 +350,7 @@ public abstract class AbstractPluginBlock {
 	}
 	
 	public void initializeFrom(ILaunchConfiguration config) throws CoreException {
+		fLaunchConfiguration = config;
 		fIncludeOptionalButton.setSelection(config.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true));
 		fAddWorkspaceButton.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true));
 

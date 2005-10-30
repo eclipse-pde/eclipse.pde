@@ -58,7 +58,7 @@ import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 
 
-public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration implements IPDELauncherConstants {
+public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 
 	public static final String CORE_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
 	public static final String LEGACY_CORE_APPLICATION = "org.eclipse.pde.junit.runtime.legacyCoretestapplication"; //$NON-NLS-1$
@@ -86,7 +86,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 				return;
 			}
 
-			if (configuration.getAttribute(CONFIG_CLEAR_AREA, false))
+			if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
 				CoreUtility.deleteContent(getConfigDir(configuration));
 			launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());
 			
@@ -186,12 +186,12 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 		programArgs.add(getApplicationName(pluginMap, configuration));
 		
 		// If a product is specified, then add it to the program args
-		if (configuration.getAttribute(USE_PRODUCT, false)) {
+		if (configuration.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
 			programArgs.add("-product"); //$NON-NLS-1$
-			programArgs.add(configuration.getAttribute(PRODUCT, "")); //$NON-NLS-1$
+			programArgs.add(configuration.getAttribute(IPDELauncherConstants.PRODUCT, "")); //$NON-NLS-1$
 		} else {
 			// Specify the application to test
-			String testApplication = configuration.getAttribute(APP_TO_TEST, (String)null);
+			String testApplication = configuration.getAttribute(IPDELauncherConstants.APP_TO_TEST, (String)null);
 			if (testApplication != null && testApplication.length() > 0) {
 				programArgs.add("-testApplication"); //$NON-NLS-1$
 				programArgs.add(testApplication);
@@ -247,9 +247,9 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			programArgs.add("-pdelaunch"); //$NON-NLS-1$	
 
 		// Create the .options file if tracing is turned on
-		if (configuration.getAttribute(TRACING, false)
-				&& !TRACING_NONE.equals(configuration.getAttribute(
-						TRACING_CHECKED, (String) null))) {
+		if (configuration.getAttribute(IPDELauncherConstants.TRACING, false)
+				&& !IPDELauncherConstants.TRACING_NONE.equals(configuration.getAttribute(
+						IPDELauncherConstants.TRACING_CHECKED, (String) null))) {
 			programArgs.add("-debug"); //$NON-NLS-1$
 			String path = getConfigDir(configuration).getPath() + Path.SEPARATOR + ".options"; //$NON-NLS-1$
 			programArgs.add(LaunchArgumentsHelper.getTracingFileArgument(configuration, path));
@@ -385,14 +385,14 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 	}
 	
 	protected String getDefaultWorkspace(ILaunchConfiguration config) throws CoreException {
-		if (config.getAttribute(APPLICATION, UI_APPLICATION).equals(UI_APPLICATION))
+		if (config.getAttribute(IPDELauncherConstants.APPLICATION, UI_APPLICATION).equals(UI_APPLICATION))
 			return LauncherUtils.getDefaultPath().append("junit-workbench-workspace").toPortableString(); //$NON-NLS-1$
 		return LauncherUtils.getDefaultPath().append("junit-core-workspace").toPortableString();				 //$NON-NLS-1$
 	}
 	
 	protected String getApplicationName(Map pluginMap, ILaunchConfiguration configuration) {
 		try {
-			String application = configuration.getAttribute(APPLICATION, (String)null);
+			String application = configuration.getAttribute(IPDELauncherConstants.APPLICATION, (String)null);
 			if (CORE_APPLICATION.equals(application)) {
 				if (PDECore.getDefault().getModelManager().isOSGiRuntime())
 					return CORE_APPLICATION;
@@ -406,7 +406,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
 				String point = extensions[i].getPoint();
-				if (point != null && point.equals("org.eclipse.core.runtime.applications")) { //$NON-NLS-1$
+				if ("org.eclipse.core.runtime.applications".equals(point)) { //$NON-NLS-1$
 					if ("workbench".equals(extensions[i].getId())){ //$NON-NLS-1$
 						return LEGACY_UI_APPLICATION;
 					}
@@ -421,7 +421,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration imple
 			String projectID = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
 			if (projectID.length() > 0) {
 				IResource project = PDEPlugin.getWorkspace().getRoot().findMember(projectID);
-				if (project != null && project instanceof IProject) {
+				if (project instanceof IProject) {
 					IPluginModelBase model = PDECore.getDefault().getModelManager().findModel((IProject)project);
 					if (model != null) {
 						return model.getPluginBase().getId();

@@ -45,8 +45,7 @@ import org.eclipse.swt.widgets.Widget;
 
 public class EquinoxPluginBlock extends AbstractPluginBlock {
 	
-	class EquinoxLabelProvider extends PDELabelProvider {
-		
+	class EquinoxLabelProvider extends PDELabelProvider {		
 		public Image getColumnImage(Object obj, int index) {
 			return index == 0 ? super.getColumnImage(obj, index) : null;
 		}

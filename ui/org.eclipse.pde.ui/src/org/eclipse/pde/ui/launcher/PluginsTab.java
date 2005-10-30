@@ -173,13 +173,6 @@ public class PluginsTab extends AbstractLauncherTab {
 		return fImage;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
-	public void activated(ILaunchConfigurationWorkingCopy configuration) {
-		fPluginBlock.activated(configuration, !fShowFeatures);
-	}
-
 	/**
 	 * Validates the tab.  If the feature option is chosen, and the workspace is not correctly set up,
 	 * the error message is set.

@@ -21,16 +21,12 @@ import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
 public class PluginBlock extends AbstractPluginBlock {
 
-	private String fProduct;
-	private String fApplication;
-
 	public PluginBlock(AbstractLauncherTab tab) {
 		super(tab);
 	}
 	
 	public void initializeFrom(ILaunchConfiguration config, boolean defaultSelection) throws CoreException {
 		super.initializeFrom(config);
-		initializeProductFrom(config, defaultSelection);
 		if (defaultSelection) {
 			handleRestoreDefaults();
 		} else {
@@ -40,36 +36,6 @@ public class PluginBlock extends AbstractPluginBlock {
 		enableViewer(!defaultSelection);
 		updateCounter();
 		fTab.updateLaunchConfigurationDialog();
-	}
-
-	public void activated(ILaunchConfigurationWorkingCopy config, boolean isJUnit) {
-		initializeProductFrom(config, isJUnit);
-	}
-	
-	public void initializeProductFrom(ILaunchConfiguration config, boolean isJUnit) {
-		try {
-			if (config.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
-				fProduct = config.getAttribute(IPDELauncherConstants.PRODUCT, (String)null);
-				fApplication = null;
-			} else {
-				String appToRun = config.getAttribute(IPDELauncherConstants.APPLICATION, LaunchConfigurationHelper.getDefaultApplicationName());
-				if (!isJUnit)
-					fApplication = appToRun;
-				else {
-					if(JUnitLaunchConfiguration.CORE_APPLICATION.equals(appToRun)){
-						fApplication = null;
-					} else {
-						fApplication = config.getAttribute(IPDELauncherConstants.APP_TO_TEST, LaunchConfigurationHelper.getDefaultApplicationName());
-					}
-				}
-				fProduct = null;
-			}
-		} catch (CoreException e) {
-		}
-	}
-	
-	protected PluginValidationOperation createValidationOperation() {
-		return new PluginValidationOperation(getPluginsToValidate(), fProduct, fApplication);
 	}
 	
 	/*

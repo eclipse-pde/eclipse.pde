@@ -13,7 +13,9 @@ package org.eclipse.pde.internal.ui.launcher;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -35,6 +37,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.graphics.Image;
 
 
@@ -42,11 +45,12 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	
 	private static Object[] NO_CHILDREN = new Object[0];
 	
-	private IPluginModelBase[] fModels;
 	private MinimalState fState;
 	private ArrayList fInvalidModels = new ArrayList();
 	private String fProductID;
 	private String fApplicationID;
+
+	private ILaunchConfiguration fLaunchConfiguration;
 
 	class InvalidNode {
 		public String toString() {
@@ -234,15 +238,24 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 		}
 	}
 	
-	public PluginValidationOperation(IPluginModelBase[] models) {
-		this(models, null, null);
-	}
-	
-	public PluginValidationOperation(IPluginModelBase[] models, String product, String application) {
-		fModels = models;
-		fProductID = product;
-		fApplicationID = application;
+	public PluginValidationOperation(ILaunchConfiguration configuration) {
+		fLaunchConfiguration = configuration;
 		fState = new MinimalState();
+		initialize();
+	}
+
+	private void initialize() {
+		try {
+			if (fLaunchConfiguration.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
+				fProductID = fLaunchConfiguration.getAttribute(IPDELauncherConstants.PRODUCT, (String)null);
+			} else {
+				String appToRun = fLaunchConfiguration.getAttribute(IPDELauncherConstants.APP_TO_TEST, (String)null);
+				if(appToRun == null)
+					appToRun = fLaunchConfiguration.getAttribute(IPDELauncherConstants.APPLICATION, LaunchConfigurationHelper.getDefaultApplicationName());				
+				fApplicationID = JUnitLaunchConfiguration.CORE_APPLICATION.equals(appToRun) ? null : appToRun;
+			}
+		} catch (CoreException e) {
+		}
 	}
 
 	/* (non-Javadoc)
@@ -250,9 +263,13 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	 */
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException {
-		for (int i = 0; i < fModels.length; i++) {
-			if (fState.addBundle(fModels[i], -1) == null)
-				fInvalidModels.add(fModels[i]);
+		try {
+			IPluginModelBase[] models = LaunchPluginValidator.getPluginList(fLaunchConfiguration);
+			for (int i = 0; i < models.length; i++) {
+				if (fState.addBundle(models[i], -1) == null)
+					fInvalidModels.add(models[i]);
+			}
+		} catch (CoreException e) {
 		}
 		fState.resolveState(false);
 	}
@@ -313,5 +330,5 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	public ILabelProvider getLabelProvider() {
 		return new ConstraintLabelProvider();
 	}
-
+	
 }

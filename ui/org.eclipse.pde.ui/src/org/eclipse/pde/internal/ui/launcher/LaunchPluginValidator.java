@@ -161,6 +161,13 @@ public class LaunchPluginValidator {
 		return map;
 	}
 	
+	public static IPluginModelBase[] getPluginList(ILaunchConfiguration config) throws CoreException {
+		Map map = getPluginsToRun(config);
+		if (map == null)
+			return new IPluginModelBase[0];
+		return (IPluginModelBase[])map.values().toArray(new IPluginModelBase[map.size()]);
+	}
+	
 	public static Map getPluginsToRun(ILaunchConfiguration config)
 			throws CoreException {
 		TreeMap map = null;
