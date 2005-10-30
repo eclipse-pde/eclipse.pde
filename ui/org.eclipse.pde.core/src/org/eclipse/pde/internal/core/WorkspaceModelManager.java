@@ -93,37 +93,28 @@ public class WorkspaceModelManager
 	}
 	
 	public static boolean isBinaryFeatureProject(IProject project) {
-		if (isFeatureProject(project)){
-			try {
-				String binary = project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY);
-				if (binary != null) {
-					RepositoryProvider provider = RepositoryProvider.getProvider(project);
-					return provider==null || provider instanceof BinaryRepositoryProvider;
-				}
-			} catch (CoreException e) {
-				PDECore.logException(e);
-			}
-		}
-		return false;
+		return isFeatureProject(project) && isBinaryProject(project);
 	}
 	
 	public static boolean isBinaryPluginProject(IProject project) {
-		if (isPluginProject(project)){
-			try {
-				String binary = project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY);
-				if (binary != null) {
-					RepositoryProvider provider = RepositoryProvider.getProvider(project);
-					return provider==null || provider instanceof BinaryRepositoryProvider;
-				}
-			} catch (CoreException e) {
-				PDECore.logException(e);
+		return isPluginProject(project) && isBinaryProject(project);
+	}
+
+	public static boolean isBinaryProject(IProject project) {
+		try {
+			String binary = project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY);
+			if (binary != null) {
+				RepositoryProvider provider = RepositoryProvider.getProvider(project);
+				return provider==null || provider instanceof BinaryRepositoryProvider;
 			}
+		} catch (CoreException e) {
+			PDECore.logException(e);
 		}
 		return false;
 	}
-	
+
 	public static boolean isNonBinaryPluginProject(IProject project) {
-		return isPluginProject(project) && !isBinaryPluginProject(project);
+		return isPluginProject(project) && !isBinaryProject(project);
 	}
 	
 	public static boolean isJavaPluginProject(IProject project) {
