@@ -96,7 +96,7 @@ public class LauncherUtils {
 		final int[] result = new int[1];
 		getDisplay().syncExec(new Runnable() {
 			public void run() {
-				String title = PDEUIMessages.WorkbenchLauncherConfigurationDelegate_title;
+				String title = PDEUIMessages.LauncherUtils_title;
 				String message =
 					NLS.bind(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_confirmDeleteWorkspace, workspaceFile.getPath());
 				MessageDialog dialog = new MessageDialog(getDisplay().getActiveShell(), title, null,

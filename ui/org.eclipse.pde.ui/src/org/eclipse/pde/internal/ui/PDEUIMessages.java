@@ -610,10 +610,7 @@ public class PDEUIMessages extends NLS {
 	public static String WorkbenchLauncherConfigurationDelegate_jrePathNotFound;
 	public static String WorkbenchLauncherConfigurationDelegate_badFeatureSetup;
 	public static String WorkbenchLauncherConfigurationDelegate_starting;
-	public static String WorkbenchLauncherConfigurationDelegate_missingRequired;
 	public static String WorkbenchLauncherConfigurationDelegate_noStartup;
-	public static String WorkbenchLauncherConfigurationDelegate_brokenPlugins;
-	public static String WorkbenchLauncherConfigurationDelegate_title;
 	public static String WorkbenchLauncherConfigurationDelegate_confirmDeleteWorkspace;
 	public static String JUnitLaunchConfiguration_error_invalidproject;
 	public static String JUnitLaunchConfiguration_error_notests;
@@ -2255,6 +2252,10 @@ public class PDEUIMessages extends NLS {
 	public static String PluginValidationOperation_hostVersion;
 
 	public static String AbstractPluginBlock_auto_validate;
+
+	public static String LauncherUtils_title;
+
+	public static String PluginValidationDialog_continue;
 
 
 }

@@ -11,6 +11,7 @@
 package org.eclipse.pde.ui.launcher;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -20,10 +21,12 @@ import java.util.TreeMap;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.ExternalModelManager;
@@ -32,11 +35,13 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.EquinoxPluginBlock;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
-import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
+import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
+import org.eclipse.pde.internal.ui.launcher.PluginValidationDialog;
+import org.eclipse.pde.internal.ui.launcher.PluginValidationOperation;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * A launch delegate for launching the Equinox framework
@@ -58,8 +63,27 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		Map target = EquinoxPluginBlock.retrieveTargetMap(configuration);
 		
 		Map plugins = getPluginsToRun(workspace, target);
-		if (plugins == null)
-			return null;
+		if (configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false)) {
+			IPluginModelBase[] models = (IPluginModelBase[])plugins.values().toArray(new IPluginModelBase[plugins.size()]);
+			final PluginValidationOperation op = new PluginValidationOperation(models);
+			try {
+				op.run(new NullProgressMonitor());
+			} catch (InvocationTargetException e) {
+			} catch (InterruptedException e) {
+			} finally {
+				if (op.hasErrors()) {
+					final int[] result = new int[1];
+					final Display display = LauncherUtils.getDisplay();
+					display.syncExec(new Runnable() {
+						public void run() {
+							result[0] = new PluginValidationDialog(display.getActiveShell(), op).open();
+					}});
+					if (result[0] == IDialogConstants.CANCEL_ID) {
+						return null;
+					}
+				}
+			}
+		}
 		
 		programArgs.add("-dev"); //$NON-NLS-1$
         programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", plugins)); //$NON-NLS-1$
@@ -153,19 +177,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 			}
 		}
 		
-		ArrayList statusEntries = new ArrayList();
-		iter = plugins.values().iterator();
-		while (iter.hasNext()) {
-			IPluginModelBase model = (IPluginModelBase) iter.next();
-			if (!model.isLoaded()) {
-				statusEntries.add(new Status(IStatus.WARNING, 
-						PDEPlugin.getPluginId(), 
-						IStatus.OK, 
-						model.getPluginBase().getId(), 
-						null));
-			}
-		}	
-		return LaunchPluginValidator.validatePluginsToRun(plugins, statusEntries);
+		return plugins;
 	}
 
 	/**

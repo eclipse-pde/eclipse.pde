@@ -15,8 +15,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
@@ -53,7 +51,7 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 				String appName = fLaunchConfiguration.getAttribute(IPDELauncherConstants.APPLICATION, LaunchConfigurationHelper.getDefaultApplicationName());
 				product.setApplication(appName);
 			}
-			addPlugins(factory, product, getSelectedPlugins());
+			addPlugins(factory, product, LaunchPluginValidator.getPluginList(fLaunchConfiguration));
 			if (fLaunchConfiguration.getAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true)) {
 				super.initializeProduct(product);
 			} else {
@@ -72,15 +70,4 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 		}	
 	}
 	
-	private IPluginModelBase[] getSelectedPlugins() {
-		try {
-			if (fLaunchConfiguration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
-				return PDECore.getDefault().getModelManager().getPlugins();
-			}
-			return LaunchPluginValidator.getSelectedPlugins(fLaunchConfiguration);
-		} catch (CoreException e) {
-		}
-		return new IPluginModelBase[0];
-	}
-
 }

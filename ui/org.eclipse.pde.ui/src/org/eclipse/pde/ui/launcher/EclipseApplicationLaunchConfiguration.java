@@ -11,6 +11,7 @@
 package org.eclipse.pde.ui.launcher;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
@@ -22,6 +23,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.ExternalModelManager;
@@ -33,8 +35,11 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
+import org.eclipse.pde.internal.ui.launcher.PluginValidationDialog;
+import org.eclipse.pde.internal.ui.launcher.PluginValidationOperation;
 import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * A launch delegate for launching Eclipse applications
@@ -241,7 +246,29 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) 
-		throws CoreException {		
+		throws CoreException {
+		if (configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false)) {
+			final PluginValidationOperation op = new PluginValidationOperation(configuration);
+			try {
+				op.run(monitor);
+			} catch (InvocationTargetException e) {
+			} catch (InterruptedException e) {
+			} finally {
+				if (op.hasErrors()) {
+					final int[] result = new int[1];
+					final Display display = LauncherUtils.getDisplay();
+					display.syncExec(new Runnable() {
+						public void run() {
+							result[0] = new PluginValidationDialog(display.getActiveShell(), op).open();
+					}});
+					if (result[0] == IDialogConstants.CANCEL_ID) {
+						monitor.setCanceled(true);
+						return;
+					}
+				}
+			}
+		}
+
 		String workspace = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
 		// Clear workspace and prompt, if necessary
 		if (!LauncherUtils.clearWorkspace(configuration, workspace, new SubProgressMonitor(monitor, 1))) {

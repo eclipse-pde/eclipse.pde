@@ -51,7 +51,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	private String fProductID;
 	private String fApplicationID;
 
-	private ILaunchConfiguration fLaunchConfiguration;
+	private IPluginModelBase[] fModels;
 
 	class InvalidNode {
 		public String toString() {
@@ -240,19 +240,24 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	}
 	
 	public PluginValidationOperation(ILaunchConfiguration configuration) {
-		fLaunchConfiguration = configuration;
 		fState = new MinimalState(TargetPlatform.getTargetEnvironment());
-		initialize();
+		initialize(configuration);
+	}
+	
+	public PluginValidationOperation(IPluginModelBase[] models) {
+		fState = new MinimalState(TargetPlatform.getTargetEnvironment());
+		fModels = models;
 	}
 
-	private void initialize() {
+	private void initialize(ILaunchConfiguration configuration) {
 		try {
-			if (fLaunchConfiguration.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
-				fProductID = fLaunchConfiguration.getAttribute(IPDELauncherConstants.PRODUCT, (String)null);
+			fModels = LaunchPluginValidator.getPluginList(configuration);
+			if (configuration.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
+				fProductID = configuration.getAttribute(IPDELauncherConstants.PRODUCT, (String)null);
 			} else {
-				String appToRun = fLaunchConfiguration.getAttribute(IPDELauncherConstants.APP_TO_TEST, (String)null);
+				String appToRun = configuration.getAttribute(IPDELauncherConstants.APP_TO_TEST, (String)null);
 				if(appToRun == null)
-					appToRun = fLaunchConfiguration.getAttribute(IPDELauncherConstants.APPLICATION, LaunchConfigurationHelper.getDefaultApplicationName());				
+					appToRun = configuration.getAttribute(IPDELauncherConstants.APPLICATION, LaunchConfigurationHelper.getDefaultApplicationName());				
 				fApplicationID = JUnitLaunchConfiguration.CORE_APPLICATION.equals(appToRun) ? null : appToRun;
 			}
 		} catch (CoreException e) {
@@ -264,13 +269,9 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	 */
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException {
-		try {
-			IPluginModelBase[] models = LaunchPluginValidator.getPluginList(fLaunchConfiguration);
-			for (int i = 0; i < models.length; i++) {
-				if (fState.addBundle(models[i], -1) == null)
-					fInvalidModels.add(models[i]);
-			}
-		} catch (CoreException e) {
+		for (int i = 0; i < fModels.length; i++) {
+			if (fState.addBundle(fModels[i], -1) == null)
+				fInvalidModels.add(fModels[i]);
 		}
 		fState.resolveState(false);
 	}

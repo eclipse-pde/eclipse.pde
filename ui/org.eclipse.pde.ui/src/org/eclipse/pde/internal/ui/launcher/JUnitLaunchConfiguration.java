@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
@@ -38,6 +39,7 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.SocketUtil;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
@@ -55,6 +57,7 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 
 
@@ -92,6 +95,10 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 			
 			int port = SocketUtil.findFreePort();
 			VMRunnerConfiguration runnerConfig = createVMRunner(configuration, testTypes, port, mode);
+			if (runnerConfig == null) {
+				monitor.setCanceled(true);
+				return;
+			}
 			monitor.worked(1);
 			
 			setDefaultSourceLocator(launch, configuration);
@@ -174,8 +181,29 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 		
 		// Get the list of plug-ins to run
 		Map pluginMap = LaunchPluginValidator.getPluginsToRun(configuration);
-		if (pluginMap == null)
-			return null;		
+		
+		if (configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false)) {
+			IPluginModelBase[] models = (IPluginModelBase[])pluginMap.values().toArray(new IPluginModelBase[pluginMap.size()]);
+			final PluginValidationOperation op = new PluginValidationOperation(models);
+			try {
+				op.run(new NullProgressMonitor());
+			} catch (InvocationTargetException e) {
+			} catch (InterruptedException e) {
+			} finally {
+				if (op.hasErrors()) {
+					final int[] result = new int[1];
+					final Display display = LauncherUtils.getDisplay();
+					display.syncExec(new Runnable() {
+						public void run() {
+							result[0] = new PluginValidationDialog(display.getActiveShell(), op).open();
+					}});
+					if (result[0] == IDialogConstants.CANCEL_ID) {
+						return null;
+					}
+				}
+			}
+		}
+
 		addRequiredPlugins(pluginMap);
 		
 		programArgs.add("-version"); //$NON-NLS-1$

@@ -19,22 +19,14 @@ import java.util.TreeSet;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
-import org.eclipse.swt.widgets.Display;
 
 public class LaunchPluginValidator {
 	
@@ -80,7 +72,7 @@ public class LaunchPluginValidator {
 			wc.doSave();
 	}
 	
-	public static IPluginModelBase[] getSelectedWorkspacePlugins(ILaunchConfiguration configuration)
+	private static IPluginModelBase[] getSelectedWorkspacePlugins(ILaunchConfiguration configuration)
 			throws CoreException {
 		
 		boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
@@ -126,75 +118,37 @@ public class LaunchPluginValidator {
 		return set;
 	}
 
-	public static Map validatePluginsToRun(Map map, ArrayList statusEntries) throws CoreException {
-		final String requiredPlugin;
-		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
-			requiredPlugin = "org.eclipse.osgi"; //$NON-NLS-1$
-		else
-			requiredPlugin = "org.eclipse.core.boot"; //$NON-NLS-1$
-
-		if (!map.containsKey(requiredPlugin)) {
-			final Display display = getDisplay();
-			display.syncExec(new Runnable() {
-				public void run() {
-					MessageDialog.openError(
-									display.getActiveShell(),
-									PDEUIMessages.WorkbenchLauncherConfigurationDelegate_title,
-									NLS.bind(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_missingRequired,
-											requiredPlugin));
-				}
-			});
-			return null;
-		}
-
-		// alert user if any plug-ins are not loaded correctly.
-		if (statusEntries.size() > 0) {
-			final MultiStatus multiStatus = new MultiStatus(PDEPlugin.getPluginId(),
-					IStatus.OK, (IStatus[]) statusEntries
-							.toArray(new IStatus[statusEntries.size()]),
-					PDEUIMessages.WorkbenchLauncherConfigurationDelegate_brokenPlugins,
-					null);
-			if (!ignoreValidationErrors(multiStatus)) {
-				return null;
-			}
-		}
-		return map;
-	}
-	
 	public static IPluginModelBase[] getPluginList(ILaunchConfiguration config) throws CoreException {
 		Map map = getPluginsToRun(config);
-		if (map == null)
-			return new IPluginModelBase[0];
 		return (IPluginModelBase[])map.values().toArray(new IPluginModelBase[map.size()]);
 	}
 	
 	public static Map getPluginsToRun(ILaunchConfiguration config)
 			throws CoreException {
-		TreeMap map = null;
-		ArrayList statusEntries = new ArrayList();
-
-		if (config.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
-			map = validatePlugins(PDECore.getDefault().getModelManager().getPlugins(),
-					statusEntries);
-		} else {
-			map = validatePlugins(getSelectedPlugins(config), statusEntries);
-		}
-
-		return validatePluginsToRun(map, statusEntries);
-	}
-
-	public static IPluginModelBase[] getSelectedPlugins(ILaunchConfiguration config)
-			throws CoreException {
-		Map map = getSelectedPluginMap(config);
-		return (IPluginModelBase[]) map.values().toArray(new IPluginModelBase[map.size()]);
-	}
-	
-	public static Map getSelectedPluginMap(ILaunchConfiguration config)
-			throws CoreException {
 
 		checkBackwardCompatibility(config, true);
 				
 		TreeMap map = new TreeMap();
+		if (config.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
+			IPluginModelBase[] models = PDECore.getDefault().getModelManager().getPlugins();
+			for (int i = 0; i < models.length; i++) {
+				String id = models[i].getPluginBase().getId();
+				if (id != null)
+					map.put(id, models[i]);
+			}
+			return map;
+		}
+		
+		if (config.getAttribute(IPDELauncherConstants.USEFEATURES, false)) {
+			IPluginModelBase[] models = PDECore.getDefault().getModelManager().getWorkspaceModels();
+			for (int i = 0; i < models.length; i++) {
+				String id = models[i].getPluginBase().getId();
+				if (id != null)
+					map.put(id, models[i]);
+			}
+			return map;
+		}
+		
 		IPluginModelBase[] wsmodels = getSelectedWorkspacePlugins(config);
 		for (int i = 0; i < wsmodels.length; i++) {
 			String id = wsmodels[i].getPluginBase().getId();
@@ -233,43 +187,5 @@ public class LaunchPluginValidator {
 		}
 		return (IProject[]) projects.toArray(new IProject[projects.size()]);
 	}
-
-	private static TreeMap validatePlugins(IPluginModelBase[] models,
-			ArrayList statusEntries) {
-		TreeMap map = new TreeMap();
-		for (int i = 0; i < models.length; i++) {
-			if (models[i].isLoaded()) {
-				map.put(models[i].getPluginBase().getId(), models[i]);								
-			} else {
-				statusEntries.add(new Status(IStatus.WARNING, 
-						PDEPlugin.getPluginId(), 
-						IStatus.OK, 
-						models[i].getPluginBase().getId(), 
-						null));
-			}
-		}
-		return map;
-	}
-
-	private static boolean ignoreValidationErrors(final MultiStatus status) {
-		final boolean[] result = new boolean[1];
-		getDisplay().syncExec(new Runnable() {
-			public void run() {
-				result[0] = MessageDialog.openConfirm(getDisplay().getActiveShell(),
-						PDEUIMessages.WorkbenchLauncherConfigurationDelegate_title,
-						status.getMessage());
-			}
-		});
-		return result[0];
-	}
-	
-	private static Display getDisplay() {
-		Display display = Display.getCurrent();
-		if (display == null) {
-			display = Display.getDefault();
-		}
-		return display;
-	}
-
 
 }

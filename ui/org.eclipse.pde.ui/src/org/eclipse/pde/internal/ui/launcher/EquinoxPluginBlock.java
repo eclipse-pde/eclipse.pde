@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
@@ -393,5 +394,29 @@ public class EquinoxPluginBlock extends AbstractPluginBlock {
 		EquinoxLaunchShortcut.initializePluginState(config, 
 				PDECore.getDefault().getModelManager().getWorkspaceModels());
 	}
+	
+	protected PluginValidationOperation createValidationOperation() {
+		return new PluginValidationOperation(getPluginsToValidate());
+	}
+	
+	protected IPluginModelBase[] getPluginsToValidate() {
+		if (!fPluginTreeViewer.getTree().isEnabled())
+			return PDECore.getDefault().getModelManager().getPlugins();
+		
+		Map map = new HashMap();
+		Object[] objects = fPluginTreeViewer.getCheckedElements();
+		for (int i = 0; i < objects.length; i++) {
+			if (objects[i] instanceof IPluginModelBase) {
+				IPluginModelBase model = (IPluginModelBase)objects[i];
+				String id = model.getPluginBase().getId();
+				if (id == null)
+					continue;
+				if (!map.containsKey(id) || model.getUnderlyingResource() != null)
+					map.put(id, model);
+			}
+		}
+		return (IPluginModelBase[])map.values().toArray(new IPluginModelBase[map.size()]);
+	}
+
 
 }
