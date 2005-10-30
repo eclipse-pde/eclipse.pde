@@ -81,7 +81,6 @@ public class PDEState extends MinimalState {
 	private IProgressMonitor fMonitor;
 	private Map fPluginInfos;
 	private Map fExtensions;
-	private Dictionary fPlatformProperties;
 	private TreeMap fTargetModels = new TreeMap();
 	private ArrayList fWorkspaceModels = new ArrayList();
 	private boolean fCombined;
@@ -99,7 +98,6 @@ public class PDEState extends MinimalState {
 		fWorkspaceURLs = workspace;
 		fTargetURLs = target;
 		fMonitor = monitor;
-		fPlatformProperties = properties;
 		setTargetMode(target);
 		if (fResolve) {
 			readTargetState();
@@ -108,7 +106,7 @@ public class PDEState extends MinimalState {
 			createExtensionDocument();
 		}
 		fState.setResolver(Platform.getPlatformAdmin().getResolver());
-		fState.setPlatformProperties(fPlatformProperties);
+		fState.setPlatformProperties(properties);
 		resolveState(false);
 		
 		if (fResolve)

@@ -2254,5 +2254,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginValidationOperation_hostVersion;
 
+	public static String AbstractPluginBlock_auto_validate;
+
 
 }

@@ -133,6 +133,16 @@ public interface IPDELauncherConstants {
 	 * @see IPDELauncherConstants#SELECTED_WORKSPACE_PLUGINS
 	 */					
 	String AUTOMATIC_ADD = "automaticAdd"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is a boolean specifying
+	 * whether the list of plug-ins to run should be validate prior to launching.
+	 * If problems are found, they will be reported and the user will be able to cancel or
+	 * continue.
+	 * If no problems are found, the launch continues as normal.
+	 */					
+	String AUTOMATIC_VALIDATE = "automaticValidate"; //$NON-NLS-1$
+	
 	/**
 	 * Launch configuration attribute key. The value is a string specifying
 	 * a comma-separated list of IDs of target platform plug-ins to launch with.

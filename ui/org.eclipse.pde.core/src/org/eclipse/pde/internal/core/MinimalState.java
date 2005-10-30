@@ -87,10 +87,13 @@ public class MinimalState {
 		stateObjectFactory = Platform.getPlatformAdmin().getFactory();
 	}
 	
-	public MinimalState() {
+	protected MinimalState() {		
+	}
+	
+	public MinimalState(Dictionary properties) {
 		fState = stateObjectFactory.createState();
 		fState.setResolver(Platform.getPlatformAdmin().getResolver());
-        fState.setPlatformProperties(TargetPlatform.getTargetEnvironment());		
+        fState.setPlatformProperties(properties);		
 	}
 	
 	public void addBundle(IPluginModelBase model, boolean update) {

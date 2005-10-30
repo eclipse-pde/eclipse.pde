@@ -87,6 +87,8 @@ public abstract class AbstractPluginBlock {
 	private Label fCounter;
 
 	private ILaunchConfiguration fLaunchConfiguration;
+
+	private Button fAutoValidate;
 	
 	class Listener extends SelectionAdapter {
 		public void widgetSelected(SelectionEvent e) {
@@ -163,8 +165,20 @@ public abstract class AbstractPluginBlock {
 		
 		fAddWorkspaceButton = new Button(composite, SWT.CHECK);
 		fAddWorkspaceButton.setText(PDEUIMessages.AdvancedLauncherTab_addNew); 
-		fAddWorkspaceButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		fAddWorkspaceButton.setLayoutData(gd);
 		fAddWorkspaceButton.addSelectionListener(fListener);
+		
+		Label separator = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		separator.setLayoutData(gd);
+		
+		fAutoValidate = new Button(composite, SWT.CHECK);
+		fAutoValidate.setText(PDEUIMessages.AbstractPluginBlock_auto_validate);
+		fAutoValidate.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fAutoValidate.addSelectionListener(fListener);
 		
 		Button button = new Button(composite, SWT.PUSH);
 		button.setText(PDEUIMessages.AdvancedLauncherTab_validatePlugins); 
@@ -277,7 +291,7 @@ public abstract class AbstractPluginBlock {
 
 	}
 	
-	private void handleValidatePlugins() {
+	protected void handleValidatePlugins() {
 		PluginValidationOperation op = createValidationOperation();
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
@@ -353,7 +367,7 @@ public abstract class AbstractPluginBlock {
 		fLaunchConfiguration = config;
 		fIncludeOptionalButton.setSelection(config.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true));
 		fAddWorkspaceButton.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true));
-
+		fAutoValidate.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false));
 		if (fPluginTreeViewer.getInput() == null) {
 			fPluginTreeViewer.setUseHashlookup(true);
 			fPluginTreeViewer.setInput(PDEPlugin.getDefault());
@@ -480,6 +494,7 @@ public abstract class AbstractPluginBlock {
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, fIncludeOptionalButton.getSelection());
 		config.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, fAddWorkspaceButton.getSelection());
+		config.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, fAutoValidate.getSelection());
 		savePluginState(config);
 		updateCounter();
 	}

@@ -32,6 +32,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.MinimalState;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -240,7 +241,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	
 	public PluginValidationOperation(ILaunchConfiguration configuration) {
 		fLaunchConfiguration = configuration;
-		fState = new MinimalState();
+		fState = new MinimalState(TargetPlatform.getTargetEnvironment());
 		initialize();
 	}
 
