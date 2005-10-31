@@ -85,7 +85,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 	
 	private ISearchRequestor fSearchRequestor;
 	private Pattern fSearchPattern;
-	private int fSearchFor;
+	private int fSearchFor = -1; // set since S_FOR_TYPES = 0;
 	
 	public ClassSearchParticipant() {
 	}
@@ -101,14 +101,17 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		String search;
 		if (querySpecification instanceof ElementQuerySpecification) {
 			search = ((ElementQuerySpecification)querySpecification).getElement().getElementName();
-			if (((ElementQuerySpecification)querySpecification).getElement().getElementType() == IJavaElement.TYPE)
+			int type = ((ElementQuerySpecification)querySpecification).getElement().getElementType();
+			if (type == IJavaElement.TYPE)
 				fSearchFor = S_FOR_TYPES;
+			else if (type == IJavaElement.PACKAGE_FRAGMENT || type == IJavaElement.PACKAGE_FRAGMENT_ROOT)
+				fSearchFor = S_FOR_PACKAGES;
 		} else {
 			fSearchFor = ((PatternQuerySpecification)querySpecification).getSearchFor();
-			if (fSearchFor != S_FOR_TYPES && fSearchFor != S_FOR_PACKAGES)
-				return;
 			search = ((PatternQuerySpecification)querySpecification).getPattern();
 		}
+		if (fSearchFor != S_FOR_TYPES && fSearchFor != S_FOR_PACKAGES)
+			return;
 		fSearchPattern = PatternConstructor.createPattern(search, true);
 		fSearchRequestor = requestor;
 		
