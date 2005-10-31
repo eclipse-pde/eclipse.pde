@@ -14,6 +14,7 @@ import java.io.*;
 import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+import java.util.jar.Attributes.Name;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
@@ -81,6 +82,13 @@ public class ManifestModifier extends Task {
 				changeValue(key, value);
 			}
 		}
+		//force a manifest version if none exists
+		String manifestVersionKey = Name.MANIFEST_VERSION.toString();
+		if (!manifest.getMainAttributes().containsKey(manifestVersionKey)) {
+			contentChanged = true;
+			manifest.getMainAttributes().put(Name.MANIFEST_VERSION, "1.0"); //$NON-NLS-1$
+		}
+
 	}
 
 	private void loadManifest() {
