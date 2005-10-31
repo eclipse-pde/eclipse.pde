@@ -168,7 +168,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 		if (end == -1)
 			return;
 		String currentVersion = buffer.substring(begin, end);
-		String newVersion = "_" + version; //$NON-NLS-1$
+		String newVersion = version;
 		if (currentVersion.equals(newVersion))
 			return;
 		buffer.replace(begin, end, newVersion);
