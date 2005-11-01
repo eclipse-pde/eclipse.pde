@@ -655,10 +655,12 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateCompilerSettings() {
 		String javacSource = null;
 		String javacTarget = null;
+		String bootClasspath = null;
 		try {
 			Properties properties = getBuildProperties();
 			javacSource = properties.getProperty(IBuildPropertiesConstants.PROPERTY_JAVAC_SOURCE);
 			javacTarget = properties.getProperty(IBuildPropertiesConstants.PROPERTY_JAVAC_TARGET);
+			bootClasspath = properties.getProperty(IBuildPropertiesConstants.PROPERTY_BOOT_CLASSPATH);
 		} catch (CoreException e) {
 			//ignore
 		}
@@ -667,44 +669,50 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printProperty(PROPERTY_JAVAC_FAIL_ON_ERROR, "false"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_JAVAC_VERBOSE, "true"); //$NON-NLS-1$
+		script.printProperty(PROPERTY_JAVAC_COMPILERARG, ""); //$NON-NLS-1$  
+
 		if (javacSource == null)
 			script.printProperty(IXMLConstants.PROPERTY_JAVAC_SOURCE, "1.3"); //$NON-NLS-1$
 		if (javacTarget == null)
 			script.printProperty(IXMLConstants.PROPERTY_JAVAC_TARGET, "1.2"); //$NON-NLS-1$  
-		script.printProperty(PROPERTY_JAVAC_COMPILERARG, ""); //$NON-NLS-1$  
-		script.println("<path id=\"path_bootclasspath\">"); //$NON-NLS-1$
-		script.println("\t<fileset dir=\"${java.home}/lib\">"); //$NON-NLS-1$
-		script.println("\t\t<include name=\"*.jar\"/>"); //$NON-NLS-1$
-		script.println("\t</fileset>"); //$NON-NLS-1$
-		script.println("</path>"); //$NON-NLS-1$
-		script.printPropertyRefid(PROPERTY_BOOTCLASSPATH, "path_bootclasspath"); //$NON-NLS-1$		
+		if (bootClasspath == null) {
+			script.println("<path id=\"path_bootclasspath\">"); //$NON-NLS-1$
+			script.println("\t<fileset dir=\"${java.home}/lib\">"); //$NON-NLS-1$
+			script.println("\t\t<include name=\"*.jar\"/>"); //$NON-NLS-1$
+			script.println("\t</fileset>"); //$NON-NLS-1$
+			script.println("</path>"); //$NON-NLS-1$
+			script.printPropertyRefid(PROPERTY_BOOTCLASSPATH, "path_bootclasspath"); //$NON-NLS-1$
+		}
 
 		if (javacSource != null)
-			script.printProperty(PROPERTY_PLUGIN_JAVAC_SOURCE, javacSource);
+			script.printProperty(PROPERTY_BUNDLE_JAVAC_SOURCE, javacSource);
 		if (javacTarget != null)
-			script.printProperty(PROPERTY_PLUGIN_JAVAC_TARGET, javacTarget);
+			script.printProperty(PROPERTY_BUNDLE_JAVAC_TARGET, javacTarget);
+		if (bootClasspath != null)
+			script.printProperty(PROPERTY_BUNDLE_BOOTCLASSPATH, bootClasspath);
 
 		String[] environments = model.getExecutionEnvironments();
-		String bootClasspath, source, target = null;
+		String classpath, source, target = null;
 		for (int i = 0; i < environments.length; i++) {
 			Properties environmentMappings = getExecutionEnvironmentMappings();
-			bootClasspath = PROPERTY_BOOTCLASSPATH + '.' + environments[i];
-			script.printConditionIsSet(PROPERTY_PLUGIN_BOOTCLASSPATH, Utils.getPropertyFormat(bootClasspath), bootClasspath);
+			classpath = PROPERTY_BOOTCLASSPATH + '.' + environments[i];
+			if (bootClasspath == null)
+				script.printConditionIsSet(PROPERTY_BUNDLE_BOOTCLASSPATH, Utils.getPropertyFormat(classpath), classpath);
 
 			source = (String) environmentMappings.get(environments[i] + '.' + IXMLConstants.PROPERTY_JAVAC_SOURCE);
 			target = (String) environmentMappings.get(environments[i] + '.' + IXMLConstants.PROPERTY_JAVAC_TARGET);
 			if (javacSource == null && source != null)
-				script.printConditionIsSet(PROPERTY_PLUGIN_JAVAC_SOURCE, source, bootClasspath);
+				script.printConditionIsSet(PROPERTY_BUNDLE_JAVAC_SOURCE, source, classpath);
 			if (javacTarget == null && target != null)
-				script.printConditionIsSet(PROPERTY_PLUGIN_JAVAC_TARGET, target, bootClasspath);
+				script.printConditionIsSet(PROPERTY_BUNDLE_JAVAC_TARGET, target, classpath);
 		}
 
 		if (javacSource == null)
-			script.printProperty(PROPERTY_PLUGIN_JAVAC_SOURCE, Utils.getPropertyFormat(IXMLConstants.PROPERTY_JAVAC_SOURCE));
+			script.printProperty(PROPERTY_BUNDLE_JAVAC_SOURCE, Utils.getPropertyFormat(IXMLConstants.PROPERTY_JAVAC_SOURCE));
 		if (javacTarget == null)
-			script.printProperty(PROPERTY_PLUGIN_JAVAC_TARGET, Utils.getPropertyFormat(IXMLConstants.PROPERTY_JAVAC_TARGET));
-
-		script.printProperty(PROPERTY_PLUGIN_BOOTCLASSPATH, Utils.getPropertyFormat(PROPERTY_BOOTCLASSPATH));
+			script.printProperty(PROPERTY_BUNDLE_JAVAC_TARGET, Utils.getPropertyFormat(IXMLConstants.PROPERTY_JAVAC_TARGET));
+		if (bootClasspath == null)
+			script.printProperty(PROPERTY_BUNDLE_BOOTCLASSPATH, Utils.getPropertyFormat(PROPERTY_BOOTCLASSPATH));
 		script.println();
 	}
 
@@ -888,14 +896,14 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printComment("compile the source code"); //$NON-NLS-1$
 		JavacTask javac = new JavacTask();
 		javac.setClasspathId(name + PROPERTY_CLASSPATH);
-		javac.setBootClasspath(Utils.getPropertyFormat(PROPERTY_PLUGIN_BOOTCLASSPATH));
+		javac.setBootClasspath(Utils.getPropertyFormat(PROPERTY_BUNDLE_BOOTCLASSPATH));
 		javac.setDestdir(destdir);
 		javac.setFailOnError(Utils.getPropertyFormat(PROPERTY_JAVAC_FAIL_ON_ERROR));
 		javac.setDebug(Utils.getPropertyFormat(PROPERTY_JAVAC_DEBUG_INFO));
 		javac.setVerbose(Utils.getPropertyFormat(PROPERTY_JAVAC_VERBOSE));
 		javac.setIncludeAntRuntime("no"); //$NON-NLS-1$
-		javac.setSource(Utils.getPropertyFormat(PROPERTY_PLUGIN_JAVAC_SOURCE));
-		javac.setTarget(Utils.getPropertyFormat(PROPERTY_PLUGIN_JAVAC_TARGET));
+		javac.setSource(Utils.getPropertyFormat(PROPERTY_BUNDLE_JAVAC_SOURCE));
+		javac.setTarget(Utils.getPropertyFormat(PROPERTY_BUNDLE_JAVAC_TARGET));
 		javac.setCompileArgs(Utils.getPropertyFormat(PROPERTY_JAVAC_COMPILERARG));
 		javac.setSrcdir(sources);
 		script.print(javac);

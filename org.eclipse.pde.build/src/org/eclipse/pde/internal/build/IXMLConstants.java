@@ -104,9 +104,9 @@ public interface IXMLConstants {
 	public static final String PROPERTY_JAVAC_VERBOSE = "javacVerbose"; //$NON-NLS-1$
 	public static final String PROPERTY_JAVAC_SOURCE = "javacSource"; //$NON-NLS-1$
 	public static final String PROPERTY_JAVAC_TARGET = "javacTarget"; //$NON-NLS-1$
-	public static final String PROPERTY_PLUGIN_JAVAC_SOURCE = "pluginJavacSource"; //$NON-NLS-1$
-	public static final String PROPERTY_PLUGIN_BOOTCLASSPATH = "pluginBootClasspath"; //$NON-NLS-1$
-	public static final String PROPERTY_PLUGIN_JAVAC_TARGET = "pluginJavacTarget"; //$NON-NLS-1$
+	public static final String PROPERTY_BUNDLE_JAVAC_SOURCE = "bundleJavacSource"; //$NON-NLS-1$
+	public static final String PROPERTY_BUNDLE_BOOTCLASSPATH = "bundleBootClasspath"; //$NON-NLS-1$
+	public static final String PROPERTY_BUNDLE_JAVAC_TARGET = "bundleJavacTarget"; //$NON-NLS-1$
 	public static final String PROPERTY_JAVAC_COMPILERARG = "compilerArg"; //$NON-NLS-1$
 	public static final String PROPERTY_ARCHIVE_PREFIX = "archivePrefix"; //$NON-NLS-1$
 	public static final String PROPERTY_PLUGIN_ARCHIVE_PREFIX = "pluginArchivePrefix"; //$NON-NLS-1$
