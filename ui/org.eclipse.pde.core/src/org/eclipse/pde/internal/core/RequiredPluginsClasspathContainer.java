@@ -119,6 +119,9 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			Map map = retrieveVisiblePackagesFromState(desc);
 			
 			HashSet added = new HashSet();
+			
+			// to avoid cycles, e.g. when a bundle imports a package it exports
+			added.add(desc.getSymbolicName());
 
 			HostSpecification host = desc.getHost();
 			if (desc.isResolved() && host != null) {
