@@ -44,22 +44,16 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 		return new URL(parentURL.getProtocol(), parentURL.getHost(), path.toString());	
 	}
 	
-	private static URL getPluginRelativePath(String pluginID, IPath path, URL parentURL) {
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginID);
-		if (model == null)
-			return null;
-		
-		File file = new File(model.getInstallLocation(), path.toString());
-		if (!file.exists() || !file.isFile()) {
-			SourceLocationManager mgr = PDECore.getDefault().getSourceLocationManager();
-			file = mgr.findSourceFile(model.getPluginBase(), path);
+	private static URL getPluginRelativePath(String pluginID, IPath path, URL parentURL) {		
+		URL url = SchemaRegistry.getSchemaURL(pluginID, path.toString());
+		if (url == null) {
+			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginID);
+			if (model != null)
+				url = SchemaRegistry.getSchemaFromSourceExtension(model.getPluginBase(), path);		
 		}
-		URL url = null;
 		try {
-			if (file != null && file.exists() && file.isFile()) {
-				url = file.toURL();
-			} else if (parentURL != null){
-				file = new File(parentURL.getFile(), "../../../" + pluginID + "/" + path.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			if (url == null && parentURL != null){
+				File file = new File(parentURL.getFile(), "../../../" + pluginID + "/" + path.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 				if (file.exists() && file.isFile())
 					url = file.toURL();
 			}

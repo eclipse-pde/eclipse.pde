@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 
 
 public class SchemaRegistry {
@@ -77,33 +78,59 @@ public class SchemaRegistry {
 		String schema = point.getSchema();
 		if (schema == null || schema.trim().length() == 0)
 			return null;
-		String location = point.getModel().getInstallLocation();
-		if (location == null)
-			return null;
-		File file = new File(location, schema);
-		// try in the external plugin, if we did not find anything in workspace
-		if (!file.exists() && point.getModel().getUnderlyingResource() != null) {
-			String pluginID = point.getPluginBase().getId();
-			ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(pluginID);
-			if (entry != null) {
-				IPluginModelBase model = entry.getExternalModel();
-				if (model != null) {
-					 file = new File(model.getInstallLocation(), schema);
-				}
-			}
-		}
-		if (!file.exists()) {
-			SourceLocationManager mgr = PDECore.getDefault().getSourceLocationManager();
-			file = mgr.findSourceFile(point.getPluginBase(), new Path(schema));
-		}
 		
-		URL url = null;
+		IPluginModelBase model = point.getPluginModel();
+		URL url = getSchemaURL(model.getPluginBase().getId(), schema);		
+		if (url == null)
+			url = getSchemaFromSourceExtension(point.getPluginBase(), new Path(schema));
+		return url;
+	}
+	
+	public static URL getSchemaFromSourceExtension(IPluginBase plugin, IPath path) {
+		SourceLocationManager mgr = PDECore.getDefault().getSourceLocationManager();
+		File file = mgr.findSourceFile(plugin, path);
 		try {
 			if (file != null && file.exists() && file.isFile())
-				url = file.toURL();
+				return file.toURL();
 		} catch (MalformedURLException e) {
 		}
+		return null;
+	}
+	
+	public static URL getSchemaURL(String pluginID, String schema) {
+		if (pluginID == null)
+			return null;
+		
+		URL url = null;
+		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(pluginID);
+		if (entry != null) {
+			url = getSchemaURL(entry.getWorkspaceModel(), schema);
+			if (url == null)
+				url = getSchemaURL(entry.getExternalModel(), schema);
+		}
 		return url;
+	}
+	
+	private static URL getSchemaURL(IPluginModelBase model, String schema) {
+		try {
+			if (model == null)
+				return null;
+			
+			String location = model.getInstallLocation();
+			if (location == null)
+				return null;
+			
+			File file = new File(location);			
+			if (file.isDirectory()) {
+				File schemaFile = new File(file, schema);
+				if (schemaFile.exists())
+					return schemaFile.toURL();
+			} else if (CoreUtility.jarContainsResource(file, schema, false)) { //$NON-NLS-1$
+				return new URL("jar:file:" + file.getAbsolutePath() + "!/" + schema); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		} catch (MalformedURLException e) {
+		}		
+		return null;
 	}
 	
 	private boolean hasSchemaChanged(ISchemaDescriptor desc, URL url) {
