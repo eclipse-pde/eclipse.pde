@@ -76,7 +76,7 @@ public class BuildSourcePage extends KeyValueSourcePage {
 		IPreferenceStore store = JavaPlugin.getDefault().getCombinedPreferenceStore();
 		setPreferenceStore(store);
 		fColorManager = ColorManager.getDefault();
-		setSourceViewerConfiguration(new BuildSourceViewerConfiguration(fColorManager, store));
+		setSourceViewerConfiguration(new BuildSourceViewerConfiguration(fColorManager, store, this));
 	}
 	
 	public void dispose() {

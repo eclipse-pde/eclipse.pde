@@ -21,6 +21,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.text.reconciler.IReconciler;
+import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.IWhitespaceDetector;
 import org.eclipse.jface.text.rules.IWordDetector;
@@ -28,8 +30,11 @@ import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordRule;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
+import org.eclipse.pde.internal.ui.editor.text.ReconcilingStrategy;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
 
@@ -44,6 +49,8 @@ public class BuildSourceViewerConfiguration extends TextSourceViewerConfiguratio
 	private AbstractJavaScanner fCommentScanner;
 	private AbstractJavaScanner fPropertyValueScanner;
 	private IColorManager fColorManager;
+	private MonoReconciler fReconciler;
+	private BuildSourcePage fSourcePage;
 
 	private class SingleTokenJavaScanner extends AbstractJavaScanner{
 
@@ -117,9 +124,10 @@ public class BuildSourceViewerConfiguration extends TextSourceViewerConfiguratio
 		}
 	}
 	
-	public BuildSourceViewerConfiguration(IColorManager colorManager, IPreferenceStore store) {
+	public BuildSourceViewerConfiguration(IColorManager colorManager, IPreferenceStore store, BuildSourcePage sourcePage) {
 		super(store);
 		fColorManager = colorManager;
+		fSourcePage = sourcePage;
 		initializeScanners();
 	}
 
@@ -150,6 +158,21 @@ public class BuildSourceViewerConfiguration extends TextSourceViewerConfiguratio
 		return reconciler;
 	}
 
+	public IReconciler getReconciler(ISourceViewer sourceViewer) {
+		if (fReconciler == null) {
+			IBaseModel model = fSourcePage.getInputContext().getModel();
+			if (model instanceof IReconcilingParticipant) {
+				ReconcilingStrategy strategy = new ReconcilingStrategy();
+				strategy.addParticipant((IReconcilingParticipant)model);
+				if (fSourcePage.getContentOutline() instanceof IReconcilingParticipant)
+					strategy.addParticipant((IReconcilingParticipant)fSourcePage.getContentOutline());
+				fReconciler = new MonoReconciler(strategy, false);
+				fReconciler.setDelay(500);
+			}
+		}
+		return fReconciler;
+	}
+	
 	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
 		((ColorManager)fColorManager).handlePropertyChangeEvent(event);
 		if (fPropertyKeyScanner.affectsBehavior(event))
