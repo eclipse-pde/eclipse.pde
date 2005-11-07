@@ -165,7 +165,9 @@ public class RequiredExecutionEnvironmentSection extends PDESection {
 	}
 	
 	private RequiredExecutionEnvironmentHeader getHeader() {
-		IManifestHeader header = getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
+		Bundle bundle = getBundle();
+		if (bundle == null) return null;
+		IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 		if (header instanceof RequiredExecutionEnvironmentHeader)
 			return (RequiredExecutionEnvironmentHeader) header;
 		return null;
