@@ -235,7 +235,7 @@ public abstract class SyntaxColorTab {
 		label.setText(PDEUIMessages.SyntaxColorTab_preview);
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		fPreviewViewer = new SourceViewer(previewComp, null, SWT.BORDER|SWT.V_SCROLL);	
+		fPreviewViewer = new SourceViewer(previewComp, null, SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL);	
 		fSourceViewerConfiguration = getSourceViewerConfiguration();
 		
 		if (fSourceViewerConfiguration != null)
