@@ -20,6 +20,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.pde.internal.core.iproduct.IExportSettings;
+import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.FileExtensionFilter;
@@ -46,7 +49,6 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 public class ProductExportWizardPage extends BaseExportWizardPage {
 	
 	private static final String S_PRODUCT_CONFIG = "productConfig"; //$NON-NLS-1$
-	private static final String S_ROOT_DIR = "productRoot"; //$NON-NLS-1$
 	private static final String S_SYNC_PRODUCT = "syncProduct"; //$NON-NLS-1$
 
 	private Button fSyncButton;
@@ -70,30 +72,23 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 		
 		createConfigurationSection(container);
 		createSynchronizationSection(container);
-		checkForProductFile(container);
 	}
 	
-	protected void initializeTopSection() {
-		if (fSelection.size() > 0) {
-			Object object = fSelection.getFirstElement();
-			if (object instanceof IFile) {
-				IFile file = (IFile)object;
-				if ("product".equals(file.getFileExtension())) { //$NON-NLS-1$
-					String entry = file.getFullPath().toString();
-					if (fProductCombo.indexOf(entry) == -1) {
-						fProductCombo.add(entry, 0);
-					}
-					fProductCombo.setText(entry);	
-				}
-			}
+	protected void initializeTopSection() {	
+		initializeProductCombo();
+		
+		IProduct product = getProduct();
+		String root = null;
+		if (product != null) {
+			IExportSettings info = product.getExportSettings();
+			root = info.getLastRoot();
+			
 		}
+		fProductRootText.setText(root != null ? root : "eclipse"); //$NON-NLS-1$
 		
-		IDialogSettings settings = getDialogSettings();		
-		String value = settings.get(S_ROOT_DIR);
-		fProductRootText.setText(value == null ? "eclipse" : value); //$NON-NLS-1$
-		
-		value = settings.get(S_SYNC_PRODUCT);
-		fSyncButton.setSelection(value == null ? true : settings.getBoolean(S_SYNC_PRODUCT));	
+		IDialogSettings settings = getDialogSettings();
+		String value = settings.get(S_SYNC_PRODUCT);
+		fSyncButton.setSelection(value == null ? true : settings.getBoolean(S_SYNC_PRODUCT));
 	}
 	
 	private void createConfigurationSection(Composite parent) {
@@ -158,12 +153,14 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 		fProductCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				pageChanged();
+				updateProductFields();
 			}
 		});
 		
 		fProductCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				pageChanged();
+				updateProductFields();
 			}
 		});
 	}
@@ -223,10 +220,21 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 		}
 	}
 	
-	private void checkForProductFile(Composite container) {
+	private void initializeProductCombo() {
+		if (fSelection.size() > 0) {
+			Object object = fSelection.getFirstElement();
+			if (object instanceof IFile) {
+				IFile file = (IFile)object;
+				if ("product".equals(file.getFileExtension())) { //$NON-NLS-1$
+					String entry = file.getFullPath().toString();
+					if (fProductCombo.indexOf(entry) == -1)
+						fProductCombo.add(entry, 0);
+				}
+			}
+		}
+		
 		IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();
 		if (projects.length == 0) return;
-		
 		try {
 			IResource[] members = projects[0].members();
 			for (int i = 0; i < members.length; i++) {
@@ -237,13 +245,47 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 					String path = members[i].getFullPath().toString();
 					if (fProductCombo.indexOf(path) == -1)
 						fProductCombo.add(path, 0);
-					fProductCombo.setText(path);
-					return;
+					break;
 				}
 			}
 		} catch (CoreException e) {}
+		
+		String[] items = fProductCombo.getItems();
+		if (items != null && items.length > 0)
+			fProductCombo.setText(items[items.length - 1]);
 	}
 	
+	private WorkspaceProductModel getProductModel() {
+		IFile modelFile = getProductFile();
+		if (modelFile == null)
+			return null;
+		WorkspaceProductModel model = new WorkspaceProductModel(modelFile, true);
+		if (!model.isLoaded())
+			try {
+				model.load();
+			} catch (CoreException e) {}
+		return model;
+	}
+	
+	protected void updateProductFields() {
+		IProduct product = getProduct();
+		if (product == null)
+			return;
+		
+		IExportSettings info = product.getExportSettings();
+		String root = info.getLastRoot();
+		fProductRootText.setText(root != null ? root : "eclipse"); //$NON-NLS-1$
+		setDestinationSection(product);
+	}
+
+	
+	private IProduct getProduct() {
+		WorkspaceProductModel model = getProductModel();
+		if (model == null)
+			return null;
+		IProduct product = model.getProduct();
+		return product;
+	}
 	
 	protected void hookHelpContext(Control control) {
 	}
@@ -252,8 +294,32 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 		super.saveSettings();
 		IDialogSettings settings = getDialogSettings();
 		saveCombo(settings, S_PRODUCT_CONFIG, fProductCombo);
-		settings.put(S_ROOT_DIR, fProductRootText.getText().trim());
 		settings.put(S_SYNC_PRODUCT, fSyncButton.getSelection());
+		WorkspaceProductModel model = getProductModel();
+		if (model == null)
+			return;
+		IProduct product = model.getProduct();
+		if (product == null)
+			return;
+		
+		IExportSettings exSettings = product.getExportSettings();
+		boolean updated = false;
+		if (!fProductRootText.getText().equals(exSettings.getLastRoot())) {
+			exSettings.setLastRoot(fProductRootText.getText());
+			updated = true;
+		}
+		if (!getDestinationText().equals(exSettings.getLastDest())) {
+			exSettings.setLastDest(getDestinationText());
+			updated = true;
+		}
+		if (!exSettings.isDirectory() == isDirectoryDest()) {
+			exSettings.setIsDirectory(isDirectoryDest());
+			updated = true;
+		}
+		if (updated) {
+			product.setExportSettings(exSettings);
+			model.save();
+		}
 	}
 	
 	public boolean doSync() {
@@ -266,7 +332,8 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 	
 	public IFile getProductFile() {
 		String product = fProductCombo.getText().trim();
-		if (product.equals("")) return null; //$NON-NLS-1$
+		if (product.equals("")) //$NON-NLS-1$
+			return null;
 		IPath path = new Path(product);
 		if (path.segmentCount() < 2)
 			return null;
@@ -285,4 +352,33 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
         return super.getVerticalSpacing() * 2;
     }
 
+    private boolean setDestinationSection(IProduct product) {
+    	IExportSettings info = product.getExportSettings();
+		String dest = info.getLastDest();
+		if (dest != null) {
+			boolean useDir = info.isDirectory();
+			fDirectoryButton.setSelection(useDir);	
+			fArchiveFileButton.setSelection(!useDir);
+			toggleDestinationGroup(useDir);
+			if (useDir) {
+				if (fDirectoryCombo.indexOf(dest) == -1)
+					fDirectoryCombo.add(dest, 0);
+			} else {
+				if (fArchiveCombo.indexOf(dest) == -1)
+		    		fArchiveCombo.add(dest, 0);
+			}
+			fDirectoryCombo.setText(useDir ? dest : ""); //$NON-NLS-1$
+			fArchiveCombo.setText(useDir ? "" : dest); //$NON-NLS-1$
+		}
+		return (dest != null);
+    }
+    
+	protected void initializeDestinationSection(IDialogSettings settings) {
+		IProduct product = getProduct();
+		boolean destSet = false;
+		if (product != null)
+			destSet = setDestinationSection(product);
+		if (!destSet)
+			super.initializeDestinationSection(settings);
+	}
 }

@@ -11,27 +11,21 @@
 package org.eclipse.pde.internal.core.iproduct;
 
 
-public interface IProductModelFactory {
+public interface IExportSettings extends IProductObject {
 	
-	IProduct createProduct();
+	public static final String P_LAST_ROOT = "lastRoot"; //$NON-NLS-1$
+	public static final String P_LAST_DEST = "lastDest"; //$NON-NLS-1$
+	public static final String P_DIRECTORY_DEST = "dirDest"; //$NON-NLS-1$
 	
-	IAboutInfo createAboutInfo();
+	void setLastRoot(String path);
 	
-	IProductPlugin createPlugin();
+	String getLastRoot();
 	
-	IProductFeature createFeature();
+	void setLastDest(String path);
 	
-	IConfigurationFileInfo createConfigFileInfo();
+	String getLastDest();
 	
-	IWindowImages createWindowImages();
+	void setIsDirectory(boolean isDir);
 	
-	ISplashInfo createSplashInfo();
-	
-	ILauncherInfo createLauncherInfo();
-	
-	IArgumentsInfo createLauncherArguments();
-	
-	IIntroInfo createIntroInfo();
-
-	IExportSettings createExportSettings();
+	boolean isDirectory();
 }

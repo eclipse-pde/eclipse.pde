@@ -40,6 +40,8 @@ public interface IProduct extends IProductObject {
 	
 	IIntroInfo getIntroInfo();
 	
+	IExportSettings getExportSettings();
+	
 	ILauncherInfo getLauncherInfo();
 	
 	void addPlugin(IProductPlugin plugin);
@@ -71,6 +73,8 @@ public interface IProduct extends IProductObject {
 	void setSplashInfo(ISplashInfo info);
 	
 	void setIntroInfo(IIntroInfo introInfo);
+	
+	void setExportSettings(IExportSettings exportSettings);
 	
 	void setLauncherInfo(ILauncherInfo info);
 	

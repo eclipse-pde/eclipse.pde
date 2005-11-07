@@ -52,8 +52,8 @@ public class ConfigurationFileInfo extends ProductObject implements
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element)node;
-			fPath = element.getAttribute("path"); //$NON-NLS-1$
-			fUse = element.getAttribute("use"); //$NON-NLS-1$
+			fPath = element.getAttribute(P_PATH);
+			fUse = element.getAttribute(P_USE);
 		}
 	}
 

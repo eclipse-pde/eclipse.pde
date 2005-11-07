@@ -55,12 +55,12 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 	
 	private static String[] COMPILER_LEVELS = new String[] {"1.1", "1.2", "1.3", "1.4", "5.0"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		
-	private Button fDirectoryButton;
-	private Combo fDirectoryCombo;
+	protected Button fDirectoryButton;
+	protected Combo fDirectoryCombo;
 	private Button fBrowseDirectory;
 	
-	private Button fArchiveFileButton;
-	private Combo fArchiveCombo;
+	protected Button fArchiveFileButton;
+	protected Combo fArchiveCombo;
 	private Button fBrowseFile;
 	
 	private Button fIncludeSource;
@@ -239,7 +239,7 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 	
 	protected abstract String getJarButtonText();
 	
-	private void toggleDestinationGroup(boolean useDirectory) {
+	protected void toggleDestinationGroup(boolean useDirectory) {
 		fArchiveCombo.setEnabled(!useDirectory);
 		fBrowseFile.setEnabled(!useDirectory);
 		fDirectoryCombo.setEnabled(useDirectory);
@@ -414,7 +414,7 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
         return settings.getBoolean(S_JAR_FORMAT);
 	}
 	
-	private void initializeDestinationSection(IDialogSettings settings) {
+	protected void initializeDestinationSection(IDialogSettings settings) {
 		boolean useDirectory = settings.getBoolean(S_EXPORT_DIRECTORY);
 		fDirectoryButton.setSelection(useDirectory);	
 		fArchiveFileButton.setSelection(!useDirectory);
@@ -431,6 +431,10 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 				list.add(curr);
 			}
 		}
+		String text = combo.getText();
+		if (text.length() > 0)
+			list.add(0, text);
+		
 		String[] items = (String[])list.toArray(new String[list.size()]);
 		combo.setItems(items);
 		if (items.length > 0)
@@ -569,5 +573,14 @@ public abstract class BaseExportWizardPage extends ExportWizardPage  {
 				.findFeatureModel("org.eclipse.platform.launchers"); //$NON-NLS-1$
 		return model != null;
 	}
-	
+    
+    protected String getDestinationText() {
+    	if (isDirectoryDest())
+    		return fDirectoryCombo.getText();
+    	return fArchiveCombo.getText();
+    }
+    
+    protected boolean isDirectoryDest() {
+    	return fDirectoryButton.getSelection();
+    }
 }

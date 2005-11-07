@@ -73,4 +73,8 @@ public class ProductModelFactory implements IProductModelFactory {
 		return new IntroInfo(fModel);
 	}
 
+	public IExportSettings createExportSettings() {
+		return new ExportSettings(fModel);
+	}
+
 }
