@@ -41,9 +41,9 @@ public class ManifestSyntaxColorTab extends SyntaxColorTab {
 		buffer.append(delimiter);
 		buffer.append("Require-Bundle:"); //$NON-NLS-1$
 		buffer.append(delimiter);
-		buffer.append(" org.eclipse.core.runtime; bundle-version=\"3.0.0\","); //$NON-NLS-1$
+		buffer.append(" org.eclipse.core.runtime;bundle-version=\"3.0.0\","); //$NON-NLS-1$
 		buffer.append(delimiter);
-		buffer.append(" org.eclipse.ui; resolution:=optional"); //$NON-NLS-1$
+		buffer.append(" org.eclipse.ui;resolution:=optional"); //$NON-NLS-1$
 		IDocument document = new Document(buffer.toString());
 		return document;
 	}

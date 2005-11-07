@@ -17,7 +17,7 @@ import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
 import org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.pde.internal.ui.editor.text.IPDEColorConstants;
-import org.eclipse.pde.internal.ui.editor.text.XMLSourceViewerConfiguration;
+import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
 
 public class XMLSyntaxColorTab extends SyntaxColorTab {
 
@@ -56,7 +56,7 @@ public class XMLSyntaxColorTab extends SyntaxColorTab {
 	}
 
 	protected ChangeAwareSourceViewerConfiguration getSourceViewerConfiguration() {
-		return new XMLSourceViewerConfiguration(null, fColorManager);
+		return new XMLConfiguration(fColorManager);
 	}
 
 	protected String[][] getColorStrings() {
