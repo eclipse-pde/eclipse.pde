@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.editor.text;
 import org.eclipse.jface.text.rules.*;
 
 public class XMLPartitionScanner extends RuleBasedPartitionScanner {
-	public final static String XML_DEFAULT = "__xml_default"; //$NON-NLS-1$
 	public final static String XML_COMMENT = "__xml_comment"; //$NON-NLS-1$
 	public final static String XML_TAG = "__xml_tag"; //$NON-NLS-1$
 

@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.text;
 
 import org.eclipse.jdt.ui.PreferenceConstants;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
 
 public interface IColorManager {
@@ -24,5 +25,9 @@ public interface IColorManager {
 	};
 	
 	void dispose();
+	
 	Color getColor(String key);
+	
+	void handlePropertyChangeEvent(PropertyChangeEvent event);
+
 }

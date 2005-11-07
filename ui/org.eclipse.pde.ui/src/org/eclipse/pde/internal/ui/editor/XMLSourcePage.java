@@ -58,11 +58,11 @@ public abstract class XMLSourcePage extends PDESourcePage {
 
 	protected boolean affectsTextPresentation(PropertyChangeEvent event){
 		String property = event.getProperty();
-		return property.equals(IPDEColorConstants.P_DEFAULT) 
-		|| property.equals(IPDEColorConstants.P_PROC_INSTR) 
-		|| property.equals(IPDEColorConstants.P_STRING) 
-		|| property.equals(IPDEColorConstants.P_TAG) 
-		|| property.equals(IPDEColorConstants.P_XML_COMMENT);
+		return property.startsWith(IPDEColorConstants.P_DEFAULT) 
+					|| property.startsWith(IPDEColorConstants.P_PROC_INSTR) 
+					|| property.startsWith(IPDEColorConstants.P_STRING) 
+					|| property.startsWith(IPDEColorConstants.P_TAG) 
+					|| property.startsWith(IPDEColorConstants.P_XML_COMMENT);
 	}
 	
 	/* (non-Javadoc)
@@ -73,8 +73,7 @@ public abstract class XMLSourcePage extends PDESourcePage {
 		if (affectsTextPresentation(event)) {
 			sourceViewerConfiguration.adaptToPreferenceChange(event);
 			setSourceViewerConfiguration(sourceViewerConfiguration);
-		}
-							
+		}						
 		super.handlePreferenceStoreChanged(event);
 	}
 

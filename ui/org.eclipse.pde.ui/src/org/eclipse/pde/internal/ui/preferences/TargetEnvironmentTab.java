@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 
-public class EnvironmentBlock implements IEnvironmentVariables {
+public class TargetEnvironmentTab implements IEnvironmentVariables {
 	private Combo fOSCombo;
 	private Combo fWSCombo;
 	private Combo fNLCombo;
@@ -55,7 +55,7 @@ public class EnvironmentBlock implements IEnvironmentVariables {
 	private static boolean LOCALES_INITIALIZED = false;
 	private String fDefaultJRE;
 
-	public EnvironmentBlock() {
+	public TargetEnvironmentTab() {
 		preferences = PDECore.getDefault().getPluginPreferences();
 	}
 	

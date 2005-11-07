@@ -23,7 +23,7 @@ import org.eclipse.ui.PlatformUI;
 public class CompilersPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
-	private CompilersConfigurationBlock configurationBlock;
+	private CompilersConfigurationTab configurationBlock;
 
 	/**
 	 *  
@@ -34,7 +34,7 @@ public class CompilersPreferencePage extends PreferencePage implements
 		// only used when page is shown programatically
 		setTitle(PDEUIMessages.CompilersPreferencePage_title); 
 
-		configurationBlock = new CompilersConfigurationBlock(null);
+		configurationBlock = new CompilersConfigurationTab(null);
 	}
 
 	/*

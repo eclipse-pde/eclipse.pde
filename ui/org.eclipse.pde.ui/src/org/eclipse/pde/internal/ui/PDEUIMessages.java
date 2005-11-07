@@ -2257,5 +2257,27 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginValidationDialog_continue;
 
+	public static String EditorPreferencePage_link;
+
+	public static String ManifestSyntaxColorTab_keys;
+
+	public static String ManifestSyntaxColorTab_assignment;
+
+	public static String ManifestSyntaxColorTab_values;
+
+	public static String ManifestSyntaxColorTab_attributes;
+
+	public static String ManifestSyntaxColorTab_directives;
+
+	public static String SyntaxColorTab_elements;
+
+	public static String SyntaxColorTab_color;
+
+	public static String SyntaxColorTab_bold;
+
+	public static String SyntaxColorTab_italic;
+
+	public static String SyntaxColorTab_preview;
+
 
 }

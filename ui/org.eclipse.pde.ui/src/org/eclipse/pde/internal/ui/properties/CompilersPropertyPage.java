@@ -21,7 +21,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.builders.CompilerFlags;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.preferences.CompilersConfigurationBlock;
+import org.eclipse.pde.internal.ui.preferences.CompilersConfigurationTab;
 import org.eclipse.pde.internal.ui.preferences.CompilersPreferencePage;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -43,7 +43,7 @@ public class CompilersPropertyPage extends PropertyPage {
 
 	private Button changeWorkspaceSettingsButton;
 
-	private CompilersConfigurationBlock configurationBlock;
+	private CompilersConfigurationTab configurationBlock;
 
 	private Control configurationBlockControl;
 
@@ -57,7 +57,7 @@ public class CompilersPropertyPage extends PropertyPage {
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		configurationBlock = new CompilersConfigurationBlock(getProject());
+		configurationBlock = new CompilersConfigurationTab(getProject());
 
 		SelectionListener listener = new SelectionAdapter() {
 

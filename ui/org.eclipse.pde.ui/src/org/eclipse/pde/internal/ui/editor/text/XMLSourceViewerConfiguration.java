@@ -10,19 +10,26 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.presentation.*;
-import org.eclipse.jface.text.reconciler.*;
-import org.eclipse.jface.text.rules.*;
-import org.eclipse.jface.text.source.*;
-import org.eclipse.jface.util.*;
-import org.eclipse.pde.core.*;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextDoubleClickStrategy;
+import org.eclipse.jface.text.TextAttribute;
+import org.eclipse.jface.text.presentation.IPresentationReconciler;
+import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.text.reconciler.IReconciler;
+import org.eclipse.jface.text.reconciler.MonoReconciler;
+import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
+import org.eclipse.jface.text.source.IAnnotationHover;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
+import org.eclipse.pde.internal.ui.editor.XMLDoubleClickStrategy;
+import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 
 
-public class XMLSourceViewerConfiguration extends TextSourceViewerConfiguration {
+public class XMLSourceViewerConfiguration extends ChangeAwareSourceViewerConfiguration {
 	private AnnotationHover fAnnotationHover;
 	private XMLDoubleClickStrategy fDoubleClickStrategy;
 	private XMLTagScanner fTagScanner;
@@ -59,31 +66,14 @@ public class XMLSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	}
 	
 	protected XMLScanner getPDEScanner() {
-		if (fPdeScanner == null) {
+		if (fPdeScanner == null)
 			fPdeScanner = new XMLScanner(fColorManager);
-			fPdeScanner.setDefaultReturnToken(
-				new Token(
-					new TextAttribute(fColorManager.getColor(IPDEColorConstants.P_DEFAULT))));
-		}
 		return fPdeScanner;
 	}
 	
-	public void applyColorPreferenceChange(){
-		fPdeScanner = new XMLScanner(fColorManager);
-		fPdeScanner.setDefaultReturnToken(
-				new Token(
-						new TextAttribute(fColorManager.getColor(IPDEColorConstants.P_DEFAULT))));
-		fTagScanner = new XMLTagScanner(fColorManager);
-		fTagScanner.setDefaultReturnToken(
-				new Token(new TextAttribute(fColorManager.getColor(IPDEColorConstants.P_TAG))));
-		
-	}
 	protected XMLTagScanner getPDETagScanner() {
-		if (fTagScanner == null) {
+		if (fTagScanner == null) 
 			fTagScanner = new XMLTagScanner(fColorManager);
-			fTagScanner.setDefaultReturnToken(
-				new Token(new TextAttribute(fColorManager.getColor(IPDEColorConstants.P_TAG))));
-		}
 		return fTagScanner;
 	}
 	
@@ -97,10 +87,9 @@ public class XMLSourceViewerConfiguration extends TextSourceViewerConfiguration 
 		fDr = new DefaultDamagerRepairer(getPDETagScanner());
 		reconciler.setDamager(fDr, XMLPartitionScanner.XML_TAG);
 		reconciler.setRepairer(fDr, XMLPartitionScanner.XML_TAG);
-
-		fXMLCommentAttr = new TextAttribute(fColorManager.getColor(IPDEColorConstants.P_XML_COMMENT));
-		fNdr =
-			new NonRuleBasedDamagerRepairer(fXMLCommentAttr);
+	
+		fXMLCommentAttr = BasePDEScanner.createTextAttribute(fColorManager, IPDEColorConstants.P_XML_COMMENT);
+		fNdr = new NonRuleBasedDamagerRepairer(fXMLCommentAttr);
 		reconciler.setDamager(fNdr, XMLPartitionScanner.XML_COMMENT);
 		reconciler.setRepairer(fNdr, XMLPartitionScanner.XML_COMMENT);
 
@@ -114,6 +103,8 @@ public class XMLSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	}
 	
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
+		if (fSourcePage == null)
+			return fReconciler;
 		if (fReconciler == null) {
 			IBaseModel model = fSourcePage.getInputContext().getModel();
 			if (model instanceof IReconcilingParticipant) {
@@ -137,26 +128,56 @@ public class XMLSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 * Update the default tokens of the scanners.
 	 */
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
-		if (fTagScanner == null) {
+		if (fTagScanner == null)
 			return; //property change before the editor is fully created
-		}
-		fTagScanner.adaptToPreferenceChange((ColorManager)fColorManager, event);
-		fPdeScanner.adaptToPreferenceChange((ColorManager)fColorManager, event);
+		
+    	fColorManager.handlePropertyChangeEvent(event);
+		fTagScanner.adaptToPreferenceChange(fColorManager, event);
+		fPdeScanner.adaptToPreferenceChange(fColorManager, event);
 		String property= event.getProperty();
 		if (property.startsWith(IPDEColorConstants.P_XML_COMMENT)) {
-			adaptToColorChange(event);
-			fNdr.setDefaultTextAttribute(fXMLCommentAttr);
+	    	adaptTextAttribute(event);
 		} 
 	}
 	
-	 /**
-     * Update the text attributes associated with the tokens of this scanner as a color preference has been changed. 
-     */
-    private void adaptToColorChange(PropertyChangeEvent event) {
-    	((ColorManager)fColorManager).updateProperty(event.getProperty()); 
-    	fXMLCommentAttr= new TextAttribute(((ColorManager)fColorManager).getColor(event.getProperty()), fXMLCommentAttr.getBackground(), fXMLCommentAttr.getStyle());
-    }
- 
+	private void adaptTextAttribute(PropertyChangeEvent event) {
+		String property = event.getProperty();
+		if (property.endsWith(IPDEColorConstants.P_BOLD_SUFFIX)) {
+			fXMLCommentAttr = adaptToStyleChange(event, SWT.BOLD, fXMLCommentAttr);
+		} else if (property.endsWith(IPDEColorConstants.P_ITALIC_SUFFIX)) {
+			fXMLCommentAttr = adaptToStyleChange(event, SWT.ITALIC, fXMLCommentAttr);
+		} else {
+	    	fXMLCommentAttr= new TextAttribute(fColorManager.getColor(event.getProperty()), 
+	    									   fXMLCommentAttr.getBackground(), 
+	    									   fXMLCommentAttr.getStyle());
+		}
+		fNdr.setDefaultTextAttribute(fXMLCommentAttr);
+	}
 	
+	private TextAttribute adaptToStyleChange(PropertyChangeEvent event, int styleAttribute, TextAttribute textAttribute) {
+		boolean eventValue = false;
+		Object value = event.getNewValue();
+		if (value instanceof Boolean)
+			eventValue = ((Boolean)value).booleanValue();
+		
+		boolean activeValue = (textAttribute.getStyle() & styleAttribute) == styleAttribute;
+		if (activeValue != eventValue) { 
+			Color foreground = textAttribute.getForeground();
+			Color background = textAttribute.getBackground();
+			int style = eventValue ? textAttribute.getStyle() | styleAttribute : textAttribute.getStyle() & ~styleAttribute;
+			textAttribute= new TextAttribute(foreground, background, style);
+		}	
+		return textAttribute;
+	}
+
+	
+	public boolean affectsTextPresentation(PropertyChangeEvent event) {
+		String property = event.getProperty();
+		return property.startsWith(IPDEColorConstants.P_DEFAULT) ||
+			property.startsWith(IPDEColorConstants.P_PROC_INSTR) ||
+			property.startsWith(IPDEColorConstants.P_STRING) || 
+			property.startsWith(IPDEColorConstants.P_TAG) || 
+			property.startsWith(IPDEColorConstants.P_XML_COMMENT);
+	}
 	
 }

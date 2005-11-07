@@ -56,7 +56,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 
-public class SourceBlock {	
+public class TargetSourceTab {	
 	private Image fFolderImage;
 	private TreeViewer fTreeViewer;
 	private Image fExtensionImage;
@@ -125,7 +125,7 @@ public class SourceBlock {
 		}	
 	}
 
-	public SourceBlock() {
+	public TargetSourceTab() {
 		initializeImages();
 		fSystemNode = new NamedElement(PDEUIMessages.SourceBlock_target); 
 		fUserNode = new NamedElement(PDEUIMessages.SourceBlock_additional); 

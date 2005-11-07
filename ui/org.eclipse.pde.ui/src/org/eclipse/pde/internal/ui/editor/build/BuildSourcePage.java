@@ -27,6 +27,7 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.KeyValueSourcePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
+import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.swt.graphics.Image;
 
@@ -69,7 +70,7 @@ public class BuildSourcePage extends KeyValueSourcePage {
 		}
 	}
 
-	private ColorManager fColorManager;
+	private IColorManager fColorManager;
 	
 	public BuildSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);

@@ -54,9 +54,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	private Label fHomeLabel;
 	private Combo fHomeText;
 	private Button fBrowseButton;
-	private ExternalPluginsBlock fPluginsBlock;
-	private EnvironmentBlock fEnvironmentBlock;
-	private SourceBlock fSourceBlock;
+	private TargetPluginsTab fPluginsBlock;
+	private TargetEnvironmentTab fEnvironmentBlock;
+	private TargetSourceTab fSourceBlock;
 	
 	private Preferences fPreferences = null;
 	private boolean fNeedsReload = false;
@@ -74,7 +74,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	public TargetPlatformPreferencePage(int index) {
 		setDescription(PDEUIMessages.Preferences_TargetPlatformPage_Description); 
 		fPreferences = PDECore.getDefault().getPluginPreferences();
-		fPluginsBlock = new ExternalPluginsBlock(this);
+		fPluginsBlock = new TargetPluginsTab(this);
 		fIndex = index;
 	}
 	
@@ -170,7 +170,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	}
 	
 	private void createEnvironmentTab(TabFolder folder) {
-		fEnvironmentBlock = new EnvironmentBlock();
+		fEnvironmentBlock = new TargetEnvironmentTab();
 		Control block = fEnvironmentBlock.createContents(folder);
 		
 		TabItem tab = new TabItem(folder, SWT.NONE);
@@ -179,7 +179,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	}
 	
 	private void createSourceTab(TabFolder folder) {
-		fSourceBlock = new SourceBlock();
+		fSourceBlock = new TargetSourceTab();
 		Control block = fSourceBlock.createContents(folder);
 		
 		TabItem tab = new TabItem(folder, SWT.NONE);
@@ -253,7 +253,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			fHomeText.add(location, 0);
 	}
 	
-	public SourceBlock getSourceBlock() {
+	public TargetSourceTab getSourceBlock() {
 		return fSourceBlock;
 	}
 }

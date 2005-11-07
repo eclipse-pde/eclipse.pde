@@ -53,7 +53,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  */
-public class CompilersConfigurationBlock {
+public class CompilersConfigurationTab {
 
 	private Set fBuilders = new HashSet();
 
@@ -91,7 +91,7 @@ public class CompilersConfigurationBlock {
 	 */
 	private IProject project;
 
-	public CompilersConfigurationBlock(IProject project) {
+	public CompilersConfigurationTab(IProject project) {
 		this.project = project;
 	}
 

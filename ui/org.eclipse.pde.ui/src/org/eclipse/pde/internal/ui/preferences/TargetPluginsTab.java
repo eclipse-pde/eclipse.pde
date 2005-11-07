@@ -38,7 +38,7 @@ import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.forms.widgets.*;
 
 
-public class ExternalPluginsBlock {
+public class TargetPluginsTab {
 	private CheckboxTableViewer fPluginListViewer;
 	private TargetPlatformPreferencePage fPage;
 	private boolean fReloaded;
@@ -136,7 +136,7 @@ public class ExternalPluginsBlock {
 		}
 	}
 
-	public ExternalPluginsBlock(TargetPlatformPreferencePage page) {
+	public TargetPluginsTab(TargetPlatformPreferencePage page) {
 		this.fPage = page;
 		String[] buttonLabels =
 			{

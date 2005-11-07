@@ -33,6 +33,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.XMLConfiguration;
 import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
+import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -162,7 +163,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 	private String fPreErrorKey;
 
 	private IDocument fEmptyDoc;
-	private ColorManager fColorManager;
+	private IColorManager fColorManager;
 	private XMLConfiguration fXMLConfig;
 	private XMLDocumentSetupParticpant fSetupParticipant;
 	
