@@ -85,7 +85,7 @@ public class SourceOutlinePage extends ContentOutlinePage implements IReconcilin
 	 */
 	public void reconciled(IDocument document) {
 		final Control control = getControl();
-		if (control == null)
+		if (control == null || control.isDisposed())
 			return;
 		control.getDisplay().asyncExec(new Runnable() {
 			public void run() {
