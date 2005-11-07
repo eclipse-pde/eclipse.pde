@@ -11,17 +11,25 @@
 package org.eclipse.pde.internal.ui.wizards.tools;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Vector;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -30,6 +38,9 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.internal.PDE;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPluginConverter;
@@ -37,10 +48,12 @@ import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
+import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.correction.OrganizeManifestJob;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.pde.internal.ui.wizards.plugin.ClasspathComputer;
@@ -57,6 +70,10 @@ public class ConvertedProjectsPage extends WizardPage  {
 	private TablePart tablePart;
 	private IProject[] fSelected;
 	private IProject[] fUnconverted;
+	
+	private String fLibraryName;
+	private String[] fSrcEntries;
+	private String[] fLibEntries;
 	
 	public class ProjectContentProvider
 		extends DefaultContentProvider
@@ -124,7 +141,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 	}
 
 
-	private static String createInitialName(String id) {
+	private String createInitialName(String id) {
 		int loc = id.lastIndexOf('.');
 		if (loc == -1)
 			return id;
@@ -132,7 +149,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 		buf.setCharAt(0, Character.toUpperCase(buf.charAt(0)));
 		return buf.toString();
 	}
-	private static void createManifestFile(IFile file, IProgressMonitor monitor)
+	private void createManifestFile(IFile file, IProgressMonitor monitor)
 		throws CoreException {
 		WorkspacePluginModel model = new WorkspacePluginModel(file, false);
 		model.load();
@@ -142,9 +159,29 @@ public class ConvertedProjectsPage extends WizardPage  {
 		plugin.setId(file.getProject().getName());
 		plugin.setName(createInitialName(plugin.getId()));
 		plugin.setVersion("1.0.0"); //$NON-NLS-1$
+		
+		IPluginModelFactory factory = model.getPluginFactory();
+		IPluginBase base = model.getPluginBase();
+		if (fLibraryName != null && !fLibraryName.equals(".")) {
+			IPluginLibrary library = factory.createLibrary();
+			library.setName(fLibraryName);
+			library.setExported(true);
+			base.add(library);
+		}
+		for (int i = 0; i < fLibEntries.length; i++) {
+			IPluginLibrary library = factory.createLibrary();
+			library.setName(fLibEntries[i]);
+			library.setExported(true);
+			base.add(library);
+		}
 		model.save();
 		PDEPluginConverter.convertToOSGIFormat(file.getProject(), TargetPlatform.getTargetVersionString(), null, new SubProgressMonitor(monitor, 1));
+		organizeExports(file.getProject());
 		file.delete(true, null);
+	}
+
+	private boolean isOldTarget() {
+		return TargetPlatform.getTargetVersion() < 3.1;
 	}
 	
 	public boolean finish() {
@@ -173,7 +210,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 		return true;
 	}
 	
-	public static void updateBuildPath(IProject project, IProgressMonitor monitor)
+	public void updateBuildPath(IProject project, IProgressMonitor monitor)
 		throws CoreException {
 		IPath manifestPath = project.getFullPath().append("plugin.xml"); //$NON-NLS-1$
 		IFile file = project.getWorkspace().getRoot().getFile(manifestPath);
@@ -187,11 +224,14 @@ public class ConvertedProjectsPage extends WizardPage  {
 		ClasspathComputer.setClasspath(project, model);
 	}
 
-	public static void convertProject(
-		IProject project,
-		IProgressMonitor monitor)
-		throws CoreException {
+	public void convertProject(IProject project, IProgressMonitor monitor)
+			throws CoreException {
+		
 		CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
+		
+		loadClasspathEntries(project);
+		loadLibraryName(project);
+		
 		if (!WorkspaceModelManager.isPluginProject(project))
 			createManifestFile(project.getFile("plugin.xml"), monitor); //$NON-NLS-1$
 		IFile buildFile = project.getFile("build.properties"); //$NON-NLS-1$
@@ -203,16 +243,27 @@ public class ConvertedProjectsPage extends WizardPage  {
 				entry.addToken("plugin.xml"); //$NON-NLS-1$
 			if (project.getFile("META-INF/MANIFEST.MF").exists()) //$NON-NLS-1$
 				entry.addToken("META-INF/"); //$NON-NLS-1$
+			for (int i = 0; i < fLibEntries.length; i++) {
+				entry.addToken(fLibEntries[i]);
+			}
+			
+			if (fSrcEntries.length > 0) {
+				entry.addToken(fLibraryName);
+				IBuildEntry source = model.getFactory().createEntry("source." + fLibraryName);
+				for (int i = 0; i < fSrcEntries.length; i++) {
+					source.addToken(fSrcEntries[i]);
+				}
+				build.add(source);
+			}
 			if (entry.getTokens().length > 0)
 				build.add(entry);
+			
 			model.save();
 		}
 	}
 	
-	private void convertProjects(
-		Object[] selected,
-		IProgressMonitor monitor)
-		throws CoreException {
+	private void convertProjects(Object[] selected, IProgressMonitor monitor)
+			throws CoreException {
 		int totalCount = 2 * selected.length;
 		monitor.beginTask(
 			PDEUIMessages.ConvertedProjectWizard_converting,
@@ -233,5 +284,66 @@ public class ConvertedProjectsPage extends WizardPage  {
 		}
 		monitor.done();
 	}
-
+	
+	private void loadClasspathEntries(IProject project) {
+		IJavaProject javaProject = JavaCore.create(project);
+		IClasspathEntry[] classPath = new IClasspathEntry[0];
+		ArrayList sources = new ArrayList();
+		ArrayList libraries = new ArrayList();
+		try {
+			classPath = javaProject.getRawClasspath();
+		} catch (JavaModelException e) {
+		}
+		for (int i = 0; i < classPath.length; i++) {
+			int contentType = classPath[i].getEntryKind();
+			if (contentType == IClasspathEntry.CPE_SOURCE)
+				sources.add(getRelativePath(classPath[i], project) + "/");
+			else if (contentType == IClasspathEntry.CPE_LIBRARY) {
+				String path = getRelativePath(classPath[i], project);
+				if (path.length() > 0)
+					libraries.add(path);
+				else
+					libraries.add(".");
+			}
+		}
+		fSrcEntries = (String[])sources.toArray(new String[sources.size()]);
+		fLibEntries = (String[])libraries.toArray(new String[libraries.size()]);
+	}
+	
+	private String getRelativePath(IClasspathEntry cpe, IProject project) {
+		IPath path = project.getFile(cpe.getPath()).getProjectRelativePath();
+		return path.removeFirstSegments(1).toString();
+	}
+	
+	private void loadLibraryName(IProject project) {
+		if (isOldTarget() || 
+				(fLibEntries.length > 0 && fSrcEntries.length > 0)) {
+			String libName = project.getName();
+			int i = libName.lastIndexOf(".");
+			if (i != -1)
+				libName = libName.substring(i + 1);
+			fLibraryName = libName + ".jar";
+		} else {
+			fLibraryName = ".";
+		}
+	}
+	
+	private void organizeExports(IProject project) {
+		IFile manifest = project.getFile("META-INF/MANIFEST.MF");
+		try {
+			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+			manager.connect(manifest.getFullPath(), null);
+			ITextFileBuffer buffer = manager.getTextFileBuffer(manifest.getFullPath());
+			IDocument document = buffer.getDocument();		
+			BundleModel model = new BundleModel(document, false);
+			model.load();
+			if (model.isLoaded())
+				OrganizeManifestJob.organizeExportPackages(model.getBundle(), project);
+		} catch (CoreException e) {} 
+		finally {
+			try {
+				FileBuffers.getTextFileBufferManager().disconnect(manifest.getFullPath(), null);
+			} catch (CoreException e) {}
+		}
+	}
 }

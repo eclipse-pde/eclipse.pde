@@ -145,7 +145,7 @@ public class OrganizeManifestJob extends WorkspaceJob {
 		monitor.worked(1);
 	}
 	
-	protected static void organizeExportPackages(IBundle bundle, IProject project) {
+	public static void organizeExportPackages(IBundle bundle, IProject project) {
 		if (!(bundle instanceof Bundle))
 			return;
 		
@@ -216,6 +216,8 @@ public class OrganizeManifestJob extends WorkspaceJob {
 				// if valid build.properties exists.  Do NOT use else statement!  getBuild() could return null.
 				if (build != null) {  
 					IBuildEntry entry = build.getEntry("source." + lib); //$NON-NLS-1$
+					if (entry == null)
+						continue;
 					String[] tokens = entry.getTokens();
 					for (int i = 0; i < tokens.length; i++) {
 						root = jproj.getPackageFragmentRoot(proj.getFolder(tokens[i]));
