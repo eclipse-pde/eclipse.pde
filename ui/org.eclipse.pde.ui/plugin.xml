@@ -1495,7 +1495,7 @@
          point="org.eclipse.ui.intro.configExtension">
       <standbyContentPart
             pluginId="org.eclipse.pde.ui"
-            class="org.eclipse.pde.ui.internal.samples.SampleStandbyContent"
+            class="org.eclipse.pde.internal.ui.samples.SampleStandbyContent"
             id="org.eclipse.pde.ui.sampleStandbyPart">
       </standbyContentPart>
    </extension>
