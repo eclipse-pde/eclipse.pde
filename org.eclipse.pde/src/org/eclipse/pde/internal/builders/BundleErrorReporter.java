@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.builders;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -1365,8 +1366,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			if ("exceptions".equals(key)) { //$NON-NLS-1$
 				String[] values = elements[0].getAttributes(key);
 				for (int i = 0; i < values.length; i++) {
-					if (!packageExists(header, values[i]))
-						return false;
+					StringTokenizer st = new StringTokenizer(values[i], ","); //$NON-NLS-1$
+					while (st.hasMoreTokens())
+						if (!packageExists(header, st.nextToken().trim()))
+							return false;
 				}
 			}
 		}
@@ -1376,9 +1379,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	private boolean packageExists(IHeader header, String exportPackageStmt) {
 		/* The exported package does not exist in the bundle */
 		if (!getProjectPackages().containsKey(exportPackageStmt)) {
-			if (!(getHostPackages().containsKey(exportPackageStmt) || fHasExtensibleApi
-					&& getFragmentsPackages()
-							.containsKey(exportPackageStmt))) {
+			if (!(getHostPackages().containsKey(exportPackageStmt)
+					|| fHasExtensibleApi
+					&& getFragmentsPackages().containsKey(exportPackageStmt))) {
 				String message = NLS.bind(PDEMessages.BundleErrorReporter_NotExistInProject, exportPackageStmt); 
 				report(message, header.getLineNumber() + 1, CompilerFlags.P_UNRESOLVED_IMPORTS);
 				return false;
