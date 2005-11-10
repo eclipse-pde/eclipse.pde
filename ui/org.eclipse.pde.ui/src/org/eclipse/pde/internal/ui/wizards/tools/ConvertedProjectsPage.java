@@ -162,7 +162,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 		
 		IPluginModelFactory factory = model.getPluginFactory();
 		IPluginBase base = model.getPluginBase();
-		if (fLibraryName != null && !fLibraryName.equals(".")) {
+		if (fLibraryName != null && !fLibraryName.equals(".")) { //$NON-NLS-1$
 			IPluginLibrary library = factory.createLibrary();
 			library.setName(fLibraryName);
 			library.setExported(true);
@@ -249,7 +249,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 			
 			if (fSrcEntries.length > 0) {
 				entry.addToken(fLibraryName);
-				IBuildEntry source = model.getFactory().createEntry("source." + fLibraryName);
+				IBuildEntry source = model.getFactory().createEntry("source." + fLibraryName); //$NON-NLS-1$
 				for (int i = 0; i < fSrcEntries.length; i++) {
 					source.addToken(fSrcEntries[i]);
 				}
@@ -297,13 +297,13 @@ public class ConvertedProjectsPage extends WizardPage  {
 		for (int i = 0; i < classPath.length; i++) {
 			int contentType = classPath[i].getEntryKind();
 			if (contentType == IClasspathEntry.CPE_SOURCE)
-				sources.add(getRelativePath(classPath[i], project) + "/");
+				sources.add(getRelativePath(classPath[i], project) + "/"); //$NON-NLS-1$
 			else if (contentType == IClasspathEntry.CPE_LIBRARY) {
 				String path = getRelativePath(classPath[i], project);
 				if (path.length() > 0)
 					libraries.add(path);
 				else
-					libraries.add(".");
+					libraries.add("."); //$NON-NLS-1$
 			}
 		}
 		fSrcEntries = (String[])sources.toArray(new String[sources.size()]);
@@ -319,17 +319,17 @@ public class ConvertedProjectsPage extends WizardPage  {
 		if (isOldTarget() || 
 				(fLibEntries.length > 0 && fSrcEntries.length > 0)) {
 			String libName = project.getName();
-			int i = libName.lastIndexOf(".");
+			int i = libName.lastIndexOf("."); //$NON-NLS-1$
 			if (i != -1)
 				libName = libName.substring(i + 1);
-			fLibraryName = libName + ".jar";
+			fLibraryName = libName + ".jar"; //$NON-NLS-1$
 		} else {
-			fLibraryName = ".";
+			fLibraryName = "."; //$NON-NLS-1$
 		}
 	}
 	
 	private void organizeExports(IProject project) {
-		IFile manifest = project.getFile("META-INF/MANIFEST.MF");
+		IFile manifest = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
 		try {
 			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 			manager.connect(manifest.getFullPath(), null);

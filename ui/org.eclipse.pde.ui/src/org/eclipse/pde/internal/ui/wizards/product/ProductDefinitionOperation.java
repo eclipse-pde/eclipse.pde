@@ -243,7 +243,8 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 				buffer.append(image128);
 			}
 		}
-		return buffer.length() == 0 ? null : buffer.toString();
+		String bufferOut = buffer.toString();
+		return bufferOut.equals(",,,,") ? null : bufferOut; //$NON-NLS-1$
 	}
 	
 	private void modifyExistingFile(IFile file, IProgressMonitor monitor) throws CoreException, IOException, MalformedTreeException, BadLocationException {
