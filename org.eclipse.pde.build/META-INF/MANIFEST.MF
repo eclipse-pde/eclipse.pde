@@ -18,5 +18,5 @@ Export-Package: org.eclipse.pde.internal.build;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.build.packager;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.build.site;x-friends:="org.eclipse.pde.ui"
 Bundle-Localization: plugin
-Eclipse-AutoStart: true
-Eclipse-AutoStop: true
+Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
