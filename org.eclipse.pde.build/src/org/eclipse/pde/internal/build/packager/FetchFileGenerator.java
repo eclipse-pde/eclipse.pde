@@ -95,7 +95,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 		Properties selectedFiles = new Properties();
 		selectedFiles.put("toUnzip", collectedFiles); //$NON-NLS-1$
 		try {
-			OutputStream stream = new BufferedOutputStream(new FileOutputStream(workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR)); //$NON-NLS-1$
+			OutputStream stream = new BufferedOutputStream(new FileOutputStream(workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR)); 
 			try {
 				selectedFiles.store(stream, null);
 			} finally {

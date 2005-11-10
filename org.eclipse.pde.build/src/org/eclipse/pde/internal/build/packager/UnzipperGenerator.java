@@ -78,21 +78,21 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 
 	private void generatePrologue() {
 		script.println();
-		script.printComment("Unzip script"); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printComment("Unzip script"); //$NON-NLS-1$ 
 		script.println();
 		script.printProjectDeclaration("Unzipper", TARGET_MAIN, "."); //$NON-NLS-1$	//$NON-NLS-2$
 		script.printTargetDeclaration(TARGET_MAIN, null, null, null, null);
 	}
 
 	private void generateUncompressionCommands() throws CoreException {
-		zipsList = readProperties(workingDirectory, directoryLocation, IStatus.ERROR); //$NON-NLS-1$
+		zipsList = readProperties(workingDirectory, directoryLocation, IStatus.ERROR); 
 
 		String zipEntries = zipsList.getProperty("toUnzip",""); //$NON-NLS-1$	//$NON-NLS-2$
 
 		List toUnzipWithOrder = new ArrayList(unzipOrder.length);
-		String[] allZipEntries = Utils.getArrayFromString(zipEntries, ENTRY_SEPARATOR); //$NON-NLS-1$
+		String[] allZipEntries = Utils.getArrayFromString(zipEntries, ENTRY_SEPARATOR); 
 		for (int i = 0; i < allZipEntries.length; i++) {
-			String[] entryDetail = Utils.getArrayFromString(allZipEntries[i], DATA_SEPARATOR); //$NON-NLS-1$
+			String[] entryDetail = Utils.getArrayFromString(allZipEntries[i], DATA_SEPARATOR); 
 			script.printComment("Uncompress " + entryDetail[ARCHIVE_NAME]); //$NON-NLS-1$
 
 			if (!entryDetail[FOLDER].equals(".")) //$NON-NLS-1$
@@ -157,7 +157,7 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 	private void generateUnzipArchive(String[] entryDetail) {
 		List parameters = new ArrayList(1);
 		parameters.add("-o -X ${unzipArgs} "); //$NON-NLS-1$
-		parameters.add(Utils.getPropertyFormat("downloadDirectory") + '/' + entryDetail[ARCHIVE_NAME]); //$NON-NLS-1$ //$NON-NLS-2$
+		parameters.add(Utils.getPropertyFormat("downloadDirectory") + '/' + entryDetail[ARCHIVE_NAME]); //$NON-NLS-1$ 
 		script.printExecTask("unzip", "${tempDirectory}/" + entryDetail[FOLDER], parameters, null); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
@@ -170,9 +170,9 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 			String rootFilesFolder = "${tempDirectory}/" + config.toString(".") + '/' +  entryDetail[FOLDER];
 			script.printMkdirTask(rootFilesFolder);
 			parameters.add("-o -X ${unzipArgs} "); //$NON-NLS-1$
-			parameters.add(Utils.getPropertyFormat("downloadDirectory") + '/' + entryDetail[ARCHIVE_NAME]); //$NON-NLS-1$ //$NON-NLS-2$
+			parameters.add(Utils.getPropertyFormat("downloadDirectory") + '/' + entryDetail[ARCHIVE_NAME]); //$NON-NLS-1$ 
 			parameters.add("-x " + (entryDetail[FOLDER].equals(".") ? "eclipse" : "") + "/features/*"  + " " + (entryDetail[FOLDER].equals(".") ? "eclipse" : "") + "/plugins/*");
-			script.printExecTask("unzip", rootFilesFolder, parameters, null); //$NON-NLS-1$//$NON-NLS-2$
+			script.printExecTask("unzip", rootFilesFolder, parameters, null); //$NON-NLS-1$
 		}
 	}
 	
@@ -180,7 +180,7 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 	private void generateUntarArchice(String[] entryDetail) {
 		List parameters = new ArrayList(2);
 		parameters.add("-" + (entryDetail[ARCHIVE_NAME].endsWith(".gz") ? "z" : "") + "pxvf"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-		parameters.add(Utils.getPropertyFormat("downloadDirectory") + '/' + entryDetail[ARCHIVE_NAME]); //$NON-NLS-1$ //$NON-NLS-2$
+		parameters.add(Utils.getPropertyFormat("downloadDirectory") + '/' + entryDetail[ARCHIVE_NAME]); //$NON-NLS-1$ 
 		script.printExecTask("tar", "${tempDirectory}/" + entryDetail[FOLDER], parameters, null); //$NON-NLS-1$//$NON-NLS-2$	
 	}
 	
@@ -192,7 +192,7 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 			String rootFilesFolder = "${tempDirectory}/" + config.toString(".") + '/' +  entryDetail[FOLDER];
 			script.printMkdirTask(rootFilesFolder);
 			parameters.add("-" + (entryDetail[ARCHIVE_NAME].endsWith(".gz") ? "z" : "") + "pxvf"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-			parameters.add(Utils.getPropertyFormat("downloadDirectory") + '/' + entryDetail[ARCHIVE_NAME]); //$NON-NLS-1$ //$NON-NLS-2$
+			parameters.add(Utils.getPropertyFormat("downloadDirectory") + '/' + entryDetail[ARCHIVE_NAME]); //$NON-NLS-1$ 
 			parameters.add("--exclude=" + (entryDetail[FOLDER].equals(".") ? "eclipse" : "") + "/features/*");
 			parameters.add("--exclude=" + (entryDetail[FOLDER].equals(".") ? "eclipse" : "") + "/plugins/*");			
 			script.printExecTask("tar", "${tempDirectory}/" + entryDetail[FOLDER], parameters, null); //$NON-NLS-1$//$NON-NLS-2$	

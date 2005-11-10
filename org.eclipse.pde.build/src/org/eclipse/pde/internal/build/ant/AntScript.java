@@ -523,7 +523,7 @@ public class AntScript {
 			}
 			indent--;
 		}
-		printEndTag(tag); //$NON-NLS-1$
+		printEndTag(tag); 
 	}
 	
 	/**

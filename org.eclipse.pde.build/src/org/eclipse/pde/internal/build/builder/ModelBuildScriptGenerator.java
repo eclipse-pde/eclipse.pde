@@ -41,7 +41,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		private String[] output;
 		private String[] extraClasspath;
 		private String excludedFromJar;
-		private byte type;
+		byte type;
 
 		protected CompiledEntry(String entryName, String[] entrySource, String[] entryOutput, String[] entryExtraClasspath, String excludedFromJar, byte entryType) {
 			this.name = entryName;

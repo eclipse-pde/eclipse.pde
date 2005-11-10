@@ -18,7 +18,7 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 	private String packagingPropertiesLocation;
 	private boolean backwardCompatibleName = false;
 	
-	public PackageScriptGenerator(String directory, AssemblyInformation assemblageInformation, String featureId) throws CoreException {
+	public PackageScriptGenerator(String directory, AssemblyInformation assemblageInformation, String featureId) {
 		super(directory, assemblageInformation, featureId);
 	}
 	
@@ -63,7 +63,7 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 	
 	private String computeBackwardCompatibleName(Config configInfo) {
 		if (backwardCompatibleName)
-			return DEFAULT_ASSEMBLE_NAME + (configInfo.equals(Config.genericConfig()) ? "" : ('.' + configInfo.toStringReplacingAny(".", ANY_STRING)) + (backwardCompatibleName ? ".xml" : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			return DEFAULT_ASSEMBLE_NAME + (configInfo.equals(Config.genericConfig()) ? "" : ('.' + configInfo.toStringReplacingAny(".", ANY_STRING)) + (backwardCompatibleName ? ".xml" : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
 		return DEFAULT_ASSEMBLE_NAME + (featureId.equals("") ? "" : ('.' + featureId)) + (configInfo.equals(Config.genericConfig()) ? "" : ('.' + configInfo.toStringReplacingAny(".", ANY_STRING)) + (backwardCompatibleName ? ".xml" : "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 	}
 }

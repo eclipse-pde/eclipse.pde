@@ -101,7 +101,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			closeScript();
 		}
 
-		if (recursiveGeneration && mapInfos.get(TYPE).equals(FEATURE)) //$NON-NLS-1$
+		if (recursiveGeneration && mapInfos.get(TYPE).equals(FEATURE)) 
 			generateFetchFilesForIncludedFeatures();
 
 		saveRepositoryVersions();
@@ -109,7 +109,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 	private void saveRepositoryVersions(Properties properties, String fileName) throws CoreException {
 		try {
-			InputStream input = new BufferedInputStream(new FileInputStream(workingDirectory + '/' + fileName)); //$NON-NLS-1$
+			InputStream input = new BufferedInputStream(new FileInputStream(workingDirectory + '/' + fileName)); 
 			try {
 				properties.load(input);
 			} finally {
@@ -169,7 +169,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		generatePrologue();
 		generateFetchTarget();
 		generateFetchElementTarget();
-		if (mapInfos.get(TYPE).equals(FEATURE)) { //$NON-NLS-1$ 	//$NON-NLS-2$
+		if (mapInfos.get(TYPE).equals(FEATURE)) { 
 			generateFetchPluginsTarget();
 			generateFetchRecusivelyTarget();
 		}
@@ -184,7 +184,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		script.println();
 		script.printTargetDeclaration(TARGET_FETCH, null, null, null, null);
 		script.printAntCallTask(TARGET_FETCH_ELEMENT, null, null);
-		if (mapInfos.get(TYPE).equals(FEATURE)) { //$NON-NLS-1$ 	//$NON-NLS-2$
+		if (mapInfos.get(TYPE).equals(FEATURE)) { 
 			script.printAntCallTask(TARGET_FETCH_PLUGINS, null, null);
 			script.printAntCallTask(TARGET_FETCH_RECURSIVELY, null, null);
 		}
@@ -204,7 +204,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 	protected void generateFetchPluginsTarget() throws CoreException {
 		script.printTargetDeclaration(TARGET_FETCH_PLUGINS, null, FEATURE_AND_PLUGINS, null, null);
-		retrieveFeature((String) mapInfos.get(ELEMENT), (String) mapInfos.get(CVSROOT), (String) mapInfos.get(TAG), (String) mapInfos.get(PASSWORD), (String) mapInfos.get(PATH)); //$NON-NLS-1$ 	//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-1$ //$NON-NLS-5$
+		retrieveFeature((String) mapInfos.get(ELEMENT), (String) mapInfos.get(CVSROOT), (String) mapInfos.get(TAG), (String) mapInfos.get(PASSWORD), (String) mapInfos.get(PATH)); 
 		generateChildrenFetchScript();
 		script.printTargetEnd();
 	}
@@ -232,15 +232,15 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ENTRY_MISSING, message, null));
 		}
 
-		entryInfos.put(TAG, fetchTag.length() == 0 ? cvsFields[0] : fetchTag); //$NON-NLS-1$
-		entryInfos.put(CVSROOT, cvsFields[1]); //$NON-NLS-1$
-		entryInfos.put(PASSWORD, (cvsFields.length > 2 && !cvsFields[2].equals("")) ? cvsFields[2] : null); //$NON-NLS-1$ //$NON-NLS-2$
+		entryInfos.put(TAG, fetchTag.length() == 0 ? cvsFields[0] : fetchTag); 
+		entryInfos.put(CVSROOT, cvsFields[1]); 
+		entryInfos.put(PASSWORD, (cvsFields.length > 2 && !cvsFields[2].equals("")) ? cvsFields[2] : null); //$NON-NLS-1$ 
 
-		entryInfos.put(PATH, (cvsFields.length > 3 && !cvsFields[3].equals("")) ? cvsFields[3] : null); //$NON-NLS-1$ //$NON-NLS-2$
+		entryInfos.put(PATH, (cvsFields.length > 3 && !cvsFields[3].equals("")) ? cvsFields[3] : null); //$NON-NLS-1$ 
 
-		int index = entry.indexOf('@'); //$NON-NLS-1$
-		entryInfos.put(TYPE, entry.substring(0, index)); //$NON-NLS-1$
-		entryInfos.put(ELEMENT, entry.substring(index + 1)); //$NON-NLS-1$
+		int index = entry.indexOf('@'); 
+		entryInfos.put(TYPE, entry.substring(0, index)); 
+		entryInfos.put(ELEMENT, entry.substring(index + 1)); 
 		return entryInfos;
 	}
 
@@ -279,32 +279,32 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 		String password = (String) mapFileEntry.get(PASSWORD);
 		if (password != null)
-			script.printCVSPassTask((String) mapFileEntry.get(CVSROOT), password, cvsPassFileLocation); //$NON-NLS-1$
+			script.printCVSPassTask((String) mapFileEntry.get(CVSROOT), password, cvsPassFileLocation); 
 
 		String type = (String) mapFileEntry.get(TYPE);
 		String location = getElementLocation(type);
 		Map params = new HashMap(5);
 
 		//We directly export the CVS content into the correct directory 
-		params.put("destination", mapFileEntry.get(ELEMENT)); //$NON-NLS-1$ //$NON-NLS-2$
-		params.put(TAG, mapFileEntry.get(TAG)); //$NON-NLS-1$ //$NON-NLS-2$
-		params.put(CVSROOT, mapFileEntry.get(CVSROOT)); //$NON-NLS-1$ //$NON-NLS-2$
+		params.put("destination", mapFileEntry.get(ELEMENT)); //$NON-NLS-1$ 
+		params.put(TAG, mapFileEntry.get(TAG)); 
+		params.put(CVSROOT, mapFileEntry.get(CVSROOT)); 
 		params.put("quiet", "${quiet}"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		String cvsPackage = ((String) mapFileEntry.get(PATH) == null ? (String) mapFileEntry.get(ELEMENT) : (String) mapFileEntry.get(PATH)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String cvsPackage = ((String) mapFileEntry.get(PATH) == null ? (String) mapFileEntry.get(ELEMENT) : (String) mapFileEntry.get(PATH)); 
 		String fullLocation = null;
 		if (type.equals(FEATURE)) {
-			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR; 
 			params.put("fileToCheck", fullLocation); //$NON-NLS-1$
 			cvsPackage += manifestFileOnly ? '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$
 			repositoryFeatureVersions.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));
 		} else if (type.equals(PLUGIN)) {
-			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_PLUGIN_FILENAME_DESCRIPTOR; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_PLUGIN_FILENAME_DESCRIPTOR; 
 			params.put("fileToCheck", fullLocation); //$NON-NLS-1$
 			cvsPackage += manifestFileOnly ? '/' + DEFAULT_PLUGIN_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$
 			repositoryPluginVersions.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));
 		} else if (type.equals(FRAGMENT)) {
-			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR; 
 			params.put("fileToCheck", fullLocation); //$NON-NLS-1$
 			cvsPackage += manifestFileOnly ? '/' + DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$
 			repositoryPluginVersions.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));
@@ -321,7 +321,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		if (type.equals(PLUGIN) || type.equals(FRAGMENT)) {
 			script.printAvailableTask(fullLocation, location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_BUNDLE_FILENAME_DESCRIPTOR);
 		}
-		script.printAntTask("../" + scriptName, Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + (type.equals(FEATURE) ? DEFAULT_FEATURE_LOCATION : DEFAULT_PLUGIN_LOCATION), TARGET_GET_FROM_CVS, null, null, params); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		script.printAntTask("../" + scriptName, Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + (type.equals(FEATURE) ? DEFAULT_FEATURE_LOCATION : DEFAULT_PLUGIN_LOCATION), TARGET_GET_FROM_CVS, null, null, params); //$NON-NLS-1$ 
 		return true;
 	}
 
@@ -365,11 +365,11 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 			boolean generated = true;
 			if (allChildren[i].isFragment())
-				generated = generateFetchEntry(FRAGMENT + '@' + elementId, !Utils.isIn(compiledChildren, allChildren[i])); //$NON-NLS-1$
+				generated = generateFetchEntry(FRAGMENT + '@' + elementId, !Utils.isIn(compiledChildren, allChildren[i])); 
 			else
-				generated = generateFetchEntry(PLUGIN + '@' + elementId, !Utils.isIn(compiledChildren, allChildren[i])); //$NON-NLS-1$
+				generated = generateFetchEntry(PLUGIN + '@' + elementId, !Utils.isIn(compiledChildren, allChildren[i])); 
 			if (generated == false)
-				generateFetchEntry(BUNDLE + '@' + elementId, !Utils.isIn(compiledChildren, allChildren[i])); //$NON-NLS-1$
+				generateFetchEntry(BUNDLE + '@' + elementId, !Utils.isIn(compiledChildren, allChildren[i])); 
 		}
 	}
 
@@ -388,12 +388,12 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		// Generate a temporary Ant script which retrieves the feature.xml for this
 		// feature from CVS
 		File root = new File(workingDirectory);
-		File target = new File(root, DEFAULT_RETRIEVE_FILENAME_DESCRIPTOR); //$NON-NLS-1$
+		File target = new File(root, DEFAULT_RETRIEVE_FILENAME_DESCRIPTOR); 
 		try {
 			AntScript retrieve = new AntScript(new FileOutputStream(target));
 			try {
 				retrieve.printProjectDeclaration("RetrieveFeature", "main", "."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				retrieve.printTargetDeclaration(TARGET_MAIN, null, null, null, null); //$NON-NLS-1$
+				retrieve.printTargetDeclaration(TARGET_MAIN, null, null, null, null); 
 
 				IPath moduleFeatureFile;
 				IPath moduleFeatureProperties;
@@ -429,7 +429,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			runner.run();
 			FeatureExecutableFactory factory = new FeatureExecutableFactory();
 			File featureFolder = new File(root, (path == null ? elementName : path));
-			feature = (Feature) factory.createFeature(featureFolder.toURL(), null, null);
+			feature = factory.createFeature(featureFolder.toURL(), null, null);
 
 			//We only delete here, so if an exception is thrown the user can still see the retrieve.xml 
 			target.delete();
@@ -484,7 +484,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	 */
 	protected String getElementLocation(String type) {
 		IPath location = new Path(Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY));
-		if (type.equals(FEATURE)) //$NON-NLS-1$
+		if (type.equals(FEATURE)) 
 			location = location.append(DEFAULT_FEATURE_LOCATION);
 		else
 			location = location.append(DEFAULT_PLUGIN_LOCATION);
@@ -511,7 +511,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		script.println();
 		script.printComment("Fetch script for " + element); //$NON-NLS-1$
 		script.println();
-		script.printProjectDeclaration("FetchScript", TARGET_FETCH, null); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printProjectDeclaration("FetchScript", TARGET_FETCH, null); //$NON-NLS-1$ 
 		script.printProperty(PROPERTY_QUIET, "true"); //$NON-NLS-1$
 	}
 

@@ -32,13 +32,13 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	protected static String workingDirectory;
 	protected static boolean buildingOSGi = true;
 	protected AntScript script;
-	
+
 	private static PDEUIStateWrapper pdeUIState;
-	
+
 	/** Location of the plug-ins and fragments. */
 	protected String[] pluginPath;
 	protected BuildTimeSiteFactory siteFactory;
-	
+
 	protected boolean reportResolutionErrors;
 
 	static {
@@ -72,7 +72,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 				IStatus error = new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_CONFIG_FORMAT, NLS.bind(Messages.error_configWrongFormat, configs[i]), null);
 				throw new CoreException(error);
 			}
-			Config aConfig = new Config(configs[i]); //$NON-NLS-1$
+			Config aConfig = new Config(configs[i]);
 			if (aConfig.equals(Config.genericConfig()))
 				configInfos.add(Config.genericConfig());
 			else
@@ -153,7 +153,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			return;
 
 		try {
-			OutputStream scriptStream = new BufferedOutputStream(new FileOutputStream(scriptLocation + '/' + scriptName)); //$NON-NLS-1$
+			OutputStream scriptStream = new BufferedOutputStream(new FileOutputStream(scriptLocation + '/' + scriptName)); 
 			try {
 				script = new AntScript(scriptStream);
 			} catch (IOException e) {
@@ -224,12 +224,12 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	public BuildTimeSite getSite(boolean refresh) throws CoreException {
 		if (siteFactory != null && refresh == false)
 			return (BuildTimeSite) siteFactory.createSite();
-	
+
 		if (siteFactory == null || refresh == true) {
 			siteFactory = new BuildTimeSiteFactory();
 			siteFactory.setReportResolutionErrors(reportResolutionErrors);
 		}
-	
+
 		siteFactory.setSitePaths(getPaths());
 		siteFactory.setInitialState(pdeUIState);
 		return (BuildTimeSite) siteFactory.createSite();
@@ -242,14 +242,14 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	private String[] getPaths() {
 		if (pluginPath != null)
 			return pluginPath;
-	
+
 		return new String[] {workingDirectory};
 	}
 
 	public void setBuildSiteFactory(BuildTimeSiteFactory siteFactory) {
 		this.siteFactory = siteFactory;
 	}
-	
+
 	/**
 	 * Return the path of the plugins		//TODO Do we need to add support for features, or do we simply consider one list of URL? It is just a matter of style/
 	 * @return URL[]
@@ -266,8 +266,8 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	public void setPluginPath(String[] path) {
 		pluginPath = path;
 	}
-	
-	public void setPDEState(State  state) {
+
+	public void setPDEState(State state) {
 		ensurePDEUIStateNotNull();
 		pdeUIState.setState(state);
 	}
@@ -276,16 +276,16 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		ensurePDEUIStateNotNull();
 		pdeUIState.setExtraData(p);
 	}
-	
+
 	public void setNextId(long nextId) {
 		ensurePDEUIStateNotNull();
 		pdeUIState.setNextId(nextId);
 	}
-	
+
 	protected void flushState() {
 		pdeUIState = null;
 	}
-	
+
 	private void ensurePDEUIStateNotNull() {
 		if (pdeUIState == null)
 			pdeUIState = new PDEUIStateWrapper();

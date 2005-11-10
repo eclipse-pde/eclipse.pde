@@ -153,29 +153,4 @@ public class PluginVersionReplaceTask extends Task {
 		}
 		return result;
 	}
-
-	private static void transferStreams(InputStream source, OutputStream destination) throws IOException {
-		source = new BufferedInputStream(source);
-		destination = new BufferedOutputStream(destination);
-		try {
-			byte[] buffer = new byte[8192];
-			while (true) {
-				int bytesRead = -1;
-				if ((bytesRead = source.read(buffer)) == -1)
-					break;
-				destination.write(buffer, 0, bytesRead);
-			}
-		} finally {
-			try {
-				source.close();
-			} catch (IOException e) {
-				// ignore
-			}
-			try {
-				destination.close();
-			} catch (IOException e) {
-				// ignore
-			}
-		}
-	}
 }

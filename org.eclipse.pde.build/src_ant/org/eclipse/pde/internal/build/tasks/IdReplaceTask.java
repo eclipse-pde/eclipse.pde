@@ -70,7 +70,7 @@ public class IdReplaceTask extends Task {
 	 */
 	public void setPluginIds(String values) {
 		pluginIds = new HashMap(10);
-		for (StringTokenizer tokens = new StringTokenizer(values, COMMA); tokens.hasMoreTokens();) { //$NON-NLS-1$
+		for (StringTokenizer tokens = new StringTokenizer(values, COMMA); tokens.hasMoreTokens();) { 
 			String token = tokens.nextToken().trim();
 			String id = EMPTY;
 			if (!token.equals(EMPTY))
@@ -92,7 +92,7 @@ public class IdReplaceTask extends Task {
 	 */
 	public void setFeatureIds(String values) {
 		featureIds = new HashMap(10);
-		for (StringTokenizer tokens = new StringTokenizer(values, COMMA); tokens.hasMoreTokens();) { //$NON-NLS-1$
+		for (StringTokenizer tokens = new StringTokenizer(values, COMMA); tokens.hasMoreTokens();) { 
 			String token = tokens.nextToken().trim();
 			String id = EMPTY;
 			if (!token.equals(EMPTY))

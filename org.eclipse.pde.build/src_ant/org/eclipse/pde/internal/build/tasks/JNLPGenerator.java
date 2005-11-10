@@ -183,12 +183,6 @@ public class JNLPGenerator extends DefaultHandler {
 		return os.equals(currentOS);
 	}
 
-	private void processUpdate(Attributes attributes) {
-		String href = attributes.getValue("url"); //$NON-NLS-1$
-		if (codebase == null)
-			codebase = href;
-	}
-
 	private void processDescription(Attributes attributes) {
 	}
 

@@ -104,10 +104,12 @@ public class ProductFile extends DefaultHandler {
 			try {
 				parser.parse(new InputSource(in), this);
 			} catch (SAXException e) {
+				//Ignore
 			} finally {
 				in.close();
 			}
 		} catch (IOException e) {
+			//Ignore
 		}
 	}
 

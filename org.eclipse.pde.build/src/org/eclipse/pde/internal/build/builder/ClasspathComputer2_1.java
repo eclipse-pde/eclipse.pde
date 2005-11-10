@@ -277,7 +277,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 					if (i == 3)
 						modelLocation += urlfragments[i];
 					else
-						modelLocation += '/' + urlfragments[i]; //$NON-NLS-1$
+						modelLocation += '/' + urlfragments[i]; 
 				}
 				return relativePath = Utils.makeRelative(new Path(modelLocation), new Path(location)).toOSString();
 			}

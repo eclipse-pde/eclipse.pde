@@ -163,14 +163,14 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 				if (features.size() == 1)
 					featureInfo = getNameAndVersion((String) features.get(0));
 				else
-					featureInfo = new String[] {"all"};
+					featureInfo = new String[] {"all"}; //$NON-NLS-1$
 
 				generateAssembleScripts(assemblageInformation, featureInfo, generator.siteFactory);
 
 				if (features.size() == 1)
 					featureInfo = getNameAndVersion((String) features.get(0));
 				else
-					featureInfo = new String[] {""};
+					featureInfo = new String[] {""}; //$NON-NLS-1$
 
 				generatePackageScripts(assemblageInformation, featureInfo, generator.siteFactory);
 			}

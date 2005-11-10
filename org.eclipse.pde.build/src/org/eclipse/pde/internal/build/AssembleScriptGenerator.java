@@ -21,7 +21,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 
 	protected AssembleConfigScriptGenerator configScriptGenerator;
 
-	public AssembleScriptGenerator(String directory, AssemblyInformation assemblageInformation, String featureId) throws CoreException {
+	public AssembleScriptGenerator(String directory, AssemblyInformation assemblageInformation, String featureId) {
 		this.directory = directory;
 		this.assemblageInformation = assemblageInformation;
 		this.featureId = featureId;
@@ -29,7 +29,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected String getScriptName() {
-		return DEFAULT_ASSEMBLE_NAME + '.' + (featureId.equals("") ? "" : featureId + '.') + DEFAULT_ASSEMBLE_ALL;
+		return DEFAULT_ASSEMBLE_NAME + '.' + (featureId.equals("") ? "" : featureId + '.') + DEFAULT_ASSEMBLE_ALL;  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	protected AssembleConfigScriptGenerator getConfigScriptGenerator() {
@@ -67,7 +67,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		configScriptGenerator.generate();
 
 		Map params = new HashMap(1);
-		params.put("assembleScriptName", configScriptGenerator.getTargetName() + ".xml"); //$NON-NLS-1$
+		params.put("assembleScriptName", configScriptGenerator.getTargetName() + ".xml"); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printAntTask(Utils.getPropertyFormat(DEFAULT_CUSTOM_TARGETS), null, configScriptGenerator.getTargetName(), null, null, params);
 	}
 

@@ -271,7 +271,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			return coll;
 		}
 
-		String featureDirectory = from + '/' + foldername; //$NON-NLS-1$
+		String featureDirectory = from + '/' + foldername; 
 		Collection collectedElements = new ArrayList(10);
 
 		File[] featureDirectoryContent = new File(featureDirectory).listFiles();
@@ -320,7 +320,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 						throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));
 					}
 
-					String fileToCopy = toDir + '/' + files[i].getName(); //$NON-NLS-1$
+					String fileToCopy = toDir + '/' + files[i].getName(); 
 					try {
 						outputStream = new FileOutputStream(fileToCopy);
 					} catch (FileNotFoundException e) {
@@ -490,7 +490,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			String instruction = (String) permission.getKey();
 			String parameters = removeEndingSlashes((String) permission.getValue());
 			if (instruction.startsWith(prefixPermissions)) {
-				generateChmodInstruction(script, getPropertyFormat(targetRootProperty) + '/' + configInfix + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), instruction.substring(prefixPermissions.length()), parameters); //$NON-NLS-1$ //$NON-NLS-2$
+				generateChmodInstruction(script, getPropertyFormat(targetRootProperty) + '/' + configInfix + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), instruction.substring(prefixPermissions.length()), parameters); 
 				continue;
 			}
 			if (instruction.startsWith(prefixLinks)) {
