@@ -15,10 +15,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.ant.AntScript;
-import org.eclipse.pde.internal.build.site.PDEState;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IPluginEntry;
 
@@ -156,38 +154,6 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			result.append(values[i]);
 		}
 		return result.toString();
-	}
-
-	/**
-	 * 
-	 * @param counts
-	 * @return List
-	 */
-	protected static List findRootNodes(Map counts) {
-		List result = new ArrayList(5);
-		for (Iterator i = counts.keySet().iterator(); i.hasNext();) {
-			Object node = i.next();
-			int count = ((Integer) counts.get(node)).intValue();
-			if (count == 0)
-				result.add(node);
-		}
-		return result;
-	}
-
-	/**
-	 * Helper method to ensure an array is converted into an ArrayList.
-	 * 
-	 * @param args
-	 * @return List
-	 */
-	public static ArrayList getArrayList(Object[] args) {
-		// We could be using Arrays.asList() here, but it does not specify
-		// what kind of list it will return. We do need a list that
-		// implements the method List.remove(int) and ArrayList does.
-		ArrayList result = new ArrayList(args.length);
-		for (int i = 0; i < args.length; i++)
-			result.add(args[i]);
-		return result;
 	}
 
 	/**
@@ -341,20 +307,6 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return copiedFiles;
 	}
 
-	static private class Relation {
-		Object from;
-		Object to;
-
-		Relation(Object from, Object to) {
-			this.from = from;
-			this.to = to;
-		}
-
-		public String toString() {
-			return from.toString() + "->" + (to == null ? "" : to.toString()); //$NON-NLS-1$//$NON-NLS-2$
-		}
-	}
-
 	public static List extractPlugins(List initialList, List toExtract) { 
 		//TODO This algorithm needs to be  improved
 		if (initialList.size() == toExtract.size())
@@ -369,104 +321,6 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			}
 		}
 		return result;
-	}
-
-	public static List computePrerequisiteOrder(List plugins) {
-		List prereqs = new ArrayList(plugins.size());
-		List fragments = new ArrayList();
-
-		// create a collection of directed edges from plugin to prereq
-		for (Iterator iter = plugins.iterator(); iter.hasNext();) {
-			BundleDescription current = (BundleDescription) iter.next();
-			if (current.getHost() != null) {
-				fragments.add(current);
-				continue;
-			}
-			boolean found = false;
-
-			BundleDescription[] prereqList = PDEState.getDependentBundles(current);
-			for (int j = 0; j < prereqList.length; j++) {
-				// ensure that we only include values from the original set.
-				if (plugins.contains(prereqList[j])) {
-					found = true;
-					prereqs.add(new Relation(current, prereqList[j]));
-				}
-			}
-
-			// if we didn't find any prereqs for this plugin, add a null prereq
-			// to ensure the value is in the output
-			if (!found)
-				prereqs.add(new Relation(current, null));
-		}
-
-		//The fragments needs to added relatively to their host and to their
-		// own prerequisite (bug #43244)
-		for (Iterator iter = fragments.iterator(); iter.hasNext();) {
-			BundleDescription current = (BundleDescription) iter.next();
-
-			if (plugins.contains(current.getHost().getBundle()))
-				prereqs.add(new Relation(current, current.getHost().getSupplier()));
-			else
-				BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_GENERIC, NLS.bind(Messages.exception_hostNotFound, current.getSymbolicName()), null));
-
-			BundleDescription[] prereqList = PDEState.getDependentBundles(current);
-			for (int j = 0; j < prereqList.length; j++) {
-				// ensure that we only include values from the original set.
-				if (plugins.contains(prereqList[j])) {
-					prereqs.add(new Relation(current, prereqList[j]));
-				}
-			}
-		}
-
-		// do a topological sort, insert the fragments into the sorted elements
-		return computeNodeOrder(prereqs);
-	}
-
-	protected static List computeNodeOrder(List edges) {
-		Map counts = computeCounts(edges);
-		List nodes = new ArrayList(counts.size());
-		while (!counts.isEmpty()) {
-			List roots = findRootNodes(counts);
-			if (roots.isEmpty())
-				break;
-			for (Iterator i = roots.iterator(); i.hasNext();)
-				counts.remove(i.next());
-			nodes.addAll(roots);
-			removeArcs(edges, roots, counts);
-		}
-		return nodes;
-	}
-
-	protected static Map computeCounts(List mappings) {
-		Map counts = new HashMap(5);
-		for (int i = 0; i < mappings.size(); i++) {
-			Object from = ((Relation) mappings.get(i)).from;
-			Integer fromCount = (Integer) counts.get(from);
-			Object to = ((Relation) mappings.get(i)).to;
-			if (to == null)
-				counts.put(from, new Integer(0));
-			else {
-				if (((Integer) counts.get(to)) == null)
-					counts.put(to, new Integer(0));
-				fromCount = fromCount == null ? new Integer(1) : new Integer(fromCount.intValue() + 1);
-				counts.put(from, fromCount);
-			}
-		}
-		return counts;
-	}
-
-	protected static void removeArcs(List edges, List roots, Map counts) {
-		for (Iterator j = roots.iterator(); j.hasNext();) {
-			Object root = j.next();
-			for (int i = 0; i < edges.size(); i++) {
-				if (root.equals(((Relation) edges.get(i)).to)) {
-					Object input = ((Relation) edges.get(i)).from;
-					Integer count = (Integer) counts.get(input);
-					if (count != null)
-						counts.put(input, new Integer(count.intValue() - 1));
-				}
-			}
-		}
 	}
 
 	public static int isStringIn(String[] searched, String toSearch) {

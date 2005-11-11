@@ -511,7 +511,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	public List getSortedBundles() {
-		return Utils.computePrerequisiteOrder(Arrays.asList(getState().getResolvedBundles()));
+		BundleDescription[] toSort = getState().getResolvedBundles();
+		Platform.getPlatformAdmin().getStateHelper().sortBundles(toSort);
+		return Arrays.asList(toSort);
 	}
 
 	public void cleanupOriginalState() {
