@@ -384,7 +384,7 @@ public class WorkspaceModelManager
 		}
 
 		PDECore.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_CLOSE);
-		JavaCore.addPreProcessingResourceChangedListener(this);
+		JavaCore.addPreProcessingResourceChangedListener(this, IResourceChangeEvent.POST_CHANGE);
 		fInitialized = true;
 	}
 	
@@ -512,7 +512,7 @@ public class WorkspaceModelManager
 		}
 		
 		workspace.addResourceChangeListener(this, IResourceChangeEvent.PRE_CLOSE);
-		JavaCore.addPreProcessingResourceChangedListener(this);
+		JavaCore.addPreProcessingResourceChangedListener(this, IResourceChangeEvent.POST_CHANGE);
 		
 		fModelsLocked = false;
 		fInitialized = true;
