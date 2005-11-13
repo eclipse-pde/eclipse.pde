@@ -422,7 +422,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 					return true;
 				if (fFile.getProject().findMember(currPath) != null)
 					return true;
-				if (fBuildModel != null && fBuildModel.getEntry("source." + paths.get(i)) != null)
+				if (fBuildModel != null && fBuildModel.getEntry("source." + paths.get(i)) != null) //$NON-NLS-1$
 					return true;
 			} else {
 				if (CoreUtility.jarContainsResource(new File(bundleJar), paths.get(i).toString(), false))
