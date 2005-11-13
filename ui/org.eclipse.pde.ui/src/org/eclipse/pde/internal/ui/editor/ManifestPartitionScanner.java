@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jdt.internal.ui.propertiesfileeditor.LeadingWhitespacePredicateRule;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.IPredicateRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
@@ -32,9 +31,7 @@ public class ManifestPartitionScanner extends RuleBasedPartitionScanner {
 		super();
 
 		IToken headerName = new Token(HEADER_NAME);
-		IToken headerAssignment = new Token(HEADER_ASSIGNMENT);
 		IToken headerValue = new Token(HEADER_VALUE);
-		IToken key = new Token(IDocument.DEFAULT_CONTENT_TYPE);
 
 		IPredicateRule[] rules = new IPredicateRule[3];
 
