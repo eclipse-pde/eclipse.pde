@@ -11,36 +11,60 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.util.*;
+import org.eclipse.jface.text.reconciler.IReconciler;
+import org.eclipse.jface.text.reconciler.MonoReconciler;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.text.*;
+import org.eclipse.pde.internal.ui.editor.text.ColorManager;
+import org.eclipse.pde.internal.ui.editor.text.IColorManager;
+import org.eclipse.pde.internal.ui.editor.text.IPDEColorConstants;
+import org.eclipse.pde.internal.ui.editor.text.ReconcilingStrategy;
+import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 
 public abstract class XMLSourcePage extends PDESourcePage {
-	protected IColorManager colorManager;
-	/**
-	 * @param editor
-	 * @param id
-	 * @param title
-	 */
+	
+	class XMLSourceViewerConfiguration extends XMLConfiguration {
+		private MonoReconciler fReconciler;
+
+		public XMLSourceViewerConfiguration(IColorManager colorManager) {
+			super(colorManager);
+		}
+		
+		public IReconciler getReconciler(ISourceViewer sourceViewer) {
+			if (fReconciler == null) {
+				IBaseModel model = getInputContext().getModel();
+				if (model instanceof IReconcilingParticipant) {
+					ReconcilingStrategy strategy = new ReconcilingStrategy();
+					strategy.addParticipant((IReconcilingParticipant)model);
+					ISortableContentOutlinePage outline = getContentOutline();
+					if (outline instanceof IReconcilingParticipant)
+						strategy.addParticipant((IReconcilingParticipant)outline);
+					fReconciler = new MonoReconciler(strategy, false);
+					fReconciler.setDelay(500);
+				}
+			}
+			return fReconciler;
+		}
+	}
+	
+	protected IColorManager fColorManager;
+
 	public XMLSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
-		setSourceViewerConfiguration(createXMLConfiguration());
+		fColorManager = ColorManager.getDefault();
+		setSourceViewerConfiguration(new XMLSourceViewerConfiguration(fColorManager));
 		setRangeIndicator(new DefaultRangeIndicator());
-	}
-
-	protected XMLSourceViewerConfiguration createXMLConfiguration() {
-		if (colorManager != null)
-			colorManager.dispose();
-		colorManager = ColorManager.getDefault();
-		return new XMLSourceViewerConfiguration(this, colorManager);
 	}
 	
 	public void dispose() {
 		super.dispose();
-		colorManager.dispose();
+		fColorManager.dispose();
 	}
 	
 	public boolean canLeaveThePage() {

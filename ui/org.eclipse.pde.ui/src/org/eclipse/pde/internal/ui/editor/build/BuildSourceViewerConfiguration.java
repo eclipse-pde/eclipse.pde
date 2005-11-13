@@ -32,6 +32,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
+import org.eclipse.pde.internal.ui.editor.text.AbstractJavaScanner;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.pde.internal.ui.editor.text.ReconcilingStrategy;

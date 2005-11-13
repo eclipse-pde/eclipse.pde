@@ -18,7 +18,6 @@ import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.pde.internal.ui.editor.XMLDoubleClickStrategy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 
