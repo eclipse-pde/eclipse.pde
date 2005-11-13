@@ -20,7 +20,11 @@ public class XMLScanner extends BasePDEScanner {
 	private Token fProcInstr;
 
 	public XMLScanner(IColorManager manager) {
-		fProcInstr = new Token(createTextAttribute(manager, IPDEColorConstants.P_PROC_INSTR));
+		super(manager);
+	}
+	
+	protected void initialize() {
+		fProcInstr = new Token(createTextAttribute(IPDEColorConstants.P_PROC_INSTR));
 		
 		IRule[] rules = new IRule[2];		
 		//Add rule for processing instructions
@@ -28,7 +32,7 @@ public class XMLScanner extends BasePDEScanner {
 		// Add generic whitespace rule.
 		rules[1] = new WhitespaceRule(new XMLWhitespaceDetector());
 		setRules(rules);
-	    setDefaultReturnToken(new Token(createTextAttribute(manager, IPDEColorConstants.P_DEFAULT)));
+	    setDefaultReturnToken(new Token(createTextAttribute(IPDEColorConstants.P_DEFAULT)));
 	}
 	
 	protected Token getTokenAffected(PropertyChangeEvent event) {
@@ -37,7 +41,7 @@ public class XMLScanner extends BasePDEScanner {
     	return (Token)fDefaultReturnToken;
     }
     
-    protected boolean isInterestingToken(String property) {
+    public boolean affectsTextPresentation(String property) {
     	return property.startsWith(IPDEColorConstants.P_DEFAULT) 
     			|| property.startsWith(IPDEColorConstants.P_PROC_INSTR);
     }

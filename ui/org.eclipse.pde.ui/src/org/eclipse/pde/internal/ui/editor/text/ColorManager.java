@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.SWT;
@@ -106,6 +107,8 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 		Object color = event.getNewValue();
 		if (color instanceof RGB) {
 			putColor(event.getProperty(), (RGB)color);
+		} else {
+			putColor(event.getProperty(), StringConverter.asRGB(color.toString()));
 		}
 	}
 }

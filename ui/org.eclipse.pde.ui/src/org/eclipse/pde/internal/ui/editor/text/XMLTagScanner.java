@@ -22,7 +22,11 @@ public class XMLTagScanner extends BasePDEScanner {
 	private Token fStringToken;
 	
 	public XMLTagScanner(IColorManager manager) {
-		fStringToken = new Token(createTextAttribute(manager, IPDEColorConstants.P_STRING));
+		super(manager);
+	}
+	
+	protected void initialize() {
+		fStringToken = new Token(createTextAttribute(IPDEColorConstants.P_STRING));
 		IRule[] rules = new IRule[3];
 		// Add rule for single and double quotes
 		rules[0] = new MultiLineRule("\"", "\"", fStringToken, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
@@ -30,18 +34,18 @@ public class XMLTagScanner extends BasePDEScanner {
 		// Add generic whitespace rule.
 		rules[2] = new WhitespaceRule(new XMLWhitespaceDetector());
 		setRules(rules);
-		setDefaultReturnToken(new Token(createTextAttribute(manager, IPDEColorConstants.P_TAG)));
+		setDefaultReturnToken(new Token(createTextAttribute(IPDEColorConstants.P_TAG)));
 	}
 	
     protected Token getTokenAffected(PropertyChangeEvent event) {
-    	String property= event.getProperty();
+    	String property = event.getProperty();
     	if (property.startsWith(IPDEColorConstants.P_STRING)) 
     		return fStringToken;
     	return (Token)fDefaultReturnToken;
     }
 
-	protected boolean isInterestingToken(String property) {
-		return  property.startsWith(IPDEColorConstants.P_TAG) || property.startsWith(IPDEColorConstants.P_STRING);
+	public boolean affectsTextPresentation(String property) {
+		return property.startsWith(IPDEColorConstants.P_TAG) || property.startsWith(IPDEColorConstants.P_STRING);
 	}
 
 }

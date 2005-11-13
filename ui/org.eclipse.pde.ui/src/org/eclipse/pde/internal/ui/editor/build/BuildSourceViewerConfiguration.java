@@ -11,31 +11,33 @@
 
 package org.eclipse.pde.internal.ui.editor.build;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
+import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IWhitespaceDetector;
 import org.eclipse.jface.text.rules.IWordDetector;
+import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordRule;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
-import org.eclipse.pde.internal.ui.editor.text.AbstractJavaScanner;
-import org.eclipse.pde.internal.ui.editor.text.ColorManager;
+import org.eclipse.pde.internal.ui.editor.text.ArgumentRule;
+import org.eclipse.pde.internal.ui.editor.text.BasePDEScanner;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.pde.internal.ui.editor.text.ReconcilingStrategy;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
 
@@ -46,30 +48,70 @@ public class BuildSourceViewerConfiguration extends TextSourceViewerConfiguratio
 	protected static String PROPERTY_VALUE = "__pf_roperty_value"; //$NON-NLS-1$
 	protected static String[] PARTITIONS = new String[] { COMMENT, PROPERTY_VALUE };
 
-	private AbstractJavaScanner fPropertyKeyScanner;
-	private AbstractJavaScanner fCommentScanner;
-	private AbstractJavaScanner fPropertyValueScanner;
+	private BasePDEScanner fPropertyKeyScanner;
+	private BasePDEScanner fCommentScanner;
+	private BasePDEScanner fPropertyValueScanner;
 	private IColorManager fColorManager;
+	
 	private MonoReconciler fReconciler;
 	private BuildSourcePage fSourcePage;
+	
+	private abstract class AbstractJavaScanner extends BasePDEScanner {
+		
+	    public void adaptToPreferenceChange(PropertyChangeEvent event) {
+	    	String property= event.getProperty();
+	    	if (affectsTextPresentation(property)) {
+	    		Token token = getTokenAffected(event);
+	    		if (property.endsWith(PreferenceConstants.EDITOR_BOLD_SUFFIX))
+	    			adaptToStyleChange(event, token, SWT.BOLD);
+	    		else if (property.endsWith(PreferenceConstants.EDITOR_ITALIC_SUFFIX))
+	    			adaptToStyleChange(event, token, SWT.ITALIC);
+	    		else if (property.endsWith(PreferenceConstants.EDITOR_STRIKETHROUGH_SUFFIX))
+	    			adaptToStyleChange(event, token, TextAttribute.STRIKETHROUGH);
+	    		else if (property.endsWith(PreferenceConstants.EDITOR_UNDERLINE_SUFFIX))
+	    			adaptToStyleChange(event, token, TextAttribute.UNDERLINE);
+	    		else
+	    			adaptToColorChange(event, token);
+	    	}
+	    }
+		
+		protected TextAttribute createTextAttribute(String property) {
+			Color color = fColorManager.getColor(property);
+			int style = SWT.NORMAL;
+			if (fPreferenceStore.getBoolean(property + PreferenceConstants.EDITOR_BOLD_SUFFIX))
+				style |= SWT.BOLD;
+			if (fPreferenceStore.getBoolean(property + PreferenceConstants.EDITOR_ITALIC_SUFFIX))
+				style |= SWT.ITALIC;
+			if (fPreferenceStore.getBoolean(property + PreferenceConstants.EDITOR_STRIKETHROUGH_SUFFIX))
+				style |= TextAttribute.STRIKETHROUGH;
+			if (fPreferenceStore.getBoolean(property + PreferenceConstants.EDITOR_UNDERLINE_SUFFIX))
+				style |= TextAttribute.UNDERLINE;
+			return new TextAttribute(color, null, style);
+		}
+	}
 
-	private class SingleTokenJavaScanner extends AbstractJavaScanner{
+	private class SingleTokenJavaScanner extends AbstractJavaScanner {
 
-		private String[] fProperty;
+		private String fProperty;
+		private Token fToken;
 
-		public SingleTokenJavaScanner(IColorManager manager, IPreferenceStore store, String property) {
-			super(manager, store);
-			fProperty = new String[] { property };
+		public SingleTokenJavaScanner(String property) {
+			fProperty = property;
+			setColorManager(fColorManager);
 			initialize();
 		}
 
-		protected String[] getTokenProperties() {
-			return fProperty;
+		public boolean affectsTextPresentation(String property) {
+			return property.startsWith(fProperty);
 		}
 
-		protected List createRules() {
-			setDefaultReturnToken(getToken(fProperty[0]));
-			return null;
+		protected Token getTokenAffected(PropertyChangeEvent event) {
+			return fToken;
+		}
+
+		protected void initialize() {
+			fToken = new Token(createTextAttribute(fProperty));
+			setDefaultReturnToken(fToken);			
 		}
 	}
 
@@ -96,32 +138,46 @@ public class BuildSourceViewerConfiguration extends TextSourceViewerConfiguratio
 			public boolean isWordPart(char c) {
 				return false;
 			}
-		}
+		}	
 
-		public PropertyValueScanner(IColorManager manager, IPreferenceStore store) {
-			super(manager, store);
+		private Token fArgumentToken;
+		private Token fAssignmentToken;
+
+		public PropertyValueScanner() {
+			setColorManager(fColorManager);
 			initialize();
 		}
-
-		protected String[] getTokenProperties() {
-			return new String[] {
-					PreferenceConstants.PROPERTIES_FILE_COLORING_VALUE,
-					PreferenceConstants.PROPERTIES_FILE_COLORING_ARGUMENT,
-					PreferenceConstants.PROPERTIES_FILE_COLORING_ASSIGNMENT
-			};
+		
+		public boolean affectsTextPresentation(String property) {
+			return property.startsWith(PreferenceConstants.PROPERTIES_FILE_COLORING_VALUE)
+					|| property.startsWith(PreferenceConstants.PROPERTIES_FILE_COLORING_ARGUMENT) 
+					|| property.startsWith(PreferenceConstants.PROPERTIES_FILE_COLORING_ASSIGNMENT);
 		}
 
-		protected List createRules() {
-			setDefaultReturnToken(getToken(PreferenceConstants.PROPERTIES_FILE_COLORING_VALUE));
-			List rules = new ArrayList();
-			rules.add(new WordRule(new AssignmentDetector(), getToken(PreferenceConstants.PROPERTIES_FILE_COLORING_ASSIGNMENT)));
-			rules.add(new WhitespaceRule(new IWhitespaceDetector() {
+		protected Token getTokenAffected(PropertyChangeEvent event) {
+			String property = event.getProperty();
+			if (property.startsWith(PreferenceConstants.PROPERTIES_FILE_COLORING_ARGUMENT))
+				return fArgumentToken;
+			if (property.startsWith(PreferenceConstants.PROPERTIES_FILE_COLORING_ASSIGNMENT))
+				return fAssignmentToken;
+			return (Token)fDefaultReturnToken;
+		}
+
+		protected void initialize() {
+			IRule[] rules = new IRule[3];
+			fArgumentToken = new Token(createTextAttribute(PreferenceConstants.PROPERTIES_FILE_COLORING_ARGUMENT));			
+			rules[0] = new ArgumentRule(fArgumentToken);
+			
+			fAssignmentToken = new Token(createTextAttribute(PreferenceConstants.PROPERTIES_FILE_COLORING_ASSIGNMENT));
+			rules[1] = new WordRule(new AssignmentDetector(), fAssignmentToken);
+			
+			rules[2] = new WhitespaceRule(new IWhitespaceDetector() {
 				public boolean isWhitespace(char c) {
 					return Character.isWhitespace(c);
-				}
-				
-			}));
-			return rules;
+				}			
+			});
+			setRules(rules);
+			setDefaultReturnToken(new Token(createTextAttribute(PreferenceConstants.PROPERTIES_FILE_COLORING_VALUE)));
 		}
 	}
 	
@@ -134,9 +190,9 @@ public class BuildSourceViewerConfiguration extends TextSourceViewerConfiguratio
 
 
 	private void initializeScanners() {
-		fPropertyKeyScanner = new SingleTokenJavaScanner(fColorManager, fPreferenceStore, PreferenceConstants.PROPERTIES_FILE_COLORING_KEY);
-		fPropertyValueScanner = new PropertyValueScanner(fColorManager, fPreferenceStore);
-		fCommentScanner = new SingleTokenJavaScanner(fColorManager, fPreferenceStore, PreferenceConstants.PROPERTIES_FILE_COLORING_COMMENT);
+		fPropertyKeyScanner = new SingleTokenJavaScanner(PreferenceConstants.PROPERTIES_FILE_COLORING_KEY);
+		fPropertyValueScanner = new PropertyValueScanner();
+		fCommentScanner = new SingleTokenJavaScanner(PreferenceConstants.PROPERTIES_FILE_COLORING_COMMENT);
 	}
 
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
@@ -175,20 +231,18 @@ public class BuildSourceViewerConfiguration extends TextSourceViewerConfiguratio
 	}
 	
 	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
-		((ColorManager)fColorManager).handlePropertyChangeEvent(event);
-		if (fPropertyKeyScanner.affectsBehavior(event))
-			fPropertyKeyScanner.adaptToPreferenceChange(event);
-		if (fCommentScanner.affectsBehavior(event))
-			fCommentScanner.adaptToPreferenceChange(event);
-		if (fPropertyValueScanner.affectsBehavior(event))
-			fPropertyValueScanner.adaptToPreferenceChange(event);
+		if (affectsColorPresentation(event.getProperty()))
+			fColorManager.handlePropertyChangeEvent(event);
+		fPropertyKeyScanner.adaptToPreferenceChange(event);
+		fCommentScanner.adaptToPreferenceChange(event);
+		fPropertyValueScanner.adaptToPreferenceChange(event);
 	}
 	
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		int length = PARTITIONS.length;
 		String[] contentTypes = new String[length + 1];
 		contentTypes[0] = IDocument.DEFAULT_CONTENT_TYPE;
-		for (int i= 0; i < length; i++)
+		for (int i = 0; i < length; i++)
 			contentTypes[i+1] = PARTITIONS[i];
 
 		return contentTypes;
@@ -199,10 +253,18 @@ public class BuildSourceViewerConfiguration extends TextSourceViewerConfiguratio
 	}
 	
 	public boolean affectsTextPresentation(PropertyChangeEvent event) {
-		return  fPropertyKeyScanner.affectsBehavior(event)
-			|| fCommentScanner.affectsBehavior(event)
-			|| fPropertyValueScanner.affectsBehavior(event);
+		String property = event.getProperty();
+		return fCommentScanner.affectsTextPresentation(property)
+				|| fPropertyKeyScanner.affectsTextPresentation(property)
+				|| fPropertyValueScanner.affectsTextPresentation(property);
 	}
-
+	
+	private boolean affectsColorPresentation(String property) {
+		 return property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_VALUE)
+					|| property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_ARGUMENT) 
+					|| property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_ASSIGNMENT)
+	 				|| property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_KEY)
+	 				|| property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_COMMENT);
+	}
 }
 

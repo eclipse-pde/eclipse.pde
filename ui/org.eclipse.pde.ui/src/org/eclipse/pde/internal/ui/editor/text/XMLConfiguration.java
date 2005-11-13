@@ -18,6 +18,7 @@ import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 
@@ -33,10 +34,7 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 	private MultilineDamagerRepairer fDamagerRepairer;
 	
 	public XMLConfiguration(IColorManager colorManager) {
-		setColorManager(colorManager);
-	}
-	
-	public void setColorManager(IColorManager colorManager) {
+		super(PDEPlugin.getDefault().getPreferenceStore());
 		fColorManager = colorManager;
 	}
 	
@@ -97,16 +95,16 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 	}
 	
 	/**
-	 * Preference colors have changed.  
+	 * Preference colors or fonts have changed.  
 	 * Update the default tokens of the scanners.
 	 */
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
 		if (fTagScanner == null)
 			return; //property change before the editor is fully created
-		
-    	fColorManager.handlePropertyChangeEvent(event);
-		fTagScanner.adaptToPreferenceChange(fColorManager, event);
-		fPdeScanner.adaptToPreferenceChange(fColorManager, event);
+		if (affectsColorPresentation(event))
+			fColorManager.handlePropertyChangeEvent(event);
+		fTagScanner.adaptToPreferenceChange(event);
+		fPdeScanner.adaptToPreferenceChange(event);
 		String property= event.getProperty();
 		if (property.startsWith(IPDEColorConstants.P_XML_COMMENT)) {
 	    	adaptTextAttribute(event);
@@ -120,7 +118,7 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 		} else if (property.endsWith(IPDEColorConstants.P_ITALIC_SUFFIX)) {
 			fXMLCommentAttr = adaptToStyleChange(event, SWT.ITALIC, fXMLCommentAttr);
 		} else {
-	    	fXMLCommentAttr= new TextAttribute(fColorManager.getColor(event.getProperty()), 
+	    	fXMLCommentAttr = new TextAttribute(fColorManager.getColor(event.getProperty()), 
 	    									   fXMLCommentAttr.getBackground(), 
 	    									   fXMLCommentAttr.getStyle());
 		}
@@ -142,7 +140,6 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 		}	
 		return textAttribute;
 	}
-
 	
 	public boolean affectsTextPresentation(PropertyChangeEvent event) {
 		String property = event.getProperty();
@@ -151,6 +148,15 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 			property.startsWith(IPDEColorConstants.P_STRING) || 
 			property.startsWith(IPDEColorConstants.P_TAG) || 
 			property.startsWith(IPDEColorConstants.P_XML_COMMENT);
+	}
+	
+	public boolean affectsColorPresentation(PropertyChangeEvent event) {
+		String property = event.getProperty();
+		return property.equals(IPDEColorConstants.P_DEFAULT) ||
+			property.equals(IPDEColorConstants.P_PROC_INSTR) ||
+			property.equals(IPDEColorConstants.P_STRING) || 
+			property.equals(IPDEColorConstants.P_TAG) || 
+			property.equals(IPDEColorConstants.P_XML_COMMENT);
 	}
 	
 }

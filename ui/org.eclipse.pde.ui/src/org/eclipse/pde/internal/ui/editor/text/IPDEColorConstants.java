@@ -25,8 +25,8 @@ public interface IPDEColorConstants {
 	RGB HEADER_ATTRIBUTE  = new RGB(  0, 128,   0);
 	RGB HEADER_DIRECTIVE  = new RGB(128,   0,   0);
 	
-	String P_BOLD_SUFFIX = ".bold"; //$NON-NLS-1$
-	String P_ITALIC_SUFFIX = ".italic"; //$NON-NLS-1$
+	String P_BOLD_SUFFIX = "_bold"; //$NON-NLS-1$
+	String P_ITALIC_SUFFIX = "_italic"; //$NON-NLS-1$
 	
 	String P_XML_COMMENT = "editor.color.xml_comment"; //$NON-NLS-1$
 	String P_PROC_INSTR = "editor.color.instr"; //$NON-NLS-1$
