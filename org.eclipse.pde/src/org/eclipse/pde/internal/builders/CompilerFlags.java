@@ -75,11 +75,20 @@ public class CompilerFlags {
 	public static final String F_UNRESOLVED_FEATURES = "compilers.f.unresolved-features"; //$NON-NLS-1$
 
 	private static final String[][] fFlags = {
-			{ P_UNRESOLVED_IMPORTS, P_UNRESOLVED_EX_POINTS, P_NO_REQUIRED_ATT,
-					P_UNKNOWN_ELEMENT, P_UNKNOWN_ATTRIBUTE, P_DEPRECATED,
-					P_UNKNOWN_CLASS, P_UNKNOWN_RESOURCE, P_NOT_EXTERNALIZED },
-			{ S_CREATE_DOCS, S_DOC_FOLDER, S_OPEN_TAGS },
-			{ F_UNRESOLVED_PLUGINS, F_UNRESOLVED_FEATURES }, {} };
+			{ P_UNRESOLVED_IMPORTS, 
+			  P_UNRESOLVED_EX_POINTS, 
+			  P_NO_REQUIRED_ATT,
+			  P_UNKNOWN_ELEMENT, 
+			  P_UNKNOWN_ATTRIBUTE, 
+			  P_DEPRECATED,
+			  P_UNKNOWN_CLASS, 
+			  P_UNKNOWN_RESOURCE, 
+			  P_NOT_EXTERNALIZED },
+			{ S_CREATE_DOCS, 
+			  S_DOC_FOLDER, 
+			  S_OPEN_TAGS },
+			{ F_UNRESOLVED_PLUGINS, 
+			  F_UNRESOLVED_FEATURES }};
 
 	public static int getFlagType(String flagId) {
 		if (flagId.equals(S_CREATE_DOCS))
@@ -205,8 +214,8 @@ public class CompilerFlags {
 		node.putInt(P_UNKNOWN_ELEMENT, WARNING);
 		node.putInt(P_UNKNOWN_ATTRIBUTE, WARNING);
 		node.putInt(P_DEPRECATED, WARNING);
-		node.putInt(P_UNKNOWN_CLASS, IGNORE);
-		node.putInt(P_UNKNOWN_RESOURCE, IGNORE);
+		node.putInt(P_UNKNOWN_CLASS, WARNING);
+		node.putInt(P_UNKNOWN_RESOURCE, WARNING);
 		node.putInt(P_NOT_EXTERNALIZED, IGNORE);
 
 		node.putBoolean(S_CREATE_DOCS, false);
