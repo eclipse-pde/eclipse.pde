@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -24,10 +25,12 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.PDEMessages;
 import org.eclipse.pde.internal.core.AbstractModel;
+import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
@@ -55,11 +58,17 @@ import org.xml.sax.SAXException;
 
 public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	
-	IPluginModelBase fModel;
+	private IPluginModelBase fModel;
+	private IBuild fBuildModel;
 	
 	public ExtensionsErrorReporter(IFile file) {
 		super(file);
 		fModel = PDECore.getDefault().getModelManager().findModel(file.getProject());
+		try {
+			if (fModel.getUnderlyingResource() != null)
+				fBuildModel = ClasspathUtilCore.getBuild(fModel);
+		} catch (CoreException e) {
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -412,6 +421,8 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				if (currPath.isAbsolute() && currPath.toFile().exists())
 					return true;
 				if (fFile.getProject().findMember(currPath) != null)
+					return true;
+				if (fBuildModel != null && fBuildModel.getEntry("source." + paths.get(i)) != null)
 					return true;
 			} else {
 				if (CoreUtility.jarContainsResource(new File(bundleJar), paths.get(i).toString(), false))
