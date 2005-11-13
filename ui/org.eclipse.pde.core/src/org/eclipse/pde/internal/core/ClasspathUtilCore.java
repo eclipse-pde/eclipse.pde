@@ -224,7 +224,7 @@ public class ClasspathUtilCore {
 		return null;
 	}
 	
-	protected static IBuild getBuild(IPluginModelBase model)
+	public static IBuild getBuild(IPluginModelBase model)
 			throws CoreException {
 		IBuildModel buildModel = model.getBuildModel();
 		if (buildModel == null) {
