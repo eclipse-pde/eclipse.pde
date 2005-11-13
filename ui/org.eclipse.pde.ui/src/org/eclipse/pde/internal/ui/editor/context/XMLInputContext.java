@@ -16,18 +16,15 @@ import java.util.Iterator;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.text.XMLPartitionScanner;
 import org.eclipse.text.edits.DeleteEdit;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MoveSourceEdit;
@@ -48,14 +45,6 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		super(editor, input, primary);
 	}	
 
-	protected IDocumentPartitioner createDocumentPartitioner() {
-		FastPartitioner partitioner = new FastPartitioner(
-				new XMLPartitionScanner(), new String[]{
-						XMLPartitionScanner.XML_TAG,
-						XMLPartitionScanner.XML_COMMENT});
-		return partitioner;
-	}
-	
 	protected IDocumentSetupParticipant getDocumentSetupParticipant() {
 		return new XMLDocumentSetupParticpant();
 	}

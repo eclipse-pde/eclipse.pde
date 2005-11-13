@@ -11,7 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.context;
 import java.util.ArrayList;
 
-import org.eclipse.core.filebuffers.*;
+import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.pde.core.IBaseModel;
@@ -31,9 +30,7 @@ import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.StorageDocumentProvider;
-import org.eclipse.pde.internal.ui.editor.SystemFileDocumentProvider;
-import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.editor.PDEStorageDocumentProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MoveSourceEdit;
@@ -41,8 +38,8 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.editors.text.*;
+import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
+import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
 /**
@@ -99,20 +96,15 @@ public abstract class InputContext {
 	public IDocumentProvider getDocumentProvider() {
 		return fDocumentProvider;
 	}
+	
 	private IDocumentProvider createDocumentProvider(IEditorInput input) {
 		if (input instanceof IFileEditorInput) {
-			return createFileDocumentProvider();
-		} else if (input instanceof SystemFileEditorInput) {
-			return new SystemFileDocumentProvider(createDocumentPartitioner(), getDefaultCharset());
-		} else if (input instanceof IStorageEditorInput) {
-			return new StorageDocumentProvider(createDocumentPartitioner(), getDefaultCharset());
+			return new ForwardingDocumentProvider(
+								getPartitionName(),
+								getDocumentSetupParticipant(), 
+								new TextFileDocumentProvider());		
 		}
-		return null;
-	}
-	
-	private IDocumentProvider createFileDocumentProvider() {
-		return new ForwardingDocumentProvider(getPartitionName(),
-				getDocumentSetupParticipant(), new TextFileDocumentProvider());
+		return new PDEStorageDocumentProvider(getDocumentSetupParticipant());
 	}
 	
 	protected IDocumentSetupParticipant getDocumentSetupParticipant() {
@@ -124,18 +116,12 @@ public abstract class InputContext {
 	
 	protected abstract String getPartitionName();
 		
-	protected IDocumentPartitioner createDocumentPartitioner() {
-		return null;
-	}
-	
 	protected abstract String getDefaultCharset();
 	
 	protected abstract IBaseModel createModel(IEditorInput input) throws CoreException;
 	
 	protected void create() {
 		fDocumentProvider = createDocumentProvider(fEditorInput);
-		if (fDocumentProvider == null)
-			return;
 		try {
 			fDocumentProvider.connect(fEditorInput);
 			fModel = createModel(fEditorInput);

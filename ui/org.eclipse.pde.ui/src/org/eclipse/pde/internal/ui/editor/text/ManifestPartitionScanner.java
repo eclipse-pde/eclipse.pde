@@ -10,18 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.jface.text.rules.*;
+import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 
-public class XMLPartitionScanner extends RuleBasedPartitionScanner {
-	public final static String XML_COMMENT = "__xml_comment"; //$NON-NLS-1$
-	public final static String XML_TAG = "__xml_tag"; //$NON-NLS-1$
+public class ManifestPartitionScanner extends RuleBasedPartitionScanner {
 	
-	public static final String[] PARTITIONS = new String[] {XML_COMMENT, XML_TAG};
+	public static final String MANIFEST_FILE_PARTITIONING = "__mf_partitioning"; //$NON-NLS-1$
+
+	public static final String MANIFEST_HEADER = "__mf_bundle_header"; //$NON-NLS-1$
 	
-	public XMLPartitionScanner() {
-		IPredicateRule[] rules = new IPredicateRule[2];
-		rules[0] = new MultiLineRule("<!--", "-->", new Token(XML_COMMENT), '\\', true); //$NON-NLS-1$ //$NON-NLS-2$
-		rules[1] = new XMLTagRule(new Token(XML_TAG));
-		setPredicateRules(rules);
+	public static final String[] PARTITIONS = new String[] {MANIFEST_HEADER};
+	
+	public ManifestPartitionScanner() {
 	}
+
 }

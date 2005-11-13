@@ -26,11 +26,7 @@ public class XMLDocumentSetupParticpant implements IDocumentSetupParticipant {
 	}
 	
 	private IDocumentPartitioner createDocumentPartitioner() {
-		FastPartitioner partitioner = new FastPartitioner(
-				new XMLPartitionScanner(), new String[]{
-						XMLPartitionScanner.XML_TAG,
-						XMLPartitionScanner.XML_COMMENT});
-		return partitioner;
+		return new FastPartitioner(new XMLPartitionScanner(), XMLPartitionScanner.PARTITIONS);
 	}
 
 }

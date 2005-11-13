@@ -4,7 +4,7 @@ import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.FastPartitioner;
-import org.eclipse.pde.internal.ui.editor.ManifestPartitionScanner;
+import org.eclipse.pde.internal.ui.editor.text.ManifestPartitionScanner;
 
 public class ManifestDocumentSetupParticipant implements IDocumentSetupParticipant {
 
@@ -17,10 +17,7 @@ public class ManifestDocumentSetupParticipant implements IDocumentSetupParticipa
 	}
 	
 	private IDocumentPartitioner createDocumentPartitioner() {
-		FastPartitioner partitioner = new FastPartitioner(
-				new ManifestPartitionScanner(),
-				ManifestPartitionScanner.PARTITIONS);
-		return partitioner;
+		return new FastPartitioner(new ManifestPartitionScanner(), ManifestPartitionScanner.PARTITIONS);
 	}
 
 }

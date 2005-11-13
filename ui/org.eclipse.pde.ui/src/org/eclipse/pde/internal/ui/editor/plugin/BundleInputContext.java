@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.io.*;
 import java.util.*;
+
+import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
@@ -151,5 +153,9 @@ public class BundleInputContext extends UTF8InputContext {
 	}
 	protected String getPartitionName() {
 		return "___bundle_partition"; //$NON-NLS-1$
+	}
+	
+	protected IDocumentSetupParticipant getDocumentSetupParticipant() {
+		return new ManifestDocumentSetupParticipant();
 	}
 }
