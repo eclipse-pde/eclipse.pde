@@ -227,11 +227,4 @@ public class ManifestSourcePage extends XMLSourcePage {
 		}
 		return null;
 	}
-	protected String[] collectContextMenuPreferencePages() {
-		String[] ids= super.collectContextMenuPreferencePages();
-		String[] more= new String[ids.length + 1];
-		more[0]= "org.eclipse.pde.ui.EditorPreferencePage"; //$NON-NLS-1$
-		System.arraycopy(ids, 0, more, 1, ids.length);
-		return more;
-	}
 }

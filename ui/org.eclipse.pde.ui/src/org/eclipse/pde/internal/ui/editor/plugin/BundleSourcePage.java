@@ -9,20 +9,55 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Enumeration;
 
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.jface.text.reconciler.IReconciler;
+import org.eclipse.jface.text.reconciler.MonoReconciler;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
-import org.eclipse.pde.internal.core.text.bundle.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
+import org.eclipse.pde.internal.core.text.bundle.Bundle;
+import org.eclipse.pde.internal.core.text.bundle.BundleModel;
+import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.editor.KeyValueSourcePage;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.SourceOutlinePage;
+import org.eclipse.pde.internal.ui.editor.text.ColorManager;
+import org.eclipse.pde.internal.ui.editor.text.IColorManager;
+import org.eclipse.pde.internal.ui.editor.text.ManifestConfiguration;
+import org.eclipse.pde.internal.ui.editor.text.ReconcilingStrategy;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.swt.graphics.Image;
 
 public class BundleSourcePage extends KeyValueSourcePage {
+	
+	class BundleSourceViewerConfiguration extends ManifestConfiguration {
+		public BundleSourceViewerConfiguration(IColorManager manager) {
+			super(manager);
+		}
+		
+		public IReconciler getReconciler(ISourceViewer sourceViewer) {
+			ReconcilingStrategy strategy = new ReconcilingStrategy();
+			strategy.addParticipant((IReconcilingParticipant) getInputContext()
+					.getModel());
+			strategy.addParticipant((SourceOutlinePage)getContentOutline());
+			MonoReconciler reconciler = new MonoReconciler(strategy, false);
+			reconciler.setDelay(500);
+			return reconciler;
+		}
+	}
+
 	class BundleOutlineContentProvider extends DefaultContentProvider
 			implements ITreeContentProvider {
 		public Object[] getChildren(Object parent) {
@@ -63,9 +98,12 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			return null;
 		}
 	}
+	private IColorManager fColorManager;
 	
 	public BundleSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
+		fColorManager = ColorManager.getDefault();
+		setSourceViewerConfiguration(new BundleSourceViewerConfiguration(fColorManager));
 	}
 	
 	protected ILabelProvider createOutlineLabelProvider() {
@@ -91,6 +129,33 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		    }
 		}
 		return null;
+	}
+	
+	public void dispose() {
+		fColorManager.dispose();
+		super.dispose();
+	}
+	
+	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
+		try {
+			ISourceViewer sourceViewer = getSourceViewer();
+			if (sourceViewer != null)
+				((BundleSourceViewerConfiguration) getSourceViewerConfiguration()).handlePropertyChangeEvent(event);
+		} finally {
+			super.handlePreferenceStoreChanged(event);
+		}
+	}
+	
+	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
+		return ((BundleSourceViewerConfiguration)getSourceViewerConfiguration()).affectsTextPresentation(event) || super.affectsTextPresentation(event);
+	}
+	
+	protected String[] collectContextMenuPreferencePages() {
+		String[] ids= super.collectContextMenuPreferencePages();
+		String[] more= new String[ids.length + 1];
+		more[0]= "org.eclipse.pde.ui.EditorPreferencePage"; //$NON-NLS-1$
+		System.arraycopy(ids, 0, more, 1, ids.length);
+		return more;
 	}
 
 }

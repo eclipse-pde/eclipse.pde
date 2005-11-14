@@ -10,10 +10,6 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 		super(store);
 	}
 	
-	public ChangeAwareSourceViewerConfiguration() {
-		super();
-	}
-	
  	public abstract boolean affectsTextPresentation(PropertyChangeEvent event);
  	
  	public abstract boolean affectsColorPresentation(PropertyChangeEvent event);

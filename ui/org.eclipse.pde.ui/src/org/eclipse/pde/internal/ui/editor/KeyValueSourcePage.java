@@ -11,9 +11,6 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.reconciler.IReconciler;
-import org.eclipse.jface.text.reconciler.MonoReconciler;
-import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -21,34 +18,12 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
-import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
-import org.eclipse.pde.internal.ui.editor.text.AnnotationHover;
-import org.eclipse.pde.internal.ui.editor.text.ReconcilingStrategy;
-import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
 public abstract class KeyValueSourcePage extends PDESourcePage {
-
-	class KeyValueSourceViewerConfiguration extends TextSourceViewerConfiguration {
-		private AnnotationHover fAnnotationHover;
-		public IReconciler getReconciler(ISourceViewer sourceViewer) {
-			ReconcilingStrategy strategy = new ReconcilingStrategy();
-			strategy.addParticipant((IReconcilingParticipant) getInputContext()
-					.getModel());
-			strategy.addParticipant((SourceOutlinePage)getContentOutline());
-			MonoReconciler reconciler = new MonoReconciler(strategy, false);
-			reconciler.setDelay(500);
-			return reconciler;
-		}
-		public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
-			if (fAnnotationHover == null)
-				fAnnotationHover = new AnnotationHover();
-			return fAnnotationHover;
-		}
-	}
+	
 	public KeyValueSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
-		setSourceViewerConfiguration(new KeyValueSourceViewerConfiguration());
 	}
 
 	/* (non-Javadoc)

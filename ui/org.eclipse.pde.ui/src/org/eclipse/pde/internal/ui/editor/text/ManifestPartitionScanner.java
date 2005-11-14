@@ -10,17 +10,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
+import java.util.ArrayList;
+
+import org.eclipse.jface.text.rules.IPredicateRule;
 import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
+import org.eclipse.jface.text.rules.SingleLineRule;
+import org.eclipse.jface.text.rules.Token;
 
 public class ManifestPartitionScanner extends RuleBasedPartitionScanner {
 	
-	public static final String MANIFEST_FILE_PARTITIONING = "__mf_partitioning"; //$NON-NLS-1$
-
-	public static final String MANIFEST_HEADER = "__mf_bundle_header"; //$NON-NLS-1$
+	public static final String MANIFEST_HEADER_VALUE = "__mf_bundle_header_value"; //$NON-NLS-1$
 	
-	public static final String[] PARTITIONS = new String[] {MANIFEST_HEADER};
+	public static final String[] PARTITIONS = new String[] {MANIFEST_HEADER_VALUE};
 	
 	public ManifestPartitionScanner() {
+		
+		Token value = new Token(MANIFEST_HEADER_VALUE);
+		ArrayList rules = new ArrayList();
+		rules.add(new SingleLineRule("=", null, value, '\\', true, true)); //$NON-NLS-1$
+		rules.add(new SingleLineRule(":", null, value, '\\', true, true)); //$NON-NLS-1$
+		rules.add(new SingleLineRule(" ", null, value, '\\', true, true)); //$NON-NLS-1$
+		rules.add(new SingleLineRule("\t", null, value, '\\', true, true)); //$NON-NLS-1$
+		setPredicateRules((IPredicateRule[])rules.toArray(new IPredicateRule[rules.size()]));
 	}
 
 }

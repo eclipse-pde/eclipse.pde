@@ -93,8 +93,6 @@ public class BuildSourceViewerConfiguration extends TextSourceViewerConfiguratio
 	private class SingleTokenJavaScanner extends AbstractJavaScanner {
 
 		private String fProperty;
-		private Token fToken;
-
 		public SingleTokenJavaScanner(String property) {
 			fProperty = property;
 			setColorManager(fColorManager);
@@ -106,12 +104,11 @@ public class BuildSourceViewerConfiguration extends TextSourceViewerConfiguratio
 		}
 
 		protected Token getTokenAffected(PropertyChangeEvent event) {
-			return fToken;
+			return (Token)fDefaultReturnToken;
 		}
 
 		protected void initialize() {
-			fToken = new Token(createTextAttribute(fProperty));
-			setDefaultReturnToken(fToken);			
+			setDefaultReturnToken(new Token(createTextAttribute(fProperty)));			
 		}
 	}
 
@@ -196,7 +193,6 @@ public class BuildSourceViewerConfiguration extends TextSourceViewerConfiguratio
 	}
 
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
-
 		PresentationReconciler reconciler = new PresentationReconciler();
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 

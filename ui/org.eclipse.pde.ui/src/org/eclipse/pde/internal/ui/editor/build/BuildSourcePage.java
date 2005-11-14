@@ -88,9 +88,8 @@ public class BuildSourcePage extends KeyValueSourcePage {
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		try {
 			ISourceViewer sourceViewer = getSourceViewer();
-			if (sourceViewer == null)
-				return;
-			((BuildSourceViewerConfiguration) getSourceViewerConfiguration()).handlePropertyChangeEvent(event);
+			if (sourceViewer != null)
+				((BuildSourceViewerConfiguration) getSourceViewerConfiguration()).handlePropertyChangeEvent(event);
 		} finally {
 			super.handlePreferenceStoreChanged(event);
 		}

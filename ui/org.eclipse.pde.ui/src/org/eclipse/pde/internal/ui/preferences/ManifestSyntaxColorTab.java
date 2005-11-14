@@ -13,9 +13,11 @@ package org.eclipse.pde.internal.ui.preferences;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.context.ManifestDocumentSetupParticipant;
 import org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.pde.internal.ui.editor.text.IPDEColorConstants;
+import org.eclipse.pde.internal.ui.editor.text.ManifestConfiguration;
 
 public class ManifestSyntaxColorTab extends SyntaxColorTab {
 
@@ -45,11 +47,12 @@ public class ManifestSyntaxColorTab extends SyntaxColorTab {
 		buffer.append(delimiter);
 		buffer.append(" org.eclipse.ui;resolution:=optional"); //$NON-NLS-1$
 		IDocument document = new Document(buffer.toString());
+		new ManifestDocumentSetupParticipant().setup(document);
 		return document;
 	}
 
 	protected ChangeAwareSourceViewerConfiguration getSourceViewerConfiguration() {
-		return null;
+		return new ManifestConfiguration(fColorManager);
 	}
 
 	protected String[][] getColorStrings() {
