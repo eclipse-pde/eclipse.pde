@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.pde.internal.runtime.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
+import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
 
 
 /**

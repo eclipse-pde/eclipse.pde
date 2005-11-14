@@ -10,11 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.junit.runtime;
 
-import junit.framework.*;
+import junit.framework.Assert;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.testing.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IPlatformRunnable;
+import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.testing.ITestHarness;
+import org.eclipse.ui.testing.TestableObject;
 
 /**
  * A Workbench that runs a test suite specified in the

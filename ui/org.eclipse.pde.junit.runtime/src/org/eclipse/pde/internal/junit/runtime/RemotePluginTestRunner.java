@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.junit.runtime;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.Locale;
 
 import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.jdt.internal.junit.runner.RemoteTestRunner;
-import org.osgi.framework.*;
+import org.osgi.framework.Bundle;
 
 /**
  * Runs JUnit tests contained inside a plugin.

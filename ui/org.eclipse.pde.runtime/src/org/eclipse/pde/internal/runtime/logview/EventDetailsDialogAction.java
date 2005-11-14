@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.logview;
 
-import java.util.*;
+import java.util.Comparator;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.util.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.runtime.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.actions.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.actions.SelectionProviderAction;
 
 
 public class EventDetailsDialogAction extends SelectionProviderAction{

@@ -13,7 +13,8 @@ package org.eclipse.pde.internal.runtime.registry;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.views.properties.*;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 public class ConfigurationElementPropertySource extends RegistryPropertySource {
 	private IConfigurationElement config;

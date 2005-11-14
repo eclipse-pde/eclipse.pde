@@ -14,7 +14,8 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
-import org.eclipse.ui.views.properties.*;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 public class ExtensionPointPropertySource extends RegistryPropertySource {
 	private IExtensionPoint extensionPoint;

@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime;
 
-import java.net.*;
+import java.net.URL;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.resource.*;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 
 public class PDERuntimePluginImages {

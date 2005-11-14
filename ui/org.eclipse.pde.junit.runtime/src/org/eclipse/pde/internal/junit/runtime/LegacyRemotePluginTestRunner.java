@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.junit.runtime;
 import java.util.Locale;
 
 import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.jdt.internal.junit.runner.RemoteTestRunner;
 
 /**

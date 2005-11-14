@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.logview;
 
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
 
 public class LogViewContentProvider implements ITreeContentProvider {
 	private LogView logView;

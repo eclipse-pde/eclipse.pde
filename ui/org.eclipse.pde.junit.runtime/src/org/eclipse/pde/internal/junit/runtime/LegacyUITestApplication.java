@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.junit.runtime;
 
-import junit.framework.*;
+import junit.framework.Assert;
 
 import org.eclipse.core.boot.IPlatformRunnable;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.IWindowListener;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
 
 public class LegacyUITestApplication implements IPlatformRunnable {
 

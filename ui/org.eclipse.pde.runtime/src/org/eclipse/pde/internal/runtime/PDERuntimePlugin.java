@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.runtime.registry.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.plugin.*;
-import org.osgi.framework.*;
+import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.pde.internal.runtime.registry.PluginObjectAdapter;
+import org.eclipse.pde.internal.runtime.registry.RegistryPropertySourceFactory;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 
 public class PDERuntimePlugin extends AbstractUIPlugin {

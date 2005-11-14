@@ -9,13 +9,21 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.osgi.util.*;
-import org.eclipse.pde.internal.runtime.*;
-import org.osgi.framework.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 public class RegistryBrowserContentProvider
 		implements
 			org.eclipse.jface.viewers.ITreeContentProvider {

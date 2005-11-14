@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.junit.runtime;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPlatformRunnable;
 
 
 public class CoreTestApplication implements IPlatformRunnable {

@@ -11,7 +11,8 @@
 package org.eclipse.pde.internal.runtime.logview;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
 import org.eclipse.swt.graphics.Image;
 

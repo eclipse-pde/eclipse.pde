@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.logview;
 
-import java.io.*;
-import java.text.*;
-import java.util.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;

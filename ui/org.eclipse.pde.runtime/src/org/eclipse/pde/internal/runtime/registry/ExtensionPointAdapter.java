@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 
 public class ExtensionPointAdapter extends ParentAdapter {
 

@@ -14,7 +14,8 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
-import org.eclipse.ui.views.properties.*;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 public class PluginPropertySource extends RegistryPropertySource {
 	private IPluginDescriptor pd;

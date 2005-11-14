@@ -11,7 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.util.*;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.dialogs.*;
 	/**
