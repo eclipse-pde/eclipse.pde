@@ -80,7 +80,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	
 	class AssignmentDetector implements IWordDetector {
 		public boolean isWordStart(char c) {
-			return c == ':' || c == '=';
+			return c == ':' || c == '=' || c == ';' || c == ',';
 		}
 
 		public boolean isWordPart(char c) {
