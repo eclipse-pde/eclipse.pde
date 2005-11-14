@@ -50,10 +50,13 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 		PreferenceConverter.setDefault(store, P_TAG, TAG);
 		PreferenceConverter.setDefault(store, P_XML_COMMENT, XML_COMMENT);
 		PreferenceConverter.setDefault(store, P_HEADER_KEY, HEADER_KEY);
+		store.setDefault(P_HEADER_KEY + IPDEColorConstants.P_BOLD_SUFFIX, true);
 		PreferenceConverter.setDefault(store, P_HEADER_VALUE, HEADER_VALUE);
 		PreferenceConverter.setDefault(store, P_HEADER_ASSIGNMENT, HEADER_ASSIGNMENT);
 		PreferenceConverter.setDefault(store, P_HEADER_ATTRIBUTE, HEADER_ATTRIBUTE);
+		store.setDefault(P_HEADER_ATTRIBUTE + IPDEColorConstants.P_ITALIC_SUFFIX, true);
 		PreferenceConverter.setDefault(store, P_HEADER_DIRECTIVE, HEADER_DIRECTIVE);
+		store.setDefault(P_HEADER_DIRECTIVE + IPDEColorConstants.P_ITALIC_SUFFIX, true);
 	}
 
 	private void initialize() {
