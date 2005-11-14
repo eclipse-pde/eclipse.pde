@@ -30,9 +30,11 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.context.ManifestDocumentSetupParticipant;
 import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
+import org.eclipse.pde.internal.ui.editor.text.ManifestConfiguration;
 import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
@@ -165,7 +167,10 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 	private IDocument fEmptyDoc;
 	private IColorManager fColorManager;
 	private XMLConfiguration fXMLConfig;
-	private XMLDocumentSetupParticpant fSetupParticipant;
+	private XMLDocumentSetupParticpant fXMLSetupParticipant;
+	private ManifestDocumentSetupParticipant fManifestSetupParticipant;
+
+	private ManifestConfiguration fManifestConfig;
 	
 	protected ExternalizeStringsWizardPage(ModelChangeTable changeTable) {
 		super(PAGE_NAME);
@@ -201,7 +206,9 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		};
 		fColorManager = ColorManager.getDefault();
 		fXMLConfig = new XMLConfiguration(fColorManager);
-		fSetupParticipant = new XMLDocumentSetupParticpant();
+		fXMLSetupParticipant = new XMLDocumentSetupParticpant();
+		fManifestConfig = new ManifestConfiguration(fColorManager);
+		fManifestSetupParticipant = new ManifestDocumentSetupParticipant();
 	}
 	
 	public void dispose() {
@@ -444,7 +451,10 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 			fSourceViewer.unconfigure();
 		if (sourceFile.getFileExtension().equalsIgnoreCase("xml")) { //$NON-NLS-1$
 			fSourceViewer.configure(fXMLConfig);
-			fSetupParticipant.setup(document);
+			fXMLSetupParticipant.setup(document);
+		} else {
+			fSourceViewer.configure(fManifestConfig);
+			fManifestSetupParticipant.setup(document);
 		}
 		
 		fSourceViewer.setDocument(document);
