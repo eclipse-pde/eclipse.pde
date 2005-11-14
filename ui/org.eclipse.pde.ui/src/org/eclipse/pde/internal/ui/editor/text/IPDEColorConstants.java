@@ -19,9 +19,9 @@ public interface IPDEColorConstants {
 	RGB DEFAULT =           new RGB(  0,   0,   0);
 	RGB TAG =               new RGB(  0,   0, 128);
 	
-	RGB HEADER_KEY = 		new RGB(  0,   0,   0);
-	RGB HEADER_VALUE = 		new RGB(  0,   0, 255);
-	RGB HEADER_ASSIGNMENT = new RGB(  0,   0,   0);
+	RGB HEADER_KEY = 		new RGB(128,  64,  64);
+	RGB HEADER_VALUE = 		new RGB( 40,  40,  40);
+	RGB HEADER_ASSIGNMENT = new RGB(128,  64,  64);
 	
 	String P_BOLD_SUFFIX = "_bold"; //$NON-NLS-1$
 	String P_ITALIC_SUFFIX = "_italic"; //$NON-NLS-1$
