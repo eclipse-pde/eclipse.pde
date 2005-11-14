@@ -24,9 +24,7 @@ public class ManifestSyntaxColorTab extends SyntaxColorTab {
 	private static final String[][] COLOR_STRINGS = new String[][] {
 			{PDEUIMessages.ManifestSyntaxColorTab_keys, IPDEColorConstants.P_HEADER_KEY},
 			{PDEUIMessages.ManifestSyntaxColorTab_assignment, IPDEColorConstants.P_HEADER_ASSIGNMENT},
-			{PDEUIMessages.ManifestSyntaxColorTab_values, IPDEColorConstants.P_HEADER_VALUE},
-			{PDEUIMessages.ManifestSyntaxColorTab_attributes, IPDEColorConstants.P_HEADER_ATTRIBUTE},
-			{PDEUIMessages.ManifestSyntaxColorTab_directives, IPDEColorConstants.P_HEADER_DIRECTIVE}};
+			{PDEUIMessages.ManifestSyntaxColorTab_values, IPDEColorConstants.P_HEADER_VALUE}};
 
 	public ManifestSyntaxColorTab(IColorManager manager) {
 		super(manager);

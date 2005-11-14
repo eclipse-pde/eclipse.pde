@@ -52,8 +52,6 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	class ManifestValueScanner extends BasePDEScanner {
 		
 		private Token fAssignmentToken;
-		//private Token fAttributeToken;
-		//private Token fDirectiveToken;
 
 		public ManifestValueScanner() {
 			super(fColorManager);
@@ -61,8 +59,6 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 
 		public boolean affectsTextPresentation(String property) {
 			return property.startsWith(IPDEColorConstants.P_HEADER_ASSIGNMENT)
-					|| property.startsWith(IPDEColorConstants.P_HEADER_ATTRIBUTE)
-					|| property.startsWith(IPDEColorConstants.P_HEADER_DIRECTIVE)
 					|| property.startsWith(IPDEColorConstants.P_HEADER_VALUE);
 		}
 
@@ -70,10 +66,6 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 			String property = event.getProperty();
 			if (property.startsWith(IPDEColorConstants.P_HEADER_ASSIGNMENT))
 				return fAssignmentToken;
-			/*if (property.startsWith(IPDEColorConstants.P_HEADER_ATTRIBUTE))
-				return fAttributeToken;
-			if (property.startsWith(IPDEColorConstants.P_HEADER_DIRECTIVE))
-				return fDirectiveToken;*/
 			return (Token)fDefaultReturnToken;
 		}
 
@@ -81,9 +73,6 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 			IRule[] rules = new IRule[1];
 			fAssignmentToken = new Token(createTextAttribute(IPDEColorConstants.P_HEADER_ASSIGNMENT));
 			rules[0] = new WordRule(new AssignmentDetector(), fAssignmentToken);
-			
-			//fAttributeToken = new Token(createTextAttribute(IPDEColorConstants.P_HEADER_ATTRIBUTE));
-			//fDirectiveToken = new Token(createTextAttribute(IPDEColorConstants.P_HEADER_DIRECTIVE));
 			setRules(rules);
 			setDefaultReturnToken(new Token(createTextAttribute(IPDEColorConstants.P_HEADER_VALUE)));
 		}	
@@ -138,9 +127,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	public boolean affectsTextPresentation(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		return property.startsWith(IPDEColorConstants.P_HEADER_KEY) ||
-			property.startsWith(IPDEColorConstants.P_HEADER_VALUE) ||
-			property.startsWith(IPDEColorConstants.P_HEADER_ATTRIBUTE) || 
-			property.startsWith(IPDEColorConstants.P_HEADER_DIRECTIVE) || 
+			property.startsWith(IPDEColorConstants.P_HEADER_VALUE) || 
 			property.startsWith(IPDEColorConstants.P_HEADER_ASSIGNMENT);
 	}
 
@@ -148,8 +135,6 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 		String property = event.getProperty();
 		return property.equals(IPDEColorConstants.P_HEADER_KEY) ||
 			property.equals(IPDEColorConstants.P_HEADER_VALUE) ||
-			property.equals(IPDEColorConstants.P_HEADER_ATTRIBUTE) || 
-			property.equals(IPDEColorConstants.P_HEADER_DIRECTIVE) || 
 			property.equals(IPDEColorConstants.P_HEADER_ASSIGNMENT);
 	}
 

@@ -53,10 +53,6 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 		store.setDefault(P_HEADER_KEY + IPDEColorConstants.P_BOLD_SUFFIX, true);
 		PreferenceConverter.setDefault(store, P_HEADER_VALUE, HEADER_VALUE);
 		PreferenceConverter.setDefault(store, P_HEADER_ASSIGNMENT, HEADER_ASSIGNMENT);
-		PreferenceConverter.setDefault(store, P_HEADER_ATTRIBUTE, HEADER_ATTRIBUTE);
-		store.setDefault(P_HEADER_ATTRIBUTE + IPDEColorConstants.P_ITALIC_SUFFIX, true);
-		PreferenceConverter.setDefault(store, P_HEADER_DIRECTIVE, HEADER_DIRECTIVE);
-		store.setDefault(P_HEADER_DIRECTIVE + IPDEColorConstants.P_ITALIC_SUFFIX, true);
 	}
 
 	private void initialize() {
@@ -75,13 +71,17 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 		}
 	}
 
+	public void disposeColors() {
+		Iterator e = fColorTable.values().iterator();
+		while (e.hasNext())
+			 ((Color) e.next()).dispose();
+		fColorManager = null;
+		
+	}
 	public void dispose() {
 		counter--;
 		if (counter == 0) {
-			Iterator e = fColorTable.values().iterator();
-			while (e.hasNext())
-				 ((Color) e.next()).dispose();
-			fColorManager = null;
+			disposeColors();
 		}
 	}
 	

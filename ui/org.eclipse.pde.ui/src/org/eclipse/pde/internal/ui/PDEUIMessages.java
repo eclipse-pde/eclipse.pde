@@ -2265,10 +2265,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String ManifestSyntaxColorTab_values;
 
-	public static String ManifestSyntaxColorTab_attributes;
-
-	public static String ManifestSyntaxColorTab_directives;
-
 	public static String SyntaxColorTab_elements;
 
 	public static String SyntaxColorTab_color;

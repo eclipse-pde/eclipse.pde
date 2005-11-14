@@ -17,7 +17,6 @@ import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
-import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -38,7 +37,7 @@ public class EditorPreferencePage
 		
 	private XMLSyntaxColorTab fXMLTab;
 	private ManifestSyntaxColorTab fManifestTab;
-	private IColorManager fColorManager;
+	private ColorManager fColorManager;
 
 	public EditorPreferencePage() {
 		setDescription(PDEUIMessages.EditorPreferencePage_colorSettings);
@@ -53,7 +52,7 @@ public class EditorPreferencePage
 	}
 	
 	public void dispose() {
-		fColorManager.dispose();
+		fColorManager.disposeColors();
 		fXMLTab.dispose();
 		fManifestTab.dispose();
 		super.dispose();

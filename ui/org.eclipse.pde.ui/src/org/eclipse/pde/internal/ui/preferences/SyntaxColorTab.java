@@ -269,15 +269,12 @@ public abstract class SyntaxColorTab {
 			ColorElement item = (ColorElement)fElementViewer.getElementAt(i);
 			RGB rgb = PreferenceConverter.getDefaultColor(store, item.getColorKey());		
 			item.setColorValue(rgb);
-			if (item.isBold())
-				item.setBold(false);
-			if (item.isItalic())
-				item.setItalic(false);
-		}	
-		if (fBoldButton.getSelection())
-			fBoldButton.setSelection(false);
-		if (fItalicButton.getSelection())
-			fItalicButton.setSelection(false);
+			item.setBold(store.getDefaultBoolean(item.getColorKey() + IPDEColorConstants.P_BOLD_SUFFIX));
+			item.setItalic(store.getDefaultBoolean(item.getColorKey() + IPDEColorConstants.P_ITALIC_SUFFIX));		
+		}
+		ColorElement element = getColorElement(fElementViewer);
+		fBoldButton.setSelection(element.isBold());
+		fItalicButton.setSelection(element.isItalic());
 	}
 	
 	public void dispose() {
