@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -122,7 +123,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			
 			// to avoid cycles, e.g. when a bundle imports a package it exports
 			added.add(desc.getSymbolicName());
-
+			
 			HostSpecification host = desc.getHost();
 			if (desc.isResolved() && host != null) {
 				addHostPlugin(host, added, map, entries);
@@ -135,14 +136,14 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			}
 			
 			// add Import-Package
-			ImportPackageSpecification[] imports = desc.getImportPackages();
-			for (int i = 0; i < imports.length; i++) {
-				BaseDescription supplier = imports[i].getSupplier();
-				if (supplier instanceof ExportPackageDescription) {
-					addDependencyViaImportPackage(((ExportPackageDescription)supplier).getExporter(), added, map, entries);				
-				}
+			Iterator iter = map.keySet().iterator();
+			while (iter.hasNext()) {
+				String symbolicName = iter.next().toString();
+				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(symbolicName);
+				if (model != null && model.isEnabled())
+					addDependencyViaImportPackage(model.getBundleDescription(), added, map, entries);
 			}
-			
+
 			addExtraClasspathEntries(added, entries);
 
 			// add implicit dependencies
@@ -165,23 +166,28 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		Map visiblePackages = new TreeMap();
 		if (bundle.isResolved()) {
 			BundleDescription desc = bundle;
-			if (desc.getHost() != null)
-				desc = (BundleDescription)desc.getHost().getSupplier();
-			
 			StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
-			ExportPackageDescription[] exports = helper.getVisiblePackages(desc);
-			for (int i = 0; i < exports.length; i++) {
-				BundleDescription exporter = exports[i].getExporter();
-				if (exporter == null)
-					continue;
-				ArrayList list = (ArrayList)visiblePackages.get(exporter.getName());
-				if (list == null) 
-					list = new ArrayList();
-				list.add(getRule(helper, desc, exports[i]));
-				visiblePackages.put(exporter.getName(), list);
-			}
+			addVisiblePackagesFromState(helper, desc, visiblePackages);
+			if (desc.getHost() != null)
+				addVisiblePackagesFromState(helper, (BundleDescription)desc.getHost().getSupplier(), visiblePackages);
 		}
 		return visiblePackages;
+	}
+
+	private void addVisiblePackagesFromState(StateHelper helper, BundleDescription desc, Map visiblePackages) {
+		ExportPackageDescription[] exports = helper.getVisiblePackages(desc);
+		for (int i = 0; i < exports.length; i++) {
+			BundleDescription exporter = exports[i].getExporter();
+			if (exporter == null)
+				continue;
+			ArrayList list = (ArrayList)visiblePackages.get(exporter.getSymbolicName());
+			if (list == null) 
+				list = new ArrayList();
+			Rule rule = getRule(helper, desc, exports[i]);
+			if (!list.contains(rule))
+				list.add(rule);
+			visiblePackages.put(exporter.getSymbolicName(), list);
+		}
 	}
 	
 	private Rule getRule(StateHelper helper, BundleDescription desc, ExportPackageDescription export) {

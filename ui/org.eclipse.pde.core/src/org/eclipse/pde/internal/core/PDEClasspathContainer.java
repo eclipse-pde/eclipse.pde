@@ -32,6 +32,11 @@ public class PDEClasspathContainer {
 	class Rule {
 		IPath path;
 		boolean discouraged;
+		public boolean equals(Object other) {
+			if (!(other instanceof Rule))
+				return false;
+			return discouraged == ((Rule)other).discouraged && path.equals(((Rule)other).path);
+		}
 	}
 	
 	private static HashMap ACCESSIBLE_RULES = new HashMap();
