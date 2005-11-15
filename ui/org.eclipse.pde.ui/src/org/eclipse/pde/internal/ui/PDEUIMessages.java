@@ -2279,5 +2279,9 @@ public class PDEUIMessages extends NLS {
 
 	public static String EditorPreferencePage_manifest;
 
+	public static String ManifestSyntaxColorTab_reservedOSGi;
+
+	public static String ManifestSyntaxColorTab_attributes;
+
 
 }

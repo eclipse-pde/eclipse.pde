@@ -22,9 +22,11 @@ import org.eclipse.pde.internal.ui.editor.text.ManifestConfiguration;
 public class ManifestSyntaxColorTab extends SyntaxColorTab {
 
 	private static final String[][] COLOR_STRINGS = new String[][] {
+			{PDEUIMessages.ManifestSyntaxColorTab_reservedOSGi, IPDEColorConstants.P_HEADER_OSGI},
 			{PDEUIMessages.ManifestSyntaxColorTab_keys, IPDEColorConstants.P_HEADER_KEY},
 			{PDEUIMessages.ManifestSyntaxColorTab_assignment, IPDEColorConstants.P_HEADER_ASSIGNMENT},
-			{PDEUIMessages.ManifestSyntaxColorTab_values, IPDEColorConstants.P_HEADER_VALUE}};
+			{PDEUIMessages.ManifestSyntaxColorTab_values, IPDEColorConstants.P_HEADER_VALUE},
+			{PDEUIMessages.ManifestSyntaxColorTab_attributes, IPDEColorConstants.P_HEADER_ATTRIBUTES}};
 
 	public ManifestSyntaxColorTab(IColorManager manager) {
 		super(manager);

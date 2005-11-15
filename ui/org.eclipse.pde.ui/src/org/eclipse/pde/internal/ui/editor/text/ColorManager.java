@@ -50,8 +50,11 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 		PreferenceConverter.setDefault(store, P_TAG, TAG);
 		PreferenceConverter.setDefault(store, P_XML_COMMENT, XML_COMMENT);
 		PreferenceConverter.setDefault(store, P_HEADER_KEY, HEADER_KEY);
-		store.setDefault(P_HEADER_KEY + IPDEColorConstants.P_BOLD_SUFFIX, true);
+		PreferenceConverter.setDefault(store, P_HEADER_OSGI, HEADER_OSGI);
+		store.setDefault(P_HEADER_OSGI + IPDEColorConstants.P_BOLD_SUFFIX, true);
 		PreferenceConverter.setDefault(store, P_HEADER_VALUE, HEADER_VALUE);
+		PreferenceConverter.setDefault(store, P_HEADER_ATTRIBUTES, HEADER_ATTRIBUTES);
+		store.setDefault(P_HEADER_ATTRIBUTES + IPDEColorConstants.P_ITALIC_SUFFIX, true);
 		PreferenceConverter.setDefault(store, P_HEADER_ASSIGNMENT, HEADER_ASSIGNMENT);
 	}
 
@@ -63,7 +66,9 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 		putColor(pstore, P_TAG);
 		putColor(pstore, P_XML_COMMENT);
 		putColor(pstore, P_HEADER_KEY);
+		putColor(pstore, P_HEADER_OSGI);
 		putColor(pstore, P_HEADER_VALUE);
+		putColor(pstore, P_HEADER_ATTRIBUTES);
 		putColor(pstore, P_HEADER_ASSIGNMENT);
 		pstore = JavaPlugin.getDefault().getCombinedPreferenceStore();
 		for (int i = 0; i < IColorManager.PROPERTIES_COLORS.length; i++) {
