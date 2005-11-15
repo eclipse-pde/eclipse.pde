@@ -83,8 +83,7 @@ public class ManifestModifier extends Task {
 			}
 		}
 		//force a manifest version if none exists
-		String manifestVersionKey = Name.MANIFEST_VERSION.toString();
-		if (!manifest.getMainAttributes().containsKey(manifestVersionKey)) {
+		if (!manifest.getMainAttributes().containsKey(Name.MANIFEST_VERSION)) {
 			contentChanged = true;
 			manifest.getMainAttributes().put(Name.MANIFEST_VERSION, "1.0"); //$NON-NLS-1$
 		}
