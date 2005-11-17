@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
@@ -160,13 +161,24 @@ public class PDEState extends MinimalState {
 	}
 	
 	private void createTargetModels() {
-		BundleDescription[] bundleDescriptions = fResolve ? fState.getResolvedBundles() : fState.getBundles();
+		BundleDescription[] bundleDescriptions = fState.getBundles();
 		for (int i = 0; i < bundleDescriptions.length; i++) {
-			BundleDescription desc = bundleDescriptions[i];
-			fMonitor.subTask(bundleDescriptions[i].getSymbolicName());
-			fTargetModels.put(desc.getSymbolicName(), createExternalModel(desc));
-			fExtensions.remove(Long.toString(desc.getBundleId()));
-			fPluginInfos.remove(Long.toString(desc.getBundleId()));
+			boolean add = true;
+			if (!bundleDescriptions[i].isResolved()) {
+				ResolverError[] error = fState.getResolverErrors(bundleDescriptions[i]);
+				for (int j = 0; j < error.length; j++) {
+					if (error[j].getType() == ResolverError.SINGLETON_SELECTION) {
+						add = false;
+						break;
+					}
+				}
+			}
+			if (add) {
+				BundleDescription desc = bundleDescriptions[i];
+				fTargetModels.put(desc.getSymbolicName(), createExternalModel(desc));
+				fExtensions.remove(Long.toString(desc.getBundleId()));
+				fPluginInfos.remove(Long.toString(desc.getBundleId()));
+			}
 		}
 	}
  	
