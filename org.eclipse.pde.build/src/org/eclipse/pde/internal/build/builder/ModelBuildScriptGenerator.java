@@ -914,6 +914,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		script.printCopyTask(null, destdir, fileSets, true, false);
 
+		if (customBuildCallbacks != null) {
+			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_POST_COMPILE + name, null, null, params, references);
+		}
+		
 		String jarLocation = getJARLocation(entry.getName(true));
 		script.printMkdirTask(new Path(jarLocation).removeLastSegments(1).toString());
 

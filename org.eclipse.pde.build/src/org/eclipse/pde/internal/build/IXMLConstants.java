@@ -123,6 +123,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_BUILD_TEMP = "buildTempFolder"; //$NON-NLS-1$
 	public static final String PROPERTY_PRE = "pre."; //$NON-NLS-1$
 	public static final String PROPERTY_POST = "post."; //$NON-NLS-1$
+	public static final String PROPERTY_POST_COMPILE = "post.compile."; //$NON-NLS-1$
 	public static final String PROPERTY_SOURCE_FOLDER = "source.folder"; //$NON-NLS-1$
 	public static final String PROPERTY_TARGET_FOLDER = "target.folder"; //$NON-NLS-1$
 	public static final String PROPERTY_JAR_LOCATION = "jar.Location"; //$NON-NLS-1$
