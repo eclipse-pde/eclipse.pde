@@ -9,19 +9,20 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
-/**
- * @version 	1.0
- * @author
- */
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+
+
 public class WizardCheckboxTablePart extends CheckboxTablePart {
 	private int selectAllIndex = -1;
 	private int deselectAllIndex = -1;

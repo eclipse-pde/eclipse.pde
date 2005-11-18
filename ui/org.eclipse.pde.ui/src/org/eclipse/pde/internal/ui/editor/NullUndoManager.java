@@ -13,10 +13,6 @@ package org.eclipse.pde.internal.ui.editor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.pde.core.IModelChangeProvider;
 
-/**
- * @version 	1.0
- * @author
- */
 public class NullUndoManager implements IModelUndoManager {
 
 	/*

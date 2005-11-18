@@ -9,15 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
-/**
- * @version 	1.0
- * @author
- */
+
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.jface.dialogs.Dialog;
 
 public class PixelConverter {
 	

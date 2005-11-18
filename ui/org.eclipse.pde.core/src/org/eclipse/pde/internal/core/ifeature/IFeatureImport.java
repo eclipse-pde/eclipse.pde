@@ -10,27 +10,29 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ifeature;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.plugin.*;
-/**
- * @version 	1.0
- * @author
- */
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.plugin.IPluginReference;
+
 public interface IFeatureImport extends IFeatureObject, IPluginReference {
 	String P_TYPE = "type"; //$NON-NLS-1$
+
 	String P_PATCH = "patch"; //$NON-NLS-1$
+
 	String P_ID_MATCH = "id-match"; //$NON-NLS-1$
-	
+
 	int PLUGIN = 0;
+
 	int FEATURE = 1;
-	
+
 	int getType();
-	
+
 	void setType(int type) throws CoreException;
-	
+
 	boolean isPatch();
+
 	void setPatch(boolean patch) throws CoreException;
-	
+
 	int getIdMatch();
+
 	void setIdMatch(int idMatch) throws CoreException;
 }

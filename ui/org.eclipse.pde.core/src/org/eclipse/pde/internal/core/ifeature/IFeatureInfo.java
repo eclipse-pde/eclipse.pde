@@ -8,24 +8,25 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
- 
+
 package org.eclipse.pde.internal.core.ifeature;
 
-import org.eclipse.core.runtime.*;
-/**
- * @version 	1.0
- * @author
- */
+import org.eclipse.core.runtime.CoreException;
+
 public interface IFeatureInfo extends IFeatureObject {
 	String P_URL = "p_url"; //$NON-NLS-1$
+
 	String P_DESC = "p_desc"; //$NON-NLS-1$
-	
+
 	public String getURL();
+
 	public String getDescription();
-	
+
 	public void setURL(String url) throws CoreException;
+
 	public void setDescription(String desc) throws CoreException;
-	
+
 	public boolean isEmpty();
+
 	public int getIndex();
 }

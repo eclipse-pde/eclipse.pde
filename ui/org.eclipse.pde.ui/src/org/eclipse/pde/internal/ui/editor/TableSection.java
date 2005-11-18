@@ -11,13 +11,12 @@
 package org.eclipse.pde.internal.ui.editor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.pde.internal.ui.parts.EditableTablePart;
+import org.eclipse.pde.internal.ui.parts.StructuredViewerPart;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-/**
- * @version 1.0
- * @author
- */
+
 public abstract class TableSection extends StructuredViewerSection {
 	protected boolean handleDefaultButton = true;
 	class PartAdapter extends EditableTablePart {

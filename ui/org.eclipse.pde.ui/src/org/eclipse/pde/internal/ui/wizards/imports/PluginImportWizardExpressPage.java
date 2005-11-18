@@ -48,9 +48,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-/**
- * @author Wassim Melhem
- */
 public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 
 	private TablePart tablePart;

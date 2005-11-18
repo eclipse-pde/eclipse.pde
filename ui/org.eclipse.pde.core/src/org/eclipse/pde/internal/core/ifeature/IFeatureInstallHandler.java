@@ -10,18 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ifeature;
 
-import org.eclipse.core.runtime.*;
-/**
- * @version 	1.0
- * @author
- */
+import org.eclipse.core.runtime.CoreException;
+
 public interface IFeatureInstallHandler extends IFeatureObject {
 	String P_LIBRARY = "library"; //$NON-NLS-1$
+
 	String P_HANDLER_NAME = "handlerName"; //$NON-NLS-1$
 
 	public String getLibrary();
+
 	public String getHandlerName();
-	
+
 	public void setLibrary(String library) throws CoreException;
+
 	public void setHandlerName(String handlerName) throws CoreException;
 }

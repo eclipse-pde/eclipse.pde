@@ -55,9 +55,6 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
-/**
- * @author Wassim Melhem
- */
 public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
 	

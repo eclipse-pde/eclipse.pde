@@ -12,12 +12,11 @@ package org.eclipse.pde.internal.ui.parts;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-/**
- * @version 1.0
- * @author
- */
+
+
 public abstract class StructuredViewerPart extends SharedPartWithButtons {
 	private StructuredViewer viewer;
 	private Point minSize = null;

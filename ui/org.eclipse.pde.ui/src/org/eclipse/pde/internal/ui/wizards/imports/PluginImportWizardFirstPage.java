@@ -61,9 +61,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 
-/**
- * @author Wassim Melhem
- */
 public class PluginImportWizardFirstPage extends WizardPage {
 	
 	private static String SETTINGS_IMPORTTYPE = "importType"; //$NON-NLS-1$

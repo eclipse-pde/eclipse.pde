@@ -9,10 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
-/**
- * @version 	1.0
- * @author
- */
 public class Choice {
 	private String label;
 	private String value;

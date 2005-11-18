@@ -9,18 +9,17 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
-import java.util.*;
+import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IModelChangeProvider;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.forms.editor.IFormPage;
 
-/**
- * @version 	1.0
- * @author
- */
 public abstract class ModelUndoManager
 	implements IModelUndoManager, IModelChangedListener {
 	private boolean ignoreChanges;

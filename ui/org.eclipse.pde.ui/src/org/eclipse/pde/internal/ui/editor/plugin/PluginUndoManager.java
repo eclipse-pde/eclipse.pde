@@ -39,10 +39,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ModelUndoManager;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 
-/**
- * @version 	1.0
- * @author
- */
 public class PluginUndoManager extends ModelUndoManager {
 	
 	public PluginUndoManager(PDEFormEditor editor) {
