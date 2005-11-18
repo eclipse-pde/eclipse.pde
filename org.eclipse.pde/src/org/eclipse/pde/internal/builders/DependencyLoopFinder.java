@@ -10,17 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-/**
- * @version 	1.0
- * @author
- */
-
-import java.util.*;
+import java.util.Vector;
 
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.PDEMessages;
+import org.eclipse.pde.internal.core.PDECore;
 
 public class DependencyLoopFinder {
 
