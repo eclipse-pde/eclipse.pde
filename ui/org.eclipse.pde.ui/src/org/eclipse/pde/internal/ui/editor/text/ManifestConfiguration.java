@@ -154,7 +154,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 		}
 
 		public boolean isWordPart(char c) {
-			return c != ':' && c != '=';
+			return c != ':' && c != '=' && !Character.isSpaceChar(c);
 		}	
 	}
 
