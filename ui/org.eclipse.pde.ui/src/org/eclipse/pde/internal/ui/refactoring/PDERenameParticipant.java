@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
+import java.util.HashMap;
+import java.util.Iterator;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -20,16 +23,23 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
+import org.eclipse.ltk.core.refactoring.participants.ISharableParticipant;
+import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
+import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
-public abstract class PDERenameParticipant extends RenameParticipant {
+public abstract class PDERenameParticipant extends RenameParticipant implements ISharableParticipant {
 	
 	protected IProject fProject;
-	protected IJavaElement fElement;
+	protected HashMap fElements;
 
 	public RefactoringStatus checkConditions(IProgressMonitor pm,
 			CheckConditionsContext context) throws OperationCanceledException {
 		return new RefactoringStatus();
+	}
+	
+	public void addElement(Object element, RefactoringArguments arguments) {
+		fElements.put(element, ((RenameArguments)arguments).getNewName());
 	}
 
 	public Change createChange(IProgressMonitor pm) throws CoreException,
@@ -48,18 +58,26 @@ public abstract class PDERenameParticipant extends RenameParticipant {
 		IFile file = fProject.getFile(filename);
 		if (file.exists()) {
 			Change change = PluginManifestChange.createRenameChange(
-					file, getOldName(), getNewName(), pm);
+					file, getOldNames(), getNewNames(), pm);
 			if (change != null)
 				result.add(change);
 		}
 	}
 	
-	protected String getOldName() {
-		return fElement.getElementName();
+	protected String[] getOldNames() {
+		String[] result = new String[fElements.size()];
+		Iterator iter = fElements.keySet().iterator();
+		for (int i = 0; i < fElements.size(); i++)
+			result[i] = ((IJavaElement)iter.next()).getElementName();
+		return result;
 	}
 	
-	protected String getNewName() {
-		return getArguments().getNewName();
+	protected String[] getNewNames() {
+		String[] result = new String[fElements.size()];
+		Iterator iter = fElements.values().iterator();
+		for (int i = 0; i < fElements.size(); i++)
+			result[i] = iter.next().toString();
+		return result;
 	}
 
 	protected void addBundleManifestChange(CompositeChange result, IProgressMonitor pm)
@@ -70,8 +88,11 @@ public abstract class PDERenameParticipant extends RenameParticipant {
 	protected void addBundleManifestChange(IFile file, CompositeChange result, 
 			IProgressMonitor pm) throws CoreException {
 		if (file.exists()) {
-			Change change = BundleManifestChange.createRenameChange(file, fElement,
-					getNewName(), pm);
+			Change change = BundleManifestChange.createRenameChange(
+							file, 
+							(IJavaElement[])fElements.keySet().toArray(new IJavaElement[fElements.size()]),
+							getNewNames(), 
+							pm);
 			if (change != null)
 				result.add(change);
 		}

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -33,7 +35,8 @@ public class ManifestPackageMoveParticipant extends PDEMoveParticipant {
 			IProject project = javaProject.getProject();
 			if (WorkspaceModelManager.hasBundleManifest(project)) {
 				fProject = javaProject.getProject();
-				fElement = fragment;
+				fElements = new ArrayList();
+				fElements.add(fragment);
 				return true;
 			}
 		}
@@ -50,7 +53,7 @@ public class ManifestPackageMoveParticipant extends PDEMoveParticipant {
 			IProject destProject = getDestinationProject();
 			if (destProject != null && !fProject.equals(destProject)) {
 				MoveFromChange change = BundleManifestChange.createMovePackageChange(file, 
-						fElement.getElementName(), 
+						(IJavaElement[])fElements.toArray(new IJavaElement[fElements.size()]), 
 						pm);
 				if (change != null) {
 					result.add(change);

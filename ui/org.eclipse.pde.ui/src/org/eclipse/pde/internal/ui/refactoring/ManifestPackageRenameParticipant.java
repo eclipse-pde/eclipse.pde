@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
+import java.util.HashMap;
+import java.util.Iterator;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -19,6 +22,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
+import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 import org.eclipse.osgi.service.resolver.BaseDescription;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
@@ -42,7 +46,8 @@ public class ManifestPackageRenameParticipant extends PDERenameParticipant {
 				IProject project = javaProject.getProject();
 				if (WorkspaceModelManager.isPluginProject(project)) {
 					fProject = javaProject.getProject();
-					fElement = fragment;
+					fElements = new HashMap();
+					fElements.put(fragment, ((RenameArguments)getArguments()).getNewName());
 					return true;
 				}
 			}
@@ -78,18 +83,20 @@ public class ManifestPackageRenameParticipant extends PDERenameParticipant {
 	
 	private boolean isAffected(BundleDescription desc, BundleDescription dependent) {
 		ImportPackageSpecification[] imports = dependent.getImportPackages();
-		String name = fElement.getElementName();
-		for (int i = 0; i < imports.length; i++) {
-			if (name.equals(imports[i].getName())) {
-				BaseDescription supplier = imports[i].getSupplier();
-				if (supplier instanceof ExportPackageDescription) {
-					if (desc.equals(((ExportPackageDescription)supplier).getExporter()))
-						return true;
+		Iterator iter = fElements.keySet().iterator();
+		while (iter.hasNext()) {
+			String name = ((IJavaElement)iter.next()).getElementName();
+			for (int i = 0; i < imports.length; i++) {
+				if (name.equals(imports[i].getName())) {
+					BaseDescription supplier = imports[i].getSupplier();
+					if (supplier instanceof ExportPackageDescription) {
+						if (desc.equals(((ExportPackageDescription)supplier).getExporter()))
+							return true;
+					}
 				}
 			}
 		}
 		return false;
 	}
-
 
 }

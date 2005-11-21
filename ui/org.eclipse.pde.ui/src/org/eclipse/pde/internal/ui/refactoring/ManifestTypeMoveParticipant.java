@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -33,7 +35,8 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 			IProject project = javaProject.getProject();
 			if (WorkspaceModelManager.isPluginProject(project)) {
 				fProject = javaProject.getProject();
-				fElement = type;
+				fElements = new ArrayList();
+				fElements.add(element);
 				return true;
 			}
 		}
@@ -59,19 +62,23 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 		IFile file = fProject.getFile(filename);
 		if (file.exists()) {
 			Change change = PluginManifestChange.createRenameChange(file, 
-					getOldName(), 
-					getNewName(), 
+					getOldNames(), 
+					getNewNames(), 
 					pm);
 			if (change != null)
 				result.add(change);				
 		}
 	}
 	
-	private String getOldName() {
-		return ((IType)fElement).getFullyQualifiedName('$');
+	private String[] getOldNames() {
+		String[] result = new String[fElements.size()];
+		for (int i = 0; i < fElements.size(); i++) {
+			result[i] = ((IType)fElements.get(i)).getFullyQualifiedName('$');
+		}
+		return result;
 	}
 	
-	private String getNewName() {
+	private String[] getNewNames() {
 		Object destination = getArguments().getDestination();
 		StringBuffer buffer = new StringBuffer();
 		if (destination instanceof IPackageFragment) {
@@ -79,16 +86,22 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 			if (buffer.length() > 0)
 				buffer.append("."); //$NON-NLS-1$
 		}
-		buffer.append(fElement.getElementName());
-		return buffer.toString();
+		String[] result = new String[fElements.size()];
+		for (int i = 0; i < fElements.size(); i++) {
+			result[i] = buffer.toString() + ((IJavaElement)fElements.get(i)).getElementName();
+		}
+		return result;
 	}
 
 	protected void addBundleManifestChange(CompositeChange result, IProgressMonitor pm)
 			throws CoreException {
 		IFile file = fProject.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
 		if (file.exists()) {
-			Change change = BundleManifestChange.createRenameChange(file, fElement,
-					getNewName(), pm);
+			Change change = BundleManifestChange.createRenameChange(
+										file, 
+										(IJavaElement[])fElements.toArray(new IJavaElement[fElements.size()]),
+										getNewNames(), 
+										pm);
 			if (change != null)
 				result.add(change);
 		}

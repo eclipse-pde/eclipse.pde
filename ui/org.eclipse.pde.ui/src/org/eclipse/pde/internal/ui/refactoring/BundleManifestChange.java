@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
@@ -22,6 +24,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -49,12 +52,8 @@ public class BundleManifestChange {
 
 			BundleModel model = (BundleModel)bundle.getModel();
 			BundleTextChangeListener listener = new BundleTextChangeListener(model.getDocument());
-			bundle.getModel().addModelChangedListener(listener);
-			
-			String headerName = getExportedPackageHeader(bundle);
-			addPackage((ExportPackageHeader)bundle.getManifestHeader(headerName),
-					   (BundleModel)bundle.getModel(),
-					   change);
+			bundle.getModel().addModelChangedListener(listener);			
+			addPackage(bundle, change);
 			return createChange(listener, file);
 		} catch (CoreException e) {
 		} catch (MalformedTreeException e) {
@@ -65,7 +64,7 @@ public class BundleManifestChange {
 		return null;
 	}
 	
-	public static MoveFromChange createMovePackageChange(IFile file, String packageName, IProgressMonitor monitor) throws CoreException {
+	public static MoveFromChange createMovePackageChange(IFile file, IJavaElement[] elements, IProgressMonitor monitor) throws CoreException {
 		try {
 			Bundle bundle = getBundle(file, monitor);
 			if (bundle == null)
@@ -75,11 +74,14 @@ public class BundleManifestChange {
 			BundleTextChangeListener listener = new BundleTextChangeListener(model.getDocument());
 			bundle.getModel().addModelChangedListener(listener);
 			
-			PDEManifestElement export = removePackage(bundle.getManifestHeader(Constants.EXPORT_PACKAGE), 
-													  packageName);
-			PDEManifestElement provide = removePackage(bundle.getManifestHeader(ICoreConstants.PROVIDE_PACKAGE),
-													   packageName);
-			removePackage(bundle.getManifestHeader(Constants.IMPORT_PACKAGE), packageName);
+			ArrayList list = new ArrayList();
+			for (int i = 0; i < elements.length; i++) {
+				String packageName = elements[i].getElementName();
+				PDEManifestElement export = removePackage(bundle.getManifestHeader(Constants.EXPORT_PACKAGE), 
+														  		packageName);
+				if (export != null)
+					list.add(export);
+			}
 
 			TextEdit[] operations = listener.getTextOperations();
 			if (operations.length > 0) {
@@ -87,10 +89,8 @@ public class BundleManifestChange {
 				MultiTextEdit edit = new MultiTextEdit();
 				edit.addChildren(operations);
 				change.setEdit(edit);
-				if (export != null)
-					change.setMovedElement(export);
-				else if (provide != null)
-					change.setMovedElement(provide);
+				if (list.size() > 0)
+					change.setMovedElements((PDEManifestElement[])list.toArray(new PDEManifestElement[list.size()]));
 				return change;
 			}
 		} catch (CoreException e) {
@@ -102,7 +102,7 @@ public class BundleManifestChange {
 		return null;
 	}
 
-	public static Change createRenameChange(IFile file, IJavaElement element, String newText,
+	public static Change createRenameChange(IFile file, IJavaElement[] elements, String[] newTexts,
 			IProgressMonitor monitor) throws CoreException {
 		try {
 			Bundle bundle = getBundle(file, monitor);
@@ -111,32 +111,36 @@ public class BundleManifestChange {
 			
 			BundleModel model = (BundleModel)bundle.getModel();
 			BundleTextChangeListener listener = new BundleTextChangeListener(model.getDocument());
-			bundle.getModel().addModelChangedListener(listener);		
-			if (element instanceof IType) {
-				String oldText = ((IType)element).getFullyQualifiedName('$');
-				resetHeaderValue(bundle.getManifestHeader(Constants.BUNDLE_ACTIVATOR), 
-						oldText, 
-						newText);				
-				resetHeaderValue(bundle.getManifestHeader(ICoreConstants.PLUGIN_CLASS), 
-						oldText, 
-						newText);
-			} else if (element instanceof IPackageFragment) {
-				String oldText = element.getElementName();				
-				resetHeaderValue(bundle.getManifestHeader(Constants.BUNDLE_ACTIVATOR), 
-						oldText, 
-						newText);			
-				resetHeaderValue(bundle.getManifestHeader(ICoreConstants.PLUGIN_CLASS),  
-						oldText, 
-						newText);									
-				renamePackage(bundle.getManifestHeader(Constants.EXPORT_PACKAGE), 
-						oldText, 
-						newText);
-				renamePackage(bundle.getManifestHeader(ICoreConstants.PROVIDE_PACKAGE),
-						oldText, 
-						newText);
-				renamePackage(bundle.getManifestHeader(Constants.IMPORT_PACKAGE), 
-						oldText, 
-						newText);
+			bundle.getModel().addModelChangedListener(listener);
+			for (int i = 0; i < elements.length; i++) {
+				IJavaElement element = elements[i];
+				String newText = newTexts[i];
+				if (element instanceof IType) {
+					String oldText = ((IType)element).getFullyQualifiedName('$');
+					resetHeaderValue(bundle.getManifestHeader(Constants.BUNDLE_ACTIVATOR), 
+							oldText, 
+							newText);				
+					resetHeaderValue(bundle.getManifestHeader(ICoreConstants.PLUGIN_CLASS), 
+							oldText, 
+							newText);
+				} else if (element instanceof IPackageFragment) {
+					String oldText = element.getElementName();				
+					resetHeaderValue(bundle.getManifestHeader(Constants.BUNDLE_ACTIVATOR), 
+							oldText, 
+							newText);			
+					resetHeaderValue(bundle.getManifestHeader(ICoreConstants.PLUGIN_CLASS),  
+							oldText, 
+							newText);									
+					renamePackage(bundle.getManifestHeader(Constants.EXPORT_PACKAGE), 
+							oldText, 
+							newText);
+					renamePackage(bundle.getManifestHeader(ICoreConstants.PROVIDE_PACKAGE),
+							oldText, 
+							newText);
+					renamePackage(bundle.getManifestHeader(Constants.IMPORT_PACKAGE), 
+							oldText, 
+							newText);
+				}
 			}
 			return createChange(listener, file);
 		} catch (CoreException e) {
@@ -187,14 +191,19 @@ public class BundleManifestChange {
 		return result;
 	}
 
-	private static void addPackage(ExportPackageHeader header, BundleModel model, MoveFromChange change) {
-		if (header != null) {
-			if (!header.hasPackage(change.getPackageName())) {
-				header.addPackage(new ExportPackageObject(header, change.getMovedElement(), getVersionAttribute(header.getBundle())));
+	private static void addPackage(Bundle bundle, MoveFromChange change) {
+		String headerName = getExportedPackageHeader(bundle);
+		ExportPackageHeader header = (ExportPackageHeader)bundle.getManifestHeader(headerName);
+		ManifestElement[] elements = change.getMovedElements();
+		for (int i = 0; i < elements.length; i++) {
+			if (header != null) {
+				if (!header.hasPackage(change.getPackageName(i))) {
+					header.addPackage(new ExportPackageObject(header, elements[i], getVersionAttribute(header.getBundle())));
+				}
+			} else {
+				bundle.setHeader(headerName, change.getMovedText(i));
+				header = (ExportPackageHeader)bundle.getManifestHeader(headerName);
 			}
-		} else {
-			IBundle bundle = model.getBundle();
-			bundle.setHeader(getExportedPackageHeader(bundle), change.getMovedText());
 		}
 	}
 	

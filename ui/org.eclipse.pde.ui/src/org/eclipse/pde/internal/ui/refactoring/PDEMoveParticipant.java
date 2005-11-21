@@ -10,29 +10,36 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
+import org.eclipse.ltk.core.refactoring.participants.ISharableParticipant;
 import org.eclipse.ltk.core.refactoring.participants.MoveParticipant;
+import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
-public abstract class PDEMoveParticipant extends MoveParticipant {
+public abstract class PDEMoveParticipant extends MoveParticipant implements ISharableParticipant {
 
 	protected IProject fProject;
-	protected IJavaElement fElement;
+	protected ArrayList fElements;
 
 	public RefactoringStatus checkConditions(IProgressMonitor pm,
 			CheckConditionsContext context) throws OperationCanceledException {
 		return new RefactoringStatus();
 	}
+	
+	public void addElement(Object element, RefactoringArguments arguments) {
+		fElements.add(element);
+	}
 
 	public Change createChange(IProgressMonitor pm) throws CoreException,
-			OperationCanceledException {	
+			OperationCanceledException {
 		CompositeChange result = new CompositeChange(getName());
 		addBundleManifestChange(result, pm);
 		if (isInterestingForExtensions()) {

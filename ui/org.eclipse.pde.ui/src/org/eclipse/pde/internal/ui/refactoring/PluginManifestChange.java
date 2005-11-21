@@ -41,7 +41,7 @@ import org.eclipse.text.edits.TextEdit;
 
 public class PluginManifestChange {
 	
-	public static Change createRenameChange(IFile file, String oldName, String newName, IProgressMonitor monitor) 
+	public static Change createRenameChange(IFile file, String[] oldNames, String[] newNames, IProgressMonitor monitor) 
 			throws CoreException {
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		try {
@@ -63,20 +63,22 @@ public class PluginManifestChange {
 				
 				MultiTextEdit multiEdit = new MultiTextEdit();
 				
-				if (model instanceof PluginModel) {
-					PluginNode plugin = (PluginNode)model.getPluginBase();
-					IDocumentAttribute attr = plugin.getDocumentAttribute("class"); //$NON-NLS-1$
-					TextEdit edit = createTextEdit(attr, oldName, newName);
-					if (edit != null)
-						multiEdit.addChild(edit);					
-				}
-				
-				SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
-				IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-				for (int i = 0; i < extensions.length; i++) {
-					ISchema schema = registry.getSchema(extensions[i].getPoint());
-					if (schema != null)
-						addExtensionAttributeEdit(schema, extensions[i], multiEdit, oldName, newName);
+				for (int i = 0; i < oldNames.length; i++) {
+					if (model instanceof PluginModel) {
+						PluginNode plugin = (PluginNode)model.getPluginBase();
+						IDocumentAttribute attr = plugin.getDocumentAttribute("class"); //$NON-NLS-1$
+						TextEdit edit = createTextEdit(attr, oldNames[i], newNames[i]);
+						if (edit != null)
+							multiEdit.addChild(edit);					
+					}
+					
+					SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
+					IPluginExtension[] extensions = model.getPluginBase().getExtensions();
+					for (int j = 0; j < extensions.length; j++) {
+						ISchema schema = registry.getSchema(extensions[j].getPoint());
+						if (schema != null)
+							addExtensionAttributeEdit(schema, extensions[j], multiEdit, oldNames[i], newNames[i]);
+					}
 				}
 				
 				if (multiEdit.hasChildren()) {

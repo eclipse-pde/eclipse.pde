@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
+import java.util.HashMap;
+import java.util.Iterator;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
@@ -26,24 +30,34 @@ public class ManifestTypeRenameParticipant extends PDERenameParticipant {
 			IProject project = javaProject.getProject();
 			if (WorkspaceModelManager.isPluginProject(project)) {
 				fProject = javaProject.getProject();
-				fElement = type;
+				fElements = new HashMap();
+				fElements.put(type, ((RenameArguments)getArguments()).getNewName());
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	protected String getOldName() {
-		return ((IType)fElement).getFullyQualifiedName('$');
+	protected String[] getOldNames() {
+		String[] result = new String[fElements.size()];
+		Iterator iter = fElements.keySet().iterator();
+		for (int i = 0; i < fElements.size(); i++)
+			result[i] = ((IType)iter.next()).getFullyQualifiedName('$');
+		return result;
 	}
 	
-	protected String getNewName() {
-		IType type = (IType)fElement;
-		String oldName = type.getFullyQualifiedName('$');
-		int index = oldName.lastIndexOf(fElement.getElementName());
-		StringBuffer buffer = new StringBuffer(oldName.substring(0, index));
-		buffer.append(getArguments().getNewName());
-		return buffer.toString();
+	protected String[] getNewNames() {
+		String[] result = new String[fElements.size()];
+		Iterator iter = fElements.keySet().iterator();
+		for (int i = 0; i < fElements.size(); i++) {
+			IType type = (IType)iter.next();
+			String oldName = type.getFullyQualifiedName('$');
+			int index = oldName.lastIndexOf(type.getElementName());
+			StringBuffer buffer = new StringBuffer(oldName.substring(0, index));
+			buffer.append(fElements.get(type));
+			result[i] = buffer.toString();
+		}
+		return result;
 	}
 
 	public String getName() {

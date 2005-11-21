@@ -18,34 +18,35 @@ import org.osgi.framework.BundleException;
 
 public class MoveFromChange extends TextFileChange {
 	
-	PDEManifestElement fElement;
+	PDEManifestElement[] fElements;
 
 	public MoveFromChange(String name, IFile file) {
 		super(name, file);
 	}
 	
-	public ManifestElement getMovedElement() {
+	public ManifestElement[] getMovedElements() {
+		ManifestElement[] result = new ManifestElement[fElements.length];
 		try {
-			String value = fElement.write();
-			String name = fElement.getHeader().getName();
-			ManifestElement[] elements = ManifestElement.parseHeader(name, value);
-			if (elements.length > 0)
-				return elements[0];
+			for (int i = 0; i < fElements.length; i++) {
+				String value = fElements[i].write();
+				String name = fElements[i].getHeader().getName();
+				result[i] = ManifestElement.parseHeader(name, value)[0];
+			}
 		} catch (BundleException e) {
 		}
-		return null;
+		return result;
 	}
 	
-	public String getMovedText() {
-		return fElement.write();
+	public String getMovedText(int index) {
+		return fElements[index].write();
 	}
 	
-	public void setMovedElement(PDEManifestElement element) {
-		fElement = element;
+	public void setMovedElements(PDEManifestElement[] elements) {
+		fElements = elements;
 	}
 	
-	public String getPackageName() {
-		return fElement.getValue();
+	public String getPackageName(int index) {
+		return fElements[index].getValue();
 	}
 
 }
