@@ -268,12 +268,27 @@ public class ProductExportJob extends FeatureExportJob {
             if (location != null)
             	writer.println("osgi.splashPath=" + location); //$NON-NLS-1$
             writer.println("eclipse.product=" + fProduct.getId()); //$NON-NLS-1$
+            boolean refactored = TargetPlatform.isRuntimeRefactored();
             if (fProduct.useFeatures() || fProduct.containsPlugin("org.eclipse.update.configurator")) { //$NON-NLS-1$
-                writer.println("osgi.bundles=" +  "org.eclipse.core.runtime@2:start,org.eclipse.update.configurator@3:start"); //$NON-NLS-1$ //$NON-NLS-2$
+    			StringBuffer buffer = new StringBuffer();
+    			if (refactored) {
+    				buffer.append("org.eclipse.equinox.common@2:start,"); //$NON-NLS-1$
+    				buffer.append("org.eclipse.core.jobs@2:start,"); //$NON-NLS-1$
+    				buffer.append("org.eclipse.equinox.registry@2:start,"); //$NON-NLS-1$
+    				buffer.append("org.eclipse.equinox.preferences,"); //$NON-NLS-1$
+    				buffer.append("org.eclipse.core.contenttype,"); //$NON-NLS-1$
+    				buffer.append("org.eclipse.core.runtime@3:start,org.eclipse.update.configurator@4:start"); //$NON-NLS-1$
+    			} else {
+    				buffer.append("org.eclipse.core.runtime@2:start,org.eclipse.update.configurator@3:start"); //$NON-NLS-1$
+    			}
+                writer.println("osgi.bundles=" +  buffer.toString()); //$NON-NLS-1$
             } else {
-                writer.println("osgi.bundles=" + getPluginList(config)); //$NON-NLS-1$
+                writer.println("osgi.bundles=" + getPluginList(config, refactored)); //$NON-NLS-1$
             }
-            writer.println("osgi.bundles.defaultStartLevel=4"); //$NON-NLS-1$ 		
+            if (refactored)
+                writer.println("osgi.bundles.defaultStartLevel=5"); //$NON-NLS-1$ 		
+            else
+                writer.println("osgi.bundles.defaultStartLevel=4"); //$NON-NLS-1$ 		
         } catch (IOException e) {
         } finally {
             if (writer != null)
@@ -316,7 +331,7 @@ public class ProductExportJob extends FeatureExportJob {
 		return (dot != -1) ? fProduct.getId().substring(0, dot) : null;
 	}
 	
-	private String getPluginList(String[] config) {
+	private String getPluginList(String[] config, boolean refactored) {
 		StringBuffer buffer = new StringBuffer();
 		
         Dictionary environment = new Hashtable(4);
@@ -338,8 +353,17 @@ public class ProductExportJob extends FeatureExportJob {
 					if (buffer.length() > 0)
 						buffer.append(","); //$NON-NLS-1$
 					buffer.append(id);
-					if ("org.eclipse.core.runtime".equals(id)) //$NON-NLS-1$
+					if ("org.eclipse.equinox.common".equals(id) //$NON-NLS-1$
+							|| "org.eclipse.core.jobs".equals(id) //$NON-NLS-1$
+							|| "org.eclipse.equinox.registry".equals(id)) { //$NON-NLS-1$
 						buffer.append("@2:start"); //$NON-NLS-1$
+					} else if ("org.eclipse.core.runtime".equals(id)) { //$NON-NLS-1$
+						if (refactored) {
+							buffer.append("@3:start"); //$NON-NLS-1$
+						} else {
+							buffer.append("@2:start"); //$NON-NLS-1$
+						}
+					}
 				}
 			} catch (InvalidSyntaxException e) {
 			}
