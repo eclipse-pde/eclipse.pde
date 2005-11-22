@@ -115,8 +115,20 @@ public class LaunchConfigurationHelper {
 		properties.setProperty("osgi.framework", "org.eclipse.osgi"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (productID != null)
 			addSplashLocation(properties, productID, map);
+		boolean refactoredRuntime = PDECore.getDefault().getModelManager().findEntry("org.eclipse.equinox.common") != null; //$NON-NLS-1$
 		if (map.containsKey("org.eclipse.update.configurator")) { //$NON-NLS-1$
-			properties.setProperty("osgi.bundles", "org.eclipse.core.runtime@2:start,org.eclipse.update.configurator@3:start"); //$NON-NLS-1$ //$NON-NLS-2$
+			StringBuffer buffer = new StringBuffer();
+			if (refactoredRuntime) {
+				buffer.append("org.eclipse.equinox.common@2:start,"); //$NON-NLS-1$
+				buffer.append("org.eclipse.core.jobs@2:start,"); //$NON-NLS-1$
+				buffer.append("org.eclipse.equinox.registry@2:start,"); //$NON-NLS-1$
+				buffer.append("org.eclipse.equinox.preferences,"); //$NON-NLS-1$
+				buffer.append("org.eclipse.core.contenttype,"); //$NON-NLS-1$
+				buffer.append("org.eclipse.core.runtime@3:start,org.eclipse.update.configurator@4:start"); //$NON-NLS-1$
+			} else {
+				buffer.append("org.eclipse.core.runtime@2:start,org.eclipse.update.configurator@3:start"); //$NON-NLS-1$
+			}
+			properties.setProperty("osgi.bundles", buffer.toString());  //$NON-NLS-1$
 		} else {
 			StringBuffer buffer = new StringBuffer();
 			Iterator iter = map.keySet().iterator();
@@ -125,15 +137,26 @@ public class LaunchConfigurationHelper {
 				if ("org.eclipse.osgi".equals(id)) //$NON-NLS-1$
 					continue;
 				buffer.append(id);
-				if ("org.eclipse.core.runtime".equals(id)) { //$NON-NLS-1$
+				if ("org.eclipse.equinox.common".equals(id) //$NON-NLS-1$
+						|| "org.eclipse.core.jobs".equals(id) //$NON-NLS-1$
+						|| "org.eclipse.equinox.registry".equals(id)) { //$NON-NLS-1$
 					buffer.append("@2:start"); //$NON-NLS-1$
+				} else if ("org.eclipse.core.runtime".equals(id)) { //$NON-NLS-1$
+					if (refactoredRuntime) {
+						buffer.append("@3:start"); //$NON-NLS-1$
+					} else {
+						buffer.append("@2:start"); //$NON-NLS-1$
+					}
 				}
 				if (iter.hasNext())
 					buffer.append(","); //$NON-NLS-1$
 			}
 			properties.setProperty("osgi.bundles", buffer.toString()); //$NON-NLS-1$
 		}
-		properties.setProperty("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (refactoredRuntime)
+			properties.setProperty("osgi.bundles.defaultStartLevel", "5"); //$NON-NLS-1$ //$NON-NLS-2$
+		else
+			properties.setProperty("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
 		return properties;
 	}
 	
