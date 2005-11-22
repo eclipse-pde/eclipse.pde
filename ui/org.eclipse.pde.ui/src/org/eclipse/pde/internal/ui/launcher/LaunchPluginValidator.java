@@ -25,6 +25,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
@@ -68,7 +69,44 @@ public class LaunchPluginValidator {
 			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, value2);
 		}
 		
-		if (save && (value != null || value2 != null))
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		boolean upgrade = manager.findEntry("org.eclipse.equinox.common") != null; //$NON-NLS-1$
+		String version = configuration.getAttribute("pde.version", (String) null); //$NON-NLS-1$
+		if (upgrade && version == null) {
+			wc.setAttribute("pde.version", "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
+			boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
+			boolean useFeatures = configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false);
+			boolean automaticAdd = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			if (!usedefault && !useFeatures) {
+				String[] newPlugins = new String[] {"org.eclipse.equinox.common", //$NON-NLS-1$
+													"org.eclipse.core.jobs", //$NON-NLS-1$
+													"org.eclipse.equinox.registry"}; //$NON-NLS-1$
+				StringBuffer extensions = new StringBuffer(configuration.getAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, "")); //$NON-NLS-1$
+				StringBuffer target = new StringBuffer(configuration.getAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, "")); //$NON-NLS-1$
+				for (int i = 0; i < newPlugins.length; i++) {
+					IPluginModelBase model = manager.findModel(newPlugins[i]);
+					if (model == null)
+						continue;
+					if (model.getUnderlyingResource() != null) {
+						if (automaticAdd)
+							continue;
+						if (extensions.length() > 0)
+							extensions.append(","); //$NON-NLS-1$
+						extensions.append(newPlugins[i]);
+					} else {
+						if (target.length() > 0)
+							target.append(","); //$NON-NLS-1$
+						target.append(newPlugins[i]);
+					}					
+				}
+				if (extensions.length() > 0)
+					wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, extensions.toString());
+				if (target.length() > 0)
+					wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, target.toString());
+			}
+		}
+		
+		if (save && (value != null || value2 != null || (upgrade && version == null)))
 			wc.doSave();
 	}
 	
