@@ -78,9 +78,12 @@ public class LaunchPluginValidator {
 			boolean useFeatures = configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false);
 			boolean automaticAdd = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
 			if (!usedefault && !useFeatures) {
-				String[] newPlugins = new String[] {"org.eclipse.equinox.common", //$NON-NLS-1$
+				String[] newPlugins = new String[] {"org.eclipse.core.contenttype", //$NON-NLS-1$
 													"org.eclipse.core.jobs", //$NON-NLS-1$
+													"org.eclipse.equinox.common", //$NON-NLS-1$
+													"org.eclipse.equinox.preferences", //$NON-NLS-1$
 													"org.eclipse.equinox.registry"}; //$NON-NLS-1$
+													
 				StringBuffer extensions = new StringBuffer(configuration.getAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, "")); //$NON-NLS-1$
 				StringBuffer target = new StringBuffer(configuration.getAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, "")); //$NON-NLS-1$
 				for (int i = 0; i < newPlugins.length; i++) {
