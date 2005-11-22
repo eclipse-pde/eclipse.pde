@@ -27,8 +27,7 @@ import org.eclipse.ui.part.*;
 public class SchemaEditor extends MultiSourceEditor {
 	private ShowDescriptionAction previewAction;
 	
-	protected void createResourceContexts(InputContextManager manager,
-			IFileEditorInput input) {
+	protected void createResourceContexts(InputContextManager manager, IFileEditorInput input) {
 		IFile file = input.getFile();
 		IFileEditorInput in = new FileEditorInput(file);
 		manager.putContext(in, new SchemaInputContext(this, in, true));
@@ -48,8 +47,7 @@ public class SchemaEditor extends MultiSourceEditor {
 	protected boolean hasKnownTypes() {
 		try {
 			TransferData[] types = getClipboard().getAvailableTypes();
-			Transfer[] transfers =
-				new Transfer[] { TextTransfer.getInstance(), RTFTransfer.getInstance()};
+			Transfer[] transfers = new Transfer[] { TextTransfer.getInstance(), RTFTransfer.getInstance()};
 			for (int i = 0; i < types.length; i++) {
 				for (int j = 0; j < transfers.length; j++) {
 					if (transfers[j].isSupportedType(types[i]))
@@ -93,16 +91,12 @@ public class SchemaEditor extends MultiSourceEditor {
 			removePage(context.getId());
 	}
 
-	protected void createSystemFileContexts(InputContextManager manager,
-			SystemFileEditorInput input) {
-		manager.putContext(input, new SchemaInputContext(this, input,
-					true));
+	protected void createSystemFileContexts(InputContextManager manager, SystemFileEditorInput input) {
+		manager.putContext(input, new SchemaInputContext(this, input, true));
 	}
 
-	protected void createStorageContexts(InputContextManager manager,
-			IStorageEditorInput input) {
-		manager.putContext(input,
-							new SchemaInputContext(this, input, true));
+	protected void createStorageContexts(InputContextManager manager, IStorageEditorInput input) {
+		manager.putContext(input, new SchemaInputContext(this, input, true));
 	}
 	
 	protected void contextMenuAboutToShow(IMenuManager manager) {
@@ -111,7 +105,7 @@ public class SchemaEditor extends MultiSourceEditor {
 	
 	void previewReferenceDocument() {
 		ISchema schema = (ISchema) getAggregateModel();
-		if (previewAction==null)
+		if (previewAction == null)
 			previewAction = new ShowDescriptionAction(schema);
 		else
 			previewAction.setSchema(schema);
@@ -120,8 +114,8 @@ public class SchemaEditor extends MultiSourceEditor {
 
 	protected void addPages() {
 		try {
+		 	addPage(new SchemaOverviewPage(this));
 			addPage(new SchemaFormPage(this));
-			addPage(new SchemaDocPage(this));
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
@@ -132,11 +126,7 @@ public class SchemaEditor extends MultiSourceEditor {
 	protected String computeInitialPageId() {
 		String firstPageId = super.computeInitialPageId();
 		if (firstPageId == null) {
-			InputContext primary = inputContextManager.getPrimaryContext();
-			if (primary.getId().equals(SchemaInputContext.CONTEXT_ID))
-				firstPageId = SchemaFormPage.PAGE_ID;
-			if (firstPageId == null)
-				firstPageId = SchemaFormPage.PAGE_ID;
+			firstPageId = SchemaOverviewPage.PAGE_ID;
 		}
 		return firstPageId;
 	}

@@ -178,11 +178,13 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 					return;
 				}
 				initialValues.superClassName = "org.eclipse.core.runtime.Plugin"; //$NON-NLS-1$
-				IPluginImport[] imports = model.getPluginBase().getImports();
-				for (int i = 0; i < imports.length; i++) {
-					if (imports[i].getId().equals("org.eclipse.ui")) { //$NON-NLS-1$
-						initialValues.superClassName = "org.eclipse.ui.plugin.AbstractUIPlugin"; //$NON-NLS-1$
-						break;
+				if (model != null) {
+					IPluginImport[] imports = model.getPluginBase().getImports();
+					for (int i = 0; i < imports.length; i++) {
+						if (imports[i].getId().equals("org.eclipse.ui")) { //$NON-NLS-1$
+							initialValues.superClassName = "org.eclipse.ui.plugin.AbstractUIPlugin"; //$NON-NLS-1$
+							break;
+						}
 					}
 				}
 				initialValues.superClassType = findTypeForName(initialValues.superClassName);

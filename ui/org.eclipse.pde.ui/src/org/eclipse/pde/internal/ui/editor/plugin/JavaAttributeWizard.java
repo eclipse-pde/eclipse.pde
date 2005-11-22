@@ -9,28 +9,37 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-import java.lang.reflect.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.ui.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.ide.*;
-import org.eclipse.ui.wizards.newresource.*;
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jdt.ui.wizards.NewTypeWizardPage;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 public class JavaAttributeWizard extends Wizard {
 	private String className, classArgs;
 	private IProject project;
 	private ISchemaAttribute attInfo;
 	private IPluginModelBase model;
-	private JavaAttributeWizardPage mainPage;
+	protected NewTypeWizardPage mainPage;
 	private static String STORE_SECTION = "JavaAttributeWizard"; //$NON-NLS-1$
 	public JavaAttributeWizard(JavaAttributeValue value) {
 		this(value.getProject(), value.getModel(), value.getAttributeInfo(),
@@ -60,7 +69,7 @@ public class JavaAttributeWizard extends Wizard {
 		mainPage = new JavaAttributeWizardPage(project, model, attInfo,
 				className);
 		addPage(mainPage);
-		mainPage.init();
+		((JavaAttributeWizardPage)mainPage).init();
 	}
 	public boolean performFinish() {
 		if (mainPage.getPackageText() != null
@@ -69,7 +78,8 @@ public class JavaAttributeWizard extends Wizard {
 					+ mainPage.getTypeName();
 		else
 			className = mainPage.getTypeName();
-		classArgs = mainPage.getClassArgs();
+		if (mainPage instanceof JavaAttributeWizardPage)
+			classArgs = ((JavaAttributeWizardPage)mainPage).getClassArgs();
 		IRunnableWithProgress op = new WorkspaceModifyOperation(){
 			protected void execute(IProgressMonitor monitor)
 			throws CoreException, InvocationTargetException,

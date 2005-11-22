@@ -10,16 +10,42 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.net.URL;
-import java.util.*;
-import javax.xml.parsers.*;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Vector;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IModelChangedListener;
+import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.XMLDefaultHandler;
+import org.eclipse.pde.internal.core.ischema.IDocumentSection;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
+import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
+import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaEnumeration;
+import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
+import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
+import org.eclipse.pde.internal.core.ischema.ISchemaType;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.w3c.dom.*;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class Schema extends PlatformObject implements ISchema {
@@ -36,6 +62,8 @@ public class Schema extends PlatformObject implements ISchema {
 	private String fPointID;
 
 	private String fPluginID;
+	
+	private boolean fRequiresPlugin = true;
 
 	private ISchemaDescriptor fSchemaDescriptor;
 
@@ -192,8 +220,7 @@ public class Schema extends PlatformObject implements ISchema {
 		Vector candidates = new Vector();
 		ISchemaType type = element.getType();
 		if (type instanceof ISchemaComplexType) {
-			ISchemaCompositor compositor = ((ISchemaComplexType) type)
-					.getCompositor();
+			ISchemaCompositor compositor = ((ISchemaComplexType)type).getCompositor();
 			if (compositor != null)
 				collectElements(compositor, candidates);
 		}
@@ -414,14 +441,13 @@ public class Schema extends PlatformObject implements ISchema {
 							if (meta.getNodeName().equals("meta.attribute")) { //$NON-NLS-1$
 								element.setKind(processKind(getAttribute(meta,
 										"kind"))); //$NON-NLS-1$
-								element
-										.setBasedOn(getAttribute(meta,
-												"basedOn")); //$NON-NLS-1$
-								element
-										.setTranslatableProperty(processTranslatable(getAttribute(
+								element.setBasedOn(
+										getAttribute(meta,"basedOn")); //$NON-NLS-1$
+								element.setTranslatableProperty(
+										processTranslatable(getAttribute(
 												meta, "translatable"))); //$NON-NLS-1$
-								element
-										.setDeprecatedProperty(processDeprecated(getAttribute(
+								element.setDeprecatedProperty(
+										processDeprecated(getAttribute(
 												meta, "deprecated"))); //$NON-NLS-1$
 							}
 						}
@@ -574,6 +600,7 @@ public class Schema extends PlatformObject implements ISchema {
 		String aname = getAttribute(elementNode, "name"); //$NON-NLS-1$
 		String atype = getAttribute(elementNode, "type"); //$NON-NLS-1$
 		String aref = getAttribute(elementNode, "ref"); //$NON-NLS-1$
+		
 		int minOccurs = 1;
 		int maxOccurs = 1;
 		String aminOccurs = getAttribute(elementNode, "minOccurs"); //$NON-NLS-1$
@@ -602,7 +629,11 @@ public class Schema extends PlatformObject implements ISchema {
 		if (atype != null) {
 			type = resolveTypeReference(atype);
 		}
-		SchemaElement element = new SchemaElement(parent, aname);
+		SchemaElement element;
+		if (aname.equals("extension")) //$NON-NLS-1$
+			element = new SchemaRootElement(parent, aname);
+		else
+			element = new SchemaElement(parent, aname);
 		//element.bindSourceLocation(elementNode, lineTable);
 		element.setMinOccurs(minOccurs);
 		element.setMaxOccurs(maxOccurs);
@@ -648,6 +679,10 @@ public class Schema extends PlatformObject implements ISchema {
 												meta, "translatable"))); //$NON-NLS-1$
 								element.setDeprecatedProperty(processDeprecated(getAttribute(
 												meta, "deprecated"))); //$NON-NLS-1$
+								if (element instanceof ISchemaRootElement) {
+									String depSug = getAttribute(meta, SchemaRootElement.P_DEP_REPLACEMENT);
+									((ISchemaRootElement)element).setDeprecatedSuggestion(depSug);
+								}
 							}
 						}
 					}
@@ -701,6 +736,7 @@ public class Schema extends PlatformObject implements ISchema {
 								setName(getAttribute(meta, "name")); //$NON-NLS-1$
 								fPluginID = getAttribute(meta, "plugin"); //$NON-NLS-1$
 								fPointID = getAttribute(meta, "id"); //$NON-NLS-1$
+								fRequiresPlugin = !"false".equals(getAttribute(meta, P_REQUIRES_PLUGIN)); //$NON-NLS-1$
 								fValid = true;
 							} else if (meta.getNodeName()
 									.equals("meta.section")) { //$NON-NLS-1$
@@ -763,6 +799,7 @@ public class Schema extends PlatformObject implements ISchema {
 		fIncludes = null;
 		fPointID = null;
 		fPluginID = null;
+		fRequiresPlugin = true;
 		fReferences = null;
 		fDescription = null;
 		fName = null;
@@ -896,6 +933,8 @@ public class Schema extends PlatformObject implements ISchema {
 		writer.println(indent2 + "<appInfo>"); //$NON-NLS-1$
 		writer.print(indent3 + "<meta.schema plugin=\"" + pluginId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.print(" id=\"" + pointId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		if (!fRequiresPlugin)
+			writer.print(" " + P_REQUIRES_PLUGIN + "=\"false\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println(" name=\"" + getName() + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println(indent2 + "</appInfo>"); //$NON-NLS-1$
 		writer.println(indent2 + "<documentation>"); //$NON-NLS-1$
@@ -920,8 +959,7 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 		// add document sections
 		for (int i = 0; i < fDocSections.size(); i++) {
-			IDocumentSection section = (IDocumentSection) fDocSections
-					.elementAt(i);
+			IDocumentSection section = (IDocumentSection) fDocSections.elementAt(i);
 			section.write(INDENT, writer);
 			writer.println();
 		}
@@ -935,5 +973,15 @@ public class Schema extends PlatformObject implements ISchema {
 				"\\r\\n|\\r|\\n", lineDelimiter); //$NON-NLS-1$
 
 		return platformDescription;
+	}
+
+	public boolean requiresPlugin() {
+		return fRequiresPlugin;
+	}
+
+	public void setRequiresPlugin(boolean requires) {
+		boolean oldValue = fRequiresPlugin;
+		fRequiresPlugin = requires;
+		fireModelObjectChanged(this, P_REQUIRES_PLUGIN, Boolean.toString(oldValue), Boolean.toString(requires));
 	}
 }

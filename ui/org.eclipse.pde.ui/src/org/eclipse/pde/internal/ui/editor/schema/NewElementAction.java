@@ -41,7 +41,11 @@ public class NewElementAction extends Action {
 	}
 	public void run() {
 		String name = getInitialName();
-		SchemaElement element = new SchemaElement(schema, name);
+		SchemaElement element;
+		if (name.equals("extension")) //$NON-NLS-1$
+			element = new SchemaRootElement(schema, name);
+		else
+			element = new SchemaElement(schema, name);
 		element.setType(new SchemaSimpleType(schema, "string")); //$NON-NLS-1$
 		schema.addElement(element);
 		schema.updateReferencesFor(element, Schema.REFRESH_ADD);

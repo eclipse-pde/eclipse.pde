@@ -445,27 +445,11 @@ public class PDEUIMessages extends NLS {
 	public static String ManifestEditor_PropertyPage_tagName;
 
 	// Schema Editor ##################################
-	public static String SchemaEditor_oldExtension;
 	public static String SchemaEditorContributor_previewAction;
-
-	public static String SchemaEditor_AttributePR_attributeCopy;
-
-	public static String SchemaEditor_AttributePR_use;
-	public static String SchemaEditor_AttributePR_kind;
-	public static String SchemaEditor_AttributePR_type;
-	public static String SchemaEditor_AttributePR_restriction;
-	public static String SchemaEditor_AttributePR_value;
-	public static String SchemaEditor_AttributePR_basedOn;
-	public static String SchemaEditor_AttributePR_name;
-
-	public static String SchemaEditor_CompositorPR_kind;
 
 	public static String SchemaEditor_DescriptionSection_title;
 	public static String SchemaEditor_DescriptionSection_desc;
 
-	public static String SchemaEditor_DocForm_title;
-
-	public static String SchemaEditor_DocSection_title;
 	public static String SchemaEditor_DocSection_desc;
 	public static String SchemaEditor_topic_overview;
 	public static String SchemaEditor_topic_since;
@@ -473,11 +457,6 @@ public class PDEUIMessages extends NLS {
 	public static String SchemaEditor_topic_implementation;
 	public static String SchemaEditor_topic_api;
 	public static String SchemaEditor_topic_copyright;
-
-	public static String SchemaEditor_ElementPR_name;
-	public static String SchemaEditor_ElementPR_icon;
-	public static String SchemaEditor_ElementPR_labelAttribute;
-	public static String SchemaEditor_ElementPR_invalid;
 
 	public static String SchemaEditor_SpecSection_title;
 	public static String SchemaEditor_SpecSection_desc;
@@ -498,12 +477,6 @@ public class PDEUIMessages extends NLS {
 	public static String RestrictionDialog_remove;
 	public static String ReviewPage_noSampleFound;
 
-	public static String SchemaEditor_GrammarSection_title;
-	public static String SchemaEditor_GrammarSection_desc;
-	public static String SchemaEditor_GrammarSection_compositor;
-	public static String SchemaEditor_GrammarSection_reference;
-	public static String SchemaEditor_GrammarSection_dtd;
-
 	public static String SchemaEditor_NewAttribute_label;
 	public static String SchemaEditor_NewAttribute_tooltip;
 	public static String SchemaEditor_NewAttribute_initialName;
@@ -516,9 +489,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String SchemaEditor_FormPage_title;
 	public static String SchemaEditor_DocPage_title;
-
-	public static String SchemaPropertySheet_clone_label;
-	public static String SchemaPropertySheet_clone_tooltip;
 
 	public static String AbstractPluginModelBase_error;
 	// Launchers #######################################
@@ -2283,5 +2253,86 @@ public class PDEUIMessages extends NLS {
 
 	public static String ManifestSyntaxColorTab_attributes;
 
+	public static String AbstractSchemaDetails_dtdLabel;
+
+	public static String AbstractSchemaDetails_minOccurLabel;
+
+	public static String AbstractSchemaDetails_maxOccurLabel;
+
+	public static String AbstractSchemaDetails_unboundedButton;
+
+	public static String ElementSection_compositorMenu;
+
+	public static String ElementSection_referenceMenu;
+
+	public static String NewRestrictionDialog_title;
+
+	public static String NewRestrictionDialog_message;
+
+	public static String SchemaSpecSection_declareDependencyButton;
+
+	public static String SchemaIncludesSection_addButton;
+
+	public static String SchemaIncludesSection_removeButton;
+
+	public static String SchemaIncludesSection_title;
+
+	public static String SchemaIncludesSection_description;
+
+	public static String SchemaIncludesSection_dialogMessage;
+
+	public static String SchemaElementDetails_labelProperty;
+
+	public static String SchemaElementDetails_icon;
+
+	public static String SchemaDetails_translatable;
+
+	public static String SchemaElementDetails_title;
+	
+	public static String SchemaElementDetails_description;
+
+	public static String SchemaCompositorDetails_description;
+	
+	public static String SchemaElementReferenceDetails_description;
+	
+	public static String SchemaCompositorDetails_type;
+
+	public static String SchemaCompositorDetails_title;
+
+	public static String SchemaElementReferenceDetails_reference;
+
+	public static String SchemaElementReferenceDetails_title;
+
+	public static String DocSection_text;
+
+	public static String SchemaDetails_deprecated;
+
+	public static String SchemaAttributeDetails_use;
+
+	public static String SchemaAttributeDetails_defaultValue;
+
+	public static String SchemaAttributeDetails_type;
+
+	public static String SchemaAttributeDetails_restrictions;
+
+	public static String SchemaAttributeDetails_addRestButton;
+
+	public static String SchemaAttributeDetails_removeRestButton;
+
+	public static String SchemaAttributeDetails_extends;
+
+	public static String SchemaAttributeDetails_browseButton;
+
+	public static String SchemaAttributeDetails_implements;
+
+	public static String SchemaAttributeDetails_title;
+
+	public static String SchemaAttributeDetails_description;
+	
+	public static String SchemaAttributeDetails_defaultDefaultValue;
+
+	public static String SchemaDetails_name;
+
+	public static String SchemaRootElementDetails_replacement;
 
 }

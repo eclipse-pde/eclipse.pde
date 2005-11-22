@@ -42,8 +42,6 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 
 	public static final String P_BASED_ON = "basedOnProperty"; //$NON-NLS-1$
 
-	private boolean verifying;
-
 	private boolean fTranslatable;
 
 	private boolean fDeprecated;
@@ -89,7 +87,6 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 		String oldValue = basedOn;
 		basedOn = newBasedOn;
 		getSchema().fireModelObjectChanged(this, P_BASED_ON, oldValue, basedOn);
-		verifyProperties();
 	}
 
 	public void setKind(int newKind) {
@@ -97,7 +94,6 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 		kind = newKind;
 		getSchema().fireModelObjectChanged(this, P_KIND, oldValue,
 				new Integer(kind));
-		verifyProperties();
 	}
 	
 	public void setTranslatableProperty(boolean translatable) {
@@ -118,7 +114,6 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 		Object oldValue = type;
 		type = newType;
 		getSchema().fireModelObjectChanged(this, P_TYPE, oldValue, type);
-		verifyProperties();
 	}
 
 	public void setParent(ISchemaObject obj) {
@@ -132,14 +127,12 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 		use = newUse;
 		getSchema().fireModelObjectChanged(this, P_USE, oldValue,
 				new Integer(use));
-		verifyProperties();
 	}
 
 	public void setValue(String value) {
 		String oldValue = (String) this.value;
 		this.value = value;
 		getSchema().fireModelObjectChanged(this, P_VALUE, oldValue, value);
-		verifyProperties();
 	}
 
 	public void setValueFilter(String valueFilter) {
@@ -147,44 +140,6 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 		this.valueFilter = valueFilter;
 		getSchema().fireModelObjectChanged(this, P_VALUE_FILTER, oldValue,
 				valueFilter);
-	}
-
-	private void verifyProperties() {
-		if (verifying)
-			return;
-		verifying = true;
-		// check if the current combination of properties
-		// make sense.
-		if (kind != STRING) {
-			// type must be 'string' and no restriction
-			ensureStringType();
-			ensureNoRestriction();
-		}
-		if (kind != JAVA) {
-			// basedOn makes no sense
-			setBasedOn(null);
-		}
-		if (type != null && type.getName().equals("boolean")) //$NON-NLS-1$
-			// no restriction for boolean
-			ensureNoRestriction();
-		if (use != DEFAULT)
-			// value makes no sense without 'default' use
-			setValue(null);
-		verifying = false;
-	}
-
-	private void ensureStringType() {
-		if (type == null || type.getName().equals("boolean")) //$NON-NLS-1$
-			setType(new SchemaSimpleType(getSchema(), "string")); //$NON-NLS-1$
-	}
-
-	private void ensureNoRestriction() {
-		if (type instanceof SchemaSimpleType
-				&& ((SchemaSimpleType) type).getRestriction() != null) {
-			SchemaSimpleType simpleType = (SchemaSimpleType) type;
-			simpleType.setRestriction(null);
-			setType(simpleType);
-		}
 	}
 
 	public void write(String indent, PrintWriter writer) {

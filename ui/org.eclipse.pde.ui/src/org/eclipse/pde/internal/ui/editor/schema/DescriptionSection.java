@@ -10,30 +10,47 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.rules.*;
-import org.eclipse.jface.text.source.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.rules.FastPartitioner;
+import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.pde.core.IEditable;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
+import org.eclipse.pde.internal.core.schema.Schema;
+import org.eclipse.pde.internal.core.schema.SchemaObject;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.text.IColorManager;
+import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
+import org.eclipse.pde.internal.ui.editor.text.XMLPartitionScanner;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.forms.IFormPart;
+import org.eclipse.ui.forms.IPartSelectionListener;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
 
 public class DescriptionSection extends PDESection implements IPartSelectionListener {
-	private Button applyButton;
-	private Button resetButton;
 	private IDocument document;
 	private boolean editable = true;
 	private SourceViewerConfiguration sourceConfiguration;
@@ -59,15 +76,8 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 		document.setDocumentPartitioner(partitioner);
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
-	private void checkForPendingChanges() {
-		if (applyButton.isEnabled())
-			handleApply();
-	}
 	public void commit(boolean onSave) {
-		handleApply();
-		if (onSave) {
-			resetButton.setEnabled(false);
-		}
+		updateDescription();
 		super.commit(onSave);
 	}
 	public void createClient(
@@ -88,15 +98,13 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 		sourceViewer.configure(sourceConfiguration);
 		sourceViewer.setDocument(document);
 		sourceViewer.setEditable(isEditable());
-		sourceViewer
-			.addSelectionChangedListener(new ISelectionChangedListener() {
+		sourceViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateSelection(event.getSelection());
 			}
 		});
 		Control styledText = sourceViewer.getTextWidget();
-		styledText.setFont(
-			JFaceResources.getFontRegistry().get(JFaceResources.TEXT_FONT));
+		styledText.setFont(JFaceResources.getFontRegistry().get(JFaceResources.TEXT_FONT));
 		if (SWT.getPlatform().equals("motif") == false) //$NON-NLS-1$
 			toolkit.paintBordersFor(container);
 		styledText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
@@ -104,51 +112,12 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 		Control control = children[children.length - 1];
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 200;
-		gd.heightHint = 64;
+		gd.heightHint = 90;
 		control.setLayoutData(gd);
 		styledText.setMenu(getPage().getPDEEditor().getContextMenu());
 		styledText.addFocusListener(new FocusAdapter() {
 			public void focusGained(FocusEvent e) {
 				updateSelection(sourceViewer.getSelection());
-			}
-		});
-
-		Composite buttonContainer = toolkit.createComposite(container);
-		layout = new GridLayout();
-		layout.marginHeight = 0;
-		buttonContainer.setLayout(layout);
-		gd = new GridData(GridData.FILL_VERTICAL);
-		buttonContainer.setLayoutData(gd);
-
-		applyButton =
-			toolkit.createButton(
-				buttonContainer,
-				PDEUIMessages.Actions_apply_flabel,
-				SWT.PUSH);
-		applyButton.setEnabled(false);
-		gd =
-			new GridData(
-				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		applyButton.setLayoutData(gd);
-		applyButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleApply();
-			}
-		});
-
-		resetButton =
-			toolkit.createButton(
-				buttonContainer,
-				PDEUIMessages.Actions_reset_flabel,
-				SWT.PUSH);
-		resetButton.setEnabled(false);
-		gd =
-			new GridData(
-				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		resetButton.setLayoutData(gd);
-		resetButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleReset();
 			}
 		});
 		section.setClient(container);
@@ -191,23 +160,15 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 		return false;
 	}
 	protected void fillContextMenu(IMenuManager manager) {
-		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
-			manager);
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
-	private void handleApply() {
+	private void updateDescription() {
 		if (element != null) {
-			if (element == schema) {
+			if (element == schema)
 				((Schema)schema).setDescription(document.get());
-			}
-			else {
-			 ((SchemaObject) element).setDescription(document.get());
-			}
+			else
+				((SchemaObject) element).setDescription(document.get());
 		}
-		applyButton.setEnabled(false);
-		resetButton.setEnabled(false);
-	}
-	private void handleReset() {
-		updateDocument();
 	}
 	public void initialize() {
 		schema = (ISchema) getPage().getModel();
@@ -218,8 +179,6 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 				if (!ignoreChange && schema instanceof IEditable) {
 					markDirty();
 				}
-				applyButton.setEnabled(true);
-				resetButton.setEnabled(true);
 			}
 			public void documentAboutToBeChanged(DocumentEvent e) {
 			}
@@ -229,11 +188,14 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 		return editable;
 	}
 	public void selectionChanged(IFormPart part, ISelection selection) {
-		checkForPendingChanges();
 		if (!(part instanceof ElementSection))
 			return;
 		Object changeObject = ((IStructuredSelection)selection).getFirstElement();
+		if (changeObject != element)
+			updateDescription();
 		element = (ISchemaObject) changeObject;
+		if (element instanceof ISchemaObjectReference)
+			element = ((ISchemaObjectReference)element).getReferencedObject();
 		if (element == null)
 			element = schema;
 		updateDocument();
@@ -249,19 +211,8 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 		String text = element.getDescription();
 		if (text == null)
 			text = ""; //$NON-NLS-1$
-		/*
-		else
-			text = TextUtil.createMultiLine(text, 60, false);
-		*/
 		document.set(text);
-		resetButton.setEnabled(false);
-		applyButton.setEnabled(false);
 		ignoreChange = false;
-//		ISchemaObject eobj = element;
-//		if (element instanceof ISchemaAttribute) {
-//			eobj = element.getParent();
-//		}
-		//sourceViewer.setEditable(eobj.getName().equals("extension")==false);
 	}
 
 	public boolean canPaste(Clipboard clipboard) {

@@ -212,6 +212,7 @@ public class SchemaElement extends RepeatableSchemaObject implements
 		if (type instanceof SchemaSimpleType) {
 			writer.print(" type=\"" + type.getName() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		
 		writer.println(">"); //$NON-NLS-1$
 		String indent2 = indent + Schema.INDENT;
 		String realDescription = getWritableDescription();
@@ -233,6 +234,9 @@ public class SchemaElement extends RepeatableSchemaObject implements
 					writer.print(" translatable=\"true\""); //$NON-NLS-1$
 				if (isDeprecated())
 					writer.print(" deprecated=\"true\""); //$NON-NLS-1$
+				String extendedProperties = getExtendedAttributes();
+				if (extendedProperties != null)
+					writer.print(extendedProperties);
 				writer.println("/>"); //$NON-NLS-1$
 				writer.println(indent3 + "</appInfo>"); //$NON-NLS-1$
 			}
@@ -266,5 +270,9 @@ public class SchemaElement extends RepeatableSchemaObject implements
 	 */
 	public boolean isDeprecated() {
 		return fDeprecated;
+	}
+	
+	public String getExtendedAttributes() {
+		return null;
 	}
 }

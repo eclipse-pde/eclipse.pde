@@ -40,15 +40,13 @@ public class DocSection extends PDESection {
 	private SourceViewer sourceViewer;
 	private CTabFolder tabFolder;
 	private ISchema schema;
-	private Button applyButton;
-	private Button resetButton;
 	private Object element;
 	private boolean ignoreChange;
 
 	public DocSection(PDEFormPage page, Composite parent, IColorManager colorManager) {
-		super(page, parent, Section.DESCRIPTION|Section.NO_TITLE, false);
-		String description = PDEUIMessages.SchemaEditor_DocSection_desc;
-		getSection().setDescription(description);
+		 		 super(page, parent, Section.DESCRIPTION, true);
+		 		 getSection().setText(PDEUIMessages.DocSection_text);
+		 		 getSection().setDescription(PDEUIMessages.SchemaEditor_DocSection_desc);
 		sourceConfiguration = new XMLConfiguration(colorManager);
 		document = new Document();
 		partitioner =
@@ -59,14 +57,10 @@ public class DocSection extends PDESection {
 					XMLPartitionScanner.XML_COMMENT });
 		partitioner.connect(document);
 		document.setDocumentPartitioner(partitioner);
-		//getSection().clientVerticalSpacing = 3;
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 	public void commit(boolean onSave) {
 		handleApply();
-		if (onSave) {
-			resetButton.setEnabled(false);
-		}
 		super.commit(onSave);
 	}
 	public void createClient(
@@ -74,10 +68,7 @@ public class DocSection extends PDESection {
 		FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginWidth = 2;
-		layout.marginHeight = 5;
-		layout.verticalSpacing = 8;
+		 		 layout.verticalSpacing = 9;
 		container.setLayout(layout);
 		GridData gd;
 
@@ -86,7 +77,6 @@ public class DocSection extends PDESection {
 		tabFolder = new CTabFolder(container, SWT.FLAT|SWT.TOP);
 		toolkit.adapt(tabFolder, true, true);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
 		gd.heightHint = 2;
 		tabFolder.setLayoutData(gd);
 		toolkit.getColors().initializeSectionToolBarColors();
@@ -124,45 +114,7 @@ public class DocSection extends PDESection {
 		gd.widthHint = 50;
 		gd.heightHint = 50;
 		control.setLayoutData(gd);
-		Composite buttonContainer = toolkit.createComposite(container);
-		layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		buttonContainer.setLayout(layout);
-		gd = new GridData(GridData.FILL_VERTICAL);
-		buttonContainer.setLayoutData(gd);
 
-		applyButton =
-			toolkit.createButton(
-				buttonContainer,
-				PDEUIMessages.Actions_apply_flabel,
-				SWT.PUSH);
-		applyButton.setEnabled(false);
-		gd =
-			new GridData(
-				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		applyButton.setLayoutData(gd);
-		applyButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleApply();
-			}
-		});
-
-		resetButton =
-			toolkit.createButton(
-				buttonContainer,
-				PDEUIMessages.Actions_reset_flabel,
-				SWT.PUSH);
-		resetButton.setEnabled(false);
-		gd =
-			new GridData(
-				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		resetButton.setLayoutData(gd);
-		resetButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleReset();
-			}
-		});
 		createTabs();
 		section.setClient(container);
 		initialize();
@@ -255,13 +207,8 @@ public class DocSection extends PDESection {
 				 ((SchemaObject) element).setDescription(document.get());
 			updateTabImage(tabFolder.getSelection());
 		}
-		applyButton.setEnabled(false);
-		resetButton.setEnabled(false);
 	}
-	private void handleReset() {
-		updateEditorInput(element);
-		updateTabImage(tabFolder.getSelection());		
-	}
+
 	public void initialize() {
 		sourceViewer.setEditable(schema.isEditable());
 		document.addDocumentListener(new IDocumentListener() {
@@ -269,8 +216,6 @@ public class DocSection extends PDESection {
 				if (!ignoreChange && schema.isEditable()) {
 					markDirty();
 				}
-				applyButton.setEnabled(true);
-				resetButton.setEnabled(true);
 			}
 			public void documentAboutToBeChanged(DocumentEvent e) {
 			}
@@ -291,11 +236,6 @@ public class DocSection extends PDESection {
 			IDocumentSection section = sections[i];
 			addTab(section);
 		}
-	}
-	
-	public void checkForPendingChanges() {
-		if (applyButton.isEnabled()) 
-			handleApply();
 	}
 	
 	private void addTab(ISchemaObject section) {
@@ -356,8 +296,6 @@ public class DocSection extends PDESection {
 		*/
 
 		document.set(text);
-		applyButton.setEnabled(false);
-		resetButton.setEnabled(false);
 		element = input;
 		ignoreChange = false;
 	}

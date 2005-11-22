@@ -37,13 +37,12 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.IDocumentSection;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
 import org.eclipse.pde.internal.core.schema.DocumentSection;
 import org.eclipse.pde.internal.core.schema.EditableSchema;
 import org.eclipse.pde.internal.core.schema.SchemaAttribute;
 import org.eclipse.pde.internal.core.schema.SchemaComplexType;
-import org.eclipse.pde.internal.core.schema.SchemaCompositor;
 import org.eclipse.pde.internal.core.schema.SchemaElement;
+import org.eclipse.pde.internal.core.schema.SchemaRootElement;
 import org.eclipse.pde.internal.core.schema.SchemaSimpleType;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.IdUtil;
@@ -225,12 +224,9 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		schema.addDocumentSection(section);
 		SchemaElement element;
 		if (!shared) {
-			element = new SchemaElement(schema, "extension"); //$NON-NLS-1$
+			element = new SchemaRootElement(schema, "extension"); //$NON-NLS-1$
 			SchemaComplexType complexType = new SchemaComplexType(schema);
 			element.setType(complexType);
-			SchemaCompositor compositor = new SchemaCompositor(element,
-					ISchemaCompositor.SEQUENCE);
-			complexType.setCompositor(compositor);
 			SchemaAttribute attribute = new SchemaAttribute(element, "point"); //$NON-NLS-1$
 			attribute.setType(new SchemaSimpleType(schema, "string")); //$NON-NLS-1$
 			attribute.setUse(ISchemaAttribute.REQUIRED);

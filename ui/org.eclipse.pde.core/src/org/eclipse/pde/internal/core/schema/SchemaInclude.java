@@ -91,4 +91,14 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 			fIncludedSchema = null;
 		}
 	}
+	
+	public boolean equals(Object obj) {
+		if (obj instanceof ISchemaInclude) {
+			ISchemaInclude other = (ISchemaInclude)obj;
+			if (fLocation != null)
+				return fLocation.equals(other.getLocation());
+			return other.getLocation() == null;
+		}
+		return false;
+	}
 }

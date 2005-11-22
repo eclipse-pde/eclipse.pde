@@ -34,6 +34,16 @@ public NewReferenceAction(
 public void run() {
 	if (object != null && object instanceof SchemaCompositor) {
 		SchemaCompositor parent = (SchemaCompositor) object;
+		ISchemaObject[] sobjects = parent.getChildren();
+		for (int i = 0; i < sobjects.length; i++) {
+			if (sobjects[i] instanceof SchemaElementReference) {
+				SchemaElementReference ref = (SchemaElementReference)sobjects[i];
+				if (ref.getReferencedObject().equals(referencedElement)) {
+					ref.setMaxOccurs(ref.getMaxOccurs() + 1);
+					return;
+				}
+			}
+		}
 		SchemaElementReference reference =
 			new SchemaElementReference(parent, referencedElement.getName());
 		reference.setReferencedObject(referencedElement);

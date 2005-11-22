@@ -49,6 +49,6 @@ public class SchemaSourcePage extends XMLSourcePage {
 	protected ISortableContentOutlinePage createOutlinePage() {
 		//TODO remove this method when the above three stubs
 		// are implemented
-		return null;
+		return new SchemaFormOutlinePage((PDEFormEditor) getEditor());
 	}
 }

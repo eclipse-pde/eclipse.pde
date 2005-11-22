@@ -28,7 +28,7 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 			if (parent instanceof ISchemaElement) {
 				return getAttributes((ISchemaElement) parent);
 			}
-			if (parent instanceof SchemaDocPage) {
+			if (parent instanceof SchemaOverviewPage) {
 				return getTopics();
 			}
 		}
@@ -103,7 +103,7 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 		if (item instanceof ISchemaElement || item instanceof ISchemaAttribute)
 			return SchemaFormPage.PAGE_ID;
 		if (item instanceof IDocumentSection || item instanceof ISchema)
-			return SchemaDocPage.PAGE_ID;
+			return SchemaOverviewPage.PAGE_ID;
 		return super.getParentPageId(item);
 	}
 	public void modelChanged(IModelChangedEvent event) {

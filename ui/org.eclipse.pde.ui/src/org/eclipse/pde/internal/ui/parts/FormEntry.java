@@ -30,6 +30,7 @@ public class FormEntry {
 	private boolean dirty;
 	boolean ignoreModify = false;
 	private IFormEntryListener listener;
+	private boolean fDimLabelOnDisable;
 	/**
 	 * The default constructor. Call 'createControl' to make it.
 	 *  
@@ -37,7 +38,6 @@ public class FormEntry {
 	public FormEntry(Composite parent, FormToolkit toolkit, String labelText, int style) {
 		createControl(parent, toolkit, labelText, style, null, false, 0, 0);
 	}
-	
 	/**
 	 * This constructor create all the controls right away.
 	 * 
@@ -97,6 +97,12 @@ public class FormEntry {
 	}
 	public void setEditable(boolean editable) {
 		text.setEditable(editable);
+		if (fDimLabelOnDisable) {
+			if (label instanceof Hyperlink)
+				((Hyperlink)label).setUnderlined(editable);
+			label.setEnabled(editable);
+			text.setEnabled(editable);
+		}
 		if (browse!=null) 
 			browse.setEnabled(editable);
 	}
@@ -272,5 +278,24 @@ public class FormEntry {
 		ignoreModify = blockNotification;
 		setValue(value);
 		ignoreModify = false;
+	}
+	
+	/**
+	 * 
+	 * Sets the value of this entry that govners if it's label will be
+	 * disabled when the form entry is disabled.
+	 * 
+	 * @param dimLabel
+	 */
+	public void setDimLabel(boolean dimLabel) {
+		fDimLabelOnDisable = dimLabel;
+	}
+	
+	public void setVisible(boolean visible) {
+		label.setVisible(visible);
+		if (text != null)
+			text.setVisible(visible);
+		if (browse != null)
+			browse.setVisible(visible);
 	}
 }

@@ -150,7 +150,6 @@ public abstract class PDEFormEditor extends FormEditor
 	private Menu contextMenu;
 	protected InputContextManager inputContextManager;
 	private ISortableContentOutlinePage formOutline;
-	private PDEMultiPagePropertySheet propertySheet;
 	private PDEMultiPageContentOutline contentOutline;
 	private String lastActivePageId;
 	private boolean lastDirtyState;
@@ -267,7 +266,6 @@ public abstract class PDEFormEditor extends FormEditor
 		super.pageChange(newPageIndex);
 		IFormPage page = getActivePageInstance();
 		updateContentOutline(page);
-		updatePropertySheet(page);
 		if (page!=null)
 			lastActivePageId = page.getId();
 	}
@@ -540,9 +538,6 @@ public abstract class PDEFormEditor extends FormEditor
 		if (key.equals(IContentOutlinePage.class)) {
 			return getContentOutline();
 		}
-		if (key.equals(IPropertySheetPage.class)) {
-			return getPropertySheet();
-		}
 		if (key.equals(IGotoMarker.class)) {
 			return this;
 		}
@@ -561,13 +556,7 @@ public abstract class PDEFormEditor extends FormEditor
 		}
 		return contentOutline;
 	}
-	public PDEMultiPagePropertySheet getPropertySheet() {
-		if (propertySheet == null || propertySheet.isDisposed()) {
-			propertySheet = new PDEMultiPagePropertySheet();
-			updatePropertySheet(getActivePageInstance());
-		}
-		return propertySheet;
-	}
+
 	/**
 	 * 
 	 * @return outline page or null
@@ -611,17 +600,7 @@ public abstract class PDEFormEditor extends FormEditor
 	protected IPropertySheetPage getPropertySheet(PDEFormPage page) {
 		return page.getPropertySheetPage();
 	}
-	void updatePropertySheet(IFormPage page) {
-		if (propertySheet == null)
-			return;
-		if (page instanceof PDEFormPage) {
-			IPropertySheetPage propertySheetPage = getPropertySheet((PDEFormPage) page);
-			if (propertySheetPage != null) {
-				propertySheet.setPageActive(propertySheetPage);
-			}
-		} else
-			propertySheet.setDefaultPageActive();
-	}
+
 	/* package */IFormPage[] getPages() {
 		ArrayList formPages = new ArrayList();
 		for (int i = 0; i < pages.size(); i++) {
