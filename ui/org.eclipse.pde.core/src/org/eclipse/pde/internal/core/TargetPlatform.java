@@ -488,5 +488,10 @@ public class TargetPlatform implements IEnvironmentVariables {
 		}
 		return null;
 	}
+	
+	public static boolean isRuntimeRefactored() {
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		return manager.findEntry("org.eclipse.equinox.common") != null; //$NON-NLS-1$	
+	}
 
 }

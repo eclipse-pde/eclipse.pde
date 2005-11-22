@@ -41,6 +41,8 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 			ILaunchConfigurationType configType= getJUnitLaunchConfigType();
 			String computedName = DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);
+			if (TargetPlatform.isRuntimeRefactored())
+				wc.setAttribute("pde.version", "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
 			wc.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultJUnitWorkspaceLocation());
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$

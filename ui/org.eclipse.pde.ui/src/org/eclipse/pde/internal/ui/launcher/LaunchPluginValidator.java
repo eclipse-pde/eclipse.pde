@@ -27,6 +27,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
 public class LaunchPluginValidator {
@@ -69,9 +70,8 @@ public class LaunchPluginValidator {
 			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, value2);
 		}
 		
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		boolean upgrade = manager.findEntry("org.eclipse.equinox.common") != null; //$NON-NLS-1$
 		String version = configuration.getAttribute("pde.version", (String) null); //$NON-NLS-1$
+		boolean upgrade = TargetPlatform.isRuntimeRefactored();
 		if (upgrade && version == null) {
 			wc.setAttribute("pde.version", "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
 			boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
@@ -86,6 +86,7 @@ public class LaunchPluginValidator {
 													
 				StringBuffer extensions = new StringBuffer(configuration.getAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, "")); //$NON-NLS-1$
 				StringBuffer target = new StringBuffer(configuration.getAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, "")); //$NON-NLS-1$
+				PluginModelManager manager = PDECore.getDefault().getModelManager();
 				for (int i = 0; i < newPlugins.length; i++) {
 					IPluginModelBase model = manager.findModel(newPlugins[i]);
 					if (model == null)

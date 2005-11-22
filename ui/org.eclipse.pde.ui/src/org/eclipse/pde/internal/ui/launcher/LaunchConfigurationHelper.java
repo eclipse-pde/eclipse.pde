@@ -115,7 +115,7 @@ public class LaunchConfigurationHelper {
 		properties.setProperty("osgi.framework", "org.eclipse.osgi"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (productID != null)
 			addSplashLocation(properties, productID, map);
-		boolean refactoredRuntime = PDECore.getDefault().getModelManager().findEntry("org.eclipse.equinox.common") != null; //$NON-NLS-1$
+		boolean refactoredRuntime = TargetPlatform.isRuntimeRefactored();
 		if (map.containsKey("org.eclipse.update.configurator")) { //$NON-NLS-1$
 			StringBuffer buffer = new StringBuffer();
 			if (refactoredRuntime) {
