@@ -58,7 +58,6 @@ public class PDEPerspective implements IPerspectiveFactory {
 		bottom.addView("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$
 		bottom.addView(IPageLayout.ID_TASK_LIST);
 		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
-		bottom.addView(IPageLayout.ID_PROP_SHEET);
 		
 		factory.addView(
 			IPageLayout.ID_OUTLINE,
