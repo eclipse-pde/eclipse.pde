@@ -191,7 +191,7 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 		if (!(part instanceof ElementSection))
 			return;
 		Object changeObject = ((IStructuredSelection)selection).getFirstElement();
-		if (changeObject != element)
+		if (changeObject != element && isDirty())
 			updateDescription();
 		element = (ISchemaObject) changeObject;
 		if (element instanceof ISchemaObjectReference)
