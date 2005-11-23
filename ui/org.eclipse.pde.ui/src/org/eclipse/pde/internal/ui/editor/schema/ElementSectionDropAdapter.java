@@ -17,11 +17,9 @@ import org.eclipse.swt.dnd.TransferData;
 
 public class ElementSectionDropAdapter extends ViewerDropAdapter {
 	private TransferData currentTransfer;
-	private ElementSection section;
 
 	public ElementSectionDropAdapter(ElementSection section) {
 		super(section.getTreeViewer());
-		this.section = section;
 	}
 
 	/**
