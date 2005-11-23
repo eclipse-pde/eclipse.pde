@@ -586,12 +586,12 @@ public class Schema extends PlatformObject implements ISchema {
 		// all: element
 		if (tag.equals("all") //$NON-NLS-1$
 				&& (parentKind == ISchemaCompositor.ROOT || parentKind == ISchemaCompositor.GROUP)) {
-			return processCompositor(parent, child, ISchemaCompositor.ALL);
+			return processCompositor(parent, child, ISchemaCompositor.SEQUENCE);
 		}
 		// group: all | choice | sequence
 		if (tag.equals("group") //$NON-NLS-1$
 				&& (parentKind == ISchemaCompositor.CHOICE || parentKind == ISchemaCompositor.SEQUENCE)) {
-			return processCompositor(parent, child, ISchemaCompositor.GROUP);
+			return processCompositor(parent, child, ISchemaCompositor.SEQUENCE);
 		}
 		return null;
 	}

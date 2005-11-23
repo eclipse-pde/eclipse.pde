@@ -157,15 +157,11 @@ public class SchemaCompositor
 		String tag = null;
 
 		switch (kind) {
-			case ALL :
-				tag = "all"; //$NON-NLS-1$
-				break;
 			case CHOICE :
 				tag = "choice"; //$NON-NLS-1$
-				break;
+				break;	
+			case ALL :
 			case GROUP :
-				tag = "group"; //$NON-NLS-1$
-				break;
 			case SEQUENCE :
 				tag = "sequence"; //$NON-NLS-1$
 				break;

@@ -31,19 +31,12 @@ public class NewCompositorAction extends Action {
 		ImageDescriptor desc = null;
 	
 		switch (kind) {
-			case ISchemaCompositor.ALL :
-				desc = PDEPluginImages.DESC_ALL_SC_OBJ;
-				break;
-			case ISchemaCompositor.GROUP :
-				desc = PDEPluginImages.DESC_GROUP_SC_OBJ;
-				break;
 			case ISchemaCompositor.SEQUENCE :
 				desc = PDEPluginImages.DESC_SEQ_SC_OBJ;
 				break;
 			case ISchemaCompositor.CHOICE :
 				desc = PDEPluginImages.DESC_CHOICE_SC_OBJ;
 				break;
-	
 		}
 		setImageDescriptor(desc);
 		setEnabled(source.getSchema().isEditable());
