@@ -328,22 +328,21 @@ public class ElementSection extends TreeSection {
 	}
 
 	public void handleModelChanged(IModelChangedEvent e) {
+		if (e.getChangedProperty() != null
+				&& e.getChangedProperty().equals(ISchemaObject.P_DESCRIPTION))
+			return;
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
 			return;
 		}
-		if (e.getChangedProperty() != null
-				&& e.getChangedProperty().equals(ISchemaObject.P_DESCRIPTION))
-			return;
 		Object[] objects = e.getChangedObjects();
 		for (int i = 0; i < objects.length; i++) {
 			Object obj = objects[0];
 			if (obj instanceof ISchemaObjectReference) {
 				treeViewer.refresh();
-				treeViewer.setSelection(new StructuredSelection(obj), true);
-				return;
-			}
-			if (obj instanceof ISchemaElement || obj instanceof ISchemaAttribute) {
+				if (e.getChangeType() == IModelChangedEvent.INSERT)
+					treeViewer.setSelection(new StructuredSelection(obj), true);
+			} else if (obj instanceof ISchemaElement || obj instanceof ISchemaAttribute) {
 				if (e.getChangeType() == IModelChangedEvent.CHANGE) {
 					String changeProp = e.getChangedProperty();
 					if (changeProp.equals(ISchemaObject.P_NAME) 
@@ -400,14 +399,6 @@ public class ElementSection extends TreeSection {
 				}
 			}
 		}
-	}
-	
-	public void refresh() {
-		ISelection selection = treeViewer.getSelection();
-		treeViewer.refresh();
-		if (!selection.isEmpty())
-			treeViewer.setSelection(selection);
-		super.refresh();
 	}
 
 	protected void selectionChanged(IStructuredSelection selection) {
