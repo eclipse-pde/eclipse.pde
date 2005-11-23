@@ -112,7 +112,7 @@ public class SchemaCompositor
 		}
 	}
 	public void updateReferencesFor(ISchemaElement element, int kind) {
-		for (int i = 0; i < children.size(); i++) {
+		for (int i = children.size() - 1; i >= 0; i--) {
 			Object child = children.elementAt(i);
 			if (child instanceof SchemaElementReference) {
 				SchemaElementReference ref = (SchemaElementReference) child;
@@ -121,23 +121,14 @@ public class SchemaCompositor
 					case ISchema.REFRESH_ADD :
 						if (element.getName().equals(refName)) {
 							ref.setReferencedObject(element);
-							getSchema().fireModelObjectChanged(
-								ref,
-								null,
-								null,
-								null);
+							getSchema().fireModelObjectChanged(ref, null, null, null);
 						}
 						break;
 					case ISchema.REFRESH_DELETE :
 						if (element.getName().equals(refName)) {
 							removeChild(ref);
-							getSchema().fireModelObjectChanged(
-								this,
-								null,
-								ref,
-								null);
+							getSchema().fireModelObjectChanged(this, null, ref,	null);
 						}
-
 						break;
 					case ISchema.REFRESH_RENAME :
 						// Using the object comparison, try to
@@ -152,11 +143,7 @@ public class SchemaCompositor
 						// reference.
 						else if (element.getName().equals(refName)) {
 							ref.setReferencedObject(element);
-							getSchema().fireModelObjectChanged(
-								ref,
-								null,
-								null,
-								null);
+							getSchema().fireModelObjectChanged(ref, null, null,	null);
 						}
 						break;
 				}
