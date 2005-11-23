@@ -53,6 +53,8 @@ public class PDEMessages extends NLS {
 	public static String Builders_Manifest_non_ext_element;
 	public static String Builders_Manifest_deprecated_attribute;
 	public static String Builders_Manifest_deprecated_element;
+	public static String Builders_Manifest_deprecated_rootElement;
+	public static String Builders_Manifest_deprecated_rootElementSuggestion;
 	public static String Builders_Manifest_unused_element;
 	public static String Builders_Manifest_unused_attribute;
 	public static String Builders_Manifest_class;

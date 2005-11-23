@@ -44,6 +44,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaEnumeration;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
 import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
+import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.core.ischema.ISchemaType;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
@@ -172,8 +173,13 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			if (schemaElement != null) {
 				validateRequiredExtensionAttributes(element, schemaElement);
 				validateExistingExtensionAttributes(element, element.getAttributes(), schemaElement);
-				if (schemaElement.isDeprecated())
-					reportDeprecatedElement(element);
+				if (schemaElement.isDeprecated()) {
+					if (schemaElement instanceof ISchemaRootElement)
+						reportDeprecatedRootElement(element, 
+								((ISchemaRootElement)schemaElement).getDeprecatedSuggestion());
+					else
+						reportDeprecatedElement(element);
+				}
 				if (schemaElement.hasTranslatableContent())
 					validateTranslatableElementContent(element);
 			}
@@ -493,4 +499,17 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		}	
 	}
 
+	protected void reportDeprecatedRootElement(Element element, String suggestion) {
+		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
+		if (severity != CompilerFlags.IGNORE) {
+			String point = element.getAttribute("point");
+			if (point == null) return; // should never come to this...
+			String message;
+			if (suggestion != null)
+				message = NLS.bind(PDEMessages.Builders_Manifest_deprecated_rootElementSuggestion, point, suggestion);
+			else
+				message = NLS.bind(PDEMessages.Builders_Manifest_deprecated_rootElement, point);
+			report(message, getLine(element, "point"), severity);
+		}	
+	}
 }
