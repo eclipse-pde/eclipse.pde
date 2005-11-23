@@ -9,16 +9,23 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.swt.graphics.Image;
 
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.ischema.IDocumentSection;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.ischema.ISchemaType;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 
 public class SchemaFormOutlinePage extends FormOutlinePage {
-	private Object[] topics;
+	private Object[] fTopics;
+
 	public Object[] getChildren(Object parent) {
 		ISchema schema = (ISchema) editor.getAggregateModel();
 		if (schema.isValid()) {
@@ -34,24 +41,22 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 		}
 		return super.getChildren(parent);
 	}
-	class OutlineLabelProvider extends BasicLabelProvider {
+	
+	class SchemaLabelProvider extends BasicLabelProvider {
 		public String getText(Object obj) {
 			String label = getObjectLabel(obj);
-			if (label != null)
-				return label;
-			return super.getText(obj);
-		}
-		public Image getImage(Object obj) {
-			Image image = PDEPlugin.getDefault().getLabelProvider().getImage(
-					obj);
-			if (image != null)
-				return image;
-			return super.getImage(obj);
+			return (label == null) ? super.getText(obj) : label;
 		}
 	}
+
 	public SchemaFormOutlinePage(PDEFormEditor editor) {
 		super(editor);
 	}
+	
+	protected ILabelProvider createLabelProvider() {
+		return new SchemaLabelProvider();
+	}
+
 	protected Object[] createTopics() {
 		ISchema schema = (ISchema) editor.getAggregateModel();
 		IDocumentSection[] sections = schema.getDocumentSections();
@@ -62,18 +67,21 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 		}
 		return result;
 	}
-	Object[] getAttributes(ISchemaElement element) {
+
+	private Object[] getAttributes(ISchemaElement element) {
 		ISchemaType type = element.getType();
 		if (type instanceof ISchemaComplexType) {
 			return ((ISchemaComplexType) type).getAttributes();
 		}
 		return new Object[0];
 	}
-	Object[] getMarkup() {
+
+	private Object[] getMarkup() {
 		ISchema schema = (ISchema) editor.getAggregateModel();
 		return schema.getElements();
 	}
-	String getObjectLabel(Object obj) {
+
+	protected String getObjectLabel(Object obj) {
 		if (obj instanceof ISchema) {
 			return PDEUIMessages.SchemaEditor_topic_overview;
 		}
@@ -93,12 +101,14 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 		}
 		return null;
 	}
+
 	Object[] getTopics() {
-		if (topics == null) {
-			topics = createTopics();
+		if (fTopics == null) {
+			fTopics = createTopics();
 		}
-		return topics;
+		return fTopics;
 	}
+
 	protected String getParentPageId(Object item) {
 		if (item instanceof ISchemaElement || item instanceof ISchemaAttribute)
 			return SchemaFormPage.PAGE_ID;
@@ -106,9 +116,10 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 			return SchemaOverviewPage.PAGE_ID;
 		return super.getParentPageId(item);
 	}
+
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			topics = null;
+			fTopics = null;
 			treeViewer.refresh();
 			return;
 		}
@@ -122,10 +133,6 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 				parent = ((ISchemaObject) object).getParent();
 			}
 			if (parent != null) {
-				if (parent instanceof ISchema) {
-					//parent =
-					// formPage.getEditor().getPage(SchemaEditor.DEFINITION_PAGE);
-				}
 				treeViewer.refresh(parent);
 				treeViewer.expandToLevel(parent, 2);
 			} else {
