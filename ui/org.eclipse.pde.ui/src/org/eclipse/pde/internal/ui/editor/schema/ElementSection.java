@@ -173,10 +173,10 @@ public class ElementSection extends TreeSection {
 				handleDelete(obj);
 			return false;
 		}
-		if (actionId.equals(ActionFactory.PASTE.getId())) {
-			doPaste();
-			return true;
-		}
+//		if (actionId.equals(ActionFactory.PASTE.getId())) {
+//			doPaste();
+//			return true;
+//		}
 		return false;
 	}
 
@@ -433,87 +433,87 @@ public class ElementSection extends TreeSection {
 		getTreePart().setButtonEnabled(1, canAddAttribute);
 	}
 
-	public void doPaste(Object target, Object[] objects) {
-		for (int i = 0; i < objects.length; i++) {
-			Object object = objects[i];
-			Object realTarget = getRealTarget(target, object);
-			Object sibling = getSibling(target, object);
-			if (realTarget == null)
-				continue;
-			doPaste(realTarget, sibling, object);
-		}
-	}
+//	public void doPaste(Object target, Object[] objects) {
+//		for (int i = 0; i < objects.length; i++) {
+//			Object object = objects[i];
+//			Object realTarget = getRealTarget(target, object);
+//			Object sibling = getSibling(target, object);
+//			if (realTarget == null)
+//				continue;
+//			doPaste(realTarget, sibling, object);
+//		}
+//	}
 
-	private Object getSibling(Object target, Object object) {
-		if (target instanceof ISchemaElement && object instanceof ISchemaElement)
-			return target;
-		if (target instanceof ISchemaAttribute && object instanceof ISchemaAttribute)
-			return target;
-		return null;
-	}
+//	private Object getSibling(Object target, Object object) {
+//		if (target instanceof ISchemaElement && object instanceof ISchemaElement)
+//			return target;
+//		if (target instanceof ISchemaAttribute && object instanceof ISchemaAttribute)
+//			return target;
+//		return null;
+//	}
 
-	private Object getRealTarget(Object target, Object object) {
-		if (object instanceof ISchemaObjectReference) {
-			return target;
-		}
-		if (object instanceof ISchemaElement) {
-			return schema;
-		}
-		if (object instanceof ISchemaAttribute) {
-			if (target instanceof ISchemaAttribute) {
-				// add it to the parent of the selected attribute
-				return ((ISchemaAttribute) target).getParent();
-			}
-			if (target instanceof ISchemaElement)
-				return target;
-		}
-		return null;
-	}
+//	private Object getRealTarget(Object target, Object object) {
+//		if (object instanceof ISchemaObjectReference) {
+//			return target;
+//		}
+//		if (object instanceof ISchemaElement) {
+//			return schema;
+//		}
+//		if (object instanceof ISchemaAttribute) {
+//			if (target instanceof ISchemaAttribute) {
+//				// add it to the parent of the selected attribute
+//				return ((ISchemaAttribute) target).getParent();
+//			}
+//			if (target instanceof ISchemaElement)
+//				return target;
+//		}
+//		return null;
+//	}
 
-	private void doPaste(Object realTarget, Object sibling, Object object) {
-		if (object instanceof ISchemaRootElement) {
-			// do not paste root elements
-		} else if (realTarget instanceof ISchemaObjectReference) {
-			
-		} else if (object instanceof ISchemaObjectReference) {
-			
-		} else if (object instanceof ISchemaElement) {
-			SchemaElement element = (SchemaElement) object;
-			element.setParent(schema);
-			schema.addElement(element, (ISchemaElement) sibling);
-			schema.updateReferencesFor(element, ISchema.REFRESH_ADD);
-		} else if (object instanceof ISchemaAttribute) {
-			SchemaElement element = (SchemaElement) realTarget;
-			SchemaAttribute attribute = (SchemaAttribute) object;
-			attribute.setParent(element);
-			ISchemaType type = element.getType();
-			SchemaComplexType complexType = null;
-			if (!(type instanceof ISchemaComplexType)) {
-				complexType = new SchemaComplexType(element.getSchema());
-				element.setType(complexType);
-			} else {
-				complexType = (SchemaComplexType) type;
-			}
-			complexType.addAttribute(attribute, (ISchemaAttribute) sibling);
-		}
-	}
+//	private void doPaste(Object realTarget, Object sibling, Object object) {
+//		if (object instanceof ISchemaRootElement) {
+//			// do not paste root elements
+//		} else if (realTarget instanceof ISchemaObjectReference) {
+//			
+//		} else if (object instanceof ISchemaObjectReference) {
+//			
+//		} else if (object instanceof ISchemaElement) {
+//			SchemaElement element = (SchemaElement) object;
+//			element.setParent(schema);
+//			schema.addElement(element, (ISchemaElement) sibling);
+//			schema.updateReferencesFor(element, ISchema.REFRESH_ADD);
+//		} else if (object instanceof ISchemaAttribute) {
+//			SchemaElement element = (SchemaElement) realTarget;
+//			SchemaAttribute attribute = (SchemaAttribute) object;
+//			attribute.setParent(element);
+//			ISchemaType type = element.getType();
+//			SchemaComplexType complexType = null;
+//			if (!(type instanceof ISchemaComplexType)) {
+//				complexType = new SchemaComplexType(element.getSchema());
+//				element.setType(complexType);
+//			} else {
+//				complexType = (SchemaComplexType) type;
+//			}
+//			complexType.addAttribute(attribute, (ISchemaAttribute) sibling);
+//		}
+//	}
 
-	protected boolean canPaste(Object target, Object[] objects) {
-		for (int i = 0; i < objects.length; i++) {
-			Object obj = objects[i];
-			if (obj instanceof ISchemaAttribute && target instanceof ISchemaAttribute) {
-				continue;
-			} else if (obj instanceof ISchemaObjectReference && target instanceof ISchemaCompositor) {
-				continue;
-			} else if (target instanceof ISchemaElement 
-					&& !(target instanceof ISchemaObjectReference)
-					&& !(obj instanceof ISchemaRootElement)) {
-				continue;
-			}
-			return false;
-		}
-		return true;
-	}
+//	protected boolean canPaste(Object target, Object[] objects) {
+//		for (int i = 0; i < objects.length; i++) {
+//			Object obj = objects[i];
+//			if (obj instanceof ISchemaAttribute && target instanceof ISchemaAttribute) {
+//				continue;
+//			} else if (obj instanceof ISchemaObjectReference && target instanceof ISchemaCompositor) {
+//				continue;
+//			} else if (target instanceof ISchemaElement 
+//					&& !(target instanceof ISchemaObjectReference)
+//					&& !(obj instanceof ISchemaRootElement)) {
+//				continue;
+//			}
+//			return false;
+//		}
+//		return true;
+//	}
 
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		Object object = selection.getFirstElement();

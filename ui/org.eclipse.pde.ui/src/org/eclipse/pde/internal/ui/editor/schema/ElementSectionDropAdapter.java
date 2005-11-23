@@ -29,7 +29,7 @@ public class ElementSectionDropAdapter extends ViewerDropAdapter {
 	 */
 	public boolean performDrop(Object data) {
 		if (data instanceof Object[]) {
-			section.doPaste(getCurrentTarget(), (Object[])data);
+//			section.doPaste(getCurrentTarget(), (Object[])data);
 			return true;
 		}
 		return false;
