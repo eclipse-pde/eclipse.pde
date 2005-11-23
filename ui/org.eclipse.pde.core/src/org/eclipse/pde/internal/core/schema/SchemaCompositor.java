@@ -130,12 +130,11 @@ public class SchemaCompositor
 						break;
 					case ISchema.REFRESH_DELETE :
 						if (element.getName().equals(refName)) {
-							ref.setReferencedObject(null);
 							removeChild(ref);
 							getSchema().fireModelObjectChanged(
+								this,
+								null,
 								ref,
-								null,
-								null,
 								null);
 						}
 

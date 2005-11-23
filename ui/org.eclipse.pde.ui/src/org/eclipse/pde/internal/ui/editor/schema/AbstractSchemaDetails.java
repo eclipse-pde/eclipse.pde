@@ -46,7 +46,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		new String[] { Boolean.toString(true), Boolean.toString(false) };
 	
 	private Section fSection;
-	private Text dtdLabel;
+	private Text fDtdLabel;
 	private ElementSection fElementSection;
 	private boolean fShowDTD;
 	private Spinner fMinOccurSpinner;
@@ -96,13 +96,13 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 			gd.verticalIndent = 15;
 			label.setLayoutData(gd);
 			
-			dtdLabel = toolkit.createText(client, "", SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);//$NON-NLS-1$
+			fDtdLabel = toolkit.createText(client, "", SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);//$NON-NLS-1$
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 3;
 			gd.heightHint = 40;
-			dtdLabel.setLayoutData(gd);
-			dtdLabel.setEditable(false);
-			dtdLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+			fDtdLabel.setLayoutData(gd);
+			fDtdLabel.setEditable(false);
+			fDtdLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		}
 		
 		toolkit.paintBordersFor(client);
@@ -142,7 +142,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	}
 	
 	private void updateDTDLabel(Object changeObject) {
-		if (!fShowDTD) return;
+		if (!fShowDTD || fDtdLabel.isDisposed()) return;
 		if (changeObject instanceof ISchemaAttribute) {
 			changeObject = ((ISchemaAttribute) changeObject).getParent();
 		} else if (changeObject instanceof ISchemaCompositor) {
@@ -153,7 +153,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 			}
 		}
 		if (changeObject instanceof ISchemaElement)
-			dtdLabel.setText(((ISchemaElement)changeObject).getDTDRepresentation(false));
+			fDtdLabel.setText(((ISchemaElement)changeObject).getDTDRepresentation(false));
 	}
 	
 	protected void fireMasterSelection(ISelection selection) {
