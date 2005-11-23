@@ -494,44 +494,52 @@ public class PointSelectionPage
 	}
 	
 	public void selectionChanged(SelectionChangedEvent event) {
-		
 		ISelection selection = event.getSelection();
-		setDescription(""); //$NON-NLS-1$
-		fTemplateLabel.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_title);
-		fPointDescription.setText(PDEUIMessages.PointSelectionPage_noDescAvailable);
-		fDescLink.setText(NLS.bind(PDEUIMessages.PointSelectionPage_extPointDesc, "")); //$NON-NLS-1$
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 			if (ssel != null && !ssel.isEmpty()) {
-				if (ssel.getFirstElement() instanceof IPluginExtensionPoint){
-					fCurrentPoint = (IPluginExtensionPoint) ssel.getFirstElement();
-					fTemplateViewer.setInput(fCurrentPoint);
-					URL url = SchemaRegistry.getSchemaURL(fCurrentPoint);
-					String fullID = fCurrentPoint.getFullId();
-					ISchema desc = new SchemaDescriptor(fullID, url).getSchema(false);
-					String schemaName = desc != null ? desc.getName() : fullID;
-					setDescription(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_pluginDescription, schemaName));
-					setDescriptionText(""); //$NON-NLS-1$
-					fTemplateLabel.setText(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_label, schemaName.toLowerCase(Locale.ENGLISH)));
-					fDescLink.setText(NLS.bind(PDEUIMessages.PointSelectionPage_extPointDesc, schemaName));
-					if (desc != null)
-						fPointDescription.setText(stripTags(desc.getDescription())); 
-					setSelectedNode(null);
-					setPageComplete(true);
-				} else if (ssel.getFirstElement() instanceof WizardElement) {
-					WizardElement wizardSelection = (WizardElement)ssel.getFirstElement();
-					setSelectedNode(createWizardNode(wizardSelection));
-					setDescriptionText(wizardSelection.getDescription());
-					setDescription(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_templateDescription, wizardSelection.getLabel())); 
-					setPageComplete(false);
-				}
-			}
-			else {
+				Object element = ssel.getFirstElement();
+				if (element instanceof WizardElement)
+					handleTemplateSelection((WizardElement)element);
+				else if (element instanceof IPluginExtensionPoint)
+					handlePointSelection((IPluginExtensionPoint)element);
+			} else {
+				setDescription(""); //$NON-NLS-1$
+				setDescriptionText(""); //$NON-NLS-1$
+				fTemplateLabel.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_title);
+				fPointDescription.setText(PDEUIMessages.PointSelectionPage_noDescAvailable);
+				fDescLink.setText(NLS.bind(PDEUIMessages.PointSelectionPage_extPointDesc, "")); //$NON-NLS-1$
 				setSelectedNode(null);
 				setPageComplete(false);
 			}
+			getContainer().updateButtons();
 		}
-		getContainer().updateButtons();
+	}
+	
+	private void handleTemplateSelection(WizardElement element) {
+		setSelectedNode(createWizardNode(element));
+		setDescriptionText(element.getDescription());
+		setDescription(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_templateDescription, element.getLabel())); 
+		setPageComplete(false);
+	}
+	
+	private void handlePointSelection(IPluginExtensionPoint element) {
+		fCurrentPoint = element;
+		fTemplateViewer.setInput(fCurrentPoint);
+		URL url = SchemaRegistry.getSchemaURL(fCurrentPoint);
+		String fullID = fCurrentPoint.getFullId();
+		ISchema desc = new SchemaDescriptor(fullID, url).getSchema(false);
+		String schemaName = desc != null ? desc.getName() : fullID;
+		setDescription(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_pluginDescription, schemaName));
+		setDescriptionText(""); //$NON-NLS-1$
+		fTemplateLabel.setText(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_label, schemaName.toLowerCase(Locale.ENGLISH)));
+		fDescLink.setText(NLS.bind(PDEUIMessages.PointSelectionPage_extPointDesc, schemaName));
+		if (desc != null)
+			fPointDescription.setText(stripTags(desc.getDescription()));
+		else
+			fPointDescription.setText(PDEUIMessages.PointSelectionPage_noDescAvailable);
+		setSelectedNode(null);
+		setPageComplete(true);
 	}
 	
 	private void updateTabSelection(int index) {
