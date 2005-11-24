@@ -15,6 +15,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEDetails;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -52,6 +53,8 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	private Spinner fMinOccurSpinner;
 	private Spinner fMaxOccurSpinner;
 	private Button fUnboundSelect;
+	private Label fMinLabel;
+	private Label fMaxLabel;
 	
 	public AbstractSchemaDetails(ElementSection section, boolean showDTD) {
 		fElementSection = section;
@@ -114,6 +117,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	public abstract void createDetails(Composite parent);
 	public abstract void updateFields();
 	public abstract void hookListeners();
+	public abstract ISchemaObject getDetailsObject();
 	
 	protected void setDecription(String desc) {
 		fSection.setDescription(desc); 
@@ -171,8 +175,8 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	}
 	
 	protected Composite createMinOccurComp(Composite parent, FormToolkit toolkit) {
-		toolkit.createLabel(parent, PDEUIMessages.AbstractSchemaDetails_minOccurLabel).setForeground(
-				toolkit.getColors().getColor(FormColors.TITLE));
+		fMinLabel = toolkit.createLabel(parent, PDEUIMessages.AbstractSchemaDetails_minOccurLabel);
+		fMinLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		Composite comp = toolkit.createComposite(parent);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
@@ -194,8 +198,8 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	}
 	
 	protected Composite createMaxOccurComp(Composite parent, FormToolkit toolkit) {
-		toolkit.createLabel(parent, PDEUIMessages.AbstractSchemaDetails_maxOccurLabel).setForeground(
-				toolkit.getColors().getColor(FormColors.TITLE));
+		fMaxLabel = toolkit.createLabel(parent, PDEUIMessages.AbstractSchemaDetails_maxOccurLabel);
+		fMaxLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		Composite comp = toolkit.createComposite(parent);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
@@ -222,8 +226,8 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fUnboundSelect.setLayoutData(gd);
 		fUnboundSelect.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				boolean unbound = fUnboundSelect.getSelection();
-				fMaxOccurSpinner.setEnabled(!unbound);
+				fMaxOccurSpinner.setEnabled(!fUnboundSelect.getSelection() 
+						&& getDetailsObject().getSchema().isEditable());
 			}
 		});
 		
@@ -266,5 +270,13 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	protected void hookMaxOccur(SelectionAdapter adapter) {
 		fUnboundSelect.addSelectionListener(adapter);
 		fMaxOccurSpinner.addSelectionListener(adapter);
+	}
+	
+	protected void enableMinMax(boolean enable) {
+		fMinOccurSpinner.setEnabled(enable);
+		fMaxOccurSpinner.setEnabled(!fUnboundSelect.getSelection() && enable);
+		fUnboundSelect.setEnabled(enable);
+		fMinLabel.setEnabled(enable);
+		fMaxLabel.setEnabled(enable);
 	}
 }

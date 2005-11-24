@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.schema.SchemaElementReference;
 import org.eclipse.pde.internal.core.schema.SchemaRootElement;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -23,6 +24,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -32,6 +34,7 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 	private FormEntry fName;
 	private ComboPart fDeprecated;
 	private FormEntry fSuggestion;
+	private Label fDepLabel;
 	
 	public SchemaRootElementDetails(ISchemaElement element, ElementSection section) {
 		super(section, true);
@@ -46,7 +49,8 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		
 		fName = new FormEntry(parent, toolkit, PDEUIMessages.SchemaDetails_name, SWT.NONE);
 		
-		toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated).setForeground(foreground);
+		fDepLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
+		fDepLabel.setForeground(foreground);
 		fDeprecated = createComboPart(parent, toolkit, BOOLS, 2);
 
 		fSuggestion = new FormEntry(parent, toolkit, PDEUIMessages.SchemaRootElementDetails_replacement, null, false, 6);
@@ -61,8 +65,13 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 			return;
 		fName.setValue(fElement.getName());		
 		fDeprecated.select(fElement.isDeprecated() ? 0 : 1);
-		fSuggestion.setEditable(fElement.isDeprecated());
 		fSuggestion.setValue(fElement.getDeprecatedSuggestion());
+		
+		boolean editable = fElement.getSchema().isEditable();
+		fSuggestion.setEditable(fElement.isDeprecated() && editable);
+		fName.setEditable(editable);
+		fDeprecated.setEnabled(editable);
+		fDepLabel.setEnabled(editable);
 	}
 
 	public void hookListeners() {
@@ -75,7 +84,8 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		fDeprecated.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fElement.setDeprecatedProperty(fDeprecated.getSelectionIndex() == 0);
-				fSuggestion.setEditable(fDeprecated.getSelectionIndex() == 0);
+				fSuggestion.setEditable(fDeprecated.getSelectionIndex() == 0
+						&& fElement.getSchema().isEditable());
 			}
 		});
 		fSuggestion.setFormEntryListener(new FormEntryAdapter(this) {
@@ -83,5 +93,9 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 				fElement.setDeprecatedSuggestion(fSuggestion.getValue());
 			}
 		});
+	}
+
+	public ISchemaObject getDetailsObject() {
+		return fElement;
 	}
 }

@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.schema;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
 import org.eclipse.pde.internal.core.schema.SchemaElementReference;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -19,6 +20,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -29,6 +31,7 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 
 	private SchemaElementReference fElement;
 	private Hyperlink fReferenceLink;
+	private Label fRefLabel;
 	
 	public SchemaElementReferenceDetails(ISchemaObjectReference compositor, ElementSection section) {
 		super(section, true);
@@ -41,8 +44,8 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 		createMinOccurComp(parent, toolkit);
 		createMaxOccurComp(parent, toolkit);
 		
-		toolkit.createLabel(parent, PDEUIMessages.SchemaElementReferenceDetails_reference).setForeground(
-				toolkit.getColors().getColor(FormColors.TITLE));
+		fRefLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaElementReferenceDetails_reference);
+		fRefLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		fReferenceLink = toolkit.createHyperlink(parent, fElement.getName(), SWT.NONE);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
@@ -55,6 +58,10 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 	public void updateFields() {
 		updateMinOccur(fElement.getMinOccurs());
 		updateMaxOccur(fElement.getMaxOccurs());
+		boolean editable = fElement.getSchema().isEditable();
+		fRefLabel.setEnabled(editable);
+		fReferenceLink.setEnabled(editable);
+		enableMinMax(editable);
 	}
 
 	public void hookListeners() {
@@ -73,5 +80,9 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 				fireMasterSelection(new StructuredSelection(fElement.getReferencedObject()));
 			}
 		});
+	}
+
+	public ISchemaObject getDetailsObject() {
+		return fElement;
 	}
 }

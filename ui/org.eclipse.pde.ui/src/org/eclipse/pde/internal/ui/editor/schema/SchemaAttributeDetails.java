@@ -21,7 +21,9 @@ import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
@@ -29,6 +31,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.core.schema.ChoiceRestriction;
@@ -92,6 +95,9 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 	private Button fRemoveRestriction;
 	private Label fResLabel;
 	private Label fTransLabel;
+	private Label fTypeLabel;
+	private Label fUseLabel;
+	private Label fDepLabel;
 	
 	public SchemaAttributeDetails(ISchemaAttribute attribute, ElementSection section) {
 		super(section, false);
@@ -120,16 +126,19 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		
 		fName = new FormEntry(parent, toolkit, PDEUIMessages.SchemaDetails_name, SWT.NONE);
 		
-		toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated).setForeground(foreground);
+		fDepLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
+		fDepLabel.setForeground(foreground);
 		fDeprecated = createComboPart(parent, toolkit, BOOLS, 2);
 		
-		toolkit.createLabel(parent, PDEUIMessages.SchemaAttributeDetails_use).setForeground(foreground);
+		fUseLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaAttributeDetails_use);
+		fUseLabel.setForeground(foreground);
 		fUse = createComboPart(parent, toolkit, USE, 2);
 		
 		fValue = new FormEntry(parent, toolkit, PDEUIMessages.SchemaAttributeDetails_defaultValue, null, false, 6);
 		fValue.setDimLabel(true);
 		
-		toolkit.createLabel(parent, PDEUIMessages.SchemaAttributeDetails_type).setForeground(foreground);
+		fTypeLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaAttributeDetails_type);
+		fTypeLabel.setForeground(foreground);
 		fType = createComboPart(parent, toolkit, TYPES, 2);
 		
 		fTransLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_translatable);
@@ -211,7 +220,16 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 				}
 			}
 		}
-		updateTypeParts(isStringType && kind == IMetaAttribute.STRING, kind == IMetaAttribute.JAVA);
+		boolean editable = fAttribute.getSchema().isEditable();
+		updateParts(isStringType && kind == IMetaAttribute.STRING, kind == IMetaAttribute.JAVA, editable);
+		fValue.setEditable(editable);
+		fName.setEditable(editable);
+		fDeprecated.setEnabled(editable);
+		fType.setEnabled(editable);
+		fUse.setEnabled(editable);
+		fTypeLabel.setEnabled(editable);
+		fUseLabel.setEnabled(editable);
+		fDepLabel.setEnabled(editable);
 	}
 
 	public void hookListeners() {
@@ -254,7 +272,9 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 						&& ((SchemaSimpleType) type).getRestriction() != null) {
 					((SchemaSimpleType) type).setRestriction(null);
 				}
-				updateTypeParts(kind == IMetaAttribute.STRING, kind == IMetaAttribute.JAVA);
+				updateParts(kind == IMetaAttribute.STRING,
+						kind == IMetaAttribute.JAVA,
+						fAttribute.getSchema().isEditable());
 			}
 		});
 		fUse.addSelectionListener(new SelectionAdapter() {
@@ -353,6 +373,12 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 				}
 			}
 		});
+		fRestrictionsTable.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				fRemoveRestriction.setEnabled(fAttribute.getSchema().isEditable()
+						&& !event.getSelection().isEmpty());
+			}
+		});
 	}
 	
 	private String handleLinkActivated(String value, boolean isInter) {
@@ -409,23 +435,28 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		}
 	}
 	
-	private void updateTypeParts(boolean isStringKind, boolean isJavaKind) {
-		fTranslatable.getControl().setEnabled(isStringKind);
+	private void updateParts(boolean isStringKind, boolean isJavaKind, boolean editable) {
 		fTranslatable.getControl().setVisible(isStringKind || isJavaKind);
-		fTransLabel.setEnabled(isStringKind);
 		fTransLabel.setVisible(isStringKind || isJavaKind);
-		fResLabel.setEnabled(isStringKind);
 		fResLabel.setVisible(isStringKind || isJavaKind);
 		fRestrictionsTable.getControl().setVisible(isStringKind || isJavaKind);
-		fRestrictionsTable.getControl().setEnabled(isStringKind);
 		fAddRestriction.setVisible(isStringKind || isJavaKind);
-		fAddRestriction.setEnabled(isStringKind);
 		fRemoveRestriction.setVisible(isStringKind || isJavaKind);
-		fRemoveRestriction.setEnabled(isStringKind);
-		fRestrictionsTable.refresh();
 		fInterfaceEntry.setVisible(isJavaKind);
-		fInterfaceEntry.setEditable(isJavaKind);
 		fClassEntry.setVisible(isJavaKind);
-		fClassEntry.setEditable(isJavaKind);
+		fTranslatable.getControl().setEnabled(isStringKind && editable);
+		fTransLabel.setEnabled(isStringKind && editable);
+		fResLabel.setEnabled(isStringKind && editable);
+		fRestrictionsTable.getControl().setEnabled(isStringKind && editable);
+		fAddRestriction.setEnabled(isStringKind && editable);
+		fRemoveRestriction.setEnabled(isStringKind 
+				&& !fRestrictionsTable.getSelection().isEmpty()
+				 && editable);
+		fInterfaceEntry.setEditable(isJavaKind && editable);
+		fClassEntry.setEditable(isJavaKind && editable);
+	}
+
+	public ISchemaObject getDetailsObject() {
+		return fAttribute;
 	}
 }

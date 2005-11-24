@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.schema.SchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaElementReference;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -23,6 +24,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -34,6 +36,8 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 	private FormEntry fName;
 	private ComboPart fDeprecated;
 	private ComboPart fTranslatable;
+	private Label fTransLabel;
+	private Label fDepLabel;
 	
 	public SchemaElementDetails(ISchemaElement element, ElementSection section) {
 		super(section, true);
@@ -55,11 +59,13 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		fLabelProperty = new FormEntry(parent, toolkit, PDEUIMessages.SchemaElementDetails_labelProperty, SWT.NONE);
 		fIcon = new FormEntry(parent, toolkit, PDEUIMessages.SchemaElementDetails_icon, SWT.NONE);
 		
-		toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated).setForeground(foreground);
+		fDepLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
+		fDepLabel.setForeground(foreground);
 		fDeprecated = createComboPart(parent, toolkit, BOOLS, 2);
 
 		
-		toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_translatable).setForeground(foreground);
+		fTransLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_translatable);
+		fTransLabel.setForeground(foreground);
 		fTranslatable = createComboPart(parent, toolkit, BOOLS, 2);
 		
 		setText(PDEUIMessages.SchemaElementDetails_title);
@@ -79,6 +85,15 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		fDeprecated.select(fElement.isDeprecated() ? 0 : 1);
 		
 		fTranslatable.select(fElement.hasTranslatableContent() ? 0 : 1);
+		
+		boolean editable = fElement.getSchema().isEditable();
+		fIcon.setEditable(editable);
+		fLabelProperty.setEditable(editable);
+		fName.setEditable(editable);
+		fDeprecated.setEnabled(editable);
+		fTranslatable.setEnabled(editable);
+		fDepLabel.setEnabled(editable);
+		fTransLabel.setEnabled(editable);
 	}
 
 	public void hookListeners() {
@@ -108,5 +123,9 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 				fElement.setTranslatableProperty(fTranslatable.getSelectionIndex() == 0);
 			}
 		});
+	}
+
+	public ISchemaObject getDetailsObject() {
+		return fElement;
 	}
 }

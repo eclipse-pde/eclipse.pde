@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.schema;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.schema.SchemaCompositor;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
@@ -19,6 +20,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -26,6 +28,7 @@ public class SchemaCompositorDetails extends AbstractSchemaDetails {
 
 	private SchemaCompositor fCompositor;
 	private ComboPart fKind;
+	private Label fKindLabel;
 	
 	public SchemaCompositorDetails(ISchemaCompositor compositor, ElementSection section) {
 		super(section, true);
@@ -38,8 +41,8 @@ public class SchemaCompositorDetails extends AbstractSchemaDetails {
 		createMinOccurComp(parent, toolkit);
 		createMaxOccurComp(parent, toolkit);
 		
-		toolkit.createLabel(parent, PDEUIMessages.SchemaCompositorDetails_type).setForeground(
-				toolkit.getColors().getColor(FormColors.TITLE));
+		fKindLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaCompositorDetails_type);
+		fKindLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		fKind = new ComboPart();
 		fKind.createControl(parent, toolkit, SWT.READ_ONLY);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -59,8 +62,12 @@ public class SchemaCompositorDetails extends AbstractSchemaDetails {
 
 		updateMinOccur(fCompositor.getMinOccurs());
 		updateMaxOccur(fCompositor.getMaxOccurs());
-		
 		fKind.select(fCompositor.getKind() - 1);
+		
+		boolean editable = fCompositor.getSchema().isEditable();
+		fKindLabel.setEnabled(editable);
+		fKind.setEnabled(editable);
+		enableMinMax(editable);
 	}
 
 	public void hookListeners() {
@@ -80,5 +87,9 @@ public class SchemaCompositorDetails extends AbstractSchemaDetails {
 				setDecription(NLS.bind(PDEUIMessages.SchemaCompositorDetails_description, fCompositor.getName()));
 			}
 		});
+	}
+
+	public ISchemaObject getDetailsObject() {
+		return fCompositor;
 	}
 }

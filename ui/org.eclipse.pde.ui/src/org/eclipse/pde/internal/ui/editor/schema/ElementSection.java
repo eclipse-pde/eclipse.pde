@@ -130,6 +130,11 @@ public class ElementSection extends TreeSection {
 		return fTreeViewer;
 	}
 
+	public void refresh() {
+		fTreeViewer.refresh();
+		super.refresh();
+	}
+	
 	protected void buttonSelected(int index) {
 		switch (index) {
 		case 0:

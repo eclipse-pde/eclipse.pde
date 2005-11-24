@@ -94,4 +94,10 @@ public class ComboPart {
 		else
 			((CCombo) combo).setItems(items);
 	}
+	public void setEnabled(boolean enabled) {
+		if (combo instanceof Combo)
+			((Combo) combo).setEnabled(enabled);
+		else
+			((CCombo) combo).setEnabled(enabled);
+	}
 }
