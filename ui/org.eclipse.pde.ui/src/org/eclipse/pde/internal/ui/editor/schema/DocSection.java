@@ -10,98 +10,105 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.rules.*;
-import org.eclipse.jface.text.source.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.text.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.ischema.IDocumentSection;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.schema.Schema;
+import org.eclipse.pde.internal.core.schema.SchemaObject;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
+import org.eclipse.pde.internal.ui.editor.text.IColorManager;
+import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
 
 public class DocSection extends PDESection {
-	private IDocument document;
-	private IDocumentPartitioner partitioner;
-	private SourceViewerConfiguration sourceConfiguration;
-	private SourceViewer sourceViewer;
-	private CTabFolder tabFolder;
-	private ISchema schema;
-	private Object element;
-	private boolean ignoreChange;
+	private IDocument fDocument;
+	private SourceViewerConfiguration fSourceConfiguration;
+	private SourceViewer fSourceViewer;
+	private CTabFolder fTabFolder;
+	private ISchema fSchema;
+	private Object fElement;
+	private boolean fIgnoreChange;
 
 	public DocSection(PDEFormPage page, Composite parent, IColorManager colorManager) {
 		 		 super(page, parent, Section.DESCRIPTION, true);
 		 		 getSection().setText(PDEUIMessages.DocSection_text);
 		 		 getSection().setDescription(PDEUIMessages.SchemaEditor_DocSection_desc);
-		sourceConfiguration = new XMLConfiguration(colorManager);
-		document = new Document();
-		partitioner =
-			new FastPartitioner(
-				new XMLPartitionScanner(),
-				new String[] {
-					XMLPartitionScanner.XML_TAG,
-					XMLPartitionScanner.XML_COMMENT });
-		partitioner.connect(document);
-		document.setDocumentPartitioner(partitioner);
+		fSourceConfiguration = new XMLConfiguration(colorManager);
+		fDocument = new Document();
+		new XMLDocumentSetupParticpant().setup(fDocument);
+		fSchema = (ISchema) getPage().getModel();	
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
+	
 	public void commit(boolean onSave) {
 		handleApply();
 		super.commit(onSave);
 	}
-	public void createClient(
-		Section section,
-		FormToolkit toolkit) {
+	
+	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
-		 		 layout.verticalSpacing = 9;
+		layout.verticalSpacing = 9;
 		container.setLayout(layout);
-		GridData gd;
 
-		schema = (ISchema) getPage().getModel();
-		
-		tabFolder = new CTabFolder(container, SWT.FLAT|SWT.TOP);
-		toolkit.adapt(tabFolder, true, true);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		fTabFolder = new CTabFolder(container, SWT.FLAT|SWT.TOP);
+		toolkit.adapt(fTabFolder, true, true);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.heightHint = 2;
-		tabFolder.setLayoutData(gd);
+		fTabFolder.setLayoutData(gd);
+		
 		toolkit.getColors().initializeSectionToolBarColors();
 		Color selectedColor1 = toolkit.getColors().getColor(FormColors.TB_BG);
 		Color selectedColor2 = toolkit.getColors().getColor(FormColors.TB_GBG);
-		tabFolder.setSelectionBackground(new Color[] {selectedColor1, selectedColor2, toolkit.getColors().getBackground()}, new int[] {50, 100}, true);
+		fTabFolder.setSelectionBackground(new Color[] {selectedColor1, selectedColor2, toolkit.getColors().getBackground()}, new int[] {50, 100}, true);
 
-		tabFolder.addSelectionListener(new SelectionAdapter() {
+		fTabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateTabSelection();
 			}
 		});
 
-		int styles =
-			SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL;
-		sourceViewer = new SourceViewer(container, null, styles);
-		sourceViewer.configure(sourceConfiguration);
-		sourceViewer.setDocument(document);
-		sourceViewer
-			.addSelectionChangedListener(new ISelectionChangedListener() {
+		int styles = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL;
+		fSourceViewer = new SourceViewer(container, null, styles);
+		fSourceViewer.configure(fSourceConfiguration);
+		fSourceViewer.setDocument(fDocument);
+		fSourceViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateSelection(event.getSelection());
 			}
 		});
-		StyledText styledText = sourceViewer.getTextWidget();
+		StyledText styledText = fSourceViewer.getTextWidget();
 		styledText.setFont(JFaceResources.getTextFont());
 		styledText.setMenu(getPage().getPDEEditor().getContextMenu());
 		styledText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
@@ -118,38 +125,39 @@ public class DocSection extends PDESection {
 		createTabs();
 		section.setClient(container);
 		initialize();
-		if (tabFolder.getItemCount()>0) {
-			tabFolder.setSelection(0);		
+		if (fTabFolder.getItemCount() > 0) {
+			fTabFolder.setSelection(0);		
 			updateTabSelection();
 		}
 	}
+	
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.CUT.getId())) {
-			sourceViewer.doOperation(SourceViewer.CUT);
+			fSourceViewer.doOperation(SourceViewer.CUT);
 			return true;
 		} else if (
 			actionId.equals(ActionFactory.COPY.getId())) {
-			sourceViewer.doOperation(SourceViewer.COPY);
+			fSourceViewer.doOperation(SourceViewer.COPY);
 			return true;
 		} else if (
 			actionId.equals(ActionFactory.PASTE.getId())) {
-			sourceViewer.doOperation(SourceViewer.PASTE);
+			fSourceViewer.doOperation(SourceViewer.PASTE);
 			return true;
 		} else if (
 			actionId.equals(ActionFactory.SELECT_ALL.getId())) {
-			sourceViewer.doOperation(SourceViewer.SELECT_ALL);
+			fSourceViewer.doOperation(SourceViewer.SELECT_ALL);
 			return true;
 		} else if (
 			actionId.equals(ActionFactory.DELETE.getId())) {
-			sourceViewer.doOperation(SourceViewer.DELETE);
+			fSourceViewer.doOperation(SourceViewer.DELETE);
 			return true;
 		} else if (
 			actionId.equals(ActionFactory.UNDO.getId())) {
-			sourceViewer.doOperation(SourceViewer.UNDO);
+			fSourceViewer.doOperation(SourceViewer.UNDO);
 			return true;
 		} else if (
 			actionId.equals(ActionFactory.REDO.getId())) {
-			sourceViewer.doOperation(SourceViewer.REDO);
+			fSourceViewer.doOperation(SourceViewer.REDO);
 			return true;
 		}
 		return false;
@@ -164,7 +172,7 @@ public class DocSection extends PDESection {
 		if (input instanceof ISchema) {
 			index = 0;
 		} else if (input instanceof IDocumentSection) {
-			IDocumentSection[] sections = schema.getDocumentSections();
+			IDocumentSection[] sections = fSchema.getDocumentSections();
 			for (int i = 0; i < sections.length; i++) {
 				IDocumentSection section = sections[i];
 				if (section.equals(input)) {
@@ -174,7 +182,7 @@ public class DocSection extends PDESection {
 			}
 		}
 		if (index != -1)
-			tabFolder.setSelection(index);
+			fTabFolder.setSelection(index);
 		updateEditorInput(input);
 		return true;
 	}
@@ -200,38 +208,38 @@ public class DocSection extends PDESection {
 	}
 
 	private void handleApply() {
-		if (element != null) {
-			if (element instanceof ISchema)
-				 ((Schema) element).setDescription(document.get());
+		if (fElement != null) {
+			if (fElement instanceof ISchema)
+				 ((Schema) fElement).setDescription(fDocument.get());
 			else
-				 ((SchemaObject) element).setDescription(document.get());
-			updateTabImage(tabFolder.getSelection());
+				 ((SchemaObject) fElement).setDescription(fDocument.get());
+			updateTabImage(fTabFolder.getSelection());
 		}
 	}
 
 	public void initialize() {
-		sourceViewer.setEditable(schema.isEditable());
-		document.addDocumentListener(new IDocumentListener() {
+		fSourceViewer.setEditable(fSchema.isEditable());
+		fDocument.addDocumentListener(new IDocumentListener() {
 			public void documentChanged(DocumentEvent e) {
-				if (!ignoreChange && schema.isEditable()) {
+				if (!fIgnoreChange && fSchema.isEditable()) {
 					markDirty();
 				}
 			}
 			public void documentAboutToBeChanged(DocumentEvent e) {
 			}
 		});
-		updateEditorInput(schema);
-		schema.addModelChangedListener(this);
+		updateEditorInput(fSchema);
+		fSchema.addModelChangedListener(this);
 	}
 
 	public void dispose() {
-		schema.removeModelChangedListener(this);
+		fSchema.removeModelChangedListener(this);
 		super.dispose();
 	}
 
 	private void createTabs() {
-		IDocumentSection[] sections = schema.getDocumentSections();
-		addTab(schema);
+		IDocumentSection[] sections = fSchema.getDocumentSections();
+		addTab(fSchema);
 		for (int i = 0; i < sections.length; i++) {
 			IDocumentSection section = sections[i];
 			addTab(section);
@@ -240,42 +248,36 @@ public class DocSection extends PDESection {
 	
 	private void addTab(ISchemaObject section) {
 		String label = getTopicName(section);
-		CTabItem item = new CTabItem(tabFolder, SWT.NULL);
+		CTabItem item = new CTabItem(fTabFolder, SWT.NULL);
 		item.setText(label);
 		item.setData(section);
 		updateTabImage(item);
 	}
 
 	private void updateTabImage(CTabItem item) {
-		if (item==null) return;
-		ISchemaObject section = (ISchemaObject)item.getData();
-		if (section==null) return;
-		item.setImage(PDEPlugin.getDefault().getLabelProvider().getImage(section));
+		if (item != null) {
+			ISchemaObject section = (ISchemaObject)item.getData();
+			if (section != null)
+				item.setImage(PDEPlugin.getDefault().getLabelProvider().getImage(section));
+		}
 	}
 
 	private void updateTabSelection() {
-		int index = tabFolder.getSelectionIndex();
-		if (schema.isEditable() && isDirty()) {
+		int index = fTabFolder.getSelectionIndex();
+		if (fSchema.isEditable() && isDirty())
 			handleApply();
-		}
+		
 		if (index == 0)
-			updateEditorInput(schema);
+			updateEditorInput(fSchema);
 		else {
-			IDocumentSection[] sections = schema.getDocumentSections();
+			IDocumentSection[] sections = fSchema.getDocumentSections();
 			updateEditorInput(sections[index - 1]);
 		}
 	}
 
-	/*private String resolveObjectName(Object object) {
-		if (object instanceof ISchemaObject) {
-			return ((ISchemaObject) object).getName();
-		}
-		return object.toString();
-	}*/
-	
 	public void setFocus() {
-		sourceViewer.getTextWidget().setFocus();
-		updateSelection(sourceViewer.getSelection());
+		fSourceViewer.getTextWidget().setFocus();
+		updateSelection(fSourceViewer.getSelection());
 	}
 
 	private void updateSelection(ISelection selection) {
@@ -283,21 +285,13 @@ public class DocSection extends PDESection {
 	}
 
 	public void updateEditorInput(Object input) {
-		ignoreChange = true;
-		String text = ""; //$NON-NLS-1$
-		if (input instanceof ISchemaObject) {
+		fIgnoreChange = true;
+		String text = "";
+		if (input instanceof ISchemaObject)
 			text = ((ISchemaObject) input).getDescription();
-		}
-		if (text == null)
-			text = ""; //$NON-NLS-1$
-		/*
-		else
-			text = TextUtil.createMultiLine(text, 60, false);
-		*/
-
-		document.set(text);
-		element = input;
-		ignoreChange = false;
+		fDocument.set(text == null ? "" : text);
+		fElement = input;
+		fIgnoreChange = false;
 	}
 
 	public void modelChanged(IModelChangedEvent e) {
@@ -307,33 +301,17 @@ public class DocSection extends PDESection {
 	}
 
 	public void refresh() {
-		int itemCount = tabFolder.getItemCount();
-		IDocumentSection[] sections = schema.getDocumentSections();
-		if (itemCount != sections.length+1) {
-			// sections added or removed - reload combo
-			disposeAllTabs();
-			createTabs();
-			getPage().getManagedForm().getForm().reflow(true);
-			updateEditorInput(schema);
-		}
+		IDocumentSection[] sections = fSchema.getDocumentSections();
+		int index = fTabFolder.getSelectionIndex();
+		if (index == 0)
+			updateEditorInput(fSchema);
 		else {
-			int index = tabFolder.getSelectionIndex();
-			if (index == 0)
-				updateEditorInput(schema);
-			else {
-				updateEditorInput(sections[index - 1]);
-			}
+			updateEditorInput(sections[index - 1]);
 		}
 		super.refresh();
 	}
 
-	private void disposeAllTabs() {
-		CTabItem [] items = tabFolder.getItems();
-		for (int i=0; i<items.length; i++) 
-			items[i].dispose();
-	}
-
 	public boolean canPaste(Clipboard clipboard) {
-		return sourceViewer.canDoOperation(SourceViewer.PASTE);
+		return fSourceViewer.canDoOperation(SourceViewer.PASTE);
 	}
 }
