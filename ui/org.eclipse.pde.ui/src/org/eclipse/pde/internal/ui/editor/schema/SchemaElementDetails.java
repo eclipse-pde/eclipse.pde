@@ -51,19 +51,16 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
 		
 		fName = new FormEntry(parent, toolkit, PDEUIMessages.SchemaDetails_name, SWT.NONE);
-		fName.setFormEntryListener(new FormEntryAdapter(this) {
-			public void textValueChanged(FormEntry entry) {
-				
-			}
-		});
+		fName.setDimLabel(true);
 		fLabelProperty = new FormEntry(parent, toolkit, PDEUIMessages.SchemaElementDetails_labelProperty, SWT.NONE);
+		fLabelProperty.setDimLabel(true);
 		fIcon = new FormEntry(parent, toolkit, PDEUIMessages.SchemaElementDetails_icon, SWT.NONE);
+		fIcon.setDimLabel(true);
 		
 		fDepLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
 		fDepLabel.setForeground(foreground);
 		fDeprecated = createComboPart(parent, toolkit, BOOLS, 2);
 
-		
 		fTransLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_translatable);
 		fTransLabel.setForeground(foreground);
 		fTranslatable = createComboPart(parent, toolkit, BOOLS, 2);
@@ -83,7 +80,6 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		fIcon.setValue(curr != null ? curr : ""); //$NON-NLS-1$
 		
 		fDeprecated.select(fElement.isDeprecated() ? 0 : 1);
-		
 		fTranslatable.select(fElement.hasTranslatableContent() ? 0 : 1);
 		
 		boolean editable = fElement.getSchema().isEditable();

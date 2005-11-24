@@ -10,12 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
-import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.widgets.Control;
 
 public class ElementSectionDragAdapter extends DragSourceAdapter {
@@ -52,7 +58,7 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 		}
 	}
 
-	static String createTextualRepresentation(IStructuredSelection sel) {
+	private String createTextualRepresentation(IStructuredSelection sel) {
 		StringBuffer buf = new StringBuffer();
 		for (Iterator iter = sel.iterator(); iter.hasNext();) {
 			String name = iter.next().toString();
@@ -95,7 +101,7 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 		return canCopy((IStructuredSelection) selectionProvider.getSelection());
 	}
 
-	static boolean canCopy(IStructuredSelection selection) {
+	private boolean canCopy(IStructuredSelection selection) {
 		Object prev = null;
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
@@ -115,7 +121,7 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 			(IStructuredSelection) selectionProvider.getSelection());
 	}
 
-	static ISchemaObject[] createObjectRepresentation(IStructuredSelection selection) {
+	private ISchemaObject[] createObjectRepresentation(IStructuredSelection selection) {
 		ArrayList objects = new ArrayList();
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();

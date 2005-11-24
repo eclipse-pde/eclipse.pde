@@ -104,11 +104,6 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		fAttribute = (SchemaAttribute)attribute;
 	}
 
-	class SchemaAttributeLabelProvider extends LabelProvider {
-		public String getText(Object element) {
-			return super.getText(element);
-		}
-	}
 	class SchemaAttributeContentProvider extends DefaultTableProvider {
 		
 		public Object[] getElements(Object inputElement) {
@@ -125,6 +120,7 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
 		
 		fName = new FormEntry(parent, toolkit, PDEUIMessages.SchemaDetails_name, SWT.NONE);
+		fName.setDimLabel(true);
 		
 		fDepLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
 		fDepLabel.setForeground(foreground);
@@ -167,7 +163,7 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		table.setLayoutData(gd);
 		fRestrictionsTable = new TableViewer(table);
 		fRestrictionsTable.setContentProvider(new SchemaAttributeContentProvider());
-		fRestrictionsTable.setLabelProvider(new SchemaAttributeLabelProvider());
+		fRestrictionsTable.setLabelProvider(new LabelProvider());
 		fRestrictionsTable.setInput(new Object());
 		
 		Composite resButtonComp = toolkit.createComposite(parent);

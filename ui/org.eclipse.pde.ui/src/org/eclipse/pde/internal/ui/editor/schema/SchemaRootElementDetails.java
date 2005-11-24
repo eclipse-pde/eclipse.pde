@@ -48,6 +48,7 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
 		
 		fName = new FormEntry(parent, toolkit, PDEUIMessages.SchemaDetails_name, SWT.NONE);
+		fName.setDimLabel(true);
 		
 		fDepLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
 		fDepLabel.setForeground(foreground);

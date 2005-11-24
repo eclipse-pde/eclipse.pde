@@ -120,7 +120,7 @@ public class ElementSection extends TreeSection {
 
 	protected void initDragAndDrop() {
 		fClipboard = new Clipboard(fTreeViewer.getControl().getDisplay());
-		int ops = DND.DROP_COPY | DND.DROP_MOVE;
+		int ops = DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK;
 		Transfer[] transfers = new Transfer[] {ModelDataTransfer.getInstance(), TextTransfer.getInstance() };
 		fTreeViewer.addDragSupport(ops, transfers, new ElementSectionDragAdapter(fTreeViewer, this));
 		fTreeViewer.addDropSupport(ops | DND.DROP_DEFAULT, transfers, new ElementSectionDropAdapter(this));
@@ -156,6 +156,10 @@ public class ElementSection extends TreeSection {
 
 	public boolean doGlobalAction(String actionId) {
 		boolean cut = actionId.equals(ActionFactory.CUT.getId());
+		// TODO DISABLED CUTTING
+		if (cut)
+			return false;
+		
 		if (cut || actionId.equals(ActionFactory.DELETE.getId())) {
 			ISelection sel = fTreeViewer.getSelection();
 			Object obj = ((IStructuredSelection) sel).getFirstElement();
@@ -442,15 +446,19 @@ public class ElementSection extends TreeSection {
 			return target;
 		if (target instanceof ISchemaAttribute && object instanceof ISchemaAttribute)
 			return target;
+		if (target instanceof ISchemaObjectReference && object instanceof ISchemaElement)
+			return target;
 		return null;
 	}
 
 	private Object getRealTarget(Object target, Object object) {
-		if (object instanceof ISchemaObjectReference) {
-			return target;
-		}
-		if (object instanceof ISchemaElement) {
-			return fSchema;
+		if (object instanceof ISchemaElement || object instanceof ISchemaObjectReference) {
+			if (target instanceof SchemaElementReference)
+				return ((SchemaElementReference)target).getCompositor();
+			if (target instanceof ISchemaCompositor)
+				return target;
+			if (object instanceof ISchemaElement)
+				return fSchema;
 		}
 		if (object instanceof ISchemaAttribute) {
 			if (target instanceof ISchemaAttribute) {
@@ -460,16 +468,48 @@ public class ElementSection extends TreeSection {
 			if (target instanceof ISchemaElement)
 				return target;
 		}
+		if (object instanceof ISchemaCompositor) {
+			if (target instanceof ISchemaElement)
+				return target;
+			if (target instanceof ISchemaCompositor) {
+				return target;
+			}
+		}
 		return null;
 	}
 
 	private void doPaste(Object realTarget, Object sibling, Object object) {
-		if (object instanceof ISchemaRootElement) {
-			// do not paste root elements
-		} else if (realTarget instanceof ISchemaObjectReference) {
-			
-		} else if (object instanceof ISchemaObjectReference) {
-			
+		//	TODO DISABLED PASTING
+		if (true)
+			return;
+		if (object instanceof ISchemaCompositor 
+				&& realTarget instanceof ISchemaObject) {
+			SchemaCompositor compositor = new SchemaCompositor(
+					(ISchemaObject)realTarget,
+					((ISchemaCompositor)object).getKind());
+			if (realTarget instanceof SchemaElement) {
+				SchemaElement element = (SchemaElement)realTarget;
+				SchemaComplexType type = null;
+				if (element.getType() instanceof SchemaComplexType) {
+					type = (SchemaComplexType) element.getType();
+					type.setCompositor(compositor);
+				} else {
+					type = new SchemaComplexType(element.getSchema());
+					type.setCompositor(compositor);
+					element.setType(type);
+				}
+			} else if (realTarget instanceof SchemaCompositor) {
+				((SchemaCompositor) realTarget).addChild(compositor);
+			}
+		} else if (object instanceof SchemaElementReference) {
+			if (realTarget instanceof SchemaCompositor) {
+				SchemaElementReference oldRef = (SchemaElementReference)object;
+				SchemaCompositor parent = (SchemaCompositor) realTarget;
+				String refName = oldRef.getReferenceName();
+				SchemaElementReference reference = new SchemaElementReference(parent, refName);
+				reference.setReferencedObject(fSchema.findElement(refName));
+				parent.addChild(reference);
+			}
 		} else if (object instanceof ISchemaElement) {
 			SchemaElement element = (SchemaElement) object;
 			element.setParent(fSchema);
@@ -520,5 +560,31 @@ public class ElementSection extends TreeSection {
 
 	public void handleCollapseAll() {
 		fTreeViewer.collapseAll();
+	}
+
+	public void doLink(Object currentTarget, Object[] objects) {
+		for (int i = 0; i < objects.length; i++) {
+			Object object = objects[i];
+			Object realTarget = getRealTarget(currentTarget, object);
+			Object sibling = getSibling(currentTarget, object);
+			if (realTarget == null)
+				continue;
+			doLink(realTarget, sibling, object);
+		}
+	}
+
+	private void doLink(Object realTarget, Object sibling, Object object) {
+		if (realTarget instanceof ISchemaCompositor
+				&& object instanceof ISchemaElement) {
+			
+			if (sibling instanceof SchemaElementReference)
+				realTarget = ((SchemaElementReference)sibling).getCompositor();
+			
+			SchemaCompositor parent = (SchemaCompositor) realTarget;
+			String refName = ((ISchemaElement)object).getName();
+			SchemaElementReference reference = new SchemaElementReference(parent, refName);
+			reference.setReferencedObject(fSchema.findElement(refName));
+			parent.addChild(reference);
+		}
 	}
 }
