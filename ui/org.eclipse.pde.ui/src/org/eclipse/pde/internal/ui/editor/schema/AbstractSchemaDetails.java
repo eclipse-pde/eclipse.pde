@@ -99,10 +99,9 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 			fDtdLabel = toolkit.createText(client, "", SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);//$NON-NLS-1$
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 3;
-			gd.heightHint = 40;
+			gd.heightHint = 60;
 			fDtdLabel.setLayoutData(gd);
 			fDtdLabel.setEditable(false);
-			fDtdLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		}
 		
 		toolkit.paintBordersFor(client);
@@ -247,8 +246,8 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	}
 	
 	protected void updateMinOccur(int min) {
-		if (fMinOccurSpinner == null) return;
-		fMinOccurSpinner.setSelection(min);
+		if (fMinOccurSpinner != null)
+			fMinOccurSpinner.setSelection(min);
 	}
 	
 	protected void updateMaxOccur(int max) {
