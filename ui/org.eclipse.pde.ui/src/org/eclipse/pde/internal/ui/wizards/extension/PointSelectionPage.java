@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -42,11 +43,10 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
-import org.eclipse.pde.internal.core.text.plugin.PluginExtensionPointNode;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
+import org.eclipse.pde.internal.core.text.plugin.PluginExtensionPointNode;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -452,23 +452,30 @@ public class PointSelectionPage
 
 	public boolean finish() {
 		String point = getFullId(fCurrentPoint);
+		
 		try {
-			IPluginExtension extension = fModel.getFactory().createExtension();
+			IPluginExtension extension =
+				fModel.getFactory().createExtension();
 			extension.setPoint(point);
 			fModel.getPluginBase().add(extension);
 			
-			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
-			Schema schema = (Schema)registry.getSchema(extension.getPoint());
-			if (!schema.isLoaded())
-				schema.load();
 			String pluginID = fCurrentPoint.getPluginBase().getId();
-			
 			if (!(fCurrentPoint instanceof PluginExtensionPointNode)
-					&& !fAvailableImports.contains(pluginID)
-					&& schema.requiresPlugin()) {
-				IPluginImport importNode = fModel.getPluginFactory().createImport();
-				importNode.setId(pluginID);
-				fModel.getPluginBase().add(importNode);
+					&& !fAvailableImports.contains(pluginID)) {
+				if (MessageDialog
+						.openQuestion(
+								getShell(),
+								PDEUIMessages.NewExtensionWizard_PointSelectionPage_dependencyTitle,
+								NLS
+										.bind(
+												PDEUIMessages.NewExtensionWizard_PointSelectionPage_dependencyMessage,
+												new String[] { pluginID,
+														fCurrentPoint.getId() }))) {
+					IPluginImport importNode = fModel.getPluginFactory()
+							.createImport();
+					importNode.setId(pluginID);
+					fModel.getPluginBase().add(importNode);
+				}
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);

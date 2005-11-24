@@ -16,12 +16,8 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -31,7 +27,6 @@ public class SchemaSpecSection extends PDESection {
 	private FormEntry fPluginText;
 	private FormEntry fPointText;
 	private FormEntry fNameText;
-	private Button fDependencyButton;
 		
 	public SchemaSpecSection(SchemaOverviewPage page, Composite parent) {
 	    super(page, parent, Section.DESCRIPTION);
@@ -81,16 +76,6 @@ public class SchemaSpecSection extends PDESection {
 			}
 		});
 		
-		fDependencyButton = toolkit.createButton(container, PDEUIMessages.SchemaSpecSection_declareDependencyButton, SWT.CHECK);
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		fDependencyButton.setLayoutData(gd);
-		fDependencyButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				schema.setRequiresPlugin(fDependencyButton.getSelection());
-			}
-		});
-		
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -111,7 +96,6 @@ public class SchemaSpecSection extends PDESection {
 			fPluginText.getText().setEnabled(false);
 			fPointText.getText().setEnabled(false);
 			fNameText.getText().setEnabled(false);
-			fDependencyButton.setEnabled(false);
 		}
 		schema.addModelChangedListener(this);
 	}
@@ -126,7 +110,6 @@ public class SchemaSpecSection extends PDESection {
 		fPluginText.setValue(schema.getPluginId(), true);
 		fPointText.setValue(schema.getPointId(), true);
 		fNameText.setValue(schema.getName(), true);
-		fDependencyButton.setSelection(schema.requiresPlugin());
 		getPage().getManagedForm().getForm().setText(schema.getName());
 		super.refresh();
 	}

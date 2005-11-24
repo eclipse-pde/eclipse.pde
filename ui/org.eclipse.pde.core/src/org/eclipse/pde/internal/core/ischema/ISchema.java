@@ -34,8 +34,6 @@ public interface ISchema extends ISchemaObject, IBaseModel, IModelChangeProvider
 
 	String P_PLUGIN = "pluginId"; //$NON-NLS-1$
 	
-	String P_REQUIRES_PLUGIN = "requiresPlugin"; //$NON-NLS-1$
-
 	int REFRESH_ADD = 1;
 
 	int REFRESH_DELETE = 2;
@@ -118,10 +116,6 @@ public interface ISchema extends ISchemaObject, IBaseModel, IModelChangeProvider
 	public String getPluginId();
 
 	public void setPluginId(String pluginId) throws CoreException;
-
-	public boolean requiresPlugin();
-
-	public void setRequiresPlugin(boolean requires);
 
 	/**
 	 * Returns an object that holds a reference to this schema. Descriptors are

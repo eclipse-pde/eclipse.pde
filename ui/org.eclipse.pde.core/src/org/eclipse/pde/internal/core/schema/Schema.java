@@ -63,8 +63,6 @@ public class Schema extends PlatformObject implements ISchema {
 
 	private String fPluginID;
 	
-	private boolean fRequiresPlugin = true;
-
 	private ISchemaDescriptor fSchemaDescriptor;
 
 	private boolean fLoaded;
@@ -736,7 +734,6 @@ public class Schema extends PlatformObject implements ISchema {
 								setName(getAttribute(meta, "name")); //$NON-NLS-1$
 								fPluginID = getAttribute(meta, "plugin"); //$NON-NLS-1$
 								fPointID = getAttribute(meta, "id"); //$NON-NLS-1$
-								fRequiresPlugin = !"false".equals(getAttribute(meta, P_REQUIRES_PLUGIN)); //$NON-NLS-1$
 								fValid = true;
 							} else if (meta.getNodeName()
 									.equals("meta.section")) { //$NON-NLS-1$
@@ -799,7 +796,6 @@ public class Schema extends PlatformObject implements ISchema {
 		fIncludes = null;
 		fPointID = null;
 		fPluginID = null;
-		fRequiresPlugin = true;
 		fReferences = null;
 		fDescription = null;
 		fName = null;
@@ -933,8 +929,6 @@ public class Schema extends PlatformObject implements ISchema {
 		writer.println(indent2 + "<appInfo>"); //$NON-NLS-1$
 		writer.print(indent3 + "<meta.schema plugin=\"" + pluginId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.print(" id=\"" + pointId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (!fRequiresPlugin)
-			writer.print(" " + P_REQUIRES_PLUGIN + "=\"false\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println(" name=\"" + getName() + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println(indent2 + "</appInfo>"); //$NON-NLS-1$
 		writer.println(indent2 + "<documentation>"); //$NON-NLS-1$
@@ -975,13 +969,4 @@ public class Schema extends PlatformObject implements ISchema {
 		return platformDescription;
 	}
 
-	public boolean requiresPlugin() {
-		return fRequiresPlugin;
-	}
-
-	public void setRequiresPlugin(boolean requires) {
-		boolean oldValue = fRequiresPlugin;
-		fRequiresPlugin = requires;
-		fireModelObjectChanged(this, P_REQUIRES_PLUGIN, Boolean.toString(oldValue), Boolean.toString(requires));
-	}
 }

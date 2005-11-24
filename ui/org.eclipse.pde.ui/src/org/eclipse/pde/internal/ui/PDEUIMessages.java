@@ -2269,8 +2269,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String NewRestrictionDialog_message;
 
-	public static String SchemaSpecSection_declareDependencyButton;
-
 	public static String SchemaIncludesSection_addButton;
 
 	public static String SchemaIncludesSection_removeButton;
