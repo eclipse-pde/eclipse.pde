@@ -29,14 +29,9 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 public abstract class PDEFormPage extends FormPage {
-	/**
-	 * @param editor
-	 * @param id
-	 * @param title
-	 */
+
 	public PDEFormPage(FormEditor editor, String id, String title) {
 		super(editor, id, title);
 	}
@@ -134,9 +129,7 @@ public abstract class PDEFormPage extends FormPage {
 		}
 		return targetPart;
 	}
-	public IPropertySheetPage getPropertySheetPage() {
-		return null;
-	}
+
 	protected boolean canPerformDirectly(String id, Control control) {
 		if (control instanceof Text) {
 			Text text = (Text) control;

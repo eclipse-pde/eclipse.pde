@@ -45,11 +45,11 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class ElementSection extends TreeSection {
-	private TreeViewer treeViewer;
-	private Schema schema;
-	private NewElementAction newElementAction = new NewElementAction();
-	private NewAttributeAction newAttributeAction = new NewAttributeAction();
-	private Clipboard clipboard;
+	private TreeViewer fTreeViewer;
+	private Schema fSchema;
+	private NewElementAction fNewElementAction = new NewElementAction();
+	private NewAttributeAction fNewAttributeAction = new NewAttributeAction();
+	private Clipboard fClipboard;
 
 	class ContentProvider extends DefaultContentProvider implements	ITreeContentProvider {
 		public Object[] getElements(Object object) {
@@ -87,8 +87,7 @@ public class ElementSection extends TreeSection {
 		}
 
 		public boolean hasChildren(Object parent) {
-			if (parent instanceof ISchemaAttribute
-					|| parent instanceof ISchemaObjectReference)
+			if (parent instanceof ISchemaAttribute || parent instanceof ISchemaObjectReference)
 				return false;
 			return getChildren(parent).length > 0;
 		}
@@ -113,22 +112,22 @@ public class ElementSection extends TreeSection {
 	private void createTree(Composite container, FormToolkit toolkit) {
 		TreePart treePart = getTreePart();
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
-		treeViewer = treePart.getTreeViewer();
-		treeViewer.setContentProvider(new ContentProvider());
-		treeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		fTreeViewer = treePart.getTreeViewer();
+		fTreeViewer.setContentProvider(new ContentProvider());
+		fTreeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 //		initDragAndDrop();
 	}
 
 	protected void initDragAndDrop() {
-		clipboard = new Clipboard(treeViewer.getControl().getDisplay());
+		fClipboard = new Clipboard(fTreeViewer.getControl().getDisplay());
 		int ops = DND.DROP_COPY | DND.DROP_MOVE;
 		Transfer[] transfers = new Transfer[] {ModelDataTransfer.getInstance(), TextTransfer.getInstance() };
-		treeViewer.addDragSupport(ops, transfers, new ElementSectionDragAdapter(treeViewer, this));
-		treeViewer.addDropSupport(ops | DND.DROP_DEFAULT, transfers, new ElementSectionDropAdapter(this));
+		fTreeViewer.addDragSupport(ops, transfers, new ElementSectionDragAdapter(fTreeViewer, this));
+		fTreeViewer.addDropSupport(ops | DND.DROP_DEFAULT, transfers, new ElementSectionDropAdapter(this));
 	}
 
 	TreeViewer getTreeViewer() {
-		return treeViewer;
+		return fTreeViewer;
 	}
 
 	protected void buttonSelected(int index) {
@@ -143,9 +142,9 @@ public class ElementSection extends TreeSection {
 	}
 
 	public void dispose() {
-		if (clipboard != null) {
-			clipboard.dispose();
-			clipboard = null;
+		if (fClipboard != null) {
+			fClipboard.dispose();
+			fClipboard = null;
 		}
 		super.dispose();
 	}
@@ -153,7 +152,7 @@ public class ElementSection extends TreeSection {
 	public boolean doGlobalAction(String actionId) {
 		boolean cut = actionId.equals(ActionFactory.CUT.getId());
 		if (cut || actionId.equals(ActionFactory.DELETE.getId())) {
-			ISelection sel = treeViewer.getSelection();
+			ISelection sel = fTreeViewer.getSelection();
 			Object obj = ((IStructuredSelection) sel).getFirstElement();
 			if (obj != null)
 				handleDelete(obj);
@@ -161,10 +160,10 @@ public class ElementSection extends TreeSection {
 			// the selection to the clipboard
 			return !cut;
 		}
-//		if (actionId.equals(ActionFactory.PASTE.getId())) {
-//			doPaste();
-//			return true;
-//		}
+		if (actionId.equals(ActionFactory.PASTE.getId())) {
+			doPaste();
+			return true;
+		}
 		return false;
 	}
 
@@ -172,21 +171,21 @@ public class ElementSection extends TreeSection {
 		if (object instanceof ISchemaElement
 				|| object instanceof ISchemaAttribute
 				|| object instanceof ISchemaCompositor) {
-			treeViewer.setSelection(new StructuredSelection(object), true);
+			fTreeViewer.setSelection(new StructuredSelection(object), true);
 			return true;
 		}
 		return false;
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
-		final ISelection selection = treeViewer.getSelection();
+		final ISelection selection = fTreeViewer.getSelection();
 		final Object object = ((IStructuredSelection) selection).getFirstElement();
 
 		MenuManager submenu = new MenuManager(PDEUIMessages.Menus_new_label);
 		if (object == null || object instanceof SchemaElement) {
-			newElementAction.setSchema(schema);
-			newElementAction.setEnabled(schema.isEditable());
-			submenu.add(newElementAction);
+			fNewElementAction.setSchema(fSchema);
+			fNewElementAction.setEnabled(fSchema.isEditable());
+			submenu.add(fNewElementAction);
 		}
 		if (object != null) {
 			ISchemaElement element = null;
@@ -197,9 +196,9 @@ public class ElementSection extends TreeSection {
 			
 			if (element != null	&& !(element instanceof ISchemaRootElement)
 					&& !(element instanceof ISchemaObjectReference)) { //$NON-NLS-1$
-				newAttributeAction.setElement((SchemaElement) element);
-				newAttributeAction.setEnabled(schema.isEditable());
-				submenu.add(newAttributeAction);
+				fNewAttributeAction.setElement((SchemaElement) element);
+				fNewAttributeAction.setEnabled(fSchema.isEditable());
+				submenu.add(fNewAttributeAction);
 			}
 		}
 		if (object instanceof SchemaElement || object instanceof SchemaCompositor) {
@@ -241,7 +240,7 @@ public class ElementSection extends TreeSection {
 					}
 				};
 				deleteAction.setText(PDEUIMessages.Actions_delete_label);
-				deleteAction.setEnabled(schema.isEditable());
+				deleteAction.setEnabled(fSchema.isEditable());
 				manager.add(deleteAction);
 			}
 		}
@@ -289,7 +288,7 @@ public class ElementSection extends TreeSection {
 	}
 
 	private void handleNewAttribute() {
-		Object object = ((IStructuredSelection) treeViewer.getSelection()).getFirstElement();
+		Object object = ((IStructuredSelection) fTreeViewer.getSelection()).getFirstElement();
 		if (object != null) {
 			SchemaElement element = null;
 			if (object instanceof SchemaElement)
@@ -298,21 +297,21 @@ public class ElementSection extends TreeSection {
 				element = (SchemaElement) ((SchemaAttribute) object).getParent();
 			
 			if (element != null && !(element instanceof ISchemaRootElement)) { //$NON-NLS-1$
-				newAttributeAction.setElement(element);
-				newAttributeAction.run();
+				fNewAttributeAction.setElement(element);
+				fNewAttributeAction.run();
 			}
 		}
 	}
 
 	private void handleNewElement() {
-		newElementAction.setSchema(schema);
-		newElementAction.run();
+		fNewElementAction.setSchema(fSchema);
+		fNewElementAction.run();
 	}
 
 	public void initialize() {
-		this.schema = (Schema) getPage().getModel();
-		treeViewer.setInput(schema);
-		getTreePart().setButtonEnabled(0, schema.isEditable());
+		this.fSchema = (Schema) getPage().getModel();
+		fTreeViewer.setInput(fSchema);
+		getTreePart().setButtonEnabled(0, fSchema.isEditable());
 		getTreePart().setButtonEnabled(1, false);
 	}
 
@@ -328,60 +327,60 @@ public class ElementSection extends TreeSection {
 		for (int i = 0; i < objects.length; i++) {
 			Object obj = objects[0];
 			if (obj instanceof SchemaElementReference) {
-				treeViewer.refresh(((SchemaElementReference)obj).getCompositor());
+				fTreeViewer.refresh(((SchemaElementReference)obj).getCompositor());
 				if (e.getChangeType() == IModelChangedEvent.INSERT)
-					treeViewer.setSelection(new StructuredSelection(obj), true);
+					fTreeViewer.setSelection(new StructuredSelection(obj), true);
 			} else if (obj instanceof ISchemaElement || obj instanceof ISchemaAttribute) {
 				if (e.getChangeType() == IModelChangedEvent.CHANGE) {
 					String changeProp = e.getChangedProperty();
 					if (changeProp.equals(ISchemaObject.P_NAME) 
 							|| changeProp.equals(SchemaAttribute.P_KIND))
-						treeViewer.update(obj, null);
+						fTreeViewer.update(obj, null);
 					Object typeCheck = e.getNewValue();
 					if (typeCheck instanceof ISchemaComplexType 
 							&& changeProp.equals(SchemaElement.P_TYPE)
 							&& obj instanceof ISchemaElement) {
-						treeViewer.refresh(typeCheck);
-						treeViewer.setSelection(new StructuredSelection(typeCheck), true);
+						fTreeViewer.refresh(typeCheck);
+						fTreeViewer.setSelection(new StructuredSelection(typeCheck), true);
 					}
 				} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
 					ISchemaObject sobj = (ISchemaObject) obj;
 					ISchemaObject parent = sobj.getParent();
-					treeViewer.add(parent, sobj);
-					treeViewer.setSelection(new StructuredSelection(obj), true);
+					fTreeViewer.add(parent, sobj);
+					fTreeViewer.setSelection(new StructuredSelection(obj), true);
 				} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 					ISchemaObject sobj = (ISchemaObject) obj;
 					ISchemaObject parent = sobj.getParent();
-					treeViewer.remove(obj);
-					treeViewer.setSelection(new StructuredSelection(parent), true);
+					fTreeViewer.remove(obj);
+					fTreeViewer.setSelection(new StructuredSelection(parent), true);
 				}
 			} else if (obj instanceof ISchemaCompositor || obj instanceof ISchemaObjectReference) {
 				final ISchemaObject sobj = (ISchemaObject) obj;
 				ISchemaObject parent = sobj.getParent();
 				if (e.getChangeType() == IModelChangedEvent.CHANGE) {
-					treeViewer.update(sobj, null);
+					fTreeViewer.update(sobj, null);
 				} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
-					treeViewer.add(parent, sobj);
-					treeViewer.getTree().getDisplay().asyncExec(new Runnable() {
+					fTreeViewer.add(parent, sobj);
+					fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
 						public void run() {
-							treeViewer.setSelection(new StructuredSelection(sobj), true);
+							fTreeViewer.setSelection(new StructuredSelection(sobj), true);
 						}
 					});
 				} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
-					treeViewer.remove(sobj);
-					treeViewer.setSelection(new StructuredSelection(parent), true);
+					fTreeViewer.remove(sobj);
+					fTreeViewer.setSelection(new StructuredSelection(parent), true);
 				}
 			} else if (obj instanceof ISchemaComplexType) {
 				// first compositor added/removed
-				treeViewer.refresh();
+				fTreeViewer.refresh();
 				if (e.getChangeType() == IModelChangedEvent.INSERT ||
 						e.getChangeType() == IModelChangedEvent.CHANGE) {
 					ISchemaComplexType type = (ISchemaComplexType) obj;
 					final ISchemaCompositor compositor = type.getCompositor();
 					if (compositor != null) {
-						treeViewer.getTree().getDisplay().asyncExec(new Runnable() {
+						fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
 							public void run() {
-								treeViewer.setSelection(new StructuredSelection(compositor), true);
+								fTreeViewer.setSelection(new StructuredSelection(compositor), true);
 							}
 						});
 					}
@@ -397,14 +396,14 @@ public class ElementSection extends TreeSection {
 	}
 
 	public void setFocus() {
-		treeViewer.getTree().setFocus();
-		getPage().getPDEEditor().setSelection(treeViewer.getSelection());
+		fTreeViewer.getTree().setFocus();
+		getPage().getPDEEditor().setSelection(fTreeViewer.getSelection());
 	}
 
 	private void updateButtons() {
-		if (!schema.isEditable())
+		if (!fSchema.isEditable())
 			return;
-		Object object = ((IStructuredSelection) treeViewer.getSelection()).getFirstElement();
+		Object object = ((IStructuredSelection) fTreeViewer.getSelection()).getFirstElement();
 		ISchemaObject sobject = (ISchemaObject) object;
 
 		boolean canAddAttribute = false;
@@ -422,99 +421,99 @@ public class ElementSection extends TreeSection {
 		getTreePart().setButtonEnabled(1, canAddAttribute);
 	}
 
-//	public void doPaste(Object target, Object[] objects) {
-//		for (int i = 0; i < objects.length; i++) {
-//			Object object = objects[i];
-//			Object realTarget = getRealTarget(target, object);
-//			Object sibling = getSibling(target, object);
-//			if (realTarget == null)
-//				continue;
-//			doPaste(realTarget, sibling, object);
-//		}
-//	}
+	public void doPaste(Object target, Object[] objects) {
+		for (int i = 0; i < objects.length; i++) {
+			Object object = objects[i];
+			Object realTarget = getRealTarget(target, object);
+			Object sibling = getSibling(target, object);
+			if (realTarget == null)
+				continue;
+			doPaste(realTarget, sibling, object);
+		}
+	}
 
-//	private Object getSibling(Object target, Object object) {
-//		if (target instanceof ISchemaElement && object instanceof ISchemaElement)
-//			return target;
-//		if (target instanceof ISchemaAttribute && object instanceof ISchemaAttribute)
-//			return target;
-//		return null;
-//	}
+	private Object getSibling(Object target, Object object) {
+		if (target instanceof ISchemaElement && object instanceof ISchemaElement)
+			return target;
+		if (target instanceof ISchemaAttribute && object instanceof ISchemaAttribute)
+			return target;
+		return null;
+	}
 
-//	private Object getRealTarget(Object target, Object object) {
-//		if (object instanceof ISchemaObjectReference) {
-//			return target;
-//		}
-//		if (object instanceof ISchemaElement) {
-//			return schema;
-//		}
-//		if (object instanceof ISchemaAttribute) {
-//			if (target instanceof ISchemaAttribute) {
-//				// add it to the parent of the selected attribute
-//				return ((ISchemaAttribute) target).getParent();
-//			}
-//			if (target instanceof ISchemaElement)
-//				return target;
-//		}
-//		return null;
-//	}
+	private Object getRealTarget(Object target, Object object) {
+		if (object instanceof ISchemaObjectReference) {
+			return target;
+		}
+		if (object instanceof ISchemaElement) {
+			return fSchema;
+		}
+		if (object instanceof ISchemaAttribute) {
+			if (target instanceof ISchemaAttribute) {
+				// add it to the parent of the selected attribute
+				return ((ISchemaAttribute) target).getParent();
+			}
+			if (target instanceof ISchemaElement)
+				return target;
+		}
+		return null;
+	}
 
-//	private void doPaste(Object realTarget, Object sibling, Object object) {
-//		if (object instanceof ISchemaRootElement) {
-//			// do not paste root elements
-//		} else if (realTarget instanceof ISchemaObjectReference) {
-//			
-//		} else if (object instanceof ISchemaObjectReference) {
-//			
-//		} else if (object instanceof ISchemaElement) {
-//			SchemaElement element = (SchemaElement) object;
-//			element.setParent(schema);
-//			schema.addElement(element, (ISchemaElement) sibling);
-//			schema.updateReferencesFor(element, ISchema.REFRESH_ADD);
-//		} else if (object instanceof ISchemaAttribute) {
-//			SchemaElement element = (SchemaElement) realTarget;
-//			SchemaAttribute attribute = (SchemaAttribute) object;
-//			attribute.setParent(element);
-//			ISchemaType type = element.getType();
-//			SchemaComplexType complexType = null;
-//			if (!(type instanceof ISchemaComplexType)) {
-//				complexType = new SchemaComplexType(element.getSchema());
-//				element.setType(complexType);
-//			} else {
-//				complexType = (SchemaComplexType) type;
-//			}
-//			complexType.addAttribute(attribute, (ISchemaAttribute) sibling);
-//		}
-//	}
+	private void doPaste(Object realTarget, Object sibling, Object object) {
+		if (object instanceof ISchemaRootElement) {
+			// do not paste root elements
+		} else if (realTarget instanceof ISchemaObjectReference) {
+			
+		} else if (object instanceof ISchemaObjectReference) {
+			
+		} else if (object instanceof ISchemaElement) {
+			SchemaElement element = (SchemaElement) object;
+			element.setParent(fSchema);
+			fSchema.addElement(element, (ISchemaElement) sibling);
+			fSchema.updateReferencesFor(element, ISchema.REFRESH_ADD);
+		} else if (object instanceof ISchemaAttribute) {
+			SchemaElement element = (SchemaElement) realTarget;
+			SchemaAttribute attribute = (SchemaAttribute) object;
+			attribute.setParent(element);
+			ISchemaType type = element.getType();
+			SchemaComplexType complexType = null;
+			if (!(type instanceof ISchemaComplexType)) {
+				complexType = new SchemaComplexType(element.getSchema());
+				element.setType(complexType);
+			} else {
+				complexType = (SchemaComplexType) type;
+			}
+			complexType.addAttribute(attribute, (ISchemaAttribute) sibling);
+		}
+	}
 
-//	protected boolean canPaste(Object target, Object[] objects) {
-//		for (int i = 0; i < objects.length; i++) {
-//			Object obj = objects[i];
-//			if (obj instanceof ISchemaAttribute && target instanceof ISchemaAttribute) {
-//				continue;
-//			} else if (obj instanceof ISchemaObjectReference && target instanceof ISchemaCompositor) {
-//				continue;
-//			} else if (target instanceof ISchemaElement 
-//					&& !(target instanceof ISchemaObjectReference)
-//					&& !(obj instanceof ISchemaRootElement)) {
-//				continue;
-//			}
-//			return false;
-//		}
-//		return true;
-//	}
+	protected boolean canPaste(Object target, Object[] objects) {
+		for (int i = 0; i < objects.length; i++) {
+			Object obj = objects[i];
+			if (obj instanceof ISchemaAttribute && target instanceof ISchemaAttribute) {
+				continue;
+			} else if (obj instanceof ISchemaObjectReference && target instanceof ISchemaCompositor) {
+				continue;
+			} else if (target instanceof ISchemaElement 
+					&& !(target instanceof ISchemaObjectReference)
+					&& !(obj instanceof ISchemaRootElement)) {
+				continue;
+			}
+			return false;
+		}
+		return true;
+	}
 
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		Object object = selection.getFirstElement();
 		if (object instanceof SchemaElementReference)
-			treeViewer.setSelection(new StructuredSelection(((SchemaElementReference) object).getReferencedObject()));
+			fTreeViewer.setSelection(new StructuredSelection(((SchemaElementReference) object).getReferencedObject()));
 	}
 	void fireSelection(ISelection selection) {
-		if (selection == null) selection = treeViewer.getSelection();
-		treeViewer.setSelection(selection);
+		if (selection == null) selection = fTreeViewer.getSelection();
+		fTreeViewer.setSelection(selection);
 	}
 
 	public void handleCollapseAll() {
-		treeViewer.collapseAll();
+		fTreeViewer.collapseAll();
 	}
 }

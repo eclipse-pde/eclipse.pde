@@ -40,7 +40,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 public class SchemaFormPage extends PDEFormPage implements IModelChangedListener {
 	public static final String PAGE_ID = "form"; //$NON-NLS-1$
 	private ElementSection section;
-	private SchemaBlock block;
+	private SchemaBlock fBlock;
 	private AbstractSchemaDetails fCurrDetails;
 	private IColorManager fColorManager;
 	
@@ -91,13 +91,13 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 	
 	public SchemaFormPage(PDEFormEditor editor) {
 		super(editor, PAGE_ID, PDEUIMessages.SchemaEditor_FormPage_title);
-		block = new SchemaBlock();
+		fBlock = new SchemaBlock();
 		fColorManager = ColorManager.getDefault();
 	}
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
-		block.createContent(managedForm);
+		fBlock.createContent(managedForm);
 		DescriptionSection descSection = new DescriptionSection(this, form.getBody(), fColorManager);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		descSection.getSection().setLayoutData(gd);
@@ -106,6 +106,7 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.SCHEMA_EDITOR_MAIN);
 		initialize();
 	}
+	
 	public void initialize() {
 		ISchema schema = (ISchema)getModel();
 		getManagedForm().getForm().setText(schema.getName());

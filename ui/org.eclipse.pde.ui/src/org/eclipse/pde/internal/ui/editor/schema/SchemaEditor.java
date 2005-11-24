@@ -100,7 +100,9 @@ public class SchemaEditor extends MultiSourceEditor {
 	}
 	
 	protected void contextMenuAboutToShow(IMenuManager manager) {
-		super.contextMenuAboutToShow(manager);
+		ISelection selection = getSelection();
+		if (selection != null && !selection.isEmpty())
+			super.contextMenuAboutToShow(manager);
 	}
 	
 	void previewReferenceDocument() {

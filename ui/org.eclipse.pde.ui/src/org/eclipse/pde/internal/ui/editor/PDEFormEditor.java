@@ -69,7 +69,7 @@ import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.ui.part.MultiPageEditorSite;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-import org.eclipse.ui.views.properties.IPropertySheetPage;
+
 /**
  * A simple multi-page form editor that uses Eclipse Forms support. Example
  * plug-in is configured to create one instance of form colors that is shared
@@ -596,9 +596,6 @@ public abstract class PDEFormEditor extends FormEditor
 		if (page != null)
 			updateContentOutline(page);
 		return page;
-	}
-	protected IPropertySheetPage getPropertySheet(PDEFormPage page) {
-		return page.getPropertySheetPage();
 	}
 
 	/* package */IFormPage[] getPages() {

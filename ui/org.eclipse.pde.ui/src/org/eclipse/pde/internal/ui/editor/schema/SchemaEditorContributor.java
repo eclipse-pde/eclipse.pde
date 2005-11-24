@@ -19,7 +19,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
 
 public class SchemaEditorContributor extends PDEFormEditorContributor {
-	private PreviewAction previewAction;
+	private PreviewAction fPreviewAction;
 
 	class PreviewAction extends Action {
 		public PreviewAction() {
@@ -48,17 +48,17 @@ public class SchemaEditorContributor extends PDEFormEditorContributor {
 	public void contextMenuAboutToShow(IMenuManager mm, boolean addClipboard) {
 		super.contextMenuAboutToShow(mm, addClipboard);
 		mm.add(new Separator());
-		mm.add(previewAction);
+		mm.add(fPreviewAction);
 	}
 	
 	public Action getPreviewAction() {
-		return previewAction;
+		return fPreviewAction;
 	}
 
 	protected void makeActions() {
 		super.makeActions();
-		previewAction = new PreviewAction();
-		previewAction.setText(
+		fPreviewAction = new PreviewAction();
+		fPreviewAction.setText(
 			PDEUIMessages.SchemaEditorContributor_previewAction); 
 	}
 }
