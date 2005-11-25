@@ -197,7 +197,6 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		
 		fUse.select(fAttribute.getUse());
 		Object value = fAttribute.getValue();
-		fValue.setEditable(fAttribute.getUse() == 2);
 		fValue.setValue(value != null ? value.toString() : ""); //$NON-NLS-1$
 		
 		if (kind == IMetaAttribute.JAVA) {
@@ -218,7 +217,7 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		}
 		boolean editable = fAttribute.getSchema().isEditable();
 		updateParts(isStringType && kind == IMetaAttribute.STRING, kind == IMetaAttribute.JAVA, editable);
-		fValue.setEditable(editable);
+		fValue.setEditable(editable && fAttribute.getUse() == 2);
 		fName.setEditable(editable);
 		fDeprecated.setEnabled(editable);
 		fType.setEnabled(editable);
