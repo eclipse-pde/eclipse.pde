@@ -17,7 +17,6 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
-import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
@@ -25,16 +24,15 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.widgets.Control;
 
 public class ElementSectionDragAdapter extends DragSourceAdapter {
-	ISelectionProvider selectionProvider;
-	Object dragData;
-	ElementSection section;
+	private ISelectionProvider fSelectionProvider;
+	private Object fDragData;
 
 	/**
 	 * NavigatorDragAction constructor comment.
 	 */
-	public ElementSectionDragAdapter(ISelectionProvider provider, ElementSection section) {
-		selectionProvider = provider;
-		this.section = section;
+	public ElementSectionDragAdapter(ISelectionProvider provider) {
+		fSelectionProvider = provider;
+
 	}
 
 	/**
@@ -46,14 +44,14 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 			return;
 		if (ModelDataTransfer.getInstance().isSupportedType(event.dataType)) {
 			event.data = getSelectedModelObjects();
-			dragData = event.data;
+			fDragData = event.data;
 			return;
 		}
 		if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
 			event.data =
 				createTextualRepresentation(
-					(IStructuredSelection) selectionProvider.getSelection());
-			dragData = null;
+					(IStructuredSelection) fSelectionProvider.getSelection());
+			fDragData = null;
 			return;
 		}
 	}
@@ -84,21 +82,13 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 	}
 
 	public void dragFinished(DragSourceEvent event) {
-		if (event.doit == false || dragData == null)
+		if (event.doit == false || fDragData == null)
 			return;
-		if (event.detail == DND.DROP_MOVE) {
-			ISchemaObject[] objects = (ISchemaObject[]) dragData;
-
-			for (int i = 0; i < objects.length; i++) {
-				ISchemaObject obj = objects[i];
-				section.handleDelete(obj);
-			}
-		}
-		dragData = null;
+		fDragData = null;
 	}
 
 	private boolean canDrag() {
-		return canCopy((IStructuredSelection) selectionProvider.getSelection());
+		return canCopy((IStructuredSelection) fSelectionProvider.getSelection());
 	}
 
 	private boolean canCopy(IStructuredSelection selection) {
@@ -118,7 +108,7 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 
 	private ISchemaObject[] getSelectedModelObjects() {
 		return createObjectRepresentation(
-			(IStructuredSelection) selectionProvider.getSelection());
+			(IStructuredSelection) fSelectionProvider.getSelection());
 	}
 
 	private ISchemaObject[] createObjectRepresentation(IStructuredSelection selection) {
@@ -132,5 +122,11 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 		}
 		return (ISchemaObject[]) objects.toArray(
 			new ISchemaObject[objects.size()]);
+	}
+	
+	public Object[] getDragData() {
+		if (fDragData instanceof Object[])
+			return (Object[])fDragData;
+		return new Object[] { fDragData };
 	}
 }

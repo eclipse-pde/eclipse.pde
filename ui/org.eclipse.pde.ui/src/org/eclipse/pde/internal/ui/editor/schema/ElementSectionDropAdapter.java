@@ -20,35 +20,30 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TransferData;
 
 public class ElementSectionDropAdapter extends ViewerDropAdapter {
-	private TransferData currentTransfer;
-	private ElementSection section;
+	private TransferData fCurrentTransfer;
+	private ElementSection fSsection;
+	private ElementSectionDragAdapter fDragAdapter;
 
-	public ElementSectionDropAdapter(ElementSection section) {
+	public ElementSectionDropAdapter(ElementSectionDragAdapter dragAdapter, ElementSection section) {
 		super(section.getTreeViewer());
-		this.section = section;
+		fSsection = section;
+		fDragAdapter = dragAdapter;
 	}
 
 	/**
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#performDrop(java.lang.Object)
 	 */
 	public boolean performDrop(Object data) {
-		if (data instanceof Object[]) {
-			if (getCurrentOperation() == DND.DROP_LINK) {
-				section.doLink(getCurrentTarget(), (Object[])data);
-			} else {
-				section.doPaste(getCurrentTarget(), (Object[])data);
-			}
-			return true;
-		}
-		return false;
+		fSsection.handleOp(getCurrentTarget(), fDragAdapter.getDragData(), getCurrentOperation());
+		return true;
 	}
 
 	/**
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#validateDrop(java.lang.Object, int, org.eclipse.swt.dnd.TransferData)
 	 */
 	public boolean validateDrop(Object target, int operation, TransferData transferType) {
-		currentTransfer = transferType;
-		if (!ModelDataTransfer.getInstance().isSupportedType(currentTransfer))
+		fCurrentTransfer = transferType;
+		if (!ModelDataTransfer.getInstance().isSupportedType(fCurrentTransfer))
 			return false;
 		Object cargo = getSelectedObject();
 		
@@ -57,18 +52,18 @@ public class ElementSectionDropAdapter extends ViewerDropAdapter {
 			return (cargo instanceof ISchemaElement
 				&& (target instanceof ISchemaCompositor || target instanceof ISchemaObjectReference));
 			
-		if (cargo instanceof ISchemaObjectReference) {
+		if (cargo instanceof ISchemaObjectReference) { // dropping an element reference
 			// onto a compositor or reference
 			if ((target instanceof ISchemaCompositor 
 					|| target instanceof ISchemaObjectReference))
 				return true;
-		} else if (cargo instanceof ISchemaElement) { // droping an element
+		} else if (cargo instanceof ISchemaElement) { // dropping an element
 			// onto a non referenced element
 			if (isNonRefElement(target) || target == null)
 				return true;
 		} else if (cargo instanceof ISchemaCompositor) { // dropping a compositor
 			// onto a non referenced element
-			if (isNonRefElement(target))
+			if (isNonRefElement(target) || target instanceof ISchemaCompositor || target instanceof ISchemaObjectReference)
 				return true;
 		} else if (cargo instanceof ISchemaAttribute) { // dropping an attribute
 			// onto a non referenced element or attribute

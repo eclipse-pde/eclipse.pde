@@ -50,6 +50,7 @@ public class ElementSection extends TreeSection {
 	private NewElementAction fNewElementAction = new NewElementAction();
 	private NewAttributeAction fNewAttributeAction = new NewAttributeAction();
 	private Clipboard fClipboard;
+	private SchemaRearranger fRearranger;
 
 	class ContentProvider extends DefaultContentProvider implements	ITreeContentProvider {
 		public Object[] getElements(Object object) {
@@ -115,15 +116,16 @@ public class ElementSection extends TreeSection {
 		fTreeViewer = treePart.getTreeViewer();
 		fTreeViewer.setContentProvider(new ContentProvider());
 		fTreeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-//		initDragAndDrop();
+		initDragAndDrop();
 	}
 
 	protected void initDragAndDrop() {
 		fClipboard = new Clipboard(fTreeViewer.getControl().getDisplay());
 		int ops = DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK;
 		Transfer[] transfers = new Transfer[] {ModelDataTransfer.getInstance(), TextTransfer.getInstance() };
-		fTreeViewer.addDragSupport(ops, transfers, new ElementSectionDragAdapter(fTreeViewer, this));
-		fTreeViewer.addDropSupport(ops | DND.DROP_DEFAULT, transfers, new ElementSectionDropAdapter(this));
+		ElementSectionDragAdapter dragAdapter = new ElementSectionDragAdapter(fTreeViewer);
+		fTreeViewer.addDragSupport(ops, transfers, dragAdapter);
+		fTreeViewer.addDropSupport(ops | DND.DROP_DEFAULT, transfers, new ElementSectionDropAdapter(dragAdapter, this));
 	}
 
 	TreeViewer getTreeViewer() {
@@ -156,10 +158,6 @@ public class ElementSection extends TreeSection {
 
 	public boolean doGlobalAction(String actionId) {
 		boolean cut = actionId.equals(ActionFactory.CUT.getId());
-		// TODO DISABLED CUTTING
-		if (cut)
-			return false;
-		
 		if (cut || actionId.equals(ActionFactory.DELETE.getId())) {
 			ISelection sel = fTreeViewer.getSelection();
 			Object obj = ((IStructuredSelection) sel).getFirstElement();
@@ -285,11 +283,13 @@ public class ElementSection extends TreeSection {
 			ISchemaObject cparent = compositor.getParent();
 			if (cparent instanceof ISchemaElement) {
 				SchemaElement element = (SchemaElement) cparent;
-				SchemaComplexType complexType = (SchemaComplexType) element.getType();
-				if (complexType.getAttributeCount() == 0)
-					element.setType(new SchemaSimpleType(element.getSchema(), "string")); //$NON-NLS-1$
+				ISchemaType type = element.getType();
+				if (type instanceof SchemaComplexType
+						&& ((SchemaComplexType)type).getAttributeCount() != 0)
+					((SchemaComplexType)type).setCompositor(null);
 				else
-					complexType.setCompositor(null);
+					element.setType(new SchemaSimpleType(element.getSchema(), "string")); //$NON-NLS-1$
+					
 			} else if (cparent instanceof SchemaCompositor) {
 				((SchemaCompositor) cparent).removeChild(compositor);
 			}
@@ -319,6 +319,7 @@ public class ElementSection extends TreeSection {
 
 	public void initialize() {
 		this.fSchema = (Schema) getPage().getModel();
+		fRearranger = new SchemaRearranger(fSchema);
 		fTreeViewer.setInput(fSchema);
 		getTreePart().setButtonEnabled(0, fSchema.isEditable());
 		getTreePart().setButtonEnabled(1, false);
@@ -342,8 +343,9 @@ public class ElementSection extends TreeSection {
 			} else if (obj instanceof ISchemaElement || obj instanceof ISchemaAttribute) {
 				if (e.getChangeType() == IModelChangedEvent.CHANGE) {
 					String changeProp = e.getChangedProperty();
-					if (changeProp.equals(ISchemaObject.P_NAME) 
-							|| changeProp.equals(SchemaAttribute.P_KIND))
+					if (changeProp != null
+							&& (changeProp.equals(ISchemaObject.P_NAME) 
+							|| changeProp.equals(SchemaAttribute.P_KIND)))
 						fTreeViewer.update(obj, null);
 					Object typeCheck = e.getNewValue();
 					if (typeCheck instanceof ISchemaComplexType 
@@ -351,6 +353,8 @@ public class ElementSection extends TreeSection {
 							&& obj instanceof ISchemaElement) {
 						fTreeViewer.refresh(typeCheck);
 						fTreeViewer.setSelection(new StructuredSelection(typeCheck), true);
+					} else {
+						fTreeViewer.refresh(obj);
 					}
 				} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
 					ISchemaObject sobj = (ISchemaObject) obj;
@@ -381,7 +385,7 @@ public class ElementSection extends TreeSection {
 				}
 			} else if (obj instanceof ISchemaComplexType) {
 				// first compositor added/removed
-				fTreeViewer.refresh();
+				fTreeViewer.refresh(((ISchemaComplexType)obj).getCompositor());
 				if (e.getChangeType() == IModelChangedEvent.INSERT ||
 						e.getChangeType() == IModelChangedEvent.CHANGE) {
 					ISchemaComplexType type = (ISchemaComplexType) obj;
@@ -394,6 +398,8 @@ public class ElementSection extends TreeSection {
 						});
 					}
 				}
+			} else if (obj instanceof ISchema) {
+				fTreeViewer.refresh();
 			}
 		}
 	}
@@ -430,17 +436,6 @@ public class ElementSection extends TreeSection {
 		getTreePart().setButtonEnabled(1, canAddAttribute);
 	}
 
-	public void doPaste(Object target, Object[] objects) {
-		for (int i = 0; i < objects.length; i++) {
-			Object object = objects[i];
-			Object realTarget = getRealTarget(target, object);
-			Object sibling = getSibling(target, object);
-			if (realTarget == null)
-				continue;
-			doPaste(realTarget, sibling, object);
-		}
-	}
-
 	private Object getSibling(Object target, Object object) {
 		if (target instanceof ISchemaElement && object instanceof ISchemaElement)
 			return target;
@@ -469,66 +464,14 @@ public class ElementSection extends TreeSection {
 				return target;
 		}
 		if (object instanceof ISchemaCompositor) {
+			if (target instanceof SchemaElementReference) 
+				return ((SchemaElementReference)target).getCompositor();
 			if (target instanceof ISchemaElement)
 				return target;
-			if (target instanceof ISchemaCompositor) {
+			if (target instanceof ISchemaCompositor)
 				return target;
-			}
 		}
 		return null;
-	}
-
-	private void doPaste(Object realTarget, Object sibling, Object object) {
-		//	TODO DISABLED PASTING
-		if (true)
-			return;
-		if (object instanceof ISchemaCompositor 
-				&& realTarget instanceof ISchemaObject) {
-			SchemaCompositor compositor = new SchemaCompositor(
-					(ISchemaObject)realTarget,
-					((ISchemaCompositor)object).getKind());
-			if (realTarget instanceof SchemaElement) {
-				SchemaElement element = (SchemaElement)realTarget;
-				SchemaComplexType type = null;
-				if (element.getType() instanceof SchemaComplexType) {
-					type = (SchemaComplexType) element.getType();
-					type.setCompositor(compositor);
-				} else {
-					type = new SchemaComplexType(element.getSchema());
-					type.setCompositor(compositor);
-					element.setType(type);
-				}
-			} else if (realTarget instanceof SchemaCompositor) {
-				((SchemaCompositor) realTarget).addChild(compositor);
-			}
-		} else if (object instanceof SchemaElementReference) {
-			if (realTarget instanceof SchemaCompositor) {
-				SchemaElementReference oldRef = (SchemaElementReference)object;
-				SchemaCompositor parent = (SchemaCompositor) realTarget;
-				String refName = oldRef.getReferenceName();
-				SchemaElementReference reference = new SchemaElementReference(parent, refName);
-				reference.setReferencedObject(fSchema.findElement(refName));
-				parent.addChild(reference);
-			}
-		} else if (object instanceof ISchemaElement) {
-			SchemaElement element = (SchemaElement) object;
-			element.setParent(fSchema);
-			fSchema.addElement(element, (ISchemaElement) sibling);
-			fSchema.updateReferencesFor(element, ISchema.REFRESH_ADD);
-		} else if (object instanceof ISchemaAttribute) {
-			SchemaElement element = (SchemaElement) realTarget;
-			SchemaAttribute attribute = (SchemaAttribute) object;
-			attribute.setParent(element);
-			ISchemaType type = element.getType();
-			SchemaComplexType complexType = null;
-			if (!(type instanceof ISchemaComplexType)) {
-				complexType = new SchemaComplexType(element.getSchema());
-				element.setType(complexType);
-			} else {
-				complexType = (SchemaComplexType) type;
-			}
-			complexType.addAttribute(attribute, (ISchemaAttribute) sibling);
-		}
 	}
 
 	protected boolean canPaste(Object target, Object[] objects) {
@@ -562,14 +505,28 @@ public class ElementSection extends TreeSection {
 		fTreeViewer.collapseAll();
 	}
 
-	public void doLink(Object currentTarget, Object[] objects) {
+	protected void doPaste(Object target, Object[] objects) {
+		handleOp(target, objects, DND.DROP_COPY);
+	}
+
+	public void handleOp(Object currentTarget, Object[] objects, int currentOperation) {
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
 			Object realTarget = getRealTarget(currentTarget, object);
 			Object sibling = getSibling(currentTarget, object);
 			if (realTarget == null)
 				continue;
-			doLink(realTarget, sibling, object);
+			switch (currentOperation) {
+			case DND.DROP_COPY:
+				doPaste(realTarget, sibling, object);
+				break;
+			case DND.DROP_MOVE:
+				doMove(realTarget, sibling, object);
+				break;
+			case DND.DROP_LINK:
+				doLink(realTarget, sibling, object);
+				break;
+			}
 		}
 	}
 
@@ -585,6 +542,71 @@ public class ElementSection extends TreeSection {
 			SchemaElementReference reference = new SchemaElementReference(parent, refName);
 			reference.setReferencedObject(fSchema.findElement(refName));
 			parent.addChild(reference);
+		}
+	}
+	
+	private void doMove(Object realTarget, Object sibling, Object object) {
+		if (object instanceof ISchemaCompositor) {
+			fRearranger.moveCompositor(
+					(ISchemaObject)realTarget,
+					(ISchemaCompositor)object);
+		} else if (object instanceof SchemaElementReference) {
+			fRearranger.moveReference(
+					(SchemaElementReference)object,
+					(ISchemaCompositor)realTarget);
+		} else if (object instanceof ISchemaElement) {
+			fRearranger.moveElement(
+					(ISchemaObject)realTarget,
+					(ISchemaElement)object,
+					sibling != null ? (ISchemaAttribute)sibling : null);
+		} else if (object instanceof ISchemaAttribute) {
+			fRearranger.moveAttribute(
+					(ISchemaElement)realTarget,
+					(ISchemaAttribute)object,
+					sibling != null ? (ISchemaAttribute)sibling : null);
+		}
+	}
+	
+	private void doPaste(Object realTarget, Object sibling, Object object) {
+		if (object instanceof ISchemaCompositor && realTarget instanceof ISchemaObject) {
+			if (realTarget instanceof SchemaElement) {
+				SchemaElement element = (SchemaElement)realTarget;
+				SchemaComplexType type = null;
+				if (element.getType() instanceof SchemaComplexType) {
+					type = (SchemaComplexType) element.getType();
+					type.setCompositor((SchemaCompositor)object);
+				} else {
+					type = new SchemaComplexType(element.getSchema());
+					type.setCompositor((SchemaCompositor)object);
+					element.setType(type);
+				}
+			} else if (realTarget instanceof SchemaCompositor) {
+				((SchemaCompositor) realTarget).addChild((SchemaCompositor)object);
+			}
+		} else if (object instanceof SchemaElementReference) {
+			if (realTarget instanceof SchemaCompositor) {
+				SchemaCompositor parent = (SchemaCompositor) realTarget;
+				((SchemaElementReference)object).setCompositor(parent);
+				parent.addChild((SchemaElementReference)object);
+			}
+		} else if (object instanceof ISchemaElement) {
+			SchemaElement element = (SchemaElement) object;
+			element.setParent(fSchema);
+			fSchema.addElement(element, (ISchemaElement) sibling);
+			fSchema.updateReferencesFor(element, ISchema.REFRESH_ADD);
+		} else if (object instanceof ISchemaAttribute) {
+			SchemaElement element = (SchemaElement) realTarget;
+			SchemaAttribute attribute = (SchemaAttribute) object;
+			attribute.setParent(element);
+			ISchemaType type = element.getType();
+			SchemaComplexType complexType = null;
+			if (!(type instanceof ISchemaComplexType)) {
+				complexType = new SchemaComplexType(element.getSchema());
+				element.setType(complexType);
+			} else {
+				complexType = (SchemaComplexType) type;
+			}
+			complexType.addAttribute(attribute, (ISchemaAttribute) sibling);
 		}
 	}
 }

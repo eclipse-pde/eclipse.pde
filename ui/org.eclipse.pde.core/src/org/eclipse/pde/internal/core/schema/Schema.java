@@ -780,6 +780,31 @@ public class Schema extends PlatformObject implements ISchema {
 				new Object[] { docSection }, null));
 	}
 
+	public void moveElementToSibling(ISchemaElement element, ISchemaObject sibling) {
+		if (!isLoaded())
+			load();
+		int index = fElements.indexOf(element);
+		int newIndex;
+		if (sibling != null && fElements.contains(sibling))
+			newIndex = fElements.indexOf(sibling);
+		else
+			newIndex = fElements.size() - 1;
+		
+		if (index > newIndex) {
+			for (int i = index; i > newIndex; i--) {
+				fElements.set(i, fElements.elementAt(i - 1));
+			}
+		} else if (index < newIndex) {
+			for (int i = index; i < newIndex; i++) {
+				fElements.set(i, fElements.elementAt(i + 1));
+			}
+		} else // don't need to move
+			return;
+		fElements.set(newIndex, element);
+		fireModelChanged(new ModelChangedEvent(this, ModelChangedEvent.CHANGE,
+				new Object[] { this }, null));
+	}
+	
 	public void removeElement(ISchemaElement element) {
 		fElements.removeElement(element);
 		fireModelChanged(new ModelChangedEvent(this, ModelChangedEvent.REMOVE,

@@ -24,7 +24,7 @@ public class SchemaElementReference extends PlatformObject implements
 
 	private static final long serialVersionUID = 1L;
 
-	transient private ISchemaElement element;
+	private ISchemaElement element;
 
 	private ISchemaCompositor compositor;
 

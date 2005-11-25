@@ -59,6 +59,45 @@ public class SchemaCompositor
 				new Object[] { child },
 				null));
 	}
+	
+	public void moveChildToSibling(ISchemaObject element, ISchemaObject sibling) {
+		int index = children.indexOf(element);
+		int newIndex;
+		if (sibling != null && children.contains(sibling))
+			newIndex = children.indexOf(sibling);
+		else
+			newIndex = children.size() - 1;
+		
+		if (index > newIndex) {
+			for (int i = index; i > newIndex; i--) {
+				children.set(i, children.elementAt(i - 1));
+			}
+		} else if (index < newIndex) {
+			for (int i = index; i < newIndex; i++) {
+				children.set(i, children.elementAt(i + 1));
+			}
+		} else // don't need to move
+			return;
+		children.set(newIndex, element);
+		getSchema().fireModelChanged(new ModelChangedEvent(
+				getSchema(), ModelChangedEvent.CHANGE,
+				new Object[] { this }, null));
+	}
+	
+	public void addChild(ISchemaObject newChild, ISchemaObject afterSibling) {
+		int index = -1;
+		if (afterSibling != null) {
+			index = children.indexOf(afterSibling);
+		}
+		if (index != -1)
+			children.add(index + 1, newChild);
+		else
+			children.addElement(newChild);
+		getSchema().fireModelChanged(new ModelChangedEvent(
+				getSchema(), ModelChangedEvent.INSERT,
+				new Object[] { newChild }, null));
+	}
+	
 	public int getChildCount() {
 		return children.size();
 	}

@@ -52,6 +52,31 @@ public class SchemaComplexType
 				new Object[] { attribute },
 				null));
 	}
+	public void moveAttributeTo(ISchemaAttribute attribute, ISchemaAttribute sibling) {
+		int index = attributes.indexOf(attribute);
+		int newIndex;
+		if (sibling != null && attributes.contains(sibling))
+			newIndex = attributes.indexOf(sibling);
+		else
+			newIndex = attributes.size() - 1;
+		
+		if (index > newIndex) {
+			for (int i = index; i > newIndex; i--) {
+				attributes.set(i, attributes.elementAt(i - 1));
+			}
+		} else if (index < newIndex) {
+			for (int i = index; i < newIndex; i++) {
+				attributes.set(i, attributes.elementAt(i + 1));
+			}
+		} else // don't need to move
+			return;
+		attributes.set(newIndex, attribute);
+		getSchema().fireModelChanged(
+				new ModelChangedEvent(
+						getSchema(), 
+						ModelChangedEvent.CHANGE,
+						new Object[] { attribute.getParent() }, null));
+	}
 	public ISchemaAttribute getAttribute(String name) {
 		for (int i = 0; i < attributes.size(); i++) {
 			ISchemaAttribute attribute =
