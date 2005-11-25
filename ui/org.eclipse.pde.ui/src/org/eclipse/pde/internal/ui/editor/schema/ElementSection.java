@@ -359,7 +359,7 @@ public class ElementSection extends TreeSection {
 				} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
 					ISchemaObject sobj = (ISchemaObject) obj;
 					ISchemaObject parent = sobj.getParent();
-					fTreeViewer.add(parent, sobj);
+					fTreeViewer.refresh(parent);
 					fTreeViewer.setSelection(new StructuredSelection(obj), true);
 				} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 					ISchemaObject sobj = (ISchemaObject) obj;
