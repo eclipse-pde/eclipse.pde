@@ -22,7 +22,6 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
@@ -207,36 +206,36 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 	public void monitoredFileAdded(IFile file) {
 		String name = file.getName();
 		if (name.equalsIgnoreCase("MANIFEST.MF")) { //$NON-NLS-1$
-			if (!inputContextManager.hasContext(BundleInputContext.CONTEXT_ID)) {
+			if (!fInputContextManager.hasContext(BundleInputContext.CONTEXT_ID)) {
 				IEditorInput in = new FileEditorInput(file);
-				inputContextManager.putContext(in, new BundleInputContext(this, in, false));
+				fInputContextManager.putContext(in, new BundleInputContext(this, in, false));
 			}
 		}
 		else if (name.equalsIgnoreCase("plugin.xml")) { //$NON-NLS-1$
-			if (!inputContextManager.hasContext(PluginInputContext.CONTEXT_ID)) {
+			if (!fInputContextManager.hasContext(PluginInputContext.CONTEXT_ID)) {
 				IEditorInput in = new FileEditorInput(file);
-				inputContextManager.putContext(in, new PluginInputContext(this, in, false, false));
+				fInputContextManager.putContext(in, new PluginInputContext(this, in, false, false));
 			}
 		}
 		else if (name.equalsIgnoreCase("fragment.xml")) { //$NON-NLS-1$
-			if (!inputContextManager.hasContext(PluginInputContext.CONTEXT_ID)) {			
+			if (!fInputContextManager.hasContext(PluginInputContext.CONTEXT_ID)) {			
 				IEditorInput in = new FileEditorInput(file);
-				inputContextManager.putContext(in, new PluginInputContext(this, in, false, true));
+				fInputContextManager.putContext(in, new PluginInputContext(this, in, false, true));
 			}
 		}
 		else if (name.equalsIgnoreCase("build.properties")) { //$NON-NLS-1$
-			if (!inputContextManager.hasContext(BuildInputContext.CONTEXT_ID)) {			
+			if (!fInputContextManager.hasContext(BuildInputContext.CONTEXT_ID)) {			
 				IEditorInput in = new FileEditorInput(file);
-				inputContextManager.putContext(in, new BuildInputContext(this, in, false));
+				fInputContextManager.putContext(in, new BuildInputContext(this, in, false));
 			}
 		}
 	}
 	
 	public void ensurePluginContextPresence() {
-		if (inputContextManager.hasContext(PluginInputContext.CONTEXT_ID))
+		if (fInputContextManager.hasContext(PluginInputContext.CONTEXT_ID))
 			return;
-		IProject project = inputContextManager.getCommonProject();
-		String name = (inputContextManager.getAggregateModel() instanceof IFragmentModel)
+		IProject project = fInputContextManager.getCommonProject();
+		String name = (fInputContextManager.getAggregateModel() instanceof IFragmentModel)
 						? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
 		IFile file = project.getFile(name); 
 		WorkspacePluginModelBase model;
@@ -253,14 +252,14 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 		}
 		model.save();
 		IEditorInput in = new FileEditorInput(file);
-		inputContextManager.putContext(in, new PluginInputContext(this, in, false, false));
+		fInputContextManager.putContext(in, new PluginInputContext(this, in, false, false));
 
 		updateBuildProperties(name);
 	}
 	
     private void updateBuildProperties(String filename) {
         try {
-         InputContext context = inputContextManager.findContext(BuildInputContext.CONTEXT_ID);
+         InputContext context = fInputContextManager.findContext(BuildInputContext.CONTEXT_ID);
          if (context != null) {
                 IBuildModel buildModel = (IBuildModel)context.getModel();
                 IBuild build = buildModel.getBuild();
@@ -424,10 +423,6 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 		}
 	}
 	
-	public boolean canCopy(ISelection selection) {
-		return true;
-	}	
-
 	protected void addPages() {
 		try {
 			addPage(new OverviewPage(this));
@@ -436,7 +431,7 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 			if (showExtensionTabs()) {
 				addExtensionTabs();
 			}
-			if (inputContextManager.hasContext(BuildInputContext.CONTEXT_ID))
+			if (fInputContextManager.hasContext(BuildInputContext.CONTEXT_ID))
 				addPage(new BuildPage(this));
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
@@ -450,20 +445,20 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 	protected String computeInitialPageId() {
 		if (SHOW_SOURCE) {
 			SHOW_SOURCE = false;
-			InputContext primary = inputContextManager.getPrimaryContext();
+			InputContext primary = fInputContextManager.getPrimaryContext();
 			if (primary != null)
 				return primary.getId();
 		}
 		
 		String firstPageId = super.computeInitialPageId();
 		if (firstPageId == null) {
-			InputContext primary = inputContextManager.getPrimaryContext();
+			InputContext primary = fInputContextManager.getPrimaryContext();
 			if (primary == null)
 				return null;
 			if (BuildInputContext.CONTEXT_ID.equals(primary.getId()))
 				firstPageId = BuildPage.PAGE_ID;
 			else if (PluginInputContext.CONTEXT_ID.equals(primary.getId())) {
-				if (inputContextManager.hasContext(BundleInputContext.CONTEXT_ID))
+				if (fInputContextManager.hasContext(BundleInputContext.CONTEXT_ID))
 					firstPageId = ExtensionsPage.PAGE_ID;
 				else
 					firstPageId = OverviewPage.PAGE_ID;
@@ -534,19 +529,19 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 		if (object instanceof IFile) {
 			String name = ((IFile)object).getName();
 			if (name.equals("plugin.xml") || name.equals("fragment.xml")) //$NON-NLS-1$ //$NON-NLS-2$
-				context = inputContextManager.findContext(PluginInputContext.CONTEXT_ID);
+				context = fInputContextManager.findContext(PluginInputContext.CONTEXT_ID);
 			else if (name.equals("MANIFEST.MF")) //$NON-NLS-1$
-				context = inputContextManager.findContext(BundleInputContext.CONTEXT_ID);
+				context = fInputContextManager.findContext(BundleInputContext.CONTEXT_ID);
 			else if (name.equals("build.properties")) //$NON-NLS-1$
-				context = inputContextManager.findContext(BuildInputContext.CONTEXT_ID);
+				context = fInputContextManager.findContext(BuildInputContext.CONTEXT_ID);
 		} else if (object instanceof IBuildObject) {
-			context = inputContextManager.findContext(BuildInputContext.CONTEXT_ID);
+			context = fInputContextManager.findContext(BuildInputContext.CONTEXT_ID);
 		} else if (object instanceof IPluginExtensionPoint || object instanceof IPluginExtension) {
-			context = inputContextManager.findContext(PluginInputContext.CONTEXT_ID);
+			context = fInputContextManager.findContext(PluginInputContext.CONTEXT_ID);
 		} else {
-			context = inputContextManager.findContext(BundleInputContext.CONTEXT_ID);
+			context = fInputContextManager.findContext(BundleInputContext.CONTEXT_ID);
 			if (context == null)
-				context = inputContextManager.findContext(PluginInputContext.CONTEXT_ID);
+				context = fInputContextManager.findContext(PluginInputContext.CONTEXT_ID);
 		}		
 		return context;
 	}
@@ -564,7 +559,7 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
     		if (!PluginInputContext.CONTEXT_ID.equals(id)) {
     			if (SHOW_SOURCE) {
     				setActivePage(PluginInputContext.CONTEXT_ID);
-    			} else if (inputContextManager.hasContext(BundleInputContext.CONTEXT_ID)) {
+    			} else if (fInputContextManager.hasContext(BundleInputContext.CONTEXT_ID)) {
     				setActivePage(ExtensionsPage.PAGE_ID);
     			} else {
     				setActivePage(OverviewPage.PAGE_ID);
@@ -576,7 +571,7 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
     }
     
     public boolean showExtensionTabs() {
-    	if (inputContextManager.hasContext(PluginInputContext.CONTEXT_ID))
+    	if (fInputContextManager.hasContext(PluginInputContext.CONTEXT_ID))
     		return true;
     	return fShowExtensions && getAggregateModel().isEditable();
      }

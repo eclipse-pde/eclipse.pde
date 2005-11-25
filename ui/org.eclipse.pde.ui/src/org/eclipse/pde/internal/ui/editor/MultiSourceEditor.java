@@ -16,7 +16,7 @@ import org.eclipse.ui.forms.editor.IFormPage;
 
 public abstract class MultiSourceEditor extends PDEFormEditor {
 	protected void addSourcePage(String contextId) {
-		InputContext context = inputContextManager.findContext(contextId);
+		InputContext context = fInputContextManager.findContext(contextId);
 		if (context == null)
 			return;
 		PDESourcePage sourcePage;

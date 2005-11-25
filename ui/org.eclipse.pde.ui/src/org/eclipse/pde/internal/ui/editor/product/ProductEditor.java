@@ -93,7 +93,7 @@ public class ProductEditor extends PDEFormEditor {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
 	 */
 	protected InputContext getInputContext(Object object) {
-		return inputContextManager.findContext(ProductInputContext.CONTEXT_ID);
+		return fInputContextManager.findContext(ProductInputContext.CONTEXT_ID);
 	}
 
 	/* (non-Javadoc)

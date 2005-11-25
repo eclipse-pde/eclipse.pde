@@ -17,7 +17,6 @@ import java.util.Locale;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.core.isite.ISiteObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
@@ -27,11 +26,6 @@ import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
-import org.eclipse.swt.SWTError;
-import org.eclipse.swt.dnd.RTFTransfer;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
@@ -61,25 +55,6 @@ public class SiteEditor extends MultiSourceEditor {
 		return contextManager;
 	}
 	
-	public boolean canCopy(ISelection selection) {
-		return true;
-	}	
-	
-	protected boolean hasKnownTypes() {
-		try {
-			TransferData[] types = getClipboard().getAvailableTypes();
-			Transfer[] transfers =
-				new Transfer[] { TextTransfer.getInstance(), RTFTransfer.getInstance()};
-			for (int i = 0; i < types.length; i++) {
-				for (int j = 0; j < transfers.length; j++) {
-					if (transfers[j].isSupportedType(types[i]))
-						return true;
-				}
-			}
-		} catch (SWTError e) {
-		}
-		return false;
-	}
 	
 	public void monitoredFileAdded(IFile file) {
 	}
@@ -123,8 +98,7 @@ public class SiteEditor extends MultiSourceEditor {
 			IStorageEditorInput input) {
 		String name = input.getName().toLowerCase(Locale.ENGLISH);
 		if (name.startsWith("site.xml")) { //$NON-NLS-1$
-			manager.putContext(input,
-							new SiteInputContext(this, input, true));
+			manager.putContext(input, new SiteInputContext(this, input, true));
 		}
 	}
 	
@@ -165,7 +139,7 @@ public class SiteEditor extends MultiSourceEditor {
 	protected InputContext getInputContext(Object object) {
 		InputContext context = null;
 		if (object instanceof ISiteObject) {
-			context = inputContextManager
+			context = fInputContextManager
 					.findContext(SiteInputContext.CONTEXT_ID);
 		}
 		return context;

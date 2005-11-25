@@ -10,19 +10,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.context.*;
-import org.eclipse.pde.internal.ui.search.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.forms.editor.*;
-import org.eclipse.ui.part.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
+import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.PDESourcePage;
+import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.editor.context.InputContext;
+import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
+import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.forms.editor.IFormPage;
+import org.eclipse.ui.part.FileEditorInput;
 
 public class SchemaEditor extends MultiSourceEditor {
 	private ShowDescriptionAction previewAction;
@@ -40,24 +46,6 @@ public class SchemaEditor extends MultiSourceEditor {
 		return contextManager;
 	}
 	
-	public boolean canCopy(ISelection selection) {
-		return true;
-	}	
-	
-	protected boolean hasKnownTypes() {
-		try {
-			TransferData[] types = getClipboard().getAvailableTypes();
-			Transfer[] transfers = new Transfer[] { TextTransfer.getInstance(), RTFTransfer.getInstance()};
-			for (int i = 0; i < types.length; i++) {
-				for (int j = 0; j < transfers.length; j++) {
-					if (transfers[j].isSupportedType(types[i]))
-						return true;
-				}
-			}
-		} catch (SWTError e) {
-		}
-		return false;
-	}
 
 	public void monitoredFileAdded(IFile file) {
 		/*
@@ -150,7 +138,7 @@ public class SchemaEditor extends MultiSourceEditor {
 	protected InputContext getInputContext(Object object) {
 		InputContext context = null;
 		if (object instanceof ISchemaObject) {
-			context = inputContextManager.findContext(SchemaInputContext.CONTEXT_ID);
+			context = fInputContextManager.findContext(SchemaInputContext.CONTEXT_ID);
 		}		
 		return context;
 	}

@@ -10,19 +10,30 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.internal.core.build.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.context.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.forms.editor.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.views.properties.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.internal.core.build.IBuildObject;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
+import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.PDESourcePage;
+import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.editor.context.InputContext;
+import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.dnd.RTFTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.forms.editor.IFormPage;
+import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
 
 public class BuildEditor extends MultiSourceEditor {
 	public BuildEditor() {
@@ -44,9 +55,9 @@ public class BuildEditor extends MultiSourceEditor {
 	public void monitoredFileAdded(IFile file) {
 		String name = file.getName();
 		if (name.equalsIgnoreCase("build.properties")) { //$NON-NLS-1$
-			if (!inputContextManager.hasContext(BuildInputContext.CONTEXT_ID)) {
+			if (!fInputContextManager.hasContext(BuildInputContext.CONTEXT_ID)) {
 				IEditorInput in = new FileEditorInput(file);
-				inputContextManager.putContext(in, new BuildInputContext(this, in, false));
+				fInputContextManager.putContext(in, new BuildInputContext(this, in, false));
 			}
 		}
 	}
@@ -80,10 +91,6 @@ public class BuildEditor extends MultiSourceEditor {
 		manager.putContext(input, new BuildInputContext(this, input, true));
 	}
 
-	public boolean canCopy(ISelection selection) {
-		return true;
-	}
-	
 	protected void addPages() {
 		try {
 			if (getEditorInput() instanceof IFileEditorInput)
@@ -97,7 +104,7 @@ public class BuildEditor extends MultiSourceEditor {
 	protected String computeInitialPageId() {
 		String firstPageId = super.computeInitialPageId();
 		if (firstPageId == null) {
-			InputContext primary = inputContextManager.getPrimaryContext();
+			InputContext primary = fInputContextManager.getPrimaryContext();
 			if (primary.getId().equals(BuildInputContext.CONTEXT_ID))
 				firstPageId = BuildPage.PAGE_ID;
 			if (firstPageId == null)
@@ -158,7 +165,7 @@ public class BuildEditor extends MultiSourceEditor {
 	protected InputContext getInputContext(Object object) {
 		InputContext context = null;
 		if (object instanceof IBuildObject) {
-			context = inputContextManager.findContext(BuildInputContext.CONTEXT_ID);
+			context = fInputContextManager.findContext(BuildInputContext.CONTEXT_ID);
 		} 
 		return context;
 	}

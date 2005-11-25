@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IIdentifiable;
 import org.eclipse.pde.internal.core.build.IBuildObject;
@@ -134,9 +133,9 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 			 * in, false));
 			 */
 		} else if (name.equalsIgnoreCase("build.properties")) { //$NON-NLS-1$
-			if (!inputContextManager.hasContext(BuildInputContext.CONTEXT_ID)) {
+			if (!fInputContextManager.hasContext(BuildInputContext.CONTEXT_ID)) {
 				IEditorInput in = new FileEditorInput(file);
-				inputContextManager.putContext(in, new BuildInputContext(this,
+				fInputContextManager.putContext(in, new BuildInputContext(this,
 						in, false));
 			}
 		}
@@ -211,10 +210,6 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		}
 	}
 
-	public boolean canCopy(ISelection selection) {
-		return true;
-	}
-
 	protected void addPages() {
 		try {
 			addPage(new FeatureFormPage(this, PDEUIMessages.FeatureEditor_FeaturePage_title));
@@ -223,7 +218,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 			addPage(new FeatureIncludesPage(this, PDEUIMessages.FeatureEditor_IncludesPage_title));
 			addPage(new FeatureDependenciesPage(this, PDEUIMessages.FeatureEditor_DependenciesPage_title));
 			addPage(new FeatureAdvancedPage(this, PDEUIMessages.FeatureEditor_AdvancedPage_title));
-			if (inputContextManager.hasContext(BuildInputContext.CONTEXT_ID))
+			if (fInputContextManager.hasContext(BuildInputContext.CONTEXT_ID))
 				addPage(new BuildPage(this));
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
@@ -235,7 +230,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 	protected String computeInitialPageId() {
 		String firstPageId = super.computeInitialPageId();
 		if (firstPageId == null) {
-			InputContext primary = inputContextManager.getPrimaryContext();
+			InputContext primary = fInputContextManager.getPrimaryContext();
 			if (primary != null && FeatureInputContext.CONTEXT_ID.equals(primary.getId()))
 				firstPageId = FeatureFormPage.PAGE_ID;
 			if (firstPageId == null)
@@ -329,10 +324,10 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 	protected InputContext getInputContext(Object object) {
 		InputContext context = null;
 		if (object instanceof IBuildObject) {
-			context = inputContextManager
+			context = fInputContextManager
 					.findContext(BuildInputContext.CONTEXT_ID);
 		} else if (object instanceof IFeatureObject) {
-			context = inputContextManager
+			context = fInputContextManager
 					.findContext(FeatureInputContext.CONTEXT_ID);
 		}
 		return context;
