@@ -106,7 +106,7 @@ public class UnusedDependenciesJob extends Job {
 				}
 			}
 			// List can contain IPluginImports or ImportPackageObjects
-			showResults((Object[])list.toArray(new Object[list.size()]));
+			showResults(list.toArray());
 		} finally {
 			monitor.done();
 		}

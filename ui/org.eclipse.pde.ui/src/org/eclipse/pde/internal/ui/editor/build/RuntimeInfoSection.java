@@ -132,8 +132,7 @@ IModelChangedListener {
 					if (!libList.contains(libraries[i]))
 						libList.add(libraries[i]);
 				}
-				return (IBuildEntry[]) libList.toArray(new IBuildEntry[libList
-																	   .size()]);
+				return libList.toArray();
 			}
 			return new Object[0];
 		}
