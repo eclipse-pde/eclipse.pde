@@ -137,7 +137,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			
 			IBuild build = ClasspathUtilCore.getBuild(fModel);
 			if (build != null)
-				addSecondaryDependencies(added, entries, build);
+				addSecondaryDependencies(added, map, entries, build);
 			
 			// add Import-Package
 			Iterator iter = map.keySet().iterator();
@@ -218,23 +218,27 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 
 	private void addDependency(BundleDescription desc, HashSet added, Map map, ArrayList entries) throws CoreException {
+		addDependency(desc, added, map, entries, true);
+	}
+	
+	private void addDependency(BundleDescription desc, HashSet added, Map map, ArrayList entries, boolean useInclusion) throws CoreException {
 		if (desc == null || !added.add(desc.getSymbolicName()))
 			return;
 
-		addPlugin(desc, true, map, entries);
+		addPlugin(desc, useInclusion, map, entries);
 
 		if (hasExtensibleAPI(desc) && desc.getContainingState() != null) {
 			BundleDescription[] fragments = desc.getFragments();
 			for (int i = 0; i < fragments.length; i++) {
 				if (fragments[i].isResolved())
-					addDependency(fragments[i], added, map, entries);
+					addDependency(fragments[i], added, map, entries, useInclusion);
 			}
 		}
 
 		BundleSpecification[] required = desc.getRequiredBundles();
 		for (int i = 0; i < required.length; i++) {
 			if (required[i].isExported()) {
-				addDependency(getSupplier(required[i]), added, map, entries);
+				addDependency(getSupplier(required[i]), added, map, entries, useInclusion);
 			}
 		}
 	}
@@ -407,7 +411,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		}	
 	}
 	
-	private void addSecondaryDependencies(HashSet added, ArrayList entries, IBuild build) {
+	private void addSecondaryDependencies(HashSet added, Map map, ArrayList entries, IBuild build) {
 		try {
 		  IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
 		  if (entry != null) {
@@ -416,13 +420,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				  // Get PluginModelBase first to resolve system.bundle entry if it exists
 				  IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(tokens[i]);
 				  if (model != null) {
-					  String pluginId = model.getPluginBase().getId();
-					  if (added.add(pluginId)) {
-						  if (model.getUnderlyingResource() == null)
-							  addExternalPlugin(model, null, entries);
-						  else
-							  addProjectEntry(model.getUnderlyingResource().getProject(), null, entries);
-					  }
+					  addDependency(model.getBundleDescription(), added, map, entries, false);
 				  }
 			  }
 		  }
