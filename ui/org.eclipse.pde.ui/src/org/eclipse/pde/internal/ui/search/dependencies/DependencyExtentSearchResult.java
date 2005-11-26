@@ -10,17 +10,23 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dependencies;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.internal.ui.javaeditor.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.search.*;
-import org.eclipse.search.ui.*;
-import org.eclipse.search.ui.text.*;
-import org.eclipse.ui.*;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IParent;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.search.SearchResult;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.IEditorMatchAdapter;
+import org.eclipse.search.ui.text.IFileMatchAdapter;
+import org.eclipse.search.ui.text.Match;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 
 
 public class DependencyExtentSearchResult extends SearchResult implements IEditorMatchAdapter {
@@ -57,31 +63,16 @@ public class DependencyExtentSearchResult extends SearchResult implements IEdito
 	 * @see org.eclipse.search.ui.text.IEditorMatchAdapter#computeContainedMatches(org.eclipse.search.ui.text.AbstractTextSearchResult, org.eclipse.ui.IEditorPart)
 	 */
 	public Match[] computeContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
-		IEditorInput editorInput= editor.getEditorInput();
-		if (editorInput instanceof IFileEditorInput)  {
-			IFileEditorInput fileEditorInput= (IFileEditorInput) editorInput;
-			IFile file = fileEditorInput.getFile();
-			if (JavaCore.create(file) != null)
-				return computeContainedMatches(result, file);
-		} else if (editorInput instanceof IClassFileEditorInput) {
-			IClassFileEditorInput classFileEditorInput= (IClassFileEditorInput) editorInput;
+		IEditorInput editorInput = editor.getEditorInput();
+		IJavaElement element = (IJavaElement) editorInput.getAdapter(IJavaElement.class);
+		if (element != null) {
 			Set matches= new HashSet();
-			collectMatches(matches, classFileEditorInput.getClassFile());
+			collectMatches(matches, element);
 			return (Match[]) matches.toArray(new Match[matches.size()]);
 		}
 		return super.computeContainedMatches(result, editor);
 
 	}
-	
-	public Match[] computeContainedMatches(AbstractTextSearchResult result, IFile file) {
-		IJavaElement javaElement= JavaCore.create(file);
-		if (!(javaElement instanceof ICompilationUnit || javaElement instanceof IClassFile))
-			return new Match[0];
-		Set matches= new HashSet();
-		collectMatches(matches, javaElement);
-		return (Match[]) matches.toArray(new Match[matches.size()]);
-	}
-
 	
 	private void collectMatches(Set matches, IJavaElement element) {
 		Match[] m= getMatches(element);

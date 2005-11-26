@@ -41,7 +41,6 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
-import org.eclipse.osgi.framework.adaptor.core.AbstractFrameworkAdaptor;
 import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IFragmentModel;
@@ -218,7 +217,7 @@ public class SWTLaunchConfiguration extends
 						in = zipFile.getInputStream(zipEntry);
 						if (in != null) {
 							File file = new File(destination, zipEntry.getName());
-							AbstractFrameworkAdaptor.readFile(in, file);
+							CoreUtility.readFile(in, file);
 							if (!Platform.getOS().equals(Constants.OS_WIN32))
 								Runtime.getRuntime().exec(new String[] {"chmod", "755", file.getAbsolutePath()}).waitFor(); //$NON-NLS-1$ //$NON-NLS-2$
 						}

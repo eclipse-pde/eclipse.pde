@@ -55,7 +55,7 @@ public class PluginExportWizardPage extends ExportWizardPageWithTable {
 				}
 			}
 		}
-		return (IModel[]) result.toArray(new IModel[result.size()]);
+		return result.toArray();
 	}
 	
 	protected void hookHelpContext(Control control) {

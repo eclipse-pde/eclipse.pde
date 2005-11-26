@@ -10,14 +10,26 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import javax.xml.parsers.FactoryConfigurationError;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
@@ -35,6 +47,49 @@ import org.w3c.dom.Element;
 
 
 public class CoreUtility {
+	
+	/**
+	 * Read a file from an InputStream and write it to the file system.
+	 *
+	 * @param in InputStream from which to read.
+	 * @param file output file to create.
+	 * @exception IOException
+	 */
+	public static void readFile(InputStream in, File file) throws IOException {
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(file);
+
+			byte buffer[] = new byte[1024];
+			int count;
+			while ((count = in.read(buffer, 0, buffer.length)) > 0) {
+				fos.write(buffer, 0, count);
+			}
+
+			fos.close();
+			fos = null;
+
+			in.close();
+			in = null;
+		} catch (IOException e) {
+			// close open streams
+			if (fos != null) {
+				try {
+					fos.close();
+				} catch (IOException ee) {
+				}
+			}
+
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException ee) {
+				}
+			}
+
+			throw e;
+		}
+	}
 
 	public static void addNatureToProject(IProject proj, String natureId,
 			IProgressMonitor monitor) throws CoreException {
