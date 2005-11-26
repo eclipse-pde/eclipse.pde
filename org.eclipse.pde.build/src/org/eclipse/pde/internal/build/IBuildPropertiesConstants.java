@@ -47,6 +47,10 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_SRC_EXCLUDES = "src.excludes"; //$NON-NLS-1$
 	public static final String PROPERTY_SRC_INCLUDES = "src.includes"; //$NON-NLS-1$
 
+	public static final String PROPERTY_JAVAC_DEFAULT_ENCODING_PREFIX = "javacDefaultEncoding."; //$NON-NLS-1$
+	public static final String PROPERTY_JAVAC_CUSTOM_ENCODINGS_PREFIX = "javacCustomEncodings."; //$NON-NLS-1$
+	public static final String PROPERTY_JAVAC_WARNINGS_PREFIX = "javacWarnings."; //$NON-NLS-1$
+	
 	public static final String DEFAULT_MATCH_ALL = "*"; //$NON-NLS-1$
 	public static final String DEFAULT_FINAL_SHAPE = "*"; //$NON-NLS-1$
 	

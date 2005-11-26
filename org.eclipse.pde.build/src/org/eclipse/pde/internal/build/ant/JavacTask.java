@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.ant;
 
+import org.eclipse.pde.internal.build.IXMLConstants;
+
 /**
  * Wrapper class for the Ant javac task.
  */
@@ -27,6 +29,8 @@ public class JavacTask implements ITask {
 	protected String source;
 	protected String target;
 	protected String compileArgs;
+	protected String compileArgsFile;
+	protected String encoding;
 
 	/**
 	 * Default constructor for the class.
@@ -50,6 +54,7 @@ public class JavacTask implements ITask {
 		script.printAttribute("bootclasspath", bootclasspath, false); //$NON-NLS-1$
 		script.printAttribute("source", source, false); //$NON-NLS-1$
 		script.printAttribute("target", target, false); //$NON-NLS-1$
+		script.printAttribute("encoding", encoding, false); //$NON-NLS-1$
 		script.println(">"); //$NON-NLS-1$
 
 		script.indent++;
@@ -65,6 +70,10 @@ public class JavacTask implements ITask {
 			script.print("<src path="); //$NON-NLS-1$
 			script.printQuotes(srcdir[i]);
 			script.println("/>"); //$NON-NLS-1$
+		}
+
+		if (compileArgsFile != null) {
+			script.println("<compilerarg line=\"@" + compileArgsFile + "\" compiler=\"" + IXMLConstants.JDT_COMPILER_ADAPTER + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		}
 		script.indent--;
 		script.printEndTag("javac"); //$NON-NLS-1$
@@ -175,5 +184,13 @@ public class JavacTask implements ITask {
 
 	public void setCompileArgs(String args) {
 		this.compileArgs = args;
+	}
+
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
+	}
+
+	public void setCompileArgsFile(String file) {
+		this.compileArgsFile = file;
 	}
 }

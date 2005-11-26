@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.builder;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,8 +19,7 @@ import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.internal.runtime.PlatformURLFragmentConnection;
 import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.HostSpecification;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.PDEState;
@@ -27,8 +27,34 @@ import org.eclipse.update.core.IPluginEntry;
 import org.osgi.framework.Filter;
 
 public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConstants, IXMLConstants, IBuildPropertiesConstants {
+	public static class ClasspathElement {
+		private String path;
+		private String accessRules;
+		public ClasspathElement(String path, String accessRules){
+			this.path = path;
+			this.accessRules = accessRules;
+		}
+		public String toString() {
+			return path;
+		}
+		public String getPath() {
+			return path;
+		}
+		public String getAccessRules(){
+			return accessRules;
+		}
+		public boolean equals(Object obj) {
+			if(obj instanceof ClasspathElement){
+				ClasspathElement element = (ClasspathElement) obj;
+				return path.equals(element.getPath()) && accessRules.equals(element.getAccessRules());
+			}
+			return false;
+		}
+	}
+	
 	private ModelBuildScriptGenerator generator;
-
+	private Map visiblePackages = null;
+	
 	public ClasspathComputer3_0(ModelBuildScriptGenerator modelGenerator) {
 		this.generator = modelGenerator;
 	}
@@ -48,6 +74,8 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		String location = generator.getLocation(model);
 		Set addedPlugins = new HashSet(10); //The set of all the plugins already added to the classpath (this allows for optimization)
 
+		visiblePackages = getVisiblePackages(model);
+
 		//PREREQUISITE
 		addPrerequisites(model, classpath, location, pluginChain, addedPlugins);
 
@@ -58,6 +86,31 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 	}
 
+	private Map getVisiblePackages(BundleDescription model) {
+		Map packages = new HashMap(20);
+		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
+		ExportPackageDescription[] exports = helper.getVisiblePackages(model);
+		for (int i = 0; i < exports.length; i++) {
+			BundleDescription exporter = exports[i].getExporter();
+			if (exporter == null)
+				continue;
+			
+			boolean discouraged = helper.getAccessCode(model, exports[i]) == StateHelper.ACCESS_DISCOURAGED;
+			String pattern = exports[i].getName().replaceAll("\\.", "/") + "/*"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			String rule = (discouraged ? '~' : '+') + pattern;
+			
+			String rules = (String) packages.get(exporter.getSymbolicName());
+			if (rules != null) {
+				if (rules.indexOf(rule) == -1)
+					rules = (rules != null) ? rules + File.pathSeparator + rule : rule;
+			} else {
+				rules = rule;
+			}
+				
+			packages.put(exporter.getSymbolicName(), rules);
+		}
+		return packages;
+	}
 	/**
 	 * Add the specified plugin (including its jars) and its fragments 
 	 * @param plugin
@@ -165,6 +218,13 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	// basePath : the relative path between the plugin from which we are adding the classpath and the plugin that is requiring this entry 
 	// classpath : The classpath in which we want to add this path 
 	private void addPathAndCheck(String pluginId, IPath basePath, String libraryName, Properties modelProperties, List classpath) {
+		final String EXCLUDE_ALL_RULE = "-**/*"; //$NON-NLS-1$
+		String rules = null;
+		if (visiblePackages.containsKey(pluginId)) {
+			rules = "[" + (String) visiblePackages.get(pluginId) + File.pathSeparator + EXCLUDE_ALL_RULE + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+		} else {
+			rules = "[" + EXCLUDE_ALL_RULE + "]";  //$NON-NLS-1$//$NON-NLS-2$
+		}
 		String path = null;
 		if ("jar".equalsIgnoreCase(basePath.getFileExtension())) { //$NON-NLS-1$
 			path = basePath.toOSString();
@@ -174,15 +234,17 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		path = generator.replaceVariables(path, pluginId == null ? false : generator.getCompiledElements().contains(pluginId));
 		String secondaryPath = null;
 		if (generator.getCompiledElements().contains(pluginId)) {
-			if (modelProperties == null || modelProperties.getProperty(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX + libraryName) != null) 
+			if (modelProperties == null || modelProperties.getProperty(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX + libraryName) != null)
 				path = Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + path;
 			secondaryPath = Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/../" + pluginId + '/' + libraryName; //$NON-NLS-1$
 		}
-		if (!classpath.contains(path))
-			classpath.add(path);
+		ClasspathElement element = new ClasspathElement(path, rules);
+		if (!classpath.contains(element))
+			classpath.add(element);
 
-		if (secondaryPath != null && !classpath.contains(secondaryPath))
-			classpath.add(secondaryPath);
+		element = new ClasspathElement(secondaryPath, rules);
+		if (secondaryPath != null && !classpath.contains(element))
+			classpath.add(element);
 
 	}
 

@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.builder;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -19,6 +18,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.ant.FileSet;
 import org.eclipse.pde.internal.build.ant.JavacTask;
+import org.eclipse.pde.internal.build.builder.ClasspathComputer3_0.ClasspathElement;
 import org.eclipse.update.core.IPluginEntry;
 
 /**
@@ -506,7 +506,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		Properties bundleProperties = (Properties) model.getUserObject();
 		if (bundleProperties == null)
 			return;
-		
+
 		String qualifier = bundleProperties.getProperty(PROPERTY_QUALIFIER);
 		if (qualifier == null)
 			return;
@@ -864,6 +864,82 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	/**
+	 * generate compile settings for compiling this entry
+	 * warning levels, default encoding, custom encodings
+	 * @param javac
+	 * @param entry
+	 */
+	private void generateCompilerSettings(JavacTask javac, CompiledEntry entry, List classpath) {
+		final String ADAPTER_ENCODING = "#ADAPTER#ENCODING#"; //$NON-NLS-1$
+		final String ADAPTER_ACCESS = "#ADAPTER#ACCESS#"; //$NON-NLS-1$
+
+		Properties properties = null;
+		try {
+			properties = getBuildProperties();
+		} catch (CoreException e) {
+			return;
+		}
+		if (properties == null && classpath.size() == 0)
+			return;
+
+		String name = entry.getName(false);
+		if (name.equals(EXPANDED_DOT))
+			name = DOT;
+
+		String defaultEncodingVal = properties.getProperty(PROPERTY_JAVAC_DEFAULT_ENCODING_PREFIX + name);
+		if (defaultEncodingVal != null)
+			javac.setEncoding(defaultEncodingVal);
+
+		String customEncodingsVal = properties.getProperty(PROPERTY_JAVAC_CUSTOM_ENCODINGS_PREFIX + name);
+		String warningLevels = properties.getProperty(PROPERTY_JAVAC_WARNINGS_PREFIX + name);
+
+		if (customEncodingsVal == null && warningLevels == null && classpath.size() == 0) {
+			return;
+		}
+
+		String root = getLocation(model);
+		File file = new File(root, "javaCompiler." + name + ".args"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (file.exists()) {
+			file.delete();
+		}
+		Writer writer = null;
+		try {
+			try {
+				writer = new BufferedWriter(new FileWriter(file));
+
+				if (warningLevels != null) {
+					writer.write("-warn:" + warningLevels + "\n"); //$NON-NLS-1$//$NON-NLS-2$
+				}
+
+				if (customEncodingsVal != null) {
+					String[] encodings = customEncodingsVal.split(","); //$NON-NLS-1$
+					if (encodings.length > 0) {
+						for (int i = 0; i < encodings.length; i++) {
+							writer.write(ADAPTER_ENCODING + encodings[i] + "\n"); //$NON-NLS-1$
+						}
+					}
+				}
+				//handle access rules if we are using ClasspathComputer3_0
+				if (classpath.size() > 0 && classpath.get(0) instanceof ClasspathElement) {
+					for (Iterator iterator = classpath.iterator(); iterator.hasNext();) {
+						ClasspathElement element = (ClasspathElement) iterator.next();
+						//remove leading ../../..
+						String path = element.getPath().replaceFirst("^(\\.\\.[\\\\/])*", ""); //$NON-NLS-1$//$NON-NLS-2$
+						writer.write(ADAPTER_ACCESS + path + element.getAccessRules() + "\n"); //$NON-NLS-1$
+					}
+				}
+				javac.setCompileArgsFile(Utils.getPropertyFormat(PROPERTY_BASEDIR) + "/" + file.getName()); //$NON-NLS-1$
+			} finally {
+				if (writer != null)
+					writer.close();
+
+			}
+		} catch (IOException e1) {
+			//ignore
+		}
+	}
+
+	/**
 	 * Add the "jar" target to the given Ant script using the given classpath and
 	 * jar as parameters.
 	 * 
@@ -906,6 +982,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		javac.setTarget(Utils.getPropertyFormat(PROPERTY_BUNDLE_JAVAC_TARGET));
 		javac.setCompileArgs(Utils.getPropertyFormat(PROPERTY_JAVAC_COMPILERARG));
 		javac.setSrcdir(sources);
+		generateCompilerSettings(javac, entry, classpath);
+
 		script.print(javac);
 		script.printComment("Copy necessary resources"); //$NON-NLS-1$
 		FileSet[] fileSets = new FileSet[sources.length];
@@ -917,7 +995,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (customBuildCallbacks != null) {
 			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_POST_COMPILE + name, null, null, params, references);
 		}
-		
+
 		String jarLocation = getJARLocation(entry.getName(true));
 		script.printMkdirTask(new Path(jarLocation).removeLastSegments(1).toString());
 

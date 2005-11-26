@@ -499,31 +499,33 @@ public class AntScript {
 
 	/**
 	 * Print a <code>path</code> structure to the Ant Script.
+	 * The list of paths are printed using path.toString(), so paths
+	 * can be any Object.  Commonly String or ClasspathComputer3_0.ClasspathElement
 	 * @param tag   - tag for the structure, normally path or classpath 
 	 * @param id    - id for this structure
-	 * @param paths - list of paths
+	 * @param paths - list of paths. Paths are printed using path.toString()
 	 */
-	public void printPathStructure( String tag, String id, List paths ){
+	public void printPathStructure(String tag, String id, List paths) {
 		printTab();
-		print("<" + tag ); //$NON-NLS-1$
-		if( id != null )
-			print( " id=\"" + id + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		print("<" + tag); //$NON-NLS-1$
+		if (id != null)
+			print(" id=\"" + id + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		print(">"); //$NON-NLS-1$
 		println();
-		
-		if( paths != null ){
+
+		if (paths != null) {
 			indent++;
 			for (Iterator iter = paths.iterator(); iter.hasNext();) {
-				String path = (String) iter.next();
+				Object path = iter.next();
 				printTab();
 				print("<pathelement"); //$NON-NLS-1$
-				printAttribute("path", path, false); //$NON-NLS-1$
+				printAttribute("path", path.toString(), false); //$NON-NLS-1$
 				print("/>"); //$NON-NLS-1$
 				println();
 			}
 			indent--;
 		}
-		printEndTag(tag); 
+		printEndTag(tag);
 	}
 	
 	/**
