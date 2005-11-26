@@ -35,6 +35,10 @@ public class ImportPackageObject extends PackageObject {
     public ImportPackageObject(ManifestHeader header, ExportPackageDescription desc, String versionAttribute) {       
         super(header, desc.getName(), getVersion(desc), versionAttribute);
     }
+    
+    public ImportPackageObject(ManifestHeader header, String id, String version, String versionAttribute) {
+    	super(header, id, version, versionAttribute);
+    }
    
     public boolean isOptional() {
     	int manifestVersion = BundlePluginBase.getBundleManifestVersion(getHeader().getBundle());

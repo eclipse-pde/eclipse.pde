@@ -40,6 +40,8 @@ public interface ICoreConstants {
 	public static final String SELFHOSTING_BIN_EXLCUDES = "selfhosting.binExcludes"; //$NON-NLS-1$
 	public static final String EQUINOX_PROPERTY = "pluginProject.equinox"; //$NON-NLS-1$
 	public static final String EXTENSIONS_PROPERTY = "pluginProject.extensions"; //$NON-NLS-1$
+	public static final String SECONDARY_DEPENDENCIES = "secondary.dependencies"; //$NON-NLS-1$
+	public static final String RESOLVE_WITH_REQUIRE_BUNDLE = "resolve.requirebundle"; //$NON-NLS-1$
 	
 	// for backwards compatibility with Eclipse 3.0 bundle manifest files
 	public final static String PROVIDE_PACKAGE = "Provide-Package"; //$NON-NLS-1$

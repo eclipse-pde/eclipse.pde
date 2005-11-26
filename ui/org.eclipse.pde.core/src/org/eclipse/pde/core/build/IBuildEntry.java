@@ -48,6 +48,10 @@ public interface IBuildEntry extends IWritable {
 	 */	
 	public static final String JARS_EXTRA_CLASSPATH = "jars.extra.classpath"; //$NON-NLS-1$
 	/**
+	 * The name of the key that declares possible plug-in dependencies
+	 */	
+	public static final String SECONDARY_DEPENDENCIES = "secondary.libs"; //$NON-NLS-1$
+	/**
 	 * Adds the token to the list of token for this entry.
 	 * This method will throw a CoreException if
 	 * the model is not editable.

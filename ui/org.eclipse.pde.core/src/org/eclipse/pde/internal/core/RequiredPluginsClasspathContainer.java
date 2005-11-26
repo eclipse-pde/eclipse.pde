@@ -135,6 +135,10 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				addDependency(getSupplier(required[i]), added, map, entries);
 			}
 			
+			IBuild build = ClasspathUtilCore.getBuild(fModel);
+			if (build != null)
+				addSecondaryDependencies(added, entries, build);
+			
 			// add Import-Package
 			Iterator iter = map.keySet().iterator();
 			while (iter.hasNext()) {
@@ -144,7 +148,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 					addDependencyViaImportPackage(model.getBundleDescription(), added, map, entries);
 			}
 
-			addExtraClasspathEntries(added, entries);
+			if (build != null)
+				addExtraClasspathEntries(added, entries, build);
 
 			// add implicit dependencies
 			addImplicitDependencies(added, map, entries);
@@ -344,9 +349,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 					: false;
 	}
 	
-	protected void addExtraClasspathEntries(HashSet added, ArrayList entries) throws CoreException {
-		IBuild build = ClasspathUtilCore.getBuild(fModel);
-		IBuildEntry entry = (build == null) ? null : build.getEntry(IBuildEntry.JARS_EXTRA_CLASSPATH);
+	protected void addExtraClasspathEntries(HashSet added, ArrayList entries, IBuild build) throws CoreException {
+		IBuildEntry entry = build.getEntry(IBuildEntry.JARS_EXTRA_CLASSPATH);
 		if (entry == null)
 			return;
 
@@ -402,6 +406,31 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			}						
 		}	
 	}
+	
+	private void addSecondaryDependencies(HashSet added, ArrayList entries, IBuild build) {
+		try {
+		  IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
+		  if (entry != null) {
+			  String[] tokens = entry.getTokens();
+			  for (int i = 0; i < tokens.length; i++) {
+				  // Get PluginModelBase first to resolve system.bundle entry if it exists
+				  IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(tokens[i]);
+				  if (model != null) {
+					  String pluginId = model.getPluginBase().getId();
+					  if (added.add(pluginId)) {
+						  if (model.getUnderlyingResource() == null)
+							  addExternalPlugin(model, null, entries);
+						  else
+							  addProjectEntry(model.getUnderlyingResource().getProject(), null, entries);
+					  }
+				  }
+			  }
+		  }
+		} catch (CoreException e) {
+			return;
+		}
+	}
+
 	
 	private void addExtraLibrary(IPath path, IPluginModelBase model, ArrayList entries) throws CoreException {
 		IPath srcPath = null;
