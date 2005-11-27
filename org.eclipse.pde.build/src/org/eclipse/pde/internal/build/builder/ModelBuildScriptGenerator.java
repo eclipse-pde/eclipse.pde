@@ -510,7 +510,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		String qualifier = bundleProperties.getProperty(PROPERTY_QUALIFIER);
 		if (qualifier == null)
 			return;
-		script.print("<eclipse.versionReplacer path=\"" + location + "\" version=\"" + model.getVersion() + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		script.println("<eclipse.versionReplacer path=\"" + location + "\" version=\"" + model.getVersion() + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 
 	private void generatePermissionProperties(String directory) throws CoreException {
