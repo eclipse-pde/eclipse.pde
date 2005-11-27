@@ -66,7 +66,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		super(file);
 		fModel = PDECore.getDefault().getModelManager().findModel(file.getProject());
 		try {
-			if (fModel.getUnderlyingResource() != null)
+			if (fModel != null && fModel.getUnderlyingResource() != null)
 				fBuildModel = ClasspathUtilCore.getBuild(fModel);
 		} catch (CoreException e) {
 		}
