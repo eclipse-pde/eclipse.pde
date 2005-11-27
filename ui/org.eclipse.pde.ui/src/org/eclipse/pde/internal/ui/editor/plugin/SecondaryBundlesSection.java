@@ -149,6 +149,12 @@ public class SecondaryBundlesSection extends TableSection implements IModelChang
 		super(formPage, parent, Section.DESCRIPTION|Section.TWISTIE|Section.COMPACT, new String[] { ADD, REMOVE});
 		getSection().setText(PDEUIMessages.SecondaryBundlesSection_title); 
 		getSection().setDescription(PDEUIMessages.SecondaryBundlesSection_desc);
+		IBuildModel model = getBuildModel();
+		if (model != null) {
+			IBuildEntry entry = model.getBuild().getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
+			if (entry != null && entry.getTokens().length > 0)
+				getSection().setExpanded(true);
+		}
 	}
 
 	protected void createClient(Section section, FormToolkit toolkit) {
@@ -237,8 +243,8 @@ public class SecondaryBundlesSection extends TableSection implements IModelChang
 		}
 		IEclipsePreferences pref = new ProjectScope(fProject).getNode(PDECore.PLUGIN_ID);
 		
-		if (!fManageDepsButton.getSelection())
-			pref.putBoolean(ICoreConstants.SECONDARY_DEPENDENCIES, false);
+		if (fManageDepsButton.getSelection())
+			pref.putBoolean(ICoreConstants.SECONDARY_DEPENDENCIES, true);
 		else 
 			pref.remove(ICoreConstants.SECONDARY_DEPENDENCIES);
 		if (fImportPackageButton.getSelection())
@@ -269,7 +275,7 @@ public class SecondaryBundlesSection extends TableSection implements IModelChang
 			fProject = resource.getProject();
 			IEclipsePreferences pref = new ProjectScope(fProject).getNode(PDECore.PLUGIN_ID);
 			if (pref != null) {
-				fManageDepsButton.setSelection(pref.getBoolean(ICoreConstants.SECONDARY_DEPENDENCIES, true));
+				fManageDepsButton.setSelection(pref.getBoolean(ICoreConstants.SECONDARY_DEPENDENCIES, false));
 				boolean useRequireBundle = pref.getBoolean(ICoreConstants.RESOLVE_WITH_REQUIRE_BUNDLE, true);
 				fRequireBundleButton.setSelection(useRequireBundle);
 				fImportPackageButton.setSelection(!useRequireBundle);
