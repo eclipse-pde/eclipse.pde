@@ -413,7 +413,7 @@ public class InfoSection extends PDESection {
 	private void updateTabImage(CTabItem item) {
 		if (item == null)
 			return;
-		Object info = (IFeatureInfo) item.getData();
+		Object info = item.getData();
 		if (info != null) {
 			item.setImage(PDEPlugin.getDefault().getLabelProvider().getImage(
 					info));

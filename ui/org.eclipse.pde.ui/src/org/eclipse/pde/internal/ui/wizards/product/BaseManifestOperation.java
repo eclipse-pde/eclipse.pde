@@ -31,7 +31,6 @@ import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
 import org.eclipse.pde.internal.core.text.bundle.IModelTextChangeListener;
-import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Shell;
@@ -73,7 +72,7 @@ public abstract class BaseManifestOperation implements IRunnableWithProgress {
 					IModelTextChangeListener listener = new BundleTextChangeListener(document);
 					model.addModelChangedListener(listener);
 					Bundle bundle = (Bundle)model.getBundle();
-					IManifestHeader header = (ManifestHeader)bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
+					IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 					if (header instanceof BundleSymbolicNameHeader) {
 						BundleSymbolicNameHeader symbolic = (BundleSymbolicNameHeader)header;
 						if (!symbolic.isSingleton())

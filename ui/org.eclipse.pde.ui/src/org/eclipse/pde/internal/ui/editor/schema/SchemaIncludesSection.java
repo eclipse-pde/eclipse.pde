@@ -249,7 +249,7 @@ public class SchemaIncludesSection extends TableSection {
 			IFile file = project.getFile(currSchemaPath);
 			IEditorInput input = new FileEditorInput(file);
 			try {
-				getPage().getSite().getPage().openEditor(input, "org.eclipse.pde.ui.schemaEditor");
+				getPage().getSite().getPage().openEditor(input, "org.eclipse.pde.ui.schemaEditor"); //$NON-NLS-1$
 			} catch (PartInitException e) {
 			}
 		}

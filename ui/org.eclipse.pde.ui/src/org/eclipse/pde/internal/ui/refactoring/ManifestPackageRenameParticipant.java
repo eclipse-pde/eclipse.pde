@@ -22,7 +22,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
-import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 import org.eclipse.osgi.service.resolver.BaseDescription;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
@@ -47,7 +46,7 @@ public class ManifestPackageRenameParticipant extends PDERenameParticipant {
 				if (WorkspaceModelManager.isPluginProject(project)) {
 					fProject = javaProject.getProject();
 					fElements = new HashMap();
-					fElements.put(fragment, ((RenameArguments)getArguments()).getNewName());
+					fElements.put(fragment, getArguments().getNewName());
 					return true;
 				}
 			}

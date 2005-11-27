@@ -76,8 +76,7 @@ public class RequiresSection extends TableSection implements
 					displayable.add(imports[i]);
 				}
 
-				return (IFeatureImport[]) displayable
-						.toArray(new IFeatureImport[displayable.size()]);
+				return displayable.toArray();
 			}
 			return new Object[0];
 		}

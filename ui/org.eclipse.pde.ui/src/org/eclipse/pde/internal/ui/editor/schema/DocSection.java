@@ -286,10 +286,10 @@ public class DocSection extends PDESection {
 
 	public void updateEditorInput(Object input) {
 		fIgnoreChange = true;
-		String text = "";
+		String text = ""; //$NON-NLS-1$
 		if (input instanceof ISchemaObject)
 			text = ((ISchemaObject) input).getDescription();
-		fDocument.set(text == null ? "" : text);
+		fDocument.set(text == null ? "" : text); //$NON-NLS-1$
 		fElement = input;
 		fIgnoreChange = false;
 	}

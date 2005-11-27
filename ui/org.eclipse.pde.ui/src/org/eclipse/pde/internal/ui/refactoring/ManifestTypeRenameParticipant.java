@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
@@ -31,7 +30,7 @@ public class ManifestTypeRenameParticipant extends PDERenameParticipant {
 			if (WorkspaceModelManager.isPluginProject(project)) {
 				fProject = javaProject.getProject();
 				fElements = new HashMap();
-				fElements.put(type, ((RenameArguments)getArguments()).getNewName());
+				fElements.put(type, getArguments().getNewName());
 				return true;
 			}
 		}

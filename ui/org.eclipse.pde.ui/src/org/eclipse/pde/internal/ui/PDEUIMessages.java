@@ -2333,4 +2333,12 @@ public class PDEUIMessages extends NLS {
 
 	public static String SchemaRootElementDetails_replacement;
 
+	public static String SecondaryBundlesSection_title;
+
+	public static String SecondaryBundlesSection_desc;
+
+	public static String SecondaryBundlesSection_check;
+
+	public static String SecondaryBundlesSection_resolve;
+
 }
