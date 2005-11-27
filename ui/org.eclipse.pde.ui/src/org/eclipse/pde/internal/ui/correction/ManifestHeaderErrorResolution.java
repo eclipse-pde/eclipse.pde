@@ -38,6 +38,8 @@ public abstract class ManifestHeaderErrorResolution extends AbstractPDEMarkerRes
 			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 			manager.connect(resource.getFullPath(), null);
 			ITextFileBuffer buffer = manager.getTextFileBuffer(resource.getFullPath());
+			if (buffer.isDirty())
+				buffer.commit(null, true);
 			IDocument document = buffer.getDocument();		
 			BundleModel model = new BundleModel(document, false);
 			model.load();
