@@ -124,6 +124,8 @@ public class PluginClassCodeGenerator {
 
 		writer.println("\t/**"); //$NON-NLS-1$
 		writer.println("\t * Returns the shared instance."); //$NON-NLS-1$
+		writer.println("\t *"); //$NON-NLS-1$
+		writer.println("\t * @return the shared instance."); //$NON-NLS-1$
 		writer.println("\t */"); //$NON-NLS-1$
 		writer.println("\tpublic static " + className + " getDefault() {"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("\t\treturn plugin;"); //$NON-NLS-1$
