@@ -10,15 +10,33 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.preferences.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class ClasspathHelper {
 
@@ -143,7 +161,12 @@ public class ClasspathHelper {
 	private static IPath[] getOutputFolders(IPluginModelBase model, boolean checkExcluded) {
 		ArrayList result = new ArrayList();
 		IProject project = model.getUnderlyingResource().getProject();
-		try {
+		HashSet set = new HashSet();
+		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+		for (int i = 0; i < libraries.length; i++) {
+			set.add(libraries[i].getName());
+		}
+ 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject jProject = JavaCore.create(project);
 				
@@ -158,7 +181,13 @@ public class ClasspathHelper {
 					if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 						path = entries[i].getOutputLocation();
 					} else if (entries[i].getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
-						path = entries[i].getPath();
+						IPath candidate = entries[i].getPath().removeFirstSegments(1);
+						if (candidate.segmentCount() == 0) {
+							if (set.isEmpty() || set.contains("."))
+								path = entries[i].getPath();
+						} else if (set.contains(candidate.toString())) {
+							path = entries[i].getPath();
+						}
 					}
 					if (path != null && !excluded.contains(path)) {
 						addPath(result, project, path);
