@@ -242,7 +242,7 @@ public class SchemaIncludesSection extends TableSection {
 			if (!(edinput instanceof IFileEditorInput))
 				return;
 			IPath includePath = new Path(((ISchemaInclude)object).getLocation());
-			if ("schema:".equals(includePath.getDevice())) {
+			if ("schema:".equals(includePath.getDevice())) { //$NON-NLS-1$
 				SchemaEditor.openSchema(includePath);
 			} else {
 				IFile currSchemaFile = ((IFileEditorInput)edinput).getFile();

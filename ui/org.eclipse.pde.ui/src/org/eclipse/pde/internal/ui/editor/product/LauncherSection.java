@@ -159,17 +159,12 @@ public class LauncherSection extends PDESection {
 		fNotebookLayout = new StackLayout();
 		fNotebook.setLayout(fNotebookLayout);
 
-		fWin32Section = addWin32Section(fNotebook, toolkit);
-		fMacSection = addMacSection(fNotebook, toolkit);
 		fLinuxSection = addLinuxSection(fNotebook, toolkit);
+		fMacSection = addMacSection(fNotebook, toolkit);
 		fSolarisSection = addSolarisSection(fNotebook, toolkit);
-		
-		fNotebookLayout.topControl = fWin32Section;
+		fWin32Section = addWin32Section(fNotebook, toolkit);
 		
 		createTabs();
-		if (fTabFolder.getItemCount() > 0) {
-			fTabFolder.setSelection(0);
-		}
 		
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
@@ -178,10 +173,12 @@ public class LauncherSection extends PDESection {
 	}
 	
 	private void createTabs() {
-		addTab("win32");
-		addTab("macosx");
-		addTab("linux");
-		addTab("solaris");
+		addTab("linux"); //$NON-NLS-1$
+		addTab("macosx"); //$NON-NLS-1$
+		addTab("solaris"); //$NON-NLS-1$
+		addTab("win32"); //$NON-NLS-1$
+		fTabFolder.setSelection(0);
+		fNotebookLayout.topControl = fLinuxSection;	
 	}
 	
 	private void addTab(String label) {
@@ -200,10 +197,28 @@ public class LauncherSection extends PDESection {
 	private Composite addWin32Section(Composite parent, FormToolkit toolkit) {
 		Composite comp = createComposite(parent, toolkit);
 		
+		fBmpButton = toolkit.createButton(comp, PDEUIMessages.LauncherSection_bmpImages, SWT.RADIO); 
+		TableWrapData td = new TableWrapData();
+		td.colspan = 3;
+		fBmpButton.setLayoutData(td);
+		fBmpButton.setEnabled(isEditable());
+		
+		final Label label = toolkit.createLabel(comp, PDEUIMessages.LauncherSection_bmpImagesText, SWT.WRAP); 
+		td = new TableWrapData();
+		td.colspan = 3;
+		label.setLayoutData(td);
+
+		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_Low16, ILauncherInfo.WIN32_16_LOW)); 
+		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_High16, ILauncherInfo.WIN32_16_HIGH)); 
+		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_32Low, ILauncherInfo.WIN32_32_LOW)); 
+		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_32High, ILauncherInfo.WIN32_32_HIGH)); 
+		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_48Low, ILauncherInfo.WIN32_48_LOW)); 
+		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_48High, ILauncherInfo.WIN32_48_HIGH)); 
+
 		fIcoButton = toolkit.createButton(comp, PDEUIMessages.LauncherSection_ico, SWT.RADIO); 
-		TableWrapData gd = new TableWrapData();
-		gd.colspan = 3;
-		fIcoButton.setLayoutData(gd);
+		td = new TableWrapData();
+		td.colspan = 3;
+		fIcoButton.setLayoutData(td);
 		fIcoButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean selected = fIcoButton.getSelection();
@@ -215,24 +230,6 @@ public class LauncherSection extends PDESection {
 		
 		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_file, ILauncherInfo.P_ICO_PATH)); 
 		
-		fBmpButton = toolkit.createButton(comp, PDEUIMessages.LauncherSection_bmpImages, SWT.RADIO); 
-		gd = new TableWrapData();
-		gd.colspan = 3;
-		fBmpButton.setLayoutData(gd);
-		fBmpButton.setEnabled(isEditable());
-		
-		final Label label = toolkit.createLabel(comp, PDEUIMessages.LauncherSection_bmpImagesText, SWT.WRAP); 
-		gd = new TableWrapData();
-		gd.colspan = 3;
-		label.setLayoutData(gd);
-
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_Low16, ILauncherInfo.WIN32_16_LOW)); 
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_High16, ILauncherInfo.WIN32_16_HIGH)); 
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_32Low, ILauncherInfo.WIN32_32_LOW)); 
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_32High, ILauncherInfo.WIN32_32_HIGH)); 
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_48Low, ILauncherInfo.WIN32_48_LOW)); 
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_48High, ILauncherInfo.WIN32_48_HIGH)); 
-
 		toolkit.paintBordersFor(comp);
 		return comp;
 	}
@@ -422,16 +419,16 @@ public class LauncherSection extends PDESection {
 		Control oldPage = fNotebookLayout.topControl;
 		switch (index) {
 		case 0:
-			fNotebookLayout.topControl = fWin32Section;
+			fNotebookLayout.topControl = fLinuxSection;
 			break;
 		case 1:
 			fNotebookLayout.topControl = fMacSection;
 			break;
 		case 2:
-			fNotebookLayout.topControl = fLinuxSection;
+			fNotebookLayout.topControl = fSolarisSection;
 			break;
 		case 3:
-			fNotebookLayout.topControl = fSolarisSection;
+			fNotebookLayout.topControl = fWin32Section;
 			break;
 		}
 		if (oldPage != fNotebookLayout.topControl)
