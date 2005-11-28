@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.site;
 
-import org.eclipse.update.core.Feature;
-import org.eclipse.update.core.IIncludedFeatureReference;
+import org.eclipse.update.core.*;
 
 public class BuildTimeFeature extends Feature {
 	private boolean binary = false;
+	private int contextQualifierLength = -1;
 
 	public IIncludedFeatureReference[] getRawIncludedFeatureReferences() {
 		return getFeatureIncluded();
@@ -28,4 +28,37 @@ public class BuildTimeFeature extends Feature {
 		this.binary = isCompiled;
 	}
 
+	private VersionedIdentifier versionId;
+	
+	public VersionedIdentifier getVersionedIdentifier() {
+		if (versionId != null)
+			return versionId;
+
+		String id = getFeatureIdentifier();
+		String ver = getFeatureVersion();
+		if (id != null && ver != null) {
+			try {
+				versionId = new VersionedIdentifier(id, ver);
+				return versionId;
+			} catch (Exception e) {
+				//UpdateCore.warn("Unable to create versioned identifier:" + id + ":" + ver); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+
+		versionId = new VersionedIdentifier(getURL().toExternalForm(), null);
+		return versionId;
+	}
+	
+	public void setFeatureVersion(String featureVersion) {
+		super.setFeatureVersion(featureVersion);
+		versionId = null;
+	}
+
+	public void setContextQualifierLength(int l) {
+		contextQualifierLength = l;
+	}
+	
+	public int getContextQualifierLength(){
+		return contextQualifierLength;
+	}
 }

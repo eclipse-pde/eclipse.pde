@@ -65,6 +65,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private String[] extraPlugins = new String[0];
 	private boolean generateJnlp = false;
 	private boolean signJars = false;
+	private boolean generateVersionSuffix = false;
 
 	//Cache the result of compteElements for performance
 	private List computedElements = null;
@@ -157,6 +158,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		featureGenerator.setBuildingOSGi(isBuildingOSGi());
 		featureGenerator.includePlatformIndependent(isPlatformIndependentIncluded());
 		featureGenerator.setIgnoreMissingPropertiesFile(isIgnoreMissingPropertiesFile());
+		featureGenerator.setGenerateVersionSuffix(generateVersionSuffix);
 		featureGenerator.generate();
 	}
 
@@ -270,6 +272,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			generator.setBuildingOSGi(isBuildingOSGi());
 			generator.includePlatformIndependent(isPlatformIndependentIncluded());
 			generator.setIgnoreMissingPropertiesFile(isIgnoreMissingPropertiesFile());
+			generator.setGenerateVersionSuffix(generateVersionSuffix);
 			generator.generate();
 		}
 	}
@@ -707,7 +710,115 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	private void generateChildrenScripts() throws CoreException {
 		List plugins = computeElements();
+		String suffix = generateFeatureVersionSuffix((BuildTimeFeature) feature, plugins);
+		if (suffix != null) {
+			PluginVersionIdentifier versionId = feature.getVersionedIdentifier().getVersion();
+			String qualifier = versionId.getQualifierComponent();
+			qualifier = qualifier.substring(0, ((BuildTimeFeature) feature).getContextQualifierLength());
+			qualifier = qualifier + '-' + suffix;
+			versionId = new PluginVersionIdentifier(versionId.getMajorComponent(), versionId.getMinorComponent(), versionId.getServiceComponent(), qualifier);
+			String newVersion = versionId.toString();
+			((BuildTimeFeature) feature).setFeatureVersion(newVersion);
+			initializeFeatureNames(); //reset our variables
+		}
 		generateModels(Utils.extractPlugins(getSite(false).getRegistry().getSortedBundles(), plugins));
+	}
+
+	private String generateFeatureVersionSuffix(BuildTimeFeature buildFeature, List plugins) throws CoreException {
+		if (!generateVersionSuffix || buildFeature.getContextQualifierLength() == -1)
+			return null; //no qualifier, do nothing 
+
+		Properties properties = getBuildProperties();
+		String significantDigits = (String) properties.get(PROPERTY_SIGNIFICANT_VERSION_DIGITS);
+		int maxDigits = 9;
+		if (significantDigits != null) {
+			try {
+				maxDigits = Integer.parseInt(significantDigits);
+			} catch (NumberFormatException e) {
+				//exception, leave at default
+			}
+		}
+		String generatedLength = (String) properties.get(PROPERTY_GENERATED_VERSION_LENGTH);
+		int finalLength = 10;
+		if (generatedLength != null) {
+			try {
+				finalLength = Integer.parseInt(generatedLength);
+			} catch (NumberFormatException e) {
+				//exception, leave at default
+			}
+		}
+
+		IIncludedFeatureReference[] referencedFeatures = buildFeature.getIncludedFeatureReferences();
+		int numElements = plugins.size() + referencedFeatures.length;
+		byte[][] versions = new byte[numElements][];
+		int idx = -1;
+		int longestByteArray = 0;
+		int shift = '-';
+		String qualifier;
+		if (referencedFeatures != null) {
+			for (int i = 0; i < referencedFeatures.length; i++) {
+				BuildTimeFeature refFeature = (BuildTimeFeature) getSite(false).findFeature(referencedFeatures[i].getVersionedIdentifier().getIdentifier(), null, false);
+				if (refFeature == null)
+					continue;
+				qualifier = refFeature.getVersionedIdentifier().getVersion().getQualifierComponent();
+				if (qualifier.length() > 0) {
+					versions[++idx] = qualifier.getBytes();
+					if (versions[idx].length > longestByteArray)
+						longestByteArray = versions[idx].length;
+				}
+			}
+		}
+		for (Iterator iterator = plugins.iterator(); iterator.hasNext();) {
+			BundleDescription model = (BundleDescription) iterator.next();
+			qualifier = model.getVersion().getQualifier();
+			if (qualifier.length() > 0) {
+				versions[++idx] = qualifier.getBytes();
+				if (versions[idx].length > longestByteArray)
+					longestByteArray = versions[idx].length;
+			}
+		}
+		
+		if (idx == -1)
+			return null;
+		
+		if (longestByteArray > maxDigits)
+			longestByteArray = maxDigits;
+
+		int[] sums = new int[longestByteArray];
+		for (int i = 0; i <= idx; i++) {
+			for (int j = 0; j < longestByteArray; j++) {
+				if (versions[i].length > j)
+					sums[j] += versions[i][j] - shift;
+			}
+		}
+		char[] result = new char[finalLength];
+		int x = 0, val = 0, carry = 0;
+		char c = 0;
+
+		int i = -1;
+		while (++i < sums.length || carry != 0) {
+			x = carry + ((i < longestByteArray) ? sums[i] : 0);
+			val = x % 64;
+			carry = x >> 6;
+
+			if (val == 0)
+				c = '-';
+			else if (val > 0 && val <= 10)
+				c = (char) ('0' + val - 1);
+			else if (val == 11)
+				c = '_';
+			else if (val > 11 && val <= 37)
+				c = (char) ('A' + val - 12);
+			else if (val > 37 && val <= 63)
+				c = (char) ('a' + val - 38);
+
+			result[finalLength - i - 1] = c;
+		}
+		for (; i < finalLength; i++) {
+			result[finalLength - i - 1] = '-';
+		}
+
+		return String.valueOf(result);
 	}
 
 	/**
@@ -777,11 +888,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			if (i != -1)
 				featureRootLocation = featureRootLocation.substring(0, i);
 		}
-		featureFullName = getNormalizedName(feature);
-		featureFolderName = DEFAULT_FEATURE_LOCATION + '/' + featureFullName;
-		sourceFeatureFullName = computeSourceFeatureName(feature, false);
-		sourceFeatureFullNameVersionned = computeSourceFeatureName(feature, true);
-		featureTempFolder = Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER);
+		initializeFeatureNames();
 
 		if (feature instanceof BuildTimeFeature) {
 			if (getBuildProperties() == MissingProperties.getInstance()) {
@@ -790,6 +897,14 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				buildFeature.setBinary(true);
 			}
 		}
+	}
+
+	private void initializeFeatureNames() throws CoreException {
+		featureFullName = getNormalizedName(feature);
+		featureFolderName = DEFAULT_FEATURE_LOCATION + '/' + featureFullName;
+		sourceFeatureFullName = computeSourceFeatureName(feature, false);
+		sourceFeatureFullNameVersionned = computeSourceFeatureName(feature, true);
+		featureTempFolder = Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER);
 	}
 
 	private String computeSourceFeatureName(IFeature featureForName, boolean withNumber) throws CoreException {
@@ -952,6 +1067,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		sourceScriptGenerator.setBuildingOSGi(isBuildingOSGi());
 		sourceScriptGenerator.includePlatformIndependent(isPlatformIndependentIncluded());
 		sourceScriptGenerator.setIgnoreMissingPropertiesFile(isIgnoreMissingPropertiesFile());
+		sourceScriptGenerator.setGenerateVersionSuffix(generateVersionSuffix);
 		sourceScriptGenerator.generate();
 	}
 
@@ -985,7 +1101,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		// create the directory for the plugin
 		IPath sourcePluginDirURL = new Path(workingDirectory + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(result, false) );
 		File sourcePluginDir = sourcePluginDirURL.toFile();
-		new File(sourcePluginDir, "META-INF").mkdirs();
+		new File(sourcePluginDir, "META-INF").mkdirs(); //$NON-NLS-1$
 
 		// Create the MANIFEST.MF
 		StringBuffer buffer;
@@ -1016,10 +1132,10 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		
 		//Copy the plugin.xml
 		try {
-			InputStream pluginXML = BundleHelper.getDefault().getBundle().getEntry(TEMPLATE + "/30/plugin/plugin.xml").openStream();
+			InputStream pluginXML = BundleHelper.getDefault().getBundle().getEntry(TEMPLATE + "/30/plugin/plugin.xml").openStream(); //$NON-NLS-1$
 			Utils.transferStreams(pluginXML, new FileOutputStream(sourcePluginDirURL.append(DEFAULT_PLUGIN_FILENAME_DESCRIPTOR).toOSString()));
 		} catch (IOException e1) {
-			String message = NLS.bind(Messages.exception_readingFile, TEMPLATE + "/30/plugin/plugin.xml");
+			String message = NLS.bind(Messages.exception_readingFile, TEMPLATE + "/30/plugin/plugin.xml"); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e1));
 		}
 
@@ -1126,7 +1242,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		// create the directory for the plugin
 		Path sourceFragmentDirURL = new Path(workingDirectory + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(fragment, false));
 		File sourceFragmentDir = new File(sourceFragmentDirURL.toOSString());
-		new File(sourceFragmentDir, "META-INF").mkdirs();
+		new File(sourceFragmentDir, "META-INF").mkdirs(); //$NON-NLS-1$
 		try {
 			// read the content of the template file
 			Path fragmentPath = new Path(TEMPLATE + "/30/fragment/" + DEFAULT_BUNDLE_FILENAME_DESCRIPTOR);//$NON-NLS-1$
@@ -1139,10 +1255,10 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 			//Copy the fragment.xml
 			try {
-				InputStream fragmentXML = BundleHelper.getDefault().getBundle().getEntry(TEMPLATE + "/30/fragment/fragment.xml").openStream();
+				InputStream fragmentXML = BundleHelper.getDefault().getBundle().getEntry(TEMPLATE + "/30/fragment/fragment.xml").openStream(); //$NON-NLS-1$
 				Utils.transferStreams(fragmentXML, new FileOutputStream(sourceFragmentDirURL.append(DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR).toOSString()));
 			} catch (IOException e1) {
-				String message = NLS.bind(Messages.exception_readingFile, TEMPLATE + "/30/fragment/fragment.xml");
+				String message = NLS.bind(Messages.exception_readingFile, TEMPLATE + "/30/fragment/fragment.xml"); //$NON-NLS-1$
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e1));
 			}
 			
@@ -1324,6 +1440,15 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	public void setSignJars(boolean value) {
 		signJars = value;
 	}
+	
+	/**
+	 * Sets whether or not to generate the feature version suffix
+	 * 
+	 * @param value whether or not to generate the feature version suffix
+	 */
+	public void setGenerateVersionSuffix(boolean value) {
+		generateVersionSuffix = value;
+	}
 
 	protected void collectElementToAssemble(IPluginEntry entryToCollect) throws CoreException {
 		if (assemblyData == null)
@@ -1339,7 +1464,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	// Create a feature object representing a source feature based on the featureExample
 	private Feature createSourceFeature(Feature featureExample) throws CoreException {
-		Feature result = new Feature();
+		BuildTimeFeature result = new BuildTimeFeature();
 		result.setFeatureIdentifier(computeSourceFeatureName(featureExample, false));
 		result.setFeatureVersion(featureExample.getVersionedIdentifier().getVersion().toString());
 		result.setLabel(featureExample.getLabelNonLocalized());
@@ -1355,6 +1480,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		result.setOS(featureExample.getOS());
 		result.setArch(featureExample.getOSArch());
 		result.setWS(featureExample.getWS());
+		int contextLength = featureExample instanceof BuildTimeFeature ? ((BuildTimeFeature) featureExample).getContextQualifierLength() : -1;
+		result.setContextQualifierLength(contextLength);
 		return result;
 	}
 

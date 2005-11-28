@@ -194,4 +194,13 @@ public class BuildScriptGeneratorTask extends Task {
 	public void setForceContextQualifier(String value) {
 		QualifierReplacer.setGlobalQualifier(value);
 	}
+	
+	/**
+	 * Set the boolean value indicating whether or not to generate a version suffix
+	 * for features based on their content.
+	 * @param value <code>true</code> if version suffixes should be generated.
+	 */
+	public void setGenerateFeatureVersionSuffix(boolean value){
+		generator.setGenerateFeatureVersionSuffix(value);
+	}
 }

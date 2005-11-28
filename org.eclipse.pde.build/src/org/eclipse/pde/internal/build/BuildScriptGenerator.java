@@ -43,6 +43,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	protected boolean includePlatformIndependent = true;
 	protected boolean signJars = false;
 	protected boolean generateJnlp = false;
+	protected boolean generateFeatureVersionSuffix = false;
 	private String product;
 	//Map configuration with the expected output format: key: Config, value: string
 	private HashMap archivesFormat;
@@ -155,6 +156,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 				generator.setIgnoreMissingPropertiesFile(ignoreMissingPropertiesFile);
 				generator.setSignJars(signJars);
 				generator.setGenerateJnlp(generateJnlp);
+				generator.setGenerateVersionSuffix(generateFeatureVersionSuffix);
 				generator.generate();
 			}
 
@@ -276,6 +278,10 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	public void setGenerateJnlp(boolean value) {
 		generateJnlp = value;
+	}
+	
+	public void setGenerateFeatureVersionSuffix(boolean value) {
+		generateFeatureVersionSuffix = value;
 	}
 
 	private class ArchiveTable extends HashMap {

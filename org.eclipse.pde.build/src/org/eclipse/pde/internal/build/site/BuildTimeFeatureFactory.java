@@ -45,9 +45,16 @@ public class BuildTimeFeatureFactory extends BaseFeatureFactory implements IFeat
 			featureStream = resolvedURL.openStream();
 			feature = (Feature) this.parseFeature(featureStream);
 
-			String newVersion = QualifierReplacer.replaceQualifierInVersion(feature.getFeatureVersion(), feature.getFeatureIdentifier(), AbstractScriptGenerator.readProperties(new Path(url.getFile()).removeLastSegments(1).toOSString(), PROPERTIES_FILE, IStatus.OK).getProperty(PROPERTY_QUALIFIER), ((BuildTimeSite) site).getFeatureVersions());
-			if (newVersion != null)
+			String qualifier = AbstractScriptGenerator.readProperties(new Path(url.getFile()).removeLastSegments(1).toOSString(), PROPERTIES_FILE, IStatus.OK).getProperty(PROPERTY_QUALIFIER);
+			String newVersion = QualifierReplacer.replaceQualifierInVersion(feature.getFeatureVersion(), feature.getFeatureIdentifier(), qualifier, ((BuildTimeSite) site).getFeatureVersions());
+			if (newVersion != null){
+				//a feature version ending in .qualifier using context will be further modified based on its included plugins				
+				if (feature.getFeatureVersion().endsWith('.' + PROPERTY_QUALIFIER) && (qualifier == null || qualifier.equalsIgnoreCase(PROPERTY_CONTEXT))) {
+					int idx = feature.getFeatureVersion().lastIndexOf('.' + PROPERTY_QUALIFIER);
+					((BuildTimeFeature)feature).setContextQualifierLength(newVersion.length() - idx - 1);
+				}
 				((BuildTimeFeature) feature).setFeatureVersion(newVersion);
+			}
 
 			feature.setSite(site);
 			feature.setFeatureContentProvider(contentProvider);
