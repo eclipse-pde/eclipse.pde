@@ -11,9 +11,14 @@
 package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
@@ -24,6 +29,7 @@ import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PartInitException;
@@ -141,6 +147,35 @@ public class SchemaEditor extends MultiSourceEditor {
 			context = fInputContextManager.findContext(SchemaInputContext.CONTEXT_ID);
 		}		
 		return context;
+	}
+	
+	public static boolean openSchema(IFile file) {
+		if (file != null && file.exists()) {
+			IEditorInput input = new FileEditorInput(file);
+			try {
+				return PDEPlugin.getActivePage().openEditor(input, PDEPlugin.SCHEMA_EDITOR_ID) != null;
+			} catch (PartInitException e) {
+			}
+		}
+		return false;
+	}
+
+	public static boolean openSchema(IPath path) {
+		String pluginId = path.segment(0);
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginId);
+		if (model != null && model.getUnderlyingResource() != null) {
+			IProject project = model.getUnderlyingResource().getProject();
+			IFile file = project.getFile(path.removeFirstSegments(1));
+			return openSchema(file);
+		}
+		return false;
+	}
+	
+	public static void openToElement(IPath path, ISchemaElement element) {
+		if (openSchema(path)) {
+			//  TODO
+			// Select <element> on 2nd page of editor
+		}
 	}
 
 }

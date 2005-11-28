@@ -15,7 +15,6 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEDetails;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -117,7 +116,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	public abstract void createDetails(Composite parent);
 	public abstract void updateFields();
 	public abstract void hookListeners();
-	public abstract ISchemaObject getDetailsObject();
+	public abstract boolean isEditableElement();
 	
 	protected void setDecription(String desc) {
 		fSection.setDescription(desc); 
@@ -227,7 +226,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fUnboundSelect.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fMaxOccurSpinner.setEnabled(!fUnboundSelect.getSelection() 
-						&& getDetailsObject().getSchema().isEditable());
+						&& isEditableElement());
 			}
 		});
 		

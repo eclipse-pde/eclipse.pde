@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.editor.schema;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
 import org.eclipse.pde.internal.core.schema.SchemaElementReference;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -58,7 +57,7 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 	public void updateFields() {
 		updateMinOccur(fElement.getMinOccurs());
 		updateMaxOccur(fElement.getMaxOccurs());
-		boolean editable = fElement.getSchema().isEditable();
+		boolean editable = isEditableElement();
 		fRefLabel.setEnabled(editable);
 		fReferenceLink.setEnabled(editable);
 		enableMinMax(editable);
@@ -82,7 +81,7 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 		});
 	}
 
-	public ISchemaObject getDetailsObject() {
-		return fElement;
+	public boolean isEditableElement() {
+		return fElement.getCompositor().getSchema().isEditable();
 	}
 }

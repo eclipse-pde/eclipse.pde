@@ -31,7 +31,6 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.core.schema.ChoiceRestriction;
@@ -213,7 +212,7 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 				}
 			}
 		}
-		boolean editable = fAttribute.getSchema().isEditable();
+		boolean editable = isEditableElement();
 		updateParts(isStringType && kind == IMetaAttribute.STRING, kind == IMetaAttribute.JAVA, editable);
 		fValue.setEditable(editable && fAttribute.getUse() == 2);
 		fName.setEditable(editable);
@@ -449,7 +448,7 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		fClassEntry.setEditable(isJavaKind && editable);
 	}
 
-	public ISchemaObject getDetailsObject() {
-		return fAttribute;
+	public boolean isEditableElement() {
+		return fAttribute.getSchema().isEditable();
 	}
 }

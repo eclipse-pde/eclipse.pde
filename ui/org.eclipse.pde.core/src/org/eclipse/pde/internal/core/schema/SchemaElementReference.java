@@ -100,7 +100,7 @@ public class SchemaElementReference extends PlatformObject implements
 	public void setParent(ISchemaObject parent) {
 	}
 
-	protected ISchemaElement getReferencedElement() {
+	public ISchemaElement getReferencedElement() {
 		return element;
 	}
 
@@ -125,11 +125,15 @@ public class SchemaElementReference extends PlatformObject implements
 					return schema;
 			}
 		}
+		return getCompositorsSchema();
+	}
+
+	public ISchema getCompositorsSchema() {
 		if (compositor != null)
 			return compositor.getSchema();
 		return null;
 	}
-
+	
 	public ISchemaType getType() {
 		return getReferencedElement().getType();
 	}
@@ -145,7 +149,7 @@ public class SchemaElementReference extends PlatformObject implements
 	public void setMaxOccurs(int newMaxOccurs) {
 		Integer oldValue = new Integer(maxOccurs);
 		maxOccurs = newMaxOccurs;
-		ISchema schema = getSchema();
+		ISchema schema = getCompositorsSchema();
 		if (schema != null)
 			schema.fireModelObjectChanged(this, P_MAX_OCCURS, oldValue,
 					new Integer(maxOccurs));
@@ -154,7 +158,7 @@ public class SchemaElementReference extends PlatformObject implements
 	public void setMinOccurs(int newMinOccurs) {
 		Integer oldValue = new Integer(minOccurs);
 		minOccurs = newMinOccurs;
-		ISchema schema = getSchema();
+		ISchema schema = getCompositorsSchema();
 		if (schema != null)
 			schema.fireModelObjectChanged(this, P_MIN_OCCURS, oldValue,
 					new Integer(minOccurs));
@@ -170,7 +174,7 @@ public class SchemaElementReference extends PlatformObject implements
 	public void setReferenceName(String name) {
 		String oldValue = this.referenceName;
 		this.referenceName = name;
-		ISchema schema = getSchema();
+		ISchema schema = getCompositorsSchema();
 		if (schema != null)
 			schema.fireModelObjectChanged(this, P_REFERENCE_NAME, oldValue,
 					name);

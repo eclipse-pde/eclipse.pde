@@ -1,6 +1,7 @@
 package org.eclipse.pde.internal.ui.editor.schema;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -16,6 +17,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
 import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
 import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
@@ -468,8 +470,22 @@ public class ElementSection extends TreeSection {
 
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		Object object = selection.getFirstElement();
-		if (object instanceof SchemaElementReference)
-			fTreeViewer.setSelection(new StructuredSelection(((SchemaElementReference) object).getReferencedObject()));
+		if (object instanceof SchemaElementReference) {
+			ISchemaElement element = ((SchemaElementReference) object).getReferencedElement();
+			ISchema schema = element.getSchema();
+			if (schema.equals(fSchema))
+				fTreeViewer.setSelection(new StructuredSelection(((SchemaElementReference) object).getReferencedObject()));
+			else {
+				ISchemaInclude[] includes = fSchema.getIncludes();
+				for (int i = 0; i < includes.length; i++) {
+					if (includes[i].getIncludedSchema().equals(schema)) {
+						String location = includes[i].getLocation();
+						SchemaEditor.openToElement(new Path(location), element);
+						break;
+					}
+				}
+			}
+		}
 	}
 	protected void fireSelection(ISelection selection) {
 		if (selection == null) selection = fTreeViewer.getSelection();

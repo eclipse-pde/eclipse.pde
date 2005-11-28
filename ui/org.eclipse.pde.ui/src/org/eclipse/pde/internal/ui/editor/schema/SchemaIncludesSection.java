@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -41,14 +42,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.part.FileEditorInput;
 
 public class SchemaIncludesSection extends TableSection {
 
@@ -238,19 +237,19 @@ public class SchemaIncludesSection extends TableSection {
 
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		Object object = selection.getFirstElement();
-		if (object instanceof ISchemaInclude && false) {
+		if (object instanceof ISchemaInclude) {
 			IEditorInput edinput = getPage().getEditorInput();
 			if (!(edinput instanceof IFileEditorInput))
 				return;
-			IFile currSchemaFile = ((IFileEditorInput)edinput).getFile();
-			IProject project = currSchemaFile.getProject();
-			IPath currSchemaPath = currSchemaFile.getProjectRelativePath();
-			
-			IFile file = project.getFile(currSchemaPath);
-			IEditorInput input = new FileEditorInput(file);
-			try {
-				getPage().getSite().getPage().openEditor(input, "org.eclipse.pde.ui.schemaEditor"); //$NON-NLS-1$
-			} catch (PartInitException e) {
+			IPath includePath = new Path(((ISchemaInclude)object).getLocation());
+			if ("schema:".equals(includePath.getDevice())) {
+				SchemaEditor.openSchema(includePath);
+			} else {
+				IFile currSchemaFile = ((IFileEditorInput)edinput).getFile();
+				IProject project = currSchemaFile.getProject();
+				IPath currSchemaPath = currSchemaFile.getProjectRelativePath();
+				IFile file = project.getFile(currSchemaPath.removeLastSegments(1).append(includePath));
+				SchemaEditor.openSchema(file);
 			}
 		}
 	}

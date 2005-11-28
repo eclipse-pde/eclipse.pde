@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.schema.SchemaElementReference;
 import org.eclipse.pde.internal.core.schema.SchemaRootElement;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -68,7 +67,7 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		fDeprecated.select(fElement.isDeprecated() ? 0 : 1);
 		fSuggestion.setValue(fElement.getDeprecatedSuggestion(), true);
 		
-		boolean editable = fElement.getSchema().isEditable();
+		boolean editable = isEditableElement();
 		fSuggestion.setEditable(fElement.isDeprecated() && editable);
 		fName.setEditable(editable);
 		fDeprecated.setEnabled(editable);
@@ -96,7 +95,7 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		});
 	}
 
-	public ISchemaObject getDetailsObject() {
-		return fElement;
+	public boolean isEditableElement() {
+		return fElement.getSchema().isEditable();
 	}
 }

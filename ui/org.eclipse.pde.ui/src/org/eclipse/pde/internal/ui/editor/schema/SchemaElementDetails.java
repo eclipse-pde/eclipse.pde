@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.schema.SchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaElementReference;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -79,7 +78,7 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		fDeprecated.select(fElement.isDeprecated() ? 0 : 1);
 		fTranslatable.select(fElement.hasTranslatableContent() ? 0 : 1);
 		
-		boolean editable = fElement.getSchema().isEditable();
+		boolean editable = isEditableElement();
 		fIcon.setEditable(editable);
 		fLabelProperty.setEditable(editable);
 		fName.setEditable(editable);
@@ -118,7 +117,7 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		});
 	}
 
-	public ISchemaObject getDetailsObject() {
-		return fElement;
+	public boolean isEditableElement() {
+		return fElement.getSchema().isEditable();
 	}
 }

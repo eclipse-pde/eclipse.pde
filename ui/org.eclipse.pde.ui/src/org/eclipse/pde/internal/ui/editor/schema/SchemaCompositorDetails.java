@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.editor.schema;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.schema.SchemaCompositor;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
@@ -64,7 +63,7 @@ public class SchemaCompositorDetails extends AbstractSchemaDetails {
 		updateMaxOccur(fCompositor.getMaxOccurs());
 		fKind.select(fCompositor.getKind() - 1);
 		
-		boolean editable = fCompositor.getSchema().isEditable();
+		boolean editable = isEditableElement();
 		fKindLabel.setEnabled(editable);
 		fKind.setEnabled(editable);
 		enableMinMax(editable);
@@ -89,7 +88,7 @@ public class SchemaCompositorDetails extends AbstractSchemaDetails {
 		});
 	}
 
-	public ISchemaObject getDetailsObject() {
-		return fCompositor;
+	public boolean isEditableElement() {
+		return fCompositor.getSchema().isEditable();
 	}
 }
