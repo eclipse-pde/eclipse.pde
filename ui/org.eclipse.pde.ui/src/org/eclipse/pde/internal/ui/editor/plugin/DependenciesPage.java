@@ -9,20 +9,16 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-import java.util.ArrayList;
+import java.util.*;
 
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.*;
+import org.eclipse.ui.forms.editor.*;
+import org.eclipse.ui.forms.widgets.*;
 
 public class DependenciesPage extends PDEFormPage {
 	
@@ -46,33 +42,19 @@ public class DependenciesPage extends PDEFormPage {
 		layout.makeColumnsEqualWidth = isBundle;
 		body.setLayout(layout);
 		
-		FormToolkit toolkit = managedForm.getToolkit();
-		Composite left = toolkit.createComposite(body);
-		left.setLayout(new GridLayout());
-		left.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		Composite right = toolkit.createComposite(body);
-		right.setLayout(new GridLayout());
-		right.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		managedForm.addPart(new RequiresSection(this, left, getRequiredSectionLabels()));		
+		managedForm.addPart(new RequiresSection(this, body, getRequiredSectionLabels()));		
 		if (isBundle)
-			managedForm.addPart(new ImportPackageSection(this, right));
+			managedForm.addPart(new ImportPackageSection(this, body));
 		else
-			managedForm.addPart(new MatchSection(this, right, true));
+			managedForm.addPart(new MatchSection(this, body, true));
 		
-		DependencyAnalysisSection section;
+		DependencyAnalysisSection section = new DependencyAnalysisSection(this, body, isBundle ? Section.COMPACT : Section.EXPANDED);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
 		if (isBundle)
-			section = new DependencyAnalysisSection(this, left, Section.COMPACT);
+			gd.horizontalSpan = 2;
 		else
-			section = new DependencyAnalysisSection(this, right, Section.EXPANDED);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = 150;
-		section.getSection().setLayoutData(gd);	
-		
-		if (isBundle  && getModel().isEditable())
-			managedForm.addPart(new SecondaryBundlesSection(this, right));
-		
+			gd.widthHint = 150;
+		section.getSection().setLayoutData(gd);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_PLUGIN_DEPENDENCIES);
 	}
 	
