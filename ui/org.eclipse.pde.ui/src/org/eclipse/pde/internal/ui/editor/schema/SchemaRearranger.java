@@ -1,16 +1,21 @@
 package org.eclipse.pde.internal.ui.editor.schema;
 
+import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
 import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
+import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaType;
 import org.eclipse.pde.internal.core.schema.Schema;
+import org.eclipse.pde.internal.core.schema.SchemaAttribute;
 import org.eclipse.pde.internal.core.schema.SchemaComplexType;
 import org.eclipse.pde.internal.core.schema.SchemaCompositor;
 import org.eclipse.pde.internal.core.schema.SchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaElementReference;
+import org.eclipse.pde.internal.core.schema.SchemaSimpleType;
 
 public class SchemaRearranger {
 
@@ -55,17 +60,20 @@ public class SchemaRearranger {
 		compositor.setParent(newParent);
 	}
 
-	public void moveReference(SchemaElementReference reference, ISchemaCompositor compositor) {
+	public void moveReference(SchemaElementReference reference, ISchemaCompositor compositor, ISchemaObject sibling) {
 		ISchemaCompositor oldCompositor = reference.getCompositor();
 		if (!(compositor != null 
 				&& reference != null
-				&& oldCompositor != null
-				&& !compositor.equals(oldCompositor)))
+				&& oldCompositor != null))
 			return;
 		if (compositor instanceof SchemaCompositor) {
-			((SchemaCompositor) oldCompositor).removeChild(reference);
-			reference.setCompositor(compositor);
-			((SchemaCompositor) compositor).addChild(reference);
+			if (compositor.equals(oldCompositor)) {
+				((SchemaCompositor)compositor).moveChildToSibling(reference, sibling);
+			} else {
+				((SchemaCompositor) oldCompositor).removeChild(reference);
+				reference.setCompositor(compositor);
+				((SchemaCompositor) compositor).addChild(reference);
+			}
 		}
 	}
 	
@@ -103,4 +111,99 @@ public class SchemaRearranger {
 		}
 	}
 	
+	public void pasteCompositor(ISchemaObject realTarget, ISchemaCompositor compositor, ISchemaObject sibling) {
+		if (realTarget instanceof SchemaElement) {
+			SchemaElement element = (SchemaElement)realTarget;
+			SchemaComplexType type = null;
+			if (element.getType() instanceof SchemaComplexType) {
+				type = (SchemaComplexType) element.getType();
+				type.setCompositor(compositor);
+			} else {
+				type = new SchemaComplexType(element.getSchema());
+				type.setCompositor(compositor);
+				element.setType(type);
+			}
+		} else if (realTarget instanceof SchemaCompositor) {
+			((SchemaCompositor) realTarget).addChild(compositor, sibling);
+		}
+	}
+	
+	public void pasteReference(ISchemaObject realTarget, ISchemaObjectReference object, ISchemaObject sibling) {
+		if (realTarget instanceof SchemaCompositor) {
+			SchemaCompositor parent = (SchemaCompositor) realTarget;
+			((SchemaElementReference)object).setCompositor(parent);
+			parent.addChild((SchemaElementReference)object, sibling);
+		}
+	}
+	
+	public void pasteElement(ISchemaElement object, ISchemaObject sibling) {
+		SchemaElement element = (SchemaElement) object;
+		element.setParent(fSchema);
+		fSchema.addElement(element, (ISchemaElement) sibling);
+		fSchema.updateReferencesFor(element, ISchema.REFRESH_ADD);
+	}
+	
+	public void pasteAttribute(ISchemaElement realTarget, ISchemaAttribute object, ISchemaObject sibling) {
+		SchemaElement element = (SchemaElement) realTarget;
+		SchemaAttribute attribute = (SchemaAttribute) object;
+		attribute.setParent(element);
+		ISchemaType type = element.getType();
+		SchemaComplexType complexType = null;
+		if (!(type instanceof ISchemaComplexType)) {
+			complexType = new SchemaComplexType(element.getSchema());
+			element.setType(complexType);
+		} else {
+			complexType = (SchemaComplexType) type;
+		}
+		if (sibling instanceof ISchemaAttribute)
+			complexType.addAttribute(attribute, (ISchemaAttribute) sibling);
+		else
+			complexType.addAttribute(attribute);
+	}
+	
+	public void linkReference(ISchemaCompositor realTarget, ISchemaElement object, ISchemaObject sibling) {
+		if (sibling instanceof SchemaElementReference)
+			realTarget = ((SchemaElementReference)sibling).getCompositor();
+		
+		SchemaCompositor parent = (SchemaCompositor) realTarget;
+		String refName = object.getName();
+		SchemaElementReference reference = new SchemaElementReference(parent, refName);
+		reference.setReferencedObject(fSchema.findElement(refName));
+		parent.addChild(reference, sibling);
+	}
+	
+	public void deleteCompositor(ISchemaCompositor compositor) {
+		ISchemaObject cparent = compositor.getParent();
+		if (cparent instanceof ISchemaElement) {
+			SchemaElement element = (SchemaElement) cparent;
+			ISchemaType type = element.getType();
+			if (type instanceof SchemaComplexType
+					&& ((SchemaComplexType)type).getAttributeCount() != 0)
+				((SchemaComplexType)type).setCompositor(null);
+			else
+				element.setType(new SchemaSimpleType(element.getSchema(), "string")); //$NON-NLS-1$
+				
+		} else if (cparent instanceof SchemaCompositor) {
+			((SchemaCompositor) cparent).removeChild(compositor);
+		}
+	}
+	
+	public void deleteAttribute(ISchemaAttribute attribute) {
+		ISchemaElement element = (ISchemaElement)attribute.getParent();
+		SchemaComplexType type = (SchemaComplexType) element.getType();
+		type.removeAttribute(attribute);
+	}
+	
+	public void deleteElement(ISchemaElement element) {
+		if (!(element instanceof ISchemaRootElement)) {
+			Schema schema = (Schema) element.getParent();
+			schema.removeElement(element);
+			schema.updateReferencesFor(element, ISchema.REFRESH_DELETE);
+		}
+	}
+	
+	public void deleteReference(SchemaElementReference reference) {
+		SchemaCompositor compositor = (SchemaCompositor)reference.getCompositor();
+		compositor.removeChild(reference);
+	}
 }

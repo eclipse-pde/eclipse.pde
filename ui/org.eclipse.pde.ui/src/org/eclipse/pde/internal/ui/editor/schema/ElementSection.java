@@ -22,11 +22,9 @@ import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaType;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaAttribute;
-import org.eclipse.pde.internal.core.schema.SchemaComplexType;
 import org.eclipse.pde.internal.core.schema.SchemaCompositor;
 import org.eclipse.pde.internal.core.schema.SchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaElementReference;
-import org.eclipse.pde.internal.core.schema.SchemaSimpleType;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
@@ -128,7 +126,7 @@ public class ElementSection extends TreeSection {
 		fTreeViewer.addDropSupport(ops | DND.DROP_DEFAULT, transfers, new ElementSectionDropAdapter(dragAdapter, this));
 	}
 
-	TreeViewer getTreeViewer() {
+	protected TreeViewer getTreeViewer() {
 		return fTreeViewer;
 	}
 
@@ -261,38 +259,15 @@ public class ElementSection extends TreeSection {
 		}
 	}
 
-	void handleDelete(Object object) {
-		ISchemaObject sobject = (ISchemaObject) object;
-		ISchemaObject parent = sobject.getParent();
-
-		if (sobject instanceof SchemaElementReference) {
-			SchemaCompositor compositor = (SchemaCompositor) ((SchemaElementReference) sobject).getCompositor();
-			compositor.removeChild(sobject);
-		} else if (sobject instanceof ISchemaElement) {
-			if (!(sobject instanceof ISchemaRootElement)) {
-				Schema schema = (Schema) parent;
-				schema.removeElement((ISchemaElement) sobject);
-				schema.updateReferencesFor((ISchemaElement) sobject, ISchema.REFRESH_DELETE);
-			}
-		} else if (sobject instanceof ISchemaAttribute) {
-			SchemaElement element = (SchemaElement) parent;
-			SchemaComplexType type = (SchemaComplexType) element.getType();
-			type.removeAttribute((ISchemaAttribute) sobject);
-		} else if (sobject instanceof SchemaCompositor) {
-			SchemaCompositor compositor = (SchemaCompositor) sobject;
-			ISchemaObject cparent = compositor.getParent();
-			if (cparent instanceof ISchemaElement) {
-				SchemaElement element = (SchemaElement) cparent;
-				ISchemaType type = element.getType();
-				if (type instanceof SchemaComplexType
-						&& ((SchemaComplexType)type).getAttributeCount() != 0)
-					((SchemaComplexType)type).setCompositor(null);
-				else
-					element.setType(new SchemaSimpleType(element.getSchema(), "string")); //$NON-NLS-1$
-					
-			} else if (cparent instanceof SchemaCompositor) {
-				((SchemaCompositor) cparent).removeChild(compositor);
-			}
+	private void handleDelete(Object object) {
+		if (object instanceof SchemaElementReference) {
+			fRearranger.deleteReference((SchemaElementReference)object);
+		} else if (object instanceof ISchemaElement) {
+			fRearranger.deleteElement((ISchemaElement)object);
+		} else if (object instanceof ISchemaAttribute) {
+			fRearranger.deleteAttribute((ISchemaAttribute)object);
+		} else if (object instanceof ISchemaCompositor) {
+			fRearranger.deleteCompositor((ISchemaCompositor)object);
 		}
 	}
 
@@ -371,7 +346,7 @@ public class ElementSection extends TreeSection {
 				final ISchemaObject sobj = (ISchemaObject) obj;
 				ISchemaObject parent = sobj.getParent();
 				if (e.getChangeType() == IModelChangedEvent.CHANGE) {
-					fTreeViewer.update(sobj, null);
+					fTreeViewer.refresh(sobj);
 				} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
 					fTreeViewer.add(parent, sobj);
 					fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
@@ -436,22 +411,22 @@ public class ElementSection extends TreeSection {
 		getTreePart().setButtonEnabled(1, canAddAttribute);
 	}
 
-	private Object getSibling(Object target, Object object) {
+	private ISchemaObject getSibling(Object target, Object object) {
 		if (target instanceof ISchemaElement && object instanceof ISchemaElement)
-			return target;
+			return (ISchemaElement)target;
 		if (target instanceof ISchemaAttribute && object instanceof ISchemaAttribute)
-			return target;
-		if (target instanceof ISchemaObjectReference && object instanceof ISchemaElement)
-			return target;
+			return (ISchemaAttribute)target;
+		if (target instanceof SchemaElementReference && object instanceof ISchemaElement)
+			return (SchemaElementReference)target;
 		return null;
 	}
 
-	private Object getRealTarget(Object target, Object object) {
+	private ISchemaObject getRealTarget(Object target, Object object) {
 		if (object instanceof ISchemaElement || object instanceof ISchemaObjectReference) {
 			if (target instanceof SchemaElementReference)
 				return ((SchemaElementReference)target).getCompositor();
 			if (target instanceof ISchemaCompositor)
-				return target;
+				return (ISchemaCompositor)target;
 			if (object instanceof ISchemaElement)
 				return fSchema;
 		}
@@ -461,15 +436,15 @@ public class ElementSection extends TreeSection {
 				return ((ISchemaAttribute) target).getParent();
 			}
 			if (target instanceof ISchemaElement)
-				return target;
+				return (ISchemaElement)target;
 		}
 		if (object instanceof ISchemaCompositor) {
 			if (target instanceof SchemaElementReference) 
 				return ((SchemaElementReference)target).getCompositor();
 			if (target instanceof ISchemaElement)
-				return target;
+				return (ISchemaElement)target;
 			if (target instanceof ISchemaCompositor)
-				return target;
+				return (ISchemaCompositor)target;
 		}
 		return null;
 	}
@@ -496,7 +471,7 @@ public class ElementSection extends TreeSection {
 		if (object instanceof SchemaElementReference)
 			fTreeViewer.setSelection(new StructuredSelection(((SchemaElementReference) object).getReferencedObject()));
 	}
-	void fireSelection(ISelection selection) {
+	protected void fireSelection(ISelection selection) {
 		if (selection == null) selection = fTreeViewer.getSelection();
 		fTreeViewer.setSelection(selection);
 	}
@@ -511,9 +486,11 @@ public class ElementSection extends TreeSection {
 
 	public void handleOp(Object currentTarget, Object[] objects, int currentOperation) {
 		for (int i = 0; i < objects.length; i++) {
-			Object object = objects[i];
-			Object realTarget = getRealTarget(currentTarget, object);
-			Object sibling = getSibling(currentTarget, object);
+			if (!(objects[i] instanceof ISchemaObject))
+				continue;
+			ISchemaObject object = (ISchemaObject)objects[i];
+			ISchemaObject realTarget = getRealTarget(currentTarget, object);
+			ISchemaObject sibling = getSibling(currentTarget, object);
 			if (realTarget == null)
 				continue;
 			switch (currentOperation) {
@@ -530,33 +507,29 @@ public class ElementSection extends TreeSection {
 		}
 	}
 
-	private void doLink(Object realTarget, Object sibling, Object object) {
+	private void doLink(ISchemaObject realTarget, ISchemaObject sibling, ISchemaObject object) {
 		if (realTarget instanceof ISchemaCompositor
 				&& object instanceof ISchemaElement) {
-			
-			if (sibling instanceof SchemaElementReference)
-				realTarget = ((SchemaElementReference)sibling).getCompositor();
-			
-			SchemaCompositor parent = (SchemaCompositor) realTarget;
-			String refName = ((ISchemaElement)object).getName();
-			SchemaElementReference reference = new SchemaElementReference(parent, refName);
-			reference.setReferencedObject(fSchema.findElement(refName));
-			parent.addChild(reference);
+			fRearranger.linkReference(
+					(ISchemaCompositor)realTarget,
+					(ISchemaElement)object,
+					sibling);
 		}
 	}
 	
-	private void doMove(Object realTarget, Object sibling, Object object) {
+	private void doMove(ISchemaObject realTarget, ISchemaObject sibling, ISchemaObject object) {
 		if (object instanceof ISchemaCompositor) {
 			fRearranger.moveCompositor(
-					(ISchemaObject)realTarget,
+					realTarget,
 					(ISchemaCompositor)object);
 		} else if (object instanceof SchemaElementReference) {
 			fRearranger.moveReference(
 					(SchemaElementReference)object,
-					(ISchemaCompositor)realTarget);
+					(ISchemaCompositor)realTarget,
+					sibling);
 		} else if (object instanceof ISchemaElement) {
 			fRearranger.moveElement(
-					(ISchemaObject)realTarget,
+					realTarget,
 					(ISchemaElement)object,
 					sibling != null ? (ISchemaAttribute)sibling : null);
 		} else if (object instanceof ISchemaAttribute) {
@@ -567,46 +540,26 @@ public class ElementSection extends TreeSection {
 		}
 	}
 	
-	private void doPaste(Object realTarget, Object sibling, Object object) {
-		if (object instanceof ISchemaCompositor && realTarget instanceof ISchemaObject) {
-			if (realTarget instanceof SchemaElement) {
-				SchemaElement element = (SchemaElement)realTarget;
-				SchemaComplexType type = null;
-				if (element.getType() instanceof SchemaComplexType) {
-					type = (SchemaComplexType) element.getType();
-					type.setCompositor((SchemaCompositor)object);
-				} else {
-					type = new SchemaComplexType(element.getSchema());
-					type.setCompositor((SchemaCompositor)object);
-					element.setType(type);
-				}
-			} else if (realTarget instanceof SchemaCompositor) {
-				((SchemaCompositor) realTarget).addChild((SchemaCompositor)object);
-			}
+	private void doPaste(ISchemaObject realTarget, ISchemaObject sibling, ISchemaObject object) {
+		if (object instanceof ISchemaCompositor) {
+			fRearranger.pasteCompositor(
+					realTarget,
+					(ISchemaCompositor)object,
+					sibling);
 		} else if (object instanceof SchemaElementReference) {
-			if (realTarget instanceof SchemaCompositor) {
-				SchemaCompositor parent = (SchemaCompositor) realTarget;
-				((SchemaElementReference)object).setCompositor(parent);
-				parent.addChild((SchemaElementReference)object);
-			}
+			fRearranger.pasteReference(
+					realTarget,
+					(SchemaElementReference)object,
+					sibling);
 		} else if (object instanceof ISchemaElement) {
-			SchemaElement element = (SchemaElement) object;
-			element.setParent(fSchema);
-			fSchema.addElement(element, (ISchemaElement) sibling);
-			fSchema.updateReferencesFor(element, ISchema.REFRESH_ADD);
+			fRearranger.pasteElement(
+					(ISchemaElement)object,
+					sibling);
 		} else if (object instanceof ISchemaAttribute) {
-			SchemaElement element = (SchemaElement) realTarget;
-			SchemaAttribute attribute = (SchemaAttribute) object;
-			attribute.setParent(element);
-			ISchemaType type = element.getType();
-			SchemaComplexType complexType = null;
-			if (!(type instanceof ISchemaComplexType)) {
-				complexType = new SchemaComplexType(element.getSchema());
-				element.setType(complexType);
-			} else {
-				complexType = (SchemaComplexType) type;
-			}
-			complexType.addAttribute(attribute, (ISchemaAttribute) sibling);
+			fRearranger.pasteAttribute(
+					(ISchemaElement)realTarget,
+					(ISchemaAttribute)object,
+					sibling);
 		}
 	}
 }
