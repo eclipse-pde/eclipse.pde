@@ -322,8 +322,13 @@ public class MinimalState {
 	}
 
 	public String getDefaultJavaProfile() {
-		if ("none".equals(System.getProperty("pde.jreProfile"))) //$NON-NLS-1$ //$NON-NLS-2$
+		String jreProfile = System.getProperty("pde.jreProfile"); //$NON-NLS-1$
+		if (jreProfile != null && jreProfile.length() > 0) {
+			if ("none".equals(jreProfile)) //$NON-NLS-1$ //$NON-NLS-2$
 				return null;
+			return jreProfile;
+		} 
+		
 		// if the java profiles list is not set then find the list
 		if (fJavaProfiles == null)
 			setJavaProfiles(getOSGiLocation());
