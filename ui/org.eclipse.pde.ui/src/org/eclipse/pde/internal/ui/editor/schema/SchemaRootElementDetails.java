@@ -64,9 +64,9 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 	public void updateFields() {
 		if (fElement == null)
 			return;
-		fName.setValue(fElement.getName());		
+		fName.setValue(fElement.getName(), true);		
 		fDeprecated.select(fElement.isDeprecated() ? 0 : 1);
-		fSuggestion.setValue(fElement.getDeprecatedSuggestion());
+		fSuggestion.setValue(fElement.getDeprecatedSuggestion(), true);
 		
 		boolean editable = fElement.getSchema().isEditable();
 		fSuggestion.setEditable(fElement.isDeprecated() && editable);

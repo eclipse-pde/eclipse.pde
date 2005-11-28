@@ -72,12 +72,9 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 	public void updateFields() {
 		if (fElement == null)
 			return;
-		String curr = fElement.getName();
-		fName.setValue(curr != null ? curr : ""); //$NON-NLS-1$
-		curr = fElement.getLabelProperty();
-		fLabelProperty.setValue(curr != null ? curr : ""); //$NON-NLS-1$
-		curr = fElement.getIconProperty();
-		fIcon.setValue(curr != null ? curr : ""); //$NON-NLS-1$
+		fName.setValue(fElement.getName(), true);
+		fLabelProperty.setValue(fElement.getLabelProperty(), true);
+		fIcon.setValue(fElement.getIconProperty(), true);
 		
 		fDeprecated.select(fElement.isDeprecated() ? 0 : 1);
 		fTranslatable.select(fElement.hasTranslatableContent() ? 0 : 1);

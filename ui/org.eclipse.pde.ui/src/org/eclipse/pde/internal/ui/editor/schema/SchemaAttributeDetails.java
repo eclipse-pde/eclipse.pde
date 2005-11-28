@@ -185,9 +185,7 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 	public void updateFields() {
 		if (fAttribute == null)
 			return;
-		String curr = fAttribute.getName();
-		fName.setValue(curr != null ? curr : ""); //$NON-NLS-1$
-		
+		fName.setValue(fAttribute.getName(), true); //$NON-NLS-1$
 		fDeprecated.select(fAttribute.isDeprecated() ? 0 : 1);
 		fTranslatable.select(fAttribute.isTranslatable() ? 0 : 1);
 		
@@ -197,21 +195,21 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		
 		fUse.select(fAttribute.getUse());
 		Object value = fAttribute.getValue();
-		fValue.setValue(value != null ? value.toString() : ""); //$NON-NLS-1$
+		fValue.setValue(value != null ? value.toString() : "", true); //$NON-NLS-1$
 		
 		if (kind == IMetaAttribute.JAVA) {
-			curr = fAttribute.getBasedOn();
-			if (curr != null && curr.length() > 0) {
-				int index = curr.indexOf(":"); //$NON-NLS-1$
+			String basedOn = fAttribute.getBasedOn();
+			if (basedOn != null && basedOn.length() > 0) {
+				int index = basedOn.indexOf(":"); //$NON-NLS-1$
 				if (index == -1) {
-					String className = curr.substring(curr.lastIndexOf(".") + 1); //$NON-NLS-1$
+					String className = basedOn.substring(basedOn.lastIndexOf(".") + 1); //$NON-NLS-1$
 					if (className.length() > 1 && className.charAt(0) == 'I')
-						fInterfaceEntry.setValue(curr);
+						fInterfaceEntry.setValue(basedOn, true);
 					else
-						fClassEntry.setValue(curr);
+						fClassEntry.setValue(basedOn, true);
 				} else {
-					fClassEntry.setValue(curr.substring(0, index));
-					fInterfaceEntry.setValue(curr.substring(index + 1));
+					fClassEntry.setValue(basedOn.substring(0, index), true);
+					fInterfaceEntry.setValue(basedOn.substring(index + 1), true);
 				}
 			}
 		}
