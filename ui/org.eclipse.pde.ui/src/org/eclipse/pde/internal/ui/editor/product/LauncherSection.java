@@ -12,26 +12,52 @@ package org.eclipse.pde.internal.ui.editor.product;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.pde.internal.core.iproduct.*;
+import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
+import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
-import org.eclipse.pde.internal.ui.util.*;
+import org.eclipse.pde.internal.ui.util.FileExtensionFilter;
+import org.eclipse.pde.internal.ui.util.FileValidator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.model.*;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 
 public class LauncherSection extends PDESection {
@@ -43,6 +69,20 @@ public class LauncherSection extends PDESection {
 	private Button fIcoButton;
 
 	private Button fBmpButton;
+
+	private CTabFolder fTabFolder;
+
+	private Composite fNotebook;
+
+	private StackLayout fNotebookLayout;
+
+	private Composite fLinuxSection;
+
+	private Composite fMacSection;
+
+	private Composite fSolarisSection;
+
+	private Composite fWin32Section;
 
 	class IconEntry extends FormEntry {
 		String fIconId;
@@ -79,41 +119,86 @@ public class LauncherSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
-	protected void createClient(Section section, FormToolkit toolkit) {
+	public void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.LauncherSection_title); 
 		section.setDescription(PDEUIMessages.LauncherSection_desc); 
-
-		Composite client = toolkit.createComposite(section);
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.numColumns = 2;
-		client.setLayout(layout);
 		
+		Composite container = toolkit.createComposite(section);
+		container.setLayout(new GridLayout());
+
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-		fNameEntry = new FormEntry(client, toolkit, PDEUIMessages.LauncherSection_launcherName, null, false); 
+		fNameEntry = new FormEntry(container, toolkit, PDEUIMessages.LauncherSection_launcherName, null, false); 
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getLauncherInfo().setLauncherName(entry.getValue());
 			}
 		});
-		fNameEntry.setEditable(isEditable());
 		
-		createLabel(client, toolkit, "", 2);	 //$NON-NLS-1$
-		createLabel(client, toolkit, PDEUIMessages.LauncherSection_label, 2); 
+		createLabel(container, toolkit, "", 2);	 //$NON-NLS-1$
+		createLabel(container, toolkit, PDEUIMessages.LauncherSection_label, 2); 
 		
-		addLinuxSection(client, toolkit);
-		addMacSection(client, toolkit);
-		addSolarisSection(client, toolkit);
-		addWin32Section(client, toolkit);
+		fTabFolder = new CTabFolder(container, SWT.FLAT | SWT.TOP);
+		toolkit.adapt(fTabFolder, true, true);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.heightHint = 2;
+		fTabFolder.setLayoutData(gd);
 		
-		toolkit.paintBordersFor(client);
-		section.setClient(client);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
-		gd.verticalSpan = 4;
-		section.setLayoutData(gd);
+		toolkit.getColors().initializeSectionToolBarColors();
+		Color selectedColor1 = toolkit.getColors().getColor(FormColors.TB_BG);
+		Color selectedColor2 = toolkit.getColors().getColor(FormColors.TB_GBG);
+		fTabFolder.setSelectionBackground(new Color[] {selectedColor1, selectedColor2, toolkit.getColors().getBackground()}, new int[] {50, 100}, true);
+
+		fTabFolder.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateTabSelection();
+			}
+		});
+
+		fNotebook = toolkit.createComposite(container);
+		fNotebook.setLayoutData(new GridData(GridData.FILL_BOTH));
+		fNotebookLayout = new StackLayout();
+		fNotebook.setLayout(fNotebookLayout);
+
+		fWin32Section = addWin32Section(fNotebook, toolkit);
+		fMacSection = addMacSection(fNotebook, toolkit);
+		fLinuxSection = addLinuxSection(fNotebook, toolkit);
+		fSolarisSection = addSolarisSection(fNotebook, toolkit);
+		
+		fNotebookLayout.topControl = fWin32Section;
+		
+		createTabs();
+		if (fTabFolder.getItemCount() > 0) {
+			fTabFolder.setSelection(0);
+		}
+		
+		toolkit.paintBordersFor(container);
+		section.setClient(container);
+		section.setLayoutData(new GridData(
+				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 	}
 	
-	private void addWin32Section(Composite parent, FormToolkit toolkit) {
-		Composite comp = createComposite(parent, toolkit, "win32"); //$NON-NLS-1$
+	private void createTabs() {
+		addTab("win32");
+		addTab("macosx");
+		addTab("linux");
+		addTab("solaris");
+	}
+	
+	private void addTab(String label) {
+		CTabItem item = new CTabItem(fTabFolder, SWT.NULL);
+		item.setText(label);
+		updateTabImage(item);
+	}
+	
+	private void updateTabImage(CTabItem item) {
+		if (item == null)
+			return;
+		item.setImage(PDEPlugin.getDefault().getLabelProvider().get(
+					PDEPluginImages.DESC_DOC_SECTION_OBJ));
+	}
+	
+	private Composite addWin32Section(Composite parent, FormToolkit toolkit) {
+		Composite comp = createComposite(parent, toolkit);
 		
 		fIcoButton = toolkit.createButton(comp, PDEUIMessages.LauncherSection_ico, SWT.RADIO); 
 		TableWrapData gd = new TableWrapData();
@@ -149,6 +234,7 @@ public class LauncherSection extends PDESection {
 		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_48High, ILauncherInfo.WIN32_48_HIGH)); 
 
 		toolkit.paintBordersFor(comp);
+		return comp;
 	}
 	
 	private void createLabel(Composite parent, FormToolkit toolkit, String text, int span) {
@@ -166,15 +252,16 @@ public class LauncherSection extends PDESection {
 		}
 	}
 	
-	private void addLinuxSection(Composite parent, FormToolkit toolkit) {
-		Composite comp = createComposite(parent, toolkit, "linux"); //$NON-NLS-1$
+	private Composite addLinuxSection(Composite parent, FormToolkit toolkit) {
+		Composite comp = createComposite(parent, toolkit);
 		createLabel(comp, toolkit, PDEUIMessages.LauncherSection_linuxLabel, 3);	 
 		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_icon, ILauncherInfo.LINUX_ICON)); 
 		toolkit.paintBordersFor(comp);
+		return comp;
 	}
 
-	private void addSolarisSection(Composite parent, FormToolkit toolkit) {
-		Composite comp = createComposite(parent, toolkit, "solaris"); //$NON-NLS-1$
+	private Composite addSolarisSection(Composite parent, FormToolkit toolkit) {
+		Composite comp = createComposite(parent, toolkit);
 		createLabel(comp, toolkit, PDEUIMessages.LauncherSection_solarisLabel, 3); 
 
 		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_large, ILauncherInfo.SOLARIS_LARGE)); 
@@ -183,28 +270,23 @@ public class LauncherSection extends PDESection {
 		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_tiny, ILauncherInfo.SOLARIS_TINY)); 
 		
 		toolkit.paintBordersFor(comp);
+		return comp;
 	}
 	
-	private void addMacSection(Composite parent, FormToolkit toolkit) {
-		Composite comp = createComposite(parent, toolkit, "macosx");		 //$NON-NLS-1$
+	private Composite addMacSection(Composite parent, FormToolkit toolkit) {
+		Composite comp = createComposite(parent, toolkit);
 		createLabel(comp, toolkit, PDEUIMessages.LauncherSection_macLabel, 3);		 
 		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_file, ILauncherInfo.MACOSX_ICON)); 
 		toolkit.paintBordersFor(comp);
+		return comp;
 	}
 	
-	private Composite createComposite(Composite parent, FormToolkit toolkit, String text) {
-		ExpandableComposite ec = toolkit.createSection(parent, ExpandableComposite.TWISTIE|ExpandableComposite.COMPACT);
-		ec.setText(text);
-		
-		TableWrapData gd = new TableWrapData(TableWrapData.FILL_GRAB);
-		gd.colspan = 2;
-		ec.setLayoutData(gd);
-		Composite comp = toolkit.createComposite(ec);
+	private Composite createComposite(Composite parent, FormToolkit toolkit) {
+		Composite comp = toolkit.createComposite(parent);
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.leftMargin = layout.rightMargin = 0;
 		layout.numColumns = 3;
 		comp.setLayout(layout);
-		ec.setClient(comp);
 		return comp;
 	}
 	
@@ -335,4 +417,25 @@ public class LauncherSection extends PDESection {
 		return false;
 	}
 
+	private void updateTabSelection() {
+		int index = fTabFolder.getSelectionIndex();
+		Control oldPage = fNotebookLayout.topControl;
+		switch (index) {
+		case 0:
+			fNotebookLayout.topControl = fWin32Section;
+			break;
+		case 1:
+			fNotebookLayout.topControl = fMacSection;
+			break;
+		case 2:
+			fNotebookLayout.topControl = fLinuxSection;
+			break;
+		case 3:
+			fNotebookLayout.topControl = fSolarisSection;
+			break;
+		}
+		if (oldPage != fNotebookLayout.topControl)
+			fNotebook.layout();
+	}
+	
 }
