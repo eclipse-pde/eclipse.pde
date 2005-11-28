@@ -183,7 +183,7 @@ public class ClasspathHelper {
 					} else if (entries[i].getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
 						IPath candidate = entries[i].getPath().removeFirstSegments(1);
 						if (candidate.segmentCount() == 0) {
-							if (set.isEmpty() || set.contains("."))
+							if (set.isEmpty() || set.contains(".")) //$NON-NLS-1$
 								path = entries[i].getPath();
 						} else if (set.contains(candidate.toString())) {
 							path = entries[i].getPath();
