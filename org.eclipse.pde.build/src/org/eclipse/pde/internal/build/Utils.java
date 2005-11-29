@@ -335,6 +335,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 
 	public static void generatePermissions(Properties featureProperties, Config aConfig, String targetRootProperty, AntScript script) {
 		String configInfix = aConfig.toString("."); //$NON-NLS-1$
+		String configPath = aConfig.toStringReplacingAny(".", ANY_STRING);
 		String prefixPermissions = ROOT_PREFIX + configInfix + '.' + PERMISSIONS + '.';
 		String prefixLinks = ROOT_PREFIX + configInfix + '.' + LINK;
 		String commonPermissions = ROOT_PREFIX + PERMISSIONS + '.';
@@ -344,19 +345,19 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			String instruction = (String) permission.getKey();
 			String parameters = removeEndingSlashes((String) permission.getValue());
 			if (instruction.startsWith(prefixPermissions)) {
-				generateChmodInstruction(script, getPropertyFormat(targetRootProperty) + '/' + configInfix + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), instruction.substring(prefixPermissions.length()), parameters); 
+				generateChmodInstruction(script, getPropertyFormat(targetRootProperty) + '/' + configPath + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), instruction.substring(prefixPermissions.length()), parameters); 
 				continue;
 			}
 			if (instruction.startsWith(prefixLinks)) {
-				generateLinkInstruction(script, getPropertyFormat(targetRootProperty) + '/' + configInfix + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), parameters);
+				generateLinkInstruction(script, getPropertyFormat(targetRootProperty) + '/' + configPath + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), parameters);
 				continue;
 			}
 			if (instruction.startsWith(commonPermissions)) {
-				generateChmodInstruction(script, getPropertyFormat(targetRootProperty) + '/' + configInfix + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), instruction.substring(commonPermissions.length()), parameters);
+				generateChmodInstruction(script, getPropertyFormat(targetRootProperty) + '/' + configPath + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), instruction.substring(commonPermissions.length()), parameters);
 				continue;
 			}
 			if (instruction.startsWith(commonLinks)) {
-				generateLinkInstruction(script, getPropertyFormat(targetRootProperty) + '/' + configInfix + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), parameters);
+				generateLinkInstruction(script, getPropertyFormat(targetRootProperty) + '/' + configPath + '/' + getPropertyFormat(PROPERTY_COLLECTING_FOLDER), parameters);
 				continue;
 			}
 		}
