@@ -207,7 +207,7 @@ public class ProductExportJob extends FeatureExportJob {
 	}
 	
 	private void createLauncherIniFile(String os) {
-		String programArgs = getProgramArguments();
+		String programArgs = getProgramArguments(os);
 		String vmArgs = getVMArguments();
 		
 		if (programArgs.length() == 0 && vmArgs.length() == 0)
@@ -247,9 +247,9 @@ public class ProductExportJob extends FeatureExportJob {
 		}
 	}
 
-	private String getProgramArguments() {
+	private String getProgramArguments(String os) {
 		IArgumentsInfo info = fProduct.getLauncherArguments();
-		return (info != null) ? CoreUtility.normalize(info.getProgramArguments()) : ""; //$NON-NLS-1$
+		return info != null ? CoreUtility.normalize(info.getCompleteProgramArguments(os)) : "";//$NON-NLS-1$
 	}
 	
 	private String getVMArguments() {

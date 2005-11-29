@@ -10,28 +10,99 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.w3c.dom.*;
 
 public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 
 	private static final long serialVersionUID = 1L;
-	private String fProgramArgs = ""; //$NON-NLS-1$
+	private String fProgramArgsAll = ""; //$NON-NLS-1$
+	private String fProgramArgsLin = ""; //$NON-NLS-1$
+	private String fProgramArgsMac = ""; //$NON-NLS-1$
+	private String fProgramArgsSol = ""; //$NON-NLS-1$
+	private String fProgramArgsWin = ""; //$NON-NLS-1$
+	
 	private String fVMArgs = ""; //$NON-NLS-1$
 
 	public ArgumentsInfo(IProductModel model) {
 		super(model);
 	}
 
-	public void setProgramArguments(String args) {
-		String old = fProgramArgs;
-		fProgramArgs = args;
-		if (isEditable())
-			firePropertyChanged(P_PROG_ARGS, old, fProgramArgs);
+	public void setProgramArguments(String args, int platform) {
+		String old;
+		if (args == null)
+			args = "";
+		switch (platform) {
+		case L_ARGS_ALL:
+			old = fProgramArgsAll;
+			fProgramArgsAll = args;
+			if (isEditable())
+				firePropertyChanged(P_PROG_ARGS_ALL, old, fProgramArgsAll);
+			break;
+		case L_ARGS_LINUX:
+			old = fProgramArgsLin;
+			fProgramArgsLin = args;
+			if (isEditable())
+				firePropertyChanged(P_PROG_ARGS_LIN, old, fProgramArgsLin);
+			break;
+		case L_ARGS_MACOS:
+			old = fProgramArgsMac;
+			fProgramArgsMac = args;
+			if (isEditable())
+				firePropertyChanged(P_PROG_ARGS_MAC, old, fProgramArgsMac);
+			break;
+		case L_ARGS_SOLAR:
+			old = fProgramArgsSol;
+			fProgramArgsSol = args;
+			if (isEditable())
+				firePropertyChanged(P_PROG_ARGS_SOL, old, fProgramArgsSol);
+			break;
+		case L_ARGS_WIN32:
+			old = fProgramArgsWin;
+			fProgramArgsWin = args;
+			if (isEditable())
+				firePropertyChanged(P_PROG_ARGS_WIN, old, fProgramArgsWin);
+			break;
+		}
+		
 	}
 
-	public String getProgramArguments() {
-		return fProgramArgs;
+	public String getProgramArguments(int platform) {
+		switch (platform) {
+		case L_ARGS_ALL:
+			return fProgramArgsAll;
+		case L_ARGS_LINUX:
+			return fProgramArgsLin;
+		case L_ARGS_MACOS:
+			return fProgramArgsMac;
+		case L_ARGS_SOLAR:
+			return fProgramArgsSol;
+		case L_ARGS_WIN32:
+			return fProgramArgsWin;
+		}
+		return "";
+	}
+	
+	public String getCompleteProgramArguments(String os) {
+		if (Platform.OS_WIN32.equals(os)) {
+			return getCompleteArgs(getProgramArguments(L_ARGS_WIN32));
+		} else if (Platform.OS_LINUX.equals(os)) {
+			return getCompleteArgs(getProgramArguments(L_ARGS_LINUX));
+		} else if (Platform.OS_MACOSX.equals(os)) {
+			return getCompleteArgs(getProgramArguments(L_ARGS_MACOS));
+		} else if (Platform.OS_SOLARIS.equals(os)) {
+			return getCompleteArgs(getProgramArguments(L_ARGS_SOLAR));
+		} else {
+			return getProgramArguments(L_ARGS_ALL);
+		}
+	}
+	
+	private String getCompleteArgs(String platformArgs) {
+		String args = platformArgs;
+		if (fProgramArgsAll.length() > 0)
+			args = fProgramArgsAll + " " + args;
+		return args.trim();
 	}
 
 	public void setVMArguments(String args) {
@@ -50,8 +121,16 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 		for (int i = 0; i < list.getLength(); i++) {
 			Node child = list.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				if (child.getNodeName().equals(P_PROG_ARGS)) {
-					fProgramArgs = getText(child);
+				if (child.getNodeName().equals(P_PROG_ARGS_ALL)) {
+					fProgramArgsAll = getText(child);
+				} else if (child.getNodeName().equals(P_PROG_ARGS_LIN)) {
+					fProgramArgsLin = getText(child);
+				} else if (child.getNodeName().equals(P_PROG_ARGS_MAC)) {
+					fProgramArgsMac = getText(child);
+				} else if (child.getNodeName().equals(P_PROG_ARGS_SOL)) {
+					fProgramArgsSol = getText(child);
+				} else if (child.getNodeName().equals(P_PROG_ARGS_WIN)) {
+					fProgramArgsWin = getText(child);
 				} else if (child.getNodeName().equals(P_VM_ARGS)) {
 					fVMArgs = getText(child);
 				}
@@ -70,8 +149,20 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 	
 	public void write(String indent,java.io.PrintWriter writer) {
 		writer.println(indent + "<launcherArgs>"); //$NON-NLS-1$
-		if (fProgramArgs.length() > 0) {
-			writer.println(indent + "   " + "<" + P_PROG_ARGS + ">" + getWritableString(fProgramArgs) + "</" + P_PROG_ARGS + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		if (fProgramArgsAll.length() > 0) {
+			writer.println(indent + "   " + "<" + P_PROG_ARGS_ALL + ">" + getWritableString(fProgramArgsAll) + "</" + P_PROG_ARGS_ALL + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		}
+		if (fProgramArgsLin.length() > 0) {
+			writer.println(indent + "   " + "<" + P_PROG_ARGS_LIN + ">" + getWritableString(fProgramArgsLin) + "</" + P_PROG_ARGS_LIN + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		}
+		if (fProgramArgsMac.length() > 0) {
+			writer.println(indent + "   " + "<" + P_PROG_ARGS_MAC + ">" + getWritableString(fProgramArgsMac) + "</" + P_PROG_ARGS_MAC + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		}
+		if (fProgramArgsSol.length() > 0) {
+			writer.println(indent + "   " + "<" + P_PROG_ARGS_SOL + ">" + getWritableString(fProgramArgsSol) + "</" + P_PROG_ARGS_SOL + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		}
+		if (fProgramArgsWin.length() > 0) {
+			writer.println(indent + "   " + "<" + P_PROG_ARGS_WIN + ">" + getWritableString(fProgramArgsWin) + "</" + P_PROG_ARGS_WIN + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		}
 		if (fVMArgs.length() > 0) {
 			writer.println(indent + "   " + "<" + P_VM_ARGS + ">" + getWritableString(fVMArgs) + "</" + P_VM_ARGS + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$

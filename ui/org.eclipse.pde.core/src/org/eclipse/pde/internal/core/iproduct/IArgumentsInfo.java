@@ -12,12 +12,25 @@ package org.eclipse.pde.internal.core.iproduct;
 
 public interface IArgumentsInfo extends IProductObject {
 	
-	public static final String P_PROG_ARGS = "programArgs"; //$NON-NLS-1$
+	public static final String P_PROG_ARGS_ALL = "programArgsAll"; //$NON-NLS-1$
+	public static final String P_PROG_ARGS_LIN = "programArgsLin"; //$NON-NLS-1$
+	public static final String P_PROG_ARGS_MAC = "programArgsMac"; //$NON-NLS-1$
+	public static final String P_PROG_ARGS_SOL = "programArgsSol"; //$NON-NLS-1$
+	public static final String P_PROG_ARGS_WIN = "programArgsWin"; //$NON-NLS-1$
+	
 	public static final String P_VM_ARGS = "vmArgs"; //$NON-NLS-1$
 	
-	void setProgramArguments(String args);
+	public static final int L_ARGS_ALL = 0;
+	public static final int L_ARGS_LINUX = 1;
+	public static final int L_ARGS_MACOS = 2;
+	public static final int L_ARGS_SOLAR = 3;
+	public static final int L_ARGS_WIN32 = 4;
 	
-	String getProgramArguments();
+	void setProgramArguments(String args, int platform);
+	
+	String getProgramArguments(int platform);
+	
+	String getCompleteProgramArguments(String os);
 	
 	void setVMArguments(String args);
 	
