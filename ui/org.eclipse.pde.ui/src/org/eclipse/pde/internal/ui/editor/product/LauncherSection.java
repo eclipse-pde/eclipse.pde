@@ -153,6 +153,7 @@ public class LauncherSection extends PDESection {
 				updateTabSelection();
 			}
 		});
+		fTabFolder.setUnselectedImageVisible(false);
 
 		fNotebook = toolkit.createComposite(container);
 		fNotebook.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -184,14 +185,8 @@ public class LauncherSection extends PDESection {
 	private void addTab(String label) {
 		CTabItem item = new CTabItem(fTabFolder, SWT.NULL);
 		item.setText(label);
-		updateTabImage(item);
-	}
-	
-	private void updateTabImage(CTabItem item) {
-		if (item == null)
-			return;
 		item.setImage(PDEPlugin.getDefault().getLabelProvider().get(
-					PDEPluginImages.DESC_DOC_SECTION_OBJ));
+				PDEPluginImages.DESC_PLUGIN_CONFIG_OBJ));
 	}
 	
 	private Composite addWin32Section(Composite parent, FormToolkit toolkit) {
@@ -408,10 +403,7 @@ public class LauncherSection extends PDESection {
 	
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
-		Control c = d.getFocusControl();
-		if (c instanceof Text)
-			return true;
-		return false;
+		return (d.getFocusControl() instanceof Text);
 	}
 
 	private void updateTabSelection() {
