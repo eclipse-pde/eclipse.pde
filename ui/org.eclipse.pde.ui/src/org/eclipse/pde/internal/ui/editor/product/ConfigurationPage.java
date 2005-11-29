@@ -49,7 +49,6 @@ public class ConfigurationPage extends PDEFormPage {
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
 		layout.marginWidth = 10;
 		layout.verticalSpacing = 20;
 		layout.horizontalSpacing = 10;
