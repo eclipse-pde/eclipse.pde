@@ -32,7 +32,7 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 	public void setProgramArguments(String args, int platform) {
 		String old;
 		if (args == null)
-			args = "";
+			args = ""; //$NON-NLS-1$
 		switch (platform) {
 		case L_ARGS_ALL:
 			old = fProgramArgsAll;
@@ -81,7 +81,7 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 		case L_ARGS_WIN32:
 			return fProgramArgsWin;
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	public String getCompleteProgramArguments(String os) {
@@ -101,7 +101,7 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 	private String getCompleteArgs(String platformArgs) {
 		String args = platformArgs;
 		if (fProgramArgsAll.length() > 0)
-			args = fProgramArgsAll + " " + args;
+			args = fProgramArgsAll + " " + args; //$NON-NLS-1$
 		return args.trim();
 	}
 

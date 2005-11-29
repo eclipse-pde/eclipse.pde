@@ -2341,4 +2341,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String SecondaryBundlesSection_resolve;
 
+	public static String ArgumentsSection_allPlatforms;
+
 }

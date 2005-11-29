@@ -53,11 +53,11 @@ public class ArgumentsSection extends PDESection {
 
 	private static final String[] TAB_LABELS = new String[5];
 	static {
-		TAB_LABELS[IArgumentsInfo.L_ARGS_ALL] = "All Platforms";
-		TAB_LABELS[IArgumentsInfo.L_ARGS_LINUX] = "Linux";
-		TAB_LABELS[IArgumentsInfo.L_ARGS_MACOS] = "MacOS";
-		TAB_LABELS[IArgumentsInfo.L_ARGS_SOLAR] = "Solaris";
-		TAB_LABELS[IArgumentsInfo.L_ARGS_WIN32] = "Win32";
+		TAB_LABELS[IArgumentsInfo.L_ARGS_ALL] = PDEUIMessages.ArgumentsSection_allPlatforms;
+		TAB_LABELS[IArgumentsInfo.L_ARGS_LINUX] = "linux"; //$NON-NLS-1$
+		TAB_LABELS[IArgumentsInfo.L_ARGS_MACOS] = "macosx"; //$NON-NLS-1$
+		TAB_LABELS[IArgumentsInfo.L_ARGS_SOLAR] = "solaris"; //$NON-NLS-1$
+		TAB_LABELS[IArgumentsInfo.L_ARGS_WIN32] = "win32"; //$NON-NLS-1$
 	}
 	
 	private FormEntry fVMArgs;
