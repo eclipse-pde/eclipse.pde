@@ -91,8 +91,9 @@ public class LaunchAction extends Action {
 
 	private ILaunchConfiguration refreshConfiguration(ILaunchConfigurationWorkingCopy wc) throws CoreException {
 		wc.setAttribute(IPDELauncherConstants.PRODUCT, fProduct.getId());
-		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, getVMArguments()); 
-		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, getProgramArguments(Platform.getOS()));
+		String os = Platform.getOS();
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, getVMArguments(os)); 
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, getProgramArguments(os));
 		StringBuffer wsplugins = new StringBuffer();
 		StringBuffer explugins = new StringBuffer();
 		IPluginModelBase[] models = getModels();
@@ -121,9 +122,9 @@ public class LaunchAction extends Action {
 		return info != null ? CoreUtility.normalize(info.getCompleteProgramArguments(os)) : ""; //$NON-NLS-1$
 	}
 	
-	private String getVMArguments() {
+	private String getVMArguments(String os) {
 		IArgumentsInfo info = fProduct.getLauncherArguments();
-		return (info != null) ? CoreUtility.normalize(info.getVMArguments()) : ""; //$NON-NLS-1$
+		return (info != null) ? CoreUtility.normalize(info.getCompleteVMArguments(os)) : ""; //$NON-NLS-1$
 	}	
 	
 	private IPluginModelBase[] getModels() {
