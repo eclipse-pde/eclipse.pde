@@ -142,8 +142,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			public void run() {	
 			createPluginsTab(fTabFolder);
 			createEnvironmentTab(fTabFolder);
-			createSourceTab(fTabFolder);
 			createArgumentsTab(fTabFolder);
+			createSourceTab(fTabFolder);
 			fTabFolder.setSelection(fIndex);
 			}
 		});
@@ -224,6 +224,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		fHomeText.setText(ExternalModelManager.computeDefaultPlatformPath());
 		fPluginsBlock.handleReload();
 		fEnvironmentBlock.performDefaults();
+		fArgumentsBlock.performDefaults();
 		fSourceBlock.performDefaults();
 		super.performDefaults();
 	}

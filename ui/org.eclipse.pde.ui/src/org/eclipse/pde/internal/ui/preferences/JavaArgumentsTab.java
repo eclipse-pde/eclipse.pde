@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class JavaArgumentsTab {
@@ -29,13 +30,20 @@ public class JavaArgumentsTab {
 	public Control createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout());
+		
+		Label description = new Label(container, SWT.WRAP);
+		description.setText(PDEUIMessages.JavaArgumentsTab_description);
+		GridData gd = new GridData();
+		gd.widthHint = 450;
+		description.setLayoutData(gd);
+		
 		Group programGroup = new Group(container, SWT.NONE);
 		programGroup.setLayout(new GridLayout());
 		programGroup.setText(PDEUIMessages.JavaArgumentsTab_progamArgsGroup);
 		
 		fProgramArgs = new Text(programGroup, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
-		GridData gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
-		gd.widthHint = 500;
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 450;
 		gd.heightHint = 60;
 		fProgramArgs.setLayoutData(gd);
 		
@@ -49,8 +57,8 @@ public class JavaArgumentsTab {
 		vmGroup.setText(PDEUIMessages.JavaArgumentsTab_vmArgsGroup);
 		
 		fVMArgs = new Text(vmGroup, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
-		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
-		gd.widthHint = 500;
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 450;
 		gd.heightHint = 60;
 		fVMArgs.setLayoutData(gd);
 		
@@ -91,5 +99,8 @@ public class JavaArgumentsTab {
 		preferences.setValue(ICoreConstants.VM_ARGS, fVMArgs.getText());
 	}
 	
-
+	protected void performDefaults() {
+		fProgramArgs.setText(""); //$NON-NLS-1$
+		fVMArgs.setText(""); //$NON-NLS-1$
+	}
 }
