@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.TextAttribute;
@@ -21,6 +22,8 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 
 public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
@@ -34,7 +37,11 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 	private MultilineDamagerRepairer fDamagerRepairer;
 	
 	public XMLConfiguration(IColorManager colorManager) {
-		super(PDEPlugin.getDefault().getPreferenceStore());
+        super(new ChainedPreferenceStore(new IPreferenceStore[] {
+                  PDEPlugin.getDefault().getPreferenceStore(),
+                  EditorsUI.getPreferenceStore() // general text editor store
+                }
+              ));
 		fColorManager = colorManager;
 	}
 	

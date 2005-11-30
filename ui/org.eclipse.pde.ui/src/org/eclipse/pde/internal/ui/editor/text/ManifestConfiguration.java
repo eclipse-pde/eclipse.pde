@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
@@ -23,6 +24,8 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.osgi.framework.Constants;
 
 public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration {
@@ -159,7 +162,11 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	}
 
 	public ManifestConfiguration(IColorManager manager) {
-		super(PDEPlugin.getDefault().getPreferenceStore());
+        super(new ChainedPreferenceStore(new IPreferenceStore[] {
+                PDEPlugin.getDefault().getPreferenceStore(),
+                EditorsUI.getPreferenceStore() // general text editor store
+              }
+            ));
 		fColorManager = manager;
 		fPropertyKeyScanner = new ManifestHeaderScanner();
 		fPropertyValueScanner = new ManifestValueScanner();
