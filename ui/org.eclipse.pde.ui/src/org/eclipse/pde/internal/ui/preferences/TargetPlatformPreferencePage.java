@@ -57,6 +57,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	private TargetPluginsTab fPluginsBlock;
 	private TargetEnvironmentTab fEnvironmentBlock;
 	private TargetSourceTab fSourceBlock;
+	private JavaArgumentsTab fArgumentsBlock;
 	
 	private Preferences fPreferences = null;
 	private boolean fNeedsReload = false;
@@ -142,6 +143,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			createPluginsTab(fTabFolder);
 			createEnvironmentTab(fTabFolder);
 			createSourceTab(fTabFolder);
+			createArgumentsTab(fTabFolder);
 			fTabFolder.setSelection(fIndex);
 			}
 		});
@@ -184,6 +186,15 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		
 		TabItem tab = new TabItem(folder, SWT.NONE);
 		tab.setText(PDEUIMessages.TargetPlatformPreferencePage_sourceCode);  
+		tab.setControl(block);
+	}
+	
+	private void createArgumentsTab(TabFolder folder) {
+		fArgumentsBlock = new JavaArgumentsTab(this);
+		Control block = fArgumentsBlock.createControl(folder);
+		
+		TabItem tab = new TabItem(folder, SWT.NONE);
+		tab.setText(PDEUIMessages.TargetPlatformPreferencePage_agrumentsTab);
 		tab.setControl(block);
 	}
 
@@ -239,6 +250,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		} 
 		fSourceBlock.performOk();
 		fPluginsBlock.performOk();
+		fArgumentsBlock.performOk();
 		return super.performOk();
 	}
 	

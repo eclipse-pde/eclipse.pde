@@ -16,6 +16,7 @@ import java.util.TreeMap;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -35,6 +36,7 @@ import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
@@ -225,8 +227,7 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 			if (TargetPlatform.isRuntimeRefactored())
 				wc.setAttribute("pde.version", "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
 			wc.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(computedName)); //$NON-NLS-1$
-			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$
-			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
+			setJavaArguments(wc);
 			wc.setAttribute(IPDELauncherConstants.USEFEATURES, false);
 			wc.setAttribute(IPDELauncherConstants.DOCLEAR, false);
 			wc.setAttribute(IPDELauncherConstants.ASKCLEAR, true);
@@ -276,6 +277,16 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 			PDEPlugin.logException(ce);
 		} 
 		return config;
+	}
+	
+	private void setJavaArguments(ILaunchConfigurationWorkingCopy wc) {
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		String programArgs = preferences.getString(ICoreConstants.PROGRAM_ARGS);
+		if (programArgs.length()  > 0)
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, programArgs);
+		String vmArgs = preferences.getString(ICoreConstants.VM_ARGS);
+		if (vmArgs.length() > 0)
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
 	}
 	
 	private String getProduct(String appName) {

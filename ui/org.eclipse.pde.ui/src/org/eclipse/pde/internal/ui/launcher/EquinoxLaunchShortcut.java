@@ -15,6 +15,7 @@ import java.util.TreeMap;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -26,6 +27,7 @@ import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -122,8 +124,7 @@ public class EquinoxLaunchShortcut implements ILaunchShortcut {
 			ILaunchConfigurationType configType = getLaunchConfigurationType();
 			String computedName = getComputedName("Equinox"); //$NON-NLS-1$
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);  
-			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$
-			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "-console"); //$NON-NLS-1$
+			setJavaArguments(wc);
 			wc.setAttribute(IPDELauncherConstants.TRACING_CHECKED, IPDELauncherConstants.TRACING_NONE);
 			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
 			initializePluginState(wc, selected);
@@ -133,6 +134,17 @@ public class EquinoxLaunchShortcut implements ILaunchShortcut {
 			PDEPlugin.logException(ce);
 		} 
 		return config;
+	}
+	
+	private void setJavaArguments(ILaunchConfigurationWorkingCopy wc) {
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		String progArgs = preferences.getString(ICoreConstants.PROGRAM_ARGS);
+		if (progArgs.indexOf("-console") == -1) //$NON-NLS-1$
+			progArgs = "-console " + progArgs; //$NON-NLS-1$
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, progArgs); //$NON-NLS-1$
+		String vmArgs = preferences.getString(ICoreConstants.VM_ARGS);
+		if (vmArgs.length() > 0)
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
 	}
 	
 	public static void initializePluginState(ILaunchConfigurationWorkingCopy wc, IPluginModelBase[] selected) {

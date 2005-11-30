@@ -2343,4 +2343,26 @@ public class PDEUIMessages extends NLS {
 
 	public static String ArgumentsSection_allPlatforms;
 
+	public static String TargetPlatformPreferencePage_agrumentsTab;
+
+	public static String JavaArgumentsTab_progamArgsGroup;
+
+	public static String JavaArgumentsTab_programVariables;
+
+	public static String JavaArgumentsTab_vmArgsGroup;
+
+	public static String JavaArgumentsTab_vmVariables;
+
+	public static String NewTargetProfileWizard_title;
+
+	public static String TargetProfileWizardPage_description;
+
+	public static String TargetProfileWizardPage_extensionInfoGroup;
+
+	public static String TargetProfileWizardPage_profileId;
+
+	public static String TargetProfileWizardPage_profileName;
+
+	public static String NewPlatformFileOperation_taskName;
+
 }

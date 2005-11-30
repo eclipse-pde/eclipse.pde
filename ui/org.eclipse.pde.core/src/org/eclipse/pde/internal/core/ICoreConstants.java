@@ -25,6 +25,8 @@ public interface ICoreConstants {
 	String VALUE_SAVED_SOME = "savedSome"; //$NON-NLS-1$
 	String P_SOURCE_LOCATIONS = "source_locations"; //$NON-NLS-1$
 	String P_EXT_LOCATIONS = "ext_locations"; //$NON-NLS-1$
+	String PROGRAM_ARGS = "program_args"; //$NON-NLS-1$
+	String VM_ARGS = "vm_args"; //$NON-NLS-1$
 	
 	// Target JRE
 	String TARGET_JRE = "targetJRE"; //$NON-NLS-1$

@@ -11,11 +11,14 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -85,6 +88,15 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends
 		configuration.setAttribute(
 			IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
 			"org.eclipse.pde.ui.workbenchClasspathProvider"); //$NON-NLS-1$
+		
+		// Set Program/VM arguments with preference values
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		String programArgs = preferences.getString(ICoreConstants.PROGRAM_ARGS);
+		if (programArgs.length() > 0)
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, programArgs);
+		String vmArgs = preferences.getString(ICoreConstants.VM_ARGS);
+		if (vmArgs.length() > 0)
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
 	}
 
 }

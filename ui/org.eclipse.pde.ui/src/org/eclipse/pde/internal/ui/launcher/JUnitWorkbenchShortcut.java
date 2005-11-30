@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -20,6 +21,8 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration;
 import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchShortcut;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
@@ -44,8 +47,7 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 			if (TargetPlatform.isRuntimeRefactored())
 				wc.setAttribute("pde.version", "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
 			wc.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultJUnitWorkspaceLocation());
-			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
-			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$
+			setJavaArguments(wc);
 			wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 			wc.setAttribute(IPDELauncherConstants.DOCLEAR, true);
 			wc.setAttribute(IPDELauncherConstants.ASKCLEAR, false);
@@ -77,6 +79,16 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 			PDEPlugin.log(ce);
 		}
 		return config;
+	}
+	
+	private void setJavaArguments(ILaunchConfigurationWorkingCopy wc) {
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		String programArgs = preferences.getString(ICoreConstants.PROGRAM_ARGS);
+		if (programArgs.length() > 0)
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, programArgs);
+		String vmArgs = preferences.getString(ICoreConstants.VM_ARGS);
+		if (vmArgs.length() > 0)
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
 	}
 	
 }
