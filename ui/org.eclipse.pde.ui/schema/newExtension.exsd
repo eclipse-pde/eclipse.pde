@@ -92,7 +92,7 @@ represent the wizard.
 interface. This attribute is mutually exclusive with the &lt;code&gt;template&lt;/code&gt; attribute.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.pde.IExtensionWizard"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.pde.ui.IExtensionWizard"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -171,7 +171,7 @@ represent the wizard.
 interface.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.pde.IExtensionEditorWizard"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.pde.ui.IExtensionEditorWizard"/>
                </appInfo>
             </annotation>
          </attribute>

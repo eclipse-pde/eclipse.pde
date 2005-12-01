@@ -96,7 +96,7 @@ represent the wizard.
 &lt;samp&gt;org.eclipse.pde.ui.IPluginContentWizard&lt;/samp&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.jface.Wizard:org.eclipse.pde.IPluginContentWizard"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.Wizard:org.eclipse.pde.ui.IPluginContentWizard"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -138,7 +138,7 @@ represent the wizard.
          <attribute name="requiresActivator" type="boolean" use="default" value="false">
             <annotation>
                <documentation>
-                  Since 3.2.  A boolean flag indicating whether the wizard contributes an activator class.  If set to &lt;code&gt;true&lt;/code&gt;, the wizard will appear in the New Plug-in Project wizard only when the user chooses to generate a java class to control the plug-in&apos;s life cycle.
+                  Since 3.2.  A boolean flag indicating whether the wizard contributes an activator class.  If set to &lt;code&gt;true&lt;/code&gt;, the wizard will appear in the New Plug-in Project wizard only when the user chooses to generate an activator to control the plug-in life cycle.
                </documentation>
             </annotation>
          </attribute>
