@@ -1322,7 +1322,15 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	
 	private void validateLazyStart() {
 		IHeader header = (IHeader) fHeaders.get(ICoreConstants.ECLIPSE_LAZYSTART);
-		isValidStartHeader(header);
+		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
+		if (header != null 
+				&& TargetPlatform.getTargetVersion() < 3.2
+				&& severity != CompilerFlags.IGNORE) {
+			report(PDEMessages.BundleErrorReporter_lazyStart_unsupported,
+					header.getLineNumber() + 1, severity,
+					PDEMarkerFactory.NO_RESOLUTION);
+		} else
+			isValidStartHeader(header);
 	}
 	
 	private boolean isValidStartHeader(IHeader header) {

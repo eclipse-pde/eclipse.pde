@@ -502,14 +502,14 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	protected void reportDeprecatedRootElement(Element element, String suggestion) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
 		if (severity != CompilerFlags.IGNORE) {
-			String point = element.getAttribute("point");
+			String point = element.getAttribute("point"); //$NON-NLS-1$
 			if (point == null) return; // should never come to this...
 			String message;
 			if (suggestion != null)
 				message = NLS.bind(PDEMessages.Builders_Manifest_deprecated_rootElementSuggestion, point, suggestion);
 			else
 				message = NLS.bind(PDEMessages.Builders_Manifest_deprecated_rootElement, point);
-			report(message, getLine(element, "point"), severity);
+			report(message, getLine(element, "point"), severity); //$NON-NLS-1$
 		}	
 	}
 }
