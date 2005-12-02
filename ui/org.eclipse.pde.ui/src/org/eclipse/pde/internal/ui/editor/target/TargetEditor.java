@@ -8,13 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.editor.product;
+package org.eclipse.pde.internal.ui.editor.target;
 
 import java.io.File;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -27,15 +25,9 @@ import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PartInitException;
 
 
-public class ProductEditor extends PDEFormEditor {
+public class TargetEditor extends PDEFormEditor {
 
-	private ConfigurationPage fPluginConfigurationPage;
-	private ConfigurationPage fFeatureConfigurationPage;
-
-	/**
-	 * 
-	 */
-	public ProductEditor() {
+	public TargetEditor() {
 		super();
 	}
 
@@ -43,14 +35,14 @@ public class ProductEditor extends PDEFormEditor {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createInputContextManager()
 	 */
 	protected InputContextManager createInputContextManager() {
-		return new ProductInputContextManager(this);
+		return new TargetInputContextManager(this);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createResourceContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.ui.IFileEditorInput)
 	 */
 	protected void createResourceContexts(InputContextManager manager, IFileEditorInput input) {
-		manager.putContext(input, new ProductInputContext(this, input, true));
+		manager.putContext(input, new TargetInputContext(this, input, true));
 		manager.monitorFile(input.getFile());
 	}
 
@@ -62,9 +54,9 @@ public class ProductEditor extends PDEFormEditor {
 		File file = (File) input.getAdapter(File.class);
 		if (file != null) {
 			String name = file.getName();
-			if (name.endsWith(".product")) {  //$NON-NLS-1$
+			if (name.endsWith(".target")) {  //$NON-NLS-1$
 				IEditorInput in = new SystemFileEditorInput(file);
-				manager.putContext(in, new ProductInputContext(this, in, true));
+				manager.putContext(in, new TargetInputContext(this, in, true));
 			}
 		}
 	}
@@ -74,8 +66,8 @@ public class ProductEditor extends PDEFormEditor {
 	 */
 	protected void createStorageContexts(InputContextManager manager,
 			IStorageEditorInput input) {
-		if (input.getName().endsWith(".product")) { //$NON-NLS-1$
-			manager.putContext(input, new ProductInputContext(this, input, true));
+		if (input.getName().endsWith(".target")) { //$NON-NLS-1$
+			manager.putContext(input, new TargetInputContext(this, input, true));
 		}
 	}
 
@@ -83,14 +75,14 @@ public class ProductEditor extends PDEFormEditor {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createContentOutline()
 	 */
 	protected ISortableContentOutlinePage createContentOutline() {
-		return new ProductOutlinePage(this);
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
 	 */
 	protected InputContext getInputContext(Object object) {
-		return fInputContextManager.findContext(ProductInputContext.CONTEXT_ID);
+		return fInputContextManager.findContext(TargetInputContext.CONTEXT_ID);
 	}
 
 	/* (non-Javadoc)
@@ -99,36 +91,11 @@ public class ProductEditor extends PDEFormEditor {
 	protected void addPages() {
 		try {
 			addPage(new OverviewPage(this));
-			fPluginConfigurationPage = new ConfigurationPage(this, false);
-			fFeatureConfigurationPage = new ConfigurationPage(this, true);
-			if (useFeatures())
-				addPage(fFeatureConfigurationPage);
-			else
-				addPage(fPluginConfigurationPage);
-			addPage(new LauncherPage(this));
-			addPage(new BrandingPage(this));
 		} catch (PartInitException e) {
-			PDEPlugin.logException(e);
+			PDEPlugin.log(e);
 		}
 	}
 	
-	public void updateConfigurationPage() {
-		try {
-			if (useFeatures()) {
-				removePage(fPluginConfigurationPage.getIndex());
-				addPage(1, fFeatureConfigurationPage);
-			} else {
-				removePage(fFeatureConfigurationPage.getIndex());
-				addPage(1, fPluginConfigurationPage);
-			}
-		} catch (PartInitException e) {
-		}
-	}
-	
-	public boolean useFeatures() {
-		IBaseModel model = getAggregateModel();
-		return ((IProductModel)model).getProduct().useFeatures();
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextAdded(org.eclipse.pde.internal.ui.editor.context.InputContext)

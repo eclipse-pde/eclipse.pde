@@ -8,15 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.editor.product;
+package org.eclipse.pde.internal.ui.editor.target;
 
 import org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor;
 
 
-public class ProductEditorContributor extends PDEFormEditorContributor {
+public class TargetEditorContributor extends PDEFormEditorContributor {
 
-	public ProductEditorContributor() {
-		super("Target"); //$NON-NLS-1$
+	public TargetEditorContributor() {
+		super("Product"); //$NON-NLS-1$
 	}
 	
 }

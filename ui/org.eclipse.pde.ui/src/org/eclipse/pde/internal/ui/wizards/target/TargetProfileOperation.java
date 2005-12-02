@@ -51,7 +51,7 @@ public class TargetProfileOperation extends WorkspaceModifyOperation {
 					((ISetSelectionTarget) focusPart).selectReveal(selection);
 				}
 				try {
-					IDE.openEditor(page, fFile);
+					IDE.openEditor(page, fFile, PDEPlugin.TARGET_EDIOTR_ID);
 				} catch (PartInitException e) {
 				}
 			}

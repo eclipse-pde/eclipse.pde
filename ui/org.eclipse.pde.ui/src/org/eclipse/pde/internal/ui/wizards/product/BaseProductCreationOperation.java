@@ -171,7 +171,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 					((ISetSelectionTarget) focusPart).selectReveal(selection);
 				}
 				try {
-					IDE.openEditor(page, fFile);
+					IDE.openEditor(page, fFile, PDEPlugin.PRODUCT_EDITOR_ID);
 				} catch (PartInitException e) {
 				}
 			}
