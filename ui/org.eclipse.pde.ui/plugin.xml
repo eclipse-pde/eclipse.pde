@@ -569,7 +569,7 @@
             id="org.eclipse.pde.ui.siteEditor">
             <contentTypeBinding contentTypeId="org.eclipse.pde.siteManifest"/>
      </editor>
-      <editor
+     <editor
             default="true"
             name="%product.editor"
             icon="$nl$/icons/obj16/product_xml_obj.gif"
@@ -577,6 +577,15 @@
             contributorClass="org.eclipse.pde.internal.ui.editor.product.ProductEditorContributor"
             id="org.eclipse.pde.ui.productEditor">
             <contentTypeBinding contentTypeId="org.eclipse.pde.productFile"/>
+      </editor>
+     <editor
+            default="true"
+            name="%editor.profile.name"
+            icon="$nl$/icons/obj16/product_xml_obj.gif"
+            class="org.eclipse.pde.internal.ui.editor.target.TargetEditor"
+            contributorClass="org.eclipse.pde.internal.ui.editor.target.TargetEditorContributor"
+            id="org.eclipse.pde.ui.targetEditor">
+            <contentTypeBinding contentTypeId="org.eclipse.pde.targetFile"/>
       </editor>
       <editor
             name="%editors.sample.name"
