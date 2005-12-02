@@ -36,8 +36,10 @@ public class JARFileFilter extends ViewerFilter{
 		if (element instanceof IFile)
 			return isFileValid(((IFile)element).getProjectRelativePath());
 
-			if (element instanceof IContainer){ // i.e. IProject, IFolder
+		if (element instanceof IContainer){ // i.e. IProject, IFolder
 			try {
+				if (!((IContainer)element).isAccessible())
+					return false;
 				IResource[] resources = ((IContainer)element).members();
 				for (int i = 0; i < resources.length; i++){
 					if (select(viewer, parent, resources[i]))
