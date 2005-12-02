@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.branding.*;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.*;
 
 
@@ -51,8 +52,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 	
 	private void createContent() {
         WorkspaceProductModel model = new WorkspaceProductModel(fFile, false);
-        IProduct product = model.getProduct();
-        initializeProduct(product);
+        initializeProduct(model.getProduct());
         model.save();
         model.dispose();
 	}
@@ -171,7 +171,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 					((ISetSelectionTarget) focusPart).selectReveal(selection);
 				}
 				try {
-					page.openEditor(new FileEditorInput(fFile), PDEPlugin.PRODUCT_EDITOR_ID);
+					IDE.openEditor(page, fFile);
 				} catch (PartInitException e) {
 				}
 			}

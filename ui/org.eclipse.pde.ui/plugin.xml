@@ -169,6 +169,16 @@
             %new.product.desc
          </description>
       </wizard>
+      <wizard
+            category="org.eclipse.pde.PDE"
+            class="org.eclipse.pde.internal.ui.wizards.target.NewTargetProfileWizard"
+            icon="$nl$/icons/etool16/defcon_wiz.gif"
+            id="org.eclipse.pde.ui.NewProfileWizard"
+            name="%new.profile.name">
+         <description>
+            %wizard.profile.name
+         </description>
+      </wizard>
    </extension>
    <extension
          id="selfhosting.import"

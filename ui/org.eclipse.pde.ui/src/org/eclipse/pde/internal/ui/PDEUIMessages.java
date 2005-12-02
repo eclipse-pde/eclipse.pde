@@ -2359,4 +2359,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String JavaArgumentsTab_description;
 
+	public static String TargetProfileWizardPage_title;
+
+	public static String TargetProfileWizardPage_error;
+
 }

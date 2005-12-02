@@ -47,6 +47,7 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	public ProductFileWizadPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
 		setDescription(PDEUIMessages.ProductFileWizadPage_title);
+		setTitle(PDEUIMessages.NewProductFileWizard_title);
 		initializeModel(selection);
 	}
 	

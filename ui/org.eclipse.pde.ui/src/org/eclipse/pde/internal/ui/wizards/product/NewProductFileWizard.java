@@ -29,7 +29,6 @@ public class NewProductFileWizard extends BasicNewResourceWizard {
 	 */
 	public void addPages() {
 		fMainPage = new ProductFileWizadPage("product", getSelection()); //$NON-NLS-1$
-		fMainPage.setTitle(PDEUIMessages.NewProductFileWizard_title); 
 		addPage(fMainPage);
 	}
 
