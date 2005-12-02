@@ -198,6 +198,16 @@
 		</describer>
 	  </content-type>
    	  <content-type 
+   	  		id="targetFile" 
+   	  		name="%target.profile.content" 
+       		base-type="org.eclipse.core.runtime.xml"
+    		priority="high"				
+    		file-extensions="target">
+    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+    		<parameter name="element" value="target"/>
+		</describer>
+	  </content-type>
+   	  <content-type 
    	  		id="schema" 
    	  		name="%schemaFile" 
        		base-type="org.eclipse.core.runtime.xml"
