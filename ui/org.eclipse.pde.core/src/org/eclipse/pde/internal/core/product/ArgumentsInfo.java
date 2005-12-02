@@ -11,8 +11,10 @@
 package org.eclipse.pde.internal.core.product;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.pde.internal.core.iproduct.*;
-import org.w3c.dom.*;
+import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
+import org.eclipse.pde.internal.core.iproduct.IProductModel;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 

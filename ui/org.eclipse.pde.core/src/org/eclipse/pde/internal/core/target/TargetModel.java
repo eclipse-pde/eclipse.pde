@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core.product;
+package org.eclipse.pde.internal.core.target;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,69 +21,46 @@ import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.AbstractModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.XMLDefaultHandler;
-import org.eclipse.pde.internal.core.iproduct.IProduct;
-import org.eclipse.pde.internal.core.iproduct.IProductModel;
-import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
+import org.eclipse.pde.internal.core.itarget.ITarget;
+import org.eclipse.pde.internal.core.itarget.ITargetModel;
+import org.eclipse.pde.internal.core.itarget.ITargetModelFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-
-public class ProductModel extends AbstractModel implements IProductModel {
+public class TargetModel extends AbstractModel implements ITargetModel {
 
 	private static final long serialVersionUID = 1L;
 	
-	private IProductModelFactory fFactory;
-	private IProduct fProduct;
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.AbstractModel#updateTimeStamp()
-	 */
+	private ITargetModelFactory fFactory;
+	private ITarget fTarget;
+
 	protected void updateTimeStamp() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductModel#getProduct()
-	 */
-	public IProduct getProduct() {
-		if (fProduct == null)
-			fProduct = getFactory().createProduct();
-		return fProduct;
+	public ITarget getTarget() {
+		if (fTarget == null)
+			fTarget = getFactory().createTarget();
+		return fTarget;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductModel#getFactory()
-	 */
-	public IProductModelFactory getFactory() {
+	public ITargetModelFactory getFactory() {
 		if (fFactory == null)
-			fFactory = new ProductModelFactory(this);
+			fFactory = new TargetModelFactory(this);
 		return fFactory;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductModel#getInstallLocation()
-	 */
 	public String getInstallLocation() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#isInSync()
-	 */
 	public boolean isInSync() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#load()
-	 */
 	public void load() throws CoreException {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#load(java.io.InputStream, boolean)
-	 */
-	public void load(InputStream stream, boolean outOfSync)
-			throws CoreException {
+	public void load(InputStream stream, boolean outOfSync) throws CoreException {
 		try {
 			SAXParser parser = getSaxParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();
@@ -101,33 +78,28 @@ public class ProductModel extends AbstractModel implements IProductModel {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModel#reload(java.io.InputStream, boolean)
-	 */
-	public void reload(InputStream source, boolean outOfSync)
-			throws CoreException {
+	public void reload(InputStream source, boolean outOfSync) throws CoreException {
 		load(source, outOfSync);
 		fireModelChanged(
 				new ModelChangedEvent(this,
 					IModelChangedEvent.WORLD_CHANGED,
-					new Object[] { fProduct },
+					new Object[] { fTarget },
 					null));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IBaseModel#isEditable()
-	 */
 	public boolean isEditable() {
 		return false;
 	}
 	
 	private void processDocument(Document doc) {
 		Node rootNode = doc.getDocumentElement();
-		if (fProduct == null) {
-			fProduct = getFactory().createProduct();
+		if (fTarget == null) {
+			fTarget = getFactory().createTarget();
 		} else {
-			fProduct.reset();
+			fTarget.reset();
 		}
-		fProduct.parse(rootNode);
+		fTarget.parse(rootNode);
 	}
+
+
 }

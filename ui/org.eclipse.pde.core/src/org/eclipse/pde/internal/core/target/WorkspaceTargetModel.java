@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core.product;
+package org.eclipse.pde.internal.core.target;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -25,7 +25,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECore;
 
 
-public class WorkspaceProductModel extends ProductModel implements IEditableModel {
+public class WorkspaceTargetModel extends TargetModel implements IEditableModel {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -35,7 +35,7 @@ public class WorkspaceProductModel extends ProductModel implements IEditableMode
 
 	private boolean fEditable;
 
-	public WorkspaceProductModel(IFile file, boolean editable) {
+	public WorkspaceTargetModel(IFile file, boolean editable) {
 		fFile = file;
 		fEditable = editable;
 	}
@@ -123,9 +123,9 @@ public class WorkspaceProductModel extends ProductModel implements IEditableMode
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
 			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
-			writer.println("<?pde version=\"3.1\"?>"); //$NON-NLS-1$
+			writer.println("<?pde version=\"3.2\"?>"); //$NON-NLS-1$
 			writer.println();
-			getProduct().write("", writer); //$NON-NLS-1$
+			getTarget().write("", writer); //$NON-NLS-1$
 		}
 		setDirty(false);
 	}

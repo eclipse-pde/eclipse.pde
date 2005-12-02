@@ -10,7 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
-import org.eclipse.pde.internal.core.iproduct.*;
+import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
+import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
+import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
+import org.eclipse.pde.internal.core.iproduct.IExportSettings;
+import org.eclipse.pde.internal.core.iproduct.IIntroInfo;
+import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
+import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.core.iproduct.IProductFeature;
+import org.eclipse.pde.internal.core.iproduct.IProductModel;
+import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
+import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
+import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
+import org.eclipse.pde.internal.core.iproduct.IWindowImages;
 
 
 public class ProductModelFactory implements IProductModelFactory {

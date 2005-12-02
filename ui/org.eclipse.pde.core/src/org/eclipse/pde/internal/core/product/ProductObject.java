@@ -21,7 +21,6 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 
 public abstract class ProductObject extends PlatformObject implements IProductObject {
 
-	private static final long serialVersionUID = 1L;
 	private transient IProductModel fModel;
 
 	public ProductObject(IProductModel model) {
@@ -44,13 +43,6 @@ public abstract class ProductObject extends PlatformObject implements IProductOb
 	 */
 	public IProduct getProduct() {
 		return getModel().getProduct();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProductObject#isValid()
-	 */
-	public boolean isValid() {
-		return true;
 	}
 
 	protected void firePropertyChanged(

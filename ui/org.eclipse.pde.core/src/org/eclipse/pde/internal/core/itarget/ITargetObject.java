@@ -8,18 +8,21 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core.iproduct;
+package org.eclipse.pde.internal.core.itarget;
 
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.IModelChangeProvider;
+import java.io.Serializable;
 
+import org.eclipse.pde.core.IWritable;
+import org.w3c.dom.Node;
 
-public interface IProductModel extends IModel, IModelChangeProvider {
+public interface ITargetObject extends IWritable, Serializable {
 	
-	IProduct getProduct();
+	ITargetModel getModel();
 	
-	IProductModelFactory getFactory();
+	void setModel(ITargetModel model);
 	
-	String getInstallLocation();
+	ITarget getTarget();
 	
+	void parse(Node node);
+
 }

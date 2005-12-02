@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.iproduct;
 
-import java.io.*;
+import java.io.Serializable;
 
-import org.eclipse.pde.core.*;
-import org.w3c.dom.*;
-
+import org.eclipse.pde.core.IWritable;
+import org.w3c.dom.Node;
 
 public interface IProductObject extends IWritable, Serializable{
 	
@@ -23,8 +22,6 @@ public interface IProductObject extends IWritable, Serializable{
 	void setModel(IProductModel model);
 	
 	IProduct getProduct();
-	
-	boolean isValid();
 	
 	void parse(Node node);
 	

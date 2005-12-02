@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
-import java.io.*;
+import java.io.PrintWriter;
 
-import org.eclipse.pde.internal.core.iproduct.*;
-import org.w3c.dom.*;
+import org.eclipse.pde.internal.core.iproduct.IProductModel;
+import org.eclipse.pde.internal.core.iproduct.IWindowImages;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 public class WindowImages extends ProductObject implements IWindowImages {
 

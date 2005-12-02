@@ -8,18 +8,22 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core.iproduct;
+package org.eclipse.pde.internal.core.target;
 
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.IModelChangeProvider;
+import org.eclipse.pde.internal.core.itarget.ITarget;
+import org.eclipse.pde.internal.core.itarget.ITargetModel;
+import org.eclipse.pde.internal.core.itarget.ITargetModelFactory;
 
+public class TargetModelFactory implements ITargetModelFactory {
+	
+	private ITargetModel fModel;
 
-public interface IProductModel extends IModel, IModelChangeProvider {
-	
-	IProduct getProduct();
-	
-	IProductModelFactory getFactory();
-	
-	String getInstallLocation();
-	
+	public TargetModelFactory(ITargetModel model) {
+		fModel = model;
+	}
+
+	public ITarget createTarget() {
+		return new Target(fModel);
+	}
+
 }

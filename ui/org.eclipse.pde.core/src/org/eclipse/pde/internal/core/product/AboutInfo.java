@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
-import java.io.*;
+import java.io.PrintWriter;
 
-import org.eclipse.pde.internal.core.iproduct.*;
-import org.w3c.dom.*;
+import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
+import org.eclipse.pde.internal.core.iproduct.IProductModel;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 
 public class AboutInfo extends ProductObject implements IAboutInfo {
