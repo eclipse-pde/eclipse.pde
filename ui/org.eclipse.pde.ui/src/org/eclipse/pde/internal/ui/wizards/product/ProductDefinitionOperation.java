@@ -219,32 +219,17 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		IWindowImages images = fProduct.getWindowImages();
 		StringBuffer buffer = new StringBuffer();
 		if (images != null) {
-			String image16 = getURL(images.getImagePath(0));
-			if (image16 != null)
-				buffer.append(image16);
-			buffer.append(","); //$NON-NLS-1$
-			String image32 = getURL(images.getImagePath(1));
-			if (image32 != null) {	
-				buffer.append(image32);
-			}
-			buffer.append(","); //$NON-NLS-1$
-			String image48 = getURL(images.getImagePath(2));
-			if (image48 != null) {
-				buffer.append(image48);
-			}
-			buffer.append(","); //$NON-NLS-1$
-			String image64 = getURL(images.getImagePath(3));
-			if (image64 != null) {
-				buffer.append(image64);
-			}
-			buffer.append(","); //$NON-NLS-1$
-			String image128 = getURL(images.getImagePath(4));
-			if (image128 != null) {
-				buffer.append(image128);
+			for (int i = 0; i < IWindowImages.TOTAL_IMAGES; i++) {
+				String image = getURL(images.getImagePath(i));
+				if (image != null) {
+					if (buffer.length() > 0)
+						buffer.append(","); //$NON-NLS-1$
+					buffer.append(image);
+				}
+				
 			}
 		}
-		String bufferOut = buffer.toString();
-		return bufferOut.equals(",,,,") ? null : bufferOut; //$NON-NLS-1$
+		return buffer.length() == 0 ? null : buffer.toString(); //$NON-NLS-1$
 	}
 	
 	private void modifyExistingFile(IFile file, IProgressMonitor monitor) throws CoreException, IOException, MalformedTreeException, BadLocationException {
