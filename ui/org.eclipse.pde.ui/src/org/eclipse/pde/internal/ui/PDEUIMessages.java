@@ -2365,4 +2365,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ProductInfoSection_productname;
 
+	public static String ManifestStructureCreator_name;
+
+	public static String ManifestContentMergeViewer_title;
+
 }

@@ -74,5 +74,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.help.base,
  org.eclipse.pde.runtime,
  org.eclipse.ltk.core.refactoring,
- org.eclipse.core.variables
+ org.eclipse.core.variables,
+ org.eclipse.compare
 Eclipse-LazyStart: true

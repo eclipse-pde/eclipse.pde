@@ -1767,5 +1767,37 @@
       <factory
             contentTypeId="org.eclipse.pde.bundleManifest"
             class="org.eclipse.pde.internal.ui.editor.text.AnnotationModelFactory"/>
-   </extension>   
+   </extension>
+   <extension
+         point="org.eclipse.compare.structureMergeViewers">
+      <viewer
+            class="org.eclipse.pde.internal.ui.compare.ManifestStructureMergeViewerCreator"
+            extensions="MF"
+            id="org.eclipse.pde.internal.ui.compare.ManifestStructureMergeViewerCreator"/>
+      <contentTypeBinding
+            contentTypeId="org.eclipse.pde.bundleManifest"
+            structureMergeViewerId="org.eclipse.pde.internal.ui.compare.ManifestStructureMergeViewerCreator"/>
+   </extension>
+   <extension
+         point="org.eclipse.compare.contentMergeViewers">
+      <viewer
+            class="org.eclipse.pde.internal.ui.compare.ManifestContentMergeViewerCreator"
+            extensions="MF"
+            id="org.eclipse.pde.internal.ui.compare.ManifestContentMergeViewerCreator"/>
+      <contentTypeBinding
+            contentMergeViewerId="org.eclipse.pde.internal.ui.compare.ManifestContentMergeViewerCreator"
+            contentTypeId="org.eclipse.pde.bundleManifest"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.themes">
+      <fontDefinition
+            label="%fontDefinition.label.0"
+            defaultsTo="org.eclipse.jface.textfont"
+            categoryId="org.eclipse.compare.contentmergeviewer.TextMergeViewer"
+            id="org.eclipse.pde.internal.ui.compare.ManifestContentMergeViewer">
+         <description>
+            %fontDefinition.description.0
+         </description>
+      </fontDefinition>
+   </extension>
 </plugin>
