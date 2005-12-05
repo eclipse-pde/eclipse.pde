@@ -44,13 +44,19 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			return accessRules;
 		}
 		public boolean equals(Object obj) {
-			if(obj instanceof ClasspathElement){
+			if (obj instanceof ClasspathElement) {
 				ClasspathElement element = (ClasspathElement) obj;
-				return path.equals(element.getPath()) && accessRules.equals(element.getAccessRules());
+				if (path == null || !path.equals(element.getPath()))
+					return false;
+				if (accessRules == null)
+					return (element.getAccessRules() == null);
+				return accessRules.equals(element.getAccessRules());
 			}
 			return false;
 		}
 	}
+	
+	private static final String EXCLUDE_ALL_RULE = "-**/*"; //$NON-NLS-1$
 	
 	private ModelBuildScriptGenerator generator;
 	private Map visiblePackages = null;
@@ -89,6 +95,13 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	private Map getVisiblePackages(BundleDescription model) {
 		Map packages = new HashMap(20);
 		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
+		addVisiblePackagesFromState(helper, model, packages);
+		if (model.getHost() != null)
+			addVisiblePackagesFromState(helper, (BundleDescription)model.getHost().getSupplier(), packages);
+		return packages;
+	}
+	
+	private void addVisiblePackagesFromState(StateHelper helper, BundleDescription model, Map packages) {
 		ExportPackageDescription[] exports = helper.getVisiblePackages(model);
 		for (int i = 0; i < exports.length; i++) {
 			BundleDescription exporter = exports[i].getExporter();
@@ -109,7 +122,6 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 				
 			packages.put(exporter.getSymbolicName(), rules);
 		}
-		return packages;
 	}
 	/**
 	 * Add the specified plugin (including its jars) and its fragments 
@@ -138,7 +150,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		ModelBuildScriptGenerator.specialDotProcessing(modelProps, libraries);
 		for (int i = 0; i < libraries.length; i++) {
 			addDevEntries(model, baseLocation, classpath, Utils.getArrayFromString(modelProps.getProperty(PROPERTY_OUTPUT_PREFIX + libraries[i])));
-			addPathAndCheck(model.getSymbolicName(), base, libraries[i], modelProps, classpath);
+			addPathAndCheck(model, base, libraries[i], modelProps, classpath);
 		}
 	}
 
@@ -187,7 +199,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		IPath base = Utils.makeRelative(new Path(root), new Path(baseLocation));
 		Properties modelProps = getBuildPropertiesFor(fragment);
 		for (int i = 0; i < libraries.length; i++) {
-			addPathAndCheck(fragment.getSymbolicName(), base, libraries[i], modelProps, classpath);
+			addPathAndCheck(fragment, base, libraries[i], modelProps, classpath);
 		}
 	}
 
@@ -217,14 +229,23 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	// pluginId the plugin we are adding to the classpath
 	// basePath : the relative path between the plugin from which we are adding the classpath and the plugin that is requiring this entry 
 	// classpath : The classpath in which we want to add this path 
-	private void addPathAndCheck(String pluginId, IPath basePath, String libraryName, Properties modelProperties, List classpath) {
-		final String EXCLUDE_ALL_RULE = "-**/*"; //$NON-NLS-1$
-		String rules = null;
-		if (visiblePackages.containsKey(pluginId)) {
-			rules = "[" + (String) visiblePackages.get(pluginId) + File.pathSeparator + EXCLUDE_ALL_RULE + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-		} else {
-			rules = "[" + EXCLUDE_ALL_RULE + "]";  //$NON-NLS-1$//$NON-NLS-2$
+	private void addPathAndCheck(BundleDescription model, IPath basePath, String libraryName, Properties modelProperties, List classpath) {
+		String pluginId = null;
+		String rules = ""; //$NON-NLS-1$
+		if (model != null) {
+			pluginId = model.getSymbolicName();
+
+			String packageKey = pluginId;
+			if (model.isResolved() && model.getHost() != null) {
+				packageKey = ((BundleDescription) model.getHost().getSupplier()).getSymbolicName();
+			}
+			if (visiblePackages.containsKey(packageKey)) {
+				rules = "[" + (String) visiblePackages.get(packageKey) + File.pathSeparator + EXCLUDE_ALL_RULE + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				rules = "[" + EXCLUDE_ALL_RULE + "]"; //$NON-NLS-1$//$NON-NLS-2$
+			}
 		}
+
 		String path = null;
 		if ("jar".equalsIgnoreCase(basePath.getFileExtension())) { //$NON-NLS-1$
 			path = basePath.toOSString();
@@ -277,7 +298,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 					//Potential pb: here there maybe a nasty case where the libraries variable may refer to something which is part of the base
 					//but $xx$ will replace it by the $xx instead of $basexx. The solution is for the user to use the explicitly set the content
 					// of its build.property file
-					addPathAndCheck(model.getSymbolicName(), Path.EMPTY, libraryName, modelProperties, classpath);
+					addPathAndCheck(model, Path.EMPTY, libraryName, modelProperties, classpath);
 				}
 			}
 		} else {
@@ -287,7 +308,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 				if (order[i].equals(jar.getName(false)))
 					break;
 				addDevEntries(model, location, classpath, Utils.getArrayFromString((String) modelProperties.get(PROPERTY_OUTPUT_PREFIX + order[i])));
-				addPathAndCheck(model.getSymbolicName(), Path.EMPTY, order[i], modelProperties, classpath);
+				addPathAndCheck(model, Path.EMPTY, order[i], modelProperties, classpath);
 			}
 			// Then we add all the "pure libraries" (the one that does not contain source)
 			String[] libraries = getClasspathEntries(model);
@@ -296,7 +317,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 				if (modelProperties.get(PROPERTY_SOURCE_PREFIX + libraryName) == null) {
 					//Potential pb: if the pure library is something that is being compiled (which is supposetly not the case, but who knows...)
 					//the user will get $basexx instead of $ws 
-					addPathAndCheck(model.getSymbolicName(), Path.EMPTY, libraryName, modelProperties, classpath);
+					addPathAndCheck(model, Path.EMPTY, libraryName, modelProperties, classpath);
 				}
 			}
 		}
@@ -489,7 +510,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 		IPath root = Utils.makeRelative(new Path(generator.getLocation(model)), new Path(baseLocation));
 		for (int i = 0; i < entries.length; i++) {
-			addPathAndCheck(model.getSymbolicName(), root, entries[i], null, classpath);
+			addPathAndCheck(model, root, entries[i], null, classpath);
 		}
 	}
 
