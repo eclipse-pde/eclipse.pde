@@ -1,20 +1,28 @@
 package org.eclipse.pde.internal.ui.compare;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.IEditableContent;
+import org.eclipse.compare.IEncodedStreamContentAccessor;
 import org.eclipse.compare.IStreamContentAccessor;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.DocumentRangeNode;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
 import org.eclipse.compare.structuremergeviewer.IStructureCreator;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.text.ManifestPartitionScanner;
 import org.eclipse.swt.graphics.Image;
 
 public class ManifestStructureCreator implements IStructureCreator {
@@ -81,13 +89,13 @@ public class ManifestStructureCreator implements IStructureCreator {
 		String content= null;
 		if (input instanceof IStreamContentAccessor) {
 			try {
-				content = CompareUtilities.readString(((IStreamContentAccessor) input));
+				content = readString(((IStreamContentAccessor) input));
 			} catch(CoreException ex) {
 				return null;
 			}
 		}
 		fDocument = new Document(content != null ? content : ""); //$NON-NLS-1$
-		CompareUtilities.setupManifestDocument(fDocument);
+		setupManifestDocument(fDocument);
 				
 		boolean isEditable= false;
 		if (input instanceof IEditableContent)
@@ -115,7 +123,7 @@ public class ManifestStructureCreator implements IStructureCreator {
 		if (node instanceof IStreamContentAccessor) {
 			IStreamContentAccessor sca = (IStreamContentAccessor) node;
 			try {
-				return CompareUtilities.readString(sca);
+				return readString(sca);
 			} catch (CoreException ex) {
 			}
 		}
@@ -198,4 +206,55 @@ public class ManifestStructureCreator implements IStructureCreator {
 		return null;
 	}
 	
+	private static String readString(InputStream is, String encoding) {
+		if (is == null)
+			return null;
+		BufferedReader reader= null;
+		try {
+			StringBuffer buffer= new StringBuffer();
+			char[] part= new char[2048];
+			int read= 0;
+			reader= new BufferedReader(new InputStreamReader(is, encoding));
+
+			while ((read= reader.read(part)) != -1)
+				buffer.append(part, 0, read);
+			
+			return buffer.toString();
+			
+		} catch (IOException ex) {
+			// NeedWork
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException ex) {
+					// silently ignored
+				}
+			}
+		}
+		return null;
+	}
+	
+	private static String readString(IStreamContentAccessor sa) throws CoreException {
+		InputStream is= sa.getContents();
+		if (is != null) {
+			String encoding= null;
+			if (sa instanceof IEncodedStreamContentAccessor) {
+				try {
+					encoding= ((IEncodedStreamContentAccessor) sa).getCharset();
+				} catch (Exception e) {
+				}
+			}
+			if (encoding == null)
+				encoding= ResourcesPlugin.getEncoding();
+			return readString(is, encoding);
+		}
+		return null;
+	}
+	
+	private void setupManifestDocument(IDocument document) {
+		IDocumentPartitioner partitioner= new FastPartitioner(new ManifestPartitionScanner(), ManifestPartitionScanner.PARTITIONS);
+		document.setDocumentPartitioner(partitioner);
+		partitioner.connect(document);
+	}
 }
