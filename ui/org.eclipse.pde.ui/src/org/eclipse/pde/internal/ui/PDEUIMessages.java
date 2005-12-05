@@ -2363,4 +2363,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetProfileWizardPage_error;
 
+	public static String ProductInfoSection_productname;
+
 }

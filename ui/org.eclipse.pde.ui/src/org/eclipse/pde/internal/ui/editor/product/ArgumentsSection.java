@@ -30,7 +30,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
@@ -52,7 +51,6 @@ public class ArgumentsSection extends PDESection {
 	private FormEntry fVMArgs;
 	private FormEntry fProgramArgs;
 	private CTabFolder fTabFolder;
-	private boolean fIgnoreChange;
 	private int fLastTab;
 
 	public ArgumentsSection(PDEFormPage page, Composite parent) {
@@ -82,7 +80,11 @@ public class ArgumentsSection extends PDESection {
 
 		fTabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				updateEditorInput();
+				if (fProgramArgs.isDirty())
+					fProgramArgs.commit();			
+				if (fVMArgs.isDirty())
+					fVMArgs.commit();					
+				refresh();
 			}
 		});
 		fTabFolder.setUnselectedImageVisible(false);
@@ -92,10 +94,9 @@ public class ArgumentsSection extends PDESection {
 		fProgramArgs = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_program, SWT.MULTI|SWT.WRAP); 
 		fProgramArgs.getText().setLayoutData(new GridData(GridData.FILL_BOTH));		
 		fProgramArgs.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
-			public void textDirty(FormEntry entry) {
-				if (!fIgnoreChange) {
-					markDirty();
-				}
+			public void textValueChanged(FormEntry entry) {
+				IArgumentsInfo info = getLauncherArguments();
+				info.setProgramArguments(entry.getValue().trim(), fLastTab);
 			}
 		});
 		fProgramArgs.setEditable(isEditable());
@@ -103,10 +104,9 @@ public class ArgumentsSection extends PDESection {
 		fVMArgs = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_vm, SWT.MULTI|SWT.WRAP); 
 		fVMArgs.getText().setLayoutData(new GridData(GridData.FILL_BOTH));		
 		fVMArgs.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
-			public void textDirty(FormEntry entry) {
-				if (!fIgnoreChange) {
-					markDirty();
-				}
+			public void textValueChanged(FormEntry entry) {
+				IArgumentsInfo info = getLauncherArguments();
+				info.setVMArguments(entry.getValue().trim(), fLastTab);
 			}
 		});
 		fVMArgs.setEditable(isEditable());
@@ -131,18 +131,14 @@ public class ArgumentsSection extends PDESection {
 		fTabFolder.setSelection(fLastTab);
 	}
 	
-	private void refreshFields() {
+	public void refresh() {
+		fLastTab = fTabFolder.getSelectionIndex();
 		fProgramArgs.setValue(getLauncherArguments().getProgramArguments(fLastTab), true);
 		fVMArgs.setValue(getLauncherArguments().getVMArguments(fLastTab), true);
-	}
-	
-	public void refresh() {
-		refreshFields();
 		super.refresh();
 	}
 	
 	public void commit(boolean onSave) {
-		saveFields();
 		fProgramArgs.commit();
 		fVMArgs.commit();
 		super.commit(onSave);
@@ -173,31 +169,7 @@ public class ArgumentsSection extends PDESection {
 
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
-		Control c = d.getFocusControl();
-		if (c instanceof Text)
-			return true;
-		return false;
+		return d.getFocusControl() instanceof Text;
 	}
 	
-	private void updateEditorInput() {
-		fIgnoreChange = true;
-		saveFields();
-		refreshFields();
-		fIgnoreChange = false;
-	}
-	
-	private void saveFields() {
-		IArgumentsInfo info = getLauncherArguments();
-		String lastPArgs = info.getProgramArguments(fLastTab);
-		String currPArgs = fProgramArgs.getText().getText();
-		String lastVArgs = info.getVMArguments(fLastTab);
-		String currVArgs = fVMArgs.getText().getText();
-		if (lastPArgs.length() != currPArgs.length() 
-				|| !lastPArgs.equals(currPArgs))
-			info.setProgramArguments(currPArgs, fLastTab);
-		if (lastVArgs.length() != currVArgs.length() 
-				|| !lastVArgs.equals(currVArgs))
-			info.setVMArguments(currVArgs, fLastTab);
-		fLastTab = fTabFolder.getSelectionIndex();
-	}
 }

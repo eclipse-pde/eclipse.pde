@@ -100,7 +100,7 @@ public class ProductInfoSection extends PDESection {
 	private void createNameEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
 		createLabel(client, toolkit, PDEUIMessages.ProductInfoSection_titleLabel); 
 
-		fNameEntry = new FormEntry(client, toolkit, "Product Name:", null, false); //$NON-NLS-1$
+		fNameEntry = new FormEntry(client, toolkit, PDEUIMessages.ProductInfoSection_productname, null, false); 
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getProduct().setName(entry.getValue().trim());
