@@ -13,5 +13,11 @@ package org.eclipse.pde.internal.core.itarget;
 public interface ITargetModelFactory {
 	
 	ITarget createTarget();
+	
+	IArgumentsInfo createArguments();
+	
+	IEnvironmentInfo createEnvironment();
+	
+	IRuntimeInfo createJREInfo();
 
 }

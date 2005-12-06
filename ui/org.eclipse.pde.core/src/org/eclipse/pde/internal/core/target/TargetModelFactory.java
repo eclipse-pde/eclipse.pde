@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import org.eclipse.pde.internal.core.itarget.IArgumentsInfo;
+import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
+import org.eclipse.pde.internal.core.itarget.IRuntimeInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.core.itarget.ITargetModelFactory;
@@ -24,6 +27,18 @@ public class TargetModelFactory implements ITargetModelFactory {
 
 	public ITarget createTarget() {
 		return new Target(fModel);
+	}
+
+	public IArgumentsInfo createArguments() {
+		return new ArgumentsInfo(fModel);
+	}
+
+	public IEnvironmentInfo createEnvironment() {
+		return new EnvironmnetInfo(fModel);
+	}
+
+	public IRuntimeInfo createJREInfo() {
+		return new RuntimeInfo(fModel);
 	}
 
 }

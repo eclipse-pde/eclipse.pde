@@ -2369,4 +2369,46 @@ public class PDEUIMessages extends NLS {
 
 	public static String ManifestContentMergeViewer_title;
 
+	public static String EnvironmentPage_title;
+
+	public static String JRESection_title;
+
+	public static String JRESection_description;
+
+	public static String JRESection_defaultJRE;
+
+	public static String JRESection_JREName;
+
+	public static String JRESection_ExecutionEnv;
+
+	public static String EnvironmentSection_title;
+
+	public static String EnvironmentSection_description;
+
+	public static String EnvironmentSection_operationSystem;
+
+	public static String EnvironmentSection_windowingSystem;
+
+	public static String EnvironmentSection_architecture;
+
+	public static String EnvironmentSection_locale;
+
+	public static String ArgumentsSection_programTabLabel;
+
+	public static String ArgumentsSection_vmTabLabel;
+
+	public static String ArgumentsSection_editorTitle;
+
+	public static String ArgumentsSection_description;
+
+	public static String ArgumentsSection_argumentsTextLabel;
+
+	public static String ArgumentsSection_variableButtonTitle;
+
+	public static String TargetDefinitionSection_title;
+
+	public static String TargetDefinitionSection_name;
+
+	public static String TargetDefinitionSection_id;
+
 }

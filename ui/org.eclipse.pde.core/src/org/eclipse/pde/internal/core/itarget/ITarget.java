@@ -13,5 +13,17 @@ package org.eclipse.pde.internal.core.itarget;
 public interface ITarget extends ITargetObject {
 	
 	void reset();
+	
+	IArgumentsInfo getArguments();
+	
+	void setArguments(IArgumentsInfo info);
+	
+	IEnvironmentInfo getEnvironment();
+	
+	void setEnvironment(IEnvironmentInfo info);
+	
+	IRuntimeInfo getTargetJREInfo();
+	
+	void setTargetJREInfo(IRuntimeInfo info);
 
 }

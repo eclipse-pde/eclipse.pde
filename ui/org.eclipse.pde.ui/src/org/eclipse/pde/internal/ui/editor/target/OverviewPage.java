@@ -10,16 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.target;
 
-import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 
 public class OverviewPage extends PDEFormPage {
@@ -41,21 +39,20 @@ public class OverviewPage extends PDEFormPage {
 		fillBody(managedForm, toolkit);
 		managedForm.refresh();
 		
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.OVERVIEW_PAGE);
 	}
 
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.bottomMargin = 10;
-		layout.topMargin = 5;
-		layout.leftMargin = 10;
-		layout.rightMargin = 10;
-		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth =true;
-		layout.verticalSpacing = 30;
+		GridLayout layout = new GridLayout();
+		layout.marginBottom = 10;
+		layout.marginTop = 5;
+		layout.marginLeft = 10;
+		layout.marginRight = 10;
 		layout.horizontalSpacing = 10;
+		layout.verticalSpacing = 15;
 		body.setLayout(layout);
+		
+		managedForm.addPart(new TargetDefinitionSection(this, body));
 	}
 
 }
