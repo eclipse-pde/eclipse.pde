@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.pde.core">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.pde.core" id="targetProfiles" name="Target Profiles"/>
+      </appInfo>
+      <documentation>
+         An extension point to define and register target profiles.  PDE gives the user the ability to choose and switch between profiles.  The main content of a target profile resides in a .target file.  This file contains a list of plug-ins and/or features, the target environment, execution environment and launching arguments.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="profile" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="profile">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique identifier for the target profile
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a human readable name of the target profile
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="path" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the relative path of the target profile definition file in the contributing plug-in.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.2
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of the &lt;code&gt;targetProfile&lt;/code&gt; extension:
+&lt;pre&gt;
+  &lt;extension point = &quot;org.eclipse.pde.core.targetProfile&quot;&gt;
+     &lt;profile 
+       id=&quot;org.eclipse.pde.core.rcpProfile&quot;
+       name=&quot;Eclipse RCP&quot;
+       path=&quot;targets/rcp.target&quot;/&gt;
+  &lt;/extension&gt;
+&lt;/pre&gt;
+
+In the example above, the name and id of the target profile are declared in the plugin.xml, but its content is store in a &lt;code&gt;targets/rcp.target&lt;/code&gt; located in the contributing plug-in.
+&lt;br&gt;
+The .target file must be created via &lt;b&gt;File &gt; New &gt; Other... &gt; Plug-in Development &gt; Target Profile&lt;/b&gt; and must comply with the grammar of that file.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         No Java code is requied for this extension point.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The &lt;code&gt;org.eclipse.pde.core&lt;/code&gt; plug-in provides two extensions.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2004 IBM Corporation and others.
+&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Eclipse Public License v1.0 which 
+accompanies this distribution, and is available at 
+&lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;.
+      </documentation>
+   </annotation>
+
+</schema>
