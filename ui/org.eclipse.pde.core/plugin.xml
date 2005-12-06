@@ -48,4 +48,47 @@
             id="org.eclipse.pde.core.IResourceExtender">
       </propertyTester>
    </extension>
+      <extension
+         point="org.eclipse.jdt.launching.executionEnvironments">
+      <environment
+            id="OSGi/Minimum-1.0"
+            name="%environment.name.0"
+            description="%environment.description.0"/>
+      <environment
+            id="OSGi/Minimum-1.1"
+            name="%environment.name.1"
+            description="%environment.description.1"/>
+      <environment
+            id="JRE-1.1"
+            name="%environment.name.2"
+            description="%environment.description.2"/>
+      <environment
+            id="JRE-1.2"
+            name="%environment.name.3"
+            description="%environment.description.3"/>
+      <environment
+            id="J2SE-1.3"
+            name="%environment.name.4"
+            description="%environment.description.4"/>
+      <environment
+            id="J2SE-1.4"
+            name="%environment.name.5"
+            description="%environment.description.5"/>
+      <environment
+            id="J2SE-1.5"
+            name="%environment.name.6"
+            description="%environment.description.6"/>
+      <environment
+            id="CDC-1.0/Foundation-1.0"
+            name="%environment.name.7"
+            description="%environment.description.7"/>
+      <environment
+            id="CDC-1.1/Foundation-1.1"
+            name="%environment.name.8"
+            description="%environment.description.8"/>
+      <analyzer
+            class="org.eclipse.pde.internal.core.ExecutionEnvironmentAnalyzer"
+            id="org.eclipse.pde.ui.eeAnalyzer"/>
+   </extension>
+   
 </plugin>
