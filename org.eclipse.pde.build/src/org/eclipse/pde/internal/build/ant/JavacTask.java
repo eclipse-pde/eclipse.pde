@@ -73,7 +73,7 @@ public class JavacTask implements ITask {
 		}
 
 		if (compileArgsFile != null) {
-			script.println("<compilerarg line=\"@" + compileArgsFile + "\" compiler=\"" + IXMLConstants.JDT_COMPILER_ADAPTER + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			script.println("<compilerarg value=\"@" + compileArgsFile + "\" compiler=\"" + IXMLConstants.JDT_COMPILER_ADAPTER + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		}
 		script.indent--;
 		script.printEndTag("javac"); //$NON-NLS-1$
