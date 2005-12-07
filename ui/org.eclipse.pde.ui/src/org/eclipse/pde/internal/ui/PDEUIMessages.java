@@ -637,7 +637,6 @@ public class PDEUIMessages extends NLS {
 	public static String ExternalPluginsBlock_deselectAll;
 	public static String ExternalPluginsBlock_addRequired;
 	public static String ExternalPluginsBlock_includeFragments;
-	public static String ExternalPluginsBlock_workspace;
 	public static String ExternalPluginsBlock_workingSet;
 
 	public static String Preferences_TargetEnvironmentPage_os;

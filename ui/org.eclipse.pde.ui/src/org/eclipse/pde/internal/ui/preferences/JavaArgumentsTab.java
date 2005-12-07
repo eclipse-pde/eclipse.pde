@@ -39,6 +39,7 @@ public class JavaArgumentsTab {
 		
 		Group programGroup = new Group(container, SWT.NONE);
 		programGroup.setLayout(new GridLayout());
+		programGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		programGroup.setText(PDEUIMessages.JavaArgumentsTab_progamArgsGroup);
 		
 		fProgramArgs = new Text(programGroup, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
@@ -54,6 +55,7 @@ public class JavaArgumentsTab {
 		
 		Group vmGroup = new Group(container, SWT.NONE);
 		vmGroup.setLayout(new GridLayout());
+		vmGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		vmGroup.setText(PDEUIMessages.JavaArgumentsTab_vmArgsGroup);
 		
 		fVMArgs = new Text(vmGroup, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);

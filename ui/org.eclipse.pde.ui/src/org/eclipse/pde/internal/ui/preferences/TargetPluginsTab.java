@@ -10,32 +10,62 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import java.lang.reflect.*;
-import java.net.*;
-import java.util.*;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Vector;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.window.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelProviderEvent;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.EclipseHomeInitializer;
+import org.eclipse.pde.internal.core.ExternalModelManager;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.ModelProviderEvent;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEState;
+import org.eclipse.pde.internal.core.PluginPathFinder;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.ui.util.PersistablePluginObject;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 
 public class TargetPluginsTab {
@@ -90,9 +120,6 @@ public class TargetPluginsTab {
 				case 6:
 					handleAddRequired();
 					break;
-				case 7:
-					selectNotInWorkspace();
-					break;
 				default:
 					super.buttonSelected(button, index);
 			}
@@ -139,15 +166,13 @@ public class TargetPluginsTab {
 	public TargetPluginsTab(TargetPlatformPreferencePage page) {
 		this.fPage = page;
 		String[] buttonLabels =
-			{
-				PDEUIMessages.ExternalPluginsBlock_reload,
-				null,
-				null,
-				PDEUIMessages.WizardCheckboxTablePart_selectAll,
-				PDEUIMessages.WizardCheckboxTablePart_deselectAll,
-				PDEUIMessages.ExternalPluginsBlock_workingSet, 
-				PDEUIMessages.ExternalPluginsBlock_addRequired, 
-				PDEUIMessages.ExternalPluginsBlock_workspace};
+			{ PDEUIMessages.ExternalPluginsBlock_reload,
+			  null,
+			  null,
+			  PDEUIMessages.WizardCheckboxTablePart_selectAll,
+			  PDEUIMessages.WizardCheckboxTablePart_deselectAll,
+			  PDEUIMessages.ExternalPluginsBlock_workingSet, 
+			  PDEUIMessages.ExternalPluginsBlock_addRequired};
 		fTablePart = new TablePart(buttonLabels);
 		fTablePart.setSelectAllIndex(3);
 		fTablePart.setDeselectAllIndex(4);
@@ -315,33 +340,6 @@ public class TargetPluginsTab {
 			IPluginModelBase model = (IPluginModelBase) iter.next();
 			model.setEnabled(fTablePart.getTableViewer().getChecked(model));
 		}
-	}
-	
-	private void selectNotInWorkspace() {
-		IPluginModelBase[] wsModels = PDECore.getDefault().getModelManager().getWorkspaceModels();
-		IPluginModelBase[] exModels = getAllModels();
-		Vector selected = new Vector();
-		for (int i = 0; i < exModels.length; i++) {
-			IPluginModelBase exModel = exModels[i];
-			boolean inWorkspace = false;
-			for (int j = 0; j < wsModels.length; j++) {
-				IPluginModelBase wsModel = wsModels[j];
-				String extId = exModel.getPluginBase().getId();
-				String wsId = wsModel.getPluginBase().getId();
-				if (extId != null && wsId != null && extId.equals(wsId)) {
-					inWorkspace = true;
-					break;
-				}
-			}
-			if (!inWorkspace) {
-				selected.add(exModel);
-			}
-			if (exModel.isEnabled() == inWorkspace)
-				fChangedModels.add(exModel);
-			else if (fChangedModels.contains(exModel))
-				fChangedModels.remove(exModel);
-		}
-		fTablePart.setSelection(selected.toArray());
 	}
 	
 	public void handleSelectAll(boolean selected) {
