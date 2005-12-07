@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.CompatibleEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDelegate;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
@@ -35,7 +36,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 	public static final String OSGI_MINIMUM_1_0 = "OSGi/Minimum-1.0"; //$NON-NLS-1$
 	public static final String OSGI_MINIMUM_1_1 = "OSGi/Minimum-1.1"; //$NON-NLS-1$
 
-	public IExecutionEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor)
+	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor)
 			throws CoreException {
 		
 		ArrayList result = new ArrayList();
@@ -45,38 +46,38 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 			
 			String javaVersion = vm2.getJavaVersion();
 			if (javaVersion == null)
-				return new IExecutionEnvironment[0];
+				return new CompatibleEnvironment[0];
 			
 			if (javaVersion.compareTo("1.5") >= 0) //$NON-NLS-1$
-				addEnvironment(result, J2SE_1_5);
+				addEnvironment(result, J2SE_1_5, javaVersion.startsWith("1.5"));
 			
 			if (javaVersion.compareTo("1.4") >= 0) { //$NON-NLS-1$
-				addEnvironment(result, J2SE_1_4);
-				addEnvironment(result, CDC_FOUNDATION_1_1);
+				addEnvironment(result, J2SE_1_4, javaVersion.startsWith("1.4"));
+				addEnvironment(result, CDC_FOUNDATION_1_1, javaVersion.startsWith("1.4"));
 			}
 			
 			if (javaVersion.compareTo("1.3") >= 0) { //$NON-NLS-1$
-				addEnvironment(result, J2SE_1_3);
-				addEnvironment(result, CDC_FOUNDATION_1_0);
+				addEnvironment(result, J2SE_1_3, javaVersion.startsWith("1.3"));
+				addEnvironment(result, CDC_FOUNDATION_1_0, javaVersion.startsWith("1.3"));
 			}
 			
 			if (javaVersion.compareTo("1.2") >= 0) //$NON-NLS-1$
-				addEnvironment(result, JRE_1_2);
+				addEnvironment(result, JRE_1_2, javaVersion.startsWith("1.2"));
 			
 			if (javaVersion.compareTo("1.1") >= 0) { //$NON-NLS-1$
-				addEnvironment(result, JRE_1_1);
-				addEnvironment(result, OSGI_MINIMUM_1_0);
-				addEnvironment(result, OSGI_MINIMUM_1_1);
+				addEnvironment(result, JRE_1_1, javaVersion.startsWith("1.1"));
+				addEnvironment(result, OSGI_MINIMUM_1_0, false);
+				addEnvironment(result, OSGI_MINIMUM_1_1, false);
 			}			
 		}
-		return (IExecutionEnvironment[])result.toArray(new IExecutionEnvironment[result.size()]);
+		return (CompatibleEnvironment[])result.toArray(new CompatibleEnvironment[result.size()]);
 	}
 	
-	private void addEnvironment(ArrayList result, String id) {
+	private void addEnvironment(ArrayList result, String id, boolean strict) {
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment env = manager.getEnvironment(id);
 		if (env != null)
-			result.add(env);
+			result.add(new CompatibleEnvironment(env, strict));
 	}
 
 }
