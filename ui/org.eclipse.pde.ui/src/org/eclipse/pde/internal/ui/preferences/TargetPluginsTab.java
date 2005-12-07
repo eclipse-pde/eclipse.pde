@@ -225,6 +225,7 @@ public class TargetPluginsTab {
 
 		GridData gd = (GridData) fTablePart.getControl().getLayoutData();
 		gd.heightHint = 100;
+		gd.widthHint = 250;
 				
 		fIncludeFragments = new Button(container, SWT.CHECK);
 		fIncludeFragments.setText(PDEUIMessages.ExternalPluginsBlock_includeFragments); 
