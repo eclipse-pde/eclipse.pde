@@ -80,7 +80,7 @@
             description="%environment.description.8"/>
       <analyzer
             class="org.eclipse.pde.internal.core.ExecutionEnvironmentAnalyzer"
-            id="org.eclipse.pde.ui.eeAnalyzer"/>
+            id="org.eclipse.pde.core.eeAnalyzer"/>
    </extension>
    
 </plugin>
