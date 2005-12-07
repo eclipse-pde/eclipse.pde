@@ -60,6 +60,7 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_JAVAC_SOURCE = "javacSource"; //$NON-NLS-1$
 	public static final String PROPERTY_JAVAC_TARGET = "javacTarget"; //$NON-NLS-1$
 	public static final String PROPERTY_BOOT_CLASSPATH = "bootClasspath"; //$NON-NLS-1$
+	public static final String PROPERTY_JRE_COMPILATION_PROFILE = "jre.compilation.profile"; //$NON-NLS-1$
 	
 	public static final String PROPERTY_SIGNIFICANT_VERSION_DIGITS = "significantVersionDigits";  //$NON-NLS-1$
 	public static final String PROPERTY_GENERATED_VERSION_LENGTH = "generatedVersionLength"; //$NON-NLS-1$

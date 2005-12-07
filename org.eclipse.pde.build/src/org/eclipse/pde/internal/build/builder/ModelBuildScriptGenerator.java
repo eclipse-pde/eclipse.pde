@@ -656,11 +656,13 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		String javacSource = null;
 		String javacTarget = null;
 		String bootClasspath = null;
+		String jreProfile = null;
 		try {
 			Properties properties = getBuildProperties();
 			javacSource = properties.getProperty(IBuildPropertiesConstants.PROPERTY_JAVAC_SOURCE);
 			javacTarget = properties.getProperty(IBuildPropertiesConstants.PROPERTY_JAVAC_TARGET);
 			bootClasspath = properties.getProperty(IBuildPropertiesConstants.PROPERTY_BOOT_CLASSPATH);
+			jreProfile = properties.getProperty(IBuildPropertiesConstants.PROPERTY_JRE_COMPILATION_PROFILE);
 		} catch (CoreException e) {
 			//ignore
 		}
@@ -684,27 +686,42 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printPropertyRefid(PROPERTY_BOOTCLASSPATH, "path_bootclasspath"); //$NON-NLS-1$
 		}
 
+		Properties environmentMappings = getExecutionEnvironmentMappings();
+		if (jreProfile != null && !environmentMappings.containsKey(jreProfile + '.' + IXMLConstants.PROPERTY_JAVAC_SOURCE)) {
+			if (reportResolutionErrors) {
+				IStatus status = new Status(IStatus.ERROR, model.getSymbolicName(), IStatus.ERROR, NLS.bind(Messages.build_plugin_unrecognizedJRE, jreProfile), null);
+				BundleHelper.getDefault().getLog().log(status);
+			}
+			jreProfile = null;
+		}
+		
 		if (javacSource != null)
 			script.printProperty(PROPERTY_BUNDLE_JAVAC_SOURCE, javacSource);
 		if (javacTarget != null)
 			script.printProperty(PROPERTY_BUNDLE_JAVAC_TARGET, javacTarget);
 		if (bootClasspath != null)
 			script.printProperty(PROPERTY_BUNDLE_BOOTCLASSPATH, bootClasspath);
-
-		String[] environments = model.getExecutionEnvironments();
-		String classpath, source, target = null;
+				
+		String source, target = null;
+		String[] modelEnvironments = model.getExecutionEnvironments();
+		String[] environments = null;
+		if (jreProfile != null) {
+			environments = new String[modelEnvironments.length + 1];
+			environments[0] = jreProfile;
+			System.arraycopy(modelEnvironments, 0, environments, 1, modelEnvironments.length);	
+		} else {
+			environments = modelEnvironments;
+		}
 		for (int i = 0; i < environments.length; i++) {
-			Properties environmentMappings = getExecutionEnvironmentMappings();
-			classpath = PROPERTY_BOOTCLASSPATH + '.' + environments[i];
 			if (bootClasspath == null)
-				script.printConditionIsSet(PROPERTY_BUNDLE_BOOTCLASSPATH, Utils.getPropertyFormat(classpath), classpath);
+				script.printConditionIsSet(PROPERTY_BUNDLE_BOOTCLASSPATH, Utils.getPropertyFormat(environments[i]), environments[i]);
 
 			source = (String) environmentMappings.get(environments[i] + '.' + IXMLConstants.PROPERTY_JAVAC_SOURCE);
 			target = (String) environmentMappings.get(environments[i] + '.' + IXMLConstants.PROPERTY_JAVAC_TARGET);
 			if (javacSource == null && source != null)
-				script.printConditionIsSet(PROPERTY_BUNDLE_JAVAC_SOURCE, source, classpath);
+				script.printConditionIsSet(PROPERTY_BUNDLE_JAVAC_SOURCE, source, environments[i]);
 			if (javacTarget == null && target != null)
-				script.printConditionIsSet(PROPERTY_BUNDLE_JAVAC_TARGET, target, classpath);
+				script.printConditionIsSet(PROPERTY_BUNDLE_JAVAC_TARGET, target, environments[i]);
 		}
 
 		if (javacSource == null)

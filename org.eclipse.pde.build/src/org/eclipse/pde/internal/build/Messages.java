@@ -58,6 +58,7 @@ public class Messages extends NLS {
 	public static String build_plugin_clean;
 	public static String build_plugin_zipPlugin;
 	public static String build_plugin_refresh;
+	public static String build_plugin_unrecognizedJRE;
 
 	public static String build_feature_buildJars;
 	public static String build_feature_buildUpdateJar;
