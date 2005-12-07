@@ -17,6 +17,7 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -24,22 +25,41 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.AbstractFormPart;
+import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public abstract class PDEFormPage extends FormPage {
 
+	private boolean fNewStyleHeader;
+	
 	public PDEFormPage(FormEditor editor, String id, String title) {
 		super(editor, id, title);
 	}
 
+	public PDEFormPage(FormEditor editor, String id, String title, boolean newStyleHeader) {
+		this(editor, id, title);
+		fNewStyleHeader = newStyleHeader;
+	}
+	
 	protected void createFormContent(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
 		//form.setBackgroundImage(PDEPlugin.getDefault().getLabelProvider().get(
 		//		PDEPluginImages.DESC_FORM_BANNER));
+		if (fNewStyleHeader) {
+			FormToolkit toolkit = managedForm.getToolkit();
+			FormColors colors = toolkit.getColors();
+			colors.initializeSectionToolBarColors();
+			Color gbg = colors.getColor(FormColors.TB_GBG);
+			Color bg = colors.getBackground();
+			form.getForm().setTextBackground(new Color[]{bg, gbg}, new int [] {100}, true);
+			form.getForm().setSeparatorColor(colors.getColor(FormColors.TB_BORDER));
+			form.getForm().setSeparatorVisible(true);
+		}
 		final String href = getHelpResource();
 		if (href != null) {
 			IToolBarManager manager = form.getToolBarManager();

@@ -10,14 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.*;
+import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 
 public class BrandingPage extends PDEFormPage {
@@ -25,7 +27,7 @@ public class BrandingPage extends PDEFormPage {
 	public static final String PAGE_ID = "branding"; //$NON-NLS-1$
 
 	public BrandingPage(FormEditor editor) {
-		super(editor, PAGE_ID, PDEUIMessages.BrandingPage_title); 
+		super(editor, PAGE_ID, PDEUIMessages.BrandingPage_title, true); 
 	}
 	
 	/* (non-Javadoc)

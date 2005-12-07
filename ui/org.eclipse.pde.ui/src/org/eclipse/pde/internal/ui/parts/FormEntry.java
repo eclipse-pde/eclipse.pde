@@ -9,12 +9,30 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
+import org.eclipse.pde.internal.ui.editor.IEditorValidationProvider;
+import org.eclipse.pde.internal.ui.editor.IEditorValidator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.FormColors;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
 /**
  * The helper class for creating entry fields with label and text. Optionally,
  * a button can be added after the text. The attached listener reacts to all
@@ -22,15 +40,17 @@ import org.eclipse.ui.forms.widgets.*;
  * is called is 'valueChanged' method called (and only if 'dirty' flag is set).
  * This allows delayed commit.
  */
-public class FormEntry {
-	private Control label;
-	private Text text;
-	private Button browse;
-	private String value=""; //$NON-NLS-1$
-	private boolean dirty;
-	boolean ignoreModify = false;
-	private IFormEntryListener listener;
+public class FormEntry implements IEditorValidationProvider {
+	private Control fLabel;
+	private Text fText;
+	private Button fBrowse;
+	private String fValue=""; //$NON-NLS-1$
+	private boolean fDirty;
+	boolean fIgnoreModify = false;
+	private IFormEntryListener fListener;
 	private boolean fDimLabelOnDisable;
+	private boolean fSkipValidation;
+	private IEditorValidator fValidator;
 	/**
 	 * The default constructor. Call 'createControl' to make it.
 	 *  
@@ -77,34 +97,34 @@ public class FormEntry {
 		if (linkLabel) {
 			Hyperlink link = toolkit.createHyperlink(parent, labelText,
 					SWT.NULL);
-			label = link;
+			fLabel = link;
 		} else {
-			label = toolkit.createLabel(parent, labelText);
-			label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+			fLabel = toolkit.createLabel(parent, labelText);
+			fLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		}
-		text = toolkit.createText(parent, "", style); //$NON-NLS-1$
+		fText = toolkit.createText(parent, "", style); //$NON-NLS-1$
 		addListeners();
 		if (browseText != null) {
-			browse = toolkit.createButton(parent, browseText, SWT.PUSH);
-			browse.addSelectionListener(new SelectionAdapter() {
+			fBrowse = toolkit.createButton(parent, browseText, SWT.PUSH);
+			fBrowse.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					if (listener != null)
-						listener.browseButtonSelected(FormEntry.this);
+					if (fListener != null)
+						fListener.browseButtonSelected(FormEntry.this);
 				}
 			});
 		}
 		fillIntoGrid(parent, indent, tcolspan);
 	}
 	public void setEditable(boolean editable) {
-		text.setEditable(editable);
+		fText.setEditable(editable);
 		if (fDimLabelOnDisable) {
-			if (label instanceof Hyperlink)
-				((Hyperlink)label).setUnderlined(editable);
-			label.setEnabled(editable);
-			text.setEnabled(editable);
+			if (fLabel instanceof Hyperlink)
+				((Hyperlink)fLabel).setUnderlined(editable);
+			fLabel.setEnabled(editable);
+			fText.setEnabled(editable);
 		}
-		if (browse!=null) 
-			browse.setEnabled(editable);
+		if (fBrowse!=null) 
+			fBrowse.setEnabled(editable);
 	}
 	private void fillIntoGrid(Composite parent, int indent, int tcolspan) {
 		Layout layout = parent.getLayout();
@@ -114,40 +134,40 @@ public class FormEntry {
 			if (tcolspan > 0)
 				tspan = tcolspan;
 			else
-				tspan = browse != null ? span - 2 : span - 1;
+				tspan = fBrowse != null ? span - 2 : span - 1;
 			GridData gd;
 			gd = new GridData(GridData.VERTICAL_ALIGN_CENTER);
 			gd.horizontalIndent = indent;
-			label.setLayoutData(gd);
+			fLabel.setLayoutData(gd);
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 			gd.horizontalSpan = tspan;
 			gd.grabExcessHorizontalSpace = (tspan == 1);
 			gd.widthHint = 10;
-			text.setLayoutData(gd);
-			if (browse != null) {
+			fText.setLayoutData(gd);
+			if (fBrowse != null) {
 				gd = new GridData(GridData.VERTICAL_ALIGN_CENTER);
-				browse.setLayoutData(gd);
+				fBrowse.setLayoutData(gd);
 			}
 		} else if (layout instanceof TableWrapLayout) {
 			int span = ((TableWrapLayout) layout).numColumns;
 			if (tcolspan > 0)
 				tspan = tcolspan;
 			else
-				tspan = browse != null ? span - 2 : span - 1;
+				tspan = fBrowse != null ? span - 2 : span - 1;
 			TableWrapData td;
 			td = new TableWrapData();
 			td.valign = TableWrapData.MIDDLE;
 			td.indent = indent;
-			label.setLayoutData(td);
+			fLabel.setLayoutData(td);
 			td = new TableWrapData(TableWrapData.FILL);
 			td.colspan = tspan;
 			td.grabHorizontal = (tspan == 1);
 			td.valign = TableWrapData.MIDDLE;
-			text.setLayoutData(td);
-			if (browse != null) {
+			fText.setLayoutData(td);
+			if (fBrowse != null) {
 				td = new TableWrapData(TableWrapData.FILL);
 				td.valign = TableWrapData.MIDDLE;
-				browse.setLayoutData(td);
+				fBrowse.setLayoutData(td);
 			}
 		}
 	}
@@ -157,32 +177,32 @@ public class FormEntry {
 	 * @param listener
 	 */
 	public void setFormEntryListener(IFormEntryListener listener) {
-		if (label instanceof Hyperlink) {
-			if (this.listener!=null)
-				((Hyperlink)label).removeHyperlinkListener(this.listener);
+		if (fLabel instanceof Hyperlink) {
+			if (this.fListener!=null)
+				((Hyperlink)fLabel).removeHyperlinkListener(this.fListener);
 			if (listener!=null)
-				((Hyperlink)label).addHyperlinkListener(listener);
+				((Hyperlink)fLabel).addHyperlinkListener(listener);
 		}
-		this.listener = listener;
+		this.fListener = listener;
 	}
 	private void addListeners() {
-		text.addKeyListener(new KeyAdapter() {
+		fText.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
 				keyReleaseOccured(e);
 			}
 		});
-		text.addModifyListener(new ModifyListener() {
+		fText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				editOccured(e);
 			}
 		});
-		text.addFocusListener(new FocusAdapter() {
+		fText.addFocusListener(new FocusAdapter() {
 			public void focusGained(FocusEvent e) {
-				if (listener != null)
-					listener.focusGained(FormEntry.this);
+				if (fListener != null)
+					fListener.focusGained(FormEntry.this);
 			}
 			public void focusLost(FocusEvent e) {
-				if (dirty)
+				if (fDirty)
 					commit();
 			}
 		});
@@ -193,25 +213,27 @@ public class FormEntry {
 	 *  
 	 */
 	public void commit() {
-		if (dirty) {
-			value = text.getText();
+		if (fDirty) {
+			fValue = fText.getText();
 			//if (value.length()==0)
 				//value = null;
 			//notify
-			if (listener != null)
-				listener.textValueChanged(this);
+			if (fListener != null)
+				fListener.textValueChanged(this);
 		}
-		dirty = false;
+		fDirty = false;
 	}
 	public void cancelEdit() {
-		dirty = false;
+		fDirty = false;
 	}
 	private void editOccured(ModifyEvent e) {
-		if (ignoreModify)
+		if (!fSkipValidation)
+			validate();
+		if (fIgnoreModify)
 			return;
-		dirty = true;
-		if (listener != null)
-			listener.textDirty(this);
+		fDirty = true;
+		if (fListener != null)
+			fListener.textDirty(this);
 	}
 	/**
 	 * Returns the text control.
@@ -219,7 +241,7 @@ public class FormEntry {
 	 * @return
 	 */
 	public Text getText() {
-		return text;
+		return fText;
 	}
 	
 	/**
@@ -227,7 +249,7 @@ public class FormEntry {
 	 * @return
 	 */
 	public Button getButton() {
-		return browse;
+		return fBrowse;
 	}
 	/**
 	 * Returns the current entry value. If the entry is dirty and was not
@@ -236,7 +258,7 @@ public class FormEntry {
 	 * @return
 	 */
 	public String getValue() {
-		return value.trim();
+		return fValue.trim();
 	}
 	/**
 	 * Returns true if the text has been modified.
@@ -244,18 +266,18 @@ public class FormEntry {
 	 * @return
 	 */
 	public boolean isDirty() {
-		return dirty;
+		return fDirty;
 	}
 	private void keyReleaseOccured(KeyEvent e) {
 		if (e.character == '\r') {
 			// commit value
-			if (dirty)
+			if (fDirty)
 				commit();
 		} else if (e.character == '\u001b') { // Escape character
-			text.setText(value != null ? value : ""); // restore old //$NON-NLS-1$
-			dirty = false;
+			fText.setText(fValue != null ? fValue : ""); // restore old //$NON-NLS-1$
+			fDirty = false;
 		}	
-		listener.selectionChanged(FormEntry.this);
+		fListener.selectionChanged(FormEntry.this);
 	}
 	/**
 	 * Sets the value of this entry.
@@ -263,9 +285,9 @@ public class FormEntry {
 	 * @param value
 	 */
 	public void setValue(String value) {
-		if (text != null)
-			text.setText(value != null ? value : ""); //$NON-NLS-1$
-		this.value = (value != null) ? value : ""; //$NON-NLS-1$
+		if (fText != null)
+			fText.setText(value != null ? value : ""); //$NON-NLS-1$
+		this.fValue = (value != null) ? value : ""; //$NON-NLS-1$
 	}
 	/**
 	 * Sets the value of this entry with the possibility to turn the
@@ -275,9 +297,22 @@ public class FormEntry {
 	 * @param blockNotification
 	 */
 	public void setValue(String value, boolean blockNotification) {
-		ignoreModify = blockNotification;
+		fIgnoreModify = blockNotification;
 		setValue(value);
-		ignoreModify = false;
+		fIgnoreModify = false;
+	}
+	
+	/**
+	 * Sets the value of this entry with the possibility to turn the
+	 * notification and validation off.
+	 * 
+	 * @param value
+	 * @param blockNotification
+	 */
+	public void setValue(String value, boolean blockNotification, boolean skipValidation) {
+		fSkipValidation = skipValidation;
+		setValue(value, blockNotification);
+		fSkipValidation = false;
 	}
 	
 	/**
@@ -292,10 +327,35 @@ public class FormEntry {
 	}
 	
 	public void setVisible(boolean visible) {
-		label.setVisible(visible);
-		if (text != null)
-			text.setVisible(visible);
-		if (browse != null)
-			browse.setVisible(visible);
+		fLabel.setVisible(visible);
+		if (fText != null)
+			fText.setVisible(visible);
+		if (fBrowse != null)
+			fBrowse.setVisible(visible);
+	}
+	
+	public void setValidator(IEditorValidator validator) {
+		fValidator = validator;
+	}
+	
+	public IEditorValidator getValidator() {
+		return fValidator;
+	}
+	
+	public void validate() {
+		if (fValidator != null)
+			fValidator.validate(true);
+	}
+	
+	public String getProviderValue() {
+		return fText.getText();
+	}
+	
+	public String getLabelValue() {
+		if (fLabel instanceof Label)
+			return ((Label)fLabel).getText();
+		else if (fLabel instanceof Hyperlink)
+			return ((Hyperlink)fLabel).getText();
+		return null;
 	}
 }

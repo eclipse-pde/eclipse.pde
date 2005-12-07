@@ -153,6 +153,7 @@ public abstract class PDEFormEditor extends FormEditor
 	private PDEMultiPageContentOutline fContentOutline;
 	private String fLastActivePageId;
 	private boolean fLastDirtyState;
+	private IEditorValidationStack fValidationStack;
 
 	private static class PDEMultiPageEditorSite extends MultiPageEditorSite {
 		public PDEMultiPageEditorSite(MultiPageEditorPart multiPageEditor,
@@ -175,6 +176,7 @@ public abstract class PDEFormEditor extends FormEditor
 	public PDEFormEditor() {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fInputContextManager = createInputContextManager();
+		fValidationStack = new EditorValidationStack(this);
 	}
 	/**
 	 * We must override nested site creation so that we properly pass the source
@@ -729,4 +731,7 @@ public abstract class PDEFormEditor extends FormEditor
 		return SWT.LEFT_TO_RIGHT;
 	}
 
+	public IEditorValidationStack getValidationStack() {
+		return fValidationStack;
+	}
 }
