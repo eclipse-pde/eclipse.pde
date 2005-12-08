@@ -49,26 +49,25 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 				return new CompatibleEnvironment[0];
 			
 			if (javaVersion.compareTo("1.5") >= 0) //$NON-NLS-1$
-				addEnvironment(result, J2SE_1_5, javaVersion.startsWith("1.5"));
+				addEnvironment(result, J2SE_1_5, javaVersion.startsWith("1.5")); //$NON-NLS-1$
 			
 			if (javaVersion.compareTo("1.4") >= 0) { //$NON-NLS-1$
-				addEnvironment(result, J2SE_1_4, javaVersion.startsWith("1.4"));
-				addEnvironment(result, CDC_FOUNDATION_1_1, javaVersion.startsWith("1.4"));
+				addEnvironment(result, J2SE_1_4, javaVersion.startsWith("1.4")); //$NON-NLS-1$
+				addEnvironment(result, CDC_FOUNDATION_1_1, javaVersion.startsWith("1.4")); //$NON-NLS-1$
 			}
 			
 			if (javaVersion.compareTo("1.3") >= 0) { //$NON-NLS-1$
-				addEnvironment(result, J2SE_1_3, javaVersion.startsWith("1.3"));
-				addEnvironment(result, CDC_FOUNDATION_1_0, javaVersion.startsWith("1.3"));
+				addEnvironment(result, J2SE_1_3, javaVersion.startsWith("1.3")); //$NON-NLS-1$
+				addEnvironment(result, CDC_FOUNDATION_1_0, javaVersion.startsWith("1.3")); //$NON-NLS-1$
+				addEnvironment(result, OSGI_MINIMUM_1_0, false);
+				addEnvironment(result, OSGI_MINIMUM_1_1, false);
 			}
 			
 			if (javaVersion.compareTo("1.2") >= 0) //$NON-NLS-1$
-				addEnvironment(result, JRE_1_2, javaVersion.startsWith("1.2"));
+				addEnvironment(result, JRE_1_2, javaVersion.startsWith("1.2")); //$NON-NLS-1$
 			
-			if (javaVersion.compareTo("1.1") >= 0) { //$NON-NLS-1$
-				addEnvironment(result, JRE_1_1, javaVersion.startsWith("1.1"));
-				addEnvironment(result, OSGI_MINIMUM_1_0, false);
-				addEnvironment(result, OSGI_MINIMUM_1_1, false);
-			}			
+			if (javaVersion.compareTo("1.1") >= 0)  //$NON-NLS-1$
+				addEnvironment(result, JRE_1_1, javaVersion.startsWith("1.1"));				 //$NON-NLS-1$
 		}
 		return (CompatibleEnvironment[])result.toArray(new CompatibleEnvironment[result.size()]);
 	}

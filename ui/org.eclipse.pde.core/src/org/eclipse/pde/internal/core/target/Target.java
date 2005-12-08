@@ -73,7 +73,7 @@ public class Target extends TargetObject implements ITarget {
 					} else if (name.equals("plugins")) { //$NON-NLS-1$
 						element = (Element)child;
 						fUseAllTargetPlatform =
-							"true".equals(element.getAttribute("useAllPlugins"));
+							"true".equals(element.getAttribute("useAllPlugins")); //$NON-NLS-1$ //$NON-NLS-2$
 						parsePlugins(child.getChildNodes());
 					} else if (name.equals("features")) { //$NON-NLS-1$
 						parseFeatures(child.getChildNodes());
@@ -83,7 +83,7 @@ public class Target extends TargetObject implements ITarget {
 					} else if (name.equals("targetJRE")) { //$NON-NLS-1$
 						fRuntimeInfo = factory.createJREInfo();
 						fRuntimeInfo.parse(child);
-					} else if (name.equals("location")) {
+					} else if (name.equals("location")) { //$NON-NLS-1$
 						fLocationInfo = factory.createLocation();
 						fLocationInfo.parse(child);
 					}
@@ -124,7 +124,7 @@ public class Target extends TargetObject implements ITarget {
 			writer.print(" " + P_ID + "=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (fName != null && fName.length() > 0)
 			writer.print(" " + P_NAME + "=\"" + getWritableString(fName) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		writer.println(">");
+		writer.println(">"); //$NON-NLS-1$
 		if (fArgsInfo != null) {
 			fArgsInfo.write(indent + "   ", writer); //$NON-NLS-1$
 		}
@@ -140,25 +140,25 @@ public class Target extends TargetObject implements ITarget {
 		
 		writer.println();
 		if (fUseAllTargetPlatform) {
-			writer.println(indent + "   <plugins useAllPlugins=\"true\">");
+			writer.println(indent + "   <plugins useAllPlugins=\"true\">"); //$NON-NLS-1$
 		} else {
-			writer.println(indent + "   <plugins>");
+			writer.println(indent + "   <plugins>"); //$NON-NLS-1$
 		}
 		Iterator iter = fPlugins.values().iterator();
 		while (iter.hasNext()) {
 			ITargetPlugin plugin = (ITargetPlugin) iter.next();
-			plugin.write(indent + "      ", writer);
+			plugin.write(indent + "      ", writer); //$NON-NLS-1$
 		}
-		writer.println(indent + "   </plugins>");
+		writer.println(indent + "   </plugins>"); //$NON-NLS-1$
 		
 		writer.println();
-		writer.println(indent + "   <features>");
+		writer.println(indent + "   <features>"); //$NON-NLS-1$
 		iter = fFeatures.values().iterator();
 		while (iter.hasNext()) {
 			ITargetFeature feature = (ITargetFeature) iter.next();
-			feature.write(indent + "      ", writer);
+			feature.write(indent + "      ", writer); //$NON-NLS-1$
 		}
-		writer.println(indent + "   </features>");
+		writer.println(indent + "   </features>"); //$NON-NLS-1$
 			
 		writer.println();
 		writer.println(indent + "</target>"); //$NON-NLS-1$

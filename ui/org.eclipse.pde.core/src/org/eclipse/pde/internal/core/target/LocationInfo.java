@@ -11,7 +11,7 @@ public class LocationInfo extends TargetObject implements ILocationInfo{
 
 	private static final long serialVersionUID = 1L;
 	
-	private String fPath = "";
+	private String fPath = ""; //$NON-NLS-1$
 
 	public LocationInfo(ITargetModel model) {
 		super(model);
@@ -19,7 +19,7 @@ public class LocationInfo extends TargetObject implements ILocationInfo{
 
 	public void parse(Node node) {
 		Element element = (Element)node; 
-		fPath = element.getAttribute("path"); 
+		fPath = element.getAttribute("path");  //$NON-NLS-1$
 
 	}
 
@@ -27,7 +27,7 @@ public class LocationInfo extends TargetObject implements ILocationInfo{
 		if (fPath.length() == 0)
 			return;
 		writer.println();
-		writer.println(indent + "<location path=\"" + getWritableString(fPath) + "\"/>");
+		writer.println(indent + "<location path=\"" + getWritableString(fPath) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 
@@ -44,7 +44,7 @@ public class LocationInfo extends TargetObject implements ILocationInfo{
 
 	public void setPath(String path) {
 		String oldValue = fPath;
-		fPath = (path != null) ? path : "";
+		fPath = (path != null) ? path : ""; //$NON-NLS-1$
 		firePropertyChanged(P_LOC, oldValue, fPath);
 	}
 

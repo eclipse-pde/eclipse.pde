@@ -14,7 +14,7 @@ public interface ITarget extends ITargetObject {
 	
 	final String P_ID = "id"; //$NON-NLS-1$
 	final String P_NAME = "name"; //$NON-NLS-1$
-	final String P_ALL_PLUGINS = "useAllPlugins";
+	final String P_ALL_PLUGINS = "useAllPlugins"; //$NON-NLS-1$
 	
 	void reset();
 	
