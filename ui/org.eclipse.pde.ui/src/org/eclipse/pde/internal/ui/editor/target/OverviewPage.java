@@ -53,6 +53,7 @@ public class OverviewPage extends PDEFormPage {
 		body.setLayout(layout);
 		
 		managedForm.addPart(new TargetDefinitionSection(this, body));
+		managedForm.addPart(new ContentSection(this, body));
 	}
 
 }

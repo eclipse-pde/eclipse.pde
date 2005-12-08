@@ -12,7 +12,19 @@ package org.eclipse.pde.internal.core.itarget;
 
 public interface ITarget extends ITargetObject {
 	
+	final String P_ID = "id"; //$NON-NLS-1$
+	final String P_NAME = "name"; //$NON-NLS-1$
+	final String P_ALL_PLUGINS = "useAllPlugins";
+	
 	void reset();
+	
+	String getId();
+	
+	void setId(String id);
+	
+	String getName();
+	
+	void setName(String name);
 	
 	IArgumentsInfo getArguments();
 	
@@ -25,5 +37,29 @@ public interface ITarget extends ITargetObject {
 	IRuntimeInfo getTargetJREInfo();
 	
 	void setTargetJREInfo(IRuntimeInfo info);
+	
+	ILocationInfo getLocationInfo();
+	
+	void setLocationInfo(ILocationInfo info);
+	
+	void addPlugin(ITargetPlugin plugin);
+	
+	void addFeature(ITargetFeature feature);
+	
+	void removePlugin(ITargetPlugin plugin);
+	
+	void removeFeature(ITargetFeature feature);
+	
+	ITargetPlugin[] getPlugins();
+	
+	ITargetFeature[] getFeatures();
+	
+	boolean containsPlugin(String id);
+	
+	boolean containsFeature(String id);
+	
+	boolean useAllPlugins();
+	
+	void setUseAllPlugins(boolean value);
 
 }

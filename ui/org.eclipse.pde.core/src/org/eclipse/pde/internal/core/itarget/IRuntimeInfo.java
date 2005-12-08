@@ -8,6 +8,11 @@ public interface IRuntimeInfo extends ITargetObject {
 	
 	public static final String P_TARGET_JRE = "targetJRE"; //$NON-NLS-1$
 	
+	/**
+	 * Returns the JRE type (TYPE_DEFAULT or TYPE_NAMED or TYPE_EXECUTION_ENV)
+	 * 
+	 * @return the int representing the predefined type of the JRE defined
+	 */
 	public int getJREType();
 	
 	public String getJREName();

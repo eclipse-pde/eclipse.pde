@@ -24,6 +24,8 @@ import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.core.itarget.ITargetFeature;
+import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
@@ -101,6 +103,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof PackageObject) {
 			return getObjectText((PackageObject)obj);
+		}
+		if (obj instanceof ITargetPlugin) {
+			return getObjectText((ITargetPlugin)obj);
+		}
+		if (obj instanceof ITargetFeature) {
+			return getObjectText((ITargetFeature)obj);
 		}
 		return super.getText(obj);
 	}
@@ -258,6 +266,14 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return preventNull(def.getLabel());
 		return preventNull(obj.getName());
 	}
+	
+	public String getObjectText(ITargetPlugin obj) {
+		return preventNull(obj.getId());
+	}
+	
+	public String getObjectText(ITargetFeature obj) {
+		return preventNull(obj.getId());
+	}
 
 	public Image getImage(Object obj) {
 		if (obj instanceof IPlugin) {
@@ -357,6 +373,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof PackageObject) {
 			return getObjectImage((PackageObject) obj);
+		}
+		if (obj instanceof ITargetPlugin) {
+			return getObjectImage((ITargetPlugin) obj);
+		}
+		if (obj instanceof ITargetFeature) {
+			return getObjectImage((ITargetFeature) obj);
 		}
 		return super.getImage(obj);
 	}
@@ -617,6 +639,20 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 	public Image getObjectImage(PackageObject obj) {
 		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
+	}
+	
+	public Image getObjectImage(ITargetPlugin obj) {
+		BundleDescription desc = TargetPlatform.getState().getBundle(obj.getId(), null);
+		if (desc != null) {
+			return desc.getHost() == null 
+				? get(PDEPluginImages.DESC_PLUGIN_OBJ)
+				: get(PDEPluginImages.DESC_FRAGMENT_OBJ);
+		}
+		return get(PDEPluginImages.DESC_PLUGIN_OBJ, F_ERROR);
+	}
+	
+	public Image getObjectImage(ITargetFeature obj) {
+		return get(PDEPluginImages.DESC_FEATURE_OBJ, 0);
 	}
 
 	public boolean isFullNameModeEnabled() {

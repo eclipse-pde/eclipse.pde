@@ -21,6 +21,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -62,14 +64,16 @@ public class EnvironmentSection extends PDESection {
 		IEnvironmentInfo orgEnv = getEnvironment();
 		initializeChoices(orgEnv);
 		
-		toolkit.createLabel(left, PDEUIMessages.EnvironmentSection_operationSystem);
+		Label label = toolkit.createLabel(left, PDEUIMessages.EnvironmentSection_operationSystem);
+		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		
 		fOSCombo = new ComboPart();
 		fOSCombo.createControl(left, toolkit, SWT.SINGLE | SWT.BORDER );
 		fOSCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fOSCombo.setItems((String[])fOSChoices.toArray(new String[fOSChoices.size()]));
 
-		toolkit.createLabel(left, PDEUIMessages.EnvironmentSection_windowingSystem);
+		label = toolkit.createLabel(left, PDEUIMessages.EnvironmentSection_windowingSystem);
+		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		
 		fWSCombo = new ComboPart();
 		fWSCombo.createControl(left, toolkit, SWT.SINGLE | SWT.BORDER);
@@ -80,7 +84,8 @@ public class EnvironmentSection extends PDESection {
 		right.setLayout(new GridLayout(2, false));
 		right.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		toolkit.createLabel(right, PDEUIMessages.EnvironmentSection_architecture);
+		label = toolkit.createLabel(right, PDEUIMessages.EnvironmentSection_architecture);
+		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		
 		fArchCombo = new ComboPart();
 		fArchCombo.createControl(right, toolkit, SWT.SINGLE | SWT.BORDER);
@@ -88,7 +93,8 @@ public class EnvironmentSection extends PDESection {
 		fArchCombo.setItems((String[])fArchChoices.toArray(new String[fArchChoices.size()]));
 		
 		
-		toolkit.createLabel(right, PDEUIMessages.EnvironmentSection_locale);
+		label = toolkit.createLabel(right, PDEUIMessages.EnvironmentSection_locale);
+		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		
 		fNLCombo = new ComboPart();
 		fNLCombo.createControl(right, toolkit, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);

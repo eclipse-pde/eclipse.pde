@@ -99,8 +99,10 @@ public class FormEntry implements IEditorValidationProvider {
 					SWT.NULL);
 			fLabel = link;
 		} else {
-			fLabel = toolkit.createLabel(parent, labelText);
-			fLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+			if (labelText != null) {
+				fLabel = toolkit.createLabel(parent, labelText);
+				fLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+			}
 		}
 		fText = toolkit.createText(parent, "", style); //$NON-NLS-1$
 		addListeners();
@@ -117,7 +119,7 @@ public class FormEntry implements IEditorValidationProvider {
 	}
 	public void setEditable(boolean editable) {
 		fText.setEditable(editable);
-		if (fDimLabelOnDisable) {
+		if (fDimLabelOnDisable && fLabel != null) {
 			if (fLabel instanceof Hyperlink)
 				((Hyperlink)fLabel).setUnderlined(editable);
 			fLabel.setEnabled(editable);
@@ -136,9 +138,11 @@ public class FormEntry implements IEditorValidationProvider {
 			else
 				tspan = fBrowse != null ? span - 2 : span - 1;
 			GridData gd;
-			gd = new GridData(GridData.VERTICAL_ALIGN_CENTER);
-			gd.horizontalIndent = indent;
-			fLabel.setLayoutData(gd);
+			if (fLabel != null) {
+				gd = new GridData(GridData.VERTICAL_ALIGN_CENTER);
+				gd.horizontalIndent = indent;
+				fLabel.setLayoutData(gd);
+			}
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 			gd.horizontalSpan = tspan;
 			gd.grabExcessHorizontalSpace = (tspan == 1);
@@ -155,10 +159,12 @@ public class FormEntry implements IEditorValidationProvider {
 			else
 				tspan = fBrowse != null ? span - 2 : span - 1;
 			TableWrapData td;
-			td = new TableWrapData();
-			td.valign = TableWrapData.MIDDLE;
-			td.indent = indent;
-			fLabel.setLayoutData(td);
+			if (fLabel != null) {
+				td = new TableWrapData();
+				td.valign = TableWrapData.MIDDLE;
+				td.indent = indent;
+				fLabel.setLayoutData(td);
+			}
 			td = new TableWrapData(TableWrapData.FILL);
 			td.colspan = tspan;
 			td.grabHorizontal = (tspan == 1);
@@ -177,7 +183,7 @@ public class FormEntry implements IEditorValidationProvider {
 	 * @param listener
 	 */
 	public void setFormEntryListener(IFormEntryListener listener) {
-		if (fLabel instanceof Hyperlink) {
+		if (fLabel != null && fLabel instanceof Hyperlink) {
 			if (this.fListener!=null)
 				((Hyperlink)fLabel).removeHyperlinkListener(this.fListener);
 			if (listener!=null)
@@ -327,7 +333,8 @@ public class FormEntry implements IEditorValidationProvider {
 	}
 	
 	public void setVisible(boolean visible) {
-		fLabel.setVisible(visible);
+		if (fLabel != null)
+			fLabel.setVisible(visible);
 		if (fText != null)
 			fText.setVisible(visible);
 		if (fBrowse != null)
@@ -352,6 +359,8 @@ public class FormEntry implements IEditorValidationProvider {
 	}
 	
 	public String getLabelValue() {
+		if (fLabel == null)
+			return null;
 		if (fLabel instanceof Label)
 			return ((Label)fLabel).getText();
 		else if (fLabel instanceof Hyperlink)

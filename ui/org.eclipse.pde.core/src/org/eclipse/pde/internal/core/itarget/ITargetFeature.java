@@ -10,20 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.itarget;
 
-public interface ITargetModelFactory {
+public interface ITargetFeature extends ITargetObject {
 	
-	ITarget createTarget();
+	String getId();
 	
-	IArgumentsInfo createArguments();
+	void setId(String id);
 	
-	IEnvironmentInfo createEnvironment();
+	String getVersion();
 	
-	IRuntimeInfo createJREInfo();
-	
-	ILocationInfo createLocation();
-	
-	ITargetPlugin createPlugin();
-	
-	ITargetFeature createFeature();
+	void setVersion(String version);
 
 }
