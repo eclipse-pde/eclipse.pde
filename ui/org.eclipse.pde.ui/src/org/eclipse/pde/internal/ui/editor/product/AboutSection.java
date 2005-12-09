@@ -10,23 +10,23 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.AbstractFormValidator;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.IEditorValidationProvider;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.ValidationUtilities;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.FileExtensionFilter;
 import org.eclipse.pde.internal.ui.util.FileValidator;
@@ -85,6 +85,11 @@ public class AboutSection extends PDESection {
 			}
 		});
 		fImageEntry.setEditable(isEditable());
+		fImageEntry.setValidator(new AbstractFormValidator(this) {
+			public boolean inputValidates() {
+				return isValidImage(fImageEntry, new int[] {500, 330, 250, 330});
+			}
+		});
 		
 		fTextEntry = new FormEntry(client, toolkit, PDEUIMessages.AboutSection_text, SWT.MULTI|SWT.WRAP); 
 		fTextEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
@@ -145,7 +150,7 @@ public class AboutSection extends PDESection {
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 		IPath path = new Path(fImageEntry.getValue());
 		if (!path.isAbsolute()) {
-			path = getFullPath(path);
+			path = ValidationUtilities.getFullPath(path, getProduct());
 		}
 		IResource resource = root.findMember(path);
 		try {
@@ -174,21 +179,6 @@ public class AboutSection extends PDESection {
 		return (IProductModel)getPage().getPDEEditor().getAggregateModel();
 	}
 	
-	private IPath getFullPath(IPath path) {
-		String productId = getProduct().getId();
-		int dot = productId.lastIndexOf('.');
-		String pluginId = (dot != -1) ? productId.substring(0, dot) : ""; //$NON-NLS-1$
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginId);
-		if (model != null && model.getUnderlyingResource() != null) {
-			IPath newPath = new Path(model.getInstallLocation()).append(path);
-			IContainer container = PDEPlugin.getWorkspace().getRoot().getContainerForLocation(newPath);
-			if (container != null) {
-				return container.getFullPath();
-			}
-		}
-		return path;
-	}
-	
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		Control c = d.getFocusControl();
@@ -196,6 +186,10 @@ public class AboutSection extends PDESection {
 			return true;
 		return false;
 	}
-
+	
+	private boolean isValidImage(IEditorValidationProvider provider, int[] dimensions) {
+		IResource resource = ValidationUtilities.getImageResource(provider.getProviderValue(), false, getProduct());
+		return ValidationUtilities.isValidImage(provider, resource, dimensions, ValidationUtilities.F_MAXIMAGE);
+	}
 
 }

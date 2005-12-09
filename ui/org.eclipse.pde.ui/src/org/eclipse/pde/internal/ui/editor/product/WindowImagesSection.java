@@ -10,15 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IWindowImages;
@@ -172,7 +166,7 @@ public class WindowImagesSection extends PDESection {
 	}
 	
 	private void openImage(String value) {
-		IResource resource = getImageResource(value, true);
+		IResource resource = ValidationUtilities.getImageResource(value, true, getProduct());
 		try {
 			if (resource != null && resource instanceof IFile)
 				IDE.openEditor(PDEPlugin.getActivePage(), (IFile)resource, true);
@@ -180,21 +174,6 @@ public class WindowImagesSection extends PDESection {
 				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_warning); // 
 		} catch (PartInitException e) {
 		}			
-	}
-	
-	private IPath getFullPath(IPath path) {
-		String productId = getProduct().getId();
-		int dot = productId.lastIndexOf('.');
-		String pluginId = (dot != -1) ? productId.substring(0, dot) : ""; //$NON-NLS-1$
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginId);
-		if (model != null && model.getUnderlyingResource() != null) {
-			IPath newPath = new Path(model.getInstallLocation()).append(path);
-			IContainer container = PDEPlugin.getWorkspace().getRoot().getContainerForLocation(newPath);
-			if (container != null) {
-				return container.getFullPath();
-			}
-		}
-		return path;
 	}
 
 	public boolean canPaste(Clipboard clipboard) {
@@ -204,27 +183,10 @@ public class WindowImagesSection extends PDESection {
 			return true;
 		return false;
 	}
-
-	private IResource getImageResource(String value, boolean showWarning) {
-		if (value == null)
-			return null;
-		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
-		IPath path = new Path(value);
-		if (path.isEmpty()){
-			if (showWarning)
-				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_emptyPath); // 
-			return null;
-		}
-		if (!path.isAbsolute()) {
-			path = getFullPath(path);
-		}
-		return root.findMember(path);
-	}
 	
 	
 	private boolean isValidImage(IEditorValidationProvider provider, int[] dimensions) {
-		return ValidationUtilities.isValidImage(provider,
-				getImageResource(provider.getProviderValue(), false),
-				dimensions);
+		IResource resource = ValidationUtilities.getImageResource(provider.getProviderValue(), false, getProduct());
+		return ValidationUtilities.isValidImage(provider, resource, dimensions, ValidationUtilities.F_EXACTIMAGE);
 	}
 }
