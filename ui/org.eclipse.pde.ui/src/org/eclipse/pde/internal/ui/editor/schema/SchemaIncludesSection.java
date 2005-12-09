@@ -30,7 +30,6 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaInclude;
-import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.TableSection;
@@ -78,9 +77,7 @@ public class SchemaIncludesSection extends TableSection {
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		TablePart tablePart = getTablePart();
 		fViewer = tablePart.getTableViewer();
-		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
-		lp.connect(this);
-		fViewer.setLabelProvider(lp);
+		fViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fViewer.setContentProvider(new ArrayContentProvider());
 
 		getSchema().addModelChangedListener(this);

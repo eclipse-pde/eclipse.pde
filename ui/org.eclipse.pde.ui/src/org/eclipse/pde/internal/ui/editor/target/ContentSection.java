@@ -41,6 +41,7 @@ import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.core.itarget.ITargetModelFactory;
 import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
@@ -56,6 +57,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -75,31 +77,35 @@ public class ContentSection extends TableSection {
 	
 	class ContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
+			ITarget target = getTarget();
+			if (target.useAllPlugins())
+				return new Object[0];
 			if (fLastTab == 0)
-				return getTarget().getPlugins();
-			return getTarget().getFeatures();
+				return target.getPlugins();
+			return target.getFeatures();
 		}
 	}
 	
 	private static final String[] TAB_LABELS = new String[2];
 	static {
-		TAB_LABELS[0] = "Plug-ins";
-		TAB_LABELS[1] = "Features";
+		TAB_LABELS[0] = PDEUIMessages.ContentSection_plugins;
+		TAB_LABELS[1] = PDEUIMessages.ContentSection_features;
 	}
 	
 	private static final String[] BUTTONS = new String[5];
 	static {
-		BUTTONS[0] = "Add...";
-		BUTTONS[1] = "Remove";
-		BUTTONS[2] = "Remove All";
-		BUTTONS[3] = "Add Working Set...";
-		BUTTONS[4] = "Add Required Plugins";
+		BUTTONS[0] = PDEUIMessages.ContentSection_add;
+		BUTTONS[1] = PDEUIMessages.ContentSection_remove;
+		BUTTONS[2] = PDEUIMessages.ContentSection_removeAll;
+		BUTTONS[3] = PDEUIMessages.ContentSection_workingSet;
+		BUTTONS[4] = PDEUIMessages.ContentSection_required;
 	}
 	
 	private TableViewer fContentViewer;
 	private CTabFolder fTabFolder;
 	private int fLastTab;
 	private Button fUseAllPlugins;
+	private Image[] fTabImages;
 	
 	public ContentSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, BUTTONS);
@@ -117,7 +123,7 @@ public class ContentSection extends TableSection {
 		client.setLayout(layout);
 		client.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		fUseAllPlugins = toolkit.createButton(client, "Include all plug-ins from the specified target", SWT.CHECK);
+		fUseAllPlugins = toolkit.createButton(client, PDEUIMessages.ContentSection_allTarget, SWT.CHECK);
 		fUseAllPlugins.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				getTarget().setUseAllPlugins(fUseAllPlugins.getSelection());
@@ -172,8 +178,8 @@ public class ContentSection extends TableSection {
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);	
-		section.setText("Target Content");
-		section.setDescription("Select the plug-ins and features that make up the content of this profile.");
+		section.setText(PDEUIMessages.ContentSection_targetContent);
+		section.setDescription(PDEUIMessages.ContentSection_targetContentDesc);
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		getModel().addModelChangedListener(this);
 	}
@@ -201,9 +207,13 @@ public class ContentSection extends TableSection {
 	}
 	
 	private void createTabs() {
+		fTabImages = new Image[] {PDEPluginImages.DESC_PLUGIN_OBJ.createImage(), 
+				PDEPluginImages.DESC_FEATURE_OBJ.createImage()
+		};
 		for (int i = 0; i < TAB_LABELS.length; i++) {
 			CTabItem item = new CTabItem(fTabFolder, SWT.NULL);
 			item.setText(TAB_LABELS[i]);
+			item.setImage(fTabImages[i]);
 		}
 		fLastTab = 0;
 		fTabFolder.setSelection(fLastTab);
@@ -218,16 +228,13 @@ public class ContentSection extends TableSection {
 		boolean useAllPlugins = getTarget().useAllPlugins();
 		fUseAllPlugins.setSelection(useAllPlugins);
 		fTabFolder.setEnabled(!useAllPlugins);
-		getTablePart().setEnabled(!useAllPlugins);
-		if (!useAllPlugins) {
-			TablePart table = getTablePart();
-			table.setButtonEnabled(0, isEditable());
-			table.setButtonEnabled(1, isEditable());
-			table.setButtonEnabled(2, isEditable());
-			boolean pluginTab = (fLastTab == 0);
-			table.setButtonEnabled(3, isEditable() && pluginTab);
-			table.setButtonEnabled(4, isEditable() && pluginTab);
-		}
+		TablePart table = getTablePart();
+		table.setButtonEnabled(0, isEditable() && !useAllPlugins);
+		table.setButtonEnabled(1, isEditable() && !useAllPlugins);
+		table.setButtonEnabled(2, isEditable() && !useAllPlugins);
+		boolean pluginTab = (fLastTab == 0);
+		table.setButtonEnabled(3, isEditable() && pluginTab && !useAllPlugins);
+		table.setButtonEnabled(4, isEditable() && pluginTab && !useAllPlugins);
 		
 		super.refresh();
 	}
@@ -269,12 +276,14 @@ public class ContentSection extends TableSection {
 			Object[] bundles = dialog.getResult();
 			ITarget target = getTarget();
 			ITargetModelFactory factory = getModel().getFactory();
+			ITargetPlugin[] plugins = new ITargetPlugin[bundles.length];
 			for (int i = 0; i < bundles.length; i++) {
 				String id = ((BundleDescription)bundles[i]).getSymbolicName();
 				ITargetPlugin plugin = factory.createPlugin();
 				plugin.setId(id);
-				target.addPlugin(plugin);
+				plugins[i] = plugin;
 			}
+			target.addPlugins(plugins);
 		}
 	}
 	
@@ -308,6 +317,7 @@ public class ContentSection extends TableSection {
 		if (dialog.open() == Window.OK) {
 			Object[] models = dialog.getResult();
 			ITargetModelFactory factory = getModel().getFactory();
+			ITargetFeature [] features = new ITargetFeature[models.length];
 			for (int i = 0; i < models.length; ++i) {
 				IFeature feature = ((IFeatureModel)models[i]).getFeature();
 				String id = feature.getId();
@@ -315,8 +325,9 @@ public class ContentSection extends TableSection {
 				ITargetFeature tfeature = factory.createFeature();
 				tfeature.setId(id);
 				tfeature.setVersion(version);
-				target.addFeature(tfeature);
+				features[i] = tfeature;
 			}
+			target.addFeatures(features);
 		}
 	}
 	
@@ -326,13 +337,13 @@ public class ContentSection extends TableSection {
 			Object[] objects = ssel.toArray();
 			ITarget target = getTarget();
 			if (fLastTab == 0) {
-				for (int i = 0; i < objects.length; i++) {
-					target.removePlugin((ITargetPlugin)objects[i]);
-				}	
+				ITargetPlugin[] plugins = new ITargetPlugin[objects.length];
+				System.arraycopy(objects, 0, plugins, 0, objects.length);
+				target.removePlugins(plugins);
 			} else {
-				for (int i = 0; i < objects.length; i++) {
-					target.removeFeature((ITargetFeature)objects[i]);
-				}
+				ITargetFeature[] features = new ITargetFeature[objects.length];
+				System.arraycopy(objects, 0, features, 0, objects.length);
+				target.removeFeatures(features);
 			}
 		}
 	}
@@ -341,13 +352,15 @@ public class ContentSection extends TableSection {
 		TableItem[] items = fContentViewer.getTable().getItems();
 		ITarget target = getTarget();
 		if (fLastTab == 0) {
-			for (int i = 0; i < items.length; i++) {
-				target.removePlugin((ITargetPlugin)items[i].getData());
-			}
+			ITargetPlugin[] plugins = new ITargetPlugin[items.length];
+			for (int i = 0; i < plugins.length; i++)
+				plugins[i] = (ITargetPlugin)items[i].getData();
+			target.removePlugins(plugins);
 		} else {
-			for (int i = 0; i < items.length; i++) {
-				target.removeFeature((ITargetFeature)items[i].getData());
-			}
+			ITargetFeature[] features = new ITargetFeature[items.length];
+			for (int i = 0; i < features.length; i++)
+				features[i] = (ITargetFeature)items[i].getData();
+			target.removeFeatures(features);
 		}
 	}
 	
@@ -380,6 +393,7 @@ public class ContentSection extends TableSection {
 			IWorkingSet[] workingSets = dialog.getSelection();
 			ITarget target = getTarget();
 			ITargetModelFactory factory = target.getModel().getFactory();
+			HashSet plugins = new HashSet();
 			for (int i = 0; i < workingSets.length; i++) {
 				IAdaptable[] elements = workingSets[i].getElements();
 				for (int j = 0; j < elements.length; j++) {
@@ -387,10 +401,11 @@ public class ContentSection extends TableSection {
 					if (model != null) {
 						ITargetPlugin plugin = factory.createPlugin();
 						plugin.setId(model.getPluginBase().getId());
-						target.addPlugin(plugin);						
+						plugins.add(plugin);						
 					}
 				}
 			}
+			target.addPlugins((ITargetPlugin[]) plugins.toArray(new ITargetPlugin[plugins.size()]));
 		}
 	}
 	
@@ -426,13 +441,16 @@ public class ContentSection extends TableSection {
 			}
 		}
 		ITargetModelFactory factory = target.getModel().getFactory();
+		ITargetPlugin[] pluginsToAdd = new ITargetPlugin[set.size()];
+		int i = 0;
 		Iterator iter = set.iterator();
 		while (iter.hasNext()) {
 			String id = iter.next().toString();
 			ITargetPlugin plugin = factory.createPlugin();
 			plugin.setId(id);
-			target.addPlugin(plugin);
+			pluginsToAdd[i++] = plugin;
 		}
+		target.addPlugins(pluginsToAdd);
 	}
 	
 	private static void addDependencies(BundleDescription desc, Set set) {
@@ -523,7 +541,7 @@ public class ContentSection extends TableSection {
 		if (ssel == null)
 			return;
 		
-		Action openAction = new Action("Open") { 
+		Action openAction = new Action(PDEUIMessages.ContentSection_open) { 
 			public void run() {
 				handleDoubleClick((IStructuredSelection)fContentViewer.getSelection());
 			}
@@ -533,7 +551,7 @@ public class ContentSection extends TableSection {
 		
 		manager.add(new Separator());
 		
-		Action removeAction = new Action("Remove") { 
+		Action removeAction = new Action(PDEUIMessages.ContentSection_remove) { 
 			public void run() {
 				handleDelete();
 			}
@@ -541,7 +559,7 @@ public class ContentSection extends TableSection {
 		removeAction.setEnabled(isEditable() && ssel.size() > 0);
 		manager.add(removeAction);
 		
-		Action removeAll = new Action("Remove All") { 
+		Action removeAll = new Action(PDEUIMessages.ContentSection_removeAll) { 
 			public void run() {
 				handleRemoveAll();
 			}
@@ -565,5 +583,13 @@ public class ContentSection extends TableSection {
 	
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
+	}
+	
+	public void dispose() {
+		getModel().removeModelChangedListener(this);
+		if (fTabImages != null)
+			for (int i = 0; i < fTabImages.length; i++) 
+				fTabImages[i].dispose();
+		super.dispose();
 	}
 }

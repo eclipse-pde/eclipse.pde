@@ -75,7 +75,7 @@ public class TargetEditor extends PDEFormEditor {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createContentOutline()
 	 */
 	protected ISortableContentOutlinePage createContentOutline() {
-		return null;
+		return new TargetOutlinePage(this);
 	}
 
 	/* (non-Javadoc)

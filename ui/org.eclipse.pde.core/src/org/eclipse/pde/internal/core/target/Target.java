@@ -73,7 +73,7 @@ public class Target extends TargetObject implements ITarget {
 					} else if (name.equals("plugins")) { //$NON-NLS-1$
 						element = (Element)child;
 						fUseAllTargetPlatform =
-							"true".equals(element.getAttribute("useAllPlugins")); //$NON-NLS-1$ //$NON-NLS-2$
+							"true".equalsIgnoreCase(element.getAttribute("useAllPlugins")); //$NON-NLS-1$ //$NON-NLS-2$
 						parsePlugins(child.getChildNodes());
 					} else if (name.equals("features")) { //$NON-NLS-1$
 						parseFeatures(child.getChildNodes());
@@ -227,6 +227,22 @@ public class Target extends TargetObject implements ITarget {
 		if (isEditable())
 			fireStructureChanged(plugin, IModelChangedEvent.INSERT);
 	}
+	
+	public void addPlugins(ITargetPlugin[] plugins) {
+		fUseAllTargetPlatform = false;
+		boolean modify = false;
+		for (int i = 0; i < plugins.length; i ++ ) {
+			String id = plugins[i].getId();
+			if (fPlugins.containsKey(id))
+				continue;
+			modify = true;
+			plugins[i].setModel(getModel());
+			fPlugins.put(id, plugins[i]);
+		}
+		if (isEditable() && modify) {
+			fireStructureChanged(plugins, IModelChangedEvent.INSERT);
+		}
+	}
 
 	public void addFeature(ITargetFeature feature) {
 		fUseAllTargetPlatform = false;
@@ -238,6 +254,21 @@ public class Target extends TargetObject implements ITarget {
 		if (isEditable())
 			fireStructureChanged(feature, IModelChangedEvent.INSERT);
 	}
+	
+	public void addFeatures(ITargetFeature[] features) {
+		fUseAllTargetPlatform = false;
+		boolean modify = false;
+		for (int i = 0; i < features.length; i++) {
+			String id = features[i].getId();
+			if (fFeatures.containsKey(id))
+				continue;
+			modify = true;
+			features[i].setModel(getModel());
+			fFeatures.put(id, features[i]);
+		}
+		if (isEditable() && modify)
+			fireStructureChanged(features, IModelChangedEvent.INSERT);
+	}
 
 	public void removePlugin(ITargetPlugin plugin) {
 		fUseAllTargetPlatform = false;
@@ -245,12 +276,32 @@ public class Target extends TargetObject implements ITarget {
 		if (isEditable())
 			fireStructureChanged(plugin, IModelChangedEvent.REMOVE);
 	}
+	
+	public void removePlugins(ITargetPlugin[] plugins) {
+		fUseAllTargetPlatform = false;
+		boolean modify = false;
+		for (int i =0; i < plugins.length; i++) 
+			modify = ((fPlugins.remove(plugins[i].getId()) != null) || modify);
+		if (isEditable() && modify)
+			fireStructureChanged(plugins,IModelChangedEvent.REMOVE);
+	}
 
 	public void removeFeature(ITargetFeature feature) {
 		fUseAllTargetPlatform = false;
 		fFeatures.remove(feature.getId());
 		if (isEditable())
 			fireStructureChanged(feature, IModelChangedEvent.REMOVE);
+	}
+	
+	public void removeFeatures(ITargetFeature[] features) {
+		fUseAllTargetPlatform = false;
+		boolean modify = false;
+		for (int i = 0; i < features.length; i++) {
+			modify = ((fFeatures.remove(features[i].getId()) != null) || modify);
+		}
+		if (isEditable() && modify)
+			fireStructureChanged(features, IModelChangedEvent.REMOVE);
+		
 	}
 
 	public ITargetPlugin[] getPlugins() {

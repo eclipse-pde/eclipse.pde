@@ -2410,4 +2410,38 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetDefinitionSection_id;
 
+	public static String AbstractFormValidator_noMessageSet;
+
+	public static String TargetDefinitionSection_targetLocation;
+
+	public static String TargetDefinitionSection_sameAsHost;
+
+	public static String TargetDefinitionSection_location;
+
+	public static String TargetDefinitionSection_fileSystem;
+
+	public static String TargetDefinitionSection_variables;
+
+	public static String ContentSection_plugins;
+
+	public static String ContentSection_features;
+
+	public static String ContentSection_add;
+
+	public static String ContentSection_remove;
+
+	public static String ContentSection_removeAll;
+
+	public static String ContentSection_workingSet;
+
+	public static String ContentSection_required;
+
+	public static String ContentSection_allTarget;
+
+	public static String ContentSection_targetContent;
+
+	public static String ContentSection_targetContentDesc;
+
+	public static String ContentSection_open;
+
 }

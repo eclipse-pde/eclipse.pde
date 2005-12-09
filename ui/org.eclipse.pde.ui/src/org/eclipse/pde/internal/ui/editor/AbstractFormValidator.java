@@ -1,12 +1,13 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public abstract class AbstractFormValidator implements IEditorValidator {
 
 	private boolean fEnabled = true;
 	private boolean fInputValidates;
-	private String fMessage = "no validation message set";
+	private String fMessage = PDEUIMessages.AbstractFormValidator_noMessageSet;
 	private String fMessagePrefix;
 	private int fSeverity = -1;
 	private PDESection fSection;
@@ -29,7 +30,7 @@ public abstract class AbstractFormValidator implements IEditorValidator {
 	
 	public String getMessage() {
 		if (fMessagePrefix == null)
-			fMessagePrefix = "[" + fSection.getSection().getText() + "] ";
+			fMessagePrefix = "[" + fSection.getSection().getText() + "] "; //$NON-NLS-1$ //$NON-NLS-2$
 		return fMessagePrefix + fMessage;
 	}
 	

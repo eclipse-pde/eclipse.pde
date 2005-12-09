@@ -104,10 +104,10 @@ public class TargetDefinitionSection extends PDESection {
 	}
 	
 	private void createLocation(Composite client, FormToolkit toolkit, IActionBars actionBars) {
-		Label label = toolkit.createLabel(client, "Target location:");
+		Label label = toolkit.createLabel(client, PDEUIMessages.TargetDefinitionSection_targetLocation);
 		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 		
-		fUseDefault = toolkit.createButton(client, "The target platform is the same as the host (running) platform", SWT.RADIO);
+		fUseDefault = toolkit.createButton(client, PDEUIMessages.TargetDefinitionSection_sameAsHost, SWT.RADIO);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 5;
 		gd.horizontalIndent = 15;
@@ -115,29 +115,28 @@ public class TargetDefinitionSection extends PDESection {
 		fUseDefault.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (fUseDefault.getSelection()) {
-					fPath.getText().setEnabled(false);
+					fPath.getText().setEditable(false);
+					fPath.setValue("", true); //$NON-NLS-1$
 					fFileSystem.setEnabled(false);
 					fVariable.setEnabled(false);
-					String path = fPath.getValue();
-					if (path.length() > 0)
-						getLocationInfo().setPath("");
+					getLocationInfo().setDefault(true);
 				}
 			}
 		});
 		
-		fCustomPath = toolkit.createButton(client, "Location:", SWT.RADIO);
+		fCustomPath = toolkit.createButton(client, PDEUIMessages.TargetDefinitionSection_location, SWT.RADIO);
 		gd = new GridData();
 		gd.horizontalIndent = 15;
 		fCustomPath.setLayoutData(gd);
 		fCustomPath.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (fCustomPath.getSelection()) {
-					fPath.getText().setEnabled(true);
+					ILocationInfo info = getLocationInfo();
+					fPath.getText().setEditable(true);
+					fPath.setValue(info.getPath(), true);
 					fFileSystem.setEnabled(true);
 					fVariable.setEnabled(true);
-					String path = fPath.getValue();
-					if (path.length() > 0)
-						getLocationInfo().setPath(path);
+					info.setDefault(false);
 				}
 			}
 		});
@@ -150,14 +149,14 @@ public class TargetDefinitionSection extends PDESection {
 			}
 		});
 		
-		fFileSystem = toolkit.createButton(client, "File System...", SWT.PUSH);
+		fFileSystem = toolkit.createButton(client, PDEUIMessages.TargetDefinitionSection_fileSystem, SWT.PUSH);
 		fFileSystem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleBrowseFileSystem();
 			}
 		});
 		
-		fVariable = toolkit.createButton(client, "Variables...", SWT.PUSH);
+		fVariable = toolkit.createButton(client, PDEUIMessages.TargetDefinitionSection_variables, SWT.PUSH);
 		fVariable.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleInsertVariable();
@@ -195,8 +194,9 @@ public class TargetDefinitionSection extends PDESection {
 		ILocationInfo info = getLocationInfo();
 		fUseDefault.setSelection(info.useDefault());
 		fCustomPath.setSelection(!info.useDefault());
-		fPath.setValue(info.getPath(),true);
-		fPath.getText().setEnabled(!info.useDefault());
+		String path = (info.useDefault()) ? "" : info.getPath(); //$NON-NLS-1$
+		fPath.setValue(path,true);
+		fPath.getText().setEditable(!info.useDefault());
 		fFileSystem.setEnabled(!info.useDefault());
 		fVariable.setEnabled(!info.useDefault());
 		super.refresh();

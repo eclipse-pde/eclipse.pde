@@ -28,6 +28,8 @@ import org.eclipse.pde.internal.core.itarget.ITargetFeature;
 import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.text.bundle.*;
+import org.eclipse.pde.internal.ui.editor.target.TargetOutlinePage.FeatureNode;
+import org.eclipse.pde.internal.ui.editor.target.TargetOutlinePage.PluginNode;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -380,6 +382,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof ITargetFeature) {
 			return getObjectImage((ITargetFeature) obj);
 		}
+		if (obj instanceof PluginNode) {
+			return getObjectImage((PluginNode) obj);
+		}
+		if (obj instanceof FeatureNode) {
+			return getObjectImage((FeatureNode) obj);
+		}
 		return super.getImage(obj);
 	}
 
@@ -654,7 +662,15 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public Image getObjectImage(ITargetFeature obj) {
 		return get(PDEPluginImages.DESC_FEATURE_OBJ, 0);
 	}
-
+	
+	public Image getObjectImage(PluginNode obj) {
+		return get(PDEPluginImages.DESC_PLUGIN_OBJ);
+	}
+	
+	public Image getObjectImage(FeatureNode obj) {
+		return get(PDEPluginImages.DESC_FEATURE_OBJ, 0);
+	}
+	
 	public boolean isFullNameModeEnabled() {
 		return PDEPlugin.isFullNameModeEnabled();
 	}

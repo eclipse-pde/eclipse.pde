@@ -6,6 +6,8 @@ public interface ILocationInfo extends ITargetObject {
 	
 	public boolean useDefault();
 	
+	public void setDefault(boolean value);
+	
 	public String getPath();
 	
 	public void setPath(String path);

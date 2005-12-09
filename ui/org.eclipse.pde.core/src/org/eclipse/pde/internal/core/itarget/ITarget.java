@@ -44,11 +44,19 @@ public interface ITarget extends ITargetObject {
 	
 	void addPlugin(ITargetPlugin plugin);
 	
+	void addPlugins(ITargetPlugin[] plugins);
+	
 	void addFeature(ITargetFeature feature);
+	
+	void addFeatures(ITargetFeature features[]);
 	
 	void removePlugin(ITargetPlugin plugin);
 	
+	void removePlugins(ITargetPlugin[] plugins);
+	
 	void removeFeature(ITargetFeature feature);
+	
+	void removeFeatures(ITargetFeature[] features);
 	
 	ITargetPlugin[] getPlugins();
 	

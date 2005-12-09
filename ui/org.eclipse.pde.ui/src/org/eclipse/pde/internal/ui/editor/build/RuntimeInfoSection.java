@@ -200,7 +200,6 @@ IModelChangedListener {
 		getSection().setDescription(PDEUIMessages.BuildEditor_RuntimeInfoSection_desc);
 		getBuildModel().addModelChangedListener(this);
 		createClient(getSection(), page.getManagedForm().getToolkit());
-		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 	
 	private IBuildModel getBuildModel() {
@@ -581,7 +580,6 @@ IModelChangedListener {
 		IBuildModel buildModel = getBuildModel();
 		if (buildModel!=null)
 			buildModel.removeModelChangedListener(this);
-		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 	
