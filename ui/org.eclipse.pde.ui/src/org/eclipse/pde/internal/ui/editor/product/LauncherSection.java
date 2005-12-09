@@ -239,7 +239,15 @@ public class LauncherSection extends PDESection {
 		});
 		fIcoButton.setEnabled(isEditable());
 		
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_file, ILauncherInfo.P_ICO_PATH)); 
+		final IconEntry ientry = new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_file, ILauncherInfo.P_ICO_PATH);
+		ientry.setValidator(new AbstractFormValidator(this) {
+			public boolean inputValidates() {
+				return EditorUtilities.isValidImage(ientry,
+						getProduct(), new int[0],
+						EditorUtilities.F_ICOIMAGE);
+			}
+		});
+		fIcons.add(ientry); 
 		
 		toolkit.paintBordersFor(comp);
 		return comp;

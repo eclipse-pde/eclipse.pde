@@ -55,8 +55,9 @@ public class EditorUtilities {
 		String imagePath = provider.getProviderValue();
 		String message = null;
 		int severity = -1;
-		if (imagePath.length() == 0) // ignore empty strings
+		if (imagePath.length() == 0) {// ignore empty strings
 			return true;
+		}
 		IResource resource = getImageResource(provider.getProviderValue(), false, product);
 		if (resource != null && resource instanceof IFile) {
 			try {
@@ -82,17 +83,17 @@ public class EditorUtilities {
 					}
 				}
 			} catch (SWTException e) {
-				message = imagePath + " is not a path to a valid image.";
+				message = " is not a path to a valid image.";
 			}	
 		} else
-			message = imagePath + " is not a path to a valid file.";
+			message = " is not a path to a valid file.";
 		
 		if (message != null) {
 			String fieldName = null;
 			if (provider instanceof FormEntry)
 				fieldName = ((FormEntry)provider).getLabelText();
 			if (fieldName != null)
-				fieldName = fieldName + " ";
+				fieldName = " " + fieldName + " " + imagePath + ", ";
 			else
 				fieldName = "";
 			provider.getValidator().setMessage(fieldName + message);

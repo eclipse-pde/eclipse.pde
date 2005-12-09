@@ -18,6 +18,7 @@ public interface IEditorValidator {
 	/**
 	 * Validates the editor's field and updates the error
 	 * stack if neccesary.
+	 * @param revalidate
 	 * @return true if this form object has a valid entry.
 	 */
 	public boolean validate(boolean revalidate);

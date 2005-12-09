@@ -118,6 +118,8 @@ public class FormEntry implements IEditorValidationProvider {
 		fillIntoGrid(parent, indent, tcolspan);
 	}
 	public void setEditable(boolean editable) {
+		if (fValidator != null)
+			fValidator.setEnabled(editable);
 		fText.setEditable(editable);
 		if (fDimLabelOnDisable && fLabel != null) {
 			if (fLabel instanceof Hyperlink)
