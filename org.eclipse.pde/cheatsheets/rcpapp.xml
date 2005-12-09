@@ -15,6 +15,7 @@
 
 	<item
 		href="/org.eclipse.pde.doc.user/guide/rcp_project.htm" 
+		dialog="true"
 		title="Creating a New Plug-in Project">
 		<action
 			pluginId="org.eclipse.pde.ui"
@@ -40,6 +41,7 @@
     
 	<item
 		href="/org.eclipse.pde.doc.user/guide/product_configuration.htm"
+		dialog="true"
 		title="Defining a product configuration">
 		<action 
 			pluginId="org.eclipse.pde.ui"
@@ -69,6 +71,7 @@
 
 	<item
 		href="/org.eclipse.pde.doc.user/guide/product_export.htm"
+		dialog="true"
 		title="Exporting a Rich Client Application">
 		<description>
 			The product configuration editor also allows you to export RCP

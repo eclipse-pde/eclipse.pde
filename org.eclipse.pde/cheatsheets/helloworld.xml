@@ -16,6 +16,7 @@
 
 	<item
 		href="/org.eclipse.pde.doc.user/guide/pde_configuring.htm"
+		dialog="true"
 		title="Configuring PDE">
 		<action
 			pluginId="org.eclipse.pde.ui"
@@ -52,6 +53,7 @@
 	<item
 		href="/org.eclipse.pde.doc.user/guide/pde_creating.htm" 
 		title="Creating a New Plug-in Project"
+		dialog="true"
 		skip="true">
 		<action
 			pluginId="org.eclipse.pde.ui"
@@ -127,6 +129,7 @@
 		
 	<item
 		href="/org.eclipse.pde.doc.user/guide/pde_running.htm"
+		dialog="true"
 		title="Running the plug-in">
 		<action
 			pluginId="org.eclipse.pde.ui"
@@ -148,6 +151,7 @@
 
 	<item
 		href="/org.eclipse.pde.doc.user/guide/pde_deploy.htm"
+		dialog="true"
 		title="Deploying a plug-in">
 		<action
 			pluginId="org.eclipse.pde.ui"
