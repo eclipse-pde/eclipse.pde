@@ -204,6 +204,7 @@ public class PDEPluginImages {
  	public static final ImageDescriptor DESC_NEWPPRJ_WIZ = create(PATH_WIZBAN, "newpprj_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWFRAGPRJ_WIZ = create(PATH_WIZBAN, "newfprj_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DEFCON_WIZ  = create(PATH_WIZBAN, "defcon_wiz.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_TARGET_WIZ  = create(PATH_WIZBAN, "target_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWEX_WIZ   = create(PATH_WIZBAN, "newex_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWEXP_WIZ  = create(PATH_WIZBAN, "newexp_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWEXPRJ_WIZ   = create(PATH_WIZBAN, "newexprj_wiz.gif"); //$NON-NLS-1$

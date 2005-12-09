@@ -172,7 +172,7 @@
       <wizard
             category="org.eclipse.pde.PDE"
             class="org.eclipse.pde.internal.ui.wizards.target.NewTargetProfileWizard"
-            icon="$nl$/icons/etool16/defcon_wiz.gif"
+            icon="$nl$/icons/etool16/new_target_wiz.gif"
             id="org.eclipse.pde.ui.NewProfileWizard"
             name="%new.profile.name">
          <description>
@@ -581,7 +581,7 @@
      <editor
             default="true"
             name="%editor.profile.name"
-            icon="$nl$/icons/obj16/product_xml_obj.gif"
+            icon="$nl$/icons/obj16/target_profile_xml_obj.gif"
             class="org.eclipse.pde.internal.ui.editor.target.TargetEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.target.TargetEditorContributor"
             id="org.eclipse.pde.ui.targetEditor">

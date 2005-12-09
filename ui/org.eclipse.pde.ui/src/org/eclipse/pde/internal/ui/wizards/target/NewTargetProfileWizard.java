@@ -37,7 +37,7 @@ public class NewTargetProfileWizard extends BasicNewResourceWizard {
 	}
 	
 	protected void initializeDefaultPageImageDescriptor() {
-		setDefaultPageImageDescriptor(PDEPluginImages.DESC_DEFCON_WIZ);
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_TARGET_WIZ);
 	}
 
 }
