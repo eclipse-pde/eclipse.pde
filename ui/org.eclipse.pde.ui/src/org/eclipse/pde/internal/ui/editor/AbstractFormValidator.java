@@ -32,13 +32,13 @@ public abstract class AbstractFormValidator implements IEditorValidator {
 	public String getMessage(boolean includePageName) {
 		StringBuffer buff = new StringBuffer();
 		if (includePageName) {
-			buff.append("[");
+			buff.append("["); //$NON-NLS-1$
 			buff.append(fSection.getPage().getId());
-			buff.append("]");
+			buff.append("]"); //$NON-NLS-1$
 		}
-		buff.append("[");
+		buff.append("["); //$NON-NLS-1$
 		buff.append(fSection.getSection().getText());
-		buff.append("]");
+		buff.append("]"); //$NON-NLS-1$
 		buff.append(fMessage);
 		return buff.toString();
 	}

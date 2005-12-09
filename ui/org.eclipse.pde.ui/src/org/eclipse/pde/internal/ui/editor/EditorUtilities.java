@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
@@ -64,7 +65,7 @@ public class EditorUtilities {
 				ImageLoader loader = new ImageLoader();
 				ImageData[] idata = loader.load(((IFile)resource).getLocation().toString());
 				if (idata.length == 0) {
-					message = " no image data found in " + imagePath;
+					message = NLS.bind(PDEUIMessages.EditorUtilities_noImageData, imagePath);
 				} else {
 					MessageSeverity ms = null;
 					switch (checkType) {
@@ -83,20 +84,20 @@ public class EditorUtilities {
 					}
 				}
 			} catch (SWTException e) {
-				message = " is not a path to a valid image.";
+				message = PDEUIMessages.EditorUtilities_pathNotValidImage;
 			}	
 		} else
-			message = " is not a path to a valid file.";
+			message = PDEUIMessages.EditorUtilities_invalidFilePath;
 		
 		if (message != null) {
 			String fieldName = null;
 			if (provider instanceof FormEntry)
 				fieldName = ((FormEntry)provider).getLabelText();
 			if (fieldName != null)
-				fieldName = " " + fieldName + " " + imagePath + ", ";
+				fieldName = " " + fieldName + " " + imagePath; //$NON-NLS-1$ //$NON-NLS-2$
 			else
-				fieldName = "";
-			provider.getValidator().setMessage(fieldName + message);
+				fieldName = ""; //$NON-NLS-1$
+			provider.getValidator().setMessage(fieldName + " " + message); //$NON-NLS-1$
 			if (severity >= 0)
 				provider.getValidator().setSeverity(severity);
 		}
@@ -106,7 +107,7 @@ public class EditorUtilities {
 	
 	private static MessageSeverity getMS_icoImage(ImageData[] imagedata) {
 		if (imagedata.length < 6)
-			return new MessageSeverity("Ico files must contain at least 6 images.");
+			return new MessageSeverity(PDEUIMessages.EditorUtilities_icoError);
 		return null;
 	}
 
@@ -116,7 +117,10 @@ public class EditorUtilities {
 		int width = imagedata.width;
 		int height = imagedata.height;
 		if (width != sizes[0] || height != sizes[1])
-			return new MessageSeverity("Image has incorrect size: " + getSizeString(width, height) + ". Required size: " + getSizeString(sizes[0], sizes[1]));
+			return new MessageSeverity(
+					NLS.bind(PDEUIMessages.EditorUtilities_incorrectSize,
+							getSizeString(width, height),
+							getSizeString(sizes[0], sizes[1])));
 		return null;
 	}
 	
@@ -126,17 +130,21 @@ public class EditorUtilities {
 		int width = imagedata.width;
 		int height = imagedata.height;
 		if (width > sizes[0] || height > sizes[1]) {
-			return new MessageSeverity("Image is too large: " + getSizeString(width, height) + ". Max size: " + getSizeString(sizes[0], sizes[1]));
+			return new MessageSeverity(
+					NLS.bind(PDEUIMessages.EditorUtilities_imageTooLarge,
+							getSizeString(width, height),
+							getSizeString(sizes[0], sizes[1])));
 		} else if (sizes.length > 2) {
 			if (width > sizes[2] || height > sizes[3])
-				return new MessageSeverity("Images larger than " + getSizeString(sizes[2], sizes[3])+ " will overlap/hide text, see section description.",
+				return new MessageSeverity(
+						NLS.bind(PDEUIMessages.EditorUtilities_imageTooLargeInfo, getSizeString(sizes[2], sizes[3])),
 						IMessageProvider.INFORMATION);
 		}
 		return null;
 	}
 	
 	private static String getSizeString(int width, int height) {
-		return width + " x " + height;
+		return width + " x " + height; //$NON-NLS-1$
 	}
 	
 	private static IPath getFullPath(IPath path, IProduct product) {

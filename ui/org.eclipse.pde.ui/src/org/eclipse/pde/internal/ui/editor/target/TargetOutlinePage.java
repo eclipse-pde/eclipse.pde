@@ -5,6 +5,7 @@ import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetFeature;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 
@@ -17,8 +18,8 @@ public class TargetOutlinePage extends FormOutlinePage {
 		
 		public String toString() {
 			if (fUseAllPlugins)
-				return "Use all plugins";
-			return "plugins";
+				return PDEUIMessages.TargetOutlinePage_useAllPlugins;
+			return PDEUIMessages.TargetOutlinePage_plugins;
 		}
 		
 		public PluginNode(ITargetPlugin[] plugins) {
@@ -42,7 +43,7 @@ public class TargetOutlinePage extends FormOutlinePage {
 		public ITargetFeature[] fFeatures;
 		
 		public String toString() {
-			return "features";
+			return PDEUIMessages.TargetOutlinePage_features;
 		}
 		
 		public FeatureNode(ITargetFeature[] features) {

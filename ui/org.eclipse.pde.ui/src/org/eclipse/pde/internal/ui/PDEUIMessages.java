@@ -2444,4 +2444,24 @@ public class PDEUIMessages extends NLS {
 
 	public static String ContentSection_open;
 
+	public static String TargetOutlinePage_useAllPlugins;
+
+	public static String TargetOutlinePage_plugins;
+
+	public static String TargetOutlinePage_features;
+
+	public static String EditorUtilities_noImageData;
+
+	public static String EditorUtilities_pathNotValidImage;
+
+	public static String EditorUtilities_invalidFilePath;
+
+	public static String EditorUtilities_icoError;
+
+	public static String EditorUtilities_incorrectSize;
+
+	public static String EditorUtilities_imageTooLarge;
+
+	public static String EditorUtilities_imageTooLargeInfo;
+
 }
