@@ -27,7 +27,7 @@ public class BrandingPage extends PDEFormPage {
 	public static final String PAGE_ID = "branding"; //$NON-NLS-1$
 
 	public BrandingPage(FormEditor editor) {
-		super(editor, PAGE_ID, PDEUIMessages.BrandingPage_title, true); 
+		super(editor, PAGE_ID, PDEUIMessages.BrandingPage_title); 
 	}
 	
 	/* (non-Javadoc)

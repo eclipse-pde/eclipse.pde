@@ -17,7 +17,8 @@ public class EditorValidationStack implements IEditorValidationStack {
 	public void push(IEditorValidator validator) {
 		if (validator == null)
 			return;
-		fStack.push(validator);
+		if (!fStack.contains(validator))
+			fStack.push(validator);
 		Form form = getForm();
 		if (form == null)
 			return;
