@@ -50,14 +50,14 @@ public abstract class PDEFormPage extends FormPage {
 		final ScrolledForm form = managedForm.getForm();
 		//form.setBackgroundImage(PDEPlugin.getDefault().getLabelProvider().get(
 		//		PDEPluginImages.DESC_FORM_BANNER));
+		FormToolkit toolkit = managedForm.getToolkit();
+		FormColors colors = toolkit.getColors();
+		form.getForm().setSeparatorColor(colors.getColor(FormColors.TB_BORDER));
 		if (fNewStyleHeader) {
-			FormToolkit toolkit = managedForm.getToolkit();
-			FormColors colors = toolkit.getColors();
 			colors.initializeSectionToolBarColors();
 			Color gbg = colors.getColor(FormColors.TB_GBG);
 			Color bg = colors.getBackground();
 			form.getForm().setTextBackground(new Color[]{bg, gbg}, new int [] {100}, true);
-			form.getForm().setSeparatorColor(colors.getColor(FormColors.TB_BORDER));
 			form.getForm().setSeparatorVisible(true);
 		}
 		final String href = getHelpResource();
@@ -188,5 +188,13 @@ public abstract class PDEFormPage extends FormPage {
 			if (part instanceof IContextPart)
 				((IContextPart)part).cancelEdit();
 		}
+	}
+	
+	public void setActive(boolean active) {
+		if (active) {
+			if (!getPDEEditor().getValidationStack().isEmpty())
+				getPDEEditor().getValidationStack().top(null, this);
+		}
+		super.setActive(active);
 	}
 }

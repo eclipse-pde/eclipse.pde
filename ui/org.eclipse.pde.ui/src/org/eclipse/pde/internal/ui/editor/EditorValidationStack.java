@@ -22,20 +22,22 @@ public class EditorValidationStack implements IEditorValidationStack {
 		Form form = getForm();
 		if (form == null)
 			return;
-		String message = validator.getMessage();
+		String message = validator.getMessage(true);
 		if (message != null)
 			form.setMessage(message, validator.getSeverity());
 	}
 
-	public IEditorValidator top(IEditorValidator callingValidator) {
-		if (fStack.isEmpty()) return null;
+	public IEditorValidator top(IEditorValidator callingValidator, IFormPage page) {
 		Form form = getForm();
 		if (form == null) return null;
 		IEditorValidator top = getTopValidator();
-		if (top == null)
+		if (top == null || fStack.isEmpty())
 			form.setMessage(null);
-		else
-			form.setMessage(top.getMessage(), top.getSeverity());
+		else {
+			boolean samePage = page == null || (
+					page.equals(top.getSection().getPage())); 
+			form.setMessage(top.getMessage(!samePage), top.getSeverity());
+		}
 		return top;
 	}
 
@@ -55,5 +57,9 @@ public class EditorValidationStack implements IEditorValidationStack {
 		if (page == null)
 			return null;
 		return page.getManagedForm().getForm().getForm();
+	}
+	
+	public boolean isEmpty() {
+		return fStack.isEmpty();
 	}
 }

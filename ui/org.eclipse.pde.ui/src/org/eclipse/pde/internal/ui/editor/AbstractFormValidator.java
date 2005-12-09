@@ -10,7 +10,6 @@ public abstract class AbstractFormValidator implements IEditorValidator {
 	private boolean fEnabled = true;
 	private boolean fInputValidates;
 	private String fMessage = PDEUIMessages.AbstractFormValidator_noMessageSet;
-	private String fMessagePrefix;
 	private int fSeverity = -1;
 	private PDESection fSection;
 	
@@ -30,10 +29,18 @@ public abstract class AbstractFormValidator implements IEditorValidator {
 		fMessage = message;
 	}
 	
-	public String getMessage() {
-		if (fMessagePrefix == null)
-			fMessagePrefix = "[" + fSection.getSection().getText() + "] "; //$NON-NLS-1$ //$NON-NLS-2$
-		return fMessagePrefix + fMessage;
+	public String getMessage(boolean includePageName) {
+		StringBuffer buff = new StringBuffer();
+		if (includePageName) {
+			buff.append("[");
+			buff.append(fSection.getPage().getId());
+			buff.append("]");
+		}
+		buff.append("[");
+		buff.append(fSection.getSection().getText());
+		buff.append("]");
+		buff.append(fMessage);
+		return buff.toString();
 	}
 	
 	public void setSeverity(int severity) {
@@ -55,7 +62,7 @@ public abstract class AbstractFormValidator implements IEditorValidator {
 		if (revalidate) {
 			fInputValidates = inputValidates();
 			if (fInputValidates)
-				fSection.getPage().getPDEEditor().getValidationStack().top(this);
+				fSection.getPage().getPDEEditor().getValidationStack().top(this, null);
 			else
 				fSection.getPage().getPDEEditor().getValidationStack().push(this);
 		}

@@ -15,13 +15,19 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ide.IDE;
 
-public class ValidationUtilities {
+public class EditorUtilities {
 	
+	public static final int[][] F_ICON_DIMENSIONS = new int[][] {
+		{16, 16}, {32, 32}, {48, 48}, {64, 64}, {128, 128}
+	};
 	public static final int F_EXACTIMAGE = 0;
 	public static final int F_MAXIMAGE = 1;
+	public static final int F_ICOIMAGE = 2;
 	
 	static class MessageSeverity {
 		String fMessage;
@@ -45,27 +51,35 @@ public class ValidationUtilities {
 	 * dimensions[2] = width2
 	 * dimensions[3] = height2
 	 */
-	public static boolean isValidImage(IEditorValidationProvider provider, IResource resource, int[] dimensions, int checkType) {
+	public static boolean isValidImage(IEditorValidationProvider provider, IProduct product, int[] dimensions, int checkType) {
 		String imagePath = provider.getProviderValue();
 		String message = null;
 		int severity = -1;
 		if (imagePath.length() == 0) // ignore empty strings
 			return true;
+		IResource resource = getImageResource(provider.getProviderValue(), false, product);
 		if (resource != null && resource instanceof IFile) {
 			try {
-				Image image = new Image(PDEPlugin.getActiveWorkbenchShell().getDisplay(),
-						((IFile)resource).getLocation().toString());
-				MessageSeverity ms = null;
-				switch (checkType) {
-				case F_EXACTIMAGE:
-					ms = getMS_exactImageSize(image, dimensions);
-					break;
-				case F_MAXIMAGE:
-					ms = getMS_maxImageSize(image, dimensions);
-				}
-				if (ms != null) {
-					message = ms.getMessage();
-					severity = ms.getSeverity();
+				ImageLoader loader = new ImageLoader();
+				ImageData[] idata = loader.load(((IFile)resource).getLocation().toString());
+				if (idata.length == 0) {
+					message = " no image data found in " + imagePath;
+				} else {
+					MessageSeverity ms = null;
+					switch (checkType) {
+					case F_EXACTIMAGE:
+						ms = getMS_exactImageSize(idata[0], dimensions);
+						break;
+					case F_MAXIMAGE:
+						ms = getMS_maxImageSize(idata[0], dimensions);
+						break;
+					case F_ICOIMAGE:
+						ms = getMS_icoImage(idata);
+					}
+					if (ms != null) {
+						message = ms.getMessage();
+						severity = ms.getSeverity();
+					}
 				}
 			} catch (SWTException e) {
 				message = imagePath + " is not a path to a valid image.";
@@ -89,34 +103,42 @@ public class ValidationUtilities {
 		return message == null;
 	}
 	
-	private static MessageSeverity getMS_exactImageSize(Image image, int[] sizes) {
+	private static MessageSeverity getMS_icoImage(ImageData[] imagedata) {
+		if (imagedata.length < 6)
+			return new MessageSeverity("Ico files must contain at least 6 images.");
+		return null;
+	}
+
+	private static MessageSeverity getMS_exactImageSize(ImageData imagedata, int[] sizes) {
 		if (sizes.length < 2)
 			return null;
-		Rectangle bounds = image.getBounds();
-		int width = bounds.width;
-		int height = bounds.height;
+		int width = imagedata.width;
+		int height = imagedata.height;
 		if (width != sizes[0] || height != sizes[1])
-			return new MessageSeverity("About image has incorrect size: " + width + " x " + height + ". Required size: " + sizes[0] + " x " + sizes[1]);
+			return new MessageSeverity("Image has incorrect size: " + getSizeString(width, height) + ". Required size: " + getSizeString(sizes[0], sizes[1]));
 		return null;
 	}
 	
-	private static MessageSeverity getMS_maxImageSize(Image image, int[] sizes) {
+	private static MessageSeverity getMS_maxImageSize(ImageData imagedata, int[] sizes) {
 		if (sizes.length < 2)
 			return null;
-		Rectangle bounds = image.getBounds();
-		int width = bounds.width;
-		int height = bounds.height;
+		int width = imagedata.width;
+		int height = imagedata.height;
 		if (width > sizes[0] || height > sizes[1]) {
-			return new MessageSeverity("About image has incorrect size: " + width + " x " + height + ". Max size: " + sizes[0] + " x " + sizes[1]);
-		} else if (sizes.length > 2 || bounds.height > sizes[3]) {
-			if (bounds.width > sizes[2])
-				return new MessageSeverity("About images larger than " + sizes[0] + " x " + sizes[1] + " will not display about text",
+			return new MessageSeverity("Image is too large: " + getSizeString(width, height) + ". Max size: " + getSizeString(sizes[0], sizes[1]));
+		} else if (sizes.length > 2) {
+			if (width > sizes[2] || height > sizes[3])
+				return new MessageSeverity("Images larger than " + getSizeString(sizes[2], sizes[3])+ " will overlap/hide text, see section description.",
 						IMessageProvider.INFORMATION);
 		}
 		return null;
 	}
 	
-	public static IPath getFullPath(IPath path, IProduct product) {
+	private static String getSizeString(int width, int height) {
+		return width + " x " + height;
+	}
+	
+	private static IPath getFullPath(IPath path, IProduct product) {
 		String productId = product.getId();
 		int dot = productId.lastIndexOf('.');
 		String pluginId = (dot != -1) ? productId.substring(0, dot) : ""; //$NON-NLS-1$
@@ -131,7 +153,7 @@ public class ValidationUtilities {
 		return path;
 	}
 	
-	public static IResource getImageResource(String value, boolean showWarning, IProduct product) {
+	private static IResource getImageResource(String value, boolean showWarning, IProduct product) {
 		if (value == null)
 			return null;
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
@@ -142,8 +164,19 @@ public class ValidationUtilities {
 			return null;
 		}
 		if (!path.isAbsolute()) {
-			path = ValidationUtilities.getFullPath(path, product);
+			path = EditorUtilities.getFullPath(path, product);
 		}
 		return root.findMember(path);
+	}
+	
+	public static void openImage(String value, IProduct product) {
+		IResource resource = EditorUtilities.getImageResource(value, true, product);
+		try {
+			if (resource != null && resource instanceof IFile)
+				IDE.openEditor(PDEPlugin.getActivePage(), (IFile)resource, true);
+			else
+				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.AboutSection_open, PDEUIMessages.AboutSection_warning); // 
+		} catch (PartInitException e) {
+		}		
 	}
 }

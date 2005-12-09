@@ -23,6 +23,8 @@ import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.AbstractFormValidator;
+import org.eclipse.pde.internal.ui.editor.EditorUtilities;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
@@ -61,28 +63,36 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 
 public class LauncherSection extends PDESection {
-
+	
+	private static final String[] F_WIN_ICON_LABELS = new String[] {
+		PDEUIMessages.LauncherSection_Low16,
+		PDEUIMessages.LauncherSection_High16,
+		PDEUIMessages.LauncherSection_32Low,
+		PDEUIMessages.LauncherSection_32High,
+		PDEUIMessages.LauncherSection_48Low,
+		PDEUIMessages.LauncherSection_48High
+	};
+	private static final String[] F_WIN_ICON_IDS = new String[] {
+		ILauncherInfo.WIN32_16_LOW,
+		ILauncherInfo.WIN32_16_HIGH,
+		ILauncherInfo.WIN32_32_LOW,
+		ILauncherInfo.WIN32_32_HIGH,
+		ILauncherInfo.WIN32_48_LOW,
+		ILauncherInfo.WIN32_48_HIGH
+	};
+	
 	private FormEntry fNameEntry;
-
 	private ArrayList fIcons = new ArrayList();
-
 	private Button fIcoButton;
-
 	private Button fBmpButton;
-
 	private CTabFolder fTabFolder;
-
 	private Composite fNotebook;
-
 	private StackLayout fNotebookLayout;
-
 	private Composite fLinuxSection;
-
 	private Composite fMacSection;
-
 	private Composite fSolarisSection;
-
 	private Composite fWin32Section;
+	
 
 	class IconEntry extends FormEntry {
 		String fIconId;
@@ -203,13 +213,19 @@ public class LauncherSection extends PDESection {
 		td.colspan = 3;
 		label.setLayoutData(td);
 
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_Low16, ILauncherInfo.WIN32_16_LOW)); 
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_High16, ILauncherInfo.WIN32_16_HIGH)); 
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_32Low, ILauncherInfo.WIN32_32_LOW)); 
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_32High, ILauncherInfo.WIN32_32_HIGH)); 
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_48Low, ILauncherInfo.WIN32_48_LOW)); 
-		fIcons.add(new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_48High, ILauncherInfo.WIN32_48_HIGH)); 
-
+		for (int i = 0; i < F_WIN_ICON_LABELS.length; i++) {
+			final IconEntry ientry = new IconEntry(comp, toolkit, F_WIN_ICON_LABELS[i], F_WIN_ICON_IDS[i]);
+			final int index = i / 2; // since we have 2 images for each size
+			ientry.setValidator(new AbstractFormValidator(this) {
+				public boolean inputValidates() {
+					return EditorUtilities.isValidImage(ientry,
+							getProduct(), EditorUtilities.F_ICON_DIMENSIONS[index],
+							EditorUtilities.F_EXACTIMAGE);
+				}
+			});
+			fIcons.add(ientry);
+		}
+		
 		fIcoButton = toolkit.createButton(comp, PDEUIMessages.LauncherSection_ico, SWT.RADIO); 
 		td = new TableWrapData();
 		td.colspan = 3;

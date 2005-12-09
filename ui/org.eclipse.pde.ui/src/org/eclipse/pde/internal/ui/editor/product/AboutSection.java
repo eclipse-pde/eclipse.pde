@@ -11,22 +11,16 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.AbstractFormValidator;
+import org.eclipse.pde.internal.ui.editor.EditorUtilities;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.IEditorValidationProvider;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.pde.internal.ui.editor.ValidationUtilities;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.FileExtensionFilter;
 import org.eclipse.pde.internal.ui.util.FileValidator;
@@ -39,12 +33,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -81,13 +73,15 @@ public class AboutSection extends PDESection {
 				handleBrowse();
 			}
 			public void linkActivated(HyperlinkEvent e) {
-				openImage();
+				EditorUtilities.openImage(fImageEntry.getValue(), getProduct());
 			}
 		});
 		fImageEntry.setEditable(isEditable());
 		fImageEntry.setValidator(new AbstractFormValidator(this) {
 			public boolean inputValidates() {
-				return isValidImage(fImageEntry, new int[] {500, 330, 250, 330});
+				return EditorUtilities.isValidImage(fImageEntry,
+						getProduct(), new int[] {500, 330, 250, 330},
+						EditorUtilities.F_MAXIMAGE);
 			}
 		});
 		
@@ -146,22 +140,6 @@ public class AboutSection extends PDESection {
 		super.cancelEdit();
 	}
 	
-	private void openImage() {
-		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
-		IPath path = new Path(fImageEntry.getValue());
-		if (!path.isAbsolute()) {
-			path = ValidationUtilities.getFullPath(path, getProduct());
-		}
-		IResource resource = root.findMember(path);
-		try {
-			if (resource != null && resource instanceof IFile)
-				IDE.openEditor(PDEPlugin.getActivePage(), (IFile)resource, true);
-			else
-				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.AboutSection_open, PDEUIMessages.AboutSection_warning); // 
-		} catch (PartInitException e) {
-		}		
-	}
-	
 	private IAboutInfo getAboutInfo() {
 		IAboutInfo info = getProduct().getAboutInfo();
 		if (info == null) {
@@ -186,10 +164,4 @@ public class AboutSection extends PDESection {
 			return true;
 		return false;
 	}
-	
-	private boolean isValidImage(IEditorValidationProvider provider, int[] dimensions) {
-		IResource resource = ValidationUtilities.getImageResource(provider.getProviderValue(), false, getProduct());
-		return ValidationUtilities.isValidImage(provider, resource, dimensions, ValidationUtilities.F_MAXIMAGE);
-	}
-
 }

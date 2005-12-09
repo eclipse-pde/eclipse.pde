@@ -11,19 +11,16 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IWindowImages;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.AbstractFormValidator;
+import org.eclipse.pde.internal.ui.editor.EditorUtilities;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.IEditorValidationProvider;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.pde.internal.ui.editor.ValidationUtilities;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.FileExtensionFilter;
 import org.eclipse.pde.internal.ui.util.FileValidator;
@@ -35,12 +32,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -53,9 +48,6 @@ public class WindowImagesSection extends PDESection {
 		PDEUIMessages.WindowImagesSection_48,
 		PDEUIMessages.WindowImagesSection_64,
 		PDEUIMessages.WindowImagesSection_128
-	};
-	private static final int[][] F_ICON_DIMENSIONS = new int[][] {
-		{16, 16}, {32, 32}, {48, 48}, {64, 64}, {128, 128}
 	};
 	private FormEntry[] fImages = new FormEntry[F_ICON_LABELS.length];
 	
@@ -90,13 +82,15 @@ public class WindowImagesSection extends PDESection {
 					handleBrowse(entry);
 				}
 				public void linkActivated(HyperlinkEvent e) {
-					openImage(fImages[index].getValue());
+					EditorUtilities.openImage(fImages[index].getValue(), getProduct());
 				}
 			});
 			fImages[index].setEditable(isEditable());
 			fImages[index].setValidator(new AbstractFormValidator(this) {
 				public boolean inputValidates() {
-					return isValidImage(fImages[index], F_ICON_DIMENSIONS[index]);
+					return EditorUtilities.isValidImage(fImages[index],
+							getProduct(), EditorUtilities.F_ICON_DIMENSIONS[index],
+							EditorUtilities.F_EXACTIMAGE);
 				}
 			});
 		}
@@ -164,17 +158,6 @@ public class WindowImagesSection extends PDESection {
 			entry.setValue(file.getFullPath().toString());
 		}
 	}
-	
-	private void openImage(String value) {
-		IResource resource = ValidationUtilities.getImageResource(value, true, getProduct());
-		try {
-			if (resource != null && resource instanceof IFile)
-				IDE.openEditor(PDEPlugin.getActivePage(), (IFile)resource, true);
-			else
-				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_warning); // 
-		} catch (PartInitException e) {
-		}			
-	}
 
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
@@ -182,11 +165,5 @@ public class WindowImagesSection extends PDESection {
 		if (c instanceof Text)
 			return true;
 		return false;
-	}
-	
-	
-	private boolean isValidImage(IEditorValidationProvider provider, int[] dimensions) {
-		IResource resource = ValidationUtilities.getImageResource(provider.getProviderValue(), false, getProduct());
-		return ValidationUtilities.isValidImage(provider, resource, dimensions, ValidationUtilities.F_EXACTIMAGE);
 	}
 }
