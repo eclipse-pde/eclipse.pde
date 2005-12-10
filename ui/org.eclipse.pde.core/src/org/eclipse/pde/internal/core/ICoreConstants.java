@@ -39,7 +39,7 @@ public interface ICoreConstants {
 	public final static String EQUINOX = "Equinox"; //$NON-NLS-1$
 
 	// project preferences
-	public static final String SELFHOSTING_BIN_EXLCUDES = "selfhosting.binExcludes"; //$NON-NLS-1$
+	public static final String SELFHOSTING_BIN_EXCLUDES = "selfhosting.binExcludes"; //$NON-NLS-1$
 	public static final String EQUINOX_PROPERTY = "pluginProject.equinox"; //$NON-NLS-1$
 	public static final String EXTENSIONS_PROPERTY = "pluginProject.extensions"; //$NON-NLS-1$
 	public static final String SECONDARY_DEPENDENCIES = "secondary.dependencies"; //$NON-NLS-1$

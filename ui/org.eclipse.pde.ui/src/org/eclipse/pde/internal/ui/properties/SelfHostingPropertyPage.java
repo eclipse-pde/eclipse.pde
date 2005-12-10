@@ -145,7 +145,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 		fViewer.setAllChecked(true);
 		Preferences pref = getPreferences((IProject)getElement());
 		if (pref != null) {
-			String binExcludes = pref.get(ICoreConstants.SELFHOSTING_BIN_EXLCUDES, ""); //$NON-NLS-1$
+			String binExcludes = pref.get(ICoreConstants.SELFHOSTING_BIN_EXCLUDES, ""); //$NON-NLS-1$
 			StringTokenizer tokenizer = new StringTokenizer(binExcludes, ","); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens()) {
 				String token = tokenizer.nextToken().trim();
@@ -178,9 +178,9 @@ public class SelfHostingPropertyPage extends PropertyPage {
 		}
 		if (pref != null) {
 			if (buffer.length() > 0)
-				pref.put(ICoreConstants.SELFHOSTING_BIN_EXLCUDES, buffer.toString());
+				pref.put(ICoreConstants.SELFHOSTING_BIN_EXCLUDES, buffer.toString());
 			else
-				pref.remove(ICoreConstants.SELFHOSTING_BIN_EXLCUDES);
+				pref.remove(ICoreConstants.SELFHOSTING_BIN_EXCLUDES);
 			
 			try {
 				pref.flush();
