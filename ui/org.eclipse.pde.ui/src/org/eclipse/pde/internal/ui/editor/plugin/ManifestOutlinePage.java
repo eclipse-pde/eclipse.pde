@@ -67,7 +67,7 @@ public class ManifestOutlinePage extends FormOutlinePage {
 		return super.getParentPageId(item);
 	}
 	private IBuildModel getBuildModel() {
-		InputContext context = editor.getContextManager().findContext(BuildInputContext.CONTEXT_ID);
+		InputContext context = fEditor.getContextManager().findContext(BuildInputContext.CONTEXT_ID);
 		if (context!=null)
 			return (IBuildModel)context.getModel();
 		return null;

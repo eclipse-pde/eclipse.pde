@@ -16,8 +16,4 @@ public interface ITargetFeature extends ITargetObject {
 	
 	void setId(String id);
 	
-	String getVersion();
-	
-	void setVersion(String version);
-
 }

@@ -26,10 +26,12 @@ public class LocationInfo extends TargetObject implements ILocationInfo{
 
 	public void write(String indent, PrintWriter writer) {
 		writer.println();
-		writer.print(indent + "<location "); //$NON-NLS-1$
+		writer.print(indent + "<location"); //$NON-NLS-1$
 		if (fUseDefault)
-			writer.print("useDefault=\"true\" "); //$NON-NLS-1$
-		writer.println("path=\"" + getWritableString(fPath) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(" useDefault=\"true\""); //$NON-NLS-1$
+		if (fPath != null && fPath.trim().length() > 0)
+			writer.print(" path=\"" + getWritableString(fPath.trim()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("/>");  //$NON-NLS-1$
 	}
 
 	public boolean useDefault() {

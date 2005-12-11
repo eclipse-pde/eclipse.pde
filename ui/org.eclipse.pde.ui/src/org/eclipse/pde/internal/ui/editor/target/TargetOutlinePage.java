@@ -1,9 +1,10 @@
 package org.eclipse.pde.internal.ui.editor.target;
 
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.itarget.ITarget;
-import org.eclipse.pde.internal.core.itarget.ITargetFeature;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
+import org.eclipse.pde.internal.core.itarget.ITargetObject;
 import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -16,43 +17,59 @@ import org.eclipse.ui.forms.editor.FormPage;
 
 public class TargetOutlinePage extends FormOutlinePage {
 	
-	public class PluginNode {
+	public class TargetContentNode {
 		
-		public ITargetPlugin[] fPlugins;
+		private ITarget fTarget;
+		private boolean fFeatureBased = false;
 		
 		public String toString() {
-			return PDEUIMessages.TargetOutlinePage_plugins;
+			return fFeatureBased 
+					? PDEUIMessages.TargetOutlinePage_features 
+					: PDEUIMessages.TargetOutlinePage_plugins;
 		}
 		
-		public PluginNode(ITargetPlugin[] plugins) {
-			fPlugins = plugins;
+		public TargetContentNode(ITarget target, boolean featureBased) {
+			fTarget = target;
+			fFeatureBased = featureBased;
 		}
 		
-		public ITargetPlugin[] getModels() {
-			return fPlugins;
+		public ITargetObject[] getModels() {
+			if (fTarget.useAllPlugins())
+				return new ITargetObject[0];
+			if (fFeatureBased)
+				return fTarget.getFeatures();
+			return fTarget.getPlugins();
+		}
+		
+		public boolean isFeatureBased() {
+			return fFeatureBased;
 		}
 		
 	}
 	
-	public class FeatureNode {
-		
-		public ITargetFeature[] fFeatures;
-		
-		public String toString() {
-			return PDEUIMessages.TargetOutlinePage_features;
-		}
-		
-		public FeatureNode(ITargetFeature[] features) {
-			fFeatures = features;
-		}
-		
-		public ITargetFeature[] getModels() {
-			return fFeatures;
-		}
-	}
+	private TargetContentNode pNode;
+	private TargetContentNode fNode;
 	
 	public TargetOutlinePage(PDEFormEditor editor) {
 		super(editor);
+	}
+	
+	public void modelChanged(IModelChangedEvent event) {
+		if (ITarget.P_ALL_PLUGINS.equals(event.getChangedProperty())
+				|| event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			super.modelChanged(event);
+			return;
+		}
+		
+		if (event.getChangeType() == IModelChangedEvent.INSERT 
+				|| event.getChangeType() == IModelChangedEvent.REMOVE) {
+			Object object = event.getChangedObjects()[0];
+			if (object instanceof ITargetPlugin)
+				getTreeViewer().refresh(pNode);
+			else
+				getTreeViewer().refresh(fNode);
+			return;
+		}
 	}
 	
 	protected Object[] getChildren(Object parent) {
@@ -62,23 +79,12 @@ public class TargetOutlinePage extends FormOutlinePage {
 			if (target.useAllPlugins())
 				return new Object[0];
 			
-			ITargetPlugin[] plugins = target.getPlugins();
-			PluginNode pNode = (plugins.length > 0)  ?  new PluginNode(plugins) : null;
-
-			ITargetFeature[] features = target.getFeatures();
-			FeatureNode fNode = (features.length > 0)  ? new FeatureNode(features) : null;
-
-			if (pNode != null && fNode != null) 
-				return new Object[] {pNode, fNode};
-			if (pNode != null)
-				return new Object[] {pNode};
-			if (fNode != null)
-				return new Object[] {fNode};
+			pNode = new TargetContentNode(target, false);
+			fNode = new TargetContentNode(target, true);
+			return new Object[] {pNode, fNode};
 		}
-		if (parent instanceof PluginNode)
-			return ((PluginNode)parent).getModels();
-		if (parent instanceof FeatureNode)
-			return ((FeatureNode)parent).getModels();
+		if (parent instanceof TargetContentNode)
+			return ((TargetContentNode)parent).getModels();
 		return new Object[0];
 	}
 	
@@ -86,10 +92,11 @@ public class TargetOutlinePage extends FormOutlinePage {
 		return new BasicLabelProvider() {
 			public Image getImage(Object element) {
 				PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
-				if (element instanceof PluginNode)
-					return provider.get(PDEPluginImages.DESC_PLUGIN_OBJ);
-				if (element instanceof FeatureNode)
-					return provider.get(PDEPluginImages.DESC_FEATURE_OBJ);
+				if (element instanceof TargetContentNode) {
+					if (((TargetContentNode)element).isFeatureBased())
+						return provider.get(PDEPluginImages.DESC_FEATURE_OBJ);				
+					return provider.get(PDEPluginImages.DESC_PLUGIN_OBJ);				
+				}
 				if (element instanceof FormPage)
 					return super.getImage(element);
 				return provider.getImage(element);

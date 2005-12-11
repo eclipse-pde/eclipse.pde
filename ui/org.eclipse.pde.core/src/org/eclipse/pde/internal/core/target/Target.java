@@ -70,13 +70,8 @@ public class Target extends TargetObject implements ITarget {
 					if (name.equals("launcherArgs")) { //$NON-NLS-1$
 						fArgsInfo = factory.createArguments();
 						fArgsInfo.parse(child);
-					} else if (name.equals("plugins")) { //$NON-NLS-1$
-						element = (Element)child;
-						fUseAllTargetPlatform =
-							"true".equalsIgnoreCase(element.getAttribute("useAllPlugins")); //$NON-NLS-1$ //$NON-NLS-2$
-						parsePlugins(child.getChildNodes());
-					} else if (name.equals("features")) { //$NON-NLS-1$
-						parseFeatures(child.getChildNodes());
+					} else if (name.equals("content")) { //$NON-NLS-1$
+						parseContent((Element)child);
 					} else if (name.equals("environment")) { //$NON-NLS-1$
 						fEnvInfo = factory.createEnvironment();
 						fEnvInfo.parse(child);
@@ -90,6 +85,20 @@ public class Target extends TargetObject implements ITarget {
 				}
 			}
 		}
+	}
+	
+	private void parseContent(Element content) {
+		fUseAllTargetPlatform =
+			"true".equals(content.getAttribute("useAllPlugins")); //$NON-NLS-1$ //$NON-NLS-2$
+		NodeList children = content.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node node = children.item(i);
+			if ("plugins".equals(node.getNodeName())) { //$NON-NLS-1$
+				parsePlugins(node.getChildNodes());
+			} else if ("features".equals(node.getNodeName())) { //$NON-NLS-1$
+				parseFeatures(node.getChildNodes());
+			}
+		}	
 	}
 	
 	private void parsePlugins(NodeList children) {
@@ -140,26 +149,27 @@ public class Target extends TargetObject implements ITarget {
 		
 		writer.println();
 		if (fUseAllTargetPlatform) {
-			writer.println(indent + "   <plugins useAllPlugins=\"true\">"); //$NON-NLS-1$
+			writer.println(indent + "   <content useAllPlugins=\"true\">"); //$NON-NLS-1$
 		} else {
-			writer.println(indent + "   <plugins>"); //$NON-NLS-1$
+			writer.println(indent + "   <content>"); //$NON-NLS-1$
 		}
+		
+		writer.println(indent + "      <plugins>"); //$NON-NLS-1$
 		Iterator iter = fPlugins.values().iterator();
 		while (iter.hasNext()) {
 			ITargetPlugin plugin = (ITargetPlugin) iter.next();
-			plugin.write(indent + "      ", writer); //$NON-NLS-1$
+			plugin.write(indent + "         ", writer); //$NON-NLS-1$
 		}
-		writer.println(indent + "   </plugins>"); //$NON-NLS-1$
-		
-		writer.println();
-		writer.println(indent + "   <features>"); //$NON-NLS-1$
+		writer.println(indent + "      </plugins>"); //$NON-NLS-1$		
+		writer.println(indent + "      <features>"); //$NON-NLS-1$
 		iter = fFeatures.values().iterator();
 		while (iter.hasNext()) {
 			ITargetFeature feature = (ITargetFeature) iter.next();
-			feature.write(indent + "      ", writer); //$NON-NLS-1$
+			feature.write(indent + "         ", writer); //$NON-NLS-1$
 		}
-		writer.println(indent + "   </features>"); //$NON-NLS-1$
-			
+		writer.println(indent + "      </features>"); //$NON-NLS-1$
+		writer.println(indent + "   </content>"); //$NON-NLS-1$
+		
 		writer.println();
 		writer.println(indent + "</target>"); //$NON-NLS-1$
 	}
@@ -218,18 +228,10 @@ public class Target extends TargetObject implements ITarget {
 	}
 
 	public void addPlugin(ITargetPlugin plugin) {
-		fUseAllTargetPlatform = false;
-		String id = plugin.getId();
-		if (fPlugins.containsKey(id))
-			return;
-		plugin.setModel(getModel());
-		fPlugins.put(id, plugin);
-		if (isEditable())
-			fireStructureChanged(plugin, IModelChangedEvent.INSERT);
+		addPlugins(new ITargetPlugin[] {plugin});
 	}
 	
 	public void addPlugins(ITargetPlugin[] plugins) {
-		fUseAllTargetPlatform = false;
 		boolean modify = false;
 		for (int i = 0; i < plugins.length; i ++ ) {
 			String id = plugins[i].getId();
@@ -245,18 +247,10 @@ public class Target extends TargetObject implements ITarget {
 	}
 
 	public void addFeature(ITargetFeature feature) {
-		fUseAllTargetPlatform = false;
-		String id = feature.getId();
-		if (fFeatures.containsKey(id))
-			return;
-		feature.setModel(getModel());
-		fFeatures.put(id, feature);
-		if (isEditable())
-			fireStructureChanged(feature, IModelChangedEvent.INSERT);
+		addFeatures(new ITargetFeature[] {feature});
 	}
 	
 	public void addFeatures(ITargetFeature[] features) {
-		fUseAllTargetPlatform = false;
 		boolean modify = false;
 		for (int i = 0; i < features.length; i++) {
 			String id = features[i].getId();
@@ -271,37 +265,28 @@ public class Target extends TargetObject implements ITarget {
 	}
 
 	public void removePlugin(ITargetPlugin plugin) {
-		fUseAllTargetPlatform = false;
-		fPlugins.remove(plugin.getId());
-		if (isEditable())
-			fireStructureChanged(plugin, IModelChangedEvent.REMOVE);
+		removePlugins(new ITargetPlugin[] {plugin});
 	}
 	
 	public void removePlugins(ITargetPlugin[] plugins) {
-		fUseAllTargetPlatform = false;
 		boolean modify = false;
 		for (int i =0; i < plugins.length; i++) 
 			modify = ((fPlugins.remove(plugins[i].getId()) != null) || modify);
 		if (isEditable() && modify)
-			fireStructureChanged(plugins,IModelChangedEvent.REMOVE);
+			fireStructureChanged(plugins, IModelChangedEvent.REMOVE);
 	}
 
 	public void removeFeature(ITargetFeature feature) {
-		fUseAllTargetPlatform = false;
-		fFeatures.remove(feature.getId());
-		if (isEditable())
-			fireStructureChanged(feature, IModelChangedEvent.REMOVE);
+		removeFeatures(new ITargetFeature[] {feature});
 	}
 	
 	public void removeFeatures(ITargetFeature[] features) {
-		fUseAllTargetPlatform = false;
 		boolean modify = false;
 		for (int i = 0; i < features.length; i++) {
 			modify = ((fFeatures.remove(features[i].getId()) != null) || modify);
 		}
 		if (isEditable() && modify)
-			fireStructureChanged(features, IModelChangedEvent.REMOVE);
-		
+			fireStructureChanged(features, IModelChangedEvent.REMOVE);	
 	}
 
 	public ITargetPlugin[] getPlugins() {

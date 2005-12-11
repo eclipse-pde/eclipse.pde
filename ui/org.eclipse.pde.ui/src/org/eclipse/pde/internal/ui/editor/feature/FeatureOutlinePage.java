@@ -41,7 +41,7 @@ import org.eclipse.ui.forms.editor.IFormPage;
 public class FeatureOutlinePage extends FormOutlinePage {
 	class ContentProvider extends BasicContentProvider {
 		public Object[] getChildren(Object parent) {
-			IFeatureModel model = (IFeatureModel) editor.getAggregateModel();
+			IFeatureModel model = (IFeatureModel) fEditor.getAggregateModel();
 			if (model.isValid()) {
 				if (parent instanceof FeatureFormPage) {
 					return new Object[0];
@@ -80,7 +80,7 @@ public class FeatureOutlinePage extends FormOutlinePage {
 		public Object getParent(Object child) {
 			String pageId = getParentPageId(child);
 			if (pageId != null)
-				return editor.findPage(pageId);
+				return fEditor.findPage(pageId);
 			return super.getParent(child);
 		}
 	}
@@ -117,7 +117,7 @@ public class FeatureOutlinePage extends FormOutlinePage {
 	}
 
 	private Object[] getInfos() {
-		IFeatureModel model = (IFeatureModel) editor.getAggregateModel();
+		IFeatureModel model = (IFeatureModel) fEditor.getAggregateModel();
 		IFeature feature = model.getFeature();
 		Vector result = new Vector();
 		for (int i = 0; i < 3; i++) {
@@ -130,31 +130,31 @@ public class FeatureOutlinePage extends FormOutlinePage {
 	}
 
 	private Object[] getReferences() {
-		IFeatureModel model = (IFeatureModel) editor.getAggregateModel();
+		IFeatureModel model = (IFeatureModel) fEditor.getAggregateModel();
 		IFeature feature = model.getFeature();
 		return feature.getPlugins();
 	}
 
 	private Object[] getImports() {
-		IFeatureModel model = (IFeatureModel) editor.getAggregateModel();
+		IFeatureModel model = (IFeatureModel) fEditor.getAggregateModel();
 		IFeature feature = model.getFeature();
 		return feature.getImports();
 	}
 
 	private Object[] getIncludes() {
-		IFeatureModel model = (IFeatureModel) editor.getAggregateModel();
+		IFeatureModel model = (IFeatureModel) fEditor.getAggregateModel();
 		IFeature feature = model.getFeature();
 		return feature.getIncludedFeatures();
 	}
 
 	private Object[] getData() {
-		IFeatureModel model = (IFeatureModel) editor.getAggregateModel();
+		IFeatureModel model = (IFeatureModel) fEditor.getAggregateModel();
 		IFeature feature = model.getFeature();
 		return feature.getData();
 	}
 
 	private Object[] getURLs() {
-		IFeatureModel model = (IFeatureModel) editor.getAggregateModel();
+		IFeatureModel model = (IFeatureModel) fEditor.getAggregateModel();
 		IFeature feature = model.getFeature();
 		IFeatureURL url = feature.getURL();
 		if (url == null)
@@ -166,15 +166,15 @@ public class FeatureOutlinePage extends FormOutlinePage {
 		if (object instanceof IFeatureURLElement) {
 			return fDiscoveryUrls;
 		}
-		return editor.findPage(getParentPageId(object));
+		return fEditor.findPage(getParentPageId(object));
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
-		if (treeViewer.getControl().isDisposed()) {
+		if (fTreeViewer.getControl().isDisposed()) {
 			return;
 		}
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			treeViewer.refresh();
+			fTreeViewer.refresh();
 			return;
 		}
 		Object object = event.getChangedObjects()[0];
@@ -184,8 +184,8 @@ public class FeatureOutlinePage extends FormOutlinePage {
 				if (property.equals(IFeature.P_DESCRIPTION)
 						|| property.equals(IFeature.P_COPYRIGHT)
 						|| property.equals(IFeature.P_LICENSE)) {
-					IFormPage page = editor.findPage(InfoFormPage.PAGE_ID);
-					treeViewer.refresh(page);
+					IFormPage page = fEditor.findPage(InfoFormPage.PAGE_ID);
+					fTreeViewer.refresh(page);
 					return;
 				}
 			}
@@ -195,26 +195,26 @@ public class FeatureOutlinePage extends FormOutlinePage {
 				|| object instanceof IFeatureData
 				|| object instanceof IFeatureURLElement) {
 			if (event.getChangeType() == IModelChangedEvent.CHANGE) {
-				treeViewer.update(object, null);
+				fTreeViewer.update(object, null);
 			} else {
 				// find the parent
 				Object parent = null;
 				parent = getParent(object);
 				if (parent != null) {
 					if (event.getChangeType() == IModelChangedEvent.INSERT)
-						treeViewer.add(parent, event.getChangedObjects());
+						fTreeViewer.add(parent, event.getChangedObjects());
 					else
-						treeViewer.remove(event.getChangedObjects());
+						fTreeViewer.remove(event.getChangedObjects());
 				} else {
-					treeViewer.refresh();
-					treeViewer.expandAll();
+					fTreeViewer.refresh();
+					fTreeViewer.expandAll();
 				}
 			}
 		}
 	}
 
 	private IBuildModel getBuildModel() {
-		InputContext context = editor.getContextManager().findContext(
+		InputContext context = fEditor.getContextManager().findContext(
 				BuildInputContext.CONTEXT_ID);
 		if (context != null)
 			return (IBuildModel) context.getModel();

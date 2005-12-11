@@ -321,10 +321,8 @@ public class ContentSection extends TableSection {
 			for (int i = 0; i < models.length; ++i) {
 				IFeature feature = ((IFeatureModel)models[i]).getFeature();
 				String id = feature.getId();
-				String version = feature.getVersion();
 				ITargetFeature tfeature = factory.createFeature();
 				tfeature.setId(id);
-				tfeature.setVersion(version);
 				features[i] = tfeature;
 			}
 			target.addFeatures(features);

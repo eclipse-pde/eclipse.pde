@@ -27,7 +27,7 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 	private Object[] fTopics;
 
 	public Object[] getChildren(Object parent) {
-		ISchema schema = (ISchema) editor.getAggregateModel();
+		ISchema schema = (ISchema) fEditor.getAggregateModel();
 		if (schema.isValid()) {
 			if (parent instanceof SchemaFormPage) {
 				return getMarkup();
@@ -58,7 +58,7 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 	}
 
 	protected Object[] createTopics() {
-		ISchema schema = (ISchema) editor.getAggregateModel();
+		ISchema schema = (ISchema) fEditor.getAggregateModel();
 		IDocumentSection[] sections = schema.getDocumentSections();
 		Object[] result = new Object[sections.length + 1];
 		result[0] = schema;
@@ -77,7 +77,7 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 	}
 
 	private Object[] getMarkup() {
-		ISchema schema = (ISchema) editor.getAggregateModel();
+		ISchema schema = (ISchema) fEditor.getAggregateModel();
 		return schema.getElements();
 	}
 
@@ -120,12 +120,12 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			fTopics = null;
-			treeViewer.refresh();
+			fTreeViewer.refresh();
 			return;
 		}
 		Object object = event.getChangedObjects()[0];
 		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
-			treeViewer.update(object, null);
+			fTreeViewer.update(object, null);
 		} else {
 			// find the parent
 			Object parent = null;
@@ -133,11 +133,11 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 				parent = ((ISchemaObject) object).getParent();
 			}
 			if (parent != null) {
-				treeViewer.refresh(parent);
-				treeViewer.expandToLevel(parent, 2);
+				fTreeViewer.refresh(parent);
+				fTreeViewer.expandToLevel(parent, 2);
 			} else {
-				treeViewer.refresh();
-				treeViewer.expandAll();
+				fTreeViewer.refresh();
+				fTreeViewer.expandAll();
 			}
 		}
 	}

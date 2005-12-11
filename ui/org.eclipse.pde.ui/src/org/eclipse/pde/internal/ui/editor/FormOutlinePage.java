@@ -24,11 +24,12 @@ import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 public class FormOutlinePage extends ContentOutlinePage
-		implements
-			IModelChangedListener, ISortableContentOutlinePage {
-	private boolean stale;
+		implements IModelChangedListener, ISortableContentOutlinePage {
+	
+	private boolean fStale;
 	private ViewerSorter fViewerSorter;
-	private boolean sorted;
+	private boolean fSorted;
+	
 	public class BasicContentProvider extends DefaultContentProvider
 			implements
 				ITreeContentProvider {
@@ -71,12 +72,12 @@ public class FormOutlinePage extends ContentOutlinePage
 			return Integer.MAX_VALUE;
 		}
 	}
-	protected TreeViewer treeViewer;
-	protected PDEFormEditor editor;
-	protected boolean editorSelection = false;
-	protected boolean outlineSelection = false;
+	protected TreeViewer fTreeViewer;
+	protected PDEFormEditor fEditor;
+	protected boolean fEditorSelection = false;
+	protected boolean fOutlineSelection = false;
 	public FormOutlinePage(PDEFormEditor editor) {
-		this.editor = editor;
+		this.fEditor = editor;
 	}
 	protected ITreeContentProvider createContentProvider() {
 		return new BasicContentProvider();
@@ -87,19 +88,19 @@ public class FormOutlinePage extends ContentOutlinePage
 	}
 	public void createControl(Composite parent) {
 		Tree widget = new Tree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		treeViewer = new TreeViewer(widget);
-		treeViewer.addSelectionChangedListener(this);
-		treeViewer.setContentProvider(createContentProvider());
-		treeViewer.setLabelProvider(createLabelProvider());
+		fTreeViewer = new TreeViewer(widget);
+		fTreeViewer.addSelectionChangedListener(this);
+		fTreeViewer.setContentProvider(createContentProvider());
+		fTreeViewer.setLabelProvider(createLabelProvider());
 		createOutlineSorter();
-		if(sorted)
-			treeViewer.setSorter(fViewerSorter);
+		if(fSorted)
+			fTreeViewer.setSorter(fViewerSorter);
 		else
-			treeViewer.setSorter(null);
-		treeViewer.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
-		treeViewer.setUseHashlookup(true);
-		treeViewer.setInput(editor);
-		IBaseModel model = editor.getAggregateModel();
+			fTreeViewer.setSorter(null);
+		fTreeViewer.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
+		fTreeViewer.setUseHashlookup(true);
+		fTreeViewer.setInput(fEditor);
+		IBaseModel model = fEditor.getAggregateModel();
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider)model).addModelChangedListener(this);
 	}
@@ -107,18 +108,18 @@ public class FormOutlinePage extends ContentOutlinePage
 		return new BasicLabelProvider();
 	}
 	public void dispose() {
-		IBaseModel model = editor.getAggregateModel();
+		IBaseModel model = fEditor.getAggregateModel();
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider)model).removeModelChangedListener(this);
 		super.dispose();
 	}
 	
 	public Control getControl() {
-		return treeViewer != null ? treeViewer.getControl() : null;
+		return fTreeViewer != null ? fTreeViewer.getControl() : null;
 	}
 	private Object[] getPages() {
 		ArrayList formPages = new ArrayList();
-		IFormPage [] pages = editor.getPages();
+		IFormPage [] pages = fEditor.getPages();
 		for (int i=0; i<pages.length; i++) {
 			if (pages[i].isEditor()==false)
 				formPages.add(pages[i]);
@@ -127,17 +128,17 @@ public class FormOutlinePage extends ContentOutlinePage
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
-		IFormPage page = editor.getActivePageInstance();
-		stale=true;
+		IFormPage page = fEditor.getActivePageInstance();
+		fStale=true;
 		if (page.isEditor()==false)
 			refresh();
 	}
 	
 	public void refresh() {
-		if (stale) {
-			treeViewer.refresh();
-			treeViewer.expandAll();
-			stale=false;
+		if (fStale) {
+			fTreeViewer.refresh();
+			fTreeViewer.expandAll();
+			fStale=false;
 		}
 	}
 	
@@ -152,20 +153,20 @@ public class FormOutlinePage extends ContentOutlinePage
 	}
 
 	public void selectionChanged(Object item) {
-		IFormPage page = editor.getActivePageInstance();
+		IFormPage page = fEditor.getActivePageInstance();
 		String id = getParentPageId(item);
 		IFormPage newPage=null;
 		if (id!=null && (page==null || !page.getId().equals(id)))
-			newPage = editor.setActivePage(id);
+			newPage = fEditor.setActivePage(id);
 		IFormPage revealPage = newPage!=null?newPage:page;
 		if (revealPage!=null && !(item instanceof IFormPage))
 			revealPage.selectReveal(item);
 	}
 	
 	public void selectionChanged(SelectionChangedEvent event) {
-		if (editorSelection)
+		if (fEditorSelection)
 			return;
-		outlineSelection = true;
+		fOutlineSelection = true;
 		try {
 			ISelection selection = event.getSelection();
 			if (selection.isEmpty() == false
@@ -176,35 +177,35 @@ public class FormOutlinePage extends ContentOutlinePage
 			}
 			fireSelectionChanged(selection);
 		} finally {
-			outlineSelection = false;
+			fOutlineSelection = false;
 		}
 	}
 	public void setFocus() {
-		if (treeViewer != null)
-			treeViewer.getTree().setFocus();
+		if (fTreeViewer != null)
+			fTreeViewer.getTree().setFocus();
 	}
 	public ISelection getSelection() {
-		if (treeViewer == null)
+		if (fTreeViewer == null)
 			return StructuredSelection.EMPTY;
-		return treeViewer.getSelection();
+		return fTreeViewer.getSelection();
 	}
 	public void sort (boolean sorting){
-		sorted = sorting;
-		if(treeViewer!=null)
+		fSorted = sorting;
+		if(fTreeViewer!=null)
 			if(sorting)
-				treeViewer.setSorter(fViewerSorter);
+				fTreeViewer.setSorter(fViewerSorter);
 			else
-				treeViewer.setSorter(null);
+				fTreeViewer.setSorter(null);
 	}
 	/*
 	 * (non-Javadoc) Method declared on ISelectionProvider.
 	 */
 	public void setSelection(ISelection selection) {
-		if (outlineSelection)
+		if (fOutlineSelection)
 			return;
-		editorSelection = true;
+		fEditorSelection = true;
 		try {
-			if (treeViewer == null)
+			if (fTreeViewer == null)
 				return;
 			if (selection != null && !selection.isEmpty()
 					&& selection instanceof IStructuredSelection) {
@@ -215,7 +216,7 @@ public class FormOutlinePage extends ContentOutlinePage
 							.getImport());
 				}
 				if (item instanceof IDocumentNode) {
-					while (null == treeViewer.testFindItem(item)) {
+					while (null == fTreeViewer.testFindItem(item)) {
 						item = ((IDocumentNode) item).getParentNode();
 						if (item == null) {
 							break;
@@ -224,9 +225,13 @@ public class FormOutlinePage extends ContentOutlinePage
 					}
 				}
 			}
-			treeViewer.setSelection(selection);
+			fTreeViewer.setSelection(selection);
 		} finally {
-			editorSelection = false;
+			fEditorSelection = false;
 		}
+	}
+	
+	protected TreeViewer getTreeViewer() {
+		return fTreeViewer;
 	}
 }
