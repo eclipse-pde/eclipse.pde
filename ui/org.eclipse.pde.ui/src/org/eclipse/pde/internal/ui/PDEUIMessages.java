@@ -2122,18 +2122,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String RequiredExecutionEnvironmentSection_title;
 
-	public static String RequiredExecutionEnvironmentSection_minJRE;
-
-	public static String RequiredExecutionEnvironmentSection_jreProfile;
-
-	public static String RequiredExecutionEnvironmentSection_minJ2ME;
-
-	public static String RequiredExecutionEnvironmentSection_j2meProfile;
-
-	public static String RequiredExecutionEnvironmentSection_fminJRE;
-
-	public static String RequiredExecutionEnvironmentSection_fminJ2ME;
-
 	public static String PluginGeneralInfoSection_lazyStart;
 
 	public static String ClassSearchParticipant_taskMessage;
@@ -2461,5 +2449,21 @@ public class PDEUIMessages extends NLS {
 	public static String EditorUtilities_imageTooLarge;
 
 	public static String EditorUtilities_imageTooLargeInfo;
+
+	public static String RequiredExecutionEnvironmentSection_add;
+
+	public static String RequiredExecutionEnvironmentSection_remove;
+
+	public static String RequiredExecutionEnvironmentSection_up;
+
+	public static String RequiredExecutionEnvironmentSection_down;
+
+	public static String RequiredExecutionEnvironmentSection_fragmentDesc;
+
+	public static String RequiredExecutionEnvironmentSection_pluginDesc;
+
+	public static String RequiredExecutionEnvironmentSection_dialog_title;
+
+	public static String RequiredExecutionEnvironmentSection_dialogMessage;
 
 }

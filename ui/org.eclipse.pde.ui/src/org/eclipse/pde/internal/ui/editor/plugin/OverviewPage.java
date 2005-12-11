@@ -79,7 +79,6 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		form.setText(PDEUIMessages.ManifestEditor_OverviewPage_title); 
 		fillBody(managedForm, toolkit);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_PLUGIN_OVERVIEW);		
-		managedForm.refresh();
 	}
 	
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
@@ -106,9 +105,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		managedForm.addPart(general);		
 		if (isBundle())
 			managedForm.addPart(new RequiredExecutionEnvironmentSection(this, left));
-		if (isEditable())
-    		createTestingSection(managedForm, left, toolkit);
-		
+			
 		Composite right = toolkit.createComposite(body);			
 		layout = new TableWrapLayout();
 		layout.verticalSpacing = 20;
@@ -117,6 +114,8 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		createContentSection(managedForm, right, toolkit);
 		if (isEditable() || getPDEEditor().hasInputContext(PluginInputContext.CONTEXT_ID))
 			createExtensionSection(managedForm, right, toolkit);
+		if (isEditable() )
+    		createTestingSection(managedForm, isBundle() ? right : left, toolkit);
         if (isEditable())
     		createExportingSection(managedForm, right, toolkit);
 	}

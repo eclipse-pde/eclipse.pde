@@ -15,7 +15,6 @@ import java.util.Vector;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureData;
@@ -30,10 +29,7 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.editor.build.BuildPage;
-import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.forms.editor.IFormPage;
@@ -65,15 +61,6 @@ public class FeatureOutlinePage extends FormOutlinePage {
 					return getData();
 				}
 			}
-			if (parent instanceof PDEFormPage) {
-				PDEFormPage page = (PDEFormPage) parent;
-				IBuildModel buildModel = getBuildModel();
-				if (buildModel != null && buildModel.isValid()) {
-					if (page.getId().equals(BuildPage.PAGE_ID))
-						return buildModel.getBuild().getBuildEntries();
-				}
-			}
-
 			return super.getChildren(parent);
 		}
 
@@ -198,8 +185,7 @@ public class FeatureOutlinePage extends FormOutlinePage {
 				fTreeViewer.update(object, null);
 			} else {
 				// find the parent
-				Object parent = null;
-				parent = getParent(object);
+				Object parent = getParent(object);
 				if (parent != null) {
 					if (event.getChangeType() == IModelChangedEvent.INSERT)
 						fTreeViewer.add(parent, event.getChangedObjects());
@@ -213,11 +199,4 @@ public class FeatureOutlinePage extends FormOutlinePage {
 		}
 	}
 
-	private IBuildModel getBuildModel() {
-		InputContext context = fEditor.getContextManager().findContext(
-				BuildInputContext.CONTEXT_ID);
-		if (context != null)
-			return (IBuildModel) context.getModel();
-		return null;
-	}
 }
