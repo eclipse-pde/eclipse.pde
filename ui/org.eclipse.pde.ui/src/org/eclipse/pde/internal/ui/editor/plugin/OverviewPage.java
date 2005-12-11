@@ -104,7 +104,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			general = new PluginGeneralInfoSection(this, left);
 		managedForm.addPart(general);		
 		if (isBundle())
-			managedForm.addPart(new RequiredExecutionEnvironmentSection(this, left));
+			managedForm.addPart(new ExecutionEnvironmentSection(this, left));
 			
 		Composite right = toolkit.createComposite(body);			
 		layout = new TableWrapLayout();

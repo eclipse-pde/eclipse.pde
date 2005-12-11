@@ -48,7 +48,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.osgi.framework.Constants;
 
-public class RequiredExecutionEnvironmentSection extends TableSection {
+public class ExecutionEnvironmentSection extends TableSection {
 
 	private TableViewer fEETable;
 	private Action fRemoveAction;
@@ -93,7 +93,7 @@ public class RequiredExecutionEnvironmentSection extends TableSection {
 		}
 	}
 
-	public RequiredExecutionEnvironmentSection(PDEFormPage page, Composite parent) {
+	public ExecutionEnvironmentSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.RequiredExecutionEnvironmentSection_add, PDEUIMessages.RequiredExecutionEnvironmentSection_remove, PDEUIMessages.RequiredExecutionEnvironmentSection_up, PDEUIMessages.RequiredExecutionEnvironmentSection_down});
 		createClient(getSection(), page.getEditor().getToolkit());
 	}

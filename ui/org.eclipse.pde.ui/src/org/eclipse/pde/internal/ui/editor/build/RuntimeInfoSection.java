@@ -11,36 +11,80 @@
 
 package org.eclipse.pde.internal.ui.editor.build;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Vector;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.context.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.model.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IEditable;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IModelChangedListener;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.ui.PDELabelProvider;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.context.InputContext;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.parts.StructuredViewerPart;
+import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.wizards.FolderSelectionDialog;
+import org.eclipse.pde.internal.ui.wizards.RenameDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class RuntimeInfoSection extends PDESection
 implements
@@ -54,7 +98,6 @@ IModelChangedListener {
 	private IBuildEntry fCurrentLibrary;
 	private IStructuredSelection fCurrentSelection;
 	
-	private Button fIncludeLibraryButton;
 	private boolean fEnabled = true;
 	
 	class RenameAction extends Action {
@@ -333,18 +376,6 @@ IModelChangedListener {
 		createLeftSection(container, toolkit);
 		createRightSection(container, toolkit);
 		
-		fIncludeLibraryButton = toolkit.createButton(container, PDEUIMessages.BuildEditor_RuntimeInfoSection_buildInclude, SWT.CHECK);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		fIncludeLibraryButton.setLayoutData(gd);
-		fIncludeLibraryButton.setVisible(false);
-		fIncludeLibraryButton.addSelectionListener(new SelectionAdapter() {
-			
-			public void widgetSelected(SelectionEvent e) {
-				handleLibInBinBuild(fIncludeLibraryButton.getSelection(),
-						fCurrentLibrary.getName().substring(7));
-			}
-		});
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 	}
@@ -539,7 +570,6 @@ IModelChangedListener {
 		fLibraryPart.setButtonEnabled(0, enable);
 		fLibraryPart.setButtonEnabled(2, false);
 		fLibraryPart.setButtonEnabled(3, false);
-		fIncludeLibraryButton.setEnabled(enable);
 		
 		fFolderPart.setButtonEnabled(0, enable
 				&& !fLibraryViewer.getSelection().isEmpty());
@@ -665,10 +695,8 @@ IModelChangedListener {
 			update((IBuildEntry) item);
 			updateDirectionalButtons();
 			String name = ((IBuildEntry) item).getName();
-			fIncludeLibraryButton.setVisible(true);
 			if (name.startsWith(IBuildEntry.JAR_PREFIX))
 				name = name.substring(IBuildEntry.JAR_PREFIX.length());
-			fIncludeLibraryButton.setSelection(isJarIncluded(name));
 		}
 	}
 	
@@ -683,32 +711,6 @@ IModelChangedListener {
 				&& table.getSelectionIndex() < table.getItemCount() - 1);
 	}
 	
-	private boolean isJarIncluded(String libName) {
-		IBuildModel model = getBuildModel();
-		IProject project = model.getUnderlyingResource().getProject();
-		IPath libPath;
-		if (libName.equals(".") || libName.equals("./") || libName.equals(".\\")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			libPath = null;
-		else 
-			libPath = project.getFile(libName).getProjectRelativePath();
-		IBuildEntry binIncl = model.getBuild().getEntry(
-				IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
-		IBuildEntry binExcl = model.getBuild().getEntry(
-				IBuildPropertiesConstants.PROPERTY_BIN_EXCLUDES);
-		if (binIncl == null)
-			return false;
-		if (libPath == null)
-			return binIncl.contains(libName);
-		if (libPath.segmentCount() == 1) {
-			return binIncl.contains(libName) || binIncl.contains("*.jar"); //$NON-NLS-1$
-		} else if (binIncl.contains(libName)) {
-			return true;
-		} else if (binExcl != null && binExcl.contains(libName)) {
-			return false;
-		} else {
-			return isParentIncluded(libPath, binIncl, binExcl);
-		}
-	}
 	
 	protected boolean isParentIncluded(IPath libPath, IBuildEntry binIncl,
 			IBuildEntry binExcl) {
@@ -734,7 +736,6 @@ IModelChangedListener {
 		fLibraryViewer.setSelection(null);
 		fFolderViewer.setInput(null);
 		fFolderPart.setButtonEnabled(0, false);
-		fIncludeLibraryButton.setVisible(false);
 		updateDirectionalButtons();
 		super.refresh();
 	}
@@ -1084,27 +1085,18 @@ IModelChangedListener {
 		if (keyName!= null && keyName.equals(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES)){
 			if (fCurrentLibrary == null)
 				return;
-			if (event.getOldValue() == null || event.getNewValue() == null ){ // added/removed token
-				boolean isInBinBuild = entry.contains(fCurrentLibrary.getName().substring(7));
-				fIncludeLibraryButton.setSelection(isInBinBuild);
-			}
-			return;
 		}
-		
-		
-		
+				
 		if (type == IModelChangedEvent.INSERT){
 //			account for new key
 			fLibraryViewer.refresh();
 			if (fCurrentSelection != null) {
 				fLibraryViewer.setSelection(fCurrentSelection);
-				fIncludeLibraryButton.setSelection(true);
 				updateDirectionalButtons();
 			} else {
 				fFolderPart.setButtonEnabled(0, false);
 				fLibraryViewer.setSelection(null);
 				fFolderViewer.setInput(null);
-				fIncludeLibraryButton.setVisible(false);
 			}
 		} else if (type == IModelChangedEvent.REMOVE){
 			// account for key removal
@@ -1113,7 +1105,6 @@ IModelChangedListener {
 			fFolderPart.setButtonEnabled(0, false);
 			fLibraryViewer.setSelection(null);
 			fFolderViewer.setInput(null);
-			fIncludeLibraryButton.setVisible(false);
 		} else if (keyName!=null && keyName.startsWith(IBuildEntry.JAR_PREFIX)){ 
 			// modification to source.{libname}.jar
 			// renaming token
@@ -1130,7 +1121,6 @@ IModelChangedListener {
 				fFolderPart.setButtonEnabled(0, false);
 				fLibraryViewer.setSelection(null);
 				fFolderViewer.setInput(null);
-				fIncludeLibraryButton.setVisible(false);
 			}
 			if (fCurrentLibrary != null)
 				update(fCurrentLibrary);		
