@@ -65,8 +65,6 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText(PDEUIMessages.OverviewPage_title);  
 		fillBody(managedForm, toolkit);
-		managedForm.refresh();
-		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.OVERVIEW_PAGE);
 	}
 

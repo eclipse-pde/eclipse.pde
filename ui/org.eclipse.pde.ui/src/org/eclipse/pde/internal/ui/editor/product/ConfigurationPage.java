@@ -43,8 +43,6 @@ public class ConfigurationPage extends PDEFormPage {
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText(PDEUIMessages.Product_ConfigurationPage_title);  
 		fillBody(managedForm, toolkit);
-		managedForm.refresh();
-		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.CONFIGURATION_PAGE);
 	}
 

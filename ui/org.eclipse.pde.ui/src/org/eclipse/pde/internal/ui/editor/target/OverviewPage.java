@@ -37,8 +37,6 @@ public class OverviewPage extends PDEFormPage {
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText(PDEUIMessages.OverviewPage_title);  
 		fillBody(managedForm, toolkit);
-		managedForm.refresh();
-		
 	}
 
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {

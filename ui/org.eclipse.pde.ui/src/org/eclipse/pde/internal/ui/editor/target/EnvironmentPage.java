@@ -23,7 +23,6 @@ public class EnvironmentPage extends PDEFormPage {
 		form.setText(PDEUIMessages.EnvironmentPage_title);
 		FormToolkit toolkit = managedForm.getToolkit();
 		fillBody(managedForm, toolkit);
-		managedForm.refresh();		
 	}
 	
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {

@@ -39,8 +39,6 @@ public class LauncherPage extends PDEFormPage {
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText(PDEUIMessages.LauncherPage_title);  
 		fillBody(managedForm, toolkit);
-		managedForm.refresh();
-		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.BRANDING_PAGE);
 	}
 	
