@@ -23,6 +23,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -582,6 +583,26 @@ public class ContentSection extends TableSection {
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 	}
+	
+	public boolean setFormInput(Object input) {
+		if (input instanceof ITargetPlugin) {
+			if (fTabFolder.getSelectionIndex() != 0) {
+				fTabFolder.setSelection(0);
+				refresh();
+			}
+			fContentViewer.setSelection(new StructuredSelection(input), true);
+			return true;
+		} else if (input instanceof ITargetFeature) {
+			if (fTabFolder.getSelectionIndex() != 1) {
+				fTabFolder.setSelection(1);
+				refresh();
+			}
+			fContentViewer.setSelection(new StructuredSelection(input), true);
+			return true;			
+		}
+		return super.setFormInput(input);
+	}
+
 	
 	public void dispose() {
 		getModel().removeModelChangedListener(this);
