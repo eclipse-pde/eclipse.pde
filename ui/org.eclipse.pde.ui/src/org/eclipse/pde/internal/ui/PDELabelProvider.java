@@ -10,26 +10,58 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.ui.*;
+import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.builders.CompilerFlags;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.feature.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.core.iproduct.*;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.feature.FeatureChild;
+import org.eclipse.pde.internal.core.feature.FeatureImport;
+import org.eclipse.pde.internal.core.feature.FeaturePlugin;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
+import org.eclipse.pde.internal.core.ifeature.IFeatureData;
+import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
+import org.eclipse.pde.internal.core.ifeature.IFeatureInfo;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
+import org.eclipse.pde.internal.core.iproduct.IProductFeature;
+import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
+import org.eclipse.pde.internal.core.ischema.IDocumentSection;
+import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.ischema.ISchemaRepeatable;
+import org.eclipse.pde.internal.core.isite.ISiteArchive;
+import org.eclipse.pde.internal.core.isite.ISiteCategory;
+import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
+import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.itarget.ITargetFeature;
 import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
-import org.eclipse.pde.internal.core.text.bundle.*;
-import org.eclipse.pde.internal.ui.editor.target.TargetOutlinePage.FeatureNode;
-import org.eclipse.pde.internal.ui.editor.target.TargetOutlinePage.PluginNode;
+import org.eclipse.pde.internal.core.text.bundle.PackageObject;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -382,12 +414,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof ITargetFeature) {
 			return getObjectImage((ITargetFeature) obj);
 		}
-		if (obj instanceof PluginNode) {
-			return getObjectImage((PluginNode) obj);
-		}
-		if (obj instanceof FeatureNode) {
-			return getObjectImage((FeatureNode) obj);
-		}
 		return super.getImage(obj);
 	}
 
@@ -660,14 +686,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 	
 	public Image getObjectImage(ITargetFeature obj) {
-		return get(PDEPluginImages.DESC_FEATURE_OBJ, 0);
-	}
-	
-	public Image getObjectImage(PluginNode obj) {
-		return get(PDEPluginImages.DESC_PLUGIN_OBJ);
-	}
-	
-	public Image getObjectImage(FeatureNode obj) {
 		return get(PDEPluginImages.DESC_FEATURE_OBJ, 0);
 	}
 	

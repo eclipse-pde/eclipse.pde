@@ -2444,8 +2444,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String ContentSection_open;
 
-	public static String TargetOutlinePage_useAllPlugins;
-
 	public static String TargetOutlinePage_plugins;
 
 	public static String TargetOutlinePage_features;
