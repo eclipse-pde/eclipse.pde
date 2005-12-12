@@ -1086,7 +1086,9 @@ IModelChangedListener {
 			if (fCurrentLibrary == null)
 				return;
 		}
-				
+		
+		
+		
 		if (type == IModelChangedEvent.INSERT){
 //			account for new key
 			fLibraryViewer.refresh();

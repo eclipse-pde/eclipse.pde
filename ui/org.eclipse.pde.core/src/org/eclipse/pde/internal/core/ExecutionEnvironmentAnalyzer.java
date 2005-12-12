@@ -53,14 +53,14 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 			
 			if (javaVersion.compareTo("1.4") >= 0) { //$NON-NLS-1$
 				addEnvironment(result, J2SE_1_4, javaVersion.startsWith("1.4")); //$NON-NLS-1$
-				addEnvironment(result, CDC_FOUNDATION_1_1, javaVersion.startsWith("1.4")); //$NON-NLS-1$
+				addEnvironment(result, CDC_FOUNDATION_1_1, false); 
+				addEnvironment(result, OSGI_MINIMUM_1_1, false);
 			}
 			
 			if (javaVersion.compareTo("1.3") >= 0) { //$NON-NLS-1$
 				addEnvironment(result, J2SE_1_3, javaVersion.startsWith("1.3")); //$NON-NLS-1$
-				addEnvironment(result, CDC_FOUNDATION_1_0, javaVersion.startsWith("1.3")); //$NON-NLS-1$
+				addEnvironment(result, CDC_FOUNDATION_1_0, false); 
 				addEnvironment(result, OSGI_MINIMUM_1_0, false);
-				addEnvironment(result, OSGI_MINIMUM_1_1, false);
 			}
 			
 			if (javaVersion.compareTo("1.2") >= 0) //$NON-NLS-1$

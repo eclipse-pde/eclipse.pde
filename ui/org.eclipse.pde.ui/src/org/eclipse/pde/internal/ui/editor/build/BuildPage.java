@@ -35,12 +35,13 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class BuildPage extends PDEFormPage {
 	public static final String PAGE_ID = "build"; //$NON-NLS-1$
-	private BuildClasspathSection classpathSection;
-	private BuildContentsSection srcSection;
-	private BuildContentsSection binSection;
-	private RuntimeInfoSection runtimeSection;
+	private BuildClasspathSection fClasspathSection;
+	private BuildContentsSection fSrcSection;
+	private BuildContentsSection fBinSection;
+	private RuntimeInfoSection fRuntimeSection;
 	
-	private Button customButton;
+	private Button fCustomButton;
+	private BuildExecutionEnvironmentSection fBuildEESection;
 	
 	public BuildPage(FormEditor editor) {
 		super(editor, PAGE_ID, PDEUIMessages.BuildPage_name);  
@@ -59,54 +60,51 @@ public class BuildPage extends PDEFormPage {
 		layout.makeColumnsEqualWidth = true;
 		form.getBody().setLayout(layout);
 
-		customButton =
+		fCustomButton =
 			toolkit.createButton(
 				form.getBody(),
 				getCustomText(),
 				SWT.CHECK);
-		customButton.setAlignment(SWT.LEFT);
-		GridData gd = new GridData (GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan =1;
-		customButton.setLayoutData(gd);
+		fCustomButton.setAlignment(SWT.LEFT);
 		
 		Label label = toolkit.createLabel(form.getBody(), null);
-		gd = new GridData (GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan =1;
-		label.setLayoutData(gd);
+		label.setLayoutData(new GridData (GridData.FILL_HORIZONTAL));
 		
-		customButton.addSelectionListener(new SelectionAdapter() {
+		fCustomButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				boolean isCustom = customButton.getSelection();
+				boolean isCustom = fCustomButton.getSelection();
 				IBuildEntry customEntry = getCustomBuildEntry();
 				setCustomEntryValue(customEntry, isCustom);
 				handleCustomCheckState(isCustom);
 			}
 		});
 		
-		runtimeSection = new RuntimeInfoSection(this, form.getBody());
+		fRuntimeSection = new RuntimeInfoSection(this, form.getBody());
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		fRuntimeSection.getSection().setLayoutData(gd);
+		
+		fBuildEESection = new BuildExecutionEnvironmentSection(this, form.getBody());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		runtimeSection.getSection().setLayoutData(gd);
-		
-		binSection = new BinSection(this, form.getBody());
-		gd = new GridData(GridData.FILL_BOTH);
-		binSection.getSection().setLayoutData(gd);
+		fBuildEESection.getSection().setLayoutData(gd);
 
-		srcSection = new SrcSection(this, form.getBody());
-		gd = new GridData(GridData.FILL_BOTH);
-		srcSection.getSection().setLayoutData(gd);
+		fBinSection = new BinSection(this, form.getBody());
+		fBinSection.getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		classpathSection = new BuildClasspathSection(this, form.getBody());
-		gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
-		gd.horizontalSpan=2;
-		//gd.widthHint = 100;
-		//gd.heightHint = 100;
-		classpathSection.getSection().setLayoutData(gd);
+		fSrcSection = new SrcSection(this, form.getBody());
+		fSrcSection.getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		fClasspathSection = new BuildClasspathSection(this, form.getBody());
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		fClasspathSection.getSection().setLayoutData(gd);
 		
-		mform.addPart(runtimeSection);
-		mform.addPart(srcSection);
-		mform.addPart(binSection);
-		mform.addPart(classpathSection);
+		mform.addPart(fRuntimeSection);
+		mform.addPart(fSrcSection);
+		mform.addPart(fBinSection);
+		mform.addPart(fBuildEESection);
+		mform.addPart(fClasspathSection);
 
 		handleCustomCheckState(getCustomSelection());
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.BUILD_PAGE);
@@ -146,15 +144,15 @@ public class BuildPage extends PDEFormPage {
 	}
 	
 	private void handleCustomCheckState(boolean isCustom){
-		customButton.setSelection(isCustom);
+		fCustomButton.setSelection(isCustom);
 		enableAllSections(!isCustom);
 	}
 	
 	public void enableAllSections(boolean enable){
-		runtimeSection.enableSection(enable);
-		binSection.enableSection(enable);
-		srcSection.enableSection(enable);
-		classpathSection.enableSection(enable);
+		fRuntimeSection.enableSection(enable);
+		fBinSection.enableSection(enable);
+		fSrcSection.enableSection(enable);
+		fClasspathSection.enableSection(enable);
 	}
 
 	private void setCustomEntryValue(IBuildEntry customEntry, boolean isCustom){
