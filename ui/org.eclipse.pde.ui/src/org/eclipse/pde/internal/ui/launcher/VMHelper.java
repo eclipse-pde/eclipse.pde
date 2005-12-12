@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.util.NLS;
@@ -27,27 +26,6 @@ import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
 public class VMHelper {
 	
-	public static IVMInstall findMatchingJREInstall(String compliance) {
-		IVMInstallType[] installTypes = JavaRuntime.getVMInstallTypes();
-		for (int i = 0; i < installTypes.length; i++) {
-			IVMInstall[] installs = installTypes[i].getVMInstalls();
-			for (int k = 0; k < installs.length; k++) {
-				if (hasMatchingCompliance(installs[k], compliance)) {
-					return installs[k];
-				}
-			}
-		}
-		return null;
-	}
-
-	public static boolean hasMatchingCompliance(IVMInstall inst, String compliance) {
-		if (!(inst instanceof IVMInstall2))
-			return false;
-
-		String version = ((IVMInstall2) inst).getJavaVersion();
-		return version != null && compliance.compareTo(version) <= 0;
-	}
-
 	public static IVMInstall[] getAllVMInstances() {
 		ArrayList res = new ArrayList();
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();

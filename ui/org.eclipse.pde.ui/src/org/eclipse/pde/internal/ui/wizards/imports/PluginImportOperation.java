@@ -39,6 +39,8 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
@@ -57,7 +59,6 @@ import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.wizards.plugin.ClasspathComputer;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -173,11 +174,22 @@ public class PluginImportOperation extends JarImportOperation {
 		String id = model.getPluginBase().getId();
 		monitor.beginTask(NLS.bind(PDEUIMessages.ImportWizard_operation_creating2, id), 6);
 		try {
-			String jreLevel = ClasspathComputer.getCompliance(model.getBundleDescription());
-			if (jreLevel != null && VMHelper.findMatchingJREInstall(jreLevel) == null) {
-				String message = NLS.bind(PDEUIMessages.PluginImportOperation_executionEnvironment, id, jreLevel);
-				if (!queryExecutionEnvironment(message))
-					return;
+			BundleDescription desc = model.getBundleDescription();
+			if (desc != null) {
+				IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+				String[] envs = desc.getExecutionEnvironments();
+				boolean found = false; 
+				for (int i = 0; i < envs.length; i++) {
+					if (manager.getEnvironment(envs[i]) != null) {
+						found = false;
+						break;
+					}
+				}
+				if (envs.length > 0 && !found) {
+					String message = NLS.bind(PDEUIMessages.PluginImportOperation_executionEnvironment, id, envs[0]);
+					if (!queryExecutionEnvironment(message))
+						return;					
+				}
 			}
 			
 			IProject project = findProject(model.getPluginBase().getId());

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -35,6 +36,17 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 	
 	public static final String OSGI_MINIMUM_1_0 = "OSGi/Minimum-1.0"; //$NON-NLS-1$
 	public static final String OSGI_MINIMUM_1_1 = "OSGi/Minimum-1.1"; //$NON-NLS-1$
+
+	
+	public static String getCompliance(String ee) {
+		if (ee == null)
+			return null;
+		if (J2SE_1_5.equals(ee))
+			return JavaCore.VERSION_1_5;
+		if (J2SE_1_4.equals(ee) || CDC_FOUNDATION_1_1.equals(ee))
+			return JavaCore.VERSION_1_4;		
+		return JavaCore.VERSION_1_3;
+	}
 	
 	public static String[] getKnownExecutionEnvironments() {
 		return new String[] {

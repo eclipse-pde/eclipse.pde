@@ -27,7 +27,6 @@ import org.eclipse.jdt.core.IJavaModelStatus;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.build.IBuild;
@@ -35,12 +34,13 @@ import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.ExecutionEnvironmentAnalyzer;
 import org.eclipse.pde.internal.core.JavadocLocationManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.team.core.RepositoryProvider;
 
 public class ClasspathComputer {
@@ -54,13 +54,15 @@ public class ClasspathComputer {
 
 		ArrayList result = new ArrayList();
 				
+		IBuild build = getBuild(project);
+
 		// add own libraries/source
-		addSourceAndLibraries(project, model, clear, result);
+		addSourceAndLibraries(project, model, build, clear, result);
 	
-		// add JRE
-		String compliance = getCompliance(model.getBundleDescription());
-		result.add(createJREEntry(compliance));
-		setComplianceOptions(JavaCore.create(project), compliance);
+		// add JRE and set compliance options
+		String ee = getExecutionEnvironment(model.getBundleDescription(), build);	
+		result.add(createJREEntry(ee));
+		setComplianceOptions(JavaCore.create(project), ExecutionEnvironmentAnalyzer.getCompliance(ee));
 
 		// add pde container
 		result.add(createContainerEntry());
@@ -79,7 +81,7 @@ public class ClasspathComputer {
 		return (IClasspathEntry[])result.toArray(new IClasspathEntry[result.size()]);
 	}
 
-	public static void addSourceAndLibraries(IProject project, IPluginModelBase model, boolean clear, 
+	public static void addSourceAndLibraries(IProject project, IPluginModelBase model, IBuild build, boolean clear, 
 			ArrayList result) throws CoreException {
 		
 		HashSet paths = new HashSet();
@@ -96,7 +98,6 @@ public class ClasspathComputer {
 			}
 		}
 
-		IBuild build = getBuild(project);
 		IClasspathAttribute[] attrs = getClasspathAttributes(project, model);
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 		for (int i = 0; i < libraries.length; i++) {
@@ -190,6 +191,26 @@ public class ClasspathComputer {
 		return (dot != -1) ? libraryName.substring(0, dot) + "src.zip" : libraryName;	 //$NON-NLS-1$
 	}
 	
+	private static String getExecutionEnvironment(BundleDescription bundleDescription, IBuild build) {
+		String ee = null;
+		
+		// try build.properties first
+		IBuildEntry entry = build.getEntry(IBuildPropertiesConstants.PROPERTY_JRE_COMPILATION_PROFILE);
+		if (entry != null) {
+			String[] tokens = entry.getTokens();
+			if (tokens.length > 0)
+				ee = tokens[0];
+		}
+		
+		// try the Bundle-RequiredExecutionEnvironment header
+		if (ee == null && bundleDescription != null) {
+			String[] envs = bundleDescription.getExecutionEnvironments();
+			if (envs.length > 0)
+				ee = envs[0];
+		}
+		return ee;
+	}
+	
 	public static void setComplianceOptions(IJavaProject project, String compliance) {
 		Map map = project.getOptions(false);		
 		if (compliance == null) {
@@ -220,42 +241,15 @@ public class ClasspathComputer {
 			map.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_1);
 			map.put(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.IGNORE);
 			map.put(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.IGNORE);
-		} else {
-			throw new IllegalArgumentException("Unsupported compliance: " + compliance); //$NON-NLS-1$
 		}
 		project.setOptions(map);		
 	}
 	
-	public static String getCompliance(BundleDescription desc) {
-		if (desc == null)
-			return null;
-		
-		String[] env = desc.getExecutionEnvironments();
-		if (env.length == 0)
-			return null;
-		
-		double compliance = Double.MAX_VALUE;
-		for (int i = 0; i < env.length; i++) {
-			compliance = Math.min(getComplianceLevel(env[i]), compliance);
-		}
-		return Double.toString(compliance);
-	}
-	
-	private static double getComplianceLevel(String env) {
-		if ("J2SE-1.5".equals(env)) //$NON-NLS-1$
-			return Double.parseDouble(JavaCore.VERSION_1_5);
-		if ("J2SE-1.4".equals(env)) //$NON-NLS-1$
-			return Double.parseDouble(JavaCore.VERSION_1_4);
-		return Double.parseDouble(JavaCore.VERSION_1_3);
-	}
-	
-	public static IClasspathEntry createJREEntry(String compliance) {
+	public static IClasspathEntry createJREEntry(String ee) {
 		IPath path = new Path(JavaRuntime.JRE_CONTAINER);		
-		if (compliance != null && !VMHelper.hasMatchingCompliance(JavaRuntime.getDefaultVMInstall(), compliance)) {
-			IVMInstall inst = VMHelper.findMatchingJREInstall(compliance);
-			if (inst != null) {
-				path = path.append(inst.getVMInstallType().getId()).append(inst.getName());
-			}
+		if (ee != null) {
+			path = path.append(JavaRuntime.EXTENSION_POINT_EXECUTION_ENVIRONMENTS);
+			path = path.append(ee);
 		}
 		return JavaCore.newContainerEntry(path);
 	}
