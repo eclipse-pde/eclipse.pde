@@ -10,11 +10,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.osgi.framework.Version;
 
 public class SourceLocationManager implements ICoreConstants {
 	private SourceLocation[] fExtensionLocations = null;
@@ -73,7 +83,7 @@ public class SourceLocationManager implements ICoreConstants {
 	}
 
 	private IPath getRelativePath(IPluginBase pluginBase, IPath sourcePath) {
-		PluginVersionIdentifier vid = new PluginVersionIdentifier(pluginBase.getVersion());
+		Version vid = new Version(pluginBase.getVersion());
 		String pluginDir = pluginBase.getId() + "_" + vid.toString(); //$NON-NLS-1$
 		return new Path(pluginDir).append(sourcePath);
 	}
