@@ -36,10 +36,8 @@ import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.EclipseHomeInitializer;
 import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.ICoreConstants;
@@ -77,8 +75,6 @@ public class TargetPluginsTab {
 	private IPluginModelBase[] fInitialModels;
 	private IPluginModelBase[] fModels;
 	private PDEState fCurrentState;
-	private Button fIncludeFragments;
-
 	
 	class ReloadOperation implements IRunnableWithProgress {
 		private String location;
@@ -227,14 +223,6 @@ public class TargetPluginsTab {
 		gd.heightHint = 100;
 		gd.widthHint = 250;
 				
-		fIncludeFragments = new Button(container, SWT.CHECK);
-		fIncludeFragments.setText(PDEUIMessages.ExternalPluginsBlock_includeFragments); 
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		gd.verticalIndent = 5;
-		gd.horizontalIndent = 5;
-		fIncludeFragments.setLayoutData(gd);
-		fIncludeFragments.setSelection(PDECore.getDefault().getPluginPreferences().getBoolean(ICoreConstants.INCLUDE_FRAGMENTS));
 		return container;
 	}
 
@@ -331,7 +319,6 @@ public class TargetPluginsTab {
 		for (int i = 0; i < locations.length && i < 5; i++) {
 			preferences.setValue(ICoreConstants.SAVED_PLATFORM + i, locations[i]);
 		}
-		preferences.setValue(ICoreConstants.INCLUDE_FRAGMENTS, fIncludeFragments.getSelection());
 		PDECore.getDefault().savePluginPreferences();
 	}
 	
@@ -439,22 +426,11 @@ public class TargetPluginsTab {
 		}
 		
 		if (model instanceof IPluginModel) {
-			boolean addFragments = fIncludeFragments.getSelection()
-							|| ClasspathUtilCore.hasExtensibleAPI((IPlugin)model.getPluginBase());
-			if (!addFragments) {
-				IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-				for (int i = 0; i < libraries.length; i++) {
-					if (ClasspathUtilCore.containsVariables(libraries[i].getName())) {
-						addFragments = true;
-						break;
-					}
-				}
-			}
-			if (addFragments) {
-				IFragmentModel[] fragments = findFragments(models, ((IPluginModel)model).getPlugin());
-				for (int i = 0; i < fragments.length; i++) {
+			IFragmentModel[] fragments = findFragments(models, ((IPluginModel)model).getPlugin());
+			for (int i = 0; i < fragments.length; i++) {
+				String id = fragments[i].getFragment().getId();
+				if (!"org.eclipse.ui.workbench.compatibility".equals(id))
 					addPluginAndDependencies(fragments[i], selected);
-				}
 			}
 		} else {
 			IFragment fragment = ((IFragmentModel) model).getFragment();
