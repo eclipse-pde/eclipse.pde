@@ -13,15 +13,11 @@ package org.eclipse.pde.internal.core;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.jar.Attributes;
@@ -49,7 +45,6 @@ import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.osgi.service.resolver.VersionConstraint;
 import org.eclipse.osgi.service.resolver.VersionRange;
-import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
@@ -65,12 +60,13 @@ public class MinimalState {
 
 	private PluginConverter fConverter = null;
 
-	private boolean fJavaProfileChanged = false; // indicates that the java
-													// profile has changed
+	private boolean fEEListChanged = false; // indicates that the EE has changed
+											// this could be due to the system bundle changing location
+											// or initially when the ee list is first created.
 
-	private String fJavaProfile; // the currently selected java profile
+	private String[] fExecutionEnvironments; // an ordered list of known/supported execution environments
 
-	private String[] fJavaProfiles; // the list of available java profiles
+											private boolean fNoProfile;
 
 	private static final String SYSTEM_BUNDLE = "org.eclipse.osgi"; //$NON-NLS-1$
 
@@ -167,9 +163,10 @@ public class MinimalState {
 		}
 		BundleDescription desc = addBundle(manifest, bundleLocation, keepLibraries, bundleId);
 		if (desc != null && SYSTEM_BUNDLE.equals(desc.getSymbolicName())) {
-			// if this is the system bundle then reset the java profile and
-			// indicate that the javaProfile has changed
-			setJavaProfiles(bundleLocation);
+			// if this is the system bundle then 
+			// indicate that the javaProfile has changed since the new system
+			// bundle may not contain profiles for all EE's in the list
+			fEEListChanged = true;
 		}
 		return desc;
 	}
@@ -242,31 +239,38 @@ public class MinimalState {
 	}
 
 	private synchronized StateDelta internalResolveState(boolean incremental) {
-		if (fJavaProfile == null) {
-			fJavaProfile = getDefaultJavaProfile();
-			fJavaProfileChanged = true;
-		}
-		if (fJavaProfileChanged) {
+		if (fExecutionEnvironments == null && !fNoProfile)
+			setExecutionEnvironments();
+	
+		if (fEEListChanged) {
 			incremental = !fState.setPlatformProperties(getProfilePlatformProperties());
-			fJavaProfileChanged = false;
+			fEEListChanged = false;
 		}
 		return fState.resolve(incremental);
 	}
 
-	private Dictionary getProfilePlatformProperties() {
-		// get the target platform properties
-		Dictionary props = TargetPlatform.getTargetEnvironment();
-		// add the selected java profile
-		Properties profileProps = getJavaProfileProperties();
-		if (profileProps != null) {
-			String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
-			if (systemPackages != null)
-				props.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
-			String ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
-			if (ee != null)
-				props.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, ee);
+	private Dictionary[] getProfilePlatformProperties() {
+		if (fExecutionEnvironments == null || fExecutionEnvironments.length == 0)
+			return new Dictionary[] {TargetPlatform.getTargetEnvironment()};
+		
+		// add java profiles for those EE's that have a .profile file in the current system bundle
+		ArrayList result = new ArrayList(fExecutionEnvironments.length);
+		for (int i = 0; i < fExecutionEnvironments.length; i++) {
+			Properties profileProps = getJavaProfileProperties(fExecutionEnvironments[i]);
+			if (profileProps != null) {
+				Dictionary props = TargetPlatform.getTargetEnvironment();
+				String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
+				if (systemPackages != null)
+					props.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
+				String ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
+				if (ee != null)
+					props.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, ee);
+				result.add(props);
+			}
 		}
-		return props;
+		if (result.size() > 0)
+			return (Dictionary[])result.toArray(new Dictionary[result.size()]);
+		return new Dictionary[] {TargetPlatform.getTargetEnvironment()};
 	}
 
 	private File getOSGiLocation() {
@@ -275,33 +279,36 @@ public class MinimalState {
 		return (osgiBundle == null) ? null : new File(osgiBundle.getLocation());
 	}
 
-	private Properties getJavaProfileProperties() {
-		// returns the list of packages in the selected java profile
-		if (fJavaProfile == null)
-			return null;
+	private Properties getJavaProfileProperties(String ee) {
 		File location = getOSGiLocation();
 		if (location == null)
 			return null;
+		
+		String filename = ee.replace('/', '_') + ".profile"; //$NON-NLS-1$
 		InputStream is = null;
 		ZipFile zipFile = null;
 		try {
 			// find the input stream to the profile properties file
 			if (location.isDirectory()) {
-				is = new FileInputStream(new File(location, fJavaProfile));
+				File file = new File(location, filename);
+				if (file.exists())
+					is = new FileInputStream(file);
 			} else {
 				zipFile = null;
 				try {
 					zipFile = new ZipFile(location, ZipFile.OPEN_READ);
-					ZipEntry entry = zipFile.getEntry(fJavaProfile);
+					ZipEntry entry = zipFile.getEntry(filename);
 					if (entry != null)
 						is = zipFile.getInputStream(entry);
 				} catch (IOException e) {
 					// nothing to do
 				}
 			}
-			Properties profile = new Properties();
-			profile.load(is);
-			return profile;
+			if (is != null) {
+				Properties profile = new Properties();
+				profile.load(is);
+				return profile;
+			}
 		} catch (IOException e) {
 			// nothing to do
 		} finally {
@@ -318,24 +325,6 @@ public class MinimalState {
 					// nothing to do
 				}
 		}
-		return null;
-	}
-
-	public String getDefaultJavaProfile() {
-		String jreProfile = System.getProperty("pde.jreProfile"); //$NON-NLS-1$
-		if (jreProfile != null && jreProfile.length() > 0) {
-			if ("none".equals(jreProfile)) //$NON-NLS-1$ //$NON-NLS-2$
-				return null;
-			return jreProfile;
-		} 
-		
-		// if the java profiles list is not set then find the list
-		if (fJavaProfiles == null)
-			setJavaProfiles(getOSGiLocation());
-		// the javaProfiles list is sorted in descending order; return the first
-		// profile in the list (highest available profile)
-		if (fJavaProfiles != null && fJavaProfiles.length > 0)
-			return fJavaProfiles[0];
 		return null;
 	}
 
@@ -365,95 +354,20 @@ public class MinimalState {
 		fTargetMode = mode;
 	}
 
-	private void setJavaProfiles(File bundleLocation) {
-		if (bundleLocation == null)
-			return;
-		if (bundleLocation.isDirectory())
-			fJavaProfiles = getDirJavaProfiles(bundleLocation);
-		else
-			fJavaProfiles = getJarJavaProfiles(bundleLocation);
-		// if the selected java profile is set; make sure it is still available
-		if (fJavaProfile != null) {
-			if (fJavaProfiles == null)
-				fJavaProfile = null;
-			else if (Arrays.binarySearch(fJavaProfiles, fJavaProfile) < 0)
-				fJavaProfile = null;
+	private void setExecutionEnvironments() {		
+		String jreProfile = System.getProperty("pde.jreProfile"); //$NON-NLS-1$
+		if (jreProfile != null && jreProfile.length() > 0) {
+			if ("none".equals(jreProfile)) { //$NON-NLS-1$
+				fNoProfile = true;
+			} else {
+				fExecutionEnvironments = new String[] {jreProfile};	
+			}
+		} else {		
+			fExecutionEnvironments = ExecutionEnvironmentAnalyzer.getKnownExecutionEnvironments();
 		}
-		fJavaProfileChanged = true; // alway indicate the selected java profile
-									// has changed
+		fEEListChanged = true; // alway indicate the list has changed
 	}
-
-	private String[] getDirJavaProfiles(File bundleLocation) {
-		// try the profile list first
-		File profileList = new File (bundleLocation, "profile.list"); //$NON-NLS-1$
-		if (profileList.exists())
-			try {
-				return getJavaProfiles(new FileInputStream(profileList));
-			} catch (IOException e) {
-				// this should not happen because we just checked if the file exists
-			}
-		String[] profiles = bundleLocation.list(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return name.endsWith(".profile"); //$NON-NLS-1$
-			}
-		});
-		return sortProfiles(profiles);
-	}
-
-	private String[] getJarJavaProfiles(File bundleLocation) {
-		ZipFile zipFile = null;
-		ArrayList results = new ArrayList(6);
-		try {
-			zipFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
-			ZipEntry profileList = zipFile.getEntry("profile.list"); //$NON-NLS-1$
-			if (profileList != null)
-				try {
-					return getJavaProfiles(zipFile.getInputStream(profileList));
-				} catch (IOException e) {
-					// this should not happen, just incase do the default
-				}
-			
-			Enumeration entries = zipFile.entries();
-			while (entries.hasMoreElements()) {
-				String entryName = ((ZipEntry) entries.nextElement()).getName();
-				if (entryName.indexOf('/') < 0 && entryName.endsWith(".profile")) //$NON-NLS-1$
-					results.add(entryName);
-			}
-		} catch (IOException e) {
-			// nothing to do
-		} finally {
-			if (zipFile != null)
-				try {
-					zipFile.close();
-				} catch (IOException e) {
-					// nothing to do
-				}
-		}
-		return sortProfiles((String[]) results.toArray(new String[results.size()]));
-	}
-
-	private String[] getJavaProfiles(InputStream is) throws IOException {
-		Properties props = new Properties();
-		props.load(is);
-		return ManifestElement.getArrayFromList(props.getProperty("java.profiles"), ","); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
-	private String[] sortProfiles(String[] profiles) {
-		Arrays.sort(profiles, new Comparator() {
-			public int compare(Object profile1, Object profile2) {
-				// need to make sure J2SE profiles are sorted ahead of all other profiles
-				String p1 = (String) profile1;
-				String p2 = (String) profile2;
-				if (p1.startsWith("J2SE") && !p2.startsWith("J2SE")) //$NON-NLS-1$ //$NON-NLS-2$
-					return -1;
-				if (!p1.startsWith("J2SE") && p2.startsWith("J2SE")) //$NON-NLS-1$ //$NON-NLS-2$
-					return 1;
-				return -p1.compareTo(p2);
-			}
-		});
-		return profiles;
-	}
-
+	
 	public void addBundleDescription(BundleDescription toAdd) {
 		fState.addBundle(toAdd);
 	}

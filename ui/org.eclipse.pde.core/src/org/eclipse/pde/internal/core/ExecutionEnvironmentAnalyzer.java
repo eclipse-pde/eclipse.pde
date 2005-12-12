@@ -27,7 +27,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 	public static final String J2SE_1_5 = "J2SE-1.5"; //$NON-NLS-1$
 	public static final String J2SE_1_4 = "J2SE-1.4"; //$NON-NLS-1$
 	public static final String J2SE_1_3 = "J2SE-1.3"; //$NON-NLS-1$
-	public static final String JRE_1_2 = "JRE-1.2"; //$NON-NLS-1$
+	public static final String J2SE_1_2 = "J2SE-1.2"; //$NON-NLS-1$
 	public static final String JRE_1_1 = "JRE-1.1"; //$NON-NLS-1$
 	
 	public static final String CDC_FOUNDATION_1_1 = "CDC-1.1/Foundation-1.1"; //$NON-NLS-1$
@@ -35,6 +35,19 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 	
 	public static final String OSGI_MINIMUM_1_0 = "OSGi/Minimum-1.0"; //$NON-NLS-1$
 	public static final String OSGI_MINIMUM_1_1 = "OSGi/Minimum-1.1"; //$NON-NLS-1$
+	
+	public static String[] getKnownExecutionEnvironments() {
+		return new String[] {
+				JRE_1_1,
+				J2SE_1_2,
+				OSGI_MINIMUM_1_0,
+				OSGI_MINIMUM_1_1,
+				CDC_FOUNDATION_1_0,
+				J2SE_1_3,
+				CDC_FOUNDATION_1_1,
+				J2SE_1_4,
+				J2SE_1_5};
+	}
 
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor)
 			throws CoreException {
@@ -54,17 +67,17 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 			if (javaVersion.compareTo("1.4") >= 0) { //$NON-NLS-1$
 				addEnvironment(result, J2SE_1_4, javaVersion.startsWith("1.4")); //$NON-NLS-1$
 				addEnvironment(result, CDC_FOUNDATION_1_1, false); 
-				addEnvironment(result, OSGI_MINIMUM_1_1, false);
 			}
 			
 			if (javaVersion.compareTo("1.3") >= 0) { //$NON-NLS-1$
 				addEnvironment(result, J2SE_1_3, javaVersion.startsWith("1.3")); //$NON-NLS-1$
 				addEnvironment(result, CDC_FOUNDATION_1_0, false); 
+				addEnvironment(result, OSGI_MINIMUM_1_1, false);
 				addEnvironment(result, OSGI_MINIMUM_1_0, false);
 			}
 			
 			if (javaVersion.compareTo("1.2") >= 0) //$NON-NLS-1$
-				addEnvironment(result, JRE_1_2, javaVersion.startsWith("1.2")); //$NON-NLS-1$
+				addEnvironment(result, J2SE_1_2, javaVersion.startsWith("1.2")); //$NON-NLS-1$
 			
 			if (javaVersion.compareTo("1.1") >= 0)  //$NON-NLS-1$
 				addEnvironment(result, JRE_1_1, javaVersion.startsWith("1.1"));				 //$NON-NLS-1$

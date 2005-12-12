@@ -61,7 +61,7 @@
             id="JRE-1.1"
             description="%environment.description.2"/>
       <environment
-            id="JRE-1.2"
+            id="J2SE-1.2"
             description="%environment.description.3"/>
       <environment
             id="J2SE-1.3"
