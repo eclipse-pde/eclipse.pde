@@ -26,6 +26,8 @@ public interface IProduct extends IProductObject {
 	
 	String getApplication();
 	
+	String getDefiningPluginId();
+	
 	boolean useFeatures();
 	
 	IAboutInfo getAboutInfo();

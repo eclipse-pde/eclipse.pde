@@ -76,7 +76,17 @@ public class Product extends ProductObject implements IProduct {
 	public String getApplication() {
 		return fApplication;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getDefiningPluginId()
+	 */
+	public String getDefiningPluginId() {
+		if (fId == null)
+			return null;
+		int dot = fId.lastIndexOf('.');
+		return (dot != -1) ? fId.substring(0, dot) : null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setId(java.lang.String)
 	 */
