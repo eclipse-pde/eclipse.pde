@@ -66,7 +66,6 @@ public class BuildExecutionEnvironmentSection extends PDESection {
 		fCombo.createControl(client, toolkit, SWT.READ_ONLY);
 		fCombo.setItems(getExecutionEnvironments());
 		fCombo.add("", 0); //$NON-NLS-1$
-		fCombo.setText(""); //$NON-NLS-1$
 		fCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
