@@ -82,5 +82,16 @@
             class="org.eclipse.pde.internal.core.ExecutionEnvironmentAnalyzer"
             id="org.eclipse.pde.core.eeAnalyzer"/>
    </extension>
+      <extension
+            point="org.eclipse.pde.core.targetProfiles">
+         <profile
+               id="org.eclipse.pde.core.rcpWithSource"
+               name="%profile.name.0"
+               path="profiles/rcpWithSource.target"/>
+         <profile
+               id="org.eclipse.pde.core.binaryRCP"
+               name="%profile.name.1"
+               path="profiles/rcp.target"/>
+      </extension>
    
 </plugin>
