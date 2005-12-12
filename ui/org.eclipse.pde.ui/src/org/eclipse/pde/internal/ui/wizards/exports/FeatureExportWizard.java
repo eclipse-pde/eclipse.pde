@@ -67,8 +67,6 @@ public class FeatureExportWizard extends BaseExportWizard {
 		info.zipFileName = fPage1.getFileName();
 		info.targets = fPage2 == null ? null : 
 			fPage1.doMultiPlatform() ? fPage2.getTargets() : null;
-		info.javacSource = fPage1.getJavacSource();
-		info.javacTarget = fPage1.getJavacTarget();
 		info.items = ((ExportWizardPageWithTable)fPage1).getSelectedItems();
 		info.signingInfo = fPage1.useJARFormat() ? fPage3.getSigningInfo() : null;
 		info.jnlpInfo = fPage1.useJARFormat() ? fPage3.getJNLPInfo() : null;
@@ -101,8 +99,6 @@ public class FeatureExportWizard extends BaseExportWizard {
 			export.setAttribute("exportType", getExportOperation());  //$NON-NLS-1$
 			export.setAttribute("useJARFormat", Boolean.toString(fPage1.useJARFormat())); //$NON-NLS-1$
 			export.setAttribute("exportSource", Boolean.toString(fPage1.doExportSource())); //$NON-NLS-1$
-			export.setAttribute("source", fPage1.getJavacSource()); //$NON-NLS-1$
-			export.setAttribute("target", fPage1.getJavacTarget()); //$NON-NLS-1$
 			return doc;
 		} catch (DOMException e) {
 		} catch (FactoryConfigurationError e) {

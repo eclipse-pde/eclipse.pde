@@ -52,8 +52,6 @@ public class PluginExportWizard extends BaseExportWizard {
 		info.exportSource = fPage1.doExportSource();
 		info.destinationDirectory = fPage1.getDestination();
 		info.zipFileName = fPage1.getFileName();
-		info.javacSource = fPage1.getJavacSource();
-		info.javacTarget = fPage1.getJavacTarget();
 		info.items = ((ExportWizardPageWithTable)fPage1).getSelectedItems();
 		info.signingInfo = fPage1.useJARFormat() ? fPage2.getSigningInfo() : null;
 		
@@ -85,8 +83,6 @@ public class PluginExportWizard extends BaseExportWizard {
 			export.setAttribute("exportType", getExportOperation());  //$NON-NLS-1$
 			export.setAttribute("useJARFormat", Boolean.toString(fPage1.useJARFormat()));  //$NON-NLS-1$
 			export.setAttribute("exportSource", Boolean.toString(fPage1.doExportSource()));  //$NON-NLS-1$
-			export.setAttribute("source", fPage1.getJavacSource()); //$NON-NLS-1$
-			export.setAttribute("target", fPage1.getJavacTarget()); //$NON-NLS-1$
 			target.appendChild(export);
 			return doc;
 		} catch (DOMException e) {

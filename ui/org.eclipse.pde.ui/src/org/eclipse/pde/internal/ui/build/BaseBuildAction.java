@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.*;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.*;
@@ -196,6 +198,13 @@ public abstract class BaseBuildAction
 				properties.put(IXMLConstants.PROPERTY_JAVAC_TARGET, jProject.getOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, true)); 				
 			}
 			properties.put(IXMLConstants.PROPERTY_BOOTCLASSPATH, getBootClasspath()); 
+			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+			IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
+			for (int i = 0; i < envs.length; i++) {
+				String id = envs[i].getId();
+				if (id != null)
+					properties.put(id, BaseBuildAction.getBootClasspath(id));
+			}
 			
 			launchCopy.setAttribute(
 					IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES,
@@ -221,8 +230,39 @@ public abstract class BaseBuildAction
 	}
 	
 	public static String getBootClasspath() {
+		return getBootClasspath(JavaRuntime.getDefaultVMInstall());
+	}
+
+	public static String getBootClasspath(String environmentID) {
+		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+		IExecutionEnvironment environment = manager.getEnvironment(environmentID);
+		IVMInstall vm = null;
+		if (environment != null) {
+			vm = environment.getDefaultVM();
+			if (vm == null) {
+				IVMInstall[] installs = environment.getCompatibleVMs();
+				// take the first strictly compatible vm if there is no default
+				for (int i = 0; i < installs.length; i++) {
+					IVMInstall install = installs[i];
+					if (environment.isStrictlyCompatible(install)) {
+						vm = install;
+						break;
+					}
+				}
+				// use the first vm failing that
+				if (vm == null && installs.length > 0) {
+					vm = installs[0];
+				}
+			}
+		}
+		if (vm == null)
+			vm = JavaRuntime.getDefaultVMInstall();
+		return getBootClasspath(vm);
+	}
+
+	public static String getBootClasspath(IVMInstall install) {
 		StringBuffer buffer = new StringBuffer();
-		LibraryLocation[] locations = JavaRuntime.getLibraryLocations(JavaRuntime.getDefaultVMInstall());
+		LibraryLocation[] locations = JavaRuntime.getLibraryLocations(install);
 		for (int i = 0; i < locations.length; i++) {
 			buffer.append(locations[i].getSystemLibraryPath().toOSString());
 			if (i < locations.length - 1)
