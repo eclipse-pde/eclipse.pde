@@ -19,7 +19,6 @@ public interface ICoreConstants {
 	String VALUE_USE_THIS = "useThis"; //$NON-NLS-1$
 	String VALUE_USE_OTHER = "useOther"; //$NON-NLS-1$
 	String CHECKED_PLUGINS = "checkedPlugins"; //$NON-NLS-1$
-	String INCLUDE_FRAGMENTS = "includeFragments"; //$NON-NLS-1$
 	String VALUE_SAVED_NONE = "[savedNone]"; //$NON-NLS-1$
 	String VALUE_SAVED_ALL = "[savedAll]"; //$NON-NLS-1$
 	String VALUE_SAVED_SOME = "savedSome"; //$NON-NLS-1$

@@ -429,7 +429,7 @@ public class TargetPluginsTab {
 			IFragmentModel[] fragments = findFragments(models, ((IPluginModel)model).getPlugin());
 			for (int i = 0; i < fragments.length; i++) {
 				String id = fragments[i].getFragment().getId();
-				if (!"org.eclipse.ui.workbench.compatibility".equals(id))
+				if (!"org.eclipse.ui.workbench.compatibility".equals(id)) //$NON-NLS-1$
 					addPluginAndDependencies(fragments[i], selected);
 			}
 		} else {
