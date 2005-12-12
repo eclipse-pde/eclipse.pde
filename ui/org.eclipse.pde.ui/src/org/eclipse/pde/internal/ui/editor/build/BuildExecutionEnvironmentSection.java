@@ -105,6 +105,9 @@ public class BuildExecutionEnvironmentSection extends PDESection {
 				PDEPreferencesUtil.showPreferencePage(new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}); //$NON-NLS-1$
 			}
 		});
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent = 20;
+		link.setLayoutData(gd);
 		
 		toolkit.paintBordersFor(client);
 
