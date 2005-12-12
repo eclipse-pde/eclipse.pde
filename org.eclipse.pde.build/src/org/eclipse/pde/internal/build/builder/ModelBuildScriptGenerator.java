@@ -352,14 +352,14 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateGatherLogTarget() throws CoreException {
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_LOGS, TARGET_INIT, PROPERTY_DESTINATION_TEMP_FOLDER, null, null);
+		IPath baseDestination = new Path(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
+		baseDestination = baseDestination.append(fullName);
 		Map params = null;
 		if (customBuildCallbacks != null) {
 			params = new HashMap(1);
-			params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
+			params.put(PROPERTY_DESTINATION_TEMP_FOLDER, baseDestination.toString());
 			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_PRE + TARGET_GATHER_LOGS, null, null, params);
 		}
-		IPath baseDestination = new Path(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
-		baseDestination = baseDestination.append(fullName);
 		List destinations = new ArrayList(5);
 		Properties properties = getBuildProperties();
 		CompiledEntry[] availableJars = extractEntriesToCompile(properties);
@@ -401,14 +401,14 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION_TEMP_FOLDER, null, null);
 
+		IPath baseDestination = new Path(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
+		baseDestination = baseDestination.append(fullName);
 		Map params = null;
 		if (customBuildCallbacks != null) {
 			params = new HashMap(1);
-			params.put(PROPERTY_TARGET_FOLDER, Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
+			params.put(PROPERTY_TARGET_FOLDER, baseDestination.toString());
 			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_PRE + TARGET_GATHER_SOURCES, null, null, params);
 		}
-		IPath baseDestination = new Path(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
-		baseDestination = baseDestination.append(fullName);
 		List destinations = new ArrayList(5);
 		Properties properties = getBuildProperties();
 		CompiledEntry[] availableJars = extractEntriesToCompile(properties);
