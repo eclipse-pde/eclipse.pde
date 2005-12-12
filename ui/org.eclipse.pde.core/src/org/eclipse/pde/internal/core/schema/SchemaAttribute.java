@@ -99,7 +99,7 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	}
 	
 	public void setTranslatableProperty(boolean translatable) {
-		if (getKind() == STRING && type.getName().equals("string")) { //$NON-NLS-1$
+		if (getKind() == STRING && "string".equals(type.getName())) { //$NON-NLS-1$
 			boolean oldValue = fTranslatable;
 			fTranslatable = translatable;
 			getSchema().fireModelObjectChanged(this, P_TRANSLATABLE,
