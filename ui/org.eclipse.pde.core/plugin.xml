@@ -87,11 +87,11 @@
          <profile
                id="org.eclipse.pde.core.rcpWithSource"
                name="%profile.name.0"
-               path="profiles/rcpWithSource.target"/>
+               path="targets/rcpWithSource.target"/>
          <profile
                id="org.eclipse.pde.core.binaryRCP"
                name="%profile.name.1"
-               path="profiles/rcp.target"/>
+               path="targets/rcp.target"/>
       </extension>
    
 </plugin>
