@@ -486,7 +486,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 					if (!children[i].isDirectory()) {
 						String filename = children[i].getName();
 						if (filename.equals("build.xml") //$NON-NLS-1$
-								|| (filename.startsWith("javaCompiler.") && filename.endsWith(".args")) //$NON-NLS-1$
+								|| (filename.startsWith("javaCompiler.") && filename.endsWith(".args")) //$NON-NLS-1$ //$NON-NLS-2$
 								|| (filename.startsWith("assemble.") && filename.endsWith(".xml")) //$NON-NLS-1$ //$NON-NLS-2$
 								|| (filename.startsWith("package.") && filename.endsWith(".xml")) //$NON-NLS-1$ //$NON-NLS-2$
 								|| filename.equals(FEATURE_POST_PROCESSING)
