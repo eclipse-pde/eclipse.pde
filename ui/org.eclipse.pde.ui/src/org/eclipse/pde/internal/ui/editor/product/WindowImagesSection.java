@@ -82,14 +82,15 @@ public class WindowImagesSection extends PDESection {
 					handleBrowse(entry);
 				}
 				public void linkActivated(HyperlinkEvent e) {
-					EditorUtilities.openImage(fImages[index].getValue(), getProduct());
+					EditorUtilities.openImage(fImages[index].getValue(), getProduct().getDefiningPluginId());
 				}
 			});
 			fImages[index].setEditable(isEditable());
 			fImages[index].setValidator(new AbstractFormValidator(this) {
 				public boolean inputValidates() {
 					return EditorUtilities.isValidImage(fImages[index],
-							getProduct(), EditorUtilities.F_ICON_DIMENSIONS[index],
+							getProduct().getDefiningPluginId(),
+							EditorUtilities.F_ICON_DIMENSIONS[index],
 							EditorUtilities.F_EXACTIMAGE);
 				}
 			});

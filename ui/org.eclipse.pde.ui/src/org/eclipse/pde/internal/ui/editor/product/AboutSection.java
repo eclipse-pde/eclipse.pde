@@ -73,14 +73,15 @@ public class AboutSection extends PDESection {
 				handleBrowse();
 			}
 			public void linkActivated(HyperlinkEvent e) {
-				EditorUtilities.openImage(fImageEntry.getValue(), getProduct());
+				EditorUtilities.openImage(fImageEntry.getValue(), getProduct().getDefiningPluginId());
 			}
 		});
 		fImageEntry.setEditable(isEditable());
 		fImageEntry.setValidator(new AbstractFormValidator(this) {
 			public boolean inputValidates() {
 				return EditorUtilities.isValidImage(fImageEntry,
-						getProduct(), new int[] {500, 330, 250, 330},
+						getProduct().getDefiningPluginId(),
+						new int[] {500, 330, 250, 330},
 						EditorUtilities.F_MAXIMAGE);
 			}
 		});

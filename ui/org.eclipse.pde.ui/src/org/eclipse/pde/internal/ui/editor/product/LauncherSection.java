@@ -219,7 +219,8 @@ public class LauncherSection extends PDESection {
 			ientry.setValidator(new AbstractFormValidator(this) {
 				public boolean inputValidates() {
 					return EditorUtilities.isValidImage(ientry,
-							getProduct(), EditorUtilities.F_ICON_DIMENSIONS[index],
+							getProduct().getDefiningPluginId(),
+							EditorUtilities.F_ICON_DIMENSIONS[index],
 							EditorUtilities.F_EXACTIMAGE);
 				}
 			});
@@ -243,8 +244,8 @@ public class LauncherSection extends PDESection {
 		ientry.setValidator(new AbstractFormValidator(this) {
 			public boolean inputValidates() {
 				return EditorUtilities.isValidImage(ientry,
-						getProduct(), new int[0],
-						EditorUtilities.F_ICOIMAGE);
+						getProduct().getDefiningPluginId(),
+						new int[0], EditorUtilities.F_ICOIMAGE);
 			}
 		});
 		fIcons.add(ientry); 

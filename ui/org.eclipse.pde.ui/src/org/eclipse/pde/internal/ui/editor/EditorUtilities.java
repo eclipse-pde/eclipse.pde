@@ -1,5 +1,11 @@
 package org.eclipse.pde.internal.ui.editor;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -11,7 +17,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
@@ -52,42 +58,46 @@ public class EditorUtilities {
 	 * dimensions[2] = width2
 	 * dimensions[3] = height2
 	 */
-	public static boolean isValidImage(IEditorValidationProvider provider, IProduct product, int[] dimensions, int checkType) {
+	public static boolean isValidImage(IEditorValidationProvider provider, String definingPluginId, int[] dimensions, int checkType) {
 		String imagePath = provider.getProviderValue();
 		String message = null;
 		int severity = -1;
 		if (imagePath.length() == 0) {// ignore empty strings
 			return true;
 		}
-		IResource resource = getImageResource(provider.getProviderValue(), false, product);
-		if (resource != null && resource instanceof IFile) {
-			try {
-				ImageLoader loader = new ImageLoader();
-				ImageData[] idata = loader.load(((IFile)resource).getLocation().toString());
-				if (idata.length == 0) {
-					message = NLS.bind(PDEUIMessages.EditorUtilities_noImageData, imagePath);
-				} else {
-					MessageSeverity ms = null;
-					switch (checkType) {
-					case F_EXACTIMAGE:
-						ms = getMS_exactImageSize(idata[0], dimensions);
-						break;
-					case F_MAXIMAGE:
-						ms = getMS_maxImageSize(idata[0], dimensions);
-						break;
-					case F_ICOIMAGE:
-						ms = getMS_icoImage(idata);
-					}
-					if (ms != null) {
-						message = ms.getMessage();
-						severity = ms.getSeverity();
-					}
+		IPath path = getFullPath(new Path(imagePath), definingPluginId);
+		try {
+			URL url = new URL(path.toString());
+			ImageLoader loader = new ImageLoader();
+			InputStream stream = url.openStream();
+			ImageData[] idata = loader.load(stream);
+			stream.close();
+			if (idata.length == 0) {
+				message = NLS.bind(PDEUIMessages.EditorUtilities_noImageData, imagePath);
+			} else {
+				MessageSeverity ms = null;
+				switch (checkType) {
+				case F_EXACTIMAGE:
+					ms = getMS_exactImageSize(idata[0], dimensions);
+					break;
+				case F_MAXIMAGE:
+					ms = getMS_maxImageSize(idata[0], dimensions);
+					break;
+				case F_ICOIMAGE:
+					ms = getMS_icoImage(idata);
 				}
-			} catch (SWTException e) {
-				message = PDEUIMessages.EditorUtilities_pathNotValidImage;
-			}	
-		} else
+				if (ms != null) {
+					message = ms.getMessage();
+					severity = ms.getSeverity();
+				}
+			}
+		} catch (SWTException e) {
+			message = PDEUIMessages.EditorUtilities_pathNotValidImage;
+		} catch (MalformedURLException e) {
 			message = PDEUIMessages.EditorUtilities_invalidFilePath;
+		} catch (IOException e) {
+			message = PDEUIMessages.EditorUtilities_invalidFilePath;
+		}	
 		
 		if (message != null) {
 			String fieldName = null;
@@ -147,25 +157,28 @@ public class EditorUtilities {
 		return width + " x " + height; //$NON-NLS-1$
 	}
 	
-	private static IPath getFullPath(IPath path, IProduct product) {
-		String productId = product.getId();
-		int dot = productId.lastIndexOf('.');
-		String pluginId = (dot != -1) ? productId.substring(0, dot) : ""; //$NON-NLS-1$
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginId);
-		if (model != null && model.getUnderlyingResource() != null) {
+	private static IPath getFullPath(IPath path, String definingPluginId) {
+		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
+		IResource resource = root.findMember(path);
+		if (resource != null)
+			return new Path("file:" + resource.getLocation().toString());
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(definingPluginId);
+		if (model != null && model.getInstallLocation() != null) {
 			IPath newPath = new Path(model.getInstallLocation()).append(path);
-			IContainer container = PDEPlugin.getWorkspace().getRoot().getContainerForLocation(newPath);
-			if (container != null) {
+			IContainer container = root.getContainerForLocation(newPath);
+			if (container != null)
 				return container.getFullPath();
-			}
+			File file = new File(model.getInstallLocation());
+			if (file.isFile() && CoreUtility.jarContainsResource(file, path.toString(), false))
+				return new Path("jar:file:" + file.getAbsolutePath() + "!/" + path.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			return new Path("file:" + newPath.toString());
 		}
 		return path;
 	}
 	
-	private static IResource getImageResource(String value, boolean showWarning, IProduct product) {
+	private static IResource getImageResource(String value, boolean showWarning, String definingPluginId) {
 		if (value == null)
 			return null;
-		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 		IPath path = new Path(value);
 		if (path.isEmpty()){
 			if (showWarning)
@@ -173,13 +186,14 @@ public class EditorUtilities {
 			return null;
 		}
 		if (!path.isAbsolute()) {
-			path = EditorUtilities.getFullPath(path, product);
+			path = getFullPath(path, definingPluginId);
 		}
+		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 		return root.findMember(path);
 	}
 	
-	public static void openImage(String value, IProduct product) {
-		IResource resource = EditorUtilities.getImageResource(value, true, product);
+	public static void openImage(String value, String definingPluginId) {
+		IResource resource = getImageResource(value, true, definingPluginId);
 		try {
 			if (resource != null && resource instanceof IFile)
 				IDE.openEditor(PDEPlugin.getActivePage(), (IFile)resource, true);
