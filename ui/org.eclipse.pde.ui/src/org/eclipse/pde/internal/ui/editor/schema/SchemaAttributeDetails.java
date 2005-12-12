@@ -45,6 +45,7 @@ import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -52,6 +53,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IActionBars;
@@ -97,6 +99,12 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 	private Label fTypeLabel;
 	private Label fUseLabel;
 	private Label fDepLabel;
+	private Composite fBooleanTypeComp;
+	private Composite fStringTypeComp;
+	private Composite fJavaTypeComp;
+	private Composite fResourceTypeComp;
+	private Composite fNotebook;
+	private StackLayout fNotebookLayout;
 	
 	public SchemaAttributeDetails(ISchemaAttribute attribute, ElementSection section) {
 		super(section, false);
@@ -104,7 +112,6 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 	}
 
 	class SchemaAttributeContentProvider extends DefaultTableProvider {
-		
 		public Object[] getElements(Object inputElement) {
 			ISchemaSimpleType type = fAttribute.getType();
 			ISchemaRestriction restriction = type.getRestriction();
@@ -136,22 +143,62 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		fTypeLabel.setForeground(foreground);
 		fType = createComboPart(parent, toolkit, TYPES, 2);
 		
-		fTransLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_translatable);
+		fNotebook = toolkit.createComposite(parent);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 3;
+		fNotebook.setLayoutData(gd);
+		fNotebook.setLayout(new GridLayout());
+		fNotebookLayout = new StackLayout();
+		fNotebook.setLayout(fNotebookLayout);
+		
+		fBooleanTypeComp = createEmptyComposite(fNotebook, toolkit);
+		fStringTypeComp = createStringTypeComp(fNotebook, toolkit, foreground);
+		fJavaTypeComp = createJavaTypeComp(fNotebook, toolkit, foreground);
+		fResourceTypeComp = createEmptyComposite(fNotebook, toolkit);
+		
+		toolkit.paintBordersFor(parent);
+		toolkit.paintBordersFor(fNotebook);
+		toolkit.paintBordersFor(fJavaTypeComp);
+		toolkit.paintBordersFor(fStringTypeComp);
+		setText(PDEUIMessages.SchemaAttributeDetails_title);
+		setDecription(NLS.bind(PDEUIMessages.SchemaAttributeDetails_description, fAttribute.getName()));
+	}
+
+	private Composite createEmptyComposite(Composite parent, FormToolkit toolkit) {
+		Composite comp = toolkit.createComposite(parent);
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridLayout layout = new GridLayout(3, false);
+		layout.marginHeight = 2;
+		layout.marginWidth = 0;
+		comp.setLayout(layout);
+		return comp;
+	}
+
+	private Composite createJavaTypeComp(Composite parent, FormToolkit toolkit, Color foreground) {
+		Composite comp = createEmptyComposite(parent, toolkit);
+		fClassEntry = new FormEntry(comp, toolkit, PDEUIMessages.SchemaAttributeDetails_extends, PDEUIMessages.SchemaAttributeDetails_browseButton, true, 13);
+		fInterfaceEntry = new FormEntry(comp, toolkit, PDEUIMessages.SchemaAttributeDetails_implements, PDEUIMessages.SchemaAttributeDetails_browseButton, true, 13);
+		return comp;
+	}
+
+	private Composite createStringTypeComp(Composite parent, FormToolkit toolkit, Color foreground) {
+		Composite comp = createEmptyComposite(parent, toolkit);
+		fTransLabel = toolkit.createLabel(comp, PDEUIMessages.SchemaDetails_translatable);
 		fTransLabel.setForeground(foreground);
 		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-		gd.horizontalIndent = 6;
+		gd.horizontalIndent = 11;
 		gd.verticalIndent = 2;
 		fTransLabel.setLayoutData(gd);
-		fTranslatable = createComboPart(parent, toolkit, BOOLS, 2);
+		fTranslatable = createComboPart(comp, toolkit, BOOLS, 2);
 		
-		fResLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaAttributeDetails_restrictions);
+		fResLabel = toolkit.createLabel(comp, PDEUIMessages.SchemaAttributeDetails_restrictions);
 		fResLabel.setForeground(foreground);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-		gd.horizontalIndent = 6;
+		gd.horizontalIndent = 11;
 		gd.verticalIndent = 2;
 		fResLabel.setLayoutData(gd);
 
-		Composite tableComp = toolkit.createComposite(parent);
+		Composite tableComp = toolkit.createComposite(comp);
 		GridLayout layout = new GridLayout(); layout.marginHeight = layout.marginWidth = 0;
 		tableComp.setLayout(layout);
 		tableComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -165,7 +212,7 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		fRestrictionsTable.setLabelProvider(new LabelProvider());
 		fRestrictionsTable.setInput(new Object());
 		
-		Composite resButtonComp = toolkit.createComposite(parent);
+		Composite resButtonComp = toolkit.createComposite(comp);
 		layout = new GridLayout(); layout.marginHeight = layout.marginWidth = 0;
 		resButtonComp.setLayout(layout);
 		resButtonComp.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
@@ -173,14 +220,9 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		fRemoveRestriction = toolkit.createButton(resButtonComp, PDEUIMessages.SchemaAttributeDetails_removeRestButton, SWT.NONE);
 		fAddRestriction.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fRemoveRestriction.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		fClassEntry = new FormEntry(parent, toolkit, PDEUIMessages.SchemaAttributeDetails_extends, PDEUIMessages.SchemaAttributeDetails_browseButton, true, 6);
-		fInterfaceEntry = new FormEntry(parent, toolkit, PDEUIMessages.SchemaAttributeDetails_implements, PDEUIMessages.SchemaAttributeDetails_browseButton, true, 6);
-		
-		setText(PDEUIMessages.SchemaAttributeDetails_title);
-		setDecription(NLS.bind(PDEUIMessages.SchemaAttributeDetails_description, fAttribute.getName()));
+		return comp;
 	}
-
+	
 	public void updateFields() {
 		if (fAttribute == null)
 			return;
@@ -213,7 +255,14 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 			}
 		}
 		boolean editable = isEditableElement();
-		updateParts(isStringType && kind == IMetaAttribute.STRING, kind == IMetaAttribute.JAVA, editable);
+		updateTabSelection(fType.getSelectionIndex());
+		fTranslatable.getControl().setEnabled(editable);
+		fTransLabel.setEnabled(editable);
+		fResLabel.setEnabled(editable);
+		fRestrictionsTable.getControl().setEnabled(editable);
+		fAddRestriction.setEnabled(editable);
+		fRemoveRestriction.setEnabled(
+				!fRestrictionsTable.getSelection().isEmpty() && editable);
 		fValue.setEditable(editable && fAttribute.getUse() == 2);
 		fName.setEditable(editable);
 		fDeprecated.setEnabled(editable);
@@ -264,9 +313,7 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 						&& ((SchemaSimpleType) type).getRestriction() != null) {
 					((SchemaSimpleType) type).setRestriction(null);
 				}
-				updateParts(kind == IMetaAttribute.STRING,
-						kind == IMetaAttribute.JAVA,
-						fAttribute.getSchema().isEditable());
+				updateTabSelection(fType.getSelectionIndex());
 			}
 		});
 		fUse.addSelectionListener(new SelectionAdapter() {
@@ -422,33 +469,33 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 			if (dialog.open() == SelectionDialog.OK) {
 				IType type = (IType) dialog.getResult()[0];
 				entry.setValue(type.getFullyQualifiedName('$'));
+				entry.commit();
 			}
 		} catch (CoreException e) {
 		}
 	}
-	
-	private void updateParts(boolean isStringKind, boolean isJavaKind, boolean editable) {
-		fTranslatable.getControl().setVisible(isStringKind || isJavaKind);
-		fTransLabel.setVisible(isStringKind || isJavaKind);
-		fResLabel.setVisible(isStringKind || isJavaKind);
-		fRestrictionsTable.getControl().setVisible(isStringKind || isJavaKind);
-		fAddRestriction.setVisible(isStringKind || isJavaKind);
-		fRemoveRestriction.setVisible(isStringKind || isJavaKind);
-		fInterfaceEntry.setVisible(isJavaKind);
-		fClassEntry.setVisible(isJavaKind);
-		fTranslatable.getControl().setEnabled(isStringKind && editable);
-		fTransLabel.setEnabled(isStringKind && editable);
-		fResLabel.setEnabled(isStringKind && editable);
-		fRestrictionsTable.getControl().setEnabled(isStringKind && editable);
-		fAddRestriction.setEnabled(isStringKind && editable);
-		fRemoveRestriction.setEnabled(isStringKind 
-				&& !fRestrictionsTable.getSelection().isEmpty()
-				 && editable);
-		fInterfaceEntry.setEditable(isJavaKind && editable);
-		fClassEntry.setEditable(isJavaKind && editable);
-	}
 
 	public boolean isEditableElement() {
 		return fAttribute.getSchema().isEditable();
+	}
+	
+	private void updateTabSelection(int kind) {
+		Control oldPage = fNotebookLayout.topControl;
+		switch (kind) {
+		case 0:
+			fNotebookLayout.topControl = fBooleanTypeComp;
+			break;
+		case 1:
+			fNotebookLayout.topControl = fStringTypeComp;
+			break;
+		case 2:
+			fNotebookLayout.topControl = fJavaTypeComp;
+			break;
+		case 3:
+			fNotebookLayout.topControl = fResourceTypeComp;
+			break;
+		}
+		if (oldPage != fNotebookLayout.topControl)
+			fNotebook.layout();
 	}
 }

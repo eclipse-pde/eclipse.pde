@@ -161,7 +161,7 @@ public class EditorUtilities {
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 		IResource resource = root.findMember(path);
 		if (resource != null)
-			return new Path("file:" + resource.getLocation().toString());
+			return new Path("file:" + resource.getLocation().toString()); //$NON-NLS-1$
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(definingPluginId);
 		if (model != null && model.getInstallLocation() != null) {
 			IPath newPath = new Path(model.getInstallLocation()).append(path);
@@ -171,7 +171,7 @@ public class EditorUtilities {
 			File file = new File(model.getInstallLocation());
 			if (file.isFile() && CoreUtility.jarContainsResource(file, path.toString(), false))
 				return new Path("jar:file:" + file.getAbsolutePath() + "!/" + path.toString()); //$NON-NLS-1$ //$NON-NLS-2$
-			return new Path("file:" + newPath.toString());
+			return new Path("file:" + newPath.toString()); //$NON-NLS-1$
 		}
 		return path;
 	}

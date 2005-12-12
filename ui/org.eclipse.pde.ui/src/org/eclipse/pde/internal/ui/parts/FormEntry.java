@@ -125,7 +125,6 @@ public class FormEntry implements IEditorValidationProvider {
 			if (fLabel instanceof Hyperlink)
 				((Hyperlink)fLabel).setUnderlined(editable);
 			fLabel.setEnabled(editable);
-			fText.setEnabled(editable);
 		}
 		if (fBrowse!=null) 
 			fBrowse.setEnabled(editable);
@@ -326,7 +325,7 @@ public class FormEntry implements IEditorValidationProvider {
 	/**
 	 * 
 	 * Sets the value of this entry that govners if it's label will be
-	 * disabled when the form entry is disabled.
+	 * disabled when the form entry is set as non-editable.
 	 * 
 	 * @param dimLabel
 	 */

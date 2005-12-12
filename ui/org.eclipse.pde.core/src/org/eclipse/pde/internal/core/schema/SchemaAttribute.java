@@ -60,7 +60,7 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	}
 
 	public String getBasedOn() {
-		return basedOn;
+		return getKind() == JAVA ? basedOn : null;
 	}
 
 	public int getKind() {
@@ -84,9 +84,11 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	}
 
 	public void setBasedOn(String newBasedOn) {
-		String oldValue = basedOn;
-		basedOn = newBasedOn;
-		getSchema().fireModelObjectChanged(this, P_BASED_ON, oldValue, basedOn);
+		if (getKind() == JAVA) {
+			String oldValue = basedOn;
+			basedOn = newBasedOn;
+			getSchema().fireModelObjectChanged(this, P_BASED_ON, oldValue, basedOn);
+		}
 	}
 
 	public void setKind(int newKind) {
@@ -97,10 +99,12 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	}
 	
 	public void setTranslatableProperty(boolean translatable) {
-		boolean oldValue = fTranslatable;
-		fTranslatable = translatable;
-		getSchema().fireModelObjectChanged(this, P_TRANSLATABLE,
-				Boolean.valueOf(oldValue), Boolean.valueOf(translatable));
+		if (getKind() == STRING && type.getName().equals("string")) { //$NON-NLS-1$
+			boolean oldValue = fTranslatable;
+			fTranslatable = translatable;
+			getSchema().fireModelObjectChanged(this, P_TRANSLATABLE,
+					Boolean.valueOf(oldValue), Boolean.valueOf(translatable));
+		}
 	}
 	
 	public void setDeprecatedProperty(boolean deprecated) {
@@ -226,7 +230,7 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaAttribute#isTranslatable()
 	 */
 	public boolean isTranslatable() {
-		return fTranslatable;
+		return fTranslatable && getKind() == STRING && type.getName().equals("string"); //$NON-NLS-1$
 	}
 
 	/*
