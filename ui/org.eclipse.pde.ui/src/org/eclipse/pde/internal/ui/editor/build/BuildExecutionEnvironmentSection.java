@@ -84,8 +84,8 @@ public class BuildExecutionEnvironmentSection extends PDESection {
 								entry.addToken(text);
 						} else {
 							entry = getBuildModel().getFactory().createEntry(IBuildPropertiesConstants.PROPERTY_JRE_COMPILATION_PROFILE);
-							entry.addToken(text);
 							getBuildModel().getBuild().add(entry);
+							entry.addToken(text);
 						}
 					}
 				} catch (CoreException e1) {
