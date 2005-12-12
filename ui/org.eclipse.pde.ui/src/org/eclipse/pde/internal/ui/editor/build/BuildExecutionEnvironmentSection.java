@@ -105,6 +105,8 @@ public class BuildExecutionEnvironmentSection extends PDESection {
 				PDEPreferencesUtil.showPreferencePage(new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}); //$NON-NLS-1$
 			}
 		});
+		
+		toolkit.paintBordersFor(client);
 
 		section.setClient(client);
 		IBuildModel model = getBuildModel();
