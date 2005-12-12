@@ -232,7 +232,8 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	private void addPathAndCheck(BundleDescription model, IPath basePath, String libraryName, Properties modelProperties, List classpath) {
 		String pluginId = null;
 		String rules = ""; //$NON-NLS-1$
-		if (model != null) {
+		//only add access rules to libraries that are not part of the current bundle
+		if (model != null && model != generator.getModel()) {
 			pluginId = model.getSymbolicName();
 
 			String packageKey = pluginId;

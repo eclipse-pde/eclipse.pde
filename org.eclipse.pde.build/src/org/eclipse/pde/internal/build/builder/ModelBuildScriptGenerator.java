@@ -922,7 +922,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		Writer writer = null;
 		try {
 			try {
-				writer = new BufferedWriter(new FileWriter(file));
+				//only create the file if we are going to write something in it
+				if (warningLevels != null || customEncodingsVal != null)
+					writer = new BufferedWriter(new FileWriter(file));
 
 				if (warningLevels != null) {
 					writer.write("-warn:" + warningLevels + "\n"); //$NON-NLS-1$//$NON-NLS-2$
@@ -948,15 +950,17 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 							}
 							//remove leading ../../..
 							path = path.replaceFirst("^(\\.\\.[\\\\/])*", ""); //$NON-NLS-1$//$NON-NLS-2$
+							if (writer == null)
+								writer = new BufferedWriter(new FileWriter(file));
 							writer.write(ADAPTER_ACCESS + path + element.getAccessRules() + "\n"); //$NON-NLS-1$
 						}
 					}
 				}
-				javac.setCompileArgsFile(Utils.getPropertyFormat(PROPERTY_BASEDIR) + "/" + file.getName()); //$NON-NLS-1$
+				if (writer != null)
+					javac.setCompileArgsFile(Utils.getPropertyFormat(PROPERTY_BASEDIR) + "/" + file.getName()); //$NON-NLS-1$
 			} finally {
 				if (writer != null)
 					writer.close();
-
 			}
 		} catch (IOException e1) {
 			//ignore
