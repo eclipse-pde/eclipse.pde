@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.2"?>
 
-<target id="org.eclipse.pde.core.binaryRCP" name="Base RCP (Binary Only)">
+<target id="org.eclipse.pde.core.rcpWithSource" name="Base RCP with Source">
 
    <location useDefault="true"/>
 
@@ -10,6 +10,7 @@
       </plugins>
       <features>
          <feature id="org.eclipse.rcp"/>
+         <feature id="org.eclipse.rcp.source"/>
       </features>
    </content>
 
