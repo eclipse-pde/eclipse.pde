@@ -12,6 +12,9 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.action.Action;
@@ -23,6 +26,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
@@ -37,13 +41,20 @@ import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.EditableTablePart;
 import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.preferences.PDEPreferencesUtil;
+import org.eclipse.pde.internal.ui.wizards.plugin.ClasspathComputer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.osgi.framework.Constants;
@@ -115,8 +126,49 @@ public class ExecutionEnvironmentSection extends TableSection {
 		fEETable = tablePart.getTableViewer();
 		fEETable.setContentProvider(new ContentProvider());
 		fEETable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		toolkit.paintBordersFor(container);
 		
+		Hyperlink link = toolkit.createHyperlink(container, PDEUIMessages.BuildExecutionEnvironmentSection_configure, SWT.NONE);
+		link.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		link.addHyperlinkListener(new IHyperlinkListener() {
+			public void linkEntered(HyperlinkEvent e) {
+			}
+			public void linkExited(HyperlinkEvent e) {
+			}
+			public void linkActivated(HyperlinkEvent e) {
+				PDEPreferencesUtil.showPreferencePage(new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}); //$NON-NLS-1$
+			}
+		});
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		link.setLayoutData(gd);
+		
+		final IProject project = getPage().getPDEEditor().getCommonProject();
+		try {
+			if (project.hasNature(JavaCore.NATURE_ID)) {
+				link = toolkit.createHyperlink(container, PDEUIMessages.ExecutionEnvironmentSection_updateClasspath, SWT.NONE);
+				link.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+				link.addHyperlinkListener(new IHyperlinkListener() {
+					public void linkEntered(HyperlinkEvent e) {
+					}
+					public void linkExited(HyperlinkEvent e) {
+					}
+					public void linkActivated(HyperlinkEvent e) {
+						try {
+							getPage().getEditor().doSave(null);
+							IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
+							if (model != null)
+								ClasspathComputer.setClasspath(project, model);
+						} catch (CoreException e1) {
+						}
+					}
+				});
+				gd = new GridData();
+				gd.horizontalSpan = 2;
+				link.setLayoutData(gd);
+			}
+		} catch (CoreException e1) {
+		}
+
 		makeActions();
         
         IBundleModel model = getBundleModel();
@@ -124,6 +176,7 @@ public class ExecutionEnvironmentSection extends TableSection {
         	fEETable.setInput(model);
         	model.addModelChangedListener(this);
         }
+		toolkit.paintBordersFor(container);
 		section.setClient(container);
 	}
 	

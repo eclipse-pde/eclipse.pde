@@ -12,7 +12,9 @@ package org.eclipse.pde.internal.ui.editor.build;
 
 import java.util.TreeSet;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
@@ -20,7 +22,9 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
@@ -28,6 +32,7 @@ import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.preferences.PDEPreferencesUtil;
+import org.eclipse.pde.internal.ui.wizards.plugin.ClasspathComputer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -56,7 +61,7 @@ public class BuildExecutionEnvironmentSection extends PDESection {
 		section.setDescription(PDEUIMessages.BuildExecutionEnvironmentSection_desc);
 		
 		Composite client = toolkit.createComposite(section);
-		client.setLayout(new GridLayout(3, false));
+		client.setLayout(new GridLayout(4, false));
 		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Label label = toolkit.createLabel(client, PDEUIMessages.BuildExecutionEnvironmentSection_label, SWT.NONE);
@@ -66,7 +71,6 @@ public class BuildExecutionEnvironmentSection extends PDESection {
 		fCombo.createControl(client, toolkit, SWT.READ_ONLY);
 		fCombo.setItems(getExecutionEnvironments());
 		fCombo.add("", 0); //$NON-NLS-1$
-		fCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				try {
@@ -104,10 +108,37 @@ public class BuildExecutionEnvironmentSection extends PDESection {
 				PDEPreferencesUtil.showPreferencePage(new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}); //$NON-NLS-1$
 			}
 		});
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_BEGINNING);
+		GridData gd = new GridData();
 		gd.horizontalIndent = 20;
 		link.setLayoutData(gd);
 		
+		final IProject project = getPage().getPDEEditor().getCommonProject();
+		try {
+			if (project.hasNature(JavaCore.NATURE_ID)) {
+				link = toolkit.createHyperlink(client, PDEUIMessages.ExecutionEnvironmentSection_updateClasspath, SWT.NONE);
+				link.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+				link.addHyperlinkListener(new IHyperlinkListener() {
+					public void linkEntered(HyperlinkEvent e) {
+					}
+					public void linkExited(HyperlinkEvent e) {
+					}
+					public void linkActivated(HyperlinkEvent e) {
+						try {
+							getPage().getEditor().doSave(null);
+							IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
+							if (model != null)
+								ClasspathComputer.setClasspath(project, model);
+						} catch (CoreException e1) {
+						}
+					}
+				});
+				 gd = new GridData();
+			     gd.horizontalIndent = 20;
+				 link.setLayoutData(gd);
+			}
+		} catch (CoreException e1) {
+		}
+
 		toolkit.paintBordersFor(client);
 
 		section.setClient(client);

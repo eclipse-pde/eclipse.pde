@@ -2469,4 +2469,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String BuildExecutionEnvironmentSection_configure;
 
+	public static String ExecutionEnvironmentSection_updateClasspath;
+
 }
