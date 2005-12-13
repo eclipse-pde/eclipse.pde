@@ -108,9 +108,6 @@ public class BuildExecutionEnvironmentSection extends PDESection {
 				PDEPreferencesUtil.showPreferencePage(new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}); //$NON-NLS-1$
 			}
 		});
-		GridData gd = new GridData();
-		gd.horizontalIndent = 20;
-		link.setLayoutData(gd);
 		
 		final IProject project = getPage().getPDEEditor().getCommonProject();
 		try {
@@ -132,8 +129,8 @@ public class BuildExecutionEnvironmentSection extends PDESection {
 						}
 					}
 				});
-				 gd = new GridData();
-			     gd.horizontalIndent = 20;
+				 GridData gd = new GridData();
+			     gd.horizontalIndent = 10;
 				 link.setLayoutData(gd);
 			}
 		} catch (CoreException e1) {
