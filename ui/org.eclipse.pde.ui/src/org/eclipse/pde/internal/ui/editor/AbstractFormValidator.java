@@ -36,7 +36,7 @@ public abstract class AbstractFormValidator implements IEditorValidator {
 		StringBuffer buff = new StringBuffer();
 		if (includePageName) {
 			buff.append("["); //$NON-NLS-1$
-			buff.append(fSection.getPage().getId());
+			buff.append(fSection.getPage().getTitle());
 			buff.append("]"); //$NON-NLS-1$
 		}
 		buff.append("["); //$NON-NLS-1$
