@@ -194,14 +194,15 @@ public class ClasspathComputer {
 	private static String getExecutionEnvironment(BundleDescription bundleDescription, IBuild build) {
 		String ee = null;
 		
-		// try build.properties first
-		IBuildEntry entry = build.getEntry(IBuildPropertiesConstants.PROPERTY_JRE_COMPILATION_PROFILE);
-		if (entry != null) {
-			String[] tokens = entry.getTokens();
-			if (tokens.length > 0)
-				ee = tokens[0];
+		if (build != null) {
+			// try build.properties first
+			IBuildEntry entry = build.getEntry(IBuildPropertiesConstants.PROPERTY_JRE_COMPILATION_PROFILE);
+			if (entry != null) {
+				String[] tokens = entry.getTokens();
+				if (tokens.length > 0)
+					ee = tokens[0];
+			}
 		}
-		
 		// try the Bundle-RequiredExecutionEnvironment header
 		if (ee == null && bundleDescription != null) {
 			String[] envs = bundleDescription.getExecutionEnvironments();
