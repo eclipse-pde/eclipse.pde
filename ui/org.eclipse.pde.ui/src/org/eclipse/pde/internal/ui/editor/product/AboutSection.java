@@ -81,7 +81,7 @@ public class AboutSection extends PDESection {
 			public boolean inputValidates() {
 				return EditorUtilities.isValidImage(fImageEntry,
 						getProduct(), new int[] {500, 330, 250, 330},
-						EditorUtilities.F_MAXIMAGE);
+						0, EditorUtilities.F_MAXIMAGE);
 			}
 		});
 		

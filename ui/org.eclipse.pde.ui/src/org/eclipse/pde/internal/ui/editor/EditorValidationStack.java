@@ -34,8 +34,7 @@ public class EditorValidationStack implements IEditorValidationStack {
 		if (top == null)
 			form.setMessage(null);
 		else {
-			boolean samePage = page == null || (
-					page.equals(top.getSection().getPage())); 
+			boolean samePage = page.equals(top.getSection().getPage()); 
 			form.setMessage(top.getMessage(!samePage), top.getSeverity());
 		}
 		return top;

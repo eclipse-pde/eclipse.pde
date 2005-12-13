@@ -36,6 +36,7 @@ public class EditorUtilities {
 	public static final int F_EXACTIMAGE = 0;
 	public static final int F_MAXIMAGE = 1;
 	public static final int F_ICOIMAGE = 2;
+	public static final int F_IMAGEDEPTH = 3;
 	
 	static class MessageSeverity {
 		String fMessage;
@@ -52,6 +53,29 @@ public class EditorUtilities {
 	}
 	
 	
+	public static ImageData[] getImageData(IEditorValidationProvider provider,
+			IProduct product) {
+		String imagePath = provider.getProviderValue();
+		try {
+			IPath path = getFullPath(new Path(imagePath), product);
+			URL url = new URL(path.toString());
+			ImageLoader loader = new ImageLoader();
+			InputStream stream = url.openStream();
+			ImageData[] idata = loader.load(stream);
+			stream.close();
+			return idata;
+		} catch (SWTException e) {
+//			message = PDEUIMessages.EditorUtilities_pathNotValidImage;
+		} catch (MalformedURLException e) {
+//			message = PDEUIMessages.EditorUtilities_invalidFilePath;
+		} catch (IOException e) {
+//			message = PDEUIMessages.EditorUtilities_invalidFilePath;
+		} catch (NullPointerException e) {
+//			message = PDEUIMessages.EditorUtilities_invalidFilePath;
+		}
+		return null;
+	}
+	
 	/*
 	 * dimensions must be atleast of size 2
 	 * dimensions[0] = width of image
@@ -59,7 +83,11 @@ public class EditorUtilities {
 	 * dimensions[2] = width2
 	 * dimensions[3] = height2
 	 */
-	public static boolean isValidImage(IEditorValidationProvider provider, IProduct product, int[] dimensions, int checkType) {
+	public static boolean isValidImage(IEditorValidationProvider provider,
+			IProduct product,
+			int[] dimensions,
+			int depth,
+			int checkType) {
 		String imagePath = provider.getProviderValue();
 		String message = null;
 		int severity = -1;
@@ -86,6 +114,12 @@ public class EditorUtilities {
 					break;
 				case F_ICOIMAGE:
 					ms = getMS_icoImage(idata);
+					break;
+				case F_IMAGEDEPTH:
+					ms = getMS_exactImageSize(idata[0], dimensions);
+					if (ms == null)
+						ms = getMS_imageDepth(idata[0], depth);
+					break;
 				}
 				if (ms != null) {
 					message = ms.getMessage();
@@ -111,6 +145,7 @@ public class EditorUtilities {
 			}
 			sb.append(" "); //$NON-NLS-1$
 			sb.append(imagePath);
+			sb.append(" "); //$NON-NLS-1$
 			sb.append(message);
 			provider.getValidator().setMessage(sb.toString());
 			if (severity >= 0)
@@ -134,8 +169,7 @@ public class EditorUtilities {
 		if (width != sizes[0] || height != sizes[1])
 			return new MessageSeverity(
 					NLS.bind(PDEUIMessages.EditorUtilities_incorrectSize,
-							getSizeString(width, height),
-							getSizeString(sizes[0], sizes[1])));
+							getSizeString(width, height)));
 		return null;
 	}
 	
@@ -147,14 +181,20 @@ public class EditorUtilities {
 		if (width > sizes[0] || height > sizes[1]) {
 			return new MessageSeverity(
 					NLS.bind(PDEUIMessages.EditorUtilities_imageTooLarge,
-							getSizeString(width, height),
-							getSizeString(sizes[0], sizes[1])));
+							getSizeString(width, height)));
 		} else if (sizes.length > 2) {
 			if (width > sizes[2] || height > sizes[3])
 				return new MessageSeverity(
 						NLS.bind(PDEUIMessages.EditorUtilities_imageTooLargeInfo, getSizeString(sizes[2], sizes[3])),
 						IMessageProvider.INFORMATION);
 		}
+		return null;
+	}
+	
+	private static MessageSeverity getMS_imageDepth(ImageData imagedata, int depth) {
+		if (imagedata.depth != depth)
+			return new MessageSeverity(
+					NLS.bind(PDEUIMessages.EditorUtilities_incorrectImageDepth, Integer.toString(imagedata.depth)));
 		return null;
 	}
 	

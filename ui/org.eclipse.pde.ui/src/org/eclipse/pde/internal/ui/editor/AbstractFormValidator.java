@@ -63,7 +63,7 @@ public abstract class AbstractFormValidator implements IEditorValidator {
 		if (revalidate) {
 			fInputValidates = inputValidates();
 			if (fInputValidates)
-				fSection.getPage().getPDEEditor().getValidationStack().top(this, null);
+				fSection.getPage().getPDEEditor().getValidationStack().top(this, fSection.getPage());
 			else
 				fSection.getPage().getPDEEditor().getValidationStack().push(this);
 		}

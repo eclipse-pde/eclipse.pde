@@ -2471,4 +2471,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExecutionEnvironmentSection_updateClasspath;
 
+	public static String EditorUtilities_incorrectImageDepth;
+
 }

@@ -91,7 +91,7 @@ public class WindowImagesSection extends PDESection {
 					return EditorUtilities.isValidImage(
 							fImages[index],	getProduct(),
 							EditorUtilities.F_ICON_DIMENSIONS[index],
-							EditorUtilities.F_EXACTIMAGE);
+							0, EditorUtilities.F_EXACTIMAGE);
 				}
 			});
 		}

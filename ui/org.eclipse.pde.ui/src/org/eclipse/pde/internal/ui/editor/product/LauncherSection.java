@@ -215,13 +215,14 @@ public class LauncherSection extends PDESection {
 
 		for (int i = 0; i < F_WIN_ICON_LABELS.length; i++) {
 			final IconEntry ientry = new IconEntry(comp, toolkit, F_WIN_ICON_LABELS[i], F_WIN_ICON_IDS[i]);
+			final int depth = i%2 == 0 ? 4 : 8;
 			final int index = i / 2; // since we have 2 images for each size
 			ientry.setValidator(new AbstractFormValidator(this) {
 				public boolean inputValidates() {
 					return EditorUtilities.isValidImage(
 							ientry, getProduct(),
 							EditorUtilities.F_ICON_DIMENSIONS[index],
-							EditorUtilities.F_EXACTIMAGE);
+							depth, EditorUtilities.F_IMAGEDEPTH);
 				}
 			});
 			fIcons.add(ientry);
@@ -245,7 +246,7 @@ public class LauncherSection extends PDESection {
 			public boolean inputValidates() {
 				return EditorUtilities.isValidImage(
 						ientry, getProduct(),
-						new int[0], EditorUtilities.F_ICOIMAGE);
+						new int[0], 0, EditorUtilities.F_ICOIMAGE);
 			}
 		});
 		fIcons.add(ientry); 
