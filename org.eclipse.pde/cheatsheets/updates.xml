@@ -31,7 +31,6 @@
 	<item
 		href="/org.eclipse.pde.doc.user/guide/pde_creating.htm"
 		title="Creating the plug-in project"
-		dialog="true"
 		skip="true">
 		<action
 			pluginId="org.eclipse.pde.ui"
@@ -50,7 +49,6 @@
 	<item
 		href="/org.eclipse.pde.doc.user/guide/pde_feature_setup.htm"
 		title="Creating the feature project"
-		dialog="true"
 		skip="true">
 		<action
 			pluginId="org.eclipse.pde.ui"
@@ -85,7 +83,6 @@
 	<item
 		href="/org.eclipse.pde.doc.user/guide/pde_site_setup.htm"
 		title="Creating an update site project"
-		dialog="true"
 		skip="true">
 		<action
 			pluginId="org.eclipse.pde.ui"
@@ -147,7 +144,6 @@
 	</item>
 	<item
 		href="/org.eclipse.pde.doc.user/guide/pde_site_previewing.htm"
-		dialog="true"
 		title="Testing the update site">
 		<action
 			pluginId="org.eclipse.ui.ide"
@@ -172,7 +168,6 @@
 	</item>
 	<item
 		href="/org.eclipse.pde.doc.user/guide/pde_site_previewing.htm"
-		dialog="true"
 		title="Installing the feature">
 		<description>
 		   	When ready to test the feature itself, install
@@ -186,7 +181,6 @@
 	</item>
 	<item
 		href="/org.eclipse.pde.doc.user/guide/pde_site_previewing.htm"
-		dialog="true"
 		title="Verifying the installation">
 		<description>
 			Upon restart, select <b>Help-&gt;Software Updates-&gt;Manage Configuration...</b>.
