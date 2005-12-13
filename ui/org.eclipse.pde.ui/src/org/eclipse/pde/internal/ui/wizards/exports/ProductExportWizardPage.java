@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.pde.internal.core.iproduct.IExportSettings;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -77,16 +76,12 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 	protected void initializeTopSection() {	
 		initializeProductCombo();
 		
-		IProduct product = getProduct();
-		String root = null;
-		if (product != null) {
-			IExportSettings info = product.getExportSettings();
-			root = info.getLastRoot();
-			
-		}
-		fProductRootText.setText(root != null ? root : "eclipse"); //$NON-NLS-1$
-		
 		IDialogSettings settings = getDialogSettings();
+		// TODO
+//		String productId = getProduct().getId();
+//		String root = null;
+//		fProductRootText.setText(root != null ? root : "eclipse"); //$NON-NLS-1$
+		
 		String value = settings.get(S_SYNC_PRODUCT);
 		fSyncButton.setSelection(value == null ? true : settings.getBoolean(S_SYNC_PRODUCT));
 	}
@@ -271,9 +266,9 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 		IProduct product = getProduct();
 		if (product == null)
 			return;
-		
-		IExportSettings info = product.getExportSettings();
-		String root = info.getLastRoot();
+		// TODO
+		IDialogSettings settings = getDialogSettings();
+		String root = null;
 		fProductRootText.setText(root != null ? root : "eclipse"); //$NON-NLS-1$
 		setDestinationSection(product);
 	}
@@ -302,24 +297,24 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 		if (product == null)
 			return;
 		
-		IExportSettings exSettings = product.getExportSettings();
-		boolean updated = false;
-		if (!fProductRootText.getText().equals(exSettings.getLastRoot())) {
-			exSettings.setLastRoot(fProductRootText.getText());
-			updated = true;
-		}
-		if (!getDestinationText().equals(exSettings.getLastDest())) {
-			exSettings.setLastDest(getDestinationText());
-			updated = true;
-		}
-		if (!exSettings.isDirectory() == isDirectoryDest()) {
-			exSettings.setIsDirectory(isDirectoryDest());
-			updated = true;
-		}
-		if (updated) {
-			product.setExportSettings(exSettings);
-			model.save();
-		}
+//		IExportSettings exSettings = product.getExportSettings();
+//		boolean updated = false;
+//		if (!fProductRootText.getText().equals(exSettings.getLastRoot())) {
+//			exSettings.setLastRoot(fProductRootText.getText());
+//			updated = true;
+//		}
+//		if (!getDestinationText().equals(exSettings.getLastDest())) {
+//			exSettings.setLastDest(getDestinationText());
+//			updated = true;
+//		}
+//		if (!exSettings.isDirectory() == isDirectoryDest()) {
+//			exSettings.setIsDirectory(isDirectoryDest());
+//			updated = true;
+//		}
+//		if (updated) {
+//			product.setExportSettings(exSettings);
+//			model.save();
+//		}
 	}
 	
 	public boolean doSync() {
@@ -353,22 +348,24 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
     }
 
     private boolean setDestinationSection(IProduct product) {
-    	IExportSettings info = product.getExportSettings();
-		String dest = info.getLastDest();
+    	// TODO
+//    	IExportSettings info = product.getExportSettings();
+//		String dest = info.getLastDest();
+		String dest = null;
 		if (dest != null) {
-			boolean useDir = info.isDirectory();
-			fDirectoryButton.setSelection(useDir);	
-			fArchiveFileButton.setSelection(!useDir);
-			toggleDestinationGroup(useDir);
-			if (useDir) {
-				if (fDirectoryCombo.indexOf(dest) == -1)
-					fDirectoryCombo.add(dest, 0);
-			} else {
-				if (fArchiveCombo.indexOf(dest) == -1)
-		    		fArchiveCombo.add(dest, 0);
-			}
-			fDirectoryCombo.setText(useDir ? dest : ""); //$NON-NLS-1$
-			fArchiveCombo.setText(useDir ? "" : dest); //$NON-NLS-1$
+//			boolean useDir = info.isDirectory();
+//			fDirectoryButton.setSelection(useDir);	
+//			fArchiveFileButton.setSelection(!useDir);
+//			toggleDestinationGroup(useDir);
+//			if (useDir) {
+//				if (fDirectoryCombo.indexOf(dest) == -1)
+//					fDirectoryCombo.add(dest, 0);
+//			} else {
+//				if (fArchiveCombo.indexOf(dest) == -1)
+//		    		fArchiveCombo.add(dest, 0);
+//			}
+//			fDirectoryCombo.setText(useDir ? dest : ""); //$NON-NLS-1$
+//			fArchiveCombo.setText(useDir ? "" : dest); //$NON-NLS-1$
 		}
 		return (dest != null);
     }

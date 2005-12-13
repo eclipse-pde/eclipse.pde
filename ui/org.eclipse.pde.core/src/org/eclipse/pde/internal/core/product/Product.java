@@ -18,7 +18,6 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
 import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
-import org.eclipse.pde.internal.core.iproduct.IExportSettings;
 import org.eclipse.pde.internal.core.iproduct.IIntroInfo;
 import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
@@ -50,7 +49,6 @@ public class Product extends ProductObject implements IProduct {
 	private ILauncherInfo fLauncherInfo;
 	private IArgumentsInfo fLauncherArgs;
 	private IIntroInfo fIntroInfo;
-	private IExportSettings fExportSettings;
 
 	public Product(IProductModel model) {
 		super(model);
@@ -173,11 +171,6 @@ public class Product extends ProductObject implements IProduct {
 			fIntroInfo.write(indent + "   ", writer); //$NON-NLS-1$
 		}
 		
-		if (fExportSettings != null) {
-			writer.println();
-			fExportSettings.write(indent + "   ", writer); //$NON-NLS-1$
-		}
-		
 		writer.println();
 		writer.println(indent + "   <plugins>"); //$NON-NLS-1$  
 		Iterator iter = fPlugins.values().iterator();
@@ -263,9 +256,6 @@ public class Product extends ProductObject implements IProduct {
 					} else if (name.equals("intro")) { //$NON-NLS-1$
 						fIntroInfo = factory.createIntroInfo();
 						fIntroInfo.parse(child);
-					} else if (name.equals("exportSettings")) { //$NON-NLS-1$
-						fExportSettings = factory.createExportSettings();
-						fExportSettings.parse(child);
 					}
 				}
 			}
@@ -420,17 +410,6 @@ public class Product extends ProductObject implements IProduct {
 
 	public void setIntroInfo(IIntroInfo introInfo) {
 		fIntroInfo = introInfo;
-	}
-
-	public IExportSettings getExportSettings() {
-		if (fExportSettings == null)
-			fExportSettings = new ExportSettings(getModel());
-		return fExportSettings;
-	}
-
-	public void setExportSettings(IExportSettings exportSettings) {
-		fExportSettings = exportSettings;
-		
 	}
 
 }

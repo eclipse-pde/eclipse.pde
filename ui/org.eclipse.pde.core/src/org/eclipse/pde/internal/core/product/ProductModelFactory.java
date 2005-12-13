@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.core.product;
 import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
 import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
-import org.eclipse.pde.internal.core.iproduct.IExportSettings;
 import org.eclipse.pde.internal.core.iproduct.IIntroInfo;
 import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
@@ -83,10 +82,6 @@ public class ProductModelFactory implements IProductModelFactory {
 
 	public IIntroInfo createIntroInfo() {
 		return new IntroInfo(fModel);
-	}
-
-	public IExportSettings createExportSettings() {
-		return new ExportSettings(fModel);
 	}
 
 }

@@ -32,6 +32,4 @@ public interface IProductModelFactory {
 	IArgumentsInfo createLauncherArguments();
 	
 	IIntroInfo createIntroInfo();
-
-	IExportSettings createExportSettings();
 }
