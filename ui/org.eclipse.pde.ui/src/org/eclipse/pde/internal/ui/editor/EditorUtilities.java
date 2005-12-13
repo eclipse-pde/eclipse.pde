@@ -8,6 +8,7 @@ import java.net.URL;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
@@ -17,10 +18,10 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
@@ -58,15 +59,15 @@ public class EditorUtilities {
 	 * dimensions[2] = width2
 	 * dimensions[3] = height2
 	 */
-	public static boolean isValidImage(IEditorValidationProvider provider, String definingPluginId, int[] dimensions, int checkType) {
+	public static boolean isValidImage(IEditorValidationProvider provider, IProduct product, int[] dimensions, int checkType) {
 		String imagePath = provider.getProviderValue();
 		String message = null;
 		int severity = -1;
 		if (imagePath.length() == 0) {// ignore empty strings
 			return true;
 		}
-		IPath path = getFullPath(new Path(imagePath), definingPluginId);
 		try {
+			IPath path = getFullPath(new Path(imagePath), product);
 			URL url = new URL(path.toString());
 			ImageLoader loader = new ImageLoader();
 			InputStream stream = url.openStream();
@@ -97,17 +98,21 @@ public class EditorUtilities {
 			message = PDEUIMessages.EditorUtilities_invalidFilePath;
 		} catch (IOException e) {
 			message = PDEUIMessages.EditorUtilities_invalidFilePath;
-		}	
+		} catch (NullPointerException e) {
+			message = PDEUIMessages.EditorUtilities_invalidFilePath;
+		}
 		
 		if (message != null) {
-			String fieldName = null;
-			if (provider instanceof FormEntry)
-				fieldName = ((FormEntry)provider).getLabelText();
-			if (fieldName != null)
-				fieldName = " " + fieldName + " " + imagePath; //$NON-NLS-1$ //$NON-NLS-2$
-			else
-				fieldName = ""; //$NON-NLS-1$
-			provider.getValidator().setMessage(fieldName + " " + message); //$NON-NLS-1$
+			StringBuffer sb = new StringBuffer();
+			String desc = provider.getProviderDescription();
+			if (desc != null) {
+				sb.append(" "); //$NON-NLS-1$
+				sb.append(desc);
+			}
+			sb.append(" "); //$NON-NLS-1$
+			sb.append(imagePath);
+			sb.append(message);
+			provider.getValidator().setMessage(sb.toString());
 			if (severity >= 0)
 				provider.getValidator().setSeverity(severity);
 		}
@@ -157,21 +162,42 @@ public class EditorUtilities {
 		return width + " x " + height; //$NON-NLS-1$
 	}
 	
-	private static IPath getFullPath(IPath path, String definingPluginId) {
+	private static IPath getFullPath(IPath path, IProduct product) throws MalformedURLException {
+		String filePath = path.toString();
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
-		IResource resource = root.findMember(path);
+		// look in root
+		if (filePath.indexOf('/') == 0) {
+			IResource resource = root.findMember(filePath);
+			if (resource != null)
+				return new Path("file:", resource.getLocation().toString()); //$NON-NLS-1$
+			return null;
+		}
+		// look in project
+		IProject project = product.getModel().getUnderlyingResource().getProject();
+		IResource resource = project.findMember(filePath);
 		if (resource != null)
-			return new Path("file:" + resource.getLocation().toString()); //$NON-NLS-1$
+			return new Path("file:", resource.getLocation().toString()); //$NON-NLS-1$
+		
+		// look in external models
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(product.getDefiningPluginId());
+		if (model != null && model.getInstallLocation() != null) {
+			File modelNode = new File(model.getInstallLocation());
+			String pluginPath = modelNode.getAbsolutePath();
+			if (modelNode.isFile() && CoreUtility.jarContainsResource(modelNode, filePath, false))
+				return new Path("jar:file:", pluginPath + "!/" + filePath); //$NON-NLS-1$ //$NON-NLS-2$
+			return new Path("file:", pluginPath + "/" + filePath); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return null;
+	}
+	
+	private static IPath getRootPath(IPath path, String definingPluginId) { 
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(definingPluginId);
 		if (model != null && model.getInstallLocation() != null) {
 			IPath newPath = new Path(model.getInstallLocation()).append(path);
+			IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 			IContainer container = root.getContainerForLocation(newPath);
 			if (container != null)
 				return container.getFullPath();
-			File file = new File(model.getInstallLocation());
-			if (file.isFile() && CoreUtility.jarContainsResource(file, path.toString(), false))
-				return new Path("jar:file:" + file.getAbsolutePath() + "!/" + path.toString()); //$NON-NLS-1$ //$NON-NLS-2$
-			return new Path("file:" + newPath.toString()); //$NON-NLS-1$
 		}
 		return path;
 	}
@@ -186,7 +212,7 @@ public class EditorUtilities {
 			return null;
 		}
 		if (!path.isAbsolute()) {
-			path = getFullPath(path, definingPluginId);
+			path = getRootPath(path, definingPluginId);
 		}
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 		return root.findMember(path);

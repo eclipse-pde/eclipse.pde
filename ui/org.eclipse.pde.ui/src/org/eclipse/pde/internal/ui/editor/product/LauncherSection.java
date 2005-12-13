@@ -218,8 +218,8 @@ public class LauncherSection extends PDESection {
 			final int index = i / 2; // since we have 2 images for each size
 			ientry.setValidator(new AbstractFormValidator(this) {
 				public boolean inputValidates() {
-					return EditorUtilities.isValidImage(ientry,
-							getProduct().getDefiningPluginId(),
+					return EditorUtilities.isValidImage(
+							ientry, getProduct(),
 							EditorUtilities.F_ICON_DIMENSIONS[index],
 							EditorUtilities.F_EXACTIMAGE);
 				}
@@ -243,8 +243,8 @@ public class LauncherSection extends PDESection {
 		final IconEntry ientry = new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_file, ILauncherInfo.P_ICO_PATH);
 		ientry.setValidator(new AbstractFormValidator(this) {
 			public boolean inputValidates() {
-				return EditorUtilities.isValidImage(ientry,
-						getProduct().getDefiningPluginId(),
+				return EditorUtilities.isValidImage(
+						ientry, getProduct(),
 						new int[0], EditorUtilities.F_ICOIMAGE);
 			}
 		});

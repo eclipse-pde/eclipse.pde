@@ -88,8 +88,8 @@ public class WindowImagesSection extends PDESection {
 			fImages[index].setEditable(isEditable());
 			fImages[index].setValidator(new AbstractFormValidator(this) {
 				public boolean inputValidates() {
-					return EditorUtilities.isValidImage(fImages[index],
-							getProduct().getDefiningPluginId(),
+					return EditorUtilities.isValidImage(
+							fImages[index],	getProduct(),
 							EditorUtilities.F_ICON_DIMENSIONS[index],
 							EditorUtilities.F_EXACTIMAGE);
 				}

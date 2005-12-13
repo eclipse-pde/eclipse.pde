@@ -80,8 +80,7 @@ public class AboutSection extends PDESection {
 		fImageEntry.setValidator(new AbstractFormValidator(this) {
 			public boolean inputValidates() {
 				return EditorUtilities.isValidImage(fImageEntry,
-						getProduct().getDefiningPluginId(),
-						new int[] {500, 330, 250, 330},
+						getProduct(), new int[] {500, 330, 250, 330},
 						EditorUtilities.F_MAXIMAGE);
 			}
 		});

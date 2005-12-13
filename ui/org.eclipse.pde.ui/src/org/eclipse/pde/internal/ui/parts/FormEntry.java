@@ -359,7 +359,7 @@ public class FormEntry implements IEditorValidationProvider {
 		return fText.getText();
 	}
 	
-	public String getLabelText() {
+	public String getProviderDescription() {
 		if (fLabel == null)
 			return null;
 		if (fLabel instanceof Label)

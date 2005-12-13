@@ -25,7 +25,13 @@ public interface IEditorValidationProvider {
 	public void validate();
 	/**
 	 * Returns the input value of the object
-	 * @return
+	 * @return value
 	 */
 	public String getProviderValue();
+	/**
+	 * Returns the details on the contents of this provider.
+	 * eg. label
+	 * @return details/information
+	 */
+	public String getProviderDescription();
 }
