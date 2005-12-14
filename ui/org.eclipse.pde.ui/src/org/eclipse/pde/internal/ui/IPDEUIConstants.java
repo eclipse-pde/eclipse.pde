@@ -34,4 +34,10 @@ public interface IPDEUIConstants {
 		new QualifiedName(PLUGIN_ID, "default-editor-page");	 //$NON-NLS-1$
 	QualifiedName DEFAULT_EDITOR_PAGE_KEY_NEW =
 		new QualifiedName(PLUGIN_ID, "default-editor-page-new");	 //$NON-NLS-1$
+	QualifiedName DEFAULT_PRODUCT_EXPORT_LOCATION =
+		new QualifiedName(PLUGIN_ID, "product-export-location");	 //$NON-NLS-1$
+	QualifiedName DEFAULT_PRODUCT_EXPORT_DIR =
+		new QualifiedName(PLUGIN_ID, "product-export-type");	 //$NON-NLS-1$
+	QualifiedName DEFAULT_PRODUCT_EXPORT_ROOT =
+		new QualifiedName(PLUGIN_ID, "product-export-root");	 //$NON-NLS-1$
 }

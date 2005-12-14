@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.FileExtensionFilter;
@@ -49,6 +50,9 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 	
 	private static final String S_PRODUCT_CONFIG = "productConfig"; //$NON-NLS-1$
 	private static final String S_SYNC_PRODUCT = "syncProduct"; //$NON-NLS-1$
+	private static final int S_EXP_ROOT = 0;
+	private static final int S_EXP_DEST = 1;
+	private static final int S_EXP_DIR = 2;
 
 	private Button fSyncButton;
 	private Text fProductRootText;
@@ -75,13 +79,11 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 	
 	protected void initializeTopSection() {	
 		initializeProductCombo();
-		
+		String[] exSettings = getExportSettings();
+		fProductRootText.setText(exSettings != null 
+				&& exSettings[S_EXP_ROOT] != null ? 
+						exSettings[S_EXP_ROOT] : "eclipse"); //$NON-NLS-1$
 		IDialogSettings settings = getDialogSettings();
-		// TODO
-//		String productId = getProduct().getId();
-//		String root = null;
-//		fProductRootText.setText(root != null ? root : "eclipse"); //$NON-NLS-1$
-		
 		String value = settings.get(S_SYNC_PRODUCT);
 		fSyncButton.setSelection(value == null ? true : settings.getBoolean(S_SYNC_PRODUCT));
 	}
@@ -266,14 +268,34 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 		IProduct product = getProduct();
 		if (product == null)
 			return;
-		// TODO
-		IDialogSettings settings = getDialogSettings();
-		String root = null;
-		fProductRootText.setText(root != null ? root : "eclipse"); //$NON-NLS-1$
+		
+		String[] exSettings = getExportSettings();
+		fProductRootText.setText(exSettings != null 
+				&& exSettings[S_EXP_ROOT] != null ? 
+						exSettings[S_EXP_ROOT] : "eclipse"); //$NON-NLS-1$
 		setDestinationSection(product);
 	}
 
 	
+	private String[] getExportSettings() {
+		IResource file = getProductFile();
+		if (file == null)
+			return null;
+		String[] settings = null;
+		try {
+			settings = new String[3];
+			settings[S_EXP_ROOT] = file.getPersistentProperty(
+					IPDEUIConstants.DEFAULT_PRODUCT_EXPORT_ROOT);
+			settings[S_EXP_DEST] = file.getPersistentProperty(
+					IPDEUIConstants.DEFAULT_PRODUCT_EXPORT_LOCATION);
+			settings[S_EXP_DIR] = file.getPersistentProperty(
+					IPDEUIConstants.DEFAULT_PRODUCT_EXPORT_DIR);
+		} catch (CoreException e) {
+			settings = null;
+		}
+		return settings;
+	}
+
 	private IProduct getProduct() {
 		WorkspaceProductModel model = getProductModel();
 		if (model == null)
@@ -290,33 +312,37 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
 		IDialogSettings settings = getDialogSettings();
 		saveCombo(settings, S_PRODUCT_CONFIG, fProductCombo);
 		settings.put(S_SYNC_PRODUCT, fSyncButton.getSelection());
-		WorkspaceProductModel model = getProductModel();
-		if (model == null)
-			return;
-		IProduct product = model.getProduct();
-		if (product == null)
-			return;
 		
-//		IExportSettings exSettings = product.getExportSettings();
-//		boolean updated = false;
-//		if (!fProductRootText.getText().equals(exSettings.getLastRoot())) {
-//			exSettings.setLastRoot(fProductRootText.getText());
-//			updated = true;
-//		}
-//		if (!getDestinationText().equals(exSettings.getLastDest())) {
-//			exSettings.setLastDest(getDestinationText());
-//			updated = true;
-//		}
-//		if (!exSettings.isDirectory() == isDirectoryDest()) {
-//			exSettings.setIsDirectory(isDirectoryDest());
-//			updated = true;
-//		}
-//		if (updated) {
-//			product.setExportSettings(exSettings);
-//			model.save();
-//		}
+		String[] exSettings = getExportSettings();
+		if (exSettings == null)
+			exSettings = new String[] {null, null, null};
+		
+		exSettings[S_EXP_ROOT] = fProductRootText.getText();
+		exSettings[S_EXP_DEST] = getDestinationText();
+		exSettings[S_EXP_DIR] = Boolean.toString(isDirectoryDest());
+		setExportSettings(exSettings);
 	}
-	
+
+	private void setExportSettings(String[] exSettings) {
+		IResource file = getProductFile();
+		if (file == null 
+				|| exSettings == null 
+				|| exSettings.length != 3)
+			return;
+		try {
+			file.setPersistentProperty(
+					IPDEUIConstants.DEFAULT_PRODUCT_EXPORT_ROOT,
+					exSettings[S_EXP_ROOT]);
+			file.setPersistentProperty(
+					IPDEUIConstants.DEFAULT_PRODUCT_EXPORT_LOCATION,
+					exSettings[S_EXP_DEST]);
+			file.setPersistentProperty(
+					IPDEUIConstants.DEFAULT_PRODUCT_EXPORT_DIR,
+					exSettings[S_EXP_DIR]);
+		} catch (CoreException e) {
+		}
+	}
+
 	public boolean doSync() {
 		return fSyncButton.getSelection();
 	}
@@ -348,24 +374,22 @@ public class ProductExportWizardPage extends BaseExportWizardPage {
     }
 
     private boolean setDestinationSection(IProduct product) {
-    	// TODO
-//    	IExportSettings info = product.getExportSettings();
-//		String dest = info.getLastDest();
-		String dest = null;
+    	String[] settings = getExportSettings();
+		String dest = settings[S_EXP_DEST];
 		if (dest != null) {
-//			boolean useDir = info.isDirectory();
-//			fDirectoryButton.setSelection(useDir);	
-//			fArchiveFileButton.setSelection(!useDir);
-//			toggleDestinationGroup(useDir);
-//			if (useDir) {
-//				if (fDirectoryCombo.indexOf(dest) == -1)
-//					fDirectoryCombo.add(dest, 0);
-//			} else {
-//				if (fArchiveCombo.indexOf(dest) == -1)
-//		    		fArchiveCombo.add(dest, 0);
-//			}
-//			fDirectoryCombo.setText(useDir ? dest : ""); //$NON-NLS-1$
-//			fArchiveCombo.setText(useDir ? "" : dest); //$NON-NLS-1$
+			boolean useDir = settings[S_EXP_DIR].equals(Boolean.toString(true));
+			fDirectoryButton.setSelection(useDir);	
+			fArchiveFileButton.setSelection(!useDir);
+			toggleDestinationGroup(useDir);
+			if (useDir) {
+				if (fDirectoryCombo.indexOf(dest) == -1)
+					fDirectoryCombo.add(dest, 0);
+			} else {
+				if (fArchiveCombo.indexOf(dest) == -1)
+		    		fArchiveCombo.add(dest, 0);
+			}
+			fDirectoryCombo.setText(useDir ? dest : ""); //$NON-NLS-1$
+			fArchiveCombo.setText(useDir ? "" : dest); //$NON-NLS-1$
 		}
 		return (dest != null);
     }
