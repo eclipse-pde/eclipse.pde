@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
@@ -44,6 +45,29 @@ public abstract class PDEFormPage extends FormPage {
 	public PDEFormPage(FormEditor editor, String id, String title, boolean newStyleHeader) {
 		this(editor, id, title);
 		fNewStyleHeader = newStyleHeader;
+	}
+	
+	public void dispose() {
+		Control c = getPartControl();
+		if (c!=null && !c.isDisposed()) {
+			Menu menu = c.getMenu();
+			if (menu!=null)
+				resetMenu(menu, c);
+		}
+		super.dispose();
+	}
+	private void resetMenu(Menu menu, Control c) {
+		if (c instanceof Composite) {
+			Composite comp = (Composite)c;
+			Control [] children = comp.getChildren();
+			for (int i=0; i<children.length; i++) {
+				resetMenu(menu, children[i]);
+			}
+		}
+		Menu cmenu = c.getMenu();
+		if (cmenu!=null && cmenu.equals(menu)) {
+			c.setMenu(null);
+		}
 	}
 	
 	protected void createFormContent(IManagedForm managedForm) {
