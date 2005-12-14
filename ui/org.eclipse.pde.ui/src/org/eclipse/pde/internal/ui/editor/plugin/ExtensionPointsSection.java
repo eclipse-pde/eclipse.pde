@@ -10,31 +10,64 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.zip.ZipFile;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.elements.*;
-import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.pde.internal.ui.search.*;
-import org.eclipse.pde.internal.ui.util.*;
-import org.eclipse.pde.internal.ui.wizards.extension.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.part.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IModelChangeProvider;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.SourceLocationManager;
+import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
+import org.eclipse.pde.internal.ui.editor.JarEntryFile;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.search.FindReferencesAction;
+import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.wizards.extension.NewExtensionPointWizard;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.part.FileEditorInput;
 
 public class ExtensionPointsSection extends TableSection {
 	private TableViewer pointTable;
@@ -172,15 +205,12 @@ public class ExtensionPointsSection extends TableSection {
 		Object object = ((IStructuredSelection) selection).getFirstElement();
 		final IPluginExtensionPoint point = (IPluginExtensionPoint) object;
 		if (point.getSchema() != null) {
-			final IEditorInput input = getPage().getEditor().getEditorInput();
-			if (input instanceof IFileEditorInput || input instanceof SystemFileEditorInput) {
-				Action openSchemaAction = new Action(PDEUIMessages.ManifestEditor_DetailExtensionPointSection_openSchema) {
-					public void run() {
-						handleOpenSchema(point);
-					}
-				};
-				manager.add(openSchemaAction);
-			}
+			Action openSchemaAction = new Action(PDEUIMessages.ManifestEditor_DetailExtensionPointSection_openSchema) {
+				public void run() {
+					handleOpenSchema(point);
+				}
+			};
+			manager.add(openSchemaAction);
 		}
 		manager.add(new Separator());
 		
@@ -258,39 +288,74 @@ public class ExtensionPointsSection extends TableSection {
 
 	private void handleOpenSchema(IPluginExtensionPoint point) {
 		String schema = point.getSchema();
-		IModel model = point.getModel();
-		IResource resource = model.getUnderlyingResource();
-		final IWorkbenchPage page = PDEPlugin.getActivePage();
-
-		final IEditorInput input;
-
-		if (resource != null) {
-			IProject project = resource.getProject();
-			IFile file = project.getFile(schema);
-			input = new FileEditorInput(file);
-		} else {
-			String location = ((IPluginModelBase) model).getInstallLocation();
-			File file = new File(location, schema);
-			if (!file.exists()) {
-				// try source location
-				SourceLocationManager manager = PDECore.getDefault()
-						.getSourceLocationManager();
-				file = manager.findSourceFile(point.getPluginBase(), new Path(
-						schema));
+		IEditorInput input = null;
+		
+		if (schema != null) {
+			input = getEditorInput(point.getPluginModel(), schema);
+			if (input == null) {
+				IPluginModelBase model = (IPluginModelBase)getPage().getPDEEditor().getAggregateModel();
+				if (model != null)
+					input = getSchemaFromSourceExtension(model.getPluginBase(), new Path(point.getSchema()));		
 			}
-			input = new SystemFileEditorInput(file);
 		}
-		BusyIndicator.showWhile(pointTable.getTable().getDisplay(),
+		
+		if (input != null) {
+			final IWorkbenchPage page = PDEPlugin.getActivePage();
+			final IEditorInput editorInput = input;
+			BusyIndicator.showWhile(pointTable.getTable().getDisplay(),
 				new Runnable() {
 					public void run() {
 						try {
-							page.openEditor(input,
-									IPDEUIConstants.SCHEMA_EDITOR_ID);
+							page.openEditor(editorInput, IPDEUIConstants.SCHEMA_EDITOR_ID);
 						} catch (PartInitException e) {
 							PDEPlugin.logException(e);
 						}
 					}
-				});
+				}
+			);
+		} else {
+			MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.ExtensionPointsSection_openSchema, PDEUIMessages.ExtensionPointsSection_schemaNotFound);
+		}
+	}
+	
+	public static IEditorInput getSchemaFromSourceExtension(IPluginBase plugin, IPath path) {
+		SourceLocationManager mgr = PDECore.getDefault().getSourceLocationManager();
+		File file = mgr.findSourceFile(plugin, path);
+		return (file != null && file.exists() && file.isFile())
+				 ? new SystemFileEditorInput(file)
+				 : null;
+	}
+	
+	private static IEditorInput getEditorInput(IPluginModelBase model, String schema) {
+		try {
+			if (model == null || schema == null)
+				return null;
+			
+			IResource resource = model.getUnderlyingResource();
+			if (resource != null) {
+				IProject project = resource.getProject();
+				IFile file = project.getFile(schema);
+				return file.exists() ? new FileEditorInput(file) : null;
+			}
+			
+			String location = model.getInstallLocation();
+			if (location == null)
+				return null;
+			
+			File file = new File(location);			
+			if (file.isDirectory()) {
+				File schemaFile = new File(file, schema);
+				if (schemaFile.exists() && schemaFile.isFile())
+					return new SystemFileEditorInput(file);
+			} else if (CoreUtility.jarContainsResource(file, schema, false)) { //$NON-NLS-1$
+				ZipFile zipFile = new ZipFile(location);
+				if (zipFile.getEntry(schema) != null) 
+					return new JarEntryEditorInput(new JarEntryFile(zipFile, schema));
+			}
+		} catch (MalformedURLException e) {
+		} catch (IOException e) {
+		}		
+		return null;
 	}
 
 	protected void doPaste(Object target, Object[] objects) {

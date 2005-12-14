@@ -2473,4 +2473,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String EditorUtilities_incorrectImageDepth;
 
+	public static String ExtensionPointsSection_openSchema;
+
+	public static String ExtensionPointsSection_schemaNotFound;
+
 }
