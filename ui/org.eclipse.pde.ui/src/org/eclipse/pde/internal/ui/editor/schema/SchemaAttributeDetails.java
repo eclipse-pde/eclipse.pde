@@ -177,7 +177,9 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 	private Composite createJavaTypeComp(Composite parent, FormToolkit toolkit, Color foreground) {
 		Composite comp = createEmptyComposite(parent, toolkit);
 		fClassEntry = new FormEntry(comp, toolkit, PDEUIMessages.SchemaAttributeDetails_extends, PDEUIMessages.SchemaAttributeDetails_browseButton, true, 13);
+		fClassEntry.setDimLabel(true);
 		fInterfaceEntry = new FormEntry(comp, toolkit, PDEUIMessages.SchemaAttributeDetails_implements, PDEUIMessages.SchemaAttributeDetails_browseButton, true, 13);
+		fInterfaceEntry.setDimLabel(true);
 		return comp;
 	}
 
@@ -271,6 +273,8 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		fTypeLabel.setEnabled(editable);
 		fUseLabel.setEnabled(editable);
 		fDepLabel.setEnabled(editable);
+		fClassEntry.setEditable(editable);
+		fInterfaceEntry.setEditable(editable);
 	}
 
 	public void hookListeners() {
@@ -423,7 +427,7 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 	private String handleLinkActivated(String value, boolean isInter) {
 		IProject project = getPage().getPDEEditor().getCommonProject();
 		try {
-			if (project.hasNature(JavaCore.NATURE_ID)) {
+			if (project != null && project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject javaProject = JavaCore.create(project);
 				IJavaElement element = javaProject.findType(value.replace('$', '.'));
 				if (element != null)
