@@ -144,7 +144,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 		
 		final IProject project = getPage().getPDEEditor().getCommonProject();
 		try {
-			if (project.hasNature(JavaCore.NATURE_ID)) {
+			if (project != null && project.hasNature(JavaCore.NATURE_ID)) {
 				link = toolkit.createHyperlink(container, PDEUIMessages.ExecutionEnvironmentSection_updateClasspath, SWT.NONE);
 				link.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
 				link.addHyperlinkListener(new IHyperlinkListener() {
