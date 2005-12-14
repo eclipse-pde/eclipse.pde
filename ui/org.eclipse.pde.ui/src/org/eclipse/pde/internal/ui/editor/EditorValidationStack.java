@@ -2,6 +2,7 @@ package org.eclipse.pde.internal.ui.editor;
 
 import java.util.Stack;
 
+import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.Form;
 
@@ -56,7 +57,8 @@ public class EditorValidationStack implements IEditorValidationStack {
 		IFormPage page = fEditor.getActivePageInstance();
 		if (page == null)
 			return null;
-		return page.getManagedForm().getForm().getForm();
+		IManagedForm mform = page.getManagedForm();
+		return mform == null ? null : mform.getForm().getForm();
 	}
 	
 	public boolean isEmpty() {
