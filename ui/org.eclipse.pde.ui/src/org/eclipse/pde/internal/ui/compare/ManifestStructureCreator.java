@@ -19,7 +19,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.text.ManifestPartitionScanner;
@@ -140,7 +139,7 @@ public class ManifestStructureCreator implements IStructureCreator {
 	}
 	private void parseManifest(ManifestNode root, IDocument doc) throws IOException {
 		int lineStart = 0;
-		int[] args= new int[2];
+		int[] args = new int[2];
 		args[0] = 0;	// here we return the line number
 		args[1] = 0;	// and here the offset of the first character of the line 
 		
@@ -189,13 +188,10 @@ public class ManifestStructureCreator implements IStructureCreator {
 		try {
 			if (line >= doc.getNumberOfLines())
 				return null;
-			IRegion region = doc.getLineInformation(line);
-			int start = region.getOffset();
-			int length = region.getLength();
-			
+			int start = doc.getLineOffset(line);
+			int length = doc.getLineLength(line);
 			try {
-				region = doc.getLineInformation(line+1);
-				args[1] = region.getOffset();
+				args[1] = doc.getLineOffset(line+1);
 			} catch (BadLocationException ex) {
 				args[1] = doc.getLength();
 			}
