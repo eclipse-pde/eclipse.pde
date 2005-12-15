@@ -166,7 +166,7 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 		if (useString != null) {
 			writer.print(" use=\"" + useString + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (value != null) {
+		if (value != null && getUse() == DEFAULT) {
 			writer.print(" value=\"" + value + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		String documentation = getWritableDescription();

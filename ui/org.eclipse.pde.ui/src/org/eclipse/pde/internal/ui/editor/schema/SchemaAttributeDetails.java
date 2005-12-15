@@ -254,7 +254,12 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		fAddRestriction.setEnabled(editable);
 		fRemoveRestriction.setEnabled(
 				!fRestrictionsTable.getSelection().isEmpty() && editable);
-		fValue.setEditable(editable && fAttribute.getUse() == 2);
+		if (fAttribute.getUse() != 2) {
+			fValue.getLabel().setEnabled(false);
+			fValue.getText().setEnabled(false);
+		} else {
+			fValue.setEditable(editable);
+		}
 		fName.setEditable(editable);
 		fDeprecated.setEnabled(editable);
 		fType.setEnabled(editable);
@@ -310,7 +315,8 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 			public void widgetSelected(SelectionEvent e) {
 				int use = fUse.getSelectionIndex();
 				fAttribute.setUse(use);
-				fValue.setEditable(use == 2);
+				fValue.getLabel().setEnabled(use == 2);
+				fValue.getText().setEnabled(use == 2);
 				if (use == 2 && fValue.getValue().length() == 0) {
 					fValue.setValue(PDEUIMessages.SchemaAttributeDetails_defaultDefaultValue);
 					fValue.getText().setSelection(0, fValue.getValue().length());
