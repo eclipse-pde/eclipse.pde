@@ -69,7 +69,7 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 
 		if (!fElement.isDeprecated()) {
 			fSuggestion.getLabel().setEnabled(false);
-			fSuggestion.getText().setEnabled(false);
+			fSuggestion.getText().setEditable(false);
 		} else {
 			fSuggestion.setEditable(isEditable());
 		}
@@ -87,7 +87,7 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 				boolean deprecated = fDeprecated.getSelectionIndex() == 0;
 				fElement.setDeprecatedProperty(deprecated);				
 				fSuggestion.getLabel().setEnabled(deprecated);
-				fSuggestion.getText().setEnabled(deprecated);			
+				fSuggestion.getText().setEditable(deprecated);			
 			}
 		});
 		fSuggestion.setFormEntryListener(new FormEntryAdapter(this) {

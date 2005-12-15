@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
-import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -92,11 +91,9 @@ public class SchemaSpecSection extends PDESection {
 	public void initialize() {
 		ISchema schema = (ISchema) getPage().getModel();
 		refresh();
-		if (!(schema instanceof IEditable)) {
-			fPluginText.getText().setEnabled(false);
-			fPointText.getText().setEnabled(false);
-			fNameText.getText().setEnabled(false);
-		}
+		fPluginText.setEditable(isEditable());
+		fPointText.setEditable(isEditable());
+		fNameText.setEditable(isEditable());
 		schema.addModelChangedListener(this);
 	}
 

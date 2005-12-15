@@ -256,7 +256,7 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 				!fRestrictionsTable.getSelection().isEmpty() && editable);
 		if (fAttribute.getUse() != 2) {
 			fValue.getLabel().setEnabled(false);
-			fValue.getText().setEnabled(false);
+			fValue.getText().setEditable(false);
 		} else {
 			fValue.setEditable(editable);
 		}
@@ -316,7 +316,7 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 				int use = fUse.getSelectionIndex();
 				fAttribute.setUse(use);
 				fValue.getLabel().setEnabled(use == 2);
-				fValue.getText().setEnabled(use == 2);
+				fValue.getText().setEditable(use == 2);
 				if (use == 2 && fValue.getValue().length() == 0) {
 					fValue.setValue(PDEUIMessages.SchemaAttributeDetails_defaultDefaultValue);
 					fValue.getText().setSelection(0, fValue.getValue().length());

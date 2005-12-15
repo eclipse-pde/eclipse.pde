@@ -181,7 +181,7 @@ public class PluginImportOperation extends JarImportOperation {
 				boolean found = false; 
 				for (int i = 0; i < envs.length; i++) {
 					if (manager.getEnvironment(envs[i]) != null) {
-						found = false;
+						found = true;
 						break;
 					}
 				}
