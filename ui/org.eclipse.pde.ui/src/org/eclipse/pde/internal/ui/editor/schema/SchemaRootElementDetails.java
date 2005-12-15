@@ -33,7 +33,6 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 	private FormEntry fName;
 	private ComboPart fDeprecated;
 	private FormEntry fSuggestion;
-	private Label fDepLabel;
 	
 	public SchemaRootElementDetails(ISchemaElement element, ElementSection section) {
 		super(section, true);
@@ -47,14 +46,12 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
 		
 		fName = new FormEntry(parent, toolkit, PDEUIMessages.SchemaDetails_name, SWT.NONE);
-		fName.setDimLabel(true);
-		
-		fDepLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
-		fDepLabel.setForeground(foreground);
+
+		Label label = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
+		label.setForeground(foreground);
 		fDeprecated = createComboPart(parent, toolkit, BOOLS, 2);
 
 		fSuggestion = new FormEntry(parent, toolkit, PDEUIMessages.SchemaRootElementDetails_replacement, null, false, 6);
-		fSuggestion.setDimLabel(true);
 		
 		setText(PDEUIMessages.SchemaElementDetails_title);
 		setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
@@ -71,7 +68,6 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		fSuggestion.setEditable(fElement.isDeprecated() && editable);
 		fName.setEditable(editable);
 		fDeprecated.setEnabled(editable);
-		fDepLabel.setEnabled(editable);
 	}
 
 	public void hookListeners() {

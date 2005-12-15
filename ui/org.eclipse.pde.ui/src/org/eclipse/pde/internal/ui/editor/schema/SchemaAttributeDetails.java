@@ -94,11 +94,6 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 	private FormEntry fInterfaceEntry;
 	private Button fAddRestriction;
 	private Button fRemoveRestriction;
-	private Label fResLabel;
-	private Label fTransLabel;
-	private Label fTypeLabel;
-	private Label fUseLabel;
-	private Label fDepLabel;
 	private Composite fBooleanTypeComp;
 	private Composite fStringTypeComp;
 	private Composite fJavaTypeComp;
@@ -126,21 +121,19 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
 		
 		fName = new FormEntry(parent, toolkit, PDEUIMessages.SchemaDetails_name, SWT.NONE);
-		fName.setDimLabel(true);
 		
-		fDepLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
-		fDepLabel.setForeground(foreground);
+		Label label = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
+		label.setForeground(foreground);
 		fDeprecated = createComboPart(parent, toolkit, BOOLS, 2);
 		
-		fUseLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaAttributeDetails_use);
-		fUseLabel.setForeground(foreground);
+		label = toolkit.createLabel(parent, PDEUIMessages.SchemaAttributeDetails_use);
+		label.setForeground(foreground);
 		fUse = createComboPart(parent, toolkit, USE, 2);
 		
 		fValue = new FormEntry(parent, toolkit, PDEUIMessages.SchemaAttributeDetails_defaultValue, null, false, 6);
-		fValue.setDimLabel(true);
 		
-		fTypeLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaAttributeDetails_type);
-		fTypeLabel.setForeground(foreground);
+		label = toolkit.createLabel(parent, PDEUIMessages.SchemaAttributeDetails_type);
+		label.setForeground(foreground);
 		fType = createComboPart(parent, toolkit, TYPES, 2);
 		
 		fNotebook = toolkit.createComposite(parent);
@@ -176,29 +169,27 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 
 	private Composite createJavaTypeComp(Composite parent, FormToolkit toolkit, Color foreground) {
 		Composite comp = createEmptyComposite(parent, toolkit);
-		fClassEntry = new FormEntry(comp, toolkit, PDEUIMessages.SchemaAttributeDetails_extends, PDEUIMessages.SchemaAttributeDetails_browseButton, true, 13);
-		fClassEntry.setDimLabel(true);
-		fInterfaceEntry = new FormEntry(comp, toolkit, PDEUIMessages.SchemaAttributeDetails_implements, PDEUIMessages.SchemaAttributeDetails_browseButton, true, 13);
-		fInterfaceEntry.setDimLabel(true);
+		fClassEntry = new FormEntry(comp, toolkit, PDEUIMessages.SchemaAttributeDetails_extends, PDEUIMessages.SchemaAttributeDetails_browseButton, isEditable(), 13);
+		fInterfaceEntry = new FormEntry(comp, toolkit, PDEUIMessages.SchemaAttributeDetails_implements, PDEUIMessages.SchemaAttributeDetails_browseButton, isEditable(), 13);
 		return comp;
 	}
 
 	private Composite createStringTypeComp(Composite parent, FormToolkit toolkit, Color foreground) {
 		Composite comp = createEmptyComposite(parent, toolkit);
-		fTransLabel = toolkit.createLabel(comp, PDEUIMessages.SchemaDetails_translatable);
-		fTransLabel.setForeground(foreground);
+		Label label = toolkit.createLabel(comp, PDEUIMessages.SchemaDetails_translatable);
+		label.setForeground(foreground);
 		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		gd.horizontalIndent = 11;
 		gd.verticalIndent = 2;
-		fTransLabel.setLayoutData(gd);
+		label.setLayoutData(gd);
 		fTranslatable = createComboPart(comp, toolkit, BOOLS, 2);
 		
-		fResLabel = toolkit.createLabel(comp, PDEUIMessages.SchemaAttributeDetails_restrictions);
-		fResLabel.setForeground(foreground);
+		label = toolkit.createLabel(comp, PDEUIMessages.SchemaAttributeDetails_restrictions);
+		label.setForeground(foreground);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		gd.horizontalIndent = 11;
 		gd.verticalIndent = 2;
-		fResLabel.setLayoutData(gd);
+		label.setLayoutData(gd);
 
 		Composite tableComp = toolkit.createComposite(comp);
 		GridLayout layout = new GridLayout(); layout.marginHeight = layout.marginWidth = 0;
@@ -259,8 +250,6 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		boolean editable = isEditableElement();
 		updateTabSelection(fType.getSelectionIndex());
 		fTranslatable.getControl().setEnabled(editable);
-		fTransLabel.setEnabled(editable);
-		fResLabel.setEnabled(editable);
 		fRestrictionsTable.getControl().setEnabled(editable);
 		fAddRestriction.setEnabled(editable);
 		fRemoveRestriction.setEnabled(
@@ -270,9 +259,6 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		fDeprecated.setEnabled(editable);
 		fType.setEnabled(editable);
 		fUse.setEnabled(editable);
-		fTypeLabel.setEnabled(editable);
-		fUseLabel.setEnabled(editable);
-		fDepLabel.setEnabled(editable);
 		fClassEntry.setEditable(editable);
 		fInterfaceEntry.setEditable(editable);
 	}

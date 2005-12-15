@@ -35,8 +35,6 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 	private FormEntry fName;
 	private ComboPart fDeprecated;
 	private ComboPart fTranslatable;
-	private Label fTransLabel;
-	private Label fDepLabel;
 	
 	public SchemaElementDetails(ISchemaElement element, ElementSection section) {
 		super(section, true);
@@ -50,18 +48,15 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
 		
 		fName = new FormEntry(parent, toolkit, PDEUIMessages.SchemaDetails_name, SWT.NONE);
-		fName.setDimLabel(true);
 		fLabelProperty = new FormEntry(parent, toolkit, PDEUIMessages.SchemaElementDetails_labelProperty, SWT.NONE);
-		fLabelProperty.setDimLabel(true);
 		fIcon = new FormEntry(parent, toolkit, PDEUIMessages.SchemaElementDetails_icon, SWT.NONE);
-		fIcon.setDimLabel(true);
 		
-		fDepLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
-		fDepLabel.setForeground(foreground);
+		Label label = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
+		label.setForeground(foreground);
 		fDeprecated = createComboPart(parent, toolkit, BOOLS, 2);
 
-		fTransLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_translatable);
-		fTransLabel.setForeground(foreground);
+		label = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_translatable);
+		label.setForeground(foreground);
 		fTranslatable = createComboPart(parent, toolkit, BOOLS, 2);
 		
 		setText(PDEUIMessages.SchemaElementDetails_title);
@@ -82,10 +77,6 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		fIcon.setEditable(editable);
 		fLabelProperty.setEditable(editable);
 		fName.setEditable(editable);
-		fDeprecated.setEnabled(editable);
-		fTranslatable.setEnabled(editable);
-		fDepLabel.setEnabled(editable);
-		fTransLabel.setEnabled(editable);
 	}
 
 	public void hookListeners() {

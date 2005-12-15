@@ -48,7 +48,6 @@ public class FormEntry implements IEditorValidationProvider {
 	private boolean fDirty;
 	boolean fIgnoreModify = false;
 	private IFormEntryListener fListener;
-	private boolean fDimLabelOnDisable;
 	private boolean fSkipValidation;
 	private IEditorValidator fValidator;
 	/**
@@ -121,11 +120,9 @@ public class FormEntry implements IEditorValidationProvider {
 		if (fValidator != null)
 			fValidator.setEnabled(editable);
 		fText.setEditable(editable);
-		if (fDimLabelOnDisable && fLabel != null) {
-			if (fLabel instanceof Hyperlink)
-				((Hyperlink)fLabel).setUnderlined(editable);
-			fLabel.setEnabled(editable);
-		}
+		if (fLabel instanceof Hyperlink)
+			((Hyperlink)fLabel).setUnderlined(editable);
+		
 		if (fBrowse!=null) 
 			fBrowse.setEnabled(editable);
 	}
@@ -320,17 +317,6 @@ public class FormEntry implements IEditorValidationProvider {
 		fSkipValidation = skipValidation;
 		setValue(value, blockNotification);
 		fSkipValidation = false;
-	}
-	
-	/**
-	 * 
-	 * Sets the value of this entry that govners if it's label will be
-	 * disabled when the form entry is set as non-editable.
-	 * 
-	 * @param dimLabel
-	 */
-	public void setDimLabel(boolean dimLabel) {
-		fDimLabelOnDisable = dimLabel;
 	}
 	
 	public void setVisible(boolean visible) {
