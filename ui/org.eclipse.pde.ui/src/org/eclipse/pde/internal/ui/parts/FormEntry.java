@@ -248,6 +248,10 @@ public class FormEntry implements IEditorValidationProvider {
 		return fText;
 	}
 	
+	public Control getLabel() {
+		return fLabel;
+	}
+	
 	/**
 	 * Returns the browse button control.
 	 * @return

@@ -64,10 +64,15 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		fDeprecated.select(fElement.isDeprecated() ? 0 : 1);
 		fSuggestion.setValue(fElement.getDeprecatedSuggestion(), true);
 		
-		boolean editable = isEditableElement();
-		fSuggestion.setEditable(fElement.isDeprecated() && editable);
-		fName.setEditable(editable);
-		fDeprecated.setEnabled(editable);
+		fName.setEditable(isEditable());
+		fDeprecated.setEnabled(isEditable());
+
+		if (!fElement.isDeprecated()) {
+			fSuggestion.getLabel().setEnabled(false);
+			fSuggestion.getText().setEnabled(false);
+		} else {
+			fSuggestion.setEditable(isEditable());
+		}
 	}
 
 	public void hookListeners() {
@@ -79,9 +84,10 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		});
 		fDeprecated.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fElement.setDeprecatedProperty(fDeprecated.getSelectionIndex() == 0);
-				fSuggestion.setEditable(fDeprecated.getSelectionIndex() == 0
-						&& fElement.getSchema().isEditable());
+				boolean deprecated = fDeprecated.getSelectionIndex() == 0;
+				fElement.setDeprecatedProperty(deprecated);				
+				fSuggestion.getLabel().setEnabled(deprecated);
+				fSuggestion.getText().setEnabled(deprecated);			
 			}
 		});
 		fSuggestion.setFormEntryListener(new FormEntryAdapter(this) {
