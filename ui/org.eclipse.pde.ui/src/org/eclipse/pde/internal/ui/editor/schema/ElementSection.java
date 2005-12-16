@@ -362,7 +362,11 @@ public class ElementSection extends TreeSection {
 				}
 			} else if (obj instanceof ISchemaComplexType) {
 				// first compositor added/removed
-				fTreeViewer.refresh(((ISchemaComplexType)obj).getCompositor());
+				ISchemaCompositor comp = ((ISchemaComplexType)obj).getCompositor();
+				fTreeViewer.refresh(comp);
+				if (comp != null)
+					fTreeViewer.refresh(comp.getParent());
+				
 				if (e.getChangeType() == IModelChangedEvent.INSERT ||
 						e.getChangeType() == IModelChangedEvent.CHANGE) {
 					ISchemaComplexType type = (ISchemaComplexType) obj;

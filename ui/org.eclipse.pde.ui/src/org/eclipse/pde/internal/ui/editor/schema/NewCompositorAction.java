@@ -48,6 +48,13 @@ public class NewCompositorAction extends Action {
 			SchemaElement element = (SchemaElement) source;
 			if (element.getType() instanceof SchemaComplexType) {
 				type = (SchemaComplexType) element.getType();
+				ISchemaCompositor oldComp = type.getCompositor();
+				if (oldComp != null) {
+					ISchemaObject[] oldChildren = oldComp.getChildren();
+					for (int i = 0; i < oldChildren.length; i++) {
+						compositor.addChild(oldChildren[i]);
+					}
+				}
 				type.setCompositor(compositor);
 			} else {
 				type = new SchemaComplexType(source.getSchema());
