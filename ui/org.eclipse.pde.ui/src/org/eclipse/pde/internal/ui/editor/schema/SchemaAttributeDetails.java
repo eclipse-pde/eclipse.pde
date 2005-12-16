@@ -470,10 +470,6 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		} catch (CoreException e) {
 		}
 	}
-
-	public boolean isEditableElement() {
-		return fAttribute.getSchema().isEditable();
-	}
 	
 	private void updateTabSelection(int kind) {
 		Control oldPage = fNotebookLayout.topControl;

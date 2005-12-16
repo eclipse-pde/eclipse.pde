@@ -96,8 +96,4 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 			}
 		});
 	}
-
-	public boolean isEditableElement() {
-		return fElement.getSchema().isEditable();
-	}
 }

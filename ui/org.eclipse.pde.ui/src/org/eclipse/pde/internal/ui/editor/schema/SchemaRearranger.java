@@ -120,8 +120,8 @@ public class SchemaRearranger {
 				type.setCompositor(compositor);
 			} else {
 				type = new SchemaComplexType(element.getSchema());
-				type.setCompositor(compositor);
 				element.setType(type);
+				type.setCompositor(compositor);
 			}
 		} else if (realTarget instanceof SchemaCompositor) {
 			((SchemaCompositor) realTarget).addChild(compositor, sibling);

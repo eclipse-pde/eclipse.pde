@@ -87,8 +87,4 @@ public class SchemaCompositorDetails extends AbstractSchemaDetails {
 			}
 		});
 	}
-
-	public boolean isEditableElement() {
-		return fCompositor.getSchema().isEditable();
-	}
 }

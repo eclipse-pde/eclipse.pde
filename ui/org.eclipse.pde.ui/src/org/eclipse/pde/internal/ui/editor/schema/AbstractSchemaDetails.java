@@ -116,7 +116,10 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	public abstract void createDetails(Composite parent);
 	public abstract void updateFields();
 	public abstract void hookListeners();
-	public abstract boolean isEditableElement();
+	
+	public boolean isEditableElement() {
+		return fElementSection.isEditable();
+	}
 	
 	protected void setDecription(String desc) {
 		fSection.setDescription(desc); 

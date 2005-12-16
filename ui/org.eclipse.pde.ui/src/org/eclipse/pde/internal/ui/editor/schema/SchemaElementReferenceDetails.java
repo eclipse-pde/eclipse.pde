@@ -80,8 +80,4 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 			}
 		});
 	}
-
-	public boolean isEditableElement() {
-		return fElement.getCompositor().getSchema().isEditable();
-	}
 }
