@@ -949,6 +949,9 @@
             <separator
                   name="group1">
             </separator>
+            <separator
+                  name="group2">
+            </separator>
          </menu>
          <filter
                name="projectNature"
@@ -977,7 +980,7 @@
                menubarPath="org.eclipse.pde.ui.project.tools/group0"
                enablesFor="+"
                id="org.eclipse.pde.ui.ExternalizeStrings">
-         </action> 
+         </action>
          <action
                label="%MigrationAction.label"
                class="org.eclipse.pde.internal.ui.wizards.tools.MigrationAction"
@@ -986,6 +989,22 @@
                enablesFor="+"
                id="org.eclipse.pde.ui.MigrationAction3">
          </action>
+		 <action
+               label="Change Target Profile..."
+               helpContextId="org.eclipse.pde.doc.user.target_profile"
+               class="org.eclipse.pde.internal.ui.nls.GetNonExternalizedStringsAction"
+               menubarPath="org.eclipse.pde.ui.project.tools/group2"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.ChangeTargetProfile">
+         </action>
+         <action
+               label="Refresh Target Platform"
+               helpContextId="org.eclipse.pde.doc.user.target_profile"
+               class="org.eclipse.pde.internal.ui.nls.GetNonExternalizedStringsAction"
+               menubarPath="org.eclipse.pde.ui.project.tools/group2"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.RefreshTargetPlatform">
+         </action> 
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
