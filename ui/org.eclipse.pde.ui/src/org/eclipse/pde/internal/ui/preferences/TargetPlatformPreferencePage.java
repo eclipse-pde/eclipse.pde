@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -89,51 +88,14 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	public Control createContents(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
 		layout.marginHeight = layout.marginWidth = 0;
 		container.setLayout(layout);
 
-		Group profiles = new Group(container, SWT.NONE);
-		profiles.setText("Target Profiles");
-		layout = new GridLayout(5, false);
-		profiles.setLayout(layout);
-		profiles.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		Label currentProfile = new Label(profiles, SWT.NONE);
-		currentProfile.setText("Current Profile:");
-		
-		Combo profileCombo = new Combo(profiles, SWT.BORDER | SWT.READ_ONLY);
-		profileCombo.setItems(new String[] {
-				"item1", "item2"
-		});
-		profileCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		Button profileBrowse = new Button(profiles, SWT.PUSH);
-		profileBrowse.setText("Browse...");
-		GridData gd = new GridData();
-		gd.widthHint = 60;
-		profileBrowse.setLayoutData(gd);
-		
-		Button profilePreview = new Button(profiles, SWT.PUSH);
-		profilePreview.setText("Preview...");
-		gd = new GridData();
-		gd.widthHint = 60;
-		profilePreview.setLayoutData(gd);
-		
-		Button profileApply = new Button(profiles, SWT.PUSH);
-		profileApply.setText("Apply");
-		gd = new GridData();
-		gd.widthHint = 60;
-		profileApply.setLayoutData(gd);
-		
-		Group target = new Group(container, SWT.NONE);
-		target.setText("Current Profile");
-		layout = new GridLayout(3, false);
-		target.setLayout(layout);
-		target.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		fHomeLabel = new Label(target, SWT.NULL);
+		fHomeLabel = new Label(container, SWT.NULL);
 		fHomeLabel.setText(PDEUIMessages.Preferences_TargetPlatformPage_PlatformHome); 
 		
-		fHomeText = new Combo(target, SWT.NONE);
+		fHomeText = new Combo(container, SWT.NONE);
 		fHomeText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		ArrayList locations = new ArrayList();
 		for (int i = 0; i < 5; i++) {
@@ -160,7 +122,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			}
 		});
 		
-		fBrowseButton = new Button(target, SWT.PUSH);
+		fBrowseButton = new Button(container, SWT.PUSH);
 		fBrowseButton.setText(PDEUIMessages.Preferences_TargetPlatformPage_PlatformHome_Button); 
 		fBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		SWTUtil.setButtonDimensionHint(fBrowseButton);
@@ -171,8 +133,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		});
 		
 		
-		fTabFolder = new TabFolder(target, SWT.NONE);
-		gd = new GridData(GridData.FILL_BOTH);
+		fTabFolder = new TabFolder(container, SWT.NONE);
+		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 3;
 		fTabFolder.setLayoutData(gd);
 		
