@@ -78,9 +78,9 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 			return;
 		fName.setValue(fElement.getName(), true);
 		String labProp = fElement.getLabelProperty();
-		fLabelProperty.setText(labProp != null ? labProp : "");
+		fLabelProperty.setText(labProp != null ? labProp : ""); //$NON-NLS-1$
 		String icProp = fElement.getIconProperty();
-		fIcon.setText(icProp != null ? icProp : "");
+		fIcon.setText(icProp != null ? icProp : ""); //$NON-NLS-1$
 		
 		fDeprecated.select(fElement.isDeprecated() ? 0 : 1);
 		fTranslatable.select(fElement.hasTranslatableContent() ? 0 : 1);
@@ -95,7 +95,7 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		fIcon.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String icon = fIcon.getSelection();
-				if (icon == null || icon.equals(""))
+				if (icon == null || icon.equals("")) //$NON-NLS-1$
 					fElement.setIconProperty(null);
 				else
 					fElement.setIconProperty(icon);
@@ -104,7 +104,7 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		fLabelProperty.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String label = fLabelProperty.getSelection();
-				if (label == null || label.equals(""))
+				if (label == null || label.equals("")) //$NON-NLS-1$
 					fElement.setLabelProperty(null);
 				else
 					fElement.setLabelProperty(label);
@@ -131,7 +131,7 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 	private String[] getIconItems() {
 		ISchemaAttribute[] attribs = fElement.getAttributes();
 		ArrayList list = new ArrayList();
-		list.add("");
+		list.add(""); //$NON-NLS-1$
 		for (int i = 0; i < attribs.length; i++) {
 			if (attribs[i].getKind() == IMetaAttribute.RESOURCE) {
 				list.add(attribs[i].getName());
@@ -143,7 +143,7 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 	private String[] getLabelItems() {
 		ISchemaAttribute[] attribs = fElement.getAttributes();
 		String[] labels = new String[attribs.length + 1];
-		labels[0] = "";
+		labels[0] = ""; //$NON-NLS-1$
 		for (int i = 0; i < attribs.length; i++) {
 			labels[i + 1] = attribs[i].getName();
 		}
