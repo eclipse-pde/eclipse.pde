@@ -82,6 +82,9 @@ of this wizard.
                   a relative path of an icon that will be used to visually 
 represent the wizard.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string">
@@ -161,6 +164,9 @@ of this wizard.
                   a relative path of an icon that will be used to visually 
 represent the wizard.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
