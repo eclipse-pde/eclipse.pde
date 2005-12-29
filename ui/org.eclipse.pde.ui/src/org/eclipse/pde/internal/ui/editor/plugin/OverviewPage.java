@@ -293,11 +293,9 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		} else if (href.equals("action.convert")) { //$NON-NLS-1$
 			handleConvert();
 		} else if (href.equals("action.runEquinox")) { //$NON-NLS-1$ {
-			// TODO run osgi launcher
 			getEditor().doSave(null);
 			getEquinoxShortcut().run(getPDEEditor().getCommonProject());
 		} else if (href.equals("action.debugEquinox")) { //$NON-NLS-1$
-			// TODO run osgi launcher in debug
 			getEditor().doSave(null);
 			getEquinoxShortcut().debug(getPDEEditor().getCommonProject());
 		}
