@@ -378,6 +378,7 @@ public class LogView extends ViewPart implements ILogListener {
     private void createViewer(Composite parent) {
         fTreeViewer = new TreeViewer(parent, SWT.FULL_SELECTION);
         fTree = fTreeViewer.getTree();
+        fTree.setLinesVisible(true);
         createColumns(fTree);
         fTreeViewer.setContentProvider(new LogViewContentProvider(this));
         fTreeViewer.setLabelProvider(new LogViewLabelProvider());
