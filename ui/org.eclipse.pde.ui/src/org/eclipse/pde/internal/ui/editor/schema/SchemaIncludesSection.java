@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -147,8 +146,8 @@ public class SchemaIncludesSection extends TableSection {
 		ISelection selection = fViewer.getSelection();
 		if (selection.isEmpty())
 			return;
-		if (selection instanceof StructuredSelection) {
-			selected = ((StructuredSelection) selection).toArray();
+		if (selection instanceof IStructuredSelection) {
+			selected = ((IStructuredSelection) selection).toArray();
 			Schema schema = (Schema) getSchema();
 			for (int i = 0; i < selected.length; i++) {
 				schema.removeInclude((ISchemaInclude) selected[i]);

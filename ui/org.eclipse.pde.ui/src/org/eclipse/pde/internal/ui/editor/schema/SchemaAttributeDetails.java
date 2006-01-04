@@ -22,9 +22,9 @@ import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -385,8 +385,8 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 			public void widgetSelected(SelectionEvent e) {
 				ISelection selection = fRestrictionsTable.getSelection();
 				if (selection.isEmpty()) return;
-				if (!(selection instanceof StructuredSelection)) return;
-				StructuredSelection sselection = (StructuredSelection)selection;
+				if (!(selection instanceof IStructuredSelection)) return;
+				IStructuredSelection sselection = (IStructuredSelection)selection;
 				Object[] aselection = sselection.toArray();
 				ISchemaSimpleType type = fAttribute.getType();
 				ChoiceRestriction res = (ChoiceRestriction)type.getRestriction();
