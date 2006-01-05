@@ -27,6 +27,6 @@ public class SchemaRootElement extends SchemaElement implements
 	public String getExtendedAttributes() {
 		if (fDeperecatedReplacement == null)
 			return null;
-		return Messages.getString("SchemaRootElement.1") + P_DEP_REPLACEMENT + Messages.getString("SchemaRootElement.2") + fDeperecatedReplacement + Messages.getString("SchemaRootElement.3"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return " " + P_DEP_REPLACEMENT + "=\"" + fDeperecatedReplacement + "\" "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }
