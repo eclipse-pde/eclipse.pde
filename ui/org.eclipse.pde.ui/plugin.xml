@@ -739,7 +739,15 @@
                menubarPath="org.eclipse.pde.ui.plugin.tools/group0"
                enablesFor="+"
                id="org.eclipse.pde.ui.ExternalizeStrings">
-         </action> 
+         </action>
+         <action
+               label="Convert Help files to XHTML..."
+               helpContextId="com.janek.xhtmlConverter.convert"
+               class="org.eclipse.pde.internal.ui.xhtml.GetUnconvertedAction"
+               menubarPath="org.eclipse.pde.ui.plugin.tools/group0"
+               enablesFor="+"
+               id="com.janek.xhtmlconverter.convert">
+         </action>
          <action
                label="%MigrationAction.label"
                class="org.eclipse.pde.internal.ui.wizards.tools.MigrationAction"
@@ -763,7 +771,7 @@
                menubarPath="org.eclipse.pde.ui.plugin.tools/group2"
                enablesFor="1"
                id="org.eclipse.pde.ui.CreateHelpIndexAction">
-         </action>         
+         </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
