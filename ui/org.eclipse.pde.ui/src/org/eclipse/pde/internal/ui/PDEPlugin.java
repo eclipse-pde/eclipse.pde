@@ -14,30 +14,40 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Hashtable;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
+import org.osgi.framework.BundleContext;
+
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.pde.internal.core.FileAdapter;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationListener;
 import org.eclipse.pde.internal.ui.launcher.LaunchListener;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.view.PluginsViewAdapterFactory;
+
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+
+import org.eclipse.ui.editors.text.TextFileDocumentProvider;
+
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.BundleContext;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 
 public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 
@@ -55,6 +65,12 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	private FormColors fFormColors;
 	private PDELabelProvider fLabelProvider;
 	private ILaunchConfigurationListener fLaunchConfigurationListener;
+
+	/**
+	 * The shared text file document provider.
+	 * @since 3.2
+	 */
+	private IDocumentProvider fTextFileDocumentProvider;
 
 	public PDEPlugin() {
 		fInstance = this;
@@ -211,6 +227,27 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	public static boolean isFullNameModeEnabled() {
 		IPreferenceStore store = getDefault().getPreferenceStore();
 		return store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS).equals(IPreferenceConstants.VALUE_USE_NAMES);
+	}
+	
+	/**
+	 * Returns the shared text file document provider for this plug-in.
+	 * 
+	 * @return the shared text file document provider
+	 * @since 3.2
+	 */
+	public synchronized IDocumentProvider getTextFileDocumentProvider() {
+		if (fTextFileDocumentProvider == null) {
+			fTextFileDocumentProvider = new TextFileDocumentProvider() {
+				protected FileInfo createFileInfo(Object element) throws CoreException {
+					FileInfo info = super.createFileInfo(element);
+					if (info != null && info.fTextFileBuffer != null)
+						info.fModel = info.fTextFileBuffer.getAnnotationModel();
+					setUpSynchronization(info);
+					return info;
+				}
+			};
+		}
+		return fTextFileDocumentProvider;
 	}
 	
 }

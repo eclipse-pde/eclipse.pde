@@ -39,7 +39,6 @@ import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
-import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
 /**
@@ -102,7 +101,7 @@ public abstract class InputContext {
 			return new ForwardingDocumentProvider(
 								getPartitionName(),
 								getDocumentSetupParticipant(), 
-								new TextFileDocumentProvider());		
+								PDEPlugin.getDefault().getTextFileDocumentProvider());		
 		}
 		return new PDEStorageDocumentProvider(getDocumentSetupParticipant());
 	}

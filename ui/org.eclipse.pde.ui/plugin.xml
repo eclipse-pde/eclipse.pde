@@ -741,12 +741,12 @@
                id="org.eclipse.pde.ui.ExternalizeStrings">
          </action>
          <action
-               label="Convert Help files to XHTML..."
+               label="%convert.html.xhtml"
                helpContextId="com.janek.xhtmlConverter.convert"
                class="org.eclipse.pde.internal.ui.xhtml.GetUnconvertedAction"
                menubarPath="org.eclipse.pde.ui.plugin.tools/group0"
                enablesFor="+"
-               id="com.janek.xhtmlconverter.convert">
+               id="org.eclipse.pde.ui.xhtmlconverter.convert">
          </action>
          <action
                label="%MigrationAction.label"
@@ -1695,62 +1695,6 @@
             id="org.eclipse.pde.ui.queryParticipant"
             name="%queryParticipant.name.0"
             nature="org.eclipse.pde.PluginNature"/>
-   </extension>
-   <extension
-         id="org.eclipse.pde.ui.PluginDocumentFactory"
-         point="org.eclipse.core.filebuffers.documentCreation">
-      <factory
-            contentTypeId="org.eclipse.pde.pluginManifest"
-            class="org.eclipse.pde.internal.ui.editor.text.ManifestDocumentFactory">
-      </factory>
-   </extension>
-   <extension
-         id="org.eclipse.pde.ui.BundleDocumentFactory"
-         point="org.eclipse.core.filebuffers.documentCreation">
-      <factory
-            contentTypeId="org.eclipse.pde.bundleManifest"
-            class="org.eclipse.pde.internal.ui.editor.text.ManifestDocumentFactory">
-      </factory>
-   </extension>
-   <extension
-         id="org.eclipse.pde.ui.FragmentDocumentFactory"
-         point="org.eclipse.core.filebuffers.documentCreation">
-      <factory
-            contentTypeId="org.eclipse.pde.fragmentManifest"
-            class="org.eclipse.pde.internal.ui.editor.text.ManifestDocumentFactory">
-      </factory>
-   </extension>
-   <extension
-         id="org.eclipse.pde.ui.FeatureDocumentFactory"
-         point="org.eclipse.core.filebuffers.documentCreation">
-      <factory
-            contentTypeId="org.eclipse.pde.featureManifest"
-            class="org.eclipse.pde.internal.ui.editor.text.ManifestDocumentFactory">
-      </factory>
-   </extension>
-   <extension
-         id="org.eclipse.pde.ui.SiteDocumentFactory"
-         point="org.eclipse.core.filebuffers.documentCreation">
-      <factory
-            contentTypeId="org.eclipse.pde.siteManifest"
-            class="org.eclipse.pde.internal.ui.editor.text.ManifestDocumentFactory">
-      </factory>
-   </extension>
-   <extension
-         id="org.eclipse.pde.ui.SchemaDocumentFactory"
-         point="org.eclipse.core.filebuffers.documentCreation">
-      <factory
-            contentTypeId="org.eclipse.pde.schema"
-            class="org.eclipse.pde.internal.ui.editor.text.ManifestDocumentFactory">
-      </factory>
-   </extension>
-   <extension
-         id="org.eclipse.pde.ui.BuildDocumentFactory"
-         point="org.eclipse.core.filebuffers.documentCreation">
-      <factory
-            contentTypeId="org.eclipse.pde.buildProperties"
-            class="org.eclipse.pde.internal.ui.editor.text.ManifestDocumentFactory">
-      </factory>
    </extension>
    <extension
          point="org.eclipse.core.filebuffers.annotationModelCreation">
