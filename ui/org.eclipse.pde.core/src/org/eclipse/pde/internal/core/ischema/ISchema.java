@@ -143,4 +143,17 @@ public interface ISchema extends ISchemaObject, IBaseModel, IModelChangeProvider
 	 *         none.
 	 */
 	ISchemaInclude[] getIncludes();
+	
+	/**
+	 * Returns whether the root schema element ( the <exension> element)
+	 * has been marked deprecated, making this schema deprecated.
+	 * @return true if this schema is deprecated
+	 */
+	public boolean isDeperecated();
+	
+	/**
+	 * Returns replacement schema in case this one is deprecated.
+	 * @return the replacement schema 
+	 */
+	public String getDeprecatedSuggestion();
 }

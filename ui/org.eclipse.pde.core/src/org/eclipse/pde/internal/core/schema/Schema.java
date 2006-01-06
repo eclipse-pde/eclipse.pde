@@ -994,4 +994,24 @@ public class Schema extends PlatformObject implements ISchema {
 		return platformDescription;
 	}
 
+	public boolean isDeperecated() {
+		Iterator it = fElements.iterator();
+		while (it.hasNext()) {
+			Object next = it.next();
+			if (next instanceof SchemaRootElement)
+				return ((SchemaRootElement)next).isDeprecated();
+		}
+		return false;
+	}
+
+	public String getDeprecatedSuggestion() {
+		Iterator it = fElements.iterator();
+		while (it.hasNext()) {
+			Object next = it.next();
+			if (next instanceof SchemaRootElement)
+				return ((SchemaRootElement)next).getDeprecatedSuggestion();
+		}
+		return null;
+	}
+
 }
