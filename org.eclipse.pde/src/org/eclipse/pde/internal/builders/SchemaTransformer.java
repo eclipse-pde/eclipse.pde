@@ -103,6 +103,14 @@ public class SchemaTransformer {
 	private void printBody() {
 		fWriter.println("<BODY>"); //$NON-NLS-1$
 		fWriter.println("<H1><CENTER>" + fSchema.getName() + "</CENTER></H1>"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (fSchema.isDeperecated()) {
+			fWriter.print("<div style=\"border: 1px solid #990000; padding: 5px; text-align: center; color: red;\">"); //$NON-NLS-1$
+			fWriter.print("This extension point is deprecated"); //$NON-NLS-1$
+			String suggestion = fSchema.getDeprecatedSuggestion();
+			if (suggestion != null)
+				fWriter.print(", use <i>" + suggestion + "</i> as a replacement."); //$NON-NLS-1$ //$NON-NLS-2$
+			fWriter.println("</div>"); //$NON-NLS-1$
+		}
 		fWriter.println("<p></p>"); //$NON-NLS-1$
 		fWriter.print("<h6 class=CaptionFigColumn id=header>Identifier: </h6>"); //$NON-NLS-1$
 		fWriter.print(fSchema.getQualifiedPointId());
@@ -240,6 +248,9 @@ public class SchemaTransformer {
 		String dtd = element.getDTDRepresentation(true);
 		String nameLink = "<a name=\"e." + name + "\">" + name + "</a>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
+		if (element.isDeprecated() && !(element instanceof SchemaRootElement))
+			fWriter.print("<div style=\"color: red; font-style: italic;\">The <b>" + name + "</b> element is deprecated</div> "); //$NON-NLS-1$ //$NON-NLS-2$
+		
 		fWriter.print(
 			"<p class=code id=dtd>&lt;!ELEMENT " //$NON-NLS-1$
 				+ nameLink
@@ -288,7 +299,10 @@ public class SchemaTransformer {
 					continue;
 				}
 			}
-			fWriter.print("<li><b>" + att.getName() + "</b> - "); //$NON-NLS-1$ //$NON-NLS-2$
+			fWriter.print("<li>"); //$NON-NLS-1$
+			if (att.isDeprecated())
+				fWriter.print("<i style=\"color: red;\">Deprecated</i> "); //$NON-NLS-1$
+			fWriter.print("<b>" + att.getName() + "</b> - "); //$NON-NLS-1$ //$NON-NLS-2$
 			transformText(att.getDescription());
 			fWriter.println("</li>");			 //$NON-NLS-1$
 		}
