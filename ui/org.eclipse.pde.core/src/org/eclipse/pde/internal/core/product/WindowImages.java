@@ -87,7 +87,15 @@ public class WindowImages extends ProductObject implements IWindowImages {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element)node;
 			f16ImagePath = element.getAttribute(P_16); //$NON-NLS-1$
+			// try the old 3.1 attribute name
+			if (f16ImagePath == null)
+				f16ImagePath = element.getAttribute("small"); //$NON-NLS-1$
+			
 			f32ImagePath = element.getAttribute(P_32); //$NON-NLS-1$
+			// try the old 3.1 attribute name
+			if (f32ImagePath == null)
+				f32ImagePath = element.getAttribute("large"); //$NON-NLS-1$
+			
 			f48ImagePath = element.getAttribute(P_48); //$NON-NLS-1$
 			f64ImagePath = element.getAttribute(P_64); //$NON-NLS-1$
 			f128ImagePath = element.getAttribute(P_128); //$NON-NLS-1$
