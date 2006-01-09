@@ -48,6 +48,7 @@ import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -56,10 +57,13 @@ import org.osgi.framework.Version;
 public class SWTLaunchConfiguration extends
 		AbstractJavaLaunchConfigurationDelegate {
 
+	private boolean fShouldDelete;
+
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
+		fShouldDelete = true;
 		
 		monitor.beginTask(MessageFormat.format("{0}...", new String[]{configuration.getName()}), 3); //$NON-NLS-1$
 		// check for cancellation
@@ -90,20 +94,20 @@ public class SWTLaunchConfiguration extends
 		String vmArgs = getVMArguments(configuration);
 		ExecutionArguments execArgs = new ExecutionArguments(vmArgs, pgmArgs);
 		
-		// Find SWT Fragment for the target platform
-		BundleDescription fragment = findFragment();
+		// Find SWT Fragments from the target platform
+		BundleDescription[] fragments = findFragments();
 		
 		// VM-specific attributes
 		Map vmAttributesMap = getVMSpecificAttributesMap(configuration);
 		
 		// Classpath
-		String[] classpath = getClasspath(fragment, configuration);
+		String[] classpath = getClasspath(fragments, configuration);
 		
 		// Create VM config
 		VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName, classpath);
 		runConfig.setProgramArguments(execArgs.getProgramArgumentsArray());
 		runConfig.setEnvironment(envp);
-		runConfig.setVMArguments(getVMArguments(fragment, execArgs));
+		runConfig.setVMArguments(getVMArguments(fragments, execArgs));
 		runConfig.setWorkingDirectory(workingDirName);
 		runConfig.setVMSpecificAttributesMap(vmAttributesMap);
 
@@ -136,11 +140,14 @@ public class SWTLaunchConfiguration extends
 		monitor.done();
 	}
 	
-	private String[] getVMArguments(BundleDescription fragment, ExecutionArguments execArgs) {
-		if (fragment == null)
+	private String[] getVMArguments(BundleDescription[] fragments, ExecutionArguments execArgs) {
+		if (fragments.length == 0)
 			return execArgs.getVMArgumentsArray();
 		
-		String location = getNativeLibrariesLocation(fragment);
+		String location = getNativeLibrariesLocations(fragments);
+		if (location == null)
+			return execArgs.getVMArgumentsArray();
+		
 		String[] vmArgs = execArgs.getVMArgumentsArray();
 		for (int i = vmArgs.length - 1; i >= 0; i--) {
 			if (vmArgs[i].startsWith("-Djava.library.path")) { //$NON-NLS-1$
@@ -154,21 +161,32 @@ public class SWTLaunchConfiguration extends
 		return all;
 	}
 	
-	public static BundleDescription findFragment() {
+	private String getNativeLibrariesLocations(BundleDescription[] bundles) {
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < bundles.length; i++) {
+			String location = getNativeLibrariesLocation(bundles[i]);
+			if (location != null) {
+				if (buffer.length() > 0)
+					buffer.append(File.pathSeparatorChar);
+				buffer.append(location);
+			}
+		}
+		return buffer.length() == 0 ? null : buffer.toString();
+	}
+
+	protected static BundleDescription[] findFragments() {
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel("org.eclipse.swt"); //$NON-NLS-1$
 		if (model != null && model.isEnabled()) {
 			BundleDescription desc = model.getBundleDescription();
-			if (desc.getContainingState() != null) {
-				BundleDescription[] fragments = desc.getFragments();
-				if (fragments.length > 0) {
-					return fragments[0];
-				}
-			}
+			if (desc.getContainingState() != null)
+				return desc.getFragments();
 		}
-		return null;
+		return new BundleDescription[0];
 	}
 
 	private String getNativeLibrariesLocation(BundleDescription fragment) {
+		if (!fragment.isResolved())
+			return null;
 		Version version = fragment.getVersion();
 		if (version.getMajor() < 3 || version.getMinor() < 1)
 			return getLegacyNativeLibrariesLocation(fragment);
@@ -182,7 +200,10 @@ public class SWTLaunchConfiguration extends
 		File metadata = PDEPlugin.getDefault().getStateLocation().toFile();
 		File cache = new File(metadata, Long.toString(timestamp) + ".swt"); //$NON-NLS-1$
 		if (!cache.exists()){
-			deleteStaleCache(metadata);
+			if (fShouldDelete) {
+				deleteStaleCache(metadata);
+				fShouldDelete = false;
+			}
 			cache.mkdirs();
 			extractZipFile(file, cache);
 		}		
@@ -267,35 +288,37 @@ public class SWTLaunchConfiguration extends
 		return buffer.toString();
 	}
 		
-	private String[] getClasspath(BundleDescription desc, ILaunchConfiguration configuration) throws CoreException {
+	private String[] getClasspath(BundleDescription[] fragments, ILaunchConfiguration configuration) throws CoreException {
 		String[] entries = getClasspath(configuration);
 		
-		IFragmentModel fragment = PDECore.getDefault().getModelManager().findFragmentModel(desc.getSymbolicName());
-		
-		if (fragment == null)
-			return entries;
-		
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		ArrayList extra = new ArrayList();
-		IResource resource = fragment.getUnderlyingResource();
-		if (resource != null) {
-			IProject project = resource.getProject();
-			if (project.hasNature(JavaCore.NATURE_ID)) {
-				IJavaProject jProject = JavaCore.create(project);
-				extra.add(JavaRuntime.newProjectRuntimeClasspathEntry(jProject).getPath());
-				IClasspathEntry[] classEntries = jProject.getRawClasspath();
-				for (int i = 0; i < classEntries.length; i++) {
-					int kind = classEntries[i].getEntryKind();
-					if (kind == IClasspathEntry.CPE_LIBRARY) {
-						extra.add(JavaRuntime.newArchiveRuntimeClasspathEntry(classEntries[i].getPath()).getLocation());
-					} 
+		for (int i = 0; i < fragments.length; i++) {
+			IFragmentModel fragment = manager.findFragmentModel(fragments[i].getSymbolicName());	
+			if (fragment == null)
+				continue;
+			
+			IResource resource = fragment.getUnderlyingResource();
+			if (resource != null) {
+				IProject project = resource.getProject();
+				if (project.hasNature(JavaCore.NATURE_ID)) {
+					IJavaProject jProject = JavaCore.create(project);
+					extra.add(JavaRuntime.newProjectRuntimeClasspathEntry(jProject).getPath());
+					IClasspathEntry[] classEntries = jProject.getRawClasspath();
+					for (int j = 0; j < classEntries.length; j++) {
+						int kind = classEntries[j].getEntryKind();
+						if (kind == IClasspathEntry.CPE_LIBRARY) {
+							extra.add(JavaRuntime.newArchiveRuntimeClasspathEntry(classEntries[j].getPath()).getLocation());
+						} 
+					}
 				}
-			}
-		} else {
-			IPluginLibrary[] libraries = fragment.getFragment().getLibraries();
-			String location = fragment.getInstallLocation();
-			for (int i = 0; i < libraries.length; i++) {
-				String name = ClasspathUtilCore.expandLibraryName(libraries[i].getName());
-				extra.add(new Path(location).append(name).toOSString());
+			} else {
+				IPluginLibrary[] libraries = fragment.getFragment().getLibraries();
+				String location = fragment.getInstallLocation();
+				for (int j = 0; j < libraries.length; j++) {
+					String name = ClasspathUtilCore.expandLibraryName(libraries[j].getName());
+					extra.add(new Path(location).append(name).toOSString());
+				}
 			}
 		}
 		if (extra.size() > 0) {
