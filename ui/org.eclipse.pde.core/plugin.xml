@@ -78,6 +78,9 @@
       <environment
             id="CDC-1.1/Foundation-1.1"
             description="%environment.description.8"/>
+      <environment
+            id="JavaSE-1.6"
+            description="%environment.description.9"/>
       <analyzer
             class="org.eclipse.pde.internal.core.ExecutionEnvironmentAnalyzer"
             id="org.eclipse.pde.core.eeAnalyzer"/>

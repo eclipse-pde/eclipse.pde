@@ -25,6 +25,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 
 public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyzerDelegate {
 	
+	public static final String JavaSE_1_6 = "JavaSE-1.6"; //$NON-NLS-1$
 	public static final String J2SE_1_5 = "J2SE-1.5"; //$NON-NLS-1$
 	public static final String J2SE_1_4 = "J2SE-1.4"; //$NON-NLS-1$
 	public static final String J2SE_1_3 = "J2SE-1.3"; //$NON-NLS-1$
@@ -41,6 +42,8 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 	public static String getCompliance(String ee) {
 		if (ee == null)
 			return null;
+		if (JavaSE_1_6.equals(ee))
+			return JavaCore.VERSION_1_6;
 		if (J2SE_1_5.equals(ee))
 			return JavaCore.VERSION_1_5;
 		if (J2SE_1_4.equals(ee) || CDC_FOUNDATION_1_1.equals(ee))
@@ -58,7 +61,8 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 				J2SE_1_3,
 				CDC_FOUNDATION_1_1,
 				J2SE_1_4,
-				J2SE_1_5};
+				J2SE_1_5,
+				JavaSE_1_6};
 	}
 
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor)
@@ -72,6 +76,9 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 			String javaVersion = vm2.getJavaVersion();
 			if (javaVersion == null)
 				return new CompatibleEnvironment[0];
+			
+			if (javaVersion.compareTo("1.6") >= 0) //$NON-NLS-1$
+				addEnvironment(result, JavaSE_1_6, javaVersion.startsWith("1.6")); //$NON-NLS-1$
 			
 			if (javaVersion.compareTo("1.5") >= 0) //$NON-NLS-1$
 				addEnvironment(result, J2SE_1_5, javaVersion.startsWith("1.5")); //$NON-NLS-1$
