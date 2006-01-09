@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.runtime.logview;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -30,7 +31,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IMemento;
 
 
-public class FilterDialog extends Dialog {
+public class FilterDialog extends TrayDialog {
 	private Button limit;
 	private Text limitText;
 

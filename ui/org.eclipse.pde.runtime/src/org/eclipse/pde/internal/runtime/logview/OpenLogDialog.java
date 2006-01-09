@@ -22,10 +22,10 @@ import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Displays the error log in non-Win32 platforms - see bug 55314.
  */
-public final class OpenLogDialog extends Dialog {
+public final class OpenLogDialog extends TrayDialog {
     // input log file
     private File logFile;
     // location/size configuration
