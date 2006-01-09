@@ -269,6 +269,8 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 		child.setParent(this);
 	}
 	public void write(PrintWriter writer) {
+		if (session != null)
+			writer.print(session.getSessionData());
 		writer.print(getSeverityText());
 		if (date != null) {
 			writer.print(" "); //$NON-NLS-1$
