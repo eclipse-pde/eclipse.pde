@@ -528,7 +528,7 @@ public class LogView extends ViewPart implements ILogListener {
             dialog.setFilterPath(fDirectory);
         String path = dialog.open();
         if (path != null) {
-            if (!path.endsWith(".log")) //$NON-NLS-1$
+            if (path.indexOf('.') == -1 && !path.endsWith(".log")) //$NON-NLS-1$
                 path += ".log"; //$NON-NLS-1$
             File outputFile = new Path(path).toFile();
             fDirectory = outputFile.getParent();
