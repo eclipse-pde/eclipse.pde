@@ -34,57 +34,60 @@ public class SWTSourcePathComputer extends JavaSourcePathComputer {
 	
 	public ISourceContainer[] computeSourceContainers(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		ISourceContainer[] containers =  super.computeSourceContainers(configuration, monitor);
+		ArrayList extra = new ArrayList();
 
-		BundleDescription desc = SWTLaunchConfiguration.findFragment();
-		IFragment fragment = null;
-		if (desc != null) {
-			IFragmentModel model = PDECore.getDefault().getModelManager().findFragmentModel(desc.getSymbolicName());
-			fragment = model != null ? model.getFragment() : null;
-		}
+		BundleDescription[] fragments = SWTLaunchConfiguration.findFragments();
 		
-		if (fragment == null)
-			return containers;
-		
-		IPath fragmentPath = new Path(fragment.getModel().getInstallLocation());
-		for (int i = 0; i < containers.length; i++) {
-			if (containers[i] instanceof PackageFragmentRootSourceContainer) {
-				PackageFragmentRootSourceContainer container = (PackageFragmentRootSourceContainer)containers[i];
-				IPackageFragmentRoot root = container.getPackageFragmentRoot();
-				if (root.getSourceAttachmentPath() == null) {
-					int matchCount = fragmentPath.matchingFirstSegments(root.getPath());
-					if (matchCount == fragmentPath.segmentCount()) {
-						IPath libPath = root.getPath().removeFirstSegments(matchCount);
-						String libLocation = getLibrarySourceLocation(fragment, libPath);
-						if (libLocation != null) {
-							containers[i] = new ExternalArchiveSourceContainer(libLocation, false);
+		for (int j = 0; j < fragments.length; j++) {
+			if (!fragments[j].isResolved())
+				continue;
+			
+			IFragmentModel model = PDECore.getDefault().getModelManager().findFragmentModel(fragments[j].getSymbolicName());
+			IFragment fragment = model != null ? model.getFragment() : null;			
+			if (fragment == null)
+				return containers;
+			
+			IPath fragmentPath = new Path(fragment.getModel().getInstallLocation());
+			for (int i = 0; i < containers.length; i++) {
+				if (containers[i] instanceof PackageFragmentRootSourceContainer) {
+					PackageFragmentRootSourceContainer container = (PackageFragmentRootSourceContainer)containers[i];
+					IPackageFragmentRoot root = container.getPackageFragmentRoot();
+					if (root.getSourceAttachmentPath() == null) {
+						int matchCount = fragmentPath.matchingFirstSegments(root.getPath());
+						if (matchCount == fragmentPath.segmentCount()) {
+							IPath libPath = root.getPath().removeFirstSegments(matchCount);
+							String libLocation = getLibrarySourceLocation(fragment, libPath);
+							if (libLocation != null) {
+								containers[i] = new ExternalArchiveSourceContainer(libLocation, false);
+							}
 						}
 					}
 				}
 			}
-		}
-		ArrayList extra = new ArrayList();
-		IResource resource = fragment.getModel().getUnderlyingResource();
-		if (resource != null) {
-			IProject project = resource.getProject();
-			if (project.hasNature(JavaCore.NATURE_ID)) {
-				IJavaProject jProject = JavaCore.create(project);
-				extra.add(new JavaProjectSourceContainer(jProject));
-				IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
-				for (int i = 0; i < roots.length; i++) {
-					if (roots[i].getKind() == IPackageFragmentRoot.K_BINARY 
-							&& roots[i].getRawClasspathEntry().getEntryKind() == IClasspathEntry.CPE_LIBRARY) 
-						extra.add(new PackageFragmentRootSourceContainer(roots[i]));
+			IResource resource = fragment.getModel().getUnderlyingResource();
+			if (resource != null) {
+				IProject project = resource.getProject();
+				if (project.hasNature(JavaCore.NATURE_ID)) {
+					IJavaProject jProject = JavaCore.create(project);
+					extra.add(new JavaProjectSourceContainer(jProject));
+					IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
+					for (int i = 0; i < roots.length; i++) {
+						if (roots[i].getKind() == IPackageFragmentRoot.K_BINARY 
+								&& roots[i].getRawClasspathEntry().getEntryKind() == IClasspathEntry.CPE_LIBRARY) 
+							extra.add(new PackageFragmentRootSourceContainer(roots[i]));
+					}
 				}
-			}
-		} else {
-			IPluginLibrary[] libraries = fragment.getLibraries();
-			for (int i = 0; i < libraries.length; i++) {
-				String name = ClasspathUtilCore.expandLibraryName(libraries[i].getName());
-				String location = getLibrarySourceLocation(fragment, new Path(name));
-				if (location != null)
-					extra.add(new ExternalArchiveSourceContainer(location, false));
-			}
+			} else {
+				IPluginLibrary[] libraries = fragment.getLibraries();
+				for (int i = 0; i < libraries.length; i++) {
+					String name = ClasspathUtilCore.expandLibraryName(libraries[i].getName());
+					String location = getLibrarySourceLocation(fragment, new Path(name));
+					if (location != null)
+						extra.add(new ExternalArchiveSourceContainer(location, false));
+				}
+			}			
 		}
+		
 		if (extra.size() > 0) {
 			ISourceContainer[] all = new ISourceContainer[containers.length + extra.size()];
 			System.arraycopy(containers, 0, all, 0, containers.length);
