@@ -30,6 +30,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.TargetProfileManager;
 import org.eclipse.pde.internal.core.itarget.ILocationInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
@@ -78,6 +79,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	private TargetEnvironmentTab fEnvironmentTab;
 	private TargetSourceTab fSourceTab;
 	private JavaArgumentsTab fArgumentsTab;
+	private TargetImplicitPluginsTab fImplicitDependenciesTab;
 	private IConfigurationElement [] fElements;
 	
 	private Preferences fPreferences = null;
@@ -86,7 +88,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	private int fIndex;
 	private TabFolder fTabFolder;
 	private boolean fContainsWorkspaceProfile = false;
-	private TargetImplicitPluginsTab fExplicitPluginsTab;
 	private boolean fFirstClick = true;
 	
 	/**
@@ -270,8 +271,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	}
 	
 	private void createExplicitTab(TabFolder folder) {
-		fExplicitPluginsTab = new TargetImplicitPluginsTab(this);
-		Control block = fExplicitPluginsTab.createContents(folder);
+		fImplicitDependenciesTab = new TargetImplicitPluginsTab(this);
+		Control block = fImplicitDependenciesTab.createContents(folder);
 		
 		TabItem tab = new TabItem(folder, SWT.NONE);
 		tab.setText(PDEUIMessages.TargetPlatformPreferencePage_implicitTab);
@@ -447,6 +448,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		fPluginsTab.loadTargetProfile(target);
 		fEnvironmentTab.loadTargetProfile(target);
 		fArgumentsTab.loadTargetProfile(target);
+		fImplicitDependenciesTab.loadTargetProfile(target);
 		fSourceTab.loadTargetProfile(target);
 	}
 	
@@ -455,7 +457,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		fPluginsTab.handleReload();
 		fEnvironmentTab.performDefaults();
 		fArgumentsTab.performDefaults();
-		fExplicitPluginsTab.performDefauls();
+		fImplicitDependenciesTab.performDefauls();
 		fSourceTab.performDefaults();
 		super.performDefaults();
 	}
@@ -483,7 +485,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		fSourceTab.performOk();
 		fPluginsTab.performOk();
 		fArgumentsTab.performOk();
-		fExplicitPluginsTab.performOk();
+		fImplicitDependenciesTab.performOk();
 		saveTarget();
 		return super.performOk();
 	}
@@ -518,5 +520,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	
 	protected IPluginModelBase[] getCurrentModels() {
 		return fPluginsTab.getCurrentModels();
+	}
+	
+	protected PDEState getCurrentState() {
+		return fPluginsTab.getCurrentState();
 	}
 }

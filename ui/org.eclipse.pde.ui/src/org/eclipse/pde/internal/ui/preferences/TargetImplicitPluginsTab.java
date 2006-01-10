@@ -8,20 +8,23 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.itarget.IImplicitDependenciesInfo;
+import org.eclipse.pde.internal.core.itarget.ITarget;
+import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -39,7 +42,6 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 public class TargetImplicitPluginsTab {
 	
 	private TableViewer fElementViewer;
-	private String ROOT;
 	protected Set fElements;
 	
 	private Button fAddButton;
@@ -49,23 +51,13 @@ public class TargetImplicitPluginsTab {
 	private TargetPlatformPreferencePage fPage;
 	
 	public TargetImplicitPluginsTab(TargetPlatformPreferencePage page) {
-		ROOT = ""; //$NON-NLS-1$
 		fPage = page;
 	}
 	
-	class SourceProvider implements IStructuredContentProvider {
-
+	class ContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object inputElement) {
-			if (inputElement.equals(ROOT))
-				return fElements.toArray();
-			return null;
+			return fElements.toArray();
 		}
-
-		public void dispose() {
-		}
-
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}		
 	}
 	
 	public Control createContents(Composite parent) {
@@ -95,14 +87,12 @@ public class TargetImplicitPluginsTab {
 		fElementViewer.getControl().setLayoutData(gd);
 		fElementViewer.setContentProvider(new ArrayContentProvider());
 		fElementViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		fElementViewer.setInput(ROOT);
+		fElementViewer.setInput(PDEPlugin.getDefault());
 		fElementViewer.setSorter(new ViewerSorter());
 		fElementViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateButtons();
-			}
-			
+			}		
 		});
 		fElementViewer.getTable().addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
@@ -123,8 +113,9 @@ public class TargetImplicitPluginsTab {
 		while (tokens.hasMoreElements()) {
 			IPluginModelBase base = manager.findModel(tokens.nextToken());
 			if (base != null) {
-				fElements.add(base);
-				fElementViewer.add(base);
+				BundleDescription desc = base.getBundleDescription();
+				fElements.add(desc);
+				fElementViewer.add(desc);
 			}
 		}
 	}
@@ -187,11 +178,10 @@ public class TargetImplicitPluginsTab {
 		dialog.setMessage(PDEUIMessages.PluginSelectionDialog_message);
 		dialog.setMultipleSelection(true);
 		if (dialog.open() == Window.OK) {
-			Object[] models = dialog.getResult();
-			for (int i = 0; i < models.length; i++) {
-				IPluginModelBase base = (IPluginModelBase) models[i];
-				fElementViewer.add(base);
-				fElements.add(base);
+			Object[] bundles = dialog.getResult();
+			for (int i = 0; i < bundles.length; i++) {
+				fElementViewer.add(bundles[i]);
+				fElements.add(bundles[i]);
 			}
 			updateButtons();
 		}
@@ -202,19 +192,16 @@ public class TargetImplicitPluginsTab {
 		Set currentPlugins = new HashSet((4/3) * fElements.size() + 1);
 		Iterator it = fElements.iterator();
 		while (it.hasNext()) {
-			IPluginModelBase base = (IPluginModelBase)it.next();
-			currentPlugins.add(getSymbolicName(base));
+			BundleDescription desc = (BundleDescription)it.next();
+			currentPlugins.add(desc.getSymbolicName());
 		}
 		
-		//BundleDescription[] bundles = TargetPlatform.getState().getBundles();
 		IPluginModelBase[] models = fPage.getCurrentModels();
 		Set result = new HashSet((4/3) * models.length + 1);
 		for (int i = 0; i < models.length; i++) {
 			BundleDescription desc = models[i].getBundleDescription();
-			if (desc != null) {
-				if (!currentPlugins.contains(desc.getSymbolicName()))
-					result.add(models[i]);
-			}
+			if (!currentPlugins.contains(desc.getSymbolicName()))
+				result.add(desc);
 		}
 		return result.toArray();
 	}
@@ -250,18 +237,26 @@ public class TargetImplicitPluginsTab {
 		while (it.hasNext()) {
 			if (buffer.length() > 0)
 				buffer.append(",");
-			IPluginModelBase base = (IPluginModelBase) it.next();
-			buffer.append(getSymbolicName(base));
+			BundleDescription desc = (BundleDescription) it.next();
+			buffer.append(desc.getSymbolicName());
 		}
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		preferences.setValue(ICoreConstants.IMPLICIT_DEPENDENCIES, buffer.toString());
 	}
 	
-	private String getSymbolicName(IPluginModelBase base) {
-		BundleDescription desc = base.getBundleDescription();
-		if (desc != null) 
-			return desc.getSymbolicName();
-		return base.getPluginBase().getId();
+	public void loadTargetProfile(ITarget target) {
+		fElements.clear();
+		IImplicitDependenciesInfo info = target.getImplicitPluginsInfo();
+		if (info != null) {
+			State state = fPage.getCurrentState().getState();
+			ITargetPlugin[] plugins = info.getPlugins();
+			for (int i = 0; i < plugins.length; i++) {
+				BundleDescription desc = state.getBundle(plugins[i].getId(), null);
+				if (desc != null)
+					fElements.add(desc);
+			}
+		}
+		fElementViewer.refresh();
 	}
 
 }
