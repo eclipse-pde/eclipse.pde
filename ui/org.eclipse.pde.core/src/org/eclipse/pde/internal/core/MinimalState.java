@@ -140,6 +140,7 @@ public class MinimalState {
 			return descriptor;
 		} catch (BundleException e) {
 		} catch (NumberFormatException e) {
+		} catch (IllegalArgumentException e) {
 		}
 		return null;
 	}
