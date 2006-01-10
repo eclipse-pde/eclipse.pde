@@ -129,7 +129,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * 
 	 * @param pageIndex
 	 *            a zero-based index of the page relative to this template. For
-	 *            example, if a template need to have two pages, you have to
+	 *            example, if a template needs to have two pages, you have to
 	 *            call this method twice (once with index 0 and again with index
 	 *            1).
 	 * @see #setPageCount(int)
