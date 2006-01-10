@@ -236,7 +236,7 @@ public class TargetImplicitPluginsTab {
 		Iterator it = fElements.iterator();
 		while (it.hasNext()) {
 			if (buffer.length() > 0)
-				buffer.append(",");
+				buffer.append(","); //$NON-NLS-1$
 			BundleDescription desc = (BundleDescription) it.next();
 			buffer.append(desc.getSymbolicName());
 		}

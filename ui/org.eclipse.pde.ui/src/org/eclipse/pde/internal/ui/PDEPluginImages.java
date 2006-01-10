@@ -225,7 +225,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_PRODUCT_EXPORT_WIZ = create(PATH_WIZBAN, "exp_product.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_JAR_TO_PLUGIN_WIZ = create(PATH_WIZBAN, "jarToPlugin_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXTSTR_WIZ = create(PATH_WIZBAN, "extstr_wiz.gif"); //$NON-NLS-1$
-
+	public static final ImageDescriptor DESC_XHTML_CONVERT_WIZ = create(PATH_WIZBAN, "xhtml_wizard.gif"); //$NON-NLS-1$
 	/**
 	 * View
 	 */

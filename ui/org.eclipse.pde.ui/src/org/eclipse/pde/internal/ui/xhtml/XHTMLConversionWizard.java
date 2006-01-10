@@ -8,9 +8,9 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.xhtml.TocReplaceTable.TocReplaceEntry;
-
 
 public class XHTMLConversionWizard extends Wizard {
 
@@ -18,6 +18,7 @@ public class XHTMLConversionWizard extends Wizard {
 	private TocReplaceTable fTable;
 
 	public XHTMLConversionWizard(TocReplaceTable table) {
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_XHTML_CONVERT_WIZ);
 		setWindowTitle(PDEUIMessages.XHTMLConversionWizard_title);
 		setNeedsProgressMonitor(true);
 		fTable = table;
@@ -58,4 +59,5 @@ public class XHTMLConversionWizard extends Wizard {
 		page1 = new XHTMLConversionWizardPage(fTable);
 		addPage(page1);
 	}
+	
 }
