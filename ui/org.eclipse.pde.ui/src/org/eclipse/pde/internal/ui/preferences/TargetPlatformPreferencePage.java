@@ -431,7 +431,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		target = model.getTarget();
 		ILocationInfo info = target.getLocationInfo();
 		String path;
-		if (info.useDefault()) {
+		if (info == null || info.useDefault()) {
 			path = ExternalModelManager.computeDefaultPlatformPath();
 		} else {
 			try {
