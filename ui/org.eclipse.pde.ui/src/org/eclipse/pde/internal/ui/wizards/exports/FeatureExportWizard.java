@@ -25,9 +25,8 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class FeatureExportWizard extends BaseExportWizard {
+public class FeatureExportWizard extends AntGeneratingExportWizard {
 	private static final String STORE_SECTION = "FeatureExportWizard"; //$NON-NLS-1$
-	private AdvancedFeatureExportPage fPage3;
 	private CrossPlatformExportPage fPage2;
 
 	/**
@@ -45,9 +44,6 @@ public class FeatureExportWizard extends BaseExportWizard {
 			fPage2 = new CrossPlatformExportPage("environment", model); //$NON-NLS-1$
 			addPage(fPage2);
 		}	
-		fPage3 = new AdvancedFeatureExportPage();
-		addPage(fPage3);
-		((FeatureExportWizardPage)fPage1).setFeaturePage(fPage3);
 	}
 
 	protected BaseExportWizardPage createPage1() {
@@ -60,16 +56,16 @@ public class FeatureExportWizard extends BaseExportWizard {
 	
 	protected void scheduleExportJob() {
 		FeatureExportInfo info = new FeatureExportInfo();
-		info.toDirectory = fPage1.doExportToDirectory();
-		info.useJarFormat = fPage1.useJARFormat();
-		info.exportSource = fPage1.doExportSource();
-		info.destinationDirectory = fPage1.getDestination();
-		info.zipFileName = fPage1.getFileName();
-		info.targets = fPage2 == null ? null : 
-			fPage1.doMultiPlatform() ? fPage2.getTargets() : null;
-		info.items = ((ExportWizardPageWithTable)fPage1).getSelectedItems();
-		info.signingInfo = fPage1.useJARFormat() ? fPage3.getSigningInfo() : null;
-		info.jnlpInfo = fPage1.useJARFormat() ? fPage3.getJNLPInfo() : null;
+		info.toDirectory = fPage.doExportToDirectory();
+		info.useJarFormat = fPage.useJARFormat();
+		info.exportSource = fPage.doExportSource();
+		info.destinationDirectory = fPage.getDestination();
+		info.zipFileName = fPage.getFileName();
+		if (fPage2 != null && ((FeatureExportWizardPage)fPage).doMultiPlatform())
+			info.targets = fPage2.getTargets();
+		info.items = fPage.getSelectedItems();
+		info.signingInfo = fPage.getSigningInfo();
+		info.jnlpInfo = ((FeatureExportWizardPage)fPage).getJNLPInfo();
 		
 		FeatureExportJob job = new FeatureExportJob(info);
 		job.setUser(true);
@@ -92,13 +88,13 @@ public class FeatureExportWizard extends BaseExportWizard {
 			
 			Element export = doc.createElement("pde.exportFeatures"); //$NON-NLS-1$
 			export.setAttribute("features", getFeatureIDs()); //$NON-NLS-1$
-			export.setAttribute("destination", fPage1.getDestination()); //$NON-NLS-1$
-			String filename = fPage1.getFileName();
+			export.setAttribute("destination", fPage.getDestination()); //$NON-NLS-1$
+			String filename = fPage.getFileName();
 			if (filename != null)
 				export.setAttribute("filename", filename); //$NON-NLS-1$
 			export.setAttribute("exportType", getExportOperation());  //$NON-NLS-1$
-			export.setAttribute("useJARFormat", Boolean.toString(fPage1.useJARFormat())); //$NON-NLS-1$
-			export.setAttribute("exportSource", Boolean.toString(fPage1.doExportSource())); //$NON-NLS-1$
+			export.setAttribute("useJARFormat", Boolean.toString(fPage.useJARFormat())); //$NON-NLS-1$
+			export.setAttribute("exportSource", Boolean.toString(fPage.doExportSource())); //$NON-NLS-1$
 			return doc;
 		} catch (DOMException e) {
 		} catch (FactoryConfigurationError e) {
@@ -109,17 +105,16 @@ public class FeatureExportWizard extends BaseExportWizard {
 	
 	private String getFeatureIDs() {
 		StringBuffer buffer = new StringBuffer();
-		Object[] objects = ((ExportWizardPageWithTable)fPage1).getSelectedItems();
+		Object[] objects = fPage.getSelectedItems();
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
 			if (object instanceof IFeatureModel) {
 				buffer.append(((IFeatureModel)object).getFeature().getId());
 				if (i < objects.length - 1)
-					buffer.append(",");					 //$NON-NLS-1$
+					buffer.append(",");			//$NON-NLS-1$
 			}
 		}
 		return buffer.toString();
 	}
-
 
 }

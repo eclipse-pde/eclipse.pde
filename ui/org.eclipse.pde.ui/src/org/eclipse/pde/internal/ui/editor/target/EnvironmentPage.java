@@ -34,11 +34,13 @@ public class EnvironmentPage extends PDEFormPage {
 		layout.marginRight = 10;
 		layout.verticalSpacing = 15;
 		layout.horizontalSpacing = 10;
+		layout.numColumns = 2;
 		body.setLayout(layout);
 		
 		managedForm.addPart(new EnvironmentSection(this, body));
 		managedForm.addPart(new JRESection(this, body));
 		managedForm.addPart(new ArgumentsSection(this, body));
+		managedForm.addPart(new ImplicitDependenciesSection(this, body));
 	}
 	
 }

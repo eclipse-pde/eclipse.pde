@@ -24,17 +24,17 @@ public class XHTMLConverter {
 	private static final String[] XHTML_DOCTYPES = new String[3];
 	static {
 		XHTML_DOCTYPES[XHTML_STRICT] = 
-			"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">";
+			"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">"; //$NON-NLS-1$
 		XHTML_DOCTYPES[XHTML_TRANSITIONAL] = 
-			"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
+			"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"; //$NON-NLS-1$
 		XHTML_DOCTYPES[XHTML_FRAMESET] =
-			"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">";
+			"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">"; //$NON-NLS-1$
 	}
 	private static final String XHTML_DEFAULT_DOCTYPE = XHTML_DOCTYPES[XHTML_TRANSITIONAL];
-	private static final String XMLNS = "xmlns";
-	private static final String XMLNS_LOC = "http://www.w3.org/1999/xhtml";
-	private static final String F_NEW_FILE_SUFFIX = ".xhtml";
-	private static final String F_XHTML_FE = "xhtml";
+	private static final String XMLNS = "xmlns"; //$NON-NLS-1$
+	private static final String XMLNS_LOC = "http://www.w3.org/1999/xhtml"; //$NON-NLS-1$
+	private static final String F_NEW_FILE_SUFFIX = ".xhtml"; //$NON-NLS-1$
+	private static final String F_XHTML_FE = "xhtml"; //$NON-NLS-1$
 	
 	private int fDoctype;
 	private Stack fTagStack;
@@ -79,7 +79,7 @@ public class XHTMLConverter {
 		try {
 			HTMLParser parser = new HTMLParser(file);
 			pw.println(getDoctypeString(fDoctype));
-			XHTMLTag htmlTag = grabNextTag(parser, "<html");
+			XHTMLTag htmlTag = grabNextTag(parser, "<html"); //$NON-NLS-1$
 			htmlTag.addAttribute(XMLNS, XMLNS_LOC);
 			// fill in any remaning attributes the html tag had
 			convertTagContents(parser, htmlTag);
@@ -123,7 +123,7 @@ public class XHTMLConverter {
 	}
 	
 	public String prepareXHTMLFileName(String filename) {
-		int period = filename.lastIndexOf(".");
+		int period = filename.lastIndexOf("."); //$NON-NLS-1$
 		if (period > -1)
 			return filename.substring(0, period) + F_NEW_FILE_SUFFIX;
 		return filename + F_NEW_FILE_SUFFIX;

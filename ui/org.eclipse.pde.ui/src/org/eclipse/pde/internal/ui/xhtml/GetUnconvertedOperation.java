@@ -29,7 +29,7 @@ import org.w3c.dom.NodeList;
 
 public class GetUnconvertedOperation implements IRunnableWithProgress {
 
-	private static final String F_TOC_EXTENSION = "org.eclipse.help.toc";
+	private static final String F_TOC_EXTENSION = "org.eclipse.help.toc"; //$NON-NLS-1$
 	
 	private IFile fBaseFile;
 	private TocReplaceTable fReplaceTable = new TocReplaceTable();
@@ -72,7 +72,7 @@ public class GetUnconvertedOperation implements IRunnableWithProgress {
 		Iterator it = tocs.iterator();
 		while (it.hasNext()) {
 			IFile file = (IFile)it.next();
-			if (file.getName().equals("toc.xml"))
+			if (file.getName().equals("toc.xml")) //$NON-NLS-1$
 				file.getName().toString();
 			XMLErrorReporter xml = new XMLErrorReporter(file);
 			ValidatingSAXParser.parse(file, xml);
@@ -92,12 +92,12 @@ public class GetUnconvertedOperation implements IRunnableWithProgress {
 	}
 
 	private void checkXML(ElementNode root, IFile file) {
-		String href = root.getAttribute("href");
+		String href = root.getAttribute("href"); //$NON-NLS-1$
 		if (href != null 
-				&& (href.endsWith(".html") 
-				|| href.endsWith(".htm")
-				|| href.endsWith(".xhtml"))) {
-			fReplaceTable.addToTable(href, root.getAttribute("label"), file);
+				&& (href.endsWith(".html")  //$NON-NLS-1$
+				|| href.endsWith(".htm") //$NON-NLS-1$
+				|| href.endsWith(".xhtml"))) { //$NON-NLS-1$
+			fReplaceTable.addToTable(href, root.getAttribute("label"), file); //$NON-NLS-1$
 		}
 		NodeList children = root.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -115,10 +115,10 @@ public class GetUnconvertedOperation implements IRunnableWithProgress {
 					&& !monitor.isCanceled()) {
 				IPluginObject[] children = extensions[i].getChildren();
 				for (int j = 0; j < children.length && !monitor.isCanceled(); j++) {
-					if (children[j].getName().equals("toc")
+					if (children[j].getName().equals("toc") //$NON-NLS-1$
 							&& children[j] instanceof IPluginElement) {
 						IPluginElement element = (IPluginElement) children[j];
-						IPluginAttribute fileAttrib = element.getAttribute("file");
+						IPluginAttribute fileAttrib = element.getAttribute("file"); //$NON-NLS-1$
 						if (fileAttrib != null) {
 							String location = fileAttrib.getValue();
 							IProject project = fBaseFile.getProject();

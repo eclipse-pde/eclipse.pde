@@ -48,6 +48,7 @@ public class EnvironmentSection extends PDESection {
 		section.setDescription(PDEUIMessages.EnvironmentSection_description);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.verticalAlignment = SWT.TOP;
+		data.horizontalSpan = 2;
 		section.setLayoutData(data);
 		
 		Composite client = toolkit.createComposite(section);

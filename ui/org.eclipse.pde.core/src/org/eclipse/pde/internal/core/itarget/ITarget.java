@@ -40,8 +40,12 @@ public interface ITarget extends ITargetObject {
 	
 	ILocationInfo getLocationInfo();
 	
-	void setLocationInfo(ILocationInfo info);
+	void setImplicitPluginsInfo(IImplicitDependenciesInfo info);
 	
+	IImplicitDependenciesInfo getImplicitPluginsInfo();
+	
+	void setLocationInfo(ILocationInfo info);
+		
 	void addPlugin(ITargetPlugin plugin);
 	
 	void addPlugins(ITargetPlugin[] plugins);

@@ -4,6 +4,8 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.itarget.IArgumentsInfo;
+import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -104,5 +106,18 @@ public class JavaArgumentsTab {
 	protected void performDefaults() {
 		fProgramArgs.setText(""); //$NON-NLS-1$
 		fVMArgs.setText(""); //$NON-NLS-1$
+	}
+	
+	protected void loadTargetProfile(ITarget target) {
+		IArgumentsInfo info = target.getArguments();
+		if (info == null) {
+			fProgramArgs.setText(""); //$NON-NLS-1$
+			fVMArgs.setText(""); //$NON-NLS-1$
+			return;
+		}
+		String progArgs = (info.getProgramArguments() == null) ? "" : info.getProgramArguments(); //$NON-NLS-1$
+		fProgramArgs.setText(progArgs);
+		String vmArgs = (info.getVMArguments() == null) ? "" : info.getVMArguments(); //$NON-NLS-1$
+		fVMArgs.setText(vmArgs);
 	}
 }

@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.WizardPage;
 
-public abstract class ExportWizardPage extends WizardPage implements IExportWizardPage {
-
-	public ExportWizardPage(String pageName) {
+public abstract class AbstractExportWizardPage extends WizardPage {
+	
+	protected AbstractExportWizardPage(String pageName) {
 		super(pageName);
 	}
+
+	protected abstract void pageChanged();
+	
+	protected abstract void saveSettings(IDialogSettings settings);
 
 }

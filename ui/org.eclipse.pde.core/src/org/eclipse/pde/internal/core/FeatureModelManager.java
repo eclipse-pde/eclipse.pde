@@ -114,6 +114,10 @@ public class FeatureModelManager {
 		}
 		return (IFeatureModel[])valid.toArray(new IFeatureModel[valid.size()]);
 	}
+	
+	public IFeatureModel[] getWorkspaceModels() {
+		return fWorkspaceManager.getFeatureModels();
+	}
 
 	/**
 	 * Finds active model with a given id and version

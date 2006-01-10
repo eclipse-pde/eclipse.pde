@@ -260,6 +260,9 @@
                name="*.product"
                class="org.eclipse.core.resources.IFile">
          </selection>
+         <selection
+               class="org.eclipse.core.resources.IContainer">
+         </selection>
       </wizard>
       <category
             id="org.eclipse.pde.ui.PluginDevelopment"
@@ -741,14 +744,6 @@
                id="org.eclipse.pde.ui.ExternalizeStrings">
          </action>
          <action
-               label="%convert.html.xhtml"
-               helpContextId="com.janek.xhtmlConverter.convert"
-               class="org.eclipse.pde.internal.ui.xhtml.GetUnconvertedAction"
-               menubarPath="org.eclipse.pde.ui.plugin.tools/group0"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.xhtmlconverter.convert">
-         </action>
-         <action
                label="%MigrationAction.label"
                class="org.eclipse.pde.internal.ui.wizards.tools.MigrationAction"
                helpContextId="org.eclipse.pde.doc.user.migrate_action"
@@ -757,20 +752,28 @@
                id="org.eclipse.pde.ui.MigrationAction1">
          </action>
          <action
-               label="%popupMenus.buildPlugin.label"
-               helpContextId="org.eclipse.pde.doc.user.create_plugin_jars"
-               class="org.eclipse.pde.internal.ui.build.BuildPluginAction"
-               menubarPath="org.eclipse.pde.ui.plugin.tools/group2"
-               enablesFor="1"
-               id="org.eclipse.pde.ui.BuildPluginAction">
-         </action>
-         <action
                label="%popupMenus.createHelpIndex.label"
                helpContextId="org.eclipse.pde.doc.user.create_help_index"
                class="org.eclipse.pde.internal.ui.wizards.tools.CreateHelpIndexAction"
                menubarPath="org.eclipse.pde.ui.plugin.tools/group2"
                enablesFor="1"
                id="org.eclipse.pde.ui.CreateHelpIndexAction">
+         </action>
+         <action
+               label="%convert.html.xhtml"
+               helpContextId="org.eclipse.pde.doc.user.xhtmlConverter"
+               class="org.eclipse.pde.internal.ui.xhtml.GetUnconvertedAction"
+               menubarPath="org.eclipse.pde.ui.plugin.tools/group2"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.xhtmlconverter.convert">
+         </action>
+         <action
+               label="%popupMenus.buildPlugin.label"
+               helpContextId="org.eclipse.pde.doc.user.create_plugin_jars"
+               class="org.eclipse.pde.internal.ui.build.BuildPluginAction"
+               menubarPath="org.eclipse.pde.ui.plugin.tools/group2"
+               enablesFor="1"
+               id="org.eclipse.pde.ui.BuildPluginAction">
          </action>
       </objectContribution>
       <objectContribution
@@ -957,6 +960,9 @@
             <separator
                   name="group1">
             </separator>
+            <separator
+                  name="group2">
+            </separator>
          </menu>
          <filter
                name="projectNature"
@@ -994,6 +1000,14 @@
                enablesFor="+"
                id="org.eclipse.pde.ui.MigrationAction3">
          </action>
+         <!--<action
+               label="Refresh Target Platform"
+               helpContextId="org.eclipse.pde.doc.user.target_profile"
+               class="org.eclipse.pde.internal.ui.nls.GetNonExternalizedStringsAction"
+               menubarPath="org.eclipse.pde.ui.project.tools/group2"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.RefreshTargetPlatform">
+         </action> -->
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"

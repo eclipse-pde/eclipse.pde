@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core.target;
 
 import org.eclipse.pde.internal.core.itarget.IArgumentsInfo;
 import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
+import org.eclipse.pde.internal.core.itarget.IImplicitDependenciesInfo;
 import org.eclipse.pde.internal.core.itarget.ILocationInfo;
 import org.eclipse.pde.internal.core.itarget.IRuntimeInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
@@ -46,6 +47,10 @@ public class TargetModelFactory implements ITargetModelFactory {
 
 	public ILocationInfo createLocation() {
 		return new LocationInfo(fModel);
+	}
+	
+	public IImplicitDependenciesInfo createImplicitPluginInfo() {
+		return new ImplicitDependenciesInfo(fModel);
 	}
 
 	public ITargetPlugin createPlugin() {

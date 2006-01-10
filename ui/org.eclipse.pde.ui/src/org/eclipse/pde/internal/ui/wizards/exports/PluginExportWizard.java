@@ -23,9 +23,8 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class PluginExportWizard extends BaseExportWizard {
+public class PluginExportWizard extends AntGeneratingExportWizard {
 	private static final String STORE_SECTION = "PluginExportWizard"; //$NON-NLS-1$
-	private AdvancedPluginExportPage fPage2;
 
 	public PluginExportWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_PLUGIN_EXPORT_WIZ);
@@ -39,21 +38,15 @@ public class PluginExportWizard extends BaseExportWizard {
 		return STORE_SECTION;
 	}
 	
-	public void addPages() {
-		super.addPages();
-		fPage2 = new AdvancedPluginExportPage("plugin-sign"); //$NON-NLS-1$
-		addPage(fPage2);
-	}
-	
 	protected void scheduleExportJob() {
 		FeatureExportInfo info = new FeatureExportInfo();
-		info.toDirectory = fPage1.doExportToDirectory();
-		info.useJarFormat = fPage1.useJARFormat();
-		info.exportSource = fPage1.doExportSource();
-		info.destinationDirectory = fPage1.getDestination();
-		info.zipFileName = fPage1.getFileName();
-		info.items = ((ExportWizardPageWithTable)fPage1).getSelectedItems();
-		info.signingInfo = fPage1.useJARFormat() ? fPage2.getSigningInfo() : null;
+		info.toDirectory = fPage.doExportToDirectory();
+		info.useJarFormat = fPage.useJARFormat();
+		info.exportSource = fPage.doExportSource();
+		info.destinationDirectory = fPage.getDestination();
+		info.zipFileName = fPage.getFileName();
+		info.items = fPage.getSelectedItems();
+		info.signingInfo = fPage.useJARFormat() ? fPage.getSigningInfo() : null;
 		
 		PluginExportJob job = new PluginExportJob(info);
 		job.setUser(true);
@@ -76,13 +69,13 @@ public class PluginExportWizard extends BaseExportWizard {
 			
 			Element export = doc.createElement("pde.exportPlugins"); //$NON-NLS-1$
 			export.setAttribute("plugins", getPluginIDs()); //$NON-NLS-1$
-			export.setAttribute("destination", fPage1.getDestination()); //$NON-NLS-1$
-			String filename = fPage1.getFileName();
+			export.setAttribute("destination", fPage.getDestination()); //$NON-NLS-1$
+			String filename = fPage.getFileName();
 			if (filename != null)
 				export.setAttribute("filename", filename); //$NON-NLS-1$
 			export.setAttribute("exportType", getExportOperation());  //$NON-NLS-1$
-			export.setAttribute("useJARFormat", Boolean.toString(fPage1.useJARFormat()));  //$NON-NLS-1$
-			export.setAttribute("exportSource", Boolean.toString(fPage1.doExportSource()));  //$NON-NLS-1$
+			export.setAttribute("useJARFormat", Boolean.toString(fPage.useJARFormat()));  //$NON-NLS-1$
+			export.setAttribute("exportSource", Boolean.toString(fPage.doExportSource()));  //$NON-NLS-1$
 			target.appendChild(export);
 			return doc;
 		} catch (DOMException e) {
@@ -94,7 +87,7 @@ public class PluginExportWizard extends BaseExportWizard {
 	
 	private String getPluginIDs() {
 		StringBuffer buffer = new StringBuffer();
-		Object[] objects = ((ExportWizardPageWithTable)fPage1).getSelectedItems();
+		Object[] objects = fPage.getSelectedItems();
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
 			if (object instanceof IPluginModelBase) {

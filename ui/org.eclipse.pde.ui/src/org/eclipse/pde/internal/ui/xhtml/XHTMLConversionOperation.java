@@ -14,6 +14,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.xhtml.TocReplaceTable.TocReplaceEntry;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.text.edits.MalformedTreeException;
@@ -33,8 +35,7 @@ public class XHTMLConversionOperation implements IWorkspaceRunnable {
 	public void run(IProgressMonitor monitor) throws CoreException {
 		XHTMLConverter converter = new XHTMLConverter(XHTMLConverter.XHTML_TRANSITIONAL);
 		
-		monitor.beginTask("XHTML Converter", fEntries.length * 3);
-		long time = System.currentTimeMillis();
+		monitor.beginTask(PDEUIMessages.XHTMLConversionOperation_taskName, fEntries.length * 3);
 		int success = 0;
 		for (int i = 0; i < fEntries.length; i++) {
 			String replacement = converter.prepareXHTMLFileName(fEntries[i].getHref());
@@ -57,17 +58,13 @@ public class XHTMLConversionOperation implements IWorkspaceRunnable {
 		}
 		
 		monitor.worked(fEntries.length - success);
-		monitor.done();
-		
-		System.out.println("failed: " + (fEntries.length - success));
-		System.out.println("succeeded: " + success);
-		System.out.println("total time: " + (System.currentTimeMillis() - time));
+		monitor.done();	
 	}
 
 	private boolean convert(TocReplaceEntry entry, XHTMLConverter converter, IProgressMonitor monitor) throws CoreException {
 		if (monitor.isCanceled())
 			return false;
-		monitor.subTask("creating " + entry.getHref() + " xhtml file");
+		monitor.subTask(NLS.bind(PDEUIMessages.XHTMLConversionOperation_createXHTML, entry.getHref()));
 		boolean success = converter.convert(entry.getOriginalFile(), monitor);
 		monitor.worked(2);
 		return success;
@@ -99,19 +96,17 @@ public class XHTMLConversionOperation implements IWorkspaceRunnable {
 						Iterator it = changeList.iterator();
 						while (it.hasNext()) {
 							TocReplaceEntry entry = (TocReplaceEntry)it.next();
-//							monitor.subTask("Updating toc entry: " + entry.getHref() + " and removing HTML file");
 							FindReplaceDocumentAdapter frda = new FindReplaceDocumentAdapter(doc);
-							String findString = "\"" + entry.getHref() + "\"";
+							String findString = "\"" + entry.getHref() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 							String replacement = entry.getReplacement();
-//							String replacement = entry.getOriginalFile().getProjectRelativePath().toString();
-							String replaceString = "\"" + replacement + "\"";
+							String replaceString = "\"" + replacement + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 							
 							frda.find(0, findString, true, false, false, false);
 							try {
 								frda.replace(replaceString, false);
 							} catch (IllegalStateException illegalState1) { // did not find anything...
-								findString = "'" + entry.getHref() + "'";   // search for attribute with singlequotes
-								replaceString = "'" + replacement + "'";
+								findString = "'" + entry.getHref() + "'";   // search for attribute with singlequotes //$NON-NLS-1$ //$NON-NLS-2$
+								replaceString = "'" + replacement + "'"; //$NON-NLS-1$ //$NON-NLS-2$
 								frda.find(0, findString, true, false, false, false);
 								try {
 									frda.replace(replaceString, false);

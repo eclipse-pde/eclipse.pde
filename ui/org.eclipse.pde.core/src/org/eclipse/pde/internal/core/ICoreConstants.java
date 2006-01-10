@@ -26,6 +26,7 @@ public interface ICoreConstants {
 	String P_EXT_LOCATIONS = "ext_locations"; //$NON-NLS-1$
 	String PROGRAM_ARGS = "program_args"; //$NON-NLS-1$
 	String VM_ARGS = "vm_args"; //$NON-NLS-1$
+	String IMPLICIT_DEPENDENCIES = "implicit_dependencies"; //$NON-NLS-1$
 	
 	// Target JRE
 	String TARGET_JRE = "targetJRE"; //$NON-NLS-1$
@@ -43,6 +44,7 @@ public interface ICoreConstants {
 	public static final String EXTENSIONS_PROPERTY = "pluginProject.extensions"; //$NON-NLS-1$
 	public static final String SECONDARY_DEPENDENCIES = "secondary.dependencies"; //$NON-NLS-1$
 	public static final String RESOLVE_WITH_REQUIRE_BUNDLE = "resolve.requirebundle"; //$NON-NLS-1$
+	public static final String TARGET_PROFILE = "target.profile"; //$NON-NLS-1$
 	
 	// for backwards compatibility with Eclipse 3.0 bundle manifest files
 	public final static String PROVIDE_PACKAGE = "Provide-Package"; //$NON-NLS-1$

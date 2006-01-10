@@ -130,7 +130,7 @@ public class ExternalFeatureModelManager implements
 		return null;
 	}
 
-	private void loadModels(String platformHome) {
+	public void loadModels(String platformHome) {
 		IFeatureModel[] newModels;
 		if (platformHome != null && platformHome.length() > 0) {
 			newModels = createModels(platformHome);
@@ -191,5 +191,9 @@ public class ExternalFeatureModelManager implements
 	
 	public synchronized void reload() {
 		loadModels(fPref.getString(ICoreConstants.PLATFORM_PATH));
+	}
+	
+	public IFeatureModel[] getModels() {
+		return fModels;
 	}
 }

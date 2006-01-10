@@ -84,6 +84,7 @@ public interface IHelpContextIds {
 	
 	public static final String PLUGIN_EXPORT_WIZARD = PREFIX + "plugin_export_wizard"; //$NON-NLS-1$
 	public static final String FEATURE_EXPORT_WIZARD = PREFIX + "feature_export_wizard";	 //$NON-NLS-1$
+ 	public static final String PRODUCT_EXPORT_WIZARD = PREFIX + "product_export_wizard"; //$NON-NLS-1$
  	
  	public static final String TEMPLATE_SELECTION = PREFIX + "template_selection"; //$NON-NLS-1$
  	public static final String TEMPLATE_EDITOR = PREFIX + "template_editor"; //$NON-NLS-1$

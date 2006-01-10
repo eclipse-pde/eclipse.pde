@@ -102,7 +102,10 @@ public abstract class BaseBuildAction
 		monitor.setTaskName(PDEUIMessages.BuildAction_Update); 
 		refreshLocal(monitor);
 		monitor.worked(1);
-		setDefaultValues();
+		IProject project = fManifestFile.getProject();
+		IFile generatedFile = (IFile) project.findMember("build.xml"); //$NON-NLS-1$
+		if (generatedFile != null)
+			setDefaultValues(generatedFile);
 		monitor.worked(1);
 
 	}
@@ -153,12 +156,7 @@ public abstract class BaseBuildAction
 		project.refreshLocal(IResource.DEPTH_ONE, monitor);
 	}
 
-	private void setDefaultValues() {
-		IProject project = fManifestFile.getProject();
-		IFile generatedFile = (IFile) project.findMember("build.xml"); //$NON-NLS-1$
-		if (generatedFile == null)
-			return;
-
+	public static void setDefaultValues(IFile generatedFile) {
 		try {
 			List configs = AntLaunchShortcut
 					.findExistingLaunchConfigurations(generatedFile);
@@ -188,6 +186,7 @@ public abstract class BaseBuildAction
 			properties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$  
 			properties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, "true"); //$NON-NLS-1$
 			
+			IProject project = generatedFile.getProject();
 			if (!project.hasNature(JavaCore.NATURE_ID)) {
 				Preferences pref = JavaCore.getPlugin().getPluginPreferences();
 				properties.put(IXMLConstants.PROPERTY_JAVAC_SOURCE, pref.getString(JavaCore.COMPILER_SOURCE)); 

@@ -58,7 +58,7 @@ public class TocReplaceTable {
 					public String getLabel(Object o) {
 						String label = TocReplaceEntry.this.getLabel();
 						String href = TocReplaceEntry.this.getHref();
-						return label == null ? href : href + " (" + label + ")";
+						return label == null ? href : href + " (" + label + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					public Object getParent(Object o) {
 						return TocReplaceEntry.this.getTocFile();
@@ -80,7 +80,7 @@ public class TocReplaceTable {
 	
 	public void addToTable(String href, String title, IFile tocFile) {
 		TocReplaceEntry tro = new TocReplaceEntry(href, title, tocFile);
-		if (href.endsWith(".xhtml") && !tro.fileMissing())
+		if (href.endsWith(".xhtml") && !tro.fileMissing()) //$NON-NLS-1$
 			return;
 		Hashtable entries = tro.fileMissing() ? fInvalidEntries : fEntries;
 		if (entries.containsKey(tocFile)) {

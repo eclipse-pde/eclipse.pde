@@ -582,6 +582,9 @@ public class ProductExportJob extends FeatureExportJob {
 		}	
 	}
 	
-
+	protected void setAdditionalAttributes(Element plugin, BundleDescription bundle) {
+    	boolean unpack = CoreUtility.guessUnpack(bundle);
+        plugin.setAttribute("unpack", Boolean.toString(unpack)); //$NON-NLS-1$
+	}
 	
 }

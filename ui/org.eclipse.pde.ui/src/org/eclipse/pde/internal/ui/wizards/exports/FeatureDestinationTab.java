@@ -10,8 +10,23 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
-public interface IExportWizardPage {
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+
+public class FeatureDestinationTab extends ExportDestinationTab {
+
+	public FeatureDestinationTab(AbstractExportWizardPage page) {
+		super(page);
+	}
 	
-	void saveSettings();
+	protected void hookListeners() {
+		super.hookListeners();
+		fDirectoryButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				((FeatureExportWizardPage)fPage).adjustJNLPTabVisibility();
+				fPage.pageChanged();
+			}
+		});
+	}
 
 }

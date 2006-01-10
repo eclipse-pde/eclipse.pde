@@ -15,6 +15,7 @@ import java.util.Vector;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -32,7 +33,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
-public class PortabilityChoicesDialog extends Dialog {
+public class PortabilityChoicesDialog extends TrayDialog {
 	private String value;
 	private Choice[] choices;
 	private CheckboxTableViewer choiceViewer;

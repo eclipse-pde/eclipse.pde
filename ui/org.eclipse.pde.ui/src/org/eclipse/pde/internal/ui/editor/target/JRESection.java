@@ -48,6 +48,7 @@ public class JRESection extends PDESection {
 		section.setLayout(new GridLayout());
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.verticalAlignment = SWT.TOP;
+		data.horizontalSpan = 2;
 		section.setLayoutData(data);
 
 		Composite client = toolkit.createComposite(section);

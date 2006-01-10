@@ -20,11 +20,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.core.IEnvironmentVariables;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
+import org.eclipse.pde.internal.core.itarget.IRuntimeInfo;
+import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -203,6 +209,88 @@ public class TargetEnvironmentTab implements IEnvironmentVariables {
 		fWSCombo.setText(preferences.getString(WS));
 		fNLCombo.setText(expandLocaleName(preferences.getString(NL)));
 		fArchCombo.setText(preferences.getString(ARCH));		
+	}
+	
+	protected void loadTargetProfile(ITarget target) {
+		loadTargetProfileEnvironment(target.getEnvironment());
+		loadTargetProfileJRE(target.getTargetJREInfo());
+	}
+	
+	private void loadTargetProfileEnvironment(IEnvironmentInfo info) {
+		if (info == null)
+			return;
+		String os = info.getOS();
+		String ws = info.getWS();
+		String arch = info.getArch();
+		String nl = info.getNL();
+		nl = expandLocaleName(nl);
+		
+		if (!os.equals("")) { //$NON-NLS-1$
+			if (fOSCombo.indexOf(os) == -1)
+				fOSCombo.add(os);
+			fOSCombo.setText(os);
+		}
+		
+		if (!ws.equals("")) { //$NON-NLS-1$
+			if (fWSCombo.indexOf(ws) == -1)
+				fWSCombo.add(ws);
+			fWSCombo.setText(ws);
+		}
+		
+		if (!arch.equals("")) { //$NON-NLS-1$
+			if (fArchCombo.indexOf(arch) == -1)
+				fArchCombo.add(arch);
+			fArchCombo.setText(arch);
+		}
+		
+		if (!nl.equals("")) { //$NON-NLS-1$
+			if (fNLCombo.indexOf(nl) == -1)
+				fNLCombo.add(nl);
+			fNLCombo.setText(nl);
+		}
+	}
+	
+	private void loadTargetProfileJRE(IRuntimeInfo info) {
+		if (info == null)
+			return;
+		int jreType = info.getJREType();
+		String vmName = null;
+		switch (jreType) {
+		case IRuntimeInfo.TYPE_DEFAULT:
+			vmName = JavaRuntime.getDefaultVMInstall().getName();
+			break;
+		case IRuntimeInfo.TYPE_NAMED:
+			vmName = info.getJREName();
+			break;
+		case IRuntimeInfo.TYPE_EXECUTION_ENV:
+			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+			IExecutionEnvironment environment = manager.getEnvironment(info.getJREName());
+			IVMInstall vm = null;
+			if (environment != null) {
+				vm = environment.getDefaultVM();
+				if (vm == null) {
+					IVMInstall[] installs = environment.getCompatibleVMs();
+					// take the first strictly compatible vm if there is no default
+					for (int i = 0; i < installs.length; i++) {
+						IVMInstall install = installs[i];
+						if (environment.isStrictlyCompatible(install)) {
+							vmName = install.getName();
+							break;
+						}
+					}
+					// use the first vm failing that
+					if (vm == null && installs.length > 0) 
+						vmName = installs[0].getName();
+				} else 
+					vmName = vm.getName();
+			}
+			if (vmName == null)
+				vmName = JavaRuntime.getDefaultVMInstall().getName();
+		default:
+			break;
+		}
+		int index = fJRECombo.indexOf(vmName);
+		fJRECombo.select(index);
 	}
 	
 	/**

@@ -13,8 +13,11 @@ package org.eclipse.pde.internal.ui.preferences;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Stack;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IProject;
@@ -23,6 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -39,12 +43,21 @@ import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.EclipseHomeInitializer;
+import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
 import org.eclipse.pde.internal.core.ExternalModelManager;
+import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ModelProviderEvent;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.PluginPathFinder;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.core.itarget.ITarget;
+import org.eclipse.pde.internal.core.itarget.ITargetFeature;
+import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -75,6 +88,7 @@ public class TargetPluginsTab {
 	private IPluginModelBase[] fInitialModels;
 	private IPluginModelBase[] fModels;
 	private PDEState fCurrentState;
+	private Map fCurrentFeatures;
 	
 	class ReloadOperation implements IRunnableWithProgress {
 		private String location;
@@ -86,8 +100,35 @@ public class TargetPluginsTab {
 		public void run(IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {	
 			URL[] pluginPaths = PluginPathFinder.getPluginPaths(location);
-			fCurrentState = new PDEState(pluginPaths, true, monitor);
-			fModels = fCurrentState.getModels();		
+			monitor.beginTask(PDEUIMessages.TargetPluginsTab_readingPlatform, 10);
+			SubProgressMonitor parsePluginMonitor = new SubProgressMonitor(monitor, 9);
+			fCurrentState = new PDEState(pluginPaths, true, parsePluginMonitor);
+			fModels = fCurrentState.getModels();
+			loadFeatures(new SubProgressMonitor(monitor, 1));
+			monitor.done();
+		}
+		
+		private void loadFeatures(IProgressMonitor monitor) {
+			ExternalFeatureModelManager manager = new ExternalFeatureModelManager();
+			manager.loadModels(location);
+			IFeatureModel[] externalModels = manager.getModels();
+			IFeatureModel[] workspaceModels = PDECore.getDefault().getFeatureModelManager().getWorkspaceModels();
+			int numFeatures = externalModels.length + workspaceModels.length;
+			monitor.beginTask(PDEUIMessages.TargetPluginsTab_readingFeatures, numFeatures);
+			fCurrentFeatures = new HashMap((4/3) * (numFeatures) + 1);
+			for (int i = 0; i < externalModels.length; i++) {
+				String id = externalModels[i].getFeature().getId();
+				monitor.subTask(id);
+				fCurrentFeatures.put(id, externalModels[i]);
+				monitor.worked(1);
+			}
+			for (int i = 0; i < workspaceModels.length; i++) {
+				String id = workspaceModels[i].getFeature().getId();
+				monitor.subTask(id);
+				fCurrentFeatures.put(id, workspaceModels[i]);
+				monitor.worked(1);
+			}
+			monitor.done();
 		}
 		
 	}
@@ -156,6 +197,10 @@ public class TargetPluginsTab {
 		
 		public void incrementCounter(int increment) {
 			updateCounter(getSelectionCount() + increment);
+		}
+		
+		public void updateCounter(int amount) {
+			super.updateCounter(amount);
 		}
 	}
 
@@ -238,6 +283,68 @@ public class TargetPluginsTab {
 			return fInitialModels;
 		}
 		return fModels;
+	}
+	
+	protected void loadTargetProfile(ITarget target) {
+		if (target.useAllPlugins()) {
+			handleSelectAll(true);
+			return;
+		}
+		HashSet set = new HashSet();
+		ITargetFeature[] targetFeatures = target.getFeatures();
+		Stack features = new Stack();
+		
+		FeatureModelManager featureManager = null;
+		if (fCurrentFeatures == null)
+			featureManager = PDECore.getDefault().getFeatureModelManager();
+		for (int i = 0 ; i < targetFeatures.length; i++) {
+			IFeatureModel model = (featureManager != null) ? featureManager.findFeatureModel(targetFeatures[i].getId()) :
+				(IFeatureModel)fCurrentFeatures.get(targetFeatures[i].getId());
+			if (model != null)
+				features.push(model.getFeature());
+		}
+		while (!features.isEmpty()) {
+			IFeature feature = (IFeature) features.pop();
+			IFeaturePlugin [] plugins = feature.getPlugins();
+			for (int j = 0; j < plugins.length; j++) {
+				set.add(plugins[j].getId());
+			}
+			IFeatureChild[] children = feature.getIncludedFeatures();
+			for (int j = 0; j < children.length; j++) {
+				IFeatureModel model = (featureManager != null) ? featureManager.findFeatureModel(children[j].getId()) :
+					(IFeatureModel)fCurrentFeatures.get(children[j].getId());
+				features.push(model);
+			}
+		}
+
+		ITargetPlugin[] plugins = target.getPlugins();
+		for (int i = 0 ; i < plugins.length; i++) {
+			set.add(plugins[i].getId());
+		}
+		
+		IPluginModelBase[] models = getAllModels();
+		int counter = 0;
+		for (int i = 0; i < models.length; i++) {
+			String id = models[i].getPluginBase().getId();
+			if (id == null)
+				continue;
+			if (set.contains(id)) {
+				++counter;
+				if (!fPluginListViewer.getChecked(models[i])) {
+					fPluginListViewer.setChecked(models[i], true);
+					if (!models[i].isEnabled())
+						fChangedModels.add(models[i]);
+				}
+				set.remove(id);
+			} else {
+				if (fPluginListViewer.getChecked(models[i])) {
+					fPluginListViewer.setChecked(models[i], false);
+					if (models[i].isEnabled())
+						fChangedModels.add(models[i]);
+				}
+			}		
+		}
+		fTablePart.updateCounter(counter);
 	}
 
 	protected void handleReload() {
@@ -461,6 +568,12 @@ public class TargetPluginsTab {
 			}
 		}
 		return (IFragmentModel[]) result.toArray(new IFragmentModel[result.size()]);
+	}
+	
+	protected IPluginModelBase[] getCurrentModels() {
+		if (fCurrentState != null)
+			return fCurrentState.getModels();
+		return PDECore.getDefault().getModelManager().getAllPlugins();
 	}
 
 }

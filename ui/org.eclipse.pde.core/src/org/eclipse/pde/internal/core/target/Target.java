@@ -17,6 +17,7 @@ import java.util.TreeMap;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.itarget.IArgumentsInfo;
 import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
+import org.eclipse.pde.internal.core.itarget.IImplicitDependenciesInfo;
 import org.eclipse.pde.internal.core.itarget.ILocationInfo;
 import org.eclipse.pde.internal.core.itarget.IRuntimeInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
@@ -39,6 +40,7 @@ public class Target extends TargetObject implements ITarget {
 	private IEnvironmentInfo fEnvInfo;
 	private IRuntimeInfo fRuntimeInfo;
 	private ILocationInfo fLocationInfo;
+	private IImplicitDependenciesInfo fImplicitInfo;
 	private boolean fUseAllTargetPlatform = false;
 	
 	public Target(ITargetModel model) {
@@ -50,6 +52,7 @@ public class Target extends TargetObject implements ITarget {
 		fEnvInfo = null;
 		fRuntimeInfo = null;
 		fLocationInfo = null;
+		fImplicitInfo = null;
 		fPlugins.clear();
 		fFeatures.clear();
 		fUseAllTargetPlatform = false;
@@ -81,6 +84,9 @@ public class Target extends TargetObject implements ITarget {
 					} else if (name.equals("location")) { //$NON-NLS-1$
 						fLocationInfo = factory.createLocation();
 						fLocationInfo.parse(child);
+					} else if (name.equals("implicitDependencies")) { //$NON-NLS-1$
+						fImplicitInfo = factory.createImplicitPluginInfo();
+						fImplicitInfo.parse(child);
 					}
 				}
 			}
@@ -169,7 +175,9 @@ public class Target extends TargetObject implements ITarget {
 		}
 		writer.println(indent + "      </features>"); //$NON-NLS-1$
 		writer.println(indent + "   </content>"); //$NON-NLS-1$
-		
+		if (fImplicitInfo != null) {
+			fImplicitInfo.write(indent + "   ", writer); //$NON-NLS-1$
+		}
 		writer.println();
 		writer.println(indent + "</target>"); //$NON-NLS-1$
 	}
@@ -314,5 +322,13 @@ public class Target extends TargetObject implements ITarget {
 		fUseAllTargetPlatform = value;
 		if (isEditable())
 			firePropertyChanged(P_ALL_PLUGINS, new Boolean(oldValue), new Boolean(fUseAllTargetPlatform));
+	}
+
+	public void setImplicitPluginsInfo(IImplicitDependenciesInfo info) {
+		fImplicitInfo = info;
+	}
+
+	public IImplicitDependenciesInfo getImplicitPluginsInfo() {
+		return fImplicitInfo;
 	}
 }

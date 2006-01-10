@@ -78,7 +78,7 @@ public class LauncherUtils {
 			boolean doClear = !configuration.getAttribute(IPDELauncherConstants.ASKCLEAR, true);
 			if (!doClear) {
 				int result = confirmDeleteWorkspace(workspaceFile);
-				if (result == 2) {
+				if (result == 2 || result == -1) {
 					monitor.done();
 					return false;
 				}

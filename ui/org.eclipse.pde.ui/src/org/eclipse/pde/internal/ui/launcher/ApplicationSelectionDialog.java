@@ -10,16 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.debug.core.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 
 
-public class ApplicationSelectionDialog extends Dialog {
+public class ApplicationSelectionDialog extends TrayDialog {
 	
 	private String fMode;
 	private Combo applicationCombo;

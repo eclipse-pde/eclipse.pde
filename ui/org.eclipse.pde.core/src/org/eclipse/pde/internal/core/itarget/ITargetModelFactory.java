@@ -22,6 +22,8 @@ public interface ITargetModelFactory {
 	
 	ILocationInfo createLocation();
 	
+	IImplicitDependenciesInfo createImplicitPluginInfo();
+	
 	ITargetPlugin createPlugin();
 	
 	ITargetFeature createFeature();

@@ -695,9 +695,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
                         	Element plugin = doc.createElement("plugin"); //$NON-NLS-1$
                         	plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
                             plugin.setAttribute("version", "0.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
-                            if (!fInfo.useJarFormat) {
-                                plugin.setAttribute("unpack", Boolean.toString(isUnpack(bundle))); //$NON-NLS-1$
-                             }
+                            setAdditionalAttributes(plugin, bundle);
                             root.appendChild(plugin);
                          }
                     } catch (InvalidSyntaxException e) {
@@ -711,7 +709,6 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		}      	
     }
     
-    protected boolean isUnpack(BundleDescription bundle){
-    	return CoreUtility.guessUnpack(bundle);
+    protected void setAdditionalAttributes(Element plugin, BundleDescription bundle){
     }
 }

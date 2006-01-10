@@ -17,15 +17,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
-import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.PersistablePluginObject;
@@ -33,7 +30,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 
 
-public class PluginExportWizardPage extends ExportWizardPageWithTable {
+public class PluginExportWizardPage extends BaseExportWizardPage {
 	
 	public PluginExportWizardPage(IStructuredSelection selection) {
 		super(
@@ -91,34 +88,12 @@ public class PluginExportWizardPage extends ExportWizardPageWithTable {
 		return null;
 	}
 	
-	protected String getJarButtonText() {
-		return PDEUIMessages.BaseExportWizardPage_packageJARs; 
-	}
-				
-    protected boolean addMultiplatformSection() {
-		return false;
-	}
-    
 	protected boolean isEnableJarButton() {
 		return getSelectedItems().length <= 1;
 	}
 	
-	protected boolean getInitialJarButtonSelection(IDialogSettings settings) {
-		Object[] selectedPlugins = getSelectedItems();
-		if (selectedPlugins.length == 1) {
-			BundleDescription bundle = null;
-			if (selectedPlugins[0] instanceof IPluginModelBase) {
-				bundle = ((IPluginModelBase) selectedPlugins[0])
-						.getBundleDescription();
-			}
-			if (bundle == null) {
-				if (selectedPlugins[0] instanceof BundleDescription)
-					bundle = (BundleDescription) selectedPlugins[0];
-			}
-			if (bundle != null) {
-				return !CoreUtility.guessUnpack(bundle);
-			}
-		}
-		return super.getInitialJarButtonSelection(settings);
+	protected void adjustAdvancedTabsVisibility() {
+		adjustJARSigningTabVisibility();
+		pageChanged();
 	}
 }

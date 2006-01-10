@@ -11,12 +11,14 @@
 package org.eclipse.pde.internal.ui.search.dependencies;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.text.bundle.*;
+import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
+import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
@@ -29,7 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-public class UnusedImportsDialog extends Dialog {
+public class UnusedImportsDialog extends TrayDialog {
 	private IPluginModelBase model;
 	private Object[] unused;
 	private WizardCheckboxTablePart checkboxTablePart;

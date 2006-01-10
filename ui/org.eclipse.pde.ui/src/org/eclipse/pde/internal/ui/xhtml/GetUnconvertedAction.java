@@ -7,6 +7,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -35,7 +36,7 @@ public class GetUnconvertedAction implements IWorkbenchWindowActionDelegate {
 				});
 			} else
 				MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
-						"No action necessary", "There were no files found that need to be converted.");
+						PDEUIMessages.GetUnconvertedAction_noAction, PDEUIMessages.GetUnconvertedAction_message);
 		}
 	}
 

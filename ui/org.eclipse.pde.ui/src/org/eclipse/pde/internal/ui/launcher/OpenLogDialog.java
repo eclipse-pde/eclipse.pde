@@ -11,22 +11,36 @@
 
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.io.*;
-import java.lang.reflect.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.operation.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.RandomAccessFile;
+import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * Displays the error log in non-Win32 platforms - see bug 55314.
  */
-public final class OpenLogDialog extends Dialog {
+public final class OpenLogDialog extends TrayDialog {
     // input log file
     private File logFile;
     // location/size configuration

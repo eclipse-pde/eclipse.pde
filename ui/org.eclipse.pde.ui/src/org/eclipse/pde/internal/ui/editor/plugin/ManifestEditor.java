@@ -55,6 +55,7 @@ import org.eclipse.pde.internal.ui.editor.build.BuildPage;
 import org.eclipse.pde.internal.ui.editor.build.BuildSourcePage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -78,6 +79,10 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 	}
 	
 	public static IEditorPart openPluginEditor(IPluginModelBase model) {
+		if (model == null) {
+			Display.getDefault().beep();
+			return null;
+		}
 		return openPluginEditor(model, false);
 	}
 	

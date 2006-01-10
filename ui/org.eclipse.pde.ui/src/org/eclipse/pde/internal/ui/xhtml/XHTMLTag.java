@@ -17,16 +17,16 @@ public class XHTMLTag {
 	 */
 	private static final ArrayList F_XHTML_S1_EE = new ArrayList(10); 
 	static {
-		F_XHTML_S1_EE.add("base");
-		F_XHTML_S1_EE.add("meta");
-		F_XHTML_S1_EE.add("link");
-		F_XHTML_S1_EE.add("hr");
-		F_XHTML_S1_EE.add("br");
-		F_XHTML_S1_EE.add("param");
-		F_XHTML_S1_EE.add("img");
-		F_XHTML_S1_EE.add("area");
-		F_XHTML_S1_EE.add("input");
-		F_XHTML_S1_EE.add("col");
+		F_XHTML_S1_EE.add("base"); //$NON-NLS-1$
+		F_XHTML_S1_EE.add("meta"); //$NON-NLS-1$
+		F_XHTML_S1_EE.add("link"); //$NON-NLS-1$
+		F_XHTML_S1_EE.add("hr"); //$NON-NLS-1$
+		F_XHTML_S1_EE.add("br"); //$NON-NLS-1$
+		F_XHTML_S1_EE.add("param"); //$NON-NLS-1$
+		F_XHTML_S1_EE.add("img"); //$NON-NLS-1$
+		F_XHTML_S1_EE.add("area"); //$NON-NLS-1$
+		F_XHTML_S1_EE.add("input"); //$NON-NLS-1$
+		F_XHTML_S1_EE.add("col"); //$NON-NLS-1$
 	}
 	/*
 	 * Empty XHTML Transitional 1.0 elements
@@ -34,18 +34,18 @@ public class XHTMLTag {
 	 */
 	private static final ArrayList F_XHTML_T1_EE = new ArrayList(12);
 	static {
-		F_XHTML_T1_EE.add("base");
-		F_XHTML_T1_EE.add("meta");
-		F_XHTML_T1_EE.add("link");
-		F_XHTML_T1_EE.add("hr");
-		F_XHTML_T1_EE.add("br");
-		F_XHTML_T1_EE.add("basefont");
-		F_XHTML_T1_EE.add("param");
-		F_XHTML_T1_EE.add("img");
-		F_XHTML_T1_EE.add("area");
-		F_XHTML_T1_EE.add("input");
-		F_XHTML_T1_EE.add("isindex");
-		F_XHTML_T1_EE.add("col");
+		F_XHTML_T1_EE.add("base"); //$NON-NLS-1$
+		F_XHTML_T1_EE.add("meta"); //$NON-NLS-1$
+		F_XHTML_T1_EE.add("link"); //$NON-NLS-1$
+		F_XHTML_T1_EE.add("hr"); //$NON-NLS-1$
+		F_XHTML_T1_EE.add("br"); //$NON-NLS-1$
+		F_XHTML_T1_EE.add("basefont"); //$NON-NLS-1$
+		F_XHTML_T1_EE.add("param"); //$NON-NLS-1$
+		F_XHTML_T1_EE.add("img"); //$NON-NLS-1$
+		F_XHTML_T1_EE.add("area"); //$NON-NLS-1$
+		F_XHTML_T1_EE.add("input"); //$NON-NLS-1$
+		F_XHTML_T1_EE.add("isindex"); //$NON-NLS-1$
+		F_XHTML_T1_EE.add("col"); //$NON-NLS-1$
 	}
 	/*
 	 * Empty XHTML Frameset 1.0 elements
@@ -53,25 +53,25 @@ public class XHTMLTag {
 	 */
 	private static final ArrayList F_XHTML_F1_EE = new ArrayList(13);
 	static {
-		F_XHTML_F1_EE.add("base");
-		F_XHTML_F1_EE.add("meta");
-		F_XHTML_F1_EE.add("link");
-		F_XHTML_F1_EE.add("frame");
-		F_XHTML_F1_EE.add("hr");
-		F_XHTML_F1_EE.add("br");
-		F_XHTML_F1_EE.add("basefont");
-		F_XHTML_F1_EE.add("param");
-		F_XHTML_F1_EE.add("img");
-		F_XHTML_F1_EE.add("area");
-		F_XHTML_F1_EE.add("input");
-		F_XHTML_F1_EE.add("isindex");
-		F_XHTML_F1_EE.add("col");
+		F_XHTML_F1_EE.add("base"); //$NON-NLS-1$
+		F_XHTML_F1_EE.add("meta"); //$NON-NLS-1$
+		F_XHTML_F1_EE.add("link"); //$NON-NLS-1$
+		F_XHTML_F1_EE.add("frame"); //$NON-NLS-1$
+		F_XHTML_F1_EE.add("hr"); //$NON-NLS-1$
+		F_XHTML_F1_EE.add("br"); //$NON-NLS-1$
+		F_XHTML_F1_EE.add("basefont"); //$NON-NLS-1$
+		F_XHTML_F1_EE.add("param"); //$NON-NLS-1$
+		F_XHTML_F1_EE.add("img"); //$NON-NLS-1$
+		F_XHTML_F1_EE.add("area"); //$NON-NLS-1$
+		F_XHTML_F1_EE.add("input"); //$NON-NLS-1$
+		F_XHTML_F1_EE.add("isindex"); //$NON-NLS-1$
+		F_XHTML_F1_EE.add("col"); //$NON-NLS-1$
 	}
 	private static final char F_TAG_OPEN = '<';
 	private static final char F_TAG_CLOSE = '>';
 	private static final char F_TAG_SLASH = '/';
 	private static final char F_TAG_SPACE = ' ';
-	private static final String F_DOUBLE_QUOTE = "\"";
+	private static final String F_DOUBLE_QUOTE = "\""; //$NON-NLS-1$
 	
 	
 	private String fTagName;

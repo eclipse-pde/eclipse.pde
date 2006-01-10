@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
@@ -32,31 +32,23 @@ import org.eclipse.pde.internal.ui.build.FeatureExportInfo;
 import org.eclipse.pde.internal.ui.build.ProductExportJob;
 import org.eclipse.pde.internal.ui.wizards.product.SynchronizationOperation;
 import org.eclipse.ui.progress.IProgressConstants;
-import org.w3c.dom.Document;
 
 
 public class ProductExportWizard extends BaseExportWizard {
 	
 	private static final String STORE_SECTION = "ProductExportWizard"; //$NON-NLS-1$
-	private IFile fFile;
 	private WorkspaceProductModel fProductModel;
 	private CrossPlatformExportPage fPage2;
+	private ProductExportWizardPage fPage;
 
 	public ProductExportWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_PRODUCT_EXPORT_WIZ);
 	}
 	
-	public ProductExportWizard(IFile file) {
-		this();
-		fFile = file;
-	}
-
-	protected BaseExportWizardPage createPage1() {
-		return new ProductExportWizardPage(fFile == null ? getSelection() : new StructuredSelection(fFile));
-	}
-
 	public void addPages() {
-		super.addPages();
+		fPage = new ProductExportWizardPage(getSelection());
+		addPage(fPage);
+		
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 		IFeatureModel model = manager.findFeatureModel("org.eclipse.platform.launchers"); //$NON-NLS-1$
 		if (model != null) {
@@ -69,26 +61,20 @@ public class ProductExportWizard extends BaseExportWizard {
 		return STORE_SECTION;
 	}
 
-	protected Document generateAntTask() {
-		return null;
-	}
-
 	protected void scheduleExportJob() {
-		ProductExportWizardPage page = (ProductExportWizardPage)fPage1;
-		
 		FeatureExportInfo info = new FeatureExportInfo();
-		info.toDirectory = page.doExportToDirectory();
-		info.exportSource = page.doExportSource();
-		info.destinationDirectory = page.getDestination();
-		info.zipFileName = page.getFileName();
-		info.targets = fPage2 == null ? null : 
-				page.doMultiPlatform() ? fPage2.getTargets() : null;
+		info.toDirectory = fPage.doExportToDirectory();
+		info.exportSource = fPage.doExportSource();
+		info.destinationDirectory = fPage.getDestination();
+		info.zipFileName = fPage.getFileName();
+		if (fPage2 != null && fPage.doMultiPlatform())
+			info.targets = fPage2.getTargets();
 		if (fProductModel.getProduct().useFeatures())
 			info.items = getFeatureModels();
 		else
 			info.items = getPluginModels();
 		
-		String rootDirectory = page.getRootDirectory();
+		String rootDirectory = fPage.getRootDirectory();
 		if ("".equals(rootDirectory.trim())) //$NON-NLS-1$
 			rootDirectory = ".";  //$NON-NLS-1$
 		ProductExportJob job = new ProductExportJob(info, fProductModel, rootDirectory);
@@ -124,8 +110,7 @@ public class ProductExportWizard extends BaseExportWizard {
 	}
 	
 	protected boolean performPreliminaryChecks() {
-		ProductExportWizardPage page = (ProductExportWizardPage)fPage1;
-		fProductModel = new WorkspaceProductModel(page.getProductFile(), false);
+		fProductModel = new WorkspaceProductModel(fPage.getProductFile(), false);
 		try {
 			fProductModel.load();
 			if (!fProductModel.isLoaded()) {
@@ -137,17 +122,35 @@ public class ProductExportWizard extends BaseExportWizard {
 			return false;
 		}
 
-		if (((ProductExportWizardPage)fPage1).doSync()) {
+		if (fPage.doSync()) {
 			try {
 				getContainer().run(false, false, new SynchronizationOperation(fProductModel.getProduct(), getContainer().getShell()));
 			} catch (InvocationTargetException e) {
-				MessageDialog.openError(getContainer().getShell(), "Synchronize", e.getTargetException().getMessage()); //$NON-NLS-1$
+				MessageDialog.openError(getContainer().getShell(), PDEUIMessages.ProductExportWizard_syncTitle, e.getTargetException().getMessage()); 
 				return false;
 			} catch (InterruptedException e) {
 				return false;
 			}
 		}		
 		return true;
+	}
+	
+	protected boolean confirmDelete() {
+		if (!fPage.doExportToDirectory()) {
+			File zipFile = new File(fPage.getDestination(), fPage.getFileName());
+			if (zipFile.exists()) {
+				if (!MessageDialog.openQuestion(getContainer().getShell(),
+						PDEUIMessages.BaseExportWizard_confirmReplace_title,  
+						NLS.bind(PDEUIMessages.BaseExportWizard_confirmReplace_desc, zipFile.getAbsolutePath())))
+					return false;
+				zipFile.delete();
+			}
+		}
+		return true;
+	}
+	
+	public boolean canFinish() {
+		return (fPage.getNextPage() != null) ? super.canFinish() : fPage.isPageComplete();
 	}
 
 }

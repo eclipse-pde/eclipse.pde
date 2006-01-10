@@ -517,8 +517,6 @@ public class PDEUIMessages extends NLS {
 	public static String AdvancedLauncherTab_useFeatures;
 	public static String AdvancedLauncherTab_useList;
 	public static String AdvancedLauncherTab_selectAll;
-	public static String AdvancedFeatureExportPage_desc;
-	public static String AdvancedPluginExportPage_desc;
 	public static String AdvancedLauncherTab_deselectAll;
 	public static String AdvancedFeatureExportPage_noSite;
 	public static String AdvancedPluginExportPage_signJar;
@@ -529,7 +527,6 @@ public class PDEUIMessages extends NLS {
 	public static String AdvancedLauncherTab_workingSet;
 	public static String AdvancedLauncherTab_noProblems;
 	public static String AdvancedFeatureExportPage_jnlp;
-	public static String AdvancedPluginExportPage_title;
 	public static String AdvancedPluginExportPage_alias;
 	public static String AdvancedLauncherTab_includeFragments;
 	public static String AdvancedLauncherTab_includeOptional;
@@ -1516,7 +1513,6 @@ public class PDEUIMessages extends NLS {
 	public static String ExportWizard_badDirectory;
 	public static String ExportWizard_workingSet;
 	public static String ExportWizard_browse;
-	public static String ExportWizard_browse2;
 	public static String ExportWizard_antCheck;
 	public static String ExportWizard_dialog_title;
 	public static String ExportWizard_dialog_message;
@@ -2476,5 +2472,63 @@ public class PDEUIMessages extends NLS {
 	public static String ExtensionPointsSection_openSchema;
 
 	public static String ExtensionPointsSection_schemaNotFound;
+
+	public static String TargetPlatformPreferencePage_TargetGroupTitle;
+
+	public static String TargetPlatformPreferencePage_CurrentProfileLabel;
+
+	public static String TargetPlatformPreferencePage_BrowseButton;
+
+	public static String TargetPlatformPreferencePage_ApplyButton;
+
+	public static String TargetPlatformPreferencePage_FileSelectionTitle;
+
+	public static String TargetPlatformPreferencePage_FileSelectionMessage;
+
+	public static String ImplicitDependenicesSection_Add;
+
+	public static String ImplicitDependenicesSection_Remove;
+
+	public static String ImplicitDependenicesSection_RemoveAll;
+
+	public static String ImplicitDependenicesSection_Title;
+
+	public static String TargetImplicitPluginsTab_desc;
+
+	public static String TargetImplicitPluginsTab_removeAll3;
+
+	public static String TargetPluginsTab_readingPlatform;
+
+	public static String TargetPluginsTab_readingFeatures;
+
+	public static String TargetPlatformPreferencePage_implicitTab;
+
+	public static String ProductExportWizard_syncTitle;
+
+	public static String ProductExportWizardPage_exportOptionsGroup;
+
+	public static String XHTMLConversionWizard_title;
+
+	public static String GetUnconvertedAction_noAction;
+
+	public static String GetUnconvertedAction_message;
+
+	public static String XHTMLConversionOperation_taskName;
+
+	public static String XHTMLConversionWizardPage_title;
+
+	public static String XHTMLConversionWizardPage_desc;
+
+	public static String XHTMLConversionWizardPage_invalidText;
+
+	public static String XHTMLConversionWizardPage_selectAll;
+
+	public static String XHTMLConversionWizardPage_deselectAll;
+
+	public static String XHTMLConversionWizardPage_noEntries;
+
+	public static String XHTMLConversionWizardPage_viewerLabel;
+
+	public static String XHTMLConversionOperation_createXHTML;
 
 }

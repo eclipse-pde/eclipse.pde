@@ -31,6 +31,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SourceLocation;
 import org.eclipse.pde.internal.core.SourceLocationManager;
+import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -179,6 +180,10 @@ public class TargetSourceTab {
 	public void performDefaults() {
 		fUserLocations.clear();
 		fTreeViewer.refresh();
+	}
+	
+	protected void loadTargetProfile(ITarget target) {
+		// this tab should do nothing.  It may later be removed altogether
 	}
 
 	protected void handleAdd() {

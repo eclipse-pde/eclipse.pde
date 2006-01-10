@@ -52,7 +52,7 @@ public class ArgumentsSection extends PDESection {
 		section.setText(PDEUIMessages.ArgumentsSection_editorTitle);
 		section.setDescription(PDEUIMessages.ArgumentsSection_description);
 		GridData data = new GridData(GridData.FILL_BOTH);
-		data.horizontalSpan = 2;
+		data.horizontalSpan = 1;
 		section.setLayoutData(data);
 		
 		Composite client = toolkit.createComposite(section);

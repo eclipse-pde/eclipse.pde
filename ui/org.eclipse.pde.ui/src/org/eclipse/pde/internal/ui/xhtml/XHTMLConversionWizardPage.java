@@ -10,6 +10,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.xhtml.TocReplaceTable.TocReplaceEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -58,8 +59,9 @@ public class XHTMLConversionWizardPage extends WizardPage {
 	}
 	
 	protected XHTMLConversionWizardPage(TocReplaceTable table) {
-		super("XHTML Conversion Wizard");
-		setDescription("Convert your HTML help files to XHTML");
+		super("convert"); //$NON-NLS-1$
+		setTitle(PDEUIMessages.XHTMLConversionWizardPage_title);
+		setDescription(PDEUIMessages.XHTMLConversionWizardPage_desc);
 		fTable = table;
 	}
 
@@ -89,7 +91,7 @@ public class XHTMLConversionWizardPage extends WizardPage {
 		if (fTable.containsInvalidEntires()) {
 			Composite invalid = createComposite(viewers, true, 1, false);
 			Label invalidPaths = new Label(invalid, SWT.NONE);
-			invalidPaths.setText("The following entries contain invalid filepaths (and will not be converted):");
+			invalidPaths.setText(PDEUIMessages.XHTMLConversionWizardPage_invalidText);
 			fInvalidViewer = new TreeViewer(invalid, SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE | SWT.BORDER);
 			fInvalidViewer.setContentProvider(new CP(true));
 			fInvalidViewer.setLabelProvider(new WorkbenchLabelProvider());
@@ -101,9 +103,9 @@ public class XHTMLConversionWizardPage extends WizardPage {
 		
 		Composite buttonComp = createComposite(columns, true, 1, true);
 		Label blankLabel = new Label(buttonComp, SWT.NONE);
-		blankLabel.setText("");
+		blankLabel.setText(""); //$NON-NLS-1$
 		Button selectAll = new Button(buttonComp, SWT.PUSH);
-		selectAll.setText("Select All");
+		selectAll.setText(PDEUIMessages.XHTMLConversionWizardPage_selectAll);
 		selectAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		selectAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -111,7 +113,7 @@ public class XHTMLConversionWizardPage extends WizardPage {
 			}
 		});
 		Button deselectAll = new Button(buttonComp, SWT.PUSH);
-		deselectAll.setText("Deselect All");
+		deselectAll.setText(PDEUIMessages.XHTMLConversionWizardPage_deselectAll);
 		deselectAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		deselectAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -124,9 +126,9 @@ public class XHTMLConversionWizardPage extends WizardPage {
 			selectAll.setEnabled(false);
 			deselectAll.setEnabled(false);
 			setPageComplete(false);
-			label.setText("There are no entries needed for conversion");
+			label.setText(PDEUIMessages.XHTMLConversionWizardPage_noEntries);
 		} else
-			label.setText("Select toc entires for conversion (" + numValidEntries + " found):");
+			label.setText(PDEUIMessages.XHTMLConversionWizardPage_viewerLabel);
 		
 		setControl(columns);
 		Dialog.applyDialogFont(columns);
