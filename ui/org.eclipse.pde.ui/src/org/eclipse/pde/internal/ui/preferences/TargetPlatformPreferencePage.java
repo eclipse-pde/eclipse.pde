@@ -430,19 +430,19 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		}
 		target = model.getTarget();
 		ILocationInfo info = target.getLocationInfo();
-		if (!info.useDefault() ||  !ExternalModelManager.isTargetEqualToHost(getPlatformPath())) {
-			String path;
+		String path;
+		if (info.useDefault()) {
+			path = ExternalModelManager.computeDefaultPlatformPath();
+		} else {
 			try {
 				path = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(info.getPath());
 			} catch (CoreException e) {
 				return;
-			}
-			// If Windows, ignore the case of the path
-			if ((java.io.File.separatorChar == '\\') ? !path.equalsIgnoreCase(getPlatformPath()) :
-				!path.equals(getPlatformPath())) {
-				fHomeText.setText(path);
-				fPluginsTab.handleReload();
-			}
+			}			
+		}
+		if (!ExternalModelManager.arePathsEqual(new Path(path), new Path(fHomeText.getText()))) {
+			fHomeText.setText(path);
+			fPluginsTab.handleReload();
 		}
 		
 		fPluginsTab.loadTargetProfile(target);
