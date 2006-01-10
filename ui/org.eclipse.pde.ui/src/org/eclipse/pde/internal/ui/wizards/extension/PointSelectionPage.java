@@ -266,8 +266,7 @@ public class PointSelectionPage
 		layout = new GridLayout(2, false);
 		layout.marginHeight = layout.marginWidth = 0;
 		labelContainer.setLayout(layout);
-		gd = new GridData(GridData.FILL_BOTH);
-		labelContainer.setLayoutData(gd);
+		labelContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Label filterLabel = new Label(labelContainer, SWT.NONE);
 		filterLabel.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_availExtPoints_label);
@@ -288,6 +287,17 @@ public class PointSelectionPage
             }
             public void keyReleased(KeyEvent e) {}
         });
+		
+		fFilterCheck = new Button(outerContainer, SWT.CHECK);
+		fFilterCheck.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_filterCheck); 
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fFilterCheck.setLayoutData(gd);
+		fFilterCheck.setSelection(true);
+		fFilterCheck.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fPointListViewer.refresh();
+			}
+		});
 		
 		fPointListViewer =
 			new TableViewer(
@@ -386,19 +396,7 @@ public class PointSelectionPage
 		gd = new GridData(GridData.FILL_BOTH | GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		descriptionComposite.setLayoutData(gd);
 		createDescriptionIn(descriptionComposite);
-
-		
-		fFilterCheck = new Button(outerContainer, SWT.CHECK);
-		fFilterCheck.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_filterCheck); 
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fFilterCheck.setLayoutData(gd);
-		fFilterCheck.setSelection(true);
-		fFilterCheck.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				fPointListViewer.refresh();
-			}
-		});
-		
+	
 		getContainer().getShell().setSize(500, 500);
 		initialize();
 		setControl(tabFolder);
