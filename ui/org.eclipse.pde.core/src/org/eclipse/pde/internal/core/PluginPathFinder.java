@@ -60,7 +60,11 @@ public class PluginPathFinder {
 	 */
 	private static File[] getSites(String platformHome, boolean features) {
 		ArrayList sites = new ArrayList();
-		sites.add(new File(platformHome, features ? "features" : "plugins"));  //$NON-NLS-1$//$NON-NLS-2$
+		File file = new File(platformHome, features ? "features" : "plugins"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (!features && !file.exists())
+			file = new File(platformHome);
+		if (file.exists())
+			sites.add(file);  
 		
 		File[] linkFiles = new File(platformHome + IPath.SEPARATOR + "links").listFiles(); //$NON-NLS-1$	
 		if (linkFiles != null) {
