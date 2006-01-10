@@ -270,18 +270,17 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 	}
 	public void write(PrintWriter writer) {
 		if (session != null)
-			writer.print(session.getSessionData());
-		writer.print(getSeverityText());
-		if (date != null) {
-			writer.print(" "); //$NON-NLS-1$
-			writer.print(getDate());
-		}
-		if (message != null) {
-			writer.print(" "); //$NON-NLS-1$
-			writer.print(getMessage());
-		}
-		writer.println();
-		if (stack != null)
+			writer.println(session.getSessionData());
+		writer.println(getSeverityText());
+		if (date != null)
+			writer.println(getDate());
+		
+		if (message != null)
+			writer.println(getMessage());
+	
+		if (stack != null) {
+			writer.println();
 			writer.println(stack);
+		}
 	}
 }
