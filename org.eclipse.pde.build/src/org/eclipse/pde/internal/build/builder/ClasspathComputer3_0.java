@@ -233,7 +233,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		String pluginId = null;
 		String rules = ""; //$NON-NLS-1$
 		//only add access rules to libraries that are not part of the current bundle
-		if (model != null && model != generator.getModel()) {
+		//and are not this bundle's host if we are a fragment
+		BundleDescription currentBundle = generator.getModel();
+		if (model != null && model != currentBundle && (currentBundle.getHost() == null || currentBundle.getHost().getSupplier() != model) ) {
 			pluginId = model.getSymbolicName();
 
 			String packageKey = pluginId;
