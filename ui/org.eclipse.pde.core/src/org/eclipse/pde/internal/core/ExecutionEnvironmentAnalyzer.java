@@ -11,12 +11,14 @@
 package org.eclipse.pde.internal.core;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstall2;
+import org.eclipse.jdt.launching.IVMInstall3;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.CompatibleEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -37,6 +39,12 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 	
 	public static final String OSGI_MINIMUM_1_0 = "OSGi/Minimum-1.0"; //$NON-NLS-1$
 	public static final String OSGI_MINIMUM_1_1 = "OSGi/Minimum-1.1"; //$NON-NLS-1$
+	
+	public static final String JAVA_SPEC_VERSION = "java.specification.version"; //$NON-NLS-1$
+	public static final String JAVA_SPEC_NAME = "java.specification.name"; //$NON-NLS-1$
+	public static final String J2ME_NAME = "J2ME Foundation Specification"; //$NON-NLS-1$
+	
+	public static final String[] VM_PROPERTIES = {JAVA_SPEC_NAME, JAVA_SPEC_VERSION};
 
 	
 	public static String getCompliance(String ee) {
@@ -85,12 +93,25 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 			
 			if (javaVersion.compareTo("1.4") >= 0) { //$NON-NLS-1$
 				addEnvironment(result, J2SE_1_4, javaVersion.startsWith("1.4")); //$NON-NLS-1$
-				addEnvironment(result, CDC_FOUNDATION_1_1, false); 
+				boolean perfect = false;
+				if (vm instanceof IVMInstall3) {
+					Map map = ((IVMInstall3)vm).evaluateSystemProperties(VM_PROPERTIES , null);
+					perfect = "1.1".equals(map.get(JAVA_SPEC_VERSION))  //$NON-NLS-1$
+								&& J2ME_NAME.equals(map.get(JAVA_SPEC_NAME));
+				} 
+				addEnvironment(result, CDC_FOUNDATION_1_1, perfect); 
+				
 			}
 			
 			if (javaVersion.compareTo("1.3") >= 0) { //$NON-NLS-1$
 				addEnvironment(result, J2SE_1_3, javaVersion.startsWith("1.3")); //$NON-NLS-1$
-				addEnvironment(result, CDC_FOUNDATION_1_0, false); 
+				boolean perfect = false;
+				if (vm instanceof IVMInstall3) {
+					Map map = ((IVMInstall3)vm).evaluateSystemProperties(VM_PROPERTIES , null);
+					perfect = "1.0".equals(map.get(JAVA_SPEC_VERSION))  //$NON-NLS-1$
+								&& J2ME_NAME.equals(map.get(JAVA_SPEC_NAME));
+				} 
+				addEnvironment(result, CDC_FOUNDATION_1_0, perfect); 
 				addEnvironment(result, OSGI_MINIMUM_1_1, false);
 				addEnvironment(result, OSGI_MINIMUM_1_0, false);
 			}
