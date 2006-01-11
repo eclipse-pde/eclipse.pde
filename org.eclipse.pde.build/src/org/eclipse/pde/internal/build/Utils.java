@@ -149,9 +149,11 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	public static String getStringFromArray(String[] values, String separator) {
 		StringBuffer result = new StringBuffer();
 		for (int i = 0; i < values.length; i++) {
-			if (i > 0)
-				result.append(separator);
-			result.append(values[i]);
+			if (values[i] != null) {
+				if (i > 0)
+					result.append(separator);
+				result.append(values[i]);
+			}
 		}
 		return result.toString();
 	}

@@ -1015,8 +1015,14 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.print(javac);
 		script.printComment("Copy necessary resources"); //$NON-NLS-1$
 		FileSet[] fileSets = new FileSet[sources.length];
-		for (int i = 0; i < sources.length; i++)
-			fileSets[i] = new FileSet(sources[i], null, null, null, "**/*.java, **/package.htm*" + ',' + entry.getExcludedFromJar(), null, null); //$NON-NLS-1$
+		for (int i = 0; i < sources.length; i++) {
+			String excludes = "**/*.java, **/package.htm*"; //$NON-NLS-1$
+			String excludedFromJar = entry.getExcludedFromJar();
+			if (excludedFromJar != null)
+				excludes += ',' + excludedFromJar;
+			
+			fileSets[i] = new FileSet(sources[i], null, null, null, excludes, null, null);
+		}
 
 		script.printCopyTask(null, destdir, fileSets, true, false);
 
