@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.apache.crimson.tree.ElementNode;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
@@ -77,21 +76,18 @@ public class GetUnconvertedOperation implements IRunnableWithProgress {
 			XMLErrorReporter xml = new XMLErrorReporter(file);
 			ValidatingSAXParser.parse(file, xml);
 			Element root = xml.getDocumentRoot();
-			if (root != null)
-				checkXML(root, file);
-		}
-	}
-
-	private void checkXML(Element root, IFile file) {
-		NodeList children = root.getChildNodes();
-		for (int i = 0; i < children.getLength(); i++) {
-			if (children.item(i) instanceof ElementNode) {
-				checkXML((ElementNode)children.item(i), file);
+			if (root != null) {
+				NodeList children = root.getChildNodes();
+				for (int i = 0; i < children.getLength(); i++) {
+					if (children.item(i) instanceof Element) {
+						checkXML((Element)children.item(i), file);
+					}
+				}
 			}
 		}
 	}
 
-	private void checkXML(ElementNode root, IFile file) {
+	private void checkXML(Element root, IFile file) {
 		String href = root.getAttribute("href"); //$NON-NLS-1$
 		if (href != null 
 				&& (href.endsWith(".html")  //$NON-NLS-1$
@@ -101,8 +97,8 @@ public class GetUnconvertedOperation implements IRunnableWithProgress {
 		}
 		NodeList children = root.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
-			if (children.item(i) instanceof ElementNode) {
-				checkXML((ElementNode)children.item(i), file);
+			if (children.item(i) instanceof Element) {
+				checkXML((Element)children.item(i), file);
 			}
 		}
 	}
