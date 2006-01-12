@@ -2531,4 +2531,12 @@ public class PDEUIMessages extends NLS {
 
 	public static String XHTMLConversionOperation_createXHTML;
 
+	public static String TargetProfileWizardPage_groupTitle;
+
+	public static String TargetProfileWizardPage_blankTarget;
+
+	public static String TargetProfileWizardPage_currentPlatform;
+
+	public static String TargetProfileWizardPage_existingTarget;
+
 }

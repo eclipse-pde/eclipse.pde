@@ -20,7 +20,7 @@ public class NewTargetProfileWizard extends BasicNewResourceWizard {
 
 	public boolean performFinish() {
 		try {
-			getContainer().run(false, true, new TargetProfileOperation(fPage.createNewFile()));
+			getContainer().run(false, true, getOperation());
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
 			return false;
@@ -38,6 +38,15 @@ public class NewTargetProfileWizard extends BasicNewResourceWizard {
 	
 	protected void initializeDefaultPageImageDescriptor() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_TARGET_WIZ);
+	}
+	
+	private BaseTargetProfileOperation getOperation() {
+		int option = fPage.getInitializationOption();
+		if (option == TargetProfileWizardPage.USE_DEFAULT)
+			return new BaseTargetProfileOperation(fPage.createNewFile());
+		else if (option == TargetProfileWizardPage.USE_CURRENT_TP)
+			return new TargetProfileFromPlatformOperation(fPage.createNewFile());
+		return new TargetProfileFromTargetOperation(fPage.createNewFile(), fPage.getTargetId());
 	}
 
 }

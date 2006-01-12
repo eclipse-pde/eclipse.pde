@@ -7,6 +7,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.itarget.ILocationInfo;
+import org.eclipse.pde.internal.core.itarget.ITarget;
+import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.core.target.WorkspaceTargetModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.widgets.Display;
@@ -18,17 +23,18 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ISetSelectionTarget;
 
-public class TargetProfileOperation extends WorkspaceModifyOperation {
+public class BaseTargetProfileOperation extends WorkspaceModifyOperation {
 	
 	private IFile fFile;
 
-	public TargetProfileOperation(IFile file){
+	public BaseTargetProfileOperation(IFile file){
 		fFile = file;
 	}
 
 	protected void execute(IProgressMonitor monitor) throws CoreException,
 			InvocationTargetException, InterruptedException {
         WorkspaceTargetModel model = new WorkspaceTargetModel(fFile, false);
+        initializeTarget(model);
         model.save();
         model.dispose();
         openFile();
@@ -56,6 +62,14 @@ public class TargetProfileOperation extends WorkspaceModifyOperation {
 				}
 			}
 		});	
+	}
+	
+	protected void initializeTarget(ITargetModel model) {
+		ITarget target = model.getTarget();
+		ILocationInfo info = model.getFactory().createLocation();
+		info.setPath(PDECore.getDefault().getPluginPreferences().getString(ICoreConstants.PLATFORM_PATH));
+		info.setDefault(true);
+		target.setLocationInfo(info);
 	}
 
 }
