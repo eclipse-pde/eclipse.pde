@@ -171,11 +171,13 @@ public class ImplicitDependenciesSection extends TableSection {
 		ITargetPlugin[] plugins = new ITargetPlugin[src.length];
 		System.arraycopy(src, 0, plugins, 0, src.length);
 		getImplicitPluginsInfo().removePlugins(plugins);
+		updateButtons();
 	}
 	
 	protected void handleRemoveAll() {
 		IImplicitDependenciesInfo info =getImplicitPluginsInfo();
 		info.removePlugins(info.getPlugins());
+		updateButtons();
 	}
 	
 	private IImplicitDependenciesInfo getImplicitPluginsInfo() {
@@ -245,11 +247,9 @@ public class ImplicitDependenciesSection extends TableSection {
 		getPage().getPDEEditor().setSelection(selection);
 	}
 	
-//	public void commit(boolean onSave) {
-//		
-//	}
-	
 	public void dispose() {
-		getModel().removeModelChangedListener(this);
+		ITargetModel model = getModel();
+		if (model != null)
+			model.removeModelChangedListener(this);
 	}
 }

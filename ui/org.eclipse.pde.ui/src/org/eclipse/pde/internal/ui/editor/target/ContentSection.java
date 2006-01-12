@@ -22,7 +22,9 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -176,12 +178,18 @@ public class ContentSection extends TableSection {
 			}
 		});
 		fContentViewer.setInput(PDECore.getDefault().getModelManager());
+		fContentViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				updateButtons();
+			}
+		});
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);	
 		section.setText(PDEUIMessages.ContentSection_targetContent);
 		section.setDescription(PDEUIMessages.ContentSection_targetContentDesc);
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
+		updateButtons();
 		getModel().addModelChangedListener(this);
 	}
 	
@@ -226,18 +234,23 @@ public class ContentSection extends TableSection {
 	public void refresh() {
 		fLastTab = fTabFolder.getSelectionIndex();
 		fContentViewer.refresh();
+		updateButtons();
+		super.refresh();
+	}
+	
+	protected void updateButtons(){
 		boolean useAllPlugins = getTarget().useAllPlugins();
 		fUseAllPlugins.setSelection(useAllPlugins);
 		fTabFolder.setEnabled(!useAllPlugins);
 		TablePart table = getTablePart();
+		boolean itemsSeelected = !fContentViewer.getSelection().isEmpty();
+		boolean hasItems = fContentViewer.getTable().getItemCount() > 0;
 		table.setButtonEnabled(0, isEditable() && !useAllPlugins);
-		table.setButtonEnabled(1, isEditable() && !useAllPlugins);
-		table.setButtonEnabled(2, isEditable() && !useAllPlugins);
+		table.setButtonEnabled(1, isEditable() && !useAllPlugins && itemsSeelected);
+		table.setButtonEnabled(2, isEditable() && !useAllPlugins && hasItems);
 		boolean pluginTab = (fLastTab == 0);
 		table.setButtonEnabled(3, isEditable() && pluginTab && !useAllPlugins);
 		table.setButtonEnabled(4, isEditable() && pluginTab && !useAllPlugins);
-		
-		super.refresh();
 	}
 	
 	protected boolean canPaste(Object target, Object[] objects) {
@@ -262,6 +275,7 @@ public class ContentSection extends TableSection {
 			handleAddPlugin();
 		else 
 			handleAddFeature();
+		updateButtons();
 	}
 	
 	private void handleAddPlugin() {
@@ -345,6 +359,7 @@ public class ContentSection extends TableSection {
 				target.removeFeatures(features);
 			}
 		}
+		updateButtons();
 	}
 	
 	private void handleRemoveAll() {
@@ -361,6 +376,7 @@ public class ContentSection extends TableSection {
 				features[i] = (ITargetFeature)items[i].getData();
 			target.removeFeatures(features);
 		}
+		updateButtons();
 	}
 	
 	/* (non-Javadoc)
@@ -406,6 +422,7 @@ public class ContentSection extends TableSection {
 			}
 			target.addPlugins((ITargetPlugin[]) plugins.toArray(new ITargetPlugin[plugins.size()]));
 		}
+		updateButtons();
 	}
 	
 	private IPluginModelBase findModel(IAdaptable object) {
@@ -605,7 +622,9 @@ public class ContentSection extends TableSection {
 
 	
 	public void dispose() {
-		getModel().removeModelChangedListener(this);
+		ITargetModel model = getModel();
+		if (model != null)
+			model.removeModelChangedListener(this);
 		if (fTabImages != null)
 			for (int i = 0; i < fTabImages.length; i++) 
 				fTabImages[i].dispose();
