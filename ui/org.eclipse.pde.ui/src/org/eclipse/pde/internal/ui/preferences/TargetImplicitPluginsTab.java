@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -56,6 +55,8 @@ public class TargetImplicitPluginsTab {
 	
 	class ContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object inputElement) {
+			if (fElements == null)
+				loadTable();
 			return fElements.toArray();
 		}
 	}
@@ -85,7 +86,7 @@ public class TargetImplicitPluginsTab {
 		fElementViewer = new TableViewer(container, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		fElementViewer.getControl().setLayoutData(gd);
-		fElementViewer.setContentProvider(new ArrayContentProvider());
+		fElementViewer.setContentProvider(new ContentProvider());
 		fElementViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fElementViewer.setInput(PDEPlugin.getDefault());
 		fElementViewer.setSorter(new ViewerSorter());
@@ -101,7 +102,6 @@ public class TargetImplicitPluginsTab {
 				}
 			}
 		});
-		loadTable();
 	}
 	
 	protected void loadTable() {
