@@ -1053,7 +1053,7 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
+            sourceLocatorId="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
             name="%launchConfigurationType.name"
             sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"
             delegate="org.eclipse.pde.ui.launcher.EclipseApplicationLaunchConfiguration"
@@ -1061,7 +1061,7 @@
             id="org.eclipse.pde.ui.RuntimeWorkbench">
       </launchConfigurationType>
       <launchConfigurationType
-            sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
+            sourceLocatorId="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
             name="%launcher.framework.name"
             sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"
             delegate="org.eclipse.pde.ui.launcher.EquinoxLaunchConfiguration"
@@ -1077,7 +1077,7 @@
             id="org.eclipse.pde.ui.swtLaunchConfig">
       </launchConfigurationType>
       <launchConfigurationType
-            sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
+            sourceLocatorId="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
             name="%launcher.junit.name"
             sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"
             delegate="org.eclipse.pde.internal.ui.launcher.JUnitLaunchConfiguration"
@@ -1766,4 +1766,12 @@
          </description>
       </fontDefinition>
    </extension>
+   <extension point="org.eclipse.debug.core.sourceLocators">
+   		<sourceLocator
+   			id="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
+   			class="org.eclipse.pde.internal.ui.launcher.PDESourceLookupDirector"
+   			name="%pde.sourcelocator">
+   		</sourceLocator>
+   </extension>
+   
 </plugin>
