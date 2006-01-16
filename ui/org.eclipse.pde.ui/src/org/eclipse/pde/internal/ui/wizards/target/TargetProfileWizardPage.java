@@ -1,13 +1,23 @@
 package org.eclipse.pde.internal.ui.wizards.target;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetProfileManager;
+import org.eclipse.pde.internal.core.itarget.ITargetModel;
+import org.eclipse.pde.internal.core.target.TargetModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.target.OpenTargetProfileAction;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -30,6 +40,7 @@ public class TargetProfileWizardPage extends WizardNewFileCreationPage {
 	private Button fExistingTargetButton;
 	private Combo fTargets;
 	private String[] fTargetIds;
+	private Button fPreviewButton;
 	
 	private static String EXTENSION = ".target"; //$NON-NLS-1$
 	
@@ -45,39 +56,83 @@ public class TargetProfileWizardPage extends WizardNewFileCreationPage {
 	}
 	
     protected void createAdvancedControls(Composite parent) {
-    	Group initializeGroup = new Group(parent, SWT.NONE);
-    	initializeGroup.setText(PDEUIMessages.TargetProfileWizardPage_groupTitle);
-    	initializeGroup.setLayout(new GridLayout(2, false));
-    	initializeGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+    	Group group = new Group(parent, SWT.NONE);
+    	group.setText(PDEUIMessages.TargetProfileWizardPage_groupTitle);
+    	group.setLayout(new GridLayout(3, false));
+    	group.setLayoutData(new GridData(GridData.FILL_BOTH));
     	
-    	fDefaultButton = new Button(initializeGroup, SWT.RADIO);
+    	fDefaultButton = new Button(group, SWT.RADIO);
     	fDefaultButton.setText(PDEUIMessages.TargetProfileWizardPage_blankTarget);
     	GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-    	gd.horizontalSpan = 2;
+    	gd.horizontalSpan = 3;
     	fDefaultButton.setLayoutData(gd);
     	fDefaultButton.setSelection(true);
     	
-    	fCurrentTPButton = new Button(initializeGroup, SWT.RADIO);
+    	fCurrentTPButton = new Button(group, SWT.RADIO);
     	fCurrentTPButton.setText(PDEUIMessages.TargetProfileWizardPage_currentPlatform);
     	gd = new GridData(GridData.FILL_HORIZONTAL);
-    	gd.horizontalSpan = 2;
+    	gd.horizontalSpan = 3;
     	fCurrentTPButton.setLayoutData(gd);
     	
-    	fExistingTargetButton = new Button(initializeGroup, SWT.RADIO);
+    	fExistingTargetButton = new Button(group, SWT.RADIO);
     	fExistingTargetButton.setText(PDEUIMessages.TargetProfileWizardPage_existingTarget);
     	fExistingTargetButton.setLayoutData(new GridData());
     	fExistingTargetButton.addSelectionListener(new SelectionAdapter() {
     		public void widgetSelected(SelectionEvent e) {
-    			fTargets.setEnabled(fExistingTargetButton.getSelection());
+    			boolean enabled = fExistingTargetButton.getSelection();
+    			fTargets.setEnabled(enabled);
+    			fPreviewButton.setEnabled(enabled);
     		}
     	});
     	
-    	fTargets = new Combo(initializeGroup, SWT.SINGLE|SWT.READ_ONLY);
+    	fTargets = new Combo(group, SWT.SINGLE|SWT.READ_ONLY);
     	fTargets.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     	fTargets.setEnabled(false);
     	initializeTargetCombo();
-    	Dialog.applyDialogFont(initializeGroup);
+    	
+    	fPreviewButton = new Button(group, SWT.PUSH);
+    	fPreviewButton.setText(PDEUIMessages.TargetProfileWizardPage_viewProfile);
+    	fPreviewButton.setLayoutData(new GridData());
+    	SWTUtil.setButtonDimensionHint(fPreviewButton);
+    	fPreviewButton.setEnabled(false);
+    	fPreviewButton.addSelectionListener(new SelectionAdapter() {
+    		public void widgetSelected(SelectionEvent e) {
+				InputStream stream = null;
+				try {
+					URL url = getExternalTargetURL();
+					if (url != null)
+						stream = url.openStream();
+ 					if (stream != null) {
+						ITargetModel model = new TargetModel();
+						model.load(stream, false);
+						new OpenTargetProfileAction(getShell(), model).run();
+					}
+				} catch (IOException e1) {
+				} catch (CoreException e2) {
+				} finally {
+					try {
+						if (stream != null)
+							stream.close();
+					} catch (IOException e3) {
+					}
+				}
+    		}
+    	});
+    	
+    	Dialog.applyDialogFont(group);
     }
+    
+	private URL getExternalTargetURL() {
+		TargetProfileManager manager = PDECore.getDefault().getTargetProfileManager();
+		IConfigurationElement elem = manager.getTarget(fTargetIds[fTargets.getSelectionIndex()]);
+		if (elem != null) {
+			String path = elem.getAttribute("path");  //$NON-NLS-1$
+			String symbolicName = elem.getDeclaringExtension().getNamespace();
+			return TargetProfileManager.getResourceURL(symbolicName, path);
+		}
+		return null;
+	}
+
     
     protected void initializeTargetCombo() {
     	IConfigurationElement[] elements = PDECore.getDefault().getTargetProfileManager().getSortedTargets();
