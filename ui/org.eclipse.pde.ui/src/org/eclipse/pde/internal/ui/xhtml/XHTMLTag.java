@@ -2,9 +2,6 @@ package org.eclipse.pde.internal.ui.xhtml;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
 
 import org.apache.lucene.demo.html.HTMLParser;
 import org.apache.lucene.demo.html.Token;
@@ -76,7 +73,8 @@ public class XHTMLTag {
 	
 	private String fTagName;
 	private String fCurrAttName;
-	private HashMap fAttributes;
+	private ArrayList fAttribNames;
+	private ArrayList fAttribValues;
 	private boolean fIsClosingTag;
 	private boolean fIsEmptyTag;
 	private int fDTDType;
@@ -84,7 +82,8 @@ public class XHTMLTag {
 	public XHTMLTag(String tagName, int type) {
 		fTagName = extractTagName(tagName);
 		fDTDType = type;
-		fAttributes = new HashMap();
+		fAttribNames = new ArrayList();
+		fAttribValues = new ArrayList();
 	}
 
 	private String extractTagName(String tagName) {
@@ -128,8 +127,8 @@ public class XHTMLTag {
 	public void addAttribute(String attName, String attValue) {
 		if (attName == null)
 			return;
-		fAttributes.put(attName.toLowerCase(), 
-				attValue != null ? attValue : attName);
+		fAttribNames.add(attName.toLowerCase());
+		fAttribValues.add(attValue != null ? attValue : attName);
 		// reset name
 		fCurrAttName = null;
 	}
@@ -164,18 +163,13 @@ public class XHTMLTag {
 			sb.append(F_TAG_SLASH);
 		sb.append(fTagName);
 		if (!fIsClosingTag) {
-			Set keys = fAttributes.keySet();
-			if (keys != null && keys.size() > 0) {
-				Iterator i = keys.iterator();
-				while (i.hasNext()) {
-					Object next = i.next();
-					sb.append(F_TAG_SPACE);
-					sb.append(next.toString());
-					sb.append('=');
-					sb.append(F_DOUBLE_QUOTE);
-					sb.append(fAttributes.get(next).toString());
-					sb.append(F_DOUBLE_QUOTE);
-				}
+			for (int i = 0; i < fAttribNames.size(); i++) {
+				sb.append(F_TAG_SPACE);
+				sb.append(fAttribNames.get(i).toString());
+				sb.append('=');
+				sb.append(F_DOUBLE_QUOTE);
+				sb.append(fAttribValues.get(i).toString());
+				sb.append(F_DOUBLE_QUOTE);
 			}
 			if (isEmptyTag()) {
 				sb.append(F_TAG_SPACE);
