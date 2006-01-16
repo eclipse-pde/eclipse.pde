@@ -218,6 +218,8 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 			parameters.put("arch", plugins[i].getOSArch()); //$NON-NLS-1$
 			parameters.put("ws", plugins[i].getWS()); //$NON-NLS-1$
 			parameters.put("nl", plugins[i].getNL()); //$NON-NLS-1$
+			if (plugins[i] instanceof PluginEntry && !((PluginEntry)plugins[i]).isUnpack())
+				parameters.put("unpack", Boolean.FALSE.toString()); //$NON-NLS-1$
 			parameters.put("download-size", new Long(plugins[i].getDownloadSize() != -1 ? plugins[i].getDownloadSize() : 0)); //$NON-NLS-1$
 			parameters.put("install-size", new Long(plugins[i].getInstallSize() != -1 ? plugins[i].getInstallSize() : 0)); //$NON-NLS-1$
 			printTag("plugin", parameters, true, true, true); //$NON-NLS-1$
