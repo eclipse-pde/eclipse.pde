@@ -124,6 +124,8 @@ public class TargetProfileWindow extends ApplicationWindow {
 		createEntry(body, toolkit, PDEUIMessages.TargetDefinitionSection_name, target.getName());
 		createEntry(body, toolkit, PDEUIMessages.TargetDefinitionSection_id, target.getId());
 		createEntry(body, toolkit, PDEUIMessages.TargetDefinitionSection_targetLocation, getLocation(target));
+		
+		toolkit.paintBordersFor(form.getBody());
 		return form;	
 	}
 
@@ -153,6 +155,7 @@ public class TargetProfileWindow extends ApplicationWindow {
 		String jre = jreInfo == null ? JavaRuntime.getDefaultVMInstall().getName() : jreInfo.getCompatibleJRE();
 		createEntry(body, toolkit, PDEUIMessages.TargetProfileWindow_jre, jre);
 		
+		toolkit.paintBordersFor(form.getBody());
 		return form;	
 	}
 	
@@ -170,7 +173,8 @@ public class TargetProfileWindow extends ApplicationWindow {
 		tableViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		tableViewer.setInput(objects);
 		tableViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
-				
+		
+		toolkit.paintBordersFor(form.getBody());
 		return form;	
 	}
 
@@ -185,6 +189,8 @@ public class TargetProfileWindow extends ApplicationWindow {
 		entry.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
 		entry = createEntry(body, toolkit, PDEUIMessages.TargetProfileWindow_vm, info.getVMArguments());
 		entry.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		toolkit.paintBordersFor(form.getBody());
 		return form;	
 	}
 	
