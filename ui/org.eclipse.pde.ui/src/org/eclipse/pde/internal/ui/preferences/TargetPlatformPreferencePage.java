@@ -548,4 +548,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	protected PDEState getCurrentState() {
 		return fPluginsTab.getCurrentState();
 	}
+	
+	protected String[] getImplicitPlugins() {
+		return fImplicitDependenciesTab.getImplicitPlugins();
+	}
 }

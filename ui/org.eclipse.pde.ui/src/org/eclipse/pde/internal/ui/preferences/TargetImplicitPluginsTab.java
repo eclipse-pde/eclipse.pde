@@ -258,5 +258,15 @@ public class TargetImplicitPluginsTab {
 		}
 		fElementViewer.refresh();
 	}
+	
+	protected String[] getImplicitPlugins() {
+		String[] result = new String[fElements.size()];
+		Iterator iter = fElements.iterator();
+		int i = 0;
+		while (iter.hasNext()) {
+			result[i++] = ((BundleDescription)iter.next()).getSymbolicName();
+		}
+		return result;
+	}
 
 }

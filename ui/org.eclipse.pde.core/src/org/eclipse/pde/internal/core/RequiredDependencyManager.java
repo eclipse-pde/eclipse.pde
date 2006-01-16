@@ -10,106 +10,72 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.BundleSpecification;
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.osgi.service.resolver.HostSpecification;
+import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class RequiredDependencyManager {
 	
-	/*public static IPluginModelBase[] addRequiredPlugins(
-			IPluginModelBase[] selected, IPluginModelBase[] allModels) {
-		if (selected.length == 0 || selected.length == allModels.length)
-			return new IPluginModelBase[0];
-
-		HashSet existing = new HashSet();
-		ArrayList result = new ArrayList();
+	public static Set addRequiredPlugins(Object[] selected, String[] implicit, State state) {
+		Set set = new TreeSet();
 		for (int i = 0; i < selected.length; i++) {
-			String id = selected[i].getPluginBase().getId();
-			if (id != null)
-				existing.add(id);
-		}
-		
-		Iterator iter = existing.iterator();
-		while (iter.hasNext()) {
-			addDependencies(iter.next().toString(), existing, result);
-		}
-		
-		
-		return (IPluginModelBase[])result.values().toArray(new IPluginModelBase[result.size()]);
-	}
-	
-	/*private void handleAddRequired() {
-		ArrayList result = new ArrayList();
-		for (int i = 0; i < items.length; i++) {
-			IPluginModelBase model = (IPluginModelBase)items[i].getData();
-			if (fTablePart.getTableViewer().getChecked(model))
-				addPluginAndDependencies((IPluginModelBase) items[i].getData(), result);
-		}
-		fTablePart.setSelection(result.toArray());
-	}
-	
-	protected void addPluginAndDependencies(
-			IPluginModelBase model,
-			ArrayList selected) {
-				
-			if (!selected.contains(model)) {
-				selected.add(model);
-				if (!model.isEnabled())
-					fChangedModels.add(model);
-				addDependencies(getAllModels(), model, selected);
+			if (!(selected[i] instanceof IPluginModelBase))
+				continue;
+			IPluginModelBase model = (IPluginModelBase)selected[i];
+			addBundleAndDependencies(model.getBundleDescription(), set);
+			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
+			for (int j = 0; j < extensions.length; j++) {
+				String point = extensions[j].getPoint();
+				if (point != null) {
+					int dot = point.lastIndexOf('.');
+					if (dot != -1) {
+						String id = point.substring(0, dot);
+						addBundleAndDependencies(state.getBundle(id, null), set);
+					}
+				}
 			}
 		}
 		
-	protected void addDependencies(
-	    IPluginModelBase[] models,
-		IPluginModelBase model,
-		ArrayList selected) {
+		for (int i = 0; i < implicit.length; i++) {
+			addBundleAndDependencies(state.getBundle(implicit[i], null), set);
+		}
 		
-		IPluginImport[] required = model.getPluginBase().getImports();
-		if (required.length > 0) {
+		for (int i = 0; i < selected.length; i++) {
+			if (!(selected[i] instanceof IPluginModelBase))
+				continue;
+			IPluginModelBase model = (IPluginModelBase)selected[i];
+			set.remove(model.getPluginBase().getId());
+		}
+		return set;
+	}
+	
+	private static void addBundleAndDependencies(BundleDescription desc, Set set) {
+		if (desc != null && set.add(desc.getSymbolicName())) {
+			BundleSpecification[] required = desc.getRequiredBundles();
 			for (int i = 0; i < required.length; i++) {
-				IPluginModelBase found = findModel(models, required[i].getId());
-				if (found != null) {
-					addPluginAndDependencies(found, selected);
-				}
+				addBundleAndDependencies((BundleDescription)required[i].getSupplier(), set);
 			}
-		}
-		
-		if (model instanceof IPluginModel) {
-			IFragmentModel[] fragments = findFragments(models, ((IPluginModel)model).getPlugin());
+			ExportPackageDescription[] exported = desc.getResolvedImports();
+			for (int i = 0; i < exported.length; i++) {
+				addBundleAndDependencies(exported[i].getExporter(), set);
+			}
+			BundleDescription[] fragments = desc.getFragments();
 			for (int i = 0; i < fragments.length; i++) {
-				String id = fragments[i].getFragment().getId();
+				String id = fragments[i].getSymbolicName();
 				if (!"org.eclipse.ui.workbench.compatibility".equals(id)) //$NON-NLS-1$
-					addPluginAndDependencies(fragments[i], selected);
+					addBundleAndDependencies(fragments[i], set);
 			}
-		} else {
-			IFragment fragment = ((IFragmentModel) model).getFragment();
-			IPluginModelBase found = findModel(models, fragment.getPluginId());
-			if (found != null) {
-				addPluginAndDependencies(found, selected);
-			}
+			HostSpecification host = desc.getHost();
+			if (host != null)
+				addBundleAndDependencies((BundleDescription)host.getSupplier(), set);
 		}
 	}
-
-	private IPluginModelBase findModel(IPluginModelBase[] models, String id) {
-		for (int i = 0; i < models.length; i++) {
-			String modelId = models[i].getPluginBase().getId();
-			if (modelId != null && modelId.equals(id))
-				return models[i];
-		}
-		return null;
-	}
-
-	private IFragmentModel[] findFragments(IPluginModelBase[] models, IPlugin plugin) {
-		ArrayList result = new ArrayList();
-		for (int i = 0; i < models.length; i++) {
-			if (models[i] instanceof IFragmentModel) {
-				IFragment fragment = ((IFragmentModel) models[i]).getFragment();
-				if (plugin.getId().equalsIgnoreCase(fragment.getPluginId())) {
-					result.add(models[i]);
-				}
-			}
-		}
-		return (IFragmentModel[]) result.toArray(new IFragmentModel[result.size()]);
-	}
-	*/
-
-
+	
 }

@@ -12,11 +12,11 @@ package org.eclipse.pde.internal.ui.preferences;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 import java.util.Vector;
 
@@ -34,13 +34,9 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.EclipseHomeInitializer;
 import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
@@ -51,6 +47,7 @@ import org.eclipse.pde.internal.core.ModelProviderEvent;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.PluginPathFinder;
+import org.eclipse.pde.internal.core.RequiredDependencyManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
@@ -72,7 +69,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -86,8 +82,6 @@ public class TargetPluginsTab {
 	private boolean fReloaded;
 	private TablePart fTablePart;
 	private HashSet fChangedModels = new HashSet();
-	private IPluginModelBase[] fInitialModels;
-	private IPluginModelBase[] fModels;
 	private PDEState fCurrentState;
 	private Map fCurrentFeatures;
 	
@@ -104,7 +98,6 @@ public class TargetPluginsTab {
 			monitor.beginTask(PDEUIMessages.TargetPluginsTab_readingPlatform, 10);
 			SubProgressMonitor parsePluginMonitor = new SubProgressMonitor(monitor, 9);
 			fCurrentState = new PDEState(pluginPaths, true, parsePluginMonitor);
-			fModels = fCurrentState.getModels();
 			loadFeatures(new SubProgressMonitor(monitor, 1));
 			monitor.done();
 		}
@@ -138,7 +131,7 @@ public class TargetPluginsTab {
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			return getAllModels();
+			return getCurrentModels();
 		}
 	}
 
@@ -185,7 +178,7 @@ public class TargetPluginsTab {
 		
 		protected void handleSelectAll(boolean select) {
 			super.handleSelectAll(select);
-			IPluginModelBase[] allModels = getAllModels();
+			IPluginModelBase[] allModels = getCurrentModels();
 			for (int i = 0; i < allModels.length; i++) {
 				IPluginModelBase model = allModels[i];
 				if (model.isEnabled() != select) {
@@ -230,8 +223,8 @@ public class TargetPluginsTab {
 			type =
 				IModelProviderEvent.MODELS_REMOVED
 					| IModelProviderEvent.MODELS_ADDED | IModelProviderEvent.TARGET_CHANGED;
-			removedArray = fInitialModels;
-			addedArray = getAllModels();
+			removedArray = PDECore.getDefault().getModelManager().getExternalModels();
+			addedArray = getCurrentModels();
 		} else if (fChangedModels.size() > 0) {
 			type |= IModelProviderEvent.MODELS_CHANGED;
 			changedArray = (IModel[]) fChangedModels.toArray(new IModel[fChangedModels.size()]);
@@ -277,15 +270,6 @@ public class TargetPluginsTab {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
 
-	public IPluginModelBase[] getAllModels() {
-		if (fModels == null) {
-			fInitialModels =
-				PDECore.getDefault().getModelManager().getExternalModels();
-			return fInitialModels;
-		}
-		return fModels;
-	}
-	
 	protected void loadTargetProfile(ITarget target) {
 		if (target.useAllPlugins()) {
 			handleSelectAll(true);
@@ -323,7 +307,7 @@ public class TargetPluginsTab {
 			set.add(plugins[i].getId());
 		}
 		
-		IPluginModelBase[] models = getAllModels();
+		IPluginModelBase[] models = getCurrentModels();
 		int counter = 0;
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getPluginBase().getId();
@@ -361,7 +345,7 @@ public class TargetPluginsTab {
 			fChangedModels.clear();
 			handleSelectAll(true);
 			fReloaded = true;
-			fPage.getSourceBlock().resetExtensionLocations(getAllModels());
+			fPage.getSourceBlock().resetExtensionLocations(getCurrentModels());
 		}
 		fPage.resetNeedsReload();
 	}
@@ -372,7 +356,7 @@ public class TargetPluginsTab {
 			return;
 
 		fPluginListViewer.setInput(PDECore.getDefault().getExternalModelManager());
-		IPluginModelBase[] allModels = getAllModels();
+		IPluginModelBase[] allModels = getCurrentModels();
 
 		Vector selection = new Vector();
 		for (int i = 0; i < allModels.length; i++) {
@@ -388,9 +372,8 @@ public class TargetPluginsTab {
 		BusyIndicator.showWhile(fPage.getShell().getDisplay(), new Runnable() {
 			public void run() {
 				savePreferences();
-				if (fReloaded)
-					EclipseHomeInitializer.resetEclipseHomeVariable();
 				if (fReloaded) {
+					EclipseHomeInitializer.resetEclipseHomeVariable();
 					IPluginModelBase[] models = PDECore.getDefault().getModelManager().getWorkspaceModels();
 					for (int i = 0; i < models.length; i++) {
 						BundleDescription bundle = models[i].getBundleDescription();
@@ -403,12 +386,15 @@ public class TargetPluginsTab {
 					}
 					if (models.length > 0)
 						fCurrentState.resolveState(true);
+					updateModels();
+					computeDelta();
 					PDECore.getDefault().getExternalModelManager().setModels(fCurrentState.getTargetModels());
 					PDECore.getDefault().getModelManager().setState(fCurrentState);
 					PDECore.getDefault().getFeatureModelManager().targetReloaded();				
+				} else {
+					updateModels();
+					computeDelta();
 				}
-				updateModels();
-				computeDelta();
 			}
 		});
 	}
@@ -447,7 +433,7 @@ public class TargetPluginsTab {
 		IWorkingSetSelectionDialog dialog = manager.createWorkingSetSelectionDialog(fTablePart.getControl().getShell(), true);
 		if (dialog.open() == Window.OK) {
 			HashSet set = getPluginIDs(dialog.getSelection());
-			IPluginModelBase[] models = getAllModels();
+			IPluginModelBase[] models = getCurrentModels();
 			int counter = 0;
 			for (int i = 0; i < models.length; i++) {
 				String id = models[i].getPluginBase().getId();
@@ -492,89 +478,26 @@ public class TargetPluginsTab {
 	}
 	
 	private void handleAddRequired() {
-		TableItem[] items = fTablePart.getTableViewer().getTable().getItems();
-		
-		if (items.length == 0)
-			return;
-		
-		ArrayList result = new ArrayList();
-		for (int i = 0; i < items.length; i++) {
-			IPluginModelBase model = (IPluginModelBase)items[i].getData();
-			if (fTablePart.getTableViewer().getChecked(model))
-				addPluginAndDependencies((IPluginModelBase) items[i].getData(), result);
-		}
-		fTablePart.setSelection(result.toArray());
-	}
-	
-	protected void addPluginAndDependencies(
-			IPluginModelBase model,
-			ArrayList selected) {
-				
-			if (!selected.contains(model)) {
-				selected.add(model);
-				if (!model.isEnabled())
-					fChangedModels.add(model);
-				addDependencies(getAllModels(), model, selected);
-			}
-		}
-		
-	protected void addDependencies(
-	    IPluginModelBase[] models,
-		IPluginModelBase model,
-		ArrayList selected) {
-		
-		IPluginImport[] required = model.getPluginBase().getImports();
-		if (required.length > 0) {
-			for (int i = 0; i < required.length; i++) {
-				IPluginModelBase found = findModel(models, required[i].getId());
-				if (found != null) {
-					addPluginAndDependencies(found, selected);
-				}
-			}
-		}
-		
-		if (model instanceof IPluginModel) {
-			IFragmentModel[] fragments = findFragments(models, ((IPluginModel)model).getPlugin());
-			for (int i = 0; i < fragments.length; i++) {
-				String id = fragments[i].getFragment().getId();
-				if (!"org.eclipse.ui.workbench.compatibility".equals(id)) //$NON-NLS-1$
-					addPluginAndDependencies(fragments[i], selected);
-			}
-		} else {
-			IFragment fragment = ((IFragmentModel) model).getFragment();
-			IPluginModelBase found = findModel(models, fragment.getPluginId());
-			if (found != null) {
-				addPluginAndDependencies(found, selected);
-			}
-		}
-	}
-
-	private IPluginModelBase findModel(IPluginModelBase[] models, String id) {
+		Object[] checked = fPluginListViewer.getCheckedElements();
+		String[] implicit = fPage.getImplicitPlugins();
+		State state = getCurrentState().getState();
+		Set set = RequiredDependencyManager.addRequiredPlugins(checked, implicit, state);
+		IPluginModelBase[] models = getCurrentModels();
+		int counter = 0;
 		for (int i = 0; i < models.length; i++) {
-			String modelId = models[i].getPluginBase().getId();
-			if (modelId != null && modelId.equals(id))
-				return models[i];
-		}
-		return null;
-	}
-
-	private IFragmentModel[] findFragments(IPluginModelBase[] models, IPlugin plugin) {
-		ArrayList result = new ArrayList();
-		for (int i = 0; i < models.length; i++) {
-			if (models[i] instanceof IFragmentModel) {
-				IFragment fragment = ((IFragmentModel) models[i]).getFragment();
-				if (plugin.getId().equalsIgnoreCase(fragment.getPluginId())) {
-					result.add(models[i]);
-				}
+			if (set.contains(models[i].getPluginBase().getId())) {
+				fPluginListViewer.setChecked(models[i], true);
+				fChangedModels.add(models[i]);
+				counter += 1;
 			}
 		}
-		return (IFragmentModel[]) result.toArray(new IFragmentModel[result.size()]);
+		fTablePart.incrementCounter(counter);
 	}
 	
 	protected IPluginModelBase[] getCurrentModels() {
 		if (fCurrentState != null)
 			return fCurrentState.getModels();
-		return PDECore.getDefault().getModelManager().getAllPlugins();
+		return PDECore.getDefault().getModelManager().getExternalModels();
 	}
 	
 	protected PDEState getCurrentState() {
