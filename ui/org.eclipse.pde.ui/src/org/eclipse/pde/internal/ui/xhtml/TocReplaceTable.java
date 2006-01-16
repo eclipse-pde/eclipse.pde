@@ -35,9 +35,6 @@ public class TocReplaceTable {
 		public String getLabel() {
 			return fLabel;
 		}
-		public String getCompleteEntryPath() {
-			return fEntryFile.getLocation().toString();
-		}
 		public boolean fileMissing() {
 			return fEntryFile == null || !fEntryFile.exists();
 		}
@@ -75,60 +72,42 @@ public class TocReplaceTable {
 	}
 	
 	private Hashtable fEntries = new Hashtable();
-	private Hashtable fInvalidEntries = new Hashtable();
-	private int fNumValidEntries;
 	
 	public void addToTable(String href, String title, IFile tocFile) {
 		TocReplaceEntry tro = new TocReplaceEntry(href, title, tocFile);
-		if (href.endsWith(".xhtml") && !tro.fileMissing()) //$NON-NLS-1$
-			return;
-		Hashtable entries = tro.fileMissing() ? fInvalidEntries : fEntries;
-		if (entries.containsKey(tocFile)) {
-			ArrayList tocList = (ArrayList)entries.get(tocFile);
+		if (tro.fileMissing())
+			return; // ignore invalid entries
+		if (fEntries.containsKey(tocFile)) {
+			ArrayList tocList = (ArrayList)fEntries.get(tocFile);
 			tocList.add(tro);
 		} else {
 			ArrayList tocList = new ArrayList();
 			tocList.add(tro);
-			entries.put(tocFile, tocList);
+			fEntries.put(tocFile, tocList);
 		}
-		if (!tro.fileMissing())
-			fNumValidEntries++;
 	}
 	
-	public IFile[] getTocs(boolean invalid) {
-		Set keys = invalid ? fInvalidEntries.keySet() : fEntries.keySet();
+	public IFile[] getTocs() {
+		Set keys = fEntries.keySet();
 		Iterator it = keys.iterator();
-		IFile[] files = new IFile[invalid ? 
-				fInvalidEntries.size() : 
-					fEntries.size()];
+		IFile[] files = new IFile[fEntries.size()];
 		int i = 0;
 		while (it.hasNext())
 			files[i++] = (IFile)it.next();
 		return files;
 	}
 	
-	public TocReplaceEntry[] getToBeConverted(IFile file, boolean invalid) {
-		ArrayList list = invalid ? 
-				(ArrayList)fInvalidEntries.get(file) :
-					(ArrayList)fEntries.get(file);
+	public TocReplaceEntry[] getToBeConverted(IFile file) {
+		ArrayList list = (ArrayList)fEntries.get(file);
 		return (TocReplaceEntry[]) list.toArray(new TocReplaceEntry[list.size()]);
 	}
 
 	public int numEntries() {
-		return fEntries.size() + fInvalidEntries.size();
-	}
-	
-	public int numValidEntries() {
-		return fNumValidEntries;
+		return fEntries.size();
 	}
 	
 	public void clear() {
-		fNumValidEntries = 0;
 		fEntries.clear();
-		fInvalidEntries.clear();
 	}
-	
-	public boolean containsInvalidEntires() {
-		return fInvalidEntries.size() > 0;
-	}
+
 }

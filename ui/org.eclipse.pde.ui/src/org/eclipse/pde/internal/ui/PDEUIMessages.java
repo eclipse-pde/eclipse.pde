@@ -2525,8 +2525,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String XHTMLConversionWizardPage_deselectAll;
 
-	public static String XHTMLConversionWizardPage_noEntries;
-
 	public static String XHTMLConversionWizardPage_viewerLabel;
 
 	public static String XHTMLConversionOperation_createXHTML;

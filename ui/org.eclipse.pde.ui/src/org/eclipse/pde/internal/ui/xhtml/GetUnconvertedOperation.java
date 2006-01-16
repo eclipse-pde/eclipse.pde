@@ -71,8 +71,6 @@ public class GetUnconvertedOperation implements IRunnableWithProgress {
 		Iterator it = tocs.iterator();
 		while (it.hasNext()) {
 			IFile file = (IFile)it.next();
-			if (file.getName().equals("toc.xml")) //$NON-NLS-1$
-				file.getName().toString();
 			XMLErrorReporter xml = new XMLErrorReporter(file);
 			ValidatingSAXParser.parse(file, xml);
 			Element root = xml.getDocumentRoot();
@@ -91,8 +89,7 @@ public class GetUnconvertedOperation implements IRunnableWithProgress {
 		String href = root.getAttribute("href"); //$NON-NLS-1$
 		if (href != null 
 				&& (href.endsWith(".html")  //$NON-NLS-1$
-				|| href.endsWith(".htm") //$NON-NLS-1$
-				|| href.endsWith(".xhtml"))) { //$NON-NLS-1$
+				|| href.endsWith(".htm"))) { //$NON-NLS-1$
 			fReplaceTable.addToTable(href, root.getAttribute("label"), file); //$NON-NLS-1$
 		}
 		NodeList children = root.getChildNodes();

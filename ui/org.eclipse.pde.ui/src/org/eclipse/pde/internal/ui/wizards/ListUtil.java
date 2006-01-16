@@ -10,12 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards;
 
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.ElementLabelProvider;
+import org.eclipse.pde.internal.ui.nls.ModelChange;
 import org.eclipse.swt.graphics.Image;
 
 
@@ -57,6 +64,9 @@ public class ListUtil {
 			if (object instanceof ModelEntry)
 				return getPluginName(
 					((ModelEntry) object).getActiveModel().getPluginBase());
+			if (object instanceof ModelChange)
+				return getPluginName(
+						((ModelChange)object).getParentModel().getPluginBase());
 			return null;
 		}
 

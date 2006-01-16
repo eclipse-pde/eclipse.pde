@@ -7,13 +7,11 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.xhtml.TocReplaceTable.TocReplaceEntry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -29,16 +27,12 @@ public class XHTMLConversionWizardPage extends WizardPage {
 
 	private TocReplaceTable fTable;
 	private ContainerCheckedTreeViewer fInputViewer;
-	private TreeViewer fInvalidViewer;
 	
 	private class CP implements ITreeContentProvider {
-		private boolean fInvalid;
-		public CP(boolean invalidEntries) {
-			fInvalid = invalidEntries;
-		}
+
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof IFile)
-				return fTable.getToBeConverted((IFile)parentElement, fInvalid);
+				return fTable.getToBeConverted((IFile)parentElement);
 			return null;
 		}
 		public Object getParent(Object element) {
@@ -50,7 +44,7 @@ public class XHTMLConversionWizardPage extends WizardPage {
 			return element instanceof IFile;
 		}
 		public Object[] getElements(Object inputElement) {
-			return fTable.getTocs(fInvalid);
+			return fTable.getTocs();
 		}
 		public void dispose() {
 		}
@@ -67,13 +61,13 @@ public class XHTMLConversionWizardPage extends WizardPage {
 
 	public void createControl(Composite parent) {
 		Composite columns = createComposite(parent, false, 2, false);
-		SashForm viewers = new SashForm(columns, SWT.VERTICAL);
-		viewers.setLayoutData(new GridData(GridData.FILL_BOTH));
+		columns.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		Composite valid = createComposite(viewers, true, 1, false);
+		Composite valid = createComposite(columns, true, 1, false);
 		Label label = new Label(valid, SWT.NONE);
+		label.setText(PDEUIMessages.XHTMLConversionWizardPage_viewerLabel);
 		fInputViewer = new ContainerCheckedTreeViewer(valid, SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE | SWT.BORDER);
-		fInputViewer.setContentProvider(new CP(false));
+		fInputViewer.setContentProvider(new CP());
 		fInputViewer.setLabelProvider(new WorkbenchLabelProvider());
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 400;
@@ -85,21 +79,8 @@ public class XHTMLConversionWizardPage extends WizardPage {
 			}
 		});
 		fInputViewer.setInput(new Object());
-		fInputViewer.setAllChecked(true);
 		fInputViewer.expandAll();
-		
-		if (fTable.containsInvalidEntires()) {
-			Composite invalid = createComposite(viewers, true, 1, false);
-			Label invalidPaths = new Label(invalid, SWT.NONE);
-			invalidPaths.setText(PDEUIMessages.XHTMLConversionWizardPage_invalidText);
-			fInvalidViewer = new TreeViewer(invalid, SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE | SWT.BORDER);
-			fInvalidViewer.setContentProvider(new CP(true));
-			fInvalidViewer.setLabelProvider(new WorkbenchLabelProvider());
-			fInvalidViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
-			fInvalidViewer.setInput(new Object());
-			fInvalidViewer.expandAll();
-			viewers.setWeights(new int[] {5,3});
-		}
+		fInputViewer.setAllChecked(true);
 		
 		Composite buttonComp = createComposite(columns, true, 1, true);
 		Label blankLabel = new Label(buttonComp, SWT.NONE);
@@ -110,6 +91,7 @@ public class XHTMLConversionWizardPage extends WizardPage {
 		selectAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fInputViewer.setAllChecked(true);
+				setPageComplete(true);
 			}
 		});
 		Button deselectAll = new Button(buttonComp, SWT.PUSH);
@@ -118,17 +100,9 @@ public class XHTMLConversionWizardPage extends WizardPage {
 		deselectAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fInputViewer.setAllChecked(false);
+				setPageComplete(false);
 			}
 		});
-		
-		int numValidEntries = fTable.numValidEntries();
-		if (numValidEntries == 0) {
-			selectAll.setEnabled(false);
-			deselectAll.setEnabled(false);
-			setPageComplete(false);
-			label.setText(PDEUIMessages.XHTMLConversionWizardPage_noEntries);
-		} else
-			label.setText(PDEUIMessages.XHTMLConversionWizardPage_viewerLabel);
 		
 		setControl(columns);
 		Dialog.applyDialogFont(columns);

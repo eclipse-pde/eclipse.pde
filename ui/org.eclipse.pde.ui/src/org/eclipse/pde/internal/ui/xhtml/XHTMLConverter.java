@@ -9,7 +9,6 @@ import java.io.StringWriter;
 import java.util.Stack;
 
 import org.apache.lucene.demo.html.HTMLParser;
-import org.apache.lucene.demo.html.HTMLParserConstants;
 import org.apache.lucene.demo.html.Token;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -89,7 +88,7 @@ public class XHTMLConverter {
 			Token token = parser.getNextToken();
 			while (isValid(token)) {
 				switch (token.kind) {
-				case HTMLParserConstants.TagName:
+				case HTMLParser.TagName:
 					XHTMLTag tag = new XHTMLTag(token.image, fDoctype);
 					convertTagContents(parser, tag);
 					if (tag.isClosingTag()) {
@@ -144,7 +143,7 @@ public class XHTMLConverter {
 	private XHTMLTag grabNextTag(HTMLParser parser, String tag) {
 		Token token = parser.getNextToken();
 		while (isValid(token)) {
-			if (token.kind == HTMLParserConstants.TagName
+			if (token.kind == HTMLParser.TagName
 					&& token.image.equalsIgnoreCase(tag))
 				return new XHTMLTag(token.image, fDoctype);
 			token = parser.getNextToken();
@@ -156,7 +155,7 @@ public class XHTMLConverter {
 		if (tag == null)
 			return;
 		Token token = parser.getNextToken();
-		while (isValid(token) && token.kind != HTMLParserConstants.TagEnd) {
+		while (isValid(token) && token.kind != HTMLParser.TagEnd) {
 			tag.eatToken(token);
 			token = parser.getNextToken();
 		}
@@ -165,7 +164,7 @@ public class XHTMLConverter {
 	}
 	
 	private boolean isValid(Token token) {
-		return token != null && token.kind != HTMLParserConstants.EOF;
+		return token != null && token.kind != HTMLParser.EOF;
 	}
 	
 	private String getDoctypeString(int version) {
