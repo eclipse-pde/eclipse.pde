@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
@@ -24,7 +24,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 public class RequiredDependencyManager {
 	
 	public static Set addRequiredPlugins(Object[] selected, String[] implicit, State state) {
-		Set set = new TreeSet();
+		Set set = new HashSet();
 		for (int i = 0; i < selected.length; i++) {
 			if (!(selected[i] instanceof IPluginModelBase))
 				continue;
