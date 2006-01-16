@@ -13,7 +13,7 @@ import org.eclipse.pde.internal.core.itarget.IArgumentsInfo;
 import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
 import org.eclipse.pde.internal.core.itarget.IImplicitDependenciesInfo;
 import org.eclipse.pde.internal.core.itarget.ILocationInfo;
-import org.eclipse.pde.internal.core.itarget.IRuntimeInfo;
+import org.eclipse.pde.internal.core.itarget.ITargetJRE;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.core.itarget.ITargetModelFactory;
@@ -87,7 +87,7 @@ public class TargetProfileFromPlatformOperation extends BaseTargetProfileOperati
 	}
 	
 	protected void initializeJREInfo(ITarget target, ITargetModelFactory factory) {
-		IRuntimeInfo info = factory.createJREInfo();
+		ITargetJRE info = factory.createJREInfo();
 		info.setDefaultJRE();
 		target.setTargetJREInfo(info);
 	}

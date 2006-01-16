@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.preferences;
 
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -34,10 +35,12 @@ import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.TargetProfileManager;
 import org.eclipse.pde.internal.core.itarget.ILocationInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
+import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.core.target.TargetModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.target.OpenTargetProfileAction;
 import org.eclipse.pde.internal.ui.util.FileExtensionFilter;
 import org.eclipse.pde.internal.ui.util.FileValidator;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -56,6 +59,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbench;
@@ -69,17 +73,18 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 	public static final int PLUGINS_INDEX = 0;
 	public static final int ENVIRONMENT_INDEX = 1;
-	public static final int SOURCE_INDEX = 2;
+	public static final int SOURCE_INDEX = 4;
 	
 	private Label fHomeLabel;
 	private Combo fHomeText;
 	private Combo fProfileCombo;
 	private Button fBrowseButton;
+	
 	private TargetPluginsTab fPluginsTab;
 	private TargetEnvironmentTab fEnvironmentTab;
-	private TargetSourceTab fSourceTab;
 	private JavaArgumentsTab fArgumentsTab;
 	private TargetImplicitPluginsTab fImplicitDependenciesTab;
+	private TargetSourceTab fSourceTab;
 	private IConfigurationElement [] fElements;
 	
 	private Preferences fPreferences = null;
@@ -130,13 +135,13 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		profiles.setLayout(new GridLayout(4, false));
 		profiles.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 				
-		Label profile = new Label(profiles, SWT.NONE);
+		Link profile = new Link(profiles, SWT.NONE);
 		profile.setText(PDEUIMessages.TargetPlatformPreferencePage_CurrentProfileLabel);
-		/*profile.addSelectionListener(new SelectionAdapter() {
+		profile.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleOpenTargetProfile();
+				new OpenTargetProfileAction(getShell(), getTargetModel()).run();
 			}
-		});*/
+		});
 		
 		fProfileCombo = new Combo(profiles, SWT.BORDER | SWT.READ_ONLY);
 		loadTargetCombo();
@@ -162,7 +167,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			}
 		});
 		SWTUtil.setButtonDimensionHint(loadProfileButton);
-		
 	}
 	
 	private void createCurrentTargetPlatformGroup(Composite container) {
@@ -406,29 +410,48 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	public void init(IWorkbench workbench) {
 	}
 	
-	private void handleLoadTargetProfile() {		
-		ITarget target = null;
-		TargetModel model = new TargetModel();
-		IFile file = getTargetFile();
-		if (file != null) 
-			try {
-				model.load(file.getContents(), false);
-			} catch (CoreException e) {
-				return;
+	private ITargetModel getTargetModel() {
+		InputStream stream = null;
+		try {
+			IFile file = getTargetFile();
+			if (file != null)
+				stream = file.getContents();
+			if (stream == null) {
+				URL url = getExternalTargetURL();
+				if (url != null)
+					stream = url.openStream();
 			}
-		else { 
-			URL url = getExternalTargetURL();
-			if (url == null)
-				return;
+			
+			if (stream != null) {
+				ITargetModel model = new TargetModel();
+				model.load(stream, false);
+				return model;
+			}
+		} catch (CoreException e) {
+		} catch (IOException e) {
+		} finally {
 			try {
-				model.load(url.openStream(), false);
-			} catch (CoreException e) {
-				return;
+				if (stream != null)
+					stream.close();
 			} catch (IOException e) {
-				return;
 			}
 		}
-		target = model.getTarget();
+		return null;
+	}
+	
+	private void handleLoadTargetProfile() {
+		ITargetModel model = getTargetModel();
+		if (model == null) {
+			// TODO display a message to the user that a profile was not found
+			return;
+		}
+		
+		if (!model.isLoaded()) {
+			// TODO display a message that a profile is malformed
+			return;
+		}
+		
+		ITarget target = model.getTarget();
 		ILocationInfo info = target.getLocationInfo();
 		String path;
 		if (info == null || info.useDefault()) {

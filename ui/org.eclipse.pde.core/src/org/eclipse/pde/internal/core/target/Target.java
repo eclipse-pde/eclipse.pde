@@ -19,7 +19,7 @@ import org.eclipse.pde.internal.core.itarget.IArgumentsInfo;
 import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
 import org.eclipse.pde.internal.core.itarget.IImplicitDependenciesInfo;
 import org.eclipse.pde.internal.core.itarget.ILocationInfo;
-import org.eclipse.pde.internal.core.itarget.IRuntimeInfo;
+import org.eclipse.pde.internal.core.itarget.ITargetJRE;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetFeature;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
@@ -38,7 +38,7 @@ public class Target extends TargetObject implements ITarget {
 	private TreeMap fFeatures = new TreeMap();
 	private IArgumentsInfo fArgsInfo;
 	private IEnvironmentInfo fEnvInfo;
-	private IRuntimeInfo fRuntimeInfo;
+	private ITargetJRE fRuntimeInfo;
 	private ILocationInfo fLocationInfo;
 	private IImplicitDependenciesInfo fImplicitInfo;
 	private boolean fUseAllTargetPlatform = false;
@@ -198,11 +198,11 @@ public class Target extends TargetObject implements ITarget {
 		fEnvInfo = info;
 	}
 
-	public IRuntimeInfo getTargetJREInfo() {
+	public ITargetJRE getTargetJREInfo() {
 		return fRuntimeInfo;
 	}
 
-	public void setTargetJREInfo(IRuntimeInfo info) {
+	public void setTargetJREInfo(ITargetJRE info) {
 		fRuntimeInfo = info;
 		
 	}

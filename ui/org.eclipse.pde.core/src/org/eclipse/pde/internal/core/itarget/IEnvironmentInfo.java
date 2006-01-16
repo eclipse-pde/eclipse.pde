@@ -22,5 +22,13 @@ public interface IEnvironmentInfo extends ITargetObject{
 	public void setArch(String arch);
 	
 	public void setNL(String nl);
+	
+	public String getDisplayOS();
+	
+	public String getDisplayWS();
+	
+	public String getDisplayArch();
+	
+	public String getDisplayNL();
 
 }

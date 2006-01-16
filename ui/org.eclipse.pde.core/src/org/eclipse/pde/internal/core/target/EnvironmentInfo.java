@@ -2,12 +2,13 @@ package org.eclipse.pde.internal.core.target;
 
 import java.io.PrintWriter;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class EnvironmnetInfo extends TargetObject implements IEnvironmentInfo {
+public class EnvironmentInfo extends TargetObject implements IEnvironmentInfo {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -16,7 +17,7 @@ public class EnvironmnetInfo extends TargetObject implements IEnvironmentInfo {
 	private String fArch;
 	private String fNL;
 	
-	public EnvironmnetInfo(ITargetModel model) {
+	public EnvironmentInfo(ITargetModel model) {
 		super(model);
 	}
 
@@ -103,6 +104,30 @@ public class EnvironmnetInfo extends TargetObject implements IEnvironmentInfo {
 		if (fNL != null && fNL.length() > 0)
 			writer.println(indent + "   <" + P_NL + ">" + getWritableString(fNL) + "</" + P_NL + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		writer.println(indent + "</environment>"); //$NON-NLS-1$
+	}
+
+	public String getDisplayOS() {
+		if (fOS == null || fOS.trim().length() == 0)
+			return Platform.getOS();
+		return fOS.trim();
+	}
+
+	public String getDisplayWS() {
+		if (fWS == null || fWS.trim().length() == 0)
+			return Platform.getWS();
+		return fWS.trim();
+	}
+
+	public String getDisplayArch() {
+		if (fArch == null || fArch.trim().length() == 0)
+			return Platform.getOSArch();
+		return fArch.trim();
+	}
+
+	public String getDisplayNL() {
+		if (fNL == null || fNL.trim().length() == 0)
+			return Platform.getNL();
+		return fNL.trim();
 	}
 
 }

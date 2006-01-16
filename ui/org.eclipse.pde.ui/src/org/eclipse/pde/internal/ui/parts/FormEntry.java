@@ -284,8 +284,9 @@ public class FormEntry implements IEditorValidationProvider {
 		} else if (e.character == '\u001b') { // Escape character
 			fText.setText(fValue != null ? fValue : ""); // restore old //$NON-NLS-1$
 			fDirty = false;
-		}	
-		fListener.selectionChanged(FormEntry.this);
+		}
+		if (fListener != null)
+			fListener.selectionChanged(FormEntry.this);
 	}
 	/**
 	 * Sets the value of this entry.

@@ -1,6 +1,6 @@
 package org.eclipse.pde.internal.core.itarget;
 
-public interface IRuntimeInfo extends ITargetObject {
+public interface ITargetJRE extends ITargetObject {
 	
 	public final static int TYPE_DEFAULT = 0;
 	public final static int TYPE_NAMED = 1;
@@ -22,5 +22,7 @@ public interface IRuntimeInfo extends ITargetObject {
 	public void setExecutionEnvJRE(String name);
 	
 	public void setDefaultJRE();
+	
+	public String getCompatibleJRE();
 
 }

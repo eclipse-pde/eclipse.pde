@@ -18,7 +18,7 @@ public interface ITargetModelFactory {
 	
 	IEnvironmentInfo createEnvironment();
 	
-	IRuntimeInfo createJREInfo();
+	ITargetJRE createJREInfo();
 	
 	ILocationInfo createLocation();
 	

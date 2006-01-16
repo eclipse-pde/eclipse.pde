@@ -5,7 +5,7 @@ import java.util.TreeSet;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
-import org.eclipse.pde.internal.core.itarget.IRuntimeInfo;
+import org.eclipse.pde.internal.core.itarget.ITargetJRE;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -14,7 +14,6 @@ import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -22,9 +21,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -55,7 +52,7 @@ public class JRESection extends PDESection {
 		client.setLayout(new GridLayout(2, false));
 		
 		initializeValues();
-		IRuntimeInfo info = getRuntimeInfo();
+		ITargetJRE info = getRuntimeInfo();
 		int jreType = info.getJREType();
 		String jreName = info.getJREName();
 		
@@ -63,7 +60,7 @@ public class JRESection extends PDESection {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fDefaultJREButton.setLayoutData(gd);
-		if (jreType == IRuntimeInfo.TYPE_DEFAULT)
+		if (jreType == ITargetJRE.TYPE_DEFAULT)
 			fDefaultJREButton.setSelection(true);
 		fDefaultJREButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -76,7 +73,7 @@ public class JRESection extends PDESection {
 		fNamedJREButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateWidgets();
-				getRuntimeInfo().setNamedJRE(getText(fNamedJREsCombo));
+				getRuntimeInfo().setNamedJRE(fNamedJREsCombo.getSelection());
 			}
 		});
 		
@@ -85,7 +82,7 @@ public class JRESection extends PDESection {
 		fNamedJREsCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		String[] installs = VMHelper.getVMInstallNames();
 		fNamedJREsCombo.setItems(installs);
-		if (jreType == IRuntimeInfo.TYPE_NAMED) {
+		if (jreType == ITargetJRE.TYPE_NAMED) {
 			if (fNamedJREsCombo.indexOf(jreName) < 0 )
 				fNamedJREsCombo.add(jreName);
 			fNamedJREsCombo.setText(jreName);
@@ -95,7 +92,7 @@ public class JRESection extends PDESection {
 		}
 		fNamedJREsCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				getRuntimeInfo().setNamedJRE(getText(fNamedJREsCombo));
+				getRuntimeInfo().setNamedJRE(fNamedJREsCombo.getSelection());
 			}
 		});
 		
@@ -103,7 +100,7 @@ public class JRESection extends PDESection {
 		fExecEnvButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateWidgets();
-				getRuntimeInfo().setExecutionEnvJRE(getText(fExecEnvsCombo));
+				getRuntimeInfo().setExecutionEnvJRE(fExecEnvsCombo.getSelection());
 			}
 		});
 		
@@ -111,7 +108,7 @@ public class JRESection extends PDESection {
 		fExecEnvsCombo.createControl(client, toolkit, SWT.SINGLE | SWT.BORDER );
 		fExecEnvsCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fExecEnvsCombo.setItems((String[])fExecEnvChoices.toArray(new String[fExecEnvChoices.size()]));
-		if (jreType == IRuntimeInfo.TYPE_EXECUTION_ENV) {
+		if (jreType == ITargetJRE.TYPE_EXECUTION_ENV) {
 			if (fExecEnvsCombo.indexOf(jreName) < 0)
 				fExecEnvsCombo.add(jreName);
 			fExecEnvButton.setSelection(true);
@@ -122,7 +119,7 @@ public class JRESection extends PDESection {
 		
 		fExecEnvsCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				getRuntimeInfo().setExecutionEnvJRE(getText(fExecEnvsCombo));
+				getRuntimeInfo().setExecutionEnvJRE(fExecEnvsCombo.getSelection());
 			}
 		});
 		
@@ -143,8 +140,8 @@ public class JRESection extends PDESection {
 		fExecEnvsCombo.setEnabled(fExecEnvButton.getSelection());
 	}
 	
-	private IRuntimeInfo getRuntimeInfo() {
-		IRuntimeInfo info = getTarget().getTargetJREInfo();
+	private ITargetJRE getRuntimeInfo() {
+		ITargetJRE info = getTarget().getTargetJREInfo();
 		if (info == null) {
 			info = getModel().getFactory().createJREInfo();
 			getTarget().setTargetJREInfo(info);
@@ -160,11 +157,4 @@ public class JRESection extends PDESection {
 		return (ITargetModel)getPage().getPDEEditor().getAggregateModel();
 	}
 	
-	private String getText(ComboPart combo) {
-		Control control = combo.getControl();
-		if (control instanceof Combo)
-			return ((Combo) control).getText();
-		return ((CCombo) control).getText();
-	}
-
 }

@@ -2539,4 +2539,30 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetProfileWizardPage_existingTarget;
 
+	public static String OpenTargetProfileAction_title;
+
+	public static String OpenTargetProfileAction_missingProfile;
+
+	public static String OpenTargetProfileAction_invalidProfile;
+
+	public static String TargetProfileWindow_title;
+
+	public static String TargetProfileWindow_definition;
+
+	public static String TargetProfileWindow_plugins;
+
+	public static String TargetProfileWindow_features;
+
+	public static String TargetProfileWindow_environment;
+
+	public static String TargetProfileWindow_launching;
+
+	public static String TargetProfileWindow_implicit;
+
+	public static String TargetProfileWindow_jre;
+
+	public static String TargetProfileWindow_program;
+
+	public static String TargetProfileWindow_vm;
+
 }

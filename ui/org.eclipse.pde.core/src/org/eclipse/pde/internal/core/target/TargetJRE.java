@@ -2,18 +2,22 @@ package org.eclipse.pde.internal.core.target;
 
 import java.io.PrintWriter;
 
-import org.eclipse.pde.internal.core.itarget.IRuntimeInfo;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+import org.eclipse.pde.internal.core.itarget.ITargetJRE;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class RuntimeInfo extends TargetObject implements IRuntimeInfo {
+public class TargetJRE extends TargetObject implements ITargetJRE {
 
 	private static final long serialVersionUID = 1L;
 	private int fType;
 	private String fName;
 
-	public RuntimeInfo(ITargetModel model) {
+	public TargetJRE(ITargetModel model) {
 		super(model);
 	}
 
@@ -94,6 +98,39 @@ public class RuntimeInfo extends TargetObject implements IRuntimeInfo {
 		else if (fType == 2)
 			writer.println(indent + "   <execEnv>" + getWritableString(fName) + "</execEnv>"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println(indent + "</targetJRE>"); //$NON-NLS-1$
+	}
+	
+	public String getCompatibleJRE() {
+		int jreType = getJREType();
+
+		switch (jreType) {
+		case ITargetJRE.TYPE_DEFAULT:
+			return JavaRuntime.getDefaultVMInstall().getName();
+		case ITargetJRE.TYPE_NAMED:
+			return getJREName();
+		case ITargetJRE.TYPE_EXECUTION_ENV:
+			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+			IExecutionEnvironment environment = manager.getEnvironment(getJREName());
+			IVMInstall vm = null;
+			if (environment != null) {
+				vm = environment.getDefaultVM();
+				if (vm == null) {
+					IVMInstall[] installs = environment.getCompatibleVMs();
+					// take the first strictly compatible vm if there is no default
+					for (int i = 0; i < installs.length; i++) {
+						IVMInstall install = installs[i];
+						if (environment.isStrictlyCompatible(install)) {
+							return install.getName();
+						}
+					}
+					// use the first vm failing that
+					if (vm == null && installs.length > 0) 
+						return installs[0].getName();
+				}
+				return vm.getName();
+			}
+		}
+		return JavaRuntime.getDefaultVMInstall().getName();
 	}
 
 }

@@ -34,9 +34,9 @@ public interface ITarget extends ITargetObject {
 	
 	void setEnvironment(IEnvironmentInfo info);
 	
-	IRuntimeInfo getTargetJREInfo();
+	ITargetJRE getTargetJREInfo();
 	
-	void setTargetJREInfo(IRuntimeInfo info);
+	void setTargetJREInfo(ITargetJRE info);
 	
 	ILocationInfo getLocationInfo();
 	
