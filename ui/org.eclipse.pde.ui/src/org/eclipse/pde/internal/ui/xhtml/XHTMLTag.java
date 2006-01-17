@@ -68,7 +68,7 @@ public class XHTMLTag {
 	private static final char F_TAG_CLOSE = '>';
 	private static final char F_TAG_SLASH = '/';
 	private static final char F_TAG_SPACE = ' ';
-	private static final String F_DOUBLE_QUOTE = "\""; //$NON-NLS-1$
+	private static final char F_TAG_DQUOTE = '"';
 	
 	
 	private String fTagName;
@@ -167,9 +167,9 @@ public class XHTMLTag {
 				sb.append(F_TAG_SPACE);
 				sb.append(fAttribNames.get(i).toString());
 				sb.append('=');
-				sb.append(F_DOUBLE_QUOTE);
+				sb.append(F_TAG_DQUOTE);
 				sb.append(fAttribValues.get(i).toString());
-				sb.append(F_DOUBLE_QUOTE);
+				sb.append(F_TAG_DQUOTE);
 			}
 			if (isEmptyTag()) {
 				sb.append(F_TAG_SPACE);
