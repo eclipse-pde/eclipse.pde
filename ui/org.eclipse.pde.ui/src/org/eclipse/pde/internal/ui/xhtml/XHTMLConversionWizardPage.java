@@ -79,7 +79,6 @@ public class XHTMLConversionWizardPage extends WizardPage {
 			}
 		});
 		fInputViewer.setInput(new Object());
-		fInputViewer.expandAll();
 		fInputViewer.setAllChecked(true);
 		
 		Composite buttonComp = createComposite(columns, true, 1, true);
