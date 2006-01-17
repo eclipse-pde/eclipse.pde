@@ -68,6 +68,8 @@ public class RequiredDependencyManager {
 			}
 			BundleDescription[] fragments = desc.getFragments();
 			for (int i = 0; i < fragments.length; i++) {
+				if (!fragments[i].isResolved())
+					continue;
 				String id = fragments[i].getSymbolicName();
 				if (!"org.eclipse.ui.workbench.compatibility".equals(id)) //$NON-NLS-1$
 					addBundleAndDependencies(fragments[i], set);

@@ -2565,4 +2565,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetProfileWizardPage_viewProfile;
 
+	public static String TargetPluginsTab_groupPlugins;
+
 }
