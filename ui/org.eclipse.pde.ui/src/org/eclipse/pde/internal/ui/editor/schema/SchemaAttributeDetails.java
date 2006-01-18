@@ -376,7 +376,7 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 						res = new ChoiceRestriction(fAttribute.getSchema());
 					res.setChildren(vres);
 					if (type instanceof SchemaSimpleType)
-							((SchemaSimpleType)type).setRestriction(res);
+						((SchemaSimpleType)type).setRestriction(res);
 					fRestrictionsTable.refresh();
 				}
 			}
@@ -402,8 +402,12 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 						if (stays) vres.add(currRes[i]);
 					}
 					res.setChildren(vres);
-					if (type instanceof SchemaSimpleType)
-						((SchemaSimpleType)type).setRestriction(res);
+					if (type instanceof SchemaSimpleType) {
+						if (vres.size() == 0)
+							((SchemaSimpleType)type).setRestriction(null);
+						else
+							((SchemaSimpleType)type).setRestriction(res);
+					}
 					fRestrictionsTable.refresh();
 				}
 			}
