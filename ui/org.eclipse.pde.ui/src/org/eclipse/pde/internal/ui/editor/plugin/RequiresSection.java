@@ -363,6 +363,8 @@ public class RequiresSection
 			
 			// Need Install Location to load model.  Giving it org.eclipse.osgi's install location
 			IPluginModelBase osgi = PDECore.getDefault().getModelManager().findModel("org.eclipse.osgi"); //$NON-NLS-1$
+			if (osgi == null)
+				return;
 			model.setInstallLocation(osgi.getInstallLocation());
 			
 			// Load model from a String representing the contents of an equivalent plugin.xml file
