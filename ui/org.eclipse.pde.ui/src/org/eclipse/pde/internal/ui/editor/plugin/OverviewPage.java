@@ -186,7 +186,9 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
 		toolkit.adapt(info, true, true);
 		info.setImage(lp.get(PDEPluginImages.DESC_HELP));
-		info.setBackground(section.getTitleBarGradientBackground());
+		//no need for the background - transparency will take care of it
+		info.setBackground(null);
+		//info.setBackground(section.getTitleBarGradientBackground());
 		info.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				displayHelpResource("/org.eclipse.pde.doc.user/guide/pde_running.htm"); //$NON-NLS-1$
@@ -215,7 +217,9 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 				displayHelpResource("/org.eclipse.pde.doc.user/guide/pde_deploy.htm"); //$NON-NLS-1$
 			}
 		});
-		info.setBackground(section.getTitleBarGradientBackground());
+		//info.setBackground(section.getTitleBarGradientBackground());
+		//no need for the background - transparency will take care of it
+		info.setBackground(null);
 		section.setTextClient(info);
 		section.setClient(createClient(section, isFragment() ? PDEUIMessages.OverviewPage_fDeploying : PDEUIMessages.OverviewPage_deploying, toolkit));
 	}
