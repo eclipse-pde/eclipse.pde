@@ -126,10 +126,10 @@ Each sample has a name, one or more project elements and a final perspective. Th
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="shared" type="string">
+         <attribute name="shared" type="boolean">
             <annotation>
                <documentation>
-                  shared projects may be listed in more than one sample. When this attribute is &lt;code&gt;true&lt;/code&gt;, and the project with the same name already exists in the workspace, it will be silently skipped. Otherwise, users will be prompted for overwrite permition.
+                  shared projects may be listed in more than one sample. When this attribute is &lt;code&gt;true&lt;/code&gt;, and the project with the same name already exists in the workspace, it will be silently skipped. Otherwise, users will be prompted for overwrite permission.
                </documentation>
             </annotation>
          </attribute>
