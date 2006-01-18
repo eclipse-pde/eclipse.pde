@@ -71,6 +71,22 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		return result;
 	}
 	
+	public Collection getAllCompiledPlugins() {
+		Collection pluginsByConfig = assembleInformation.values();
+		Set result = new HashSet(); 
+		for (Iterator iter2 = pluginsByConfig.iterator(); iter2.hasNext();) {
+			Collection allPlugins = ((AssemblyLevelConfigInfo) iter2.next()).getPlugins();
+			for (Iterator iter = allPlugins.iterator(); iter.hasNext();) {
+				BundleDescription bundle = (BundleDescription) iter.next();
+				Properties bundleProperties = ((Properties) bundle.getUserObject());
+				if (bundleProperties != null && Boolean.TRUE == bundleProperties.get(IS_COMPILED))
+					result.add(bundle);
+			}
+			
+		}
+		return result;
+	}
+	
 	public Collection getCompiledFeatures(Config config) {
 		Collection allFeatures= getFeatures(config);
 		ArrayList result = new ArrayList(allFeatures.size()); 
