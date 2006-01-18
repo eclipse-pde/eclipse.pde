@@ -70,8 +70,8 @@ public interface IPDEBuildConstants {
 	public final static String DEFAULT_FEATURES_POSTPROCESSINGSTEPS_FILENAME_DESCRIPTOR = "features.postProcessingSteps.properties"; //$NON-NLS-1$
 	public final static String DEFAULT_CUSTOM_BUILD_CALLBACKS_FILE = "customBuildCallbacks.xml"; //$NON-NLS-1$
 
-	public final static String DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX = "finalPluginsVersion"; //$NON-NLS-1$
-	public final static String DEFAULT_FEATURE_VERSION_FILENAME_PREFIX = "finalFeaturesVersion"; //$NON-NLS-1$
+	public final static String DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX = "finalPluginsVersions"; //$NON-NLS-1$
+	public final static String DEFAULT_FEATURE_VERSION_FILENAME_PREFIX = "finalFeaturesVersions"; //$NON-NLS-1$
 	public final static String PROPERTIES_FILE_SUFFIX = ".properties"; //$NON-NLS-1$
 	
 	// Tag replaced in files
