@@ -203,4 +203,12 @@ public class BuildScriptGeneratorTask extends Task {
 	public void setGenerateFeatureVersionSuffix(boolean value){
 		generator.setGenerateFeatureVersionSuffix(value);
 	}
+	
+	/**
+	 * Set whether or not to generate plugin & feature versions lists
+	 * @param value
+	 */
+	public void setGenerateVersionsLists(boolean value){
+		generator.setGenerateVersionsList(value);
+	}
 }

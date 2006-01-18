@@ -60,8 +60,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	// Variables to control is a mkdir to a specific folder was already.
 	protected List mkdirLocations = new ArrayList(5);
 	// A property table containing the association between the plugins and the version from the map  
-	protected Properties repositoryPluginVersions = new Properties();
-	protected Properties repositoryFeatureVersions = new Properties();
+	protected Properties repositoryPluginTags = new Properties();
+	protected Properties repositoryFeatureTags = new Properties();
 
 	public static final String FEATURE_ONLY = "featureOnly"; //$NON-NLS-1$
 	public static final String FEATURE_AND_PLUGINS = "featureAndPlugins"; //$NON-NLS-1$
@@ -104,10 +104,10 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		if (recursiveGeneration && mapInfos.get(TYPE).equals(FEATURE)) 
 			generateFetchFilesForIncludedFeatures();
 
-		saveRepositoryVersions();
+		saveRepositoryTags();
 	}
 
-	private void saveRepositoryVersions(Properties properties, String fileName) throws CoreException {
+	private void saveRepositoryTags(Properties properties, String fileName) throws CoreException {
 		try {
 			InputStream input = new BufferedInputStream(new FileInputStream(workingDirectory + '/' + fileName)); 
 			try {
@@ -127,14 +127,14 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 				os.close();
 			}
 		} catch (IOException e) {
-			String message = NLS.bind(Messages.exception_writingFile, directoryLocation + '/' + DEFAULT_PLUGIN_VERSION_FILENAME_DESCRIPTOR);
+			String message = NLS.bind(Messages.exception_writingFile, workingDirectory + '/' + fileName);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, null));
 		}
 	}
 	
-	private void saveRepositoryVersions() throws CoreException {
-		saveRepositoryVersions(repositoryPluginVersions, DEFAULT_PLUGIN_VERSION_FILENAME_DESCRIPTOR);
-		saveRepositoryVersions(repositoryFeatureVersions, DEFAULT_FEATURE_VERSION_FILENAME_DESCRIPTOR);
+	private void saveRepositoryTags() throws CoreException {
+		saveRepositoryTags(repositoryPluginTags, DEFAULT_PLUGIN_REPOTAG_FILENAME_DESCRIPTOR);
+		saveRepositoryTags(repositoryFeatureTags, DEFAULT_FEATURE_REPOTAG_FILENAME_DESCRIPTOR);
 	}
 
 	/**
@@ -155,7 +155,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			generator.setFetchTag(fetchTag);
 			generator.setDirectory(directory);
 			generator.setBuildSiteFactory(siteFactory);
-			generator.repositoryPluginVersions = repositoryPluginVersions;
+			generator.repositoryPluginTags = repositoryPluginTags;
 			generator.generate();
 		}
 	}
@@ -297,22 +297,22 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR; 
 			params.put("fileToCheck", fullLocation); //$NON-NLS-1$
 			cvsPackage += manifestFileOnly ? '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$
-			repositoryFeatureVersions.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));
+			repositoryFeatureTags.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));
 		} else if (type.equals(PLUGIN)) {
 			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_PLUGIN_FILENAME_DESCRIPTOR; 
 			params.put("fileToCheck", fullLocation); //$NON-NLS-1$
 			cvsPackage += manifestFileOnly ? '/' + DEFAULT_PLUGIN_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$
-			repositoryPluginVersions.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));
+			repositoryPluginTags.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));
 		} else if (type.equals(FRAGMENT)) {
 			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR; 
 			params.put("fileToCheck", fullLocation); //$NON-NLS-1$
 			cvsPackage += manifestFileOnly ? '/' + DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR : ""; //$NON-NLS-1$
-			repositoryPluginVersions.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));
+			repositoryPluginTags.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));
 		} else if (type.equals(BUNDLE)) {
 			fullLocation = location + '/' + (String) mapFileEntry.get(ELEMENT) + '/' + DEFAULT_BUNDLE_FILENAME_DESCRIPTOR;
 			params.put("fileToCheck", fullLocation); //$NON-NLS-1$
 			cvsPackage += manifestFileOnly ? '/' + DEFAULT_BUNDLE_FILENAME_DESCRIPTOR : "";//$NON-NLS-1$ 
-			repositoryPluginVersions.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));			
+			repositoryPluginTags.put(mapFileEntry.get(ELEMENT), mapFileEntry.get(TAG));   
 		}
 		params.put("package", cvsPackage); //$NON-NLS-1$
 

@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
+import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.builder.*;
 import org.eclipse.pde.internal.build.packager.PackageScriptGenerator;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.VersionedIdentifier;
+import org.osgi.framework.Version;
 
 public class BuildScriptGenerator extends AbstractScriptGenerator {
 	/**
@@ -55,6 +60,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	/** flag indicating if missing properties file should be logged */
 	private boolean ignoreMissingPropertiesFile = true;
+	
+	/** flag indicating if we should generate the plugin & feature versions lists */
+	private boolean generateVersionsList = false;
 
 	private static final String PROPERTY_ARCHIVESFORMAT = "archivesFormat"; //$NON-NLS-1$
 
@@ -176,12 +184,97 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 				generatePackageScripts(assemblageInformation, featureInfo, generator.siteFactory);
 			}
+			if (generateVersionsList)
+				generateVersionsLists(assemblageInformation);
 		} finally {
 			if (generator != null)
 				generator.getSite(false).getRegistry().cleanupOriginalState();
 		}
 	}
 
+	protected void generateVersionsLists(AssemblyInformation assemblageInformation) throws CoreException {
+		if (assemblageInformation == null)
+			return;
+		List configs = getConfigInfos();
+		Set features = new HashSet();
+		Set plugins = new HashSet();
+		Properties versions = new Properties();
+
+		//For each configuration, save the version of all the features in a file 
+		//and save the version of all the plug-ins in another file
+		for (Iterator iter = configs.iterator(); iter.hasNext();) {
+			Config config = (Config) iter.next();
+			String configString = config.toStringReplacingAny("_", ANY_STRING); //$NON-NLS-1$
+			
+			//Features
+			Collection list = assemblageInformation.getFeatures(config);
+			versions.clear();
+			features.addAll(list);
+			for (Iterator i = list.iterator(); i.hasNext();) {
+				IFeature feature = (IFeature) i.next();
+				VersionedIdentifier id = feature.getVersionedIdentifier();
+				recordVersion(id.getIdentifier(), new Version(id.getVersion().toString()), versions);
+			}
+			saveVersions(versions, DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + '.' + configString + PROPERTIES_FILE_SUFFIX);
+
+			//Plugins
+			list = assemblageInformation.getPlugins(config);
+			versions.clear();
+			plugins.addAll(list);
+			for (Iterator i = list.iterator(); i.hasNext();) {
+				BundleDescription bundle = (BundleDescription) i.next();
+				recordVersion(bundle.getSymbolicName(), bundle.getVersion(), versions);
+			}
+			saveVersions(versions, DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + '.' + configString + PROPERTIES_FILE_SUFFIX);
+		}
+
+		//Create a file containing all the feature versions  
+		versions.clear();
+		for (Iterator i = features.iterator(); i.hasNext();) {
+			IFeature feature = (IFeature) i.next();
+			VersionedIdentifier id = feature.getVersionedIdentifier();
+			recordVersion(id.getIdentifier(), new Version(id.getVersion().toString()), versions);
+		}
+		saveVersions(versions, DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX);
+
+		//Create a file containing all the plugin versions
+		versions.clear();
+		for (Iterator i = plugins.iterator(); i.hasNext();) {
+			BundleDescription bundle = (BundleDescription) i.next();
+			recordVersion(bundle.getSymbolicName(), bundle.getVersion(), versions);
+		}
+		saveVersions(versions, DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX);
+	}
+ 
+	protected void recordVersion(String name, Version version, Properties properties) {
+		String versionString = version.toString();
+		if (properties.containsKey(name)) {
+			Version existing = new Version((String) properties.get(name));
+			if (version.compareTo(existing) >= 0) {
+				properties.put(name, versionString);
+			}
+		} else {
+			properties.put(name, versionString);
+		}
+		String suffix = '_' + String.valueOf(version.getMajor()) + '.' + String.valueOf(version.getMinor()) + '.' + String.valueOf(version.getMicro());
+		properties.put(name + suffix, versionString);
+	}
+ 
+	protected void saveVersions(Properties properties, String fileName) throws CoreException {
+		String location = workingDirectory + '/' + fileName;
+		try {
+			OutputStream os = new BufferedOutputStream(new FileOutputStream(location));
+			try {
+				properties.store(os, null);
+			} finally {
+				os.close();
+			}
+		} catch (IOException e) {
+			String message = NLS.bind(Messages.exception_writingFile, location);
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, null));
+		}
+	}
+ 
 	protected void generatePackageScripts(AssemblyInformation assemblageInformation, String[] featureInfo, BuildTimeSiteFactory factory) throws CoreException {
 		PackageScriptGenerator assembler = null;
 		assembler = new PackageScriptGenerator(workingDirectory, assemblageInformation, featureInfo[0]);
@@ -254,6 +347,14 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		this.generateAssembleScript = generateAssembleScript;
 	}
 
+	/**
+	 * Whether or not to generate plugin & feature versions lists
+	 * @param generateVersionsList
+	 */
+	public void setGenerateVersionsList(boolean generateVersionsList) {
+		this.generateVersionsList = generateVersionsList;
+	}
+	
 	/**
 	 * @param value The reportResolutionErrors to set.
 	 */

@@ -40,7 +40,7 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 		if (repositoryVersions == null) {
 			repositoryVersions = new Properties();
 			try {
-				InputStream input = new BufferedInputStream(new FileInputStream(AbstractScriptGenerator.getWorkingDirectory() + '/' + DEFAULT_FEATURE_VERSION_FILENAME_DESCRIPTOR));
+				InputStream input = new BufferedInputStream(new FileInputStream(AbstractScriptGenerator.getWorkingDirectory() + '/' + DEFAULT_FEATURE_REPOTAG_FILENAME_DESCRIPTOR));
 				try {
 					repositoryVersions.load(input);
 				} finally {

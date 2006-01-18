@@ -61,7 +61,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		state.setResolver(Platform.getPlatformAdmin().getResolver());
 		id = 0;
 		bundleClasspaths = new HashMap();
-		loadPluginVersionFile();
+		loadPluginTagFile();
 	}
 
 	public StateObjectFactory getFactory() {
@@ -122,10 +122,10 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		return result;
 	}
 
-	private void loadPluginVersionFile() {
+	private void loadPluginTagFile() {
 		repositoryVersions = new Properties();
 		try {
-			InputStream input = new BufferedInputStream(new FileInputStream(AbstractScriptGenerator.getWorkingDirectory() + '/' + DEFAULT_PLUGIN_VERSION_FILENAME_DESCRIPTOR));
+			InputStream input = new BufferedInputStream(new FileInputStream(AbstractScriptGenerator.getWorkingDirectory() + '/' + DEFAULT_PLUGIN_REPOTAG_FILENAME_DESCRIPTOR));
 			try {
 				repositoryVersions.load(input);
 			} finally {
