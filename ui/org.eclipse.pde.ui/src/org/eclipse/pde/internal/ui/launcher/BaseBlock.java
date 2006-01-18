@@ -124,7 +124,10 @@ public abstract class BaseBlock {
 					true,
 					PDEUIMessages.BaseBlock_relative); 
 		if (dialog.open() == ContainerSelectionDialog.OK) {
-			IPath path = (IPath)dialog.getResult()[0];
+			Object[] result = dialog.getResult();
+			if (result.length == 0)
+				return;
+			IPath path = (IPath)result[0];
 			fLocationText.setText("${workspace_loc:" + path.makeRelative().toString() + "}"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
