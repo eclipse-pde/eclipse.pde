@@ -16,12 +16,12 @@ import org.eclipse.pde.internal.core.schema.SchemaElementReference;
 import org.eclipse.pde.internal.core.schema.SchemaRootElement;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.FormColors;
@@ -31,7 +31,8 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 
 	private SchemaRootElement fElement;
 	private FormEntry fName;
-	private ComboPart fDeprecated;
+	private Button fDepTrue;
+	private Button fDepFalse;
 	private FormEntry fSuggestion;
 	
 	public SchemaRootElementDetails(ISchemaElement element, ElementSection section) {
@@ -49,7 +50,9 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 
 		Label label = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
 		label.setForeground(foreground);
-		fDeprecated = createComboPart(parent, toolkit, BOOLS, 2);
+		Button[] buttons = createTrueFalseButtons(parent, 2);
+		fDepTrue = buttons[0];
+		fDepFalse = buttons[1];
 
 		fSuggestion = new FormEntry(parent, toolkit, PDEUIMessages.SchemaRootElementDetails_replacement, null, false, 6);
 		
@@ -61,11 +64,13 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		if (fElement == null)
 			return;
 		fName.setValue(fElement.getName(), true);		
-		fDeprecated.select(fElement.isDeprecated() ? 0 : 1);
+		fDepTrue.setSelection(fElement.isDeprecated());
+		fDepFalse.setSelection(!fElement.isDeprecated());
 		fSuggestion.setValue(fElement.getDeprecatedSuggestion(), true);
 		
 		fName.setEditable(isEditable());
-		fDeprecated.setEnabled(isEditable());
+		fDepTrue.setEnabled(isEditable());
+		fDepFalse.setEnabled(isEditable());
 
 		if (!fElement.isDeprecated()) {
 			fSuggestion.getLabel().setEnabled(false);
@@ -82,9 +87,9 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 				setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
 			}
 		});
-		fDeprecated.addSelectionListener(new SelectionAdapter() {
+		fDepTrue.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				boolean deprecated = fDeprecated.getSelectionIndex() == 0;
+				boolean deprecated = fDepTrue.getSelection();
 				fElement.setDeprecatedProperty(deprecated);				
 				fSuggestion.getLabel().setEnabled(deprecated);
 				fSuggestion.getText().setEditable(deprecated);			

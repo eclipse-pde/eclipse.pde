@@ -176,6 +176,24 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		return cp;
 	}
 	
+	protected Button[] createTrueFalseButtons(Composite parent, int colSpan) {
+		Composite comp = new Composite(parent, SWT.NONE);
+		GridLayout gl = new GridLayout(2, false);
+		gl.marginHeight = gl.marginWidth = 0;
+		comp.setLayout(gl);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = colSpan;
+		comp.setLayoutData(gd);
+		Button tButton = new Button(comp, SWT.RADIO);
+		tButton.setText(BOOLS[0]);
+		Button fButton = new Button(comp, SWT.RADIO);
+		fButton.setText(BOOLS[1]);
+		gd = new GridData();
+		gd.horizontalIndent = 20;
+		fButton.setLayoutData(gd);
+		return new Button[] {tButton, fButton};
+	}
+	
 	protected Composite createMinOccurComp(Composite parent, FormToolkit toolkit) {
 		fMinLabel = toolkit.createLabel(parent, PDEUIMessages.AbstractSchemaDetails_minOccurLabel);
 		fMinLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));

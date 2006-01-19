@@ -26,6 +26,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.FormColors;
@@ -37,8 +38,10 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 	private FormEntry fName;
 	private ComboPart fLabelProperty;
 	private ComboPart fIcon;
-	private ComboPart fDeprecated;
-	private ComboPart fTranslatable;
+	private Button fDepTrue;
+	private Button fDepFalse;
+	private Button fTransTrue;
+	private Button fTransFalse;
 	
 	public SchemaElementDetails(ISchemaElement element, ElementSection section) {
 		super(section, true);
@@ -53,21 +56,25 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		
 		fName = new FormEntry(parent, toolkit, PDEUIMessages.SchemaDetails_name, SWT.NONE);
 		
-		Label label = toolkit.createLabel(parent, PDEUIMessages.SchemaElementDetails_labelProperty);
+		Label label = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
+		label.setForeground(foreground);
+		Button[] buttons = createTrueFalseButtons(parent, 2);
+		fDepTrue = buttons[0];
+		fDepFalse = buttons[1];
+		
+		label = toolkit.createLabel(parent, PDEUIMessages.SchemaElementDetails_labelProperty);
 		label.setForeground(foreground);
 		fLabelProperty = createComboPart(parent, toolkit, getLabelItems(), 2);
 		
 		label = toolkit.createLabel(parent, PDEUIMessages.SchemaElementDetails_icon);
 		label.setForeground(foreground);
 		fIcon = createComboPart(parent, toolkit, getIconItems(), 2);
-		
-		label = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
-		label.setForeground(foreground);
-		fDeprecated = createComboPart(parent, toolkit, BOOLS, 2);
 
 		label = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_translatable);
 		label.setForeground(foreground);
-		fTranslatable = createComboPart(parent, toolkit, BOOLS, 2);
+		buttons = createTrueFalseButtons(parent, 2);
+		fTransTrue = buttons[0];
+		fTransFalse = buttons[1];
 		
 		setText(PDEUIMessages.SchemaElementDetails_title);
 		setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
@@ -82,13 +89,21 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		String icProp = fElement.getIconProperty();
 		fIcon.setText(icProp != null ? icProp : ""); //$NON-NLS-1$
 		
-		fDeprecated.select(fElement.isDeprecated() ? 0 : 1);
-		fTranslatable.select(fElement.hasTranslatableContent() ? 0 : 1);
+		fDepTrue.setSelection(fElement.isDeprecated());
+		fDepFalse.setSelection(!fElement.isDeprecated());
+		
+		fTransTrue.setSelection(fElement.hasTranslatableContent());
+		fTransFalse.setSelection(!fElement.hasTranslatableContent());
 		
 		boolean editable = isEditableElement();
 		fIcon.setEnabled(editable);
 		fLabelProperty.setEnabled(editable);
 		fName.setEditable(editable);
+		
+		fDepTrue.setEnabled(editable);
+		fDepFalse.setEnabled(editable);
+		fTransTrue.setEnabled(editable);
+		fTransFalse.setEnabled(editable);
 	}
 
 	public void hookListeners() {
@@ -116,14 +131,14 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 				setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
 			}
 		});
-		fDeprecated.addSelectionListener(new SelectionAdapter() {
+		fDepTrue.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fElement.setDeprecatedProperty(fDeprecated.getSelectionIndex() == 0);
+				fElement.setDeprecatedProperty(fDepTrue.getSelection());
 			}
 		});
-		fTranslatable.addSelectionListener(new SelectionAdapter() {
+		fTransTrue.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fElement.setTranslatableProperty(fTranslatable.getSelectionIndex() == 0);
+				fElement.setTranslatableProperty(fTransTrue.getSelection());
 			}
 		});
 	}

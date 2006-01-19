@@ -16,7 +16,6 @@ import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
-import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TransferData;
 
 public class ElementSectionDropAdapter extends ViewerDropAdapter {
@@ -47,11 +46,6 @@ public class ElementSectionDropAdapter extends ViewerDropAdapter {
 			return false;
 		Object cargo = getSelectedObject();
 		
-		// only way to link is dropping an element onto a compositor or reference
-		if (operation == DND.DROP_LINK)
-			return (cargo instanceof ISchemaElement
-				&& (target instanceof ISchemaCompositor || target instanceof ISchemaObjectReference));
-			
 		if (cargo instanceof ISchemaObjectReference) { // dropping an element reference
 			// onto a compositor or reference
 			if ((target instanceof ISchemaCompositor 
@@ -59,7 +53,7 @@ public class ElementSectionDropAdapter extends ViewerDropAdapter {
 				return true;
 		} else if (cargo instanceof ISchemaElement) { // dropping an element
 			// onto a non referenced element
-			if (isNonRefElement(target) || target == null)
+			if (target instanceof ISchemaCompositor || target instanceof ISchemaObjectReference || isNonRefElement(target) || target == null)
 				return true;
 		} else if (cargo instanceof ISchemaCompositor) { // dropping a compositor
 			// onto a non referenced element

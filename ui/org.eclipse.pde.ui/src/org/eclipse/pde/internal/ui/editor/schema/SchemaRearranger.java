@@ -82,6 +82,8 @@ public class SchemaRearranger {
 			return;
 		if (fSchema.equals(parent)) {
 			fSchema.moveElementToSibling(element, sibling);
+		} else if (parent instanceof ISchemaCompositor) {
+			linkReference((ISchemaCompositor)parent, element, sibling);
 		}
 	}
 	

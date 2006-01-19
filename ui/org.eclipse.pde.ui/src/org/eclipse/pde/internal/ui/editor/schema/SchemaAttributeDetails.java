@@ -85,8 +85,10 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 	private SchemaAttribute fAttribute;
 	private FormEntry fValue;
 	private FormEntry fName;
-	private ComboPart fDeprecated;
-	private ComboPart fTranslatable;
+	private Button fDepTrue;
+	private Button fDepFalse;
+	private Button fTransTrue;
+	private Button fTransFalse;
 	private ComboPart fType;
 	private ComboPart fUse;
 	private TableViewer fRestrictionsTable;
@@ -124,7 +126,9 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		
 		Label label = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
 		label.setForeground(foreground);
-		fDeprecated = createComboPart(parent, toolkit, BOOLS, 2);
+		Button[] buttons = createTrueFalseButtons(parent, 2);
+		fDepTrue = buttons[0];
+		fDepFalse = buttons[1];
 		
 		label = toolkit.createLabel(parent, PDEUIMessages.SchemaAttributeDetails_use);
 		label.setForeground(foreground);
@@ -182,7 +186,9 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		gd.horizontalIndent = 11;
 		gd.verticalIndent = 2;
 		label.setLayoutData(gd);
-		fTranslatable = createComboPart(comp, toolkit, BOOLS, 2);
+		Button[] buttons = createTrueFalseButtons(comp, 2);
+		fTransTrue = buttons[0];
+		fTransFalse = buttons[1];
 		
 		label = toolkit.createLabel(comp, PDEUIMessages.SchemaAttributeDetails_restrictions);
 		label.setForeground(foreground);
@@ -220,8 +226,11 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		if (fAttribute == null)
 			return;
 		fName.setValue(fAttribute.getName(), true); //$NON-NLS-1$
-		fDeprecated.select(fAttribute.isDeprecated() ? 0 : 1);
-		fTranslatable.select(fAttribute.isTranslatable() ? 0 : 1);
+		fDepTrue.setSelection(fAttribute.isDeprecated());
+		fDepFalse.setSelection(!fAttribute.isDeprecated());
+		
+		fTransTrue.setSelection(fAttribute.isTranslatable());
+		fTransFalse.setSelection(!fAttribute.isTranslatable());
 		
 		boolean isStringType = fAttribute.getType().getName().equals(STRING_TYPE);
 		int kind = fAttribute.getKind();
@@ -249,7 +258,8 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		}
 		boolean editable = isEditableElement();
 		updateTabSelection(fType.getSelectionIndex());
-		fTranslatable.getControl().setEnabled(editable);
+		fTransTrue.setEnabled(editable);
+		fTransFalse.setEnabled(editable);
 		fRestrictionsTable.getControl().setEnabled(editable);
 		fAddRestriction.setEnabled(editable);
 		fRemoveRestriction.setEnabled(
@@ -261,7 +271,8 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 			fValue.setEditable(editable);
 		}
 		fName.setEditable(editable);
-		fDeprecated.setEnabled(editable);
+		fDepTrue.setEnabled(editable);
+		fDepFalse.setEnabled(editable);
 		fType.setEnabled(editable);
 		fUse.setEnabled(editable);
 		fClassEntry.setEditable(editable);
@@ -281,14 +292,14 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 				setDecription(NLS.bind(PDEUIMessages.SchemaAttributeDetails_description, fAttribute.getName()));
 			}
 		});
-		fDeprecated.addSelectionListener(new SelectionAdapter() {
+		fDepTrue.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fAttribute.setDeprecatedProperty(fDeprecated.getSelection().equals(BOOLS[0]));
+				fAttribute.setDeprecatedProperty(fDepTrue.getSelection());
 			}
 		});
-		fTranslatable.addSelectionListener(new SelectionAdapter() {
+		fTransTrue.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fAttribute.setTranslatableProperty(fTranslatable.getSelection().equals(BOOLS[0]));
+				fAttribute.setTranslatableProperty(fTransTrue.getSelection());
 			}
 		});
 		fType.addSelectionListener(new SelectionAdapter() {
