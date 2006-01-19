@@ -32,7 +32,6 @@ public class XHTMLConverter {
 	private static final String XHTML_DEFAULT_DOCTYPE = XHTML_DOCTYPES[XHTML_TRANSITIONAL];
 	private static final String XMLNS = "xmlns"; //$NON-NLS-1$
 	private static final String XMLNS_LOC = "http://www.w3.org/1999/xhtml"; //$NON-NLS-1$
-	private static final String F_NEW_FILE_SUFFIX = ".xhtml"; //$NON-NLS-1$
 	private static final String F_XHTML_FE = "xhtml"; //$NON-NLS-1$
 	
 	private int fDoctype;
@@ -125,8 +124,8 @@ public class XHTMLConverter {
 	public String prepareXHTMLFileName(String filename) {
 		int period = filename.lastIndexOf("."); //$NON-NLS-1$
 		if (period > -1)
-			return filename.substring(0, period) + F_NEW_FILE_SUFFIX;
-		return filename + F_NEW_FILE_SUFFIX;
+			return filename.substring(0, period + 1) + F_XHTML_FE;
+		return filename + F_XHTML_FE;
 	}
 	
 	private void modifyFile(IFile htmlFile, IProgressMonitor monitor) throws CoreException {

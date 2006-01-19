@@ -111,7 +111,6 @@ public class XHTMLConversionOperation implements IWorkspaceRunnable {
 			return;
 		fShell.getDisplay().syncExec(new Runnable() {
 			public void run() {
-				monitor.subTask(NLS.bind(PDEUIMessages.XHTMLConversionOperation_updatingToc, tocFile.getName()));
 				ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 				try {
 					try {
@@ -119,6 +118,7 @@ public class XHTMLConversionOperation implements IWorkspaceRunnable {
 						ITextFileBuffer buffer = manager.getTextFileBuffer(tocFile.getFullPath());
 						IDocument doc = buffer.getDocument();
 						
+						monitor.subTask(NLS.bind(PDEUIMessages.XHTMLConversionOperation_updatingToc, tocFile.getName()));
 						Iterator it = changeList.iterator();
 						while (it.hasNext()) {
 							TocReplaceEntry entry = (TocReplaceEntry)it.next();
