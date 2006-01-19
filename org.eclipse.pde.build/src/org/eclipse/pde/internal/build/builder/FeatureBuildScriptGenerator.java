@@ -997,7 +997,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateSourceFeature() throws CoreException {
 		Feature featureExample = (Feature) feature;
 		sourceFeature = createSourceFeature(featureExample);
-		associateExtraPlugins();
+		associateExtraPluginsAndFeatures();
 		if (isBuildingOSGi())
 			sourcePlugin = create30SourcePlugin();
 		else
@@ -1074,31 +1074,39 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	// Add extra plugins into the given feature.
-	private void associateExtraPlugins() throws CoreException {
+	private void associateExtraPluginsAndFeatures() throws CoreException {
 		for (int i = 1; i < extraPlugins.length; i++) {
 			BundleDescription model;
 			// see if we have a plug-in or a fragment
-			StringTokenizer tokenizer = new StringTokenizer(extraPlugins[i].startsWith("plugin@") ? extraPlugins[i].substring(7) : extraPlugins[i].substring(8), ";");  //$NON-NLS-1$//$NON-NLS-2$
-			String bundleId = tokenizer.nextToken();
-			boolean unpack = true;
-			while (tokenizer.hasMoreTokens()){
-				String token = tokenizer.nextToken();
-				if (token.startsWith("unpack")){ //$NON-NLS-1$
-					unpack = (token.toUpperCase().indexOf(TRUE) > -1);
-					break;
+			if (extraPlugins[i].startsWith("feature@")){ //$NON-NLS-1$
+				String id = extraPlugins[i].substring(8);
+				IncludedFeatureReference include = new IncludedFeatureReference();
+				include.setFeatureIdentifier(id);
+				include.setFeatureVersion(GENERIC_VERSION_NUMBER);
+				sourceFeature.addIncludedFeatureReferenceModel(include );
+			} else {
+				StringTokenizer tokenizer = new StringTokenizer(extraPlugins[i].startsWith("plugin@") ? extraPlugins[i].substring(7) : extraPlugins[i].substring(8), ";");  //$NON-NLS-1$//$NON-NLS-2$
+				String bundleId = tokenizer.nextToken();
+				boolean unpack = true;
+				while (tokenizer.hasMoreTokens()){
+					String token = tokenizer.nextToken();
+					if (token.startsWith("unpack")){ //$NON-NLS-1$
+						unpack = (token.toUpperCase().indexOf(TRUE) > -1);
+						break;
+					}
 				}
+				model = getSite(false).getRegistry().getResolvedBundle(bundleId);
+				if (model == null) {
+					String message = NLS.bind(Messages.exception_missingPlugin, extraPlugins[i]);
+					BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, extraPlugins[i], EXCEPTION_PLUGIN_MISSING, message, null));
+					continue;
+				}
+				PluginEntry entry = new PluginEntry();
+				entry.setPluginIdentifier(model.getSymbolicName());
+				entry.setPluginVersion(model.getVersion().toString());
+				entry.setUnpack(unpack);
+				sourceFeature.addPluginEntryModel(entry);
 			}
-			model = getSite(false).getRegistry().getResolvedBundle(bundleId);
-			if (model == null) {
-				String message = NLS.bind(Messages.exception_missingPlugin, extraPlugins[i]);
-				BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, extraPlugins[i], EXCEPTION_PLUGIN_MISSING, message, null));
-				continue;
-			}
-			PluginEntry entry = new PluginEntry();
-			entry.setPluginIdentifier(model.getSymbolicName());
-			entry.setPluginVersion(model.getVersion().toString());
-			entry.setUnpack(unpack);
-			sourceFeature.addPluginEntryModel(entry);
 		}
 	}
 
