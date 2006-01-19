@@ -35,47 +35,40 @@ public class XHTMLConverter {
 	private static final String F_XHTML_FE = "xhtml"; //$NON-NLS-1$
 	
 	private int fDoctype;
-	private Stack fTagStack;
-	private StringWriter fWriter;
 	
 	public XHTMLConverter(int docType) {
 		fDoctype = docType;
-		fTagStack = new Stack();
 	}
 	
 	public void setType(int docType) {
 		fDoctype = docType;
 	}
 	
-	public boolean convert(IFile htmlIFile, IProgressMonitor monitor) {
-		if (!htmlIFile.exists())
-			return false;
+	public void convert(IFile htmlIFile, IProgressMonitor monitor) throws CoreException {
 		File htmlFile = new File(htmlIFile.getLocation().toString());
 		if (!htmlFile.exists())
-			return false;
+			// file not found, possibly a duplicate href entry
+			// (in this case it has already been converted)
+			return;
 		
-		fTagStack.clear();
-		fWriter = new StringWriter();
-		PrintWriter pwriter = new PrintWriter(fWriter);
+		StringWriter writer = new StringWriter();
+		PrintWriter pwriter = new PrintWriter(writer);
 		write(htmlFile, pwriter);
 		monitor.worked(1);
 		pwriter.flush();
 		pwriter.close();
 		
-		fWriter.flush();
+		writer.flush();
 		try {
-			modifyFile(htmlIFile, monitor);
-			fWriter.close();
-		} catch (CoreException e) {
-			return false;
+			modifyFile(htmlIFile, writer, monitor);
+			writer.close();
 		} catch (IOException e) {
 		}
-		
-		return true;
 	}
 	
 	private void write(File file, PrintWriter pw) {
 		try {
+			Stack tagStack = new Stack();
 			HTMLParser parser = new HTMLParser(file);
 			pw.println(getDoctypeString(fDoctype));
 			XHTMLTag htmlTag = grabNextTag(parser, "<html"); //$NON-NLS-1$
@@ -83,7 +76,7 @@ public class XHTMLConverter {
 			// fill in any remaning attributes the html tag had
 			convertTagContents(parser, htmlTag);
 			htmlTag.write(pw);
-			fTagStack.push(htmlTag);
+			tagStack.push(htmlTag);
 			
 			Token token = parser.getNextToken();
 			while (isValid(token)) {
@@ -94,15 +87,15 @@ public class XHTMLConverter {
 					if (tag.isClosingTag()) {
 						// Closinsg tag encountered:
 						// - pop a tag from the stack and close it
-						if (fTagStack.isEmpty())
+						if (tagStack.isEmpty())
 							break;
-						XHTMLTag topStack = (XHTMLTag)fTagStack.pop();
-						topStack.writeCloseVersion(pw);
+						XHTMLTag topStack = (XHTMLTag)tagStack.pop();
+						topStack.writeClosed(pw);
 						break;
 					}
 					if (!tag.isEmptyTag())
 						// Non-empty tags get pushed on the stack for closing
-						fTagStack.push(tag);
+						tagStack.push(tag);
 					
 					tag.write(pw);
 					break;
@@ -113,9 +106,9 @@ public class XHTMLConverter {
 			}
 			
 			// close all remaining tags
-			while (!fTagStack.isEmpty()) {
-				XHTMLTag topStack = (XHTMLTag)fTagStack.pop();
-				topStack.writeCloseVersion(pw);
+			while (!tagStack.isEmpty()) {
+				XHTMLTag topStack = (XHTMLTag)tagStack.pop();
+				topStack.writeClosed(pw);
 			}
 		} catch (FileNotFoundException e) {
 		}
@@ -128,18 +121,16 @@ public class XHTMLConverter {
 		return filename + F_XHTML_FE;
 	}
 	
-	private void modifyFile(IFile htmlFile, IProgressMonitor monitor) throws CoreException {
-		try {
-			ByteArrayInputStream bais = new ByteArrayInputStream(fWriter.toString().getBytes());
-			htmlFile.setContents(bais, IFile.KEEP_HISTORY | IFile.FORCE, monitor);
-			monitor.worked(1);
-			bais.close();
-			IPath newPath = htmlFile.getFullPath().removeFileExtension().addFileExtension(F_XHTML_FE);
-			htmlFile.move(newPath, IFile.KEEP_HISTORY | IFile.FORCE, monitor);
-			monitor.worked(1);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	private void modifyFile(IFile htmlFile, StringWriter writer, IProgressMonitor monitor) throws CoreException, IOException {
+		// set new contents
+		ByteArrayInputStream bais = new ByteArrayInputStream(writer.toString().getBytes());
+		htmlFile.setContents(bais, IFile.KEEP_HISTORY | IFile.FORCE, monitor);
+		bais.close();
+		monitor.worked(1);
+		// rename to .xhtml
+		IPath newPath = htmlFile.getFullPath().removeFileExtension().addFileExtension(F_XHTML_FE);
+		htmlFile.move(newPath, IFile.KEEP_HISTORY | IFile.FORCE, monitor);
+		monitor.worked(1);
 	}
 	
 	private XHTMLTag grabNextTag(HTMLParser parser, String tag) {

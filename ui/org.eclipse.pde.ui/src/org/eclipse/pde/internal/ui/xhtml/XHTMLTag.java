@@ -138,7 +138,7 @@ public class XHTMLTag {
 			addAttribute(fCurrAttName, null);
 	}
 
-	public void writeCloseVersion(PrintWriter pw) {
+	public void writeClosed(PrintWriter pw) {
 		if (fTagName == null)
 			return;
 		pw.write(F_TAG_OPEN);
