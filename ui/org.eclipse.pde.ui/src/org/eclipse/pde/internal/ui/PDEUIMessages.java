@@ -2567,4 +2567,16 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetPluginsTab_groupPlugins;
 
+	public static String CompilersConfigurationTab_buildPropertiesErrors;
+
+	public static String XHTMLConversionOperation_updatingToc;
+
+	public static String XHTMLConversionOperation_failed;
+
+	public static String XHTMLConversionOperation_1prob;
+
+	public static String XHTMLConversionOperation_multiProb;
+
+	public static String XHTMLConversionOperation_title;
+
 }

@@ -11,6 +11,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
@@ -33,20 +37,24 @@ public class XHTMLConversionOperation implements IWorkspaceRunnable {
 	}
 
 	public void run(IProgressMonitor monitor) throws CoreException {
-		XHTMLConverter converter = new XHTMLConverter(XHTMLConverter.XHTML_TRANSITIONAL);
+		MultiStatus ms = new MultiStatus(
+				"org.eclipse.pde.ui", IStatus.OK, //$NON-NLS-1$
+				PDEUIMessages.XHTMLConversionOperation_failed, null);
 		
-		monitor.beginTask(PDEUIMessages.XHTMLConversionOperation_taskName, fEntries.length * 3);
-		int success = 0;
+		XHTMLConverter converter = new XHTMLConverter(XHTMLConverter.XHTML_TRANSITIONAL);
+		int workUnits = fEntries.length * 4;
+		monitor.beginTask(PDEUIMessages.XHTMLConversionOperation_taskName, workUnits);
+		
 		for (int i = 0; i < fEntries.length; i++) {
 			String replacement = converter.prepareXHTMLFileName(fEntries[i].getHref());
 			fEntries[i].setReplacement(replacement);
-			if (convert(fEntries[i], converter, monitor)) {
+			if (convert(fEntries[i], converter, monitor))
 				addTocUpdate(fEntries[i]);
-				success++;
+			else {
+				addFailed(ms, fEntries[i].getHref());
 			}
 		}
-		
-		monitor.worked(fEntries.length - success);
+		monitor.worked(ms.getChildren().length * 3);
 		
 		if (fTocs.size() > 0) {
 			Iterator it = fTocs.keySet().iterator();
@@ -56,18 +64,38 @@ public class XHTMLConversionOperation implements IWorkspaceRunnable {
 				updateToc(tocFile, changeList, monitor);
 			}
 		}
+		monitor.worked(ms.getChildren().length);
 		
-		monitor.worked(fEntries.length - success);
-		monitor.done();	
+		checkFailed(ms);
 	}
 
-	private boolean convert(TocReplaceEntry entry, XHTMLConverter converter, IProgressMonitor monitor) throws CoreException {
+	private void checkFailed(final MultiStatus ms) {
+		if (ms.getChildren().length > 0) {
+			fShell.getDisplay().syncExec(new Runnable() {
+				public void run() {
+					String message;
+					if (ms.getChildren().length == 1)
+						message = PDEUIMessages.XHTMLConversionOperation_1prob;
+					else
+						message = ms.getChildren().length + PDEUIMessages.XHTMLConversionOperation_multiProb;
+					ErrorDialog.openError(fShell, PDEUIMessages.XHTMLConversionOperation_title, message, ms);
+				}
+			});
+		}
+	}
+
+	private void addFailed(MultiStatus ms, String message) {
+		ms.add(new Status(
+				IStatus.WARNING, "org.eclipse.pde.ui",  //$NON-NLS-1$
+				IStatus.OK, message, null));
+	}
+	
+	
+	private boolean convert(TocReplaceEntry entry, XHTMLConverter converter, IProgressMonitor monitor) {
 		if (monitor.isCanceled())
 			return false;
 		monitor.subTask(NLS.bind(PDEUIMessages.XHTMLConversionOperation_createXHTML, entry.getHref()));
-		boolean success = converter.convert(entry.getOriginalFile(), monitor);
-		monitor.worked(2);
-		return success;
+		return converter.convert(entry.getOriginalFile(), monitor);
 	}
 	
 	private void addTocUpdate(TocReplaceEntry entry) {
@@ -86,6 +114,7 @@ public class XHTMLConversionOperation implements IWorkspaceRunnable {
 			return;
 		fShell.getDisplay().syncExec(new Runnable() {
 			public void run() {
+				monitor.subTask(NLS.bind(PDEUIMessages.XHTMLConversionOperation_updatingToc, tocFile.getName()));
 				ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 				try {
 					try {

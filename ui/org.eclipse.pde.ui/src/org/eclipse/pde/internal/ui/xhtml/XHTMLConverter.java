@@ -59,6 +59,7 @@ public class XHTMLConverter {
 		fWriter = new StringWriter();
 		PrintWriter pwriter = new PrintWriter(fWriter);
 		write(htmlFile, pwriter);
+		monitor.worked(1);
 		pwriter.flush();
 		pwriter.close();
 		
@@ -132,9 +133,11 @@ public class XHTMLConverter {
 		try {
 			ByteArrayInputStream bais = new ByteArrayInputStream(fWriter.toString().getBytes());
 			htmlFile.setContents(bais, IFile.KEEP_HISTORY | IFile.FORCE, monitor);
+			monitor.worked(1);
 			bais.close();
 			IPath newPath = htmlFile.getFullPath().removeFileExtension().addFileExtension(F_XHTML_FE);
 			htmlFile.move(newPath, IFile.KEEP_HISTORY | IFile.FORCE, monitor);
+			monitor.worked(1);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
