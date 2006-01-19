@@ -135,4 +135,28 @@ public class PDEMessages extends NLS {
 	public static String ManifestConsistencyChecker_projectCheck;
 
 	public static String BundleErrorReporter_lazyStart_unsupported;
+
+	public static String ManifestConsistencyChecker_buildPropertiesSubtask;
+
+	public static String BuildErrorReporter_missingEntry;
+
+	public static String BuildErrorReporter_missingFolder;
+
+	public static String BuildErrorReporter_emptyEntry;
+
+	public static String BuildErrorReporter_binIncludesMissing;
+
+	public static String BuildErrorReporter_sourceTokens;
+
+	public static String BuildErrorReporter_sourceMissing;
+
+	public static String BuildErrorReporter_classpathEntryMissing;
+
+	public static String BuildErrorReporter_missingFile;
+
+	public static String BuildErrorReporter_entiresMustRefDirs;
+
+	public static String BuildErrorReporter_dirsMustEndSlash;
+
+	public static String BuildErrorReporter_classpathEntryMissing1;
 }

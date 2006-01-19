@@ -10,14 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import java.util.*;
+import java.util.Map;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.*;
-import org.eclipse.pde.internal.core.*;
-import org.osgi.framework.*;
+import org.eclipse.pde.internal.PDEMessages;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.osgi.framework.Bundle;
 
 public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
@@ -48,6 +54,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				checkManifestFile(manifestFile, monitor);
 		}
 		checkProjectDescription(monitor);
+		checkBuildProperties(monitor);
 	}
 
 	private void checkManifestFile(IFile file, IProgressMonitor monitor) {
@@ -117,5 +124,17 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		} catch (CoreException e) {
 		}
 		monitor.done();
+	}
+	
+	private void checkBuildProperties(IProgressMonitor monitor) {
+		if (monitor.isCanceled())
+			return;
+		monitor.subTask(PDEMessages.ManifestConsistencyChecker_buildPropertiesSubtask);
+		IProject project = getProject();
+		IFile file = project.getFile("build.properties"); //$NON-NLS-1$
+		
+		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_BUILD);
+		BuildErrorReporter ber = new BuildErrorReporter(file, severity);
+		ber.validateContent(monitor);
 	}
 }

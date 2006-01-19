@@ -61,6 +61,8 @@ public class CompilerFlags {
 	public static final String P_NO_REQUIRED_ATT = "compilers.p.no-required-att"; //$NON-NLS-1$
 
 	public static final String P_NOT_EXTERNALIZED = "compilers.p.not-externalized-att"; //$NON-NLS-1$
+	
+	public static final String P_BUILD = "compilers.p.build"; //$NON-NLS-1$
 
 	public static final String P_DEPRECATED = "compilers.p.deprecated"; //$NON-NLS-1$
 
@@ -83,7 +85,8 @@ public class CompilerFlags {
 			  P_DEPRECATED,
 			  P_UNKNOWN_CLASS, 
 			  P_UNKNOWN_RESOURCE, 
-			  P_NOT_EXTERNALIZED },
+			  P_NOT_EXTERNALIZED,
+			  P_BUILD},
 			{ S_CREATE_DOCS, 
 			  S_DOC_FOLDER, 
 			  S_OPEN_TAGS },
@@ -217,6 +220,7 @@ public class CompilerFlags {
 		node.putInt(P_UNKNOWN_CLASS, WARNING);
 		node.putInt(P_UNKNOWN_RESOURCE, WARNING);
 		node.putInt(P_NOT_EXTERNALIZED, IGNORE);
+		node.putInt(P_BUILD, ERROR);
 
 		node.putBoolean(S_CREATE_DOCS, false);
 		node.put(S_DOC_FOLDER, "doc"); //$NON-NLS-1$
