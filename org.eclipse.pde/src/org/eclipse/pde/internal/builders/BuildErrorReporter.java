@@ -36,8 +36,6 @@ public class BuildErrorReporter extends ErrorReporter {
 	private static final String SRC_INCLUDES = "src.includes"; //$NON-NLS-1$
 	private static final String SOURCE = "source."; //$NON-NLS-1$
 	private static final String CUSTOM = "custom"; //$NON-NLS-1$
-	private static final String TEMPSTR1 = PDEMessages.BuildErrorReporter_missingEntry;
-	private static final String TEMPSTR2 = PDEMessages.BuildErrorReporter_missingFolder;
 	
 	private class BuildProblem {
 		IBuildEntry fBuildEntry;
@@ -105,7 +103,6 @@ public class BuildErrorReporter extends ErrorReporter {
 				
 		}
 		
-		validateMissingIncludes(binIncludes, srcIncludes);
 		validateIncludes(binIncludes);
 		validateIncludes(srcIncludes);
 		
@@ -123,11 +120,6 @@ public class BuildErrorReporter extends ErrorReporter {
 		validateSourceEntries(sourceEntries);
 		validateMissingSourceInBinIncludes(binIncludes, sourceEntryKeys);
 		
-	}
-
-	private void validateMissingIncludes(IBuildEntry binIncludes, IBuildEntry srcIncludes) {
-		if (binIncludes == null)
-			prepareError(NLS.bind(TEMPSTR1, BIN_INCLUDES));
 	}
 
 	private void validateMissingSourceInBinIncludes(IBuildEntry binIncludes, ArrayList sourceEntryKeys) {
@@ -159,7 +151,7 @@ public class BuildErrorReporter extends ErrorReporter {
 					if (folderEntry == null 
 							|| !folderEntry.exists() 
 							|| !(folderEntry instanceof IFolder))
-						prepareError(name, tokens[j], NLS.bind(TEMPSTR2, tokens[j]));
+						prepareError(name, tokens[j], NLS.bind(PDEMessages.BuildErrorReporter_missingFolder, tokens[j]));
 				}
 			}
 			
@@ -192,7 +184,7 @@ public class BuildErrorReporter extends ErrorReporter {
 				continue;
 			String buildEntryKey = SOURCE + libname;
 			if (!sourceEntryKeys.contains(buildEntryKey))
-				prepareError(NLS.bind(TEMPSTR1, buildEntryKey));
+				prepareError(NLS.bind(PDEMessages.BuildErrorReporter_missingEntry, buildEntryKey));
 		}
 	}
 
@@ -231,20 +223,20 @@ public class BuildErrorReporter extends ErrorReporter {
 		String[] tokens = includes.getTokens();
 		for (int i = 0; i < tokens.length; i++) {
 			String token = tokens[i].trim();
+			if (token.indexOf("*") != -1) //$NON-NLS-1$
+				// skip entries with wildcards
+				continue;
+			else if (token.equals(".")) //$NON-NLS-1$
+				// skip . since we know it exists
+				continue;
 			IResource member = fProject.findMember(token);
 			String message = null;
 			if (member == null) {
 				if (token.endsWith("/")) //$NON-NLS-1$
-					message = NLS.bind(TEMPSTR2, token);
+					message = NLS.bind(PDEMessages.BuildErrorReporter_missingFolder, token);
 				else
 					message = NLS.bind(PDEMessages.BuildErrorReporter_missingFile, token);
-			} else if (token.equals(".")) //$NON-NLS-1$
-				// skip . since it retuns an IFolder
-				continue;
-			else if (token.indexOf("*") != -1) //$NON-NLS-1$
-				// skip wildcards
-				continue;
-			else if (token.endsWith("/") && !(member instanceof IFolder)) //$NON-NLS-1$
+			} else if (token.endsWith("/") && !(member instanceof IFolder)) //$NON-NLS-1$
 				message = NLS.bind(PDEMessages.BuildErrorReporter_entiresMustRefDirs, token);
 			else if (!token.endsWith("/") && !(member instanceof IFile)) //$NON-NLS-1$
 				message = NLS.bind(PDEMessages.BuildErrorReporter_dirsMustEndSlash, token);
