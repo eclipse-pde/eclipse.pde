@@ -42,17 +42,13 @@ public class XHTMLConversionOperation implements IWorkspaceRunnable {
 				PDEUIMessages.XHTMLConversionOperation_failed, null);
 		
 		XHTMLConverter converter = new XHTMLConverter(XHTMLConverter.XHTML_TRANSITIONAL);
-		int workUnits = fEntries.length * 4;
-		monitor.beginTask(PDEUIMessages.XHTMLConversionOperation_taskName, workUnits);
+		monitor.beginTask(PDEUIMessages.XHTMLConversionOperation_taskName, fEntries.length * 4);
 		
 		for (int i = 0; i < fEntries.length; i++) {
-			String replacement = converter.prepareXHTMLFileName(fEntries[i].getHref());
-			fEntries[i].setReplacement(replacement);
 			if (convert(fEntries[i], converter, monitor))
 				addTocUpdate(fEntries[i]);
-			else {
+			else
 				addFailed(ms, fEntries[i].getHref());
-			}
 		}
 		monitor.worked(ms.getChildren().length * 3);
 		
@@ -95,6 +91,7 @@ public class XHTMLConversionOperation implements IWorkspaceRunnable {
 		if (monitor.isCanceled())
 			return false;
 		monitor.subTask(NLS.bind(PDEUIMessages.XHTMLConversionOperation_createXHTML, entry.getHref()));
+		entry.setReplacement(converter.prepareXHTMLFileName(entry.getHref()));
 		return converter.convert(entry.getOriginalFile(), monitor);
 	}
 	
