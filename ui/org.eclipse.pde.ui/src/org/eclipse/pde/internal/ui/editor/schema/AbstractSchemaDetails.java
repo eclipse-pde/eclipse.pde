@@ -176,18 +176,16 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		return cp;
 	}
 	
-	protected Button[] createTrueFalseButtons(Composite parent, int colSpan) {
-		Composite comp = new Composite(parent, SWT.NONE);
+	protected Button[] createTrueFalseButtons(Composite parent, FormToolkit toolkit, int colSpan) {
+		Composite comp = toolkit.createComposite(parent, SWT.NONE);
 		GridLayout gl = new GridLayout(2, false);
 		gl.marginHeight = gl.marginWidth = 0;
 		comp.setLayout(gl);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = colSpan;
 		comp.setLayoutData(gd);
-		Button tButton = new Button(comp, SWT.RADIO);
-		tButton.setText(BOOLS[0]);
-		Button fButton = new Button(comp, SWT.RADIO);
-		fButton.setText(BOOLS[1]);
+		Button tButton = toolkit.createButton(comp, BOOLS[0], SWT.RADIO);
+		Button fButton = toolkit.createButton(comp, BOOLS[1], SWT.RADIO);
 		gd = new GridData();
 		gd.horizontalIndent = 20;
 		fButton.setLayoutData(gd);

@@ -58,7 +58,7 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		
 		Label label = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_deprecated);
 		label.setForeground(foreground);
-		Button[] buttons = createTrueFalseButtons(parent, 2);
+		Button[] buttons = createTrueFalseButtons(parent, toolkit, 2);
 		fDepTrue = buttons[0];
 		fDepFalse = buttons[1];
 		
@@ -72,7 +72,7 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 
 		label = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_translatable);
 		label.setForeground(foreground);
-		buttons = createTrueFalseButtons(parent, 2);
+		buttons = createTrueFalseButtons(parent, toolkit, 2);
 		fTransTrue = buttons[0];
 		fTransFalse = buttons[1];
 		
