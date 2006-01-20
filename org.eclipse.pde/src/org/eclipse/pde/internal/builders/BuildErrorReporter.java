@@ -144,15 +144,11 @@ public class BuildErrorReporter extends ErrorReporter {
 			String name = ((IBuildEntry)sourceEntries.get(i)).getName();
 			String[] tokens = ((IBuildEntry)sourceEntries.get(i)).getTokens();
 			for (int j = 0; j < tokens.length; j++) {
-				if (!tokens[j].endsWith("/")) //$NON-NLS-1$
-					prepareError(name, tokens[j], NLS.bind(PDEMessages.BuildErrorReporter_sourceTokens, tokens[j]));
-				else {
-					IResource folderEntry = fProject.findMember(tokens[j]);
-					if (folderEntry == null 
-							|| !folderEntry.exists() 
-							|| !(folderEntry instanceof IFolder))
-						prepareError(name, tokens[j], NLS.bind(PDEMessages.BuildErrorReporter_missingFolder, tokens[j]));
-				}
+				IResource folderEntry = fProject.findMember(tokens[j]);
+				if (folderEntry == null 
+						|| !folderEntry.exists() 
+						|| !(folderEntry instanceof IFolder))
+					prepareError(name, tokens[j], NLS.bind(PDEMessages.BuildErrorReporter_missingFolder, tokens[j]));
 			}
 			
 		}

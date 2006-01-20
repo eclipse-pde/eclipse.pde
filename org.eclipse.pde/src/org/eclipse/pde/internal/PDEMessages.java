@@ -146,8 +146,6 @@ public class PDEMessages extends NLS {
 
 	public static String BuildErrorReporter_binIncludesMissing;
 
-	public static String BuildErrorReporter_sourceTokens;
-
 	public static String BuildErrorReporter_sourceMissing;
 
 	public static String BuildErrorReporter_classpathEntryMissing;
