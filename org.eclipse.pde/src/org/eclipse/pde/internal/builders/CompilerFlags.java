@@ -220,7 +220,7 @@ public class CompilerFlags {
 		node.putInt(P_UNKNOWN_CLASS, WARNING);
 		node.putInt(P_UNKNOWN_RESOURCE, WARNING);
 		node.putInt(P_NOT_EXTERNALIZED, IGNORE);
-		node.putInt(P_BUILD, ERROR);
+		node.putInt(P_BUILD, WARNING);
 
 		node.putBoolean(S_CREATE_DOCS, false);
 		node.put(S_DOC_FOLDER, "doc"); //$NON-NLS-1$
