@@ -1,33 +1,42 @@
 package org.eclipse.pde.internal.builders;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.PDEMessages;
+import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.ibundle.IBundleFragmentModel;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.build.BuildEntry;
 import org.eclipse.pde.internal.core.text.build.BuildModel;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.osgi.framework.Constants;
 
 public class BuildErrorReporter extends ErrorReporter {
@@ -99,8 +108,7 @@ public class BuildErrorReporter extends ErrorReporter {
 				if (tokens.length == 1 && tokens[0].equalsIgnoreCase("true")) //$NON-NLS-1$
 					// nothing to validate in custom builds
 					return;
-			}
-				
+			}	
 		}
 		
 		validateIncludes(binIncludes, sourceEntryKeys);
@@ -121,7 +129,7 @@ public class BuildErrorReporter extends ErrorReporter {
 		validateMissingSourceInBinIncludes(binIncludes, sourceEntryKeys);
 		
 	}
-
+	
 	private void validateMissingSourceInBinIncludes(IBuildEntry binIncludes, ArrayList sourceEntryKeys) {
 		if (binIncludes == null)
 			return;
@@ -155,10 +163,11 @@ public class BuildErrorReporter extends ErrorReporter {
 	}
 
 	private void validateMissingLibraries(ArrayList sourceEntryKeys, IClasspathEntry[] cpes) {
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(fProject);
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		IPluginModelBase model = manager.findModel(fProject);
 		if (model == null)
 			return;
-		if (model instanceof IBundlePluginModelBase) {
+		if (model instanceof IBundlePluginModelBase && !(model instanceof IBundleFragmentModel)) {
 			IBundleModel bm = ((IBundlePluginModelBase)model).getBundleModel();
 			IManifestHeader mh = bm.getBundle().getManifestHeader(Constants.BUNDLE_CLASSPATH);
 			if ((mh == null || mh.getValue() == null)) {
@@ -178,10 +187,48 @@ public class BuildErrorReporter extends ErrorReporter {
 				// non "." library entries that exist in the workspace
 				// don't have to be referenced in the build properties
 				continue;
-			String buildEntryKey = SOURCE + libname;
-			if (!sourceEntryKeys.contains(buildEntryKey))
-				prepareError(NLS.bind(PDEMessages.BuildErrorReporter_missingEntry, buildEntryKey));
+			String sourceEntryKey = SOURCE + libname;
+			if (!sourceEntryKeys.contains(sourceEntryKey) 
+					&& !containedInFragment(manager, model.getBundleDescription().getFragments(), libname))
+				prepareError(NLS.bind(PDEMessages.BuildErrorReporter_missingEntry, sourceEntryKey));
 		}
+	}
+
+	private boolean containedInFragment(PluginModelManager manager, BundleDescription[] fragments, String libname) {
+		if (fragments == null)
+			return false;
+		for (int j = 0; j < fragments.length; j++) {
+			ModelEntry entry = manager.findEntry(fragments[j].getSymbolicName());
+			IPluginModelBase fragmentModel = entry.getWorkspaceModel();
+			if (fragmentModel != null) {
+				IProject project = fragmentModel.getUnderlyingResource().getProject();
+				if (project.findMember(libname) != null)
+					return true;
+				try {
+					IBuild build = ClasspathUtilCore.getBuild(fragmentModel);
+					if (build != null) {
+						IBuildEntry[] entries = build.getBuildEntries();
+						for (int i = 0; i < entries.length; i++) {
+							if (entries[i].getName().equals(SOURCE + libname))
+								return true;
+						}
+						return false;
+					}
+				} catch (CoreException e) {
+				}
+			} else {
+				String location = fragments[j].getLocation();
+				File external = new File(location);
+				if (external.exists()) {
+					if (external.isDirectory()) {
+						IPath p = new Path(location).addTrailingSeparator().append(libname);
+						return new File(p.toOSString()).exists();
+					}
+					return CoreUtility.jarContainsResource(external, libname, false);
+				}
+			}
+		}
+		return false;
 	}
 
 	private void validateSourceEntries(ArrayList sourceEntries, IClasspathEntry[] cpes) {
