@@ -103,8 +103,8 @@ public class BuildErrorReporter extends ErrorReporter {
 				
 		}
 		
-		validateIncludes(binIncludes);
-		validateIncludes(srcIncludes);
+		validateIncludes(binIncludes, sourceEntryKeys);
+		validateIncludes(srcIncludes, sourceEntryKeys);
 		
 		try {
 			if (fProject.hasNature(JavaCore.NATURE_ID)) {
@@ -217,7 +217,7 @@ public class BuildErrorReporter extends ErrorReporter {
 		}
 	}
 	
-	private void validateIncludes(IBuildEntry includes) {
+	private void validateIncludes(IBuildEntry includes, ArrayList sourceIncludes) {
 		if (includes == null)
 			return;
 		String[] tokens = includes.getTokens();
@@ -226,12 +226,14 @@ public class BuildErrorReporter extends ErrorReporter {
 			if (token.indexOf("*") != -1) //$NON-NLS-1$
 				// skip entries with wildcards
 				continue;
-			else if (token.equals(".")) //$NON-NLS-1$
+			if (token.equals(".")) //$NON-NLS-1$
 				// skip . since we know it exists
 				continue;
 			IResource member = fProject.findMember(token);
 			String message = null;
 			if (member == null) {
+				if (sourceIncludes.contains(SOURCE + token))
+					continue;
 				if (token.endsWith("/")) //$NON-NLS-1$
 					message = NLS.bind(PDEMessages.BuildErrorReporter_missingFolder, token);
 				else
