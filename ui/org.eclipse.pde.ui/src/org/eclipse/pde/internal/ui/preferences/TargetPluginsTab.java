@@ -251,7 +251,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		fCounterLabel.setLayoutData(gd);
 		
 		fGroupPlugins = new Button (container, SWT.CHECK);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fGroupPlugins.setLayoutData(gd);
 		fGroupPlugins.setText(PDEUIMessages.TargetPluginsTab_groupPlugins);
