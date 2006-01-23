@@ -30,6 +30,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.FormColors;
@@ -104,6 +105,8 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 			gd.heightHint = 60;
 			fDtdLabel.setLayoutData(gd);
 			fDtdLabel.setEditable(false);
+			// remove pop-up menu
+			fDtdLabel.setMenu(new Menu(client));
 		}
 		
 		toolkit.paintBordersFor(client);
