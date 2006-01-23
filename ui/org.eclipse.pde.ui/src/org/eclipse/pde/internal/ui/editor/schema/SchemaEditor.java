@@ -13,8 +13,6 @@ package org.eclipse.pde.internal.ui.editor.schema;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
@@ -91,12 +89,6 @@ public class SchemaEditor extends MultiSourceEditor {
 
 	protected void createStorageContexts(InputContextManager manager, IStorageEditorInput input) {
 		manager.putContext(input, new SchemaInputContext(this, input, true));
-	}
-	
-	protected void contextMenuAboutToShow(IMenuManager manager) {
-		ISelection selection = getSelection();
-		if (selection != null && !selection.isEmpty())
-			super.contextMenuAboutToShow(manager);
 	}
 	
 	void previewReferenceDocument() {
