@@ -98,15 +98,19 @@ import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 
 public class PluginsView extends ViewPart {
-	private static final String DEFAULT_EDITOR_ID = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
+	private static final String DEFAULT_EDITOR_ID = "org.eclipse.ui.DefaultTextEditor";  //$NON-NLS-1$
+	private static final String HIDE_WRKSPC = "hideWorkspace"; //$NON-NLS-1$
+	private static final String HIDE_EXENABLED = "hideEnabledExternal"; //$NON-NLS-1$
+	private static final String SHOW_EXDISABLED = "showDisabledExternal"; //$NON-NLS-1$
 	private TreeViewer treeViewer;
 	private DrillDownAdapter drillDownAdapter;
 	private IPropertyChangeListener propertyListener;
 	private Action openAction;
 	private Action importBinaryAction;
 	private Action importSourceAction;
-	private Action disabledFilterAction;
-	private Action workspaceFilterAction;
+	private Action hideExtDisabledFilterAction;
+	private Action hideExtEnabledFilterAction;
+	private Action hideWorkspaceFilterAction;
 	private Action openManifestAction;
 	private Action openSchemaAction;
 	private Action openSystemEditorAction;
@@ -122,20 +126,26 @@ public class PluginsView extends ViewPart {
     private CollapseAllAction collapseAllAction;
 	private ShowInWorkspaceAction showInNavigatorAction;
 	private ShowInWorkspaceAction showInPackagesAction;
-	private DisabledFilter disabledFilter = new DisabledFilter();
-	private WorkspaceFilter workspaceFilter = new WorkspaceFilter();
+	private DisabledFilter hideExtEnabledFilter = new DisabledFilter(true);
+	private DisabledFilter hideExtDisabledFilter = new DisabledFilter(false);
+	private WorkspaceFilter hideWorkspaceFilter = new WorkspaceFilter();
 	private JavaFilter javaFilter = new JavaFilter();
 	private CopyToClipboardAction copyAction;
 	private Clipboard clipboard;
 
 	class DisabledFilter extends ViewerFilter {
+		
+		boolean fEnabled;
+		DisabledFilter(boolean enabled) {
+			fEnabled = enabled;
+		}
 		public boolean select(Viewer v, Object parent, Object element) {
 			if (element instanceof ModelEntry) {
 				ModelEntry entry = (ModelEntry) element;
 				if (entry.getWorkspaceModel() == null) {
 					IPluginModelBase externalModel = entry.getExternalModel();
 					if (externalModel != null)
-						return externalModel.isEnabled();
+						return externalModel.isEnabled() != fEnabled;
 				}
 			}
 			return true;
@@ -201,15 +211,12 @@ public class PluginsView extends ViewPart {
 	}
 
 	public void dispose() {
-		PDEPlugin
-			.getDefault()
-			.getPreferenceStore()
-			.removePropertyChangeListener(
-			propertyListener);
+		PDEPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(
+				propertyListener);
 		openDependenciesAction.dispose();
-		if (clipboard!=null) {
+		if (clipboard != null) {
 			clipboard.dispose();
-			clipboard=null;
+			clipboard = null;
 		}
 		super.dispose();
 	}
@@ -218,12 +225,10 @@ public class PluginsView extends ViewPart {
 	 * @see IWorkbenchPart#createPartControl(Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		treeViewer =
-			new TreeViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		treeViewer = new TreeViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		drillDownAdapter = new DrillDownAdapter(treeViewer);
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		treeViewer.setContentProvider(
-			new PluginsContentProvider(this, manager));
+		treeViewer.setContentProvider(new PluginsContentProvider(this, manager));
 		treeViewer.setLabelProvider(new PluginsLabelProvider());
 		treeViewer.setSorter(ListUtil.PLUGIN_SORTER);
 		initDragAndDrop();
@@ -234,13 +239,13 @@ public class PluginsView extends ViewPart {
 		registerGlobalActions(actionBars);
 		hookContextMenu();
 		hookDoubleClickAction();
-		treeViewer
-			.addSelectionChangedListener(new ISelectionChangedListener() {
+		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
 				handleSelectionChanged(e.getSelection());
 			}
 		});
 		treeViewer.setInput(manager);
+		updateContentDescription();
 		PDEPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(
 			propertyListener);
 		getViewSite().setSelectionProvider(treeViewer);
@@ -256,8 +261,9 @@ public class PluginsView extends ViewPart {
 	}
 
 	private void contributeToDropDownMenu(IMenuManager manager) {
-		manager.add(workspaceFilterAction);
-		manager.add(disabledFilterAction);
+		manager.add(hideWorkspaceFilterAction);
+		manager.add(hideExtEnabledFilterAction);
+		manager.add(hideExtDisabledFilterAction);
 	}
 
 	private void contributeToLocalToolBar(IToolBarManager manager) {
@@ -267,8 +273,8 @@ public class PluginsView extends ViewPart {
 	}
 	
 	private void registerGlobalActions(IActionBars actionBars) {
-			actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(),
-                selectAllAction);
+		actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(),
+            selectAllAction);
 	}
 	private void makeActions() {
 		clipboard = new Clipboard(treeViewer.getTree().getDisplay());
@@ -286,8 +292,7 @@ public class PluginsView extends ViewPart {
 				ModelEntry entry = getEnclosingEntry();
 				IPluginModelBase model = entry.getActiveModel();
 				openDependenciesAction.selectionChanged(
-					this,
-					new StructuredSelection(model));
+					this, new StructuredSelection(model));
 				openDependenciesAction.run(this);
 			}
 		};
@@ -305,30 +310,42 @@ public class PluginsView extends ViewPart {
 			}
 		};
 		importSourceAction.setText(PDEUIMessages.PluginsView_asSourceProject); 
-		disabledFilterAction = new Action() {
+		hideExtDisabledFilterAction = new Action() {
 			public void run() {
-				boolean checked = disabledFilterAction.isChecked();
+				boolean checked = hideExtDisabledFilterAction.isChecked();
 				if (checked)
-					treeViewer.removeFilter(disabledFilter);
+					treeViewer.removeFilter(hideExtDisabledFilter);
 				else
-					treeViewer.addFilter(disabledFilter);
-				getSettings().put("disabledFilter", !checked); //$NON-NLS-1$
+					treeViewer.addFilter(hideExtDisabledFilter);
+				getSettings().put(SHOW_EXDISABLED, checked); 
+				updateContentDescription();
 			}
 		};
-		disabledFilterAction.setText(PDEUIMessages.PluginsView_showDisabled); 
-		disabledFilterAction.setChecked(false);
-		workspaceFilterAction = new Action() {
+		hideExtDisabledFilterAction.setText(PDEUIMessages.PluginsView_showDisabled); 
+		hideExtEnabledFilterAction = new Action() {
 			public void run() {
-				boolean checked = workspaceFilterAction.isChecked();
+				boolean checked = hideExtEnabledFilterAction.isChecked();
 				if (checked)
-					treeViewer.removeFilter(workspaceFilter);
+					treeViewer.removeFilter(hideExtEnabledFilter);
 				else
-					treeViewer.addFilter(workspaceFilter);
-				getSettings().put("workspaceFilter", !checked); //$NON-NLS-1$
+					treeViewer.addFilter(hideExtEnabledFilter);
+				getSettings().put(HIDE_EXENABLED, !checked); 
+				updateContentDescription();
 			}
 		};
-		workspaceFilterAction.setText(PDEUIMessages.PluginsView_showWorkspace); 
-		workspaceFilterAction.setChecked(true);
+		hideExtEnabledFilterAction.setText(PDEUIMessages.PluginsView_showEnabled); 
+		hideWorkspaceFilterAction = new Action() {
+			public void run() {
+				boolean checked = hideWorkspaceFilterAction.isChecked();
+				if (checked)
+					treeViewer.removeFilter(hideWorkspaceFilter);
+				else
+					treeViewer.addFilter(hideWorkspaceFilter);
+				getSettings().put(HIDE_WRKSPC, !checked); 
+				updateContentDescription();
+			}
+		};
+		hideWorkspaceFilterAction.setText(PDEUIMessages.PluginsView_showWorkspace); 
 
 		openTextEditorAction = new Action() {
 			public void run() {
@@ -540,9 +557,9 @@ public class PluginsView extends ViewPart {
 		ImageDescriptor desc =
 			PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(
 				fileName);
-		if (lcFileName.equals("plugin.xml") //$NON-NLS-1$
-		|| lcFileName.equals("fragment.xml") //$NON-NLS-1$
-		|| lcFileName.equals("manifest.mf")) { //$NON-NLS-1$
+		if (lcFileName.equals("plugin.xml")  //$NON-NLS-1$
+		|| lcFileName.equals("fragment.xml")  //$NON-NLS-1$
+		|| lcFileName.equals("manifest.mf")) {  //$NON-NLS-1$
 			openManifestAction.setImageDescriptor(desc);
 			manager.add(openManifestAction);
 			manager.add(new Separator());
@@ -562,7 +579,7 @@ public class PluginsView extends ViewPart {
 		openTextEditorAction.setChecked(
 			editorId == null || editorId.equals(DEFAULT_EDITOR_ID));
 		openSystemEditorAction.setImageDescriptor(desc);
-		openSystemEditorAction.setChecked(editorId != null && editorId.equals("@system")); //$NON-NLS-1$
+		openSystemEditorAction.setChecked(editorId != null && editorId.equals("@system"));  //$NON-NLS-1$
 		manager.add(openSystemEditorAction);
 	}
 
@@ -610,30 +627,32 @@ public class PluginsView extends ViewPart {
 
 	private IDialogSettings getSettings() {
 		IDialogSettings master = PDEPlugin.getDefault().getDialogSettings();
-		IDialogSettings section = master.getSection("pluginsView"); //$NON-NLS-1$
+		IDialogSettings section = master.getSection("pluginsView");  //$NON-NLS-1$
 		if (section == null) {
-			section = master.addNewSection("pluginsView"); //$NON-NLS-1$
+			section = master.addNewSection("pluginsView");  //$NON-NLS-1$
 		}
 		return section;
 	}
 
 	private void initFilters() {
-		boolean workspace = false;
-		boolean disabled = true;
 		IDialogSettings settings = getSettings();
-		workspace = settings.getBoolean("workspaceFilter"); //$NON-NLS-1$
-		disabled = !settings.getBoolean("disabledFilter"); //$NON-NLS-1$
-		if (workspace)
-			treeViewer.addFilter(workspaceFilter);
-		if (disabled)
-			treeViewer.addFilter(disabledFilter);
 		treeViewer.addFilter(javaFilter);
-		workspaceFilterAction.setChecked(!workspace);
-		disabledFilterAction.setChecked(!disabled);
+		boolean hideWorkspace = settings.getBoolean(HIDE_WRKSPC);
+		boolean hideEnabledExternal = settings.getBoolean(HIDE_EXENABLED);
+		boolean hideDisabledExternal = !settings.getBoolean(SHOW_EXDISABLED);
+		if (hideWorkspace)
+			treeViewer.addFilter(hideWorkspaceFilter);
+		if (hideEnabledExternal)
+			treeViewer.addFilter(hideExtEnabledFilter);
+		if (hideDisabledExternal)
+			treeViewer.addFilter(hideExtDisabledFilter);
+		hideWorkspaceFilterAction.setChecked(!hideWorkspace);
+		hideExtEnabledFilterAction.setChecked(!hideEnabledExternal);
+		hideExtDisabledFilterAction.setChecked(!hideDisabledExternal);
 	}
 
 	private void hookContextMenu() {
-		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+		MenuManager menuMgr = new MenuManager("#PopupMenu");  //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
@@ -665,7 +684,7 @@ public class PluginsView extends ViewPart {
 				return;
 			}
 			String editorId = adapter.getEditorId();
-			if (editorId != null && editorId.equals("@system")) //$NON-NLS-1$
+			if (editorId != null && editorId.equals("@system"))  //$NON-NLS-1$
 				handleOpenSystemEditor(adapter);
 			else
 				handleOpenTextEditor(adapter, editorId);
@@ -828,7 +847,7 @@ public class PluginsView extends ViewPart {
 				editorId = PDEPlugin.SCHEMA_EDITOR_ID;
 		}
 		try {
-			if (editorId == null || editorId.equals("@system")) //$NON-NLS-1$
+			if (editorId == null || editorId.equals("@system"))  //$NON-NLS-1$
 				editorId = DEFAULT_EDITOR_ID;
 			page.openEditor(
 				new SystemFileEditorInput(adapter.getFile()),
@@ -878,7 +897,7 @@ public class PluginsView extends ViewPart {
 				new PartInitException(
 					NLS.bind(PDEUIMessages.PluginsView_unableToOpen, file.getName())));
 		} else {
-			adapter.setEditorId("@system"); //$NON-NLS-1$
+			adapter.setEditorId("@system");  //$NON-NLS-1$
 		}
 	}
 
@@ -918,7 +937,7 @@ public class PluginsView extends ViewPart {
 	}
 
 	private void handleSelectionChanged(ISelection selection) {
-		String text = ""; //$NON-NLS-1$
+		String text = "";  //$NON-NLS-1$
 		Object obj = getSelectedObject();
 		if (obj instanceof ModelEntry) {
 			IPluginModelBase model = ((ModelEntry) obj).getActiveModel();
@@ -950,26 +969,31 @@ public class PluginsView extends ViewPart {
 			return;
 		
 		if (newInput == null
-			|| newInput.equals(PDECore.getDefault().getModelManager())) {
-			setContentDescription(""); //$NON-NLS-1$
-			// restore old
+				|| newInput.equals(PDECore.getDefault().getModelManager())) {
+			setContentDescription("");  //$NON-NLS-1$
 			setTitleToolTip(getTitle());
 		} else {
-			String viewName = config.getAttribute("name"); //$NON-NLS-1$
+			String viewName = config.getAttribute("name");  //$NON-NLS-1$
 			String name = ((LabelProvider) treeViewer.getLabelProvider()).getText(newInput);
-			setContentDescription(viewName + ": " + name); //$NON-NLS-1$
+			setContentDescription(viewName + ": " + name);  //$NON-NLS-1$
 			setTitleToolTip(getInputPath(newInput));
 		}
 	}
 	private String getInputPath(Object input) {
 		if (input instanceof FileAdapter) {
-			return "file: " + ((FileAdapter) input).getFile().getAbsolutePath(); //$NON-NLS-1$
+			return "file: " + ((FileAdapter) input).getFile().getAbsolutePath();  //$NON-NLS-1$
 		}
 		if (input instanceof ModelEntry) {
 			IPluginModelBase model = ((ModelEntry) input).getActiveModel();
-			return "plugin: " + model.getInstallLocation(); //$NON-NLS-1$
+			return "plugin: " + model.getInstallLocation();  //$NON-NLS-1$
 		}
-		return ""; //$NON-NLS-1$
+		return "";  //$NON-NLS-1$
+	}
+	
+	private void updateContentDescription() {
+		String total = Integer.toString(((PluginModelManager)treeViewer.getInput()).getEntries().length);
+		String visible = Integer.toString(treeViewer.getTree().getItemCount());
+		setContentDescription(NLS.bind(PDEUIMessages.PluginsView_description, visible, total)); 
 	}
 
 }

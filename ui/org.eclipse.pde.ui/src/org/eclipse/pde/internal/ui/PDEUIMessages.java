@@ -1391,6 +1391,7 @@ public class PDEUIMessages extends NLS {
 	public static String PluginsView_asBinaryProject;
 	public static String PluginsView_asSourceProject;
 	public static String PluginsView_showDisabled;
+	public static String PluginsView_showEnabled;
 	public static String PluginsView_showWorkspace;
 	public static String PluginsView_textEditor;
 	public static String PluginWorkingSet_title;
@@ -2578,5 +2579,7 @@ public class PDEUIMessages extends NLS {
 	public static String XHTMLConversionOperation_multiProb;
 
 	public static String XHTMLConversionOperation_title;
+
+	public static String PluginsView_description;
 
 }
