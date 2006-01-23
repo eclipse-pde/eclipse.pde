@@ -29,7 +29,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class PDEClasspathContainer {
 	
-	class Rule {
+	public class Rule {
 		IPath path;
 		boolean discouraged;
 		public boolean equals(Object other) {
@@ -64,7 +64,13 @@ public class PDEClasspathContainer {
 		}
 	}
 	
-	protected void addExternalPlugin(IPluginModelBase model, Rule[] rules, ArrayList entries) throws CoreException {
+	public static IClasspathEntry[] getExternalEntries(IPluginModelBase model) throws CoreException {
+		ArrayList entries = new ArrayList();
+		addExternalPlugin(model, new Rule[0], entries);
+		return (IClasspathEntry[])entries.toArray(new IClasspathEntry[entries.size()]);
+	}
+	
+	protected static void addExternalPlugin(IPluginModelBase model, Rule[] rules, ArrayList entries) throws CoreException {
 		if (new File(model.getInstallLocation()).isFile()) {
 			IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, "."); //$NON-NLS-1$
 			if (srcPath == null)
@@ -90,7 +96,7 @@ public class PDEClasspathContainer {
 		}
 	}
 	
-	protected void addLibraryEntry(IPath path, IPath srcPath, Rule[] rules, IClasspathAttribute[] attributes, ArrayList entries) {
+	protected static void addLibraryEntry(IPath path, IPath srcPath, Rule[] rules, IClasspathAttribute[] attributes, ArrayList entries) {
 		IClasspathEntry entry = null;
 		if (rules != null) {
 			entry = JavaCore.newLibraryEntry(
@@ -108,7 +114,7 @@ public class PDEClasspathContainer {
 		}
 	}
 	
-	protected IAccessRule[] getAccessRules(Rule[] rules) {
+	protected static IAccessRule[] getAccessRules(Rule[] rules) {
 		IAccessRule[] accessRules = new IAccessRule[rules.length + 1];
 		for (int i = 0; i < rules.length; i++) {
 			Rule rule = rules[i];
@@ -127,7 +133,7 @@ public class PDEClasspathContainer {
 		return rule;
 	}
 	
-	private IClasspathAttribute[] getClasspathAttributes(IPluginModelBase model) {
+	private static IClasspathAttribute[] getClasspathAttributes(IPluginModelBase model) {
 		JavadocLocationManager manager = PDECore.getDefault().getJavadocLocationManager();
 		String location = manager.getJavadocLocation(model);
 		if (location == null)
@@ -144,7 +150,7 @@ public class PDEClasspathContainer {
 		return rule;		
 	}
 	
-	protected IPath getPath(IPluginModelBase model, String libraryName) {
+	protected static IPath getPath(IPluginModelBase model, String libraryName) {
 		IResource resource = model.getUnderlyingResource();
 		if (resource != null) {
 			IResource jarFile = resource.getProject().findMember(libraryName);
@@ -154,7 +160,7 @@ public class PDEClasspathContainer {
 		return file.exists() ? new Path(file.getAbsolutePath()) : null;
 	}
 	
-	protected IPluginModelBase resolveLibraryInFragments(IPluginModelBase model, String libraryName) {
+	protected static IPluginModelBase resolveLibraryInFragments(IPluginModelBase model, String libraryName) {
 		BundleDescription desc = model.getBundleDescription();
 		if (desc != null) {
 			BundleDescription[] fragments = desc.getFragments();

@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.launcher;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
@@ -45,5 +46,12 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 	public boolean supportsSourceContainerType(ISourceContainerType type) {
 		return !fFilteredTypes.contains(type.getId());
 	}
-
+	
+	public Object getSourceElement(Object element) {
+		PDESourceLookupQuery query = new PDESourceLookupQuery(element);
+		Platform.run(query);
+		Object result = query.getResult();
+		return result != null ? result : super.getSourceElement(element);
+	}
+	
 }
