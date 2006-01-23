@@ -323,7 +323,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			params.put(PROPERTY_PLUGIN_DESTINATION, PLUGIN_DESTINATION);
 			params.put(PROPERTY_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER));
 			params.put(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
-			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_PRE + TARGET_CLEAN, null, null, params);
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_CLEAN, ".", FALSE, params, null); //$NON-NLS-1$
 		}
 		for (int i = 0; i < availableJars.length; i++) {
 			String jarName = availableJars[i].getName(true);
@@ -339,7 +339,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printDeleteTask(Utils.getPropertyFormat(IXMLConstants.PROPERTY_TEMP_FOLDER), null, null);
 
 		if (customBuildCallbacks != null) {
-			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_POST + TARGET_CLEAN, null, null, params);
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_CLEAN, ".", FALSE, params, null); //$NON-NLS-1$
 		}
 		script.printTargetEnd();
 	}
@@ -358,7 +358,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (customBuildCallbacks != null) {
 			params = new HashMap(1);
 			params.put(PROPERTY_DESTINATION_TEMP_FOLDER, baseDestination.toString());
-			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_PRE + TARGET_GATHER_LOGS, null, null, params);
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_LOGS, ".", FALSE, params, null); //$NON-NLS-1$
 		}
 		List destinations = new ArrayList(5);
 		Properties properties = getBuildProperties();
@@ -374,7 +374,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 
 		if (customBuildCallbacks != null) {
-			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_POST + TARGET_GATHER_LOGS, null, null, params);
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_LOGS, ".", FALSE, params, null); //$NON-NLS-1$
 		}
 		script.printTargetEnd();
 	}
@@ -407,7 +407,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (customBuildCallbacks != null) {
 			params = new HashMap(1);
 			params.put(PROPERTY_TARGET_FOLDER, baseDestination.toString());
-			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_PRE + TARGET_GATHER_SOURCES, null, null, params);
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_SOURCES, ".", FALSE, params, null); //$NON-NLS-1$
 		}
 		List destinations = new ArrayList(5);
 		Properties properties = getBuildProperties();
@@ -429,7 +429,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 
 		if (customBuildCallbacks != null) {
-			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_POST + TARGET_GATHER_SOURCES, null, null, params);
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_SOURCES, ".", FALSE, params, null); //$NON-NLS-1$
 		}
 		script.printTargetEnd();
 	}
@@ -446,6 +446,16 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		destination = destination.append(fullName);
 		String root = destination.toString();
 		script.printMkdirTask(root);
+		
+		Map params = null;
+		if (customBuildCallbacks != null) {
+			params = new HashMap(3);
+			params.put(PROPERTY_TARGET_FOLDER, root);
+			params.put(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
+			params.put(PROPERTY_BASEDIR, Utils.getPropertyFormat(PROPERTY_BASEDIR));
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_BIN_PARTS, ".", FALSE, params, null); //$NON-NLS-1$
+		}
+		
 		List destinations = new ArrayList(5);
 		destinations.add(destination);
 		String include = (String) getBuildProperties().get(PROPERTY_BIN_INCLUDES);
@@ -492,11 +502,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		genarateIdReplacementCall(destination.toString());
 
 		if (customBuildCallbacks != null) {
-			Map params = new HashMap(3);
-			params.put(PROPERTY_TARGET_FOLDER, root);
-			params.put(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
-			params.put(PROPERTY_BASEDIR, Utils.getPropertyFormat(PROPERTY_BASEDIR));
-			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_POST + TARGET_GATHER_BIN_PARTS, null, null, params);
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_BIN_PARTS, ".", FALSE, params, null); //$NON-NLS-1$
 		}
 
 		script.printTargetEnd();
@@ -851,7 +857,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (customBuildCallbacks != null) {
 			params = new HashMap(1);
 			params.put(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
-			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_PRE + TARGET_BUILD_JARS, null, null, params);
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_BUILD_JARS, ".", FALSE, params, null); //$NON-NLS-1$
 		}
 		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
 			String name = ((CompiledEntry) iter.next()).getName(false);
@@ -859,14 +865,14 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printAntCallTask(name, null, null);
 		}
 		if (customBuildCallbacks != null) {
-			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_POST + TARGET_BUILD_JARS, null, null, params);
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_BUILD_JARS, ".", FALSE, params, null); //$NON-NLS-1$
 		}
 		script.printTargetEnd();
 
 		script.println();
 		script.printTargetDeclaration(TARGET_BUILD_SOURCES, TARGET_INIT, null, null, null);
 		if (customBuildCallbacks != null) {
-			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_PRE + TARGET_BUILD_SOURCES, null, null, params);
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_BUILD_SOURCES, ".", FALSE, params, null); //$NON-NLS-1$
 		}
 		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
 			String jarName = ((CompiledEntry) iter.next()).getName(false);
@@ -875,7 +881,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printAntCallTask(srcName, null, null);
 		}
 		if (customBuildCallbacks != null) {
-			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_POST + TARGET_BUILD_SOURCES, null, null, params);
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_BUILD_SOURCES, ".", FALSE, params, null); //$NON-NLS-1$
 		}
 		script.printTargetEnd();
 	}
@@ -994,7 +1000,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 			references = new HashMap(1);
 			references.put(name + PROPERTY_CLASSPATH, null);
-			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_PRE + name, null, null, params, references);
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + name, ".", FALSE, params, references); //$NON-NLS-1$
 		}
 
 		script.printComment("compile the source code"); //$NON-NLS-1$
@@ -1027,7 +1033,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printCopyTask(null, destdir, fileSets, true, false);
 
 		if (customBuildCallbacks != null) {
-			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_POST_COMPILE + name, null, null, params, references);
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST_COMPILE + name, ".", FALSE, params, references); //$NON-NLS-1$
 		}
 
 		String jarLocation = getJARLocation(entry.getName(true));
@@ -1044,7 +1050,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (customBuildCallbacks != null) {
 			params.clear();
 			params.put(PROPERTY_JAR_LOCATION, jarLocation);
-			script.printAntTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), null, PROPERTY_POST + name, null, null, params, references);
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + name, ".", FALSE, params, references); //$NON-NLS-1$
 		}
 		script.printTargetEnd();
 	}
