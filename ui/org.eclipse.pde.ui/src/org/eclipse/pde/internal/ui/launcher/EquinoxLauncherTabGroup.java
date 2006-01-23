@@ -17,13 +17,12 @@ import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.EnvironmentTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.debug.ui.sourcelookup.SourceLookupTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.ui.launcher.EquinoxSettingsTab;
 import org.eclipse.pde.ui.launcher.EquinoxPluginsTab;
+import org.eclipse.pde.ui.launcher.EquinoxSettingsTab;
 import org.eclipse.pde.ui.launcher.TracingTab;
 
 public class EquinoxLauncherTabGroup extends AbstractLaunchConfigurationTabGroup {
@@ -36,9 +35,7 @@ public class EquinoxLauncherTabGroup extends AbstractLaunchConfigurationTabGroup
 					new EquinoxSettingsTab(),
 					new TracingTab(), 
 					new EnvironmentTab(),
-					new SourceLookupTab(), 
 					new CommonTab()};
-
 		setTabs(tabs);
 	}
 	
