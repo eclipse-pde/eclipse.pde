@@ -43,7 +43,7 @@ public class PDEClasspathContainer {
 	private static HashMap DISCOURAGED_RULES = new HashMap();
 	
 	private static final IAccessRule EXCLUDE_ALL_RULE = 
-		JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE); //$NON-NLS-1$
+		JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE|IAccessRule.IGNORE_IF_BETTER); //$NON-NLS-1$
 
 	protected void addProjectEntry(IProject project, Rule[] rules, ArrayList entries) throws CoreException {
 		if (project.hasNature(JavaCore.NATURE_ID)) {
@@ -144,7 +144,7 @@ public class PDEClasspathContainer {
 	private static synchronized IAccessRule getDiscouragedRule(IPath path) {
 		IAccessRule rule = (IAccessRule)DISCOURAGED_RULES.get(path);
 		if (rule == null) {
-			rule = JavaCore.newAccessRule(path, IAccessRule.K_DISCOURAGED);
+			rule = JavaCore.newAccessRule(path, IAccessRule.K_DISCOURAGED|IAccessRule.IGNORE_IF_BETTER);
 			DISCOURAGED_RULES.put(path, rule);
 		}
 		return rule;		
