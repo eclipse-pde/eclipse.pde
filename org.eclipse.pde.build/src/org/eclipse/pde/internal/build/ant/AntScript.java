@@ -197,6 +197,43 @@ public class AntScript {
 		}
 	}
 
+	public void printSubantTask(String antfile, String target, String buildpath, String failOnError, Map properties, Map references) {
+		printTab();
+		output.print("<subant"); //$NON-NLS-1$
+		printAttribute("antfile", antfile, false); //$NON-NLS-1$
+		printAttribute("target", target, false); //$NON-NLS-1$
+		printAttribute("failonerror", failOnError, false);   //$NON-NLS-1$
+		printAttribute("buildpath", buildpath, false);  //$NON-NLS-1$
+		if (properties == null && references == null)
+			output.println("/>"); //$NON-NLS-1$
+		else {
+			output.println(">"); //$NON-NLS-1$
+			indent++;
+			if( properties != null ) {
+				Set entries = properties.entrySet();
+				for (Iterator iter = entries.iterator(); iter.hasNext();) {
+					Map.Entry entry = (Map.Entry) iter.next();
+					printProperty((String) entry.getKey(), (String) entry.getValue());
+				}
+			}
+			if( references != null ){
+				Set entries = references.entrySet();
+				for (Iterator iter = entries.iterator(); iter.hasNext();) {
+					Map.Entry entry = (Map.Entry) iter.next();
+					printTab();
+					print("<reference refid=\"" + (String)entry.getKey() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+					if( entry.getValue() != null ){
+						print(" torefid=\"" + (String) entry.getValue() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					print("/>"); //$NON-NLS-1$
+					println();
+				}
+			}
+			indent--;
+			printTab();
+			output.println("</subant>"); //$NON-NLS-1$
+		}
+	}
 	/**
 	 * Print a <code>zip</code> task to this script.
 	 * 

@@ -69,7 +69,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	//Cache the result of compteElements for performance
 	private List computedElements = null;
-	
+	private String customFeatureCallbacks = null;
 	private static final String TEMPLATE = "data"; //$NON-NLS-1$
 	
 	public FeatureBuildScriptGenerator() {
@@ -443,18 +443,28 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * @throws CoreException
 	 */
 	private void generateGatherBinPartsTarget() throws CoreException {
+		String include = (String) getBuildProperties().get(PROPERTY_BIN_INCLUDES);
+		String exclude = (String) getBuildProperties().get(PROPERTY_BIN_EXCLUDES);
+		String root = Utils.getPropertyFormat(PROPERTY_FEATURE_BASE) + '/' + featureFolderName;
+		
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_FEATURE_BASE, null, null);
+		script.printMkdirTask(root);
+		
+		Map callbackParams = null;
+		if (customFeatureCallbacks != null) {
+			callbackParams = new HashMap(1);
+			callbackParams.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE)).append(DEFAULT_PLUGIN_LOCATION).toString());
+			callbackParams.put(PROPERTY_FEATURE_DIRECTORY, root);
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_BIN_PARTS, ".", FALSE, callbackParams, null); //$NON-NLS-1$
+		}
+		
 		Map params = new HashMap(1);
 		params.put(PROPERTY_TARGET, TARGET_GATHER_BIN_PARTS);
 		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE)).append(DEFAULT_PLUGIN_LOCATION).toString());
 		script.printAntCallTask(TARGET_CHILDREN, null, params);
-		String include = (String) getBuildProperties().get(PROPERTY_BIN_INCLUDES);
-		String exclude = (String) getBuildProperties().get(PROPERTY_BIN_EXCLUDES);
-		String root = Utils.getPropertyFormat(PROPERTY_FEATURE_BASE) + '/' + featureFolderName;
 
 		if (include != null) {
-			script.printMkdirTask(root);
 			if (include != null || exclude != null) {
 				FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR), null, include, null, exclude, null, null);
 				script.printCopyTask(null, root, new FileSet[] {fileSet}, true, false);
@@ -485,6 +495,9 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.println("<eclipse.idReplacer featureFilePath=\"" + root + '/' + DEFAULT_FEATURE_FILENAME_DESCRIPTOR + "\"  selfVersion=\"" + feature.getVersionedIdentifier().getVersion() + "\" featureIds=\"" + featureVersionInfo + "\" pluginIds=\"" + pluginVersionInfo + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		}
 		generateRootFilesAndPermissionsCalls();
+		if (customFeatureCallbacks != null) {
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_BIN_PARTS, ".", FALSE, callbackParams, null); //$NON-NLS-1$
+		}
 		script.printTargetEnd();
 		generateRootFilesAndPermissions();
 	}
@@ -704,6 +717,9 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printTargetDeclaration(TARGET_INIT, null, null, null, null);
 		script.printProperty(PROPERTY_FEATURE_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + PROPERTY_FEATURE_TEMP_FOLDER);
 		script.printProperty(PROPERTY_FEATURE_DESTINATION, Utils.getPropertyFormat(PROPERTY_BASEDIR));
+		if (customFeatureCallbacks != null) {
+			script.printAvailableTask(PROPERTY_CUSTOM_BUILD_CALLBACKS, customFeatureCallbacks, customFeatureCallbacks);
+		}
 		script.printTargetEnd();
 	}
 
@@ -899,6 +915,12 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				buildFeature.setBinary(true);
 			}
 		}
+		
+		customFeatureCallbacks = getBuildProperties().getProperty(PROPERTY_CUSTOM_BUILD_CALLBACKS);
+		if (TRUE.equalsIgnoreCase(customFeatureCallbacks))
+			customFeatureCallbacks = DEFAULT_CUSTOM_BUILD_CALLBACKS_FILE;
+		else if (FALSE.equalsIgnoreCase(customFeatureCallbacks))
+			customFeatureCallbacks = null;
 	}
 
 	private void initializeFeatureNames() throws CoreException {
