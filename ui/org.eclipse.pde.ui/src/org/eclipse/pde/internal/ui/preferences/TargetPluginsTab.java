@@ -408,6 +408,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			}
 			
 		});
+		fPluginTreeViewer.setAutoExpandLevel(2);
 	}
 	
 	public void dispose() {
@@ -507,7 +508,6 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			handleSelectAll(true);
 			fReloaded = true;
 			fPage.getSourceBlock().resetExtensionLocations(getCurrentModels());
-			initializeTreeState();
 		}
 		fPage.resetNeedsReload();
 	}
@@ -551,7 +551,6 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		for (int i = 0; i < parents.length; i++) {
 			handleGrayChecked((File)parents[i], false);
 		}
-		initializeTreeState();
 		setCounter(elements.length);
 	}
 	
@@ -576,12 +575,6 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		}
 	}
 	
-	private void initializeTreeState() {
-		if (fTreeViewerContents.keySet().size() == 1) {
-			fPluginTreeViewer.expandToLevel(fTreeViewerContents.keySet().iterator().next(), 1);
-		}
-	}
-
 	public void performOk() {
 		BusyIndicator.showWhile(fPage.getShell().getDisplay(), new Runnable() {
 			public void run() {
