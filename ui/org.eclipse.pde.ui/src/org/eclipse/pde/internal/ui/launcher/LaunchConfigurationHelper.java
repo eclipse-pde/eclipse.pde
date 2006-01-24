@@ -74,7 +74,7 @@ public class LaunchConfigurationHelper {
 				String userPath = config.getAttribute(IPDELauncherConstants.CONFIG_LOCATION, (String)null);
 				if (userPath != null) {
 					userPath = getSubstitutedString(userPath);
-					dir = new File(userPath);
+					dir = new File(userPath).getAbsoluteFile();
 				}
 			}
 		} catch (CoreException e) {
