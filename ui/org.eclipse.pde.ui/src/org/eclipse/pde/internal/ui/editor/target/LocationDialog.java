@@ -12,6 +12,7 @@ import org.eclipse.pde.internal.core.itarget.ILocationInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -93,6 +94,7 @@ public class LocationDialog extends StatusDialog {
 				handleBrowseFileSystem();
 			}
 		});
+		SWTUtil.setButtonDimensionHint(fs);
 		
 		Button var = new Button(container, SWT.PUSH);
 		var.setText(PDEUIMessages.LocationDialog_variables);
@@ -102,6 +104,7 @@ public class LocationDialog extends StatusDialog {
 				handleInsertVariable();
 			}
 		});
+		SWTUtil.setButtonDimensionHint(var);
 	}
 	
 	private IStatus createErrorStatus(String message) {
