@@ -10,7 +10,6 @@ import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.itarget.IAdditionalLocation;
 import org.eclipse.pde.internal.core.itarget.ILocationInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
@@ -27,7 +26,6 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
 
 public class LocationDialog extends StatusDialog {
 	
@@ -46,13 +44,13 @@ public class LocationDialog extends StatusDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 5;
+		layout.numColumns = 4;
 		layout.marginHeight = layout.marginWidth = 10;
 		container.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		container.setLayoutData(gd);
 		
-		createEntries(container);
+		createEntry(container);
 
 		ModifyListener listener = new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -60,28 +58,32 @@ public class LocationDialog extends StatusDialog {
 			}
 		};
 		fPath.addModifyListener(listener);
-		setTitle(PDEUIMessages.SiteEditor_NewArchiveDialog_title); 
+		setTitle(PDEUIMessages.LocationDialog_title); 
 		Dialog.applyDialogFont(container);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.NEW_ARCHIVE_DIALOG);
 		
 		dialogChanged();
 		
 		return container;
 	}
 	
-	protected void createEntries(Composite container) {
+	protected void createEntry(Composite container) {
 		Label label = new Label(container, SWT.NULL);
-		label.setText(PDEUIMessages.SiteEditor_NewArchiveDialog_path); 
+		label.setText(PDEUIMessages.LocationDialog_path); 
 		label.setLayoutData(new GridData());
 		
 		fPath = new Text(container, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 3;
 		fPath.setLayoutData(gd);
 		
 		if (fLocation != null) {
 			fPath.setText(fLocation.getPath());
 		}
+		
+		label = new Label(container, SWT.NONE);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		label.setLayoutData(gd);
 		
 		Button fs = new Button(container, SWT.PUSH);
 		fs.setText(PDEUIMessages.LocationDialog_fileSystem);
@@ -157,7 +159,7 @@ public class LocationDialog extends StatusDialog {
 	}
 	
 	protected void handleBrowseFileSystem() {
-		DirectoryDialog dialog = new DirectoryDialog(PDEPlugin.getActiveWorkbenchShell());
+		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setFilterPath(fPath.getText());
 		dialog.setText(PDEUIMessages.BaseBlock_dirSelection); 
 		dialog.setMessage(PDEUIMessages.BaseBlock_dirChoose); 
@@ -169,7 +171,7 @@ public class LocationDialog extends StatusDialog {
 	
 	private void handleInsertVariable() {
 		StringVariableSelectionDialog dialog = 
-					new StringVariableSelectionDialog(PDEPlugin.getActiveWorkbenchShell());
+					new StringVariableSelectionDialog(getShell());
 		if (dialog.open() == StringVariableSelectionDialog.OK) {
 			fPath.insert(dialog.getVariableExpression());
 		}

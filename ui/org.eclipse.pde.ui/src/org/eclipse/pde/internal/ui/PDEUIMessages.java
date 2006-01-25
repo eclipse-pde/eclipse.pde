@@ -2602,4 +2602,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String LocationsSection_description;
 
+	public static String LocationDialog_title;
+
+	public static String LocationDialog_path;
+
 }
