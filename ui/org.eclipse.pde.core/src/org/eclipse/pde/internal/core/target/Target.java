@@ -11,10 +11,13 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.io.PrintWriter;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.itarget.IAdditionalLocation;
 import org.eclipse.pde.internal.core.itarget.IArgumentsInfo;
 import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
 import org.eclipse.pde.internal.core.itarget.IImplicitDependenciesInfo;
@@ -42,6 +45,7 @@ public class Target extends TargetObject implements ITarget {
 	private ILocationInfo fLocationInfo;
 	private IImplicitDependenciesInfo fImplicitInfo;
 	private boolean fUseAllTargetPlatform = false;
+	private Set fAdditionalDirectories = new HashSet();
 	
 	public Target(ITargetModel model) {
 		super(model);
@@ -56,6 +60,7 @@ public class Target extends TargetObject implements ITarget {
 		fPlugins.clear();
 		fFeatures.clear();
 		fUseAllTargetPlatform = false;
+		fAdditionalDirectories.clear();
 	}
 
 	public void parse(Node node) {
@@ -103,6 +108,8 @@ public class Target extends TargetObject implements ITarget {
 				parsePlugins(node.getChildNodes());
 			} else if ("features".equals(node.getNodeName())) { //$NON-NLS-1$
 				parseFeatures(node.getChildNodes());
+			} else if ("extraLocations".equals(node.getNodeName())) { //$NON-NLS-1$
+				parseLocations(node.getChildNodes());
 			}
 		}	
 	}
@@ -128,6 +135,19 @@ public class Target extends TargetObject implements ITarget {
 					ITargetFeature feature = getModel().getFactory().createFeature();
 					feature.parse(child);
 					fFeatures.put(feature.getId(), feature);
+				}
+			}
+		}
+	}
+	
+	private void parseLocations(NodeList children) {
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				if (child.getNodeName().equals("dir")) { //$NON-NLS-1$
+					IAdditionalLocation loc = getModel().getFactory().createAdditionalLocation();
+					loc.parse(child);
+					fAdditionalDirectories.add(loc);
 				}
 			}
 		}
@@ -174,6 +194,15 @@ public class Target extends TargetObject implements ITarget {
 			feature.write(indent + "         ", writer); //$NON-NLS-1$
 		}
 		writer.println(indent + "      </features>"); //$NON-NLS-1$
+		if (!fAdditionalDirectories.isEmpty()) {
+			writer.println(indent + "      <extraLocations>"); //$NON-NLS-1$
+			iter = fAdditionalDirectories.iterator();
+			while (iter.hasNext()) {
+				IAdditionalLocation location = (IAdditionalLocation) iter.next();
+				location.write(indent + "         ", writer); //$NON-NLS-1$
+			}
+			writer.println(indent + "      </extraLocations>"); //$NON-NLS-1$
+		}
 		writer.println(indent + "   </content>"); //$NON-NLS-1$
 		if (fImplicitInfo != null) {
 			fImplicitInfo.write(indent + "   ", writer); //$NON-NLS-1$
@@ -330,5 +359,24 @@ public class Target extends TargetObject implements ITarget {
 
 	public IImplicitDependenciesInfo getImplicitPluginsInfo() {
 		return fImplicitInfo;
+	}
+
+	public IAdditionalLocation[] getAdditionalDirectories() {
+		return (IAdditionalLocation[])
+			fAdditionalDirectories.toArray(new IAdditionalLocation[fAdditionalDirectories.size()]);
+	}
+
+	public void addAdditionalDirectories(IAdditionalLocation[] dirs) {
+		for (int i = 0; i < dirs.length; i++) {
+			fAdditionalDirectories.add(dirs[i]);
+		}
+		fireStructureChanged(dirs, IModelChangedEvent.INSERT);
+	}
+	
+	public void removeAdditionalDirectories(IAdditionalLocation[] dirs) {
+		for (int i = 0; i < dirs.length; i++) {
+			fAdditionalDirectories.remove(dirs[i]);
+		}
+		fireStructureChanged(dirs, IModelChangedEvent.REMOVE);
 	}
 }

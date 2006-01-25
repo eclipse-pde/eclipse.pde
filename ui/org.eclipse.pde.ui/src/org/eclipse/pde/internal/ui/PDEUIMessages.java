@@ -2582,4 +2582,24 @@ public class PDEUIMessages extends NLS {
 
 	public static String PluginsView_description;
 
+	public static String TargetProfileWindow_additionalLocations;
+
+	public static String LocationDialog_fileSystem;
+
+	public static String LocationDialog_variables;
+
+	public static String LocationDialog_locationExists;
+
+	public static String LocationDialog_emptyPath;
+
+	public static String LocationsSection_add;
+
+	public static String LocationsSection_edit;
+
+	public static String LocationsSection_remove;
+
+	public static String LocationsSection_title;
+
+	public static String LocationsSection_description;
+
 }

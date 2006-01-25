@@ -58,6 +58,7 @@ import org.eclipse.pde.internal.core.isite.ISiteArchive;
 import org.eclipse.pde.internal.core.isite.ISiteCategory;
 import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
+import org.eclipse.pde.internal.core.itarget.IAdditionalLocation;
 import org.eclipse.pde.internal.core.itarget.ITargetFeature;
 import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
@@ -144,6 +145,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof ITargetFeature) {
 			return getObjectText((ITargetFeature)obj);
+		}
+		if (obj instanceof IAdditionalLocation) {
+			return getObjectText((IAdditionalLocation)obj);
 		}
 		if (obj instanceof ExecutionEnvironment) {
 			return getObjectText((ExecutionEnvironment)obj);
@@ -316,6 +320,10 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public String getObjectText(ITargetFeature obj) {
 		return preventNull(obj.getId());
 	}
+	
+	public String getObjectText(IAdditionalLocation obj) {
+		return preventNull(obj.getPath());
+	}
 
 	public Image getImage(Object obj) {
 		if (obj instanceof IPlugin) {
@@ -421,6 +429,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof ITargetFeature) {
 			return getObjectImage((ITargetFeature) obj);
+		}
+		if (obj instanceof IAdditionalLocation) {
+			return getObjectImage((IAdditionalLocation)obj);
 		}
 		if (obj instanceof ExecutionEnvironment) {
 			return getObjectImage((ExecutionEnvironment)obj);
@@ -702,6 +713,10 @@ public class PDELabelProvider extends SharedLabelProvider {
 	
 	public Image getObjectImage(ITargetFeature obj) {
 		return get(PDEPluginImages.DESC_FEATURE_OBJ, 0);
+	}
+	
+	public Image getObjectImage(IAdditionalLocation obj) {
+		return get(PDEPluginImages.DESC_SITE_OBJ);
 	}
 	
 	public boolean isFullNameModeEnabled() {

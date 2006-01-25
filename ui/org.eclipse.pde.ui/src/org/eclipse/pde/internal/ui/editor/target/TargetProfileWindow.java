@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.pde.internal.core.ExternalModelManager;
+import org.eclipse.pde.internal.core.itarget.IAdditionalLocation;
 import org.eclipse.pde.internal.core.itarget.IArgumentsInfo;
 import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
 import org.eclipse.pde.internal.core.itarget.IImplicitDependenciesInfo;
@@ -38,6 +39,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -125,6 +127,14 @@ public class TargetProfileWindow extends ApplicationWindow {
 		createEntry(body, toolkit, PDEUIMessages.TargetDefinitionSection_id, target.getId());
 		createEntry(body, toolkit, PDEUIMessages.TargetDefinitionSection_targetLocation, getLocation(target));
 		
+		IAdditionalLocation[] locs = target.getAdditionalDirectories();
+		if (locs.length > 0) {
+			Label label = toolkit.createLabel(body, PDEUIMessages.TargetProfileWindow_additionalLocations);
+			label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+			label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+			createTable(body, toolkit, locs);
+		}
+		
 		toolkit.paintBordersFor(form.getBody());
 		return form;	
 	}
@@ -165,17 +175,22 @@ public class TargetProfileWindow extends ApplicationWindow {
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 5;
 		body.setLayout(layout);
+
+		createTable(body, toolkit, objects);
 		
+		toolkit.paintBordersFor(form.getBody());
+		return form;	
+	}
+	
+	private Control createTable(Composite parent, FormToolkit toolkit, Object[] objects) {
 		int style = SWT.H_SCROLL | SWT.V_SCROLL | toolkit.getBorderStyle();
 
-		TableViewer	tableViewer = new TableViewer(body, style);
+		TableViewer	tableViewer = new TableViewer(parent, style);
 		tableViewer.setContentProvider(new ArrayContentProvider());
 		tableViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		tableViewer.setInput(objects);
 		tableViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		toolkit.paintBordersFor(form.getBody());
-		return form;	
+		return tableViewer.getControl();
 	}
 
 	private Control createArgumentsTab(Composite parent, FormToolkit toolkit, IArgumentsInfo info) {

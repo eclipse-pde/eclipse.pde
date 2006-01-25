@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import org.eclipse.pde.internal.core.itarget.IAdditionalLocation;
 import org.eclipse.pde.internal.core.itarget.IArgumentsInfo;
 import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
 import org.eclipse.pde.internal.core.itarget.IImplicitDependenciesInfo;
@@ -59,6 +60,10 @@ public class TargetModelFactory implements ITargetModelFactory {
 
 	public ITargetFeature createFeature() {
 		return new TargetFeature(fModel);
+	}
+	
+	public IAdditionalLocation createAdditionalLocation() {
+		return new AdditionalDirectory(fModel);
 	}
 
 }

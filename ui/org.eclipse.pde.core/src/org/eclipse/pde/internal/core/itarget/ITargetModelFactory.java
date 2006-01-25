@@ -27,5 +27,7 @@ public interface ITargetModelFactory {
 	ITargetPlugin createPlugin();
 	
 	ITargetFeature createFeature();
+	
+	IAdditionalLocation createAdditionalLocation();
 
 }

@@ -73,5 +73,11 @@ public interface ITarget extends ITargetObject {
 	boolean useAllPlugins();
 	
 	void setUseAllPlugins(boolean value);
+	
+	IAdditionalLocation[] getAdditionalDirectories();
+	
+	void removeAdditionalDirectories(IAdditionalLocation[] dirs);
+	
+	void addAdditionalDirectories(IAdditionalLocation[] dirs);
 
 }
