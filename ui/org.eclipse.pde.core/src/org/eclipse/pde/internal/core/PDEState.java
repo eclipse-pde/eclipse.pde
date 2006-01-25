@@ -107,7 +107,6 @@ public class PDEState extends MinimalState {
 			createExtensionDocument();
 		}
 		fState.setResolver(Platform.getPlatformAdmin().getResolver());
-		fState.setPlatformProperties(properties);
 		resolveState(false);
 		
 		if (fResolve)

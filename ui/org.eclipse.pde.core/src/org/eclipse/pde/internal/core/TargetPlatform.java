@@ -400,11 +400,12 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 	
 	public static Dictionary getTargetEnvironment() {
-		Dictionary result = new Hashtable(4);
+		Dictionary result = new Hashtable();
 		result.put ("osgi.os", TargetPlatform.getOS()); //$NON-NLS-1$
 		result.put ("osgi.ws", TargetPlatform.getWS()); //$NON-NLS-1$
 		result.put ("osgi.nl", TargetPlatform.getNL()); //$NON-NLS-1$
 		result.put ("osgi.arch", TargetPlatform.getOSArch()); //$NON-NLS-1$
+		result.put("osgi.resolveOptional", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		return result;
 	}
 
