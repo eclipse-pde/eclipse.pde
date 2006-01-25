@@ -28,6 +28,21 @@ public class ComboChoiceOption extends AbstractChoiceOption {
 	private Combo fCombo;
 	private Label fLabel;
 	
+	/**
+	 * Constructor for ComboChoiceOption.
+	 *
+	 * @param section
+	 *            the parent section.
+	 * @param name
+	 *            the unique name
+	 * @param label
+	 *            the presentable label
+	 * @param choices
+	 *            the list of choices from which the value can be chosen. Each
+	 *            array entry should be an array of size 2, where position 0
+	 *            will be interpeted as the choice unique name, and position 1
+	 *            as the choice presentable label. 
+	 */
 	public ComboChoiceOption(BaseOptionTemplateSection section, String name, String label, String[][] choices) {
 		super(section, name, label, choices);
 	}

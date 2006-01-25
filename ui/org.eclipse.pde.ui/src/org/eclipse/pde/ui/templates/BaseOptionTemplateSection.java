@@ -97,7 +97,11 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 */
 	protected TemplateOption addOption(String name, String label,
 			String[][] choices, String value, int pageIndex) {
-		AbstractChoiceOption option = ChoiceOption.createChoiceOption(this, name, label, choices);		
+		AbstractChoiceOption option;
+		if (choices.length == 2)
+			option = new RadioChoiceOption(this, name, label, choices);
+		else
+			option = new ComboChoiceOption(this, name, label, choices);			
 		registerOption(option, value, pageIndex);
 		return option;
 	}

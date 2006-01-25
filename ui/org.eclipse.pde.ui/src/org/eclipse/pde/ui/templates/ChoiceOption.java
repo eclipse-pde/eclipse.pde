@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.*;
  * the fixed set of options.
  * 
  * @since 2.0
+ * @deprecated see {@link RadioChoiceOption} and {@link ComboChoiceOption}
  */
 public class ChoiceOption extends TemplateOption {
 	private String[][] choices;
@@ -41,7 +42,6 @@ public class ChoiceOption extends TemplateOption {
 	 *            array entry should be an array of size 2, where position 0
 	 *            will be interpeted as the choice unique name, and position 1
 	 *            as the choice presentable label.
-	 * @deprecated see {@link createChoiceOption(BaseOptionTemplateSection section, String name, String label, String[][] choices)}
 	 */
 	public ChoiceOption(BaseOptionTemplateSection section, String name,
 			String label, String[][] choices) {
@@ -156,30 +156,5 @@ public class ChoiceOption extends TemplateOption {
 			}
 		}
 		blockListener = false;
-	}
-	
-	/**
-	 * Creates a choice action with either a combo box or radio buttons, depending
-	 * on the number of choices.
-	 * 
-	 * @param section
-	 *            the parent section.
-	 * @param name
-	 *            the unique name
-	 * @param label
-	 *            the presentable label
-	 * @param choices
-	 *            the list of choices from which the value can be chosen. Each
-	 *            array entry should be an array of size 2, where position 0
-	 *            will be interpeted as the choice unique name, and position 1
-	 *            as the choice presentable label.
-	 * @return An appropriate subclass of AbstractChoiceOption based on the number of
-	 * 			  choices provided.
-	 */
-	public static AbstractChoiceOption createChoiceOption(BaseOptionTemplateSection section, String name,
-			String label, String[][] choices) {
-		if (choices.length == 2)
-			return new RadioChoiceOption(section, name, label, choices);
-		return new ComboChoiceOption(section, name, label, choices);
 	}
 }
