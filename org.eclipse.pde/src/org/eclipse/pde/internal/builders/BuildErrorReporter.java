@@ -133,15 +133,20 @@ public class BuildErrorReporter extends ErrorReporter {
 	private void validateMissingSourceInBinIncludes(IBuildEntry binIncludes, ArrayList sourceEntryKeys) {
 		if (binIncludes == null)
 			return;
+		boolean matchAllJars = false;
 		for (int i = 0; i < sourceEntryKeys.size(); i++) {
 			String key = (String)sourceEntryKeys.get(i);
 			key = key.substring(SOURCE.length());
 			boolean found = false;
 			String[] binIncludesTokens = binIncludes.getTokens();
 			for (int j = 0; j < binIncludesTokens.length; j++) {
+				if (binIncludesTokens[j].equals("*.jar"))
+					matchAllJars = true;
 				if (key.equals(binIncludesTokens[j]))
 					found = true;
 			}
+			if (key.endsWith(".jar") && matchAllJars)
+				continue;
 			if (!found)
 				prepareError(BIN_INCLUDES, null, NLS.bind(PDEMessages.BuildErrorReporter_binIncludesMissing, key));
 		}
