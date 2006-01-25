@@ -10,10 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
 /**
  * Implementation of the AbstractTemplateOption that allows users to choose a value from
@@ -28,8 +34,7 @@ public class RadioChoiceOption extends AbstractChoiceOption {
 
 	/**
 	 * Constructor for RadioChoiceOption.
-	 * When creating options with more than 2 choices it is suggested to use
-	 * ComboChoiceOption instead of RadioChoiceOption
+	 * Number of choices must be 2, otherwise an assertion will fail.
 	 * 
 	 * @param section
 	 *            the parent section.
@@ -38,14 +43,16 @@ public class RadioChoiceOption extends AbstractChoiceOption {
 	 * @param label
 	 *            the presentable label
 	 * @param choices
-	 *            the list of choices from which the value can be chosen. Each
-	 *            array entry should be an array of size 2, where position 0
+	 *            the list of choices from which the value can be chosen. This
+	 *            list must be of size 2.
+	 *            Each array entry should be an array of size 2, where position 0
 	 *            will be interpeted as the choice unique name, and position 1
 	 *            as the choice presentable label.
 	 */
 	public RadioChoiceOption(BaseOptionTemplateSection section, String name,
 			String label, String[][] choices) {
 		super(section, name, label, choices);
+		Assert.isTrue(choices.length == 2);
 	}
 
 	private Button createRadioButton(Composite parent, int span, String[] choice) {
