@@ -3,6 +3,7 @@ package org.eclipse.pde.internal.builders;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -37,6 +38,7 @@ import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.build.BuildEntry;
 import org.eclipse.pde.internal.core.text.build.BuildModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.osgi.framework.Constants;
 
 public class BuildErrorReporter extends ErrorReporter {
@@ -134,20 +136,16 @@ public class BuildErrorReporter extends ErrorReporter {
 	private void validateMissingSourceInBinIncludes(IBuildEntry binIncludes, ArrayList sourceEntryKeys) {
 		if (binIncludes == null)
 			return;
-		boolean matchAllJars = false;
 		for (int i = 0; i < sourceEntryKeys.size(); i++) {
 			String key = (String)sourceEntryKeys.get(i);
 			key = key.substring(SOURCE.length());
 			boolean found = false;
 			String[] binIncludesTokens = binIncludes.getTokens();
 			for (int j = 0; j < binIncludesTokens.length; j++) {
-				if (binIncludesTokens[j].equals("*.jar"))
-					matchAllJars = true;
-				if (key.equals(binIncludesTokens[j]))
+				Pattern pattern = PatternConstructor.createPattern(binIncludesTokens[j], false);
+				if (pattern.matcher(key).matches())
 					found = true;
 			}
-			if (key.endsWith(".jar") && matchAllJars)
-				continue;
 			if (!found)
 				prepareError(BIN_INCLUDES, null, NLS.bind(PDEMessages.BuildErrorReporter_binIncludesMissing, key));
 		}
@@ -256,7 +254,7 @@ public class BuildErrorReporter extends ErrorReporter {
 				}
 			}
 			if (!found) {
-				String spath = path.removeFirstSegments(i).addTrailingSeparator().toString();
+				String spath = path.removeFirstSegments(1).addTrailingSeparator().toString();
 				if (sourceEntries.size() == 1) {
 					String name = ((IBuildEntry)sourceEntries.get(0)).getName();
 					prepareError(name, null, NLS.bind(PDEMessages.BuildErrorReporter_classpathEntryMissing1, spath, name));
