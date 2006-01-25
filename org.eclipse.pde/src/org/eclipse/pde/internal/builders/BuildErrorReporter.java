@@ -312,6 +312,8 @@ public class BuildErrorReporter extends ErrorReporter {
 	}
 	
 	private void reportErrors(BuildModel bm, IProgressMonitor monitor) {
+		if (bm == null)
+			return;
 		IBuild build = bm.getBuild();
 		IBuildEntry[] buildEntries = build.getBuildEntries();
 		HashMap entries = new HashMap();
