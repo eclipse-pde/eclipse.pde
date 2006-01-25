@@ -80,7 +80,8 @@ public class BuildErrorReporter extends ErrorReporter {
 		validateBuild(wbm.getBuild(true));
 		
 		// if there are any errors report using the text model
-		reportErrors(prepareTextBuildModel(monitor), monitor);
+		if (fProblemList.size() > 0)
+			reportErrors(prepareTextBuildModel(monitor), monitor);
 	}
 
 	private void validateBuild(IBuild build) {
@@ -327,7 +328,7 @@ public class BuildErrorReporter extends ErrorReporter {
 				continue;
 			
 			int lineNum;
-			// general file case (eg. missing entry)
+			// general file case (eg. missing source.* entry)
 			if (bp.noLine())
 				lineNum = 1;
 			// issue with a particular entry
@@ -344,7 +345,7 @@ public class BuildErrorReporter extends ErrorReporter {
 	
 	private int getLineNumber(IBuildEntry ibe, String tokenString) {
 		if (!(ibe instanceof BuildEntry))
-			return -1;
+			return 0;
 		BuildEntry be = (BuildEntry)ibe;
 		IDocument doc = ((BuildModel)be.getModel()).getDocument();
 		try {
@@ -358,14 +359,14 @@ public class BuildErrorReporter extends ErrorReporter {
 			
 			int index = entry.indexOf('=') + 1;
 			if (index == 0 || index == entry.length())
-				return -1;
+				return 0;
 			
 			// remove the entry name			
 			entry = entry.substring(index);
 			
 			int entryTokenOffset = entry.indexOf(tokenString);
 			if (entryTokenOffset == -1)
-				return -1;
+				return 0;
 			
 			// check to see if single occurence
 			if (entryTokenOffset == entry.lastIndexOf(tokenString))
@@ -378,7 +379,7 @@ public class BuildErrorReporter extends ErrorReporter {
 				// during comparison
 				int cci = entry.indexOf(',');
 				if (cci == -1 && entry.indexOf(tokenString) == -1)
-					return -1;
+					return 0;
 				
 				// if entry starts with slash make sure token does not include it
 				boolean sws = entry.charAt(0) == '\\'; 
@@ -392,7 +393,7 @@ public class BuildErrorReporter extends ErrorReporter {
 			
 		} catch (BadLocationException e) {
 		}
-		return -1;
+		return 0;
 	}
 	
 	private void prepareError(String name, String token, String message) {
