@@ -1119,7 +1119,19 @@ public class PDEUIMessages extends NLS {
 	public static String BuilderTemplate_defaultNatureName;
 	public static String BuilderTemplate_markerName;
 	public static String BuilderTemplate_generateAction;
-
+	
+	public static String DecoratorTemplate_title;
+	public static String DecoratorTemplate_desc;
+	public static String DecoratorTemplate_packageName;
+	public static String DecoratorTemplate_placement;
+	public static String DecoratorTemplate_resourceLabel;
+	public static String DecoratorTemplate_readOnlyLabel;
+	public static String DecoratorTemplate_decorateProject;
+	public static String DecoratorTemplate_decorateReadOnly;
+	public static String DecoratorTemplate_placementChoices;
+	public static String DecoratorTemplate_decoratorClass;
+	public static String DecoratorTemplate_decoratorClassName;
+	
 	//
 
 	public static String PluginSelectionDialog_title;

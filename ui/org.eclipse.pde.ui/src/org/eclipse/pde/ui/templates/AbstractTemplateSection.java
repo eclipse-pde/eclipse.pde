@@ -295,7 +295,7 @@ public abstract class AbstractTemplateSection
 	/**
 	 * Tests if the folder found in the template location should be created in
 	 * the target project. Subclasses may use this method to conditionally block
-	 * creation of the entire directories (subject to user choices).
+	 * the creation of entire directories (subject to user choices).
 	 * 
 	 * @param sourceFolder
 	 *            the folder that is tested
@@ -310,7 +310,7 @@ public abstract class AbstractTemplateSection
 	/**
 	 * Tests if the file found in the template location should be created in the
 	 * target project. Subclasses may use this method to conditionally block
-	 * createion of the file (subject to user choices).
+	 * creation of the file (subject to user choices).
 	 * 
 	 * @param sourceFile
 	 *            the file found in the template location that needs to be
@@ -388,6 +388,9 @@ public abstract class AbstractTemplateSection
 
 				if (firstLevel) {
 					binary = false;
+					if (!isOkToCreateFolder(member))
+						continue;
+					
 					if (member.getName().equals("java")) { //$NON-NLS-1$
 						IFolder sourceFolder = getSourceFolder(monitor);
 						dstContainer = generateJavaSourceFolder(sourceFolder, monitor);
