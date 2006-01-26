@@ -22,6 +22,7 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
@@ -578,7 +579,8 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
     public boolean showExtensionTabs() {
     	if (fInputContextManager.hasContext(PluginInputContext.CONTEXT_ID))
     		return true;
-    	return fShowExtensions && getAggregateModel().isEditable();
+    	IBaseModel model = getAggregateModel();
+    	return fShowExtensions && model != null && model.isEditable();
      }
 
     public boolean isEquinox() {
