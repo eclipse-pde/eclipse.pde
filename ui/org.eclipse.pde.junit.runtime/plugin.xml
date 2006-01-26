@@ -1,21 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.pde.junit.runtime"
-   name="%pluginName"
-   version="3.1.0"
-   provider-name="%providerName">
-
-   <runtime>
-      <library name="pdejunit.jar"/>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.jdt.junit.runtime"/>
-      <import plugin="org.junit"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.core.runtime.compatibility" optional="true"/>
-      <import plugin="org.eclipse.ui" optional="true"/>
-   </requires>
+<plugin>
 
    <extension
          id="uitestapplication"
@@ -32,24 +17,6 @@
       <application>
          <run
                class="org.eclipse.pde.internal.junit.runtime.CoreTestApplication">
-         </run>
-      </application>
-   </extension>
-   <extension
-         id="legacyUItestapplication"
-         point="org.eclipse.core.runtime.applications">
-      <application>
-         <run
-               class="org.eclipse.pde.internal.junit.runtime.LegacyUITestApplication">
-         </run>
-      </application>
-   </extension>
-   <extension
-         id="legacyCoretestapplication"
-         point="org.eclipse.core.runtime.applications">
-      <application>
-         <run
-               class="org.eclipse.pde.internal.junit.runtime.LegacyCoreTestApplication">
          </run>
       </application>
    </extension>
