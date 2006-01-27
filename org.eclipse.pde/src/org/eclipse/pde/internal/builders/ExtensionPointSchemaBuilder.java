@@ -10,17 +10,36 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.schema.*;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.PDE;
+import org.eclipse.pde.internal.PDEMessages;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.schema.Schema;
+import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
 
 public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	class DeltaVisitor implements IResourceDeltaVisitor {

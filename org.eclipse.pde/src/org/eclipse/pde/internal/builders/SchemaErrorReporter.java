@@ -10,13 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import java.util.*;
+import java.util.Stack;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.*;
-import org.w3c.dom.*;
+import org.eclipse.pde.internal.PDEMessages;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 
 public class SchemaErrorReporter extends XMLErrorReporter {

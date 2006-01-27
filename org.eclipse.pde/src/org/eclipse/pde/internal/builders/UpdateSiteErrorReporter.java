@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.w3c.dom.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
 
 
 public class UpdateSiteErrorReporter extends ManifestErrorReporter {

@@ -10,14 +10,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal;
 
-import java.io.*;
-import java.lang.reflect.*;
-import java.net.*;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.builders.*;
-import org.osgi.framework.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.pde.internal.builders.CompilerFlags;
+import org.eclipse.pde.internal.builders.FeatureRebuilder;
+import org.osgi.framework.BundleContext;
 
 
 public class PDE extends Plugin {

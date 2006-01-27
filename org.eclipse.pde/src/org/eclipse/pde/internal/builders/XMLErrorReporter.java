@@ -10,19 +10,35 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Stack;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.core.filebuffers.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.pde.internal.*;
-import org.eclipse.pde.internal.core.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.FindReplaceDocumentAdapter;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Position;
+import org.eclipse.pde.internal.PDE;
+import org.eclipse.pde.internal.core.PDECore;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
 
 public class XMLErrorReporter extends DefaultHandler {
 	

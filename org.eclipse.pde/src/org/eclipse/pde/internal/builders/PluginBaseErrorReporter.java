@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.*;
+import org.eclipse.pde.internal.PDEMessages;
 import org.eclipse.pde.internal.core.PDECore;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 
 public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {

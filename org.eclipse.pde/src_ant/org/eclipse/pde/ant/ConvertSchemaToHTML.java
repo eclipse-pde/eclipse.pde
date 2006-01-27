@@ -10,23 +10,40 @@
  *******************************************************************************/
 package org.eclipse.pde.ant;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.util.jar.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Dictionary;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.tools.ant.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.util.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.*;
-import org.eclipse.pde.internal.builders.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.plugin.*;
-import org.eclipse.pde.internal.core.schema.*;
-import org.osgi.framework.*;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.PDE;
+import org.eclipse.pde.internal.PDEMessages;
+import org.eclipse.pde.internal.builders.SchemaTransformer;
+import org.eclipse.pde.internal.core.XMLDefaultHandler;
+import org.eclipse.pde.internal.core.plugin.ExternalFragmentModel;
+import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
+import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
+import org.eclipse.pde.internal.core.schema.Schema;
+import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
+import org.osgi.framework.Constants;
 
 public class ConvertSchemaToHTML extends Task {
 

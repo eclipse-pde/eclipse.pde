@@ -10,17 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.PDEMessages;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
 
 
 public class FeatureErrorReporter extends ManifestErrorReporter {

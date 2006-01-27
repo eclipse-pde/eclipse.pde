@@ -10,14 +10,24 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URL;
 import java.util.Locale;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.core.schema.*;
-import org.osgi.framework.*;
+import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.pde.internal.core.ischema.IDocumentSection;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
+import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
+import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
+import org.eclipse.pde.internal.core.schema.ChoiceRestriction;
+import org.eclipse.pde.internal.core.schema.DocumentSection;
+import org.eclipse.pde.internal.core.schema.SchemaRootElement;
+import org.osgi.framework.Bundle;
 
 public class SchemaTransformer {
 	

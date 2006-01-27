@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import org.eclipse.core.resources.*;
-import org.w3c.dom.*;
+import org.eclipse.core.resources.IFile;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
 
 
 public class PluginErrorReporter extends PluginBaseErrorReporter {

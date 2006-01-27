@@ -10,12 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import java.util.*;
+import java.util.Map;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.*;
+import org.eclipse.pde.internal.PDE;
+import org.eclipse.pde.internal.PDEMessages;
 
 public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 	class DeltaVisitor implements IResourceDeltaVisitor {

@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.xml.sax.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.xml.sax.SAXException;
 
 public class ValidatingSAXParser {
 	

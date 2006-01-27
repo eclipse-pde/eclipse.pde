@@ -10,15 +10,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.builders;
 
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.*;
+import org.eclipse.pde.internal.PDEMessages;
 import org.eclipse.pde.internal.core.util.IdUtil;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 
 public class ManifestErrorReporter extends XMLErrorReporter {
