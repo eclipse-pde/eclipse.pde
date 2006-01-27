@@ -24,6 +24,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.internal.runtime.logview.LogView;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -160,7 +161,7 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
                             		new String[] {
                             			PDEUIMessages.Launcher_error_displayInLogView,
                             			PDEUIMessages.Launcher_error_displayInSystemEditor,
-                            			PDEUIMessages.Launcher_error_displayNo}, 
+                            			IDialogConstants.NO_LABEL}, 
                             		OPEN_IN_ERROR_LOG_VIEW);
                         		int dialog_value = dialog.open();
                             	if (dialog_value == OPEN_IN_ERROR_LOG_VIEW) {
