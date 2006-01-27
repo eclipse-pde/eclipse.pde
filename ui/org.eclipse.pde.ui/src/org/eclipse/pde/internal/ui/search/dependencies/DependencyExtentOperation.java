@@ -162,7 +162,9 @@ public class DependencyExtentOperation {
 						SearchEngine.createJavaSearchScope(new IJavaElement[] {parent}),
 						decRequestor,
 						null);
-				fSearchResult.addMatch(decRequestor.getMatch());	
+				Match match = decRequestor.getMatch();
+				if (match != null)
+					fSearchResult.addMatch(match);	
 			}
 		}
 		
