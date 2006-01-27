@@ -10,10 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.team.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFileModificationValidator;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.team.IMoveDeleteHook;
+import org.eclipse.core.resources.team.IResourceTree;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.team.core.RepositoryProvider;
 
 public class BinaryRepositoryProvider extends RepositoryProvider {
 	private IMoveDeleteHook moveDeleteHook;

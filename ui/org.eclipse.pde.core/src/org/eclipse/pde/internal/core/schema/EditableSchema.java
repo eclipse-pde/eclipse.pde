@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
-import java.io.*;
-import java.net.*;
+import java.io.PrintWriter;
+import java.net.URL;
 
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.core.IEditable;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 
 public class EditableSchema extends Schema implements IEditable {
 

@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
-import java.io.*;
+import java.io.PrintWriter;
 
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.ischema.IDocumentSection;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 
 public class DocumentSection extends SchemaObject implements IDocumentSection {
 

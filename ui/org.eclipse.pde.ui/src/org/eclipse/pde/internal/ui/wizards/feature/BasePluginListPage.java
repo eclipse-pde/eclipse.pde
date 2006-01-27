@@ -11,11 +11,11 @@
 
 package org.eclipse.pde.internal.ui.wizards.feature;
 
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.swt.widgets.Composite;
 
 public class BasePluginListPage extends WizardPage {
 	protected WizardCheckboxTablePart tablePart;

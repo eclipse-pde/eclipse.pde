@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.core.plugin;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IIdentifiable;
 /**
  * A model object that represents the content of a plug-in or
  * fragment manifest. This object contains data that is common

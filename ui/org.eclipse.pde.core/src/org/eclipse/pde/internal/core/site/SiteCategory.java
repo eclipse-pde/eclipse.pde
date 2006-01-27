@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.site;
 
-import java.io.*;
+import java.io.PrintWriter;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.isite.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.internal.core.isite.ISite;
+import org.eclipse.pde.internal.core.isite.ISiteCategory;
+import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
+import org.w3c.dom.Node;
 
 public class SiteCategory extends SiteObject implements ISiteCategory {
 	private static final long serialVersionUID = 1L;

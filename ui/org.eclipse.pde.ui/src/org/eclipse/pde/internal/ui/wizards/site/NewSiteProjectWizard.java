@@ -10,14 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.site;
 
-import java.lang.reflect.*;
+import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.operation.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.ui.wizards.newresource.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.wizards.NewWizard;
+import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 public class NewSiteProjectWizard extends NewWizard implements IExecutableExtension {
 

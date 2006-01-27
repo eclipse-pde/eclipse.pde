@@ -9,12 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core.build;
-import java.io.*;
-import java.util.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.internal.core.util.*;
+import java.io.PrintWriter;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.internal.core.util.PropertiesUtil;
 public class BuildEntry extends BuildObject implements IBuildEntry {
 	private Vector tokens = new Vector();
 	private String name;

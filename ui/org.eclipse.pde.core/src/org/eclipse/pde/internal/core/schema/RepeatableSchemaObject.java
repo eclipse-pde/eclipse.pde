@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.ischema.ISchemaRepeatable;
 
 public abstract class RepeatableSchemaObject extends SchemaObject implements ISchemaRepeatable {
 	public static final String P_MIN_OCCURS="min_occurs"; //$NON-NLS-1$

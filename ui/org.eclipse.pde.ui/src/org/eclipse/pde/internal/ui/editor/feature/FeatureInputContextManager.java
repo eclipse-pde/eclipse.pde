@@ -18,7 +18,8 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.context.*;
+import org.eclipse.pde.internal.ui.editor.context.InputContext;
+import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 
 public class FeatureInputContextManager extends InputContextManager {
 	/**

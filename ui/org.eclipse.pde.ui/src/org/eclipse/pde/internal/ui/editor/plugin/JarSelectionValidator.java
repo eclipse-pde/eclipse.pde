@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.ui.dialogs.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 	/**
 	 * Implementation of a <code>ISelectionValidator</code> to validate the
 	 * type of an element.

@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
+import java.util.Locale;
+import java.util.Vector;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.ifeature.IFeatureURL;
+import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class FeatureURL extends FeatureObject implements IFeatureURL {
 	private static final long serialVersionUID = 1L;

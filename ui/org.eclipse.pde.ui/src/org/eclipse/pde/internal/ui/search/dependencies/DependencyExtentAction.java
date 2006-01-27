@@ -11,10 +11,10 @@
 package org.eclipse.pde.internal.ui.search.dependencies;
 
 
-import org.eclipse.core.resources.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.search.ui.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.action.Action;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.search.ui.NewSearchUI;
 
 public class DependencyExtentAction extends Action {
 	

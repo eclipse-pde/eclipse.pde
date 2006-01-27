@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.context;
 
-import org.eclipse.core.filebuffers.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.rules.*;
-import org.eclipse.pde.internal.ui.editor.text.*;
+import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.rules.FastPartitioner;
+import org.eclipse.pde.internal.ui.editor.text.XMLPartitionScanner;
 
 public class XMLDocumentSetupParticpant implements IDocumentSetupParticipant {
 

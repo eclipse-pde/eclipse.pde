@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
+import java.io.File;
+
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
-import org.eclipse.core.runtime.IAdaptable;
-import java.io.*;
 
 /**
  * Insert the type's description here.

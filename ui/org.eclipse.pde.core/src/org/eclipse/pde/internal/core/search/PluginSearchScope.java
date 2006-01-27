@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.search;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
 
 public class PluginSearchScope {
 

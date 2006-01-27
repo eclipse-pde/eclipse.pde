@@ -10,14 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.site;
 
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
+import java.util.Vector;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.isite.*;
-import org.w3c.dom.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.isite.ISiteCategory;
+import org.eclipse.pde.internal.core.isite.ISiteFeature;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class SiteFeature extends VersionableObject implements ISiteFeature {
 	private static final long serialVersionUID = 1L;

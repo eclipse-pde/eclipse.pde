@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.elements;
 
-import java.util.*;
-import org.eclipse.swt.graphics.*;
+import java.util.Vector;
+
+import org.eclipse.swt.graphics.Image;
 
 
 public class ElementList extends NamedElement {

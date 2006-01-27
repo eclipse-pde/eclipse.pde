@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 
 public class JavaAttributeValue extends ResourceAttributeValue {
 	private ISchemaAttribute attInfo;

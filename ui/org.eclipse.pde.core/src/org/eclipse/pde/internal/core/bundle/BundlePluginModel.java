@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bundle;
 
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
 
 public class BundlePluginModel
 	extends BundlePluginModelBase

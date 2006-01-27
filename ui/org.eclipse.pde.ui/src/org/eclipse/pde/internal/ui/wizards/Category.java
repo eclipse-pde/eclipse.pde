@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards;
 
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.StringTokenizer;
+
+import org.eclipse.core.runtime.IConfigurationElement;
 
 public class Category {
 	private IConfigurationElement config;

@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
-import java.io.*;
+import java.io.Serializable;
 
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaType;
 
 public abstract class SchemaType implements ISchemaType, Serializable {
 	private String name;

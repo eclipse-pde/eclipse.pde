@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards;
 
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.pde.ui.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardNode;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.ui.IBasePluginWizard;
+import org.eclipse.swt.graphics.Point;
 
 public abstract class WizardNode implements IWizardNode {
 	private IWizard wizard;

@@ -16,11 +16,13 @@
  */
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.pde.internal.ui.parts.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.forms.events.*;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.TextSelection;
+import org.eclipse.pde.internal.ui.parts.FormEntry;
+import org.eclipse.pde.internal.ui.parts.IFormEntryListener;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 
 public class FormEntryAdapter implements IFormEntryListener {
 	private IContextPart contextPart;

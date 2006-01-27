@@ -12,10 +12,12 @@ package org.eclipse.pde.internal.ui.search;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.ui.*;
+import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
+import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IWorkbenchPart;
 
 public class PreviewReferenceAction implements IObjectActionDelegate {
 	private IFile fFile;

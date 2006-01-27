@@ -10,16 +10,23 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IModelChangedListener;
+import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
 import org.eclipse.pde.internal.core.IModelChangeProviderExtension;
-import org.eclipse.pde.internal.core.bundle.*;
-import org.eclipse.pde.internal.core.ibundle.*;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.core.IModelChangedListenerFilter;
+import org.eclipse.pde.internal.core.bundle.BundleFragmentModel;
+import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
+import org.eclipse.pde.internal.core.bundle.BundlePluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.build.*;
-import org.eclipse.pde.internal.ui.editor.context.*;
+import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
+import org.eclipse.pde.internal.ui.editor.context.InputContext;
+import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.ui.forms.IFormPart;
 
 

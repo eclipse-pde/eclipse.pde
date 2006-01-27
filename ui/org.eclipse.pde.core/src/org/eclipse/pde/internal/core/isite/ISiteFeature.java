@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.isite;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.internal.core.ifeature.IVersionable;
 
 public interface ISiteFeature extends IVersionable, ISiteObject {
 	String P_TYPE = "type"; //$NON-NLS-1$

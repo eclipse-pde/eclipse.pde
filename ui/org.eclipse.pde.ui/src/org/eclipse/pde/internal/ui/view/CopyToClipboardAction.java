@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.view;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import java.util.*;
 import org.eclipse.pde.internal.core.FileAdapter;
-import org.eclipse.swt.dnd.*;
-import java.io.*;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 
 public class CopyToClipboardAction extends Action {
 	IStructuredSelection selection;

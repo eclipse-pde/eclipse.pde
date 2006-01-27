@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.search.ui.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.NewSearchUI;
 
 
 public abstract class BaseSearchAction extends Action {

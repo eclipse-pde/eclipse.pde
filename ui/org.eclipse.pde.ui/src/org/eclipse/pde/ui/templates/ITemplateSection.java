@@ -12,9 +12,12 @@ package org.eclipse.pde.ui.templates;
 import java.net.URL;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginReference;
 
 /**
  * This interface represents a section of the template wizard that generates a

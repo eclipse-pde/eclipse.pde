@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bundle;
 
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.internal.core.ibundle.IBundleFragmentModel;
 
 public class BundleFragmentModel
 	extends BundlePluginModelBase

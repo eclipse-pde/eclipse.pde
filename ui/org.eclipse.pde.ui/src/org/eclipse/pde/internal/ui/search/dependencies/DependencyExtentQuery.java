@@ -12,14 +12,17 @@ package org.eclipse.pde.internal.ui.search.dependencies;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.search.ui.*;
-import org.eclipse.search.ui.text.*;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
 
 
 public class DependencyExtentQuery implements ISearchQuery {

@@ -11,7 +11,8 @@
 package org.eclipse.pde.ui;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginReference;
 /**
  * Classes that implement this interface are contributed via the extension point
  * <code>org.eclipse.pde.ui.pluginContent</code>. The expectation is that

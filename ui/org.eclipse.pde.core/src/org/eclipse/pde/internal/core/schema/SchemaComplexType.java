@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
+import java.util.Vector;
 
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
+import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
 
 public class SchemaComplexType
 	extends SchemaType

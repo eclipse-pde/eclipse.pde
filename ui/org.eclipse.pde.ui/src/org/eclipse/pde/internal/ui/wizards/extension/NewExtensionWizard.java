@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.extension;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.wizards.NewWizard;
+import org.eclipse.pde.internal.ui.wizards.WizardCollectionElement;
+import org.eclipse.pde.internal.ui.wizards.WizardElement;
 
 public class NewExtensionWizard extends NewWizard {
 	public static final String PLUGIN_POINT = "newExtension"; //$NON-NLS-1$

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.elements;
 
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Image;
 
 public interface IPDEElement {
 

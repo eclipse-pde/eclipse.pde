@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ischema;
 
-import java.net.*;
+import java.net.URL;
 
 /**
  * Classes that implement this interface are responsible for holding the schema

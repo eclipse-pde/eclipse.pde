@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IProject;
 
 public class ResourceAttributeValue {
 	private IProject project;

@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
-import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.jface.resource.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.schema.SchemaCompositor;
+import org.eclipse.pde.internal.core.schema.SchemaElementReference;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 
 public class NewReferenceAction extends Action {
 	private Object object;

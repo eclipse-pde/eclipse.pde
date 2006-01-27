@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.view;
 
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.ui.views.properties.*;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySource;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 public class ModelEntryPropertySource implements IPropertySource {
 	private IPropertyDescriptor [] descriptors;

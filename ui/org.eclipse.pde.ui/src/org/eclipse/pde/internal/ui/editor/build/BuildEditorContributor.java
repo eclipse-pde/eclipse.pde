@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor;
 import org.eclipse.swt.dnd.Clipboard;
 
 public class BuildEditorContributor extends PDEFormEditorContributor {

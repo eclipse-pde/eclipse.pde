@@ -11,16 +11,18 @@
 
 package org.eclipse.pde.internal.ui.wizards.templates;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.ui.templates.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.internal.core.TargetPlatform;
-import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.osgi.framework.*;
-
-import java.net.*;
-import java.util.*;
+import org.eclipse.pde.ui.templates.OptionTemplateSection;
+import org.osgi.framework.Bundle;
 
 public abstract class PDETemplateSection extends OptionTemplateSection {
 

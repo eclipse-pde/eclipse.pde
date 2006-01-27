@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.elements;
 
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 
 public class ListContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 

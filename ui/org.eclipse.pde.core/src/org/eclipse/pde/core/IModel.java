@@ -9,9 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.core;
-import java.io.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import java.io.InputStream;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 /**
  * A generic model. Classes that implement this interface are expected to be
  * able to:

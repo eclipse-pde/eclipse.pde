@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.build;
 
-import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.build.IBuildModelFactory;
 
 public class BuildModelFactory implements IBuildModelFactory {
 	private IBuildModel model;

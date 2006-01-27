@@ -9,8 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.core.build;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IWritable;
 /**
  * The top-level model object of the model that is created from
  * "build.properties" file.

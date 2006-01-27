@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor;
 import org.eclipse.swt.dnd.Clipboard;
 
 public class SiteEditorContributor extends PDEFormEditorContributor {

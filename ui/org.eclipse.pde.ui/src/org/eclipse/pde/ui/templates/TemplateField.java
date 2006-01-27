@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 /**
  * The base class for all the template option fields. Template option is a
  * single editable option that is exposed to the users in the wizard pages

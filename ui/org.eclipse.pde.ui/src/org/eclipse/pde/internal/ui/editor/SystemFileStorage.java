@@ -10,9 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import java.io.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.resources.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public class SystemFileStorage extends PlatformObject implements IStorage {

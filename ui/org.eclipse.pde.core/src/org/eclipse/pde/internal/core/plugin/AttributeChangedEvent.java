@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IModelChangeProvider;
+import org.eclipse.pde.core.ModelChangedEvent;
 
 public class AttributeChangedEvent extends ModelChangedEvent {
 	public static final String P_ATTRIBUTE_VALUE = "att_value"; //$NON-NLS-1$

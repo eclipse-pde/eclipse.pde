@@ -13,11 +13,17 @@ package org.eclipse.pde.internal.ui.wizards.extension;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.ElementList;
-import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.pde.internal.ui.wizards.Category;
+import org.eclipse.pde.internal.ui.wizards.WizardCollectionElement;
+import org.eclipse.pde.internal.ui.wizards.WizardElement;
 import org.eclipse.swt.graphics.Image;
 
 public class NewExtensionRegistryReader {

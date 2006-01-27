@@ -10,14 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.search.ui.text.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.search.ui.text.Match;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionContext;
 
 
 public class PluginSearchResultPage extends AbstractSearchResultPage {

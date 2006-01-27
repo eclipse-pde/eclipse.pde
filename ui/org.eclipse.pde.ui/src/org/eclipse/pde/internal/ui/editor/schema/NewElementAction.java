@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
-import java.util.*;
+import java.util.Hashtable;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.core.schema.Schema;
+import org.eclipse.pde.internal.core.schema.SchemaElement;
+import org.eclipse.pde.internal.core.schema.SchemaRootElement;
+import org.eclipse.pde.internal.core.schema.SchemaSimpleType;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class NewElementAction extends Action {
 	private Schema schema;

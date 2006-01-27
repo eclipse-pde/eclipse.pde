@@ -16,8 +16,8 @@
  */
 package org.eclipse.pde.internal.core.util;
 
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
+import java.util.Enumeration;
 
 public class PropertiesUtil {
 	private static final char[] HEX =

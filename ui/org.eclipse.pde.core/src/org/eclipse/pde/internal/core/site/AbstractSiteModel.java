@@ -10,15 +10,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.site;
 
-import java.io.*;
+import java.io.InputStream;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.SAXParser;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.isite.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.internal.core.AbstractModel;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.XMLDefaultHandler;
+import org.eclipse.pde.internal.core.isite.ISite;
+import org.eclipse.pde.internal.core.isite.ISiteModel;
+import org.eclipse.pde.internal.core.isite.ISiteModelFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 public abstract class AbstractSiteModel
 	extends AbstractModel

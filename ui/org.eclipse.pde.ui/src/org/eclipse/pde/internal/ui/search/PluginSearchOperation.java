@@ -10,13 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import java.util.*;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.search.*;
-import org.eclipse.pde.internal.core.util.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.search.PluginSearchInput;
+import org.eclipse.pde.internal.core.util.PatternConstructor;
 
 
 public class PluginSearchOperation {

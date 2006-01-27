@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.core.build;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IWritable;
 /**
  * Jar entry represents one 'library=folder list' entry
  * in plugin.jars file.

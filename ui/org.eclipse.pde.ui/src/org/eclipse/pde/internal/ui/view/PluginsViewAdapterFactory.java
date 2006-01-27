@@ -11,8 +11,9 @@
 package org.eclipse.pde.internal.ui.view;
 
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.pde.internal.core.FileAdapter;
+import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.ui.views.properties.IPropertySource;
-import org.eclipse.pde.internal.core.*;
 
 public class PluginsViewAdapterFactory implements IAdapterFactory {
 	private FileAdapterPropertySource adapterPropertySource;

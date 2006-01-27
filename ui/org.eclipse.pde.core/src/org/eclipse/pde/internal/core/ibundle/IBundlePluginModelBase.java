@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ibundle;
 import org.eclipse.pde.core.IEditable;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
 /**
  * An adapter of the pre-3.0 plug-in model base interface that is capable of
  * maintaining the predictable facade when dealing with plug-in with OSGi

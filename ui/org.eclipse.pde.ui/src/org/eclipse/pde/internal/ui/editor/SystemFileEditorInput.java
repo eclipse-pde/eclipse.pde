@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import java.io.*;
-import org.eclipse.ui.*;
+import java.io.File;
+
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IStorageEditorInput;
 
 public class SystemFileEditorInput implements IStorageEditorInput, IPersistableElement {
 	private SystemFileStorage storage;

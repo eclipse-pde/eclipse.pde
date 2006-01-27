@@ -18,7 +18,8 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.ui.templates.*;
+import org.eclipse.pde.ui.templates.AbstractNewPluginTemplateWizard;
+import org.eclipse.pde.ui.templates.ITemplateSection;
 
 public class NewPluginTemplateChoiceWizard
 	extends AbstractNewPluginTemplateWizard {

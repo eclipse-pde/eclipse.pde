@@ -13,13 +13,20 @@ package org.eclipse.pde.internal.ui.wizards.extension;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginReference;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.IExtensionWizard;
-import org.eclipse.pde.ui.templates.*;
+import org.eclipse.pde.ui.templates.BaseOptionTemplateSection;
+import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 /**
  * This wizard should be used as a base class for 

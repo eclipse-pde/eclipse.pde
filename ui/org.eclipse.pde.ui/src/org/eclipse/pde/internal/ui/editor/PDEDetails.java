@@ -12,8 +12,11 @@ package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.forms.AbstractFormPart;
+import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public abstract class PDEDetails extends AbstractFormPart implements IDetailsPage, IContextPart {

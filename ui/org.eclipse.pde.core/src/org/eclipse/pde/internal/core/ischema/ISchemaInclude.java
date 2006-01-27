@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ischema;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Classes that implement this interface represent a schema that is included in

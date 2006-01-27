@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.search.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.search.ui.*;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.search.PluginSearchInput;
+import org.eclipse.pde.internal.core.search.PluginSearchScope;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.search.ui.ISearchQuery;
 
 
 public class FindReferencesAction extends BaseSearchAction {

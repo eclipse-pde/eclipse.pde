@@ -11,12 +11,15 @@
 package org.eclipse.pde.internal.core.bundle;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
-import org.eclipse.pde.internal.core.ibundle.*;
-import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundleFragment;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.core.text.bundle.FragmentHostHeader;
-import org.osgi.framework.*;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 
 public class BundleFragment extends BundlePluginBase implements IBundleFragment {
 

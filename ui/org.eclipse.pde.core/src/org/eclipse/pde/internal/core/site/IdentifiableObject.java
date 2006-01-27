@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.site;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IIdentifiable;
+import org.w3c.dom.Node;
 
 public class IdentifiableObject extends SiteObject implements IIdentifiable {
 

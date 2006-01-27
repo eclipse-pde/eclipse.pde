@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.search.*;
-import org.eclipse.search.ui.*;
-import org.eclipse.search.ui.text.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.pde.core.ISourceObject;
+import org.eclipse.pde.internal.core.search.PluginSearchInput;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.Match;
 
 public class PluginSearchQuery implements ISearchQuery {
 

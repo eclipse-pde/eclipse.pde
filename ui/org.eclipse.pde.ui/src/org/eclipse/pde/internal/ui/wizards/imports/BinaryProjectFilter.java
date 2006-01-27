@@ -11,11 +11,14 @@
 package org.eclipse.pde.internal.ui.wizards.imports;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.team.core.*;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.pde.internal.core.BinaryRepositoryProvider;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.team.core.RepositoryProvider;
 
 public class BinaryProjectFilter extends ViewerFilter {
 

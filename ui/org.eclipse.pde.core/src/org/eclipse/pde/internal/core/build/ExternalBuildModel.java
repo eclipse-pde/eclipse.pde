@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.build;
 
-import java.io.*;
-import java.net.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Path;
 
 public class ExternalBuildModel extends BuildModel {
 

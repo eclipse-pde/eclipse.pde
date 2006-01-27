@@ -10,15 +10,23 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.view;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.*;
-import java.util.*;
-import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.ISetSelectionTarget;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.part.ISetSelectionTarget;
 
 public class ShowInWorkspaceAction extends Action {
 	private String viewId;

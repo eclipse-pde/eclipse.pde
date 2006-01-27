@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.core;
 
-import java.io.*;
+import java.io.PrintWriter;
 /**
  * Models that implement this interface indicate that
  * they can be changed. When a model is changed,

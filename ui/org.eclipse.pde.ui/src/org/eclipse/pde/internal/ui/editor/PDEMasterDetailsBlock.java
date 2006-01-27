@@ -11,12 +11,14 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.MasterDetailsBlock;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.forms.widgets.Section;
 
 public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {
 	private PDEFormPage page;

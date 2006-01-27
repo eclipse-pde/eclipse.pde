@@ -10,18 +10,29 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
 
-import java.io.*;
-import java.util.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.text.*;
-import org.eclipse.pde.internal.core.text.build.*;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.context.*;
-import org.eclipse.text.edits.*;
-import org.eclipse.ui.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.text.AbstractEditingModel;
+import org.eclipse.pde.internal.core.text.IDocumentKey;
+import org.eclipse.pde.internal.core.text.build.BuildModel;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
+import org.eclipse.pde.internal.ui.editor.context.InputContext;
+import org.eclipse.text.edits.DeleteEdit;
+import org.eclipse.text.edits.InsertEdit;
+import org.eclipse.text.edits.ReplaceEdit;
+import org.eclipse.text.edits.TextEdit;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IStorageEditorInput;
 
 public class BuildInputContext extends InputContext {
 	public static final String CONTEXT_ID = "build-context"; //$NON-NLS-1$

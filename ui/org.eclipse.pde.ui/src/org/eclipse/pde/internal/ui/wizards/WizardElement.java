@@ -10,12 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards;
 
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IPluginContribution;
-import org.osgi.framework.*;
+import org.osgi.framework.Bundle;
 
 public class WizardElement extends NamedElement implements IPluginContribution {
 	public static final String ATT_NAME = "name"; //$NON-NLS-1$

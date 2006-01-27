@@ -10,13 +10,24 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.util.Hashtable;
+import java.util.Vector;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.pde.core.ISourceObject;
+import org.eclipse.pde.internal.core.ischema.IMetaElement;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
+import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
+import org.eclipse.pde.internal.core.ischema.ISchemaType;
+import org.w3c.dom.Comment;
+import org.w3c.dom.Node;
 
 public class SchemaElementReference extends PlatformObject implements
 		ISchemaElement, IMetaElement, ISchemaObjectReference, ISourceObject,

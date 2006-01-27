@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import org.eclipse.pde.ui.*;
+import org.eclipse.pde.ui.IFragmentFieldData;
 
 public class FragmentFieldData extends AbstractFieldData implements IFragmentFieldData {
 

@@ -10,13 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
-import java.util.*;
+import java.util.Hashtable;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.schema.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
+import org.eclipse.pde.internal.core.ischema.ISchemaType;
+import org.eclipse.pde.internal.core.schema.SchemaAttribute;
+import org.eclipse.pde.internal.core.schema.SchemaComplexType;
+import org.eclipse.pde.internal.core.schema.SchemaElement;
+import org.eclipse.pde.internal.core.schema.SchemaSimpleType;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class NewAttributeAction extends Action {
 	private SchemaElement element;

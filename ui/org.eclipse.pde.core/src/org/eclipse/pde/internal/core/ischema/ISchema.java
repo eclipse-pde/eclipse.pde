@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ischema;
 
-import java.net.*;
+import java.net.URL;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IModelChangeProvider;
 
 /**
  * Objects of this class encapsulate data loaded from the XML Schema file that

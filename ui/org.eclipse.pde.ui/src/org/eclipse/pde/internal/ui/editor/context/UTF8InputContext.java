@@ -15,8 +15,8 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.ui.editor.context;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.ui.*;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.ui.IEditorInput;
 
 
 public abstract class UTF8InputContext extends InputContext {

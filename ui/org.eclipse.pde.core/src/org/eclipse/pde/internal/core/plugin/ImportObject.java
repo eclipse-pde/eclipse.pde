@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.*;
+import java.io.PrintWriter;
+import java.io.Serializable;
 
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.ISourceObject;
+import org.eclipse.pde.core.IWritable;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginImport;
 
 public class ImportObject extends PluginReference implements IWritable, Serializable {
 	private static final long serialVersionUID = 1L;

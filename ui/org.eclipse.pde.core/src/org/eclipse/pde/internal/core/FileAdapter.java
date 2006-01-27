@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
+import java.io.File;
 import java.util.Locale;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.PlatformObject;
 
 public class FileAdapter extends PlatformObject {
 	private File file;

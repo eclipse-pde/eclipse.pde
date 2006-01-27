@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.templates;
 
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.ui.*;
-import org.eclipse.pde.ui.templates.*;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.ui.IFieldData;
+import org.eclipse.pde.ui.templates.ITemplateSection;
+import org.eclipse.pde.ui.templates.NewPluginTemplateWizard;
 
 
 public class MailNewWizard extends NewPluginTemplateWizard {

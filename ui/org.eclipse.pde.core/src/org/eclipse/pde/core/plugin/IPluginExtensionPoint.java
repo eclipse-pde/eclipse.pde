@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.core.plugin;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IIdentifiable;
 /**
  * Classes that implement this interface model an extension point
  * element specified in the plug-in manifest.

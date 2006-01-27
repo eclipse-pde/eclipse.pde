@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.texteditor.*;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 
 /**
  * A marker annotation model whose underlying source of markers is 

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.core.plugin;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * A model object that contains the portion of the plug-in model

@@ -14,9 +14,11 @@ package org.eclipse.pde.internal.core.bundle;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundlePlugin;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleActivatorHeader;
-import org.osgi.framework.*;
+import org.osgi.framework.Constants;
 
 public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 

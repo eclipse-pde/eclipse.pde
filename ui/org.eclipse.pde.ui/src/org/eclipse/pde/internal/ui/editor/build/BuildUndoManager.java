@@ -12,10 +12,14 @@ package org.eclipse.pde.internal.ui.editor.build;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.internal.core.build.*;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.internal.core.build.BuildObject;
+import org.eclipse.pde.internal.core.build.IBuildObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.ModelUndoManager;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 
 public class BuildUndoManager extends ModelUndoManager {
 

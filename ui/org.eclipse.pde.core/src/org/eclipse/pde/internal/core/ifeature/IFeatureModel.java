@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ifeature;
 
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelChangeProvider;
 /**
  * This model type is designed to hold data loaded from
  * "feature.xml" file of an Eclipse feature.

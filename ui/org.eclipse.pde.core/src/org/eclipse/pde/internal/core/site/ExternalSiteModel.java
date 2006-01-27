@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.site;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 
 
 public class ExternalSiteModel extends AbstractSiteModel {

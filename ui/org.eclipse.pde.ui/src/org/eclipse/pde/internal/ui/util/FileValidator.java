@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.ui.dialogs.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 
 public class FileValidator implements ISelectionStatusValidator {
 

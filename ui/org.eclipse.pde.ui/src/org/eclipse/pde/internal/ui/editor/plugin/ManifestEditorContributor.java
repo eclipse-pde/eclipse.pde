@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor;
 
 public class ManifestEditorContributor extends PDEFormEditorContributor {
 	/**

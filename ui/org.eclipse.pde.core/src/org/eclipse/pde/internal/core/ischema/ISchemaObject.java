@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ischema;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.pde.core.IWritable;
 /**
  * Base interface for all objects that belong to the extension point
  * schema model.

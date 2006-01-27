@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import java.util.*;
+import java.util.ArrayList;
 
-import org.eclipse.pde.ui.*;
-import org.eclipse.pde.ui.templates.*;
+import org.eclipse.pde.ui.IPluginFieldData;
+import org.eclipse.pde.ui.templates.ITemplateSection;
 
 public class PluginFieldData extends AbstractFieldData implements IPluginFieldData {
 	

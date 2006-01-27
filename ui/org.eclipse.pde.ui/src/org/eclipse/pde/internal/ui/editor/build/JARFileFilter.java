@@ -11,8 +11,11 @@
 
 package org.eclipse.pde.internal.ui.editor.build;
 
-import java.util.*;
-import org.eclipse.core.resources.*;
+import java.util.HashSet;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.Viewer;

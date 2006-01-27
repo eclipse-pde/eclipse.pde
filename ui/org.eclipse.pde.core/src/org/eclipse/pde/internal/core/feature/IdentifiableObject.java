@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.IIdentifiable;
+import org.w3c.dom.Node;
 
 public class IdentifiableObject extends FeatureObject implements IIdentifiable {
 	private static final long serialVersionUID = 1L;

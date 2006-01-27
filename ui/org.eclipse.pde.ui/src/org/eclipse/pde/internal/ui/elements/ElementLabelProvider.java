@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.elements;
 
-import org.eclipse.swt.graphics.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
 
 public class ElementLabelProvider extends LabelProvider {
 	public static final ElementLabelProvider INSTANCE = new ElementLabelProvider();

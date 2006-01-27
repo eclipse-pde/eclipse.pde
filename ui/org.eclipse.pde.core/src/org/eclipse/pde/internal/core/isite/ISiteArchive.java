@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.isite;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 
 public interface ISiteArchive extends ISiteObject {
 	String P_URL = "url"; //$NON-NLS-1$

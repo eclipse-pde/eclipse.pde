@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
-import java.io.*;
-import java.net.*;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 
 
 public class SchemaDescriptor implements ISchemaDescriptor {

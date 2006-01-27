@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.search;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.pde.core.plugin.IPluginObject;
 
 public interface IPluginSearchResultCollector {
 	

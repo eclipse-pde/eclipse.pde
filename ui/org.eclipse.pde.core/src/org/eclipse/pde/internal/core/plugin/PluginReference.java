@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.internal.core.PDECore;
 
 public class PluginReference extends PlatformObject {
 	private String id;

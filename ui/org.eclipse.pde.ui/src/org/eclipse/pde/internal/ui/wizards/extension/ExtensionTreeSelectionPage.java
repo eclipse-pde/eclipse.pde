@@ -11,12 +11,17 @@
 package org.eclipse.pde.internal.ui.wizards.extension;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.ui.*;
+import org.eclipse.pde.internal.ui.wizards.WizardCollectionElement;
+import org.eclipse.pde.internal.ui.wizards.WizardElement;
+import org.eclipse.pde.internal.ui.wizards.WizardNode;
+import org.eclipse.pde.internal.ui.wizards.WizardTreeSelectionPage;
+import org.eclipse.pde.ui.IBasePluginWizard;
+import org.eclipse.pde.ui.IExtensionWizard;
 import org.eclipse.pde.ui.templates.ITemplateSection;
 
 /**

@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import java.util.*;
+import java.util.ArrayList;
 
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.reconciler.*;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.reconciler.DirtyRegion;
+import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 
 public class ReconcilingStrategy implements IReconcilingStrategy {

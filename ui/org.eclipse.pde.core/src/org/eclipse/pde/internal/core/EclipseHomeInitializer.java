@@ -11,8 +11,11 @@
 package org.eclipse.pde.internal.core;
 
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jdt.core.ClasspathVariableInitializer;
+import org.eclipse.jdt.core.JavaCore;
 
 public class EclipseHomeInitializer extends ClasspathVariableInitializer {
 

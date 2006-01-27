@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.view;
 
-import org.eclipse.pde.internal.core.FileAdapter;
-import org.eclipse.ui.views.properties.*;
-import java.util.*;
 import java.text.DateFormat;
+import java.util.Date;
+
+import org.eclipse.pde.internal.core.FileAdapter;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySource;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 public class FileAdapterPropertySource implements IPropertySource {
 	private IPropertyDescriptor [] descriptors;

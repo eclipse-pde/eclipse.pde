@@ -11,14 +11,16 @@
 package org.eclipse.pde.internal.ui.wizards.site;
 
 import java.util.Hashtable;
-import org.eclipse.jface.action.*;
+
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.ui.*;
-import org.eclipse.ui.cheatsheets.*;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.cheatsheets.ICheatSheetAction;
+import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 
 public class OpenProjectWizardAction extends Action implements ICheatSheetAction {
 	/**

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.*;
+import java.util.ArrayList;
 
 public class PluginModelDelta {
 	public static final int ADDED = 1;

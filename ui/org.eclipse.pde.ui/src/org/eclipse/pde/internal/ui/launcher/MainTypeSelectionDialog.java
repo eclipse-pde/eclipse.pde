@@ -14,7 +14,7 @@ package org.eclipse.pde.internal.ui.launcher;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;

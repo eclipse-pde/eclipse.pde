@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ibundle;
 
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelChangeProvider;
 /**
  * This model is created from the "META-INF/MANIFEST.MF" file that represents
  * the plug-in manifest in Eclipse 3.0 OSGi format.

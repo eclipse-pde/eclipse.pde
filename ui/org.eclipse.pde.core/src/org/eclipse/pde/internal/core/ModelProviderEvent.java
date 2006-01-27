@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelProviderEvent;
 
 public class ModelProviderEvent implements IModelProviderEvent {
 	private int types;

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
 
 public class SourceLocation {
 	private IPath path;

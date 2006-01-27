@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.site;
 
-import java.io.*;
+import java.io.PrintWriter;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.isite.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.internal.core.isite.ISiteDescription;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class SiteDescription extends SiteObject implements ISiteDescription {
 	private static final long serialVersionUID = 1L;

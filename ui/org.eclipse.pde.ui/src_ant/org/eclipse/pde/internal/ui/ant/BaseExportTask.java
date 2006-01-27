@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.ant;
 
-import org.apache.tools.ant.*;
-import org.eclipse.core.runtime.jobs.*;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+import org.eclipse.core.runtime.jobs.Job;
 
 public abstract class BaseExportTask extends Task {
 	
