@@ -72,7 +72,7 @@ public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPag
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#elementsChanged(java.lang.Object[])
 	 */
 	protected void elementsChanged(Object[] objects) {
-		if (fContentProvider != null)
+		if (fContentProvider != null && fContentProvider.fSearchResult != null)
 			fContentProvider.elementsChanged(objects);
 	}
 
