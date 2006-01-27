@@ -145,6 +145,8 @@ public class DependencyExtentOperation {
 	
 	private void searchForTypesUsed(SearchEngine engine, IJavaElement parent, IType[] types, IJavaSearchScope scope) throws CoreException {
 		for (int i = 0; i < types.length; i++) {
+			if (types[i].isAnonymous())
+				continue;
 			TypeReferenceSearchRequestor requestor = new TypeReferenceSearchRequestor();
 			engine.search(
 					SearchPattern.createPattern(types[i], IJavaSearchConstants.REFERENCES),
