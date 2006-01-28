@@ -66,7 +66,7 @@ public interface IFieldData {
 	 * 
 	 * @return <code>true</code> if the plug-in is created for use with
 	 *         products based on Eclipse before release 3.0, <code>false</code>
-	 *         if the plug-ins is compatible with Eclipse 3.0.
+	 *         if the plug-in is compatible with Eclipse 3.0.
 	 */
 	boolean isLegacy();
 	

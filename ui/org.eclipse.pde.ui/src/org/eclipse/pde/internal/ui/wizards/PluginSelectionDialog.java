@@ -52,10 +52,6 @@ public class PluginSelectionDialog extends ElementListSelectionDialog {
 	
 	public static HashSet getExistingImports(IPluginBase model) {
 		HashSet existingImports = new HashSet();
-		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			existingImports.add("org.eclipse.core.boot"); //$NON-NLS-1$
-			existingImports.add("org.eclipse.core.runtime"); //$NON-NLS-1$
-		}
 		addSelfAndDirectImports(existingImports, model);
 		if (model instanceof IFragment) {
 			IPlugin parent = getParentPlugin((IFragment) model);

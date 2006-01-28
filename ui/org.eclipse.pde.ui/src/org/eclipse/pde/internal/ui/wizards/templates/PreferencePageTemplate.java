@@ -108,11 +108,9 @@ public class PreferencePageTemplate extends PDETemplateSection {
 
 	protected String getTemplateDirectory() {
 		String schemaVersion = model.getPluginBase().getSchemaVersion();
-		if (PDECore.getDefault().getModelManager().isOSGiRuntime()
-				&& schemaVersion != null)
-			return "templates_" + schemaVersion; //$NON-NLS-1$
-		return "templates"; //$NON-NLS-1$
+		return "templates_" + schemaVersion == null ? "3.0" : schemaVersion; //$NON-NLS-1$
 	}
+	
 	public String getReplacementString(String fileName, String key) {
 		if (key.equals(KEY_FULL_PLUGIN_CLASS_NAME))
 			return mainClassName;
@@ -182,17 +180,15 @@ public class PreferencePageTemplate extends PDETemplateSection {
 		if (!extension.isInTheModel())
 			plugin.add(extension);
 
-		if (PDECore.getDefault().getModelManager().isOSGiRuntime()
-				&& model.getPluginBase().getSchemaVersion() != null) {
-			IPluginExtension extension2 = createExtension("org.eclipse.core.runtime.preferences", true); //$NON-NLS-1$
-			IPluginElement prefElement = factory.createElement(extension);
-			prefElement.setName("initializer"); //$NON-NLS-1$
-			prefElement.setAttribute("class", getStringOption(KEY_PACKAGE_NAME)+".PreferenceInitializer"); //$NON-NLS-1$ //$NON-NLS-2$
-			extension2.add(prefElement);
-			if (!extension2.isInTheModel())
-				plugin.add(extension2);
-		}
-}
+		IPluginExtension extension2 = createExtension("org.eclipse.core.runtime.preferences", true); //$NON-NLS-1$
+		IPluginElement prefElement = factory.createElement(extension);
+		prefElement.setName("initializer"); //$NON-NLS-1$
+		prefElement.setAttribute("class", getStringOption(KEY_PACKAGE_NAME)+".PreferenceInitializer"); //$NON-NLS-1$ //$NON-NLS-2$
+		extension2.add(prefElement);
+		if (!extension2.isInTheModel())
+			plugin.add(extension2);
+    }
+
 	
 	/* (non-Javadoc)
      * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)

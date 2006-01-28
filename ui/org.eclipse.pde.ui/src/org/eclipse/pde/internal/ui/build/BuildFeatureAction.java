@@ -47,7 +47,7 @@ public class BuildFeatureAction extends BaseBuildAction {
 		}
 		
 		BuildScriptGenerator generator = new BuildScriptGenerator();
-		generator.setBuildingOSGi(PDECore.getDefault().getModelManager().isOSGiRuntime());
+		generator.setBuildingOSGi(true);
 		generator.setChildren(true);
 		AbstractScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
 

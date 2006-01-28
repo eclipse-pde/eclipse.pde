@@ -1410,7 +1410,6 @@ public class PDEUIMessages extends NLS {
 	public static String PluginsView_manifestEditor;
 	public static String PluginContentPage_rcpGroup;
 	public static String PluginContentPage_appClass;
-	public static String PluginContentPage_noLibrary;
 	public static String PluginWorkingSet_emptyName;
 	public static String PluginWorkingSet_nameInUse;
 	public static String PluginsView_schemaEditor;

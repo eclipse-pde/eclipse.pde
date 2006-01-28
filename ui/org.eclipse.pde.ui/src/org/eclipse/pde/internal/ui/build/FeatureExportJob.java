@@ -364,7 +364,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 	}
 
 	protected void setupGenerator(BuildScriptGenerator generator, String featureID, String versionId, String os, String ws, String arch, String featureLocation) throws CoreException {
-		generator.setBuildingOSGi(PDECore.getDefault().getModelManager().isOSGiRuntime());
+		generator.setBuildingOSGi(true);
 		generator.setChildren(true);
 		generator.setWorkingDirectory(featureLocation);
 		generator.setDevEntries(getDevProperties());

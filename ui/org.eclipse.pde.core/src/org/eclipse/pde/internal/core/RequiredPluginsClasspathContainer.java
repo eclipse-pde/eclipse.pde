@@ -151,9 +151,6 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			if (build != null)
 				addExtraClasspathEntries(added, entries, build);
 
-			// add implicit dependencies
-			addImplicitDependencies(added, map, entries);
-			
 		} catch (CoreException e) {
 		}
 		return (IClasspathEntry[])entries.toArray(new IClasspathEntry[entries.size()]);
@@ -284,39 +281,6 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	private Rule[] getInclusions(Map map, BundleDescription desc) {
 		ArrayList list = (ArrayList)map.get(desc.getSymbolicName());
 		return list != null ? (Rule[])list.toArray(new Rule[list.size()]) : new Rule[0];		
-	}
-
-	private void addImplicitDependencies(HashSet added, Map map, ArrayList entries) throws CoreException {
-		String id = fModel.getPluginBase().getId();
-		String schemaVersion = fModel.getPluginBase().getSchemaVersion();
-		boolean isOSGi = TargetPlatform.isOSGi();
-		
-		if ((isOSGi && schemaVersion != null)
-				|| id.equals("org.eclipse.core.boot") //$NON-NLS-1$
-				|| id.equals("org.apache.xerces") //$NON-NLS-1$
-				|| id.startsWith("org.eclipse.swt")) //$NON-NLS-1$
-			return;
-
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-
-		if (schemaVersion == null && isOSGi) {
-			if (!id.equals("org.eclipse.core.runtime")) { //$NON-NLS-1$
-				IPluginModelBase plugin = manager.findModel(
-						"org.eclipse.core.runtime.compatibility"); //$NON-NLS-1$
-				if (plugin != null && plugin.isEnabled())
-					addDependency(plugin.getBundleDescription(), added, map, entries);
-			}
-		} else {
-			IPluginModelBase plugin = manager.findModel("org.eclipse.core.boot"); //$NON-NLS-1$
-			if (plugin != null && plugin.isEnabled())
-				addDependency(plugin.getBundleDescription(), added, map, entries);
-			
-			if (!id.equals("org.eclipse.core.runtime")) { //$NON-NLS-1$
-				plugin = manager.findModel("org.eclipse.core.runtime"); //$NON-NLS-1$
-				if (plugin != null && plugin.isEnabled())
-					addDependency(plugin.getBundleDescription(), added, map, entries);
-			}
-		}
 	}
 
 	private void addHostPlugin(HostSpecification hostSpec, HashSet added, Map map, ArrayList entries) throws CoreException {

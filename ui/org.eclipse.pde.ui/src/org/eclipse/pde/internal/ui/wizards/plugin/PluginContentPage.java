@@ -18,7 +18,6 @@ import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
@@ -158,9 +157,7 @@ public class PluginContentPage extends ContentPage {
 		data.setClassname(fClassText.getText().trim());
 		data.setUIPlugin(fUIPlugin.getSelection());
 		data.setDoGenerateClass(fGenerateClass.isEnabled() && fGenerateClass.getSelection());
-		data.setRCPApplicationPlugin(!fData.isSimple()
-						&& !fData.isLegacy()
-						&& fYesButton.getSelection());
+		data.setRCPApplicationPlugin(!fData.isSimple() && fYesButton.getSelection());
 	}
 	
 	private void createRCPGroup(Composite container){
@@ -226,7 +223,7 @@ public class PluginContentPage extends ContentPage {
 				fClassText.setText(computeId().toLowerCase(Locale.ENGLISH) + ".Activator"); //$NON-NLS-1$
 				fChangedGroups = oldfChanged;
 			}		
-			fRCPGroup.setVisible(!fData.isLegacy() && !fData.isSimple() && !pureOSGi);
+			fRCPGroup.setVisible(!fData.isSimple() && !pureOSGi);
     	}
         super.setVisible(visible);
     }
@@ -236,11 +233,6 @@ public class PluginContentPage extends ContentPage {
 	 */
 	protected void validatePage() {
 		String errorMessage = validateProperties();
-		if (errorMessage == null && !fData.isSimple()) {
-			if (fLibraryText.getText().trim().length() == 0 && fData.getTargetVersion().equals(ICoreConstants.TARGET21)) {
-				errorMessage = PDEUIMessages.PluginContentPage_noLibrary; 
-			}	
-		}
 		if (errorMessage == null && fGenerateClass.isEnabled() && fGenerateClass.getSelection()) {
 			IStatus status = JavaConventions.validateJavaTypeName(fClassText.getText().trim());
 			if (status.getSeverity() == IStatus.ERROR) {

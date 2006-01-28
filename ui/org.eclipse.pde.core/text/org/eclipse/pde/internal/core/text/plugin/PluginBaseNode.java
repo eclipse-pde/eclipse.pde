@@ -20,7 +20,6 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 
 public abstract class PluginBaseNode extends PluginObjectNode implements IPluginBase {
@@ -332,9 +331,8 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + newLine); //$NON-NLS-1$
-		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			buffer.append("<?eclipse version=\"3.0\"?>" + newLine); //$NON-NLS-1$
-		}
+		buffer.append("<?eclipse version=\"3.0\"?>" + newLine); //$NON-NLS-1$
+		
 		buffer.append(writeShallow(false) + newLine);
 		
 		IDocumentNode runtime = getEnclosingElement("runtime", false); //$NON-NLS-1$

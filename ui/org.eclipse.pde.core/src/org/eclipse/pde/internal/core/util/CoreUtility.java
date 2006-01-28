@@ -250,7 +250,7 @@ public class CoreUtility {
 			return true;
 	
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-		if (libraries.length == 0 && PDECore.getDefault().getModelManager().isOSGiRuntime())
+		if (libraries.length == 0)
 			return false;
 	
 		for (int i = 0; i < libraries.length; i++) {

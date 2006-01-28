@@ -126,7 +126,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		});
 		
 		fTargetCombo = new Combo(group, SWT.READ_ONLY|SWT.SINGLE);
-		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET32, ICoreConstants.TARGET31, ICoreConstants.TARGET30, ICoreConstants.TARGET21});
+		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET32, ICoreConstants.TARGET31, ICoreConstants.TARGET30});
 		fTargetCombo.setText(TargetPlatform.getTargetVersionString());
 		
 	    fOSGIButton = createButton(group, SWT.RADIO, 1, 30);
@@ -142,7 +142,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fJarredCheck.setLayoutData(gd);
-		updateBundleCheck();
+		fJarredCheck.setSelection(Double.parseDouble(fTargetCombo.getText()) >= 3.1);
 	}
 	
 	private void createPluginPropertiesGroup(Composite container) {
@@ -218,18 +218,11 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		}
 	}
 
-	private void updateBundleCheck() {
-		boolean legacy = fTargetCombo.getText().equals(ICoreConstants.TARGET21);
-		fJarredCheck.setEnabled(!legacy);
-		double target = Double.parseDouble(fTargetCombo.getText());
-		fJarredCheck.setSelection(target >= 3.1);
-	}
-
 	public void updateData() {
 		fData.setSimple(false);
 		fData.setSourceFolderName(null);
 		fData.setOutputFolderName(null);
-		fData.setLegacy(fTargetCombo.getText().equals(ICoreConstants.TARGET21));
+		fData.setLegacy(false);
 		fData.setTargetVersion(fTargetCombo.getText());
 
 		fData.setId(fIdText.getText().trim());

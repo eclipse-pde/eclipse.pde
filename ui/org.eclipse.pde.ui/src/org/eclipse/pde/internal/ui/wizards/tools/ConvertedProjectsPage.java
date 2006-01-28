@@ -42,7 +42,6 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.internal.PDE;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPluginConverter;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
@@ -154,8 +153,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 		WorkspacePluginModel model = new WorkspacePluginModel(file, false);
 		model.load();
 		IPlugin plugin = model.getPlugin();
-		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
-			plugin.setSchemaVersion("3.0"); //$NON-NLS-1$
+		plugin.setSchemaVersion("3.0"); //$NON-NLS-1$
 		plugin.setId(file.getProject().getName());
 		plugin.setName(createInitialName(plugin.getId()));
 		plugin.setVersion("1.0.0"); //$NON-NLS-1$
