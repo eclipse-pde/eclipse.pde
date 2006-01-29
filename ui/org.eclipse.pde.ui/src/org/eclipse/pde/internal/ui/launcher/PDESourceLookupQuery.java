@@ -51,6 +51,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 public class PDESourceLookupQuery implements ISafeRunnable {
 	
 	private static String ECLIPSE_CLASSLOADER = "org.eclipse.core.runtime.adaptor.EclipseClassLoader"; //$NON-NLS-1$
+	private static String MAIN_CLASS = "org.eclipse.core.launcher.Main"; //$NON-NLS-1$
+	private static String MAIN_PLUGIN = "org.eclipse.platform"; //$NON-NLS-1$
 	
 	private Object fElement;
 	private Object fResult;
@@ -66,9 +68,13 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 		if (fElement instanceof IJavaStackFrame) {
 			IJavaStackFrame stackFrame = (IJavaStackFrame)fElement;
 			IJavaObject bundleData = getBundleData(stackFrame);
+			String typeName = generateSourceName(stackFrame.getDeclaringTypeName());
 			if (bundleData != null) {
-				String typeName = generateSourceName(stackFrame.getDeclaringTypeName());
 				fResult = getSourceElement(bundleData, typeName);
+			} else if (MAIN_CLASS.equals(stackFrame.getDeclaringTypeName())){
+				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(MAIN_PLUGIN);
+				if (model != null)
+					fResult = getSourceElement(model.getInstallLocation(), MAIN_PLUGIN, typeName);
 			}
 		}
 	}
@@ -101,6 +107,10 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	private Object getSourceElement(IJavaObject bundleData, String elementName) throws CoreException {
 		String location = getValue(bundleData, "fileName"); //$NON-NLS-1$
 		String id = getValue(bundleData, "symbolicName"); //$NON-NLS-1$
+		return getSourceElement(location, id, elementName);
+	}	
+	
+	private Object getSourceElement(String location, String id, String elementName) throws CoreException {
 		if (location != null && id != null) {
 			Object result = findSourceElement(getSourceContainers(location, id), elementName);
 			if (result != null)
