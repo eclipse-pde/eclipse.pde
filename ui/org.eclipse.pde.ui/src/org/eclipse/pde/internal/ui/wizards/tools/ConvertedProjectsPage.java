@@ -154,7 +154,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 		model.load();
 		IPlugin plugin = model.getPlugin();
 		plugin.setSchemaVersion("3.0"); //$NON-NLS-1$
-		plugin.setId(file.getProject().getName());
+		plugin.setId(getValidId(file.getProject().getName()));
 		plugin.setName(createInitialName(plugin.getId()));
 		plugin.setVersion("1.0.0"); //$NON-NLS-1$
 		
@@ -176,6 +176,10 @@ public class ConvertedProjectsPage extends WizardPage  {
 		PDEPluginConverter.convertToOSGIFormat(file.getProject(), TargetPlatform.getTargetVersionString(), null, new SubProgressMonitor(monitor, 1));
 		organizeExports(file.getProject());
 		file.delete(true, null);
+	}
+
+	private String getValidId(String name) {
+		return name.replaceAll("[^a-zA-Z0-9\\._]", "_"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private boolean isOldTarget() {
