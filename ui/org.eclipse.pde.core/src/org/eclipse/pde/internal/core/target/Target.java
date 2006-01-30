@@ -35,7 +35,6 @@ import org.w3c.dom.NodeList;
 public class Target extends TargetObject implements ITarget {
 
 	private static final long serialVersionUID = 1L;
-	private String fId;
 	private String fName;
 	private TreeMap fPlugins = new TreeMap();
 	private TreeMap fFeatures = new TreeMap();
@@ -67,7 +66,6 @@ public class Target extends TargetObject implements ITarget {
 		if (node.getNodeType() == Node.ELEMENT_NODE 
 				&& node.getNodeName().equals("target")) { //$NON-NLS-1$
 			Element element = (Element)node; 
-			fId = element.getAttribute(P_ID); 
 			fName = element.getAttribute(P_NAME); 
 			NodeList children = node.getChildNodes();
 			ITargetModelFactory factory = getModel().getFactory();
@@ -155,8 +153,6 @@ public class Target extends TargetObject implements ITarget {
 
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<target"); //$NON-NLS-1$
-		if (fId != null && fId.length() > 0)
-			writer.print(" " + P_ID + "=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (fName != null && fName.length() > 0)
 			writer.print(" " + P_NAME + "=\"" + getWritableString(fName) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.println(">"); //$NON-NLS-1$
@@ -234,16 +230,6 @@ public class Target extends TargetObject implements ITarget {
 	public void setTargetJREInfo(ITargetJRE info) {
 		fRuntimeInfo = info;
 		
-	}
-
-	public String getId() {
-		return fId;
-	}
-
-	public void setId(String id) {
-		String oldValue = fId;
-		fId = id;
-		firePropertyChanged(P_ID, oldValue, fId);
 	}
 
 	public String getName() {

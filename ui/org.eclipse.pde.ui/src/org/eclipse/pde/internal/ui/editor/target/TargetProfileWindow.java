@@ -124,7 +124,6 @@ public class TargetProfileWindow extends ApplicationWindow {
 		
 		ITarget target = fTargetModel.getTarget();
 		createEntry(body, toolkit, PDEUIMessages.TargetDefinitionSection_name, target.getName());
-		createEntry(body, toolkit, PDEUIMessages.TargetDefinitionSection_id, target.getId());
 		createEntry(body, toolkit, PDEUIMessages.TargetDefinitionSection_targetLocation, getLocation(target));
 		
 		IAdditionalLocation[] locs = target.getAdditionalDirectories();

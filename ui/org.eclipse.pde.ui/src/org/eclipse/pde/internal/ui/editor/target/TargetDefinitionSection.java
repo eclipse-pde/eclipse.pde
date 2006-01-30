@@ -69,8 +69,6 @@ public class TargetDefinitionSection extends PDESection {
 		
 		createNameEntry(client, toolkit, actionBars);
 		
-		createIDEntry(client, toolkit, actionBars);
-		
 		createLocation(client, toolkit, actionBars);
 		
 		toolkit.paintBordersFor(client);
@@ -91,18 +89,6 @@ public class TargetDefinitionSection extends PDESection {
 		fNameEntry.setEditable(isEditable());
 	}
 
-	private void createIDEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
-		fIDEntry = new FormEntry(client, toolkit, PDEUIMessages.TargetDefinitionSection_id, null, false); 
-		fIDEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
-			public void textValueChanged(FormEntry entry) {
-				getTarget().setId(entry.getValue());
-			}
-		});
-		GridData gd = (GridData)fIDEntry.getText().getLayoutData();
-		gd.horizontalSpan = 4;
-		fIDEntry.setEditable(isEditable());
-	}
-	
 	private void createLocation(Composite client, FormToolkit toolkit, IActionBars actionBars) {
 		Label label = toolkit.createLabel(client, PDEUIMessages.TargetDefinitionSection_targetLocation);
 		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
@@ -190,7 +176,6 @@ public class TargetDefinitionSection extends PDESection {
 	public void refresh() {
 		ITarget target = getTarget();
 		fNameEntry.setValue(target.getName(), true);
-		fIDEntry.setValue(target.getId(), true);
 		ILocationInfo info = getLocationInfo();
 		fUseDefault.setSelection(info.useDefault());
 		fCustomPath.setSelection(!info.useDefault());

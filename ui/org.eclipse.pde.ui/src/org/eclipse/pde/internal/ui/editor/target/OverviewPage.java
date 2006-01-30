@@ -42,12 +42,11 @@ public class OverviewPage extends PDEFormPage {
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
 		GridLayout layout = new GridLayout();
-		layout.marginBottom = 10;
+		layout.marginBottom = 5;
 		layout.marginTop = 5;
 		layout.marginLeft = 10;
 		layout.marginRight = 10;
-		layout.horizontalSpacing = 10;
-		layout.verticalSpacing = 15;
+		layout.verticalSpacing = 5;
 		body.setLayout(layout);
 		
 		managedForm.addPart(new TargetDefinitionSection(this, body));
