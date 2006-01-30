@@ -2614,4 +2614,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String LocationDialog_path;
 
+	public static String TargetPlatformPreferencePage_reset;
+
+	public static String TargetPlatformPreferencePage_chooseInstall;
+
 }

@@ -94,6 +94,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	private TabFolder fTabFolder;
 	private boolean fContainsWorkspaceProfile = false;
 	private boolean fFirstClick = true;
+	private Button fResetButton;
 	
 	/**
 	 * MainPreferencePage constructor comment.
@@ -171,7 +172,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	
 	private void createCurrentTargetPlatformGroup(Composite container) {
 		Composite target = new Composite(container, SWT.NONE);
-		GridLayout layout = new GridLayout(3, false);
+		GridLayout layout = new GridLayout(4, false);
 		layout.marginHeight = layout.marginWidth = 0;
 		target.setLayout(layout);
 		target.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -197,6 +198,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		fHomeText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				fNeedsReload = true;
+				fResetButton.setEnabled(!ExternalModelManager.isTargetEqualToHost(fHomeText.getText()));
 			}
 		});
 		fHomeText.addSelectionListener(new SelectionAdapter() {
@@ -220,10 +222,21 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			}
 		});
 		
+		fResetButton = new Button(target, SWT.PUSH);
+		fResetButton.setText(PDEUIMessages.TargetPlatformPreferencePage_reset); 
+		fResetButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		SWTUtil.setButtonDimensionHint(fResetButton);
+		fResetButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fHomeText.setText(ExternalModelManager.computeDefaultPlatformPath());
+				fPluginsTab.handleReload();
+			}
+		});	
+		fResetButton.setEnabled(!ExternalModelManager.isTargetEqualToHost(fHomeText.getText()));
 		
 		fTabFolder = new TabFolder(target, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 3;
+		gd.horizontalSpan = 4;
 		fTabFolder.setLayoutData(gd);
 		
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
@@ -298,6 +311,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 	private void handleBrowse() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
+		dialog.setMessage(PDEUIMessages.TargetPlatformPreferencePage_chooseInstall);
 		if (fHomeText.getText().length() > 0)
 			dialog.setFilterPath(fHomeText.getText());
 		String newPath = dialog.open();
