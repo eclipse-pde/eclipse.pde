@@ -69,10 +69,11 @@ public class RadioChoiceOption extends AbstractChoiceOption {
 		
 		fLabel = createLabel(parent, 1);
 		fLabel.setEnabled(isEnabled());
-		fill(fLabel, 1);
+		fill(fLabel, span);
 		
-		Composite radioComp = createComposite(parent, span - 1);
-		fill(radioComp, span - 1);
+		Composite radioComp = createComposite(parent, span);
+		GridData gd = fill(radioComp, span);
+		gd.horizontalIndent = 10;
 		GridLayout layout = new GridLayout(fChoices.length, true);
 		layout.marginWidth = layout.marginHeight = 0;
 		radioComp.setLayout(layout);
@@ -92,10 +93,9 @@ public class RadioChoiceOption extends AbstractChoiceOption {
 		};
 
 		for (int i = 0; i < fChoices.length; i++) {
-			Button button = createRadioButton(radioComp, 1, fChoices[i]);
-			fButtons[i] = button;
-			button.addSelectionListener(listener);
-			button.setEnabled(isEnabled());
+			fButtons[i] = createRadioButton(radioComp, 1, fChoices[i]);
+			fButtons[i].addSelectionListener(listener);
+			fButtons[i].setEnabled(isEnabled());
 		}
 		
 		if (getChoice() != null)
