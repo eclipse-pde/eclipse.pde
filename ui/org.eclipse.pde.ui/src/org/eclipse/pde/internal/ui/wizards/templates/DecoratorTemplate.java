@@ -262,7 +262,7 @@ public class DecoratorTemplate extends PDETemplateSection {
 			decoratorElement.setAttribute(
 					"label", PDEUIMessages.DecoratorTemplate_readOnlyLabel); //$NON-NLS-1$		
 			decoratorElement.setAttribute(
-					"class", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(DECORATOR_CLASS_NAME)); //$NON-NLS-1$
+					"class", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(DECORATOR_CLASS_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		IPluginElement enablementElement = factory

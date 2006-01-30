@@ -108,7 +108,7 @@ public class PreferencePageTemplate extends PDETemplateSection {
 
 	protected String getTemplateDirectory() {
 		String schemaVersion = model.getPluginBase().getSchemaVersion();
-		return "templates_" + schemaVersion == null ? "3.0" : schemaVersion; //$NON-NLS-1$
+		return "templates_" + schemaVersion == null ? "3.0" : schemaVersion; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public String getReplacementString(String fileName, String key) {
