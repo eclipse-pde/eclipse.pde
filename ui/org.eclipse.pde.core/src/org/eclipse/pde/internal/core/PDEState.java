@@ -222,7 +222,7 @@ public class PDEState extends MinimalState {
 				fPluginInfos.remove(Long.toString(newbundle.getBundleId()));
 			}
 			fId = Math.max(fId, fState.getBundles().length);
-			fState.resolve(true);
+			fState.resolve(false);
 		}
 	}
 	
