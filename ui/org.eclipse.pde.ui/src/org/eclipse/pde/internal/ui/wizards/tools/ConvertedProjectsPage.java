@@ -231,7 +231,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 		
 		CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, monitor);
 		
-		loadClasspathEntries(project);
+		loadClasspathEntries(project, monitor);
 		loadLibraryName(project);
 		
 		if (!WorkspaceModelManager.isPluginProject(project))
@@ -287,21 +287,21 @@ public class ConvertedProjectsPage extends WizardPage  {
 		monitor.done();
 	}
 	
-	private void loadClasspathEntries(IProject project) {
+	private void loadClasspathEntries(IProject project, IProgressMonitor monitor) {
 		IJavaProject javaProject = JavaCore.create(project);
-		IClasspathEntry[] classPath = new IClasspathEntry[0];
+		IClasspathEntry[] currentClassPath = new IClasspathEntry[0];
 		ArrayList sources = new ArrayList();
 		ArrayList libraries = new ArrayList();
 		try {
-			classPath = javaProject.getRawClasspath();
+			currentClassPath = javaProject.getRawClasspath();
 		} catch (JavaModelException e) {
 		}
-		for (int i = 0; i < classPath.length; i++) {
-			int contentType = classPath[i].getEntryKind();
+		for (int i = 0; i < currentClassPath.length; i++) {
+			int contentType = currentClassPath[i].getEntryKind();
 			if (contentType == IClasspathEntry.CPE_SOURCE)
-				sources.add(getRelativePath(classPath[i], project) + "/"); //$NON-NLS-1$
+				sources.add(getRelativePath(currentClassPath[i], project) + "/"); //$NON-NLS-1$
 			else if (contentType == IClasspathEntry.CPE_LIBRARY) {
-				String path = getRelativePath(classPath[i], project);
+				String path = getRelativePath(currentClassPath[i], project);
 				if (path.length() > 0)
 					libraries.add(path);
 				else
@@ -310,6 +310,14 @@ public class ConvertedProjectsPage extends WizardPage  {
 		}
 		fSrcEntries = (String[])sources.toArray(new String[sources.size()]);
 		fLibEntries = (String[])libraries.toArray(new String[libraries.size()]);
+		
+		IClasspathEntry[] classPath = new IClasspathEntry[currentClassPath.length + 1];
+		System.arraycopy(currentClassPath, 0, classPath, 0, currentClassPath.length);
+		classPath[classPath.length - 1] = ClasspathComputer.createContainerEntry();
+		try {
+			javaProject.setRawClasspath(classPath, monitor);
+		} catch (JavaModelException e) {
+		}
 	}
 	
 	private String getRelativePath(IClasspathEntry cpe, IProject project) {
