@@ -81,8 +81,8 @@ public class ComboPart {
 	}
 	public String getSelection() {
 		if (combo instanceof Combo)
-			return ((Combo) combo).getItem(getSelectionIndex()).trim();
-		return ((CCombo) combo).getItem(getSelectionIndex()).trim();
+			return ((Combo) combo).getText().trim();
+		return ((CCombo) combo).getText().trim();
 	}
 	public void setText(String text) {
 		if (combo instanceof Combo)

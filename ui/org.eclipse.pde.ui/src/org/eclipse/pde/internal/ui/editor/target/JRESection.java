@@ -33,6 +33,7 @@ public class JRESection extends PDESection {
 	private ComboPart fNamedJREsCombo;
 	private ComboPart fExecEnvsCombo;
 	private TreeSet fExecEnvChoices;
+	private boolean fBlockChanges;
 
 	public JRESection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
@@ -52,20 +53,16 @@ public class JRESection extends PDESection {
 		client.setLayout(new GridLayout(2, false));
 		
 		initializeValues();
-		ITargetJRE info = getRuntimeInfo();
-		int jreType = info.getJREType();
-		String jreName = info.getJREName();
 		
 		fDefaultJREButton = toolkit.createButton(client, PDEUIMessages.JRESection_defaultJRE, SWT.RADIO);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fDefaultJREButton.setLayoutData(gd);
-		if (jreType == ITargetJRE.TYPE_DEFAULT)
-			fDefaultJREButton.setSelection(true);
 		fDefaultJREButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateWidgets();
-				getRuntimeInfo().setDefaultJRE();
+				if (!fBlockChanges)
+					getRuntimeInfo().setDefaultJRE();
 			}
 		});
 		
@@ -73,7 +70,8 @@ public class JRESection extends PDESection {
 		fNamedJREButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateWidgets();
-				getRuntimeInfo().setNamedJRE(fNamedJREsCombo.getSelection());
+				if (!fBlockChanges)
+					getRuntimeInfo().setNamedJRE(fNamedJREsCombo.getSelection());
 			}
 		});
 		
@@ -82,17 +80,10 @@ public class JRESection extends PDESection {
 		fNamedJREsCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		String[] installs = VMHelper.getVMInstallNames();
 		fNamedJREsCombo.setItems(installs);
-		if (jreType == ITargetJRE.TYPE_NAMED) {
-			if (fNamedJREsCombo.indexOf(jreName) < 0 )
-				fNamedJREsCombo.add(jreName);
-			fNamedJREsCombo.setText(jreName);
-			fNamedJREButton.setSelection(true);
-		} else if (installs.length > 0) {
-			fNamedJREsCombo.setText(installs[0]);
-		}
 		fNamedJREsCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				getRuntimeInfo().setNamedJRE(fNamedJREsCombo.getSelection());
+				if (!fBlockChanges)
+					getRuntimeInfo().setNamedJRE(fNamedJREsCombo.getSelection());
 			}
 		});
 		
@@ -100,7 +91,8 @@ public class JRESection extends PDESection {
 		fExecEnvButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateWidgets();
-				getRuntimeInfo().setExecutionEnvJRE(fExecEnvsCombo.getSelection());
+				if (!fBlockChanges)
+					getRuntimeInfo().setExecutionEnvJRE(fExecEnvsCombo.getSelection());
 			}
 		});
 		
@@ -108,22 +100,14 @@ public class JRESection extends PDESection {
 		fExecEnvsCombo.createControl(client, toolkit, SWT.SINGLE | SWT.BORDER );
 		fExecEnvsCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fExecEnvsCombo.setItems((String[])fExecEnvChoices.toArray(new String[fExecEnvChoices.size()]));
-		if (jreType == ITargetJRE.TYPE_EXECUTION_ENV) {
-			if (fExecEnvsCombo.indexOf(jreName) < 0)
-				fExecEnvsCombo.add(jreName);
-			fExecEnvButton.setSelection(true);
-			fExecEnvsCombo.setText(jreName);
-		} else if (!fExecEnvChoices.isEmpty()){
-			fExecEnvsCombo.setText(fExecEnvChoices.first().toString());
-		}
 		
 		fExecEnvsCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				getRuntimeInfo().setExecutionEnvJRE(fExecEnvsCombo.getSelection());
+				if (!fBlockChanges)
+					getRuntimeInfo().setExecutionEnvJRE(fExecEnvsCombo.getSelection());
 			}
 		});
-		
-		updateWidgets();
+
 		section.setClient(client);
 	}
 	
@@ -155,6 +139,37 @@ public class JRESection extends PDESection {
 	
 	private ITargetModel getModel() {
 		return (ITargetModel)getPage().getPDEEditor().getAggregateModel();
+	}
+	
+	public void refresh() {
+		fBlockChanges = true;
+		ITargetJRE info = getRuntimeInfo();
+
+		int jreType = info.getJREType();		
+		fDefaultJREButton.setSelection(jreType == ITargetJRE.TYPE_DEFAULT);
+		fNamedJREButton.setSelection(jreType == ITargetJRE.TYPE_NAMED);
+		fExecEnvButton.setSelection(jreType == ITargetJRE.TYPE_EXECUTION_ENV);
+		
+		String jreName = info.getJREName();
+		if (jreType == ITargetJRE.TYPE_NAMED) {
+			if (fNamedJREsCombo.indexOf(jreName) < 0)
+				fNamedJREsCombo.add(jreName);
+			fNamedJREsCombo.setText(jreName);
+		} else if (jreType == ITargetJRE.TYPE_EXECUTION_ENV) {
+			if (fExecEnvsCombo.indexOf(jreName) < 0)
+				fExecEnvsCombo.add(jreName);
+			fExecEnvsCombo.setText(jreName);
+		} 
+		
+		if (fExecEnvsCombo.getSelectionIndex() == -1)
+			fExecEnvsCombo.setText(fExecEnvChoices.first().toString());
+		
+		if (fNamedJREsCombo.getSelectionIndex() == -1)
+			fNamedJREsCombo.setText(VMHelper.getDefaultVMInstallName());	
+		
+		updateWidgets();
+		super.refresh();
+		fBlockChanges = false;
 	}
 	
 }
