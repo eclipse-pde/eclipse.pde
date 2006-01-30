@@ -612,8 +612,8 @@ public class PointSelectionPage
 		if (wizard instanceof NewExtensionTemplateWizard) {
 			if (((NewExtensionTemplateWizard) wizard).updatedDependencies()) {
 				if (MessageDialog.openQuestion(getShell(),
-								"New dependencies added to plugin...",
-								"Save changes made to plugin? (Pressing 'No' may result in your code having compilation errors).")) {
+								PDEUIMessages.PointSelectionPage_newDepFound,
+								PDEUIMessages.PointSelectionPage_newDepMessage)) {
 					fWizard.getEditor().doSave(new NullProgressMonitor());
 				}
 			}

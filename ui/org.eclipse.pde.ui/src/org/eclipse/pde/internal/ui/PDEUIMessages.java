@@ -2618,4 +2618,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetPlatformPreferencePage_chooseInstall;
 
+	public static String PointSelectionPage_newDepFound;
+
+	public static String PointSelectionPage_newDepMessage;
+
 }
