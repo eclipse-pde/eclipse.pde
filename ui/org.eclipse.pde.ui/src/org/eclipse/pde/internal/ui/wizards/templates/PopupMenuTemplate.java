@@ -19,6 +19,7 @@ import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginModelFactory;
+import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.IFieldData;
@@ -207,6 +208,13 @@ public class PopupMenuTemplate extends PDETemplateSection {
 	    if (packageName.length() !=0)
 	        return packageName + ".popup.actions"; //$NON-NLS-1$
 	    return "popup.actions"; //$NON-NLS-1$
+	}
+	
+	public IPluginReference[] getDependencies(String schemaVersion) {
+		IPluginReference[] result = new IPluginReference[2];
+		result[0] = new PluginReference("org.eclipse.ui", null, 0); //$NON-NLS-1$
+		result[1] = new PluginReference("org.eclipse.core.resources", null, 0); //$NON-NLS-1$
+		return result;
 	}
 	
 }
