@@ -50,7 +50,7 @@ public class PackageSelectionDialog extends ElementListSelectionDialog {
 				for (int j = 0; j < children.length; j++) {
 					IPackageFragment fragment = (IPackageFragment)children[j];
 					String name = fragment.getElementName();
-					if ((fragment.hasChildren() || fragment.getNonJavaResources().length > 0) && !existingPackages.contains(name)) {
+					if (fragment.hasChildren() && !existingPackages.contains(name)) {
 						if (!name.equals("java") || !name.startsWith("java.") || allowJava) //$NON-NLS-1$ //$NON-NLS-2$
 							map.put(fragment.getElementName(), fragment);
 					}
@@ -67,6 +67,7 @@ public class PackageSelectionDialog extends ElementListSelectionDialog {
 			IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {
 				if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE
+						|| jProject.getProject().equals(roots[i].getCorrespondingResource())
 						|| (roots[i].isArchive() && !roots[i].isExternal())) {
 					result.add(roots[i]);
 				}
