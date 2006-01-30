@@ -86,18 +86,28 @@ public class JavadocLocationManager {
 					new URL(path);
 					processPlugins(path, javadoc.getChildren());
 				} catch (MalformedURLException e) {
-					StringBuffer buffer = new StringBuffer("file:/"); //$NON-NLS-1$
 					attr = javadoc.getAttribute("archive"); //$NON-NLS-1$
 					boolean archive = attr == null ? false : "true".equals(attr.getValue()); //$NON-NLS-1$
+
 					IPath modelPath = new Path(extension.getModel().getInstallLocation());
-					buffer.append(modelPath.toPortableString());
+					StringBuffer buffer = new StringBuffer();			
 					File file = modelPath.toFile();
-					if (file.exists() && file.isFile()) {
-						buffer.append("!/"); //$NON-NLS-1$
-						archive = true;
-					}
+					if (file.exists()) {
+						try {
+							buffer.append(file.toURI().toURL());
+				        } catch (MalformedURLException e1) {
+				        	buffer.append("file:/"); //$NON-NLS-1$
+				            buffer.append(modelPath.toPortableString());
+				        }
+				        if (file.isFile()) {
+				        	buffer.append("!/"); //$NON-NLS-1$
+				        	archive = true;
+				        }
+					} 
 					buffer.append(path);
-					processPlugins(archive ? "jar:" + buffer.toString() : buffer.toString(), javadoc.getChildren()); //$NON-NLS-1$
+					if (archive)
+						buffer.insert(0, "jar:"); //$NON-NLS-1$
+					processPlugins(buffer.toString(), javadoc.getChildren()); //$NON-NLS-1$				
 				}
 			}
 		}
