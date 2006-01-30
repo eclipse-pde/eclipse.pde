@@ -163,15 +163,12 @@ public class FragmentContentPage extends ContentPage {
 	
 	private String computeInitialPluginVersion(String pluginVersion) {
 		if (pluginVersion != null
-				&& PluginVersionIdentifier.validateVersion(pluginVersion)
-						.isOK()) {
-			PluginVersionIdentifier pvi = new PluginVersionIdentifier(
-					pluginVersion);
-			if ("qualifier".equals(pvi.getQualifierComponent())) { //$NON-NLS-1$
-				return pvi.getMajorComponent() + "." + pvi.getMinorComponent() //$NON-NLS-1$
+				&& PluginVersionIdentifier.validateVersion(pluginVersion).isOK()) {
+			PluginVersionIdentifier pvi = new PluginVersionIdentifier(pluginVersion);
+			return pvi.getMajorComponent() + "." + pvi.getMinorComponent() //$NON-NLS-1$
 						+ "." + pvi.getServiceComponent(); //$NON-NLS-1$
-			}
 		}
+		
 		return pluginVersion;
 	}
 
