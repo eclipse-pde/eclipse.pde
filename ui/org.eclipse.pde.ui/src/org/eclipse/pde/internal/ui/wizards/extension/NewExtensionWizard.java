@@ -72,6 +72,7 @@ public class NewExtensionWizard extends NewWizard {
 		}
 	}
 	public boolean performFinish() {
+		fPointPage.checkModel();
 		if (fPointPage.canFinish())
 			return fPointPage.finish();
 		return true;

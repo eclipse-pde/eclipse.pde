@@ -51,6 +51,7 @@ public class NewExtensionTemplateWizard
 	private ITemplateSection section;
 	IProject project;
 	IPluginModelBase model;
+	boolean fUpdatedDependencies;
 	/**
 	 * Creates a new template wizard.
 	 */
@@ -120,12 +121,13 @@ public class NewExtensionTemplateWizard
 		IPluginReference[] refs = section.getDependencies(model.getPluginBase().getSchemaVersion());
 		for (int i = 0; i < refs.length; i++) {
 			IPluginReference ref = refs[i];
-			if (modelContains(ref) == false) {
+			if (!modelContains(ref)) {
 				IPluginImport iimport = model.getPluginFactory().createImport();
 				iimport.setId(ref.getId());
 				iimport.setMatch(ref.getMatch());
 				iimport.setVersion(ref.getVersion());
 				model.getPluginBase().add(iimport);
+				fUpdatedDependencies = true;
 			}
 		}
 	}
@@ -141,5 +143,9 @@ public class NewExtensionTemplateWizard
 			}
 		}
 		return false;
+	}
+	
+	public boolean updatedDependencies() {
+		return fUpdatedDependencies;
 	}
 }

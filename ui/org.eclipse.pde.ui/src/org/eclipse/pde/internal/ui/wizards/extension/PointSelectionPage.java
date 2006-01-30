@@ -20,6 +20,7 @@ import java.util.regex.PatternSyntaxException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -34,6 +35,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginExtension;
@@ -460,17 +462,12 @@ public class PointSelectionPage
 			String pluginID = fCurrentPoint.getPluginBase().getId();
 			if (!(fCurrentPoint instanceof PluginExtensionPointNode)
 					&& !fAvailableImports.contains(pluginID)) {
-				if (MessageDialog
-						.openQuestion(
-								getShell(),
-								PDEUIMessages.NewExtensionWizard_PointSelectionPage_dependencyTitle,
-								NLS
-										.bind(
-												PDEUIMessages.NewExtensionWizard_PointSelectionPage_dependencyMessage,
-												new String[] { pluginID,
-														fCurrentPoint.getId() }))) {
-					IPluginImport importNode = fModel.getPluginFactory()
-							.createImport();
+				if (MessageDialog.openQuestion(
+						getShell(), PDEUIMessages.NewExtensionWizard_PointSelectionPage_dependencyTitle,
+						NLS.bind(
+								PDEUIMessages.NewExtensionWizard_PointSelectionPage_dependencyMessage,
+								new String[] { pluginID, fCurrentPoint.getId() }))) {
+					IPluginImport importNode = fModel.getPluginFactory().createImport();
 					importNode.setId(pluginID);
 					fModel.getPluginBase().add(importNode);
 				}
@@ -605,5 +602,21 @@ public class PointSelectionPage
 				}
 		}
 		return sb.toString();
+	}
+	
+	public void checkModel() {
+		IWizardNode node = getSelectedNode();
+		if (node == null)
+			return;
+		IWizard wizard = node.getWizard();
+		if (wizard instanceof NewExtensionTemplateWizard) {
+			if (((NewExtensionTemplateWizard) wizard).updatedDependencies()) {
+				if (MessageDialog.openQuestion(getShell(),
+								"New dependencies added to plugin...",
+								"Save changes made to plugin? (Pressing 'No' may result in your code having compilation errors).")) {
+					fWizard.getEditor().doSave(new NullProgressMonitor());
+				}
+			}
+		}
 	}
 }
