@@ -211,20 +211,6 @@ public class ConvertedProjectsPage extends WizardPage  {
 		}
 		return true;
 	}
-	
-	public void updateBuildPath(IProject project, IProgressMonitor monitor)
-		throws CoreException {
-		IPath manifestPath = project.getFullPath().append("plugin.xml"); //$NON-NLS-1$
-		IFile file = project.getWorkspace().getRoot().getFile(manifestPath);
-		if (!file.exists())
-			return;
-		WorkspacePluginModel model = new WorkspacePluginModel(file, true);
-		model.load();
-		if (!model.isLoaded())
-			return;
-			
-		ClasspathComputer.setClasspath(project, model);
-	}
 
 	public void convertProject(IProject project, IProgressMonitor monitor)
 			throws CoreException {
@@ -266,23 +252,10 @@ public class ConvertedProjectsPage extends WizardPage  {
 	
 	private void convertProjects(Object[] selected, IProgressMonitor monitor)
 			throws CoreException {
-		int totalCount = 2 * selected.length;
-		monitor.beginTask(
-			PDEUIMessages.ConvertedProjectWizard_converting,
-			totalCount);
+		monitor.beginTask(PDEUIMessages.ConvertedProjectWizard_converting, selected.length);
 		for (int i = 0; i < selected.length; i++) {
 			convertProject((IProject) selected[i], monitor);
 			monitor.worked(1);
-		}
-		
-		// update build path
-		monitor.subTask(PDEUIMessages.ConvertedProjectWizard_updating);
-		for (int i = 0; i < selected.length; i++) {
-			if (((IProject) selected[i]).hasNature(JavaCore.NATURE_ID)) {
-				updateBuildPath((IProject) selected[i], new SubProgressMonitor(monitor,1));
-			} else {
-				monitor.worked(1);
-			}
 		}
 		monitor.done();
 	}
