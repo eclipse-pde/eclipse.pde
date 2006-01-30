@@ -32,6 +32,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.service.resolver.BundleDelta;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.service.resolver.StateDelta;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
@@ -450,7 +451,18 @@ public class PluginModelManager implements IAdaptable {
 		if (external != null) {
 			fState.removeBundleDescription(external.getBundleDescription());
 		}
-		fState.addBundle(model, false);		
+		fState.addBundle(model, false);
+		
+		BundleDescription desc = model.getBundleDescription();
+		if (desc != null) {
+			HostSpecification spec = desc.getHost();
+			if (spec != null && spec.getName() != null
+				&& (desc.getImportPackages().length > 0 || desc.getRequiredBundles().length > 0)) {
+				IPluginModelBase host = findModel(spec.getName());
+				if (host != null)
+					fState.addBundle(host, true);
+			}
+		}
 	}
 	
 	private void removeWorkspaceBundleFromState(IPluginModelBase model, String id) {
