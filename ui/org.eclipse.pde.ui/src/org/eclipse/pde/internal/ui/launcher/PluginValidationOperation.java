@@ -62,7 +62,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	
 	class MissingCore {
 		public String toString() {
-			return NLS.bind(PDEUIMessages.PluginValidationOperation_missingCore, "org.eclipse.osgi"); 
+			return NLS.bind(PDEUIMessages.PluginValidationOperation_missingCore, "org.eclipse.osgi");  //$NON-NLS-1$
 		}
 	}
 	
@@ -317,7 +317,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	}
 	
 	private boolean isCoreMissing() {
-		return (getState().getBundles("org.eclipse.osgi").length == 0);
+		return (getState().getBundles("org.eclipse.osgi").length == 0); //$NON-NLS-1$
 	}
 	
 	public IContentProvider getContentProvider() {
