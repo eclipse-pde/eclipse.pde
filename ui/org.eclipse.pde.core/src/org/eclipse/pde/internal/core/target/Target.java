@@ -142,7 +142,7 @@ public class Target extends TargetObject implements ITarget {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				if (child.getNodeName().equals("dir")) { //$NON-NLS-1$
+				if (child.getNodeName().equals("location")) { //$NON-NLS-1$
 					IAdditionalLocation loc = getModel().getFactory().createAdditionalLocation();
 					loc.parse(child);
 					fAdditionalDirectories.add(loc);

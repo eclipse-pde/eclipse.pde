@@ -34,6 +34,6 @@ public class AdditionalDirectory extends TargetObject implements
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		writer.println(indent + "<dir path=\"" + getWritableString(fPath) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println(indent + "<location path=\"" + getWritableString(fPath) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
