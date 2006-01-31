@@ -15,7 +15,6 @@ import org.eclipse.debug.ui.EnvironmentTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.ui.launcher.ConfigurationTab;
 import org.eclipse.pde.ui.launcher.MainTab;
 import org.eclipse.pde.ui.launcher.PluginsTab;
@@ -29,24 +28,14 @@ public class EclipseApplicationLauncherTabGroup extends AbstractPDELaunchConfigu
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = null;
-		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			tabs = new ILaunchConfigurationTab[]{
-					new MainTab(),
-					new JavaArgumentsTab(),
-					new PluginsTab(), 
-					new ConfigurationTab(),
-					new TracingTab(), 
-					new EnvironmentTab(),
-					new CommonTab()};
-		} else {
-			tabs = new ILaunchConfigurationTab[]{
-					new MainTab(),
-					new JavaArgumentsTab(),
-					new PluginsTab(), 
-					new TracingTab(),
-					new EnvironmentTab(),
-					new CommonTab()};
-		}
+		tabs = new ILaunchConfigurationTab[]{
+				new MainTab(),
+				new JavaArgumentsTab(),
+				new PluginsTab(), 
+				new ConfigurationTab(),
+				new TracingTab(), 
+				new EnvironmentTab(),
+				new CommonTab()};
 		setTabs(tabs);
 	}
 

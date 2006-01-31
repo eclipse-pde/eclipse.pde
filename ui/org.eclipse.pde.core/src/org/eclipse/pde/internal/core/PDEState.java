@@ -99,7 +99,6 @@ public class PDEState extends MinimalState {
 		fWorkspaceURLs = workspace;
 		fTargetURLs = target;
 		fMonitor = monitor;
-		setTargetMode(target);
 		if (fResolve) {
 			readTargetState();
 		} else {

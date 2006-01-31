@@ -63,6 +63,16 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		Map target = EquinoxPluginBlock.retrieveTargetMap(configuration);
 		
 		Map plugins = getPluginsToRun(workspace, target);
+		if (!plugins.containsKey("org.eclipse.osgi")) {
+			IStatus status = new Status(
+					IStatus.ERROR, 
+					"org.eclipse.pde.ui",  //$NON-NLS-1$
+					IStatus.OK,
+					PDEUIMessages.EquinoxLaunchConfiguration_oldTarget,
+					null);
+			throw new CoreException(status);
+		}
+		
 		if (configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false)) {
 			IPluginModelBase[] models = (IPluginModelBase[])plugins.values().toArray(new IPluginModelBase[plugins.size()]);
 			final PluginValidationOperation op = new PluginValidationOperation(models);
@@ -186,15 +196,6 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-		if (!TargetPlatform.isOSGi()) {
-			IStatus status = new Status(
-					IStatus.ERROR, 
-					"org.eclipse.pde.ui",  //$NON-NLS-1$
-					IStatus.OK,
-					PDEUIMessages.EquinoxLaunchConfiguration_oldTarget,
-					null);
-			throw new CoreException(status);
-		}
 		// clear config area, if necessary
 		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
 			CoreUtility.deleteContent(getConfigDir(configuration));

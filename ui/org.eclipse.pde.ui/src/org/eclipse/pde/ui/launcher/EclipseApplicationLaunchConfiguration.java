@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.PDECore;
@@ -74,24 +73,21 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 			programArgs.add(targetWorkspace);
 		}
 		
-		boolean isOSGI = PDECore.getDefault().getModelManager().isOSGiRuntime();
 		boolean showSplash = true;
 		if (configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false)) {
 			validateFeatures();
 			IPath installPath = PDEPlugin.getWorkspace().getRoot().getLocation();
 			programArgs.add("-install"); //$NON-NLS-1$
 			programArgs.add("file:" + installPath.removeLastSegments(1).addTrailingSeparator().toString()); //$NON-NLS-1$
-			if (isOSGI && !configuration.getAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, true)) {
+			if (!configuration.getAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, true)) {
 				programArgs.add("-configuration"); //$NON-NLS-1$
 				programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
 			}
 			programArgs.add("-update"); //$NON-NLS-1$
             // add the output folder names
             programArgs.add("-dev"); //$NON-NLS-1$
-            if (PDECore.getDefault().getModelManager().isOSGiRuntime())
-                programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", true)); //$NON-NLS-1$
-            else
-                programArgs.add(ClasspathHelper.getDevEntries(true));
+            programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", true)); //$NON-NLS-1$
+
     		// necessary for PDE to know how to load plugins when target platform = host platform
     		// see PluginPathFinder.getPluginPaths()
      		programArgs.add("-pdelaunch"); //$NON-NLS-1$           
@@ -100,46 +96,22 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 			if (pluginMap == null) 
 				return null;
 				
-			if (isOSGI) {
-				String productID = LaunchConfigurationHelper.getProductID(configuration);
-				Properties prop = LaunchConfigurationHelper.createConfigIniFile(configuration,
-						productID, pluginMap, getConfigDir(configuration));
-				showSplash = prop.containsKey("osgi.splashPath") || prop.containsKey("splashLocation"); //$NON-NLS-1$ //$NON-NLS-2$
-				TargetPlatform.createPlatformConfigurationArea(
-						pluginMap,
-						getConfigDir(configuration),
-						LaunchConfigurationHelper.getContributingPlugin(productID));
-			} else {
-				String primaryPlugin = LaunchConfigurationHelper.getPrimaryPlugin();
-				TargetPlatform.createPlatformConfigurationArea(
-						pluginMap,
-						getConfigDir(configuration),
-						primaryPlugin);
-				if (primaryPlugin != null) {
-					programArgs.add("-feature"); //$NON-NLS-1$
-					programArgs.add(primaryPlugin);					
-				}
-				IPluginModelBase bootModel = (IPluginModelBase)pluginMap.get("org.eclipse.core.boot"); //$NON-NLS-1$
-				String bootPath = LaunchConfigurationHelper.getBootPath(bootModel);
-				if (bootPath != null && !bootPath.endsWith(".jar")) { //$NON-NLS-1$
-					programArgs.add("-boot"); //$NON-NLS-1$
-					programArgs.add("file:" + bootPath); //$NON-NLS-1$
-				}				
-			}
-			
+			String productID = LaunchConfigurationHelper.getProductID(configuration);
+			Properties prop = LaunchConfigurationHelper.createConfigIniFile(configuration,
+					productID, pluginMap, getConfigDir(configuration));
+			showSplash = prop.containsKey("osgi.splashPath") || prop.containsKey("splashLocation"); //$NON-NLS-1$ //$NON-NLS-2$
+			TargetPlatform.createPlatformConfigurationArea(
+					pluginMap,
+					getConfigDir(configuration),
+					LaunchConfigurationHelper.getContributingPlugin(productID));
+
 			programArgs.add("-configuration"); //$NON-NLS-1$
-			if (isOSGI)
-				programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
-			else
-				programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).append("platform.cfg").toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
 			
             // add the output folder names
             programArgs.add("-dev"); //$NON-NLS-1$
-            if (PDECore.getDefault().getModelManager().isOSGiRuntime())
-                programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", pluginMap)); //$NON-NLS-1$
-            else
-                programArgs.add(ClasspathHelper.getDevEntries(true));            
-
+            programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", pluginMap)); //$NON-NLS-1$
+ 
     		// necessary for PDE to know how to load plugins when target platform = host platform
     		// see PluginPathFinder.getPluginPaths()
     		if (pluginMap.containsKey(PDECore.getPluginId()))
@@ -201,18 +173,12 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		if (!marker.exists()) 
 			CoreUtility.copyFile(eclipsePath, ".eclipseproduct", marker); //$NON-NLS-1$
 		
-		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			File configDir = new File(productDir, "configuration"); //$NON-NLS-1$
-			if (!configDir.exists())
-				configDir.mkdirs();		
-			File ini = new File(configDir, "config.ini");			 //$NON-NLS-1$
-			if (!ini.exists())
-				CoreUtility.copyFile(eclipsePath.append("configuration"), "config.ini", ini); //$NON-NLS-1$ //$NON-NLS-2$
-		} else {
-			File ini = new File(productDir, "install.ini"); //$NON-NLS-1$
-			if (!ini.exists()) 
-				CoreUtility.copyFile(eclipsePath, "install.ini", ini);		 //$NON-NLS-1$
-		}
+		File configDir = new File(productDir, "configuration"); //$NON-NLS-1$
+		if (!configDir.exists())
+			configDir.mkdirs();		
+		File ini = new File(configDir, "config.ini");			 //$NON-NLS-1$
+		if (!ini.exists())
+			CoreUtility.copyFile(eclipsePath.append("configuration"), "config.ini", ini); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*
@@ -225,8 +191,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 				if (config.getAttribute(IPDELauncherConstants.USEFEATURES, false) 
 						&& config.getAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, true)) {
 					String root = getProductPath().toString();
-					if (PDECore.getDefault().getModelManager().isOSGiRuntime())
-						root += "/configuration"; //$NON-NLS-1$
+					root += "/configuration"; //$NON-NLS-1$
 					fConfigDir = new File(root);
 					if (!fConfigDir.exists())
 						fConfigDir.mkdirs();

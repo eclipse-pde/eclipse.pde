@@ -67,18 +67,10 @@ public class PluginModelManager implements IAdaptable {
 		fSearchablePluginsManager = new SearchablePluginsManager(this);
 	}
 	
-	/*
-	 * Returns true if OSGi runtime is currently present either in
-	 * the workspace or in the target platform.
-	 */
-	public boolean isOSGiRuntime() {
-		return findEntry(OSGI_RUNTIME) != null;
-	}
-	
 	public String getTargetVersion() {
 		ModelEntry entry = findEntry(OSGI_RUNTIME); 
 		if (entry == null) 
-			return ICoreConstants.TARGET21;
+			return ICoreConstants.TARGET30;
 		
 		IPluginModelBase model = entry.getActiveModel();
 		String version = model.getPluginBase().getVersion();

@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
@@ -95,7 +94,6 @@ public class ProgramBlock {
 		
 		boolean useProduct = 
 					config.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)
-					&& PDECore.getDefault().getModelManager().isOSGiRuntime() 
 					&& fProductCombo.getItemCount() > 0;
 		fApplicationButton.setSelection(!useProduct);
 		fApplicationCombo.setEnabled(!useProduct);

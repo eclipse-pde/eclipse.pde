@@ -31,7 +31,6 @@ import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.MinimalState;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -63,7 +62,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	
 	class MissingCore {
 		public String toString() {
-			return NLS.bind(PDEUIMessages.PluginValidationOperation_missingCore, getCorePluginID()); 
+			return NLS.bind(PDEUIMessages.PluginValidationOperation_missingCore, "org.eclipse.osgi"); 
 		}
 	}
 	
@@ -318,11 +317,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	}
 	
 	private boolean isCoreMissing() {
-		return (getState().getBundles(getCorePluginID()).length == 0);
-	}
-	
-	private String getCorePluginID() {
-		return PDECore.getDefault().getModelManager().isOSGiRuntime() ? "org.eclipse.osgi" : "org.eclipse.core.boot"; //$NON-NLS-1$ //$NON-NLS-2$
+		return (getState().getBundles("org.eclipse.osgi").length == 0);
 	}
 	
 	public IContentProvider getContentProvider() {

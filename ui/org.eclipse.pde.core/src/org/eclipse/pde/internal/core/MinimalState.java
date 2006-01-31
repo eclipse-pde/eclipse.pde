@@ -15,7 +15,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Iterator;
@@ -54,8 +53,6 @@ public class MinimalState {
 
 	protected State fState;
 		
-	private String fTargetMode = null;
-
 	protected long fId;
 
 	private PluginConverter fConverter = null;
@@ -153,7 +150,7 @@ public class MinimalState {
 					&& !new File(bundleLocation, "fragment.xml").exists()) //$NON-NLS-1$
 				return null;
 			PluginConverter converter = acquirePluginConverter();
-			manifest = converter.convertManifest(bundleLocation, false, getTargetMode(), false, null);
+			manifest = converter.convertManifest(bundleLocation, false, null, false, null);
 			if (manifest == null
 					|| manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null)
 				throw new CoreException(new Status(
@@ -335,24 +332,6 @@ public class MinimalState {
 
 	public State getState() {
 		return fState;
-	}
-
-	protected void setTargetMode(URL[] urls) {
-		fTargetMode = ICoreConstants.TARGET21;
-		for (int i = 0; i < urls.length; i++) {
-			if (urls[i].getFile().indexOf("org.eclipse.osgi") != -1) {//$NON-NLS-1$
-				fTargetMode = null;
-				break;
-			}
-		}
-	}
-
-	public String getTargetMode() {
-		return fTargetMode;
-	}
-	
-	public void setTargetMode(String mode) {
-		fTargetMode = mode;
 	}
 
 	private void setExecutionEnvironments() {		

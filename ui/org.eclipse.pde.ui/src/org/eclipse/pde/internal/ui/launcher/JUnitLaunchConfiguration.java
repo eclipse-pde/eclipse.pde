@@ -43,7 +43,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathHelper;
@@ -64,9 +63,7 @@ import org.eclipse.update.configurator.ConfiguratorUtils;
 public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 
 	public static final String CORE_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
-	public static final String LEGACY_CORE_APPLICATION = "org.eclipse.pde.junit.runtime.legacyCoretestapplication"; //$NON-NLS-1$
 	public static final String UI_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$
-	public static final String LEGACY_UI_APPLICATION = "org.eclipse.pde.junit.runtime.legacyUItestapplication"; //$NON-NLS-1$
 	
 	protected static IPluginModelBase[] registryPlugins;
 	protected File fConfigDir = null;
@@ -234,40 +231,20 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 		}
 		
 		// Create the platform configuration for the runtime workbench
-		if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			String productID = LaunchConfigurationHelper.getProductID(configuration);
-			LaunchConfigurationHelper.createConfigIniFile(configuration,
-					productID, pluginMap, getConfigDir(configuration));
-			TargetPlatform.createPlatformConfigurationArea(
-					pluginMap,
-					getConfigDir(configuration),
-					LaunchConfigurationHelper.getContributingPlugin(productID));
-		} else {
-			TargetPlatform.createPlatformConfigurationArea(
-					pluginMap,
-					getConfigDir(configuration),
-					LaunchConfigurationHelper.getPrimaryPlugin());
-			// Pre-OSGi platforms need the location of org.eclipse.core.boot specified
-			IPluginModelBase bootModel = (IPluginModelBase)pluginMap.get("org.eclipse.core.boot"); //$NON-NLS-1$
-			String bootPath = LaunchConfigurationHelper.getBootPath(bootModel);
-			if (bootPath != null && !bootPath.endsWith(".jar")) { //$NON-NLS-1$
-				programArgs.add("-boot"); //$NON-NLS-1$
-				programArgs.add("file:" + bootPath); //$NON-NLS-1$
-			}			
-		}
+		String productID = LaunchConfigurationHelper.getProductID(configuration);
+		LaunchConfigurationHelper.createConfigIniFile(configuration,
+				productID, pluginMap, getConfigDir(configuration));
+		TargetPlatform.createPlatformConfigurationArea(
+				pluginMap,
+				getConfigDir(configuration),
+				LaunchConfigurationHelper.getContributingPlugin(productID));
 		
 		programArgs.add("-configuration"); //$NON-NLS-1$
-		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
-			programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
-		else
-			programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).append("platform.cfg").toString()); //$NON-NLS-1$ //$NON-NLS-2$
+		programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
 		
 		// Specify the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
-		if (PDECore.getDefault().getModelManager().isOSGiRuntime())
-			programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", pluginMap)); //$NON-NLS-1$
-		else
-			programArgs.add(ClasspathHelper.getDevEntries(true));
+		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", pluginMap)); //$NON-NLS-1$
 		
 		// necessary for PDE to know how to load plugins when target platform = host platform
 		// see PluginPathFinder.getPluginPaths()
@@ -421,25 +398,9 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 	protected String getApplicationName(Map pluginMap, ILaunchConfiguration configuration) {
 		try {
 			String application = configuration.getAttribute(IPDELauncherConstants.APPLICATION, (String)null);
-			if (CORE_APPLICATION.equals(application)) {
-				if (PDECore.getDefault().getModelManager().isOSGiRuntime())
-					return CORE_APPLICATION;
-				return LEGACY_CORE_APPLICATION;
-			}			
+			if (CORE_APPLICATION.equals(application)) 
+				return CORE_APPLICATION;				
 		} catch (CoreException e) {
-		}
-				
-		IPluginModelBase model = (IPluginModelBase)pluginMap.get("org.eclipse.ui"); //$NON-NLS-1$
-		if (model != null) {
-			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-			for (int i = 0; i < extensions.length; i++) {
-				String point = extensions[i].getPoint();
-				if ("org.eclipse.core.runtime.applications".equals(point)) { //$NON-NLS-1$
-					if ("workbench".equals(extensions[i].getId())){ //$NON-NLS-1$
-						return LEGACY_UI_APPLICATION;
-					}
-				}
-			}
 		}
 		return UI_APPLICATION;
 	}
@@ -477,11 +438,6 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 	public static IPluginModelBase[] getPluginAndPrereqs(String id) {
 		TreeMap map = new TreeMap();
 		addPluginAndPrereqs(id, map);
-		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			addPluginAndPrereqs("org.eclipse.core.boot", map); //$NON-NLS-1$
-			addPluginAndPrereqs("org.eclipse.core.runtime", map); //$NON-NLS-1$
-		}
-		
 		return (IPluginModelBase[])map.values().toArray(new IPluginModelBase[map.size()]);
 	}
 	

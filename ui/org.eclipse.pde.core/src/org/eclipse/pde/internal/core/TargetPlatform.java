@@ -82,11 +82,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 				// defect 37319
 				if (location.segmentCount() > 2)
 					location = location.removeFirstSegments(location.segmentCount() - 2);
-				if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-					location = location.append(model.isFragmentModel()
-							? "fragment.xml" //$NON-NLS-1$
-							: "plugin.xml"); //$NON-NLS-1$
-			    }
 				//31489 - entry must be relative
 				list[i] = location.setDevice(null).makeRelative().toString();
 			}
@@ -129,14 +124,9 @@ public class TargetPlatform implements IEnvironmentVariables {
 		String brandingPluginID)
 		throws CoreException {
 		try {
-			if (PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-				if (pluginMap.containsKey("org.eclipse.update.configurator")) {  //$NON-NLS-1$
-					savePlatformConfiguration(ConfiguratorUtils.getPlatformConfiguration(null),configDir, pluginMap, brandingPluginID);
-				}
-				checkPluginPropertiesConsistency(pluginMap, configDir);
-			} else {
-				savePlatformConfiguration(new PlatformConfiguration(null), new File(configDir, "platform.cfg"), pluginMap, brandingPluginID); //$NON-NLS-1$
-			} 			
+			if (pluginMap.containsKey("org.eclipse.update.configurator"))   //$NON-NLS-1$
+				savePlatformConfiguration(ConfiguratorUtils.getPlatformConfiguration(null),configDir, pluginMap, brandingPluginID);			
+			checkPluginPropertiesConsistency(pluginMap, configDir);
 		} catch (CoreException e) {
 			// Rethrow
 			throw e;
@@ -287,11 +277,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 			config.configureSite(siteEntry);
 		}
 
-		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			// Set boot location
-			URL bootURL = new URL("file:" + bootModel.getInstallLocation()); //$NON-NLS-1$
-			config.setBootstrapPluginLocation(BOOT_ID, bootURL);
-		}
 		config.isTransient(true);
 	}
 
@@ -409,10 +394,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 		return result;
 	}
 
-	public static boolean isOSGi() {
-		return PDECore.getDefault().getModelManager().isOSGiRuntime();
-	}
-	
 	public static String getTargetVersionString() {
 		return PDECore.getDefault().getModelManager().getTargetVersion();
 	}
@@ -474,9 +455,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 	 * @return String or null
 	 */
 	public static String getDefaultProduct() {
-		if (getTargetVersion() < 3.0) {
-			return null;
-		}
 		Properties config = getConfigIniProperties("configuration/config.ini"); //$NON-NLS-1$
 		if (config != null) {
 			String product = (String) config.get("eclipse.product"); //$NON-NLS-1$

@@ -45,8 +45,6 @@ import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 public class LaunchConfigurationHelper {
 	
 	public static void synchronizeManifests(ILaunchConfiguration config, File configDir) {
-		if (!PDECore.getDefault().getModelManager().isOSGiRuntime())
-			return;
 		try {
 			String programArgs = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, 
 														""); //$NON-NLS-1$
@@ -360,9 +358,6 @@ public class LaunchConfigurationHelper {
 	}
 
 	public static String getDefaultApplicationName() {
-		if (!PDECore.getDefault().getModelManager().isOSGiRuntime())
-			return "org.eclipse.ui.workbench"; //$NON-NLS-1$
-		
 		Properties properties = TargetPlatform.getConfigIniProperties("configuration/config.ini"); //$NON-NLS-1$
 		String appName = (properties != null) ? properties.getProperty("eclipse.application") : null; //$NON-NLS-1$
 		return (appName != null) ? appName : "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$

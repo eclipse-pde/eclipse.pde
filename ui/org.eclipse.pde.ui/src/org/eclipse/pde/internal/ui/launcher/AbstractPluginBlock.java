@@ -384,9 +384,6 @@ public abstract class AbstractPluginBlock {
 				addPluginAndDependencies(model, map);
 			}
 		}
-		if (!PDECore.getDefault().getModelManager().isOSGiRuntime()) {
-			addPluginAndDependencies(findPlugin("org.eclipse.core.runtime"), map); //$NON-NLS-1$
-		}
 
 		checked = map.values().toArray();
 

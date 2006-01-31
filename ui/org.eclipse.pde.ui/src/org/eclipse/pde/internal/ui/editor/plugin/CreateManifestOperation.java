@@ -46,8 +46,7 @@ public class CreateManifestOperation implements IRunnableWithProgress{
 	private void handleConvert() throws CoreException {
 		IProject project = fModel.getUnderlyingResource().getProject();
 		String target = TargetPlatform.getTargetVersionString();
-		PDEPluginConverter.convertToOSGIFormat(project, target, ClasspathHelper.getDevDictionary(fModel), new NullProgressMonitor()); 
-		
+		PDEPluginConverter.convertToOSGIFormat(project, target, ClasspathHelper.getDevDictionary(fModel), new NullProgressMonitor()); 		
 	}
 	
 	private void trimOldManifest() throws BadLocationException, CoreException {
