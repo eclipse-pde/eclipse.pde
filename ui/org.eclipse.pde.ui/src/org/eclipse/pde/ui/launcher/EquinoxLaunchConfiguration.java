@@ -20,13 +20,12 @@ import java.util.TreeMap;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.ExternalModelManager;
@@ -63,14 +62,16 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		Map target = EquinoxPluginBlock.retrieveTargetMap(configuration);
 		
 		Map plugins = getPluginsToRun(workspace, target);
-		if (!plugins.containsKey("org.eclipse.osgi")) {
-			IStatus status = new Status(
-					IStatus.ERROR, 
-					"org.eclipse.pde.ui",  //$NON-NLS-1$
-					IStatus.OK,
-					PDEUIMessages.EquinoxLaunchConfiguration_oldTarget,
-					null);
-			throw new CoreException(status);
+		if (!plugins.containsKey("org.eclipse.osgi")) { //$NON-NLS-1$
+			final Display display = LauncherUtils.getDisplay();
+			display.syncExec(new Runnable() {
+				public void run() {
+					MessageDialog.openError(display.getActiveShell(), 
+							PDEUIMessages.LauncherUtils_title, 
+							PDEUIMessages.EquinoxLaunchConfiguration_oldTarget);
+				}
+			});
+			return null;
 		}
 		
 		if (configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false)) {
