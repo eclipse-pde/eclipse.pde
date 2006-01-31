@@ -1759,6 +1759,13 @@
       <contentTypeBinding
             contentTypeId="org.eclipse.pde.bundleManifest"
             structureMergeViewerId="org.eclipse.pde.internal.ui.compare.ManifestStructureMergeViewerCreator"/>
+      <viewer
+            extensions="xml,exsd"
+            class="org.eclipse.pde.internal.ui.compare.XMLStructureViewerCreator"
+            id="org.eclipse.pde.internal.ui.compare.XMLStructureViewerCreator" />
+      <contentTypeBinding
+            structureMergeViewerId="org.eclipse.pde.internal.ui.compare.XMLStructureViewerCreator"
+            contentTypeId="org.eclipse.pde.pluginManifest" />
    </extension>
    <extension
          point="org.eclipse.compare.contentMergeViewers">
@@ -1769,8 +1776,15 @@
       <contentTypeBinding
             contentMergeViewerId="org.eclipse.pde.internal.ui.compare.ManifestContentMergeViewerCreator"
             contentTypeId="org.eclipse.pde.bundleManifest"/>
+      <viewer
+            class="org.eclipse.pde.internal.ui.compare.XMLContentMergeViewerCreator"
+            extensions="xml,exsd"
+            id="org.eclipse.pde.internal.ui.compare.XMLContentMergeViewerCreator"/>
+      <contentTypeBinding
+            contentMergeViewerId="org.eclipse.pde.internal.ui.compare.XMLContentMergeViewerCreator"
+            contentTypeId="org.eclipse.pde.pluginManifest" />
    </extension>
-   <extension
+    <extension
          point="org.eclipse.ui.themes">
       <fontDefinition
             label="%fontDefinition.label.0"
@@ -1781,8 +1795,20 @@
             %fontDefinition.description.0
          </description>
       </fontDefinition>
-   </extension>
-   <extension point="org.eclipse.debug.core.sourceLocators">
+    </extension>
+    <extension
+         point="org.eclipse.ui.themes">
+       <fontDefinition
+            label="%fontDefinition.label.1"
+            defaultsTo="org.eclipse.jface.textfont"
+            categoryId="org.eclipse.compare.contentmergeviewer.TextMergeViewer"
+            id="org.eclipse.pde.internal.ui.compare.XMLContentMergeViewer">
+         <description>
+            %fontDefinition.description.1
+         </description>
+       </fontDefinition>
+    </extension>
+    <extension point="org.eclipse.debug.core.sourceLocators">
    		<sourceLocator
    			id="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
    			class="org.eclipse.pde.internal.ui.launcher.PDESourceLookupDirector"
