@@ -19,9 +19,9 @@ import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.core.itarget.ITargetModelFactory;
 import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
 
-public class TargetProfileFromPlatformOperation extends BaseTargetProfileOperation {
+public class TargetDefinitionFromPlatformOperation extends BaseTargetDefinitionOperation {
 
-	public TargetProfileFromPlatformOperation(IFile file) {
+	public TargetDefinitionFromPlatformOperation(IFile file) {
 		super(file);
 	}
 	

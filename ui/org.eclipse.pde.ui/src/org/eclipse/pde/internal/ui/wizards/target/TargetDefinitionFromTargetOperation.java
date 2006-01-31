@@ -7,24 +7,24 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetProfileManager;
+import org.eclipse.pde.internal.core.TargetDefinitionManager;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 
-public class TargetProfileFromTargetOperation extends
-		BaseTargetProfileOperation {
+public class TargetDefinitionFromTargetOperation extends
+		BaseTargetDefinitionOperation {
 	
 	private String fTargetId;
 
-	public TargetProfileFromTargetOperation(IFile file, String id) {
+	public TargetDefinitionFromTargetOperation(IFile file, String id) {
 		super(file);
 		fTargetId = id;
 	}
 	
 	protected void initializeTarget(ITargetModel model) {
 		IConfigurationElement elem = PDECore.getDefault().getTargetProfileManager().getTarget(fTargetId);
-		String path = elem.getAttribute("path");  //$NON-NLS-1$
+		String path = elem.getAttribute("definition");  //$NON-NLS-1$
 		String symbolicName = elem.getDeclaringExtension().getNamespace();
-		URL url = TargetProfileManager.getResourceURL(symbolicName, path);
+		URL url = TargetDefinitionManager.getResourceURL(symbolicName, path);
 		if (url != null) {
 			try {
 				model.load(url.openStream(), false);

@@ -9,12 +9,12 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
-public class NewTargetProfileWizard extends BasicNewResourceWizard {
+public class NewTargetDefinitionWizard extends BasicNewResourceWizard {
 	
-	TargetProfileWizardPage fPage;
+	TargetDefinitionWizardPage fPage;
 	
 	public void addPages() {
-		fPage = new TargetProfileWizardPage("profile", getSelection()); //$NON-NLS-1$
+		fPage = new TargetDefinitionWizardPage("profile", getSelection()); //$NON-NLS-1$
 		addPage(fPage);
 	}
 
@@ -40,13 +40,13 @@ public class NewTargetProfileWizard extends BasicNewResourceWizard {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_TARGET_WIZ);
 	}
 	
-	private BaseTargetProfileOperation getOperation() {
+	private BaseTargetDefinitionOperation getOperation() {
 		int option = fPage.getInitializationOption();
-		if (option == TargetProfileWizardPage.USE_DEFAULT)
-			return new BaseTargetProfileOperation(fPage.createNewFile());
-		else if (option == TargetProfileWizardPage.USE_CURRENT_TP)
-			return new TargetProfileFromPlatformOperation(fPage.createNewFile());
-		return new TargetProfileFromTargetOperation(fPage.createNewFile(), fPage.getTargetId());
+		if (option == TargetDefinitionWizardPage.USE_DEFAULT)
+			return new BaseTargetDefinitionOperation(fPage.createNewFile());
+		else if (option == TargetDefinitionWizardPage.USE_CURRENT_TP)
+			return new TargetDefinitionFromPlatformOperation(fPage.createNewFile());
+		return new TargetDefinitionFromTargetOperation(fPage.createNewFile(), fPage.getTargetId());
 	}
 
 }

@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
-public class TargetProfileManager implements IRegistryChangeListener{
+public class TargetDefinitionManager implements IRegistryChangeListener{
 	
 	Map fTargets;
 	private static String[] attributes;
@@ -29,7 +29,7 @@ public class TargetProfileManager implements IRegistryChangeListener{
 		for (int i = 0; i < deltas.length; i++) {
 			IExtension extension = deltas[i].getExtension();
 			String extensionId = extension.getExtensionPointUniqueIdentifier();
-			if (extensionId.equals("org.eclipse.pde.core.targetProfiles")) { //$NON-NLS-1$
+			if (extensionId.equals("org.eclipse.pde.core.targets")) { //$NON-NLS-1$
 				IConfigurationElement[] elems = extension.getConfigurationElements();
 				if (deltas[i].getKind() == IExtensionDelta.ADDED)
 					add(elems);
@@ -78,7 +78,7 @@ public class TargetProfileManager implements IRegistryChangeListener{
 		fTargets = new HashMap();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		registry.addRegistryChangeListener(this);
-		IConfigurationElement[] elements = registry.getConfigurationElementsFor("org.eclipse.pde.core.targetProfiles"); //$NON-NLS-1$
+		IConfigurationElement[] elements = registry.getConfigurationElementsFor("org.eclipse.pde.core.targets"); //$NON-NLS-1$
 		add(elements);
 	}
 	
@@ -89,7 +89,7 @@ public class TargetProfileManager implements IRegistryChangeListener{
 			if (value == null || value.equals("")) //$NON-NLS-1$
 				return false;
 		}
-		value = elem.getAttribute("path"); //$NON-NLS-1$
+		value = elem.getAttribute("definition"); //$NON-NLS-1$
 		String symbolicName = elem.getDeclaringExtension().getNamespace();
 		URL url = getResourceURL(symbolicName, value);
 		try {
@@ -104,7 +104,7 @@ public class TargetProfileManager implements IRegistryChangeListener{
 	public static URL getResourceURL(String bundleID, String resourcePath) {
 		try {
 			Bundle bundle = Platform.getBundle(bundleID);
-			if (bundle != null) {
+			if (bundle != null && resourcePath != null) {
 				URL entry = bundle.getEntry(resourcePath);
 				if (entry != null)
 					return Platform.asLocalURL(entry);

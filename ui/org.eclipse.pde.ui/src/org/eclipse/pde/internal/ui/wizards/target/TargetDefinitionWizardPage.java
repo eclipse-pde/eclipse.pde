@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetProfileManager;
+import org.eclipse.pde.internal.core.TargetDefinitionManager;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.core.target.TargetModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
-public class TargetProfileWizardPage extends WizardNewFileCreationPage {
+public class TargetDefinitionWizardPage extends WizardNewFileCreationPage {
 	
 	protected static final int USE_DEFAULT = 0;
 	protected static final int USE_CURRENT_TP = 1;
@@ -44,7 +44,7 @@ public class TargetProfileWizardPage extends WizardNewFileCreationPage {
 	
 	private static String EXTENSION = ".target"; //$NON-NLS-1$
 	
-	public TargetProfileWizardPage(String pageName, IStructuredSelection selection) {
+	public TargetDefinitionWizardPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
 		setTitle(PDEUIMessages.TargetProfileWizardPage_title);
 		setDescription(PDEUIMessages.TargetProfileWizardPage_description);
@@ -123,12 +123,12 @@ public class TargetProfileWizardPage extends WizardNewFileCreationPage {
     }
     
 	private URL getExternalTargetURL() {
-		TargetProfileManager manager = PDECore.getDefault().getTargetProfileManager();
+		TargetDefinitionManager manager = PDECore.getDefault().getTargetProfileManager();
 		IConfigurationElement elem = manager.getTarget(fTargetIds[fTargets.getSelectionIndex()]);
 		if (elem != null) {
-			String path = elem.getAttribute("path");  //$NON-NLS-1$
+			String path = elem.getAttribute("definition");  //$NON-NLS-1$
 			String symbolicName = elem.getDeclaringExtension().getNamespace();
-			return TargetProfileManager.getResourceURL(symbolicName, path);
+			return TargetDefinitionManager.getResourceURL(symbolicName, path);
 		}
 		return null;
 	}

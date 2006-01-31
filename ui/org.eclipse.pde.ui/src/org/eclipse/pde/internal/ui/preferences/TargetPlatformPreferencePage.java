@@ -32,7 +32,7 @@ import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEState;
-import org.eclipse.pde.internal.core.TargetProfileManager;
+import org.eclipse.pde.internal.core.TargetDefinitionManager;
 import org.eclipse.pde.internal.core.itarget.ILocationInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
@@ -416,9 +416,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		if (offSet > fProfileCombo.getSelectionIndex())
 			return null;
 		IConfigurationElement elem = fElements[fProfileCombo.getSelectionIndex() - offSet];
-		String path = elem.getAttribute("path");  //$NON-NLS-1$
+		String path = elem.getAttribute("definition");  //$NON-NLS-1$
 		String symbolicName = elem.getDeclaringExtension().getNamespace();
-		return TargetProfileManager.getResourceURL(symbolicName, path);
+		return TargetDefinitionManager.getResourceURL(symbolicName, path);
 	}
 
 	public void init(IWorkbench workbench) {

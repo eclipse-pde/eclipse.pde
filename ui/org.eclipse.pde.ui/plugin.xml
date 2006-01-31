@@ -171,7 +171,7 @@
       </wizard>
       <wizard
             category="org.eclipse.pde.PDE"
-            class="org.eclipse.pde.internal.ui.wizards.target.NewTargetProfileWizard"
+            class="org.eclipse.pde.internal.ui.wizards.target.NewTargetDefinitionWizard"
             icon="$nl$/icons/etool16/new_target_wiz.gif"
             id="org.eclipse.pde.ui.NewProfileWizard"
             name="%new.profile.name">

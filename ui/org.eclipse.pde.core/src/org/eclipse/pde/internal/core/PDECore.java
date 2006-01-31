@@ -183,7 +183,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	private ExternalModelManager fExternalModelManager;
 	private WorkspaceModelManager fWorkspaceModelManager;
 	private FeatureModelManager fFeatureModelManager;
-	private TargetProfileManager fTargetProfileManager;
+	private TargetDefinitionManager fTargetProfileManager;
 
 	// Schema registry
 	private SchemaRegistry fSchemaRegistry;
@@ -291,9 +291,9 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		return fModelManager;
 	}
 	
-	public TargetProfileManager getTargetProfileManager() {
+	public TargetDefinitionManager getTargetProfileManager() {
 		if (fTargetProfileManager == null)
-			fTargetProfileManager = new TargetProfileManager();
+			fTargetProfileManager = new TargetDefinitionManager();
 		return fTargetProfileManager;
 	}
 	

@@ -23,11 +23,11 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ISetSelectionTarget;
 
-public class BaseTargetProfileOperation extends WorkspaceModifyOperation {
+public class BaseTargetDefinitionOperation extends WorkspaceModifyOperation {
 	
 	private IFile fFile;
 
-	public BaseTargetProfileOperation(IFile file){
+	public BaseTargetDefinitionOperation(IFile file){
 		fFile = file;
 	}
 

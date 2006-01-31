@@ -4,7 +4,7 @@
 
      <extension-point id="source" name="%expoint.source.name" schema="schema/source.exsd"/>
      <extension-point id="javadoc" name="%expoint.javadoc.name" schema="schema/javadoc.exsd"/>
-     <extension-point id="targetProfiles" name="%expoint.target.name" schema="schema/targetProfiles.exsd"/>
+     <extension-point id="targets" name="%expoint.target.name" schema="schema/targets.exsd"/>
 
    <extension
          point="org.eclipse.jdt.core.classpathVariableInitializer">
@@ -86,15 +86,15 @@
             id="org.eclipse.pde.core.eeAnalyzer"/>
    </extension>
       <extension
-            point="org.eclipse.pde.core.targetProfiles">
-         <profile
+            point="org.eclipse.pde.core.targets">
+         <target
                id="org.eclipse.pde.core.rcpWithSource"
-               name="%profile.name.0"
-               path="targets/rcpWithSource.target"/>
-         <profile
+               name="%target.name.0"
+               definition="targets/rcpWithSource.target"/>
+         <target
                id="org.eclipse.pde.core.binaryRCP"
-               name="%profile.name.1"
-               path="targets/rcp.target"/>
+               name="%target.name.1"
+               definition="targets/rcp.target"/>
       </extension>
    
 </plugin>
