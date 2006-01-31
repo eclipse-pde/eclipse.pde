@@ -1760,7 +1760,7 @@
             contentTypeId="org.eclipse.pde.bundleManifest"
             structureMergeViewerId="org.eclipse.pde.internal.ui.compare.ManifestStructureMergeViewerCreator"/>
       <viewer
-            extensions="xml,exsd"
+            extensions="xml"
             class="org.eclipse.pde.internal.ui.compare.XMLStructureViewerCreator"
             id="org.eclipse.pde.internal.ui.compare.XMLStructureViewerCreator" />
       <contentTypeBinding
@@ -1778,7 +1778,7 @@
             contentTypeId="org.eclipse.pde.bundleManifest"/>
       <viewer
             class="org.eclipse.pde.internal.ui.compare.XMLContentMergeViewerCreator"
-            extensions="xml,exsd"
+            extensions="xml"
             id="org.eclipse.pde.internal.ui.compare.XMLContentMergeViewerCreator"/>
       <contentTypeBinding
             contentMergeViewerId="org.eclipse.pde.internal.ui.compare.XMLContentMergeViewerCreator"

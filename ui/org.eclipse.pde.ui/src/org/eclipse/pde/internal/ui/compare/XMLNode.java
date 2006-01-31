@@ -69,7 +69,7 @@ public class XMLNode extends DocumentRangeNode implements ITypedElement {
 	 * @see ITypedElement#getType
 	 */
 	public String getType() {
-		return "txt"; //$NON-NLS-1$
+		return "xml"; //$NON-NLS-1$
 	}
 
 	
