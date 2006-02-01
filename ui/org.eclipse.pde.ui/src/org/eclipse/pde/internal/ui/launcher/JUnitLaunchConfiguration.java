@@ -65,7 +65,6 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 	public static final String CORE_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
 	public static final String UI_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$
 	
-	protected static IPluginModelBase[] registryPlugins;
 	protected File fConfigDir = null;
 
 	public void launch(
@@ -331,24 +330,11 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 	protected IPluginModelBase findPlugin(String id) throws CoreException {
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		IPluginModelBase model = manager.findModel(id);
-		if (model != null)
-			return model;
-
-		if (registryPlugins == null) {
-			URL[] pluginPaths = ConfiguratorUtils.getCurrentPlatformConfiguration().getPluginPath();
-			PDEState state = new PDEState(pluginPaths, false, new NullProgressMonitor());
-			registryPlugins = state.getTargetModels();
+		if (model == null) {
+			abort(NLS.bind(PDEUIMessages.JUnitLaunchConfiguration_error_missingPlugin, id),
+				  null, IStatus.OK);
 		}
-
-		for (int i = 0; i < registryPlugins.length; i++) {
-			if (registryPlugins[i].getPluginBase().getId().equals(id))
-				return registryPlugins[i];
-		}
-		abort(
-			NLS.bind(PDEUIMessages.JUnitLaunchConfiguration_error_missingPlugin, id),
-			null,
-			IStatus.OK);
-		return null;
+		return model;
 	}
 	
 	public String[] getVMArgumentsArray(ILaunchConfiguration configuration) throws CoreException {
