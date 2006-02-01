@@ -104,7 +104,7 @@ public class PluginVersionPart {
 		    else
 		    	fMinVersionBound.select(0);
 		    
-		    if (fVersionRange != null)
+		    if (fVersionRange != null && getMaxVersion().length() > 0)
 		    	fMaxVersionBound.select((fVersionRange.getIncludeMaximum()) ? 0 : 1);
 		    else
 		    	fMaxVersionBound.select(1);
