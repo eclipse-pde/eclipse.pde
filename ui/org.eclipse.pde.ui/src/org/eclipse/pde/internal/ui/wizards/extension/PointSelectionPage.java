@@ -619,4 +619,10 @@ public class PointSelectionPage
 			}
 		}
 	}
+	
+	public void setVisible(boolean visible) {
+		if (visible)
+			fFilterText.setFocus();
+		super.setVisible(visible);
+	}
 }
