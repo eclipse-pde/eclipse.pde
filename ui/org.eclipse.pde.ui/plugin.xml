@@ -1759,13 +1759,13 @@
       <contentTypeBinding
             contentTypeId="org.eclipse.pde.bundleManifest"
             structureMergeViewerId="org.eclipse.pde.internal.ui.compare.ManifestStructureMergeViewerCreator"/>
-      <viewer
+      <!--<viewer
             extensions="xml"
             class="org.eclipse.pde.internal.ui.compare.XMLStructureViewerCreator"
             id="org.eclipse.pde.internal.ui.compare.XMLStructureViewerCreator" />
       <contentTypeBinding
             structureMergeViewerId="org.eclipse.pde.internal.ui.compare.XMLStructureViewerCreator"
-            contentTypeId="org.eclipse.pde.pluginManifest" />
+            contentTypeId="org.eclipse.pde.pluginManifest" />-->
    </extension>
    <extension
          point="org.eclipse.compare.contentMergeViewers">
@@ -1776,13 +1776,13 @@
       <contentTypeBinding
             contentMergeViewerId="org.eclipse.pde.internal.ui.compare.ManifestContentMergeViewerCreator"
             contentTypeId="org.eclipse.pde.bundleManifest"/>
-      <viewer
+      <!--<viewer
             class="org.eclipse.pde.internal.ui.compare.XMLContentMergeViewerCreator"
             extensions="xml"
             id="org.eclipse.pde.internal.ui.compare.XMLContentMergeViewerCreator"/>
       <contentTypeBinding
             contentMergeViewerId="org.eclipse.pde.internal.ui.compare.XMLContentMergeViewerCreator"
-            contentTypeId="org.eclipse.pde.pluginManifest" />
+            contentTypeId="org.eclipse.pde.pluginManifest" />-->
    </extension>
     <extension
          point="org.eclipse.ui.themes">
@@ -1796,7 +1796,7 @@
          </description>
       </fontDefinition>
     </extension>
-    <extension
+    <!--<extension
          point="org.eclipse.ui.themes">
        <fontDefinition
             label="%fontDefinition.label.1"
@@ -1807,7 +1807,7 @@
             %fontDefinition.description.1
          </description>
        </fontDefinition>
-    </extension>
+    </extension>-->
     <extension point="org.eclipse.debug.core.sourceLocators">
    		<sourceLocator
    			id="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"

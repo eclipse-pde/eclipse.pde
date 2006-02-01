@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 public final class XMLStructureMapping {
 	
 	public static final String ECLIPSE_PLUGIN = "Eclipse Plugin"; //$NON-NLS-1$
-	public static final String ECLIPSE_SCHEMA = "Eclipse Schema";
+	public static final String ECLIPSE_SCHEMA = "Eclipse Schema"; //$NON-NLS-1$
 	public static final String IMAGE_TYPE_PREFIX = "xml_"; //$NON-NLS-1$
 
 	private static HashMap fMappings;

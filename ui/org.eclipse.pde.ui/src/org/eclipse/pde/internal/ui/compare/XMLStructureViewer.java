@@ -159,7 +159,7 @@ public class XMLStructureViewer extends StructureDiffViewer {
 					totalWork = 1;
 				else
 					totalWork = 3;
-				monitor.beginTask("Running Matching algorithm...", totalWork); 
+				monitor.beginTask("Running Matching algorithm...", totalWork);  //$NON-NLS-1$
 				
 				AbstractMatching m = new OrderedMatching();
 				try {

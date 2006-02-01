@@ -50,9 +50,9 @@ import org.xml.sax.helpers.LocatorImpl;
 public class XMLStructureCreator implements IStructureCreator {
 
 	protected static final boolean DEBUG_MODE = true;
-	public static final String DEFAULT_NAME = "XML Compare";
-	public static final String USE_UNORDERED = "Unordered";
-	public static final String USE_ORDERED = "Ordered";
+	public static final String DEFAULT_NAME = "XML Compare"; //$NON-NLS-1$
+	public static final String USE_UNORDERED = "Unordered"; //$NON-NLS-1$
+	public static final String USE_ORDERED = "Ordered"; //$NON-NLS-1$
 	
 	public static final String DEFAULT_IDMAP = XMLStructureMapping.ECLIPSE_PLUGIN;
 	public static final String TYPE_ROOT = "plugin"; //$NON-NLS-1$
@@ -307,7 +307,7 @@ public class XMLStructureCreator implements IStructureCreator {
 							body_value = removeWhiteSpace(body_value);
 						}
 						XMLNode bodynode = new XMLNode(TYPE_TEXT, "body_(" + fCurrentParent.bodies + ")", body_value, (fSignature + SIGN_TEXT), fDoc, offset, length); //$NON-NLS-2$ //$NON-NLS-1$
-						bodynode.setName(NLS.bind("{0} ({1})", "body", Integer.toString(fCurrentParent.bodies))); //$NON-NLS-1$
+						bodynode.setName(NLS.bind("{0} ({1})", "body", Integer.toString(fCurrentParent.bodies))); //$NON-NLS-1$ //$NON-NLS-2$
 						fCurrentParent.addChild(bodynode);
 						bodynode.setParent(fCurrentParent);
 						if (XMLStructureCreator.DEBUG_MODE)
@@ -478,9 +478,9 @@ public class XMLStructureCreator implements IStructureCreator {
 	 * Set File extension of the parsed file. This extension will be used to choose an Id Map scheme.
 	 */
 	public void setFileExtension(String ext) {
-		if (ext.equals(".xml"))
+		if (ext.equals("xml")) //$NON-NLS-1$
 			setIdMap(XMLStructureMapping.ECLIPSE_PLUGIN);
-		else if (ext.equals(".exsd"))
+		else if (ext.equals("exsd")) //$NON-NLS-1$
 			setIdMap(XMLStructureMapping.ECLIPSE_SCHEMA);
 	}
 
@@ -523,7 +523,6 @@ public class XMLStructureCreator implements IStructureCreator {
 
 			try {
 				SAXParserFactory factory = SAXParserFactory.newInstance();
-				factory.setNamespaceAware(true);
 				SAXParser parser = factory.newSAXParser();
 				parser.parse(new InputSource(new StringReader(contents)), handler);
 
