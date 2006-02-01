@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
+import java.io.File;
 import java.util.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
@@ -79,7 +80,11 @@ public class AssemblyInformation implements IPDEBuildConstants {
 			for (Iterator iter = allPlugins.iterator(); iter.hasNext();) {
 				BundleDescription bundle = (BundleDescription) iter.next();
 				Properties bundleProperties = ((Properties) bundle.getUserObject());
-				if (bundleProperties != null && Boolean.TRUE == bundleProperties.get(IS_COMPILED))
+				if (bundleProperties == null || bundleProperties.get(IS_COMPILED) == null){
+					File props = new File(bundle.getLocation(), PROPERTIES_FILE);
+					if(props.exists() && props.isFile())
+						result.add(bundle);
+				} else if (Boolean.TRUE == bundleProperties.get(IS_COMPILED))
 					result.add(bundle);
 			}
 			
