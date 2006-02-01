@@ -1208,13 +1208,17 @@
                         value="1">
                   </count>
                		<iterate>
+               		  <and>
+               		    <test property="org.eclipse.jdt.launching.hasProjectNature" args="org.eclipse.pde.PluginNature"/>
                  		<or>
-                   			<test property="org.eclipse.debug.ui.matchesPattern" value="*.java"/>
-                   			<test property="org.eclipse.debug.ui.matchesPattern" value="*.class"/>
-                   			<adapt type="org.eclipse.jdt.core.IJavaElement"/>
+             			    <test property="org.eclipse.jdt.launching.extendsInterface" args="junit.framework.Test"/>
+                 			<test property="org.eclipse.jdt.launching.hasMethod" args="suite, ()QTest;, public static"/>
+                 			<and>
+                 				<test property="org.eclipse.jdt.launching.isContainer"/>
+                 				<test property="org.eclipse.jdt.launching.buildpathReference" args="junit"/>
+                 			</and>
                  		</or>
-                 		<test property="org.eclipse.pde.core.PluginNature"/>
-                 		<test property="org.eclipse.jdt.junit.isTest"/>
+                      </and>
                		</iterate>
                </with>
             </enablement>
@@ -1332,12 +1336,13 @@
              <with variable="selection">
                <count value="1"/>
                <iterate>
-                 <or>
-                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.java"/>
-                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.class"/>
-                   <adapt type="org.eclipse.jdt.core.IJavaElement"/>
-                 </or>
-                 <test property="org.eclipse.jdt.debug.ui.hasMainType"/>
+                 <and>
+                    <test property="org.eclipse.jdt.launching.buildpathReference" args="swt"/>
+             		<or>
+             			<test property="org.eclipse.jdt.launching.hasMain"/>
+             			<test property="org.eclipse.jdt.launching.isContainer"/>
+             		</or>
+             	 </and>
                </iterate>
              </with>
            </enablement>
