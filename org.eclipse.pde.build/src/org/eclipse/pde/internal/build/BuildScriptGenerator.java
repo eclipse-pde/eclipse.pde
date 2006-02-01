@@ -165,6 +165,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 				generator.setSignJars(signJars);
 				generator.setGenerateJnlp(generateJnlp);
 				generator.setGenerateVersionSuffix(generateFeatureVersionSuffix);
+				generator.setProduct(product);
 				generator.generate();
 			}
 

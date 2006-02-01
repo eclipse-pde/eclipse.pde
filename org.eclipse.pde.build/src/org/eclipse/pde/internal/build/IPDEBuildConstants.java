@@ -69,6 +69,7 @@ public interface IPDEBuildConstants {
 	public final static String DEFAULT_PLUGINS_POSTPROCESSINGSTEPS_FILENAME_DESCRIPTOR = "plugins.postProcessingSteps.properties"; //$NON-NLS-1$
 	public final static String DEFAULT_FEATURES_POSTPROCESSINGSTEPS_FILENAME_DESCRIPTOR = "features.postProcessingSteps.properties"; //$NON-NLS-1$
 	public final static String DEFAULT_CUSTOM_BUILD_CALLBACKS_FILE = "customBuildCallbacks.xml"; //$NON-NLS-1$
+	public final static String DEFAULT_PRODUCT_ROOT_FILES_DIR = "productRootFiles"; //$NON-NLS-1$
 
 	public final static String DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX = "finalPluginsVersions"; //$NON-NLS-1$
 	public final static String DEFAULT_FEATURE_VERSION_FILENAME_PREFIX = "finalFeaturesVersions"; //$NON-NLS-1$

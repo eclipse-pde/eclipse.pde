@@ -12,8 +12,7 @@
 package org.eclipse.pde.internal.build;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import javax.xml.parsers.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
@@ -47,6 +46,12 @@ public class ProductFile extends DefaultHandler {
 	private String launcherName = null;
 	private String icons[] = null;
 	private boolean parsed = false;
+	private String configPath = null;
+	private String id = null;
+	private boolean useFeatures = false;
+	private List plugins = null;
+	private String splashLocation = null;
+	private String productName;
 
 	/**
 	 * Constructs a feature parser.
@@ -74,6 +79,18 @@ public class ProductFile extends DefaultHandler {
 		return launcherName;
 	}
 	
+	public List getPlugins() {
+		if(!parsed)
+			parse();
+		return plugins;
+	}
+	
+	public boolean containsPlugin(String plugin) {
+		if(!parsed)
+			parse();
+		return plugins != null && plugins.contains(plugin);
+	}
+
 	/**
 	 * Parses the specified url and constructs a feature
 	 */
@@ -92,6 +109,36 @@ public class ProductFile extends DefaultHandler {
 		icons = new String[i];
 		System.arraycopy(temp, 0, icons, 0, i);
 		return icons;
+	}
+
+	public String getConfigIniPath() {
+		if (!parsed)
+			parse();
+		return configPath;
+	}
+
+	public String getId() {
+		if (!parsed)
+			parse();
+		return id;
+	}
+	
+	public String getSplashLocation() {
+		if (!parsed)
+			parse();
+		return splashLocation;
+	}
+
+	public String getProductName() {
+		if (!parsed)
+			parse();
+		return productName;
+	}
+	
+	public boolean useFeatures() {
+		if (!parsed)
+			parse();
+		return useFeatures;
 	}
 
 	private void parse() {
@@ -128,6 +175,35 @@ public class ProductFile extends DefaultHandler {
 			processIco(attributes);
 		} else if ("bmp".equals(localName)) { //$NON-NLS-1$
 			processBmp(attributes);
+		} else if ("configIni".equals(localName)) { //$NON-NLS-1$
+			processConfigIni(attributes);
+		} else if ("product".equals(localName)) { //$NON-NLS-1$
+			processProduct(attributes);
+		} else if ("plugin".equals(localName)) { //$NON-NLS-1$
+			processPlugin(attributes);
+		} else if ("splash".equals(localName)) { //$NON-NLS-1$
+			splashLocation = attributes.getValue("location"); //$NON-NLS-1$
+		}
+	}
+
+	private void processPlugin(Attributes attributes) {
+		if (plugins == null)
+			plugins = new ArrayList();
+		plugins.add(attributes.getValue("id")); //$NON-NLS-1$
+	}
+
+	private void processProduct(Attributes attributes) {
+		id = attributes.getValue("id"); //$NON-NLS-1$
+		productName = attributes.getValue("name"); //$NON-NLS-1$
+		String use = attributes.getValue("useFeatures"); //$NON-NLS-1$
+		if (use != null)
+			useFeatures = IBuildPropertiesConstants.TRUE.equals(use.toUpperCase());
+
+	}
+
+	private void processConfigIni(Attributes attributes) {
+		if (attributes.getValue("use").equals("custom")) { //$NON-NLS-1$//$NON-NLS-2$
+			configPath = attributes.getValue("path"); //$NON-NLS-1$
 		}
 	}
 

@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
-import java.io.File;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.ant.*;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
-import org.eclipse.pde.internal.build.site.PDEState;
-import org.eclipse.update.core.*;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.PluginEntry;
 
 /**
  * Generate an assemble script for a given feature and a given config. It
@@ -133,44 +132,6 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printBrandTask(install, computeIconsList(), Utils.getPropertyFormat(PROPERTY_LAUNCHER_NAME), Utils.getPropertyFormat(PROPERTY_OS));
 	}
 
-	private String findFile(String location, boolean makeRelative) {
-		PDEState state;
-		try {
-			state = getSite(false).getRegistry();
-		} catch (CoreException e) {
-			return null;
-		}
-		Path path = new Path(location);
-		String id = path.segment(0);
-		BundleDescription bundle = state.getResolvedBundle(id);
-		if (bundle != null) {
-			String result = checkFile(new Path(bundle.getLocation()), path, makeRelative);
-			if (result != null)
-				return result;
-		}
-		// Couldn't find the file in any of the plugins, try in a feature.
-		IFeature feature = null;
-		try {
-			feature = getSite(false).findFeature(id, null, false);
-		} catch (CoreException e) {
-			//Ignore
-		}
-		if (feature == null) 
-			return null;
-		ISiteFeatureReference ref = feature.getSite().getFeatureReference(feature);
-		IPath featureBase = new Path(ref.getURL().getFile()).removeLastSegments(1);
-		return checkFile(featureBase, path, makeRelative);
-	}
-
-	private String checkFile(IPath base, Path target, boolean makeRelative) {
-		IPath path = base.append(target.removeFirstSegments(1));
-		String result = path.toOSString();
-		if (!new File(result).exists())
-			return null;
-		if (makeRelative)
-			return Utils.makeRelative(path, new Path(workingDirectory)).toOSString();
-		return result;
-	}
 	private void generateArchivingSteps() {
 		if (FORMAT_FOLDER.equalsIgnoreCase(archiveFormat)) {
 			generateMoveRootFiles();

@@ -70,6 +70,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	//Cache the result of compteElements for performance
 	private List computedElements = null;
 	private String customFeatureCallbacks = null;
+	private String product = null;
 	private static final String TEMPLATE = "data"; //$NON-NLS-1$
 	
 	public FeatureBuildScriptGenerator() {
@@ -513,6 +514,15 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 *  
 	 */
 	private void generateRootFilesAndPermissions() throws CoreException {
+		if (product != null) {
+			ProductGenerator generator = new ProductGenerator();
+			generator.setProduct(product);
+			generator.setBuildSiteFactory(siteFactory);
+			generator.setBuildProperties(getBuildProperties());
+			generator.setRoot(featureRootLocation);
+			generator.setWorkingDirectory(getWorkingDirectory());
+			generator.generate();
+		}
 		for (Iterator iter = getConfigInfos().iterator(); iter.hasNext();) {
 			Config aConfig = (Config) iter.next();
 			script.printTargetDeclaration(TARGET_ROOTFILES_PREFIX + aConfig.toString("_"), null, null, null, null); //$NON-NLS-1$
@@ -1489,6 +1499,14 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 */
 	public void setGenerateVersionSuffix(boolean value) {
 		generateVersionSuffix = value;
+	}
+	
+	/**
+	 * Set the location of the .product file
+	 * @param product the location of the .product file
+	 */
+	public void setProduct(String product) {
+		this.product  = product;
 	}
 
 	protected void collectElementToAssemble(IPluginEntry entryToCollect) throws CoreException {

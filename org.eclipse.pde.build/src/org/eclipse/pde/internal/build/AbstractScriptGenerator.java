@@ -17,9 +17,8 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.ant.AntScript;
-import org.eclipse.pde.internal.build.site.BuildTimeSite;
-import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
-import org.eclipse.update.core.SiteManager;
+import org.eclipse.pde.internal.build.site.*;
+import org.eclipse.update.core.*;
 
 /**
  * Generic super-class for all script generator classes. 
@@ -289,5 +288,46 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	private void ensurePDEUIStateNotNull() {
 		if (pdeUIState == null)
 			pdeUIState = new PDEUIStateWrapper();
+	}
+	
+	protected String findFile(String location, boolean makeRelative) {
+		if (location == null)
+			return null;
+		PDEState state;
+		try {
+			state = getSite(false).getRegistry();
+		} catch (CoreException e) {
+			return null;
+		}
+		Path path = new Path(location);
+		String id = path.segment(0);
+		BundleDescription bundle = state.getResolvedBundle(id);
+		if (bundle != null) {
+			String result = checkFile(new Path(bundle.getLocation()), path, makeRelative);
+			if (result != null)
+				return result;
+		}
+		// Couldn't find the file in any of the plugins, try in a feature.
+		IFeature feature = null;
+		try {
+			feature = getSite(false).findFeature(id, null, false);
+		} catch (CoreException e) {
+			//Ignore
+		}
+		if (feature == null) 
+			return null;
+		ISiteFeatureReference ref = feature.getSite().getFeatureReference(feature);
+		IPath featureBase = new Path(ref.getURL().getFile()).removeLastSegments(1);
+		return checkFile(featureBase, path, makeRelative);
+	}
+
+	private String checkFile(IPath base, Path target, boolean makeRelative) {
+		IPath path = base.append(target.removeFirstSegments(1));
+		String result = path.toOSString();
+		if (!new File(result).exists())
+			return null;
+		if (makeRelative)
+			return Utils.makeRelative(path, new Path(workingDirectory)).toOSString();
+		return result;
 	}
 }
