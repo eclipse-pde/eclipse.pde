@@ -70,7 +70,7 @@ public class PluginModelManager implements IAdaptable {
 	public String getTargetVersion() {
 		ModelEntry entry = findEntry(OSGI_RUNTIME); 
 		if (entry == null) 
-			return ICoreConstants.TARGET30;
+			return ICoreConstants.TARGET32;
 		
 		IPluginModelBase model = entry.getActiveModel();
 		String version = model.getPluginBase().getVersion();
