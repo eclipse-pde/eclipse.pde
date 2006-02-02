@@ -279,8 +279,8 @@ public class ExportPackageVisibilitySection extends TableSection
         fInternalButton.setEnabled(object != null && isEditable());
         fInternalButton.setSelection(objects != null && object.isInternal());
         
-        getTablePart().setButtonEnabled(0, fInternalButton.getSelection());
-        getTablePart().setButtonEnabled(1, fInternalButton.getSelection());
+        getTablePart().setButtonEnabled(0, fInternalButton.getSelection() && isEditable());
+        getTablePart().setButtonEnabled(1, fInternalButton.getSelection()&& isEditable());
         fFriendViewer.setInput(object);
         fBlockChanges = false;
     }
