@@ -146,6 +146,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		FeatureBuildScriptGenerator featureGenerator = new FeatureBuildScriptGenerator(Utils.getArrayFromString(getBuildProperties().getProperty(GENERATION_SOURCE_PLUGIN_PREFIX + pluginId))[0], null, assemblyData);
 		featureGenerator.setGenerateIncludedFeatures(false);
 		featureGenerator.setAnalyseChildren(analysePlugins);
+		featureGenerator.setSourceFeatureId(pluginId);
 		featureGenerator.setSourceFeatureGeneration(true);
 		featureGenerator.setExtraPlugins(Utils.getArrayFromString(getBuildProperties().getProperty(GENERATION_SOURCE_PLUGIN_PREFIX + pluginId)));
 		featureGenerator.setBinaryFeatureGeneration(false);
@@ -265,8 +266,10 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			generator.setBinaryFeatureGeneration(!doSourceFeatureGeneration);
 			//We don't want to regenerate the scripts for the binary feature we are reading to build the source feature
 			generator.setScriptGeneration(doSourceFeatureGeneration ? false : true);
-			if (doSourceFeatureGeneration)
+			if (doSourceFeatureGeneration) {
+				generator.setSourceFeatureId(featureId);
 				generator.setExtraPlugins(Utils.getArrayFromString(getBuildProperties().getProperty(GENERATION_SOURCE_FEATURE_PREFIX + featureId)));
+			}
 			generator.setPluginPath(pluginPath);
 			generator.setBuildSiteFactory(siteFactory);
 			generator.setDevEntries(devEntries);
@@ -941,8 +944,14 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		featureTempFolder = Utils.getPropertyFormat(PROPERTY_FEATURE_TEMP_FOLDER);
 	}
 
+	public void setSourceFeatureId(String id){
+		sourceFeatureFullName = id;
+	}
+	
 	private String computeSourceFeatureName(IFeature featureForName, boolean withNumber) throws CoreException {
 		String sourceFeatureName = getBuildProperties().getProperty(PROPERTY_SOURCE_FEATURE_NAME);
+		if (sourceFeatureName == null) 
+			sourceFeatureName = sourceFeatureFullName;
 		if (sourceFeatureName == null)
 			sourceFeatureName = featureForName.getVersionedIdentifier().getIdentifier() + ".source"; //$NON-NLS-1$
 		return sourceFeatureName + (withNumber ? "_" + featureForName.getVersionedIdentifier().getVersion().toString() : ""); //$NON-NLS-1$ //$NON-NLS-2$
