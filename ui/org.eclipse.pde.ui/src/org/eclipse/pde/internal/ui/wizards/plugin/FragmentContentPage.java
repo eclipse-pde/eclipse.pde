@@ -155,7 +155,14 @@ public class FragmentContentPage extends ContentPage {
 		
 		Label label = new Label(comp, SWT.NONE);
 		label.setText(PDEUIMessages.FragmentContentPage_pid); 
-		fPluginIdText_oldV = createPluginIdContainer(comp, false, 1);
+		
+		Composite container = new Composite(comp, SWT.NONE);
+		layout = new GridLayout(2, false);
+		layout.marginHeight = layout.marginWidth = 0;
+		container.setLayout(layout);
+		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		fPluginIdText_oldV = createPluginIdContainer(container, false, 1);
 		
 		label = new Label(comp, SWT.NONE);
 		label.setText(PDEUIMessages.FragmentContentPage_pversion); 
@@ -176,17 +183,9 @@ public class FragmentContentPage extends ContentPage {
 	}
 
 	private Text createPluginIdContainer(Composite parent, final boolean validateRange, int span) {
-		Composite container = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(2, false);
-		layout.marginHeight = layout.marginWidth = 0;
-		container.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = span;
-		container.setLayoutData(gd);
+		final Text pluginText = createText(parent, listener);
 
-		final Text pluginText = createText(container, listener);
-
-		Button browse = new Button(container, SWT.PUSH);
+		Button browse = new Button(parent, SWT.PUSH);
 		browse.setText(PDEUIMessages.ContentPage_browse); 
 		browse.setLayoutData(new GridData());
 		browse.addSelectionListener(new SelectionAdapter() {
