@@ -196,7 +196,7 @@ public abstract class AbstractPluginBlock {
 	}
 	
 	protected void createPluginViewer(Composite composite) {
-		fPluginTreeViewer = new CheckboxTreeViewer(composite, SWT.BORDER|SWT.FULL_SELECTION);
+		fPluginTreeViewer = new CheckboxTreeViewer(composite, getTreeViewerStyle());
 		fPluginTreeViewer.setContentProvider(new PluginContentProvider());
 		fPluginTreeViewer.setLabelProvider(getLabelProvider());
 		fPluginTreeViewer.setAutoExpandLevel(2);
@@ -251,6 +251,10 @@ public abstract class AbstractPluginBlock {
 		fCounter = new Label(composite, SWT.NONE);
 		fCounter.setLayoutData(new GridData(GridData.FILL_BOTH|GridData.VERTICAL_ALIGN_END));
 		updateCounter();
+	}
+	
+	protected int getTreeViewerStyle() {
+		return SWT.BORDER;
 	}
 	
 	private Button createButton(Composite composite, String text) {

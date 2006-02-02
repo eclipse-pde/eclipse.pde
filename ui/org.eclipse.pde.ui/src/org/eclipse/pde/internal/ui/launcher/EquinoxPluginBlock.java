@@ -417,6 +417,10 @@ public class EquinoxPluginBlock extends AbstractPluginBlock {
 		}
 		return (IPluginModelBase[])map.values().toArray(new IPluginModelBase[map.size()]);
 	}
+	
+	protected int getTreeViewerStyle() {
+		return super.getTreeViewerStyle() | SWT.FULL_SELECTION;
+	}
 
 
 }
