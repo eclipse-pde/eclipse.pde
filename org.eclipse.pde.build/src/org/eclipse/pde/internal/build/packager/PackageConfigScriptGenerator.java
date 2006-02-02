@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.ant.FileSet;
 import org.eclipse.pde.internal.build.builder.FeatureBuildScriptGenerator;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
+import org.eclipse.pde.internal.build.site.BuildTimeSiteContentProvider;
 
 public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	
@@ -26,20 +27,40 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 
 	protected void generateGatherBinPartsCalls() { //TODO Here we should try to use cp because otherwise we will loose the permissions
 		String excludedFiles = "build.properties, .project, .classpath"; //$NON-NLS-1$
+		IPath baseLocation = null;
+		try {
+			String url = ((BuildTimeSiteContentProvider) getSite(false).getSiteContentProvider()).getInstalledBaseURL();
+			if (url != null)
+				baseLocation = new Path(url);
+		} catch (CoreException e) {
+			//nothing
+		}
 		for (int i = 0; i < plugins.length; i++) {
 			Path pluginLocation = new Path(plugins[i].getLocation());
+			String location = pluginLocation.toOSString();
 			boolean isFolder = isFolder(pluginLocation);
+			
+			//try to relate the plugin location to the ${baseLocation} property
+			if (baseLocation != null && baseLocation.isPrefixOf(pluginLocation)) {
+				IPath relative = pluginLocation.removeFirstSegments(baseLocation.segmentCount());
+				location = new Path(Utils.getPropertyFormat(PROPERTY_BASE_LOCATION)).append(relative).toOSString();
+			}
 			if (isFolder) {
-				script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + ModelBuildScriptGenerator.getNormalizedName(plugins[i]), new FileSet[] {new FileSet(pluginLocation.toOSString(), null, null, null, excludedFiles, null, null)}, false, false);
+				script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + ModelBuildScriptGenerator.getNormalizedName(plugins[i]), new FileSet[] {new FileSet(location, null, null, null, excludedFiles, null, null)}, false, false);
 			} else {
-				script.printCopyFileTask(pluginLocation.toOSString(), Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + pluginLocation.lastSegment(), false);
+				script.printCopyFileTask(location, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + pluginLocation.lastSegment(), false);
 			}
 		}
 
 		for (int i = 0; i < features.length; i++) {
 			IPath featureLocation = new Path(features[i].getURL().getPath()); // Here we assume that all the features are local
 			featureLocation = featureLocation.removeLastSegments(1);
-			script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + FeatureBuildScriptGenerator.getNormalizedName(features[i]), new FileSet[] {new FileSet(featureLocation.toOSString(), null, null, null, null, null, null)}, false, false);
+			String location = featureLocation.toOSString();
+			if (baseLocation != null && baseLocation.isPrefixOf(featureLocation)) {
+				IPath relative = featureLocation.removeFirstSegments(baseLocation.segmentCount());
+				location = new Path(Utils.getPropertyFormat(PROPERTY_BASE_LOCATION)).append(relative).toOSString();
+			}
+			script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + FeatureBuildScriptGenerator.getNormalizedName(features[i]), new FileSet[] {new FileSet(location, null, null, null, null, null, null)}, false, false);
 		}
 		
 		if (packagingProperties.size() != 0) {
