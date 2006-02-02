@@ -279,10 +279,19 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			generator.includePlatformIndependent(isPlatformIndependentIncluded());
 			generator.setIgnoreMissingPropertiesFile(isIgnoreMissingPropertiesFile());
 			generator.setGenerateVersionSuffix(generateVersionSuffix);
-			generator.generate();
+			try {
+				generator.generate();
+			}  catch (CoreException exception) {
+				absorbExceptionIfOptionalFeature(referencedFeatures[i], exception);
+			}
 		}
 	}
 
+	private void absorbExceptionIfOptionalFeature(IIncludedFeatureReference feature, CoreException toAbsorb) throws CoreException {
+		if (toAbsorb.getStatus().getCode() != EXCEPTION_FEATURE_MISSING || (toAbsorb.getStatus().getCode() == EXCEPTION_FEATURE_MISSING && !feature.isOptional()))
+			throw toAbsorb;
+	}
+	
 	protected void setExtraPlugins(String[] plugins) {
 		extraPlugins = plugins;
 	}
@@ -479,7 +488,13 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			IIncludedFeatureReference[] includedFeatures = feature.getRawIncludedFeatureReferences();
 			for (int i = 0; i < includedFeatures.length; i++) {
 				String versionId = includedFeatures[i].getVersionedIdentifier().getVersion().toString();
-				IFeature includedFeature = getSite(false).findFeature(includedFeatures[i].getVersionedIdentifier().getIdentifier(), versionId, true);
+				IFeature includedFeature = null;
+				try {
+					includedFeature = getSite(false).findFeature(includedFeatures[i].getVersionedIdentifier().getIdentifier(), versionId, true);
+				} catch(CoreException e) {
+					absorbExceptionIfOptionalFeature(includedFeatures[i], e);
+					continue;
+				}
 				VersionedIdentifier includedFeatureVersionId = includedFeature.getVersionedIdentifier();
 				featureVersionInfo += (includedFeatureVersionId.getIdentifier() + ',' + includedFeatureVersionId.getVersion().toString() + ',');
 			}
@@ -693,6 +708,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				String versionId = features[i].getVersionedIdentifier().getVersion().toString();
 				IFeature includedFeature = getSite(false).findFeature(featureId, versionId, false);
 				if (includedFeature == null) {
+					if (features[i].isOptional())
+						continue;
 					String message = NLS.bind(Messages.exception_missingFeature, featureId + ' ' + versionId);
 					throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
 				}
