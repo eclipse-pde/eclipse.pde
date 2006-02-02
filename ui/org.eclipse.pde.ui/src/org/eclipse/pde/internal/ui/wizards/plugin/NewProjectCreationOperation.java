@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -31,6 +33,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModelFactory;
 import org.eclipse.pde.core.plugin.IFragment;
@@ -64,6 +67,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ISetSelectionTarget;
+import org.osgi.framework.Constants;
 import org.osgi.service.prefs.BackingStoreException;
 
 public class NewProjectCreationOperation extends WorkspaceModifyOperation {
@@ -92,13 +96,38 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 								? ((AbstractFieldData)fData).getOSGiFramework()
 								: null;
 
+		HashMap map = new HashMap();
+		if (fData instanceof IFragmentFieldData) {
+			IFragmentFieldData data = (IFragmentFieldData)fData;
+			StringBuffer buffer = new StringBuffer();
+			buffer.append(data.getPluginId());
+			buffer.append(";"); //$NON-NLS-1$
+			buffer.append(Constants.BUNDLE_VERSION_ATTRIBUTE);
+			buffer.append("=\""); //$NON-NLS-1$
+			buffer.append(data.getPluginVersion());
+			buffer.append("\""); //$NON-NLS-1$
+			map.put(Constants.FRAGMENT_HOST, buffer.toString());
+		}
 		if (framework != null) {
-			PDEPluginConverter.createBundleForFramework(project, 
-								getImportPackagesSet(), 
-								new SubProgressMonitor(monitor, 1));
+			StringBuffer buffer = new StringBuffer();
+			Set packages = getImportPackagesSet();
+			Iterator iter = packages.iterator();
+			while (iter.hasNext()) {
+				if (buffer.length() > 0) {
+					buffer.append(","); //$NON-NLS-1$
+					buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
+					buffer.append(" "); //$NON-NLS-1$
+				}
+				buffer.append(iter.next().toString());
+			}
+			if (buffer.length() > 0)
+				map.put(Constants.IMPORT_PACKAGE, buffer.toString());
+			
+			PDEPluginConverter.createBundleForFramework(project, map, new SubProgressMonitor(monitor, 1));
 		} else {
 			PDEPluginConverter.convertToOSGIFormat(project,
 					((AbstractFieldData) fData).getTargetVersion(), null,
+					map.size() > 0 ? map : null,
 					new SubProgressMonitor(monitor, 1));
 		}
 		if (fModel.getPluginBase().getExtensions().length == 0) {
@@ -174,9 +203,10 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 				.getTargetVersion());
 		if (pluginBase instanceof IFragment) {
 			IFragment fragment = (IFragment) pluginBase;
-			FragmentFieldData data = (FragmentFieldData) fData;
+			IFragmentFieldData data = (IFragmentFieldData) fData;
 			fragment.setPluginId(data.getPluginId());
-			fragment.setPluginVersion(data.getPluginVersion());
+			VersionRange version = new VersionRange(data.getPluginVersion());
+			fragment.setPluginVersion(version.getMinimum().toString());
 			fragment.setRule(data.getMatch());
 		} else {
 			if (((IPluginFieldData) fData).doGenerateClass())

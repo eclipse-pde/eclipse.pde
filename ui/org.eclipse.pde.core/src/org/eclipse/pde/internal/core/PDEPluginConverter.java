@@ -16,9 +16,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -39,6 +39,10 @@ import org.osgi.util.tracker.ServiceTracker;
 public class PDEPluginConverter {
 	
 	public static void convertToOSGIFormat(IProject project, String target, Dictionary dictionary, IProgressMonitor monitor) throws CoreException {
+		convertToOSGIFormat(project, target, dictionary, null, monitor);
+	}
+	
+	public static void convertToOSGIFormat(IProject project, String target, Dictionary dictionary, HashMap newProps, IProgressMonitor monitor) throws CoreException {
 		try {
 			File outputFile = new File(project.getLocation().append(
 					"META-INF/MANIFEST.MF").toOSString()); //$NON-NLS-1$
@@ -48,6 +52,10 @@ public class PDEPluginConverter {
 			tracker.open();
 			PluginConverter converter = (PluginConverter) tracker.getService();
 			converter.convertManifest(inputFile, outputFile, false, target, true, dictionary);
+
+			if (newProps != null && newProps.size() > 0)
+				converter.writeManifest(outputFile, getProperties(outputFile, newProps), false);
+		
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 			tracker.close();
 		} catch (PluginConversionException e) {
@@ -56,7 +64,7 @@ public class PDEPluginConverter {
 		}
 	}
 	
-	public static void createBundleForFramework(IProject project, Set packages, IProgressMonitor monitor) throws CoreException {
+	public static void createBundleForFramework(IProject project, HashMap newProps, IProgressMonitor monitor) throws CoreException {
 		try {
 			File outputFile = new File(project.getLocation().append(
 					"META-INF/MANIFEST.MF").toOSString()); //$NON-NLS-1$
@@ -69,33 +77,43 @@ public class PDEPluginConverter {
 			String versionString =  version <= 3.1 ? ICoreConstants.TARGET31 : TargetPlatform.getTargetVersionString();
 			converter.convertManifest(inputFile, outputFile, false, versionString, true, null);
 			
-			InputStream manifestStream = new FileInputStream(outputFile);
-			Manifest manifest = new Manifest(manifestStream);
-			Properties prop = manifestToProperties(manifest.getMainAttributes());
+			Properties prop = getProperties(outputFile, newProps);
 			prop.remove(ICoreConstants.ECLIPSE_AUTOSTART); 
 			prop.remove(ICoreConstants.ECLIPSE_LAZYSTART);
-			StringBuffer buffer = new StringBuffer();
-			Iterator iter = packages.iterator();
-			while (iter.hasNext()) {
-				if (buffer.length() > 0) {
-					buffer.append(","); //$NON-NLS-1$
-					buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
-					buffer.append(" "); //$NON-NLS-1$
-				}
-				buffer.append(iter.next().toString());
-			}
-			if (buffer.length() > 0)
-				prop.put(Constants.IMPORT_PACKAGE, buffer.toString());
 			converter.writeManifest(outputFile, prop, false);
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 			tracker.close();
 		} catch (PluginConversionException e) {
 		} catch (CoreException e) {
-		} catch (FileNotFoundException e) {
-		} catch (IOException e) {
 		} finally {
 			monitor.done();
 		}
+	}
+	
+	private static Properties getProperties(File file, HashMap newProps) {
+		InputStream manifestStream = null;
+		try {
+			manifestStream = new FileInputStream(file);
+			Manifest manifest = new Manifest(manifestStream);
+			Properties prop = manifestToProperties(manifest.getMainAttributes());
+			if (newProps != null && newProps.size() > 0) {
+				Iterator iter = newProps.keySet().iterator();
+				while (iter.hasNext()) {
+					String key = iter.next().toString();
+					prop.put(key, newProps.get(key));
+				}
+			}
+			return prop;
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (manifestStream != null)
+					manifestStream.close();
+			} catch (IOException e) {
+			}
+		}
+		return new Properties();
 	}
 	
 	public static void modifyBundleClasspathHeader(IProject project, IPluginModelBase model) {
