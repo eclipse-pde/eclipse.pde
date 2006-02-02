@@ -12,12 +12,10 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -25,6 +23,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
@@ -32,7 +31,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
@@ -47,8 +45,6 @@ import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.configurator.IPlatformConfiguration;
 
 public class TargetPlatform implements IEnvironmentVariables {
-
-	private static final String BOOT_ID = "org.eclipse.core.boot"; //$NON-NLS-1$
 
 	static class LocalSite {
 		private ArrayList plugins;
@@ -89,8 +85,8 @@ public class TargetPlatform implements IEnvironmentVariables {
 		}
 	}
 	
-	public static Properties getConfigIniProperties(String filename) {
-		File iniFile = new File(ExternalModelManager.getEclipseHome().toOSString(), filename);
+	public static Properties getConfigIniProperties() {
+		File iniFile = new File(ExternalModelManager.getEclipseHome().toOSString(), "configuration/config.ini"); //$NON-NLS-1$
 		if (!iniFile.exists())
 			return null;
 		Properties pini = new Properties();
@@ -103,21 +99,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		}		
 		return null;
 	}
-
-	public static String[] createPluginPath() throws CoreException {
-		return createPluginPath(PDECore.getDefault().getModelManager().getPlugins());
-	}
-
-	public static String[] createPluginPath(IPluginModelBase[] models)
-		throws CoreException {
-		String paths[] = new String[models.length];
-		for (int i = 0; i < models.length; i++) {
-			paths[i] = models[i].getInstallLocation();
-		}
-		return paths;
-	}
-
-
+	
 	public static void createPlatformConfigurationArea(
 		Map pluginMap,
 		File configDir,
@@ -199,47 +181,17 @@ public class TargetPlatform implements IEnvironmentVariables {
 			addToSite(sitePath, model, sites);
 		}
 
-		IPluginModelBase bootModel = (IPluginModelBase)pluginMap.get(BOOT_ID);	
-		URL configURL = new URL("file:" + configFile.getPath()); //$NON-NLS-1$
-		createConfigurationEntries(platformConfiguration, bootModel, sites);
+		createConfigurationEntries(platformConfiguration,sites);
 		if (primaryFeatureId != null)
 			createFeatureEntries(platformConfiguration, pluginMap, primaryFeatureId);
 		platformConfiguration.refresh();
-		platformConfiguration.save(configURL);
-
-		if (bootModel!=null) {
-			String version = bootModel.getPluginBase().getVersion();
-			if (version!=null) {
-				PluginVersionIdentifier bootVid = new PluginVersionIdentifier(version);
-				PluginVersionIdentifier breakVid = new PluginVersionIdentifier("2.0.3"); //$NON-NLS-1$
-				if (breakVid.isGreaterThan(bootVid))
-				// Platform configuration version changed in 2.1
-				// but the same fix is in 2.0.3.
-				// Must switch back to configuration 1.0 for 
-				// older configurations.
-				repairConfigurationVersion(configURL);
-			}
-		}
+		platformConfiguration.save(new URL("file:" + configFile.getPath())); //$NON-NLS-1$
 	}
 
 	private static IPath getTransientSitePath(IPluginModelBase model) {
 		return new Path(model.getInstallLocation()).removeLastSegments(2);		
 	}
 	
-	private static void repairConfigurationVersion(URL url) throws IOException {
-		File file = new File(url.getFile());
-		if (file.exists()) {
-			Properties p = new Properties();
-			FileInputStream fis = new FileInputStream(file);
-			p.load(fis);
-			p.setProperty("version", "1.0"); //$NON-NLS-1$ //$NON-NLS-2$
-			fis.close();
-			FileOutputStream fos = new FileOutputStream(file);
-			p.store(fos, (new Date()).toString());
-			fos.close();
-		}
-	}
-
 	private static void addToSite(
 		IPath path,
 		IPluginModelBase model,
@@ -261,7 +213,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 
 	private static void createConfigurationEntries(
 		IPlatformConfiguration config,
-		IPluginModelBase bootModel,
 		ArrayList sites)
 		throws CoreException, MalformedURLException {
 
@@ -276,7 +227,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 				config.createSiteEntry(localSite.getURL(), sitePolicy);
 			config.configureSite(siteEntry);
 		}
-
 		config.isTransient(true);
 	}
 
@@ -455,17 +405,17 @@ public class TargetPlatform implements IEnvironmentVariables {
 	 * @return String or null
 	 */
 	public static String getDefaultProduct() {
-		Properties config = getConfigIniProperties("configuration/config.ini"); //$NON-NLS-1$
+		Properties config = getConfigIniProperties();
 		if (config != null) {
 			String product = (String) config.get("eclipse.product"); //$NON-NLS-1$
-			if (product != null && getProductNameSet().contains(product)) {
+			if (product != null && getProductNameSet().contains(product))
 				return product;
-			}
 		}
-		if (getProductNameSet().contains("org.eclipse.platform.ide")) { //$NON-NLS-1$
-			return "org.eclipse.platform.ide"; //$NON-NLS-1$
-		}
-		return null;
+		Set set = getProductNameSet();
+		if (set.contains("org.eclipse.sdk.ide")) //$NON-NLS-1$
+			return "org.eclipse.sdk.ide"; //$NON-NLS-1$
+		
+		return set.contains("org.eclipse.platform.ide") ? "org.eclipse.platform.ide" : null; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static boolean isRuntimeRefactored() {

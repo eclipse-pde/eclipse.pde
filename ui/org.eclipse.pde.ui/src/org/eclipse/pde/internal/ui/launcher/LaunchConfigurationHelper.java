@@ -189,7 +189,7 @@ public class LaunchConfigurationHelper {
 	}
 
 	private static void addSplashLocation(Properties properties, String productID, Map map)  {
-		Properties targetConfig = TargetPlatform.getConfigIniProperties("configuration/config.ini"); //$NON-NLS-1$
+		Properties targetConfig = TargetPlatform.getConfigIniProperties(); 
 		String targetProduct = targetConfig == null ? null : targetConfig.getProperty("eclipse.product"); //$NON-NLS-1$
 		String targetSplash = targetConfig == null ? null : targetConfig.getProperty("osgi.splashPath"); //$NON-NLS-1$
 		ArrayList locations = new ArrayList();
@@ -318,11 +318,6 @@ public class LaunchConfigurationHelper {
 		return null;
 	}
 	
-	public static String getPrimaryPlugin() {
-		Properties properties = TargetPlatform.getConfigIniProperties("install.ini");		 //$NON-NLS-1$
-		return properties == null ? null : properties.getProperty("feature.default.id");		 //$NON-NLS-1$
-	}
-	
 	public static String getProductID(ILaunchConfiguration configuration) throws CoreException {
 		String result = null;
 		if (configuration.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
@@ -353,12 +348,12 @@ public class LaunchConfigurationHelper {
 		if (result != null)
 			return result;
 		
-		Properties properties = TargetPlatform.getConfigIniProperties("configuration/config.ini");		 //$NON-NLS-1$
+		Properties properties = TargetPlatform.getConfigIniProperties();
 		return properties == null ? null : properties.getProperty("eclipse.product"); //$NON-NLS-1$
 	}
 
 	public static String getDefaultApplicationName() {
-		Properties properties = TargetPlatform.getConfigIniProperties("configuration/config.ini"); //$NON-NLS-1$
+		Properties properties = TargetPlatform.getConfigIniProperties(); 
 		String appName = (properties != null) ? properties.getProperty("eclipse.application") : null; //$NON-NLS-1$
 		return (appName != null) ? appName : "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 	}
