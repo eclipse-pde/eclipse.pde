@@ -11,6 +11,9 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Properties;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import org.eclipse.core.resources.IProject;
@@ -30,6 +33,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
@@ -148,16 +152,19 @@ public class EquinoxLaunchShortcut implements ILaunchShortcut {
 	}
 	
 	public static void initializePluginState(ILaunchConfigurationWorkingCopy wc, IPluginModelBase[] selected) {
-		TreeMap map = new TreeMap();
+		Map startLevelMap = getStartLevelMap();
+		TreeMap pluginMap = new TreeMap();
 		for (int i = 0; i < selected.length; i++)
-			RuntimeWorkbenchShortcut.addPluginAndDependencies(selected[i], map);
-		Object[] models = map.values().toArray();
+			RuntimeWorkbenchShortcut.addPluginAndDependencies(selected[i], pluginMap);
+		Object[] models = pluginMap.values().toArray();
 		StringBuffer wsplugins = new StringBuffer();
 		StringBuffer explugins = new StringBuffer();
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase model = (IPluginModelBase)models[i];
 			String id = model.getPluginBase().getId();
 			String value = "org.eclipse.osgi".equals(id) ? "@:" : "@default:default"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (startLevelMap.containsKey(id))
+				value = (String)startLevelMap.get(id);
 			if (model.getUnderlyingResource() == null) {
 				if (explugins.length() > 0)
 					explugins.append(","); //$NON-NLS-1$
@@ -173,6 +180,53 @@ public class EquinoxLaunchShortcut implements ILaunchShortcut {
 		wc.setAttribute(IPDELauncherConstants.WORKSPACE_BUNDLES, wsplugins.toString());
 		wc.setAttribute(IPDELauncherConstants.TARGET_BUNDLES, explugins.toString());
 		
+	}
+	
+	private static TreeMap getStartLevelMap() {
+		TreeMap startLevels = new TreeMap();
+		Properties props = TargetPlatform.getConfigIniProperties();
+		if (props != null) {
+			String value = (String)props.get("osgi.bundles"); //$NON-NLS-1$
+			if (value != null) {
+				StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
+				while (tokenizer.hasMoreTokens()) {
+					String tokenValue = tokenizer.nextToken();
+					int index = tokenValue.indexOf("@"); //$NON-NLS-1$
+					if (index > 0) {
+						String plugin = tokenValue.substring(0,index).trim();
+						startLevels.put(plugin, getStartValue(tokenValue.substring(index)));
+					}
+				}
+			}
+		} 
+		return startLevels;
+	}
+	
+	private static String getStartValue(String value) {
+		StringBuffer buffer = new StringBuffer(value);
+				
+		StringBuffer result = new StringBuffer("@"); //$NON-NLS-1$
+		result.append(":"); //$NON-NLS-1$
+		
+		int index = value.indexOf("start"); //$NON-NLS-1$
+		result.append(Boolean.toString(index != -1));
+		
+		if (index != -1)
+			buffer.delete(index, index + 5);
+		
+		int colon = value.indexOf(':');
+		if (colon != -1)
+			buffer.deleteCharAt(colon);
+		
+		// delete the first char '@'
+		buffer.deleteCharAt(0);
+		
+		try {
+			result.insert(1, Integer.parseInt(buffer.toString().trim()));
+		} catch (NumberFormatException e) {
+			result.insert(1, "default"); //$NON-NLS-1$
+		}
+		return result.toString();
 	}
 
 	private String getComputedName(String prefix) {
