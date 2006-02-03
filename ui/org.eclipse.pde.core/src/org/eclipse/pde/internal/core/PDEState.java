@@ -240,7 +240,7 @@ public class PDEState extends MinimalState {
 		info.className	= className != null ? className : (String)manifest.get(Constants.BUNDLE_ACTIVATOR);	
 		info.libraries = PDEStateHelper.getClasspath(manifest);
 		info.hasExtensibleAPI = "true".equals(manifest.get(ICoreConstants.EXTENSIBLE_API)); //$NON-NLS-1$ 
-		info.isPatchFragment = "true".equals(manifest.get(ICoreConstants.PATCH_FRAGMENT));
+		info.isPatchFragment = "true".equals(manifest.get(ICoreConstants.PATCH_FRAGMENT)); //$NON-NLS-1$
 		info.localization = (String)manifest.get(Constants.BUNDLE_LOCALIZATION);
 		info.hasBundleStructure = hasBundleStructure;
 		fPluginInfos.put(Long.toString(desc.getBundleId()), info);
@@ -252,8 +252,8 @@ public class PDEState extends MinimalState {
 		info.providerName = element.getAttribute("provider"); //$NON-NLS-1$
 		info.className	= element.getAttribute("class"); //$NON-NLS-1$
 		info.hasExtensibleAPI = "true".equals(element.getAttribute("hasExtensibleAPI")); //$NON-NLS-1$ //$NON-NLS-2$
-		info.isPatchFragment = "true".equals(element.getAttribute("patch"));
-		info.hasBundleStructure = !"false".equals(element.getAttribute("isBundle"));
+		info.isPatchFragment = "true".equals(element.getAttribute("patch")); //$NON-NLS-1$ //$NON-NLS-2$
+		info.hasBundleStructure = !"false".equals(element.getAttribute("isBundle")); //$NON-NLS-1$ //$NON-NLS-2$
 		info.project = element.getAttribute("project"); //$NON-NLS-1$
 		info.legacy = "true".equals(element.getAttribute("legacy")); //$NON-NLS-1$ //$NON-NLS-2$
 		info.localization = element.getAttribute("localization"); //$NON-NLS-1$
@@ -317,9 +317,9 @@ public class PDEState extends MinimalState {
 				if (info.hasExtensibleAPI)
 					element.setAttribute("hasExtensibleAPI", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (info.isPatchFragment)
-					element.setAttribute("patch", "true");
+					element.setAttribute("patch", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (!info.hasBundleStructure)
-					element.setAttribute("isBundle", "false");
+					element.setAttribute("isBundle", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (info.localization != null)
 					element.setAttribute("localization", info.localization); //$NON-NLS-1$
 				if (info.libraries != null) {
@@ -647,9 +647,9 @@ public class PDEState extends MinimalState {
 				if (ClasspathUtilCore.hasExtensibleAPI(models[i]))
 					element.setAttribute("hasExtensibleAPI", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 				else if (ClasspathUtilCore.isPatchFragment(models[i]))
-					element.setAttribute("patch", "true");				
+					element.setAttribute("patch", "true");				 //$NON-NLS-1$ //$NON-NLS-2$
 				if (!(models[i] instanceof IBundlePluginModelBase))
-					element.setAttribute("isBundle", "false");
+					element.setAttribute("isBundle", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (plugin.getSchemaVersion() == null)
 					element.setAttribute("legacy", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (models[i] instanceof IBundlePluginModelBase) {

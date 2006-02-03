@@ -86,7 +86,7 @@ public abstract class BundleModel
 		if (state.hasExtensibleAPI(id))
 			properties.put(ICoreConstants.EXTENSIBLE_API, "true"); //$NON-NLS-1$
 		if (state.isPatchFragment(id))
-			properties.put(ICoreConstants.PATCH_FRAGMENT, "true");
+			properties.put(ICoreConstants.PATCH_FRAGMENT, "true"); //$NON-NLS-1$
 		String[] libraries = state.getLibraryNames(id);
 		if (libraries.length > 0) {
 			StringBuffer buffer = new StringBuffer();

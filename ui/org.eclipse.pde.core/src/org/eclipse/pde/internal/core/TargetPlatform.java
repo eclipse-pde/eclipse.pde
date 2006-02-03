@@ -370,9 +370,9 @@ public class TargetPlatform implements IEnvironmentVariables {
 				continue;
 			Long id = new Long(desc.getBundleId());
 			if (ClasspathUtilCore.hasExtensibleAPI(models[i])) {
-				properties.put(id, ICoreConstants.EXTENSIBLE_API + ": true");
+				properties.put(id, ICoreConstants.EXTENSIBLE_API + ": true"); //$NON-NLS-1$
 			} else if (ClasspathUtilCore.isPatchFragment(models[i])) {
-				properties.put(id, ICoreConstants.PATCH_FRAGMENT + ": true");
+				properties.put(id, ICoreConstants.PATCH_FRAGMENT + ": true"); //$NON-NLS-1$
 			}
 		}		
 		return properties;		
