@@ -379,7 +379,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 	
 	public static HashMap getBundleClasspaths(PDEState state) {
-		TargetPlatform.getPatchMap(state);
 		HashMap properties = new HashMap();
 		BundleDescription[] bundles = state.getState().getBundles();
 		for (int i = 0; i < bundles.length; i++) {

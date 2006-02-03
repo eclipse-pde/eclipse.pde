@@ -47,6 +47,7 @@ public abstract class PluginBase
 	private String fId;
 	private String fVersion;
 	private String fSchemaVersion;
+	private boolean fHasBundleStructure;
 
 	private String fTargetVersion = "3.1"; //$NON-NLS-1$
 
@@ -99,6 +100,7 @@ public abstract class PluginBase
 		fProviderName = state.getProviderName(bundleDesc.getBundleId());
 		if (!state.isLegacy(bundleDesc.getBundleId()))
 			fSchemaVersion = "3.0"; //$NON-NLS-1$
+		fHasBundleStructure = state.hasBundleStructure(bundleDesc.getBundleId());
 		loadRuntime(bundleDesc, state);
 		loadImports(bundleDesc);		
 		if (!ignoreExtensions) {
@@ -387,6 +389,10 @@ public abstract class PluginBase
 	
 	public String getTargetVersion() {
 		return fTargetVersion;
+	}
+	
+	public boolean hasBundleStructure() {
+		return fHasBundleStructure;
 	}
 	
 }

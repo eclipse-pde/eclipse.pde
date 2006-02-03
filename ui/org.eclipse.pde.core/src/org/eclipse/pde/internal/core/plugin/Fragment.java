@@ -31,6 +31,8 @@ public class Fragment extends PluginBase implements IFragment {
 	private String fPluginVersion = ""; //$NON-NLS-1$
 
 	private int fMatchRule = IMatchRules.NONE;
+	
+	private boolean fPatch;
 
 	public String getPluginId() {
 		return fPluginId;
@@ -60,6 +62,7 @@ public class Fragment extends PluginBase implements IFragment {
 					: null;
 			fMatchRule = PluginBase.getMatchRule(versionRange);
 		}
+		fPatch = state.isPatchFragment(bundleDescription.getBundleId());
 		super.load(bundleDescription, state, ignoreExtensions);
 	}
 
@@ -191,5 +194,9 @@ public class Fragment extends PluginBase implements IFragment {
 			((IPluginExtension) children[i]).write(firstIndent, writer);
 		}
 		writer.println("</fragment>"); //$NON-NLS-1$
+	}
+	
+	public boolean isPatch() {
+		return fPatch;
 	}
 }

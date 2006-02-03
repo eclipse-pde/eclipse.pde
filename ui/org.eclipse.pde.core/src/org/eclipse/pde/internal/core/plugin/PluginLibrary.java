@@ -41,7 +41,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	public String[] getContentFilters() {
 		IPluginModelBase model = (IPluginModelBase)getModel();
 		ArrayList list = new ArrayList();
-		if (ClasspathUtilCore.isBundle(model)) {
+		if (ClasspathUtilCore.hasBundleStructure(model)) {
 			BundleDescription desc = model.getBundleDescription();
 			if (desc != null) {
 				ExportPackageDescription[] exports = desc.getExportPackages();
