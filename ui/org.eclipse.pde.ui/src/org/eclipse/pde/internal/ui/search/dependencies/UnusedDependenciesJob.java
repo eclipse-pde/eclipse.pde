@@ -77,7 +77,7 @@ public class UnusedDependenciesJob extends Job {
 	 */
 	protected IStatus run(IProgressMonitor monitor) {
 		ImportPackageObject[] packages = null;
-		if (ClasspathUtilCore.isBundle(fModel)) {
+		if (ClasspathUtilCore.hasBundleStructure(fModel)) {
 			IBundle bundle = ((IBundlePluginModelBase)fModel).getBundleModel().getBundle();
 			ImportPackageHeader header = (ImportPackageHeader)((Bundle)bundle).getManifestHeader(Constants.IMPORT_PACKAGE);
 			if (header != null)

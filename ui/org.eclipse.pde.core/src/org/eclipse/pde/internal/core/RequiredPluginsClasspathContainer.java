@@ -36,7 +36,6 @@ import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
 import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 
@@ -222,15 +221,23 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		if (desc == null || !added.add(desc.getSymbolicName()))
 			return;
 
-		addPlugin(desc, useInclusion, map, entries);
+		BundleDescription[] fragments = hasExtensibleAPI(desc) ? desc.getFragments() : new BundleDescription[0];
 
-		if (hasExtensibleAPI(desc) && desc.getContainingState() != null) {
-			BundleDescription[] fragments = desc.getFragments();
-			for (int i = 0; i < fragments.length; i++) {
-				if (fragments[i].isResolved())
-					addDependency(fragments[i], added, map, entries, useInclusion);
+		// add fragment patches before host
+		for (int i = 0; i < fragments.length; i++) {
+			if (fragments[i].isResolved() && ClasspathUtilCore.isPatchFragment(fragments[i])) {			
+				addDependency(fragments[i], added, map, entries, useInclusion);	
 			}
 		}
+		
+		addPlugin(desc, useInclusion, map, entries);
+		
+		// add fragments that are not patches after the host
+		for (int i = 0; i < fragments.length; i++) {
+			if (fragments[i].isResolved() && !ClasspathUtilCore.isPatchFragment(fragments[i])) {
+				addDependency(fragments[i], added, map, entries, useInclusion);
+			}
+		}			
 
 		BundleSpecification[] required = desc.getRequiredBundles();
 		for (int i = 0; i < required.length; i++) {
@@ -238,7 +245,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				addDependency(getSupplier(required[i]), added, map, entries, useInclusion);
 			}
 		}
-	}
+	}	
 	
 	private boolean addPlugin(BundleDescription desc, boolean useInclusions, Map map, ArrayList entries)
 			throws CoreException {		
@@ -275,7 +282,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		else
 			rules = getInclusions(map, desc);
 		
-		return (rules.length == 0 && !ClasspathUtilCore.isBundle(model)) ? null : rules;
+		return (rules.length == 0 && !ClasspathUtilCore.hasBundleStructure(model)) ? null : rules;
 	}
 	
 	private Rule[] getInclusions(Map map, BundleDescription desc) {
@@ -312,9 +319,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	
 	private boolean hasExtensibleAPI(BundleDescription desc) {
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(desc);
-		return (model instanceof IPluginModel) 
-					? ClasspathUtilCore.hasExtensibleAPI(((IPluginModel)model).getPlugin()) 
-					: false;
+		return model != null ? ClasspathUtilCore.hasExtensibleAPI(model) : false;
 	}
 	
 	protected void addExtraClasspathEntries(HashSet added, ArrayList entries, IBuild build) throws CoreException {

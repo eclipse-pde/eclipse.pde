@@ -71,7 +71,9 @@ public class PDEState extends MinimalState {
 		String providerName;
 		String className;
 		boolean hasExtensibleAPI;
+		boolean isPatchFragment;
 		boolean legacy;
+		boolean hasBundleStructure;
 		String[] libraries;
 		String project;
 		String localization;
@@ -105,10 +107,9 @@ public class PDEState extends MinimalState {
 			createNewTargetState();
 			createExtensionDocument();
 		}
-		fState.setResolver(Platform.getPlatformAdmin().getResolver());
 		resolveState(false);
 		
-		if (fResolve)
+		if (fResolve && fNewState)
 			logResolutionErrors();
 		
 		createTargetModels();
@@ -131,6 +132,7 @@ public class PDEState extends MinimalState {
 			savePluginInfo(dir);
 			fNewState = true;
 		} else {
+			fState.setResolver(Platform.getPlatformAdmin().getResolver());
 			fId = fState.getBundles().length;
 		}
 		if ((fExtensions = readExtensionsCache(dir)) == null)
@@ -138,14 +140,14 @@ public class PDEState extends MinimalState {
 	}
 	
 	private void createNewTargetState() {
-		fState = stateObjectFactory.createState();
+		fState = stateObjectFactory.createState(true);
 		fPluginInfos = new HashMap();
 		fMonitor.beginTask(PDECoreMessages.PDEState_readingPlugins, fTargetURLs.length);
 		for (int i = 0; i < fTargetURLs.length; i++) {
 			File file = new File(fTargetURLs[i].getFile());
 			try {
 				fMonitor.subTask(file.getName());
-				addBundle(file, true, -1);
+				addBundle(file, -1);
 			} catch (PluginConversionException e) {
 			} catch (CoreException e) {
 			} catch (IOException e) {
@@ -229,14 +231,7 @@ public class PDEState extends MinimalState {
 		return fCombined;
 	}
 	
-	public BundleDescription addBundle(Dictionary manifest, File bundleLocation, boolean keepLibraries, long bundleId) {
-		BundleDescription desc = super.addBundle(manifest, bundleLocation, keepLibraries, bundleId);
-		if (desc != null && keepLibraries)
-			createPluginInfo(desc, manifest);
-		return desc;
-	}
-
-	private void createPluginInfo(BundleDescription desc, Dictionary manifest) {
+	protected void addAuxiliaryData(BundleDescription desc, Dictionary manifest, boolean hasBundleStructure) {
 		PluginInfo info = new PluginInfo();
 		info.name = (String)manifest.get(Constants.BUNDLE_NAME);
 		info.providerName = (String)manifest.get(Constants.BUNDLE_VENDOR);
@@ -245,7 +240,9 @@ public class PDEState extends MinimalState {
 		info.className	= className != null ? className : (String)manifest.get(Constants.BUNDLE_ACTIVATOR);	
 		info.libraries = PDEStateHelper.getClasspath(manifest);
 		info.hasExtensibleAPI = "true".equals(manifest.get(ICoreConstants.EXTENSIBLE_API)); //$NON-NLS-1$ 
+		info.isPatchFragment = "true".equals(manifest.get(ICoreConstants.PATCH_FRAGMENT));
 		info.localization = (String)manifest.get(Constants.BUNDLE_LOCALIZATION);
+		info.hasBundleStructure = hasBundleStructure;
 		fPluginInfos.put(Long.toString(desc.getBundleId()), info);
 	}
 	
@@ -255,6 +252,8 @@ public class PDEState extends MinimalState {
 		info.providerName = element.getAttribute("provider"); //$NON-NLS-1$
 		info.className	= element.getAttribute("class"); //$NON-NLS-1$
 		info.hasExtensibleAPI = "true".equals(element.getAttribute("hasExtensibleAPI")); //$NON-NLS-1$ //$NON-NLS-2$
+		info.isPatchFragment = "true".equals(element.getAttribute("patch"));
+		info.hasBundleStructure = !"false".equals(element.getAttribute("isBundle"));
 		info.project = element.getAttribute("project"); //$NON-NLS-1$
 		info.legacy = "true".equals(element.getAttribute("legacy")); //$NON-NLS-1$ //$NON-NLS-2$
 		info.localization = element.getAttribute("localization"); //$NON-NLS-1$
@@ -317,6 +316,10 @@ public class PDEState extends MinimalState {
 					element.setAttribute("name", info.name); //$NON-NLS-1$
 				if (info.hasExtensibleAPI)
 					element.setAttribute("hasExtensibleAPI", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+				if (info.isPatchFragment)
+					element.setAttribute("patch", "true");
+				if (!info.hasBundleStructure)
+					element.setAttribute("isBundle", "false");
 				if (info.localization != null)
 					element.setAttribute("localization", info.localization); //$NON-NLS-1$
 				if (info.libraries != null) {
@@ -440,7 +443,10 @@ public class PDEState extends MinimalState {
 				timestamp ^= file.getAbsolutePath().hashCode();
 			}
 		}
-		return timestamp;
+		// This +1 has appeared since Feb 03, 2006
+		// This is because we now cache new properties (hasBundleStructure and isPatchFragment)
+		// and we want to clear old caches that may not have them
+		return timestamp + 1;  
 	}
  	
  	private IPluginModelBase createWorkspaceModel(BundleDescription desc) {
@@ -521,6 +527,14 @@ public class PDEState extends MinimalState {
 		return info == null ? false : info.hasExtensibleAPI;		
 	}
 
+	public boolean isPatchFragment(long bundleID) {
+		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
+		return info == null ? false : info.isPatchFragment;		
+	}
+	public boolean hasBundleStructure(long bundleID) {
+		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
+		return info == null ? false : info.hasBundleStructure;		
+	}
 	public boolean isLegacy(long bundleID) {
 		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? false : info.legacy;		
@@ -598,7 +612,7 @@ public class PDEState extends MinimalState {
 		if (!"true".equals(System.getProperty("pde.nocache")) && shouldSaveState(models)) { //$NON-NLS-1$ //$NON-NLS-2$
 			timestamp = computeTimestamp(models);
 			File dir = new File(DIR, Long.toString(timestamp) + ".workspace"); //$NON-NLS-1$
-			State state = stateObjectFactory.createState();
+			State state = stateObjectFactory.createState(false);
 			for (int i = 0; i < models.length; i++) {
 				state.addBundle(models[i].getBundleDescription());
 			}
@@ -630,8 +644,12 @@ public class PDEState extends MinimalState {
 					element.setAttribute("provider", plugin.getProviderName()); //$NON-NLS-1$
 				if (plugin.getName() != null)
 					element.setAttribute("name", plugin.getName()); //$NON-NLS-1$
-				if (plugin instanceof IPlugin && ClasspathUtilCore.hasExtensibleAPI((IPlugin)plugin))
+				if (ClasspathUtilCore.hasExtensibleAPI(models[i]))
 					element.setAttribute("hasExtensibleAPI", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+				else if (ClasspathUtilCore.isPatchFragment(models[i]))
+					element.setAttribute("patch", "true");				
+				if (!(models[i] instanceof IBundlePluginModelBase))
+					element.setAttribute("isBundle", "false");
 				if (plugin.getSchemaVersion() == null)
 					element.setAttribute("legacy", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (models[i] instanceof IBundlePluginModelBase) {

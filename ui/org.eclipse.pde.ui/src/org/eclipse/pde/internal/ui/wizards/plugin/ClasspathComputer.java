@@ -117,7 +117,7 @@ public class ClasspathComputer {
 				if (buildEntry != null) {
 					addSourceFolder(buildEntry, project, paths, result);
 				}
-			} else if (ClasspathUtilCore.isBundle(model)) {
+			} else if (ClasspathUtilCore.hasBundleStructure(model)) {
 				addJARdPlugin(project, ClasspathUtilCore.getFilename(model), attrs, result);
 			}
 		}

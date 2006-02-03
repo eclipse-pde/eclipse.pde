@@ -63,7 +63,7 @@ public class MinimalState {
 
 	private String[] fExecutionEnvironments; // an ordered list of known/supported execution environments
 
-											private boolean fNoProfile;
+	private boolean fNoProfile;
 
 	private static final String SYSTEM_BUNDLE = "org.eclipse.osgi"; //$NON-NLS-1$
 
@@ -84,8 +84,7 @@ public class MinimalState {
 	}
 	
 	public MinimalState(Dictionary properties) {
-		fState = stateObjectFactory.createState();
-		fState.setResolver(Platform.getPlatformAdmin().getResolver());
+		fState = stateObjectFactory.createState(true);
         fState.setPlatformProperties(properties);		
 	}
 	
@@ -105,7 +104,7 @@ public class MinimalState {
 		long bundleId = desc == null || !update ? -1 : desc.getBundleId();
 		try {
 			model.setBundleDescription(
-					addBundle(new File(model.getInstallLocation()), false,  bundleId));
+					addBundle(new File(model.getInstallLocation()), bundleId));
 		} catch (IOException e) {			
 		} catch (PluginConversionException e) {
 		} catch (CoreException e) {
@@ -115,7 +114,7 @@ public class MinimalState {
 	
 	public BundleDescription addBundle(IPluginModelBase model, long bundleId) {
 		try {
-			return addBundle(new File(model.getInstallLocation()), false, -1);
+			return addBundle(new File(model.getInstallLocation()), -1);
 		} catch (IOException e) {			
 		} catch (PluginConversionException e) {
 		} catch (CoreException e) {
@@ -123,7 +122,7 @@ public class MinimalState {
 		return null;
 	}
 
-	public BundleDescription addBundle(Dictionary manifest, File bundleLocation, boolean keepLibraries, long bundleId) {
+	public BundleDescription addBundle(Dictionary manifest, File bundleLocation, long bundleId) {
 		try {
 			BundleDescription descriptor = stateObjectFactory.createBundleDescription(
 					fState, manifest, bundleLocation.getAbsolutePath(),
@@ -142,9 +141,10 @@ public class MinimalState {
 		return null;
 	}
 
-	public BundleDescription addBundle(File bundleLocation, boolean keepLibraries, long bundleId) throws PluginConversionException, CoreException, IOException {
+	public BundleDescription addBundle(File bundleLocation, long bundleId) throws PluginConversionException, CoreException, IOException {
 		Dictionary manifest = loadManifest(bundleLocation);
-		if (manifest == null || manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null) {
+		boolean hasBundleStructure = manifest != null && manifest.get(Constants.BUNDLE_SYMBOLICNAME) != null;
+		if (!hasBundleStructure) {
 			if (!bundleLocation.isFile() 
 					&& !new File(bundleLocation, "plugin.xml").exists() //$NON-NLS-1$
 					&& !new File(bundleLocation, "fragment.xml").exists()) //$NON-NLS-1$
@@ -159,14 +159,20 @@ public class MinimalState {
 						IStatus.ERROR,
 						"Error parsing plug-in manifest file at " + bundleLocation.toString(), null)); //$NON-NLS-1$
 		}
-		BundleDescription desc = addBundle(manifest, bundleLocation, keepLibraries, bundleId);
+		BundleDescription desc = addBundle(manifest, bundleLocation, bundleId);
 		if (desc != null && SYSTEM_BUNDLE.equals(desc.getSymbolicName())) {
 			// if this is the system bundle then 
 			// indicate that the javaProfile has changed since the new system
 			// bundle may not contain profiles for all EE's in the list
 			fEEListChanged = true;
 		}
+		if (desc != null) {
+			addAuxiliaryData(desc, manifest, hasBundleStructure);
+		}
 		return desc;
+	}
+	
+	protected void addAuxiliaryData(BundleDescription desc, Dictionary manifest, boolean hasBundleStructure) {		
 	}
 
 	protected void saveState(File dir) {
@@ -271,17 +277,12 @@ public class MinimalState {
 		return new Dictionary[] {TargetPlatform.getTargetEnvironment()};
 	}
 
-	private File getOSGiLocation() {
-		// return the File location of the system bundle
-		BundleDescription osgiBundle = fState.getBundle(SYSTEM_BUNDLE, null);
-		return (osgiBundle == null) ? null : new File(osgiBundle.getLocation());
-	}
-
 	private Properties getJavaProfileProperties(String ee) {
-		File location = getOSGiLocation();
-		if (location == null)
+		BundleDescription osgiBundle = fState.getBundle(SYSTEM_BUNDLE, null);
+		if (osgiBundle == null) 
 			return null;
 		
+		File location = new File(osgiBundle.getLocation());
 		String filename = ee.replace('/', '_') + ".profile"; //$NON-NLS-1$
 		InputStream is = null;
 		ZipFile zipFile = null;

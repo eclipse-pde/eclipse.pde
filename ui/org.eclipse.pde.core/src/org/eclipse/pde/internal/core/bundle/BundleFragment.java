@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.bundle;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleFragment;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
@@ -119,4 +120,9 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 		}
 		return null;				
 	}
+	
+	public boolean isPatch() {
+		return "true".equals(getValue(ICoreConstants.PATCH_FRAGMENT)); //$NON-NLS-1$ 
+	}
+
 }

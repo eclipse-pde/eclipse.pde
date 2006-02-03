@@ -11,10 +11,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Enumeration;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -24,16 +21,22 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.bundle.BundleFragment;
 import org.eclipse.pde.internal.core.bundle.BundlePlugin;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.plugin.Fragment;
 import org.eclipse.pde.internal.core.plugin.Plugin;
+import org.eclipse.pde.internal.core.plugin.PluginBase;
 
 public class ClasspathUtilCore {
 	
@@ -102,7 +105,27 @@ public class ClasspathUtilCore {
 		return entry;
 	}
 	
-	public static boolean hasExtensibleAPI(IPlugin plugin) {
+	public static boolean hasExtensibleAPI(IPluginModelBase model) {
+		IPluginBase pluginBase = model.getPluginBase();
+		if (pluginBase instanceof IPlugin)
+			return hasExtensibleAPI((IPlugin)pluginBase);
+		return false;
+	}
+	
+	public static boolean isPatchFragment(BundleDescription desc) {
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		IFragmentModel model = manager.findFragmentModel(desc.getSymbolicName());
+		return model != null ? isPatchFragment(model.getFragment()) : false;
+	}
+	
+	public static boolean isPatchFragment(IPluginModelBase model) {
+		IPluginBase pluginBase = model.getPluginBase();
+		if (pluginBase instanceof IFragment)
+			return isPatchFragment((IFragment)pluginBase);
+		return false;
+	}
+	
+	private static boolean hasExtensibleAPI(IPlugin plugin) {
 		if (plugin instanceof Plugin)
 			return ((Plugin) plugin).hasExtensibleAPI();
 		if (plugin instanceof BundlePlugin)
@@ -110,27 +133,21 @@ public class ClasspathUtilCore {
 		return false;
 	}
 		
-	public static boolean isBundle(IPluginModelBase model) {
-		if (model instanceof IBundlePluginModelBase)
-			return true;
-		if (model.getUnderlyingResource() == null) {
-			File location = new File(model.getInstallLocation());
-			if (location.isDirectory() && !new File(location, "META-INF/MANIFEST.MF").exists()) //$NON-NLS-1$
-				return false;					
-			Dictionary manifest = null;
-			try {
-				manifest = MinimalState.loadManifest(location);
-			} catch (IOException e) {
-			}
-			if (manifest == null)
-				return false;
-			Enumeration keys = manifest.keys();
-			while (keys.hasMoreElements()) {
-				if (keys.nextElement().toString().equals("Bundle-SymbolicName")) //$NON-NLS-1$
-					return true;
-			}
-			return false;
-		}
+	private static boolean isPatchFragment(IFragment fragment) {
+		if (fragment instanceof Fragment) 
+			return ((Fragment)fragment).isPatch();
+		if (fragment instanceof BundleFragment)
+			return ((BundleFragment)fragment).isPatch();
+		return false;
+	}
+	
+	public static boolean hasBundleStructure(IPluginModelBase model) {
+		if (model.getUnderlyingResource() != null)
+			return model instanceof IBundlePluginModelBase;
+		
+		IPluginBase plugin = model.getPluginBase();
+		if (plugin instanceof PluginBase) 
+			return ((PluginBase)plugin).hasBundleStructure();
 		return false;
 	}
 	
