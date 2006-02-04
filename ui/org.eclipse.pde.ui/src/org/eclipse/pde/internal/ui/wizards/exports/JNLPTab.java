@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
@@ -66,6 +67,7 @@ public class JNLPTab {
 		fVersionLabel = createLabel(jnlpGroup, PDEUIMessages.AdvancedFeatureExportPage_jreVersion);	 
 		fVersionText = createText(jnlpGroup);
 		
+		Dialog.applyDialogFont(jnlpGroup);
 		return jnlpGroup;
 	}
 	

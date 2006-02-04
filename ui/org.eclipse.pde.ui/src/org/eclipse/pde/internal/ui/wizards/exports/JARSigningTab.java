@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -99,6 +100,7 @@ public class JARSigningTab {
 		fPasswordText = createText(comp, 2);
 		fPasswordText.setEchoChar('*');
 		
+		Dialog.applyDialogFont(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IHelpContextIds.ADVANCED_PLUGIN_EXPORT);
 		return comp;
 	}
