@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Sep 26, 2003
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 package org.eclipse.pde.internal.core.util;
 
 import java.io.PrintWriter;
 import java.util.Enumeration;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 
 public class PropertiesUtil {
 	private static final char[] HEX =
@@ -172,21 +169,23 @@ public class PropertiesUtil {
 		}
 	}
 	
-	public static String writeKeyValuePair(String name, String[] tokens) {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(createWritableName(name));
-		buffer.append(" = "); //$NON-NLS-1$
-		int indentLength = name.length() + 3;
-		for (int i = 0; i < tokens.length; i++) {
-			buffer.append(createEscapedValue(tokens[i]));
-			if (i < tokens.length - 1) {
-				buffer.append(",\\" + System.getProperty("line.separator")); //$NON-NLS-1$ //$NON-NLS-2$
-				for (int j = 0; j < indentLength; j++) {
-					buffer.append(" "); //$NON-NLS-1$
+	public static int getInsertOffset(IDocument doc) {
+		int offset = doc.getLength();
+		for (int i = doc.getNumberOfLines() - 1; i >= 0; i--) {
+			try {
+				if (doc.get(doc.getLineOffset(i), doc.getLineLength(i)).trim().length() > 0) {
+					break;
 				}
+				offset = doc.getLineOffset(i);
+			} catch (BadLocationException e) {
 			}
-		}	
-		buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
-		return buffer.toString();
+		}
+		return offset;
 	}
+	
+	public static boolean isNewlineNeeded(IDocument doc) throws BadLocationException {
+		int line = doc.getLineOfOffset(getInsertOffset(doc));
+		return doc.get(doc.getLineOffset(line), doc.getLineLength(line)).trim().length() > 0;
+	}
+
 }

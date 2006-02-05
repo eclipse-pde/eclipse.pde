@@ -290,6 +290,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 					if (buffer.length() > 0) {
 						buffer.append(","); //$NON-NLS-1$
 						buffer.append(getLineDelimiter());
+						buffer.append(" ");
 					}
 					buffer.append(((IExecutionEnvironment)result[i]).getId());
 				}

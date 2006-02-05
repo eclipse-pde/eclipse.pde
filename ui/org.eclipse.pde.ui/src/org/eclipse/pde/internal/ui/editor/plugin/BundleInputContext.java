@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -29,6 +28,7 @@ import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.PDEManifestElement;
 import org.eclipse.pde.internal.core.text.bundle.PackageFriend;
+import org.eclipse.pde.internal.core.util.PropertiesUtil;
 import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
@@ -130,17 +130,7 @@ public class BundleInputContext extends UTF8InputContext {
 	
 	private void insertKey(IDocumentKey key, ArrayList ops) {
 		IDocument doc = getDocumentProvider().getDocument(getInput());
-		int offset = doc.getLength();
-		for (int i = doc.getNumberOfLines() - 1; i >= 0; i--) {
-			try {
-				if (doc.get(doc.getLineOffset(i), doc.getLineLength(i)).trim().length() > 0) {
-					break;
-				}
-				offset = doc.getLineOffset(i);
-			} catch (BadLocationException e) {
-			}
-		}
-		InsertEdit op = new InsertEdit(offset, key.write()); 
+		InsertEdit op = new InsertEdit(PropertiesUtil.getInsertOffset(doc), key.write()); 
 		fOperationTable.put(key, op);
 		ops.add(op);
 	}

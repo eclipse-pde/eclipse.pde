@@ -15,11 +15,14 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
+import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
 
 public class BuildEntry implements IBuildEntry, IDocumentKey {
@@ -29,7 +32,23 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	private IBuildModel fModel;
 	private String fName;
 	private ArrayList fTokens = new ArrayList();
+	private String fLineDelimiter;
 	
+	public BuildEntry(String name, IBuildModel model) {
+		fName = name;
+		fModel = model;
+		setLineDelimiter();
+	}
+	
+	private void setLineDelimiter() {
+		if (fModel instanceof IEditingModel) {
+			IDocument document = ((IEditingModel)fModel).getDocument();
+			fLineDelimiter = TextUtilities.getDefaultLineDelimiter(document);
+		} else {
+			fLineDelimiter = System.getProperty("line.separator");
+		}	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuildEntry#addToken(java.lang.String)
 	 */
@@ -123,10 +142,6 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	public void write(String indent, PrintWriter writer) {
 	}
 	
-	public void setModel(IBuildModel model) {
-		fModel = model;
-	}
-	
 	public IBuildModel getModel() {
 		return fModel;
 	}
@@ -141,6 +156,22 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#write()
 	 */
 	public String write() {
-		return PropertiesUtil.writeKeyValuePair(getName(), getTokens());
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(PropertiesUtil.createWritableName(fName));
+		buffer.append(" = "); //$NON-NLS-1$
+		int indentLength = fName.length() + 3;
+		for (int i = 0; i < fTokens.size(); i++) {
+			buffer.append(PropertiesUtil.createEscapedValue(fTokens.get(i).toString()));
+			if (i < fTokens.size() - 1) {
+				buffer.append(",\\"); //$NON-NLS-1$
+				buffer.append(fLineDelimiter);
+				for (int j = 0; j < indentLength; j++) {
+					buffer.append(" "); //$NON-NLS-1$
+				}
+			}
+		}	
+		buffer.append(fLineDelimiter); //$NON-NLS-1$
+		return buffer.toString();
 	}
+
 }

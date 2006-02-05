@@ -72,7 +72,7 @@ public class ModelChangedEvent implements IModelChangedEvent {
 	 * @see IModelChangedEvent#getChangedObjects
 	 */
 	public Object[] getChangedObjects() {
-		return changedObjects;
+		return (changedObjects == null) ? new Object[0] : changedObjects;
 	}
 	/**
 	 * @see IModelChangedEvent#getChangedProperty

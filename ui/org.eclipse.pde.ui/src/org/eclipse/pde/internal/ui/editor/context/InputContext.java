@@ -28,10 +28,12 @@ import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.text.IEditingModel;
+import org.eclipse.pde.internal.core.util.PropertiesUtil;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEStorageDocumentProvider;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MoveSourceEdit;
 import org.eclipse.text.edits.MultiTextEdit;
@@ -196,6 +198,8 @@ public abstract class InputContext {
 		if (fEditOperations.size() > 0) {
 			try {
 				MultiTextEdit edit = new MultiTextEdit();
+				if (isNewlineNeeded(doc))
+					insert(edit, new InsertEdit(doc.getLength(), TextUtilities.getDefaultLineDelimiter(doc)));
 				for (int i = 0; i < fEditOperations.size(); i++) {
 					insert(edit, (TextEdit)fEditOperations.get(i));
 				}
@@ -211,6 +215,10 @@ public abstract class InputContext {
 				PDEPlugin.logException(e);
 			}
 		}	
+	}
+	
+	protected boolean isNewlineNeeded(IDocument doc) throws BadLocationException {
+		return PropertiesUtil.isNewlineNeeded(doc);
 	}
 	
 	protected static void insert(TextEdit parent, TextEdit edit) {

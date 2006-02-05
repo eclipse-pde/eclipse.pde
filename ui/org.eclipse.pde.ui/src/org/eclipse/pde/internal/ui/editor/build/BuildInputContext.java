@@ -16,13 +16,13 @@ import java.util.HashMap;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
 import org.eclipse.pde.internal.core.text.build.BuildModel;
+import org.eclipse.pde.internal.core.util.PropertiesUtil;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
@@ -85,45 +85,32 @@ public class BuildInputContext extends InputContext {
 	 */
 	protected void addTextEditOperation(ArrayList ops, IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
-		if (objects != null) {
-			for (int i = 0; i < objects.length; i++) {
-				Object object = objects[i];
-				IDocumentKey key = (IDocumentKey)object;
-				TextEdit op = (TextEdit)fOperationTable.get(key);
-				if (op != null) {
-					fOperationTable.remove(key);
-					ops.remove(op);
-				}
-				switch (event.getChangeType()) {
-					case IModelChangedEvent.REMOVE :
-						deleteKey(key, ops);
-						break;
-					case IModelChangedEvent.INSERT :
-						insertKey(key, ops);
-						break;
-					case IModelChangedEvent.CHANGE :
-						modifyKey(key, ops);
-					default:
-						break;
-				}
+		for (int i = 0; i < objects.length; i++) {
+			Object object = objects[i];
+			IDocumentKey key = (IDocumentKey)object;
+			TextEdit op = (TextEdit)fOperationTable.get(key);
+			if (op != null) {
+				fOperationTable.remove(key);
+				ops.remove(op);
+			}
+			switch (event.getChangeType()) {
+				case IModelChangedEvent.REMOVE :
+					deleteKey(key, ops);
+					break;
+				case IModelChangedEvent.INSERT :
+					insertKey(key, ops);
+					break;
+				case IModelChangedEvent.CHANGE :
+					modifyKey(key, ops);
+				default:
+					break;
 			}
 		}
 	}
 	
 	private void insertKey(IDocumentKey key, ArrayList ops) {
 		IDocument doc = getDocumentProvider().getDocument(getInput());
-		String preTermination = ""; //$NON-NLS-1$
-		if (doc.getNumberOfLines() > 0) {
-			try {
-				if (doc.getLineDelimiter(doc.getNumberOfLines() - 1) == null
-						&& doc.getLineLength(doc.getNumberOfLines() - 1) > 0) {
-					preTermination = getLineDelimiter(); 
-				}
-			} catch (BadLocationException ble) {
-			}
-		}
-		InsertEdit op = new InsertEdit(doc.getLength(), preTermination
-				+ key.write());
+		InsertEdit op = new InsertEdit(PropertiesUtil.getInsertOffset(doc), key.write()); 
 		fOperationTable.put(key, op);
 		ops.add(op);
 	}
