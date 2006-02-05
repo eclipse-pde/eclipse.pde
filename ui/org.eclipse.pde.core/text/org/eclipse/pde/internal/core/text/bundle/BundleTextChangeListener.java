@@ -10,27 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
-import java.util.HashMap;
-
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.text.IDocumentKey;
-import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
-import org.eclipse.pde.internal.core.util.PropertiesUtil;
-import org.eclipse.text.edits.DeleteEdit;
-import org.eclipse.text.edits.InsertEdit;
-import org.eclipse.text.edits.ReplaceEdit;
-import org.eclipse.text.edits.TextEdit;
+import org.eclipse.pde.internal.core.text.AbstractTextChangeListener;
 
-public class BundleTextChangeListener implements IModelTextChangeListener {
+public class BundleTextChangeListener extends AbstractTextChangeListener {
 
-	private HashMap fOperationTable = new HashMap();
-	private IDocument fDocument;
-	
 	public BundleTextChangeListener(IDocument document) {
-		fDocument = document;
+		super(document);
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
@@ -53,42 +40,6 @@ public class BundleTextChangeListener implements IModelTextChangeListener {
 				}
 			}
 		}
-	}
-
-	private void insertKey(IDocumentKey key) {
-		int offset = PropertiesUtil.getInsertOffset(fDocument);
-		fOperationTable.put(key, new InsertEdit(offset, key.write()));
-	}
-	
-	private void deleteKey(IDocumentKey key) {
-		if (key.getOffset() >= 0) 
-			fOperationTable.put(key, new DeleteEdit(key.getOffset(), key.getLength()));
-	}
-	
-	private void modifyKey(IDocumentKey key) {		
-		if (key.getOffset() == -1) {
-			insertKey(key);
-		} else {
-			TextEdit op = new ReplaceEdit(key.getOffset(), key.getLength(), key.write()); 
-			fOperationTable.put(key, op);
-		}	
-	}
-
-	public TextEdit[] getTextOperations() {
-		if (fOperationTable.size() == 0)
-			return new TextEdit[0];
-		
-		TextEdit[] ops = (TextEdit[])fOperationTable.values().toArray(new TextEdit[fOperationTable.size()]);
-		try {
-			if (!PropertiesUtil.isNewlineNeeded(fDocument))
-				return ops;
-		} catch (BadLocationException e) {
-		}
-		
-		TextEdit[] result = new TextEdit[fOperationTable.size() + 1];
-		result[0] = new InsertEdit(PropertiesUtil.getInsertOffset(fDocument), TextUtilities.getDefaultLineDelimiter(fDocument));
-		System.arraycopy(ops, 0, result, 1, ops.length);
-		return result;
 	}
 
 }
