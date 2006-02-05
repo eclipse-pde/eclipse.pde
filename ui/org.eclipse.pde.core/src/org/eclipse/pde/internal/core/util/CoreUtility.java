@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -306,6 +307,70 @@ public class CoreUtility {
 			} catch (IOException e) {
 			}
 		}
+	}
+	
+	public static org.eclipse.jface.text.Document getTextDocument(File bundleLocation, String path) {
+		ZipFile jarFile = null;
+		InputStream stream = null;
+		try {
+			String extension = new Path(bundleLocation.getName()).getFileExtension();
+			if ("jar".equals(extension) && bundleLocation.isFile()) { //$NON-NLS-1$
+				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
+				ZipEntry manifestEntry = jarFile.getEntry(path);
+				if (manifestEntry != null) {
+					stream = jarFile.getInputStream(manifestEntry);
+				}
+			} else {
+				File file = new File(bundleLocation, path);
+				if (file.exists())
+					stream = new FileInputStream(file);
+			}
+			return getTextDocument(stream);
+		} catch (IOException e) {
+		} finally {
+			try {
+				if (jarFile != null)
+					jarFile.close();
+			} catch (IOException e) {
+			}
+		}
+		return null;
+	}
+	
+	public static org.eclipse.jface.text.Document getTextDocument(InputStream in) {
+		ByteArrayOutputStream output = null;
+		String result = null;
+		try {
+			output = new ByteArrayOutputStream();
+
+			byte buffer[] = new byte[1024];
+			int count;
+			while ((count = in.read(buffer, 0, buffer.length)) > 0) {
+				output.write(buffer, 0, count);
+			}
+
+			result = output.toString("UTF-8"); //$NON-NLS-1$
+			output.close();
+			output = null;
+			in.close();
+			in = null;
+		} catch (IOException e) {
+			// close open streams
+			if (output != null) {
+				try {
+					output.close();
+				} catch (IOException ee) {
+				}
+			}
+
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException ee) {
+				}
+			}
+		}
+		return result == null ? null : new org.eclipse.jface.text.Document(result);
 	}
 
 }
