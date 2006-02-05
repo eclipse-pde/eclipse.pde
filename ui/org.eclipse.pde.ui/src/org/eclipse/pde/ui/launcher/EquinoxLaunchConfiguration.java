@@ -32,7 +32,6 @@ import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
-import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.EquinoxPluginBlock;
@@ -118,7 +117,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		Properties properties = new Properties();
 		properties.setProperty("osgi.install.area", "file:" + ExternalModelManager.getEclipseHome().toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.setProperty("osgi.configuration.cascaded", "false"); //$NON-NLS-1$ //$NON-NLS-2$
-		properties.put("osgi.framework", TargetPlatform.getBundleURL("org.eclipse.osgi", map)); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.put("osgi.framework", LaunchConfigurationHelper.getBundleURL("org.eclipse.osgi", map)); //$NON-NLS-1$ //$NON-NLS-2$
 		int start = configuration.getAttribute(IPDELauncherConstants.DEFAULT_START_LEVEL, 4);
 		properties.put("osgi.bundles.defaultStartLevel", Integer.toString(start)); //$NON-NLS-1$
 		boolean autostart = configuration.getAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, true);
@@ -140,7 +139,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 				if (buffer.length() > 0)
 					buffer.append(","); //$NON-NLS-1$
 				buffer.append("reference:"); //$NON-NLS-1$
-				buffer.append(TargetPlatform.getBundleURL(id, plugins));
+				buffer.append(LaunchConfigurationHelper.getBundleURL(id, plugins));
 				
 				String data = model.getUnderlyingResource() == null ? target.get(id).toString() : workspace.get(id).toString();
 				int index = data.indexOf(':');

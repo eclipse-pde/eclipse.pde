@@ -18,18 +18,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginElement;
@@ -113,48 +111,22 @@ public class LaunchConfigurationHelper {
 		properties.setProperty("osgi.framework", "org.eclipse.osgi"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (productID != null)
 			addSplashLocation(properties, productID, map);
-		boolean refactoredRuntime = TargetPlatform.isRuntimeRefactored();
-		if (map.containsKey("org.eclipse.update.configurator")) { //$NON-NLS-1$
-			StringBuffer buffer = new StringBuffer();
-			if (refactoredRuntime) {
-				buffer.append("org.eclipse.equinox.common@2:start,"); //$NON-NLS-1$
-				buffer.append("org.eclipse.core.jobs@2:start,"); //$NON-NLS-1$
-				buffer.append("org.eclipse.equinox.registry@2:start,"); //$NON-NLS-1$
-				buffer.append("org.eclipse.equinox.preferences,"); //$NON-NLS-1$
-				buffer.append("org.eclipse.core.contenttype,"); //$NON-NLS-1$
-				buffer.append("org.eclipse.core.runtime@3:start,org.eclipse.update.configurator@4:start"); //$NON-NLS-1$
-			} else {
-				buffer.append("org.eclipse.core.runtime@2:start,org.eclipse.update.configurator@3:start"); //$NON-NLS-1$
-			}
-			properties.setProperty("osgi.bundles", buffer.toString());  //$NON-NLS-1$
-		} else {
-			StringBuffer buffer = new StringBuffer();
+		
+		StringBuffer buffer = new StringBuffer(TargetPlatform.getBundleList());
+		Set initialSet = TargetPlatform.getBundleSet(buffer.toString());
+		if (!initialSet.contains("org.eclipse.update.configurator")) { //$NON-NLS-1$
 			Iterator iter = map.keySet().iterator();
 			while (iter.hasNext()) {
 				String id = iter.next().toString();
-				if ("org.eclipse.osgi".equals(id)) //$NON-NLS-1$
-					continue;
-				buffer.append(id);
-				if ("org.eclipse.equinox.common".equals(id) //$NON-NLS-1$
-						|| "org.eclipse.core.jobs".equals(id) //$NON-NLS-1$
-						|| "org.eclipse.equinox.registry".equals(id)) { //$NON-NLS-1$
-					buffer.append("@2:start"); //$NON-NLS-1$
-				} else if ("org.eclipse.core.runtime".equals(id)) { //$NON-NLS-1$
-					if (refactoredRuntime) {
-						buffer.append("@3:start"); //$NON-NLS-1$
-					} else {
-						buffer.append("@2:start"); //$NON-NLS-1$
-					}
+				if (!initialSet.contains(id)) {
+					if (buffer.length() > 0)
+						buffer.append(',');
+					buffer.append(id);
 				}
-				if (iter.hasNext())
-					buffer.append(","); //$NON-NLS-1$
 			}
-			properties.setProperty("osgi.bundles", buffer.toString()); //$NON-NLS-1$
 		}
-		if (refactoredRuntime)
-			properties.setProperty("osgi.bundles.defaultStartLevel", "5"); //$NON-NLS-1$ //$NON-NLS-2$
-		else
-			properties.setProperty("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.setProperty("osgi.bundles", buffer.toString()); //$NON-NLS-1$
+		properties.setProperty("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
 		return properties;
 	}
 	
@@ -217,7 +189,7 @@ public class LaunchConfigurationHelper {
 			if (location.startsWith("platform:/base/plugins/")) { //$NON-NLS-1$
 				location = location.replaceFirst("platform:/base/plugins/", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			String url = TargetPlatform.getBundleURL(location, map);
+			String url = getBundleURL(location, map);
 			if (url == null)
 				continue;
 			if (buffer.length() > 0)
@@ -228,14 +200,21 @@ public class LaunchConfigurationHelper {
 			properties.setProperty("osgi.splashPath", buffer.toString()); //$NON-NLS-1$
 	}
 	
-	
+	public static String getBundleURL(String id, Map pluginMap) {
+		IPluginModelBase model = (IPluginModelBase)pluginMap.get(id.trim());
+		if (model == null)
+			return null;
+		
+		return "file:" + new Path(model.getInstallLocation()).addTrailingSeparator().toString(); //$NON-NLS-1$
+	}
+		
 	private static void setBundleLocations(Map map, Properties properties) {
 		String framework = properties.getProperty("osgi.framework"); //$NON-NLS-1$
 		if (framework != null) {
 			if (framework.startsWith("platform:/base/plugins/")) { //$NON-NLS-1$
 				framework.replaceFirst("platform:/base/plugins/", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			String url = TargetPlatform.getBundleURL(framework, map);
+			String url = getBundleURL(framework, map);
 			if (url != null)
 				properties.setProperty("osgi.framework", url); //$NON-NLS-1$
 		}
@@ -246,29 +225,25 @@ public class LaunchConfigurationHelper {
 			StringTokenizer tokenizer = new StringTokenizer(bundles, ","); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens()) {
 				String token = tokenizer.nextToken().trim();
-				String url = TargetPlatform.getBundleURL(token, map);
+				String url = getBundleURL(token, map);
 				int index = -1;
 				if (url == null) {
 					index = token.indexOf('@');
-					if (index != -1) {
-						url = TargetPlatform.getBundleURL(token.substring(0,index), map);
-					}
+					if (index != -1)
+						url = getBundleURL(token.substring(0,index), map);
 					if (url == null) {
 						index = token.indexOf(':');
-						if (index != -1) {
-							url = TargetPlatform.getBundleURL(token.substring(0,index), map);
-						}
+						if (index != -1)
+							url = getBundleURL(token.substring(0,index), map);
 					}
 				}
-				if (url == null) {
-					buffer.append(token);
-				} else {
+				if (url != null) {
+					if (buffer.length() > 0)
+						buffer.append(',');
 					buffer.append("reference:" + url); //$NON-NLS-1$
 					if (index != -1)
 						buffer.append(token.substring(index));
 				}
-				if (tokenizer.hasMoreTokens())
-					buffer.append(","); //$NON-NLS-1$
 			}
 			properties.setProperty("osgi.bundles", buffer.toString()); //$NON-NLS-1$
 		}
@@ -290,32 +265,6 @@ public class LaunchConfigurationHelper {
 			return null;
 		int index = productID.lastIndexOf('.');
 		return index == -1 ? productID : productID.substring(0, index);
-	}
-	
-	public static String getBootPath(IPluginModelBase bootModel) {
-		try {
-			IResource resource = bootModel.getUnderlyingResource();
-			if (resource != null) {
-				IProject project = resource.getProject();
-				if (project.hasNature(JavaCore.NATURE_ID)) {
-					resource = project.findMember("boot.jar"); //$NON-NLS-1$
-					if (resource != null)
-						return "file:" + resource.getLocation().toOSString(); //$NON-NLS-1$
-					IPath path = JavaCore.create(project).getOutputLocation();
-					if (path != null) {
-						IPath sourceBootPath =
-							project.getParent().getLocation().append(path);
-						return sourceBootPath.addTrailingSeparator().toOSString();
-					}
-				}
-			} else {
-				File bootJar = new File(bootModel.getInstallLocation(), "boot.jar"); //$NON-NLS-1$
-				if (bootJar.exists())
-					return "file:" + bootJar.getAbsolutePath(); //$NON-NLS-1$
-			}
-		} catch (CoreException e) {
-		}
-		return null;
 	}
 	
 	public static String getProductID(ILaunchConfiguration configuration) throws CoreException {

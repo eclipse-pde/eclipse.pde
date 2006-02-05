@@ -18,12 +18,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
@@ -100,6 +102,43 @@ public class TargetPlatform implements IEnvironmentVariables {
 		return null;
 	}
 	
+	public static String getBundleList() {
+		Properties properties = getConfigIniProperties();
+		String osgiBundles = properties == null ? null : properties.getProperty("osgi.bundles"); //$NON-NLS-1$
+		if (osgiBundles == null) {
+			StringBuffer buffer = new StringBuffer();
+			if (getTargetVersion() > 3.1) {
+				buffer.append("org.eclipse.equinox.common@2:start,"); //$NON-NLS-1$
+				buffer.append("org.eclipse.core.jobs@2:start,"); //$NON-NLS-1$
+				buffer.append("org.eclipse.core.runtime.compatibility.registry,"); //$NON-NLS-1$
+				buffer.append("org.eclipse.equinox.registry@2:start,"); //$NON-NLS-1$
+				buffer.append("org.eclipse.equinox.preferences,"); //$NON-NLS-1$
+				buffer.append("org.eclipse.core.contenttype,"); //$NON-NLS-1$
+			}
+			buffer.append("org.eclipse.core.runtime@2:start,"); //$NON-NLS-1$
+			buffer.append("org.eclipse.update.configurator@3:start"); //$NON-NLS-1$
+			osgiBundles = buffer.toString();
+		} else {
+			osgiBundles = osgiBundles.replaceAll("\\s", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return osgiBundles;
+	}
+	
+	public static Set getBundleSet(String bundleList) {
+		Set set = new HashSet();
+		set.add("org.eclipse.osgi"); //$NON-NLS-1$
+		StringTokenizer tokenizer = new StringTokenizer(bundleList, ","); //$NON-NLS-1$
+		while (tokenizer.hasMoreTokens()) {
+			String token = tokenizer.nextToken();
+			int index = token.indexOf('@');
+			if (index > 0) 
+				set.add(token.substring(0, index).trim());
+			else 
+				set.add(token.trim());
+		}	
+		return set;
+	}
+	
 	public static void createPlatformConfigurationArea(
 		Map pluginMap,
 		File configDir,
@@ -157,14 +196,6 @@ public class TargetPlatform implements IEnvironmentVariables {
         return false;
     }
 
-	public static String getBundleURL(String id, Map pluginMap) {
-		IPluginModelBase model = (IPluginModelBase)pluginMap.get(id);
-		if (model == null)
-			return null;
-		
-		return "file:" + new Path(model.getInstallLocation()).addTrailingSeparator().toString(); //$NON-NLS-1$
-	}
-	
 	private static void savePlatformConfiguration(
 		IPlatformConfiguration platformConfiguration,
 		File configFile,
@@ -436,9 +467,14 @@ public class TargetPlatform implements IEnvironmentVariables {
 		return set.contains("org.eclipse.platform.ide") ? "org.eclipse.platform.ide" : null; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
-	public static boolean isRuntimeRefactored() {
+	public static boolean isRuntimeRefactored1() {
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		return manager.findEntry("org.eclipse.equinox.common") != null; //$NON-NLS-1$	
+		return manager.findEntry("org.eclipse.equinox.common") != null; //$NON-NLS-1$
 	}
-
+	
+	public static boolean isRuntimeRefactored2() {
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		return manager.findEntry("org.eclipse.core.runtime.compatibility.registry") != null;		 //$NON-NLS-1$
+	}
+	
 }

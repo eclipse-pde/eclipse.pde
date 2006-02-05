@@ -224,7 +224,9 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 			ILaunchConfigurationType configType = getWorkbenchLaunchConfigType();
 			String computedName = getComputedName(configType.getName());
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName); 
-			if (TargetPlatform.isRuntimeRefactored())
+			if (TargetPlatform.isRuntimeRefactored2())
+				wc.setAttribute("pde.version", "3.2a"); //$NON-NLS-1$ //$NON-NLS-2$
+			else if (TargetPlatform.isRuntimeRefactored1())
 				wc.setAttribute("pde.version", "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
 			wc.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(computedName)); //$NON-NLS-1$
 			setJavaArguments(wc);

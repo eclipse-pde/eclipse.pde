@@ -71,24 +71,34 @@ public class LaunchPluginValidator {
 		}
 		
 		String version = configuration.getAttribute("pde.version", (String) null); //$NON-NLS-1$
-		boolean upgrade = TargetPlatform.isRuntimeRefactored();
-		if (upgrade && version == null) {
-			wc.setAttribute("pde.version", "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
+		boolean upgrade = (TargetPlatform.isRuntimeRefactored1() && version == null)
+					   || (TargetPlatform.isRuntimeRefactored2() && !"3.2a".equals(version)); //$NON-NLS-1$
+		if (upgrade) {
+			if (TargetPlatform.isRuntimeRefactored2())
+				wc.setAttribute("pde.version", "3.2a"); //$NON-NLS-1$ //$NON-NLS-2$
+			else
+				wc.setAttribute("pde.version", "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
 			boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 			boolean useFeatures = configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false);
 			boolean automaticAdd = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
 			if (!usedefault && !useFeatures) {
-				String[] newPlugins = new String[] {"org.eclipse.core.contenttype", //$NON-NLS-1$
-													"org.eclipse.core.jobs", //$NON-NLS-1$
-													"org.eclipse.equinox.common", //$NON-NLS-1$
-													"org.eclipse.equinox.preferences", //$NON-NLS-1$
-													"org.eclipse.equinox.registry"}; //$NON-NLS-1$
+				ArrayList list = new ArrayList();
+				if (version == null) {
+					list.add("org.eclipse.core.contenttype"); //$NON-NLS-1$
+					list.add("org.eclipse.core.jobs"); //$NON-NLS-1$
+					list.add("org.eclipse.equinox.common"); //$NON-NLS-1$
+					list.add("org.eclipse.equinox.preferences"); //$NON-NLS-1$
+					list.add("org.eclipse.equinox.registry"); //$NON-NLS-1$
+				}
+				if (TargetPlatform.isRuntimeRefactored2())
+					list.add("org.eclipse.core.runtime.compatibility.registry"); //$NON-NLS-1$
 													
 				StringBuffer extensions = new StringBuffer(configuration.getAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, "")); //$NON-NLS-1$
 				StringBuffer target = new StringBuffer(configuration.getAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, "")); //$NON-NLS-1$
 				PluginModelManager manager = PDECore.getDefault().getModelManager();
-				for (int i = 0; i < newPlugins.length; i++) {
-					IPluginModelBase model = manager.findModel(newPlugins[i]);
+				for (int i = 0; i < list.size(); i++) {
+					String plugin = list.get(i).toString();
+					IPluginModelBase model = manager.findModel(plugin);
 					if (model == null)
 						continue;
 					if (model.getUnderlyingResource() != null) {
@@ -96,11 +106,11 @@ public class LaunchPluginValidator {
 							continue;
 						if (extensions.length() > 0)
 							extensions.append(","); //$NON-NLS-1$
-						extensions.append(newPlugins[i]);
+						extensions.append(plugin);
 					} else {
 						if (target.length() > 0)
 							target.append(","); //$NON-NLS-1$
-						target.append(newPlugins[i]);
+						target.append(plugin);
 					}					
 				}
 				if (extensions.length() > 0)
@@ -110,7 +120,7 @@ public class LaunchPluginValidator {
 			}
 		}
 		
-		if (save && (value != null || value2 != null || (upgrade && version == null)))
+		if (save && (value != null || value2 != null || upgrade))
 			wc.doSave();
 	}
 	
