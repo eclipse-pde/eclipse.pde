@@ -24,7 +24,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
@@ -55,7 +54,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
@@ -246,11 +244,6 @@ public class IntroSection extends PDESection {
 
 			IDocument document = buffer.getDocument();
 			
-			String ld = TextUtilities.getDefaultLineDelimiter(document);
-			TextEdit edit = checkTrailingNewline(document, ld);
-			if (edit != null)
-				edit.apply(document);
-			
 			BundleModel model = new BundleModel(document, false);
 			model.load();
 			if (model.isLoaded()) {
@@ -276,17 +269,6 @@ public class IntroSection extends PDESection {
 		} finally {
 			manager.disconnect(manifestPath, monitor);
 		}
-	}
-	
-	private TextEdit checkTrailingNewline(IDocument document, String ld) {
-		try {
-			int len = ld.length();
-			if (!document.get(document.getLength() - len, len).equals(ld)) {
-				return new InsertEdit(document.getLength(), ld);
-			}
-		} catch (BadLocationException e) {
-		}
-		return null;
 	}
 	
 }

@@ -25,9 +25,6 @@ public class BuildModelFactory implements IBuildModelFactory {
 	 * @see org.eclipse.pde.core.build.IBuildModelFactory#createEntry(java.lang.String)
 	 */
 	public IBuildEntry createEntry(String name) {
-		BuildEntry entry = new BuildEntry();
-		entry.setName(name);
-		entry.setModel(fModel);
-		return entry;
+		return new BuildEntry(name, fModel);
 	}
 }

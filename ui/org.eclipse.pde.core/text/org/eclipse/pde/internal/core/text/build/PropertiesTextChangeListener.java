@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core.text.bundle;
+package org.eclipse.pde.internal.core.text.build;
 
 import java.util.HashMap;
 
@@ -24,12 +24,12 @@ import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
 
-public class BundleTextChangeListener implements IModelTextChangeListener {
+public class PropertiesTextChangeListener implements IModelTextChangeListener {
 
 	private HashMap fOperationTable = new HashMap();
 	private IDocument fDocument;
-	
-	public BundleTextChangeListener(IDocument document) {
+
+	public PropertiesTextChangeListener(IDocument document) {
 		fDocument = document;
 	}
 
@@ -37,31 +37,25 @@ public class BundleTextChangeListener implements IModelTextChangeListener {
 		Object[] objects = event.getChangedObjects();
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
-            if (object instanceof PDEManifestElement)
-                object = ((PDEManifestElement)object).getHeader();
-            else if (object instanceof PackageFriend)
-                object = ((PackageFriend)object).getHeader();
-            
-			if (object instanceof ManifestHeader) {
-				ManifestHeader header = (ManifestHeader)object;
-				fOperationTable.remove(header);
-				
-				if (header.getValue() == null || header.getValue().trim().length() == 0) {
-					deleteKey(header);						
-				} else {
-					modifyKey(header);
-				}
+			IDocumentKey key = (IDocumentKey)object;
+			fOperationTable.remove(key);
+			switch (event.getChangeType()) {
+				case IModelChangedEvent.REMOVE :
+					deleteKey(key);
+					break;
+				default :
+					modifyKey(key);
 			}
 		}
 	}
-
+	
 	private void insertKey(IDocumentKey key) {
 		int offset = PropertiesUtil.getInsertOffset(fDocument);
 		fOperationTable.put(key, new InsertEdit(offset, key.write()));
 	}
 	
 	private void deleteKey(IDocumentKey key) {
-		if (key.getOffset() >= 0) 
+		if (key.getOffset() >= 0)
 			fOperationTable.put(key, new DeleteEdit(key.getOffset(), key.getLength()));
 	}
 	
@@ -69,7 +63,7 @@ public class BundleTextChangeListener implements IModelTextChangeListener {
 		if (key.getOffset() == -1) {
 			insertKey(key);
 		} else {
-			TextEdit op = new ReplaceEdit(key.getOffset(), key.getLength(), key.write()); 
+			TextEdit op = new ReplaceEdit(key.getOffset(), key.getLength(), key.write());
 			fOperationTable.put(key, op);
 		}	
 	}
@@ -90,5 +84,6 @@ public class BundleTextChangeListener implements IModelTextChangeListener {
 		System.arraycopy(ops, 0, result, 1, ops.length);
 		return result;
 	}
+
 
 }
