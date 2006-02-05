@@ -187,10 +187,21 @@ public class BuildErrorReporter extends ErrorReporter {
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 		for (int i = 0; i < libraries.length; i++) {
 			String libname = libraries[i].getName();
-			if (!libname.equals(".") &&	fProject.findMember(libname) != null) //$NON-NLS-1$
+			if (libname.equals(".")) { //$NON-NLS-1$
+				// no need to flag anything if the project contains no source folders.
+				for (int j = 0; j < cpes.length; j++) {
+					if (cpes[j].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+						if (!sourceEntryKeys.contains(SOURCE + ".")) //$NON-NLS-1$
+							prepareError(PDEMessages.BuildErrorReporter_sourceMissing);
+						break;
+					}
+				}
+				continue;
+			} else if (fProject.findMember(libname) != null) {//$NON-NLS-1$
 				// non "." library entries that exist in the workspace
 				// don't have to be referenced in the build properties
 				continue;
+			}
 			String sourceEntryKey = SOURCE + libname;
 			if (!sourceEntryKeys.contains(sourceEntryKey) 
 					&& !containedInFragment(manager, model.getBundleDescription().getFragments(), libname))
