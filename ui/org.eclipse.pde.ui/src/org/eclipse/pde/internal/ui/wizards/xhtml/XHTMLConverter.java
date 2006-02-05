@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.ui.xhtml;
+package org.eclipse.pde.internal.ui.wizards.xhtml;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.ui.xhtml;
+package org.eclipse.pde.internal.ui.wizards.xhtml;
 
 import java.util.ArrayList;
 import java.util.Hashtable;

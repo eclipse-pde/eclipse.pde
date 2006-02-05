@@ -773,7 +773,7 @@
          <action
                label="%convert.html.xhtml"
                helpContextId="org.eclipse.pde.doc.user.xhtmlConverter"
-               class="org.eclipse.pde.internal.ui.xhtml.GetUnconvertedAction"
+               class="org.eclipse.pde.internal.ui.wizards.xhtml.GetUnconvertedAction"
                menubarPath="org.eclipse.pde.ui.plugin.tools/group2"
                enablesFor="+"
                id="org.eclipse.pde.ui.xhtmlconverter.convert">

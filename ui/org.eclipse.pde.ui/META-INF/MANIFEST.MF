@@ -44,7 +44,7 @@ Export-Package: org.eclipse.pde.internal.ui;x-internal:=true,
  org.eclipse.pde.internal.ui.wizards.target;x-internal:=true,
  org.eclipse.pde.internal.ui.wizards.templates;x-internal:=true,
  org.eclipse.pde.internal.ui.wizards.tools;x-internal:=true,
- org.eclipse.pde.internal.ui.xhtml;x-internal:=true,
+ org.eclipse.pde.internal.ui.wizards.xhtml;x-internal:=true,
  org.eclipse.pde.ui,
  org.eclipse.pde.ui.launcher,
  org.eclipse.pde.ui.templates

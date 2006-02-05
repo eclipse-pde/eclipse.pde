@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.ui.xhtml;
+package org.eclipse.pde.internal.ui.wizards.xhtml;
 
 import java.util.ArrayList;
 
@@ -10,7 +10,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.xhtml.TocReplaceTable.TocReplaceEntry;
+import org.eclipse.pde.internal.ui.wizards.xhtml.TocReplaceTable.TocReplaceEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;

@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.ui.xhtml;
+package org.eclipse.pde.internal.ui.wizards.xhtml;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -20,7 +20,7 @@ import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.xhtml.TocReplaceTable.TocReplaceEntry;
+import org.eclipse.pde.internal.ui.wizards.xhtml.TocReplaceTable.TocReplaceEntry;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.text.edits.MalformedTreeException;
 
