@@ -24,6 +24,7 @@ import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.IPluginParent;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
@@ -40,7 +41,6 @@ import org.eclipse.pde.internal.core.text.plugin.PluginModel;
 import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.text.edits.MalformedTreeException;
-import org.osgi.framework.Constants;
 
 public class GetNonExternalizedStringsOperation 
 		implements IRunnableWithProgress {
@@ -119,20 +119,15 @@ public class GetNonExternalizedStringsOperation
 		try {
 			if (!ModelChange.modelLoaded(model)) return;
 			IFile manifestFile = null;
-			if (isNotTranslated(model.getBundleModel().getBundle().getHeader(Constants.BUNDLE_NAME))) {
-				manifestFile = getManifestFile(project);
-				if (manifestFile != null) {
-					IManifestHeader header = inspectHeader(project, manifestFile, Constants.BUNDLE_NAME, monitor);
-					if (header != null)
-						fModelChangeTable.addToChangeTable(model, manifestFile, header, fSelectedModels.contains(model));
-				}
-			}
-			if (isNotTranslated(model.getBundleModel().getBundle().getHeader(Constants.BUNDLE_VENDOR))) {
-				if (manifestFile == null) manifestFile = getManifestFile(project);
-				if (manifestFile != null) {
-					IManifestHeader header = inspectHeader(project, manifestFile, Constants.BUNDLE_VENDOR, monitor);
-					if (header != null)
-						fModelChangeTable.addToChangeTable(model, manifestFile, header, fSelectedModels.contains(model));
+			for (int i = 0; i < ICoreConstants.TRANSLATABLE_HEADERS.length; i++) {
+				if (isNotTranslated(model.getBundleModel().getBundle().getHeader(ICoreConstants.TRANSLATABLE_HEADERS[i]))) {
+					if (manifestFile == null)
+						manifestFile = getManifestFile(project);
+					if (manifestFile != null) {
+						IManifestHeader header = getHeader(project, manifestFile, ICoreConstants.TRANSLATABLE_HEADERS[i], monitor);
+						if (header != null)
+							fModelChangeTable.addToChangeTable(model, manifestFile, header, fSelectedModels.contains(model));
+					}
 				}
 			}
 		} catch (MalformedTreeException e) {
@@ -146,7 +141,7 @@ public class GetNonExternalizedStringsOperation
 		return null;
 	}
 	
-	private IManifestHeader inspectHeader(IProject project, IFile file, String headerName, IProgressMonitor monitor) throws CoreException {
+	private IManifestHeader getHeader(IProject project, IFile file, String headerName, IProgressMonitor monitor) throws CoreException {
 		IManifestHeader header = null;
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		try {

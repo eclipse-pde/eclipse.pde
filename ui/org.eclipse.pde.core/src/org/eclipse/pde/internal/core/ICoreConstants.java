@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import org.osgi.framework.Constants;
+
 public interface ICoreConstants {
 	
 	// Target Platform
@@ -63,4 +65,8 @@ public interface ICoreConstants {
 	public static final String INTERNAL_DIRECTIVE = "x-internal"; //$NON-NLS-1$
 	public static final String FRIENDS_DIRECTIVE = "x-friends"; //$NON-NLS-1$
 	public static final String PLATFORM_FILTER = "Eclipse-PlatformFilter"; //$NON-NLS-1$
+	
+	public static final String[] TRANSLATABLE_HEADERS = new String[] {
+		Constants.BUNDLE_VENDOR, Constants.BUNDLE_NAME
+	};
 }
