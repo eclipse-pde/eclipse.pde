@@ -133,7 +133,7 @@ public class LaunchConfigurationHelper {
 			}
 		}
 		if (!initialBundleSet.contains("org.eclipse.update.configurator")) { //$NON-NLS-1$
-			initialBundleSet.add("org.eclipse.osgi");
+			initialBundleSet.add("org.eclipse.osgi"); //$NON-NLS-1$
 			Iterator iter = map.keySet().iterator();
 			while (iter.hasNext()) {
 				String id = iter.next().toString();
