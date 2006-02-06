@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -112,13 +113,31 @@ public class LaunchConfigurationHelper {
 		if (productID != null)
 			addSplashLocation(properties, productID, map);
 		
-		StringBuffer buffer = new StringBuffer(TargetPlatform.getBundleList());
-		Set initialSet = TargetPlatform.getBundleSet(buffer.toString());
-		if (!initialSet.contains("org.eclipse.update.configurator")) { //$NON-NLS-1$
+		String bundleList = TargetPlatform.getBundleList();
+		StringBuffer buffer = new StringBuffer();
+		
+		// include only bundles that are actually in this product configuration
+		Set initialBundleSet = new HashSet();
+		StringTokenizer tokenizer = new StringTokenizer(bundleList, ","); //$NON-NLS-1$
+		while (tokenizer.hasMoreTokens()) {
+			String token = tokenizer.nextToken();
+			int index = token.indexOf('@');
+			String id = index != -1 ? token.substring(0, index) : token;
+			if (map.containsKey(id)) {
+				if (buffer.length() > 0)
+					buffer.append(',');
+				buffer.append(id);
+				if (index != -1 && index < token.length() -1)
+					buffer.append(token.substring(index));				
+				initialBundleSet.add(id);
+			}
+		}
+		if (!initialBundleSet.contains("org.eclipse.update.configurator")) { //$NON-NLS-1$
+			initialBundleSet.add("org.eclipse.osgi");
 			Iterator iter = map.keySet().iterator();
 			while (iter.hasNext()) {
 				String id = iter.next().toString();
-				if (!initialSet.contains(id)) {
+				if (!initialBundleSet.contains(id)) {
 					if (buffer.length() > 0)
 						buffer.append(',');
 					buffer.append(id);

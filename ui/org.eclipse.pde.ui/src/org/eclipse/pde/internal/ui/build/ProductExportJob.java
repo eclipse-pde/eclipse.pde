@@ -361,11 +361,13 @@ public class ProductExportJob extends FeatureExportJob {
 				buffer.append(id);
 				if (index != -1 && index < token.length() -1)
 					buffer.append(token.substring(index));				
+				initialBundleSet.add(id);
 			}
-			initialBundleSet.add(id);
 		}
 		
 		if (!fProduct.containsPlugin("org.eclipse.update.configurator")) { //$NON-NLS-1$
+			initialBundleSet.add("org.eclipse.osgi"); //$NON-NLS-1$
+			
 	        Dictionary environment = new Hashtable(4);
 	        environment.put("osgi.os", config[0]); //$NON-NLS-1$
 	        environment.put("osgi.ws", config[1]); //$NON-NLS-1$
