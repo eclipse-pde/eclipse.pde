@@ -50,7 +50,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public class PDESourceLookupQuery implements ISafeRunnable {
 	
-	private static String ECLIPSE_CLASSLOADER = "org.eclipse.core.runtime.adaptor.EclipseClassLoader"; //$NON-NLS-1$
+	protected static String OSGI_CLASSLOADER = "org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader"; //$NON-NLS-1$
+	private static String LEGACY_ECLIPSE_CLASSLOADER = "org.eclipse.core.runtime.adaptor.EclipseClassLoader"; //$NON-NLS-1$
 	private static String MAIN_CLASS = "org.eclipse.core.launcher.Main"; //$NON-NLS-1$
 	private static String MAIN_PLUGIN = "org.eclipse.platform"; //$NON-NLS-1$
 	
@@ -67,14 +68,20 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	public void run() throws Exception {
 		if (fElement instanceof IJavaStackFrame) {
 			IJavaStackFrame stackFrame = (IJavaStackFrame)fElement;
-			IJavaObject bundleData = getBundleData(stackFrame);
 			String typeName = generateSourceName(stackFrame.getDeclaringTypeName());
-			if (bundleData != null) {
-				fResult = getSourceElement(bundleData, typeName);
-			} else if (MAIN_CLASS.equals(stackFrame.getDeclaringTypeName())){
-				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(MAIN_PLUGIN);
-				if (model != null)
-					fResult = getSourceElement(model.getInstallLocation(), MAIN_PLUGIN, typeName);
+
+			IJavaObject object = stackFrame.getReferenceType().getClassLoaderObject();
+			if (object != null) {
+				IJavaClassType type = (IJavaClassType)object.getJavaType();
+				/*if (OSGI_CLASSLOADER.equals(type.getName())) {
+					fResult = findSourceElement(object, typeName);
+				} else*/ if (LEGACY_ECLIPSE_CLASSLOADER.equals(type.getName())) {
+					fResult = findSourceElement_legacy(object, typeName);		
+				} else if (MAIN_CLASS.equals(stackFrame.getDeclaringTypeName())){
+					IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(MAIN_PLUGIN);
+					if (model != null)
+						fResult = getSourceElement(model.getInstallLocation(), MAIN_PLUGIN, typeName);
+				}
 			}
 		}
 	}
@@ -83,36 +90,47 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 		return fResult;
 	}
 	
-	private IJavaObject getBundleData(IJavaStackFrame stackFrame) throws DebugException {
-		IJavaObject object = stackFrame.getReferenceType().getClassLoaderObject();
-		if (object == null)
-			return null;
-		IJavaClassType type = (IJavaClassType)object.getJavaType();
-		if (ECLIPSE_CLASSLOADER.equals(type.getName())) {
-			IJavaFieldVariable variable = object.getField("hostdata", true); //$NON-NLS-1$
-			if (variable != null) {
-				IValue value = variable.getValue();
-				if (value instanceof IJavaObject)
-					return (IJavaObject)value;
-			}
-		}
-		return null;
-	}
-	
 	private String getValue(IJavaObject object, String variable) throws DebugException {
 		IJavaFieldVariable var = object.getField(variable, false);
 		return var == null ? null : var.getValue().getValueString();
 	}
 	
-	private Object getSourceElement(IJavaObject bundleData, String elementName) throws CoreException {
-		String location = getValue(bundleData, "fileName"); //$NON-NLS-1$
-		String id = getValue(bundleData, "symbolicName"); //$NON-NLS-1$
-		return getSourceElement(location, id, elementName);
-	}	
+	protected Object findSourceElement(IJavaObject object, String typeName) throws CoreException {
+		IJavaObject manager = getObject(object, "manager", false); //$NON-NLS-1$
+		if (manager != null) {
+			IJavaObject data = getObject(manager, "data", false); //$NON-NLS-1$
+			if (data != null) {
+				String location = getValue(data, "fileName"); //$NON-NLS-1$
+				String id = getValue(data, "symbolicName"); //$NON-NLS-1$
+				return getSourceElement(location, id, typeName);			
+			}
+		}	
+		return null;
+	}
 	
-	private Object getSourceElement(String location, String id, String elementName) throws CoreException {
+	private IJavaObject getObject(IJavaObject object, String field, boolean superfield) throws DebugException {
+		IJavaFieldVariable variable = object.getField(field, superfield);
+		if (variable != null) {
+			IValue value = variable.getValue();
+			if (value instanceof IJavaObject) 
+				return (IJavaObject)value;
+		}
+		return null;
+	}
+	
+	private Object findSourceElement_legacy(IJavaObject object, String typeName) throws CoreException {
+		IJavaObject hostdata = getObject(object, "hostdata", true); //$NON-NLS-1$
+		if (hostdata != null) {
+			String location = getValue(hostdata, "fileName"); //$NON-NLS-1$
+			String id = getValue(hostdata, "symbolicName"); //$NON-NLS-1$
+			return getSourceElement(location, id, typeName);
+		}
+		return null;
+	}
+	
+	private Object getSourceElement(String location, String id, String typeName) throws CoreException {
 		if (location != null && id != null) {
-			Object result = findSourceElement(getSourceContainers(location, id), elementName);
+			Object result = findSourceElement(getSourceContainers(location, id), typeName);
 			if (result != null)
 				return result;
 			
@@ -124,7 +142,7 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 				for (int i = 0; i < fragments.length; i++) {
 					location = fragments[i].getLocation();
 					id = fragments[i].getSymbolicName();
-					result = findSourceElement(getSourceContainers(location, id), elementName);
+					result = findSourceElement(getSourceContainers(location, id), typeName);
 					if (result != null)
 						return result;
 				}
@@ -133,9 +151,9 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 		return null;
 	}
 	
-	private Object findSourceElement(ISourceContainer[] containers, String elementName) throws CoreException {
+	private Object findSourceElement(ISourceContainer[] containers, String typeName) throws CoreException {
 		for (int i = 0; i < containers.length; i++) {
-			Object[] result = containers[i].findSourceElements(elementName);
+			Object[] result = containers[i].findSourceElements(typeName);
 			if (result.length > 0)
 				return result[0];
 		}
