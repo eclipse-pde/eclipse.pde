@@ -116,7 +116,7 @@ public class LaunchConfigurationHelper {
 		String bundleList = TargetPlatform.getBundleList();
 		StringBuffer buffer = new StringBuffer();
 		
-		// include only bundles that are actually in this product configuration
+		// include only bundles that are actually in the list of plug-ins to launch
 		Set initialBundleSet = new HashSet();
 		StringTokenizer tokenizer = new StringTokenizer(bundleList, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {

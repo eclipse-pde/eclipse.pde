@@ -18,14 +18,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
@@ -122,21 +120,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 			osgiBundles = osgiBundles.replaceAll("\\s", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return osgiBundles;
-	}
-	
-	public static Set getBundleSet(String bundleList) {
-		Set set = new HashSet();
-		set.add("org.eclipse.osgi"); //$NON-NLS-1$
-		StringTokenizer tokenizer = new StringTokenizer(bundleList, ","); //$NON-NLS-1$
-		while (tokenizer.hasMoreTokens()) {
-			String token = tokenizer.nextToken();
-			int index = token.indexOf('@');
-			if (index > 0) 
-				set.add(token.substring(0, index).trim());
-			else 
-				set.add(token.trim());
-		}	
-		return set;
 	}
 	
 	public static void createPlatformConfigurationArea(
