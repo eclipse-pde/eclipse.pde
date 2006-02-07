@@ -538,15 +538,15 @@ public class PointSelectionPage
 	}
 	
 	private void updateTabSelection(int index) {
-		if (index==0) {
+		if (index == 0) {
 			// extension point page
 			ISelection selection = fTemplateViewer.getSelection();
 			if (selection.isEmpty()==false)
 				selectionChanged(new SelectionChangedEvent(fTemplateViewer, selection));
 			else
 				selectionChanged(new SelectionChangedEvent(fPointListViewer, fPointListViewer.getSelection()));
-		}
-		else {
+			fFilterText.setFocus();
+		} else {
 			// wizard page
 			ISelectionProvider provider = fWizardsPage.getSelectionProvider();
 			selectionChanged(new SelectionChangedEvent(provider, provider.getSelection()));
