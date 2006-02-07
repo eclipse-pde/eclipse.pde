@@ -24,86 +24,90 @@ charset=iso-8859-1 rel=stylesheet>
 
 <H1>Eclipse Platform Build Notes<BR>Plug-in Development Environment</H1>
 <p>Eclipse SDK 3.2M5 - Feb 6, 2006</p>
+
+<H2>What's new in this drop</H2>
+<UL>
+  <LI>Added support for patch fragments<LI>PDE now consults the &#39;osgi.bundles&#39; 
+  key in the target&#39;s config.ini when launching or exporting a product.<LI>
+  Adapted the source lookup to the newly refactored classloader.</UL>
 <p><b><font size="4">Problem Reports Fixed</font></b></p>
 <table class="bz_buglist" cellSpacing="0" cellPadding="4" width="100%">
-	<colgroup>
-      <col class="bz_id_column">
-      <col class="bz_short_short_desc_column">
-    </colgroup>
-    <tr align="left">
-	    <th colspan="1" class="first-child">
-			<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&amp;short_desc_type=allwordssubstr&amp;short_desc=&amp;classification=Eclipse&amp;product=PDE&amp;component=UI&amp;target_milestone=3.2%20M5&amp;long_desc_type=allwordssubstr&amp;long_desc=&amp;bug_file_loc_type=allwordssubstr&amp;bug_file_loc=&amp;status_whiteboard_type=allwordssubstr&amp;status_whiteboard=&amp;keywords_type=allwords&amp;keywords=&amp;bug_status=RESOLVED&amp;bug_status=VERIFIED&amp;bug_status=CLOSED&amp;resolution=FIXED&amp;emailtype1=substring&amp;email1=&amp;emailtype2=substring&amp;email2=&amp;bugidtype=include&amp;bug_id=&amp;votes=&amp;chfieldfrom=2006-01-31&amp;chfieldto=Now&amp;chfieldvalue=&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;order=bugs.bug_id&amp;query_based_on=">ID</a>
-	    </th>
-		<th colspan="1">
-			<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&amp;short_desc_type=allwordssubstr&amp;short_desc=&amp;classification=Eclipse&amp;product=PDE&amp;component=UI&amp;target_milestone=3.2%20M5&amp;long_desc_type=allwordssubstr&amp;long_desc=&amp;bug_file_loc_type=allwordssubstr&amp;bug_file_loc=&amp;status_whiteboard_type=allwordssubstr&amp;status_whiteboard=&amp;keywords_type=allwords&amp;keywords=&amp;bug_status=RESOLVED&amp;bug_status=VERIFIED&amp;bug_status=CLOSED&amp;resolution=FIXED&amp;emailtype1=substring&amp;email1=&amp;emailtype2=substring&amp;email2=&amp;bugidtype=include&amp;bug_id=&amp;votes=&amp;chfieldfrom=2006-01-31&amp;chfieldto=Now&amp;chfieldvalue=&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;order=bugs.short_desc&amp;query_based_on=">Summary</a>
-		</th>
-	</tr>
-	<tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
-	    <td class="first-child">
-	      <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=109823">109823</a>
-	      <span style="display: none"></span>
-	    </td>
-	    <td>plugin classpath (ìBundle-ClassPathî) is ignored during c...
-	    </td>
-	</tr>
-	<tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
-		<td class="first-child">
-	      <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=115008">115008</a>
-	      <span style="display: none"></span>
-	    </td>
-	    <td >Run As/Debug As menus often contain non-applicable items
-	    </td>
-	</tr>
-	<tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
-		<td class="first-child">
-	      <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=121245">121245</a>
-	      <span style="display: none"></span>
-	    </td>
-		<td >New fragment dialog exposes old notion for matching rules
-	    </td>
-	</tr>
-	<tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
-		<td class="first-child">
-	      <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=123128">123128</a>
-	      <span style="display: none"></span>
-	    </td>
-		<td >Fragment creation wizard unexpectedly sets host version
-	    </td>
-	</tr>
-	<tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
-		<td class="first-child">
-	      <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=123242">123242</a>
-	      <span style="display: none"></span>
-	    </td>
-		<td >Can't launch 3.2 using 3.1.x
-	    </td>
-	</tr>
-	<tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
-		<td class="first-child">
-	      <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=124652">124652</a>
-	      <span style="display: none"></span>
-	    </td>
-		<td >use osgi.bundles from target as template for equinox laun...
-	    </td>
-	</tr>
-	<tr class="bz_minor             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
-		<td class="first-child">
-	      <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=125913">125913</a>
-	      <span style="display: none"></span>
-	    </td>
-		<td >New Extension dialog should give default focus to filter ...
-	    </td>
-	</tr>
-	<tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
-		<td class="first-child">
-	      <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126440">126440</a>
-	      <span style="display: none"></span>
-	    </td>
-		<td >Plug-in Export dialog JAR signing tab not using dialog font
-	    </td>
-	</tr>
+  <tr align="left">
+    <th class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&classification=Eclipse&product=PDE&component=UI&target_milestone=3.2%20M5&long_desc_type=allwordssubstr&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&status_whiteboard_type=allwordssubstr&status_whiteboard=&keywords_type=allwords&keywords=&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&emailtype1=substring&email1=&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=2006-01-31&chfieldto=Now&chfieldvalue=&field0-0-0=noop&type0-0-0=noop&value0-0-0=&order=bugs.bug_id&query_based_on=">
+    ID</a> </th>
+    <th>
+    <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&classification=Eclipse&product=PDE&component=UI&target_milestone=3.2%20M5&long_desc_type=allwordssubstr&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&status_whiteboard_type=allwordssubstr&status_whiteboard=&keywords_type=allwords&keywords=&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&emailtype1=substring&email1=&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=2006-01-31&chfieldto=Now&chfieldvalue=&field0-0-0=noop&type0-0-0=noop&value0-0-0=&order=bugs.short_desc,bugs.bug_id&query_based_on=">
+    Summary</a> </th>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=109823">109823</a>
+    </td>
+    <td>plugin classpath (‚ÄúBundle-ClassPath‚Äù) is ignored during compile time?
+    </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=115008">115008</a>
+    </td>
+    <td>Run As/Debug As menus often contain non-applicable items </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=121245">121245</a>
+    </td>
+    <td>New fragment dialog exposes old notion for matching rules </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=123128">123128</a>
+    </td>
+    <td>Fragment creation wizard unexpectedly sets host version </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=123242">123242</a>
+    </td>
+    <td>Can&#39;t launch 3.2 using 3.1.x </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=124652">124652</a>
+    </td>
+    <td>use osgi.bundles from target as template for equinox launcher </td>
+  </tr>
+  <tr class="bz_minor             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=125913">125913</a>
+    </td>
+    <td>New Extension dialog should give default focus to filter text field </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126440">126440</a>
+    </td>
+    <td>Plug-in Export dialog JAR signing tab not using dialog font </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126517">126517</a>
+    </td>
+    <td>New source lookup is broken </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126606">126606</a>
+    </td>
+    <td>NPE when saving Target Definition Editor </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+    <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=126687">126687</a>
+    </td>
+    <td>Add support for patch fragments </td>
+  </tr>
 </table>
-<P>
 <HR>
 
 <H1>Eclipse Platform Build Notes<BR>Plug-in Development Environment</H1>Eclipse 
