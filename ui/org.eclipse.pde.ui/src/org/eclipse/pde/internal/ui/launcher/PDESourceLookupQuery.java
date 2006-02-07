@@ -73,9 +73,9 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 			IJavaObject object = stackFrame.getReferenceType().getClassLoaderObject();
 			if (object != null) {
 				IJavaClassType type = (IJavaClassType)object.getJavaType();
-				/*if (OSGI_CLASSLOADER.equals(type.getName())) {
+				if (OSGI_CLASSLOADER.equals(type.getName())) {
 					fResult = findSourceElement(object, typeName);
-				} else*/ if (LEGACY_ECLIPSE_CLASSLOADER.equals(type.getName())) {
+				} else if (LEGACY_ECLIPSE_CLASSLOADER.equals(type.getName())) {
 					fResult = findSourceElement_legacy(object, typeName);		
 				} else if (MAIN_CLASS.equals(stackFrame.getDeclaringTypeName())){
 					IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(MAIN_PLUGIN);
