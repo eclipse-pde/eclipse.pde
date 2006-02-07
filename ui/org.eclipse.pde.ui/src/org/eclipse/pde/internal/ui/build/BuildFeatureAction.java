@@ -60,7 +60,7 @@ public class BuildFeatureAction extends BaseBuildAction {
 		generator.setPluginPath(TargetPlatform.getFeaturePaths());
 		generator.setPDEState(TargetPlatform.getState());
 		generator.setNextId(TargetPlatform.getPDEState().getNextId());
-		generator.setStateExtraData(TargetPlatform.getBundleClasspaths(TargetPlatform.getPDEState()));
+		generator.setStateExtraData(TargetPlatform.getBundleClasspaths(TargetPlatform.getPDEState()), TargetPlatform.getPatchMap(TargetPlatform.getPDEState()));
 		generator.setGenerateAssembleScript(false);
 		generator.generate();	
 	}

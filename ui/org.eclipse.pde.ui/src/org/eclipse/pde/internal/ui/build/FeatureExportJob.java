@@ -384,7 +384,7 @@ public class FeatureExportJob extends Job implements IPreferenceConstants {
 		generator.setArchivesFormat(format);
 		generator.setPDEState(getState(os, ws, arch));
 		generator.setNextId(TargetPlatform.getPDEState().getNextId());
-		generator.setStateExtraData(TargetPlatform.getBundleClasspaths(TargetPlatform.getPDEState()));
+		generator.setStateExtraData(TargetPlatform.getBundleClasspaths(TargetPlatform.getPDEState()), TargetPlatform.getPatchMap(TargetPlatform.getPDEState()));
 		AbstractScriptGenerator.setForceUpdateJar(false);
 		AbstractScriptGenerator.setEmbeddedSource(fInfo.exportSource);		
 	}
