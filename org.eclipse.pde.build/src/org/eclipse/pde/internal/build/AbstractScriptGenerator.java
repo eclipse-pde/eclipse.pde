@@ -271,9 +271,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		pdeUIState.setState(state);
 	}
 
-	public void setStateExtraData(HashMap p) {
+	public void setStateExtraData(HashMap classpath, Map patchData) {
 		ensurePDEUIStateNotNull();
-		pdeUIState.setExtraData(p);
+		pdeUIState.setExtraData(classpath, patchData);
 	}
 
 	public void setNextId(long nextId) {

@@ -12,29 +12,36 @@
 package org.eclipse.pde.internal.build;
 
 import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.osgi.service.resolver.State;
 
 public class PDEUIStateWrapper {
 	private State state;
-	private HashMap extraData;
+	private HashMap classpath;
+	private Map patchData;
 	private long nextId;
 	
 	public void setState(State s) {
 		state = s;
 	}
 	
-	public void setExtraData(HashMap data) {
-		extraData = data;
+	public void setExtraData(HashMap classpath, Map patch) {
+		this.classpath = classpath;
+		this.patchData = patch;
 	}
 	
 	public State getState() {
 		return state;
 	}
 	
-	public HashMap getExtraData() {
-		return extraData;
+	public HashMap getClasspaths() {
+		return classpath;
 	}
 
+	public Map getPatchData() {
+		return patchData;
+	}
+	
 	public void setNextId(long nextId) {
 		this.nextId = nextId;
 	}

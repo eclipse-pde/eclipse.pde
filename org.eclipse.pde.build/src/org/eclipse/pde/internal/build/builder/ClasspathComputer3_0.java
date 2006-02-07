@@ -131,8 +131,14 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 * @throws CoreException
 	 */
 	private void addPlugin(BundleDescription plugin, List classpath, String location) throws CoreException {
+		boolean allFragments = true;
+		String patchInfo = (String) generator.getSite(false).getRegistry().getPatchData().get(new Long(plugin.getBundleId()));
+		if (patchInfo != null && plugin != generator.getModel()) {
+			addFragmentsLibraries(plugin, classpath, location, false, false);
+			allFragments = false;
+		}
 		addRuntimeLibraries(plugin, classpath, location);
-		addFragmentsLibraries(plugin, classpath, location);
+		addFragmentsLibraries(plugin, classpath, location, true, allFragments);
 	}
 
 	/**
@@ -161,7 +167,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 * @param baseLocation
 	 * @throws CoreException
 	 */
-	private void addFragmentsLibraries(BundleDescription plugin, List classpath, String baseLocation) throws CoreException {
+	private void addFragmentsLibraries(BundleDescription plugin, List classpath, String baseLocation, boolean afterPlugin, boolean all) throws CoreException {
 		// if plugin is not a plugin, it's a fragment and there is no fragment for a fragment. So we return.
 		BundleDescription[] fragments = plugin.getFragments();
 		if (fragments == null)
@@ -172,9 +178,21 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 				continue;
 			if (matchFilter(fragments[i]) == false)
 				continue;
-			addPluginLibrariesToFragmentLocations(plugin, fragments[i], classpath, baseLocation);
-			addRuntimeLibraries(fragments[i], classpath, baseLocation);
+			if (! afterPlugin && isPatchFragment(fragments[i])) {
+				addPluginLibrariesToFragmentLocations(plugin, fragments[i], classpath, baseLocation);
+				addRuntimeLibraries(fragments[i], classpath, baseLocation);
+				continue;
+			}
+			if ( (afterPlugin && !isPatchFragment(fragments[i])) || all) {
+				addRuntimeLibraries(fragments[i], classpath, baseLocation);
+				addPluginLibrariesToFragmentLocations(plugin, fragments[i], classpath, baseLocation);
+				continue;
+			}
 		}
+	}
+
+	private boolean isPatchFragment(BundleDescription fragment) throws CoreException {
+		return generator.getSite(false).getRegistry().getPatchData().get(new Long(fragment.getBundleId())) != null;
 	}
 
 	/**

@@ -34,6 +34,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	private long id;
 	private Properties repositoryVersions;
 	private HashMap bundleClasspaths;
+	private Map patchBundles;
 	private List addedBundle;
 	private List unqualifiedBundles; //All the bundle description objects that have .qualifier in them 
 
@@ -49,7 +50,8 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		state = initialState.getState();
 		factory = state.getFactory();
 		id = initialState.getNextId();
-		bundleClasspaths = initialState.getExtraData();
+		bundleClasspaths = initialState.getClasspaths();
+		patchBundles = initialState.getPatchData();
 		addedBundle = new ArrayList();
 		unqualifiedBundles = new ArrayList();
 		forceQualifiers();
@@ -61,6 +63,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		state.setResolver(Platform.getPlatformAdmin().getResolver());
 		id = 0;
 		bundleClasspaths = new HashMap();
+		patchBundles = new HashMap();
 		loadPluginTagFile();
 	}
 
@@ -83,6 +86,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			BundleDescription descriptor;
 			descriptor = factory.createBundleDescription(state, enhancedManifest, bundleLocation.getAbsolutePath(), getNextId());
 			bundleClasspaths.put(new Long(descriptor.getBundleId()), getClasspath(enhancedManifest));
+			String patchValue = fillPatchData(enhancedManifest);
+			if (patchValue != null)
+				patchBundles.put(new Long(descriptor.getBundleId()), patchValue);
 			rememberQualifierTagPresence(descriptor);
 			if (state.addBundle(descriptor) == true && addedBundle != null)
 				addedBundle.add(descriptor);
@@ -120,6 +126,17 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			//Ignore
 		}
 		return result;
+	}
+	
+	private String fillPatchData(Dictionary manifest) {
+		if (manifest.get("Eclipse-ExtensibleAPI") != null) {
+			return "Eclipse-ExtensibleAPI: true";
+		}
+		
+		if (manifest.get("Eclipse-PatchFragment") != null) {
+			return "Eclipse-PatchFragment: true";
+		}
+		return null;
 	}
 
 	private void loadPluginTagFile() {
@@ -510,6 +527,10 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		return bundleClasspaths;
 	}
 
+	public Map getPatchData() {
+		return patchBundles;
+	}
+	
 	public List getSortedBundles() {
 		BundleDescription[] toSort = getState().getResolvedBundles();
 		Platform.getPlatformAdmin().getStateHelper().sortBundles(toSort);
