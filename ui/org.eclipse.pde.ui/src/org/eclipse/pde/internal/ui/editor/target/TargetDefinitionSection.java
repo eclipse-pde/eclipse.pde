@@ -41,7 +41,6 @@ import org.eclipse.ui.forms.widgets.Section;
 public class TargetDefinitionSection extends PDESection {
 
 	private FormEntry fNameEntry;
-	private FormEntry fIDEntry;
 	private FormEntry fPath;
 	private Button fUseDefault;
 	private Button fCustomPath;
@@ -155,7 +154,6 @@ public class TargetDefinitionSection extends PDESection {
 	 */
 	public void commit(boolean onSave) {
 		fNameEntry.commit();
-		fIDEntry.commit();
 		fPath.commit();
 		super.commit(onSave);
 	}
@@ -165,7 +163,6 @@ public class TargetDefinitionSection extends PDESection {
 	 */
 	public void cancelEdit() {
 		fNameEntry.cancelEdit();
-		fIDEntry.cancelEdit();
 		fPath.cancelEdit();
 		super.cancelEdit();
 	}
