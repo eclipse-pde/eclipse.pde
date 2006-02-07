@@ -448,8 +448,11 @@ public class PluginModelManager implements IAdaptable {
 		BundleDescription desc = model.getBundleDescription();
 		if (desc != null) {
 			HostSpecification spec = desc.getHost();
-			if (spec != null && spec.getName() != null
-				&& (desc.getImportPackages().length > 0 || desc.getRequiredBundles().length > 0)) {
+			if (spec != null 
+				&& spec.getName() != null
+				&& (ClasspathUtilCore.isPatchFragment(desc)
+					|| desc.getImportPackages().length > 0 
+					|| desc.getRequiredBundles().length > 0)) {
 				IPluginModelBase host = findModel(spec.getName());
 				if (host != null)
 					fState.addBundle(host, true);
