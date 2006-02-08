@@ -36,7 +36,6 @@ public interface IPDEBuildConstants {
 	public static final String ARG_DEV_ENTRIES = "-dev"; //$NON-NLS-1$
 	public static final String ARG_DIRECTORY_LOCATION = "-directory"; //$NON-NLS-1$
 	public static final String ARG_ELEMENTS = "-elements"; //$NON-NLS-1$
-	//public static final String ARG_INSTALL_LOCATION = "-installDir"; //$NON-NLS-1$
 	public static final String ARG_NO_CHILDREN = "-nochildren"; //$NON-NLS-1$
 	public static final String ARG_PLUGIN_PATH = "-pluginpath"; //$NON-NLS-1$
 	public static final String ARG_SCRIPT_NAME = "-scriptname"; //$NON-NLS-1$
@@ -113,4 +112,8 @@ public interface IPDEBuildConstants {
 	public final static String OSGI_OS = "osgi.os";  //$NON-NLS-1$
 	public final static String OSGI_ARCH = "osgi.arch";  //$NON-NLS-1$
 	public final static String OSGI_NL = "osgi.nl";  //$NON-NLS-1$
+	
+	//Eclipse specific manifest headers
+	public final static String EXTENSIBLE_API = "Eclipse-ExtensibleAPI";  //$NON-NLS-1$
+	public final static String PATCH_FRAGMENT = "Eclipse-PatchFragment"; //$NON-NLS-1$
 }

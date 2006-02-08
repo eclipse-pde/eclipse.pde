@@ -124,4 +124,8 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		//In the packager there is nothing to do since, the features we are packaging are pre-built and do not have a build.properties
 		return new FileSet[0];
 	}
+	
+	public void generateTarTask(boolean assembling){
+		super.generateTarTask(false);
+	}
 }

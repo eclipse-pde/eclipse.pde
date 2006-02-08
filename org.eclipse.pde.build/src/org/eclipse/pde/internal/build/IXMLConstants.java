@@ -42,6 +42,7 @@ public interface IXMLConstants {
 	public static final String TARGET_GATHER_SOURCES = "gather.sources"; //$NON-NLS-1$
 	public static final String TARGET_INIT = "init"; //$NON-NLS-1$
 	public static final String TARGET_MAIN = "main"; //$NON-NLS-1$
+	public static final String TARGET_TAR_RESULTS = "tarResults"; //$NON-NLS-1$
 	public static final String TARGET_PROPERTIES = "properties"; //$NON-NLS-1$
 	public static final String TARGET_REFRESH = "refresh"; //$NON-NLS-1$
 	public static final String TARGET_ZIP_DISTRIBUTION = "zip.distribution"; //$NON-NLS-1$
@@ -130,7 +131,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_TARGET_FOLDER = "target.folder"; //$NON-NLS-1$
 	public static final String PROPERTY_JAR_LOCATION = "jar.Location"; //$NON-NLS-1$
 	public static final String PROPERTY_CLASSPATH = ".classpath"; //$NON-NLS-1$
-
+	public static final String PROPERTY_RUN_PACKAGER = "runPackager"; //$NON-NLS-1$
 	public static final String PROPERTY_ASSEMBLY_TMP = "assemblyTempDir"; //$NON-NLS-1$
 
 	//Jar signing properties
