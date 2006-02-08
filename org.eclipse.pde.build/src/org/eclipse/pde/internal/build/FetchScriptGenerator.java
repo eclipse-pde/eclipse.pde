@@ -253,7 +253,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			if (featureProperties.containsKey(GENERATION_SOURCE_FEATURE_PREFIX + featureId)) {
 				String[] extraElementsToFetch = Utils.getArrayFromString(featureProperties.getProperty(GENERATION_SOURCE_FEATURE_PREFIX + featureId), ","); //$NON-NLS-1$
 				for (int j = 1; j < extraElementsToFetch.length; j++) {
-					generateFetchEntry(extraElementsToFetch[j], false);
+					String [] elements = Utils.getArrayFromString(extraElementsToFetch[j], ";"); //$NON-NLS-1$
+					generateFetchEntry(elements[0], false);
 				}
 				continue;
 			}
