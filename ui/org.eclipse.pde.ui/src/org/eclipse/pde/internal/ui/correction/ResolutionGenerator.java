@@ -12,10 +12,7 @@ package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.builders.PDEMarkerFactory;
-import org.eclipse.pde.internal.ui.IPreferenceConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
 
@@ -56,8 +53,9 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 			IResource res = marker.getResource();
 			if (res != null)
 				return new IMarkerResolution[] {
-						new RemoveExportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, packageName),
-						new OrganizeExportPackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE, res.getProject())};
+						new RemoveExportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, packageName)
+						//new OrganizeExportPackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE, res.getProject())
+					};
 		}
 		return NO_RESOLUTIONS;
 	}
@@ -71,12 +69,13 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		if (optionalPkg) 
 			return new IMarkerResolution[] {new RemoveImportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, packageName)};
 
-		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		boolean removeImports = store.getString(IPreferenceConstants.PROP_RESOLVE_IMPORTS).equals(IPreferenceConstants.VALUE_REMOVE_IMPORT);
+//		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+//		boolean removeImports = store.getString(IPreferenceConstants.PROP_RESOLVE_IMPORTS).equals(IPreferenceConstants.VALUE_REMOVE_IMPORT);
 		return new IMarkerResolution[] {
 				new RemoveImportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, packageName),
-				new OptionalImportPackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE, packageName),
-				new OrganizeImportPackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE, removeImports)};		
+				new OptionalImportPackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE, packageName)
+//				new OrganizeImportPackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE, removeImports)
+			};		
 	}
 	
 	private IMarkerResolution[] getUnresolvedBundle(IMarker marker) {
@@ -88,12 +87,13 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		if (optionalBundle) 
 			return new IMarkerResolution[] {new RemoveRequireBundleResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, bundleId)};
 
-		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		boolean removeImports = store.getString(IPreferenceConstants.PROP_RESOLVE_IMPORTS).equals(IPreferenceConstants.VALUE_REMOVE_IMPORT);
+//		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+//		boolean removeImports = store.getString(IPreferenceConstants.PROP_RESOLVE_IMPORTS).equals(IPreferenceConstants.VALUE_REMOVE_IMPORT);
 		return new IMarkerResolution[] {
 				new RemoveRequireBundleResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, bundleId),
-				new OptionalRequireBundleResolution(AbstractPDEMarkerResolution.RENAME_TYPE, bundleId),
-				new OrganizeRequireBundleResolution(AbstractPDEMarkerResolution.RENAME_TYPE, removeImports)};		
+				new OptionalRequireBundleResolution(AbstractPDEMarkerResolution.RENAME_TYPE, bundleId)
+//				new OrganizeRequireBundleResolution(AbstractPDEMarkerResolution.RENAME_TYPE, removeImports)
+			};		
 	}
 
 	/*
