@@ -125,7 +125,11 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		return new FileSet[0];
 	}
 	
-	public void generateTarTask(boolean assembling){
-		super.generateTarTask(false);
+	protected void generateGZipTarget(boolean assembling){
+		super.generateGZipTarget(false);
+	}
+	
+	public void generateTarGZTasks(boolean assembling) {
+		super.generateTarGZTasks(false);
 	}
 }

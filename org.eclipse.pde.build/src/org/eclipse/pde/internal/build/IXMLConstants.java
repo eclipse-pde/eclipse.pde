@@ -42,7 +42,7 @@ public interface IXMLConstants {
 	public static final String TARGET_GATHER_SOURCES = "gather.sources"; //$NON-NLS-1$
 	public static final String TARGET_INIT = "init"; //$NON-NLS-1$
 	public static final String TARGET_MAIN = "main"; //$NON-NLS-1$
-	public static final String TARGET_TAR_RESULTS = "tarResults"; //$NON-NLS-1$
+	public static final String TARGET_GZIP_RESULTS = "gzipResults"; //$NON-NLS-1$
 	public static final String TARGET_PROPERTIES = "properties"; //$NON-NLS-1$
 	public static final String TARGET_REFRESH = "refresh"; //$NON-NLS-1$
 	public static final String TARGET_ZIP_DISTRIBUTION = "zip.distribution"; //$NON-NLS-1$

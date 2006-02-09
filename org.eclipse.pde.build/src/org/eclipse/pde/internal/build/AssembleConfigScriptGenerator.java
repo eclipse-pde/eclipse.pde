@@ -154,7 +154,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		}
 
 		if (FORMAT_TAR.equalsIgnoreCase(archiveFormat)) {
-			generateTarCall();
+			generateTarGZTasks(true);
 			return;
 		}
 	}
@@ -254,17 +254,16 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printComment("End of the jarUp task"); //$NON-NLS-1$
 	}
 
-	private void generateGZipTarget() {
+	protected void generateGZipTarget(boolean assembling) {
+		//during the assemble stage, only zip if we aren't running the packager
+		script.printTargetDeclaration(TARGET_GZIP_RESULTS, null, null, assembling ? PROPERTY_RUN_PACKAGER : null, null);
 		script.println("<move file=\"" //$NON-NLS-1$
 				+ Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + "\" tofile=\"" //$NON-NLS-1$
 				+ Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' 
 				+ Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + "/tmp.tar\"/>"); //$NON-NLS-1$
 		script.printGZip(Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + "/tmp.tar", //$NON-NLS-1$ 
 				Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH));
-		List args = new ArrayList(2);
-		args.add("-rf"); //$NON-NLS-1$
-		args.add('\'' + Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '\'');
-		script.printExecTask("rm", null, args, null); //$NON-NLS-1$
+		script.printTargetEnd();
 	}
 
 	protected void generatePrologue() {
@@ -439,11 +438,11 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private void generateEpilogue() {
-		if (!FORMAT_TAR.equalsIgnoreCase(archiveFormat) && !FORMAT_FOLDER.equalsIgnoreCase(archiveFormat))
+		if (!FORMAT_FOLDER.equalsIgnoreCase(archiveFormat))
 			script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), null, null);
 		script.printTargetEnd();
 		if (FORMAT_TAR.equalsIgnoreCase(archiveFormat)) 
-			generateTarTask(true);
+			generateGZipTarget(true);
 		script.printProjectEnd();
 		script.close();
 		script = null;
@@ -509,7 +508,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		return featureId + "-" + Utils.getPropertyFormat(PROPERTY_BUILD_ID_PARAM) + (configInfo.equals(Config.genericConfig()) ? "" : ("-" + configInfo.toStringReplacingAny(".", ANY_STRING))) + ".zip"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
 
-	public void generateTarCall() {
+	public void generateTarGZTasks(boolean assembling) {
 		//This task only supports creation of archive with eclipse at the root 
 		//Need to do the copy using cp because of the link
 		List parameters = new ArrayList(2);
@@ -521,20 +520,17 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			parameters.add("-rf '" + Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '\''); //$NON-NLS-1$ //$NON-NLS-2$
 			script.printExecTask("rm", Utils.getPropertyFormat(PROPERTY_BASEDIR), parameters, null); //$NON-NLS-1$
 		}
-		script.printAntCallTask(TARGET_TAR_RESULTS, null, null );
-	}
-	
-	public void generateTarTask(boolean assembling){
-		//during the assemble stage, only tar if we aren't running the packager
-		script.printTargetDeclaration(TARGET_TAR_RESULTS, null, null, assembling ? PROPERTY_RUN_PACKAGER : null, null);
+		parameters.clear();
+		String tarArgs = assembling ? "-cvf '" : "-rvf '";  //$NON-NLS-1$//$NON-NLS-2$
+		parameters.add(Utils.getPropertyFormat(PROPERTY_TAR_ARGS) + tarArgs + Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + "' " + Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + ' '); //$NON-NLS-1$ //$NON-NLS-2$
+		script.printExecTask("tar", Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), parameters, null); //$NON-NLS-1$ 
 		
-		List parameters = new ArrayList(1);
-		parameters.add(Utils.getPropertyFormat(PROPERTY_TAR_ARGS) + "-cvf '" + Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + "' " + Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + ' '); //$NON-NLS-1$ //$NON-NLS-2$
-		script.printExecTask("tar", Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), parameters, null); //$NON-NLS-1$
+		script.printAntCallTask(TARGET_GZIP_RESULTS, null, null );
 		
-		generateGZipTarget();
-		script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), null, null);
-		script.printTargetEnd();
+		List args = new ArrayList(2);
+		args.add("-rf"); //$NON-NLS-1$
+		args.add('\'' + Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP) + '\'');
+		script.printExecTask("rm", null, args, null); //$NON-NLS-1$
 	}
 
 	//TODO this code andn the generateAntTarTarget() should be refactored using a factory or something like that.
