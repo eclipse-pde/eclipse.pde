@@ -829,14 +829,6 @@
                id="org.eclipse.pde.ui.ExternalizeStrings">
          </action> 
          <action
-         	   label="%OrganizeManifest.label"
-         	   helpContextId="org.eclipse.pde.doc.user.organize_manifest"
-               class="org.eclipse.pde.internal.ui.search.OrganizeManifestAction"
-               menubarPath="org.eclipse.pde.ui.manifest.tools/group0"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.OrganizeManifest"> 
-         </action>
-         <action
                label="%popupMenus.buildPlugin.label"
                helpContextId="org.eclipse.pde.doc.user.create_plugin_jars"
                class="org.eclipse.pde.internal.ui.build.BuildPluginAction"
@@ -1013,6 +1005,14 @@
                menubarPath="org.eclipse.pde.ui.project.tools/group0"
                enablesFor="+"
                id="org.eclipse.pde.ui.ExternalizeStrings">
+         </action>
+         <action
+               label="%OrganizeManifest.label"
+               helpContextId="org.eclipse.pde.doc.user.organize_manifest"
+               class="org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsAction"
+               menubarPath="org.eclipse.pde.ui.project.tools/group0"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.OrganizeManifest"> 
          </action> 
          <action
                label="%MigrationAction.label"

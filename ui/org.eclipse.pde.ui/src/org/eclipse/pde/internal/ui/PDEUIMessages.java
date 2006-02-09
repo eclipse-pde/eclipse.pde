@@ -2167,14 +2167,6 @@ public class PDEUIMessages extends NLS {
 	public static String PointSelectionPage_extPointDesc;
 
 	public static String PointSelectionPage_noDescAvailable;
-	
-	public static String MainPreferencePage_ManifestOranizationTitle;
-
-	public static String MainPreferencePage_ResolveImports;
-
-	public static String MainPreferencePage_RemoveImport;
-
-	public static String MainPreferencePage_ImportOptional;
 
 	public static String RemoveRequireBundleResolution_description;
 
@@ -2637,5 +2629,59 @@ public class PDEUIMessages extends NLS {
 	public static String PointSelectionPage_newDepFound;
 
 	public static String PointSelectionPage_newDepMessage;
+
+	public static String OrganizeManifestsWizard_title;
+
+	public static String OrganizeManifestsOperation_export;
+
+	public static String OrganizeManifestsOperation_filterInternal;
+
+	public static String OrganizeManifestsOperation_removeUnresolved;
+
+	public static String OrganizeManifestsOperation_markOptionalUnresolved;
+
+	public static String OrganizeManifestsOperation_unusedDeps;
+
+	public static String OrganizeManifestsOperation_lazyStart;
+
+	public static String OrganizeManifestsOperation_nlIconPath;
+
+	public static String OrganizeManifestsOperation_unusedKeys;
+
+	public static String OrganizeManifestsWizardPage_title;
+
+	public static String OrganizeManifestsWizardPage_description;
+
+	public static String OrganizeManifestsWizardPage_errorMsg;
+
+	public static String OrganizeManifestsWizardPage_exportedGroup;
+
+	public static String OrganizeManifestsWizardPage_addMissing;
+
+	public static String OrganizeManifestsWizardPage_markInternal;
+
+	public static String OrganizeManifestsWizardPage_packageFilter;
+
+	public static String OrganizeManifestsWizardPage_removeUnresolved;
+
+	public static String OrganizeManifestsWizardPage_dependenciesGroup;
+
+	public static String OrganizeManifestsWizardPage_unresolvedDependencies;
+
+	public static String OrganizeManifestsWizardPage_remove;
+
+	public static String OrganizeManifestsWizardPage_markOptional;
+
+	public static String OrganizeManifestsWizardPage_removeUnused;
+
+	public static String OrganizeManifestsWizardPage_generalGroup;
+
+	public static String OrganizeManifestsWizardPage_lazyStart;
+
+	public static String OrganizeManifestsWizardPage_internationalizationGroup;
+
+	public static String OrganizeManifestsWizardPage_prefixNL;
+
+	public static String OrganizeManifestsWizardPage_removeUnusedKeys;
 
 }

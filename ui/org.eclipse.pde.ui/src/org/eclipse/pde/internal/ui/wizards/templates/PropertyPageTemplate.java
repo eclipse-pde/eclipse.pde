@@ -25,6 +25,8 @@ import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.IFieldData;
+import org.eclipse.pde.ui.templates.AbstractTemplateSection;
+import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.pde.ui.templates.TemplateOption;
 
 public class PropertyPageTemplate extends PDETemplateSection {

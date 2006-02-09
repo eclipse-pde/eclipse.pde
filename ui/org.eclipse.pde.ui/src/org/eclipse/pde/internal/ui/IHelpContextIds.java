@@ -169,4 +169,8 @@ public interface IHelpContextIds {
 	public static final String BRANDING_PAGE = PREFIX + "branding_page"; //$NON-NLS-1$
 	public static final String CONFIGURATION_PAGE = PREFIX + "configuration_page"; //$NON-NLS-1$
 	public static final String OVERVIEW_PAGE = PREFIX + "overview_page"; //$NON-NLS-1$
+	
+	
+	// Tools
+	public static final String ORGANIZE_MANIFESTS = PREFIX + "organize_manifest"; //$NON-NLS-1$
 }

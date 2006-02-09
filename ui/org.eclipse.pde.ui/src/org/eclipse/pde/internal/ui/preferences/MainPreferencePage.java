@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -33,8 +32,6 @@ public class MainPreferencePage extends PreferencePage
 	implements IWorkbenchPreferencePage, IPreferenceConstants {
 	private Button fUseID;
 	private Button fUseName;
-	private Button fRemoveImport;
-	private Button fOptionalImport;
 
 	
 	public MainPreferencePage() {
@@ -67,32 +64,6 @@ public class MainPreferencePage extends PreferencePage
 			fUseName.setSelection(true);
 		}
 		
-		Group group2 = new Group(composite, SWT.None);
-		group2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group2.setText(PDEUIMessages.MainPreferencePage_ManifestOranizationTitle);
-		group2.setLayout(new GridLayout());
-		
-		Label label = new Label(group2, SWT.LEFT);
-		label.setText(PDEUIMessages.MainPreferencePage_ResolveImports);
-		
-		fRemoveImport = new Button(group2, SWT.RADIO);
-		fRemoveImport.setText(PDEUIMessages.MainPreferencePage_RemoveImport);
-		GridData gd = new GridData();
-		gd.horizontalIndent = 20;
-		fRemoveImport.setLayoutData(gd);
-		
-		fOptionalImport = new Button(group2, SWT.RADIO);
-		fOptionalImport.setText(PDEUIMessages.MainPreferencePage_ImportOptional);
-		gd = new GridData();
-		gd.horizontalIndent = 20;
-		fOptionalImport.setLayoutData(gd);
-		
-		if (store.getString(PROP_RESOLVE_IMPORTS).equals(VALUE_REMOVE_IMPORT)) {
-			fRemoveImport.setSelection(true);
-		} else {
-			fOptionalImport.setSelection(true);
-		}
-		
 		return composite;		
 	}
 	
@@ -109,12 +80,6 @@ public class MainPreferencePage extends PreferencePage
 		} else {
 			store.setValue(PROP_SHOW_OBJECTS, VALUE_USE_NAMES);
 		}
-		
-		if (fRemoveImport.getSelection()) {
-			store.setValue(PROP_RESOLVE_IMPORTS, VALUE_REMOVE_IMPORT);
-		} else {
-			store.setValue(PROP_RESOLVE_IMPORTS, VALUE_IMPORT_OPTIONAL);
-		}
 		PDEPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
 	}
@@ -127,13 +92,6 @@ public class MainPreferencePage extends PreferencePage
 		} else {
 			fUseID.setSelection(false);
 			fUseName.setSelection(true);
-		}
-		if (store.getDefaultString(PROP_RESOLVE_IMPORTS).equals(VALUE_REMOVE_IMPORT)) {
-			fRemoveImport.setSelection(true);
-			fOptionalImport.setSelection(false);
-		} else {
-			fRemoveImport.setSelection(false);
-			fOptionalImport.setSelection(true);
 		}
 	}
 

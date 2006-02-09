@@ -17,6 +17,7 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
@@ -35,6 +36,7 @@ import org.eclipse.pde.internal.ui.editor.build.BuildPage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.launcher.EquinoxLaunchShortcut;
 import org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut;
+import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Composite;
@@ -302,6 +304,12 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		} else if (href.equals("action.debugEquinox")) { //$NON-NLS-1$
 			getEditor().doSave(null);
 			getEquinoxShortcut().debug(getPDEEditor().getCommonProject());
+		} else if (href.equals("organize")) { //$NON-NLS-1$
+			getEditor().doSave(null);
+			OrganizeManifestsAction organizeAction = new OrganizeManifestsAction();
+			organizeAction.selectionChanged(null, 
+					new StructuredSelection(getPDEEditor().getCommonProject()));
+			organizeAction.run(null);
 		}
 	}
 	

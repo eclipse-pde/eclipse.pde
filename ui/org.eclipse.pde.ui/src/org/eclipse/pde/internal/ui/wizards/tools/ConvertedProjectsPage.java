@@ -52,7 +52,6 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.correction.OrganizeManifestJob;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
 import org.eclipse.pde.internal.ui.wizards.plugin.ClasspathComputer;
@@ -321,7 +320,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 			BundleModel model = new BundleModel(document, false);
 			model.load();
 			if (model.isLoaded())
-				OrganizeManifestJob.organizeExportPackages(model.getBundle(), project);
+				OrganizeManifestsOperation.organizeExportPackages(model.getBundle(), project, true, true);
 		} catch (CoreException e) {} 
 		finally {
 			try {

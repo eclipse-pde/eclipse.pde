@@ -2,6 +2,7 @@ package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsOperation;
 
 public class OrganizeImportPackageResolution extends
 		ManifestHeaderErrorResolution {
@@ -14,7 +15,7 @@ public class OrganizeImportPackageResolution extends
 	}
 
 	protected void createChange(BundleModel model) {
-		OrganizeManifestJob.organizeImportPackages(model.getBundle(), fRemoveImports);
+		OrganizeManifestsOperation.organizeImportPackages(model.getBundle(), fRemoveImports);
 	}
 
 	public String getDescription() {

@@ -10,14 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dependencies;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -101,21 +98,8 @@ public class UnusedImportsDialog extends TrayDialog {
 	}
 
 	protected void okPressed() {
-		try {
-			ImportPackageHeader pkgHeader = null;
-			Object[] elements = choiceViewer.getCheckedElements();
-			for (int i = 0; i < elements.length; i++) {
-				if (elements[i] instanceof IPluginImport)
-					model.getPluginBase().remove((IPluginImport) elements[i]);
-				else {
-					if (pkgHeader == null) 
-						pkgHeader = (ImportPackageHeader)((ImportPackageObject)elements[i]).getHeader();
-					pkgHeader.removePackage((ImportPackageObject)elements[i]);			
-				}
-			}
-			super.okPressed();
-		} catch (CoreException e) {
-		}
+		GatherUnusedDependenciesOperation.removeDependencies(model, choiceViewer.getCheckedElements());
+		super.okPressed();
 	}
 
 }

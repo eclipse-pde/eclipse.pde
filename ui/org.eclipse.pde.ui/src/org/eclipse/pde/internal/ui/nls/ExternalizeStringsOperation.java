@@ -8,20 +8,20 @@ import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
+import org.eclipse.pde.internal.core.text.bundle.Bundle;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
-import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.osgi.framework.Constants;
 
 public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 
@@ -43,7 +43,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 					ByteArrayInputStream pStream = new ByteArrayInputStream(propertiesFileComment.getBytes());
 					pFile.create(pStream, true, monitor);
 					if (!change.localizationSet()) {
-						addBundleLocalization(pFile.getProject(), change.getBundleLocalization(), monitor);
+						addBundleLocalization(model, change.getBundleLocalization());
 					}
 				}
 				
@@ -100,41 +100,12 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		}
  	}
 	
-	private void addBundleLocalization(IProject project, String localization, IProgressMonitor monitor) throws CoreException {
-		IFile mFile = project.getFile(GetNonExternalizedStringsOperation.MANIFEST_LOCATION);
-		if (!mFile.exists()) return;
-		ITextFileBufferManager mManager = FileBuffers.getTextFileBufferManager();
-		try {
-			mManager.connect(mFile.getFullPath(), monitor);
-			ITextFileBuffer mBuffer = mManager.getTextFileBuffer(mFile.getFullPath());
-			IDocument mDoc = mBuffer.getDocument();
-			
-			String nl = TextUtilities.getDefaultLineDelimiter(mDoc);
-
-			TextEdit mEdit = checkTrailingNewline(mDoc, nl);
-			if (mEdit != null)
-				mEdit.apply(mDoc);
-			
-			mEdit = new InsertEdit(mDoc.getLength(), 
-					Constants.BUNDLE_LOCALIZATION + ": " + localization + nl); //$NON-NLS-1$
-			mEdit.apply(mDoc);
-			mBuffer.commit(monitor, true);
-			
-		} catch (MalformedTreeException e) {
-		} catch (BadLocationException e) {
-		} finally {
-			mManager.disconnect(mFile.getFullPath(), monitor);
+	private void addBundleLocalization(IPluginModelBase model, String localization)  {
+		if (model instanceof IBundlePluginModel) {
+			IBundlePluginModel bundleModel = (IBundlePluginModel)model;
+			IBundle bundle = bundleModel.getBundleModel().getBundle();
+			if (bundle instanceof Bundle)
+				((Bundle)bundle).setLocalization(localization);
 		}
-	}
-	
-	private TextEdit checkTrailingNewline(IDocument document, String ld) {
-		try {
-			int len = ld.length();
-			if (!document.get(document.getLength() - len, len).equals(ld)) {
-				return new InsertEdit(document.getLength(), ld);
-			}
-		} catch (BadLocationException e) {
-		}
-		return null;
 	}
  }

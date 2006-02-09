@@ -199,6 +199,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 					}
 				} else {
 					setEnabled(fLocalizationText, false);
+					fLocalizationText.setEditable(true);
 					setPageComplete(false);
 					setErrorMessage(PDEUIMessages.ExternalizeStringsWizardPage_badLocalizationError);
 				}

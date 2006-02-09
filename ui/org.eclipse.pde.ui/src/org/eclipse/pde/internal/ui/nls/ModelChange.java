@@ -151,6 +151,7 @@ public class ModelChange extends DefaultElement {
 	}
 	
 	public boolean localizationSet() {
-		return PDEManager.getBundleLocalization(fParent) != null;
+		String localization = PDEManager.getBundleLocalization(fParent);
+		return localization != null && localization.length() > 0;
 	}
 }
