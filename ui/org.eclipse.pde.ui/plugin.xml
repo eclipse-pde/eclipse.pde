@@ -531,6 +531,17 @@
             %newExtension.templates.decorator.desc
          </description>
       </wizard>
+      <wizard
+            availableAsShortcut="true"
+            category="templates"
+            icon="$nl$/icons/etool16/newex_wiz.gif"
+            id="org.eclipse.pde.ui.newExtension.importWizard"
+            name="%newExtension.templates.importWizard.name"
+            template="org.eclipse.pde.ui.templates.importWizard">
+         <description>
+            %newExtension.templates.importWizard.desc
+         </description>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -1469,6 +1480,11 @@
             contributingId="org.eclipse.ui.decorators"
             id="org.eclipse.pde.ui.templates.decorator"
             name="%template.decorator.name"/>
+      <template
+            class="org.eclipse.pde.internal.ui.wizards.templates.ImportWizardTemplate"
+            contributingId="org.eclipse.ui.importWizards"
+            id="org.eclipse.pde.ui.templates.importWizard"
+            name="%template.importWizard.name"/>
    </extension>
    <extension
          point="org.eclipse.jdt.ui.javaElementFilters">

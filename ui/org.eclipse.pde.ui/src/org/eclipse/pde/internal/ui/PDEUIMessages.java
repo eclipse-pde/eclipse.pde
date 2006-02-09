@@ -1131,6 +1131,22 @@ public class PDEUIMessages extends NLS {
 	public static String DecoratorTemplate_decoratorClass;
 	public static String DecoratorTemplate_decoratorClassName;
 	
+	public static String ImportWizardTemplate_title;
+	public static String ImportWizardTemplate_desc;
+	public static String ImportWizardTemplate_packageName;
+	public static String ImportWizardTemplate_wizardClass;
+	public static String ImportWizardTemplate_wizardClassName;
+	public static String ImportWizardTemplate_importWizardCategory;
+	public static String ImportWizardTemplate_importWizardCategoryName;
+	public static String ImportWizardTemplate_pageClass;
+	public static String ImportWizardTemplate_pageClassName;
+	public static String ImportWizardTemplate_wizardName;
+	public static String ImportWizardTemplate_wizardDefaultName;
+	public static String ImportWizardTemplate_filterChoices;
+	public static String ImportWizardTemplate_filters;
+	public static String ImportWizardTemplate_wizardDescription;
+
+	
 	//
 
 	public static String PluginSelectionDialog_title;

@@ -107,6 +107,32 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 		return option;
 	}
 	/**
+	 * Adds a blank field with a default height to provide spacing.
+	 * 
+	 * @param pageIndex
+	 *            a zero-based index of a page where this option should appear
+	 * @return the newly created option
+	 */
+	protected TemplateOption addBlankField(int pageIndex) {
+		BlankField field = new BlankField(this);	
+		registerOption(field, "", pageIndex); //$NON-NLS-1$
+		return field;
+	}
+	/**
+	 * Adds a blank field with a specific height to provide spacing.
+	 * 
+	 * @param height
+	 *            specifies the height of the blank field in pixels            
+	 * @param pageIndex
+	 *            a zero-based index of a page where this option should appear
+	 * @return the newly created option
+	 */
+	protected TemplateOption addBlankField(int height, int pageIndex) {
+		BlankField field = new BlankField(this, height);	
+		registerOption(field, "", pageIndex); //$NON-NLS-1$
+		return field;
+	}
+	/**
 	 * Initializes the option with a given unique name with the provided value.
 	 * The value will be set only if the option has not yet been initialized.
 	 * 

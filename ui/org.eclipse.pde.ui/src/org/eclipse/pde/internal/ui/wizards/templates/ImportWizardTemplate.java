@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.templates;
 
-import java.io.File;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
@@ -26,38 +25,34 @@ import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.IFieldData;
-import org.eclipse.pde.ui.templates.BooleanOption;
 import org.eclipse.pde.ui.templates.TemplateOption;
 
-public class DecoratorTemplate extends PDETemplateSection { 
-	public static final String DECORATOR_CLASS_NAME = "decoratorClassName"; //$NON-NLS-1$
-	public static final String DECORATOR_ICON_PLACEMENT = "decoratorPlacement"; //$NON-NLS-1$
-	public static final String DECORATOR_BLN_PROJECT = "decorateProjects"; //$NON-NLS-1$
-	public static final String DECORATOR_BLN_READONLY = "decorateReadOnly"; //$NON-NLS-1$
+public class ImportWizardTemplate extends PDETemplateSection { 
+	public static final String WIZARD_CLASS_NAME = "wizardClassName"; //$NON-NLS-1$
+	public static final String WIZARD_CATEGORY_NAME = "wizardCategoryName"; //$NON-NLS-1$
+	public static final String WIZARD_PAGE_CLASS_NAME = "wizardPageClassName"; //$NON-NLS-1$
+	public static final String WIZARD_IMPORT_NAME = "wizardImportName"; //$NON-NLS-1$
+	public static final String WIZARD_FILE_FILTERS = "wizardFileFilters"; //$NON-NLS-1$
 	
 	private WizardPage page;
-	private TemplateOption packageOption;
-	private TemplateOption classOption;
-	private BooleanOption projectOption;
-	private BooleanOption readOnlyOption;
 	
 	/**
-	 * Constructor for DecoratorTemplate.
+	 * Constructor for ImportWizardTemplate.
 	 */
-	public DecoratorTemplate() {
+	public ImportWizardTemplate() {
 		setPageCount(1);
 		createOptions();
-		alterOptionStates();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		// Additional dependency required to decorate resource objects
+		// Additional dependency required to provide WizardNewFileCreationPage
 		if (schemaVersion != null) {
-			IPluginReference[] dep = new IPluginReference[1];
-			dep[0] = new PluginReference("org.eclipse.core.resources", null, 0); //$NON-NLS-1$
+			IPluginReference[] dep = new IPluginReference[2];
+			dep[0] = new PluginReference("org.eclipse.ui.ide", null, 0); //$NON-NLS-1$
+			dep[1] = new PluginReference("org.eclipse.core.resources", null, 0); //$NON-NLS-1$
 			return dep;
 		}
 		return super.getDependencies(schemaVersion);
@@ -71,7 +66,7 @@ public class DecoratorTemplate extends PDETemplateSection {
 		 // Identifier used for the folder name within the templates_3.X
 		 // hierarchy  and as part of the lookup key for the template label
 		 // variable.
-		return "decorator"; //$NON-NLS-1$
+		return "importWizard"; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -83,33 +78,47 @@ public class DecoratorTemplate extends PDETemplateSection {
 	
 	/**
 	 * Creates the options to be displayed on the template wizard.
-	 * A multiple choice option (radio buttons) and a boolean option
-	 * are used.
+	 * Various string options, blank fields and a multiple choice 
+	 * option are used.
 	 */
 	private void createOptions() {
-		String[][] choices = fromCommaSeparated(PDEUIMessages.DecoratorTemplate_placementChoices);
+		String[][] choices = fromCommaSeparated(PDEUIMessages.ImportWizardTemplate_filterChoices);
 		
-		addOption(DECORATOR_ICON_PLACEMENT,
-			PDEUIMessages.DecoratorTemplate_placement,
-			choices,
-			choices[0][0],
-			0);	
-		
-		projectOption = (BooleanOption) addOption(DECORATOR_BLN_PROJECT,
-				PDEUIMessages.DecoratorTemplate_decorateProject, true, 0);
-		
-		readOnlyOption = (BooleanOption) addOption(DECORATOR_BLN_READONLY,
-				PDEUIMessages.DecoratorTemplate_decorateReadOnly, false, 0);
-		
-		packageOption = addOption(
+		addOption(
 				KEY_PACKAGE_NAME,
-				PDEUIMessages.DecoratorTemplate_packageName,
+				PDEUIMessages.ImportWizardTemplate_packageName,
 				(String) null,
 				0);
-		classOption = addOption(
-				DECORATOR_CLASS_NAME,
-				PDEUIMessages.DecoratorTemplate_decoratorClass,
-				PDEUIMessages.DecoratorTemplate_decoratorClassName,
+		addOption(
+				WIZARD_CLASS_NAME,
+				PDEUIMessages.ImportWizardTemplate_wizardClass,
+				PDEUIMessages.ImportWizardTemplate_wizardClassName,
+				0);	
+		addOption(
+				WIZARD_PAGE_CLASS_NAME,
+				PDEUIMessages.ImportWizardTemplate_pageClass,
+				PDEUIMessages.ImportWizardTemplate_pageClassName,
+				0);	
+		
+		addBlankField(0);
+		
+		addOption(
+				WIZARD_CATEGORY_NAME,
+				PDEUIMessages.ImportWizardTemplate_importWizardCategory,
+				PDEUIMessages.ImportWizardTemplate_importWizardCategoryName,
+				0);	
+		addOption(
+				WIZARD_IMPORT_NAME,
+				PDEUIMessages.ImportWizardTemplate_wizardName,
+				PDEUIMessages.ImportWizardTemplate_wizardDefaultName,
+				0);	
+
+		addBlankField(0);
+
+		addOption(WIZARD_FILE_FILTERS,
+				PDEUIMessages.ImportWizardTemplate_filters,
+				choices,
+				choices[0][0],
 				0);	
 	}
 
@@ -120,59 +129,19 @@ public class DecoratorTemplate extends PDETemplateSection {
 		int pageIndex = 0;
 
 		page = createPage(pageIndex, IHelpContextIds.TEMPLATE_EDITOR);
-		page.setTitle(PDEUIMessages.DecoratorTemplate_title); 
-		page.setDescription(PDEUIMessages.DecoratorTemplate_desc);
+		page.setTitle(PDEUIMessages.ImportWizardTemplate_title); 
+		page.setDescription(PDEUIMessages.ImportWizardTemplate_desc);
 
 		wizard.addPage(page);
 		markPagesAdded();
 	}
 	
-	private void alterOptionStates() {
-		projectOption.setEnabled(!readOnlyOption.isSelected());
-		packageOption.setEnabled(!projectOption.isEnabled());
-		classOption.setEnabled(!projectOption.isEnabled());
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#isOkToCreateFolder(java.io.File)
-	 */
-	protected boolean isOkToCreateFolder(File sourceFolder) {
-		//Define rules for creating folders from the Templates_3.X folders
-		boolean isOk = true;
-		String folderName = sourceFolder.getName();
-		if (folderName.equals("java")) { //$NON-NLS-1$
-			isOk = readOnlyOption.isEnabled() && readOnlyOption.isSelected();
-		}
-		return isOk;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#isOkToCreateFile(java.io.File)
-	 */
-	protected boolean isOkToCreateFile(File sourceFile) {
-		//Define rules for creating files from the Templates_3.X folders
-		boolean isOk = true;
-		String fileName = sourceFile.getName();
-		if (fileName.equals("read_only.gif")) { //$NON-NLS-1$
-			isOk = readOnlyOption.isEnabled() && readOnlyOption.isSelected();
-		} else if (fileName.equals("sample_decorator.gif")) { //$NON-NLS-1$
-			isOk = !readOnlyOption.isSelected();
-		} else if (fileName.equals("$decoratorClassName$.java")) { //$NON-NLS-1$
-			isOk = readOnlyOption.isEnabled() && readOnlyOption.isSelected();
-		}
-		return isOk;	
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#validateOptions(org.eclipse.pde.ui.templates.TemplateOption)
 	 */
 	public void validateOptions(TemplateOption source) {
 		//Validate page upon change in option state and alter
 		//the page if the read-only boolean changes
-		if (source == readOnlyOption){
-			alterOptionStates();
-		}		
-		
 		if (source.isRequired() && source.isEmpty()) {
 			flagMissingRequiredOption(source);
 		} else {
@@ -240,71 +209,31 @@ public class DecoratorTemplate extends PDETemplateSection {
 		IPluginExtension extension = createExtension(getUsedExtensionPoint(),true);
 		IPluginModelFactory factory = model.getPluginFactory();
 
-		IPluginElement decoratorElement = factory.createElement(extension);
-		decoratorElement.setName("decorator"); //$NON-NLS-1$
-		decoratorElement.setAttribute("adaptable", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-		decoratorElement.setAttribute("state", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-		decoratorElement.setAttribute("lightweight", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		if(!readOnlyOption.isSelected()){
-			decoratorElement.setAttribute(
-					"id", plugin.getId() + "." + getSectionId()); //$NON-NLS-1$ //$NON-NLS-2$
-			decoratorElement.setAttribute(
-					"label", PDEUIMessages.DecoratorTemplate_resourceLabel); //$NON-NLS-1$		
-			decoratorElement.setAttribute("icon", "icons/sample_decorator.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-			decoratorElement.setAttribute(
-					"location", getValue(DECORATOR_ICON_PLACEMENT).toString()); //$NON-NLS-1$
-		}
-		else {
-			decoratorElement.setAttribute(
-					"id", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(DECORATOR_CLASS_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
-			decoratorElement.setAttribute(
-					"label", PDEUIMessages.DecoratorTemplate_readOnlyLabel); //$NON-NLS-1$		
-			decoratorElement.setAttribute(
-					"class", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(DECORATOR_CLASS_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
-		}
+		IPluginElement categoryElement = factory.createElement(extension);
+		categoryElement.setName("category"); //$NON-NLS-1$
+		categoryElement.setAttribute(
+				"id", getStringOption(KEY_PACKAGE_NAME) + ".sampleCategory"); //$NON-NLS-1$ //$NON-NLS-2$
+		categoryElement.setAttribute(
+				"name", getStringOption(WIZARD_CATEGORY_NAME)); //$NON-NLS-1$
 
-		IPluginElement enablementElement = factory
-				.createElement(decoratorElement);
-		enablementElement.setName("enablement"); //$NON-NLS-1$
+		IPluginElement wizardElement = factory.createElement(extension);
+		wizardElement.setName("wizard"); //$NON-NLS-1$
+		wizardElement.setAttribute(
+						"id", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(WIZARD_CLASS_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
+		wizardElement.setAttribute("name", getStringOption(WIZARD_IMPORT_NAME)); //$NON-NLS-1$
+		wizardElement.setAttribute(
+						"class", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(WIZARD_CLASS_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
+		wizardElement.setAttribute(
+						"category", getStringOption(KEY_PACKAGE_NAME) + ".sampleCategory"); //$NON-NLS-1$ //$NON-NLS-2$
+		wizardElement.setAttribute("icon", "icons/sample.gif"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		IPluginElement andElement = factory.createElement(enablementElement);
-		andElement.setName("and"); //$NON-NLS-1$
-		
-		IPluginElement resourceObjectElement = factory.createElement(andElement);
-		resourceObjectElement.setName("objectClass"); //$NON-NLS-1$
-		resourceObjectElement.setAttribute(
-				"name", "org.eclipse.core.resources.IResource"); //$NON-NLS-1$ //$NON-NLS-2$
+		IPluginElement descriptionElement = factory.createElement(extension);
+		descriptionElement.setName("description"); //$NON-NLS-1$
+		descriptionElement.setText(PDEUIMessages.ImportWizardTemplate_wizardDescription);
 
-		IPluginElement orElement = factory.createElement(andElement);
-		orElement.setName("or"); //$NON-NLS-1$
-
-		IPluginElement fileObjectElement = factory.createElement(orElement);
-		fileObjectElement.setName("objectClass"); //$NON-NLS-1$
-		fileObjectElement.setAttribute(
-				"name", "org.eclipse.core.resources.IFile"); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		IPluginElement folderObjectElement = factory.createElement(orElement);
-		folderObjectElement.setName("objectClass"); //$NON-NLS-1$
-		folderObjectElement.setAttribute(
-				"name", "org.eclipse.core.resources.IFolder"); //$NON-NLS-1$ //$NON-NLS-2$
-
-		IPluginElement projectObjectElement = factory.createElement(orElement);
-		projectObjectElement.setName("objectClass"); //$NON-NLS-1$
-		projectObjectElement.setAttribute(
-				"name", "org.eclipse.core.resources.IProject"); //$NON-NLS-1$ //$NON-NLS-2$
-
-		if(readOnlyOption.isSelected())
-			orElement.add(folderObjectElement);
-		else if (projectOption.isSelected())
-			orElement.add(projectObjectElement);
-		orElement.add(fileObjectElement);
-		andElement.add(resourceObjectElement);
-		andElement.add(orElement);
-		enablementElement.add(andElement);
-		decoratorElement.add(enablementElement);
-
-		extension.add(decoratorElement);
+		wizardElement.add(descriptionElement);
+		extension.add(categoryElement);
+		extension.add(wizardElement);
 		if (!extension.isInTheModel())
 			plugin.add(extension);
 	}
@@ -324,15 +253,15 @@ public class DecoratorTemplate extends PDETemplateSection {
 		 // any classes required by the decorator. 
 		String packageName = super.getFormattedPackageName(id);
 		if (packageName.length() != 0)
-			return packageName + ".decorators"; //$NON-NLS-1$
-		return "decorators"; //$NON-NLS-1$
+			return packageName + ".importWizards"; //$NON-NLS-1$
+		return "importWizards"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
 	 */
 	public String getUsedExtensionPoint() {
-		return "org.eclipse.ui.decorators"; //$NON-NLS-1$
+		return "org.eclipse.ui.importWizards"; //$NON-NLS-1$
 	}
 
 	/**
