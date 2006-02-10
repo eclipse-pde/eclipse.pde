@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
@@ -188,8 +189,21 @@ public class LauncherSection extends PDESection {
 		addTab("macosx"); //$NON-NLS-1$
 		addTab("solaris"); //$NON-NLS-1$
 		addTab("win32"); //$NON-NLS-1$
-		fTabFolder.setSelection(0);
-		fNotebookLayout.topControl = fLinuxSection;	
+		
+		String currentTarget = TargetPlatform.getOS();
+		if ("win32".equals(currentTarget)) { //$NON-NLS-1$
+			fTabFolder.setSelection(3);
+			fNotebookLayout.topControl = fWin32Section;
+		} else if ("macosx".equals(currentTarget)) { //$NON-NLS-1$
+			fTabFolder.setSelection(1);
+			fNotebookLayout.topControl = fMacSection;
+		} else if ("solaris".equals(currentTarget)) { //$NON-NLS-1$
+			fTabFolder.setSelection(2);
+			fNotebookLayout.topControl = fSolarisSection;
+		} else {
+			fTabFolder.setSelection(0);
+			fNotebookLayout.topControl = fLinuxSection;	
+		}
 	}
 	
 	private void addTab(String label) {
