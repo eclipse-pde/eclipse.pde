@@ -29,9 +29,6 @@ import org.eclipse.ui.PartInitException;
 
 public class ProductEditor extends PDEFormEditor {
 
-	private ConfigurationPage fPluginConfigurationPage;
-	private ConfigurationPage fFeatureConfigurationPage;
-
 	/**
 	 * 
 	 */
@@ -99,12 +96,7 @@ public class ProductEditor extends PDEFormEditor {
 	protected void addPages() {
 		try {
 			addPage(new OverviewPage(this));
-			fPluginConfigurationPage = new ConfigurationPage(this, false);
-			fFeatureConfigurationPage = new ConfigurationPage(this, true);
-			if (useFeatures())
-				addPage(fFeatureConfigurationPage);
-			else
-				addPage(fPluginConfigurationPage);
+			addPage(new ConfigurationPage(this, useFeatures()));
 			addPage(new LauncherPage(this));
 			addPage(new BrandingPage(this));
 		} catch (PartInitException e) {
@@ -114,13 +106,8 @@ public class ProductEditor extends PDEFormEditor {
 	
 	public void updateConfigurationPage() {
 		try {
-			if (useFeatures()) {
-				removePage(fPluginConfigurationPage.getIndex());
-				addPage(1, fFeatureConfigurationPage);
-			} else {
-				removePage(fFeatureConfigurationPage.getIndex());
-				addPage(1, fPluginConfigurationPage);
-			}
+			removePage(1);
+			addPage(1, new ConfigurationPage(this, useFeatures()));
 		} catch (PartInitException e) {
 		}
 	}
