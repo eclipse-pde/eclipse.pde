@@ -35,7 +35,7 @@ public class ManifestOutlinePage extends FormOutlinePage {
 		if (parent instanceof PDEFormPage) {
 			PDEFormPage page = (PDEFormPage) parent;
 			IPluginModelBase model = (IPluginModelBase) page.getModel();
-			if (model.isValid()) {
+			if (model != null && model.isValid()) {
 				IPluginBase pluginBase = model.getPluginBase();
 				if (page.getId().equals(DependenciesPage.PAGE_ID))
 					return pluginBase.getImports();
