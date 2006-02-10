@@ -44,6 +44,9 @@
 
    <element name="target">
       <complexType>
+         <sequence>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -72,6 +75,17 @@
             </annotation>
          </attribute>
       </complexType>
+   </element>
+
+   <element name="description" type="string">
+      <annotation>
+         <appInfo>
+            <meta.element translatable="true"/>
+         </appInfo>
+         <documentation>
+            a human-readable description of this target
+         </documentation>
+      </annotation>
    </element>
 
    <annotation>
