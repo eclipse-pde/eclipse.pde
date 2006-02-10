@@ -53,7 +53,6 @@ public class ProductInfoSection extends PDESection {
 	private ComboPart fProductCombo;
 	private Button fPluginButton;
 	private Button fFeatureButton;
-	private boolean fUsePlugins = true;
 	
 	private static int NUM_COLUMNS = 3;
 
@@ -210,12 +209,11 @@ public class ProductInfoSection extends PDESection {
 		fPluginButton.addSelectionListener(new SelectionAdapter() {	
 			public void widgetSelected(SelectionEvent e) {
 				boolean selected = fPluginButton.getSelection();
-				// usePlugins is equal to fPluginButton.getSelection() before event
-				if (selected == fUsePlugins)
-					return;
-				fUsePlugins = selected;
-				getProduct().setUseFeatures(!selected);
-				((ProductEditor)getPage().getEditor()).updateConfigurationPage();
+				IProduct product = getProduct();
+				if (selected == product.useFeatures()) {
+					product.setUseFeatures(!selected);
+					((ProductEditor)getPage().getEditor()).updateConfigurationPage();
+				}
 			}
 		});
 		
@@ -267,7 +265,6 @@ public class ProductInfoSection extends PDESection {
 		fAppCombo.setText(product.getApplication());
 		fPluginButton.setSelection(!product.useFeatures());
 		fFeatureButton.setSelection(product.useFeatures());
-		fUsePlugins = !product.useFeatures();
 		super.refresh();
 	}
 	
