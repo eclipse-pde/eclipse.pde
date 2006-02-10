@@ -517,16 +517,17 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	private Image getObjectImage(ImportObject iobj) {
 		int flags = 0;
-		if (iobj.isResolved() == false)
-			flags = F_ERROR;
-		else if (iobj.getImport().isReexported())
+		IPluginImport iimport = iobj.getImport();
+		if (!iobj.isResolved())
+			flags = iimport.isOptional() ? F_WARNING : F_ERROR;
+		else if (iimport.isReexported())
 			flags = F_EXPORT;
 		IPlugin plugin = iobj.getPlugin();
 		if (plugin != null) {
 			IPluginModelBase model = plugin.getPluginModel();
 			flags |= getModelFlags(model);
 		}
-		return get(getRequiredPluginImageDescriptor(iobj.getImport()), flags);
+		return get(getRequiredPluginImageDescriptor(iimport), flags);
 	}
 	
 	protected ImageDescriptor getRequiredPluginImageDescriptor(IPluginImport iobj) {
