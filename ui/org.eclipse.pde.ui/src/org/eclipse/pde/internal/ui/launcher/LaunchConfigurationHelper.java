@@ -299,14 +299,15 @@ public class LaunchConfigurationHelper {
 				IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
 				for (int j = 0; j < extensions.length; j++) {
 					String point = extensions[j].getPoint();
-					if (point != null && point.equals("org.eclipse.core.runtime.products")) {//$NON-NLS-1$
+					String extId = extensions[j].getId();
+					if ("org.eclipse.core.runtime.products".equals(point) && extId != null) {//$NON-NLS-1$
 						IPluginObject[] children = extensions[j].getChildren();
 						if (children.length != 1)
 							continue;
 						if (!"product".equals(children[0].getName())) //$NON-NLS-1$
 							continue;
 						if (appID.equals(((IPluginElement)children[0]).getAttribute("application").getValue())) { //$NON-NLS-1$
-							result = id;
+							result = id + "." + extId; //$NON-NLS-1$
 							break;
 						}
 					}
