@@ -438,15 +438,16 @@ public class WorkspaceModelManager
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelProvider#removeModelProviderListener(org.eclipse.pde.core.IModelProviderListener)
 	 */
-	public void removeModelProviderListener(IModelProviderListener listener) {
+	public synchronized void removeModelProviderListener(IModelProviderListener listener) {
 		fListeners.remove(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelProvider#addModelProviderListener(org.eclipse.pde.core.IModelProviderListener)
 	 */
-	public void addModelProviderListener(IModelProviderListener listener) {
-		fListeners.add(listener);
+	public synchronized void addModelProviderListener(IModelProviderListener listener) {
+		if (!fListeners.contains(listener))
+			fListeners.add(listener);
 	}
 	
 	/* (non-Javadoc)
@@ -748,7 +749,7 @@ public class WorkspaceModelManager
 		}
 	}
 	
-	private void fireModelProviderEvent(ModelProviderEvent event) {
+	private synchronized void fireModelProviderEvent(ModelProviderEvent event) {
 		for (Iterator iter = fListeners.iterator(); iter.hasNext();) {
 			((IModelProviderListener) iter.next()).modelsChanged(event);
 		}
