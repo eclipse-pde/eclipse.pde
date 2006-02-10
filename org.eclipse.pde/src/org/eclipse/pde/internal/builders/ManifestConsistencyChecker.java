@@ -129,10 +129,12 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	private void checkBuildProperties(IProgressMonitor monitor) {
 		if (monitor.isCanceled())
 			return;
-		monitor.subTask(PDEMessages.ManifestConsistencyChecker_buildPropertiesSubtask);
 		IProject project = getProject();
 		IFile file = project.getFile("build.properties"); //$NON-NLS-1$
-		
+		if (!file.exists())
+			return;
+
+		monitor.subTask(PDEMessages.ManifestConsistencyChecker_buildPropertiesSubtask);
 		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_BUILD);
 		BuildErrorReporter ber = new BuildErrorReporter(file, severity);
 		ber.validateContent(monitor);
