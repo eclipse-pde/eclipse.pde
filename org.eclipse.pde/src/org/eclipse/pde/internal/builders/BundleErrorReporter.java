@@ -372,6 +372,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 			IJavaProject javaProject = JavaCore.create(fProject);
 			try {
+				if (activator.indexOf('$') != -1)
+					activator = activator.replace('$', '.');
+
 				// Look for this activator in the project's classpath
 				IType type = javaProject.findType(activator);
 	
@@ -446,6 +449,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 			IJavaProject javaProject = JavaCore.create(fProject);
 			try {
+				if (pluginClass.indexOf('$') != -1)
+					pluginClass = pluginClass.replace('$', '.');
+				
 				// Look for this plugin class in the project's classpath
 				IType type = javaProject.findType(pluginClass);
 
