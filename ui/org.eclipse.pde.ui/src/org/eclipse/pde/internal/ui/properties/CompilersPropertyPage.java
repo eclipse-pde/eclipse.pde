@@ -176,7 +176,11 @@ public class CompilersPropertyPage extends PropertyPage {
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		return configurationBlock.performOk(useProjectSettings());
+		if (!configurationBlock.performOk(useProjectSettings())) {
+			getContainer().updateButtons();
+			return false;
+		}
+		return super.performOk();
 	}
 
 	private boolean showPreferencePage() {
