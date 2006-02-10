@@ -122,7 +122,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		IStatus status = null;
 		if (e instanceof CoreException)
 			status = ((CoreException) e).getStatus();
-		else
+		else if (e.getMessage() != null)
 			status =
 				new Status(
 					IStatus.ERROR,
