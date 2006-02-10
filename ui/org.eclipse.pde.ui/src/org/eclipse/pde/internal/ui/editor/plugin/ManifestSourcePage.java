@@ -64,7 +64,10 @@ public class ManifestSourcePage extends XMLSourcePage {
 				return PDEUIMessages.ManifestSourcePage_extensionPoints; 
 			if (obj == fExtensions)
 				return PDEUIMessages.ManifestSourcePage_extensions; 
-			return fProvider.getText(obj);
+			String text = fProvider.getText(obj);
+			if ((text == null || text.trim().length() == 0) && obj instanceof IDocumentNode)
+				text = ((IDocumentNode)obj).getXMLTagName();
+			return text;
 		}
 
 		public Image getImage(Object obj) {
