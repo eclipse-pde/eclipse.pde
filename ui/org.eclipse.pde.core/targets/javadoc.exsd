@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.pde.core">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.pde.core" id="javadoc" name="Javadoc Attachments"/>
+      </appInfo>
+      <documentation>
+         This extension point associates plug-ins with the javadoc location of the code they contain.  PDE uses these mappings to automatically attach javadoc to plug-in libraries when it computes a plug-in&apos;s classpath.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="javadoc" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="javadoc">
+      <complexType>
+         <sequence>
+            <element ref="plugin" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="path" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The &lt;code&gt;path&lt;/code&gt; is a URL or a path that is relative to the plug-in declaring the extension.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="archive" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  an optional attribute indicating if the javadoc is located inside an archive.  If not specified, the default is &lt;code&gt;false&lt;/code&gt;.  This attribute should be used only if the &lt;code&gt;path&lt;/code&gt; attribute specifies a relative path.  This attribute has no effect if the &lt;code&gt;path&lt;/code&gt; attribute specifies a URL.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="plugin">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the id of the plug-in whose javadoc location is specified by the &lt;code&gt;path&lt;/code&gt; attribute
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.2
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of the &lt;code&gt;javadoc&lt;/code&gt; extension:
+&lt;pre&gt;
+ &lt;extension point=&quot;org.eclipse.pde.core.javadoc&quot;&gt;
+     &lt;javadoc path=&quot;doc.zip!/references/api/&quot; archive=&quot;true&quot;/&gt;
+        &lt;plugin id=&quot;com.example.abc&quot;/&gt;
+        &lt;plugin id=&quot;com.example.def&quot;/&gt;
+     &lt;/javadoc&gt;
+     
+     &lt;javadoc path=&quot;http://www.sample-url.org/doc/&quot;/&gt;
+        &lt;plugin id=&quot;com.example.ghi&quot;/&gt;
+     &lt;/javadoc&gt;
+     
+     &lt;javadoc path=&quot;doc/&quot;/&gt;
+        &lt;plugin id=&quot;com.example.jkl&quot;/&gt;
+     &lt;/javadoc&gt;     
+  &lt;/extension&gt;
+&lt;/pre&gt;
+
+In this example, the javadoc for two plug-ins: &lt;code&gt;com.example.abc&lt;/code&gt; and &lt;code&gt;com.example.xyz&lt;/code&gt; have their javadoc located in a &lt;code&gt;references/api/&lt;/code&gt; directory inside a &lt;code&gt;doc.zip&lt;/code&gt; ZIP file in the plug-in declaring this extension.
+
+The javadoc for plug-in &lt;code&gt;com.example.ghi&lt;/code&gt; is located at &lt;code&gt;http://www.sample-url.org/doc/&lt;/code&gt;.
+
+The javadoc for plug-in &lt;code&gt;com.example.jkl&lt;/code&gt; is located in directory &lt;code&gt;doc&lt;/code&gt; relative to the location of the plug-in declaring this extension.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         No Java code is requied for this extension point.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         Eclipse SDK comes with ISV documentation plug-ins that use this extension point.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2005 IBM Corporation and others.
+&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Eclipse Public License v1.0 which 
+accompanies this distribution, and is available at 
+&lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;.
+      </documentation>
+   </annotation>
+
+</schema>
