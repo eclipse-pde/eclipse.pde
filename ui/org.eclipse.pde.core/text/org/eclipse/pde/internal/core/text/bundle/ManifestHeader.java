@@ -13,10 +13,14 @@ package org.eclipse.pde.internal.core.text.bundle;
 import java.io.PrintWriter;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.internal.core.bundle.BundleObject;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.text.IEditingModel;
 
 public class ManifestHeader extends BundleObject implements IManifestHeader {
     private static final long serialVersionUID = 1L;
@@ -102,6 +106,23 @@ public class ManifestHeader extends BundleObject implements IManifestHeader {
 	public String write() {
 		StringBuffer sb = new StringBuffer(fName);
 		sb.append(": "); //$NON-NLS-1$
+		try {
+			if (fOffset != -1) {
+				IBundleModel model = fBundle.getModel();
+				if (model instanceof IEditingModel) {
+					IDocument doc = ((IEditingModel)model).getDocument();
+					int line = doc.getLineOfOffset(fOffset);
+					String text = doc.get(fOffset, doc.getLineLength(line)).trim();
+					// respect a line break after a ":", if the user had entered it
+					// bug 113098
+					if (text.length() == fName.length() + 1) {
+						sb.append(fLineDelimiter);
+						sb.append(" ");
+					}
+				}
+			}
+		} catch (BadLocationException e) {
+		}
 		sb.append(getValue());
 		sb.append(fLineDelimiter);
 		return sb.toString(); 
