@@ -96,11 +96,15 @@ public class PropertiesUtil {
 		for (int x= 0; x < len;) {
 			aChar= s.charAt(x++);
 			if (aChar == '\\') {
+				if (x >= len)
+					break;
 				aChar= s.charAt(x++);
 				if (aChar == 'u') {
 					// Read the xxxx
 					int value= 0;
 					for (int i= 0; i < 4; i++) {
+						if (x >= len)
+							break;
 						aChar= s.charAt(x++);
 						switch (aChar) {
 							case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
