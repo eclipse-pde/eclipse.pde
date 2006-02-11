@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -117,9 +118,14 @@ public class LaunchArgumentsHelper {
 	}
 	
 	public static File getWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
-		String working = configuration.getAttribute(
-				IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, 
-				"${workspace_loc}/../"); //$NON-NLS-1$
+		String working;
+		try {
+			working = configuration.getAttribute(
+						IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, 
+						new File(".").getCanonicalPath()); //$NON-NLS-1$
+		} catch (IOException e) {
+			working = "${workspace_loc}/../"; //$NON-NLS-1$
+		}
 		File dir = new File(getSubstitutedString(working));
 		if (!dir.exists())
 			dir.mkdirs();
