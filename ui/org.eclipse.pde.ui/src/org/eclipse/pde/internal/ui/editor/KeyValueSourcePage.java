@@ -63,6 +63,9 @@ public abstract class KeyValueSourcePage extends PDESourcePage {
 
 		int offset = key.getOffset();
 		int length = key.getLength();
+		
+		if (offset == -1 || length == -1)
+			return;
 		setHighlightRange(offset, length, true);
 		int nameLength = PropertiesUtil.createWritableName(key.getName())
 				.length();
