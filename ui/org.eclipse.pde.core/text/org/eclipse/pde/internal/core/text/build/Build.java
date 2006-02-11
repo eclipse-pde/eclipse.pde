@@ -104,8 +104,15 @@ public class Build implements IBuild {
 				}
 				
 				line = line.trim();
-				if (line.length() == 0)
+				if (line.length() == 0) {
+					// we are at last line, set the length of the last key.
+					// we are here because the properties file ends with a trailing unnecessary backslash
+					if (currentKey != null && i == lines - 1) {
+						currentKey.setLength(offset - 1 - currentKey.getOffset());
+						currentKey = null;
+					}
 					continue;
+				}
 				
 				if (currentKey != null) {
 					if (!line.endsWith("\\")) { //$NON-NLS-1$
