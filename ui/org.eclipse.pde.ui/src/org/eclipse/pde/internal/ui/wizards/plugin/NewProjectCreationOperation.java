@@ -347,7 +347,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 	protected void fillBinIncludes(IProject project, IBuildEntry binEntry)
 			throws CoreException {
-		if (!fData.hasBundleStructure() || fContentWizard != null)
+		if ((!fData.hasBundleStructure() || fContentWizard != null)
+			 && ((AbstractFieldData)fData).getOSGiFramework() == null)
 			binEntry.addToken(fData instanceof IFragmentFieldData ? "fragment.xml" //$NON-NLS-1$
 							: "plugin.xml"); //$NON-NLS-1$
 		if (fData.hasBundleStructure())
