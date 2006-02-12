@@ -5,6 +5,7 @@
      <extension-point id="source" name="%expoint.source.name" schema="schema/source.exsd"/>
      <extension-point id="javadoc" name="%expoint.javadoc.name" schema="schema/javadoc.exsd"/>
      <extension-point id="targets" name="%expoint.target.name" schema="schema/targets.exsd"/>
+     <extension-point id="executionEnvironments" name="%executionEnvExtPoint" schema="schema/executionEnvironments.exsd"/>
 
    <extension
          point="org.eclipse.jdt.core.classpathVariableInitializer">

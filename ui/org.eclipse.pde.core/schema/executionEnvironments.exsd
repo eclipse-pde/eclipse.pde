@@ -3,17 +3,17 @@
 <schema targetNamespace="org.eclipse.pde.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.pde.core" id="targets" name="Targets"/>
+         <meta.schema plugin="org.eclipse.pde.core" id="executionEnvironments" name="Execution Environments"/>
       </appInfo>
       <documentation>
-         An extension point to define and register target definitions.  PDE gives the user the ability to choose and switch between targets.  The main content of a target resides in a .target file.  Among other things, this file contains a list of plug-ins and/or features, the target environment, execution environment and launching arguments.
+         [Enter description of this extension point.]
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="target" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="environment" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -42,32 +42,20 @@
       </complexType>
    </element>
 
-   <element name="target">
+   <element name="environment">
       <complexType>
-         <sequence>
-            <element ref="description" minOccurs="0" maxOccurs="1"/>
-         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique identifier for the target
+                  a unique identifier of an execution environment.  Must match an execution environment ID for an &lt;code&gt;org.eclipse.jdt.launching.executionEnvironments&lt;/code&gt; extension.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="name" type="string" use="required">
+         <attribute name="profile" type="string" use="required">
             <annotation>
                <documentation>
-                  a human readable name of the target
-               </documentation>
-               <appInfo>
-                  <meta.attribute translatable="true"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="definition" type="string" use="required">
-            <annotation>
-               <documentation>
-                  the relative path of the target definition file in the contributing plug-in.
+                  The relative path to the JRE profile associated with this execution environment.
+A JRE profile contains values for the properties &lt;code&gt;org.osgi.framework.system.packages&lt;/code&gt; and &lt;code&gt;org.osgi.framework.bootdelegation&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -75,17 +63,6 @@
             </annotation>
          </attribute>
       </complexType>
-   </element>
-
-   <element name="description" type="string">
-      <annotation>
-         <appInfo>
-            <meta.element translatable="true"/>
-         </appInfo>
-         <documentation>
-            a human-readable description of this target
-         </documentation>
-      </annotation>
    </element>
 
    <annotation>
@@ -102,19 +79,19 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of the &lt;code&gt;targets&lt;/code&gt; extension:
+         The following is an example of the &lt;code&gt;executionEnvironments&lt;/code&gt; extension:
 &lt;pre&gt;
-  &lt;extension point = &quot;org.eclipse.pde.core.targets&quot;&gt;
-     &lt;target 
-       id=&quot;org.eclipse.pde.core.rcpTarget&quot;
-       name=&quot;Eclipse RCP&quot;
-       path=&quot;targets/rcp.target&quot;/&gt;
+  &lt;extension point = &quot;org.eclipse.pde.core.executionEnvironments&quot;&gt;
+     &lt;environment 
+       id=&quot;J2SE-1.4&quot;
+       profile=&quot;profiles/J2SE-1.4.profile&quot;/&gt;
   &lt;/extension&gt;
 &lt;/pre&gt;
 
-In the example above, the name and id of the target are declared in the plugin.xml, but its content is store in a &lt;code&gt;targets/rcp.target&lt;/code&gt; located in the contributing plug-in.
-&lt;br&gt;
-The .target file must be created via &lt;b&gt;File &gt; New &gt; Other... &gt; Plug-in Development &gt; Target Definition&lt;/b&gt; and must comply with the grammar of that file.
+In the example above, the ID matches the ID of an &lt;code&gt;environment&lt;/code&gt; element declared in an &lt;code&gt;org.eclipse.jdt.launching.executionEnvironments&lt;/code&gt; extension.
+
+The JRE profile for this execution environment is located at &lt;code&gt;profiles/J2SE-1.4.profile&lt;/code&gt; in the declaring plug-in.
+
       </documentation>
    </annotation>
 
@@ -123,7 +100,7 @@ The .target file must be created via &lt;b&gt;File &gt; New &gt; Other... &gt; P
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         No Java code is requied for this extension point.
+         No Java code is required for this extension point.
       </documentation>
    </annotation>
 
@@ -132,7 +109,7 @@ The .target file must be created via &lt;b&gt;File &gt; New &gt; Other... &gt; P
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The &lt;code&gt;org.eclipse.pde.core&lt;/code&gt; plug-in provides two extensions.
+         The Eclipse SDK does not contribute extensions to this extension point.
       </documentation>
    </annotation>
 
