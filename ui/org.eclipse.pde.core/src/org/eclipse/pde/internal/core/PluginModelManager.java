@@ -248,7 +248,10 @@ public class PluginModelManager implements IAdaptable {
 					entry = updateTable(oldID, model, false, delta);
 					model.setBundleDescription(null);
 				} else if (oldID.equals(newID)) {
-					fState.addBundle(model, true);
+					if (model.isEnabled())
+						fState.addBundle(model, true);
+					else
+						fState.removeBundleDescription(model.getBundleDescription());
 					entry = (ModelEntry)getEntryTable().get(oldID);
 					delta.addEntry(entry, PluginModelDelta.CHANGED);		
 				} else {
@@ -465,7 +468,7 @@ public class PluginModelManager implements IAdaptable {
 		
 		ModelEntry entry = findEntry(id);
 		IPluginModelBase external = entry == null ? null : entry.getExternalModel();
-		if (external != null) {
+		if (external != null && external.isEnabled()) {
 			fState.addBundleDescription(external.getBundleDescription());
 		}
 	}

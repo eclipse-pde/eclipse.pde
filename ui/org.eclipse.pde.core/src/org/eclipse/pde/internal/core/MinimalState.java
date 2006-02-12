@@ -323,7 +323,8 @@ public class MinimalState {
 	}
 
 	public void removeBundleDescription(BundleDescription description) {
-		fState.removeBundle(description);
+		if (description != null)
+			fState.removeBundle(description);
 	}
 
 	public State getState() {
