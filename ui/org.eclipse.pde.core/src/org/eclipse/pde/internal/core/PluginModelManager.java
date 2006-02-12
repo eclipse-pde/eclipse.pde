@@ -438,11 +438,7 @@ public class PluginModelManager implements IAdaptable {
 		String id = model.getPluginBase().getId();
 		if (id == null)
 			return;
-		ModelEntry entry = findEntry(id);
-		IPluginModelBase external = entry == null ? null : entry.getExternalModel();
-		if (external != null) {
-			fState.removeBundleDescription(external.getBundleDescription());
-		}
+
 		fState.addBundle(model, false);
 		
 		BundleDescription desc = model.getBundleDescription();

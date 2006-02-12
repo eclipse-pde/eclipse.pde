@@ -26,7 +26,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
@@ -91,12 +90,8 @@ public class MinimalState {
 	public void addBundle(IPluginModelBase model, boolean update) {
 		if (!update) {
 			BundleDescription[] bundles = fState.getBundles(model.getPluginBase().getId());
-			IPath path = new Path(model.getInstallLocation());
 			for (int i = 0; i < bundles.length; i++) {
-				if (ExternalModelManager.arePathsEqual(path, new Path(bundles[i].getLocation()))) {
-					model.setBundleDescription(bundles[i]);
-					return;
-				}
+				fState.removeBundle(bundles[i]);
 			}
 		}
 		
