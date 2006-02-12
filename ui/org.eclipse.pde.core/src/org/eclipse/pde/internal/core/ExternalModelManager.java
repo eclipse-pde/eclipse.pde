@@ -112,20 +112,12 @@ public class ExternalModelManager {
 		String saved = pref.getString(ICoreConstants.CHECKED_PLUGINS);
 		if (saved.equals(ICoreConstants.VALUE_SAVED_ALL))
 			enableAll();
-		else {
-			if (!saved.equals(ICoreConstants.VALUE_SAVED_NONE)) {
-				Vector list = createSavedList(saved);
-				for (int i = 0; i < fModels.length; i++) {
-					fModels[i].setEnabled(!list.contains(fModels[i].getPluginBase().getId()));
-				}
-			}
-			PDEState state = TargetPlatform.getPDEState();
+		else if (!saved.equals(ICoreConstants.VALUE_SAVED_NONE)) {
+			Vector list = createSavedList(saved);
 			for (int i = 0; i < fModels.length; i++) {
-				if (!fModels[i].isEnabled())
-					state.removeBundleDescription(fModels[i].getBundleDescription());
+				fModels[i].setEnabled(!list.contains(fModels[i].getPluginBase().getId()));
 			}
-			state.resolveState(true);
-		} 
+		}
 	}
 	
 	public void setModels(IPluginModelBase[] models) {
