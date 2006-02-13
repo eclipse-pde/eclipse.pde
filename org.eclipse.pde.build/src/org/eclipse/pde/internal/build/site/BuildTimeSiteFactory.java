@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.InvalidSiteTypeException;
@@ -64,14 +65,14 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 			}
 
 			installedBaseURL = installedBaseLocation;
-			Collection installedFeatures = Utils.findFiles(installedBaseLocation, DEFAULT_FEATURE_LOCATION, DEFAULT_FEATURE_FILENAME_DESCRIPTOR);
+			Collection installedFeatures = Utils.findFiles(installedBaseLocation, DEFAULT_FEATURE_LOCATION, Constants.FEATURE_FILENAME_DESCRIPTOR);
 			if (installedFeatures != null)
 				featureXMLs.addAll(installedFeatures);
 
 			//Search the features in the links
 			String[] linkPaths = PluginPathFinder.getPluginPaths(installedBaseURL);
 			for (int i = 0; i < linkPaths.length; i++) {
-				Collection foundFeatures = Utils.findFiles(linkPaths[i], DEFAULT_FEATURE_LOCATION, DEFAULT_FEATURE_FILENAME_DESCRIPTOR);
+				Collection foundFeatures = Utils.findFiles(linkPaths[i], DEFAULT_FEATURE_LOCATION, Constants.FEATURE_FILENAME_DESCRIPTOR);
 				if (foundFeatures != null)
 					featureXMLs.addAll(foundFeatures);
 			}
@@ -154,7 +155,7 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 	private Collection findFeatureXMLs() {
 		Collection features = new ArrayList();
 		for (int i = 0; i < sitePaths.length; i++) {
-			Collection foundFeatures = Utils.findFiles(sitePaths[i], DEFAULT_FEATURE_LOCATION, DEFAULT_FEATURE_FILENAME_DESCRIPTOR);
+			Collection foundFeatures = Utils.findFiles(sitePaths[i], DEFAULT_FEATURE_LOCATION, Constants.FEATURE_FILENAME_DESCRIPTOR);
 			if (foundFeatures != null)
 				features.addAll(foundFeatures);
 		}

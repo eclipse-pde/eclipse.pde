@@ -11,7 +11,9 @@ Require-Bundle:
  org.eclipse.ant.core,
  org.eclipse.update.core,
  org.eclipse.core.runtime.compatibility;resolution:=optional
-Export-Package: org.eclipse.pde.internal.build;x-friends:="org.eclipse.pde.ui",
+Export-Package: 
+ org.eclipse.pde.build,
+ org.eclipse.pde.internal.build;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.build.ant;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.build.builder;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.build.packager;x-friends:="org.eclipse.pde.ui",

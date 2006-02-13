@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.build;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.ant.*;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
 import org.eclipse.update.core.IFeature;
@@ -220,7 +221,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		for (int i = 0; i < features.length; i++) {
 			IFeature feature = features[i];
 			String placeToGather = feature.getURL().getPath();
-			int j = placeToGather.lastIndexOf(DEFAULT_FEATURE_FILENAME_DESCRIPTOR);
+			int j = placeToGather.lastIndexOf(Constants.FEATURE_FILENAME_DESCRIPTOR);
 			if (j != -1)
 				placeToGather = placeToGather.substring(0, j);
 			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), TARGET_GATHER_SOURCES, null, null, properties);
@@ -237,7 +238,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		Map params = new HashMap(2);
 		params.put(PROPERTY_SOURCE, Utils.getPropertyFormat(PROPERTY_SOURCE));
 		params.put(PROPERTY_ELEMENT_NAME, Utils.getPropertyFormat(PROPERTY_ELEMENT_NAME));
-		script.printAntCallTask(TARGET_JARING, null, params);
+		script.printAntCallTask(TARGET_JARING, true, params);
 		script.printTargetEnd();
 
 		script.printTargetDeclaration(TARGET_JARING, null, fileExists, null, null);
@@ -338,7 +339,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		for (int i = 0; i < features.length; i++) {
 			IFeature feature = features[i];
 			String placeToGather = feature.getURL().getPath();
-			int j = placeToGather.lastIndexOf(DEFAULT_FEATURE_FILENAME_DESCRIPTOR);
+			int j = placeToGather.lastIndexOf(Constants.FEATURE_FILENAME_DESCRIPTOR);
 			if (j != -1)
 				placeToGather = placeToGather.substring(0, j);
 			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), TARGET_GATHER_BIN_PARTS, null, null, properties);
@@ -350,7 +351,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
 			IFeature feature = (IFeature) iter.next();
 			String placeToGather = feature.getURL().getPath();
-			int j = placeToGather.lastIndexOf(DEFAULT_FEATURE_FILENAME_DESCRIPTOR);
+			int j = placeToGather.lastIndexOf(Constants.FEATURE_FILENAME_DESCRIPTOR);
 			if (j != -1)
 				placeToGather = placeToGather.substring(0, j);
 			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), TARGET_GATHER_BIN_PARTS, null, null, properties);
@@ -363,7 +364,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		Map properties = new HashMap(2);
 		properties.put(PROPERTY_SOURCE, type == BUNDLE ? Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) : Utils.getPropertyFormat(PROPERTY_ECLIPSE_FEATURES));
 		properties.put(PROPERTY_ELEMENT_NAME, name + '_' + version);
-		script.printAntCallTask(TARGET_JARSIGNING, null, properties);
+		script.printAntCallTask(TARGET_JARSIGNING, true, properties);
 	}
 
 	//generate the appropriate postProcessingCall
@@ -434,7 +435,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		Map properties = new HashMap(2);
 		properties.put(PROPERTY_SOURCE, type == BUNDLE ? Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) : Utils.getPropertyFormat(PROPERTY_ECLIPSE_FEATURES));
 		properties.put(PROPERTY_ELEMENT_NAME, name + '_' + version);
-		script.printAntCallTask(TARGET_JARUP, null, properties);
+		script.printAntCallTask(TARGET_JARUP, true, properties);
 	}
 
 	private void generateEpilogue() {
@@ -525,7 +526,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		parameters.add(Utils.getPropertyFormat(PROPERTY_TAR_ARGS) + tarArgs + Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + "' " + Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + ' '); //$NON-NLS-1$ //$NON-NLS-2$
 		script.printExecTask("tar", Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), parameters, null); //$NON-NLS-1$ 
 		
-		script.printAntCallTask(TARGET_GZIP_RESULTS, null, null );
+		script.printAntCallTask(TARGET_GZIP_RESULTS, true, null );
 		
 		List args = new ArrayList(2);
 		args.add("-rf"); //$NON-NLS-1$

@@ -54,7 +54,6 @@ public interface IXMLConstants {
 	public static final String TARGET_FETCH_ELEMENT = "fetch.element"; //$NON-NLS-1$
 	public static final String TARGET_FETCH_PLUGINS = "fetch.plugins"; //$NON-NLS-1$
 	public static final String TARGET_FETCH_RECURSIVELY = "fetch.recursively"; //$NON-NLS-1$
-	public static final String TARGET_GET_FROM_CVS = "getFromCVS"; //$NON-NLS-1$
 	public static final String TARGET_EFFECTIVE_FETCH = "effectiveFetch"; //$NON-NLS-1$
 	public static final String TARGET_JARUP = "jarUp"; //$NON-NLS-1$
 	public static final String TARGET_JARING = "jarIng"; //$NON-NLS-1$

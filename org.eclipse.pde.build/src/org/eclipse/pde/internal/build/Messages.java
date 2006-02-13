@@ -33,7 +33,8 @@ public class Messages extends NLS {
 	public static String error_configWrongFormat;
 	public static String error_missingCustomBuildFile;
 	public static String error_missingSourceFolder;
-	
+	public static String error_noCorrespondingFactory;
+
 	// exception
 	public static String exception_missingElement;
 	public static String exception_missingFeature;

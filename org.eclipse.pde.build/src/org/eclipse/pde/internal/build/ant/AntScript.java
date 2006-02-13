@@ -12,13 +12,14 @@ package org.eclipse.pde.internal.build.ant;
 
 import java.io.*;
 import java.util.*;
+import org.eclipse.pde.build.IAntScript;
 
 /**
  * Class for producing Ant scripts. Contains convenience methods for creating the
  * XML elements required for Ant scripts. See the <a href="http://jakarta.apache.org/ant">Ant</a> 
  * website for more details on Ant scripts and the particular Ant tasks.
  */
-public class AntScript {
+public class AntScript implements IAntScript {
 
 	protected OutputStream out;
 	protected PrintWriter output;
@@ -61,11 +62,12 @@ public class AntScript {
 	 * 	called target
 	 * @param params table of parameters for the call
 	 */
-	public void printAntCallTask(String target, String inheritAll, Map params) {
+	public void printAntCallTask(String target, boolean inheritAll, Map params) {
 		printTab();
 		output.print("<antcall"); //$NON-NLS-1$
 		printAttribute("target", target, true); //$NON-NLS-1$
-		printAttribute("inheritAll", inheritAll, false); //$NON-NLS-1$
+		if (inheritAll == false)
+			printAttribute("inheritAll", "false", false); //$NON-NLS-1$ //$NON-NLS-2$
 		if (params == null)
 			output.println("/>"); //$NON-NLS-1$
 		else {
@@ -329,7 +331,7 @@ public class AntScript {
 	 * @param mandatory <code>true</code> if the attribute should be printed even
 	 *   if it is <code>null</code>
 	 */
-	protected void printAttribute(String name, String value, boolean mandatory) {
+	public void printAttribute(String name, String value, boolean mandatory) {
 		if (mandatory && value == null)
 			value = ""; //$NON-NLS-1$
 		if (value != null) {
@@ -495,46 +497,6 @@ public class AntScript {
 	}
 
 	/**
-	 * Print a <code>cvs</code> task to the Ant script.
-	 * 
-	 * @param command the CVS command to run
-	 * @param cvsRoot value for the CVSROOT variable
-	 * @param dest the destination directory for the checked out resources
-	 * @param module the module name to check out
-	 * @param tag the tag of the module to check out
-	 * @param quiet whether or not to print informational messages to the output
-	 * @param passFile the name of the password file
-	 */
-	public void printCVSTask(String command, String cvsRoot, String dest, String module, String tag, String quiet, String passFile) {
-		printTab();
-		output.print("<cvs"); //$NON-NLS-1$
-		printAttribute("command", command, false); //$NON-NLS-1$
-		printAttribute("cvsRoot", cvsRoot, false); //$NON-NLS-1$
-		printAttribute("dest", dest, false); //$NON-NLS-1$
-		printAttribute("package", module, false); //$NON-NLS-1$
-		printAttribute("tag", tag, false); //$NON-NLS-1$
-		printAttribute("quiet", quiet, false); //$NON-NLS-1$
-		printAttribute("passfile", passFile, false); //$NON-NLS-1$
-		output.println("/>"); //$NON-NLS-1$
-	}
-
-	/**
-	 * Print a <code>cvspass</code> task to the Ant script.
-	 * 
-	 * @param cvsRoot the name of the repository
-	 * @param password the password
-	 * @param passFile the name of the password file
-	 */
-	public void printCVSPassTask(String cvsRoot, String password, String passFile) {
-		printTab();
-		output.print("<cvspass"); //$NON-NLS-1$
-		printAttribute("cvsRoot", cvsRoot, true); //$NON-NLS-1$
-		printAttribute("password", password, true); //$NON-NLS-1$
-		printAttribute("passfile", passFile, false); //$NON-NLS-1$
-		output.println("/>"); //$NON-NLS-1$
-	}
-
-	/**
 	 * Print a <code>path</code> structure to the Ant Script.
 	 * The list of paths are printed using path.toString(), so paths
 	 * can be any Object.  Commonly String or ClasspathComputer3_0.ClasspathElement
@@ -663,7 +625,7 @@ public class AntScript {
 	/**
 	 * Print the given number of tabs to the Ant script.
 	 */
-	protected void printTab() {
+	public void printTab() {
 		for (int i = 0; i < indent; i++)
 			output.print("\t"); //$NON-NLS-1$
 	}
@@ -817,5 +779,9 @@ public class AntScript {
 		println("<isset property=\"" + testProperty + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 		indent--;
 		printEndTag("condition"); //$NON-NLS-1$
+	}
+	
+	public void printTabs() {
+		printTab();
 	}
 }

@@ -44,10 +44,6 @@ public interface IPDEBuildConstants {
 
 	// default values
 	public final static String DEFAULT_BUILD_SCRIPT_FILENAME = "build.xml"; //$NON-NLS-1$
-	public final static String DEFAULT_FEATURE_FILENAME_DESCRIPTOR = "feature.xml"; //$NON-NLS-1$
-	public final static String DEFAULT_FRAGMENT_FILENAME_DESCRIPTOR = "fragment.xml"; //$NON-NLS-1$
-	public final static String DEFAULT_BUNDLE_FILENAME_DESCRIPTOR = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
-	public final static String DEFAULT_PLUGIN_FILENAME_DESCRIPTOR = "plugin.xml"; //$NON-NLS-1$
 	public final static String DEFAULT_FEATURE_LOCATION = "features"; //$NON-NLS-1$
 	public final static String DEFAULT_FETCH_SCRIPT_FILENAME = "fetch.xml"; //$NON-NLS-1$
 	public final static String DEFAULT_ASSEMBLE_FILENAME = "assemble.xml"; //$NON-NLS-1$
@@ -116,4 +112,10 @@ public interface IPDEBuildConstants {
 	//Eclipse specific manifest headers
 	public final static String EXTENSIBLE_API = "Eclipse-ExtensibleAPI";  //$NON-NLS-1$
 	public final static String PATCH_FRAGMENT = "Eclipse-PatchFragment"; //$NON-NLS-1$
+	
+	// fetch task extension point
+	public final static String EXT_FETCH_TASK_FACTORIES = "org.eclipse.pde.build.fetchFactories"; //$NON-NLS-1$
+	public final static String ATTR_ID = "id"; //$NON-NLS-1$
+	public final static String ATTR_CLASS = "class"; //$NON-NLS-1$
+	public final static String ELEM_FACTORY = "factory"; //$NON-NLS-1$
 }

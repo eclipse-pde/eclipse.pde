@@ -75,7 +75,7 @@ public class FetchTask extends Task {
 	 * @since 3.0 
 	 */
 	public void setFetchTag(String value) {
-		generator.setFetchTag(value);
+		generator.setFetchTagAsString(value);
 	}
 
 	/**
