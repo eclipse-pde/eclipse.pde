@@ -15,6 +15,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -109,5 +110,9 @@ public class SchemaSpecSection extends PDESection {
 		fNameText.setValue(schema.getName(), true);
 		getPage().getManagedForm().getForm().setText(schema.getName());
 		super.refresh();
+	}
+	
+	public boolean canPaste(Clipboard clipboard) {
+		return isEditable();
 	}
 }

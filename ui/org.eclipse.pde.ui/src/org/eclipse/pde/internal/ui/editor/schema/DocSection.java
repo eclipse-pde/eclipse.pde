@@ -39,6 +39,8 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -112,7 +114,12 @@ public class DocSection extends PDESection {
 		styledText.setFont(JFaceResources.getTextFont());
 		styledText.setMenu(getPage().getPDEEditor().getContextMenu());
 		styledText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
-
+		styledText.addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent e) {
+				getPage().getPDEEditor().getContributor().updateSelectableActions(null);
+			}
+		});
+		
 		if (SWT.getPlatform().equals("motif") == false) //$NON-NLS-1$
 			toolkit.paintBordersFor(container);
 		Control[] children = container.getChildren();
