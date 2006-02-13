@@ -286,4 +286,10 @@ public interface IPDELauncherConstants {
 	 */
 	String TARGET_BUNDLES = "target_bundles"; //$NON-NLS-1$
 			
+	/**
+	 * Launch configuration attribute key.  The value can be either the full path
+	 * to the workspace location of a Target Definition (ie. .target file), or
+	 * the ID of a target defined in an org.eclipse.pde.core.targets extension.
+	 */
+	String DEFINED_TARGET = "defined_target"; //$NON-NLS-1$
 }
