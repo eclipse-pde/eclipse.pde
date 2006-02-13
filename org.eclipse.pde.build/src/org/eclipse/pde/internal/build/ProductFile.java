@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.build;
 import java.io.*;
 import java.util.*;
 import javax.xml.parsers.*;
+import org.eclipse.core.runtime.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -21,7 +22,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  * @since 3.1
  */
-public class ProductFile extends DefaultHandler {
+public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private final static SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 
 	private static final String SOLARIS_LARGE = "solarisLarge"; //$NON-NLS-1$
@@ -50,13 +51,14 @@ public class ProductFile extends DefaultHandler {
 	private String id = null;
 	private boolean useFeatures = false;
 	private List plugins = null;
+	private List features = null;
 	private String splashLocation = null;
 	private String productName;
 
 	/**
 	 * Constructs a feature parser.
 	 */
-	public ProductFile(String location, String os) {
+	public ProductFile(String location, String os) throws CoreException {
 		super();
 		this.location = new File(location);
 		this.currentOS = os;
@@ -64,11 +66,9 @@ public class ProductFile extends DefaultHandler {
 			parserFactory.setNamespaceAware(true);
 			parser = parserFactory.newSAXParser();
 		} catch (ParserConfigurationException e) {
-			if (BundleHelper.getDefault().isDebugging())
-				System.out.println(e);	
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PRODUCT_FORMAT, e.getLocalizedMessage(), e));
 		} catch (SAXException e) {
-			if (BundleHelper.getDefault().isDebugging())
-				System.out.println(e);
+			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PRODUCT_FORMAT, e.getLocalizedMessage(), e));
 		}
 	}
 
@@ -83,6 +83,12 @@ public class ProductFile extends DefaultHandler {
 		if(!parsed)
 			parse();
 		return plugins;
+	}
+	
+	public List getFeatures() {
+		if(!parsed)
+			parse();
+		return features;
 	}
 	
 	public boolean containsPlugin(String plugin) {
@@ -183,6 +189,8 @@ public class ProductFile extends DefaultHandler {
 			processPlugin(attributes);
 		} else if ("splash".equals(localName)) { //$NON-NLS-1$
 			splashLocation = attributes.getValue("location"); //$NON-NLS-1$
+		} else if ("feature".equals(localName)) { //$NON-NLS-1$
+			processFeature(attributes);
 		}
 	}
 
@@ -191,14 +199,19 @@ public class ProductFile extends DefaultHandler {
 			plugins = new ArrayList();
 		plugins.add(attributes.getValue("id")); //$NON-NLS-1$
 	}
+	
+	private void processFeature(Attributes attributes) {
+		if (features == null)
+			features = new ArrayList();
+		features.add(attributes.getValue("id")); //$NON-NLS-1$
+	}
 
 	private void processProduct(Attributes attributes) {
 		id = attributes.getValue("id"); //$NON-NLS-1$
 		productName = attributes.getValue("name"); //$NON-NLS-1$
 		String use = attributes.getValue("useFeatures"); //$NON-NLS-1$
 		if (use != null)
-			useFeatures = IBuildPropertiesConstants.TRUE.equals(use.toUpperCase());
-
+			useFeatures = IBuildPropertiesConstants.TRUE.equalsIgnoreCase(use);
 	}
 
 	private void processConfigIni(Attributes attributes) {

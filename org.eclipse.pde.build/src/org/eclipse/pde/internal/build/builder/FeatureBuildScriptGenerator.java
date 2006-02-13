@@ -533,7 +533,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 *  
 	 */
 	private void generateRootFilesAndPermissions() throws CoreException {
-		if (product != null) {
+		if (product != null && !havePDEUIState()) {
 			ProductGenerator generator = new ProductGenerator();
 			generator.setProduct(product);
 			generator.setBuildSiteFactory(siteFactory);
@@ -1150,7 +1150,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				while (tokenizer.hasMoreTokens()){
 					String token = tokenizer.nextToken();
 					if (token.startsWith("unpack")){ //$NON-NLS-1$
-						unpack = (token.toUpperCase().indexOf(TRUE) > -1);
+						unpack = (token.toLowerCase().indexOf(TRUE) > -1);
 						break;
 					}
 				}

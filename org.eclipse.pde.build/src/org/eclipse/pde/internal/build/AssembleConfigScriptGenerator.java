@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
+import java.io.File;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -87,7 +88,16 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		String productPath = findFile(product, false);
 		if (productPath == null)
 			productPath = product;
-		productFile = new ProductFile(productPath, configInfo.getOs());
+		File f = new File(productPath);
+		if (f.exists() && f.isFile()) {
+			try {
+				productFile = new ProductFile(productPath, configInfo.getOs());
+			} catch (CoreException e) {
+				// TODO log
+			}
+		} else {
+			//TODO log
+		}
 	}
 
 	private String computeIconsList() {

@@ -97,6 +97,7 @@ public interface IPDEBuildConstants {
 	public final static int WARNING_MISSING_SOURCE = 20;
 	public final static int WARNING_ELEMENT_NOT_FETCHED = 21;
 	public final static int EXCEPTION_CONFIG_FORMAT = 22;
+	public final static int EXCEPTION_PRODUCT_FORMAT = 23;
 
 	//User object keys. BundleDescription.getUserObject()
 	public final static String IS_COMPILED = "isCompiler"; //$NON-NLS-1$

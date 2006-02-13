@@ -77,7 +77,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		refactoredRuntime = state.getResolvedBundle(BUNDLE_EQUINOX_COMMON) != null;
 	}
 	
-	private void loadProduct() {
+	private void loadProduct() throws CoreException {
 		if (product == null || product.startsWith("${")) { //$NON-NLS-1$
 			productFile = null;
 			return;
@@ -171,6 +171,10 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			for (Iterator iter = pluginList.iterator(); iter.hasNext();) {
 				String id = (String) iter.next();
 				BundleDescription bundle = state.getResolvedBundle(id);
+				if (bundle == null) {
+					//TODO error?
+					continue;
+				}
 				String filter = bundle.getPlatformFilter();
 				if (filter == null || helper.createFilter(filter).match(environment)) {
 					if (BUNDLE_OSGI.equals(id))

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	private static PDEUIStateWrapper pdeUIState;
 
 	/** Location of the plug-ins and fragments. */
+	protected String[] sitePaths;
 	protected String[] pluginPath;
 	protected BuildTimeSiteFactory siteFactory;
 
@@ -235,14 +236,21 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	}
 
 	/**
-	 * Method getPaths. 
+	 * Method getPaths.  These are the paths used for the BuildTimeSite
 	 * @return URL[]
 	 */
 	private String[] getPaths() {
-		if (pluginPath != null)
-			return pluginPath;
+		if (sitePaths == null) {
+			if (pluginPath != null) {
+				sitePaths = new String[pluginPath.length + 1];
+				System.arraycopy(pluginPath, 0, sitePaths, 0, pluginPath.length);
+				sitePaths[sitePaths.length - 1] = workingDirectory;
+			} else {
+				sitePaths = new String[] {workingDirectory};
+			}
+		}
 
-		return new String[] {workingDirectory};
+		return sitePaths;
 	}
 
 	public void setBuildSiteFactory(BuildTimeSiteFactory siteFactory) {
@@ -290,6 +298,12 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			pdeUIState = new PDEUIStateWrapper();
 	}
 	
+	protected boolean havePDEUIState() {
+		return pdeUIState != null;
+	}
+	
+	//Find a file in a bundle or a feature.
+	//location is assumed to be structured like : /<featureId | pluginId>/path.to.the.file
 	protected String findFile(String location, boolean makeRelative) {
 		if (location == null)
 			return null;

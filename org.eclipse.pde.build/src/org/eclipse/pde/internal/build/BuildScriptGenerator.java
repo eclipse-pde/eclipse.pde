@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.builder.*;
 import org.eclipse.pde.internal.build.packager.PackageScriptGenerator;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.update.core.*;
 import org.osgi.framework.Version;
 
 public class BuildScriptGenerator extends AbstractScriptGenerator {
@@ -324,10 +323,6 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 */
 	public void setElements(String[] elements) {
 		this.elements = elements;
-	}
-
-	public void setPluginPath(String[] pluginPath) {
-		this.pluginPath = pluginPath;
 	}
 
 	/**

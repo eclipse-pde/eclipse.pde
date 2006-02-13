@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.tasks;
 
+import java.io.File;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
@@ -51,10 +52,10 @@ public class BuildScriptGeneratorTask extends Task {
 	/**
 	 * Set the plug-in path to be the given value.
 	 * 
-	 * @param pluginPath the plug-in path
+	 * @param pluginPath a File.pathSeparator separated list of paths
 	 */
 	public void setPluginPath(String pluginPath) {
-		generator.setPluginPath(Utils.getArrayFromString(pluginPath));
+		generator.setPluginPath(Utils.getArrayFromString(pluginPath, File.pathSeparator));
 	}
 
 	/**

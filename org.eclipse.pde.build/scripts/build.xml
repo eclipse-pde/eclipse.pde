@@ -8,8 +8,9 @@
 <property name="builderDirectory" location="${builder}"/>
 <property name="buildProperties" location="${builder}/build.properties"/>
 <property file="${buildProperties}"/>
-<property name="customTargets" location="${builderDirectory}/customTargets.xml"/>
-<property name="genericTargets" location="genericTargets.xml"/>
+<available property="customTargets" file="${builder}/customTargets.xml" value="${builder}/customTargets.xml"/>
+<property name="customTargets" location="${eclipse.pdebuild.templates}/headless-build/customTargets.xml"/>
+<property name="genericTargets" location="${eclipse.pdebuild.scripts}/genericTargets.xml"/>
 
 <!-- ===================================================================== -->
 <!-- main entry point to setup, fetch, generate, build etc. Use -->

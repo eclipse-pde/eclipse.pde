@@ -22,6 +22,11 @@
       </antTask>
       <antTask
             library="lib/pdebuild-ant.jar"
+            name="eclipse.generateFeature"
+            class="org.eclipse.pde.internal.build.tasks.FeatureGeneratorTask">
+      </antTask>
+      <antTask
+            library="lib/pdebuild-ant.jar"
             name="eclipse.buildManifest"
             class="org.eclipse.pde.internal.build.tasks.BuildManifestTask">
       </antTask>
@@ -91,6 +96,25 @@
       <factory
             class="org.eclipse.pde.internal.build.fetch.CVSFetchTaskFactory"
             id="CVS"/>
+   </extension>
+   
+    <extension
+         point="org.eclipse.ant.core.antProperties">
+      <antProperty
+            class="org.eclipse.pde.internal.build.properties.PDEProperties"
+            eclipseRuntime="false"
+            headless="true"
+            name="eclipse.pdebuild.home"/>
+      <antProperty
+            class="org.eclipse.pde.internal.build.properties.PDEProperties"
+            eclipseRuntime="false"
+            headless="true"
+            name="eclipse.pdebuild.scripts"/>
+      <antProperty
+            class="org.eclipse.pde.internal.build.properties.PDEProperties"
+            eclipseRuntime="false"
+            headless="true"
+            name="eclipse.pdebuild.templates"/>                        
    </extension>
 
 </plugin>
