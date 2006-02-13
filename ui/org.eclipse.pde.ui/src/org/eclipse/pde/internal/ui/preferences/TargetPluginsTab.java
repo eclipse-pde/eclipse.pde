@@ -13,12 +13,14 @@ package org.eclipse.pde.internal.ui.preferences;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IProject;
@@ -100,6 +102,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 	private Label fCounterLabel;
 	private int fCounter;
 	private Map fCurrentFeatures;
+	private ArrayList fAdditionalLocations = new ArrayList();
 	
 	class ReloadOperation implements IRunnableWithProgress {
 		private String location;
@@ -107,13 +110,36 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		public ReloadOperation(String platformPath) {
 			this.location = platformPath;
 		}
+		
+		private URL[] computePluginURLs() {
+			URL[] base  = PluginPathFinder.getPluginPaths(location);		
+			if (fAdditionalLocations.size() == 0)
+				return base;
+			
+			File[] extraLocations = new File[fAdditionalLocations.size()];
+			for (int i = 0; i < extraLocations.length; i++) {
+				String location = fAdditionalLocations.get(i).toString();
+				File dir = new File(location, "plugins"); //$NON-NLS-1$
+				if (!dir.exists() || !dir.isDirectory())
+					dir = new File(location);
+				extraLocations[i] = dir;
+			}
+
+			URL[] additional = PluginPathFinder.scanLocations(extraLocations);			
+			if (additional.length == 0)
+				return base;
+			
+			URL[] result = new URL[base.length + additional.length];
+			System.arraycopy(base, 0, result, 0, base.length);
+			System.arraycopy(additional, 0, result, base.length, additional.length);			
+			return result;
+		}
 			
 		public void run(IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {	
-			URL[] pluginPaths = PluginPathFinder.getPluginPaths(location);
 			monitor.beginTask(PDEUIMessages.TargetPluginsTab_readingPlatform, 10);
 			SubProgressMonitor parsePluginMonitor = new SubProgressMonitor(monitor, 9);
-			fCurrentState = new PDEState(pluginPaths, true, parsePluginMonitor);
+			fCurrentState = new PDEState(computePluginURLs(), true, parsePluginMonitor);
 			loadFeatures(new SubProgressMonitor(monitor, 1));
 			monitor.done();
 			fTreeViewerContents.clear();
@@ -121,24 +147,19 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		}
 		
 		private void loadFeatures(IProgressMonitor monitor) {
-			ExternalFeatureModelManager manager = new ExternalFeatureModelManager();
-			manager.loadModels(location);
-			IFeatureModel[] externalModels = manager.getModels();
+			IFeatureModel[] externalModels = ExternalFeatureModelManager.createModels(location, fAdditionalLocations, monitor);
 			IFeatureModel[] workspaceModels = PDECore.getDefault().getFeatureModelManager().getWorkspaceModels();
 			int numFeatures = externalModels.length + workspaceModels.length;
-			monitor.beginTask(PDEUIMessages.TargetPluginsTab_readingFeatures, numFeatures);
 			fCurrentFeatures = new HashMap((4/3) * (numFeatures) + 1);
 			for (int i = 0; i < externalModels.length; i++) {
 				String id = externalModels[i].getFeature().getId();
-				monitor.subTask(id);
-				fCurrentFeatures.put(id, externalModels[i]);
-				monitor.worked(1);
+				if (id != null)
+					fCurrentFeatures.put(id, externalModels[i]);
 			}
 			for (int i = 0; i < workspaceModels.length; i++) {
 				String id = workspaceModels[i].getFeature().getId();
-				monitor.subTask(id);
-				fCurrentFeatures.put(id, workspaceModels[i]);
-				monitor.worked(1);
+				if (id != null)
+					fCurrentFeatures.put(id, workspaceModels[i]);
 			}
 			monitor.done();
 		}
@@ -201,6 +222,12 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			  PDEUIMessages.ExternalPluginsBlock_workingSet, 
 			  PDEUIMessages.ExternalPluginsBlock_addRequired});
 		this.fPage = page;
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		String additional = preferences.getString(ICoreConstants.ADDITIONAL_LOCATIONS);
+		StringTokenizer tokenizer = new StringTokenizer(additional, ","); //$NON-NLS-1$
+		while (tokenizer.hasMoreTokens()) {
+			fAdditionalLocations.add(tokenizer.nextToken().trim());
+		}
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
@@ -492,7 +519,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		}
 		setCounter(counter);
 	}
-
+	
 	protected void handleReload() {
 		String platformPath = fPage.getPlatformPath();
 		if (platformPath != null && platformPath.length() > 0) {
@@ -510,6 +537,11 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			fPage.getSourceBlock().resetExtensionLocations(getCurrentModels());
 		}
 		fPage.resetNeedsReload();
+	}	
+
+	protected void handleReload(ArrayList additionalLocations) {
+		fAdditionalLocations = additionalLocations;
+		handleReload();
 	}
 
 	public void initialize() {
@@ -621,6 +653,14 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			preferences.setValue(ICoreConstants.SAVED_PLATFORM + i, locations[i]);
 		}
 		preferences.setValue(ICoreConstants.GROUP_PLUGINS_VIEW, fGroupPlugins.getSelection());
+		
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < fAdditionalLocations.size(); i++) {
+			if (buffer.length() > 0)
+				buffer.append(","); //$NON-NLS-1$
+			buffer.append(fAdditionalLocations.get(i).toString());
+		}
+		preferences.setValue(ICoreConstants.ADDITIONAL_LOCATIONS, buffer.toString());
 		PDECore.getDefault().savePluginPreferences();
 	}
 	

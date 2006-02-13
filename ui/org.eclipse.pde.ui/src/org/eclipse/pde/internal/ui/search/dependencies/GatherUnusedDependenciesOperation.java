@@ -67,7 +67,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			if (header instanceof ImportPackageHeader) {
 				packages = ((ImportPackageHeader)header).getPackages();
 			} else if (header != null && header.getValue() != null) {
-				header = new ImportPackageHeader(Constants.IMPORT_PACKAGE, header.getValue(), bundle, System.getProperty("line.separator"));
+				header = new ImportPackageHeader(Constants.IMPORT_PACKAGE, header.getValue(), bundle, System.getProperty("line.separator")); //$NON-NLS-1$
 				packages = ((ImportPackageHeader)header).getPackages();
 			}
 		}

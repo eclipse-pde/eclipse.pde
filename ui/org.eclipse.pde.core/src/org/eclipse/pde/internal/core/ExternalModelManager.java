@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
+import java.io.File;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.StringTokenizer;
@@ -126,7 +127,32 @@ public class ExternalModelManager {
 
 	public static URL[] getPluginPaths() {
 		Preferences pref = PDECore.getDefault().getPluginPreferences();
-		return PluginPathFinder.getPluginPaths(pref.getString(ICoreConstants.PLATFORM_PATH));	
+		URL[] base = PluginPathFinder.getPluginPaths(pref.getString(ICoreConstants.PLATFORM_PATH));
+
+		String value = pref.getString(ICoreConstants.ADDITIONAL_LOCATIONS);
+		StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
+		
+		if (tokenizer.countTokens() == 0)
+			return base;
+				
+		File[] extraLocations = new File[tokenizer.countTokens()];
+		for (int i = 0; i < extraLocations.length; i++) {
+			String location = tokenizer.nextToken();
+			File dir = new File(location, "plugins"); //$NON-NLS-1$
+			if (!dir.exists() || !dir.isDirectory())
+				dir = new File(location);
+			extraLocations[i] = dir;
+		}
+		URL[] additional = PluginPathFinder.scanLocations(extraLocations);
+		
+		if (additional.length == 0)
+			return base;
+		
+		URL[] result = new URL[base.length + additional.length];
+		System.arraycopy(base, 0, result, 0, base.length);
+		System.arraycopy(additional, 0, result, base.length, additional.length);
+		
+		return result;
 	}
 	
 	public void removeModelProviderListener(IModelProviderListener listener) {

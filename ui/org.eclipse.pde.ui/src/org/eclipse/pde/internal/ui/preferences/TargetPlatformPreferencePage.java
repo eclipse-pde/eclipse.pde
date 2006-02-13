@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -33,6 +34,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.TargetDefinitionManager;
+import org.eclipse.pde.internal.core.itarget.IAdditionalLocation;
 import org.eclipse.pde.internal.core.itarget.ILocationInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
@@ -198,7 +200,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		fHomeText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				fNeedsReload = true;
-				fResetButton.setEnabled(!ExternalModelManager.isTargetEqualToHost(fHomeText.getText()));
 			}
 		});
 		fHomeText.addSelectionListener(new SelectionAdapter() {
@@ -206,7 +207,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 				if (fFirstClick)
 					fFirstClick = false;
 				else {
-					fPluginsTab.handleReload();
+					fPluginsTab.handleReload(new ArrayList());
 					fNeedsReload = false;
 				}
 			}
@@ -229,10 +230,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		fResetButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fHomeText.setText(ExternalModelManager.computeDefaultPlatformPath());
-				fPluginsTab.handleReload();
+				fPluginsTab.handleReload(new ArrayList());
 			}
 		});	
-		fResetButton.setEnabled(!ExternalModelManager.isTargetEqualToHost(fHomeText.getText()));
 		
 		fTabFolder = new TabFolder(target, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -320,7 +320,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			if (fHomeText.indexOf(newPath) == -1)
 				fHomeText.add(newPath, 0);
 			fHomeText.setText(newPath);
-			fPluginsTab.handleReload();
+			fPluginsTab.handleReload(new ArrayList());
 			fNeedsReload = false;
 		}
 	}
@@ -472,14 +472,26 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			path = ExternalModelManager.computeDefaultPlatformPath();
 		} else {
 			try {
-				path = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(info.getPath());
+				IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+				path = manager.performStringSubstitution(info.getPath());
 			} catch (CoreException e) {
 				return;
 			}			
 		}
-		if (!ExternalModelManager.arePathsEqual(new Path(path), new Path(fHomeText.getText()))) {
+		if (!ExternalModelManager.arePathsEqual(new Path(path), new Path(fHomeText.getText()))
+				|| target.getAdditionalDirectories().length > 0) {
 			fHomeText.setText(path);
-			fPluginsTab.handleReload();
+			ArrayList additional = new ArrayList();
+			IAdditionalLocation[] locations = target.getAdditionalDirectories();
+			IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+			for (int i = 0; i < locations.length; i++) {
+				try {
+					additional.add(manager.performStringSubstitution(locations[i].getPath()));
+				} catch (CoreException e) {
+					additional.add(locations[i]);
+				}			
+			}
+			fPluginsTab.handleReload(additional);
 		}
 		
 		fPluginsTab.loadTargetProfile(target);
@@ -491,7 +503,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	
 	public void performDefaults() {
 		fHomeText.setText(ExternalModelManager.computeDefaultPlatformPath());
-		fPluginsTab.handleReload();
+		fPluginsTab.handleReload(new ArrayList());
 		fEnvironmentTab.performDefaults();
 		fArgumentsTab.performDefaults();
 		fImplicitDependenciesTab.performDefauls();
@@ -517,7 +529,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 				getContainer().updateButtons();
 				return false;
 			}
-			fPluginsTab.handleReload();
+			fPluginsTab.handleReload(new ArrayList());
 		} 
 		fSourceTab.performOk();
 		fPluginsTab.performOk();

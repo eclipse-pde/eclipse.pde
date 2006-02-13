@@ -30,6 +30,7 @@ public interface ICoreConstants {
 	String VM_ARGS = "vm_args"; //$NON-NLS-1$
 	String IMPLICIT_DEPENDENCIES = "implicit_dependencies"; //$NON-NLS-1$
 	String GROUP_PLUGINS_VIEW = "group_plugins"; //$NON-NLS-1$
+	String ADDITIONAL_LOCATIONS = "additional_locations"; //$NON-NLS-1$
 	
 	// Target JRE
 	String TARGET_JRE = "targetJRE"; //$NON-NLS-1$

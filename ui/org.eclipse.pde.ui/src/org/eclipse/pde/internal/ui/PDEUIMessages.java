@@ -2516,8 +2516,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetPluginsTab_readingPlatform;
 
-	public static String TargetPluginsTab_readingFeatures;
-
 	public static String TargetPlatformPreferencePage_implicitTab;
 
 	public static String ProductExportWizard_syncTitle;

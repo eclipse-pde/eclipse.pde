@@ -117,7 +117,7 @@ public class ManifestHeader extends BundleObject implements IManifestHeader {
 					// bug 113098
 					if (text.length() == fName.length() + 1) {
 						sb.append(fLineDelimiter);
-						sb.append(" ");
+						sb.append(" "); //$NON-NLS-1$
 					}
 				}
 			}
