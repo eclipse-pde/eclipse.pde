@@ -320,7 +320,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 			BundleModel model = new BundleModel(document, false);
 			model.load();
 			if (model.isLoaded())
-				OrganizeManifestsOperation.organizeExportPackages(model.getBundle(), project, true, true);
+				OrganizeManifest.organizeExportPackages(model.getBundle(), project, true, true);
 		} catch (CoreException e) {} 
 		finally {
 			try {

@@ -13,4 +13,8 @@ public interface IOrganizeManifestsSettings {
 	public static final String PROP_REMOVE_LAZY = "OrganizeManifests.General.cleanup"; //$NON-NLS-1$
 	public static final String PROP_NLS_PATH = "OrganizeManifests.Translation.nls"; //$NON-NLS-1$
 	public static final String PROP_UNUSED_KEYS = "OrganizeManifests.Translation.unusedKeys"; //$NON-NLS-1$
+	
+	public static final String F_MANIFEST_FILE = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
+	public static final String F_PLUGIN_FILE = "plugin.xml"; //$NON-NLS-1$
+	public static final String F_FRAGMENT_FILE = "fragment.xml"; //$NON-NLS-1$
 }
