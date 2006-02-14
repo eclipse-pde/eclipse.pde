@@ -80,6 +80,15 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		}
 	}
 	
+	public void dispose() {
+		if (isBundle()) {
+			IBundleModel model = getBundle().getModel();
+			if (model != null)
+				model.removeModelChangedListener(this);
+		}
+		super.dispose();
+	}
+	
 	private void createLazyStart(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
 		fLazyStart = toolkit.createButton(parent, PDEUIMessages.PluginGeneralInfoSection_lazyStart, SWT.CHECK);
 		TableWrapData td = new TableWrapData();
