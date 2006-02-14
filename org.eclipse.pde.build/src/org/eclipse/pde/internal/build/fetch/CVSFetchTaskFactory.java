@@ -30,7 +30,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 
 	private static final String TARGET_GET_FROM_CVS = "FetchFromCVS"; //$NON-NLS-1$
 	private static final String SEPARATOR = ","; //$NON-NLS-1$
-	public static final String OVERRIDE_TAG = "cvs"; //$NON-NLS-1$
+	public static final String OVERRIDE_TAG = ID;
 
 	//CVS specific keys used in the map being passed around.
 	private static final String KEY_CVSROOT = "cvsRoot"; //$NON-NLS-1$
