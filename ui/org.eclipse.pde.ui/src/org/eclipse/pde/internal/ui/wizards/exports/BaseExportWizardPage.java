@@ -24,7 +24,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -106,10 +105,8 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		
 		fTabFolder = new TabFolder(container, SWT.NONE);
 		fTabFolder.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		createTabs(fTabFolder);
+		createTabs(fTabFolder, getDialogSettings());
 		
-		// load settings
-		initializeTabs(getDialogSettings());
 		initializeViewer();
 		if (getErrorMessage() != null) {
 			setMessage(getErrorMessage());
@@ -120,22 +117,17 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		Dialog.applyDialogFont(container);		
 	}
 	
-	protected void initializeTabs(IDialogSettings settings) {
-		fDestinationTab.initialize(settings);
-		fOptionsTab.initialize(settings);
-		if (fJARSiginingTab != null)
-			fJARSiginingTab.initialize(settings);
-	}
-	
-	protected void createTabs(TabFolder folder) {
+	protected void createTabs(TabFolder folder, IDialogSettings settings) {
 		createDestinationTab(folder);
+		fDestinationTab.initialize(settings);
+		
 		createOptionsTab(folder);
-		String useJAR = getDialogSettings().get(ExportOptionsTab.S_JAR_FORMAT);
-		boolean showTab = useJAR == null 
-								? TargetPlatform.getTargetVersion() >= 3.1 
-								: "true".equals(useJAR); //$NON-NLS-1$
-		if (showTab)
+		fOptionsTab.initialize(settings);
+
+		if (fOptionsTab.useJARFormat()) {
 			createJARSigningTab(folder);
+			fJARSiginingTab.initialize(settings);
+		}
 	}
 	
 	protected void createDestinationTab(TabFolder folder) {

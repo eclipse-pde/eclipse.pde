@@ -53,19 +53,12 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 		return model instanceof IFeatureModel;
 	}
 	
-	protected void createTabs(TabFolder folder) {
-		super.createTabs(folder);
-		IDialogSettings settings = getDialogSettings();
-		boolean useDirectory = settings.getBoolean(ExportDestinationTab.S_EXPORT_DIRECTORY);
-		boolean useJARFormat = settings.getBoolean(ExportOptionsTab.S_JAR_FORMAT);
-		if (useDirectory && useJARFormat)
+	protected void createTabs(TabFolder folder, IDialogSettings settings) {
+		super.createTabs(folder, settings);
+		if (fDestinationTab.doExportToDirectory() && fOptionsTab.useJARFormat()) {
 			createJNLPTab(folder);
-	}
-	
-	protected void initializeTabs(IDialogSettings settings) {
-		super.initializeTabs(settings);
-		if (fJNLPTab != null)
 			fJNLPTab.initialize(settings);
+		}
 	}
 	
 	protected void createDestinationTab(TabFolder folder) {
@@ -124,7 +117,7 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 			}
 		} else {
 			int count = fTabFolder.getItemCount();
-			if (count >= 3) {
+			if (count >= (useJARFormat() ? 4 : 3)) {
 				fJNLPTab.saveSettings(settings);
 				fTabFolder.getItem(count-1).dispose();
 			}			
