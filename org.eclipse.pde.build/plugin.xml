@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-   <extension-point id="fetchFactories" name="%fetchTaskFactories.name" schema="schema/fetchTaskFactories.exsd"/>
+   <extension-point id="fetchFactories" name="%fetchFactories.name" schema="schema/fetchFactories.exsd"/>
 <!-- Tasks -->
    <extension
          point="org.eclipse.ant.core.antTasks">
@@ -96,6 +96,9 @@
       <factory
             class="org.eclipse.pde.internal.build.fetch.CVSFetchTaskFactory"
             id="CVS"/>
+      <factory
+            class="org.eclipse.pde.internal.build.fetch.COPYFetchTasksFactory"
+            id="COPY"/>
    </extension>
    
     <extension
