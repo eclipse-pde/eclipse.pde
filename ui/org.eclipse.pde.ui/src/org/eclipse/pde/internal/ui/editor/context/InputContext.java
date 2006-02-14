@@ -132,15 +132,13 @@ public abstract class InputContext {
 						if (e.getChangeType() != IModelChangedEvent.WORLD_CHANGED) {
 							if (!fEditor.getLastDirtyState())
 								fEditor.fireSaveNeeded(fEditorInput, true);
-							if (!fIsSourceMode) {
-								IModelChangeProvider provider = e.getChangeProvider();
-								if (provider instanceof IEditingModel) {
-									// this is to guard against false notifications
-									// when a revert operation is performed, focus is taken away from a FormEntry
-									// and a text edit operation is falsely requested
-									if (((IEditingModel)provider).isDirty())
-										addTextEditOperation(fEditOperations, e);
-								}
+							IModelChangeProvider provider = e.getChangeProvider();
+							if (provider instanceof IEditingModel) {
+								// this is to guard against false notifications
+								// when a revert operation is performed, focus is taken away from a FormEntry
+								// and a text edit operation is falsely requested
+								if (((IEditingModel)provider).isDirty())
+									addTextEditOperation(fEditOperations, e);
 							}
 						} 
 					}
@@ -276,7 +274,7 @@ public abstract class InputContext {
 				}
 			}
 		}
-		return fDocumentProvider.canSaveDocument(fEditorInput);
+		return fEditOperations.size() > 0 || fDocumentProvider.canSaveDocument(fEditorInput);
 	}
 	
 	public void dispose() {
