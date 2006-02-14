@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.2"?>
 
-<target id="org.eclipse.pde.core.rcpWithSource" name="Base RCP with Source">
+<target name="Base RCP with Source">
 
    <location useDefault="true"/>
 

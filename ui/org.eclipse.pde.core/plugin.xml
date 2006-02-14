@@ -89,13 +89,21 @@
       <extension
             point="org.eclipse.pde.core.targets">
          <target
+               definition="targets/rcpWithSource.target"
                id="org.eclipse.pde.core.rcpWithSource"
-               name="%target.name.0"
-               definition="targets/rcpWithSource.target"/>
+               name="%target.name.0">
+            <description>
+               %target.description.0         
+            </description>
+         </target>
          <target
+               definition="targets/rcp.target"
                id="org.eclipse.pde.core.binaryRCP"
-               name="%target.name.1"
-               definition="targets/rcp.target"/>
+               name="%target.name.1">
+            <description>
+               %target.description.1
+            </description>
+         </target>
       </extension>
    
 </plugin>

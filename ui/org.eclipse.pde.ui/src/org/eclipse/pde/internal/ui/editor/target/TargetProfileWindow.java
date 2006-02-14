@@ -134,6 +134,15 @@ public class TargetProfileWindow extends ApplicationWindow {
 			createTable(body, toolkit, locs);
 		}
 		
+		String desc = target.getDescription();
+		if (desc != null) {
+			FormEntry entry = createEntry(body, toolkit, PDEUIMessages.TargetProfileWindow_targetDescription, desc, SWT.WRAP|SWT.V_SCROLL);
+			GridData gd = new GridData(GridData.FILL_BOTH);
+			gd.widthHint = 200;
+			entry.getText().setLayoutData(gd);
+			entry.getLabel().setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+		}
+		
 		toolkit.paintBordersFor(form.getBody());
 		return form;	
 	}
@@ -209,7 +218,11 @@ public class TargetProfileWindow extends ApplicationWindow {
 	}
 	
 	private FormEntry createEntry(Composite client, FormToolkit toolkit, String text, String value) {
-		FormEntry entry = new FormEntry(client, toolkit, text, SWT.NONE); 
+		return createEntry(client, toolkit, text, value, SWT.NONE);
+	}
+	
+	private FormEntry createEntry(Composite client, FormToolkit toolkit, String text, String value, int style) {
+		FormEntry entry = new FormEntry(client, toolkit, text, style); 
 		entry.setValue(value);
 		entry.setEditable(false);
 		return entry;

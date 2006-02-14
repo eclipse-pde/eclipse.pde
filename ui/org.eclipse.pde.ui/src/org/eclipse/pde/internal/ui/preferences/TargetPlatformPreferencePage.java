@@ -420,6 +420,17 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		String symbolicName = elem.getDeclaringExtension().getNamespace();
 		return TargetDefinitionManager.getResourceURL(symbolicName, path);
 	}
+	
+	private String getTargetDescription() {
+		int offSet = fProfileCombo.getItemCount() - fElements.length;
+		if (offSet > fProfileCombo.getSelectionIndex())
+			return null;
+		IConfigurationElement elem = fElements[fProfileCombo.getSelectionIndex() - offSet];
+		IConfigurationElement [] children = elem.getChildren("description"); //$NON-NLS-1$
+		if (children.length > 0) 
+			return children[0].getValue();
+		return null;
+	}
 
 	public void init(IWorkbench workbench) {
 	}
@@ -428,10 +439,12 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		InputStream stream = null;
 		try {
 			IFile file = getTargetFile();
+			String desc = null;
 			if (file != null)
 				stream = file.getContents();
 			if (stream == null) {
 				URL url = getExternalTargetURL();
+				desc = getTargetDescription();
 				if (url != null)
 					stream = url.openStream();
 			}
@@ -439,6 +452,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			if (stream != null) {
 				ITargetModel model = new TargetModel();
 				model.load(stream, false);
+				if (desc != null)
+					model.getTarget().setDescription(desc);
 				return model;
 			}
 		} catch (CoreException e) {

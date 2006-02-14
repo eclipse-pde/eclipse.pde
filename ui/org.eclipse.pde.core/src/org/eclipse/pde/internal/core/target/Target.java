@@ -45,6 +45,7 @@ public class Target extends TargetObject implements ITarget {
 	private IImplicitDependenciesInfo fImplicitInfo;
 	private boolean fUseAllTargetPlatform = false;
 	private Set fAdditionalDirectories = new HashSet();
+	private String fDescription = null;
 	
 	public Target(ITargetModel model) {
 		super(model);
@@ -364,5 +365,13 @@ public class Target extends TargetObject implements ITarget {
 			fAdditionalDirectories.remove(dirs[i]);
 		}
 		fireStructureChanged(dirs, IModelChangedEvent.REMOVE);
+	}
+
+	public void setDescription(String desc) {
+		fDescription = desc;
+	}
+
+	public String getDescription() {
+		return fDescription;
 	}
 }

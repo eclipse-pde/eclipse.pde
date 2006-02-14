@@ -2682,4 +2682,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String OrganizeManifestsWizardPage_removeUnusedKeys;
 
+	public static String TargetProfileWindow_targetDescription;
+
 }

@@ -74,5 +74,9 @@ public interface ITarget extends ITargetObject {
 	void removeAdditionalDirectories(IAdditionalLocation[] dirs);
 	
 	void addAdditionalDirectories(IAdditionalLocation[] dirs);
+	
+	void setDescription(String desc);
+	
+	String getDescription();
 
 }
