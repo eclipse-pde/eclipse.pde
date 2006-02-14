@@ -49,11 +49,9 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 	}
 
 	private IPluginModelBase fModel;
-	private boolean fTopLevelOperation;
 	private ArrayList fList;
 	
-	public GatherUnusedDependenciesOperation(IPluginModelBase model, boolean topLevel) {
-		fTopLevelOperation = topLevel;
+	public GatherUnusedDependenciesOperation(IPluginModelBase model) {
 		fModel = model;
 	}
 	
@@ -73,9 +71,9 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		}
 		IPluginImport[] imports = fModel.getPluginBase().getImports();
 	
-		int totalWork = (packages != null) ? (packages.length + imports.length*3) : imports.length*3;
-		if (fTopLevelOperation)
-			monitor.beginTask("", totalWork); //$NON-NLS-1$
+		int totalWork = imports.length * 3 + (packages != null ? packages.length : 0);
+		monitor.beginTask("", totalWork); //$NON-NLS-1$
+
 		fList = new ArrayList();
 		for (int i = 0; i < imports.length; i++) {
 			if (monitor.isCanceled())
@@ -88,6 +86,8 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		
 		if (packages != null && !monitor.isCanceled()) {
 			for (int i = 0; i < packages.length; i++) {
+				if (monitor.isCanceled())
+					break;
 				if (isUnused(packages[i], new SubProgressMonitor(monitor, 1))) {
 					fList.add(packages[i]);
 					updateMonitor(monitor, fList.size());
@@ -97,21 +97,17 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 	}
 
 	private void updateMonitor(IProgressMonitor monitor, int size) {
-		String message = 
-			PDEUIMessages.UnusedDependencies_analyze
-			+ size
-			+ " " //$NON-NLS-1$
-			+ PDEUIMessages.UnusedDependencies_unused
-			+ " " //$NON-NLS-1$
-			+ (size == 1
-				? PDEUIMessages.DependencyExtent_singular
-				: PDEUIMessages.DependencyExtent_plural) 
-			+ " " //$NON-NLS-1$
-			+ PDEUIMessages.DependencyExtent_found;
-		if (fTopLevelOperation)
-			monitor.setTaskName(message);
-		else
-			monitor.subTask(message);
+		monitor.setTaskName(
+				PDEUIMessages.UnusedDependencies_analyze
+					+ size
+					+ " " //$NON-NLS-1$
+					+ PDEUIMessages.UnusedDependencies_unused
+					+ " " //$NON-NLS-1$
+					+ (size == 1
+						? PDEUIMessages.DependencyExtent_singular
+						: PDEUIMessages.DependencyExtent_plural) 
+					+ " " //$NON-NLS-1$
+					+ PDEUIMessages.DependencyExtent_found); 
 	}
 	
 	private boolean isUnused(IPluginImport plugin, SubProgressMonitor monitor) {
@@ -133,8 +129,8 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			IPackageFragment[] packageFragments = PluginJavaSearchUtil.collectPackageFragments(plugins, jProject, true);
 			SearchEngine engine = new SearchEngine();
 			IJavaSearchScope searchScope = PluginJavaSearchUtil.createSeachScope(jProject);
-			if (fTopLevelOperation)
-				monitor.beginTask("", packageFragments.length*2); //$NON-NLS-1$
+			
+			monitor.beginTask("", packageFragments.length*2); //$NON-NLS-1$
 			for (int i = 0; i < packageFragments.length; i++) {
 				IPackageFragment pkgFragment = packageFragments[i];
 				if (pkgFragment.hasChildren()) {
@@ -142,8 +138,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 					engine.search(
 							SearchPattern.createPattern(pkgFragment, IJavaSearchConstants.REFERENCES),
 							new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()},
-							searchScope, requestor, 
-							fTopLevelOperation ? new SubProgressMonitor(monitor, 1) : null);
+							searchScope, requestor, new SubProgressMonitor(monitor, 1));
 					if (requestor.foundMatches()) {
 						if (provideJavaClasses(packageFragments[i], engine,
 								searchScope, new SubProgressMonitor(monitor, 1))) {
@@ -167,8 +162,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			IProgressMonitor monitor) throws JavaModelException, CoreException {
 		Requestor requestor;
 		IJavaElement[] children = packageFragment.getChildren();
-		if (fTopLevelOperation)
-			monitor.beginTask("", children.length); //$NON-NLS-1$
+		monitor.beginTask("", children.length); //$NON-NLS-1$
 
 		try {
 			for (int j = 0; j < children.length; j++) {
@@ -184,8 +178,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 						engine.search(SearchPattern.createPattern(types[t],
 								IJavaSearchConstants.REFERENCES),
 								new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() },
-								searchScope, requestor, 
-								fTopLevelOperation ? new SubProgressMonitor(monitor, 1) : null);
+								searchScope, requestor, new SubProgressMonitor(monitor, 1));
 						if (requestor.foundMatches()) {
 							return true;
 						}
@@ -193,8 +186,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 				}
 			}
 		} finally {
-			if (fTopLevelOperation)
-				monitor.done();
+			monitor.done();
 		}
 		return false;
 	}
@@ -206,8 +198,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			if (!project.hasNature(JavaCore.NATURE_ID))
 				return false;
 			
-			if (fTopLevelOperation)
-				monitor.beginTask("", 1); //$NON-NLS-1$
+			monitor.beginTask("", 1); //$NON-NLS-1$
 			IJavaProject jProject = JavaCore.create(project);
 			SearchEngine engine = new SearchEngine();
 			IJavaSearchScope searchScope = PluginJavaSearchUtil.createSeachScope(jProject);
@@ -218,15 +209,13 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 					SearchPattern.createPattern(packageName, IJavaSearchConstants.PACKAGE, 
 							IJavaSearchConstants.REFERENCES, SearchPattern.R_EXACT_MATCH),
 							new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()},
-							searchScope, 
-							requestor, fTopLevelOperation ? new SubProgressMonitor(monitor, 1) : null);
+							searchScope, requestor, new SubProgressMonitor(monitor, 1));
 			
 			if (requestor.foundMatches()) 
 				return true;
 		} catch (CoreException e) {
 		} finally {
-			if (fTopLevelOperation)
-				monitor.done();
+			monitor.done();
 		}
 		return false;
 	}

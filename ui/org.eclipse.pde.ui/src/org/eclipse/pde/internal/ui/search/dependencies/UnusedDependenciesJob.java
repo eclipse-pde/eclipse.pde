@@ -40,7 +40,7 @@ public class UnusedDependenciesJob extends Job {
 	 */
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
-			GatherUnusedDependenciesOperation udo = new GatherUnusedDependenciesOperation(fModel, true);
+			GatherUnusedDependenciesOperation udo = new GatherUnusedDependenciesOperation(fModel);
 			udo.run(monitor);
 			// List can contain IPluginImports or ImportPackageObjects
 			showResults(udo.getList().toArray());

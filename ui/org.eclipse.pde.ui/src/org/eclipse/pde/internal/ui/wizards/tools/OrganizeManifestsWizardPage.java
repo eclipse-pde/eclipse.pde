@@ -32,19 +32,16 @@ public class OrganizeManifestsWizardPage extends WizardPage implements IPreferen
 	private Button fFixIconNLSPaths;
 	private Button fRemovedUnusedKeys;
 	private Button fRemoveLazy;
-
-	private boolean fWorkToBeDone;
 	
 	private Button[] fTopLevelButtons; // used for setting page complete state
 	private Button[] fParentButtons; // parents with children that need to be dis/enabled
 	
 	
 	private static String title = PDEUIMessages.OrganizeManifestsWizardPage_title;
-	protected OrganizeManifestsWizardPage(boolean workToBeDone) {
+	protected OrganizeManifestsWizardPage() {
 		super(title);
 		setTitle(title);
 		setDescription(PDEUIMessages.OrganizeManifestsWizardPage_description);
-		fWorkToBeDone = workToBeDone;
 	}
 
 	public void createControl(Composite parent) {
@@ -52,21 +49,15 @@ public class OrganizeManifestsWizardPage extends WizardPage implements IPreferen
 		container.setLayout(new GridLayout());
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		if (fWorkToBeDone) {
-			createExportedPackagesGroup(container);
-			createRequireImportGroup(container);
-			createGeneralGroup(container);
-			createNLSGroup(container);
-			
-			// init
-			setButtonArrays();
-			presetOptions();
-			hookListeners();
-		} else {
-			Label label = new Label(container, SWT.NONE);
-			label.setText(PDEUIMessages.OrganizeManifestsWizardPage_errorMsg);
-			setPageComplete(false);
-		}
+		createExportedPackagesGroup(container);
+		createRequireImportGroup(container);
+		createGeneralGroup(container);
+		createNLSGroup(container);
+		
+		// init
+		setButtonArrays();
+		presetOptions();
+		hookListeners();
 		
 		setControl(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.ORGANIZE_MANIFESTS);
@@ -162,14 +153,10 @@ public class OrganizeManifestsWizardPage extends WizardPage implements IPreferen
 		fRemoveUnresolved.setSelection(!settings.getBoolean(PROP_REMOVE_UNRESOLVED_EX));
 		
 		fModifyDependencies.setSelection(!settings.getBoolean(PROP_MODIFY_DEP));
-		String resolve = settings.get(PROP_RESOLVE_IMPORTS);
-		if (VALUE_IMPORT_OPTIONAL.equals(resolve)) {
-			fRemoveImport.setSelection(false);
-			fOptionalImport.setSelection(true);
-		} else {
-			fRemoveImport.setSelection(true);
-			fOptionalImport.setSelection(false);
-		}
+
+		fRemoveImport.setSelection(!settings.getBoolean(PROP_RESOLVE_IMP_MARK_OPT));
+		fOptionalImport.setSelection(settings.getBoolean(PROP_RESOLVE_IMP_MARK_OPT));
+
 		fUnusedDependencies.setSelection(settings.getBoolean(PROP_UNUSED_DEPENDENCIES));
 		
 		fRemoveLazy.setSelection(!settings.getBoolean(PROP_REMOVE_LAZY));
@@ -182,8 +169,6 @@ public class OrganizeManifestsWizardPage extends WizardPage implements IPreferen
 	}
 
 	protected void preformOk() {
-		if (!fWorkToBeDone)
-			return;
 		IDialogSettings settings = getDialogSettings();
 
 		settings.put(PROP_ADD_MISSING, !fAddMissing.getSelection());
@@ -193,8 +178,7 @@ public class OrganizeManifestsWizardPage extends WizardPage implements IPreferen
 		
 
 		settings.put(PROP_MODIFY_DEP, !fModifyDependencies.getSelection());
-		settings.put(PROP_RESOLVE_IMPORTS, fRemoveImport.getSelection() ?
-				VALUE_REMOVE_IMPORT : VALUE_IMPORT_OPTIONAL);
+		settings.put(PROP_RESOLVE_IMP_MARK_OPT, fOptionalImport.getSelection());
 		settings.put(PROP_UNUSED_DEPENDENCIES, fUnusedDependencies.getSelection());
 		
 		settings.put(PROP_REMOVE_LAZY, !fRemoveLazy.getSelection());

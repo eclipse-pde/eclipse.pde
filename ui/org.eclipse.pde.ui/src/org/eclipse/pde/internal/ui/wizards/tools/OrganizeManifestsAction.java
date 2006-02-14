@@ -6,10 +6,13 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -45,10 +48,10 @@ public class OrganizeManifestsAction implements IWorkbenchWindowActionDelegate {
 					proj = ((IFile)element).getProject();
 				else if (element instanceof IProject)
 					proj = (IProject) element;
-				if (proj != null)
+				if (proj != null && WorkspaceModelManager.hasBundleManifest(proj))
 					projects.add(proj);
 			}
-			if (projects.size() > 0) { // should always happen since action wont trigger for empty selections
+			if (projects.size() > 0) {
 				OrganizeManifestsWizard wizard = new OrganizeManifestsWizard(projects);
 				final WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 				BusyIndicator.showWhile(
@@ -58,7 +61,11 @@ public class OrganizeManifestsAction implements IWorkbenchWindowActionDelegate {
 						dialog.open();
 					}
 				});
-			}
+			} else
+				MessageDialog.openInformation(
+						PDEPlugin.getActiveWorkbenchShell(),
+						PDEUIMessages.OrganizeManifestsWizardPage_title,
+						PDEUIMessages.OrganizeManifestsWizardPage_errorMsg);
 		}
 	}
 

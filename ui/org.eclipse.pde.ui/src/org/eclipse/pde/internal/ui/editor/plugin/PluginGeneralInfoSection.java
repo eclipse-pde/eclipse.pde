@@ -32,6 +32,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
 import org.eclipse.pde.internal.core.text.bundle.LazyStartHeader;
@@ -72,6 +73,11 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		if (isBundle()) {
 			createLazyStart(parent, toolkit, actionBars);
 		}
+		if (isBundle()) {
+			IBundleModel model = getBundle().getModel();
+			if (model != null)
+				model.addModelChangedListener(this);
+		}
 	}
 	
 	private void createLazyStart(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
@@ -83,12 +89,11 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		fLazyStart.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				IManifestHeader header = getLazyStartHeader();
-				if (header instanceof LazyStartHeader) {
+				if (header instanceof LazyStartHeader)
 					((LazyStartHeader)header).setLazyStart(fLazyStart.getSelection());
-				} else {
+				else
 					getBundle().setHeader(getLazyStartHeaderName(), 
 							Boolean.toString(fLazyStart.getSelection()));
-				}
 			}
 		});
 	}
@@ -201,9 +206,8 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		fClassEntry.setValue(plugin.getClassName(), true);
 		if (fLazyStart != null) {
 			IManifestHeader header = getLazyStartHeader();
-			if (header instanceof LazyStartHeader) {
-				fLazyStart.setSelection(((LazyStartHeader)header).isLazyStart());
-			}
+			fLazyStart.setSelection(header instanceof LazyStartHeader 
+					&& ((LazyStartHeader)header).isLazyStart());
 		}
 		super.refresh();
 	}

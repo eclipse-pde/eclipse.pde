@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -57,6 +58,7 @@ import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
@@ -75,6 +77,7 @@ import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleObject;
+import org.eclipse.pde.internal.core.text.bundle.SingleManifestHeader;
 import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
 import org.eclipse.pde.internal.core.text.plugin.PluginAttribute;
 import org.eclipse.pde.internal.core.text.plugin.PluginModel;
@@ -104,58 +107,50 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 	private static final String F_MANIFEST_FILE = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
 	private static final String F_PLUGIN_FILE = "plugin.xml"; //$NON-NLS-1$
 	private static final String F_FRAGMENT_FILE = "fragment.xml"; //$NON-NLS-1$
-	
-	protected boolean F_ADD_MISSING_EX; // export-package
-	protected boolean F_MARK_INTERNAL_EX; // export-package
-	protected String F_EX_PACKAGE_FILTER = ""; // *.internal.* by default //$NON-NLS-1$
-	protected boolean F_REMOVE_UNRESOLVED_EX; // export-package
-	protected boolean F_MODIFY_DEP; // import-package / require-bundle
-	protected boolean F_REMOVE_IMPORT; // if true: remove, else mark optional
-	protected boolean F_UNUSED_DEPENDENCIES;
-	protected boolean F_REMOVE_LAZY; // remove lazy/auto start if no activator
-	protected boolean F_PREFIX_NL_PATH; // prefix icon paths with $nl$
-	protected boolean F_UNUSED_KEYS; // <bundle-localization>.properties
-	
 	private static String F_NL_PREFIX = "$nl$"; //$NON-NLS-1$
 	private static String[] F_ICON_EXTENSIONS = new String[] {
 		"BMP", "ICO", "JPEG", "JPG", "GIF", "PNG", "TIFF" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 	};
 	
-	private ArrayList fProjectList;
 	
+	// if operation is executed without setting operations, these defaults will be used
+	protected boolean fAddMissing = true; // add all packages to export-package
+	protected boolean fMarkInternal = true; // mark export-package as internal
+	protected String fPackageFilter = IOrganizeManifestsSettings.VALUE_DEFAULT_FILTER;
+	protected boolean fRemoveUnresolved = true; // remove unresolved export-package
+	protected boolean fModifyDep = true; // modify import-package / require-bundle
+	protected boolean fRemoveDependencies = true; // if true: remove, else mark optional
+	protected boolean fUnusedDependencies; // find/remove unused dependencies - long running op
+	protected boolean fRemoveLazy = true; // remove lazy/auto start if no activator
+	protected boolean fPrefixIconNL; // prefix icon paths with $nl$
+	protected boolean fUnusedKeys; // remove unused <bundle-localization>.properties keys
+	
+	
+	private ArrayList fProjectList;
 	private IProject fCurrentProject;
 	private IBundlePluginModel fCurrentBundleModel;
 	private PluginModelBase fCurrentPluginModelBase;
 	private ISaveablePart fCurrentOpenEditor;
-	private IDialogSettings fSettings;
 	
-	public OrganizeManifestsOperation(ArrayList projectList, IDialogSettings settings) {
+	public OrganizeManifestsOperation(ArrayList projectList) {
 		fProjectList = projectList;
-		fSettings = settings;
-		updateSettings();
-	}
-
-	public OrganizeManifestsOperation(IProject project, IDialogSettings settings) {
-		fProjectList = new ArrayList();
-		fProjectList.add(project);
-		fSettings = settings;
-		updateSettings();
 	}
 
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-		int totalTicks = getTotalTicksPerProject() * fProjectList.size();
-		monitor.beginTask(PDEUIMessages.OrganizeManifestJob_taskName, totalTicks);
+		monitor.beginTask(PDEUIMessages.OrganizeManifestJob_taskName, fProjectList.size());
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		for (int i = 0; i < fProjectList.size(); i++) {
 			if (monitor.isCanceled())
 				break;
 			resetModels();
-			cleanProject((IProject)fProjectList.get(i), manager, monitor);
+			cleanProject((IProject)fProjectList.get(i), manager, new SubProgressMonitor(monitor, 1));
 		}
 	}
 	
 	private void cleanProject(IProject project, ITextFileBufferManager manager, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+		
 		fCurrentProject = project;
+		monitor.beginTask(fCurrentProject.getName(), getTotalTicksPerProject());
 		IFile manifest = fCurrentProject.getFile(F_MANIFEST_FILE);
 		IFile underlyingXML = fCurrentProject.getFile(F_PLUGIN_FILE);
 		if (!underlyingXML.exists())
@@ -165,15 +160,15 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 		IDocument manifestDoc = null;
 		IDocument xmlDoc = null;
 		BundleTextChangeListener bundleTextChangeListener = null;
-		ITextFileBuffer pluginModelBuffer = null;
+		ITextFileBuffer xmlModelBuffer = null;
 		MultiTextEdit textEdit = null;
 		try {
 			
 			boolean loadedFromEditor = loadFromEditor();
 			
 			if (connectExtensions(underlyingXML)) {
-				pluginModelBuffer = connectBuffer(underlyingXML, manager);
-				xmlDoc = pluginModelBuffer.getDocument();
+				xmlModelBuffer = connectBuffer(underlyingXML, manager);
+				xmlDoc = xmlModelBuffer.getDocument();
 				
 				if (!loadedFromEditor) {
 					if (F_FRAGMENT_FILE.equals(underlyingXML.getName()))
@@ -209,19 +204,21 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 		} finally {
 			try {
 				writeChanges(manifestBuffer, manifestDoc, monitor, getTextEdit(bundleTextChangeListener));
-				writeChanges(pluginModelBuffer, xmlDoc, monitor, textEdit);
+				writeChanges(xmlModelBuffer, xmlDoc, monitor, textEdit);
 				
 				if (fCurrentOpenEditor != null && !monitor.isCanceled())
 					fCurrentOpenEditor.doSave(monitor);
 				
-				if (fCurrentBundleModel != null && connectBundle())
+				if (connectBundle())
 					manager.disconnect(manifest.getFullPath(), null);
 
-				if (fCurrentPluginModelBase != null && connectExtensions(underlyingXML))
+				if (connectExtensions(underlyingXML))
 					manager.disconnect(underlyingXML.getFullPath(), null);
 
 			} catch (CoreException e) {
 				PDEPlugin.log(e);
+			} finally {
+				monitor.done();
 			}
 		}
 	}
@@ -231,17 +228,16 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 		ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath());
 		if (buffer.isDirty())
 			buffer.commit(null, true);
-		
 		return buffer;
 	}
 	
 	private boolean connectExtensions(IFile underlyingXML) {
-		return underlyingXML.exists() && (F_PREFIX_NL_PATH || F_UNUSED_KEYS || F_UNUSED_DEPENDENCIES);
+		return underlyingXML.exists() && (fPrefixIconNL || fUnusedKeys || fUnusedDependencies);
 	}
 	
 	private boolean connectBundle() {
-		return F_ADD_MISSING_EX || F_MODIFY_DEP || F_UNUSED_DEPENDENCIES
-				|| F_REMOVE_LAZY || F_REMOVE_UNRESOLVED_EX || F_UNUSED_KEYS;
+		return fAddMissing || fModifyDep || fUnusedDependencies
+				|| fRemoveLazy || fRemoveUnresolved || fUnusedKeys;
 	}
 	
 	private boolean loadFromEditor() throws PartInitException {
@@ -308,65 +304,63 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 			bundle = fCurrentBundleModel.getBundleModel().getBundle();
 		String projectName = fCurrentProject.getName();
 		
-		if (F_ADD_MISSING_EX || F_REMOVE_UNRESOLVED_EX) {
+		if (fAddMissing || fRemoveUnresolved) {
 			monitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_export, projectName));
 			if (!monitor.isCanceled())
-				organizeExportPackages(bundle, fCurrentProject, F_ADD_MISSING_EX, F_REMOVE_UNRESOLVED_EX);
-			if (F_ADD_MISSING_EX)
+				organizeExportPackages(bundle, fCurrentProject, fAddMissing, fRemoveUnresolved);
+			if (fAddMissing)
 				monitor.worked(1);
-			if (F_REMOVE_UNRESOLVED_EX)
+			if (fRemoveUnresolved)
 				monitor.worked(1);
 		}
 		
-		if (F_MARK_INTERNAL_EX) {
+		if (fMarkInternal) {
 			monitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_filterInternal, projectName));
 			if (!monitor.isCanceled())
-				markPackagesInternal(bundle, F_EX_PACKAGE_FILTER);
+				markPackagesInternal(bundle, fPackageFilter);
 			monitor.worked(1);
 		}
 		
-		if (F_MODIFY_DEP) {
-			String message = F_REMOVE_IMPORT ?
+		if (fModifyDep) {
+			String message = fRemoveDependencies ?
 					NLS.bind(PDEUIMessages.OrganizeManifestsOperation_removeUnresolved, projectName) :
 						NLS.bind(PDEUIMessages.OrganizeManifestsOperation_markOptionalUnresolved, projectName);
 			monitor.subTask(message);
 			if (!monitor.isCanceled())
-				organizeImportPackages(bundle, F_REMOVE_IMPORT);
+				organizeImportPackages(bundle, fRemoveDependencies);
 			monitor.worked(1);
 			
 			if (!monitor.isCanceled())
-				organizeRequireBundles(bundle, F_REMOVE_IMPORT);
+				organizeRequireBundles(bundle, fRemoveDependencies);
 			monitor.worked(1);
 		}
 		
 		
-		if (F_UNUSED_DEPENDENCIES) {
+		if (fUnusedDependencies) {
 			monitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_unusedDeps, projectName));
 			if (!monitor.isCanceled()) {
-				GatherUnusedDependenciesOperation udo = new GatherUnusedDependenciesOperation(fCurrentBundleModel, false);
-				udo.run(monitor);
+				GatherUnusedDependenciesOperation udo = new GatherUnusedDependenciesOperation(fCurrentBundleModel);
+				udo.run(new SubProgressMonitor(monitor, 4));
 				GatherUnusedDependenciesOperation.removeDependencies(fCurrentBundleModel, udo.getList().toArray());
 			}
-			// monitor ticks handled by operation
-			// monitor.worked(4);
 		}
 		
 		
-		if (F_REMOVE_LAZY) {
+		if (fRemoveLazy) {
 			monitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_lazyStart, fCurrentProject.getName()));
 			if (!monitor.isCanceled())
 				removeUnneededLazyStart(bundle);
 			monitor.worked(1);
 		}
 		
-		if (F_PREFIX_NL_PATH) {
+		if (fPrefixIconNL) {
 			monitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_nlIconPath, projectName));
 			if (!monitor.isCanceled())
 				prefixIconPaths(fCurrentPluginModelBase, edit);
 			monitor.worked(1);
 		}
 		
-		if (F_UNUSED_KEYS) {
+		if (fUnusedKeys) {
 			monitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_unusedKeys, projectName));
 			if (!monitor.isCanceled())
 				removeUnusedKeys(fCurrentProject, bundle, fCurrentPluginModelBase);
@@ -417,11 +411,10 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 		}
 		
 		// Remove packages that don't exist	
-		if (removeUnresolved) {
-			for (int i = 0; i < currentPkgs.length; i++) 
+		if (removeUnresolved)
+			for (int i = 0; i < currentPkgs.length; i++)
 				if (!packages.contains(currentPkgs[i].getName()))
 					header.removePackage(currentPkgs[i]);
-		}
 	}
 	
 	private static IPackageFragmentRoot[] findPackageFragmentRoots(IBundle bundle, IProject proj) {
@@ -558,11 +551,14 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 	public static void removeUnneededLazyStart(IBundle bundle) {
 		if (!(bundle instanceof Bundle))
 			return;
-		if (bundle.getHeader(Constants.BUNDLE_ACTIVATOR) == null) { 
-			if (bundle.getHeader(ICoreConstants.ECLIPSE_LAZYSTART) != null)
-				((Bundle)bundle).setHeader(ICoreConstants.ECLIPSE_LAZYSTART, null);
-			if (bundle.getHeader(ICoreConstants.ECLIPSE_AUTOSTART) != null)
-				((Bundle)bundle).setHeader(ICoreConstants.ECLIPSE_AUTOSTART, null);
+		if (bundle.getHeader(Constants.BUNDLE_ACTIVATOR) == null) {
+			String[] remove = new String[] {
+					ICoreConstants.ECLIPSE_LAZYSTART, ICoreConstants.ECLIPSE_AUTOSTART};
+			for (int i = 0; i < remove.length; i++) {
+				IManifestHeader lazy = ((Bundle)bundle).getManifestHeader(remove[i]);
+				if (lazy instanceof SingleManifestHeader)
+					((SingleManifestHeader)lazy).setMainComponent(null);
+			}
 		}
 		
 	}
@@ -760,9 +756,7 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 	}
 	
 	private static boolean fileExists(String container, String filename) {
-		File testFile = new File(container + filename);
-		return testFile.exists();
-			
+		return new File(container + filename).exists();
 	}
 	
 	/**
@@ -782,11 +776,11 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 		for (int i = 0; i < extensions.length; i++) {
 			ISchema schema = registry.getSchema(extensions[i].getPoint());
 			if (schema != null)
-				inspectExtensionForIconPaths(schema, extensions[i], multiEdit);
+				inspectElementsIconPaths(schema, extensions[i], multiEdit);
 		}
 	}
 	
-	private static void inspectExtensionForIconPaths(ISchema schema, IPluginParent parent, MultiTextEdit multiEdit) {
+	private static void inspectElementsIconPaths(ISchema schema, IPluginParent parent, MultiTextEdit multiEdit) {
 		IPluginObject[] children = parent.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			IPluginElement child = (IPluginElement)children[i];
@@ -817,43 +811,43 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 					}
 				}
 			}
-			inspectExtensionForIconPaths(schema, child, multiEdit);
+			inspectElementsIconPaths(schema, child, multiEdit);
 		}
 	}
 	
 	
 	private int getTotalTicksPerProject() {
 		int ticks = 0;
-		if (F_ADD_MISSING_EX)
+		if (fAddMissing)
 			ticks++;
-		if (F_MARK_INTERNAL_EX)
+		if (fMarkInternal)
 			ticks++;
-		if (F_REMOVE_UNRESOLVED_EX)
-			ticks ++;
-		if (F_MODIFY_DEP)
+		if (fRemoveUnresolved)
+			ticks++;
+		if (fModifyDep)
 			ticks += 2;
-		if (F_UNUSED_DEPENDENCIES)
+		if (fUnusedDependencies)
 			ticks += 4;
-		if (F_REMOVE_LAZY)
+		if (fRemoveLazy)
 			ticks++;
-		if (F_PREFIX_NL_PATH)
+		if (fPrefixIconNL)
 			ticks++;
-		if (F_UNUSED_KEYS)
+		if (fUnusedKeys)
 			ticks++;
 		return ticks;
 	}
 	
 	
-	private void updateSettings() {
-		F_ADD_MISSING_EX = !fSettings.getBoolean(PROP_ADD_MISSING);
-		F_MARK_INTERNAL_EX = !fSettings.getBoolean(PROP_MARK_INTERNAL);
-		F_EX_PACKAGE_FILTER = fSettings.get(PROP_INTERAL_PACKAGE_FILTER);
-		F_REMOVE_UNRESOLVED_EX = !fSettings.getBoolean(PROP_REMOVE_UNRESOLVED_EX);
-		F_MODIFY_DEP = !fSettings.getBoolean(PROP_MODIFY_DEP);
-		F_REMOVE_IMPORT = fSettings.get(PROP_RESOLVE_IMPORTS).equals(VALUE_REMOVE_IMPORT);
-		F_UNUSED_DEPENDENCIES = fSettings.getBoolean(PROP_UNUSED_DEPENDENCIES);
-		F_REMOVE_LAZY = !fSettings.getBoolean(PROP_REMOVE_LAZY);
-		F_PREFIX_NL_PATH = fSettings.getBoolean(PROP_NLS_PATH);
-		F_UNUSED_KEYS = fSettings.getBoolean(PROP_UNUSED_KEYS);
+	public void setOperations(IDialogSettings settings) {
+		fAddMissing = !settings.getBoolean(PROP_ADD_MISSING);
+		fMarkInternal = !settings.getBoolean(PROP_MARK_INTERNAL);
+		fPackageFilter = settings.get(PROP_INTERAL_PACKAGE_FILTER);
+		fRemoveUnresolved = !settings.getBoolean(PROP_REMOVE_UNRESOLVED_EX);
+		fModifyDep = !settings.getBoolean(PROP_MODIFY_DEP);
+		fRemoveDependencies = !settings.getBoolean(PROP_RESOLVE_IMP_MARK_OPT);
+		fUnusedDependencies = settings.getBoolean(PROP_UNUSED_DEPENDENCIES);
+		fRemoveLazy = !settings.getBoolean(PROP_REMOVE_LAZY);
+		fPrefixIconNL = settings.getBoolean(PROP_NLS_PATH);
+		fUnusedKeys = settings.getBoolean(PROP_UNUSED_KEYS);
 	}
 }
