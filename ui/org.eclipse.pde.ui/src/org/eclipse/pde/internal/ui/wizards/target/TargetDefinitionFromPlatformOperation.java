@@ -9,6 +9,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.IEnvironmentVariables;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.itarget.IAdditionalLocation;
 import org.eclipse.pde.internal.core.itarget.IArgumentsInfo;
 import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
 import org.eclipse.pde.internal.core.itarget.IImplicitDependenciesInfo;
@@ -34,6 +35,7 @@ public class TargetDefinitionFromPlatformOperation extends BaseTargetDefinitionO
 		initializeEnvironmentInfo(preferences, target, factory);
 		initializeImplicitInfo(preferences, target, factory);
 		initializeLocationInfo(preferences, target, factory);
+		initializeAdditionalLocsInfo(preferences, target, factory);
 		initializeJREInfo(target, factory);
 		initializePluginContent(preferences, target, factory);
 		
@@ -84,6 +86,22 @@ public class TargetDefinitionFromPlatformOperation extends BaseTargetDefinitionO
 		if (!useThis)
 			info.setPath(preferences.getString(ICoreConstants.PLATFORM_PATH));
 		target.setLocationInfo(info);
+	}
+	
+	protected void initializeAdditionalLocsInfo(Preferences preferences, ITarget target, ITargetModelFactory factory) {
+		String additional = preferences.getString(ICoreConstants.ADDITIONAL_LOCATIONS);
+		StringTokenizer tokenizer = new StringTokenizer(additional, ","); //$NON-NLS-1$
+		int size = tokenizer.countTokens();
+		if (size > 0) {
+			IAdditionalLocation[] locations = new IAdditionalLocation[size];
+			int i = 0;
+			while (tokenizer.hasMoreTokens()) {
+				IAdditionalLocation location = factory.createAdditionalLocation();
+				location.setPath(tokenizer.nextToken().trim());
+				locations[i++] = location;
+			}
+			target.addAdditionalDirectories(locations);
+		}
 	}
 	
 	protected void initializeJREInfo(ITarget target, ITargetModelFactory factory) {
