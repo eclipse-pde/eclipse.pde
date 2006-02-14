@@ -167,12 +167,18 @@ public class BundleManifestChange {
 	private static void resetHeaderValue(IManifestHeader header, String oldText, String newText) {
 		if (header != null) {
 			String value = header.getValue();
-			if (value != null && value.startsWith(oldText) && value.lastIndexOf('.') <= oldText.length()) {
+			if (oldText.equals(value) || isNestedType(value, oldText)) {
 				StringBuffer buffer = new StringBuffer(newText);
 				buffer.append(value.substring(oldText.length()));
 				header.setValue(buffer.toString());
 			}
 		}
+	}
+	
+	private static boolean isNestedType(String value, String oldName) {
+		if (value == null || value.length() <= oldName.length())
+			return false;
+		return (value.startsWith(oldName) && value.charAt(oldName.length()) == '$'); 
 	}
 	
 	private static void renamePackage(IManifestHeader header, String oldName, String newName) {

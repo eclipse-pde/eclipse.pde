@@ -122,12 +122,18 @@ public class PluginManifestChange {
 			return null;
 		
 		String value = attr.getAttributeValue();
-		if (value != null && value.startsWith(oldName) && value.lastIndexOf('.') <= oldName.length()) {
+		if (oldName.equals(value) || isNestedType(value, oldName)) {
 			int offset = attr.getValueOffset();
 			if (offset >= 0)
 				return new ReplaceEdit(offset, oldName.length(), newName);
 		}
 		return null;
+	}
+	
+	private static boolean isNestedType(String value, String oldName) {
+		if (value == null || value.length() <= oldName.length())
+			return false;
+		return (value.startsWith(oldName) && value.charAt(oldName.length()) == '$'); 
 	}
 
 }
