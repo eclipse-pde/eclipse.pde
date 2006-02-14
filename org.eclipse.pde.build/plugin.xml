@@ -96,9 +96,6 @@
       <factory
             class="org.eclipse.pde.internal.build.fetch.CVSFetchTaskFactory"
             id="CVS"/>
-      <factory
-            class="org.eclipse.pde.internal.build.fetch.COPYFetchTasksFactory"
-            id="COPY"/>
    </extension>
    
     <extension
