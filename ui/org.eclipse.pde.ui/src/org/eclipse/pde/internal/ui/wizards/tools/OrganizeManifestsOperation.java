@@ -803,7 +803,8 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 						for (int e = 0; e < F_ICON_EXTENSIONS.length; e++) {
 							if (value.equalsIgnoreCase(F_ICON_EXTENSIONS[e])) {
 								IPath path = new Path(F_NL_PREFIX);
-								path = path.addTrailingSeparator();
+								if (attr.getValue().charAt(0) != Path.SEPARATOR)
+									path = path.addTrailingSeparator();
 								multiEdit.addChild(new InsertEdit(attr.getValueOffset(), path.toString()));
 								break;
 							}
