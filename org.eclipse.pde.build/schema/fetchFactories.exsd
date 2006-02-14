@@ -84,13 +84,13 @@
       </appInfo>
       <documentation>
          &lt;pre&gt;
-&lt;extension point=&quot;org.eclipse.pde.build.fetchTaskFactories&quot;&gt;
+&lt;extension point=&quot;org.eclipse.pde.build.fetchFactories&quot;&gt;
+    &lt;factory
+        class=&quot;org.eclipse.pde.internal.build.fetch.CVSFetchTaskFactory&quot;
+        id=&quot;CVS&quot;/&gt;
     &lt;factory
         class=&quot;org.eclipse.pde.internal.build.fetch.COPYFetchTasksFactory&quot;
         id=&quot;COPY&quot;/&gt;
-      &lt;factory
-            class=&quot;org.eclipse.pde.internal.build.fetch.CVSFetchTaskFactory&quot;
-            id=&quot;CVS&quot;/&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
       </documentation>
@@ -101,7 +101,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         See the org.eclipse.pde.build.IFetchFactory interface.
+         See the &lt;code&gt;org.eclipse.pde.build.IFetchFactory&lt;/code&gt; interface.
       </documentation>
    </annotation>
 
