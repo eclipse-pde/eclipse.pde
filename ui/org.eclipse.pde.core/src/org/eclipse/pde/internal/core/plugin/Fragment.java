@@ -149,11 +149,13 @@ public class Fragment extends PluginBase implements IFragment {
 			writer.println();
 			writer.print("   provider-name=\"" + getWritableString(getProviderName()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (getPluginId() != null) {
+		String pid = getPluginId();
+		if (pid != null && pid.length() > 0) {
 			writer.println();
 			writer.print("   plugin-id=\"" + getPluginId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (getPluginVersion() != null) {
+		String pver = getPluginVersion(); 
+		if (pver != null && pver.length() > 0) {
 			writer.println();
 			writer.print("   plugin-version=\"" + getPluginVersion() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
