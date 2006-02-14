@@ -557,8 +557,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		fetchTags = new Properties();
 		String[] entries = Utils.getArrayFromString(value);
 		//Backward compatibility
-		if (entries.length == 1) {
-			fetchTags.put(CVSFetchTaskFactory.OVERRIDE_TAG, fetchTags);
+		if (entries.length == 1 && (entries[0].indexOf('=') == -1)) {
+			fetchTags.put(CVSFetchTaskFactory.OVERRIDE_TAG, entries[0]);
 			return;
 		}
 		for (int i = 0; i < entries.length; i++) {
