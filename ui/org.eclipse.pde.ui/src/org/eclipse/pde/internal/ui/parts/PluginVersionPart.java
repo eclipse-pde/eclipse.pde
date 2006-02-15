@@ -35,6 +35,8 @@ public class PluginVersionPart {
     	try {
         	if (version != null && !version.equals("")) { //$NON-NLS-1$
         		fVersionRange = new VersionRange(version);
+        		if (fVersionRange.getMinimum().compareTo(fVersionRange.getMaximum()) < 0)
+        			fIsRanged = true;
         	} 
         } catch (IllegalArgumentException e) {
         	// illegal version string passed
