@@ -54,6 +54,9 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
+import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
 import org.eclipse.pde.internal.core.text.build.BuildModel;
 import org.eclipse.pde.internal.core.text.build.PropertiesTextChangeListener;
@@ -309,14 +312,38 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 				IBuildEntry[] entries = build.getBuildEntries();
 				ArrayList allKeys = new ArrayList(entries.length);
 				for (int i = 0; i < entries.length; i++)
-					allKeys.add(entries[i].getName());
+					if (!allKeys.contains(entries[i].getName()))
+						allKeys.add(entries[i].getName());
 				
 				ArrayList usedkeys = new ArrayList();
 				findTranslatedStrings(project, modelBase, bundle, usedkeys);
 				
 				for (int i = 0; i < usedkeys.size(); i++)
-					if (allKeys.contains(usedkeys.get(i)))
-						allKeys.remove(usedkeys.get(i));
+					allKeys.remove(usedkeys.get(i));
+				
+				if (allKeys.size() == 0)
+					return;
+				
+				// scan properties file for keys referencing other keys
+				for (int i = 0; i < entries.length; i++) {
+					String[] tokens = entries[i].getTokens();
+					if (tokens == null || tokens.length == 0)
+						continue;
+					String entry = tokens[0];
+					for (int k = 1; k < tokens.length; k++)
+						entry += ',' + tokens[k];
+					if (entry.indexOf('%') == entry.lastIndexOf('%'))
+						continue;
+					
+					// allKeys must NOT have any duplicates
+					for (int j = 0; j < allKeys.size(); j++) {
+						String akey = '%' + (String)allKeys.get(j) + '%';
+						if (entry.indexOf(akey) != -1)
+							allKeys.remove(allKeys.get(j--));
+						if (allKeys.size() == 0)
+							return;
+					}
+				}
 				
 				for (int i = 0; i < allKeys.size(); i++) {
 					IBuildEntry entry = build.getEntry((String)allKeys.get(i));
@@ -427,28 +454,31 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 				list.add(value);
 		}
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-		for (int i = 0; i < extensions.length; i++) {
-			inspectExtensionForTranslation(extensions[i], list);
-		}
+		for (int i = 0; i < extensions.length; i++)
+			if (extensions[i] instanceof IDocumentNode)
+				inspectElementForTranslation((IDocumentNode)extensions[i], list);
 	}
 	
-	private static void inspectExtensionForTranslation(IPluginParent parent, ArrayList list) {
-		IPluginObject[] children = parent.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			IPluginElement child = (IPluginElement)children[i];
-			String textValue = getTranslatedKey(child.getText());
-			if (textValue != null && !list.contains(textValue))
-				list.add(textValue);
-			
-			IPluginAttribute[] attributes = child.getAttributes();
-			for (int j = 0; j < attributes.length; j++) {
-				String attrValue = getTranslatedKey(attributes[j].getValue());
-				if (attrValue != null && !list.contains(attrValue))
-					list.add(attrValue);
-			}
-			
-			inspectExtensionForTranslation(child, list);
+	private static void inspectElementForTranslation(IDocumentNode parent, ArrayList list) {
+		IDocumentTextNode text = parent.getTextNode();
+		String textValue = getTranslatedKey(text != null ? text.getText() : null);
+		if (textValue != null && !list.contains(textValue))
+			list.add(textValue);
+		
+		IDocumentAttribute[] attributes = parent.getNodeAttributes();
+		for (int j = 0; j < attributes.length; j++) {
+			String attrValue = getTranslatedKey(attributes[j].getAttributeValue());
+			if (attrValue != null && !list.contains(attrValue))
+				list.add(attrValue);
 		}
+		
+		if (!(parent instanceof IPluginParent))
+			return;
+		
+		IPluginObject[] children = ((IPluginParent)parent).getChildren();
+		for (int i = 0; i < children.length; i++)
+			if (children[i] instanceof IDocumentNode)
+				inspectElementForTranslation((IDocumentNode)children[i], list);	
 	}
 	
 	private static void findTranslatedMFStrings(IBundle bundle, ArrayList list) {
@@ -456,7 +486,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 			return;
 		for (int i = 0; i < ICoreConstants.TRANSLATABLE_HEADERS.length; i++) {
 			String key = getTranslatedKey(bundle.getHeader(ICoreConstants.TRANSLATABLE_HEADERS[i]));
-			if (key != null)
+			if (key != null && !list.contains(key))
 				list.add(key);
 		}
 	}
