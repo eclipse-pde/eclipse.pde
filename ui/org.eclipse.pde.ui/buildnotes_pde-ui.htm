@@ -26,18 +26,11 @@ charset=iso-8859-1 rel=stylesheet>
 <p>Eclipse SDK 3.2M5 - Feb 15, 2006</p>
 
 <H2>What's new in this drop</H2>
-<UL>
-  <LI>Added support for patch fragments<LI>PDE now consults the &#39;osgi.bundles&#39; 
-  key in the target&#39;s config.ini when launching or exporting a product.<LI>
-  Adapted the source lookup to the newly refactored classloader.
-  <LI>Removed 2.1 backward compatibility for self-hosting<LI>The new PDE source
-  lookup for debugging Eclipse/Equinox/Plugin JUnit applications can now locate 
-  source dynamically when the main thread is suspended.<LI>The extension point 
-  ID to contribute target definitions has been finalized to be
-  <font face="Courier">org.eclipse.pde.core.targets</font><LI>The Target Editor 
-  allows the specification of multiple directories in the target.<LI>New 
-  template for the <font face="Courier">org.eclipse.ui.decorators</font> 
-  extension point has been added.<LI>Added a Reset button to the Target Platform 
+In addition to the items listed in the 3.2M5 New and Noteworthy section:<UL>
+  <LI>Removed 2.1 backward compatibility for self-hosting.<LI>New 
+  templates for the <font face="Courier">org.eclipse.ui.decorators</font>&nbsp; 
+  and <font face="Courier">org.eclipse.ui.importWizards </font> 
+  extension points has been added.<LI>Added a Reset button to the Target Platform 
   preference page to make it easy to restore to the default target platform 
   location.</UL>
 <p><b><font size="4">Problem Reports Fixed</font></b></p>
@@ -67,8 +60,7 @@ charset=iso-8859-1 rel=stylesheet>
       <span style="display: none"></span>
     </td>
 
-    <td >Source lookup confused if same type is defined in different projects
-    </td>
+    <td >Source lookup confused if same type is defined in different projects</td>
 
   </tr>
 
@@ -229,7 +221,7 @@ charset=iso-8859-1 rel=stylesheet>
       <span style="display: none"></span>
     </td>
 
-    <td >plugin classpath (“Bundle-ClassPath”) is ignored during compile time?
+    <td >plugin classpath (?Bundle-ClassPath?) is ignored during compile time?
     </td>
 
   </tr>
