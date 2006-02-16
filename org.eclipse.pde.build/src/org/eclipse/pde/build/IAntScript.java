@@ -73,7 +73,7 @@ public interface IAntScript {
 	
 	/**
 	 * Print tagName as an xml end tag (<code>&lt;/tagName&gt;<code>).
-	 * @param tagName the tag to print.
+	 * @param endTag the tag to print.
 	 */
 	public void printEndTag(String endTag);
 	
