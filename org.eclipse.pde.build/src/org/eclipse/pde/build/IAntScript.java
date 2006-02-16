@@ -49,7 +49,7 @@ public interface IAntScript {
 	public void println();
 	
 	/**
-	 * Print an ant call task as defined on {@link http://ant.apache.org/manual/CoreTasks/antcall.html }.
+	 * Print an ant call task as defined by <a href="http://ant.apache.org/manual/CoreTasks/antcall.html">AntCall</a>}.
 	 * @param target the target executed by the call. This value can not be <code>null</code>.
 	 * @param inheritAll If true, pass all properties to the new Ant project.
 	 * @param params Specifies as key / value pairs, the properties to set before running the specified target. This value can be <code>null</code>
@@ -83,7 +83,7 @@ public interface IAntScript {
 	public void printTabs();
 	
 	/**
-	 * Print a target declaration. See {@link http://ant.apache.org/manual/using.html#targets }. 
+	 * Print a target declaration. See <a href="http://ant.apache.org/manual/using.html#targets">Ant's targets</a>. 
 	 * @param name the name of the target. This value can not be <code>null</code>.
 	 * @param depends a comma-separated list of names of targets on which this target depends. This value can be <code>null</code>.
 	 * @param ifClause the name of the property that must be set in order for this target to execute. This value can be <code>null</code>
