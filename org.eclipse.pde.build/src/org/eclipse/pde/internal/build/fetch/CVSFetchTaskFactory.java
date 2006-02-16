@@ -37,7 +37,6 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 	private static final String KEY_CVSPASSFILE = "cvsPassFile"; //$NON-NLS-1$
 	private static final String KEY_PASSWORD = "password"; //$NON-NLS-1$
 	private static final String KEY_PATH = "path"; //$NON-NLS-1$
-	private static final String KEY_TAG = "tag"; //$NON-NLS-1$
 
 	//Properties used in the CVS part of the scripts
 	private static final String PROP_DESTINATIONFOLDER = "destinationFolder"; //$NON-NLS-1$
@@ -62,7 +61,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		Map params = new HashMap(5);
 		// we directly export the CVS content into the destination
 		params.put(PROP_DESTINATIONFOLDER, destination.uptoSegment(destination.segmentCount() - 1).toString());
-		params.put(PROP_TAG, entryInfos.get(KEY_TAG));
+		params.put(PROP_TAG, entryInfos.get(IFetchFactory.KEY_ELEMENT_TAG));
 		params.put(PROP_CVSROOT, entryInfos.get(KEY_CVSROOT));
 		params.put(PROP_QUIET, "${cvs.quiet}"); //$NON-NLS-1$
 		params.put(PROP_ELEMENTNAME, element);
@@ -100,7 +99,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 			} else {
 				filePath = new Path((String) entryInfos.get(KEY_ELEMENT_NAME)).append(file);
 			}
-			printCVSTask("export -r " + (String) entryInfos.get(KEY_TAG) + ' ' + filePath.toString(), (String) entryInfos.get(KEY_CVSROOT), destination.toString(), null, null, "true", null, null, script);  //$NON-NLS-1$//$NON-NLS-2$
+			printCVSTask("export -r " + (String) entryInfos.get(IFetchFactory.KEY_ELEMENT_TAG) + ' ' + filePath.toString(), (String) entryInfos.get(KEY_CVSROOT), destination.toString(), null, null, "true", null, null, script);  //$NON-NLS-1$//$NON-NLS-2$
 			script.println("<move file=\"" + destination + '/' + filePath + "\"" + " tofile=\"" + destination.append(file) + "\" failonerror=\"false\" />");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 	}
@@ -120,7 +119,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 
 		String overrideTag = overrideTags.getProperty(OVERRIDE_TAG);
 		entryInfos.put(KEY_CVSPASSFILE, (arguments.length > 4 && !arguments[4].equals("")) ? arguments[4] : null); //$NON-NLS-1$
-		entryInfos.put(KEY_TAG, (overrideTag != null && overrideTag.trim().length() != 0 ? overrideTag : arguments[0]));
+		entryInfos.put(IFetchFactory.KEY_ELEMENT_TAG, (overrideTag != null && overrideTag.trim().length() != 0 ? overrideTag : arguments[0]));
 		entryInfos.put(KEY_CVSROOT, arguments[1]);
 		entryInfos.put(KEY_PASSWORD, (arguments.length > 2 && !arguments[2].equals("")) ? arguments[2] : null); //$NON-NLS-1$
 		entryInfos.put(KEY_PATH, (arguments.length > 3 && !arguments[3].equals("")) ? arguments[3] : null); //$NON-NLS-1$ 

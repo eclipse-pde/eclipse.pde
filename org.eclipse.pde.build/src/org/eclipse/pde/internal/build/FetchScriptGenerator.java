@@ -330,6 +330,16 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			}
 			factory.generateRetrieveFilesCall(mapFileEntry, computeFinalLocation(type, elementToFetch), files, script);
 		}
+		
+		//Keep track of the element that are being fetched
+		Properties tags = null;
+		if (type.equals(IFetchFactory.ELEMENT_TYPE_FEATURE))
+			tags = repositoryFeatureTags;
+		else 
+			tags = repositoryPluginTags;
+		if (mapFileEntry.get(IFetchFactory.KEY_ELEMENT_TAG) != null)
+			tags.put(elementToFetch, mapFileEntry.get(IFetchFactory.KEY_ELEMENT_TAG));
+		
 		return true;
 	}
 
@@ -390,7 +400,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		// feature from CVS
 		File root = new File(workingDirectory);
 		File target = new File(root, DEFAULT_RETRIEVE_FILENAME_DESCRIPTOR);
-		IPath destination = new Path(root.getAbsolutePath()).append("tempFeature/");
+		IPath destination = new Path(root.getAbsolutePath()).append("tempFeature/"); //$NON-NLS-1$
 		try {
 			AntScript retrieve = new AntScript(new FileOutputStream(target));
 			try {
@@ -564,7 +574,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		for (int i = 0; i < entries.length; i++) {
 			String[] valueForRepo = Utils.getArrayFromString(entries[i], "="); //$NON-NLS-1$
 			if (valueForRepo == null || valueForRepo.length != 2)
-				throw new IllegalArgumentException("FetchTag " + entries[i]);
+				throw new IllegalArgumentException("FetchTag " + entries[i]); //$NON-NLS-1$
 			fetchTags.put(valueForRepo[0], valueForRepo[1]);
 		}
 	}
