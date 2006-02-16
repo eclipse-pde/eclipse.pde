@@ -82,7 +82,7 @@ public class BuildFeatureAction extends BaseBuildAction {
 					.getReferencedFeature();
 			if (child != null && child != fFeatureModel.getFeature()) {
 				IFeatureModel refmodel = child.getModel();
-				if (refmodel != null) {
+				if (refmodel != null && refmodel.getUnderlyingResource() != null) {
 					refmodel.getUnderlyingResource().getProject().refreshLocal(
 							IResource.DEPTH_ONE, monitor);
 				}
