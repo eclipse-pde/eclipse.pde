@@ -463,7 +463,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_FEATURE_BASE, null, null);
-		script.printMkdirTask(root);
+		if (include != null)
+			script.printMkdirTask(root);
 		
 		Map callbackParams = null;
 		if (customFeatureCallbacks != null) {
