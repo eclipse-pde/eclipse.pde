@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Gunnar Wagenknecht - Initial API and implementation
- *     IBM - Initial API and implementation
+ *     IBM Corporation - Initial API and implementation
  **********************************************************************/
  package org.eclipse.pde.build;
 
