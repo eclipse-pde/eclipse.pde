@@ -13,11 +13,14 @@ package org.eclipse.pde.build;
 import java.util.Map;
 
 /**
- * An interface providing helper methods to produce Ant scripts. 
+ * Interface providing helper methods to produce Ant scripts. 
  * <p> 
  * It contains convenience methods for creating the XML elements 
  * required for Ant scripts. See the <a href="http://ant.apache.org">Ant</a> 
  * website for more details on Ant scripts and the particular Ant tasks.
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented by clients.
  * </p>
  */
 public interface IAntScript {

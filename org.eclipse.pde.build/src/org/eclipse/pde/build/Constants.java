@@ -16,8 +16,15 @@
  * @since 3.2
  */
 public interface Constants {
+	/** Constant for the string <code>feature.xml</code> */
 	public final static String FEATURE_FILENAME_DESCRIPTOR = "feature.xml"; //$NON-NLS-1$
+	
+	/** Constant for the string <code>fragment.xml</code> */
 	public final static String FRAGMENT_FILENAME_DESCRIPTOR = "fragment.xml"; //$NON-NLS-1$
+	
+	/** Constant for the string <code>plugin.xml</code> */
 	public final static String PLUGIN_FILENAME_DESCRIPTOR = "plugin.xml"; //$NON-NLS-1$
+	
+	/** Constant for the string <code>META-INF/MANIFEST.MF</code> */
 	public final static String BUNDLE_FILENAME_DESCRIPTOR = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
 }

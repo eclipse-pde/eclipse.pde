@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 /**
+ * Interface to be implemented by clients of the <code>org.eclipse.pde.build.fetchFactories</code> extension-point.
+ * <p>
  * The factories are being used at various points in the execution of the PDE Build<code>eclipse.fetch</code> Ant task.
  * Based on a map file entry, they are responsible for generating segments of an ant script whose execution will fetch 
  * plug-ins, fragments, bundles and features or individual files contained in one of those elements.
@@ -44,7 +46,15 @@ public interface IFetchFactory {
 	/** Key used to store the value of the element type */
 	public static final String KEY_ELEMENT_TYPE = "type"; //$NON-NLS-1$
 
-	/** Key used to store the value of the tag that will be used to fetch the element */
+	/** Key used to store the value of the tag that will be used to fetch the element.
+	 * <p>
+	 *  The grammar of the expected value is limited to:
+	 *  <pre>
+	 *  	 value::= (alpha|digit|'_'|'-')+
+	 *      digit ::= [0..9]
+	 *      alpha ::= [a..zA..Z]
+	 * </pre>
+	 *  */
 	public static final String KEY_ELEMENT_TAG = "tag"; //$NON-NLS-1$
 
 	/** One of the value for element type. See {@link #KEY_ELEMENT_TYPE}.*/
@@ -72,8 +82,9 @@ public interface IFetchFactory {
 	 * @param overrideTags a key / value containing all the override tags specified for all the repository (maybe <code>null</code> or empty). 
 	 * The values of this map of this are read from the fetchTag property (see file scripts/templates/headless-build/build.properties). 
 	 * @param entryInfos the map to store repository specific information derived from the rawEntry.This object is being passed as arguments to 
-	 * the other methods of the factory.  The factories are also expected to set {@link #KEY_ELEMENT_TAG} to indicate the tag that will be used 
-	 * to fetch the element. Note that {@link #KEY_ELEMENT_NAME} and {@link #KEY_ELEMENT_TYPE} are reserved entries whose values respectively 
+	 * the other methods of the factory. The factories are also expected to set {@link #KEY_ELEMENT_TAG} to indicate the tag that will be used 
+	 * to fetch the element. This value is for example used to generate the "qualifier" value of a version number. 
+	 * Note that {@link #KEY_ELEMENT_NAME} and {@link #KEY_ELEMENT_TYPE} are reserved entries whose values respectively 
 	 * refer to the name of the element being fetched and its type.
 	 * @throws CoreException if the rawEntry is incorrect.
 	 */
