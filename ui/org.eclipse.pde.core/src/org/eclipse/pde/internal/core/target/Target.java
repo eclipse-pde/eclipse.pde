@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -27,6 +28,7 @@ import org.eclipse.pde.internal.core.itarget.ITargetFeature;
 import org.eclipse.pde.internal.core.itarget.ITargetJRE;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.core.itarget.ITargetModelFactory;
+import org.eclipse.pde.internal.core.itarget.ITargetObject;
 import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -256,17 +258,18 @@ public class Target extends TargetObject implements ITarget {
 	}
 	
 	public void addPlugins(ITargetPlugin[] plugins) {
-		boolean modify = false;
+		ArrayList list = new ArrayList();
 		for (int i = 0; i < plugins.length; i ++ ) {
 			String id = plugins[i].getId();
 			if (fPlugins.containsKey(id))
 				continue;
-			modify = true;
+			list.add(plugins[i]);
 			plugins[i].setModel(getModel());
 			fPlugins.put(id, plugins[i]);
 		}
-		if (isEditable() && modify) {
-			fireStructureChanged(plugins, IModelChangedEvent.INSERT);
+		if (isEditable() && list.size() > 0) {
+			fireStructureChanged((ITargetObject[])list.toArray(new ITargetObject[list.size()]), 
+								IModelChangedEvent.INSERT);
 		}
 	}
 
@@ -275,17 +278,18 @@ public class Target extends TargetObject implements ITarget {
 	}
 	
 	public void addFeatures(ITargetFeature[] features) {
-		boolean modify = false;
+		ArrayList list = new ArrayList();
 		for (int i = 0; i < features.length; i++) {
 			String id = features[i].getId();
 			if (fFeatures.containsKey(id))
 				continue;
-			modify = true;
+			list.add(features[i]);
 			features[i].setModel(getModel());
 			fFeatures.put(id, features[i]);
 		}
-		if (isEditable() && modify)
-			fireStructureChanged(features, IModelChangedEvent.INSERT);
+		if (isEditable() && list.size() > 0)
+			fireStructureChanged((ITargetObject[])list.toArray(new ITargetObject[list.size()]), 
+					IModelChangedEvent.INSERT);
 	}
 
 	public void removePlugin(ITargetPlugin plugin) {
