@@ -91,7 +91,7 @@ public class TargetDefinitionManager implements IRegistryChangeListener{
 				return false;
 		}
 		value = elem.getAttribute("definition"); //$NON-NLS-1$
-		String symbolicName = elem.getDeclaringExtension().getNamespace();
+		String symbolicName = elem.getDeclaringExtension().getNamespaceIdentifier();
 		URL url = getResourceURL(symbolicName, value);
 		try {
 			if (url != null && url.openStream().available() > 0)
