@@ -115,7 +115,7 @@ public class EquinoxPluginBlock extends AbstractPluginBlock {
 				final Spinner spinner = new Spinner(tree, SWT.BORDER);
 				spinner.setMinimum(0);
 				String level = item.getText(1);
-				int defaultLevel =  "default".equals(level) ? 0 : Integer.parseInt(level); //$NON-NLS-1$
+				int defaultLevel =  level.length() == 0 || "default".equals(level) ? 0 : Integer.parseInt(level); //$NON-NLS-1$
 				spinner.setSelection(defaultLevel);
 				spinner.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent e) {
