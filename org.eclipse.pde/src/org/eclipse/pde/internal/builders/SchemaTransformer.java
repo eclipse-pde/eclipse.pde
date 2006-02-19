@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Locale;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.core.ischema.IDocumentSection;
@@ -59,7 +60,7 @@ public class SchemaTransformer {
 	private void setCssURL(URL cssURL) {
 		try {
 			if (cssURL != null) 
-				fCssURL = Platform.resolve(cssURL);
+				fCssURL = FileLocator.resolve(cssURL);
 		} catch (IOException e) {
 		}
 		if (fCssURL == null && fCssPurpose != BUILD)
@@ -103,7 +104,7 @@ public class SchemaTransformer {
 			if (bundle != null) {
 				URL entry = bundle.getEntry(resourcePath);
 				if (entry != null)
-					return Platform.asLocalURL(entry);
+					return FileLocator.toFileURL(entry);
 			}
 		} catch (IOException e) {
 		}
