@@ -38,8 +38,6 @@ public class BuildSiteAction implements IObjectActionDelegate,
 
 	private IFile fSiteXML;
 	
-	private IWorkbenchPart fTargetPart;
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -47,7 +45,6 @@ public class BuildSiteAction implements IObjectActionDelegate,
 	 *      org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		fTargetPart = targetPart;
 	}
 
 	/*
@@ -63,7 +60,7 @@ public class BuildSiteAction implements IObjectActionDelegate,
 		IFeatureModel[] models = getFeatureModels(sbFeatures);
 
 		if (models.length > 0) {
-			BuildSiteJob job = new BuildSiteJob(fTargetPart.getSite().getShell().getDisplay(), models, fModel);
+			BuildSiteJob job = new BuildSiteJob(models, fModel);
 			job.setUser(true);
 			job.schedule();
 			job.setProperty(IProgressConstants.ICON_PROPERTY,

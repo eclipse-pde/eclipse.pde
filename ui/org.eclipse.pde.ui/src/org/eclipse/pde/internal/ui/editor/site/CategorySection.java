@@ -669,14 +669,14 @@ public class CategorySection extends TreeSection implements
 			return;
 		}
 
-		BuildSiteJob job = new BuildSiteJob(fCategoryViewer.getTree().getDisplay(), models, buildSiteModel);
+		BuildSiteJob job = new BuildSiteJob(models, buildSiteModel);
 		job.setUser(true);
 		job.schedule();
 	}
 
 	/**
 	 * Finds a feature with the same id and version as a site feature. If
-	 * feature is not found, but feature with a M.m.m.qualifier exists it will
+	 * feature is not found, but feature with a M.m.s.qualifier exists it will
 	 * be returned.
 	 * 
 	 * @param siteFeature

@@ -37,7 +37,6 @@ import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.swt.widgets.Display;
 
 public class BuildSiteJob extends FeatureExportJob {
 
@@ -60,8 +59,7 @@ public class BuildSiteJob extends FeatureExportJob {
 		return info;
 	}
 
-	public BuildSiteJob(Display display, IFeatureModel[] models,
-			ISiteModel siteModel) {		
+	public BuildSiteJob(IFeatureModel[] models, ISiteModel siteModel) {		
 		super(getInfo(siteModel, models));
 		fFeaturemodels = models;
 		fSiteModel = siteModel;
