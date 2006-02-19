@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.pde.junit.runtime; singleton:=true
 Bundle-Version: 3.2.0.qualifier
-Bundle-ClassPath: pdejunit.jar
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.jdt.junit.runtime;bundle-version="[3.2.0,4.0.0)",
