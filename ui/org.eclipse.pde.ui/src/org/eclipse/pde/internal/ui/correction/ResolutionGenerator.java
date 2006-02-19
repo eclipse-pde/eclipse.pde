@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.pde.internal.builders.PDEMarkerFactory;
+import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
 

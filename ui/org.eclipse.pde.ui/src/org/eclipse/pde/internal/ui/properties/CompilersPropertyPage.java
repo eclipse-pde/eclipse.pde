@@ -18,7 +18,7 @@ import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.window.Window;
-import org.eclipse.pde.internal.builders.CompilerFlags;
+import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.preferences.CompilersConfigurationTab;

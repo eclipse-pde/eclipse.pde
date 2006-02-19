@@ -31,6 +31,8 @@ import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.internal.core.builders.CompilerFlags;
+import org.eclipse.pde.internal.core.builders.FeatureRebuilder;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
@@ -197,6 +199,8 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	private BundleContext fBundleContext;
 	private ServiceTracker fTracker;
 	private JavaElementChangeListener fJavaElementChangeListener;
+
+	private FeatureRebuilder fFeatureRebuilder;
 
 	public PDECore() {
 		inst = this;
@@ -400,8 +404,11 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		this.fBundleContext = context;
+		fBundleContext = context;
 		fJavaElementChangeListener = new JavaElementChangeListener();
+		CompilerFlags.initializeDefaults();
+		fFeatureRebuilder = new FeatureRebuilder();
+		fFeatureRebuilder.start();
 	}
 
 	public BundleContext getBundleContext() {
@@ -437,6 +444,10 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		if (fTargetProfileManager!=null) {
 			fTargetProfileManager.shutdown();
 			fTargetProfileManager = null;
+		}
+		if (fFeatureRebuilder != null) {
+			fFeatureRebuilder.stop();
+			fFeatureRebuilder = null;
 		}
 	}
 }

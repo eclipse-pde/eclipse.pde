@@ -104,6 +104,211 @@
                %target.description.1
             </description>
          </target>
-      </extension>
+      </extension>     
+
+<!-- ================================================================================= -->
+<!-- Natures                                                                           -->
+<!-- ================================================================================= -->
+   <extension
+         id="org.eclipse.pde.PluginNature"
+         name="%natures.pluginNature.name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.pde.internal.core.natures.PluginProject">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="org.eclipse.pde.FeatureNature"
+         name="%natures.featureNature.name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.pde.internal.core.natures.FeatureProject">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="org.eclipse.pde.UpdateSiteNature"
+         name="%natures.siteNature.name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.pde.internal.core.natures.SiteProject">
+         </run>
+      </runtime>
+   </extension>
+   
+<!-- ================================================================================= -->
+<!-- Builders                                                                          -->
+<!-- ================================================================================= -->
+   <extension
+         id="org.eclipse.pde.ManifestBuilder"
+         name="%builders.manifestBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.eclipse.pde.internal.core.builders.ManifestConsistencyChecker">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="org.eclipse.pde.SchemaBuilder"
+         name="%builders.schemaBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.eclipse.pde.internal.core.builders.ExtensionPointSchemaBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="org.eclipse.pde.FeatureBuilder"
+         name="%builders.featureBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.eclipse.pde.internal.core.builders.FeatureConsistencyChecker">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="org.eclipse.pde.UpdateSiteBuilder"
+         name="%builders.siteBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.eclipse.pde.internal.core.builders.UpdateSiteBuilder">
+         </run>
+      </builder>
+   </extension>
+      
+<!-- ================================================================================= -->
+<!-- Markers                                                                           -->
+<!-- ================================================================================= -->
+   <extension
+         id="org.eclipse.pde.validation-marker"
+         name="%builders.marker.label"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <super type="org.eclipse.core.resources.textmarker"/>
+      <attribute name="id"/>
+      <persistent value="true"/>
+   </extension>
+   
+<!-- ================================================================================= -->
+<!-- Content Types                                                                     -->
+<!-- ================================================================================= -->
+   <extension 
+   		 point="org.eclipse.core.runtime.contentTypes">
+      <content-type 
+      		id="pluginManifest" 
+      		name="%pluginManifestName" 
+    		base-type="org.eclipse.core.runtime.xml"
+   			priority="high"				
+    		file-names="plugin.xml">
+    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+    		<parameter name="element" value="plugin"/>
+		</describer>
+	  </content-type>
+   	  <content-type 
+   	  		id="fragmentManifest" 
+   	  		name="%fragmentManifestName" 
+       		base-type="org.eclipse.core.runtime.xml"
+    		priority="high"				
+    		file-names="fragment.xml">
+    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+    		<parameter name="element" value="fragment"/>
+		</describer>
+	  </content-type>
+   	  <content-type 
+   	  		id="featureManifest" 
+   	  		name="%featureManifestName" 
+       		base-type="org.eclipse.core.runtime.xml"
+    		priority="high"				
+    		file-names="feature.xml">
+    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+    		<parameter name="element" value="feature"/>
+		</describer>
+	  </content-type>
+   	  <content-type 
+   	  		id="siteManifest" 
+   	  		name="%siteManifestName" 
+       		base-type="org.eclipse.core.runtime.xml"
+    		priority="high"				
+    		file-names="site.xml">
+    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+    		<parameter name="element" value="site"/>
+		</describer>
+	  </content-type>
+   	  <content-type 
+   	  		id="productFile" 
+   	  		name="%productConfiguration" 
+       		base-type="org.eclipse.core.runtime.xml"
+    		priority="high"				
+    		file-extensions="product">
+    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+    		<parameter name="element" value="product"/>
+		</describer>
+	  </content-type>
+   	  <content-type 
+   	  		id="targetFile" 
+   	  		name="%target.profile.content" 
+       		base-type="org.eclipse.core.runtime.xml"
+    		priority="high"				
+    		file-extensions="target">
+    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+    		<parameter name="element" value="target"/>
+		</describer>
+	  </content-type>
+   	  <content-type 
+   	  		id="schema" 
+   	  		name="%schemaFile" 
+       		base-type="org.eclipse.core.runtime.xml"
+    		priority="high"				
+    		file-extensions="exsd">
+    	<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+    		<parameter name="element" value="schema"/>
+		</describer>
+	  </content-type>
+	  <content-type 
+	  		id="pluginProperties" 
+	  		name="%pluginPropertiesName" 
+    		base-type="org.eclipse.jdt.core.javaProperties"
+    		priority="high"				
+    		file-names="plugin.properties"/>
+      <content-type 
+		    id="buildProperties" 
+		    name="%buildPropertiesName" 
+		    base-type="org.eclipse.jdt.core.javaProperties"
+		    priority="high"
+		    file-names="build.properties"/>
+      <content-type 
+		    id="bundleManifest" 
+		    name="%bundleManifest" 
+		    base-type="org.eclipse.jdt.core.JARManifest"
+		    priority="high"
+            describer="org.eclipse.pde.internal.core.content.BundleManifestDescriber"/>
+    </extension>
+   
+<!-- ================================================================================= -->
+<!-- Ant-related extensions                                                            -->
+<!-- ================================================================================= -->
+    <extension
+         point="org.eclipse.ant.core.antTasks">
+      <antTask
+            library="ant_tasks/pde-ant.jar"
+            name="pde.convertSchemaToHTML"
+            class="org.eclipse.pde.internal.core.ant.ConvertSchemaToHTML">
+      </antTask>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ant.core.extraClasspathEntries">
+      <extraClasspathEntry
+            library="ant_tasks/pde-ant.jar">
+      </extraClasspathEntry>
+   </extension>
    
 </plugin>

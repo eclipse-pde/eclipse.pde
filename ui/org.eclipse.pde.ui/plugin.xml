@@ -1758,25 +1758,25 @@
    <extension
          point="org.eclipse.core.filebuffers.annotationModelCreation">
       <factory
-            contentTypeId="org.eclipse.pde.pluginManifest"
+            contentTypeId="org.eclipse.pde.core.pluginManifest"
             class="org.eclipse.pde.internal.ui.editor.text.AnnotationModelFactory"/>
    </extension>
    <extension
          point="org.eclipse.core.filebuffers.annotationModelCreation">
       <factory
-            contentTypeId="org.eclipse.pde.pluginManifest"
+            contentTypeId="org.eclipse.pde.core.pluginManifest"
             class="org.eclipse.pde.internal.ui.editor.text.AnnotationModelFactory"/>
    </extension>
    <extension
          point="org.eclipse.core.filebuffers.annotationModelCreation">
       <factory
-            contentTypeId="org.eclipse.pde.fragmentManifest"
+            contentTypeId="org.eclipse.pde.core.fragmentManifest"
             class="org.eclipse.pde.internal.ui.editor.text.AnnotationModelFactory"/>
    </extension>
    <extension
          point="org.eclipse.core.filebuffers.annotationModelCreation">
       <factory
-            contentTypeId="org.eclipse.pde.bundleManifest"
+            contentTypeId="org.eclipse.pde.core.bundleManifest"
             class="org.eclipse.pde.internal.ui.editor.text.AnnotationModelFactory"/>
    </extension>
    <extension
@@ -1786,7 +1786,7 @@
             extensions="MF"
             id="org.eclipse.pde.internal.ui.compare.ManifestStructureMergeViewerCreator"/>
       <contentTypeBinding
-            contentTypeId="org.eclipse.pde.bundleManifest"
+            contentTypeId="org.eclipse.pde.core.bundleManifest"
             structureMergeViewerId="org.eclipse.pde.internal.ui.compare.ManifestStructureMergeViewerCreator"/>
       <!--<viewer
             extensions="xml"
@@ -1804,7 +1804,7 @@
             id="org.eclipse.pde.internal.ui.compare.ManifestContentMergeViewerCreator"/>
       <contentTypeBinding
             contentMergeViewerId="org.eclipse.pde.internal.ui.compare.ManifestContentMergeViewerCreator"
-            contentTypeId="org.eclipse.pde.bundleManifest"/>
+            contentTypeId="org.eclipse.pde.core.bundleManifest"/>
       <!--<viewer
             class="org.eclipse.pde.internal.ui.compare.XMLContentMergeViewerCreator"
             extensions="xml"

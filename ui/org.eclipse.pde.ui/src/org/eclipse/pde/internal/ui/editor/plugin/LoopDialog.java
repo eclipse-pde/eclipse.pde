@@ -15,7 +15,7 @@ import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.pde.internal.builders.DependencyLoop;
+import org.eclipse.pde.internal.core.builders.DependencyLoop;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;

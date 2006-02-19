@@ -29,8 +29,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.pde.internal.PDE;
-import org.eclipse.pde.internal.builders.CompilerFlags;
+import org.eclipse.pde.internal.core.builders.CompilerFlags;
+import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -314,7 +315,7 @@ public class CompilersConfigurationTab {
 				try {
 					IProject[] projects = null;
 					if (project == null) {
-						projects = PDE.getWorkspace().getRoot().getProjects();
+						projects = PDEPlugin.getWorkspace().getRoot().getProjects();
 					} else {
 						projects = new IProject[] { project };
 					}
