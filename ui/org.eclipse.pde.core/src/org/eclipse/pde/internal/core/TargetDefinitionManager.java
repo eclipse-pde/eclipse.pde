@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
@@ -107,7 +108,7 @@ public class TargetDefinitionManager implements IRegistryChangeListener{
 			if (bundle != null && resourcePath != null) {
 				URL entry = bundle.getEntry(resourcePath);
 				if (entry != null)
-					return Platform.asLocalURL(entry);
+					return FileLocator.toFileURL(entry);
 			}
 		} catch (IOException e) {
 		}

@@ -18,6 +18,7 @@ import java.util.Locale;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
@@ -203,7 +204,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 
 	public URL getInstallURL() {
 		try {
-			return Platform.resolve(getDefault().getBundle().getEntry("/")); //$NON-NLS-1$
+			return FileLocator.resolve(getDefault().getBundle().getEntry("/")); //$NON-NLS-1$
 		} catch (IOException e) {
 			return null;
 		}
