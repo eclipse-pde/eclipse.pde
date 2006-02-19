@@ -15,8 +15,8 @@ Require-Bundle: org.junit,
  org.eclipse.jdt.core,
  org.eclipse.test.performance,
  org.eclipse.ui.ide,
- org.eclipse.pde,
  org.eclipse.team.core,
  org.eclipse.jdt.ui,
- org.eclipse.jdt.launching
+ org.eclipse.jdt.launching,
+ org.eclipse.pde.core
 Eclipse-LazyStart: true

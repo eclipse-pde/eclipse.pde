@@ -17,9 +17,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.*;
+import org.eclipse.pde.internal.core.natures.*;
 import org.eclipse.pde.ui.tests.*;
 
 public class SimplePluginTestCase extends NewProjectTest {

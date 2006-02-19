@@ -17,11 +17,11 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.internal.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.*;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.natures.*;
 import org.eclipse.pde.ui.tests.*;
 import org.eclipse.pde.ui.tests.wizards.plugin.NewProjectTest;
 

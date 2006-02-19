@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.pde.internal.PDE;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
 import org.eclipse.pde.internal.ui.wizards.site.NewSiteProjectCreationOperation;
 import org.eclipse.swt.widgets.Display;
