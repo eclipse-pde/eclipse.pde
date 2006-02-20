@@ -22,14 +22,84 @@ charset=iso-8859-1 rel=stylesheet>
 <P>
 <HR>
 
+
+<H1>Eclipse Platform Build Notes<BR>Plug-in Development Environment</H1>
+<p>Eclipse SDK 3.2M6 - Feb 20, 2006</p>
+<p><b><font size="4">Problem Reports Fixed</font></b></p>
+<table class="bz_buglist" cellspacing="0" cellpadding="4" width="100%">
+    <colgroup>
+      <col class="bz_id_column">
+      <col class="bz_short_desc_column">
+    </colgroup>
+  <tr align="left">
+    <th colspan="1" class="first-child">
+      <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&amp;short_desc_type=allwordssubstr&amp;short_desc=&amp;classification=Eclipse&amp;product=PDE&amp;component=UI&amp;target_milestone=3.2%20M6&amp;long_desc_type=allwordssubstr&amp;long_desc=&amp;bug_file_loc_type=allwordssubstr&amp;bug_file_loc=&amp;status_whiteboard_type=allwordssubstr&amp;status_whiteboard=&amp;keywords_type=allwords&amp;keywords=&amp;bug_status=RESOLVED&amp;bug_status=VERIFIED&amp;bug_status=CLOSED&amp;resolution=FIXED&amp;emailtype1=exact&amp;email1=&amp;emailtype2=substring&amp;email2=&amp;bugidtype=include&amp;bug_id=&amp;votes=&amp;chfieldfrom=&amp;chfieldto=Now&amp;chfieldvalue=&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;order=bugs.bug_id&amp;query_based_on=">ID</a>
+    </th>
+    <th colspan="1">
+      <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&amp;short_desc_type=allwordssubstr&amp;short_desc=&amp;classification=Eclipse&amp;product=PDE&amp;component=UI&amp;target_milestone=3.2%20M6&amp;long_desc_type=allwordssubstr&amp;long_desc=&amp;bug_file_loc_type=allwordssubstr&amp;bug_file_loc=&amp;status_whiteboard_type=allwordssubstr&amp;status_whiteboard=&amp;keywords_type=allwords&amp;keywords=&amp;bug_status=RESOLVED&amp;bug_status=VERIFIED&amp;bug_status=CLOSED&amp;resolution=FIXED&amp;emailtype1=exact&amp;email1=&amp;emailtype2=substring&amp;email2=&amp;bugidtype=include&amp;bug_id=&amp;votes=&amp;chfieldfrom=&amp;chfieldto=Now&amp;chfieldvalue=&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;order=bugs.short_desc,bugs.bug_id&amp;query_based_on=">Summary</a>
+    </th>
+  </tr>
+  <tr class="bz_minor             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+      <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=128518">128518</a>
+      <span style="display: none"></span>
+    </td>
+    <td >should &quot;mark internal&quot; default filter be *.internal*
+    </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+      <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=128523">128523</a>
+      <span style="display: none"></span>
+    </td>
+    <td >java.lang.NumberFormatException thrown by org.eclipse.pde.internal.ui.launcher.EquinoxPluginBlock
+    </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+      <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=128533">128533</a>
+      <span style="display: none"></span>
+    </td>
+    <td >org.eclipse.pde.junit.runtime can now be JARd
+    </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+      <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=128538">128538</a>
+      <span style="display: none"></span>
+    </td>
+    <td >Builders and natures can finally be moved from org.eclipse.pde
+    </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_odd             ">
+    <td class="first-child">
+      <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=128554">128554</a>
+      <span style="display: none"></span>
+    </td>
+    <td >remove dependency on core.expressions
+    </td>
+  </tr>
+  <tr class="bz_normal             bz_P3             bz_RESOLVED             bz_FIXED                                       bz_row_even             ">
+    <td class="first-child">
+      <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=128717">128717</a>
+      <span style="display: none"></span>
+    </td>
+    <td >Feature Patch/Project wizards need revamping
+    </td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<P>
+<HR>
+
 <H1>Eclipse Platform Build Notes<BR>Plug-in Development Environment</H1>
 <p>Eclipse SDK 3.2M5 - Feb 15, 2006</p>
 
 <H2>What's new in this drop</H2>
 In addition to the items listed in the 3.2M5 New and Noteworthy section:<UL>
-  <LI>Removed 2.1 backward compatibility for self-hosting.<LI>New 
-  templates for the <font face="Courier">org.eclipse.ui.decorators</font>&nbsp; 
-  and <font face="Courier">org.eclipse.ui.importWizards </font> 
+  <LI>Removed 2.1 backward compatibility for self-hosting.<LI>New
+  templates for the <font face="Courier">org.eclipse.ui.decorators</font>&nbsp;
+  and <font face="Courier">org.eclipse.ui.importWizards </font>
   extension points has been added.<LI>Added a Reset button to the Target Platform 
   preference page to make it easy to restore to the default target platform 
   location.</UL>
