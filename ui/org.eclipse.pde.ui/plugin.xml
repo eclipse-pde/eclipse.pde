@@ -553,9 +553,9 @@
             contributorClass="org.eclipse.pde.internal.ui.editor.plugin.ManifestEditorContributor"
 			matchingStrategy="org.eclipse.pde.internal.ui.editor.plugin.ManifestEditorMatchingStrategy"
             id="org.eclipse.pde.ui.manifestEditor">
-            <contentTypeBinding contentTypeId="org.eclipse.pde.pluginManifest"/>
-            <contentTypeBinding contentTypeId="org.eclipse.pde.fragmentManifest"/>
-            <contentTypeBinding contentTypeId="org.eclipse.pde.bundleManifest"/>            
+            <contentTypeBinding contentTypeId="org.eclipse.pde.core.pluginManifest"/>
+            <contentTypeBinding contentTypeId="org.eclipse.pde.core.fragmentManifest"/>
+            <contentTypeBinding contentTypeId="org.eclipse.pde.core.bundleManifest"/>            
       </editor>
       <editor
             default="true"
@@ -564,7 +564,7 @@
             class="org.eclipse.pde.internal.ui.editor.schema.SchemaEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.schema.SchemaEditorContributor"
             id="org.eclipse.pde.ui.schemaEditor">
-            <contentTypeBinding contentTypeId="org.eclipse.pde.schema"/>
+            <contentTypeBinding contentTypeId="org.eclipse.pde.core.schema"/>
       </editor>
 	  <editor
 	        default="true"
@@ -573,7 +573,7 @@
 			contributorClass="org.eclipse.pde.internal.ui.editor.build.BuildEditorContributor"
 			class="org.eclipse.pde.internal.ui.editor.build.BuildEditor"
 			id="org.eclipse.pde.ui.buildEditor">
-			<contentTypeBinding contentTypeId="org.eclipse.pde.buildProperties"/>
+			<contentTypeBinding contentTypeId="org.eclipse.pde.core.buildProperties"/>
 	  </editor>
       <editor
             default="true"
@@ -583,7 +583,7 @@
             contributorClass="org.eclipse.pde.internal.ui.editor.feature.FeatureEditorContributor"
 			matchingStrategy="org.eclipse.pde.internal.ui.editor.feature.FeatureEditorMatchingStrategy"
             id="org.eclipse.pde.ui.featureEditor">
-            <contentTypeBinding contentTypeId="org.eclipse.pde.featureManifest"/>
+            <contentTypeBinding contentTypeId="org.eclipse.pde.core.featureManifest"/>
       </editor>
       <editor
             default="true"
@@ -592,7 +592,7 @@
             class="org.eclipse.pde.internal.ui.editor.site.SiteEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.site.SiteEditorContributor"
             id="org.eclipse.pde.ui.siteEditor">
-            <contentTypeBinding contentTypeId="org.eclipse.pde.siteManifest"/>
+            <contentTypeBinding contentTypeId="org.eclipse.pde.core.siteManifest"/>
      </editor>
      <editor
             default="true"
@@ -601,7 +601,7 @@
             class="org.eclipse.pde.internal.ui.editor.product.ProductEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.product.ProductEditorContributor"
             id="org.eclipse.pde.ui.productEditor">
-            <contentTypeBinding contentTypeId="org.eclipse.pde.productFile"/>
+            <contentTypeBinding contentTypeId="org.eclipse.pde.core.productFile"/>
       </editor>
       <editor
             default="true"
@@ -610,7 +610,7 @@
             class="org.eclipse.pde.internal.ui.editor.target.TargetEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.target.TargetEditorContributor"
             id="org.eclipse.pde.ui.targetEditor">
-            <contentTypeBinding contentTypeId="org.eclipse.pde.targetFile"/>
+            <contentTypeBinding contentTypeId="org.eclipse.pde.core.targetFile"/>
       </editor>
       <editor
             name="%editors.sample.name"
