@@ -54,6 +54,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	private boolean generateJnlp;
 
 	private String archiveFormat;
+	private boolean groupConfigs = false;
 	private String product;
 	private ProductFile productFile = null;
 
@@ -565,12 +566,23 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		if (rootFileProviders.size() == 0)
 			return;
 
-		FileSet[] permissionSets = generatePermissions(true);
-		FileSet[] rootFiles = new FileSet[permissionSets.length + 1];
-		String toExcludeFromArchive = Utils.getStringFromCollection(this.addedByPermissions, ","); //$NON-NLS-1$
-		System.arraycopy(permissionSets, 0, rootFiles, 1, permissionSets.length);
-		rootFiles[0] = new ZipFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER), false, null, "**/**", null, toExcludeFromArchive, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, null); //$NON-NLS-1$//$NON-NLS-2$
-		script.printZipTask(Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, rootFiles);
+		if (groupConfigs) {
+			List allConfigs = getConfigInfos();
+			FileSet[] rootFiles = new FileSet[allConfigs.size()];
+			int i = 0;
+			for (Iterator iter = allConfigs.iterator(); iter.hasNext();) {
+				Config elt = (Config) iter.next();
+				rootFiles[i++] = new ZipFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + elt.toStringReplacingAny(".", ANY_STRING), false, null, "**/**", null, null, null, elt.toStringReplacingAny(".", ANY_STRING), null, null); //$NON-NLS-1$//$NON-NLS-2$
+			}
+			script.printZipTask(Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, rootFiles);
+		} else {
+			FileSet[] permissionSets = generatePermissions(true);
+			FileSet[] rootFiles = new FileSet[permissionSets.length + 1];
+			String toExcludeFromArchive = Utils.getStringFromCollection(this.addedByPermissions, ","); //$NON-NLS-1$
+			System.arraycopy(permissionSets, 0, rootFiles, 1, permissionSets.length);
+			rootFiles[0] = new ZipFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER), false, null, "**/**", null, toExcludeFromArchive, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX), null, null); //$NON-NLS-1$//$NON-NLS-2$
+			script.printZipTask(Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, rootFiles);
+		}
 	}
 
 	protected FileSet[] generatePermissions(boolean zip) {
@@ -659,5 +671,9 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 	public void setArchiveFormat(String archiveFormat) {
 		this.archiveFormat = archiveFormat;
+	}
+	
+	public void setGroupConfigs(boolean group) {
+		groupConfigs = group;
 	}
 }

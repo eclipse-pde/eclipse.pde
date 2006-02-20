@@ -550,6 +550,12 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			Utils.generatePermissions(getBuildProperties(), aConfig, PROPERTY_FEATURE_BASE, script);
 			script.printTargetEnd();
 		}
+		script.printTargetDeclaration(TARGET_ROOTFILES_PREFIX + "group_group_group", null, null, null, null); //$NON-NLS-1$
+		for (Iterator iter = getConfigInfos().iterator(); iter.hasNext();) {
+			Config aConfig = (Config) iter.next();
+			script.printAntCallTask(TARGET_ROOTFILES_PREFIX + aConfig.toString("_"), true, null);//.getPropertyFormat(PROPERTY_OS) + '_' + Utils.getPropertyFormat(PROPERTY_WS) + '_' + Utils.getPropertyFormat(PROPERTY_ARCH))
+		}
+		script.printTargetEnd();
 	}
 
 	private void generateCopyRootFiles(Config aConfig) throws CoreException {

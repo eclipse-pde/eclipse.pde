@@ -22,6 +22,8 @@
 <property name="signJars" value="false"/>
 <property name="generateFeatureVersionSuffix" value="false" />
 <property name="generateVersionsLists" value="true" />
+<property name="groupConfigurations" value="false"/>
+
 <!-- ===================================================================== -->
 <!-- Fetch a single element (feature, plugin, fragment) -->
 <!-- ===================================================================== -->
@@ -72,6 +74,7 @@
 		signJars="${signJars}"
 		generateFeatureVersionSuffix="${generateFeatureVersionSuffix}"
 		generateVersionsLists="${generateVersionsLists}"
+		groupConfiguration="${groupConfigurations}"
 	/>
 </target>
 

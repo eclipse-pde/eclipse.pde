@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.build.packager;
 
 import java.util.*;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.build.AssemblyInformation;
 import org.eclipse.pde.internal.build.Config;
@@ -19,25 +20,10 @@ import org.eclipse.pde.internal.build.Config;
 public class DeltaPackScriptGenerator extends PackageScriptGenerator {
 	public DeltaPackScriptGenerator(String directory, AssemblyInformation assemblageInformation, String featureId) throws CoreException {
 		super(directory, assemblageInformation, featureId);
+		groupConfigs = true;
 	}
 
-	protected void generateMainTarget() throws CoreException {
-			script.printTargetDeclaration(TARGET_MAIN, null, null, null, null);
-			doDeltaPack();
-			script.printTargetEnd();
-	}
-	
-	private void doDeltaPack() throws CoreException {
-		Collection allPlugins = new HashSet();
-		Collection allFeatures = new HashSet();
-		Collection allRootFiles = new HashSet();
-		
-		for (Iterator allConfigs = getConfigInfos().iterator(); allConfigs.hasNext();) {
-			Config element = (Config) allConfigs.next();
-			allPlugins.addAll(assemblageInformation.getPlugins(element));
-			allFeatures.addAll(assemblageInformation.getFeatures(element));
-			allRootFiles.addAll(assemblageInformation.getRootFileProviders(element));
-		}
-		basicGenerateAssembleConfigFileTargetCall(new Config("delta", "delta", "delta"), allPlugins, allFeatures, allFeatures, allRootFiles);		
+	protected void basicGenerateAssembleConfigFileTargetCall(Config aConfig, Collection binaryPlugins, Collection binaryFeatures, Collection allFeatures, Collection rootFiles) throws CoreException {
+		super.basicGenerateAssembleConfigFileTargetCall(new Config("delta", "delta", "delta"), binaryPlugins, binaryFeatures, allFeatures, rootFiles);
 	}
 }

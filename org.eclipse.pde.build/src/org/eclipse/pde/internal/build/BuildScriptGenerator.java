@@ -33,6 +33,11 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	protected boolean children = true;
 
 	/**
+	 * Indicates whether the resulting archive will contain a group of all the configurations
+	 */
+	protected boolean groupConfigs = false;
+	
+	/**
 	 * Source elements for script generation.
 	 */
 	protected String[] elements;
@@ -283,6 +288,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		assembler.setArchivesFormat(getArchivesFormat());
 		assembler.setProduct(product);
 		assembler.setBuildSiteFactory(factory);
+		assembler.setGroupConfigs(groupConfigs);
 		assembler.generate();
 	}
 
@@ -293,6 +299,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		assembler.setArchivesFormat(getArchivesFormat());
 		assembler.setProduct(product);
 		assembler.setBuildSiteFactory(factory);
+		assembler.setGroupConfigs(groupConfigs);
 		assembler.generate();
 	}
 
@@ -430,5 +437,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	public void includePlatformIndependent(boolean b) {
 		includePlatformIndependent = b;
+	}
+
+	public void setGroupConfigs(boolean value) {
+		groupConfigs = value;
 	}
 }

@@ -212,4 +212,12 @@ public class BuildScriptGeneratorTask extends Task {
 	public void setGenerateVersionsLists(boolean value){
 		generator.setGenerateVersionsList(value);
 	}
+	
+	/**
+	 * Set the boolean indicating if resulting archive should contain a group of all the configurations being built.
+	 * @param value <code>false</code> if the configurations being built should be grouped in one archive.
+	 */
+	public void setGroupConfiguration(boolean value) {
+		generator.setGroupConfigs(value);
+	}
 }

@@ -40,14 +40,15 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 		packagingPropertiesLocation = propertyFile;
 	}
 
-	protected void generateAssembleConfigFileTargetCall(Config aConfig) throws CoreException {
-		basicGenerateAssembleConfigFileTargetCall(aConfig, assemblageInformation.getBinaryPlugins(aConfig), assemblageInformation.getBinaryFeatures(aConfig), assemblageInformation.getFeatures(aConfig), null); //TODO Check if there are case where this is interesting
+	protected Collection[] getConfigInfos(Config aConfig) {
+		return new Collection[] {assemblageInformation.getBinaryPlugins(aConfig), assemblageInformation.getBinaryFeatures(aConfig), assemblageInformation.getFeatures(aConfig), new HashSet(0) };
 	}
 	
 	protected void basicGenerateAssembleConfigFileTargetCall(Config aConfig, Collection binaryPlugins, Collection binaryFeatures, Collection allFeatures, Collection rootFiles) throws CoreException {
 		configScriptGenerator.initialize(directory, featureId, aConfig, binaryPlugins, binaryFeatures, allFeatures, rootFiles); 
 		((PackageConfigScriptGenerator) configScriptGenerator).setPackagingPropertiesLocation(packagingPropertiesLocation);
 		configScriptGenerator.setArchiveFormat((String) archivesFormat.get(aConfig));
+		configScriptGenerator.setGroupConfigs(groupConfigs);
 		setForceUpdateJar(forceUpdateJarFormat);
 		configScriptGenerator.setBuildSiteFactory(siteFactory);
 		configScriptGenerator.generate();
