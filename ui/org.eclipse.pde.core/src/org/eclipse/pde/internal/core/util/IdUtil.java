@@ -40,4 +40,8 @@ public class IdUtil {
         }
         return true;
     }
+    
+    public static String getValidId(String projectName) {
+    	return projectName.replaceAll("[^a-zA-Z0-9\\._]", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
 }

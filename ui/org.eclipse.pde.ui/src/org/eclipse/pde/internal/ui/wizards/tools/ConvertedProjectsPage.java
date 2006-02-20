@@ -49,6 +49,7 @@ import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -153,7 +154,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 		model.load();
 		IPlugin plugin = model.getPlugin();
 		plugin.setSchemaVersion("3.0"); //$NON-NLS-1$
-		plugin.setId(getValidId(file.getProject().getName()));
+		plugin.setId(IdUtil.getValidId(file.getProject().getName()));
 		plugin.setName(createInitialName(plugin.getId()));
 		plugin.setVersion("1.0.0"); //$NON-NLS-1$
 		
@@ -175,10 +176,6 @@ public class ConvertedProjectsPage extends WizardPage  {
 		PDEPluginConverter.convertToOSGIFormat(file.getProject(), TargetPlatform.getTargetVersionString(), null, new SubProgressMonitor(monitor, 1));
 		organizeExports(file.getProject());
 		file.delete(true, null);
-	}
-
-	private String getValidId(String name) {
-		return name.replaceAll("[^a-zA-Z0-9\\._]", "_"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private boolean isOldTarget() {

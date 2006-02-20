@@ -81,10 +81,6 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		setDescription(PDEUIMessages.NewLibraryPluginCreationPage_desc); 
 	}
 
-	protected String computeId() {
-		return getProjectName().replaceAll("[^a-zA-Z0-9\\._]", "_"); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		Composite control = (Composite) getControl();
@@ -254,7 +250,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	}
 
 	protected boolean validatePage() {
-		String id = computeId();
+		String id = IdUtil.getValidId(getProjectName());
 		// properties group
 		if (!fPropertiesListener.isChanged() && fIdText != null) {
 			fPropertiesListener.setBlocked(true);

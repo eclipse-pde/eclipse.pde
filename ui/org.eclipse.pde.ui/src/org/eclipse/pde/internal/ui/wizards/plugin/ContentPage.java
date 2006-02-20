@@ -154,7 +154,7 @@ public abstract class ContentPage extends WizardPage {
 	}
 	
 	protected String computeId() {
-		return fProjectProvider.getProjectName().replaceAll("[^a-zA-Z0-9\\._]", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+		return IdUtil.getValidId(fProjectProvider.getProjectName());
 	}
 
 	private void presetLibraryField(String id){

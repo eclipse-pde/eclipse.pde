@@ -763,7 +763,6 @@ public class PDEUIMessages extends NLS {
 	public static String BuildAction_ErrorDialog_Message;
 
 	public static String NewFeatureWizard_wtitle;
-	public static String NewFeatureWizard_MainPage_title;
 	public static String NewFeatureWizard_MainPage_desc;
 	public static String NewFeatureWizard_SpecPage_title;
 	public static String NewFeatureWizard_SpecPage_desc;
@@ -795,7 +794,6 @@ public class PDEUIMessages extends NLS {
 	public static String NewFeatureWizard_SpecPage_customProject;
 	public static String NewFeatureWizard_SpecPage_patch_customProject;
 	public static String NewFeatureWizard_SpecPage_patchProperties;
-	public static String NewFeatureWizard_SpecPage_error_library;
 
 	public static String FeatureDetailsSection_title;
 	public static String FeatureDetailsSection_desc;
@@ -814,10 +812,8 @@ public class PDEUIMessages extends NLS {
 	public static String SiteEditor_PortabilityChoicesDialog_title;
 
 	public static String FeaturePatch_wtitle;
-	public static String FeaturePatch_MainPage_title;
 	public static String FeaturePatch_MainPage_desc;
 	public static String PatchSpec_title;
-	public static String PatchSpec_desc;
 	public static String NewFeaturePatch_SpecPage_id;
 	public static String NewFeaturePatch_SpecPage_name;
 	public static String NewFeaturePatch_SpecPage_provider;
@@ -883,7 +879,6 @@ public class PDEUIMessages extends NLS {
 	public static String BaseFeatureSpecPage_patchGroup_title;
 	public static String BaseFeatureSpecPage_featurePropertiesGroup_title;
 	public static String BaseFeatureSpecPage_browse;
-	public static String BaseFeatureSpecPage_customGroup;
 	public static String BaseExtensionPoint_sections_copyright;
 	public static String BaseExportWizard_confirmReplace_title;
 	public static String BaseExtensionPoint_generating;

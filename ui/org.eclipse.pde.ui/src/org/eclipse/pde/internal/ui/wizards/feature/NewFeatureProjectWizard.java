@@ -10,397 +10,48 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.feature;
 
-import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.core.feature.FeaturePlugin;
-import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureInfo;
-import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
-import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
-import org.eclipse.pde.internal.core.natures.PDE;
-import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
-import org.eclipse.pde.internal.ui.wizards.NewWizard;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
-import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.part.ISetSelectionTarget;
-import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
-public class NewFeatureProjectWizard extends NewWizard
-		implements
-			IExecutableExtension {
-	public static final String DEF_PROJECT_NAME = "project-name"; //$NON-NLS-1$
-	public static final String DEF_ID = "feature-id"; //$NON-NLS-1$
-	public static final String DEF_NAME = "feature-name"; //$NON-NLS-1$
+public class NewFeatureProjectWizard extends AbstractNewFeatureWizard {
 
-	private WizardNewProjectCreationPage mainPage;
-	private FeatureSpecPage specPage;
-	private PluginListPage pluginListPage;
-	private IConfigurationElement config;
-	private IProjectProvider provider;
-	private FeatureData fFeatureData;
-	public class FeatureProjectProvider implements IProjectProvider {
-		public FeatureProjectProvider() {
-			super();
-		}
-		public String getProjectName() {
-			return mainPage.getProjectName();
-		}
-		public IProject getProject() {
-			return mainPage.getProjectHandle();
-		}
-		public IPath getLocationPath() {
-			return mainPage.getLocationPath();
-		}
-		public FeatureData getFeatureData() {
-			return specPage.getFeatureData();
-		}
-		public IPluginBase[] getPluginListSelection() {
-			if (pluginListPage == null)
-				return null;
-			return pluginListPage.getSelectedPlugins();
-		}
-		public IConfigurationElement getConfigElement() {
-			return config;
-		}
-	}
 	public NewFeatureProjectWizard() {
 		super();
-		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_WIZ);
-		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
-		setNeedsProgressMonitor(true);
 		setWindowTitle(PDEUIMessages.NewFeatureWizard_wtitle);
 	}
 	
 	public void addPages() {
-		provider = new FeatureProjectProvider();
-		mainPage = new WizardNewProjectCreationPage("main") { //$NON-NLS-1$
-			public void createControl(Composite parent) {
-				super.createControl(parent);
-				PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.NEW_FEATURE_MAIN);
-			}
-		};
-		
-		mainPage.setTitle(PDEUIMessages.NewFeatureWizard_MainPage_title);
-		mainPage.setDescription(PDEUIMessages.NewFeatureWizard_MainPage_desc);
-		String pname = getDefaultValue(DEF_PROJECT_NAME);
-		if (pname != null)
-			mainPage.setInitialProjectName(pname);
-		addPage(mainPage);
-		specPage = new FeatureSpecPage(mainPage);
-		specPage.setInitialId(getDefaultValue(DEF_ID));
-		specPage.setInitialName(getDefaultValue(DEF_NAME));
-		addPage(specPage);
+		super.addPages();
 		if (hasInterestingProjects()) {
-			pluginListPage = new PluginListPage();
-			addPage(pluginListPage);
+			fSecondPage = new PluginListPage();
+			addPage(fSecondPage);
 		}
 	}
-
-	public boolean canFinish() {
-		IWizardPage page = getContainer().getCurrentPage();
-		return ((page == specPage && page.isPageComplete()) 
-				|| (page == pluginListPage && page.isPageComplete()));
-	}
-
+	
 	private boolean hasInterestingProjects() {
 		return PDECore.getDefault().getModelManager().getPlugins().length > 0;
 	}
-
-	public boolean performFinish() {
-		final IProject project = ((FeatureProjectProvider) provider)
-				.getProject();
-		final IPath location = ((FeatureProjectProvider) provider)
-				.getLocationPath();
-		fFeatureData = ((FeatureProjectProvider) provider)
-				.getFeatureData();
-		final IPluginBase[] plugins = ((FeatureProjectProvider) provider)
-				.getPluginListSelection() != null
-				? ((FeatureProjectProvider) provider).getPluginListSelection()
-				: (new IPluginBase[0]);
-		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) {
-				try {
-					createFeatureProject(project, location, fFeatureData, plugins,
-							monitor);
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-				} finally {
-					monitor.done();
-				}
-			}
-		};
-		try {
-			getContainer().run(false, true, operation);
-			BasicNewProjectResourceWizard
-					.updatePerspective(((FeatureProjectProvider) provider)
-							.getConfigElement());
-		} catch (InvocationTargetException e) {
-			PDEPlugin.logException(e);
-			return false;
-		} catch (InterruptedException e) {
-			return false;
-		}
-		return true;
-
-	}
-
-	public void setInitializationData(IConfigurationElement config,
-			String property, Object data) throws CoreException {
-		this.config = config;
-	}
-
-	/* feature creation methods */
-
-	protected static void addSourceFolder(String name, IProject project,
-			IProgressMonitor monitor) throws CoreException {
-		IPath path = project.getFullPath().append(name);
-		ensureFolderExists(project, path, monitor);
-		monitor.worked(1);
-	}
-
-	private static void ensureFolderExists(IProject project, IPath folderPath,
-			IProgressMonitor monitor) throws CoreException {
-		IWorkspace workspace = project.getWorkspace();
-
-		for (int i = 1; i <= folderPath.segmentCount(); i++) {
-			IPath partialPath = folderPath.uptoSegment(i);
-			if (!workspace.getRoot().exists(partialPath)) {
-				IFolder folder = workspace.getRoot().getFolder(partialPath);
-				folder.create(true, true, null);
-			}
-			monitor.worked(1);
-		}
-
-	}
-	private void createBuildProperties(IProject project, FeatureData data) throws CoreException {
-		String fileName = "build.properties"; //$NON-NLS-1$
-		IPath path = project.getFullPath().append(fileName);
-		IFile file = project.getWorkspace().getRoot().getFile(path);
-		if (!file.exists()) {
-			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
-			IBuildEntry ientry = model.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
-			ientry.addToken("feature.xml"); //$NON-NLS-1$
-			String library = data.library;
-			if (library != null) {
-				String source = data.getSourceFolderName();
-				if (source != null) {
-					IBuildEntry entry = model.getFactory().createEntry(
-							IBuildEntry.JAR_PREFIX + library);
-					if (!source.endsWith("/")) //$NON-NLS-1$
-						source += "/"; //$NON-NLS-1$
-					entry.addToken(source);
-					ientry.addToken(library);
-					model.getBuild().add(entry);
-				}
-				String output = data.getJavaBuildFolderName();
-				if (output != null) {
-					IBuildEntry entry = model.getFactory().createEntry(
-							IBuildPropertiesConstants.PROPERTY_OUTPUT_PREFIX
-									+ library);
-					if (!output.endsWith("/")) //$NON-NLS-1$
-						output += "/"; //$NON-NLS-1$
-					entry.addToken(output);
-					model.getBuild().add(entry);
-				}
-			}
-
-			model.getBuild().add(ientry);
-			model.save();
-		}
-		IDE.setDefaultEditor(file, PDEPlugin.BUILD_EDITOR_ID);
-	}
-
-	private IFile createFeatureManifest(IProject project, FeatureData data,
-			IPluginBase[] plugins) throws CoreException {
-		IFile file = project.getFile("feature.xml"); //$NON-NLS-1$
-		WorkspaceFeatureModel model = new WorkspaceFeatureModel();
-		model.setFile(file);
-		IFeature feature = model.getFeature();
-		String name = data.name;
-		feature.setLabel(name);
-		feature.setId(data.id);
-		feature.setVersion(data.version);
-		feature.setProviderName(data.provider);
-		if(data.hasCustomHandler){
-			feature.setInstallHandler(model.getFactory().createInstallHandler());
-		}
-
-		IFeaturePlugin[] added = new IFeaturePlugin[plugins.length];
-
-		for (int i = 0; i < plugins.length; i++) {
-			IPluginBase plugin = plugins[i];
-			FeaturePlugin fplugin = (FeaturePlugin) model.getFactory()
-					.createPlugin();
-			fplugin.loadFrom(plugin);
-			fplugin.setVersion("0.0.0"); //$NON-NLS-1$
-			fplugin.setUnpack(CoreUtility.guessUnpack(plugin.getPluginModel()
-					.getBundleDescription()));
-			added[i] = fplugin;
-		}
-		feature.addPlugins(added);
-		//feature.computeImports();
-		IFeatureInstallHandler handler = feature.getInstallHandler();
-		if (handler != null) {		
-			handler.setLibrary(data.library);
-		}
-
-		IFeatureInfo info = model.getFactory().createInfo(IFeature.INFO_COPYRIGHT);
-		feature.setFeatureInfo(info, IFeature.INFO_COPYRIGHT);
-		
-		info.setURL("http://www.example.com/copyright"); //$NON-NLS-1$
-		info.setDescription(PDEUIMessages.NewFeatureWizard_sampleCopyrightDesc); 
-		
-		info = model.getFactory().createInfo(IFeature.INFO_LICENSE);
-		feature.setFeatureInfo(info, IFeature.INFO_LICENSE);
-		
-		info.setURL("http://www.example.com/license"); //$NON-NLS-1$
-		info.setDescription(PDEUIMessages.NewFeatureWizard_sampleLicenseDesc); 
-
-		info = model.getFactory().createInfo(IFeature.INFO_DESCRIPTION);
-		feature.setFeatureInfo(info, IFeature.INFO_DESCRIPTION);
-		
-		info.setURL("http://www.example.com/description"); //$NON-NLS-1$
-		info.setDescription(PDEUIMessages.NewFeatureWizard_sampleDescriptionDesc); 
-
-		// Save the model
-		model.save();
-		model.dispose();
-		IDE.setDefaultEditor(file, PDEPlugin.FEATURE_EDITOR_ID);
-		return file;
-	}
-
-	private void createFeatureProject(IProject project, IPath location,
-			FeatureData data, IPluginBase[] plugins, IProgressMonitor monitor)
-			throws CoreException {
-
-		monitor.beginTask(PDEUIMessages.NewFeatureWizard_creatingProject, 3);
-		boolean overwrite = true;
-		if (location.append(project.getName()).toFile().exists()) {
-			overwrite = MessageDialog.openQuestion(PDEPlugin
-					.getActiveWorkbenchShell(), PDEUIMessages.NewFeatureWizard_wtitle, PDEUIMessages.NewFeatureWizard_overwriteFeature);
-		}
-		if (overwrite) {
-			CoreUtility.createProject(project, location, monitor);
-			project.open(monitor);
-			IProjectDescription desc = project.getWorkspace()
-					.newProjectDescription(project.getName());
-			desc.setLocation(provider.getLocationPath());
-			if (!project.hasNature(PDE.FEATURE_NATURE))
-				CoreUtility.addNatureToProject(project, PDE.FEATURE_NATURE,
-						monitor);
-
-			if (!project.hasNature(JavaCore.NATURE_ID)
-					&& data.hasCustomHandler()) {
-				CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID,
-						monitor);
-				JavaCore.create(project).setOutputLocation(
-						project.getFullPath().append(
-								data.getJavaBuildFolderName()),
-						monitor);
-				JavaCore
-						.create(project)
-						.setRawClasspath(
-								new IClasspathEntry[]{
-										JavaCore.newContainerEntry(new Path(
-												JavaRuntime.JRE_CONTAINER)),
-										JavaCore
-												.newSourceEntry(project
-														.getFullPath()
-														.append(
-																data
-																		.getSourceFolderName()))},
-								monitor);
-				addSourceFolder(data.getSourceFolderName(), project,
-						monitor);
-			}
-
-			monitor.subTask(PDEUIMessages.NewFeatureWizard_creatingManifest);
-			monitor.worked(1);
-			createBuildProperties(project, data);
-			monitor.worked(1);
-			// create feature.xml
-			IFile file = createFeatureManifest(project, data, plugins);
-			monitor.worked(1);
-			// open manifest for editing
-			openFeatureManifest(file);
-		} else {
-			project.create(monitor);
-			project.open(monitor);
-			IFile featureFile = project.getFile("feature.xml"); //$NON-NLS-1$
-			if (featureFile.exists())
-				openFeatureManifest(featureFile);
-			monitor.worked(3);
-		}
-
-	}
-
-	private void openFeatureManifest(IFile manifestFile) {
-		IWorkbenchPage page = PDEPlugin.getActivePage();
-		// Reveal the file first
-		final ISelection selection = new StructuredSelection(manifestFile);
-		final IWorkbenchPart activePart = page.getActivePart();
-
-		if (activePart instanceof ISetSelectionTarget) {
-			getShell().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					((ISetSelectionTarget) activePart).selectReveal(selection);
-				}
-			});
-		}
-		// Open the editor
-
-		FileEditorInput input = new FileEditorInput(manifestFile);
-		String id = PDEPlugin.FEATURE_EDITOR_ID;
-		try {
-			page.openEditor(input, id);
-		} catch (PartInitException e) {
-			PDEPlugin.logException(e);
-		}
-	}
 	
+	protected AbstractFeatureSpecPage createFirstPage() {
+		return new FeatureSpecPage();
+	}
+
 	public String getFeatureId() {
-		return fFeatureData.id;
+		return fProvider.getFeatureData().id;
 	}
 	
 	public String getFeatureVersion() {
-		return fFeatureData.version;	
+		return fProvider.getFeatureData().version;	
+	}
+
+	protected IRunnableWithProgress getOperation() {
+		return new CreateFeatureProjectOperation(
+				fProvider.getProject(),
+				fProvider.getLocationPath(),
+				fProvider.getFeatureData(),
+				fProvider.getPluginListSelection(),
+				getShell());
 	}
 
 }

@@ -11,84 +11,97 @@
 
 package org.eclipse.pde.internal.ui.wizards.feature;
 
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
-public class FeatureSpecPage extends BaseFeatureSpecPage {
+public class FeatureSpecPage extends AbstractFeatureSpecPage {
 
-	protected FeatureSpecPage(WizardNewProjectCreationPage mainPage) {
-		super(mainPage, false);
+	private Text fFeatureProviderText;
+	private Text fFeatureIdText;
+	
+	public FeatureSpecPage() {
+		super();
 		setTitle(PDEUIMessages.NewFeatureWizard_SpecPage_title);
 		setDescription(PDEUIMessages.NewFeatureWizard_SpecPage_desc);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.feature.BaseFeatureSpecPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
-	public void createControl(Composite parent) {
-		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.NEW_FEATURE_DATA);
-	}
 
 	protected void initialize() {
-		if (isInitialized)
-			return;
-
-		String projectName = mainPage.getProjectName();
-		if (initialId == null) {
-			featureIdText.setText(computeInitialId(projectName));
-		}
-		if (initialName == null)
-			featureNameText.setText(projectName);
-		featureVersionText.setText("1.0.0"); //$NON-NLS-1$
-
-		super.initialize();
+		String projectName = getProjectName();
+		if (fInitialId == null)
+			fFeatureIdText.setText(IdUtil.getValidId(projectName));
+		if (fInitialName == null)
+			fFeatureNameText.setText(projectName);
+		fFeatureVersionText.setText("1.0.0"); //$NON-NLS-1$
+		setMessage(PDEUIMessages.NewFeatureWizard_MainPage_desc);
 	}
-
+	
 	public FeatureData getFeatureData() {
 		FeatureData data = new FeatureData();
-		data.id = featureIdText.getText();
-		data.version = featureVersionText.getText();
-		data.provider = featureProviderText.getText();
-		data.name = featureNameText.getText();
+		data.id = fFeatureIdText.getText();
+		data.version = fFeatureVersionText.getText();
+		data.provider = fFeatureProviderText.getText();
+		data.name = fFeatureNameText.getText();
 		data.library = getInstallHandlerLibrary();
-		data.hasCustomHandler = customChoice.getSelection();
+		data.hasCustomHandler = data.library != null;
 		return data;
 	}
 
-	protected void verifyComplete() {
-		String message = verifyIdRules();
-		if (message != null) {
-			setPageComplete(false);
-			setErrorMessage(message);
-			return;
-		}
-		message = verifyVersion();
-		if (message != null) {
-			setPageComplete(false);
-			setErrorMessage(message);
-			return;
-		}
-		if (customChoice.getSelection() && libraryText.getText().length() == 0) {
-			setPageComplete(false);
-			setErrorMessage(PDEUIMessages.NewFeatureWizard_SpecPage_error_library);
-			return;
-		}
-		setPageComplete(true);
-		setErrorMessage(null);
-		return;
-
-	}
-	public void setVisible(boolean visible) {
-		super.setVisible(visible);
-		if (visible) {
-			initialize();
-			isInitialized = true;
-			featureIdText.setFocus();
-		}
+	protected String validateContent() {
+		setMessage(null);
+		return null;
 	}
 	
+	protected String getHelpId() {
+		return IHelpContextIds.NEW_FEATURE_DATA;
+	}
+	
+	protected void createContents(Composite container) {
+		Group group = new Group(container, SWT.NULL);
+		group.setLayout(new GridLayout(2, false));
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		group.setText(PDEUIMessages.BaseFeatureSpecPage_featurePropertiesGroup_title); 
+		
+		Label label = new Label(group, SWT.NULL);
+		label.setText(PDEUIMessages.NewFeatureWizard_SpecPage_id);
+		fFeatureIdText = new Text(group, SWT.BORDER);
+		fFeatureIdText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		createCommonInput(group);
+		
+		label = new Label(group, SWT.NULL);
+		label.setText(PDEUIMessages.NewFeatureWizard_SpecPage_provider);
+		fFeatureProviderText = new Text(group, SWT.BORDER);
+		fFeatureProviderText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		createInstallHandlerText(group);
+	}
+	
+	protected void attachListeners(ModifyListener listener) {
+		fFeatureProviderText.addModifyListener(listener);
+		fFeatureIdText.addModifyListener(listener);
+	}
+	
+	protected String getFeatureId() {
+		return fFeatureIdText.getText();
+	}
+	
+	
+	protected void updateNameRelativeFields() {
+		if (fFeatureIdText == null || fFeatureNameText == null)
+			return;
+		fSelfModification = true;
+		String name = getProjectName();
+		fFeatureIdText.setText(IdUtil.getValidId(name));
+		fFeatureNameText.setText(name);
+		fSelfModification = false;
+	}
 }

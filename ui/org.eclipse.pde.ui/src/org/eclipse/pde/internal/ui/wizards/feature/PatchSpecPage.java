@@ -12,77 +12,64 @@
 package org.eclipse.pde.internal.ui.wizards.feature;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.wizards.FeatureSelectionDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
-public class PatchSpecPage extends BaseFeatureSpecPage {
+public class PatchSpecPage extends AbstractFeatureSpecPage {
 
-	public PatchSpecPage(WizardNewProjectCreationPage mainPage) {
-		super(mainPage, true);
-		setTitle(PDEUIMessages.PatchSpec_title); 
-		setDescription(PDEUIMessages.PatchSpec_desc); 
-	}
+	private Text fPatchProviderText;
+	private Button fBrowseButton;
+	private Text fPatchIdText;
+	private Text fPatchNameText;
+	private Text fFeatureIdText;
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.feature.BaseFeatureSpecPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
-	public void createControl(Composite parent) {
-		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.NEW_PATCH_REQUIRED_DATA);
+	public PatchSpecPage() {
+		super();
+		setTitle(PDEUIMessages.PatchSpec_title); 
+		setDescription(PDEUIMessages.NewFeatureWizard_SpecPage_desc); 
 	}
 
 	protected void initialize() {
-		if (isInitialized)
-			return;
-		String projectName = mainPage.getProjectName();
-		if (initialId == null)
-			patchIdText.setText(computeInitialId(projectName));
-		if (initialName == null)
-			patchNameText.setText(projectName);
-		setErrorMessage(null);
-		super.initialize();
+		String projectName = getProjectName();
+		if (fInitialId == null)
+			fPatchIdText.setText(IdUtil.getValidId(projectName));
+		if (fInitialName == null)
+			fPatchNameText.setText(projectName);
+		setMessage(PDEUIMessages.FeaturePatch_MainPage_desc);
 	}
 
-	protected void verifyComplete() {
-		String message = verifyIdRules();
-		if (message != null) {
-			setPageComplete(false);
-			setErrorMessage(message);
-			return;
-		}
-		message = verifyVersion();
-		if (message != null) {
-			setPageComplete(false);
-			setErrorMessage(message);
-			return;
-		}
-		if (customChoice.getSelection() && libraryText.getText().length() == 0) {
-			setPageComplete(false);
-			setErrorMessage(PDEUIMessages.NewFeatureWizard_SpecPage_error_library);
-			return;
-		}
-		
-		fFeatureToPatch = PDECore.getDefault().getFeatureModelManager()
-				.findFeatureModel(featureIdText.getText(),
-						featureVersionText.getText());
+	protected String validateContent() {
+		fFeatureToPatch = PDECore.getDefault().getFeatureModelManager().findFeatureModel(
+				fFeatureIdText.getText(), fFeatureVersionText.getText());
 		if (fFeatureToPatch != null) {
 			setMessage(null);
-			setPageComplete(true);
-			setErrorMessage(null);
-			return;
+			return null;
 		}
 		
-		setMessage(NLS.bind(PDEUIMessages.NewFeaturePatch_SpecPage_notFound, featureIdText.getText()), IMessageProvider.WARNING); 
-		setErrorMessage(null);
+		setMessage(NLS.bind(PDEUIMessages.NewFeaturePatch_SpecPage_notFound,
+				fFeatureIdText.getText(), fFeatureVersionText.getText()),
+				IMessageProvider.WARNING); 
 		getContainer().updateButtons();
-		return;
+		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -95,21 +82,21 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
     }
 
 	private String getPatchId() {
-		if (patchIdText == null)
+		if (fPatchIdText == null)
 			return ""; //$NON-NLS-1$
-		return patchIdText.getText();
+		return fPatchIdText.getText();
 	}
 
 	private String getPatchName() {
-		if (patchNameText == null)
+		if (fPatchNameText == null)
 			return ""; //$NON-NLS-1$
-		return patchNameText.getText();
+		return fPatchNameText.getText();
 	}
 
 	private String getPatchProvider() {
-		if (patchProviderText == null)
+		if (fPatchProviderText == null)
 			return ""; //$NON-NLS-1$
-		return patchProviderText.getText();
+		return fPatchProviderText.getText();
 	}
 	
 	public FeatureData getFeatureData() {
@@ -119,15 +106,15 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 		data.provider = getPatchProvider();
 		data.name = getPatchName();
 		data.library = getInstallHandlerLibrary();
-		data.hasCustomHandler = customChoice.getSelection();
+		data.hasCustomHandler = data.library != null;
 		data.isPatch = true;
-		data.featureToPatchId = featureIdText.getText();
-		data.featureToPatchVersion = featureVersionText.getText();
+		data.featureToPatchId = fFeatureIdText.getText();
+		data.featureToPatchVersion = fFeatureVersionText.getText();
 		return data;
 	}
 
 	protected String verifyIdRules() {
-		String id = patchIdText.getText();
+		String id = fPatchIdText.getText();
 		if (id == null || id.length() == 0)
 			return PDEUIMessages.NewFeatureWizard_SpecPage_pmissing;
 		if (!IdUtil.isValidPluginId(id)) {
@@ -136,12 +123,104 @@ public class PatchSpecPage extends BaseFeatureSpecPage {
 		return super.verifyIdRules();
 	}
 	
-	public void setVisible(boolean visible) {
-		super.setVisible(visible);
-		if (visible) {
-			initialize();
-			isInitialized = true;
-			patchIdText.setFocus();
-		}
+	
+	protected String getHelpId() {
+		return IHelpContextIds.NEW_PATCH_REQUIRED_DATA;
+	}
+	
+	protected void createTopGroup(Composite container) {
+		Group patchGroup = new Group(container, SWT.NULL);
+		patchGroup.setLayout(new GridLayout(2, false));
+		patchGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		patchGroup.setText(PDEUIMessages.NewFeatureWizard_SpecPage_patchProperties); 
+		Label label = new Label(patchGroup, SWT.NULL);
+		label.setText(PDEUIMessages.NewFeaturePatch_SpecPage_id);
+		fPatchIdText = new Text(patchGroup, SWT.BORDER);
+		fPatchIdText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		label = new Label(patchGroup, SWT.NULL);
+		label.setText(PDEUIMessages.NewFeaturePatch_SpecPage_name);
+		fPatchNameText = new Text(patchGroup, SWT.BORDER);
+		fPatchNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		label = new Label(patchGroup, SWT.NULL);
+		label.setText(PDEUIMessages.NewFeaturePatch_SpecPage_provider);
+		fPatchProviderText = new Text(patchGroup, SWT.BORDER);
+		fPatchProviderText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		createInstallHandlerText(patchGroup);
+	}
+	
+	protected void createContents(Composite container) {
+		
+		createTopGroup(container);
+		
+		Group group = new Group(container, SWT.NULL);
+		group.setLayout(new GridLayout(2, false));
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		group.setText(PDEUIMessages.BaseFeatureSpecPage_featurePropertiesGroup_title); 
+		group.setText(PDEUIMessages.BaseFeatureSpecPage_patchGroup_title); 
+					
+		Label label = new Label(group, SWT.NULL);
+		label.setText(PDEUIMessages.NewFeatureWizard_SpecPage_id);
+		
+		Composite patchcontainer = new Composite(group, SWT.NULL);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = layout.marginWidth = 0;
+		layout.horizontalSpacing = 5;
+		patchcontainer.setLayout(layout);
+		patchcontainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		fFeatureIdText = new Text(patchcontainer, SWT.BORDER);
+		fFeatureIdText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		fBrowseButton = new Button(patchcontainer, SWT.PUSH);
+		fBrowseButton.setText(PDEUIMessages.BaseFeatureSpecPage_browse);
+		fBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		fBrowseButton.addSelectionListener(new SelectionAdapter() {
+			
+			public void widgetSelected(SelectionEvent e) {
+				FeatureSelectionDialog dialog = new FeatureSelectionDialog(
+						getShell(), PDECore.getDefault().getFeatureModelManager().getModels(), false);
+				dialog.create();
+				if (dialog.open() == Window.OK) {
+					Object[] result = dialog.getResult();
+					IFeatureModel selectedModel = (IFeatureModel) result[0];
+					
+					// block auto validation till last setText
+					fSelfModification = true;
+					fFeatureIdText.setText(selectedModel.getFeature().getId());
+					fFeatureNameText.setText(selectedModel.getFeature().getLabel());
+					fSelfModification = false;
+					fFeatureVersionText.setText(selectedModel.getFeature().getVersion());
+					
+					fFeatureToPatch = selectedModel;
+				}
+			}
+		});
+		SWTUtil.setButtonDimensionHint(fBrowseButton);
+		
+		createCommonInput(group);
+	}
+	
+	protected void attachListeners(ModifyListener listener) {
+		fPatchIdText.addModifyListener(listener);
+		fPatchNameText.addModifyListener(listener);
+		fPatchProviderText.addModifyListener(listener);
+		fFeatureIdText.addModifyListener(listener);
+	}
+	
+	protected String getFeatureId() {
+		return fFeatureIdText.getText();
+	}
+
+	protected void updateNameRelativeFields() {
+		if (fPatchIdText == null || fPatchNameText == null)
+			return;
+		fSelfModification = true;
+		String name = getProjectName();
+		fPatchIdText.setText(IdUtil.getValidId(name));
+		fPatchNameText.setText(name);
+		fSelfModification = false;
 	}
 }
