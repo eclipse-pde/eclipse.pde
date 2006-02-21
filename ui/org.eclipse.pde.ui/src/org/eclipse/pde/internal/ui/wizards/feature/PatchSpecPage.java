@@ -131,7 +131,9 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 	protected void createTopGroup(Composite container) {
 		Group patchGroup = new Group(container, SWT.NULL);
 		patchGroup.setLayout(new GridLayout(2, false));
-		patchGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.verticalIndent = 10;
+		patchGroup.setLayoutData(gd);
 		patchGroup.setText(PDEUIMessages.NewFeatureWizard_SpecPage_patchProperties); 
 		Label label = new Label(patchGroup, SWT.NULL);
 		label.setText(PDEUIMessages.NewFeaturePatch_SpecPage_id);
@@ -157,8 +159,9 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 		
 		Group group = new Group(container, SWT.NULL);
 		group.setLayout(new GridLayout(2, false));
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(PDEUIMessages.BaseFeatureSpecPage_featurePropertiesGroup_title); 
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.verticalIndent = 10;
+		group.setLayoutData(gd);
 		group.setText(PDEUIMessages.BaseFeatureSpecPage_patchGroup_title); 
 					
 		Label label = new Label(group, SWT.NULL);

@@ -67,7 +67,9 @@ public class FeatureSpecPage extends AbstractFeatureSpecPage {
 	protected void createContents(Composite container) {
 		Group group = new Group(container, SWT.NULL);
 		group.setLayout(new GridLayout(2, false));
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.verticalIndent = 10;
+		group.setLayoutData(gd);
 		group.setText(PDEUIMessages.BaseFeatureSpecPage_featurePropertiesGroup_title); 
 		
 		Label label = new Label(group, SWT.NULL);
