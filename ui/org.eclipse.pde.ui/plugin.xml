@@ -766,6 +766,14 @@
                id="org.eclipse.pde.ui.ExternalizeStrings">
          </action>
          <action
+               label="%OrganizeManifest.label"
+               helpContextId="org.eclipse.pde.doc.user.organize_manifest"
+               class="org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsAction"
+               menubarPath="org.eclipse.pde.ui.plugin.tools/group0"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.OrganizeManifest"> 
+         </action>
+         <action
                label="%MigrationAction.label"
                class="org.eclipse.pde.internal.ui.wizards.tools.MigrationAction"
                helpContextId="org.eclipse.pde.doc.user.migrate_action"
