@@ -260,10 +260,12 @@ public class PluginModelManager implements IAdaptable {
 			}
 		}
 		
-		StateDelta stateDelta =	(e.getEventTypes() & IModelProviderEvent.TARGET_CHANGED) != 0 
+		if (fState != null) {
+			StateDelta stateDelta =	(e.getEventTypes() & IModelProviderEvent.TARGET_CHANGED) != 0 
 									? null 
 									: fState.resolveState(true);
-		updateAffectedEntries(stateDelta);
+			updateAffectedEntries(stateDelta);
+		}
 		if (javaSearchAffected)
 			fSearchablePluginsManager.updateClasspathContainer();
 		fireDelta(delta);
