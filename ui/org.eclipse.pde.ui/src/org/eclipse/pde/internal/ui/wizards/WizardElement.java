@@ -79,8 +79,7 @@ public class WizardElement extends NamedElement implements IPluginContribution {
 		if (source.indexOf('%') == -1)
 			return source;
 
-		Bundle bundle = Platform.getBundle(configurationElement
-				.getNamespace());
+		Bundle bundle = Platform.getBundle(configurationElement.getNamespaceIdentifier());
 		if (bundle == null)
 			return source;
 

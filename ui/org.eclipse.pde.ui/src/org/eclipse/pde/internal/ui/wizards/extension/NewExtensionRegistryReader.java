@@ -69,7 +69,7 @@ public class NewExtensionRegistryReader {
 		WizardElement element = new WizardElement(config);
 		String imageName = config.getAttribute(WizardElement.ATT_ICON);
 		if (imageName != null) {
-			String pluginID = config.getNamespace();
+			String pluginID = config.getNamespaceIdentifier();
 			Image image = PDEPlugin.getDefault().getLabelProvider()
 					.getImageFromPlugin(pluginID, imageName);
 			element.setImage(image);
@@ -88,7 +88,7 @@ public class NewExtensionRegistryReader {
 		WizardElement element = new WizardElement(config);
 		String imageName = config.getAttribute(WizardElement.ATT_ICON);
 		if (imageName != null) {
-			String pluginID = config.getNamespace();
+			String pluginID = config.getNamespaceIdentifier();
 			Image image = PDEPlugin.getDefault().getLabelProvider()
 					.getImageFromPlugin(pluginID, imageName);
 			element.setImage(image);

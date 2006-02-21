@@ -32,10 +32,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -272,8 +272,8 @@ public abstract class AbstractTemplateSection
 			return;
 		}
 		try {
-			locationUrl = Platform.resolve(locationUrl);
-			locationUrl = Platform.asLocalURL(locationUrl);
+			locationUrl = FileLocator.resolve(locationUrl);
+			locationUrl = FileLocator.toFileURL(locationUrl);
 		} catch (IOException e) {
 			return;
 		}

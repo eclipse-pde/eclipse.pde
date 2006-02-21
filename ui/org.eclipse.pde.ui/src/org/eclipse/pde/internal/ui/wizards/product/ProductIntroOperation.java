@@ -28,10 +28,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -268,8 +268,8 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 			return;
 		}
 		try {
-			locationUrl = Platform.resolve(locationUrl);
-			locationUrl = Platform.asLocalURL(locationUrl);
+			locationUrl = FileLocator.resolve(locationUrl);
+			locationUrl = FileLocator.toFileURL(locationUrl);
 		} catch (IOException e) {
 			return;
 		}

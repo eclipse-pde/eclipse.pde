@@ -23,7 +23,7 @@ public class TargetDefinitionFromTargetOperation extends
 	protected void initializeTarget(ITargetModel model) {
 		IConfigurationElement elem = PDECore.getDefault().getTargetProfileManager().getTarget(fTargetId);
 		String path = elem.getAttribute("definition");  //$NON-NLS-1$
-		String symbolicName = elem.getDeclaringExtension().getNamespace();
+		String symbolicName = elem.getDeclaringExtension().getNamespaceIdentifier();
 		URL url = TargetDefinitionManager.getResourceURL(symbolicName, path);
 		if (url != null) {
 			try {

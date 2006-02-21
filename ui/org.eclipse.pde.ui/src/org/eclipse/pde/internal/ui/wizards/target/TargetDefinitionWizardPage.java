@@ -127,7 +127,7 @@ public class TargetDefinitionWizardPage extends WizardNewFileCreationPage {
 		IConfigurationElement elem = manager.getTarget(fTargetIds[fTargets.getSelectionIndex()]);
 		if (elem != null) {
 			String path = elem.getAttribute("definition");  //$NON-NLS-1$
-			String symbolicName = elem.getDeclaringExtension().getNamespace();
+			String symbolicName = elem.getDeclaringExtension().getNamespaceIdentifier();
 			return TargetDefinitionManager.getResourceURL(symbolicName, path);
 		}
 		return null;

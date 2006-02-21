@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -175,7 +176,7 @@ public class SampleOperation implements IRunnableWithProgress {
         
 		project.create(new SubProgressMonitor(monitor, 1));
 		project.open(new NullProgressMonitor());
-		Bundle bundle = Platform.getBundle(sample.getNamespace());
+		Bundle bundle = Platform.getBundle(sample.getNamespaceIdentifier());
 		ZipFile zipFile = getZipFileFromPluginDir(path, bundle);
 		importFilesFromZip(zipFile, project.getFullPath(),
 				new SubProgressMonitor(monitor, 1));
@@ -231,8 +232,8 @@ public class SampleOperation implements IRunnableWithProgress {
 	private ZipFile getZipFileFromPluginDir(String pluginRelativePath,
 			Bundle bundle) throws CoreException {
 		try {
-			URL starterURL = Platform.resolve(bundle.getEntry(pluginRelativePath));
-			return new ZipFile(Platform.asLocalURL(starterURL).getFile());
+			URL starterURL = FileLocator.resolve(bundle.getEntry(pluginRelativePath));
+			return new ZipFile(FileLocator.toFileURL(starterURL).getFile());
 		} catch (IOException e) {
 			String message = pluginRelativePath + ": " + e.getMessage(); //$NON-NLS-1$
 			Status status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(),
