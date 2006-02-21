@@ -16,6 +16,9 @@ import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
@@ -41,7 +44,7 @@ import org.eclipse.text.edits.TextEdit;
 
 public class PluginManifestChange {
 	
-	public static Change createRenameChange(IFile file, String[] oldNames, String[] newNames, IProgressMonitor monitor) 
+	public static Change createRenameChange(IFile file, IJavaElement[] affectedElements, String[] newNames, IProgressMonitor monitor) 
 			throws CoreException {
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		try {
@@ -63,11 +66,11 @@ public class PluginManifestChange {
 				
 				MultiTextEdit multiEdit = new MultiTextEdit();
 				
-				for (int i = 0; i < oldNames.length; i++) {
+				for (int i = 0; i < affectedElements.length; i++) {
 					if (model instanceof PluginModel) {
 						PluginNode plugin = (PluginNode)model.getPluginBase();
 						IDocumentAttribute attr = plugin.getDocumentAttribute("class"); //$NON-NLS-1$
-						TextEdit edit = createTextEdit(attr, oldNames[i], newNames[i]);
+						TextEdit edit = createTextEdit(attr, affectedElements[i], newNames[i]);
 						if (edit != null)
 							multiEdit.addChild(edit);					
 					}
@@ -77,7 +80,7 @@ public class PluginManifestChange {
 					for (int j = 0; j < extensions.length; j++) {
 						ISchema schema = registry.getSchema(extensions[j].getPoint());
 						if (schema != null)
-							addExtensionAttributeEdit(schema, extensions[j], multiEdit, oldNames[i], newNames[i]);
+							addExtensionAttributeEdit(schema, extensions[j], multiEdit, affectedElements[i], newNames[i]);
 					}
 				}
 				
@@ -95,7 +98,7 @@ public class PluginManifestChange {
 		}	
 	}
 	
-	private static void addExtensionAttributeEdit(ISchema schema, IPluginParent parent, MultiTextEdit multi, String oldName, String newName) {
+	private static void addExtensionAttributeEdit(ISchema schema, IPluginParent parent, MultiTextEdit multi, IJavaElement element, String newName) {
 		IPluginObject[] children = parent.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			IPluginElement child = (IPluginElement)children[i];
@@ -107,22 +110,25 @@ public class PluginManifestChange {
 					ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
 					if (attInfo != null && attInfo.getKind() == IMetaAttribute.JAVA) {
 						IDocumentAttribute docAttr = (IDocumentAttribute)attr;
-						TextEdit edit = createTextEdit(docAttr, oldName, newName);
+						TextEdit edit = createTextEdit(docAttr, element, newName);
 						if (edit != null)
 							multi.addChild(edit);
 					}
 				}
 			}
-			addExtensionAttributeEdit(schema, child, multi, oldName, newName);
+			addExtensionAttributeEdit(schema, child, multi, element, newName);
 		}
 	}
 	
-	private static TextEdit createTextEdit(IDocumentAttribute attr, String oldName, String newName) {
+	private static TextEdit createTextEdit(IDocumentAttribute attr, IJavaElement element, String newName) {
 		if (attr == null)
 			return null;
 		
+		String oldName = (element instanceof IType) 
+							? ((IType)element).getFullyQualifiedName('$') 
+							: element.getElementName();
 		String value = attr.getAttributeValue();
-		if (oldName.equals(value) || isNestedType(value, oldName)) {
+		if (oldName.equals(value) || isGoodMatch(value, oldName, element instanceof IPackageFragment)) {
 			int offset = attr.getValueOffset();
 			if (offset >= 0)
 				return new ReplaceEdit(offset, oldName.length(), newName);
@@ -130,10 +136,12 @@ public class PluginManifestChange {
 		return null;
 	}
 	
-	private static boolean isNestedType(String value, String oldName) {
+	private static boolean isGoodMatch(String value, String oldName, boolean isPackage) {
 		if (value == null || value.length() <= oldName.length())
 			return false;
-		return (value.startsWith(oldName) && value.charAt(oldName.length()) == '$'); 
+		boolean goodLengthMatch = isPackage 
+									? value.lastIndexOf('.') <= oldName.length() 
+									: value.charAt(oldName.length()) == '$';
+		return value.startsWith(oldName) && goodLengthMatch; 
 	}
-
 }

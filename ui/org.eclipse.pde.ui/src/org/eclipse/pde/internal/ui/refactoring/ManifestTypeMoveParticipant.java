@@ -62,7 +62,7 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 		IFile file = fProject.getFile(filename);
 		if (file.exists()) {
 			Change change = PluginManifestChange.createRenameChange(file, 
-					getOldNames(), 
+					getAffectedElements(), 
 					getNewNames(), 
 					pm);
 			if (change != null)
@@ -70,12 +70,8 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 		}
 	}
 	
-	private String[] getOldNames() {
-		String[] result = new String[fElements.size()];
-		for (int i = 0; i < fElements.size(); i++) {
-			result[i] = ((IType)fElements.get(i)).getFullyQualifiedName('$');
-		}
-		return result;
+	protected IJavaElement[] getAffectedElements() {
+		return (IJavaElement[])fElements.toArray(new IJavaElement[fElements.size()]);
 	}
 	
 	private String[] getNewNames() {

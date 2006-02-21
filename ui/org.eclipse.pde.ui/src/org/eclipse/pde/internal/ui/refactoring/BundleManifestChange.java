@@ -118,17 +118,21 @@ public class BundleManifestChange {
 				if (element instanceof IType) {
 					String oldText = ((IType)element).getFullyQualifiedName('$');
 					resetHeaderValue(bundle.getManifestHeader(Constants.BUNDLE_ACTIVATOR), 
+							false,
 							oldText, 
 							newText);				
 					resetHeaderValue(bundle.getManifestHeader(ICoreConstants.PLUGIN_CLASS), 
+							false,
 							oldText, 
 							newText);
 				} else if (element instanceof IPackageFragment) {
 					String oldText = element.getElementName();				
 					resetHeaderValue(bundle.getManifestHeader(Constants.BUNDLE_ACTIVATOR), 
+							true,
 							oldText, 
 							newText);			
 					resetHeaderValue(bundle.getManifestHeader(ICoreConstants.PLUGIN_CLASS),  
+							true,
 							oldText, 
 							newText);									
 					renamePackage(bundle.getManifestHeader(Constants.EXPORT_PACKAGE), 
@@ -164,10 +168,10 @@ public class BundleManifestChange {
 		return null;
 	}
 	
-	private static void resetHeaderValue(IManifestHeader header, String oldText, String newText) {
+	private static void resetHeaderValue(IManifestHeader header, boolean isPackage, String oldText, String newText) {
 		if (header != null) {
 			String value = header.getValue();
-			if (oldText.equals(value) || isNestedType(value, oldText)) {
+			if (isGoodMatch(value, oldText, isPackage)) {
 				StringBuffer buffer = new StringBuffer(newText);
 				buffer.append(value.substring(oldText.length()));
 				header.setValue(buffer.toString());
@@ -175,10 +179,13 @@ public class BundleManifestChange {
 		}
 	}
 	
-	private static boolean isNestedType(String value, String oldName) {
+	private static boolean isGoodMatch(String value, String oldName, boolean isPackage) {
 		if (value == null || value.length() <= oldName.length())
 			return false;
-		return (value.startsWith(oldName) && value.charAt(oldName.length()) == '$'); 
+		boolean goodLengthMatch = isPackage 
+									? value.lastIndexOf('.') <= oldName.length() 
+									: value.charAt(oldName.length()) == '$';
+		return value.startsWith(oldName) && goodLengthMatch; 
 	}
 	
 	private static void renamePackage(IManifestHeader header, String oldName, String newName) {

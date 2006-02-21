@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.refactoring;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -58,18 +59,15 @@ public abstract class PDERenameParticipant extends RenameParticipant implements 
 		IFile file = fProject.getFile(filename);
 		if (file.exists()) {
 			Change change = PluginManifestChange.createRenameChange(
-					file, getOldNames(), getNewNames(), pm);
+					file, getAffectedElements(), getNewNames(), pm);
 			if (change != null)
 				result.add(change);
 		}
 	}
 	
-	protected String[] getOldNames() {
-		String[] result = new String[fElements.size()];
-		Iterator iter = fElements.keySet().iterator();
-		for (int i = 0; i < fElements.size(); i++)
-			result[i] = ((IJavaElement)iter.next()).getElementName();
-		return result;
+	protected IJavaElement[] getAffectedElements() {
+		Set objects = fElements.keySet();
+		return (IJavaElement[])objects.toArray(new IJavaElement[objects.size()]);
 	}
 	
 	protected String[] getNewNames() {
