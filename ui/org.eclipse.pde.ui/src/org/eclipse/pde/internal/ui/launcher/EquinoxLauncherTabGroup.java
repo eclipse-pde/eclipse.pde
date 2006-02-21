@@ -28,8 +28,8 @@ import org.eclipse.pde.ui.launcher.TracingTab;
 public class EquinoxLauncherTabGroup extends AbstractLaunchConfigurationTabGroup {
 
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		ILaunchConfigurationTab[] tabs =
-			tabs = new ILaunchConfigurationTab[]{
+		ILaunchConfigurationTab[] tabs = 
+			new ILaunchConfigurationTab[]{
 					new EquinoxPluginsTab(),
 					new JavaArgumentsTab(),
 					new EquinoxSettingsTab(),
