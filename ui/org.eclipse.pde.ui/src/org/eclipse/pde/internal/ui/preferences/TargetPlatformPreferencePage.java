@@ -417,7 +417,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			return null;
 		IConfigurationElement elem = fElements[fProfileCombo.getSelectionIndex() - offSet];
 		String path = elem.getAttribute("definition");  //$NON-NLS-1$
-		String symbolicName = elem.getDeclaringExtension().getNamespace();
+		String symbolicName = elem.getDeclaringExtension().getNamespaceIdentifier();
 		return TargetDefinitionManager.getResourceURL(symbolicName, path);
 	}
 	
