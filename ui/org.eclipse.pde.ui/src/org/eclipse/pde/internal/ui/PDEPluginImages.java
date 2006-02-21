@@ -204,30 +204,28 @@ public class PDEPluginImages {
 	/**
 	 * WIZ
 	 */
- 	public static final ImageDescriptor DESC_NEWPPRJ_WIZ = create(PATH_WIZBAN, "newpprj_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_NEWFRAGPRJ_WIZ = create(PATH_WIZBAN, "newfprj_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_DEFCON_WIZ  = create(PATH_WIZBAN, "defcon_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_TARGET_WIZ  = create(PATH_WIZBAN, "target_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_NEWEX_WIZ   = create(PATH_WIZBAN, "newex_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_NEWEXP_WIZ  = create(PATH_WIZBAN, "newexp_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_NEWEXPRJ_WIZ   = create(PATH_WIZBAN, "newexprj_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_NEWFTRPRJ_WIZ   = create(PATH_WIZBAN, "newftrprj_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_NEWFTRPTCH_WIZ = create(PATH_WIZBAN, "newefix_wizban.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_NEWSITEPRJ_WIZ   = create(PATH_WIZBAN, "newsiteprj_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_CONVJPPRJ_WIZ =create(PATH_WIZBAN, "convjpprj_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_EXT_POINT_SCHEMA_WIZ = create(PATH_WIZBAN, "schema_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_DEBUG_WIZ     = create(PATH_WIZBAN, "debug_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_RUN_WIZ     = create(PATH_WIZBAN, "run_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_PLUGIN_IMPORT_WIZ  = create(PATH_WIZBAN, "imp_extplug_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_PLUGIN_EXPORT_WIZ  = create(PATH_WIZBAN, "exp_deployplug_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FEATURE_IMPORT_WIZ  = create(PATH_WIZBAN, "imp_extfeat_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FEATURE_EXPORT_WIZ  = create(PATH_WIZBAN, "exp_deployfeat_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_MIGRATE_30_WIZ = create(PATH_WIZBAN, "migrate_30_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_PRODUCT_WIZ = create(PATH_WIZBAN, "product_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_PRODUCT_EXPORT_WIZ = create(PATH_WIZBAN, "exp_product.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_JAR_TO_PLUGIN_WIZ = create(PATH_WIZBAN, "jarToPlugin_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_EXTSTR_WIZ = create(PATH_WIZBAN, "extstr_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_XHTML_CONVERT_WIZ = create(PATH_WIZBAN, "xhtml_wizard.gif"); //$NON-NLS-1$
+ 	public static final ImageDescriptor DESC_NEWPPRJ_WIZ = create(PATH_WIZBAN, "newpprj_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_NEWFRAGPRJ_WIZ = create(PATH_WIZBAN, "newfprj_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_DEFCON_WIZ = create(PATH_WIZBAN, "defcon_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_TARGET_WIZ = create(PATH_WIZBAN, "target_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_NEWEX_WIZ = create(PATH_WIZBAN, "newex_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_NEWEXP_WIZ = create(PATH_WIZBAN, "newexp_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_NEWEXPRJ_WIZ = create(PATH_WIZBAN, "newexprj_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_NEWFTRPRJ_WIZ = create(PATH_WIZBAN, "newftrprj_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_NEWFTRPTCH_WIZ = create(PATH_WIZBAN, "newefix_wizban.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_NEWSITEPRJ_WIZ = create(PATH_WIZBAN, "newsiteprj_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CONVJPPRJ_WIZ = create(PATH_WIZBAN, "convjpprj_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_EXT_POINT_SCHEMA_WIZ = create(PATH_WIZBAN, "schema_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_PLUGIN_IMPORT_WIZ = create(PATH_WIZBAN, "imp_extplug_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_PLUGIN_EXPORT_WIZ = create(PATH_WIZBAN, "exp_deployplug_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_FEATURE_IMPORT_WIZ = create(PATH_WIZBAN, "imp_extfeat_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_FEATURE_EXPORT_WIZ = create(PATH_WIZBAN, "exp_deployfeat_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_MIGRATE_30_WIZ = create(PATH_WIZBAN, "migrate_30_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_PRODUCT_WIZ = create(PATH_WIZBAN, "product_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_PRODUCT_EXPORT_WIZ = create(PATH_WIZBAN, "exp_product.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_JAR_TO_PLUGIN_WIZ = create(PATH_WIZBAN, "jarToPlugin_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_EXTSTR_WIZ = create(PATH_WIZBAN, "extstr_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_XHTML_CONVERT_WIZ = create(PATH_WIZBAN, "xhtml_wiz.png"); //$NON-NLS-1$
 	/**
 	 * View
 	 */
