@@ -2679,4 +2679,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetProfileWindow_targetDescription;
 
+	public static String ManifestEditorContributor_externStringsActionName;
+
 }

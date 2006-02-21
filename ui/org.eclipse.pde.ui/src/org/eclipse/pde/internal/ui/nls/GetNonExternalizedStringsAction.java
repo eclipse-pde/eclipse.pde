@@ -13,12 +13,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 
-public class GetNonExternalizedStringsAction 
-		implements IWorkbenchWindowActionDelegate {
+public class GetNonExternalizedStringsAction implements IWorkbenchWindowActionDelegate {
 
 	private ISelection fSelection;
 	
-
 	public GetNonExternalizedStringsAction() {
 	}
 
@@ -34,10 +32,8 @@ public class GetNonExternalizedStringsAction
 			ModelChangeTable changeTable = runnable.getChangeTable();
 			if (!changeTable.isEmpty()) {
 				ExternalizeStringsWizard wizard = new ExternalizeStringsWizard(changeTable);
-				final WizardDialog dialog = new WizardDialog(PDEPlugin
-						.getActiveWorkbenchShell(), wizard);
-				BusyIndicator.showWhile(PDEPlugin.getActiveWorkbenchShell()
-						.getDisplay(), new Runnable() {
+				final WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+				BusyIndicator.showWhile(PDEPlugin.getActiveWorkbenchShell().getDisplay(), new Runnable() {
 					public void run() {
 						dialog.open();
 					}

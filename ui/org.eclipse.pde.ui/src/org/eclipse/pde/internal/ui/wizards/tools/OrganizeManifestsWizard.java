@@ -3,7 +3,6 @@ package org.eclipse.pde.internal.ui.wizards.tools;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -14,11 +13,10 @@ public class OrganizeManifestsWizard extends Wizard {
 	private ArrayList fProjects;
 	
 	public OrganizeManifestsWizard(ArrayList projects) {
-		IDialogSettings workbenchSettings = PDEPlugin.getDefault().getDialogSettings();
 		fProjects = projects;
 		setNeedsProgressMonitor(true);
 		setWindowTitle(PDEUIMessages.OrganizeManifestsWizard_title);
-		setDialogSettings(workbenchSettings);
+		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 	}
 
 	public boolean performFinish() {
