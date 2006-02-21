@@ -6,12 +6,12 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -64,51 +64,59 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 	
 	protected void createFeature(IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(PDEUIMessages.NewFeatureWizard_creatingProject, 3);
+		IFile file;
 		if (shouldOverwriteFeature()) {
-			CoreUtility.createProject(fProject, fLocation, monitor);
-			fProject.open(monitor);
-			IProjectDescription desc = fProject.getWorkspace().newProjectDescription(fProject.getName());
-			desc.setLocation(fLocation);
-			if (!fProject.hasNature(PDE.FEATURE_NATURE))
-				CoreUtility.addNatureToProject(fProject, PDE.FEATURE_NATURE, monitor);
-
-			if (!fProject.hasNature(JavaCore.NATURE_ID)
-					&& fFeatureData.hasCustomHandler()) {
-				CoreUtility.addNatureToProject(fProject, JavaCore.NATURE_ID, monitor);
-				JavaCore.create(fProject).setOutputLocation(
-						fProject.getFullPath().append(fFeatureData.getJavaBuildFolderName()), monitor);
-				JavaCore.create(fProject).setRawClasspath(
-						new IClasspathEntry[] {
-								JavaCore.newContainerEntry(new Path(JavaRuntime.JRE_CONTAINER)),
-								JavaCore.newSourceEntry(fProject.getFullPath().append(fFeatureData.getSourceFolderName()))
-						}, monitor);
-				addSourceFolder(fFeatureData.getSourceFolderName(), fProject, monitor);
-			}
-
-			monitor.subTask(PDEUIMessages.NewFeatureWizard_creatingManifest);
+			createProject(monitor);
 			monitor.worked(1);
 			createBuildProperties();
 			monitor.worked(1);
+			
 			// create feature.xml
-			IFile file = createManifest();
+			monitor.subTask(PDEUIMessages.NewFeatureWizard_creatingManifest);
+			file = createFeature();
 			monitor.worked(1);
-			// open manifest for editing
-			openFeatureManifest(file);
 		} else {
 			fProject.create(monitor);
 			fProject.open(monitor);
-			IFile featureFile = fProject.getFile("feature.xml"); //$NON-NLS-1$
-			if (featureFile.exists())
-				openFeatureManifest(featureFile);
+			file = fProject.getFile("feature.xml"); //$NON-NLS-1$
 			monitor.worked(3);
 		}
+		if (file.exists())
+			openFeatureEditor(file);
+	}
+	
+	private void createProject(IProgressMonitor monitor) throws CoreException {
+		CoreUtility.createProject(fProject, fLocation, monitor);
+		fProject.open(monitor);
+		IProjectDescription desc = fProject.getWorkspace().newProjectDescription(fProject.getName());
+		desc.setLocation(fLocation);
+		if (!fProject.hasNature(PDE.FEATURE_NATURE))
+			CoreUtility.addNatureToProject(fProject, PDE.FEATURE_NATURE, monitor);
 
+		if (fFeatureData.hasCustomHandler()) {
+			if (!fProject.hasNature(JavaCore.NATURE_ID))
+				CoreUtility.addNatureToProject(fProject, JavaCore.NATURE_ID, monitor);
+			
+			if (fFeatureData.getSourceFolderName() != null
+					&& fFeatureData.getSourceFolderName().trim().length() > 0) {
+				IFolder folder = fProject.getFolder(fFeatureData.getSourceFolderName());
+				if (!folder.exists())
+					CoreUtility.createFolder(folder);
+			}
+			
+			IJavaProject jproject = JavaCore.create(fProject);
+			jproject.setOutputLocation(fProject.getFullPath().append(
+					fFeatureData.getJavaBuildFolderName()), monitor);
+			jproject.setRawClasspath(
+					new IClasspathEntry[] {
+							JavaCore.newSourceEntry(fProject.getFullPath().append(fFeatureData.getSourceFolderName())),
+							JavaCore.newContainerEntry(new Path(JavaRuntime.JRE_CONTAINER))
+					}, monitor);
+		}
 	}
 	
 	protected void createBuildProperties() throws CoreException {
-		String fileName = "build.properties"; //$NON-NLS-1$
-		IPath path = fProject.getFullPath().append(fileName);
-		IFile file = fProject.getWorkspace().getRoot().getFile(path);
+		IFile file = fProject.getFile("build.properties"); //$NON-NLS-1$
 		if (!file.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
 			IBuildEntry ientry = model.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
@@ -126,8 +134,7 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 				}
 				String output = fFeatureData.getJavaBuildFolderName();
 				if (output != null) {
-					IBuildEntry entry = model.getFactory().createEntry(
-							IBuildPropertiesConstants.PROPERTY_OUTPUT_PREFIX + library);
+					IBuildEntry entry = model.getFactory().createEntry(IBuildPropertiesConstants.PROPERTY_OUTPUT_PREFIX + library);
 					if (!output.endsWith("/")) //$NON-NLS-1$
 						output += "/"; //$NON-NLS-1$
 					entry.addToken(output);
@@ -141,7 +148,7 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 		IDE.setDefaultEditor(file, PDEPlugin.BUILD_EDITOR_ID);
 	}
 	
-	protected IFile createManifest() throws CoreException {
+	protected IFile createFeature() throws CoreException {
 		IFile file = fProject.getFile("feature.xml"); //$NON-NLS-1$
 		WorkspaceFeatureModel model = new WorkspaceFeatureModel();
 		model.setFile(file);
@@ -183,7 +190,7 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 	
 	protected abstract void configureFeature(IFeature feature, WorkspaceFeatureModel model) throws CoreException ;
 	
-	protected void openFeatureManifest(IFile manifestFile) {
+	protected void openFeatureEditor(IFile manifestFile) {
 		IWorkbenchPage page = PDEPlugin.getActivePage();
 		// Reveal the file first
 		final ISelection selection = new StructuredSelection(manifestFile);
@@ -197,45 +204,21 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 			});
 		}
 		// Open the editor
-		FileEditorInput input = new FileEditorInput(manifestFile);
-		String id = PDEPlugin.FEATURE_EDITOR_ID;
 		try {
-			page.openEditor(input, id);
+			page.openEditor(new FileEditorInput(manifestFile), PDEPlugin.FEATURE_EDITOR_ID);
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
 	}
 	
-	protected static void addSourceFolder(String name, IProject project,
-			IProgressMonitor monitor) throws CoreException {
-		IPath path = project.getFullPath().append(name);
-		ensureFolderExists(project, path, monitor);
-		monitor.worked(1);
-	}
-
-	private static void ensureFolderExists(IProject project, IPath folderPath,
-			IProgressMonitor monitor) throws CoreException {
-		IWorkspace workspace = project.getWorkspace();
-
-		for (int i = 1; i <= folderPath.segmentCount(); i++) {
-			IPath partialPath = folderPath.uptoSegment(i);
-			if (!workspace.getRoot().exists(partialPath)) {
-				IFolder folder = workspace.getRoot().getFolder(partialPath);
-				folder.create(true, true, null);
-			}
-			monitor.worked(1);
-		}
-	}
-	
 	protected boolean shouldOverwriteFeature() {
-		boolean overwrite = true;
-		if (fLocation.append(fProject.getName()).toFile().exists()) {
-			overwrite = MessageDialog.openQuestion(
-					PDEPlugin.getActiveWorkbenchShell(),
-					this instanceof CreateFeaturePatchOperation ?
-							PDEUIMessages.FeaturePatch_wtitle : PDEUIMessages.NewFeatureWizard_wtitle,
-					PDEUIMessages.NewFeatureWizard_overwriteFeature);
-		}
-		return overwrite;
+		return 
+			!fLocation.append(fProject.getName()).toFile().exists()
+				||
+			MessageDialog.openQuestion(
+				PDEPlugin.getActiveWorkbenchShell(),
+				this instanceof CreateFeaturePatchOperation ?
+						PDEUIMessages.FeaturePatch_wtitle : PDEUIMessages.NewFeatureWizard_wtitle,
+				PDEUIMessages.NewFeatureWizard_overwriteFeature);
 	}
 }
