@@ -48,6 +48,9 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel
 
 	protected NLResourceHelper createNLResourceHelper() {
 		try {
+			// TODO revisit this method
+			if (file == null || file.getLocation() == null)
+				return null;
 			IPath path = file.getLocation().removeLastSegments(1);
 			String installLocation = path.toOSString();
 			if (installLocation.startsWith("file:") == false) //$NON-NLS-1$
