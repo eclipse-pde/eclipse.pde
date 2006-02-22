@@ -287,6 +287,10 @@ public class BuildErrorReporter extends ErrorReporter {
 			if (token.equals(".")) //$NON-NLS-1$
 				// skip . since we know it exists
 				continue;
+			int varStart = token.indexOf("${"); //$NON-NLS-1$
+			if (varStart != -1 && varStart < token.indexOf("}")) //$NON-NLS-1$
+				// skip '${x}' variables
+				continue;
 			IResource member = fProject.findMember(token);
 			String message = null;
 			if (member == null) {
@@ -366,12 +370,12 @@ public class BuildErrorReporter extends ErrorReporter {
 			// extract the full entry
 			String entry = doc.get(be.getOffset(), be.getLength());
 			
-			int index = entry.indexOf('=') + 1;
-			if (index == 0 || index == entry.length())
+			int valueIndex = entry.indexOf('=') + 1;
+			if (valueIndex == 0 || valueIndex == entry.length())
 				return 0;
 			
 			// remove the entry name			
-			entry = entry.substring(index);
+			entry = entry.substring(valueIndex);
 			
 			int entryTokenOffset = entry.indexOf(tokenString);
 			if (entryTokenOffset == -1)
@@ -379,7 +383,7 @@ public class BuildErrorReporter extends ErrorReporter {
 			
 			// check to see if single occurence
 			if (entryTokenOffset == entry.lastIndexOf(tokenString))
-				return doc.getLineOfOffset(be.getOffset() + index + entryTokenOffset) + 1;
+				return doc.getLineOfOffset(be.getOffset() + valueIndex + entryTokenOffset) + 1;
 			
 			// multiple occurences, must comb through to find exact location
 			entryTokenOffset = 0;
@@ -395,7 +399,7 @@ public class BuildErrorReporter extends ErrorReporter {
 				String ct = entry.substring(sws ? 1 : 0, cci);
 				entryTokenOffset += cci;
 				if (ct.trim().equals(tokenString))
-					return doc.getLineOfOffset(be.getOffset() + index + entryTokenOffset) + 1;
+					return doc.getLineOfOffset(be.getOffset() + valueIndex + entryTokenOffset) + 1;
 				
 				entry = entry.substring(cci + 1);
 			}
