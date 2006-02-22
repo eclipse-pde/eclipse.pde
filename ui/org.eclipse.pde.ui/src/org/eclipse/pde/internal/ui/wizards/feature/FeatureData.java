@@ -15,14 +15,14 @@ import org.eclipse.jdt.ui.PreferenceConstants;
 
 public class FeatureData {
 
-	String id;
-	String name;
-	String version;
-	String provider;
-	String library;
-	boolean isPatch;
-	String featureToPatchId;
-	String featureToPatchVersion;
+	public String id;
+	public String name;
+	public String version;
+	public String provider;
+	public String library;
+	public boolean isPatch;
+	public String featureToPatchId;
+	public String featureToPatchVersion;
 
 	public FeatureData() {
 		library = null;
@@ -30,7 +30,7 @@ public class FeatureData {
 	}
 
 	public boolean hasCustomHandler() {
-		return library == null || library.length() == 0;
+		return library != null && library.length() > 0;
 	}
 	
 	public String getSourceFolderName() {
