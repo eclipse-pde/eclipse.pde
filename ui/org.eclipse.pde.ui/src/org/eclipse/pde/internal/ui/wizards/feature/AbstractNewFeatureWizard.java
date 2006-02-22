@@ -22,7 +22,6 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.internal.ui.wizards.NewWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
@@ -68,7 +67,6 @@ public abstract class AbstractNewFeatureWizard extends NewWizard implements IExe
 
 	public AbstractNewFeatureWizard() {
 		super();
-		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPTCH_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setNeedsProgressMonitor(true);
 	}

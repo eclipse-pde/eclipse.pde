@@ -11,12 +11,14 @@
 package org.eclipse.pde.internal.ui.wizards.feature;
 
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class NewFeaturePatchWizard extends AbstractNewFeatureWizard {
 
 	public NewFeaturePatchWizard() {
 		super();
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPTCH_WIZ);
 		setWindowTitle(PDEUIMessages.FeaturePatch_wtitle);
 	}
 
