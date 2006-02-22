@@ -20,23 +20,17 @@ public class FeatureData {
 	String version;
 	String provider;
 	String library;
-	boolean hasCustomHandler;
 	boolean isPatch;
 	String featureToPatchId;
 	String featureToPatchVersion;
 
 	public FeatureData() {
 		library = null;
-		hasCustomHandler = false;
 		isPatch = false;
 	}
 
 	public boolean hasCustomHandler() {
-		return hasCustomHandler;
-	}
-
-	public boolean isPatch(){
-	    return isPatch;
+		return library == null || library.length() == 0;
 	}
 	
 	public String getSourceFolderName() {

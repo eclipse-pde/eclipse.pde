@@ -51,7 +51,6 @@ public class FeatureSpecPage extends AbstractFeatureSpecPage {
 		data.provider = fFeatureProviderText.getText();
 		data.name = fFeatureNameText.getText();
 		data.library = getInstallHandlerLibrary();
-		data.hasCustomHandler = data.library != null;
 		return data;
 	}
 

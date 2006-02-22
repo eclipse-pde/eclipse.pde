@@ -28,8 +28,8 @@ public class NewFeaturePatchWizard extends AbstractNewFeatureWizard {
 		return new CreateFeaturePatchOperation(
 				fProvider.getProject(),
 				fProvider.getLocationPath(),
-				fProvider.getFeatureToPatch(),
 				fProvider.getFeatureData(),
+				fProvider.getFeatureToPatch(),
 				getShell());
 	}
 

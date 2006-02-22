@@ -157,7 +157,7 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 		feature.setId(fFeatureData.id);
 		feature.setVersion(fFeatureData.version);
 		feature.setProviderName(fFeatureData.provider);
-		if (fFeatureData.hasCustomHandler)
+		if (fFeatureData.hasCustomHandler())
 			feature.setInstallHandler(model.getFactory().createInstallHandler());
 
 		configureFeature(feature, model);

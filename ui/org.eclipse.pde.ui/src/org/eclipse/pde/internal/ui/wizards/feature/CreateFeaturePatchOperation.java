@@ -15,7 +15,7 @@ public class CreateFeaturePatchOperation extends AbstractCreateFeatureOperation 
 	private IFeatureModel fFeatureModel;
 
 	public CreateFeaturePatchOperation(IProject project, IPath location,
-			IFeatureModel featureModel, FeatureData featureData, Shell shell) {
+			FeatureData featureData, IFeatureModel featureModel, Shell shell) {
 		super(project, location, featureData, shell);
 		fFeatureModel = featureModel;
 	}
@@ -27,7 +27,7 @@ public class CreateFeaturePatchOperation extends AbstractCreateFeatureOperation 
 			featureImport.setPatch(true);
 			featureImport.setVersion(fFeatureModel.getFeature().getVersion());
 			featureImport.setId(fFeatureModel.getFeature().getId());
-		} else if (fFeatureData.isPatch()) {
+		} else if (fFeatureData.isPatch) {
 			featureImport.setType(IFeatureImport.FEATURE);
 			featureImport.setPatch(true);
 			featureImport.setVersion(fFeatureData.featureToPatchVersion);

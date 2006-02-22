@@ -106,7 +106,6 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 		data.provider = getPatchProvider();
 		data.name = getPatchName();
 		data.library = getInstallHandlerLibrary();
-		data.hasCustomHandler = data.library != null;
 		data.isPatch = true;
 		data.featureToPatchId = fFeatureIdText.getText();
 		data.featureToPatchVersion = fFeatureVersionText.getText();
