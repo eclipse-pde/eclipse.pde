@@ -223,10 +223,9 @@ public class BuildErrorReporter extends ErrorReporter {
 					IBuild build = ClasspathUtilCore.getBuild(fragmentModel);
 					if (build != null) {
 						IBuildEntry[] entries = build.getBuildEntries();
-						for (int i = 0; i < entries.length; i++) {
+						for (int i = 0; i < entries.length; i++)
 							if (entries[i].getName().equals(SOURCE + libname))
 								return true;
-						}
 						return false;
 					}
 				} catch (CoreException e) {
@@ -385,23 +384,31 @@ public class BuildErrorReporter extends ErrorReporter {
 			if (entryTokenOffset == entry.lastIndexOf(tokenString))
 				return doc.getLineOfOffset(be.getOffset() + valueIndex + entryTokenOffset) + 1;
 			
+			
 			// multiple occurences, must comb through to find exact location
-			entryTokenOffset = 0;
+			// skip ahead to 1st occurence
+			entry = entry.substring(entryTokenOffset);
+			int currOffset = be.getOffset() + valueIndex + entryTokenOffset;
 			while (true) {
 				// tokenize string using ',' as a delimiter, trim out whitespace and '\' characters
 				// during comparison
+				if (entry.charAt(0) == '\\') {
+					currOffset++;
+					entry = entry.substring(1);
+				}
 				int cci = entry.indexOf(',');
-				if (cci == -1 && entry.indexOf(tokenString) == -1)
+				if (cci == -1) {
+					if (entry.trim().equals(tokenString))
+						return doc.getLineOfOffset(currOffset + entry.indexOf(tokenString)) + 1;
 					return 0;
+				}
 				
-				// if entry starts with slash make sure token does not include it
-				boolean sws = entry.charAt(0) == '\\'; 
-				String ct = entry.substring(sws ? 1 : 0, cci);
-				entryTokenOffset += cci;
-				if (ct.trim().equals(tokenString))
-					return doc.getLineOfOffset(be.getOffset() + valueIndex + entryTokenOffset) + 1;
+				String ct = entry.substring(0, cci).trim();
+				if (ct.equals(tokenString)) 
+					return doc.getLineOfOffset(currOffset) + 1;
 				
-				entry = entry.substring(cci + 1);
+				entry = entry.substring(++cci);
+				currOffset += cci;
 			}
 			
 		} catch (BadLocationException e) {
