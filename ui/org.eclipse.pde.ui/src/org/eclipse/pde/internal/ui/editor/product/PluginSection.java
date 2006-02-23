@@ -22,6 +22,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -56,7 +57,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -121,9 +121,9 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		tablePart.setButtonEnabled(0, isEditable());
 		tablePart.setButtonEnabled(1, isEditable());
 		tablePart.setButtonEnabled(2, isEditable());
-		tablePart.setButtonEnabled(3, isEditable());
-		tablePart.setButtonEnabled(4, isEditable());
-		tablePart.setButtonEnabled(6, isEditable());
+		
+		// remove buttons will be updated on refresh
+		
 		tablePart.setButtonEnabled(7, isEditable());
 		tablePart.setButtonEnabled(8, isEditable());
 		
@@ -364,21 +364,17 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	}
 	
 	private void handleRemoveAll() {
-		TableItem[] items = fPluginTable.getTable().getItems();
 		IProduct product = getProduct();
-		for (int i = 0; i < items.length; i++) {
-			product.removePlugin((IProductPlugin)items[i].getData());
-		}
+		product.removePlugins(product.getPlugins());
 	}
 	
 	private void handleDelete() {
 		IStructuredSelection ssel = (IStructuredSelection)fPluginTable.getSelection();
 		if (ssel.size() > 0) {
 			Object[] objects = ssel.toArray();
-			IProduct product = getProduct();
-			for (int i = 0; i < objects.length; i++) {
-				product.removePlugin((IProductPlugin)objects[i]);
-			}
+			IProductPlugin[] plugins = new IProductPlugin[objects.length];
+			System.arraycopy(objects, 0, plugins, 0, objects.length);
+			getProduct().removePlugins(plugins);
 		}
 	}
 
@@ -447,6 +443,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 					fPluginTable.remove(objects[i]);
 			}
 		}
+		updateRemoveButtons(false, true);
 	}
 	
 	/* (non-Javadoc)
@@ -454,6 +451,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	 */
 	public void refresh() {
 		fPluginTable.refresh();
+		updateRemoveButtons(true, true);
 		super.refresh();
 	}
 
@@ -465,8 +463,10 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		if (!control.isDisposed()) {
 			control.getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					if (!control.isDisposed())
+					if (!control.isDisposed()) {
 						fPluginTable.refresh();
+						updateRemoveButtons(true, true);
+					}
 				}
 			});
 		}
@@ -485,6 +485,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
+		updateRemoveButtons(true, false);
 	}
 	
 	public boolean setFormInput(Object input) {
@@ -502,4 +503,15 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		}
 	}
 	
+	private void updateRemoveButtons(boolean updateRemove, boolean updateRemoveAll) {
+		TablePart tablePart = getTablePart();
+		if (updateRemove) {
+			ISelection selection = getViewerSelection();
+			tablePart.setButtonEnabled(3,
+					isEditable() &&	!selection.isEmpty() && selection instanceof IStructuredSelection && 
+					((IStructuredSelection)selection).getFirstElement() instanceof IProductPlugin);
+		}
+		if (updateRemoveAll)
+			tablePart.setButtonEnabled(4, isEditable() && fPluginTable.getTable().getItemCount() > 0);
+	}
 }

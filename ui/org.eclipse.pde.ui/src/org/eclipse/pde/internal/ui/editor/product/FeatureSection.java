@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -42,7 +43,6 @@ import org.eclipse.pde.internal.ui.wizards.feature.NewFeatureProjectWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -90,8 +90,9 @@ public class FeatureSection extends TableSection {
 		fFeatureTable.setInput(PDECore.getDefault().getFeatureModelManager());
 		
 		tablePart.setButtonEnabled(0, isEditable());
-		tablePart.setButtonEnabled(1, isEditable());
-		tablePart.setButtonEnabled(2, isEditable());
+		
+		// remove buttons updated on refresh
+		
 		tablePart.setButtonEnabled(5, isEditable());
 		
 		toolkit.paintBordersFor(container);
@@ -146,11 +147,8 @@ public class FeatureSection extends TableSection {
 	
 
 	private void handleRemoveAll() {
-		TableItem[] items = fFeatureTable.getTable().getItems();
 		IProduct product = getProduct();
-		for (int i = 0; i < items.length; i++) {
-			product.removeFeature((IProductFeature)items[i].getData());
-		}
+		product.removeFeatures(product.getFeatures());
 	}
 
 	/* (non-Javadoc)
@@ -209,10 +207,9 @@ public class FeatureSection extends TableSection {
 		IStructuredSelection ssel = (IStructuredSelection)fFeatureTable.getSelection();
 		if (ssel.size() > 0) {
 			Object[] objects = ssel.toArray();
-			IProduct product = getProduct();
-			for (int i = 0; i < objects.length; i++) {
-				product.removeFeature((IProductFeature)objects[i]);
-			}
+			IProductFeature[] features = new IProductFeature[objects.length];
+			System.arraycopy(objects, 0, features, 0, objects.length);
+			getProduct().removeFeatures(features);
 		}
 	}
 	
@@ -314,6 +311,7 @@ public class FeatureSection extends TableSection {
 					fFeatureTable.remove(objects[i]);
 			}
 		}
+		updateRemoveButtons(false, true);
 	}
 	
 	/* (non-Javadoc)
@@ -321,11 +319,13 @@ public class FeatureSection extends TableSection {
 	 */
 	public void refresh() {
 		fFeatureTable.refresh();
+		updateRemoveButtons(true, true);
 		super.refresh();
 	}
 	
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
+		updateRemoveButtons(true, false);
 	}
 
 	public boolean setFormInput(Object input) {
@@ -336,4 +336,16 @@ public class FeatureSection extends TableSection {
 		return super.setFormInput(input);
 	}
 
+	private void updateRemoveButtons(boolean updateRemove, boolean updateRemoveAll) {
+		TablePart tablePart = getTablePart();
+		if (updateRemove) {
+			ISelection selection = getViewerSelection();
+			tablePart.setButtonEnabled(1,
+					isEditable() &&	!selection.isEmpty() && selection instanceof IStructuredSelection && 
+					((IStructuredSelection)selection).getFirstElement() instanceof IProductFeature);
+		}
+		if (updateRemoveAll)
+			tablePart.setButtonEnabled(2, isEditable() && fFeatureTable.getTable().getItemCount() > 0);
+	}
+	
 }

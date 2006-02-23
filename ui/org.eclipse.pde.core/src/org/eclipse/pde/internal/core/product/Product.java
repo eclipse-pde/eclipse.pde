@@ -301,16 +301,18 @@ public class Product extends ProductObject implements IProduct {
 		if (isEditable())
 			fireStructureChanged(plugin, IModelChangedEvent.INSERT);
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#removePlugin(org.eclipse.pde.internal.core.iproduct.IProductPlugin)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#removePlugins(org.eclipse.pde.internal.core.iproduct.IProductPlugin[])
 	 */
-	public void removePlugin(IProductPlugin plugin) {
-		fPlugins.remove(plugin.getId());
+	public void removePlugins(IProductPlugin[] plugins) {
+		for (int i = 0; i < plugins.length; i++) {
+			fPlugins.remove(plugins[i].getId());
+		}
 		if (isEditable())
-			fireStructureChanged(plugin, IModelChangedEvent.REMOVE);
+			fireStructureChanged(plugins, IModelChangedEvent.REMOVE);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getPlugins()
 	 */
@@ -386,10 +388,12 @@ public class Product extends ProductObject implements IProduct {
 			fireStructureChanged(feature, IModelChangedEvent.INSERT);
 	}
 
-	public void removeFeature(IProductFeature feature) {
-		fFeatures.remove(feature.getId());
+	public void removeFeatures(IProductFeature[] features) {
+		for (int i = 0; i < features.length; i++) {
+			fFeatures.remove(features[i].getId());
+		}
 		if (isEditable())
-			fireStructureChanged(feature, IModelChangedEvent.REMOVE);
+			fireStructureChanged(features, IModelChangedEvent.REMOVE);
 	}
 
 	public IProductFeature[] getFeatures() {
