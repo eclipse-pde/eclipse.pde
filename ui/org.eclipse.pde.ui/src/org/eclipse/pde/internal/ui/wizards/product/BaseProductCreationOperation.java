@@ -160,14 +160,16 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 	}
 	
 	protected void addPlugins(IProductModelFactory factory, IProduct product, IPluginModelBase[] plugins) {
+		IProductPlugin[] pplugins = new IProductPlugin[plugins.length];
 		for (int i = 0; i < plugins.length; i++) {
 			String id = plugins[i].getPluginBase().getId();
 			if (id != null && id.length() > 0) {
 				IProductPlugin plugin = factory.createPlugin();
 				plugin.setId(id);
-				product.addPlugin(plugin);
+				pplugins[i] = plugin;
 			}
 		}		
+		product.addPlugins(pplugins);
 	}
 	
 	private void openFile() {

@@ -227,7 +227,7 @@ public class IntroSection extends PDESection {
 		IProductModelFactory factory = product.getModel().getFactory();
 		IProductPlugin plugin = factory.createPlugin();
 		plugin.setId(INTRO_POINT);
-		product.addPlugin(plugin);
+		product.addPlugins(new IProductPlugin[] {plugin});
 		
 		PluginSection.handleAddRequired(new IProductPlugin[] {plugin});
 		if (fManifest == null) loadManifestAndIntroIds(true);

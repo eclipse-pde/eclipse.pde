@@ -44,9 +44,9 @@ public interface IProduct extends IProductObject {
 	
 	ILauncherInfo getLauncherInfo();
 	
-	void addPlugin(IProductPlugin plugin);
+	void addPlugins(IProductPlugin[] plugin);
 	
-	void addFeature(IProductFeature feature);
+	void addFeatures(IProductFeature[] feature);
 	
 	void removePlugins(IProductPlugin[] plugins);
 	

@@ -297,21 +297,23 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 			}
 		}
 		IProductModelFactory factory = product.getModel().getFactory();
+		IProductPlugin[] requiredPlugins = new IProductPlugin[set.size()];
+		int i = 0;
 		Iterator iter = set.iterator();
 		while (iter.hasNext()) {
 			String id = iter.next().toString();
 			IProductPlugin plugin = factory.createPlugin();
 			plugin.setId(id);
-			product.addPlugin(plugin);
+			requiredPlugins[i++] = plugin;
 		}
+		product.addPlugins(requiredPlugins);
 	}
 	
 	private static void addDependencies(BundleDescription desc, Set set) {
 		if (desc == null)
 			return;
 		
-		String id = desc.getSymbolicName();
-		if (!set.add(id))
+		if (!set.add(desc.getSymbolicName()))
 			return;
 
 		
@@ -349,6 +351,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 			IWorkingSet[] workingSets = dialog.getSelection();
 			IProduct product = getProduct();
 			IProductModelFactory factory = product.getModel().getFactory();
+			ArrayList pluginList = new ArrayList();
 			for (int i = 0; i < workingSets.length; i++) {
 				IAdaptable[] elements = workingSets[i].getElements();
 				for (int j = 0; j < elements.length; j++) {
@@ -356,10 +359,11 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 					if (model != null) {
 						IProductPlugin plugin = factory.createPlugin();
 						plugin.setId(model.getPluginBase().getId());
-						product.addPlugin(plugin);						
+						pluginList.add(plugin);					
 					}
 				}
 			}
+			product.addPlugins((IProductPlugin[]) pluginList.toArray(new IProductPlugin[pluginList.size()]));	
 		}
 	}
 	
@@ -412,7 +416,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		IProductModelFactory factory = product.getModel().getFactory();
 		IProductPlugin plugin = factory.createPlugin();
 		plugin.setId(id);
-		product.addPlugin(plugin);
+		product.addPlugins(new IProductPlugin[] {plugin});
 	}
 	
 	private IProduct getProduct() {
@@ -497,10 +501,16 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	}
 	
 	protected void doPaste(Object target, Object[] objects) {
-		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof IProductPlugin)
-				getProduct().addPlugin((IProductPlugin)objects[i]);		
+		IProductPlugin[] plugins;
+		if (objects instanceof IProductPlugin[])
+			plugins = (IProductPlugin[])objects;
+		else {
+			plugins = new IProductPlugin[objects.length];
+			for (int i = 0; i < objects.length; i++)
+				if (objects[i] instanceof IProductPlugin)
+					plugins[i] = (IProductPlugin)objects[i];
 		}
+		getProduct().addPlugins(plugins);
 	}
 	
 	private void updateRemoveButtons(boolean updateRemove, boolean updateRemoveAll) {

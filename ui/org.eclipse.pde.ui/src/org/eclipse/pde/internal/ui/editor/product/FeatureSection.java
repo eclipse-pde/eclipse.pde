@@ -142,7 +142,7 @@ public class FeatureSection extends TableSection {
 		IProductFeature feature = factory.createFeature();
 		feature.setId(id);
 		feature.setVersion(version);
-		product.addFeature(feature);
+		product.addFeatures(new IProductFeature[] {feature});
 	}
 	
 
@@ -196,10 +196,16 @@ public class FeatureSection extends TableSection {
 	}
 	
 	protected void doPaste(Object target, Object[] objects) {
-		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof IProductFeature)
-				getProduct().addFeature((IProductFeature)objects[i]);		
+		IProductFeature[] features;
+		if (objects instanceof IProductFeature[])
+			features = (IProductFeature[])objects;
+		else {
+			features = new IProductFeature[objects.length];
+			for (int i = 0; i < objects.length; i++)
+				if (objects[i] instanceof IProductFeature)
+					features[i] = (IProductFeature)objects[i];
 		}
+		getProduct().addFeatures(features);
 	}
 
 	

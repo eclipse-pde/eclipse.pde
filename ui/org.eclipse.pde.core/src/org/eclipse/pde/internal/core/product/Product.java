@@ -291,25 +291,35 @@ public class Product extends ProductObject implements IProduct {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#addPlugin(org.eclipse.pde.internal.core.iproduct.IProductPlugin)
 	 */
-	public void addPlugin(IProductPlugin plugin) {
-		String id = plugin.getId();
-		if (fPlugins.containsKey(id))
-			return;
-		
-		plugin.setModel(getModel());
-		fPlugins.put(id, plugin);
-		if (isEditable())
-			fireStructureChanged(plugin, IModelChangedEvent.INSERT);
+	public void addPlugins(IProductPlugin[] plugins) {
+		boolean modified = false;
+		for (int i = 0; i < plugins.length; i++) {
+			if (plugins[i] == null)
+				continue;
+			String id = plugins[i].getId();
+			if (id == null || fPlugins.containsKey(id)) {
+				plugins[i] = null;
+				continue;
+			}
+			
+			plugins[i].setModel(getModel());
+			fPlugins.put(id, plugins[i]);
+			modified = true;
+		}
+		if (modified && isEditable())
+			fireStructureChanged(plugins, IModelChangedEvent.INSERT);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#removePlugins(org.eclipse.pde.internal.core.iproduct.IProductPlugin[])
 	 */
 	public void removePlugins(IProductPlugin[] plugins) {
+		boolean modified = false;
 		for (int i = 0; i < plugins.length; i++) {
-			fPlugins.remove(plugins[i].getId());
+			if (fPlugins.remove(plugins[i].getId()) != null)
+				modified = true;
 		}
-		if (isEditable())
+		if (modified && isEditable())
 			fireStructureChanged(plugins, IModelChangedEvent.REMOVE);
 	}
 	
@@ -377,22 +387,33 @@ public class Product extends ProductObject implements IProduct {
 		fLauncherInfo = info;
 	}
 
-	public void addFeature(IProductFeature feature) {
-		String id = feature.getId();
-		if (fFeatures.containsKey(id))
-			return;
+	public void addFeatures(IProductFeature[] features) {
+		boolean modified = false;
+		for (int i = 0; i < features.length; i++) {
+			if (features[i] == null)
+				continue;
+			String id = features[i].getId();
+			if (fFeatures.containsKey(id)) {
+				features[i] = null;
+				continue;
+			}
+			
+			features[i].setModel(getModel());
+			fFeatures.put(id, features[i]);
+			modified = true;
+		}
 		
-		feature.setModel(getModel());
-		fFeatures.put(id, feature);
-		if (isEditable())
-			fireStructureChanged(feature, IModelChangedEvent.INSERT);
+		if (modified && isEditable())
+			fireStructureChanged(features, IModelChangedEvent.INSERT);
 	}
 
 	public void removeFeatures(IProductFeature[] features) {
+		boolean modified = false;
 		for (int i = 0; i < features.length; i++) {
-			fFeatures.remove(features[i].getId());
+			if (fFeatures.remove(features[i].getId()) != null)
+				modified = true;
 		}
-		if (isEditable())
+		if (modified && isEditable())
 			fireStructureChanged(features, IModelChangedEvent.REMOVE);
 	}
 
