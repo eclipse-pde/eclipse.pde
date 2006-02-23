@@ -36,6 +36,7 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 	protected String fInitialName;
 	protected IFeatureModel fFeatureToPatch;
 	protected boolean fSelfModification;
+	private boolean fUpdateName = true;
 	
 	public AbstractFeatureSpecPage() {
 		super("specPage"); //$NON-NLS-1$
@@ -87,7 +88,8 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 		boolean valid = super.validatePage();
 		if (!valid)
 			return valid;
-		updateNameRelativeFields();
+		if (fUpdateName)
+			updateNameRelativeFields();
 		return validateBaseContent(false);
 	}
 	
@@ -167,8 +169,10 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 	private void attachListeners() {
 		ModifyListener listener = new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if (!fSelfModification)
+				if (!fSelfModification) {
+					fUpdateName = false;
 					setPageComplete(validateBaseContent(true));
+				}
 			}
 		};
 		attachListeners(listener);

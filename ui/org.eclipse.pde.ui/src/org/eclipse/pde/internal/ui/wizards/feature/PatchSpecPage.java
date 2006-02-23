@@ -220,9 +220,10 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 		if (fPatchIdText == null || fPatchNameText == null)
 			return;
 		fSelfModification = true;
-		String name = getProjectName();
-		fPatchIdText.setText(IdUtil.getValidId(name));
-		fPatchNameText.setText(name);
+		String id = IdUtil.getValidId(getProjectName());
+		fPatchIdText.setText(id);
+		fPatchNameText.setText(IdUtil.getValidName(id, "Feature"));
+		fPatchProviderText.setText(IdUtil.getValidProvider(id));
 		fSelfModification = false;
 	}
 }

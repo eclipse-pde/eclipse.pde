@@ -100,9 +100,10 @@ public class FeatureSpecPage extends AbstractFeatureSpecPage {
 		if (fFeatureIdText == null || fFeatureNameText == null)
 			return;
 		fSelfModification = true;
-		String name = getProjectName();
-		fFeatureIdText.setText(IdUtil.getValidId(name));
-		fFeatureNameText.setText(name);
+		String id = IdUtil.getValidId(getProjectName());
+		fFeatureIdText.setText(id);
+		fFeatureNameText.setText(IdUtil.getValidName(id, "Feature"));
+		fFeatureProviderText.setText(IdUtil.getValidProvider(id));
 		fSelfModification = false;
 	}
 }

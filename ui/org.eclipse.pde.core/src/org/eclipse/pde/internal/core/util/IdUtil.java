@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
 
+import java.util.StringTokenizer;
+
 public class IdUtil {
 	public static boolean isValidPluginId(String name) {
 		if (name.length() <= 0) {
@@ -43,5 +45,25 @@ public class IdUtil {
     
     public static String getValidId(String projectName) {
     	return projectName.replaceAll("[^a-zA-Z0-9\\._]", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
+    public static String getValidName(String id, String nameFieldQualifier) {
+		StringTokenizer tok = new StringTokenizer(id, "."); //$NON-NLS-1$
+		while (tok.hasMoreTokens()) {
+			String token = tok.nextToken();
+			if (!tok.hasMoreTokens())
+				return Character.toUpperCase(token.charAt(0))
+								+ ((token.length() > 1) ? token.substring(1) : "") //$NON-NLS-1$
+								+ " " + nameFieldQualifier; //$NON-NLS-1$
+		}
+		return ""; //$NON-NLS-1$
+    }
+    
+    public static String getValidProvider(String id) {
+    	StringTokenizer tok = new StringTokenizer(id, "."); //$NON-NLS-1$
+		int count = tok.countTokens();
+		if (count > 2 && tok.nextToken().equals("com")) //$NON-NLS-1$
+			return tok.nextToken().toUpperCase();
+		return ""; //$NON-NLS-1$
     }
 }

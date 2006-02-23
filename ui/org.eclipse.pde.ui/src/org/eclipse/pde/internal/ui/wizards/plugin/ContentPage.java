@@ -140,8 +140,8 @@ public abstract class ContentPage extends WizardPage {
 				int oldfChanged = fChangedGroups;				
 				fIdText.setText(id);
 				fVersionText.setText("1.0.0"); //$NON-NLS-1$
-				presetNameField(id);
-				presetProviderField(id);
+				fNameText.setText(IdUtil.getValidName(id, getNameFieldQualifier()));
+				fProviderText.setText(IdUtil.getValidProvider(id));
 				presetLibraryField(id);
 				fChangedGroups = oldfChanged;
 			}
@@ -171,26 +171,8 @@ public abstract class ContentPage extends WizardPage {
 				fLibraryText.setText(token + ".jar"); //$NON-NLS-1$
 		}
 	}
-	private void presetNameField(String id) {
-		StringTokenizer tok = new StringTokenizer(id, "."); //$NON-NLS-1$
-		while (tok.hasMoreTokens()) {
-			String token = tok.nextToken();
-			if (!tok.hasMoreTokens()) {
-				fNameText.setText(Character.toUpperCase(token.charAt(0))
-								+ ((token.length() > 1) ? token.substring(1) : "") //$NON-NLS-1$
-								+ " " + getNameFieldQualifier()); //$NON-NLS-1$
-			}
-		}
-	}
 	
 	protected abstract String getNameFieldQualifier();
-
-	private void presetProviderField(String id) {
-		StringTokenizer tok = new StringTokenizer(id, "."); //$NON-NLS-1$
-		int count = tok.countTokens();
-		if (count > 2 && tok.nextToken().equals("com")) //$NON-NLS-1$
-			fProviderText.setText(tok.nextToken().toUpperCase());
-	}
 
 	public void updateData() {
 		fData.setId(fIdText.getText().trim());
