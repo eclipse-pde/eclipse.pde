@@ -2,14 +2,14 @@
 <introContent>
   <!-- Extension to the SDK Tutorial Page. -->
   <extensionContent id="org.eclipse.pde" name="PDE" alt-style="css/swt.properties" style="css/tutorials.css" path="tutorials/@">
-    <group label="Eclipse Plug-in Development" id="pde" style-id="tutorials-group">
-      <link url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&amp;input=org.eclipse.pde.helloworld" label="Create a &quot;Hello, World&quot; plug-in" id="pde-hello-world" style-id="tutorials-link">
+    <group label="Eclipse Plug-in Development" id="pde" style-id="content-group">
+      <link url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&amp;input=org.eclipse.pde.helloworld" label="Create a &quot;Hello, World&quot; plug-in" id="pde-hello-world" style-id="content-link">
         <text>Create an Eclipse plug-in that will open a message box from the menu</text>
       </link>
-      <link url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&amp;input=org.eclipse.pde.updates" label="Deploy a feature on an update site" id="features" style-id="tutorials-link">
+      <link url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&amp;input=org.eclipse.pde.updates" label="Deploy a feature on an update site" id="features" style-id="content-link">
         <text>End-to-end tutorial in building and deploying features</text>
       </link>
-      <link url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&amp;input=org.eclipse.pde.rcpapp" label="Build a Rich Client Platform application" id="rcp" style-id="tutorials-link">
+      <link url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&amp;input=org.eclipse.pde.rcpapp" label="Build a Rich Client Platform application" id="rcp" style-id="content-link">
         <text>Create a full RCP application step by step</text>
       </link>
     </group>

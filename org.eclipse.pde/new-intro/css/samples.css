@@ -1,16 +1,16 @@
-#swt .sample-link img {
+#swt .content-link img {
 	background-image : url(graphics/obj_48/samplered_obj.gif);
 }
 
-#swt .sample-link:hover img {
+#swt .content-link:hover img {
 	background-image : url(graphics/obj_48/sampleredhov_obj.gif);
 }
 
-#workbench .sample-link img {
+#workbench .content-link img {
 	background-image : url(graphics/obj_48/samplepurp_obj.gif);
 }
 
-#workbench .sample-link:hover img {
+#workbench .content-link:hover img {
 	background-image : url(graphics/obj_48/samplepurphov_obj.gif);
 }
 
