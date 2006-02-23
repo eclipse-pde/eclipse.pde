@@ -2,7 +2,7 @@
 <introContent>
   <!-- Extension to the SDK What's New Page. -->
   <extensionContent id="org.eclipse.pde.migration" name="Porting Guide" alt-style="css/swt.properties" style="css/news.css" path="whatsnew/@">
-    <group style-id="content-group">
+    <group style-id="content-group" id="content-group">
     	<link style-id="content-link" label="Migration from the previous release" url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.platform.doc.isv/porting/eclipse_3_1_porting_guide.html&amp;embedTarget=page-content" id="migration">
         	<text>Learn what you need to do to make your old code work in Eclipse 3.1</text>
     	</link>
