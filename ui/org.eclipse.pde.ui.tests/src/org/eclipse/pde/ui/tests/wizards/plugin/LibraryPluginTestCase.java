@@ -33,7 +33,7 @@ public class LibraryPluginTestCase extends NewProjectTest {
 	
 	public void testLibrariesFromWorkspacePlugin() {
 		try {
-			playScript(Catalog.LIBRARY_PLUGIN_1);
+			ScriptRunner.run(Catalog.LIBRARY_PLUGIN_1, getWorkbench());
 			verifyProject(false, "pdeuiant.jar", "bin");
 			verifyPluginModel(null, "pdeuiant.jar");
 			verifyBuildProperties(false, false, "pdeuiant.jar");
@@ -44,7 +44,7 @@ public class LibraryPluginTestCase extends NewProjectTest {
 	
 	public void testLibrariesFromWorkspacePluginWithManifest() {
 		try {
-			playScript(Catalog.LIBRARY_PLUGIN_2);
+			ScriptRunner.run(Catalog.LIBRARY_PLUGIN_2, getWorkbench());
 			verifyProject(true, "pdeuiant.jar", "bin");
 			verifyPluginModel(null, "pdeuiant.jar");
 			verifyBuildProperties(true, false, "pdeuiant.jar");
@@ -55,7 +55,7 @@ public class LibraryPluginTestCase extends NewProjectTest {
 	
 	public void testUnzipFromWorkspacePlugin() {
 		try {
-			playScript(Catalog.LIBRARY_PLUGIN_3);
+			ScriptRunner.run(Catalog.LIBRARY_PLUGIN_3, getWorkbench());
 			verifyProject(false, ".", "bin");
 			verifyPluginModel(null, ".");
 			verifyBuildProperties(false, true, ".");
@@ -66,7 +66,7 @@ public class LibraryPluginTestCase extends NewProjectTest {
 	
 	public void testUnzipFromWorkspacePluginWithManifest() {
 		try {
-			playScript(Catalog.LIBRARY_PLUGIN_4);
+			ScriptRunner.run(Catalog.LIBRARY_PLUGIN_4, getWorkbench());
 			verifyProject(true, ".", "bin");
 			verifyPluginModel(null, ".");
 			verifyBuildProperties(true, true, ".");

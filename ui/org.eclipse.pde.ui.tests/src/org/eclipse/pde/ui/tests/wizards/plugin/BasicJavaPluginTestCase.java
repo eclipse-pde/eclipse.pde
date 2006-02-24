@@ -33,7 +33,7 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 	
 	public void testMinimalJavaPlugin() {
 		try {
-			playScript(Catalog.BASIC_JAVA_PLUGIN_1);
+			ScriptRunner.run(Catalog.BASIC_JAVA_PLUGIN_1, getWorkbench());
 			verifyProject(true);
 			verifyPluginModel(null, ".", true);
 			verifyBuildProperties(true, ".", "src", "bin");
@@ -44,7 +44,7 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 	
 	public void testMinimalJavaPluginWithoutManifest() {
 		try {
-			playScript(Catalog.BASIC_JAVA_PLUGIN_2);
+			ScriptRunner.run(Catalog.BASIC_JAVA_PLUGIN_2, getWorkbench());
 			verifyProject(false);
 			verifyPluginModel(null, "xyz.jar", false);
 			verifyBuildProperties(false, "xyz.jar", "src", "bin");
@@ -55,7 +55,7 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 	
 	public void testMultiSegmentSourceFolder() {
 		try {
-			playScript(Catalog.BASIC_JAVA_PLUGIN_3);
+			ScriptRunner.run(Catalog.BASIC_JAVA_PLUGIN_3, getWorkbench());
 			verifyProject(true, null, "src/abc", "bin");
 			verifyPluginModel(null, ".", true);
 			verifyBuildProperties(true, ".", "src/abc", "bin");
@@ -66,7 +66,7 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 	
 	public void testMultiSegmentOutputFolder() {
 		try {
-			playScript(Catalog.BASIC_JAVA_PLUGIN_4);
+			ScriptRunner.run(Catalog.BASIC_JAVA_PLUGIN_4, getWorkbench());
 			verifyProject(true, null, "src", "bin/abc");
 			verifyPluginModel(null, ".", true);
 			verifyBuildProperties(true, ".", "src", "bin/abc");
@@ -77,7 +77,7 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 	
 	public void testUIPlugin() {
 		try {
-			playScript(Catalog.BASIC_JAVA_PLUGIN_6);
+			ScriptRunner.run(Catalog.BASIC_JAVA_PLUGIN_6, getWorkbench());
 			verifyProject(true, "com.example.xyz.XyzPlugin", "src", "bin");
 			verifyPluginModel("com.example.xyz.XyzPlugin", ".", true);
 			verifyBuildProperties(true, ".", "src", "bin");
@@ -89,7 +89,7 @@ public class BasicJavaPluginTestCase extends NewProjectTest {
 	
 	public void testNonUIPlugin() {
 		try {
-			playScript(Catalog.BASIC_JAVA_PLUGIN_7);
+			ScriptRunner.run(Catalog.BASIC_JAVA_PLUGIN_7, getWorkbench());
 			verifyProject(true, "com.example.xyz.XyzPlugin", "src", "bin");
 			verifyPluginModel("com.example.xyz.XyzPlugin", ".", true);
 			verifyBuildProperties(true, ".", "src", "bin");

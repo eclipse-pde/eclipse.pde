@@ -31,12 +31,12 @@ public class SimplePluginTestCase extends NewProjectTest {
 	}
 
 	public void testSimplePluginProject() {
-		playScript(Catalog.SIMPLE_PLUGIN_1);
+		ScriptRunner.run(Catalog.SIMPLE_PLUGIN_1, getWorkbench());
 		verifyProjectContent(true);
 	}
 	
 	public void testSimplePluginWithoutManifest() {
-		playScript(Catalog.SIMPLE_PLUGIN_2);
+		ScriptRunner.run(Catalog.SIMPLE_PLUGIN_2, getWorkbench());
 		verifyProjectContent(false);
 	}
 	

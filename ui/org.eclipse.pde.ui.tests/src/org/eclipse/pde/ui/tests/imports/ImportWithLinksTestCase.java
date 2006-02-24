@@ -25,7 +25,7 @@ public class ImportWithLinksTestCase extends PDETestCase {
 	}
 	
 	public void testImportLinks1() {
-		playScript(Catalog.IMPORT_LINKS_1);
+		ScriptRunner.run(Catalog.IMPORT_LINKS_1, getWorkbench());
 		try {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			verifyProject(root.getProject("org.eclipse.core.filebuffers"));
@@ -35,7 +35,7 @@ public class ImportWithLinksTestCase extends PDETestCase {
 	}
 
 	public void testImportLinks2() {
-		playScript(Catalog.IMPORT_LINKS_2);
+		ScriptRunner.run(Catalog.IMPORT_LINKS_2, getWorkbench());
 		try {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			verifyProject(root.getProject("org.eclipse.osgi"));
@@ -45,7 +45,7 @@ public class ImportWithLinksTestCase extends PDETestCase {
 	}
 	
 	public void testImportLinks3() {
-		playScript(Catalog.IMPORT_LINKS_3);
+		ScriptRunner.run(Catalog.IMPORT_LINKS_3, getWorkbench());
 		try {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			IProject[] projects = root.getProjects();

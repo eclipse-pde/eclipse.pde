@@ -25,6 +25,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.ui.tests.Catalog;
 import org.eclipse.pde.ui.tests.PDETestCase;
+import org.eclipse.pde.ui.tests.ScriptRunner;
 
 public class ImportFeatureTestCase extends PDETestCase {
 
@@ -33,7 +34,7 @@ public class ImportFeatureTestCase extends PDETestCase {
 	}
 
 	public void testImportBinaryFeature1() {
-		playScript(Catalog.IMPORT_BINARY_FEATURE_1);
+		ScriptRunner.run(Catalog.IMPORT_BINARY_FEATURE_1, getWorkbench());
 		try {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			verifyProject(root.getProject("org.eclipse.pde-feature"), true);
@@ -44,7 +45,7 @@ public class ImportFeatureTestCase extends PDETestCase {
 	}
 
 	public void testImportBinaryFeature2() {
-		playScript(Catalog.IMPORT_BINARY_FEATURE_2);
+		ScriptRunner.run(Catalog.IMPORT_BINARY_FEATURE_2, getWorkbench());
 		try {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			verifyProject(root.getProject("org.eclipse.sdk-feature"), true);
@@ -70,7 +71,7 @@ public class ImportFeatureTestCase extends PDETestCase {
 	}
 
 	public void testImportFeatureAsSource() {
-		playScript(Catalog.IMPORT_SOURCE_FEATURE);
+		ScriptRunner.run(Catalog.IMPORT_SOURCE_FEATURE, getWorkbench());
 		try {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			verifyProject(root.getProject("org.eclipse.pde-feature"), false);

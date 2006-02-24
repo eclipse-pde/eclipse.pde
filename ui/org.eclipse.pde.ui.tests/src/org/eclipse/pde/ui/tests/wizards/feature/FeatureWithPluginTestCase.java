@@ -19,7 +19,8 @@ import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.ui.tests.Catalog;
-import org.eclipse.pde.ui.tests.wizards.plugin.NewProjectTest;
+import org.eclipse.pde.ui.tests.NewProjectTest;
+import org.eclipse.pde.ui.tests.ScriptRunner;
 
 public class FeatureWithPluginTestCase extends NewProjectTest {
 
@@ -30,13 +31,13 @@ public class FeatureWithPluginTestCase extends NewProjectTest {
 	}
 
 	public void testFeatureWithExternalPlugin() {
-		playScript(Catalog.FEATURE_WITH_PLUGIN_1);
+		ScriptRunner.run(Catalog.FEATURE_WITH_PLUGIN_1, getWorkbench());
 		verifyProjectExistence();
 		verifyFeatureModel("org.eclipse.pde.ui");
 	}
 
 	public void testFeatureWithWorkspacePlugin() {
-		playScript(Catalog.FEATURE_WITH_PLUGIN_2);
+		ScriptRunner.run(Catalog.FEATURE_WITH_PLUGIN_2, getWorkbench());
 		verifyProjectExistence();
 		verifyFeatureModel("com.example.test.plugin");
 	}

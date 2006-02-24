@@ -10,17 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests;
 
-import java.io.*;
-import java.net.*;
+import junit.framework.TestCase;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.tests.macro.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.intro.*;
-
-import junit.framework.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 
 public abstract class PDETestCase extends TestCase {
 	
@@ -28,45 +26,20 @@ public abstract class PDETestCase extends TestCase {
 	
 	private static IWorkbench fWorkbench;
 
-	protected void setUp() throws Exception {
+	protected final void setUp() throws Exception {
 		if (FIRST_TEST) {
 			fWorkbench = PlatformUI.getWorkbench();
 			
-				// close intro
-			IIntroManager intro = fWorkbench.getIntroManager();
-			intro.closeIntro(intro.getIntro());
-		
-			// open PDE perspective
-			fWorkbench.showPerspective(PDEPlugin.PERSPECTIVE_ID, fWorkbench.getActiveWorkbenchWindow());
-			
 			// set to false
 			FIRST_TEST = false;
-		}	
-	}
-	
-	protected void playScript(String scriptName) {
-		InputStream stream = null;
-		try {
-			MacroManager recorder = MacroPlugin.getDefault().getMacroManager();
-			URL url = Platform.getBundle("org.eclipse.pde.ui.tests").getEntry("scripts/" + scriptName);
-			if (url == null)
-				fail("Script \"" + scriptName + "\" could not be found");
-			stream = url.openStream();			
-			recorder.play(fWorkbench.getDisplay(), fWorkbench.getActiveWorkbenchWindow(), scriptName, stream);
-			recorder.shutdown();
-		} catch (CoreException e) {
-			fail("Error playing the script: \"" + scriptName + "\"");
-		} catch (IOException e) {			
-		} finally {
-			try {
-				if (stream != null) 
-					stream.close();
-			} catch (IOException e) {
-			}
 		}
 	}
 	
-	protected void tearDown() {
+	protected IWorkbench getWorkbench() {
+		return fWorkbench;
+	}
+	
+	protected final void tearDown() {
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject[] projects = workspaceRoot.getProjects();
 		try {
@@ -76,5 +49,4 @@ public abstract class PDETestCase extends TestCase {
 		} catch (CoreException e) {
 		}
 	}
-	
 }

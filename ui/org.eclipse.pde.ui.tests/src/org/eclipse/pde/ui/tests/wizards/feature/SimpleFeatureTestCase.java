@@ -23,7 +23,6 @@ import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.natures.*;
 import org.eclipse.pde.ui.tests.*;
-import org.eclipse.pde.ui.tests.wizards.plugin.NewProjectTest;
 
 public class SimpleFeatureTestCase extends NewProjectTest {
 
@@ -34,12 +33,12 @@ public class SimpleFeatureTestCase extends NewProjectTest {
 	}
 
 	public void testSimpleFeatureProject() {
-		playScript(Catalog.SIMPLE_FEATURE_1);
+		ScriptRunner.run(Catalog.SIMPLE_FEATURE_1, getWorkbench());
 		verifyProjectContent(false);
 	}
 
 	public void testSimpleFeatureWithInstallHandlerProject() {
-		playScript(Catalog.SIMPLE_FEATURE_2);
+		ScriptRunner.run(Catalog.SIMPLE_FEATURE_2, getWorkbench());
 		verifyProjectContent(true);
 	}
 
