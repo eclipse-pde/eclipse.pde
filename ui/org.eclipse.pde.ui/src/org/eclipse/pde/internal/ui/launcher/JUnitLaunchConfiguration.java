@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
@@ -48,6 +49,7 @@ import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEManager;
+import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.util.CoreUtility;
@@ -55,6 +57,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.update.configurator.ConfiguratorUtils;
 
 
 public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
@@ -62,6 +65,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 	public static final String CORE_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
 	public static final String UI_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$
 	
+	protected static IPluginModelBase[] registryPlugins;
 	protected File fConfigDir = null;
 
 	public void launch(
@@ -327,11 +331,24 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 	protected IPluginModelBase findPlugin(String id) throws CoreException {
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		IPluginModelBase model = manager.findModel(id);
-		if (model == null) {
-			abort(NLS.bind(PDEUIMessages.JUnitLaunchConfiguration_error_missingPlugin, id),
-				  null, IStatus.OK);
+		if (model != null)
+			return model;
+
+		if (registryPlugins == null) {
+			URL[] pluginPaths = ConfiguratorUtils.getCurrentPlatformConfiguration().getPluginPath();
+			PDEState state = new PDEState(pluginPaths, false, new NullProgressMonitor());
+			registryPlugins = state.getTargetModels();
 		}
-		return model;
+
+		for (int i = 0; i < registryPlugins.length; i++) {
+			if (registryPlugins[i].getPluginBase().getId().equals(id))
+				return registryPlugins[i];
+		}
+		abort(
+			NLS.bind(PDEUIMessages.JUnitLaunchConfiguration_error_missingPlugin, id),
+			null,
+			IStatus.OK);
+		return null;
 	}
 	
 	public String[] getVMArgumentsArray(ILaunchConfiguration configuration) throws CoreException {
