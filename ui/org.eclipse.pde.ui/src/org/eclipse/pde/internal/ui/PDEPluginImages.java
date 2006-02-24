@@ -226,6 +226,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_JAR_TO_PLUGIN_WIZ = create(PATH_WIZBAN, "jarToPlugin_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXTSTR_WIZ = create(PATH_WIZBAN, "extstr_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_XHTML_CONVERT_WIZ = create(PATH_WIZBAN, "xhtml_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ORGANIZE_MANIFESTS = create(PATH_WIZBAN, "cleanmanifest_wiz.png"); //$NON-NLS-1$
 	/**
 	 * View
 	 */

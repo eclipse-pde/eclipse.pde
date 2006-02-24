@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class OrganizeManifestsWizard extends Wizard {
@@ -17,6 +18,7 @@ public class OrganizeManifestsWizard extends Wizard {
 		setNeedsProgressMonitor(true);
 		setWindowTitle(PDEUIMessages.OrganizeManifestsWizard_title);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_ORGANIZE_MANIFESTS);
 	}
 
 	public boolean performFinish() {
