@@ -48,6 +48,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 public class TargetProfileWindow extends ApplicationWindow {
 
 	protected ITargetModel fTargetModel;
+	private FormToolkit fToolkit;
 
 	public TargetProfileWindow(Shell parentShell, ITargetModel model) {
 		super(parentShell);
@@ -62,20 +63,20 @@ public class TargetProfileWindow extends ApplicationWindow {
 	}
 	
 	protected Control createContents(Composite parent) {
-		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
+		fToolkit = new FormToolkit(parent.getDisplay());
 		CTabFolder folder = new CTabFolder(parent, SWT.NONE);
 		folder.setLayout(new GridLayout());
-		toolkit.adapt(folder, true, true);
-		toolkit.adapt(parent);
-		toolkit.getColors().initializeSectionToolBarColors();
-		Color selectedColor1 = toolkit.getColors().getColor(FormColors.TB_BG);
-		Color selectedColor2 = toolkit.getColors().getColor(FormColors.TB_GBG);
+		fToolkit.adapt(folder, true, true);
+		fToolkit.adapt(parent);
+		fToolkit.getColors().initializeSectionToolBarColors();
+		Color selectedColor1 = fToolkit.getColors().getColor(FormColors.TB_BG);
+		Color selectedColor2 = fToolkit.getColors().getColor(FormColors.TB_GBG);
 		folder.setSelectionBackground(new Color[] { selectedColor1,
-				selectedColor2, toolkit.getColors().getBackground() },
+				selectedColor2, fToolkit.getColors().getBackground() },
 				new int[] { 50, 100 }, true);
 		
 		CTabItem item = new CTabItem(folder, SWT.NONE);
-		item.setControl(createDefinitionTab(folder, toolkit));
+		item.setControl(createDefinitionTab(folder, fToolkit));
 		item.setText(PDEUIMessages.TargetProfileWindow_definition);
 		
 		ITarget target = fTargetModel.getTarget();
@@ -83,32 +84,32 @@ public class TargetProfileWindow extends ApplicationWindow {
 		ITargetPlugin[] plugins = target.getPlugins();
 		if (!target.useAllPlugins() && plugins.length > 0) {
 			item = new CTabItem(folder, SWT.NONE);
-			item.setControl(createTabularTab(folder, toolkit, plugins));
+			item.setControl(createTabularTab(folder, fToolkit, plugins));
 			item.setText(PDEUIMessages.TargetProfileWindow_plugins);
 		}
 		
 		ITargetFeature[] features = target.getFeatures();
 		if (!target.useAllPlugins() && features.length > 0) {
 			item = new CTabItem(folder, SWT.NONE);
-			item.setControl(createTabularTab(folder, toolkit, features));
+			item.setControl(createTabularTab(folder, fToolkit, features));
 			item.setText(PDEUIMessages.TargetProfileWindow_features);
 		}
 		
 		item = new CTabItem(folder, SWT.NONE);
-		item.setControl(createEnvironmentTab(folder, toolkit));
+		item.setControl(createEnvironmentTab(folder, fToolkit));
 		item.setText(PDEUIMessages.TargetProfileWindow_environment);
 		
 		IArgumentsInfo argInfo = target.getArguments();
 		if (argInfo != null) {
 			item = new CTabItem(folder, SWT.NONE);
-			item.setControl(createArgumentsTab(folder, toolkit, argInfo));
+			item.setControl(createArgumentsTab(folder, fToolkit, argInfo));
 			item.setText(PDEUIMessages.TargetProfileWindow_launching);
 		}
 		
 		IImplicitDependenciesInfo info = target.getImplicitPluginsInfo();
 		if (info != null) {
 			item = new CTabItem(folder, SWT.NONE);
-			item.setControl(createTabularTab(folder, toolkit, info.getPlugins()));
+			item.setControl(createTabularTab(folder, fToolkit, info.getPlugins()));
 			item.setText(PDEUIMessages.TargetProfileWindow_implicit);
 		}
 		
@@ -237,6 +238,11 @@ public class TargetProfileWindow extends ApplicationWindow {
 		} catch (CoreException e) {
 		}
 		return ""; //$NON-NLS-1$
+	}
+	
+	public boolean close() {
+		fToolkit.dispose();
+		return super.close();
 	}
 
 }
