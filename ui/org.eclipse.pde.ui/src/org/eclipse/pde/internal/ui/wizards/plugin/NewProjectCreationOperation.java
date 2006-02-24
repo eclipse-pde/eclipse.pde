@@ -369,7 +369,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	private void generateTopLevelPluginClass(IProject project,
 			IProgressMonitor monitor) throws CoreException {
 		PluginFieldData data = (PluginFieldData) fData;
-		fGenerator = new PluginClassCodeGenerator(project, data.getClassname(), data);
+		fGenerator = new PluginClassCodeGenerator(project, data.getClassname(), data, fContentWizard != null);
 		fGenerator.generate(monitor);
 		monitor.done();
 	}

@@ -29,12 +29,14 @@ public class PluginClassCodeGenerator {
 	private PluginFieldData fPluginData;
 	private IProject fProject;
 	private String fQualifiedClassName;
+	private boolean fGenerateTemplate;
 
 	public PluginClassCodeGenerator(IProject project, String qualifiedClassName,
-			PluginFieldData data) {
-		this.fProject = project;
-		this.fQualifiedClassName = qualifiedClassName;
+			PluginFieldData data, boolean generateTemplate) {
+		fProject = project;
+		fQualifiedClassName = qualifiedClassName;
 		fPluginData = data;
+		fGenerateTemplate = generateTemplate;
 	}
 
 	public IFile generate(IProgressMonitor monitor) throws CoreException {
@@ -52,9 +54,7 @@ public class PluginClassCodeGenerator {
 		IFile file = fProject.getFile(path.append(className + ".java")); //$NON-NLS-1$
 		StringWriter swriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(swriter);
-		if (fPluginData.isLegacy()) {
-			generateLegacyPluginClass(packageName, className, writer);
-		} else if (fPluginData.getOSGiFramework() != null){ 
+		if (fPluginData.getOSGiFramework() != null){ 
 			generateActivatorClass(packageName, className, writer);
 		} else {
 			generatePluginClass(packageName, className, writer);
@@ -82,15 +82,16 @@ public class PluginClassCodeGenerator {
 			writer.println();
 		}
 		if (fPluginData.isUIPlugin()) {
-			writer.println("import org.eclipse.ui.plugin.*;"); //$NON-NLS-1$
-			writer.println("import org.eclipse.jface.resource.ImageDescriptor;"); //$NON-NLS-1$
+			if (fGenerateTemplate)
+				writer.println("import org.eclipse.jface.resource.ImageDescriptor;"); //$NON-NLS-1$
+			writer.println("import org.eclipse.ui.plugin.AbstractUIPlugin;"); //$NON-NLS-1$
 		} else {
 			writer.println("import org.eclipse.core.runtime.Plugin;"); //$NON-NLS-1$
 		}
 		writer.println("import org.osgi.framework.BundleContext;"); //$NON-NLS-1$
 		writer.println();
 		writer.println("/**"); //$NON-NLS-1$
-		writer.println(" * The main plugin class to be used in the desktop."); //$NON-NLS-1$
+		writer.println(" * The activator class controls the plug-in life cycle"); //$NON-NLS-1$
 		writer.println(" */"); //$NON-NLS-1$
 		if (fPluginData.isUIPlugin())
 			writer.println("public class " + className + " extends AbstractUIPlugin {"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -108,20 +109,28 @@ public class PluginClassCodeGenerator {
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
 
-		writer.println("\t/**"); //$NON-NLS-1$
-		writer.println("\t * This method is called upon plug-in activation"); //$NON-NLS-1$
+		writer.println("\t/*"); //$NON-NLS-1$
+		writer.println("\t * (non-Javadoc)"); //$NON-NLS-1$
+		if (fPluginData.isUIPlugin())
+			writer.println("\t * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)"); //$NON-NLS-1$
+		else
+			writer.println("\t * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)"); //$NON-NLS-1$
 		writer.println("\t */"); //$NON-NLS-1$
 		writer.println("\tpublic void start(BundleContext context) throws Exception {"); //$NON-NLS-1$
 		writer.println("\t\tsuper.start(context);"); //$NON-NLS-1$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
 
-		writer.println("\t/**"); //$NON-NLS-1$
-		writer.println("\t * This method is called when the plug-in is stopped"); //$NON-NLS-1$
+		writer.println("\t/*"); //$NON-NLS-1$
+		writer.println("\t * (non-Javadoc)"); //$NON-NLS-1$
+		if (fPluginData.isUIPlugin())
+			writer.println("\t * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)"); //$NON-NLS-1$
+		else
+			writer.println("\t * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)"); //$NON-NLS-1$
 		writer.println("\t */"); //$NON-NLS-1$
 		writer.println("\tpublic void stop(BundleContext context) throws Exception {"); //$NON-NLS-1$
-		writer.println("\t\tsuper.stop(context);"); //$NON-NLS-1$
 		writer.println("\t\tplugin = null;"); //$NON-NLS-1$
+		writer.println("\t\tsuper.stop(context);"); //$NON-NLS-1$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
 
@@ -134,7 +143,7 @@ public class PluginClassCodeGenerator {
 		writer.println("\t\treturn plugin;"); //$NON-NLS-1$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
-		if (fPluginData.isUIPlugin()) {
+		if (fPluginData.isUIPlugin() && fGenerateTemplate) {
 			writer.println("\t/**"); //$NON-NLS-1$
 		    writer.println("\t * Returns an image descriptor for the image file at the given"); //$NON-NLS-1$
 		    writer.println("\t * plug-in relative path."); //$NON-NLS-1$
@@ -143,80 +152,12 @@ public class PluginClassCodeGenerator {
 		    writer.println("\t * @return the image descriptor"); //$NON-NLS-1$
 		    writer.println("\t */"); //$NON-NLS-1$
 		    writer.println("\tpublic static ImageDescriptor getImageDescriptor(String path) {"); //$NON-NLS-1$
-		    writer.println("\t\treturn AbstractUIPlugin.imageDescriptorFromPlugin(\"" + fPluginData.getId() + "\", path);"); //$NON-NLS-1$ //$NON-NLS-2$
+		    writer.println("\t\treturn imageDescriptorFromPlugin(\"" + fPluginData.getId() + "\", path);"); //$NON-NLS-1$ //$NON-NLS-2$
 		    writer.println("\t}"); //$NON-NLS-1$
 		}
 		writer.println("}"); //$NON-NLS-1$
 	}
-	private void generateLegacyPluginClass(String packageName, String className,
-			PrintWriter writer) {
-		if (!packageName.equals("")) { //$NON-NLS-1$
-			writer.println("package " + packageName + ";"); //$NON-NLS-1$ //$NON-NLS-2$
-			writer.println();
-		}
-		if (fPluginData.isUIPlugin())
-			writer.println("import org.eclipse.ui.plugin.*;"); //$NON-NLS-1$
-		writer.println("import org.eclipse.core.runtime.*;"); //$NON-NLS-1$
-		writer.println("import java.util.*;"); //$NON-NLS-1$
-		writer.println();
-		writer.println("/**"); //$NON-NLS-1$
-		writer.println(" * The main plugin class to be used in the desktop."); //$NON-NLS-1$
-		writer.println(" */"); //$NON-NLS-1$
-		if (fPluginData.isUIPlugin())
-			writer.println("public class " + className + " extends AbstractUIPlugin {"); //$NON-NLS-1$ //$NON-NLS-2$
-		else
-			writer.println("public class " + className + " extends Plugin {"); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println("\t//The shared instance."); //$NON-NLS-1$
-		writer.println("\tprivate static " + className + " plugin;"); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println("\t//Resource bundle."); //$NON-NLS-1$
-		writer.println("\tprivate ResourceBundle resourceBundle;"); //$NON-NLS-1$
-		writer.println("\t"); //$NON-NLS-1$
-		writer.println("\t/**"); //$NON-NLS-1$
-		writer.println("\t * The constructor."); //$NON-NLS-1$
-		writer.println("\t */"); //$NON-NLS-1$
-		writer.println("\tpublic " + className //$NON-NLS-1$
-				+ "(IPluginDescriptor descriptor) {"); //$NON-NLS-1$
-		writer.println("\t\tsuper(descriptor);"); //$NON-NLS-1$
-		writer.println("\t\tplugin = this;"); //$NON-NLS-1$
-		writer.println("\t}"); //$NON-NLS-1$
-		writer.println();
-		writer.println("\t/**"); //$NON-NLS-1$
-		writer.println("\t * Returns the shared instance."); //$NON-NLS-1$
-		writer.println("\t */"); //$NON-NLS-1$
-		writer.println("\tpublic static " + className + " getDefault() {"); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println("\t\treturn plugin;"); //$NON-NLS-1$
-		writer.println("\t}"); //$NON-NLS-1$
-		writer.println();
-		writer.println("\t/**"); //$NON-NLS-1$
-		writer.println("\t * Returns the string from the plugin's resource bundle,"); //$NON-NLS-1$
-		writer.println("\t * or 'key' if not found."); //$NON-NLS-1$
-		writer.println("\t */"); //$NON-NLS-1$
-		writer.println("\tpublic static String getResourceString(String key) {"); //$NON-NLS-1$
-		writer.println("\t\tResourceBundle bundle = " + className //$NON-NLS-1$
-				+ ".getDefault().getResourceBundle();"); //$NON-NLS-1$
-		writer.println("\t\ttry {"); //$NON-NLS-1$
-		writer.println("\t\t\treturn (bundle != null) ? bundle.getString(key) : key;"); //$NON-NLS-1$
-		writer.println("\t\t} catch (MissingResourceException e) {"); //$NON-NLS-1$
-		writer.println("\t\t\treturn key;"); //$NON-NLS-1$
-		writer.println("\t\t}"); //$NON-NLS-1$
-		writer.println("\t}"); //$NON-NLS-1$
-		writer.println();
-		writer.println("\t/**"); //$NON-NLS-1$
-		writer.println("\t * Returns the plugin's resource bundle,"); //$NON-NLS-1$
-		writer.println("\t */"); //$NON-NLS-1$
-		writer.println("\tpublic ResourceBundle getResourceBundle() {"); //$NON-NLS-1$
-		writer.println("\t\ttry {"); //$NON-NLS-1$
-		writer.println("\t\t\tif (resourceBundle == null)"); //$NON-NLS-1$
-		writer.println("\t\t\t\tresourceBundle   = ResourceBundle.getBundle(\"" //$NON-NLS-1$
-				+ packageName + "." + className + "Resources\");"); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println("\t\t} catch (MissingResourceException x) {"); //$NON-NLS-1$
-		writer.println("\t\t\tresourceBundle = null;"); //$NON-NLS-1$
-		writer.println("\t\t}"); //$NON-NLS-1$
-		writer.println("\t\treturn resourceBundle;"); //$NON-NLS-1$
-		writer.println("\t}"); //$NON-NLS-1$
-		writer.println("}"); //$NON-NLS-1$
-	}
-	
+
 	private void generateActivatorClass(String packageName, String className,
 			PrintWriter writer) {
 		if (!packageName.equals("")) { //$NON-NLS-1$
@@ -228,9 +169,17 @@ public class PluginClassCodeGenerator {
 		writer.println();
 		writer.println("public class " + className + " implements BundleActivator {"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println();
+		writer.println("\t/*"); //$NON-NLS-1$
+		writer.println("\t * (non-Javadoc)"); //$NON-NLS-1$
+		writer.println("\t * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)"); //$NON-NLS-1$
+		writer.println("\t */"); //$NON-NLS-1$
 		writer.println("\tpublic void start(BundleContext context) throws Exception {"); //$NON-NLS-1$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
+		writer.println("\t/*"); //$NON-NLS-1$
+		writer.println("\t * (non-Javadoc)"); //$NON-NLS-1$
+		writer.println("\t * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)"); //$NON-NLS-1$
+		writer.println("\t */"); //$NON-NLS-1$
 		writer.println("\tpublic void stop(BundleContext context) throws Exception {"); //$NON-NLS-1$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
