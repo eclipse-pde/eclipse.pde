@@ -9,7 +9,6 @@ import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
 import org.eclipse.pde.internal.core.text.plugin.PluginAttribute;
 import org.eclipse.pde.internal.core.text.plugin.PluginElementNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginExtensionPointNode;
-import org.eclipse.pde.internal.core.util.CoreUtility;
 
 public class ModelChangeElement {
 	
@@ -35,7 +34,7 @@ public class ModelChangeElement {
 			fLength = text.getLength();
 		} else if (incoming instanceof PluginAttribute) {
 			PluginAttribute attr = (PluginAttribute)incoming;
-			fValue = CoreUtility.getWritableString(attr.getValue());
+			fValue = attr.getValue();
 			generateValidKey(attr.getEnclosingElement().getXMLTagName(), attr.getName());
 			fOffset = attr.getValueOffset();
 			fLength = attr.getValueLength();
