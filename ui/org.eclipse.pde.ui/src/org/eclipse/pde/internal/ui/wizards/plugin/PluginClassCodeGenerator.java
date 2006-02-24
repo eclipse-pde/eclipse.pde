@@ -98,7 +98,10 @@ public class PluginClassCodeGenerator {
 		else
 			writer.println("public class " + className + " extends Plugin {"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println();
-		writer.println("\t//The shared instance."); //$NON-NLS-1$
+		writer.println("\t// The plug-in ID"); //$NON-NLS-1$
+		writer.println("\tpublic static final String PLUGIN_ID = \"" + fPluginData.getId() + "\";"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println();
+		writer.println("\t// The shared instance."); //$NON-NLS-1$
 		writer.println("\tprivate static " + className + " plugin;"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("\t"); //$NON-NLS-1$
 		writer.println("\t/**"); //$NON-NLS-1$
@@ -152,7 +155,7 @@ public class PluginClassCodeGenerator {
 		    writer.println("\t * @return the image descriptor"); //$NON-NLS-1$
 		    writer.println("\t */"); //$NON-NLS-1$
 		    writer.println("\tpublic static ImageDescriptor getImageDescriptor(String path) {"); //$NON-NLS-1$
-		    writer.println("\t\treturn imageDescriptorFromPlugin(\"" + fPluginData.getId() + "\", path);"); //$NON-NLS-1$ //$NON-NLS-2$
+		    writer.println("\t\treturn imageDescriptorFromPlugin(PLUGIN_ID, path);"); //$NON-NLS-1$ //$NON-NLS-2$
 		    writer.println("\t}"); //$NON-NLS-1$
 		}
 		writer.println("}"); //$NON-NLS-1$
