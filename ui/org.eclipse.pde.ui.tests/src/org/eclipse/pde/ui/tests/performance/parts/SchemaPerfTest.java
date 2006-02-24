@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.performance.parts;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.test.performance.*;
+import org.eclipse.test.performance.Dimension;
+import org.eclipse.test.performance.PerformanceTestCase;
 
 public class SchemaPerfTest extends PerformanceTestCase {
 

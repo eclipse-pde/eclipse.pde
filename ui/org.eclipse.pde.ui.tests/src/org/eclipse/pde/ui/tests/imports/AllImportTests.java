@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.imports;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 public class AllImportTests {
 	

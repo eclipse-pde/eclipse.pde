@@ -10,13 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.imports;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.ui.tests.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.ui.tests.Catalog;
+import org.eclipse.pde.ui.tests.PDETestCase;
+import org.eclipse.pde.ui.tests.ScriptRunner;
 
 public class ImportAsSourceTestCase extends PDETestCase {
 

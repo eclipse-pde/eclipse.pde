@@ -10,18 +10,30 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.wizards.plugin;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.build.*;
-import org.eclipse.pde.internal.core.natures.*;
-import org.eclipse.pde.ui.tests.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
-import junit.framework.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.ui.tests.Catalog;
+import org.eclipse.pde.ui.tests.NewProjectTest;
+import org.eclipse.pde.ui.tests.ScriptRunner;
 
 public class LibraryPluginTestCase extends NewProjectTest {
 

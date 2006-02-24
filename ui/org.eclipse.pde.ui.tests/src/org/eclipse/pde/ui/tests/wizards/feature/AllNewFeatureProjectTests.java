@@ -10,15 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.wizards.feature;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 public class AllNewFeatureProjectTests {
 	
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite to test new feature project creation wizards."); //$NON-NLS-1$
 		suite.addTest(FeatureProjectTestCase.suite());
-//		suite.addTest(SimpleFeatureTestCase.suite());
-//		suite.addTest(FeatureWithPluginTestCase.suite());
 		return suite;
 	}
 

@@ -13,9 +13,6 @@ package org.eclipse.pde.internal.ui.tests.macro;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.pde.internal.ui.tests.macro.IRecorderListener;
-import org.eclipse.pde.internal.ui.tests.macro.MacroManager;
-import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 

@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.tests.macro;
 
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
 
 public class CommandTarget {

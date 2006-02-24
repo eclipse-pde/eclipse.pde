@@ -12,11 +12,16 @@ package org.eclipse.pde.internal.ui.tests.macro;
 
 import java.io.PrintWriter;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.*;
+import org.eclipse.ui.commands.ExecutionException;
+import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
+import org.eclipse.ui.commands.NotHandledException;
 
 public class KeyCommand extends MacroCommand {
 	public static final String TYPE="key-binding";

@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.performance;
 
-import org.eclipse.pde.ui.tests.performance.parts.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
-import junit.framework.*;
+import org.eclipse.pde.ui.tests.performance.parts.InitializeModelsPerfTest;
+import org.eclipse.pde.ui.tests.performance.parts.OpenManifestEditorPerfTest;
+import org.eclipse.pde.ui.tests.performance.parts.SchemaPerfTest;
 
 public class PDEPerformanceTests {
 

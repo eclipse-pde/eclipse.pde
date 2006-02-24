@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.performance.parts;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
-import org.eclipse.pde.internal.ui.editor.plugin.*;
-import org.eclipse.test.performance.*;
-import org.eclipse.ui.*;
+import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
+import org.eclipse.test.performance.Dimension;
+import org.eclipse.test.performance.PerformanceTestCase;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 
 public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 

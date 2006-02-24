@@ -11,8 +11,8 @@
 package org.eclipse.pde.internal.ui.tests.macro;
 
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.*;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 
 public class EditorCommandTarget extends CommandTarget {
 	/**

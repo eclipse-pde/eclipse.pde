@@ -10,14 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.tests.macro;
 
-import java.io.*;
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.*;
+import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 

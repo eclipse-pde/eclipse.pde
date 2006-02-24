@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.tests.macro;
 
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.pde.internal.ui.tests.macro.MacroManager;
 
 
 public class IndexWizard extends Wizard {

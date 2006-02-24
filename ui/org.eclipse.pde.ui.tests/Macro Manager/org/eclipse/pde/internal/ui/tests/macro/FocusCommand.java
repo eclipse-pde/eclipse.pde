@@ -12,9 +12,11 @@ package org.eclipse.pde.internal.ui.tests.macro;
 
 import java.io.PrintWriter;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 
 public class FocusCommand extends MacroCommand {
 	public static final String TYPE = "focus";

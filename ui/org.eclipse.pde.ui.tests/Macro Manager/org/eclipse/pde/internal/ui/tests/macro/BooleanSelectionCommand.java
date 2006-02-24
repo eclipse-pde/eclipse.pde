@@ -14,12 +14,20 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
-import org.w3c.dom.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Widget;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class BooleanSelectionCommand extends MacroCommand {
 	public static final String TYPE="select";

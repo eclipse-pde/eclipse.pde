@@ -11,8 +11,8 @@
 package org.eclipse.pde.internal.ui.tests.macro;
 
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.*;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 
 public class ViewCommandTarget extends CommandTarget {
 	public ViewCommandTarget(Widget widget, IViewPart view) {

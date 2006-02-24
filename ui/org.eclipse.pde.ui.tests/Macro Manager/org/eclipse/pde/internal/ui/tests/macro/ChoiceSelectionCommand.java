@@ -10,13 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.tests.macro;
 
-import java.io.*;
+import java.io.PrintWriter;
 import java.util.Hashtable;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.widgets.*;
-import org.w3c.dom.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Widget;
+import org.w3c.dom.Node;
 
 public class ChoiceSelectionCommand extends MacroCommand {
 	public static final String TYPE = "choice-select";

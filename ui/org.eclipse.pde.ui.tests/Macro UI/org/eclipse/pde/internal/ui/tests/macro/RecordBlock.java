@@ -15,10 +15,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.internal.ui.tests.macro.IRecorderListener;
-import org.eclipse.pde.internal.ui.tests.macro.Macro;
-import org.eclipse.pde.internal.ui.tests.macro.MacroManager;
-import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.eclipse.ui.IWorkbenchWindow;
 
 public class RecordBlock implements IRecorderListener {
