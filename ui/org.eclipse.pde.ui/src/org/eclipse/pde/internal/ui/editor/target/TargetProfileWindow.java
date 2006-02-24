@@ -51,7 +51,7 @@ public class TargetProfileWindow extends ApplicationWindow {
 
 	public TargetProfileWindow(Shell parentShell, ITargetModel model) {
 		super(parentShell);
-		setShellStyle(SWT.MAX | SWT.RESIZE | SWT.APPLICATION_MODAL);
+		setShellStyle(SWT.MAX | SWT.RESIZE | SWT.CLOSE | SWT.APPLICATION_MODAL);
 		fTargetModel = model;
  	}
 	
