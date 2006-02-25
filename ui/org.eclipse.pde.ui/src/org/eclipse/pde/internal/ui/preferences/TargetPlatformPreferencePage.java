@@ -471,12 +471,12 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	private void handleLoadTargetProfile() {
 		ITargetModel model = getTargetModel();
 		if (model == null) {
-			// TODO display a message to the user that a profile was not found
+			MessageDialog.openError(getShell(), PDEUIMessages.TargetPlatformPreferencePage_notFoundTitle, PDEUIMessages.TargetPlatformPreferencePage_notFoundDescription);
 			return;
 		}
 		
 		if (!model.isLoaded()) {
-			// TODO display a message that a profile is malformed
+			MessageDialog.openError(getShell(), PDEUIMessages.TargetPlatformPreferencePage_invalidTitle, PDEUIMessages.TargetPlatformPreferencePage_invalidDescription);
 			return;
 		}
 		

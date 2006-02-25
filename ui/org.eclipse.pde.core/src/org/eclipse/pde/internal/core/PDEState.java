@@ -72,8 +72,8 @@ public class PDEState extends MinimalState {
 		String className;
 		boolean hasExtensibleAPI;
 		boolean isPatchFragment;
-		boolean legacy;
 		boolean hasBundleStructure;
+		String schema;
 		String[] libraries;
 		String project;
 		String localization;
@@ -248,15 +248,21 @@ public class PDEState extends MinimalState {
 	
 	private void createPluginInfo(Map map, Element element) {
 		PluginInfo info = new PluginInfo();
-		info.name = element.getAttribute("name"); //$NON-NLS-1$
-		info.providerName = element.getAttribute("provider"); //$NON-NLS-1$
-		info.className	= element.getAttribute("class"); //$NON-NLS-1$
+		if (element.hasAttribute("name"))
+			info.name = element.getAttribute("name"); //$NON-NLS-1$
+		if (element.hasAttribute("provider"))
+			info.providerName = element.getAttribute("provider"); //$NON-NLS-1$
+		if (element.hasAttribute("class"))
+			info.className	= element.getAttribute("class"); //$NON-NLS-1$
 		info.hasExtensibleAPI = "true".equals(element.getAttribute("hasExtensibleAPI")); //$NON-NLS-1$ //$NON-NLS-2$
 		info.isPatchFragment = "true".equals(element.getAttribute("patch")); //$NON-NLS-1$ //$NON-NLS-2$
 		info.hasBundleStructure = !"false".equals(element.getAttribute("isBundle")); //$NON-NLS-1$ //$NON-NLS-2$
-		info.project = element.getAttribute("project"); //$NON-NLS-1$
-		info.legacy = "true".equals(element.getAttribute("legacy")); //$NON-NLS-1$ //$NON-NLS-2$
-		info.localization = element.getAttribute("localization"); //$NON-NLS-1$
+		if (element.hasAttribute("project"))
+			info.project = element.getAttribute("project"); //$NON-NLS-1$
+		if (element.hasAttribute("schema"))
+			info.schema = element.getAttribute("schema"); //$NON-NLS-1$	
+		if (element.hasAttribute("localization"))
+			info.localization = element.getAttribute("localization"); //$NON-NLS-1$
 		
 		NodeList libs = element.getChildNodes(); 
 		ArrayList list = new ArrayList(libs.getLength());
@@ -314,6 +320,8 @@ public class PDEState extends MinimalState {
 					element.setAttribute("provider", info.providerName); //$NON-NLS-1$
 				if (info.name != null)
 					element.setAttribute("name", info.name); //$NON-NLS-1$
+				if (info.schema != null)
+					element.setAttribute("schema", info.schema); //$NON-NLS-1$
 				if (info.hasExtensibleAPI)
 					element.setAttribute("hasExtensibleAPI", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (info.isPatchFragment)
@@ -443,10 +451,10 @@ public class PDEState extends MinimalState {
 				timestamp ^= file.getAbsolutePath().hashCode();
 			}
 		}
-		// This +1 has appeared since Feb 03, 2006
+		// This -1 has appeared since Feb 03, 2006
 		// This is because we now cache new properties (hasBundleStructure and isPatchFragment)
 		// and we want to clear old caches that may not have them
-		return timestamp + 1;  
+		return timestamp - 1;  
 	}
  	
  	private IPluginModelBase createWorkspaceModel(BundleDescription desc) {
@@ -535,9 +543,10 @@ public class PDEState extends MinimalState {
 		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? false : info.hasBundleStructure;		
 	}
-	public boolean isLegacy(long bundleID) {
+	
+	public String getSchemaVersion(long bundleID) {
 		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
-		return info == null ? false : info.legacy;		
+		return info == null ? null : info.schema;		
 	}
 
 	public String getPluginName(long bundleID) {
@@ -650,8 +659,9 @@ public class PDEState extends MinimalState {
 					element.setAttribute("patch", "true");				 //$NON-NLS-1$ //$NON-NLS-2$
 				if (!(models[i] instanceof IBundlePluginModelBase))
 					element.setAttribute("isBundle", "false"); //$NON-NLS-1$ //$NON-NLS-2$
-				if (plugin.getSchemaVersion() == null)
-					element.setAttribute("legacy", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+				String schema = plugin.getSchemaVersion();
+				if (schema != null && schema.length() > 0)
+					element.setAttribute("schema", schema);  //$NON-NLS-1$
 				if (models[i] instanceof IBundlePluginModelBase) {
 					String localization = ((IBundlePluginModelBase)models[i]).getBundleLocalization();
 					if (localization != null)

@@ -38,6 +38,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.plugin.AbstractExtensions;
 import org.eclipse.pde.internal.core.plugin.PluginImport;
 import org.eclipse.pde.internal.core.plugin.PluginLibrary;
 import org.eclipse.pde.internal.core.text.bundle.BundleClasspathHeader;
@@ -63,7 +64,11 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	}
 	
 	public String getSchemaVersion() {
-		return "3.0"; //$NON-NLS-1$
+		IExtensions root = getExtensionsRoot();
+		if (root instanceof AbstractExtensions) {
+			return ((AbstractExtensions)root).getSchemaVersion();
+		}
+		return null;
 	}
 	
 	public void setSchemaVersion(String value) throws CoreException {

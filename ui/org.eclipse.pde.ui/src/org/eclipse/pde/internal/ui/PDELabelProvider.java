@@ -709,7 +709,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 				? get(PDEPluginImages.DESC_PLUGIN_OBJ)
 				: get(PDEPluginImages.DESC_FRAGMENT_OBJ);
 		}
-		return get(PDEPluginImages.DESC_PLUGIN_OBJ, F_ERROR);
+		return get(PDEPluginImages.DESC_PLUGIN_OBJ, 0);
 	}
 	
 	public Image getObjectImage(ITargetFeature obj) {

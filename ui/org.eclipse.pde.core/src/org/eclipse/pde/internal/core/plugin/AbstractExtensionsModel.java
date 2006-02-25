@@ -80,7 +80,7 @@ public abstract class AbstractExtensionsModel
 			SAXParser parser = getSaxParser();
 			PluginHandler handler = new PluginHandler(true);
 			parser.parse(stream, handler);
-			fExtensions.load(handler.getDocumentElement());
+			fExtensions.load(handler.getDocumentElement(), handler.getSchemaVersion());
 			setLoaded(true);
 			if (!outOfSync)
 				updateTimeStamp();

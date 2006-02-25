@@ -17,10 +17,11 @@ import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class Extensions
-	extends AbstractExtensions {
+public class Extensions extends AbstractExtensions {
+	
 	private static final long serialVersionUID = 1L;
-	private boolean valid;
+	
+	private boolean fValid;
 	private boolean fIsFragment;
 
 	public Extensions() {
@@ -28,10 +29,11 @@ public class Extensions
 
 	void load(Extensions srcPluginBase) {
 		super.load(srcPluginBase);
-		valid = hasRequiredAttributes();
+		fValid = hasRequiredAttributes();
 	}
 
-	void load(Node node) {
+	void load(Node node, String schemaVersion) {
+		fSchemaVersion = schemaVersion;
 		if (node == null)
 			return;
 		NodeList children = node.getChildNodes();
@@ -41,7 +43,7 @@ public class Extensions
 				processChild(child);
 			}
 		}
-		valid = hasRequiredAttributes();
+		fValid = hasRequiredAttributes();
 	}
 	
 	void load(Node[] nodes) {
@@ -51,16 +53,16 @@ public class Extensions
 				processChild(child);
 			}
 		}
-		valid = hasRequiredAttributes();	
+		fValid = hasRequiredAttributes();	
 	}
 
 	public void reset() {
 		super.reset();
-		valid=false;
+		fValid=false;
 	}
 	
 	public boolean isValid() {
-		return valid;
+		return fValid;
 	}
 
 	public void write(String indent, PrintWriter writer) {

@@ -17,15 +17,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.core.plugin.IExtensions;
+import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.w3c.dom.Node;
 
-public abstract class AbstractExtensions
-	extends PluginObject
-	implements IExtensions {
+public abstract class AbstractExtensions extends PluginObject implements IExtensions {
+	
+	protected String fSchemaVersion;
 	
 	protected ArrayList fExtensions = new ArrayList(1);
 	protected ArrayList fExtensionPoints = new ArrayList(1);
@@ -37,6 +38,7 @@ public abstract class AbstractExtensions
 		((PluginExtension) extension).setParent(this);
 		fireStructureChanged(extension, IModelChangedEvent.INSERT);
 	}
+	
 	public void add(IPluginExtensionPoint extensionPoint)
 		throws CoreException {
 		ensureModelEditable();
@@ -49,6 +51,7 @@ public abstract class AbstractExtensions
 	public IPluginExtensionPoint[] getExtensionPoints() {
 		return (IPluginExtensionPoint[])fExtensionPoints.toArray(new IPluginExtensionPoint[fExtensionPoints.size()]);
 	}
+	
 	public IPluginExtension[] getExtensions() {
 		return (IPluginExtension[])fExtensions.toArray(new IPluginExtension[fExtensions.size()]);
 	}
@@ -101,6 +104,7 @@ public abstract class AbstractExtensions
 		((PluginExtension) extension).setInTheModel(false);
 		fireStructureChanged(extension, ModelChangedEvent.REMOVE);
 	}
+	
 	public void remove(IPluginExtensionPoint extensionPoint)
 		throws CoreException {
 		ensureModelEditable();
@@ -121,6 +125,7 @@ public abstract class AbstractExtensions
 	public int getIndexOf(IPluginExtension e) {
 		return fExtensions.indexOf(e);
 	}
+	
 	public void swap(IPluginExtension e1, IPluginExtension e2)
 		throws CoreException {
 		ensureModelEditable();
@@ -132,6 +137,7 @@ public abstract class AbstractExtensions
 		fExtensions.set(index2, e2);
 		firePropertyChanged(this, P_EXTENSION_ORDER, e1, e2);
 	}
+	
 	protected void writeChildren(
 		String indent,
 		String tag,
@@ -158,4 +164,17 @@ public abstract class AbstractExtensions
 		}
 		return true;
 	}
+	
+	public String getSchemaVersion() {
+		return fSchemaVersion;
+	}
+	
+	public void setSchemaVersion(String schemaVersion) throws CoreException {
+		ensureModelEditable();
+		String oldValue = fSchemaVersion;
+		fSchemaVersion = schemaVersion;
+		firePropertyChanged(IPluginBase.P_SCHEMA_VERSION, oldValue, schemaVersion);
+	}
+	
+
 }

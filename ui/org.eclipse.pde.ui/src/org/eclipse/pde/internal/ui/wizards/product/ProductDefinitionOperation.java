@@ -35,6 +35,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IWindowImages;
@@ -111,7 +112,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 	private void createNewFile(IFile file) throws CoreException {
 		WorkspacePluginModelBase model = (WorkspacePluginModelBase)getModel(file);
 		IPluginBase base = model.getPluginBase();
-		base.setSchemaVersion("3.0"); //$NON-NLS-1$
+		base.setSchemaVersion(TargetPlatform.getTargetVersion() < 3.2 ? "3.0" : "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
 		base.add(createExtension(model));
 		model.save();
 	}

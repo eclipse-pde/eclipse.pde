@@ -193,14 +193,13 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			fModel = new WorkspacePluginModel(project.getFile("plugin.xml"), false); //$NON-NLS-1$
 		}
 		PluginBase pluginBase = (PluginBase) fModel.getPluginBase();
-		if (!fData.isLegacy())
-			pluginBase.setSchemaVersion("3.0"); //$NON-NLS-1$
+		String targetVersion = ((AbstractFieldData) fData).getTargetVersion();
+		pluginBase.setSchemaVersion(Double.parseDouble(targetVersion) < 3.2 ? "3.0" : "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
 		pluginBase.setId(fData.getId());
 		pluginBase.setVersion(fData.getVersion());
 		pluginBase.setName(fData.getName());
 		pluginBase.setProviderName(fData.getProvider());
-		pluginBase.setTargetVersion(((AbstractFieldData) fData)
-				.getTargetVersion());
+		pluginBase.setTargetVersion(targetVersion);
 		if (pluginBase instanceof IFragment) {
 			IFragment fragment = (IFragment) pluginBase;
 			IFragmentFieldData data = (IFragmentFieldData) fData;

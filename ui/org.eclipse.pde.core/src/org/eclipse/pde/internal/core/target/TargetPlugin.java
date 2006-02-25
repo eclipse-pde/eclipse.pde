@@ -11,6 +11,7 @@ public class TargetPlugin extends TargetObject implements ITargetPlugin {
 
 	private static final long serialVersionUID = 1L;
 	private String fId;
+	private boolean fOptional = false;
 
 	public TargetPlugin(ITargetModel model) {
 		super(model);
@@ -25,12 +26,24 @@ public class TargetPlugin extends TargetObject implements ITargetPlugin {
 	}
 
 	public void parse(Node node) {
-		if (node.getNodeType() == Node.ELEMENT_NODE)
-			fId = ((Element)node).getAttribute("id"); //$NON-NLS-1$
+		if (node.getNodeType() == Node.ELEMENT_NODE) {
+			Element element = (Element)node;
+			fId = element.getAttribute("id"); //$NON-NLS-1$
+			fOptional = element.getAttribute("optional").equalsIgnoreCase("true"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		writer.println(indent + "<plugin id=\"" + getWritableString(fId) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.print(indent + "<plugin id=\"" + getWritableString(fId)); //$NON-NLS-1$
+		writer.println((fOptional) ? "\" optional=\"true\"/>" : "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public boolean isOptional() {
+		return fOptional;
+	}
+
+	public void setOptional(boolean optional) {
+		fOptional = optional;
 	}
 
 }

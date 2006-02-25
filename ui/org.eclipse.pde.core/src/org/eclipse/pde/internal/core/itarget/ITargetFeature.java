@@ -16,4 +16,8 @@ public interface ITargetFeature extends ITargetObject {
 	
 	void setId(String id);
 	
+	boolean isOptional();
+	
+	void setOptional(boolean optional);
+	
 }

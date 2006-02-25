@@ -2678,6 +2678,22 @@ public class PDEUIMessages extends NLS {
 	public static String OrganizeManifestsWizardPage_removeUnusedKeys;
 
 	public static String TargetProfileWindow_targetDescription;
+	
+	public static String TargetPlatformPreferencePage_notFoundTitle;
+
+	public static String TargetPlatformPreferencePage_notFoundDescription;
+
+	public static String TargetPlatformPreferencePage_invalidTitle;
+
+	public static String TargetPlatformPreferencePage_invalidDescription;
+	
+	public static String TargetPluginsTab_features;
+
+	public static String TargetPluginsTab_plugins;
+
+	public static String TargetPluginsTab_dialogTitle;
+
+	public static String TargetPluginsTab_dialogDescription;
 
 	public static String ManifestEditorContributor_externStringsActionName;
 

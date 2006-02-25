@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -31,6 +32,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -38,6 +41,7 @@ import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
@@ -69,6 +73,7 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.SharedPartWithButtons;
+import org.eclipse.pde.internal.ui.parts.TreeErrorMessage;
 import org.eclipse.pde.internal.ui.util.PersistablePluginObject;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
@@ -211,6 +216,44 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			return result;
 		}
 
+	}
+	
+	private class TreeNode {
+		Object[] fChildren;
+		boolean fFeature;
+		protected TreeNode (Object[] children, boolean feature) {
+			fChildren = children;	
+			fFeature = feature;
+		}
+		protected Object[] getChildren() 	{	return fChildren;	}
+		protected boolean isFeatureBased() 	{	return fFeature;	}
+		public String toString() {
+			return fFeature ? PDEUIMessages.TargetPluginsTab_features : PDEUIMessages.TargetPluginsTab_plugins;
+		}
+	}
+	
+	protected class ErrorDialogContentProvider extends DefaultContentProvider implements ITreeContentProvider{
+		TreeNode fPlugins, fFeatures;
+		ErrorDialogContentProvider(TreeNode features, TreeNode plugins) {
+			fFeatures = features;	
+			fPlugins = plugins;
+		}
+		public Object[] getChildren(Object parentElement) {
+			if (parentElement instanceof TreeNode)
+				return ((TreeNode)parentElement).getChildren();
+			return null;
+		}
+		public Object getParent(Object element) {
+			return null;
+		}
+		public boolean hasChildren(Object element) {
+			return element instanceof TreeNode;
+		}
+		public Object[] getElements(Object inputElement) {
+			if (fFeatures != null && fPlugins != null) 		return new Object[] {fFeatures, fPlugins};
+			else if (fFeatures != null)						return new Object[] {fFeatures};
+			else 											return new Object[] {fPlugins};
+		}
 	}
 
 	public TargetPluginsTab(TargetPlatformPreferencePage page) {
@@ -447,7 +490,9 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			handleSelectAll(true);
 			return;
 		}
-		HashSet set = new HashSet();
+		Map required = new HashMap();
+		Set optional = new HashSet();
+		ArrayList missingFeatures = new ArrayList();
 		ITargetFeature[] targetFeatures = target.getFeatures();
 		Stack features = new Stack();
 		
@@ -459,24 +504,33 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 				(IFeatureModel)fCurrentFeatures.get(targetFeatures[i].getId());
 			if (model != null)
 				features.push(model.getFeature());
-		}
-		while (!features.isEmpty()) {
-			IFeature feature = (IFeature) features.pop();
-			IFeaturePlugin [] plugins = feature.getPlugins();
-			for (int j = 0; j < plugins.length; j++) {
-				set.add(plugins[j].getId());
+			else if (!targetFeatures[i].isOptional()) {
+				missingFeatures.add(targetFeatures[i]);
 			}
-			IFeatureChild[] children = feature.getIncludedFeatures();
-			for (int j = 0; j < children.length; j++) {
-				IFeatureModel model = (featureManager != null) ? featureManager.findFeatureModel(children[j].getId()) :
-					(IFeatureModel)fCurrentFeatures.get(children[j].getId());
-				features.push(model);
+			while (!features.isEmpty()) {
+				IFeature feature = (IFeature) features.pop();
+				IFeaturePlugin [] plugins = feature.getPlugins();
+				for (int j = 0; j < plugins.length; j++) {
+					if (targetFeatures[i].isOptional() || plugins[j].isFragment())
+						optional.add(plugins[j].getId());
+					else
+						required.put(plugins[j].getId(), plugins[j]);
+				}
+				IFeatureChild[] children = feature.getIncludedFeatures();
+				for (int j = 0; j < children.length; j++) {
+					model = (featureManager != null) ? featureManager.findFeatureModel(children[j].getId()) :
+						(IFeatureModel)fCurrentFeatures.get(children[j].getId());
+					features.push(model);
+				}
 			}
 		}
 
 		ITargetPlugin[] plugins = target.getPlugins();
 		for (int i = 0 ; i < plugins.length; i++) {
-			set.add(plugins[i].getId());
+			if (plugins[i].isOptional())
+				optional.add(plugins[i].getId());
+			else
+				required.put(plugins[i].getId(), plugins[i]);
 		}
 		
 		IPluginModelBase[] models = getCurrentModels();
@@ -485,7 +539,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			String id = models[i].getPluginBase().getId();
 			if (id == null)
 				continue;
-			if (set.contains(id)) {
+			if (required.containsKey(id) || optional.contains(id)) {
 				++counter;
 				if (!fPluginListViewer.getChecked(models[i])) {
 					fPluginTreeViewer.setChecked(models[i], true);
@@ -501,7 +555,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 					}
 					
 				}
-				set.remove(id);
+				required.remove(id);
 			} else {
 				if (fPluginListViewer.getChecked(models[i])) {
 					fPluginTreeViewer.setChecked(models[i], false);
@@ -518,6 +572,38 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			}		
 		}
 		setCounter(counter);
+		if (!required.isEmpty() || !missingFeatures.isEmpty()) {
+			handleErrorDialog(required, missingFeatures);
+		}
+	}
+	
+	private void handleErrorDialog(Map required, List missingFearures) {
+		TreeNode plugins = null, features = null;
+		if (!missingFearures.isEmpty()) {
+			features = new TreeNode(missingFearures.toArray(), true);
+		}
+		if (!required.isEmpty()) {
+			plugins = new TreeNode(required.values().toArray(), false);
+		}
+		TreeErrorMessage dialog = new TreeErrorMessage(fPage.getShell(), PDEUIMessages.TargetPluginsTab_dialogTitle, null, PDEUIMessages.TargetPluginsTab_dialogDescription, 
+					MessageDialog.WARNING, new String[] { IDialogConstants.OK_LABEL }, 0);
+		dialog.setContentProvider(new ErrorDialogContentProvider(features, plugins));
+		dialog.setLabelProvider(new LabelProvider() {
+			public Image getImage(Object obj) {
+				if (obj instanceof TreeNode) {
+					if (((TreeNode)obj).isFeatureBased())
+						return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ, 0);
+					return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGIN_OBJ, 0);
+				} 
+				return PDEPlugin.getDefault().getLabelProvider().getImage(obj);
+			}
+			
+			public String getText(Object obj) {
+				return PDEPlugin.getDefault().getLabelProvider().getText(obj);
+			}
+		});
+		dialog.setInput(new Object());
+		dialog.open();
 	}
 	
 	protected void handleReload() {

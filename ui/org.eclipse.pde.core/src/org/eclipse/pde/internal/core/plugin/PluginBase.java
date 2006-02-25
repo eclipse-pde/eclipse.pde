@@ -36,9 +36,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public abstract class PluginBase
-	extends AbstractExtensions
-	implements IPluginBase {
+public abstract class PluginBase extends AbstractExtensions implements IPluginBase {
 	private static final Version maxVersion = new Version(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
 
 	private ArrayList fLibraries = new ArrayList();
@@ -46,20 +44,10 @@ public abstract class PluginBase
 	private String fProviderName;
 	private String fId;
 	private String fVersion;
-	private String fSchemaVersion;
 	private boolean fHasBundleStructure;
 
-	private String fTargetVersion = "3.1"; //$NON-NLS-1$
+	private String fTargetVersion = "3.2"; //$NON-NLS-1$
 
-	public String getSchemaVersion() {
-		return fSchemaVersion;
-	}
-	public void setSchemaVersion(String schemaVersion) throws CoreException {
-		ensureModelEditable();
-		String oldValue = fSchemaVersion;
-		fSchemaVersion = schemaVersion;
-		firePropertyChanged(P_SCHEMA_VERSION, oldValue, schemaVersion);
-	}
 	public void add(IPluginLibrary library) throws CoreException {
 		ensureModelEditable();
 		fLibraries.add(library);
@@ -98,8 +86,7 @@ public abstract class PluginBase
 		fVersion = bundleDesc.getVersion().toString();
 		fName = state.getPluginName(bundleDesc.getBundleId());
 		fProviderName = state.getProviderName(bundleDesc.getBundleId());
-		if (!state.isLegacy(bundleDesc.getBundleId()))
-			fSchemaVersion = "3.0"; //$NON-NLS-1$
+		fSchemaVersion = state.getSchemaVersion(bundleDesc.getBundleId());
 		fHasBundleStructure = state.hasBundleStructure(bundleDesc.getBundleId());
 		loadRuntime(bundleDesc, state);
 		loadImports(bundleDesc);		
@@ -149,10 +136,6 @@ public abstract class PluginBase
 		}
 		if (name.equals(P_LIBRARY_ORDER)) {
 			swap((IPluginLibrary) oldValue, (IPluginLibrary) newValue);
-			return;
-		}
-		if (name.equals(P_SCHEMA_VERSION)) {
-			setSchemaVersion(newValue!=null? newValue.toString():null);
 			return;
 		}
 		super.restoreProperty(name, oldValue, newValue);

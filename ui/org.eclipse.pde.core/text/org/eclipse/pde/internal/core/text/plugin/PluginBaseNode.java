@@ -23,9 +23,9 @@ import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 
 public abstract class PluginBaseNode extends PluginObjectNode implements IPluginBase {
-	
-	
+		
 	private String fSchemaVersion;
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */

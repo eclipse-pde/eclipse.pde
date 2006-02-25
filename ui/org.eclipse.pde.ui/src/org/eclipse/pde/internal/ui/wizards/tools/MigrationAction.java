@@ -24,6 +24,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -124,6 +125,7 @@ public class MigrationAction implements IObjectActionDelegate {
 		for (int i = 0; i < models.length; i++) {
 			if (!models[i].getUnderlyingResource().isLinked()
 					&& models[i].isLoaded()
+					&& !(models[i] instanceof IBundlePluginModelBase)
 					&& models[i].getPluginBase().getSchemaVersion() == null)
 				result.add(models[i]);
 		}
