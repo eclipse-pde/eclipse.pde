@@ -75,6 +75,8 @@ public class XMLErrorReporter extends DefaultHandler {
 
 	private FindReplaceDocumentAdapter fFindReplaceAdapter;
 
+	private double fSchemaVersion = 2.1;
+
 	public XMLErrorReporter(IFile file) {
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		try {
@@ -356,6 +358,19 @@ public class XMLErrorReporter extends DefaultHandler {
 			fRootElement.normalize();
 		return fRootElement;
 	}
-
 	
+	public void processingInstruction(String target, String data) throws SAXException {
+		if ("eclipse".equals(target)) { //$NON-NLS-1$
+			if ("version=\"3.0\"".equals(data)) {
+				fSchemaVersion = 3.0;
+			} else if ("version=\"3.2\"".equals(data)) {
+				fSchemaVersion = 3.2;
+			}
+		}
+	}
+	
+	protected double getSchemaVersion() {
+		return fSchemaVersion ;
+	}
+
 }

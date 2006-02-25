@@ -243,7 +243,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		if (id.length() == 0)
 			return PDEUIMessages.NewLibraryPluginCreationPage_noid; 
 
-		if (!IdUtil.isValidPluginId(id)) { 
+		if (!IdUtil.isValidCompositeID(id)) { 
 			return PDEUIMessages.NewLibraryPluginCreationPage_invalidId; 
 		}
 		return null;

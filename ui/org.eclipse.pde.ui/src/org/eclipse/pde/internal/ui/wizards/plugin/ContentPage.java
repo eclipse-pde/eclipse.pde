@@ -100,7 +100,7 @@ public abstract class ContentPage extends WizardPage {
 		if (id.length() == 0)
 			return PDEUIMessages.ContentPage_noid; 
 
-		if (!IdUtil.isValidPluginId(id)) {
+		if (!IdUtil.isValidCompositeID(id)) {
 			return PDEUIMessages.ContentPage_invalidId; 
 		}
 		return null;

@@ -381,7 +381,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	public boolean checkFieldsFilled() {	
 		boolean empty = fIdText.getText().length() == 0 || fNameText.getText().length() == 0;
         if (!empty) {
-            empty = !IdUtil.isValidExtensionPointId(fIdText.getText());
+            empty = !IdUtil.isValidSimpleID(fIdText.getText());
         }
 		if (!empty && isPluginIdNeeded()) {
 			empty = getPluginId().length() == 0 || fSchemaText.getText().length() == 0 ;
@@ -392,7 +392,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	}
 
     public boolean isInvalidValidId() {
-        return fIdText.getText().length()>0 && !IdUtil.isValidExtensionPointId(fIdText.getText());
+        return fIdText.getText().length()>0 && !IdUtil.isValidSimpleID(fIdText.getText());
     }
 
 	private void validatePage() {

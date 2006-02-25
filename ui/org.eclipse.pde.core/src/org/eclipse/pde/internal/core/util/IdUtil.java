@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.core.util;
 import java.util.StringTokenizer;
 
 public class IdUtil {
-	public static boolean isValidPluginId(String name) {
+	public static boolean isValidCompositeID(String name) {
 		if (name.length() <= 0) {
 			return false;
 		}
@@ -29,7 +29,7 @@ public class IdUtil {
 		return true;
 	}
 
-    public static boolean isValidExtensionPointId(String name) {
+    public static boolean isValidSimpleID(String name) {
         if (name.length() <= 0) {
             return false;
         }

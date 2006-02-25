@@ -101,11 +101,11 @@ public class PluginClassCodeGenerator {
 		writer.println("\t// The plug-in ID"); //$NON-NLS-1$
 		writer.println("\tpublic static final String PLUGIN_ID = \"" + fPluginData.getId() + "\";"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println();
-		writer.println("\t// The shared instance."); //$NON-NLS-1$
+		writer.println("\t// The shared instance"); //$NON-NLS-1$
 		writer.println("\tprivate static " + className + " plugin;"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("\t"); //$NON-NLS-1$
 		writer.println("\t/**"); //$NON-NLS-1$
-		writer.println("\t * The constructor."); //$NON-NLS-1$
+		writer.println("\t * The constructor"); //$NON-NLS-1$
 		writer.println("\t */"); //$NON-NLS-1$
 		writer.println("\tpublic " + className + "() {"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("\t\tplugin = this;"); //$NON-NLS-1$
@@ -138,9 +138,9 @@ public class PluginClassCodeGenerator {
 		writer.println();
 
 		writer.println("\t/**"); //$NON-NLS-1$
-		writer.println("\t * Returns the shared instance."); //$NON-NLS-1$
+		writer.println("\t * Returns the shared instance"); //$NON-NLS-1$
 		writer.println("\t *"); //$NON-NLS-1$
-		writer.println("\t * @return the shared instance."); //$NON-NLS-1$
+		writer.println("\t * @return the shared instance"); //$NON-NLS-1$
 		writer.println("\t */"); //$NON-NLS-1$
 		writer.println("\tpublic static " + className + " getDefault() {"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("\t\treturn plugin;"); //$NON-NLS-1$
@@ -149,7 +149,7 @@ public class PluginClassCodeGenerator {
 		if (fPluginData.isUIPlugin() && fGenerateTemplate) {
 			writer.println("\t/**"); //$NON-NLS-1$
 		    writer.println("\t * Returns an image descriptor for the image file at the given"); //$NON-NLS-1$
-		    writer.println("\t * plug-in relative path."); //$NON-NLS-1$
+		    writer.println("\t * plug-in relative path"); //$NON-NLS-1$
 		    writer.println("\t *"); //$NON-NLS-1$
 		    writer.println("\t * @param path the path"); //$NON-NLS-1$
 		    writer.println("\t * @return the image descriptor"); //$NON-NLS-1$

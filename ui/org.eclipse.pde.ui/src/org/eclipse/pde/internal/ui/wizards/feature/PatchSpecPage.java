@@ -116,7 +116,7 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 		String id = fPatchIdText.getText();
 		if (id == null || id.length() == 0)
 			return PDEUIMessages.NewFeatureWizard_SpecPage_pmissing;
-		if (!IdUtil.isValidPluginId(id)) {
+		if (!IdUtil.isValidCompositeID(id)) {
 			return PDEUIMessages.NewFeatureWizard_SpecPage_invalidId;
 		}
 		return super.verifyIdRules();

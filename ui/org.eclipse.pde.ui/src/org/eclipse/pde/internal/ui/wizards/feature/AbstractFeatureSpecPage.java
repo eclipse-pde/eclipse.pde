@@ -147,7 +147,7 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 		String id = getFeatureId();
 		if (id == null || id.length() == 0)
 			return PDEUIMessages.NewFeatureWizard_SpecPage_missing;
-		if (!IdUtil.isValidPluginId(id)) {
+		if (!IdUtil.isValidCompositeID(id)) {
 			return PDEUIMessages.NewFeatureWizard_SpecPage_invalidId;
 		}
 		return null;

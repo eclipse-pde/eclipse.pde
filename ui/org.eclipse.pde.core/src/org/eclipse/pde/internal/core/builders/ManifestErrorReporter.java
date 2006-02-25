@@ -131,8 +131,8 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 	 * @return false if failed
 	 */
 	protected boolean validatePluginID(Element element, Attr attr) {
-        if (!IdUtil.isValidPluginId(attr.getValue())) {
-            String message = NLS.bind(PDECoreMessages.Builders_Manifest_pluginId_value, attr.getValue(), attr.getName());
+        if (!IdUtil.isValidCompositeID(attr.getValue())) {
+            String message = NLS.bind(PDECoreMessages.Builders_Manifest_compositeID, attr.getValue(), attr.getName());
             report(message, getLine(element, attr.getName()),
                     CompilerFlags.WARNING);
             return false;

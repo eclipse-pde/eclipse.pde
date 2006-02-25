@@ -297,10 +297,15 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	protected void validateExtensionPoint(Element element) {
 		if (assertAttributeDefined(element, "id", CompilerFlags.ERROR)) { //$NON-NLS-1$
             Attr idAttr = element.getAttributeNode("id"); //$NON-NLS-1$
-            if (!IdUtil.isValidExtensionPointId(idAttr.getValue())) {
-                String message = NLS.bind(PDECoreMessages.Builders_Manifest_extensionPointId_value, idAttr.getValue());
-                report(message, getLine(element, idAttr.getName()), CompilerFlags.WARNING);
-            }
+            double schemaVersion = getSchemaVersion();
+            String message = null;
+            if (schemaVersion < 3.2 && !IdUtil.isValidSimpleID(idAttr.getValue()))
+            	message = NLS.bind(PDECoreMessages.Builders_Manifest_simpleID, idAttr.getValue());
+            else if (schemaVersion >= 3.2 && !IdUtil.isValidCompositeID(idAttr.getValue()))
+            	message = NLS.bind(PDECoreMessages.Builders_Manifest_compositeID, idAttr.getValue());
+           
+            if (message != null)   
+            	report(message, getLine(element, idAttr.getName()), CompilerFlags.WARNING);
         }
 
 		assertAttributeDefined(element, "name", CompilerFlags.ERROR); //$NON-NLS-1$

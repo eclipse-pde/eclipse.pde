@@ -988,7 +988,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private boolean validatePluginId(IHeader header, String value) {
 		String message;
-		if (!IdUtil.isValidPluginId(value)) {
+		if (!IdUtil.isValidCompositeID(value)) {
 			message = PDECoreMessages.BundleErrorReporter_InvalidSymbolicName; 
 			report(message, header.getLineNumber() + 1, CompilerFlags.WARNING);
 			return false;
