@@ -222,7 +222,7 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 		fSelfModification = true;
 		String id = IdUtil.getValidId(getProjectName());
 		fPatchIdText.setText(id);
-		fPatchNameText.setText(IdUtil.getValidName(id, "Feature"));
+		fPatchNameText.setText(IdUtil.getValidName(id, PDEUIMessages.PatchSpecPage_feature));
 		fPatchProviderText.setText(IdUtil.getValidProvider(id));
 		fSelfModification = false;
 	}

@@ -102,7 +102,7 @@ public class FeatureSpecPage extends AbstractFeatureSpecPage {
 		fSelfModification = true;
 		String id = IdUtil.getValidId(getProjectName());
 		fFeatureIdText.setText(id);
-		fFeatureNameText.setText(IdUtil.getValidName(id, "Feature"));
+		fFeatureNameText.setText(IdUtil.getValidName(id, PDEUIMessages.FeatureSpecPage_feature));
 		fFeatureProviderText.setText(IdUtil.getValidProvider(id));
 		fSelfModification = false;
 	}

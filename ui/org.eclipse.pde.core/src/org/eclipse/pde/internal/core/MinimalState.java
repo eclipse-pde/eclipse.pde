@@ -375,7 +375,7 @@ public class MinimalState {
 
 	protected void logResolutionErrors() {
 		MultiStatus errors = new MultiStatus(PDECore.getPluginId(), 1,
-				"Problems occurred during the resolution of the target platform", 
+				"Problems occurred during the resolution of the target platform",  //$NON-NLS-1$
 				null);
 
 		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();

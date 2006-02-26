@@ -361,9 +361,9 @@ public class XMLErrorReporter extends DefaultHandler {
 	
 	public void processingInstruction(String target, String data) throws SAXException {
 		if ("eclipse".equals(target)) { //$NON-NLS-1$
-			if ("version=\"3.0\"".equals(data)) {
+			if ("version=\"3.0\"".equals(data)) { //$NON-NLS-1$
 				fSchemaVersion = 3.0;
-			} else if ("version=\"3.2\"".equals(data)) {
+			} else if ("version=\"3.2\"".equals(data)) { //$NON-NLS-1$
 				fSchemaVersion = 3.2;
 			}
 		}

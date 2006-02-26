@@ -48,13 +48,13 @@ public class PDEExtensionRegistry {
 				&& "true".equals(Platform.getDebugOption("org.eclipse.pde.core/cache")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
-	private static String CACHE_EXTENSION = ".extensions";
+	private static String CACHE_EXTENSION = ".extensions"; //$NON-NLS-1$
 	
-	private static String ROOT_EXTENSIONS = "extensions";
-	private static String ELEMENT_BUNDLE = "bundle";
-	private static String ATTR_BUNDLE_ID = "bundleID";
-	private static String ELEMENT_EXTENSION = "extension";
-	private static String ELEMENT_EXTENSION_POINT = "extension-point";
+	private static String ROOT_EXTENSIONS = "extensions"; //$NON-NLS-1$
+	private static String ELEMENT_BUNDLE = "bundle"; //$NON-NLS-1$
+	private static String ATTR_BUNDLE_ID = "bundleID"; //$NON-NLS-1$
+	private static String ELEMENT_EXTENSION = "extension"; //$NON-NLS-1$
+	private static String ELEMENT_EXTENSION_POINT = "extension-point"; //$NON-NLS-1$
 	
 	private Map fExtensions = new HashMap();
 

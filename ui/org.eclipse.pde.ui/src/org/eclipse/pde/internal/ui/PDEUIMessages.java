@@ -2697,4 +2697,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ManifestEditorContributor_externStringsActionName;
 
+	public static String PatchSpecPage_feature;
+
+	public static String FeatureSpecPage_feature;
+
 }
