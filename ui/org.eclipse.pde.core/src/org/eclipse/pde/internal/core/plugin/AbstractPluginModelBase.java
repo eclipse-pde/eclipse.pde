@@ -91,13 +91,13 @@ public abstract class AbstractPluginModelBase
 		}
 	}
 	
-	public void load(BundleDescription description, PDEState state, boolean ignoreExtensions) {
+	public void load(BundleDescription description, PDEState state) {
 		setBundleDescription(description);
 		IPluginBase base = getPluginBase();
 		if (base instanceof Plugin)
-			((Plugin)base).load(description, state, ignoreExtensions);
+			((Plugin)base).load(description, state);
 		else
-			((Fragment)base).load(description, state, ignoreExtensions);
+			((Fragment)base).load(description, state);
 		updateTimeStamp();
 		setLoaded(true);	
 	}

@@ -81,7 +81,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		return fId;
 	}
 
-	void load(BundleDescription bundleDesc, PDEState state, boolean ignoreExtensions) {
+	void load(BundleDescription bundleDesc, PDEState state) {
 		fId = bundleDesc.getSymbolicName();
 		fVersion = bundleDesc.getVersion().toString();
 		fName = state.getPluginName(bundleDesc.getBundleId());
@@ -90,10 +90,8 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		fHasBundleStructure = state.hasBundleStructure(bundleDesc.getBundleId());
 		loadRuntime(bundleDesc, state);
 		loadImports(bundleDesc);		
-		if (!ignoreExtensions) {
-			loadExtensionPoints(state.getExtensionPoints(bundleDesc.getBundleId()));
-			loadExtensions(state.getExtensions(bundleDesc.getBundleId()));
-		}
+		loadExtensionPoints(state.getExtensionPoints(bundleDesc.getBundleId()));
+		loadExtensions(state.getExtensions(bundleDesc.getBundleId()));
 	}
 	
 	void loadExtensions(Node[] list) {

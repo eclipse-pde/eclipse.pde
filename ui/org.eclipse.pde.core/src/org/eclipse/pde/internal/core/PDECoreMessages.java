@@ -17,16 +17,10 @@ public class PDECoreMessages extends NLS {
 	public static String PluginModelManager_outOfSync;
 
 	// Status text #####################################
-	public static String ExternalModelManager_scanningProblems;
-	public static String ExternalModelManager_processingPath;
-	public static String Errors_SetupError;
-	public static String Errors_SetupError_NoPlatformHome;
-	public static String Errors_modelError;
 	public static String BinaryRepositoryProvider_veto;
 	public static String RequiredPluginsClasspathContainer_description;
 	public static String ExternalJavaSearchClasspathContainer_description;
 	public static String TargetPlatform_exceptionThrown;
-	public static String TargetPlatformRegistryLoader_parsing;
 
 	public static String FeatureInfo_description;
 	public static String FeatureInfo_license;
@@ -48,15 +42,12 @@ public class PDECoreMessages extends NLS {
 	public static String SchemaCompositor_group;
 	public static String SchemaCompositor_sequence;
 	public static String SiteBuildObject_readOnlyException;
-	public static String PDEState_invalidFormat;
 
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, PDECoreMessages.class);
 	}
 
-	public static String PDEState_readingPlugins;
-	
 	// Builders and natures 
 	public static String Builders_updating;
 	public static String Builders_verifying;

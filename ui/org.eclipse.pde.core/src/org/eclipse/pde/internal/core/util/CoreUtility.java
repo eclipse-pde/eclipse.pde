@@ -33,18 +33,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.plugin.PluginExtension;
-import org.eclipse.pde.internal.core.plugin.PluginExtensionPoint;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 
 public class CoreUtility {
@@ -181,49 +172,6 @@ public class CoreUtility {
 			}
 			curr.delete();
 		}
-	}
-	
-	public static Element writeExtension(Document doc, IPluginExtension extension) {
-		Element child = doc.createElement("extension"); //$NON-NLS-1$
-		if (extension.getPoint() != null)
-			child.setAttribute("point", getWritableString(extension.getPoint())); //$NON-NLS-1$
-		if (extension.getName() != null)
-			child.setAttribute("name", getWritableString(extension.getName())); //$NON-NLS-1$
-		if (extension.getId() != null)
-			child.setAttribute("id", getWritableString(extension.getId())); //$NON-NLS-1$
-		if (extension instanceof PluginExtension)
-			child.setAttribute("line", Integer.toString(((PluginExtension)extension).getStartLine())); //$NON-NLS-1$
-		IPluginObject[] children = extension.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			child.appendChild(writeElement(doc, (IPluginElement)children[i]));
-		}
-		return child;	
-	}
-	
-	public static Element writeElement(Document doc, IPluginElement element) {
-		Element child = doc.createElement(element.getName());
-		IPluginAttribute[] attrs = element.getAttributes();
-		for (int i = 0; i < attrs.length; i++) {
-			child.setAttribute(attrs[i].getName(), getWritableString(attrs[i].getValue()));
-		}
-		IPluginObject[] elements = element.getChildren();
-		for (int i = 0; i < elements.length; i++) {
-			child.appendChild(writeElement(doc, (IPluginElement)elements[i]));
-		}
-		return child;
-	}
-	
-	public static Element writeExtensionPoint(Document doc, IPluginExtensionPoint extPoint) {
-		Element child = doc.createElement("extension-point"); //$NON-NLS-1$
-		if (extPoint.getId() != null)
-			child.setAttribute("id", getWritableString(extPoint.getId())); //$NON-NLS-1$
-		if (extPoint.getName() != null)
-			child.setAttribute("name", getWritableString(extPoint.getName())); //$NON-NLS-1$
-		if (extPoint.getSchema() != null)
-			child.setAttribute("schema", getWritableString(extPoint.getSchema())); //$NON-NLS-1$
-		if (extPoint instanceof PluginExtensionPoint)
-			child.setAttribute("line", Integer.toString(((PluginExtensionPoint)extPoint).getStartLine())); //$NON-NLS-1$
-		return child;	
 	}
 	
     public static boolean guessUnpack(BundleDescription bundle) {

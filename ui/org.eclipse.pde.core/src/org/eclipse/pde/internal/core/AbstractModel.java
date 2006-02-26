@@ -153,7 +153,7 @@ public abstract class AbstractModel
 				IStatus.ERROR,
 				PDECore.getPluginId(),
 				IStatus.OK,
-				PDECoreMessages.Errors_modelError,
+				"Error in the manifest file",
 				e);
 		throw new CoreException(status);
 	}

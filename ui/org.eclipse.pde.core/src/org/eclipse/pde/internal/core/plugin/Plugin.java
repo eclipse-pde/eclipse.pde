@@ -33,10 +33,10 @@ public class Plugin extends PluginBase implements IPlugin {
 		return this;
 	}
 
-	void load(BundleDescription bundleDescription, PDEState state, boolean ignoreExtensions) {
+	void load(BundleDescription bundleDescription, PDEState state) {
 		fClassname = state.getClassName(bundleDescription.getBundleId());
 		fHasExtensibleAPI = state.hasExtensibleAPI(bundleDescription.getBundleId());
-		super.load(bundleDescription, state, ignoreExtensions);
+		super.load(bundleDescription, state);
 	}
 	
 	void load(Node node, String schemaVersion) {

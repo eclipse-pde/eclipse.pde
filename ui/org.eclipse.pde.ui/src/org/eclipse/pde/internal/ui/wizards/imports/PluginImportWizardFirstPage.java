@@ -421,7 +421,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					all = urls; 
 				}
 				PDEState state = new PDEState(all, false, monitor);
-				models = state.getModels();
+				models = state.getTargetModels();
 				monitor.done();
 			}
 		};

@@ -60,14 +60,14 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	public void load() {
 	}
 	
-	public void load(BundleDescription description, PDEState state, boolean ignoreExtensions) {
+	public void load(BundleDescription description, PDEState state) {
 		IPath path = new Path(description.getLocation());
 		String device = path.getDevice();
 		if (device != null)
 			path = path.setDevice(device.toUpperCase());
 		setInstallLocation(path.toOSString());
 		fLocalization = state.getBundleLocalization(description.getBundleId());
-		super.load(description, state, ignoreExtensions);
+		super.load(description, state);
 	}
 		
 	public boolean isInSync() {
@@ -93,9 +93,6 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 
 	public void setInstallLocation(String newInstallLocation) {
 		fInstallLocation = newInstallLocation;
-		File file = new File(newInstallLocation);
-		if (file.isDirectory())
-			fInstallLocation += File.separator;
 	}
 	
 	public String getLocalization() {

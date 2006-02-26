@@ -905,7 +905,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 	
 	protected IPluginModelBase[] getCurrentModels() {
 		if (fCurrentState != null)
-			return fCurrentState.getModels();
+			return fCurrentState.getTargetModels();
 		return PDECore.getDefault().getModelManager().getExternalModels();
 	}
 	

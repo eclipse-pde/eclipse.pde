@@ -385,7 +385,6 @@ public class PluginModelManager implements IAdaptable {
 						WorkspaceModelManager.getPluginPaths(),
 						ExternalModelManager.getPluginPaths(),
 						true,
-						TargetPlatform.getTargetEnvironment(),
 						new NullProgressMonitor());
 		
 		fExternalManager.initializeModels(fState.getTargetModels());	
@@ -433,7 +432,8 @@ public class PluginModelManager implements IAdaptable {
 		for (int i = 0; i < models.length; i++) {
 			addWorkspaceBundleToState(models[i]);
 		}
-		fState.resolveState(true);
+		if (models.length > 0)
+			fState.resolveState(true);
 	}
 	
 	private void addWorkspaceBundleToState(IPluginModelBase model) {

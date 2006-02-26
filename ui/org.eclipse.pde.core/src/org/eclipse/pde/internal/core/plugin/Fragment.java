@@ -52,7 +52,7 @@ public class Fragment extends PluginBase implements IFragment {
 		return super.hasRequiredAttributes();
 	}
 
-	void load(BundleDescription bundleDescription, PDEState state, boolean ignoreExtensions) {
+	void load(BundleDescription bundleDescription, PDEState state) {
 		HostSpecification host = bundleDescription.getHost();
 		fPluginId = host.getName();
 		VersionRange versionRange = host.getVersionRange();
@@ -63,7 +63,7 @@ public class Fragment extends PluginBase implements IFragment {
 			fMatchRule = PluginBase.getMatchRule(versionRange);
 		}
 		fPatch = state.isPatchFragment(bundleDescription.getBundleId());
-		super.load(bundleDescription, state, ignoreExtensions);
+		super.load(bundleDescription, state);
 	}
 
 	void load(Node node, String schemaVersion) {

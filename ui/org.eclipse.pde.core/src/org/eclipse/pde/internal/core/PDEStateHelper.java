@@ -35,7 +35,7 @@ import org.xml.sax.SAXException;
 
 
 public class PDEStateHelper {
-	private static SAXParserFactory saxParserFactory;
+	private static SAXParser parser;
 
 	public static BundleDescription[] getDependentBundles(BundleDescription root) {
 		BundleDescription[] imported = getImportedBundles(root);  // Import-Package
@@ -132,7 +132,7 @@ public class PDEStateHelper {
 		return root.getResolvedRequires();
 		}
 	
-	public static void parseExtensions(BundleDescription desc, Element parent) {
+	public static synchronized void parseExtensions(BundleDescription desc, Element parent) {
 		ZipFile jarFile = null;
 		InputStream stream = null;
 		try {
@@ -173,11 +173,9 @@ public class PDEStateHelper {
 	}
 	
 	private static SAXParser getParser() throws ParserConfigurationException, SAXException{
-		if (saxParserFactory == null)
-			saxParserFactory = SAXParserFactory.newInstance();
-		return saxParserFactory.newSAXParser();
+		if (parser == null)
+			parser = SAXParserFactory.newInstance().newSAXParser();
+		return parser;
 	}
-
-
 
 }
