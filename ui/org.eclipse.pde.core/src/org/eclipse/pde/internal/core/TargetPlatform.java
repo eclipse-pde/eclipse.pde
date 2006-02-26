@@ -63,7 +63,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		}
 
 		public URL getURL() throws MalformedURLException {
-			return new URL("file:" + path.addTrailingSeparator().toString()); //$NON-NLS-1$
+			return new URL("file:" + path.removeTrailingSeparator()); //$NON-NLS-1$
 		}
 
 		public void add(IPluginModelBase model) {

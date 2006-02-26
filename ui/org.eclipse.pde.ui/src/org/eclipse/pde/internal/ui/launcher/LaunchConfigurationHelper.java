@@ -224,7 +224,7 @@ public class LaunchConfigurationHelper {
 		if (model == null)
 			return null;
 		
-		return "file:" + new Path(model.getInstallLocation()).addTrailingSeparator().toString(); //$NON-NLS-1$
+		return "file:" + new Path(model.getInstallLocation()).removeTrailingSeparator().toString(); //$NON-NLS-1$
 	}
 		
 	private static void setBundleLocations(Map map, Properties properties) {
@@ -257,8 +257,9 @@ public class LaunchConfigurationHelper {
 					}
 				}
 				if (url != null) {
-					if (buffer.length() > 0)
-						buffer.append(',');
+					if (buffer.length() > 0) {
+						buffer.append(","); //$NON-NLS-1$
+					}
 					buffer.append("reference:" + url); //$NON-NLS-1$
 					if (index != -1)
 						buffer.append(token.substring(index));
