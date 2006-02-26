@@ -19,6 +19,8 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Vector;
 
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -49,6 +51,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class Schema extends PlatformObject implements ISchema {
+	private static SAXParser parser;
+
 	private URL fURL;
 
 	private Vector fListeners = new Vector();
@@ -368,10 +372,16 @@ public class Schema extends PlatformObject implements ISchema {
 			}		
 		}
 	}
+	
+	private static synchronized SAXParser getParser() throws ParserConfigurationException, SAXException, FactoryConfigurationError {
+		if (parser == null)
+			parser = SAXParserFactory.newInstance().newSAXParser();
+		return parser;	
+	}
 
 	public void load(InputStream stream) {
 		try {
-			SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+			SAXParser parser = getParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();
 			parser.parse(stream, handler);
 			traverseDocumentTree(handler.getDocumentElement());
