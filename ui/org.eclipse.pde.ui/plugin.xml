@@ -181,7 +181,6 @@
       </wizard>
    </extension>
    <extension
-         id="selfhosting.import"
          point="org.eclipse.ui.importWizards">
       <wizard
             category="org.eclipse.pde.ui.PluginDevelopment"
