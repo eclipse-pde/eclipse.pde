@@ -20,7 +20,6 @@ public class AllImportTests {
 		suite.addTest(ImportWithLinksTestCase.suite());
 		suite.addTest(ImportAsBinaryTestCase.suite());
 		suite.addTest(ImportAsSourceTestCase.suite());
-		suite.addTest(ImportFeatureTestCase.suite());
 		return suite;
 	}
 

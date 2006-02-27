@@ -14,79 +14,74 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.ui.tests.Catalog;
-import org.eclipse.pde.ui.tests.PDETestCase;
-import org.eclipse.pde.ui.tests.ScriptRunner;
+import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
 
-public class ImportAsBinaryTestCase extends PDETestCase {
+public class ImportAsBinaryTestCase extends BaseImportTestCase {
+	
+	private static int TYPE = PluginImportOperation.IMPORT_BINARY;
 
 	public static Test suite() {
 		return new TestSuite(ImportAsBinaryTestCase.class);
 	}
 	
-	public void testImportBinary1() {
-		ScriptRunner.run(Catalog.IMPORT_BINARY_1, getWorkbench());
-		try {
-			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			verifyProject(root.getProject("org.eclipse.core.filebuffers"));
-		} catch (CoreException e) {
-			fail("testImportBinary1:" + e);
-		}
-	}
-
-	public void testImportBinary2() {
-		ScriptRunner.run(Catalog.IMPORT_BINARY_2, getWorkbench());
-		try {
-			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			verifyProject(root.getProject("org.eclipse.osgi"));
-		} catch (CoreException e) {
-			fail("testImportBinary2:" + e);
-		}
+	public void testImportBinaryJAR() {
+		runOperation(new String[] {"org.eclipse.pde.core"}, TYPE);
+		verifyBinaryProject("org.eclipse.pde.core", true);
 	}
 	
-	public void testImportBinary3() {
-		ScriptRunner.run(Catalog.IMPORT_BINARY_3, getWorkbench());
+	public void testImportBinaryFlat() {
+		runOperation(new String[] {"org.eclipse.jdt.debug"}, TYPE);
+		verifyBinaryProject("org.eclipse.jdt.debug", true);
+	}
+	
+	public void testImportBinaryNotJavaFlat() {
+		runOperation(new String[] {"org.eclipse.pde"}, TYPE);
+		verifyBinaryProject("org.eclipse.pde", false);
+	}
+	
+	public void testImportBinaryNotJavaJARd() {
+		runOperation(new String[] {"org.eclipse.jdt.doc.user"}, TYPE);
+		verifyBinaryProject("org.eclipse.jdt.doc.user", false);
+	}
+	
+	public void testImportBinaryMultiple() {
+		runOperation(new String[] {"org.eclipse.core.filebuffers", "org.eclipse.jdt.doc.user", "org.eclipse.pde.build"},
+					TYPE);
+		verifyBinaryProject("org.eclipse.core.filebuffers", true);
+		verifyBinaryProject("org.eclipse.jdt.doc.user", false);
+		verifyBinaryProject("org.eclipse.pde.build", true);		
+	}
+
+	private void verifyBinaryProject(String projectName, boolean isJava) {
 		try {
-			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			IProject[] projects = root.getProjects();
-			assertTrue(projects.length > 0);
-			for (int i = 0; i < projects.length; i++) {
-				verifyProject(projects[i]);				
+			IProject project =  verifyProject(projectName);
+			assertEquals(PDECore.BINARY_PROJECT_VALUE, project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY));
+			assertTrue(project.hasNature(PDE.PLUGIN_NATURE));
+			assertEquals(isJava, project.hasNature(JavaCore.NATURE_ID));
+			if (isJava) {
+				IJavaProject jProject = JavaCore.create(project);
+				assertTrue(checkSourceAttached(jProject));
+				assertTrue(checkLibraryEntry(jProject));
 			}
-		} catch (CoreException e) {
-			fail("testImportBinary3:" + e);
-		}
+		} catch (CoreException e) {	
+			fail(e.getMessage());
+		}	
 	}
 
-	private void verifyProject(IProject project) throws CoreException {
-		assertTrue("Project was not created.", project.exists());
-		assertNotNull(project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY));
-		if (project.hasNature(JavaCore.NATURE_ID))
-			assertTrue(checkSourceAttached(JavaCore.create(project)));
-	}
-		
-	private boolean checkSourceAttached(IJavaProject jProject) throws CoreException {
-		IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
-		for (int i = 0; i < roots.length; i++) {
-			IClasspathEntry entry = roots[i].getRawClasspathEntry();
-			if (entry.getEntryKind() != IClasspathEntry.CPE_LIBRARY 
-					|| entry.getEntryKind() != IClasspathEntry.CPE_CONTAINER 
-					|| !entry.getPath().equals(new Path(PDECore.CLASSPATH_CONTAINER_ID)))
-				continue;
-			if (roots[i].getSourceAttachmentPath() == null)
-				return false;
+	private boolean checkLibraryEntry(IJavaProject jProject) throws JavaModelException {
+		IClasspathEntry[] entries = jProject.getRawClasspath();
+		for (int i = 0; i < entries.length; i++) {
+			if (entries[i].getEntryKind() == IClasspathEntry.CPE_LIBRARY)
+				return true;
 		}
-		return true;
+		return false;
 	}
-	
 
 }

@@ -17,26 +17,13 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.ui.IWorkbench;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 public abstract class PDETestCase extends TestCase {
 	
-	private static boolean FIRST_TEST = true;
-	
-	private static IWorkbench fWorkbench;
-
-	protected final void setUp() throws Exception {
-		if (FIRST_TEST) {
-			fWorkbench = PlatformUI.getWorkbench();
-			
-			// set to false
-			FIRST_TEST = false;
-		}
-	}
-	
-	protected IWorkbench getWorkbench() {
-		return fWorkbench;
+	protected Shell getShell() {
+		return PlatformUI.getWorkbench().getDisplay().getActiveShell();
 	}
 	
 	protected final void tearDown() {

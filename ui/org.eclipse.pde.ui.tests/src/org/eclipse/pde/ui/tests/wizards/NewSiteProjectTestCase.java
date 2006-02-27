@@ -34,11 +34,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
-public class NewSiteProjectTest extends TestCase {
+public class NewSiteProjectTestCase extends TestCase {
 	private static final String EXISTING_PROJECT_NAME = "ExistingSiteProject"; //$NON-NLS-1$
 
 	public static Test suite() {
-		return new TestSuite(NewSiteProjectTest.class);
+		return new TestSuite(NewSiteProjectTestCase.class);
 	}
 
 	/*

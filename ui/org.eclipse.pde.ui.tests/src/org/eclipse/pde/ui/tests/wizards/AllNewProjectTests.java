@@ -8,16 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.ui.tests.wizards.feature;
+package org.eclipse.pde.ui.tests.wizards;
+
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class AllNewFeatureProjectTests {
+public class AllNewProjectTests {
 	
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite to test new feature project creation wizards."); //$NON-NLS-1$
-		suite.addTest(FeatureProjectTestCase.suite());
+		TestSuite suite = new TestSuite("Test Suite to test project creation wizards."); //$NON-NLS-1$
+		suite.addTest(NewFeatureProjectTestCase.suite());
+		suite.addTest(NewSiteProjectTestCase.suite());
 		return suite;
 	}
 

@@ -16,7 +16,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
-public abstract class NewProjectTest extends PDETestCase {
+public abstract class NewProjectTestCase extends PDETestCase {
 	
 	protected void verifyProjectExistence() {
 		assertTrue("Project does not exist", getProject().exists());

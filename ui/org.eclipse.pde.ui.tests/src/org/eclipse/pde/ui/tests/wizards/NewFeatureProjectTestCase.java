@@ -1,4 +1,4 @@
-package org.eclipse.pde.ui.tests.wizards.feature;
+package org.eclipse.pde.ui.tests.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -20,11 +20,11 @@ import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.wizards.feature.CreateFeaturePatchOperation;
 import org.eclipse.pde.internal.ui.wizards.feature.CreateFeatureProjectOperation;
 import org.eclipse.pde.internal.ui.wizards.feature.FeatureData;
-import org.eclipse.pde.ui.tests.NewProjectTest;
+import org.eclipse.pde.ui.tests.NewProjectTestCase;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
-public class FeatureProjectTestCase extends NewProjectTest {
+public class NewFeatureProjectTestCase extends NewProjectTestCase {
 
 	private static final String PROJECT_NAME = "com.junitTest.feature";
 	private static final FeatureData DEFAULT_FEATURE_DATA = new FeatureData();
@@ -41,7 +41,7 @@ public class FeatureProjectTestCase extends NewProjectTest {
 		return fd;
 	}
 	public static Test suite() {
-		return new TestSuite(FeatureProjectTestCase.class);
+		return new TestSuite(NewFeatureProjectTestCase.class);
 	}
 	
 	protected String getProjectName() {
@@ -61,11 +61,11 @@ public class FeatureProjectTestCase extends NewProjectTest {
 		if (patch)
 			op = new CreateFeaturePatchOperation(
 					project, path, fd, (IFeatureModel) modelObject,
-					getWorkbench().getDisplay().getActiveShell());
+					getShell());
 		else
 			op = new CreateFeatureProjectOperation(
 					project, path, fd, (IPluginBase[]) modelObject,
-					getWorkbench().getDisplay().getActiveShell());
+					getShell());
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		try {
 			progressService.runInUI(progressService, op, null);
