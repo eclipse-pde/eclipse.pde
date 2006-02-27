@@ -54,18 +54,18 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element)node;
-			fLocation = element.getAttribute(P_LOCATION);
+			setLocation(element.getAttribute(P_LOCATION));
 			NodeList children = element.getElementsByTagName(P_PROPERTY);
 			for (int i = 0; i < children.getLength(); i++) {
 				ElementNode child = (ElementNode)children.item(i);
 				String name = child.getAttribute(P_PROPERTY_NAME);
 				String value = child.getAttribute(P_PROPERTY_VALUE);
 				if (P_PROGRESS_GEOMETRY.equals(name))
-					fProgressGeometry = getGeometryArray(value);
+					setProgressGeometry(getGeometryArray(value));
 				else if (P_MESSAGE_GEOMETRY.equals(name))
-					fMessageGeometry = getGeometryArray(value);
+					setMessageGeometry(getGeometryArray(value));
 				else if (P_FOREGROUND_COLOR.equals(name))
-					fForegroundColor = value;
+					setForegroundColor(value);
 			}
 			if (!isValidHexValue(fForegroundColor))
 				fForegroundColor = null;
