@@ -177,7 +177,7 @@ public class SplashSection extends PDESection {
 				applyColor();
 			}
 		});
-		toolkit.adapt(colorButton, false, false);
+		toolkit.adapt(colorButton, true, true);
 		
 		fMessageControls[9] = colorButton;
 
