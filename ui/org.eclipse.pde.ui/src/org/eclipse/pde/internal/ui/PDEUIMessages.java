@@ -1226,9 +1226,6 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureImportWizard_errors_buildFolderInvalid;
 	public static String FeatureImportWizard_errors_buildFolderMissing;
 
-	public static String FeatureImportWizard_DetailedPage_title;
-	public static String FeatureImportWizard_DetailedPage_desc;
-	public static String FeatureImportWizard_DetailedPage_featureList;
 	public static String FeatureImportWizard_messages_loadingRuntime;
 	public static String FeatureImportWizard_messages_updating;
 	public static String FeatureImportWizard_messages_loadingFile;
@@ -2722,5 +2719,7 @@ public class PDEUIMessages extends NLS {
 	public static String SplashSection_messageY;
 
 	public static String SplashSection_messageHeight;
+
+	public static String FeatureImportWizardPage_reload;
 
 }

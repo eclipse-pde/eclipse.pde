@@ -36,8 +36,7 @@ import org.eclipse.ui.IWorkbench;
 public class FeatureImportWizard extends Wizard implements IImportWizard {
 
 	private static final String STORE_SECTION = "FeatureImportWizard"; //$NON-NLS-1$
-	private FeatureImportWizardFirstPage fPage1;
-	private FeatureImportWizardDetailedPage fPage2;
+	private FeatureImportWizardPage fPage1;
 
 	public FeatureImportWizard() {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
@@ -58,10 +57,8 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 	public void addPages() {
 		setNeedsProgressMonitor(true);
 
-		fPage1 = new FeatureImportWizardFirstPage();
+		fPage1 = new FeatureImportWizardPage();
 		addPage(fPage1);
-		fPage2 = new FeatureImportWizardDetailedPage(fPage1);
-		addPage(fPage2);
 	}
 
 	private IDialogSettings getSettingsSection(IDialogSettings master) {
@@ -77,7 +74,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 	 */
 	public boolean performFinish() {
 		try {
-			final IFeatureModel[] models = fPage2.getSelectedModels();
+			final IFeatureModel[] models = fPage1.getSelectedModels();
 			fPage1.storeSettings(true);
 			IPath targetPath = computeTargetPath();
 
