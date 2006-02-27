@@ -38,10 +38,12 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
 import org.eclipse.pde.internal.core.iproduct.IWindowImages;
 import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.core.product.SplashInfo;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
 import org.eclipse.pde.internal.core.text.plugin.PluginElementNode;
@@ -131,52 +133,39 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		element.setAttribute("name", fProduct.getName()); //$NON-NLS-1$
 		element.setAttribute("application", fApplication); //$NON-NLS-1$
 
-		IPluginElement child = createWindowImagesElement(element);
+		IPluginElement child = createElement(element, IProductConstants.WINDOW_IMAGES, getWindowImagesString());
 		if (child != null)
 			element.add(child);
 		
-		child = createAboutTextElement(element);
+		child = createElement(element, IProductConstants.ABOUT_TEXT, getAboutText());
 		if (child != null)
 			element.add(child);
 			
-		child = createAboutImageElement(element);
+		child = createElement(element, IProductConstants.ABOUT_IMAGE, getAboutImage());
 		if (child != null)
 			element.add(child);		
+		
+		child = createElement(element, IProductConstants.STARTUP_FOREGROUND_COLOR, getForegroundColor());
+		if (child != null)
+			element.add(child);	
+		
+		child = createElement(element, IProductConstants.STARTUP_PROGRESS_RECT, getProgressRect());
+		if (child != null)
+			element.add(child);	
+		
+		child = createElement(element, IProductConstants.STARTUP_MESSAGE_RECT, getMessageRect());
+		if (child != null)
+			element.add(child);	
 		
 		return element;
 	}
 	
-	private IPluginElement createAboutTextElement(IPluginElement parent) throws CoreException {
-		String value = getAboutText();
+	private IPluginElement createElement(IPluginElement parent, String name, String value) throws CoreException {
 		IPluginElement element = null;
 		if (value != null && value.length() > 0) {
 			element = parent.getModel().getFactory().createElement(parent);
 			element.setName("property"); //$NON-NLS-1$
-			element.setAttribute("name", IProductConstants.ABOUT_TEXT); //$NON-NLS-1$ 
-			element.setAttribute("value", value); //$NON-NLS-1$ 
-		}
-		return element;
-	}
-	
-	private IPluginElement createAboutImageElement(IPluginElement parent) throws CoreException {
-		String image = getAboutImage();
-		IPluginElement element = null;
-		if (image != null && image.length() > 0) {
-			element = parent.getModel().getFactory().createElement(parent);
-			element.setName("property"); //$NON-NLS-1$
-			element.setAttribute("name", IProductConstants.ABOUT_IMAGE); //$NON-NLS-1$ 
-			element.setAttribute("value", image); //$NON-NLS-1$ 
-		}
-		return element;
-	}
-	
-	private IPluginElement createWindowImagesElement(IPluginElement parent) throws CoreException {
-		IPluginElement element = null;
-		String value = getWindowImagesString();
-		if (value != null) {
-			element = parent.getModel().getFactory().createElement(parent);
-			element.setName("property"); //$NON-NLS-1$
-			element.setAttribute("name", IProductConstants.WINDOW_IMAGES); //$NON-NLS-1$ 
+			element.setAttribute("name", name); //$NON-NLS-1$ 
 			element.setAttribute("value", value); //$NON-NLS-1$ 
 		}
 		return element;
@@ -231,6 +220,21 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 			}
 		}
 		return buffer.length() == 0 ? null : buffer.toString(); //$NON-NLS-1$
+	}
+	
+	private String getForegroundColor() {
+		ISplashInfo info = fProduct.getSplashInfo();
+		return info != null ? info.getForegroundColor() : null;
+	}
+	
+	private String getProgressRect() {
+		ISplashInfo info = fProduct.getSplashInfo();
+		return info != null ? SplashInfo.getGeometryString(info.getProgressGeometry()) : null;
+	}
+	
+	private String getMessageRect() {
+		ISplashInfo info = fProduct.getSplashInfo();
+		return info != null ? SplashInfo.getGeometryString(info.getMessageGeometry()) : null;
 	}
 	
 	private void modifyExistingFile(IFile file, IProgressMonitor monitor) throws CoreException, IOException, MalformedTreeException, BadLocationException {
@@ -302,6 +306,9 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		synchronizeChild(element, IProductConstants.ABOUT_IMAGE, getAboutImage());
 		synchronizeChild(element, IProductConstants.ABOUT_TEXT, getAboutText());
 		synchronizeChild(element, IProductConstants.WINDOW_IMAGES, getWindowImagesString());
+		synchronizeChild(element, IProductConstants.STARTUP_FOREGROUND_COLOR, getForegroundColor());
+		synchronizeChild(element, IProductConstants.STARTUP_MESSAGE_RECT, getMessageRect());
+		synchronizeChild(element, IProductConstants.STARTUP_PROGRESS_RECT, getProgressRect());
 		
 		String oldText = fDocument.get(element.getOffset(), element.getLength());
 		String newText = element.write(false);

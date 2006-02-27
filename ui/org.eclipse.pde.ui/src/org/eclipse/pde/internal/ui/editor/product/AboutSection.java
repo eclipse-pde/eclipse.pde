@@ -96,6 +96,8 @@ public class AboutSection extends PDESection {
 		gd.horizontalSpan = 2;
 		fTextEntry.getText().setLayoutData(gd);
 		fTextEntry.setEditable(isEditable());
+		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END);
+		fTextEntry.getLabel().setLayoutData(gd);
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);

@@ -53,9 +53,9 @@ public class BrandingPage extends PDEFormPage {
 
 		// sections
 		managedForm.addPart(new SplashSection(this, body));	
-		managedForm.addPart(new IntroSection(this, body));
 		managedForm.addPart(new WindowImagesSection(this, body));
 		managedForm.addPart(new AboutSection(this, body));	
+		managedForm.addPart(new IntroSection(this, body));
 	}
 
 

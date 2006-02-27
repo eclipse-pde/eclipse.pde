@@ -2701,4 +2701,26 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureSpecPage_feature;
 
+	public static String SplashSection_progressBar;
+
+	public static String SplashSection_progressX;
+
+	public static String SplashSection_progressWidth;
+
+	public static String SplashSection_progressY;
+
+	public static String SplashSection_progressHeight;
+
+	public static String SplashSection_progressMessage;
+
+	public static String SplashSection_messageX;
+
+	public static String SplashSection_messageWidth;
+
+	public static String SplashSection_messageColor;
+
+	public static String SplashSection_messageY;
+
+	public static String SplashSection_messageHeight;
+
 }

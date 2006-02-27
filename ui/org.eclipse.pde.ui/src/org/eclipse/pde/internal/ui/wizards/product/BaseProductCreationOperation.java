@@ -30,7 +30,9 @@ import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
 import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
+import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
 import org.eclipse.pde.internal.core.iproduct.IWindowImages;
+import org.eclipse.pde.internal.core.product.SplashInfo;
 import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -156,6 +158,14 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 				}
 			}
 			product.setWindowImages(winImages);
+			
+			ISplashInfo splashInfo = factory.createSplashInfo();
+			splashInfo.setForegroundColor(prop.getProperty(IProductConstants.STARTUP_FOREGROUND_COLOR));
+			int[] barGeo = SplashInfo.getGeometryArray(prop.getProperty(IProductConstants.STARTUP_PROGRESS_RECT));
+			splashInfo.setProgressGeometry(barGeo);
+			int[] messageGeo = SplashInfo.getGeometryArray(prop.getProperty(IProductConstants.STARTUP_MESSAGE_RECT));
+			splashInfo.setMessageGeometry(messageGeo);
+			product.setSplashInfo(splashInfo);
 		}
 	}
 	

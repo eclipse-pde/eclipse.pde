@@ -10,12 +10,48 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.iproduct;
 
+
 public interface ISplashInfo extends IProductObject {
 	
 	public static final String P_LOCATION = "location"; //$NON-NLS-1$
+	public static final String P_PROGRESS_GEOMETRY= "startupProgressRect"; //$NON-NLS-1$
+	public static final String P_MESSAGE_GEOMETRY = "startupMessageRect"; //$NON-NLS-1$
+	public static final String P_FOREGROUND_COLOR = "startupForegroundColor"; //$NON-NLS-1$
+	public static final String P_PROPERTY = "property"; //$NON-NLS-1$
+	public static final String P_PROPERTY_NAME = "name"; //$NON-NLS-1$
+	public static final String P_PROPERTY_VALUE = "value"; //$NON-NLS-1$
 	
 	void setLocation(String location);
 	
 	String getLocation();
 	
+	void addProgressBar(boolean add, boolean blockNotification);
+	
+	/**
+	 * 
+	 * @param geo array of length 4 where geo[0] = x
+	 * 									  geo[1] = y
+	 * 									  geo[1] = width
+	 * 									  geo[1] = height
+	 */
+	void setProgressGeometry(int[] geo);
+	
+	int[] getProgressGeometry();
+	
+	void addProgressMessage(boolean add, boolean blockNotification);
+	
+	/**
+	 * 
+	 * @param geo array of length 4 where geo[0] = x
+	 * 									  geo[1] = y
+	 * 									  geo[1] = width
+	 * 									  geo[1] = height
+	 */
+	void setMessageGeometry(int[] geo);
+	
+	int[] getMessageGeometry();
+	
+	void setForegroundColor(String hexColor) throws IllegalArgumentException;
+	
+	String getForegroundColor();
 }
