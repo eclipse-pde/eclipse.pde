@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.core.product;
 import java.io.PrintWriter;
 import java.util.StringTokenizer;
 
-import org.apache.crimson.tree.ElementNode;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
 import org.w3c.dom.Element;
@@ -40,10 +39,10 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		super(model);
 	}
 
-	public void setLocation(String location) {
+	public void setLocation(String location, boolean blockNotification) {
 		String old = fLocation;
 		fLocation = location;
-		if (isEditable())
+		if (!blockNotification && isEditable())
 			firePropertyChanged(P_LOCATION, old, fLocation);
 	}
 
@@ -54,18 +53,18 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 	public void parse(Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element)node;
-			setLocation(element.getAttribute(P_LOCATION));
+			setLocation(element.getAttribute(P_LOCATION), true);
 			NodeList children = element.getElementsByTagName(P_PROPERTY);
 			for (int i = 0; i < children.getLength(); i++) {
-				ElementNode child = (ElementNode)children.item(i);
+				Element child = (Element)children.item(i);
 				String name = child.getAttribute(P_PROPERTY_NAME);
 				String value = child.getAttribute(P_PROPERTY_VALUE);
 				if (P_PROGRESS_GEOMETRY.equals(name))
-					setProgressGeometry(getGeometryArray(value));
+					setProgressGeometry(getGeometryArray(value), true);
 				else if (P_MESSAGE_GEOMETRY.equals(name))
-					setMessageGeometry(getGeometryArray(value));
+					setMessageGeometry(getGeometryArray(value), true);
 				else if (P_FOREGROUND_COLOR.equals(name))
-					setForegroundColor(value);
+					setForegroundColor(value, true);
 			}
 			if (!isValidHexValue(fForegroundColor))
 				fForegroundColor = null;
@@ -101,11 +100,11 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		writer.println(indent + indent + P_PROPERTY_VALUE + "=\"" + value + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
-	public void setProgressGeometry(int[] geo) {
+	public void setProgressGeometry(int[] geo, boolean blockNotification) {
 		fCustomizeProgressBar = geo != null;
 		int[] old = fProgressGeometry;
 		fProgressGeometry = geo;
-		if (isEditable())
+		if (!blockNotification && isEditable())
 			firePropertyChanged(P_PROGRESS_GEOMETRY, old, fProgressGeometry);
 	}
 
@@ -113,11 +112,11 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		return fCustomizeProgressBar ? fProgressGeometry : null;
 	}
 	
-	public void setMessageGeometry(int[] geo) {
+	public void setMessageGeometry(int[] geo, boolean blockNotification) {
 		fCustomizeProgressMessage = geo != null;
 		int[] old = fMessageGeometry;
 		fMessageGeometry = geo;
-		if (isEditable())
+		if (!blockNotification && isEditable())
 			firePropertyChanged(P_MESSAGE_GEOMETRY, old, fMessageGeometry);
 	}
 
@@ -125,13 +124,13 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		return fCustomizeProgressMessage ? fMessageGeometry : null;
 	}
 
-	public void setForegroundColor(String hexColor) throws IllegalArgumentException {
+	public void setForegroundColor(String hexColor, boolean blockNotification) throws IllegalArgumentException {
 		if (hexColor != null && !isValidHexValue(hexColor))
 			throw new IllegalArgumentException();
 		fCustomizeForegroundColor = hexColor != null;
 		String old = fForegroundColor;
 		fForegroundColor = hexColor;
-		if (isEditable())
+		if (!blockNotification && isEditable())
 			firePropertyChanged(P_FOREGROUND_COLOR, old, fForegroundColor);
 	}
 
@@ -187,16 +186,24 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 	public void addProgressBar(boolean add, boolean blockNotification) {
 		boolean old = fCustomizeProgressBar;
 		fCustomizeProgressBar = add;
-		if (!blockNotification && isEditable())
-			firePropertyChanged("", Boolean.toString(old), Boolean.toString(fCustomizeProgressBar)); //$NON-NLS-1$
+		int[] geo = getProgressGeometry();
+		if (add)
+			setProgressGeometry(geo != null ? geo : new int[] {0,0,0,0}, blockNotification);
+		 else if (!blockNotification && isEditable())
+			firePropertyChanged("", Boolean.toString(old), Boolean.toString(add)); //$NON-NLS-1$
 	}
 
 	public void addProgressMessage(boolean add, boolean blockNotification) {
-		boolean oldM = fCustomizeProgressMessage;
-		boolean oldC = fCustomizeForegroundColor;
+		boolean mold = fCustomizeProgressMessage;
+		boolean cold = fCustomizeForegroundColor;
 		fCustomizeProgressMessage = add;
 		fCustomizeForegroundColor = add;
-		if (!blockNotification && isEditable())
-			firePropertyChanged("", Boolean.toString(oldM || oldC), Boolean.toString(add)); //$NON-NLS-1$
+		int[] geo = getMessageGeometry();
+		String foreground = getForegroundColor();
+		if (add) {
+			setMessageGeometry(geo != null ? geo : new int[] {0,0,0,0}, blockNotification);
+			setForegroundColor(foreground != null ? foreground : "000000", blockNotification); //$NON-NLS-1$
+		} else if (!blockNotification && isEditable())
+			firePropertyChanged("", Boolean.toString(mold || cold), Boolean.toString(add)); //$NON-NLS-1$
 	}
 }

@@ -21,7 +21,7 @@ public interface ISplashInfo extends IProductObject {
 	public static final String P_PROPERTY_NAME = "name"; //$NON-NLS-1$
 	public static final String P_PROPERTY_VALUE = "value"; //$NON-NLS-1$
 	
-	void setLocation(String location);
+	void setLocation(String location, boolean blockNotification);
 	
 	String getLocation();
 	
@@ -33,8 +33,9 @@ public interface ISplashInfo extends IProductObject {
 	 * 									  geo[1] = y
 	 * 									  geo[1] = width
 	 * 									  geo[1] = height
+	 * @param blockNotification TODO
 	 */
-	void setProgressGeometry(int[] geo);
+	void setProgressGeometry(int[] geo, boolean blockNotification);
 	
 	int[] getProgressGeometry();
 	
@@ -46,12 +47,13 @@ public interface ISplashInfo extends IProductObject {
 	 * 									  geo[1] = y
 	 * 									  geo[1] = width
 	 * 									  geo[1] = height
+	 * @param blockNotification
 	 */
-	void setMessageGeometry(int[] geo);
+	void setMessageGeometry(int[] geo, boolean blockNotification);
 	
 	int[] getMessageGeometry();
 	
-	void setForegroundColor(String hexColor) throws IllegalArgumentException;
+	void setForegroundColor(String hexColor, boolean blockNotification) throws IllegalArgumentException;
 	
 	String getForegroundColor();
 }

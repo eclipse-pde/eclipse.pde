@@ -160,11 +160,11 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 			product.setWindowImages(winImages);
 			
 			ISplashInfo splashInfo = factory.createSplashInfo();
-			splashInfo.setForegroundColor(prop.getProperty(IProductConstants.STARTUP_FOREGROUND_COLOR));
+			splashInfo.setForegroundColor(prop.getProperty(IProductConstants.STARTUP_FOREGROUND_COLOR), true);
 			int[] barGeo = SplashInfo.getGeometryArray(prop.getProperty(IProductConstants.STARTUP_PROGRESS_RECT));
-			splashInfo.setProgressGeometry(barGeo);
+			splashInfo.setProgressGeometry(barGeo, true);
 			int[] messageGeo = SplashInfo.getGeometryArray(prop.getProperty(IProductConstants.STARTUP_MESSAGE_RECT));
-			splashInfo.setMessageGeometry(messageGeo);
+			splashInfo.setMessageGeometry(messageGeo, true);
 			product.setSplashInfo(splashInfo);
 		}
 	}

@@ -92,7 +92,7 @@ public class SplashSection extends PDESection {
 		fPluginEntry = new FormEntry(client, toolkit, PDEUIMessages.SplashSection_plugin, PDEUIMessages.SplashSection_browse, false); // 
 		fPluginEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
-				getSplashInfo().setLocation(entry.getValue());
+				getSplashInfo().setLocation(entry.getValue(), false);
 			}
 			public void browseButtonSelected(FormEntry entry) {
 				handleBrowse();
@@ -118,8 +118,6 @@ public class SplashSection extends PDESection {
 			public void widgetSelected(SelectionEvent e) {
 				boolean enable = fAddBarButton.getSelection();
 				getSplashInfo().addProgressBar(enable, false);
-				if (enable)
-					applySpinners(true);
 				for (int i = 0; i < fBarControls.length; i++)
 					fBarControls[i].setEnabled(enable);
 			}
@@ -160,10 +158,6 @@ public class SplashSection extends PDESection {
 			public void widgetSelected(SelectionEvent e) {
 				boolean enable = fAddMessageButton.getSelection();
 				getSplashInfo().addProgressMessage(enable, false);
-				if (enable) {
-					applySpinners(false);
-					applyColor();
-				}
 				for (int i = 0; i < fMessageControls.length; i++)
 					fMessageControls[i].setEnabled(enable);
 			}
@@ -218,7 +212,7 @@ public class SplashSection extends PDESection {
 		if (fBlockNotification)
 			return;
 		RGB rgb = fColorSelector.getColorValue();
-		getSplashInfo().setForegroundColor(rgbToHEX(rgb));
+		getSplashInfo().setForegroundColor(rgbToHEX(rgb), false);
 	}
 	
 	private void applySpinners(boolean bar) {
@@ -232,9 +226,9 @@ public class SplashSection extends PDESection {
 				spinners[3].getSelection()
 		};
 		if (bar)
-			getSplashInfo().setProgressGeometry(geo);
+			getSplashInfo().setProgressGeometry(geo, false);
 		else
-			getSplashInfo().setMessageGeometry(geo);
+			getSplashInfo().setMessageGeometry(geo, false);
 	}
 	
 	private Label createLabel(Composite parent, FormToolkit toolkit, Color color, String labelName) {
