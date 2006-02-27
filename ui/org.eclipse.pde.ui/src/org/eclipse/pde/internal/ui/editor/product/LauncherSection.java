@@ -135,7 +135,7 @@ public class LauncherSection extends PDESection {
 		section.setDescription(PDEUIMessages.LauncherSection_desc); 
 		
 		Composite container = toolkit.createComposite(section);
-		container.setLayout(new GridLayout());
+		container.setLayout(new GridLayout(2, false));
 
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		fNameEntry = new FormEntry(container, toolkit, PDEUIMessages.LauncherSection_launcherName, null, false); 
@@ -152,6 +152,7 @@ public class LauncherSection extends PDESection {
 		toolkit.adapt(fTabFolder, true, true);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.heightHint = 2;
+		gd.horizontalSpan = 2;
 		fTabFolder.setLayoutData(gd);
 		
 		toolkit.getColors().initializeSectionToolBarColors();
@@ -167,7 +168,9 @@ public class LauncherSection extends PDESection {
 		fTabFolder.setUnselectedImageVisible(false);
 
 		fNotebook = toolkit.createComposite(container);
-		fNotebook.setLayoutData(new GridData(GridData.FILL_BOTH));
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
+		fNotebook.setLayoutData(gd);
 		fNotebookLayout = new StackLayout();
 		fNotebook.setLayout(fNotebookLayout);
 
