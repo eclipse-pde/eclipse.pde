@@ -51,6 +51,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -60,8 +61,6 @@ import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.osgi.framework.Constants;
 
 
@@ -83,28 +82,24 @@ public class IntroSection extends PDESection {
 		section.setDescription(PDEUIMessages.IntroSection_sectionDescription); 
 		
 		Composite client = toolkit.createComposite(section);
-		TableWrapLayout layout = new TableWrapLayout();
+		GridLayout layout = new GridLayout();
 		boolean canCreateNew = TargetPlatform.getTargetVersion() >= NEW_INTRO_SUPPORT_VERSION;
 		layout.numColumns = canCreateNew ? 3 : 2;
-		layout.topMargin = 5;
+		layout.marginHeight = 5;
 		client.setLayout(layout);
 		
 		
 		Label label = toolkit.createLabel(client, PDEUIMessages.IntroSection_introLabel, SWT.WRAP);
-		TableWrapData td = new TableWrapData();
-		td.colspan = canCreateNew ? 3 : 2;
+		GridData td = new GridData();
+		td.horizontalSpan = canCreateNew ? 3 : 2;
 		label.setLayoutData(td);
 		
 		Label introLabel = toolkit.createLabel(client, PDEUIMessages.IntroSection_introInput); 
 		introLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
-		td = new TableWrapData();
-		td.valign = TableWrapData.MIDDLE;
-		introLabel.setLayoutData(td);
 		
 		fIntroCombo = new ComboPart();
 		fIntroCombo.createControl(client, toolkit, SWT.READ_ONLY);
-		td = new TableWrapData(TableWrapData.FILL_GRAB);
-		td.valign = TableWrapData.MIDDLE;
+		td = new GridData(GridData.FILL_HORIZONTAL);
 		fIntroCombo.getControl().setLayoutData(td);
 		loadManifestAndIntroIds(false);
 		if (fAvailableIntroIds != null ) fIntroCombo.setItems(fAvailableIntroIds);
@@ -118,7 +113,7 @@ public class IntroSection extends PDESection {
 		if (canCreateNew) {
 			Button button = toolkit.createButton(client, PDEUIMessages.IntroSection_new, SWT.PUSH); 
 			button.setEnabled(isEditable());
-			button.setLayoutData(new TableWrapData(TableWrapData.FILL));
+			button.setLayoutData(new GridData(GridData.FILL));
 			button.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					handleNewIntro();

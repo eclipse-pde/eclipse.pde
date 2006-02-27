@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.editor.product;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
@@ -46,16 +47,25 @@ public class BrandingPage extends PDEFormPage {
 		Composite body = managedForm.getForm().getBody();
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		layout.makeColumnsEqualWidth = true;
 		layout.marginWidth = 10;
-		layout.verticalSpacing = 30;
+		layout.verticalSpacing = 15;
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 
 		// sections
 		managedForm.addPart(new SplashSection(this, body));	
-		managedForm.addPart(new WindowImagesSection(this, body));
+		
+		Composite comp = toolkit.createComposite(body);
+		layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 0;
+		layout.verticalSpacing = 15;
+		comp.setLayout(layout);
+		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING));
+		managedForm.addPart(new WindowImagesSection(this, comp));
+		managedForm.addPart(new IntroSection(this, comp));
+
 		managedForm.addPart(new AboutSection(this, body));	
-		managedForm.addPart(new IntroSection(this, body));
 	}
 
 

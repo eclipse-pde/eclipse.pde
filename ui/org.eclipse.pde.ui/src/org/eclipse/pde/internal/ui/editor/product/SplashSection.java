@@ -31,6 +31,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -43,8 +44,6 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 
 public class SplashSection extends PDESection {
@@ -78,15 +77,15 @@ public class SplashSection extends PDESection {
 		section.setDescription(PDEUIMessages.SplashSection_desc); 
 
 		Composite client = toolkit.createComposite(section);
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.numColumns = 3;
-		layout.topMargin = 5;
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 10;
+		layout.marginHeight = 5;
 		client.setLayout(layout);
 		
 		Label label = toolkit.createLabel(client, PDEUIMessages.SplashSection_label, SWT.WRAP); 
-		TableWrapData td = new TableWrapData();
-		td.colspan = 3;
-		label.setLayoutData(td);
+		GridData gd = new GridData();
+		gd.horizontalSpan = 10;
+		label.setLayoutData(gd);
 		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		fPluginEntry = new FormEntry(client, toolkit, PDEUIMessages.SplashSection_plugin, PDEUIMessages.SplashSection_browse, false); // 
@@ -99,18 +98,16 @@ public class SplashSection extends PDESection {
 			}
 		});
 		fPluginEntry.setEditable(isEditable());
-		td = new TableWrapData(TableWrapData.LEFT, TableWrapData.MIDDLE);
-		td.indent = 10;
-		fPluginEntry.getLabel().setLayoutData(td);
 		
 		createProgressBarConfig(client, toolkit);
 		createProgressMessageConfig(client, toolkit);
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
-		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING));
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		section.setLayoutData(gd);
 	}
-	
 	
 	private void createProgressBarConfig(Composite parent, FormToolkit toolkit) {
 		fAddBarButton = createButton(parent, toolkit, PDEUIMessages.SplashSection_progressBar);
@@ -123,25 +120,16 @@ public class SplashSection extends PDESection {
 			}
 		});
 		
-		Composite pSpinComp = toolkit.createComposite(parent);
-		TableWrapData twd = new TableWrapData();
-		twd.colspan = 3;
-		pSpinComp.setLayoutData(twd);
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.numColumns = 4;
-		layout.topMargin = layout.bottomMargin = layout.leftMargin = layout.rightMargin = 0;
-		pSpinComp.setLayout(layout);
-		
 		Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
 		
-		fBarControls[0] = createLabel(pSpinComp, toolkit, foreground, PDEUIMessages.SplashSection_progressX);
-		fBarControls[1] = fBarSpinners[0] = createSpinner(pSpinComp, toolkit);
-		fBarControls[2] = createLabel(pSpinComp, toolkit, foreground, PDEUIMessages.SplashSection_progressWidth);
-		fBarControls[3] = fBarSpinners[1] = createSpinner(pSpinComp, toolkit);
-		fBarControls[4] = createLabel(pSpinComp, toolkit, foreground, PDEUIMessages.SplashSection_progressY);
-		fBarControls[5] = fBarSpinners[2] = createSpinner(pSpinComp, toolkit);
-		fBarControls[6] = createLabel(pSpinComp, toolkit, foreground, PDEUIMessages.SplashSection_progressHeight);
-		fBarControls[7] = fBarSpinners[3] = createSpinner(pSpinComp, toolkit);
+		fBarControls[0] = createLabel(parent, toolkit, foreground, PDEUIMessages.SplashSection_progressX);
+		fBarControls[1] = fBarSpinners[0] = createSpinner(parent, toolkit);
+		fBarControls[2] = createLabel(parent, toolkit, foreground, PDEUIMessages.SplashSection_progressY);
+		fBarControls[3] = fBarSpinners[1] = createSpinner(parent, toolkit);
+		fBarControls[4] = createLabel(parent, toolkit, foreground, PDEUIMessages.SplashSection_progressWidth);
+		fBarControls[5] = fBarSpinners[2] = createSpinner(parent, toolkit);
+		fBarControls[6] = createLabel(parent, toolkit, foreground, PDEUIMessages.SplashSection_progressHeight);
+		fBarControls[7] = fBarSpinners[3] = createSpinner(parent, toolkit);
 		
 		for (int i = 0; i < fBarSpinners.length; i++) {
 			fBarSpinners[i].addModifyListener(new ModifyListener() {
@@ -150,6 +138,12 @@ public class SplashSection extends PDESection {
 				}
 			});
 		}
+		
+		Composite filler = toolkit.createComposite(parent);
+		filler.setLayout(new GridLayout());
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		filler.setLayoutData(gd);
 	}
 	
 	private void createProgressMessageConfig(Composite parent, FormToolkit toolkit) {
@@ -163,26 +157,21 @@ public class SplashSection extends PDESection {
 			}
 		});
 		
-		Composite mSpinComp = toolkit.createComposite(parent);
-		TableWrapData twd = new TableWrapData();
-		twd.colspan = 3;
-		mSpinComp.setLayoutData(twd);
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.numColumns = 6;
-		layout.topMargin = layout.bottomMargin = layout.leftMargin = layout.rightMargin = 0;
-		mSpinComp.setLayout(layout);
-		
 		Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
 		
-		fMessageControls[0] = createLabel(mSpinComp, toolkit, foreground, PDEUIMessages.SplashSection_messageX);
-		fMessageControls[1] = fMessageSpinners[0] = createSpinner(mSpinComp, toolkit);
-		fMessageControls[2] = createLabel(mSpinComp, toolkit, foreground, PDEUIMessages.SplashSection_messageWidth);
-		fMessageControls[3] = fMessageSpinners[1] = createSpinner(mSpinComp, toolkit);
+		fMessageControls[0] = createLabel(parent, toolkit, foreground, PDEUIMessages.SplashSection_messageX);
+		fMessageControls[1] = fMessageSpinners[0] = createSpinner(parent, toolkit);
+		fMessageControls[2] = createLabel(parent, toolkit, foreground, PDEUIMessages.SplashSection_messageY);
+		fMessageControls[3] = fMessageSpinners[1] = createSpinner(parent, toolkit);
 		
-		fMessageControls[4] = createLabel(mSpinComp, toolkit, foreground, PDEUIMessages.SplashSection_messageColor);
-		fColorSelector = new ColorSelector(mSpinComp);
+		fMessageControls[4] = createLabel(parent, toolkit, foreground, PDEUIMessages.SplashSection_messageWidth);
+		fMessageControls[5] = fMessageSpinners[2] = createSpinner(parent, toolkit);
+		fMessageControls[6] = createLabel(parent, toolkit, foreground, PDEUIMessages.SplashSection_messageHeight);
+		fMessageControls[7] = fMessageSpinners[3] = createSpinner(parent, toolkit);
+
+		fMessageControls[8] = createLabel(parent, toolkit, foreground, PDEUIMessages.SplashSection_messageColor);
+		fColorSelector = new ColorSelector(parent);
 		Button colorButton = fColorSelector.getButton();
-		colorButton.setLayoutData(new TableWrapData(TableWrapData.LEFT, TableWrapData.MIDDLE));
 		colorButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				applyColor();
@@ -190,15 +179,8 @@ public class SplashSection extends PDESection {
 		});
 		toolkit.adapt(colorButton, false, false);
 		
-		fMessageControls[5] = colorButton;
-		fMessageControls[6] = createLabel(mSpinComp, toolkit, foreground, PDEUIMessages.SplashSection_messageY);
-		fMessageControls[7] = fMessageSpinners[2] = createSpinner(mSpinComp, toolkit);
-		fMessageControls[8] = createLabel(mSpinComp, toolkit, foreground, PDEUIMessages.SplashSection_messageHeight);
-		fMessageControls[9] = fMessageSpinners[3] = createSpinner(mSpinComp, toolkit);
-		twd = new TableWrapData(TableWrapData.LEFT);
-		twd.colspan = 3;
-		fMessageControls[9].setLayoutData(twd);
-		
+		fMessageControls[9] = colorButton;
+
 		for (int i = 0; i < fMessageSpinners.length; i++) {
 			fMessageSpinners[i].addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
@@ -234,24 +216,23 @@ public class SplashSection extends PDESection {
 	private Label createLabel(Composite parent, FormToolkit toolkit, Color color, String labelName) {
 		Label label = toolkit.createLabel(parent, labelName);
 		label.setForeground(color);
-		TableWrapData twd = new TableWrapData(TableWrapData.LEFT, TableWrapData.MIDDLE);
-		twd.indent = 10;
-		label.setLayoutData(twd);
+		GridData gd = new GridData();
+		gd.horizontalIndent = 10;
+		label.setLayoutData(gd);
 		return label;
 	}
 	
 	private Button createButton(Composite parent, FormToolkit toolkit, String label) {
 		Button button = toolkit.createButton(parent, label, SWT.CHECK);
-		TableWrapData twd = new TableWrapData(TableWrapData.LEFT, TableWrapData.MIDDLE);
-		twd.colspan = 3;
-		button.setLayoutData(twd);
+		GridData gd = new GridData();
+		gd.horizontalSpan = 10;
+		button.setLayoutData(gd);
 		return button;
 	}
 	
 	private Spinner createSpinner(Composite parent, FormToolkit toolkit) {
 		Spinner spinner = new Spinner(parent, SWT.BORDER);
 		spinner.setMinimum(0);
-		spinner.setMaximum(2000);
 		toolkit.adapt(spinner, false, false);
 		return spinner;
 	}
