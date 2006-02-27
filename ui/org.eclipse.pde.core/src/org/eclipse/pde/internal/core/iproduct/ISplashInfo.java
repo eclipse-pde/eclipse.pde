@@ -17,9 +17,6 @@ public interface ISplashInfo extends IProductObject {
 	public static final String P_PROGRESS_GEOMETRY= "startupProgressRect"; //$NON-NLS-1$
 	public static final String P_MESSAGE_GEOMETRY = "startupMessageRect"; //$NON-NLS-1$
 	public static final String P_FOREGROUND_COLOR = "startupForegroundColor"; //$NON-NLS-1$
-	public static final String P_PROPERTY = "property"; //$NON-NLS-1$
-	public static final String P_PROPERTY_NAME = "name"; //$NON-NLS-1$
-	public static final String P_PROPERTY_VALUE = "value"; //$NON-NLS-1$
 	
 	void setLocation(String location, boolean blockNotification);
 	

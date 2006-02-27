@@ -17,7 +17,6 @@ import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 public class SplashInfo extends ProductObject implements ISplashInfo {
 
@@ -54,20 +53,9 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element)node;
 			setLocation(element.getAttribute(P_LOCATION), true);
-			NodeList children = element.getElementsByTagName(P_PROPERTY);
-			for (int i = 0; i < children.getLength(); i++) {
-				Element child = (Element)children.item(i);
-				String name = child.getAttribute(P_PROPERTY_NAME);
-				String value = child.getAttribute(P_PROPERTY_VALUE);
-				if (P_PROGRESS_GEOMETRY.equals(name))
-					setProgressGeometry(getGeometryArray(value), true);
-				else if (P_MESSAGE_GEOMETRY.equals(name))
-					setMessageGeometry(getGeometryArray(value), true);
-				else if (P_FOREGROUND_COLOR.equals(name))
-					setForegroundColor(value, true);
-			}
-			if (!isValidHexValue(fForegroundColor))
-				fForegroundColor = null;
+			setProgressGeometry(getGeometryArray(element.getAttribute(P_PROGRESS_GEOMETRY)), true);
+			setMessageGeometry(getGeometryArray(element.getAttribute(P_MESSAGE_GEOMETRY)), true);
+			setForegroundColor(element.getAttribute(P_FOREGROUND_COLOR), true);
 		}
 	}
 
@@ -75,29 +63,28 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		if (!hasData())
 			return;
 		
+		writer.print(indent + "<splash"); //$NON-NLS-1$
+		
 		if (fLocation != null && fLocation.length() > 0)
-			writer.println(indent + "<splash " + P_LOCATION + "=\"" + getWritableString(fLocation) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		else
-			writer.println(indent + "<splash>"); //$NON-NLS-1$
+			writeProperty(indent, writer, P_LOCATION, getWritableString(fLocation));
 		
 		String progres = getGeometryString(fProgressGeometry);
-		if (fCustomizeProgressBar && progres != null) 
-			writeProperty(indent + indent, writer, P_PROGRESS_GEOMETRY, getWritableString(progres));
+		if (fCustomizeProgressBar && progres != null)
+			writeProperty(indent, writer, P_PROGRESS_GEOMETRY, getWritableString(progres));
 		
 		String message = getGeometryString(fMessageGeometry);
 		if (fCustomizeProgressMessage && message != null)
-			writeProperty(indent + indent, writer, P_MESSAGE_GEOMETRY, getWritableString(message));
+			writeProperty(indent, writer, P_MESSAGE_GEOMETRY, getWritableString(message));
 		
 		if (fCustomizeForegroundColor && isValidHexValue(fForegroundColor))
-			writeProperty(indent + indent, writer, P_FOREGROUND_COLOR, getWritableString(fForegroundColor));
+			writeProperty(indent, writer, P_FOREGROUND_COLOR, getWritableString(fForegroundColor));
 		
-		writer.println(indent + "</splash>"); //$NON-NLS-1$
+		writer.print(" />"); //$NON-NLS-1$
 	}
 
 	private void writeProperty(String indent, PrintWriter writer, String name, String value) {
-		writer.println(indent + "<property"); //$NON-NLS-1$
-		writer.println(indent + indent + P_PROPERTY_NAME + "=\"" + name + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println(indent + indent + P_PROPERTY_VALUE + "=\"" + value + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println();
+		writer.print(indent + indent + name + "=\"" + value + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public void setProgressGeometry(int[] geo, boolean blockNotification) {
@@ -125,6 +112,8 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 	}
 
 	public void setForegroundColor(String hexColor, boolean blockNotification) throws IllegalArgumentException {
+		if (hexColor != null && hexColor.length() == 0)
+			hexColor = null;
 		if (hexColor != null && !isValidHexValue(hexColor))
 			throw new IllegalArgumentException();
 		fCustomizeForegroundColor = hexColor != null;
