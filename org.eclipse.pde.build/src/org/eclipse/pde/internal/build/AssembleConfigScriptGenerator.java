@@ -402,7 +402,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private boolean getUnpackClause(BundleDescription bundle) {
-		return ((PluginEntry) ((ArrayList) ((Properties) bundle.getUserObject()).get(PLUGIN_ENTRY)).get(0)).isUnpack();
+		Set entries = (Set) ((Properties)bundle.getUserObject()).get(PLUGIN_ENTRY);
+		return ((PluginEntry) entries.iterator().next()).isUnpack();
 	}
 
 	protected Object[] getFinalShape(BundleDescription bundle) {

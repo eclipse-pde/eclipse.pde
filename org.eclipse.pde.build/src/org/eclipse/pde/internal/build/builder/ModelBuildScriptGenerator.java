@@ -196,8 +196,18 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		return false;
 	}
 
+	private static boolean containsExpandedDot(String [] classpath) {
+		if (classpath == null || classpath.length == 0)
+			return false;
+		for (int i = 0; i < classpath.length; i++) {
+			if( EXPANDED_DOT.equals(classpath[i]))
+				return true;
+		}
+		return false;
+	}
+	
 	public static boolean specialDotProcessing(Properties properties, String[] classpathInfo) {
-		if (findAndReplaceDot(classpathInfo) || (classpathInfo.length > 0 && classpathInfo[0].equals(EXPANDED_DOT))) {
+		if (findAndReplaceDot(classpathInfo) || containsExpandedDot(classpathInfo)) {
 			String sourceFolder = properties.getProperty(PROPERTY_SOURCE_PREFIX + DOT);
 			if (sourceFolder != null) {
 				properties.setProperty(PROPERTY_SOURCE_PREFIX + EXPANDED_DOT, sourceFolder);

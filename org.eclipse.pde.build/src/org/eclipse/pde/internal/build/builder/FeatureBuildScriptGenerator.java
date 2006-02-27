@@ -135,9 +135,9 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			bundleProperties = new Properties();
 			model.setUserObject(bundleProperties);
 		}
-		ArrayList entries = (ArrayList) bundleProperties.get(PLUGIN_ENTRY);
+		Set  entries = (Set) bundleProperties.get(PLUGIN_ENTRY);
 		if (entries == null) {
-			entries = new ArrayList();
+			entries = new HashSet();
 			bundleProperties.put(PLUGIN_ENTRY, entries);
 		}
 		entries.add(entry);
@@ -894,27 +894,32 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				continue;
 			generatedScripts.add(model);
 			
-			ArrayList matchingEntries = (ArrayList) ((Properties) model.getUserObject()).get(PLUGIN_ENTRY);
-			for (Iterator entryIter = matchingEntries.iterator(); entryIter.hasNext();) {
-				IPluginEntry correspondingEntry = (IPluginEntry) entryIter.next();
-				List list = selectConfigs(correspondingEntry);
-				if (list.size() == 0)
-					continue;
+			//Get the corresponding plug-in entries (from a feature object) associated with the model
+			//and generate the script if one the configuration is being built. The generated scripts
+			//are configuration agnostic so we only generate once.
+			Set matchingEntries = (Set) ((Properties) model.getUserObject()).get(PLUGIN_ENTRY);
+			if (matchingEntries.isEmpty())
+				return;
+			
+			Iterator entryIter = matchingEntries.iterator(); 
+			IPluginEntry correspondingEntry = (IPluginEntry) entryIter.next();
+			List list = selectConfigs(correspondingEntry);
+			if (list.size() == 0)
+				continue;
 				
-				ModelBuildScriptGenerator generator = new ModelBuildScriptGenerator();
-				generator.setBuildSiteFactory(siteFactory);
-				generator.setCompiledElements(getCompiledElements());
-				generator.setIgnoreMissingPropertiesFile(isIgnoreMissingPropertiesFile());
-				generator.setModel(model); // setModel has to be called before configurePersistentProperties because it reads the model's properties
-				generator.setFeatureGenerator(this);
-				generator.setPluginPath(getPluginPath());
-				generator.setBuildingOSGi(isBuildingOSGi());
-				generator.setDevEntries(devEntries);
-				generator.includePlatformIndependent(isPlatformIndependentIncluded());
-				generator.setSignJars(signJars);
-				generator.setAssociatedEntry(correspondingEntry);
-				generator.generate();
-			}
+			ModelBuildScriptGenerator generator = new ModelBuildScriptGenerator();
+			generator.setBuildSiteFactory(siteFactory);
+			generator.setCompiledElements(getCompiledElements());
+			generator.setIgnoreMissingPropertiesFile(isIgnoreMissingPropertiesFile());
+			generator.setModel(model); // setModel has to be called before configurePersistentProperties because it reads the model's properties
+			generator.setFeatureGenerator(this);
+			generator.setPluginPath(getPluginPath());
+			generator.setBuildingOSGi(isBuildingOSGi());
+			generator.setDevEntries(devEntries);
+			generator.includePlatformIndependent(isPlatformIndependentIncluded());
+			generator.setSignJars(signJars);
+			generator.setAssociatedEntry(correspondingEntry);
+			generator.generate();
 		}
 	
 	}
