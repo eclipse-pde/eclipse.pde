@@ -65,10 +65,9 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	
 	public String getSchemaVersion() {
 		IExtensions root = getExtensionsRoot();
-		if (root instanceof AbstractExtensions) {
-			return ((AbstractExtensions)root).getSchemaVersion();
-		}
-		return null;
+		if (root instanceof AbstractExtensions) 
+			return ((AbstractExtensions)root).getSchemaVersion();		
+		return (root instanceof IPluginBase) ? ((IPluginBase)root).getSchemaVersion() : null;
 	}
 	
 	public void setSchemaVersion(String value) throws CoreException {
