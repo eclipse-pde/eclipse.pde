@@ -56,9 +56,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.progress.IProgressService;
 
 public class FeatureImportWizardPage extends WizardPage {
 
@@ -379,9 +379,9 @@ public class FeatureImportWizardPage extends WizardPage {
 				monitor.done();
 			}
 		};
-		IWorkbench workbench = PDEPlugin.getActiveWorkbenchWindow().getWorkbench();
+		IProgressService pservice = PlatformUI.getWorkbench().getProgressService();
 		try {
-			workbench.getProgressService().busyCursorWhile(runnable);
+			pservice.busyCursorWhile(runnable);
 		} catch (InvocationTargetException e) {
 		} catch (InterruptedException e) {
 		}
