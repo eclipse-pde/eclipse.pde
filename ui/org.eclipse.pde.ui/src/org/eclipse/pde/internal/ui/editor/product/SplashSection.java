@@ -11,6 +11,8 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.jface.preference.ColorSelector;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
@@ -171,15 +173,14 @@ public class SplashSection extends PDESection {
 
 		fMessageControls[8] = createLabel(parent, toolkit, foreground, PDEUIMessages.SplashSection_messageColor);
 		fColorSelector = new ColorSelector(parent);
-		Button colorButton = fColorSelector.getButton();
-		colorButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				applyColor();
+		fColorSelector.addListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (!event.getNewValue().equals(event.getOldValue()))
+					applyColor();
 			}
 		});
-		toolkit.adapt(colorButton, true, true);
-		
-		fMessageControls[9] = colorButton;
+		toolkit.adapt(fColorSelector.getButton(), true, true);
+		fMessageControls[9] = fColorSelector.getButton();
 
 		for (int i = 0; i < fMessageSpinners.length; i++) {
 			fMessageSpinners[i].addModifyListener(new ModifyListener() {
