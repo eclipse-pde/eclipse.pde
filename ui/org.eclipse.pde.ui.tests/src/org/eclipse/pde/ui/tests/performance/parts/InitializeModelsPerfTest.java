@@ -16,6 +16,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.pde.internal.core.ExecutionEnvironmentAnalyzer;
 import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEState;
@@ -37,6 +38,7 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 	public void testModels() throws Exception {
 		tagAsSummary("Initialize Plug-ins (no caching)", Dimension.ELAPSED_PROCESS);
 		String path = ExternalModelManager.getEclipseHome().toOSString();
+		ExecutionEnvironmentAnalyzer.getKnownExecutionEnvironments();
 		startMeasuring();
 		new PDEState(PluginPathFinder.getPluginPaths(path), false, new NullProgressMonitor());
 		stopMeasuring();
@@ -47,6 +49,7 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 	public void testCachedModels() throws Exception {
 		tagAsGlobalSummary("Initialize Plug-ins (with caching)", Dimension.ELAPSED_PROCESS);
 		String path = ExternalModelManager.getEclipseHome().toOSString();
+		ExecutionEnvironmentAnalyzer.getKnownExecutionEnvironments();
 		new PDEState(PluginPathFinder.getPluginPaths(path), true, new NullProgressMonitor());
 		startMeasuring();
 		new PDEState(PluginPathFinder.getPluginPaths(path), true, new NullProgressMonitor());
