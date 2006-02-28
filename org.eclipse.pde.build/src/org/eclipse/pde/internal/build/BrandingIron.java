@@ -41,14 +41,14 @@ public class BrandingIron implements IXMLConstants {
 		if (name.startsWith("${")) //$NON-NLS-1$
 			return;
 
-		// if the root does not exists (happens in some packaging cases) or 
-		// there is already a file with target name, don't do anything
-		String testName = os.equals("win32") ? name + ".exe" : name;
-		if (!new File(root).exists() || new File(root, testName).exists())
-			return;
-		
-		if (icons == null || icons[0].startsWith("${"))
+		if (icons == null || icons[0].startsWith("${")) //$NON-NLS-1$
 			brandIcons = false;
+		
+		// if the root does not exists (happens in some packaging cases) or 
+		// there is already a file with target name and we don't need to update its icons, don't do anything
+		String testName = os.equals("win32") ? name + ".exe" : name; //$NON-NLS-1$ //$NON-NLS-2$
+		if (!new File(root).exists() || (!brandIcons && new File(root, testName).exists()))
+			return;
 		
 		if ("win32".equals(os)) //$NON-NLS-1$
 			brandWindows();
