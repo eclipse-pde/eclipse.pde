@@ -2688,10 +2688,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetPluginsTab_plugins;
 
-	public static String TargetPluginsTab_dialogTitle;
-
-	public static String TargetPluginsTab_dialogDescription;
-
 	public static String ManifestEditorContributor_externStringsActionName;
 
 	public static String PatchSpecPage_feature;
@@ -2721,5 +2717,11 @@ public class PDEUIMessages extends NLS {
 	public static String SplashSection_messageHeight;
 
 	public static String FeatureImportWizardPage_reload;
+	
+	public static String TargetErrorDialog_title;
+
+	public static String TargetErrorDialog_description;
+	
+	public static String TargetDefinitionSection_description;
 
 }

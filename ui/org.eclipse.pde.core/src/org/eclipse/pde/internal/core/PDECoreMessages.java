@@ -190,4 +190,24 @@ public class PDECoreMessages extends NLS {
 
 	public static String BuildErrorReporter_classpathEntryMissing1;
 
+	public static String LoadTargetOperation_mainTaskName;
+
+	public static String LoadTargetOperation_argsTaskName;
+
+	public static String LoadTargetOperation_envTaskName;
+
+	public static String LoadTargetOperation_jreTaskName;
+
+	public static String LoadTargetOperation_implicitPluginsTaskName;
+
+	public static String LoadTargetOperation_loadPluginsTaskName;
+
+	public static String LoadTargetOperation_reloadTaskName;
+
+	public static String LoadTargetOperation_selectPluginsTaskName;
+
+	public static String LoadTargetOperation_enablePluginsTaskName;
+
+	public static String LoadTargetOperation_findPluginsTaskName;
+
 }

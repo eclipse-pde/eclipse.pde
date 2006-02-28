@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -494,7 +495,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			}			
 		}
 		if (!ExternalModelManager.arePathsEqual(new Path(path), new Path(fHomeText.getText()))
-				|| target.getAdditionalDirectories().length > 0) {
+				|| !areAdditionalLocationsEqual(target)) {
 			fHomeText.setText(path);
 			ArrayList additional = new ArrayList();
 			IAdditionalLocation[] locations = target.getAdditionalDirectories();
@@ -514,6 +515,28 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		fArgumentsTab.loadTargetProfile(target);
 		fImplicitDependenciesTab.loadTargetProfile(target);
 		fSourceTab.loadTargetProfile(target);
+	}
+	
+	private boolean areAdditionalLocationsEqual(ITarget target) {
+		IAdditionalLocation[] addtionalLocs = target.getAdditionalDirectories();
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
+		String value = preferences.getString(ICoreConstants.ADDITIONAL_LOCATIONS);
+		StringTokenizer tokenzier = new StringTokenizer(value);
+		if (addtionalLocs.length != tokenzier.countTokens()) 
+			return false;
+		while (tokenzier.hasMoreTokens()) {
+			boolean found = false;
+			String location = tokenzier.nextToken();
+			for (int i = 0; i < addtionalLocs.length; i++) {
+				if (addtionalLocs[i].getPath().equals(location)) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) 
+				return false;
+		}
+		return true;
 	}
 	
 	public void performDefaults() {

@@ -11,13 +11,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-public class TreeErrorMessage extends MessageDialog {
+public class TreeMessageDialog extends MessageDialog {
 	
 	private ITreeContentProvider fContentProvider;
 	private ILabelProvider fLabelProvider;
 	private Object fInput;
 
-	public TreeErrorMessage(Shell parentShell, String dialogTitle, Image dialogTitleImage, String dialogMessage, int dialogImageType, String[] dialogButtonLabels, int defaultIndex) {
+	public TreeMessageDialog(Shell parentShell, String dialogTitle, Image dialogTitleImage, String dialogMessage, int dialogImageType, String[] dialogButtonLabels, int defaultIndex) {
 		super(parentShell, dialogTitle, dialogTitleImage, dialogMessage,
 				dialogImageType, dialogButtonLabels, defaultIndex);
 	}
