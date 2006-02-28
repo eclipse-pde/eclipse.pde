@@ -36,7 +36,7 @@ import org.eclipse.ui.IWorkbench;
 public class FeatureImportWizard extends Wizard implements IImportWizard {
 
 	private static final String STORE_SECTION = "FeatureImportWizard"; //$NON-NLS-1$
-	private FeatureImportWizardPage fPage1;
+	private FeatureImportWizardPage fPage;
 
 	public FeatureImportWizard() {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
@@ -57,8 +57,8 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 	public void addPages() {
 		setNeedsProgressMonitor(true);
 
-		fPage1 = new FeatureImportWizardPage();
-		addPage(fPage1);
+		fPage = new FeatureImportWizardPage();
+		addPage(fPage);
 	}
 
 	private IDialogSettings getSettingsSection(IDialogSettings master) {
@@ -74,14 +74,13 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 	 */
 	public boolean performFinish() {
 		try {
-			final IFeatureModel[] models = fPage1.getSelectedModels();
-			fPage1.storeSettings(true);
+			IFeatureModel[] models = fPage.getSelectedModels();
+			fPage.storeSettings(true);
 			IPath targetPath = computeTargetPath();
 
-			IRunnableWithProgress op = getImportOperation(getShell(), fPage1
-					.isBinary(), models, targetPath);
+			IRunnableWithProgress op = getImportOperation(
+					getShell(), fPage.isBinary(), models, targetPath);
 			getContainer().run(true, true, op);
-
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
@@ -106,7 +105,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 	 * @param shell
 	 * @param models
 	 * @param targetPath null to use default workspace location
-	 * @return
+	 * @return the import operation
 	 */
 	public static IRunnableWithProgress getImportOperation(
 		final Shell shell,
@@ -151,14 +150,13 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 	}
 
 	private static class ReplaceQuery implements IReplaceQuery {
-		private Shell shell;
+		private Shell fShell;
 		public ReplaceQuery(Shell shell) {
-			this.shell = shell;
+			this.fShell = shell;
 		}
 
 		private int yesToAll = 0;
-		private int[] RETURNCODES =
-			{
+		private int[] RETURNCODES = {
 				IReplaceQuery.YES,
 				IReplaceQuery.YES,
 				IReplaceQuery.NO,
@@ -166,16 +164,16 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 				IReplaceQuery.CANCEL };
 
 		public int doQuery(IProject project) {
-			if (yesToAll != 0) {
+			if (yesToAll != 0)
 				return yesToAll > 0 ? IReplaceQuery.YES : IReplaceQuery.NO;
-			}
 
-			final String message =
-				NLS.bind(PDEUIMessages.FeatureImportWizard_messages_exists, project.getName());
+			final String message = NLS.bind(
+					PDEUIMessages.FeatureImportWizard_messages_exists,
+					project.getName());
 			final int[] result = { IReplaceQuery.CANCEL };
-			shell.getDisplay().syncExec(new Runnable() {
+			fShell.getDisplay().syncExec(new Runnable() {
 				public void run() {
-					ReplaceDialog dialog = new ReplaceDialog(shell, message);
+					ReplaceDialog dialog = new ReplaceDialog(fShell, message);
 					int retVal = dialog.open();
 					if (retVal >= 0) {
 						result[0] = RETURNCODES[retVal];

@@ -1228,7 +1228,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureImportWizard_messages_loadingRuntime;
 	public static String FeatureImportWizard_messages_updating;
-	public static String FeatureImportWizard_messages_loadingFile;
 	public static String FeatureImportWizard_title;
 	public static String FeatureMatchSection_patch;
 	public static String FeatureSection_removeAll;
@@ -1564,7 +1563,6 @@ public class PDEUIMessages extends NLS {
 	public static String GrammarPropertySource_maxOccursValue;
 	public static String ReferencePropertySource_minOccurs_value;
 	public static String ReferencePropertySource_maxOccurs_value;
-	public static String FeatureImportWizard_DetailedPage_loading;
 	public static String FeatureImportWizard_DetailedPage_problemsLoading;
 	public static String NewFeatureDialog_alreadyDefined;
 	public static String NewArchiveDialog_alreadyExists;
@@ -2723,5 +2721,9 @@ public class PDEUIMessages extends NLS {
 	public static String TargetErrorDialog_description;
 	
 	public static String TargetDefinitionSection_description;
+
+	public static String FeatureImportWizardPage_reloadLocation;
+
+	public static String FeatureImportWizardPage_importHasInvalid;
 
 }
