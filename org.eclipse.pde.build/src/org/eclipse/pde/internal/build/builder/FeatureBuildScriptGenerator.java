@@ -786,7 +786,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		Properties properties = getBuildProperties();
 		String significantDigits = (String) properties.get(PROPERTY_SIGNIFICANT_VERSION_DIGITS);
-		int maxDigits = 9;
+		int maxDigits = 15;
 		if (significantDigits != null) {
 			try {
 				maxDigits = Integer.parseInt(significantDigits);
@@ -795,10 +795,12 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			}
 		}
 		String generatedLength = (String) properties.get(PROPERTY_GENERATED_VERSION_LENGTH);
-		int finalLength = 10;
+		int finalLength = 15;
 		if (generatedLength != null) {
 			try {
 				finalLength = Integer.parseInt(generatedLength);
+				if (finalLength < maxDigits)
+					finalLength = maxDigits;
 			} catch (NumberFormatException e) {
 				//exception, leave at default
 			}
@@ -806,9 +808,9 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		IIncludedFeatureReference[] referencedFeatures = buildFeature.getIncludedFeatureReferences();
 		int numElements = plugins.size() + referencedFeatures.length;
-		byte[][] versions = new byte[numElements][];
+		char[][] versions = new char[numElements][];
 		int idx = -1;
-		int longestByteArray = 0;
+		int longestArray = 0;
 		int shift = '-';
 		String qualifier;
 		if (referencedFeatures != null) {
@@ -816,11 +818,15 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				BuildTimeFeature refFeature = (BuildTimeFeature) getSite(false).findFeature(referencedFeatures[i].getVersionedIdentifier().getIdentifier(), null, false);
 				if (refFeature == null)
 					continue;
+				int contextLength = refFeature.getContextQualifierLength();
+				contextLength++; //account for the '-' separating the context qualifier and suffix
 				qualifier = refFeature.getVersionedIdentifier().getVersion().getQualifierComponent();
-				if (qualifier.length() > 0) {
-					versions[++idx] = qualifier.getBytes();
-					if (versions[idx].length > longestByteArray)
-						longestByteArray = versions[idx].length;
+				if (qualifier.length() > contextLength) {
+					char [] chars = qualifier.toCharArray();
+					versions[++idx] = new char[chars.length - contextLength];
+					System.arraycopy(chars, contextLength, versions[idx], 0, chars.length - contextLength);
+					if (versions[idx].length > longestArray)
+						longestArray = versions[idx].length;
 				}
 			}
 		}
@@ -828,21 +834,21 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			BundleDescription model = (BundleDescription) iterator.next();
 			qualifier = model.getVersion().getQualifier();
 			if (qualifier.length() > 0) {
-				versions[++idx] = qualifier.getBytes();
-				if (versions[idx].length > longestByteArray)
-					longestByteArray = versions[idx].length;
+				versions[++idx] = qualifier.toCharArray();
+				if (versions[idx].length > longestArray)
+					longestArray = versions[idx].length;
 			}
 		}
 		
 		if (idx == -1)
 			return null;
 		
-		if (longestByteArray > maxDigits)
-			longestByteArray = maxDigits;
+		if (longestArray > maxDigits)
+			longestArray = maxDigits;
 
-		int[] sums = new int[longestByteArray];
+		int[] sums = new int[longestArray];
 		for (int i = 0; i <= idx; i++) {
-			for (int j = 0; j < longestByteArray; j++) {
+			for (int j = 0; j < longestArray; j++) {
 				if (versions[i].length > j)
 					sums[j] += versions[i][j] - shift;
 			}
@@ -852,8 +858,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		char c = 0;
 
 		int i = -1;
-		while (++i < sums.length || carry != 0) {
-			x = carry + ((i < longestByteArray) ? sums[i] : 0);
+		while ((++i < longestArray || carry != 0) && i < finalLength) {
+			x = carry + ((i < longestArray) ? sums[longestArray - i - 1] : 0);
 			val = x % 64;
 			carry = x >> 6;
 
