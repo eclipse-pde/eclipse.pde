@@ -11,6 +11,7 @@
 package org.eclipse.pde.ui.tests.performance.parts;
 
 import java.io.File;
+import java.net.URL;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -39,8 +40,9 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 		tagAsSummary("Initialize Plug-ins (no caching)", Dimension.ELAPSED_PROCESS);
 		String path = ExternalModelManager.getEclipseHome().toOSString();
 		ExecutionEnvironmentAnalyzer.getKnownExecutionEnvironments();
+		URL[] paths = PluginPathFinder.getPluginPaths(path);
 		startMeasuring();
-		new PDEState(PluginPathFinder.getPluginPaths(path), false, new NullProgressMonitor());
+		new PDEState(paths, false, new NullProgressMonitor());
 		stopMeasuring();
 		commitMeasurements();
 		assertPerformance();
@@ -50,9 +52,10 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 		tagAsGlobalSummary("Initialize Plug-ins (with caching)", Dimension.ELAPSED_PROCESS);
 		String path = ExternalModelManager.getEclipseHome().toOSString();
 		ExecutionEnvironmentAnalyzer.getKnownExecutionEnvironments();
-		new PDEState(PluginPathFinder.getPluginPaths(path), true, new NullProgressMonitor());
+		URL[] paths = PluginPathFinder.getPluginPaths(path);
+		new PDEState(paths, true, new NullProgressMonitor());
 		startMeasuring();
-		new PDEState(PluginPathFinder.getPluginPaths(path), true, new NullProgressMonitor());
+		new PDEState(paths, true, new NullProgressMonitor());
 		stopMeasuring();
 		commitMeasurements();
 		assertPerformance();
