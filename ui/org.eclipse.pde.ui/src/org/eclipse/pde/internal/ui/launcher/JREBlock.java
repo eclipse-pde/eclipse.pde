@@ -88,12 +88,14 @@ public class JREBlock {
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String currentVM = fJreCombo.getText();
+				boolean useDefault = VMHelper.getDefaultVMInstallName().equals(currentVM);
 				String[] pageIDs = new String[] {"org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"}; //$NON-NLS-1$
 				if (PDEPreferencesUtil.showPreferencePage(pageIDs)) {
 					fJreCombo.setItems(VMHelper.getVMInstallNames());
-					fJreCombo.setText(currentVM);
-					if (fJreCombo.getSelectionIndex() == -1)
+					if (useDefault || fJreCombo.indexOf(currentVM) == -1)
 						fJreCombo.setText(VMHelper.getDefaultVMInstallName());
+					else
+						fJreCombo.setText(currentVM);
 				}
 			}
 		});
