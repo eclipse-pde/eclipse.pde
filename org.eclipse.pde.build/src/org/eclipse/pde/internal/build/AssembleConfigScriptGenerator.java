@@ -102,16 +102,16 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private String computeIconsList() {
+		String result = Utils.getPropertyFormat(PROPERTY_LAUNCHER_ICONS);
 		if (productFile == null)
-			return Utils.getPropertyFormat(PROPERTY_LAUNCHER_ICONS);
+			return result;
 		String[] icons = productFile.getIcons();
-		String result = new String();
 		for (int i = 0; i < icons.length; i++) {
 			String location = findFile(icons[i], true);
 			if (location != null)
-				result +=  (i > 0 ? ", " : "") + Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + location; //$NON-NLS-1$ //$NON-NLS-2$
+				result +=  ", " + Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + location; //$NON-NLS-1$
 		}
-		return result.length() == 0 ? null : result;
+		return result;
 	}
 
 	private void loadPostProcessingSteps() {
