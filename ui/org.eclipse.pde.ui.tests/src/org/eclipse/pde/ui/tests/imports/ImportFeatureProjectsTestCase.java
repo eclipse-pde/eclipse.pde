@@ -1,4 +1,4 @@
-package org.eclipse.pde.ui.tests.wizards;
+package org.eclipse.pde.ui.tests.imports;
 
 import java.lang.reflect.InvocationTargetException;
 
