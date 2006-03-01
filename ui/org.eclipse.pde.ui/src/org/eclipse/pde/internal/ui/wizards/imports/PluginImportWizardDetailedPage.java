@@ -274,6 +274,8 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
+		if (visible)
+			fFilterText.setFocus();
 		setPageComplete(visible && fImportListViewer.getTable().getItemCount() > 0);
 		
 	}
