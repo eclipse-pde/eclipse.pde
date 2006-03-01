@@ -30,21 +30,18 @@ import org.eclipse.ui.ide.IDE;
 
 public class EditorUtilities {
 	
-	public static final int[][] F_ICON_DIMENSIONS = new int[][] {
-		{16, 16}, {32, 32}, {48, 48}, {64, 64}, {128, 128}
-	};
-	public static final int F_EXACTIMAGE = 0;
-	public static final int F_MAXIMAGE = 1;
-	public static final int F_ICOIMAGE = 2;
-	public static final int F_IMAGEDEPTH = 3;
+	private static final int F_EXACT_IMAGE_SIZE = 0;
+	private static final int F_MAX_IMAGE_SIZE = 1;
+	private static final int F_ICO_IMAGE = 2;
+	private static final int F_IMAGE_DEPTH = 3;
 	
-	static class MessageSeverity {
+	static class ValidationMessage {
 		String fMessage;
 		int fSeverity = -1;
-		MessageSeverity(String message) {
+		ValidationMessage(String message) {
 			fMessage = message;
 		}
-		MessageSeverity(String message, int severity) {
+		ValidationMessage(String message, int severity) {
 			this(message);
 			fSeverity = severity;
 		}
@@ -52,48 +49,15 @@ public class EditorUtilities {
 		int getSeverity() { return fSeverity; }
 	}
 	
+	static class ValidationInfo {
+		int maxWidth, maxHeight, warningWidth, warningHeight, requiredDepth;
+	}
+	
 	
 	public static ImageData[] getImageData(IEditorValidationProvider provider,
 			IProduct product) {
 		String imagePath = provider.getProviderValue();
-		try {
-			IPath path = getFullPath(new Path(imagePath), product);
-			URL url = new URL(path.toString());
-			ImageLoader loader = new ImageLoader();
-			InputStream stream = url.openStream();
-			ImageData[] idata = loader.load(stream);
-			stream.close();
-			return idata;
-		} catch (SWTException e) {
-//			message = PDEUIMessages.EditorUtilities_pathNotValidImage;
-		} catch (MalformedURLException e) {
-//			message = PDEUIMessages.EditorUtilities_invalidFilePath;
-		} catch (IOException e) {
-//			message = PDEUIMessages.EditorUtilities_invalidFilePath;
-		} catch (NullPointerException e) {
-//			message = PDEUIMessages.EditorUtilities_invalidFilePath;
-		}
-		return null;
-	}
-	
-	/*
-	 * dimensions must be atleast of size 2
-	 * dimensions[0] = width of image
-	 * dimensions[1] = height of image
-	 * dimensions[2] = width2
-	 * dimensions[3] = height2
-	 */
-	public static boolean isValidImage(IEditorValidationProvider provider,
-			IProduct product,
-			int[] dimensions,
-			int depth,
-			int checkType) {
-		String imagePath = provider.getProviderValue();
 		String message = null;
-		int severity = -1;
-		if (imagePath.length() == 0) {// ignore empty strings
-			return true;
-		}
 		try {
 			IPath path = getFullPath(new Path(imagePath), product);
 			URL url = new URL(path.toString());
@@ -101,99 +65,134 @@ public class EditorUtilities {
 			InputStream stream = url.openStream();
 			ImageData[] idata = loader.load(stream);
 			stream.close();
-			if (idata.length == 0) {
-				message = NLS.bind(PDEUIMessages.EditorUtilities_noImageData, imagePath);
-			} else {
-				MessageSeverity ms = null;
-				switch (checkType) {
-				case F_EXACTIMAGE:
-					ms = getMS_exactImageSize(idata[0], dimensions);
-					break;
-				case F_MAXIMAGE:
-					ms = getMS_maxImageSize(idata[0], dimensions);
-					break;
-				case F_ICOIMAGE:
-					ms = getMS_icoImage(idata);
-					break;
-				case F_IMAGEDEPTH:
-					ms = getMS_exactImageSize(idata[0], dimensions);
-					if (ms == null)
-						ms = getMS_imageDepth(idata[0], depth);
-					break;
-				}
-				if (ms != null) {
-					message = ms.getMessage();
-					severity = ms.getSeverity();
-				}
-			}
+			if (idata != null && idata.length > 0)
+				return idata;
+			message = PDEUIMessages.EditorUtilities_noImageData;
 		} catch (SWTException e) {
 			message = PDEUIMessages.EditorUtilities_pathNotValidImage;
 		} catch (MalformedURLException e) {
 			message = PDEUIMessages.EditorUtilities_invalidFilePath;
 		} catch (IOException e) {
 			message = PDEUIMessages.EditorUtilities_invalidFilePath;
-		} catch (NullPointerException e) {
-			message = PDEUIMessages.EditorUtilities_invalidFilePath;
 		}
-		
+		handleMessage(message, -1, provider);
+		return null;
+	}
+	
+	private static boolean containsEmptyField(IEditorValidationProvider provider) {
+		return provider.getProviderValue().length() == 0;
+	}
+	
+	private static void handleMessage(String message, int severity, IEditorValidationProvider provider) {
 		if (message != null) {
 			StringBuffer sb = new StringBuffer();
 			String desc = provider.getProviderDescription();
 			if (desc != null) {
-				sb.append(" "); //$NON-NLS-1$
 				sb.append(desc);
+				sb.append(' ');
 			}
-			sb.append(" "); //$NON-NLS-1$
-			sb.append(imagePath);
-			sb.append(" "); //$NON-NLS-1$
+			sb.append(provider.getProviderValue());
+			sb.append(" - "); //$NON-NLS-1$
 			sb.append(message);
 			provider.getValidator().setMessage(sb.toString());
-			if (severity >= 0)
-				provider.getValidator().setSeverity(severity);
+			provider.getValidator().setSeverity(severity);
 		}
-		
-		return message == null;
 	}
 	
-	private static MessageSeverity getMS_icoImage(ImageData[] imagedata) {
-		if (imagedata.length < 6)
-			return new MessageSeverity(PDEUIMessages.EditorUtilities_icoError);
+	private static boolean imageEntryInternalValidate(IEditorValidationProvider provider, IProduct product, ValidationInfo info, int validationType) {
+		if (containsEmptyField(provider))
+			return true;
+		ImageData[] idata = getImageData(provider, product);
+		if (idata == null)
+			return false;
+		
+		ValidationMessage ms = null;
+		switch(validationType) {
+		case F_MAX_IMAGE_SIZE:
+			ms = getMS_maxImageSize(idata[0], info.maxWidth, info.maxHeight, info.warningWidth, info.warningHeight);
+			break;
+		case F_ICO_IMAGE:
+			ms = getMS_icoImage(idata);
+			break;
+		case F_IMAGE_DEPTH: // do not break after F_IMAGEDEPTH since we are also checking exact size
+			ms = getMS_imageDepth(idata[0], info.requiredDepth);
+		case F_EXACT_IMAGE_SIZE:
+			if (ms == null)
+				ms = getMS_exactImageSize(idata[0], info.maxWidth, info.maxHeight);
+			break;
+		}
+		
+		if (ms != null)
+			handleMessage(ms.getMessage(), ms.getSeverity(), provider);
+		
+		return ms == null;
+	}
+	
+	public static boolean imageEntryHasValidIco(IEditorValidationProvider provider, IProduct product) {
+		ValidationInfo info = new ValidationInfo();
+		return imageEntryInternalValidate(provider, product, info, F_ICO_IMAGE);
+	}
+	
+	public static boolean imageEntrySizeDoesNotExceed(IEditorValidationProvider provider,
+			IProduct product, int mwidth, int mheight, int wwidth, int wheight) {
+		ValidationInfo info = new ValidationInfo();
+		info.maxWidth = mwidth;
+		info.maxHeight = mheight;
+		info.warningWidth = wwidth;
+		info.warningHeight = wheight;
+		return imageEntryInternalValidate(provider, product, info, F_MAX_IMAGE_SIZE);
+	}
+	
+	public static boolean imageEntryHasExactSize(IEditorValidationProvider provider,
+			IProduct product, int width, int height) {
+		ValidationInfo info = new ValidationInfo();
+		info.maxWidth = width;
+		info.maxHeight = height;
+		return imageEntryInternalValidate(provider, product, info, F_EXACT_IMAGE_SIZE);
+	}
+	
+	public static boolean imageEntryHasExactDepthAndSize(IEditorValidationProvider provider,
+			IProduct product, int width, int height, int depth) {
+		ValidationInfo info = new ValidationInfo();
+		info.maxWidth = width;
+		info.maxHeight = height;
+		info.requiredDepth = depth;
+		return imageEntryInternalValidate(provider, product, info, F_IMAGE_DEPTH);
+	}
+	
+	private static ValidationMessage getMS_icoImage(ImageData[] imagedata) {
+		if (imagedata.length < 7)
+			return new ValidationMessage(PDEUIMessages.EditorUtilities_icoError);
 		return null;
 	}
 
-	private static MessageSeverity getMS_exactImageSize(ImageData imagedata, int[] sizes) {
-		if (sizes.length < 2)
-			return null;
+	private static ValidationMessage getMS_exactImageSize(ImageData imagedata, int mwidth, int mheight) {
 		int width = imagedata.width;
 		int height = imagedata.height;
-		if (width != sizes[0] || height != sizes[1])
-			return new MessageSeverity(
+		if (width != mwidth || height != mheight)
+			return new ValidationMessage(
 					NLS.bind(PDEUIMessages.EditorUtilities_incorrectSize,
 							getSizeString(width, height)));
 		return null;
 	}
 	
-	private static MessageSeverity getMS_maxImageSize(ImageData imagedata, int[] sizes) {
-		if (sizes.length < 2)
-			return null;
+	private static ValidationMessage getMS_maxImageSize(ImageData imagedata, int mwidth, int mheight, int wwidth, int wheight) {
 		int width = imagedata.width;
 		int height = imagedata.height;
-		if (width > sizes[0] || height > sizes[1]) {
-			return new MessageSeverity(
+		if (width > mwidth || height > mheight) 
+			return new ValidationMessage(
 					NLS.bind(PDEUIMessages.EditorUtilities_imageTooLarge,
 							getSizeString(width, height)));
-		} else if (sizes.length > 2) {
-			if (width > sizes[2] || height > sizes[3])
-				return new MessageSeverity(
-						NLS.bind(PDEUIMessages.EditorUtilities_imageTooLargeInfo, getSizeString(sizes[2], sizes[3])),
+		else if (width > wwidth || height > wheight)
+			return new ValidationMessage(
+						NLS.bind(PDEUIMessages.EditorUtilities_imageTooLargeInfo, getSizeString(wwidth, wheight)),
 						IMessageProvider.INFORMATION);
-		}
 		return null;
 	}
 	
-	private static MessageSeverity getMS_imageDepth(ImageData imagedata, int depth) {
+	private static ValidationMessage getMS_imageDepth(ImageData imagedata, int depth) {
 		if (imagedata.depth != depth)
-			return new MessageSeverity(
+			return new ValidationMessage(
 					NLS.bind(PDEUIMessages.EditorUtilities_incorrectImageDepth, Integer.toString(imagedata.depth)));
 		return null;
 	}
@@ -210,7 +209,7 @@ public class EditorUtilities {
 			IResource resource = root.findMember(filePath);
 			if (resource != null)
 				return new Path("file:", resource.getLocation().toString()); //$NON-NLS-1$
-			return null;
+			throw new MalformedURLException();
 		}
 		// look in project
 		IProject project = product.getModel().getUnderlyingResource().getProject();
@@ -227,7 +226,8 @@ public class EditorUtilities {
 				return new Path("jar:file:", pluginPath + "!/" + filePath); //$NON-NLS-1$ //$NON-NLS-2$
 			return new Path("file:", pluginPath + "/" + filePath); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		return null;
+		// no file found - throw exception
+		throw new MalformedURLException();
 	}
 	
 	private static IPath getRootPath(IPath path, String definingPluginId) { 

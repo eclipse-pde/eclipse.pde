@@ -68,14 +68,22 @@ public class LauncherSection extends PDESection {
 	private static final String[] F_WIN_ICON_LABELS = new String[] {
 		PDEUIMessages.LauncherSection_Low16,
 		PDEUIMessages.LauncherSection_High16,
+		PDEUIMessages.LauncherSection_Low24,
 		PDEUIMessages.LauncherSection_32Low,
 		PDEUIMessages.LauncherSection_32High,
 		PDEUIMessages.LauncherSection_48Low,
 		PDEUIMessages.LauncherSection_48High
 	};
+	private static final int[] F_WIN_ICON_DEPTHS = new int[] {
+		8, 32, 8, 8, 32, 8, 32
+	};
+	private static final int[][] F_WIN_ICON_DIMENSIONS = new int[][] {
+		{16, 16}, {16, 16}, {24, 24}, {32, 32}, {32, 32}, {48, 48}, {48, 48}
+	};
 	private static final String[] F_WIN_ICON_IDS = new String[] {
 		ILauncherInfo.WIN32_16_LOW,
 		ILauncherInfo.WIN32_16_HIGH,
+		ILauncherInfo.WIN32_24_LOW,
 		ILauncherInfo.WIN32_32_LOW,
 		ILauncherInfo.WIN32_32_HIGH,
 		ILauncherInfo.WIN32_48_LOW,
@@ -232,14 +240,14 @@ public class LauncherSection extends PDESection {
 
 		for (int i = 0; i < F_WIN_ICON_LABELS.length; i++) {
 			final IconEntry ientry = new IconEntry(comp, toolkit, F_WIN_ICON_LABELS[i], F_WIN_ICON_IDS[i]);
-			final int depth = i%2 == 0 ? 4 : 8;
-			final int index = i / 2; // since we have 2 images for each size
+			final int index = i;
 			ientry.setValidator(new AbstractFormValidator(this) {
 				public boolean inputValidates() {
-					return EditorUtilities.isValidImage(
+					return EditorUtilities.imageEntryHasExactDepthAndSize(
 							ientry, getProduct(),
-							EditorUtilities.F_ICON_DIMENSIONS[index],
-							depth, EditorUtilities.F_IMAGEDEPTH);
+							F_WIN_ICON_DIMENSIONS[index][0],
+							F_WIN_ICON_DIMENSIONS[index][1],
+							F_WIN_ICON_DEPTHS[index]);
 				}
 			});
 			fIcons.add(ientry);
@@ -261,9 +269,7 @@ public class LauncherSection extends PDESection {
 		final IconEntry ientry = new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_file, ILauncherInfo.P_ICO_PATH);
 		ientry.setValidator(new AbstractFormValidator(this) {
 			public boolean inputValidates() {
-				return EditorUtilities.isValidImage(
-						ientry, getProduct(),
-						new int[0], 0, EditorUtilities.F_ICOIMAGE);
+				return EditorUtilities.imageEntryHasValidIco(ientry, getProduct());
 			}
 		});
 		fIcons.add(ientry); 
@@ -348,6 +354,7 @@ public class LauncherSection extends PDESection {
 				entry.setEditable(isEditable()&& useIco);
 			} else if (id.equals(ILauncherInfo.WIN32_16_HIGH) 
 					|| id.equals(ILauncherInfo.WIN32_16_LOW)
+					|| id.equals(ILauncherInfo.WIN32_24_LOW)
 					|| id.equals(ILauncherInfo.WIN32_32_HIGH)
 					|| id.equals(ILauncherInfo.WIN32_32_LOW)
 					|| id.equals(ILauncherInfo.WIN32_48_HIGH)

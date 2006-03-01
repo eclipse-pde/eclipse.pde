@@ -438,8 +438,9 @@ public class ProductExportJob extends FeatureExportJob {
 		if (info.usesWinIcoFile()) {
 			append(buffer, info.getIconPath(ILauncherInfo.P_ICO_PATH));
 		} else {
-			append(buffer, info.getIconPath(ILauncherInfo.WIN32_16_HIGH));
 			append(buffer, info.getIconPath(ILauncherInfo.WIN32_16_LOW));
+			append(buffer, info.getIconPath(ILauncherInfo.WIN32_16_HIGH));
+			append(buffer, info.getIconPath(ILauncherInfo.WIN32_24_LOW));
 			append(buffer, info.getIconPath(ILauncherInfo.WIN32_32_HIGH));
 			append(buffer, info.getIconPath(ILauncherInfo.WIN32_32_LOW));
 			append(buffer, info.getIconPath(ILauncherInfo.WIN32_48_HIGH));

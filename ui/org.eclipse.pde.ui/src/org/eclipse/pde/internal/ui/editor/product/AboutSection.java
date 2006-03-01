@@ -79,9 +79,9 @@ public class AboutSection extends PDESection {
 		fImageEntry.setEditable(isEditable());
 		fImageEntry.setValidator(new AbstractFormValidator(this) {
 			public boolean inputValidates() {
-				return EditorUtilities.isValidImage(fImageEntry,
-						getProduct(), new int[] {500, 330, 250, 330},
-						0, EditorUtilities.F_MAXIMAGE);
+				return EditorUtilities.imageEntrySizeDoesNotExceed(
+						fImageEntry, getProduct(),
+						500, 330, 250, 330);
 			}
 		});
 		

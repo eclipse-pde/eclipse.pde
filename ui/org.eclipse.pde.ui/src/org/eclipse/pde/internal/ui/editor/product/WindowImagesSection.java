@@ -42,6 +42,9 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class WindowImagesSection extends PDESection {
 
+	private static final int[][] F_ICON_DIMENSIONS = new int[][] {
+		{16, 16}, {32, 32}, {48, 48}, {64, 64}, {128, 128}
+	};
 	private static final String[] F_ICON_LABELS = new String[] {
 		PDEUIMessages.WindowImagesSection_16,
 		PDEUIMessages.WindowImagesSection_32,
@@ -88,10 +91,10 @@ public class WindowImagesSection extends PDESection {
 			fImages[index].setEditable(isEditable());
 			fImages[index].setValidator(new AbstractFormValidator(this) {
 				public boolean inputValidates() {
-					return EditorUtilities.isValidImage(
+					return EditorUtilities.imageEntryHasExactSize(
 							fImages[index],	getProduct(),
-							EditorUtilities.F_ICON_DIMENSIONS[index],
-							0, EditorUtilities.F_EXACTIMAGE);
+							F_ICON_DIMENSIONS[index][0],
+							F_ICON_DIMENSIONS[index][1]);
 				}
 			});
 		}

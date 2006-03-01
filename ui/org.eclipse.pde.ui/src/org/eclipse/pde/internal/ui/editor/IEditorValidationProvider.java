@@ -2,7 +2,7 @@ package org.eclipse.pde.internal.ui.editor;
 
 /**
  * Classes that implement this interface will have the ability
- * to contriubte the an editors validator.
+ * to contriubte to an editors validator.
  *
  */
 public interface IEditorValidationProvider {
@@ -13,7 +13,7 @@ public interface IEditorValidationProvider {
 	public void setValidator(IEditorValidator validator);
 	/**
 	 * Return the validator currently associated with this object
-	 * @return
+	 * @return the IEditorValidator associated with this object
 	 */
 	public IEditorValidator getValidator() ;
 	/**

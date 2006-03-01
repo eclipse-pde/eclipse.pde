@@ -29,19 +29,20 @@ public abstract class AbstractFormValidator implements IEditorValidator {
 	}
 	
 	public void setMessage(String message) {
-		fMessage = message;
+		fMessage = message != null ? message : PDEUIMessages.AbstractFormValidator_noMessageSet;
 	}
 	
 	public String getMessage(boolean includePageName) {
 		StringBuffer buff = new StringBuffer();
 		if (includePageName) {
-			buff.append("["); //$NON-NLS-1$
+			buff.append('[');
 			buff.append(fSection.getPage().getTitle());
-			buff.append("]"); //$NON-NLS-1$
+			buff.append(']');
 		}
-		buff.append("["); //$NON-NLS-1$
+		buff.append('[');
 		buff.append(fSection.getSection().getText());
-		buff.append("]"); //$NON-NLS-1$
+		buff.append(']');
+		buff.append(' ');
 		buff.append(fMessage);
 		return buff.toString();
 	}
@@ -62,10 +63,11 @@ public abstract class AbstractFormValidator implements IEditorValidator {
 			return true;
 		if (revalidate) {
 			fInputValidates = inputValidates();
+			IEditorValidationStack stack = fSection.getPage().getPDEEditor().getValidationStack();
 			if (fInputValidates)
-				fSection.getPage().getPDEEditor().getValidationStack().top(this, fSection.getPage());
+				stack.top(this, fSection.getPage());
 			else
-				fSection.getPage().getPDEEditor().getValidationStack().push(this);
+				stack.push(this);
 		}
 		return fInputValidates;
 	}

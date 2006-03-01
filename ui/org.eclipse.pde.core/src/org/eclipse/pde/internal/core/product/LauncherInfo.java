@@ -100,6 +100,7 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 				} else if (name.equals("bmp")) { //$NON-NLS-1$
 					fIcons.put(WIN32_16_HIGH, child.getAttribute(WIN32_16_HIGH));
 					fIcons.put(WIN32_16_LOW, child.getAttribute(WIN32_16_LOW));
+					fIcons.put(WIN32_24_LOW, child.getAttribute(WIN32_24_LOW));
 					fIcons.put(WIN32_32_HIGH, child.getAttribute(WIN32_32_HIGH));
 					fIcons.put(WIN32_32_LOW, child.getAttribute(WIN32_32_LOW));
 					fIcons.put(WIN32_48_HIGH, child.getAttribute(WIN32_48_HIGH));
@@ -145,6 +146,7 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 		writer.print(indent + "   <bmp"); //$NON-NLS-1$
 		writeIcon(indent + "   ", WIN32_16_HIGH, writer); //$NON-NLS-1$
 		writeIcon(indent + "   ", WIN32_16_LOW, writer); //$NON-NLS-1$
+		writeIcon(indent + "   ", WIN32_24_LOW, writer); //$NON-NLS-1$
 		writeIcon(indent + "   ", WIN32_32_HIGH, writer); //$NON-NLS-1$
 		writeIcon(indent + "   ", WIN32_32_LOW, writer); //$NON-NLS-1$
 		writeIcon(indent + "   ", WIN32_48_HIGH, writer); //$NON-NLS-1$

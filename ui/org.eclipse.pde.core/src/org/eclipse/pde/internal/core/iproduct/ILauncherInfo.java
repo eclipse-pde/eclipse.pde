@@ -23,6 +23,7 @@ public interface ILauncherInfo extends IProductObject {
 	
 	public static final String WIN32_16_LOW = "winSmallLow"; //$NON-NLS-1$
 	public static final String WIN32_16_HIGH = "winSmallHigh"; //$NON-NLS-1$
+	public static final String WIN32_24_LOW = "win24Low"; //$NON-NLS-1$
 	public static final String WIN32_32_LOW = "winMediumLow"; //$NON-NLS-1$
 	public static final String WIN32_32_HIGH = "winMediumHigh"; //$NON-NLS-1$
 	public static final String WIN32_48_LOW = "winLargeLow"; //$NON-NLS-1$

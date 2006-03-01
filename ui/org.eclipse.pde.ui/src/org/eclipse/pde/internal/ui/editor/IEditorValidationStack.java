@@ -21,13 +21,13 @@ public interface IEditorValidationStack {
 	 * Get the next false-validating provider.
 	 * @param provider the provider which is currently being validated
 	 * @param page the page from which this is getting called
-	 * @return
+	 * @return the first IEditorValidator from the top of the stack that does not validate or null if none exist
 	 */
 	public IEditorValidator top(IEditorValidator provider, IFormPage page);
 	
 	/**
 	 * Returns if the validation stack is empty;
-	 * @return
+	 * @return if the stack is empty
 	 */
 	public boolean isEmpty();
 }
