@@ -20,6 +20,7 @@ public class AllNewProjectTests {
 		TestSuite suite = new TestSuite("Test Suite to test project creation wizards."); //$NON-NLS-1$
 		suite.addTest(NewFeatureProjectTestCase.suite());
 		suite.addTest(NewSiteProjectTestCase.suite());
+		suite.addTest(ImportFeatureProjectsTestCase.suite());
 		return suite;
 	}
 

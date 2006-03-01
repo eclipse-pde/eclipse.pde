@@ -26,7 +26,7 @@ public abstract class PDETestCase extends TestCase {
 		return PlatformUI.getWorkbench().getDisplay().getActiveShell();
 	}
 	
-	protected final void tearDown() {
+	protected void tearDown() {
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject[] projects = workspaceRoot.getProjects();
 		try {
