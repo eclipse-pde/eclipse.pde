@@ -11,11 +11,9 @@
 package org.eclipse.pde.internal.ui.build;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
@@ -37,13 +35,13 @@ public class BuildFeatureAction extends BaseBuildAction {
 	protected void makeScripts(IProgressMonitor monitor)
 		throws InvocationTargetException, CoreException {
 		
-		ArrayList paths = new ArrayList();
 		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
 		for (int i = 0; i < models.length; i++) {
-			paths.add(models[i].getInstallLocation() + IPath.SEPARATOR + "feature.xml"); //$NON-NLS-1$
-			if (models[i].getUnderlyingResource() != null
-					&& models[i].getUnderlyingResource().equals(fManifestFile))
-				fFeatureModel = models[i];
+			if (models[i].getUnderlyingResource() != null) {
+				IResource underlying = models[i].getUnderlyingResource();
+				if (underlying.equals(fManifestFile) || underlying.getProject().equals(fManifestFile.getProject()))
+					fFeatureModel = models[i];
+			}
 		}
 		
 		BuildScriptGenerator generator = new BuildScriptGenerator();
