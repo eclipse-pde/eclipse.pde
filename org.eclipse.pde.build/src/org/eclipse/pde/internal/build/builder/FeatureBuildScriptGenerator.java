@@ -541,7 +541,12 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			generator.setBuildProperties(getBuildProperties());
 			generator.setRoot(featureRootLocation);
 			generator.setWorkingDirectory(getWorkingDirectory());
-			generator.generate();
+			try {
+				generator.generate();
+			} catch (CoreException e ) {
+				//problem with the .product file
+				//TODO Log warning/error
+			}
 		}
 		for (Iterator iter = getConfigInfos().iterator(); iter.hasNext();) {
 			Config aConfig = (Config) iter.next();

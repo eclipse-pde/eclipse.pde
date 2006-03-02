@@ -19,6 +19,8 @@ import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.site.PDEState;
 
 public class FeatureGenerator extends AbstractScriptGenerator {
+	private static final String LAUNCHER_FEATURE_NAME = "org.eclipse.platform.launchers"; //$NON-NLS-1$
+
 	private String featureId = null;
 	private String productFile = null;
 	private String[] pluginList = null;
@@ -129,8 +131,12 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			writer.printTag("plugin", parameters, true, true, true); //$NON-NLS-1$
 		}
 		
+		boolean hasLaunchers = false;
 		for (Iterator iter = features.iterator(); iter.hasNext();) {
 			String name = (String) iter.next();
+			if (name.equals(LAUNCHER_FEATURE_NAME)) {
+				hasLaunchers = true;	
+			}
 			if (verify) {
 				//this will throw an exception if the feature is not found.
 				getSite(false).findFeature(name, null, true);
@@ -139,7 +145,13 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			parameters.put("id", name); //$NON-NLS-1$
 			parameters.put("version", "0.0.0");  //$NON-NLS-1$//$NON-NLS-2$
 			writer.printTag("includes", parameters, true, true, true); //$NON-NLS-1$
-			
+		}
+		if (!hasLaunchers) {
+			parameters.clear();
+			parameters.put("id", LAUNCHER_FEATURE_NAME); //$NON-NLS-1$
+			parameters.put("version", "0.0.0");  //$NON-NLS-1$//$NON-NLS-2$
+			parameters.put("optional", "true");  //$NON-NLS-1$//$NON-NLS-2$
+			writer.printTag("includes", parameters, true, true, true); //$NON-NLS-1$
 		}
 		writer.endTag("feature"); //$NON-NLS-1$
 		writer.close();

@@ -13,12 +13,14 @@ package org.eclipse.pde.internal.build;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.site.PDEState;
 
 public class ProductGenerator extends AbstractScriptGenerator {
 	private static final String BUNDLE_EQUINOX_COMMON = "org.eclipse.equinox.common"; //$NON-NLS-1$
 	private static final String BUNDLE_EQUINOX_REGISTRY = "org.eclipse.equinox.registry"; //$NON-NLS-1$
+	private static final String BUNDLE_RUNTIME_COMPATIBILITY_REGISTRY = "org.eclipse.core.runtime.compatibility.registry"; //$NON-NLS-1$
 	private static final String BUNDLE_EQUINOX_PREFERENCES = "org.eclipse.equinox.preferences"; //$NON-NLS-1$
 	private static final String BUNDLE_OSGI = "org.eclipse.osgi"; //$NON-NLS-1$
 	private static final String BUNDLE_CORE_JOBS = "org.eclipse.core.jobs"; //$NON-NLS-1$
@@ -27,8 +29,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 	private static final String BUNDLE_UPDATE_CONFIGURATOR = "org.eclipse.update.configurator"; //$NON-NLS-1$
 	private static final String START_LEVEL_2 = "@2:start"; //$NON-NLS-1$
 	private static final String START_LEVEL_3 = "@3:start"; //$NON-NLS-1$
-	private static final String START_LEVEL_4 = "@4:start"; //$NON-NLS-1$
-	
+
 	private String product = null;
 	private ProductFile productFile = null;
 	private String root = null;
@@ -40,43 +41,60 @@ public class ProductGenerator extends AbstractScriptGenerator {
 	 */
 	public void generate() throws CoreException {
 		initialize();
-		
+
 		if (productFile == null)
 			return;
+
+		//we need at least a product id
+		if (productFile.getId() == null) {
+			return;
+		}
 
 		String custom = findFile(productFile.getConfigIniPath(), false);
 		String location = null, fileList = null;
 		for (Iterator iter = getConfigInfos().iterator(); iter.hasNext();) {
 			Config config = (Config) iter.next();
 			location = DEFAULT_PRODUCT_ROOT_FILES_DIR + '/' + config.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$
-			
+
+			String rootLocation = root + location;
+			File rootDir = new File(rootLocation);
+			if ((!rootDir.exists() && !rootDir.mkdirs()) || rootDir.isFile())
+				continue; //we will fail trying to create the files, TODO log warning/error
+
 			//add generated root files to build.properties
 			if (buildProperties != null) {
 				fileList = buildProperties.getProperty(ROOT_PREFIX + config.toString("."), ""); //$NON-NLS-1$ //$NON-NLS-2$
 				fileList += (fileList.length() > 0) ? ',' + location : location;
 				buildProperties.put(ROOT_PREFIX + config.toString("."), fileList); //$NON-NLS-1$
 			}
-			
+
 			//configuration/config.ini
 			if (custom != null) {
-				copyFile(custom, root + location + "/configuration/config.ini"); //$NON-NLS-1$
+				copyFile(custom, rootLocation + "/configuration/config.ini"); //$NON-NLS-1$
 			} else {
-				createConfigIni(config, root + location);				
+				createConfigIni(config, rootLocation);
 			}
-			
+
+			//only the config.ini makes sense in the any config
+			if (config.getOs().equals(Config.ANY))
+				continue;
+
 			//.eclipseproduct
-			createEclipseProductFile(root + location);
+			createEclipseProductFile(rootLocation);
+
+			//eclipse.ini
+			createLauncherIniFile(rootLocation, config.getOs());
 		}
-		
+
 	}
-	
+
 	private void initialize() throws CoreException {
 		loadProduct();
-		
+
 		PDEState state = getSite(false).getRegistry();
 		refactoredRuntime = state.getResolvedBundle(BUNDLE_EQUINOX_COMMON) != null;
 	}
-	
+
 	private void loadProduct() throws CoreException {
 		if (product == null || product.startsWith("${")) { //$NON-NLS-1$
 			productFile = null;
@@ -85,33 +103,33 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		String productPath = findFile(product, false);
 		if (productPath == null)
 			productPath = product;
-		
+
 		//the ProductFile uses the OS to determine which icons to return, we don't care so can use null
 		//this is better since this generator may be used for multiple OS's
 		productFile = new ProductFile(productPath, null);
 	}
-	
+
 	private void copyFile(String src, String dest) {
 		File source = new File(src);
 		if (!source.exists())
 			return;
 		File destination = new File(dest);
 		File destDir = destination.getParentFile();
-		if (!destDir.exists())
-			destDir.mkdirs();
-		
+		if ((!destDir.exists() && !destDir.mkdirs()) || destDir.isFile())
+			return; //we will fail trying to create the file, TODO log warning/error
+
 		InputStream in = null;
 		OutputStream out = null;
 		try {
 			in = new FileInputStream(source);
 			out = new FileOutputStream(destination);
-		
+
 			//Transfer bytes from in to out
-	        byte[] buf = new byte[1024];
-	        int len;
-	        while ((len = in.read(buf)) > 0) {
-	            out.write(buf, 0, len);
-	        }
+			byte[] buf = new byte[1024];
+			int len;
+			while ((len = in.read(buf)) > 0) {
+				out.write(buf, 0, len);
+			}
 		} catch (IOException e) {
 			//nothing
 		} finally {
@@ -132,31 +150,63 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		}
 	}
 
-	
 	private void createConfigIni(Config config, String location) throws CoreException {
+		File configDir = new File(location + "/configuration"); //$NON-NLS-1$
+		if ((!configDir.exists() && !configDir.mkdirs()) || configDir.isFile())
+			return; //we will fail trying to create the file, TODO log warning/error
+
 		PDEState state = getSite(false).getRegistry();
-		
+
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("#Product Runtime Configuration File\n"); //$NON-NLS-1$
-		
+
 		String splash = getSplashLocation(config);
 		if (splash != null)
 			buffer.append("osgi.splashPath=" + splash + '\n'); //$NON-NLS-1$
 
+		String application = productFile.getApplication();
+		if (application != null)
+			buffer.append("eclipse.application=" + application + '\n'); //$NON-NLS-1$
 		buffer.append("eclipse.product=" + productFile.getId() + '\n'); //$NON-NLS-1$
 		buffer.append("osgi.bundles="); //$NON-NLS-1$
 		if (productFile.useFeatures() || productFile.containsPlugin(BUNDLE_UPDATE_CONFIGURATOR)) {
 			if (refactoredRuntime) {
-				buffer.append(BUNDLE_EQUINOX_COMMON);		buffer.append(START_LEVEL_2);	buffer.append(',');
-				buffer.append(BUNDLE_CORE_JOBS);			buffer.append(START_LEVEL_2);	buffer.append(',');
-				buffer.append(BUNDLE_EQUINOX_REGISTRY); 	buffer.append(START_LEVEL_2);	buffer.append(',');
-				buffer.append(BUNDLE_EQUINOX_PREFERENCES);									buffer.append(',');
-				buffer.append(BUNDLE_CORE_CONTENTTYPE);										buffer.append(',');
-				buffer.append(BUNDLE_CORE_RUNTIME);			buffer.append(START_LEVEL_3);	buffer.append(',');
-				buffer.append(BUNDLE_UPDATE_CONFIGURATOR);	buffer.append(START_LEVEL_4);	buffer.append('\n');
+				//org.eclipse.equinox.common@2:start,  
+				buffer.append(BUNDLE_EQUINOX_COMMON);
+				buffer.append(START_LEVEL_2);
+				buffer.append(',');
+				//org.eclipse.core.jobs@2:start,
+				buffer.append(BUNDLE_CORE_JOBS);
+				buffer.append(START_LEVEL_2);
+				buffer.append(',');
+				//org.eclipse.core.runtime.compatibility.registry,
+				buffer.append(BUNDLE_RUNTIME_COMPATIBILITY_REGISTRY);
+				buffer.append(',');
+				//org.eclipse.equinox.registry@2:start,
+				buffer.append(BUNDLE_EQUINOX_REGISTRY);
+				buffer.append(START_LEVEL_2);
+				buffer.append(',');
+				//org.eclipse.equinox.preferences,
+				buffer.append(BUNDLE_EQUINOX_PREFERENCES);
+				buffer.append(',');
+				//org.eclipse.core.contenttype,
+				buffer.append(BUNDLE_CORE_CONTENTTYPE);
+				buffer.append(',');
+				//org.eclipse.core.runtime@2:start,
+				buffer.append(BUNDLE_CORE_RUNTIME);
+				buffer.append(START_LEVEL_2);
+				buffer.append(',');
+				//org.eclipse.update.configurator@3:start
+				buffer.append(BUNDLE_UPDATE_CONFIGURATOR);
+				buffer.append(START_LEVEL_3);
+				buffer.append('\n');
 			} else {
-				buffer.append(BUNDLE_CORE_RUNTIME);			buffer.append(START_LEVEL_2);	buffer.append(',');
-				buffer.append(BUNDLE_UPDATE_CONFIGURATOR);	buffer.append(START_LEVEL_3);	buffer.append('\n');
+				buffer.append(BUNDLE_CORE_RUNTIME);
+				buffer.append(START_LEVEL_2);
+				buffer.append(',');
+				buffer.append(BUNDLE_UPDATE_CONFIGURATOR);
+				buffer.append(START_LEVEL_3);
+				buffer.append('\n');
 			}
 		} else {
 			Dictionary environment = new Hashtable(4);
@@ -204,9 +254,6 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 		FileWriter writer = null;
 		try {
-			File configDir = new File(location + "/configuration"); //$NON-NLS-1$
-			if (!configDir.exists())
-				configDir.mkdirs();
 			writer = new FileWriter(new File(configDir, "config.ini")); //$NON-NLS-1$
 			writer.write(buffer.toString());
 		} catch (IOException e) {
@@ -222,24 +269,26 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 	}
 
-	private void createEclipseProductFile(String directory) throws CoreException  {
+	private void createEclipseProductFile(String directory) throws CoreException {
 		File dir = new File(directory);
-		if (!dir.exists() || !dir.isDirectory())
-			dir.mkdirs();
-		
+		if ((!dir.exists() && !dir.mkdirs()) || dir.isFile())
+			return; //we will fail trying to create the file, TODO log warning/error
+
 		Properties properties = new Properties();
-		properties.put("name", productFile.getProductName()); //$NON-NLS-1$
-		properties.put("id", productFile.getId());		 //$NON-NLS-1$
+		if (productFile.getProductName() != null)
+			properties.put("name", productFile.getProductName()); //$NON-NLS-1$
+		if (productFile.getId() != null)
+			properties.put("id", productFile.getId()); //$NON-NLS-1$
 
 		BundleDescription bundle = getSite(false).getRegistry().getResolvedBundle(getBrandingPlugin());
 		if (bundle != null)
 			properties.put("version", bundle.getVersion().toString()); //$NON-NLS-1$
-		
+
 		FileOutputStream stream = null;
 		try {
 			File file = new File(dir, ".eclipseproduct"); //$NON-NLS-1$
 			stream = new FileOutputStream(file);
-			properties.store(stream, "Eclipse Product File");  //$NON-NLS-1$
+			properties.store(stream, "Eclipse Product File"); //$NON-NLS-1$
 			stream.flush();
 		} catch (IOException e) {
 			//nothing
@@ -256,6 +305,8 @@ public class ProductGenerator extends AbstractScriptGenerator {
 	
 	private String getBrandingPlugin() {
 		String id = productFile.getId();
+		if (id == null)
+			return null;
 		int dot = id.lastIndexOf('.');
 		return (dot != -1) ? id.substring(0, dot) : null;
 	}
@@ -293,10 +344,67 @@ public class ProductGenerator extends AbstractScriptGenerator {
 					}
 				}
 			}
-		}	
+		}
 		return buffer.toString();
 	}
-	
+
+	private void createLauncherIniFile(String directory, String os) {
+		String launcher = getLauncherName();
+
+		if (os.equals(Platform.OS_MACOSX)) {
+				directory += "/" + launcher + ".app/Contents/MacOS"; //$NON-NLS-1$//$NON-NLS-2$
+		}
+		File dir = new File(directory);
+		if ((!dir.exists() && !dir.mkdirs()) || dir.isFile())
+			return; //we will fail trying to create the file TODO log warning/error
+
+		String programArgs = productFile.getProgramArguments(os);
+		String vmArgs = productFile.getVMArguments(os);
+
+		if ((programArgs == null || programArgs.length() == 0) && (vmArgs == null || vmArgs.length() == 0))
+			return;
+
+		String lineDelimiter = Platform.OS_WIN32.equals(os) ? "\r\n" : "\n"; //$NON-NLS-1$ //$NON-NLS-2$
+		PrintWriter writer = null;
+		try {
+			writer = new PrintWriter(new FileWriter(new File(dir, launcher + ".ini"))); //$NON-NLS-1$
+			if (programArgs != null && programArgs.length() > 0) {
+				StringTokenizer tokenizer = new StringTokenizer(programArgs);
+				while (tokenizer.hasMoreTokens()) {
+					writer.print(tokenizer.nextToken());
+					writer.print(lineDelimiter);
+				}
+			}
+			if (vmArgs != null && vmArgs.length() > 0) {
+				writer.print("-vmargs"); //$NON-NLS-1$
+				writer.print(lineDelimiter);
+				StringTokenizer tokenizer = new StringTokenizer(vmArgs);
+				while (tokenizer.hasMoreTokens()) {
+					writer.print(tokenizer.nextToken());
+					writer.print(lineDelimiter);
+				}
+			}
+		} catch (IOException e) {
+			//nothing
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+
+	private String getLauncherName() {
+		String name = productFile.getLauncherName();
+
+		if (name != null && name.length() > 0) {
+			name = name.trim();
+			if (name.endsWith(".exe")) //$NON-NLS-1$
+				name = name.substring(0, name.length() - 4);
+			return name;
+		}
+		return "eclipse"; //$NON-NLS-1$
+	}
+
 	public void setProduct(String product) {
 		this.product = product;
 	}
