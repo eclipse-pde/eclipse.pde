@@ -227,16 +227,16 @@ public class LauncherSection extends PDESection {
 	private Composite addWin32Section(Composite parent, FormToolkit toolkit) {
 		Composite comp = createComposite(parent, toolkit);
 		
-		fBmpButton = toolkit.createButton(comp, PDEUIMessages.LauncherSection_bmpImages, SWT.RADIO); 
+		final Label label = toolkit.createLabel(comp, PDEUIMessages.LauncherSection_bmpImagesText, SWT.WRAP); 
 		TableWrapData td = new TableWrapData();
 		td.colspan = 3;
-		fBmpButton.setLayoutData(td);
-		fBmpButton.setEnabled(isEditable());
-		
-		final Label label = toolkit.createLabel(comp, PDEUIMessages.LauncherSection_bmpImagesText, SWT.WRAP); 
+		label.setLayoutData(td);
+
+		fBmpButton = toolkit.createButton(comp, PDEUIMessages.LauncherSection_bmpImages, SWT.RADIO); 
 		td = new TableWrapData();
 		td.colspan = 3;
-		label.setLayoutData(td);
+		fBmpButton.setLayoutData(td);
+		fBmpButton.setEnabled(isEditable());		
 
 		for (int i = 0; i < F_WIN_ICON_LABELS.length; i++) {
 			final IconEntry ientry = new IconEntry(comp, toolkit, F_WIN_ICON_LABELS[i], F_WIN_ICON_IDS[i]);
