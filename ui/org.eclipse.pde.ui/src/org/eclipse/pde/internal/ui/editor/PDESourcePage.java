@@ -35,7 +35,6 @@ import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
@@ -320,9 +319,5 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		int offset = node.getOffset();
 		int length = node.getLength();
 		setHighlightRange(offset, length == -1 ? 1 : length, moveCursor);
-	}
-	
-	public int getOrientation() {
-		return SWT.LEFT_TO_RIGHT;
 	}
 }
