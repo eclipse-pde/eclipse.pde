@@ -20,6 +20,7 @@ import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.ant.FileSet;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
+import org.eclipse.pde.internal.build.site.PDEState;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.IncludedFeatureReferenceModel;
 import org.eclipse.update.core.model.URLEntryModel;
@@ -111,7 +112,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 			String versionRequested = identifier.getVersion().toString();
 			model = getSite(false).getRegistry().getResolvedBundle(identifier.getIdentifier(), versionRequested);
-			if (model == null && getBuildProperties().containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + identifier.getIdentifier())) {
+			//we prefer a newly generated source plugin over a preexisting binary one. 
+			if ((model == null || Utils.isBinary(model)) && getBuildProperties().containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + identifier.getIdentifier())) {
 				generateEmbeddedSource(identifier.getIdentifier());
 				model = getSite(false).getRegistry().getResolvedBundle(identifier.getIdentifier(), versionRequested);
 			}
@@ -144,6 +146,8 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	private void generateEmbeddedSource(String pluginId) throws CoreException {
+		if (sourceFeatureGeneration)
+			return;
 		FeatureBuildScriptGenerator featureGenerator = new FeatureBuildScriptGenerator(Utils.getArrayFromString(getBuildProperties().getProperty(GENERATION_SOURCE_PLUGIN_PREFIX + pluginId))[0], null, assemblyData);
 		featureGenerator.setGenerateIncludedFeatures(false);
 		featureGenerator.setAnalyseChildren(analysePlugins);
@@ -1136,7 +1140,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	private void generateSourceFeatureScripts() throws CoreException {
-		FeatureBuildScriptGenerator sourceScriptGenerator = new FeatureBuildScriptGenerator(sourceFeatureFullName, null, assemblyData);
+		FeatureBuildScriptGenerator sourceScriptGenerator = new FeatureBuildScriptGenerator(sourceFeatureFullName, sourceFeature.getFeatureVersion(), assemblyData);
 		sourceScriptGenerator.setGenerateIncludedFeatures(true);
 		sourceScriptGenerator.setAnalyseChildren(true);
 		sourceScriptGenerator.setSourceToGather(sourceToGather);
@@ -1266,7 +1270,13 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 			}
 		}
-		getSite(false).getRegistry().addBundle(sourcePluginDir);
+		
+		PDEState state = getSite(false).getRegistry();
+		BundleDescription oldBundle = state.getResolvedBundle(result.getPluginIdentifier());
+		if(oldBundle != null)
+			state.getState().removeBundle(oldBundle);
+		state.addBundle(sourcePluginDir);
+		
 		return result;
 	}
 	
@@ -1335,7 +1345,11 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 			}
 		}
-		getSite(false).getRegistry().addBundle(sourcePluginDir);
+		PDEState state = getSite(false).getRegistry();
+		BundleDescription oldBundle = state.getResolvedBundle(result.getPluginIdentifier());
+		if(oldBundle != null)
+			state.getState().removeBundle(oldBundle);
+		state.addBundle(sourcePluginDir);
 		return result;
 	}
 
@@ -1406,7 +1420,11 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			String message = NLS.bind(Messages.exception_writingFile, sourceFragmentDir.getName());
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, null));
 		}
-		getSite(false).getRegistry().addBundle(sourceFragmentDir);
+		PDEState state = getSite(false).getRegistry();
+		BundleDescription oldBundle = state.getResolvedBundle(fragment.getPluginIdentifier());
+		if(oldBundle != null)
+			state.getState().removeBundle(oldBundle);
+		state.addBundle(sourceFragmentDir);
 	}
 	
 	private void createSourceFragment(PluginEntry fragment, PluginEntry plugin) throws CoreException {
@@ -1465,7 +1483,11 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			String message = NLS.bind(Messages.exception_writingFile, sourceFragmentDir.getName());
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, null));
 		}
-		getSite(false).getRegistry().addBundle(sourceFragmentDir);
+		PDEState state = getSite(false).getRegistry();
+		BundleDescription oldBundle = state.getResolvedBundle(fragment.getPluginIdentifier());
+		if(oldBundle != null)
+			state.getState().removeBundle(oldBundle);
+		state.addBundle(sourceFragmentDir);
 	}
 
 	public String getSourcePluginName(PluginEntry plugin, boolean versionSuffix) {

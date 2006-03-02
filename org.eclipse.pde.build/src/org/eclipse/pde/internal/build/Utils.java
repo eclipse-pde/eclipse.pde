@@ -15,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.update.core.IFeature;
@@ -406,5 +407,14 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		sb.append(propertyName);
 		sb.append(PROPERTY_ASSIGNMENT_SUFFIX);
 		return sb.toString();
+	}
+	
+	public static boolean isBinary(BundleDescription bundle) {
+		Properties bundleProperties = ((Properties) bundle.getUserObject());
+		if (bundleProperties == null || bundleProperties.get(IS_COMPILED) == null){
+			File props = new File(bundle.getLocation(), PROPERTIES_FILE);
+			return !(props.exists() && props.isFile());
+		}
+		return (Boolean.FALSE == bundleProperties.get(IS_COMPILED));
 	}
 }
