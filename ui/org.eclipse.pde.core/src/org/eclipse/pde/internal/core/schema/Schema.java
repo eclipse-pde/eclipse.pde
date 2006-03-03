@@ -305,7 +305,7 @@ public class Schema extends PlatformObject implements ISchema {
 
 	private String getNormalizedText(String source) {
 		if (source == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		
 		String result = source.replace('\t', ' ');
 		result = result.trim();
@@ -360,7 +360,7 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 	
 	private InputStream getInputStream() throws IOException {
-		if ("file".equals(fURL.getProtocol()))
+		if ("file".equals(fURL.getProtocol())) //$NON-NLS-1$
 			return new FileInputStream(fURL.getFile());
 		return getURL().openStream();
 	}
