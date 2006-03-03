@@ -118,21 +118,6 @@ public class PDERuntimePluginImages {
 	public static final ImageDescriptor DESC_COLLAPSE_ALL =
 		create(PATH_LCL, "collapseall.gif"); //$NON-NLS-1$
 	
-	public static final ImageDescriptor DESC_HORIZONTAL_VIEW =
-		create(PATH_LCL, "th_horizontal.gif"); //$NON-NLS-1$
-	
-	public static final ImageDescriptor DESC_HORIZONTAL_VIEW_DISABLED = 
-		create(PATH_LCL_DISABLED, "th_horizontal.gif"); //$NON-NLS-1$
-	
-	public static final ImageDescriptor DESC_VERTICAL_VIEW =
-		create(PATH_LCL, "th_vertical.gif"); //$NON-NLS-1$
-	
-	public static final ImageDescriptor DESC_VERTICAL_VIEW_DISABLED = 
-		create(PATH_LCL_DISABLED, "th_vertical.gif"); //$NON-NLS-1$
-	
-	public static final ImageDescriptor DESC_HIDE_PANE =
-		create(PATH_EVENTS, "hide_pane.gif"); //$NON-NLS-1$
-	
 	/*
 	 * Event Details
 	 */
