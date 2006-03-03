@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -359,6 +360,8 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 	
 	private InputStream getInputStream() throws IOException {
+		if ("file".equals(fURL.getProtocol()))
+			return new FileInputStream(fURL.getFile());
 		return getURL().openStream();
 	}
 
