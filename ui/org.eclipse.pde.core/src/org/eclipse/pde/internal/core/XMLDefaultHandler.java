@@ -29,8 +29,13 @@ public class XMLDefaultHandler extends DefaultHandler {
 	private Element fRootElement;
 	
 	private Stack fElementStack = new Stack();
+	private boolean fAbbreviated;
 	
 	public XMLDefaultHandler() {
+	}
+	
+	public XMLDefaultHandler(boolean abbreviated) {
+		fAbbreviated = abbreviated;
 	}
 	
 	public void startElement(String uri, String localName, String qName, Attributes attributes)
@@ -86,6 +91,8 @@ public class XMLDefaultHandler extends DefaultHandler {
 	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 	 */
 	public void characters(char[] characters, int start, int length) throws SAXException {
+		if (fAbbreviated)
+			return;
 		StringBuffer buff = new StringBuffer();
 		for (int i = 0; i < length; i++) {
 			buff.append(characters[start + i]);

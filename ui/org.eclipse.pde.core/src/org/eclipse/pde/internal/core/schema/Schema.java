@@ -303,6 +303,9 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 
 	private String getNormalizedText(String source) {
+		if (source == null)
+			return "";
+		
 		String result = source.replace('\t', ' ');
 		result = result.trim();
 		return result;
@@ -354,11 +357,15 @@ public class Schema extends PlatformObject implements ISchema {
 	public boolean isNotificationEnabled() {
 		return fNotificationEnabled;
 	}
+	
+	private InputStream getInputStream() throws IOException {
+		return getURL().openStream();
+	}
 
 	public void load() {
 		InputStream input = null;
 		try {
-			input = getURL().openStream();
+			input = getInputStream();
 			load(input);
 		} catch (FileNotFoundException e) {
 			fLoaded = false;
@@ -382,7 +389,7 @@ public class Schema extends PlatformObject implements ISchema {
 	public void load(InputStream stream) {
 		try {
 			SAXParser parser = getParser();
-			XMLDefaultHandler handler = new XMLDefaultHandler();
+			XMLDefaultHandler handler = new XMLDefaultHandler(fAbbreviated);
 			parser.parse(stream, handler);
 			traverseDocumentTree(handler.getDocumentElement());
 		} catch (SAXException e) {
@@ -439,8 +446,9 @@ public class Schema extends PlatformObject implements ISchema {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				if (child.getNodeName().equals("documentation")) { //$NON-NLS-1$
-					element.setDescription(getNormalizedText(child
-							.getFirstChild().getNodeValue()));
+					Node doc = child.getFirstChild();
+					if (doc != null)
+						element.setDescription(getNormalizedText(doc.getNodeValue()));
 				} else if (child.getNodeName().equals("appInfo")) { //$NON-NLS-1$
 					NodeList infos = child.getChildNodes();
 					for (int j = 0; j < infos.getLength(); j++) {
