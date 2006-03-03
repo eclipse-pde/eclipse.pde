@@ -34,12 +34,12 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		deleteContent(new File(PDECore.getDefault().getStateLocation().toOSString()));
+		ExecutionEnvironmentAnalyzer.getKnownExecutionEnvironments();
 	}
 	
 	public void testModels() throws Exception {
 		tagAsSummary("Initialize Plug-ins (no caching)", Dimension.ELAPSED_PROCESS);
 		String path = ExternalModelManager.getEclipseHome().toOSString();
-		ExecutionEnvironmentAnalyzer.getKnownExecutionEnvironments();
 		URL[] paths = PluginPathFinder.getPluginPaths(path);
 		startMeasuring();
 		new PDEState(paths, false, new NullProgressMonitor());
@@ -51,7 +51,6 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 	public void testCachedModels() throws Exception {
 		tagAsGlobalSummary("Initialize Plug-ins (with caching)", Dimension.ELAPSED_PROCESS);
 		String path = ExternalModelManager.getEclipseHome().toOSString();
-		ExecutionEnvironmentAnalyzer.getKnownExecutionEnvironments();
 		URL[] paths = PluginPathFinder.getPluginPaths(path);
 		new PDEState(paths, true, new NullProgressMonitor());
 		startMeasuring();
