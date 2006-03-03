@@ -15,11 +15,18 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jdt.ui.actions.ShowInPackageViewAction;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -59,6 +66,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -106,6 +115,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
     private TableViewer fPackageViewer;
 
     private Action fAddAction;
+    private Action fOpenAction;
     private Action fRemoveAction;
     private Action fPropertiesAction;
 
@@ -206,7 +216,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
     }
     
     protected void handleDoubleClick(IStructuredSelection selection) {
-        handleOpenProperties();
+    	handleOpen(selection);
     }
 
     protected void buttonSelected(int index) {
@@ -221,6 +231,39 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
             handleOpenProperties();
         }
 	}
+    
+    private void handleOpen(ISelection sel) {
+    	if (sel instanceof IStructuredSelection)  {
+    		IStructuredSelection selection = (IStructuredSelection) sel;
+    		if (selection.size() != 1) 
+    			return;
+    		PackageObject importObject = (PackageObject)selection.getFirstElement();
+    		String packageName = importObject.getName();
+
+    		IJavaProject jp = JavaCore.create(getPage().getPDEEditor().getCommonProject());
+    		if (jp != null)
+    			try {
+    				IPackageFragmentRoot[] roots = jp.getPackageFragmentRoots();
+    				for (int i = 0; i < roots.length; i++) {
+    					IPackageFragment frag = roots[i].getPackageFragment(packageName);
+    					if (frag.exists()) {
+    						openPackage(frag);
+    						break;
+    					}
+    				}
+    			} catch (JavaModelException e) {
+    			}
+    	}
+    }
+    
+    private void openPackage(IPackageFragment frag) {
+    	try {
+    		IViewPart part = PDEPlugin.getActivePage().showView(JavaUI.ID_PACKAGES);
+    		ShowInPackageViewAction action = new ShowInPackageViewAction(part.getSite());
+    		action.run(frag);
+    	} catch (PartInitException e) {
+    	}
+    }
 
 	private void handleOpenProperties() {
         Object object = ((IStructuredSelection)fPackageViewer.getSelection()).getFirstElement();
@@ -355,6 +398,11 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
             }
         };
         fAddAction.setEnabled(isEditable());
+        fOpenAction = new Action(PDEUIMessages.RequiresSection_open) {
+        	public void run() {
+        		handleOpen(fPackageViewer.getSelection());
+        	}
+        };
         fRemoveAction = new Action(PDEUIMessages.RequiresSection_delete) { 
             public void run() {
                 handleRemove();
@@ -370,9 +418,13 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
     }
 
 	protected void fillContextMenu(IMenuManager manager) {
+		ISelection selection = fPackageViewer.getSelection();
         manager.add(fAddAction);
+        if (!selection.isEmpty())
+        	manager.add(fOpenAction);
         manager.add(new Separator());
-        manager.add(fRemoveAction);
+        if (!selection.isEmpty())
+        	manager.add(fRemoveAction);
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 		manager.add(new Separator());
 		if (((IModel)getPage().getModel()).getUnderlyingResource()!=null) 
