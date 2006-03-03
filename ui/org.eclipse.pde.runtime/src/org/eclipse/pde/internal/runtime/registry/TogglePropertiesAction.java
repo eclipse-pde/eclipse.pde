@@ -24,32 +24,32 @@ import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
  * @since 3.0
  */
 public class TogglePropertiesAction extends Action {
-	private RegistryBrowser fViewer;
+//	private RegistryBrowser fViewer;
 	private int fOrientation;
 
 	public TogglePropertiesAction(RegistryBrowser view, int orientation) {
 		super("", AS_RADIO_BUTTON); //$NON-NLS-1$
-		setRegistryBrowser(view);
+//		setRegistryBrowser(view);
 		setOrientation(orientation);
 				
-		if (orientation == RegistryBrowser.VERTICAL_ORIENTATION) {
+//		if (orientation == RegistryBrowser.VERTICAL_ORIENTATION) {
 			setText(PDERuntimeMessages.RegistryView_verticalOrientation_label);  
 			setToolTipText(PDERuntimeMessages.RegistryView_verticalOrientation_tooltip);  
 			setDescription(PDERuntimeMessages.RegistryView_verticalOrientation_desc);  
 			setImageDescriptor(PDERuntimePluginImages.DESC_VERTICAL_VIEW);
 			setDisabledImageDescriptor(PDERuntimePluginImages.DESC_VERTICAL_VIEW_DISABLED);
-		} else if (orientation == RegistryBrowser.HORIZONTAL_ORIENTATION) {
+//		} else if (orientation == RegistryBrowser.HORIZONTAL_ORIENTATION) {
 			setText(PDERuntimeMessages.RegistryView_horizontalOrientation_label);  
 			setToolTipText(PDERuntimeMessages.RegistryView_horizontalOrientation_tooltip);  
 			setDescription(PDERuntimeMessages.RegistryView_horizontalOrientation_desc);  
 			setImageDescriptor(PDERuntimePluginImages.DESC_HORIZONTAL_VIEW);
 			setDisabledImageDescriptor(PDERuntimePluginImages.DESC_HORIZONTAL_VIEW_DISABLED);
-		} else {
+//		} else {
 			setText(PDERuntimeMessages.RegistryView_showPropertiesSheet_label);
 			setToolTipText(PDERuntimeMessages.RegistryView_showPropertiesSheet_tooltip);  
 			setDescription(PDERuntimeMessages.RegistryView_showPropertiesSheet_desc);  
 			setImageDescriptor(PDERuntimePluginImages.DESC_HIDE_PANE);
-		} 		
+//		} 		
 
 	}
 
@@ -57,16 +57,16 @@ public class TogglePropertiesAction extends Action {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() { // called when menu pressed
-		getRegistryBrowser().setViewOrientation(getOrientation()); 
+//		getRegistryBrowser().setViewOrientation(getOrientation()); 
 	}
 	
-	private RegistryBrowser getRegistryBrowser() {
-		return fViewer;
-	}
+//	private RegistryBrowser getRegistryBrowser() {
+//		return fViewer;
+//	}
 
-	private void setRegistryBrowser(RegistryBrowser view) {
-		fViewer = view;
-	}
+//	private void setRegistryBrowser(RegistryBrowser view) {
+//		fViewer = view;
+//	}
 
 	private void setOrientation(int orientation) {
 		fOrientation = orientation;

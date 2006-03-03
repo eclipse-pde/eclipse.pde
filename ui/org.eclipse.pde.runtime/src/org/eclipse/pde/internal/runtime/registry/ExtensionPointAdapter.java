@@ -15,19 +15,19 @@ import org.eclipse.core.runtime.IExtensionPoint;
 
 public class ExtensionPointAdapter extends ParentAdapter {
 
-
-public ExtensionPointAdapter(Object object) {
-	super(object);
-}
-protected Object [] createChildren() {
-	IExtensionPoint extensionPoint = (IExtensionPoint)getObject();
-
-	IExtension [] extensions = extensionPoint.getExtensions();
-	Object [] result = new Object[extensions.length];
-	for (int i=0; i<extensions.length; i++) {
-		IExtension extension = extensions[i];
-		result[i] = new ExtensionAdapter(extension);
+	public ExtensionPointAdapter(Object object) {
+		super(object);
 	}
-	return result;
-}
+
+	protected Object[] createChildren() {
+		IExtensionPoint extensionPoint = (IExtensionPoint) getObject();
+
+		IExtension[] extensions = extensionPoint.getExtensions();
+		Object[] result = new Object[extensions.length];
+		for (int i = 0; i < extensions.length; i++) {
+			IExtension extension = extensions[i];
+			result[i] = new ExtensionAdapter(extension);
+		}
+		return result;
+	}
 }

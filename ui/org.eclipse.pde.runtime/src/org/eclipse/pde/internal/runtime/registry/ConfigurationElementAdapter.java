@@ -14,19 +14,36 @@ import org.eclipse.core.runtime.IConfigurationElement;
 
 public class ConfigurationElementAdapter extends ParentAdapter {
 
-
-public ConfigurationElementAdapter(Object object) {
-	super(object);
-}
-protected Object[] createChildren() {
-	IConfigurationElement config = (IConfigurationElement)getObject();
-	IConfigurationElement [] children = config.getChildren();
-	if (children.length==0) return null;
-	Object[] result = new Object[children.length];
-	for (int i=0; i<children.length; i++) {
-		IConfigurationElement child = children[i];
-		result[i] = new ConfigurationElementAdapter(child);
+	class ConfigurationAttribute implements IConfigurationAttribute {
+		private String fLabel;
+		public ConfigurationAttribute(String name, String value) {
+			fLabel = name + " = " + value; //$NON-NLS-1$
+		}
+		public String getLabel() {
+			return fLabel;
+		}
 	}
-	return result;
-}
+	
+	public ConfigurationElementAdapter(Object object) {
+		super(object);
+	}
+
+	protected Object[] createChildren() {
+		IConfigurationElement config = (IConfigurationElement) getObject();
+		String[] atts = config.getAttributeNames();
+		IConfigurationAttribute[] catts = new IConfigurationAttribute[atts.length];
+		for (int i = 0; i < atts.length; i++)
+			catts[i] = new ConfigurationAttribute(atts[i], config.getAttribute(atts[i]));
+		IConfigurationElement[] children = config.getChildren();
+		Object[] result = new Object[children.length + catts.length];
+		for (int i = 0; i < children.length; i++) {
+			IConfigurationElement child = children[i];
+			result[i] = new ConfigurationElementAdapter(child);
+		}
+		for (int i = 0; i < catts.length; i++) {
+			IConfigurationAttribute child = catts[i];
+			result[children.length + i] = new ConfigurationAttributeAdapter(child);
+		}
+		return result;
+	}
 }

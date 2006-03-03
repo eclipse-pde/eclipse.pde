@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime;
 
-import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.pde.internal.runtime.registry.PluginObjectAdapter;
-import org.eclipse.pde.internal.runtime.registry.RegistryPropertySourceFactory;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -60,10 +56,6 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		this.fContext = context;
-		IAdapterManager manager = Platform.getAdapterManager();
-		RegistryPropertySourceFactory factory =
-			new RegistryPropertySourceFactory();
-		manager.registerAdapters(factory, PluginObjectAdapter.class);
 	}
 	
 	public BundleContext getBundleContext() {

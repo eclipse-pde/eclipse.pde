@@ -74,17 +74,6 @@ public class PDERuntimeMessages extends NLS {
 	public static String RegistryView_pluginPR_version;
 	public static String RegistryView_pluginPR_activated;
 
-	public static String RegistryView_prerequisitePR_exported;
-	public static String RegistryView_prerequisitePR_id;
-	public static String RegistryView_prerequisitePR_version;
-	public static String RegistryView_prerequisitePR_optional;
-	public static String RegistryView_prerequisitePR_match;
-	public static String RegistryView_prerequisitePR_matchedCompatible;
-	public static String RegistryView_prerequisitePR_matchedExact;
-	public static String RegistryView_prerequisitePR_matchedEquivalent;
-	public static String RegistryView_prerequisitePR_matchedGreaterOrEqual;
-	public static String RegistryView_prerequisitePR_matchedPerfect;
-
 	public static String RegistryView_refresh_label;
 	public static String RegistryView_refresh_tooltip;
 	public static String RegistryView_collapseAll_label;
@@ -128,4 +117,6 @@ public class PDERuntimeMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, PDERuntimeMessages.class);
 	}
+
+	public static String RegistryBrowserLabelProvider_nameIdBind;
 }

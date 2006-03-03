@@ -12,8 +12,8 @@ package org.eclipse.pde.internal.runtime;
 
 import java.net.URL;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -46,6 +46,8 @@ public class PDERuntimePluginImages {
 		create(PATH_OBJ, "extensions_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_GENERIC_XML_OBJ =
 		create(PATH_OBJ, "generic_xml_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ATTR_XML_OBJ =
+		create(PATH_OBJ, "attr_xml_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_INFO_ST_OBJ =
 		create(PATH_OBJ, "info_st_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_JAVA_LIB_OBJ =
@@ -64,7 +66,9 @@ public class PDERuntimePluginImages {
 		create(PATH_OBJ, "runtime_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_WARNING_ST_OBJ =
 		create(PATH_OBJ, "warning_st_obj.gif"); //$NON-NLS-1$
-
+	public static final ImageDescriptor DESC_LOCATION =
+		create(PATH_OBJ, "location_obj.gif"); //$NON-NLS-1$
+	
 	/*
 	 * Local tool bar image descriptors
 	 */
@@ -141,6 +145,10 @@ public class PDERuntimePluginImages {
 	 */
 	public static final ImageDescriptor DESC_RUN_CO =
 		create(PATH_OVR, "run_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_EXPORT_CO =
+		create(PATH_OVR, "export_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ERROR_CO =
+		create(PATH_OVR, "error_co.gif"); //$NON-NLS-1$
 
 	private static ImageDescriptor create(String prefix, String name) {
 		return ImageDescriptor.createFromURL(makeIconURL(prefix, name));
@@ -151,7 +159,7 @@ public class PDERuntimePluginImages {
 	}
 	private static URL makeIconURL(String prefix, String name) {
 		String path = "$nl$/" + prefix + name; //$NON-NLS-1$
-		return Platform.find(PDERuntimePlugin.getDefault().getBundle(), new Path(path));
+		return FileLocator.find(PDERuntimePlugin.getDefault().getBundle(), new Path(path), null);
 	}
 	public static Image manage(String key, ImageDescriptor desc) {
 		Image image = desc.createImage();
