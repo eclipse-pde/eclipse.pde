@@ -29,11 +29,15 @@ public class SchemaPerfTest extends PerformanceTestCase {
 		tagAsSummary("Loading all schemas", Dimension.ELAPSED_PROCESS);
 		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getAllPlugins();
 		startMeasuring();
+		int count = 0;
 		for (int i = 0; i < models.length; i++) {
 			IPluginExtensionPoint[] extPoints = models[i].getPluginBase().getExtensionPoints();
 			for (int j = 0; j < extPoints.length; j++) {
 				PDECore.getDefault().getSchemaRegistry().getSchema(extPoints[j].getFullId());
 			}
+			// For a fair comparison, read as many schemas as there are in Eclipse 3.1
+			if (count++ == 178)
+				break;
 		}
 		stopMeasuring();
 		commitMeasurements();
