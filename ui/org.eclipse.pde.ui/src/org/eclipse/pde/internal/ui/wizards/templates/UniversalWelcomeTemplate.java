@@ -77,7 +77,7 @@ public class UniversalWelcomeTemplate extends PDETemplateSection {
 	}
 
 	public String getSectionId() {
-		return "universal"; //$NON-NLS-1$
+		return "universalWelcome"; //$NON-NLS-1$
 	}
 
 	protected void initializeFields(IFieldData data) {
