@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -18,6 +17,8 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -178,9 +179,13 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 						bundleEntry = FileLocator.resolve(bundleEntry);
 					} catch (IOException e) {
 					}
-					File file = new File(bundleEntry.getFile());
-					String path = file.getAbsolutePath();
-					return path.endsWith("!") ? path.substring(0, path.length() - 1) : path;
+					IPath path = new Path(bundleEntry.getFile());
+					String pathString = path.removeTrailingSeparator().toString();
+					if (pathString.startsWith("file:"))
+						pathString = pathString.substring(5);
+					if (pathString.endsWith("!"))
+						pathString = pathString.substring(0, pathString.length() - 1);
+					return pathString;
 			}
 		}
 		if (element instanceof IExtension) {
