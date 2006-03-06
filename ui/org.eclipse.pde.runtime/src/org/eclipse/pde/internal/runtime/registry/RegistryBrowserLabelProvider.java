@@ -180,7 +180,7 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 					} catch (IOException e) {
 					}
 					IPath path = new Path(bundleEntry.getFile());
-					String pathString = path.removeTrailingSeparator().toString();
+					String pathString = path.removeTrailingSeparator().toOSString();
 					if (pathString.startsWith("file:"))
 						pathString = pathString.substring(5);
 					if (pathString.endsWith("!"))
