@@ -34,7 +34,6 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 	class BundleFolder implements IBundleFolder {
 		private int id;
 		private Bundle bundle;
-		private Object[] children;
 		public BundleFolder(Bundle pd, int id) {
 			this.bundle = pd;
 			this.id = id;
@@ -43,9 +42,7 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 			return bundle;
 		}
 		public Object[] getChildren() {
-			if (children == null)
-				children = getFolderChildren(bundle, id);
-			return children;
+			return getFolderChildren(bundle, id);
 		}
 		public int getFolderId() {
 			return id;

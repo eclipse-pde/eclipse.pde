@@ -9,9 +9,17 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
+import org.eclipse.core.internal.registry.ExtensionRegistry;
+import org.eclipse.core.runtime.ContributorFactoryOSGi;
+import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
@@ -33,6 +41,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -58,6 +67,8 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 	private Action refreshAction;
 	private Action showPluginsAction;
 	private Action collapseAllAction;
+	private Action removeAction;
+	private Action addAction;
 	private DrillDownAdapter drillDownAdapter;
 	
 	// single-pane control
@@ -141,7 +152,7 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		mainView.setLayout(layout);
 		mainView.setLayoutData(new GridData(GridData.FILL_BOTH));	
 		
-		Tree tree = new Tree(mainView, SWT.FLAT);
+		Tree tree = new Tree(mainView, SWT.FLAT | SWT.MULTI);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		tree.setLayoutData(gd);
 		treeViewer = new TreeViewer(tree);
@@ -201,6 +212,27 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 	}
 	public void fillContextMenu(IMenuManager manager) {
 		manager.add(refreshAction);
+		Tree tree = getUndisposedTree();
+		if (tree != null && false) { // testing purposes only
+			TreeItem[] selection = tree.getSelection();
+			boolean allRemoveable = true;
+			boolean canAdd = true;
+			for (int i = 0; i < selection.length; i++) {
+				Object obj = selection[i].getData();
+				if (obj instanceof PluginObjectAdapter)
+					obj = ((PluginObjectAdapter)obj).getObject();
+				if (!(obj instanceof Bundle) || ((Bundle)obj).getState() < Bundle.RESOLVED)
+					canAdd = false;
+				if (!(obj instanceof IExtensionPoint) && !(obj instanceof IExtension)) {
+					allRemoveable = false;
+					break;
+				}
+			}
+			if (allRemoveable)
+				manager.add(removeAction);
+			if (canAdd && selection.length == 1)
+				manager.add(addAction);
+		}
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator());
@@ -230,10 +262,8 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 	 * @see org.osgi.framework.BundleListener#bundleChanged(org.osgi.framework.BundleEvent)
 	 */
 	public void bundleChanged(BundleEvent event) {
-		if (treeViewer == null)
-			return;
-		Tree tree = treeViewer.getTree();
-		if (tree.isDisposed())
+		Tree tree = getUndisposedTree();
+		if (tree == null)
 			return;
 		
 		final RegistryBrowserContentProvider provider = ((RegistryBrowserContentProvider) treeViewer.getContentProvider());
@@ -243,24 +273,25 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		final PluginObjectAdapter adapter = new PluginObjectAdapter(eventBundle);
 		tree.getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				if (treeViewer == null || treeViewer.getTree() == null || treeViewer.getTree().isDisposed())
+				Tree tree = getUndisposedTree();
+				if (tree == null)
 					return;
 				TreeItem[] items = treeViewer.getTree().getItems();
 				if (items != null) {
 					for (int i = 0; i < items.length; i++) {
-						PluginObjectAdapter plugin = (PluginObjectAdapter) items[i].getData();
-						if (plugin != null) {
-							Object object = plugin.getObject();
-							if (object instanceof Bundle) {
-								Bundle bundle = (Bundle) object;
-								if (bundle.equals(eventBundle)) {
-									treeViewer.remove(plugin);
-									break;
-								}
+						Object object = items[i].getData();
+						if (object instanceof PluginObjectAdapter)
+							object = ((PluginObjectAdapter)object).getObject(); 
+						if (object != null && object instanceof Bundle) {
+							Bundle bundle = (Bundle) object;
+							if (bundle.equals(eventBundle)) {
+								treeViewer.update(items[i], null);
+								updateTitle();
+								return;
 							}
 						}
 					}
-				}
+				}	
 				if (provider.isShowRunning() && eventBundle.getState() != Bundle.ACTIVE)
 					return;
 				treeViewer.add(treeViewer.getInput(), adapter);
@@ -273,33 +304,110 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
 	 */
 	public void registryChanged(IRegistryChangeEvent event) {
+		Tree tree = getUndisposedTree();
+		if (tree == null)
+			return;
 		final IExtensionDelta[] deltas = event.getExtensionDeltas();
-		treeViewer.getTree().getDisplay().syncExec(new Runnable() {
+		tree.getDisplay().syncExec(new Runnable() {
 			public void run() {
-				for (int i = 0; i < deltas.length; i++) {
-					IExtension ext = deltas[i].getExtension();
-					IExtensionPoint extPoint = deltas[i].getExtensionPoint();
-					Bundle bundle = Platform.getBundle(ext.getNamespaceIdentifier());
-					if (bundle == null)
-						continue;
-					PluginObjectAdapter adapter = new PluginObjectAdapter(bundle);
-					if (deltas[i].getKind() == IExtensionDelta.ADDED) {
-						if (ext != null)
-							treeViewer.add(adapter, ext);
-						if (extPoint != null)
-							treeViewer.add(adapter, extPoint);
-					} else {
-						if (ext != null)
-							treeViewer.remove(ext);
-						if (extPoint != null)
-							treeViewer.remove(extPoint);
-						treeViewer.refresh();
-					}
-				}
-				updateTitle();
+				if (getUndisposedTree() == null)
+					return;
+				for (int i = 0; i < deltas.length; i++)
+					handleDelta(deltas[i]);
 			}
 		});
 	}
+	
+	private void handleDelta(IExtensionDelta delta) {
+		IExtension ext = delta.getExtension();
+		IExtensionPoint extPoint = delta.getExtensionPoint();
+		if (delta.getKind() == IExtensionDelta.ADDED) {
+			addToTree(ext);
+			addToTree(extPoint);
+		} else if (delta.getKind() == IExtensionDelta.REMOVED) {
+			removeFromTree(ext);
+			removeFromTree(extPoint);
+		}
+	}
+	
+	private void addToTree(Object object) {
+		String namespace = getNamespaceIdentifier(object);
+		if (namespace == null)
+			return;
+		TreeItem[] bundles = treeViewer.getTree().getItems();
+		for (int i = 0; i < bundles.length; i++) {
+			Object data = bundles[i].getData();
+			Object adapted = null;
+			if (data instanceof PluginObjectAdapter)
+				adapted = ((PluginObjectAdapter)data).getObject();
+			if (adapted instanceof Bundle && ((Bundle)adapted).getSymbolicName().equals(namespace)) {
+				// TODO fix this method
+				if (true) {
+					treeViewer.refresh(data);
+					return;
+				}
+				TreeItem[] folders = bundles[i].getItems();
+				for (int j = 0; j < folders.length; j++) {
+					IBundleFolder folder = (IBundleFolder)folders[j].getData();
+					if (correctFolder(folder, object)) {
+						treeViewer.add(folder, object);
+						return;
+					}
+				}
+				// folder not found - 1st extension - refresh bundle item
+				treeViewer.refresh(data);
+			}
+		}
+	}
+	
+	private String getNamespaceIdentifier(Object object) {
+		if (object instanceof IExtensionPoint)
+			return ((IExtensionPoint)object).getNamespaceIdentifier();
+		if (object instanceof IExtension)
+			return ((IExtension)object).getContributor().getName();
+		return null;
+	}
+	
+	private boolean correctFolder(IBundleFolder folder, Object child) {
+		if (folder == null)
+			return false;
+		if (child instanceof IExtensionPoint)
+			return folder.getFolderId() == IBundleFolder.F_EXTENSION_POINTS;
+		if (child instanceof IExtension)
+			return folder.getFolderId() == IBundleFolder.F_EXTENSIONS;
+		return false;
+	}
+	
+	private void removeFromTree(Object object) {
+		String namespace = getNamespaceIdentifier(object);
+		if (namespace == null)
+			return;
+		TreeItem[] bundles = treeViewer.getTree().getItems();
+		for (int i = 0; i < bundles.length; i++) {
+			Object data = bundles[i].getData();
+			Object adapted = null;
+			if (data instanceof PluginObjectAdapter)
+				adapted = ((PluginObjectAdapter)data).getObject();
+			if (adapted instanceof Bundle && ((Bundle)adapted).getSymbolicName().equals(namespace)) {
+				TreeItem[] folders = bundles[i].getItems();
+				// TODO fix this method
+				if (true) {
+					treeViewer.refresh(data);
+					return;
+				}
+				for (int j = 0; j < folders.length; j++) {
+					IBundleFolder folder = (IBundleFolder)folders[j].getData();
+					if (correctFolder(folder, object)) {
+						treeViewer.remove(object);
+						return;
+					}
+				}
+				// folder not found - 1st extension - refresh bundle item
+				treeViewer.refresh(data);
+			}
+		}
+	}
+	
 	/*
 	 * toolbar and context menu actions
 	 */
@@ -329,6 +437,51 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		};
 		showPluginsAction.setChecked(memento.getString(SHOW_RUNNING_PLUGINS).equals("true")); //$NON-NLS-1$
 		
+		removeAction = new Action("Remove") {
+			public void run() {
+				Tree tree = getUndisposedTree();
+				if (tree == null)
+					return;
+				IExtensionRegistry registry = Platform.getExtensionRegistry();
+				Object token = ((ExtensionRegistry)registry).getTemporaryUserToken();
+				TreeItem[] selection = tree.getSelection();
+				for (int i = 0; i < selection.length; i++) {
+					Object obj = selection[i].getData();
+					if (obj instanceof ParentAdapter)
+						obj = ((ParentAdapter)obj).getObject();
+					if (obj instanceof IExtensionPoint)
+						registry.removeExtensionPoint((IExtensionPoint)obj, token);
+					else if (obj instanceof IExtension)
+						registry.removeExtension((IExtension)obj, token);
+				}
+				
+			}
+		};
+		
+		addAction = new Action("Add...") {
+			public void run() {
+				Tree tree = getUndisposedTree();
+				if (tree == null)
+					return;
+				FileDialog dialog = new FileDialog(getSite().getShell(), SWT.OPEN);
+				String input = dialog.open();
+				if (input == null)
+					return;
+				Object selection = tree.getSelection()[0].getData();
+				if (selection instanceof PluginObjectAdapter)
+					selection = ((PluginObjectAdapter)selection).getObject();
+				if (!(selection instanceof Bundle))
+					return;
+				IContributor contributor = ContributorFactoryOSGi.createContributor((Bundle)selection);
+				IExtensionRegistry registry = Platform.getExtensionRegistry();
+				Object token = ((ExtensionRegistry)registry).getTemporaryUserToken();
+				try {
+					registry.addContribution(new FileInputStream(input), contributor, false, null, null, token);
+				} catch (FileNotFoundException e) {
+				}
+			}
+		};
+		
 		collapseAllAction = new Action("collapseAll"){ //$NON-NLS-1$
 			public void run(){
 				treeViewer.collapseAll();
@@ -343,5 +496,11 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		if (treeViewer == null || treeViewer.getContentProvider() == null)
 			return;
 		setContentDescription(((RegistryBrowserContentProvider)treeViewer.getContentProvider()).getTitleSummary());
+	}
+	
+	private Tree getUndisposedTree() {
+		if (treeViewer == null || treeViewer.getTree() == null || treeViewer.getTree().isDisposed())
+			return null;
+		return treeViewer.getTree();
 	}
 }
