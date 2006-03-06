@@ -1,0 +1,3 @@
+
+a#$linkId$ img { background-image : url(graphics/sample.gif); }
+a#$linkId$:hover img { background-image : url(graphics/sample_hov.gif); }
