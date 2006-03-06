@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -151,8 +151,18 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		treeViewer.setUseHashlookup(true);
 		treeViewer.setSorter(new ViewerSorter(){
 			public int compare(Viewer viewer, Object e1, Object e2) {
+				if (e1 instanceof PluginObjectAdapter)
+					e1 = ((PluginObjectAdapter)e1).getObject();
+				if (e2 instanceof PluginObjectAdapter)
+					e2 = ((PluginObjectAdapter)e2).getObject();
 				if (e1 instanceof IBundleFolder && e2 instanceof IBundleFolder)
 					return ((IBundleFolder)e1).getFolderId() - ((IBundleFolder)e2).getFolderId();
+				if (e1 instanceof Bundle && e2 instanceof Bundle) {
+					String id1 = ((Bundle)e1).getSymbolicName();
+					String id2 = ((Bundle)e2).getSymbolicName();
+					if (id2.indexOf(id1) == 0)
+						return -1;
+				}
 				return super.compare(viewer, e1, e2);
 			}
 		});
