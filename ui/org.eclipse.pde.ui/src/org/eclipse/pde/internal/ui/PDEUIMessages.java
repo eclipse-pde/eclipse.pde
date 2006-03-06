@@ -2727,4 +2727,24 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureImportWizardPage_importHasInvalid;
 
+	public static String UniversalWelcomeTemplate_key_directoryName;
+
+	public static String UniversalWelcomeTemplate_key_targetPage;
+
+	public static String UniversalWelcomeTemplate_page_Overview;
+
+	public static String UniversalWelcomeTemplate_page_Tutorials;
+
+	public static String UniversalWelcomeTemplate_page_FirstSteps;
+
+	public static String UniversalWelcomeTemplate_page_Samples;
+
+	public static String UniversalWelcomeTemplate_page_Whatsnew;
+
+	public static String UniversalWelcomeTemplate_page_Migrate;
+
+	public static String UniversalWelcomeTemplate_page_WebResources;
+
+	public static String UniversalWelcomeTemplate_linkUrl;
+
 }

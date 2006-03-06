@@ -161,8 +161,18 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 */
 	public String getStringOption(String name) {
 		TemplateOption option = (TemplateOption) options.get(name);
-		if (option != null && option instanceof StringOption) {
-			return ((StringOption) option).getText();
+		if (option != null) {
+			if (option instanceof StringOption)
+				return ((StringOption) option).getText();
+			else if (option instanceof ComboChoiceOption) {
+				// Added by DG: selection of the choice option
+				// should also be considered if the selected
+				// value is a String.
+				ComboChoiceOption ccoption = (ComboChoiceOption)option;
+				Object value = ccoption.getValue();
+				if (value!=null && value instanceof String)
+					return (String)value;
+			}
 		}
 		return null;
 	}
