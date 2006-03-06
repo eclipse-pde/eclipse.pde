@@ -15,6 +15,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor;
 import org.eclipse.pde.internal.ui.nls.GetNonExternalizedStringsAction;
@@ -48,8 +49,11 @@ public class ManifestEditorContributor extends PDEFormEditorContributor {
 
 	public void contextMenuAboutToShow(IMenuManager mm, boolean addClipboard) {
 		super.contextMenuAboutToShow(mm, addClipboard);
-		mm.add(new Separator());
-		mm.add(fExternalizeAction);
+		IBaseModel model = getEditor().getAggregateModel();
+		if (model != null && model.isEditable()) {
+			mm.add(new Separator());
+			mm.add(fExternalizeAction);
+		}
 	}
 
 	protected void makeActions() {
