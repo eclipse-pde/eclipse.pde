@@ -2746,5 +2746,10 @@ public class PDEUIMessages extends NLS {
 	public static String UniversalWelcomeTemplate_page_WebResources;
 
 	public static String UniversalWelcomeTemplate_linkUrl;
+	
+	public static String ProductInfoSection_plugins;
+
+	public static String ProductInfoSection_features;
+
 
 }

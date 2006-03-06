@@ -28,6 +28,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -42,8 +44,6 @@ import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 
 public class ProductInfoSection extends PDESection {
@@ -69,8 +69,8 @@ public class ProductInfoSection extends PDESection {
 		section.setDescription(PDEUIMessages.ProductInfoSection_desc); 
 
 		Composite client = toolkit.createComposite(section);
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.leftMargin = layout.rightMargin = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
+		GridLayout layout = new GridLayout();
+		layout.marginLeft = layout.marginRight = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
 		layout.numColumns = NUM_COLUMNS;
 		client.setLayout(layout);
 
@@ -83,9 +83,6 @@ public class ProductInfoSection extends PDESection {
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);	
-		TableWrapData td = new TableWrapData(TableWrapData.FILL_GRAB);
-		td.colspan = 2;
-		section.setLayoutData(td);
 		
 		getProductModel().addModelChangedListener(this);
 	}
@@ -115,15 +112,10 @@ public class ProductInfoSection extends PDESection {
 
 		Label label = toolkit.createLabel(client, PDEUIMessages.ProductInfoSection_id); 
 		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
-		TableWrapData td = new TableWrapData();
-		td.valign = TableWrapData.MIDDLE;
-		label.setLayoutData(td);
 		
 		fProductCombo = new ComboPart();
 		fProductCombo.createControl(client, toolkit, SWT.READ_ONLY);
-		td = new TableWrapData(TableWrapData.FILL_GRAB);
-		td.valign = TableWrapData.MIDDLE;
-		fProductCombo.getControl().setLayoutData(td);
+		fProductCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fProductCombo.setItems(TargetPlatform.getProductNames());
 		fProductCombo.add(""); //$NON-NLS-1$
 		fProductCombo.addSelectionListener(new SelectionAdapter() {
@@ -160,16 +152,12 @@ public class ProductInfoSection extends PDESection {
 		
 		Label label = toolkit.createLabel(client, PDEUIMessages.ProductInfoSection_app, SWT.WRAP); 
 		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
-		TableWrapData td = new TableWrapData();
-		td.valign = TableWrapData.MIDDLE;
-		label.setLayoutData(td);
 		
 		fAppCombo = new ComboPart();
 		fAppCombo.createControl(client, toolkit, SWT.READ_ONLY);
-		td = new TableWrapData(TableWrapData.FILL);
-		td.colspan = NUM_COLUMNS - 1;
-		td.valign = TableWrapData.MIDDLE;
-		fAppCombo.getControl().setLayoutData(td);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = NUM_COLUMNS - 1;
+		fAppCombo.getControl().setLayoutData(gd);
 		fAppCombo.setItems(TargetPlatform.getApplicationNames());
 		fAppCombo.add(""); //$NON-NLS-1$
 		fAppCombo.addSelectionListener(new SelectionAdapter() {
@@ -183,11 +171,17 @@ public class ProductInfoSection extends PDESection {
 	
 	private void createConfigurationOption(Composite client, FormToolkit toolkit) {
 		createLabel(client, toolkit, ""); //$NON-NLS-1$
-		FormText text = toolkit.createFormText(client, true);
+		
+		Composite comp = toolkit.createComposite(client);
+		GridLayout layout = new GridLayout(3, false);
+		layout.marginWidth = layout.marginHeight = 0;
+		comp.setLayout(layout);
+		GridData gd = new GridData();
+		gd.horizontalSpan = 3;
+		comp.setLayoutData(gd);
+		
+		FormText text = toolkit.createFormText(comp, true);
 		text.setText(PDEUIMessages.Product_overview_configuration, true, true); 
-		TableWrapData gd = new TableWrapData(TableWrapData.FILL);
-		gd.colspan = NUM_COLUMNS;
-		text.setLayoutData(gd);
 		text.addHyperlinkListener(new IHyperlinkListener() {
 			public void linkEntered(HyperlinkEvent e) {
 				getStatusLineManager().setMessage(e.getLabel());
@@ -201,9 +195,9 @@ public class ProductInfoSection extends PDESection {
 			}
 		});
 		
-		fPluginButton = toolkit.createButton(client, "plug-ins", SWT.RADIO); //$NON-NLS-1$
-		gd = new TableWrapData();
-		gd.indent = 25;
+		fPluginButton = toolkit.createButton(comp, PDEUIMessages.ProductInfoSection_plugins, SWT.RADIO); 
+		gd = new GridData();
+		gd.horizontalIndent = 25;
 		fPluginButton.setLayoutData(gd);
 		fPluginButton.setEnabled(isEditable());
 		fPluginButton.addSelectionListener(new SelectionAdapter() {	
@@ -217,18 +211,18 @@ public class ProductInfoSection extends PDESection {
 			}
 		});
 		
-		fFeatureButton = toolkit.createButton(client, "features", SWT.RADIO); //$NON-NLS-1$
-		gd = new TableWrapData();
-		gd.indent = 25;
+		fFeatureButton = toolkit.createButton(comp, PDEUIMessages.ProductInfoSection_features, SWT.RADIO); 
+		gd = new GridData();
+		gd.horizontalIndent = 25;
 		fFeatureButton.setLayoutData(gd);
 		fFeatureButton.setEnabled(isEditable());
 	}
 	
 	private void createLabel(Composite client, FormToolkit toolkit, String text) {
 		Label label = toolkit.createLabel(client, text, SWT.WRAP);
-		TableWrapData td = new TableWrapData();
-		td.colspan = NUM_COLUMNS;
-		label.setLayoutData(td);
+		GridData gd = new GridData();
+		gd.horizontalSpan = NUM_COLUMNS;
+		label.setLayoutData(gd);
 	}
 	
 	/* (non-Javadoc)

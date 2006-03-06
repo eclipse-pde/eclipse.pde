@@ -77,12 +77,17 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		layout.rightMargin = 10;
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth =true;
-		layout.verticalSpacing = 30;
+		layout.verticalSpacing = 15;
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 
 		// sections
-		managedForm.addPart(new ProductInfoSection(this, body));
+		ProductInfoSection section = new ProductInfoSection(this, body);
+		TableWrapData td = new TableWrapData();
+		td.colspan = 2;
+		section.getSection().setLayoutData(td);
+		
+		managedForm.addPart(section);
 		if (getModel().isEditable()) {
 			createTestingSection(body, toolkit);
 			createExportingSection(body, toolkit);
