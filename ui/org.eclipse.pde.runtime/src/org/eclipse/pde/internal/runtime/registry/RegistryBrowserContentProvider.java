@@ -179,11 +179,11 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 	}
 
 	public PluginObjectAdapter[] getPlugins(Bundle[] bundles) {
-		PluginObjectAdapter[] result = new PluginObjectAdapter[bundles.length];
-		for (int i = 0; i < bundles.length; i++) {
-			result[i] = new PluginObjectAdapter(bundles[i]);
-		}
-		return result;
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < bundles.length; i++)
+			if (bundles[i].getHeaders().get(Constants.FRAGMENT_HOST) == null)
+				list.add(new PluginObjectAdapter(bundles[i]));
+		return (PluginObjectAdapter[]) list.toArray(new PluginObjectAdapter[list.size()]);
 	}
 	private Object[] getFolderChildren(Bundle bundle, int id) {
 		Object[] array = null;
