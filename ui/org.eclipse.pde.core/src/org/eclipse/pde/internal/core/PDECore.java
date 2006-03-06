@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.core;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.Locale;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -23,7 +22,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
@@ -339,35 +337,6 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	public WorkspaceModelManager getWorkspaceModelManager() {
 		initializeModels();
 		return fWorkspaceModelManager;
-	}
-
-	/**
-	 * @see org.eclipse.core.runtime.Plugin#initializeDefaultPluginPreferences()
-	 */
-	protected void initializeDefaultPluginPreferences() {
-		Preferences preferences = getPluginPreferences();
-		preferences.setDefault(
-			ICoreConstants.TARGET_MODE,
-			ICoreConstants.VALUE_USE_THIS);
-		preferences.setDefault(
-			ICoreConstants.CHECKED_PLUGINS,
-			ICoreConstants.VALUE_SAVED_ALL);
-		if (preferences
-			.getString(ICoreConstants.TARGET_MODE)
-			.equals(ICoreConstants.VALUE_USE_THIS))
-			preferences.setValue(
-				ICoreConstants.PLATFORM_PATH,
-				ExternalModelManager.computeDefaultPlatformPath());
-		else
-			preferences.setDefault(
-				ICoreConstants.PLATFORM_PATH,
-				ExternalModelManager.computeDefaultPlatformPath());
-
-		// set defaults for the target environment variables.
-		preferences.setDefault(OS, Platform.getOS());
-		preferences.setDefault(WS, Platform.getWS());
-		preferences.setDefault(NL, Locale.getDefault().toString());
-		preferences.setDefault(ARCH, Platform.getOSArch());		
 	}
 
 	private synchronized void initializeModels() {
