@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.product.LauncherSection;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
@@ -35,9 +36,11 @@ public class EditorUtilities {
 	private static final int F_ICO_IMAGE = 2;
 	private static final int F_IMAGE_DEPTH = 3;
 	
+	
 	static class ValidationMessage {
 		String fMessage;
 		int fSeverity = -1;
+		boolean fShowField = true;
 		ValidationMessage(String message) {
 			fMessage = message;
 		}
@@ -45,8 +48,10 @@ public class EditorUtilities {
 			this(message);
 			fSeverity = severity;
 		}
-		String getMessage() { return fMessage; }
-		int getSeverity() { return fSeverity; }
+		ValidationMessage(String message, int severity, boolean ignoreField) {
+			this(message, severity);
+			fShowField = ignoreField;
+		}
 	}
 	
 	static class ValidationInfo {
@@ -54,7 +59,7 @@ public class EditorUtilities {
 	}
 	
 	
-	public static ImageData[] getImageData(IEditorValidationProvider provider,
+	private static ImageData[] getImageData(IEditorValidationProvider provider,
 			IProduct product) {
 		String imagePath = provider.getProviderValue();
 		String message = null;
@@ -75,7 +80,7 @@ public class EditorUtilities {
 		} catch (IOException e) {
 			message = PDEUIMessages.EditorUtilities_invalidFilePath;
 		}
-		handleMessage(message, -1, provider);
+		handleMessage(message, -1, true, provider);
 		return null;
 	}
 	
@@ -83,16 +88,18 @@ public class EditorUtilities {
 		return provider.getProviderValue().length() == 0;
 	}
 	
-	private static void handleMessage(String message, int severity, IEditorValidationProvider provider) {
+	private static void handleMessage(String message, int severity, boolean writeField, IEditorValidationProvider provider) {
 		if (message != null) {
 			StringBuffer sb = new StringBuffer();
-			String desc = provider.getProviderDescription();
-			if (desc != null) {
-				sb.append(desc);
-				sb.append(' ');
+			if (writeField) {
+				String desc = provider.getProviderDescription();
+				if (desc != null) {
+					sb.append(desc);
+					sb.append(' ');
+				}
+				sb.append(provider.getProviderValue());
+				sb.append(" - "); //$NON-NLS-1$
 			}
-			sb.append(provider.getProviderValue());
-			sb.append(" - "); //$NON-NLS-1$
 			sb.append(message);
 			provider.getValidator().setMessage(sb.toString());
 			provider.getValidator().setSeverity(severity);
@@ -123,7 +130,7 @@ public class EditorUtilities {
 		}
 		
 		if (ms != null)
-			handleMessage(ms.getMessage(), ms.getSeverity(), provider);
+			handleMessage(ms.fMessage, ms.fSeverity, ms.fShowField, provider);
 		
 		return ms == null;
 	}
@@ -160,9 +167,34 @@ public class EditorUtilities {
 		return imageEntryInternalValidate(provider, product, info, F_IMAGE_DEPTH);
 	}
 	
-	private static ValidationMessage getMS_icoImage(ImageData[] imagedata) {
-		if (imagedata.length < 7)
-			return new ValidationMessage(PDEUIMessages.EditorUtilities_icoError);
+	private static ValidationMessage getMS_icoImage(ImageData[] imagedata) {	
+		int totalSizes = LauncherSection.F_WIN_ICON_DIMENSIONS.length;
+		boolean[] found = new boolean[totalSizes];
+		for (int i = 0; i < imagedata.length; i++) {
+			int width = imagedata[i].width;
+			int height = imagedata[i].height;
+			int depth = imagedata[i].depth;
+			for (int w = 0; w < totalSizes; w++)
+				if (width == LauncherSection.F_WIN_ICON_DIMENSIONS[w][0] &&
+						height == LauncherSection.F_WIN_ICON_DIMENSIONS[w][1] &&
+						depth == LauncherSection.F_WIN_ICON_DEPTHS[w])
+					found[w] = true;
+		}
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < found.length; i++) {
+			if (!found[i]) {
+				if (sb.length() == 0)
+					sb.append(PDEUIMessages.EditorUtilities_icoError);
+				else
+					sb.append(", "); //$NON-NLS-1$
+				int width = LauncherSection.F_WIN_ICON_DIMENSIONS[i][0];
+				int height = LauncherSection.F_WIN_ICON_DIMENSIONS[i][1];
+				int depth = LauncherSection.F_WIN_ICON_DEPTHS[i];
+				sb.append(NLS.bind(PDEUIMessages.EditorUtilities_missingIcoNote, getSizeString(width, height), Integer.toString(depth)));
+			}
+		}
+		if (sb.length() > 0)
+			return new ValidationMessage(sb.toString(), -1, false);
 		return null;
 	}
 
@@ -185,7 +217,7 @@ public class EditorUtilities {
 							getSizeString(width, height)));
 		else if (width > wwidth || height > wheight)
 			return new ValidationMessage(
-						NLS.bind(PDEUIMessages.EditorUtilities_imageTooLargeInfo, getSizeString(wwidth, wheight)),
+					NLS.bind(PDEUIMessages.EditorUtilities_imageTooLargeInfo, getSizeString(wwidth, wheight)),
 						IMessageProvider.INFORMATION);
 		return null;
 	}

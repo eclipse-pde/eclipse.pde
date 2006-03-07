@@ -5,11 +5,10 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public abstract class AbstractFormValidator implements IEditorValidator {
 
-	private static final int DEFAULT_SEVERITY = IMessageProvider.WARNING;
 	private boolean fEnabled;
 	private boolean fInputValidates = true;
 	private String fMessage = PDEUIMessages.AbstractFormValidator_noMessageSet;
-	private int fSeverity = -1;
+	private int fSeverity = IMessageProvider.WARNING;
 	private PDESection fSection;
 	
 	public AbstractFormValidator(PDESection section) {
@@ -32,9 +31,9 @@ public abstract class AbstractFormValidator implements IEditorValidator {
 		fMessage = message != null ? message : PDEUIMessages.AbstractFormValidator_noMessageSet;
 	}
 	
-	public String getMessage(boolean includePageName) {
+	public String getMessage() {
 		StringBuffer buff = new StringBuffer();
-		if (includePageName) {
+		if (!fSection.getPage().isActive()) {
 			buff.append('[');
 			buff.append(fSection.getPage().getTitle());
 			buff.append(']');
@@ -48,24 +47,32 @@ public abstract class AbstractFormValidator implements IEditorValidator {
 	}
 	
 	public void setSeverity(int severity) {
-		fSeverity = severity;
+		if (severity >= 0)
+			fSeverity = severity;
 	}
 	
 	public int getSeverity() {
-		return fSeverity < 0 ? DEFAULT_SEVERITY : fSeverity;
+		return fSeverity;
 	}
 	
 	public PDESection getSection() {
 		return fSection;
 	}
+	
+	public boolean markedInvalid() {
+		return isEnabled() && !fInputValidates;
+	}
+	
 	public final boolean validate(boolean revalidate) {
-		if (!isEnabled()) // if validator is disabled return true
+		IEditorValidationStack stack = fSection.getPage().getPDEEditor().getValidationStack();
+		if (!isEnabled()) {
+			stack.top();
 			return true;
+		}
 		if (revalidate) {
 			fInputValidates = inputValidates();
-			IEditorValidationStack stack = fSection.getPage().getPDEEditor().getValidationStack();
 			if (fInputValidates)
-				stack.top(this, fSection.getPage());
+				stack.top();
 			else
 				stack.push(this);
 		}

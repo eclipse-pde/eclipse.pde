@@ -1,6 +1,5 @@
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.ui.forms.editor.IFormPage;
 
 /**
  * A stack used to keep track of validating fields in a form.
@@ -18,12 +17,9 @@ public interface IEditorValidationStack {
 	public void push(IEditorValidator provider);
 	
 	/**
-	 * Get the next false-validating provider.
-	 * @param provider the provider which is currently being validated
-	 * @param page the page from which this is getting called
-	 * @return the first IEditorValidator from the top of the stack that does not validate or null if none exist
+	 * Display the top most error on the stack, or null if the stack is empty.
 	 */
-	public IEditorValidator top(IEditorValidator provider, IFormPage page);
+	public void top();
 	
 	/**
 	 * Returns if the validation stack is empty;

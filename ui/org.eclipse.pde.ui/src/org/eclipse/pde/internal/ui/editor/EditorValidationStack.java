@@ -16,35 +16,29 @@ public class EditorValidationStack implements IEditorValidationStack {
 	}
 	
 	public void push(IEditorValidator validator) {
-		if (validator == null)
-			return;
-		if (!fStack.contains(validator))
-			fStack.push(validator);
-		Form form = getForm();
-		if (form == null)
-			return;
-		String message = validator.getMessage(false);
-		if (message != null)
-			form.setMessage(message, validator.getSeverity());
+		Form form = getForm(validator);
+		if (form != null && validator.markedInvalid()) {
+			if (!fStack.contains(validator))
+				fStack.push(validator);
+			form.setMessage(validator.getMessage(), validator.getSeverity());
+		}
 	}
 
-	public IEditorValidator top(IEditorValidator callingValidator, IFormPage page) {
-		Form form = getForm();
-		if (form == null) return null;
+	public void top() {
 		IEditorValidator top = getTopValidator();
+		Form form = getForm(top);
+		if (form == null)
+			return;
 		if (top == null)
 			form.setMessage(null);
-		else {
-			boolean samePage = page.equals(top.getSection().getPage()); 
-			form.setMessage(top.getMessage(!samePage), top.getSeverity());
-		}
-		return top;
+		else
+			form.setMessage(top.getMessage(), top.getSeverity());
 	}
 
 	private IEditorValidator getTopValidator() {
 		if (fStack.isEmpty()) return null;
 		IEditorValidator currTop = (IEditorValidator)fStack.peek();
-		while (currTop.validate(false)) {
+		while (!currTop.markedInvalid()) {
 			fStack.pop();
 			if (fStack.isEmpty())
 				return null;
@@ -53,8 +47,10 @@ public class EditorValidationStack implements IEditorValidationStack {
 		return currTop;
 	}
 	
-	private Form getForm() {
+	private Form getForm(IEditorValidator validator) {
 		IFormPage page = fEditor.getActivePageInstance();
+		if (validator != null && page == null)
+			page = validator.getSection().getPage();
 		if (page == null)
 			return null;
 		IManagedForm mform = page.getManagedForm();

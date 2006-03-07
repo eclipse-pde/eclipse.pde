@@ -216,7 +216,7 @@ public abstract class PDEFormPage extends FormPage {
 	
 	public void setActive(boolean active) {
 		if (active)
-			getPDEEditor().getValidationStack().top(null, this);
+			getPDEEditor().getValidationStack().top();
 		super.setActive(active);
 	}
 }

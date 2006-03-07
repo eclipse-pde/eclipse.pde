@@ -47,7 +47,7 @@ public class LauncherPage extends PDEFormPage {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginWidth = 10;
-		layout.verticalSpacing = 20;
+		layout.verticalSpacing = 15;
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 

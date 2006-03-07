@@ -29,12 +29,16 @@ public interface IEditorValidator {
 	 */
 	public boolean inputValidates();
 	/**
+	 * Returns the result of the last validation.
+	 * @return the result of the last validation
+	 */
+	public boolean markedInvalid();
+	/**
 	 * Returns a message to the user indicating the problem
 	 * with the validation
-	 * @param includePageName indicates if the page name should be included in the message
 	 * @return the message
 	 */
-	public String getMessage(boolean includePageName);
+	public String getMessage();
 	public void setMessage(String message);
 	/**
 	 * Returns the severity (if any) of the form object's entry's

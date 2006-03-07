@@ -50,7 +50,7 @@ public class ConfigurationPage extends PDEFormPage {
 		Composite body = managedForm.getForm().getBody();
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 10;
-		layout.verticalSpacing = 20;
+		layout.verticalSpacing = 15;
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 

@@ -2448,6 +2448,8 @@ public class PDEUIMessages extends NLS {
 	public static String EditorUtilities_imageTooLarge;
 
 	public static String EditorUtilities_imageTooLargeInfo;
+	
+	public static String EditorUtilities_missingIcoNote;
 
 	public static String RequiredExecutionEnvironmentSection_add;
 

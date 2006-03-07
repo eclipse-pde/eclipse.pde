@@ -74,10 +74,10 @@ public class LauncherSection extends PDESection {
 		PDEUIMessages.LauncherSection_48Low,
 		PDEUIMessages.LauncherSection_48High
 	};
-	private static final int[] F_WIN_ICON_DEPTHS = new int[] {
+	public static final int[] F_WIN_ICON_DEPTHS = new int[] {
 		8, 32, 8, 8, 32, 8, 32
 	};
-	private static final int[][] F_WIN_ICON_DIMENSIONS = new int[][] {
+	public static final int[][] F_WIN_ICON_DIMENSIONS = new int[][] {
 		{16, 16}, {16, 16}, {24, 24}, {32, 32}, {32, 32}, {48, 48}, {48, 48}
 	};
 	private static final String[] F_WIN_ICON_IDS = new String[] {
@@ -351,7 +351,7 @@ public class LauncherSection extends PDESection {
 			IconEntry entry = (IconEntry)fIcons.get(i);
 			String id = entry.getIconId();
 			if (id.equals(ILauncherInfo.P_ICO_PATH)) {
-				entry.setEditable(isEditable()&& useIco);
+				entry.setEditable(isEditable() && useIco);
 			} else if (id.equals(ILauncherInfo.WIN32_16_HIGH) 
 					|| id.equals(ILauncherInfo.WIN32_16_LOW)
 					|| id.equals(ILauncherInfo.WIN32_24_LOW)
