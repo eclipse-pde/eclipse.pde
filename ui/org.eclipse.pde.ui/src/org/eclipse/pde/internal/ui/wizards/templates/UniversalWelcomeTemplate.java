@@ -55,13 +55,13 @@ public class UniversalWelcomeTemplate extends PDETemplateSection {
 
 	private void createOptions() {
 		// options
-		addOption(KEY_INTRO_DIR, PDEUIMessages.UniversalWelcomeTemplate_key_directoryName, "intro", 0); //$NON-NLS-2$
+		addOption(KEY_INTRO_DIR, PDEUIMessages.UniversalWelcomeTemplate_key_directoryName, "intro", 0); //$NON-NLS-2$ //$NON-NLS-1$
 		addOption(KEY_PATH, PDEUIMessages.UniversalWelcomeTemplate_key_targetPage, new String[][] {
-				{ "overview/@", PDEUIMessages.UniversalWelcomeTemplate_page_Overview }, { "tutorials/@", PDEUIMessages.UniversalWelcomeTemplate_page_Tutorials }, //$NON-NLS-1$ //$NON-NLS-3$
-				{ "firststeps/@", PDEUIMessages.UniversalWelcomeTemplate_page_FirstSteps }, { "samples/@", PDEUIMessages.UniversalWelcomeTemplate_page_Samples }, //$NON-NLS-1$ //$NON-NLS-3$
-				{ "whatsnew/@", PDEUIMessages.UniversalWelcomeTemplate_page_Whatsnew }, { "migrate/@", PDEUIMessages.UniversalWelcomeTemplate_page_Migrate }, //$NON-NLS-1$ //$NON-NLS-3$
-				{ "webresources/@", PDEUIMessages.UniversalWelcomeTemplate_page_WebResources } }, "overview/@", 0); //$NON-NLS-1$ //$NON-NLS-3$
-		addOption(KEY_LINK_URL, PDEUIMessages.UniversalWelcomeTemplate_linkUrl, "http://www.eclipse.org", 0); //$NON-NLS-2$
+				{ "overview/@", PDEUIMessages.UniversalWelcomeTemplate_page_Overview }, { "tutorials/@", PDEUIMessages.UniversalWelcomeTemplate_page_Tutorials }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				{ "firststeps/@", PDEUIMessages.UniversalWelcomeTemplate_page_FirstSteps }, { "samples/@", PDEUIMessages.UniversalWelcomeTemplate_page_Samples }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				{ "whatsnew/@", PDEUIMessages.UniversalWelcomeTemplate_page_Whatsnew }, { "migrate/@", PDEUIMessages.UniversalWelcomeTemplate_page_Migrate }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				{ "webresources/@", PDEUIMessages.UniversalWelcomeTemplate_page_WebResources } }, "overview/@", 0); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		addOption(KEY_LINK_URL, PDEUIMessages.UniversalWelcomeTemplate_linkUrl, "http://www.eclipse.org", 0); //$NON-NLS-2$ //$NON-NLS-1$
 	}
 
 	public void addPages(Wizard wizard) {
