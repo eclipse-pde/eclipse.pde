@@ -285,7 +285,7 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 						if (object != null && object instanceof Bundle) {
 							Bundle bundle = (Bundle) object;
 							if (bundle.equals(eventBundle)) {
-								treeViewer.update(items[i], null);
+								treeViewer.update(items[i].getData(), null);
 								updateTitle();
 								return;
 							}
