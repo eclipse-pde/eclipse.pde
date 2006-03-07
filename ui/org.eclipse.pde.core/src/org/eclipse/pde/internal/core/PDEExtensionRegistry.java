@@ -103,7 +103,7 @@ public class PDEExtensionRegistry {
 		return (Node[])list.toArray(new Node[list.size()]);
 	}
 	
-	private Document createExtensionDocument(State state){
+	protected Document createExtensionDocument(State state){
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		Document doc = null;
 		try {

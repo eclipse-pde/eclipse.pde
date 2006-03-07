@@ -67,10 +67,12 @@ public class PDEState extends MinimalState {
 		fExtensionRegistry = new PDEExtensionRegistry();
 		fAuxiliaryState = new PDEAuxiliaryState();
 		
-		if (resolve)
+		if (resolve) {
 			readTargetState(target, monitor);
-		else
+		} else {
 			createNewTargetState(resolve, target, monitor);	
+			fExtensionRegistry.createExtensionDocument(fState);
+		}
 		createTargetModels();
 		
 		if (resolve && workspace.length > 0 && !fNewState && !"true".equals(System.getProperty("pde.nocache"))) //$NON-NLS-1$ //$NON-NLS-2$
