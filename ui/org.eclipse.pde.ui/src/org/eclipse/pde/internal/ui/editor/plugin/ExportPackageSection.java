@@ -105,7 +105,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
     private TableViewer fPackageViewer;
 
     private Action fAddAction;
-    private Action fOpenAction;
+    private Action fGoToAction;
     private Action fRemoveAction;
     private Action fPropertiesAction;
     private ExportPackageHeader fHeader;
@@ -233,10 +233,10 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 	}
     
     protected void handleDoubleClick(IStructuredSelection selection) {
-        handleOpen(selection);
+        handleGoToPackage(selection);
     }
     
-    private void handleOpen(ISelection sel) {
+    private void handleGoToPackage(ISelection sel) {
     	if (sel instanceof IStructuredSelection) {
     		IStructuredSelection selection = (IStructuredSelection) sel;
     		if (selection.size() != 1) 
@@ -396,9 +396,9 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
             }
         };
         fAddAction.setEnabled(isEditable());
-        fOpenAction = new Action(PDEUIMessages.RequiresSection_open) {
+        fGoToAction = new Action(PDEUIMessages.ImportPackageSection_goToPackage) {
         	public void run() {
-        		handleOpen(fPackageViewer.getSelection());
+        		handleGoToPackage(fPackageViewer.getSelection());
         	}
         };
         fRemoveAction = new Action(PDEUIMessages.RequiresSection_delete) { 
@@ -418,8 +418,9 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = fPackageViewer.getSelection();
         manager.add(fAddAction);
-        if (!selection.isEmpty()) 
-        	manager.add(fOpenAction);
+        if (selection instanceof IStructuredSelection && 
+        		((IStructuredSelection)selection).size() == 1)
+        	manager.add(fGoToAction);
         manager.add(new Separator());
         if (!selection.isEmpty())
         	manager.add(fRemoveAction);

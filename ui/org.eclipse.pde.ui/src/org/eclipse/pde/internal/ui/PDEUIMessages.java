@@ -2751,5 +2751,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String ProductInfoSection_features;
 
+	public static String ImportPackageSection_goToPackage;
 
 }
