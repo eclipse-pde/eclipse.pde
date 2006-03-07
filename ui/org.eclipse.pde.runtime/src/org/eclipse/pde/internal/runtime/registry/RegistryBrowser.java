@@ -60,19 +60,16 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 	
 	public static final String SHOW_RUNNING_PLUGINS = "RegistryView.showRunning.label"; //$NON-NLS-1$
 	
-	private TreeViewer treeViewer;
-	private IMemento memento;
+	private TreeViewer fTreeViewer;
+	private IMemento fMemento;
 	
 	// menus and action items
-	private Action refreshAction;
-	private Action showPluginsAction;
-	private Action collapseAllAction;
-	private Action removeAction;
-	private Action addAction;
+	private Action fRefreshAction;
+	private Action fShowPluginsAction;
+	private Action fCollapseAllAction;
+	private Action fRemoveAction;
+	private Action fAddAction;
 	private DrillDownAdapter drillDownAdapter;
-	
-	// single-pane control
-	private Composite mainView;
 	
 	/*
 	 * customized DrillDownAdapter which modifies enabled state of showing active/inactive
@@ -85,22 +82,22 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 
 		public void goInto() {
 			super.goInto();
-			showPluginsAction.setEnabled(!canGoHome());
+			fShowPluginsAction.setEnabled(!canGoHome());
 		}
 
 		public void goBack() {
 			super.goBack();
-			showPluginsAction.setEnabled(!canGoHome());
+			fShowPluginsAction.setEnabled(!canGoHome());
 		}
 
 		public void goHome() {
 			super.goHome();
-			showPluginsAction.setEnabled(!canGoHome());
+			fShowPluginsAction.setEnabled(!canGoHome());
 		}
 
 		public void goInto(Object newInput) {
 			super.goInto(newInput);
-			showPluginsAction.setEnabled(!canGoHome());
+			fShowPluginsAction.setEnabled(!canGoHome());
 		}
 	}
 	public RegistryBrowser() {
@@ -110,16 +107,16 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		if (memento == null)
-			this.memento = XMLMemento.createWriteRoot("REGISTRYVIEW"); //$NON-NLS-1$
+			this.fMemento = XMLMemento.createWriteRoot("REGISTRYVIEW"); //$NON-NLS-1$
 		else
-			this.memento = memento;
+			this.fMemento = memento;
 		initializeMemento();
 	}
 	
 	private void initializeMemento() {
 		// show all plug-ins by default (i.e. not just activated ones)
-		if (memento.getString(SHOW_RUNNING_PLUGINS) == null)
-			memento.putString(SHOW_RUNNING_PLUGINS, "false"); //$NON-NLS-1$
+		if (fMemento.getString(SHOW_RUNNING_PLUGINS) == null)
+			fMemento.putString(SHOW_RUNNING_PLUGINS, "false"); //$NON-NLS-1$
 	}
 	
 	public void dispose() {
@@ -139,28 +136,28 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		makeActions();
 		createTreeViewer(composite);
 		fillToolBar();
-		treeViewer.refresh();
-		setContentDescription(((RegistryBrowserContentProvider)treeViewer.getContentProvider()).getTitleSummary());
+		fTreeViewer.refresh();
+		setContentDescription(((RegistryBrowserContentProvider)fTreeViewer.getContentProvider()).getTitleSummary());
 		
 		Platform.getExtensionRegistry().addRegistryChangeListener(this);
 		PDERuntimePlugin.getDefault().getBundleContext().addBundleListener(this);
 	}
 	private void createTreeViewer(Composite parent) {
-		mainView = new Composite(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 0;
-		mainView.setLayout(layout);
-		mainView.setLayoutData(new GridData(GridData.FILL_BOTH));	
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));	
 		
-		Tree tree = new Tree(mainView, SWT.FLAT | SWT.MULTI);
+		Tree tree = new Tree(composite, SWT.FLAT | SWT.MULTI);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		tree.setLayoutData(gd);
-		treeViewer = new TreeViewer(tree);
-		boolean showRunning = memento.getString(SHOW_RUNNING_PLUGINS).equals("true") ? true : false; //$NON-NLS-1$
-		treeViewer.setContentProvider(new RegistryBrowserContentProvider(treeViewer, showRunning));
-		treeViewer.setLabelProvider(new RegistryBrowserLabelProvider(treeViewer));
-		treeViewer.setUseHashlookup(true);
-		treeViewer.setSorter(new ViewerSorter() {
+		fTreeViewer = new TreeViewer(tree);
+		boolean showRunning = fMemento.getString(SHOW_RUNNING_PLUGINS).equals("true") ? true : false; //$NON-NLS-1$
+		fTreeViewer.setContentProvider(new RegistryBrowserContentProvider(fTreeViewer, showRunning));
+		fTreeViewer.setLabelProvider(new RegistryBrowserLabelProvider(fTreeViewer));
+		fTreeViewer.setUseHashlookup(true);
+		fTreeViewer.setSorter(new ViewerSorter() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if (e1 instanceof PluginObjectAdapter)
 					e1 = ((PluginObjectAdapter)e1).getObject();
@@ -177,12 +174,12 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		});
 		
 		Bundle[] bundles = PDERuntimePlugin.getDefault().getBundleContext().getBundles();
-		treeViewer.setInput(new PluginObjectAdapter(bundles));
+		fTreeViewer.setInput(new PluginObjectAdapter(bundles));
 		
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(treeViewer.getControl(),
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(fTreeViewer.getControl(),
 				IHelpContextIds.REGISTRY_VIEW);
 		
-		getViewSite().setSelectionProvider(treeViewer);
+		getViewSite().setSelectionProvider(fTreeViewer);
 		
 		MenuManager popupMenuManager = new MenuManager();
 		IMenuListener listener = new IMenuListener() {
@@ -197,19 +194,19 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 	}
 		
 	private void fillToolBar(){
-		drillDownAdapter = new RegistryDrillDownAdapter(treeViewer);
+		drillDownAdapter = new RegistryDrillDownAdapter(fTreeViewer);
 		IActionBars bars = getViewSite().getActionBars();
 		IToolBarManager mng = bars.getToolBarManager();
 		drillDownAdapter.addNavigationActions(mng);
-		mng.add(refreshAction);
+		mng.add(fRefreshAction);
 		mng.add(new Separator());
-		mng.add(collapseAllAction);
+		mng.add(fCollapseAllAction);
 		IMenuManager mgr = bars.getMenuManager();
 		mgr.add(new Separator());
-		mgr.add(showPluginsAction);
+		mgr.add(fShowPluginsAction);
 	}
 	public void fillContextMenu(IMenuManager manager) {
-		manager.add(refreshAction);
+		manager.add(fRefreshAction);
 		Tree tree = getUndisposedTree();
 		if (tree != null && false) { // testing purposes only
 			TreeItem[] selection = tree.getSelection();
@@ -227,33 +224,33 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 				}
 			}
 			if (allRemoveable)
-				manager.add(removeAction);
+				manager.add(fRemoveAction);
 			if (canAdd && selection.length == 1)
-				manager.add(addAction);
+				manager.add(fAddAction);
 		}
 		manager.add(new Separator());
 		drillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator());
-		manager.add(showPluginsAction);
+		manager.add(fShowPluginsAction);
 	}
 	public TreeViewer getTreeViewer() {
-		return treeViewer;
+		return fTreeViewer;
 	}
 	
 	public void saveState(IMemento memento) {
-		if (memento == null || this.memento == null || treeViewer == null)
+		if (memento == null || this.fMemento == null || fTreeViewer == null)
 			return;
-		boolean showRunning = ((RegistryBrowserContentProvider) treeViewer
+		boolean showRunning = ((RegistryBrowserContentProvider) fTreeViewer
 				.getContentProvider()).isShowRunning();
 		if (showRunning)
-			this.memento.putString(SHOW_RUNNING_PLUGINS, Boolean.toString(true));
+			this.fMemento.putString(SHOW_RUNNING_PLUGINS, Boolean.toString(true));
 		else
-			this.memento.putString(SHOW_RUNNING_PLUGINS, Boolean.toString(false));
-		memento.putMemento(this.memento);
+			this.fMemento.putString(SHOW_RUNNING_PLUGINS, Boolean.toString(false));
+		memento.putMemento(this.fMemento);
 	}
 	
 	public void setFocus() {
-		treeViewer.getTree().setFocus();
+		fTreeViewer.getTree().setFocus();
 	}
 	
 	/*
@@ -264,7 +261,7 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		if (tree == null)
 			return;
 		
-		final RegistryBrowserContentProvider provider = ((RegistryBrowserContentProvider) treeViewer.getContentProvider());
+		final RegistryBrowserContentProvider provider = ((RegistryBrowserContentProvider) fTreeViewer.getContentProvider());
 		final Bundle eventBundle = Platform.getBundle(event.getBundle().getSymbolicName());
 		if (eventBundle == null)
 			return;
@@ -274,7 +271,7 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 				Tree tree = getUndisposedTree();
 				if (tree == null)
 					return;
-				TreeItem[] items = treeViewer.getTree().getItems();
+				TreeItem[] items = fTreeViewer.getTree().getItems();
 				if (items != null) {
 					for (int i = 0; i < items.length; i++) {
 						Object object = items[i].getData();
@@ -283,7 +280,7 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 						if (object != null && object instanceof Bundle) {
 							Bundle bundle = (Bundle) object;
 							if (bundle.equals(eventBundle)) {
-								treeViewer.update(items[i].getData(), null);
+								fTreeViewer.update(items[i].getData(), null);
 								updateTitle();
 								return;
 							}
@@ -292,7 +289,7 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 				}	
 				if (provider.isShowRunning() && eventBundle.getState() != Bundle.ACTIVE)
 					return;
-				treeViewer.add(treeViewer.getInput(), adapter);
+				fTreeViewer.add(fTreeViewer.getInput(), adapter);
 				updateTitle();
 			}
 		});
@@ -332,7 +329,7 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		String namespace = getNamespaceIdentifier(object);
 		if (namespace == null)
 			return;
-		TreeItem[] bundles = treeViewer.getTree().getItems();
+		TreeItem[] bundles = fTreeViewer.getTree().getItems();
 		for (int i = 0; i < bundles.length; i++) {
 			Object data = bundles[i].getData();
 			Object adapted = null;
@@ -341,19 +338,19 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 			if (adapted instanceof Bundle && ((Bundle)adapted).getSymbolicName().equals(namespace)) {
 				// TODO fix this method
 				if (true) {
-					treeViewer.refresh(data);
+					fTreeViewer.refresh(data);
 					return;
 				}
 				TreeItem[] folders = bundles[i].getItems();
 				for (int j = 0; j < folders.length; j++) {
 					IBundleFolder folder = (IBundleFolder)folders[j].getData();
 					if (correctFolder(folder, object)) {
-						treeViewer.add(folder, object);
+						fTreeViewer.add(folder, object);
 						return;
 					}
 				}
 				// folder not found - 1st extension - refresh bundle item
-				treeViewer.refresh(data);
+				fTreeViewer.refresh(data);
 			}
 		}
 	}
@@ -380,7 +377,7 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		String namespace = getNamespaceIdentifier(object);
 		if (namespace == null)
 			return;
-		TreeItem[] bundles = treeViewer.getTree().getItems();
+		TreeItem[] bundles = fTreeViewer.getTree().getItems();
 		for (int i = 0; i < bundles.length; i++) {
 			Object data = bundles[i].getData();
 			Object adapted = null;
@@ -390,18 +387,18 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 				TreeItem[] folders = bundles[i].getItems();
 				// TODO fix this method
 				if (true) {
-					treeViewer.refresh(data);
+					fTreeViewer.refresh(data);
 					return;
 				}
 				for (int j = 0; j < folders.length; j++) {
 					IBundleFolder folder = (IBundleFolder)folders[j].getData();
 					if (correctFolder(folder, object)) {
-						treeViewer.remove(object);
+						fTreeViewer.remove(object);
 						return;
 					}
 				}
 				// folder not found - 1st extension - refresh bundle item
-				treeViewer.refresh(data);
+				fTreeViewer.refresh(data);
 			}
 		}
 	}
@@ -410,32 +407,32 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 	 * toolbar and context menu actions
 	 */
 	public void makeActions() {
-		refreshAction = new Action("refresh") { //$NON-NLS-1$
+		fRefreshAction = new Action("refresh") { //$NON-NLS-1$
 			public void run() {
-				BusyIndicator.showWhile(treeViewer.getTree().getDisplay(),
+				BusyIndicator.showWhile(fTreeViewer.getTree().getDisplay(),
 						new Runnable() {
 					public void run() {
-						treeViewer.refresh();
+						fTreeViewer.refresh();
 					}
 				});
 			}
 		};
-		refreshAction.setText(PDERuntimeMessages.RegistryView_refresh_label);
-		refreshAction.setToolTipText(PDERuntimeMessages.RegistryView_refresh_tooltip);
-		refreshAction.setImageDescriptor(PDERuntimePluginImages.DESC_REFRESH);
-		refreshAction.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_REFRESH_DISABLED);
+		fRefreshAction.setText(PDERuntimeMessages.RegistryView_refresh_label);
+		fRefreshAction.setToolTipText(PDERuntimeMessages.RegistryView_refresh_tooltip);
+		fRefreshAction.setImageDescriptor(PDERuntimePluginImages.DESC_REFRESH);
+		fRefreshAction.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_REFRESH_DISABLED);
 		
-		showPluginsAction = new Action(PDERuntimeMessages.RegistryView_showRunning_label){
+		fShowPluginsAction = new Action(PDERuntimeMessages.RegistryView_showRunning_label){
 			public void run() {
-				RegistryBrowserContentProvider cp = (RegistryBrowserContentProvider) treeViewer.getContentProvider();
-				cp.setShowRunning(showPluginsAction.isChecked());
-				treeViewer.refresh();
+				RegistryBrowserContentProvider cp = (RegistryBrowserContentProvider) fTreeViewer.getContentProvider();
+				cp.setShowRunning(fShowPluginsAction.isChecked());
+				fTreeViewer.refresh();
 				updateTitle();
 			}
 		};
-		showPluginsAction.setChecked(memento.getString(SHOW_RUNNING_PLUGINS).equals("true")); //$NON-NLS-1$
+		fShowPluginsAction.setChecked(fMemento.getString(SHOW_RUNNING_PLUGINS).equals("true")); //$NON-NLS-1$
 		
-		removeAction = new Action("Remove") {
+		fRemoveAction = new Action("Remove") {
 			public void run() {
 				Tree tree = getUndisposedTree();
 				if (tree == null)
@@ -456,7 +453,7 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 			}
 		};
 		
-		addAction = new Action("Add...") {
+		fAddAction = new Action("Add...") {
 			public void run() {
 				Tree tree = getUndisposedTree();
 				if (tree == null)
@@ -480,25 +477,25 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 			}
 		};
 		
-		collapseAllAction = new Action("collapseAll"){ //$NON-NLS-1$
+		fCollapseAllAction = new Action("collapseAll"){ //$NON-NLS-1$
 			public void run(){
-				treeViewer.collapseAll();
+				fTreeViewer.collapseAll();
 			}
 		};
-		collapseAllAction.setText(PDERuntimeMessages.RegistryView_collapseAll_label);
-		collapseAllAction.setImageDescriptor(PDERuntimePluginImages.DESC_COLLAPSE_ALL);
-		collapseAllAction.setToolTipText(PDERuntimeMessages.RegistryView_collapseAll_tooltip);
+		fCollapseAllAction.setText(PDERuntimeMessages.RegistryView_collapseAll_label);
+		fCollapseAllAction.setImageDescriptor(PDERuntimePluginImages.DESC_COLLAPSE_ALL);
+		fCollapseAllAction.setToolTipText(PDERuntimeMessages.RegistryView_collapseAll_tooltip);
 	}
 	
 	public void updateTitle(){
-		if (treeViewer == null || treeViewer.getContentProvider() == null)
+		if (fTreeViewer == null || fTreeViewer.getContentProvider() == null)
 			return;
-		setContentDescription(((RegistryBrowserContentProvider)treeViewer.getContentProvider()).getTitleSummary());
+		setContentDescription(((RegistryBrowserContentProvider)fTreeViewer.getContentProvider()).getTitleSummary());
 	}
 	
 	private Tree getUndisposedTree() {
-		if (treeViewer == null || treeViewer.getTree() == null || treeViewer.getTree().isDisposed())
+		if (fTreeViewer == null || fTreeViewer.getTree() == null || fTreeViewer.getTree().isDisposed())
 			return null;
-		return treeViewer.getTree();
+		return fTreeViewer.getTree();
 	}
 }

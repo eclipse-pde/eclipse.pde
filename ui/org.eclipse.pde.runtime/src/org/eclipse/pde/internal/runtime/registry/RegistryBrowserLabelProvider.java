@@ -31,74 +31,74 @@ import org.osgi.framework.Bundle;
 
 public class RegistryBrowserLabelProvider extends LabelProvider {
 	
-	private Image pluginImage;
-	private Image activePluginImage;
-	private Image unresolvedPluginImage;
-	private Image libraryImage;
-	private Image runtimeImage;
-	private Image genericTagImage;
-	private Image genericAttrImage;
-	private Image extensionImage;
-	private Image extensionsImage;
-	private Image extensionPointImage;
-	private Image extensionPointsImage;
-	private Image requiresImage;
-	private Image expReqPluginImage;
-	private Image reqPluginImage;
-	private Image locationImage;
-	private TreeViewer viewer;
+	private Image fPluginImage;
+	private Image fActivePluginImage;
+	private Image fUnresolvedPluginImage;
+	private Image fLibraryImage;
+	private Image fRuntimeImage;
+	private Image fGenericTagImage;
+	private Image fGenericAttrImage;
+	private Image fExtensionImage;
+	private Image fExtensionsImage;
+	private Image fExtensionPointImage;
+	private Image fExtensionPointsImage;
+	private Image fRequiresImage;
+	private Image fExpReqPluginImage;
+	private Image fReqPluginImage;
+	private Image fLocationImage;
+	private TreeViewer fViewer;
 	
 	public RegistryBrowserLabelProvider(TreeViewer viewer) {
-		this.viewer = viewer;
-		pluginImage = PDERuntimePluginImages.DESC_PLUGIN_OBJ.createImage();
-		reqPluginImage = PDERuntimePluginImages.DESC_REQ_PLUGIN_OBJ.createImage();
-		extensionPointImage = PDERuntimePluginImages.DESC_EXT_POINT_OBJ.createImage();
-		extensionPointsImage = PDERuntimePluginImages.DESC_EXT_POINTS_OBJ.createImage();
-		extensionImage = PDERuntimePluginImages.DESC_EXTENSION_OBJ.createImage();
-		extensionsImage = PDERuntimePluginImages.DESC_EXTENSIONS_OBJ.createImage();
-		requiresImage = PDERuntimePluginImages.DESC_REQ_PLUGINS_OBJ.createImage();
-		libraryImage = PDERuntimePluginImages.DESC_JAVA_LIB_OBJ.createImage();
-		genericTagImage = PDERuntimePluginImages.DESC_GENERIC_XML_OBJ.createImage();
-		genericAttrImage = PDERuntimePluginImages.DESC_ATTR_XML_OBJ.createImage();
-		runtimeImage = PDERuntimePluginImages.DESC_RUNTIME_OBJ.createImage();
-		locationImage = PDERuntimePluginImages.DESC_LOCATION.createImage();
+		fViewer = viewer;
+		fPluginImage = PDERuntimePluginImages.DESC_PLUGIN_OBJ.createImage();
+		fReqPluginImage = PDERuntimePluginImages.DESC_REQ_PLUGIN_OBJ.createImage();
+		fExtensionPointImage = PDERuntimePluginImages.DESC_EXT_POINT_OBJ.createImage();
+		fExtensionPointsImage = PDERuntimePluginImages.DESC_EXT_POINTS_OBJ.createImage();
+		fExtensionImage = PDERuntimePluginImages.DESC_EXTENSION_OBJ.createImage();
+		fExtensionsImage = PDERuntimePluginImages.DESC_EXTENSIONS_OBJ.createImage();
+		fRequiresImage = PDERuntimePluginImages.DESC_REQ_PLUGINS_OBJ.createImage();
+		fLibraryImage = PDERuntimePluginImages.DESC_JAVA_LIB_OBJ.createImage();
+		fGenericTagImage = PDERuntimePluginImages.DESC_GENERIC_XML_OBJ.createImage();
+		fGenericAttrImage = PDERuntimePluginImages.DESC_ATTR_XML_OBJ.createImage();
+		fRuntimeImage = PDERuntimePluginImages.DESC_RUNTIME_OBJ.createImage();
+		fLocationImage = PDERuntimePluginImages.DESC_LOCATION.createImage();
 		
 		ImageDescriptor activePluginDesc =
 			new OverlayIcon(
 				PDERuntimePluginImages.DESC_PLUGIN_OBJ,
 				new ImageDescriptor[][] {{ PDERuntimePluginImages.DESC_RUN_CO }});
-		activePluginImage = activePluginDesc.createImage();
+		fActivePluginImage = activePluginDesc.createImage();
 		
 		ImageDescriptor unresolvedPluginDesc =
 			new OverlayIcon(
 				PDERuntimePluginImages.DESC_PLUGIN_OBJ,
 				new ImageDescriptor[][] {{ PDERuntimePluginImages.DESC_ERROR_CO }});
-		unresolvedPluginImage = unresolvedPluginDesc.createImage();
+		fUnresolvedPluginImage = unresolvedPluginDesc.createImage();
 		
 		
 		ImageDescriptor exportedRequiresDesc = 
 			new OverlayIcon(
 					PDERuntimePluginImages.DESC_REQ_PLUGIN_OBJ,
 					new ImageDescriptor[][] {{ PDERuntimePluginImages.DESC_EXPORT_CO }});
-		expReqPluginImage = exportedRequiresDesc.createImage();
+		fExpReqPluginImage = exportedRequiresDesc.createImage();
 		
 	}
 	public void dispose() {
-		pluginImage.dispose();
-		activePluginImage.dispose();
-		unresolvedPluginImage.dispose();
-		reqPluginImage.dispose();
-		extensionPointImage.dispose();
-		extensionPointsImage.dispose();
-		extensionImage.dispose();
-		extensionsImage.dispose();
-		requiresImage.dispose();
-		expReqPluginImage.dispose();
-		libraryImage.dispose();
-		genericTagImage.dispose();
-		genericAttrImage.dispose();
-		runtimeImage.dispose();
-		locationImage.dispose();
+		fPluginImage.dispose();
+		fActivePluginImage.dispose();
+		fUnresolvedPluginImage.dispose();
+		fReqPluginImage.dispose();
+		fExtensionPointImage.dispose();
+		fExtensionPointsImage.dispose();
+		fExtensionImage.dispose();
+		fExtensionsImage.dispose();
+		fRequiresImage.dispose();
+		fExpReqPluginImage.dispose();
+		fLibraryImage.dispose();
+		fGenericTagImage.dispose();
+		fGenericAttrImage.dispose();
+		fRuntimeImage.dispose();
+		fLocationImage.dispose();
 	}
 	public Image getImage(Object element) {
 		if (element instanceof PluginObjectAdapter)
@@ -108,47 +108,47 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 			Bundle bundle = (Bundle) element;
 			switch (bundle.getState()) {
 			case Bundle.ACTIVE:
-				return activePluginImage;
+				return fActivePluginImage;
 			case Bundle.RESOLVED:
-				return pluginImage;
+				return fPluginImage;
 			default:
-				return unresolvedPluginImage;
+				return fUnresolvedPluginImage;
 			}
 		}
 		if (element instanceof IBundleFolder) {
 			int id = ((IBundleFolder) element).getFolderId();
 			switch (id) {
 				case IBundleFolder.F_EXTENSIONS:
-					return extensionsImage;
+					return fExtensionsImage;
 				case IBundleFolder.F_EXTENSION_POINTS:
-					return extensionPointsImage;
+					return fExtensionPointsImage;
 				case IBundleFolder.F_IMPORTS:
-					return requiresImage;
+					return fRequiresImage;
 				case IBundleFolder.F_LIBRARIES:
-					return runtimeImage;
+					return fRuntimeImage;
 				case IBundleFolder.F_LOCATION:
-					return locationImage;
+					return fLocationImage;
 			}
 			return null;
 		}
 		if (element instanceof IExtension)
-			return extensionImage;
+			return fExtensionImage;
 		
 		if (element instanceof IExtensionPoint)
-			return extensionPointImage;
+			return fExtensionPointImage;
 		
 		if (element instanceof IBundlePrerequisite)
 			return ((IBundlePrerequisite)element).isExported() ?
-					expReqPluginImage : reqPluginImage;
+					fExpReqPluginImage : fReqPluginImage;
 		
 		if (element instanceof IBundleLibrary)
-			return libraryImage;
+			return fLibraryImage;
 		
 		if (element instanceof IConfigurationElement)
-			return genericTagImage;
+			return fGenericTagImage;
 		
 		if (element instanceof IConfigurationAttribute)
-			return genericAttrImage;
+			return fGenericAttrImage;
 		
 		return null;
 	}
@@ -189,7 +189,7 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 			}
 		}
 		if (element instanceof IExtension) {
-			if (((RegistryBrowserContentProvider)viewer.getContentProvider()).isInExtensionSet) {
+			if (((RegistryBrowserContentProvider)fViewer.getContentProvider()).isInExtensionSet) {
 				String name = ((IExtension) element).getLabel();
 				String id = ((IExtension) element).getExtensionPointUniqueIdentifier();
 				if (name != null && name.length() > 0)
