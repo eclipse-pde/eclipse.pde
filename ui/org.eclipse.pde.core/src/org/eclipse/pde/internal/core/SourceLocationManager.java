@@ -15,9 +15,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
@@ -65,30 +63,30 @@ public class SourceLocationManager implements ICoreConstants {
 	}
 
 	public File findSourceFile(IPluginBase pluginBase, IPath sourcePath) {
-		IStatus status = PluginVersionIdentifier.validateVersion(pluginBase.getVersion());
-		if (status.getSeverity() != IStatus.OK)
-			return null;
 		IPath relativePath = getRelativePath(pluginBase, sourcePath);
 		SearchResult result = findSourceLocation(pluginBase, relativePath);
 		return (result != null)? result.file : null;
 	}
 
 	public IPath findSourcePath(IPluginBase pluginBase, IPath sourcePath) {
-		IStatus status = PluginVersionIdentifier.validateVersion(pluginBase.getVersion());
-		if (status.getSeverity() != IStatus.OK)
-			return null;
 		IPath relativePath = getRelativePath(pluginBase, sourcePath);
 		SearchResult result = findSourceLocation(pluginBase, relativePath);
 		return result == null ? null : result.loc.getPath().append(relativePath);
 	}
 
 	private IPath getRelativePath(IPluginBase pluginBase, IPath sourcePath) {
-		Version vid = new Version(pluginBase.getVersion());
-		String pluginDir = pluginBase.getId() + "_" + vid.toString(); //$NON-NLS-1$
-		return new Path(pluginDir).append(sourcePath);
+		try {
+			Version vid = new Version(pluginBase.getVersion());
+			String pluginDir = pluginBase.getId() + "_" + vid.toString(); //$NON-NLS-1$
+			return new Path(pluginDir).append(sourcePath);
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
 	}
 
 	public SearchResult findSourceLocation(IPluginBase pluginBase, IPath relativePath) {
+		if (relativePath == null)
+			return null;
 		SearchResult result = findSearchResult(getUserLocations(), relativePath);
 		return (result != null) ? result : findSearchResult(getExtensionLocations(), relativePath);
 	}
