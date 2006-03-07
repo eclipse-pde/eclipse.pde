@@ -931,7 +931,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 
 		String root = getLocation(model);
-		File file = new File(root, "javaCompiler." + name + ".args"); //$NON-NLS-1$ //$NON-NLS-2$
+		File file = new File(root, "javaCompiler." + name.replaceAll("[\\\\/]", "_") + ".args"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		if (file.exists()) {
 			file.delete();
 		}

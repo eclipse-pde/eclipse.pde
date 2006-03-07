@@ -30,6 +30,13 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	public static class ClasspathElement {
 		private String path;
 		private String accessRules;
+		
+		/**
+		 * Create a ClasspathElement object
+		 * @param path
+		 * @param accessRules
+		 * @throws NullPointerException if path is null
+		 */
 		public ClasspathElement(String path, String accessRules){
 			this.path = path;
 			this.accessRules = accessRules;
@@ -43,23 +50,42 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		public String getAccessRules(){
 			return accessRules;
 		}
+		public void addRules(String newRule){
+			if (accessRules.equals("") || accessRules.equals(newRule)) //$NON-NLS-1$
+				return;
+			if (!newRule.equals("")) { //$NON-NLS-1$
+				String join = accessRules.substring(0, accessRules.length() - EXCLUDE_ALL_RULE.length() - 1);
+				newRule = join + newRule.substring(1);
+			}
+			accessRules = newRule;
+			return;
+		}
+		/**
+		 * ClasspathElement objects are equal if they have the same path.
+		 * Access rules are not considered.
+		 */
 		public boolean equals(Object obj) {
 			if (obj instanceof ClasspathElement) {
 				ClasspathElement element = (ClasspathElement) obj;
-				if (path == null || !path.equals(element.getPath()))
-					return false;
-				if (accessRules == null)
-					return (element.getAccessRules() == null);
-				return accessRules.equals(element.getAccessRules());
+				return (path != null && path.equals(element.getPath()));
 			}
 			return false;
 		}
+		public int hashCode() {
+			return path.hashCode();
+		}
+		
+		public static String normalize(String path) {
+			//always use '/' as a path separator to help with comparing paths in equals
+			return path.replaceAll("\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 	
-	private static final String EXCLUDE_ALL_RULE = "-**/*"; //$NON-NLS-1$
+	private static final String EXCLUDE_ALL_RULE = "?**/*"; //$NON-NLS-1$
 	
 	private ModelBuildScriptGenerator generator;
 	private Map visiblePackages = null;
+	private Map pathElements = null;
 	
 	public ClasspathComputer3_0(ModelBuildScriptGenerator modelGenerator) {
 		this.generator = modelGenerator;
@@ -79,7 +105,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		List pluginChain = new ArrayList(10); //The list of plugins added to detect cycle
 		String location = generator.getLocation(model);
 		Set addedPlugins = new HashSet(10); //The set of all the plugins already added to the classpath (this allows for optimization)
-
+		pathElements = new HashMap();
 		visiblePackages = getVisiblePackages(model);
 
 		//PREREQUISITE
@@ -279,15 +305,25 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			if (modelProperties == null || modelProperties.getProperty(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX + libraryName) != null)
 				path = Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + '/' + path;
 			secondaryPath = Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/../" + pluginId + '/' + libraryName; //$NON-NLS-1$
+		
 		}
-		ClasspathElement element = new ClasspathElement(path, rules);
-		if (!classpath.contains(element))
-			classpath.add(element);
+		
+		addClasspathElementWithRule(classpath, path, rules);
+		if (secondaryPath != null) {
+			addClasspathElementWithRule(classpath, secondaryPath, rules);
+		}	
+	}
 
-		element = new ClasspathElement(secondaryPath, rules);
-		if (secondaryPath != null && !classpath.contains(element))
+	private void addClasspathElementWithRule(List classpath, String path, String rules) {
+		String normalizedPath = ClasspathElement.normalize(path);
+		ClasspathElement existing = (ClasspathElement) pathElements.get(normalizedPath);
+		if (existing != null){
+			existing.addRules( rules);
+		} else {
+			ClasspathElement element = new ClasspathElement(normalizedPath, rules);
 			classpath.add(element);
-
+			pathElements.put(normalizedPath, element);
+		}
 	}
 
 	private void addSelf(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar, List classpath, String location, List pluginChain, Set addedPlugins) throws CoreException {
