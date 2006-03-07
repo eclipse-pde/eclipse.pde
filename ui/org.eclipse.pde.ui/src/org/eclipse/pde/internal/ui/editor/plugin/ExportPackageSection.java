@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jdt.ui.actions.FindReferencesAction;
 import org.eclipse.jdt.ui.actions.ShowInPackageViewAction;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
@@ -55,6 +56,7 @@ import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -236,11 +238,11 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
         handleGoToPackage(selection);
     }
     
-    private void handleGoToPackage(ISelection sel) {
+    private IPackageFragment getPackageFragment(ISelection sel) {
     	if (sel instanceof IStructuredSelection) {
     		IStructuredSelection selection = (IStructuredSelection) sel;
     		if (selection.size() != 1) 
-    			return;
+    			return null;
     		PackageObject importObject = (PackageObject)selection.getFirstElement();
     		String packageName = importObject.getName();
 
@@ -251,22 +253,24 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
     				for (int i = 0; i < roots.length; i++) {
     					IPackageFragment frag = roots[i].getPackageFragment(packageName);
     					if (frag.exists()) {
-    						openPackage(frag);
-    						break;
+    						return frag;
     					}
     				}
     			} catch (JavaModelException e) {
     			}
     	}
+    	return null;
     }
     
-    private void openPackage(IPackageFragment frag) {
-    	try {
-    		IViewPart part = PDEPlugin.getActivePage().showView(JavaUI.ID_PACKAGES);
-    		ShowInPackageViewAction action = new ShowInPackageViewAction(part.getSite());
-    		action.run(frag);
-    	} catch (PartInitException e) {
-    	}
+    private void handleGoToPackage(ISelection selection) {
+    	IPackageFragment frag = getPackageFragment(selection);
+    	if (frag != null)
+    		try {
+    			IViewPart part = PDEPlugin.getActivePage().showView(JavaUI.ID_PACKAGES);
+    			ShowInPackageViewAction action = new ShowInPackageViewAction(part.getSite());
+    			action.run(frag);
+    		} catch (PartInitException e) {
+    		}
     }
 
     protected void buttonSelected(int index) {
@@ -418,17 +422,36 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = fPackageViewer.getSelection();
         manager.add(fAddAction);
-        if (selection instanceof IStructuredSelection && 
-        		((IStructuredSelection)selection).size() == 1)
+        boolean singleSelection = selection instanceof IStructuredSelection && 
+			((IStructuredSelection)selection).size() == 1;
+        if (singleSelection)
         	manager.add(fGoToAction);
         manager.add(new Separator());
         if (!selection.isEmpty())
         	manager.add(fRemoveAction);
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
+		if (singleSelection)
+			manager.add(new Action(PDEUIMessages.ExportPackageSection_findReferences) {
+				public void run() {
+					doSearch(fPackageViewer.getSelection());
+				}
+			});
         if (shouldEnableProperties(((IStructuredSelection)fPackageViewer.getSelection()).toArray())) {
             manager.add(new Separator());
             manager.add(fPropertiesAction);
         }
+	}
+	
+	private void doSearch(ISelection sel) {
+		IPackageFragment frag = getPackageFragment(sel);
+		if (frag != null) {
+			FindReferencesAction action = new FindReferencesAction(getPage().getEditorSite());
+			action.run(frag);
+		} else if (sel instanceof IStructuredSelection)  {
+    		IStructuredSelection selection = (IStructuredSelection) sel;
+    		PackageObject exportObject = (PackageObject)selection.getFirstElement();
+    		NewSearchUI.runQueryInBackground(new BlankQuery(exportObject));
+		}
 	}
 
     private BundleInputContext getBundleContext() {

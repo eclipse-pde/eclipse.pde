@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -22,6 +23,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jdt.ui.actions.FindReferencesInWorkingSetAction;
 import org.eclipse.jdt.ui.actions.ShowInPackageViewAction;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
@@ -61,13 +63,17 @@ import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.search.dependencies.UnusedDependenciesAction;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -232,37 +238,39 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         }
 	}
     
-    private void handleGoToPackage(ISelection sel) {
+    private IPackageFragment getPackageFragment(ISelection sel) {
     	if (sel instanceof IStructuredSelection)  {
     		IStructuredSelection selection = (IStructuredSelection) sel;
     		if (selection.size() != 1) 
-    			return;
+    			return null;
     		PackageObject importObject = (PackageObject)selection.getFirstElement();
     		String packageName = importObject.getName();
 
     		IJavaProject jp = JavaCore.create(getPage().getPDEEditor().getCommonProject());
     		if (jp != null)
     			try {
-    				IPackageFragmentRoot[] roots = jp.getPackageFragmentRoots();
+    				IPackageFragmentRoot[] roots = jp.getAllPackageFragmentRoots();
     				for (int i = 0; i < roots.length; i++) {
     					IPackageFragment frag = roots[i].getPackageFragment(packageName);
     					if (frag.exists()) {
-    						openPackage(frag);
-    						break;
+    						return frag;
     					}
     				}
     			} catch (JavaModelException e) {
     			}
     	}
+    	return null;
     }
     
-    private void openPackage(IPackageFragment frag) {
-    	try {
-    		IViewPart part = PDEPlugin.getActivePage().showView(JavaUI.ID_PACKAGES);
-    		ShowInPackageViewAction action = new ShowInPackageViewAction(part.getSite());
-    		action.run(frag);
-    	} catch (PartInitException e) {
-    	}
+    private void handleGoToPackage(ISelection selection) {
+    	IPackageFragment frag = getPackageFragment(selection);
+    	if (frag != null)
+    		try {
+    			IViewPart part = PDEPlugin.getActivePage().showView(JavaUI.ID_PACKAGES);
+    			ShowInPackageViewAction action = new ShowInPackageViewAction(part.getSite());
+    			action.run(frag);
+    		} catch (PartInitException e) {
+    		}
     }
 
 	private void handleOpenProperties() {
@@ -418,22 +426,61 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
     }
 
 	protected void fillContextMenu(IMenuManager manager) {
-		ISelection selection = fPackageViewer.getSelection();
+		final ISelection selection = fPackageViewer.getSelection();
         manager.add(fAddAction);
-        if (selection instanceof IStructuredSelection && 
-        		((IStructuredSelection)selection).size() == 1)
+        boolean singleSelection = selection instanceof IStructuredSelection && 
+			((IStructuredSelection)selection).size() == 1;
+        if (singleSelection)
         	manager.add(fGoToAction);
         manager.add(new Separator());
         if (!selection.isEmpty())
         	manager.add(fRemoveAction);
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 		manager.add(new Separator());
+		if (singleSelection){ 
+			manager.add(new Action(PDEUIMessages.DependencyExtentSearchResultPage_referencesInPlugin) {
+				public void run() {
+					doReferenceSearch(selection);
+				}
+			});
+		}
 		if (((IModel)getPage().getModel()).getUnderlyingResource()!=null) 
 			manager.add(new UnusedDependenciesAction((IPluginModelBase) getPage().getModel(), false));
         if (!fPackageViewer.getSelection().isEmpty()) {
             manager.add(new Separator());
             manager.add(fPropertiesAction);
         }
+	}
+	
+	private void doReferenceSearch(final ISelection sel) {
+		IPackageFragmentRoot[] roots = null;
+		try {
+			roots = getSourceRoots();
+		} catch (JavaModelException e) {
+		}
+		final IPackageFragment fragment = getPackageFragment(sel);
+		if (fragment != null && roots != null) {
+			IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
+			IWorkingSet set = manager.createWorkingSet("temp", roots); //$NON-NLS-1$
+			new FindReferencesInWorkingSetAction(getPage().getEditorSite(), new IWorkingSet[] {set}).run(fragment);
+			manager.removeWorkingSet(set);
+		} else if (sel instanceof IStructuredSelection)  {
+			IStructuredSelection selection = (IStructuredSelection) sel;
+			PackageObject importObject = (PackageObject)selection.getFirstElement();
+			NewSearchUI.runQueryInBackground(new BlankQuery(importObject));
+		}
+	}
+	
+	private IPackageFragmentRoot[] getSourceRoots() throws JavaModelException {
+		ArrayList result = new ArrayList();
+		IProject project = getPage().getPDEEditor().getCommonProject();
+		IPackageFragmentRoot[] roots = JavaCore.create(project).getPackageFragmentRoots();
+		for (int i = 0; i < roots.length; i++) {
+			if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE
+					|| (roots[i].isArchive() && !roots[i].isExternal())) 
+				result.add(roots[i]);
+		}
+		return (IPackageFragmentRoot[]) result.toArray(new IPackageFragmentRoot[result.size()]);
 	}
 
     private BundleInputContext getBundleContext() {

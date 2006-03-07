@@ -2753,4 +2753,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String ImportPackageSection_goToPackage;
 
+	public static String ExportPackageSection_findReferences;
+
 }
