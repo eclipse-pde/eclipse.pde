@@ -160,7 +160,7 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		treeViewer.setContentProvider(new RegistryBrowserContentProvider(treeViewer, showRunning));
 		treeViewer.setLabelProvider(new RegistryBrowserLabelProvider(treeViewer));
 		treeViewer.setUseHashlookup(true);
-		treeViewer.setSorter(new ViewerSorter(){
+		treeViewer.setSorter(new ViewerSorter() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if (e1 instanceof PluginObjectAdapter)
 					e1 = ((PluginObjectAdapter)e1).getObject();
@@ -169,10 +169,8 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 				if (e1 instanceof IBundleFolder && e2 instanceof IBundleFolder)
 					return ((IBundleFolder)e1).getFolderId() - ((IBundleFolder)e2).getFolderId();
 				if (e1 instanceof Bundle && e2 instanceof Bundle) {
-					String id1 = ((Bundle)e1).getSymbolicName();
-					String id2 = ((Bundle)e2).getSymbolicName();
-					if (id2.indexOf(id1) == 0)
-						return -1;
+					e1 = ((Bundle)e1).getSymbolicName();
+					e2 = ((Bundle)e2).getSymbolicName();
 				}
 				return super.compare(viewer, e1, e2);
 			}
