@@ -45,7 +45,6 @@ import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.search.ui.text.ISearchEditorAccess;
 import org.eclipse.search.ui.text.Match;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
@@ -727,10 +726,6 @@ public abstract class PDEFormEditor extends FormEditor
 	
 	protected abstract InputContext getInputContext(Object object);
 	
-	public int getOrientation() {
-		return SWT.LEFT_TO_RIGHT;
-	}
-
 	public IEditorValidationStack getValidationStack() {
 		return fValidationStack;
 	}
