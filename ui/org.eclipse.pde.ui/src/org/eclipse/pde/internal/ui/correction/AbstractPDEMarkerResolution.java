@@ -29,4 +29,7 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 		return null;
 	}
 
+	public int getType() {
+		return fType;
+	}
 }

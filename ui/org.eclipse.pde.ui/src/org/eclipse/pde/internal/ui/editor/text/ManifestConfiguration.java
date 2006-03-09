@@ -14,6 +14,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IWordDetector;
@@ -34,6 +35,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	private IColorManager fColorManager;
 	private BasePDEScanner fPropertyKeyScanner;
 	private BasePDEScanner fPropertyValueScanner;
+	private ManifestQuickAssistAssistant fQuickAssistant;
 	
 	class ManifestHeaderScanner extends BasePDEScanner {
 		
@@ -233,5 +235,17 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 		fPropertyValueScanner.adaptToPreferenceChange(event);
 	}
 
-
+	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
+		if (sourceViewer.isEditable()) {
+			if (fQuickAssistant == null)
+				fQuickAssistant = new ManifestQuickAssistAssistant();
+			return fQuickAssistant;
+		}
+		return null;
+	}
+	
+	public void dispose() {
+		if (fQuickAssistant != null)
+			fQuickAssistant.dispose();
+	}
 }

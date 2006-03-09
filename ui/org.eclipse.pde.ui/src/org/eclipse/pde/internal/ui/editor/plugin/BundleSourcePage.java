@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.ResourceBundle;
 
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.reconciler.IReconciler;
@@ -36,9 +37,11 @@ import org.eclipse.pde.internal.ui.editor.SourceOutlinePage;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.pde.internal.ui.editor.text.ManifestConfiguration;
+import org.eclipse.pde.internal.ui.editor.text.ManifestSelectAnnotationRulerAction;
 import org.eclipse.pde.internal.ui.editor.text.ReconcilingStrategy;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 public class BundleSourcePage extends KeyValueSourcePage {
 	
@@ -99,11 +102,13 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		}
 	}
 	private IColorManager fColorManager;
+	private BundleSourceViewerConfiguration fConfiguration;
 	
 	public BundleSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
 		fColorManager = ColorManager.getDefault();
-		setSourceViewerConfiguration(new BundleSourceViewerConfiguration(fColorManager));
+		fConfiguration = new BundleSourceViewerConfiguration(fColorManager);
+		setSourceViewerConfiguration(fConfiguration);
 	}
 	
 	protected ILabelProvider createOutlineLabelProvider() {
@@ -133,6 +138,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	
 	public void dispose() {
 		fColorManager.dispose();
+		fConfiguration.dispose();
 		super.dispose();
 	}
 	
@@ -140,14 +146,14 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		try {
 			ISourceViewer sourceViewer = getSourceViewer();
 			if (sourceViewer != null)
-				((BundleSourceViewerConfiguration) getSourceViewerConfiguration()).handlePropertyChangeEvent(event);
+				fConfiguration.handlePropertyChangeEvent(event);
 		} finally {
 			super.handlePreferenceStoreChanged(event);
 		}
 	}
 	
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
-		return ((BundleSourceViewerConfiguration)getSourceViewerConfiguration()).affectsTextPresentation(event) || super.affectsTextPresentation(event);
+		return fConfiguration.affectsTextPresentation(event) || super.affectsTextPresentation(event);
 	}
 	
 	protected String[] collectContextMenuPreferencePages() {
@@ -157,5 +163,14 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		System.arraycopy(ids, 0, more, 1, ids.length);
 		return more;
 	}
-
+	
+	protected void createActions() {
+		super.createActions();
+		ManifestSelectAnnotationRulerAction action = new ManifestSelectAnnotationRulerAction(
+				ResourceBundle.getBundle("org.eclipse.pde.internal.ui.editor.text.ConstructedManifestEditorMessages"), //$NON-NLS-1$
+				"ManifestSelectAnnotationRulerAction.", //$NON-NLS-1$
+				this,
+				getVerticalRuler());
+		setAction(ITextEditorActionConstants.RULER_CLICK, action);
+	}
 }
