@@ -42,6 +42,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private static final String SOLARIS_TINY = "solarisTiny"; //$NON-NLS-1$
 	private static final String WIN32_16_LOW = "winSmallLow"; //$NON-NLS-1$
 	private static final String WIN32_16_HIGH = "winSmallHigh"; //$NON-NLS-1$
+	private static final String WIN32_24_LOW = "win24Low"; //$NON-NLS-1$
 	private static final String WIN32_32_LOW = "winMediumLow"; //$NON-NLS-1$
 	private static final String WIN32_32_HIGH = "winMediumHigh"; //$NON-NLS-1$
 	private static final String WIN32_48_LOW = "winLargeLow"; //$NON-NLS-1$
@@ -456,6 +457,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 			return;
 		result.add(attributes.getValue(WIN32_16_HIGH));
 		result.add(attributes.getValue(WIN32_16_LOW));
+		result.add(attributes.getValue(WIN32_24_LOW));
 		result.add(attributes.getValue(WIN32_32_HIGH));
 		result.add(attributes.getValue(WIN32_32_LOW));
 		result.add(attributes.getValue(WIN32_48_HIGH));
