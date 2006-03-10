@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.build.packager.PackagerGenerator;
+import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 
 /** 
  * Internal task.
@@ -30,6 +31,7 @@ public class PackagerTask extends Task {
 		generator = new PackagerGenerator();
 		generator.setReportResolutionErrors(true);
 		generator.setIgnoreMissingPropertiesFile(true);
+		BuildTimeSiteFactory.setInstalledBaseSite(null);
 	}
 
 	/**
