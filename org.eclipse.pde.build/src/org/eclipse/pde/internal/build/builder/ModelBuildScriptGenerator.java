@@ -195,26 +195,14 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 		return false;
 	}
-
-	private static boolean containsExpandedDot(String [] classpath) {
-		if (classpath == null || classpath.length == 0)
-			return false;
-		for (int i = 0; i < classpath.length; i++) {
-			if( EXPANDED_DOT.equals(classpath[i]))
-				return true;
-		}
-		return false;
-	}
 	
 	public static boolean specialDotProcessing(Properties properties, String[] classpathInfo) {
-		if (findAndReplaceDot(classpathInfo) || containsExpandedDot(classpathInfo)) {
-			String sourceFolder = properties.getProperty(PROPERTY_SOURCE_PREFIX + DOT);
-			if (sourceFolder != null) {
-				properties.setProperty(PROPERTY_SOURCE_PREFIX + EXPANDED_DOT, sourceFolder);
-				properties.remove(PROPERTY_SOURCE_PREFIX + DOT);
-			} else {
-				return false;
-			}
+		findAndReplaceDot(classpathInfo);
+		String sourceFolder = properties.getProperty(PROPERTY_SOURCE_PREFIX + DOT);
+		if (sourceFolder != null) {
+			properties.setProperty(PROPERTY_SOURCE_PREFIX + EXPANDED_DOT, sourceFolder);
+			properties.remove(PROPERTY_SOURCE_PREFIX + DOT);
+			
 			String outputValue = properties.getProperty(PROPERTY_OUTPUT_PREFIX + DOT);
 			if (outputValue != null) {
 				properties.setProperty(PROPERTY_OUTPUT_PREFIX + EXPANDED_DOT, outputValue);
@@ -337,10 +325,14 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 		for (int i = 0; i < availableJars.length; i++) {
 			String jarName = availableJars[i].getName(true);
+			String jarLocation = getJARLocation(jarName);
+			//avoid destructive cleans
+			if(jarLocation.equals("") || jarLocation.startsWith(DOT + DOT) || jarLocation.equals(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER))) //$NON-NLS-1$
+				continue;
 			if (availableJars[i].type == CompiledEntry.JAR) {
-				script.printDeleteTask(null, getJARLocation(jarName), null);
+				script.printDeleteTask(null, jarLocation, null);
 			} else {
-				script.printDeleteTask(getJARLocation(jarName), null, null);
+				script.printDeleteTask(jarLocation, null, null);
 			}
 			script.printDeleteTask(null, getSRCLocation(jarName), null);
 		}
