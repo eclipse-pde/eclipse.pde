@@ -22,14 +22,16 @@ import org.apache.tools.ant.Task;
  */
 public class IdReplaceTask extends Task {
 	private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
-	private static final String FEATURE = "feature";//$NON-NLS-1$
+	private static final String FEATURE_START_TAG = "<feature";//$NON-NLS-1$
 	private static final String ID = "id";//$NON-NLS-1$
 	private static final String VERSION = "version";//$NON-NLS-1$
 	private static final String COMMA = ","; //$NON-NLS-1$
 	private static final String BACKSLASH = "\""; //$NON-NLS-1$
 	private static final String EMPTY = ""; //$NON-NLS-1$
-	private static final String PLUGIN = "plugin"; //$NON-NLS-1$
-	private static final String INCLUDES = "includes"; //$NON-NLS-1$
+	private static final String PLUGIN_START_TAG = "<plugin"; //$NON-NLS-1$
+	private static final String INCLUDES_START_TAG = "<includes"; //$NON-NLS-1$
+	private static final String COMMENT_START_TAG = "<!--"; //$NON-NLS-1$
+	private static final String COMMENT_END_TAG = "-->"; //$NON-NLS-1$
 	
 	//Path of the file where we are replacing the values
 	private String featureFilePath;
@@ -115,7 +117,16 @@ public class IdReplaceTask extends Task {
 		}
 
 		//Skip feature declaration because it contains the word "plugin"
-		int startFeature = scan(buffer, 0, FEATURE);
+		int startComment = scan(buffer, 0, COMMENT_START_TAG);
+		int endComment = startComment > -1 ? scan(buffer, startComment, COMMENT_END_TAG) : -1;
+		int startFeature = scan(buffer, 0, FEATURE_START_TAG);
+
+		while (startComment != -1 && startFeature > startComment && startFeature < endComment) {
+			startFeature = scan(buffer, endComment, FEATURE_START_TAG);
+			startComment = scan(buffer, endComment, COMMENT_START_TAG);
+			endComment = startComment > -1 ? scan(buffer, startComment, COMMENT_END_TAG) : -1;
+		}
+
 		if (startFeature == -1)
 			return;
 
@@ -157,11 +168,14 @@ public class IdReplaceTask extends Task {
 		int startElement = endFeature;
 		int startId = 0;
 		while (true) {
-			int startPlugin = scan(buffer, startElement + 1, PLUGIN);
-			int startInclude = scan(buffer, startElement + 1, INCLUDES);
+			int startPlugin = scan(buffer, startElement + 1, PLUGIN_START_TAG);
+			int startInclude = scan(buffer, startElement + 1, INCLUDES_START_TAG);
 
 			if (startPlugin == -1 && startInclude == -1)
 				break;
+
+			startComment = scan(buffer, startElement + 1, COMMENT_START_TAG);
+			endComment = startComment > -1 ? scan(buffer, startComment, COMMENT_END_TAG) : -1;
 
 			int foundElement = -1;
 			boolean isPlugin = false;
@@ -180,15 +194,11 @@ public class IdReplaceTask extends Task {
 				}
 			}
 
-			//Verify that we have a "<" before the matching position.
-			int character = foundElement;
-			while(Character.isWhitespace(buffer.charAt(--character))) {/*Nothing to do */}
-			if (buffer.charAt(character) != '<') {
-				startElement = foundElement;
+			if (startComment != -1 && foundElement > startComment && foundElement < endComment) {
+				startElement = endComment;
 				continue;
 			}
-				
-			
+
 			startId = scan(buffer, foundElement, ID);
 			if (startId == -1)
 				break;

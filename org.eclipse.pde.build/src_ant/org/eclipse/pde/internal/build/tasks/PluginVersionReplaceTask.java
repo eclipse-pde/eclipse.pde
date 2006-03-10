@@ -20,8 +20,10 @@ import org.apache.tools.ant.Task;
  * @since 3.0
  */
 public class PluginVersionReplaceTask extends Task {
-	private static final String PLUGIN = "plugin"; //$NON-NLS-1$
-	private static final String FRAGMENT = "fragment"; //$NON-NLS-1$
+	private static final String PLUGIN_START_TAG = "<plugin"; //$NON-NLS-1$
+	private static final String FRAGMENT_START_TAG = "<fragment"; //$NON-NLS-1$
+	private static final String COMMENT_START_TAG = "<!--"; //$NON-NLS-1$
+	private static final String COMMENT_END_TAG = "-->"; //$NON-NLS-1$
 	private static final String VERSION = "version";//$NON-NLS-1$
 	private static final String BACKSLASH = "\""; //$NON-NLS-1$
 
@@ -64,11 +66,15 @@ public class PluginVersionReplaceTask extends Task {
 		}
 
 		//Find the word plugin or fragment
-		int startPlugin;
-		if (plugin)
-			startPlugin = scan(buffer, 0, PLUGIN);
-		else
-			startPlugin = scan(buffer, 0, FRAGMENT);
+		int startPlugin = scan(buffer, 0, plugin ? PLUGIN_START_TAG : FRAGMENT_START_TAG);
+		int startComment = scan(buffer, 0, COMMENT_START_TAG);
+		int endComment = startComment > -1 ? scan(buffer, startComment, COMMENT_END_TAG) : -1;
+
+		while (startComment != -1 && startPlugin > startComment && startPlugin < endComment) {
+			startPlugin = scan(buffer, endComment, plugin ? PLUGIN_START_TAG : FRAGMENT_START_TAG);
+			startComment = scan(buffer, endComment, COMMENT_START_TAG);
+			endComment = startComment > -1 ? scan(buffer, startComment, COMMENT_END_TAG) : -1;
+		}
 
 		if (startPlugin == -1)
 			return;
