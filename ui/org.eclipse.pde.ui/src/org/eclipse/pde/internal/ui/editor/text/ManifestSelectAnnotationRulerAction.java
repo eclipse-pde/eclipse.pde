@@ -28,7 +28,7 @@ import org.eclipse.ui.texteditor.SelectMarkerRulerAction;
 
 public class ManifestSelectAnnotationRulerAction extends SelectMarkerRulerAction {
 
-	private boolean fHasCorrection;
+	private boolean fIsEditable;
 	private ITextEditor fTextEditor;
 	private Position fPosition;
 	private ResourceBundle fBundle;
@@ -50,7 +50,7 @@ public class ManifestSelectAnnotationRulerAction extends SelectMarkerRulerAction
 	 * @since 3.2
 	 */
 	public void runWithEvent(Event event) {
-		if (fHasCorrection) {
+		if (fIsEditable) {
 			ITextOperationTarget operation = (ITextOperationTarget) fTextEditor.getAdapter(ITextOperationTarget.class);
 			final int opCode= ISourceViewer.QUICK_ASSIST;
 			if (operation != null && operation.canDoOperation(opCode)) {
@@ -64,11 +64,10 @@ public class ManifestSelectAnnotationRulerAction extends SelectMarkerRulerAction
 	}
 
 	public void update() {
-		findPosition();
-		setEnabled(true); // super.update() might change this later
-
+		checkReadOnly();
 		
-		if (fHasCorrection) {
+		if (fIsEditable) {
+			setEnabled(true); // super.update() might change this later
 			initialize(fBundle, fPrefix + "QuickFix."); //$NON-NLS-1$
 			return;
 		}
@@ -76,9 +75,9 @@ public class ManifestSelectAnnotationRulerAction extends SelectMarkerRulerAction
 		super.update();
 	}
 
-	private void findPosition() {
+	private void checkReadOnly() {
 		fPosition = null;
-		fHasCorrection = false;
+		fIsEditable = false;
 
 		AbstractMarkerAnnotationModel model = getAnnotationModel();
 		IAnnotationAccessExtension annotationAccess = getAnnotationAccessExtension();
@@ -107,8 +106,8 @@ public class ManifestSelectAnnotationRulerAction extends SelectMarkerRulerAction
 			boolean isReadOnly = fTextEditor instanceof ITextEditorExtension && ((ITextEditorExtension)fTextEditor).isEditorInputReadOnly();
 			if (!isReadOnly) {
 				fPosition = position;
-				fHasCorrection = true;
-				layer= annotationLayer;
+				fIsEditable = true;
+				layer = annotationLayer;
 				continue;
 			}
 		}

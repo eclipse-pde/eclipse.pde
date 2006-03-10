@@ -19,6 +19,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
@@ -35,6 +36,7 @@ import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.pde.internal.ui.editor.text.ArgumentRule;
 import org.eclipse.pde.internal.ui.editor.text.BasePDEScanner;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
+import org.eclipse.pde.internal.ui.editor.text.PDEQuickAssistAssistant;
 import org.eclipse.pde.internal.ui.editor.text.ReconcilingStrategy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -55,6 +57,7 @@ public class BuildSourceViewerConfiguration extends TextSourceViewerConfiguratio
 	
 	private MonoReconciler fReconciler;
 	private BuildSourcePage fSourcePage;
+	private PDEQuickAssistAssistant fQuickAssistant;
 	
 	private abstract class AbstractJavaScanner extends BasePDEScanner {
 		
@@ -261,6 +264,20 @@ public class BuildSourceViewerConfiguration extends TextSourceViewerConfiguratio
 					|| property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_ASSIGNMENT)
 	 				|| property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_KEY)
 	 				|| property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_COMMENT);
+	}
+	
+	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
+		if (sourceViewer.isEditable()) {
+			if (fQuickAssistant == null)
+				fQuickAssistant = new PDEQuickAssistAssistant();
+			return fQuickAssistant;
+		}
+		return null;
+	}
+	
+	public void dispose() {
+		if (fQuickAssistant != null)
+			fQuickAssistant.dispose();
 	}
 }
 

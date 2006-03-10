@@ -22,19 +22,19 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 
-public class ManifestQuickAssistAssistant extends QuickAssistAssistant {
+public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 
 	private Image fCreateImage;
 	private Image fRenameImage;
 	private Image fRemoveImage;
 	
-	class ManifestCompletionProposal implements ICompletionProposal {
+	class PDECompletionProposal implements ICompletionProposal {
 
 		Position fPosition;
 		IMarkerResolution fResolution;
 		IMarker fMarker;
 		
-		public ManifestCompletionProposal(IMarkerResolution resolution, Position pos, IMarker marker) {
+		public PDECompletionProposal(IMarkerResolution resolution, Position pos, IMarker marker) {
 			fPosition = pos;
 			fResolution = resolution;
 			fMarker = marker;
@@ -49,7 +49,8 @@ public class ManifestQuickAssistAssistant extends QuickAssistAssistant {
 		}
 
 		public String getAdditionalProposalInfo() {
-			// TODO Auto-generated method stub
+			if (fResolution instanceof AbstractPDEMarkerResolution)
+				return ((AbstractPDEMarkerResolution)fResolution).getDescription();
 			return null;
 		}
 
@@ -78,11 +79,10 @@ public class ManifestQuickAssistAssistant extends QuickAssistAssistant {
 		
 	}
 	
-	
-	class ManifestQuickAssistProcessor implements IQuickAssistProcessor {
+	class PDEQuickAssistProcessor implements IQuickAssistProcessor {
 
 		ResolutionGenerator fGenerator = new ResolutionGenerator();
-		HashMap fResolutionMapping = new HashMap();
+		HashMap fResMap = new HashMap();
 		
 		public String getErrorMessage() {
 			return null;
@@ -91,12 +91,12 @@ public class ManifestQuickAssistAssistant extends QuickAssistAssistant {
 		public boolean canFix(Annotation annotation) {
 			if (!(annotation instanceof MarkerAnnotation))
 				return false;
-			MarkerAnnotation markerAnnotation = (MarkerAnnotation)annotation;
-			IMarkerResolution[] resolutions = fGenerator.getResolutions(markerAnnotation.getMarker());
+			IMarker marker = ((MarkerAnnotation)annotation).getMarker();
+			IMarkerResolution[] resolutions = fGenerator.getResolutions(marker);
 			boolean canFix = resolutions.length > 0;
 			if (canFix)
-				if (!fResolutionMapping.containsKey(markerAnnotation))
-					fResolutionMapping.put(markerAnnotation, resolutions);
+				if (!fResMap.containsKey(marker))
+					fResMap.put(marker, resolutions);
 			return canFix;
 		}
 
@@ -110,27 +110,28 @@ public class ManifestQuickAssistAssistant extends QuickAssistAssistant {
 			ArrayList list = new ArrayList();
 			while (it.hasNext()) {
 				Object key = it.next();
-				Object mapping = fResolutionMapping.get(key);
-				if (key instanceof MarkerAnnotation) {
-					Position pos = amodel.getPosition((Annotation)key);
+				if (!(key instanceof MarkerAnnotation))
+					continue;
+				
+				MarkerAnnotation annotation = (MarkerAnnotation)key;
+				IMarker marker = annotation.getMarker();
+				IMarkerResolution[] mapping = (IMarkerResolution[])fResMap.get(marker);
+				if (mapping != null) {
+					Position pos = amodel.getPosition(annotation);
 					if (pos.getOffset() != invocationContext.getOffset())
 						continue;
-					if (mapping instanceof IMarkerResolution[]) {
-						for (int i = 0; i < ((IMarkerResolution[])mapping).length; i++) {
-							list.add(new ManifestCompletionProposal(
-									((IMarkerResolution[])mapping)[i], pos,
-									((MarkerAnnotation)key).getMarker()));
-						}
-					}
+					for (int i = 0; i < mapping.length; i++)
+						list.add(new PDECompletionProposal(mapping[i], pos, marker));
 				}
 			}
 			return (ICompletionProposal[]) list.toArray(new ICompletionProposal[list.size()]);
 		}
-		
 	}
 
-	public ManifestQuickAssistAssistant() {
-		setQuickAssistProcessor(new ManifestQuickAssistProcessor());
+
+	
+	public PDEQuickAssistAssistant() {
+		setQuickAssistProcessor(new PDEQuickAssistProcessor());
 		fCreateImage = PDEPluginImages.DESC_ADD_ATT.createImage();
 		fRemoveImage = PDEPluginImages.DESC_REMOVE_ATT.createImage();
 		fRenameImage = PDEPluginImages.DESC_REFRESH.createImage();

@@ -27,22 +27,32 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 	public IMarkerResolution[] getResolutions(IMarker marker) {
 		int problemID = marker.getAttribute("id", PDEMarkerFactory.NO_RESOLUTION); //$NON-NLS-1$
 		switch (problemID) {
-			case PDEMarkerFactory.DEPRECATED_AUTOSTART:
+			case PDEMarkerFactory.M_DEPRECATED_AUTOSTART:
 				return new IMarkerResolution[] {new RenameAutostartResolution(AbstractPDEMarkerResolution.RENAME_TYPE)};
-			case PDEMarkerFactory.JAVA_PACKAGE__PORTED:
+			case PDEMarkerFactory.M_JAVA_PACKAGE__PORTED:
 				return new IMarkerResolution[] {new CreateJREBundleHeaderResolution(AbstractPDEMarkerResolution.CREATE_TYPE)};
-			case PDEMarkerFactory.SINGLETON_DIR_NOT_SET:
+			case PDEMarkerFactory.M_SINGLETON_DIR_NOT_SET:
 				return new IMarkerResolution[] {new AddSingletonToSymbolicName(AbstractPDEMarkerResolution.RENAME_TYPE, true)};
-			case PDEMarkerFactory.SINGLETON_ATT_NOT_SET:
+			case PDEMarkerFactory.M_SINGLETON_ATT_NOT_SET:
 				return new IMarkerResolution[] {new AddSingletonToSymbolicName(AbstractPDEMarkerResolution.RENAME_TYPE, false)};
-			case PDEMarkerFactory.PROJECT_BUILD_ORDER_ENTRIES:
+			case PDEMarkerFactory.M_PROJECT_BUILD_ORDER_ENTRIES:
 				return new IMarkerResolution[] {new RemoveStaticProjectReferences(AbstractPDEMarkerResolution.REMOVE_TYPE)};
-			case PDEMarkerFactory.EXPORT_PKG_NOT_EXIST:
+			case PDEMarkerFactory.M_EXPORT_PKG_NOT_EXIST:
 				return getUnresolvedExportProposals(marker);
-			case PDEMarkerFactory.IMPORT_PKG_NOT_AVAILABLE:
+			case PDEMarkerFactory.M_IMPORT_PKG_NOT_AVAILABLE:
 				return getUnresolvedImportPackageProposals(marker);
-			case PDEMarkerFactory.REQ_BUNDLE_NOT_AVAILABLE:
+			case PDEMarkerFactory.M_REQ_BUNDLE_NOT_AVAILABLE:
 				return getUnresolvedBundle(marker);
+			case PDEMarkerFactory.B_REMOVE_SLASH_FILE_ENTRY:
+				return new IMarkerResolution[] { new RemoveSeperatorBuildEntryResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
+			case PDEMarkerFactory.B_APPEND_SLASH_FOLDER_ENTRY:
+				return new IMarkerResolution[] { new AppendSeperatorBuildEntryResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
+			case PDEMarkerFactory.B_ADDDITION:
+				return new IMarkerResolution[] { new AddBuildEntryResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker)};
+			case PDEMarkerFactory.B_SOURCE_ADDITION:
+				return new IMarkerResolution[] { new AddSourceBuildEntryResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker)};
+			case PDEMarkerFactory.B_REMOVAL:
+				return new IMarkerResolution[] { new RemoveBuildEntryResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker)};
 		}
 		return NO_RESOLUTIONS;
 	}

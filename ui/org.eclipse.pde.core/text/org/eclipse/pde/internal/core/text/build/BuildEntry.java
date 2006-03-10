@@ -53,8 +53,10 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	 * @see org.eclipse.pde.core.build.IBuildEntry#addToken(java.lang.String)
 	 */
 	public void addToken(String token) throws CoreException {
-		fTokens.add(token);
-		getModel().fireModelObjectChanged(this, getName(), null, token);
+		if (fTokens.contains(token))
+			return;
+		if (fTokens.add(token))
+			getModel().fireModelObjectChanged(this, getName(), null, token);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.IDocumentKey#getName()
@@ -78,8 +80,8 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	 * @see org.eclipse.pde.core.build.IBuildEntry#removeToken(java.lang.String)
 	 */
 	public void removeToken(String token) throws CoreException {
-		fTokens.remove(token);
-		getModel().fireModelObjectChanged(this, getName(), token, null);
+		if (fTokens.remove(token))
+			getModel().fireModelObjectChanged(this, getName(), token, null);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuildEntry#renameToken(java.lang.String, java.lang.String)

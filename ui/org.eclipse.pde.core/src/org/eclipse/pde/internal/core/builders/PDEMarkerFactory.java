@@ -19,25 +19,36 @@ public class PDEMarkerFactory implements IMarkerFactory {
 	public static final String MARKER_ID = "org.eclipse.pde.validation-marker"; //$NON-NLS-1$
 
 	public static final int NO_RESOLUTION = -1;
-	public static final int DEPRECATED_AUTOSTART = 1;
-	public static final int JAVA_PACKAGE__PORTED = 2;
-	public static final int SINGLETON_DIR_NOT_SET = 3;
-	public static final int SINGLETON_ATT_NOT_SET = 4;
-	public static final int PROJECT_BUILD_ORDER_ENTRIES = 5;
-	public static final int EXPORT_PKG_NOT_EXIST = 6; 
-	public static final int IMPORT_PKG_NOT_AVAILABLE = 7;
-	public static final int REQ_BUNDLE_NOT_AVAILABLE = 8;
+	
+	// manifest source fixes
+	public static final int M_DEPRECATED_AUTOSTART = 0x1001;
+	public static final int M_JAVA_PACKAGE__PORTED = 0x1002;
+	public static final int M_SINGLETON_DIR_NOT_SET = 0x1003;
+	public static final int M_SINGLETON_ATT_NOT_SET = 0x1004;
+	public static final int M_PROJECT_BUILD_ORDER_ENTRIES = 0x1005;
+	public static final int M_EXPORT_PKG_NOT_EXIST = 0x1006; 
+	public static final int M_IMPORT_PKG_NOT_AVAILABLE = 0x1007;
+	public static final int M_REQ_BUNDLE_NOT_AVAILABLE = 0x1008;
+	
+	// build properties fixes
+	public static final int B_APPEND_SLASH_FOLDER_ENTRY = 0x2001;
+	public static final int B_REMOVE_SLASH_FILE_ENTRY = 0x2002;	
+	public static final int B_ADDDITION = 0x2003;
+	public static final int B_SOURCE_ADDITION = 0x2004;
+	public static final int B_REMOVAL = 0x2005;
+	
+	// build marker attribute keys
+	public static final String K_BUILD_ENTRY = "buildEntry.key"; //$NON-NLS-1$
+	public static final String K_BUILD_TOKEN = "buildEntry.tokenValue"; //$NON-NLS-1$
+
 	
 	/**
-	 * @see org.eclipse.pde.internal.builders.IMarkerFactory#createMarker(org.eclipse.core.resources.IFile)
+	 * @see org.eclipse.pde.internal.core.builders.IMarkerFactory#createMarker(org.eclipse.core.resources.IFile)
 	 */
 	public IMarker createMarker(IFile file) throws CoreException {
 		return createMarker(file, NO_RESOLUTION);
 	}
 	
-	/**
-	 * @see org.eclipse.pde.internal.builders.IMarkerFactory#createMarker(org.eclipse.core.resources.IFile)
-	 */
 	public IMarker createMarker(IFile file, int id) throws CoreException {
 		IMarker marker = file.createMarker(MARKER_ID);
 		marker.setAttribute("id", id); //$NON-NLS-1$

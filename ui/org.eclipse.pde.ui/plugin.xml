@@ -1835,7 +1835,7 @@
    <extension
          point="org.eclipse.core.filebuffers.annotationModelCreation">
       <factory
-            contentTypeId="org.eclipse.pde.core.pluginManifest"
+            contentTypeId="org.eclipse.pde.core.buildProperties"
             class="org.eclipse.pde.internal.ui.editor.text.AnnotationModelFactory"/>
    </extension>
    <extension

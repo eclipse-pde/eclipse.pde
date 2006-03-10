@@ -16,12 +16,12 @@ import org.eclipse.jface.text.quickassist.IQuickFixableAnnotation;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
-public class ManifestMarkerAnnotationModel extends ResourceMarkerAnnotationModel {
+public class PDEMarkerAnnotationModel extends ResourceMarkerAnnotationModel {
 
-	class ManifestMarkerAnnotation extends MarkerAnnotation implements IQuickFixableAnnotation {
+	class PDEMarkerAnnotation extends MarkerAnnotation implements IQuickFixableAnnotation {
 		boolean quickFixableState;
 		boolean isQuickFixable;
-		public ManifestMarkerAnnotation(IMarker marker) {
+		public PDEMarkerAnnotation(IMarker marker) {
 			super(marker);
 		}
 
@@ -40,11 +40,11 @@ public class ManifestMarkerAnnotationModel extends ResourceMarkerAnnotationModel
 		
 	}
 	
-	public ManifestMarkerAnnotationModel(IResource resource) {
+	public PDEMarkerAnnotationModel(IResource resource) {
 		super(resource);
 	}
 	
 	protected MarkerAnnotation createMarkerAnnotation(IMarker marker) {
-		return new ManifestMarkerAnnotation(marker);
+		return new PDEMarkerAnnotation(marker);
 	}
 }

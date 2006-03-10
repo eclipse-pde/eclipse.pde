@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
-import java.util.ResourceBundle;
 
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.reconciler.IReconciler;
@@ -37,11 +36,9 @@ import org.eclipse.pde.internal.ui.editor.SourceOutlinePage;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.pde.internal.ui.editor.text.ManifestConfiguration;
-import org.eclipse.pde.internal.ui.editor.text.ManifestSelectAnnotationRulerAction;
 import org.eclipse.pde.internal.ui.editor.text.ReconcilingStrategy;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 public class BundleSourcePage extends KeyValueSourcePage {
 	
@@ -162,15 +159,5 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		more[0]= "org.eclipse.pde.ui.EditorPreferencePage"; //$NON-NLS-1$
 		System.arraycopy(ids, 0, more, 1, ids.length);
 		return more;
-	}
-	
-	protected void createActions() {
-		super.createActions();
-		ManifestSelectAnnotationRulerAction action = new ManifestSelectAnnotationRulerAction(
-				ResourceBundle.getBundle("org.eclipse.pde.internal.ui.editor.text.ConstructedManifestEditorMessages"), //$NON-NLS-1$
-				"ManifestSelectAnnotationRulerAction.", //$NON-NLS-1$
-				this,
-				getVerticalRuler());
-		setAction(ITextEditorActionConstants.RULER_CLICK, action);
 	}
 }

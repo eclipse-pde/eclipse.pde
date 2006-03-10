@@ -2,11 +2,11 @@ package org.eclipse.pde.internal.core.builders;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -43,23 +43,35 @@ import org.osgi.framework.Constants;
 
 public class BuildErrorReporter extends ErrorReporter {
 	
+	private static final int NO_RES = PDEMarkerFactory.NO_RESOLUTION;
 	private static final String BIN_INCLUDES = "bin.includes"; //$NON-NLS-1$
 	private static final String SRC_INCLUDES = "src.includes"; //$NON-NLS-1$
-	private static final String SOURCE = "source."; //$NON-NLS-1$
 	private static final String CUSTOM = "custom"; //$NON-NLS-1$
+	public static final String SOURCE = "source."; //$NON-NLS-1$
+	private static final String DEF_SOURCE_ENTRY = SOURCE + '.';
 	
 	private class BuildProblem {
-		IBuildEntry fBuildEntry;
 		String fEntryToken;
 		String fEntryName;
 		String fMessage;
-		BuildProblem(String name, String token, String message) {
+		int fFixId;
+		BuildProblem(String name, String token, String message, int fixId) {
 			fEntryName = name;
 			fEntryToken = token;
 			fMessage = message;
+			fFixId = fixId;
 		}
-		boolean noLine() {
-			return fEntryName == null;
+		public boolean equals(Object obj) {
+			if (!(obj instanceof BuildProblem))
+				return false;
+			BuildProblem bp = (BuildProblem)obj;
+			if (!fEntryName.equals(bp.fEntryName))
+				return false;
+			if (fEntryToken != null && !fEntryToken.equals(bp.fEntryToken))
+				return false;
+			if (fFixId != bp.fFixId)
+				return false;
+			return true;
 		}
 	}
 	
@@ -96,10 +108,10 @@ public class BuildErrorReporter extends ErrorReporter {
 		for (int i = 0; i < entries.length; i++) {
 			String name = entries[i].getName();
 			if (entries[i].getTokens().length == 0) {
-				prepareError(name, null, PDECoreMessages.BuildErrorReporter_emptyEntry);
-				continue;
-			}
-			if (name.equals(BIN_INCLUDES))
+				prepareError(name, null,
+						PDECoreMessages.BuildErrorReporter_emptyEntry,
+						PDEMarkerFactory.B_REMOVAL);
+			} else if (name.equals(BIN_INCLUDES))
 				binIncludes = entries[i];
 			else if (name.equals(SRC_INCLUDES))
 				srcIncludes = entries[i];
@@ -147,7 +159,9 @@ public class BuildErrorReporter extends ErrorReporter {
 					found = true;
 			}
 			if (!found)
-				prepareError(BIN_INCLUDES, null, NLS.bind(PDECoreMessages.BuildErrorReporter_binIncludesMissing, key));
+				prepareError(BIN_INCLUDES, key,
+						NLS.bind(PDECoreMessages.BuildErrorReporter_binIncludesMissing, key),
+						PDEMarkerFactory.B_ADDDITION);
 		}
 	}
 
@@ -160,7 +174,9 @@ public class BuildErrorReporter extends ErrorReporter {
 				if (folderEntry == null 
 						|| !folderEntry.exists() 
 						|| !(folderEntry instanceof IFolder))
-					prepareError(name, tokens[j], NLS.bind(PDECoreMessages.BuildErrorReporter_missingFolder, tokens[j]));
+					prepareError(name, tokens[j],
+							NLS.bind(PDECoreMessages.BuildErrorReporter_missingFolder, tokens[j]),
+							PDEMarkerFactory.B_REMOVAL);
 			}
 			
 		}
@@ -177,8 +193,10 @@ public class BuildErrorReporter extends ErrorReporter {
 			if ((mh == null || mh.getValue() == null)) {
 				for (int i = 0; i < cpes.length; i++) {
 					if (cpes[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-						if (!sourceEntryKeys.contains(SOURCE + ".")) //$NON-NLS-1$
-							prepareError(PDECoreMessages.BuildErrorReporter_sourceMissing);
+						if (!sourceEntryKeys.contains(DEF_SOURCE_ENTRY))
+							prepareError(DEF_SOURCE_ENTRY, null,
+									PDECoreMessages.BuildErrorReporter_sourceMissing,
+									PDEMarkerFactory.B_SOURCE_ADDITION);
 						break;
 					}
 				}
@@ -191,8 +209,10 @@ public class BuildErrorReporter extends ErrorReporter {
 				// no need to flag anything if the project contains no source folders.
 				for (int j = 0; j < cpes.length; j++) {
 					if (cpes[j].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-						if (!sourceEntryKeys.contains(SOURCE + ".")) //$NON-NLS-1$
-							prepareError(PDECoreMessages.BuildErrorReporter_sourceMissing);
+						if (!sourceEntryKeys.contains(DEF_SOURCE_ENTRY))
+							prepareError(DEF_SOURCE_ENTRY, null,
+									PDECoreMessages.BuildErrorReporter_sourceMissing,
+									PDEMarkerFactory.B_SOURCE_ADDITION);
 						break;
 					}
 				}
@@ -205,7 +225,9 @@ public class BuildErrorReporter extends ErrorReporter {
 			String sourceEntryKey = SOURCE + libname;
 			if (!sourceEntryKeys.contains(sourceEntryKey) 
 					&& !containedInFragment(manager, model.getBundleDescription().getFragments(), libname))
-				prepareError(NLS.bind(PDECoreMessages.BuildErrorReporter_missingEntry, sourceEntryKey));
+				prepareError(sourceEntryKey, null,
+						NLS.bind(PDECoreMessages.BuildErrorReporter_missingEntry, sourceEntryKey),
+						PDEMarkerFactory.B_SOURCE_ADDITION);
 		}
 	}
 
@@ -246,6 +268,33 @@ public class BuildErrorReporter extends ErrorReporter {
 	}
 
 	private void validateSourceEntries(ArrayList sourceEntries, IClasspathEntry[] cpes) {
+		String[] unlisted = getUnlistedClasspaths(sourceEntries, fProject, cpes);
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < unlisted.length; i++) {
+			if (unlisted[i] == null)
+				break;
+			if (sb.length() > 0)
+				sb.append(", "); //$NON-NLS-1$
+			sb.append(unlisted[i]);
+		}
+		String unlistedEntries = sb.toString();
+		if (sb.length() == 0)
+			return;
+		if (sourceEntries.size() == 1) {
+			String name = ((IBuildEntry)sourceEntries.get(0)).getName();
+			prepareError(name, null,
+					NLS.bind(PDECoreMessages.BuildErrorReporter_classpathEntryMissing1, unlistedEntries, name),
+					PDEMarkerFactory.B_SOURCE_ADDITION);
+		} else
+			prepareError(DEF_SOURCE_ENTRY, null,
+					NLS.bind(PDECoreMessages.BuildErrorReporter_classpathEntryMissing, unlistedEntries),
+					PDEMarkerFactory.B_SOURCE_ADDITION);
+		
+	}
+	
+	public static String[] getUnlistedClasspaths(ArrayList sourceEntries, IProject project, IClasspathEntry[] cpes) {
+		String[] unlisted = new String[cpes.length];
+		int index = 0;
 		for (int i = 0; i < cpes.length; i++) {
 			if (cpes[i].getEntryKind() != IClasspathEntry.CPE_SOURCE)
 				continue;
@@ -255,7 +304,7 @@ public class BuildErrorReporter extends ErrorReporter {
 				IBuildEntry be = (IBuildEntry)sourceEntries.get(j);
 				String[] tokens = be.getTokens();
 				for (int k = 0; k < tokens.length; k++) {
-					IResource res = fProject.findMember(tokens[k]);
+					IResource res = project.findMember(tokens[k]);
 					if (res == null)
 						continue;
 					IPath ipath = res.getFullPath();
@@ -263,15 +312,10 @@ public class BuildErrorReporter extends ErrorReporter {
 						found = true;
 				}
 			}
-			if (!found) {
-				String spath = path.removeFirstSegments(1).addTrailingSeparator().toString();
-				if (sourceEntries.size() == 1) {
-					String name = ((IBuildEntry)sourceEntries.get(0)).getName();
-					prepareError(name, null, NLS.bind(PDECoreMessages.BuildErrorReporter_classpathEntryMissing1, spath, name));
-				} else
-					prepareError(NLS.bind(PDECoreMessages.BuildErrorReporter_classpathEntryMissing, spath));
-			}
+			if (!found)
+				unlisted[index++] = path.removeFirstSegments(1).addTrailingSeparator().toString();
 		}
+		return unlisted;
 	}
 	
 	private void validateIncludes(IBuildEntry includes, ArrayList sourceIncludes) {
@@ -292,6 +336,7 @@ public class BuildErrorReporter extends ErrorReporter {
 				continue;
 			IResource member = fProject.findMember(token);
 			String message = null;
+			int fixId = NO_RES;
 			if (member == null) {
 				if (sourceIncludes.contains(SOURCE + token))
 					continue;
@@ -299,13 +344,17 @@ public class BuildErrorReporter extends ErrorReporter {
 					message = NLS.bind(PDECoreMessages.BuildErrorReporter_missingFolder, token);
 				else
 					message = NLS.bind(PDECoreMessages.BuildErrorReporter_missingFile, token);
-			} else if (token.endsWith("/") && !(member instanceof IFolder)) //$NON-NLS-1$
+				fixId = PDEMarkerFactory.B_REMOVAL;
+			} else if (token.endsWith("/") && !(member instanceof IFolder)) { //$NON-NLS-1$
 				message = NLS.bind(PDECoreMessages.BuildErrorReporter_entiresMustRefDirs, token);
-			else if (!token.endsWith("/") && !(member instanceof IFile)) //$NON-NLS-1$
+				fixId = PDEMarkerFactory.B_REMOVE_SLASH_FILE_ENTRY;
+			} else if (!token.endsWith("/") && !(member instanceof IFile)) { //$NON-NLS-1$
 				message = NLS.bind(PDECoreMessages.BuildErrorReporter_dirsMustEndSlash, token);
+				fixId = PDEMarkerFactory.B_APPEND_SLASH_FOLDER_ENTRY;
+			}
 			
 			if (message != null)
-				prepareError(includes.getName(), token, message);
+				prepareError(includes.getName(), token, message, fixId);
 		}
 	}
 
@@ -320,6 +369,7 @@ public class BuildErrorReporter extends ErrorReporter {
 				return null;
 			return bm;
 		} catch (CoreException e) {
+			PDECore.log(e);
 			return null;
 		}
 	}
@@ -327,31 +377,21 @@ public class BuildErrorReporter extends ErrorReporter {
 	private void reportErrors(BuildModel bm, IProgressMonitor monitor) {
 		if (bm == null)
 			return;
-		IBuild build = bm.getBuild();
-		IBuildEntry[] buildEntries = build.getBuildEntries();
-		HashMap entries = new HashMap();
-		for (int i = 0; i < buildEntries.length; i++) {
-			entries.put(buildEntries[i].getName(), buildEntries[i]);	
-		}
 		
 		for (int i = 0; i < fProblemList.size(); i++) {
 			BuildProblem bp = (BuildProblem)fProblemList.get(i);
-			if (bp == null)
-				continue;
 			
 			int lineNum;
-			// general file case (eg. missing source.* entry)
-			if (bp.noLine())
+			IBuildEntry buildEntry = bm.getBuild().getEntry(bp.fEntryName);
+			if (buildEntry == null || bp.fEntryName == null)
+				// general file case (eg. missing source.* entry)
 				lineNum = 1;
-			// issue with a particular entry
-			else {
-				bp.fBuildEntry = (IBuildEntry)entries.get(bp.fEntryName);
-				if (bp.fBuildEntry == null)
-					continue;
-				lineNum = getLineNumber(bp.fBuildEntry, bp.fEntryToken);
-			}
+			else
+				// issue with a particular entry
+				lineNum = getLineNumber(buildEntry, bp.fEntryToken);
+			
 			if (lineNum > 0)
-				report(bp.fMessage, lineNum, fSeverity);
+				report(bp.fMessage, lineNum, bp.fFixId, bp.fEntryName, bp.fEntryToken);
 		}
 	}
 	
@@ -361,31 +401,31 @@ public class BuildErrorReporter extends ErrorReporter {
 		BuildEntry be = (BuildEntry)ibe;
 		IDocument doc = ((BuildModel)be.getModel()).getDocument();
 		try {
+			int buildEntryLineNumber = doc.getLineOfOffset(be.getOffset()) + 1;
 			if (tokenString == null)
 				// we are interested in the build entry name
 				// (getLineOfOffset is 0-indexed, need 1-indexed)
-				return doc.getLineOfOffset(be.getOffset()) + 1;
+				return buildEntryLineNumber;
 
 			// extract the full entry
 			String entry = doc.get(be.getOffset(), be.getLength());
 			
 			int valueIndex = entry.indexOf('=') + 1;
 			if (valueIndex == 0 || valueIndex == entry.length())
-				return 0;
+				return buildEntryLineNumber;
 			
 			// remove the entry name			
 			entry = entry.substring(valueIndex);
 			
 			int entryTokenOffset = entry.indexOf(tokenString);
 			if (entryTokenOffset == -1)
-				return 0;
+				return buildEntryLineNumber;
 			
 			// check to see if single occurence
-			if (entryTokenOffset == entry.lastIndexOf(tokenString))
-				return doc.getLineOfOffset(be.getOffset() + valueIndex + entryTokenOffset) + 1;
+//			if (entryTokenOffset == entry.lastIndexOf(tokenString)) {
+//				return doc.getLineOfOffset(be.getOffset() + valueIndex + entryTokenOffset) + 1;
+//			}
 			
-			
-			// multiple occurences, must comb through to find exact location
 			// skip ahead to 1st occurence
 			entry = entry.substring(entryTokenOffset);
 			int currOffset = be.getOffset() + valueIndex + entryTokenOffset;
@@ -400,7 +440,7 @@ public class BuildErrorReporter extends ErrorReporter {
 				if (cci == -1) {
 					if (entry.trim().equals(tokenString))
 						return doc.getLineOfOffset(currOffset + entry.indexOf(tokenString)) + 1;
-					return 0;
+					return buildEntryLineNumber;
 				}
 				
 				String ct = entry.substring(0, cci).trim();
@@ -416,12 +456,25 @@ public class BuildErrorReporter extends ErrorReporter {
 		return 0;
 	}
 	
-	private void prepareError(String name, String token, String message) {
-		BuildProblem bp = new BuildProblem(name, token, message);
+	private void prepareError(String name, String token, String message, int fixId) {
+		BuildProblem bp = new BuildProblem(name, token, message, fixId);
+		for (int i = 0; i < fProblemList.size(); i++) {
+			BuildProblem listed = (BuildProblem)fProblemList.get(i);
+			if (listed.equals(bp))
+				return;
+		}
 		fProblemList.add(bp);
 	}
 	
-	private void prepareError(String message) {
-		prepareError(null, null, message);
+	private IMarker report(String message, int line, int problemID, String buildEntry, String buildToken) {
+		IMarker marker = report(message, line, fSeverity, problemID);
+		if (marker != null) {
+			try {
+				marker.setAttribute(PDEMarkerFactory.K_BUILD_ENTRY, buildEntry);
+				marker.setAttribute(PDEMarkerFactory.K_BUILD_TOKEN, buildToken);
+			} catch (CoreException e) {
+			}
+		}
+		return marker;
 	}
  }

@@ -2757,4 +2757,16 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExportPackageSection_findReferences;
 
+	public static String RemoveBuildEntryResolution_removeEntry;
+
+	public static String RemoveBuildEntryResolution_removeToken;
+
+	public static String AddBuildEntryResolution_add;
+
+	public static String AppendSeperatorBuildEntryResolution_label;
+
+	public static String AddSourceBuildEntryResolution_label;
+
+	public static String RemoveSeperatorBuildEntryResolution_label;
+
 }

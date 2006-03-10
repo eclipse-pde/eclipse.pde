@@ -10,21 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.text.edits.MalformedTreeException;
-import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.text.edits.TextEdit;
 
 public abstract class ManifestHeaderErrorResolution extends AbstractPDEMarkerResolution {	
 	
@@ -32,44 +23,18 @@ public abstract class ManifestHeaderErrorResolution extends AbstractPDEMarkerRes
 		super(type);
 	}
 
-	public void run(IMarker marker) {
-		IResource resource = marker.getResource();
-		try {
-			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-			manager.connect(resource.getFullPath(), null);
-			ITextFileBuffer buffer = manager.getTextFileBuffer(resource.getFullPath());
-			if (buffer.isDirty())
-				buffer.commit(null, true);
-			IDocument document = buffer.getDocument();		
-			BundleModel model = new BundleModel(document, false);
-			model.load();
-			if (model.isLoaded()) {
-				IModelTextChangeListener listener = new BundleTextChangeListener(document);
-				model.addModelChangedListener(listener);
-				createChange(model);
-				TextEdit[] edits = listener.getTextOperations();
-				if (edits.length > 0) {
-					MultiTextEdit multi = new MultiTextEdit();
-					multi.addChildren(edits);
-					multi.apply(document);
-					buffer.commit(null, true);
-				}
-			}
-		} catch (CoreException e) {
-			PDEPlugin.log(e);
-		} catch (MalformedTreeException e) {
-			PDEPlugin.log(e);
-		} catch (BadLocationException e) {
-			PDEPlugin.log(e);
-		} finally {
-			try {
-				FileBuffers.getTextFileBufferManager().disconnect(resource.getFullPath(), null);
-			} catch (CoreException e) {
-				PDEPlugin.log(e);
-			}
-		}
+	protected AbstractEditingModel createModel(IDocument document) {
+		return new BundleModel(document, false);
 	}
 	
 	protected abstract void createChange(BundleModel model);
+	
+	protected void createChange(AbstractEditingModel model, IMarker marker) {
+		if (model instanceof BundleModel)
+			createChange((BundleModel)model);
+	}
 
+	protected IModelTextChangeListener createListener(IDocument doc) {
+		return new BundleTextChangeListener(doc);
+	}
 }

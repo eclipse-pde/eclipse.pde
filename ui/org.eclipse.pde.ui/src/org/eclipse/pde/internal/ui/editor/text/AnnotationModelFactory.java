@@ -24,7 +24,7 @@ public class AnnotationModelFactory implements IAnnotationModelFactory {
 		if (file == null) 
 			return new SystemFileMarkerAnnotationModel();
 		
-		return new ManifestMarkerAnnotationModel(file);
+		return new PDEMarkerAnnotationModel(file);
 	}
 
 }

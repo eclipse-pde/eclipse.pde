@@ -16,6 +16,8 @@
  */
 package org.eclipse.pde.internal.ui.editor;
 
+import java.util.ResourceBundle;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
@@ -35,6 +37,7 @@ import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
+import org.eclipse.pde.internal.ui.editor.text.ManifestSelectAnnotationRulerAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -48,6 +51,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 public abstract class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker {
 	/**
@@ -326,4 +330,12 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		return SWT.LEFT_TO_RIGHT;
 	}
 	
+	protected void createActions() {
+		super.createActions();
+		ManifestSelectAnnotationRulerAction action = new ManifestSelectAnnotationRulerAction(
+				ResourceBundle.getBundle("org.eclipse.pde.internal.ui.editor.text.ConstructedManifestEditorMessages"), //$NON-NLS-1$
+				"PDESelectAnnotationRulerAction.", //$NON-NLS-1$
+				this, getVerticalRuler());
+		setAction(ITextEditorActionConstants.RULER_CLICK, action);
+	}
 }

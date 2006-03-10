@@ -60,9 +60,9 @@ public class Build implements IBuild {
 	 * @see org.eclipse.pde.core.build.IBuild#remove(org.eclipse.pde.core.build.IBuildEntry)
 	 */
 	public void remove(IBuildEntry entry) throws CoreException {
-		fEntries.remove(entry.getName());
-		fModel.fireModelChanged(new ModelChangedEvent(fModel,
-				IModelChangedEvent.REMOVE, new Object[]{entry}, null));
+		if (fEntries.remove(entry.getName()) != null)
+			fModel.fireModelChanged(new ModelChangedEvent(fModel,
+					IModelChangedEvent.REMOVE, new Object[]{entry}, null));
 	}
 	/*
 	 * (non-Javadoc)
@@ -151,4 +151,7 @@ public class Build implements IBuild {
 		}
 	}
 
+	public BuildModel getModel() {
+		return fModel;
+	}
 }

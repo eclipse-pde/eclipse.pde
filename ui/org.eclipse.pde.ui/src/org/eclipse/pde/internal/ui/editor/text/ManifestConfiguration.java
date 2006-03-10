@@ -35,7 +35,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	private IColorManager fColorManager;
 	private BasePDEScanner fPropertyKeyScanner;
 	private BasePDEScanner fPropertyValueScanner;
-	private ManifestQuickAssistAssistant fQuickAssistant;
+	private PDEQuickAssistAssistant fQuickAssistant;
 	
 	class ManifestHeaderScanner extends BasePDEScanner {
 		
@@ -238,7 +238,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
 		if (sourceViewer.isEditable()) {
 			if (fQuickAssistant == null)
-				fQuickAssistant = new ManifestQuickAssistAssistant();
+				fQuickAssistant = new PDEQuickAssistAssistant();
 			return fQuickAssistant;
 		}
 		return null;
