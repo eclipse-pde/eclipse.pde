@@ -678,7 +678,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printComment(Messages.build_compilerSetting);
 		script.printProperty(PROPERTY_JAVAC_FAIL_ON_ERROR, "false"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$
-		script.printProperty(PROPERTY_JAVAC_VERBOSE, "true"); //$NON-NLS-1$
+		script.printProperty(PROPERTY_JAVAC_VERBOSE, "false"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_JAVAC_COMPILERARG, ""); //$NON-NLS-1$  
 
 		if (javacSource == null)
