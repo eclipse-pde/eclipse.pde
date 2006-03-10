@@ -146,7 +146,8 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_NEWFTRPRJ_TOOL = create(PATH_TOOL, "newftrprj_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWPPRJ_TOOL = create(PATH_TOOL, "newpprj_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWFRAGPRJ_TOOL = create(PATH_TOOL, "newfragprj_wiz.gif"); //$NON-NLS-1$
-
+	public static final ImageDescriptor DESC_WORKBENCH_LAUNCHER_WIZ = create(PATH_TOOL, "eclipse_launcher_wiz.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_NEWEXP_WIZ_TOOL = create(PATH_TOOL, "newexp_wiz.gif"); //$NON-NLS-1$
 
 
 	/**
@@ -160,7 +161,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_GOTOOBJ = create(PATH_LCL, "goto_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PROPERTIES = create(PATH_LCL, "properties.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_REFRESH = create(PATH_LCL, "refresh.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_REMOVE_ATT = create(PATH_LCL, "remove_att.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_DELETE = create(PATH_LCL, "delete_edit.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_MAXIMIZE = create(PATH_LCL, "maximize.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_RESTORE = create(PATH_LCL, "restore.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FULL_HIERARCHY = create(PATH_LCL, "full_hierarchy.gif"); //$NON-NLS-1$
@@ -198,8 +199,7 @@ public class PDEPluginImages {
 
 	public static final ImageDescriptor DESC_RUN_EXC = create(PATH_OBJ, "run_exc.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DEBUG_EXC = create(PATH_OBJ, "debug_exc.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_WORKBENCH_LAUNCHER_WIZ = create(PATH_TOOL, "eclipse_launcher_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_NEWEXP_WIZ_TOOL = create(PATH_TOOL, "newexp_wiz.gif"); //$NON-NLS-1$
+
 
 	/**
 	 * WIZ

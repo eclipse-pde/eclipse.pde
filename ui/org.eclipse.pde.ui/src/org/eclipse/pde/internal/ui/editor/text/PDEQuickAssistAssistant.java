@@ -133,7 +133,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 	public PDEQuickAssistAssistant() {
 		setQuickAssistProcessor(new PDEQuickAssistProcessor());
 		fCreateImage = PDEPluginImages.DESC_ADD_ATT.createImage();
-		fRemoveImage = PDEPluginImages.DESC_REMOVE_ATT.createImage();
+		fRemoveImage = PDEPluginImages.DESC_DELETE.createImage();
 		fRenameImage = PDEPluginImages.DESC_REFRESH.createImage();
 	}
 	
