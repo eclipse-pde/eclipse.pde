@@ -30,17 +30,6 @@ public interface IPDEBuildConstants {
 	public final static String SOURCE_PLUGIN_ATTRIBUTE = "sourcePlugin"; //$NON-NLS-1$
 	public final static String MANIFEST_FOLDER = "META-INF"; //$NON-NLS-1$
 	public final static String MANIFEST = "MANIFEST.MF"; //$NON-NLS-1$
-	
-	// command line arguments
-	public static final String ARG_CVS_PASSFILE_LOCATION = "-cvspassfile"; //$NON-NLS-1$
-	public static final String ARG_DEV_ENTRIES = "-dev"; //$NON-NLS-1$
-	public static final String ARG_DIRECTORY_LOCATION = "-directory"; //$NON-NLS-1$
-	public static final String ARG_ELEMENTS = "-elements"; //$NON-NLS-1$
-	public static final String ARG_NO_CHILDREN = "-nochildren"; //$NON-NLS-1$
-	public static final String ARG_PLUGIN_PATH = "-pluginpath"; //$NON-NLS-1$
-	public static final String ARG_SCRIPT_NAME = "-scriptname"; //$NON-NLS-1$
-	public static final String ARG_SOURCE_LOCATION = "-source"; //$NON-NLS-1$
-	public static final String ARG_RECURSIVE_GENERATION = "-recursiveGeneration"; //$NON-NLS-1$
 
 	// default values
 	public final static String DEFAULT_BUILD_SCRIPT_FILENAME = "build.xml"; //$NON-NLS-1$
