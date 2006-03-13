@@ -76,8 +76,14 @@ public class SourceLocationManager implements ICoreConstants {
 
 	private IPath getRelativePath(IPluginBase pluginBase, IPath sourcePath) {
 		try {
-			Version vid = new Version(pluginBase.getVersion());
-			String pluginDir = pluginBase.getId() + "_" + vid.toString(); //$NON-NLS-1$
+			String pluginDir = pluginBase.getId();
+			if (pluginDir == null)
+				return null;
+			String version = pluginBase.getVersion();
+			if (version != null) {
+				Version vid = new Version(version);
+				pluginDir += "_" + vid.toString(); //$NON-NLS-1$
+			}
 			return new Path(pluginDir).append(sourcePath);
 		} catch (IllegalArgumentException e) {
 			return null;
