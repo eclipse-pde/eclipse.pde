@@ -43,6 +43,8 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 				return getUnresolvedImportPackageProposals(marker);
 			case PDEMarkerFactory.M_REQ_BUNDLE_NOT_AVAILABLE:
 				return getUnresolvedBundle(marker);
+			case PDEMarkerFactory.M_EXT_STRINGS:
+				return new IMarkerResolution[] { new ExternalizeStringsResolution(AbstractPDEMarkerResolution.RENAME_TYPE)};
 			case PDEMarkerFactory.B_REMOVE_SLASH_FILE_ENTRY:
 				return new IMarkerResolution[] { new RemoveSeperatorBuildEntryResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
 			case PDEMarkerFactory.B_APPEND_SLASH_FOLDER_ENTRY:

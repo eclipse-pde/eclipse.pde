@@ -1300,7 +1300,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		String value = header.getValue();
 		if (shouldTranslate) {
 			if (!value.startsWith("%")) { //$NON-NLS-1$
-				report(NLS.bind(PDECoreMessages.Builders_Manifest_non_ext_attribute, header.getName()), getLine(header, value), severity); 
+				report(NLS.bind(PDECoreMessages.Builders_Manifest_non_ext_attribute, header.getName()),
+						getLine(header, value),
+						severity,
+						PDEMarkerFactory.M_EXT_STRINGS); 
 			} else if (fModel instanceof AbstractModel) {
 				NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
 				if (helper == null || !helper.resourceExists(value)) {

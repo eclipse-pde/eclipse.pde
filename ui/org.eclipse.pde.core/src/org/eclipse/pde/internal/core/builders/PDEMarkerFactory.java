@@ -29,6 +29,7 @@ public class PDEMarkerFactory implements IMarkerFactory {
 	public static final int M_EXPORT_PKG_NOT_EXIST = 0x1006; 
 	public static final int M_IMPORT_PKG_NOT_AVAILABLE = 0x1007;
 	public static final int M_REQ_BUNDLE_NOT_AVAILABLE = 0x1008;
+	public static final int M_EXT_STRINGS = 0x1009;
 	
 	// build properties fixes
 	public static final int B_APPEND_SLASH_FOLDER_ENTRY = 0x2001;
