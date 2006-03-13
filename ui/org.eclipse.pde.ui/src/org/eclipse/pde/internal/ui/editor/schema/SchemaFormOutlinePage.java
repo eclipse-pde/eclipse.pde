@@ -28,7 +28,7 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 
 	public Object[] getChildren(Object parent) {
 		ISchema schema = (ISchema) fEditor.getAggregateModel();
-		if (schema.isValid()) {
+		if (schema != null && schema.isValid()) {
 			if (parent instanceof SchemaFormPage) {
 				return getMarkup();
 			}
