@@ -139,8 +139,11 @@ public class SchemaInputContext extends XMLInputContext {
 	
 	protected boolean synchronizeModel(IDocument doc) {
 		Schema schema = (Schema) getModel();
-		if (schema == null)
-			return false;
+		if (schema == null) {
+			// if model is null try to recreate it
+			create();
+			return getModel() == null;
+		}
 		String text = doc.get();
 		try {
 			InputStream stream =
