@@ -18,6 +18,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.internal.junit.launcher.AssertionVMArg;
 import org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration;
 import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchShortcut;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -76,6 +77,7 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 			} else {
 				wc.setAttribute(IPDELauncherConstants.APPLICATION, JUnitLaunchConfiguration.CORE_APPLICATION);				
 			}
+			AssertionVMArg.setArgDefault(wc);
 			config= wc.doSave();		
 		} catch (CoreException ce) {
 			PDEPlugin.log(ce);
