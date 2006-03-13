@@ -179,7 +179,16 @@ public class ElementSection extends TreeSection {
 				|| object instanceof ISchemaAttribute
 				|| object instanceof ISchemaCompositor) {
 			fTreeViewer.setSelection(new StructuredSelection(object), true);
-			return true;
+			
+			ISelection selection = fTreeViewer.getSelection();
+			if (selection != null && !selection.isEmpty())
+				return true;
+			if (object instanceof ISchemaElement) {
+				ISchemaElement found = fSchema.findElement(((ISchemaElement)object).getName());
+				if (found != null)
+					fTreeViewer.setSelection(new StructuredSelection(found), true);
+				return found != null;
+			}
 		}
 		return false;
 	}
@@ -478,7 +487,7 @@ public class ElementSection extends TreeSection {
 			ISchemaElement element = ((SchemaElementReference) object).getReferencedElement();
 			ISchema schema = element.getSchema();
 			if (schema.equals(fSchema))
-				fTreeViewer.setSelection(new StructuredSelection(((SchemaElementReference) object).getReferencedObject()));
+				fireSelection(new StructuredSelection(element));
 			else {
 				ISchemaInclude[] includes = fSchema.getIncludes();
 				for (int i = 0; i < includes.length; i++) {

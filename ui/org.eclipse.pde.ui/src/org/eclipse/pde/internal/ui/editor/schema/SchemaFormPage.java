@@ -39,7 +39,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class SchemaFormPage extends PDEFormPage implements IModelChangedListener {
 	public static final String PAGE_ID = "form"; //$NON-NLS-1$
-	private ElementSection section;
+	private ElementSection fSection;
 	private SchemaBlock fBlock;
 	private AbstractSchemaDetails fCurrDetails;
 	private IColorManager fColorManager;
@@ -50,8 +50,8 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 			super(SchemaFormPage.this);
 		}
 		protected PDESection createMasterSection(IManagedForm managedForm, Composite parent) {
-			section = new ElementSection(getPage(), parent);
-			return section;
+			fSection = new ElementSection(getPage(), parent);
+			return fSection;
 		}
 		protected void registerPages(DetailsPart detailsPart) {
 			detailsPart.setPageLimit(0); // need to store current page in this object
@@ -62,16 +62,16 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 		}
 		public IDetailsPage getPage(Object object) {
 			if (object instanceof ISchemaObjectReference)
-				fCurrDetails = new SchemaElementReferenceDetails((ISchemaObjectReference)object, section);
+				fCurrDetails = new SchemaElementReferenceDetails((ISchemaObjectReference)object, fSection);
 			else if (object instanceof ISchemaElement) {
 				if (object instanceof ISchemaRootElement)
-					fCurrDetails = new SchemaRootElementDetails((ISchemaElement)object, section);
+					fCurrDetails = new SchemaRootElementDetails((ISchemaElement)object, fSection);
 				else
-					fCurrDetails = new SchemaElementDetails((ISchemaElement)object, section);
+					fCurrDetails = new SchemaElementDetails((ISchemaElement)object, fSection);
 			} else if (object instanceof ISchemaCompositor)
-				fCurrDetails = new SchemaCompositorDetails((ISchemaCompositor)object, section);
+				fCurrDetails = new SchemaCompositorDetails((ISchemaCompositor)object, fSection);
 			else if (object instanceof ISchemaAttribute)
-				fCurrDetails = new SchemaAttributeDetails((ISchemaAttribute)object, section);
+				fCurrDetails = new SchemaAttributeDetails((ISchemaAttribute)object, fSection);
 			else
 				fCurrDetails = null;
 			return fCurrDetails;
@@ -80,7 +80,7 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 			final ScrolledForm form = managedForm.getForm();
 			Action collapseAction = new Action("col") { //$NON-NLS-1$
 				public void run() {
-					section.handleCollapseAll();
+					fSection.handleCollapseAll();
 				}
 			};
 			collapseAction.setToolTipText(PDEUIMessages.ExtensionsPage_collapseAll); 
@@ -128,8 +128,8 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 					getManagedForm().getForm().setText(((ISchema)change[0]).getName());
 			}
 		}
-		if (section != null)
-			section.handleModelChanged(event);
+		if (fSection != null)
+			fSection.handleModelChanged(event);
 		if (fCurrDetails != null)
 			fCurrDetails.modelChanged(event);
 	}

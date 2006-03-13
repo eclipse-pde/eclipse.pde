@@ -28,6 +28,7 @@ import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PartInitException;
@@ -35,7 +36,7 @@ import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.part.FileEditorInput;
 
 public class SchemaEditor extends MultiSourceEditor {
-	private ShowDescriptionAction previewAction;
+	private ShowDescriptionAction fPreviewAction;
 	
 	protected void createResourceContexts(InputContextManager manager, IFileEditorInput input) {
 		IFile file = input.getFile();
@@ -93,11 +94,11 @@ public class SchemaEditor extends MultiSourceEditor {
 	
 	void previewReferenceDocument() {
 		ISchema schema = (ISchema) getAggregateModel();
-		if (previewAction == null)
-			previewAction = new ShowDescriptionAction(schema);
+		if (fPreviewAction == null)
+			fPreviewAction = new ShowDescriptionAction(schema);
 		else
-			previewAction.setSchema(schema);
-		previewAction.run();
+			fPreviewAction.setSchema(schema);
+		fPreviewAction.run();
 	}	
 
 	protected void addPages() {
@@ -165,8 +166,11 @@ public class SchemaEditor extends MultiSourceEditor {
 	
 	public static void openToElement(IPath path, ISchemaElement element) {
 		if (openSchema(path)) {
-			//  TODO
-			// Select <element> on 2nd page of editor
+			IEditorPart editorPart = PDEPlugin.getActivePage().getActiveEditor();
+			if (!(editorPart instanceof SchemaEditor))
+				return; // something messed up, schema editor should be open
+			SchemaEditor schemaEditor = (SchemaEditor)editorPart;
+			schemaEditor.selectReveal(element);
 		}
 	}
 
