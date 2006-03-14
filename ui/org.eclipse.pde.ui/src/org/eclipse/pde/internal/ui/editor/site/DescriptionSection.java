@@ -74,6 +74,7 @@ public class DescriptionSection extends PDESection {
 		gd.widthHint = 200;
 		gd.heightHint = 64;
 		fDescEntry.getText().setLayoutData(gd);
+		fDescEntry.getLabel().setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		fDescEntry.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				setDescriptionText(text.getValue());
