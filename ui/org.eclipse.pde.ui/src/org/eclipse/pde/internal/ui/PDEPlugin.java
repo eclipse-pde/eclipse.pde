@@ -14,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Hashtable;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -28,19 +27,14 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.core.FileAdapter;
 import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationListener;
 import org.eclipse.pde.internal.ui.launcher.LaunchListener;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.view.PluginsViewAdapterFactory;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -246,33 +240,5 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 			};
 		}
 		return fTextFileDocumentProvider;
-	}
-	
-	public static PDEFormEditor getOpenManifestEditor(IProject project) {
-		return getOpenEditor(project, IPDEUIConstants.MANIFEST_EDITOR_ID);
-	}
-	
-	public static PDEFormEditor getOpenBuildPropertiesEditor(IProject project) {
-		return getOpenEditor(project, IPDEUIConstants.BUILD_EDITOR_ID);
-	}
-	
-	private static PDEFormEditor getOpenEditor(IProject project, String editorId) {
-		IWorkbenchPage page = getActivePage();
-		IEditorReference[] editors = page.getEditorReferences();
-		for (int i = 0; i < editors.length; i++) {
-			if (editors[i].getId().equals(editorId)) {
-				IPersistableElement persistable;
-				try {
-					persistable = editors[i].getEditorInput().getPersistable();
-					if (!(persistable instanceof IFileEditorInput))
-						continue;
-					if (!((IFileEditorInput)persistable).getFile().getProject().equals(project))
-						continue;
-					return (PDEFormEditor)page.findEditor(editors[i].getEditorInput());
-				} catch (PartInitException e) {
-				}
-			}
-		}
-		return null;
 	}
 }

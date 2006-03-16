@@ -28,6 +28,7 @@ import org.eclipse.pde.internal.core.text.plugin.PluginModel;
 import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.EditorUtilities;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.search.dependencies.GatherUnusedDependenciesOperation;
 import org.eclipse.text.edits.MalformedTreeException;
@@ -158,7 +159,7 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 	}
 	
 	private boolean loadFromEditor() {
-		fCurrentOpenEditor = PDEPlugin.getOpenManifestEditor(fCurrentProject);
+		fCurrentOpenEditor = EditorUtilities.getOpenManifestEditor(fCurrentProject);
 		if (fCurrentOpenEditor != null) {
 			IBaseModel model = ((PDEFormEditor)fCurrentOpenEditor).getAggregateModel();
 			if (model instanceof IBundlePluginModel) {

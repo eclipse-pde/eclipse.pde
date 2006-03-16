@@ -20,12 +20,17 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.product.LauncherSection;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 
@@ -299,5 +304,33 @@ public class EditorUtilities {
 				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.AboutSection_open, PDEUIMessages.AboutSection_warning); // 
 		} catch (PartInitException e) {
 		}		
+	}
+	
+	public static PDEFormEditor getOpenManifestEditor(IProject project) {
+		return getOpenEditor(project, IPDEUIConstants.MANIFEST_EDITOR_ID);
+	}
+	
+	public static PDEFormEditor getOpenBuildPropertiesEditor(IProject project) {
+		return getOpenEditor(project, IPDEUIConstants.BUILD_EDITOR_ID);
+	}
+	
+	private static PDEFormEditor getOpenEditor(IProject project, String editorId) {
+		IWorkbenchPage page = PDEPlugin.getActivePage();
+		IEditorReference[] editors = page.getEditorReferences();
+		for (int i = 0; i < editors.length; i++) {
+			if (editors[i].getId().equals(editorId)) {
+				IPersistableElement persistable;
+				try {
+					persistable = editors[i].getEditorInput().getPersistable();
+					if (!(persistable instanceof IFileEditorInput))
+						continue;
+					if (!((IFileEditorInput)persistable).getFile().getProject().equals(project))
+						continue;
+					return (PDEFormEditor)page.findEditor(editors[i].getEditorInput());
+				} catch (PartInitException e) {
+				}
+			}
+		}
+		return null;
 	}
 }

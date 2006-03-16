@@ -23,6 +23,7 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.EditorUtilities;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.editor.build.BuildSourcePage;
@@ -117,12 +118,12 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 		PDEFormEditor editor = null;
 		switch (modelType) {
 		case F_BUNDLE_MODEL:
-			editor = PDEPlugin.getOpenManifestEditor(project);
+			editor = EditorUtilities.getOpenManifestEditor(project);
 			break;
 		case F_BUILD_MODEL:
-			editor = PDEPlugin.getOpenBuildPropertiesEditor(project);
+			editor = EditorUtilities.getOpenBuildPropertiesEditor(project);
 			if (editor == null) {
-				editor = PDEPlugin.getOpenManifestEditor(project);
+				editor = EditorUtilities.getOpenManifestEditor(project);
 				IFormPage page = editor.findPage(BuildInputContext.CONTEXT_ID);
 				if (page instanceof BuildSourcePage) {
 					IBaseModel model = ((BuildSourcePage)page).getInputContext().getModel();
