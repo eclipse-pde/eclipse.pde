@@ -448,7 +448,8 @@ public class PluginModelManager implements IAdaptable {
 			HostSpecification spec = desc.getHost();
 			if (spec != null 
 				&& spec.getName() != null
-				&& (ClasspathUtilCore.isPatchFragment(desc)
+				&& ("true".equals(System.getProperty("pde.allowCycles")) //$NON-NLS-1$ //$NON-NLS-2$
+					||ClasspathUtilCore.isPatchFragment(desc)
 					|| desc.getImportPackages().length > 0 
 					|| desc.getRequiredBundles().length > 0)) {
 				IPluginModelBase host = findModel(spec.getName());

@@ -124,8 +124,16 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			added.add(desc.getSymbolicName());
 			
 			HostSpecification host = desc.getHost();
-			if (desc.isResolved() && host != null) {
-				addHostPlugin(host, added, map, entries);
+			if (host != null) {
+				if (desc.isResolved())
+					addHostPlugin(host, added, map, entries);
+			} else if ("true".equals(System.getProperty("pde.allowCycles"))) { //$NON-NLS-1$ //$NON-NLS-2$
+				BundleDescription[] fragments = desc.getFragments();
+				for (int i = 0; i < fragments.length; i++) {
+					if (fragments[i].isResolved()) {
+						addPlugin(fragments[i], false, map, entries);
+					}
+				}
 			}
 
 			// add dependencies
