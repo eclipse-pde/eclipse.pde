@@ -26,20 +26,13 @@ import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
 import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
 import org.eclipse.pde.internal.core.text.plugin.PluginModel;
 import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.search.dependencies.GatherUnusedDependenciesOperation;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.ISaveablePart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 
 public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrganizeManifestsSettings {
 	
@@ -91,9 +84,10 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 		BundleTextChangeListener bundleTextChangeListener = null;
 		ITextFileBuffer xmlModelBuffer = null;
 		IDocument xmlDoc = null;
+		boolean loadedFromEditor = false;
 		try {
 			
-			boolean loadedFromEditor = loadFromEditor();
+			loadedFromEditor = loadFromEditor();
 			
 			if (connectExtensions(underlyingXML)) {
 				xmlModelBuffer = connectBuffer(underlyingXML, manager);
@@ -108,21 +102,19 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 				}
 			}
 			
-			if (connectBundle()) {
+			if (connectBundle() && !loadedFromEditor) {
 				manifestBuffer = connectBuffer(manifest, manager);
 				manifestDoc = manifestBuffer.getDocument();
 				
-				if (!loadedFromEditor) {
-					fCurrentBundleModel = new BundlePluginModel();
-					BundleModel bundleModel = new BundleModel(manifestDoc, false);
-					bundleModel.load();
-					bundleTextChangeListener = new BundleTextChangeListener(manifestDoc);
-					bundleModel.addModelChangedListener(bundleTextChangeListener);
-					bundleModel.setUnderlyingResource(manifest);
-					fCurrentBundleModel.setBundleModel(bundleModel);
-					if (fCurrentPluginModelBase != null)
-						fCurrentBundleModel.setExtensionsModel(fCurrentPluginModelBase);
-				}
+				fCurrentBundleModel = new BundlePluginModel();
+				BundleModel bundleModel = new BundleModel(manifestDoc, false);
+				bundleModel.load();
+				bundleTextChangeListener = new BundleTextChangeListener(manifestDoc);
+				bundleModel.addModelChangedListener(bundleTextChangeListener);
+				bundleModel.setUnderlyingResource(manifest);
+				fCurrentBundleModel.setBundleModel(bundleModel);
+				if (fCurrentPluginModelBase != null)
+					fCurrentBundleModel.setExtensionsModel(fCurrentPluginModelBase);
 			}
 			
 			runCleanup(monitor);
@@ -137,12 +129,12 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 				if (fCurrentOpenEditor != null && !monitor.isCanceled())
 					fCurrentOpenEditor.doSave(monitor);
 				
-				if (connectBundle())
-					manager.disconnect(manifest.getFullPath(), null);
-
 				if (connectExtensions(underlyingXML))
 					manager.disconnect(underlyingXML.getFullPath(), null);
 
+				if (connectBundle() && !loadedFromEditor)
+					manager.disconnect(manifest.getFullPath(), null);
+				
 			} catch (CoreException e) {
 				PDEPlugin.log(e);
 			} finally {
@@ -165,25 +157,16 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 				|| fRemoveLazy || fRemoveUnresolved || fUnusedKeys;
 	}
 	
-	private boolean loadFromEditor() throws PartInitException {
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		IEditorReference[] editors = page.getEditorReferences();
-		for (int i = 0; i < editors.length; i++) {
-			if (editors[i].getId().equals(IPDEUIConstants.MANIFEST_EDITOR_ID)) {
-				IPersistableElement persistable = editors[i].getEditorInput().getPersistable();
-				if (!(persistable instanceof IFileEditorInput))
-					continue;
-				if (!((IFileEditorInput)persistable).getFile().getProject().equals(fCurrentProject))
-					continue;
-				fCurrentOpenEditor = page.findEditor(editors[i].getEditorInput());
-				IBaseModel model = ((PDEFormEditor)fCurrentOpenEditor).getAggregateModel();
-				if (model instanceof IBundlePluginModel) {
-					fCurrentBundleModel = (IBundlePluginModel)model;
-					ISharedExtensionsModel sharedExtensions = fCurrentBundleModel.getExtensionsModel();
-					if (sharedExtensions instanceof PluginModelBase)
-						fCurrentPluginModelBase = (PluginModelBase)sharedExtensions;
-					return true;
-				}
+	private boolean loadFromEditor() {
+		fCurrentOpenEditor = PDEPlugin.getOpenManifestEditor(fCurrentProject);
+		if (fCurrentOpenEditor != null) {
+			IBaseModel model = ((PDEFormEditor)fCurrentOpenEditor).getAggregateModel();
+			if (model instanceof IBundlePluginModel) {
+				fCurrentBundleModel = (IBundlePluginModel)model;
+				ISharedExtensionsModel sharedExtensions = fCurrentBundleModel.getExtensionsModel();
+				if (sharedExtensions instanceof PluginModelBase)
+					fCurrentPluginModelBase = (PluginModelBase)sharedExtensions;
+				return true;
 			}
 		}
 		return false;
@@ -283,14 +266,14 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 
 	private int getTotalTicksPerProject() {
 		int ticks = 0;
-		if (fAddMissing)		ticks++;
-		if (fMarkInternal)		ticks++;
-		if (fRemoveUnresolved)	ticks++;
-		if (fModifyDep)			ticks+= 2;
-		if (fUnusedDependencies)ticks+= 4;
-		if (fRemoveLazy)		ticks++;
-		if (fPrefixIconNL)		ticks++;
-		if (fUnusedKeys)		ticks++;
+		if (fAddMissing)		ticks += 1;
+		if (fMarkInternal)		ticks += 1;
+		if (fRemoveUnresolved)	ticks += 1;
+		if (fModifyDep)			ticks += 2;
+		if (fUnusedDependencies)ticks += 4;
+		if (fRemoveLazy)		ticks += 1;
+		if (fPrefixIconNL)		ticks += 1;
+		if (fUnusedKeys)		ticks += 1;
 		return ticks;
 	}
 	

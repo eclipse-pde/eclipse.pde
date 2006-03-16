@@ -37,7 +37,7 @@ import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
-import org.eclipse.pde.internal.ui.editor.text.ManifestSelectAnnotationRulerAction;
+import org.eclipse.pde.internal.ui.editor.text.PDESelectAnnotationRulerAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -332,8 +332,8 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	
 	protected void createActions() {
 		super.createActions();
-		ManifestSelectAnnotationRulerAction action = new ManifestSelectAnnotationRulerAction(
-				ResourceBundle.getBundle("org.eclipse.pde.internal.ui.editor.text.ConstructedManifestEditorMessages"), //$NON-NLS-1$
+		PDESelectAnnotationRulerAction action = new PDESelectAnnotationRulerAction(
+				ResourceBundle.getBundle("org.eclipse.pde.internal.ui.editor.text.ConstructedPDEEditorMessages"), //$NON-NLS-1$
 				"PDESelectAnnotationRulerAction.", //$NON-NLS-1$
 				this, getVerticalRuler());
 		setAction(ITextEditorActionConstants.RULER_CLICK, action);

@@ -26,7 +26,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorExtension;
 import org.eclipse.ui.texteditor.SelectMarkerRulerAction;
 
-public class ManifestSelectAnnotationRulerAction extends SelectMarkerRulerAction {
+public class PDESelectAnnotationRulerAction extends SelectMarkerRulerAction {
 
 	private boolean fIsEditable;
 	private ITextEditor fTextEditor;
@@ -34,7 +34,7 @@ public class ManifestSelectAnnotationRulerAction extends SelectMarkerRulerAction
 	private ResourceBundle fBundle;
 	private String fPrefix;
 
-	public ManifestSelectAnnotationRulerAction(ResourceBundle bundle, String prefix, ITextEditor editor, IVerticalRulerInfo ruler) {
+	public PDESelectAnnotationRulerAction(ResourceBundle bundle, String prefix, ITextEditor editor, IVerticalRulerInfo ruler) {
 		super(bundle, prefix, editor, ruler);
 		fTextEditor = editor;
 		fBundle = bundle;
