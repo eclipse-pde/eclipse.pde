@@ -508,8 +508,6 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 	 * $nl$ segment.
 	 *  
 	 * @param model - 
-	 * @param multiEdit - this MultiTextEdit object must be handled
-	 * 		  (applied to a document) by the user after this operation is complete.
 	 */
 	public static MultiTextEdit prefixIconPaths(PluginModelBase model) {
 		if (model == null)
