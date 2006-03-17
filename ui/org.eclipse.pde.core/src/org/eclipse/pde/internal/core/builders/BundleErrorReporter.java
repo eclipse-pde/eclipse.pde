@@ -538,8 +538,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 		validatePluginId(header, fPluginId);
 
-		validateSingletonAttribute(header, elements[0]);
-		validateSingletonDirective(header, elements[0]);
+		validateSingleton(header, elements[0]);
 
 		return true;
 	}
@@ -1171,30 +1170,23 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 	}
 
-	private void validateSingletonAttribute(IHeader header,
-			ManifestElement element) {
-		String singletonAttr = element
-				.getAttribute(ICoreConstants.SINGLETON_ATTRIBUTE);
+	private void validateSingleton(IHeader header, ManifestElement element) {
+		String singletonAttr = element.getAttribute(ICoreConstants.SINGLETON_ATTRIBUTE);
+		String singletonDir = element.getDirective(Constants.SINGLETON_DIRECTIVE);
 		if (fHasExtensions && !fEclipse3_1 && !"true".equals(singletonAttr)) { //$NON-NLS-1$
-			String message = NLS.bind(PDECoreMessages.BundleErrorReporter_singletonAttrRequired, ICoreConstants.SINGLETON_ATTRIBUTE); 
-			report(message, header.getLineNumber() + 1,	CompilerFlags.ERROR, PDEMarkerFactory.M_SINGLETON_ATT_NOT_SET);
+			String message = NLS.bind(
+					PDECoreMessages.BundleErrorReporter_singletonAttrRequired,
+					ICoreConstants.SINGLETON_ATTRIBUTE);
+			report(message, header.getLineNumber() + 1, CompilerFlags.ERROR, PDEMarkerFactory.M_SINGLETON_ATT_NOT_SET);
 		} else if (isCheckDeprecated() && fEclipse3_1 && singletonAttr != null) {
-			String message = NLS.bind(PDECoreMessages.BundleErrorReporter_deprecated_attribute_singleton, ICoreConstants.SINGLETON_ATTRIBUTE); 
-			report(message,	getLine(header, ICoreConstants.SINGLETON_ATTRIBUTE + "="), //$NON-NLS-1$
-					CompilerFlags.P_DEPRECATED, PDEMarkerFactory.M_SINGLETON_DIR_NOT_SET);
-		} else {
-			validateBooleanAttributeValue(header, element, ICoreConstants.SINGLETON_ATTRIBUTE);
-		}
-	}
-
-	private void validateSingletonDirective(IHeader header,
-			ManifestElement element) {
-		String singletonDir = element
-				.getDirective(Constants.SINGLETON_DIRECTIVE);
-		if (fHasExtensions && fEclipse3_1 && !"true".equals(singletonDir)) { //$NON-NLS-1$
+			String message = NLS.bind(PDECoreMessages.BundleErrorReporter_deprecated_attribute_singleton, ICoreConstants.SINGLETON_ATTRIBUTE);
+			report(message, getLine(header, ICoreConstants.SINGLETON_ATTRIBUTE + "="), //$NON-NLS-1$
+					CompilerFlags.P_DEPRECATED,	PDEMarkerFactory.M_SINGLETON_DIR_NOT_SET);
+		} else if (fHasExtensions && fEclipse3_1 && !"true".equals(singletonDir)) { //$NON-NLS-1$
 			String message = NLS.bind(PDECoreMessages.BundleErrorReporter_singletonRequired, Constants.SINGLETON_DIRECTIVE); 
 			report(message, header.getLineNumber() + 1,	CompilerFlags.ERROR, PDEMarkerFactory.M_SINGLETON_DIR_NOT_SET);
 		} else {
+			validateBooleanAttributeValue(header, element, ICoreConstants.SINGLETON_ATTRIBUTE);
 			validateBooleanDirectiveValue(header, element, Constants.SINGLETON_DIRECTIVE);
 		}
 	}

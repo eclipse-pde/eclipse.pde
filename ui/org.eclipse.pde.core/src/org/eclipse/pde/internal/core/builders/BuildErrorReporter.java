@@ -95,7 +95,7 @@ public class BuildErrorReporter extends ErrorReporter {
 		
 		// if there are any errors report using the text model
 		if (fProblemList.size() > 0)
-			reportErrors(prepareTextBuildModel(monitor), monitor);
+			reportErrors(prepareTextBuildModel(monitor));
 	}
 
 	private void validateBuild(IBuild build) {
@@ -374,7 +374,7 @@ public class BuildErrorReporter extends ErrorReporter {
 		}
 	}
 	
-	private void reportErrors(BuildModel bm, IProgressMonitor monitor) {
+	private void reportErrors(BuildModel bm) {
 		if (bm == null)
 			return;
 		
