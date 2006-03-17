@@ -11,7 +11,7 @@
 
 package org.eclipse.pde.internal.ui.editor.plugin.rows;
 
-import java.text.BreakIterator;
+import com.ibm.icu.text.BreakIterator;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.pde.core.plugin.IPluginAttribute;

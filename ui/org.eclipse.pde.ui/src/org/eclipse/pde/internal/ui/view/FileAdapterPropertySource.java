@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.view;
 
-import java.text.DateFormat;
+import com.ibm.icu.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.pde.internal.core.FileAdapter;

@@ -11,7 +11,7 @@
 package org.eclipse.pde.internal.runtime.logview;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.StringTokenizer;
 
