@@ -55,6 +55,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.IHelpContextIds;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
@@ -571,7 +572,7 @@ public class LogView extends ViewPart implements ILogListener {
     	dialog.create();
     	dialog.getShell().setText(
     			PDERuntimeMessages.LogView_FilterDialog_title); 
-    	if (dialog.open() == FilterDialog.OK)
+    	if (dialog.open() == Window.OK)
     		reloadLog();
     }
     

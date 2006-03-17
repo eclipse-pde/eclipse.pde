@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -59,7 +60,7 @@ public class OpenDependenciesAction implements IWorkbenchWindowActionDelegate {
 	public static void openDependencies(IPluginModelBase model) {
 		IWorkbenchPage page = PDEPlugin.getActivePage();
 		try {
-			IViewPart view = page.showView(PDEPlugin.DEPENDENCIES_VIEW_ID);
+			IViewPart view = page.showView(IPDEUIConstants.DEPENDENCIES_VIEW_ID);
 			((DependenciesView)view).openTo(model);
 		}
 		catch (PartInitException e) {

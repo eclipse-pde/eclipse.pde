@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.ui.parts;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 
 
 /**
@@ -142,7 +142,7 @@ public class StatusInfo implements IStatus {
 	 * @see IStatus#getPlugin()
 	 */
 	public String getPlugin() {
-		return PDEPlugin.PLUGIN_ID;
+		return IPDEUIConstants.PLUGIN_ID;
 	}
 
 	/**

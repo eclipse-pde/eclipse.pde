@@ -3,7 +3,7 @@ package org.eclipse.pde.internal.ui.wizards.xhtml;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-import org.apache.lucene.demo.html.HTMLParser;
+import org.apache.lucene.demo.html.HTMLParserConstants;
 import org.apache.lucene.demo.html.Token;
 
 public class XHTMLTag {
@@ -105,7 +105,7 @@ public class XHTMLTag {
 	
 	protected void eatToken(Token token) {
 		switch (token.kind) {
-		case HTMLParser.ArgName:
+		case HTMLParserConstants.ArgName:
 			expandLeftoverAttribute();
 			// set the attribute name or mark tag as empty
 			if (token.image.length() == 1
@@ -115,9 +115,9 @@ public class XHTMLTag {
 			} else
 				fCurrAttName = token.image;
 			break;
-		case HTMLParser.ArgValue:
-		case HTMLParser.Quote1Text:
-		case HTMLParser.Quote2Text:
+		case HTMLParserConstants.ArgValue:
+		case HTMLParserConstants.Quote1Text:
+		case HTMLParserConstants.Quote2Text:
 			// found the value: add the attribute
 			addAttribute(fCurrAttName, token.image);
 			break;

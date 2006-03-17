@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IIdentifiable;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
@@ -516,8 +517,8 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		String pref = store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS);
 		if (pref!=null && pref.equals(IPreferenceConstants.VALUE_USE_NAMES))
-			return IPluginBase.P_NAME;
-		return IPluginBase.P_ID;
+			return IPluginObject.P_NAME;
+		return IIdentifiable.P_ID;
 	}
 	
 	private String getTitleText(IPluginBase pluginBase) {

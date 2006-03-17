@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureInfo;
 import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Shell;
@@ -145,7 +146,7 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 			model.getBuild().add(ientry);
 			model.save();
 		}
-		IDE.setDefaultEditor(file, PDEPlugin.BUILD_EDITOR_ID);
+		IDE.setDefaultEditor(file, IPDEUIConstants.BUILD_EDITOR_ID);
 	}
 	
 	protected IFile createFeature() throws CoreException {
@@ -184,7 +185,7 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 		// Save the model
 		model.save();
 		model.dispose();
-		IDE.setDefaultEditor(file, PDEPlugin.FEATURE_EDITOR_ID);
+		IDE.setDefaultEditor(file, IPDEUIConstants.FEATURE_EDITOR_ID);
 		return file;
 	}
 	
@@ -205,7 +206,7 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 		}
 		// Open the editor
 		try {
-			page.openEditor(new FileEditorInput(manifestFile), PDEPlugin.FEATURE_EDITOR_ID);
+			page.openEditor(new FileEditorInput(manifestFile), IPDEUIConstants.FEATURE_EDITOR_ID);
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}

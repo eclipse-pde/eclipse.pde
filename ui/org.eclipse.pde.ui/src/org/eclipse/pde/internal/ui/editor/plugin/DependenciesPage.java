@@ -20,8 +20,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.forms.widgets.Section;
 
 public class DependenciesPage extends PDEFormPage {
 	
@@ -51,7 +51,7 @@ public class DependenciesPage extends PDEFormPage {
 		else
 			managedForm.addPart(new MatchSection(this, body, true));
 		
-		DependencyAnalysisSection section = new DependencyAnalysisSection(this, body, isBundle ? Section.COMPACT : Section.EXPANDED);
+		DependencyAnalysisSection section = new DependencyAnalysisSection(this, body, isBundle ? ExpandableComposite.COMPACT : ExpandableComposite.EXPANDED);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
 		if (isBundle)
 			gd.horizontalSpan = 2;

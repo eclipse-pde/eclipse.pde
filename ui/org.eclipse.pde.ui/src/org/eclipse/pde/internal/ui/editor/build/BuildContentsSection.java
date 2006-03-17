@@ -27,7 +27,6 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -308,7 +307,7 @@ public abstract class BuildContentsSection extends TableSection
 					boolean isIncluded = includes.contains(resource);
 					if (resource.equals(".") || resource.equals("./") || resource.equals(".\\")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						// ignore - should be root directory
-					} else if (resource.lastIndexOf(Path.SEPARATOR) == resource
+					} else if (resource.lastIndexOf(IPath.SEPARATOR) == resource
 							.length() - 1) {
 						IFolder folder = fProject.getFolder(resource);
 						fTreeViewer.setSubtreeChecked(folder, isIncluded);
@@ -383,10 +382,10 @@ public abstract class BuildContentsSection extends TableSection
 		IPath resPath = resource.getProjectRelativePath();
 		while (resPath.segmentCount() > 1) {
 			resPath = resPath.removeLastSegments(1);
-			if (includes.contains(resPath.toString() + Path.SEPARATOR))
+			if (includes.contains(resPath.toString() + IPath.SEPARATOR))
 				return false;
 			else if (excludes != null
-					&& excludes.contains(resPath.toString() + Path.SEPARATOR))
+					&& excludes.contains(resPath.toString() + IPath.SEPARATOR))
 				return true;
 		}
 		return !excludes.contains(resourceName);
@@ -448,7 +447,7 @@ public abstract class BuildContentsSection extends TableSection
 	}
 
 	protected String getResourceFolderName(String resourceName) {
-		return resourceName + Path.SEPARATOR;
+		return resourceName + IPath.SEPARATOR;
 	}
 
 	/**
@@ -521,7 +520,7 @@ public abstract class BuildContentsSection extends TableSection
 			if (entry != null) {
 				String[] tokens = entry.getTokens();
 				for (int i = 0; i < tokens.length; i++) {
-					if (tokens[i].indexOf(Path.SEPARATOR) != -1
+					if (tokens[i].indexOf(IPath.SEPARATOR) != -1
 							&& tokens[i].startsWith(parentFolder)
 							&& !tokens[i].equals(parentFolder)) {
 						entry.removeToken(tokens[i]);

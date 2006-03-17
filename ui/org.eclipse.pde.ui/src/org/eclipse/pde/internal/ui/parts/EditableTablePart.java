@@ -11,11 +11,11 @@
 package org.eclipse.pde.internal.ui.parts;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.RenameDialog;
 import org.eclipse.swt.widgets.Composite;
@@ -85,7 +85,7 @@ public class EditableTablePart extends TablePart {
 			dialog.create();
 			dialog.getShell().setText(PDEUIMessages.EditableTablePart_renameTitle); 
 			dialog.getShell().setSize(300, 150);
-			if (dialog.open()==Dialog.OK) {
+			if (dialog.open() == Window.OK) {
 				entryModified(obj, dialog.getNewName());
 			}
 		}

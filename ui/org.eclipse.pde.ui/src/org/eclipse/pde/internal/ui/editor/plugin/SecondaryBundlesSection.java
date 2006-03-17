@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.build.IBuild;
@@ -61,6 +62,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.osgi.service.prefs.BackingStoreException;
@@ -146,7 +148,7 @@ public class SecondaryBundlesSection extends TableSection implements IModelChang
 	}
 
 	public SecondaryBundlesSection(PDEFormPage formPage, Composite parent) {
-		super(formPage, parent, Section.DESCRIPTION|Section.TWISTIE|Section.COMPACT, new String[] { ADD, REMOVE});
+		super(formPage, parent, Section.DESCRIPTION | ExpandableComposite.TWISTIE | ExpandableComposite.COMPACT, new String[] { ADD, REMOVE});
 		getSection().setText(PDEUIMessages.SecondaryBundlesSection_title); 
 		getSection().setDescription(PDEUIMessages.SecondaryBundlesSection_desc);
 		IBuildModel model = getBuildModel();
@@ -342,7 +344,7 @@ public class SecondaryBundlesSection extends TableSection implements IModelChang
 				getAvailablePlugins(),
 				true);
 		dialog.create();
-		if (dialog.open() == PluginSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 		    IBuild build = getBuildModel().getBuild();
 			IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
 			try {

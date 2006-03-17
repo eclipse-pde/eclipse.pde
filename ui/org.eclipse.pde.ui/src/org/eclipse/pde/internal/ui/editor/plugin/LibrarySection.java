@@ -21,12 +21,12 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
@@ -318,7 +318,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		dialog.getShell().setText(PDEUIMessages.ManifestEditor_LibrarySection_newLibraryEntry);
 		SWTUtil.setDialogSize(dialog, 250, 175);
 
-		if (dialog.open() == Dialog.OK){
+		if (dialog.open() == Window.OK){
 			String libName = dialog.getLibraryName();
 			if (libName==null || libName.length()==0)
 				return;
@@ -352,7 +352,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		dialog.setInput(((IModel)getPage().getModel()).getUnderlyingResource().getProject());
 		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
 
-		if (dialog.open() == ElementTreeSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			Object[] elements = dialog.getResult();
 			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 			for (int i = 0; i < elements.length; i++) {

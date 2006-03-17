@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IPartSelectionListener;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -50,7 +51,7 @@ public class BodyTextSection
 	private boolean blockNotification;
 
 	public BodyTextSection(ExtensionsPage page, Composite parent) {
-		super(page, parent, Section.TWISTIE);
+		super(page, parent, ExpandableComposite.TWISTIE);
 		getSection().setText(PDEUIMessages.ManifestEditor_BodyTextSection_title);
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}

@@ -29,6 +29,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.ICoreConstants;
@@ -382,7 +383,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		IFile target = getTargetFile();
 		if (target != null) dialog.setInitialSelection(target);
 
-		if (dialog.open() == ElementTreeSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			IFile file = (IFile)dialog.getFirstResult();
 			TargetModel model = new TargetModel();
 			try {

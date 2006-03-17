@@ -47,6 +47,7 @@ import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
@@ -234,7 +235,7 @@ public class NewLibraryPluginCreationOperation extends
 			throw new CoreException(
 					new Status(
 							IStatus.ERROR,
-							PDEPlugin.PLUGIN_ID,
+							IPDEUIConstants.PLUGIN_ID,
 							IStatus.OK,
 							NLS.bind(PDEUIMessages.NewProjectCreationOperation_errorImportingJar,jar), e));
 		}

@@ -63,13 +63,14 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
+import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
-import org.eclipse.pde.internal.ui.preferences.MainPreferencePage;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
@@ -90,6 +91,7 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
@@ -203,7 +205,7 @@ public class PluginsView extends ViewPart {
 		propertyListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				String property = event.getProperty();
-				if (property.equals(MainPreferencePage.PROP_SHOW_OBJECTS)) {
+				if (property.equals(IPreferenceConstants.PROP_SHOW_OBJECTS)) {
 					treeViewer.refresh();
 				}
 			}
@@ -565,7 +567,7 @@ public class PluginsView extends ViewPart {
 			manager.add(new Separator());
 			openManifestAction.setChecked(
 				editorId != null
-					&& editorId.equals(PDEPlugin.MANIFEST_EDITOR_ID));
+					&& editorId.equals(IPDEUIConstants.MANIFEST_EDITOR_ID));
 		}
 		if (lcFileName.endsWith(".mxsd") || lcFileName.endsWith(".exsd")) { //$NON-NLS-1$ //$NON-NLS-2$
 			openSchemaAction.setImageDescriptor(desc);
@@ -573,7 +575,7 @@ public class PluginsView extends ViewPart {
 			manager.add(new Separator());
 			openSchemaAction.setChecked(
 				editorId != null 
-					&& editorId.equals(PDEPlugin.SCHEMA_EDITOR_ID));
+					&& editorId.equals(IPDEUIConstants.SCHEMA_EDITOR_ID));
 		}
 		manager.add(openTextEditorAction);
 		openTextEditorAction.setChecked(
@@ -842,9 +844,9 @@ public class PluginsView extends ViewPart {
 		IWorkbenchPage page = PDEPlugin.getActivePage();
 		if (editorId == null) {
 			if (adapter.isManifest())
-				editorId = PDEPlugin.MANIFEST_EDITOR_ID;
+				editorId = IPDEUIConstants.MANIFEST_EDITOR_ID;
 			else if (adapter.isSchema())
-				editorId = PDEPlugin.SCHEMA_EDITOR_ID;
+				editorId = IPDEUIConstants.SCHEMA_EDITOR_ID;
 		}
 		try {
 			if (editorId == null || editorId.equals("@system"))  //$NON-NLS-1$
@@ -859,11 +861,11 @@ public class PluginsView extends ViewPart {
 	}
 
 	private void handleOpenManifestEditor(FileAdapter adapter) {
-		handleOpenTextEditor(adapter, PDEPlugin.MANIFEST_EDITOR_ID);
+		handleOpenTextEditor(adapter, IPDEUIConstants.MANIFEST_EDITOR_ID);
 	}
 	
 	private void handleOpenSchemaEditor(FileAdapter adapter) {
-		handleOpenTextEditor(adapter, PDEPlugin.SCHEMA_EDITOR_ID);
+		handleOpenTextEditor(adapter, IPDEUIConstants.SCHEMA_EDITOR_ID);
 	}
 
 	private void handleOpenSystemEditor(FileAdapter adapter) {

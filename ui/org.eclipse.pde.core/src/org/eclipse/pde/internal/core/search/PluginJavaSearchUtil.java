@@ -16,6 +16,7 @@ import java.util.HashSet;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -119,7 +120,7 @@ public class PluginJavaSearchUtil {
 				String libraryName =
 					ClasspathUtilCore.expandLibraryName(libraries[i].getName());
 				String path =
-					plugin.getModel().getInstallLocation() + Path.SEPARATOR + libraryName;
+					plugin.getModel().getInstallLocation() + IPath.SEPARATOR + libraryName;
 				if (new File(path).exists()) {
 					libraryPaths.add(new Path(path));
 				} else {
@@ -141,7 +142,7 @@ public class PluginJavaSearchUtil {
 		for (int i = 0; i < fragments.length; i++) {
 			String path =
 				fragments[i].getInstallLocation()
-					+ Path.SEPARATOR
+					+ IPath.SEPARATOR
 					+ libraryName;
 			if (new File(path).exists()) {
 				libraryPaths.add(new Path(path));

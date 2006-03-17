@@ -16,6 +16,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPlugin;
@@ -308,7 +309,7 @@ public class FeatureSpecSection extends PDESection {
 						.getActiveWorkbenchShell(), wizard);
 				dialog.create();
 				SWTUtil.setDialogSize(dialog, 400, 500);
-				if (dialog.open() == WizardDialog.OK) {
+				if (dialog.open() == Window.OK) {
 					String plugin = wizard.getPluginId();
 					try {
 						feature.setPlugin(plugin);
@@ -577,7 +578,7 @@ public class FeatureSpecSection extends PDESection {
 	protected void handleOpenDialog() {
 		PluginSelectionDialog dialog = new PluginSelectionDialog(getSection().getShell(), false, false);
 		dialog.create();
-		if (dialog.open() == PluginSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			IPluginModel model = (IPluginModel) dialog.getFirstResult();
 			IPlugin plugin = model.getPlugin();
 			fPluginText.setValue(plugin.getId());

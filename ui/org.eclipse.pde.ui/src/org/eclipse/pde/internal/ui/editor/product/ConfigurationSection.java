@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
@@ -122,7 +123,7 @@ public class ConfigurationSection extends PDESection {
 		dialog.addFilter(new FileNameFilter("config.ini")); //$NON-NLS-1$
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 
-		if (dialog.open() == ElementTreeSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			IFile file = (IFile)dialog.getFirstResult();
 			fCustomEntry.setValue(file.getFullPath().toString());
 		}

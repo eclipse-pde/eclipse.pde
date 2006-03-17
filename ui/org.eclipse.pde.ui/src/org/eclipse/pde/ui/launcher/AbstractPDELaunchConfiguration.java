@@ -16,8 +16,8 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -224,7 +224,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			programArgs.add(
 					LaunchArgumentsHelper.getTracingFileArgument(
 					configuration,
-					getConfigDir(configuration).toString() + Path.SEPARATOR + ".options")); //$NON-NLS-1$
+					getConfigDir(configuration).toString() + IPath.SEPARATOR + ".options")); //$NON-NLS-1$
 		}
 
 		// add the program args specified by the user

@@ -13,6 +13,7 @@ import org.eclipse.pde.internal.core.itarget.ILocationInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.core.target.WorkspaceTargetModel;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
@@ -57,7 +58,7 @@ public class BaseTargetDefinitionOperation extends WorkspaceModifyOperation {
 					((ISetSelectionTarget) focusPart).selectReveal(selection);
 				}
 				try {
-					IDE.openEditor(page, fFile, PDEPlugin.TARGET_EDITOR_ID);
+					IDE.openEditor(page, fFile, IPDEUIConstants.TARGET_EDITOR_ID);
 				} catch (PartInitException e) {
 				}
 			}

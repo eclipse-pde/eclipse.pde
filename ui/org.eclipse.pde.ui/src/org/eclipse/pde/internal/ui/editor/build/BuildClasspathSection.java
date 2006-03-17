@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.build.IBuild;
@@ -48,6 +49,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -165,7 +167,7 @@ public class BuildClasspathSection
 		super(
 			page,
 			parent,
-			Section.DESCRIPTION | Section.TWISTIE,
+			Section.DESCRIPTION | ExpandableComposite.TWISTIE,
 			new String[] {
 				PDEUIMessages.BuildEditor_ClasspathSection_add,
 				PDEUIMessages.BuildEditor_ClasspathSection_remove,
@@ -320,7 +322,7 @@ public class BuildClasspathSection
 				
 		initializeDialogSettings(dialog);
 
-		if (dialog.open() == ElementTreeSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			
 			Object[] elements = dialog.getResult();
 

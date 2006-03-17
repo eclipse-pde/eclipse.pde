@@ -16,7 +16,7 @@ import java.util.Locale;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -238,7 +238,7 @@ public class PluginContentPage extends ContentPage {
 			if (status.getSeverity() == IStatus.ERROR) {
 				errorMessage = status.getMessage();
 			} else if (status.getSeverity() == IStatus.WARNING) {
-				setMessage(status.getMessage(), DialogPage.WARNING);
+				setMessage(status.getMessage(), IMessageProvider.WARNING);
 			}
 		}
 		setErrorMessage(errorMessage);

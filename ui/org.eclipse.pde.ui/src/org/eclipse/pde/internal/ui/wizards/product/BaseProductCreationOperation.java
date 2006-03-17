@@ -34,6 +34,7 @@ import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
 import org.eclipse.pde.internal.core.iproduct.IWindowImages;
 import org.eclipse.pde.internal.core.product.SplashInfo;
 import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Display;
@@ -198,7 +199,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 					((ISetSelectionTarget) focusPart).selectReveal(selection);
 				}
 				try {
-					IDE.openEditor(page, fFile, PDEPlugin.PRODUCT_EDITOR_ID);
+					IDE.openEditor(page, fFile, IPDEUIConstants.PRODUCT_EDITOR_ID);
 				} catch (PartInitException e) {
 				}
 			}

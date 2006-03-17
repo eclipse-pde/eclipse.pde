@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.StatusDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.itarget.IAdditionalLocation;
 import org.eclipse.pde.internal.core.itarget.ILocationInfo;
@@ -175,7 +176,7 @@ public class LocationDialog extends StatusDialog {
 	private void handleInsertVariable() {
 		StringVariableSelectionDialog dialog = 
 					new StringVariableSelectionDialog(getShell());
-		if (dialog.open() == StringVariableSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			fPath.insert(dialog.getVariableExpression());
 		}
 	}

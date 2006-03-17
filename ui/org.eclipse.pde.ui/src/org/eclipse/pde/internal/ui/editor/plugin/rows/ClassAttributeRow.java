@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
@@ -74,7 +75,7 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 					dialog.create();
 					SWTUtil.setDialogSize(dialog, 400, 500);
 					int dResult = dialog.open();
-					if (dResult == WizardDialog.OK) {
+					if (dResult == Window.OK) {
 						name = wizard.getClassNameWithArgs();
 						text.setText(name);
 						result = javaProject.findType(name);
@@ -95,7 +96,7 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 					dialog.create();
 					SWTUtil.setDialogSize(dialog, 400, 500);
 					int dResult = dialog.open();
-					if (dResult == WizardDialog.OK) {
+					if (dResult == Window.OK) {
 						String newValue = wizard.getClassName();
 						name = newValue.replace('.', '/') + ".java"; //$NON-NLS-1$
 						text.setText(newValue);
@@ -148,7 +149,7 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
                         false,
 						""); //$NON-NLS-1$
 				dialog.setTitle(PDEUIMessages.ClassAttributeRow_dialogTitle); 
-				if (dialog.open() == SelectionDialog.OK) {
+				if (dialog.open() == Window.OK) {
 					IType type = (IType) dialog.getResult()[0];
 					text.setText(type.getFullyQualifiedName('$'));
 				}

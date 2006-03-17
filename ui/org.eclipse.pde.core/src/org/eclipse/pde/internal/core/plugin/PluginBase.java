@@ -23,7 +23,6 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
@@ -236,13 +235,13 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		ensureModelEditable();
 		fLibraries.remove(library);
 		((PluginLibrary) library).setInTheModel(false);
-		fireStructureChanged(library, ModelChangedEvent.REMOVE);
+		fireStructureChanged(library, IModelChangedEvent.REMOVE);
 	}
 	public void remove(IPluginImport iimport) throws CoreException {
 		ensureModelEditable();
 		fImports.remove(iimport);
 		((PluginImport) iimport).setInTheModel(false);
-		fireStructureChanged(iimport, ModelChangedEvent.REMOVE);
+		fireStructureChanged(iimport, IModelChangedEvent.REMOVE);
 	}
 	public void reset() {
 		fLibraries = new ArrayList();

@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
@@ -410,7 +411,7 @@ public class LauncherSection extends PDESection {
 		dialog.addFilter(new FileExtensionFilter(extension)); 
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 
-		if (dialog.open() == ElementTreeSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			IFile file = (IFile)dialog.getFirstResult();
 			entry.setValue(file.getFullPath().toString());
 		}

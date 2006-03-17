@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
@@ -44,7 +45,7 @@ public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {
 	protected void createToolBarActions(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
 	
-		Action haction = new Action("hor", Action.AS_RADIO_BUTTON) { //$NON-NLS-1$
+		Action haction = new Action("hor", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$
 			public void run() {
 				sashForm.setOrientation(SWT.HORIZONTAL);
 				form.reflow(true);
@@ -55,7 +56,7 @@ public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {
 		haction.setImageDescriptor(PDEPluginImages.DESC_HORIZONTAL);
 		haction.setDisabledImageDescriptor(PDEPluginImages.DESC_HORIZONTAL_DISABLED);
 
-		Action vaction = new Action("ver", Action.AS_RADIO_BUTTON) { //$NON-NLS-1$
+		Action vaction = new Action("ver", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$
 			public void run() {
 				sashForm.setOrientation(SWT.VERTICAL);
 				form.reflow(true);

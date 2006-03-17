@@ -28,9 +28,9 @@ public class BuildPluginAction extends BaseBuildAction {
 		throws InvocationTargetException, CoreException {
 	
 		BuildScriptGenerator generator = new BuildScriptGenerator();
-		BuildScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
-		BuildScriptGenerator.setForceUpdateJar(AbstractScriptGenerator.getForceUpdateJarFormat());
-		BuildScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());
+		AbstractScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());
+		AbstractScriptGenerator.setForceUpdateJar(AbstractScriptGenerator.getForceUpdateJarFormat());
+		AbstractScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos());
 		
 		IProject project = fManifestFile.getProject();
 		generator.setWorkingDirectory(project.getLocation().toOSString());

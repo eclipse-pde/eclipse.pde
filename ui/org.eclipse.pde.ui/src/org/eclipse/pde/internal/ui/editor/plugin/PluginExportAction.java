@@ -17,6 +17,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -71,6 +72,6 @@ public class PluginExportAction extends Action {
 		wd.create();
 		//wd.getShell().setSize(450, 600);
 		int result = wd.open();
-		notifyResult(result == WizardDialog.OK);
+		notifyResult(result == Window.OK);
 	}
 }

@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.schema;
 import java.io.PrintWriter;
 import java.util.Vector;
 
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECoreMessages;
@@ -59,7 +60,7 @@ public class SchemaCompositor
 		child.setParent(this);
 		getSchema().fireModelChanged(
 			new ModelChangedEvent(getSchema(),
-				ModelChangedEvent.INSERT,
+				IModelChangedEvent.INSERT,
 				new Object[] { child },
 				null));
 	}
@@ -84,7 +85,7 @@ public class SchemaCompositor
 			return;
 		children.set(newIndex, element);
 		getSchema().fireModelChanged(new ModelChangedEvent(
-				getSchema(), ModelChangedEvent.CHANGE,
+				getSchema(), IModelChangedEvent.CHANGE,
 				new Object[] { this }, null));
 	}
 	
@@ -98,7 +99,7 @@ public class SchemaCompositor
 		else
 			children.addElement(newChild);
 		getSchema().fireModelChanged(new ModelChangedEvent(
-				getSchema(), ModelChangedEvent.INSERT,
+				getSchema(), IModelChangedEvent.INSERT,
 				new Object[] { newChild }, null));
 	}
 	
@@ -125,7 +126,7 @@ public class SchemaCompositor
 		children.removeElement(child);
 		getSchema().fireModelChanged(
 			new ModelChangedEvent(getSchema(),
-				ModelChangedEvent.REMOVE,
+				IModelChangedEvent.REMOVE,
 				new Object[] { child },
 				null));
 	}

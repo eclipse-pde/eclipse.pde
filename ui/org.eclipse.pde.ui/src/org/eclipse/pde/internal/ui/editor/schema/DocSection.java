@@ -16,6 +16,7 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.viewers.ISelection;
@@ -140,31 +141,31 @@ public class DocSection extends PDESection {
 	
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.CUT.getId())) {
-			fSourceViewer.doOperation(SourceViewer.CUT);
+			fSourceViewer.doOperation(ITextOperationTarget.CUT);
 			return true;
 		} else if (
 			actionId.equals(ActionFactory.COPY.getId())) {
-			fSourceViewer.doOperation(SourceViewer.COPY);
+			fSourceViewer.doOperation(ITextOperationTarget.COPY);
 			return true;
 		} else if (
 			actionId.equals(ActionFactory.PASTE.getId())) {
-			fSourceViewer.doOperation(SourceViewer.PASTE);
+			fSourceViewer.doOperation(ITextOperationTarget.PASTE);
 			return true;
 		} else if (
 			actionId.equals(ActionFactory.SELECT_ALL.getId())) {
-			fSourceViewer.doOperation(SourceViewer.SELECT_ALL);
+			fSourceViewer.doOperation(ITextOperationTarget.SELECT_ALL);
 			return true;
 		} else if (
 			actionId.equals(ActionFactory.DELETE.getId())) {
-			fSourceViewer.doOperation(SourceViewer.DELETE);
+			fSourceViewer.doOperation(ITextOperationTarget.DELETE);
 			return true;
 		} else if (
 			actionId.equals(ActionFactory.UNDO.getId())) {
-			fSourceViewer.doOperation(SourceViewer.UNDO);
+			fSourceViewer.doOperation(ITextOperationTarget.UNDO);
 			return true;
 		} else if (
 			actionId.equals(ActionFactory.REDO.getId())) {
-			fSourceViewer.doOperation(SourceViewer.REDO);
+			fSourceViewer.doOperation(ITextOperationTarget.REDO);
 			return true;
 		}
 		return false;
@@ -319,6 +320,6 @@ public class DocSection extends PDESection {
 	}
 
 	public boolean canPaste(Clipboard clipboard) {
-		return fSourceViewer.canDoOperation(SourceViewer.PASTE);
+		return fSourceViewer.canDoOperation(ITextOperationTarget.PASTE);
 	}
 }

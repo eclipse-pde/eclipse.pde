@@ -65,6 +65,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.FileEditorInput;
@@ -84,7 +85,7 @@ public class ExtensionPointsSection extends TableSection {
 	}
 
 	public ExtensionPointsSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.TITLE_BAR, new String[] { PDEUIMessages.ManifestEditor_DetailExtensionPointSection_new });
+		super(page, parent, ExpandableComposite.TITLE_BAR, new String[] { PDEUIMessages.ManifestEditor_DetailExtensionPointSection_new });
 		getSection().setText(PDEUIMessages.ManifestEditor_DetailExtensionPointSection_title);
 		handleDefaultButton = false;
 		getTablePart().setEditable(false);

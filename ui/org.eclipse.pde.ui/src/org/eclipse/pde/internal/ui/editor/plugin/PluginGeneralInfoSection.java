@@ -25,6 +25,7 @@ import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -136,7 +137,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 							WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 							dialog.create();
 							SWTUtil.setDialogSize(dialog, 400, 500);
-							if (dialog.open() == WizardDialog.OK) {
+							if (dialog.open() == Window.OK) {
 								fClassEntry.setValue(wizard.getClassNameWithArgs());
 							}
 						}
@@ -165,7 +166,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 						false,
 						""); //$NON-NLS-1$
 				dialog.setTitle(PDEUIMessages.GeneralInfoSection_selectionTitle); 
-				if (dialog.open() == SelectionDialog.OK) {
+				if (dialog.open() == Window.OK) {
 					IType type = (IType) dialog.getResult()[0];
 					fClassEntry.setValue(type.getFullyQualifiedName('$'));
 				}

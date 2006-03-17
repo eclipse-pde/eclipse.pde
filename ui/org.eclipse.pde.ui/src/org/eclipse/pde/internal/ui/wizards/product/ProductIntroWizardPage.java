@@ -14,6 +14,7 @@ import java.util.TreeSet;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
@@ -173,7 +174,7 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 
 	private void handleBrowse() {
 		PluginSelectionDialog dialog = new PluginSelectionDialog(getShell(), PDECore.getDefault().getModelManager().getWorkspaceModels(), false);
-		if (dialog.open() == PluginSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			IPluginModelBase model = (IPluginModelBase)dialog.getFirstResult();
 			String id = model.getPluginBase().getId();
 			fPluginText.setText(id);

@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.schema;
 import java.io.PrintWriter;
 import java.util.Vector;
 
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
@@ -51,7 +52,7 @@ public class SchemaComplexType
 			attributes.addElement(attribute);
 		getSchema().fireModelChanged(
 			new ModelChangedEvent(getSchema(),
-				ModelChangedEvent.INSERT,
+				IModelChangedEvent.INSERT,
 				new Object[] { attribute },
 				null));
 	}
@@ -77,7 +78,7 @@ public class SchemaComplexType
 		getSchema().fireModelChanged(
 				new ModelChangedEvent(
 						getSchema(), 
-						ModelChangedEvent.CHANGE,
+						IModelChangedEvent.CHANGE,
 						new Object[] { attribute.getParent() }, null));
 	}
 	public ISchemaAttribute getAttribute(String name) {
@@ -108,7 +109,7 @@ public class SchemaComplexType
 		attributes.removeElement(attribute);
 		getSchema().fireModelChanged(
 			new ModelChangedEvent(getSchema(),
-				ModelChangedEvent.REMOVE,
+				IModelChangedEvent.REMOVE,
 				new Object[] { attribute },
 				null));
 	}

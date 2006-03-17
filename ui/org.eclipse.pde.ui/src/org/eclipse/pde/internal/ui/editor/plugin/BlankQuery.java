@@ -5,7 +5,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.internal.core.text.bundle.PackageObject;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.search.SearchResult;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
@@ -21,7 +21,7 @@ public class BlankQuery implements ISearchQuery {
 	public IStatus run(IProgressMonitor monitor)
 			throws OperationCanceledException {
 		monitor.done();
-		return new Status(IStatus.OK, PDEPlugin.PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
+		return new Status(IStatus.OK, IPDEUIConstants.PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
 	}
 
 	public String getLabel() {

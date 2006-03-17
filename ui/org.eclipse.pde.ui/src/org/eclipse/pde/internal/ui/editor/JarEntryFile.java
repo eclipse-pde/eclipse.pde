@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 
 
 public class JarEntryFile extends PlatformObject implements IStorage {
@@ -43,7 +43,7 @@ public class JarEntryFile extends PlatformObject implements IStorage {
 			ZipEntry zipEntry = fZipFile.getEntry(fEntryName);
 			return fZipFile.getInputStream(zipEntry);
 		} catch (Exception e){
-			throw new CoreException(new Status(IStatus.ERROR, PDEPlugin.PLUGIN_ID, IStatus.ERROR, e.getMessage(), e));
+			throw new CoreException(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.ERROR, e.getMessage(), e));
 		}
 	}
 

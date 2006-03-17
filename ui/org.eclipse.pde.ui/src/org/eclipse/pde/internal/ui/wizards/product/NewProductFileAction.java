@@ -2,6 +2,7 @@ package org.eclipse.pde.internal.ui.wizards.product;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -33,7 +34,7 @@ public class NewProductFileAction extends Action implements ICheatSheetAction {
 		SWTUtil.setDialogSize(dialog, 500, 500);
 		dialog.getShell().setText(wizard.getWindowTitle());
 		int result = dialog.open();
-		notifyResult(result==WizardDialog.OK);
+		notifyResult(result==Window.OK);
 	}
 
 }

@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -37,6 +38,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -414,7 +416,7 @@ public class FeatureImportWizardPage extends WizardPage {
 			}
 		}
 		return new MultiStatus(
-				PDEPlugin.PLUGIN_ID, IStatus.OK,
+				IPDEUIConstants.PLUGIN_ID, IStatus.OK,
 				(IStatus[]) resultStatus.toArray(new IStatus[resultStatus.size()]),
 				PDEUIMessages.FeatureImportWizard_DetailedPage_problemsLoading, 
 				null);
@@ -432,12 +434,12 @@ public class FeatureImportWizardPage extends WizardPage {
 			model.load(stream, false);
 			if(!model.isValid()){
 				status = new Status(
-						IStatus.WARNING, PDEPlugin.PLUGIN_ID, IStatus.OK,
+						IStatus.WARNING, IPDEUIConstants.PLUGIN_ID, IStatus.OK,
 						NLS.bind(PDEUIMessages.FeatureImportWizardPage_importHasInvalid, dir), null);
 			}
 		} catch (Exception e) {
 			// Errors in the file
-			status = new Status(IStatus.ERROR, PDEPlugin.PLUGIN_ID, IStatus.OK, e.getMessage(), e);
+			status = new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.OK, e.getMessage(), e);
 		}
 		if (stream != null) {
 			try {
@@ -462,7 +464,7 @@ public class FeatureImportWizardPage extends WizardPage {
 		if (fFeatureViewer != null && fFeatureViewer.getTable().getItemCount() == 0)
 			message = PDEUIMessages.FeatureImportWizard_messages_noFeatures; 
 		
-		setMessage(message, WizardPage.INFORMATION);
+		setMessage(message, IMessageProvider.INFORMATION);
 		setPageComplete(fTablePart.getSelectionCount() > 0);
 	}
 	

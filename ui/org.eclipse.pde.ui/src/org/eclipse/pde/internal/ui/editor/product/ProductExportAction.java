@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -42,7 +43,7 @@ public class ProductExportAction extends Action {
 		wizard.init(PlatformUI.getWorkbench(), fSelection);
 		WizardDialog wd = new ResizableWizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 		wd.create();
-		notifyResult(wd.open() == WizardDialog.OK);
+		notifyResult(wd.open() == Window.OK);
 	}
 	
 }

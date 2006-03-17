@@ -444,7 +444,7 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 					WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 					dialog.create();
 					SWTUtil.setDialogSize(dialog, 400, 500);
-					if (dialog.open() == WizardDialog.OK) {
+					if (dialog.open() == Window.OK) {
 						return wizard.getClassName();
 					}
 				}
@@ -477,7 +477,7 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 					PlatformUI.getWorkbench().getProgressService(),
 					SearchEngine.createWorkspaceScope(), scopeType, false, filter); //$NON-NLS-1$
 			dialog.setTitle(PDEUIMessages.GeneralInfoSection_selectionTitle); 
-			if (dialog.open() == SelectionDialog.OK) {
+			if (dialog.open() == Window.OK) {
 				IType type = (IType) dialog.getResult()[0];
 				entry.setValue(type.getFullyQualifiedName('$'));
 				entry.commit();

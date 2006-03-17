@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.LoadTargetOperation;
 import org.eclipse.pde.internal.core.itarget.ILocationInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
@@ -46,6 +47,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -62,7 +64,7 @@ public class TargetDefinitionSection extends PDESection {
 	private static int NUM_COLUMNS = 5;
 	
 	public TargetDefinitionSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.TITLE_BAR|Section.TWISTIE);
+		super(page, parent, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE);
 		createClient(getSection(), page.getEditor().getToolkit());
 		getSection().setExpanded(true);
 	}
@@ -266,7 +268,7 @@ public class TargetDefinitionSection extends PDESection {
 	private void handleInsertVariable() {
 		StringVariableSelectionDialog dialog = 
 					new StringVariableSelectionDialog(PDEPlugin.getActiveWorkbenchShell());
-		if (dialog.open() == StringVariableSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			fPath.getText().insert(dialog.getVariableExpression());
 			// have to setValue to make sure getValue reflects the actual text in the Text object.
 			fPath.setValue(fPath.getText().getText());

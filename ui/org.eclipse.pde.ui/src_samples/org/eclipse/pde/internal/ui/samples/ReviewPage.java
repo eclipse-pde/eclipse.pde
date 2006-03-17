@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.samples;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -55,7 +56,7 @@ public class ReviewPage extends WizardPage {
 				buf.append(NLS.bind(PDEUIMessages.ReviewPage_content, selection.getAttribute("name"))); //$NON-NLS-1$ 
 		}
 		else {
-			setMessage(PDEUIMessages.ReviewPage_noSampleFound, WizardPage.WARNING); 
+			setMessage(PDEUIMessages.ReviewPage_noSampleFound, IMessageProvider.WARNING); 
 		}
 		buf.append("</form>"); //$NON-NLS-1$
 		formText.setText(buf.toString());

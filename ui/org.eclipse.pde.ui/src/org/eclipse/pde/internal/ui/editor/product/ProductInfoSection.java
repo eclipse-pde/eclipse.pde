@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.TargetPlatform;
@@ -138,7 +139,7 @@ public class ProductInfoSection extends PDESection {
 		ProductDefinitionWizard wizard = new ProductDefinitionWizard(getProduct());
 		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 		dialog.create();
-		if (dialog.open() == WizardDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			String id = wizard.getProductId();
 			IProduct product = getProduct();
 			product.setId(id);

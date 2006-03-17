@@ -24,6 +24,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
@@ -175,13 +176,13 @@ public class IntroSection extends PDESection {
 					PDEUIMessages.IntroSection_undefinedProductId, null, 
 					PDEUIMessages.IntroSection_undefinedProductIdMessage,
 					MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
-	        if (mdiag.open() != MessageDialog.OK)
+	        if (mdiag.open() != Window.OK)
 	        	return;
 		}
 		ProductIntroWizard wizard = new ProductIntroWizard(getProduct(), needNewProduct);
 		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 		dialog.create();
-		if (dialog.open() == WizardDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			String id = wizard.getIntroId();
 			fIntroCombo.add(id, 0);
 			fIntroCombo.setText(id);

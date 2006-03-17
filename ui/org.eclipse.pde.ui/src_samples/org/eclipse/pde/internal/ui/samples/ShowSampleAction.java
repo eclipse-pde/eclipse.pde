@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -65,7 +66,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
                             .getActiveWorkbenchShell(), wizard);
                     dialog.create();
                     dialog.setPageSize(450, 500);
-                    if (dialog.open() == WizardDialog.OK) {
+                    if (dialog.open() == Window.OK) {
                         switchToSampleStandby(wizard);
                     }
                 } catch (CoreException e) {

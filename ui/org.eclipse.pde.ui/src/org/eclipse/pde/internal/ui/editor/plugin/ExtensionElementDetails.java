@@ -18,6 +18,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
@@ -36,6 +37,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.SharedScrolledComposite;
@@ -81,7 +83,7 @@ public class ExtensionElementDetails extends PDEDetails {
 		layout.bottomMargin = 0;
 		parent.setLayout(layout);
 		FormToolkit toolkit = getManagedForm().getToolkit();
-		section = toolkit.createSection(parent, Section.TITLE_BAR
+		section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR
 				| Section.DESCRIPTION);
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		section.marginHeight = 5;
@@ -106,8 +108,8 @@ public class ExtensionElementDetails extends PDEDetails {
 			ISchemaAttribute atts[] = schemaElement.getAttributes();
 			// Compute horizontal span
 			for (int i = 0; i < atts.length; i++) {
-				if (atts[i].getKind() == ISchemaAttribute.JAVA
-						|| atts[i].getKind() == ISchemaAttribute.RESOURCE) {
+				if (atts[i].getKind() == IMetaAttribute.JAVA
+						|| atts[i].getKind() == IMetaAttribute.RESOURCE) {
 					span = 3;
 					break;
 				}
@@ -139,9 +141,9 @@ public class ExtensionElementDetails extends PDEDetails {
 	private ExtensionAttributeRow createAttributeRow(ISchemaAttribute att,
 			Composite parent, FormToolkit toolkit, int span) {
 		ExtensionAttributeRow row;
-		if (att.getKind() == ISchemaAttribute.JAVA)
+		if (att.getKind() == IMetaAttribute.JAVA)
 			row = new ClassAttributeRow(this, att);
-		else if (att.getKind() == ISchemaAttribute.RESOURCE)
+		else if (att.getKind() == IMetaAttribute.RESOURCE)
 			row = new ResourceAttributeRow(this, att);
 		else {
 			ISchemaSimpleType type = att.getType();

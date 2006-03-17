@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.pde.core.IIdentifiable;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.core.plugin.IExtensions;
@@ -74,7 +75,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
-		if (event.getChangeType() == ModelChangedEvent.WORLD_CHANGED) {
+		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			if (event.getChangeProvider().equals(model.getBundleModel())) {
 				reset();
 			}
@@ -549,7 +550,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 				((BundleSymbolicNameHeader)header).setId(id);
 			else 
 				bundle.setHeader(Constants.BUNDLE_SYMBOLICNAME, id);
-			model.fireModelObjectChanged(this, IPluginBase.P_ID, old, id);
+			model.fireModelObjectChanged(this, IIdentifiable.P_ID, old, id);
 		}
 	}
 
@@ -585,7 +586,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 				((BundleNameHeader)header).setBundleName(name);
 			else
 				bundle.setHeader(Constants.BUNDLE_NAME, name);
-			model.fireModelObjectChanged(this, IPluginBase.P_NAME, old, name);
+			model.fireModelObjectChanged(this, IPluginObject.P_NAME, old, name);
 		}
 	}
 	

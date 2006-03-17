@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
@@ -281,7 +282,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 		dialog.setMultipleSelection(true);
 		dialog.setTitle(PDEUIMessages.RequiredExecutionEnvironmentSection_dialog_title);
 		dialog.setMessage(PDEUIMessages.RequiredExecutionEnvironmentSection_dialogMessage);
-		if (dialog.open() == ElementListSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			Object[] result = dialog.getResult();
 			IManifestHeader header = getHeader();
 			if (header == null) {

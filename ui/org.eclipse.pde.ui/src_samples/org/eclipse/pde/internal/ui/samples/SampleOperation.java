@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
@@ -129,7 +130,7 @@ public class SampleOperation implements IRunnableWithProgress {
 	private void throwCoreException(InvocationTargetException e) throws CoreException {
 		Throwable t = e.getCause();
 		Status status= new Status(IStatus.ERROR, 
-				PDEPlugin.PLUGIN_ID,
+				IPDEUIConstants.PLUGIN_ID,
 				IStatus.OK,
 				e.getMessage(),
 				t);

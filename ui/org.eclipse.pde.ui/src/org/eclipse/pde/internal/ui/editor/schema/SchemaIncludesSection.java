@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
@@ -168,7 +169,7 @@ public class SchemaIncludesSection extends TableSection {
 		dialog.addFilter(new PDEProjectFilter());
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 
-		if (dialog.open() == ElementTreeSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			Object result = dialog.getFirstResult();
 			if (!(result instanceof IFile))
 				return;

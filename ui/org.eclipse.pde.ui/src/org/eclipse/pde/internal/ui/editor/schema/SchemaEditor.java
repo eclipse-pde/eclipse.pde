@@ -18,6 +18,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
@@ -146,7 +147,7 @@ public class SchemaEditor extends MultiSourceEditor {
 		if (file != null && file.exists()) {
 			IEditorInput input = new FileEditorInput(file);
 			try {
-				return PDEPlugin.getActivePage().openEditor(input, PDEPlugin.SCHEMA_EDITOR_ID) != null;
+				return PDEPlugin.getActivePage().openEditor(input, IPDEUIConstants.SCHEMA_EDITOR_ID) != null;
 			} catch (PartInitException e) {
 			}
 		}

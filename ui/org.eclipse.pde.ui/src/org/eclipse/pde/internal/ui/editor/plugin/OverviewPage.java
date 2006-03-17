@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
@@ -36,6 +37,7 @@ import org.eclipse.pde.internal.ui.editor.build.BuildPage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.launcher.EquinoxLaunchShortcut;
 import org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut;
+import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -48,6 +50,7 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
@@ -143,7 +146,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		
 		FormText text = createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fContent : PDEUIMessages.OverviewPage_content, toolkit);
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
-		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, PDELabelProvider.F_EDIT)); //$NON-NLS-1$
+		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, SharedLabelProvider.F_EDIT)); //$NON-NLS-1$
 		
 		if (!isBundle() && isEditable()){
 			String content;
@@ -174,7 +177,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		
 		FormText text  = createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fExtensionContent : PDEUIMessages.OverviewPage_extensionContent, toolkit);
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
-		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, PDELabelProvider.F_EDIT)); //$NON-NLS-1$
+		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, SharedLabelProvider.F_EDIT)); //$NON-NLS-1$
 		
 		section.setClient(container);
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
@@ -227,7 +230,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	}
 	
 	private Section createStaticSection(FormToolkit toolkit, Composite parent, String text) {
-		Section section = toolkit.createSection(parent, Section.TITLE_BAR);
+		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR);
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		section.setText(text);
 		return section;
@@ -397,7 +400,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 				PDEUIMessages.OverviewPage_extensionPageMessageTitle, null, 
 				PDEUIMessages.OverviewPage_extensionPageMessageBody,
 				MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
-        if (mdiag.open() != MessageDialog.OK)
+        if (mdiag.open() != Window.OK)
         	return;
         try {
         	ManifestEditor manifestEditor = (ManifestEditor)getEditor();

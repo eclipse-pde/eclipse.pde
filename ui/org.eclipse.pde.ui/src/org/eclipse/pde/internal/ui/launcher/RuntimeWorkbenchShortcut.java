@@ -26,9 +26,9 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginBase;
@@ -92,7 +92,7 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 				ApplicationSelectionDialog dialog = new ApplicationSelectionDialog(
 						PDEPlugin.getActiveWorkbenchShell().getShell(), applicationNames,
 						mode);
-				if (dialog.open() == Dialog.OK) {
+				if (dialog.open() == Window.OK) {
 					launch(mode, dialog.getSelectedApplication());
 				}
 			}
@@ -209,7 +209,7 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 		dialog.setMultipleSelection(false);
 		int result= dialog.open();
 		labelProvider.dispose();
-		if (result == ElementListSelectionDialog.OK) {
+		if (result == Window.OK) {
 			return (ILaunchConfiguration)dialog.getFirstResult();
 		}
 		return null;		

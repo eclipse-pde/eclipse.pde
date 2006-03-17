@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor;
 import java.util.ArrayList;
 
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -111,7 +112,7 @@ public class FormOutlinePage extends ContentOutlinePage
 			fTreeViewer.setSorter(fViewerSorter);
 		else
 			fTreeViewer.setSorter(null);
-		fTreeViewer.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
+		fTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		fTreeViewer.setUseHashlookup(true);
 		fTreeViewer.setInput(fEditor);
 		IBaseModel model = fEditor.getAggregateModel();

@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
@@ -118,7 +119,7 @@ public class AboutSection extends PDESection {
 		dialog.addFilter(new FileExtensionFilter("gif")); //$NON-NLS-1$
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 
-		if (dialog.open() == ElementTreeSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			IFile file = (IFile)dialog.getFirstResult();
 			fImageEntry.setValue(file.getFullPath().toString());
 		}

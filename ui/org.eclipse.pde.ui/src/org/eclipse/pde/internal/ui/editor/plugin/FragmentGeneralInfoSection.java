@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IFragment;
@@ -97,7 +98,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 						.getActiveWorkbenchShell(), wizard);
 				dialog.create();
 				SWTUtil.setDialogSize(dialog, 400, 500);
-				if (dialog.open() == WizardDialog.OK) {
+				if (dialog.open() == Window.OK) {
 					String plugin = wizard.getPluginId();
 					try {
 						((IFragment) getPluginBase()).setPluginId(plugin);
@@ -114,7 +115,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 	protected void handleOpenDialog() {
 		PluginSelectionDialog dialog = new PluginSelectionDialog(getSection().getShell(), false, false);
 		dialog.create();
-		if (dialog.open() == PluginSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			IPluginModel model = (IPluginModel) dialog.getFirstResult();
 			IPlugin plugin = model.getPlugin();
 			fPluginIdEntry.setValue(plugin.getId());

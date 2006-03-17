@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.editor.product;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
@@ -308,7 +309,7 @@ public class SplashSection extends PDESection {
 		dialog.setMultipleSelection(false);
 		dialog.setTitle(PDEUIMessages.SplashSection_selection); 
 		dialog.setMessage(PDEUIMessages.SplashSection_message); 
-		if (dialog.open() == ElementListSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			IPluginModelBase model = (IPluginModelBase)dialog.getFirstResult();
 			fPluginEntry.setValue(model.getPluginBase().getId());
 		}

@@ -35,6 +35,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 public class ManifestSourcePage extends XMLSourcePage {
@@ -81,7 +82,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 				return fProvider.get(PDEPluginImages.DESC_EXTENSIONS_OBJ);
 			
 			Image image = fProvider.getImage(obj);
-			int flags = ((IDocumentNode)obj).isErrorNode() ? PDELabelProvider.F_ERROR : 0;
+			int flags = ((IDocumentNode)obj).isErrorNode() ? SharedLabelProvider.F_ERROR : 0;
 			return (flags == 0) ? image : fProvider.get(image, flags);
 		}
 	}

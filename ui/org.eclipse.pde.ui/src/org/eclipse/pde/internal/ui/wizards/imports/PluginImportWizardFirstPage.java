@@ -27,8 +27,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.wizard.WizardPage;
@@ -381,7 +381,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			}
 			if (!curr.equals(new Path(getTargetHome()))) {
 				setErrorMessage(null);
-				setMessage(PDEUIMessages.ImportWizard_FirstPage_warning, DialogPage.WARNING); 
+				setMessage(PDEUIMessages.ImportWizard_FirstPage_warning, IMessageProvider.WARNING); 
 				setPageComplete(true);
 				return;
 			}

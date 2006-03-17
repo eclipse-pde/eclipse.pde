@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -71,7 +72,7 @@ public class ExtensionDetails extends PDEDetails {
 		parent.setLayout(layout);
 
 
-		Section section = toolkit.createSection(parent, Section.TITLE_BAR|Section.DESCRIPTION);
+		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION);
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		section.marginHeight = 5;		
 		section.marginWidth = 5;

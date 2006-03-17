@@ -29,6 +29,7 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
@@ -116,7 +117,7 @@ public class EquinoxLaunchShortcut implements ILaunchShortcut {
 		dialog.setMultipleSelection(false);
 		int result= dialog.open();
 		labelProvider.dispose();
-		if (result == ElementListSelectionDialog.OK) {
+		if (result == Window.OK) {
 			return (ILaunchConfiguration)dialog.getFirstResult();
 		}
 		return null;		

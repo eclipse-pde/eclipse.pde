@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -221,7 +222,7 @@ public class LibraryVisibilitySection extends TableSection
 				PackageSelectionDialog dialog = new PackageSelectionDialog(
 						fPackageExportViewer.getTable().getShell(),
 						labelProvider, JavaCore.create(project), existing, true);
-				if (dialog.open() == PackageSelectionDialog.OK) {
+				if (dialog.open() == Window.OK) {
 					Object[] elements = dialog.getResult();
 					for (int i = 0; i < elements.length; i++) {
 						IPackageFragment fragment = (IPackageFragment) elements[i];

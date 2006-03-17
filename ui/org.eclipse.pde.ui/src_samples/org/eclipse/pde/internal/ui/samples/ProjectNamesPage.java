@@ -15,6 +15,7 @@ import java.util.HashSet;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -82,7 +83,7 @@ public class ProjectNamesPage extends WizardPage {
 			validateEntries();
 		}
 		else {
-			setMessage(PDEUIMessages.ProjectNamesPage_noSampleFound, WizardPage.WARNING); 
+			setMessage(PDEUIMessages.ProjectNamesPage_noSampleFound, IMessageProvider.WARNING); 
 		}
 	}
 	public String [] getProjectNames() {

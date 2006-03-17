@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -192,7 +193,7 @@ public class ExportPackageVisibilitySection extends TableSection
 	private void handleAdd() {
         PluginSelectionDialog dialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), getModels(), true);
         dialog.create();
-        if (dialog.open() == PluginSelectionDialog.OK) {
+        if (dialog.open() == Window.OK) {
             Object[] selected = dialog.getResult();
             for (int i = 0; i < selected.length; i++) {
                 IPluginModelBase model = (IPluginModelBase)selected[i];

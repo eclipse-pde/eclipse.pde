@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
@@ -181,7 +182,7 @@ public class RequiresSection
         dialog.create();
         SWTUtil.setDialogSize(dialog, 400, -1);
         dialog.setTitle(importObject.getId());
-        if (dialog.open() == DependencyPropertiesDialog.OK && isEditable()) {
+        if (dialog.open() == Window.OK && isEditable()) {
             try {
                 importObject.setOptional(dialog.isOptional());
                 importObject.setReexported(dialog.isReexported());
@@ -299,7 +300,7 @@ public class RequiresSection
 				getAvailablePlugins(model),
 				true);
 		dialog.create();
-		if (dialog.open() == PluginSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			Object[] models = dialog.getResult();
 			for (int i = 0; i < models.length; i++) {
 				try {

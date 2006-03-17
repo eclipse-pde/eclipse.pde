@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.IPluginParent;
@@ -97,7 +96,7 @@ public abstract class PluginParent extends IdentifiablePluginObject implements
 		ensureModelEditable();
 		fChildren.remove(child);
 		((PluginObject) child).setInTheModel(false);
-		fireStructureChanged(child, ModelChangedEvent.REMOVE);
+		fireStructureChanged(child, IModelChangedEvent.REMOVE);
 	}
 
 	public void reconnect() {

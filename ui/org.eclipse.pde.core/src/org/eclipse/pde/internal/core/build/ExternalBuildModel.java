@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 
 public class ExternalBuildModel extends BuildModel {
 
@@ -41,7 +41,7 @@ public class ExternalBuildModel extends BuildModel {
 			if (file.isFile() && file.getName().endsWith(".jar")) { //$NON-NLS-1$
 				url = new URL("jar:file:" + file.getAbsolutePath() + "!/build.properties"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				url = new URL("file:" + file.getAbsolutePath() + Path.SEPARATOR + "build.properties"); //$NON-NLS-1$ //$NON-NLS-2$
+				url = new URL("file:" + file.getAbsolutePath() + IPath.SEPARATOR + "build.properties"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			InputStream stream = url.openStream();
 			load(stream, false);

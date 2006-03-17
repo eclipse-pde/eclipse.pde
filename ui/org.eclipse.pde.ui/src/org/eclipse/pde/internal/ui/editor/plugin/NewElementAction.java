@@ -21,6 +21,7 @@ import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginParent;
+import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -95,7 +96,7 @@ public class NewElementAction extends Action {
 	private void initializeAttribute(IPluginElement element, ISchemaAttribute attInfo,
 			int counter) throws CoreException {
 		String value = null;
-		if (attInfo.getKind() == ISchemaAttribute.JAVA)
+		if (attInfo.getKind() == IMetaAttribute.JAVA)
 			value = createDefaultClassName(attInfo, counter);
 		else if (attInfo.getUse() == ISchemaAttribute.DEFAULT
 				&& attInfo.getValue() != null)

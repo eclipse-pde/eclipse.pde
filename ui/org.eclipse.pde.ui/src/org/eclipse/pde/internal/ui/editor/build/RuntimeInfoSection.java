@@ -37,7 +37,6 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -47,6 +46,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -276,12 +276,12 @@ IModelChangedListener {
 					addAllJarsToBinIncludes(binIncl, project, model);
 				} else if (!isSelected && libPath.segmentCount() > 1){
 					IPath parent = libPath.removeLastSegments(1);
-					String parentPath = parent.toString() + Path.SEPARATOR;
+					String parentPath = parent.toString() + IPath.SEPARATOR;
 					if (binIncl.contains(parentPath) && !project.exists(parent)){
 						binIncl.removeToken(parentPath);
 					} else if (parent.segmentCount() > 1){
 						parent = parent.removeLastSegments(1);
-						parentPath = parent.toString() + Path.SEPARATOR;
+						parentPath = parent.toString() + IPath.SEPARATOR;
 						if (binIncl.contains(parentPath) && !project.exists(parent))
 							binIncl.removeToken(parentPath);
 					}
@@ -331,8 +331,8 @@ IModelChangedListener {
 		try {
 			while (iter.hasNext()) {
 				String outputFolder = iter.next().toString();
-				if (!outputFolder.endsWith("" + Path.SEPARATOR)) //$NON-NLS-1$
-					outputFolder = outputFolder.concat("" + Path.SEPARATOR); //$NON-NLS-1$
+				if (!outputFolder.endsWith("" + IPath.SEPARATOR)) //$NON-NLS-1$
+					outputFolder = outputFolder.concat("" + IPath.SEPARATOR); //$NON-NLS-1$
 				if (!outputEntry.contains(outputFolder.toString()))
 					outputEntry.addToken(outputFolder.toString());
 			}
@@ -600,7 +600,7 @@ IModelChangedListener {
 			dialog.create();
             dialog.setTitle(PDEUIMessages.RuntimeInfoSection_rename); 
 			dialog.getShell().setSize(300, 150);
-			if (dialog.open() == Dialog.OK) {
+			if (dialog.open() == Window.OK) {
 				entryModified(entry, dialog.getNewName());
 			}
 		}
@@ -716,10 +716,10 @@ IModelChangedListener {
 			IBuildEntry binExcl) {
 		while (libPath.segmentCount() > 1) {
 			libPath = libPath.removeLastSegments(1);
-			if (binIncl.contains(libPath.toString() + Path.SEPARATOR))
+			if (binIncl.contains(libPath.toString() + IPath.SEPARATOR))
 				return true;
 			else if (binExcl != null
-					&& binExcl.contains(libPath.toString() + Path.SEPARATOR))
+					&& binExcl.contains(libPath.toString() + IPath.SEPARATOR))
 				return false;
 		}
 		return false;
@@ -767,7 +767,7 @@ IModelChangedListener {
 				dialog.getShell().setText(PDEUIMessages.RuntimeInfoSection_addEntry);  
 				
 				try {
-					if (dialog.open() == Dialog.OK) {
+					if (dialog.open() == Window.OK) {
 						
 						String name = dialog.getNewName();
 						
@@ -987,7 +987,7 @@ IModelChangedListener {
 			}
 		});
 		
-		if (dialog.open() == FolderSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			try {
 				IFolder folder = (IFolder) dialog.getFirstResult();
 				String folderPath = folder.getProjectRelativePath()

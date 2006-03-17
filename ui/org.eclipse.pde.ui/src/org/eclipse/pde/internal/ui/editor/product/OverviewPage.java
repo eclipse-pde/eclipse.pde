@@ -39,6 +39,7 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -95,7 +96,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	}
 	
 	private void createTestingSection(Composite parent, FormToolkit toolkit) {
-		Section section = toolkit.createSection(parent, Section.TITLE_BAR);
+		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR);
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		section.setText(PDEUIMessages.Product_OverviewPage_testing); 
 		FormText text = createClient(section, PDEUIMessages.Product_overview_testing, toolkit); 
@@ -107,7 +108,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	}
 	
 	private void createExportingSection(Composite parent, FormToolkit toolkit) {
-		Section section = toolkit.createSection(parent, Section.TITLE_BAR);
+		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR);
 		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		section.setText(PDEUIMessages.OverviewPage_exportingTitle); 
 		FormText text = createClient(section, PDEUIMessages.Product_overview_exporting, toolkit); 

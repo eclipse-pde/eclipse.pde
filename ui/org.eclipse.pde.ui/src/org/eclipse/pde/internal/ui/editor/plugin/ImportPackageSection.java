@@ -35,6 +35,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
@@ -281,7 +282,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         dialog.create();
         SWTUtil.setDialogSize(dialog, 400, -1);
         dialog.setTitle(importObject.getName());
-        if (dialog.open() == DependencyPropertiesDialog.OK && isEditable()) {
+        if (dialog.open() == Window.OK && isEditable()) {
             importObject.setOptional(dialog.isOptional());
             importObject.setVersion(dialog.getVersion());
          }
@@ -304,7 +305,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         dialog.setTitle(PDEUIMessages.ImportPackageSection_selection);
         dialog.create();
         SWTUtil.setDialogSize(dialog, 400, 500);
-		if (dialog.open() == ElementListSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult();
             if (fHeader != null) {
     			for (int i = 0; i < selected.length; i++) {

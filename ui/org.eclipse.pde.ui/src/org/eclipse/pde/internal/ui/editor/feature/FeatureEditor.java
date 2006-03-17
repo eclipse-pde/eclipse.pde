@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -76,7 +77,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 					input = new SystemFileEditorInput(new File(model
 							.getInstallLocation(), "feature.xml")); //$NON-NLS-1$
 				IDE.openEditor(PDEPlugin.getActivePage(), input,
-						PDEPlugin.FEATURE_EDITOR_ID, true);
+						IPDEUIConstants.FEATURE_EDITOR_ID, true);
 			} catch (PartInitException e) {
 			}
 		} else {

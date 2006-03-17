@@ -14,6 +14,7 @@ import java.util.Hashtable;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRootElement;
@@ -53,7 +54,7 @@ public class NewElementAction extends Action {
 			element = new SchemaElement(schema, name);
 		element.setType(new SchemaSimpleType(schema, "string")); //$NON-NLS-1$
 		schema.addElement(element);
-		schema.updateReferencesFor(element, Schema.REFRESH_ADD);
+		schema.updateReferencesFor(element, ISchema.REFRESH_ADD);
 	}
 	public void setSchema(Schema newSchema) {
 		schema = newSchema;

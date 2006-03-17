@@ -36,6 +36,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
@@ -296,7 +297,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
         	dialog.setTitle(((ExportPackageObject)selected[0]).getName());
         else 
         	dialog.setTitle(PDEUIMessages.ExportPackageSection_props);
-        if (dialog.open() == DependencyPropertiesDialog.OK && isEditable()) {
+        if (dialog.open() == Window.OK && isEditable()) {
         	String newVersion = dialog.getVersion();
         	for (int i = 0; i < selected.length; i++) {
         		ExportPackageObject object = (ExportPackageObject)selected[i];
@@ -325,7 +326,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
                         JavaCore.create(project), 
                         fHeader == null ? new Vector() : fHeader.getPackageNames(),
                         "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE))); //$NON-NLS-1$
-                if (dialog.open() == PackageSelectionDialog.OK) {
+                if (dialog.open() == Window.OK) {
                     Object[] selected = dialog.getResult();
                     if (fHeader != null) {
                         for (int i = 0; i < selected.length; i++) {

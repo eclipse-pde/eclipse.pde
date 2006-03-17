@@ -33,6 +33,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -48,7 +49,7 @@ public class LocationsSection extends TableSection {
 	}
 
 	public LocationsSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION | Section.TWISTIE, new String[] {PDEUIMessages.LocationsSection_add,PDEUIMessages.LocationsSection_edit, PDEUIMessages.LocationsSection_remove});
+		super(page, parent, Section.DESCRIPTION | ExpandableComposite.TWISTIE, new String[] {PDEUIMessages.LocationsSection_add,PDEUIMessages.LocationsSection_edit, PDEUIMessages.LocationsSection_remove});
 	}
 
 	protected void createClient(Section section, FormToolkit toolkit) {

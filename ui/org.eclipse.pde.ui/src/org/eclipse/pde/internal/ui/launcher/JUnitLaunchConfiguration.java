@@ -20,6 +20,7 @@ import java.util.TreeMap;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -53,6 +54,7 @@ import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
@@ -153,7 +155,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 			throw new CoreException(
 				new Status(
 					IStatus.ERROR,
-					PDEPlugin.PLUGIN_ID,
+					IPDEUIConstants.PLUGIN_ID,
 					IStatus.ERROR,
 					PDEUIMessages.JUnitLaunchConfiguration_error_notaplugin, 
 					null));
@@ -165,7 +167,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 	
 	protected void abort(String message, Throwable exception, int code)
 		throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, PDEPlugin.PLUGIN_ID, code, message, exception));
+		throw new CoreException(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, code, message, exception));
 	}
 	
 	public String[] getProgramArgumentsArray(
@@ -256,7 +258,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 				&& !IPDELauncherConstants.TRACING_NONE.equals(configuration.getAttribute(
 						IPDELauncherConstants.TRACING_CHECKED, (String) null))) {
 			programArgs.add("-debug"); //$NON-NLS-1$
-			String path = getConfigDir(configuration).getPath() + Path.SEPARATOR + ".options"; //$NON-NLS-1$
+			String path = getConfigDir(configuration).getPath() + IPath.SEPARATOR + ".options"; //$NON-NLS-1$
 			programArgs.add(LaunchArgumentsHelper.getTracingFileArgument(configuration, path));
 		}
 		

@@ -131,7 +131,7 @@ public class FeatureSection extends TableSection {
 		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 		dialog.create();
 		SWTUtil.setDialogSize(dialog, 400, 500);
-		if (dialog.open() == WizardDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			addFeature(wizard.getFeatureId(), wizard.getFeatureVersion());
 		}
 	}

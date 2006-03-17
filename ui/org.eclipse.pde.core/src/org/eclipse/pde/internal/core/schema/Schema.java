@@ -32,6 +32,7 @@ import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.XMLDefaultHandler;
 import org.eclipse.pde.internal.core.ischema.IDocumentSection;
+import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
@@ -103,7 +104,7 @@ public class Schema extends PlatformObject implements ISchema {
 
 	public void addDocumentSection(IDocumentSection docSection) {
 		fDocSections.addElement(docSection);
-		fireModelChanged(new ModelChangedEvent(this, ModelChangedEvent.INSERT,
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.INSERT,
 				new Object[] { docSection }, null));
 	}
 
@@ -120,7 +121,7 @@ public class Schema extends PlatformObject implements ISchema {
 			fElements.add(index + 1, element);
 		else
 			fElements.add(element);
-		fireModelChanged(new ModelChangedEvent(this, ModelChangedEvent.INSERT,
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.INSERT,
 				new Object[] { element }, null));
 	}
 
@@ -128,7 +129,7 @@ public class Schema extends PlatformObject implements ISchema {
 		if (fIncludes == null)
 			fIncludes = new Vector();
 		fIncludes.add(include);
-		fireModelChanged(new ModelChangedEvent(this, ModelChangedEvent.INSERT,
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.INSERT,
 				new Object[] { include }, null));
 	}
 
@@ -136,7 +137,7 @@ public class Schema extends PlatformObject implements ISchema {
 		if (fIncludes == null)
 			return;
 		fIncludes.remove(include);
-		fireModelChanged(new ModelChangedEvent(this, ModelChangedEvent.REMOVE,
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.REMOVE,
 				new Object[] { include }, null));
 	}
 
@@ -718,11 +719,11 @@ public class Schema extends PlatformObject implements ISchema {
 	private int processKind(String name) {
 		if (name != null) {
 			if (name.equals("java")) //$NON-NLS-1$
-				return SchemaAttribute.JAVA;
+				return IMetaAttribute.JAVA;
 			if (name.equals("resource")) //$NON-NLS-1$
-				return SchemaAttribute.RESOURCE;
+				return IMetaAttribute.RESOURCE;
 		}
-		return SchemaAttribute.STRING;
+		return IMetaAttribute.STRING;
 	}
 
 	private void processSchemaAnnotation(Node node) {
@@ -797,7 +798,7 @@ public class Schema extends PlatformObject implements ISchema {
 
 	public void removeDocumentSection(IDocumentSection docSection) {
 		fDocSections.removeElement(docSection);
-		fireModelChanged(new ModelChangedEvent(this, ModelChangedEvent.REMOVE,
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.REMOVE,
 				new Object[] { docSection }, null));
 	}
 
@@ -822,13 +823,13 @@ public class Schema extends PlatformObject implements ISchema {
 		} else // don't need to move
 			return;
 		fElements.set(newIndex, element);
-		fireModelChanged(new ModelChangedEvent(this, ModelChangedEvent.CHANGE,
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.CHANGE,
 				new Object[] { this }, null));
 	}
 	
 	public void removeElement(ISchemaElement element) {
 		fElements.removeElement(element);
-		fireModelChanged(new ModelChangedEvent(this, ModelChangedEvent.REMOVE,
+		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.REMOVE,
 				new Object[] { element }, null));
 	}
 

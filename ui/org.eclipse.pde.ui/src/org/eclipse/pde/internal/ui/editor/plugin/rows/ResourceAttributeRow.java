@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -118,7 +119,7 @@ public class ResourceAttributeRow extends ReferenceAttributeRow {
 						IStatus.ERROR, "", null); //$NON-NLS-1$
 			}
 		});
-		if (dialog.open() == ElementTreeSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			file = (IFile) dialog.getFirstResult();
 			String value = file.getProjectRelativePath().toString();
 			text.setText(value);

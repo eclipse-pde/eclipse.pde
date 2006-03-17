@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.internal.core.PDECore;
@@ -195,7 +196,7 @@ public class FragmentContentPage extends ContentPage {
 						PluginSelectionDialog dialog = new PluginSelectionDialog(
 								pluginText.getShell(), false, false);
 						dialog.create();
-						if (dialog.open() == PluginSelectionDialog.OK) {
+						if (dialog.open() == Window.OK) {
 							IPluginModel model = (IPluginModel) dialog.getFirstResult();
 							IPlugin plugin = model.getPlugin();
 							String version = computeInitialPluginVersion(plugin.getVersion());

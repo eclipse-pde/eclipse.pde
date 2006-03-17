@@ -29,6 +29,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
@@ -225,7 +226,7 @@ public class LaunchAction extends Action {
 		dialog.setMultipleSelection(false);
 		int result= dialog.open();
 		labelProvider.dispose();
-		if (result == ElementListSelectionDialog.OK) {
+		if (result == Window.OK) {
 			return (ILaunchConfiguration)dialog.getFirstResult();
 		}
 		return null;		

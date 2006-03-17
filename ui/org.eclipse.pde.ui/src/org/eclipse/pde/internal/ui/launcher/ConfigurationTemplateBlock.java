@@ -22,6 +22,7 @@ import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.FileNameFilter;
@@ -139,7 +140,7 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 						IStatus.ERROR, "", null); //$NON-NLS-1$
 			}
 		});
-		if (dialog.open() == ElementTreeSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			file = (IFile) dialog.getFirstResult();
 			fLocationText.setText("${workspace_loc:" + file.getFullPath().makeRelative() + "}"); //$NON-NLS-1$ //$NON-NLS-2$
 		}

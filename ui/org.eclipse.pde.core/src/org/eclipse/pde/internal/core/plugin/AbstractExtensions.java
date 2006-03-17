@@ -15,7 +15,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.core.plugin.IExtensions;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtension;
@@ -102,7 +101,7 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 		ensureModelEditable();
 		fExtensions.remove(extension);
 		((PluginExtension) extension).setInTheModel(false);
-		fireStructureChanged(extension, ModelChangedEvent.REMOVE);
+		fireStructureChanged(extension, IModelChangedEvent.REMOVE);
 	}
 	
 	public void remove(IPluginExtensionPoint extensionPoint)
@@ -110,7 +109,7 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 		ensureModelEditable();
 		fExtensionPoints.remove(extensionPoint);
 		((PluginExtensionPoint) extensionPoint).setInTheModel(false);
-		fireStructureChanged(extensionPoint, ModelChangedEvent.REMOVE);
+		fireStructureChanged(extensionPoint, IModelChangedEvent.REMOVE);
 	}
 
 	public void reset() {

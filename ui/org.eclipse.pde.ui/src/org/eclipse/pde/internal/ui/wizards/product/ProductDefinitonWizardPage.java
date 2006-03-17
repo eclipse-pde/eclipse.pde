@@ -15,6 +15,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -240,7 +241,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 
 	private void handleBrowse() {
 		PluginSelectionDialog dialog = new PluginSelectionDialog(getShell(), PDECore.getDefault().getModelManager().getWorkspaceModels(), false);
-		if (dialog.open() == PluginSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			IPluginModelBase model = (IPluginModelBase)dialog.getFirstResult();
 			fPluginText.setText(model.getPluginBase().getId());
 		}

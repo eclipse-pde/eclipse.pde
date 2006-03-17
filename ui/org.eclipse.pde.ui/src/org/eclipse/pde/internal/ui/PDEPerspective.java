@@ -49,7 +49,7 @@ public class PDEPerspective implements IPerspectiveFactory {
 		topLeft.addPlaceholder(IPageLayout.ID_RES_NAV);
 		topLeft.addView(JavaUI.ID_PACKAGES);
 		topLeft.addPlaceholder(JavaUI.ID_TYPE_HIERARCHY);
-		topLeft.addView(PDEPlugin.PLUGINS_VIEW_ID);
+		topLeft.addView(IPDEUIConstants.PLUGINS_VIEW_ID);
 
 		IFolderLayout bottom =
 			factory.createFolder(
@@ -89,7 +89,7 @@ public class PDEPerspective implements IPerspectiveFactory {
 	private void addViewShortcuts() {
 		factory.addShowViewShortcut(JavaUI.ID_PACKAGES);
 		factory.addShowViewShortcut("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$
-		factory.addShowViewShortcut(PDEPlugin.PLUGINS_VIEW_ID);
+		factory.addShowViewShortcut(IPDEUIConstants.PLUGINS_VIEW_ID);
 		factory.addShowViewShortcut(IPageLayout.ID_RES_NAV);
 		factory.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
 		factory.addShowViewShortcut(IPageLayout.ID_TASK_LIST);

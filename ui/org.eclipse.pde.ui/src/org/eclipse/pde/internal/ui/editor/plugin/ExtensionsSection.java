@@ -53,6 +53,7 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.extension.ExtensionEditorWizard;
 import org.eclipse.pde.internal.ui.wizards.extension.NewExtensionWizard;
 import org.eclipse.pde.ui.IExtensionEditorWizard;
@@ -550,7 +551,7 @@ public class ExtensionsSection extends TreeSection
 		if (changeObject instanceof IPluginBase
 				&& event.getChangeType() == IModelChangedEvent.CHANGE
 				&& event.getChangedProperty().equals(
-						IPluginBase.P_EXTENSION_ORDER)) {
+						IExtensions.P_EXTENSION_ORDER)) {
 			IStructuredSelection sel = (IStructuredSelection) extensionTree
 					.getSelection();
 			IPluginExtension extension = (IPluginExtension) sel
@@ -601,7 +602,7 @@ public class ExtensionsSection extends TreeSection
 			boolean hasBodyText = bodyText!=null&&bodyText.length()>0;
 			if (hasBodyText) {
 				elementImage = PDEPlugin.getDefault().getLabelProvider().get(
-						elementImage, PDELabelProvider.F_EDIT);
+						elementImage, SharedLabelProvider.F_EDIT);
 			}
 		}
 		return elementImage;
