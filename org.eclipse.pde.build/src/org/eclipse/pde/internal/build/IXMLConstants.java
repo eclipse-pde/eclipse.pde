@@ -86,6 +86,7 @@ public interface IXMLConstants {
 	public static final String PROPERTY_LAUNCHER_NAME = "launcherName"; //$NON-NLS-1$
 	public static final String PROPERTY_PRODUCT = "product"; //$NON-NLS-1$
 	public static final String PROPERTY_BASE_LOCATION = "baseLocation"; //$NON-NLS-1$
+	public static final String PROPERTY_LOG_EXTENSION = "logExtension"; //$NON-NLS-1$
 	
 	//public static final String PROPERTY_INSTALL = "install"; //$NON-NLS-1$
 	public static final String PROPERTY_NL = "nl"; //$NON-NLS-1$

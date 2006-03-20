@@ -31,6 +31,7 @@ public class JavacTask implements ITask {
 	protected String compileArgs;
 	protected String compileArgsFile;
 	protected String encoding;
+	protected String logExtension;
 
 	/**
 	 * Default constructor for the class.
@@ -76,7 +77,7 @@ public class JavacTask implements ITask {
 			script.println("<compilerarg value=\"@" + compileArgsFile + "\" compiler=\"" + IXMLConstants.JDT_COMPILER_ADAPTER + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		}
 		if (destdir != null) {
-			script.println("<compilerarg line=\"-log " + destdir + ".log\" compiler=\"" + IXMLConstants.JDT_COMPILER_ADAPTER + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			script.println("<compilerarg line=\"-log " + destdir + logExtension + "\" compiler=\"" + IXMLConstants.JDT_COMPILER_ADAPTER + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		}
 		script.indent--;
 		script.printEndTag("javac"); //$NON-NLS-1$
@@ -193,6 +194,10 @@ public class JavacTask implements ITask {
 		this.encoding = encoding;
 	}
 
+	public void setLogExtension(String extension) {
+		this.logExtension = extension;
+	}
+	
 	public void setCompileArgsFile(String file) {
 		this.compileArgsFile = file;
 	}

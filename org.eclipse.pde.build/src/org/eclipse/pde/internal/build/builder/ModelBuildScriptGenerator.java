@@ -372,7 +372,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				script.printMkdirTask(destination.toString());
 				destinations.add(destination);
 			}
-			script.printCopyTask(getTempJARFolderLocation(name) + ".log", destination.toString(), null, false, false); //$NON-NLS-1$
+			script.printCopyTask(getTempJARFolderLocation(name) + Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION), destination.toString(), null, false, false);
 		}
 
 		if (customBuildCallbacks != null) {
@@ -578,7 +578,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/');
 		script.printAntCallTask(TARGET_GATHER_BIN_PARTS, true, params);
 		script.printAntCallTask(TARGET_GATHER_SOURCES, true, params);
-		FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER), null, "**/*.bin.log", null, null, null, null); //$NON-NLS-1$
+		FileSet fileSet = new FileSet(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER), null, "**/*.bin" + Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION), null, null, null, null); //$NON-NLS-1$
 		script.printDeleteTask(null, null, new FileSet[] {fileSet});
 		script.printZipTask(pluginZipDestination, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER), true, false, null);
 		script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
@@ -679,6 +679,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printProperty(PROPERTY_JAVAC_FAIL_ON_ERROR, "false"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_JAVAC_VERBOSE, "false"); //$NON-NLS-1$
+		script.printProperty(PROPERTY_LOG_EXTENSION, ".log"); //$NON-NLS-1$
 		script.printProperty(PROPERTY_JAVAC_COMPILERARG, ""); //$NON-NLS-1$  
 
 		if (javacSource == null)
@@ -1018,6 +1019,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		javac.setTarget(Utils.getPropertyFormat(PROPERTY_BUNDLE_JAVAC_TARGET));
 		javac.setCompileArgs(Utils.getPropertyFormat(PROPERTY_JAVAC_COMPILERARG));
 		javac.setSrcdir(sources);
+		javac.setLogExtension(Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION));
 		generateCompilerSettings(javac, entry, classpath);
 
 		script.print(javac);
