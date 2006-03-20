@@ -386,7 +386,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		String[] links = Utils.getArrayFromString(files, ","); //$NON-NLS-1$
 		List arguments = new ArrayList(2);
 		for (int i = 0; i < links.length; i += 2) {
-			arguments.add("-s"); //$NON-NLS-1$
+			arguments.add("-sf"); //$NON-NLS-1$
 			arguments.add(links[i]);
 			arguments.add(links[i + 1]);
 			script.printExecTask("ln", dir, arguments, "Linux"); //$NON-NLS-1$ //$NON-NLS-2$

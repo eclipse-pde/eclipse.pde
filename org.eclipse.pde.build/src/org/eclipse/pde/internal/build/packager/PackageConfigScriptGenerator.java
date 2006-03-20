@@ -80,6 +80,8 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 			String target = Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER); //$NON-NLS-1$
 			script.printCopyTask(null, target, new FileSet[] { rootFiles }, false, false);
 			
+			Utils.generatePermissions(packagingProperties, configInfo, PROPERTY_ECLIPSE_BASE, script);
+			
 			//This is need so that the call in assemble config script generator gather the root files 
 			rootFileProviders = new ArrayList(1);
 			rootFileProviders.add("elt"); //$NON-NLS-1$
