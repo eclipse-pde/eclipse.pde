@@ -466,15 +466,14 @@ public class BuildErrorReporter extends ErrorReporter {
 		fProblemList.add(bp);
 	}
 	
-	private IMarker report(String message, int line, int problemID, String buildEntry, String buildToken) {
+	private void report(String message, int line, int problemID, String buildEntry, String buildToken) {
 		IMarker marker = report(message, line, fSeverity, problemID);
 		if (marker != null) {
 			try {
-				marker.setAttribute(PDEMarkerFactory.K_BUILD_ENTRY, buildEntry);
-				marker.setAttribute(PDEMarkerFactory.K_BUILD_TOKEN, buildToken);
+				marker.setAttribute(PDEMarkerFactory.BK_BUILD_ENTRY, buildEntry);
+				marker.setAttribute(PDEMarkerFactory.BK_BUILD_TOKEN, buildToken);
 			} catch (CoreException e) {
 			}
 		}
-		return marker;
 	}
  }

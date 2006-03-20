@@ -12,10 +12,10 @@ package org.eclipse.pde.internal.core.text.build;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.text.AbstractTextChangeListener;
+import org.eclipse.pde.internal.core.text.AbstractKeyValueTextChangeListener;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
 
-public class PropertiesTextChangeListener extends AbstractTextChangeListener {
+public class PropertiesTextChangeListener extends AbstractKeyValueTextChangeListener {
 
 	public PropertiesTextChangeListener(IDocument document) {
 		super(document);

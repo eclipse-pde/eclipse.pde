@@ -55,6 +55,8 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 				return new IMarkerResolution[] { new AddSourceBuildEntryResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker)};
 			case PDEMarkerFactory.B_REMOVAL:
 				return new IMarkerResolution[] { new RemoveBuildEntryResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker)};
+			case PDEMarkerFactory.P_ILLEGAL_XML_NODE:
+				return new IMarkerResolution[] { new RemoveNodeXMLResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker)};
 		}
 		return NO_RESOLUTIONS;
 	}

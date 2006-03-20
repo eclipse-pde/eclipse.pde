@@ -38,9 +38,13 @@ public class PDEMarkerFactory implements IMarkerFactory {
 	public static final int B_SOURCE_ADDITION = 0x2004;
 	public static final int B_REMOVAL = 0x2005;
 	
-	// build marker attribute keys
-	public static final String K_BUILD_ENTRY = "buildEntry.key"; //$NON-NLS-1$
-	public static final String K_BUILD_TOKEN = "buildEntry.tokenValue"; //$NON-NLS-1$
+	// plugin.xml fixes
+	public static final int P_ILLEGAL_XML_NODE = 0x3001;
+	
+	// marker attribute keys
+	public static final String BK_BUILD_ENTRY = "buildEntry.key"; //$NON-NLS-1$
+	public static final String BK_BUILD_TOKEN = "buildEntry.tokenValue"; //$NON-NLS-1$
+	public static final String PK_TREE_LOCATION_PATH = "xmlTree.locationPath"; //$NON-NLS-1$
 
 	
 	/**

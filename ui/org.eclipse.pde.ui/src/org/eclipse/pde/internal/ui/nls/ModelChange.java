@@ -10,10 +10,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDEManager;
-import org.eclipse.pde.internal.ui.elements.DefaultElement;
 
 
-public class ModelChange extends DefaultElement {
+public class ModelChange {
 	
 	private static final String DEFAULT_LOCALIZATION_PREFIX = "plugin"; //$NON-NLS-1$
 	public static final String LOCALIZATION_FILE_SUFFIX = ".properties"; //$NON-NLS-1$

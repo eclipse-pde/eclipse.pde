@@ -41,9 +41,12 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 		if (parent == null || parent instanceof org.w3c.dom.Document) {
 			report(PDECoreMessages.Builders_Manifest_illegalRoot, getLine(element), severity); 
 		} else {
-			report(NLS.bind(PDECoreMessages.Builders_Manifest_child, (new String[] { 
-			element.getNodeName(), parent.getNodeName() })),
-					getLine(element), severity);
+			report(NLS.bind(
+							PDECoreMessages.Builders_Manifest_child,
+							new String[] { element.getNodeName(), parent.getNodeName() }),
+					getLine(element),
+					severity,
+					PDEMarkerFactory.P_ILLEGAL_XML_NODE, element, null);
 		}
 	}
 	

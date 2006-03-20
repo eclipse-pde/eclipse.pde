@@ -12,9 +12,9 @@ package org.eclipse.pde.internal.core.text.bundle;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.text.AbstractTextChangeListener;
+import org.eclipse.pde.internal.core.text.AbstractKeyValueTextChangeListener;
 
-public class BundleTextChangeListener extends AbstractTextChangeListener {
+public class BundleTextChangeListener extends AbstractKeyValueTextChangeListener {
 
 	public BundleTextChangeListener(IDocument document) {
 		super(document);

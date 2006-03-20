@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -34,6 +35,7 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
+import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -245,5 +247,12 @@ public class ManifestSourcePage extends XMLSourcePage {
 			}
 		}
 		return null;
+	}
+	
+	public void dispose() {
+		SourceViewerConfiguration config = getSourceViewerConfiguration();
+		if (config instanceof XMLConfiguration)
+			((XMLConfiguration)config).dispose();
+		super.dispose();
 	}
 }

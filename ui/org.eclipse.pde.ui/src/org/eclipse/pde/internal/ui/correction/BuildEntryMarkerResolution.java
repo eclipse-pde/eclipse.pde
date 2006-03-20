@@ -18,19 +18,19 @@ public abstract class BuildEntryMarkerResolution extends AbstractPDEMarkerResolu
 	public BuildEntryMarkerResolution(int type, IMarker marker) {
 		super(type);
 		try {
-			fEntry = (String)marker.getAttribute(PDEMarkerFactory.K_BUILD_ENTRY);
-			fToken = (String)marker.getAttribute(PDEMarkerFactory.K_BUILD_TOKEN);
+			fEntry = (String)marker.getAttribute(PDEMarkerFactory.BK_BUILD_ENTRY);
+			fToken = (String)marker.getAttribute(PDEMarkerFactory.BK_BUILD_TOKEN);
 		} catch (CoreException e) {
 		}
 	}
 
 	protected AbstractEditingModel createModel(IDocument doc) {
-		return new BuildModel(doc, false);
+		return new BuildModel(doc, true);
 	}
 
 	protected abstract void createChange(Build build);
 	
-	protected void createChange(AbstractEditingModel model, IMarker marker) {
+	protected void createChange(AbstractEditingModel model) {
 		if (model instanceof BuildModel)
 			createChange((Build)((BuildModel)model).getBuild());
 	}

@@ -45,7 +45,7 @@ public class RemoveStaticProjectReferences extends AbstractPDEMarkerResolution {
 		}
 	}
 
-	protected void createChange(AbstractEditingModel model, IMarker marker) {
+	protected void createChange(AbstractEditingModel model) {
 		// overridden run method handles everything
 	}
 

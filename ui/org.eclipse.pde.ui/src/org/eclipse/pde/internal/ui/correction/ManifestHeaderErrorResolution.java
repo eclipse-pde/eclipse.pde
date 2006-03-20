@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
@@ -24,12 +23,12 @@ public abstract class ManifestHeaderErrorResolution extends AbstractPDEMarkerRes
 	}
 
 	protected AbstractEditingModel createModel(IDocument document) {
-		return new BundleModel(document, false);
+		return new BundleModel(document, true);
 	}
 	
 	protected abstract void createChange(BundleModel model);
 	
-	protected void createChange(AbstractEditingModel model, IMarker marker) {
+	protected void createChange(AbstractEditingModel model) {
 		if (model instanceof BundleModel)
 			createChange((BundleModel)model);
 	}

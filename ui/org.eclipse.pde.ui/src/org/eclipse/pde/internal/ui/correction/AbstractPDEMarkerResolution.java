@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -40,8 +41,11 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 	public static final int CREATE_TYPE = 1;
 	public static final int RENAME_TYPE = 2;
 	public static final int REMOVE_TYPE = 3;
+	
 	private static final int F_BUNDLE_MODEL = 0;
 	private static final int F_BUILD_MODEL = 1;
+	private static final int F_PLUGIN_MODEL = 2;
+	private static final int F_FRAGMENT_MODEL = 3;
 	
 	protected int fType;
 	private IEditorPart fOpenEditor;
@@ -61,16 +65,21 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 	
 	public void run(IMarker marker) {
 		IResource res = marker.getResource();
+		IProject project = res.getProject();
 		String name = res.getName();
 		AbstractEditingModel model = null;
 		if (name.equals("MANIFEST.MF"))  //$NON-NLS-1$
-			model = findModelFromEditor(res.getProject(), F_BUNDLE_MODEL);
+			model = findModelFromEditor(project, F_BUNDLE_MODEL);
 		else if (name.equals("build.properties")) //$NON-NLS-1$
-			model = findModelFromEditor(res.getProject(), F_BUILD_MODEL);
-		
+			model = findModelFromEditor(project, F_BUILD_MODEL);
+		else if (name.equals("plugin.xml")) //$NON-NLS-1$
+			model = findModelFromEditor(project, F_PLUGIN_MODEL);
+		else if (name.equals("fragment.xml")) //$NON-NLS-1$
+			model = findModelFromEditor(project, F_FRAGMENT_MODEL);
+			
 		if (model != null) {
 			// directly modify model from open editor and save
-			createChange(model, marker);
+			createChange(model);
 			if (fOpenEditor != null)
 				fOpenEditor.doSave(null);
 			fOpenEditor = null;
@@ -89,7 +98,7 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 				if (model.isLoaded()) {
 					IModelTextChangeListener listener = createListener(document);
 					model.addModelChangedListener(listener);
-					createChange(model, marker);
+					createChange(model);
 					TextEdit[] edits = listener.getTextOperations();
 					if (edits.length > 0) {
 						MultiTextEdit multi = new MultiTextEdit();
@@ -117,13 +126,24 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 	private AbstractEditingModel findModelFromEditor(IProject project, int modelType) {
 		PDEFormEditor editor = null;
 		switch (modelType) {
-		case F_BUNDLE_MODEL:
+		case F_FRAGMENT_MODEL:
+		case F_PLUGIN_MODEL:
 			editor = EditorUtilities.getOpenManifestEditor(project);
+			if (editor != null) {
+				fOpenEditor = editor;
+				IBaseModel model = editor.getAggregateModel();
+				if (model instanceof IBundlePluginModelBase)
+					model = ((IBundlePluginModelBase)model).getExtensionsModel();
+				if (model instanceof AbstractEditingModel)
+					return (AbstractEditingModel)model;
+			}
 			break;
 		case F_BUILD_MODEL:
 			editor = EditorUtilities.getOpenBuildPropertiesEditor(project);
 			if (editor == null) {
 				editor = EditorUtilities.getOpenManifestEditor(project);
+				if (editor == null)
+					break;
 				IFormPage page = editor.findPage(BuildInputContext.CONTEXT_ID);
 				if (page instanceof BuildSourcePage) {
 					IBaseModel model = ((BuildSourcePage)page).getInputContext().getModel();
@@ -133,6 +153,9 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 					}
 				}
 			}
+			break;
+		case F_BUNDLE_MODEL:
+			editor = EditorUtilities.getOpenManifestEditor(project);
 			break;
 		}
 		if (editor != null) {
@@ -144,7 +167,7 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 		return null;
 	}
 	
-	protected abstract void createChange(AbstractEditingModel model, IMarker marker);
+	protected abstract void createChange(AbstractEditingModel model);
 	
 	protected abstract AbstractEditingModel createModel(IDocument doc);
 	

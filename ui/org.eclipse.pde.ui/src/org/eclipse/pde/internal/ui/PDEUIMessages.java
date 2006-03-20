@@ -20,6 +20,8 @@ public class PDEUIMessages extends NLS {
 	public static String DefaultCodeGenerationPage_initialName;
 	public static String DefaultCodeGenerationPage_initialFName;
 
+	public static String RemoveNodeXMLResolution_label;
+
 	//
 	// PDE resource strings
 	// Part 2.    (TRANSLATE Part 2)

@@ -16,6 +16,7 @@ import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -35,6 +36,7 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 
 	private TextAttribute fXMLCommentAttr;
 	private MultilineDamagerRepairer fDamagerRepairer;
+	private PDEQuickAssistAssistant fQuickAssistant;
 	
 	public XMLConfiguration(IColorManager colorManager) {
         super(new ChainedPreferenceStore(new IPreferenceStore[] {
@@ -166,4 +168,17 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 			property.equals(IPDEColorConstants.P_XML_COMMENT);
 	}
 	
+	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
+		if (sourceViewer.isEditable()) {
+			if (fQuickAssistant == null)
+				fQuickAssistant = new PDEQuickAssistAssistant();
+			return fQuickAssistant;
+		}
+		return null;
+	}
+	
+	public void dispose() {
+		if (fQuickAssistant != null)
+			fQuickAssistant.dispose();
+	}
 }

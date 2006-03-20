@@ -20,6 +20,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 
 public abstract class PluginBaseNode extends PluginObjectNode implements IPluginBase {
@@ -274,6 +275,14 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 			removeChildNode((IDocumentNode)extensionPoint);
 			extensionPoint.setInTheModel(false);
 			fireStructureChanged(extensionPoint, IModelChangedEvent.REMOVE);
+		}
+	}
+	
+	public void remove(IPluginObject node) {
+		if (node instanceof IDocumentNode) {
+			removeChildNode((IDocumentNode)node);
+			node.setInTheModel(false);
+			fireStructureChanged(node, IModelChangedEvent.REMOVE);
 		}
 	}
 	/* (non-Javadoc)

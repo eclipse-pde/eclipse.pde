@@ -17,6 +17,7 @@ import java.util.Stack;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.crimson.tree.XmlDocument;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
@@ -32,6 +33,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.pde.internal.core.PDECore;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -40,6 +42,8 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class XMLErrorReporter extends DefaultHandler {
+	
+	public static String F_ATT_PREFIX = "@";
 	
 	class ElementData {
 		int offset;
@@ -57,7 +61,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	
 	private int fErrorCount;
 
-	private IMarkerFactory fMarkerFactory;
+	private PDEMarkerFactory fMarkerFactory;
 
 	private org.w3c.dom.Document fXMLDocument;
 	
@@ -98,9 +102,9 @@ public class XMLErrorReporter extends DefaultHandler {
 		return fFile;
 	}
 
-	private void addMarker(String message, int lineNumber, int severity) {
+	private IMarker addMarker(String message, int lineNumber, int severity, int fixId) {
 		try {
-			IMarker marker = getMarkerFactory().createMarker(fFile);
+			IMarker marker = getMarkerFactory().createMarker(fFile, fixId);
 			marker.setAttribute(IMarker.MESSAGE, message);
 			marker.setAttribute(IMarker.SEVERITY, severity);
 			if (lineNumber == -1)
@@ -108,19 +112,21 @@ public class XMLErrorReporter extends DefaultHandler {
 			marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
 			if (severity == IMarker.SEVERITY_ERROR)
 				fErrorCount += 1;
+			return marker;
 		} catch (CoreException e) {
 			PDECore.logException(e);
 		}
+		return null;
 	}
 	
-	private IMarkerFactory getMarkerFactory() {
+	private PDEMarkerFactory getMarkerFactory() {
 		if (fMarkerFactory == null)
 			fMarkerFactory = new PDEMarkerFactory();
 		return fMarkerFactory;
 	}
 
 	private void addMarker(SAXParseException e, int severity) {
-		addMarker(e.getMessage(), e.getLineNumber(), severity);
+		addMarker(e.getMessage(), e.getLineNumber(), severity, PDEMarkerFactory.NO_RESOLUTION);
 	}
 
 	public void error(SAXParseException exception) throws SAXException {
@@ -147,11 +153,57 @@ public class XMLErrorReporter extends DefaultHandler {
 		}
 	}
 
-	public void report(String message, int line, int severity) {
+	public void report(String message, int line, int severity, int fixId, Element element, String attrName) {
+		IMarker marker = report(message, line, severity, fixId);
+		try {
+			marker.setAttribute(
+					PDEMarkerFactory.PK_TREE_LOCATION_PATH, 
+					generateLocationPath(element, attrName));
+		} catch (CoreException e) {
+		}
+	}
+
+	private String generateLocationPath(Node node, String attrName) {
+		if (node == null)
+			return null;
+		
+		int childIndex = 0;
+		for (Node previousSibling = node.getPreviousSibling();
+			 previousSibling != null;
+			 previousSibling = previousSibling.getPreviousSibling())
+			childIndex += 1;
+		
+		Node parent = node.getParentNode();
+		if (parent instanceof XmlDocument)
+			return null;
+		if (parent != null) {
+			String prefix = generateLocationPath(parent, null);
+			if (prefix != null) {
+				prefix += '>';
+				return prefix + composeNodeString(node, childIndex, attrName);
+			}
+		}
+		return composeNodeString(node, childIndex, attrName);
+	}
+	
+	private String composeNodeString(Node node, int index, String attrName) {
+		String nodeString = '(' + Integer.toString(index) + ')' + node.getNodeName();
+		if (attrName != null)
+			nodeString += F_ATT_PREFIX + attrName;
+		return nodeString;
+	}
+	
+	
+	public IMarker report(String message, int line, int severity, int fixId) {
 		if (severity == CompilerFlags.ERROR)
-			addMarker(message, line, IMarker.SEVERITY_ERROR);
-		else if (severity == CompilerFlags.WARNING)
-			addMarker(message, line, IMarker.SEVERITY_WARNING);
+			return addMarker(message, line, IMarker.SEVERITY_ERROR, fixId);
+		if (severity == CompilerFlags.WARNING)
+			return addMarker(message, line, IMarker.SEVERITY_WARNING, fixId);
+		return null;
+	}
+	
+	public IMarker report(String message, int line, int severity) {
+		return report(message, line, severity, PDEMarkerFactory.NO_RESOLUTION);
 	}
 
 	public void warning(SAXParseException exception) throws SAXException {
