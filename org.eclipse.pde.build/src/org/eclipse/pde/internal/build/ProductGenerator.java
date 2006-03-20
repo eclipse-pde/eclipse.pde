@@ -19,17 +19,13 @@ import org.eclipse.pde.internal.build.site.PDEState;
 
 public class ProductGenerator extends AbstractScriptGenerator {
 	private static final String BUNDLE_EQUINOX_COMMON = "org.eclipse.equinox.common"; //$NON-NLS-1$
-	private static final String BUNDLE_EQUINOX_REGISTRY = "org.eclipse.equinox.registry"; //$NON-NLS-1$
-	private static final String BUNDLE_RUNTIME_COMPATIBILITY_REGISTRY = "org.eclipse.core.runtime.compatibility.registry"; //$NON-NLS-1$
-	private static final String BUNDLE_EQUINOX_PREFERENCES = "org.eclipse.equinox.preferences"; //$NON-NLS-1$
 	private static final String BUNDLE_OSGI = "org.eclipse.osgi"; //$NON-NLS-1$
-	private static final String BUNDLE_CORE_JOBS = "org.eclipse.core.jobs"; //$NON-NLS-1$
-	private static final String BUNDLE_CORE_CONTENTTYPE = "org.eclipse.core.contenttype"; //$NON-NLS-1$
 	private static final String BUNDLE_CORE_RUNTIME = "org.eclipse.core.runtime"; //$NON-NLS-1$
 	private static final String BUNDLE_UPDATE_CONFIGURATOR = "org.eclipse.update.configurator"; //$NON-NLS-1$
 	private static final String START_LEVEL_2 = "@2:start"; //$NON-NLS-1$
 	private static final String START_LEVEL_3 = "@3:start"; //$NON-NLS-1$
-
+	private static final String START = "@start"; //$NON-NLS-1$
+	
 	private String product = null;
 	private ProductFile productFile = null;
 	private String root = null;
@@ -169,38 +165,24 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			buffer.append("eclipse.application=" + application + '\n'); //$NON-NLS-1$
 		buffer.append("eclipse.product=" + productFile.getId() + '\n'); //$NON-NLS-1$
 		buffer.append("osgi.bundles="); //$NON-NLS-1$
+		//When update configurator is present or when feature based product
 		if (productFile.useFeatures() || productFile.containsPlugin(BUNDLE_UPDATE_CONFIGURATOR)) {
 			if (refactoredRuntime) {
+				//start levels for eclipse 3.2
 				//org.eclipse.equinox.common@2:start,  
 				buffer.append(BUNDLE_EQUINOX_COMMON);
-				buffer.append(START_LEVEL_2);
-				buffer.append(',');
-				//org.eclipse.core.jobs@2:start,
-				buffer.append(BUNDLE_CORE_JOBS);
-				buffer.append(START_LEVEL_2);
-				buffer.append(',');
-				//org.eclipse.core.runtime.compatibility.registry,
-				buffer.append(BUNDLE_RUNTIME_COMPATIBILITY_REGISTRY);
-				buffer.append(',');
-				//org.eclipse.equinox.registry@2:start,
-				buffer.append(BUNDLE_EQUINOX_REGISTRY);
-				buffer.append(START_LEVEL_2);
-				buffer.append(',');
-				//org.eclipse.equinox.preferences,
-				buffer.append(BUNDLE_EQUINOX_PREFERENCES);
-				buffer.append(',');
-				//org.eclipse.core.contenttype,
-				buffer.append(BUNDLE_CORE_CONTENTTYPE);
-				buffer.append(',');
-				//org.eclipse.core.runtime@2:start,
-				buffer.append(BUNDLE_CORE_RUNTIME);
 				buffer.append(START_LEVEL_2);
 				buffer.append(',');
 				//org.eclipse.update.configurator@3:start
 				buffer.append(BUNDLE_UPDATE_CONFIGURATOR);
 				buffer.append(START_LEVEL_3);
+				buffer.append(',');
+				//org.eclipse.core.runtime
+				buffer.append(BUNDLE_CORE_RUNTIME);
+				buffer.append(START);
 				buffer.append('\n');
 			} else {
+				//start level for 3.1 and 3.0
 				buffer.append(BUNDLE_CORE_RUNTIME);
 				buffer.append(START_LEVEL_2);
 				buffer.append(',');
@@ -209,11 +191,11 @@ public class ProductGenerator extends AbstractScriptGenerator {
 				buffer.append('\n');
 			}
 		} else {
-			Dictionary environment = new Hashtable(4);
+			//When the plugins are all listed.
+			Dictionary environment = new Hashtable(3);
 			environment.put("osgi.os", config.getOs()); //$NON-NLS-1$
 			environment.put("osgi.ws", config.getWs()); //$NON-NLS-1$
 			environment.put("osgi.arch", config.getArch()); //$NON-NLS-1$
-			//??environment.put("osgi.nl", null); //$NON-NLS-1$
 
 			List pluginList = productFile.getPlugins();
 			BundleHelper helper = BundleHelper.getDefault();
@@ -234,11 +216,11 @@ public class ProductGenerator extends AbstractScriptGenerator {
 					else
 						buffer.append(","); //$NON-NLS-1$
 					buffer.append(id);
-					if (BUNDLE_EQUINOX_COMMON.equals(id) || BUNDLE_CORE_JOBS.equals(id) || BUNDLE_EQUINOX_REGISTRY.equals(id)) {
+					if (BUNDLE_EQUINOX_COMMON.equals(id)) {
 						buffer.append(START_LEVEL_2);
 					} else if (BUNDLE_CORE_RUNTIME.equals(id)) {
 						if (refactoredRuntime) {
-							buffer.append(START_LEVEL_3);
+							buffer.append(START);
 						} else {
 							buffer.append(START_LEVEL_2);
 						}
@@ -247,10 +229,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			}
 			buffer.append('\n');
 		}
-		if (refactoredRuntime)
-			buffer.append("osgi.bundles.defaultStartLevel=5\n"); //$NON-NLS-1$ 		
-		else
-			buffer.append("osgi.bundles.defaultStartLevel=4\n"); //$NON-NLS-1$ 	
+		buffer.append("osgi.bundles.defaultStartLevel=4\n"); //$NON-NLS-1$ 	
 
 		FileWriter writer = null;
 		try {
