@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.site;
 
-import java.util.Calendar;
+import com.ibm.icu.util.Calendar;
 import java.util.Properties;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 
