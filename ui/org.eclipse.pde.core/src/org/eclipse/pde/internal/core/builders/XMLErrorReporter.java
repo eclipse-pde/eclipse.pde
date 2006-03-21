@@ -17,7 +17,6 @@ import java.util.Stack;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.crimson.tree.XmlDocument;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
@@ -32,6 +31,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.pde.internal.core.PDECore;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
@@ -174,7 +174,7 @@ public class XMLErrorReporter extends DefaultHandler {
 			childIndex += 1;
 		
 		Node parent = node.getParentNode();
-		if (parent instanceof XmlDocument)
+		if (parent instanceof Document)
 			return null;
 		if (parent != null) {
 			String prefix = generateLocationPath(parent, null);
