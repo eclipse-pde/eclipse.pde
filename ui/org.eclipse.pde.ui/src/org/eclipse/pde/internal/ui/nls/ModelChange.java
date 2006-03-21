@@ -1,6 +1,7 @@
 package org.eclipse.pde.internal.ui.nls;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -99,8 +100,11 @@ public class ModelChange {
 		if (fProperties == null) {
 			try {
 				fProperties = new Properties();
-				if (fPropertiesFile != null && fPropertiesFile.exists())
-					fProperties.load(fPropertiesFile.getContents());
+				if (fPropertiesFile != null && fPropertiesFile.exists()) {
+					InputStream stream = fPropertiesFile.getContents();
+					fProperties.load(stream);
+					stream.close();
+				}
 			} catch (CoreException e) {
 			} catch (IOException e) {
 			}
