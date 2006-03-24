@@ -16,6 +16,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String AddLibraryDialog_emptyLibraries;
 
+	public static String ElementSection_missingRefElement;
+
 	public static String ExternalizeResolution_attrib;
 
 	public static String ExternalizeResolution_header;
@@ -33,6 +35,10 @@ public class PDEUIMessages extends NLS {
 	public static String RemoveNodeXMLResolution_attrLabel;
 
 	public static String RemoveNodeXMLResolution_label;
+
+	public static String SchemaIncludesSection_missingWarningMessage;
+
+	public static String SchemaIncludesSection_missingWarningTitle;
 
 	//
 	// PDE resource strings

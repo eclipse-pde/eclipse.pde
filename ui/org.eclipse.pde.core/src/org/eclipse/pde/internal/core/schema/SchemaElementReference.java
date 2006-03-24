@@ -17,6 +17,7 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.ISourceObject;
+import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.ischema.IMetaElement;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
@@ -61,35 +62,49 @@ public class SchemaElementReference extends PlatformObject implements
 	}
 
 	public ISchemaAttribute getAttribute(String name) {
-		return getReferencedElement().getAttribute(name);
+		if (element == null)
+			return null;
+		return element.getAttribute(name);
 	}
 
 	public int getAttributeCount() {
-		return getReferencedElement().getAttributeCount();
+		if (element == null)
+			return 0;
+		return element.getAttributeCount();
 	}
 
 	public ISchemaAttribute[] getAttributes() {
-		return getReferencedElement().getAttributes();
+		if (element == null)
+			return new ISchemaAttribute[0];
+		return element.getAttributes();
 	}
 
 	public ISchemaCompositor getCompositor() {
 		return compositor;
 	}
 
-	public java.lang.String getDescription() {
-		return getReferencedElement().getDescription();
+	public String getDescription() {
+		if (element == null)
+			return ""; //$NON-NLS-1$
+		return element.getDescription();
 	}
 
 	public String getDTDRepresentation(boolean addLinks) {
-		return getReferencedElement().getDTDRepresentation(addLinks);
+		if (element == null)
+			return PDECoreMessages.SchemaElementReference_refElementMissing;
+		return element.getDTDRepresentation(addLinks);
 	}
 
-	public java.lang.String getIconProperty() {
-		return getReferencedElement().getIconProperty();
+	public String getIconProperty() {
+		if (element == null)
+			return ""; //$NON-NLS-1$
+		return element.getIconProperty();
 	}
 
 	public String getLabelProperty() {
-		return getReferencedElement().getLabelProperty();
+		if (element == null)
+			return ""; //$NON-NLS-1$
+		return element.getLabelProperty();
 	}
 
 	public int getMaxOccurs() {
@@ -146,7 +161,9 @@ public class SchemaElementReference extends PlatformObject implements
 	}
 	
 	public ISchemaType getType() {
-		return getReferencedElement().getType();
+		if (element == null)
+			return null;
+		return element.getType();
 	}
 
 	public boolean isLinked() {
@@ -177,9 +194,9 @@ public class SchemaElementReference extends PlatformObject implements
 
 	public void setReferencedObject(ISchemaObject referencedObject) {
 		if (referencedObject instanceof ISchemaElement)
-			this.element = (ISchemaElement) referencedObject;
+			element = (ISchemaElement) referencedObject;
 		else
-			this.element = null;
+			element = null;
 	}
 
 	public void setReferenceName(String name) {

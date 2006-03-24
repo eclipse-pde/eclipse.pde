@@ -6,11 +6,13 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
@@ -116,6 +118,7 @@ public class ElementSection extends TreeSection {
 		fTreeViewer = treePart.getTreeViewer();
 		fTreeViewer.setContentProvider(new ContentProvider());
 		fTreeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		initDragAndDrop();
 	}
 
@@ -153,6 +156,7 @@ public class ElementSection extends TreeSection {
 			fClipboard.dispose();
 			fClipboard = null;
 		}
+		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 
@@ -485,6 +489,14 @@ public class ElementSection extends TreeSection {
 		Object object = selection.getFirstElement();
 		if (object instanceof SchemaElementReference) {
 			ISchemaElement element = ((SchemaElementReference) object).getReferencedElement();
+			if (element == null) {
+				String name = ((SchemaElementReference)object).getName();
+				MessageDialog.openWarning(
+						getPage().getSite().getShell(),
+						PDEUIMessages.ElementSection_missingRefElement,
+						NLS.bind(PDEUIMessages.SchemaIncludesSection_missingWarningMessage, name));
+				return;
+			}
 			ISchema schema = element.getSchema();
 			if (schema.equals(fSchema))
 				fireSelection(new StructuredSelection(element));

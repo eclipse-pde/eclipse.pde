@@ -53,6 +53,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
 import org.eclipse.pde.internal.core.ischema.ISchemaRepeatable;
 import org.eclipse.pde.internal.core.isite.ISiteArchive;
 import org.eclipse.pde.internal.core.isite.ISiteCategory;
@@ -370,7 +371,8 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return getObjectImage((ISchemaAttribute) obj);
 		}
 		if (obj instanceof ISchemaInclude) {
-			return get(PDEPluginImages.DESC_PAGE_OBJ);
+			ISchema schema = ((ISchemaInclude)obj).getIncludedSchema();
+			return get(PDEPluginImages.DESC_PAGE_OBJ, schema == null || !schema.isValid() ? F_ERROR : 0);
 		}
 		if (obj instanceof IDocumentSection || obj instanceof ISchema) {
 			int flags = getSchemaObjectFlags((ISchemaObject) obj);
@@ -563,6 +565,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	private Image getObjectImage(ISchemaElement element) {
 		int flags = getSchemaObjectFlags(element);
+		if (element instanceof ISchemaObjectReference &&
+				((ISchemaObjectReference)element).getReferencedObject() == null)
+			flags |= F_ERROR;
 		return get(PDEPluginImages.DESC_GEL_SC_OBJ, flags);
 	}
 	private Image getObjectImage(ISchemaAttribute att) {

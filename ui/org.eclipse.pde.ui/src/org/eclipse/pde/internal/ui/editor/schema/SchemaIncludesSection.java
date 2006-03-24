@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -22,6 +23,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
@@ -78,6 +80,7 @@ public class SchemaIncludesSection extends TableSection {
 		TablePart tablePart = getTablePart();
 		fViewer = tablePart.getTableViewer();
 		fViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fViewer.setContentProvider(new ArrayContentProvider());
 
 		getSchema().addModelChangedListener(this);
@@ -240,15 +243,21 @@ public class SchemaIncludesSection extends TableSection {
 				return;
 			String path = ((ISchemaInclude)object).getLocation();
 			IPath includePath = new Path(((ISchemaInclude)object).getLocation());
+			boolean result = false;
 			if (path.startsWith("schema:")) { //$NON-NLS-1$
-				SchemaEditor.openSchema(includePath);
+				result = SchemaEditor.openSchema(includePath);
 			} else {
 				IFile currSchemaFile = ((IFileEditorInput)edinput).getFile();
 				IProject project = currSchemaFile.getProject();
 				IPath currSchemaPath = currSchemaFile.getProjectRelativePath();
 				IFile file = project.getFile(currSchemaPath.removeLastSegments(1).append(includePath));
-				SchemaEditor.openSchema(file);
+				result = SchemaEditor.openSchema(file);
 			}
+			if (!result)
+				MessageDialog.openWarning(
+						getPage().getSite().getShell(),
+						PDEUIMessages.SchemaIncludesSection_missingWarningTitle,
+						NLS.bind(PDEUIMessages.SchemaIncludesSection_missingWarningMessage, includePath.toString()));
 		}
 	}
 }
