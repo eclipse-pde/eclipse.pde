@@ -11,9 +11,11 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.plugin.IPluginElement;
@@ -41,14 +43,12 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class BodyTextSection
-	extends PDESection
-	implements IModelChangedListener, IPartSelectionListener {
-	private Button applyButton;
-	private Button resetButton;
-	private IPluginElement currentElement;
-	private Text text;
-	private boolean blockNotification;
+public class BodyTextSection extends PDESection implements IModelChangedListener, IPartSelectionListener {
+	private Button fApplyButton;
+	private Button fResetButton;
+	private IPluginElement fCurrentElement;
+	private Text fText;
+	private boolean fBlockNotification;
 
 	public BodyTextSection(ExtensionsPage page, Composite parent) {
 		super(page, parent, ExpandableComposite.TWISTIE);
@@ -81,25 +81,18 @@ public class BodyTextSection
 		container.setLayout(layout);
 
 		// text
-		text =
-			toolkit.createText(
-				container,
-				"", //$NON-NLS-1$
-				SWT.MULTI
-					| SWT.WRAP
-					| SWT.V_SCROLL);
-		text.setEditable(false);
-		gd = new GridData(GridData.FILL_BOTH);
-		text.setLayoutData(gd);
-		text.addModifyListener(new ModifyListener() {
+		fText = toolkit.createText(container, "", SWT.MULTI | SWT.WRAP | SWT.V_SCROLL); //$NON-NLS-1$
+		fText.setEditable(false);
+		fText.setLayoutData(new GridData(GridData.FILL_BOTH));
+		fText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if (blockNotification) return;
+				if (fBlockNotification) return;
 				markDirty();
-				applyButton.setEnabled(true);
-				resetButton.setEnabled(true);
+				fApplyButton.setEnabled(true);
+				fResetButton.setEnabled(true);
 			}
 		});
-		text.addFocusListener(new FocusAdapter() {
+		fText.addFocusListener(new FocusAdapter() {
 			public void focusGained(FocusEvent e) {
 				getPage().getPDEEditor().getContributor().updateSelectableActions(new StructuredSelection());
 			}
@@ -109,38 +102,23 @@ public class BodyTextSection
 		layout = new GridLayout();
 		layout.marginHeight = 0;
 		buttonContainer.setLayout(layout);
-		gd =
-			new GridData(
-				GridData.HORIZONTAL_ALIGN_BEGINNING
-					| GridData.VERTICAL_ALIGN_FILL);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_FILL);
 		buttonContainer.setLayoutData(gd);
 
 		// add buttons
-		applyButton =
-			toolkit.createButton(
-				buttonContainer,
-				PDEUIMessages.Actions_apply_flabel,
-				SWT.PUSH);
-		gd =
-			new GridData(
-				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		applyButton.setLayoutData(gd);
-		applyButton.addSelectionListener(new SelectionAdapter() {
+		fApplyButton = toolkit.createButton(buttonContainer,	PDEUIMessages.Actions_apply_flabel,	SWT.PUSH);
+		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+		fApplyButton.setLayoutData(gd);
+		fApplyButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleApply();
 			}
 		});
 
-		resetButton =
-			toolkit.createButton(
-				buttonContainer,
-				PDEUIMessages.Actions_reset_flabel,
-				SWT.PUSH);
-		gd =
-			new GridData(
-				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		resetButton.setLayoutData(gd);
-		resetButton.addSelectionListener(new SelectionAdapter() {
+		fResetButton = toolkit.createButton(buttonContainer, PDEUIMessages.Actions_reset_flabel, SWT.PUSH);
+		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+		fResetButton.setLayoutData(gd);
+		fResetButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleReset();
 			}
@@ -161,63 +139,59 @@ public class BodyTextSection
 
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			handleDelete();
+			fText.cut();
 			return true;
 		}
 		if (actionId.equals(ActionFactory.CUT.getId())) {
 			// delete here and let the editor transfer
 			// the selection to the clipboard
-			handleDelete();
+			fText.cut();
 			return false;
 		}
 		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
-			text.selectAll();
+			fText.selectAll();
 			return true;
 		}
 		if (actionId.equals(ActionFactory.COPY.getId())) {
-			text.copy();
+			fText.copy();
 			return true;
 		}
 		if (actionId.equals(ActionFactory.PASTE.getId())) {
-			text.paste();
+			fText.paste();
 			return true;
 		}
 		return false;
 	}
 
-	private void handleDelete() {
-		text.cut();
-	}
-
 	private void handleApply() {
 		try {
-			if (currentElement!=null)
-				currentElement.setText(
-						text.getText().length() > 0 ? text.getText() : ""); //$NON-NLS-1$
+			if (fCurrentElement != null)
+				fCurrentElement.setText(fText.getText().length() > 0 ? fText.getText() : ""); //$NON-NLS-1$
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		applyButton.setEnabled(false);
+		fApplyButton.setEnabled(false);
+		fResetButton.setEnabled(false);
 	}
 
 	public void commit(boolean onSave) {
 		handleApply();
 		if (onSave) {
-			resetButton.setEnabled(false);
+			fResetButton.setEnabled(false);
 		}
 		super.commit(onSave);
 	}
 
 	private void handleReset() {
-		updateText(currentElement);
-		resetButton.setEnabled(false);
-		applyButton.setEnabled(false);
+		updateText(fCurrentElement);
+		fResetButton.setEnabled(false);
+		fApplyButton.setEnabled(false);
 	}
 
 	public void initialize() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		model.addModelChangedListener(this);
-		text.setEditable(model.isEditable());
+		fText.setEditable(model.isEditable());
 		updateInput();
 	}
 
@@ -229,31 +203,39 @@ public class BodyTextSection
 
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		Object changeObject = ((IStructuredSelection)selection).getFirstElement();
-		if (currentElement != null && currentElement == changeObject)
-			return;
+		if (fCurrentElement != null) {
+			if (fCurrentElement == changeObject)
+				return;
+			if (fApplyButton.isEnabled() && 
+					MessageDialog.openQuestion(
+							getSection().getShell(),
+							PDEUIMessages.BodyTextSection_saveBodyText,
+							NLS.bind(PDEUIMessages.BodyTextSection_saveBodyTextMessage, fCurrentElement.getName())))
+				handleApply();
+		}
 		if (changeObject instanceof IPluginElement)
-			this.currentElement = (IPluginElement) changeObject;
+			fCurrentElement = (IPluginElement) changeObject;
 		else
-			currentElement = null;
+			fCurrentElement = null;
 		updateInput();
 	}
 	private void updateInput() {
-		applyButton.setEnabled(false);
-		resetButton.setEnabled(false);
-		updateText(currentElement);
-		text.setEditable(isEditable() && currentElement != null);
+		fApplyButton.setEnabled(false);
+		fResetButton.setEnabled(false);
+		updateText(fCurrentElement);
+		fText.setEditable(isEditable() && fCurrentElement != null);
 	}
 
 	private void updateText(IPluginElement element) {
 		String bodyText = element != null ? element.getText() : null;
 
-		blockNotification=true;
-		text.setText(bodyText != null && bodyText.length()>0? bodyText : ""); //$NON-NLS-1$
-		applyButton.setEnabled(false);
-		resetButton.setEnabled(false);
+		fBlockNotification=true;
+		fText.setText(bodyText != null && bodyText.length()>0? bodyText : ""); //$NON-NLS-1$
+		fApplyButton.setEnabled(false);
+		fResetButton.setEnabled(false);
 
 		updateTitle(bodyText != null && bodyText.length()>0);
-		blockNotification=false;
+		fBlockNotification=false;
 	}
 	public boolean canPaste(Clipboard clipboard) {
 		return true;
