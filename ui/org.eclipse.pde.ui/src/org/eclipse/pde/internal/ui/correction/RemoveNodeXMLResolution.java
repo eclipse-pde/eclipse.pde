@@ -3,12 +3,11 @@ package org.eclipse.pde.internal.ui.correction;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.builders.XMLErrorReporter;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.IPluginParent;
+import org.eclipse.pde.internal.core.text.plugin.PluginAttribute;
 import org.eclipse.pde.internal.core.text.plugin.PluginBaseNode;
-import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
-import org.eclipse.pde.internal.core.text.plugin.PluginObjectNode;
-import org.eclipse.pde.internal.core.text.plugin.PluginParentNode;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class RemoveNodeXMLResolution extends AbstractXMLMarkerResolution {
@@ -17,14 +16,22 @@ public class RemoveNodeXMLResolution extends AbstractXMLMarkerResolution {
 		super(resolutionType, marker);
 	}
 
-	protected void createChange(PluginModelBase model) {
-		PluginObjectNode node = findNode(model, fLocationPath);
+	protected void createChange(IPluginModelBase model) {
+		Object node = findNode(model);
+		if (!(node instanceof IPluginObject))
+			return;
 		try {
-			IDocumentNode parent = node.getParentNode();
-			if (parent instanceof PluginParentNode)
-				((PluginParentNode)parent).remove(node);
-			if (parent instanceof PluginBaseNode)
-				((PluginBaseNode)parent).remove(node);
+			IPluginObject pluginObject = (IPluginObject)node;
+			IPluginObject parent = pluginObject.getParent();
+			if (parent instanceof IPluginParent)
+				((IPluginParent)parent).remove(pluginObject);
+			else if (parent instanceof PluginBaseNode)
+				((PluginBaseNode)parent).remove(pluginObject);
+			else if (pluginObject instanceof PluginAttribute) {
+				PluginAttribute attr = (PluginAttribute)pluginObject;
+				attr.getEnclosingElement().setXMLAttribute(attr.getName(), null);
+			}
+				
 		} catch (CoreException e) {
 		}
 	}
@@ -34,17 +41,9 @@ public class RemoveNodeXMLResolution extends AbstractXMLMarkerResolution {
 	}
 
 	public String getLabel() {
-		int lastChild = fLocationPath.lastIndexOf(')');
-		if (lastChild < 0)
-			return fLocationPath;
-		String item = fLocationPath.substring(lastChild + 1);
-		int attrInd = item.indexOf(XMLErrorReporter.F_ATT_PREFIX);
-		if (attrInd > -1)
-			item = item.substring(attrInd + 1);
-		return NLS.bind(
-				attrInd == -1 ? PDEUIMessages.RemoveNodeXMLResolution_label :
-							"Remove the {0} attribute.",
-				item);
+		if (isAttrNode())
+			return NLS.bind("Remove the {0} attribute.", getNameOfNode());
+		return NLS.bind(PDEUIMessages.RemoveNodeXMLResolution_label, getNameOfNode());
 	}
 
 }

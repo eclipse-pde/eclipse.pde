@@ -1,6 +1,7 @@
 package org.eclipse.pde.internal.ui.nls;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
@@ -10,9 +11,11 @@ import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
@@ -36,16 +39,9 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 				ModelChangeFile changeFile = (ModelChangeFile)fChangeFiles[i];
 				ModelChange change = changeFile.getModel();
 				IFile pFile = change.getPropertiesFile();
-				if (!pFile.exists()) {
-					IPluginModelBase model = change.getParentModel();
-					String propertiesFileComment = "# properties file for "  //$NON-NLS-1$
-						+ model.getUnderlyingResource().getProject().getName();
-					ByteArrayInputStream pStream = new ByteArrayInputStream(propertiesFileComment.getBytes());
-					pFile.create(pStream, true, monitor);
-					if (!change.localizationSet()) {
-						addBundleLocalization(model, change.getBundleLocalization());
-					}
-				}
+				checkPropertiesFile(pFile);
+				if (!change.localizationSet())
+					addBundleLocalization(change.getParentModel(), change.getBundleLocalization());
 				
 				ITextFileBufferManager pManager = FileBuffers.getTextFileBufferManager();
 				try {
@@ -76,7 +72,6 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 			IDocument uDoc = uBuffer.getDocument();
 			MultiTextEdit uEdit = new MultiTextEdit();
 			
-			String nl = TextUtilities.getDefaultLineDelimiter(pDoc);
 			Iterator iter = changeFile.getChanges().iterator();
 			
 			while (iter.hasNext()) {
@@ -85,9 +80,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 					uEdit.addChild(new ReplaceEdit(changeElement.getOffset(),
 							changeElement.getLength(), 
 							changeElement.getExternKey()));
-					pEdit.addChild(new InsertEdit(pDoc.getLength(), 
-							nl + changeElement.getKey() + " = " +  //$NON-NLS-1$
-							StringHelper.preparePropertiesString(changeElement.getValue(), nl.toCharArray())));
+					pEdit.addChild(getPropertiesInsertEdit(pDoc, changeElement));
 				}
 			}
 			uEdit.apply(uDoc);
@@ -106,6 +99,26 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 			IBundle bundle = bundleModel.getBundleModel().getBundle();
 			if (bundle instanceof Bundle)
 				((Bundle)bundle).setLocalization(localization);
+		}
+	}
+	
+	public static InsertEdit getPropertiesInsertEdit(IDocument doc, ModelChangeElement element) {
+		String nl = TextUtilities.getDefaultLineDelimiter(doc);
+		return new InsertEdit(doc.getLength(), 
+				nl + element.getKey() + " = " +  //$NON-NLS-1$
+				StringHelper.preparePropertiesString(element.getValue(), nl.toCharArray()));
+	}
+	
+	public static void checkPropertiesFile(IFile file) {
+		if (!file.exists()) {
+			String propertiesFileComment = NLS.bind("# properties file for {0}", file.getProject().getName());
+			ByteArrayInputStream pStream = new ByteArrayInputStream(propertiesFileComment.getBytes());
+			try {
+				file.create(pStream, true, new NullProgressMonitor());
+				pStream.close();
+			} catch (CoreException e1) {
+			} catch (IOException e) {
+			}
 		}
 	}
  }

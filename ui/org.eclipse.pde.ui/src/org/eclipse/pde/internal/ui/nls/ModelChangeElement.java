@@ -2,6 +2,7 @@ package org.eclipse.pde.internal.ui.nls;
 
 import java.util.Properties;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
@@ -22,9 +23,11 @@ public class ModelChangeElement {
 	private int fLength = 0;
 	private boolean fExternalized = true;
 	private ModelChange fParent;
+	private Object fUnderlying;
 	
 	public ModelChangeElement(ModelChange parent, Object incoming) {
 		fParent = parent;
+		fUnderlying = incoming;
 		if (incoming instanceof PluginElementNode) {
 			PluginElementNode elem = (PluginElementNode)incoming;
 			IDocumentTextNode text = elem.getTextNode();
@@ -96,5 +99,29 @@ public class ModelChangeElement {
 	}
 	public String getExternKey() {
 		return KEY_PREFIX + fKey;
+	}
+	
+	public boolean updateValue() {
+		try {
+			String key = getExternKey();
+			if (fUnderlying instanceof PluginElementNode) {
+				PluginElementNode elem = (PluginElementNode)fUnderlying;
+				elem.setText(key);
+			} else if (fUnderlying instanceof PluginAttribute) {
+				PluginAttribute attr = (PluginAttribute)fUnderlying;
+				String attrName = attr.getName();
+				attr.getEnclosingElement().setXMLAttribute(attrName, key);
+			} else if (fUnderlying instanceof PluginExtensionPointNode) {
+				PluginExtensionPointNode extP = (PluginExtensionPointNode)fUnderlying;
+				extP.setName(key);
+			} else if (fUnderlying instanceof ManifestHeader) {
+				ManifestHeader header = (ManifestHeader)fUnderlying;
+				header.setValue(key);
+			} else
+				return false;
+		} catch (CoreException e) {
+			return false;
+		}
+		return true;
 	}
 }

@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
@@ -28,7 +29,7 @@ public abstract class ManifestHeaderErrorResolution extends AbstractPDEMarkerRes
 	
 	protected abstract void createChange(BundleModel model);
 	
-	protected void createChange(AbstractEditingModel model) {
+	protected void createChange(IBaseModel model) {
 		if (model instanceof BundleModel)
 			createChange((BundleModel)model);
 	}

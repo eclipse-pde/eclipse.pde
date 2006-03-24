@@ -23,10 +23,13 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.build.BuildEditor;
+import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.editor.product.LauncherSection;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPersistableElement;
@@ -306,15 +309,15 @@ public class EditorUtilities {
 		}		
 	}
 	
-	public static PDEFormEditor getOpenManifestEditor(IProject project) {
-		return getOpenEditor(project, IPDEUIConstants.MANIFEST_EDITOR_ID);
+	public static ManifestEditor getOpenManifestEditor(IProject project) {
+		return (ManifestEditor)getOpenEditor(project, IPDEUIConstants.MANIFEST_EDITOR_ID);
 	}
 	
-	public static PDEFormEditor getOpenBuildPropertiesEditor(IProject project) {
-		return getOpenEditor(project, IPDEUIConstants.BUILD_EDITOR_ID);
+	public static BuildEditor getOpenBuildPropertiesEditor(IProject project) {
+		return (BuildEditor)getOpenEditor(project, IPDEUIConstants.BUILD_EDITOR_ID);
 	}
 	
-	private static PDEFormEditor getOpenEditor(IProject project, String editorId) {
+	private static IEditorPart getOpenEditor(IProject project, String editorId) {
 		IWorkbenchPage page = PDEPlugin.getActivePage();
 		IEditorReference[] editors = page.getEditorReferences();
 		for (int i = 0; i < editors.length; i++) {
@@ -326,7 +329,7 @@ public class EditorUtilities {
 						continue;
 					if (!((IFileEditorInput)persistable).getFile().getProject().equals(project))
 						continue;
-					return (PDEFormEditor)page.findEditor(editors[i].getEditorInput());
+					return page.findEditor(editors[i].getEditorInput());
 				} catch (PartInitException e) {
 				}
 			}

@@ -3,6 +3,7 @@ package org.eclipse.pde.internal.ui.correction;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
@@ -30,7 +31,7 @@ public abstract class BuildEntryMarkerResolution extends AbstractPDEMarkerResolu
 
 	protected abstract void createChange(Build build);
 	
-	protected void createChange(AbstractEditingModel model) {
+	protected void createChange(IBaseModel model) {
 		if (model instanceof BuildModel)
 			createChange((Build)((BuildModel)model).getBuild());
 	}

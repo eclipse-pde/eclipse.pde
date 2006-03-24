@@ -331,20 +331,24 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	}
 		
 	protected void validateTranslatableString(Element element, Attr attr, boolean shouldTranslate) {
+		if (!shouldTranslate)
+			return;
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_NOT_EXTERNALIZED);
 		if (severity == CompilerFlags.IGNORE)
 			return;
 		String value = attr.getValue();
-		if (shouldTranslate) {
-			if (!value.startsWith("%")) { //$NON-NLS-1$
-				report(NLS.bind(PDECoreMessages.Builders_Manifest_non_ext_attribute, attr.getName()), getLine(element, attr.getName()), severity); 
-			} else if (fModel instanceof AbstractModel) {
-				NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
-				if (helper == null || !helper.resourceExists(value)) {
-					report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(element, attr.getName()), severity); 
-				}
+		if (!value.startsWith("%")) { //$NON-NLS-1$
+			report(NLS.bind(PDECoreMessages.Builders_Manifest_non_ext_attribute, attr.getName()),
+					getLine(element, attr.getName()),
+					severity,
+					PDEMarkerFactory.P_UNTRANSLATED_NODE,
+					element, attr.getName());
+		} else if (fModel instanceof AbstractModel) {
+			NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
+			if (helper == null || !helper.resourceExists(value)) {
+				report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(element, attr.getName()), severity); 
 			}
-		} 
+		}
 	}
 	
 	protected void validateTranslatableElementContent(Element element) {
@@ -355,7 +359,11 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		if (value == null)
 			return;
 		if (!value.startsWith("%")) { //$NON-NLS-1$
-			report(NLS.bind(PDECoreMessages.Builders_Manifest_non_ext_element, element.getNodeName()), getLine(element), severity); 
+			report(NLS.bind(PDECoreMessages.Builders_Manifest_non_ext_element, element.getNodeName()),
+					getLine(element),
+					severity,
+					PDEMarkerFactory.P_UNTRANSLATED_NODE,
+					element, null); 
 		} else if (fModel instanceof AbstractModel) {
 			NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
 			if (helper == null || !helper.resourceExists(value)) {

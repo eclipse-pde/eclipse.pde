@@ -43,8 +43,6 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 				return getUnresolvedImportPackageProposals(marker);
 			case PDEMarkerFactory.M_REQ_BUNDLE_NOT_AVAILABLE:
 				return getUnresolvedBundle(marker);
-			case PDEMarkerFactory.M_EXT_STRINGS:
-				return new IMarkerResolution[] { new ExternalizeStringsResolution(AbstractPDEMarkerResolution.RENAME_TYPE)};
 			case PDEMarkerFactory.B_REMOVE_SLASH_FILE_ENTRY:
 				return new IMarkerResolution[] { new RemoveSeperatorBuildEntryResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
 			case PDEMarkerFactory.B_APPEND_SLASH_FOLDER_ENTRY:
@@ -57,6 +55,10 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 				return new IMarkerResolution[] { new RemoveBuildEntryResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker)};
 			case PDEMarkerFactory.P_ILLEGAL_XML_NODE:
 				return new IMarkerResolution[] { new RemoveNodeXMLResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker)};
+			case PDEMarkerFactory.P_UNTRANSLATED_NODE:
+				return new IMarkerResolution[] {
+						new ExternalizeResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker), 
+						new ExternalizeStringsResolution(AbstractPDEMarkerResolution.RENAME_TYPE)};
 		}
 		return NO_RESOLUTIONS;
 	}

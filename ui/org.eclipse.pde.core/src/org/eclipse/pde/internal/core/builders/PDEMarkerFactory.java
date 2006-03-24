@@ -29,7 +29,6 @@ public class PDEMarkerFactory implements IMarkerFactory {
 	public static final int M_EXPORT_PKG_NOT_EXIST = 0x1006; 
 	public static final int M_IMPORT_PKG_NOT_AVAILABLE = 0x1007;
 	public static final int M_REQ_BUNDLE_NOT_AVAILABLE = 0x1008;
-	public static final int M_EXT_STRINGS = 0x1009;
 	
 	// build properties fixes
 	public static final int B_APPEND_SLASH_FOLDER_ENTRY = 0x2001;
@@ -40,11 +39,14 @@ public class PDEMarkerFactory implements IMarkerFactory {
 	
 	// plugin.xml fixes
 	public static final int P_ILLEGAL_XML_NODE = 0x3001;
+	public static final int P_UNTRANSLATED_NODE = 0x3002;
 	
 	// marker attribute keys
 	public static final String BK_BUILD_ENTRY = "buildEntry.key"; //$NON-NLS-1$
 	public static final String BK_BUILD_TOKEN = "buildEntry.tokenValue"; //$NON-NLS-1$
-	public static final String PK_TREE_LOCATION_PATH = "xmlTree.locationPath"; //$NON-NLS-1$
+	public static final String MPK_LOCATION_PATH = "xmlTree.locationPath"; //$NON-NLS-1$
+
+	
 
 	
 	/**

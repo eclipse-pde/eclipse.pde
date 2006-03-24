@@ -9,7 +9,7 @@ public class ModelChangeFile {
 	private ModelChange fModel;
 	private ArrayList fChanges = new ArrayList();
 	private int fNumChanges = 0;
-	protected ModelChangeFile (IFile file, ModelChange model) {
+	public ModelChangeFile (IFile file, ModelChange model) {
 		fFile = file;
 		fModel = model;
 	}
@@ -19,7 +19,7 @@ public class ModelChangeFile {
 	protected ModelChange getModel() {
 		return fModel;
 	}
-	protected void add(ModelChangeElement element) {
+	public void add(ModelChangeElement element) {
 		if (fChanges.add(element))
 			fNumChanges += 1;
 	}

@@ -43,7 +43,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class XMLErrorReporter extends DefaultHandler {
 	
-	public static String F_ATT_PREFIX = "@";
+	public static final char F_ATT_PREFIX = '@';
 	
 	class ElementData {
 		int offset;
@@ -155,9 +155,11 @@ public class XMLErrorReporter extends DefaultHandler {
 
 	public void report(String message, int line, int severity, int fixId, Element element, String attrName) {
 		IMarker marker = report(message, line, severity, fixId);
+		if (marker == null)
+			return;
 		try {
 			marker.setAttribute(
-					PDEMarkerFactory.PK_TREE_LOCATION_PATH, 
+					PDEMarkerFactory.MPK_LOCATION_PATH, 
 					generateLocationPath(element, attrName));
 		} catch (CoreException e) {
 		}
@@ -178,10 +180,8 @@ public class XMLErrorReporter extends DefaultHandler {
 			return null;
 		if (parent != null) {
 			String prefix = generateLocationPath(parent, null);
-			if (prefix != null) {
-				prefix += '>';
-				return prefix + composeNodeString(node, childIndex, attrName);
-			}
+			if (prefix != null)
+				return prefix + '>' + composeNodeString(node, childIndex, attrName);
 		}
 		return composeNodeString(node, childIndex, attrName);
 	}

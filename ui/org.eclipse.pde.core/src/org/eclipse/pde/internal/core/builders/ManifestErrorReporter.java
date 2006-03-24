@@ -66,12 +66,13 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 
 	protected void reportUnknownAttribute(Element element, String attName, int severity) {
 		String message = NLS.bind(PDECoreMessages.Builders_Manifest_attribute, attName);
-		report(message, getLine(element, attName), severity);
+		report(message, getLine(element, attName), severity,
+				PDEMarkerFactory.P_ILLEGAL_XML_NODE, element, attName);
 	}
 	
 	protected void reportIllegalAttributeValue(Element element, Attr attr) {
 		String message = NLS.bind(PDECoreMessages.Builders_Manifest_att_value, (new String[] { attr.getValue(), attr.getName() }));
-		report(message, getLine(element, attr.getName()), CompilerFlags.ERROR);
+		report(message,	getLine(element, attr.getName()), CompilerFlags.ERROR);
 	}
 	
 	protected void validateVersionAttribute(Element element, Attr attr) {

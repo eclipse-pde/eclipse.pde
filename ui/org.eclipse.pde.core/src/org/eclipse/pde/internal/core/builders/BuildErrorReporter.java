@@ -468,12 +468,12 @@ public class BuildErrorReporter extends ErrorReporter {
 	
 	private void report(String message, int line, int problemID, String buildEntry, String buildToken) {
 		IMarker marker = report(message, line, fSeverity, problemID);
-		if (marker != null) {
-			try {
-				marker.setAttribute(PDEMarkerFactory.BK_BUILD_ENTRY, buildEntry);
-				marker.setAttribute(PDEMarkerFactory.BK_BUILD_TOKEN, buildToken);
-			} catch (CoreException e) {
-			}
+		if (marker == null)
+			return;
+		try {
+			marker.setAttribute(PDEMarkerFactory.BK_BUILD_ENTRY, buildEntry);
+			marker.setAttribute(PDEMarkerFactory.BK_BUILD_TOKEN, buildToken);
+		} catch (CoreException e) {
 		}
 	}
  }

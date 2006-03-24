@@ -46,8 +46,8 @@ import org.eclipse.pde.internal.core.AbstractModel;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.osgi.framework.Constants;
@@ -503,13 +503,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	
 	private void validateBundleName() {
 		IHeader header = (IHeader) fHeaders.get(Constants.BUNDLE_NAME);
-		if (header == null) {
-			report(
-					NLS.bind(PDECoreMessages.BundleErrorReporter_headerMissing, Constants.BUNDLE_NAME), 1, 
-					CompilerFlags.ERROR);
-			return;
-		}
-		validateTranslatableString(header, true);
+		if (header == null)
+			report(NLS.bind(PDECoreMessages.BundleErrorReporter_headerMissing, Constants.BUNDLE_NAME), 1, CompilerFlags.ERROR);
 	}
 
 	/**
@@ -543,11 +538,14 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		return true;
 	}
 	
-	private void validateBundleVendor() {
-		IHeader header = (IHeader) fHeaders.get(Constants.BUNDLE_VENDOR);
-		if (header == null) 
-			return;
-		validateTranslatableString(header, true);
+	private void validateTranslatableHeaders() {
+		for (int i = 0; i < ICoreConstants.TRANSLATABLE_HEADERS.length; i++) {
+			IHeader header = (IHeader) fHeaders.get(
+					ICoreConstants.TRANSLATABLE_HEADERS[i]);
+			if (header == null) 
+				continue;
+			validateTranslatableString(header, true);
+		}
 	}
 
 	private void validateBundleVersion() {
@@ -598,7 +596,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			return;
 		}
 		validateBundleName();
-		validateBundleVendor();
+		validateTranslatableHeaders();
 		validateBundleVersion();
 		// sets fExtensibleApi
 		validateExtensibleAPI();
@@ -1295,7 +1293,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				report(NLS.bind(PDECoreMessages.Builders_Manifest_non_ext_attribute, header.getName()),
 						getLine(header, value),
 						severity,
-						PDEMarkerFactory.M_EXT_STRINGS); 
+						PDEMarkerFactory.P_UNTRANSLATED_NODE, header.getName()); 
 			} else if (fModel instanceof AbstractModel) {
 				NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
 				if (helper == null || !helper.resourceExists(value)) {
@@ -1396,5 +1394,15 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 		}
 		return true;
+	}
+	
+	public void report(String message, int line, int severity, int problemID, String headerName) {
+		IMarker marker = report(message, line, severity, problemID);
+		if (marker == null)
+			return;
+		try {
+			marker.setAttribute(PDEMarkerFactory.MPK_LOCATION_PATH, headerName);
+		} catch (CoreException e) {
+		}
 	}
 }

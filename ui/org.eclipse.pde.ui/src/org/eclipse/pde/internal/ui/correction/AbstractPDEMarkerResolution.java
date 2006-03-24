@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
@@ -32,7 +33,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMarkerResolution2;
 import org.eclipse.ui.forms.editor.IFormPage;
 
@@ -42,13 +42,8 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 	public static final int RENAME_TYPE = 2;
 	public static final int REMOVE_TYPE = 3;
 	
-	private static final int F_BUNDLE_MODEL = 0;
-	private static final int F_BUILD_MODEL = 1;
-	private static final int F_PLUGIN_MODEL = 2;
-	private static final int F_FRAGMENT_MODEL = 3;
-	
 	protected int fType;
-	private IEditorPart fOpenEditor;
+	private PDEFormEditor fOpenEditor;
 
 	public AbstractPDEMarkerResolution(int type) {
 		fType = type;
@@ -64,27 +59,16 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 
 	
 	public void run(IMarker marker) {
-		IResource res = marker.getResource();
-		IProject project = res.getProject();
-		String name = res.getName();
-		AbstractEditingModel model = null;
-		if (name.equals("MANIFEST.MF"))  //$NON-NLS-1$
-			model = findModelFromEditor(project, F_BUNDLE_MODEL);
-		else if (name.equals("build.properties")) //$NON-NLS-1$
-			model = findModelFromEditor(project, F_BUILD_MODEL);
-		else if (name.equals("plugin.xml")) //$NON-NLS-1$
-			model = findModelFromEditor(project, F_PLUGIN_MODEL);
-		else if (name.equals("fragment.xml")) //$NON-NLS-1$
-			model = findModelFromEditor(project, F_FRAGMENT_MODEL);
-			
+		IBaseModel model = findModelFromEditor(marker);
+		
 		if (model != null) {
 			// directly modify model from open editor and save
 			createChange(model);
-			if (fOpenEditor != null)
-				fOpenEditor.doSave(null);
+			fOpenEditor.doSave(null);
 			fOpenEditor = null;
 		} else {
 			// create text edits and apply them to textbuffer
+			IResource res = marker.getResource();
 			try {
 				ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 				manager.connect(res.getFullPath(), null);
@@ -92,13 +76,13 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 				if (buffer.isDirty())
 					buffer.commit(null, true);
 				IDocument document = buffer.getDocument();	
-				model = createModel(document);
-				model.setUnderlyingResource(res);
-				model.load();
-				if (model.isLoaded()) {
+				AbstractEditingModel editModel = createModel(document);
+				editModel.setUnderlyingResource(res);
+				editModel.load();
+				if (editModel.isLoaded()) {
 					IModelTextChangeListener listener = createListener(document);
-					model.addModelChangedListener(listener);
-					createChange(model);
+					editModel.addModelChangedListener(listener);
+					createChange(editModel);
 					TextEdit[] edits = listener.getTextOperations();
 					if (edits.length > 0) {
 						MultiTextEdit multi = new MultiTextEdit();
@@ -123,51 +107,51 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 		}
 	}
 	
-	private AbstractEditingModel findModelFromEditor(IProject project, int modelType) {
-		PDEFormEditor editor = null;
-		switch (modelType) {
-		case F_FRAGMENT_MODEL:
-		case F_PLUGIN_MODEL:
-			editor = EditorUtilities.getOpenManifestEditor(project);
-			if (editor != null) {
-				fOpenEditor = editor;
-				IBaseModel model = editor.getAggregateModel();
+	private IBaseModel findModelFromEditor(IMarker marker) {
+		IResource res = marker.getResource();
+		IProject project = res.getProject();
+		String name = res.getName();
+		if (name.equals("plugin.xml") || name.equals("fragment.xml")) {
+			fOpenEditor = EditorUtilities.getOpenManifestEditor(project);
+			if (fOpenEditor != null) {
+				IBaseModel model = fOpenEditor.getAggregateModel();
 				if (model instanceof IBundlePluginModelBase)
 					model = ((IBundlePluginModelBase)model).getExtensionsModel();
 				if (model instanceof AbstractEditingModel)
-					return (AbstractEditingModel)model;
+					return model;
 			}
-			break;
-		case F_BUILD_MODEL:
-			editor = EditorUtilities.getOpenBuildPropertiesEditor(project);
-			if (editor == null) {
-				editor = EditorUtilities.getOpenManifestEditor(project);
-				if (editor == null)
-					break;
-				IFormPage page = editor.findPage(BuildInputContext.CONTEXT_ID);
+		} else if (name.equals("build.properties")) {
+			fOpenEditor = EditorUtilities.getOpenBuildPropertiesEditor(project);
+			if (fOpenEditor != null) {
+				IBaseModel model = fOpenEditor.getAggregateModel();
+				if (model instanceof AbstractEditingModel)
+					return model;
+			} else {
+				fOpenEditor = EditorUtilities.getOpenManifestEditor(project);
+				if (fOpenEditor == null)
+					return null;
+				IFormPage page = fOpenEditor.findPage(BuildInputContext.CONTEXT_ID);
 				if (page instanceof BuildSourcePage) {
 					IBaseModel model = ((BuildSourcePage)page).getInputContext().getModel();
-					if (model instanceof AbstractEditingModel) {
-						fOpenEditor = editor;
-						return (AbstractEditingModel)model;
-					}
+					if (model instanceof AbstractEditingModel)
+						return model;
 				}
 			}
-			break;
-		case F_BUNDLE_MODEL:
-			editor = EditorUtilities.getOpenManifestEditor(project);
-			break;
-		}
-		if (editor != null) {
-			fOpenEditor = editor;
-			IBaseModel model = editor.getAggregateModel();
-			if (model instanceof AbstractEditingModel)
-				return (AbstractEditingModel)model;
+		} else if (name.equals("MANIFEST.MF")) {
+			fOpenEditor = EditorUtilities.getOpenManifestEditor(project);
+			IBaseModel model = fOpenEditor.getAggregateModel();
+			if (model instanceof IBundlePluginModel) {
+				if (this instanceof AbstractXMLMarkerResolution)
+					return model;
+				model = ((IBundlePluginModel)model).getBundleModel();
+				if (model instanceof AbstractEditingModel)
+					return model;
+			}
 		}
 		return null;
 	}
 	
-	protected abstract void createChange(AbstractEditingModel model);
+	protected abstract void createChange(IBaseModel model);
 	
 	protected abstract AbstractEditingModel createModel(IDocument doc);
 	

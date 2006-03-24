@@ -208,7 +208,9 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 	public void fillContextMenu(IMenuManager manager) {
 		manager.add(fRefreshAction);
 		Tree tree = getUndisposedTree();
-		if (tree != null && false) { // testing purposes only
+		// TODO remove testing actions from code after delta is fixed
+		// bug 130655
+		if (tree != null && false) {
 			TreeItem[] selection = tree.getSelection();
 			boolean allRemoveable = true;
 			boolean canAdd = true;
