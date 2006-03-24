@@ -434,7 +434,7 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		};
 		fShowPluginsAction.setChecked(fMemento.getString(SHOW_RUNNING_PLUGINS).equals("true")); //$NON-NLS-1$
 		
-		fRemoveAction = new Action("Remove") {
+		fRemoveAction = new Action("Remove") { //$NON-NLS-1$
 			public void run() {
 				Tree tree = getUndisposedTree();
 				if (tree == null)
@@ -455,7 +455,7 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 			}
 		};
 		
-		fAddAction = new Action("Add...") {
+		fAddAction = new Action("Add...") { //$NON-NLS-1$
 			public void run() {
 				Tree tree = getUndisposedTree();
 				if (tree == null)

@@ -13,6 +13,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDEManager;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.nls.ExternalizeStringsOperation;
 import org.eclipse.pde.internal.ui.nls.ModelChange;
 import org.eclipse.pde.internal.ui.nls.ModelChangeElement;
@@ -65,10 +66,10 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 
 	public String getLabel() {
 		if (isAttrNode())
-			return NLS.bind("Externalize the {0} attribute.", getNameOfNode());
+			return NLS.bind(PDEUIMessages.ExternalizeResolution_attrib, getNameOfNode());
 		if (fLocationPath.charAt(0) == '(')
-			return NLS.bind("Externalize {0}'s text.", getNameOfNode());
-		return NLS.bind("Externalize the {0} header.", fLocationPath);
+			return NLS.bind(PDEUIMessages.ExternalizeResolution_text, getNameOfNode());
+		return NLS.bind(PDEUIMessages.ExternalizeResolution_header, fLocationPath);
 	}
 
 }

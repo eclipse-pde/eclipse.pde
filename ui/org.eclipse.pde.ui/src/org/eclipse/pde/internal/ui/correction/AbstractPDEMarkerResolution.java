@@ -111,7 +111,7 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 		IResource res = marker.getResource();
 		IProject project = res.getProject();
 		String name = res.getName();
-		if (name.equals("plugin.xml") || name.equals("fragment.xml")) {
+		if (name.equals("plugin.xml") || name.equals("fragment.xml")) { //$NON-NLS-1$ //$NON-NLS-2$
 			fOpenEditor = EditorUtilities.getOpenManifestEditor(project);
 			if (fOpenEditor != null) {
 				IBaseModel model = fOpenEditor.getAggregateModel();
@@ -120,7 +120,7 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 				if (model instanceof AbstractEditingModel)
 					return model;
 			}
-		} else if (name.equals("build.properties")) {
+		} else if (name.equals("build.properties")) { //$NON-NLS-1$
 			fOpenEditor = EditorUtilities.getOpenBuildPropertiesEditor(project);
 			if (fOpenEditor != null) {
 				IBaseModel model = fOpenEditor.getAggregateModel();
@@ -137,7 +137,7 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 						return model;
 				}
 			}
-		} else if (name.equals("MANIFEST.MF")) {
+		} else if (name.equals("MANIFEST.MF")) { //$NON-NLS-1$
 			fOpenEditor = EditorUtilities.getOpenManifestEditor(project);
 			IBaseModel model = fOpenEditor.getAggregateModel();
 			if (model instanceof IBundlePluginModel) {

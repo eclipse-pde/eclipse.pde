@@ -14,11 +14,23 @@ import org.eclipse.osgi.util.NLS;
 public class PDEUIMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ui.pderesources";//$NON-NLS-1$
 
+	public static String AddLibraryDialog_emptyLibraries;
+
+	public static String ExternalizeResolution_attrib;
+
+	public static String ExternalizeResolution_header;
+
+	public static String ExternalizeResolution_text;
+
+	public static String ExternalizeStringsOperation_propertiesComment;
+
 	public static String ProjectStructurePage_sourceName;
 	public static String ProjectNamesPage_duplicateNames;
 	public static String ProjectStructurePage_fsourceName;
 	public static String DefaultCodeGenerationPage_initialName;
 	public static String DefaultCodeGenerationPage_initialFName;
+
+	public static String RemoveNodeXMLResolution_attrLabel;
 
 	public static String RemoveNodeXMLResolution_label;
 

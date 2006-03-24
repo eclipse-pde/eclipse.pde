@@ -181,9 +181,9 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 					}
 					IPath path = new Path(bundleEntry.getFile());
 					String pathString = path.removeTrailingSeparator().toOSString();
-					if (pathString.startsWith("file:"))
+					if (pathString.startsWith("file:")) //$NON-NLS-1$
 						pathString = pathString.substring(5);
-					if (pathString.endsWith("!"))
+					if (pathString.endsWith("!")) //$NON-NLS-1$
 						pathString = pathString.substring(0, pathString.length() - 1);
 					return pathString;
 			}

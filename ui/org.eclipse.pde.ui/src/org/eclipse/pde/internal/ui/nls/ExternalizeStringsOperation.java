@@ -20,6 +20,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
@@ -111,7 +112,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 	
 	public static void checkPropertiesFile(IFile file) {
 		if (!file.exists()) {
-			String propertiesFileComment = NLS.bind("# properties file for {0}", file.getProject().getName());
+			String propertiesFileComment = NLS.bind(PDEUIMessages.ExternalizeStringsOperation_propertiesComment, file.getProject().getName());
 			ByteArrayInputStream pStream = new ByteArrayInputStream(propertiesFileComment.getBytes());
 			try {
 				file.create(pStream, true, new NullProgressMonitor());

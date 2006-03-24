@@ -784,20 +784,16 @@ IModelChangedListener {
 							handleLibInBinBuild(true, name);
 						
 						// add library to jars compile order
-						IBuildEntry jarOrderEntry = build
-						.getEntry(IBuildPropertiesConstants.PROPERTY_JAR_ORDER);
+						IBuildEntry jarOrderEntry = build.getEntry(IBuildPropertiesConstants.PROPERTY_JAR_ORDER);
 						int numLib = fLibraryViewer.getTable().getItemCount();
 						
 						if (jarOrderEntry == null) {
-							jarOrderEntry = getBuildModel()
-							.getFactory()
-							.createEntry(
+							jarOrderEntry = getBuildModel().getFactory().createEntry(
 									IBuildPropertiesConstants.PROPERTY_JAR_ORDER);
 							
 							// add all runtime libraries to compile order
 							for (int i = 0; i < numLib; i++) {
-								String lib = ((IBuildEntry) fLibraryViewer
-										.getElementAt(i)).getName().substring(7);
+								String lib = ((IBuildEntry) fLibraryViewer.getElementAt(i)).getName().substring(7);
 								jarOrderEntry.addToken(lib);
 							}
 							jarOrderEntry.addToken(name);
@@ -806,12 +802,11 @@ IModelChangedListener {
 							
 							// remove and re-add all runtime libraries to compile order
 							String[] tokens = jarOrderEntry.getTokens();
-							for (int i = 0; i<tokens.length; i++){
+							for (int i = 0; i<tokens.length; i++)
 								jarOrderEntry.removeToken(tokens[i]);
-							}
+							
 							for (int i = 0; i < numLib; i++) {
-								String lib = ((IBuildEntry) fLibraryViewer
-										.getElementAt(i)).getName().substring(7);
+								String lib = ((IBuildEntry) fLibraryViewer.getElementAt(i)).getName().substring(7);
 								jarOrderEntry.addToken(lib);
 							}
 							jarOrderEntry.addToken(name);
@@ -820,8 +815,7 @@ IModelChangedListener {
 						}
 						// end of jars compile order addition
 						
-						IBuildEntry library = buildModel.getFactory()
-						.createEntry(keyName);
+						IBuildEntry library = buildModel.getFactory().createEntry(keyName);
 						build.add(library);
 						
 					}
