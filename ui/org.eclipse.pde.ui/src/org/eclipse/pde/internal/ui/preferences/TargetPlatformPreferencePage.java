@@ -83,6 +83,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	private Combo fHomeText;
 	private Combo fProfileCombo;
 	private Button fBrowseButton;
+	private Button fLoadProfileButton;
 	
 	private TargetPluginsTab fPluginsTab;
 	private TargetEnvironmentTab fEnvironmentTab;
@@ -144,7 +145,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		profile.setText(PDEUIMessages.TargetPlatformPreferencePage_CurrentProfileLabel);
 		profile.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				new OpenTargetProfileAction(getShell(), getTargetModel()).run();
+				if (!fProfileCombo.getText().equals("")) //$NON-NLS-1$
+					new OpenTargetProfileAction(getShell(), getTargetModel()).run();
 			}
 		});
 		
@@ -163,15 +165,23 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		});
 		SWTUtil.setButtonDimensionHint(browse);
 		
-		Button loadProfileButton = new Button(profiles, SWT.PUSH);
-		loadProfileButton.setText(PDEUIMessages.TargetPlatformPreferencePage_ApplyButton);
-		loadProfileButton.setLayoutData(new GridData());
-		loadProfileButton.addSelectionListener(new SelectionAdapter() {
+		fLoadProfileButton = new Button(profiles, SWT.PUSH);
+		fLoadProfileButton.setText(PDEUIMessages.TargetPlatformPreferencePage_ApplyButton);
+		fLoadProfileButton.setLayoutData(new GridData());
+		fLoadProfileButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleLoadTargetProfile();
 			}
 		});
-		SWTUtil.setButtonDimensionHint(loadProfileButton);
+		fLoadProfileButton.setEnabled(!fProfileCombo.getText().equals("")); //$NON-NLS-1$
+		
+		fProfileCombo.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				fLoadProfileButton.setEnabled(!fProfileCombo.getText().equals("")); //$NON-NLS-1$
+			}
+		});
+		
+		SWTUtil.setButtonDimensionHint(fLoadProfileButton);
 	}
 	
 	private void createCurrentTargetPlatformGroup(Composite container) {
@@ -210,6 +220,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 					fFirstClick = false;
 				else {
 					fPluginsTab.handleReload(new ArrayList());
+					resetTargetProfile();
 					fNeedsReload = false;
 				}
 			}
@@ -233,6 +244,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			public void widgetSelected(SelectionEvent e) {
 				fHomeText.setText(ExternalModelManager.computeDefaultPlatformPath());
 				fPluginsTab.handleReload(new ArrayList());
+				resetTargetProfile();
 			}
 		});	
 		
@@ -324,12 +336,14 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			fHomeText.setText(newPath);
 			fPluginsTab.handleReload(new ArrayList());
 			fNeedsReload = false;
+			resetTargetProfile();
 		}
 	}
 	
 	private void loadTargetCombo() {
 		String prefId = null;
 		String pref = fPreferences.getString(ICoreConstants.TARGET_PROFILE);
+		fProfileCombo.add(""); //$NON-NLS-1$
 		
 		if (pref.startsWith("${workspace_loc:")) { //$NON-NLS-1$
 			try {
@@ -343,7 +357,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 					String value = model.getTarget().getName();
 					value = value + " [" + file.getFullPath().toString() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 					if (fProfileCombo.indexOf(value) == -1)
-						fProfileCombo.add(value, 0);
+						fProfileCombo.add(value, 1); //index 0 for "" (null target)
 					fProfileCombo.setText(value);
 					fContainsWorkspaceProfile = true;
 				} 
@@ -363,8 +377,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			if (id.equals(prefId))
 				fProfileCombo.setText(name);
 		}
-		if (fProfileCombo.getText().equals("")) //$NON-NLS-1$
-			fProfileCombo.select(0);
 	}
 	
 	private void handleTargetBrowse() {
@@ -391,7 +403,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 				String value = model.getTarget().getName();
 				value = value + " [" + file.getFullPath().toString() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 				if (fProfileCombo.indexOf(value) == -1) 
-					fProfileCombo.add(value, 0);
+					fProfileCombo.add(value, 1); // index 0 for "" null profile so add at 1
 				fProfileCombo.setText(value);
 				fContainsWorkspaceProfile = true;
 			} catch (CoreException e) {
@@ -471,6 +483,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	}
 	
 	private void handleLoadTargetProfile() {
+		if (fProfileCombo.getText().equals("")) return; //$NON-NLS-1$	
 		ITargetModel model = getTargetModel();
 		if (model == null) {
 			MessageDialog.openError(getShell(), PDEUIMessages.TargetPlatformPreferencePage_notFoundTitle, PDEUIMessages.TargetPlatformPreferencePage_notFoundDescription);
@@ -547,6 +560,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		fArgumentsTab.performDefaults();
 		fImplicitDependenciesTab.performDefauls();
 		fSourceTab.performDefaults();
+		resetTargetProfile();
 		super.performDefaults();
 	}
 
@@ -569,6 +583,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 				return false;
 			}
 			fPluginsTab.handleReload(new ArrayList());
+			resetTargetProfile();
 		} 
 		fSourceTab.performOk();
 		fPluginsTab.performOk();
@@ -579,7 +594,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	}
 	
 	private void saveTarget() {
-		if (fContainsWorkspaceProfile && (fProfileCombo.getSelectionIndex() < (fProfileCombo.getItemCount() - fElements.length))) {
+		if (fProfileCombo.getText().equals("")) //$NON-NLS-1$
+			fPreferences.setValue(ICoreConstants.TARGET_PROFILE, ""); //$NON-NLS-1$ 
+		else if (fContainsWorkspaceProfile && (fProfileCombo.getSelectionIndex() < (fProfileCombo.getItemCount() - fElements.length))) {
 			String value = fProfileCombo.getText().trim();
 			int index = value.lastIndexOf('[');
 			value = value.substring(index + 1, value.length() - 1);
@@ -602,6 +619,10 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			fHomeText.add(location, 0);
 	}
 	
+	public void resetTargetProfile() {
+		fProfileCombo.select(0);
+	}
+
 	public TargetSourceTab getSourceBlock() {
 		return fSourceTab;
 	}

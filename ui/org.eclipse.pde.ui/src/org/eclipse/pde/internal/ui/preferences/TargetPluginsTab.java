@@ -870,6 +870,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		switch (index) {
 		case 0:
 			handleReload();
+			fPage.resetTargetProfile();
 			break;
 		case 3: 
 			handleSelectAll(true);
