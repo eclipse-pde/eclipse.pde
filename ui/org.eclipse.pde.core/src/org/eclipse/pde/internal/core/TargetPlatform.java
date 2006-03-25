@@ -107,14 +107,12 @@ public class TargetPlatform implements IEnvironmentVariables {
 			StringBuffer buffer = new StringBuffer();
 			if (getTargetVersion() > 3.1) {
 				buffer.append("org.eclipse.equinox.common@2:start,"); //$NON-NLS-1$
-				buffer.append("org.eclipse.core.jobs@2:start,"); //$NON-NLS-1$
-				buffer.append("org.eclipse.core.runtime.compatibility.registry,"); //$NON-NLS-1$
-				buffer.append("org.eclipse.equinox.registry@2:start,"); //$NON-NLS-1$
-				buffer.append("org.eclipse.equinox.preferences,"); //$NON-NLS-1$
-				buffer.append("org.eclipse.core.contenttype,"); //$NON-NLS-1$
+				buffer.append("org.eclipse.update.configurator@3:start,"); //$NON-NLS-1$
+				buffer.append("org.eclipse.core.runtime@start"); //$NON-NLS-1$
+			} else {
+				buffer.append("org.eclipse.core.runtime@2:start,"); //$NON-NLS-1$
+				buffer.append("org.eclipse.update.configurator@3:start"); //$NON-NLS-1$
 			}
-			buffer.append("org.eclipse.core.runtime@2:start,"); //$NON-NLS-1$
-			buffer.append("org.eclipse.update.configurator@3:start"); //$NON-NLS-1$
 			osgiBundles = buffer.toString();
 		} else {
 			osgiBundles = osgiBundles.replaceAll("\\s", ""); //$NON-NLS-1$ //$NON-NLS-2$
