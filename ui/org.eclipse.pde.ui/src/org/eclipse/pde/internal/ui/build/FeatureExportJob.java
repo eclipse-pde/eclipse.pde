@@ -19,6 +19,8 @@ import java.net.URL;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -30,7 +32,9 @@ import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.ant.core.IAntClasspathEntry;
+import org.eclipse.ant.core.Property;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -108,7 +112,7 @@ public class FeatureExportJob extends Job {
 		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 		 */
 		public boolean contains(ISchedulingRule rule) {
-			return rule instanceof SchedulingRule;
+			return rule instanceof SchedulingRule || rule instanceof IResource;
 		}
 
 		/* (non-Javadoc)
@@ -301,6 +305,14 @@ public class FeatureExportJob extends Job {
 	protected HashMap createAntBuildProperties(String os, String ws, String arch) {
 		if (fAntBuildProperties == null) {
 			fAntBuildProperties = new HashMap(15);
+			
+			List defaultProperties= AntCorePlugin.getPlugin().getPreferences().getDefaultProperties();
+			ListIterator li = defaultProperties.listIterator();
+			while (li.hasNext()) {
+				Property prop = (Property)li.next();
+				fAntBuildProperties.put(prop.getName(), prop.getValue());
+			}
+			
 			if (fInfo.signingInfo != null) {
 				fAntBuildProperties.put("sign.alias", fInfo.signingInfo[0]); //$NON-NLS-1$
 				fAntBuildProperties.put("sign.keystore", fInfo.signingInfo[1]); //$NON-NLS-1$

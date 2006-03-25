@@ -17,6 +17,9 @@
             icon="$nl$/icons/eview16/plugins.gif"
             class="org.eclipse.pde.internal.ui.PDEPerspective"
             id="org.eclipse.pde.ui.PDEPerspective">
+         <description>
+            %perspective.description
+         </description>
       </perspective>
    </extension>
    <extension
