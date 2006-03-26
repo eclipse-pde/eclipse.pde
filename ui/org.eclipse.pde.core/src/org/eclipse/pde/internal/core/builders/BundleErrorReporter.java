@@ -387,19 +387,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 								CompilerFlags.P_UNKNOWN_CLASS);
 						return;
 					}
-	
-					// activator must be a local class
-					IPackageFragmentRoot pfroot = (IPackageFragmentRoot) type
-							.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
-					if (pfroot != null && pfroot.isExternal()) {
-						message = NLS
-								.bind(
-										PDECoreMessages.BundleErrorReporter_externalClass,
-										activator); 
-						report(message, getLine(header, activator),
-								CompilerFlags.P_UNKNOWN_CLASS);
-						return;
-					}
 				} else {
 					if (!fCompatibility) {
 						message = NLS
@@ -457,18 +444,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				/* Plugin class type does not exist */
 				if (type == null || !type.exists()) {
 					message = NLS.bind(PDECoreMessages.BundleErrorReporter_NoExist,
-							pluginClass); 
-					report(message, getLine(header, pluginClass),
-							CompilerFlags.P_UNKNOWN_CLASS);
-					return;
-				}
-
-				// Plugin class must be a local class
-				IPackageFragmentRoot pfroot = (IPackageFragmentRoot) type
-						.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
-				if (pfroot != null && pfroot.isExternal()) {
-					message = NLS.bind(
-							PDECoreMessages.BundleErrorReporter_externalClass,
 							pluginClass); 
 					report(message, getLine(header, pluginClass),
 							CompilerFlags.P_UNKNOWN_CLASS);

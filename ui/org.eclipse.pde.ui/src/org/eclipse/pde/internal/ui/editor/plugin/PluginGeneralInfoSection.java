@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -30,6 +32,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -184,10 +187,10 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		try {
 			IPackageFragmentRoot[] roots = project.getPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {
-				if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE
-						|| (roots[i].isArchive() && !roots[i].isExternal())) {
-					result.add(roots[i]);
-				}
+				IClasspathEntry entry = roots[i].getRawClasspathEntry();
+				if (entry.getEntryKind() != IClasspathEntry.CPE_CONTAINER 
+					|| entry.getPath().equals(new Path(PDECore.CLASSPATH_CONTAINER_ID)))
+				result.add(roots[i]);
 			}
 		} catch (JavaModelException e) {
 		}
