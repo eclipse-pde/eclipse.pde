@@ -23,8 +23,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -431,14 +429,6 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	
 	
 	protected void doAddDependencies() {
-		if (isDirty()) {
-			MessageDialog dialog = new MessageDialog(getSection().getShell(),
-					PDEUIMessages.DependencyManagementSection_modifiedTitle, null, 
-					PDEUIMessages.DependencyManagementSection_modifiedDescription,
-					MessageDialog.WARNING, new String[] { IDialogConstants.PROCEED_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
-	        if (dialog.open() == IDialogConstants.CANCEL_ID)
-	        	return;
-		}
 		IBaseModel model = getPage().getModel();
 		if (model instanceof IBundlePluginModelBase)  {
 			IProject proj = getPage().getPDEEditor().getCommonProject();
