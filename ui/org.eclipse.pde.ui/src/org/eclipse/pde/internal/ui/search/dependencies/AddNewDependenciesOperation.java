@@ -88,7 +88,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 	}
 	
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
-		monitor.beginTask(PDEUIMessages.AddNewDependenciesOperation_mainTask, 80);
+		monitor.beginTask(PDEUIMessages.AddNewDependenciesOperation_mainTask, 100);
 		final IBundle bundle = fBase.getBundleModel().getBundle();
 		final Set ignorePkgs = new HashSet();
 		final String[] secDeps = findSecondaryBundles(bundle, ignorePkgs);
@@ -96,17 +96,17 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			monitor.done();
 			return;
 		}
-		monitor.worked(15);
+		monitor.worked(4); 
 		findImportPackages(bundle, ignorePkgs);
-		monitor.worked(5);
+		monitor.worked(2);
 		addProjectPackages(bundle, ignorePkgs);
-		monitor.worked(10);
+		monitor.worked(4);
 		
 		final Map additionalDeps = new HashMap();
 		monitor.subTask(PDEUIMessages.AddNewDependenciesOperation_searchProject);
 		
 		boolean useRequireBundle = new ProjectScope(fProject).getNode(PDECore.PLUGIN_ID).getBoolean(ICoreConstants.RESOLVE_WITH_REQUIRE_BUNDLE, true);
-		findSecondaryDependencies(secDeps, ignorePkgs, additionalDeps, bundle, useRequireBundle, new SubProgressMonitor(monitor, 40));
+		findSecondaryDependencies(secDeps, ignorePkgs, additionalDeps, bundle, useRequireBundle, new SubProgressMonitor(monitor, 80));
 		handleNewDependencies(additionalDeps, 
 				useRequireBundle, new SubProgressMonitor(monitor, 10));
 		monitor.done();
