@@ -91,7 +91,6 @@
 	<!-- ===================================================================== -->
 	<!-- Steps to do before the target gather.bin.parts                         -->
 	<!-- Available parameters :                                                -->
-	<!--   base.dir - root of the project                                      -->
 	<!--   build.result.folder - folder containing the build results           -->
 	<!--   target.folder - destination folder                                  -->
 	<!-- ===================================================================== -->
@@ -101,7 +100,6 @@
 	<!-- ===================================================================== -->
 	<!-- Steps to do after the target gather.bin.parts                         -->
 	<!-- Available parameters :                                                -->
-	<!--   base.dir - root of the project                                      -->
 	<!--   build.result.folder - folder containing the build results           -->
 	<!--   target.folder - destination folder                                  -->
 	<!-- ===================================================================== -->

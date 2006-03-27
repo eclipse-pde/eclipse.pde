@@ -454,7 +454,6 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			params = new HashMap(3);
 			params.put(PROPERTY_TARGET_FOLDER, root);
 			params.put(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
-			params.put(PROPERTY_BASEDIR, Utils.getPropertyFormat(PROPERTY_BASEDIR));
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_BIN_PARTS, ".", FALSE, params, null); //$NON-NLS-1$
 		}
 		
