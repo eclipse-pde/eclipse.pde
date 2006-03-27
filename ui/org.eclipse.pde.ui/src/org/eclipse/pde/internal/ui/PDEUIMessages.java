@@ -1280,8 +1280,6 @@ public class PDEUIMessages extends NLS {
 	public static String Actions_refresh_label;
 	public static String Actions_delete_label;
 	public static String Actions_synchronizeVersions_label;
-	public static String Actions_apply_label;
-	public static String Actions_reset_label;
 	public static String Actions_edit_label;
 
 	public static String Actions_delete_flabel;
