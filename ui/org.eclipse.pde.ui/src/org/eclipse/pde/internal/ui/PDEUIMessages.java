@@ -26,6 +26,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExternalizeStringsOperation_propertiesComment;
 
+	public static String HelpNewWizard_wiz;
+
 	public static String ProjectStructurePage_sourceName;
 	public static String ProjectNamesPage_duplicateNames;
 	public static String ProjectStructurePage_fsourceName;

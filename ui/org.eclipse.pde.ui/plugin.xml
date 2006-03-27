@@ -408,6 +408,18 @@
             %pluginContent.builder.description
          </description>
       </wizard>
+      <wizard
+            class="org.eclipse.pde.internal.ui.wizards.templates.HelpNewWizard"
+            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            id="org.eclipse.pde.ui.pluginContent.helpContent"
+            java="false"
+            name="%pluginContent.help.name"
+            requiresActivator="false"
+            >
+         <description>
+           %pluginContent.help.description
+         </description>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.pde.ui.newExtension">

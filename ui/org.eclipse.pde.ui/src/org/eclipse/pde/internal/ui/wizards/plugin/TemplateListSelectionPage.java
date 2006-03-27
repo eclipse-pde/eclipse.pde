@@ -61,8 +61,9 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 			
 			//filter out java wizards for simple projects
 			if (simple && javaFlag) return false;
+			else if (simple) return true;
 			//filter out ui wizards for non-ui plug-ins
-			if (uiFlag && (simple || (generate && !ui))) return false;
+			if (uiFlag && generate && !ui) return false;
 			//filter out wizards that require an activator when the user specifies not to generate a class
 			if (activatorFlag && !generate) return false;
 			//filter out non-RCP wizard if RCP option is selected
