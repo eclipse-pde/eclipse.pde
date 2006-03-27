@@ -60,8 +60,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage
 			boolean activatorFlag = getFlag(config, "requiresActivator", false); //$NON-NLS-1$
 			
 			//filter out java wizards for simple projects
-			if (simple && javaFlag) return false;
-			else if (simple) return true;
+			if (simple) return !javaFlag;
 			//filter out ui wizards for non-ui plug-ins
 			if (uiFlag && generate && !ui) return false;
 			//filter out wizards that require an activator when the user specifies not to generate a class
