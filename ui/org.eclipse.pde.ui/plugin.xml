@@ -415,7 +415,7 @@
             java="false"
             name="%pluginContent.help.name"
             requiresActivator="false"
-            >
+            ui-content="false">
          <description>
            %pluginContent.help.description
          </description>
