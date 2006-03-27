@@ -16,10 +16,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String AddLibraryDialog_emptyLibraries;
 
-	public static String BodyTextSection_saveBodyText;
-
-	public static String BodyTextSection_saveBodyTextMessage;
-
 	public static String ElementSection_missingRefElement;
 
 	public static String ExternalizeResolution_attrib;
@@ -1287,8 +1283,6 @@ public class PDEUIMessages extends NLS {
 	public static String Actions_edit_label;
 
 	public static String Actions_delete_flabel;
-	public static String Actions_apply_flabel;
-	public static String Actions_reset_flabel;
 
 	public static String Menus_new_label;
 	public static String Menus_edit_label;
