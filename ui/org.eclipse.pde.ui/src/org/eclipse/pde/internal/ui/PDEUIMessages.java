@@ -2796,5 +2796,25 @@ public class PDEUIMessages extends NLS {
 	public static String ExternalizeStringsResolution_desc;
 
 	public static String ExternalizeStringsResolution_label;
+	
+	public static String DependencyManagementSection_modifiedTitle;
+
+	public static String DependencyManagementSection_modifiedDescription;
+
+	public static String DependencyManagementSection_jobName;
+
+	public static String OrganizeManifestsOperation_additionalDeps;
+
+	public static String OrganizeManifestsWizardPage_addDependencies;
+
+	public static String AddNewDependenciesAction_title;
+
+	public static String AddNewDependenciesAction_notFound;
+
+	public static String AddNewDependenciesOperation_mainTask;
+
+	public static String AddNewDependenciesOperation_searchProject;
+
+	public static String AddNewDependenciesOperation_searchForDependency;
 
 }

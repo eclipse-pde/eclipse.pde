@@ -23,11 +23,14 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.build.IBuild;
@@ -39,6 +42,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -50,37 +54,40 @@ import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.search.dependencies.AddNewDependenciesAction;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.osgi.service.prefs.BackingStoreException;
 
-public class SecondaryBundlesSection extends TableSection implements IModelChangedListener {
+public class DependencyManagementSection extends TableSection implements IModelChangedListener {
 	
 	private TableViewer fAdditionalTable;
 	private Vector fAdditionalBundles;
 	private Action fNewAction;
 	private Action fRemoveAction;
+	private Action fOpenAction;
 	private Button fRequireBundleButton;
 	private Button fImportPackageButton;
-	private Button fManageDepsButton;
-	private Label fResolveDepsLabel;
 	private IProject fProject;
 	
 	private static String ADD = PDEUIMessages.RequiresSection_add;
-	private static String REMOVE = PDEUIMessages.RequiresSection_delete; 
+	private static String REMOVE = PDEUIMessages.RequiresSection_delete;
+	private static String OPEN = PDEUIMessages.RequiresSection_open;
 	
 	class ContentProvider extends DefaultTableProvider {
 
@@ -99,7 +106,7 @@ public class SecondaryBundlesSection extends TableSection implements IModelChang
 			if (model == null)
 				return null;
 			IBuild buildObject = model.getBuild();
-			entry = buildObject.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
+			entry = buildObject.getEntry(IBuildEntry.ADDITIONAL_BUNDLES);
 			return entry;
 		}
 		
@@ -147,19 +154,22 @@ public class SecondaryBundlesSection extends TableSection implements IModelChang
 		}
 	}
 
-	public SecondaryBundlesSection(PDEFormPage formPage, Composite parent) {
-		super(formPage, parent, Section.DESCRIPTION | ExpandableComposite.TWISTIE | ExpandableComposite.COMPACT, new String[] { ADD, REMOVE});
+	public DependencyManagementSection(PDEFormPage formPage, Composite parent) {
+		super(formPage, parent, ExpandableComposite.TWISTIE|ExpandableComposite.COMPACT, new String[] { ADD, REMOVE});
 		getSection().setText(PDEUIMessages.SecondaryBundlesSection_title); 
-		getSection().setDescription(PDEUIMessages.SecondaryBundlesSection_desc);
 		IBuildModel model = getBuildModel();
 		if (model != null) {
-			IBuildEntry entry = model.getBuild().getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
+			IBuildEntry entry = model.getBuild().getEntry(IBuildEntry.ADDITIONAL_BUNDLES);
 			if (entry != null && entry.getTokens().length > 0)
 				getSection().setExpanded(true);
 		}
 	}
 
 	protected void createClient(Section section, FormToolkit toolkit) {
+		FormText text = toolkit.createFormText(section, true);
+		text.setText(PDEUIMessages.SecondaryBundlesSection_desc, false, false);
+		section.setDescriptionControl(text);
+		
 		Composite container = createClientContainer(section, 2, toolkit);
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		TablePart tablePart = getTablePart();
@@ -167,28 +177,20 @@ public class SecondaryBundlesSection extends TableSection implements IModelChang
 
 		fAdditionalTable.setContentProvider(new ContentProvider());
 		fAdditionalTable.setLabelProvider(new SecondaryTableLabelProvider());
+		GridData gd = (GridData)fAdditionalTable.getTable().getLayoutData();
+		gd.heightHint = 150;
+		fAdditionalTable.getTable().setLayoutData(gd);
 		
-		fManageDepsButton = toolkit.createButton(container, PDEUIMessages.SecondaryBundlesSection_check, SWT.CHECK);
-		fManageDepsButton.addSelectionListener(new SelectionListener() {
-
-			public void widgetSelected(SelectionEvent e) {
-				enableButtons(fManageDepsButton.getSelection());
-				savePreferences();
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-				enableButtons(fManageDepsButton.getSelection());
-				savePreferences();
-			}
-		});
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		fManageDepsButton.setLayoutData(gd);
-		
-		fResolveDepsLabel = toolkit.createLabel(container, PDEUIMessages.SecondaryBundlesSection_resolve, SWT.LEFT);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
-		fResolveDepsLabel.setLayoutData(gd);
+		FormText resolveText = toolkit.createFormText(container, true);
+		resolveText.setText(PDEUIMessages.SecondaryBundlesSection_resolve, true, true);
+		resolveText.setLayoutData(gd);
+		resolveText.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				doAddDependencies();
+			}
+		});
 		
 		Composite comp = toolkit.createComposite(container);
 		comp.setLayout(new GridLayout(2, false));
@@ -200,39 +202,22 @@ public class SecondaryBundlesSection extends TableSection implements IModelChang
 		gd = new GridData();
 		gd.horizontalIndent = 20;
 		fRequireBundleButton.setLayoutData(gd);
-		fRequireBundleButton.addSelectionListener(new SelectionListener() {
+		fRequireBundleButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				savePreferences();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				savePreferences();
-			}			
+			}	
 		});
 		
 		fImportPackageButton = toolkit.createButton(comp, "Import-Package", SWT.RADIO); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalIndent = 20;
 		fImportPackageButton.setLayoutData(gd);
-		fImportPackageButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				savePreferences();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				savePreferences();
-			}			
-		});
 		
 		toolkit.paintBordersFor(container);
 		makeActions();
 		section.setClient(container);
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		initialize();
-	}
-	
-	private void enableButtons(boolean value) {
-		fRequireBundleButton.setEnabled(value);
-		fImportPackageButton.setEnabled(value);
-		fResolveDepsLabel.setEnabled(value);
 	}
 	
 	private void savePreferences() {
@@ -245,10 +230,6 @@ public class SecondaryBundlesSection extends TableSection implements IModelChang
 		}
 		IEclipsePreferences pref = new ProjectScope(fProject).getNode(PDECore.PLUGIN_ID);
 		
-		if (fManageDepsButton.getSelection())
-			pref.putBoolean(ICoreConstants.SECONDARY_DEPENDENCIES, true);
-		else 
-			pref.remove(ICoreConstants.SECONDARY_DEPENDENCIES);
 		if (fImportPackageButton.getSelection())
 			pref.putBoolean(ICoreConstants.RESOLVE_WITH_REQUIRE_BUNDLE, false);
 		else
@@ -277,20 +258,19 @@ public class SecondaryBundlesSection extends TableSection implements IModelChang
 			fProject = resource.getProject();
 			IEclipsePreferences pref = new ProjectScope(fProject).getNode(PDECore.PLUGIN_ID);
 			if (pref != null) {
-				fManageDepsButton.setSelection(pref.getBoolean(ICoreConstants.SECONDARY_DEPENDENCIES, false));
 				boolean useRequireBundle = pref.getBoolean(ICoreConstants.RESOLVE_WITH_REQUIRE_BUNDLE, true);
 				fRequireBundleButton.setSelection(useRequireBundle);
 				fImportPackageButton.setSelection(!useRequireBundle);
-				enableButtons(fManageDepsButton.getSelection());
 			}	
 		} catch (Exception e){
-			PDEPlugin.logException( e );
+			PDEPlugin.logException(e);
 		}
 	}
 	
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = fAdditionalTable.getSelection();
 		manager.add(fNewAction);
+		manager.add(fOpenAction);
 		manager.add(new Separator());
 		getPage().contextMenuAboutToShow(manager);
 		
@@ -315,6 +295,22 @@ public class SecondaryBundlesSection extends TableSection implements IModelChang
 		}
 	}
 	
+	protected void handleDoubleClick(IStructuredSelection sel) {
+		handleOpen(sel);
+	}
+	
+	private void handleOpen(ISelection sel) {
+		if (sel instanceof IStructuredSelection) {
+			IStructuredSelection ssel = (IStructuredSelection) sel;
+			if (ssel.size() == 1) {
+				Object obj = ssel.getFirstElement();
+				IPluginModelBase base = PDECore.getDefault().getModelManager().findModel((String)obj);
+				if (base != null) 
+					ManifestEditor.open(base.getPluginBase(), false);
+			}
+		}
+	}
+	
 	private IBuildModel getBuildModel() {
 		InputContext context = getPage().getPDEEditor().getContextManager()
 			.findContext(BuildInputContext.CONTEXT_ID);
@@ -327,6 +323,12 @@ public class SecondaryBundlesSection extends TableSection implements IModelChang
 		fNewAction = new Action( ADD ){
 			public void run() { 
 				handleNew();
+			}
+		};
+		
+		fOpenAction = new Action( OPEN ) {
+			public void run() {
+				handleOpen(fAdditionalTable.getSelection());
 			}
 		};
 		
@@ -346,10 +348,10 @@ public class SecondaryBundlesSection extends TableSection implements IModelChang
 		dialog.create();
 		if (dialog.open() == Window.OK) {
 		    IBuild build = getBuildModel().getBuild();
-			IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
+			IBuildEntry entry = build.getEntry(IBuildEntry.ADDITIONAL_BUNDLES);
 			try {
 			    if (entry == null) {
-			        entry = getBuildModel().getFactory().createEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
+			        entry = getBuildModel().getFactory().createEntry(IBuildEntry.ADDITIONAL_BUNDLES);
 			        build.add(entry);
 			    }
 			    Object[] models = dialog.getResult();
@@ -358,6 +360,7 @@ public class SecondaryBundlesSection extends TableSection implements IModelChang
 					IPluginModel pmodel = (IPluginModel) models[i];
 					entry.addToken(pmodel.getPlugin().getId());
 				}
+				markDirty();
 			}catch (CoreException e) {
 				PDEPlugin.logException( e );
 			}
@@ -366,7 +369,7 @@ public class SecondaryBundlesSection extends TableSection implements IModelChang
 	
 	private IPluginModelBase[] getAvailablePlugins() {
 		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPluginsOnly();
-		HashSet currentPlugins = new HashSet( 
+		HashSet currentPlugins = new HashSet(
 				 (fAdditionalBundles == null) ? new Vector(1) : fAdditionalBundles);
 		IProject currentProj = getPage().getPDEEditor().getCommonProject();
 		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(currentProj);
@@ -384,7 +387,7 @@ public class SecondaryBundlesSection extends TableSection implements IModelChang
 	private void handleRemove(){
 		IStructuredSelection ssel = (IStructuredSelection) fAdditionalTable.getSelection();
 		
-		IBuildEntry entry = getBuildModel().getBuild().getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
+		IBuildEntry entry = getBuildModel().getBuild().getEntry(IBuildEntry.ADDITIONAL_BUNDLES);
 		Iterator it = ssel.iterator();
 		try {
 			while (it.hasNext()) {
@@ -395,6 +398,7 @@ public class SecondaryBundlesSection extends TableSection implements IModelChang
 			PDEPlugin.logException( e );
 		}
 		refresh();
+		markDirty();
 	}
 
 	protected void selectionChanged(IStructuredSelection sel) {
@@ -412,17 +416,35 @@ public class SecondaryBundlesSection extends TableSection implements IModelChang
 		}
 		Object changedObject = event.getChangedObjects()[0];
 		if ((changedObject instanceof IBuildEntry && 
-				((IBuildEntry) changedObject).getName().equals(IBuildEntry.SECONDARY_DEPENDENCIES))) {
+				((IBuildEntry) changedObject).getName().equals(IBuildEntry.ADDITIONAL_BUNDLES))) {
 			refresh();
 		}
 	}
 	
 	public boolean doGlobalAction(String actionId) {
-		// hit delete key
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleRemove();
 			return true;
 		}
 		return false;
+	}
+	
+	
+	protected void doAddDependencies() {
+		if (isDirty()) {
+			MessageDialog dialog = new MessageDialog(getSection().getShell(),
+					PDEUIMessages.DependencyManagementSection_modifiedTitle, null, 
+					PDEUIMessages.DependencyManagementSection_modifiedDescription,
+					MessageDialog.WARNING, new String[] { IDialogConstants.PROCEED_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
+	        if (dialog.open() == IDialogConstants.CANCEL_ID)
+	        	return;
+		}
+		IBaseModel model = getPage().getModel();
+		if (model instanceof IBundlePluginModelBase)  {
+			IProject proj = getPage().getPDEEditor().getCommonProject();
+			IBundlePluginModelBase bmodel = ((IBundlePluginModelBase)model);
+			AddNewDependenciesAction action = new AddNewDependenciesAction(proj, bmodel);
+			action.run();
+		}
 	}
 }

@@ -15,10 +15,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.Stack;
 import java.util.TreeMap;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -344,6 +347,7 @@ public class PluginModelManager implements IAdaptable {
 				} catch (CoreException e) {
 				}
 			}
+			addAdditionalDependencyProjects(map);
 		}
 			
 		if (map.size() > 0) {
@@ -356,6 +360,42 @@ public class PluginModelManager implements IAdaptable {
 					containers,
 					null);
 			} catch (JavaModelException e) {
+			}
+		}
+	}
+	
+	private void addAdditionalDependencyProjects(Map map) {
+		if (map.size() == 0)
+			return;
+		Stack changedProjects = new Stack();
+		Iterator it = map.keySet().iterator();
+		while (it.hasNext()) 
+			changedProjects.push(((IJavaProject)it.next()).getProject());
+	
+		IProject[] projs = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		ArrayList projects = new ArrayList();
+		for (int i = 0; i < projs.length; i++) 
+			try {
+				if (!changedProjects.contains(projs[i]) && projs[i].isOpen() && projs[i].hasNature(JavaCore.NATURE_ID)) 
+					projects.add(JavaCore.create(projs[i]));	
+			} catch (CoreException e) {
+			}
+		while (!changedProjects.isEmpty()) {
+			IProject refreshProject = (IProject)changedProjects.pop();
+			ListIterator li = projects.listIterator();
+			while (li.hasNext()) {
+				IJavaProject jp = (IJavaProject)li.next();
+				if (jp.isOnClasspath(refreshProject)) {
+					li.remove();
+					IProject baseProject = jp.getProject();
+					changedProjects.push(baseProject);
+					ModelEntry entry = findEntry(baseProject);
+					try {
+						if (entry != null && entry.shouldUpdateClasspathContainer(true)) 
+							map.put(jp, entry.getClasspathContainer(true));
+					} catch (CoreException e) {
+					}
+				}
 			}
 		}
 	}

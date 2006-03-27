@@ -30,6 +30,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.EditorUtilities;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.search.dependencies.AddNewDependenciesOperation;
 import org.eclipse.pde.internal.ui.search.dependencies.GatherUnusedDependenciesOperation;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
@@ -48,6 +49,7 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 	protected boolean fRemoveLazy = true; // remove lazy/auto start if no activator
 	protected boolean fPrefixIconNL; // prefix icon paths with $nl$
 	protected boolean fUnusedKeys; // remove unused <bundle-localization>.properties keys
+	protected boolean fAddDependencies;
 	
 	private ArrayList fProjectList;
 	private IProject fCurrentProject;
@@ -150,11 +152,11 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 	}
 	
 	private boolean connectExtensions(IFile underlyingXML) {
-		return underlyingXML.exists() && (fPrefixIconNL || fUnusedKeys || fUnusedDependencies);
+		return underlyingXML.exists() && (fPrefixIconNL || fUnusedKeys || fUnusedDependencies || fAddDependencies);
 	}
 	
 	private boolean connectBundle() {
-		return fAddMissing || fModifyDep || fUnusedDependencies
+		return fAddMissing || fModifyDep || fUnusedDependencies || fAddDependencies
 				|| fRemoveLazy || fRemoveUnresolved || fUnusedKeys;
 	}
 	
@@ -232,6 +234,14 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 			monitor.worked(1);
 		}
 		
+		if (fAddDependencies) {
+			monitor.subTask(NLS.bind (PDEUIMessages.OrganizeManifestsOperation_additionalDeps, projectName));
+			if (!monitor.isCanceled()) {
+				AddNewDependenciesOperation op = new AddNewDependenciesOperation(fCurrentProject, fCurrentBundleModel);
+				op.run(new SubProgressMonitor(monitor, 4));
+			}
+		}
+		
 		if (fUnusedDependencies) {
 			monitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_unusedDeps, projectName));
 			if (!monitor.isCanceled()) {
@@ -272,6 +282,7 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 		if (fRemoveUnresolved)	ticks += 1;
 		if (fModifyDep)			ticks += 2;
 		if (fUnusedDependencies)ticks += 4;
+		if (fAddDependencies)	ticks += 4;
 		if (fRemoveLazy)		ticks += 1;
 		if (fPrefixIconNL)		ticks += 1;
 		if (fUnusedKeys)		ticks += 1;
@@ -290,5 +301,6 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 		fRemoveLazy = !settings.getBoolean(PROP_REMOVE_LAZY);
 		fPrefixIconNL = settings.getBoolean(PROP_NLS_PATH);
 		fUnusedKeys = settings.getBoolean(PROP_UNUSED_KEYS);
+		fAddDependencies = settings.getBoolean(PROP_ADD_DEPENDENCIES);
 	}
 }

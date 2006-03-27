@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Stack;
 import java.util.TreeMap;
 
 import org.eclipse.core.resources.IFile;
@@ -144,7 +145,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			
 			IBuild build = ClasspathUtilCore.getBuild(fModel);
 			if (build != null)
-				addSecondaryDependencies(added, map, entries, build);
+				addSecondaryDependencies(desc, added, entries, build);
 			
 			// add Import-Package
 			Iterator iter = map.keySet().iterator();
@@ -388,16 +389,23 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		}	
 	}
 	
-	private void addSecondaryDependencies(HashSet added, Map map, ArrayList entries, IBuild build) {
+	private void addSecondaryDependencies(BundleDescription desc, HashSet added, ArrayList entries, IBuild build) {
 		try {
-		  IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
+		  IBuildEntry entry = build.getEntry(IBuildEntry.ADDITIONAL_BUNDLES);
 		  if (entry != null) {
 			  String[] tokens = entry.getTokens();
 			  for (int i = 0; i < tokens.length; i++) {
+				  String pluginId = tokens[i];
+				  if (added.contains(pluginId))
+					  continue;
 				  // Get PluginModelBase first to resolve system.bundle entry if it exists
-				  IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(tokens[i]);
+				  IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginId);
 				  if (model != null) {
-					  addDependency(model.getBundleDescription(), added, map, entries, false);
+					  TreeMap rules = new TreeMap();
+					  findExportedPackages(model.getBundleDescription(), desc, rules);
+					  if (model != null) {
+						  addDependency(model.getBundleDescription(), added, rules, entries, true);
+					  }
 				  }
 			  }
 		  }
@@ -406,6 +414,47 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		}
 	}
 
+	protected final void findExportedPackages(BundleDescription desc, BundleDescription projectDesc, Map map) {
+		if (desc != null) {
+			Stack stack = new Stack();
+			stack.add(desc);
+			while (!stack.isEmpty()) {
+				BundleDescription bdesc = (BundleDescription) stack.pop();
+				ExportPackageDescription[] expkgs = bdesc.getExportPackages();
+				ArrayList rules = new ArrayList();
+				for (int i = 0; i < expkgs.length; i++) {
+					Rule rule = new Rule();
+					rule.discouraged = restrictPackage(projectDesc, expkgs[i]);
+					rule.path = new Path(expkgs[i].getName().replaceAll("\\.", "/") + "/*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					rules.add(rule);
+				}
+				map.put(bdesc.getSymbolicName(), rules);
+			
+				// Look at re-exported Require-Bundles for any other exported packages
+				BundleSpecification[] requiredBundles = bdesc.getRequiredBundles();
+				for (int i = 0; i < requiredBundles.length; i++) 
+					if (requiredBundles[i].isExported()) {
+						BaseDescription bd = requiredBundles[i].getSupplier();
+						if (bd != null && bd instanceof BundleDescription)
+							stack.add(bd);
+					}
+			}
+		}
+	}
+	
+	private boolean restrictPackage(BundleDescription desc, ExportPackageDescription pkg ) {
+		String[] friends = (String[])pkg.getDirective(ICoreConstants.FRIENDS_DIRECTIVE);
+		if (friends != null) {
+			String symbolicName = desc.getSymbolicName();
+			for (int i = 0; i < friends.length; i++) {
+				if (symbolicName.equals(friends[i]))
+					return false;
+				
+			}
+			return true;
+		} 
+		return (((Boolean)pkg.getDirective(ICoreConstants.INTERNAL_DIRECTIVE)).booleanValue());
+	}
 	
 	private void addExtraLibrary(IPath path, IPluginModelBase model, ArrayList entries) throws CoreException {
 		IPath srcPath = null;

@@ -29,6 +29,7 @@ public class OrganizeManifestsWizardPage extends WizardPage implements IPreferen
 	private Button fOptionalImport;
 	private Button fModifyDependencies;
 	private Button fUnusedDependencies;
+	private Button fAdditonalDependencies;
 	private Button fFixIconNLSPaths;
 	private Button fRemovedUnusedKeys;
 	private Button fRemoveLazy;
@@ -113,6 +114,9 @@ public class OrganizeManifestsWizardPage extends WizardPage implements IPreferen
 		
 		fUnusedDependencies = new Button(group, SWT.CHECK);
 		fUnusedDependencies.setText(PDEUIMessages.OrganizeManifestsWizardPage_removeUnused);
+		
+		fAdditonalDependencies = new Button(group, SWT.CHECK);
+		fAdditonalDependencies.setText(PDEUIMessages.OrganizeManifestsWizardPage_addDependencies);
 	}
 	
 	private void createGeneralGroup(Composite container) {
@@ -158,6 +162,7 @@ public class OrganizeManifestsWizardPage extends WizardPage implements IPreferen
 		fOptionalImport.setSelection(settings.getBoolean(PROP_RESOLVE_IMP_MARK_OPT));
 
 		fUnusedDependencies.setSelection(settings.getBoolean(PROP_UNUSED_DEPENDENCIES));
+		fAdditonalDependencies.setSelection(settings.getBoolean(PROP_ADD_DEPENDENCIES));
 		
 		fRemoveLazy.setSelection(!settings.getBoolean(PROP_REMOVE_LAZY));
 		
@@ -180,6 +185,7 @@ public class OrganizeManifestsWizardPage extends WizardPage implements IPreferen
 		settings.put(PROP_MODIFY_DEP, !fModifyDependencies.getSelection());
 		settings.put(PROP_RESOLVE_IMP_MARK_OPT, fOptionalImport.getSelection());
 		settings.put(PROP_UNUSED_DEPENDENCIES, fUnusedDependencies.getSelection());
+		settings.put(PROP_ADD_DEPENDENCIES, fAdditonalDependencies.getSelection());
 		
 		settings.put(PROP_REMOVE_LAZY, !fRemoveLazy.getSelection());
 		
@@ -201,7 +207,7 @@ public class OrganizeManifestsWizardPage extends WizardPage implements IPreferen
 	private void setButtonArrays() {
 		fTopLevelButtons = new Button[] {
 			fRemoveUnresolved, fAddMissing,	fModifyDependencies, fMarkInternal,
-			fUnusedDependencies, fFixIconNLSPaths, fRemovedUnusedKeys, fRemoveLazy	
+			fUnusedDependencies, fAdditonalDependencies, fFixIconNLSPaths, fRemovedUnusedKeys, fRemoveLazy	
 		};
 		fParentButtons = new Button[] {
 			fMarkInternal, fModifyDependencies

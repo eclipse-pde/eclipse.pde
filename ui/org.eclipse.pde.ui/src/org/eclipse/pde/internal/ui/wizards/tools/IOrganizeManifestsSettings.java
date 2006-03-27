@@ -10,6 +10,7 @@ public interface IOrganizeManifestsSettings {
 	public static final String PROP_MODIFY_DEP = "OrganizeManifests.RequireImport.modifyDep"; //$NON-NLS-1$
 	public static final String PROP_RESOLVE_IMP_MARK_OPT = "OrganizeManifests.RequireImport.resolve:markOptional"; //$NON-NLS-1$
 	public static final String PROP_UNUSED_DEPENDENCIES = "OrganizeManifests.RequireImport.findRemoveUnused"; //$NON-NLS-1$
+	public static final String PROP_ADD_DEPENDENCIES = "OrganizeManifests.AddDependencies"; //$NON-NLS-1$
 	public static final String PROP_REMOVE_LAZY = "OrganizeManifests.General.cleanup"; //$NON-NLS-1$
 	public static final String PROP_NLS_PATH = "OrganizeManifests.Translation.nls"; //$NON-NLS-1$
 	public static final String PROP_UNUSED_KEYS = "OrganizeManifests.Translation.unusedKeys"; //$NON-NLS-1$

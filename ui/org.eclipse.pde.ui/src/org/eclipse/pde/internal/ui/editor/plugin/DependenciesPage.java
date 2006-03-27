@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -21,6 +22,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class DependenciesPage extends PDEFormPage {
@@ -44,19 +46,36 @@ public class DependenciesPage extends PDEFormPage {
 		layout.horizontalSpacing = 10;
 		layout.makeColumnsEqualWidth = isBundle;
 		body.setLayout(layout);
+		Composite left, right;
+		if (isBundle && getModel().isEditable()) {
+			FormToolkit toolkit = managedForm.getToolkit();
+			left = toolkit.createComposite(body, SWT.NONE);
+			left.setLayout(new GridLayout());
+			left.setLayoutData(new GridData(GridData.FILL_BOTH));
+			right = toolkit.createComposite(body, SWT.NONE);
+			right.setLayout(new GridLayout());
+			right.setLayoutData(new GridData(GridData.FILL_BOTH));
+		} else {
+			left = body;
+			right = body;
+		}
 		
-		managedForm.addPart(new RequiresSection(this, body, getRequiredSectionLabels()));		
-		if (isBundle)
-			managedForm.addPart(new ImportPackageSection(this, body));
-		else
-			managedForm.addPart(new MatchSection(this, body, true));
+		managedForm.addPart(new RequiresSection(this, left, getRequiredSectionLabels()));		
 		
-		DependencyAnalysisSection section = new DependencyAnalysisSection(this, body, isBundle ? ExpandableComposite.COMPACT : ExpandableComposite.EXPANDED);
+		DependencyAnalysisSection section;
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
-		if (isBundle)
-			gd.horizontalSpan = 2;
-		else
-			gd.widthHint = 150;
+		gd.widthHint = 150;
+		if (isBundle) {
+			managedForm.addPart(new ImportPackageSection(this, right));
+			if (getModel().isEditable()) 
+				managedForm.addPart(new DependencyManagementSection(this, left));
+			else 
+				gd.horizontalSpan = 2;
+			section = new DependencyAnalysisSection(this, right, ExpandableComposite.COMPACT);
+		} else {
+			managedForm.addPart(new MatchSection(this, right, true));
+			section = new DependencyAnalysisSection(this, right, ExpandableComposite.EXPANDED);
+		}
 		section.getSection().setLayoutData(gd);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_PLUGIN_DEPENDENCIES);
 	}
