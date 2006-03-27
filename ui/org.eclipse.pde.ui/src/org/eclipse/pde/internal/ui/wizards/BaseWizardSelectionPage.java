@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.jface.wizard.WizardSelectionPage;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.parts.FormBrowser;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -44,6 +45,8 @@ public abstract class BaseWizardSelectionPage extends WizardSelectionPage
 		return label;
 	}
 	public void setDescriptionText(String text) {
+		if (text == null)
+			text = PDEUIMessages.BaseWizardSelectionPage_noDesc;
 		descriptionBrowser.setText(text);
 	}
 	public void setDescriptionEnabled(boolean enabled) {

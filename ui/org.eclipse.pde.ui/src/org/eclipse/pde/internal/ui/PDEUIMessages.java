@@ -16,6 +16,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String AddLibraryDialog_emptyLibraries;
 
+	public static String BaseWizardSelectionPage_noDesc;
+
 	public static String ElementSection_missingRefElement;
 
 	public static String ExternalizeResolution_attrib;
