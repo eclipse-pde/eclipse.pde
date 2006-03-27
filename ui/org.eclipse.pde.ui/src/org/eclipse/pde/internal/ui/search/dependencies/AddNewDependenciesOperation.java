@@ -133,7 +133,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 	private String[] getSecondaryDependencies() {
 		IBuild build = getBuild();
 		if (build != null) {
-			IBuildEntry be = build.getEntry(IBuildEntry.ADDITIONAL_BUNDLES);
+			IBuildEntry be = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
 			if (be != null) 
 				return be.getTokens();
 		}
@@ -407,10 +407,10 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			IBuild build = getBuild();
 			IPluginBase pbase = fBase.getPluginBase();
 			if (pbase == null )  {
-				addRequireBundles(plugins, fBase.getBundleModel().getBundle(), build.getEntry(IBuildEntry.ADDITIONAL_BUNDLES));
+				addRequireBundles(plugins, fBase.getBundleModel().getBundle(), build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES));
 			}
 			else 
-				addRequireBundles(plugins, pbase, build.getEntry(IBuildEntry.ADDITIONAL_BUNDLES));
+				addRequireBundles(plugins, pbase, build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES));
 			try {
 				build.write("", new PrintWriter(new FileOutputStream(fProject.getFile("build.properties").getFullPath().toFile()))); //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (FileNotFoundException e) {

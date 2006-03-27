@@ -48,9 +48,11 @@ public interface IBuildEntry extends IWritable {
 	 */	
 	public static final String JARS_EXTRA_CLASSPATH = "jars.extra.classpath"; //$NON-NLS-1$
 	/**
-	 * The name of the key that declares additiona plug-in dependencies to augment development classpath
+	 * The name of the key that declares additional plug-in dependencies to augment development classpath
+	 * 
+	 * @since 3.2
 	 */	
-	public static final String ADDITIONAL_BUNDLES = "additional.bundles"; //$NON-NLS-1$
+	public static final String SECONDARY_DEPENDENCIES = "additional.bundles"; //$NON-NLS-1$
 	/**
 	 * Adds the token to the list of token for this entry.
 	 * This method will throw a CoreException if

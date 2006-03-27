@@ -391,7 +391,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	
 	private void addSecondaryDependencies(BundleDescription desc, HashSet added, ArrayList entries, IBuild build) {
 		try {
-		  IBuildEntry entry = build.getEntry(IBuildEntry.ADDITIONAL_BUNDLES);
+		  IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
 		  if (entry != null) {
 			  String[] tokens = entry.getTokens();
 			  for (int i = 0; i < tokens.length; i++) {

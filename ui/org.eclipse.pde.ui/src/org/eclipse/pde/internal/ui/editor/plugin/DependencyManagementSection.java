@@ -104,7 +104,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 			if (model == null)
 				return null;
 			IBuild buildObject = model.getBuild();
-			entry = buildObject.getEntry(IBuildEntry.ADDITIONAL_BUNDLES);
+			entry = buildObject.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
 			return entry;
 		}
 		
@@ -157,7 +157,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		getSection().setText(PDEUIMessages.SecondaryBundlesSection_title); 
 		IBuildModel model = getBuildModel();
 		if (model != null) {
-			IBuildEntry entry = model.getBuild().getEntry(IBuildEntry.ADDITIONAL_BUNDLES);
+			IBuildEntry entry = model.getBuild().getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
 			if (entry != null && entry.getTokens().length > 0)
 				getSection().setExpanded(true);
 		}
@@ -346,10 +346,10 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		dialog.create();
 		if (dialog.open() == Window.OK) {
 		    IBuild build = getBuildModel().getBuild();
-			IBuildEntry entry = build.getEntry(IBuildEntry.ADDITIONAL_BUNDLES);
+			IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
 			try {
 			    if (entry == null) {
-			        entry = getBuildModel().getFactory().createEntry(IBuildEntry.ADDITIONAL_BUNDLES);
+			        entry = getBuildModel().getFactory().createEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
 			        build.add(entry);
 			    }
 			    Object[] models = dialog.getResult();
@@ -385,7 +385,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	private void handleRemove(){
 		IStructuredSelection ssel = (IStructuredSelection) fAdditionalTable.getSelection();
 		
-		IBuildEntry entry = getBuildModel().getBuild().getEntry(IBuildEntry.ADDITIONAL_BUNDLES);
+		IBuildEntry entry = getBuildModel().getBuild().getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
 		Iterator it = ssel.iterator();
 		try {
 			while (it.hasNext()) {
@@ -414,7 +414,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		}
 		Object changedObject = event.getChangedObjects()[0];
 		if ((changedObject instanceof IBuildEntry && 
-				((IBuildEntry) changedObject).getName().equals(IBuildEntry.ADDITIONAL_BUNDLES))) {
+				((IBuildEntry) changedObject).getName().equals(IBuildEntry.SECONDARY_DEPENDENCIES))) {
 			refresh();
 		}
 	}
