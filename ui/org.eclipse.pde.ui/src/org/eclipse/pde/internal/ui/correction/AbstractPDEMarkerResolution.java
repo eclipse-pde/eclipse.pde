@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
@@ -141,8 +142,11 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 			fOpenEditor = EditorUtilities.getOpenManifestEditor(project);
 			IBaseModel model = fOpenEditor.getAggregateModel();
 			if (model instanceof IBundlePluginModel) {
-				if (this instanceof AbstractXMLMarkerResolution)
-					return model;
+				try {
+					if (marker.getAttribute(PDEMarkerFactory.MPK_LOCATION_PATH) != null)
+						return model;
+				} catch (CoreException e) {
+				}
 				model = ((IBundlePluginModel)model).getBundleModel();
 				if (model instanceof AbstractEditingModel)
 					return model;
