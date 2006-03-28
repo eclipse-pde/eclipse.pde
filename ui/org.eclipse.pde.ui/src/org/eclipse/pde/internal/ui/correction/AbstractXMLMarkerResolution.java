@@ -62,7 +62,9 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 		}
 		
 		IDocumentNode node = (PluginObjectNode)base.getPluginBase();
-		StringTokenizer strtok = new StringTokenizer(fLocationPath, ">"); //$NON-NLS-1$
+		StringTokenizer strtok = new StringTokenizer(
+				fLocationPath,
+				Character.toString(XMLErrorReporter.F_CHILD_SEP));
 		while (node != null && strtok.hasMoreTokens()) {
 			String token = strtok.nextToken();
 			int childIndex = Integer.parseInt(token.substring(1, token.indexOf(')')));
@@ -70,8 +72,12 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 			IDocumentNode[] children = node.getChildNodes();
 			node = children[childIndex];
 			int attr = token.indexOf(XMLErrorReporter.F_ATT_PREFIX); 
-			if (attr != -1)
-				return node.getDocumentAttribute(token.substring(attr + 1));
+			if (attr != -1) {
+				int valueIndex = token.indexOf(XMLErrorReporter.F_ATT_VALUE_PREFIX);
+				if (valueIndex == -1)
+					return node.getDocumentAttribute(token.substring(attr + 1));
+				return node.getDocumentAttribute(token.substring(attr + 1, valueIndex));
+			}
 		}
 		return node;
 	}
@@ -84,7 +90,10 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 		lastChild = item.indexOf(XMLErrorReporter.F_ATT_PREFIX); 
 		if (lastChild == -1)
 			return item;
-		return item.substring(lastChild + 1);
+		int valueIndex = item.indexOf(XMLErrorReporter.F_ATT_VALUE_PREFIX);
+		if (valueIndex == -1)
+			return item.substring(lastChild + 1);
+		return item.substring(valueIndex + 1);
 	}
 	
 	protected boolean isAttrNode() {

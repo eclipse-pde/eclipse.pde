@@ -18,6 +18,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String BaseWizardSelectionPage_noDesc;
 
+	public static String ChooseClassXMLResolution_label;
+
+	public static String CreateClassXMLResolution_label;
+
 	public static String ElementSection_missingRefElement;
 
 	public static String ExternalizeResolution_attrib;

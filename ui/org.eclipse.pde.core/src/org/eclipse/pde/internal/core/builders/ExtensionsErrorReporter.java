@@ -472,7 +472,10 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 
 			if (javaType == null) {
 				report(NLS.bind(PDECoreMessages.Builders_Manifest_class, (new String[] { value, attr.getName() })), getLine(
-						element, attr.getName()), severity);
+						element, attr.getName()), severity,
+						PDEMarkerFactory.P_UNKNOWN_CLASS,
+						element,
+						attr.getName() + F_ATT_VALUE_PREFIX + attr.getValue());
 			} 
 		} catch (JavaModelException e) {
 		}

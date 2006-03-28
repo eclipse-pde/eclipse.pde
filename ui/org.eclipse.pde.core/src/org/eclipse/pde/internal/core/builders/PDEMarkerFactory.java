@@ -40,13 +40,12 @@ public class PDEMarkerFactory implements IMarkerFactory {
 	// plugin.xml fixes
 	public static final int P_ILLEGAL_XML_NODE = 0x3001;
 	public static final int P_UNTRANSLATED_NODE = 0x3002;
+	public static final int P_UNKNOWN_CLASS = 0x3003;
 	
 	// marker attribute keys
 	public static final String BK_BUILD_ENTRY = "buildEntry.key"; //$NON-NLS-1$
 	public static final String BK_BUILD_TOKEN = "buildEntry.tokenValue"; //$NON-NLS-1$
 	public static final String MPK_LOCATION_PATH = "xmlTree.locationPath"; //$NON-NLS-1$
-
-	
 
 	
 	/**

@@ -59,6 +59,10 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 				return new IMarkerResolution[] {
 						new ExternalizeResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker), 
 						new ExternalizeStringsResolution(AbstractPDEMarkerResolution.RENAME_TYPE)};
+			case PDEMarkerFactory.P_UNKNOWN_CLASS:
+				return new IMarkerResolution[] {
+						new CreateClassXMLResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker),
+						new ChooseClassXMLResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
 		}
 		return NO_RESOLUTIONS;
 	}

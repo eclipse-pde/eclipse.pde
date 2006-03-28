@@ -44,6 +44,8 @@ import org.xml.sax.helpers.DefaultHandler;
 public class XMLErrorReporter extends DefaultHandler {
 	
 	public static final char F_ATT_PREFIX = '@';
+	public static final char F_ATT_VALUE_PREFIX = '!';
+	public static final char F_CHILD_SEP = '>';
 	
 	class ElementData {
 		int offset;
@@ -181,7 +183,7 @@ public class XMLErrorReporter extends DefaultHandler {
 		if (parent != null) {
 			String prefix = generateLocationPath(parent, null);
 			if (prefix != null)
-				return prefix + '>' + composeNodeString(node, childIndex, attrName);
+				return prefix + F_CHILD_SEP + composeNodeString(node, childIndex, attrName);
 		}
 		return composeNodeString(node, childIndex, attrName);
 	}
