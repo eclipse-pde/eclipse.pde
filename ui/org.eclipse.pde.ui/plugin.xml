@@ -815,14 +815,6 @@
                id="org.eclipse.pde.ui.CreateHelpIndexAction">
          </action>
          <action
-               label="%convert.html.xhtml"
-               helpContextId="org.eclipse.pde.doc.user.xhtmlConverter"
-               class="org.eclipse.pde.internal.ui.wizards.xhtml.GetUnconvertedAction"
-               menubarPath="org.eclipse.pde.ui.plugin.tools/group2"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.xhtmlconverter.convert">
-         </action>
-         <action
                label="%popupMenus.buildPlugin.label"
                helpContextId="org.eclipse.pde.doc.user.create_plugin_jars"
                class="org.eclipse.pde.internal.ui.build.BuildPluginAction"
@@ -1110,6 +1102,14 @@
                menubarPath="org.eclipse.pde.ui.project.tools/group1"
                enablesFor="+"
                id="org.eclipse.pde.ui.MigrationAction3">
+         </action>
+         <action
+               label="%convert.html.xhtml"
+               helpContextId="org.eclipse.pde.doc.user.xhtmlConverter"
+               class="org.eclipse.pde.internal.ui.wizards.xhtml.GetUnconvertedAction"
+               menubarPath="org.eclipse.pde.ui.project.tools/group2"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.xhtmlconverter.convert">
          </action>
          <!--<action
                label="Refresh Target Platform"
