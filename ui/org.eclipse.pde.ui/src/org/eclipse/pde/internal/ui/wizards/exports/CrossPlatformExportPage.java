@@ -165,7 +165,7 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 	private void getOS(ArrayList list, File file, String ws) {
 		File[] children = file.listFiles();
 		for (int i = 0; i < children.length; i++) {
-			if (children[i].isDirectory()) {
+			if (children[i].isDirectory() && !"CVS".equalsIgnoreCase(children[i].getName())) { //$NON-NLS-1$
 				Configuration config = new Configuration();
 				config.ws = ws;
 				config.os = file.getName();
