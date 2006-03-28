@@ -14,7 +14,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
-public class CreateJREBundleHeaderResolution extends ManifestHeaderErrorResolution {
+public class CreateJREBundleHeaderResolution extends AbstractManifestMarkerResolution {
 
 	public CreateJREBundleHeaderResolution(int type) {
 		super(type);

@@ -21,10 +21,6 @@ public class RemoveSeperatorBuildEntryResolution extends BuildEntryMarkerResolut
 		}
 	}
 
-	public String getDescription() {
-		return getLabel();
-	}
-
 	public String getLabel() {
 		return NLS.bind(PDEUIMessages.RemoveSeperatorBuildEntryResolution_label, fToken, fEntry);
 	}

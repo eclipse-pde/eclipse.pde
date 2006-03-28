@@ -60,10 +60,6 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 		}
 	}
 
-	public String getDescription() {
-		return getLabel();
-	}
-
 	public String getLabel() {
 		if (isAttrNode())
 			return NLS.bind(PDEUIMessages.ExternalizeResolution_attrib, getNameOfNode());

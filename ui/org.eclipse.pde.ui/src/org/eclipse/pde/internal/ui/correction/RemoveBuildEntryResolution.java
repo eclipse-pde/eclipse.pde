@@ -19,10 +19,6 @@ public class RemoveBuildEntryResolution extends BuildEntryMarkerResolution {
 		return NLS.bind(PDEUIMessages.RemoveBuildEntryResolution_removeToken, fToken, fEntry);
 	}
 
-	public String getDescription() {
-		return getLabel();
-	}
-
 	protected void createChange(Build build) {
 		try {
 			BuildEntry buildEntry = (BuildEntry)build.getEntry(fEntry);

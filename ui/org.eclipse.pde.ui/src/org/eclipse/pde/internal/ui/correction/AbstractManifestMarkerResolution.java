@@ -17,9 +17,9 @@ import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
 
-public abstract class ManifestHeaderErrorResolution extends AbstractPDEMarkerResolution {	
+public abstract class AbstractManifestMarkerResolution extends AbstractPDEMarkerResolution {	
 	
-	public ManifestHeaderErrorResolution(int type) {
+	public AbstractManifestMarkerResolution(int type) {
 		super(type);
 	}
 

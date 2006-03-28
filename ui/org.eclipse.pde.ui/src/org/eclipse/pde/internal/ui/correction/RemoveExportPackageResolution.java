@@ -8,7 +8,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.IMarkerResolution;
 import org.osgi.framework.Constants;
 
-public class RemoveExportPackageResolution extends ManifestHeaderErrorResolution
+public class RemoveExportPackageResolution extends AbstractManifestMarkerResolution
 		implements IMarkerResolution {
 	
 	String fPackage;

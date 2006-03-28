@@ -8,7 +8,7 @@ import org.eclipse.pde.internal.ui.nls.GetNonExternalizedStringsAction;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.custom.BusyIndicator;
 
-public class ExternalizeStringsResolution extends ManifestHeaderErrorResolution {
+public class ExternalizeStringsResolution extends AbstractManifestMarkerResolution {
 
 	public ExternalizeStringsResolution(int type) {
 		super(type);

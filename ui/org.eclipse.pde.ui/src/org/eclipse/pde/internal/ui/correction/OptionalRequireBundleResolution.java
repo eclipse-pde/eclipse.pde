@@ -9,7 +9,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.osgi.framework.Constants;
 
 public class OptionalRequireBundleResolution extends
-		ManifestHeaderErrorResolution {
+		AbstractManifestMarkerResolution {
 	
 	private String fBundleId;
 

@@ -36,10 +36,6 @@ public class RemoveNodeXMLResolution extends AbstractXMLMarkerResolution {
 		}
 	}
 
-	public String getDescription() {
-		return getLabel();
-	}
-
 	public String getLabel() {
 		if (isAttrNode())
 			return NLS.bind(PDEUIMessages.RemoveNodeXMLResolution_attrLabel, getNameOfNode());

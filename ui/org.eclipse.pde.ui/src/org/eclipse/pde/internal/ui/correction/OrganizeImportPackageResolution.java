@@ -5,7 +5,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifest;
 
 public class OrganizeImportPackageResolution extends
-		ManifestHeaderErrorResolution {
+		AbstractManifestMarkerResolution {
 	
 	private boolean fRemoveImports;
 

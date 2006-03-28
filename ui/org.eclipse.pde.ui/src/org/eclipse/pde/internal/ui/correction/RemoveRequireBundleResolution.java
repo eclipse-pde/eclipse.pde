@@ -7,7 +7,7 @@ import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.osgi.framework.Constants;
 
-public class RemoveRequireBundleResolution extends ManifestHeaderErrorResolution {
+public class RemoveRequireBundleResolution extends AbstractManifestMarkerResolution {
 	
 	private String fBundleId;
 

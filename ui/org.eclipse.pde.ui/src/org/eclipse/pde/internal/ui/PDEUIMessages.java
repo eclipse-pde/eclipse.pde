@@ -20,7 +20,11 @@ public class PDEUIMessages extends NLS {
 
 	public static String ChooseClassXMLResolution_label;
 
+	public static String ChooseManifestClassResolution_label;
+
 	public static String CreateClassXMLResolution_label;
+
+	public static String CreateManifestClassResolution_label;
 
 	public static String ElementSection_missingRefElement;
 

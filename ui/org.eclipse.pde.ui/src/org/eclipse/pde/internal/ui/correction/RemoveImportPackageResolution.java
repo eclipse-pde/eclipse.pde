@@ -7,7 +7,7 @@ import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.osgi.framework.Constants;
 
-public class RemoveImportPackageResolution extends ManifestHeaderErrorResolution {
+public class RemoveImportPackageResolution extends AbstractManifestMarkerResolution {
 	
 	private String fPkgName;
 

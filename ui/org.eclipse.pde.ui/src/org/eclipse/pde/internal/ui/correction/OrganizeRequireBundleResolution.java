@@ -4,7 +4,7 @@ import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifest;
 
-public class OrganizeRequireBundleResolution extends ManifestHeaderErrorResolution {
+public class OrganizeRequireBundleResolution extends AbstractManifestMarkerResolution {
 	
 	private boolean fRemoveImports;
 

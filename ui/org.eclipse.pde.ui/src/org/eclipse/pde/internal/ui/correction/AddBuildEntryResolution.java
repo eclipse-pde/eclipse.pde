@@ -17,10 +17,6 @@ public class AddBuildEntryResolution extends BuildEntryMarkerResolution {
 		return NLS.bind(PDEUIMessages.AddBuildEntryResolution_add, fToken, fEntry);
 	}
 
-	public String getDescription() {
-		return getLabel();
-	}
-
 	protected void createChange(Build build) {
 		try {
 			BuildEntry buildEntry = (BuildEntry)build.getEntry(fEntry);

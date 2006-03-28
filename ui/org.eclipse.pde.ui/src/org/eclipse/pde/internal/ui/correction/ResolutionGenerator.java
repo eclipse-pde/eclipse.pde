@@ -12,9 +12,11 @@ package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
+import org.osgi.framework.Constants;
 
 public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 	
@@ -43,6 +45,14 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 				return getUnresolvedImportPackageProposals(marker);
 			case PDEMarkerFactory.M_REQ_BUNDLE_NOT_AVAILABLE:
 				return getUnresolvedBundle(marker);
+			case PDEMarkerFactory.M_UNKNOWN_ACTIVATOR:
+				return new IMarkerResolution[] {
+						new CreateManifestClassResolution(AbstractPDEMarkerResolution.CREATE_TYPE, Constants.BUNDLE_ACTIVATOR),
+						new ChooseManifestClassResolution(AbstractPDEMarkerResolution.RENAME_TYPE, Constants.BUNDLE_ACTIVATOR)};
+			case PDEMarkerFactory.M_UNKNOWN_CLASS:
+				return new IMarkerResolution[] {
+						new CreateManifestClassResolution(AbstractPDEMarkerResolution.CREATE_TYPE, ICoreConstants.PLUGIN_CLASS),
+						new ChooseManifestClassResolution(AbstractPDEMarkerResolution.RENAME_TYPE, ICoreConstants.PLUGIN_CLASS)};
 			case PDEMarkerFactory.B_REMOVE_SLASH_FILE_ENTRY:
 				return new IMarkerResolution[] { new RemoveSeperatorBuildEntryResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
 			case PDEMarkerFactory.B_APPEND_SLASH_FOLDER_ENTRY:

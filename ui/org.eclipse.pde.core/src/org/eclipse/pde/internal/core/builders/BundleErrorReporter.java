@@ -384,7 +384,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 								PDECoreMessages.BundleErrorReporter_NoExist,
 								activator); 
 						report(message, getLine(header, activator),
-								CompilerFlags.P_UNKNOWN_CLASS);
+								CompilerFlags.P_UNKNOWN_CLASS, PDEMarkerFactory.M_UNKNOWN_ACTIVATOR);
 						return;
 					}
 				} else {
@@ -394,7 +394,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 										PDECoreMessages.BundleErrorReporter_unresolvedCompatibilityActivator,
 										activator); 
 						report(message, getLine(header, activator),
-								CompilerFlags.P_UNKNOWN_CLASS);
+								CompilerFlags.P_UNKNOWN_CLASS, PDEMarkerFactory.M_UNKNOWN_ACTIVATOR);
 						return;
 					}
 				}

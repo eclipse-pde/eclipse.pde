@@ -6,7 +6,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifest;
 
 public class OrganizeExportPackageResolution extends
-		ManifestHeaderErrorResolution {
+		AbstractManifestMarkerResolution {
 	
 	private IProject fProject;
 

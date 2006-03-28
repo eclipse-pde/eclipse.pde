@@ -8,7 +8,7 @@ import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.osgi.framework.Constants;
 
-public class OptionalImportPackageResolution extends ManifestHeaderErrorResolution {
+public class OptionalImportPackageResolution extends AbstractManifestMarkerResolution {
 	
 	private String fPackageName;
 	
