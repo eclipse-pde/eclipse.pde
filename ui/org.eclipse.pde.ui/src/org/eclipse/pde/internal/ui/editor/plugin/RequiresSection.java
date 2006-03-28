@@ -29,14 +29,14 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
-import org.eclipse.pde.core.IModelProviderEvent;
-import org.eclipse.pde.core.IModelProviderListener;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.IPluginModelListener;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelDelta;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -61,7 +61,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public class RequiresSection
 	extends TableSection
-	implements IModelChangedListener, IModelProviderListener {
+	implements IModelChangedListener, IPluginModelListener {
     
     private static final int ADD_INDEX = 0;
     private static final int REMOVE_INDEX = 1;
@@ -197,10 +197,7 @@ public class RequiresSection
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		if (model!=null)
 			model.removeModelChangedListener(this);
-		PDECore.getDefault().getWorkspaceModelManager().removeModelProviderListener(
-			this);
-		PDECore.getDefault().getExternalModelManager().removeModelProviderListener(
-			this);
+		PDECore.getDefault().getModelManager().removePluginModelListener(this);
 		super.dispose();
 	}
 	public boolean doGlobalAction(String actionId) {
@@ -387,9 +384,7 @@ public class RequiresSection
 		fImportViewer.setInput(model.getPluginBase());
         updateButtons();
 		model.addModelChangedListener(this);
-		PDECore.getDefault().getWorkspaceModelManager().addModelProviderListener(
-			this);
-		PDECore.getDefault().getExternalModelManager().addModelProviderListener(this);
+		PDECore.getDefault().getModelManager().addPluginModelListener(this);
 		fAddAction.setEnabled(model.isEditable());
 		fRemoveAction.setEnabled(model.isEditable());
 	}
@@ -464,7 +459,7 @@ public class RequiresSection
 		}
 	}
 
-	public void modelsChanged(IModelProviderEvent e) {
+	public void modelsChanged(PluginModelDelta delta) {
 		fImports = null;
 		final Control control = fImportViewer.getControl();
 		if (!control.isDisposed()) {

@@ -37,8 +37,10 @@ import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.IPluginModelListener;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelDelta;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
@@ -63,6 +65,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -72,7 +75,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.osgi.service.prefs.BackingStoreException;
 
-public class DependencyManagementSection extends TableSection implements IModelChangedListener {
+public class DependencyManagementSection extends TableSection implements IModelChangedListener, IPluginModelListener {
 	
 	private TableViewer fAdditionalTable;
 	private Vector fAdditionalBundles;
@@ -260,6 +263,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 				fRequireBundleButton.setSelection(useRequireBundle);
 				fImportPackageButton.setSelection(!useRequireBundle);
 			}	
+			PDECore.getDefault().getModelManager().addPluginModelListener(this);
 		} catch (Exception e){
 			PDEPlugin.logException(e);
 		}
@@ -435,6 +439,27 @@ public class DependencyManagementSection extends TableSection implements IModelC
 			IBundlePluginModelBase bmodel = ((IBundlePluginModelBase)model);
 			AddNewDependenciesAction action = new AddNewDependenciesAction(proj, bmodel);
 			action.run();
+		}
+	}
+	
+	public void dispose() {
+		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+		if (model!=null)
+			model.removeModelChangedListener(this);
+		PDECore.getDefault().getModelManager().removePluginModelListener(this);
+		super.dispose();
+	}
+
+	public void modelsChanged(PluginModelDelta delta) {
+		fAdditionalBundles = null;
+		final Control control = fAdditionalTable.getControl();
+		if (!control.isDisposed()) {
+			control.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					if (!control.isDisposed())
+						fAdditionalTable.refresh();
+				}
+			});
 		}
 	}
 }
