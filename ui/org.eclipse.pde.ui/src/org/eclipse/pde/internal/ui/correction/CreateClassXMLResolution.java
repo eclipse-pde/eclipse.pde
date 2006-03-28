@@ -104,22 +104,29 @@ public class CreateClassXMLResolution extends AbstractXMLMarkerResolution {
 			Display.getCurrent().beep();
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
+		} finally {
+			if (!name.equals(attr.getValue())) {
+				attr.getEnclosingElement().setXMLAttribute(attr.getName(), name);
+			}
 		}
 	}
 
 	private ISchemaAttribute getAttribute(PluginAttribute attr) {
 		SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
 		IDocumentNode element = attr.getEnclosingElement();
+		IPluginExtension extension = null;
 		while (element.getParentNode() != null) {
-			if (element instanceof IPluginExtension)
+			if (element instanceof IPluginExtension) {
+				extension = (IPluginExtension)element;
 				break;
+			}
 			element = element.getParentNode();
 		}
-		if (!(element instanceof IPluginExtension))
+		if (extension == null)
 			return null;
 		
-		ISchema schema = registry.getSchema(((IPluginExtension)element).getPoint());
-		ISchemaElement schemaElement = schema.findElement(element.getXMLTagName());
+		ISchema schema = registry.getSchema(extension.getPoint());
+		ISchemaElement schemaElement = schema.findElement(attr.getEnclosingElement().getXMLTagName());
 		if (schemaElement == null)
 			return null;
 		return schemaElement.getAttribute(attr.getName());
