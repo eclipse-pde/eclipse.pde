@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
+import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
@@ -229,6 +230,13 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 			IPluginExtensionPoint point = points[i];
 			if (point.getId().equals(pointID))
 				return point;
+		}
+		IFragmentModel[] fragments = PDEManager.findFragmentsFor(plugin.getPluginModel());
+		for (int i = 0; i < fragments.length; i++) {
+			points = fragments[i].getPluginBase().getExtensionPoints();
+			for (int j = 0; j < points.length; j++)
+				if (points[j].getId().equals(pointID))
+					return points[j];
 		}
 		return null;
 	}

@@ -38,6 +38,8 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginImport;
@@ -461,7 +463,8 @@ public class PointSelectionPage
 			
 			String pluginID = fCurrentPoint.getPluginBase().getId();
 			if (!(fCurrentPoint instanceof PluginExtensionPointNode)
-					&& !fAvailableImports.contains(pluginID)) {
+					&& !fAvailableImports.contains(pluginID)
+					&& !(fCurrentPoint.getPluginBase() instanceof IFragment)) {
 				if (MessageDialog.openQuestion(
 						getShell(), PDEUIMessages.NewExtensionWizard_PointSelectionPage_dependencyTitle,
 						NLS.bind(
@@ -579,7 +582,12 @@ public class PointSelectionPage
 	
 	private String getFullId(IPluginExtensionPoint point) {
 		if (point instanceof PluginExtensionPointNode) {
-			return fModel.getPluginBase().getId() + "." + point.getId(); //$NON-NLS-1$
+			String id;
+			if (fModel instanceof IFragmentModel)
+				id = ((IFragmentModel)fModel).getFragment().getPluginId();
+			else
+				id = fModel.getPluginBase().getId();
+			return id + "." + point.getId(); //$NON-NLS-1$
 		}
 		return point.getFullId();
 	}
