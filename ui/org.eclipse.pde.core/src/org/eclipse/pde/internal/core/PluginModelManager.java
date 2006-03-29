@@ -258,6 +258,13 @@ public class PluginModelManager implements IAdaptable {
 					entry = updateTable(oldID, model, false, delta);
 					entry = updateTable(newID, model, true, delta);
 				}
+				// bug 133070
+				if (model.getUnderlyingResource() == null) {
+					ModelEntry tableEntry = (ModelEntry)getEntryTable().get(newID);
+					if (tableEntry != null && tableEntry.getWorkspaceModel() != null) {
+						fState.removeBundleDescription(model.getBundleDescription());
+					}
+				}
 				if (entry != null && (model.getUnderlyingResource() != null || entry.isInJavaSearch()))
 					javaSearchAffected = true;
 			}
