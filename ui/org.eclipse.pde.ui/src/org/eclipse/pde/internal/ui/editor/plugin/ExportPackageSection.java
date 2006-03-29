@@ -406,6 +406,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
         		handleGoToPackage(fPackageViewer.getSelection());
         	}
         };
+        fGoToAction.setEnabled(getBundleModel().getUnderlyingResource() != null);
         fRemoveAction = new Action(PDEUIMessages.RequiresSection_delete) { 
             public void run() {
                 handleRemove();
