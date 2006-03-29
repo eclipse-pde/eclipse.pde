@@ -13,6 +13,8 @@ package org.eclipse.pde.internal.build.builder;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
@@ -29,6 +31,14 @@ import org.eclipse.update.core.model.URLEntryModel;
  * Generates build.xml script for features.
  */
 public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
+	private static final String COMMENT_START_TAG = "<!--"; //$NON-NLS-1$
+	private static final String COMMENT_END_TAG = "-->"; //$NON-NLS-1$
+	private static final String FEATURE_START_TAG = "<feature";//$NON-NLS-1$
+	private static final String PLUGIN_START_TAG = "<plugin"; //$NON-NLS-1$
+	private static final String FRAGMENT_START_TAG = "<fragment"; //$NON-NLS-1$
+	private static final String VERSION = "version";//$NON-NLS-1$
+	private static final String PLUGIN_VERSION = "plugin-version"; //$NON-NLS-1$
+	
 	// GENERATION FLAGS
 	/**
 	 * Indicates whether scripts for this feature included features should be
@@ -1246,6 +1256,11 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		//Copy the other files
 		Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplatePlugin", sourcePluginDir.getAbsolutePath()); //$NON-NLS-1$
+		if(copiedFiles.contains(Constants.BUNDLE_FILENAME_DESCRIPTOR)){
+			//make sure the manifest.mf has the version we want
+			replaceManifestValue(sourcePluginDirURL.append(Constants.BUNDLE_FILENAME_DESCRIPTOR).toOSString(), org.osgi.framework.Constants.BUNDLE_VERSION, result.getPluginVersion()); //$NON-NLS-1$
+		}
+
 		//	If a build.properties file already exist then we use it supposing it is correct.
 		File buildProperty = sourcePluginDirURL.append(PROPERTIES_FILE).toFile();
 		if (!buildProperty.exists()) {
@@ -1322,6 +1337,9 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e1));
 		}
 		Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplatePlugin", sourcePluginDir.getAbsolutePath()); //$NON-NLS-1$
+		if(copiedFiles.contains(Constants.PLUGIN_FILENAME_DESCRIPTOR)){
+			replaceXMLAttribute(sourcePluginDirURL.append(Constants.PLUGIN_FILENAME_DESCRIPTOR).toOSString(), PLUGIN_START_TAG, VERSION, result.getPluginVersion());
+		}
 		//	If a build.properties file already exist then we use it supposing it is correct.
 		File buildProperty = sourcePluginDirURL.append(PROPERTIES_FILE).toFile();
 		if (!buildProperty.exists()) {
@@ -1393,6 +1411,12 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			buffer.replace(beginId, beginId + REPLACED_PLUGIN_VERSION.length(), effectivePlugin.getVersion().toString());
 			Utils.transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(sourceFragmentDirURL.append(Constants.BUNDLE_FILENAME_DESCRIPTOR).toOSString()));
 			Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplateFragment", sourceFragmentDir.getAbsolutePath()); //$NON-NLS-1$
+			if(copiedFiles.contains(Constants.BUNDLE_FILENAME_DESCRIPTOR)){
+				//make sure the manifest.mf has the versions we want
+				replaceManifestValue(sourceFragmentDirURL.append(Constants.BUNDLE_FILENAME_DESCRIPTOR).toOSString(), org.osgi.framework.Constants.BUNDLE_VERSION, fragment.getPluginVersion());
+				String host = plugin.getPluginIdentifier() + ';' + org.osgi.framework.Constants.BUNDLE_VERSION + '=' + effectivePlugin.getVersion().toString();
+				replaceManifestValue(sourceFragmentDirURL.append(Constants.BUNDLE_FILENAME_DESCRIPTOR).toOSString(), org.osgi.framework.Constants.FRAGMENT_HOST, host);
+			}
 			File buildProperty = sourceFragmentDirURL.append(PROPERTIES_FILE).toFile();
 			if (!buildProperty.exists()) { //If a build.properties file already exist  then we don't override it.
 				copiedFiles.add(Constants.FRAGMENT_FILENAME_DESCRIPTOR); //Because the fragment.xml is not copied, we need to add it to the file
@@ -1457,6 +1481,10 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			buffer.replace(beginId, beginId + REPLACED_PLUGIN_VERSION.length(), plugin.getPluginVersion());
 			Utils.transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(sourceFragmentDirURL.append(Constants.FRAGMENT_FILENAME_DESCRIPTOR).toOSString()));
 			Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplateFragment", sourceFragmentDir.getAbsolutePath()); //$NON-NLS-1$
+			if(copiedFiles.contains(Constants.FRAGMENT_FILENAME_DESCRIPTOR)){
+				replaceXMLAttribute(sourceFragmentDirURL.append(Constants.FRAGMENT_FILENAME_DESCRIPTOR).toOSString(), FRAGMENT_START_TAG, VERSION, fragment.getPluginVersion());
+				replaceXMLAttribute(sourceFragmentDirURL.append(Constants.FRAGMENT_FILENAME_DESCRIPTOR).toOSString(), FRAGMENT_START_TAG, PLUGIN_VERSION, plugin.getPluginVersion());
+			}
 			File buildProperty = sourceFragmentDirURL.append(PROPERTIES_FILE).toFile();
 			if (!buildProperty.exists()) { //If a build.properties file already exist  then we don't override it.
 				copiedFiles.add(Constants.FRAGMENT_FILENAME_DESCRIPTOR); //Because the fragment.xml is not copied, we need to add it to the file
@@ -1634,6 +1662,10 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			throw new CoreException(new Status(IStatus.OK, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		}
 		Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplateFeature", sourceFeatureDir); //$NON-NLS-1$
+		if(copiedFiles.contains(Constants.FEATURE_FILENAME_DESCRIPTOR)){
+			//we overwrote our feature.xml with a template, replace the version
+			replaceXMLAttribute(sourceFeatureDir + '/' + Constants.FEATURE_FILENAME_DESCRIPTOR, FEATURE_START_TAG, VERSION, sourceFeature.getFeatureVersion());
+		}
 		File buildProperty = new File(sourceFeatureDir + '/' + PROPERTIES_FILE);
 		if (buildProperty.exists()) {//If a build.properties file already exist then we don't override it.
 			getSite(false).addFeatureReferenceModel(sourceDir);
@@ -1659,4 +1691,93 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 		getSite(false).addFeatureReferenceModel(sourceDir);
 	}
+	
+	private void replaceManifestValue(String location, String attribute, String newVersion){
+		Manifest manifest = null;
+		try {
+			InputStream is = new BufferedInputStream(new FileInputStream(location));
+			try {
+				manifest = new Manifest(is);
+			} finally {
+				is.close();
+			}
+		} catch (IOException e) {
+			return;
+		}
+		
+		manifest.getMainAttributes().put(new Attributes.Name(attribute), newVersion);
+		
+		OutputStream os = null;
+		try {
+			os = new BufferedOutputStream(new FileOutputStream(location));
+			try {
+				manifest.write(os);
+			} finally {
+				os.close();
+			}
+		} catch (IOException e1) {
+			//ignore
+		}
+	}
+	
+	private void replaceXMLAttribute( String location, String tag, String attr, String newValue) {
+		File featureFile = new File(location);
+		if(!featureFile.exists())
+			return;
+		
+		StringBuffer buffer = null;
+		try {
+			buffer = readFile(featureFile);
+		} catch (IOException e) {
+			return;
+		}
+		
+		int startComment = scan(buffer, 0, COMMENT_START_TAG);
+		int endComment = startComment > -1 ? scan(buffer, startComment, COMMENT_END_TAG) : -1;
+		int startTag = scan(buffer, 0, tag);
+		while (startComment != -1 && startTag > startComment && startTag < endComment) {
+			startTag = scan(buffer, endComment, tag);
+			startComment = scan(buffer, endComment, COMMENT_START_TAG);
+			endComment = startComment > -1 ? scan(buffer, startComment, COMMENT_END_TAG) : -1;
+		}
+		if(startTag == -1)
+			return;
+		int endTag = scan(buffer, startTag, ">"); //$NON-NLS-1$
+		boolean attrFound = false;
+		while (!attrFound) {
+			int startAttributeWord = scan(buffer, startTag, attr);
+			if (startAttributeWord == -1 || startAttributeWord > endTag)
+				return;
+			if (!Character.isWhitespace(buffer.charAt(startAttributeWord - 1))) {
+				startTag = startAttributeWord + attr.length();
+				continue;
+			}
+			//Verify that the word found is the actual attribute
+			int endAttributeWord = startAttributeWord + attr.length();
+			while (Character.isWhitespace(buffer.charAt(endAttributeWord)) && endAttributeWord < endTag) {
+				endAttributeWord++;
+			}
+			if (endAttributeWord > endTag) { //attribute  has not been found
+				return;
+			}
+
+			if (buffer.charAt(endAttributeWord) != '=') {
+				startTag = endAttributeWord;
+				continue;
+			}
+
+			int startVersionId = scan(buffer, startAttributeWord + 1, "\""); //$NON-NLS-1$
+			int endVersionId = scan(buffer, startVersionId + 1, "\""); //$NON-NLS-1$
+			buffer.replace(startVersionId + 1, endVersionId, newValue);
+			attrFound = true;
+		}
+		if(attrFound) {
+			try {
+				Utils.transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(featureFile));
+			} catch (IOException e) {
+				//ignore
+			}
+		}
+	}
+	
 }

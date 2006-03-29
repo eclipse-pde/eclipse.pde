@@ -276,8 +276,17 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			File[] files = templateLocation.listFiles();
 			if (files != null) {
 				for (int i = 0; i < files.length; i++) {
-					if (files[i].isDirectory())
+					if (files[i].isDirectory()) {
+						File subDir = new File(toDir, files[i].getName());
+						if(!subDir.exists())
+							subDir.mkdirs();
+						Collection subFiles = copyFiles(fromDir + '/' + files[i].getName(), toDir+ '/' + files[i].getName());
+						for (Iterator iter = subFiles.iterator(); iter.hasNext();) {
+							String sub = (String) iter.next();
+							copiedFiles.add(files[i].getName() + '/' + sub);
+						}
 						continue;
+					}
 
 					FileInputStream inputStream = null;
 					FileOutputStream outputStream = null;
