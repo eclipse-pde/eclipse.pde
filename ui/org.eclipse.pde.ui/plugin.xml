@@ -807,6 +807,14 @@
                id="org.eclipse.pde.ui.MigrationAction1">
          </action>
          <action
+               label="%popupMenus.createHelpIndex.label"
+               helpContextId="org.eclipse.pde.doc.user.create_help_index"
+               class="org.eclipse.pde.internal.ui.wizards.tools.CreateHelpIndexAction"
+               menubarPath="org.eclipse.pde.ui.plugin.tools/group2"
+               enablesFor="1"
+               id="org.eclipse.pde.ui.CreateHelpIndexAction">
+         </action>
+         <action
                label="%popupMenus.buildPlugin.label"
                helpContextId="org.eclipse.pde.doc.user.create_plugin_jars"
                class="org.eclipse.pde.internal.ui.build.BuildPluginAction"
@@ -861,6 +869,14 @@
                enablesFor="1"
                id="org.eclipse.pde.ui.BuildPluginAction2">
          </action>
+         <action
+               label="%popupMenus.createHelpIndex.label"
+               helpContextId="org.eclipse.pde.doc.user.create_help_index"
+               class="org.eclipse.pde.internal.ui.wizards.tools.CreateHelpIndexAction"
+               menubarPath="org.eclipse.pde.ui.manifest.tools/group1"
+               enablesFor="1"
+               id="org.eclipse.pde.ui.CreateHelpIndexAction">
+         </action>         
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
@@ -911,6 +927,14 @@
                enablesFor="1"
                id="org.eclipse.pde.ui.BuildFragmentAction">
          </action>
+         <action
+               label="%popupMenus.createHelpIndex.label"
+               helpContextId="org.eclipse.pde.doc.user.create_help_index"
+               class="org.eclipse.pde.internal.ui.wizards.tools.CreateHelpIndexAction"
+               menubarPath="org.eclipse.pde.ui.fragment.tools/group2"
+               enablesFor="1"
+               id="org.eclipse.pde.ui.CreateHelpIndexAction">
+         </action>         
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
@@ -1087,14 +1111,6 @@
                enablesFor="+"
                id="org.eclipse.pde.ui.xhtmlconverter.convert">
          </action>
-         <action
-               label="%popupMenus.createHelpIndex.label"
-               helpContextId="org.eclipse.pde.doc.user.create_help_index"
-               class="org.eclipse.pde.internal.ui.wizards.tools.CreateHelpIndexAction"
-               menubarPath="org.eclipse.pde.ui.project.tools/group2"
-               enablesFor="1"
-               id="org.eclipse.pde.ui.CreateHelpIndexAction">
-         </action>         
          <!--<action
                label="Refresh Target Platform"
                helpContextId="org.eclipse.pde.doc.user.target_profile"
