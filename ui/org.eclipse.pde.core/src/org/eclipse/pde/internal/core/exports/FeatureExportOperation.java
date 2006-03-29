@@ -459,14 +459,16 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 		if (fStateCopy == null) {
 			fStateCopy = main.getFactory().createState(main);
 			fStateCopy.setResolver(Platform.getPlatformAdmin().getResolver());
-			fStateCopy.setPlatformProperties(main.getPlatformProperties()[0]);
+			fStateCopy.setPlatformProperties(main.getPlatformProperties());
 		}
-			
-		Dictionary properties = fStateCopy.getPlatformProperties()[0];
-		properties.put("osgi.os", os); //$NON-NLS-1$
-		properties.put("osgi.ws", ws); //$NON-NLS-1$
-		properties.put("osgi.arch", arch); //$NON-NLS-1$
-		fStateCopy.setPlatformProperties(properties);
+		
+		Dictionary[] dictionaries = fStateCopy.getPlatformProperties();
+		for (int i = 0; i < dictionaries.length; i++) {
+			Dictionary properties = dictionaries[i];
+			properties.put("osgi.os", os); //$NON-NLS-1$
+			properties.put("osgi.ws", ws); //$NON-NLS-1$
+			properties.put("osgi.arch", arch); //$NON-NLS-1$			
+		}
 		fStateCopy.resolve(false);
 		return fStateCopy;
 	}
