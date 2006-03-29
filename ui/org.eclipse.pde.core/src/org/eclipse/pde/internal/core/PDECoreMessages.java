@@ -14,6 +14,8 @@ import org.eclipse.osgi.util.NLS;
 public class PDECoreMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.core.pderesources";//$NON-NLS-1$
 
+	public static String BaseExportTask_pdeExport;
+
 	public static String PluginModelManager_outOfSync;
 
 	// Status text #####################################
