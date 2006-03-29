@@ -38,6 +38,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String HelpNewWizard_wiz;
 
+	public static String OpenManifestAction_noManifest;
+
 	public static String ProjectStructurePage_sourceName;
 	public static String ProjectNamesPage_duplicateNames;
 	public static String ProjectStructurePage_fsourceName;
@@ -2814,5 +2816,11 @@ public class PDEUIMessages extends NLS {
 	public static String AddNewDependenciesOperation_searchProject;
 
 	public static String AddNewDependenciesOperation_searchForDependency;
+
+	public static String OpenManifestsAction_cannotFind;
+
+	public static String OpenManifestsAction_cannotOpen;
+
+	public static String OpenManifestsAction_title;
 
 }

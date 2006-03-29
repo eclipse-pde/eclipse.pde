@@ -1096,6 +1096,14 @@
                id="org.eclipse.pde.ui.OrganizeManifest"> 
          </action> 
          <action
+               label="%OpenManifest.label"
+			   helpContextId="org.eclipse.pde.doc.user.open_manifest"
+               class="org.eclipse.pde.internal.ui.editor.OpenManifestAction"
+               menubarPath="org.eclipse.pde.ui.project.tools/group0"
+               enablesFor="+"
+               id="org.eclipse.pde.ui.OpenManifestAction"> 
+         </action> 
+         <action
                label="%MigrationAction.label"
                class="org.eclipse.pde.internal.ui.wizards.tools.MigrationAction"
                helpContextId="org.eclipse.pde.doc.user.migrate_action"
