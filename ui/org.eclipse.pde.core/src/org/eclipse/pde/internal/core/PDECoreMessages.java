@@ -210,5 +210,9 @@ public class PDECoreMessages extends NLS {
 	public static String LoadTargetOperation_enablePluginsTaskName;
 
 	public static String LoadTargetOperation_findPluginsTaskName;
+	
+	public static String ExportWizard_badDirectory;
+
+	public static String FeatureExportJob_taskName;
 
 }

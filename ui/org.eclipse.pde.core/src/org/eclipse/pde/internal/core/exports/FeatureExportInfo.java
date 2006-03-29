@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.build;
+package org.eclipse.pde.internal.core.exports;
 
 public class FeatureExportInfo {
 
@@ -21,7 +21,5 @@ public class FeatureExportInfo {
 		public String[] signingInfo;
 		public String[] jnlpInfo;
 		public String[][] targets;
-		public String javacTarget;
-		public String javacSource;
 	
 }

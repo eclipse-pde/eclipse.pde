@@ -8,25 +8,21 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.ant;
+package org.eclipse.pde.internal.core.ant;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
+import org.eclipse.pde.internal.core.exports.FeatureExportOperation;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.ui.build.FeatureExportInfo;
-import org.eclipse.pde.internal.ui.build.FeatureExportJob;
 
 public class FeatureExportTask extends BaseExportTask {
 	private IFeatureModel[] fFeatures = new IFeatureModel[0];
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.ant.BaseExportTask#getExportJob()
-	 */
-	protected Job getExportJob() {
+	protected FeatureExportOperation getExportOperation() {
 		FeatureExportInfo info = new FeatureExportInfo();
 		info.toDirectory = fToDirectory;
 		info.useJarFormat = fUseJarFormat;
@@ -34,26 +30,20 @@ public class FeatureExportTask extends BaseExportTask {
 		info.destinationDirectory = fDestination;
 		info.zipFileName = fZipFilename;
 		info.items = fFeatures;
-		info.javacSource = fJavacSource;
-		info.javacTarget = fJavacTarget;
-		return new FeatureExportJob(info);
+		return new FeatureExportOperation(info);
 	}
 	
 	public void setFeatures(String features) {
 		StringTokenizer tok = new StringTokenizer(features, ","); //$NON-NLS-1$
+		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 		ArrayList list = new ArrayList();
 		while (tok.hasMoreTokens()) {
-			list.add(tok.nextToken().trim());
+			String id = tok.nextToken().trim();
+			IFeatureModel model = manager.findFeatureModel(id);
+			if (model != null)
+				list.add(model);
 		}
 		
-		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
-		ArrayList featureList = new ArrayList();
-		IFeatureModel[] models = manager.getFeatureModels();
-		for (int i = 0; i < models.length; i++) {
-			String id = models[i].getFeature().getId();
-			if (list.contains(id))
-				featureList.add(models[i]);			
-		}
-		fFeatures = (IFeatureModel[])featureList.toArray(new IFeatureModel[featureList.size()]);
+		fFeatures = (IFeatureModel[])list.toArray(new IFeatureModel[list.size()]);
 	}
 }

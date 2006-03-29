@@ -8,11 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.ant;
+package org.eclipse.pde.internal.core.ant;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.pde.internal.core.exports.FeatureExportOperation;
 
 public abstract class BaseExportTask extends Task {
 	
@@ -37,7 +39,11 @@ public abstract class BaseExportTask extends Task {
 		if (!fToDirectory && fZipFilename == null)
 			throw new BuildException("No zip file is specified"); //$NON-NLS-1$
 		
-		getExportJob().schedule(2000);
+		try {
+			getExportOperation().run(new NullProgressMonitor());
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void setExportType(String type) {
@@ -68,5 +74,5 @@ public abstract class BaseExportTask extends Task {
 		fJavacSource = source;
 	}
 	
-	protected abstract Job getExportJob();
+	protected abstract FeatureExportOperation getExportOperation();
 }

@@ -32,9 +32,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jface.action.IAction;
@@ -44,6 +42,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.exports.BuildUtilities;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -216,13 +215,13 @@ public abstract class BaseBuildAction
 				properties.put(IXMLConstants.PROPERTY_JAVAC_SOURCE, jProject.getOption(JavaCore.COMPILER_SOURCE, true)); 
 				properties.put(IXMLConstants.PROPERTY_JAVAC_TARGET, jProject.getOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, true)); 				
 			}
-			properties.put(IXMLConstants.PROPERTY_BOOTCLASSPATH, getBootClasspath()); 
+			properties.put(IXMLConstants.PROPERTY_BOOTCLASSPATH, BuildUtilities.getBootClasspath()); 
 			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 			IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
 			for (int i = 0; i < envs.length; i++) {
 				String id = envs[i].getId();
 				if (id != null)
-					properties.put(id, BaseBuildAction.getBootClasspath(id));
+					properties.put(id, BuildUtilities.getBootClasspath(id));
 			}
 			
 			launchCopy.setAttribute(
@@ -248,46 +247,4 @@ public abstract class BaseBuildAction
 		}
 	}
 	
-	public static String getBootClasspath() {
-		return getBootClasspath(JavaRuntime.getDefaultVMInstall());
-	}
-
-	public static String getBootClasspath(String environmentID) {
-		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-		IExecutionEnvironment environment = manager.getEnvironment(environmentID);
-		IVMInstall vm = null;
-		if (environment != null) {
-			vm = environment.getDefaultVM();
-			if (vm == null) {
-				IVMInstall[] installs = environment.getCompatibleVMs();
-				// take the first strictly compatible vm if there is no default
-				for (int i = 0; i < installs.length; i++) {
-					IVMInstall install = installs[i];
-					if (environment.isStrictlyCompatible(install)) {
-						vm = install;
-						break;
-					}
-				}
-				// use the first vm failing that
-				if (vm == null && installs.length > 0) {
-					vm = installs[0];
-				}
-			}
-		}
-		if (vm == null)
-			vm = JavaRuntime.getDefaultVMInstall();
-		return getBootClasspath(vm);
-	}
-
-	public static String getBootClasspath(IVMInstall install) {
-		StringBuffer buffer = new StringBuffer();
-		LibraryLocation[] locations = JavaRuntime.getLibraryLocations(install);
-		for (int i = 0; i < locations.length; i++) {
-			buffer.append(locations[i].getSystemLibraryPath().toOSString());
-			if (i < locations.length - 1)
-				buffer.append(";"); //$NON-NLS-1$
-		}
-		return buffer.toString();
-	}
-
 }

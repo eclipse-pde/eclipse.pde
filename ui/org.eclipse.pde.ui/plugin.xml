@@ -1632,25 +1632,6 @@
             id="org.eclipse.pde.ui.dependencyExtentResultPage"/>
    </extension>
    <extension
-         point="org.eclipse.ant.core.antTasks">
-      <antTask
-            library="pdeuiant.jar"
-            name="pde.exportPlugins"
-            class="org.eclipse.pde.internal.ui.ant.PluginExportTask">
-      </antTask>
-      <antTask
-            library="pdeuiant.jar"
-            name="pde.exportFeatures"
-            class="org.eclipse.pde.internal.ui.ant.FeatureExportTask">
-      </antTask>
-   </extension>
-   <extension
-         point="org.eclipse.ant.core.extraClasspathEntries">
-      <extraClasspathEntry
-            library="pdeuiant.jar">
-      </extraClasspathEntry>
-   </extension>
-   <extension
          point="org.eclipse.jdt.launching.classpathProviders">
       <classpathProvider
             class="org.eclipse.pde.internal.ui.launcher.WorkbenchSourcePathProvider"

@@ -268,7 +268,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureEditor_modelsInUse_title;
 	public static String FeatureEditor_modelsInUse_message;
-	public static String FeatureExportJob_taskName;
 	public static String FeatureExportJob_problems;
 	public static String FeatureExportJob_name;
 	public static String FeatureExportJob_error;
@@ -1557,7 +1556,6 @@ public class PDEUIMessages extends NLS {
 	public static String ExportWizard_destination;
 	public static String ExportWizard_options;
 	public static String ExportWizard_directory;
-	public static String ExportWizard_badDirectory;
 	public static String ExportWizard_workingSet;
 	public static String ExportWizard_browse;
 	public static String ExportWizard_antCheck;

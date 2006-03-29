@@ -8,26 +8,22 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.ant;
+package org.eclipse.pde.internal.core.ant;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
-import org.eclipse.pde.internal.ui.build.FeatureExportInfo;
-import org.eclipse.pde.internal.ui.build.PluginExportJob;
+import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
+import org.eclipse.pde.internal.core.exports.FeatureExportOperation;
+import org.eclipse.pde.internal.core.exports.PluginExportOperation;
 
 public class PluginExportTask extends BaseExportTask {
 	protected IPluginModelBase[] fPlugins = new IPluginModelBase[0];
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.ant.BaseExportTask#getExportJob()
-	 */
-	protected Job getExportJob() {
+	protected FeatureExportOperation getExportOperation() {
 		FeatureExportInfo info = new FeatureExportInfo();
 		info.toDirectory = fToDirectory;
 		info.useJarFormat = fUseJarFormat;
@@ -35,9 +31,7 @@ public class PluginExportTask extends BaseExportTask {
 		info.destinationDirectory = fDestination;
 		info.zipFileName = fZipFilename;
 		info.items = fPlugins;
-		info.javacSource = fJavacSource;
-		info.javacTarget = fJavacTarget;
-		return new PluginExportJob(info);
+		return new PluginExportOperation(info);
 	}
 	
 	public void setPlugins(String plugins) {
@@ -46,8 +40,8 @@ public class PluginExportTask extends BaseExportTask {
 		ArrayList models = new ArrayList();
 		while (tok.hasMoreTokens()) {
 			String id = tok.nextToken().trim();
-			IPluginModelBase model = manager.findPlugin(id, null, IMatchRules.NONE);
-			if (model != null && model.getUnderlyingResource() != null)
+			IPluginModelBase model = manager.findModel(id);
+			if (model != null)
 				models.add(model);
 		}
 		fPlugins = (IPluginModelBase[])models.toArray(new IPluginModelBase[models.size()]);

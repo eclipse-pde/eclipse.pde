@@ -11,10 +11,6 @@
 package org.eclipse.pde.internal.ui.build;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IContainer;
@@ -25,10 +21,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
+import org.eclipse.pde.internal.core.exports.FeatureExportOperation;
+import org.eclipse.pde.internal.core.exports.SiteBuildOperation;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
@@ -40,17 +37,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class BuildSiteJob extends FeatureExportJob {
 
-	private IFeatureModel[] fFeaturemodels;
-
-	private ISiteModel fSiteModel;
-
-	private IContainer fSiteContainer;
-	
-	private long fBuildTime;
-
-	private String fFeatureLocation;
-	
-	private static FeatureExportInfo getInfo(ISiteModel siteModel, IFeatureModel[] models) {
+	private static FeatureExportInfo getInfo(IFeatureModel[] models, ISiteModel siteModel) {
 		FeatureExportInfo info = new FeatureExportInfo();
 		info.useJarFormat = true;
 		info.toDirectory = true;
@@ -59,20 +46,21 @@ public class BuildSiteJob extends FeatureExportJob {
 		return info;
 	}
 
-	public BuildSiteJob(IFeatureModel[] models, ISiteModel siteModel) {		
-		super(getInfo(siteModel, models));
-		fFeaturemodels = models;
-		fSiteModel = siteModel;
-		fSiteContainer = siteModel.getUnderlyingResource().getParent();
+	private long fBuildTime;
+
+	private IFeatureModel[] fFeatureModels;
+	private ISiteModel fSiteModel;
+	private IContainer fSiteContainer;
+
+	public BuildSiteJob(IFeatureModel[] features, ISiteModel site) {
+		super(getInfo(features, site));
+		fFeatureModels = features;
+		fSiteModel = site;
+		fSiteContainer = site.getUnderlyingResource().getParent();
 		setRule(MultiRule.combine(fSiteContainer.getProject(), getRule()));
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	protected IStatus run(final IProgressMonitor monitor) {
+	
+	protected IStatus run(IProgressMonitor monitor) {
 		fBuildTime = System.currentTimeMillis();
 		IStatus status = super.run(monitor);
 		try {
@@ -83,80 +71,16 @@ public class BuildSiteJob extends FeatureExportJob {
 		}
 		return status;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob#doExports(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	protected void doExports(IProgressMonitor monitor)
-			throws InvocationTargetException, CoreException {
-		String[] config = { TargetPlatform.getOS(),
-				TargetPlatform.getWS(), TargetPlatform.getOSArch(),
-				TargetPlatform.getNL() };
-		try {
-			monitor.beginTask("", 10); //$NON-NLS-1$
-			// create a feature to wrap all plug-ins and features
-			String featureID = "org.eclipse.pde.container.feature"; //$NON-NLS-1$
-			fFeatureLocation = fBuildTempLocation + File.separator
-					+ featureID;
-			createFeature(featureID, fFeatureLocation, config, false);
-			createBuildPropertiesFile(fFeatureLocation);
-			if (fInfo.useJarFormat) {
-				createPostProcessingFile(new File(fFeatureLocation,
-						FEATURE_POST_PROCESSING));
-				createPostProcessingFile(new File(fFeatureLocation,
-						PLUGIN_POST_PROCESSING));
-			}
-			doExport(featureID, null, fFeatureLocation, config[0],
-					config[1], config[2],
-					new SubProgressMonitor(monitor, 7));
-		} catch (IOException e) {
-		} finally {
-			for (int j = 0; j < fInfo.items.length; j++) {
-				deleteBuildFiles(fInfo.items[j]);
-			}
-			cleanup(null, new SubProgressMonitor(monitor, 3));
-			monitor.done();
-		}	
+	
+	
+	protected FeatureExportOperation createOperation() {
+		return new SiteBuildOperation(fInfo);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.wizards.exports.FeatureExportJob#getPaths()
-	 */
-	protected String[] getPaths() {
-		String[] paths = super.getPaths();
-		String[] all = new String[paths.length + 1];
-		all[0] = fFeatureLocation + File.separator + "feature.xml"; //$NON-NLS-1$
-		System.arraycopy(paths, 0, all, 1, paths.length);
-		return all;
-	}
-
-	private void createBuildPropertiesFile(String featureLocation) {
-		File file = new File(featureLocation);
-		if (!file.exists() || !file.isDirectory())
-			file.mkdirs();
-		Properties prop = new Properties();
-		prop.put("pde", "marker"); //$NON-NLS-1$ //$NON-NLS-2$
-		save(new File(file, "build.properties"), prop, "Marker File"); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
-	private void save(File file, Properties properties, String header) {
-		try {
-			FileOutputStream stream = new FileOutputStream(file);
-			properties.store(stream, header);
-			stream.flush();
-			stream.close();
-		} catch (IOException e) {
-			PDECore.logException(e);
-		}
-	}
 	private void updateSiteFeatureVersions() {
 		try {
-			for (int i = 0; i < fFeaturemodels.length; i++) {
-				IFeature feature = fFeaturemodels[i].getFeature();
+			for (int i = 0; i < fFeatureModels.length; i++) {
+				IFeature feature = fFeatureModels[i].getFeature();
 				PluginVersionIdentifier pvi = new PluginVersionIdentifier(
 						feature.getVersion());
 

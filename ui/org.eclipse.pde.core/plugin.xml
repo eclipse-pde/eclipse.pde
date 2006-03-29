@@ -297,6 +297,16 @@
             name="pde.convertSchemaToHTML"
             class="org.eclipse.pde.internal.core.ant.ConvertSchemaToHTML">
       </antTask>
+      <antTask
+            library="ant_tasks/pde-ant.jar"
+            name="pde.exportPlugins"
+            class="org.eclipse.pde.internal.core.ant.PluginExportTask">
+      </antTask>
+      <antTask
+            library="ant_tasks/pde-ant.jar"
+            name="pde.exportFeatures"
+            class="org.eclipse.pde.internal.core.ant.FeatureExportTask">
+      </antTask>
    </extension>
    
    <extension

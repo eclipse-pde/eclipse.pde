@@ -8,12 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.ant;
+package org.eclipse.pde.internal.core.ant;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
-import org.eclipse.pde.internal.ui.build.FeatureExportJob;
+import org.eclipse.pde.internal.core.exports.FeatureExportOperation;
 
 public class ExportBuildListener implements BuildListener {
 	
@@ -58,7 +58,7 @@ public class ExportBuildListener implements BuildListener {
 	 */
 	public void messageLogged(BuildEvent event) {
 		if (event.getPriority() == Project.MSG_ERR) {
-			FeatureExportJob.errorFound();
+			FeatureExportOperation.errorFound();
 		}
 	}
 

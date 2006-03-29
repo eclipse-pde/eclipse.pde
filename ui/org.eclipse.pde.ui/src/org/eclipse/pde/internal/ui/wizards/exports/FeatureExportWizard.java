@@ -16,9 +16,9 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.build.FeatureExportInfo;
 import org.eclipse.pde.internal.ui.build.FeatureExportJob;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.w3c.dom.DOMException;
