@@ -6,12 +6,16 @@ package org.eclipse.pde.internal.ui.launcher;
  */
  
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.EnvironmentTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
+import org.eclipse.jdt.internal.junit.launcher.AssertionVMArg;
 import org.eclipse.jdt.internal.junit.launcher.JUnitMainTab;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.ui.launcher.ConfigurationTab;
 import org.eclipse.pde.ui.launcher.PluginJUnitMainTab;
 import org.eclipse.pde.ui.launcher.PluginsTab;
@@ -34,6 +38,23 @@ public class JUnitTabGroup extends AbstractPDELaunchConfigurationTabGroup {
 				new EnvironmentTab(), 
 				new CommonTab()};
 		setTabs(tabs);
+	}
+	
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
+		super.setDefaults(configuration);
+		
+		String vmArgs;
+		try {
+			vmArgs= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "");
+		} catch (CoreException e) {
+			vmArgs= "";
+		}
+		vmArgs = AssertionVMArg.enableAssertInArgString(vmArgs);
+		if (vmArgs.length() > 0)
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
 	}
 
 }
