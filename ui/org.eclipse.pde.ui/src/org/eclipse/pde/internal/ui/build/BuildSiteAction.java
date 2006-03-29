@@ -25,14 +25,12 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
-import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.progress.IProgressConstants;
 
-public class BuildSiteAction implements IObjectActionDelegate,
-		IPreferenceConstants {
+public class BuildSiteAction implements IObjectActionDelegate {
 
 	private ISiteModel fModel;
 

@@ -44,17 +44,13 @@ import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.exports.BuildUtilities;
 import org.eclipse.pde.internal.core.natures.PDE;
-import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
-public abstract class BaseBuildAction
-		implements
-			IObjectActionDelegate,
-			IPreferenceConstants {
+public abstract class BaseBuildAction implements IObjectActionDelegate{
 
 	protected IFile fManifestFile;
 
