@@ -39,8 +39,7 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 	
 	public void testModels() throws Exception {
 		tagAsSummary("Initialize Plug-ins (no caching)", Dimension.ELAPSED_PROCESS);
-		String path = ExternalModelManager.getEclipseHome().toOSString();
-		URL[] paths = PluginPathFinder.getPluginPaths(path);
+		URL[] paths = getURLs();
 		startMeasuring();
 		new PDEState(paths, false, new NullProgressMonitor());
 		stopMeasuring();
@@ -50,8 +49,7 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 	
 	public void testCachedModels() throws Exception {
 		tagAsGlobalSummary("Initialize Plug-ins (with caching)", Dimension.ELAPSED_PROCESS);
-		String path = ExternalModelManager.getEclipseHome().toOSString();
-		URL[] paths = PluginPathFinder.getPluginPaths(path);
+		URL[] paths = getURLs();
 		new PDEState(paths, true, new NullProgressMonitor());
 		startMeasuring();
 		new PDEState(paths, true, new NullProgressMonitor());
@@ -76,6 +74,15 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 			}
 			curr.delete();
 		}
+	}
+	
+	private URL[] getURLs() {
+		String path = ExternalModelManager.getEclipseHome().toOSString();
+		URL[] paths = PluginPathFinder.getPluginPaths(path);
+		// this is the number of plug-ins in 3.1.x
+		URL[] result = new URL[89];
+		System.arraycopy(paths, 0, result, 0, 89);
+		return result;
 	}
 
 	
