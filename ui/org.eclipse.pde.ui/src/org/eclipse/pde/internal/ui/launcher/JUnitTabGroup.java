@@ -48,9 +48,9 @@ public class JUnitTabGroup extends AbstractPDELaunchConfigurationTabGroup {
 		
 		String vmArgs;
 		try {
-			vmArgs= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "");
+			vmArgs= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$
 		} catch (CoreException e) {
-			vmArgs= "";
+			vmArgs= ""; //$NON-NLS-1$
 		}
 		vmArgs = AssertionVMArg.enableAssertInArgString(vmArgs);
 		if (vmArgs.length() > 0)
