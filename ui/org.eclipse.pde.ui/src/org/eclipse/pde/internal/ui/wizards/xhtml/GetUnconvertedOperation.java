@@ -35,13 +35,16 @@ public class GetUnconvertedOperation implements IRunnableWithProgress {
 	
 	public GetUnconvertedOperation(ISelection selection) {
 		Object object = ((IStructuredSelection)selection).getFirstElement();
-		if (object instanceof IFile)
-			fBaseFile = (IFile)object;
+		if (object instanceof IProject) {
+			fBaseFile = ((IProject)object).getFile("plugin.xml"); //$NON-NLS-1$
+			if (!fBaseFile.exists())
+				fBaseFile = ((IProject)object).getFile("fragment.xml"); //$NON-NLS-1$
+		}
 	}
 
 	public void run(IProgressMonitor monitor) throws InvocationTargetException,
 			InterruptedException {
-		if (fBaseFile == null)
+		if (fBaseFile == null || !fBaseFile.exists())
 			return;
 		fReplaceTable.clear();
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
