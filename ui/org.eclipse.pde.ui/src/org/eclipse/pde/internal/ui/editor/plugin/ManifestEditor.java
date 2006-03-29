@@ -212,6 +212,8 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 	}
 	
 	public void monitoredFileAdded(IFile file) {
+		if (fInputContextManager == null)
+			return;
 		String name = file.getName();
 		if (name.equalsIgnoreCase("MANIFEST.MF")) { //$NON-NLS-1$
 			if (!fInputContextManager.hasContext(BundleInputContext.CONTEXT_ID)) {
