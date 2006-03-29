@@ -79,7 +79,7 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 	private URL[] getURLs() {
 		String path = ExternalModelManager.getEclipseHome().toOSString();
 		URL[] paths = PluginPathFinder.getPluginPaths(path);
-		// this is the number of plug-ins in 3.1.x
+		// FAIR ANALYSIS: this is the number of plug-ins in 3.1.x
 		URL[] result = new URL[89];
 		System.arraycopy(paths, 0, result, 0, 89);
 		return result;
