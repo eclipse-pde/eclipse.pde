@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -91,7 +94,7 @@ public class JREBlock {
 				boolean useDefault = VMHelper.getDefaultVMInstallName().equals(currentVM);
 				String[] pageIDs = new String[] {"org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"}; //$NON-NLS-1$
 				if (PDEPreferencesUtil.showPreferencePage(pageIDs)) {
-					fJreCombo.setItems(VMHelper.getVMInstallNames());
+					setJRECombo();
 					if (useDefault || fJreCombo.indexOf(currentVM) == -1)
 						fJreCombo.setText(VMHelper.getDefaultVMInstallName());
 					else
@@ -145,7 +148,7 @@ public class JREBlock {
 		fJavawButton.setSelection(javaCommand.equals("javaw")); //$NON-NLS-1$
 		fJavaButton.setSelection(!fJavawButton.getSelection());
 		
-		fJreCombo.setItems(VMHelper.getVMInstallNames());
+		setJRECombo();
 		String vmInstallName =
 			config.getAttribute(IPDELauncherConstants.VMINSTALL, VMHelper.getDefaultVMInstallName());
 		fJreCombo.setText(vmInstallName);
@@ -190,4 +193,13 @@ public class JREBlock {
 		config.setAttribute(IPDELauncherConstants.BOOTSTRAP_ENTRIES, ""); //$NON-NLS-1$
 	}
 	
+	private void setJRECombo() {
+		String[] jres = VMHelper.getVMInstallNames();
+		Arrays.sort(jres, new Comparator() {
+			public int compare(Object arg0, Object arg1) {
+				return arg0.toString().compareTo(arg1.toString());
+			}
+		});
+		fJreCombo.setItems(jres);
+	}
 }
