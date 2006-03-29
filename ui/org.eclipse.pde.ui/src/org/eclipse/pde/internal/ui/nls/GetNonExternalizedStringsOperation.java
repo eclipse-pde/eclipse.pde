@@ -116,48 +116,29 @@ public class GetNonExternalizedStringsOperation
 	}
 	
 	private void inspectManifest(IProject project, IBundlePluginModelBase model, IProgressMonitor monitor) throws CoreException {
-		try {
-			if (!ModelChange.modelLoaded(model)) return;
-			IFile manifestFile = null;
-			for (int i = 0; i < ICoreConstants.TRANSLATABLE_HEADERS.length; i++) {
-				if (isNotTranslated(model.getBundleModel().getBundle().getHeader(ICoreConstants.TRANSLATABLE_HEADERS[i]))) {
-					if (manifestFile == null)
-						manifestFile = getManifestFile(project);
-					if (manifestFile != null) {
-						IManifestHeader header = getHeader(project, manifestFile, ICoreConstants.TRANSLATABLE_HEADERS[i], monitor);
-						if (header != null)
-							fModelChangeTable.addToChangeTable(model, manifestFile, header, fSelectedModels.contains(model));
-					}
-				}
-			}
-		} catch (MalformedTreeException e) {
+		if (!ModelChange.modelLoaded(model)) return;
+		IFile manifestFile = project.getFile(MANIFEST_LOCATION);
+		Bundle bundle = getBundle(manifestFile, monitor);
+		for (int i = 0; i < ICoreConstants.TRANSLATABLE_HEADERS.length; i++) {
+			IManifestHeader header = bundle.getManifestHeader(ICoreConstants.TRANSLATABLE_HEADERS[i]);
+			if (header != null && isNotTranslated(header.getValue()))
+				fModelChangeTable.addToChangeTable(model, manifestFile, header, fSelectedModels.contains(model));
 		}
 	}
 	
-	private IFile getManifestFile(IProject project) {
-		IResource member = project.findMember(MANIFEST_LOCATION);
-		if ((member instanceof IFile))
-			return (IFile)member;
-		return null;
-	}
-	
-	private IManifestHeader getHeader(IProject project, IFile file, String headerName, IProgressMonitor monitor) throws CoreException {
-		IManifestHeader header = null;
+	private Bundle getBundle(IFile file, IProgressMonitor monitor) throws CoreException {
+		Bundle bundle = null;
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		try {
 			manager.connect(file.getFullPath(), monitor);
 			IDocument document = manager.getTextFileBuffer(file.getFullPath()).getDocument();		
 			BundleModel model = new BundleModel(document, false);
-			Bundle bundle = null;
 			if (ModelChange.modelLoaded(model)) bundle = (Bundle)model.getBundle();
-			if (bundle != null) {
-				header = bundle.getManifestHeader(headerName);
-			}
 		} catch (MalformedTreeException e) {
 		} finally {
 			manager.disconnect(file.getFullPath(), monitor);
 		}
-		return header;
+		return bundle;
 	}
 	
 	
