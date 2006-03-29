@@ -13,6 +13,7 @@ package org.eclipse.pde.ui.tests.performance.parts;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
@@ -28,7 +29,7 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 	public void testOpen() throws Exception {
 		tagAsGlobalSummary("Open Plug-in Editor", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-
+		PDECore.getDefault().getModelManager().findEntry("org.eclipse.core.runtime");
 		for (int i = 0; i < 20; i++) {
 			startMeasuring();
 			ManifestEditor.openPluginEditor("org.eclipse.core.runtime"); //$NON-NLS-1$

@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 public abstract class NewProjectTestCase extends PDETestCase {
 	
 	protected void verifyProjectExistence() {
-		assertTrue("Project does not exist", getProject().exists());
+		assertTrue("Project does not exist", getProject().exists()); //$NON-NLS-1$
 	}
 	
 	protected IProject getProject() {
