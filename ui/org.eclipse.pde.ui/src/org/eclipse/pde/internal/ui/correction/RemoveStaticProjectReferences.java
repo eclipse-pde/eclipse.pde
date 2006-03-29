@@ -16,7 +16,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.internal.core.text.AbstractEditingModel;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
@@ -50,7 +50,7 @@ public class RemoveStaticProjectReferences extends AbstractPDEMarkerResolution {
 		// overridden run method handles everything
 	}
 
-	protected AbstractEditingModel createModel(IDocument doc) {
+	protected IModel loadModel(IDocument doc) {
 		// overridden run method handles everything
 		return null;
 	}

@@ -32,6 +32,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
@@ -67,6 +69,7 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 	public static final int REMOVE_TYPE = 3;
 	
 	protected int fType;
+	protected IResource fResource;
 	private PDEFormEditor fOpenEditor;
 
 	public AbstractPDEMarkerResolution(int type) {
@@ -86,6 +89,7 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 	}
 	
 	public void run(IMarker marker) {
+		fResource = marker.getResource();
 		IBaseModel model = findModelFromEditor(marker);
 		
 		if (model != null) {
@@ -95,28 +99,26 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 			fOpenEditor = null;
 		} else {
 			// create text edits and apply them to textbuffer
-			IResource res = marker.getResource();
 			try {
 				ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-				manager.connect(res.getFullPath(), null);
-				ITextFileBuffer buffer = manager.getTextFileBuffer(res.getFullPath());
+				manager.connect(fResource.getFullPath(), null);
+				ITextFileBuffer buffer = manager.getTextFileBuffer(fResource.getFullPath());
 				if (buffer.isDirty())
 					buffer.commit(null, true);
 				IDocument document = buffer.getDocument();	
-				AbstractEditingModel editModel = createModel(document);
-				editModel.setUnderlyingResource(res);
-				editModel.load();
-				if (editModel.isLoaded()) {
-					IModelTextChangeListener listener = createListener(document);
-					editModel.addModelChangedListener(listener);
-					createChange(editModel);
-					TextEdit[] edits = listener.getTextOperations();
-					if (edits.length > 0) {
-						MultiTextEdit multi = new MultiTextEdit();
-						multi.addChildren(edits);
-						multi.apply(document);
-						buffer.commit(null, true);
-					}
+				IModel editModel = loadModel(document);
+				IModelTextChangeListener listener = createListener(document);
+				if (!editModel.isLoaded() || listener == null)
+					return;
+				if (editModel instanceof IModelChangeProvider)
+					((IModelChangeProvider)editModel).addModelChangedListener(listener);
+				createChange(editModel);
+				TextEdit[] edits = listener.getTextOperations();
+				if (edits.length > 0) {
+					MultiTextEdit multi = new MultiTextEdit();
+					multi.addChildren(edits);
+					multi.apply(document);
+					buffer.commit(null, true);
 				}
 			} catch (CoreException e) {
 				PDEPlugin.log(e);
@@ -126,7 +128,7 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 				PDEPlugin.log(e);
 			} finally {
 				try {
-					FileBuffers.getTextFileBufferManager().disconnect(res.getFullPath(), null);
+					FileBuffers.getTextFileBufferManager().disconnect(fResource.getFullPath(), null);
 				} catch (CoreException e) {
 					PDEPlugin.log(e);
 				}
@@ -135,9 +137,8 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 	}
 	
 	private IBaseModel findModelFromEditor(IMarker marker) {
-		IResource res = marker.getResource();
-		IProject project = res.getProject();
-		String name = res.getName();
+		IProject project = fResource.getProject();
+		String name = fResource.getName();
 		if (name.equals("plugin.xml") || name.equals("fragment.xml")) { //$NON-NLS-1$ //$NON-NLS-2$
 			fOpenEditor = EditorUtilities.getOpenManifestEditor(project);
 			if (fOpenEditor != null) {
@@ -166,6 +167,8 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 			}
 		} else if (name.equals("MANIFEST.MF")) { //$NON-NLS-1$
 			fOpenEditor = EditorUtilities.getOpenManifestEditor(project);
+			if (fOpenEditor == null)
+				return null;
 			IBaseModel model = fOpenEditor.getAggregateModel();
 			if (model instanceof IBundlePluginModel) {
 				try {
@@ -183,7 +186,7 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 	
 	protected abstract void createChange(IBaseModel model);
 	
-	protected abstract AbstractEditingModel createModel(IDocument doc);
+	protected abstract IModel loadModel(IDocument doc);
 	
 	protected abstract IModelTextChangeListener createListener(IDocument doc);
 	

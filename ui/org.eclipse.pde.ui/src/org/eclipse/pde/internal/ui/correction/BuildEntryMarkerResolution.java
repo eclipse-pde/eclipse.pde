@@ -4,8 +4,8 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
-import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
 import org.eclipse.pde.internal.core.text.build.Build;
 import org.eclipse.pde.internal.core.text.build.BuildModel;
@@ -25,8 +25,14 @@ public abstract class BuildEntryMarkerResolution extends AbstractPDEMarkerResolu
 		}
 	}
 
-	protected AbstractEditingModel createModel(IDocument doc) {
-		return new BuildModel(doc, true);
+	protected IModel loadModel(IDocument doc) {
+		BuildModel model = new BuildModel(doc, true);
+		model.setUnderlyingResource(fResource);
+		try {
+			model.load();
+		} catch (CoreException e) {
+		}
+		return model;
 	}
 
 	protected abstract void createChange(Build build);

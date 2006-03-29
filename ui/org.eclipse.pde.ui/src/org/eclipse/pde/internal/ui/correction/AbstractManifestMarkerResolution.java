@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.internal.core.text.AbstractEditingModel;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
@@ -23,8 +24,14 @@ public abstract class AbstractManifestMarkerResolution extends AbstractPDEMarker
 		super(type);
 	}
 
-	protected AbstractEditingModel createModel(IDocument document) {
-		return new BundleModel(document, true);
+	protected IModel loadModel(IDocument document) {
+		BundleModel model = new BundleModel(document, true);
+		model.setUnderlyingResource(fResource);
+		try {
+			model.load();
+		} catch (CoreException e) {
+		}
+		return model;
 	}
 	
 	protected abstract void createChange(BundleModel model);
