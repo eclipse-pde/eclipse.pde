@@ -24,7 +24,6 @@ import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.text.Collator;
 import java.text.ParseException;
-import com.ibm.icu.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -73,6 +72,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
@@ -98,6 +98,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
+
+import com.ibm.icu.text.SimpleDateFormat;
 
 public class LogView extends ViewPart implements ILogListener {
     public static final String P_LOG_WARNING = "warning"; //$NON-NLS-1$
@@ -886,12 +888,20 @@ public class LogView extends ViewPart implements ILogListener {
             return;
         makeHoverShell();
         textLabel.setText(message);
-        int x = point.x + 5;
-        int y = point.y - (fTree.getItemHeight() * 2) - 20;
+        Rectangle bounds = fTree.getDisplay().getBounds();
+        Point cursorPoint = fTree.getDisplay().getCursorLocation();
+        int x = point.x;
+        int y = point.y + 25;
+        int width = fTree.getColumn(0).getWidth();
+        int height = 125;
+    	if (cursorPoint.x + width > bounds.width)
+    		x -= width;
+    	if (cursorPoint.y + height + 25 > bounds.height)
+    		y -= height + 27;
+        
         textShell.setLocation(fTree.toDisplay(x, y));
-        textShell.setSize(fTree.getColumn(0).getWidth(), 125);
-        textShell.open();
-        setFocus();
+        textShell.setSize(width, height);
+        textShell.setVisible(true);
     }
 
     void onMouseMove(Event e) {
