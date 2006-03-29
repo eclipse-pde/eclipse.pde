@@ -99,7 +99,7 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 		verifyFeatureNature();
 	}
 	
-	public void testFeatureProjectData() {
+	/*public void testFeatureProjectData() {
 		FeatureData fd = createDefaultFeatureData();
 		String library = "testLibrary";
 		fd.library = library;
@@ -113,7 +113,7 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 		assertTrue(feature.getId().equals(DEFAULT_FEATURE_DATA.id));
 		assertTrue(feature.getProviderName().equals(provider));
 		assertTrue(feature.getInstallHandler().getLibrary().equals(library));
-	}
+	}*/
 	
 	public void testSimpleFeature() {
 		createFeature(DEFAULT_FEATURE_DATA, false, null);
