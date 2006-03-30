@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -106,6 +107,9 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 
 		public ICompletionProposal[] computeQuickAssistProposals(IQuickAssistInvocationContext invocationContext) {
 			IAnnotationModel amodel = invocationContext.getSourceViewer().getAnnotationModel();
+			IDocument doc = invocationContext.getSourceViewer().getDocument();
+			
+			int offset = invocationContext.getOffset();
 			Iterator it = amodel.getAnnotationIterator();
 			ArrayList list = new ArrayList();
 			while (it.hasNext()) {
@@ -115,13 +119,22 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 				
 				MarkerAnnotation annotation = (MarkerAnnotation)key;
 				IMarker marker = annotation.getMarker();
+				
 				IMarkerResolution[] mapping = (IMarkerResolution[])fResMap.get(marker);
 				if (mapping != null) {
 					Position pos = amodel.getPosition(annotation);
-					if (pos.getOffset() != invocationContext.getOffset())
-						continue;
-					for (int i = 0; i < mapping.length; i++)
-						list.add(new PDECompletionProposal(mapping[i], pos, marker));
+					try {
+						int line = doc.getLineOfOffset(pos.getOffset());
+						int start = pos.getOffset();
+						String delim = doc.getLineDelimiter(line);
+						int delimLength = delim != null ? delim.length() : 0;
+						int end = doc.getLineLength(line) + start - delimLength;
+						if (offset >= start && offset <= end)
+							for (int i = 0; i < mapping.length; i++)
+								list.add(new PDECompletionProposal(mapping[i], pos, marker));
+					} catch (BadLocationException e) {
+					}
+					
 				}
 			}
 			return (ICompletionProposal[]) list.toArray(new ICompletionProposal[list.size()]);

@@ -54,6 +54,13 @@ import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 public abstract class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker {
+	
+	private static String RES_BUNDLE_LOCATION = "org.eclipse.pde.internal.ui.editor.text.ConstructedPDEEditorMessages"; //$NON-NLS-1$
+	private static ResourceBundle fgBundleForConstructedKeys = ResourceBundle.getBundle(RES_BUNDLE_LOCATION);
+	public static ResourceBundle getBundleForConstructedKeys() {
+		return fgBundleForConstructedKeys;
+	}
+	
 	/**
 	 * Updates the OutlinePage selection and this editor's range indicator.
 	 * 
@@ -333,9 +340,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	protected void createActions() {
 		super.createActions();
 		PDESelectAnnotationRulerAction action = new PDESelectAnnotationRulerAction(
-				ResourceBundle.getBundle("org.eclipse.pde.internal.ui.editor.text.ConstructedPDEEditorMessages"), //$NON-NLS-1$
-				"PDESelectAnnotationRulerAction.", //$NON-NLS-1$
-				this, getVerticalRuler());
+				getBundleForConstructedKeys(), "PDESelectAnnotationRulerAction.", this, getVerticalRuler()); //$NON-NLS-1$
 		setAction(ITextEditorActionConstants.RULER_CLICK, action);
 	}
 }

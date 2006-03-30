@@ -421,11 +421,6 @@ public class BuildErrorReporter extends ErrorReporter {
 			if (entryTokenOffset == -1)
 				return buildEntryLineNumber;
 			
-			// check to see if single occurence
-//			if (entryTokenOffset == entry.lastIndexOf(tokenString)) {
-//				return doc.getLineOfOffset(be.getOffset() + valueIndex + entryTokenOffset) + 1;
-//			}
-			
 			// skip ahead to 1st occurence
 			entry = entry.substring(entryTokenOffset);
 			int currOffset = be.getOffset() + valueIndex + entryTokenOffset;

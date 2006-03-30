@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jdt.ui.IContextMenuConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ICoolBarManager;
@@ -29,13 +30,18 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.editors.text.TextEditorActionContributor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
+import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 
 public class PDEFormEditorContributor
 		extends
@@ -50,6 +56,7 @@ public class PDEFormEditorContributor
 	private ClipboardAction pasteAction;
 	private Hashtable globalActions = new Hashtable();
 	private TextEditorActionContributor sourceContributor;
+	private RetargetTextEditorAction fCorrectionAssist ;
 	class GlobalAction extends Action implements IUpdate {
 		private String id;
 		public GlobalAction(String id) {
@@ -136,7 +143,36 @@ public class PDEFormEditorContributor
 		}
 	}
 	public PDEFormEditorContributor(String menuName) {
-		sourceContributor = new TextEditorActionContributor();
+		fCorrectionAssist = new RetargetTextEditorAction(PDESourcePage.getBundleForConstructedKeys(), "CorrectionAssistProposal."); //$NON-NLS-1$
+		fCorrectionAssist.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICK_ASSIST);
+		sourceContributor = new TextEditorActionContributor() {
+			public void contributeToMenu(IMenuManager mm) {
+				super.contributeToMenu(mm);
+				IMenuManager editMenu= mm.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
+				if (editMenu != null) {
+					editMenu.add(new Separator(IContextMenuConstants.GROUP_OPEN));
+					editMenu.add(new Separator(IContextMenuConstants.GROUP_GENERATE));
+					editMenu.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS));
+
+					editMenu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fCorrectionAssist);
+				}
+			}
+			public void setActiveEditor(IEditorPart part) {
+
+				super.setActiveEditor(part);
+
+				IActionBars actionBars= getActionBars();
+				IStatusLineManager manager= actionBars.getStatusLineManager();
+				manager.setMessage(null);
+				manager.setErrorMessage(null);
+
+				ITextEditor textEditor = null;
+				if (part instanceof ITextEditor)
+					textEditor = (ITextEditor)part;
+
+				fCorrectionAssist.setAction(getAction(textEditor, ITextEditorActionConstants.QUICK_ASSIST)); //$NON-NLS-1$
+			}
+		};
 		makeActions();
 	}
 	
