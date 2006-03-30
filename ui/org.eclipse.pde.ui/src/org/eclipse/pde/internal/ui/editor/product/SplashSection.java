@@ -235,6 +235,7 @@ public class SplashSection extends PDESection {
 	private Spinner createSpinner(Composite parent, FormToolkit toolkit) {
 		Spinner spinner = new Spinner(parent, SWT.BORDER);
 		spinner.setMinimum(0);
+		spinner.setMaximum(9999);
 		toolkit.adapt(spinner, false, false);
 		return spinner;
 	}
