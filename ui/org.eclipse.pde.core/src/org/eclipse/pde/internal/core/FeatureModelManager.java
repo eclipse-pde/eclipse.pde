@@ -368,7 +368,6 @@ public class FeatureModelManager {
 	}
 
 	public void addFeatureModelListener(IFeatureModelListener listener) {
-		init();
 		if (!fListeners.contains(listener))
 			fListeners.add(listener);
 	}
