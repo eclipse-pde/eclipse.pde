@@ -11,9 +11,6 @@
 
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
@@ -24,12 +21,11 @@ import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.part.IPageSite;
-import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 /**
  * Content outline page for the XML editor.
  */
-public class SourceOutlinePage extends ContentOutlinePage implements IReconcilingParticipant, ISortableContentOutlinePage{
+public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingParticipant, ISortableContentOutlinePage{
 	
 	private IEditingModel fModel;
 	private IBaseLabelProvider fLabelProvider;
@@ -73,12 +69,6 @@ public class SourceOutlinePage extends ContentOutlinePage implements IReconcilin
 		super.init(pageSite);
 	}
 	
-	public void makeContributions(
-			IMenuManager menuManager, 
-			IToolBarManager toolBarManager, 
-			IStatusLineManager statusLineManager) {
-		//Create actions and contribute into the provided managers
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.text.IReconcilingParticipant#reconciled(org.eclipse.jface.text.IDocument)

@@ -36,9 +36,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.forms.editor.IFormPage;
-import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
-public class FormOutlinePage extends ContentOutlinePage
+public class FormOutlinePage extends PDEOutlinePage
 		implements IModelChangedListener, ISortableContentOutlinePage {
 	
 	private boolean fStale;
