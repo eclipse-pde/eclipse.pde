@@ -78,19 +78,9 @@ public class RequiresSection
 
 	class ImportContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
-			if (fImports == null) {
+			if (fImports == null)
 				createImportObjects();
-			}
 			return fImports.toArray();
-		}
-		private void createImportObjects() {
-			fImports = new Vector();
-			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-			IPluginImport[] iimports = model.getPluginBase().getImports();
-			for (int i = 0; i < iimports.length; i++) {
-				IPluginImport iimport = iimports[i];
-				fImports.add(new ImportObject(iimport));
-			}
 		}
 	}
 
@@ -436,7 +426,11 @@ public class RequiresSection
 			IPluginImport iimport = (IPluginImport) changeObject;
 			if (event.getChangeType() == IModelChangedEvent.INSERT) {
 				ImportObject iobj = new ImportObject(iimport);
-				fImports.add(iobj);
+				if (fImports == null)
+					// creatImportObjects method will find new addition
+					createImportObjects();
+				else
+					fImports.add(iobj);
 				fImportViewer.add(iobj);
 				fImportViewer.setSelection(new StructuredSelection(iobj), true);
 				fImportViewer.getTable().setFocus();
@@ -444,7 +438,11 @@ public class RequiresSection
 				ImportObject iobj = findImportObject(iimport);
 				if (iobj != null) {
 					if (event.getChangeType() == IModelChangedEvent.REMOVE) {
-						fImports.remove(iobj);
+						if (fImports == null)
+							// createImportObjects method will not include the removed import
+							createImportObjects();
+						else
+							fImports.remove(iobj);
                         Table table = fImportViewer.getTable();
                         int index = table.getSelectionIndex();
 						fImportViewer.remove(iobj);
@@ -483,6 +481,16 @@ public class RequiresSection
 		return null;
 	}
 
+	private void createImportObjects() {
+		fImports = new Vector();
+		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+		IPluginImport[] iimports = model.getPluginBase().getImports();
+		for (int i = 0; i < iimports.length; i++) {
+			IPluginImport iimport = iimports[i];
+			fImports.add(new ImportObject(iimport));
+		}
+	}
+	
 	public void setFocus() {
 		if (fImportViewer != null)
 			fImportViewer.getTable().setFocus();
