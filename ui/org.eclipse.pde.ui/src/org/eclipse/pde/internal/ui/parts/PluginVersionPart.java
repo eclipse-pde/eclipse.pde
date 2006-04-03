@@ -35,12 +35,14 @@ public class PluginVersionPart {
     	try {
         	if (version != null && !version.equals("")) { //$NON-NLS-1$
         		fVersionRange = new VersionRange(version);
-        		if (fVersionRange.getMinimum().compareTo(fVersionRange.getMaximum()) < 0)
+        		Version max = fVersionRange.getMaximum();
+        		if (max.getMajor() != Integer.MAX_VALUE && 
+        				fVersionRange.getMinimum().compareTo(fVersionRange.getMaximum()) < 0)
         			fIsRanged = true;
         	} 
         } catch (IllegalArgumentException e) {
         	// illegal version string passed
-        	fVersionRange = new VersionRange("[0.0.0,0.0.0]"); //$NON-NLS-1$
+        	fVersionRange = new VersionRange("[1.0.0,1.0.0]"); //$NON-NLS-1$
         }
 	}
     

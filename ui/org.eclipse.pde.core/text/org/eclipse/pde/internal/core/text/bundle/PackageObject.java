@@ -46,7 +46,12 @@ public class PackageObject extends PDEManifestElement {
     }
     
     public String getVersion() {
-        return getAttribute(fVersionAttribute);
+    	String[] version = getAttributes(fVersionAttribute);
+    	if (version == null || version.length == 0)
+    		return null;
+    	if (version.length == 1)
+    		return version[0];
+    	return version[0] + ',' + version[1];
     }
 
     public String getName() {
