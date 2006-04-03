@@ -282,15 +282,13 @@ public class EditorUtilities {
 		return path;
 	}
 	
-	private static IResource getImageResource(String value, boolean showWarning, String definingPluginId) {
+	private static IResource getImageResource(String value, String definingPluginId) {
 		if (value == null)
 			return null;
 		IPath path = new Path(value);
-		if (path.isEmpty()){
-			if (showWarning)
-				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_emptyPath); // 
+		if (path.isEmpty())
 			return null;
-		}
+		
 		if (!path.isAbsolute()) {
 			path = getRootPath(path, definingPluginId);
 		}
@@ -299,7 +297,7 @@ public class EditorUtilities {
 	}
 	
 	public static void openImage(String value, String definingPluginId) {
-		IResource resource = getImageResource(value, true, definingPluginId);
+		IResource resource = getImageResource(value, definingPluginId);
 		try {
 			if (resource != null && resource instanceof IFile)
 				IDE.openEditor(PDEPlugin.getActivePage(), (IFile)resource, true);
