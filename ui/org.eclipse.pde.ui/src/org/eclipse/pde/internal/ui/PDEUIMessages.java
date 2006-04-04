@@ -2824,4 +2824,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String OpenManifestsAction_title;
 
+	public static String NewProjectCreationPage_invalidProjectName;
+
+	public static String NewProjectCreationPage_invalidLocationPath;
+
 }

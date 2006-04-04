@@ -188,4 +188,20 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fData.setOSGiFramework(fOSGIButton.getSelection() ? fOSGiCombo.getText() : null);
 	}
 	
+    protected boolean validatePage() {
+    	super.validatePage();
+    	String name = getProjectName();
+    	if (name.indexOf('%') > 0) {
+    		setErrorMessage(PDEUIMessages.NewProjectCreationPage_invalidProjectName);
+    		return false;
+    	}
+    	
+    	String location = getLocationPath().toString();
+    	if (location.indexOf('%') > 0) {
+    		setErrorMessage(PDEUIMessages.NewProjectCreationPage_invalidLocationPath);
+    		return false;
+    	}
+    	return true;
+    }
+	
 }

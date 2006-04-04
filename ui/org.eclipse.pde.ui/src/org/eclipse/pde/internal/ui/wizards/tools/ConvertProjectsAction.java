@@ -114,7 +114,9 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 		for (int i = 0; i < projects.length; i++) {
 			if (projects[i].isOpen() && !PDE.hasPluginNature(projects[i])
 					&& !PDE.hasFeatureNature(projects[i])
-					&& !PDE.hasUpdateSiteNature(projects[i]))
+					&& !PDE.hasUpdateSiteNature(projects[i])
+					&& projects[i].getName().indexOf('%') == -1
+					&& projects[i].getLocation().toString().indexOf('%') == -1)
 				unconverted.add(projects[i]);
 		}
 		return (IProject[]) unconverted
