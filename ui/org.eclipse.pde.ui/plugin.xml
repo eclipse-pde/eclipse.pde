@@ -1904,5 +1904,11 @@
    			name="%pde.sourcelocator">
    		</sourceLocator>
    </extension>
+    <extension
+          point="org.eclipse.ui.perspectiveExtensions">
+       <perspectiveExtension targetID="org.eclipse.pde.ui.PDEPerspective">
+          <actionSet id="org.eclipse.debug.ui.breakpointActionSet"/>
+       </perspectiveExtension>
+    </extension>
    
 </plugin>
