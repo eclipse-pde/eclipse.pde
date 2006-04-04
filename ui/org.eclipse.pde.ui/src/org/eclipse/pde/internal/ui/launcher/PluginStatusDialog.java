@@ -17,7 +17,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -44,9 +43,6 @@ public class PluginStatusDialog extends TrayDialog {
 	
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite) super.createDialogArea(parent);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 9;
-		container.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 400;
 		gd.heightHint = 300;

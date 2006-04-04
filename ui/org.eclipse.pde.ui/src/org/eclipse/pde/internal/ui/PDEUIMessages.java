@@ -2242,8 +2242,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String LauncherUtils_title;
 
-	public static String PluginValidationDialog_continue;
-
 	public static String EditorPreferencePage_link;
 
 	public static String ManifestSyntaxColorTab_keys;
