@@ -21,6 +21,7 @@ import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -181,7 +182,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
-		writer.print("<library name=\"" + getName() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.print("<library name=\"" + CoreUtility.getWritableString(getName()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fType != null)
 			writer.print(" type=\"" + fType + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!isExported()) {
