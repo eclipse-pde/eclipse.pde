@@ -228,11 +228,9 @@ public class ExtensionPointsSection extends TableSection {
 		IBaseModel model = getPage().getPDEEditor().getAggregateModel();
 		String pluginID = ((IPluginModelBase)model).getPluginBase().getId();
 		manager.add(new FindReferencesAction(point, pluginID));
-		if (pluginID != null) {
-			Action action = new ShowDescriptionAction(pluginID + "." + point.getId()); //$NON-NLS-1$
-			action.setText(PDEUIMessages.ExtensionPointsSection_showDescription);
-			manager.add(action);
-		}
+		Action action = new ShowDescriptionAction(pluginID + "." + point.getId()); //$NON-NLS-1$
+		action.setText(PDEUIMessages.ExtensionPointsSection_showDescription);
+		manager.add(action);
 	}
 
 	protected void buttonSelected(int index) {

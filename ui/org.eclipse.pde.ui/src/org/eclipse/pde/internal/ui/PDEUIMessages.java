@@ -55,6 +55,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String SchemaIncludesSection_missingWarningTitle;
 
+	public static String ShowDescriptionAction_schemaNotAvail;
+
 	//
 	// PDE resource strings
 	// Part 2.    (TRANSLATE Part 2)

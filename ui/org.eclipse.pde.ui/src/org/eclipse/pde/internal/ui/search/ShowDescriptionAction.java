@@ -91,7 +91,11 @@ public class ShowDescriptionAction extends Action {
 	
 	private void showNoSchemaMessage() {
 		String title = PDEUIMessages.ShowDescriptionAction_title; 
-		String message = NLS.bind(PDEUIMessages.ShowDescriptionAction_noPoint_desc, fPointID); // 
+		String message;
+		if (fPointID == null || fPointID.startsWith("null")) //$NON-NLS-1$
+			message = PDEUIMessages.ShowDescriptionAction_schemaNotAvail;
+		else
+			message = NLS.bind(PDEUIMessages.ShowDescriptionAction_noPoint_desc, fPointID);
 		MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title, message);
 	}
 
