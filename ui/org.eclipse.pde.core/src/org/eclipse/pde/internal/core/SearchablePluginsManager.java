@@ -54,7 +54,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 	private IJavaProject proxyProject;
 	private PluginModelManager manager;
 	private static final String PROXY_FILE_NAME = ".searchable"; //$NON-NLS-1$
-	private static final String PROXY_PROJECT_NAME = "External Plug-in Libraries"; //$NON-NLS-1$
+	public static final String PROXY_PROJECT_NAME = "External Plug-in Libraries"; //$NON-NLS-1$
 	private static final String KEY = "searchablePlugins"; //$NON-NLS-1$
 
 	private Listener elementListener;

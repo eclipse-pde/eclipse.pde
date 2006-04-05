@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core.plugin;
 
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.internal.core.PDECore;
 
 public class PluginReference extends PlatformObject {
@@ -33,8 +34,10 @@ public class PluginReference extends PlatformObject {
 		return id;
 	}
 	public IPlugin getPlugin() {
-		if (plugin == null && id!=null)
-			plugin = PDECore.getDefault().findPlugin(id);		
+		if (plugin == null && id !=null) {
+			IPluginModel model = PDECore.getDefault().getModelManager().findPluginModel(id);
+			plugin = model != null ? model.getPlugin() : null;
+		}
 		return plugin;
 	}
 	public String toString() {

@@ -11,10 +11,14 @@
 
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -38,10 +42,14 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.SearchablePluginsManager;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
@@ -247,6 +255,12 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
     		PackageObject importObject = (PackageObject)selection.getFirstElement();
     		String packageName = importObject.getName();
 
+    		IBaseModel base = getPage().getModel();
+    		if (!(base instanceof IPluginModelBase)) 
+    			return null;
+    		IPluginModelBase model = (IPluginModelBase)base;
+    		if (model.getUnderlyingResource() == null) 
+    			return getExternalPackageFragment(packageName, model);
     		IJavaProject jp = JavaCore.create(getPage().getPDEEditor().getCommonProject());
     		if (jp != null)
     			try {
@@ -261,6 +275,75 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
     			}
     	}
     	return null;
+    }
+    
+    private IPackageFragment getExternalPackageFragment(String packageName, IPluginModelBase model) {
+    	try {
+    		IProject proj = PDEPlugin.getWorkspace().getRoot().getProject(SearchablePluginsManager.PROXY_PROJECT_NAME);
+    		if (proj == null)
+    			return searchWorkspaceForPackage(packageName, model);
+    		IJavaProject jp = JavaCore.create(proj);
+    		IPath path = new Path(model.getInstallLocation());
+    		// if model is in jar form
+    		if (!path.toFile().isDirectory()) {
+    			IPackageFragmentRoot root = jp.findPackageFragmentRoot(path);
+    			if (root != null) {
+    				IPackageFragment frag = root.getPackageFragment(packageName);
+    				if (frag.exists())
+    					return frag;
+    			}
+    			// else model is in folder form, try to find model's libraries on filesystem
+    		} else {
+    			IPluginLibrary[] libs = model.getPluginBase().getLibraries();
+    			for (int i = 0; i < libs.length; i++) {
+    				if (IPluginLibrary.RESOURCE.equals(libs[i].getType()))
+    					continue;
+    				String libName = ClasspathUtilCore.expandLibraryName(libs[i].getName());
+    				IPackageFragmentRoot root = jp.findPackageFragmentRoot(path.append(libName));
+    				if (root != null) {
+    					IPackageFragment frag = root.getPackageFragment(packageName);
+    					if (frag.exists())
+    						return frag;
+    				}
+    			}
+    		}
+    	} catch (JavaModelException e){
+    	}
+    	return searchWorkspaceForPackage(packageName, model);
+    }
+    
+    private IPackageFragment searchWorkspaceForPackage(String packageName, IPluginModelBase base) {
+    	IPluginLibrary[] libs = base.getPluginBase().getLibraries();
+    	ArrayList libPaths = new ArrayList();
+    	IPath path = new Path(base.getInstallLocation());
+    	if (libs.length == 0) {
+    		libPaths.add(path);
+    	}
+		for (int i = 0; i < libs.length; i++) {
+			if (IPluginLibrary.RESOURCE.equals(libs[i].getType()))
+				continue;
+			String libName = ClasspathUtilCore.expandLibraryName(libs[i].getName());
+			libPaths.add(path.append(libName));
+		}
+		IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();
+		for (int i = 0; i < projects.length; i++) {
+			try {
+				if(!projects[i].hasNature(JavaCore.NATURE_ID) || !projects[i].isOpen())
+					continue;
+				IJavaProject jp = JavaCore.create(projects[i]);
+				ListIterator li = libPaths.listIterator();
+				while (li.hasNext()) {
+					IPackageFragmentRoot root = jp.findPackageFragmentRoot((IPath)li.next());
+					if (root != null) {
+						IPackageFragment frag = root.getPackageFragment(packageName);
+						if (frag.exists())
+							return frag;
+					}
+				}
+			} catch (CoreException e) {
+			}
+		}
+		return null;
     }
     
     private void handleGoToPackage(ISelection selection) {
@@ -406,7 +489,6 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
         		handleGoToPackage(fPackageViewer.getSelection());
         	}
         };
-        fGoToAction.setEnabled(getBundleModel().getUnderlyingResource() != null);
         fRemoveAction = new Action(PDEUIMessages.RequiresSection_delete) { 
             public void run() {
                 handleRemove();
