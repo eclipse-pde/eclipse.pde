@@ -321,7 +321,9 @@ public class ExtensionPointDetails extends PDEDetails {
 			return;
 		if (!hasSchema && fRichTextData == NO_SCHEMA_RTEXT_DATA)
 			return;
-		fRichTextData = hasSchema ? SCHEMA_RTEXT_DATA : NO_SCHEMA_RTEXT_DATA;
+		IBaseModel model = getPage().getPDEEditor().getAggregateModel();
+		String pluginID = ((IPluginModelBase)model).getPluginBase().getId();
+		fRichTextData = hasSchema && pluginID != null ? SCHEMA_RTEXT_DATA : NO_SCHEMA_RTEXT_DATA;
 		fRichText.setText(fRichTextData, true, false);
 		getManagedForm().getForm().reflow(true);
 	}
