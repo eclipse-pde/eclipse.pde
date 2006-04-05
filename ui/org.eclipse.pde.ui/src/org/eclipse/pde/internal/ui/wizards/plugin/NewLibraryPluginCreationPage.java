@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import java.util.StringTokenizer;
-
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -198,22 +196,6 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		return true;
 	}
 
-	private void presetNameField(String id) {
-		StringTokenizer tok = new StringTokenizer(id, "."); //$NON-NLS-1$
-		if (!tok.hasMoreTokens()) {
-			fNameText.setText(""); //$NON-NLS-1$
-			return;
-		}
-		while (tok.hasMoreTokens()) {
-			String token = tok.nextToken();
-			if (!tok.hasMoreTokens()) {
-				fNameText.setText(Character.toUpperCase(token.charAt(0))
-						+ ((token.length() > 1) ? token.substring(1) : "") //$NON-NLS-1$
-						+ " " + getNameFieldQualifier()); //$NON-NLS-1$
-			}
-		}
-	}
-
 	public void updateData() {
 		fData.setSimple(false);
 		fData.setSourceFolderName(null);
@@ -255,7 +237,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		if (!fPropertiesListener.isChanged() && fIdText != null) {
 			fPropertiesListener.setBlocked(true);
 			fIdText.setText(id);
-			presetNameField(id);
+			fNameText.setText(IdUtil.getValidName(id, getNameFieldQualifier()));
 			fPropertiesListener.setBlocked(false);
 		}
 

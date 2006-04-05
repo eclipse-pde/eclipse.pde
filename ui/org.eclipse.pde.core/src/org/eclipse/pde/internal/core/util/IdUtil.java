@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.core.util;
 
 import java.util.StringTokenizer;
 
+import org.eclipse.osgi.util.NLS;
+
 public class IdUtil {
 	public static boolean isValidCompositeID(String name) {
 		if (name.length() <= 0) {
@@ -47,14 +49,19 @@ public class IdUtil {
     	return projectName.replaceAll("[^a-zA-Z0-9\\._]", "_"); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
+    /*
+     * nameFieldQualifier must contain a placeholder variable
+     * ie. {0} Plug-in
+     */
     public static String getValidName(String id, String nameFieldQualifier) {
 		StringTokenizer tok = new StringTokenizer(id, "."); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {
 			String token = tok.nextToken();
-			if (!tok.hasMoreTokens())
-				return Character.toUpperCase(token.charAt(0))
-								+ ((token.length() > 1) ? token.substring(1) : "") //$NON-NLS-1$
-								+ " " + nameFieldQualifier; //$NON-NLS-1$
+			if (!tok.hasMoreTokens()) {
+				String name = Character.toUpperCase(token.charAt(0))
+							+ ((token.length() > 1) ? token.substring(1) : ""); //$NON-NLS-1$
+				return NLS.bind(nameFieldQualifier, name);
+			}
 		}
 		return ""; //$NON-NLS-1$
     }
