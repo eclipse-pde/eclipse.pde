@@ -45,12 +45,4 @@ public abstract class ModelModification {
 	protected final boolean searchForBundlePlugin() {
 		return fIsBundleModel;
 	}
-	
-	/**
-	 * Invoke this using PDEModelUtility.modifyModel(ModelModification modification)
-	 * @param model
-	 */
-	protected final void modifyEditorModel(final IBaseModel model) throws CoreException {
-		modifyModel(model);
-	}
 }

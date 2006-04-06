@@ -30,6 +30,7 @@ import org.eclipse.pde.internal.ui.editor.build.BuildEditor;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.editor.build.BuildSourcePage;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
@@ -137,14 +138,14 @@ public class PDEModelUtility {
 			Runnable runnable = new Runnable() {
 				public void run() {
 					try {
-						modification.modifyEditorModel(model);
+						modification.modifyModel(model);
 						editor.doSave(null);
 					} catch (CoreException e) {
 						PDEPlugin.log(e);
 					}
 				}
 			};
-			PDEPlugin.getActiveWorkbenchShell().getDisplay().syncExec(runnable);
+			Display.getDefault().syncExec(runnable);
 		} else {
 			// create own model, attach listener and grab text edits
 			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
