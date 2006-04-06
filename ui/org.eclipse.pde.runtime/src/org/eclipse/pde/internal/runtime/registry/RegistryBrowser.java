@@ -10,16 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
-import org.eclipse.core.internal.registry.ExtensionRegistry;
-import org.eclipse.core.runtime.ContributorFactoryOSGi;
-import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
@@ -41,7 +34,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -436,46 +428,46 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		
 		fRemoveAction = new Action("Remove") { //$NON-NLS-1$
 			public void run() {
-				Tree tree = getUndisposedTree();
-				if (tree == null)
-					return;
-				IExtensionRegistry registry = Platform.getExtensionRegistry();
-				Object token = ((ExtensionRegistry)registry).getTemporaryUserToken();
-				TreeItem[] selection = tree.getSelection();
-				for (int i = 0; i < selection.length; i++) {
-					Object obj = selection[i].getData();
-					if (obj instanceof ParentAdapter)
-						obj = ((ParentAdapter)obj).getObject();
-					if (obj instanceof IExtensionPoint)
-						registry.removeExtensionPoint((IExtensionPoint)obj, token);
-					else if (obj instanceof IExtension)
-						registry.removeExtension((IExtension)obj, token);
-				}
+//				Tree tree = getUndisposedTree();
+//				if (tree == null)
+//					return;
+//				IExtensionRegistry registry = Platform.getExtensionRegistry();
+//				Object token = ((ExtensionRegistry)registry).getTemporaryUserToken();
+//				TreeItem[] selection = tree.getSelection();
+//				for (int i = 0; i < selection.length; i++) {
+//					Object obj = selection[i].getData();
+//					if (obj instanceof ParentAdapter)
+//						obj = ((ParentAdapter)obj).getObject();
+//					if (obj instanceof IExtensionPoint)
+//						registry.removeExtensionPoint((IExtensionPoint)obj, token);
+//					else if (obj instanceof IExtension)
+//						registry.removeExtension((IExtension)obj, token);
+//				}
 				
 			}
 		};
 		
 		fAddAction = new Action("Add...") { //$NON-NLS-1$
 			public void run() {
-				Tree tree = getUndisposedTree();
-				if (tree == null)
-					return;
-				FileDialog dialog = new FileDialog(getSite().getShell(), SWT.OPEN);
-				String input = dialog.open();
-				if (input == null)
-					return;
-				Object selection = tree.getSelection()[0].getData();
-				if (selection instanceof PluginObjectAdapter)
-					selection = ((PluginObjectAdapter)selection).getObject();
-				if (!(selection instanceof Bundle))
-					return;
-				IContributor contributor = ContributorFactoryOSGi.createContributor((Bundle)selection);
-				IExtensionRegistry registry = Platform.getExtensionRegistry();
-				Object token = ((ExtensionRegistry)registry).getTemporaryUserToken();
-				try {
-					registry.addContribution(new FileInputStream(input), contributor, false, null, null, token);
-				} catch (FileNotFoundException e) {
-				}
+//				Tree tree = getUndisposedTree();
+//				if (tree == null)
+//					return;
+//				FileDialog dialog = new FileDialog(getSite().getShell(), SWT.OPEN);
+//				String input = dialog.open();
+//				if (input == null)
+//					return;
+//				Object selection = tree.getSelection()[0].getData();
+//				if (selection instanceof PluginObjectAdapter)
+//					selection = ((PluginObjectAdapter)selection).getObject();
+//				if (!(selection instanceof Bundle))
+//					return;
+//				IContributor contributor = ContributorFactoryOSGi.createContributor((Bundle)selection);
+//				IExtensionRegistry registry = Platform.getExtensionRegistry();
+//				Object token = ((ExtensionRegistry)registry).getTemporaryUserToken();
+//				try {
+//					registry.addContribution(new FileInputStream(input), contributor, false, null, null, token);
+//				} catch (FileNotFoundException e) {
+//				}
 			}
 		};
 		
