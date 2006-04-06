@@ -14,9 +14,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.builders.XMLErrorReporter;
@@ -24,15 +22,8 @@ import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
-import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
-import org.eclipse.pde.internal.core.text.bundle.BundleModel;
-import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
-import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
-import org.eclipse.pde.internal.core.text.plugin.PluginModel;
 import org.eclipse.pde.internal.core.text.plugin.PluginObjectNode;
-import org.eclipse.pde.internal.core.text.plugin.XMLTextChangeListener;
 
 public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResolution {
 
@@ -46,24 +37,6 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 		}
 	}
 	
-	protected IModel loadModel(IDocument doc) {
-		AbstractEditingModel model;
-		// if externalizing MANIFEST.MF strings - using xml class
-		// since we need IPluginModelBase
-		if (fResource.getName().equals("MANIFEST.MF")) //$NON-NLS-1$
-			model = new BundleModel(doc, true);
-		else if (fResource.getName().equals("fragment.xml")) //$NON-NLS-1$
-			model = new FragmentModel(doc, true);
-		else
-			model = new PluginModel(doc, true);
-		model.setUnderlyingResource(fResource);
-		try {
-			model.load();
-		} catch (CoreException e) {
-		}
-		return model;
-	}
-	
 	protected abstract void createChange(IPluginModelBase model);
 	
 	protected void createChange(IBaseModel model) {
@@ -73,12 +46,6 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 			createChange(pluginModel);
 		} else if (model instanceof IPluginModelBase)
 			createChange((IPluginModelBase)model);
-	}
-	
-	protected IModelTextChangeListener createListener(IDocument doc) {
-		if (fResource.getName().equals("MANIFEST.MF")) //$NON-NLS-1$
-			return new BundleTextChangeListener(doc);
-		return new XMLTextChangeListener(doc);
 	}
 	
 	protected Object findNode(IPluginModelBase base) {

@@ -39,12 +39,11 @@ public class CreateClassXMLResolution extends AbstractXMLMarkerResolution {
 			return;
 		
 		PluginAttribute attr = (PluginAttribute)object;
-		String name = attr.getValue();
-		name = trimNonAlphaChars(name).replace('$', '.');
+		String name = MarkerResolutionHelper.trimNonAlphaChars(attr.getValue()).replace('$', '.');
 		IProject project = model.getUnderlyingResource().getProject();
 		
 		JavaAttributeValue value = new JavaAttributeValue(project, model, getAttribute(attr), name);
-		name = createClass(name, model, value);
+		name = MarkerResolutionHelper.createClass(name, model, value);
 		if (!name.equals(attr.getValue())) 
 			attr.getEnclosingElement().setXMLAttribute(attr.getName(), name);
 	}

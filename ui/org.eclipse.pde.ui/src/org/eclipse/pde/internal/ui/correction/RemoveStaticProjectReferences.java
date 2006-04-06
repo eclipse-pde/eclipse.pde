@@ -14,10 +14,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class RemoveStaticProjectReferences extends AbstractPDEMarkerResolution {
@@ -48,15 +45,5 @@ public class RemoveStaticProjectReferences extends AbstractPDEMarkerResolution {
 
 	protected void createChange(IBaseModel model) {
 		// overridden run method handles everything
-	}
-
-	protected IModel loadModel(IDocument doc) {
-		// overridden run method handles everything
-		return null;
-	}
-	
-	protected IModelTextChangeListener createListener(IDocument doc) {
-		// overridden run method handles everything
-		return null;
 	}
 }

@@ -31,8 +31,7 @@ public class CreateManifestClassResolution extends AbstractManifestMarkerResolut
 	protected void createChange(BundleModel model) {
 		IManifestHeader header = model.getBundle().getManifestHeader(fHeader);
 		
-		String name = header.getValue();
-		name = trimNonAlphaChars(name).replace('$', '.');
+		String name = MarkerResolutionHelper.trimNonAlphaChars(header.getValue()).replace('$', '.');
 		IProject project = model.getUnderlyingResource().getProject();
 		
 		IPluginModelBase modelBase = PDECore.getDefault().getModelManager().findModel(project);
@@ -40,7 +39,7 @@ public class CreateManifestClassResolution extends AbstractManifestMarkerResolut
 			return;
 		
 		JavaAttributeValue value = new JavaAttributeValue(project, modelBase, null, name);
-		name = createClass(name, modelBase, value);
+		name = MarkerResolutionHelper.createClass(name, modelBase, value);
 		if (!name.equals(header.getValue())) 
 			header.setValue(name);
 	}

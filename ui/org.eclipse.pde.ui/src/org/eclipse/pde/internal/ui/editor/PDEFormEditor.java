@@ -43,6 +43,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.context.IInputContextListener;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
+import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.search.ui.text.ISearchEditorAccess;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.swt.dnd.Clipboard;
@@ -262,6 +263,7 @@ public abstract class PDEFormEditor extends FormEditor
 		if (pageToShow != null)
 			setActivePage(pageToShow);
 		updateTitle();
+		PDEModelUtility.connect(this);
 	}
 	protected void pageChange(int newPageIndex) {
 		super.pageChange(newPageIndex);
@@ -444,6 +446,7 @@ public abstract class PDEFormEditor extends FormEditor
 		}
 		//setSelection(new StructuredSelection());
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+		PDEModelUtility.disconnect(this);
 		if (clipboard != null) {
 			clipboard.dispose();
 			clipboard = null;

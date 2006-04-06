@@ -28,7 +28,7 @@ public class ChooseClassXMLResolution extends AbstractXMLMarkerResolution {
 			return;
 		PluginAttribute attrib = (PluginAttribute)object;
 		IDocumentNode element = attrib.getEnclosingElement();
-		String type = selectType();
+		String type = MarkerResolutionHelper.selectType();
 		if (type != null)
 			element.setXMLAttribute(attrib.getName(), type);
 	}

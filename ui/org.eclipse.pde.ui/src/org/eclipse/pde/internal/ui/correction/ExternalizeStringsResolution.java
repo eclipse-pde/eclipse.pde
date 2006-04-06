@@ -11,12 +11,9 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.nls.GetNonExternalizedStringsAction;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -49,16 +46,6 @@ public class ExternalizeStringsResolution extends AbstractPDEMarkerResolution {
 
 	public String getLabel() {
 		return PDEUIMessages.ExternalizeStringsResolution_label;
-	}
-	
-	protected IModelTextChangeListener createListener(IDocument doc) {
-		// all handled by run
-		return null;
-	}
-
-	protected IModel loadModel(IDocument doc) {
-		// all handled by run
-		return null;
 	}
 	
 }

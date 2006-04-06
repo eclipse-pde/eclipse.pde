@@ -26,7 +26,7 @@ public class ChooseManifestClassResolution extends AbstractManifestMarkerResolut
 
 	protected void createChange(BundleModel model) {
 		IManifestHeader header = model.getBundle().getManifestHeader(fHeader);
-		String type = selectType();
+		String type = MarkerResolutionHelper.selectType();
 		if (type != null)
 			header.setValue(type);
 	}
