@@ -70,7 +70,7 @@ public abstract class ModelModification {
 		assignFile(bundleFile);
 		assignFile(xmlFile);
 		
-		Assert.isNotNull(fManifestFile, "Full bundle modifications require a MANIFEST.MF.");
+		Assert.isNotNull(fManifestFile);
 		fModelFile = fManifestFile;
 		fIsBundleModel = true;
 	}

@@ -170,13 +170,20 @@ public abstract class DependenciesViewPage extends Page {
 	}
 
 	private Object getSelectedObject() {
-		IStructuredSelection selection = (IStructuredSelection) fViewer
-				.getSelection();
+		IStructuredSelection selection = getSelection();
 		if (selection.isEmpty() || selection.size() != 1)
 			return null;
 		return selection.getFirstElement();
 	}
 
+	protected IStructuredSelection getSelection() {
+		return (IStructuredSelection) fViewer.getSelection();
+	}
+	
+	protected void setSelection(IStructuredSelection selection) {
+		fViewer.setSelection(selection, false);
+	}
+	
 	/**
 	 * @return Returns the view.
 	 */

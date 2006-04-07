@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
@@ -522,10 +523,16 @@ public class DependenciesView extends PageBookView implements
 	 * @see org.eclipse.ui.part.PageBookView#showPageRec(org.eclipse.ui.part.PageBookView.PageRec)
 	 */
 	protected void showPageRec(PageRec pageRec) {
+		IPage currPage = getCurrentPage();
+		IStructuredSelection selection = null;
+		if (currPage instanceof DependenciesViewPage)
+			selection = ((DependenciesViewPage)currPage).getSelection();
 		IPage p = pageRec.page;
 		((DependenciesViewPage) p).setInput(fInput);
 		super.showPageRec(pageRec);
 		updateTitle(fInput);
+		if (selection != null)
+			((DependenciesViewPage) p).setSelection(selection);
 	}
 
 	void updateTitle(Object newInput) {
