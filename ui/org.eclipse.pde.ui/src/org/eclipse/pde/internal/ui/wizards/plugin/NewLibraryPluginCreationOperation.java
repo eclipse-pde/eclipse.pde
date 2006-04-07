@@ -18,9 +18,6 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.zip.ZipFile;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -33,29 +30,25 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModelFactory;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
-import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
-import org.eclipse.pde.internal.core.text.bundle.BundleModel;
-import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.ModelModification;
+import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.IPluginContentWizard;
-import org.eclipse.text.edits.MalformedTreeException;
-import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
@@ -243,41 +236,20 @@ public class NewLibraryPluginCreationOperation extends
 
 	private void removeExportRoot(IFile file, IProgressMonitor monitor)
 			throws CoreException {
-		if (!file.exists())
-			return;
-		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-		try {
-			manager.connect(file.getFullPath(), monitor);
-			ITextFileBuffer buffer = manager.getTextFileBuffer(file
-					.getFullPath());
-
-			IDocument document = buffer.getDocument();
-			BundleModel model = new BundleModel(document, false);
-			model.load();
-			if (model.isLoaded()) {
-				IModelTextChangeListener listener = new BundleTextChangeListener(document);
-				model.addModelChangedListener(listener);
-				IManifestHeader header = model.getBundle().getManifestHeader(Constants.EXPORT_PACKAGE);
-				if (header instanceof ExportPackageHeader) {
-					ExportPackageHeader export = (ExportPackageHeader)header;
-					if (export.hasPackage(".")) //$NON-NLS-1$
-						export.removePackage("."); //$NON-NLS-1$
-				}
-				TextEdit[] edits = listener.getTextOperations();
-				if (edits.length > 0) {
-					MultiTextEdit multi = new MultiTextEdit();
-					multi.addChildren(edits);
-					multi.apply(document);
-					buffer.commit(null, true);
-				}
+		
+		ModelModification mod = new ModelModification(file) {
+			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
+				if (!(model instanceof IBundlePluginModelBase))
+					return;
+				IBundlePluginModelBase modelBase = (IBundlePluginModelBase)model;
+				IBundle bundle = modelBase.getBundleModel().getBundle();
+				IManifestHeader header = bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
+				if (header instanceof ExportPackageHeader)
+					if (((ExportPackageHeader)header).hasPackage(".")) //$NON-NLS-1$
+						((ExportPackageHeader)header).removePackage("."); //$NON-NLS-1$
 			}
-		} catch (MalformedTreeException e) {
-			PDEPlugin.log(e);
-		} catch (BadLocationException e) {
-			PDEPlugin.log(e);
-		} finally {
-			manager.disconnect(file.getFullPath(), monitor);
-		}
+		};
+		PDEModelUtility.modifyModel(mod, null);
 	}
 
 	protected void setPluginLibraries(WorkspacePluginModelBase model)
