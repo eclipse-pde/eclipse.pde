@@ -12,41 +12,37 @@ package org.eclipse.pde.internal.ui.editor.product;
 
 import java.util.TreeSet;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.iproduct.IIntroInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
 import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
-import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
-import org.eclipse.pde.internal.core.text.bundle.BundleModel;
-import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
+import org.eclipse.pde.internal.core.text.bundle.RequireBundleObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
+import org.eclipse.pde.internal.ui.util.ModelModification;
+import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.pde.internal.ui.wizards.product.ProductIntroWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -56,9 +52,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.text.edits.MalformedTreeException;
-import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -68,9 +61,9 @@ import org.osgi.framework.Constants;
 public class IntroSection extends PDESection {
 
 	private ComboPart fIntroCombo;
-	private IResource fManifest;
+	private IFile fManifest;
 	private String[] fAvailableIntroIds;
-	private static final String INTRO_POINT = "org.eclipse.ui.intro"; //$NON-NLS-1$
+	private static final String INTRO_PLUGIN_ID = "org.eclipse.ui.intro"; //$NON-NLS-1$
 	private static final double NEW_INTRO_SUPPORT_VERSION = 3.1;
 
 	public IntroSection(PDEFormPage page, Composite parent) {
@@ -153,7 +146,7 @@ public class IntroSection extends PDESection {
 						if ("introProductBinding".equals(element.getName())) {//$NON-NLS-1$
 							if (element.getAttribute("productId").getValue().equals(getProduct().getId())) { //$NON-NLS-1$
 								if (fManifest == null)
-									fManifest = element.getPluginModel().getUnderlyingResource();
+									fManifest = (IFile)element.getPluginModel().getUnderlyingResource();
 								if (onlyLoadManifest)
 									return;
 								introId = element.getAttribute("introId").getValue(); //$NON-NLS-1$
@@ -222,7 +215,7 @@ public class IntroSection extends PDESection {
 		IProduct product = getProduct();
 		IProductModelFactory factory = product.getModel().getFactory();
 		IProductPlugin plugin = factory.createPlugin();
-		plugin.setId(INTRO_POINT);
+		plugin.setId(INTRO_PLUGIN_ID);
 		product.addPlugins(new IProductPlugin[] {plugin});
 		
 		PluginSection.handleAddRequired(new IProductPlugin[] {plugin});
@@ -231,40 +224,24 @@ public class IntroSection extends PDESection {
 	}
 	
 	private void addRequiredBundle() throws CoreException {
-		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-		IPath manifestPath = fManifest.getFullPath();
-		IProgressMonitor monitor = new NullProgressMonitor();
-		try {
-			manager.connect(manifestPath, monitor);
-			ITextFileBuffer buffer = manager.getTextFileBuffer(manifestPath);
-
-			IDocument document = buffer.getDocument();
-			
-			BundleModel model = new BundleModel(document, false);
-			model.load();
-			if (model.isLoaded()) {
-				IModelTextChangeListener listener = new BundleTextChangeListener(document);
-				model.addModelChangedListener(listener);
-				IManifestHeader header = model.getBundle().getManifestHeader(Constants.REQUIRE_BUNDLE);
+		ModelModification mod = new ModelModification(fManifest) {
+			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
+				if (!(model instanceof IBundlePluginModelBase))
+					return;
+				IBundlePluginModelBase modelBase = (IBundlePluginModelBase)model;
+				IBundle bundle = modelBase.getBundleModel().getBundle();
+				IManifestHeader header = bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
 				if (header instanceof RequireBundleHeader) {
-					((RequireBundleHeader)header).addBundle(INTRO_POINT);
-				} else {
-					model.getBundle().setHeader(Constants.REQUIRE_BUNDLE, INTRO_POINT);
-				}
-				TextEdit[] edits = listener.getTextOperations();
-				if (edits.length > 0) {
-					MultiTextEdit multi = new MultiTextEdit();
-					multi.addChildren(edits);
-					multi.apply(document);
-					buffer.commit(monitor, true);
-				}
-				
+					RequireBundleObject[] requires = ((RequireBundleHeader)header).getRequiredBundles();
+					for (int i = 0; i < requires.length; i++)
+						if (requires[i].getId().equals(INTRO_PLUGIN_ID))
+							return;
+					((RequireBundleHeader)header).addBundle(INTRO_PLUGIN_ID);
+				} else
+					bundle.setHeader(Constants.REQUIRE_BUNDLE, INTRO_PLUGIN_ID);
 			}
-		} catch (MalformedTreeException e) {
-		} catch (BadLocationException e) {
-		} finally {
-			manager.disconnect(manifestPath, monitor);
-		}
+		};
+		PDEModelUtility.modifyModel(mod, null);
 	}
 	
 }

@@ -54,8 +54,8 @@ public class PDEModelUtility {
 	public static final String F_BUILD = "build.properties"; //$NON-NLS-1$
 	
 	// bundle / xml various Object[] indices
-	private static final int F_Bi = 0;
-	private static final int F_Xi = 1;
+	private static final int F_Bi = 0; // the manifest.mf-related object will always be 1st
+	private static final int F_Xi = 1; // the xml-related object will always be 2nd
 	
 	private static Hashtable fOpenPDEEditors = new Hashtable();
 	
@@ -227,7 +227,7 @@ public class PDEModelUtility {
 			final PDEFormEditor editor,
 			final IBaseModel model, 
 			final IProgressMonitor monitor) {
-		Runnable runnable = new Runnable() {
+		getDisplay().syncExec(new Runnable() {
 			public void run() {
 				try {
 					modification.modifyModel(model, monitor);
@@ -236,11 +236,7 @@ public class PDEModelUtility {
 					PDEPlugin.log(e);
 				}
 			}
-		};
-		Display display = Display.getCurrent();
-		if (display == null)
-			display = Display.getDefault();
-		display.syncExec(runnable);
+		});
 	}
 	
 	private static PDEFormEditor getOpenEditor(ModelModification modification) {
@@ -322,14 +318,10 @@ public class PDEModelUtility {
 		AbstractEditingModel[] models = new AbstractEditingModel[docs.length];
 		
 		boolean isFragment = false;
-		for (int i = 0; i < docs.length; i++) {
-			if (files[i] == null || docs[i] == null)
-				break;
-			models[i] = prepareAbstractEditingModel(files[i], docs[i]);
-			if (i == F_Bi && models[i] instanceof IBundleModel)
-				isFragment = ((IBundleModel)models[i]).getBundle().getHeader(
-						Constants.FRAGMENT_HOST)!= null;
-		}
+		models[F_Bi] = prepareAbstractEditingModel(files[F_Bi], docs[F_Bi]);
+		if (models[F_Bi] instanceof IBundleModel)
+			isFragment = ((IBundleModel)models[F_Bi]).getBundle().getHeader(Constants.FRAGMENT_HOST) != null;
+		
 		IBundlePluginModelBase pluginModel;
 		if (isFragment)
 			pluginModel = new BundleFragmentModel();
@@ -337,7 +329,10 @@ public class PDEModelUtility {
 			pluginModel = new BundlePluginModel();
 		
 		pluginModel.setBundleModel((IBundleModel)models[F_Bi]);
-		pluginModel.setExtensionsModel((ISharedExtensionsModel)models[F_Xi]);
+		if (files.length > F_Xi && files[F_Xi] != null) {
+			models[F_Xi] = prepareAbstractEditingModel(files[F_Xi], docs[F_Xi]);
+			pluginModel.setExtensionsModel((ISharedExtensionsModel)models[F_Xi]);
+		}
 		return pluginModel;
 	}
 	
@@ -360,5 +355,12 @@ public class PDEModelUtility {
 		if (model instanceof AbstractEditingModel)
 			return((AbstractEditingModel)model).getLastTextChangeListener();
 		return null;
+	}
+	
+	private static Display getDisplay() {
+		Display display = Display.getCurrent();
+		if (display == null)
+			display = Display.getDefault();
+		return display;
 	}
 }
