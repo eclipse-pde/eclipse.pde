@@ -131,7 +131,7 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
 			}
 			if (verifiedFeature.getVersionedIdentifier().getIdentifier().equals(featureId))
-				if (versionId == null || features[i].getVersionedIdentifier().getVersion().toString().equals(versionId))
+				if (versionId == null || features[i].getVersionedIdentifier().getVersion().equals(new PluginVersionIdentifier(versionId)))
 					return features[i].getFeature(null);
 		}
 		int qualifierIdx = -1;
