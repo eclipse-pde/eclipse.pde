@@ -20,9 +20,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -33,11 +30,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IExtensionsModelFactory;
-import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
@@ -45,27 +40,20 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
-import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
-import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
-import org.eclipse.pde.internal.core.text.plugin.PluginModel;
-import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.ModelModification;
+import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.pde.internal.ui.wizards.templates.ControlStack;
 import org.eclipse.pde.ui.templates.IVariableProvider;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.text.edits.MalformedTreeException;
-import org.eclipse.text.edits.MultiTextEdit;
 
 public class ProductIntroOperation extends BaseManifestOperation implements IVariableProvider {
 
 	protected String fIntroId;
 	private Shell fShell;
 	private IProduct fProduct;
-	private IDocument fDocument;
 	private IProject fProject;
 	private static final String INTRO_POINT = "org.eclipse.ui.intro"; //$NON-NLS-1$
 	private static final String INTRO_CONFIG_POINT = "org.eclipse.ui.intro.config"; //$NON-NLS-1$
@@ -92,32 +80,7 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 			generateFiles(monitor);
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
-		} catch (IOException e) {
-			throw new InvocationTargetException(e);
-		} catch (MalformedTreeException e) {
-			throw new InvocationTargetException(e);
-		} catch (BadLocationException e) {
-			throw new InvocationTargetException(e);
 		}
-	}
-
-	private IFile getFile() {
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(fPluginId);
-		IProject project = model.getUnderlyingResource().getProject();
-		String filename = model instanceof IFragmentModel ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
-		return project.getFile(filename);
-	}
-
-	private IPluginModelBase getModel(IFile file) {
-		if ("plugin.xml".equals(file.getName())) //$NON-NLS-1$
-			return new WorkspacePluginModel(file, false);
-		return new WorkspaceFragmentModel(file, false);
-	}
-
-	private PluginModelBase getEditingModel(boolean isFragment) {
-		if (isFragment)
-			return new FragmentModel(fDocument, false);
-		return new PluginModel(fDocument, false);
 	}
 
 	private void createNewFile(IFile file) throws CoreException {
@@ -196,54 +159,35 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 		return presentation;
 	}
 
-	private void modifyExistingFile(IFile file, IProgressMonitor monitor)
-			throws CoreException, IOException, MalformedTreeException,
-			BadLocationException {
+	private void modifyExistingFile(IFile file, IProgressMonitor monitor) throws CoreException {
 		IStatus status = PDEPlugin.getWorkspace().validateEdit(new IFile[] { file }, fShell);
 		if (status.getSeverity() != IStatus.OK)
 			throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, NLS.bind(PDEUIMessages.ProductDefinitionOperation_readOnly, fPluginId), null)); //$NON-NLS-1$ 
-
-		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-		try {
-			manager.connect(file.getFullPath(), monitor);
-			ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath());
-
-			fDocument = buffer.getDocument();
-			PluginModelBase model = getEditingModel("fragment.xml".equals(file.getName())); //$NON-NLS-1$
-			try {
-				model.load();
-				if (!model.isLoaded())
-					throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, NLS.bind(PDEUIMessages.ProductDefinitionOperation_malformed, fPluginId), null)); //$NON-NLS-1$ 
-			} catch (CoreException e) {
-				throw e;
+		
+		ModelModification mod = new ModelModification(file) {
+			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
+				if (!(model instanceof IPluginModelBase))
+					return;
+				IPluginModelBase pluginModel = (IPluginModelBase)model;
+				IPluginExtension extension = getExtension(pluginModel, INTRO_POINT);
+				if (extension == null) {
+					extension = createIntroExtension(pluginModel);
+					pluginModel.getPluginBase().add(extension);
+				} else {
+					extension.add(createIntroExtensionContent(extension));
+					extension.add(createIntroBindingExtensionContent(extension));
+				}
+				
+				extension = getExtension(pluginModel, INTRO_CONFIG_POINT);
+				if (extension == null) {
+					extension = createIntroConfigExtension(pluginModel);
+					pluginModel.getPluginBase().add(extension);
+				} else {
+					extension.add(createIntroConfigExtensionContent(extension));
+				}
 			}
-			
-			MultiTextEdit multi = new MultiTextEdit();
-			IPluginExtension extension = getExtension(model, INTRO_POINT);
-			if (extension == null) {
-				extension = createIntroExtension(model);
-				model.getPluginBase().add(extension);
-			} else {
-				extension.add(createIntroExtensionContent(extension));
-				extension.add(createIntroBindingExtensionContent(extension));
-			}
-			multi.addChild(TextEditUtilities.getInsertOperation((IDocumentNode) extension, fDocument));
-			
-			extension = getExtension(model, INTRO_CONFIG_POINT);
-			if (extension == null) {
-				extension = createIntroConfigExtension(model);
-				model.getPluginBase().add(extension);
-			} else {
-				extension.add(createIntroConfigExtensionContent(extension));
-			}
-			multi.addChild(TextEditUtilities.getInsertOperation((IDocumentNode) extension, fDocument));
-			
-			multi.apply(fDocument);
-			buffer.commit(monitor, true);
-			
-		} finally {
-			manager.disconnect(file.getFullPath(), monitor);
-		}
+		};
+		PDEModelUtility.modifyModel(mod, monitor);
 	}
 
 	private IPluginExtension getExtension(IPluginModelBase model,

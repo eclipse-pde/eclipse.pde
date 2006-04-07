@@ -10,12 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -24,10 +20,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginElement;
@@ -40,21 +34,14 @@ import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
 import org.eclipse.pde.internal.core.iproduct.IWindowImages;
-import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.core.product.SplashInfo;
-import org.eclipse.pde.internal.core.text.IDocumentNode;
-import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
 import org.eclipse.pde.internal.core.text.plugin.PluginElementNode;
-import org.eclipse.pde.internal.core.text.plugin.PluginModel;
-import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.ModelModification;
+import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.text.edits.MalformedTreeException;
-import org.eclipse.text.edits.ReplaceEdit;
-import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.branding.IProductConstants;
 
 public class ProductDefinitionOperation extends BaseManifestOperation {
@@ -62,7 +49,6 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 	private String fProductId;
 	private String fApplication;
 	private IProduct fProduct;
-	private IDocument fDocument;
 
 	public ProductDefinitionOperation(IProduct product, String pluginId, String productId, String application, Shell shell) {
 		super(shell, pluginId);
@@ -83,34 +69,9 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 			updateSingleton(monitor);
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
-		} catch (IOException e) {
-			throw new InvocationTargetException(e);
-		} catch (MalformedTreeException e) {
-			throw new InvocationTargetException(e);
-		} catch (BadLocationException e) {
-			throw new InvocationTargetException(e);
 		}
 	}
 	
-	private IFile getFile() {
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(fPluginId);
-		IProject project = model.getUnderlyingResource().getProject();
-		String filename = model instanceof IFragmentModel ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
-		return project.getFile(filename);	
-	}
-	
-	private IPluginModelBase getModel(IFile file) {
-		if ("plugin.xml".equals(file.getName())) //$NON-NLS-1$
-			return new WorkspacePluginModel(file, false);
-		return new WorkspaceFragmentModel(file, false);
-	}
-
-	private PluginModelBase getEditingModel(boolean isFragment) {
-		if (isFragment) 
-			return new FragmentModel(fDocument, false);
-		return new PluginModel(fDocument, false);
-	}
-
 	private void createNewFile(IFile file) throws CoreException {
 		WorkspacePluginModelBase model = (WorkspacePluginModelBase)getModel(file);
 		IPluginBase base = model.getPluginBase();
@@ -237,40 +198,23 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		return info != null ? SplashInfo.getGeometryString(info.getMessageGeometry()) : null;
 	}
 	
-	private void modifyExistingFile(IFile file, IProgressMonitor monitor) throws CoreException, IOException, MalformedTreeException, BadLocationException {
+	private void modifyExistingFile(IFile file, IProgressMonitor monitor) throws CoreException {
 		IStatus status = PDEPlugin.getWorkspace().validateEdit(new IFile[] {file}, getShell());
 		if (status.getSeverity() != IStatus.OK)
 			throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, NLS.bind(PDEUIMessages.ProductDefinitionOperation_readOnly, fPluginId), null)); //$NON-NLS-1$ 
 		
-		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-		try {
-			manager.connect(file.getFullPath(), monitor);
-			ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath());
-			
-			fDocument = buffer.getDocument();
-			PluginModelBase model = getEditingModel("fragment.xml".equals(file.getName())); //$NON-NLS-1$
-			try {
-				model.load();
-				if (!model.isLoaded())
-					throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, NLS.bind(PDEUIMessages.ProductDefinitionOperation_malformed, fPluginId), null)); //$NON-NLS-1$ 
-			} catch (CoreException e) {
-				throw e;
+		ModelModification mod = new ModelModification(file) {
+			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
+				if (!(model instanceof IPluginModelBase))
+					return;
+				IPluginExtension extension = findProductExtension((IPluginModelBase)model);
+				if (extension == null)
+					insertNewExtension((IPluginModelBase)model);
+				else
+					modifyExistingExtension(extension);
 			}
-			
-			IPluginExtension extension = findProductExtension(model);
-			TextEdit edit = null;
-			if (extension == null) {
-				edit = insertNewExtension(model);
-			} else {
-				edit = modifyExistingExtension(extension);
-			}
-			if (edit != null) {
-				edit.apply(fDocument);
-				buffer.commit(monitor, true);
-			}
-		} finally {
-			manager.disconnect(file.getFullPath(), monitor);
-		}	
+		};
+		PDEModelUtility.modifyModel(mod, monitor);
 	}
 	
 	private IPluginExtension findProductExtension(IPluginModelBase model) {
@@ -285,20 +229,23 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		return null;
 	}
 	
-	private TextEdit insertNewExtension(IPluginModelBase model) throws BadLocationException, CoreException {
+	private void insertNewExtension(IPluginModelBase model) throws CoreException {
 		IPluginExtension extension = createExtension(model);
 		model.getPluginBase().add(extension);
-		return TextEditUtilities.getInsertOperation((IDocumentNode)extension, fDocument);
 	}
 	
-	private TextEdit modifyExistingExtension(IPluginExtension extension) throws CoreException, MalformedTreeException, BadLocationException {
-		if (extension.getChildCount() == 0) 
-			return insertNewProductElement(extension);
+	private void modifyExistingExtension(IPluginExtension extension) throws CoreException {
+		if (extension.getChildCount() == 0) {
+			insertNewProductElement(extension);
+			return;
+		}
 		
 		PluginElementNode element = (PluginElementNode)extension.getChildren()[0];
 		
-		if (!"product".equals(element.getName())) //$NON-NLS-1$
-			return insertNewProductElement(extension);
+		if (!"product".equals(element.getName())) { //$NON-NLS-1$
+			insertNewProductElement(extension);
+			return;
+		}
 		
 		element.setAttribute("application", fApplication); //$NON-NLS-1$
 		element.setAttribute("name", fProduct.getName()); //$NON-NLS-1$
@@ -309,12 +256,6 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		synchronizeChild(element, IProductConstants.STARTUP_FOREGROUND_COLOR, getForegroundColor());
 		synchronizeChild(element, IProductConstants.STARTUP_MESSAGE_RECT, getMessageRect());
 		synchronizeChild(element, IProductConstants.STARTUP_PROGRESS_RECT, getProgressRect());
-		
-		String oldText = fDocument.get(element.getOffset(), element.getLength());
-		String newText = element.write(false);
-		if (oldText.equals(newText))
-			return null;
-		return new ReplaceEdit(element.getOffset(), element.getLength(), newText);
 	}
 	
 	private void synchronizeChild(IPluginElement element, String propertyName, String value) throws CoreException {
@@ -345,10 +286,9 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		child.setAttribute("name", propertyName); //$NON-NLS-1$
 	}
 	
-	private TextEdit insertNewProductElement(IPluginExtension extension) throws CoreException {
+	private void insertNewProductElement(IPluginExtension extension) throws CoreException {
 		IPluginElement element = createExtensionContent(extension);
 		extension.add(element);
-		return TextEditUtilities.getInsertOperation((IDocumentNode)element, fDocument);
 	}
 	
 }
