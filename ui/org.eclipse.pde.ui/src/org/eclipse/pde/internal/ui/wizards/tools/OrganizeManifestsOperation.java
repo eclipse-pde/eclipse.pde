@@ -27,6 +27,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
 import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -35,7 +36,7 @@ import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
 import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
 import org.eclipse.pde.internal.core.text.plugin.PluginModel;
-import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
+import org.eclipse.pde.internal.core.text.plugin.XMLTextChangeListener;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -64,9 +65,8 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 	private ArrayList fProjectList;
 	private IProject fCurrentProject;
 	private IBundlePluginModel fCurrentBundleModel;
-	private PluginModelBase fCurrentPluginModelBase;
+	private IPluginModelBase fCurrentPluginModelBase;
 	private ISaveablePart fCurrentOpenEditor;
-	private MultiTextEdit fXMLTextEdit;
 	
 	public OrganizeManifestsOperation(ArrayList projectList) {
 		fProjectList = projectList;
@@ -83,7 +83,7 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 		}
 	}
 	
-	private void cleanProject(IProject project, ITextFileBufferManager manager, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+	private void cleanProject(IProject project, ITextFileBufferManager manager, final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		
 		fCurrentProject = project;
 		monitor.beginTask(fCurrentProject.getName(), getTotalTicksPerProject());
@@ -95,6 +95,7 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 		ITextFileBuffer manifestBuffer = null;
 		IDocument manifestDoc = null;
 		BundleTextChangeListener bundleTextChangeListener = null;
+		XMLTextChangeListener xmlTextChangeListener = null;
 		ITextFileBuffer xmlModelBuffer = null;
 		IDocument xmlDoc = null;
 		boolean loadedFromEditor = false;
@@ -108,10 +109,12 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 				
 				if (!loadedFromEditor) {
 					if (F_FRAGMENT_FILE.equals(underlyingXML.getName()))
-						fCurrentPluginModelBase = new FragmentModel(xmlDoc, false);
+						fCurrentPluginModelBase = new FragmentModel(xmlDoc, true);
 					else
-						fCurrentPluginModelBase = new PluginModel(xmlDoc, false);
+						fCurrentPluginModelBase = new PluginModel(xmlDoc, true);
 					fCurrentPluginModelBase.load();
+					xmlTextChangeListener = new XMLTextChangeListener(xmlDoc);
+					fCurrentPluginModelBase.addModelChangedListener(xmlTextChangeListener);
 				}
 			}
 			
@@ -120,7 +123,7 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 				manifestDoc = manifestBuffer.getDocument();
 				
 				fCurrentBundleModel = new BundlePluginModel();
-				BundleModel bundleModel = new BundleModel(manifestDoc, false);
+				BundleModel bundleModel = new BundleModel(manifestDoc, true);
 				bundleModel.load();
 				bundleTextChangeListener = new BundleTextChangeListener(manifestDoc);
 				bundleModel.addModelChangedListener(bundleTextChangeListener);
@@ -130,14 +133,17 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 					fCurrentBundleModel.setExtensionsModel(fCurrentPluginModelBase);
 			}
 			
-			runCleanup(monitor);
+			IBundle bundle = null;
+			if (fCurrentBundleModel != null)
+				bundle = fCurrentBundleModel.getBundleModel().getBundle();
+			runCleanup(monitor, bundle);
 			
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
 		} finally {
 			try {
 				writeChanges(manifestBuffer, manifestDoc, OrganizeManifest.getTextEdit(bundleTextChangeListener));
-				writeChanges(xmlModelBuffer, xmlDoc, fXMLTextEdit);
+				writeChanges(xmlModelBuffer, xmlDoc, OrganizeManifest.getTextEdit(xmlTextChangeListener));
 				
 				if (fCurrentOpenEditor != null && !monitor.isCanceled())
 					fCurrentOpenEditor.doSave(monitor);
@@ -177,8 +183,8 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 			if (model instanceof IBundlePluginModel) {
 				fCurrentBundleModel = (IBundlePluginModel)model;
 				ISharedExtensionsModel sharedExtensions = fCurrentBundleModel.getExtensionsModel();
-				if (sharedExtensions instanceof PluginModelBase)
-					fCurrentPluginModelBase = (PluginModelBase)sharedExtensions;
+				if (sharedExtensions instanceof IPluginModelBase)
+					fCurrentPluginModelBase = (IPluginModelBase)sharedExtensions;
 				return true;
 			}
 		}
@@ -190,11 +196,10 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 		fCurrentBundleModel = null;
 		fCurrentPluginModelBase = null;
 		fCurrentOpenEditor = null;
-		fXMLTextEdit = null;
 	}
 	
 	private void writeChanges(ITextFileBuffer buffer, IDocument document, MultiTextEdit multiEdit) {
-		if (multiEdit == null || buffer == null || document == null || multiEdit.getChildrenSize() == 0)
+		if (multiEdit == null || buffer == null || document == null)
 			return;
 		
 		try {
@@ -207,10 +212,8 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 
 	}
 	
-	private void runCleanup(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-		IBundle bundle = null;
-		if (fCurrentBundleModel != null)
-			bundle = fCurrentBundleModel.getBundleModel().getBundle();
+	private void runCleanup(IProgressMonitor monitor, IBundle bundle) throws InvocationTargetException, InterruptedException {
+		
 		String projectName = fCurrentProject.getName();
 		
 		if (fAddMissing || fRemoveUnresolved) {
@@ -273,7 +276,7 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 		if (fPrefixIconNL) {
 			monitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_nlIconPath, projectName));
 			if (!monitor.isCanceled())
-				fXMLTextEdit = OrganizeManifest.prefixIconPaths(fCurrentPluginModelBase);
+				OrganizeManifest.prefixIconPaths(fCurrentPluginModelBase);
 			monitor.worked(1);
 		}
 		

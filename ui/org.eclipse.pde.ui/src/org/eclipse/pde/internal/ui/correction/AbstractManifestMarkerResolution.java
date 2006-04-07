@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 
 public abstract class AbstractManifestMarkerResolution extends AbstractPDEMarkerResolution {	
@@ -22,6 +23,8 @@ public abstract class AbstractManifestMarkerResolution extends AbstractPDEMarker
 	protected abstract void createChange(BundleModel model);
 	
 	protected void createChange(IBaseModel model) {
+		if (model instanceof IBundlePluginModelBase)
+			model = ((IBundlePluginModelBase)model).getBundleModel();
 		if (model instanceof BundleModel)
 			createChange((BundleModel)model);
 	}

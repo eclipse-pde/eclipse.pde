@@ -81,13 +81,10 @@ import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleObject;
 import org.eclipse.pde.internal.core.text.bundle.SingleManifestHeader;
 import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
-import org.eclipse.pde.internal.core.text.plugin.PluginAttribute;
 import org.eclipse.pde.internal.core.text.plugin.PluginModel;
-import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
@@ -361,7 +358,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 				}
 				
 				MultiTextEdit multi = getTextEdit(listener);
-				if (multi.getChildrenSize() > 0) {
+				if (multi != null && multi.getChildrenSize() > 0) {
 					multi.apply(document);
 					buffer.commit(null, true);
 				}
@@ -519,22 +516,20 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 	 *  
 	 * @param model - 
 	 */
-	public static MultiTextEdit prefixIconPaths(PluginModelBase model) {
+	public static void prefixIconPaths(IPluginModelBase model) {
 		if (model == null)
-			return null;
+			return;
 		
-		MultiTextEdit multiEdit = new MultiTextEdit();
 		SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
 			ISchema schema = registry.getSchema(extensions[i].getPoint());
 			if (schema != null)
-				inspectElementsIconPaths(schema, extensions[i], multiEdit);
+				inspectElementsIconPaths(schema, extensions[i]);
 		}
-		return multiEdit;
 	}
 	
-	private static void inspectElementsIconPaths(ISchema schema, IPluginParent parent, MultiTextEdit multiEdit) {
+	private static void inspectElementsIconPaths(ISchema schema, IPluginParent parent) {
 		IPluginObject[] children = parent.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			IPluginElement child = (IPluginElement)children[i];
@@ -542,12 +537,9 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 			if (schemaElement != null) {
 				IPluginAttribute[] attributes = child.getAttributes();
 				for (int j = 0; j < attributes.length; j++) {
-					if (!(attributes[j] instanceof PluginAttribute))
-						continue;
-					PluginAttribute attr = (PluginAttribute)attributes[j];
-					ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
+					ISchemaAttribute attInfo = schemaElement.getAttribute(attributes[j].getName());
 					if (attInfo != null && attInfo.getKind() == IMetaAttribute.RESOURCE) {
-						String value = attr.getValue();
+						String value = attributes[j].getValue();
 						if (value.startsWith(F_NL_PREFIX))
 							continue;
 						int fileExtIndex = value.lastIndexOf('.');
@@ -557,26 +549,32 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 						for (int e = 0; e < F_ICON_EXTENSIONS.length; e++) {
 							if (value.equalsIgnoreCase(F_ICON_EXTENSIONS[e])) {
 								IPath path = new Path(F_NL_PREFIX);
-								if (attr.getValue().charAt(0) != IPath.SEPARATOR)
+								String newValue = attributes[j].getValue();
+								if (newValue.charAt(0) != IPath.SEPARATOR)
 									path = path.addTrailingSeparator();
-								multiEdit.addChild(new InsertEdit(attr.getValueOffset(), path.toString()));
+								newValue = path.toString() + newValue;
+								try {
+									child.setAttribute(attributes[j].getName(), newValue);
+								} catch (CoreException e1) {
+								}
 								break;
 							}
 						}
 					}
 				}
 			}
-			inspectElementsIconPaths(schema, child, multiEdit);
+			inspectElementsIconPaths(schema, child);
 		}
 	}
 	
 	protected static MultiTextEdit getTextEdit(IModelTextChangeListener listener) {
 		if (listener == null)
 			return null;
-		MultiTextEdit multiEdit = new MultiTextEdit();
 		TextEdit[] edits = listener.getTextOperations();
-		if (edits.length > 0)
-			multiEdit.addChildren(edits);
+		if (edits.length == 0)
+			return null;
+		MultiTextEdit multiEdit = new MultiTextEdit();
+		multiEdit.addChildren(edits);
 		return multiEdit;
 	}
 	

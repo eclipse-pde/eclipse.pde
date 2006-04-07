@@ -18,9 +18,7 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.builders.XMLErrorReporter;
-import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginObjectNode;
@@ -40,11 +38,7 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 	protected abstract void createChange(IPluginModelBase model);
 	
 	protected void createChange(IBaseModel model) {
-		if (model instanceof IBundleModel) {
-			BundlePluginModel pluginModel = new BundlePluginModel();
-			pluginModel.setBundleModel((IBundleModel)model);
-			createChange(pluginModel);
-		} else if (model instanceof IPluginModelBase)
+		if (model instanceof IPluginModelBase)
 			createChange((IPluginModelBase)model);
 	}
 	

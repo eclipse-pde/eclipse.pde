@@ -275,5 +275,13 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		fInstallLocation = location;
 	}
 
+	public IModelTextChangeListener getLastTextChangeListener() {
+		for (int i = fListeners.size() - 1; i >= 0; i--) {
+			Object obj = fListeners.get(i);
+			if (obj instanceof IModelTextChangeListener)
+				return (IModelTextChangeListener)obj;
+		}
+		return null;
+	}
 
 }

@@ -14,8 +14,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
@@ -48,15 +48,13 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 	}
 	
 	public void run(IMarker marker) {
-		ModelModification modification = new ModelModification(
-				(IFile)marker.getResource(),
-				marker.getAttribute(PDEMarkerFactory.MPK_LOCATION_PATH, null) == null) {
-			protected void modifyModel(IBaseModel model) throws CoreException {
+		ModelModification modification = new ModelModification((IFile)marker.getResource()) {
+			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				createChange(model);
 			}
 		};
 		try {
-			PDEModelUtility.modifyModel(modification);
+			PDEModelUtility.modifyModel(modification, null);
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
 		}

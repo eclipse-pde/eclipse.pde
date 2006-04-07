@@ -58,11 +58,11 @@ public class XHTMLConversionOperation implements IWorkspaceRunnable {
 		private String F_PART_ATT_NAME = "participantId"; //$NON-NLS-1$
 		private String F_PART_ATT_VALUE = "org.eclipse.help.base.xhtml"; //$NON-NLS-1$
 
-		public AddDynamicHelpExtensions(IFile modelFile) {
-			super(modelFile, false);
+		public AddDynamicHelpExtensions(IProject project) {
+			super(project);
 		}
 
-		protected void modifyModel(IBaseModel baseModel) throws CoreException {
+		protected void modifyModel(IBaseModel baseModel, IProgressMonitor monitor) throws CoreException {
 			if (!(baseModel instanceof IPluginModelBase))
 				return;
 			IPluginModelBase model = (IPluginModelBase)baseModel;
@@ -164,7 +164,7 @@ public class XHTMLConversionOperation implements IWorkspaceRunnable {
 		}
 		Iterator it = touchedProjects.iterator();
 		while (it.hasNext())
-			updateExtensions((IProject)it.next());
+			PDEModelUtility.modifyModel(new AddDynamicHelpExtensions((IProject)it.next()), monitor);
 		monitor.worked(1);
 		
 		checkFailed(ms);
@@ -258,18 +258,5 @@ public class XHTMLConversionOperation implements IWorkspaceRunnable {
 				}
 			}
 		});
-	}
-	
-	
-	private void updateExtensions(IProject project) throws CoreException {
-		// we know files must exist since we have parsed through
-		// their xml to find toc file locations
-		IFile file = project.getFile(PDEModelUtility.F_PLUGIN);
-		if (!file.exists())
-			file = project.getFile(PDEModelUtility.F_FRAGMENT);
-		if (!file.exists())
-			return;
-		
-		PDEModelUtility.modifyModel(new AddDynamicHelpExtensions(file));
 	}
 }

@@ -9,10 +9,14 @@ import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
+import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
+import org.eclipse.pde.internal.core.bundle.BundleFragmentModel;
+import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
@@ -35,6 +39,7 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.forms.editor.IFormPage;
+import org.osgi.framework.Constants;
 
 /**
  * Your one stop shop for preforming changes do your plug-in models.
@@ -43,9 +48,14 @@ import org.eclipse.ui.forms.editor.IFormPage;
 public class PDEModelUtility {
 	
 	public static final String F_MANIFEST = "MANIFEST.MF"; //$NON-NLS-1$
+	public static final String F_MANIFEST_FP = "META-INF/" + F_MANIFEST; //$NON-NLS-1$
 	public static final String F_PLUGIN = "plugin.xml"; //$NON-NLS-1$
 	public static final String F_FRAGMENT = "fragment.xml"; //$NON-NLS-1$
 	public static final String F_BUILD = "build.properties"; //$NON-NLS-1$
+	
+	// bundle / xml various Object[] indices
+	private static final int F_Bi = 0;
+	private static final int F_Xi = 1;
 	
 	private static Hashtable fOpenPDEEditors = new Hashtable();
 	
@@ -124,49 +134,73 @@ public class PDEModelUtility {
 	 * A model will be searched for in the open editors, if it is found changes will be applied
 	 * and the editor will be saved.
 	 * If no model is found one will be created and text edit operations will be generated / applied.
+	 * 
+	 * NOTE: If a MANIFEST.MF file is specified in the ModelModification a BundlePluginModel will be
+	 * searched for / created and passed to ModelModification#modifyModel(IBaseModel).
+	 * (not a BundleModel - which can be retreived from the BundlePluginModel)
 	 * @param modification
+	 * @param monitor
 	 * @throws CoreException
 	 */
-	public static void modifyModel(final ModelModification modification) throws CoreException {
-		IFile file = modification.getFile();
+	public static void modifyModel(final ModelModification modification, final IProgressMonitor monitor) throws CoreException {
+		// ModelModification was not supplied with the right files
+		// TODO should we just fail silently?
+		if (modification.getFile() == null)
+			return;
 		
-		final PDEFormEditor editor = getOpenEditor(modification);
-		final IBaseModel model = getModelFromEditor(editor, modification);
+		PDEFormEditor editor = getOpenEditor(modification);
+		IBaseModel model = getModelFromEditor(editor, modification);
 		
 		if (model != null) {
 			// open editor found, should have underlying text listeners -> apply modification
-			Runnable runnable = new Runnable() {
-				public void run() {
-					try {
-						modification.modifyModel(model);
-						editor.doSave(null);
-					} catch (CoreException e) {
-						PDEPlugin.log(e);
-					}
-				}
-			};
-			Display.getDefault().syncExec(runnable);
+			modifyEditorModel(modification, editor, model, monitor);
 		} else {
-			// create own model, attach listener and grab text edits
+			// create own model, attach listeners and grab text edits
 			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+			IFile[] files;
+			if (modification.isFullBundleModification()) {
+				files = new IFile[2];
+				files[F_Bi] = modification.getManifestFile();
+				files[F_Xi] = modification.getXMLFile();
+			} else {
+				files = new IFile[] { modification.getFile() };
+			}
+			// need to monitor number of successfull buffer connections for disconnection purposes
+			// @see } finally { statement
+			int sc = 0;
 			try {
-				manager.connect(file.getFullPath(), null);
-				ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath());
-				if (buffer.isDirty())
-					buffer.commit(null, true);
-				IDocument document = buffer.getDocument();	
-				AbstractEditingModel editModel = prepareModel(modification, document);
-				IModelTextChangeListener listener = createListener(file.getName(), document);
-				if (!editModel.isLoaded() || listener == null)
-					return;
-				editModel.addModelChangedListener(listener);
-				modification.modifyModel(editModel);
-				TextEdit[] edits = listener.getTextOperations();
-				if (edits.length > 0) {
-					MultiTextEdit multi = new MultiTextEdit();
-					multi.addChildren(edits);
-					multi.apply(document);
-					buffer.commit(null, true);
+				ITextFileBuffer[] buffers = new ITextFileBuffer[files.length];
+				IDocument[] documents = new IDocument[files.length];
+				for (int i = 0; i < files.length; i++) {
+					if (files[i] == null || !files[i].exists())
+						continue;
+					manager.connect(files[i].getFullPath(), monitor);
+					sc++;
+					buffers[i] = manager.getTextFileBuffer(files[i].getFullPath());
+					if (buffers[i].isDirty())
+						buffers[i].commit(monitor, true);
+					documents[i] = buffers[i].getDocument();
+				}
+				
+				IBaseModel editModel;
+				if (modification.isFullBundleModification())
+					editModel = prepareBundlePluginModel(files, documents);
+				else
+					editModel = prepareAbstractEditingModel(files[0], documents[0]);
+				
+				modification.modifyModel(editModel, monitor);
+				
+				IModelTextChangeListener[] listeners = gatherListeners(editModel);
+				for (int i = 0; i < listeners.length; i++) {
+					if (listeners[i] == null)
+						continue;
+					TextEdit[] edits = listeners[i].getTextOperations();
+					if (edits.length > 0) {
+						MultiTextEdit multi = new MultiTextEdit();
+						multi.addChildren(edits);
+						multi.apply(documents[i]);
+						buffers[i].commit(monitor, true);
+					}
 				}
 			} catch (CoreException e) {
 				PDEPlugin.log(e);
@@ -175,60 +209,78 @@ public class PDEModelUtility {
 			} catch (BadLocationException e) {
 				PDEPlugin.log(e);
 			} finally {
-				manager.disconnect(file.getFullPath(), null);
+				// don't want to over-disconnect in case we ran into an exception during connections
+				// dc <= sc stops this from happening
+				int dc = 0;
+				for (int i = 0; i < files.length && dc <= sc; i++) {
+					if (files[i] == null || !files[i].exists())
+						continue;
+					manager.disconnect(files[i].getFullPath(), monitor);
+					dc++;
+				}
 			}
 		}
+	}
+	
+	private static void modifyEditorModel(
+			final ModelModification modification,
+			final PDEFormEditor editor,
+			final IBaseModel model, 
+			final IProgressMonitor monitor) {
+		Runnable runnable = new Runnable() {
+			public void run() {
+				try {
+					modification.modifyModel(model, monitor);
+					editor.doSave(monitor);
+				} catch (CoreException e) {
+					PDEPlugin.log(e);
+				}
+			}
+		};
+		Display display = Display.getCurrent();
+		if (display == null)
+			display = Display.getDefault();
+		display.syncExec(runnable);
 	}
 	
 	private static PDEFormEditor getOpenEditor(ModelModification modification) {
 		IProject project = modification.getFile().getProject();
 		String name = modification.getFile().getName();
-		PDEFormEditor openEditor = null;
-		if (name.equals(F_PLUGIN) || name.equals(F_FRAGMENT)) {
-			openEditor = getOpenManifestEditor(project);
+		if (name.equals(F_PLUGIN) || name.equals(F_FRAGMENT) || name.equals(F_MANIFEST)) {
+			return getOpenManifestEditor(project);
 		} else if (name.equals(F_BUILD)) {
-			openEditor = getOpenBuildPropertiesEditor(project);
+			PDEFormEditor openEditor = getOpenBuildPropertiesEditor(project);
 			if (openEditor == null)
 				openEditor = getOpenManifestEditor(project);
-		} else if (name.equals(F_MANIFEST)) {
-			openEditor = getOpenManifestEditor(project);
+			return openEditor;
 		}
-		return openEditor;
+		return null;
 	}
 	
 	private static IBaseModel getModelFromEditor(PDEFormEditor openEditor, ModelModification modification) {
 		if (openEditor == null)
 			return null;
 		String name = modification.getFile().getName();
+		IBaseModel model = null;
 		if (name.equals(F_PLUGIN) || name.equals(F_FRAGMENT)) {
-			IBaseModel model = openEditor.getAggregateModel();
+			model = openEditor.getAggregateModel();
 			if (model instanceof IBundlePluginModelBase)
 				model = ((IBundlePluginModelBase)model).getExtensionsModel();
-			if (model instanceof AbstractEditingModel)
-				return model;
 		} else if (name.equals(F_BUILD)) {
 			if (openEditor instanceof BuildEditor) {
-				IBaseModel model = openEditor.getAggregateModel();
-				if (model instanceof AbstractEditingModel)
-					return model;
+				model = openEditor.getAggregateModel();
 			} else if (openEditor instanceof ManifestEditor) {
 				IFormPage page = openEditor.findPage(BuildInputContext.CONTEXT_ID);
-				if (page instanceof BuildSourcePage) {
-					IBaseModel model = ((BuildSourcePage)page).getInputContext().getModel();
-					if (model instanceof AbstractEditingModel)
-						return model;
-				}
+				if (page instanceof BuildSourcePage)
+					model = ((BuildSourcePage)page).getInputContext().getModel();
 			}
 		} else if (name.equals(F_MANIFEST)) {
-			IBaseModel model = openEditor.getAggregateModel();
-			if (model instanceof IBundlePluginModel) {
-				if (!modification.searchForBundlePlugin())
-					return model;
-				model = ((IBundlePluginModel)model).getBundleModel();
-				if (model instanceof AbstractEditingModel)
-					return model;
-			}
+			model = openEditor.getAggregateModel();
+			if (model instanceof IBundlePluginModelBase)
+				return model;
 		}
+		if (model instanceof AbstractEditingModel)
+			return model;
 		return null;
 	}
 	
@@ -242,9 +294,9 @@ public class PDEModelUtility {
 		return null;
 	}
 	
-	private static AbstractEditingModel prepareModel(ModelModification mod, IDocument doc) {
+	private static AbstractEditingModel prepareAbstractEditingModel(IFile file, IDocument doc) {
 		AbstractEditingModel model;
-		String filename = mod.getFile().getName();
+		String filename = file.getName();
 		if (filename.equals(F_MANIFEST))
 			model = new BundleModel(doc, true);
 		else if (filename.equals(F_FRAGMENT))
@@ -255,12 +307,58 @@ public class PDEModelUtility {
 			model = new BuildModel(doc, true);
 		else
 			return null;
-		model.setUnderlyingResource(mod.getFile());
+		model.setUnderlyingResource(file);
 		try {
 			model.load();
+			IModelTextChangeListener listener = createListener(filename, doc);
+			model.addModelChangedListener(listener);
 		} catch (CoreException e) {
+			PDEPlugin.log(e);
 		}
 		return model;
 	}
 	
+	private static IBaseModel prepareBundlePluginModel(IFile[] files, IDocument[] docs) throws CoreException {
+		AbstractEditingModel[] models = new AbstractEditingModel[docs.length];
+		
+		boolean isFragment = false;
+		for (int i = 0; i < docs.length; i++) {
+			if (files[i] == null || docs[i] == null)
+				break;
+			models[i] = prepareAbstractEditingModel(files[i], docs[i]);
+			if (i == F_Bi && models[i] instanceof IBundleModel)
+				isFragment = ((IBundleModel)models[i]).getBundle().getHeader(
+						Constants.FRAGMENT_HOST)!= null;
+		}
+		IBundlePluginModelBase pluginModel;
+		if (isFragment)
+			pluginModel = new BundleFragmentModel();
+		else
+			pluginModel = new BundlePluginModel();
+		
+		pluginModel.setBundleModel((IBundleModel)models[F_Bi]);
+		pluginModel.setExtensionsModel((ISharedExtensionsModel)models[F_Xi]);
+		return pluginModel;
+	}
+	
+	private static IModelTextChangeListener[] gatherListeners(IBaseModel editModel) {
+		IModelTextChangeListener[] listeners = new IModelTextChangeListener[0];
+		if (editModel instanceof AbstractEditingModel)
+			listeners = new IModelTextChangeListener[] {
+					((AbstractEditingModel)editModel).getLastTextChangeListener()};
+		if (editModel instanceof IBundlePluginModelBase) {
+			IBundlePluginModelBase modelBase = (IBundlePluginModelBase)editModel;
+			listeners = new IModelTextChangeListener[2];
+			listeners[F_Bi] = gatherListener(modelBase.getBundleModel());
+			listeners[F_Xi] = gatherListener(modelBase.getExtensionsModel());
+			return listeners;
+		}
+		return listeners;
+	}
+	
+	private static IModelTextChangeListener gatherListener(IBaseModel model) {
+		if (model instanceof AbstractEditingModel)
+			return((AbstractEditingModel)model).getLastTextChangeListener();
+		return null;
+	}
 }

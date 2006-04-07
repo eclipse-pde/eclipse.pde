@@ -1,7 +1,10 @@
 package org.eclipse.pde.internal.ui.util;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.pde.core.IBaseModel;
 
 /**
@@ -11,38 +14,89 @@ import org.eclipse.pde.core.IBaseModel;
  */
 public abstract class ModelModification {
 
-	private IFile fFile;
+	private IFile fModelFile;
+	private IFile fManifestFile;
+	private IFile fXMLFile;
 	private boolean fIsBundleModel;
 	
 	/**
-	 * 
+	 * Create a single model modification - used for modifying single AbstractEditingModels
 	 * @param modelFile the basic underlying file for the model you wish to modify.
-	 * @param isBundleModel if true a IBundleModel will be searched for in the open editors (vs. a IPluginModelBase) 
 	 */
-	public ModelModification(IFile modelFile, boolean isBundleModel) {
-		fFile = modelFile;
-		fIsBundleModel = isBundleModel;
+	public ModelModification(IFile modelFile) {
+		singleFileModification(modelFile);
+	}
+	
+	
+	/**
+	 * Create a full IBundlePluginModelBase modification
+	 * @param bundleFile the MANIFEST.MF file
+	 * @param xmlFile the plugin.xml/fragment.xml file for this modification (optional - can be null)
+	 * @pre bundleFile must not be <code>null</code>
+	 */
+	public ModelModification(IFile bundleFile, IFile xmlFile) {
+		multiFileModification(bundleFile, xmlFile);
+	}
+	
+	public ModelModification(IProject project) {
+		IFile xml = project.getFile(PDEModelUtility.F_PLUGIN);
+		if (!xml.exists())
+			xml = project.getFile(PDEModelUtility.F_FRAGMENT);
+		if (!xml.exists())
+			xml = null;
+		IFile manifest = project.getFile(PDEModelUtility.F_MANIFEST_FP);
+		if (!manifest.exists() && xml != null)
+			singleFileModification(xml);
+		else if (manifest.exists())
+			multiFileModification(manifest, xml);
+	}
+	
+	private void singleFileModification(IFile file) {
+		assignFile(file);
+		fModelFile = getManifestFile();
+		if (fModelFile == null)
+			fModelFile = getXMLFile();
+		fIsBundleModel = file.getName().equals(PDEModelUtility.F_MANIFEST);
+	}
+	
+	private void multiFileModification(IFile bundleFile, IFile xmlFile) {
+		assignFile(bundleFile);
+		assignFile(xmlFile);
+		
+		Assert.isNotNull(fManifestFile, "Full bundle modifications require a MANIFEST.MF.");
+		fModelFile = fManifestFile;
+		fIsBundleModel = true;
+	}
+	
+	private void assignFile(IFile file) {
+		String name = file.getName();
+		if (name.equals(PDEModelUtility.F_MANIFEST))
+			fManifestFile = file;
+		else if (name.equals(PDEModelUtility.F_PLUGIN) || name.equals(PDEModelUtility.F_FRAGMENT))
+			fXMLFile = file;
 	}
 	
 	/**
 	 * Invoke this using PDEModelUtility.modifyModel(ModelModification modification)
 	 * @param model
+	 * @param monitor
 	 * @throws CoreException
 	 */
-	protected abstract void modifyModel(IBaseModel model) throws CoreException;
+	protected abstract void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException;
 	
-	/**
-	 * @return file associated with this model modification
-	 */
 	protected final IFile getFile() {
-		return fFile;
+		return fModelFile;
 	}
 	
-	/**
-	 * 
-	 * @return if this model modification is meant for an IBundleModel
-	 */
-	protected final boolean searchForBundlePlugin() {
+	protected final IFile getManifestFile() {
+		return fManifestFile;
+	}
+	
+	protected final IFile getXMLFile() {
+		return fXMLFile;
+	}
+	
+	protected final boolean isFullBundleModification() {
 		return fIsBundleModel;
 	}
 }
