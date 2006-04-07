@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
-import org.eclipse.core.internal.runtime.FindSupport;
 import org.eclipse.core.runtime.*;
 import org.osgi.framework.*;
 
@@ -46,11 +45,11 @@ public class BundleHelper {
 	}
 
 	public final URL find(IPath path) {
-		return FindSupport.find(bundle, path, null);
+		return FileLocator.find(bundle, path, null);
 	}
 
 	public final URL find(IPath path, Map override) {
-		return FindSupport.find(bundle, path, override);
+		return FileLocator.find(bundle, path, override);
 	}
 
 	public final ILog getLog() {
@@ -62,11 +61,11 @@ public class BundleHelper {
 	}
 
 	public final InputStream openStream(IPath file) throws IOException {
-		return FindSupport.openStream(bundle, file, false);
+		return FileLocator.openStream(bundle, file, false);
 	}
 
 	public final InputStream openStream(IPath file, boolean localized) throws IOException {
-		return FindSupport.openStream(bundle, file, localized);
+		return FileLocator.openStream(bundle, file, localized);
 	}
 
 	public String toString() {
