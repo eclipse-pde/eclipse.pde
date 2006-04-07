@@ -35,9 +35,16 @@ public abstract class ModelModification {
 	 * @pre bundleFile must not be <code>null</code>
 	 */
 	public ModelModification(IFile bundleFile, IFile xmlFile) {
-		multiFileModification(bundleFile, xmlFile);
+		createFullBundleModification(bundleFile, xmlFile);
 	}
 	
+	/**
+	 * Create a ModelModification based on the contents of the project
+	 * ie. if the project contains a MANIFEST.MF this will be tagged as a 
+	 * fullBundleModification, otherwise (this project is an old-style plugin)
+	 * this will be a PluginModel/FragmentModel modification.
+	 * @param project
+	 */
 	public ModelModification(IProject project) {
 		IFile xml = project.getFile(PDEModelUtility.F_PLUGIN);
 		if (!xml.exists())
@@ -48,7 +55,7 @@ public abstract class ModelModification {
 		if (!manifest.exists() && xml != null)
 			singleFileModification(xml);
 		else if (manifest.exists())
-			multiFileModification(manifest, xml);
+			createFullBundleModification(manifest, xml);
 	}
 	
 	private void singleFileModification(IFile file) {
@@ -59,7 +66,7 @@ public abstract class ModelModification {
 		fIsBundleModel = file.getName().equals(PDEModelUtility.F_MANIFEST);
 	}
 	
-	private void multiFileModification(IFile bundleFile, IFile xmlFile) {
+	private void createFullBundleModification(IFile bundleFile, IFile xmlFile) {
 		assignFile(bundleFile);
 		assignFile(xmlFile);
 		
@@ -69,6 +76,8 @@ public abstract class ModelModification {
 	}
 	
 	private void assignFile(IFile file) {
+		if (file == null)
+			return;
 		String name = file.getName();
 		if (name.equals(PDEModelUtility.F_MANIFEST))
 			fManifestFile = file;

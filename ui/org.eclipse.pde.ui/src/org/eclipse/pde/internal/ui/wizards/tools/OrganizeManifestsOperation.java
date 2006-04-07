@@ -14,38 +14,25 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
-import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
-import org.eclipse.pde.internal.core.text.bundle.BundleModel;
-import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
-import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
-import org.eclipse.pde.internal.core.text.plugin.PluginModel;
-import org.eclipse.pde.internal.core.text.plugin.XMLTextChangeListener;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.search.dependencies.AddNewDependenciesOperation;
 import org.eclipse.pde.internal.ui.search.dependencies.GatherUnusedDependenciesOperation;
+import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
-import org.eclipse.text.edits.MalformedTreeException;
-import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.ui.ISaveablePart;
 
 public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrganizeManifestsSettings {
 	
@@ -64,9 +51,6 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 	
 	private ArrayList fProjectList;
 	private IProject fCurrentProject;
-	private IBundlePluginModel fCurrentBundleModel;
-	private IPluginModelBase fCurrentPluginModelBase;
-	private ISaveablePart fCurrentOpenEditor;
 	
 	public OrganizeManifestsOperation(ArrayList projectList) {
 		fProjectList = projectList;
@@ -78,141 +62,44 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 		for (int i = 0; i < fProjectList.size(); i++) {
 			if (monitor.isCanceled())
 				break;
-			resetModels();
 			cleanProject((IProject)fProjectList.get(i), manager, new SubProgressMonitor(monitor, 1));
 		}
 	}
 	
-	private void cleanProject(IProject project, ITextFileBufferManager manager, final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-		
+	private void cleanProject(IProject project, ITextFileBufferManager manager, IProgressMonitor monitor) {
 		fCurrentProject = project;
 		monitor.beginTask(fCurrentProject.getName(), getTotalTicksPerProject());
-		IFile manifest = fCurrentProject.getFile(F_MANIFEST_FILE);
-		IFile underlyingXML = fCurrentProject.getFile(F_PLUGIN_FILE);
-		if (!underlyingXML.exists())
-			underlyingXML = fCurrentProject.getFile(F_FRAGMENT_FILE);
 		
-		ITextFileBuffer manifestBuffer = null;
-		IDocument manifestDoc = null;
-		BundleTextChangeListener bundleTextChangeListener = null;
-		XMLTextChangeListener xmlTextChangeListener = null;
-		ITextFileBuffer xmlModelBuffer = null;
-		IDocument xmlDoc = null;
-		boolean loadedFromEditor = false;
+		final Exception[] ee = new Exception[1];
+		ModelModification modification = new ModelModification(fCurrentProject) {
+			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
+				if (model instanceof IBundlePluginModelBase)
+					try {
+						runCleanup(monitor, (IBundlePluginModelBase)model);
+					} catch (InvocationTargetException e) {
+						ee[0] = e;
+					} catch (InterruptedException e) {
+						ee[0] = e;
+					}
+			}
+		};
 		try {
-			
-			loadedFromEditor = loadFromEditor();
-			
-			if (connectExtensions(underlyingXML)) {
-				xmlModelBuffer = connectBuffer(underlyingXML, manager);
-				xmlDoc = xmlModelBuffer.getDocument();
-				
-				if (!loadedFromEditor) {
-					if (F_FRAGMENT_FILE.equals(underlyingXML.getName()))
-						fCurrentPluginModelBase = new FragmentModel(xmlDoc, true);
-					else
-						fCurrentPluginModelBase = new PluginModel(xmlDoc, true);
-					fCurrentPluginModelBase.load();
-					xmlTextChangeListener = new XMLTextChangeListener(xmlDoc);
-					fCurrentPluginModelBase.addModelChangedListener(xmlTextChangeListener);
-				}
-			}
-			
-			if (connectBundle() && !loadedFromEditor) {
-				manifestBuffer = connectBuffer(manifest, manager);
-				manifestDoc = manifestBuffer.getDocument();
-				
-				fCurrentBundleModel = new BundlePluginModel();
-				BundleModel bundleModel = new BundleModel(manifestDoc, true);
-				bundleModel.load();
-				bundleTextChangeListener = new BundleTextChangeListener(manifestDoc);
-				bundleModel.addModelChangedListener(bundleTextChangeListener);
-				bundleModel.setUnderlyingResource(manifest);
-				fCurrentBundleModel.setBundleModel(bundleModel);
-				if (fCurrentPluginModelBase != null)
-					fCurrentBundleModel.setExtensionsModel(fCurrentPluginModelBase);
-			}
-			
-			IBundle bundle = null;
-			if (fCurrentBundleModel != null)
-				bundle = fCurrentBundleModel.getBundleModel().getBundle();
-			runCleanup(monitor, bundle);
-			
+			PDEModelUtility.modifyModel(modification, monitor);
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
-		} finally {
-			try {
-				writeChanges(manifestBuffer, manifestDoc, OrganizeManifest.getTextEdit(bundleTextChangeListener));
-				writeChanges(xmlModelBuffer, xmlDoc, OrganizeManifest.getTextEdit(xmlTextChangeListener));
-				
-				if (fCurrentOpenEditor != null && !monitor.isCanceled())
-					fCurrentOpenEditor.doSave(monitor);
-				
-				if (connectExtensions(underlyingXML))
-					manager.disconnect(underlyingXML.getFullPath(), null);
-
-				if (connectBundle() && !loadedFromEditor)
-					manager.disconnect(manifest.getFullPath(), null);
-				
-			} catch (CoreException e) {
-				PDEPlugin.log(e);
-			} finally {
-				monitor.done();
-			}
 		}
+		if (ee[0] != null)
+			PDEPlugin.log(ee[0]);
 	}
 	
-	private ITextFileBuffer connectBuffer(IFile file, ITextFileBufferManager manager) throws CoreException {
-		manager.connect(file.getFullPath(), null);
-		return manager.getTextFileBuffer(file.getFullPath());
-	}
 	
-	private boolean connectExtensions(IFile underlyingXML) {
-		return underlyingXML.exists() && (fPrefixIconNL || fUnusedKeys || fUnusedDependencies || fAddDependencies);
-	}
-	
-	private boolean connectBundle() {
-		return fAddMissing || fModifyDep || fUnusedDependencies || fAddDependencies
-				|| fRemoveLazy || fRemoveUnresolved || fUnusedKeys;
-	}
-	
-	private boolean loadFromEditor() {
-		fCurrentOpenEditor = PDEModelUtility.getOpenManifestEditor(fCurrentProject);
-		if (fCurrentOpenEditor != null) {
-			IBaseModel model = ((PDEFormEditor)fCurrentOpenEditor).getAggregateModel();
-			if (model instanceof IBundlePluginModel) {
-				fCurrentBundleModel = (IBundlePluginModel)model;
-				ISharedExtensionsModel sharedExtensions = fCurrentBundleModel.getExtensionsModel();
-				if (sharedExtensions instanceof IPluginModelBase)
-					fCurrentPluginModelBase = (IPluginModelBase)sharedExtensions;
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	private void resetModels() {
-		fCurrentProject = null;
-		fCurrentBundleModel = null;
-		fCurrentPluginModelBase = null;
-		fCurrentOpenEditor = null;
-	}
-	
-	private void writeChanges(ITextFileBuffer buffer, IDocument document, MultiTextEdit multiEdit) {
-		if (multiEdit == null || buffer == null || document == null)
-			return;
+	private void runCleanup(IProgressMonitor monitor, IBundlePluginModelBase modelBase) throws InvocationTargetException, InterruptedException {
 		
-		try {
-			multiEdit.apply(document);
-			buffer.commit(null, true);
-		} catch (MalformedTreeException e1) {
-		} catch (BadLocationException e1) {
-		} catch (CoreException e) {
-		}
-
-	}
-	
-	private void runCleanup(IProgressMonitor monitor, IBundle bundle) throws InvocationTargetException, InterruptedException {
+		IBundle bundle = modelBase.getBundleModel().getBundle();
+		ISharedExtensionsModel sharedExtensionsModel = modelBase.getExtensionsModel();
+		IPluginModelBase extensionsModel = null;
+		if (sharedExtensionsModel instanceof IPluginModelBase)
+			extensionsModel = (IPluginModelBase)sharedExtensionsModel;
 		
 		String projectName = fCurrentProject.getName();
 		
@@ -250,7 +137,7 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 		if (fAddDependencies) {
 			monitor.subTask(NLS.bind (PDEUIMessages.OrganizeManifestsOperation_additionalDeps, projectName));
 			if (!monitor.isCanceled()) {
-				AddNewDependenciesOperation op = new AddNewDependenciesOperation(fCurrentProject, fCurrentBundleModel);
+				AddNewDependenciesOperation op = new AddNewDependenciesOperation(fCurrentProject, modelBase);
 				op.run(new SubProgressMonitor(monitor, 4));
 			}
 		}
@@ -259,9 +146,9 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 			monitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_unusedDeps, projectName));
 			if (!monitor.isCanceled()) {
 				SubProgressMonitor submon = new SubProgressMonitor(monitor, 4);
-				GatherUnusedDependenciesOperation udo = new GatherUnusedDependenciesOperation(fCurrentBundleModel);
+				GatherUnusedDependenciesOperation udo = new GatherUnusedDependenciesOperation(modelBase);
 				udo.run(submon);
-				GatherUnusedDependenciesOperation.removeDependencies(fCurrentBundleModel, udo.getList().toArray());
+				GatherUnusedDependenciesOperation.removeDependencies(modelBase, udo.getList().toArray());
 				submon.done();
 			}
 		}
@@ -276,14 +163,14 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 		if (fPrefixIconNL) {
 			monitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_nlIconPath, projectName));
 			if (!monitor.isCanceled())
-				OrganizeManifest.prefixIconPaths(fCurrentPluginModelBase);
+				OrganizeManifest.prefixIconPaths(extensionsModel);
 			monitor.worked(1);
 		}
 		
 		if (fUnusedKeys) {
 			monitor.subTask(NLS.bind(PDEUIMessages.OrganizeManifestsOperation_unusedKeys, projectName));
 			if (!monitor.isCanceled())
-				OrganizeManifest.removeUnusedKeys(fCurrentProject, bundle, fCurrentPluginModelBase);
+				OrganizeManifest.removeUnusedKeys(fCurrentProject, bundle, extensionsModel);
 			monitor.worked(1);
 		}
 	}
