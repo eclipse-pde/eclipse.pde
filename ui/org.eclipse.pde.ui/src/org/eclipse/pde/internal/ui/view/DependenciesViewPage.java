@@ -181,7 +181,8 @@ public abstract class DependenciesViewPage extends Page {
 	}
 	
 	protected void setSelection(IStructuredSelection selection) {
-		fViewer.setSelection(selection, false);
+		if (selection != null && !selection.isEmpty())
+			fViewer.setSelection(selection, true);
 	}
 	
 	/**

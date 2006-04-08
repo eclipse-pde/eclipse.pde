@@ -531,8 +531,7 @@ public class DependenciesView extends PageBookView implements
 		((DependenciesViewPage) p).setInput(fInput);
 		super.showPageRec(pageRec);
 		updateTitle(fInput);
-		if (selection != null)
-			((DependenciesViewPage) p).setSelection(selection);
+		((DependenciesViewPage) p).setSelection(selection);
 	}
 
 	void updateTitle(Object newInput) {
