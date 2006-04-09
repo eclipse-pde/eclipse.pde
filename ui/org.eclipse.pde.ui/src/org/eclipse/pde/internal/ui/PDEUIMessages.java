@@ -15,6 +15,8 @@ import org.eclipse.osgi.util.NLS;
 public class PDEUIMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ui.pderesources";//$NON-NLS-1$
 
+	public static String RevertUnsupportSingletonResolution_desc;
+
 	public static String AddLibraryDialog_emptyLibraries;
 
 	public static String BaseWizardSelectionPage_noDesc;
@@ -50,8 +52,6 @@ public class PDEUIMessages extends NLS {
 	public static String RemoveNodeXMLResolution_attrLabel;
 
 	public static String RemoveNodeXMLResolution_label;
-
-	public static String RevertUnsupportSingletonResolution_revertUnsupportedSingleton;
 
 	public static String SchemaIncludesSection_missingWarningMessage;
 

@@ -18,9 +18,9 @@ import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.osgi.framework.Constants;
 
-public class RevertUnsupportSingletonResolution extends AbstractManifestMarkerResolution {
+public class UnsupportedSingletonDirectiveResolution extends AbstractManifestMarkerResolution {
 
-	public RevertUnsupportSingletonResolution(int type) {
+	public UnsupportedSingletonDirectiveResolution(int type) {
 		super(type);
 	}
 
