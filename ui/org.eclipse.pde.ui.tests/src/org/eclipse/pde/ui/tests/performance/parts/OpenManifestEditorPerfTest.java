@@ -27,7 +27,7 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 	}
 	
 	public void testOpen() throws Exception {
-		tagAsGlobalSummary("Open Plug-in Editor", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
+		tagAsSummary("Open Plug-in Editor", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		PDECore.getDefault().getModelManager().findEntry("org.eclipse.core.runtime");
 		for (int i = 0; i < 20; i++) {

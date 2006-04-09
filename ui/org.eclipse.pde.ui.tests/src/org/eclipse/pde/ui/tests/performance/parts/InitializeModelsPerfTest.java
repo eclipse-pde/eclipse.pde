@@ -38,7 +38,7 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 	}
 	
 	public void testModels() throws Exception {
-		tagAsSummary("Initialize Plug-ins (no caching)", Dimension.ELAPSED_PROCESS);
+		tagAsGlobalSummary("Initialize Plug-ins (no caching)", Dimension.ELAPSED_PROCESS);
 		URL[] paths = getURLs();
 		startMeasuring();
 		new PDEState(paths, false, new NullProgressMonitor());
@@ -48,7 +48,7 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 	}
 	
 	public void testCachedModels() throws Exception {
-		tagAsGlobalSummary("Initialize Plug-ins (with caching)", Dimension.ELAPSED_PROCESS);
+		tagAsSummary("Initialize Plug-ins (with caching)", Dimension.ELAPSED_PROCESS);
 		URL[] paths = getURLs();
 		new PDEState(paths, true, new NullProgressMonitor());
 		startMeasuring();
