@@ -96,7 +96,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				.substring(comma + 1, versionRangeString.length() - 1));
 	}
 
-	private boolean fEclipse3_1;
+	private boolean fOsgiR4;
 	
 	private boolean fHasExtensibleApi = false;
 
@@ -106,14 +106,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private Map fHostPackagesMap = null;
 
-	private boolean fHasFragment_Xml;
-
-	private boolean fHasExtensions;
-
 	private String fHostBundleId;
 
-	// private Vector fIimportPkgs;
-	//
 	private String fPluginId = ""; //$NON-NLS-1$
 
 	private Map fProjectPackagesMap = null;
@@ -124,6 +118,135 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	public BundleErrorReporter(IFile file) {
 		super(file);
+	}
+
+	public void validateContent(IProgressMonitor monitor) {
+		super.validateContent(monitor);
+		if (fHeaders == null || getErrorCount() > 0)
+			return;
+
+		fModel = PDECore.getDefault().getModelManager().findModel(fProject);
+		setOsgiR4();
+
+		if (!validateBundleSymbolicName())
+			return;
+	
+		validateBundleName();
+		validateBundleVersion();
+		validateEclipsePlatformFilter();
+		validateFragmentHost();
+		validateBundleClasspath();
+		validateRequireBundle(monitor);
+		validateBundleActivator();
+		validatePluginClass();
+		validateExportPackage(monitor);
+		validateProvidePackage(monitor);
+		validateImportPackage(monitor);
+		validateAutoStart();
+		validateLazyStart();
+		validateExtensibleAPI();
+		
+		validateTranslatableHeaders();
+	}
+	
+	private void setOsgiR4() {
+		IHeader header = (IHeader) fHeaders.get(Constants.BUNDLE_MANIFESTVERSION);
+		if (header != null) {		
+			String version = header.getValue();
+			try {
+				fOsgiR4 = version != null && Integer.parseInt(version) > 1 ;
+			}  catch (NumberFormatException e) {			
+			}
+		}
+	}
+
+	/**
+	 * @return boolean false if fatal
+	 */
+	private boolean validateBundleSymbolicName() {
+		IHeader header = (IHeader) fHeaders.get(Constants.BUNDLE_SYMBOLICNAME);
+		if (header == null) {
+			report(NLS.bind(PDECoreMessages.BundleErrorReporter_headerMissing, 
+				   Constants.BUNDLE_SYMBOLICNAME), 1, CompilerFlags.ERROR);
+			return false;
+		}
+			
+		ManifestElement[] elements = header.getElements();
+		fPluginId = elements.length > 0 ? elements[0].getValue() : null;
+		if (fPluginId == null || fPluginId.length() == 0) {
+			report(PDECoreMessages.BundleErrorReporter_NoSymbolicName, header.getLineNumber() + 1, CompilerFlags.ERROR);
+			return false;
+		}
+		
+		validatePluginId(header, fPluginId);
+		validateSingleton(header, elements[0]);
+
+		return true;
+	}
+	
+	private boolean validatePluginId(IHeader header, String value) {
+		if (!IdUtil.isValidCompositeID(value)) {
+			String message = PDECoreMessages.BundleErrorReporter_InvalidSymbolicName; 
+			report(message, getLine(header, value), CompilerFlags.WARNING);
+			return false;
+		}
+		return true;
+	}
+
+	private void validateSingleton(IHeader header, ManifestElement element) {
+		String singletonAttr = element.getAttribute(ICoreConstants.SINGLETON_ATTRIBUTE);
+		String singletonDir = element.getDirective(Constants.SINGLETON_DIRECTIVE);
+		boolean hasExtensions = fModel.getPluginBase().getExtensionPoints().length > 0
+								|| fModel.getPluginBase().getExtensions().length > 0;
+
+		if (hasExtensions) {
+			if (TargetPlatform.getTargetVersion() >= 3.1) {
+				if (!"true".equals(singletonDir)) { //$NON-NLS-1$
+					if ("true".equals(singletonAttr)) { //$NON-NLS-1$
+						if (isCheckDeprecated()) {
+							String message = PDECoreMessages.BundleErrorReporter_deprecated_attribute_singleton;
+							report(message, getLine(header, ICoreConstants.SINGLETON_ATTRIBUTE + "="), //$NON-NLS-1$
+									CompilerFlags.P_DEPRECATED,	PDEMarkerFactory.M_SINGLETON_DIR_NOT_SET);
+							return;
+						}
+					} else {
+						String message = NLS.bind(PDECoreMessages.BundleErrorReporter_singletonRequired, Constants.SINGLETON_DIRECTIVE); 
+						report(message, header.getLineNumber() + 1,	CompilerFlags.ERROR, PDEMarkerFactory.M_SINGLETON_DIR_NOT_SET);						
+						return;
+					}
+				}
+			} else if (!"true".equals(singletonAttr)) { //$NON-NLS-1$
+				String message = NLS.bind(PDECoreMessages.BundleErrorReporter_singletonAttrRequired,
+						  ICoreConstants.SINGLETON_ATTRIBUTE);
+				report(message, header.getLineNumber() + 1, CompilerFlags.ERROR, PDEMarkerFactory.M_SINGLETON_ATT_NOT_SET);				
+				return;
+			}
+		}
+		
+		if (TargetPlatform.getTargetVersion() >= 3.1) {
+			if (singletonAttr != null) {
+				if (isCheckDeprecated()) {
+					String message = PDECoreMessages.BundleErrorReporter_deprecated_attribute_singleton;
+					report(message, getLine(header, ICoreConstants.SINGLETON_ATTRIBUTE + "="), //$NON-NLS-1$
+							CompilerFlags.P_DEPRECATED,	PDEMarkerFactory.M_SINGLETON_DIR_NOT_SET);
+				}			
+			}
+		} else if (singletonDir != null) {
+			if (isCheckDeprecated()) {
+				String message = PDECoreMessages.BundleErrorReporter_unsupportedSingletonDirective;
+				report(message, getLine(header, Constants.SINGLETON_DIRECTIVE + ":="), //$NON-NLS-1$
+						CompilerFlags.P_DEPRECATED,	PDEMarkerFactory.M_SINGLETON_DIR_NOT_SUPPORTED);
+				
+			}
+		}
+		validateBooleanAttributeValue(header, element, ICoreConstants.SINGLETON_ATTRIBUTE);
+		validateBooleanDirectiveValue(header, element, Constants.SINGLETON_DIRECTIVE);	
+	}
+	
+	private void validateBundleName() {
+		IHeader header = (IHeader) fHeaders.get(Constants.BUNDLE_NAME);
+		if (header == null)
+			report(NLS.bind(PDECoreMessages.BundleErrorReporter_headerMissing, Constants.BUNDLE_NAME), 1, CompilerFlags.ERROR);
 	}
 
 	/**
@@ -319,33 +442,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				CompilerFlags.P_UNRESOLVED_IMPORTS) != CompilerFlags.IGNORE;
 	}
 
-//	 /**
-//	 * @return true if the given file exists in the project
-//	 */
-//	 private boolean isFileExist(String fileName) {
-//	 IResource member = fProject.findMember(fileName);
-//	 if (member != null) {
-//	 if ((member instanceof IFile) && (member.exists()))
-//	 return true;
-//	 }
-//	
-//	 return false;
-//	 }
-
-	private void readBundleManifestVersion() {
-		IHeader header = (IHeader) fHeaders
-				.get(Constants.BUNDLE_MANIFESTVERSION);
-		if (header == null) {
-			return;
-		}
-		try {
-			Version v = new Version(header.getValue());
-			if (v.getMajor() >= 2) {
-				fEclipse3_1 = true;
-			}
-		} catch (NumberFormatException nfe) {
-		}
-	}
 
 	private void validateBundleActivator() {
 		IHeader header = (IHeader) fHeaders.get(Constants.BUNDLE_ACTIVATOR);
@@ -476,50 +572,26 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 	}
 	
-	private void validateBundleName() {
-		IHeader header = (IHeader) fHeaders.get(Constants.BUNDLE_NAME);
-		if (header == null)
-			report(NLS.bind(PDECoreMessages.BundleErrorReporter_headerMissing, Constants.BUNDLE_NAME), 1, CompilerFlags.ERROR);
-	}
-
-	/**
-	 * @return boolean false if fatal
-	 */
-	private boolean validateBundleSymbolicName() {
-		IHeader header = (IHeader) fHeaders.get(Constants.BUNDLE_SYMBOLICNAME);
-		String message;
-		if (header == null) {
-			report(
-					NLS.bind(PDECoreMessages.BundleErrorReporter_headerMissing, Constants.BUNDLE_SYMBOLICNAME), 1, 
-					CompilerFlags.ERROR);
-			return false;
-		}
-		String symbolicName = header.getValue();
-		if ((symbolicName.trim()).length() == 0) {
-			message = PDECoreMessages.BundleErrorReporter_NoSymbolicName; 
-			report(message, header.getLineNumber() + 1, CompilerFlags.ERROR);
-			return false;
-		}
-		ManifestElement[] elements = header.getElements();
-		if (elements.length == 0) {
-			return false;
-		}
-		fPluginId = elements[0].getValue();
-
-		validatePluginId(header, fPluginId);
-
-		validateSingleton(header, elements[0]);
-
-		return true;
-	}
-	
 	private void validateTranslatableHeaders() {
+		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_NOT_EXTERNALIZED);
+		if (severity == CompilerFlags.IGNORE)
+			return;
+		
 		for (int i = 0; i < ICoreConstants.TRANSLATABLE_HEADERS.length; i++) {
-			IHeader header = (IHeader) fHeaders.get(
-					ICoreConstants.TRANSLATABLE_HEADERS[i]);
-			if (header == null) 
-				continue;
-			validateTranslatableString(header, true);
+			IHeader header = (IHeader) fHeaders.get(ICoreConstants.TRANSLATABLE_HEADERS[i]);
+			if (header != null) {
+				String value = header.getValue();
+				if (!value.startsWith("%")) { //$NON-NLS-1$
+					report(NLS.bind(PDECoreMessages.Builders_Manifest_non_ext_attribute, header.getName()),
+							getLine(header, value),
+							severity,
+							PDEMarkerFactory.P_UNTRANSLATED_NODE, header.getName()); 
+				} else if (fModel instanceof AbstractModel) {
+					NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
+					if (helper == null || !helper.resourceExists(value))
+						report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(header, value), severity);				
+				}
+			}
 		}
 	}
 
@@ -548,48 +620,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			report(message, getPackageLine(header, element),
 					CompilerFlags.ERROR); 
 		}
-	}
-
-	public void validateContent(IProgressMonitor monitor) {
-		super.validateContent(monitor);
-		if (fHeaders == null || getErrorCount() > 0) {
-			return;
-		}
-
-		readBundleManifestVersion();
-		fHasFragment_Xml = fProject.getFile("fragment.xml").exists(); //$NON-NLS-1$
-
-		fModel = PDECore.getDefault().getModelManager()
-				.findModel(fProject);
-		if (fModel != null) {
-			fHasExtensions = fModel.getPluginBase().getExtensionPoints().length > 0
-					|| fModel.getPluginBase().getExtensions().length > 0;
-		}
-
-		// sets fPluginId
-		if (!validateBundleSymbolicName()) {
-			return;
-		}
-		validateBundleName();
-		validateTranslatableHeaders();
-		validateBundleVersion();
-		// sets fExtensibleApi
-		validateExtensibleAPI();
-		// sets fHostBundleId
-		validateFragmentHost();
-		validateBundleClasspath();
-		validateRequireBundle(monitor);
-		// sets fCompatibility
-		// sets fCompatibilityActivator
-		validateBundleActivator();
-		validatePluginClass();
-		validateExportPackage(monitor);
-		validateProvidePackage(monitor);
-		validateImportPackage(monitor);
-		validateEclipsePlatformFilter();
-		validateAutoStart();
-		validateLazyStart();
-		// validateNativeCode();
 	}
 
 	private void validateExportPackage(IProgressMonitor monitor) {
@@ -672,7 +702,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		IHeader header = (IHeader) fHeaders.get(Constants.FRAGMENT_HOST);
 		String message;
 		if (header == null) {
-			if (isCheckNoRequiredAttr() && fHasFragment_Xml) { 
+			if (isCheckNoRequiredAttr() && fProject.getFile("fragment.xml").exists()) {  //$NON-NLS-1$
 				message = PDECoreMessages.BundleErrorReporter_HostNeeded; 
 				report(message, 1, CompilerFlags.P_NO_REQUIRED_ATT);
 			}
@@ -801,143 +831,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 	}
 
-//	 private void validateNativeCode() {
-//		IHeader header = (IHeader) fHeaders.get(Constants.BUNDLE_NATIVECODE);
-//		if (header == null) {
-//			return;
-//		}
-//		String nativeCode = header.getValue();
-//		if (nativeCode == null) {
-//			return;
-//		}
-//		String message = null;
-//
-//		ManifestElement[] nativeCodeElements = header.getElements();
-//		for (int i = 0; i < nativeCodeElements.length; i++) {
-//			String fileNames = nativeCodeElements[i].getValue();
-//			// Parse the file names
-//			StringTokenizer st = new StringTokenizer(fileNames, ";"); //$NON-NLS-1$
-//			String filesErrorMsg = ""; //$NON-NLS-1$
-//			while (st.hasMoreTokens()) {
-//				String name = st.nextToken();
-//				if (!filesErrorMsg.equals("")) //$NON-NLS-1$
-//					filesErrorMsg += ","; //$NON-NLS-1$
-//				filesErrorMsg += name;
-//
-//				if (!isFileExist(name)) {
-//					// File does not exist.
-//					message = PDE.getFormattedMessage(
-//							"BundleErrorReporter.FileNotExist", name); //$NON-NLS-1$
-//					report(message, getLine(header, name),
-//							CompilerFlags.P_UNKNOWN_RESOURCE);
-//				}
-//			}
-//
-//			String[] processors = nativeCodeElements[i]
-//					.getAttributes(Constants.BUNDLE_NATIVECODE_PROCESSOR);
-//			if ((processors == null) || (processors.length == 0)) {
-//				// No processor settings
-//				message = PDE.getFormattedMessage(
-//						"BundleErrorReporter.NativeNoProcessor", filesErrorMsg); //$NON-NLS-1$
-//				report(message, header.getLineNumber() + 1,
-//						CompilerFlags.P_NO_REQUIRED_ATT);
-//			} else {
-//				HashSet set = new HashSet(Arrays
-//						.asList(NativeCodeAttributeValues.PROCESSOR_TYPES));
-//				set
-//						.addAll(Arrays
-//								.asList(NativeCodeAttributeValues.ADDITIONAL_PROCESSOR_ALIASES));
-//				for (int j = 0; j < processors.length; j++) {
-//					if (!set.contains(processors[j])) {
-//						// Processor is unrecognized
-//						message = PDE
-//								.getFormattedMessage(
-//										"BundleErrorReporter.NativeInvalidProcessor", processors[j]); //$NON-NLS-1$
-//						report(message, getLine(header, processors[j]),
-//								CompilerFlags.P_UNKNOWN_ATTRIBUTE);
-//					}
-//				}
-//			}
-//
-//			String[] osNames = nativeCodeElements[i]
-//					.getAttributes(Constants.BUNDLE_NATIVECODE_OSNAME);
-//			if ((osNames == null) || (osNames.length == 0)) {
-//				// No OS settings
-//				message = PDE.getFormattedMessage(
-//						"BundleErrorReporter.NativeNoOSName", filesErrorMsg); //$NON-NLS-1$
-//				report(message, header.getLineNumber() + 1,
-//						CompilerFlags.P_NO_REQUIRED_ATT);
-//			} else {
-//				HashSet set = new HashSet(Arrays
-//						.asList(NativeCodeAttributeValues.OS_TYPES));
-//				set
-//						.addAll(Arrays
-//								.asList(NativeCodeAttributeValues.ADDITIONAL_OS_ALIASES));
-//				for (int j = 0; j < osNames.length; j++) {
-//					if (!set.contains(osNames[j])) {
-//						// OS name is unrecognized
-//						message = PDE
-//								.getFormattedMessage(
-//										"BundleErrorReporter.NativeInvalidOSName", osNames[j]); //$NON-NLS-1$
-//						report(message, getLine(header, osNames[j]),
-//								CompilerFlags.P_UNKNOWN_ATTRIBUTE);
-//
-//					}
-//				}
-//			}
-//
-//			String osVersion = nativeCodeElements[i]
-//					.getAttribute(Constants.BUNDLE_NATIVECODE_OSVERSION);
-//			if (osVersion != null) {
-//				// version is in wrong format
-//				if (!isValidVersionRange(osVersion)) {
-//					message = PDE
-//							.getFormattedMessage(
-//									"BundleErrorReporter.NativeInvalidOSVersion", osVersion); //$NON-NLS-1$
-//					report(message, getLine(header, osVersion),
-//							CompilerFlags.P_UNKNOWN_ATTRIBUTE);
-//				}
-//			}
-//
-//			String filter = nativeCodeElements[i]
-//					.getAttribute(Constants.SELECTION_FILTER_ATTRIBUTE);
-//			if (filter != null) {
-//				BundleContext context = PDE.getDefault().getBundleContext();
-//				try {
-//					context.createFilter(filter);
-//				} catch (InvalidSyntaxException e) {
-//					// selection filter is in a wrong format
-//					String[] msg = new String[2];
-//					msg[0] = filter;
-//					msg[1] = e.getMessage();
-//					message = PDE.getFormattedMessage(
-//							"BundleErrorReporter.NativeInvalidFilter", msg); //$NON-NLS-1$
-//					report(message, getLine(header, filter),
-//							CompilerFlags.P_UNKNOWN_ATTRIBUTE);
-//				}
-//			}
-//
-//			String[] lang = nativeCodeElements[i]
-//					.getAttributes(Constants.BUNDLE_NATIVECODE_LANGUAGE);
-//			if ((lang != null) && (lang.length > 0)) {
-//				HashSet set = new HashSet();
-//				for (int k = 0; k < NativeCodeAttributeValues.LANGUAGES.length; k++) {
-//					set.add(NativeCodeAttributeValues.LANGUAGES[k][1]);
-//				}
-//				for (int j = 0; j < lang.length; j++) {
-//					if (!set.contains(lang[j])) {
-//						// Language is unrecognized
-//						message = PDE
-//								.getFormattedMessage(
-//										"BundleErrorReporter.NativeInvalidLanguage", lang[j]); //$NON-NLS-1$
-//						report(message, getLine(header, lang[i]),
-//								CompilerFlags.P_UNKNOWN_ATTRIBUTE);
-//					}
-//				}
-//			}
-//		}
-//	}
-
 	private void validateOptionalAttribute(IHeader header,
 			ManifestElement requireBundleElements) {
 		String message;
@@ -946,7 +839,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (rexport != null) {
 			validateBooleanAttributeValue(header, requireBundleElements,
 					ICoreConstants.OPTIONAL_ATTRIBUTE);
-			if (fEclipse3_1 && isCheckDeprecated()) {
+			if (fOsgiR4 && isCheckDeprecated()) {
 				message = NLS
 						.bind(
 								PDECoreMessages.BundleErrorReporter_deprecated_attribute_optional,
@@ -958,23 +851,13 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 	}
 
-	private boolean validatePluginId(IHeader header, String value) {
-		String message;
-		if (!IdUtil.isValidCompositeID(value)) {
-			message = PDECoreMessages.BundleErrorReporter_InvalidSymbolicName; 
-			report(message, header.getLineNumber() + 1, CompilerFlags.WARNING);
-			return false;
-		}
-		return true;
-	}
-
 	private void validateProvidePackage(IProgressMonitor monitor) {
 		IHeader header = (IHeader) fHeaders.get(ICoreConstants.PROVIDE_PACKAGE);
 		if (header == null) {
 			return;
 		}
 		String message = null;
-		if (fEclipse3_1 && isCheckDeprecated()) {
+		if (fOsgiR4 && isCheckDeprecated()) {
 			message = NLS
 					.bind(
 							PDECoreMessages.BundleErrorReporter_deprecated_header_Provide_Package,
@@ -1032,7 +915,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (rexport != null) {
 			validateBooleanAttributeValue(header, requireBundleElements,
 					ICoreConstants.REPROVIDE_ATTRIBUTE);
-			if (fEclipse3_1 && isCheckDeprecated()) {
+			if (fOsgiR4 && isCheckDeprecated()) {
 				message = NLS
 						.bind(
 								PDECoreMessages.BundleErrorReporter_deprecated_attribute_reprovide,
@@ -1143,27 +1026,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 	}
 
-	private void validateSingleton(IHeader header, ManifestElement element) {
-		String singletonAttr = element.getAttribute(ICoreConstants.SINGLETON_ATTRIBUTE);
-		String singletonDir = element.getDirective(Constants.SINGLETON_DIRECTIVE);
-		if (fHasExtensions && !fEclipse3_1 && !"true".equals(singletonAttr)) { //$NON-NLS-1$
-			String message = NLS.bind(
-					PDECoreMessages.BundleErrorReporter_singletonAttrRequired,
-					ICoreConstants.SINGLETON_ATTRIBUTE);
-			report(message, header.getLineNumber() + 1, CompilerFlags.ERROR, PDEMarkerFactory.M_SINGLETON_ATT_NOT_SET);
-		} else if (isCheckDeprecated() && fEclipse3_1 && singletonAttr != null) {
-			String message = NLS.bind(PDECoreMessages.BundleErrorReporter_deprecated_attribute_singleton, ICoreConstants.SINGLETON_ATTRIBUTE);
-			report(message, getLine(header, ICoreConstants.SINGLETON_ATTRIBUTE + "="), //$NON-NLS-1$
-					CompilerFlags.P_DEPRECATED,	PDEMarkerFactory.M_SINGLETON_DIR_NOT_SET);
-		} else if (fHasExtensions && fEclipse3_1 && !"true".equals(singletonDir)) { //$NON-NLS-1$
-			String message = NLS.bind(PDECoreMessages.BundleErrorReporter_singletonRequired, Constants.SINGLETON_DIRECTIVE); 
-			report(message, header.getLineNumber() + 1,	CompilerFlags.ERROR, PDEMarkerFactory.M_SINGLETON_DIR_NOT_SET);
-		} else {
-			validateBooleanAttributeValue(header, element, ICoreConstants.SINGLETON_ATTRIBUTE);
-			validateBooleanDirectiveValue(header, element, Constants.SINGLETON_DIRECTIVE);
-		}
-	}
-	
 	private void validateSpecificationVersionAttribute(IHeader header,
 			ManifestElement element) {
 		String version = element
@@ -1174,7 +1036,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					CompilerFlags.ERROR); 
 		}
 		if (isCheckDeprecated()) {
-			if (fEclipse3_1 && version != null) {
+			if (fOsgiR4 && version != null) {
 				String message = NLS
 						.bind(
 								PDECoreMessages.BundleErrorReporter_deprecated_attribute_specification_version,
@@ -1256,26 +1118,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			report(PDECoreMessages.BundleErrorReporter_invalidFilterSyntax, header
 					.getLineNumber() + 1, CompilerFlags.ERROR);
 		}
-	}
-	
-	protected void validateTranslatableString(IHeader header, boolean shouldTranslate) {
-		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_NOT_EXTERNALIZED);
-		if (severity == CompilerFlags.IGNORE)
-			return;
-		String value = header.getValue();
-		if (shouldTranslate) {
-			if (!value.startsWith("%")) { //$NON-NLS-1$
-				report(NLS.bind(PDECoreMessages.Builders_Manifest_non_ext_attribute, header.getName()),
-						getLine(header, value),
-						severity,
-						PDEMarkerFactory.P_UNTRANSLATED_NODE, header.getName()); 
-			} else if (fModel instanceof AbstractModel) {
-				NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
-				if (helper == null || !helper.resourceExists(value)) {
-					report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(header, value), severity); 
-				}
-			}
-		} 
 	}
 	
 	private void validateAutoStart() {
@@ -1372,11 +1214,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 	
 	public void report(String message, int line, int severity, int problemID, String headerName) {
-		IMarker marker = report(message, line, severity, problemID);
-		if (marker == null)
-			return;
 		try {
-			marker.setAttribute(PDEMarkerFactory.MPK_LOCATION_PATH, headerName);
+			IMarker marker = report(message, line, severity, problemID);
+			if (marker != null)
+				marker.setAttribute(PDEMarkerFactory.MPK_LOCATION_PATH, headerName);
 		} catch (CoreException e) {
 		}
 	}

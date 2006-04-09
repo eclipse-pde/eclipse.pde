@@ -61,12 +61,10 @@ public class JarManifestErrorReporter extends ErrorReporter {
 			}
 		}
 		return null;
-
 	}
 
 	protected int getLine(IHeader header, String valueSubstring) {
-		for (int l = header.getLineNumber(); l < header.getLineNumber()
-				+ header.getLinesSpan(); l++) {
+		for (int l = header.getLineNumber(); l < header.getLineNumber() + header.getLinesSpan(); l++) {
 			try {
 				IRegion lineRegion = fTextDocument.getLineInformation(l);
 				String lineStr = fTextDocument.get(lineRegion.getOffset(),
@@ -80,10 +78,8 @@ public class JarManifestErrorReporter extends ErrorReporter {
 		}
 		// it might span mutliple lines, try a longer algorithm
 		try {
-			IRegion lineRegion = fTextDocument.getLineInformation(header
-					.getLineNumber());
-			String lineStr = fTextDocument.get(lineRegion.getOffset(),
-					lineRegion.getLength());
+			IRegion lineRegion = fTextDocument.getLineInformation(header.getLineNumber());
+			String lineStr = fTextDocument.get(lineRegion.getOffset(), lineRegion.getLength());
 			for (int l = header.getLineNumber() + 1; l < header.getLineNumber()
 					+ header.getLinesSpan(); l++) {
 				lineRegion = fTextDocument.getLineInformation(l);
@@ -261,13 +257,11 @@ public class JarManifestErrorReporter extends ErrorReporter {
 		reportIllegalAttributeValue(header, key, value);
 	}
 
-	protected void validateBooleanAttributeValue(IHeader header,
-			ManifestElement element, String key) {
+	protected void validateBooleanAttributeValue(IHeader header, ManifestElement element, String key) {
 		validateAttributeValue(header, element, key, BOOLEAN_VALUES);
 	}
 
-	protected void validateBooleanDirectiveValue(IHeader header,
-			ManifestElement element, String key) {
+	protected void validateBooleanDirectiveValue(IHeader header, ManifestElement element, String key) {
 		validateDirectiveValue(header, element, key, BOOLEAN_VALUES);
 	}
 	
@@ -276,14 +270,11 @@ public class JarManifestErrorReporter extends ErrorReporter {
 	}
 
 	protected void validate(IProgressMonitor monitor) {
-		if (fTextDocument == null) {
-			return;
-		}
-		parseManifest(fTextDocument, monitor);
+		if (fTextDocument != null)
+			parseManifest(fTextDocument, monitor);
 	}
 
-	protected void validateDirectiveValue(IHeader header,
-			ManifestElement element, String key, String[] allowedValues) {
+	protected void validateDirectiveValue(IHeader header, ManifestElement element, String key, String[] allowedValues) {
 		String value = element.getDirective(key);
 		if (value == null) {
 			return;

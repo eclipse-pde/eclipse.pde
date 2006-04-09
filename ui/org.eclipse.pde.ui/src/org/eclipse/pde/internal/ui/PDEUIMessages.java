@@ -51,6 +51,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String RemoveNodeXMLResolution_label;
 
+	public static String RevertUnsupportSingletonResolution_revertUnsupportedSingleton;
+
 	public static String SchemaIncludesSection_missingWarningMessage;
 
 	public static String SchemaIncludesSection_missingWarningTitle;

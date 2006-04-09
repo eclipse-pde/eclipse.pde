@@ -38,6 +38,8 @@ public class BundleSymbolicNameHeader extends SingleManifestHeader {
 		} else {
 			setAttribute(Constants.SINGLETON_DIRECTIVE, 
 					singleton ? Boolean.toString(true) : null);
+			if (getDirective(Constants.SINGLETON_DIRECTIVE) != null)
+				setDirective(Constants.SINGLETON_DIRECTIVE, null);
 		}
 	}
 	
@@ -46,6 +48,14 @@ public class BundleSymbolicNameHeader extends SingleManifestHeader {
 						? getDirective(Constants.SINGLETON_DIRECTIVE)
 						: getAttribute(Constants.SINGLETON_DIRECTIVE);
 		return "true".equals(value); //$NON-NLS-1$
+	}
+	
+	public void fixUnsupportedDirective() {
+		String value = getDirective(Constants.SINGLETON_DIRECTIVE);
+		if (value != null) {
+			setAttribute(Constants.SINGLETON_DIRECTIVE, value);
+			setDirective(Constants.SINGLETON_DIRECTIVE, null);
+		}
 	}
 	
 	

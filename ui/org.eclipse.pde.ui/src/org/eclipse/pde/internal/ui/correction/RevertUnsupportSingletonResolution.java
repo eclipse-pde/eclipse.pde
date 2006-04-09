@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
-import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
@@ -19,25 +18,18 @@ import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.osgi.framework.Constants;
 
-public class AddSingletonToSymbolicName extends AbstractManifestMarkerResolution {
+public class RevertUnsupportSingletonResolution extends AbstractManifestMarkerResolution {
 
-	private boolean fisDirective;
-	
-	public AddSingletonToSymbolicName(int type, boolean directive) {
+	public RevertUnsupportSingletonResolution(int type) {
 		super(type);
-		fisDirective = directive;
 	}
 
 	public String getDescription() {
-		if (fisDirective)
-			return PDEUIMessages.AddSingleon_dir_desc;
-		return PDEUIMessages.AddSingleon_att_desc;
+		return PDEUIMessages.RevertUnsupportSingletonResolution_revertUnsupportedSingleton;
 	}
 
 	public String getLabel() {
-		if (fisDirective)
-			return PDEUIMessages.AddSingleon_dir_label;
-		return PDEUIMessages.AddSingleon_att_label;
+		return PDEUIMessages.RevertUnsupportSingletonResolution_revertUnsupportedSingleton;
 	}
 
 	protected void createChange(BundleModel model) {
@@ -46,11 +38,7 @@ public class AddSingletonToSymbolicName extends AbstractManifestMarkerResolution
 			Bundle bun = (Bundle)bundle;
 			IManifestHeader header = bun.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 			if (header instanceof BundleSymbolicNameHeader) {
-				if (fisDirective && TargetPlatform.getTargetVersion() >= 3.1)
-					bundle.setHeader(Constants.BUNDLE_MANIFESTVERSION, "2"); //$NON-NLS-1$
-				else if (!fisDirective && TargetPlatform.getTargetVersion() < 3.1)
-					bundle.setHeader(Constants.BUNDLE_MANIFESTVERSION, null);
-				((BundleSymbolicNameHeader)header).setSingleton(true);
+				((BundleSymbolicNameHeader)header).fixUnsupportedDirective();
 			}
 		}
 	}

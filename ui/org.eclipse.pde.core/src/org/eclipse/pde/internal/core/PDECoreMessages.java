@@ -17,6 +17,8 @@ public class PDECoreMessages extends NLS {
 
 	public static String BaseExportTask_pdeExport;
 
+	public static String BundleErrorReporter_unsupportedSingletonDirective;
+
 	public static String PluginModelManager_outOfSync;
 
 	// Status text #####################################

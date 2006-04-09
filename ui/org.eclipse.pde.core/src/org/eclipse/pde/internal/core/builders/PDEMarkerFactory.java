@@ -31,6 +31,7 @@ public class PDEMarkerFactory implements IMarkerFactory {
 	public static final int M_REQ_BUNDLE_NOT_AVAILABLE = 0x1008;
 	public static final int M_UNKNOWN_CLASS = 0x1009;
 	public static final int M_UNKNOWN_ACTIVATOR = 0x1010;
+	public static final int M_SINGLETON_DIR_NOT_SUPPORTED = 0x1011;
 	
 	// build properties fixes
 	public static final int B_APPEND_SLASH_FOLDER_ENTRY = 0x2001;
@@ -48,6 +49,7 @@ public class PDEMarkerFactory implements IMarkerFactory {
 	public static final String BK_BUILD_ENTRY = "buildEntry.key"; //$NON-NLS-1$
 	public static final String BK_BUILD_TOKEN = "buildEntry.tokenValue"; //$NON-NLS-1$
 	public static final String MPK_LOCATION_PATH = "xmlTree.locationPath"; //$NON-NLS-1$
+
 
 	
 	/**

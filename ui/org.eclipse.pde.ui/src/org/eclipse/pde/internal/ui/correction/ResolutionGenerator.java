@@ -37,6 +37,8 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 				return new IMarkerResolution[] {new AddSingletonToSymbolicName(AbstractPDEMarkerResolution.RENAME_TYPE, true)};
 			case PDEMarkerFactory.M_SINGLETON_ATT_NOT_SET:
 				return new IMarkerResolution[] {new AddSingletonToSymbolicName(AbstractPDEMarkerResolution.RENAME_TYPE, false)};
+			case PDEMarkerFactory.M_SINGLETON_DIR_NOT_SUPPORTED:
+				return new IMarkerResolution[] {new RevertUnsupportSingletonResolution(AbstractPDEMarkerResolution.RENAME_TYPE)};
 			case PDEMarkerFactory.M_PROJECT_BUILD_ORDER_ENTRIES:
 				return new IMarkerResolution[] {new RemoveStaticProjectReferences(AbstractPDEMarkerResolution.REMOVE_TYPE)};
 			case PDEMarkerFactory.M_EXPORT_PKG_NOT_EXIST:
