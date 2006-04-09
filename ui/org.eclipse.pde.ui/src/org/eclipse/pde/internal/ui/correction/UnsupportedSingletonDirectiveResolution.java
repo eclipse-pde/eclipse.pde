@@ -25,11 +25,11 @@ public class UnsupportedSingletonDirectiveResolution extends AbstractManifestMar
 	}
 
 	public String getDescription() {
-		return PDEUIMessages.RevertUnsupportSingletonResolution_revertUnsupportedSingleton;
+		return PDEUIMessages.RevertUnsupportSingletonResolution_desc;
 	}
 
 	public String getLabel() {
-		return PDEUIMessages.RevertUnsupportSingletonResolution_revertUnsupportedSingleton;
+		return PDEUIMessages.RevertUnsupportSingletonResolution_desc;
 	}
 
 	protected void createChange(BundleModel model) {
