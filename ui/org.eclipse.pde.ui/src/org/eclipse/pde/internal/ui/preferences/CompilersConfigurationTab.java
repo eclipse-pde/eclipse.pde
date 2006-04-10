@@ -73,6 +73,7 @@ public class CompilersConfigurationTab {
 	// The size of label array must match CompilerFlag.fFlags
 	private static final String[][] fLabels = {
 			{ PDEUIMessages.compilers_p_unresolved_import,
+					PDEUIMessages.CompilersConfigurationTab_incompatEnv,
 					PDEUIMessages.compilers_p_unresolved_ex_points,
 					PDEUIMessages.compilers_p_no_required_att,
 					PDEUIMessages.compilers_p_unknown_element,

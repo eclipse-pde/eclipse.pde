@@ -15,6 +15,8 @@ import org.eclipse.osgi.util.NLS;
 public class PDEUIMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ui.pderesources";//$NON-NLS-1$
 
+	public static String CompilersConfigurationTab_incompatEnv;
+
 	public static String RevertUnsupportSingletonResolution_desc;
 
 	public static String AddLibraryDialog_emptyLibraries;

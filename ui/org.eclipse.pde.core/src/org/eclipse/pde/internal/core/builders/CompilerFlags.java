@@ -63,6 +63,8 @@ public class CompilerFlags {
 	public static final String P_NOT_EXTERNALIZED = "compilers.p.not-externalized-att"; //$NON-NLS-1$
 	
 	public static final String P_BUILD = "compilers.p.build"; //$NON-NLS-1$
+	
+	public static final String P_INCOMPATIBLE_ENV = "compilers.incompatible-environment"; //$NON-NLS-1$
 
 	public static final String P_DEPRECATED = "compilers.p.deprecated"; //$NON-NLS-1$
 
@@ -77,7 +79,8 @@ public class CompilerFlags {
 	public static final String F_UNRESOLVED_FEATURES = "compilers.f.unresolved-features"; //$NON-NLS-1$
 
 	private static final String[][] fFlags = {
-			{ P_UNRESOLVED_IMPORTS, 
+			{ P_UNRESOLVED_IMPORTS,
+			  P_INCOMPATIBLE_ENV,
 			  P_UNRESOLVED_EX_POINTS, 
 			  P_NO_REQUIRED_ATT,
 			  P_UNKNOWN_ELEMENT, 
@@ -221,6 +224,7 @@ public class CompilerFlags {
 		node.putInt(P_UNKNOWN_RESOURCE, WARNING);
 		node.putInt(P_NOT_EXTERNALIZED, IGNORE);
 		node.putInt(P_BUILD, WARNING);
+		node.putInt(P_INCOMPATIBLE_ENV, WARNING);
 
 		node.putBoolean(S_CREATE_DOCS, false);
 		node.put(S_DOC_FOLDER, "doc"); //$NON-NLS-1$
