@@ -16,7 +16,9 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -24,22 +26,21 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 public class TocReplaceTable {
 
 	protected class TocReplaceEntry implements IAdaptable {
-		private String fEntry;
+		private String fHref;
 		private String fLabel;
-		private String fReplacement;
-		private IFile fTocFile;
+		private IResource fTocFile;
 		private IFile fEntryFile;
-		private TocReplaceEntry(String replaceString, String title, IFile parentFile) {
+		private TocReplaceEntry(String href, String title, IResource parentFile) {
 			fLabel = title;
-			fEntry = replaceString;
+			fHref = href;
 			fTocFile = parentFile;
-			if (fEntry != null && fTocFile != null)
-				fEntryFile = fTocFile.getProject().getFile(fEntry);
+			if (fHref != null && fTocFile != null)
+				fEntryFile = fTocFile.getProject().getFile(fHref);
 		}
 		public String getHref() {
-			return fEntry;
+			return fHref;
 		}
-		public IFile getTocFile() {
+		public IResource getTocFile() {
 			return fTocFile;
 		}
 		public String getLabel() {
@@ -48,7 +49,7 @@ public class TocReplaceTable {
 		public boolean fileMissing() {
 			return fEntryFile == null || !fEntryFile.exists();
 		}
-		public IFile getOriginalFile() {
+		public IFile getEntryFile() {
 			return fEntryFile;
 		}
 		public Object getAdapter(Class adapter) {
@@ -73,23 +74,25 @@ public class TocReplaceTable {
 				};
 			return null;
 		}
-		public void setReplacement(String string) {
-			fReplacement = string;
-		}
-		public String getReplacement() {
-			return fReplacement;
+		public boolean equals(Object obj) {
+			if (obj instanceof TocReplaceEntry) {
+				IPath objPath = ((TocReplaceEntry)obj).getEntryFile().getLocation();
+				return fEntryFile.getLocation().equals(objPath);
+			}
+			return false;
 		}
 	}
 	
 	private Hashtable fEntries = new Hashtable();
 	
-	public void addToTable(String href, String title, IFile tocFile) {
+	public void addToTable(String href, String title, IResource tocFile) {
 		TocReplaceEntry tro = new TocReplaceEntry(href, title, tocFile);
 		if (tro.fileMissing())
 			return; // ignore invalid entries
 		if (fEntries.containsKey(tocFile)) {
 			ArrayList tocList = (ArrayList)fEntries.get(tocFile);
-			tocList.add(tro);
+			if (!tocList.contains(tro))
+				tocList.add(tro);
 		} else {
 			ArrayList tocList = new ArrayList();
 			tocList.add(tro);
@@ -97,17 +100,17 @@ public class TocReplaceTable {
 		}
 	}
 	
-	public IFile[] getTocs() {
+	public IResource[] getTocs() {
 		Set keys = fEntries.keySet();
 		Iterator it = keys.iterator();
-		IFile[] files = new IFile[fEntries.size()];
+		IResource[] files = new IResource[fEntries.size()];
 		int i = 0;
 		while (it.hasNext())
-			files[i++] = (IFile)it.next();
+			files[i++] = (IResource)it.next();
 		return files;
 	}
 	
-	public TocReplaceEntry[] getToBeConverted(IFile file) {
+	public TocReplaceEntry[] getToBeConverted(IResource file) {
 		ArrayList list = (ArrayList)fEntries.get(file);
 		return (TocReplaceEntry[]) list.toArray(new TocReplaceEntry[list.size()]);
 	}

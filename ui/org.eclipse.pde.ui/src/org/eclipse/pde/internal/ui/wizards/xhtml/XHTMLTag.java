@@ -137,8 +137,16 @@ public class XHTMLTag {
 	public void addAttribute(String attName, String attValue) {
 		if (attName == null)
 			return;
-		fAttribNames.add(attName.toLowerCase());
-		fAttribValues.add(attValue != null ? attValue : attName);
+		String name = attName.toLowerCase();
+		// remove old attribute - using list to maintain attribute index order
+		int index = fAttribNames.size();
+		if (fAttribNames.contains(name)) {
+			index = fAttribNames.indexOf(name);
+			fAttribNames.remove(index);
+			fAttribValues.remove(index);
+		}
+		fAttribNames.add(index, attName.toLowerCase());
+		fAttribValues.add(index, attValue != null ? attValue : attName);
 		// reset name
 		fCurrAttName = null;
 	}

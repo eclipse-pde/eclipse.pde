@@ -24,7 +24,6 @@ import org.apache.lucene.demo.html.Token;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public class XHTMLConverter {
@@ -44,7 +43,6 @@ public class XHTMLConverter {
 	private static final String XHTML_DEFAULT_DOCTYPE = XHTML_DOCTYPES[XHTML_TRANSITIONAL];
 	private static final String XMLNS = "xmlns"; //$NON-NLS-1$
 	private static final String XMLNS_LOC = "http://www.w3.org/1999/xhtml"; //$NON-NLS-1$
-	private static final String F_XHTML_FE = "xhtml"; //$NON-NLS-1$
 	
 	private int fDoctype;
 	
@@ -57,11 +55,9 @@ public class XHTMLConverter {
 	}
 	
 	public void convert(IFile htmlIFile, IProgressMonitor monitor) throws CoreException {
-		File htmlFile = new File(htmlIFile.getLocation().toString());
-		if (!htmlFile.exists())
-			// file not found, possibly a duplicate href entry
-			// (in this case it has already been converted)
+		if (!htmlIFile.exists())
 			return;
+		File htmlFile = new File(htmlIFile.getLocation().toString());
 		
 		StringWriter writer = new StringWriter();
 		PrintWriter pwriter = new PrintWriter(writer);
@@ -83,10 +79,10 @@ public class XHTMLConverter {
 			Stack tagStack = new Stack();
 			HTMLParser parser = new HTMLParser(file);
 			pw.println(getDoctypeString(fDoctype));
-			XHTMLTag htmlTag = grabNextTag(parser, "<html"); //$NON-NLS-1$
-			htmlTag.addAttribute(XMLNS, XMLNS_LOC);
+			XHTMLTag htmlTag = grabNextTag(parser, "<html", pw); //$NON-NLS-1$
 			// fill in any remaning attributes the html tag had
 			convertTagContents(parser, htmlTag);
+			htmlTag.addAttribute(XMLNS, XMLNS_LOC);
 			htmlTag.write(pw);
 			tagStack.push(htmlTag);
 			
@@ -126,34 +122,42 @@ public class XHTMLConverter {
 		}
 	}
 	
-	public String prepareXHTMLFileName(String filename) {
-		int period = filename.lastIndexOf("."); //$NON-NLS-1$
-		if (period > -1)
-			return filename.substring(0, period + 1) + F_XHTML_FE;
-		return filename + F_XHTML_FE;
-	}
-	
 	private void modifyFile(IFile htmlFile, StringWriter writer, IProgressMonitor monitor) throws CoreException, IOException {
 		// set new contents
 		ByteArrayInputStream bais = new ByteArrayInputStream(writer.toString().getBytes());
 		htmlFile.setContents(bais, IResource.KEEP_HISTORY | IResource.FORCE, monitor);
 		bais.close();
 		monitor.worked(1);
-		// rename to .xhtml
-		IPath newPath = htmlFile.getFullPath().removeFileExtension().addFileExtension(F_XHTML_FE);
-		htmlFile.move(newPath, IResource.KEEP_HISTORY | IResource.FORCE, monitor);
-		monitor.worked(1);
 	}
 	
-	private XHTMLTag grabNextTag(HTMLParser parser, String tag) {
+	private XHTMLTag grabNextTag(HTMLParser parser, String tag, PrintWriter pw) {
 		Token token = parser.getNextToken();
 		while (isValid(token)) {
-			if (token.kind == HTMLParserConstants.TagName
-					&& token.image.equalsIgnoreCase(tag))
+			if (token.kind == HTMLParserConstants.TagName && token.image.equalsIgnoreCase(tag))
 				return new XHTMLTag(token.image, fDoctype);
-			token = parser.getNextToken();
+			
+			// print out all comments on the way to tag
+			if (isCommentToken(token)) {
+				while (isCommentToken(token)) {
+					pw.print(token.image);
+					token = parser.getNextToken();
+				}
+				pw.println();
+			} else
+				token = parser.getNextToken();
 		}
 		return null;
+	}
+	
+	private boolean isCommentToken(Token token) {
+		int kind = token.kind;
+		return token != null && (
+				kind == HTMLParserConstants.Comment1 || 
+				kind == HTMLParserConstants.Comment2 ||
+				kind == HTMLParserConstants.CommentText1 ||
+				kind == HTMLParserConstants.CommentText2 ||
+				kind == HTMLParserConstants.CommentEnd1 ||
+				kind == HTMLParserConstants.CommentEnd2);
 	}
 	
 	private void convertTagContents(HTMLParser parser, XHTMLTag tag) {

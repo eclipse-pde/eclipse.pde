@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.ui.wizards.xhtml;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -41,8 +41,8 @@ public class XHTMLConversionWizardPage extends WizardPage {
 	private class CP implements ITreeContentProvider {
 
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof IFile)
-				return fTable.getToBeConverted((IFile)parentElement);
+			if (parentElement instanceof IResource)
+				return fTable.getToBeConverted((IResource)parentElement);
 			return null;
 		}
 		public Object getParent(Object element) {
@@ -51,7 +51,7 @@ public class XHTMLConversionWizardPage extends WizardPage {
 			return null;
 		}
 		public boolean hasChildren(Object element) {
-			return element instanceof IFile;
+			return element instanceof IResource;
 		}
 		public Object[] getElements(Object inputElement) {
 			return fTable.getTocs();
@@ -59,6 +59,14 @@ public class XHTMLConversionWizardPage extends WizardPage {
 		public void dispose() {
 		}
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+	}
+	
+	private class LP extends WorkbenchLabelProvider {
+		protected String decorateText(String input, Object element) {
+			if (element instanceof IResource)
+				return ((IResource)element).getProjectRelativePath().toString();
+			return super.decorateText(input, element);
 		}
 	}
 	
@@ -78,7 +86,7 @@ public class XHTMLConversionWizardPage extends WizardPage {
 		label.setText(PDEUIMessages.XHTMLConversionWizardPage_viewerLabel);
 		fInputViewer = new ContainerCheckedTreeViewer(valid, SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE | SWT.BORDER);
 		fInputViewer.setContentProvider(new CP());
-		fInputViewer.setLabelProvider(new WorkbenchLabelProvider());
+		fInputViewer.setLabelProvider(new LP());
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 400;
 		gd.heightHint = 170;
