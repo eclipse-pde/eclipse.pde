@@ -71,13 +71,15 @@ public class BuildScriptGeneratorTask extends Task {
 		try {
 			run();
 		} catch (CoreException e) {
-			throw new BuildException(e);
+			throw new BuildException(TaskHelper.statusToString(e.getStatus(), null).toString());
 		}
 	}
 
 	public void run() throws CoreException {
 		generator.setReportResolutionErrors(true);
+		BundleHelper.getDefault().setLog(this);
 		generator.generate();
+		BundleHelper.getDefault().setLog(null);
 	}
 
 	/** 

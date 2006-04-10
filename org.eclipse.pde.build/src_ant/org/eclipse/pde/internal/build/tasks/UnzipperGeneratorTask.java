@@ -14,6 +14,7 @@ import org.apache.tools.ant.BuildException;
 import org.eclipse.ant.core.Task;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
+import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.packager.UnzipperGenerator;
 
 /**
@@ -26,9 +27,11 @@ public class UnzipperGeneratorTask extends Task {
 
 	public void execute() throws BuildException {
 		try {
+			BundleHelper.getDefault().setLog(this);
 			generator.generate();
+			BundleHelper.getDefault().setLog(null);
 		} catch (CoreException e) {
-			throw new BuildException(e);
+			throw new BuildException(TaskHelper.statusToString(e.getStatus(), null).toString());
 		}
 	}
 

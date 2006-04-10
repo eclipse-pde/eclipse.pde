@@ -14,6 +14,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
+import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.packager.FetchFileGenerator;
 
 /**
@@ -68,9 +69,11 @@ public class FetchFileGeneratorTask extends Task {
 
 	public void execute() throws BuildException {
 		try {
+			BundleHelper.getDefault().setLog(this);
 			fileFetcher.generate();
+			BundleHelper.getDefault().setLog(null);
 		} catch (CoreException e) {
-			throw new BuildException(e);
+			throw new BuildException(TaskHelper.statusToString(e.getStatus(), null).toString());
 		}
 	}
 }

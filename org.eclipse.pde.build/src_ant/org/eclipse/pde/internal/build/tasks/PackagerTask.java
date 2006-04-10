@@ -13,8 +13,7 @@ package org.eclipse.pde.internal.build.tasks;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.build.AbstractScriptGenerator;
-import org.eclipse.pde.internal.build.Utils;
+import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.packager.PackagerGenerator;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 
@@ -80,9 +79,11 @@ public class PackagerTask extends Task {
 
 	public void execute() throws BuildException {
 		try {
+			BundleHelper.getDefault().setLog(this);
 			generator.generate();
+			BundleHelper.getDefault().setLog(null);
 		} catch (CoreException e) {
-			throw new BuildException(e);
+			throw new BuildException(TaskHelper.statusToString(e.getStatus(), null).toString());
 		}
 	}
 

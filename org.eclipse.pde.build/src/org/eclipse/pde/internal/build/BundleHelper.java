@@ -22,7 +22,8 @@ public class BundleHelper {
 	private BundleContext context;
 	private static BundleHelper defaultInstance;
 	private boolean debug = false;
-
+	private ILog log = null;
+	
 	public static BundleHelper getDefault() {
 		return defaultInstance;
 	}
@@ -53,7 +54,9 @@ public class BundleHelper {
 	}
 
 	public final ILog getLog() {
-		return Platform.getLog(bundle);
+		if (log == null)
+			return Platform.getLog(bundle);
+		return log;
 	}
 
 	public final IPath getStateLocation() throws IllegalStateException {
@@ -93,6 +96,19 @@ public class BundleHelper {
 		} catch (InvalidSyntaxException e) {
 		    //Ignore, this has been caught when resolving the state.
 			return null;
+		}
+	}
+	
+	public void setLog(Object antLog) {
+		if (antLog == null) {
+			log = null;
+			return;
+		}
+		
+		try {
+			log = new AntLogAdapter(antLog);
+		} catch (NoSuchMethodException e) {
+			log = null;
 		}
 	}
 }

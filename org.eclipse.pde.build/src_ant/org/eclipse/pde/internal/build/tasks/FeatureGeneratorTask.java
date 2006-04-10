@@ -14,8 +14,7 @@ import java.io.File;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.build.FeatureGenerator;
-import org.eclipse.pde.internal.build.Utils;
+import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 
 /**
@@ -27,12 +26,14 @@ public class FeatureGeneratorTask extends Task {
 
 	public void execute() throws BuildException {
 		try {
+			BundleHelper.getDefault().setLog(this);
 			run();
+			BundleHelper.getDefault().setLog(null);
 		} catch (CoreException e) {
-			throw new BuildException(e);
+			throw new BuildException(TaskHelper.statusToString(e.getStatus(), null).toString());
 		}
 	}
-
+	
 	public void run() throws CoreException {
 		generator.generate();
 	}

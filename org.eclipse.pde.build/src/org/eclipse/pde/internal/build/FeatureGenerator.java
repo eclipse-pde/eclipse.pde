@@ -179,6 +179,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 
 	public void setVerify(boolean verify) {
 		this.verify = verify;
+		reportResolutionErrors = verify;
 	}
 	
     public boolean guessUnpack(BundleDescription bundle, String[] classpath) {
