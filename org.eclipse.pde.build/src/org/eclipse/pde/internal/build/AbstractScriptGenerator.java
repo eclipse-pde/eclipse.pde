@@ -315,11 +315,14 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		}
 		Path path = new Path(location);
 		String id = path.segment(0);
-		BundleDescription bundle = state.getResolvedBundle(id);
-		if (bundle != null) {
-			String result = checkFile(new Path(bundle.getLocation()), path, makeRelative);
-			if (result != null)
-				return result;
+		BundleDescription[] matches = state.getState().getBundles(id);
+		if (matches != null && matches.length != 0) {
+			BundleDescription bundle = matches[0];
+			if (bundle != null) {
+				String result = checkFile(new Path(bundle.getLocation()), path, makeRelative);
+				if (result != null)
+					return result;
+			}
 		}
 		// Couldn't find the file in any of the plugins, try in a feature.
 		IFeature feature = null;
