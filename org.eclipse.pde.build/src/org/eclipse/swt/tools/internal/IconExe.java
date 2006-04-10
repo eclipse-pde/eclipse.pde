@@ -11,7 +11,7 @@
 package org.eclipse.swt.tools.internal;
 
 import java.io.*;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Customize the icon of a Windows exe
@@ -54,27 +54,22 @@ public class IconExe {
 			return;
 		}
 		ImageLoader loader = new ImageLoader();
-		ImageData[] data = null;
 
-		if (args.length == 2) {
-			/* ICO case */
-			data = loader.load(args[1]);
-		} else {
-			/*
-			 * BMP case - each following argument is a single BMP file BMP is
-			 * handled for testing purpose only. The ICO file is the official
-			 * Microsoft format for image resources.
-			 */
-			data = new ImageData[args.length - 1];
-			for (int i = 1; i < args.length; i++) {
-				try {
-					ImageData[] current = loader.load(args[i]);
-					data[i - 1] = current[0];
-				} catch (RuntimeException e) {
-					//ignore so that we process the other images
+		List images = new ArrayList();
+		for (int i = 1; i < args.length; i++) {
+			try {
+				//An ICO should contain 7 images, a BMP will contain 1
+				ImageData[] current = loader.load(args[i]);
+				for (int j = 0; j < current.length; j++) {
+					images.add(current[j]);
 				}
+			} catch (RuntimeException e) {
+				//ignore so that we process the other images
 			}
 		}
+		ImageData[] data = new ImageData[images.size()];
+		data = (ImageData[]) images.toArray(data);
+		
 		int nMissing = unloadIcons(args[0], data);
 		if (nMissing != 0)
 			System.err.println("Error - " + nMissing + " icon(s) not replaced in " + args[0] + " using " + args[1]);
