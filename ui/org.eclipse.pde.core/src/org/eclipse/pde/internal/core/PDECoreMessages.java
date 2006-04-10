@@ -17,6 +17,14 @@ public class PDECoreMessages extends NLS {
 
 	public static String BaseExportTask_pdeExport;
 
+	public static String BundleErrorReporter_badFilter;
+
+	public static String BundleErrorReporter_unresolvedExporter;
+
+	public static String BundleErrorReporter_unresolvedHost;
+
+	public static String BundleErrorReporter_unsatisfiedConstraint;
+
 	public static String BundleErrorReporter_unsupportedSingletonDirective;
 
 	public static String PluginModelManager_outOfSync;
@@ -133,18 +141,13 @@ public class PDECoreMessages extends NLS {
 	public static String BundleErrorReporter_ClasspathNotEmpty;
 	public static String BundleErrorReporter_fragmentActivator;
 	public static String BundleErrorReporter_NoExist;
-	public static String BundleErrorReporter_unusedPluginClass;
-	public static String BundleErrorReporter_unresolvedCompatibilityActivator;
 	public static String BundleErrorReporter_InvalidFormatInBundleVersion;
 	public static String BundleErrorReporter_NotExistInProject;
 	public static String BundleErrorReporter_CannotExportDefaultPackage;
 	public static String BundleErrorReporter_BundleRangeInvalidInBundleVersion;
 	public static String BundleErrorReporter_invalidVersionRangeFormat;
-	public static String BundleErrorReporter_VersionNotInRange;
 	public static String BundleErrorReporter_NotExistPDE;
-	public static String BundleErrorReporter_IsFragment;
 	public static String BundleErrorReporter_HostNotExistPDE;
-	public static String BundleErrorReporter_HostIsFragment;
 	public static String BundleErrorReporter_HostNeeded;
 	public static String BundleErrorReporter_PackageNotExported;
 	public static String BundleErrorReporter_UnknownDirective;

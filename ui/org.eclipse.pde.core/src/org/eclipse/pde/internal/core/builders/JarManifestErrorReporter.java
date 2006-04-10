@@ -63,6 +63,29 @@ public class JarManifestErrorReporter extends ErrorReporter {
 		return null;
 	}
 
+	protected int getPackageLine(IHeader header, ManifestElement element) {
+		String packageName = element.getValue();
+		if (element.getDirectiveKeys() != null || element.getKeys() != null)
+			return getLine(header, packageName + ";"); //$NON-NLS-1$
+
+		// check for this exact package on the last line
+		try {
+			IRegion lineRegion = fTextDocument.getLineInformation(header
+					.getLineNumber()
+					+ header.getLinesSpan() - 1);
+			String lineStr = fTextDocument.get(lineRegion.getOffset(),
+					lineRegion.getLength());
+			if (lineStr.endsWith(packageName)) {
+				return header.getLineNumber() + header.getLinesSpan();
+			}
+		} catch (BadLocationException ble) {
+			PDECore.logException(ble);
+		}
+
+		// search all except last line
+		return getLine(header, packageName + ","); //$NON-NLS-1$
+	}
+
 	protected int getLine(IHeader header, String valueSubstring) {
 		for (int l = header.getLineNumber(); l < header.getLineNumber() + header.getLinesSpan(); l++) {
 			try {
@@ -298,6 +321,15 @@ public class JarManifestErrorReporter extends ErrorReporter {
 		}
 		reportIllegalValue(header);
 	}
+	
+	protected IHeader validateRequiredHeader(String name) {
+		IHeader header = (IHeader) fHeaders.get(name);
+		if (header == null) {
+			report(NLS.bind(PDECoreMessages.BundleErrorReporter_headerMissing, name), 1, CompilerFlags.ERROR);		
+		}
+		return header;
+	}
+	
 	protected void checkCanceled(IProgressMonitor monitor)
 			throws OperationCanceledException {
 		if (monitor.isCanceled()) {
