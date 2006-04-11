@@ -128,7 +128,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		validateBundleClasspath();
 		validateRequireBundle(monitor);
 		validateImportPackage(monitor);
-		//validateExportPackage(monitor);
+		validateExportPackage(monitor);
 		validateAutoStart();
 		validateLazyStart();
 		validateExtensibleAPI();
@@ -625,20 +625,17 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 
 			/* The exported package does not exist in the bundle */
-			if (!getProjectPackages().contains(name)) {
-				if (!(getHostPackages().contains(name)
-						&& getFragmentsPackages().contains(name))) {
-					message = NLS.bind(PDECoreMessages.BundleErrorReporter_NotExistInProject, name); 
-					IMarker marker = report(message, getPackageLine(header, elements[i]),
-							CompilerFlags.P_UNRESOLVED_IMPORTS, PDEMarkerFactory.M_EXPORT_PKG_NOT_EXIST);
-					try {
-						if (marker != null)
-							marker.setAttribute("packageName", name); //$NON-NLS-1$
-					} catch (CoreException e) {
-					}
+			if (!getProjectPackages().contains(name) && !getHostPackages().contains(name)
+						&& !getFragmentsPackages().contains(name)) {
+				message = NLS.bind(PDECoreMessages.BundleErrorReporter_NotExistInProject, name); 
+				IMarker marker = report(message, getPackageLine(header, elements[i]),
+						CompilerFlags.P_UNRESOLVED_IMPORTS, PDEMarkerFactory.M_EXPORT_PKG_NOT_EXIST);
+				try {
+					if (marker != null)
+						marker.setAttribute("packageName", name); //$NON-NLS-1$
+				} catch (CoreException e) {
 				}
-			}
-			
+			}		
 		}
 	}
 	
@@ -924,15 +921,13 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		return true;
 	}
 	
-	private boolean packageExists(IHeader header, String exportPackageStmt) {
+	private boolean packageExists(IHeader header, String name) {
 		/* The exported package does not exist in the bundle */
-		if (!getProjectPackages().contains(exportPackageStmt)) {
-			if (!(getHostPackages().contains(exportPackageStmt)
-					&& getFragmentsPackages().contains(exportPackageStmt))) {
-				String message = NLS.bind(PDECoreMessages.BundleErrorReporter_NotExistInProject, exportPackageStmt); 
-				report(message, header.getLineNumber() + 1, CompilerFlags.P_UNRESOLVED_IMPORTS);
-				return false;
-			}
+		if (!getProjectPackages().contains(name) && !getHostPackages().contains(name)
+				&& !getFragmentsPackages().contains(name)) {
+			String message = NLS.bind(PDECoreMessages.BundleErrorReporter_NotExistInProject, name); 
+			report(message, header.getLineNumber() + 1, CompilerFlags.P_UNRESOLVED_IMPORTS);
+			return false;
 		}
 		return true;
 	}
