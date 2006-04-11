@@ -128,7 +128,6 @@ public class PDECoreMessages extends NLS {
 	public static String BundleErrorReporter_att_value;
 	public static String BundleErrorReporter_dir_value;
 	public static String BundleErrorReporter_illegal_value;
-	public static String BundleErrorReporter_deprecated_header_Provide_Package;
 	public static String BundleErrorReporter_deprecated_attribute_optional;
 	public static String BundleErrorReporter_deprecated_attribute_reprovide;
 	public static String BundleErrorReporter_deprecated_attribute_singleton;
@@ -143,7 +142,6 @@ public class PDECoreMessages extends NLS {
 	public static String BundleErrorReporter_NoExist;
 	public static String BundleErrorReporter_InvalidFormatInBundleVersion;
 	public static String BundleErrorReporter_NotExistInProject;
-	public static String BundleErrorReporter_CannotExportDefaultPackage;
 	public static String BundleErrorReporter_BundleRangeInvalidInBundleVersion;
 	public static String BundleErrorReporter_invalidVersionRangeFormat;
 	public static String BundleErrorReporter_NotExistPDE;
