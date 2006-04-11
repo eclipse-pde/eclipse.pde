@@ -94,7 +94,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 				fSourceText.setEnabled(enabled);
 				fOutputlabel.setEnabled(enabled);
 				fOutputText.setEnabled(enabled);
-				validatePage();
+				setPageComplete(validatePage());
 			}
 		});
 		
@@ -209,22 +209,24 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
     		return false;
     	}
     	
-    	IWorkspace workspace = ResourcesPlugin.getWorkspace();
-    	IProject dmy = workspace.getRoot().getProject("project"); //$NON-NLS-1$
-    	IStatus status;
-    	if(fSourceText != null && fSourceText.getText().length() != 0) {
-    		status = workspace.validatePath(dmy.getFullPath().append(fSourceText.getText()).toString(), IResource.FOLDER);
-    		if (!status.isOK()) {
-				setErrorMessage(status.getMessage());
-				return false;
-    		}
-    	}
-    	if(fOutputText != null && fOutputText.getText().length() != 0) {
-    		status = workspace.validatePath(dmy.getFullPath().append(fOutputText.getText()).toString(), IResource.FOLDER);
-    		if (!status.isOK()) {
-				setErrorMessage(status.getMessage());
-				return false;
-    		}
+    	if (fJavaButton.getSelection()) {
+	    	IWorkspace workspace = ResourcesPlugin.getWorkspace();
+	    	IProject dmy = workspace.getRoot().getProject("project"); //$NON-NLS-1$
+	    	IStatus status;
+	    	if(fSourceText != null && fSourceText.getText().length() != 0) {
+	    		status = workspace.validatePath(dmy.getFullPath().append(fSourceText.getText()).toString(), IResource.FOLDER);
+	    		if (!status.isOK()) {
+					setErrorMessage(status.getMessage());
+					return false;
+	    		}
+	    	}
+	    	if(fOutputText != null && fOutputText.getText().length() != 0) {
+	    		status = workspace.validatePath(dmy.getFullPath().append(fOutputText.getText()).toString(), IResource.FOLDER);
+	    		if (!status.isOK()) {
+					setErrorMessage(status.getMessage());
+					return false;
+	    		}
+	    	}
     	}
     	setErrorMessage(null);
     	setMessage(null);
