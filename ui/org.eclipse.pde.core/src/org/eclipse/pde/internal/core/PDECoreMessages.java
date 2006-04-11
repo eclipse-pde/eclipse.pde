@@ -150,22 +150,10 @@ public class PDECoreMessages extends NLS {
 	public static String BundleErrorReporter_PackageNotExported;
 	public static String BundleErrorReporter_UnknownDirective;
 	public static String BundleErrorReporter_InvalidSymbolicName;
-	public static String BundleErrorReporter_FileNotExist;
-	public static String BundleErrorReporter_NativeNoProcessor;
-	public static String BundleErrorReporter_NativeNoOSName;
-	public static String BundleErrorReporter_NativeInvalidFilter;
-	public static String BundleErrorReporter_NativeInvalidOSName;
-	public static String BundleErrorReporter_NativeInvalidProcessor;
-	public static String BundleErrorReporter_NativeInvalidLanguage;
-	public static String BundleErrorReporter_NativeInvalidOSVersion;
 	public static String BundleErrorReporter_invalidFilterSyntax;
 	public static String FeatureConsistencyTrigger_JobName;
 
 	public static String BundleErrorReporter_startHeader_autoStartDeprecated;
-
-	public static String BundleErrorReporter_startHeader_tooManyElements;
-
-	public static String BundleErrorReporter_startHeader_illegalValue;
 
 	public static String BundleErrorReporter_exportNoJRE;
 

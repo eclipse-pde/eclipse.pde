@@ -255,9 +255,9 @@ public class JarManifestErrorReporter extends ErrorReporter {
 		report(msg, getLine(header, key + "="), CompilerFlags.ERROR); //$NON-NLS-1$
 	}
 
-	protected void reportIllegalValue(IHeader header) {
-		String msg = NLS.bind(PDECoreMessages.BundleErrorReporter_illegal_value, header.getValue()); 
-		report(msg, getLine(header, header.getValue()), CompilerFlags.ERROR); 
+	protected void reportIllegalValue(IHeader header, String value) {
+		String msg = NLS.bind(PDECoreMessages.BundleErrorReporter_illegal_value, value); 
+		report(msg, getLine(header, value), CompilerFlags.ERROR); 
 	}
 
 	protected void reportIllegalDirectiveValue(IHeader header, String key,
@@ -311,15 +311,15 @@ public class JarManifestErrorReporter extends ErrorReporter {
 	}
 	
 	protected void validateHeaderValue(IHeader header, String[] allowedValues) {
-		if (header.getValue() == null) {
-			return;
-		}
-		for (int i = 0; i < allowedValues.length; i++) {
-			if (allowedValues[i].equals(header.getValue())) {
-				return;
+		ManifestElement[] elements = header.getElements();
+		if (elements.length > 0) {
+			for (int i = 0; i < allowedValues.length; i++) {
+				if (allowedValues[i].equals(elements[0].getValue())) {
+					return;
+				}
 			}
+			reportIllegalValue(header, elements[0].getValue());
 		}
-		reportIllegalValue(header);
 	}
 	
 	protected IHeader validateRequiredHeader(String name) {
