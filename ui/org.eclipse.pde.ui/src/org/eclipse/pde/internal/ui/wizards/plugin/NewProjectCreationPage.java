@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -172,7 +177,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		text.setLayoutData(gd);
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				validatePage();
+				setPageComplete(validatePage());
 			}
 		});
 		return text;
@@ -189,7 +194,9 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	}
 	
     protected boolean validatePage() {
-    	super.validatePage();
+    	if (!super.validatePage())
+    		return false;
+    	
     	String name = getProjectName();
     	if (name.indexOf('%') > 0) {
     		setErrorMessage(PDEUIMessages.NewProjectCreationPage_invalidProjectName);
@@ -201,6 +208,26 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
     		setErrorMessage(PDEUIMessages.NewProjectCreationPage_invalidLocationPath);
     		return false;
     	}
+    	
+    	IWorkspace workspace = ResourcesPlugin.getWorkspace();
+    	IProject dmy = workspace.getRoot().getProject("project"); //$NON-NLS-1$
+    	IStatus status;
+    	if(fSourceText != null && fSourceText.getText().length() != 0) {
+    		status = workspace.validatePath(dmy.getFullPath().append(fSourceText.getText()).toString(), IResource.FOLDER);
+    		if (!status.isOK()) {
+				setErrorMessage(status.getMessage());
+				return false;
+    		}
+    	}
+    	if(fOutputText != null && fOutputText.getText().length() != 0) {
+    		status = workspace.validatePath(dmy.getFullPath().append(fOutputText.getText()).toString(), IResource.FOLDER);
+    		if (!status.isOK()) {
+				setErrorMessage(status.getMessage());
+				return false;
+    		}
+    	}
+    	setErrorMessage(null);
+    	setMessage(null);
     	return true;
     }
 	
