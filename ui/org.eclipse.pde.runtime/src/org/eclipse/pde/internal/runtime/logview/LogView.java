@@ -327,29 +327,37 @@ public class LogView extends ViewPart implements ILogListener {
     }
     
     private Action createOpenLogAction() {
-        Action action = new Action(PDERuntimeMessages.LogView_view_currentLog) { 
-            public void run() {
-                if (fInputFile.exists()) {
-                    if (fInputFile.length() > LogReader.MAX_FILE_LENGTH) {
-                        OpenLogDialog openDialog = new OpenLogDialog(getViewSite()
-                                .getShell(), fInputFile);
-                        openDialog.create();
-                        openDialog.open();
-                        return;
-                    } 
-                    if (!Program.launch(fInputFile.getAbsolutePath())) {
-                        Program p = Program.findProgram(".txt"); //$NON-NLS-1$
-                        if (p != null)
-                            p.execute(fInputFile.getAbsolutePath());
-                        else {
-                            OpenLogDialog openDialog = new OpenLogDialog(getViewSite().getShell(), fInputFile);
-                            openDialog.create();
-                            openDialog.open();
-                        }                  
-                    }
-                }
-            }
-        };
+        Action action = new Action(PDERuntimeMessages.LogView_view_currentLog) {
+			public void run() {
+				if (fInputFile.exists()) {
+					final Program[] p = new Program[] { null };
+					final OpenLogDialog[] openDialog = new OpenLogDialog[] { null };
+					final Shell shell = getViewSite().getShell();
+					Runnable runnable = new Runnable() {
+						public void run() {
+							boolean failed = false;
+							if (fInputFile.length() <= LogReader.MAX_FILE_LENGTH) {
+								failed = !Program.launch(fInputFile.getAbsolutePath());
+								if (failed) {
+									p[0] = Program.findProgram(".txt"); //$NON-NLS-1$
+									if (p[0] != null) {
+										p[0].execute(fInputFile.getAbsolutePath());
+										return;
+									}
+								}
+							}
+							if (failed) {
+								openDialog[0] = new OpenLogDialog(shell, fInputFile);
+								openDialog[0].create();
+							}
+						}
+					};
+					BusyIndicator.showWhile(shell.getDisplay(), runnable);
+					if (openDialog[0] != null)
+						openDialog[0].open();
+				}
+			}
+		};
         action.setImageDescriptor(PDERuntimePluginImages.DESC_OPEN_LOG);
         action.setDisabledImageDescriptor(PDERuntimePluginImages.DESC_OPEN_LOG_DISABLED);
         action.setEnabled(fInputFile.exists());
