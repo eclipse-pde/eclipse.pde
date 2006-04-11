@@ -14,7 +14,6 @@ Export-Package:
  org.eclipse.pde.internal.core.build;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.builders;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.bundle;x-friends:="org.eclipse.pde.ui",
- org.eclipse.pde.internal.core.content;x-internal:=true,
  org.eclipse.pde.internal.core.exports;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.feature;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.ibundle;x-friends:="org.eclipse.pde.ui",
@@ -47,4 +46,4 @@ Require-Bundle:
  org.eclipse.core.variables;bundle-version="[3.1.0,4.0.0)",
  org.eclipse.pde.build;bundle-version="[3.2.0,4.1.0)",
  org.eclipse.ant.core;bundle-version="[3.1.0,4.0.0)"
-Eclipse-LazyStart: true; exceptions="org.eclipse.pde.internal.core.content"
+Eclipse-LazyStart: true

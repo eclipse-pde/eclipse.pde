@@ -578,9 +578,9 @@
             contributorClass="org.eclipse.pde.internal.ui.editor.plugin.ManifestEditorContributor"
 			matchingStrategy="org.eclipse.pde.internal.ui.editor.plugin.ManifestEditorMatchingStrategy"
             id="org.eclipse.pde.ui.manifestEditor">
-            <contentTypeBinding contentTypeId="org.eclipse.pde.core.pluginManifest"/>
-            <contentTypeBinding contentTypeId="org.eclipse.pde.core.fragmentManifest"/>
-            <contentTypeBinding contentTypeId="org.eclipse.pde.core.bundleManifest"/>            
+            <contentTypeBinding contentTypeId="org.eclipse.pde.pluginManifest"/>
+            <contentTypeBinding contentTypeId="org.eclipse.pde.fragmentManifest"/>
+            <contentTypeBinding contentTypeId="org.eclipse.pde.bundleManifest"/>            
       </editor>
       <editor
             default="true"
@@ -589,7 +589,7 @@
             class="org.eclipse.pde.internal.ui.editor.schema.SchemaEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.schema.SchemaEditorContributor"
             id="org.eclipse.pde.ui.schemaEditor">
-            <contentTypeBinding contentTypeId="org.eclipse.pde.core.schema"/>
+            <contentTypeBinding contentTypeId="org.eclipse.pde.schema"/>
       </editor>
 	  <editor
 	        default="true"
@@ -598,7 +598,7 @@
 			contributorClass="org.eclipse.pde.internal.ui.editor.build.BuildEditorContributor"
 			class="org.eclipse.pde.internal.ui.editor.build.BuildEditor"
 			id="org.eclipse.pde.ui.buildEditor">
-			<contentTypeBinding contentTypeId="org.eclipse.pde.core.buildProperties"/>
+			<contentTypeBinding contentTypeId="org.eclipse.pde.buildProperties"/>
 	  </editor>
       <editor
             default="true"
@@ -608,7 +608,7 @@
             contributorClass="org.eclipse.pde.internal.ui.editor.feature.FeatureEditorContributor"
 			matchingStrategy="org.eclipse.pde.internal.ui.editor.feature.FeatureEditorMatchingStrategy"
             id="org.eclipse.pde.ui.featureEditor">
-            <contentTypeBinding contentTypeId="org.eclipse.pde.core.featureManifest"/>
+            <contentTypeBinding contentTypeId="org.eclipse.pde.featureManifest"/>
       </editor>
       <editor
             default="true"
@@ -617,7 +617,7 @@
             class="org.eclipse.pde.internal.ui.editor.site.SiteEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.site.SiteEditorContributor"
             id="org.eclipse.pde.ui.siteEditor">
-            <contentTypeBinding contentTypeId="org.eclipse.pde.core.siteManifest"/>
+            <contentTypeBinding contentTypeId="org.eclipse.pde.siteManifest"/>
      </editor>
      <editor
             default="true"
@@ -626,7 +626,7 @@
             class="org.eclipse.pde.internal.ui.editor.product.ProductEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.product.ProductEditorContributor"
             id="org.eclipse.pde.ui.productEditor">
-            <contentTypeBinding contentTypeId="org.eclipse.pde.core.productFile"/>
+            <contentTypeBinding contentTypeId="org.eclipse.pde.productFile"/>
       </editor>
       <editor
             default="true"
@@ -635,7 +635,7 @@
             class="org.eclipse.pde.internal.ui.editor.target.TargetEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.target.TargetEditorContributor"
             id="org.eclipse.pde.ui.targetEditor">
-            <contentTypeBinding contentTypeId="org.eclipse.pde.core.targetFile"/>
+            <contentTypeBinding contentTypeId="org.eclipse.pde.targetFile"/>
       </editor>
       <editor
             name="%editors.sample.name"
@@ -1818,25 +1818,25 @@
    <extension
          point="org.eclipse.core.filebuffers.annotationModelCreation">
       <factory
-            contentTypeId="org.eclipse.pde.core.pluginManifest"
+            contentTypeId="org.eclipse.pde.pluginManifest"
             class="org.eclipse.pde.internal.ui.editor.text.AnnotationModelFactory"/>
    </extension>
    <extension
          point="org.eclipse.core.filebuffers.annotationModelCreation">
       <factory
-            contentTypeId="org.eclipse.pde.core.buildProperties"
+            contentTypeId="org.eclipse.pde.buildProperties"
             class="org.eclipse.pde.internal.ui.editor.text.AnnotationModelFactory"/>
    </extension>
    <extension
          point="org.eclipse.core.filebuffers.annotationModelCreation">
       <factory
-            contentTypeId="org.eclipse.pde.core.fragmentManifest"
+            contentTypeId="org.eclipse.pde.fragmentManifest"
             class="org.eclipse.pde.internal.ui.editor.text.AnnotationModelFactory"/>
    </extension>
    <extension
          point="org.eclipse.core.filebuffers.annotationModelCreation">
       <factory
-            contentTypeId="org.eclipse.pde.core.bundleManifest"
+            contentTypeId="org.eclipse.pde.bundleManifest"
             class="org.eclipse.pde.internal.ui.editor.text.AnnotationModelFactory"/>
    </extension>
    <extension
@@ -1846,7 +1846,7 @@
             extensions="MF"
             id="org.eclipse.pde.internal.ui.compare.ManifestStructureMergeViewerCreator"/>
       <contentTypeBinding
-            contentTypeId="org.eclipse.pde.core.bundleManifest"
+            contentTypeId="org.eclipse.pde.bundleManifest"
             structureMergeViewerId="org.eclipse.pde.internal.ui.compare.ManifestStructureMergeViewerCreator"/>
       <!--<viewer
             extensions="xml"
@@ -1864,7 +1864,7 @@
             id="org.eclipse.pde.internal.ui.compare.ManifestContentMergeViewerCreator"/>
       <contentTypeBinding
             contentMergeViewerId="org.eclipse.pde.internal.ui.compare.ManifestContentMergeViewerCreator"
-            contentTypeId="org.eclipse.pde.core.bundleManifest"/>
+            contentTypeId="org.eclipse.pde.bundleManifest"/>
       <!--<viewer
             class="org.eclipse.pde.internal.ui.compare.XMLContentMergeViewerCreator"
             extensions="xml"
