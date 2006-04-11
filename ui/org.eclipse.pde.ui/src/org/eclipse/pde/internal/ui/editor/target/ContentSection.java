@@ -36,6 +36,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.itarget.ITarget;
@@ -43,6 +44,7 @@ import org.eclipse.pde.internal.core.itarget.ITargetFeature;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.core.itarget.ITargetModelFactory;
 import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
+import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -51,6 +53,7 @@ import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.feature.FeatureEditor;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
+import org.eclipse.pde.internal.ui.parts.ConditionalListSelectionDialog;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.util.PersistablePluginObject;
 import org.eclipse.pde.internal.ui.wizards.FeatureSelectionDialog;
@@ -70,7 +73,6 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -279,11 +281,14 @@ public class ContentSection extends TableSection {
 	}
 	
 	private void handleAddPlugin() {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(
+		ConditionalListSelectionDialog dialog = new ConditionalListSelectionDialog(
 				PDEPlugin.getActiveWorkbenchShell(), 
-				PDEPlugin.getDefault().getLabelProvider());
+				PDEPlugin.getDefault().getLabelProvider(),
+				PDEUIMessages.ContentSection_addDialogButtonLabel);
 		
-		dialog.setElements(getBundles());
+		TreeMap map = getBundles();
+		dialog.setElements(map.values().toArray());
+		dialog.setConditionalElements(getWorkspaceBundles(map).values().toArray());
 		dialog.setTitle(PDEUIMessages.PluginSelectionDialog_title); 
 		dialog.setMessage(PDEUIMessages.PluginSelectionDialog_message);
 		dialog.setMultipleSelection(true);
@@ -302,17 +307,34 @@ public class ContentSection extends TableSection {
 		}
 	}
 	
-	private BundleDescription[] getBundles() {
+	private TreeMap getBundles() {
 		TreeMap map = new TreeMap();
 		ITarget target = getTarget();
-		BundleDescription[] bundles = TargetPlatform.getState().getBundles();
-		for (int i = 0; i < bundles.length; i++) {
-			String id = bundles[i].getSymbolicName();
-			if (!target.containsPlugin(id)) {
-				map.put(id, bundles[i]);
+		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getExternalModels();
+		for (int i = 0; i < models.length; i++) {
+			if (models[i] instanceof ExternalPluginModelBase) {
+				BundleDescription desc = ((ExternalPluginModelBase)models[i]).getBundleDescription();
+				String id = desc.getSymbolicName();
+				if (!target.containsPlugin(id))
+					map.put(id, desc);
 			}
 		}
-		return (BundleDescription[])map.values().toArray(new BundleDescription[map.size()]);
+		return map;
+	}
+	
+	protected TreeMap getWorkspaceBundles(TreeMap used) {
+		TreeMap map = new TreeMap();
+		ITarget target = getTarget();
+		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getWorkspaceModels();
+		for (int i = 0; i < models.length; i++) {
+			if (models[i] instanceof IBundlePluginModelBase) {
+				BundleDescription desc = ((IBundlePluginModelBase)models[i]).getBundleDescription();
+				String id = desc.getSymbolicName();
+				if (!target.containsPlugin(id) && !used.containsKey(id))
+					map.put(id, desc);
+			}
+		}
+		return map;
 	}
 	
 	private void handleAddFeature() {

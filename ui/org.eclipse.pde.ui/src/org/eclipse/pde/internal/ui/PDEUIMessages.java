@@ -17,6 +17,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String CompilersConfigurationTab_incompatEnv;
 
+	public static String ContentSection_addDialogButtonLabel;
+
 	public static String RevertUnsupportSingletonResolution_desc;
 
 	public static String AddLibraryDialog_emptyLibraries;
