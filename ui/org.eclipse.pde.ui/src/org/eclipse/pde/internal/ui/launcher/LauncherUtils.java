@@ -211,7 +211,10 @@ public class LauncherUtils {
 					if (location == null) 
 						location = jp.getOutputLocation();
 					IResource res = project.getWorkspace().getRoot().findMember(location);
-					file = res.getRawLocation().toFile();
+					IPath path = res == null ? null : res.getLocation();
+					if (path == null)
+						continue;
+					file = path.toFile();
 					Stack files = new Stack();
 					files.push(file);
 					while(!files.isEmpty()) {
@@ -221,7 +224,7 @@ public class LauncherUtils {
 							for (int j =0 ; j < children.length; j++) 
 								files.push(children[j]);
 						} else 
-							if (timeStamp < file.lastModified())
+							if (file.getName().endsWith(".class") && timeStamp < file.lastModified())
 								timeStamp = file.lastModified();
 					}
 				}
