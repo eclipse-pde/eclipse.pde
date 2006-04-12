@@ -42,8 +42,8 @@ public class ImportAsBinaryTestCase extends BaseImportTestCase {
 	}
 	
 	public void testImportBinaryNotJavaFlat() {
-		runOperation(new String[] {"org.eclipse.pde"}, TYPE);
-		verifyBinaryProject("org.eclipse.pde", false);
+		runOperation(new String[] {"org.eclipse.pde.source"}, TYPE);
+		verifyBinaryProject("org.eclipse.pde.source", false);
 	}
 	
 	public void testImportBinaryNotJavaJARd() {

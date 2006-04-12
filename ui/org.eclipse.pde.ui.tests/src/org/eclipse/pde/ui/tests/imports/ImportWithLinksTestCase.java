@@ -43,8 +43,8 @@ public class ImportWithLinksTestCase extends BaseImportTestCase {
 	}
 	
 	public void testImportLinksNotJavaFlat() {
-		runOperation(new String[] {"org.eclipse.pde"}, TYPE);
-		verifyLinkedProject("org.eclipse.pde", false);
+		runOperation(new String[] {"org.eclipse.pde.source"}, TYPE);
+		verifyLinkedProject("org.eclipse.pde.source", false);
 	}
 	
 	public void testImportLinksNotJavaJARd() {
