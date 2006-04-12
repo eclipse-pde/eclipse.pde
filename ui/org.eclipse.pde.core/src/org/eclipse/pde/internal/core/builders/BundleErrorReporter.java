@@ -173,8 +173,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	private void validateSingleton(IHeader header, ManifestElement element) {
 		String singletonAttr = element.getAttribute(ICoreConstants.SINGLETON_ATTRIBUTE);
 		String singletonDir = element.getDirective(Constants.SINGLETON_DIRECTIVE);
-		boolean hasExtensions = fModel.getPluginBase().getExtensionPoints().length > 0
-								|| fModel.getPluginBase().getExtensions().length > 0;
+		IPluginBase base = fModel.getPluginBase();
+		boolean hasExtensions = base != null && 
+											(base.getExtensionPoints().length > 0
+											|| base.getExtensions().length > 0);
 
 		if (hasExtensions) {
 			if (TargetPlatform.getTargetVersion() >= 3.1) {

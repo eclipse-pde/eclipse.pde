@@ -238,9 +238,8 @@ public class JarManifestErrorReporter extends ErrorReporter {
 					report(
 							PDECoreMessages.BundleErrorReporter_noNameHeader, 
 							l, CompilerFlags.ERROR);
-					break;
-				}
-
+				} 
+				break;
 			}
 
 			return;
