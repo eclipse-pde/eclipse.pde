@@ -375,8 +375,10 @@ public class DependencyManagementSection extends TableSection implements IModelC
 				 (fAdditionalBundles == null) ? new Vector(1) : fAdditionalBundles);
 		IProject currentProj = getPage().getPDEEditor().getCommonProject();
 		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(currentProj);
-		String project_id = entry.getId();
-		currentPlugins.add(project_id);
+		if (entry != null) {
+			String project_id = entry.getId();
+			currentPlugins.add(project_id);
+		}
 		
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < plugins.length; i++){
