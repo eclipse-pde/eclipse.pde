@@ -78,9 +78,11 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 		throws CoreException {
 		try {
 			fConfigDir = null;
-			monitor.beginTask("", 6); //$NON-NLS-1$
+			monitor.beginTask("", 7); //$NON-NLS-1$
 			IType[] testTypes = getTestTypes(configuration, monitor);
 			monitor.worked(1);
+			
+			LauncherUtils.validateProjectDependencies(configuration, new SubProgressMonitor(monitor, 1));
 			
 			String workspace = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
 			if (!LauncherUtils.clearWorkspace(configuration, workspace, new SubProgressMonitor(monitor, 1))) {

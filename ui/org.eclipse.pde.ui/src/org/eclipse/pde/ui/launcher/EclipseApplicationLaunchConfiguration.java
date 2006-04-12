@@ -213,9 +213,10 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) 
 		throws CoreException {
 		if (configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false)) {
+			monitor.beginTask("", 4); //$NON-NLS-1$
 			final PluginValidationOperation op = new PluginValidationOperation(configuration);
 			try {
-				op.run(monitor);
+				op.run(new SubProgressMonitor(monitor, 1));
 			} catch (InvocationTargetException e) {
 			} catch (InterruptedException e) {
 			} finally {
@@ -232,8 +233,12 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 					}
 				}
 			}
+		} else {
+			monitor.beginTask("", 3); //$NON-NLS-1$
 		}
-
+		
+		LauncherUtils.validateProjectDependencies(configuration, new SubProgressMonitor(monitor, 1));
+		
 		String workspace = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
 		// Clear workspace and prompt, if necessary
 		if (!LauncherUtils.clearWorkspace(configuration, workspace, new SubProgressMonitor(monitor, 1))) {

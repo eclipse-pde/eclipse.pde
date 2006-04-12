@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -196,12 +197,19 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-		// clear config area, if necessary
-		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
-			CoreUtility.deleteContent(getConfigDir(configuration));
-		launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());
-			
-		monitor.worked(1);
+		try {
+			monitor.beginTask("", 2); //$NON-NLS-1$
+			LauncherUtils.validateProjectDependencies(configuration, new SubProgressMonitor(monitor, 1));
+
+			// clear config area, if necessary
+			if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
+				CoreUtility.deleteContent(getConfigDir(configuration));
+			launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());
+
+			monitor.worked(1);
+		} finally {
+			monitor.done();
+		}
 	}
 
 }

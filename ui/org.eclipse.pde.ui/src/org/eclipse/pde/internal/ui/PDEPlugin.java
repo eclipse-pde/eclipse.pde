@@ -29,6 +29,7 @@ import org.eclipse.pde.internal.core.FileAdapter;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationListener;
 import org.eclipse.pde.internal.ui.launcher.LaunchListener;
+import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.view.PluginsViewAdapterFactory;
 import org.eclipse.swt.widgets.Display;
@@ -201,6 +202,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 			DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(fLaunchConfigurationListener);
 			fLaunchConfigurationListener = null;
 		}
+		LauncherUtils.shutdown();
 		super.stop(context);
 	}
 
