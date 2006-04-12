@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.Collator;
-import java.text.ParseException;
-import com.ibm.icu.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
@@ -50,6 +48,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 
 public class EventDetailsDialog extends TrayDialog {
 	private LogEntry entry, parentEntry;
@@ -142,6 +143,12 @@ public class EventDetailsDialog extends TrayDialog {
 			return str1 == str2;
 		}
 		return str1.equals(str2);
+	}
+	
+	private boolean equal(Date d1, Date d2) {
+		if (d1 == null)
+			return d1 == d2;
+		return d1.equals(d2);
 	}
 	
 	private void createImages(){
@@ -281,17 +288,11 @@ public class EventDetailsDialog extends TrayDialog {
 		if (sortType == LogView.DATE){
 			comparator = new Comparator(){
 				public int compare(Object e1, Object e2) {
-					  try {
-	                    	SimpleDateFormat formatter = new SimpleDateFormat(
-	                    	"yyyy-MM-dd HH:mm:ss.SSS"); //$NON-NLS-1$
-	                        Date date1 = formatter.parse(((LogEntry) e1).getDate());
-	                        Date date2 = formatter.parse(((LogEntry) e2).getDate());
-	                        if (sortOrder == LogView.ASCENDING)
-	                            return date1.before(date2) ? -1 : 1;
-	                        return date1.after(date2) ? -1 : 1;
-	                    } catch (ParseException e) {
-	                    }
-	                    return 0;
+					Date date1 = ((LogEntry) e1).getDate();
+					Date date2 = ((LogEntry) e2).getDate();
+                    if (sortOrder == LogView.ASCENDING)
+                    	return date1.getTime() < date2.getTime() ? LogView.DESCENDING : LogView.ASCENDING;
+					return date1.getTime() > date2.getTime() ? LogView.DESCENDING : LogView.ASCENDING;
 				}
 			};
 		} else if (sortType == LogView.PLUGIN){
@@ -350,7 +351,13 @@ public class EventDetailsDialog extends TrayDialog {
 
 		resetTotalElementCount();
 		
-		dateLabel.setText(entry.getDate() != null ? entry.getDate() : ""); //$NON-NLS-1$
+		Date date = entry.getDate();
+		String strDate = null;
+		if (date != null) {
+			DateFormat formatter = new SimpleDateFormat(LogEntry.F_DATE_FORMAT);
+			strDate = formatter.format(date);
+		}
+		dateLabel.setText(strDate != null ? strDate : ""); //$NON-NLS-1$
 		severityImageLabel.setImage(labelProvider.getColumnImage(entry, 0));
 		severityLabel.setText(entry.getSeverityText());
 		msgText.setText(entry.getMessage() != null ? entry.getMessage() : ""); //$NON-NLS-1$

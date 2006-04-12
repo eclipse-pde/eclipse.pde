@@ -23,7 +23,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.text.Collator;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -98,8 +97,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
-
-import com.ibm.icu.text.SimpleDateFormat;
 
 public class LogView extends ViewPart implements ILogListener {
     public static final String P_LOG_WARNING = "warning"; //$NON-NLS-1$
@@ -933,16 +930,11 @@ public class LogView extends ViewPart implements ILogListener {
         if (sortType == DATE) {
             comparator = new Comparator() {
                 public int compare(Object e1, Object e2) {
-					try {
-						SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); //$NON-NLS-1$
-						Date date1 = formatter.parse(((LogEntry) e1).getDate());
-						Date date2 = formatter.parse(((LogEntry) e2).getDate());
-						if (DATE_ORDER == ASCENDING)
-							return date1.before(date2) ? DESCENDING : ASCENDING;
-						return date1.after(date2) ? DESCENDING : ASCENDING;
-					} catch (ParseException e) {
-					}
-					return 0;
+					Date date1 = ((LogEntry) e1).getDate();
+					Date date2 = ((LogEntry) e2).getDate();
+					if (DATE_ORDER == ASCENDING)
+						return date1.getTime() < date2.getTime() ? DESCENDING : ASCENDING;
+					return date1.getTime() > date2.getTime() ? DESCENDING : ASCENDING;
                 }
             };
         } else if (sortType == PLUGIN) {
@@ -984,16 +976,11 @@ public class LogView extends ViewPart implements ILogListener {
         } else {
             return new ViewerSorter() {
 				public int compare(Viewer viewer, Object e1, Object e2) {
-					try {
-						SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); //$NON-NLS-1$
-						Date date1 = formatter.parse(((LogEntry) e1).getDate());
-						Date date2 = formatter.parse(((LogEntry) e2).getDate());
-						if (DATE_ORDER == ASCENDING)
-							return date1.before(date2) ? DESCENDING : ASCENDING;
-						return date1.after(date2) ? DESCENDING : ASCENDING;
-					} catch (ParseException e) {
-					}
-					return 0;
+					Date date1 = ((LogEntry) e1).getDate();
+					Date date2 = ((LogEntry) e2).getDate();
+					if (DATE_ORDER == ASCENDING)
+						return date1.getTime() < date2.getTime() ? DESCENDING : ASCENDING;
+					return date1.getTime() > date2.getTime() ? DESCENDING : ASCENDING;
                 }
             };
         }

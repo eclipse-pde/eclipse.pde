@@ -16,6 +16,9 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
 import org.eclipse.swt.graphics.Image;
 
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
+
 public class LogViewLabelProvider
 	extends LabelProvider
 	implements ITableLabelProvider {
@@ -61,11 +64,16 @@ public class LogViewLabelProvider
 		LogEntry entry = (LogEntry) element;
 		switch (columnIndex) {
 		case 0:
-			return entry.getMessage() != null ? entry.getMessage() : ""; //$NON-NLS-1$
+			if (entry.getMessage() != null)
+				return entry.getMessage();
 		case 1:
-			return entry.getPluginId() != null ? entry.getPluginId() : ""; //$NON-NLS-1$
+			if (entry.getPluginId() != null)
+				return entry.getPluginId();
 		case 2:
-			return entry.getDate() != null ? entry.getDate() : ""; //$NON-NLS-1$
+			if (entry.getDate() != null) {
+				DateFormat formatter = new SimpleDateFormat(LogEntry.F_DATE_FORMAT);
+				return formatter.format(entry.getDate());
+			}
 		}
 		return ""; //$NON-NLS-1$
 	}

@@ -14,6 +14,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
+
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.StringTokenizer;
@@ -25,12 +27,15 @@ import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
+	
+	public static final String F_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SS"; //$NON-NLS-1$
+	
 	private ArrayList children;
 	private LogEntry parent;
 	private String pluginId;
 	private int severity;
 	private int code;
-	private String date;
+	private Date date;
 	private String message;
 	private String stack;
 	private LogSession session;
@@ -68,7 +73,7 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 	public String getStack() {
 		return stack;
 	}
-	public String getDate() {
+	public Date getDate() {
 		return date;
 	}
 	public String getSeverityText() {
@@ -172,7 +177,11 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 					dateBuffer.append(token);
 			}
 		}
-		date = dateBuffer.toString();
+		DateFormat formatter = new SimpleDateFormat(F_DATE_FORMAT);
+		try {
+			date = formatter.parse(dateBuffer.toString());
+		} catch (ParseException e) {
+		}
 	}
 	
 	int processSubEntry(String line) {
@@ -218,7 +227,11 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 					dateBuffer.append(token);
 			}
 		}
-		date = dateBuffer.toString();
+		DateFormat formatter = new SimpleDateFormat(F_DATE_FORMAT);
+		try {
+			date = formatter.parse(dateBuffer.toString());
+		} catch (ParseException e) {
+		}
 		return depth;	
 	}
 	
@@ -241,8 +254,7 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 		pluginId = status.getPlugin();
 		severity = status.getSeverity();
 		code = status.getCode();
-		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SS"); //$NON-NLS-1$
-		date = formatter.format(new Date());
+		date = new Date();
 		message = status.getMessage();
 		Throwable throwable = status.getException();
 		if (throwable != null) {
