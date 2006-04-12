@@ -2833,5 +2833,9 @@ public class PDEUIMessages extends NLS {
 	public static String NewProjectCreationPage_invalidProjectName;
 
 	public static String NewProjectCreationPage_invalidLocationPath;
+	
+	public static String RemoveInternalDirective_label;
+	
+	public static String RemoveInternalDirective_desc;
 
 }

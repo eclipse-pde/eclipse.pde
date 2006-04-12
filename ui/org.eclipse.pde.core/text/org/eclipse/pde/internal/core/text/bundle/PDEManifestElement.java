@@ -59,11 +59,11 @@ public class PDEManifestElement extends BundleObject {
 		return getTableKeys(fAttributes);
 	}
 
-	protected void addAttribute(String key, String value) {
+	public void addAttribute(String key, String value) {
 		fAttributes = addTableValue(fAttributes, key, value);
 	}
 	
-	protected void setAttribute(String key, String value) {
+	public void setAttribute(String key, String value) {
 		fAttributes = setTableValue(fAttributes, key, value);
 	}
 	
@@ -79,11 +79,11 @@ public class PDEManifestElement extends BundleObject {
 		return getTableKeys(fDirectives);
 	}
 
-	protected void addDirective(String key, String value) {
+	public void addDirective(String key, String value) {
 		fDirectives = addTableValue(fDirectives, key, value);
 	}
 	
-	protected void setDirective(String key, String value) {
+	public void setDirective(String key, String value) {
 		fDirectives = setTableValue(fDirectives, key, value);
 	}
 	

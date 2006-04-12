@@ -32,6 +32,7 @@ public class PDEMarkerFactory implements IMarkerFactory {
 	public static final int M_UNKNOWN_CLASS = 0x1009;
 	public static final int M_UNKNOWN_ACTIVATOR = 0x1010;
 	public static final int M_SINGLETON_DIR_NOT_SUPPORTED = 0x1011;
+	public static final int M_DIRECTIVE_HAS_NO_EFFECT = 0x1012;
 	
 	// build properties fixes
 	public static final int B_APPEND_SLASH_FOLDER_ENTRY = 0x2001;

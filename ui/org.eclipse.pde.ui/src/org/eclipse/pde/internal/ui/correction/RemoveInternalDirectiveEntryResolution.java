@@ -1,0 +1,47 @@
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.pde.internal.ui.correction;
+
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.text.bundle.BundleModel;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.osgi.framework.Constants;
+
+public class RemoveInternalDirectiveEntryResolution extends
+		AbstractManifestMarkerResolution {
+	
+	public RemoveInternalDirectiveEntryResolution(int type) {
+		super(type);
+	}
+
+	protected void createChange(BundleModel model) {
+		IManifestHeader header = model.getBundle().getManifestHeader(Constants.EXPORT_PACKAGE);
+		if (header instanceof ExportPackageHeader) {
+			ExportPackageObject[] packages = ((ExportPackageHeader)header).getPackages();
+			for (int i = 0; i < packages.length; i++)
+				packages[i].setDirective(ICoreConstants.INTERNAL_DIRECTIVE, null);
+				
+			((ExportPackageHeader)header).update(true);
+		}
+	}
+
+	public String getLabel() {
+		return PDEUIMessages.RemoveInternalDirective_label;
+	}
+
+	public String getDescription() {
+		return PDEUIMessages.RemoveInternalDirective_desc;
+	}
+
+}
