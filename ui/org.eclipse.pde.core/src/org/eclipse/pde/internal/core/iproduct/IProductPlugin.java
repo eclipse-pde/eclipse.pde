@@ -15,6 +15,5 @@ public interface IProductPlugin extends IProductObject {
 	
 	String getId();
 	
-	void setId(String id);
-
+	void setId(String id, boolean isFragment);
 }

@@ -33,6 +33,8 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.IPluginModelListener;
 import org.eclipse.pde.internal.core.PDECore;
@@ -68,6 +70,8 @@ import org.eclipse.ui.forms.widgets.Section;
 
 
 public class PluginSection extends TableSection implements IPluginModelListener{
+	
+	private static final char F_FRAG_PREFIX = '#';
 	
 	class ContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
@@ -172,7 +176,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		dialog.create();
 		SWTUtil.setDialogSize(dialog, 400, 500);
 		if (dialog.open() == Window.OK) {
-			addPlugin(wizard.getFragmentId());
+			addPlugin(wizard.getFragmentId(), true);
 		}
 	}
 
@@ -182,7 +186,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		dialog.create();
 		SWTUtil.setDialogSize(dialog, 400, 500);
 		if (dialog.open() == Window.OK) {
-			addPlugin(wizard.getPluginId());
+			addPlugin(wizard.getPluginId(), false);
 		}
 	}
 
@@ -302,8 +306,13 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		Iterator iter = set.iterator();
 		while (iter.hasNext()) {
 			String id = iter.next().toString();
+			boolean isFragment = false;
+			if (id.charAt(0) == F_FRAG_PREFIX) {
+				id = id.substring(1);
+				isFragment = true;
+			}
 			IProductPlugin plugin = factory.createPlugin();
-			plugin.setId(id);
+			plugin.setId(id, isFragment);
 			requiredPlugins[i++] = plugin;
 		}
 		product.addPlugins(requiredPlugins);
@@ -313,7 +322,10 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		if (desc == null)
 			return;
 		
-		if (!set.add(desc.getSymbolicName()))
+		String id = desc.getSymbolicName();
+		if (desc.getHost() != null)
+			id = F_FRAG_PREFIX + id;
+		if (!set.add(id))
 			return;
 
 		
@@ -358,7 +370,8 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 					IPluginModelBase model = findModel(elements[j]);
 					if (model != null) {
 						IProductPlugin plugin = factory.createPlugin();
-						plugin.setId(model.getPluginBase().getId());
+						IPluginBase base = model.getPluginBase(); 
+						plugin.setId(base.getId(), base instanceof IFragment);
 						pluginList.add(plugin);					
 					}
 				}
@@ -393,7 +406,8 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		if (dialog.open() == Window.OK) {
 			Object[] bundles = dialog.getResult();
 			for (int i = 0; i < bundles.length; i++) {
-				addPlugin(((BundleDescription)bundles[i]).getSymbolicName());
+				addPlugin(((BundleDescription)bundles[i]).getSymbolicName(),
+						  ((BundleDescription)bundles[i]).getHost() != null);
 			}
 		}
 	}
@@ -411,11 +425,11 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		return (BundleDescription[])map.values().toArray(new BundleDescription[map.size()]);
 	}
 	
-	private void addPlugin(String id) {
+	private void addPlugin(String id, boolean isFragment) {
 		IProduct product = getProduct();
 		IProductModelFactory factory = product.getModel().getFactory();
 		IProductPlugin plugin = factory.createPlugin();
-		plugin.setId(id);
+		plugin.setId(id, isFragment);
 		product.addPlugins(new IProductPlugin[] {plugin});
 	}
 	
