@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
@@ -84,10 +85,13 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 		try {
 			IContainer container = PDEPlugin.getWorkspace().getRoot().getContainerForLocation(new Path(dir.toString()));
 			if (container != null && container.exists()) {
-				container.getProject().refreshLocal(IResource.DEPTH_INFINITE, null);
-				IFile file = container.getFile(new Path(buildFilename));
-				if (file.exists())
-					BaseBuildAction.setDefaultValues(file);
+				IProject project = container.getProject();
+				if (project != null) {
+					project.refreshLocal(IResource.DEPTH_INFINITE, null);
+					IFile file = container.getFile(new Path(buildFilename));
+					if (file.exists())
+						BaseBuildAction.setDefaultValues(file);
+				}
 			}
 		} catch (CoreException e) {
 		}
