@@ -32,7 +32,7 @@ public class ExportPackageHeader extends BasePackageHeader {
     }
     
     public ExportPackageObject getPackage(String packageName) {
-    	return  (fElementMap == null) ? null : (ExportPackageObject) fElementMap.get(packageName);
+    	return  (fElementMap == null || packageName == null) ? null : (ExportPackageObject) fElementMap.get(packageName);
     }
     
     public ExportPackageObject[] getPackages() {

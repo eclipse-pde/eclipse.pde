@@ -56,7 +56,7 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 						new CreateManifestClassResolution(AbstractPDEMarkerResolution.CREATE_TYPE, ICoreConstants.PLUGIN_CLASS),
 						new ChooseManifestClassResolution(AbstractPDEMarkerResolution.RENAME_TYPE, ICoreConstants.PLUGIN_CLASS)};
 			case PDEMarkerFactory.M_DIRECTIVE_HAS_NO_EFFECT:
-				return new IMarkerResolution[] { new RemoveInternalDirectiveEntryResolution(AbstractPDEMarkerResolution.REMOVE_TYPE)};
+				return getRemoveInternalDirectiveResolution(marker);
 			case PDEMarkerFactory.B_REMOVE_SLASH_FILE_ENTRY:
 				return new IMarkerResolution[] { new RemoveSeperatorBuildEntryResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
 			case PDEMarkerFactory.B_APPEND_SLASH_FOLDER_ENTRY:
@@ -81,6 +81,18 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		return NO_RESOLUTIONS;
 	}
 	
+	private IMarkerResolution[] getRemoveInternalDirectiveResolution(IMarker marker) {
+		String packageName = marker.getAttribute("packageName", (String)null); //$NON-NLS-1$
+		if (packageName != null) {
+			IResource res = marker.getResource();
+			if (res != null)
+				return new IMarkerResolution[] {
+						new RemoveInternalDirectiveEntryResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, packageName)
+					};
+		}
+		return NO_RESOLUTIONS;
+	}
+	
 	private IMarkerResolution[] getUnresolvedExportProposals(IMarker marker) {
 		String packageName = marker.getAttribute("packageName", (String)null); //$NON-NLS-1$
 		if (packageName != null) {
@@ -88,7 +100,6 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 			if (res != null)
 				return new IMarkerResolution[] {
 						new RemoveExportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, packageName)
-						//new OrganizeExportPackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE, res.getProject())
 					};
 		}
 		return NO_RESOLUTIONS;
@@ -103,12 +114,9 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		if (optionalPkg) 
 			return new IMarkerResolution[] {new RemoveImportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, packageName)};
 
-//		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-//		boolean removeImports = store.getString(IPreferenceConstants.PROP_RESOLVE_IMPORTS).equals(IPreferenceConstants.VALUE_REMOVE_IMPORT);
 		return new IMarkerResolution[] {
 				new RemoveImportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, packageName),
 				new OptionalImportPackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE, packageName)
-//				new OrganizeImportPackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE, removeImports)
 			};		
 	}
 	

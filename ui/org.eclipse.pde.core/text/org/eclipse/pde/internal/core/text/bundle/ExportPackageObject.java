@@ -47,6 +47,11 @@ public class ExportPackageObject extends PackageObject {
     public boolean isInternal() {
         return "true".equals(getDirective(INTERNAL)) || getDirective(FRIENDS) != null; //$NON-NLS-1$
     }
+    
+    public void removeInternalDirective() {
+    	setDirective(INTERNAL, null);
+    	((CompositeManifestHeader)fHeader).update(true);
+    }
 
     public void setInternal(boolean internal) {
     	boolean old = isInternal();

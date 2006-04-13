@@ -37,7 +37,7 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 	private static final String JAVA_VERSION = "java.version"; //$NON-NLS-1$
 	
 	private static final String[] VM_PROPERTIES = {JAVA_SPEC_NAME, JAVA_SPEC_VERSION, JAVA_VERSION};
-	private static final String FOUNDATION = "foundation";
+	private static final String FOUNDATION = "foundation"; //$NON-NLS-1$
 	private static final Map mappings = new HashMap();
 
 	static {
@@ -138,12 +138,12 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 
 	private boolean isFoundation1_0(IVMInstall3 vm) throws CoreException {
 		Map map = vm.evaluateSystemProperties(VM_PROPERTIES, null);
-		return isFoundation(map) ? "1.0".equals(map.get(JAVA_SPEC_VERSION)) : false;
+		return isFoundation(map) ? "1.0".equals(map.get(JAVA_SPEC_VERSION)) : false; //$NON-NLS-1$
 	}
 
 	private boolean isFoundation1_1(IVMInstall3 vm) throws CoreException {
 		Map map = vm.evaluateSystemProperties(VM_PROPERTIES, null);
-		return isFoundation(map) ? "1.1".equals(map.get(JAVA_SPEC_VERSION)) : false;
+		return isFoundation(map) ? "1.1".equals(map.get(JAVA_SPEC_VERSION)) : false; //$NON-NLS-1$
 	}
 
 	private void addEnvironment(ArrayList result, String id, boolean strict) {

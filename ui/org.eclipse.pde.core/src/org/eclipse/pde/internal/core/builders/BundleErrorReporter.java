@@ -795,7 +795,12 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					PDECoreMessages.BundleErrorReporter_directive_hasNoEffectWith_,
 					new String[] { ICoreConstants.FRIENDS_DIRECTIVE,
 							ICoreConstants.INTERNAL_DIRECTIVE }); 
-			report(message, getPackageLine(header, element), CompilerFlags.WARNING, PDEMarkerFactory.M_DIRECTIVE_HAS_NO_EFFECT); 
+			IMarker marker = report(message, getPackageLine(header, element), CompilerFlags.WARNING, PDEMarkerFactory.M_DIRECTIVE_HAS_NO_EFFECT); 
+			try {
+				if (marker != null)
+					marker.setAttribute("packageName", element.getValue()); //$NON-NLS-1$
+			} catch (CoreException e) {
+			}
 		}
 	}
 
