@@ -2079,6 +2079,12 @@ public class PDEUIMessages extends NLS {
 	public static String BaseBlock_filesystem;
 
 	public static String BaseBlock_variables;
+	
+	public static String BaseBlock_workspaceS;
+
+	public static String BaseBlock_filesystemS;
+
+	public static String BaseBlock_variablesS;
 
 	public static String BaseBlock_relative;
 

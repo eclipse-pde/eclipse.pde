@@ -92,10 +92,10 @@ public abstract class BaseBlock {
 		fLocationText.addModifyListener(fListener);
 	}
 	
-	protected void createButtons(Composite parent) {
-		fWorkspaceButton = createButton(parent, PDEUIMessages.BaseBlock_workspace); 
-		fFileSystemButton = createButton(parent, PDEUIMessages.BaseBlock_filesystem); 
-		fVariablesButton = createButton(parent, PDEUIMessages.BaseBlock_variables); 	
+	protected void createButtons(Composite parent, String[] buttonLabels) {
+		fWorkspaceButton = createButton(parent, buttonLabels[0]);
+		fFileSystemButton = createButton(parent, buttonLabels[1]);
+		fVariablesButton = createButton(parent, buttonLabels[2]);
 	}
 	
 	protected Button createButton(Composite parent, String text) {

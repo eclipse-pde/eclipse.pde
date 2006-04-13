@@ -88,7 +88,9 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 		Label label = new Label(buttons, SWT.NONE);
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		createButtons(buttons);
+		createButtons(buttons, new String[] {
+				PDEUIMessages.BaseBlock_workspaceS, PDEUIMessages.BaseBlock_filesystemS, PDEUIMessages.BaseBlock_variablesS
+		});
 	}
 	
 	public void initializeFrom(ILaunchConfiguration configuration) throws CoreException {

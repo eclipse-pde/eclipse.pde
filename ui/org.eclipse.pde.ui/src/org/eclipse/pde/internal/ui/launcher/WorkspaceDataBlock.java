@@ -62,7 +62,9 @@ public class WorkspaceDataBlock extends BaseBlock {
 			}
 		});
 		
-		createButtons(buttons);
+		createButtons(buttons, new String[] {
+				PDEUIMessages.BaseBlock_workspace, PDEUIMessages.BaseBlock_filesystem, PDEUIMessages.BaseBlock_variables
+		});
 		
 		fAskClearCheck = new Button(group, SWT.CHECK);
 		fAskClearCheck.setText(PDEUIMessages.WorkspaceDataBlock_askClear);

@@ -74,7 +74,9 @@ public class ConfigurationAreaBlock extends BaseBlock {
 		fClearConfig.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fClearConfig.addSelectionListener(fListener);
 		
-		createButtons(buttons);
+		createButtons(buttons, new String[] {
+				PDEUIMessages.BaseBlock_workspace, PDEUIMessages.BaseBlock_filesystem, PDEUIMessages.BaseBlock_variables
+		});
 	}
 	
 	public void initializeFrom(ILaunchConfiguration configuration) throws CoreException {

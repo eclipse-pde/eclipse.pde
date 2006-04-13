@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginAttribute;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.plugin.JavaAttributeValue;
+import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 
 public class CreateClassXMLResolution extends AbstractXMLMarkerResolution {
 
@@ -39,11 +40,11 @@ public class CreateClassXMLResolution extends AbstractXMLMarkerResolution {
 			return;
 		
 		PluginAttribute attr = (PluginAttribute)object;
-		String name = MarkerResolutionHelper.trimNonAlphaChars(attr.getValue()).replace('$', '.');
+		String name = PDEJavaHelper.trimNonAlphaChars(attr.getValue()).replace('$', '.');
 		IProject project = model.getUnderlyingResource().getProject();
 		
 		JavaAttributeValue value = new JavaAttributeValue(project, model, getAttribute(attr), name);
-		name = MarkerResolutionHelper.createClass(name, model, value);
+		name = PDEJavaHelper.createClass(name, project, value, true);
 		if (!name.equals(attr.getValue())) 
 			attr.getEnclosingElement().setXMLAttribute(attr.getName(), name);
 	}

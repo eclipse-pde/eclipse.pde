@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
@@ -28,7 +27,6 @@ import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ICoreConstants;
@@ -45,14 +43,13 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -129,25 +126,9 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 			public void linkActivated(HyperlinkEvent e) {
 				String value = fClassEntry.getValue();
 				IProject project = getPage().getPDEEditor().getCommonProject();
-				try {
-					if (project.hasNature(JavaCore.NATURE_ID)) {
-						IJavaProject javaProject = JavaCore.create(project);
-						IJavaElement element = javaProject.findType(value.replace('$', '.'));
-						if (element != null)
-							JavaUI.openInEditor(element);
-						else {
-							JavaAttributeWizard wizard = new JavaAttributeWizard(createJavaAttributeValue());
-							WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
-							dialog.create();
-							SWTUtil.setDialogSize(dialog, 400, 500);
-							if (dialog.open() == Window.OK) {
-								fClassEntry.setValue(wizard.getClassNameWithArgs());
-							}
-						}
-					}
-				} catch (PartInitException e1) {
-				} catch (CoreException e1) {
-				}
+				value = PDEJavaHelper.createClass(value, project, createJavaAttributeValue(), false);
+				if (value != null)
+					fClassEntry.setValue(value);
 			}
 			public void browseButtonSelected(FormEntry entry) {
 				doOpenSelectionDialog();

@@ -15,6 +15,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginAttribute;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 
 public class ChooseClassXMLResolution extends AbstractXMLMarkerResolution {
 
@@ -28,7 +29,7 @@ public class ChooseClassXMLResolution extends AbstractXMLMarkerResolution {
 			return;
 		PluginAttribute attrib = (PluginAttribute)object;
 		IDocumentNode element = attrib.getEnclosingElement();
-		String type = MarkerResolutionHelper.selectType();
+		String type = PDEJavaHelper.selectType();
 		if (type != null)
 			element.setXMLAttribute(attrib.getName(), type);
 	}
