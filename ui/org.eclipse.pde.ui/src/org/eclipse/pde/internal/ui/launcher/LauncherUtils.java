@@ -40,12 +40,15 @@ import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.ui.IPreferenceConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.tools.IOrganizeManifestsSettings;
 import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsOperation;
@@ -140,6 +143,10 @@ public class LauncherUtils {
 	}
 
 	public static void validateProjectDependencies(ILaunchConfiguration launch, final IProgressMonitor monitor) {
+		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		if (!store.getBoolean(IPreferenceConstants.PROP_AUTO_MANAGE))
+			return;
+		
 		String timeStamp, selected, deSelected;
 		boolean useDefault, autoAdd;
 		try {

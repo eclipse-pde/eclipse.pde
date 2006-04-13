@@ -19,6 +19,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String ContentSection_addDialogButtonLabel;
 
+	public static String MainPreferencePage_group2;
+
+	public static String MainPreferencePage_updateStale;
+
 	public static String RevertUnsupportSingletonResolution_desc;
 
 	public static String AddLibraryDialog_emptyLibraries;

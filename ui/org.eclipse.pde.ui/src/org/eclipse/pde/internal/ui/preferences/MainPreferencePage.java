@@ -29,9 +29,10 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
 public class MainPreferencePage extends PreferencePage
-	implements IWorkbenchPreferencePage, IPreferenceConstants {
+	implements IWorkbenchPreferencePage {
 	private Button fUseID;
 	private Button fUseName;
+	private Button fAutoManage;
 
 	
 	public MainPreferencePage() {
@@ -58,12 +59,20 @@ public class MainPreferencePage extends PreferencePage
 		fUseName = new Button(group, SWT.RADIO);
 		fUseName.setText(PDEUIMessages.Preferences_MainPage_useFullNames);
 		
-		if (store.getString(PROP_SHOW_OBJECTS).equals(VALUE_USE_IDS)) {
+		if (store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS).equals(IPreferenceConstants.VALUE_USE_IDS)) {
 			fUseID.setSelection(true);
 		} else {
 			fUseName.setSelection(true);
 		}
 		
+		group = new Group(composite, SWT.NONE);
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
+		group.setLayout(new GridLayout());
+		group.setText(PDEUIMessages.MainPreferencePage_group2);
+		
+		fAutoManage = new Button(group, SWT.CHECK);
+		fAutoManage.setText(PDEUIMessages.MainPreferencePage_updateStale);
+		fAutoManage.setSelection(store.getBoolean(IPreferenceConstants.PROP_AUTO_MANAGE));
 		return composite;		
 	}
 	
@@ -76,23 +85,25 @@ public class MainPreferencePage extends PreferencePage
 	public boolean performOk() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		if (fUseID.getSelection()) {
-			store.setValue(PROP_SHOW_OBJECTS, VALUE_USE_IDS);
+			store.setValue(IPreferenceConstants.PROP_SHOW_OBJECTS, IPreferenceConstants.VALUE_USE_IDS);
 		} else {
-			store.setValue(PROP_SHOW_OBJECTS, VALUE_USE_NAMES);
+			store.setValue(IPreferenceConstants.PROP_SHOW_OBJECTS, IPreferenceConstants.VALUE_USE_NAMES);
 		}
+		store.setValue(IPreferenceConstants.PROP_AUTO_MANAGE, fAutoManage.getSelection());
 		PDEPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
 	}
 	
 	protected void performDefaults() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-		if (store.getDefaultString(PROP_SHOW_OBJECTS).equals(VALUE_USE_IDS)) {
+		if (store.getDefaultString(IPreferenceConstants.PROP_SHOW_OBJECTS).equals(IPreferenceConstants.VALUE_USE_IDS)) {
 			fUseID.setSelection(true);
 			fUseName.setSelection(false);
 		} else {
 			fUseID.setSelection(false);
 			fUseName.setSelection(true);
 		}
+		fAutoManage.setSelection(false);
 	}
 
 	/*
