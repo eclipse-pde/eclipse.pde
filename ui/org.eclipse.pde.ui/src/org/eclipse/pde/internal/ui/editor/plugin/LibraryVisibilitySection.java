@@ -265,10 +265,22 @@ public class LibraryVisibilitySection extends TableSection
 		if (selection == null || selection.isEmpty())
 			update(null);
 		IStructuredSelection ssel = (IStructuredSelection) selection;
-		if (ssel.getFirstElement() instanceof IPluginLibrary)
+		boolean enable = ssel.size() == 1;
+		setEnabled(enable);
+		if (enable && ssel.getFirstElement() instanceof IPluginLibrary)
 			update((IPluginLibrary) ssel.getFirstElement());
 	}
     
+	private void setEnabled(boolean b) {
+		fFullExportButton.setEnabled(b);
+		fSelectedExportButton.setEnabled(b);
+		fPackageExportViewer.getTable().setEnabled(b);
+		if (!b) {
+			getTablePart().setButtonEnabled(ADD_INDEX, false);
+			getTablePart().setButtonEnabled(REMOVE_INDEX, false);
+		}
+	}
+
 	private void update(IPluginLibrary library) {
 		fCurrentLibrary = library;
 		if (library == null) {

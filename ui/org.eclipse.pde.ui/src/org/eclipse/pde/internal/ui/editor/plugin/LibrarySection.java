@@ -10,14 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -27,9 +33,13 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
@@ -39,6 +49,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
+import org.eclipse.pde.internal.ui.editor.build.BuildSourcePage;
 import org.eclipse.pde.internal.ui.editor.build.JARFileFilter;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -46,11 +58,16 @@ import org.eclipse.pde.internal.ui.parts.EditableTablePart;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -165,9 +182,11 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	private void updateButtons() {
         Table table = fLibraryTable.getTable();
         boolean hasSelection = table.getSelection().length > 0;
+        boolean singleSelection = table.getSelection().length == 1;
         int count = table.getItemCount();
-        boolean canMoveUp = count > 1 && table.getSelectionIndex() > 0;
-        boolean canMoveDown = count > 1 && hasSelection && table.getSelectionIndex() < count - 1;
+        int index = table.getSelectionIndex();
+        boolean canMoveUp = singleSelection && index > 0;
+        boolean canMoveDown = singleSelection && index < count - 1;
         
         TablePart tablePart = getTablePart();
         tablePart.setButtonEnabled(ADD_INDEX, isEditable());
@@ -270,16 +289,22 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	}
     
 	private void handleRemove() {
-		Object object = ((IStructuredSelection) fLibraryTable.getSelection()).getFirstElement();
-		if (object != null && object instanceof IPluginLibrary) {
-			IPluginLibrary ep = (IPluginLibrary) object;
-			IPluginBase plugin = ep.getPluginBase();
-			try {
-				plugin.remove(ep);
-			} catch (CoreException e) {
-				PDEPlugin.logException(e);
+		Object[] selection = ((IStructuredSelection) fLibraryTable.getSelection()).toArray();
+		String[] remove = new String[selection.length];
+		for (int i = 0; i < selection.length; i++) {
+			if (selection[i] != null && selection[i] instanceof IPluginLibrary) {
+				IPluginLibrary ep = (IPluginLibrary) selection[i];
+				IPluginBase plugin = ep.getPluginBase();
+				try {
+					plugin.remove(ep);
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+				}
+				remove[i] = ep.getName();
 			}
 		}
+		updateBuildProperties(remove, new String[remove.length]);
+		updateJavaClasspathLibs(remove, new String[remove.length]);
 	}
 	private void handleDown() {
 		Table table = getTablePart().getTableViewer().getTable();
@@ -333,11 +358,25 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		}
 	}
 	private void handleAdd() {
+		final boolean[] updateClasspath = new boolean[] {true};
 		ElementTreeSelectionDialog dialog =
 			new ElementTreeSelectionDialog(
 					getPage().getSite().getShell(),
 					new WorkbenchLabelProvider(),
-				new WorkbenchContentProvider());
+				new WorkbenchContentProvider()) {
+			protected Control createDialogArea(Composite parent) {
+				Composite comp = (Composite)super.createDialogArea(parent);
+				final Button button = new Button(comp, SWT.CHECK);
+				button.setText("Update java classpath");
+				button.setSelection(updateClasspath[0]);
+				button.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						updateClasspath[0] = button.getSelection();
+					}
+				});
+				return comp;
+			}
+		};
 				
 		Class[] acceptedClasses = new Class[] { IFile.class };
 		dialog.setValidator(new LibrarySelectionValidator(acceptedClasses, true));
@@ -349,29 +388,119 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			set.add(new Path(ClasspathUtilCore.expandLibraryName(libraries[i].getName())));
 		}
 		dialog.addFilter(new LibraryFilter(set));
-		dialog.setInput(((IModel)getPage().getModel()).getUnderlyingResource().getProject());
+		IProject project = ((IModel)getPage().getModel()).getUnderlyingResource().getProject();
+		dialog.setInput(project);
 		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
 
 		if (dialog.open() == Window.OK) {
 			Object[] elements = dialog.getResult();
+			String[] filePaths = new String[elements.length];
 			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 			for (int i = 0; i < elements.length; i++) {
 				IResource elem = (IResource) elements[i];
 				IPath path = elem.getProjectRelativePath();
 				if (elem instanceof IFolder)
 					path = path.addTrailingSeparator();
+				filePaths[i] = path.toString();
 				IPluginLibrary library = model.getPluginFactory().createLibrary();
 				try {
-					library.setName(path.toString());
+					library.setName(filePaths[i]);
 					library.setExported(true);
 					model.getPluginBase().add(library);
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
-				}							
+				}
 			}
+			updateBuildProperties(new String[filePaths.length], filePaths);
+			if (updateClasspath[0])
+				updateJavaClasspathLibs(new String[filePaths.length], filePaths);
 		}	
 	}
 
+	private void updateBuildProperties(final String[] oldPaths, final String[] newPaths) {
+		IFormPage page = getPage().getEditor().findPage(BuildInputContext.CONTEXT_ID);
+		IBaseModel model = null;
+		if (page instanceof BuildSourcePage)
+			model = ((BuildSourcePage)page).getInputContext().getModel();
+		
+		if (model != null && model instanceof IBuildModel) {
+			IBuildModel bmodel = (IBuildModel)model;
+			IBuild build = bmodel.getBuild();
+			
+			String binIncludes = "bin.includes";
+			IBuildEntry entry = build.getEntry(binIncludes);
+			if (entry == null)
+				entry = bmodel.getFactory().createEntry(binIncludes);
+			
+			try {
+				// adding new entries
+				if (oldPaths[0] == null) {
+					for (int i = 0; i < newPaths.length; i++)
+						if (newPaths[i] != null)
+							entry.addToken(newPaths[i]);
+				
+				// removing entries
+				} else if (newPaths[0] == null) {
+					for (int i = 0; i < oldPaths.length; i++)
+						if (oldPaths[i] != null)
+							entry.removeToken(oldPaths[i]);
+				
+				// rename entries
+				} else {
+					for (int i = 0; i < oldPaths.length; i++)
+						if (newPaths[i] != null && oldPaths[i] != null)
+							entry.renameToken(oldPaths[i], newPaths[i]);
+				}
+			} catch (CoreException e) {
+			}
+		}
+	}
+
+	private void updateJavaClasspathLibs(String[] oldPaths, String[] newPaths) {
+		IProject project = ((IModel)getPage().getModel()).getUnderlyingResource().getProject();
+		IJavaProject jproject = JavaCore.create(project);
+		try {
+			IClasspathEntry[] entries = jproject.getRawClasspath();
+			ArrayList toBeAdded = new ArrayList();
+			int index = -1;
+			entryLoop: for (int i = 0; i < entries.length; i++) {
+				if (entries[i].getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
+					if (index == -1)
+						index = i;
+					// remove all old paths (if renaming they will be added later)
+					IPath path = entries[i].getPath().removeFirstSegments(1).removeTrailingSeparator();
+					for (int j = 0; j < oldPaths.length; j++)
+						if (oldPaths[j] != null &&
+								path.equals(new Path(oldPaths[j]).removeTrailingSeparator()))
+							continue entryLoop;
+				} else if (entries[i].getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+					if (index == -1)
+						index = i > 0 ? i : 0;
+				}
+				toBeAdded.add(entries[i]);
+			}
+			if (index == -1)
+				index = entries.length;
+			
+			// add paths
+			for (int i = 0; i < newPaths.length; i++) {
+				if (newPaths[i] == null)
+					continue;
+				IClasspathEntry entry = JavaCore.newLibraryEntry(
+						project.getFullPath().append(newPaths[i]), null, null);
+				if (!toBeAdded.contains(entry))
+					toBeAdded.add(index++, entry);
+			}
+			
+			if (toBeAdded.size() == entries.length)
+				return;
+			
+			IClasspathEntry[] updated = (IClasspathEntry[])toBeAdded.toArray(new IClasspathEntry[toBeAdded.size()]);
+			jproject.setRawClasspath(updated, null);
+		} catch (JavaModelException e) {
+		}
+	}
+	
 	public void refresh() {
 		if (fLibraryTable.getControl().isDisposed())
 			return;
@@ -432,13 +561,23 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	}
     
     protected void entryModified(Object entry, String value) {
-        try {
-            IPluginLibrary library = (IPluginLibrary)entry;
-            library.setName(value);
-        } catch (CoreException e) {
-            PDEPlugin.logException(e);
-        }
-    }
+		try {
+			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+			IProject project = model.getUnderlyingResource().getProject();
+			IPluginLibrary library = (IPluginLibrary) entry;
+			model.getPluginBase().remove(library);
+			String[] oldValue = { library.getName() };
+			String[] newValue = { value };
+			library.setName(value);
+			if (project.findMember(value) == null)
+				newValue[0] = null;
+			updateBuildProperties(oldValue, newValue);
+			updateJavaClasspathLibs(oldValue, newValue);
+			model.getPluginBase().add(library);
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
+		}
+	}
 	
 
 }
