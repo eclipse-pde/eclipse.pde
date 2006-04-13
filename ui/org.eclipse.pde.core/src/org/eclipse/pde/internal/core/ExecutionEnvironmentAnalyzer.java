@@ -10,43 +10,48 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.ArrayList;
-import java.util.Map;
-
+import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstall2;
-import org.eclipse.jdt.launching.IVMInstall3;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.environments.CompatibleEnvironment;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironmentAnalyzerDelegate;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+import org.eclipse.jdt.launching.*;
+import org.eclipse.jdt.launching.environments.*;
 
 public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyzerDelegate {
 	
-	public static final String JavaSE_1_6 = "JavaSE-1.6"; //$NON-NLS-1$
-	public static final String J2SE_1_5 = "J2SE-1.5"; //$NON-NLS-1$
-	public static final String J2SE_1_4 = "J2SE-1.4"; //$NON-NLS-1$
-	public static final String J2SE_1_3 = "J2SE-1.3"; //$NON-NLS-1$
-	public static final String J2SE_1_2 = "J2SE-1.2"; //$NON-NLS-1$
-	public static final String JRE_1_1 = "JRE-1.1"; //$NON-NLS-1$
+	private static final String JavaSE_1_6 = "JavaSE-1.6"; //$NON-NLS-1$
+	private static final String J2SE_1_5 = "J2SE-1.5"; //$NON-NLS-1$
+	private static final String J2SE_1_4 = "J2SE-1.4"; //$NON-NLS-1$
+	private static final String J2SE_1_3 = "J2SE-1.3"; //$NON-NLS-1$
+	private static final String J2SE_1_2 = "J2SE-1.2"; //$NON-NLS-1$
+	private static final String JRE_1_1 = "JRE-1.1"; //$NON-NLS-1$
 	
-	public static final String CDC_FOUNDATION_1_1 = "CDC-1.1/Foundation-1.1"; //$NON-NLS-1$
-	public static final String CDC_FOUNDATION_1_0 = "CDC-1.0/Foundation-1.0"; //$NON-NLS-1$
+	private static final String CDC_FOUNDATION_1_1 = "CDC-1.1/Foundation-1.1"; //$NON-NLS-1$
+	private static final String CDC_FOUNDATION_1_0 = "CDC-1.0/Foundation-1.0"; //$NON-NLS-1$
 	
-	public static final String OSGI_MINIMUM_1_0 = "OSGi/Minimum-1.0"; //$NON-NLS-1$
-	public static final String OSGI_MINIMUM_1_1 = "OSGi/Minimum-1.1"; //$NON-NLS-1$
+	private static final String OSGI_MINIMUM_1_0 = "OSGi/Minimum-1.0"; //$NON-NLS-1$
+	private static final String OSGI_MINIMUM_1_1 = "OSGi/Minimum-1.1"; //$NON-NLS-1$
 	
-	public static final String JAVA_SPEC_VERSION = "java.specification.version"; //$NON-NLS-1$
-	public static final String JAVA_SPEC_NAME = "java.specification.name"; //$NON-NLS-1$
-	public static final String J2ME_NAME = "J2ME Foundation Specification"; //$NON-NLS-1$
+	private static final String JAVA_SPEC_VERSION = "java.specification.version"; //$NON-NLS-1$
+	private static final String JAVA_SPEC_NAME = "java.specification.name"; //$NON-NLS-1$
+	private static final String JAVA_VERSION = "java.version"; //$NON-NLS-1$
 	
-	public static final String[] VM_PROPERTIES = {JAVA_SPEC_NAME, JAVA_SPEC_VERSION};
+	private static final String[] VM_PROPERTIES = {JAVA_SPEC_NAME, JAVA_SPEC_VERSION, JAVA_VERSION};
+	private static final String FOUNDATION = "foundation";
+	private static final Map mappings = new HashMap();
 
-	
+	static {
+		// table where the key is the EE and the value is an array of EEs that it is a super-set of
+		mappings.put(CDC_FOUNDATION_1_0, new String[] {OSGI_MINIMUM_1_0});
+		mappings.put(CDC_FOUNDATION_1_1, new String[] {CDC_FOUNDATION_1_0, OSGI_MINIMUM_1_1});
+		mappings.put(OSGI_MINIMUM_1_1, new String[] {OSGI_MINIMUM_1_0});
+		mappings.put(J2SE_1_2, new String[] {JRE_1_1});
+		mappings.put(J2SE_1_3, new String[] {J2SE_1_2, CDC_FOUNDATION_1_0, OSGI_MINIMUM_1_0});
+		mappings.put(J2SE_1_4, new String[] {J2SE_1_3, CDC_FOUNDATION_1_1, OSGI_MINIMUM_1_1});
+		mappings.put(J2SE_1_5, new String[] {J2SE_1_4});
+		mappings.put(JavaSE_1_6, new String[] {J2SE_1_5});
+	}
+
 	public static String getCompliance(String ee) {
 		if (ee == null)
 			return null;
@@ -73,63 +78,91 @@ public class ExecutionEnvironmentAnalyzer implements IExecutionEnvironmentAnalyz
 				JavaSE_1_6};
 	}
 
-	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor)
-			throws CoreException {
-		
+	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
 		ArrayList result = new ArrayList();
+		if (!(vm instanceof IVMInstall2))
+			return new CompatibleEnvironment[0];
+		IVMInstall2 vm2 = (IVMInstall2) vm;
+		
+		List types = null;
+		String javaVersion = vm2.getJavaVersion();
+		if (javaVersion == null) {
+			// We have a contributed VM type. Check to see if its a foundation VM, if we can.
+			if ((vm instanceof IVMInstall3) && isFoundation1_0((IVMInstall3) vm)) 
+				types = getTypes(CDC_FOUNDATION_1_0);
+			else if ((vm instanceof IVMInstall3) && isFoundation1_1((IVMInstall3) vm)) 
+				types = getTypes(CDC_FOUNDATION_1_1);
+		} else {
+			if (javaVersion.startsWith("1.6")) //$NON-NLS-1$
+				types = getTypes(JavaSE_1_6);
+			else if (javaVersion.startsWith("1.5")) //$NON-NLS-1$
+				types = getTypes(J2SE_1_5);
+			else if (javaVersion.startsWith("1.4")) //$NON-NLS-1$
+				types = getTypes(J2SE_1_4);
+			else if (javaVersion.startsWith("1.3")) //$NON-NLS-1$
+				types = getTypes(J2SE_1_3);
+			else if (javaVersion.startsWith("1.2")) //$NON-NLS-1$
+				types = getTypes(J2SE_1_2);
+			else if (javaVersion.startsWith("1.1")) { //$NON-NLS-1$
+				if ((vm instanceof IVMInstall3) && isFoundation1_1((IVMInstall3) vm))
+					types = getTypes(CDC_FOUNDATION_1_1);
+				else
+					types = getTypes(JRE_1_1);
+			} else if (javaVersion.startsWith("1.0")) { //$NON-NLS-1$
+				if ((vm instanceof IVMInstall3) && isFoundation1_0((IVMInstall3) vm)) 
+					types = getTypes(CDC_FOUNDATION_1_0);
+			}
+		}
 
-		if (vm instanceof IVMInstall2) {
-			IVMInstall2 vm2 = (IVMInstall2) vm;
-			
-			String javaVersion = vm2.getJavaVersion();
-			if (javaVersion == null)
-				return new CompatibleEnvironment[0];
-			
-			if (javaVersion.compareTo("1.6") >= 0) //$NON-NLS-1$
-				addEnvironment(result, JavaSE_1_6, javaVersion.startsWith("1.6")); //$NON-NLS-1$
-			
-			if (javaVersion.compareTo("1.5") >= 0) //$NON-NLS-1$
-				addEnvironment(result, J2SE_1_5, javaVersion.startsWith("1.5")); //$NON-NLS-1$
-			
-			if (javaVersion.compareTo("1.4") >= 0) { //$NON-NLS-1$
-				addEnvironment(result, J2SE_1_4, javaVersion.startsWith("1.4")); //$NON-NLS-1$
-				boolean perfect = false;
-				if (vm instanceof IVMInstall3) {
-					Map map = ((IVMInstall3)vm).evaluateSystemProperties(VM_PROPERTIES , null);
-					perfect = "1.1".equals(map.get(JAVA_SPEC_VERSION))  //$NON-NLS-1$
-								&& J2ME_NAME.equals(map.get(JAVA_SPEC_NAME));
-				} 
-				addEnvironment(result, CDC_FOUNDATION_1_1, perfect); 
-				
-			}
-			
-			if (javaVersion.compareTo("1.3") >= 0) { //$NON-NLS-1$
-				addEnvironment(result, J2SE_1_3, javaVersion.startsWith("1.3")); //$NON-NLS-1$
-				boolean perfect = false;
-				if (vm instanceof IVMInstall3) {
-					Map map = ((IVMInstall3)vm).evaluateSystemProperties(VM_PROPERTIES , null);
-					perfect = "1.0".equals(map.get(JAVA_SPEC_VERSION))  //$NON-NLS-1$
-								&& J2ME_NAME.equals(map.get(JAVA_SPEC_NAME));
-				} 
-				addEnvironment(result, CDC_FOUNDATION_1_0, perfect); 
-				addEnvironment(result, OSGI_MINIMUM_1_1, false);
-				addEnvironment(result, OSGI_MINIMUM_1_0, false);
-			}
-			
-			if (javaVersion.compareTo("1.2") >= 0) //$NON-NLS-1$
-				addEnvironment(result, J2SE_1_2, javaVersion.startsWith("1.2")); //$NON-NLS-1$
-			
-			if (javaVersion.compareTo("1.1") >= 0)  //$NON-NLS-1$
-				addEnvironment(result, JRE_1_1, javaVersion.startsWith("1.1"));				 //$NON-NLS-1$
+		if (types != null) {
+			for (int i=0; i < types.size(); i++)
+				addEnvironment(result, (String) types.get(i), i ==0);
 		}
 		return (CompatibleEnvironment[])result.toArray(new CompatibleEnvironment[result.size()]);
 	}
-	
+
+	/*
+	 * Check a couple of known system properties for the word "foundation".
+	 */
+	private boolean isFoundation(Map properties) {
+		for (int i=0; i < VM_PROPERTIES.length; i++) {
+			String value = (String) properties.get(VM_PROPERTIES[i]);
+			if (value == null)
+				continue;
+			for (StringTokenizer tokenizer = new StringTokenizer(value); tokenizer.hasMoreTokens(); )
+				if (FOUNDATION.equalsIgnoreCase(tokenizer.nextToken()))
+					return true;
+		}
+		return false;
+	}
+
+	private boolean isFoundation1_0(IVMInstall3 vm) throws CoreException {
+		Map map = vm.evaluateSystemProperties(VM_PROPERTIES, null);
+		return isFoundation(map) ? "1.0".equals(map.get(JAVA_SPEC_VERSION)) : false;
+	}
+
+	private boolean isFoundation1_1(IVMInstall3 vm) throws CoreException {
+		Map map = vm.evaluateSystemProperties(VM_PROPERTIES, null);
+		return isFoundation(map) ? "1.1".equals(map.get(JAVA_SPEC_VERSION)) : false;
+	}
+
 	private void addEnvironment(ArrayList result, String id, boolean strict) {
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment env = manager.getEnvironment(id);
 		if (env != null)
 			result.add(new CompatibleEnvironment(env, strict));
+	}
+	
+	// first entry in the list is the perfect match
+	private List getTypes(String type) {
+		List result = new ArrayList();
+		result.add(type);
+		String[] values = (String[]) mappings.get(type);
+		if (values != null) {
+			for (int i=0; i<values.length; i++)
+				result.addAll(getTypes(values[i]));
+		}
+		return result;
 	}
 
 }
