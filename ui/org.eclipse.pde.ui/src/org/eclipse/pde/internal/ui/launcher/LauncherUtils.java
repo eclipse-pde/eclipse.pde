@@ -224,7 +224,7 @@ public class LauncherUtils {
 							for (int j =0 ; j < children.length; j++) 
 								files.push(children[j]);
 						} else 
-							if (file.getName().endsWith(".class") && timeStamp < file.lastModified())
+							if (file.getName().endsWith(".class") && timeStamp < file.lastModified()) //$NON-NLS-1$
 								timeStamp = file.lastModified();
 					}
 				}

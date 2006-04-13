@@ -28,6 +28,8 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
@@ -247,11 +249,15 @@ public class ClasspathComputer {
 	}
 	
 	public static IClasspathEntry createJREEntry(String ee) {
-		IPath path = new Path(JavaRuntime.JRE_CONTAINER);		
+		IPath path = null;
 		if (ee != null) {
-			path = path.append(JavaRuntime.EXTENSION_POINT_EXECUTION_ENVIRONMENTS);
-			path = path.append(ee);
+			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+			IExecutionEnvironment env = manager.getEnvironment(ee);
+			if (env != null) 
+				path = JavaRuntime.newJREContainerPath(env);
 		}
+		if (path == null)
+			path = JavaRuntime.newDefaultJREContainerPath();
 		return JavaCore.newContainerEntry(path);
 	}
 	
