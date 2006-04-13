@@ -37,7 +37,8 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 		name = PDEJavaHelper.createClass(
 				name, getProject(),
 				createJavaAttributeValue(name), true);
-		text.setText(name);
+		if (name != null)
+			text.setText(name);
 	}
 	/*
 	 * (non-Javadoc)
