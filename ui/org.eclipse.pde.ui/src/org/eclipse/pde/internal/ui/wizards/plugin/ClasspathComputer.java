@@ -226,6 +226,12 @@ public class ClasspathComputer {
 			} else {
 				return;
 			}
+		} else if (JavaCore.VERSION_1_6.equals(compliance)) {
+			map.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_6);
+			map.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_6);
+			map.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_6);
+			map.put(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.ERROR);
+			map.put(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.ERROR);
 		} else if (JavaCore.VERSION_1_5.equals(compliance)) {
 			map.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_5);
 			map.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
