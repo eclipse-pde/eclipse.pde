@@ -163,7 +163,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		EditableTablePart tablePart = getTablePart();
 		tablePart.setEditable(isEditable());
 
-		createViewerPartControl(container, SWT.FULL_SELECTION, 2, toolkit);
+		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		fLibraryTable = tablePart.getTableViewer();
 		fLibraryTable.setContentProvider(new TableContentProvider());
 		fLibraryTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());

@@ -39,7 +39,7 @@ public class TablePart extends StructuredViewerPart {
 		Composite parent,
 		int style,
 		FormToolkit toolkit) {
-		style |= SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI;
+		style |= SWT.H_SCROLL | SWT.V_SCROLL;
 		if (toolkit==null) {
 			style |= SWT.BORDER;
 		}
