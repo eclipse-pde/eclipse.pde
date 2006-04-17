@@ -118,8 +118,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	class TableContentProvider extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			IPluginModelBase model = (IPluginModelBase)getPage().getModel();
-			return model.getPluginBase().getLibraries();
+			return getModel().getPluginBase().getLibraries();
 		}
 	}
 
@@ -137,7 +136,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	}
     
     private String getSectionDescription() {
-        IPluginModelBase model = (IPluginModelBase)getPage().getPDEEditor().getAggregateModel();
+        IPluginModelBase model = getModel();
         if (isBundle()) {
            return (model.isFragmentModel())
                ? PDEUIMessages.ClasspathSection_fragment
@@ -176,7 +175,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
         section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		section.setClient(container);
 
-        IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+        IPluginModelBase model = getModel();
         fLibraryTable.setInput(model.getPluginBase());
         model.addModelChangedListener(this);
 	}
@@ -248,7 +247,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	}
 
 	public void dispose() {
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+		IPluginModelBase model = getModel();
 		if (model != null)
 			model.removeModelChangedListener(this);
 		super.dispose();
@@ -339,7 +338,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		IPluginLibrary l2 = (IPluginLibrary)table.getItem(index2).getData();
 
 		try {
-			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+			IPluginModelBase model = getModel();
 			IPluginBase pluginBase = model.getPluginBase();
 			pluginBase.swap(l1, l2);
 			refresh();
@@ -352,7 +351,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	}
 	
 	private void handleNew(){
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+		IPluginModelBase model = getModel();
 		NewRuntimeLibraryDialog dialog = new NewRuntimeLibraryDialog(
 				getPage().getSite().getShell(), 
 				model.getPluginBase().getLibraries());
@@ -369,6 +368,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 				library.setName(libName);
 				library.setExported(true);
 				model.getPluginBase().add(library);
+				checkSourceRootEntry();
 				updateBuildProperties(
 						new String[] {null},
 						new String[] { library.getName()},
@@ -379,6 +379,40 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 				PDEPlugin.logException(e);
 			}
 		}
+	}
+	
+	private void checkSourceRootEntry() {
+		IPluginModelBase pluginModel = getModel();
+		IPluginLibrary[] libraries = pluginModel.getPluginBase().getLibraries();
+		for (int i = 0; i < libraries.length; i++)
+			if (libraries[i].getName().equals(".")) //$NON-NLS-1$
+				return;
+		IBuildModel model = getBuildModel();
+		if (model == null)
+			return;
+		
+		IBuildEntry[] entires = model.getBuild().getBuildEntries();
+		for (int i = 0; i < entires.length; i++) {
+			if (entires[i].getName().equals("source..")) { //$NON-NLS-1$
+				IPluginLibrary library = pluginModel.getPluginFactory().createLibrary();
+				try {
+					library.setName("."); //$NON-NLS-1$
+					pluginModel.getPluginBase().add(library);
+				} catch (CoreException e) {
+				}
+			}
+		}
+	}
+
+	private IBuildModel getBuildModel() {
+		IFormPage page = getPage().getEditor().findPage(BuildInputContext.CONTEXT_ID);
+		IBaseModel model = null;
+		if (page instanceof BuildSourcePage)
+			model = ((BuildSourcePage)page).getInputContext().getModel();
+		
+		if (model != null && model instanceof IBuildModel)
+			return (IBuildModel)model;
+		return null;
 	}
 	
 	private void configureSourceBuildEntry(IBuildModel bmodel, String oldPath, String newPath) throws CoreException {
@@ -433,7 +467,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		dialog.setValidator(new LibrarySelectionValidator(acceptedClasses, true));
 		dialog.setTitle(PDEUIMessages.BuildEditor_ClasspathSection_jarsTitle); 
 		dialog.setMessage(PDEUIMessages.ClasspathSection_jarsMessage); 
-		IPluginLibrary[] libraries = ((IPluginModelBase)getPage().getModel()).getPluginBase().getLibraries();
+		IPluginLibrary[] libraries = getModel().getPluginBase().getLibraries();
 		HashSet set = new HashSet();
 		for (int i = 0; i < libraries.length; i++) 
 			set.add(new Path(ClasspathUtilCore.expandLibraryName(libraries[i].getName())));
@@ -446,7 +480,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		if (dialog.open() == Window.OK) {
 			Object[] elements = dialog.getResult();
 			String[] filePaths = new String[elements.length];
-			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+			IPluginModelBase model = getModel();
 			ArrayList list = new ArrayList();
 			for (int i = 0; i < elements.length; i++) {
 				IResource elem = (IResource) elements[i];
@@ -464,6 +498,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 					PDEPlugin.logException(e);
 				}
 			}
+			checkSourceRootEntry();
 			updateBuildProperties(new String[filePaths.length], filePaths, false);
 			if (updateClasspath[0])
 				updateJavaClasspathLibs(new String[filePaths.length], filePaths);
@@ -473,49 +508,45 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	}
 
 	private void updateBuildProperties(final String[] oldPaths, final String[] newPaths, boolean modifySourceEntry) {
-		IFormPage page = getPage().getEditor().findPage(BuildInputContext.CONTEXT_ID);
-		IBaseModel model = null;
-		if (page instanceof BuildSourcePage)
-			model = ((BuildSourcePage)page).getInputContext().getModel();
+		IBuildModel bmodel = getBuildModel();
+		if (bmodel == null)
+			return;
 		
-		if (model != null && model instanceof IBuildModel) {
-			IBuildModel bmodel = (IBuildModel)model;
-			IBuild build = bmodel.getBuild();
-			
-			IBuildEntry entry = build.getEntry(BIN_INC);
-			if (entry == null)
-				entry = bmodel.getFactory().createEntry(BIN_INC);
-			
-			try {
-				// adding new entries
-				if (oldPaths[0] == null) {
-					for (int i = 0; i < newPaths.length; i++)
-						if (newPaths[i] != null) {
-							entry.addToken(newPaths[i]);
-							if (modifySourceEntry)
-								configureSourceBuildEntry(bmodel, null, newPaths[i]);
-						}
-				// removing entries
-				} else if (newPaths[0] == null) {
-					for (int i = 0; i < oldPaths.length; i++)
-						if (oldPaths[i] != null) {
-							entry.removeToken(oldPaths[i]);
-							if (modifySourceEntry)
-								configureSourceBuildEntry(bmodel, oldPaths[i], null);
-						}
-					if (entry.getTokens().length == 0)
-						build.remove(entry);
-				// rename entries
-				} else {
-					for (int i = 0; i < oldPaths.length; i++)
-						if (newPaths[i] != null && oldPaths[i] != null) {
-							entry.renameToken(oldPaths[i], newPaths[i]);
-							if (modifySourceEntry)
-								configureSourceBuildEntry(bmodel, oldPaths[i], newPaths[i]);
-						}
-				}
-			} catch (CoreException e) {
+		IBuild build = bmodel.getBuild();
+		
+		IBuildEntry entry = build.getEntry(BIN_INC);
+		if (entry == null)
+			entry = bmodel.getFactory().createEntry(BIN_INC);
+		
+		try {
+			// adding new entries
+			if (oldPaths[0] == null) {
+				for (int i = 0; i < newPaths.length; i++)
+					if (newPaths[i] != null) {
+						entry.addToken(newPaths[i]);
+						if (modifySourceEntry)
+							configureSourceBuildEntry(bmodel, null, newPaths[i]);
+					}
+			// removing entries
+			} else if (newPaths[0] == null) {
+				for (int i = 0; i < oldPaths.length; i++)
+					if (oldPaths[i] != null) {
+						entry.removeToken(oldPaths[i]);
+						if (modifySourceEntry)
+							configureSourceBuildEntry(bmodel, oldPaths[i], null);
+					}
+				if (entry.getTokens().length == 0)
+					build.remove(entry);
+			// rename entries
+			} else {
+				for (int i = 0; i < oldPaths.length; i++)
+					if (newPaths[i] != null && oldPaths[i] != null) {
+						entry.renameToken(oldPaths[i], newPaths[i]);
+						if (modifySourceEntry)
+							configureSourceBuildEntry(bmodel, oldPaths[i], newPaths[i]);
+					}
 			}
+		} catch (CoreException e) {
 		}
 	}
 
@@ -619,7 +650,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
     
     protected void entryModified(Object entry, String value) {
 		try {
-			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+			IPluginModelBase model = getModel();
 			IProject project = model.getUnderlyingResource().getProject();
 			IPluginLibrary library = (IPluginLibrary) entry;
 			model.getPluginBase().remove(library);
@@ -635,5 +666,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		}
 	}
 	
-
+    private IPluginModelBase getModel() {
+    	return (IPluginModelBase)getPage().getModel();
+    }
 }
