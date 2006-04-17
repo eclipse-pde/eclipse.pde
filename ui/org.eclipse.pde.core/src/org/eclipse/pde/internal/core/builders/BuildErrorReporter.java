@@ -56,6 +56,7 @@ public class BuildErrorReporter extends ErrorReporter {
 	private static final int NO_RES = PDEMarkerFactory.NO_RESOLUTION;
 	private static final String BIN_INCLUDES = "bin.includes"; //$NON-NLS-1$
 	private static final String SRC_INCLUDES = "src.includes"; //$NON-NLS-1$
+	private static final String JARS_EXTRA = "jars.extra.classpath"; //$NON-NLS-1$
 	private static final String CUSTOM = "custom"; //$NON-NLS-1$
 	public static final String SOURCE = "source."; //$NON-NLS-1$
 	private static final String DEF_SOURCE_ENTRY = SOURCE + '.';
@@ -65,11 +66,13 @@ public class BuildErrorReporter extends ErrorReporter {
 		String fEntryName;
 		String fMessage;
 		int fFixId;
-		BuildProblem(String name, String token, String message, int fixId) {
+		int fSeverity;
+		BuildProblem(String name, String token, String message, int fixId, int severity) {
 			fEntryName = name;
 			fEntryToken = token;
 			fMessage = message;
 			fFixId = fixId;
+			fSeverity = severity;
 		}
 		public boolean equals(Object obj) {
 			if (!(obj instanceof BuildProblem))
@@ -86,15 +89,17 @@ public class BuildErrorReporter extends ErrorReporter {
 	}
 	
 	private ArrayList fProblemList = new ArrayList();
-	private int fSeverity;
+	private int fBuildSeverity;
+	private int fClasspathSeverity;
 	
-	public BuildErrorReporter(IFile buildFile, int severity) {
+	public BuildErrorReporter(IFile buildFile) {
 		super(buildFile);
-		fSeverity = severity;
 	}
 
 	public void validate(IProgressMonitor monitor) {
-		if (fSeverity == CompilerFlags.IGNORE)
+		fBuildSeverity = CompilerFlags.getFlag(fFile.getProject(), CompilerFlags.P_BUILD);
+		fClasspathSeverity = CompilerFlags.getFlag(fFile.getProject(), CompilerFlags.P_UNRESOLVED_IMPORTS);
+		if (fBuildSeverity == CompilerFlags.IGNORE && fClasspathSeverity == CompilerFlags.IGNORE)
 			return;
 		WorkspaceBuildModel wbm = new WorkspaceBuildModel(fFile);
 		wbm.load();
@@ -112,6 +117,7 @@ public class BuildErrorReporter extends ErrorReporter {
 		
 		IBuildEntry binIncludes = null;
 		IBuildEntry srcIncludes = null;
+		IBuildEntry jarsExtra = null;
 		ArrayList sourceEntries = new ArrayList();
 		ArrayList sourceEntryKeys = new ArrayList();
 		IBuildEntry[] entries = build.getBuildEntries();
@@ -133,8 +139,17 @@ public class BuildErrorReporter extends ErrorReporter {
 				if (tokens.length == 1 && tokens[0].equalsIgnoreCase("true")) //$NON-NLS-1$
 					// nothing to validate in custom builds
 					return;
-			}	
+			} else if (name.equals(JARS_EXTRA))
+				jarsExtra = entries[i];
 		}
+		
+		// validation not relying on build flag
+		if (fClasspathSeverity != CompilerFlags.IGNORE && jarsExtra != null)
+			validateJarsExtraClasspath(jarsExtra);
+		
+		// rest of validation relies on build flag
+		if (fBuildSeverity == CompilerFlags.IGNORE)
+			return;
 		
 		validateIncludes(binIncludes, sourceEntryKeys);
 		validateIncludes(srcIncludes, sourceEntryKeys);
@@ -155,6 +170,46 @@ public class BuildErrorReporter extends ErrorReporter {
 		
 	}
 	
+	private void validateJarsExtraClasspath(IBuildEntry javaExtra) {
+		String platform = "platform:/plugin/";  //$NON-NLS-1$
+		String[] tokens = javaExtra.getTokens();
+		PluginModelManager manager =  PDECore.getDefault().getModelManager();
+		IPath projectPath = javaExtra.getModel().getUnderlyingResource().getProject().getLocation();
+		for (int i = 0; i < tokens.length; i++) {
+			boolean exists = true;
+			if (tokens[i].startsWith(platform)) {
+				String path = tokens[i].substring(platform.length());
+				int sep = path.indexOf(IPath.SEPARATOR);
+				if (sep > -1) {
+					ModelEntry entry = manager.findEntry(path.substring(0, sep));
+					if (entry == null)
+						exists = false;
+					else {
+						IResource resource = entry.getActiveModel().getUnderlyingResource();
+						path = path.substring(sep + 1);
+						if (resource == null) {
+							String location = entry.getActiveModel().getInstallLocation();
+							File external = new File(location);
+							if (external.isDirectory()) {
+								IPath p = new Path(location).addTrailingSeparator().append(path);
+								exists = new File(p.toOSString()).exists();
+							} else
+								exists = CoreUtility.jarContainsResource(external, path, false);
+						} else
+							exists = resource.getProject().findMember(path) != null;
+					}
+				}
+			} else
+				exists = projectPath.append(tokens[i]).toFile().exists();
+			
+			if (!exists)
+				prepareError(JARS_EXTRA, tokens[i],
+						NLS.bind(PDECoreMessages.BuildErrorReporter_cannotFindJar, tokens[i]),
+						PDEMarkerFactory.NO_RESOLUTION, 
+						fClasspathSeverity);
+		}
+	}
+
 	private void validateMissingSourceInBinIncludes(IBuildEntry binIncludes, ArrayList sourceEntryKeys) {
 		if (binIncludes == null)
 			return;
@@ -401,7 +456,7 @@ public class BuildErrorReporter extends ErrorReporter {
 				lineNum = getLineNumber(buildEntry, bp.fEntryToken);
 			
 			if (lineNum > 0)
-				report(bp.fMessage, lineNum, bp.fFixId, bp.fEntryName, bp.fEntryToken);
+				report(bp.fMessage, lineNum, bp.fFixId, bp.fEntryName, bp.fEntryToken, bp.fSeverity);
 		}
 	}
 	
@@ -460,9 +515,13 @@ public class BuildErrorReporter extends ErrorReporter {
 		}
 		return 0;
 	}
-	
+
 	private void prepareError(String name, String token, String message, int fixId) {
-		BuildProblem bp = new BuildProblem(name, token, message, fixId);
+		prepareError(name, token, message, fixId, fBuildSeverity);
+	}
+	
+	private void prepareError(String name, String token, String message, int fixId, int severity) {
+		BuildProblem bp = new BuildProblem(name, token, message, fixId, severity);
 		for (int i = 0; i < fProblemList.size(); i++) {
 			BuildProblem listed = (BuildProblem)fProblemList.get(i);
 			if (listed.equals(bp))
@@ -471,8 +530,8 @@ public class BuildErrorReporter extends ErrorReporter {
 		fProblemList.add(bp);
 	}
 	
-	private void report(String message, int line, int problemID, String buildEntry, String buildToken) {
-		IMarker marker = report(message, line, fSeverity, problemID);
+	private void report(String message, int line, int problemID, String buildEntry, String buildToken, int severity) {
+		IMarker marker = report(message, line, severity, problemID);
 		if (marker == null)
 			return;
 		try {

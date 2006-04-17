@@ -135,8 +135,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			return;
 
 		monitor.subTask(PDECoreMessages.ManifestConsistencyChecker_buildPropertiesSubtask);
-		int severity = CompilerFlags.getFlag(project, CompilerFlags.P_BUILD);
-		BuildErrorReporter ber = new BuildErrorReporter(file, severity);
+		BuildErrorReporter ber = new BuildErrorReporter(file);
 		ber.validateContent(monitor);
 	}
 }
