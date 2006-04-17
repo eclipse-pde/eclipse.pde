@@ -290,6 +290,12 @@ public class LibrarySection extends TableSection implements IModelChangedListene
     
 	private void handleRemove() {
 		Object[] selection = ((IStructuredSelection) fLibraryTable.getSelection()).toArray();
+		int index = selection.length;
+		int[] indices = fLibraryTable.getTable().getSelectionIndices();
+		for (int i = 0; i < indices.length; i++)
+			if (indices[i] < index)
+				index = indices[i];
+		
 		String[] remove = new String[selection.length];
 		for (int i = 0; i < selection.length; i++) {
 			if (selection[i] != null && selection[i] instanceof IPluginLibrary) {
@@ -305,6 +311,12 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		}
 		updateBuildProperties(remove, new String[remove.length]);
 		updateJavaClasspathLibs(remove, new String[remove.length]);
+		
+		if (fLibraryTable.getTable().getItemCount() > 0) {
+			fLibraryTable.getTable().setSelection(index);
+			fLibraryTable.getTable().setFocus();
+		}
+		updateButtons();
 	}
 	private void handleDown() {
 		Table table = getTablePart().getTableViewer().getTable();
@@ -329,6 +341,8 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			IPluginBase pluginBase = model.getPluginBase();
 			pluginBase.swap(l1, l2);
 			refresh();
+			table.setSelection(index2);
+			table.setFocus();
 			updateButtons();
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -352,6 +366,8 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 				library.setName(libName);
 				library.setExported(true);
 				model.getPluginBase().add(library);
+				fLibraryTable.setSelection(new StructuredSelection(library));
+		        fLibraryTable.getTable().setFocus();
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
@@ -384,9 +400,9 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		dialog.setMessage(PDEUIMessages.ClasspathSection_jarsMessage); 
 		IPluginLibrary[] libraries = ((IPluginModelBase)getPage().getModel()).getPluginBase().getLibraries();
 		HashSet set = new HashSet();
-		for (int i = 0; i < libraries.length; i++) {
+		for (int i = 0; i < libraries.length; i++) 
 			set.add(new Path(ClasspathUtilCore.expandLibraryName(libraries[i].getName())));
-		}
+		
 		dialog.addFilter(new LibraryFilter(set));
 		IProject project = ((IModel)getPage().getModel()).getUnderlyingResource().getProject();
 		dialog.setInput(project);
@@ -396,6 +412,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			Object[] elements = dialog.getResult();
 			String[] filePaths = new String[elements.length];
 			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+			ArrayList list = new ArrayList();
 			for (int i = 0; i < elements.length; i++) {
 				IResource elem = (IResource) elements[i];
 				IPath path = elem.getProjectRelativePath();
@@ -407,6 +424,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 					library.setName(filePaths[i]);
 					library.setExported(true);
 					model.getPluginBase().add(library);
+					list.add(library);
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
@@ -414,7 +432,9 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			updateBuildProperties(new String[filePaths.length], filePaths);
 			if (updateClasspath[0])
 				updateJavaClasspathLibs(new String[filePaths.length], filePaths);
-		}	
+			fLibraryTable.setSelection(new StructuredSelection(list.toArray()));
+	        fLibraryTable.getTable().setFocus();
+		}
 	}
 
 	private void updateBuildProperties(final String[] oldPaths, final String[] newPaths) {
@@ -427,7 +447,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			IBuildModel bmodel = (IBuildModel)model;
 			IBuild build = bmodel.getBuild();
 			
-			String binIncludes = "bin.includes";
+			String binIncludes = "bin.includes"; //$NON-NLS-1$
 			IBuildEntry entry = build.getEntry(binIncludes);
 			if (entry == null)
 				entry = bmodel.getFactory().createEntry(binIncludes);
@@ -467,7 +487,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 				if (entries[i].getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
 					if (index == -1)
 						index = i;
-					// remove all old paths (if renaming they will be added later)
+					// do not add the old paths (handling deletion/renaming)
 					IPath path = entries[i].getPath().removeFirstSegments(1).removeTrailingSeparator();
 					for (int j = 0; j < oldPaths.length; j++)
 						if (oldPaths[j] != null &&
@@ -517,13 +537,8 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		if (changeObject instanceof IPluginLibrary) {
 			if (event.getChangeType() == IModelChangedEvent.INSERT) {
 				fLibraryTable.add(changeObject);
-                fLibraryTable.setSelection(new StructuredSelection(changeObject));
-                fLibraryTable.getTable().setFocus();
 			} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
-                Table table = fLibraryTable.getTable();
-                int index = table.getSelectionIndex();
                 fLibraryTable.remove(changeObject);
-                table.setSelection(index < table.getItemCount() ? index : table.getItemCount() -1);
 			} else {
                 fLibraryTable.update(changeObject, null);
 			}
