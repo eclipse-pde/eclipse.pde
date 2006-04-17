@@ -383,8 +383,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	
 	private void configureSourceBuildEntry(IBuildModel bmodel, String oldPath, String newPath) throws CoreException {
 		IBuild build = bmodel.getBuild();
-		String entryName = SRC_ + (oldPath != null ? oldPath : newPath);
-		IBuildEntry entry = build.getEntry(entryName);
+		IBuildEntry entry = build.getEntry(SRC_ + (oldPath != null ? oldPath : newPath));
 		try {
 			if (newPath != null) {
 				if (entry == null) {
@@ -398,7 +397,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 					if (tokens.size() == 0)
 						return;
 					
-					entry = bmodel.getFactory().createEntry(entryName);
+					entry = bmodel.getFactory().createEntry(SRC_ + newPath);
 					for (int i = 0; i < tokens.size(); i++)
 						entry.addToken((String)tokens.get(i));
 					build.add(entry);
