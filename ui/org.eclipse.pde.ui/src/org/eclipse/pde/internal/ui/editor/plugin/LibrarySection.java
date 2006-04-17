@@ -76,6 +76,8 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 
 public class LibrarySection extends TableSection implements IModelChangedListener {
 
+	private static final String BIN_INC = "bin.includes"; //$NON-NLS-1$
+	private static final String SRC_ = "source."; //$NON-NLS-1$
     private static final int NEW_INDEX = 0;
     private static final int ADD_INDEX = 1;
     private static final int REMOVE_INDEX = 2;
@@ -309,7 +311,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 				remove[i] = ep.getName();
 			}
 		}
-		updateBuildProperties(remove, new String[remove.length]);
+		updateBuildProperties(remove, new String[remove.length], true);
 		updateJavaClasspathLibs(remove, new String[remove.length]);
 		
 		if (fLibraryTable.getTable().getItemCount() > 0) {
@@ -351,7 +353,8 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	
 	private void handleNew(){
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		NewRuntimeLibraryDialog dialog = new NewRuntimeLibraryDialog(getPage().getSite().getShell(), 
+		NewRuntimeLibraryDialog dialog = new NewRuntimeLibraryDialog(
+				getPage().getSite().getShell(), 
 				model.getPluginBase().getLibraries());
 		dialog.create();
 		dialog.getShell().setText(PDEUIMessages.ManifestEditor_LibrarySection_newLibraryEntry);
@@ -366,6 +369,10 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 				library.setName(libName);
 				library.setExported(true);
 				model.getPluginBase().add(library);
+				updateBuildProperties(
+						new String[] {null},
+						new String[] { library.getName()},
+						true);
 				fLibraryTable.setSelection(new StructuredSelection(library));
 		        fLibraryTable.getTable().setFocus();
 			} catch (CoreException e) {
@@ -373,17 +380,46 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			}
 		}
 	}
+	
+	private void configureSourceBuildEntry(IBuildModel bmodel, String oldPath, String newPath) throws CoreException {
+		IBuild build = bmodel.getBuild();
+		String entryName = SRC_ + (oldPath != null ? oldPath : newPath);
+		IBuildEntry entry = build.getEntry(entryName);
+		try {
+			if (newPath != null) {
+				if (entry == null) {
+					IProject project = ((IModel)getPage().getModel()).getUnderlyingResource().getProject();
+					IJavaProject jproject = JavaCore.create(project);
+					ArrayList tokens = new ArrayList();
+					IClasspathEntry[] entries = jproject.getRawClasspath();
+					for (int i = 0; i < entries.length; i++)
+						if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE)
+							tokens.add(entries[i].getPath().removeFirstSegments(1).addTrailingSeparator().toString());
+					if (tokens.size() == 0)
+						return;
+					
+					entry = bmodel.getFactory().createEntry(entryName);
+					for (int i = 0; i < tokens.size(); i++)
+						entry.addToken((String)tokens.get(i));
+					build.add(entry);
+				} else
+					entry.setName(SRC_ + newPath);
+			} else if (entry != null && newPath == null)
+				build.remove(entry);
+		} catch (JavaModelException e) {
+		}
+	}
+	
 	private void handleAdd() {
 		final boolean[] updateClasspath = new boolean[] {true};
-		ElementTreeSelectionDialog dialog =
-			new ElementTreeSelectionDialog(
-					getPage().getSite().getShell(),
-					new WorkbenchLabelProvider(),
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(
+				getPage().getSite().getShell(),
+				new WorkbenchLabelProvider(),
 				new WorkbenchContentProvider()) {
 			protected Control createDialogArea(Composite parent) {
 				Composite comp = (Composite)super.createDialogArea(parent);
 				final Button button = new Button(comp, SWT.CHECK);
-				button.setText("Update java classpath");
+				button.setText(PDEUIMessages.LibrarySection_addDialogButton);
 				button.setSelection(updateClasspath[0]);
 				button.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
@@ -429,7 +465,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 					PDEPlugin.logException(e);
 				}
 			}
-			updateBuildProperties(new String[filePaths.length], filePaths);
+			updateBuildProperties(new String[filePaths.length], filePaths, false);
 			if (updateClasspath[0])
 				updateJavaClasspathLibs(new String[filePaths.length], filePaths);
 			fLibraryTable.setSelection(new StructuredSelection(list.toArray()));
@@ -437,7 +473,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		}
 	}
 
-	private void updateBuildProperties(final String[] oldPaths, final String[] newPaths) {
+	private void updateBuildProperties(final String[] oldPaths, final String[] newPaths, boolean modifySourceEntry) {
 		IFormPage page = getPage().getEditor().findPage(BuildInputContext.CONTEXT_ID);
 		IBaseModel model = null;
 		if (page instanceof BuildSourcePage)
@@ -447,29 +483,37 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			IBuildModel bmodel = (IBuildModel)model;
 			IBuild build = bmodel.getBuild();
 			
-			String binIncludes = "bin.includes"; //$NON-NLS-1$
-			IBuildEntry entry = build.getEntry(binIncludes);
+			IBuildEntry entry = build.getEntry(BIN_INC);
 			if (entry == null)
-				entry = bmodel.getFactory().createEntry(binIncludes);
+				entry = bmodel.getFactory().createEntry(BIN_INC);
 			
 			try {
 				// adding new entries
 				if (oldPaths[0] == null) {
 					for (int i = 0; i < newPaths.length; i++)
-						if (newPaths[i] != null)
+						if (newPaths[i] != null) {
 							entry.addToken(newPaths[i]);
-				
+							if (modifySourceEntry)
+								configureSourceBuildEntry(bmodel, null, newPaths[i]);
+						}
 				// removing entries
 				} else if (newPaths[0] == null) {
 					for (int i = 0; i < oldPaths.length; i++)
-						if (oldPaths[i] != null)
+						if (oldPaths[i] != null) {
 							entry.removeToken(oldPaths[i]);
-				
+							if (modifySourceEntry)
+								configureSourceBuildEntry(bmodel, oldPaths[i], null);
+						}
+					if (entry.getTokens().length == 0)
+						build.remove(entry);
 				// rename entries
 				} else {
 					for (int i = 0; i < oldPaths.length; i++)
-						if (newPaths[i] != null && oldPaths[i] != null)
+						if (newPaths[i] != null && oldPaths[i] != null) {
 							entry.renameToken(oldPaths[i], newPaths[i]);
+							if (modifySourceEntry)
+								configureSourceBuildEntry(bmodel, oldPaths[i], newPaths[i]);
+						}
 				}
 			} catch (CoreException e) {
 			}
@@ -493,10 +537,9 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 						if (oldPaths[j] != null &&
 								path.equals(new Path(oldPaths[j]).removeTrailingSeparator()))
 							continue entryLoop;
-				} else if (entries[i].getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+				} else if (entries[i].getEntryKind() == IClasspathEntry.CPE_CONTAINER)
 					if (index == -1)
-						index = i > 0 ? i : 0;
-				}
+						index = i;
 				toBeAdded.add(entries[i]);
 			}
 			if (index == -1)
@@ -584,10 +627,9 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			String[] oldValue = { library.getName() };
 			String[] newValue = { value };
 			library.setName(value);
-			if (project.findMember(value) == null)
-				newValue[0] = null;
-			updateBuildProperties(oldValue, newValue);
-			updateJavaClasspathLibs(oldValue, newValue);
+			boolean memberExists = project.findMember(value) != null;
+			updateBuildProperties(oldValue, newValue, !memberExists);
+			updateJavaClasspathLibs(oldValue, memberExists ? newValue : new String[] {null});
 			model.getPluginBase().add(library);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
