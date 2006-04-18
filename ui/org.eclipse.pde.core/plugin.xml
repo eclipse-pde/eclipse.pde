@@ -220,5 +220,12 @@
             library="ant_tasks/pde-ant.jar">
       </extraClasspathEntry>
    </extension>
+   <extension
+         point="org.eclipse.core.variables.dynamicVariables">
+      <variable
+            description="%target_home.description"
+            name="target_home"
+            resolver="org.eclipse.pde.internal.core.variables.TargetHomeDynamicVariableResolver"/>
+   </extension>
    
 </plugin>
