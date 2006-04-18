@@ -290,7 +290,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
     
 	private void handleRemove() {
 		Object[] selection = ((IStructuredSelection) fLibraryTable.getSelection()).toArray();
-		int index = selection.length;
+		int index = fLibraryTable.getTable().getSelectionIndex();
 		int[] indices = fLibraryTable.getTable().getSelectionIndices();
 		for (int i = 0; i < indices.length; i++)
 			if (indices[i] < index)
@@ -312,7 +312,10 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		updateBuildProperties(remove, new String[remove.length], true);
 		updateJavaClasspathLibs(remove, new String[remove.length]);
 		
-		if (fLibraryTable.getTable().getItemCount() > 0) {
+		int itemCount = fLibraryTable.getTable().getItemCount(); 
+		if (itemCount > 0) {
+			if (index >= itemCount)
+				index = itemCount - 1;
 			fLibraryTable.getTable().setSelection(index);
 			fLibraryTable.getTable().setFocus();
 		}
