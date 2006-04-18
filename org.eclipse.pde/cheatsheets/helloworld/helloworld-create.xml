@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- Simple Cheat Sheet -->
+
+<cheatsheet title="Create a plug-in">
+
+   <!-- Introduction -->
+
+   <intro href="/org.eclipse.platform.doc.user/reference/ref-cheatsheets.htm">
+      <description>
+         This cheat sheet will demonstrate how to set up PDE and use it 
+         to create, tweak and test a plug-in project. 
+         <br/>
+         <br/>
+         To learn more about using cheat sheets, click the help button
+         in the top right corner (?). 
+      </description>
+   </intro>
+
+   <!-- Item -->
+
+   <item title="Setup the Eclipse target platform"
+         href="/org.eclipse.pde.doc.user/guide/pde_configuring.htm"
+         dialog="true"
+         skip="true">
+      <description>
+         To separate the Eclipse development environment 
+         (IDE Eclipse) you are using from the Eclipse environment you
+         are building (Target Eclipse), perform the following steps:
+      </description>
+      <subitem label="Click the &quot;Windows-&gt;Preferences&quot; menu and select the &quot;Target Platform&quot; entry from the &quot;Plug-in Development&quot; tree dialog" 
+               skip="true">
+         <command serialization="org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.pde.ui.TargetPlatformPreferencePage)"/>
+      </subitem>
+      <subitem label="Define the target Eclipse platform by using the &quot;Browse..&quot; button or typing in the &quot;Location&quot; field" 
+               skip="true"/>
+   </item>
+
+   <!-- Item -->
+
+   <item title="Open the plug-in development perspective"
+         href="/org.eclipse.pde.doc.user/guide/pde_setup.htm"
+         dialog="false"
+         skip="false">
+      <description>
+         To open the plug-in development perspective,
+         select <b>Window-&gt;Open Perspective-&gt;Other...</b> 
+         and choose <b>Plug-in Development</b>.
+         <br/>
+         <br/>
+         Alternatively, click the following button to perform the task.
+      </description>
+      <command serialization="org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.pde.ui.PDEPerspective)"/>
+   </item>
+
+   <!-- Item -->
+
+   <item title="Create the plug-in project"
+         href="/org.eclipse.pde.doc.user/guide/pde_creating.htm"
+         dialog="true"
+         skip="false">
+      <description>
+         To create the plug-in project perform the following steps
+      </description>
+      <subitem label="Select &quot;File-&gt;New-&gt;Project...&quot; and choose &quot;Plug-in Project&quot; under the &quot;Plug-in Development&quot;" 
+               skip="false">
+         <command serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.pde.ui.NewProjectWizard)"/>
+      </subitem>
+      <subitem label="Input &quot;com.example.helloworld&quot; into the &quot;Project Name&quot; text box" 
+               skip="false"/>
+      <subitem label="Accept the rest of the default preloaded values on the &quot;Plug-in Project&quot; page and click &quot;Next &gt;&quot;" 
+               skip="false"/>
+      <subitem label="Accept the default preloaded values on the &quot;Plug-in Content&quot; page and click &quot;Next &gt;&quot;" 
+               skip="false"/>
+      <subitem label="Select the &quot;Hello, World&quot; template from the list of &quot;Available Templates&quot; and click &quot;Finish&quot;" 
+               skip="false"/>           
+      
+   </item>
+
+   <!-- Item -->
+
+   <item title="Tweak the plug-in"
+         dialog="false"
+         href="/org.eclipse.pde.doc.user/guide/pde_manifest_extensions.htm"
+         skip="false">
+      <description>
+         After the new plug-in project wizard is finished from the previous step,
+         the plug-in editor is launched for your new project with the <b>Overview</b>
+         page showing.
+         <br/>
+         <br/>
+         To tweak your <b>com.example.helloworld</b> plug-in, perform the
+         following steps:
+      </description>
+      <subitem label="Select the &quot;Extensions&quot; tab" 
+               skip="false"/>
+      <subitem label="Expand the &quot;org.eclipse.ui.actionSets&quot; tree dialog under the &quot;All Extensions&quot; heading" 
+               skip="false"/>
+      <subitem label="Expand the &quot;Sample Action Set&quot; tree dialog" 
+               skip="false"/>
+      <subitem label="Select the &quot;Sample Menu&quot; entry" 
+               skip="false"/>
+      <subitem label="Replace the content of the &quot;label&quot; text box under the &quot;Extension Element Details&quot; heading with &quot;Hello!&quot;" 
+               skip="false"/>
+      <subitem label="Select the &quot;Sample Action&quot; entry under the &quot;All Extensions&quot; heading" 
+               skip="false"/>
+      <subitem label="Replace the content of the &quot;label&quot; text box under the &quot;Extension Element Details&quot; heading with &quot;Display Hello World!&quot;" 
+               skip="false"/>
+      <subitem label="Select &quot;File-&gt;Save&quot; from the main menu" 
+               skip="false"/>
+   </item>
+
+   <item title="Test the plug-in"
+         dialog="false"
+         href="/org.eclipse.pde.doc.user/guide/pde_running.htm"
+         skip="false">
+      <description>
+         To test your Eclipse plug-in inside a target Eclipse platform,
+         perform the following steps:
+      </description>
+      <subitem label="Select the &quot;Overviews&quot; tab" 
+               skip="false">
+         <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.helloworld/META-INF/MANIFEST.MF)"/>
+      </subitem>               
+      <subitem label="Click the &quot;Launch an Eclipse application&quot; hyperlink under the &quot;Testing&quot; heading" 
+               skip="false"/>
+      <subitem label="Note the &quot;Hello!&quot; entry in the main menu in the newly launched Eclipse platform" 
+               skip="true"/>
+      <subitem label="Select &quot;Hello!-&gt;Display Hello World!&quot; from the main menu" 
+               skip="false"/>
+      <subitem label="Note the icon with the Eclipse logo in the main toolbar in the newly launched Eclipse platform" 
+               skip="true"/>               
+      <subitem label="Click the icon with the Eclipse logo in the main toolbar" 
+               skip="false"/>
+      <subitem label="Select &quot;File-&gt;Exit&quot; from the main menu to exit the target Eclipse platform" 
+               skip="false"/>
+   </item>
+
+</cheatsheet>
