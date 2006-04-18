@@ -56,6 +56,9 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 			if (text.length() == 0)
 				return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, PDEUIMessages.AddLibraryDialog_emptyLibraries, null);
 			
+			if (text.indexOf(' ') != -1)
+				return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, PDEUIMessages.AddLibraryDialog_nospaces, null);
+			
 			if (libraries == null || libraries.length == 0)
 				return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
 

@@ -39,29 +39,24 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 	private HashSet librarySet;
 	
 	class DuplicateStatusValidator {
-		public IStatus validate (String text){
-			if(libraries==null || libraries.length==0)
-			return new Status(
-				IStatus.OK,
-				PDEPlugin.getPluginId(),
-				IStatus.OK,
-				"", //$NON-NLS-1$
-				null);
+		public IStatus validate(String text) {
+			String id = PDEPlugin.getPluginId();
+			if (text.length() == 0)
+				return new Status(IStatus.ERROR, id, IStatus.ERROR,
+						PDEUIMessages.AddLibraryDialog_emptyLibraries, null);
+			
+			if (text.indexOf(' ') != -1)
+				return new Status(IStatus.ERROR,  id, IStatus.ERROR,
+						PDEUIMessages.AddLibraryDialog_nospaces, null);
+			
+			if (libraries == null || libraries.length == 0)
+				return new Status(IStatus.OK, id, IStatus.OK, "", null); //$NON-NLS-1$
 
 			if (librarySet.contains(new Path(ClasspathUtilCore.expandLibraryName(text))))
-				return new Status(
-					IStatus.ERROR,
-					PDEPlugin.getPluginId(),
-					IStatus.ERROR,
-					PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_validationError, 
-					null);
-			return new Status(
-				IStatus.OK,
-				PDEPlugin.getPluginId(),
-				IStatus.OK,
-				"", //$NON-NLS-1$
-				null);
-
+				return new Status(IStatus.ERROR, id, IStatus.ERROR,
+						PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_validationError,
+						null);
+			return new Status(IStatus.OK, id, IStatus.OK, "", null); //$NON-NLS-1$
 		}
 	}
 	public NewRuntimeLibraryDialog(Shell parent, IPluginLibrary[] libraries) {
@@ -95,14 +90,12 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 		Label libraryLabel = new Label(container, SWT.NULL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		libraryLabel.setLayoutData(gd);
-		libraryLabel
-				.setText(PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_label); 
+		libraryLabel.setText(PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_label); 
 		
 		libraryText = new Text(container, SWT.SINGLE|SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		libraryText.setLayoutData(gd);
-		libraryText
-				.setText(PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_default); 
+		libraryText.setText(PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_default); 
 		libraryText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				updateStatus(validator.validate(libraryText.getText()));
