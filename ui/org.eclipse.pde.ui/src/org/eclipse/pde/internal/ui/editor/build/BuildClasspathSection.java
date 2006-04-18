@@ -11,9 +11,9 @@
 package org.eclipse.pde.internal.ui.editor.build;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
@@ -27,6 +27,8 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
@@ -34,6 +36,9 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -308,27 +313,37 @@ public class BuildClasspathSection
 		dialog.setTitle(PDEUIMessages.BuildEditor_ClasspathSection_jarsTitle); 
 		dialog.setMessage(PDEUIMessages.BuildEditor_ClasspathSection_jarsDesc); 
 		dialog.addFilter(new JARFileFilter());
+		dialog.addFilter(new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if (element instanceof IProject) {
+					try {
+						return ((IProject)element).hasNature(PDE.PLUGIN_NATURE);
+					} catch (CoreException e) {
+					}
+					return false;
+				}
+				return true;
+			}
+		});
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
 		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
 		dialog.setInitialSelection(getBuildModel().getUnderlyingResource().getProject());
 
 	}
 	private void handleNew() {
-		ElementTreeSelectionDialog dialog =
-			new ElementTreeSelectionDialog(
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(
 				getSection().getShell(),
 				new WorkbenchLabelProvider(),
 				new WorkbenchContentProvider());
 				
 		initializeDialogSettings(dialog);
-
 		if (dialog.open() == Window.OK) {
-			
 			Object[] elements = dialog.getResult();
-
 			for (int i = 0; i < elements.length; i++) {
 				IResource elem = (IResource) elements[i];
 				String tokenName = getRelativePathTokenName(elem);
+				if (tokenName == null)
+					continue;
 				addClasspathToken(tokenName);
 				fCurrentSelection = new StructuredSelection(tokenName);
 				fOldSelection = null;
@@ -351,14 +366,17 @@ public class BuildClasspathSection
 		}
 	}
 	
-	private String getRelativePathTokenName(IResource elem){
-		IPath path = elem.getFullPath();
-		IPath projectPath =
-			getBuildModel().getUnderlyingResource().getProject().getFullPath();
-		int sameSegments = path.matchingFirstSegments(projectPath);
-		if (sameSegments > 0)
-			return path.removeFirstSegments(sameSegments).toString();
-		return ".."+path.toString(); //$NON-NLS-1$
+	private String getRelativePathTokenName(IResource elem) {
+		IProject thisProject = getBuildModel().getUnderlyingResource().getProject();
+		IProject elemProject = elem.getProject();
+		String projectRelative = elem.getProjectRelativePath().toString();
+		if (thisProject == elemProject)
+			return projectRelative;
+		
+		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(elemProject);
+		if (entry != null)
+			return "platform:/plugin/" + entry.getId() + '/' + projectRelative; //$NON-NLS-1$
+		return null;
 	}
 
 	protected void buttonSelected(int index) {

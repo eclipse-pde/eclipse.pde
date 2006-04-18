@@ -393,7 +393,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		
 		IBuildEntry[] entires = model.getBuild().getBuildEntries();
 		for (int i = 0; i < entires.length; i++) {
-			if (entires[i].getName().equals("source..")) { //$NON-NLS-1$
+			if (entires[i].getName().equals(SRC_ + '.')) {
 				IPluginLibrary library = pluginModel.getPluginFactory().createLibrary();
 				try {
 					library.setName("."); //$NON-NLS-1$
