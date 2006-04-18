@@ -123,24 +123,28 @@ public class BuildErrorReporter extends ErrorReporter {
 		IBuildEntry[] entries = build.getBuildEntries();
 		for (int i = 0; i < entries.length; i++) {
 			String name = entries[i].getName();
-			if (entries[i].getTokens().length == 0) {
+			if (entries[i].getTokens().length == 0)
 				prepareError(name, null,
 						PDECoreMessages.BuildErrorReporter_emptyEntry,
 						PDEMarkerFactory.B_REMOVAL);
-			} else if (name.equals(BIN_INCLUDES))
+			else if (name.equals(BIN_INCLUDES))
 				binIncludes = entries[i];
 			else if (name.equals(SRC_INCLUDES))
 				srcIncludes = entries[i];
-			else if (name.startsWith(SOURCE)) {
+			else if (name.startsWith(SOURCE))
 				sourceEntries.add(entries[i]);
-				sourceEntryKeys.add(entries[i].getName());
-			} else if (name.equals(CUSTOM)) {
+			else if (name.equals(JARS_EXTRA))
+				jarsExtra = entries[i];
+			else if (name.equals(CUSTOM)) {
 				String[] tokens = entries[i].getTokens();
 				if (tokens.length == 1 && tokens[0].equalsIgnoreCase("true")) //$NON-NLS-1$
 					// nothing to validate in custom builds
 					return;
-			} else if (name.equals(JARS_EXTRA))
-				jarsExtra = entries[i];
+			}
+			
+			// non else if statement to catch all names
+			if (name.startsWith(SOURCE))
+				sourceEntryKeys.add(entries[i].getName());
 		}
 		
 		// validation not relying on build flag
