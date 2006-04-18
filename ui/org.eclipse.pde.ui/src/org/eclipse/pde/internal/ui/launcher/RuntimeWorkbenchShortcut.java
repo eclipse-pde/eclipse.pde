@@ -340,7 +340,7 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 			return;
 
 		String id = model.getPluginBase().getId();
-		if (map.containsKey(id))
+		if (id == null || map.containsKey(id))
 			return;
 
 		map.put(id, model);

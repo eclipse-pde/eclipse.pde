@@ -290,7 +290,8 @@ public class EquinoxPluginBlock extends AbstractPluginBlock {
 		Map map = retrieveWorkspaceMap(configuration);
 		for (int i = 0; i < fWorkspaceModels.length; i++) {
 			IPluginModelBase model = fWorkspaceModels[i];
-			if (map.containsKey(model.getPluginBase().getId())) {
+			String id = model.getPluginBase().getId();
+			if (id != null && map.containsKey(id)) {
 				if (fPluginTreeViewer.setChecked(model, true)) {
 					fNumWorkspaceChecked += 1;
 					setText(model, (String)map.get(model.getPluginBase().getId()));
