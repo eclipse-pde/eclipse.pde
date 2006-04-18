@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
@@ -37,6 +38,7 @@ public class RenameDialog extends SelectionStatusDialog {
 	private Text text;
 	private IStatus status;
 	private boolean isCaseSensitive;
+	private IInputValidator fValidator;
 	
     /**
      * Create a new rename dialog instance for the given window.
@@ -128,6 +130,17 @@ public class RenameDialog extends SelectionStatusDialog {
 	
 	private void textChanged(String text) {
 		Button okButton = getButton(IDialogConstants.OK_ID);
+		if (fValidator != null) {
+			String message = fValidator.isValid(text);
+			if (message != null) {
+				status = new Status(
+						IStatus.ERROR, PDEPlugin.getPluginId(),
+						IStatus.ERROR, message, null);
+				updateStatus(status);
+				okButton.setEnabled(false);
+				return;
+			}
+		}
 		for (int i=0; i<oldNames.size(); i++){
 			if((isCaseSensitive && text.equals(oldNames.get(i))) ||
 					(!isCaseSensitive && text.equalsIgnoreCase(oldNames.get(i).toString()))){
@@ -172,5 +185,9 @@ public class RenameDialog extends SelectionStatusDialog {
     
     public void setTitle(String title) {
         getShell().setText(title);
+    }
+    
+    public void setInputValidator(IInputValidator validator) {
+    	fValidator = validator;
     }
 }

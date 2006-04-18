@@ -44,6 +44,7 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -74,10 +75,8 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
-public class LibrarySection extends TableSection implements IModelChangedListener {
+public class LibrarySection extends TableSection implements IModelChangedListener, IBuildPropertiesConstants {
 
-	private static final String BIN_INC = "bin.includes"; //$NON-NLS-1$
-	private static final String SRC_ = "source."; //$NON-NLS-1$
     private static final int NEW_INDEX = 0;
     private static final int ADD_INDEX = 1;
     private static final int REMOVE_INDEX = 2;
@@ -393,7 +392,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		
 		IBuildEntry[] entires = model.getBuild().getBuildEntries();
 		for (int i = 0; i < entires.length; i++) {
-			if (entires[i].getName().equals(SRC_ + '.')) {
+			if (entires[i].getName().equals(PROPERTY_SOURCE_PREFIX + '.')) {
 				IPluginLibrary library = pluginModel.getPluginFactory().createLibrary();
 				try {
 					library.setName("."); //$NON-NLS-1$
@@ -417,7 +416,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	
 	private void configureSourceBuildEntry(IBuildModel bmodel, String oldPath, String newPath) throws CoreException {
 		IBuild build = bmodel.getBuild();
-		IBuildEntry entry = build.getEntry(SRC_ + (oldPath != null ? oldPath : newPath));
+		IBuildEntry entry = build.getEntry(PROPERTY_SOURCE_PREFIX + (oldPath != null ? oldPath : newPath));
 		try {
 			if (newPath != null) {
 				if (entry == null) {
@@ -431,12 +430,12 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 					if (tokens.size() == 0)
 						return;
 					
-					entry = bmodel.getFactory().createEntry(SRC_ + newPath);
+					entry = bmodel.getFactory().createEntry(PROPERTY_SOURCE_PREFIX + newPath);
 					for (int i = 0; i < tokens.size(); i++)
 						entry.addToken((String)tokens.get(i));
 					build.add(entry);
 				} else
-					entry.setName(SRC_ + newPath);
+					entry.setName(PROPERTY_SOURCE_PREFIX + newPath);
 			} else if (entry != null && newPath == null)
 				build.remove(entry);
 		} catch (JavaModelException e) {
@@ -514,9 +513,9 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		
 		IBuild build = bmodel.getBuild();
 		
-		IBuildEntry entry = build.getEntry(BIN_INC);
+		IBuildEntry entry = build.getEntry(PROPERTY_BIN_INCLUDES);
 		if (entry == null)
-			entry = bmodel.getFactory().createEntry(BIN_INC);
+			entry = bmodel.getFactory().createEntry(PROPERTY_BIN_INCLUDES);
 		
 		try {
 			// adding new entries

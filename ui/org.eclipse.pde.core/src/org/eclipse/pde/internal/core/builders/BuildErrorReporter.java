@@ -35,6 +35,7 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
@@ -51,15 +52,11 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.osgi.framework.Constants;
 
-public class BuildErrorReporter extends ErrorReporter {
+public class BuildErrorReporter extends ErrorReporter implements IBuildPropertiesConstants{
 	
 	private static final int NO_RES = PDEMarkerFactory.NO_RESOLUTION;
-	private static final String BIN_INCLUDES = "bin.includes"; //$NON-NLS-1$
 	private static final String SRC_INCLUDES = "src.includes"; //$NON-NLS-1$
-	private static final String JARS_EXTRA = "jars.extra.classpath"; //$NON-NLS-1$
-	private static final String CUSTOM = "custom"; //$NON-NLS-1$
-	public static final String SOURCE = "source."; //$NON-NLS-1$
-	private static final String DEF_SOURCE_ENTRY = SOURCE + '.';
+	private static final String DEF_SOURCE_ENTRY = PROPERTY_SOURCE_PREFIX + '.';
 	
 	private class BuildProblem {
 		String fEntryToken;
@@ -127,15 +124,15 @@ public class BuildErrorReporter extends ErrorReporter {
 				prepareError(name, null,
 						PDECoreMessages.BuildErrorReporter_emptyEntry,
 						PDEMarkerFactory.B_REMOVAL);
-			else if (name.equals(BIN_INCLUDES))
+			else if (name.equals(PROPERTY_BIN_INCLUDES))
 				binIncludes = entries[i];
 			else if (name.equals(SRC_INCLUDES))
 				srcIncludes = entries[i];
-			else if (name.startsWith(SOURCE))
+			else if (name.startsWith(PROPERTY_SOURCE_PREFIX))
 				sourceEntries.add(entries[i]);
-			else if (name.equals(JARS_EXTRA))
+			else if (name.equals(PROPERTY_JAR_EXTRA_CLASSPATH))
 				jarsExtra = entries[i];
-			else if (name.equals(CUSTOM)) {
+			else if (name.equals(PROPERTY_CUSTOM)) {
 				String[] tokens = entries[i].getTokens();
 				if (tokens.length == 1 && tokens[0].equalsIgnoreCase("true")) //$NON-NLS-1$
 					// nothing to validate in custom builds
@@ -143,7 +140,7 @@ public class BuildErrorReporter extends ErrorReporter {
 			}
 			
 			// non else if statement to catch all names
-			if (name.startsWith(SOURCE))
+			if (name.startsWith(PROPERTY_SOURCE_PREFIX))
 				sourceEntryKeys.add(entries[i].getName());
 		}
 		
@@ -207,7 +204,7 @@ public class BuildErrorReporter extends ErrorReporter {
 				exists = projectPath.append(tokens[i]).toFile().exists();
 			
 			if (!exists)
-				prepareError(JARS_EXTRA, tokens[i],
+				prepareError(PROPERTY_JAR_EXTRA_CLASSPATH, tokens[i],
 						NLS.bind(PDECoreMessages.BuildErrorReporter_cannotFindJar, tokens[i]),
 						PDEMarkerFactory.NO_RESOLUTION, 
 						fClasspathSeverity);
@@ -219,7 +216,7 @@ public class BuildErrorReporter extends ErrorReporter {
 			return;
 		for (int i = 0; i < sourceEntryKeys.size(); i++) {
 			String key = (String)sourceEntryKeys.get(i);
-			key = key.substring(SOURCE.length());
+			key = key.substring(PROPERTY_SOURCE_PREFIX.length());
 			boolean found = false;
 			String[] binIncludesTokens = binIncludes.getTokens();
 			for (int j = 0; j < binIncludesTokens.length; j++) {
@@ -228,7 +225,7 @@ public class BuildErrorReporter extends ErrorReporter {
 					found = true;
 			}
 			if (!found)
-				prepareError(BIN_INCLUDES, key,
+				prepareError(PROPERTY_BIN_INCLUDES, key,
 						NLS.bind(PDECoreMessages.BuildErrorReporter_binIncludesMissing, key),
 						PDEMarkerFactory.B_ADDDITION);
 		}
@@ -291,7 +288,7 @@ public class BuildErrorReporter extends ErrorReporter {
 				// don't have to be referenced in the build properties
 				continue;
 			}
-			String sourceEntryKey = SOURCE + libname;
+			String sourceEntryKey = PROPERTY_SOURCE_PREFIX + libname;
 			if (!sourceEntryKeys.contains(sourceEntryKey) 
 					&& !containedInFragment(manager, model.getBundleDescription().getFragments(), libname))
 				prepareError(sourceEntryKey, null,
@@ -315,7 +312,7 @@ public class BuildErrorReporter extends ErrorReporter {
 					if (build != null) {
 						IBuildEntry[] entries = build.getBuildEntries();
 						for (int i = 0; i < entries.length; i++)
-							if (entries[i].getName().equals(SOURCE + libname))
+							if (entries[i].getName().equals(PROPERTY_SOURCE_PREFIX + libname))
 								return true;
 						return false;
 					}
@@ -407,7 +404,7 @@ public class BuildErrorReporter extends ErrorReporter {
 			String message = null;
 			int fixId = NO_RES;
 			if (member == null) {
-				if (sourceIncludes.contains(SOURCE + token))
+				if (sourceIncludes.contains(PROPERTY_SOURCE_PREFIX + token))
 					continue;
 				if (token.endsWith("/")) //$NON-NLS-1$
 					message = NLS.bind(PDECoreMessages.BuildErrorReporter_missingFolder, token);

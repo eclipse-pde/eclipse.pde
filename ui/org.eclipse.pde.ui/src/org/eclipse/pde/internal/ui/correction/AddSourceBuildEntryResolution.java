@@ -21,6 +21,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.builders.BuildErrorReporter;
 import org.eclipse.pde.internal.core.text.build.Build;
 import org.eclipse.pde.internal.core.text.build.BuildEntry;
@@ -62,7 +63,7 @@ public class AddSourceBuildEntryResolution extends BuildEntryMarkerResolution {
 				IBuildEntry[] entries = build.getBuildEntries();
 				if (unlistedOnly)
 					for (int i = 0; i < entries.length; i++)
-						if (entries[i].getName().startsWith(BuildErrorReporter.SOURCE))
+						if (entries[i].getName().startsWith(IBuildPropertiesConstants.PROPERTY_SOURCE_PREFIX))
 							sourceEntries.add(entries[i]);
 				
 				IJavaProject jp = JavaCore.create(project);
