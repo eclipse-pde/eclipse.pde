@@ -41,7 +41,6 @@ public class BuildPage extends PDEFormPage {
 	private RuntimeInfoSection fRuntimeSection;
 	
 	private Button fCustomButton;
-	private BuildExecutionEnvironmentSection fBuildEESection;
 	
 	public BuildPage(FormEditor editor) {
 		super(editor, PAGE_ID, PDEUIMessages.BuildPage_name);  
@@ -84,11 +83,6 @@ public class BuildPage extends PDEFormPage {
 		gd.horizontalSpan = 2;
 		fRuntimeSection.getSection().setLayoutData(gd);
 		
-		fBuildEESection = new BuildExecutionEnvironmentSection(this, form.getBody());
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		fBuildEESection.getSection().setLayoutData(gd);
-
 		fBinSection = new BinSection(this, form.getBody());
 		fBinSection.getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -103,7 +97,6 @@ public class BuildPage extends PDEFormPage {
 		mform.addPart(fRuntimeSection);
 		mform.addPart(fSrcSection);
 		mform.addPart(fBinSection);
-		mform.addPart(fBuildEESection);
 		mform.addPart(fClasspathSection);
 
 		handleCustomCheckState(getCustomSelection());

@@ -2516,12 +2516,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String RequiredExecutionEnvironmentSection_dialogMessage;
 
-	public static String BuildExecutionEnvironmentSection_title;
-
-	public static String BuildExecutionEnvironmentSection_desc;
-
-	public static String BuildExecutionEnvironmentSection_label;
-
 	public static String BuildExecutionEnvironmentSection_configure;
 
 	public static String ExecutionEnvironmentSection_updateClasspath;
@@ -2852,4 +2846,5 @@ public class PDEUIMessages extends NLS {
 	
 	public static String RemoveInternalDirective_desc;
 
+	public static String ImportPackageSection_dialogButtonLabel;
 }
