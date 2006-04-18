@@ -27,6 +27,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String MainPreferencePage_updateStale;
 
+	public static String RemoveUnknownExecEnvironments_label;
+
 	public static String RevertUnsupportSingletonResolution_desc;
 
 	public static String AddLibraryDialog_emptyLibraries;
@@ -70,6 +72,8 @@ public class PDEUIMessages extends NLS {
 	public static String SchemaIncludesSection_missingWarningTitle;
 
 	public static String ShowDescriptionAction_schemaNotAvail;
+
+	public static String UpdateClasspathResolution_label;
 
 	//
 	// PDE resource strings

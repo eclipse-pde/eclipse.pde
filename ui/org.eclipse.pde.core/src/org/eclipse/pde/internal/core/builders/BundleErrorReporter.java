@@ -21,16 +21,21 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
@@ -116,6 +121,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		validateFragmentHost();	
 		validateRequiredHeader(Constants.BUNDLE_NAME);
 		validateBundleVersion();
+		validateRequiredExecutionEnvironment();
 		
 		validateEclipsePlatformFilter();
 		validateBundleActivator();
@@ -308,6 +314,62 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 	}
 
+	private void validateRequiredExecutionEnvironment() {
+		int sev = CompilerFlags.getFlag(fProject, CompilerFlags.P_INCOMPATIBLE_ENV);
+		if (sev == CompilerFlags.IGNORE)
+			return;
+		BundleDescription desc = fModel.getBundleDescription();
+		if (desc == null)
+			return;
+		String[] bundleEnvs = desc.getExecutionEnvironments();
+		if (bundleEnvs == null || bundleEnvs.length == 0)
+			return;
+		
+		IHeader header = (IHeader) fHeaders.get(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
+		if (header == null)
+			return;
+		
+		IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(bundleEnvs[0]);
+		if (env != null) {
+			IJavaProject jproject = JavaCore.create(fProject);
+			IClasspathEntry[] entries;
+			try {
+				entries = jproject.getRawClasspath();
+				for (int i = 0; i < entries.length; i++) {
+					if (entries[i].getEntryKind() != IClasspathEntry.CPE_CONTAINER)
+						continue;
+					IPath currentPath = entries[i].getPath();
+					if (JavaRuntime.newDefaultJREContainerPath().matchingFirstSegments(currentPath) == 0)
+						continue;
+					
+					IPath validPath = JavaRuntime.newJREContainerPath(env);
+					if (!validPath.equals(currentPath)) {
+						report(NLS.bind(PDECoreMessages.BundleErrorReporter_reqExecEnv_conflict, bundleEnvs[0]),
+								getLine(header, bundleEnvs[0]),
+								sev, PDEMarkerFactory.M_MISMATCHED_EXEC_ENV);
+					}
+				}
+			} catch (JavaModelException e) {
+			}
+		}
+		IExecutionEnvironment[] systemEnvs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
+		for (int i = 0; i < bundleEnvs.length; i++) {
+			boolean found = false;
+			for (int j = 0; j < systemEnvs.length; j++) {
+				if (bundleEnvs[i].equals(systemEnvs[j].getId())) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				report(NLS.bind(PDECoreMessages.BundleErrorReporter_reqExecEnv_unknown,
+						bundleEnvs[i]), getLine(header, bundleEnvs[i]),
+						sev, PDEMarkerFactory.M_UNKNOW_EXEC_ENV);
+				break;
+			}
+		}
+	}
+	
 	private void validateEclipsePlatformFilter() {
 		IHeader header = (IHeader) fHeaders.get(ICoreConstants.PLATFORM_FILTER);
 		if (header == null)

@@ -57,6 +57,10 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 						new ChooseManifestClassResolution(AbstractPDEMarkerResolution.RENAME_TYPE, ICoreConstants.PLUGIN_CLASS)};
 			case PDEMarkerFactory.M_DIRECTIVE_HAS_NO_EFFECT:
 				return getRemoveInternalDirectiveResolution(marker);
+			case PDEMarkerFactory.M_MISMATCHED_EXEC_ENV:
+				return new IMarkerResolution[] { new UpdateClasspathResolution(AbstractPDEMarkerResolution.RENAME_TYPE) };
+			case PDEMarkerFactory.M_UNKNOW_EXEC_ENV:
+				return new IMarkerResolution[] { new RemoveUnknownExecEnvironments(AbstractPDEMarkerResolution.REMOVE_TYPE) };
 			case PDEMarkerFactory.B_REMOVE_SLASH_FILE_ENTRY:
 				return new IMarkerResolution[] { new RemoveSeperatorBuildEntryResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
 			case PDEMarkerFactory.B_APPEND_SLASH_FOLDER_ENTRY:
