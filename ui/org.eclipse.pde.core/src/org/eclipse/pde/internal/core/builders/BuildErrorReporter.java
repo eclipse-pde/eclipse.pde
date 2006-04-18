@@ -195,7 +195,9 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 								IPath p = new Path(location).addTrailingSeparator().append(path);
 								exists = new File(p.toOSString()).exists();
 							} else
-								exists = CoreUtility.jarContainsResource(external, path, false);
+								// compiler will not recognize nested jars, if external location is not
+								// a directory this reference "does not exist"
+								exists = false;
 						} else
 							exists = resource.getProject().findMember(path) != null;
 					}
