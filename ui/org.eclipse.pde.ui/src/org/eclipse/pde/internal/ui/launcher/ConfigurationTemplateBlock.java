@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import java.io.File;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -109,7 +111,8 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 	
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {		
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true);
-		configuration.setAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, ""); //$NON-NLS-1$
+		configuration.setAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, 
+				"${target_home}" + File.separatorChar + "configuration" + File.separatorChar + "config.ini"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 
@@ -181,6 +184,16 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 		String res = dialog.open();
 		if (res != null)
 			fLocationText.setText(res);
+	}
+	
+	protected String getLocation() {
+		String path = fLocationText.getText().trim();
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+	    try {
+           return manager.performStringSubstitution(path, false);
+	    } catch (CoreException e) {
+	    	return path;
+	    }
 	}
 
 }
