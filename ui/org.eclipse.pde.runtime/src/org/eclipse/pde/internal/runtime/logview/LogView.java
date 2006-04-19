@@ -489,7 +489,8 @@ public class LogView extends ViewPart implements ILogListener {
         writeSettings();
         Platform.removeLogListener(this);
         fClipboard.dispose();
-        textShell.dispose();
+        if (textShell != null)
+        	textShell.dispose();	
         LogReader.reset();
         super.dispose();
     }
