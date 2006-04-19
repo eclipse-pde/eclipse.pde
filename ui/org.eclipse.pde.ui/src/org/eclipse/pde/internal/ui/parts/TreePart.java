@@ -35,17 +35,12 @@ public class TreePart extends StructuredViewerPart {
 	/*
 	 * @see StructuredViewerPart#createStructuredViewer(Composite, FormWidgetFactory)
 	 */
-	protected StructuredViewer createStructuredViewer(
-		Composite parent,
-		int style,
-		FormToolkit toolkit) {
+	protected StructuredViewer createStructuredViewer(Composite parent, int style, FormToolkit toolkit) {
 		style |= SWT.H_SCROLL | SWT.V_SCROLL;
-		if (toolkit==null) {
+		if (toolkit == null)
 			style |= SWT.BORDER;
-		}
-		else {
+		else
 			style |= toolkit.getBorderStyle();
-		}
 		TreeViewer	treeViewer = new TreeViewer(parent, style);
 		treeViewer.addSelectionChangedListener(new ISelectionChangedListener () {
 			public void selectionChanged(SelectionChangedEvent e) {

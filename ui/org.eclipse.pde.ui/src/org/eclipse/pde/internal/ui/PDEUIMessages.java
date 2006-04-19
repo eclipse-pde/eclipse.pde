@@ -67,6 +67,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String RemoveNodeXMLResolution_label;
 
+	public static String RuntimeInfoSection_replace;
+
+	public static String RuntimeInfoSection_replacedialog;
+
 	public static String SchemaIncludesSection_missingWarningMessage;
 
 	public static String SchemaIncludesSection_missingWarningTitle;

@@ -54,8 +54,6 @@ import org.osgi.framework.Constants;
 
 public class BuildErrorReporter extends ErrorReporter implements IBuildPropertiesConstants{
 	
-	private static final int NO_RES = PDEMarkerFactory.NO_RESOLUTION;
-	private static final String SRC_INCLUDES = "src.includes"; //$NON-NLS-1$
 	private static final String DEF_SOURCE_ENTRY = PROPERTY_SOURCE_PREFIX + '.';
 	
 	private class BuildProblem {
@@ -126,7 +124,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 						PDEMarkerFactory.B_REMOVAL);
 			else if (name.equals(PROPERTY_BIN_INCLUDES))
 				binIncludes = entries[i];
-			else if (name.equals(SRC_INCLUDES))
+			else if (name.equals(PROPERTY_SRC_INCLUDES))
 				srcIncludes = entries[i];
 			else if (name.startsWith(PROPERTY_SOURCE_PREFIX))
 				sourceEntries.add(entries[i]);
@@ -404,7 +402,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				continue;
 			IResource member = fProject.findMember(token);
 			String message = null;
-			int fixId = NO_RES;
+			int fixId = PDEMarkerFactory.NO_RESOLUTION;
 			if (member == null) {
 				if (sourceIncludes.contains(PROPERTY_SOURCE_PREFIX + token))
 					continue;

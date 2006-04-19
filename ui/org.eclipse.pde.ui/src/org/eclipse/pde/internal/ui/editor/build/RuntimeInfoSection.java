@@ -88,13 +88,15 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class RuntimeInfoSection extends PDESection implements IModelChangedListener, IBuildPropertiesConstants {
 	
+	private static final int F_NEW_INDEX = 0;
+	private static final int F_UP_UNDEX = 2;
+	private static final int F_DOWN_INDEX = 3;
+	
 	protected TableViewer fLibraryViewer;
 	protected TableViewer fFolderViewer;
 	
 	protected StructuredViewerPart fLibraryPart;
 	protected StructuredViewerPart fFolderPart;
-	private IBuildEntry fCurrentLibrary;
-	private IStructuredSelection fCurrentSelection;
 	
 	private boolean fEnabled = true;
 	
@@ -105,28 +107,37 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 		}
 		
 		public void selectionChanged(IStructuredSelection selection) {
-			if (selection.size() != 0)
-				RuntimeInfoSection.this.selectionChanged(selection);
+			getPage().getPDEEditor().setSelection(selection);
+			Object item = selection.getFirstElement();
+			if (item instanceof IBuildEntry) {
+				update((IBuildEntry) item);
+			} else if (selection == null || selection.isEmpty())
+				update(null);
+			updateDirectionalButtons();
 		}
 		
 		public void handleDoubleClick(IStructuredSelection selection) {
-			RuntimeInfoSection.this.handleDoubleClick(selection);
+			Object element = selection.getFirstElement();
+			if (getLibrarySelection() == element)
+				doRename();
+			else if (element instanceof String)
+				handleRenameFolder((String)element);
 		}
 		
 		public void buttonSelected(Button button, int index) {
 			if (getViewer() == fLibraryPart.getViewer()) {
 				switch (index) {
-				case 0 :
+				case F_NEW_INDEX:
 					handleNew();
 					break;
-				case 2 :
+				case F_UP_UNDEX: // move up
 					updateJarsCompileOrder(true);
 					break;
-				case 3 :
+				case F_DOWN_INDEX: // move down
 					updateJarsCompileOrder(false);
 					break;
 				}
-			} else if (getViewer() == fFolderPart.getViewer() && index == 0)
+			} else if (getViewer() == fFolderPart.getViewer() && index == F_NEW_INDEX)
 				handleNewFolder();
 			else
 				button.getShell().setDefaultButton(null);
@@ -316,10 +327,8 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 	
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		GridLayout layout = new GridLayout(2, true);
 		layout.marginHeight = layout.marginWidth = 0;
-		layout.makeColumnsEqualWidth = true;
 		container.setLayout(layout);
 		
 		createLeftSection(container, toolkit);
@@ -330,16 +339,9 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 	}
 	
 	private void createLeftSection(Composite parent, FormToolkit toolkit) {
-		Composite container = toolkit.createComposite(parent);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = layout.marginWidth = 2;
-		layout.numColumns = 2;
-		container.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint = 100;
-		container.setLayoutData(gd);
+		Composite container = createContainer(parent, toolkit);
 		
-		fLibraryPart = new PartAdapter(new String[]{
+		fLibraryPart = new PartAdapter(new String[] {
 				PDEUIMessages.BuildEditor_RuntimeInfoSection_addLibrary, null,
 				PDEUIMessages.ManifestEditor_LibrarySection_up,
 				PDEUIMessages.ManifestEditor_LibrarySection_down});
@@ -347,8 +349,8 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 		fLibraryViewer = (TableViewer) fLibraryPart.getViewer();
 		fLibraryViewer.setContentProvider(new LibraryContentProvider());
 		fLibraryViewer.setLabelProvider(new LibraryLabelProvider());
-		fLibraryPart.setButtonEnabled(2, false);
-		fLibraryPart.setButtonEnabled(3, false);
+		fLibraryPart.setButtonEnabled(F_UP_UNDEX, false);
+		fLibraryPart.setButtonEnabled(F_DOWN_INDEX, false);
 		fLibraryViewer.setInput(getBuildModel());
 		toolkit.paintBordersFor(container);
 		
@@ -363,16 +365,14 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 	}
 	
 	private void createRightSection(Composite parent, FormToolkit toolkit) {
-		Composite container = toolkit.createComposite(parent);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginHeight = layout.marginWidth = 2;
-		container.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint = 100;
-		container.setLayoutData(gd);
+		Composite container = createContainer(parent, toolkit);
 		
-		fFolderPart = new PartAdapter(new String[]{PDEUIMessages.BuildEditor_RuntimeInfoSection_addFolder});
+		fFolderPart = new PartAdapter(new String[] {
+				PDEUIMessages.BuildEditor_RuntimeInfoSection_addFolder}) {
+			public void selectionChanged(IStructuredSelection selection) {
+				// folder selection ignored
+			}
+		};
 		fFolderPart.createControl(container, SWT.FULL_SELECTION, 2, toolkit);
 		fFolderViewer = (TableViewer) fFolderPart.getViewer();
 		fFolderViewer.setContentProvider(new FolderContentProvider());
@@ -389,9 +389,21 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 		fFolderViewer.getControl().setMenu(menuMgr.createContextMenu(fFolderViewer.getControl()));
 	}
 	
+	private Composite createContainer(Composite parent, FormToolkit toolkit) {
+		Composite container = toolkit.createComposite(parent);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = layout.marginWidth = 2;
+		container.setLayout(layout);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 100;
+		container.setLayoutData(gd);
+		return container;
+	}
+	
 	protected void fillFolderViewerContextMenu(IMenuManager manager) {
-		ISelection selection = fFolderViewer.getSelection();
-		if (fCurrentLibrary != null) {
+		final ISelection selection = fFolderViewer.getSelection();
+		ISelection libSelection = fLibraryViewer.getSelection();
+		if (libSelection != null && !libSelection.isEmpty()) {
 			Action newAction = new Action(PDEUIMessages.BuildEditor_RuntimeInfoSection_popupFolder) {
 				public void run() {
 					handleNewFolder();
@@ -402,6 +414,15 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 		}
 		
 		manager.add(new Separator());
+		
+		Action replace = new Action(PDEUIMessages.RuntimeInfoSection_replace) {
+			public void run() {
+				handleRenameFolder(((IStructuredSelection)selection).getFirstElement().toString());
+			}
+		};
+		replace.setEnabled(!selection.isEmpty() && fEnabled);
+		manager.add(replace);
+		
 		Action deleteAction = new Action(PDEUIMessages.Actions_delete_label) {
 			public void run() {
 				handleDeleteFolder();
@@ -460,25 +481,27 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 					!newValue.equals(IBuildEntry.JAR_PREFIX + ".")) //$NON-NLS-1$
 				newValue +="/"; //$NON-NLS-1$
 			
+			String newName = newValue.substring(7);
+			
 			// jars.compile.order
 			IBuildEntry tempEntry = build.getEntry(PROPERTY_JAR_ORDER);
 			if (tempEntry != null && tempEntry.contains(oldName))
-				tempEntry.renameToken(oldName, newValue.substring(7));
+				tempEntry.renameToken(oldName, newName);
 			
 			// output.{source folder}.jar
 			tempEntry = build.getEntry(PROPERTY_OUTPUT_PREFIX + oldName);
 			if (tempEntry != null)
-				tempEntry.setName(PROPERTY_OUTPUT_PREFIX + newValue.substring(7));
+				tempEntry.setName(PROPERTY_OUTPUT_PREFIX + newName);
 				
 			// bin.includes
 			tempEntry = build.getEntry(PROPERTY_BIN_INCLUDES);
 			if (tempEntry != null && tempEntry.contains(oldName))
-				tempEntry.renameToken(oldName, newValue.substring(7));
+				tempEntry.renameToken(oldName, newName);
 			
 			// bin.excludes
 			tempEntry = build.getEntry(PROPERTY_BIN_EXCLUDES);
 			if (tempEntry != null && tempEntry.contains(oldName))
-				tempEntry.renameToken(oldName, newValue.substring(7));
+				tempEntry.renameToken(oldName, newName);
 			
 			// rename
 			entry.setName(newValue);
@@ -488,15 +511,11 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 		}
 	}
 	
-	public void handleDoubleClick(IStructuredSelection selection) {
-		doRename();
-	}
-	
 	public void enableSection(boolean enable) {
 		fEnabled = enable;
-		fLibraryPart.setButtonEnabled(0, enable);
+		fLibraryPart.setButtonEnabled(F_NEW_INDEX, enable);
 		updateDirectionalButtons();
-		fFolderPart.setButtonEnabled(0, enable && !fLibraryViewer.getSelection().isEmpty());
+		fFolderPart.setButtonEnabled(F_NEW_INDEX, enable && !fLibraryViewer.getSelection().isEmpty());
 	}
 	
 	public boolean doGlobalAction(String actionId) {
@@ -543,8 +562,11 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 		if (!isJavaProject())
 			return;
 		
+		IBuildEntry buildEntry = getLibrarySelection();
+		if (buildEntry == null)
+			return;
 		Set outputFolders = new HashSet();
-		String[] jarFolders = fCurrentLibrary.getTokens();
+		String[] jarFolders = buildEntry.getTokens();
 		IPackageFragmentRoot[] sourceFolders = computeSourceFolders();
 		for (int j = 0; j < jarFolders.length; j++) {
 			IPackageFragmentRoot sourceFolder = getSourceFolder(jarFolders[j], sourceFolders);
@@ -564,7 +586,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 			}
 		}
 		if (outputFolders.size() != 0) {
-			String libName = fCurrentLibrary.getName().substring(7);
+			String libName = buildEntry.getName().substring(7);
 			IBuildModel buildModel = getBuildModel();
 			IBuild build = buildModel.getBuild();
 			String outputName = PROPERTY_OUTPUT_PREFIX + libName;
@@ -600,44 +622,25 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 	}
 	
 	private void update(IBuildEntry variable) {
-		fCurrentLibrary = variable;
-		fFolderViewer.setInput(fCurrentLibrary);
-		fFolderPart.setButtonEnabled(0, !isReadOnly() && fEnabled && variable != null);
-	}
-	
-	protected void selectionChanged(IStructuredSelection selection) {
-		Object item = selection.getFirstElement();
-		getPage().getPDEEditor().setSelection(selection);
-		if (item instanceof IBuildEntry) {
-			update((IBuildEntry) item);
-			updateDirectionalButtons();
-			String name = ((IBuildEntry) item).getName();
-			if (name.startsWith(IBuildEntry.JAR_PREFIX))
-				name = name.substring(IBuildEntry.JAR_PREFIX.length());
+		int index = 0;
+		if (fFolderViewer.getInput() == variable)
+			index = fFolderViewer.getTable().getSelectionIndex();
+		
+		fFolderViewer.setInput(variable);
+		int count = fFolderViewer.getTable().getItemCount();
+		if (index != -1 && count > 0) {
+			if (index == count)
+				index = index - 1;
+			fFolderViewer.getTable().select(index);
 		}
+		fFolderPart.setButtonEnabled(F_NEW_INDEX, !isReadOnly() && fEnabled && variable != null);
 	}
 	
 	protected void updateDirectionalButtons() {
 		Table table = fLibraryViewer.getTable();
 		boolean hasSelection = table.getSelection().length > 0;
-		fLibraryPart.setButtonEnabled(2, fEnabled && hasSelection && table.getSelectionIndex() > 0);
-		fLibraryPart.setButtonEnabled(3, fEnabled && hasSelection && table.getSelectionIndex() < table.getItemCount() - 1);
-	}
-	
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
-	 */
-	public void refresh() {
-		fLibraryViewer.refresh();
-		fFolderViewer.refresh();
-		fLibraryViewer.setSelection(null);
-		fFolderViewer.setInput(null);
-		fFolderPart.setButtonEnabled(0, false);
-		updateDirectionalButtons();
-		super.refresh();
+		fLibraryPart.setButtonEnabled(F_UP_UNDEX, fEnabled && hasSelection && table.getSelectionIndex() > 0);
+		fLibraryPart.setButtonEnabled(F_DOWN_INDEX, fEnabled && hasSelection && table.getSelectionIndex() < table.getItemCount() - 1);
 	}
 	
 	protected String[] getLibraryNames() {
@@ -784,28 +787,20 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 	}
 	
 	private void handleDeleteFolder() {
-		int index = fFolderViewer.getTable().getSelectionIndex();
 		Object object = ((IStructuredSelection) fFolderViewer.getSelection()).getFirstElement();
-		if (object != null) {
-			String libKey = fCurrentLibrary.getName();
-			IBuildEntry entry = getBuildModel().getBuild().getEntry(libKey);
-			if (entry != null) {
-				try {
-					String[] tokens = entry.getTokens();
-					if (tokens.length > index + 1)
-						fCurrentSelection = new StructuredSelection(tokens[index + 1]);
-					else
-						fCurrentSelection = null;
-					fCurrentLibrary = entry;
-					entry.removeToken((String) object);
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-				}
-			}
+		if (object == null)
+			return;
+		IBuildEntry entry = getLibrarySelection();
+		if (entry == null)
+			return;
+		try {
+			entry.removeToken((String) object);
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
 		}
 	}
 	
-	private void handleNewFolder() {
+	private IFolder openSelectFolderDialog(final IBuildEntry entry, String title, String message) {
 		IFile file = (IFile) getBuildModel().getUnderlyingResource();
 		final IProject project = file.getProject();
 		
@@ -824,40 +819,53 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 			}
 		});
 		dialog.setAllowMultiple(false);
-		dialog.setTitle(PDEUIMessages.ManifestEditor_JarsSection_dialogTitle); 
-		dialog.setMessage(PDEUIMessages.ManifestEditor_JarsSection_dialogMessage); 
+		dialog.setTitle(title); 
+		dialog.setMessage(message); 
 		
 		dialog.setValidator(new ISelectionStatusValidator() {
 			public IStatus validate(Object[] selection) {
-				if (selection == null 
-						|| selection.length != 1
-						|| !(selection[0] instanceof IFolder))
-					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, "", null); //$NON-NLS-1$
-				
-				String libKey = fCurrentLibrary.getName();
-				IBuildEntry entry = getBuildModel().getBuild().getEntry(libKey);
+				String id = PDEPlugin.getPluginId();
+				if (selection == null || selection.length != 1 || !(selection[0] instanceof IFolder))
+					return new Status(IStatus.ERROR, id, IStatus.ERROR, "", null); //$NON-NLS-1$
 				
 				String folderPath = ((IFolder) selection[0]).getProjectRelativePath().addTrailingSeparator().toString();
-				
 				if (entry != null && entry.contains(folderPath))
-					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR,
-							PDEUIMessages.BuildEditor_RuntimeInfoSection_duplicateFolder, null);
+					return new Status(IStatus.ERROR, id, IStatus.ERROR,	PDEUIMessages.BuildEditor_RuntimeInfoSection_duplicateFolder, null);
 				
-				return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
+				return new Status(IStatus.OK, id, IStatus.OK, "", null); //$NON-NLS-1$
 			}
 		});
 		
-		if (dialog.open() == Window.OK) {
+		if (dialog.open() == Window.OK)
+			return (IFolder)dialog.getFirstResult();
+		return null;
+	}
+	
+	private void handleNewFolder() {
+		IBuildEntry entry = getLibrarySelection();
+		IFolder folder = openSelectFolderDialog(entry,
+				PDEUIMessages.ManifestEditor_JarsSection_dialogTitle,
+				PDEUIMessages.ManifestEditor_JarsSection_dialogMessage);
+		if (folder != null) {
 			try {
-				IFolder folder = (IFolder) dialog.getFirstResult();
 				String folderPath = folder.getProjectRelativePath().addTrailingSeparator().toString();
-				IBuildModel buildModel = getBuildModel();
-				String libKey = fCurrentLibrary.getName();
-				IBuildEntry entry = buildModel.getBuild().getEntry(libKey);
-				
-				fCurrentSelection = new StructuredSelection(folderPath);
-				
 				entry.addToken(folderPath);
+				refreshOutputKeys();
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
+			}
+		}
+	}
+	
+	private void handleRenameFolder(String oldName) {
+		IBuildEntry entry = getLibrarySelection();
+		IFolder folder = openSelectFolderDialog(entry,
+				PDEUIMessages.RuntimeInfoSection_replacedialog,
+				PDEUIMessages.ManifestEditor_JarsSection_dialogMessage);
+		if (folder != null) {
+			try {
+				String newFolder = folder.getProjectRelativePath().addTrailingSeparator().toString();
+				entry.renameToken(oldName, newFolder);
 				refreshOutputKeys();
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
@@ -908,56 +916,46 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 			markStale();
 		Object changeObject = event.getChangedObjects()[0];
 		String keyName = event.getChangedProperty();
-		int type = event.getChangeType();
+		
 		// check if model change applies to this section
-		if (!(changeObject instanceof IBuildEntry)
-				|| (!((IBuildEntry)changeObject).getName().startsWith(IBuildEntry.JAR_PREFIX) 
-						&& !((IBuildEntry)changeObject).getName().equals(PROPERTY_JAR_ORDER)
-						&& !((IBuildEntry)changeObject).getName().equals(PROPERTY_BIN_INCLUDES)))
+		if (!(changeObject instanceof IBuildEntry))
+			return;
+		IBuildEntry entry = (IBuildEntry)changeObject;
+		String entryName = entry.getName();
+		if (!entryName.startsWith(IBuildEntry.JAR_PREFIX)
+				&& !entryName.equals(PROPERTY_JAR_ORDER)
+				&& !entryName.equals(PROPERTY_BIN_INCLUDES))
 			return;
 		
-		IBuildEntry entry = (IBuildEntry)changeObject;
-		if (keyName!= null && keyName.equals(PROPERTY_BIN_INCLUDES))
-			if (fCurrentLibrary == null)
-				return;
+		if (entryName.equals(PROPERTY_BIN_INCLUDES))
+			return;
 		
-		if (type == IModelChangedEvent.INSERT){
-//			account for new key
-			fLibraryViewer.refresh();
-			if (fCurrentSelection != null) {
-				fLibraryViewer.setSelection(fCurrentSelection);
-				updateDirectionalButtons();
-			} else {
-				fFolderPart.setButtonEnabled(0, false);
-				fLibraryViewer.setSelection(null);
-				fFolderViewer.setInput(null);
+		int type = event.getChangeType();
+		
+		// account for new key
+		if (entry.getName().startsWith(PROPERTY_SOURCE_PREFIX)) {
+			IStructuredSelection newSel = null;
+			if (type == IModelChangedEvent.INSERT) {
+				fLibraryViewer.add(entry);
+				newSel = new StructuredSelection(entry);
+			} else if (type == IModelChangedEvent.REMOVE) {
+				int index = fLibraryViewer.getTable().getSelectionIndex();
+				fLibraryViewer.remove(entry);
+				Table table = fLibraryViewer.getTable();
+				int itemCount = table.getItemCount();
+				if (itemCount != 0) {
+					index = index < itemCount ? index : itemCount - 1;
+					newSel = new StructuredSelection(table.getItem(index).getData());
+				}
+			} else if (keyName != null && keyName.startsWith(IBuildEntry.JAR_PREFIX)) { 
+				// modification to source.{libname}.jar
+				if (event.getOldValue() != null && event.getNewValue() != null)
+					// renaming token
+					fLibraryViewer.update(entry, null);
+				
+				newSel = new StructuredSelection(entry);
 			}
-		} else if (type == IModelChangedEvent.REMOVE){
-			// account for key removal
-			fLibraryViewer.remove(entry);
-			fLibraryViewer.refresh();
-			fFolderPart.setButtonEnabled(0, false);
-			fLibraryViewer.setSelection(null);
-			fFolderViewer.setInput(null);
-		} else if (keyName!=null && keyName.startsWith(IBuildEntry.JAR_PREFIX)){ 
-			// modification to source.{libname}.jar
-			// renaming token
-			if (event.getOldValue() != null && event.getNewValue() != null){
-				fLibraryViewer.update(entry, null);
-				return;
-			} 
-			// add/remove source folder
-			refresh();
-			if (fCurrentSelection != null) {
-				fFolderViewer.setSelection(fCurrentSelection);
-				updateDirectionalButtons();
-			} else {
-				fFolderPart.setButtonEnabled(0, false);
-				fLibraryViewer.setSelection(null);
-				fFolderViewer.setInput(null);
-			}
-			if (fCurrentLibrary != null)
-				update(fCurrentLibrary);		
+			fLibraryViewer.setSelection(newSel);
 		} else if (keyName!= null && keyName.equals(PROPERTY_JAR_ORDER)){
 			// account for change in jars compile order
 			if (event.getNewValue() == null && event.getOldValue() != null)
@@ -968,9 +966,12 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 				return;
 			
 			fLibraryViewer.refresh();
-			if (fCurrentLibrary != null)
-				fLibraryViewer.setSelection(new StructuredSelection(fCurrentLibrary));
 			updateDirectionalButtons();
 		}
+	}
+	
+	private IBuildEntry getLibrarySelection() {
+		IStructuredSelection selection = (IStructuredSelection)fLibraryViewer.getSelection();
+		return (IBuildEntry)selection.getFirstElement();
 	}
 }
