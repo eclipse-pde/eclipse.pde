@@ -42,7 +42,7 @@
             contentFile="$nl$/cheatsheets/helloworld-composite.xml"
             id="org.eclipse.pde.helloworld"
             name="%cheatsheet.helloworld.name">
-         <description/>
+         <description>%cheatsheet.helloworld.desc</description>
       </cheatsheet>
    </extension>
    
