@@ -49,6 +49,7 @@ import org.eclipse.pde.internal.ui.parts.EditableTablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
@@ -61,14 +62,10 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
-public class BuildClasspathSection
-	extends TableSection
-	implements IModelChangedListener {
+public class BuildClasspathSection extends TableSection implements IModelChangedListener {
 
 	private TableViewer fTableViewer;
 	private boolean fEnabled = true;
-	private IStructuredSelection fCurrentSelection;
-	private IStructuredSelection fOldSelection;
 	
 
 	/**
@@ -280,10 +277,7 @@ public class BuildClasspathSection
 
 	private void handleDelete() {
 		Object selection =
-			((IStructuredSelection) fTableViewer.getSelection())
-				.getFirstElement();
-		fOldSelection = (IStructuredSelection) fTableViewer.getSelection();
-		int index = fTableViewer.getTable().getSelectionIndex();
+			((IStructuredSelection) fTableViewer.getSelection()).getFirstElement();
 		if (selection != null && selection instanceof String) {
 			IBuild build = getBuildModel().getBuild();
 			IBuildEntry entry = build.getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
@@ -291,14 +285,9 @@ public class BuildClasspathSection
 				try {
 					entry.removeToken(selection.toString());
 
-					String[] tokens=entry.getTokens();
-					if (tokens.length == 0) {
+					String[] tokens = entry.getTokens();
+					if (tokens.length == 0)
 						build.remove(entry);
-					} else if (tokens.length >index){
-						fCurrentSelection = new StructuredSelection(tokens[index]);
-					} else {
-						fCurrentSelection = new StructuredSelection(tokens[index-1]);
-					}
 					
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
@@ -321,6 +310,11 @@ public class BuildClasspathSection
 					} catch (CoreException e) {
 					}
 					return false;
+				} else if (element instanceof IResource) {
+					IBuildModel model = getBuildModel();
+					IBuildEntry entry = model.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
+					if (entry != null) 
+						return !entry.contains(getRelativePathTokenName((IResource)element));
 				}
 				return true;
 			}
@@ -345,8 +339,6 @@ public class BuildClasspathSection
 				if (tokenName == null)
 					continue;
 				addClasspathToken(tokenName);
-				fCurrentSelection = new StructuredSelection(tokenName);
-				fOldSelection = null;
 			}
 		}
 	}
@@ -355,7 +347,7 @@ public class BuildClasspathSection
 		IBuildModel model = getBuildModel();
 		IBuildEntry entry = model.getBuild().getEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
 		try {
-			if (entry==null){
+			if (entry == null){
 				entry = model.getFactory().createEntry(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH);
 				model.getBuild().add(entry);
 			}
@@ -392,24 +384,24 @@ public class BuildClasspathSection
 		}
 	}
 	public void modelChanged(IModelChangedEvent event) {
-		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED)
 			markStale();
-		} else if (event.getChangeType() == IModelChangedEvent.INSERT){
-			
-		} else if (event.getChangeType() == IModelChangedEvent.REMOVE){
-			
-		} else if (event.getChangeType() == IModelChangedEvent.CHANGE){
+		else if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object changeObject = event.getChangedObjects()[0];
 			
 			if (changeObject instanceof IBuildEntry && ((IBuildEntry)changeObject).getName().equals(IBuildEntry.JARS_EXTRA_CLASSPATH)){
-				if (fOldSelection == null){
-					fTableViewer.refresh();
-					fTableViewer.setSelection(fCurrentSelection);
-				} else {
-					fTableViewer.remove(fOldSelection);
-					fTableViewer.refresh();
-					fTableViewer.setSelection(fCurrentSelection);
-				}
+				Table table = fTableViewer.getTable();
+				int index = table.getSelectionIndex();
+				fTableViewer.refresh();
+				int count = table.getItemCount();
+				if (index == -1 || index >= count || event.getOldValue() == null)
+					index = count - 1;
+				if (count == 0)
+					fTableViewer.setSelection(null);
+				else 
+					fTableViewer.setSelection(
+							new StructuredSelection(table.getItem(index).getData()));
+				table.setFocus();
 			}
 		}
 	}
