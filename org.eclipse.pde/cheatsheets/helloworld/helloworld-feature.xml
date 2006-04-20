@@ -45,7 +45,7 @@
          To create the feature project, perform the following steps:
       </description>
       <subitem label="Select &quot;File-&gt;New-&gt;Project...&quot;, and choose &quot;Feature Project&quot; under the &quot;Plug-in Development&quot; heading" 
-               skip="false">
+               skip="true">
          <command serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.pde.ui.NewFeatureProjectWizard)"/>
       </subitem>
       <subitem label="Input &quot;com.example.helloworld-feature&quot; into the &quot;Project Name&quot; text box on the &quot;Feature Properties&quot; page" 

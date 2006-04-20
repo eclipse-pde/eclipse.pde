@@ -19,29 +19,10 @@
 
    <!-- Item -->
 
-   <item title="Setup the Eclipse target platform"
-         href="/org.eclipse.pde.doc.user/guide/pde_configuring.htm"
-         dialog="true"
-         skip="true">
-      <description>
-         To separate the Eclipse development environment 
-         (IDE Eclipse) you are using from the Eclipse environment you
-         are building (Target Eclipse), perform the following steps:
-      </description>
-      <subitem label="Click the &quot;Windows-&gt;Preferences&quot; menu and select the &quot;Target Platform&quot; entry from the &quot;Plug-in Development&quot; tree dialog" 
-               skip="true">
-         <command serialization="org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.pde.ui.TargetPlatformPreferencePage)"/>
-      </subitem>
-      <subitem label="Define the target Eclipse platform by using the &quot;Browse..&quot; button or typing in the &quot;Location&quot; field" 
-               skip="true"/>
-   </item>
-
-   <!-- Item -->
-
    <item title="Open the plug-in development perspective"
          href="/org.eclipse.pde.doc.user/guide/pde_setup.htm"
          dialog="false"
-         skip="false">
+         skip="true">
       <description>
          To open the plug-in development perspective,
          select <b>Window-&gt;Open Perspective-&gt;Other...</b> 
@@ -63,7 +44,7 @@
          To create the plug-in project perform the following steps
       </description>
       <subitem label="Select &quot;File-&gt;New-&gt;Project...&quot; and choose &quot;Plug-in Project&quot; under the &quot;Plug-in Development&quot;" 
-               skip="false">
+               skip="true">
          <command serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.pde.ui.NewProjectWizard)"/>
       </subitem>
       <subitem label="Input &quot;com.example.helloworld&quot; into the &quot;Project Name&quot; text box" 
@@ -119,7 +100,7 @@
          perform the following steps:
       </description>
       <subitem label="Select the &quot;Overviews&quot; tab" 
-               skip="false">
+               skip="true">
          <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.helloworld/META-INF/MANIFEST.MF)"/>
       </subitem>               
       <subitem label="Click the &quot;Launch an Eclipse application&quot; hyperlink under the &quot;Testing&quot; heading" 

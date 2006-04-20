@@ -45,7 +45,7 @@
          To create the update site project, perform the following steps:
       </description>
       <subitem label="Select &quot;File-&gt;New-&gt;Project...&quot;, and choose &quot;Update Site Project&quot; under the &quot;Plug-in Development&quot; heading" 
-               skip="false">
+               skip="true">
          <command serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.pde.ui.NewSiteProjectWizard)"/>
       </subitem>
       <subitem label="Input &quot;helloworld.site&quot; into the &quot;Project Name&quot; text box on the &quot;Update Site Project&quot; page" 

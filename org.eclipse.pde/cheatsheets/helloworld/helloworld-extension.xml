@@ -22,7 +22,7 @@
    <item title="Open the plug-in development perspective"
          href="/org.eclipse.pde.doc.user/guide/pde_setup.htm"
          dialog="false"
-         skip="false">
+         skip="true">
       <description>
          To open the plug-in development perspective,
          select <b>Window-&gt;Open Perspective-&gt;Other...</b> 
@@ -171,7 +171,7 @@
          perform the following steps:
       </description>
       <subitem label="Open the plug-in editor and select the &quot;Overviews&quot; tab" 
-               skip="false">
+               skip="true">
          <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.helloworld/META-INF/MANIFEST.MF)"/>
       </subitem>
       <subitem label="Click the &quot;Launch an Eclipse application&quot; hyperlink under the &quot;Testing&quot; heading" 
