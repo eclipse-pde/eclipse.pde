@@ -208,17 +208,19 @@ public class IntroSection extends PDESection {
 	}
 	
 	private boolean productDefined() {
-		return !getProduct().getId().equals(""); //$NON-NLS-1$
+		String id = getProduct().getId();
+		return id != null && !id.equals(""); //$NON-NLS-1$
 	}
 	
 	private void addDependenciesAndPlugins() throws CoreException {
 		IProduct product = getProduct();
-		IProductModelFactory factory = product.getModel().getFactory();
-		IProductPlugin plugin = factory.createPlugin();
-		plugin.setId(INTRO_PLUGIN_ID, false);
-		product.addPlugins(new IProductPlugin[] {plugin});
-		
-		PluginSection.handleAddRequired(new IProductPlugin[] {plugin});
+		if (!product.useFeatures()) {
+			IProductModelFactory factory = product.getModel().getFactory();
+			IProductPlugin plugin = factory.createPlugin();
+			plugin.setId(INTRO_PLUGIN_ID, false);
+			product.addPlugins(new IProductPlugin[] {plugin});
+			PluginSection.handleAddRequired(new IProductPlugin[] {plugin});
+		}
 		if (fManifest == null) loadManifestAndIntroIds(true);
 		if (fManifest != null) addRequiredBundle();
 	}
