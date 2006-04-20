@@ -53,7 +53,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class Schema extends PlatformObject implements ISchema {
-	private static SAXParser parser;
+	private SAXParser fParser;
 
 	private URL fURL;
 
@@ -384,10 +384,10 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 	}
 	
-	private static synchronized SAXParser getParser() throws ParserConfigurationException, SAXException, FactoryConfigurationError {
-		if (parser == null)
-			parser = SAXParserFactory.newInstance().newSAXParser();
-		return parser;	
+	private SAXParser getParser() throws ParserConfigurationException, SAXException, FactoryConfigurationError {
+		if (fParser == null)
+			fParser = SAXParserFactory.newInstance().newSAXParser();
+		return fParser;	
 	}
 
 	public void load(InputStream stream) {
