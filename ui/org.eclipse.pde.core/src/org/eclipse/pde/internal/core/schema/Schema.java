@@ -918,6 +918,8 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 
 	public void traverseDocumentTree(Node root) {
+		if (root == null)
+			return;
 		NodeList children = root.getChildNodes();
 		fReferences = new Vector();
 		for (int i = 0; i < children.getLength(); i++) {

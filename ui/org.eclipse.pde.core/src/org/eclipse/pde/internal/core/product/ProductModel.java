@@ -88,8 +88,10 @@ public class ProductModel extends AbstractModel implements IProductModel {
 			SAXParser parser = getSaxParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();
 			parser.parse(stream, handler);
-			processDocument(handler.getDocument());
-			setLoaded(true);
+			if (handler.isPrepared()) {
+				processDocument(handler.getDocument());
+				setLoaded(true);
+			}
 		} catch (Exception e) {
 			PDECore.logException(e);
 		} finally {

@@ -65,8 +65,10 @@ public class TargetModel extends AbstractModel implements ITargetModel {
 			SAXParser parser = getSaxParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();
 			parser.parse(stream, handler);
-			processDocument(handler.getDocument());
-			setLoaded(true);
+			if (handler.isPrepared()) {
+				processDocument(handler.getDocument());
+				setLoaded(true);
+			}
 		} catch (Exception e) {
 			PDECore.logException(e);
 		} finally {

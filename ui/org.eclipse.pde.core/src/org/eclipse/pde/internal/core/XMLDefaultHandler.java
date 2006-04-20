@@ -38,8 +38,9 @@ public class XMLDefaultHandler extends DefaultHandler {
 		fAbbreviated = abbreviated;
 	}
 	
-	public void startElement(String uri, String localName, String qName, Attributes attributes)
-		throws SAXException {
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+		if (!isPrepared())
+			return;
 		Element element = fDocument.createElement(qName);
 		for (int i = 0; i < attributes.getLength(); i++) {
 			element.setAttribute(attributes.getQName(i), attributes.getValue(i));
@@ -77,21 +78,23 @@ public class XMLDefaultHandler extends DefaultHandler {
 	 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
 	 */
 	public void endDocument() throws SAXException {
-		fDocument.appendChild(fRootElement);
+		if (isPrepared())
+			fDocument.appendChild(fRootElement);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#processingInstruction(java.lang.String, java.lang.String)
 	 */
 	public void processingInstruction(String target, String data) throws SAXException {
-		fDocument.appendChild(fDocument.createProcessingInstruction(target, data));
+		if (isPrepared())
+			fDocument.appendChild(fDocument.createProcessingInstruction(target, data));
 	}
 		
 	/* (non-Javadoc)
 	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 	 */
 	public void characters(char[] characters, int start, int length) throws SAXException {
-		if (fAbbreviated)
+		if (fAbbreviated || !isPrepared())
 			return;
 		StringBuffer buff = new StringBuffer();
 		for (int i = 0; i < length; i++) {
@@ -105,13 +108,20 @@ public class XMLDefaultHandler extends DefaultHandler {
 	}
 	
 	public Node getDocumentElement() {
+		if (!isPrepared())
+			return null;
 		fDocument.getDocumentElement().normalize();
 		return fDocument.getDocumentElement();
 	}
 	
 	public org.w3c.dom.Document getDocument() {
+		if (!isPrepared())
+			return null;
 		fDocument.getDocumentElement().normalize();
 		return fDocument;
 	}
 	
+	public boolean isPrepared() {
+		return fDocument != null;
+	}
 }

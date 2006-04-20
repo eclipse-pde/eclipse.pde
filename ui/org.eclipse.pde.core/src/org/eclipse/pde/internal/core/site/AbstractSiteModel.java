@@ -67,10 +67,12 @@ public abstract class AbstractSiteModel
 			SAXParser parser = getSaxParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();
 			parser.parse(stream, handler);
-			processDocument(handler.getDocument());
-			setLoaded(true);
-			if (!outOfSync)
-				updateTimeStamp();
+			if (handler.isPrepared()) {
+				processDocument(handler.getDocument());
+				setLoaded(true);
+				if (!outOfSync)
+					updateTimeStamp();
+			}
 		} catch (Exception e) {
 			PDECore.logException(e);
 		}
