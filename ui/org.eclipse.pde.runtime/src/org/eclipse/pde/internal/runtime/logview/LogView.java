@@ -130,13 +130,13 @@ public class LogView extends ViewPart implements ILogListener {
     private File fInputFile;
     private String fDirectory;
 
-    private Comparator comparator;
-    private Collator collator;
+    private Comparator fComparator;
+    private Collator fCollator;
     
     // hover text
-    private boolean canOpenTextShell;
-    private Text textLabel;
-    private Shell textShell;
+    private boolean fCanOpenTextShell;
+    private Text fTextLabel;
+    private Shell fTextShell;
 
     private boolean fFirstEvent = true;
     
@@ -227,7 +227,7 @@ public class LogView extends ViewPart implements ILogListener {
                 manager.add(fExportAction);
                 manager.add(importLogAction);
                 manager.add(new Separator());
-                ((EventDetailsDialogAction) fPropertiesAction).setComparator(comparator);
+                ((EventDetailsDialogAction) fPropertiesAction).setComparator(fComparator);
                 manager.add(fPropertiesAction);
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
             }
@@ -399,7 +399,7 @@ public class LogView extends ViewPart implements ILogListener {
         });
         fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
             public void doubleClick(DoubleClickEvent event) {
-                ((EventDetailsDialogAction) fPropertiesAction).setComparator(comparator);
+                ((EventDetailsDialogAction) fPropertiesAction).setComparator(fComparator);
                 fPropertiesAction.run();
             }		
         });
@@ -416,12 +416,12 @@ public class LogView extends ViewPart implements ILogListener {
                 MESSAGE_ORDER *= -1;
                 ViewerSorter sorter = getViewerSorter(MESSAGE);
                 fTreeViewer.setSorter(sorter);
-                collator = sorter.getCollator();
+                fCollator = sorter.getCollator();
                 boolean isComparatorSet = 
                 	((EventDetailsDialogAction) fPropertiesAction).resetSelection(MESSAGE, MESSAGE_ORDER);
                 setComparator(MESSAGE);
                 if (!isComparatorSet)
-                    ((EventDetailsDialogAction) fPropertiesAction).setComparator(comparator);
+                    ((EventDetailsDialogAction) fPropertiesAction).setComparator(fComparator);
                 fMemento.putInteger(P_ORDER_VALUE, MESSAGE_ORDER);
                 fMemento.putInteger(P_ORDER_TYPE, MESSAGE);
                 setColumnSorting(fColumn1, MESSAGE_ORDER);
@@ -436,12 +436,12 @@ public class LogView extends ViewPart implements ILogListener {
                 PLUGIN_ORDER *= -1;
                 ViewerSorter sorter = getViewerSorter(PLUGIN);
                 fTreeViewer.setSorter(sorter);
-                collator = sorter.getCollator();
+                fCollator = sorter.getCollator();
                 boolean isComparatorSet = 
                 	((EventDetailsDialogAction) fPropertiesAction).resetSelection(PLUGIN, PLUGIN_ORDER);
                 setComparator(PLUGIN);
                 if (!isComparatorSet)
-                    ((EventDetailsDialogAction) fPropertiesAction).setComparator(comparator);
+                    ((EventDetailsDialogAction) fPropertiesAction).setComparator(fComparator);
                 fMemento.putInteger(P_ORDER_VALUE, PLUGIN_ORDER);
                 fMemento.putInteger(P_ORDER_TYPE, PLUGIN);
                 setColumnSorting(fColumn2, PLUGIN_ORDER);
@@ -456,9 +456,9 @@ public class LogView extends ViewPart implements ILogListener {
                 DATE_ORDER *= -1;
                 ViewerSorter sorter = getViewerSorter(DATE);
                 fTreeViewer.setSorter(sorter);
-                collator = sorter.getCollator();
+                fCollator = sorter.getCollator();
                 setComparator(DATE);
-				((EventDetailsDialogAction) fPropertiesAction).setComparator(comparator);
+				((EventDetailsDialogAction) fPropertiesAction).setComparator(fComparator);
                 fMemento.putInteger(P_ORDER_VALUE, DATE_ORDER);
                 fMemento.putInteger(P_ORDER_TYPE, DATE);
                 setColumnSorting(fColumn3, DATE_ORDER);
@@ -489,8 +489,8 @@ public class LogView extends ViewPart implements ILogListener {
         writeSettings();
         Platform.removeLogListener(this);
         fClipboard.dispose();
-        if (textShell != null)
-        	textShell.dispose();	
+        if (fTextShell != null)
+        	fTextShell.dispose();	
         LogReader.reset();
         super.dispose();
     }
@@ -757,8 +757,8 @@ public class LogView extends ViewPart implements ILogListener {
 			MESSAGE_ORDER = DESCENDING;
 			PLUGIN_ORDER = DESCENDING;
         }
-		if (collator == null)
-			collator = Collator.getInstance();
+		if (fCollator == null)
+			fCollator = Collator.getInstance();
 		setComparator(fMemento.getInteger(P_ORDER_TYPE).byteValue());
     }
 
@@ -826,33 +826,33 @@ public class LogView extends ViewPart implements ILogListener {
     }
 
     private void makeHoverShell() {
-        textShell = new Shell(fTree.getShell(), SWT.NO_FOCUS | SWT.ON_TOP | SWT.TOOL);
-        Display display = textShell.getDisplay();
-        textShell.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+        fTextShell = new Shell(fTree.getShell(), SWT.NO_FOCUS | SWT.ON_TOP | SWT.TOOL);
+        Display display = fTextShell.getDisplay();
+        fTextShell.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
         GridLayout layout = new GridLayout(1, false);
         int border = ((fTree.getShell().getStyle() & SWT.NO_TRIM) == 0) ? 0 : 1;
         layout.marginHeight = border;
         layout.marginWidth = border;
-        textShell.setLayout(layout);
-        textShell.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        Composite shellComposite = new Composite(textShell, SWT.NONE);
+        fTextShell.setLayout(layout);
+        fTextShell.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        Composite shellComposite = new Composite(fTextShell, SWT.NONE);
         layout = new GridLayout();
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         shellComposite.setLayout(layout);
         shellComposite.setLayoutData(
         		new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING));
-        textLabel = new Text(shellComposite, SWT.WRAP | SWT.MULTI | SWT.READ_ONLY);
+        fTextLabel = new Text(shellComposite, SWT.WRAP | SWT.MULTI | SWT.READ_ONLY);
         GridData gd = new GridData(GridData.FILL_BOTH);
         gd.widthHint = 100;
         gd.grabExcessHorizontalSpace = true;
-        textLabel.setLayoutData(gd);
+        fTextLabel.setLayoutData(gd);
         Color c = fTree.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-        textLabel.setBackground(c);
+        fTextLabel.setBackground(c);
         c = fTree.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
-        textLabel.setForeground(c);
-        textLabel.setEditable(false);
-        textShell.addDisposeListener(new DisposeListener() {
+        fTextLabel.setForeground(c);
+        fTextLabel.setEditable(false);
+        fTextShell.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e) {
                 onTextShellDispose(e);
             }
@@ -860,21 +860,21 @@ public class LogView extends ViewPart implements ILogListener {
     }
 
     void onTextShellDispose(DisposeEvent e) {
-        canOpenTextShell = true;
+        fCanOpenTextShell = true;
         setFocus();
     }
 
     void onMouseDown(Event e) {
-        if (textShell != null && !textShell.isDisposed() && !textShell.isFocusControl()) {
-            textShell.setVisible(false);
-            canOpenTextShell = true;
+        if (fTextShell != null && !fTextShell.isDisposed() && !fTextShell.isFocusControl()) {
+            fTextShell.setVisible(false);
+            fCanOpenTextShell = true;
         }
     }
 
     void onMouseHover(Event e) {
-        if (!canOpenTextShell)
+        if (!fCanOpenTextShell)
             return;
-        canOpenTextShell = false;
+        fCanOpenTextShell = false;
         Point point = new Point(e.x, e.y);
 		TreeItem item = fTree.getItem(point);
         if (item == null)
@@ -883,7 +883,7 @@ public class LogView extends ViewPart implements ILogListener {
         if (message == null)
             return;
         
-        textLabel.setText(message);
+        fTextLabel.setText(message);
         Rectangle bounds = fTree.getDisplay().getBounds();
         Point cursorPoint = fTree.getDisplay().getCursorLocation();
         int x = point.x;
@@ -895,14 +895,14 @@ public class LogView extends ViewPart implements ILogListener {
     	if (cursorPoint.y + height + 25 > bounds.height)
     		y -= height + 27;
         
-        textShell.setLocation(fTree.toDisplay(x, y));
-        textShell.setSize(width, height);
-        textShell.setVisible(true);
+        fTextShell.setLocation(fTree.toDisplay(x, y));
+        fTextShell.setSize(width, height);
+        fTextShell.setVisible(true);
     }
 
     void onMouseMove(Event e) {
-        if (textShell != null && !textShell.isDisposed() && textShell.isVisible())
-            textShell.setVisible(false);
+        if (fTextShell != null && !fTextShell.isDisposed() && fTextShell.isVisible())
+            fTextShell.setVisible(false);
 		
 		Point point = new Point(e.x, e.y);
 		TreeItem item = fTree.getItem(point);
@@ -913,7 +913,7 @@ public class LogView extends ViewPart implements ILogListener {
 		int parentCount = getNumberOfParents(entry);
 		int startRange = 20 + Math.max(image.getBounds().width + 2, 7 + 2)*parentCount;
 		int endRange = startRange + 16;
-		canOpenTextShell = e.x >= startRange && e.x <= endRange;
+		fCanOpenTextShell = e.x >= startRange && e.x <= endRange;
 	}
 	
 	private int getNumberOfParents(LogEntry entry){
@@ -924,12 +924,12 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
     public Comparator getComparator() {
-        return comparator;
+        return fComparator;
     }
 
     private void setComparator(byte sortType) {
         if (sortType == DATE) {
-            comparator = new Comparator() {
+            fComparator = new Comparator() {
                 public int compare(Object e1, Object e2) {
 					Date date1 = ((LogEntry) e1).getDate();
 					Date date2 = ((LogEntry) e2).getDate();
@@ -939,19 +939,19 @@ public class LogView extends ViewPart implements ILogListener {
                 }
             };
         } else if (sortType == PLUGIN) {
-            comparator = new Comparator() {
+            fComparator = new Comparator() {
                 public int compare(Object e1, Object e2) {
                     LogEntry entry1 = (LogEntry) e1;
                     LogEntry entry2 = (LogEntry) e2;
-                    return collator.compare(entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
+                    return fCollator.compare(entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
                 }
             };
         } else {
-            comparator = new Comparator() {
+            fComparator = new Comparator() {
                 public int compare(Object e1, Object e2) {
                     LogEntry entry1 = (LogEntry) e1;
                     LogEntry entry2 = (LogEntry) e2;
-                    return collator.compare(entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
+                    return fCollator.compare(entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
                 }
             };
         }
