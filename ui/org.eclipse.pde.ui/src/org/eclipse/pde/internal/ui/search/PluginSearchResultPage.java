@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.search;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.pde.core.plugin.IPluginBase;
@@ -20,6 +21,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.view.ImportActionGroup;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PartInitException;
@@ -72,9 +74,17 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 	protected void fillContextMenu(IMenuManager mgr) {
 		super.fillContextMenu(mgr);
 		mgr.add(new Separator());
+		IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
+		ActionContext context = new ActionContext(selection);
 		PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
-		actionGroup.setContext(new ActionContext(getViewer().getSelection()));
+		actionGroup.setContext(context);
 		actionGroup.fillContextMenu(mgr);
+		if (ImportActionGroup.canImport(selection)) {
+			ImportActionGroup importActionGroup = new ImportActionGroup();
+			importActionGroup.setContext(context);
+			importActionGroup.fillContextMenu(mgr);
+			mgr.add(new Separator());
+		}
 	}
 
 	/* (non-Javadoc)

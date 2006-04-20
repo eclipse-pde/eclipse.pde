@@ -73,8 +73,6 @@ import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
-import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
-import org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
@@ -84,7 +82,6 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPageLayout;
@@ -107,8 +104,6 @@ public class PluginsView extends ViewPart {
 	private DrillDownAdapter drillDownAdapter;
 	private IPropertyChangeListener propertyListener;
 	private Action openAction;
-	private Action importBinaryAction;
-	private Action importSourceAction;
 	private Action hideExtDisabledFilterAction;
 	private Action hideExtEnabledFilterAction;
 	private Action hideWorkspaceFilterAction;
@@ -298,19 +293,6 @@ public class PluginsView extends ViewPart {
 			}
 		};
 		openDependenciesAdapter.setText(PDEUIMessages.PluginsView_openDependencies); 
-
-		importBinaryAction = new Action() {
-			public void run() {
-				handleImport(false);
-			}
-		};
-		importBinaryAction.setText(PDEUIMessages.PluginsView_asBinaryProject); 
-		importSourceAction = new Action() {
-			public void run() {
-				handleImport(true);
-			}
-		};
-		importSourceAction.setText(PDEUIMessages.PluginsView_asSourceProject); 
 		hideExtDisabledFilterAction = new Action() {
 			public void run() {
 				boolean checked = hideExtDisabledFilterAction.isChecked();
@@ -517,11 +499,10 @@ public class PluginsView extends ViewPart {
 			if (addSeparator) {
 				manager.add(new Separator());
 			}
-			if (canImport(selection)) {
-				MenuManager importMenu = new MenuManager(PDEUIMessages.PluginsView_import); 
-				importMenu.add(importBinaryAction);
-				importMenu.add(importSourceAction);
-				manager.add(importMenu);
+			if (ImportActionGroup.canImport(selection)) {
+				ImportActionGroup actionGroup = new ImportActionGroup();
+				actionGroup.setContext(new ActionContext(selection));
+				actionGroup.fillContextMenu(manager);
 				manager.add(new Separator());
 			}
 			addSeparator = false;
@@ -582,20 +563,6 @@ public class PluginsView extends ViewPart {
 		openSystemEditorAction.setImageDescriptor(desc);
 		openSystemEditorAction.setChecked(editorId != null && editorId.equals("@system"));  //$NON-NLS-1$
 		manager.add(openSystemEditorAction);
-	}
-
-	private boolean canImport(IStructuredSelection selection) {
-		int nexternal = 0;
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
-			Object obj = iter.next();
-			if (obj instanceof ModelEntry) {
-				ModelEntry entry = (ModelEntry) obj;
-				if (entry.getWorkspaceModel() == null)
-					nexternal++;
-			} else
-				return false;
-		}
-		return nexternal > 0;
 	}
 
 	private boolean canDoJavaSearchOperation(
@@ -705,40 +672,6 @@ public class PluginsView extends ViewPart {
 			page.openEditor(input, DEFAULT_EDITOR_ID);
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
-		}
-	}
-
-	private void handleImport(boolean extractSource) {
-		IStructuredSelection selection =
-			(IStructuredSelection) treeViewer.getSelection();
-		ArrayList externalModels = new ArrayList();
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
-			ModelEntry entry = (ModelEntry) iter.next();
-			if (entry.getWorkspaceModel() != null)
-				continue;
-			externalModels.add(entry.getExternalModel());
-		}
-		IPluginModelBase[] models =
-			(IPluginModelBase[]) externalModels.toArray(
-				new IPluginModelBase[externalModels.size()]);
-		try {
-			Shell shell = treeViewer.getTree().getShell();
-			int importType =
-				extractSource
-					? PluginImportOperation.IMPORT_WITH_SOURCE
-					: PluginImportOperation.IMPORT_BINARY;
-					
-			IRunnableWithProgress op =
-				PluginImportWizard.getImportOperation(
-					shell,
-					importType,
-					models,
-					false);
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
-		} catch (InterruptedException e) {
-		} catch (InvocationTargetException e) {
-			PDEPlugin.logException(e);
-		} catch (Exception e) {
 		}
 	}
 

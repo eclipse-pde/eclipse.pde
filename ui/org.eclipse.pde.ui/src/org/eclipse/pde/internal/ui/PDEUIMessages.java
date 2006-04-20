@@ -21,6 +21,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String ContentSection_addDialogButtonLabel;
 
+	public static String ImportActionGroup_binaryWithLinkedContent;
+
+	public static String ImportActionGroup_importContributingPlugin;
+
 	public static String LibrarySection_addDialogButton;
 
 	public static String MainPreferencePage_group2;
