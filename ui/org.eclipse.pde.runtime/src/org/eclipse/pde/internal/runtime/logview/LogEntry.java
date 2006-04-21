@@ -35,7 +35,7 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 	private String pluginId;
 	private int severity;
 	private int code;
-	private Date date;
+	private Date fDate;
 	private String message;
 	private String stack;
 	private LogSession session;
@@ -74,7 +74,9 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 		return stack;
 	}
 	public Date getDate() {
-		return date;
+		if (fDate == null)
+			fDate = new Date(0); // unknown date - return epoch
+		return fDate;
 	}
 	public String getSeverityText() {
 		return getSeverityText(severity);
@@ -179,7 +181,9 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 		}
 		DateFormat formatter = new SimpleDateFormat(F_DATE_FORMAT);
 		try {
-			date = formatter.parse(dateBuffer.toString());
+			Date date = formatter.parse(dateBuffer.toString());
+			if (date != null)
+				fDate = date; 
 		} catch (ParseException e) {
 		}
 	}
@@ -229,7 +233,9 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 		}
 		DateFormat formatter = new SimpleDateFormat(F_DATE_FORMAT);
 		try {
-			date = formatter.parse(dateBuffer.toString());
+			Date date = formatter.parse(dateBuffer.toString());
+			if (date != null)
+				fDate = date; 
 		} catch (ParseException e) {
 		}
 		return depth;	
@@ -254,7 +260,7 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 		pluginId = status.getPlugin();
 		severity = status.getSeverity();
 		code = status.getCode();
-		date = new Date();
+		fDate = new Date();
 		message = status.getMessage();
 		Throwable throwable = status.getException();
 		if (throwable != null) {
@@ -284,7 +290,7 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 		if (session != null)
 			writer.println(session.getSessionData());
 		writer.println(getSeverityText());
-		if (date != null)
+		if (fDate != null)
 			writer.println(getDate());
 		
 		if (message != null)
