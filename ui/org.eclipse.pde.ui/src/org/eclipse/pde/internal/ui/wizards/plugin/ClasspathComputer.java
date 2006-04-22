@@ -25,6 +25,7 @@ import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModelStatus;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -36,7 +37,6 @@ import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.ExecutionEnvironmentAnalyzer;
 import org.eclipse.pde.internal.core.JavadocLocationManager;
@@ -62,7 +62,7 @@ public class ClasspathComputer {
 		addSourceAndLibraries(project, model, build, clear, result);
 	
 		// add JRE and set compliance options
-		String ee = getExecutionEnvironment(model.getBundleDescription(), build);	
+		String ee = getExecutionEnvironment(model.getBundleDescription());	
 		result.add(createJREEntry(ee));
 		setComplianceOptions(JavaCore.create(project), ExecutionEnvironmentAnalyzer.getCompliance(ee));
 
@@ -144,9 +144,16 @@ public class ClasspathComputer {
 			String folder = folders[j];
 			IPath path = project.getFullPath().append(folder);
 			if (paths.add(path)) {
-				if (project.findMember(folder) == null) 
-					CoreUtility.createFolder(project.getFolder(folder));							
-				result.add(JavaCore.newSourceEntry(path));
+				if (project.findMember(folder) == null) {
+					CoreUtility.createFolder(project.getFolder(folder));
+				} else {
+					IPackageFragmentRoot root = JavaCore.create(project).getPackageFragmentRoot(path.toString());
+					if (root.exists() && root.getKind() == IPackageFragmentRoot.K_BINARY) {
+						result.add(root.getRawClasspathEntry());
+					} else {
+						result.add(JavaCore.newSourceEntry(path));
+					}
+				}
 			} 
 		}	
 	}
@@ -193,25 +200,13 @@ public class ClasspathComputer {
 		return (dot != -1) ? libraryName.substring(0, dot) + "src.zip" : libraryName;	 //$NON-NLS-1$
 	}
 	
-	private static String getExecutionEnvironment(BundleDescription bundleDescription, IBuild build) {
-		String ee = null;
-		
-		if (build != null) {
-			// try build.properties first
-			IBuildEntry entry = build.getEntry(IBuildPropertiesConstants.PROPERTY_JRE_COMPILATION_PROFILE);
-			if (entry != null) {
-				String[] tokens = entry.getTokens();
-				if (tokens.length > 0)
-					ee = tokens[0];
-			}
-		}
-		// try the Bundle-RequiredExecutionEnvironment header
-		if (ee == null && bundleDescription != null) {
+	private static String getExecutionEnvironment(BundleDescription bundleDescription) {
+		if (bundleDescription != null) {
 			String[] envs = bundleDescription.getExecutionEnvironments();
 			if (envs.length > 0)
-				ee = envs[0];
+				return envs[0];
 		}
-		return ee;
+		return null;
 	}
 	
 	public static void setComplianceOptions(IJavaProject project, String compliance) {
