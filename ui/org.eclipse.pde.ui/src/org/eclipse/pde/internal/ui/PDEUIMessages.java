@@ -2859,4 +2859,8 @@ public class PDEUIMessages extends NLS {
 	public static String RemoveInternalDirective_desc;
 
 	public static String ImportPackageSection_dialogButtonLabel;
+	
+	public static String NewExtensionPointMainPage_malformedId;
+
+	public static String NewExtensionPointMainPage_namespaceNotFound;
 }

@@ -214,5 +214,7 @@ public class PDECoreMessages extends NLS {
 	public static String ExportWizard_badDirectory;
 
 	public static String FeatureExportJob_taskName;
+	
+	public static String Builders_Manifest_namespaceNotFound;
 
 }

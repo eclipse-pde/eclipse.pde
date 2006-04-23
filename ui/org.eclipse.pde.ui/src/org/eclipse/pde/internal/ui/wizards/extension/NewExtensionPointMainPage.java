@@ -18,6 +18,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Composite;
@@ -97,5 +99,28 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 			fNameText.setText(point.getName());
 		if (fSchemaText!= null && point.getSchema()!=null)
 			fSchemaText.setText(point.getSchema());
+	}
+	public String getInvalidIdMessage() {
+		String schemaVersion = model.getPluginBase().getSchemaVersion();
+		String id = fIdText.getText();
+		if (schemaVersion == null || Float.parseFloat(schemaVersion) >= 3.2) {
+			if (!IdUtil.isValidCompositeID(id))
+				return PDEUIMessages.NewExtensionPointMainPage_malformedId;
+			else if (!isValidNamespace(id))
+				return PDEUIMessages.NewExtensionPointMainPage_namespaceNotFound;
+			return null;
+		} 
+		return IdUtil.isValidSimpleID(id) ? null : PDEUIMessages.BaseExtensionPoint_malformedId;
+	}
+	protected final boolean isValidNamespace(String id) {
+        int index = id.lastIndexOf('.');
+        if (index > 0) {
+        	String pluginId = id.substring(0, index);
+        	return PDECore.getDefault().getModelManager().findEntry(pluginId) != null; 
+        }
+        return true;
+	}
+	protected boolean isComplete() {
+		return IdUtil.isValidCompositeID(fIdText.getText());
 	}
 }

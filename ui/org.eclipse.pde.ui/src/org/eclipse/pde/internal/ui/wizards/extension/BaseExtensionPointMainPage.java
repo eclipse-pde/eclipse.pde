@@ -45,7 +45,6 @@ import org.eclipse.pde.internal.core.schema.SchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRootElement;
 import org.eclipse.pde.internal.core.schema.SchemaSimpleType;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -380,9 +379,6 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	}
 	public boolean checkFieldsFilled() {	
 		boolean empty = fIdText.getText().length() == 0 || fNameText.getText().length() == 0;
-        if (!empty) {
-            empty = !IdUtil.isValidSimpleID(fIdText.getText());
-        }
 		if (!empty && isPluginIdNeeded()) {
 			empty = getPluginId().length() == 0 || fSchemaText.getText().length() == 0 ;
 		}
@@ -391,24 +387,18 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		return !empty;
 	}
 
-    public boolean isInvalidValidId() {
-        return fIdText.getText().length()>0 && !IdUtil.isValidSimpleID(fIdText.getText());
-    }
-
 	private void validatePage() {
 		if (!validateContainer())
 			return;
 		boolean isFilled = checkFieldsFilled();
-		String message = null;
-        if (isInvalidValidId())
-            message = PDEUIMessages.BaseExtensionPoint_malformedId;                
-        else if (!isFilled) {
+		String message = getInvalidIdMessage();              
+        if (message == null && !isFilled) {
             if (isPluginIdNeeded())
 				message = PDEUIMessages.BaseExtensionPoint_missingId;
 			else
 				message = PDEUIMessages.BaseExtensionPoint_noPlugin_missingId;
 		}
-		setPageComplete(isFilled);
+		setPageComplete(isFilled && isComplete());
 		setMessage(message, IMessageProvider.WARNING);
 	}
 	private boolean validateContainer() {
@@ -485,5 +475,12 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		if (path.startsWith(workspacePath))
 			path = path.replaceFirst(workspacePath, ""); //$NON-NLS-1$
 		return path;
+	}
+	public String getInvalidIdMessage() {
+		// No validation done (other than making sure id is not blank)
+		return null;
+	}
+	protected boolean isComplete() {
+		return true;
 	}
 }

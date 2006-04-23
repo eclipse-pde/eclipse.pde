@@ -962,22 +962,15 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		String pointId = getQualifiedPointId();
-		int loc = pointId.lastIndexOf('.');
-		String pluginId = ""; //$NON-NLS-1$
-		if (loc != -1) {
-			pluginId = pointId.substring(0, loc);
-			pointId = pointId.substring(loc + 1);
-		}
 		writer.println("<?xml version='1.0' encoding='UTF-8'?>"); //$NON-NLS-1$
 		writer.println("<!-- Schema file written by PDE -->"); //$NON-NLS-1$
-		writer.println("<schema targetNamespace=\"" + pluginId + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println("<schema targetNamespace=\"" + fPluginID + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 		String indent2 = INDENT + INDENT;
 		String indent3 = indent2 + INDENT;
 		writer.println(indent + "<annotation>"); //$NON-NLS-1$
 		writer.println(indent2 + "<appInfo>"); //$NON-NLS-1$
-		writer.print(indent3 + "<meta.schema plugin=\"" + pluginId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.print(" id=\"" + pointId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.print(indent3 + "<meta.schema plugin=\"" + fPluginID + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.print(" id=\"" + fPointID + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println(" name=\"" + getName() + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println(indent2 + "</appInfo>"); //$NON-NLS-1$
 		writer.println(indent2 + "<documentation>"); //$NON-NLS-1$

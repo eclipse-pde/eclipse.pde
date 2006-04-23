@@ -223,7 +223,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		String pluginID = fullID.substring(0, lastDot);
 		IPlugin plugin = findPlugin(pluginID);
 		if (plugin == null)
-			return null;
+			return PDEManager.findExtensionPoint(fullID);
 		String pointID = fullID.substring(lastDot + 1);
 		IPluginExtensionPoint[] points = plugin.getExtensionPoints();
 		for (int i = 0; i < points.length; i++) {
@@ -238,7 +238,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 				if (points[j].getId().equals(pointID))
 					return points[j];
 		}
-		return null;
+		return PDEManager.findExtensionPoint(fullID);
 	}
 
 	private IFeature findFeature(

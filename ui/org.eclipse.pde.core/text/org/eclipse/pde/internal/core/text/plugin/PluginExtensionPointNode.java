@@ -13,18 +13,21 @@ package org.eclipse.pde.internal.core.text.plugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 
-public class PluginExtensionPointNode extends PluginObjectNode
-		implements
-			IPluginExtensionPoint {
+public class PluginExtensionPointNode extends PluginObjectNode implements IPluginExtensionPoint {
 
 	private static final long serialVersionUID = 1L;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginExtensionPoint#getFullId()
 	 */
 	public String getFullId() {
+		String id = getId();
+		String version = getPluginBase().getSchemaVersion();
+		if ("3.2".equals(version) && id != null && id.indexOf('.') != -1) //$NON-NLS-1$
+			return id;
 		String pluginID = getPluginBase().getId();
-		return (pluginID != null) ? pluginID + "." + getId() : getId(); //$NON-NLS-1$
+		return (pluginID != null) ? pluginID + "." + id : id; //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginExtensionPoint#getSchema()

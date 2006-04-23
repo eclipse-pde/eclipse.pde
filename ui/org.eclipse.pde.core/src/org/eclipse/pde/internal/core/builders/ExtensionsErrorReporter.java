@@ -301,8 +301,20 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
             String message = null;
             if (schemaVersion < 3.2 && !IdUtil.isValidSimpleID(idAttr.getValue()))
             	message = NLS.bind(PDECoreMessages.Builders_Manifest_simpleID, idAttr.getValue());
-            else if (schemaVersion >= 3.2 && !IdUtil.isValidCompositeID(idAttr.getValue()))
-            	message = NLS.bind(PDECoreMessages.Builders_Manifest_compositeID, idAttr.getValue());
+            else if (schemaVersion >= 3.2) {
+            	if (!IdUtil.isValidCompositeID(idAttr.getValue())) {
+            		message = NLS.bind(PDECoreMessages.Builders_Manifest_compositeID, idAttr.getValue());
+            	} else {
+            		String id = idAttr.getNodeValue();
+            		int index = id.lastIndexOf('.');
+            		if (index > 0) {
+            			String pluginId = id.substring(0, index);
+            			if (PDECore.getDefault().getModelManager().findEntry(pluginId) == null) {
+            				message = NLS.bind(PDECoreMessages.Builders_Manifest_namespaceNotFound, id);
+            			}
+            		}
+            	}
+            }
            
             if (message != null)   
             	report(message, getLine(element, idAttr.getName()), CompilerFlags.WARNING);
