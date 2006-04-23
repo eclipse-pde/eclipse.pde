@@ -28,6 +28,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
@@ -110,7 +111,7 @@ public class ClasspathComputer {
 				if (libraries[i].getName().equals(".")) //$NON-NLS-1$
 					addJARdPlugin(project, ClasspathUtilCore.getFilename(model), attrs, result);
 				else
-					addLibraryEntry(project, libraries[i], libraries[i].isExported(), attrs, result);
+					addLibraryEntry(project, libraries[i], attrs, result);
 			}
 		}
 		if (libraries.length == 0) {
@@ -150,10 +151,10 @@ public class ClasspathComputer {
 					IPackageFragmentRoot root = JavaCore.create(project).getPackageFragmentRoot(path.toString());
 					if (root.exists() && root.getKind() == IPackageFragmentRoot.K_BINARY) {
 						result.add(root.getRawClasspathEntry());
-					} else {
-						result.add(JavaCore.newSourceEntry(path));
-					}
+						continue;
+					} 
 				}
+				result.add(JavaCore.newSourceEntry(path));
 			} 
 		}	
 	}
@@ -168,18 +169,26 @@ public class ClasspathComputer {
 		return (buildModel != null) ? buildModel.getBuild() : null;
 	}
 	
-	private static void addLibraryEntry(IProject project, IPluginLibrary library, boolean exported, IClasspathAttribute[] attrs, ArrayList result) {
+	private static void addLibraryEntry(IProject project, IPluginLibrary library, IClasspathAttribute[] attrs, ArrayList result) throws JavaModelException {
 		String name = ClasspathUtilCore.expandLibraryName(library.getName());
 		IResource jarFile = project.findMember(name);
-		if (jarFile != null) {
-			IResource resource = project.findMember(getSourceZipName(name));
-			if (resource == null)
-				resource = project.findMember(new Path(getSourceZipName(name)).lastSegment());
-			IPath srcAttachment = resource != null ? resource.getFullPath() : null;
-			IClasspathEntry entry = JavaCore.newLibraryEntry(jarFile.getFullPath(), srcAttachment, null, new IAccessRule[0], attrs, exported);
-			if (!result.contains(entry))
-				result.add(entry);
+		if (jarFile == null)
+			return;
+		
+		IPackageFragmentRoot root = JavaCore.create(project).getPackageFragmentRoot(jarFile);
+		if (root.exists() && root.getKind() == IPackageFragmentRoot.K_BINARY) {
+			IClasspathEntry oldEntry = root.getRawClasspathEntry();
+			if (oldEntry.getSourceAttachmentPath() != null && !result.contains(oldEntry)) {
+				result.add(oldEntry);		
+				return;
+			}
 		}
+			
+		IResource resource = project.findMember(getSourceZipName(name));
+		IPath srcAttachment = resource != null ? resource.getFullPath() : null;
+		IClasspathEntry entry = JavaCore.newLibraryEntry(jarFile.getFullPath(), srcAttachment, null, new IAccessRule[0], attrs, library.isExported());
+		if (!result.contains(entry))
+			result.add(entry);
 	}
 
 	private static void addJARdPlugin(IProject project, String filename, IClasspathAttribute[] attrs, ArrayList result) {		
