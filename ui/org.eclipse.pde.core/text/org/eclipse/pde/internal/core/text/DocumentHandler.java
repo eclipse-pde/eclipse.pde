@@ -190,17 +190,20 @@ public abstract class DocumentHandler extends DefaultHandler {
 			}
 			IDocument doc = getDocument();
 			String text = doc.get(node.getOffset(), node.getLength());
-			textNode.setOffset(node.getOffset() + text.indexOf(textNode.getText()));
-			text = doc.get(textNode.getOffset(), node.getLength() - textNode.getOffset() + node.getOffset());
-			int index = text.indexOf('<');
-		    for (index -= 1; index >= 0; index--) {
-		    	if (!Character.isWhitespace(text.charAt(index))) {
-		    		index += 1;
-		    		break;
-		    	}
-		    }
-		    textNode.setLength(index);
-		    textNode.setText(doc.get(textNode.getOffset(), index));
+			// 1st char of text node
+			int relativeStartOffset = text.indexOf('>') + 1;
+			// last char of text node
+			int relativeEndOffset = text.lastIndexOf('<') - 1;
+			
+			// trim whitespace
+			while (Character.isWhitespace(text.charAt(relativeStartOffset)))
+				relativeStartOffset += 1;
+			while (Character.isWhitespace(text.charAt(relativeEndOffset)))
+				relativeEndOffset -= 1;
+			
+			textNode.setOffset(node.getOffset() + relativeStartOffset);
+		    textNode.setLength(relativeEndOffset - relativeStartOffset + 1);
+		    textNode.setText(textNode.getText().trim());
 		}	
 	}
 	

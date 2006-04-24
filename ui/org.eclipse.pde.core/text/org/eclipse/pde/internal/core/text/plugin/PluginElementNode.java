@@ -75,7 +75,7 @@ public class PluginElementNode extends PluginParentNode
 			node.setEnclosingElement(this);
 			addTextNode(node);
 		}		
-		node.setText(text);
+		node.setText(text.trim());
 		firePropertyChanged(this, P_TEXT, node, node);
 	}
 	

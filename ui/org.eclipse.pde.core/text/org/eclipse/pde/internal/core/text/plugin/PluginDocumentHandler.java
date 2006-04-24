@@ -43,7 +43,9 @@ public class PluginDocumentHandler extends AbstractPluginDocumentHandler {
 				parent.addTextNode(textNode);
 				textNode.setText(buffer.toString().trim());
 			}
-		}
+		} else
+			textNode.setText(buffer.insert(0, textNode.getText()).toString());
+		
 	}
 	
 	/* (non-Javadoc)
