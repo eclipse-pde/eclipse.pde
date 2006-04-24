@@ -187,7 +187,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		// This would be necessary for the top level feature
 		script.println();
 		script.printTargetDeclaration(TARGET_FETCH, null, null, null, null);
-		script.printAntCallTask(TARGET_FETCH_ELEMENT, true, null);
+		//don't do a fetch element for the generated container feature
+		if(!mapInfos.get(IFetchFactory.KEY_ELEMENT_NAME).equals(IPDEBuildConstants.CONTAINER_FEATURE))
+			script.printAntCallTask(TARGET_FETCH_ELEMENT, true, null);
 		if (mapInfos.get(IFetchFactory.KEY_ELEMENT_TYPE).equals(IFetchFactory.ELEMENT_TYPE_FEATURE)) {
 			script.printAntCallTask(TARGET_FETCH_PLUGINS, true, null);
 			script.printAntCallTask(TARGET_FETCH_RECURSIVELY, true, null);
@@ -196,6 +198,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void generateFetchElementTarget() {
+		//don't try to fetch a generated container feature
+		if(mapInfos.get(IFetchFactory.KEY_ELEMENT_NAME).equals(IPDEBuildConstants.CONTAINER_FEATURE))
+			return;
 		script.printTargetDeclaration(TARGET_FETCH_ELEMENT, null, FEATURE_ONLY, null, null);
 		try {
 			generateFetchEntry(element, false);
@@ -231,6 +236,11 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		// read and validate the repository info for the entry
 		String repositoryInfo = getRepositoryInfo(entry);
 		if (repositoryInfo == null) {
+			if(IPDEBuildConstants.CONTAINER_FEATURE.equals(currentElement)){
+				entryInfos.put(IFetchFactory.KEY_ELEMENT_TYPE, type);
+				entryInfos.put(IFetchFactory.KEY_ELEMENT_NAME, currentElement);
+				return entryInfos;
+			}			
 			String message = NLS.bind(Messages.error_missingDirectoryEntry, entry);
 			BundleHelper.getDefault().getLog().log(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ENTRY_MISSING, message, null));
 			return null;
@@ -399,6 +409,25 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		// Generate a temporary Ant script which retrieves the feature.xml for this
 		// feature from CVS
 		File root = new File(workingDirectory);
+		
+		//generated container feature should already exist on disk
+		if(elementName.equals(IPDEBuildConstants.CONTAINER_FEATURE)) {
+			FeatureExecutableFactory factory = new FeatureExecutableFactory();
+			File featuresFolder = new File(root, DEFAULT_FEATURE_LOCATION);
+			File featureLocation = new File(featuresFolder, elementName);
+			try {
+				feature = factory.createFeature(featureLocation.toURL(), null, null);
+				featureProperties = new Properties();
+				InputStream featureStream = new FileInputStream(new File(featureLocation, PROPERTIES_FILE));
+				featureProperties.load(featureStream);
+				featureStream.close();
+				return;
+			} catch (Exception e) {
+				String message = NLS.bind(Messages.exception_missingFeature, elementName);
+				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, e));
+			}
+		}
+		
 		File target = new File(root, DEFAULT_RETRIEVE_FILENAME_DESCRIPTOR);
 		IPath destination = new Path(root.getAbsolutePath()).append("tempFeature/"); //$NON-NLS-1$
 		try {

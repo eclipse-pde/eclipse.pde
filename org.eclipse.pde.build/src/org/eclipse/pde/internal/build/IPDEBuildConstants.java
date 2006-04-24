@@ -108,4 +108,7 @@ public interface IPDEBuildConstants {
 	public final static String ATTR_ID = "id"; //$NON-NLS-1$
 	public final static String ATTR_CLASS = "class"; //$NON-NLS-1$
 	public final static String ELEM_FACTORY = "factory"; //$NON-NLS-1$
+	
+	//container feature used in building .product files
+	public final static String CONTAINER_FEATURE = "org.eclipse.pde.build.container.feature"; //$NON-NLS-1$
 }
