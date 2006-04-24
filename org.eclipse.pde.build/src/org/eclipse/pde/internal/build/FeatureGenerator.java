@@ -24,6 +24,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	private String featureId = null;
 	private String productFile = null;
 	private String[] pluginList = null;
+	private String [] fragmentList = null;
 	private String[] featureList = null;
 
 	private ProductFile product = null;
@@ -38,18 +39,18 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 
 		List plugins = pluginList != null ? Arrays.asList(pluginList) : new ArrayList();
 		List features = featureList != null ? Arrays.asList(featureList) : new ArrayList();
+		List fragments = fragmentList != null ? Arrays.asList(fragmentList) : new ArrayList();
 		if (product != null) {
-			List productElements = product.useFeatures() ? product.getFeatures() : product.getPlugins();
-			if (productElements != null && productElements.size() > 0) {
-				if (product.useFeatures())
-					features.addAll(productElements);
-				else
-					plugins.addAll(productElements);
+			if(product.useFeatures()) {
+				features.addAll(product.getFeatures());
+			} else {
+				plugins.addAll(product.getPlugins(false));
+				fragments.addAll(product.getFragments());
 			}
 		}
 		//TODO Give a warning if the product is null and no features or plugins have been given
 		try {
-			createFeature(featureId, plugins, features);
+			createFeature(featureId, plugins, fragments, features);
 		} catch (FileNotFoundException e) {
 			//TODO Log error
 		}
@@ -67,6 +68,10 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		this.featureList = featureList;
 	}
 
+	public void setFragmentList(String[] fragmentList) {
+		this.fragmentList = fragmentList;
+	}
+	
 	public void setFeatureId(String featureId) {
 		this.featureId = featureId;
 	}
@@ -87,7 +92,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		} 
 	}
 	
-	protected void createFeature(String feature, List plugins, List features) throws CoreException, FileNotFoundException {
+	protected void createFeature(String feature, List plugins, List fragments, List features) throws CoreException, FileNotFoundException {
 		String location = IPDEBuildConstants.DEFAULT_FEATURE_LOCATION + '/' + feature;
 		File directory = new File(getWorkingDirectory(), location);
 		if (!directory.exists())
@@ -111,6 +116,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		parameters.put("version", "1.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.startTag("feature", parameters, true); //$NON-NLS-1$
 
+		boolean fragment = false;
 		for (Iterator iter = plugins.iterator(); iter.hasNext();) {
 			String name = (String) iter.next();
 			boolean unpack = true;
@@ -128,7 +134,14 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			parameters.put("id", name); //$NON-NLS-1$
 			parameters.put("version", "0.0.0"); //$NON-NLS-1$//$NON-NLS-2$
 			parameters.put("unpack", unpack ? "true" : "false");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			if(fragment)
+				parameters.put("fragment", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 			writer.printTag("plugin", parameters, true, true, true); //$NON-NLS-1$
+			
+			if(!fragment && !iter.hasNext() && fragments.size() > 0){
+				fragment = true;
+				iter = fragments.iterator();
+			}
 		}
 		
 		boolean hasLaunchers = false;

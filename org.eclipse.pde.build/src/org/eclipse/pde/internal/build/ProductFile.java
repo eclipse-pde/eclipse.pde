@@ -87,6 +87,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	private String id = null;
 	private boolean useFeatures = false;
 	private List plugins = null;
+	private List fragments = null;
 	private List features = null;
 	private String splashLocation = null;
 	private String productName = null;
@@ -129,9 +130,29 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	}
 	
 	public List getPlugins() {
-		if (plugins == null)
+		return getPlugins(true);
+	}
+	
+	public List getPlugins(boolean includeFragments) {
+		List p = plugins != null ? plugins : Collections.EMPTY_LIST;
+		if(!includeFragments)
+			return p;
+		
+		List f = fragments != null ? fragments : Collections.EMPTY_LIST;
+		int size = p.size() + f.size();
+		if (size == 0)
 			return Collections.EMPTY_LIST;
-		return plugins;
+
+		List both = new ArrayList(size);
+		both.addAll(p);
+		both.addAll(f);
+		return both;
+	}
+	
+	public List getFragments() {
+		if(fragments == null)
+			return Collections.EMPTY_LIST;
+		return fragments;
 	}
 	
 	public List getFeatures() {
@@ -141,7 +162,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 	}
 	
 	public boolean containsPlugin(String plugin) {
-		return plugins != null && plugins.contains(plugin);
+		return (plugins != null && plugins.contains(plugin)) || (fragments != null && fragments.contains(plugin));
 	}
 
 	/**
@@ -393,9 +414,16 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 			launcherArgs.setProperty(key, value);
 	}
 	private void processPlugin(Attributes attributes) {
-		if (plugins == null)
-			plugins = new ArrayList();
-		plugins.add(attributes.getValue("id")); //$NON-NLS-1$
+		String fragment = attributes.getValue("fragment"); //$NON-NLS-1$
+		if (fragment != null && new Boolean(fragment).booleanValue()) {
+			if (fragments == null)
+				fragments = new ArrayList();
+			fragments.add(attributes.getValue("id")); //$NON-NLS-1$
+		} else {
+			if (plugins == null)
+				plugins = new ArrayList();
+			plugins.add(attributes.getValue("id")); //$NON-NLS-1$
+		}
 	}
 	
 	private void processFeature(Attributes attributes) {

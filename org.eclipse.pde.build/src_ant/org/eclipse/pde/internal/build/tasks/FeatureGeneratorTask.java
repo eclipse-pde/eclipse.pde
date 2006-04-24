@@ -73,6 +73,15 @@ public class FeatureGeneratorTask extends Task {
 	}
 
 	/**
+	 * Set a list of plugin fragment ids to be included in the generated feature
+	 * @param fragmentList a comma separated list of plugin ids
+	 */
+	public void setFragmentList(String fragmentList) {
+		if(fragmentList != null && !fragmentList.startsWith("${")) //$NON-NLS-1$
+			generator.setFragmentList(Utils.getArrayFromString(fragmentList));
+	}
+	
+	/**
 	 * Set a list of feature ids to be include in the generated feature
 	 * @param featureList a comma separated list of feature ids
 	 */
