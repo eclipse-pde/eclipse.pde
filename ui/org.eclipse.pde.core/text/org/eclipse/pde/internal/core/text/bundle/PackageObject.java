@@ -27,6 +27,8 @@ public class PackageObject extends PDEManifestElement {
     public PackageObject(ManifestHeader header, String name, String version, String versionAttribute) {
         super(header, name.length() > 0 ? name : "."); //$NON-NLS-1$
         fVersionAttribute = versionAttribute;
+        if (version != null) 
+        	addAttribute(fVersionAttribute, version);
         setModel(fHeader.getBundle().getModel());
     }
     
