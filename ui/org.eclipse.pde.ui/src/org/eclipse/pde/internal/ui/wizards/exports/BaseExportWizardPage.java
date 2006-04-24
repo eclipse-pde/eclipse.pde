@@ -15,9 +15,11 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -225,13 +227,20 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 	}
 	
 	protected void pageChanged() {
+		if (getMessage() != null)
+			setMessage(null);
+		if (fOptionsTab != null) {
+			String path = fOptionsTab.getAntBuildFileName();
+			String warningMessage = null;
+			if (path != null && path.length() > 0 && "build.xml".equals(new Path(path).lastSegment()))
+				warningMessage = PDEUIMessages.ExportOptionsTab_antReservedMessage;
+			setMessage(warningMessage, IMessageProvider.WARNING);
+		}
 		String error = fExportPart.getSelectionCount() > 0 ? null
 				: PDEUIMessages.ExportWizard_status_noselection;
 		if (error == null)
 			error = validateTabs();
 		setErrorMessage(error);
-		if (getMessage() != null)
-			setMessage(null);			
 		setPageComplete(error == null);
 	}
 	

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -159,11 +160,16 @@ public class ExportOptionsTab extends AbstractExportTab {
  	}
 	
 	protected String validate() {
-		String message = null;
-		if (fSaveAsAntButton.getSelection() && fAntCombo.getText().trim().length() == 0) {
-			message = PDEUIMessages.ExportWizard_status_noantfile; 
-		}
-		return message;		
+		if (fSaveAsAntButton.getSelection() && fAntCombo.getText().trim().length() == 0)
+			return PDEUIMessages.ExportWizard_status_noantfile;
+		return null;		
+	}
+	
+	protected String validateAntCombo() {
+		String path = new Path(fAntCombo.getText()).lastSegment();
+		if ("build.xml".equals(path)) //$NON-NLS-1$
+			return PDEUIMessages.ExportOptionsTab_antReservedMessage;
+		return null;
 	}
 	
 	protected boolean doExportSource() {

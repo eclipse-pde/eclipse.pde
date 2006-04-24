@@ -21,6 +21,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ContentSection_addDialogButtonLabel;
 
+	public static String ExportOptionsTab_antReservedMessage;
+
 	public static String ImportActionGroup_binaryWithLinkedContent;
 
 	public static String ImportActionGroup_importContributingPlugin;
