@@ -606,8 +606,12 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			ExportPackageDescription export = (ExportPackageDescription)exported.get(name);
 			if (export != null) {
 				if (export.getSupplier().isResolved()) {
-					report(NLS.bind(PDECoreMessages.BundleErrorReporter_unsatisfiedConstraint, imports[i].toString()), 
-						   getPackageLine(header, elements[i]), severity);					
+					Version version = export.getVersion();
+					VersionRange range = imports[i].getVersionRange();
+					if (range != null && !range.isIncluded(version)) {
+						report(NLS.bind(PDECoreMessages.BundleErrorReporter_unsatisfiedConstraint, imports[i].toString()), 
+							   getPackageLine(header, elements[i]), severity);	
+					}
 				} else {
 					report(NLS.bind(PDECoreMessages.BundleErrorReporter_unresolvedExporter,
 									new String[] {export.getSupplier().getSymbolicName(), name}), 
