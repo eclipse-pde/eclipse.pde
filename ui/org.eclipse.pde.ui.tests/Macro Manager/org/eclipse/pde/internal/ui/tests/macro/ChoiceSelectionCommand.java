@@ -68,10 +68,7 @@ public class ChoiceSelectionCommand extends MacroCommand {
 				index = tabFolder.indexOf(tabItem);
 			}
 		}
-		if (index != -1)
-			return getPositionId(index);
-		else
-			return null;
+		return (index != -1) ? getPositionId(index) : null;
 	}
 
 	private String getPositionId(int index) {
