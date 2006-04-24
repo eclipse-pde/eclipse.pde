@@ -480,7 +480,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 					model = (featureManager != null) ? featureManager.findFeatureModel(children[j].getId()) :
 						(IFeatureModel)fCurrentFeatures.get(children[j].getId());
 					if (model != null)
-						features.push(model);
+						features.push(model.getFeature());
 				}
 			}
 		}
