@@ -47,18 +47,13 @@ public class DependenciesPage extends PDEFormPage {
 		layout.makeColumnsEqualWidth = isBundle;
 		body.setLayout(layout);
 		Composite left, right;
-		if (isBundle && getModel().isEditable()) {
-			FormToolkit toolkit = managedForm.getToolkit();
-			left = toolkit.createComposite(body, SWT.NONE);
-			left.setLayout(new GridLayout());
-			left.setLayoutData(new GridData(GridData.FILL_BOTH));
-			right = toolkit.createComposite(body, SWT.NONE);
-			right.setLayout(new GridLayout());
-			right.setLayoutData(new GridData(GridData.FILL_BOTH));
-		} else {
-			left = body;
-			right = body;
-		}
+		FormToolkit toolkit = managedForm.getToolkit();
+		left = toolkit.createComposite(body, SWT.NONE);
+		left.setLayout(new GridLayout());
+		left.setLayoutData(new GridData(GridData.FILL_BOTH));
+		right = toolkit.createComposite(body, SWT.NONE);
+		right.setLayout(new GridLayout());
+		right.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		managedForm.addPart(new RequiresSection(this, left, getRequiredSectionLabels()));		
 		
