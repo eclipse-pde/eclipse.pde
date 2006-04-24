@@ -8,19 +8,23 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -58,10 +62,15 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.PackageObject;
@@ -71,14 +80,19 @@ import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
+import org.eclipse.pde.internal.ui.parts.ConditionalListSelectionDialog;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.search.dependencies.UnusedDependenciesAction;
+import org.eclipse.pde.internal.ui.util.ModelModification;
+import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkingSet;
@@ -86,7 +100,6 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.osgi.framework.Constants;
@@ -100,6 +113,48 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
     private static final int PROPERTIES_INDEX = 2;
     
     private ImportPackageHeader fHeader;
+    
+    class ImportItemWrapper {
+    	Object fUnderlying;
+    	
+    	public ImportItemWrapper(Object underlying) {
+    		fUnderlying = underlying;
+    	}
+    	
+    	public String toString() {
+    		return getName();
+    	}
+    	
+    	public boolean equals(Object obj) {
+    		if (obj instanceof ImportItemWrapper) {
+	    		ImportItemWrapper item = (ImportItemWrapper)obj;
+	    		return getName().equals(item.getName());
+    		}
+    		return false;
+    	}
+    	
+    	public String getName() {
+    		if (fUnderlying instanceof ExportPackageDescription)
+    			return ((ExportPackageDescription)fUnderlying).getName();
+    		if (fUnderlying instanceof IPackageFragment)
+    			return ((IPackageFragment)fUnderlying).getElementName();
+    		return null;
+    	}
+    	
+    	public Version getVersion() {
+    		if (fUnderlying instanceof ExportPackageDescription)
+    			return ((ExportPackageDescription)fUnderlying).getVersion();
+    		return null;
+    	}
+    	
+    	boolean hasVersion() {
+    		return hasEPD() && ((ExportPackageDescription)fUnderlying).getVersion() != null;
+    	}
+    	
+    	boolean hasEPD() {
+    		return fUnderlying instanceof ExportPackageDescription;
+    	}
+    }
     
 	class ImportPackageContentProvider extends DefaultTableProvider {
         public Object[] getElements(Object parent) {
@@ -117,14 +172,15 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		}
 
 		public String getText(Object element) {
-			ExportPackageDescription p = (ExportPackageDescription) element;
-            StringBuffer buffer = new StringBuffer(p.getName());
-            String version = p.getVersion().toString();
-            if (!version.equals(Version.emptyVersion.toString())) {
-                buffer.append(" ("); //$NON-NLS-1$
-                buffer.append(version);
-                buffer.append(")"); //$NON-NLS-1$
-            }
+			StringBuffer buffer = new StringBuffer();
+			ImportItemWrapper p = (ImportItemWrapper) element;
+			buffer.append(p.getName());
+			Version version = p.getVersion();
+			if (version != null && !Version.emptyVersion.equals(version)) {
+				buffer.append(" ("); //$NON-NLS-1$
+				buffer.append(version.toString());
+				buffer.append(")"); //$NON-NLS-1$
+			}
 			return buffer.toString();
 		}
 	}
@@ -166,8 +222,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		TablePart tablePart = getTablePart();
 		fPackageViewer = tablePart.getTableViewer();
-		fPackageViewer
-				.setContentProvider(new ImportPackageContentProvider());
+		fPackageViewer.setContentProvider(new ImportPackageContentProvider());
 		fPackageViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fPackageViewer.setSorter(new ViewerSorter() {
             public int compare(Viewer viewer, Object e1, Object e2) {
@@ -406,70 +461,172 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	}
 
 	private void handleAdd() {
-       ElementListSelectionDialog dialog = new ElementListSelectionDialog(
-                PDEPlugin.getActiveWorkbenchShell(), 
-                new ImportPackageDialogLabelProvider());
-        dialog.setElements(getAvailablePackages());
-        dialog.setMultipleSelection(true);
-        dialog.setMessage(PDEUIMessages.ImportPackageSection_exported);
-        dialog.setTitle(PDEUIMessages.ImportPackageSection_selection);
-        dialog.create();
-        SWTUtil.setDialogSize(dialog, 400, 500);
+		final ConditionalListSelectionDialog dialog = new ConditionalListSelectionDialog(
+				PDEPlugin.getActiveWorkbenchShell(),
+				new ImportPackageDialogLabelProvider(),
+				PDEUIMessages.ImportPackageSection_dialogButtonLabel);
+		Runnable runnable = new Runnable() {
+			public void run() {
+				setElements(dialog);
+				dialog.setMultipleSelection(true);
+				dialog.setMessage(PDEUIMessages.ImportPackageSection_exported);
+				dialog.setTitle(PDEUIMessages.ImportPackageSection_selection);
+				dialog.create();
+				SWTUtil.setDialogSize(dialog, 400, 500);
+			}
+		};
+		
+		BusyIndicator.showWhile(Display.getCurrent(), runnable);
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult();
-            if (fHeader != null) {
-    			for (int i = 0; i < selected.length; i++) {
-    				ExportPackageDescription candidate = (ExportPackageDescription) selected[i];
-                    fHeader.addPackage(new ImportPackageObject(fHeader, candidate, getVersionAttribute()));
-                }
-            } else {
-                getBundle().setHeader(Constants.IMPORT_PACKAGE, getValue(selected));               
-            }
+			HashMap exportMap = new HashMap();
+			if (fHeader != null) {
+				for (int i = 0; i < selected.length; i++) {
+					ImportPackageObject impObject = null;
+					if (selected[i] instanceof ImportItemWrapper)
+						selected[i] = ((ImportItemWrapper)selected[i]).fUnderlying;
+					
+					if (selected[i] instanceof ExportPackageDescription)
+						impObject = new ImportPackageObject(fHeader, (ExportPackageDescription) selected[i], getVersionAttribute());
+					else if (selected[i] instanceof IPackageFragment) {
+						// non exported package
+						IPackageFragment fragment = ((IPackageFragment) selected[i]);
+						impObject = new ImportPackageObject(fHeader, fragment.getElementName(), null, getVersionAttribute());
+						IProject project = fragment.getJavaProject().getProject();
+						IFile file = project.getFile(PDEModelUtility.F_MANIFEST_FP);
+						ArrayList list = (ArrayList)exportMap.get(file);
+						if (list == null) {
+							list = new ArrayList();
+							exportMap.put(file, list);
+						}
+						list.add(fragment);
+					}
+					if (impObject != null)
+						fHeader.addPackage(impObject);
+				}
+			} else {
+				getBundle().setHeader(Constants.IMPORT_PACKAGE, getValue(selected));
+			}
+			
+			//export all package fragments that are not exported already
+			Set keys = exportMap.keySet();
+			for (Iterator it = keys.iterator(); it.hasNext();) {
+				final IFile underlying = (IFile)it.next();
+				final ArrayList fragmentList = (ArrayList)exportMap.get(underlying);
+				ModelModification mod = new ModelModification(underlying) {
+					protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
+						if (!(model instanceof IBundlePluginModelBase))
+							return;
+						IBundlePluginModelBase bundleBase = (IBundlePluginModelBase)model;
+						IBundle bundle = bundleBase.getBundleModel().getBundle();
+						IManifestHeader header = bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
+						if (header instanceof ExportPackageHeader) {
+							for (int i = 0; i < fragmentList.size(); i++) {
+								((ExportPackageHeader)header).addPackage(
+										new ExportPackageObject(
+												(ExportPackageHeader)header,
+												((IPackageFragment)fragmentList.get(i)),
+												getVersionAttribute(bundle)));
+							}
+						} else {
+							StringBuffer buffer = new StringBuffer();
+							for (int i = 0; i < fragmentList.size(); i++) {
+								if (i > 0)
+									buffer.append(", "); //$NON-NLS-1$
+								buffer.append(((IPackageFragment)fragmentList.get(i)).getElementName());
+							}
+							bundle.setHeader(Constants.EXPORT_PACKAGE, buffer.toString());
+						}
+					}
+				};
+				try {
+					PDEModelUtility.modifyModel(mod, null);
+				} catch (CoreException e) {
+					PDEPlugin.log(e);
+				}
+			}
 		}
 	}
 
-    private String getValue(Object[] objects) {
+	private String getValue(Object[] objects) {
         StringBuffer buffer = new StringBuffer();
         for (int i = 0; i < objects.length; i++) {
-            ExportPackageDescription desc = (ExportPackageDescription)objects[i];
+        	if (!(objects[i] instanceof ImportItemWrapper))
+        		continue;
+        	Version version = ((ImportItemWrapper)objects[i]).getVersion();
             if (buffer.length() > 0)
                 buffer.append("," + getLineDelimiter() + " "); //$NON-NLS-1$ //$NON-NLS-2$
-            buffer.append(desc.getName());
-            String version = desc.getVersion().toString();
-            if (!version.equals(Version.emptyVersion.toString())) {
+            buffer.append(((ImportItemWrapper)objects[i]).getName());
+            if (version != null && !version.equals(Version.emptyVersion)) {
                 buffer.append(";"); //$NON-NLS-1$
                 buffer.append(getVersionAttribute());
                 buffer.append("=\""); //$NON-NLS-1$
-                buffer.append(version);
+                buffer.append(version.toString());
                 buffer.append("\""); //$NON-NLS-1$
             }
         }
         return buffer.toString();
     }
-    
-	private ExportPackageDescription[] getAvailablePackages() {
-		ArrayList result = new ArrayList();
-        Set set = getForbiddenIds();
-        
+	
+	private void setElements(ConditionalListSelectionDialog dialog) {
+        Set forbidden = getForbiddenIds();      
         boolean allowJava = "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE)); //$NON-NLS-1$
-        ExportPackageDescription[] packages = TargetPlatform.getState().getExportedPackages();
-        for (int i = 0; i < packages.length; i++) {
-        	if (".".equals(packages[i].getName())) //$NON-NLS-1$
-        		continue;
-            String id = packages[i].getExporter().getSymbolicName();
-            if (PDECore.getDefault().findPlugin(id) == null)
-                continue;
-			if (set.contains(packages[i].getExporter().getSymbolicName()))
-                continue;
-			String name = packages[i].getName();
-			if (("java".equals(name) || name.startsWith("java.")) && !allowJava) //$NON-NLS-1$ //$NON-NLS-2$
-				continue;
-			if (fHeader == null || !fHeader.hasPackage(packages[i].getName()))
-				result.add(packages[i]);			
-		}
-		return (ExportPackageDescription[])result.toArray(new ExportPackageDescription[result.size()]);
-	}
 
+        ArrayList elements = new ArrayList();
+        ArrayList conditional = new ArrayList();
+        IPluginModelBase[] models = PDECore.getDefault().getModelManager().getPlugins();
+        Set names = new HashSet();
+        
+        for (int i = 0; i < models.length; i++) {
+        	BundleDescription desc = models[i].getBundleDescription();
+        	String id = desc == null ? null : desc.getSymbolicName();
+        	if (id == null || forbidden.contains(id))
+        		continue;
+        	
+        	names.clear();
+        	ExportPackageDescription[] exported = desc.getExportPackages();
+        	for (int j = 0; j < exported.length; j++) {
+        		String name = exported[j].getName();
+        		names.add(name);
+    			if (("java".equals(name) || name.startsWith("java.")) && !allowJava) //$NON-NLS-1$ //$NON-NLS-2$
+    				continue;        		
+    			if (fHeader == null || !fHeader.hasPackage(name))
+    				elements.add(new ImportItemWrapper(exported[j]));			
+        	}
+        	
+        	try {
+    			// add un-exported packages in workspace non-binary plug-ins
+    			IResource resource = models[i].getUnderlyingResource();
+    			IProject project = resource != null ? resource.getProject() : null;
+    			if (project == null || !project.hasNature(JavaCore.NATURE_ID) 
+    				|| WorkspaceModelManager.isBinaryProject(project)
+    				|| !WorkspaceModelManager.hasBundleManifest(project))
+    				continue;
+				IJavaProject jp = JavaCore.create(project);
+				IPackageFragmentRoot[] roots = jp.getPackageFragmentRoots();
+				for (int j = 0; j < roots.length; j++) {
+					if (roots[j].getKind() == IPackageFragmentRoot.K_SOURCE
+						|| (roots[j].getKind() == IPackageFragmentRoot.K_BINARY && !roots[j].isExternal())) {
+						IJavaElement[] children = roots[j].getChildren();
+						for (int k = 0; k < children.length; k++) {
+							IPackageFragment f = (IPackageFragment) children[k];
+							String name = f.getElementName();
+							if (name.equals("")) //$NON-NLS-1$
+								name = "."; //$NON-NLS-1$
+							if (names.contains(name))
+								continue;
+							if (f.hasChildren() || f.getNonJavaResources().length > 0)
+								conditional.add(new ImportItemWrapper(f));
+						}
+					}
+				}
+    		} catch (CoreException e) {
+    		}       	
+        }       
+        dialog.setElements(elements.toArray());
+        dialog.setConditionalElements(conditional.toArray());
+ 	}
+	
 	public void modelChanged(IModelChangedEvent event) {
         if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
             fHeader = null;
@@ -618,7 +775,11 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
     }
     
     private String getVersionAttribute() {
-        int manifestVersion = BundlePluginBase.getBundleManifestVersion(getBundle());
+    	return getVersionAttribute(getBundle());
+    }
+    
+    private String getVersionAttribute(IBundle bundle) {
+        int manifestVersion = BundlePluginBase.getBundleManifestVersion(bundle);
         return (manifestVersion < 2) ? ICoreConstants.PACKAGE_SPECIFICATION_VERSION : Constants.VERSION_ATTRIBUTE;
     }
     
@@ -644,6 +805,11 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         if (desc == null)
             return;
         
+        BundleDescription[] fragments = desc.getFragments();
+        for (int i = 0; i < fragments.length; i++) {
+        	addDependency(state, fragments[i].getSymbolicName(), set);
+        }
+        
         BundleSpecification[] specs = desc.getRequiredBundles();
         for (int j = 0; j < specs.length; j++) {
             if (specs[j].isResolved() && specs[j].isExported()) {
@@ -651,6 +817,4 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
             }
         }        
     }
-    
-
 }
