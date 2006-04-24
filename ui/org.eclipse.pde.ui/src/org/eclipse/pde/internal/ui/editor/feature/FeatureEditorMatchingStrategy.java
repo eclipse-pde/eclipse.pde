@@ -27,8 +27,8 @@ public class FeatureEditorMatchingStrategy implements IEditorMatchingStrategy {
     		return false;
         IFile inputFile = ResourceUtil.getFile(input);
         if (inputFile != null && 
-        		(inputFile.getName().equals("feature.xml") ||
-        		 inputFile.getName().equals("build.properties"))) {
+        		(inputFile.getName().equals("feature.xml") || //$NON-NLS-1$
+        		 inputFile.getName().equals("build.properties"))) { //$NON-NLS-1$
             try {
                 return ResourceUtil.getFile(editorRef.getEditorInput()) == inputFile;
             } catch (PartInitException e) {

@@ -232,7 +232,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		if (fOptionsTab != null) {
 			String path = fOptionsTab.getAntBuildFileName();
 			String warningMessage = null;
-			if (path != null && path.length() > 0 && "build.xml".equals(new Path(path).lastSegment()))
+			if (path != null && path.length() > 0 && "build.xml".equals(new Path(path).lastSegment())) //$NON-NLS-1$
 				warningMessage = PDEUIMessages.ExportOptionsTab_antReservedMessage;
 			setMessage(warningMessage, IMessageProvider.WARNING);
 		}
