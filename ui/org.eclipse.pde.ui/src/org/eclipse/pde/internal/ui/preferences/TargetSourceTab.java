@@ -69,6 +69,7 @@ public class TargetSourceTab {
 	private NamedElement fUserNode;
 	private Button fAddButton;
 	private Button fRemoveButton;
+	private String fLastUserPath = null;
 	
 	class NamedElement {
 		String text;
@@ -187,12 +188,13 @@ public class TargetSourceTab {
 	}
 
 	protected void handleAdd() {
-		String path = getDirectoryDialog(null).open();
+		String path = getDirectoryDialog(fLastUserPath).open();
 		if (path != null) {
 			SourceLocation location = new SourceLocation(new Path(path));
 			fUserLocations.add(location);
 			fTreeViewer.add(fUserNode, location);
 			fTreeViewer.setSelection(new StructuredSelection(location));
+			fLastUserPath = path;
 		}
 	}
 	
