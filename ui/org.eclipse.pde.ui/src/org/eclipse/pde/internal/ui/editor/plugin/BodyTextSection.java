@@ -22,6 +22,8 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
@@ -70,10 +72,16 @@ public class BodyTextSection extends PDESection implements IModelChangedListener
 		fText = toolkit.createText(container, "", SWT.MULTI | SWT.WRAP | SWT.V_SCROLL); //$NON-NLS-1$
 		fText.setEditable(false);
 		fText.setLayoutData(new GridData(GridData.FILL_BOTH));
+		fText.addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent e) { }
+			public void focusLost(FocusEvent e) {
+				handleApply();
+			}
+		});
 		fText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if (fBlockNotification) return;
-				handleApply();
+				if (!fBlockNotification)
+					markDirty();
 			}
 		});
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -142,17 +150,15 @@ public class BodyTextSection extends PDESection implements IModelChangedListener
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
-		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED)
 			return;
-		}
 	}
 
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		Object changeObject = ((IStructuredSelection)selection).getFirstElement();
-		if (fCurrentElement != null) {
+		if (fCurrentElement != null)
 			if (fCurrentElement == changeObject)
 				return;
-		}
 		if (changeObject instanceof IPluginElement)
 			fCurrentElement = (IPluginElement) changeObject;
 		else
