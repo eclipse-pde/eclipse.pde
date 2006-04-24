@@ -26,15 +26,13 @@ public class FeatureEditorMatchingStrategy implements IEditorMatchingStrategy {
     	if (!(input instanceof IFileEditorInput))
     		return false;
         IFile inputFile = ResourceUtil.getFile(input);
-        if (inputFile != null) {
-            String path = inputFile.getProjectRelativePath().toString();
-            if (path.equals("feature.xml") || path.equals("build.properties")) { //$NON-NLS-1$ //$NON-NLS-2$ 
-                try {
-                    IFile editorFile = ResourceUtil.getFile(editorRef.getEditorInput());
-                    return editorFile != null && inputFile.getProject().equals(editorFile.getProject());
-                } catch (PartInitException e) {
-                    return false;
-                }
+        if (inputFile != null && 
+        		(inputFile.getName().equals("feature.xml") ||
+        		 inputFile.getName().equals("build.properties"))) {
+            try {
+                return ResourceUtil.getFile(editorRef.getEditorInput()) == inputFile;
+            } catch (PartInitException e) {
+                return false;
             }
         }
         return false;
