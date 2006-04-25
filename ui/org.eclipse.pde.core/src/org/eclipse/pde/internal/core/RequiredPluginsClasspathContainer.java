@@ -38,6 +38,7 @@ import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 
 public class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements IClasspathContainer {
@@ -332,11 +333,17 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 	
 	protected void addExtraClasspathEntries(HashSet added, ArrayList entries, IBuild build) throws CoreException {
-		IBuildEntry entry = build.getEntry(IBuildEntry.JARS_EXTRA_CLASSPATH);
-		if (entry == null)
-			return;
-
-		String[] tokens = entry.getTokens();
+		IBuildEntry[] buildEntries = build.getBuildEntries();
+		for (int i = 0; i < buildEntries.length; i++) {
+			String name = buildEntries[i].getName();
+			if (name.equals(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH) 
+					|| name.startsWith(IBuildPropertiesConstants.PROPERTY_EXTRAPATH_PREFIX)) {
+				addExtraClasspathEntries(added, entries, buildEntries[i].getTokens());
+			}
+		}
+	}	
+	
+	protected void addExtraClasspathEntries(HashSet added, ArrayList entries, String[] tokens) throws CoreException {
 		for (int i = 0; i < tokens.length; i++) {
 			IPath path = Path.fromPortableString(tokens[i]);
 			if (!path.isAbsolute()) {
