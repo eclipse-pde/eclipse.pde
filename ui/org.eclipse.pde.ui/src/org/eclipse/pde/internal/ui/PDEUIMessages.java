@@ -33,6 +33,12 @@ public class PDEUIMessages extends NLS {
 
 	public static String MainPreferencePage_updateStale;
 
+	public static String MissingResourcePage_missingResource;
+
+	public static String MissingResourcePage_unableToOpen;
+
+	public static String MissingResourcePage_unableToOpenFull;
+
 	public static String RemoveUnknownExecEnvironments_label;
 
 	public static String RevertUnsupportSingletonResolution_desc;

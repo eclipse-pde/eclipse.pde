@@ -435,6 +435,10 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 	
 	protected void addPages() {
 		try {
+			if (getAggregateModel() == null) {
+				addPage(new MissingResourcePage(this));
+				return;
+			}
 			addPage(new OverviewPage(this));
 			addPage(new DependenciesPage(this));
 			addPage(new RuntimePage(this));
