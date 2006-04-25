@@ -72,7 +72,7 @@ public class SchemaEditor extends MultiSourceEditor {
 		return true;
 	}
 
-	public void contextAdded(InputContext context) {
+	public void editorContextAdded(InputContext context) {
 		addSourcePage(context.getId());
 	}
 	public void contextRemoved(InputContext context) {
@@ -102,7 +102,7 @@ public class SchemaEditor extends MultiSourceEditor {
 		fPreviewAction.run();
 	}	
 
-	protected void addPages() {
+	protected void addEditorPages() {
 		try {
 		 	addPage(new SchemaOverviewPage(this));
 			addPage(new SchemaFormPage(this));

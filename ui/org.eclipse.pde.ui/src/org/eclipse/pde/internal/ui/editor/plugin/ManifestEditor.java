@@ -75,7 +75,6 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 	private static boolean SHOW_SOURCE;
     private boolean fEquinox = true;
     private boolean fShowExtensions = true;
-    private boolean fError = false;
     private IEclipsePreferences fPrefs;
     
 	public static IEditorPart openPluginEditor(String id) {
@@ -292,14 +291,7 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 		//file that just got removed under us.
 		return true;
 	}
-	public void contextAdded(InputContext context) {
-		if (fError) {
-			removePage(0);
-			addPages();
-			if (!fError)
-				setActivePage(OverviewPage.PAGE_ID);
-			return;
-		}
+	public void editorContextAdded(InputContext context) {
 		addSourcePage(context.getId());
 		try {
 			if (context.getId().equals(BuildInputContext.CONTEXT_ID))
@@ -441,13 +433,8 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 		}
 	}
 	
-	protected void addPages() {
+	protected void addEditorPages() {
 		try {
-			fError = getAggregateModel() == null;
-			if (fError) {
-				addPage(new MissingResourcePage(this));
-				return;
-			}
 			addPage(new OverviewPage(this));
 			addPage(new DependenciesPage(this));
 			addPage(new RuntimePage(this));
@@ -458,8 +445,6 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 				addPage(new BuildPage(this));
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
-			if (fError)
-				return;
 		}
 		addSourcePage(BundleInputContext.CONTEXT_ID);
 		addSourcePage(PluginInputContext.CONTEXT_ID);

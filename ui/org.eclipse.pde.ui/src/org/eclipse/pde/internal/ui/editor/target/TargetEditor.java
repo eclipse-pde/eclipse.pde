@@ -88,7 +88,7 @@ public class TargetEditor extends PDEFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormEditor#addPages()
 	 */
-	protected void addPages() {
+	protected void addEditorPages() {
 		try {
 			addPage(new OverviewPage(this));
 			addPage(new EnvironmentPage(this));
@@ -101,7 +101,7 @@ public class TargetEditor extends PDEFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextAdded(org.eclipse.pde.internal.ui.editor.context.InputContext)
 	 */
-	public void contextAdded(InputContext context) {
+	public void editorContextAdded(InputContext context) {
 	}
 
 	/* (non-Javadoc)

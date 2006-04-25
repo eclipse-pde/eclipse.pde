@@ -68,7 +68,7 @@ public class BuildEditor extends MultiSourceEditor {
 		//file that just got removed under us.
 		return true;
 	}
-	public void contextAdded(InputContext context) {
+	public void editorContextAdded(InputContext context) {
 		addSourcePage(context.getId());
 	}
 	public void contextRemoved(InputContext context) {
@@ -91,7 +91,7 @@ public class BuildEditor extends MultiSourceEditor {
 		manager.putContext(input, new BuildInputContext(this, input, true));
 	}
 
-	protected void addPages() {
+	protected void addEditorPages() {
 		try {
 			if (getEditorInput() instanceof IFileEditorInput)
 				addPage(new BuildPage(this));			

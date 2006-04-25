@@ -149,7 +149,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		return true;
 	}
 
-	public void contextAdded(InputContext context) {
+	public void editorContextAdded(InputContext context) {
 		addSourcePage(context.getId());
 	}
 
@@ -211,7 +211,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		}
 	}
 
-	protected void addPages() {
+	protected void addEditorPages() {
 		try {
 			addPage(new FeatureFormPage(this, PDEUIMessages.FeatureEditor_FeaturePage_title));
 			addPage(new InfoFormPage(this, PDEUIMessages.FeatureEditor_InfoPage_title));

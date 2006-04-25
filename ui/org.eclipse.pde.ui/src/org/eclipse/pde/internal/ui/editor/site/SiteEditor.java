@@ -65,7 +65,7 @@ public class SiteEditor extends MultiSourceEditor {
 		//file that just got removed under us.
 		return true;
 	}
-	public void contextAdded(InputContext context) {
+	public void editorContextAdded(InputContext context) {
 		addSourcePage(context.getId());
 	}
 	public void contextRemoved(InputContext context) {
@@ -106,7 +106,7 @@ public class SiteEditor extends MultiSourceEditor {
 		super.contextMenuAboutToShow(manager);
 	}
 
-	protected void addPages() {
+	protected void addEditorPages() {
 		try {
 			addPage(new FeaturesPage(this));
 			addPage(new ArchivePage(this));

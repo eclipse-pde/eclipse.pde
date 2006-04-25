@@ -43,6 +43,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.context.IInputContextListener;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
+import org.eclipse.pde.internal.ui.editor.plugin.MissingResourcePage;
+import org.eclipse.pde.internal.ui.editor.plugin.OverviewPage;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.search.ui.text.ISearchEditorAccess;
 import org.eclipse.search.ui.text.Match;
@@ -58,6 +60,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.forms.IManagedForm;
@@ -154,6 +157,7 @@ public abstract class PDEFormEditor extends FormEditor
 	private String fLastActivePageId;
 	private boolean fLastDirtyState;
 	private IEditorValidationStack fValidationStack;
+	private boolean fError;
 
 	private static class PDEMultiPageEditorSite extends MultiPageEditorSite {
 		public PDEMultiPageEditorSite(MultiPageEditorPart multiPageEditor,
@@ -732,4 +736,30 @@ public abstract class PDEFormEditor extends FormEditor
 	public IEditorValidationStack getValidationStack() {
 		return fValidationStack;
 	}
+	
+	protected final void addPages() {
+		fError = getAggregateModel() == null;
+		if (fError) {
+			try {
+				addPage(new MissingResourcePage(this));
+			} catch (PartInitException e) {
+				PDEPlugin.logException(e);
+			}
+		} else
+			addEditorPages();
+	}
+	
+	protected abstract void addEditorPages();
+	
+	public final void contextAdded(InputContext context) {
+		if (fError) {
+			removePage(0);
+			addPages();
+			if (!fError)
+				setActivePage(OverviewPage.PAGE_ID);
+		} else
+			editorContextAdded(context);
+	}
+	
+	public abstract void editorContextAdded(InputContext context);
 }
