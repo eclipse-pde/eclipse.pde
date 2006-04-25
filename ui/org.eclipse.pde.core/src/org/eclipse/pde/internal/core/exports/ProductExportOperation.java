@@ -199,9 +199,12 @@ public class ProductExportOperation extends FeatureExportOperation {
 		if (!dir.exists() || !dir.isDirectory())
 			dir.mkdirs();
 		Properties properties = new Properties();
-		properties.put("name", fProduct.getModel().getResourceString(fProduct.getName())); //$NON-NLS-1$
-		properties.put("id", fProduct.getId());		 //$NON-NLS-1$
 		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(getBrandingPlugin());
+		if (model != null)
+			properties.put("name", model.getResourceString(fProduct.getName())); //$NON-NLS-1$
+		else
+			properties.put("name", fProduct.getName()); //$NON-NLS-1$
+		properties.put("id", fProduct.getId()); //$NON-NLS-1$
 		if (model != null)
 			properties.put("version", model.getPluginBase().getVersion()); //$NON-NLS-1$
 		save(new File(dir, ".eclipseproduct"), properties, "Eclipse Product File"); //$NON-NLS-1$ //$NON-NLS-2$
