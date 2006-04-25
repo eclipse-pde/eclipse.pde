@@ -85,3 +85,4 @@ Eclipse-LazyStart: true
 Import-Package: org.apache.lucene.demo.html,
  org.eclipse.jdt.debug.core,
  com.ibm.icu.text
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
