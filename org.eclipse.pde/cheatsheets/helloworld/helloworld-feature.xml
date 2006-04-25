@@ -48,9 +48,7 @@
                skip="true">
          <command serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.pde.ui.NewFeatureProjectWizard)"/>
       </subitem>
-      <subitem label="Input &quot;com.example.helloworld-feature&quot; into the &quot;Project Name&quot; text box on the &quot;Feature Properties&quot; page" 
-               skip="false"/>
-      <subitem label="Input &quot;com.example.helloworld&quot; into the &quot;Feature ID&quot; text box" 
+      <subitem label="Input &quot;com.example.feature&quot; into the &quot;Project Name&quot; text box on the &quot;Feature Properties&quot; page" 
                skip="false"/>
       <subitem label="Input &quot;Hello World! Feature&quot; into the &quot;Feature Name&quot; text box" 
                skip="false"/>

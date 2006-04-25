@@ -44,7 +44,7 @@
 
    <!-- Item -->
 
-   <item title="Test the update site"
+   <item title="Browse the update site"
          dialog="true"
          href="/org.eclipse.pde.doc.user/guide/pde_site_previewing.htm"
          skip="false">
@@ -52,7 +52,7 @@
          From the previous step, an <b>Updates</b> dialog box should be in focus.
          <br/>
          <br/>
-         To test the update site, perform the following steps:
+         To browse the update site, perform the following steps:
       </description>
       <subitem label="Expand the &quot;helloworld.site&quot; tree dialog in the &quot;Select the features to install&quot; list box and note the &quot;Hello World!&quot; feature category" 
                skip="false"/>  
@@ -122,8 +122,6 @@
       <subitem label="Click &quot;OK&quot; in the resulting &quot;Uninstall&quot; dialog box" 
                skip="false"/>  
       <subitem label="Click &quot;Yes&quot; from the &quot;Install/Update&quot; dialog box to restart the Eclipse workbench" 
-               skip="false"/>  
-      <subitem label="Select &quot;File-&gt;Exit&quot; from the main menu" 
                skip="false"/>  
    </item>
 

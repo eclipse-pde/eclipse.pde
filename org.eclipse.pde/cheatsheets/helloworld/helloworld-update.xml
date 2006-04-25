@@ -50,7 +50,11 @@
       </subitem>
       <subitem label="Input &quot;helloworld.site&quot; into the &quot;Project Name&quot; text box on the &quot;Update Site Project&quot; page" 
                skip="false"/>
-      <subitem label="Deselect the &quot;Use default location&quot; text box and input &quot;C:\helloworld.site&quot; in the Location text box" 
+      <subitem label="Deselect the &quot;Use default location&quot; text box" 
+               skip="false"/>  
+      <subitem label="Note:  For the purpose of this cheat sheet we will define a Windows pathname for our update site location.  For Unix platforms, adjust accordingly." 
+               skip="true"/>  
+      <subitem label="Input &quot;C:\helloworld.site&quot; in the &quot;Location&quot; text box" 
                skip="false"/>  
       <subitem label="Click &quot;Finish&quot;" 
                skip="false"/>  
@@ -130,8 +134,12 @@
       </description>
       <subitem label="Click the &quot;Build All&quot; button" 
                skip="false"/>  
-      <subitem label="Verify the &quot;com.example.helloworld_1.0.0.jar&quot; jar file has been created in the &quot;plugins&quot; and &quot;features&quot; folders on the update site (See the &quot;Package Explorer&quot; view or the &quot;C:\helloworld.site&quot; folder)" 
-               skip="true"/>                
+      <subitem label="Verify the &quot;com.example.helloworld_1.0.0.jar&quot; jar file has been created in the &quot;plugins&quot; folders on the update site (See the &quot;Package Explorer&quot; view or the &quot;C:\helloworld.site&quot; folder)" 
+               skip="true"/>    
+      <subitem label="Verify the &quot;com.example.feature_1.0.0.jar&quot; jar file has been created in the &quot;features&quot; folders on the update site" 
+               skip="true"/>    
+               
+                           
    </item>
 
 </cheatsheet>
