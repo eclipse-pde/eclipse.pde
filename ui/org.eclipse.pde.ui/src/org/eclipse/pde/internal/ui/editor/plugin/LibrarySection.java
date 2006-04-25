@@ -582,7 +582,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 				if (newPaths[i] == null)
 					continue;
 				IClasspathEntry entry = JavaCore.newLibraryEntry(
-						project.getFullPath().append(newPaths[i]), null, null);
+						project.getFullPath().append(newPaths[i]), null, null, true);
 				if (!toBeAdded.contains(entry))
 					toBeAdded.add(index++, entry);
 			}
