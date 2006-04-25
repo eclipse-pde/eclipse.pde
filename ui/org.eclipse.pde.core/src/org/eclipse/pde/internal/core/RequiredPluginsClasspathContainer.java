@@ -364,10 +364,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			}
 			
 			if (!path.toPortableString().startsWith("platform:")) { //$NON-NLS-1$
-				File file = new File(path.toOSString());
-				if (file.exists()) {
-					addExtraLibrary(path, null, entries);			
-				}
+				addExtraLibrary(path, null, entries);			
 			} else {
 				int count = path.getDevice() == null ? 4 : 3;
 				if (path.segmentCount() >= count) {
