@@ -28,8 +28,8 @@ public class XMLDefaultHandler extends DefaultHandler {
 	private org.w3c.dom.Document fDocument;
 	private Element fRootElement;
 	
-	private Stack fElementStack = new Stack();
-	private boolean fAbbreviated;
+	protected Stack fElementStack = new Stack();
+	protected boolean fAbbreviated;
 	
 	public XMLDefaultHandler() {
 	}
@@ -110,18 +110,23 @@ public class XMLDefaultHandler extends DefaultHandler {
 	public Node getDocumentElement() {
 		if (!isPrepared())
 			return null;
-		fDocument.getDocumentElement().normalize();
+		normalizeDocumentElement();
 		return fDocument.getDocumentElement();
 	}
 	
 	public org.w3c.dom.Document getDocument() {
 		if (!isPrepared())
 			return null;
-		fDocument.getDocumentElement().normalize();
+		normalizeDocumentElement();
 		return fDocument;
 	}
 	
 	public boolean isPrepared() {
 		return fDocument != null;
+	}
+	
+	private void normalizeDocumentElement() {
+		if (fDocument.getDocumentElement() != null)
+			fDocument.getDocumentElement().normalize();
 	}
 }

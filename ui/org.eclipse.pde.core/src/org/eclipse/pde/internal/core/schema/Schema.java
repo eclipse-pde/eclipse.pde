@@ -30,7 +30,6 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.XMLDefaultHandler;
 import org.eclipse.pde.internal.core.ischema.IDocumentSection;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;
@@ -393,7 +392,7 @@ public class Schema extends PlatformObject implements ISchema {
 	public void load(InputStream stream) {
 		try {
 			SAXParser parser = getParser();
-			XMLDefaultHandler handler = new XMLDefaultHandler(fAbbreviated);
+			SchemaHandler handler = new SchemaHandler(fAbbreviated);
 			parser.parse(stream, handler);
 			traverseDocumentTree(handler.getDocumentElement());
 		} catch (SAXException e) {
