@@ -291,7 +291,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 		programArgs.add("-testpluginname"); //$NON-NLS-1$
 		programArgs.add(getTestPluginId(configuration));
 		
-		programArgs.add("-loaderpluginname");
+		programArgs.add("-loaderpluginname"); //$NON-NLS-1$
 		programArgs.add(testSearchResult.getTestKind().getLoaderPluginId());
 		
 		String testFailureNames = configuration.getAttribute(JUnitBaseLaunchConfiguration.FAILURES_FILENAME_ATTR, ""); //$NON-NLS-1$
@@ -317,9 +317,9 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 		
 	protected IPluginModelBase[] addRequiredPlugins(Map pluginMap, TestSearchResult result)
 		throws CoreException {
-		addRequiredPlugin(pluginMap, "org.eclipse.pde.junit.runtime");
-		addRequiredPlugin(pluginMap, "org.eclipse.jdt.junit.runtime");
-		addRequiredPlugin(pluginMap, "org.junit");
+		addRequiredPlugin(pluginMap, "org.eclipse.pde.junit.runtime"); //$NON-NLS-1$
+		addRequiredPlugin(pluginMap, "org.eclipse.jdt.junit.runtime"); //$NON-NLS-1$
+		addRequiredPlugin(pluginMap, "org.junit"); //$NON-NLS-1$
 		addRequiredPlugin(pluginMap, result.getTestKind().getLoaderPluginId());
 		return (IPluginModelBase[]) pluginMap.values().toArray(
 			new IPluginModelBase[pluginMap.size()]);

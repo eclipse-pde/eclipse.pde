@@ -24,7 +24,9 @@ import java.util.zip.ZipFile;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -183,6 +185,19 @@ public class SharedLabelProvider
 	
 
 	public Image getImageFromPlugin(IPluginModelBase model, String relativePath) {
+		String platform = "platform:/plugin/"; //$NON-NLS-1$
+		if (relativePath.startsWith(platform)) {
+			relativePath = relativePath.substring(platform.length());
+            int index = relativePath.indexOf('/');
+            if (index == -1)
+            	return null;
+            IPlugin plugin = PDECore.getDefault().findPlugin(relativePath.substring(0, index));
+            if (plugin == null)
+            	return null;
+            model = plugin.getPluginModel(); 
+            relativePath = relativePath.substring(index);
+        }
+		
 		String location = model.getInstallLocation();
 		if (location == null)
 			return null;
