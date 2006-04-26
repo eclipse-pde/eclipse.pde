@@ -422,11 +422,13 @@ public class TargetPlatform implements IEnvironmentVariables {
 	
 	public static String[] getFeaturePaths() {
 		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
-		String[] paths = new String[models.length];
+		ArrayList list = new ArrayList();
 		for (int i = 0; i < models.length; i++) {
-			paths[i] = models[i].getInstallLocation() + IPath.SEPARATOR + "feature.xml"; //$NON-NLS-1$
+			String location = models[i].getInstallLocation();
+			if (location != null)
+				list.add(location + IPath.SEPARATOR + "feature.xml"); //$NON-NLS-1$
 		}
-		return paths;
+		return (String[]) list.toArray(new String[list.size()]);
 	}
 
 	/**

@@ -81,7 +81,8 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel
 		return file;
 	}
 	public String getInstallLocation() {
-		return file.getParent().getLocation().toOSString();
+		IPath path = file.getParent().getLocation();
+		return path == null ? null : path.toOSString();
 	}
 	public IResource getUnderlyingResource() {
 		return file;
