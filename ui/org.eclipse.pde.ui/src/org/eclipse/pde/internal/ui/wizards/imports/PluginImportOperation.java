@@ -586,7 +586,8 @@ public class PluginImportOperation extends JarImportOperation {
 		String id = model.getPluginBase().getId();
 		if ("org.apache.ant".equals(id) //$NON-NLS-1$
 			|| "org.eclipse.osgi.util".equals(id) //$NON-NLS-1$
-			|| "org.eclipse.osgi.services".equals(id)) //$NON-NLS-1$
+			|| "org.eclipse.osgi.services".equals(id) //$NON-NLS-1$
+			|| "org.eclipse.core.runtime.compatibility.registry".equals(id)) //$NON-NLS-1$
 			return true;
 		
 		if ("org.eclipse.swt".equals(id) && !isJARd(model)) //$NON-NLS-1$
