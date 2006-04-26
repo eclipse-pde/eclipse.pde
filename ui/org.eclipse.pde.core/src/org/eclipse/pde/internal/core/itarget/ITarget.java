@@ -78,5 +78,7 @@ public interface ITarget extends ITargetObject {
 	void setDescription(String desc);
 	
 	String getDescription();
+	
+	boolean isValidFeatureObject(Object featureObj);
 
 }

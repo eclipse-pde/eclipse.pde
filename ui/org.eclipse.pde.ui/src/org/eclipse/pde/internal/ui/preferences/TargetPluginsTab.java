@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
@@ -57,12 +56,10 @@ import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.PluginPathFinder;
 import org.eclipse.pde.internal.core.RequiredDependencyManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
-import org.eclipse.pde.internal.core.ifeature.IEnvironment;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
-import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetFeature;
 import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
@@ -455,7 +452,6 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		Set optional = new HashSet();
 		ITargetFeature[] targetFeatures = target.getFeatures();
 		Stack features = new Stack();
-		IEnvironmentInfo envInfo = target.getEnvironment();
 		
 		FeatureModelManager featureManager = null;
 		if (fCurrentFeatures == null)
@@ -473,7 +469,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 				IFeature feature = (IFeature) features.pop();
 				IFeaturePlugin [] plugins = feature.getPlugins();
 				for (int j = 0; j < plugins.length; j++) {
-					if (isValidFeatureObj(plugins[j], envInfo)) {
+					if (target.isValidFeatureObject(plugins[j])) {
 						if (targetFeatures[i].isOptional() || plugins[j].isFragment())
 							optional.add(plugins[j].getId());
 						else
@@ -482,7 +478,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 				}
 				IFeatureChild[] children = feature.getIncludedFeatures();
 				for (int j = 0; j < children.length; j++) {
-					if (!isValidFeatureObj(children[j], envInfo))
+					if (!target.isValidFeatureObject(children[j]))
 						continue;
 					model = (featureManager != null) ? featureManager.findFeatureModel(children[j].getId()) :
 						(IFeatureModel)fCurrentFeatures.get(children[j].getId());
@@ -554,71 +550,6 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		if (!required.isEmpty() || !missingFeatures.isEmpty()) 
 			TargetErrorDialog.showDialog(fPage.getShell(), missingFeatures.values().toArray(),
 					required.values().toArray());
-	}
-	
-	//  Would be better implemented if IFeaturePlugin extends IEnvironment.  Look at doing this post 3.2
-	private boolean isValidFeatureObj(Object featureObj, IEnvironmentInfo envInfo) {
-		IEnvironment env = null;
-		IFeaturePlugin plugin = null;
-		if (featureObj instanceof IEnvironment)
-			env = (IEnvironment) featureObj;
-		else
-			plugin = (IFeaturePlugin) featureObj;
-		boolean result = true, isFound;
-		StringTokenizer tokenizer;
-		
-		String value = (env != null) ? env.getArch() : plugin.getArch();
-		if (value != null && result) {
-			String arch = (envInfo != null) ? envInfo.getArch() : null;
-			if (arch == null || arch.length() == 0)
-				arch = Platform.getOSArch();
-			tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
-			isFound = false;
-			while (tokenizer.hasMoreTokens()) 
-				if (arch.equals(tokenizer.nextToken().trim()))
-					isFound = true;
-			result = result && isFound;
-		}
-		
-		value = (env != null) ? env.getOS() : plugin.getOS();
-		if (value != null && result) {
-			String os = (envInfo != null) ? envInfo.getOS() : null;
-			if (os == null || os.length() == 0)
-				os = Platform.getOS();
-			tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
-			isFound = false;
-			while (tokenizer.hasMoreTokens())
-				if (os.equals(tokenizer.nextToken().trim()))
-					isFound = true;
-			result = result && isFound;
-		}
-		
-		value = (env != null) ? env.getWS() : plugin.getWS();
-		if (value != null && result) {
-			String ws = (envInfo != null) ? envInfo.getWS() : null;
-			if (ws == null || ws.length() == 0)
-				ws = Platform.getWS();
-			tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
-			isFound = false;
-			while (tokenizer.hasMoreTokens()) 
-				if (ws.equals(tokenizer.nextToken().trim()))
-					isFound = true;
-			result = result && isFound;
-		}
-		
-		value = (env != null) ? env.getNL() : plugin.getNL();
-		if (value != null && result) {
-			String nl = (envInfo != null) ? envInfo.getNL() : null;
-			if (nl == null | nl.length() == 0)
-				nl = Platform.getNL();
-			tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
-			isFound = false;
-			while (tokenizer.hasMoreTokens()) 
-				if (nl.equals(tokenizer.nextToken().trim()))
-					isFound = true;
-			result = result && isFound;
-		}
-		return result;
 	}
 	
 	protected void handleReload() {

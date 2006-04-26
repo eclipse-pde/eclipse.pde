@@ -15,9 +15,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.ifeature.IEnvironment;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.core.itarget.IAdditionalLocation;
 import org.eclipse.pde.internal.core.itarget.IArgumentsInfo;
 import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
@@ -377,5 +381,60 @@ public class Target extends TargetObject implements ITarget {
 
 	public String getDescription() {
 		return fDescription;
+	}
+	
+	//  Would be better implemented if IFeaturePlugin extends IEnvironment.  Look at doing this post 3.2
+	public boolean isValidFeatureObject(Object featureObj) {
+		IEnvironment env = null;
+		IFeaturePlugin plugin = null;
+		if (featureObj instanceof IEnvironment)
+			env = (IEnvironment) featureObj;
+		else
+			plugin = (IFeaturePlugin) featureObj;
+		boolean result = true;
+		
+		String value = (env != null) ? env.getArch() : plugin.getArch();
+		if (value != null && result) {
+			String arch = (fEnvInfo != null) ? fEnvInfo.getArch() : null;
+			if (arch == null || arch.length() == 0)
+				arch = Platform.getOSArch();
+			result = containsProperty(arch, value);
+		}
+		
+		value = (env != null) ? env.getOS() : plugin.getOS();
+		if (value != null && result) {
+			String os = (fEnvInfo != null) ? fEnvInfo.getOS() : null;
+			if (os == null || os.length() == 0)
+				os = Platform.getOS();
+			result = containsProperty(os, value);
+		}
+		
+		value = (env != null) ? env.getWS() : plugin.getWS();
+		if (value != null && result) {
+			String ws = (fEnvInfo != null) ? fEnvInfo.getWS() : null;
+			if (ws == null || ws.length() == 0)
+				ws = Platform.getWS();
+			result = containsProperty(ws, value);
+		}
+		
+		value = (env != null) ? env.getNL() : plugin.getNL();
+		if (value != null && result) {
+			String nl = (fEnvInfo != null) ? fEnvInfo.getNL() : null;
+			if (nl == null | nl.length() == 0)
+				nl = Platform.getNL();
+			result = containsProperty(nl, value);
+		}
+		return result;
+	}
+	
+	private boolean containsProperty(String property, String value) {
+		if (value == null || property == null)
+			return false;
+		StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
+		boolean isFound = false;
+		while (tokenizer.hasMoreTokens()) 
+			if (property.equals(tokenizer.nextToken().trim()))
+				isFound = true;
+		return isFound;
 	}
 }
