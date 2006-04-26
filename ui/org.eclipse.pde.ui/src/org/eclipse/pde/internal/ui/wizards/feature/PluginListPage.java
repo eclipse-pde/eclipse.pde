@@ -56,6 +56,7 @@ public class PluginListPage extends BasePluginListPage {
 		pluginViewer.setSorter(ListUtil.PLUGIN_SORTER);
 		GridData gd = (GridData) tablePart.getControl().getLayoutData();
 		gd.heightHint = 250;
+		gd.widthHint = 300;
 		pluginViewer.setInput(PDECore.getDefault().getModelManager());
 		tablePart.setSelection(new Object[0]);
 		setControl(container);
