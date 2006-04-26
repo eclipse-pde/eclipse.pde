@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
 
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.w3c.dom.Element;
@@ -22,7 +24,6 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 
 	private static final long serialVersionUID = 1L;
 	private String fId;
-	private boolean fIsFragment;
 
 	public ProductPlugin(IProductModel model) {
 		super(model);
@@ -38,19 +39,16 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductPlugin#setId(java.lang.String)
 	 */
-	public void setId(String id, boolean isFragment) {
+	public void setId(String id) {
 		fId = id;
-		fIsFragment = isFragment;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProductObject#parse(org.w3c.dom.Node)
 	 */
 	public void parse(Node node) {
-		if (node.getNodeType() == Node.ELEMENT_NODE) {
+		if (node.getNodeType() == Node.ELEMENT_NODE)
 			fId = ((Element)node).getAttribute("id"); //$NON-NLS-1$
-			fIsFragment = "true".equals(((Element)node).getAttribute("fragment")); //$NON-NLS-1$ //$NON-NLS-2$
-		}
 	}
 	
 	/* (non-Javadoc)
@@ -58,7 +56,7 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	 */
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<plugin id=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (fIsFragment)
+		if (PDECore.getDefault().getModelManager().findModel(fId).getPluginBase() instanceof IFragment)
 			writer.print(" fragment=\"true\""); //$NON-NLS-1$
 		writer.println("/>"); //$NON-NLS-1$
 	}

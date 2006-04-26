@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginElement;
@@ -179,7 +178,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 			String id = base.getId();
 			if (id != null && id.length() > 0) {
 				IProductPlugin plugin = factory.createPlugin();
-				plugin.setId(id, base instanceof IFragment);
+				plugin.setId(id);
 				pplugins[i] = plugin;
 			}
 		}		
