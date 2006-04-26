@@ -518,7 +518,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected String computeArchiveName() {
-		return featureId + "-" + Utils.getPropertyFormat(PROPERTY_BUILD_ID_PARAM) + (configInfo.equals(Config.genericConfig()) ? "" : ("-" + configInfo.toStringReplacingAny(".", ANY_STRING))) + ".zip"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		String extension = (FORMAT_TAR.equalsIgnoreCase(archiveFormat) || FORMAT_ANTTAR.equalsIgnoreCase(archiveFormat)) ? ".tar.gz" : ".zip"; //$NON-NLS-1$ //$NON-NLS-2$
+		return featureId + "-" + Utils.getPropertyFormat(PROPERTY_BUILD_ID_PARAM) + (configInfo.equals(Config.genericConfig()) ? "" : ("-" + configInfo.toStringReplacingAny(".", ANY_STRING))) + extension; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 
 	public void generateTarGZTasks(boolean assembling) {
@@ -535,7 +536,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		}
 		parameters.clear();
 		String tarArgs = assembling ? "-cvf '" : "-rvf '";  //$NON-NLS-1$//$NON-NLS-2$
-		parameters.add(Utils.getPropertyFormat(PROPERTY_TAR_ARGS) + tarArgs + Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + "' " + Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + ' '); //$NON-NLS-1$ //$NON-NLS-2$
+		parameters.add(Utils.getPropertyFormat(PROPERTY_TAR_ARGS) + tarArgs + Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH) + "' " + Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + ' '); //$NON-NLS-1$
 		script.printExecTask("tar", Utils.getPropertyFormat(PROPERTY_ASSEMBLY_TMP), parameters, null); //$NON-NLS-1$ 
 		
 		script.printAntCallTask(TARGET_GZIP_RESULTS, true, null );
@@ -573,7 +574,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			int i = 0;
 			for (Iterator iter = allConfigs.iterator(); iter.hasNext();) {
 				Config elt = (Config) iter.next();
-				rootFiles[i++] = new ZipFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + elt.toStringReplacingAny(".", ANY_STRING), false, null, "**/**", null, null, null, elt.toStringReplacingAny(".", ANY_STRING), null, null); //$NON-NLS-1$//$NON-NLS-2$
+				rootFiles[i++] = new ZipFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + elt.toStringReplacingAny(".", ANY_STRING), false, null, "**/**", null, null, null, elt.toStringReplacingAny(".", ANY_STRING), null, null); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			}
 			script.printZipTask(Utils.getPropertyFormat(PROPERTY_ARCHIVE_FULLPATH), null, false, true, rootFiles);
 		} else {
