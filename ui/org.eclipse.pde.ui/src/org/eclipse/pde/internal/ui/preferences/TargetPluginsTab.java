@@ -572,7 +572,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			String arch = (envInfo != null) ? envInfo.getArch() : null;
 			if (arch == null || arch.length() == 0)
 				arch = Platform.getOSArch();
-			tokenizer = new StringTokenizer(value, ",");
+			tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
 			isFound = false;
 			while (tokenizer.hasMoreTokens()) 
 				if (arch.equals(tokenizer.nextToken().trim()))
@@ -585,7 +585,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			String os = (envInfo != null) ? envInfo.getOS() : null;
 			if (os == null || os.length() == 0)
 				os = Platform.getOS();
-			tokenizer = new StringTokenizer(value, ",");
+			tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
 			isFound = false;
 			while (tokenizer.hasMoreTokens())
 				if (os.equals(tokenizer.nextToken().trim()))
@@ -598,7 +598,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			String ws = (envInfo != null) ? envInfo.getWS() : null;
 			if (ws == null || ws.length() == 0)
 				ws = Platform.getWS();
-			tokenizer = new StringTokenizer(value, ",");
+			tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
 			isFound = false;
 			while (tokenizer.hasMoreTokens()) 
 				if (ws.equals(tokenizer.nextToken().trim()))
@@ -611,7 +611,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			String nl = (envInfo != null) ? envInfo.getNL() : null;
 			if (nl == null | nl.length() == 0)
 				nl = Platform.getNL();
-			tokenizer = new StringTokenizer(value, ",");
+			tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
 			isFound = false;
 			while (tokenizer.hasMoreTokens()) 
 				if (nl.equals(tokenizer.nextToken().trim()))
