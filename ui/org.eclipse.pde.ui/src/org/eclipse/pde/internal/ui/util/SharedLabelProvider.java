@@ -195,7 +195,7 @@ public class SharedLabelProvider
             if (plugin == null)
             	return null;
             model = plugin.getPluginModel(); 
-            relativePath = relativePath.substring(index);
+            relativePath = relativePath.substring(index + 1);
         }
 		
 		String location = model.getInstallLocation();
