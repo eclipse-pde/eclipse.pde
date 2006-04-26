@@ -274,14 +274,12 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	// basePath : the relative path between the plugin from which we are adding the classpath and the plugin that is requiring this entry 
 	// classpath : The classpath in which we want to add this path 
 	private void addPathAndCheck(BundleDescription model, IPath basePath, String libraryName, Properties modelProperties, List classpath) {
-		String pluginId = null;
+		String pluginId = model != null ? model.getSymbolicName() : null;
 		String rules = ""; //$NON-NLS-1$
 		//only add access rules to libraries that are not part of the current bundle
 		//and are not this bundle's host if we are a fragment
 		BundleDescription currentBundle = generator.getModel();
 		if (model != null && model != currentBundle && (currentBundle.getHost() == null || currentBundle.getHost().getSupplier() != model) ) {
-			pluginId = model.getSymbolicName();
-
 			String packageKey = pluginId;
 			if (model.isResolved() && model.getHost() != null) {
 				packageKey = ((BundleDescription) model.getHost().getSupplier()).getSymbolicName();
