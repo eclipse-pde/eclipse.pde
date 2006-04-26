@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
 
-import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
@@ -56,7 +56,7 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	 */
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<plugin id=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (PDECore.getDefault().getModelManager().findModel(fId).getPluginBase() instanceof IFragment)
+		if (PDECore.getDefault().getModelManager().findModel(fId) instanceof IFragmentModel)
 			writer.print(" fragment=\"true\""); //$NON-NLS-1$
 		writer.println("/>"); //$NON-NLS-1$
 	}
