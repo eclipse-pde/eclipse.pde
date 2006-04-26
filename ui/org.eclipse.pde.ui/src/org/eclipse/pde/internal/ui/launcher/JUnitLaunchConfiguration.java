@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     David Saff (saff@mit.edu) - bug 102632: [JUnit] Support for JUnit 4.
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -30,10 +31,10 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration;
+import org.eclipse.jdt.internal.junit.launcher.TestSearchResult;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -79,7 +80,8 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 		try {
 			fConfigDir = null;
 			monitor.beginTask("", 7); //$NON-NLS-1$
-			IType[] testTypes = getTestTypes(configuration, monitor);
+			TestSearchResult testSearchResult = findTestTypes(configuration, monitor);
+			IType[] testTypes = testSearchResult.getTypes();
 			monitor.worked(1);
 			
 			LauncherUtils.validateProjectDependencies(configuration, new SubProgressMonitor(monitor, 1));
@@ -95,7 +97,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 			launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());
 			
 			int port = SocketUtil.findFreePort();
-			VMRunnerConfiguration runnerConfig = createVMRunner(configuration, testTypes, port, mode);
+			VMRunnerConfiguration runnerConfig = createVMRunner(configuration, testSearchResult, port, mode);
 			if (runnerConfig == null) {
 				monitor.setCanceled(true);
 				return;
@@ -128,7 +130,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 	 */
 	protected VMRunnerConfiguration createVMRunner(
 		ILaunchConfiguration configuration,
-		IType[] testTypes,
+		TestSearchResult testTypes,
 		int port,
 		String runMode)
 		throws CoreException {
@@ -174,7 +176,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 	
 	public String[] getProgramArgumentsArray(
 		ILaunchConfiguration configuration,
-		IType[] testTypes,
+		TestSearchResult testSearchResult,
 		int port,
 		String runMode)
 		throws CoreException {
@@ -205,10 +207,9 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 			}
 		}
 
-		addRequiredPlugins(pluginMap);
+		addRequiredPlugins(pluginMap, testSearchResult);
 		
-		programArgs.add("-version"); //$NON-NLS-1$
-		programArgs.add("3"); //$NON-NLS-1$
+		programArgs.addAll(getBasicArguments(configuration, port, runMode, testSearchResult));
 		
 		// Specify the application to launch based on the list of plug-ins to run.
 		programArgs.add("-application"); //$NON-NLS-1$
@@ -287,12 +288,12 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 			programArgs.add(TargetPlatform.getOSArch());
 		}
 			
-		if (keepAlive(configuration) && runMode.equals(ILaunchManager.DEBUG_MODE))
-			programArgs.add("-keepalive"); //$NON-NLS-1$
-		programArgs.add("-port"); //$NON-NLS-1$
-		programArgs.add(Integer.toString(port));
 		programArgs.add("-testpluginname"); //$NON-NLS-1$
 		programArgs.add(getTestPluginId(configuration));
+		
+		programArgs.add("-loaderpluginname");
+		programArgs.add(testSearchResult.getTestKind().getLoaderPluginId());
+		
 		String testFailureNames = configuration.getAttribute(JUnitBaseLaunchConfiguration.FAILURES_FILENAME_ATTR, ""); //$NON-NLS-1$
 		if (testFailureNames.length() > 0) {
 			programArgs.add("-testfailures"); //$NON-NLS-1$
@@ -300,6 +301,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 		}
 
 		// a testname was specified just run the single test
+		IType[] testTypes = testSearchResult.getTypes();
 		String testName =
 			configuration.getAttribute(JUnitBaseLaunchConfiguration.TESTNAME_ATTR, ""); //$NON-NLS-1$
 		if (testName.length() > 0) {
@@ -312,24 +314,21 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 		}
 		return (String[]) programArgs.toArray(new String[programArgs.size()]);
 	}
-	
-	protected IPluginModelBase[] addRequiredPlugins(Map pluginMap)
+		
+	protected IPluginModelBase[] addRequiredPlugins(Map pluginMap, TestSearchResult result)
 		throws CoreException {
-		if (!pluginMap.containsKey("org.eclipse.pde.junit.runtime")) { //$NON-NLS-1$
-			pluginMap.put(
-				"org.eclipse.pde.junit.runtime", //$NON-NLS-1$
-				findPlugin("org.eclipse.pde.junit.runtime")); //$NON-NLS-1$
-		}
-		if (!pluginMap.containsKey("org.eclipse.jdt.junit.runtime")) { //$NON-NLS-1$
-			pluginMap.put(
-				"org.eclipse.jdt.junit.runtime", //$NON-NLS-1$
-				findPlugin("org.eclipse.jdt.junit.runtime")); //$NON-NLS-1$
-		}
-		if (!pluginMap.containsKey("org.junit")) { //$NON-NLS-1$
-			pluginMap.put("org.junit", findPlugin("org.junit")); //$NON-NLS-1$ //$NON-NLS-2$
-		}
+		addRequiredPlugin(pluginMap, "org.eclipse.pde.junit.runtime");
+		addRequiredPlugin(pluginMap, "org.eclipse.jdt.junit.runtime");
+		addRequiredPlugin(pluginMap, "org.junit");
+		addRequiredPlugin(pluginMap, result.getTestKind().getLoaderPluginId());
 		return (IPluginModelBase[]) pluginMap.values().toArray(
 			new IPluginModelBase[pluginMap.size()]);
+	}
+	
+	private void addRequiredPlugin(Map pluginMap, final String pluginId) throws CoreException {
+		if (!pluginMap.containsKey(pluginId)) { //$NON-NLS-1$
+			pluginMap.put(pluginId, findPlugin(pluginId)); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 	
 	protected IPluginModelBase findPlugin(String id) throws CoreException {

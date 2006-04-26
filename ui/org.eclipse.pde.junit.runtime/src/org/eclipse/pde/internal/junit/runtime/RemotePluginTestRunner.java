@@ -25,6 +25,7 @@ import org.osgi.framework.Bundle;
 public class RemotePluginTestRunner extends RemoteTestRunner {
 
 	private String fTestPluginName;
+	private ClassLoader fLoaderClassLoader;
 	
 	class BundleClassLoader extends ClassLoader {
 		  private Bundle bundle;
@@ -59,28 +60,47 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	
 	/**
 	 * Returns the Plugin class loader of the plugin containing the test.
-	 * @see RemotePluginTestRunner#getClassLoader()
+	 * @see RemoteTestRunner#getTestClassLoader()
 	 */
-	protected ClassLoader getClassLoader() {
-		Bundle bundle = Platform.getBundle(fTestPluginName);
+	protected ClassLoader getTestClassLoader() {
+		final String pluginId = fTestPluginName;
+		return getClassLoader(pluginId);
+	}
+
+	public ClassLoader getClassLoader(final String pluginId) {
+		Bundle bundle = Platform.getBundle(pluginId);
 		if (bundle == null)
-			throw new IllegalArgumentException("No Classloader found for plug-in " + fTestPluginName); //$NON-NLS-1$
+			throw new IllegalArgumentException("No Classloader found for plug-in " + pluginId); //$NON-NLS-1$
 		return new BundleClassLoader(bundle);
 	}
 
-	protected void init(String[] args) {
+	public void init(String[] args) {
+		readPluginArgs(args);
 		defaultInit(args);
-		setTestPluginName(args);
 	}
 
-	protected void setTestPluginName(String[] args) {
+	public void readPluginArgs(String[] args) {
 		for (int i = 0; i < args.length; i++) {
-			if (args[i].toLowerCase(Locale.ENGLISH).equals("-testpluginname")) { //$NON-NLS-1$
-				if (i < args.length - 1)
-					fTestPluginName = args[i + 1];
-				return;
-			}
+			if (isFlag(args, i, "-testpluginname"))
+				fTestPluginName = args[i + 1];
+			
+			if (isFlag(args, i, "-loaderpluginname"))
+				fLoaderClassLoader = getClassLoader(args[i + 1]);
 		}
-		throw new IllegalArgumentException("Parameter -testpluginnname not specified."); //$NON-NLS-1$
+
+		if (fTestPluginName == null)
+			throw new IllegalArgumentException("Parameter -testpluginnname not specified."); //$NON-NLS-1$
+		
+		if (fLoaderClassLoader == null)
+			fLoaderClassLoader = getClass().getClassLoader();
+	}
+
+	protected Class loadTestLoaderClass(String className) throws ClassNotFoundException {
+		return fLoaderClassLoader.loadClass(className);
+	}
+	
+	private boolean isFlag(String[] args, int i, final String wantedFlag) {
+		String lowerCase = args[i].toLowerCase(Locale.ENGLISH);
+		return lowerCase.equals(wantedFlag)  && i < args.length - 1;
 	}
 }	
