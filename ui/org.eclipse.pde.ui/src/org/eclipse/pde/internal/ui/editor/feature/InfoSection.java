@@ -306,10 +306,8 @@ public class InfoSection extends PDESection {
 			return;
 		String urlName = fUrlText.getText();
 		String text = fDocument.get();
-		if (info != null) {
-			applyInfoText(info, urlName, text, index);
-			updateTabImage(fTabFolder.getSelection());
-		}
+		applyInfoText(info, urlName, text, index);
+		updateTabImage(fTabFolder.getSelection());
 	}
 
 	private void applyInfoText(IFeatureInfo targetInfo, String urlText,
@@ -322,18 +320,16 @@ public class InfoSection extends PDESection {
 		try {
 			IFeatureModel model = (IFeatureModel) getPage().getModel();
 			IFeature feature = model.getFeature();
-			IFeatureInfo info = targetInfo;
 
-			if (info == null) {
-				info = feature.getFeatureInfo(index);
-			}
+			if (targetInfo == null)
+				targetInfo = feature.getFeatureInfo(index);
 
-			if (targetInfo == null && info == null) {
-				info = model.getFactory().createInfo(index);
-				feature.setFeatureInfo(info, index);
+			if (targetInfo == null) {
+				targetInfo = model.getFactory().createInfo(index);
+				feature.setFeatureInfo(targetInfo, index);
 			}
-			info.setURL(url);
-			info.setDescription(text);
+			targetInfo.setURL(url);
+			targetInfo.setDescription(text);
 		} catch (CoreException e) {
 		}
 	}
