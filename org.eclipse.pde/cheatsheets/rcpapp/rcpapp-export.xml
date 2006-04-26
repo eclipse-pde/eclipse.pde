@@ -109,7 +109,7 @@
                skip="false"/>     
       <subitem label="Click the &quot;Eclipse Product export wizard&quot; hyper-text link under the &quot;Exporting&quot; heading to launch the &quot;Export&quot; dialog box" 
                skip="true">
-         <command serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.pde.ui.productExportWizard)"/>
+         <command serialization="org.eclipse.ui.file.export(exportWizardId=org.eclipse.pde.ui.productExportWizard)"/>
       </subitem>
       <subitem label="Input &quot;rcpapp_plugin-based&quot; in the &quot;Root directory&quot; text box contained in the &quot;Product Configuration&quot; group" 
                skip="false"/>
