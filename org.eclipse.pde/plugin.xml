@@ -26,13 +26,6 @@
 
    <extension 
    		 point="org.eclipse.ui.cheatsheets.cheatSheetContent">
-      <cheatsheet
-            category="org.eclipse.pde"
-            contentFile="$nl$/cheatsheets/rcpapp.xml"
-            id="org.eclipse.pde.rcpapp"
-            name="%cheatsheet.rcpApp.name">
-         <description>%cheatsheet.rcpApp.desc</description>
-      </cheatsheet>
       <category
             id="org.eclipse.pde"
             name="%cheatsheet.category.pde"/>
@@ -43,6 +36,16 @@
             id="org.eclipse.pde.helloworld"
             name="%cheatsheet.helloworld.name">
          <description>%cheatsheet.helloworld.desc</description>
+      </cheatsheet>
+      <cheatsheet
+            category="org.eclipse.pde"
+            composite="true"
+            contentFile="$nl$/cheatsheets/rcpapp-composite.xml"
+            id="org.eclipse.pde.rcpapp"
+            name="%cheatsheet.rcpapp.name">
+         <description>
+            %cheatsheet.rcpapp.desc
+         </description>
       </cheatsheet>
    </extension>
    
