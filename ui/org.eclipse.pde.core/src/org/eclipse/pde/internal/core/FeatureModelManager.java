@@ -116,6 +116,7 @@ public class FeatureModelManager {
 	}
 	
 	public IFeatureModel[] getWorkspaceModels() {
+		init();
 		return fWorkspaceManager.getFeatureModels();
 	}
 
