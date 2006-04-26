@@ -17,6 +17,9 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class NewFeatureProjectWizard extends AbstractNewFeatureWizard {
 
+	private String fId;
+	private String fVersion;
+	
 	public NewFeatureProjectWizard() {
 		super();
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_WIZ);
@@ -40,18 +43,21 @@ public class NewFeatureProjectWizard extends AbstractNewFeatureWizard {
 	}
 
 	public String getFeatureId() {
-		return fProvider.getFeatureData().id;
+		return fId;
 	}
 	
 	public String getFeatureVersion() {
-		return fProvider.getFeatureData().version;	
+		return fVersion;	
 	}
 
 	protected IRunnableWithProgress getOperation() {
+		FeatureData data = fProvider.getFeatureData();
+		fId = data.id;
+		fVersion = data.version;
 		return new CreateFeatureProjectOperation(
 				fProvider.getProject(),
 				fProvider.getLocationPath(),
-				fProvider.getFeatureData(),
+				data,
 				fProvider.getPluginListSelection(),
 				getShell());
 	}
