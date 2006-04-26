@@ -65,14 +65,14 @@ public class PDEJavaHelper {
 					result = javaProject.findType(name);
 				if (result != null)
 					JavaUI.openInEditor(result);
-				else if (result == null) {
+				else {
 					JavaAttributeWizard wizard = new JavaAttributeWizard(value);
 					WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 					dialog.create();
 					SWTUtil.setDialogSize(dialog, 400, 500);
 					int dResult = dialog.open();
 					if (dResult == Window.OK)
-						return wizard.getClassNameWithArgs();
+						return wizard.getQualifiedNameWithArgs();
 				}
 			} else if (createIfNoNature) {
 				IResource resource = project.findMember(new Path(name));
@@ -86,7 +86,7 @@ public class PDEJavaHelper {
 					SWTUtil.setDialogSize(dialog, 400, 500);
 					int dResult = dialog.open();
 					if (dResult == Window.OK) {
-						String newValue = wizard.getClassName();
+						String newValue = wizard.getQualifiedName();
 						name = newValue.replace('.', '/') + ".java"; //$NON-NLS-1$
 						resource = project.findMember(new Path(name));
 						if (resource != null && resource instanceof IFile) {

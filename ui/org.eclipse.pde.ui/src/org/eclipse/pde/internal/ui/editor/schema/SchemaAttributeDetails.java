@@ -445,7 +445,7 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 					dialog.create();
 					SWTUtil.setDialogSize(dialog, 400, 500);
 					if (dialog.open() == Window.OK) {
-						return wizard.getClassName();
+						return wizard.getQualifiedName();
 					}
 				}
 			}

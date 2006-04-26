@@ -27,14 +27,14 @@ public class NewClassCreationWizard extends JavaAttributeWizard {
 
 	public void addPages() {
 		if (fIsInterface)
-			mainPage = new NewInterfaceWizardPage();
+			fMainPage = new NewInterfaceWizardPage();
 		else
-			mainPage = new NewClassWizardPage();
-		addPage(mainPage);
+			fMainPage = new NewClassWizardPage();
+		addPage(fMainPage);
 		if (fIsInterface)
-			((NewInterfaceWizardPage)mainPage).init(StructuredSelection.EMPTY);
+			((NewInterfaceWizardPage)fMainPage).init(StructuredSelection.EMPTY);
 		else
-			((NewClassWizardPage)mainPage).init(StructuredSelection.EMPTY);
+			((NewClassWizardPage)fMainPage).init(StructuredSelection.EMPTY);
 	}
 
 }
