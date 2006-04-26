@@ -97,7 +97,7 @@ public class RequiresSection
 
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = createClientContainer(section, 2, toolkit);
-		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
+		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		TablePart tablePart = getTablePart();
 		fImportViewer = tablePart.getTableViewer();
 
@@ -122,7 +122,7 @@ public class RequiresSection
 		Table table = getTablePart().getTableViewer().getTable();
 		TableItem[] selection = table.getSelection();
 		boolean hasSelection = selection.length > 0;
-		boolean canMove = table.getItemCount() > 1;
+		boolean canMove = table.getItemCount() > 1 && selection.length == 1;
 		TablePart tablePart = getTablePart();
         tablePart.setButtonEnabled(ADD_INDEX, isEditable());
 		tablePart.setButtonEnabled(
@@ -134,7 +134,7 @@ public class RequiresSection
 				&& hasSelection && isEditable()
 				&& table.getSelectionIndex() < table.getItemCount() - 1);
         if (isBundle())
-            tablePart.setButtonEnabled(PROPERTIES_INDEX, hasSelection);
+            tablePart.setButtonEnabled(PROPERTIES_INDEX, selection.length == 1);
         tablePart.setButtonEnabled(REMOVE_INDEX, isEditable() && hasSelection);
 	}
 
