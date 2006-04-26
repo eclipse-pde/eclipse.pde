@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.build.ant;
 
 import org.eclipse.pde.internal.build.IXMLConstants;
+import org.eclipse.pde.internal.build.Utils;
 
 /**
  * Wrapper class for the Ant javac task.
@@ -61,7 +62,7 @@ public class JavacTask implements ITask {
 		script.indent++;
 
 		if (compileArgs != null) {
-			script.println("<compilerarg line=\"" + compileArgs + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$
+			script.println("<compilerarg line=\"" + compileArgs + "\" compiler=\"" + Utils.getPropertyFormat(IXMLConstants.PROPERTY_BUILD_COMPILER) + "\"/>"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 		script.println("<classpath refid=\"" + classpathId + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$
