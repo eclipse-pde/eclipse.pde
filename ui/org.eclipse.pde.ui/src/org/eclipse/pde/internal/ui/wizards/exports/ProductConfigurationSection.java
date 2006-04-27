@@ -178,11 +178,10 @@ public class ProductConfigurationSection {
 		if (path == null || path.length() == 0)
 			return null;
 		
-		try {
-			return PDEPlugin.getWorkspace().getRoot().getFile(new Path(path));
-		} catch (IllegalArgumentException e) {
-			return null;
-		}		
+		IPath thePath = new Path(path);
+		return thePath.segmentCount() < 2 
+					? null 
+					: PDEPlugin.getWorkspace().getRoot().getFile(new Path(path));
 	}
 	
 	protected void updateProductFields() {
