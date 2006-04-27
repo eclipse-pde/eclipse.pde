@@ -246,14 +246,14 @@ public class ContentSection extends TableSection {
 		fUseAllPlugins.setSelection(useAllPlugins);
 		fTabFolder.setEnabled(!useAllPlugins);
 		TablePart table = getTablePart();
-		boolean itemsSeelected = !fContentViewer.getSelection().isEmpty();
+		boolean itemsSelected = !fContentViewer.getSelection().isEmpty();
 		boolean hasItems = fContentViewer.getTable().getItemCount() > 0;
 		table.setButtonEnabled(0, isEditable() && !useAllPlugins);
-		table.setButtonEnabled(1, isEditable() && !useAllPlugins && itemsSeelected);
+		table.setButtonEnabled(1, isEditable() && !useAllPlugins && itemsSelected);
 		table.setButtonEnabled(2, isEditable() && !useAllPlugins && hasItems);
 		boolean pluginTab = (fLastTab == 0);
 		table.setButtonEnabled(3, isEditable() && pluginTab && !useAllPlugins);
-		table.setButtonEnabled(4, isEditable() && pluginTab && !useAllPlugins);
+		table.setButtonEnabled(4, isEditable() && pluginTab && !useAllPlugins && hasItems);
 	}
 	
 	protected boolean canPaste(Object target, Object[] objects) {

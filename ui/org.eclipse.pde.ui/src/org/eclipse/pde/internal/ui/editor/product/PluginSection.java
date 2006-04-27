@@ -530,7 +530,9 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 					isEditable() &&	!selection.isEmpty() && selection instanceof IStructuredSelection && 
 					((IStructuredSelection)selection).getFirstElement() instanceof IProductPlugin);
 		}
+		int count = fPluginTable.getTable().getItemCount();
 		if (updateRemoveAll)
-			tablePart.setButtonEnabled(4, isEditable() && fPluginTable.getTable().getItemCount() > 0);
+			tablePart.setButtonEnabled(4, isEditable() && count > 0);
+		tablePart.setButtonEnabled(2, isEditable() && count > 0);
 	}
 }
