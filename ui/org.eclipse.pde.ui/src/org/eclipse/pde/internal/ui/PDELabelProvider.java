@@ -34,6 +34,7 @@ import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.feature.FeatureImport;
+import org.eclipse.pde.internal.core.feature.FeatureObject;
 import org.eclipse.pde.internal.core.feature.FeaturePlugin;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
@@ -282,7 +283,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	public String getObjectText(IFeatureModel obj) {
 		IFeature feature = obj.getFeature();
-		return preventNull(feature.getId()) + " (" + preventNull(feature.getVersion()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		String name =
+			(isFullNameModeEnabled() && feature instanceof FeatureObject)
+				? ((FeatureObject)feature).getTranslatableLabel()
+				: feature.getId();
+		String text = preventNull(name);
+		return text + " (" + preventNull(feature.getVersion()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 
 	}
 

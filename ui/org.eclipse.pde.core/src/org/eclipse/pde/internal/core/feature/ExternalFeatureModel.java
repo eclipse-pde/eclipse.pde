@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.internal.core.NLResourceHelper;
 
 public class ExternalFeatureModel extends AbstractFeatureModel {
 	private static final long serialVersionUID = 1L;
@@ -43,6 +48,24 @@ public class ExternalFeatureModel extends AbstractFeatureModel {
 	}
 	public String getInstallLocation() {
 		return location;
+	}
+	
+	protected NLResourceHelper createNLResourceHelper() {
+		if (location != null) {
+			URL url = getNLLookupLocation();
+			return new NLResourceHelper("feature", new URL[] { url }); //$NON-NLS-1$
+		}
+		return null;
+	}
+		
+	public URL getNLLookupLocation() {
+		try {
+			if (location != null && new File(location).isDirectory() && !location.endsWith("/")) //$NON-NLS-1$
+				return new URL("file:" + location + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+			return new URL("file:" + location); //$NON-NLS-1$
+		} catch (MalformedURLException e) {
+			return null;
+		}
 	}
 
 }
