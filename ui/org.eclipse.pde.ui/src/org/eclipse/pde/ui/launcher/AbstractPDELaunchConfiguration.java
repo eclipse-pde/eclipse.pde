@@ -229,26 +229,32 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 
 		// add the program args specified by the user
 		String[] userArgs = LaunchArgumentsHelper.getUserProgramArgumentArray(configuration);
+		ArrayList userDefined = new ArrayList();
 		for (int i = 0; i < userArgs.length; i++) {
 			// be forgiving if people have tracing turned on and forgot
 			// to remove the -debug from the program args field.
 			if (userArgs[i].equals("-debug") && programArgs.contains("-debug")) //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
-			programArgs.add(userArgs[i]);
+			userDefined.add(userArgs[i]);
 		}
 
-		if (!programArgs.contains("-os")) { //$NON-NLS-1$
+		if (!userDefined.contains("-os")) { //$NON-NLS-1$
 			programArgs.add("-os"); //$NON-NLS-1$
 			programArgs.add(TargetPlatform.getOS());
 		}
-		if (!programArgs.contains("-ws")) { //$NON-NLS-1$
+		if (!userDefined.contains("-ws")) { //$NON-NLS-1$
 			programArgs.add("-ws"); //$NON-NLS-1$
 			programArgs.add(TargetPlatform.getWS());
 		}
-		if (!programArgs.contains("-arch")) { //$NON-NLS-1$
+		if (!userDefined.contains("-arch")) { //$NON-NLS-1$
 			programArgs.add("-arch"); //$NON-NLS-1$
 			programArgs.add(TargetPlatform.getOSArch());
 		}
+
+		if (userDefined.size() > 0) {
+			programArgs.addAll(userDefined);
+		}		
+		
 		return (String[])programArgs.toArray(new String[programArgs.size()]);
  	}
  	
