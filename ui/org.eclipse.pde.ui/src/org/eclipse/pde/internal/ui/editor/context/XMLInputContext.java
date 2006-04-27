@@ -337,32 +337,53 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	private DeleteEdit getDeleteNodeOperation(IDocumentNode node) {
 		int offset = node.getOffset();
 		int length = node.getLength();
-		int indent = 0;
 		try {
 			IDocument doc = getDocumentProvider().getDocument(getInput());
-			int line = doc.getLineOfOffset(offset + length);
-			for (;;) {
-				char ch = doc.get(offset + length, 1).toCharArray()[0];
-				if (doc.getLineOfOffset(offset + length) > line || !Character.isWhitespace(ch)) {
-					length -= 1;
+			// node starts on this line:
+			int startLine = doc.getLineOfOffset(offset);
+			// 1st char on startLine has this offset:
+			int startLineOffset = doc.getLineOffset(startLine);
+			// hunt down 1st whitespace/start of line with startOffset:
+			int startOffset;
+			// loop backwards to the beginning of the line, stop if we find non-whitespace
+			for (startOffset = offset - 1; startOffset >= startLineOffset; startOffset -= 1)
+				if (!Character.isWhitespace(doc.getChar(startOffset)))
+					break;
+			
+			// move forward one (loop stopped after reaching too far)
+			startOffset += 1;
+			
+			// node ends on this line:
+			int endLine = doc.getLineOfOffset(offset + length);
+			// length of last line's delimiter:
+			int endLineDelimLength = doc.getLineDelimiter(endLine).length();
+			// hunt last whitespace/end of line with extraLength:
+			int extraLength = length;
+			while (true) {
+				extraLength += 1;
+				if (!Character.isWhitespace(doc.getChar(offset + extraLength))) {
+					// found non-white space, move back one
+					extraLength -= 1;
 					break;
 				}
-				length += 1;
+				if (doc.getLineOfOffset(offset + extraLength) > endLine) {
+					// don't want to touch the lineDelimeters
+					extraLength -= endLineDelimLength;
+					break;
+				}
 			}
 			
-			for (indent = 1; indent <= node.getLineIndent(); indent++) {
-				char ch = doc.get(offset - indent, 1).toCharArray()[0];
-				if (!Character.isWhitespace(ch)) {
-					indent -= 1;
-					break;
-				}
-					
-			}
-//			printDeletionRange(offset - indent - 1, length + indent);
+			// if we reached start of line, remove newline
+			if (startOffset == startLineOffset)
+				startOffset -= doc.getLineDelimiter(startLine).length();
+			
+			// add difference of new offset
+			length = extraLength + (offset - startOffset);
+			offset = startOffset;
+//			printDeletionRange(offset, length);
 		} catch (BadLocationException e) {
 		}
-		return new DeleteEdit(offset - indent - 1, length + indent);
-		
+		return new DeleteEdit(offset, length);
 	}
 
 	protected void printDeletionRange(int offset, int length) {
@@ -386,7 +407,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				else
 					buffer.append(c);
 			}
-			System.out.println("[delete]" + buffer.toString() + "[/delete]");
+			System.out.println(buffer.toString());
 		} catch (BadLocationException e) {
 		}
 	}
