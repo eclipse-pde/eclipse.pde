@@ -358,13 +358,39 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				}
 					
 			}
-			//System.out.println("\"" + getDocumentProvider().getDocument(getInput()).get(offset-indent, length + indent) + "\"");
+//			printDeletionRange(offset - indent - 1, length + indent);
 		} catch (BadLocationException e) {
 		}
-		return new DeleteEdit(offset - indent, length + indent);
+		return new DeleteEdit(offset - indent - 1, length + indent);
 		
 	}
 
+	protected void printDeletionRange(int offset, int length) {
+		try {
+			// newlines printed as \n
+			// carriage returns printed as \r
+			// tabs printed as \t
+			// spaces printed as *
+			String string = getDocumentProvider().getDocument(getInput()).get(offset, length);
+			StringBuffer buffer = new StringBuffer();
+			for (int i = 0; i < string.length(); i++) {
+				char c = string.charAt(i);
+				if (c == '\n')
+					buffer.append("\\n");
+				else if (c == '\r')
+					buffer.append("\\r");
+				else if (c == '\t')
+					buffer.append("\\t");
+				else if (c == ' ')
+					buffer.append('*');
+				else
+					buffer.append(c);
+			}
+			System.out.println("[delete]" + buffer.toString() + "[/delete]");
+		} catch (BadLocationException e) {
+		}
+	}
+	
 	private IDocumentNode getHighestNodeToBeWritten(IDocumentNode node) {
 		IDocumentNode parent = node.getParentNode();
 		if (parent == null)
