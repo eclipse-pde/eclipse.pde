@@ -32,6 +32,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
@@ -514,6 +515,11 @@ public class ContentSection extends TableSection {
 		BundleSpecification[] requires = desc.getRequiredBundles();
 		for (int i = 0; i < requires.length; i++) {
 			addDependencies((BundleDescription)requires[i].getSupplier(), set);
+		}
+		
+		ExportPackageDescription[] imports = desc.getResolvedImports();
+		for (int i = 0; i < imports.length; i++) {
+			addDependencies(imports[i].getExporter(), set);
 		}
 	}
 	
