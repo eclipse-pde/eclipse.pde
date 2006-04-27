@@ -39,6 +39,8 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	
 	public URL getNLLookupLocation() {
 		try {
+			if (fInstallLocation != null && new File(fInstallLocation).isDirectory() && !fInstallLocation.endsWith("/"))  //$NON-NLS-1$
+				return new URL("file:" + fInstallLocation + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 			return new URL("file:" + fInstallLocation); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
 			return null;
