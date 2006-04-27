@@ -22,34 +22,22 @@ import org.eclipse.ui.ide.ResourceUtil;
 
 public class FeatureEditorMatchingStrategy implements IEditorMatchingStrategy {
 
-	private static final String BP = "build.properties"; //$NON-NLS-1$
-	private static final String FX = "feature.xml"; //$NON-NLS-1$
-	
     public boolean matches(IEditorReference editorRef, IEditorInput input) {
-		if (!(input instanceof IFileEditorInput))
-			return false;
-		IFile inputFile = ResourceUtil.getFile(input);
-		if (inputFile == null)
-			return false;
-		try {
-			IFile currInputFile = ResourceUtil.getFile(editorRef.getEditorInput());
-			if (currInputFile == null)
-				return false;
-			// build.properties matches with editors that have a feature.xml file
-			// as their input and that feature.xml is at the root
-			if (inputFile.getName().equals(FX)) {
-				if (currInputFile.getName().equals(BP))
-					return inputFile.getProjectRelativePath().toString().equals(FX);
-				return inputFile.equals(currInputFile);
-			} else if (inputFile.getName().equals(BP)) {
-				if (currInputFile.getName().equals(FX))
-					return currInputFile.getProjectRelativePath().toString().equals(FX);
-				return inputFile.equals(currInputFile);
-			}
-			return true;
-		} catch (PartInitException e) {
-			return false;
-		}
-	}
+    	if (!(input instanceof IFileEditorInput))
+    		return false;
+        IFile inputFile = ResourceUtil.getFile(input);
+        if (inputFile != null && 
+        		(inputFile.getName().equals("feature.xml") || //$NON-NLS-1$
+        		 inputFile.getName().equals("build.properties"))) { //$NON-NLS-1$
+            try {
+                return ResourceUtil.getFile(editorRef.getEditorInput()) == inputFile;
+            } catch (PartInitException e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+
 }
 
