@@ -573,9 +573,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				break;
 			}
 		}
-	
-		if (!hasUnresolved)
-			return;
 		
 		HashMap exported = getAvailableExportedPackages(desc.getContainingState());
 			
@@ -585,8 +582,11 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			checkCanceled(monitor);			
 			
 			validateSpecificationVersionAttribute(header, elements[i]);
-			validateVersionAttribute(header, elements[i], true);
 			validateResolutionDirective(header, elements[i]);
+			if (!hasUnresolved)
+				continue;
+			
+			validateVersionAttribute(header, elements[i], true);
 
 			String name = imports[i].getName();
 			if (name.equals("java") || name.startsWith("java.")) { //$NON-NLS-1$ //$NON-NLS-2$
