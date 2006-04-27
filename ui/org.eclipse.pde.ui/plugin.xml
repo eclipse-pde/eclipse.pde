@@ -1177,6 +1177,7 @@
             name="%launcher.swt.name"
             sourcePathComputerId="org.eclipse.pde.ui.swtSourcePathComputer"
             delegate="org.eclipse.pde.internal.ui.launcher.SWTLaunchConfiguration"
+            migrationDelegate="org.eclipse.jdt.internal.launching.JavaMigrationDelegate"
             modes="run, debug"
             id="org.eclipse.pde.ui.swtLaunchConfig">
       </launchConfigurationType>
