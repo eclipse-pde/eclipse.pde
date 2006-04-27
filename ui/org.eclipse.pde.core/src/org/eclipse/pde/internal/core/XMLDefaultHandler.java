@@ -54,7 +54,8 @@ public class XMLDefaultHandler extends DefaultHandler {
 	}
 	
 	public void endElement(String uri, String localName, String qName) throws SAXException {
-		fElementStack.pop();
+		if (isPrepared() && !fElementStack.isEmpty())
+			fElementStack.pop();
 	}
 	
 	/* (non-Javadoc)
