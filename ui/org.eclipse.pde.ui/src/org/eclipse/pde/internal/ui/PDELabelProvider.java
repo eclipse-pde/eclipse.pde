@@ -34,7 +34,6 @@ import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.feature.FeatureImport;
-import org.eclipse.pde.internal.core.feature.FeatureObject;
 import org.eclipse.pde.internal.core.feature.FeaturePlugin;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
@@ -253,7 +252,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	public String getObjectText(FeaturePlugin obj) {
 		String name =
-			isFullNameModeEnabled() ? obj.getTranslatableLabel() : obj.getId();
+			isFullNameModeEnabled() ? obj.getLabel() : obj.getId();
 		String version = obj.getVersion();
 
 		String text;
@@ -275,7 +274,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		} else if (type == IFeatureImport.FEATURE) {
 			IFeature feature = obj.getFeature();
 			if (feature != null && isFullNameModeEnabled()) {
-				return preventNull(feature.getLabel());
+				return preventNull(feature.getTranslatableLabel());
 			}
 		}
 		return preventNull(obj.getId());
@@ -284,8 +283,8 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public String getObjectText(IFeatureModel obj) {
 		IFeature feature = obj.getFeature();
 		String name =
-			(isFullNameModeEnabled() && feature instanceof FeatureObject)
-				? ((FeatureObject)feature).getTranslatableLabel()
+			(isFullNameModeEnabled())
+				? feature.getTranslatableLabel()
 				: feature.getId();
 		String text = preventNull(name);
 		return text + " (" + preventNull(feature.getVersion()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -293,6 +292,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(FeatureChild obj) {
+		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(obj.getId());
+		if (model != null) 
+			return getObjectText(model);
 		return preventNull(obj.getId()) + " (" + preventNull(obj.getVersion()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
@@ -301,6 +303,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(ISiteFeature obj) {
+		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(obj.getId());
+		if (model != null) 
+			return getObjectText(model);
 		return preventNull(obj.getURL());
 	}
 

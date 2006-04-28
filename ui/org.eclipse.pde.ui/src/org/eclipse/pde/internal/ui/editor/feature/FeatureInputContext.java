@@ -85,7 +85,8 @@ public class FeatureInputContext extends XMLInputContext {
 			return null;
 		}
 		ExternalFeatureModel model = new ExternalFeatureModel();
-		model.setInstallLocation(""); //$NON-NLS-1$
+		String path = input.getStorage().getFullPath().removeLastSegments(1).toOSString();
+		model.setInstallLocation(path);
 		try {
 			model.load(stream, false);
 		} catch (CoreException e) {

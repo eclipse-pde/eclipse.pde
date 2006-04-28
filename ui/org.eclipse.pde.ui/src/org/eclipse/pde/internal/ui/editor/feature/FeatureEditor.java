@@ -285,7 +285,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		String pref = store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS);
 		if (pref != null && pref.equals(IPreferenceConstants.VALUE_USE_NAMES))
-			return feature.getLabel();
+			return feature.getTranslatableLabel();
 		return feature.getId();
 	}
 

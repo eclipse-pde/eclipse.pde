@@ -66,9 +66,7 @@ class SiteLabelProvider extends LabelProvider {
 			return ((ISiteCategoryDefinition) element).getName();
 		if (element instanceof SiteFeatureAdapter) {
 			ISiteFeature feature = ((SiteFeatureAdapter) element).feature;
-			if (feature.getId() != null && feature.getVersion() != null)
-				return feature.getId() + " (" + feature.getVersion() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-			return feature.getURL();
+			return PDEPlugin.getDefault().getLabelProvider().getObjectText(feature);
 		}
 		if (element instanceof IFormPage)
 			return ((IFormPage)element).getTitle();

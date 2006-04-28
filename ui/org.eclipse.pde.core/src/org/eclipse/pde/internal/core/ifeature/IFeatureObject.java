@@ -56,4 +56,10 @@ public IFeatureObject getParent();
  * @param label the new label
  */
 void setLabel(String label) throws CoreException;
+/**
+ * Returns the translated label of this feature model object'
+ * @return feature object translated label
+ */
+public String getTranslatableLabel();
 }
+
