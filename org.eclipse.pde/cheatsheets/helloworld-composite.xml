@@ -2,11 +2,11 @@
 
 <!-- Composite Cheat Sheet -->
 
-<compositeCheatsheet name="Create an Eclipse plug-in using PDE">
+<compositeCheatsheet name="Creating an Eclipse plug-in">
 
    <!-- Task Group -->
 
-   <taskGroup kind="set" name="Create an Eclipse plug-in using PDE">
+   <taskGroup kind="set" name="Create an Eclipse plug-in">
       <intro>
          This cheat sheet will guide you through the individual steps to 
          create a plug-in, a plug-in extension, a feature and an update site
@@ -23,8 +23,8 @@
 
       <task kind="cheatsheet" name="Create a plug-in">
          <intro>
-            This cheat sheet will demonstrate how to setup PDE and use it to 
-            create, modify and test a plug-in project. 
+            This cheat sheet will demonstrate how to  
+            create, modify and test a plug-in. 
          </intro>
          <param name="path" value="helloworld/helloworld-create.xml" />
          <onCompletion>
@@ -36,8 +36,7 @@
 
       <task kind="cheatsheet" name="Create a plug-in extension">
          <intro>
-            This cheat sheet will demonstrate how to create and test a plug-in extension
-            using PDE. 
+            This cheat sheet will demonstrate how to create and test a plug-in extension. 
          </intro>
          <param name="path" value="helloworld/helloworld-extension.xml" />
          <onCompletion>
@@ -62,8 +61,7 @@
 
       <task kind="cheatsheet" name="Create an update site">
          <intro>
-            This cheat sheet will demonstrate how to create an update site for a plug-in
-            using PDE.
+            This cheat sheet will demonstrate how to create an update site for a plug-in.
          </intro>
          <param name="path" value="helloworld/helloworld-update.xml" />
          <onCompletion>

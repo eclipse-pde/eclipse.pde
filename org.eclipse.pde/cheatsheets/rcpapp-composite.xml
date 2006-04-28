@@ -2,15 +2,15 @@
 
 <!-- Composite Cheat Sheet -->
 
-<compositeCheatsheet name="Create an RCP application using PDE">
+<compositeCheatsheet name="Creating a Rich Client Application">
 
    <!-- Task Group -->
 
-   <taskGroup kind="set" name="Create an RCP application using PDE">
+   <taskGroup kind="set" name="Create a rich client application">
       <intro>
          This cheat sheet will guide you through the individual steps to 
          create a plug-in, define a plug-in based product, customize
-         a product, export an RCP application and define a feature-based
+         a product, export an rich client application and define a feature-based
          product using the Plug-in Development Environment (PDE).
          <br/>
          <br/>
@@ -22,12 +22,11 @@
 
       <task kind="cheatsheet" name="Create a plug-in">
          <intro>
-            This cheat sheet will demonstrate how to create a plug-in project
-            for an RCP application and execute an RCP application plug-in using PDE. 
+            This cheat sheet will demonstrate how to create and run a minimal RCP application. 
          </intro>
          <param name="path" value="rcpapp/rcpapp-create.xml" />
          <onCompletion>
-         	Congratulations!  You just created a plug-in for an RCP application!
+         	Congratulations!  You just created an RCP application!
          </onCompletion>
       </task>
 
@@ -35,9 +34,8 @@
 
       <task kind="cheatsheet" name="Define a plug-in based product">
          <intro>
-            This cheat sheet will demonstrate how to define a plug-in
-            based product configuration for an RCP application and execute 
-            an RCP application product using PDE.  
+            This cheat sheet will demonstrate how to define and run a plug-in
+            based product configuration.  
          </intro>
          <param name="path" value="rcpapp/rcpapp-plugin-product.xml" />
          <onCompletion>
@@ -51,11 +49,11 @@
          <intro>
          This cheat sheet will demonstrate how to add window images,
          add a splash screen and customize a launcher for an RCP
-         application using PDE.  
+         application.  
          </intro>
          <param name="path" value="rcpapp/rcpapp-customize.xml" />
          <onCompletion>
-         	Congratulations!  You just customized a product configuration for an RCP application!
+         	Congratulations!  You just customized your product configuration!
          </onCompletion>
       </task>
 
@@ -63,13 +61,12 @@
 
       <task kind="cheatsheet" name="Export an RCP application">
          <intro>
-         This cheat sheet will demonstrate how to modify a build 
-         configuration for an RCP application and export a 
-         RCP application product using PDE.
+         This cheat sheet will demonstrate how to modify a product 
+         configuration and export a standalone RCP product.
          </intro>
          <param name="path" value="rcpapp/rcpapp-export.xml" />
          <onCompletion>
-         	Congratulations!  You just exported an RCP application!
+         	Congratulations!  You just exported a fully-branded product!
          </onCompletion>
       </task>
 
@@ -77,13 +74,12 @@
 
       <task kind="cheatsheet" name="Define a feature-based product">
          <intro>
-         This cheat sheet will demonstrate how to define a feature-based product
-         configuration using a plug-in based one and create a feature for an RCP
-         application using PDE. 
+         This cheat sheet will demonstrate how to convert a plug-in based product
+         configuration to a feature-based one. 
          </intro>
          <param name="path" value="rcpapp/rcpapp-feature-product.xml" />
          <onCompletion>
-         	Congratulations!  You just defined a feature-based product configuration for an RCP application!
+         	Congratulations!  You just defined a feature-based product!
          </onCompletion>
       </task>
 

@@ -137,7 +137,7 @@
                skip="false"/>                 
       <subitem label="Execute the &quot;rcpapp&quot; launcher" 
                skip="false"/>    
-      <subitem label="Marvel at your glorious plug-in based RCP application that is fully executable outside the Eclipse workspace" 
+      <subitem label="Double-click on the executable to run your standalone product." 
                skip="false"/>    
    </item>
       
