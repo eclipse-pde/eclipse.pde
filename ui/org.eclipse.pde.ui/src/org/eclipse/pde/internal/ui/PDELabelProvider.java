@@ -72,7 +72,6 @@ import org.eclipse.ui.PlatformUI;
 
 public class PDELabelProvider extends SharedLabelProvider {
 	public PDELabelProvider() {
-
 	}
 	public String getText(Object obj) {
 		if (obj instanceof IPluginModelBase) {
@@ -205,11 +204,27 @@ public class PDELabelProvider extends SharedLabelProvider {
     }
 	
 	public String getObjectText(IProductPlugin obj) {
-		return obj.getId();
+		if (isFullNameModeEnabled()) {
+			String id = obj.getId();
+			IPlugin plugin = PDECore.getDefault().findPlugin(obj.getId());
+			if (plugin != null) {
+				return plugin.getTranslatedName();
+			}
+			return id != null ? id : "?"; //$NON-NLS-1$
+		}
+		return preventNull(obj.getId());
 	}
 	
 	public String getObjectText(BundleDescription bundle) {
-		return bundle.getSymbolicName();
+		String id = bundle.getSymbolicName();
+		if (isFullNameModeEnabled()) {
+			IPlugin plugin = PDECore.getDefault().findPlugin(id);
+			if (plugin != null) {
+				return plugin.getTranslatedName();
+			}
+			return id != null ? id : "?"; //$NON-NLS-1$
+		}
+		return preventNull(id);
 	}
 	
 	public String getObjectText(IPluginImport obj) {
@@ -280,15 +295,20 @@ public class PDELabelProvider extends SharedLabelProvider {
 		return preventNull(obj.getId());
 	}
 
-	public String getObjectText(IFeatureModel obj) {
+	public String getObjectText(IFeatureModel obj, boolean showVersion) {
 		IFeature feature = obj.getFeature();
 		String name =
 			(isFullNameModeEnabled())
 				? feature.getTranslatableLabel()
 				: feature.getId();
-		String text = preventNull(name);
-		return text + " (" + preventNull(feature.getVersion()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		if (!showVersion)
+			return preventNull(name);
+		return preventNull(name) + " (" + preventNull(feature.getVersion()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 
+	}
+
+	public String getObjectText(IFeatureModel obj) {
+		return getObjectText(obj, true);
 	}
 
 	public String getObjectText(FeatureChild obj) {
@@ -299,7 +319,8 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 	
 	public String getObjectText(IProductFeature obj) {
-		return preventNull(obj.getId()) + " (" + preventNull(obj.getVersion()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(obj.getId());
+		return (model != null) ? getObjectText(model, false) : preventNull(obj.getId());
 	}
 
 	public String getObjectText(ISiteFeature obj) {
@@ -326,11 +347,20 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 	
 	public String getObjectText(ITargetPlugin obj) {
+		if (isFullNameModeEnabled()) {
+			String id = obj.getId();
+			IPlugin plugin = PDECore.getDefault().findPlugin(obj.getId());
+			if (plugin != null) {
+				return plugin.getTranslatedName();
+			}
+			return id != null ? id : "?"; //$NON-NLS-1$
+		}
 		return preventNull(obj.getId());
 	}
 	
 	public String getObjectText(ITargetFeature obj) {
-		return preventNull(obj.getId());
+		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(obj.getId());
+		return (model != null)  ? getObjectText(model, false) : preventNull(obj.getId());
 	}
 	
 	public String getObjectText(IAdditionalLocation obj) {
