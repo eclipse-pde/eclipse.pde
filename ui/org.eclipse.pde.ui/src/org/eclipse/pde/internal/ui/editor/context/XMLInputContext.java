@@ -397,11 +397,11 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			for (int i = 0; i < string.length(); i++) {
 				char c = string.charAt(i);
 				if (c == '\n')
-					buffer.append("\\n");
+					buffer.append("\\n"); //$NON-NLS-1$
 				else if (c == '\r')
-					buffer.append("\\r");
+					buffer.append("\\r"); //$NON-NLS-1$
 				else if (c == '\t')
-					buffer.append("\\t");
+					buffer.append("\\t"); //$NON-NLS-1$
 				else if (c == ' ')
 					buffer.append('*');
 				else

@@ -81,10 +81,10 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 
 	public void readPluginArgs(String[] args) {
 		for (int i = 0; i < args.length; i++) {
-			if (isFlag(args, i, "-testpluginname"))
+			if (isFlag(args, i, "-testpluginname")) //$NON-NLS-1$
 				fTestPluginName = args[i + 1];
 			
-			if (isFlag(args, i, "-loaderpluginname"))
+			if (isFlag(args, i, "-loaderpluginname")) //$NON-NLS-1$
 				fLoaderClassLoader = getClassLoader(args[i + 1]);
 		}
 
