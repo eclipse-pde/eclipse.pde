@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.target;
 
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -37,6 +39,9 @@ public class OverviewPage extends PDEFormPage {
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText(PDEUIMessages.OverviewPage_title);  
 		fillBody(managedForm, toolkit);
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.TARGET_OVERVIEW_PAGE );
+
 	}
 
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {

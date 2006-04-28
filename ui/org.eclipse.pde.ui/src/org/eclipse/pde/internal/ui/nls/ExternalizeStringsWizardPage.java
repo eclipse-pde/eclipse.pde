@@ -38,6 +38,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.context.ManifestDocumentSetupParticipant;
@@ -65,6 +66,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 
 public class ExternalizeStringsWizardPage extends WizardPage {
@@ -248,8 +250,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		setControl(superSash);
 		Dialog.applyDialogFont(superSash);
 
-		// TODO ADD HELP
-//		PlatformUI.getWorkbench().getHelpSystem().setHelp(superSash, IHelpContextIds.UPDATE_CLASSPATH);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(superSash, IHelpContextIds.EXTERNALIZE_STRINGS_PAGE);
 	}
 
 	private void createInputContents(Composite composite) {

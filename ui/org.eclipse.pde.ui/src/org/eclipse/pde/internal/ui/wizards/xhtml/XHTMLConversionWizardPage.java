@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.xhtml.TocReplaceTable.TocReplaceEntry;
 import org.eclipse.swt.SWT;
@@ -29,6 +30,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -123,6 +125,8 @@ public class XHTMLConversionWizardPage extends WizardPage {
 		
 		setControl(columns);
 		Dialog.applyDialogFont(columns);
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(columns, IHelpContextIds.XHTML_CONVERSION_PAGE );
 	}
 	
 	protected Composite createComposite(Composite parent, boolean noMargin, int cols, boolean valignTop) {

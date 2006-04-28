@@ -68,7 +68,10 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		}
 		setControl(container);
 		hookHelpContext(container);
-		Dialog.applyDialogFont(container);				
+		Dialog.applyDialogFont(container);	
+		
+		PlatformUI.getWorkbench().getHelpSystem()
+		.setHelp(container, IHelpContextIds.PRODUCT_EXPORT_WIZARD);
 	}
 	
 	private void createConfigurationSection(Composite parent) {

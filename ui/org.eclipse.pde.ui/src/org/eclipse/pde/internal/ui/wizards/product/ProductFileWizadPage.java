@@ -29,6 +29,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
@@ -40,6 +41,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
 public class ProductFileWizadPage extends WizardNewFileCreationPage {
@@ -224,6 +226,8 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 		super.createControl(parent);
 		Dialog.applyDialogFont(fGroup);
 		setFileName(".product"); //$NON-NLS-1$
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.PRODUCT_FILE_PAGE );
 	}
 	
 }

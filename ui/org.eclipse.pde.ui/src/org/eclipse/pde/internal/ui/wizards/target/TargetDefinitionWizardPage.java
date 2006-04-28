@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetDefinitionManager;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.core.target.TargetModel;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.target.OpenTargetProfileAction;
@@ -37,6 +38,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
 public class TargetDefinitionWizardPage extends WizardNewFileCreationPage {
@@ -63,6 +65,7 @@ public class TargetDefinitionWizardPage extends WizardNewFileCreationPage {
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		setFileName(EXTENSION); 
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.TARGET_DEFINITION_PAGE );
 	}
 	
     protected void createAdvancedControls(Composite parent) {

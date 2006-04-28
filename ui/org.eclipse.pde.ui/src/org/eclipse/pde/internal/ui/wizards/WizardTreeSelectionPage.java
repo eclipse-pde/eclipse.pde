@@ -66,10 +66,6 @@ public abstract class WizardTreeSelectionPage
 		SashForm outerSash = new SashForm(rootSash, SWT.HORIZONTAL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		//outerContainer.setLayout(layout);
-		//outerContainer.setLayoutData(
-		//	new GridData(
-		//		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
 		// tree pane
 		Tree tree = new Tree(outerSash, SWT.BORDER);
@@ -79,19 +75,8 @@ public abstract class WizardTreeSelectionPage
 
 		categoryTreeViewer.setSorter(new WizardCollectionSorter(baseCategory));
 		categoryTreeViewer.addSelectionChangedListener(this);
-/*
-		GridData gd =
-			new GridData(
-				GridData.FILL_BOTH
-					| GridData.GRAB_HORIZONTAL
-					| GridData.GRAB_VERTICAL);
-		gd.heightHint = SIZING_LISTS_HEIGHT;
-		gd.widthHint = SIZING_LISTS_WIDTH;
-		tree.setLayoutData(gd);
-*/
 
 		// wizard actions pane
-
 		Table table = new Table(outerSash, SWT.BORDER);
 		new TableColumn(table, SWT.NONE);
 		TableLayout tlayout = new TableLayout();
@@ -120,17 +105,6 @@ public abstract class WizardTreeSelectionPage
 				});
 			}
 		});
-/*
-		gd =
-			new GridData(
-				GridData.VERTICAL_ALIGN_FILL
-					| GridData.HORIZONTAL_ALIGN_FILL
-					| GridData.GRAB_HORIZONTAL
-					| GridData.GRAB_VERTICAL);
-		gd.heightHint = SIZING_LISTS_HEIGHT;
-		gd.widthHint = SIZING_LISTS_WIDTH;
-		table.setLayoutData(gd);
-*/
 
 		// the new composite below is needed in order to make the label span the two
 		// defined columns of outerContainer
@@ -140,19 +114,11 @@ public abstract class WizardTreeSelectionPage
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		descriptionComposite.setLayout(layout);
-/*
-		GridData data =
-			new GridData(
-				GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-		data.horizontalSpan = 2;
-		data.heightHint = SIZING_DESC_HEIGHT;
-		descriptionComposite.setLayoutData(data);
-*/
 		createDescriptionIn(descriptionComposite);
 
 		initializeViewers();
 		rootSash.setWeights(new int[] {70, 30});		
-		setControl(container);
+		setControl(container);		
 	}
 	protected Object getSingleSelection(IStructuredSelection selection) {
 		Object selectedObject = selection.getFirstElement();

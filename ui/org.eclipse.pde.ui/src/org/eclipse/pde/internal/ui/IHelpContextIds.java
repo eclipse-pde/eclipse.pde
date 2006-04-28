@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
-/**
- *
- */
 public interface IHelpContextIds {
 	public static final String PREFIX = "org.eclipse.pde.doc.user."; //$NON-NLS-1$
 	
@@ -24,6 +21,7 @@ public interface IHelpContextIds {
 	public static final String COMPILERS_PREFERENCE_PAGE = PREFIX + "compilers_preference_page"; //$NON-NLS-1$
 	public static final String TARGET_ENVIRONMENT_PREFERENCE_PAGE = PREFIX + "target_environment_preference_page"; //$NON-NLS-1$
  	public static final String TARGET_PLATFORM_PREFERENCE_PAGE = PREFIX + "target_platform_preference_page"; //$NON-NLS-1$
+
  	
  	// Property Pages
  	public static final String SELFHOSTING_PROPERTY_PAGE = PREFIX + "selfhosting_property_page"; //$NON-NLS-1$
@@ -109,6 +107,12 @@ public interface IHelpContextIds {
 	public static final String FEATURE_PORTABILITY_WIZARD = PREFIX + "feature_portability_wizard"; //$NON-NLS-1$
 
 	public static final String PLUGINS_CONTAINER_PAGE = PREFIX + "plugins_container_page"; //$NON-NLS-1$
+	public static final String EXTERNALIZE_STRINGS_PAGE = PREFIX + "externalize_strings_page"; //$NON-NLS-1$
+	public static final String PRODUCT_FILE_PAGE = PREFIX + "product_file_page"; //$NON-NLS-1$
+	public static final String TARGET_DEFINITION_PAGE = PREFIX + "target_definition_page"; //$NON-NLS-1$
+
+	public static final String XHTML_CONVERSION_PAGE = PREFIX + "xhtml_conversion_page"; //$NON-NLS-1$
+
 	
 	// dialogs
 	public static final String FRAGMENT_ADD_TARGET = PREFIX + "fragment_add_target"; //$NON-NLS-1$
@@ -171,7 +175,10 @@ public interface IHelpContextIds {
 	public static final String CONFIGURATION_PAGE = PREFIX + "configuration_page"; //$NON-NLS-1$
 	public static final String OVERVIEW_PAGE = PREFIX + "overview_page"; //$NON-NLS-1$
 	
+	public static final String ENVIRONMENT_PAGE = PREFIX + "environment_page"; //$NON-NLS-1$	
+	public static final String TARGET_OVERVIEW_PAGE = PREFIX + "target_overview_page"; //$NON-NLS-1$
 	
 	// Tools
 	public static final String ORGANIZE_MANIFESTS = PREFIX + "organize_manifest"; //$NON-NLS-1$
+	
 }

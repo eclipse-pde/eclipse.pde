@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.target;
 
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -33,6 +35,8 @@ public class EnvironmentPage extends PDEFormPage {
 		form.setText(PDEUIMessages.EnvironmentPage_title);
 		FormToolkit toolkit = managedForm.getToolkit();
 		fillBody(managedForm, toolkit);
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.ENVIRONMENT_PAGE);
 	}
 	
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
