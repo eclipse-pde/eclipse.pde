@@ -582,7 +582,7 @@ public class ElementSection extends TreeSection {
 			fRearranger.moveElement(
 					realTarget,
 					(ISchemaElement)object,
-					sibling != null ? (ISchemaAttribute)sibling : null);
+					sibling);
 		} else if (object instanceof ISchemaAttribute) {
 			fRearranger.moveAttribute(
 					(ISchemaElement)realTarget,
