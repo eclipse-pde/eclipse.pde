@@ -171,7 +171,7 @@ public class BundleManifestChange {
 	private static void resetHeaderValue(IManifestHeader header, boolean isPackage, String oldText, String newText) {
 		if (header != null) {
 			String value = header.getValue();
-			if (isGoodMatch(value, oldText, isPackage)) {
+			if (oldText.equals(value) || isGoodMatch(value, oldText, isPackage)) {
 				StringBuffer buffer = new StringBuffer(newText);
 				buffer.append(value.substring(oldText.length()));
 				header.setValue(buffer.toString());
