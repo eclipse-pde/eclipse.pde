@@ -117,7 +117,7 @@
                skip="false"/>  
       <subitem label="Click the &quot;Add Feature...&quot; button" 
                skip="false"/>  
-      <subitem label="Select &quot;com.example.helloworld&quot; from the list box and click &quot;OK&quot;" 
+      <subitem label="Select &quot;com.example.feature&quot; from the list box and click &quot;OK&quot;" 
                skip="false"/>  
       <subitem label="Click &quot;File-&gt;Save&quot; from the main menu" 
                skip="false"/>                 
