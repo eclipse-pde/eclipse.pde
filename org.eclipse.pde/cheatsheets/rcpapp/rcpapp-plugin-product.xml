@@ -9,7 +9,7 @@
    <intro href="/org.eclipse.platform.doc.user/reference/ref-cheatsheets.htm">
       <description>
          This cheat sheet will demonstrate how to define a plug-in based
-         product configuration for an RCP application and execute an RCP application 
+         product configuration for an RCP application and run an RCP application 
          product using PDE.  
          <br/>
          <br/>
@@ -52,10 +52,8 @@
                skip="false"/>
       <subitem label="Input &quot;rcpapp.product&quot; into the &quot;File name&quot; text box" 
                skip="false"/>
-      <subitem label="Select the &quot;Use a launch configuration&quot; radial button inside the &quot;Initialize the file content&quot; group" 
+      <subitem label="Select the &quot;Use a launch configuration&quot; radio button inside the &quot;Initialize the file content&quot; group and click &quot;Finish&quot;" 
                skip="false"/>
-      <subitem label="Click &quot;Finish&quot;" 
-               skip="false"/>        
    </item>
 
    <!-- Item -->
@@ -118,19 +116,19 @@
          <br/>
          <br/>
          Note:  PDE automatically synchronizes the product configuration
-         when the <b>Launch the product [in Debug mode]</b> hyper text links under the 
+         when the <b>Launch the product [in Debug mode]</b> hyperlinks under the 
          <b>Testing</b> heading are used.
       </description>
    </item>
 
    <!-- Item -->
 
-   <item title="Execute the RCP Application product"
+   <item title="Run the RCP Application product"
          dialog="false"
          href="/org.eclipse.pde.doc.user/guide/product_editor.htm"
          skip="false">
       <description>
-         To execute the RCP application product,
+         To run the RCP application product,
          perform the following steps:
       </description>
       <subitem label="Click the &quot;Launch the product&quot; hyperlink under the &quot;Testing&quot; heading" 

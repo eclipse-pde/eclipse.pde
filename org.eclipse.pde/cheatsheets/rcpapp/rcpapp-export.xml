@@ -103,20 +103,20 @@
          dialog="true"
          skip="false">
       <description>
-         To export the product, perform the following steps:
+         To export the plug-in based product, perform the following steps:
       </description>
       <subitem label="Select the &quot;Overview&quot; tab within the product editor to display the &quot;Overview&quot; page" 
                skip="false"/>     
-      <subitem label="Click the &quot;Eclipse Product export wizard&quot; hyper-text link under the &quot;Exporting&quot; heading to launch the &quot;Export&quot; dialog box" 
+      <subitem label="Click the &quot;Eclipse Product export wizard&quot; hyperlink under the &quot;Exporting&quot; heading to launch the &quot;Export&quot; dialog box" 
                skip="true">
          <command serialization="org.eclipse.ui.file.export(exportWizardId=org.eclipse.pde.ui.productExportWizard)"/>
       </subitem>
+      <subitem label="Verify that &quot;/com.example.rcpapp/rcpapp.product&quot; is entered in the &quot;Configuration&quot; combo box within the &quot;Product Configuration&quot; group" 
+               skip="true"/>
       <subitem label="Input &quot;rcpapp_plugin-based&quot; in the &quot;Root directory&quot; text box contained in the &quot;Product Configuration&quot; group" 
                skip="false"/>
-      <subitem label="Input a destination directory in the &quot;Directory&quot; text box under the &quot;Destination&quot; group (e.g. &quot;C:\&quot; for Windows)" 
+      <subitem label="Input a destination directory in the &quot;Directory&quot; text box under the &quot;Destination&quot; group (e.g. &quot;C:\&quot; for Windows) and click &quot;Finish&quot;" 
                skip="false"/>
-      <subitem label="Click &quot;Finish&quot;" 
-               skip="false"/>                 
    </item>
 
    <!-- Item -->
@@ -125,7 +125,7 @@
          dialog="true"
          skip="false">
       <description>
-         To browse the exported product directory, perform the following steps:
+         To browse the exported plug-in based product directory, perform the following steps:
       </description>
       <subitem label="Navigate your file system to the destination directory specified in the previous step (e.g. &quot;C:\&quot; for Windows)" 
                skip="false"/>
@@ -135,10 +135,12 @@
                skip="true"/>
       <subitem label="Note the &quot;rcpapp&quot; launcher with a branded icon (&quot;rcpapp.exe&quot; on Windows)" 
                skip="false"/>                 
-      <subitem label="Execute the &quot;rcpapp&quot; launcher" 
+      <subitem label="Run the &quot;rcpapp&quot; launcher" 
                skip="false"/>    
-      <subitem label="Double-click on the executable to run your standalone product." 
-               skip="false"/>    
+      <subitem label="Observe the plug-in based RCP application you created that is fully executable outside the Eclipse workspace" 
+               skip="true"/>                   
+      <subitem label="Exit the RCP application" 
+               skip="false"/>     
    </item>
       
 </cheatsheet>

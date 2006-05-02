@@ -67,16 +67,12 @@
                skip="false"/>
       <subitem label="Click the &quot;Browse&quot; button adjacent to the &quot;16x16&quot; text box under the &quot;Window Images&quot; heading" 
                skip="false"/>
-      <subitem label="Fully expand the &quot;com.example.rcpapp&quot; tree in the &quot;Image Selection&quot; dialog box and select &quot;alt_window_16.gif&quot;" 
+      <subitem label="Fully expand the &quot;com.example.rcpapp&quot; tree in the &quot;Image Selection&quot; dialog box and select &quot;alt_window_16.gif&quot; and click &quot;OK&quot;" 
                skip="false"/>
-      <subitem label="Click &quot;OK&quot;" 
-               skip="false"/>                        
       <subitem label="Click the &quot;Browse&quot; button adjacent to the &quot;32x32&quot; text box under the &quot;Window Images&quot; heading" 
                skip="false"/>  
-      <subitem label="Fully expand the &quot;com.example.rcpapp&quot; tree in the &quot;Image Selection&quot; dialog box and select &quot;alt_window_32.gif&quot;" 
+      <subitem label="Fully expand the &quot;com.example.rcpapp&quot; tree in the &quot;Image Selection&quot; dialog box and select &quot;alt_window_32.gif&quot; and click &quot;OK&quot;" 
                skip="false"/>
-      <subitem label="Click &quot;OK&quot;" 
-               skip="false"/>  
       <subitem label="Select &quot;File-&gt;Save&quot; from the main menu" 
                skip="false"/> 
    </item>   
@@ -95,7 +91,7 @@
                skip="false"/>      
       <subitem label="Click the &quot;Launch the product&quot; hyperlink under the &quot;Testing&quot; heading" 
                skip="false"/>
-      <subitem label="Note the image at the top left corner of the window" 
+      <subitem label="Note the image in the window title bar (if applicable on your platform)" 
                skip="true"/>
       <subitem label="Exit the RCP application" 
                skip="false"/>
@@ -114,20 +110,18 @@
                skip="false"/>      
       <subitem label="Click the &quot;Browse...&quot; button adjacent to the &quot;Plug-in&quot; text box under the &quot;Splash Screen&quot; heading" 
                skip="false"/>
-      <subitem label="Select the &quot;com.example.rcpapp&quot; entry in the &quot;Plug-in Selection&quot; dialog box" 
+      <subitem label="Select the &quot;com.example.rcpapp&quot; entry in the &quot;Plug-in Selection&quot; dialog box and click &quot;OK&quot;" 
                skip="true"/>
-      <subitem label="Click &quot;OK&quot;" 
-               skip="false"/> 
       <subitem label="Select &quot;File-&gt;Save&quot; from the main menu" 
                skip="false"/>
+      <subitem label="Note:  Eclipse expects a file called &quot;splash.bmp&quot; to be located in the root of the specified plug-in" 
+               skip="true"/>
       <subitem label="Locate the &quot;splash.bmp&quot; file located in the &quot;icons&quot; directory under the &quot;com.example.rcpapp&quot; project within the &quot;Package Explorer view&quot;" 
                skip="false"/>                
       <subitem label="Right-click on the &quot;splash.bmp&quot; file and select &quot;Refactor-&gt;Move...&quot; from the context menu" 
                skip="false"/>                
-      <subitem label="Select &quot;com.example.rcpapp&quot; from the &quot;Move&quot; dialog box" 
+      <subitem label="Select &quot;com.example.rcpapp&quot; from the &quot;Move&quot; dialog box and click &quot;OK&quot;" 
                skip="false"/>   
-      <subitem label="Click &quot;OK&quot;" 
-               skip="false"/>                             
    </item>   
 
    <!-- Item -->
@@ -158,7 +152,7 @@
          skip="false">
       <description>
          We will walk through this task assuming we are working on a Windows
-         platform (Similar steps may be followed for Unix platforms).
+         platform (Similar steps may be followed for other platforms).
          <br/>
          <br/>
          To customize the launcher, perform the following steps:
@@ -169,14 +163,12 @@
                skip="false"/>
       <subitem label="Select the &quot;win32&quot; tab under the &quot;Program Launcher&quot; heading" 
                skip="true"/>
-      <subitem label="Select the &quot;Use a single ICO file containing 7 images as specified above&quot; radial" 
-               skip="false"/>
-      <subitem label="Click the Browse... button adjacent to the &quot;File&quot; text box" 
-               skip="false"/>
-      <subitem label="Fully expand the &quot;com.example.rcpapp&quot; tree in the &quot;Image Selection&quot; dialog box and select &quot;alt_launcher.ico&quot;" 
-               skip="false"/>
-      <subitem label="Click &quot;OK&quot;" 
-               skip="false"/>  
+      <subitem label="Select the &quot;Use a single ICO file containing 7 images as specified above&quot; radio button" 
+               skip="true"/>
+      <subitem label="Click the &quot;Browse...&quot; button adjacent to the &quot;File&quot; text box" 
+               skip="true"/>
+      <subitem label="Fully expand the &quot;com.example.rcpapp&quot; tree in the &quot;Image Selection&quot; dialog box and select &quot;alt_launcher.ico&quot; and click &quot;OK&quot;" 
+               skip="true"/>
       <subitem label="Select &quot;File-&gt;Save&quot; from the main menu" 
                skip="false"/> 
    </item>   

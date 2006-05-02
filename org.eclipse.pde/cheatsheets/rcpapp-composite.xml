@@ -10,7 +10,7 @@
       <intro>
          This cheat sheet will guide you through the individual steps to 
          create a plug-in, define a plug-in based product, customize
-         a product, export an rich client application and define a feature-based
+         a product, export a Rich Client Platform (RCP) application and define a feature-based
          product using the Plug-in Development Environment (PDE).
          <br/>
          <br/>
@@ -83,6 +83,11 @@
          </onCompletion>
       </task>
 
+      <onCompletion>
+         Congratulations!  You just created a plug-in, defined a plug-in based product, 
+         customized a product, exported an RCP application and defined a feature-based
+         product using PDE.
+      </onCompletion>
 
    </taskGroup>
 

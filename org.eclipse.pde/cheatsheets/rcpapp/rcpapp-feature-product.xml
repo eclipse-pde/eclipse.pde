@@ -63,35 +63,29 @@
          <br/>
          <br/>
          To switch to a feature based product configuration, 
-         select the <b>features</b> radial under the <b>Product Definition</b> heading.
+         select the <b>features</b> radio button under the <b>Product Definition</b> heading.
          <br/>
          <br/>
          Select <b>File-&gt;Save</b> from the main menu.         
       </description>
    </item>
 
-   <item title="Create the feature project"
+   <item title="Create the feature"
          href="/org.eclipse.pde.doc.user/guide/pde_feature_setup.htm"
          dialog="true"
          skip="false">
       <description>
-         To create the feature project, perform the following steps:
+         To create the feature, perform the following steps:
       </description>
       <subitem label="Select the &quot;Configuration&quot; tab to display the &quot;Configuration&quot; page" 
                skip="false"/>
       <subitem label="Select the &quot;New Feature...&quot; button under the &quot;Features&quot; heading" 
-               skip="true">
-         <command serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.pde.ui.NewFeatureProjectWizard)"/>
-      </subitem>
+               skip="false"/>
       <subitem label="Input &quot;com.example.feature&quot; into the &quot;Project Name&quot; text box on the &quot;Feature Properties&quot; page" 
                skip="false"/>
-      <subitem label="Input &quot;RCP Application Feature&quot; into the &quot;Feature Name&quot; text box" 
+      <subitem label="Input &quot;RCP Application Feature&quot; into the &quot;Feature Name&quot; text box and click &quot;Next &gt;&quot;" 
                skip="false"/>
-      <subitem label="Click &quot;Next &gt;&quot;" 
-               skip="false"/>  
-      <subitem label="Select the &quot;com.example.rcpapp&quot; checkbox on the &quot;Refererenced Plug-ins and Fragements&quot; page" 
-               skip="false"/>  
-      <subitem label="Click &quot;Finish&quot;" 
+      <subitem label="Select the &quot;com.example.rcpapp&quot; checkbox on the &quot;Refererenced Plug-ins and Fragements&quot; page and click &quot;Finish&quot;" 
                skip="false"/>  
    </item>
 
@@ -110,7 +104,7 @@
       </description>
       <subitem label="Select the &quot;Information&quot; tab" 
                skip="false"/>  
-      <subitem label="Input &quot;RCP application feature description&quot; into the &quot;Text&quot; dialog box" 
+      <subitem label="Input &quot;RCP application feature description&quot; into the &quot;Text&quot; dialog box within the &quot;Feature Description&quot; tab" 
                skip="false"/>  
       <subitem label="Select the &quot;License Agreement&quot; tab within the &quot;Information&quot; page" 
                skip="false"/>  
@@ -130,15 +124,13 @@
          To add features to the product configuration, perform the following steps:
       </description>
       <subitem label="Select the &quot;rcpapp.product&quot; tab in the workbench to return back to the product editor (opened on the &quot;Configuration&quot; page)" 
-               skip="false">
+               skip="true">
          <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.rcpapp/rcpapp.product)"/>
       </subitem>  
       <subitem label="Click the &quot;Add...&quot; button under the &quot;Features&quot; heading" 
                skip="false"/>  
-      <subitem label="Select the &quot;com.example.feature&quot; and &quot;org.eclipse.rcp&quot; features within the &quot;Feature Selection&quot; dialog box" 
+      <subitem label="Select the &quot;org.eclipse.rcp&quot; feature within the &quot;Feature Selection&quot; dialog box and click &quot;OK&quot;" 
                skip="false"/>  
-      <subitem label="Click &quot;OK&quot;" 
-               skip="false"/>
       <subitem label="Select &quot;File-&gt;Save&quot; from the main menu" 
                skip="false"/>
    </item>
@@ -150,20 +142,18 @@
          dialog="true"
          skip="false">
       <description>
-         To export the product, perform the following steps:
+         To export the feature based product, perform the following steps:
       </description>
       <subitem label="Select the &quot;Overview&quot; tab to display the &quot;Overview&quot; page" 
                skip="false"/>      
-      <subitem label="Click the &quot;Eclipse Product export wizard&quot; hyper-text link under the &quot;Exporting&quot; heading to launch the &quot;Export&quot; dialog box" 
+      <subitem label="Click the &quot;Eclipse Product export wizard&quot; hyperlink under the &quot;Exporting&quot; heading to launch the &quot;Export&quot; dialog box" 
                skip="true">
          <command serialization="org.eclipse.ui.file.export(exportWizardId=org.eclipse.pde.ui.productExportWizard)"/>
       </subitem>
       <subitem label="Input &quot;rcpapp_feature-based&quot; in the &quot;Root directory&quot; text box contained in the &quot;Product Configuration&quot; group" 
                skip="false"/>
-      <subitem label="Input a destination directory in the &quot;Directory&quot; text box under the &quot;Destination&quot; group (e.g. &quot;C:\&quot; for Windows)" 
+      <subitem label="Input a destination directory in the &quot;Directory&quot; text box under the &quot;Destination&quot; group (e.g. &quot;C:\&quot; for Windows) and click &quot;Finish&quot;" 
                skip="false"/>
-      <subitem label="Click &quot;Finish&quot;" 
-               skip="false"/>                 
    </item>
 
    <!-- Item -->
@@ -172,7 +162,7 @@
          dialog="true"
          skip="false">
       <description>
-         To browse the exported product directory, perform the following steps:
+         To browse the exported feature based product directory, perform the following steps:
       </description>
       <subitem label="Navigate your file system to the destination directory specified in the previous step (e.g. &quot;C:\&quot; for Windows)" 
                skip="false"/>
@@ -184,10 +174,10 @@
                skip="true"/>
       <subitem label="Note the &quot;rcpapp&quot; launcher with a branded icon (&quot;rcpapp.exe&quot; on Windows)" 
                skip="false"/>                 
-      <subitem label="Execute the &quot;rcpapp&quot; launcher" 
+      <subitem label="Run the &quot;rcpapp&quot; launcher" 
                skip="false"/>    
-      <subitem label="Marvel at your glorious feature based RCP application that is fully executable outside the Eclipse workspace" 
-               skip="false"/>    
+      <subitem label="Observe the feature based RCP application you created that is fully executable outside the Eclipse workspace" 
+               skip="true"/>    
    </item>
       
 </cheatsheet>
