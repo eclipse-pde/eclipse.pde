@@ -76,8 +76,6 @@ public class SchemaInputContext extends XMLInputContext {
 		IFile file = ((IFileEditorInput)input).getFile();
 		SchemaDescriptor sd = new SchemaDescriptor(file, true);
 		ISchema schema = sd.getSchema(false);
-		if (schema.isValid() == false)
-			return null;
 		if (schema instanceof EditableSchema) {
 			((EditableSchema) schema).setNotificationEnabled(true);
 		}
@@ -89,8 +87,6 @@ public class SchemaInputContext extends XMLInputContext {
 		SchemaDescriptor sd = new SchemaDescriptor(file); 
 
 		ISchema schema = sd.getSchema(false);
-		if (schema.isValid() == false)
-			return null;
 		if (schema instanceof EditableSchema) {
 			((EditableSchema) schema).setNotificationEnabled(true);
 		}
@@ -102,8 +98,6 @@ public class SchemaInputContext extends XMLInputContext {
 			IStorage storage = input.getStorage();
 			StorageSchemaDescriptor sd = new StorageSchemaDescriptor(storage);
 			ISchema schema = sd.getSchema(false);
-			if (schema.isValid()==false)
-				return null;
 			return schema;
 		}
 		catch (CoreException e) {
