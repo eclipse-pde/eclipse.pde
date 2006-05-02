@@ -2,15 +2,15 @@
 
 <!-- Simple Cheat Sheet -->
 
-<cheatsheet title="Export an RCP application">
+<cheatsheet title="Export an RCP product">
 
    <!-- Introduction -->
 
    <intro href="/org.eclipse.platform.doc.user/reference/ref-cheatsheets.htm">
       <description>
          This cheat sheet will demonstrate how to modify a build 
-         configuration for an RCP application and export a 
-         RCP application product using PDE.  
+         configuration and export an
+         RCP product using PDE.  
          <br/>
          <br/>
          To learn more about using cheat sheets, click the help button

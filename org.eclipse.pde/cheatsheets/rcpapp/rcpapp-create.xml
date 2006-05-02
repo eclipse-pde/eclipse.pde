@@ -8,8 +8,8 @@
 
    <intro href="/org.eclipse.platform.doc.user/reference/ref-cheatsheets.htm">
       <description>
-         This cheat sheet will demonstrate how to create a plug-in 
-         for an RCP application and run an RCP application plug-in using PDE. 
+         This cheat sheet will demonstrate how to create and run an
+         RCP application using PDE. 
          <br/>
          <br/>
          To learn more about using cheat sheets, click the help button
@@ -57,12 +57,12 @@
 
    <!-- Item -->
 
-   <item title="Run the RCP Application plug-in"
+   <item title="Run the RCP Application"
          dialog="false"
          href="/org.eclipse.pde.doc.user/guide/pde_running.htm"
          skip="false">
       <description>
-         To run the RCP application plug-in,
+         To run the RCP application,
          perform the following steps:
       </description>
       <subitem label="Select the &quot;com.example.rcpapp&quot; plug-in editor from the workbench and select the &quot;Overviews&quot; tab within it" 
@@ -102,12 +102,12 @@
 
    <!-- Item -->
 
-   <item title="Test the RCP Application plug-in"
+   <item title="Test the RCP Application"
          dialog="false"
          href="/org.eclipse.pde.doc.user/guide/pde_running.htm"
          skip="false">
       <description>
-         To test the RCP application plug-in,
+         To test the RCP application,
          perform the following steps:
       </description>
       <subitem label="Select the &quot;com.example.rcpapp&quot; plug-in editor from the workbench and select the &quot;Overviews&quot; tab within it" 

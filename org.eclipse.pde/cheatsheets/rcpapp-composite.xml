@@ -59,7 +59,7 @@
 
       <!-- Task -->
 
-      <task kind="cheatsheet" name="Export an RCP application">
+      <task kind="cheatsheet" name="Export an RCP product">
          <intro>
          This cheat sheet will demonstrate how to modify a product 
          configuration and export a standalone RCP product.
@@ -85,7 +85,7 @@
 
       <onCompletion>
          Congratulations!  You just created a plug-in, defined a plug-in based product, 
-         customized a product, exported an RCP application and defined a feature-based
+         customized a product, exported an RCP product and defined a feature-based
          product using PDE.
       </onCompletion>
 

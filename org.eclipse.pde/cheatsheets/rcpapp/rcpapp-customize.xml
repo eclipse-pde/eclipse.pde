@@ -79,12 +79,12 @@
 
    <!-- Item -->
 
-   <item title="Test the RCP Application product"
+   <item title="Test the RCP product"
          dialog="false"
          href="/org.eclipse.pde.doc.user/guide/pde_running_plugins.htm"
          skip="false">
       <description>
-         To test the RCP application product,
+         To test the RCP product,
          perform the following steps:
       </description>
       <subitem label="Select the &quot;Overview&quot; tab within the product editor to display the &quot;Overview&quot; page" 
@@ -126,12 +126,12 @@
 
    <!-- Item -->
 
-   <item title="Test the RCP Application product"
+   <item title="Test the RCP product"
          dialog="false"
          href="/org.eclipse.pde.doc.user/guide/pde_running_plugins.htm"
          skip="false">
       <description>
-         To test the RCP application product,
+         To test the RCP product,
          perform the following steps:
       </description>
       <subitem label="Select the &quot;Overview&quot; tab within the product editor to display the &quot;Overview&quot; page" 
