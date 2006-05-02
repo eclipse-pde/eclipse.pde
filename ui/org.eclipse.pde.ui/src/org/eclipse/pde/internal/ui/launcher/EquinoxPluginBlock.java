@@ -233,7 +233,7 @@ public class EquinoxPluginBlock extends AbstractPluginBlock {
 			IPluginModelBase[] models = PDECore.getDefault().getModelManager().getWorkspaceModels();
 			for (int i = 0; i < models.length; i++) {
 				String id = models[i].getPluginBase().getId();
-				if (!map.containsKey(id) && !deselectedPlugins.contains(id)) {
+				if (id != null && !map.containsKey(id) && !deselectedPlugins.contains(id)) {
 					map.put(id, "default:default"); //$NON-NLS-1$
 				}
 			}
