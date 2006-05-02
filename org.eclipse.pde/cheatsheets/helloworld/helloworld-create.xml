@@ -9,7 +9,7 @@
    <intro href="/org.eclipse.platform.doc.user/reference/ref-cheatsheets.htm">
       <description>
          This cheat sheet will demonstrate how to set up PDE and use it 
-         to create, modify and test a plug-in project. 
+         to create, modify and test a plug-in. 
          <br/>
          <br/>
          To learn more about using cheat sheets, click the help button
@@ -36,12 +36,12 @@
 
    <!-- Item -->
 
-   <item title="Create the plug-in project"
+   <item title="Create the plug-in"
          href="/org.eclipse.pde.doc.user/guide/pde_creating.htm"
          dialog="true"
          skip="false">
       <description>
-         To create the plug-in project perform the following steps
+         To create the plug-in perform the following steps
       </description>
       <subitem label="Select &quot;File-&gt;New-&gt;Project...&quot; from the main menu and choose &quot;Plug-in Project&quot; from the resulting &quot;New Project&quot; dialog box" 
                skip="true">

@@ -64,9 +64,7 @@
       </description>
       <subitem label="Click the &quot;Add&quot; button to open the &quot;New Extension&quot; wizard" 
                skip="false"/>
-      <subitem label="Select &quot;org.eclipse.ui.views&quot; from the &quot;Extension Points&quot; list box" 
-               skip="false"/>
-      <subitem label="Click the &quot;Finish&quot; button to exit the wizard" 
+      <subitem label="Select &quot;org.eclipse.ui.views&quot; from the &quot;Extension Points&quot; list box and click &quot;Finish&quot;" 
                skip="false"/>
    </item>
 

@@ -37,12 +37,12 @@
 
    <!-- Item -->
 
-   <item title="Create the update site project"
+   <item title="Create the update site"
          dialog="true"
          href="/org.eclipse.pde.doc.user/guide/pde_site_setup.htm"
          skip="false">
       <description>
-         To create the update site project, perform the following steps:
+         To create the update site, perform the following steps:
       </description>
       <subitem label="Select &quot;File-&gt;New-&gt;Project...&quot;, and choose &quot;Update Site Project&quot; under the &quot;Plug-in Development&quot; heading" 
                skip="true">
@@ -54,9 +54,7 @@
                skip="false"/>  
       <subitem label="Note:  For the purpose of this cheat sheet we will define a Windows pathname for our update site location.  For Unix platforms, adjust accordingly." 
                skip="true"/>  
-      <subitem label="Input &quot;C:\helloworld.site&quot; in the &quot;Location&quot; text box" 
-               skip="false"/>  
-      <subitem label="Click &quot;Finish&quot;" 
+      <subitem label="Input &quot;C:\helloworld.site&quot; in the &quot;Location&quot; text box and click &quot;Finish&quot;" 
                skip="false"/>  
    </item>
 

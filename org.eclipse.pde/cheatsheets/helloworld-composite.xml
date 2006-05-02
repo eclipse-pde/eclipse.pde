@@ -82,6 +82,12 @@
          </onCompletion>  
       </task>
 
+      <onCompletion>
+         Congratulations!  You just created a plug-in, a plug-in extension, a 
+         feature and an update site using PDE.  You also installed and 
+         uninstalled a feature using Install/Update
+      </onCompletion>
+
    </taskGroup>
 
 
