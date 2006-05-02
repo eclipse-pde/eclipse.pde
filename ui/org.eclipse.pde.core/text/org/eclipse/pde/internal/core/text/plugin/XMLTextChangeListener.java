@@ -246,32 +246,80 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 	private DeleteEdit getDeleteNodeOperation(IDocumentNode node) {
 		int offset = node.getOffset();
 		int length = node.getLength();
-		int indent = 0;
 		try {
-			int line = fDocument.getLineOfOffset(offset + length);
-			for (;;) {
-				char ch = fDocument.get(offset + length, 1).toCharArray()[0];
-				if (fDocument.getLineOfOffset(offset + length) > line || !Character.isWhitespace(ch)) {
-					length -= 1;
+			// node starts on this line:
+			int startLine = fDocument.getLineOfOffset(offset);
+			// 1st char on startLine has this offset:
+			int startLineOffset = fDocument.getLineOffset(startLine);
+			// hunt down 1st whitespace/start of line with startOffset:
+			int startOffset;
+			// loop backwards to the beginning of the line, stop if we find non-whitespace
+			for (startOffset = offset - 1; startOffset >= startLineOffset; startOffset -= 1)
+				if (!Character.isWhitespace(fDocument.getChar(startOffset)))
+					break;
+			
+			// move forward one (loop stopped after reaching too far)
+			startOffset += 1;
+			
+			// node ends on this line:
+			int endLine = fDocument.getLineOfOffset(offset + length);
+			// length of last line's delimiter:
+			int endLineDelimLength = fDocument.getLineDelimiter(endLine).length();
+			// hunt last whitespace/end of line with extraLength:
+			int extraLength = length;
+			while (true) {
+				extraLength += 1;
+				if (!Character.isWhitespace(fDocument.getChar(offset + extraLength))) {
+					// found non-white space, move back one
+					extraLength -= 1;
 					break;
 				}
-				length += 1;
+				if (fDocument.getLineOfOffset(offset + extraLength) > endLine) {
+					// don't want to touch the lineDelimeters
+					extraLength -= endLineDelimLength;
+					break;
+				}
 			}
 			
-			for (indent = 1; indent <= node.getLineIndent(); indent++) {
-				char ch = fDocument.get(offset - indent, 1).toCharArray()[0];
-				if (!Character.isWhitespace(ch)) {
-					indent -= 1;
-					break;
-				}
-					
-			}
+			// if we reached start of line, remove newline
+			if (startOffset == startLineOffset)
+				startOffset -= fDocument.getLineDelimiter(startLine).length();
+			
+			// add difference of new offset
+			length = extraLength + (offset - startOffset);
+			offset = startOffset;
+//			printDeletionRange(offset, length);
 		} catch (BadLocationException e) {
 		}
-		return new DeleteEdit(offset - indent, length + indent);
-		
+		return new DeleteEdit(offset, length);
 	}
 
+	protected void printDeletionRange(int offset, int length) {
+		try {
+			// newlines printed as \n
+			// carriage returns printed as \r
+			// tabs printed as \t
+			// spaces printed as *
+			String string = fDocument.get(offset, length);
+			StringBuffer buffer = new StringBuffer();
+			for (int i = 0; i < string.length(); i++) {
+				char c = string.charAt(i);
+				if (c == '\n')
+					buffer.append("\\n"); //$NON-NLS-1$
+				else if (c == '\r')
+					buffer.append("\\r"); //$NON-NLS-1$
+				else if (c == '\t')
+					buffer.append("\\t"); //$NON-NLS-1$
+				else if (c == ' ')
+					buffer.append('*');
+				else
+					buffer.append(c);
+			}
+			System.out.println(buffer.toString());
+		} catch (BadLocationException e) {
+		}
+	}
+	
 	private IDocumentNode getHighestNodeToBeWritten(IDocumentNode node) {
 		IDocumentNode parent = node.getParentNode();
 		if (parent == null)

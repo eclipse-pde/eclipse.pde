@@ -154,6 +154,8 @@ public class PluginObjectNode extends PluginDocumentNode
 	 */
 	public void setXMLAttribute(String name, String value) {
 		String oldValue = getXMLAttributeValue(name);
+		if (oldValue != null && oldValue.equals(value))
+			return;
 		PluginAttribute attr = (PluginAttribute) fAttributes.get(name);
 		try {
 			if (value == null)
