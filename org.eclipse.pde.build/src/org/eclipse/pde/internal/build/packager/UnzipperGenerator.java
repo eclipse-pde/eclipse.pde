@@ -171,7 +171,7 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 			script.printMkdirTask(rootFilesFolder);
 			parameters.add("-o -X ${unzipArgs} "); //$NON-NLS-1$
 			parameters.add(Utils.getPropertyFormat("downloadDirectory") + '/' + entryDetail[ARCHIVE_NAME]); //$NON-NLS-1$ 
-			parameters.add("-x " + (entryDetail[FOLDER].equals(".") ? "eclipse" : "") + "/features/*"  + " " + (entryDetail[FOLDER].equals(".") ? "eclipse" : "") + "/plugins/*");
+			parameters.add("-x " + (entryDetail[FOLDER].equals(".") ? "eclipse/" : "") + "features/*"  + " " + (entryDetail[FOLDER].equals(".") ? "eclipse/" : "") + "plugins/*");
 			script.printExecTask("unzip", rootFilesFolder, parameters, null); //$NON-NLS-1$
 		}
 	}
