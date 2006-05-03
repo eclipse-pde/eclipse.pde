@@ -17,6 +17,15 @@ import org.eclipse.swt.tools.internal.IconExe;
  *
  */
 public class BrandingIron implements IXMLConstants {
+	private static final String MARKER_NAME = "%EXECUTABLE_NAME%"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "%BUNDLE_NAME%"; //$NON-NLS-1$
+	private static final String ICON_NAME = "%ICON_NAME%"; //$NON-NLS-1$
+	private static final String MARKER_KEY = "<key>CFBundleExecutable</key>"; //$NON-NLS-1$
+	private static final String BUNDLE_KEY = "<key>CFBundleName</key>"; //$NON-NLS-1$
+	private static final String ICON_KEY = "<key>CFBundleIconFile</key>"; //$NON-NLS-1$
+	private static final String STRING_START = "<string>"; //$NON-NLS-1$
+	private static final String STRING_END = "</string>"; //$NON-NLS-1$
+	private static final String XDOC_ICON = "-Xdock:icon=../Resources/Eclipse.icns"; //$NON-NLS-1$
 
 	private String[] icons = null;
 	private String root;
@@ -121,17 +130,57 @@ public class BrandingIron implements IXMLConstants {
 			initialRoot = root + "/Eclipse.app/Contents";  //$NON-NLS-1$
 		copyMacLauncher(initialRoot, target);
 		String iconName = "";
+		File splashApp = new File(initialRoot, "Resources/Splash.app"); //$NON-NLS-1$
 		if (brandIcons) {
 			File icon = new File(icons[0]);
 			iconName = icon.getName();
 			copy(icon, new File(target + "/Resources/" + icon.getName())); //$NON-NLS-1$
 			new File(initialRoot + "/Resources/Eclipse.icns").delete();
-			new File(initialRoot + "/Resources/").delete();
+			if (!splashApp.exists())
+				new File(initialRoot + "/Resources/").delete(); //$NON-NLS-1$
 		}
+		copyMacIni(initialRoot, target, iconName);
 		modifyInfoPListFile(initialRoot, target, iconName);
+		if (splashApp.exists()) {
+			modifyInfoPListFile(initialRoot + "/Resources/Splash.app/Contents", target + "/Resources/Splash.app/Contents", iconName); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
 		File rootFolder = new File(initialRoot);
 		rootFolder.delete();
+		if (rootFolder.exists()) {
+			//if the rootFolder still exists, its because there were other files that need to be moved over
+			moveContents(rootFolder, new File(target));
+		}
 		rootFolder.getParentFile().delete();
+	}
+
+	private void moveContents(File source, File target) {
+		if (!source.exists())
+			return;
+
+		try {
+			if (source.getCanonicalFile().equals(target.getCanonicalFile()))
+				return;
+		} catch (IOException e) {
+			System.out.println("Could not copy macosx resources."); //$NON-NLS-1$
+			return;
+		}
+
+		target.getParentFile().mkdirs();
+		if (source.isDirectory()) {
+			target.mkdirs();
+			File[] contents = source.listFiles();
+			for (int i = 0; i < contents.length; i++) {
+				File dest = new File(target, contents[i].getName());
+				if (contents[i].isFile())
+					contents[i].renameTo(dest);
+				else
+					moveContents(contents[i], dest);
+			}
+			source.delete();
+		} else {
+			source.renameTo(target);
+		}
 	}
 
 	private void brandWindows() throws Exception {
@@ -155,14 +204,19 @@ public class BrandingIron implements IXMLConstants {
 	private void copyMacLauncher(String initialRoot, String target) {
 		String targetLauncher = target + "/MacOS/";
 		File launcher = new File(initialRoot + "/MacOS/launcher");
-		if (! launcher.exists())
-			launcher = new File(initialRoot +  "/MacOS/eclipse");
+		File eclipseLauncher = new File(initialRoot + "/MacOS/eclipse"); //$NON-NLS-1$
+		if (!launcher.exists()) {
+			launcher = eclipseLauncher;
+		} else if (eclipseLauncher.exists()) {
+			//we may actually have both if exporting from the mac
+			eclipseLauncher.delete();
+		}
 		File targetFile = new File(targetLauncher, name);
 		try {
 			if (targetFile.getCanonicalFile().equals(launcher.getCanonicalFile())) {
 				try {
 					//Force the executable bit on the exe because it has been lost when copying the file
-					Runtime.getRuntime().exec("chmod 755 " + targetFile.getAbsolutePath());
+					Runtime.getRuntime().exec(new String[] {"chmod", "755", targetFile.getAbsolutePath()}); //$NON-NLS-1$ //$NON-NLS-2$
 				} catch (IOException e) {
 					//ignore
 				}
@@ -175,7 +229,7 @@ public class BrandingIron implements IXMLConstants {
 		}
 		try {
 			//Force the executable bit on the exe because it has been lost when copying the file
-			Runtime.getRuntime().exec("chmod 755 " + targetFile.getAbsolutePath());
+			Runtime.getRuntime().exec(new String[] {"chmod", "755", targetFile.getAbsolutePath()}); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (IOException e) {
 			//ignore
 		}
@@ -183,12 +237,42 @@ public class BrandingIron implements IXMLConstants {
 		launcher.getParentFile().delete();
 	}
 
-	private void modifyInfoPListFile(String initialRoot, String targetRoot, String iconName) {
-		final String MARKER_NAME = "%EXECUTABLE_NAME%"; //$NON-NLS-1$
-		final String BUNDLE_NAME = "%BUNDLE_NAME%"; //$NON-NLS-1$
-		final String ICON_NAME = "%ICON_NAME%"; //$NON-NLS-1$
+	private void copyMacIni(String initialRoot, String target, String iconName) {
+		File ini = new File(initialRoot, "/MacOS/eclipse.ini"); //$NON-NLS-1$
+		if (!ini.exists())
+			return;
 
-		File infoPList = new File(initialRoot, "Info.plist");
+		StringBuffer buffer;
+		try {
+			buffer = readFile(ini);
+			ini.delete();
+		} catch (IOException e) {
+			System.out.println("Impossible to brand ini file"); //$NON-NLS-1$
+			return;
+		}
+
+		if(iconName.length() > 0){
+			int xdoc = scan(buffer, 0, XDOC_ICON);
+			if (xdoc != -1) {
+				String icns = XDOC_ICON.replaceFirst("Eclipse.icns", iconName); //$NON-NLS-1$
+				buffer.replace(xdoc, xdoc + XDOC_ICON.length(), icns);
+			}
+		}
+
+		try {
+			File targetFile = new File(target, "/MacOS/" + name + ".ini"); //$NON-NLS-1$//$NON-NLS-2$
+			transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(targetFile));
+		} catch (FileNotFoundException e) {
+			System.out.println("Impossible to brand ini file"); //$NON-NLS-1$
+			return;
+		} catch (IOException e) {
+			System.out.println("Impossible to brand ini file"); //$NON-NLS-1$
+			return;
+		}
+	}
+
+	private void modifyInfoPListFile(String initialRoot, String targetRoot, String iconName) {
+		File infoPList = new File(initialRoot, "Info.plist"); //$NON-NLS-1$
 		StringBuffer buffer;
 		try {
 			buffer = readFile(infoPList);
@@ -199,17 +283,49 @@ public class BrandingIron implements IXMLConstants {
 		int exePos = scan(buffer, 0, MARKER_NAME);
 		if (exePos != -1)
 			buffer.replace(exePos, exePos + MARKER_NAME.length(), name);
+		else {
+			exePos = scan(buffer, 0, MARKER_KEY);
+			if (exePos != -1) {
+				int start = scan(buffer, exePos + MARKER_KEY.length(), STRING_START);
+				int end = scan(buffer, start + STRING_START.length(), STRING_END);
+				if (start > -1 && end > start) {
+					buffer.replace(start + STRING_START.length(), end, name);
+				}
+			}
+		}
 
 		int bundlePos = scan(buffer, 0, BUNDLE_NAME);
 		if (bundlePos != -1)
 			buffer.replace(bundlePos, bundlePos + BUNDLE_NAME.length(), name);
+		else {
+			exePos = scan(buffer, 0, BUNDLE_KEY);
+			if (exePos != -1) {
+				int start = scan(buffer, exePos + BUNDLE_KEY.length(), STRING_START);
+				int end = scan(buffer, start + STRING_START.length(), STRING_END);
+				if (start > -1 && end > start) {
+					buffer.replace(start + STRING_START.length(), end, name);
+				}
+			}
+		}
 
 		int iconPos = scan(buffer, 0, ICON_NAME);
 		if (iconPos != -1)
 			buffer.replace(iconPos, iconPos + ICON_NAME.length(), iconName);
+		else {
+			exePos = scan(buffer, 0, ICON_KEY);
+			if (exePos != -1) {
+				int start = scan(buffer, exePos + ICON_KEY.length(), STRING_START);
+				int end = scan(buffer, start + STRING_START.length(), STRING_END);
+				if (start > -1 && end > start) {
+					buffer.replace(start + STRING_START.length(), end, iconName);
+				}
+			}
+		}
+
 		File target = null;
 		try {
 			target = new File(targetRoot, "Info.plist");
+			target.getParentFile().mkdirs();
 			transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(target));
 		} catch (FileNotFoundException e) {
 			System.out.println("Impossible to brand info.plist file"); //$NON-NLS-1$
