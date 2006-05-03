@@ -19,9 +19,6 @@
       <configExtension
             configId="org.eclipse.ui.intro.universalConfig"
             content="$nl$/intro/newsExtensionContent.xml"/> 
-      <configExtension
-            configId="org.eclipse.ui.intro.universalConfig"
-            content="$nl$/intro/newsExtensionContent2.xml"/>     
    </extension>
 
    <extension 
