@@ -137,7 +137,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 			rule.addWord(ICoreConstants.FRIENDS_DIRECTIVE, fAttributeToken);
 			rule.addWord(ICoreConstants.INTERNAL_DIRECTIVE, fAttributeToken);
 			rule.addWord(ICoreConstants.PACKAGE_SPECIFICATION_VERSION, fAttributeToken);
-			
+			rules[1] = rule;
 			setRules(rules);
 			setDefaultReturnToken(new Token(createTextAttribute(IPDEColorConstants.P_HEADER_VALUE)));
 		}	
