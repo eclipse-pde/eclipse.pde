@@ -51,7 +51,8 @@ public class JNLPGenerator extends DefaultHandler {
 	private String description;
 	private boolean resourceWritten = false;
 	private String currentOS = null;
-
+	private String currentArch = null;
+	
 	/**
 	 * For testing purposes only.
 	 */
@@ -84,7 +85,7 @@ public class JNLPGenerator extends DefaultHandler {
 	 */
 	public void process() {
 		InputStream in = null;
-			
+
 		try {
 			ZipFile featureArchive = null;
 			if (featureRoot.isFile()) {
@@ -132,7 +133,8 @@ public class JNLPGenerator extends DefaultHandler {
 		String version = attributes.getValue("version"); //$NON-NLS-1$
 		String os = attributes.getValue("os"); //$NON-NLS-1$
 		String ws = attributes.getValue("ws"); //$NON-NLS-1$
-		writeResourcePrologue(os, ws);
+		String arch = attributes.getValue("arch"); //$NON-NLS-1$
+		writeResourcePrologue(os, ws, arch);
 		out.println("\t\t<jar href=\"plugins/" + id + "_" + version + ".jar\"/>");
 	}
 
@@ -144,17 +146,19 @@ public class JNLPGenerator extends DefaultHandler {
 		currentOS = null;
 	}
 
-	private void writeResourcePrologue(String os, String ws) {
+	private void writeResourcePrologue(String os, String ws, String arch) {
 		if (os == null)
 			os = ws;
 		os = convertOS(os);
-		if (resourceWritten && osMatch(os))
+		arch = convertArch(arch);
+		if (resourceWritten && osMatch(os) && archMatch(arch))
 			return;
 		if (resourceWritten)
 			writeResourceEpilogue();
-		out.println("\t<resources" + (os == null ? "" : " os=\"" + os + "\"") + ">");
+		out.println("\t<resources" + (os == null ? "" : " os=\"" + os + "\"") + (arch == null ? "" : " arch=\"" + arch + "\"") + ">");
 		resourceWritten = true;
 		currentOS = os;
+		currentArch = arch;
 	}
 
 	private String convertOS(String os) {
@@ -183,6 +187,42 @@ public class JNLPGenerator extends DefaultHandler {
 		return os.equals(currentOS);
 	}
 
+	private String convertArch(String arch) {
+		if (arch == null)
+			return null;
+
+		if ("x86".equals(arch)) //$NON-NLS-1$
+			return "x86"; //$NON-NLS-1$
+
+		if ("PA_RISC".equals(arch)) //$NON-NLS-1$
+			return "PA_RISC"; //$NON-NLS-1$
+
+		if ("ppc".equals(arch)) //$NON-NLS-1$
+			return "ppc"; //$NON-NLS-1$
+
+		if ("sparc".equals(arch)) //$NON-NLS-1$
+			return "sparc"; //$NON-NLS-1$
+
+		if ("x86_64".equals(arch))//$NON-NLS-1$
+			return "x86_64"; //$NON-NLS-1$
+
+		if ("ia64".equals(arch)) //$NON-NLS-1$
+			return "ia64"; //$NON-NLS-1$
+
+		if ("ia64_32".equals(arch)) //$NON-NLS-1$
+			return "ia64_32"; //$NON-NLS-1$
+
+		return arch;
+	}
+
+	private boolean archMatch(String arch) {
+		if (arch == currentOS)
+			return true;
+		if (arch == null)
+			return false;
+		return arch.equals(currentArch);
+	}
+	
 	private void processDescription(Attributes attributes) {
 	}
 
@@ -193,7 +233,8 @@ public class JNLPGenerator extends DefaultHandler {
 		String name = attributes.getValue("name"); //$NON-NLS-1$
 		String os = attributes.getValue("os"); //$NON-NLS-1$
 		String ws = attributes.getValue("ws"); //$NON-NLS-1$
-		writeResourcePrologue(os, ws);
+		String arch = attributes.getValue("arch"); //$NON-NLS-1$
+		writeResourcePrologue(os, ws, arch);
 		out.print("\t\t<extension ");
 		if (name != null)
 			out.print("name=\"" + name + "\" ");
