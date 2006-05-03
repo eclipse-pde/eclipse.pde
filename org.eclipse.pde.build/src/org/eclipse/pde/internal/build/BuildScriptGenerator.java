@@ -215,42 +215,50 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			Collection list = assemblageInformation.getFeatures(config);
 			versions.clear();
 			features.addAll(list);
+			String featureFile = DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + '.' + configString + PROPERTIES_FILE_SUFFIX;
+			readVersions(versions, featureFile);
 			for (Iterator i = list.iterator(); i.hasNext();) {
 				IFeature feature = (IFeature) i.next();
 				VersionedIdentifier id = feature.getVersionedIdentifier();
 				recordVersion(id.getIdentifier(), new Version(id.getVersion().toString()), versions);
 			}
-			saveVersions(versions, DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + '.' + configString + PROPERTIES_FILE_SUFFIX);
+			saveVersions(versions, featureFile);
 
 			//Plugins
 			list = assemblageInformation.getPlugins(config);
 			versions.clear();
 			plugins.addAll(list);
+			String pluginFile = DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + '.' + configString + PROPERTIES_FILE_SUFFIX;
+			readVersions(versions, pluginFile);
 			for (Iterator i = list.iterator(); i.hasNext();) {
 				BundleDescription bundle = (BundleDescription) i.next();
 				recordVersion(bundle.getSymbolicName(), bundle.getVersion(), versions);
 			}
-			saveVersions(versions, DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + '.' + configString + PROPERTIES_FILE_SUFFIX);
+			saveVersions(versions, pluginFile);
 		}
 
 		//Create a file containing all the feature versions  
 		versions.clear();
+		String featureFile = DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX;
+		readVersions(versions,featureFile);
 		for (Iterator i = features.iterator(); i.hasNext();) {
 			IFeature feature = (IFeature) i.next();
 			VersionedIdentifier id = feature.getVersionedIdentifier();
 			recordVersion(id.getIdentifier(), new Version(id.getVersion().toString()), versions);
 		}
-		saveVersions(versions, DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX);
+		saveVersions(versions, featureFile);
 
 		//Create a file containing all the plugin versions
 		versions.clear();
+		String pluginVersion = DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX;
+		readVersions(versions, pluginVersion);
 		for (Iterator i = plugins.iterator(); i.hasNext();) {
 			BundleDescription bundle = (BundleDescription) i.next();
 			recordVersion(bundle.getSymbolicName(), bundle.getVersion(), versions);
 		}
-		saveVersions(versions, DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX);
+		saveVersions(versions, pluginVersion);
 	}
- 
+	
 	protected void recordVersion(String name, Version version, Properties properties) {
 		String versionString = version.toString();
 		if (properties.containsKey(name)) {
@@ -265,8 +273,26 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		properties.put(name + suffix, versionString);
 	}
  
+	private String getFilePath(String fileName) {
+		return workingDirectory + '/' + fileName;
+	}
+
+	protected void readVersions(Properties properties, String fileName) {
+		String location = getFilePath(fileName);
+		try {
+			InputStream is = new BufferedInputStream(new FileInputStream(location));
+			try {
+				properties.load(is);
+			} finally {
+				is.close();
+			}
+		} catch (IOException e) {
+			//Ignore
+		}
+	}
+
 	protected void saveVersions(Properties properties, String fileName) throws CoreException {
-		String location = workingDirectory + '/' + fileName;
+		String location = getFilePath(fileName);
 		try {
 			OutputStream os = new BufferedOutputStream(new FileOutputStream(location));
 			try {
