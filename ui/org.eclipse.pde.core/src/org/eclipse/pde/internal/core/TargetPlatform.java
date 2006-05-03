@@ -43,6 +43,8 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.configurator.IPlatformConfiguration;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
 
 public class TargetPlatform implements IEnvironmentVariables {
 
@@ -458,6 +460,18 @@ public class TargetPlatform implements IEnvironmentVariables {
 	public static boolean isRuntimeRefactored2() {
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		return manager.findEntry("org.eclipse.core.runtime.compatibility.registry") != null;		 //$NON-NLS-1$
+	}
+	
+	public static boolean matchesCurrentEnvironment(IPluginModelBase model) {
+        BundleContext context = PDECore.getDefault().getBundleContext();	        
+		Dictionary environment = getTargetEnvironment();
+		BundleDescription bundle = model.getBundleDescription();
+        String filterSpec = bundle != null ? bundle.getPlatformFilter() : null;
+        try {
+			return filterSpec == null|| context.createFilter(filterSpec).match(environment);
+		} catch (InvalidSyntaxException e) {
+			return false;
+		}		
 	}
 	
 }

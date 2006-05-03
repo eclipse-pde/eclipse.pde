@@ -376,7 +376,7 @@ public class RuntimeWorkbenchShortcut implements ILaunchShortcut {
 		for (int i = 0; i < entries.length; i++) {
 			ModelEntry entry = entries[i];
 			IPluginModelBase model = entry.getActiveModel();
-			if (model instanceof IFragmentModel) {
+			if (model instanceof IFragmentModel && TargetPlatform.matchesCurrentEnvironment(model)) {
 				String id = ((IFragmentModel) model).getFragment().getPluginId();
 				if (id.equals(plugin.getId())) {
 					result.add(model);

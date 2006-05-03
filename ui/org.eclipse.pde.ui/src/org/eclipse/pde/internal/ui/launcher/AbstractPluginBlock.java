@@ -37,6 +37,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -462,7 +463,7 @@ public abstract class AbstractPluginBlock {
 			IPluginModelBase model = entry.getActiveModel();
 			if ("org.eclipse.ui.workbench.compatibility".equals(model.getPluginBase().getId())) //$NON-NLS-1$
 				continue;
-			if (model instanceof IFragmentModel) {
+			if (model instanceof IFragmentModel && TargetPlatform.matchesCurrentEnvironment(model)) {
 				String id = ((IFragmentModel) model).getFragment().getPluginId();
 				if (id.equals(plugin.getId())) {
 					if (fPluginTreeViewer.getChecked(model)) {

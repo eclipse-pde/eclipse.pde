@@ -34,6 +34,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -143,7 +144,7 @@ public class LaunchAction extends Action {
 				if (id == null || map.containsKey(id))
 					continue;
 				IPluginModelBase model = manager.findModel(id);
-				if (model != null)
+				if (model != null && TargetPlatform.matchesCurrentEnvironment(model))
 					map.put(id, model);				
 			}
 		}
@@ -183,7 +184,7 @@ public class LaunchAction extends Action {
 			if (id == null || map.containsKey(id))
 				continue;
 			IPluginModelBase model = manager.findModel(id);
-			if (model != null)
+			if (model != null && TargetPlatform.matchesCurrentEnvironment(model))
 				map.put(id, model);
 		}
 	}
