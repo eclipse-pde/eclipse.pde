@@ -71,4 +71,8 @@ public interface ICoreConstants {
 		Constants.BUNDLE_DESCRIPTION, Constants.BUNDLE_COPYRIGHT
 	};
 	
+	// EASTER EGG
+	public static final String[] EE_TOKENS = new String[] {
+		"wassim", "simon", "cherie", "janek" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	};
 }
