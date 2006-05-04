@@ -87,6 +87,7 @@ public interface IPDEBuildConstants {
 	public final static int WARNING_ELEMENT_NOT_FETCHED = 21;
 	public final static int EXCEPTION_CONFIG_FORMAT = 22;
 	public final static int EXCEPTION_PRODUCT_FORMAT = 23;
+	public final static int EXCEPTION_PRODUCT_FILE = 24;
 
 	//User object keys. BundleDescription.getUserObject()
 	public final static String IS_COMPILED = "isCompiler"; //$NON-NLS-1$

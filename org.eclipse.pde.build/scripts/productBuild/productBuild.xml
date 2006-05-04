@@ -39,6 +39,7 @@
 		productFile="${product}"
 		verify="${verify}"
 		pluginPath="${pluginPath}"
+		configInfo="${configs}"
 	/>
 </target>
 

@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.build;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.site.PDEState;
@@ -48,11 +48,11 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 				fragments.addAll(product.getFragments());
 			}
 		}
-		//TODO Give a warning if the product is null and no features or plugins have been given
 		try {
 			createFeature(featureId, plugins, fragments, features);
 		} catch (FileNotFoundException e) {
-			//TODO Log error
+			IStatus status = new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_PRODUCT_FORMAT, NLS.bind(Messages.error_creatingFeature, e.getLocalizedMessage()), e);
+			throw new CoreException(status);
 		}
 	}
 
@@ -76,18 +76,17 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		this.featureId = featureId;
 	}
 	
-	private void initialize(){
+	private void initialize() throws CoreException{
 		if (productFile != null && !productFile.startsWith("${")) { //$NON-NLS-1$
 			String productPath = findFile(productFile, false);
 			if (productPath == null)
 				productPath = productFile;
 			File f = new File(productPath);
 			if (f.exists() && f.isFile()) {
-				try {
-					product = new ProductFile(productPath, null);
-				} catch (CoreException e) {
-					// log
-				}
+				product = new ProductFile(productPath, null);
+			} else {
+				IStatus error = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PRODUCT_FILE, NLS.bind(Messages.exception_missingElement, productFile), null);
+				throw new CoreException(error);
 			}
 		} 
 	}
@@ -99,6 +98,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			directory.mkdirs();
 
 		PDEState state = verify ? getSite(false).getRegistry() : null;
+		BundleHelper helper = BundleHelper.getDefault();
 
 		//Create feature.xml
 		File file = new File(directory, Constants.FEATURE_FILENAME_DESCRIPTOR);
@@ -111,36 +111,88 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			return;
 		}
 		Map parameters = new HashMap();
+		Dictionary environment = new Hashtable(3);
 
 		parameters.put("id", feature); //$NON-NLS-1$
 		parameters.put("version", "1.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.startTag("feature", parameters, true); //$NON-NLS-1$
 
 		boolean fragment = false;
-		for (Iterator iter = plugins.iterator(); iter.hasNext();) {
-			String name = (String) iter.next();
-			boolean unpack = true;
-			if (verify) {
-				BundleDescription bundle = state.getResolvedBundle(name);
-				if (bundle != null){
-					unpack = guessUnpack(bundle, (String[]) state.getExtraData().get(new Long(bundle.getBundleId())));
-				} else {
-					//throw error
-					String message = NLS.bind(Messages.exception_missingPlugin, name);
-					throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
+		List configs = getConfigInfos();
+		//we do the generic config first as a special case
+		configs.remove(Config.genericConfig());
+		Iterator configIterator = configs.iterator();
+		ListIterator listIter = plugins.listIterator();
+		for (	Config currentConfig = Config.genericConfig(); currentConfig != null; currentConfig = (Config) configIterator.next()) {
+			environment.put("osgi.os", currentConfig.getOs()); //$NON-NLS-1$
+			environment.put("osgi.ws", currentConfig.getWs()); //$NON-NLS-1$
+			environment.put("osgi.arch", currentConfig.getArch()); //$NON-NLS-1$
+			for (; listIter.hasNext();) {
+				String name = (String) listIter.next();
+				boolean unpack = true;
+				boolean writeBundle = !verify;
+				if (verify) {
+					BundleDescription bundle = state.getResolvedBundle(name);
+					if (bundle != null) {
+						//Bundle resolved, write it out if it matches the current config
+						String filterSpec = bundle.getPlatformFilter();
+						if (filterSpec == null || helper.createFilter(filterSpec).match(environment)) {
+							writeBundle = true;
+							unpack = guessUnpack(bundle, (String[]) state.getExtraData().get(new Long(bundle.getBundleId())));
+							if(currentConfig.equals(Config.genericConfig())){
+								listIter.remove();
+							}
+						} 
+					} else {
+						//Bundle did not resolve, only ok if it was because of the platform filter
+						BundleDescription [] bundles = state.getState().getBundles(name);
+						boolean error = true;
+						if(bundles != null && bundles.length > 0){	
+							ResolverError[] errors = state.getState().getResolverErrors(bundles[0]);
+							for (int i = 0; i < errors.length; i++) {
+								if((errors[i].getType() & ResolverError.PLATFORM_FILTER) != 0){
+									//didn't match config, this is ok
+									error = false;
+									break;
+								} 
+							}
+						}
+						if(error) {
+							//throw error
+							String message = NLS.bind(Messages.exception_missingPlugin, name);
+							throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
+						}
+					}
+				}
+
+				if(writeBundle) {
+					parameters.clear();
+					parameters.put("id", name); //$NON-NLS-1$
+					parameters.put("version", "0.0.0"); //$NON-NLS-1$//$NON-NLS-2$
+					parameters.put("unpack", unpack ? "true" : "false"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+					if(!currentConfig.equals(Config.genericConfig())){
+						parameters.put("os", currentConfig.getOs()); //$NON-NLS-1$
+						parameters.put("ws", currentConfig.getWs()); //$NON-NLS-1$
+						parameters.put("arch", currentConfig.getArch()); //$NON-NLS-1$
+					}
+					if (fragment)
+						parameters.put("fragment", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+					writer.printTag("plugin", parameters, true, true, true); //$NON-NLS-1$
+				}
+				
+				if (!fragment && !listIter.hasNext() && fragments.size() > 0) {
+					//finished the list of plugins, do the fragments now
+					fragment = true;
+					listIter = fragments.listIterator();
 				}
 			}
-			parameters.clear();
-			parameters.put("id", name); //$NON-NLS-1$
-			parameters.put("version", "0.0.0"); //$NON-NLS-1$//$NON-NLS-2$
-			parameters.put("unpack", unpack ? "true" : "false");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-			if(fragment)
-				parameters.put("fragment", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-			writer.printTag("plugin", parameters, true, true, true); //$NON-NLS-1$
-			
-			if(!fragment && !iter.hasNext() && fragments.size() > 0){
-				fragment = true;
-				iter = fragments.iterator();
+			if(!verify || !configIterator.hasNext()){
+				break;
+			} else if(plugins.size() > 0 ){
+				fragment = false;
+				listIter = plugins.listIterator();
+			} else {
+				listIter = fragments.listIterator();
 			}
 		}
 		
