@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.build.site;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Properties;
+import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.NLS;
@@ -83,11 +83,18 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 				StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
 				for (int i = 0; i < all.length; i++) {
 					if (!all[i].isResolved()) {
-						VersionConstraint[] unsatisfiedConstraints = helper.getUnsatisfiedConstraints(all[i]);
-						for (int j = 0; j < unsatisfiedConstraints.length; j++) {
-							String message = getResolutionFailureMessage(unsatisfiedConstraints[j]);
-							errors.add(new Status(IStatus.WARNING, all[i].getSymbolicName(), IStatus.WARNING, message, null));
+						ResolverError[] resolutionErrors = state.getState().getResolverErrors(all[i]);
+						VersionConstraint[] versionErrors = helper.getUnsatisfiedConstraints(all[i]);
+						
+						//ignore problems when they are caused by bundles not being built for the right config
+						if (isConfigError(all[i], resolutionErrors, AbstractScriptGenerator.getConfigInfos()))
+							continue;
+						
+						String errorMessage = "Bundle " + all[i].getSymbolicName() + ":\n" + getResolutionErrorMessage(resolutionErrors);
+						for (int j = 0; j < versionErrors.length; j++) {
+							errorMessage += '\t' + getResolutionFailureMessage(versionErrors[j]) + '\n';
 						}
+						errors.add(new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, IStatus.WARNING, errorMessage, null));
 					}
 				}
 				BundleHelper.getDefault().getLog().log(errors);
@@ -98,6 +105,43 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 		return state;
 	}
 
+	//Return whether the resolution error is caused because we are not building for the proper configurations.
+	private boolean isConfigError(BundleDescription bundle, ResolverError[] errors, List configs) {
+		Dictionary environment = new Hashtable(3);
+		String filterSpec = bundle.getPlatformFilter();
+		if (hasPlatformFilterError(errors) != null) {
+			for (Iterator iter = configs.iterator(); iter.hasNext();) {
+				Config aConfig = (Config) iter.next();
+				environment.put("osgi.os", aConfig.getOs()); //$NON-NLS-1$
+				environment.put("osgi.ws", aConfig.getWs()); //$NON-NLS-1$
+				environment.put("osgi.arch", aConfig.getArch()); //$NON-NLS-1$
+				if (BundleHelper.getDefault().createFilter(filterSpec).match(environment)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	//Check if the set of errors contain a platform filter
+	private ResolverError hasPlatformFilterError(ResolverError[] errors) {
+		for (int i = 0; i < errors.length; i++) {
+			if ((errors[i].getType() & ResolverError.PLATFORM_FILTER) != 0)
+				return errors[i];
+		}
+		return null;
+	}
+	
+	private String getResolutionErrorMessage(ResolverError[] errors) {
+		String errorMessage = ""; //$NON-NLS-1$
+		for (int i = 0; i < errors.length; i++) {
+			if ((errors[i].getType() & (ResolverError.SINGLETON_SELECTION | ResolverError.FRAGMENT_CONFLICT |	ResolverError.IMPORT_PACKAGE_USES_CONFLICT |ResolverError.REQUIRE_BUNDLE_USES_CONFLICT |ResolverError.MISSING_EXECUTION_ENVIRONMENT)) != 0)
+				errorMessage += '\t' + errors[i].toString() + '\n';
+		}
+		return errorMessage;
+	}
+	
 	public String getResolutionFailureMessage(VersionConstraint unsatisfied) {
 		if (unsatisfied.isResolved())
 			throw new IllegalArgumentException();
