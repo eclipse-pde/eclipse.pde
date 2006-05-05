@@ -14,7 +14,9 @@
 <!-- ===================================================================== -->
 <target name="main" description="the main build target">	
   	<antcall target="preBuild" /> 
-	<antcall target="generateFeature"/> <!-- Generate the feature to drive the fetch -->
+	<antcall target="generateFeature"> <!-- Generate the feature to drive the fetch -->
+		<param name="verify" value="false"/>
+	</antcall>
  	<antcall target="fetch" />
 	<antcall target="generateFeature"> <!-- We are calling generate feature a second time so that we can get the pack / unpack clause fixed -->
 		<param name="verify" value="true"/>
