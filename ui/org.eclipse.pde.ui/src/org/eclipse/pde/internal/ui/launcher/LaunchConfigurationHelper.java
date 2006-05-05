@@ -94,6 +94,10 @@ public class LaunchConfigurationHelper {
 			String templateLoc = configuration.getAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, (String)null);
 			if (templateLoc != null) {
 				properties = loadFromTemplate(getSubstitutedString(templateLoc));
+				String osgiBundles = properties.getProperty("osgi.bundles"); //$NON-NLS-1$
+				if (osgiBundles != null) {
+					properties.put("osgi.bundles", TargetPlatform.stripPathInformation(osgiBundles)); //$NON-NLS-1$
+				}
 			}
 		}
 		if (properties == null)

@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
@@ -34,6 +35,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -44,9 +46,13 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.configurator.IPlatformConfiguration;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 
 public class TargetPlatform implements IEnvironmentVariables {
+
+	private static String FILE_URL_PREFIX = "file:/"; //$NON-NLS-1$
 
 	static class LocalSite {
 		private ArrayList plugins;
@@ -86,6 +92,8 @@ public class TargetPlatform implements IEnvironmentVariables {
 			return list;
 		}
 	}
+
+	private static Map fCachedLocations;
 	
 	public static Properties getConfigIniProperties() {
 		File iniFile = new File(ExternalModelManager.getEclipseHome().toOSString(), "configuration/config.ini"); //$NON-NLS-1$
@@ -117,10 +125,59 @@ public class TargetPlatform implements IEnvironmentVariables {
 			}
 			osgiBundles = buffer.toString();
 		} else {
-			osgiBundles = osgiBundles.replaceAll("\\s", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			osgiBundles = stripPathInformation(osgiBundles);
 		}
 		return osgiBundles;
 	}
+	
+	public static String stripPathInformation(String osgiBundles) {
+		osgiBundles = osgiBundles.replaceAll("\\s", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		StringBuffer result = new StringBuffer();
+		StringTokenizer tokenizer = new StringTokenizer(osgiBundles, ","); //$NON-NLS-1$
+		while (tokenizer.hasMoreElements()) {
+			String token = tokenizer.nextToken();
+			int index = token.indexOf('@');
+			
+			// read up until the first @, if there
+			String bundle = index > 0 ? token.substring(0, index) : token;
+			
+			// if the path is relative, the last segment is the bundle symbolic name
+			// Otherwise, we need to retrieve the bundle symbolic name ourselves
+			IPath path = new Path(bundle);
+			String id = path.isAbsolute() ? getSymbolicName(bundle) : path.lastSegment();
+			if (result.length() > 0)
+				result.append(","); //$NON-NLS-1$
+			result.append(id != null ? id : bundle);
+			if (index > -1)
+				result.append(token.substring(index));
+		}
+		return result.toString();
+	}
+	
+	private static synchronized String getSymbolicName(String path) {
+		if (fCachedLocations == null)
+			fCachedLocations = new HashMap();
+		if (path.startsWith(FILE_URL_PREFIX))
+			path = path.substring(FILE_URL_PREFIX.length());
+		
+		File file = new File(path);
+		if (file.exists() && !fCachedLocations.containsKey(path)) {
+			try {
+				Dictionary dictionary = MinimalState.loadManifest(file);
+				String value = (String)dictionary.get(Constants.BUNDLE_SYMBOLICNAME);
+				if (value != null) {
+					ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, value);
+					String id = elements.length > 0 ? elements[0].getValue() : null;
+					if (id != null)
+						fCachedLocations.put(path, elements[0].getValue());
+				}
+			} catch (IOException e) {
+			} catch (BundleException e) {
+			}
+		}			
+		return (String)fCachedLocations.get(path);
+	}
+
 	
 	public static void createPlatformConfigurationArea(
 		Map pluginMap,
