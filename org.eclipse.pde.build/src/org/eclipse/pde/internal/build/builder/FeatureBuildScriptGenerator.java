@@ -237,6 +237,10 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				message = NLS.bind(Messages.exception_writeScript, buildFile);
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, message, e));
 			}
+			List configs = getConfigInfos();
+			for (Iterator iter = configs.iterator(); iter.hasNext();) {
+				assemblyData.addRootFileProvider((Config) iter.next(), feature);
+			}
 			return;
 		}
 		if (analyseIncludedFeatures)
