@@ -21,6 +21,10 @@ public class AllBundleModelTests {
 		suite.addTest(ImportPackageTestCase.suite());
 		suite.addTest(ExportPackageTestCase.suite());
 		suite.addTest(BundleClasspathTestCase.suite());
+		suite.addTest(BundleActivatorTestCase.suite());
+		suite.addTest(BundleNameTestCase.suite());
+		suite.addTest(BundleLocalizationTestCase.suite());
+		suite.addTest(LazyStartTestCase.suite());
 		return suite;
 	}
 

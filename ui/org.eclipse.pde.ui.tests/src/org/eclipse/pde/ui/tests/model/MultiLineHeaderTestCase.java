@@ -14,7 +14,7 @@ public abstract class MultiLineHeaderTestCase extends BundleModelTestCase {
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
 		buffer.append(fHeaderName);
-		buffer.append(": com.example.abc\n");
+		buffer.append(": com.example.abc,\n");
 		buffer.append(" com.example.abc.actions\n");
 		fDocument.set(buffer.toString());
 		load();
@@ -28,7 +28,7 @@ public abstract class MultiLineHeaderTestCase extends BundleModelTestCase {
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append(fHeaderName);
-		buffer.append(": com.example.abc\n");
+		buffer.append(": com.example.abc,\n");
 		buffer.append(" com.example.abc.actions\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
 		fDocument.set(buffer.toString());

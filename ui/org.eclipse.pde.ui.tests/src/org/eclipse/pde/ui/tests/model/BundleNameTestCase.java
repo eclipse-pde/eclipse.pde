@@ -4,62 +4,49 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
-import org.eclipse.pde.internal.core.text.bundle.BundleClasspathHeader;
+import org.eclipse.pde.internal.core.text.bundle.BundleNameHeader;
 import org.eclipse.text.edits.TextEdit;
 import org.osgi.framework.Constants;
 
-public class BundleClasspathTestCase extends MultiLineHeaderTestCase {
-	
+public class BundleNameTestCase extends BundleModelTestCase {
+
 	public static Test suite() {
-		return new TestSuite(BundleClasspathTestCase.class);
+		return new TestSuite(BundleNameTestCase.class);
 	}
 	
-	public BundleClasspathTestCase() {
-		super(Constants.BUNDLE_CLASSPATH);
+	public BundleNameTestCase() {
+		super(Constants.BUNDLE_NAME);
 	}
-	
-	public void testAddLibrary() throws Exception {
+
+	public void testGetName() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
 		buffer.append(fHeaderName);
-		buffer.append(": com.example.abc\n");
+		buffer.append(": Bundle Name\n");
 		fDocument.set(buffer.toString());
-		load(true);
+		load();
 		
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
-		((BundleClasspathHeader)header).addLibrary("com.example.xyz");
-		
-		TextEdit[] ops = fListener.getTextOperations();
-		assertEquals(1, ops.length);
-		
-		ops[0].apply(fDocument);
-		
-		assertEquals(6, fDocument.getNumberOfLines());
-		assertEquals(0, fDocument.getLineLength(5));
-		
-		int pos = fDocument.getLineOffset(4);
-		int length = fDocument.getLineLength(4);		
-		assertEquals(" com.example.xyz\n", fDocument.get(pos, length));
+		assertNotNull(header);
+		assertEquals(((BundleNameHeader)header).getBundleName(), "Bundle Name");
 	}
 	
-	public void testRemoveLibrary() throws Exception {
+	public void testSetName() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
-		buffer.append(fHeaderName);
-		buffer.append(": com.example.abc,\n");
-		buffer.append(" com.example.xyz\n");
 		fDocument.set(buffer.toString());
 		load(true);
 		
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
-		((BundleClasspathHeader)header).removeLibrary("com.example.abc");
+		assertNull(header);
 		
+		fModel.getBundle().setHeader(fHeaderName, "Bundle Name");
 		TextEdit[] ops = fListener.getTextOperations();
-		assertEquals(1, ops.length);
+		assertEquals(ops.length, 1);
 		
 		ops[0].apply(fDocument);
 		
@@ -67,31 +54,34 @@ public class BundleClasspathTestCase extends MultiLineHeaderTestCase {
 		assertEquals(0, fDocument.getLineLength(4));
 		
 		int pos = fDocument.getLineOffset(3);
-		int length = fDocument.getLineLength(3);		
-		assertEquals(fHeaderName + ": com.example.xyz\n", fDocument.get(pos, length));
+		int length = fDocument.getLineLength(3);	
+		assertEquals(fHeaderName + ": Bundle Name\n", fDocument.get(pos, length));
 	}
 	
-	public void testRemoveOnlyLibrary() throws Exception {
+	public void testChangeExistingName() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
 		buffer.append(fHeaderName);
-		buffer.append(": com.example.abc\n");
+		buffer.append(": Old Bundle Name\n");
 		fDocument.set(buffer.toString());
 		load(true);
 		
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
-		((BundleClasspathHeader)header).removeLibrary("com.example.abc");
+		assertNotNull(header);
 		
+		fModel.getBundle().setHeader(fHeaderName, "Bundle Name");
 		TextEdit[] ops = fListener.getTextOperations();
-		assertEquals(1, ops.length);
+		assertEquals(ops.length, 1);
 		
 		ops[0].apply(fDocument);
 		
-		assertEquals(4, fDocument.getNumberOfLines());
-		assertEquals(0, fDocument.getLineLength(3));
+		assertEquals(5, fDocument.getNumberOfLines());
+		assertEquals(0, fDocument.getLineLength(4));
 		
-		assertEquals(fDocument.get().indexOf(fHeaderName), -1);
+		int pos = fDocument.getLineOffset(3);
+		int length = fDocument.getLineLength(3);	
+		assertEquals(fHeaderName + ": Bundle Name\n", fDocument.get(pos, length));
 	}
 }
