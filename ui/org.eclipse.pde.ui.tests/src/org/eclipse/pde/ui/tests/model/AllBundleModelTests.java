@@ -8,26 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.ui.tests;
+package org.eclipse.pde.ui.tests.model;
 
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.pde.ui.tests.imports.AllImportTests;
-import org.eclipse.pde.ui.tests.model.AllBundleModelTests;
-import org.eclipse.pde.ui.tests.target.AllTargetTests;
-import org.eclipse.pde.ui.tests.wizards.AllNewProjectTests;
-
-public class AllPDETests {
-
+public class AllBundleModelTests {
+	
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for org.eclipse.pde.ui"); //$NON-NLS-1$
-		suite.addTest(AllTargetTests.suite());
-		suite.addTest(AllNewProjectTests.suite());
-		suite.addTest(AllImportTests.suite());
-		suite.addTest(AllBundleModelTests.suite());
+		TestSuite suite = new TestSuite("Test Suite for testing the bundle model"); //$NON-NLS-1$
+		suite.addTest(ImportPackageTestCase.suite());
 		return suite;
 	}
-	
+
 }

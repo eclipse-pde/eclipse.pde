@@ -18,6 +18,7 @@ Require-Bundle: org.junit,
  org.eclipse.team.core,
  org.eclipse.jdt.ui,
  org.eclipse.jdt.launching,
- org.eclipse.pde.core
+ org.eclipse.pde.core,
+ org.eclipse.text
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
