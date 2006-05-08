@@ -10,24 +10,24 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.Document;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
 
-public class BundleModelTestCase extends TestCase {
-
-	public static Test suite() {
-		return new TestSuite(BundleModelTestCase.class);
-	}
+public abstract class BundleModelTestCase extends TestCase {
 
 	protected Document fDocument;
 	protected BundleModel fModel;
 	protected BundleTextChangeListener fListener;
+	protected String fHeaderName;
+	
+	public BundleModelTestCase(String headerName) {
+		fHeaderName = headerName;
+	}
 	
 	protected void setUp() throws Exception {
 		fDocument = new Document();
@@ -48,6 +48,86 @@ public class BundleModelTestCase extends TestCase {
 		} catch (CoreException e) {
 			fail("model cannot be loaded");
 		}
+	}
+	
+	public void testAbsentHeader() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Manifest-Version: 1.0\n");
+		buffer.append("Bundle-ManifestVersion: 2\n");
+		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
+		fDocument.set(buffer.toString());
+		load();
 		
+		assertNull(fModel.getBundle().getManifestHeader(fHeaderName));		
+	}
+	
+	public void testPresentHeader() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Manifest-Version: 1.0\n");
+		buffer.append("Bundle-ManifestVersion: 2\n");
+		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
+		buffer.append(fHeaderName);
+		buffer.append(": com.example.abc\n");
+		fDocument.set(buffer.toString());
+		load();
+		
+		assertNotNull(fModel.getBundle().getManifestHeader(fHeaderName));				
+	}
+	
+	public void testHeaderOffset1() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Manifest-Version: 1.0\n");
+		buffer.append("Bundle-ManifestVersion: 2\n");
+		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
+		buffer.append(fHeaderName);
+		buffer.append(": com.example.abc\n");
+		fDocument.set(buffer.toString());
+		load();
+		
+		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
+		assertEquals(fDocument.getLineOffset(3), header.getOffset());		
+	}
+	
+	public void testHeaderOffset2() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Manifest-Version: 1.0\n");
+		buffer.append("Bundle-ManifestVersion: 2\n");
+		buffer.append(fHeaderName);
+		buffer.append(": com.example.abc\n");
+		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
+		fDocument.set(buffer.toString());
+		load();
+		
+		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
+		assertEquals(fDocument.getLineOffset(2), header.getOffset());		
+	}
+	
+	
+	public void testHeaderLength() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Manifest-Version: 1.0\n");
+		buffer.append("Bundle-ManifestVersion: 2\n");
+		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
+		buffer.append(fHeaderName);
+		buffer.append(": com.example.abc\n");
+		fDocument.set(buffer.toString());
+		load();
+		
+		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
+		assertEquals(fDocument.getLineLength(3), header.getLength());	
+	}
+	
+	public void testHeaderLengthWithWindowsDelimiter() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Manifest-Version: 1.0\r\n");
+		buffer.append("Bundle-ManifestVersion: 2\r\n");
+		buffer.append("Bundle-SymoblicName: com.example.xyz\r\n");
+		buffer.append(fHeaderName);
+		buffer.append(": com.example.abc\r\n");
+		fDocument.set(buffer.toString());
+		load();
+		
+		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
+		assertEquals(fDocument.getLineLength(3), header.getLength());	
 	}
 }

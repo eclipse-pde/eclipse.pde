@@ -19,6 +19,8 @@ public class AllBundleModelTests {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite for testing the bundle model"); //$NON-NLS-1$
 		suite.addTest(ImportPackageTestCase.suite());
+		suite.addTest(ExportPackageTestCase.suite());
+		suite.addTest(BundleClasspathTestCase.suite());
 		return suite;
 	}
 
