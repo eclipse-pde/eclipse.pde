@@ -11,49 +11,18 @@
 package org.eclipse.pde.ui.tests.model;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.Document;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
-import org.eclipse.pde.internal.core.text.bundle.BundleModel;
-import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.text.edits.TextEdit;
 import org.osgi.framework.Constants;
 
-public class ImportPackageTestCase extends TestCase {
+public class ImportPackageTestCase extends BundleModelTestCase {
 
 	public static Test suite() {
 		return new TestSuite(ImportPackageTestCase.class);
-	}
-
-	private Document fDocument;
-	private BundleModel fModel;
-	private BundleTextChangeListener fListener;
-	
-	protected void setUp() throws Exception {
-		fDocument = new Document();
-	}
-	
-	private void load() {
-		load(false);
-	}
-	
-	private void load(boolean addListener) {
-		try {
-			fModel = new BundleModel(fDocument, false);
-			fModel.load();
-			if (addListener) {
-				fListener = new BundleTextChangeListener(fModel.getDocument());
-				fModel.addModelChangedListener(fListener);
-			}
-		} catch (CoreException e) {
-			fail("model cannot be loaded");
-		}
-		
 	}
 	
 	public void testAbsentHeader() {
