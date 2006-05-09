@@ -18,6 +18,7 @@ public class AllXMLModelTests {
 	
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite for testing the xml model"); //$NON-NLS-1$
+		suite.addTest(BasicXMLTestCase.suite());
 		return suite;
 	}
 

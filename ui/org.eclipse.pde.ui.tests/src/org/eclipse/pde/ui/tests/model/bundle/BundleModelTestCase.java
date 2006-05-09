@@ -41,6 +41,8 @@ public abstract class BundleModelTestCase extends TestCase {
 		try {
 			fModel = new BundleModel(fDocument, false);
 			fModel.load();
+			if (!fModel.isLoaded() || !fModel.isValid())
+				fail("model cannot be loaded");
 			if (addListener) {
 				fListener = new BundleTextChangeListener(fModel.getDocument());
 				fModel.addModelChangedListener(fListener);
