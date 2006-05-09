@@ -30,6 +30,7 @@ public class AllBundleModelTests {
 		suite.addTest(BundleSymbolicNameTestCase.suite());
 		suite.addTest(BundleVendorTestCase.suite());
 		suite.addTest(BundleVersionTestCase.suite());
+		suite.addTest(FragmentHostTestCase.suite());
 		return suite;
 	}
 
