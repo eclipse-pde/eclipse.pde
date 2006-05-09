@@ -20,6 +20,8 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
@@ -47,15 +49,19 @@ public class JavadocLocationManager {
 
 	private String getEntry(IPluginModelBase model) {
 		initialize();
-		String id = model.getPluginBase().getId();
-		if (id == null)
-			return null;
-		Iterator iter = fLocations.keySet().iterator();
-		while (iter.hasNext()) {
-			String location = iter.next().toString();
-			Set set = (Set)fLocations.get(location);
-			if (set.contains(id))
-				return location;
+		BundleDescription desc = model.getBundleDescription();
+		if (desc != null) {
+			HostSpecification host = desc.getHost();
+			String id = host == null ? desc.getSymbolicName() : host.getName();
+			if (id != null) {
+				Iterator iter = fLocations.keySet().iterator();
+				while (iter.hasNext()) {
+					String location = iter.next().toString();
+					Set set = (Set)fLocations.get(location);
+					if (set.contains(id))
+						return location;
+				}
+			}
 		}
 		return null;
 	}
