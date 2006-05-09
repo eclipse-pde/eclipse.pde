@@ -3,10 +3,14 @@ package org.eclipse.pde.ui.tests.model.xml;
 import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
 import org.eclipse.pde.internal.core.text.plugin.PluginModel;
 import org.eclipse.pde.internal.core.text.plugin.XMLTextChangeListener;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.MultiTextEdit;
+import org.eclipse.text.edits.TextEdit;
 
 public abstract class XMLModelTestCase extends TestCase {
 	
@@ -28,7 +32,7 @@ public abstract class XMLModelTestCase extends TestCase {
 	
 	protected void load(boolean addListener) {
 		try {
-			fModel = new PluginModel(fDocument, false);
+			fModel = new PluginModel(fDocument, true);
 			fModel.load();
 			if (!fModel.isLoaded() || !fModel.isValid())
 				fail("model cannot be loaded");
@@ -49,9 +53,29 @@ public abstract class XMLModelTestCase extends TestCase {
 		sb.append(newline);
 		sb.append("<plugin>");
 		sb.append(newline);
-		sb.append(body.toString());
+		if (body != null)
+			sb.append(body.toString());
 		sb.append(newline);
 		sb.append("</plugin>");
 		fDocument.set(sb.toString());
 	}
+	
+	protected void reload(int expectedOps) {
+		TextEdit[] ops = fListener.getTextOperations();
+		if (expectedOps >= 0)
+			assertEquals(expectedOps, ops.length);
+		if (expectedOps == 0)
+			return;
+		MultiTextEdit multi = new MultiTextEdit();
+		multi.addChildren(ops);
+		try {
+			multi.apply(fDocument);
+		} catch (MalformedTreeException e) {
+			fail("MalformedTreeException: " + e.getMessage());
+		} catch (BadLocationException e) {
+			fail("BadLocationException: " + e.getMessage());
+		}
+		load();
+	}
+	
 }
