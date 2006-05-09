@@ -1,4 +1,4 @@
-package org.eclipse.pde.ui.tests.model;
+package org.eclipse.pde.ui.tests.model.bundle;
 
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;

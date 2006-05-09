@@ -1,4 +1,4 @@
-package org.eclipse.pde.ui.tests.model;
+package org.eclipse.pde.ui.tests.model.bundle;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;

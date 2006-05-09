@@ -1,52 +1,65 @@
-package org.eclipse.pde.ui.tests.model;
+package org.eclipse.pde.ui.tests.model.bundle;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
-import org.eclipse.pde.internal.core.text.bundle.BundleLocalizationHeader;
+import org.eclipse.pde.internal.core.text.bundle.BundleClasspathHeader;
 import org.eclipse.text.edits.TextEdit;
 import org.osgi.framework.Constants;
 
-public class BundleLocalizationTestCase extends BundleModelTestCase {
-
+public class BundleClasspathTestCase extends MultiLineHeaderTestCase {
+	
 	public static Test suite() {
-		return new TestSuite(BundleLocalizationTestCase.class);
+		return new TestSuite(BundleClasspathTestCase.class);
 	}
 	
-	public BundleLocalizationTestCase() {
-		super(Constants.BUNDLE_LOCALIZATION);
+	public BundleClasspathTestCase() {
+		super(Constants.BUNDLE_CLASSPATH);
 	}
-
-	public void testGetLocalization() {
+	
+	public void testAddLibrary() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
 		buffer.append(fHeaderName);
-		buffer.append(": plugin\n");
-		fDocument.set(buffer.toString());
-		load();
-		
-		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
-		assertNotNull(header);
-		assertEquals(((BundleLocalizationHeader)header).getLocalization(), "plugin");
-	}
-	
-	public void testSetLocalization() throws Exception {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("Manifest-Version: 1.0\n");
-		buffer.append("Bundle-ManifestVersion: 2\n");
-		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
+		buffer.append(": com.example.abc\n");
 		fDocument.set(buffer.toString());
 		load(true);
 		
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
-		assertNull(header);
+		((BundleClasspathHeader)header).addLibrary("com.example.xyz");
 		
-		fModel.getBundle().setHeader(fHeaderName, "plugin");
 		TextEdit[] ops = fListener.getTextOperations();
-		assertEquals(ops.length, 1);
+		assertEquals(1, ops.length);
+		
+		ops[0].apply(fDocument);
+		
+		assertEquals(6, fDocument.getNumberOfLines());
+		assertEquals(0, fDocument.getLineLength(5));
+		
+		int pos = fDocument.getLineOffset(4);
+		int length = fDocument.getLineLength(4);		
+		assertEquals(" com.example.xyz\n", fDocument.get(pos, length));
+	}
+	
+	public void testRemoveLibrary() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Manifest-Version: 1.0\n");
+		buffer.append("Bundle-ManifestVersion: 2\n");
+		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
+		buffer.append(fHeaderName);
+		buffer.append(": com.example.abc,\n");
+		buffer.append(" com.example.xyz\n");
+		fDocument.set(buffer.toString());
+		load(true);
+		
+		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
+		((BundleClasspathHeader)header).removeLibrary("com.example.abc");
+		
+		TextEdit[] ops = fListener.getTextOperations();
+		assertEquals(1, ops.length);
 		
 		ops[0].apply(fDocument);
 		
@@ -54,34 +67,31 @@ public class BundleLocalizationTestCase extends BundleModelTestCase {
 		assertEquals(0, fDocument.getLineLength(4));
 		
 		int pos = fDocument.getLineOffset(3);
-		int length = fDocument.getLineLength(3);	
-		assertEquals(fHeaderName + ": plugin\n", fDocument.get(pos, length));
+		int length = fDocument.getLineLength(3);		
+		assertEquals(fHeaderName + ": com.example.xyz\n", fDocument.get(pos, length));
 	}
 	
-	public void testChangeExistingLocalization() throws Exception {
+	public void testRemoveOnlyLibrary() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
 		buffer.append(fHeaderName);
-		buffer.append(": oldLocalization\n");
+		buffer.append(": com.example.abc\n");
 		fDocument.set(buffer.toString());
 		load(true);
 		
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
-		assertNotNull(header);
+		((BundleClasspathHeader)header).removeLibrary("com.example.abc");
 		
-		((BundleLocalizationHeader)header).setLocalization("plugin");
 		TextEdit[] ops = fListener.getTextOperations();
-		assertEquals(ops.length, 1);
+		assertEquals(1, ops.length);
 		
 		ops[0].apply(fDocument);
 		
-		assertEquals(5, fDocument.getNumberOfLines());
-		assertEquals(0, fDocument.getLineLength(4));
+		assertEquals(4, fDocument.getNumberOfLines());
+		assertEquals(0, fDocument.getLineLength(3));
 		
-		int pos = fDocument.getLineOffset(3);
-		int length = fDocument.getLineLength(3);	
-		assertEquals(fHeaderName + ": plugin\n", fDocument.get(pos, length));
+		assertEquals(fDocument.get().indexOf(fHeaderName), -1);
 	}
 }

@@ -1,54 +1,39 @@
-package org.eclipse.pde.ui.tests.model;
+package org.eclipse.pde.ui.tests.model.bundle;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
-import org.eclipse.pde.internal.core.text.bundle.LazyStartHeader;
+import org.eclipse.pde.internal.core.text.bundle.BundleNameHeader;
 import org.eclipse.text.edits.TextEdit;
+import org.osgi.framework.Constants;
 
-public class LazyStartTestCase extends BundleModelTestCase {
-
-	public LazyStartTestCase(String headerName) {
-		super(ICoreConstants.ECLIPSE_AUTOSTART);
-	}
+public class BundleNameTestCase extends BundleModelTestCase {
 
 	public static Test suite() {
-		return new TestSuite(BundleLocalizationTestCase.class);
+		return new TestSuite(BundleNameTestCase.class);
 	}
 	
-	public void testGetAutoStart() {
+	public BundleNameTestCase() {
+		super(Constants.BUNDLE_NAME);
+	}
+
+	public void testGetName() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
 		buffer.append(fHeaderName);
-		buffer.append(": true\n");
+		buffer.append(": Bundle Name\n");
 		fDocument.set(buffer.toString());
 		load();
 		
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
 		assertNotNull(header);
-		assertTrue(((LazyStartHeader)header).isLazyStart());
+		assertEquals(((BundleNameHeader)header).getBundleName(), "Bundle Name");
 	}
 	
-	public void testGetAutoStart2() {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("Manifest-Version: 1.0\n");
-		buffer.append("Bundle-ManifestVersion: 2\n");
-		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
-		buffer.append(fHeaderName);
-		buffer.append(": false\n");
-		fDocument.set(buffer.toString());
-		load();
-		
-		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
-		assertNotNull(header);
-		assertTrue(!((LazyStartHeader)header).isLazyStart());
-	}
-	
-	public void testSetLazyStart() throws Exception {
+	public void testSetName() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
@@ -59,7 +44,7 @@ public class LazyStartTestCase extends BundleModelTestCase {
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
 		assertNull(header);
 		
-		fModel.getBundle().setHeader(fHeaderName, "plugin");
+		fModel.getBundle().setHeader(fHeaderName, "Bundle Name");
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(ops.length, 1);
 		
@@ -70,23 +55,23 @@ public class LazyStartTestCase extends BundleModelTestCase {
 		
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);	
-		assertEquals(fHeaderName + ": plugin\n", fDocument.get(pos, length));
+		assertEquals(fHeaderName + ": Bundle Name\n", fDocument.get(pos, length));
 	}
 	
-	public void testChangeExistingLazyStart() throws Exception {
+	public void testChangeExistingName() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Manifest-Version: 1.0\n");
 		buffer.append("Bundle-ManifestVersion: 2\n");
 		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
 		buffer.append(fHeaderName);
-		buffer.append(": false\n");
+		buffer.append(": Old Bundle Name\n");
 		fDocument.set(buffer.toString());
 		load(true);
 		
 		IManifestHeader header = fModel.getBundle().getManifestHeader(fHeaderName);
 		assertNotNull(header);
 		
-		((LazyStartHeader)header).setLazyStart(true);
+		fModel.getBundle().setHeader(fHeaderName, "Bundle Name");
 		TextEdit[] ops = fListener.getTextOperations();
 		assertEquals(ops.length, 1);
 		
@@ -97,6 +82,6 @@ public class LazyStartTestCase extends BundleModelTestCase {
 		
 		int pos = fDocument.getLineOffset(3);
 		int length = fDocument.getLineLength(3);	
-		assertEquals(fHeaderName + ": true\n", fDocument.get(pos, length));
+		assertEquals(fHeaderName + ": Bundle Name\n", fDocument.get(pos, length));
 	}
 }
