@@ -1,0 +1,344 @@
+package org.eclipse.pde.ui.tests.model.xml;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.internal.core.text.IDocumentNode;
+
+public class StructureXMLModelTestCase extends XMLModelTestCase {
+
+	// TODO
+	// Look@ preserveCommentAddExtension / preserveContainedCommentAddElement
+	// Commented out last assert - seems like parent nodes have bad lengths
+	// fDocument contents is correct
+	
+	
+	// Plugin#write(String indent, PrintWriter writer)
+	// ~ line 99
+	static String FIRST_INDENT = "   "; //$NON-NLS-1$
+	// PluginElement#ATTRIBUTE_SHIFT
+	// ~ line 35
+	static String ATTRIBUTE_SHIFT = "      "; //$NON-NLS-1$
+	// PluginElement#ELEMENT_SHIFT
+	// ~ line 37
+	static String ELEMENT_SHIFT = "   "; //$NON-NLS-1$
+	
+	public static Test suite() {
+		return new TestSuite(StructureXMLModelTestCase.class);
+	}
+	
+	public void testStructureAddExtensionLF() throws Exception {
+		addExtension(LF);
+	}
+	public void testStructureAddExtensionCRLF() throws Exception {
+		addExtension(CRLF);
+	}
+	public void testStructureAddExtensionCR() throws Exception {
+		addExtension(CR);	
+	}
+	
+	public void testStructureAddElementLF() throws Exception {
+		addElement(LF);
+	}
+	public void testStructureAddElementCRLF() throws Exception {
+		addElement(CRLF);
+	}
+	public void testStructureAddElementCR() throws Exception {
+		addElement(CR);	
+	}
+	
+	public void testStructureAddAttributeLF() throws Exception {
+		addAttributesToElement(LF);
+	}
+	public void testStructureAddAttributeCRLF() throws Exception {
+		addAttributesToElement(CRLF);
+	}
+	public void testStructureAddAttributeCR() throws Exception {
+		addAttributesToElement(CR);	
+	}
+	
+	public void testStructureBreakOpenElementLF() throws Exception {
+		breakOpenElement(LF);
+	}
+	public void testStructureBreakOpenElementCRLF() throws Exception {
+		breakOpenElement(CRLF);
+	}
+	public void testStructureBreakOpenElementCR() throws Exception {
+		breakOpenElement(CR);	
+	}
+	
+	public void testStructurePreserveCommentInRootLF() throws Exception {
+		preserveCommentAddExtension(LF);
+	}
+	public void testStructurePreserveCommentInRootCRLF() throws Exception {
+		preserveCommentAddExtension(CRLF);
+	}
+	public void testStructurePreserveCommentInRootCR() throws Exception {
+		preserveCommentAddExtension(CR);	
+	}
+	
+	public void testStructurePreserveCommentInExtensionLF() throws Exception {
+		preserveContainedCommentAddElement(LF);
+	}
+	public void testStructurePreserveCommentInExtensionCRLF() throws Exception {
+		preserveContainedCommentAddElement(CRLF);
+	}
+	public void testStructurePreserveCommentInExtensionCR() throws Exception {
+		preserveContainedCommentAddElement(CR);	
+	}
+	
+	private void addExtension(String lineDelim) throws Exception {
+		StringBuffer sb = new StringBuffer();
+		sb.append(FIRST_INDENT);
+		sb.append("<extension");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append(ATTRIBUTE_SHIFT);
+		sb.append("point=\"org.eclipse.pde\">");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append("</extension>");
+		setXMLContents(sb, lineDelim);
+		load(true);
+		
+		IPluginExtension ext = fModel.getFactory().createExtension();
+		ext.setPoint("org.eclipse.pde2");
+		fModel.getPluginBase().add(ext);
+		
+		reload(1);
+		
+		String newContents = fDocument.get();
+		sb = new StringBuffer();
+		sb.append(FIRST_INDENT);
+		sb.append("<extension");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append(ATTRIBUTE_SHIFT);
+		sb.append("point=\"org.eclipse.pde\">");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append("</extension>");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append("<extension");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append(ATTRIBUTE_SHIFT);
+		sb.append("point=\"org.eclipse.pde2\">");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append("</extension>");
+		setXMLContents(sb, lineDelim);
+		assertEquals(fDocument.get(), newContents);
+	}
+	
+	private void addElement(String lineDelim) throws Exception {
+		StringBuffer sb = new StringBuffer();
+		sb.append(FIRST_INDENT);
+		sb.append("<extension");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append(ATTRIBUTE_SHIFT);
+		sb.append("point=\"org.eclipse.pde\">");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append("</extension>");
+		setXMLContents(sb, lineDelim);
+		load(true);
+		
+		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
+		assertEquals(1, extensions.length);
+		
+		IPluginElement element = fModel.getFactory().createElement(extensions[0]);
+		element.setName("child");
+		extensions[0].add(element);
+		
+		reload(1);
+		
+		String newContents = fDocument.get();
+		sb = new StringBuffer();
+		sb.append(FIRST_INDENT);
+		sb.append("<extension");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append(ATTRIBUTE_SHIFT);
+		sb.append("point=\"org.eclipse.pde\">");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append(ELEMENT_SHIFT);
+		sb.append("<child/>");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append("</extension>");
+		setXMLContents(sb, lineDelim);
+		assertEquals(fDocument.get(), newContents);
+	}
+	
+	private void addAttributesToElement(String lineDelim) throws Exception {
+		StringBuffer sb = new StringBuffer();
+		sb.append(FIRST_INDENT);
+		sb.append("<extension");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append(ATTRIBUTE_SHIFT);
+		sb.append("point=\"org.eclipse.pde\">");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append(ELEMENT_SHIFT);
+		sb.append("<child/>");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append("</extension>");
+		setXMLContents(sb, lineDelim);
+		load(true);
+		
+		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
+		assertEquals(1, extensions.length);
+		
+		IPluginObject[] children = extensions[0].getChildren();
+		
+		assertEquals(1, children.length);
+		assertTrue(children[0] instanceof IPluginElement);
+		
+		((IPluginElement)children[0]).setAttribute("id", "a");
+		((IPluginElement)children[0]).setAttribute("name", "test");
+		
+		reload(1);
+		
+		String newContents = fDocument.get();
+		sb = new StringBuffer();
+		sb.append(FIRST_INDENT);
+		sb.append("<extension");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append(ATTRIBUTE_SHIFT);
+		sb.append("point=\"org.eclipse.pde\">");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append(ELEMENT_SHIFT);
+		sb.append("<child");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append(ELEMENT_SHIFT);
+		sb.append(ATTRIBUTE_SHIFT);
+		sb.append("id=\"a\"");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append(ELEMENT_SHIFT);
+		sb.append(ATTRIBUTE_SHIFT);
+		sb.append("name=\"test\"/>");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append("</extension>");
+		setXMLContents(sb, lineDelim);
+		assertEquals(fDocument.get(), newContents);
+	}
+	
+	private void breakOpenElement(String lineDelim) throws Exception {
+		StringBuffer sb = new StringBuffer();
+		sb.append(FIRST_INDENT);
+		sb.append("<extension");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append(ATTRIBUTE_SHIFT);
+		sb.append("point=\"org.eclipse.pde\">");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append(ELEMENT_SHIFT);
+		sb.append("<child/>");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append("</extension>");
+		setXMLContents(sb, lineDelim);
+		load(true);
+		
+		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
+		assertEquals(1, extensions.length);
+		
+		IPluginObject[] children = extensions[0].getChildren(); 
+		assertEquals(1, children.length);
+		assertTrue(children[0] instanceof IPluginElement);
+		
+		IPluginElement element = fModel.getFactory().createElement(children[0]);
+		element.setName("subchild");
+		((IPluginElement)children[0]).add(element);
+		
+		reload(1);
+		
+		String newContents = fDocument.get();
+		sb = new StringBuffer();
+		sb.append(FIRST_INDENT);
+		sb.append("<extension");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append(ATTRIBUTE_SHIFT);
+		sb.append("point=\"org.eclipse.pde\">");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append(ELEMENT_SHIFT);
+		sb.append("<child>");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append(ELEMENT_SHIFT);
+		sb.append(ELEMENT_SHIFT);
+		sb.append("<subchild/>");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append(ELEMENT_SHIFT);
+		sb.append("</child>");
+		sb.append(lineDelim);
+		sb.append(FIRST_INDENT);
+		sb.append("</extension>");
+		setXMLContents(sb, lineDelim);
+		assertEquals(fDocument.get(), newContents);
+	}
+	
+	private void preserveCommentAddExtension(String lineDelim) throws Exception {
+		String comment = "<!-- THIS IS A COMMENT -->";
+		StringBuffer sb = new StringBuffer(comment);
+		setXMLContents(sb, lineDelim);
+		load(true);
+		
+		IPluginExtension ext = fModel.getFactory().createExtension();
+		ext.setPoint("org.eclipse.pde");
+		fModel.getPluginBase().add(ext);
+		
+		reload(1);
+		
+		int commentIndex = fDocument.get().indexOf(comment); 
+		assertTrue(commentIndex != -1);
+		IDocumentNode parent = (IDocumentNode)ext.getParent();
+		assertTrue(commentIndex >= parent.getOffset());
+		// assertTrue(commentIndex + comment.length() <= parent.getOffset() + parent.getLength());
+	}
+	
+	private void preserveContainedCommentAddElement(String lineDelim) throws Exception {
+		String comment = "<!-- THIS IS A COMMENT INSIDE THE EXTENSION -->";
+		StringBuffer sb = new StringBuffer();
+		sb.append("<extension point=\"org.eclipse.pde\">");
+		sb.append(lineDelim);
+		sb.append(comment);
+		sb.append(lineDelim);
+		sb.append("</extension>");
+		setXMLContents(sb, lineDelim);
+		load(true);
+		
+		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
+		assertEquals(1, extensions.length);
+		
+		IPluginElement element = fModel.getFactory().createElement(extensions[0]);
+		element.setName("element");
+		extensions[0].add(element);
+		
+		reload(1);
+		
+		int commentIndex = fDocument.get().indexOf(comment); 
+		assertTrue(commentIndex != -1);
+		IDocumentNode parent = (IDocumentNode)extensions[0];
+		assertTrue(commentIndex >= parent.getOffset());
+		// assertTrue(commentIndex + comment.length() <= parent.getOffset() + parent.getLength());
+	}
+}

@@ -19,6 +19,10 @@ public class AllXMLModelTests {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite for testing the xml model"); //$NON-NLS-1$
 		suite.addTest(BasicXMLTestCase.suite());
+		/* 
+		 * Commented out till XMLTextChangeListener#getTextOperations() 
+		 * gets fixed / updated (see what InputContext does)
+		 */
 //		suite.addTest(SwapXMLModelTestCase.suite());
 		suite.addTest(StructureXMLModelTestCase.suite());
 		return suite;
