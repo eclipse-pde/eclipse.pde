@@ -64,16 +64,16 @@ public abstract class XMLModelTestCase extends TestCase {
 		TextEdit[] ops = fListener.getTextOperations();
 		if (expectedOps >= 0)
 			assertEquals(expectedOps, ops.length);
-		if (expectedOps == 0)
+		if (ops.length == 0)
 			return;
 		MultiTextEdit multi = new MultiTextEdit();
 		multi.addChildren(ops);
 		try {
 			multi.apply(fDocument);
 		} catch (MalformedTreeException e) {
-			fail("MalformedTreeException: " + e.getMessage());
+			fail(e.getMessage());
 		} catch (BadLocationException e) {
-			fail("BadLocationException: " + e.getMessage());
+			fail(e.getMessage());
 		}
 		load();
 	}
