@@ -57,6 +57,7 @@ public abstract class XMLModelTestCase extends TestCase {
 			sb.append(body.toString());
 		sb.append(newline);
 		sb.append("</plugin>");
+		sb.append(newline);
 		fDocument.set(sb.toString());
 	}
 	
