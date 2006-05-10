@@ -9,12 +9,6 @@ import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 
 public class StructureXMLModelTestCase extends XMLModelTestCase {
-
-	// TODO
-	// Look@ preserveCommentAddExtension / preserveContainedCommentAddElement
-	// Commented out last assert - seems like parent nodes have bad lengths
-	// fDocument contents is correct
-	
 	
 	// Plugin#write(String indent, PrintWriter writer)
 	// ~ line 99
@@ -36,18 +30,12 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 	public void testStructureAddExtensionCRLF() throws Exception {
 		addExtension(CRLF);
 	}
-	public void testStructureAddExtensionCR() throws Exception {
-		addExtension(CR);	
-	}
 	
 	public void testStructureAddElementLF() throws Exception {
 		addElement(LF);
 	}
 	public void testStructureAddElementCRLF() throws Exception {
 		addElement(CRLF);
-	}
-	public void testStructureAddElementCR() throws Exception {
-		addElement(CR);	
 	}
 	
 	public void testStructureAddAttributeLF() throws Exception {
@@ -56,18 +44,12 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 	public void testStructureAddAttributeCRLF() throws Exception {
 		addAttributesToElement(CRLF);
 	}
-	public void testStructureAddAttributeCR() throws Exception {
-		addAttributesToElement(CR);	
-	}
 	
 	public void testStructureBreakOpenElementLF() throws Exception {
 		breakOpenElement(LF);
 	}
 	public void testStructureBreakOpenElementCRLF() throws Exception {
 		breakOpenElement(CRLF);
-	}
-	public void testStructureBreakOpenElementCR() throws Exception {
-		breakOpenElement(CR);	
 	}
 	
 	public void testStructurePreserveCommentInRootLF() throws Exception {
@@ -76,18 +58,12 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 	public void testStructurePreserveCommentInRootCRLF() throws Exception {
 		preserveCommentAddExtension(CRLF);
 	}
-	public void testStructurePreserveCommentInRootCR() throws Exception {
-		preserveCommentAddExtension(CR);	
-	}
 	
 	public void testStructurePreserveCommentInExtensionLF() throws Exception {
 		preserveContainedCommentAddElement(LF);
 	}
 	public void testStructurePreserveCommentInExtensionCRLF() throws Exception {
 		preserveContainedCommentAddElement(CRLF);
-	}
-	public void testStructurePreserveCommentInExtensionCR() throws Exception {
-		preserveContainedCommentAddElement(CR);	
 	}
 	
 	private void addExtension(String lineDelim) throws Exception {
@@ -310,9 +286,9 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 		
 		int commentIndex = fDocument.get().indexOf(comment); 
 		assertTrue(commentIndex != -1);
-		IDocumentNode parent = (IDocumentNode)ext.getParent();
+		IDocumentNode parent = (IDocumentNode)fModel.getPluginBase();
 		assertTrue(commentIndex >= parent.getOffset());
-		// assertTrue(commentIndex + comment.length() <= parent.getOffset() + parent.getLength());
+		assertTrue(commentIndex + comment.length() <= parent.getOffset() + parent.getLength());
 	}
 	
 	private void preserveContainedCommentAddElement(String lineDelim) throws Exception {
@@ -337,8 +313,8 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 		
 		int commentIndex = fDocument.get().indexOf(comment); 
 		assertTrue(commentIndex != -1);
-		IDocumentNode parent = (IDocumentNode)extensions[0];
+		IDocumentNode parent = (IDocumentNode)fModel.getPluginBase();
 		assertTrue(commentIndex >= parent.getOffset());
-		// assertTrue(commentIndex + comment.length() <= parent.getOffset() + parent.getLength());
+		assertTrue(commentIndex + comment.length() <= parent.getOffset() + parent.getLength());
 	}
 }
