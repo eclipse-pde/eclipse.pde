@@ -142,7 +142,7 @@ public class BrandingIron implements IXMLConstants {
 		copyMacIni(initialRoot, target, iconName);
 		modifyInfoPListFile(initialRoot, target, iconName);
 		if (splashApp.exists()) {
-			modifyInfoPListFile(initialRoot + "/Resources/Splash.app/Contents", target + "/Resources/Splash.app/Contents", iconName); //$NON-NLS-1$ //$NON-NLS-2$
+			brandMacSplash(initialRoot, target, iconName);
 		}
 
 		File rootFolder = new File(initialRoot);
@@ -154,6 +154,53 @@ public class BrandingIron implements IXMLConstants {
 		rootFolder.getParentFile().delete();
 	}
 
+	
+	/**
+	 * Brand the splash.app Info.plist and  link or copy the mac launcher.
+	 * It is assumed that the mac launcher has been branded already.
+	 * @param initialRoot
+	 * @param target
+	 * @param iconName
+	 */
+	private void brandMacSplash(String initialRoot, String target, String iconName) {
+		String splashContents = "/Resources/Splash.app/Contents"; //$NON-NLS-1$
+		modifyInfoPListFile(initialRoot + splashContents, target + splashContents, iconName);
+
+		//link the MacOS launcher for the splash app
+		int result = -1;
+		String osName = System.getProperty("os.name"); //$NON-NLS-1$
+		if (osName != null && !osName.startsWith("Windows")) { //$NON-NLS-1$
+			try {
+				String [] command = new String [] { "ln", "-sf", "../../../MacOS/" + name, "MacOS/" + name};   //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
+				File linkDir = new File(target, splashContents);
+				Process proc = Runtime.getRuntime().exec( command, null, linkDir);
+				result = proc.waitFor();
+			} catch (IOException e) {
+				// ignore
+			} catch (InterruptedException e) {
+				// ignore
+			}
+		}
+
+		if (result != 0) {
+			//ln failed, or we are on windows, just copy the executable instead
+			File macOSDir = new File(target, "MacOS"); //$NON-NLS-1$
+			File splashMacOSDir = new File(target, splashContents + "/MacOS"); //$NON-NLS-1$
+			splashMacOSDir.mkdirs();
+			try {
+				File targetFile = new File(splashMacOSDir, name);
+				copy(new File(macOSDir, name), targetFile);
+				try {
+					Runtime.getRuntime().exec(new String[] {"chmod", "755", targetFile.getAbsolutePath()}); //$NON-NLS-1$ //$NON-NLS-2$
+				} catch (IOException e) {
+					// ignore
+				}
+			} catch (IOException e) {
+				System.out.println("Could not copy macosx splash launcher"); //$NON-NLS-1$
+			}
+		}
+	}
+	
 	private void moveContents(File source, File target) {
 		if (!source.exists())
 			return;
