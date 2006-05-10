@@ -25,6 +25,8 @@ public class AllXMLModelTests {
 		 */
 //		suite.addTest(SwapXMLModelTestCase.suite());
 		suite.addTest(StructureXMLModelTestCase.suite());
+		suite.addTest(ExtensionAttributeTestCase.suite());
+		suite.addTest(ExtensionElementTestCase.suite());
 		return suite;
 	}
 
