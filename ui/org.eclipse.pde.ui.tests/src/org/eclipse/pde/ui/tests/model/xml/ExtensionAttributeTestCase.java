@@ -34,7 +34,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 	}
 
 	public void testAddNewExtensionAttribute3CRLF() throws Exception {
-		testAddNewExtensionAttribute2(CRLF);
+		testAddNewExtensionAttribute3(CRLF);
 	}
 
 	private void testAddNewExtensionAttribute1(String newLine) throws Exception {
@@ -276,13 +276,13 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 	}
 
 	private void testChangeExtensionAttribute1(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">\n");
+		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append("<sample id=\"org.eclipse.pde.sample1\" name=\"pde sample\" perspectiveId=\"org.eclipse.pde.ui.PDEPerspective\"/></extension>");
 		testChangeExtensionAttribute(buffer, newLine);
 	}
 
 	private void testChangeExtensionAttribute2(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">\n");
+		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("\t<sample id=\"org.eclipse.pde.sample1\" name=\"pde sample\" perspectiveId=\"org.eclipse.pde.ui.PDEPerspective\"/>");
 		buffer.append(newLine);
@@ -291,7 +291,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 	}
 
 	private void testChangeExtensionAttribute3(String newLine) throws Exception {
-		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">\n");
+		StringBuffer buffer = new StringBuffer("<extension point=\"org.eclipse.pde.ui.samples\">");
 		buffer.append(newLine);
 		buffer.append("\t\t\t<sample id=\"org.eclipse.pde.sample1\" name=\"pde sample\" perspectiveId=\"org.eclipse.pde.ui.PDEPerspective\"/>");
 		buffer.append(newLine);
