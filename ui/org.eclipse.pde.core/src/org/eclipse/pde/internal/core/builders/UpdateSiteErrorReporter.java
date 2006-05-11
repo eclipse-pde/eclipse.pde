@@ -42,7 +42,13 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 			for (int i = 0; i < attributes.getLength(); i++) {
 				Attr attr = (Attr)attributes.item(i);
 				String name = attr.getName();
-				if (!name.equals("type") && !name.equals("url") && !name.equals("mirrorsURL")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				if (!name.equals("type") && //$NON-NLS-1$
+						!name.equals("url") && //$NON-NLS-1$
+						!name.equals("mirrorsURL") && //$NON-NLS-1$
+						!name.equals("digestURL") && //$NON-NLS-1$
+						!name.equals("pack200") && //$NON-NLS-1$
+						!name.equals("availableLocales") && //$NON-NLS-1$
+						!name.equals("associateSitesURL")) { //$NON-NLS-1$
 					reportUnknownAttribute(root, name, CompilerFlags.ERROR);
 				}
 			}
