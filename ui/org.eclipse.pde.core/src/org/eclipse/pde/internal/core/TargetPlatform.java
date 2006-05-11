@@ -51,7 +51,8 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 
 public class TargetPlatform implements IEnvironmentVariables {
-
+	
+	private static String REFERENCE_PREFIX = "reference:"; //$NON-NLS-1$
 	private static String FILE_URL_PREFIX = "file:/"; //$NON-NLS-1$
 
 	static class LocalSite {
@@ -141,6 +142,12 @@ public class TargetPlatform implements IEnvironmentVariables {
 			// read up until the first @, if there
 			String bundle = index > 0 ? token.substring(0, index) : token;
 			
+			// strip [reference:][file:/] prefixes if any
+			if (bundle.startsWith(REFERENCE_PREFIX) && bundle.length() > REFERENCE_PREFIX.length())
+				bundle = bundle.substring(REFERENCE_PREFIX.length());
+			if (bundle.startsWith(FILE_URL_PREFIX) && bundle.length() > FILE_URL_PREFIX.length())
+				bundle = bundle.substring(FILE_URL_PREFIX.length());
+			
 			// if the path is relative, the last segment is the bundle symbolic name
 			// Otherwise, we need to retrieve the bundle symbolic name ourselves
 			IPath path = new Path(bundle);
@@ -157,8 +164,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 	private static synchronized String getSymbolicName(String path) {
 		if (fCachedLocations == null)
 			fCachedLocations = new HashMap();
-		if (path.startsWith(FILE_URL_PREFIX))
-			path = path.substring(FILE_URL_PREFIX.length());
 		
 		File file = new File(path);
 		if (file.exists() && !fCachedLocations.containsKey(path)) {
