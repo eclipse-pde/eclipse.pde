@@ -53,7 +53,7 @@ import org.osgi.framework.InvalidSyntaxException;
 public class TargetPlatform implements IEnvironmentVariables {
 	
 	private static String REFERENCE_PREFIX = "reference:"; //$NON-NLS-1$
-	private static String FILE_URL_PREFIX = "file:/"; //$NON-NLS-1$
+	private static String FILE_URL_PREFIX = "file:"; //$NON-NLS-1$
 
 	static class LocalSite {
 		private ArrayList plugins;
