@@ -265,7 +265,6 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 	}
 
 	private void testAddNewExtensionElement(StringBuffer buffer, String newLine) throws Exception {
-		System.out.println("add new");
 		setXMLContents(buffer, newLine);
 		load(true);
 
@@ -285,7 +284,6 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 	}
 
 	private void testAddExtensionElement(StringBuffer buffer, String newLine) throws Exception {
-		System.out.println("add");
 		setXMLContents(buffer, newLine);
 		load(true);
 
@@ -301,7 +299,6 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 	}
 
 	private void testAddNewMultipleExtensionElements(StringBuffer buffer, String newLine) throws Exception {
-		System.out.println("add new multi");
 		setXMLContents(buffer, newLine);
 		load(true);
 
@@ -320,7 +317,6 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 	}
 
 	private void testAddMultipleExtensionElements(StringBuffer buffer, String newLine) throws Exception {
-		System.out.println("add multi");
 		setXMLContents(buffer, newLine);
 		load(true);
 
@@ -341,7 +337,6 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 	}
 
 	private void testRemoveExtensionElement(StringBuffer buffer, String newLine) throws Exception {
-		System.out.println("remove");
 		setXMLContents(buffer, newLine);
 		load(true);
 
@@ -358,7 +353,6 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 	}
 
 	private void testRemoveMulitpleExtensionElements(StringBuffer buffer, String newLine) throws Exception {
-		System.out.println("remove mutli");
 		setXMLContents(buffer, newLine);	
 		load(true);
 
