@@ -23,6 +23,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExportOptionsTab_antReservedMessage;
 
+	public static String ExternalizeStringsWizardPage_subKey;
+
+	public static String ExternalizeStringsWizardPage_value;
+
 	public static String ImportActionGroup_binaryWithLinkedContent;
 
 	public static String ImportActionGroup_importContributingPlugin;

@@ -85,8 +85,8 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		TABLE_PROPERTIES[VALUE] = "value"; //$NON-NLS-1$
 		TABLE_PROPERTIES[KEY] = "key"; //$NON-NLS-1$
 		TABLE_COLUMNS[EXTERN] = ""; //$NON-NLS-1$
-		TABLE_COLUMNS[VALUE] = "Value"; //$NON-NLS-1$
-		TABLE_COLUMNS[KEY] = "Substitution Key"; //$NON-NLS-1$
+		TABLE_COLUMNS[VALUE] = PDEUIMessages.ExternalizeStringsWizardPage_value;
+		TABLE_COLUMNS[KEY] = PDEUIMessages.ExternalizeStringsWizardPage_subKey;
 	}
 
 	private class ModelChangeContentProvider implements ITreeContentProvider, IContentProvider {
