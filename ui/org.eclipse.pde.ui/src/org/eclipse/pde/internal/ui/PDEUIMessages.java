@@ -27,6 +27,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExternalizeStringsWizardPage_value;
 
+	public static String HelpTemplate_sampleText;
+
 	public static String ImportActionGroup_binaryWithLinkedContent;
 
 	public static String ImportActionGroup_importContributingPlugin;

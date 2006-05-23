@@ -73,7 +73,7 @@ public class HelpTemplate extends PDETemplateSection {
 		tocLabelOption = addOption(
 			KEY_TOC_LABEL,
 			PDEUIMessages.HelpTemplate_tocLabel,
-			"Sample Table of Contents", //$NON-NLS-1$
+			PDEUIMessages.HelpTemplate_sampleText,
 			0);
 			
 		primaryOption = (BooleanOption)addOption(
