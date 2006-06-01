@@ -51,7 +51,7 @@ In addition, it should contain any file or directory specified in the build.prop
          <attribute name="path" type="string" use="required">
             <annotation>
                <documentation>
-                  the relative path of the directory in the contributing plug-in where source content is stored. The folder must contain one or more directories in the form {id}_{version} where &lt;code&gt;id&lt;/code&gt; is a matching plug-in or fragment identifier and &lt;code&gt;version&lt;/code&gt; is the matching plugin/fragment version. These directories in turn should contain source archives and any other file or folder specified using &lt;code&gt;source.includes&lt;/code&gt; variable in build.properties file of the corresponding plug-in/fragment.
+                  the relative path of the directory in the contributing plug-in where source content is stored. The folder must contain one or more directories in the form {id}_{version} where &lt;code&gt;id&lt;/code&gt; is a matching plug-in or fragment identifier and &lt;code&gt;version&lt;/code&gt; is the matching plugin/fragment version. These directories in turn should contain source archives and any other file or folder specified using &lt;code&gt;src.includes&lt;/code&gt; variable in build.properties file of the corresponding plug-in/fragment.
                </documentation>
             </annotation>
          </attribute>
