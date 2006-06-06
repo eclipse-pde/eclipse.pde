@@ -234,9 +234,7 @@ public class NewLibraryPluginCreationOperation extends
 		}
 	}
 
-	private void removeExportRoot(IFile file, IProgressMonitor monitor)
-			throws CoreException {
-		
+	private void removeExportRoot(IFile file, IProgressMonitor monitor) {
 		ModelModification mod = new ModelModification(file) {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (!(model instanceof IBundlePluginModelBase))

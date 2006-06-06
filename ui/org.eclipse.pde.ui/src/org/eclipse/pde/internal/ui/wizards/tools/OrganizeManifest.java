@@ -20,13 +20,11 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -34,14 +32,15 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
@@ -68,8 +67,6 @@ import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
-import org.eclipse.pde.internal.core.text.build.BuildModel;
-import org.eclipse.pde.internal.core.text.build.PropertiesTextChangeListener;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
 import org.eclipse.pde.internal.core.text.bundle.BundleClasspathHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
@@ -84,8 +81,8 @@ import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
 import org.eclipse.pde.internal.core.text.plugin.PluginModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.pde.internal.ui.util.ModelModification;
+import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
 import org.osgi.framework.Constants;
@@ -293,29 +290,23 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		
 	}
 	
-	public static void removeUnusedKeys(IProject project, IBundle bundle, IPluginModelBase modelBase) {
-		String localization = bundle.getHeader(Constants.BUNDLE_LOCALIZATION);
+	public static void removeUnusedKeys(
+			final IProject project,
+			final IBundle bundle, 
+			final IPluginModelBase modelBase) {
+		String localization = bundle.getLocalization();
 		if (localization == null)
 			localization = "plugin"; //$NON-NLS-1$
 		IFile propertiesFile = project.getFile(localization + ".properties"); //$NON-NLS-1$
 		if (!propertiesFile.exists())
 			return;
 		
-		IPath propertiesPath = propertiesFile.getFullPath();
-		try {
-			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-			manager.connect(propertiesPath, null);
-			ITextFileBuffer buffer = manager.getTextFileBuffer(propertiesPath);
-			IDocument document = buffer.getDocument();
-			// reuse BuildModel - basic properties file model
-			BuildModel properties = new BuildModel(document, false);
-			properties.load();
-			if (properties.isLoaded()) {
-				
-				IModelTextChangeListener listener = new PropertiesTextChangeListener(document);
-				properties.addModelChangedListener(listener);
+		PDEModelUtility.modifyModel(new ModelModification(propertiesFile) {
+			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
+				if (!(model instanceof IBuildModel))
+					return;
 
-				IBuild build = properties.getBuild();
+				IBuild build = ((IBuildModel)model).getBuild();
 				IBuildEntry[] entries = build.getBuildEntries();
 				ArrayList allKeys = new ArrayList(entries.length);
 				for (int i = 0; i < entries.length; i++)
@@ -356,27 +347,8 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 					IBuildEntry entry = build.getEntry((String)allKeys.get(i));
 					build.remove(entry);
 				}
-				
-				MultiTextEdit multi = getTextEdit(listener);
-				if (multi != null && multi.getChildrenSize() > 0) {
-					multi.apply(document);
-					buffer.commit(null, true);
-				}
-
 			}
-		} catch (CoreException e) {
-			PDEPlugin.log(e);
-		} catch (MalformedTreeException e) {
-			PDEPlugin.log(e);
-		} catch (BadLocationException e) {
-			PDEPlugin.log(e);
-		} finally {
-			try {
-				FileBuffers.getTextFileBufferManager().disconnect(propertiesPath, null);
-			} catch (CoreException e) {
-				PDEPlugin.log(e);
-			}
-		}
+		}, null);
 	}
 	
 	private static void findTranslatedStrings(IProject project, IPluginModelBase pluginModel, IBundle bundle, ArrayList list) {

@@ -14,9 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -29,12 +26,12 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPlugin;
@@ -45,9 +42,9 @@ import org.eclipse.pde.internal.core.PDEPluginConverter;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
-import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -55,6 +52,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
+import org.eclipse.pde.internal.ui.util.ModelModification;
+import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.pde.internal.ui.wizards.plugin.ClasspathComputer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -307,22 +306,15 @@ public class ConvertedProjectsPage extends WizardPage  {
 		}
 	}
 	
-	private void organizeExports(IProject project) {
-		IFile manifest = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
-		try {
-			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-			manager.connect(manifest.getFullPath(), null);
-			ITextFileBuffer buffer = manager.getTextFileBuffer(manifest.getFullPath());
-			IDocument document = buffer.getDocument();		
-			BundleModel model = new BundleModel(document, false);
-			model.load();
-			if (model.isLoaded())
-				OrganizeManifest.organizeExportPackages(model.getBundle(), project, true, true);
-		} catch (CoreException e) {} 
-		finally {
-			try {
-				FileBuffers.getTextFileBufferManager().disconnect(manifest.getFullPath(), null);
-			} catch (CoreException e) {}
-		}
+	private void organizeExports(final IProject project) {
+		PDEModelUtility.modifyModel(new ModelModification(project.getFile("META-INF/MANIFEST.MF")) {
+			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
+				if (!(model instanceof IBundlePluginModelBase))
+					return;
+				OrganizeManifest.organizeExportPackages(
+						((IBundlePluginModelBase)model).getBundleModel().getBundle(), 
+						project, true, true);
+			}
+		}, null);
 	}
 }

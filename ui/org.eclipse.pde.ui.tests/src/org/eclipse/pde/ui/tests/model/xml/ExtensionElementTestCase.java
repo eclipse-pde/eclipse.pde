@@ -274,7 +274,7 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 		IPluginExtension ext = extensions[0];
 		ext.add(createElement("sample", ext));
 
-		reload(1);
+		reload();
 
 		extensions = fModel.getPluginBase().getExtensions();
 		assertEquals(extensions.length, 1);
@@ -293,7 +293,7 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 		IPluginExtension ext = extensions[0];
 		ext.add(createElement("sample1", ext));
 
-		ext = reloadModel(1);
+		ext = reloadModel();
 		assertEquals(ext.getChildCount(), 2);
 		assertEquals(ext.getChildren()[0].getName(), "sample");	
 	}
@@ -309,11 +309,10 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 		ext.add(createElement("sample1", ext));
 		ext.add(createElement("sample2", ext));
 
-		ext = reloadModel(2);
+		ext = reloadModel();
 		assertEquals(ext.getChildCount(), 2);
-		//		TODO uncomment after post32 branch is merged
-		//		assertEquals(ext.getChildren()[0].getName(), "sample1");
-		//		assertEquals(ext.getChildren()[1].getName(), "sample2");
+		assertEquals(ext.getChildren()[0].getName(), "sample1");
+		assertEquals(ext.getChildren()[1].getName(), "sample2");
 	}
 
 	private void testAddMultipleExtensionElements(StringBuffer buffer, String newLine) throws Exception {
@@ -328,12 +327,11 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 		ext.add(createElement("sample1", ext));
 		ext.add(createElement("sample2", ext));
 
-		ext = reloadModel(2);
+		ext = reloadModel();
 		assertEquals(ext.getChildCount(), 3);
 		assertEquals(ext.getChildren()[0].getName(), "sample");
-		//		TODO uncomment after post32 branch is merged
-		//		assertEquals(ext.getChildren()[1].getName(), "sample1");
-		//		assertEquals(ext.getChildren()[2].getName(), "sample2");
+		assertEquals(ext.getChildren()[1].getName(), "sample1");
+		assertEquals(ext.getChildren()[2].getName(), "sample2");
 	}
 
 	private void testRemoveExtensionElement(StringBuffer buffer, String newLine) throws Exception {
@@ -348,7 +346,7 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 
 		ext.remove(ext.getChildren()[0]);
 
-		ext = reloadModel(1);
+		ext = reloadModel();
 		assertEquals(ext.getChildCount(), 0);
 	}
 
@@ -369,7 +367,7 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 		ext.remove(children[0]);
 		ext.remove(children[2]);
 
-		ext = reloadModel(2);
+		ext = reloadModel();
 		assertEquals(ext.getChildCount(), 1);
 		assertEquals(ext.getChildren()[0].getName(), "sample1");
 	}

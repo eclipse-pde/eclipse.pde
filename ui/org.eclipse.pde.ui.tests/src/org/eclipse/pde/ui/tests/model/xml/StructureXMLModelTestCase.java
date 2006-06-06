@@ -84,7 +84,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 		ext.setPoint("org.eclipse.pde2");
 		fModel.getPluginBase().add(ext);
 		
-		reload(1);
+		reload();
 		
 		String newContents = fDocument.get();
 		sb = new StringBuffer();
@@ -132,7 +132,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 		element.setName("child");
 		extensions[0].add(element);
 		
-		reload(1);
+		reload();
 		
 		String newContents = fDocument.get();
 		sb = new StringBuffer();
@@ -182,7 +182,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 		((IPluginElement)children[0]).setAttribute("id", "a");
 		((IPluginElement)children[0]).setAttribute("name", "test");
 		
-		reload(1);
+		reload();
 		
 		String newContents = fDocument.get();
 		sb = new StringBuffer();
@@ -242,7 +242,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 		element.setName("subchild");
 		((IPluginElement)children[0]).add(element);
 		
-		reload(1);
+		reload();
 		
 		String newContents = fDocument.get();
 		sb = new StringBuffer();
@@ -282,7 +282,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 		ext.setPoint("org.eclipse.pde");
 		fModel.getPluginBase().add(ext);
 		
-		reload(1);
+		reload();
 		
 		int commentIndex = fDocument.get().indexOf(comment); 
 		assertTrue(commentIndex != -1);
@@ -309,7 +309,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 		element.setName("element");
 		extensions[0].add(element);
 		
-		reload(1);
+		reload();
 		
 		int commentIndex = fDocument.get().indexOf(comment); 
 		assertTrue(commentIndex != -1);

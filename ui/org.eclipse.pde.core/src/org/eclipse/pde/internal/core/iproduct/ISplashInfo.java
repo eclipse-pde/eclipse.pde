@@ -30,7 +30,7 @@ public interface ISplashInfo extends IProductObject {
 	 * 									  geo[1] = y
 	 * 									  geo[1] = width
 	 * 									  geo[1] = height
-	 * @param blockNotification TODO
+	 * @param blockNotification
 	 */
 	void setProgressGeometry(int[] geo, boolean blockNotification);
 	

@@ -192,6 +192,16 @@ public abstract class InputContext {
 	
 	protected abstract void addTextEditOperation(ArrayList ops, IModelChangedEvent event);
 	
+	public void flushEditorInput() {
+		if (fEditOperations.size() > 0) {
+			IDocument doc = fDocumentProvider.getDocument(fEditorInput);
+			fDocumentProvider.aboutToChange(fEditorInput);
+			flushModel(doc);
+			fDocumentProvider.changed(fEditorInput);
+			fValidated=false;
+		}
+	}
+	
 	protected void flushModel(IDocument doc) {
 		if (fEditOperations.size() > 0) {
 			try {

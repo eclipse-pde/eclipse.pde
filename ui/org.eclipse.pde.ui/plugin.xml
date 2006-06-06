@@ -681,11 +681,6 @@
             categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.pde.ui.DependenciesView">
       </command>
-      <command
-            name="%formatManifest.label.0"
-            description="%formatManifest.description.0"
-            id="org.eclipse.pde.ui.manifestEditor.FormatManifest">
-      </command>
 <!-- launch shortcuts -->
       <command
             name="%EclipseApplicationShortcut.description.debug"
@@ -867,14 +862,6 @@
                enablesFor="1"
                id="org.eclipse.pde.ui.BuildPluginAction2">
          </action>
-         <action
-               class="org.eclipse.pde.internal.ui.util.FormatManifestAction"
-               definitionId="org.eclipse.pde.ui.manifestEditor.FormatManifest"
-               enablesFor="+"
-               helpContextId="org.eclipse.pde.doc.user.format_bundle"
-               id="org.eclipse.pde.ui.FormatBundleText"
-               label="%formatManifest.label.0"
-               menubarPath="org.eclipse.pde.ui.manifest.tools/group1"/>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
@@ -1755,11 +1742,6 @@
             commandId="org.eclipse.pde.ui.swtLaunchShortcut.run"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>
-      <key
-            commandId="org.eclipse.pde.ui.manifestEditor.FormatManifest"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+F">
-      </key>    
    </extension>
    <extension
          point="org.eclipse.ltk.core.refactoring.renameParticipants">

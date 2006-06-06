@@ -24,7 +24,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
@@ -276,7 +275,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		super.editorContextMenuAboutToShow(menu);
 		menu.add(new Separator());
 		FormatManifestAction action = new FormatManifestAction();
-		action.selectionChanged(null, new StructuredSelection(getEditorInput()));
+		action.setSourceInput(getEditorInput());
 		menu.add(action);
 	}
 }

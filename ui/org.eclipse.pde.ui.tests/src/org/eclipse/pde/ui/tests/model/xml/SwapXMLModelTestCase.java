@@ -93,7 +93,7 @@ public class SwapXMLModelTestCase extends XMLModelTestCase {
 		extensions[0].swap(children[0], children[1]);
 		
 		// move source edit - only one op
-		reload(1);
+		reload();
 		
 		extensions = fModel.getPluginBase().getExtensions();
 		assertEquals(1, extensions.length);

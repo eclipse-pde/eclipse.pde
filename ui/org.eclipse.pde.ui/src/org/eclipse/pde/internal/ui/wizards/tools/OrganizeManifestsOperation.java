@@ -13,8 +13,6 @@ package org.eclipse.pde.internal.ui.wizards.tools;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -39,7 +37,7 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 	// if operation is executed without setting operations, these defaults will be used
 	protected boolean fAddMissing = true; // add all packages to export-package
 	protected boolean fMarkInternal = true; // mark export-package as internal
-	protected String fPackageFilter = IOrganizeManifestsSettings.VALUE_DEFAULT_FILTER;
+	protected String fPackageFilter = VALUE_DEFAULT_FILTER;
 	protected boolean fRemoveUnresolved = true; // remove unresolved export-package
 	protected boolean fModifyDep = true; // modify import-package / require-bundle
 	protected boolean fRemoveDependencies = true; // if true: remove, else mark optional
@@ -58,15 +56,11 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		monitor.beginTask(PDEUIMessages.OrganizeManifestJob_taskName, fProjectList.size());
-		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-		for (int i = 0; i < fProjectList.size(); i++) {
-			if (monitor.isCanceled())
-				break;
-			cleanProject((IProject)fProjectList.get(i), manager, new SubProgressMonitor(monitor, 1));
-		}
+		for (int i = 0; i < fProjectList.size() && !monitor.isCanceled(); i++)
+			cleanProject((IProject)fProjectList.get(i), new SubProgressMonitor(monitor, 1));
 	}
 	
-	private void cleanProject(IProject project, ITextFileBufferManager manager, IProgressMonitor monitor) {
+	private void cleanProject(IProject project, IProgressMonitor monitor) {
 		fCurrentProject = project;
 		monitor.beginTask(fCurrentProject.getName(), getTotalTicksPerProject());
 		
@@ -83,11 +77,7 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 					}
 			}
 		};
-		try {
-			PDEModelUtility.modifyModel(modification, monitor);
-		} catch (CoreException e) {
-			PDEPlugin.log(e);
-		}
+		PDEModelUtility.modifyModel(modification, monitor);
 		if (ee[0] != null)
 			PDEPlugin.log(ee[0]);
 	}

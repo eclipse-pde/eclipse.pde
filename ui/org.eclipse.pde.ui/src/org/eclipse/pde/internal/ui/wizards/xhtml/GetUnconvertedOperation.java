@@ -68,11 +68,7 @@ public class GetUnconvertedOperation implements IRunnableWithProgress {
 				inspectModel(monitor, model);
 			}
 		};
-		try {
-			PDEModelUtility.modifyModel(mod, monitor);
-		} catch (CoreException e) {
-			PDEPlugin.log(e);
-		}
+		PDEModelUtility.modifyModel(mod, monitor);
 	}
 
 	private void inspectModel(IProgressMonitor monitor, IBaseModel baseModel) throws CoreException {

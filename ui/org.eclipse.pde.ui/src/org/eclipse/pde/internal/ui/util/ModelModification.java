@@ -27,7 +27,7 @@ public abstract class ModelModification {
 	private IFile fModelFile;
 	private IFile fManifestFile;
 	private IFile fXMLFile;
-	private IFile fBuildFile;
+	private IFile fPropertiesFile;
 	private boolean fIsBundleModel;
 	
 	/**
@@ -75,8 +75,8 @@ public abstract class ModelModification {
 			fModelFile = fManifestFile;
 		else if (fXMLFile != null)
 			fModelFile = fXMLFile;
-		else if (fBuildFile != null)
-			fModelFile = fBuildFile;
+		else if (fPropertiesFile != null)
+			fModelFile = fPropertiesFile;
 		fIsBundleModel = file.getName().equals(PDEModelUtility.F_MANIFEST);
 	}
 	
@@ -97,12 +97,13 @@ public abstract class ModelModification {
 			fManifestFile = file;
 		else if (name.equals(PDEModelUtility.F_PLUGIN) || name.equals(PDEModelUtility.F_FRAGMENT))
 			fXMLFile = file;
-		else if (name.equals(PDEModelUtility.F_BUILD))
-			fBuildFile = file;
+		else if (name.endsWith(PDEModelUtility.F_PROPERTIES))
+			fPropertiesFile = file;
 	}
 	
 	/**
 	 * Invoke this using PDEModelUtility.modifyModel(ModelModification modification)
+	 * Clients / subclasses should not invoke this method.
 	 * @param model
 	 * @param monitor
 	 * @throws CoreException
@@ -121,7 +122,15 @@ public abstract class ModelModification {
 		return fXMLFile;
 	}
 	
+	protected final IFile getPropertiesFile() {
+		return fPropertiesFile;
+	}
+	
 	protected final boolean isFullBundleModification() {
 		return fIsBundleModel;
+	}
+	
+	public boolean saveOpenEditor() {
+		return true;
 	}
 }

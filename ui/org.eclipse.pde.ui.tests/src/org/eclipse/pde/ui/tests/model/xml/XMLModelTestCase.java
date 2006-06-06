@@ -61,10 +61,8 @@ public abstract class XMLModelTestCase extends TestCase {
 		fDocument.set(sb.toString());
 	}
 	
-	protected void reload(int expectedOps) {
+	protected void reload() {
 		TextEdit[] ops = fListener.getTextOperations();
-		if (expectedOps >= 0)
-			assertEquals(expectedOps, ops.length);
 		if (ops.length == 0)
 			return;
 		MultiTextEdit multi = new MultiTextEdit();

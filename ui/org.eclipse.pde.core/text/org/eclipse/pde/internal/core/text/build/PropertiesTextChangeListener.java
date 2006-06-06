@@ -22,10 +22,6 @@ public class PropertiesTextChangeListener extends AbstractKeyValueTextChangeList
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
-		Object old = event.getOldValue();
-		if (event.getChangeType() == IModelChangedEvent.CHANGE &&
-				old != null && old.equals(event.getNewValue()))
-			return;
 		Object[] objects = event.getChangedObjects();
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];

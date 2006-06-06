@@ -128,7 +128,7 @@ public class IntroSection extends PDESection {
 			return;
 		}
 		getIntroInfo().setId(fIntroCombo.getSelection());
-		try { addDependenciesAndPlugins(); } catch (CoreException e) {}
+		addDependenciesAndPlugins();
 	}
 
 	private void loadManifestAndIntroIds(boolean onlyLoadManifest) {
@@ -180,7 +180,7 @@ public class IntroSection extends PDESection {
 			fIntroCombo.add(id, 0);
 			fIntroCombo.setText(id);
 			getIntroInfo().setId(id);
-			try { addDependenciesAndPlugins(); } catch (CoreException e) {}
+			addDependenciesAndPlugins();
 		}
 	}
 
@@ -212,7 +212,7 @@ public class IntroSection extends PDESection {
 		return id != null && !id.equals(""); //$NON-NLS-1$
 	}
 	
-	private void addDependenciesAndPlugins() throws CoreException {
+	private void addDependenciesAndPlugins() {
 		IProduct product = getProduct();
 		if (!product.useFeatures()) {
 			IProductModelFactory factory = product.getModel().getFactory();
@@ -225,7 +225,7 @@ public class IntroSection extends PDESection {
 		if (fManifest != null) addRequiredBundle();
 	}
 	
-	private void addRequiredBundle() throws CoreException {
+	private void addRequiredBundle(){
 		ModelModification mod = new ModelModification(fManifest) {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (!(model instanceof IBundlePluginModelBase))

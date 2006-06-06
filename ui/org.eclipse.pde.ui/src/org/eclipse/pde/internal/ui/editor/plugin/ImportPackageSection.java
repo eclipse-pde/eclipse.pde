@@ -542,11 +542,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 						}
 					}
 				};
-				try {
-					PDEModelUtility.modifyModel(mod, null);
-				} catch (CoreException e) {
-					PDEPlugin.log(e);
-				}
+				PDEModelUtility.modifyModel(mod, null);
 			}
 		}
 	}

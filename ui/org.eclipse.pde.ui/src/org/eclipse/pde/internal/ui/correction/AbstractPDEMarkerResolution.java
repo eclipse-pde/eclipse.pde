@@ -16,7 +16,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.swt.graphics.Image;
@@ -58,11 +57,7 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 				createChange(model);
 			}
 		};
-		try {
-			PDEModelUtility.modifyModel(modification, null);
-		} catch (CoreException e) {
-			PDEPlugin.log(e);
-		}
+		PDEModelUtility.modifyModel(modification, null);
 	}
 	
 	protected abstract void createChange(IBaseModel model);

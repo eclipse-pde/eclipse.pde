@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.plugin;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -32,12 +34,14 @@ import org.eclipse.text.edits.TextEdit;
 
 public class XMLTextChangeListener extends AbstractTextChangeListener {
 	
+	private ArrayList fOperationList = new ArrayList();
+	
 	public XMLTextChangeListener(IDocument document) {
 		super(document);
 	}
 
 	public TextEdit[] getTextOperations() {
-		if (fOperationTable.size() == 0)
+		if (fOperationList.size() == 0)
 			return new TextEdit[0];
 		
 		MultiTextEdit edit = new MultiTextEdit();
@@ -46,10 +50,9 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 				insert(edit, new InsertEdit(fDocument.getLength(), TextUtilities.getDefaultLineDelimiter(fDocument)));
 		} catch (BadLocationException e) {
 		}
-		Object[] operations = fOperationTable.values().toArray();
-		for (int i = 0; i < operations.length; i++) {
+		Object[] operations = fOperationList.toArray();
+		for (int i = 0; i < operations.length; i++)
 			insert(edit, (TextEdit)operations[i]);
-		}
 		
 		return new TextEdit[] {edit};
 	}
@@ -105,14 +108,17 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 	protected void deleteNode(IDocumentNode node) {
 		// delete previous op on this node, if any
 		TextEdit old = (TextEdit)fOperationTable.get(node);
-		if (old != null)
-			fOperationTable.remove(node);
+		if (old != null) {
+			Object op = fOperationTable.remove(node);
+			fOperationList.remove(op);
+		}
 		
 		// if node has an offset, delete it
 		if (node.getOffset() > -1) {
 			// Create a delete op for this node
 			TextEdit op = getDeleteNodeOperation(node);
-			fOperationTable.put(node, op);			
+			fOperationTable.put(node, op);
+			fOperationList.add(op);
 		} else if (old == null){
 			// No previous op on this non-offset node, just rewrite highest ancestor with an offset
 			insertNode(node);
@@ -138,7 +144,8 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 				}
 			}
 		}
-		fOperationTable.put(node, op);				
+		fOperationTable.put(node, op);
+		fOperationList.add(op);
 	}
 
 	private InsertEdit insertAfterSibling(IDocumentNode node) {
@@ -183,6 +190,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 			region = getMoveRegion(node2);
 			source.setTargetEdit(new MoveTargetEdit(region.getOffset()));		
 			fOperationTable.put(node, source);
+			fOperationList.add(source);
 		} else {
 			// one node with offset, the other without offset.  Delete/reinsert the one without offset
 			insertNode((node1.getOffset() < 0) ? node1 : node2);
@@ -232,6 +240,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 			}		
 		}
 		fOperationTable.put(changedObject, op);
+		fOperationList.add(op);
 	}
 	
 	protected void addElementContentOperation(IDocumentTextNode textNode) {
@@ -266,7 +275,8 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 				return;
 			}
 		}
-		fOperationTable.put(changedObject, op);		
+		fOperationTable.put(changedObject, op);
+		fOperationList.add(op);
 	}
 
 	private boolean shouldTerminateElement(IDocument doc, int offset) {
@@ -403,10 +413,6 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
-		Object old = event.getOldValue();
-		if (event.getChangeType() == IModelChangedEvent.CHANGE &&
-				old != null && old.equals(event.getNewValue()))
-			return;
 		Object[] objects = event.getChangedObjects();
 		if (objects == null)
 			return;
@@ -414,7 +420,8 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 			if (!(objects[i] instanceof IDocumentNode))
 				continue;
 			IDocumentNode node = (IDocumentNode)objects[i];
-			fOperationTable.remove(node);
+			Object op = fOperationTable.remove(node);
+			fOperationList.remove(op);
 			switch (event.getChangeType()) {
 				case IModelChangedEvent.REMOVE:
 					deleteNode(node);
@@ -434,7 +441,6 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 							modifyNode(node, event);
 						}
 					}
-					break;
 			}
 		}
 	}

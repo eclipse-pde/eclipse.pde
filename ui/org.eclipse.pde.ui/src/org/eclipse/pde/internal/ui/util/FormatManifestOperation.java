@@ -9,12 +9,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.core.text.plugin.PluginBaseNode;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.IFileEditorInput;
 
@@ -33,36 +35,44 @@ public class FormatManifestOperation implements IRunnableWithProgress {
 			if (obj instanceof IFileEditorInput)
 				obj = ((IFileEditorInput)obj).getFile();
 			if (obj instanceof IFile) {
-				mon.subTask(NLS.bind(PDEUIMessages.FormatManifestOperation_subtask, ((IFile)obj).getFullPath().toString()));
-				formatManifest((IFile)obj, mon);
+				mon.subTask(NLS.bind(
+						PDEUIMessages.FormatManifestOperation_subtask,
+						((IFile)obj).getFullPath().toString()));
+				format((IFile)obj, mon);
 			}
 			mon.worked(1);
 		}
 	}
-
-	private static void formatManifest(Bundle bundle) {
+	
+	public static void format(IFile file, IProgressMonitor mon) {
+		PDEModelUtility.modifyModel(new ModelModification(file) {
+			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
+				if (model instanceof IBundlePluginModelBase) {
+					IBundleModel bundleModel = ((IBundlePluginModelBase)model).getBundleModel();
+					if (bundleModel.getBundle() instanceof Bundle)
+						formatBundle((Bundle)bundleModel.getBundle());
+				} else if (model instanceof IPluginModelBase) {
+					IPluginBase pluginModel = ((IPluginModelBase)model).getPluginBase();
+					if (pluginModel instanceof PluginBaseNode)
+						formatXML((PluginBaseNode)pluginModel);
+				}
+			}
+			public boolean saveOpenEditor() {
+				return false;
+			}
+		}, mon);
+	}
+	
+	private static void formatBundle(Bundle bundle) {
 		Enumeration headers = bundle.getHeaders().elements();
 		while (headers.hasMoreElements())
 			((IManifestHeader)headers.nextElement()).update(true);
 		BundleModel model = (BundleModel)bundle.getModel();
 		model.adjustOffsets(model.getDocument());
 	}
-
-	public static void formatManifest(IFile manifestFile, IProgressMonitor mon) {
-		ModelModification mod = new ModelModification(manifestFile) {
-			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-				if (model instanceof IBundlePluginModel) {
-					IBundleModel bundleModel = ((IBundlePluginModel)model).getBundleModel();
-					if (bundleModel.getBundle() instanceof Bundle)
-						formatManifest((Bundle)bundleModel.getBundle());
-				}
-			}
-		};
-		try {
-			PDEModelUtility.modifyModel(mod, mon);
-		} catch (CoreException e) {
-			PDEPlugin.log(e);
-		}
-	}
 	
+	private static void formatXML(PluginBaseNode node) {
+		// TODO Auto-generated method stub
+		
+	}
 }

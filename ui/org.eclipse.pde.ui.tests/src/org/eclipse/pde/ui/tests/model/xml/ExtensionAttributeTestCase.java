@@ -313,7 +313,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		IPluginElement elem = (IPluginElement) child;
 		elem.setAttribute("id", "org.eclipse.pde.sample1");
 
-		IPluginExtension ext = reloadModel(1);
+		IPluginExtension ext = reloadModel();
 		assertEquals(ext.getChildCount(), 1);
 		elem = (IPluginElement) ext.getChildren()[0];
 		assertEquals(elem.getName(), "sample");
@@ -334,7 +334,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample1");
 		elem.setAttribute("name", "pde sample");
 
-		IPluginExtension ext = reloadModel(1);
+		IPluginExtension ext = reloadModel();
 
 		assertEquals(ext.getChildCount(), 1);
 		elem = (IPluginElement) ext.getChildren()[0];
@@ -357,7 +357,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		elem.setAttribute("id", "org.eclipse.pde.sample1");
 		elem.setAttribute("name", "pde sample");
 
-		IPluginExtension ext = reloadModel(1);
+		IPluginExtension ext = reloadModel();
 
 		assertEquals(ext.getChildCount(), 1);
 		elem = (IPluginElement) ext.getChildren()[0];
@@ -380,7 +380,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample1");
 		elem.setAttribute("id", null);
 
-		IPluginExtension ext = reloadModel(1);
+		IPluginExtension ext = reloadModel();
 
 		assertEquals(ext.getChildCount(), 1);
 		elem = (IPluginElement) ext.getChildren()[0];
@@ -405,7 +405,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		elem.setAttribute("id", null);
 		elem.setAttribute("perspectiveId", null);
 
-		IPluginExtension ext = reloadModel(2);
+		IPluginExtension ext = reloadModel();
 
 		assertEquals(ext.getChildCount(), 1);
 		elem = (IPluginElement) ext.getChildren()[0];
@@ -427,7 +427,7 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		assertEquals(elem.getAttribute("id").getValue(), "org.eclipse.pde.sample1");
 		elem.setAttribute("id", "org.eclipse.pde.sample2");
 
-		IPluginExtension ext = reloadModel(1);
+		IPluginExtension ext = reloadModel();
 
 		assertEquals(ext.getChildCount(), 1);
 		elem = (IPluginElement) ext.getChildren()[0];

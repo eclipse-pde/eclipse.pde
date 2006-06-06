@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.util;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -30,6 +31,7 @@ import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
+import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
 import org.eclipse.pde.internal.core.text.build.BuildModel;
 import org.eclipse.pde.internal.core.text.build.PropertiesTextChangeListener;
@@ -44,6 +46,7 @@ import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.build.BuildEditor;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.editor.build.BuildSourcePage;
+import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.text.edits.MalformedTreeException;
@@ -54,7 +57,7 @@ import org.eclipse.ui.forms.editor.IFormPage;
 import org.osgi.framework.Constants;
 
 /**
- * Your one stop shop for preforming changes do your plug-in models.
+ * Your one stop shop for preforming changes to your plug-in models.
  *
  */
 public class PDEModelUtility {
@@ -63,7 +66,8 @@ public class PDEModelUtility {
 	public static final String F_MANIFEST_FP = "META-INF/" + F_MANIFEST; //$NON-NLS-1$
 	public static final String F_PLUGIN = "plugin.xml"; //$NON-NLS-1$
 	public static final String F_FRAGMENT = "fragment.xml"; //$NON-NLS-1$
-	public static final String F_BUILD = "build.properties"; //$NON-NLS-1$
+	public static final String F_PROPERTIES = ".properties"; //$NON-NLS-1$
+	public static final String F_BUILD = "build" + F_PROPERTIES; //$NON-NLS-1$
 	
 	// bundle / xml various Object[] indices
 	private static final int F_Bi = 0; // the manifest.mf-related object will always be 1st
@@ -155,6 +159,42 @@ public class PDEModelUtility {
 		return null;
 	}
 	
+ 	/**
+	 * 
+	 * @param doc
+	 * @return
+	 */
+	public static IEditingModel getOpenModel(IDocument doc) {
+		Iterator it = fOpenPDEEditors.values().iterator();
+		while (it.hasNext()) {
+			ArrayList list = (ArrayList)it.next();
+			for (int i = 0; i < list.size(); i++) {
+				PDEFormEditor e = (PDEFormEditor)list.get(i);
+				IPluginModelBase model = (IPluginModelBase)e.getAggregateModel();
+				if (model instanceof IBundlePluginModelBase) {
+					IBundleModel bModel = ((IBundlePluginModelBase)model).getBundleModel();
+					if (bModel instanceof IEditingModel &&
+							doc == ((IEditingModel)bModel).getDocument())
+						return (IEditingModel)bModel;
+					ISharedExtensionsModel eModel = ((IBundlePluginModelBase)model).getExtensionsModel();
+					if (eModel instanceof IEditingModel &&
+							doc == ((IEditingModel)eModel).getDocument())
+						return (IEditingModel)eModel;
+				}
+				
+//				IBuildModel bModel = model.getBuildModel();
+//				if (bModel instanceof IEditingModel && 
+//						doc == ((IEditingModel)bModel).getDocument())
+//					return (IEditingModel)bModel;
+				
+				if (model instanceof IEditingModel && 
+						doc == ((IEditingModel)model).getDocument())
+					return (IEditingModel)model;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * Modify a model based on the specifications provided by the ModelModification parameter.
 	 * 
@@ -169,7 +209,7 @@ public class PDEModelUtility {
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	public static void modifyModel(final ModelModification modification, final IProgressMonitor monitor) throws CoreException {
+	public static void modifyModel(final ModelModification modification, final IProgressMonitor monitor) {
 		// ModelModification was not supplied with the right files
 		// TODO should we just fail silently?
 		if (modification.getFile() == null)
@@ -242,23 +282,40 @@ public class PDEModelUtility {
 				for (int i = 0; i < files.length && dc <= sc; i++) {
 					if (files[i] == null || !files[i].exists())
 						continue;
-					manager.disconnect(files[i].getFullPath(), monitor);
-					dc++;
+					try {
+						manager.disconnect(files[i].getFullPath(), monitor);
+						dc++;
+					} catch (CoreException e) {
+						PDEPlugin.log(e);
+					}
 				}
 			}
 		}
 	}
 	
 	private static void modifyEditorModel(
-			final ModelModification modification,
+			final ModelModification mod,
 			final PDEFormEditor editor,
 			final IBaseModel model, 
 			final IProgressMonitor monitor) {
 		getDisplay().syncExec(new Runnable() {
 			public void run() {
 				try {
-					modification.modifyModel(model, monitor);
-					editor.doSave(monitor);
+					mod.modifyModel(model, monitor);
+					IFile[] files = new IFile[] {
+							mod.getManifestFile(),
+							mod.getXMLFile(),
+							mod.getPropertiesFile()
+					};
+					for (int i = 0; i < files.length; i++) {
+						if (files[i] == null)
+							continue;
+						InputContext con = editor.getContextManager().findContext(files[i]);
+						if (con != null)
+							con.flushEditorInput();
+					}
+					if (mod.saveOpenEditor())
+						editor.doSave(monitor);
 				} catch (CoreException e) {
 					PDEPlugin.log(e);
 				}
@@ -312,7 +369,7 @@ public class PDEModelUtility {
 			return new XMLTextChangeListener(doc);
 		else if (filename.equals(F_MANIFEST))
 			return new BundleTextChangeListener(doc);
-		else if (filename.equals(F_BUILD))
+		else if (filename.endsWith(F_PROPERTIES))
 			return new PropertiesTextChangeListener(doc);
 		return null;
 	}
@@ -326,7 +383,7 @@ public class PDEModelUtility {
 			model = new FragmentModel(doc, true);
 		else if (filename.equals(F_PLUGIN))
 			model = new PluginModel(doc, true);
-		else if (filename.equals(F_BUILD))
+		else if (filename.endsWith(F_PROPERTIES))
 			model = new BuildModel(doc, true);
 		else
 			return null;

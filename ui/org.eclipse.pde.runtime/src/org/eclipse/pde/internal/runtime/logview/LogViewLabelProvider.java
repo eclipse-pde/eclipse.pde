@@ -24,7 +24,7 @@ public class LogViewLabelProvider
 	extends LabelProvider
 	implements ITableLabelProvider {
 	
-	private static int MAX_LABEL_LENGTH = 125;
+	private static int MAX_LABEL_LENGTH = 200;
 	
 	private Image infoImage;
 	private Image okImage;

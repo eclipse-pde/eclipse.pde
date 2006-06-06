@@ -60,7 +60,7 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 		ext.add(obj);
 		fModel.getPluginBase().add(ext);
 
-		reload(1);
+		reload();
 		
 		extensions = fModel.getPluginBase().getExtensions();
 		assertEquals(extensions.length, 1);
@@ -80,7 +80,7 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 		
 		fModel.getPluginBase().remove(extensions[0]);
 
-		reload(1);
+		reload();
 		
 		extensions = fModel.getPluginBase().getExtensions();
 		assertEquals(extensions.length, 0);
