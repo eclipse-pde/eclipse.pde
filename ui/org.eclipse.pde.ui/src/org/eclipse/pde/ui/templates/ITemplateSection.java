@@ -162,7 +162,7 @@ public interface ITemplateSection {
 	 * this template section. The information is collected for the benefit of
 	 * <code>build.properties</code> file so that the generated files and
 	 * folders are included in the binary build. The tokens will be added as-is
-	 * to the variable <code.bin.includes</code>. For this reason, wild cards
+	 * to the variable <code>bin.includes</code>. For this reason, wild cards
 	 * and other syntax rules applicable to this variable can be used in this
 	 * method. For example:
 	 * <p>
