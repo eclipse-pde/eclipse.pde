@@ -39,9 +39,9 @@ public class JavaElementChangeListener implements IElementChangedListener {
 	
 	private Properties fTable = new Properties();
 
-	public JavaElementChangeListener() {
+	public void start() {
 		JavaCore.addElementChangedListener(this, ElementChangedEvent.POST_CHANGE);
-		load();
+		load();		
 	}
 
 	/* (non-Javadoc)

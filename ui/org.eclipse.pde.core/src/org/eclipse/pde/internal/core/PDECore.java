@@ -314,8 +314,6 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	}
 	
 	public JavaElementChangeListener getJavaElementChangeListener() {
-		if (fJavaElementChangeListener == null)
-			fJavaElementChangeListener = new JavaElementChangeListener();
 		return fJavaElementChangeListener;
 	}
 	
@@ -382,10 +380,11 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		fBundleContext = context;
-		fJavaElementChangeListener = new JavaElementChangeListener();
 		CompilerFlags.initializeDefaults();
 		fFeatureRebuilder = new FeatureRebuilder();
 		fFeatureRebuilder.start();
+		fJavaElementChangeListener = new JavaElementChangeListener();
+		fJavaElementChangeListener.start();
 	}
 
 	public BundleContext getBundleContext() {
