@@ -37,8 +37,7 @@ class SiteLabelProvider extends LabelProvider {
 
 	public SiteLabelProvider() {
 		fSiteFeatureImage = PDEPluginImages.DESC_FEATURE_OBJ.createImage();
-		fMissingSiteFeatureImage = PDEPluginImages.DESC_NOREF_FEATURE_OBJ
-				.createImage();
+		fMissingSiteFeatureImage = PDEPluginImages.DESC_NOREF_FEATURE_OBJ.createImage();
 		fCatDefImage = PDEPluginImages.DESC_CATEGORY_OBJ.createImage();
 		fPageImage = PDEPluginImages.DESC_PAGE_OBJ.createImage();
 		fSharedProvider = PDEPlugin.getDefault().getLabelProvider();
@@ -66,7 +65,7 @@ class SiteLabelProvider extends LabelProvider {
 			return ((ISiteCategoryDefinition) element).getName();
 		if (element instanceof SiteFeatureAdapter) {
 			ISiteFeature feature = ((SiteFeatureAdapter) element).feature;
-			return PDEPlugin.getDefault().getLabelProvider().getObjectText(feature);
+			return fSharedProvider.getObjectText(feature);
 		}
 		if (element instanceof IFormPage)
 			return ((IFormPage)element).getTitle();

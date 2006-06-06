@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
@@ -31,11 +32,13 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -425,6 +428,21 @@ public class XMLErrorReporter extends DefaultHandler {
 	
 	protected double getSchemaVersion() {
 		return fSchemaVersion ;
+	}
+	
+	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
+		int x = fTextDocument.get().indexOf("!DOCTYPE"); //$NON-NLS-1$
+		if (x > 0) {
+			try {
+				int line = fTextDocument.getLineOfOffset(x) + 1;
+				report(PDECoreMessages.XMLErrorReporter_ExternalEntityResolution, line, CompilerFlags.WARNING);
+			} catch (BadLocationException e) {
+			}
+		}
+		// Prevent the resolution of external entities in order to
+		// prevent the parser from accessing the Internet
+		// This will prevent huge workbench performance degradations and hangs
+		return new InputSource(new StringReader("")); //$NON-NLS-1$
 	}
 
 }

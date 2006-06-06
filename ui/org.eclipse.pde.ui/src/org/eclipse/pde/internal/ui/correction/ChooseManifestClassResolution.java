@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
@@ -27,7 +28,7 @@ public class ChooseManifestClassResolution extends AbstractManifestMarkerResolut
 
 	protected void createChange(BundleModel model) {
 		IManifestHeader header = model.getBundle().getManifestHeader(fHeader);
-		String type = PDEJavaHelper.selectType();
+		String type = PDEJavaHelper.selectType(fResource, IJavaElementSearchConstants.CONSIDER_CLASSES);
 		if (type != null)
 			header.setValue(type);
 	}

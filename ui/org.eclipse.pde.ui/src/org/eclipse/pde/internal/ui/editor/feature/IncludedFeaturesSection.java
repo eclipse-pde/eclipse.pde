@@ -162,7 +162,7 @@ public class IncludedFeaturesSection extends TableSection implements
 							try {
 								doAdd(models);
 							} catch (CoreException e) {
-								PDECore.log(e);
+								PDEPlugin.log(e);
 							}
 						}
 					}
@@ -460,4 +460,6 @@ public class IncludedFeaturesSection extends TableSection implements
 					fIncludesViewer.getElementAt(0)));
 		}
 	}
+	
+	protected boolean createCount() { return true; }
 }

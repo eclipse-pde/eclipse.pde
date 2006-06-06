@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -47,6 +48,11 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.team.core.RepositoryProvider;
 
 public class ClasspathComputer {
+	
+	private static Hashtable fSeverityTable = null;
+	private static final int SEVERITY_ERROR = 3;
+	private static final int SEVERITY_WARNING = 2;
+	private static final int SEVERITY_IGNORE = 1;
 	
 	public static void setClasspath(IProject project, IPluginModelBase model) throws CoreException {
 		IClasspathEntry[] entries = getClasspath(project, model, false);
@@ -246,17 +252,50 @@ public class ClasspathComputer {
 			map.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_4);
 			map.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_3);
 			map.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_2);
-			map.put(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.WARNING);
-			map.put(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.WARNING);
+			updateSeverityComplianceOption(map, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.WARNING);
+			updateSeverityComplianceOption(map, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.WARNING);
 		} else if (JavaCore.VERSION_1_3.equals(compliance)) {
 			map.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_3);
 			map.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_3);
 			map.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_1);
-			map.put(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.IGNORE);
-			map.put(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.IGNORE);
+			updateSeverityComplianceOption(map, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, JavaCore.IGNORE);
+			updateSeverityComplianceOption(map, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, JavaCore.IGNORE);
 		}
 		project.setOptions(map);		
 	}
+	
+	private static void updateSeverityComplianceOption(Map map, String key, String value) {
+		Integer current_value = null;
+		Integer new_value = null;
+		String current_string_value = null;
+		int current_int_value = 0;
+		int new_int_value = 0;
+		// Initialize the severity table (only once)
+		if (fSeverityTable == null) {
+			fSeverityTable = new Hashtable(SEVERITY_ERROR);
+			fSeverityTable.put(JavaCore.IGNORE, new Integer(SEVERITY_IGNORE));
+			fSeverityTable.put(JavaCore.WARNING, new Integer(SEVERITY_WARNING));
+			fSeverityTable.put(JavaCore.ERROR, new Integer(SEVERITY_ERROR));
+		}		
+		// Get the current severity
+		current_string_value = (String)map.get(key);
+		if (current_string_value != null) {
+			current_value = (Integer)fSeverityTable.get(current_string_value);
+			if (current_value != null) {
+				current_int_value = current_value.intValue();
+			}
+		}
+		// Get the new severity
+		new_value = (Integer)fSeverityTable.get(value);
+		if (new_value != null) {
+			new_int_value = new_value.intValue();
+		}
+		// If the current severity is not higher than the new severity, replace it
+		if (new_int_value > current_int_value) {
+			map.put(key, value);
+		}
+	}
+	
 	
 	public static IClasspathEntry createJREEntry(String ee) {
 		IPath path = null;

@@ -12,9 +12,7 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.ArrayList;
 
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -26,6 +24,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
@@ -192,26 +191,13 @@ public class ManifestSourcePage extends XMLSourcePage {
 			Object first= structuredSelection.getFirstElement();
 			if (first instanceof IDocumentNode && !(first instanceof IPluginBase)) {
 				setHighlightRange((IDocumentNode)first, true);
-				setSelectedRange((IDocumentNode)first);				
+				setSelectedRange((IDocumentNode)first, false);				
 			} else {
 				resetHighlightRange();
 			}
 		}
 	}
 	
-	public void setSelectedRange(IDocumentNode node) {
-		ISourceViewer sourceViewer = getSourceViewer();
-		if (sourceViewer == null)
-			return;
-
-		IDocument document = sourceViewer.getDocument();
-		if (document == null)
-			return;
-
-		int offset = node.getOffset();
-		sourceViewer.setSelectedRange(offset + 1, node.getXMLTagName().length());
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
 	 */
@@ -254,5 +240,17 @@ public class ManifestSourcePage extends XMLSourcePage {
 		if (config instanceof XMLConfiguration)
 			((XMLConfiguration)config).dispose();
 		super.dispose();
+	}
+	
+	public IDocumentRange findRange() {
+		if (fSel instanceof ImportObject)
+			fSel = ((ImportObject)fSel).getImport();
+		if (fSel instanceof IDocumentNode)
+			return (IDocumentNode)fSel;
+		return null;
+	}
+	
+	protected boolean isSelectionListener() {
+		return true;
 	}
 }

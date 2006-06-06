@@ -742,7 +742,7 @@ public class CategorySection extends TreeSection implements
 					try {
 						doAdd(models);
 					} catch (CoreException e) {
-						PDECore.log(e);
+						PDEPlugin.log(e);
 					}
 				}
 			}

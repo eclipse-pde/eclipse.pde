@@ -14,11 +14,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
@@ -28,6 +30,12 @@ import org.eclipse.ui.actions.ActionGroup;
 
 
 public class PluginSearchActionGroup extends ActionGroup {
+	
+	private IBaseModel fModel;
+	
+	public void setBaseModel(IBaseModel model) {
+		fModel = model;
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
@@ -60,7 +68,14 @@ public class PluginSearchActionGroup extends ActionGroup {
 
 	private void addShowDescriptionAction(Object object, IMenuManager menu) {
 		if (object instanceof IPluginExtensionPoint) {
-			menu.add(new ShowDescriptionAction((IPluginExtensionPoint)object));
+			IPluginExtensionPoint extPoint = (IPluginExtensionPoint)object;
+			String pointID = extPoint.getFullId();
+			// incase pointID is not fully qualified
+			if (fModel instanceof IPluginModelBase && pointID.indexOf('.') == -1) {
+				String basePointID = ((IPluginModelBase)fModel).getPluginBase().getId();
+				pointID = basePointID + '.' + pointID;
+			}
+			menu.add(new ShowDescriptionAction(extPoint, pointID));
 		} else if (object instanceof IPluginExtension) {
 			String point = ((IPluginExtension)object).getPoint();
 			IPluginExtensionPoint extPoint = PDECore.getDefault().findExtensionPoint(point);

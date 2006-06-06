@@ -324,7 +324,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(ISiteFeature obj) {
-		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(obj.getId());
+		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(
+				obj.getId(),
+				obj.getVersion() != null ? obj.getVersion() : "0.0.0"); //$NON-NLS-1$
 		if (model != null) 
 			return getObjectText(model);
 		return preventNull(obj.getURL());

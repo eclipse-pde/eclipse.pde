@@ -13,16 +13,20 @@ package org.eclipse.pde.internal.ui.wizards.extension;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.swt.widgets.Composite;
 
 public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
-	private IPluginExtensionPoint point;
-	private IContainer container;
+	private IPluginExtensionPoint fPoint;
 	private boolean isPluginIdFinal;
 	
 	public NewSchemaFileMainPage(IContainer container) {
@@ -33,26 +37,18 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 		super(container);
 		setTitle(PDEUIMessages.NewSchemaFileWizard_title);
 		setDescription(PDEUIMessages.NewSchemaFileWizard_desc);
-		this.point = point;
-		this.container = container;
+		this.fPoint = point;
 		this.isPluginIdFinal = isPluginIdFinal;
 	}
 
-	public void createControl(Composite parent) {
-		super.createControl(parent);
-		initializeValues();
-		fPluginIdText.setEnabled(!isPluginIdFinal);
-		fPluginBrowseButton.setEnabled(!isPluginIdFinal);
-		setMessage(null);
-	}
 	public boolean finish() {
 		IRunnableWithProgress operation = getOperation();
 		try {
 			getContainer().run(false, true, operation);
-			if (point != null){
-				point.setId(fIdText.getText());
-				point.setName(fNameText.getText());
-				point.setSchema(fSchemaText.getText());
+			if (fPoint != null){
+				fPoint.setId(fIdText.getText());
+				fPoint.setName(fNameText.getText());
+				fPoint.setSchema(fSchemaText.getText());
 			}
 				
 		} catch (InvocationTargetException e) {
@@ -75,19 +71,90 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 		return true;
 	}
 	public void initializeValues(){
-		if (container!=null){
-			fPluginIdText.setText(container.getProject().getName());
+		if (fContainer!=null){
+			fPluginIdText.setText(fContainer.getProject().getName());
 			if (!isPluginIdFinal())
-				fSchemaLocationText.setText(container.getProject().getName() + "/" + container.getProjectRelativePath().toString()); //$NON-NLS-1$
+				fSchemaLocationText.setText(fContainer.getProject().getName() + "/" + fContainer.getProjectRelativePath().toString()); //$NON-NLS-1$
 		}
-		if (point == null)
+		if (fPoint == null)
 			return;
-		if (fIdText!=null && point.getId()!=null)
-			fIdText.setText(point.getId());
-		if (fNameText !=null && point.getName() != null)
-			fNameText.setText(point.getName());
-		if (fSchemaText!= null && point.getSchema()!=null)
-			fSchemaText.setText(point.getSchema());
+		if (fIdText!=null && fPoint.getId()!=null)
+			fIdText.setText(fPoint.getId());
+		if (fNameText !=null && fPoint.getName() != null)
+			fNameText.setText(fPoint.getName());
+		if (fSchemaText!= null && fPoint.getSchema()!=null)
+			fSchemaText.setText(fPoint.getSchema());
 		
+		fPluginIdText.setEnabled(!isPluginIdFinal);
+		fPluginBrowseButton.setEnabled(!isPluginIdFinal);
 	}
+	
+	protected String validateFieldContents() {
+		String message = validatePluginID();
+		if (message != null)
+			return message;
+		
+		message = validateExtensionPointID();
+		if (message != null)
+			return message;
+		
+		message = validateExtensionPointName();
+		if (message != null)
+			return message;
+		
+		message = validateContainer();
+		if (message != null)
+			return message;
+		
+		message = validateExtensionPointSchema();
+		if (message != null)
+			return message;
+		
+		return null;
+	}
+	
+	protected String validatePluginID() {
+		// Verify not zero length
+		String pluginID = getPluginId();
+		if (pluginID.length() == 0)
+			return PDEUIMessages.NewSchemaFileMainPage_missingPluginID;
+
+		// Verify plug-in ID exists
+		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(pluginID);
+		if (entry == null)
+			return PDEUIMessages.NewSchemaFileMainPage_nonExistingPluginID;
+
+		// Verify plug-in ID is not an external model
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginID);
+		if (model == null || model.getUnderlyingResource() == null)
+			return PDEUIMessages.NewSchemaFileMainPage_externalPluginID;
+
+		return null;
+	}
+
+	protected String validateContainer() {
+		if (!isPluginIdFinal()) {
+			// Ensure not zero length
+			String newContainerName = fSchemaLocationText.getText().trim();
+			if (newContainerName.length() == 0)
+				return PDEUIMessages.NewSchemaFileMainPage_missingContainer;
+
+			// Ensure valid target container
+			IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
+			IResource resource = root.findMember(new Path(newContainerName));
+			if (resource instanceof IContainer) {
+				fContainer = (IContainer) resource;
+			} else {
+				fContainer = null;
+				return PDEUIMessages.NewSchemaFileMainPage_invalidContainer;
+			}
+		}
+
+		// Ensure target container exists
+		if (fContainer == null || !fContainer.exists())
+			return PDEUIMessages.NewSchemaFileMainPage_nonExistingContainer;
+
+		return null;
+	}
+	
 }

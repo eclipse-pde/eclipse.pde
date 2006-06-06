@@ -386,6 +386,9 @@ public class ExecutionEnvironmentSection extends TableSection {
 	}
 	
 	public boolean doGlobalAction(String actionId) {
+		
+		if (!isEditable()) { return false; }
+		
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleRemove();
 			return true;
@@ -394,6 +397,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 	}
 	
     protected void selectionChanged(IStructuredSelection selection) {
+    	getPage().getPDEEditor().setSelection(selection);
 		if (getPage().getModel().isEditable())
 			updateButtons();
 	}

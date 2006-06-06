@@ -21,6 +21,8 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         configurer.setInitialSize(new Point(400, 300));
         configurer.setShowCoolBar(false);
         configurer.setShowStatusLine(false);
+%if productBranding == false
         configurer.setTitle("$windowTitle$");
+%endif
     }
 }

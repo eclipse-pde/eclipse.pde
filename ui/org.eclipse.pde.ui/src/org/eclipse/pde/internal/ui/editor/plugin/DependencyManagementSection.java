@@ -464,4 +464,6 @@ public class DependencyManagementSection extends TableSection implements IModelC
 			});
 		}
 	}
+	
+	protected boolean createCount() { return true; }
 }

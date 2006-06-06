@@ -65,6 +65,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IShowEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.osgi.service.prefs.BackingStoreException;
@@ -603,4 +604,11 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
     	}
     	fShowExtensions = show;
     }
+    
+	protected void pageChange(int newPageIndex) {
+		super.pageChange(newPageIndex);
+		IFormPage page = getActivePageInstance();
+		if (page instanceof PDESourcePage)
+			((PDESourcePage)page).updateTextSelection();
+	}
 }

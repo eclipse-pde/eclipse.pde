@@ -57,7 +57,7 @@ public class BuildModel extends AbstractEditingModel implements IBuildModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.AbstractEditingModel#adjustOffsets(org.eclipse.jface.text.IDocument)
 	 */
-	protected void adjustOffsets(IDocument document) {
+	public void adjustOffsets(IDocument document) {
 		((Build)getBuild()).adjustOffsets(document);
 	}
 	

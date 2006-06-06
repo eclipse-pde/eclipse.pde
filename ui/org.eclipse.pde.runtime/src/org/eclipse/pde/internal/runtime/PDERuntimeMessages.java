@@ -57,6 +57,8 @@ public class PDERuntimeMessages extends NLS {
 	public static String LogView_FilterDialog_allSessions;
 	public static String LogView_FilterDialog_recentSession;
 
+	public static String LogViewLabelProvider_truncatedMessage;
+
 	public static String RegistryView_extensionPointPR_id;
 	public static String RegistryView_extensionPointPR_name;
 

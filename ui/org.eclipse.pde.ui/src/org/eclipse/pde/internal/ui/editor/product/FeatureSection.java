@@ -43,6 +43,7 @@ import org.eclipse.pde.internal.ui.wizards.feature.NewFeatureProjectWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -312,10 +313,27 @@ public class FeatureSection extends TableSection {
 					fFeatureTable.add(objects[i]);
 			}
 		} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
+			
+			Table table = fFeatureTable.getTable();
+			int index = table.getSelectionIndex();
+			
 			for (int i = 0; i < objects.length; i++) {
 				if (objects[i] instanceof IProductFeature)
 					fFeatureTable.remove(objects[i]);
 			}
+			
+			// Update Selection
+
+			int count = table.getItemCount();
+				
+			if ( count == 0 ) {
+				// Nothing to select
+			} else if ( index < count ) {
+				table.setSelection( index );
+			} else {
+				table.setSelection( count - 1 );
+			}			
+			
 		}
 		updateRemoveButtons(false, true);
 	}
@@ -354,4 +372,5 @@ public class FeatureSection extends TableSection {
 			tablePart.setButtonEnabled(2, isEditable() && fFeatureTable.getTable().getItemCount() > 0);
 	}
 	
+	protected boolean createCount() { return true; }
 }

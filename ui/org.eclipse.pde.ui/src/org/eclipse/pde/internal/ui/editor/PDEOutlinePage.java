@@ -33,6 +33,15 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 public abstract class PDEOutlinePage extends ContentOutlinePage {
 
+	protected PDEFormEditor fEditor;
+	
+	public PDEOutlinePage(PDEFormEditor editor) {
+		fEditor = editor;
+	}
+
+	public PDEOutlinePage() {
+	}	
+	
 	public void makeContributions(
 			IMenuManager menuManager, 
 			IToolBarManager toolBarManager, 
@@ -43,6 +52,8 @@ public abstract class PDEOutlinePage extends ContentOutlinePage {
 			public void menuAboutToShow(IMenuManager manager) {
 				ISelection selection = getSelection();
 				PluginSearchActionGroup actionGroup = new PluginSearchActionGroup();
+				if (fEditor != null)
+					actionGroup.setBaseModel(fEditor.getAggregateModel());
 				actionGroup.setContext(new ActionContext(selection));
 				actionGroup.fillContextMenu(manager);
 				if (selection instanceof IStructuredSelection) {

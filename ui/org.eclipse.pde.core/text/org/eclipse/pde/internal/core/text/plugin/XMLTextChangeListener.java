@@ -14,16 +14,19 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.text.AbstractTextChangeListener;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.PropertiesUtil;
 import org.eclipse.text.edits.DeleteEdit;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MoveSourceEdit;
 import org.eclipse.text.edits.MoveTargetEdit;
+import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
 
@@ -37,8 +40,67 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		if (fOperationTable.size() == 0)
 			return new TextEdit[0];
 		
-		return (TextEdit[])fOperationTable.values().toArray(new TextEdit[fOperationTable.size()]);
+		MultiTextEdit edit = new MultiTextEdit();
+		try {
+			if (PropertiesUtil.isNewlineNeeded(fDocument))
+				insert(edit, new InsertEdit(fDocument.getLength(), TextUtilities.getDefaultLineDelimiter(fDocument)));
+		} catch (BadLocationException e) {
+		}
+		Object[] operations = fOperationTable.values().toArray();
+		for (int i = 0; i < operations.length; i++) {
+			insert(edit, (TextEdit)operations[i]);
+		}
+		
+		return new TextEdit[] {edit};
 	}
+	
+	protected static void insert(TextEdit parent, TextEdit edit) {
+		if (!parent.hasChildren()) {
+			parent.addChild(edit);
+			if (edit instanceof MoveSourceEdit) {
+				parent.addChild(((MoveSourceEdit)edit).getTargetEdit());
+			}
+			return;
+		}
+		TextEdit[] children= parent.getChildren();
+		// First dive down to find the right parent.
+		for (int i= 0; i < children.length; i++) {
+			TextEdit child= children[i];
+			if (covers(child, edit)) {
+				insert(child, edit);
+				return;
+			}
+		}
+		// We have the right parent. Now check if some of the children have to
+		// be moved under the new edit since it is covering it.
+		for (int i= children.length - 1; i >= 0; i--) {
+			TextEdit child= children[i];
+			if (covers(edit, child)) {
+				parent.removeChild(i);
+				edit.addChild(child);
+			}
+		}
+		parent.addChild(edit);
+		if (edit instanceof MoveSourceEdit) {
+			parent.addChild(((MoveSourceEdit)edit).getTargetEdit());
+		}
+	}
+	
+	protected static boolean covers(TextEdit thisEdit, TextEdit otherEdit) {
+		if (thisEdit.getLength() == 0)	// an insertion point can't cover anything
+			return false;
+		
+		int thisOffset= thisEdit.getOffset();
+		int thisEnd= thisEdit.getExclusiveEnd();	
+		if (otherEdit.getLength() == 0) {
+			int otherOffset= otherEdit.getOffset();
+			return thisOffset < otherOffset && otherOffset < thisEnd;
+		}
+		int otherOffset= otherEdit.getOffset();
+		int otherEnd= otherEdit.getExclusiveEnd();
+		return thisOffset <= otherOffset && otherEnd <= thisEnd;
+	}
+	
 	
 	protected void deleteNode(IDocumentNode node) {
 		// delete previous op on this node, if any
@@ -341,6 +403,10 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
+		Object old = event.getOldValue();
+		if (event.getChangeType() == IModelChangedEvent.CHANGE &&
+				old != null && old.equals(event.getNewValue()))
+			return;
 		Object[] objects = event.getChangedObjects();
 		if (objects == null)
 			return;

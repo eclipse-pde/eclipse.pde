@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.editor.plugin.rows;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -59,12 +60,9 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 	}
 	private void doOpenSelectionDialog() {
 		IResource resource = getPluginBase().getModel().getUnderlyingResource();
-		IProject project = (resource == null) ? null : resource.getProject();
-		if (project != null) {
-			String type = PDEJavaHelper.selectType();
-			if (type != null)
-				text.setText(type);
-		}
+		String type = PDEJavaHelper.selectType(resource, IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES);
+		if (type != null)
+			text.setText(type);
 
 	}
 	private IPluginBase getPluginBase() {

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifest;
@@ -18,15 +17,12 @@ import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifest;
 public class OrganizeExportPackageResolution extends
 		AbstractManifestMarkerResolution {
 	
-	private IProject fProject;
-
-	public OrganizeExportPackageResolution(int type, IProject project) {
+	public OrganizeExportPackageResolution(int type) {
 		super(type);
-		fProject = project;
 	}
 
 	protected void createChange(BundleModel model) {
-		OrganizeManifest.organizeExportPackages(model.getBundle(), fProject, true, true);
+		OrganizeManifest.organizeExportPackages(model.getBundle(), fResource.getProject(), true, true);
 	}
 
 	public String getDescription() {

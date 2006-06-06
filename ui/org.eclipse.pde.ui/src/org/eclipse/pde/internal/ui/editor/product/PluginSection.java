@@ -59,6 +59,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -451,10 +452,27 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 					fPluginTable.add(objects[i]);
 			}
 		} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
+			
+			Table table = fPluginTable.getTable();
+			int index = table.getSelectionIndex();
+			
 			for (int i = 0; i < objects.length; i++) {
 				if (objects[i] instanceof IProductPlugin)
 					fPluginTable.remove(objects[i]);
 			}
+			
+			// Update Selection
+
+			int count = table.getItemCount();
+				
+			if ( count == 0 ) {
+				// Nothing to select
+			} else if ( index < count ) {
+				table.setSelection( index );
+			} else {
+				table.setSelection( count - 1 );
+			}
+			
 		}
 		updateRemoveButtons(false, true);
 	}
@@ -535,4 +553,6 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 			tablePart.setButtonEnabled(4, isEditable() && count > 0);
 		tablePart.setButtonEnabled(2, isEditable() && count > 0);
 	}
+	
+	protected boolean createCount() { return true; }
 }

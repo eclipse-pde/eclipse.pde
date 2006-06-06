@@ -11,15 +11,22 @@
 package org.eclipse.pde.internal.ui.editor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.parts.EditableTablePart;
 import org.eclipse.pde.internal.ui.parts.StructuredViewerPart;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public abstract class TableSection extends StructuredViewerSection {
-	protected boolean handleDefaultButton = true;
+	protected boolean fHandleDefaultButton = true;
 	class PartAdapter extends EditableTablePart {
+		private Label fCount;
 		public PartAdapter(String[] buttonLabels) {
 			super(buttonLabels);
 		}
@@ -35,12 +42,30 @@ public abstract class TableSection extends StructuredViewerSection {
 		}
 		public void buttonSelected(Button button, int index) {
 			TableSection.this.buttonSelected(index);
-			if (handleDefaultButton)
+			if (fHandleDefaultButton)
 				button.getShell().setDefaultButton(null);
 		}
 		protected void createButtons(Composite parent, FormToolkit toolkit) {
 			super.createButtons(parent, toolkit);
 			enableButtons();
+			if (createCount()) {
+				Composite comp = toolkit.createComposite(fButtonContainer);
+				comp.setLayout(createButtonsLayout());
+				comp.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_END | GridData.FILL_BOTH));
+				fCount = toolkit.createLabel(comp, ""); //$NON-NLS-1$
+				fCount.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				getTablePart().getTableViewer().getTable().addPaintListener(new PaintListener() {
+					public void paintControl(PaintEvent e) {
+						updateLabel();
+					}
+				});
+			}
+		}
+		protected void updateLabel() {
+			if (fCount != null && !fCount.isDisposed())
+				fCount.setText(NLS.bind(
+						PDEUIMessages.TableSection_itemCount, 
+						Integer.toString(getTableViewer().getTable().getItemCount())));
 		}
 	}
 	/**
@@ -78,4 +103,5 @@ public abstract class TableSection extends StructuredViewerSection {
 	}
 	protected void enableButtons() {
 	}
+	protected boolean createCount() { return false; }
 }

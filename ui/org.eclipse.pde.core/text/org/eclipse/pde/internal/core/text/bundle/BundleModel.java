@@ -64,7 +64,7 @@ public class BundleModel extends AbstractEditingModel implements IBundleModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.AbstractEditingModel#adjustOffsets(org.eclipse.jface.text.IDocument)
 	 */
-	protected void adjustOffsets(IDocument document) {
+	public void adjustOffsets(IDocument document) {
 		((Bundle)getBundle()).clearOffsets();
 		((Bundle)getBundle()).adjustOffsets(document);
 	}

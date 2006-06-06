@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -21,6 +22,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -238,4 +240,12 @@ public abstract class DocumentHandler extends DefaultHandler {
 	}
 	
 	protected abstract IDocument getDocument();
+	
+	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
+		// Prevent the resolution of external entities in order to
+		// prevent the parser from accessing the Internet
+		// This will prevent huge workbench performance degradations and hangs
+		return new InputSource(new StringReader("")); //$NON-NLS-1$
+	}
+	
 }

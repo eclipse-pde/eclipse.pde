@@ -260,9 +260,9 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				for (int i = 0; i < cpes.length; i++) {
 					if (cpes[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 						if (!sourceEntryKeys.contains(DEF_SOURCE_ENTRY))
-							prepareError(DEF_SOURCE_ENTRY, null,
+							prepareError(null, null,
 									PDECoreMessages.BuildErrorReporter_sourceMissing,
-									PDEMarkerFactory.B_SOURCE_ADDITION);
+									PDEMarkerFactory.NO_RESOLUTION);
 						break;
 					}
 				}
@@ -276,9 +276,9 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				for (int j = 0; j < cpes.length; j++) {
 					if (cpes[j].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 						if (!sourceEntryKeys.contains(DEF_SOURCE_ENTRY))
-							prepareError(DEF_SOURCE_ENTRY, null,
+							prepareError(null, null,
 									PDECoreMessages.BuildErrorReporter_sourceMissing,
-									PDEMarkerFactory.B_SOURCE_ADDITION);
+									PDEMarkerFactory.NO_RESOLUTION);
 						break;
 					}
 				}

@@ -35,7 +35,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration;
 import org.eclipse.jdt.internal.junit.launcher.TestSearchResult;
-import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
@@ -355,7 +354,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 	}
 	
 	public String[] getVMArgumentsArray(ILaunchConfiguration configuration) throws CoreException {
-		return new ExecutionArguments(getVMArguments(configuration),"").getVMArgumentsArray();		 //$NON-NLS-1$
+		return LaunchArgumentsHelper.getUserVMArgumentArray(configuration);
 	}
 	
 	public String getProgramArguments(ILaunchConfiguration configuration)

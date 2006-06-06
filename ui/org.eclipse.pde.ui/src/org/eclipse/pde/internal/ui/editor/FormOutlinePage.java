@@ -87,11 +87,10 @@ public class FormOutlinePage extends PDEOutlinePage
 		}
 	}
 	protected TreeViewer fTreeViewer;
-	protected PDEFormEditor fEditor;
 	protected boolean fEditorSelection = false;
 	protected boolean fOutlineSelection = false;
 	public FormOutlinePage(PDEFormEditor editor) {
-		this.fEditor = editor;
+		super(editor);
 	}
 	protected ITreeContentProvider createContentProvider() {
 		return new BasicContentProvider();

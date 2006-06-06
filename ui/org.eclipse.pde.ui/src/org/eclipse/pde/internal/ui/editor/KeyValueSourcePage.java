@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
 
-public abstract class KeyValueSourcePage extends PDESourcePage {
+public abstract class KeyValueSourcePage extends PDEProjectionSourcePage {
 	
 	public KeyValueSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);

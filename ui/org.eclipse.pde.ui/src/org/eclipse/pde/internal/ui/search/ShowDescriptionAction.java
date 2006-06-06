@@ -40,7 +40,7 @@ public class ShowDescriptionAction extends Action {
 	private String fPointID;
 	private ISchema fSchema;
 	private File fPreviewFile;
-	private boolean forceExternal;
+	private boolean fForceExternal;
 	
 	public ShowDescriptionAction(String pointID) {
 		fPointID = pointID;
@@ -51,8 +51,13 @@ public class ShowDescriptionAction extends Action {
 	}
 	
 	public ShowDescriptionAction(IPluginExtensionPoint point, boolean forceExternal) {
-		setExtensionPoint(point);
-		this.forceExternal = forceExternal;
+		setExtensionPoint(point, point.getFullId());
+		fForceExternal = forceExternal;
+	}
+	
+	public ShowDescriptionAction(IPluginExtensionPoint point, String pointID) {
+		setExtensionPoint(point, pointID);
+		fForceExternal = false;
 	}
 	
 	public ShowDescriptionAction(ISchema schema) {
@@ -64,8 +69,8 @@ public class ShowDescriptionAction extends Action {
 		fPointID = schema.getQualifiedPointId();
 	}
 	
-	public void setExtensionPoint(IPluginExtensionPoint point) {
-		fPointID = point.getFullId();
+	public void setExtensionPoint(IPluginExtensionPoint point, String pointID) {
+		fPointID = pointID;
 		setText(PDEUIMessages.ShowDescriptionAction_label); 
 		fSchema = null;
 	}
@@ -111,7 +116,7 @@ public class ShowDescriptionAction extends Action {
 			transformer.transform(fSchema, printWriter); 
 			os.flush();
 			os.close();
-			showURL(fPreviewFile, forceExternal);
+			showURL(fPreviewFile, fForceExternal);
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
 		}

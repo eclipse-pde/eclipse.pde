@@ -82,9 +82,9 @@ class LogReader {
 					} else if (writerState == SESSION_STATE && session != null) {
 						session.setSessionData(swriter.toString());
 					} else if (writerState == MESSAGE_STATE && current != null){
-						String message = current.getMessage() + swriter.toString();
-						message = message.trim();
-						current.setMessage(message);
+						StringBuffer sb = new StringBuffer(current.getMessage());
+						sb.append(swriter.toString());
+						current.setMessage(sb.toString().trim());
 					}
 					writerState = UNKNOWN_STATE;
 					swriter = null;

@@ -45,7 +45,7 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.AbstractEditingModel#adjustOffsets(org.eclipse.jface.text.IDocument)
 	 */
-	protected void adjustOffsets(IDocument document) {
+	public void adjustOffsets(IDocument document) {
 		try {
 			getParser().parse(getInputStream(document), createNodeOffsetHandler(this));
 		} catch (SAXException e) {

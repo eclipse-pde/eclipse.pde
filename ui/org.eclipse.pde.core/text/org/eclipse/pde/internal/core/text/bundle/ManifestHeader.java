@@ -154,7 +154,12 @@ public class ManifestHeader extends BundleObject implements IManifestHeader {
 	}
 	
 	public void update() {
+		// TODO
+		// should do something for headers that don't have their own class
+		// (and don't override this method)
 	}
 
+	public void update(boolean notify) {
+	}
 }
 

@@ -27,7 +27,7 @@ import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 
-public abstract class XMLSourcePage extends PDESourcePage {
+public abstract class XMLSourcePage extends PDEProjectionSourcePage {
 	
 	class XMLSourceViewerConfiguration extends XMLConfiguration {
 		private MonoReconciler fReconciler;

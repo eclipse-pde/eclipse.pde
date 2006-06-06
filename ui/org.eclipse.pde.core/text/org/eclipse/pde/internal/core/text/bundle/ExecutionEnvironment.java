@@ -16,6 +16,7 @@ public class ExecutionEnvironment extends PDEManifestElement {
 
 	public ExecutionEnvironment(ManifestHeader header, String value) {
 		super(header, value);
+		setModel(header.getBundle().getModel());
 	}
 	
 	public String getName() {

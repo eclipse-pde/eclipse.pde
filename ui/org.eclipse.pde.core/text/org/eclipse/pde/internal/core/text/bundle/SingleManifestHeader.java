@@ -68,9 +68,15 @@ public class SingleManifestHeader extends ManifestHeader {
     }
     
     public void update() {
+    	// single headers will fire a change by default
+    	update(true);
+    }
+    
+    public void update(boolean notify) {
     	String old = fValue;   	
     	fValue = fElement.write();
-    	fBundle.getModel().fireModelObjectChanged(this, fName, old, fValue);
+    	if (notify)
+    		fBundle.getModel().fireModelObjectChanged(this, fName, old, fValue);
     }
 
 }

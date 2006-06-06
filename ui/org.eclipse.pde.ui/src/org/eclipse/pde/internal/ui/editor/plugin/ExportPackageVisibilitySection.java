@@ -89,7 +89,7 @@ public class ExportPackageVisibilitySection extends TableSection
 		super(formPage, parent, Section.DESCRIPTION, new String[]{
 				PDEUIMessages.ManifestEditor_ExportSection_add,
 				PDEUIMessages.ManifestEditor_ExportSection_remove});
-		handleDefaultButton = false;
+		fHandleDefaultButton = false;
 	}
     
 	public void createClient(Section section, FormToolkit toolkit) {

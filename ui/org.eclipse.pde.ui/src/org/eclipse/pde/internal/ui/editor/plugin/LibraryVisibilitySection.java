@@ -94,7 +94,7 @@ public class LibraryVisibilitySection extends TableSection
 				PDEUIMessages.ManifestEditor_ExportSection_remove});
 		getSection().setText(PDEUIMessages.ManifestEditor_ExportSection_title);
 		getSection().setDescription(PDEUIMessages.ManifestEditor_ExportSection_desc);
-		handleDefaultButton = false;
+		fHandleDefaultButton = false;
 	}
     
 	public void createClient(Section section, FormToolkit toolkit) {

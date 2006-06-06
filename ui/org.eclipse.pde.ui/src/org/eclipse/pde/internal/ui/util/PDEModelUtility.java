@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
 import org.eclipse.pde.internal.core.bundle.BundleFragmentModel;
 import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
@@ -48,6 +49,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.osgi.framework.Constants;
 
@@ -134,6 +136,21 @@ public class PDEModelUtility {
 			PDEFormEditor editor = (PDEFormEditor)list.get(i);
 			if (editor.getEditorSite().getId().equals(editorId))
 				return editor;
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns an IPluginModelBase from the active ManifestEditor or null
+	 * if no manifest editor is open.
+	 * @return the active IPluginModelBase
+	 */
+	public static IPluginModelBase getActivePluginModel() {
+		IEditorPart editor = PDEPlugin.getActivePage().getActiveEditor();
+		if (editor instanceof ManifestEditor) {
+			IBaseModel model = ((ManifestEditor)editor).getAggregateModel();
+			if (model instanceof IPluginModelBase)
+				return (IPluginModelBase)model;
 		}
 		return null;
 	}

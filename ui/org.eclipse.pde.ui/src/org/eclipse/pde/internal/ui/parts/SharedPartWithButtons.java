@@ -21,9 +21,9 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 
 public abstract class SharedPartWithButtons extends SharedPart {
-	private String[] buttonLabels;
-	private Control[] controls;
-	private Composite buttonContainer;
+	private String[] fButtonLabels;
+	private Control[] fControls;
+	protected Composite fButtonContainer;
 	private class SelectionHandler implements SelectionListener {
 		public void widgetSelected(SelectionEvent e) {
 			buttonSelected(e);
@@ -38,11 +38,11 @@ public abstract class SharedPartWithButtons extends SharedPart {
 		}
 	}
 	public SharedPartWithButtons(String[] buttonLabels) {
-		this.buttonLabels = buttonLabels;
+		fButtonLabels = buttonLabels;
 	}
 	public void setButtonEnabled(int index, boolean enabled) {
-		if (controls != null && index >= 0 && controls.length > index) {
-			Control c = controls[index];
+		if (fControls != null && index >= 0 && fControls.length > index) {
+			Control c = fControls[index];
 			if (c instanceof Button)
 				c.setEnabled(enabled);
 		}
@@ -60,22 +60,22 @@ public abstract class SharedPartWithButtons extends SharedPart {
 		createButtons(parent, toolkit);
 	}
 	protected void createButtons(Composite parent, FormToolkit toolkit) {
-		if (buttonLabels != null && buttonLabels.length > 0) {
-			buttonContainer = createComposite(parent, toolkit);
+		if (fButtonLabels != null && fButtonLabels.length > 0) {
+			fButtonContainer = createComposite(parent, toolkit);
 			GridData gd = new GridData(GridData.FILL_VERTICAL);
-			buttonContainer.setLayoutData(gd);
-			buttonContainer.setLayout(createButtonsLayout());
-			controls = new Control[buttonLabels.length];
+			fButtonContainer.setLayoutData(gd);
+			fButtonContainer.setLayout(createButtonsLayout());
+			fControls = new Control[fButtonLabels.length];
 			SelectionHandler listener = new SelectionHandler();
-			for (int i = 0; i < buttonLabels.length; i++) {
-				String label = buttonLabels[i];
+			for (int i = 0; i < fButtonLabels.length; i++) {
+				String label = fButtonLabels[i];
 				if (label != null) {
-					Button button = createButton(buttonContainer, label, i,
+					Button button = createButton(fButtonContainer, label, i,
 							toolkit);
 					button.addSelectionListener(listener);
-					controls[i] = button;
+					fControls[i] = button;
 				} else {
-					createEmptySpace(buttonContainer, 1, toolkit);
+					createEmptySpace(fButtonContainer, 1, toolkit);
 				}
 			}
 		}		
@@ -101,8 +101,8 @@ public abstract class SharedPartWithButtons extends SharedPart {
 		return button;
 	}
 	protected void updateEnabledState() {
-		for (int i = 0; i < controls.length; i++) {
-			Control c = controls[i];
+		for (int i = 0; i < fControls.length; i++) {
+			Control c = fControls[i];
 			if (c instanceof Button)
 				c.setEnabled(isEnabled());
 		}

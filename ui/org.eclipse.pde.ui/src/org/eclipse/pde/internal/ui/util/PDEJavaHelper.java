@@ -10,18 +10,23 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.ui.IJavaElementSearchConstants;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -38,13 +43,15 @@ import org.eclipse.ui.ide.IDE;
 
 public class PDEJavaHelper {
 	
-	public static String selectType() {
+	public static String selectType(IResource resource, int scope) {
+		if (resource == null) return null;
+		IProject project = resource.getProject();
 		try {
 			SelectionDialog dialog = JavaUI.createTypeDialog(
 					PDEPlugin.getActiveWorkbenchShell(),
 					PlatformUI.getWorkbench().getProgressService(),
-					SearchEngine.createWorkspaceScope(),
-					IJavaElementSearchConstants.CONSIDER_ALL_TYPES, 
+					getSearchScope(project),
+					scope, 
 			        false, ""); //$NON-NLS-1$
 			dialog.setTitle(PDEUIMessages.ClassAttributeRow_dialogTitle); 
 			if (dialog.open() == Window.OK) {
@@ -54,7 +61,37 @@ public class PDEJavaHelper {
 		} catch (JavaModelException e) {
 		}
 		return null;
+	}	
+	
+	private static IJavaSearchScope getSearchScope(IProject project) {
+		return SearchEngine.createJavaSearchScope(getNonJRERoots(JavaCore.create(project)));
 	}
+
+	private static IPackageFragmentRoot[] getNonJRERoots(IJavaProject project) {
+		ArrayList result = new ArrayList();
+		try {
+			IPackageFragmentRoot[] roots = project.getPackageFragmentRoots();
+			for (int i = 0; i < roots.length; i++) {
+				if (!isJRELibrary(roots[i])) {
+					result.add(roots[i]);
+				}
+			}
+		} catch (JavaModelException e) {
+		}
+		return (IPackageFragmentRoot[]) result.toArray(new IPackageFragmentRoot[result.size()]);
+	}	
+	
+	public static boolean isJRELibrary(IPackageFragmentRoot root) {
+		try {
+			IPath path = root.getRawClasspathEntry().getPath();
+			if (path.equals(new Path(JavaRuntime.JRE_CONTAINER))
+					|| path.equals(new Path(JavaRuntime.JRELIB_VARIABLE))) {
+				return true;
+			}
+		} catch (JavaModelException e) {
+		}
+		return false;
+	}	
 	
 	/**
 	 * Open/Create a java class

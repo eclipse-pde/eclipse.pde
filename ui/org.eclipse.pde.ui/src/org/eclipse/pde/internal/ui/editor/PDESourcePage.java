@@ -28,10 +28,14 @@ import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.internal.core.text.AbstractEditingModel;
+import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -53,7 +57,7 @@ import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
-public abstract class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker {
+public abstract class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker, ISelectionChangedListener {
 	
 	private static String RES_BUNDLE_LOCATION = "org.eclipse.pde.internal.ui.editor.text.ConstructedPDEEditorMessages"; //$NON-NLS-1$
 	private static ResourceBundle fgBundleForConstructedKeys = ResourceBundle.getBundle(RES_BUNDLE_LOCATION);
@@ -153,6 +157,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	private InputContext inputContext;
 	private ISortableContentOutlinePage outlinePage;
 	private ISelectionChangedListener outlineSelectionChangedListener;
+	protected Object fSel;
 	/**
 	 * 
 	 */
@@ -164,6 +169,8 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		stores[1] = EditorsUI.getPreferenceStore();
 		setPreferenceStore(new ChainedPreferenceStore(stores));
 		setRangeIndicator(new DefaultRangeIndicator());
+		if (isSelectionListener())
+			getEditor().getSite().getSelectionProvider().addSelectionChangedListener(this);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#initialize(org.eclipse.ui.forms.editor.FormEditor)
@@ -180,6 +187,8 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 			outlinePage.dispose();
 			outlinePage = null;
 		}
+		if (isSelectionListener())
+			getEditor().getSite().getSelectionProvider().removeSelectionChangedListener(this);
 		super.dispose();
 	}
 
@@ -319,7 +328,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		return null;
 	}
 
-	public void setHighlightRange(IDocumentRange node, boolean moveCursor) {
+	public void setHighlightRange(IDocumentRange range, boolean moveCursor) {
 		ISourceViewer sourceViewer = getSourceViewer();
 		if (sourceViewer == null)
 			return;
@@ -328,9 +337,30 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		if (document == null)
 			return;
 
-		int offset = node.getOffset();
-		int length = node.getLength();
+		int offset = range.getOffset();
+		int length = range.getLength();
 		setHighlightRange(offset, length == -1 ? 1 : length, moveCursor);
+	}
+	
+	public void setSelectedRange(IDocumentRange range, boolean fullNodeSelection) {
+		ISourceViewer sourceViewer = getSourceViewer();
+		if (sourceViewer == null)
+			return;
+
+		IDocument document = sourceViewer.getDocument();
+		if (document == null)
+			return;
+
+		int offset;
+		int length;
+		if (range instanceof IDocumentNode && !fullNodeSelection) {
+			length = ((IDocumentNode)range).getXMLTagName().length();
+			offset = range.getOffset() + 1;
+		} else {
+			length = range.getLength();
+			offset = range.getOffset();
+		}
+		sourceViewer.setSelectedRange(offset, length);
 	}
 	
 	public int getOrientation() {
@@ -342,5 +372,49 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		PDESelectAnnotationRulerAction action = new PDESelectAnnotationRulerAction(
 				getBundleForConstructedKeys(), "PDESelectAnnotationRulerAction.", this, getVerticalRuler()); //$NON-NLS-1$
 		setAction(ITextEditorActionConstants.RULER_CLICK, action);
+	}
+	
+	public final void selectionChanged(SelectionChangedEvent event) {
+		if (event.getSource() == getSelectionProvider())
+			return;
+		ISelection sel = event.getSelection();
+		if (sel instanceof ITextSelection)
+			return;
+		if (sel instanceof IStructuredSelection)
+			fSel = ((IStructuredSelection)sel).getFirstElement();
+		else
+			fSel = null;
+	}
+	
+	/*
+	 * Locate an IDocumentRange, subclasses that want to 
+	 * highlight text components based on site selection
+	 * should override this method.
+	 */
+	protected IDocumentRange findRange() {
+		return null;
+	}
+	
+	public void updateTextSelection() {
+		IDocumentRange range = findRange();
+		if (range == null)
+			return;
+		if (range.getOffset() == -1) {
+			IBaseModel model = getInputContext().getModel();
+			if (!(model instanceof AbstractEditingModel))
+				return;
+			((AbstractEditingModel)model).adjustOffsets(((AbstractEditingModel)model).getDocument());
+			range = findRange();
+		}
+		setHighlightRange(range, true);
+		setSelectedRange(range, true);
+	}
+	
+	/*
+	 * Subclasses that wish to provide PDEFormPage -> PDESourcePage
+	 * selection persistence should override this and return true.
+	 */
+	protected boolean isSelectionListener() {
+		return false;
 	}
 }

@@ -61,6 +61,7 @@ public class CompositeManifestHeader extends ManifestHeader {
 	}
 	
 	public void update() {
+		// let subclasses fire changes
 		update(false);
 	}
 	

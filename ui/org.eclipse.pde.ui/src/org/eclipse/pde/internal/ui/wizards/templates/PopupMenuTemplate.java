@@ -28,7 +28,6 @@ import org.eclipse.pde.ui.templates.TemplateOption;
 public class PopupMenuTemplate extends PDETemplateSection {
 
 	public static final String KEY_TARGET_OBJECT = "objectClass"; //$NON-NLS-1$
-	public static final String KEY_NAME_FILTER = "nameFilter"; //$NON-NLS-1$
 	public static final String KEY_SUBMENU_LABEL = "subMenuLabel"; //$NON-NLS-1$
 	public static final String KEY_ACTION_LABEL = "actionLabel"; //$NON-NLS-1$
 	public static final String KEY_ACTION_CLASS = "actionClass"; //$NON-NLS-1$
@@ -55,11 +54,6 @@ public class PopupMenuTemplate extends PDETemplateSection {
 			KEY_TARGET_OBJECT,
 			PDEUIMessages.PopupMenuTemplate_targetClass,
 			"org.eclipse.core.resources.IFile", //$NON-NLS-1$
-			0);
-		addOption(
-			KEY_NAME_FILTER,
-			PDEUIMessages.PopupMenuTemplate_nameFilter,
-			"plugin.xml", //$NON-NLS-1$
 			0);
 		addOption(
 			KEY_SUBMENU_LABEL,
@@ -152,9 +146,6 @@ public class PopupMenuTemplate extends PDETemplateSection {
 		objectContributionElement.setAttribute(
 			"objectClass", //$NON-NLS-1$
 			getStringOption(KEY_TARGET_OBJECT));
-		objectContributionElement.setAttribute(
-			"nameFilter", //$NON-NLS-1$
-			getStringOption(KEY_NAME_FILTER));
 		objectContributionElement.setAttribute(
 			"id", //$NON-NLS-1$
 			model.getPluginBase().getId() + ".contribution1"); //$NON-NLS-1$

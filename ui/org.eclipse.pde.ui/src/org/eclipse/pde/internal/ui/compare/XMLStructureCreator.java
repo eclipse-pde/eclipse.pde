@@ -94,6 +94,13 @@ public class XMLStructureCreator implements IStructureCreator {
 			prevlocator = new LocatorImpl(locator);
 		}
 
+		public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
+			// Prevent the resolution of external entities in order to
+			// prevent the parser from accessing the Internet
+			// This will prevent huge workbench performance degradations and hangs
+			return new InputSource(new StringReader("")); //$NON-NLS-1$
+		}
+		
 		public void startDocument() {
 			prevlocator = new LocatorImpl(locator);
 		}
@@ -693,4 +700,5 @@ public class XMLStructureCreator implements IStructureCreator {
 	public boolean getRemoveWhiteSpace() {
 		return fRemoveWhiteSpace;
 	}
+	
 }

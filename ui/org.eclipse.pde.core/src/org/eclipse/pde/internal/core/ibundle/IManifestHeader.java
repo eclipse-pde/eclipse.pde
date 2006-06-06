@@ -50,4 +50,11 @@ public interface IManifestHeader extends IDocumentKey {
 	 * 
 	 */
 	void update();
+	
+	/**
+	 * Forces the header to update its value based on the current components,
+	 * attributes and directives it contains.
+	 * @param notify if true the model will be notified of the "changes"
+	 */
+	void update(boolean notify);
 }

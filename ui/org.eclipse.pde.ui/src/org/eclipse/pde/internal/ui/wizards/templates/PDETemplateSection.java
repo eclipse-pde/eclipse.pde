@@ -16,16 +16,27 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.templates.OptionTemplateSection;
 import org.osgi.framework.Bundle;
 
 public abstract class PDETemplateSection extends OptionTemplateSection {
 
+	public static final String KEY_PRODUCT_BRANDING = "productBranding"; //$NON-NLS-1$
+	public static final String KEY_PRODUCT_NAME = "productName"; //$NON-NLS-1$
+	
+	public static final String VALUE_PRODUCT_ID = "product"; //$NON-NLS-1$
+	public static final String VALUE_PRODUCT_NAME = "RCP Product"; //$NON-NLS-1$
+	public static final String VALUE_PERSPECTIVE_NAME = "RCP Perspective"; //$NON-NLS-1$
+	public static final String VALUE_APPLICATION_ID = "application"; //$NON-NLS-1$
+	
 	protected ResourceBundle getPluginResourceBundle() {
 		Bundle bundle = Platform.getBundle(PDEPlugin.getPluginId());
 		return Platform.getResourceBundle(bundle);
@@ -89,4 +100,20 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 		}
 		return buffer.toString().toLowerCase(Locale.ENGLISH);
 	}
+	
+	protected void generateFiles(IProgressMonitor monitor) throws CoreException {
+		super.generateFiles(monitor);
+		if (copyBrandingDirectory())
+			super.generateFiles(monitor, PDEPlugin.getDefault().getBundle().getEntry("branding/")); //$NON-NLS-1$
+	}
+	
+	protected boolean copyBrandingDirectory() {
+		return getBooleanOption(KEY_PRODUCT_BRANDING);
+	}
+	
+	protected void createBrandingOptions() {
+		addOption(KEY_PRODUCT_BRANDING, PDEUIMessages.HelloRCPTemplate_productBranding, false, 0);
+	}
+	
+
 }

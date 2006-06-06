@@ -21,13 +21,13 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.StandardSourcePathProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 /**
  * Generates a source lookup path for Runtime Workbench launch configurations.
@@ -106,7 +106,7 @@ public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 					IPackageFragmentRoot[] roots = project
 							.getPackageFragmentRoots();
 					for (int j = 0; j < roots.length; j++) {
-						if (roots[j].getKind() == IPackageFragmentRoot.K_BINARY && !isJRELibrary(roots[j])) {
+						if (roots[j].getKind() == IPackageFragmentRoot.K_BINARY && !PDEJavaHelper.isJRELibrary(roots[j])) {
 							IRuntimeClasspathEntry rte = JavaRuntime
 									.newArchiveRuntimeClasspathEntry(roots[j]
 											.getPath());
@@ -131,16 +131,5 @@ public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
 		}
 		return (IRuntimeClasspathEntry[]) all
 				.toArray(new IRuntimeClasspathEntry[all.size()]);
-	}
-	private boolean isJRELibrary(IPackageFragmentRoot root) {
-		try {
-			IPath path = root.getRawClasspathEntry().getPath();
-			if (path.equals(new Path(JavaRuntime.JRE_CONTAINER))
-					|| path.equals(new Path(JavaRuntime.JRELIB_VARIABLE))) {
-				return true;
-			}
-		} catch (JavaModelException e) {
-		}
-		return false;
 	}
 }

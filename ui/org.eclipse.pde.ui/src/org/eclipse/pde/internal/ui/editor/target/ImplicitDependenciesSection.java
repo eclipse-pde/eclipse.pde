@@ -262,4 +262,6 @@ public class ImplicitDependenciesSection extends TableSection {
 		if (model != null)
 			model.removeModelChangedListener(this);
 	}
+	
+	protected boolean createCount() { return true; }
 }

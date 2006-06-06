@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.preferences;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
@@ -21,6 +22,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
@@ -74,6 +76,20 @@ public class EditorPreferencePage
 		link.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				PreferencesUtil.createPreferenceDialogOn(link.getShell(), target, null, null);
+			}
+		});
+		
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		
+		Button foldingButton = new Button(parent, SWT.CHECK | SWT.LEFT | SWT.WRAP);
+		foldingButton.setText(PDEUIMessages.EditorPreferencePage_folding);
+		foldingButton.setLayoutData(gd);
+		foldingButton.setSelection(
+				PDEPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.EDITOR_FOLDING_ENABLED));
+		foldingButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+				store.setValue(IPreferenceConstants.EDITOR_FOLDING_ENABLED, ((Button) e.getSource()).getSelection());
 			}
 		});
 		

@@ -149,10 +149,7 @@ public class PluginVersionPart {
 			} catch (IllegalArgumentException e) {
 				return new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, PDEUIMessages.DependencyPropertiesDialog_invalidFormat, null); //$NON-NLS-1$;
 			}
-        if (v1.compareTo(v2) == 0) {
-        	fIsRanged = false;
-        	return Status.OK_STATUS;
-        } else if (v1.compareTo(v2) < 0) {
+        if (v1.compareTo(v2) == 0 || v1.compareTo(v2) < 0) {
         	fIsRanged = true;
             return Status.OK_STATUS;
         }
@@ -194,9 +191,17 @@ public class PluginVersionPart {
 	
 	public String getVersion() {
         String version;
-		if (fIsRanged)
-        	version = new VersionRange(new Version(getMinVersion()), getMinInclusive(), new Version(getMaxVersion()), getMaxInclusive()).toString();
-        else {
+		if (fIsRanged) {
+        	// if versions are equal they must be inclusive for a range to be valid
+        	// blindly set for the user
+			String minV = getMinVersion();
+			String maxV = getMaxVersion();
+			boolean minI = getMinInclusive();
+			boolean maxI = getMaxInclusive();
+			if (minV.equals(maxV))
+				minI = maxI = true;
+        	version = new VersionRange(new Version(minV), minI, new Version(maxV), maxI).toString();
+		} else {
         	String singleversion = extractSingleVersionFromText();
         	if (singleversion == null || singleversion.length() == 0)
         		version = ""; //$NON-NLS-1$

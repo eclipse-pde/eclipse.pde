@@ -23,9 +23,11 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExportOptionsTab_antReservedMessage;
 
-	public static String ExternalizeStringsWizardPage_subKey;
+	public static String FormatManifestAction_actionText;
 
-	public static String ExternalizeStringsWizardPage_value;
+	public static String FormatManifestOperation_subtask;
+
+	public static String FormatManifestOperation_task;
 
 	public static String HelpTemplate_sampleText;
 
@@ -94,6 +96,8 @@ public class PDEUIMessages extends NLS {
 	public static String SchemaIncludesSection_missingWarningTitle;
 
 	public static String ShowDescriptionAction_schemaNotAvail;
+
+	public static String TableSection_itemCount;
 
 	public static String UpdateClasspathResolution_label;
 
@@ -454,7 +458,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String ManifestEditor_noPlatformHome;
 	public static String ManifestSourcePage_libraries;
-	public static String MailTemplate_perspectiveName;
 	public static String ManifestSourcePage_extensions;
 	public static String MainMethodSearchEngine_search;
 	public static String ManifestEditor_ManifestPropertySheet_gotoAction_label;
@@ -937,9 +940,7 @@ public class PDEUIMessages extends NLS {
 	public static String BaseExtensionPoint_pluginId;
 	public static String BaseExtensionPoint_id;
 	public static String BaseExtensionPoint_name;
-	public static String BaseExtensionPoint_missingId;
-	public static String BaseExtensionPoint_noPlugin_missingId;
-	public static String BaseExtensionPoint_malformedId;
+
 	public static String BaseExtensionPoint_schema;
 	public static String BaseExtensionPoint_schemaLocation;
 	public static String BaseExtensionPoint_edit;
@@ -999,6 +1000,19 @@ public class PDEUIMessages extends NLS {
 	public static String NewSchemaFileWizard_title;
 	public static String NewSchemaFileWizard_desc;
 
+	public static String BaseExtensionPointMainPage_missingExtensionPointID;
+	public static String BaseExtensionPointMainPage_invalidCompositeID;
+	public static String BaseExtensionPointMainPage_invalidSimpleID;
+	public static String BaseExtensionPointMainPage_missingExtensionPointName;
+	public static String BaseExtensionPointMainPage_missingExtensionPointSchema;
+	
+	public static String NewSchemaFileMainPage_missingPluginID;
+	public static String NewSchemaFileMainPage_nonExistingPluginID;
+	public static String NewSchemaFileMainPage_externalPluginID;
+	public static String NewSchemaFileMainPage_missingContainer;
+	public static String NewSchemaFileMainPage_invalidContainer;
+	public static String NewSchemaFileMainPage_nonExistingContainer;	
+	
 	public static String ConvertedProjectWizard_title;
 	public static String ConvertedProjectWizard_desc;
 	public static String ConvertedProjectWizard_projectList;
@@ -1028,7 +1042,6 @@ public class PDEUIMessages extends NLS {
 	public static String HelloRCPNewWizard_title;
 	public static String HelloRCPTemplate_title;
 	public static String HelloRCPTemplate_desc;
-	public static String HelloRCPTemplate_appId;
 	public static String HelloRCPTemplate_appClass;
 	public static String HelloNonUIRCPNewWizard_title;
 	public static String HelloNonUIRCPTemplate_title;
@@ -1048,9 +1061,7 @@ public class PDEUIMessages extends NLS {
 	public static String IntroNewWizard_wtitle;
 	public static String IntroTemplate_title;
 	public static String IntroTemplate_desc;
-	public static String IntroTemplate_productID;
 	public static String IntroTemplate_productName;
-	public static String IntroTemplate_application;
     public static String IntroTemplate_generate;
     public static String IntroTemplate_generateDynamicContent;
     public static String IntroTemplate_generateStaticContent;
@@ -1058,10 +1069,8 @@ public class PDEUIMessages extends NLS {
 	public static String ViewRCPNewWizard_title;
 	public static String ViewRCPTemplate_title;
 	public static String ViewRCPTemplate_desc;
-	public static String ViewRCPTemplate_appId;
 	public static String ViewRCPTemplate_appClass;
 	public static String ViewRCPTemplate_packageName;
-	public static String ViewRCPTemplate_className;
 	public static String ViewRCPTemplate_windowTitle;
 
 	public static String MultiPageEditorNewWizard_wtitle;
@@ -1093,7 +1102,6 @@ public class PDEUIMessages extends NLS {
 	public static String PointSelectionPage_tab2;
 	public static String PopupMenuTemplate_desc;
 	public static String PopupMenuTemplate_targetClass;
-	public static String PopupMenuTemplate_nameFilter;
 	public static String PopupMenuTemplate_newAction;
 	public static String PopupMenuTemplate_submenuName;
 	public static String PopupMenuTemplate_defaultSubmenuName;
@@ -1357,7 +1365,6 @@ public class PDEUIMessages extends NLS {
 	public static String RuntimeWorkbenchShortcut_name;
 	public static String RuntimeInfoSection_addEntry;
 	public static String RuntimeInfoSection_rename;
-	public static String BaseExtensionPointMainPage_noContainer;
 	public static String BaseExtensionPointMainPage_pluginId_tooltip;
 	public static String BaseExtensionPointMainPage_schemaLocation_tooltip;
 	public static String BaseExtensionPointMainPage_pluginBrowse;
@@ -1729,7 +1736,6 @@ public class PDEUIMessages extends NLS {
 	public static String LoopDialog_title;
 	public static String MatchSection_title;
 	public static String MailTemplate_title;
-	public static String MailTemplate_appId;
 	public static String MailNewWizard_title;
 	public static String MatchSection_desc;
 	public static String MailTemplate_desc;
@@ -1799,7 +1805,6 @@ public class PDEUIMessages extends NLS {
 	public static String EnvironmentBlock_jreNote;
 	public static String EnvironmentBlock_targetEnv;
 	public static String MailTemplate_productName;
-	public static String MailTemplate_productID;
 	public static String MailTemplate_appClass;
 	public static String MailTemplate_packageName;
 
@@ -2000,8 +2005,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExtensionPointsSection_showDescription;
 
-	public static String HelloRCPTemplate_perspective;
-
+	public static String HelloRCPTemplate_productBranding;
+	
 	public static String OverviewPage_buildTitle;
 
 	public static String OverviewPage_buildQuestion;
@@ -2874,7 +2879,9 @@ public class PDEUIMessages extends NLS {
 
 	public static String ImportPackageSection_dialogButtonLabel;
 	
-	public static String NewExtensionPointMainPage_malformedId;
+	public static String EditorPreferencePage_folding;
+	
+	public static String ExternalizeStringsWizardPage_subKey;
 
-	public static String NewExtensionPointMainPage_namespaceNotFound;
+	public static String ExternalizeStringsWizardPage_value;
 }

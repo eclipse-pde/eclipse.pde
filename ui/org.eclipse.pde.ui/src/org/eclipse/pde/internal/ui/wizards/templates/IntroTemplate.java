@@ -36,21 +36,10 @@ public class IntroTemplate extends PDETemplateSection {
     
     private static final String STATIC_SELECTED = "static"; //$NON-NLS-1$
 
-	private static final String KEY_PRODUCT_ID = "IntroTemplate.productID"; //$NON-NLS-1$
-
-	private static final String KEY_PRODUCT_NAME = "productName"; //$NON-NLS-1$
-
-	private static final String KEY_APPLICATION_ID = "IntroTemplate.application"; //$NON-NLS-1$
-
     private static final String KEY_GENERATE_DYNAMIC_CONTENT = "IntroTemplate.generateDynamicContent"; //$NON-NLS-1$
-     
-    public static final String CLASS_NAME = "SampleXHTMLContentProvider"; //$NON-NLS-1$
-    
-    public static final String KEY_PERSPECTIVE_NAME = "perspectiveName"; //$NON-NLS-1$
     
     private String packageName;
     private String introID;
-    private String perspectiveName;
     private static final String APPLICATION_CLASS = "Application"; //$NON-NLS-1$
 
 	public IntroTemplate() {
@@ -61,14 +50,9 @@ public class IntroTemplate extends PDETemplateSection {
 
 	private void createOptions() {
 
-		// product options
-		addOption(KEY_PRODUCT_ID, PDEUIMessages.IntroTemplate_productID,
-				"product", 0); //$NON-NLS-1$ 
 		addOption(KEY_PRODUCT_NAME, PDEUIMessages.IntroTemplate_productName,
-				"My New Product", 0); //$NON-NLS-1$        
-		addOption(KEY_APPLICATION_ID, PDEUIMessages.IntroTemplate_application,
-				"application", 0); //$NON-NLS-1$ 
-
+				VALUE_PRODUCT_NAME, 0);   
+		
         addOption( KEY_GENERATE_DYNAMIC_CONTENT,
                 PDEUIMessages.IntroTemplate_generate,
                 new String[][] { {STATIC_SELECTED, PDEUIMessages.IntroTemplate_generateStaticContent}, 
@@ -97,9 +81,6 @@ public class IntroTemplate extends PDETemplateSection {
         // model has not been created
         String pluginId = data.getId();
         initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId) + ".intro");  //$NON-NLS-1$
-        initializeOption(KEY_APPLICATION_ID, getFormattedPackageName(pluginId) + ".application");  //$NON-NLS-1$
-        initializeOption(KEY_PERSPECTIVE_NAME, getFormattedPackageName(pluginId) + " Perspective");  //$NON-NLS-1$
-        perspectiveName = getFormattedPackageName(pluginId) + ".perspective"; //$NON-NLS-1$
         packageName =  getFormattedPackageName(pluginId) + ".intro"; //$NON-NLS-1$
         introID = getFormattedPackageName(pluginId) + ".intro"; //$NON-NLS-1$
     }
@@ -108,9 +89,6 @@ public class IntroTemplate extends PDETemplateSection {
         // we can initialize directly from it
         String pluginId = model.getPluginBase().getId();
         initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId) + ".intro");  //$NON-NLS-1$
-        initializeOption(KEY_APPLICATION_ID, getFormattedPackageName(pluginId) + ".application");  //$NON-NLS-1$
-        initializeOption(KEY_PERSPECTIVE_NAME, getFormattedPackageName(pluginId) + " Perspective");  //$NON-NLS-1$
-        perspectiveName = getFormattedPackageName(pluginId) + ".perspective"; //$NON-NLS-1$
         packageName =  getFormattedPackageName(pluginId) + ".intro"; //$NON-NLS-1$
         introID = getFormattedPackageName(pluginId) + ".intro"; //$NON-NLS-1$
     }
@@ -143,7 +121,7 @@ public class IntroTemplate extends PDETemplateSection {
         		
 		// org.eclipse.core.runtime.applications
 		IPluginExtension extension = createExtension("org.eclipse.core.runtime.applications", true); //$NON-NLS-1$
-		extension.setId(getStringOption(KEY_APPLICATION_ID));
+		extension.setId(VALUE_APPLICATION_ID);
 		
 		IPluginElement element = model.getPluginFactory().createElement(extension);
 		element.setName("application"); //$NON-NLS-1$
@@ -163,30 +141,15 @@ public class IntroTemplate extends PDETemplateSection {
 		IPluginElement perspectiveElement = model.getPluginFactory().createElement(perspectivesExtension);
 		perspectiveElement.setName("perspective"); //$NON-NLS-1$
 		perspectiveElement.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + ".Perspective"); //$NON-NLS-1$ //$NON-NLS-2$
-		perspectiveElement.setAttribute("name", getStringOption(KEY_PERSPECTIVE_NAME)); //$NON-NLS-1$
+		perspectiveElement.setAttribute("name", VALUE_PERSPECTIVE_NAME); //$NON-NLS-1$
 		perspectiveElement.setAttribute("id", plugin.getId() + ".perspective"); //$NON-NLS-1$ //$NON-NLS-2$
 		perspectivesExtension.add(perspectiveElement);
 		
 		if (!perspectivesExtension.isInTheModel())
 			plugin.add(perspectivesExtension);
 
-
-		// org.eclipse.core.runtime.products
-		IPluginExtension extension1 = createExtension(
-				"org.eclipse.core.runtime.products", true); //$NON-NLS-1$
-		extension1.setId(getStringOption(KEY_PRODUCT_ID));
-		//extension1.setName("org.eclipse.core.runtime.products"); //$NON-NLS-1$
-
-		IPluginElement productElement = factory.createElement(extension1);
-		productElement.setName("product"); //$NON-NLS-1$
-		productElement.setAttribute("name", getStringOption(KEY_PRODUCT_NAME)); //$NON-NLS-1$
-		productElement.setAttribute(
-				"application", plugin.getId() + "." + getStringOption(KEY_APPLICATION_ID)); //$NON-NLS-1$ //$NON-NLS-2$
-		extension1.add(productElement);
-
-		if (!extension1.isInTheModel())
-			plugin.add(extension1);
-
+		createProductExtension();
+		
 		// org.eclipse.ui.intro
 		IPluginExtension extension2 = createExtension(
 				"org.eclipse.ui.intro", true); //$NON-NLS-1$
@@ -204,7 +167,7 @@ public class IntroTemplate extends PDETemplateSection {
 		introProductBindingElement.setAttribute("introId", introID);//$NON-NLS-1$
                 
 		introProductBindingElement.setAttribute("productId", plugin.getId() //$NON-NLS-1$
-				+ '.' + getStringOption(KEY_PRODUCT_ID));
+				+ '.' + VALUE_PRODUCT_ID);
 		extension2.add(introProductBindingElement);
 
 		if (!extension2.isInTheModel())
@@ -257,6 +220,30 @@ public class IntroTemplate extends PDETemplateSection {
 
 	}
 
+   private void createProductExtension() throws CoreException {
+		IPluginBase plugin = model.getPluginBase();
+		IPluginExtension extension = createExtension("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
+		extension.setId(VALUE_PRODUCT_ID);
+
+		IPluginElement element = model.getFactory().createElement(extension);
+		element.setName("product"); //$NON-NLS-1$
+		element.setAttribute("name", getStringOption(KEY_PRODUCT_NAME)); //$NON-NLS-1$		
+		element.setAttribute("application", plugin.getId() + "." + VALUE_APPLICATION_ID); //$NON-NLS-1$ //$NON-NLS-2$
+
+		IPluginElement property = model.getFactory().createElement(element);
+
+		property = model.getFactory().createElement(element);
+		property.setName("property"); //$NON-NLS-1$
+		property.setAttribute("name", "windowImages"); //$NON-NLS-1$ //$NON-NLS-2$
+		property.setAttribute("value", "icons/alt_window_16.gif,icons/alt_window_32.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+		element.add(property);
+
+		extension.add(element);
+
+		if (!extension.isInTheModel())
+			plugin.add(extension);
+	}
+   
 	protected boolean isOkToCreateFolder(File sourceFolder) {
 		return true;
 	}
@@ -312,9 +299,7 @@ public class IntroTemplate extends PDETemplateSection {
     
     public String getStringOption(String name) {
         
-        if (name.equals(KEY_PERSPECTIVE_NAME)) {
-            return perspectiveName;
-        } else if ( name.equals(KEY_PACKAGE_NAME)) {
+    	if ( name.equals(KEY_PACKAGE_NAME)) {
             return packageName;
         }
         
@@ -322,12 +307,13 @@ public class IntroTemplate extends PDETemplateSection {
     }
 
     public String[] getNewFiles() {
-        
-       if ( getValue(KEY_GENERATE_DYNAMIC_CONTENT).toString().equals(STATIC_SELECTED)) {
-           return new String[] {"content/", "splash.bmp", "introContent.xml"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-       } 
-           
-       return new String[] {"content/", "splash.bmp", "introContent.xml", "ext.xml"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-       
-    }
+		if (getValue(KEY_GENERATE_DYNAMIC_CONTENT).toString().equals(STATIC_SELECTED)) {
+			return new String[] {"icons/", "content/", "splash.bmp", "introContent.xml" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		}
+		return new String[] {"icons/", "content/", "splash.bmp", "introContent.xml", "ext.xml" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	}
+    
+	protected boolean copyBrandingDirectory() {
+		return true;
+	}
 }

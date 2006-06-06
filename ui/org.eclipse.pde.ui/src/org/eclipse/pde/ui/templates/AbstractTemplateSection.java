@@ -248,6 +248,18 @@ public abstract class AbstractTemplateSection
 	/**
 	 * Generates files as part of the template execution. The default
 	 * implementation uses template location as a root of the file templates.
+	 * @see generateFiles(IProgressMonitor monitor, URL locationUrl) on how
+	 * the location gets processed.
+	 * 
+	 * @param monitor
+	 *            progress monitor to use to indicate generation progress
+	 */
+	protected void generateFiles(IProgressMonitor monitor) throws CoreException {
+		generateFiles(monitor, getTemplateLocation());
+	}
+	
+	/**
+	 * Generates files as part of the template execution.
 	 * The files found in the location are processed in the following way:
 	 * <ul>
 	 * <li>Files and folders found in the directory <samp>bin </samp> are
@@ -261,13 +273,14 @@ public abstract class AbstractTemplateSection
 	 * files. Variable replacement also includes file names.</li>
 	 * </ul>
 	 * 
+	 * @since 3.3
 	 * @param monitor
 	 *            progress monitor to use to indicate generation progress
+	 * @param locationUrl a url pointing to a file/directory that will be copied into the template
 	 */
-	protected void generateFiles(IProgressMonitor monitor) throws CoreException {
+	protected void generateFiles(IProgressMonitor monitor, URL locationUrl) throws CoreException {
 		monitor.setTaskName(PDEUIMessages.AbstractTemplateSection_generating);
 
-		URL locationUrl = getTemplateLocation();
 		if (locationUrl == null) {
 			return;
 		}

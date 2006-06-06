@@ -247,6 +247,9 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	}
     
     public boolean doGlobalAction(String actionId) {
+    	
+		if (!isEditable()) { return false; }
+    	
         if (actionId.equals(ActionFactory.DELETE.getId())) {
             handleRemove();
             return true;
@@ -817,4 +820,6 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
             }
         }        
     }
+
+	protected boolean createCount() { return true; }
 }

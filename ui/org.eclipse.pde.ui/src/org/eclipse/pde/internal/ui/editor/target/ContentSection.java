@@ -37,7 +37,6 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.itarget.ITarget;
@@ -69,6 +68,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
@@ -328,12 +328,10 @@ public class ContentSection extends TableSection {
 		ITarget target = getTarget();
 		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getWorkspaceModels();
 		for (int i = 0; i < models.length; i++) {
-			if (models[i] instanceof IBundlePluginModelBase) {
-				BundleDescription desc = ((IBundlePluginModelBase)models[i]).getBundleDescription();
-				String id = desc.getSymbolicName();
-				if (!target.containsPlugin(id) && !used.containsKey(id))
-					map.put(id, desc);
-			}
+			BundleDescription desc = models[i].getBundleDescription();
+			String id = desc.getSymbolicName();
+			if (!target.containsPlugin(id) && !used.containsKey(id))
+				map.put(id, desc);
 		}
 		return map;
 	}
@@ -550,12 +548,29 @@ public class ContentSection extends TableSection {
 				}
 			}
 		} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
+			
+			Table table = fContentViewer.getTable();
+			int index = table.getSelectionIndex();			
+			
 			for (int i = 0; i < objects.length; i++) {
 				if ((objects[i] instanceof ITargetPlugin && fLastTab == 0) ||
 						(objects[i] instanceof ITargetFeature && fLastTab == 1)) {
 					fContentViewer.remove(objects[i]);
 				}
 			}
+			
+			// Update Selection
+
+			int count = table.getItemCount();
+				
+			if ( count == 0 ) {
+				// Nothing to select
+			} else if ( index < count ) {
+				table.setSelection( index );
+			} else {
+				table.setSelection( count - 1 );
+			}	
+			
 		}
 		if (e.getChangedProperty() == ITarget.P_ALL_PLUGINS)
 			refresh();
@@ -658,4 +673,6 @@ public class ContentSection extends TableSection {
 				fTabImages[i].dispose();
 		super.dispose();
 	}
+	
+	protected boolean createCount() { return true; }
 }

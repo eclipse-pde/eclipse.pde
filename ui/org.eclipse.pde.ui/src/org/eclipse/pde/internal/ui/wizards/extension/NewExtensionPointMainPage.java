@@ -18,15 +18,12 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.swt.widgets.Composite;
 
 public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
-	private IPluginModelBase model;
-	private IPluginExtensionPoint point;
+	private IPluginModelBase fModel;
+	private IPluginExtensionPoint fPoint;
 	
 	public NewExtensionPointMainPage(
 			IProject project,
@@ -37,19 +34,14 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 	public NewExtensionPointMainPage(IProject project, IPluginModelBase model, IPluginExtensionPoint point){
 		super(project);
 		initialize();
-		this.model = model;
-		this.point = point;
+		this.fModel = model;
+		this.fPoint = point;
 	}
 	public void initialize(){
 		setTitle(PDEUIMessages.NewExtensionPointWizard_title);
 		setDescription(PDEUIMessages.NewExtensionPointWizard_desc);
 	}
-	public void createControl(Composite parent) {
-		super.createControl(parent);
-		initializeValues();
-		setPageComplete(checkFieldsFilled());
-		setMessage(null);
-	}
+	
 	protected boolean isPluginIdFinal(){
 		return true;
 	}
@@ -59,9 +51,9 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 		final String name = fNameText.getText();
 		final String schema = fSchemaText.getText();
 		
-		IPluginBase plugin = model.getPluginBase();
+		IPluginBase plugin = fModel.getPluginBase();
 		
-		IPluginExtensionPoint point = model.getFactory().createExtensionPoint();
+		IPluginExtensionPoint point = fModel.getFactory().createExtensionPoint();
 		try {
 			point.setId(id);
 			if (name.length() > 0)
@@ -88,39 +80,38 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 		return true;
 	}
 	public String getPluginId() {
-		return model.getPluginBase().getId();
+		return fModel.getPluginBase().getId();
 	}
-	public void initializeValues(){
-		if (point == null)
+	protected void initializeValues(){
+		if (fPoint == null)
 			return;
-		if (fIdText!=null && point.getId()!=null)
-			fIdText.setText(point.getId());
-		if (fNameText !=null && point.getName() != null)
-			fNameText.setText(point.getName());
-		if (fSchemaText!= null && point.getSchema()!=null)
-			fSchemaText.setText(point.getSchema());
+		if (fIdText!=null && fPoint.getId()!=null)
+			fIdText.setText(fPoint.getId());
+		if (fNameText !=null && fPoint.getName() != null)
+			fNameText.setText(fPoint.getName());
+		if (fSchemaText!= null && fPoint.getSchema()!=null)
+			fSchemaText.setText(fPoint.getSchema());
 	}
-	public String getInvalidIdMessage() {
-		String schemaVersion = model.getPluginBase().getSchemaVersion();
-		String id = fIdText.getText();
-		if (schemaVersion == null || Float.parseFloat(schemaVersion) >= 3.2) {
-			if (!IdUtil.isValidCompositeID(id))
-				return PDEUIMessages.NewExtensionPointMainPage_malformedId;
-			else if (!isValidNamespace(id))
-				return PDEUIMessages.NewExtensionPointMainPage_namespaceNotFound;
-			return null;
-		} 
-		return IdUtil.isValidSimpleID(id) ? null : PDEUIMessages.BaseExtensionPoint_malformedId;
-	}
-	protected final boolean isValidNamespace(String id) {
-        int index = id.lastIndexOf('.');
-        if (index > 0) {
-        	String pluginId = id.substring(0, index);
-        	return PDECore.getDefault().getModelManager().findEntry(pluginId) != null; 
-        }
-        return true;
-	}
-	protected boolean isComplete() {
-		return IdUtil.isValidCompositeID(fIdText.getText());
-	}
+	
+	protected String validateFieldContents() {
+		String message = validateExtensionPointID();
+		if (message != null)
+			return message;
+		
+		message = validateExtensionPointName();
+		if (message != null)
+			return message;
+		
+		message = validateExtensionPointSchema();
+		if (message != null)
+			return message;
+		
+		return null;
+	}	
+	
+	protected String validateExtensionPointSchema() {
+		// Do not validate "Extension Point Schema" Field
+		return null;
+	}	
+	
 }

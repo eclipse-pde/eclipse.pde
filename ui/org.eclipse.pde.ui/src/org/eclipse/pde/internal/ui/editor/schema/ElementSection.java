@@ -403,7 +403,8 @@ public class ElementSection extends TreeSection {
 					}
 				}
 			} else if (obj instanceof ISchema) {
-				fTreeViewer.refresh();
+				if (!ISchemaObject.P_NAME.equals(e.getChangedProperty()))
+					fTreeViewer.refresh();
 			}
 		}
 	}

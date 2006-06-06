@@ -181,6 +181,9 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 	}
     
     public boolean doGlobalAction(String actionId) {
+    	
+    	if (!isEditable()) { return false; }
+    	
         if (actionId.equals(ActionFactory.DELETE.getId())) {
             handleRemove();
             return true;
@@ -572,4 +575,5 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
         return (manifestVersion < 2) ? ICoreConstants.PROVIDE_PACKAGE : Constants.EXPORT_PACKAGE;
     }
 
+	protected boolean createCount() { return true; }
 }

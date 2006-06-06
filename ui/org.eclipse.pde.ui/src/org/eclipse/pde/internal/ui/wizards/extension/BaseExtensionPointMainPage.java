@@ -21,13 +21,11 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -45,6 +43,7 @@ import org.eclipse.pde.internal.core.schema.SchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRootElement;
 import org.eclipse.pde.internal.core.schema.SchemaSimpleType;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -77,7 +76,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	public static final String SETTINGS_PLUGIN_ID = "BaseExtensionPoint.settings.pluginId"; //$NON-NLS-1$
 	public static final String SCHEMA_DIR = "schema"; //$NON-NLS-1$
 
-	private IContainer fContainer;
+	protected IContainer fContainer;
 	protected Text fIdText;
 	protected Text fPluginIdText;
 	protected Text fNameText;
@@ -87,6 +86,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	protected Button fSharedSchemaButton;
 	protected Button fPluginBrowseButton;
 	protected Button fFindLocationButton;
+	
 	public BaseExtensionPointMainPage(IContainer container) {
 		super("newExtensionPoint"); //$NON-NLS-1$
 		fContainer = container;
@@ -135,10 +135,9 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		fIdText.setLayoutData(gd);
 		fIdText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				fSchemaText
-						.setText(getSchemaLocation()
-								+ (getSchemaLocation().length() > 0 ? "/" : "") + fIdText.getText() + ".exsd"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				validatePage();
+				// setting the text will trigger validation
+				// do not implicitly validate here
+				fSchemaText.setText(getSchemaLocation() + (getSchemaLocation().length() > 0 ? "/" : "") + fIdText.getText() + ".exsd"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		});
 		label = new Label(container, SWT.NONE);
@@ -207,7 +206,14 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		else
 			fIdText.setFocus();
 		setControl(container);
+		initializeValues();
 		validatePage();
+		// do not start with an error message, convert to regular message
+		String error = getErrorMessage();
+		if (error != null) {
+			setMessage(error);
+			setErrorMessage(null);
+		}
 		Dialog.applyDialogFont(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.NEW_SCHEMA);
 	}
@@ -377,61 +383,57 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			}
 		});
 	}
-	public boolean checkFieldsFilled() {	
-		boolean empty = fIdText.getText().length() == 0 || fNameText.getText().length() == 0;
-		if (!empty && isPluginIdNeeded()) {
-			empty = getPluginId().length() == 0 || fSchemaText.getText().length() == 0 ;
-		}
-		if (!empty && !isPluginIdFinal())
-			empty = fSchemaLocationText.getText().length() == 0;
-		return !empty;
-	}
 
 	private void validatePage() {
-		if (!validateContainer())
-			return;
-		boolean isFilled = checkFieldsFilled();
-		String message = getInvalidIdMessage();              
-        if (message == null && !isFilled) {
-            if (isPluginIdNeeded())
-				message = PDEUIMessages.BaseExtensionPoint_missingId;
-			else
-				message = PDEUIMessages.BaseExtensionPoint_noPlugin_missingId;
-		}
-		setPageComplete(isFilled && isComplete());
-		setMessage(message, IMessageProvider.WARNING);
+		// clear opening message
+		setMessage(null);
+		String message = validateFieldContents();
+		setErrorMessage(message);
+		setPageComplete(message == null);
 	}
-	private boolean validateContainer() {
-		if (isPluginIdNeeded() && !isPluginIdFinal()){
-			String newContainerName = fSchemaLocationText.getText().trim();
-			if (newContainerName.length() == 0){
-				handleInvalidContainer();
-				return false;
-			}
-			IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
-			IResource resource = root.findMember(new Path(newContainerName));
-			if (resource instanceof IContainer) {
-				fContainer = (IContainer)resource;
-				handleValidContainer();
-				return true;
-			}
-			fContainer = null;
-			handleInvalidContainer();
-			return false;		
-		}
+
+	protected abstract String validateFieldContents();
+	
+	protected abstract void initializeValues();
+	
+	protected String validateExtensionPointID() {
+
+		// Verify not zero length
+		String id = fIdText.getText();
+		if (id.length() == 0)
+			return PDEUIMessages.BaseExtensionPointMainPage_missingExtensionPointID;
+
+		// For 3.2 or greater plug-ins verify that it is a valid composite ID
+		// and that it has a valid namespace
+		// For 3.1 and lower plug-ins verify that it is a valid simple ID
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(getPluginId());
+		String schemaVersion = model.getPluginBase().getSchemaVersion();
+		if (schemaVersion == null || Float.parseFloat(schemaVersion) >= 3.2) {
+			if (!IdUtil.isValidCompositeID(id))
+				return PDEUIMessages.BaseExtensionPointMainPage_invalidCompositeID;
+
+		} else if (!IdUtil.isValidSimpleID(id))
+			return PDEUIMessages.BaseExtensionPointMainPage_invalidSimpleID;
+
+		return null;
+	}
+	
+	protected String validateExtensionPointName() {
+		// Verify not zero length
+		if ( fNameText.getText().length() == 0 )
+			return PDEUIMessages.BaseExtensionPointMainPage_missingExtensionPointName;
 		
-		boolean exists = fContainer != null && fContainer.exists();
-		if (!exists)
-			handleInvalidContainer();
-		return exists;
+		return null;
 	}
-	private void handleInvalidContainer(){
-		setErrorMessage(PDEUIMessages.BaseExtensionPointMainPage_noContainer); 
-		setPageComplete(false);
+
+	protected String validateExtensionPointSchema() {
+		// Verify not zero length
+		if ( fSchemaText.getText().length() == 0 )
+			return PDEUIMessages.BaseExtensionPointMainPage_missingExtensionPointSchema; 
+		
+		return null;
 	}
-	private void handleValidContainer(){
-		setErrorMessage(null);
-	}
+
 	private void handlePluginBrowse(){
 		PluginSelectionDialog dialog = new PluginSelectionDialog(getShell(), PDECore.getDefault().getModelManager().getWorkspaceModels(), false);
 		dialog.create();
@@ -480,7 +482,5 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		// No validation done (other than making sure id is not blank)
 		return null;
 	}
-	protected boolean isComplete() {
-		return true;
-	}
+
 }

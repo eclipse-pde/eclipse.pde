@@ -28,12 +28,8 @@ import org.eclipse.pde.ui.templates.TemplateOption;
 
 public class MailTemplate extends PDETemplateSection {
 	
-	public static final String KEY_PRODUCT_NAME = "productName"; //$NON-NLS-1$
-	public static final String KEY_PRODUCT_ID = "productID"; //$NON-NLS-1$
-	public static final String KEY_PERSPECTIVE_NAME = "perspectiveName"; //$NON-NLS-1$
 	public static final String KEY_WORKBENCH_ADVISOR = "advisor"; //$NON-NLS-1$
 	public static final String KEY_APPLICATION_CLASS = "applicationClass"; //$NON-NLS-1$
-	public static final String KEY_APPLICATION_ID = "applicationID"; //$NON-NLS-1$
 	
 	public MailTemplate() {
 		setPageCount(1);
@@ -50,13 +46,7 @@ public class MailTemplate extends PDETemplateSection {
 
 	
 	private void createOptions() {	
-		addOption(KEY_PRODUCT_NAME, PDEUIMessages.MailTemplate_productName, "RCP Product", 0); //$NON-NLS-1$ 
-		
-		addOption(KEY_PRODUCT_ID, PDEUIMessages.MailTemplate_productID, "product", 0); //$NON-NLS-1$ 
-		
-		addOption(KEY_APPLICATION_ID, PDEUIMessages.MailTemplate_appId, "application", 0); //$NON-NLS-1$ 
-		
-		addOption(KEY_PERSPECTIVE_NAME, PDEUIMessages.MailTemplate_perspectiveName, (String)null, 0); // 
+		addOption(KEY_PRODUCT_NAME, PDEUIMessages.MailTemplate_productName, VALUE_PRODUCT_NAME, 0);
 		
 		addOption(KEY_PACKAGE_NAME, PDEUIMessages.MailTemplate_packageName, (String) null, 0); //		
 
@@ -68,19 +58,11 @@ public class MailTemplate extends PDETemplateSection {
 		// model has not been created
 		String packageName = getFormattedPackageName(data.getId());
 		initializeOption(KEY_PACKAGE_NAME, packageName);
-
-		int index = packageName.lastIndexOf('.');
-		String name = packageName.substring(index + 1) + " Perspective"; //$NON-NLS-1$
-		initializeOption(KEY_PERSPECTIVE_NAME, Character.toUpperCase(name.charAt(0)) + name.substring(1));
 	}
 	
 	public void initializeFields(IPluginModelBase model) {
 		String packageName = getFormattedPackageName(model.getPluginBase().getId());
 		initializeOption(KEY_PACKAGE_NAME, packageName);
-
-		int index = packageName.lastIndexOf('.');
-		String name = packageName.substring(index + 1) + " Perspective"; //$NON-NLS-1$
-		initializeOption(KEY_PERSPECTIVE_NAME, Character.toUpperCase(name.charAt(0)) + name.substring(1));
 	}
 	
 	/*
@@ -135,7 +117,7 @@ public class MailTemplate extends PDETemplateSection {
 		IPluginBase plugin = model.getPluginBase();
 		
 		IPluginExtension extension = createExtension("org.eclipse.core.runtime.applications", true); //$NON-NLS-1$
-		extension.setId(getStringOption(KEY_APPLICATION_ID));
+		extension.setId(VALUE_APPLICATION_ID);
 		
 		IPluginElement element = model.getPluginFactory().createElement(extension);
 		element.setName("application"); //$NON-NLS-1$
@@ -158,7 +140,7 @@ public class MailTemplate extends PDETemplateSection {
 		IPluginElement element = model.getPluginFactory().createElement(extension);
 		element.setName("perspective"); //$NON-NLS-1$
 		element.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) + ".Perspective"); //$NON-NLS-1$ //$NON-NLS-2$
-		element.setAttribute("name", getStringOption(KEY_PERSPECTIVE_NAME)); //$NON-NLS-1$
+		element.setAttribute("name", VALUE_PERSPECTIVE_NAME); //$NON-NLS-1$
 		element.setAttribute("id", plugin.getId() + ".perspective"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(element);
 		
@@ -287,12 +269,12 @@ public class MailTemplate extends PDETemplateSection {
 	private void createProductExtension() throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
-		extension.setId(getStringOption(KEY_PRODUCT_ID));
+		extension.setId(VALUE_PRODUCT_ID);
 		
 		IPluginElement element = model.getFactory().createElement(extension);
 		element.setName("product"); //$NON-NLS-1$
-		element.setAttribute("name", getStringOption(KEY_PRODUCT_NAME)); //$NON-NLS-1$
-		element.setAttribute("application", plugin.getId() + "." + getStringOption(KEY_APPLICATION_ID)); //$NON-NLS-1$ //$NON-NLS-2$
+		element.setAttribute("name", getStringOption(KEY_PRODUCT_NAME)); //$NON-NLS-1$		
+		element.setAttribute("application", plugin.getId() + "." + VALUE_APPLICATION_ID); //$NON-NLS-1$ //$NON-NLS-2$
 
 		IPluginElement property = model.getFactory().createElement(element);
 		property.setName("property"); //$NON-NLS-1$
@@ -356,6 +338,10 @@ public class MailTemplate extends PDETemplateSection {
 	 */
 	public String[] getNewFiles() {
 		return new String[] {"icons/", "plugin.properties", "product_lg.gif", "splash.bmp"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	}
+	
+	protected boolean copyBrandingDirectory() {
+		return true;
 	}
 
 }

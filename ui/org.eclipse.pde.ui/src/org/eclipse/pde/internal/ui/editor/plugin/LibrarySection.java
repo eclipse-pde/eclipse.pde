@@ -461,6 +461,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 						updateClasspath[0] = button.getSelection();
 					}
 				});
+				applyDialogFont(button);
 				return comp;
 			}
 		};

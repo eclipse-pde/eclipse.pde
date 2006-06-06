@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginAttribute;
@@ -29,7 +30,7 @@ public class ChooseClassXMLResolution extends AbstractXMLMarkerResolution {
 			return;
 		PluginAttribute attrib = (PluginAttribute)object;
 		IDocumentNode element = attrib.getEnclosingElement();
-		String type = PDEJavaHelper.selectType();
+		String type = PDEJavaHelper.selectType(fResource, IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES);
 		if (type != null)
 			element.setXMLAttribute(attrib.getName(), type);
 	}

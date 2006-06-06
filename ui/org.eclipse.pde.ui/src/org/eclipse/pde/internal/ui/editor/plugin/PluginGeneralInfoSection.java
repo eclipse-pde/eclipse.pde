@@ -10,27 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.search.IJavaSearchScope;
-import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
-import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -50,8 +36,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.TableWrapData;
@@ -138,44 +122,10 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	}
 	
 	private void doOpenSelectionDialog() {
-		try {
-			IResource resource = getPluginBase().getModel().getUnderlyingResource();
-			IProject project = (resource == null) ? null : resource.getProject();
-			if (project != null) {
-				SelectionDialog dialog = JavaUI.createTypeDialog(
-						PDEPlugin.getActiveWorkbenchShell(),
-						PlatformUI.getWorkbench().getProgressService(),
-						getSearchScope(project),
-						IJavaElementSearchConstants.CONSIDER_CLASSES, 
-						false,
-						""); //$NON-NLS-1$
-				dialog.setTitle(PDEUIMessages.GeneralInfoSection_selectionTitle); 
-				if (dialog.open() == Window.OK) {
-					IType type = (IType) dialog.getResult()[0];
-					fClassEntry.setValue(type.getFullyQualifiedName('$'));
-				}
-			}
-		} catch (CoreException e) {
-		}
-	}
-	
-	private IJavaSearchScope getSearchScope(IProject project) {
-		return SearchEngine.createJavaSearchScope(getDirectRoots(JavaCore.create(project)));
-	}
-	
-	private IPackageFragmentRoot[] getDirectRoots(IJavaProject project) {
-		ArrayList result = new ArrayList();
-		try {
-			IPackageFragmentRoot[] roots = project.getPackageFragmentRoots();
-			for (int i = 0; i < roots.length; i++) {
-				IClasspathEntry entry = roots[i].getRawClasspathEntry();
-				if (entry.getEntryKind() != IClasspathEntry.CPE_CONTAINER 
-					|| entry.getPath().equals(new Path(PDECore.CLASSPATH_CONTAINER_ID)))
-				result.add(roots[i]);
-			}
-		} catch (JavaModelException e) {
-		}
-		return (IPackageFragmentRoot[]) result.toArray(new IPackageFragmentRoot[result.size()]);
+		IResource resource = getPluginBase().getModel().getUnderlyingResource();
+		String type = PDEJavaHelper.selectType(resource, IJavaElementSearchConstants.CONSIDER_CLASSES);
+		if (type != null)
+			fClassEntry.setValue(type);
 	}
 
 	private JavaAttributeValue createJavaAttributeValue() {

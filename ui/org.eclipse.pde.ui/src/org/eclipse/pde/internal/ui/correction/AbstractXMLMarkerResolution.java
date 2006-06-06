@@ -21,7 +21,6 @@ import org.eclipse.pde.internal.core.builders.XMLErrorReporter;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
-import org.eclipse.pde.internal.core.text.plugin.PluginObjectNode;
 
 public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResolution {
 
@@ -53,7 +52,7 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 			return bundle.getManifestHeader(fLocationPath);
 		}
 		
-		IDocumentNode node = (PluginObjectNode)base.getPluginBase();
+		IDocumentNode node = (IDocumentNode)base.getPluginBase();
 		StringTokenizer strtok = new StringTokenizer(
 				fLocationPath,
 				Character.toString(XMLErrorReporter.F_CHILD_SEP));

@@ -168,7 +168,7 @@ public class PluginSection extends TableSection implements
 							try {
 								doAdd(models);
 							} catch (CoreException e) {
-								PDECore.log(e);
+								PDEPlugin.log(e);
 							}
 						}
 					}
@@ -444,4 +444,6 @@ public class PluginSection extends TableSection implements
 					.getElementAt(0)));
 		}
 	}
+	
+	protected boolean createCount() { return true; }
 }

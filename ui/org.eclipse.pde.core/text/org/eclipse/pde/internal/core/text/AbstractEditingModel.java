@@ -163,7 +163,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 		}
 	}
 	
-	protected abstract void adjustOffsets(IDocument document);
+	public abstract void adjustOffsets(IDocument document);
 	
 	protected InputStream getInputStream(IDocument document) throws UnsupportedEncodingException {
 		return new ByteArrayInputStream(document.get().getBytes(getCharset()));

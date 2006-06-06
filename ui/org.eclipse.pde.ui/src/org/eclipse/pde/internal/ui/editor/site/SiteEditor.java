@@ -30,7 +30,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.part.FileEditorInput;
 
 public class SiteEditor extends MultiSourceEditor {
@@ -69,13 +68,7 @@ public class SiteEditor extends MultiSourceEditor {
 		addSourcePage(context.getId());
 	}
 	public void contextRemoved(InputContext context) {
-		if (context.isPrimary()) {
-			close(true);
-			return;
-		}		
-		IFormPage page = findPage(context.getId());
-		if (page!=null)
-			removePage(context.getId());
+		close(false);
 	}
 
 	protected void createSystemFileContexts(InputContextManager manager,

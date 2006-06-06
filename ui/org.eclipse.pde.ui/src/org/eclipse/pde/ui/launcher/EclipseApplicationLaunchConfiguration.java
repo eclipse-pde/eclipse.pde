@@ -126,7 +126,14 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		if (!programArgs.contains("-nosplash") && showSplash) { //$NON-NLS-1$
 			if (TargetPlatform.getTargetVersion() >= 3.1) {
 				programArgs.add(0, "-launcher");  //$NON-NLS-1$
-				IPath path = ExternalModelManager.getEclipseHome().append("eclipse"); //$NON-NLS-1$
+				
+				IPath path = null;
+				if (TargetPlatform.getOS().equals("macosx") ) { //$NON-NLS-1$
+					path = ExternalModelManager.getEclipseHome().append("Eclipse.app/Contents/Resources/Splash.app/Contents/MacOS/eclipse"); //$NON-NLS-1$
+				} else {
+					path = ExternalModelManager.getEclipseHome().append("eclipse"); //$NON-NLS-1$	
+				}
+				
 				programArgs.add(1, path.toOSString()); //This could be the branded launcher if we want (also this does not bring much)
 				programArgs.add(2, "-name"); //$NON-NLS-1$
 				programArgs.add(3, "Eclipse");	//This should be the name of the product //$NON-NLS-1$

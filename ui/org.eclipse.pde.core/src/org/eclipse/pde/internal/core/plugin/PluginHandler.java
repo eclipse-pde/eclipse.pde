@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
+import java.io.StringReader;
 import java.util.Stack;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,6 +22,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -140,6 +142,13 @@ public class PluginHandler extends DefaultHandler {
 	
 	public String getSchemaVersion() {
 		return fSchemaVersion;
+	}
+	
+	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
+		// Prevent the resolution of external entities in order to
+		// prevent the parser from accessing the Internet
+		// This will prevent huge workbench performance degradations and hangs
+		return new InputSource(new StringReader("")); //$NON-NLS-1$
 	}
 	
 }

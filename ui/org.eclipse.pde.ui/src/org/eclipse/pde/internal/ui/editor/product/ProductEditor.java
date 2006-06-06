@@ -127,7 +127,7 @@ public class ProductEditor extends PDEFormEditor {
 	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextRemoved(org.eclipse.pde.internal.ui.editor.context.InputContext)
 	 */
 	public void contextRemoved(InputContext context) {
-		close(true);
+		close(false);
 	}
 
 	/* (non-Javadoc)

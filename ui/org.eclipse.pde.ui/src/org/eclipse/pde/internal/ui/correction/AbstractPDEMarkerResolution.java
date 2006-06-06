@@ -29,6 +29,10 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 	public static final int REMOVE_TYPE = 3;
 	
 	protected int fType;
+	/**
+	 * This variable will only be available after run() is called.
+	 * ie. its not the be used in getImage()/getType()/getDesciption()
+	 */
 	protected IResource fResource;
 
 	public AbstractPDEMarkerResolution(int type) {
@@ -48,6 +52,7 @@ public abstract class AbstractPDEMarkerResolution implements IMarkerResolution2 
 	}
 	
 	public void run(IMarker marker) {
+		fResource = marker.getResource();
 		ModelModification modification = new ModelModification((IFile)marker.getResource()) {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				createChange(model);

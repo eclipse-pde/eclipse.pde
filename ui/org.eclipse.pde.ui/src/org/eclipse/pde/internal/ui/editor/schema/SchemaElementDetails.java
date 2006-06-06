@@ -14,8 +14,10 @@ import java.util.ArrayList;
 
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaElementReference;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -128,6 +130,7 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		fName.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				fElement.setName(fName.getValue());
+				((Schema)fElement.getSchema()).updateReferencesFor(fElement, ISchema.REFRESH_RENAME);
 				setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
 			}
 		});

@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
@@ -21,12 +24,21 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
+import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
+import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -38,7 +50,9 @@ import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.pde.internal.ui.editor.text.ManifestConfiguration;
 import org.eclipse.pde.internal.ui.editor.text.ReconcilingStrategy;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.util.FormatManifestAction;
 import org.eclipse.swt.graphics.Image;
+import org.osgi.framework.Constants;
 
 public class BundleSourcePage extends KeyValueSourcePage {
 	
@@ -159,5 +173,110 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		more[0]= "org.eclipse.pde.ui.EditorPreferencePage"; //$NON-NLS-1$
 		System.arraycopy(ids, 0, more, 1, ids.length);
 		return more;
+	}
+	
+	public IDocumentRange findRange() {
+		if (fSel instanceof ImportObject) {
+			IPluginModelBase base = ((ImportObject)fSel).getImport().getPluginModel();
+			if (base instanceof IBundlePluginModelBase)
+				return getSpecificRange(
+						((IBundlePluginModelBase)base).getBundleModel(),
+						Constants.REQUIRE_BUNDLE,
+						((ImportObject)fSel).getId());
+		} else if (fSel instanceof ImportPackageObject) {
+			return getSpecificRange(
+					((ImportPackageObject)fSel).getModel(),
+					Constants.IMPORT_PACKAGE,
+					((ImportPackageObject)fSel).getValue());
+		} else if (fSel instanceof ExportPackageObject) {
+			return getSpecificRange(
+					((ExportPackageObject)fSel).getModel(),
+					Constants.EXPORT_PACKAGE,
+					((ExportPackageObject)fSel).getValue());
+		} else if (fSel instanceof IPluginLibrary) {
+			IPluginModelBase base = ((IPluginLibrary)fSel).getPluginModel();
+			if (base instanceof IBundlePluginModelBase)
+				return getSpecificRange(
+						((IBundlePluginModelBase)base).getBundleModel(),
+						Constants.BUNDLE_CLASSPATH,
+						((IPluginLibrary)fSel).getName());
+		} else if (fSel instanceof ExecutionEnvironment) {
+			return getSpecificRange(
+					((ExecutionEnvironment)fSel).getModel(),
+					Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT,
+					((ExecutionEnvironment)fSel).getValue());
+		}
+		return null;
+	}
+	
+	protected IDocumentRange getSpecificRange(IBundleModel model, String headerName, String search) {
+		IManifestHeader header = model.getBundle().getManifestHeader(headerName);
+		if (header != null) {
+			final int[] range = new int[] { -1, -1 }; // { offset, length }
+			if (model instanceof BundleModel) {
+				try {
+					int start = header.getOffset() + header.getName().length();
+					int length = header.getLength() - header.getName().length();
+					String headerValue = ((BundleModel)model).getDocument().get(start, length);
+					
+					int i = headerValue.indexOf(search);
+					int last = headerValue.lastIndexOf(search);
+					if (i > 0 && i != last) {
+						char[] sChar = search.toCharArray();
+						char[] headerChar = headerValue.toCharArray();
+						headLoop: for (; i <= last; i++) {
+							// check 1st, middle and last chars to speed things up
+							if (headerChar[i] != sChar[0] && 
+									headerChar[i + sChar.length / 2] != sChar[sChar.length / 2] && 
+									headerChar[i + sChar.length - 1] != sChar[sChar.length - 1])
+								continue headLoop;
+							
+							for (int j = 1; j < sChar.length - 1; j++)
+								if (headerChar[i + j] != sChar[j])
+									continue headLoop;
+	
+							// found match
+							char c = headerChar[i - 1];
+							if (!Character.isWhitespace(c) && c != ',')
+								// search string is contained by another
+								continue headLoop;
+							
+							c = headerChar[i + sChar.length];
+							if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '.')
+								// current match is longer than search
+								continue headLoop;
+							
+							break;
+						}
+					} 
+					if (i != -1) {
+						range[0] = start + i;
+						range[1] = search.length();
+					}
+				} catch (BadLocationException e) {
+				}
+			} 
+			if (range[0] == -1) { // if un-set offset use header range
+				range[0] = header.getOffset();
+				range[1] = header.getLength();
+			}
+			return new IDocumentRange() {
+				public int getOffset() { return range[0]; }
+				public int getLength() { return range[1]; }
+			};
+		}
+		return null;
+	}
+
+	protected boolean isSelectionListener() {
+		return true;
+	}
+	
+	protected void editorContextMenuAboutToShow(IMenuManager menu) {
+		super.editorContextMenuAboutToShow(menu);
+		menu.add(new Separator());
+		FormatManifestAction action = new FormatManifestAction();
+		action.selectionChanged(null, new StructuredSelection(getEditorInput()));
+		menu.add(action);
 	}
 }

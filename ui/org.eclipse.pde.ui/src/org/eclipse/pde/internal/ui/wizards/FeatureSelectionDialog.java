@@ -16,7 +16,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 
 public class FeatureSelectionDialog extends ElementListSelectionDialog {
 
@@ -39,12 +38,4 @@ public class FeatureSelectionDialog extends ElementListSelectionDialog {
 		return super.close();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.dialogs.AbstractElementListSelectionDialog#setValidator(org.eclipse.ui.dialogs.ISelectionStatusValidator)
-	 */
-	public void setValidator(ISelectionStatusValidator validator) {
-		super.setValidator(validator);
-	}
 }
