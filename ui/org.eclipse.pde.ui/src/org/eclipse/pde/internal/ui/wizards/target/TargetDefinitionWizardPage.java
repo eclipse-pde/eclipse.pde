@@ -118,7 +118,7 @@ public class TargetDefinitionWizardPage extends WizardNewFileCreationPage {
  					if (stream != null) {
 						ITargetModel model = new TargetModel();
 						model.load(stream, false);
-						new OpenTargetProfileAction(getShell(), model).run();
+						new OpenTargetProfileAction(getShell(), model, fTargets.getText()).run();
 					}
 				} catch (IOException e1) {
 				} catch (CoreException e2) {

@@ -49,11 +49,13 @@ public class TargetProfileWindow extends ApplicationWindow {
 
 	protected ITargetModel fTargetModel;
 	private FormToolkit fToolkit;
+	private String fTargetName;
 
-	public TargetProfileWindow(Shell parentShell, ITargetModel model) {
+	public TargetProfileWindow(Shell parentShell, ITargetModel model, String targetName) {
 		super(parentShell);
 		setShellStyle(SWT.MAX | SWT.RESIZE | SWT.CLOSE | SWT.APPLICATION_MODAL);
 		fTargetModel = model;
+		fTargetName = targetName;
  	}
 	
 	public void create() {
@@ -124,7 +126,7 @@ public class TargetProfileWindow extends ApplicationWindow {
 		body.setLayout(layout);
 		
 		ITarget target = fTargetModel.getTarget();
-		createEntry(body, toolkit, PDEUIMessages.TargetDefinitionSection_name, target.getName());
+		createEntry(body, toolkit, PDEUIMessages.TargetDefinitionSection_name, fTargetName);
 		createEntry(body, toolkit, PDEUIMessages.TargetDefinitionSection_targetLocation, getLocation(target));
 		
 		IAdditionalLocation[] locs = target.getAdditionalDirectories();

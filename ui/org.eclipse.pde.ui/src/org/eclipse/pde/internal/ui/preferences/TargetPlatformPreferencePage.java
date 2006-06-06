@@ -146,7 +146,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		profile.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (!fProfileCombo.getText().equals("")) //$NON-NLS-1$
-					new OpenTargetProfileAction(getShell(), getTargetModel()).run();
+					new OpenTargetProfileAction(getShell(), getTargetModel(), fProfileCombo.getText()).run();
 			}
 		});
 		
