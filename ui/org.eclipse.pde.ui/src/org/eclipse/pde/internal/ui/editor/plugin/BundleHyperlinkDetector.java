@@ -59,7 +59,10 @@ public class BundleHyperlinkDetector implements IHyperlinkDetector {
 			return null;
 		IRegion linkRegion = new Region(range.getOffset(), range.getLength());
 		
-		return new IHyperlink[] { new JavaHyperlink(linkRegion, project, target)};
+		if (element instanceof BundleActivatorHeader)
+			return new IHyperlink[] { new JavaHyperlink(linkRegion, project, target)};
+		
+		return null;
 	}
 	
 }
