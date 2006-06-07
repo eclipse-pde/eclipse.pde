@@ -57,6 +57,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
@@ -414,6 +415,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 	protected void addDependencies(final Map depsToAdd, boolean useRequireBundle) {
 		if (useRequireBundle) {
 			Collection plugins = depsToAdd.values();
+			minimizeBundles(plugins);
 			IBuild build = getBuild();
 			IPluginBase pbase = fBase.getPluginBase();
 			if (pbase == null )  {
@@ -505,6 +507,26 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 					entry.removeToken(pluginId);
 				} catch (BundleException e){
 				} catch (CoreException e) {
+				}
+		}
+	}
+	
+	protected final void minimizeBundles(Collection pluginIds) {
+		Stack stack = new Stack();
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		Iterator it = pluginIds.iterator();
+		while (it.hasNext()) 
+			stack.push(it.next().toString());
+		
+		while (!stack.isEmpty()) {
+			IPluginModelBase base = manager.findModel(stack.pop().toString());
+			IPluginImport[] imports = base.getPluginBase().getImports();
+			
+			for (int j = 0; j < imports.length; j++) 
+				if (imports[j].isReexported()) {
+					String reExportedId = imports[j].getId();
+					pluginIds.remove(imports[j].getId());
+					stack.push(reExportedId);
 				}
 		}
 	}
