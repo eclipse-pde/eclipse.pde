@@ -54,7 +54,7 @@ public class EditorPreferencePage
 	}
 	
 	public void dispose() {
-		fColorManager.disposeColors();
+		fColorManager.disposeColors(false);
 		fXMLTab.dispose();
 		fManifestTab.dispose();
 		super.dispose();

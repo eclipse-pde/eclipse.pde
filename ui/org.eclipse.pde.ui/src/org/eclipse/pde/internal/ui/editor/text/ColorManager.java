@@ -76,18 +76,18 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 		}
 	}
 
-	public void disposeColors() {
+	public void disposeColors(boolean resetSingleton) {
 		Iterator e = fColorTable.values().iterator();
 		while (e.hasNext())
 			 ((Color) e.next()).dispose();
-		fColorManager = null;
+		if (resetSingleton)
+			fColorManager = null;
 		
 	}
 	public void dispose() {
 		counter--;
-		if (counter == 0) {
-			disposeColors();
-		}
+		if (counter == 0)
+			disposeColors(true);
 	}
 	
 	private void putColor(IPreferenceStore pstore, String property) {
