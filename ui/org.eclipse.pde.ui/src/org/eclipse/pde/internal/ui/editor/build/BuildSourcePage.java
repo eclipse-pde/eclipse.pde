@@ -9,10 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -26,8 +24,6 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.KeyValueSourcePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.text.ColorManager;
-import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.swt.graphics.Image;
 
@@ -70,29 +66,12 @@ public class BuildSourcePage extends KeyValueSourcePage {
 		}
 	}
 
-	private IColorManager fColorManager;
-	
 	public BuildSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
-		IPreferenceStore store = JavaPlugin.getDefault().getCombinedPreferenceStore();
-		setPreferenceStore(store);
-		fColorManager = ColorManager.getDefault();
-		setSourceViewerConfiguration(new BuildSourceViewerConfiguration(fColorManager, store, this));
 	}
 	
-	public void dispose() {
-		fColorManager.dispose();
-		super.dispose();
-	}
-	
-	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
-		try {
-			ISourceViewer sourceViewer = getSourceViewer();
-			if (sourceViewer != null)
-				((BuildSourceViewerConfiguration) getSourceViewerConfiguration()).handlePropertyChangeEvent(event);
-		} finally {
-			super.handlePreferenceStoreChanged(event);
-		}
+	public void setPreferenceStore(IPreferenceStore store) {
+		super.setPreferenceStore(store);
 	}
 	
 	protected ILabelProvider createOutlineLabelProvider() {

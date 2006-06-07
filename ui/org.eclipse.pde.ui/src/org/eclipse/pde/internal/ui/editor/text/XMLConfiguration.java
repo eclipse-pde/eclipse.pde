@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.TextAttribute;
@@ -20,11 +19,9 @@ import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 
 public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
@@ -32,19 +29,17 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 	private XMLDoubleClickStrategy fDoubleClickStrategy;
 	private XMLTagScanner fTagScanner;
 	private XMLScanner fPdeScanner;
-	private IColorManager fColorManager;
 
 	private TextAttribute fXMLCommentAttr;
 	private MultilineDamagerRepairer fDamagerRepairer;
 	private PDEQuickAssistAssistant fQuickAssistant;
 	
 	public XMLConfiguration(IColorManager colorManager) {
-        super(new ChainedPreferenceStore(new IPreferenceStore[] {
-                  PDEPlugin.getDefault().getPreferenceStore(),
-                  EditorsUI.getPreferenceStore() // general text editor store
-                }
-              ));
-		fColorManager = colorManager;
+		this(colorManager, null);
+	}
+	
+	public XMLConfiguration(IColorManager colorManager, PDESourcePage page) {
+		super(page, colorManager);
 	}
 	
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
@@ -97,10 +92,6 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 		if (fAnnotationHover == null)
 			fAnnotationHover = new AnnotationHover();
 		return fAnnotationHover;
-	}
-	
-	public IColorManager getColorManager(){
-		return fColorManager;	
 	}
 	
 	/**

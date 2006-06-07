@@ -216,8 +216,8 @@ public class ConvertedProjectsPage extends WizardPage  {
 		loadLibraryName(project);
 		
 		if (!WorkspaceModelManager.isPluginProject(project))
-			createManifestFile(project.getFile("plugin.xml"), monitor); //$NON-NLS-1$
-		IFile buildFile = project.getFile("build.properties"); //$NON-NLS-1$
+			createManifestFile(project.getFile(PDEModelUtility.F_PLUGIN), monitor);
+		IFile buildFile = project.getFile(PDEModelUtility.F_BUILD);
 		if (!buildFile.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(buildFile);
 			IBuild build = model.getBuild(true);
@@ -307,7 +307,8 @@ public class ConvertedProjectsPage extends WizardPage  {
 	}
 	
 	private void organizeExports(final IProject project) {
-		PDEModelUtility.modifyModel(new ModelModification(project.getFile("META-INF/MANIFEST.MF")) {
+		PDEModelUtility.modifyModel(new ModelModification(
+				project.getFile(PDEModelUtility.F_MANIFEST_FP)) {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (!(model instanceof IBundlePluginModelBase))
 					return;

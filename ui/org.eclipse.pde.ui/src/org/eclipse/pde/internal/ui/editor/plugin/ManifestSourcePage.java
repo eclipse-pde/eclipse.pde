@@ -12,8 +12,7 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.ArrayList;
 
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -25,6 +24,7 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
+import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
@@ -34,7 +34,6 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
-import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -205,41 +204,45 @@ public class ManifestSourcePage extends XMLSourcePage {
 		return new OutlineSorter();
 	}
 	
-	protected IDocumentRange getRangeElement(ITextSelection selection) {
-		if (selection.isEmpty())
-			return null;
-		IPluginModelBase model = (IPluginModelBase) getInputContext().getModel();
-		int offset = selection.getOffset();
-		IDocumentRange node = findNode(model.getPluginBase().getLibraries(),
-				offset);
+	public IDocumentRange getRangeElement(int offset) {
+		IPluginBase base = ((IPluginModelBase)getInputContext().getModel()).getPluginBase();
+		IDocumentRange 
+			node = findNode(base.getLibraries(), offset);
 		if (node == null)
-			node = findNode(model.getPluginBase().getImports(), offset);
+			node = findNode(base.getImports(), offset);
 		if (node == null)
-			node = findNode(model.getPluginBase().getExtensionPoints(), offset);
+			node = findNode(base.getExtensionPoints(), offset);
 		if (node == null)
-			node = findNode(model.getPluginBase().getExtensions(), offset);
-		if (node == null) {
-			node = findNode(new IPluginObject[] { model.getPluginBase() }, offset);
-		}
+			node = findNode(base.getExtensions(), offset);
+		if (node == null)
+			node = findNode(new IPluginObject[] { base }, offset);
+		
 		return node;
 	}
 
-	private IDocumentNode findNode(IPluginObject[] nodes, int offset) {
+	private IDocumentNode findNode(Object[] nodes, int offset) {
 		for (int i = 0; i < nodes.length; i++) {
-			IDocumentNode node = (IDocumentNode) nodes[i];
+			IDocumentNode node = (IDocumentNode)nodes[i];
 			if (offset >= node.getOffset()
 					&& offset < node.getOffset() + node.getLength()) {
-				return node;
+				
+				if (offset >= node.getOffset() && 
+						offset <= node.getOffset() + node.getXMLTagName().length() + 1)
+					return node;
+				
+				IDocumentAttribute[] attrs = node.getNodeAttributes();
+				for (int a = 0; attrs != null && a < attrs.length; a++)
+					if (attrs[a].getNameOffset() <= offset &&
+							attrs[a].getValueOffset() + attrs[a].getValueLength() >= offset)
+						return (IDocumentNode)attrs[a];
+				
+				IDocumentNode[] children = node.getChildNodes();
+				if (children == null || children.length == 0)
+					return node;
+				return findNode(children, offset);
 			}
 		}
 		return null;
-	}
-	
-	public void dispose() {
-		SourceViewerConfiguration config = getSourceViewerConfiguration();
-		if (config instanceof XMLConfiguration)
-			((XMLConfiguration)config).dispose();
-		super.dispose();
 	}
 	
 	public IDocumentRange findRange() {
@@ -252,5 +255,11 @@ public class ManifestSourcePage extends XMLSourcePage {
 	
 	protected boolean isSelectionListener() {
 		return true;
+	}
+	
+	public Object getAdapter(Class adapter) {
+		if (IHyperlinkDetector[].class.equals(adapter))
+			return new IHyperlinkDetector[] { new ManifestHyperlinkDetector(this) };
+		return super.getAdapter(adapter);
 	}
 }

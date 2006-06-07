@@ -16,11 +16,7 @@ import java.util.Enumeration;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.reconciler.IReconciler;
-import org.eclipse.jface.text.reconciler.MonoReconciler;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -32,7 +28,7 @@ import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
-import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
+import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
@@ -43,33 +39,12 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.KeyValueSourcePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.SourceOutlinePage;
-import org.eclipse.pde.internal.ui.editor.text.ColorManager;
-import org.eclipse.pde.internal.ui.editor.text.IColorManager;
-import org.eclipse.pde.internal.ui.editor.text.ManifestConfiguration;
-import org.eclipse.pde.internal.ui.editor.text.ReconcilingStrategy;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.util.FormatManifestAction;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Constants;
 
 public class BundleSourcePage extends KeyValueSourcePage {
-	
-	class BundleSourceViewerConfiguration extends ManifestConfiguration {
-		public BundleSourceViewerConfiguration(IColorManager manager) {
-			super(manager);
-		}
-		
-		public IReconciler getReconciler(ISourceViewer sourceViewer) {
-			ReconcilingStrategy strategy = new ReconcilingStrategy();
-			strategy.addParticipant((IReconcilingParticipant) getInputContext()
-					.getModel());
-			strategy.addParticipant((SourceOutlinePage)getContentOutline());
-			MonoReconciler reconciler = new MonoReconciler(strategy, false);
-			reconciler.setDelay(500);
-			return reconciler;
-		}
-	}
 
 	class BundleOutlineContentProvider extends DefaultContentProvider
 			implements ITreeContentProvider {
@@ -111,14 +86,9 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			return null;
 		}
 	}
-	private IColorManager fColorManager;
-	private BundleSourceViewerConfiguration fConfiguration;
 	
 	public BundleSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
-		fColorManager = ColorManager.getDefault();
-		fConfiguration = new BundleSourceViewerConfiguration(fColorManager);
-		setSourceViewerConfiguration(fConfiguration);
 	}
 	
 	protected ILabelProvider createOutlineLabelProvider() {
@@ -128,13 +98,10 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	protected ITreeContentProvider createOutlineContentProvider() {
 		return new BundleOutlineContentProvider();
 	}
-	protected IDocumentRange getRangeElement(ITextSelection selection) {
-		if (selection.isEmpty())
-			return null;
+	public IDocumentRange getRangeElement(int offset) {
 		IBundleModel model = (IBundleModel) getInputContext().getModel();
 		Dictionary manifest = ((Bundle) model.getBundle()).getHeaders();
-		int offset = selection.getOffset();
-		
+
 		for (Enumeration elements = manifest.elements(); elements.hasMoreElements();) {
 		    IDocumentRange node = (IDocumentRange) elements.nextElement();
 
@@ -144,26 +111,6 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		    }
 		}
 		return null;
-	}
-	
-	public void dispose() {
-		fColorManager.dispose();
-		fConfiguration.dispose();
-		super.dispose();
-	}
-	
-	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
-		try {
-			ISourceViewer sourceViewer = getSourceViewer();
-			if (sourceViewer != null)
-				fConfiguration.handlePropertyChangeEvent(event);
-		} finally {
-			super.handlePreferenceStoreChanged(event);
-		}
-	}
-	
-	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
-		return fConfiguration.affectsTextPresentation(event) || super.affectsTextPresentation(event);
 	}
 	
 	protected String[] collectContextMenuPreferencePages() {
@@ -208,63 +155,65 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		return null;
 	}
 	
-	protected IDocumentRange getSpecificRange(IBundleModel model, String headerName, String search) {
-		IManifestHeader header = model.getBundle().getManifestHeader(headerName);
-		if (header != null) {
-			final int[] range = new int[] { -1, -1 }; // { offset, length }
-			if (model instanceof BundleModel) {
-				try {
-					int start = header.getOffset() + header.getName().length();
-					int length = header.getLength() - header.getName().length();
-					String headerValue = ((BundleModel)model).getDocument().get(start, length);
+	public static IDocumentRange getSpecificRange(IBundleModel model, IManifestHeader header, String element) {
+		if (header == null || !(model instanceof IEditingModel))
+			return null;
+		
+		final int[] range = new int[] { -1, -1 }; // { offset, length }
+		try {
+			int start = header.getOffset() + header.getName().length();
+			int length = header.getLength() - header.getName().length();
+			String headerValue = ((IEditingModel)model).getDocument().get(start, length);
+			
+			int i = headerValue.indexOf(element);
+			int last = headerValue.lastIndexOf(element);
+			if (i > 0 && i != last) {
+				char[] sChar = element.toCharArray();
+				char[] headerChar = headerValue.toCharArray();
+				headLoop: for (; i <= last; i++) {
+					// check 1st, middle and last chars to speed things up
+					if (headerChar[i] != sChar[0] && 
+							headerChar[i + sChar.length / 2] != sChar[sChar.length / 2] && 
+							headerChar[i + sChar.length - 1] != sChar[sChar.length - 1])
+						continue headLoop;
 					
-					int i = headerValue.indexOf(search);
-					int last = headerValue.lastIndexOf(search);
-					if (i > 0 && i != last) {
-						char[] sChar = search.toCharArray();
-						char[] headerChar = headerValue.toCharArray();
-						headLoop: for (; i <= last; i++) {
-							// check 1st, middle and last chars to speed things up
-							if (headerChar[i] != sChar[0] && 
-									headerChar[i + sChar.length / 2] != sChar[sChar.length / 2] && 
-									headerChar[i + sChar.length - 1] != sChar[sChar.length - 1])
-								continue headLoop;
-							
-							for (int j = 1; j < sChar.length - 1; j++)
-								if (headerChar[i + j] != sChar[j])
-									continue headLoop;
-	
-							// found match
-							char c = headerChar[i - 1];
-							if (!Character.isWhitespace(c) && c != ',')
-								// search string is contained by another
-								continue headLoop;
-							
-							c = headerChar[i + sChar.length];
-							if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '.')
-								// current match is longer than search
-								continue headLoop;
-							
-							break;
-						}
-					} 
-					if (i != -1) {
-						range[0] = start + i;
-						range[1] = search.length();
-					}
-				} catch (BadLocationException e) {
+					for (int j = 1; j < sChar.length - 1; j++)
+						if (headerChar[i + j] != sChar[j])
+							continue headLoop;
+
+					// found match
+					char c = headerChar[i - 1];
+					if (!Character.isWhitespace(c) && c != ',')
+						// search string is contained by another
+						continue headLoop;
+					
+					c = headerChar[i + sChar.length];
+					if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '.')
+						// current match is longer than search
+						continue headLoop;
+					
+					break;
 				}
 			} 
-			if (range[0] == -1) { // if un-set offset use header range
-				range[0] = header.getOffset();
-				range[1] = header.getLength();
+			if (i != -1) {
+				range[0] = start + i;
+				range[1] = element.length();
 			}
-			return new IDocumentRange() {
-				public int getOffset() { return range[0]; }
-				public int getLength() { return range[1]; }
-			};
+		} catch (BadLocationException e) {
 		}
-		return null;
+		if (range[0] == -1) { // if un-set offset use header range
+			range[0] = header.getOffset();
+			range[1] = header.getLength();
+		}
+		return new IDocumentRange() {
+			public int getOffset() { return range[0]; }
+			public int getLength() { return range[1]; }
+		};
+	}
+	
+	public static IDocumentRange getSpecificRange(IBundleModel model, String headerName, String search) {
+		IManifestHeader header = model.getBundle().getManifestHeader(headerName);
+		return getSpecificRange(model, header, search);
 	}
 
 	protected boolean isSelectionListener() {
@@ -277,5 +226,11 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		FormatManifestAction action = new FormatManifestAction();
 		action.setSourceInput(getEditorInput());
 		menu.add(action);
+	}
+	
+	public Object getAdapter(Class adapter) {
+		if (IHyperlinkDetector[].class.equals(adapter))
+			return new IHyperlinkDetector[] { new BundleHyperlinkDetector(this) };
+		return super.getAdapter(adapter);
 	}
 }

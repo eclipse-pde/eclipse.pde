@@ -100,7 +100,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		public void selectionChanged(SelectionChangedEvent event) {
 			ISelection selection = event.getSelection();
 			if (!selection.isEmpty() && selection instanceof ITextSelection) {
-				IDocumentRange rangeElement = getRangeElement((ITextSelection) selection);
+				IDocumentRange rangeElement = getRangeElement(((ITextSelection) selection).getOffset());
 				if (rangeElement != null) {
 					setHighlightRange(rangeElement, false);
 				} else {
@@ -324,11 +324,17 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		return false;
 	}
 	
-	protected IDocumentRange getRangeElement(ITextSelection selection) {
+	public IDocumentRange getRangeElement(int offset) {
 		return null;
 	}
 
 	public void setHighlightRange(IDocumentRange range, boolean moveCursor) {
+		int offset = range.getOffset();
+		if (offset == -1) {
+			resetHighlightRange();
+			return;
+		}
+		
 		ISourceViewer sourceViewer = getSourceViewer();
 		if (sourceViewer == null)
 			return;
@@ -337,7 +343,6 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		if (document == null)
 			return;
 
-		int offset = range.getOffset();
 		int length = range.getLength();
 		setHighlightRange(offset, length == -1 ? 1 : length, moveCursor);
 	}

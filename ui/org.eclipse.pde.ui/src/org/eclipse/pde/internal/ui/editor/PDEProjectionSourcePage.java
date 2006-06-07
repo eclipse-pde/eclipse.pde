@@ -16,10 +16,14 @@ import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.projection.IProjectionListener;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration;
+import org.eclipse.pde.internal.ui.editor.text.ColorManager;
+import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.swt.widgets.Composite;
 
 
@@ -27,11 +31,18 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 
 	private ProjectionSupport fProjectionSupport;
 	private IFoldingStructureProvider fFoldingStructureProvider;
+	private IColorManager fColorManager;
+	private ChangeAwareSourceViewerConfiguration fConfiguration;
 
 	public PDEProjectionSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
+		fColorManager = ColorManager.getDefault();
+		fConfiguration = 
+			SourceViewerConfigurationFactory.createSourceViewerConfiguration(this, fColorManager);
+		if (fConfiguration != null)
+			setSourceViewerConfiguration(fConfiguration);
 	}
-
+	
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 
@@ -60,6 +71,9 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 			fProjectionSupport.dispose();
 			fProjectionSupport = null;
 		}
+		fColorManager.dispose();
+		if (fConfiguration != null)
+			fConfiguration.dispose();
 		super.dispose();
 	}
 
@@ -91,6 +105,24 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 	private boolean isFoldingEnabled() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		return store.getBoolean(IPreferenceConstants.EDITOR_FOLDING_ENABLED);
+	}
+	
+	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
+		if (fConfiguration == null)
+			return false;
+		return fConfiguration.affectsTextPresentation(event) || super.affectsTextPresentation(event);
+	}
+	
+	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
+		try {
+			if (fConfiguration != null) {
+				ISourceViewer sourceViewer = getSourceViewer();
+				if (sourceViewer != null)
+					fConfiguration.adaptToPreferenceChange(event);
+			}
+		} finally {
+			super.handlePreferenceStoreChanged(event);
+		}
 	}
 
 	public Object getAdapter(Class key) { 

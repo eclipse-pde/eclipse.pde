@@ -20,8 +20,6 @@ import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
-import org.eclipse.jface.text.reconciler.IReconciler;
-import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IWhitespaceDetector;
@@ -31,19 +29,17 @@ import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordRule;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
+import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.text.ArgumentRule;
 import org.eclipse.pde.internal.ui.editor.text.BasePDEScanner;
+import org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.pde.internal.ui.editor.text.PDEQuickAssistAssistant;
-import org.eclipse.pde.internal.ui.editor.text.ReconcilingStrategy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
 
-public class BuildSourceViewerConfiguration extends TextSourceViewerConfiguration {
+public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfiguration {
 
 	protected static String PROPERTIES_FILE_PARTITIONING = "___pf_partitioning";  //$NON-NLS-1$
 	protected static String COMMENT = "__pf_comment"; //$NON-NLS-1$
@@ -53,10 +49,7 @@ public class BuildSourceViewerConfiguration extends TextSourceViewerConfiguratio
 	private BasePDEScanner fPropertyKeyScanner;
 	private BasePDEScanner fCommentScanner;
 	private BasePDEScanner fPropertyValueScanner;
-	private IColorManager fColorManager;
 	
-	private MonoReconciler fReconciler;
-	private BuildSourcePage fSourcePage;
 	private PDEQuickAssistAssistant fQuickAssistant;
 	
 	private abstract class AbstractJavaScanner extends BasePDEScanner {
@@ -181,10 +174,8 @@ public class BuildSourceViewerConfiguration extends TextSourceViewerConfiguratio
 		}
 	}
 	
-	public BuildSourceViewerConfiguration(IColorManager colorManager, IPreferenceStore store, BuildSourcePage sourcePage) {
-		super(store);
-		fColorManager = colorManager;
-		fSourcePage = sourcePage;
+	public BuildSourceViewerConfiguration(IColorManager colorManager, IPreferenceStore store, PDESourcePage sourcePage) {
+		super(sourcePage, colorManager, store);
 		initializeScanners();
 	}
 
@@ -213,24 +204,9 @@ public class BuildSourceViewerConfiguration extends TextSourceViewerConfiguratio
 
 		return reconciler;
 	}
-
-	public IReconciler getReconciler(ISourceViewer sourceViewer) {
-		if (fReconciler == null) {
-			IBaseModel model = fSourcePage.getInputContext().getModel();
-			if (model instanceof IReconcilingParticipant) {
-				ReconcilingStrategy strategy = new ReconcilingStrategy();
-				strategy.addParticipant((IReconcilingParticipant)model);
-				if (fSourcePage.getContentOutline() instanceof IReconcilingParticipant)
-					strategy.addParticipant((IReconcilingParticipant)fSourcePage.getContentOutline());
-				fReconciler = new MonoReconciler(strategy, false);
-				fReconciler.setDelay(500);
-			}
-		}
-		return fReconciler;
-	}
 	
-	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
-		if (affectsColorPresentation(event.getProperty()))
+	public void adaptToPreferenceChange(PropertyChangeEvent event) {
+		if (affectsColorPresentation(event))
 			fColorManager.handlePropertyChangeEvent(event);
 		fPropertyKeyScanner.adaptToPreferenceChange(event);
 		fCommentScanner.adaptToPreferenceChange(event);
@@ -258,12 +234,13 @@ public class BuildSourceViewerConfiguration extends TextSourceViewerConfiguratio
 				|| fPropertyValueScanner.affectsTextPresentation(property);
 	}
 	
-	private boolean affectsColorPresentation(String property) {
-		 return property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_VALUE)
-					|| property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_ARGUMENT) 
-					|| property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_ASSIGNMENT)
-	 				|| property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_KEY)
-	 				|| property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_COMMENT);
+	public boolean affectsColorPresentation(PropertyChangeEvent event) {
+		String property = event.getProperty();
+		return property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_VALUE)
+				|| property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_ARGUMENT)
+				|| property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_ASSIGNMENT)
+				|| property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_KEY)
+				|| property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_COMMENT);
 	}
 	
 	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {

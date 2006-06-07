@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
@@ -24,15 +23,12 @@ import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.texteditor.ChainedPreferenceStore;
+import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.osgi.framework.Constants;
 
 public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration {
 
 	private IAnnotationHover fAnnotationHover;
-	private IColorManager fColorManager;
 	private BasePDEScanner fPropertyKeyScanner;
 	private BasePDEScanner fPropertyValueScanner;
 	private PDEQuickAssistAssistant fQuickAssistant;
@@ -168,12 +164,11 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	}
 
 	public ManifestConfiguration(IColorManager manager) {
-        super(new ChainedPreferenceStore(new IPreferenceStore[] {
-                PDEPlugin.getDefault().getPreferenceStore(),
-                EditorsUI.getPreferenceStore() // general text editor store
-              }
-            ));
-		fColorManager = manager;
+		this(manager, null);
+	}
+	
+	public ManifestConfiguration(IColorManager manager, PDESourcePage page) {
+		super(page, manager);
 		fPropertyKeyScanner = new ManifestHeaderScanner();
 		fPropertyValueScanner = new ManifestValueScanner();
 	}
@@ -226,13 +221,6 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	}
 
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
-		if (affectsColorPresentation(event))
-			fColorManager.handlePropertyChangeEvent(event);
-		fPropertyKeyScanner.adaptToPreferenceChange(event);
-		fPropertyValueScanner.adaptToPreferenceChange(event);
-	}
-	
-	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
 		if (affectsColorPresentation(event))
 			fColorManager.handlePropertyChangeEvent(event);
 		fPropertyKeyScanner.adaptToPreferenceChange(event);
