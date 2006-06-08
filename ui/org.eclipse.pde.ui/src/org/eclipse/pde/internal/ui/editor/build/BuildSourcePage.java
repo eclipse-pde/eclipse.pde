@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.build;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -18,6 +19,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.internal.core.text.IDocumentKey;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.build.BuildEntry;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -109,5 +111,23 @@ public class BuildSourcePage extends KeyValueSourcePage {
 	
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
 		return ((BuildSourceViewerConfiguration)getSourceViewerConfiguration()).affectsTextPresentation(event) || super.affectsTextPresentation(event);
+	}
+	
+	public IDocumentRange getRangeElement(int offset) {
+		IBuildModel model = (IBuildModel) getInputContext().getModel();
+		IBuildEntry[] buildEntries = model.getBuild().getBuildEntries();
+
+		for (int i = 0; i < buildEntries.length; i++) {
+			IDocumentKey key = (IDocumentKey) buildEntries[i];
+			if (offset >= key.getOffset() && offset < key.getOffset() + key.getLength())
+				return key;
+		}
+		return null;
+	}
+	
+	public Object getAdapter(Class adapter) {
+		if (IHyperlinkDetector[].class.equals(adapter))
+			return new IHyperlinkDetector[] { new BuildHyperlinkDetector(this) };
+		return super.getAdapter(adapter);
 	}
 }

@@ -42,6 +42,7 @@ public class PackageHyperlink extends ManifestElementHyperlink {
 			ShowInPackageViewAction action = new ShowInPackageViewAction(part.getSite());
 			action.run(frag);
 		} catch (PartInitException e) {
+			PDEPlugin.logException(e);
 		}
 	}
 

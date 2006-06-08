@@ -28,6 +28,7 @@ import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -144,6 +145,7 @@ public class SchemaEditor extends MultiSourceEditor {
 			} catch (PartInitException e) {
 			}
 		}
+		Display.getDefault().beep();
 		return false;
 	}
 
@@ -155,6 +157,7 @@ public class SchemaEditor extends MultiSourceEditor {
 			IFile file = project.getFile(path.removeFirstSegments(1));
 			return openSchema(file);
 		}
+		Display.getDefault().beep();
 		return false;
 	}
 	
