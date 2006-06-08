@@ -248,7 +248,7 @@ public abstract class AbstractTemplateSection
 	/**
 	 * Generates files as part of the template execution. The default
 	 * implementation uses template location as a root of the file templates.
-	 * @see generateFiles(IProgressMonitor monitor, URL locationUrl) on how
+	 * {@link #generateFiles(IProgressMonitor monitor, URL locationUrl)} on how
 	 * the location gets processed.
 	 * 
 	 * @param monitor
