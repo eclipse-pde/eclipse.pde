@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.search.dependencies;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ListIterator;
@@ -46,6 +47,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -74,6 +76,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			InterruptedException {
 		
 		ImportPackageObject[] packages = null;
+		Collection exportedPackages = null;
 		if (ClasspathUtilCore.hasBundleStructure(fModel)) {
 			IBundle bundle = ((IBundlePluginModelBase)fModel).getBundleModel().getBundle();
 			IManifestHeader header = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
@@ -82,6 +85,14 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			} else if (header != null && header.getValue() != null) {
 				header = new ImportPackageHeader(Constants.IMPORT_PACKAGE, header.getValue(), bundle, System.getProperty("line.separator")); //$NON-NLS-1$
 				packages = ((ImportPackageHeader)header).getPackages();
+			}
+			
+			header = bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
+			if (header instanceof ExportPackageHeader) {
+				exportedPackages = ((ExportPackageHeader)header).getPackageNames();
+			} else if (header != null && header.getValue() != null) {
+				header = new ExportPackageHeader(Constants.EXPORT_PACKAGE, header.getValue(), bundle, System.getProperty("line.seperator")); //$NON-NLS-1$
+				exportedPackages = ((ExportPackageHeader)header).getPackageNames();
 			}
 		}
 		IPluginImport[] imports = fModel.getPluginBase().getImports();
@@ -106,7 +117,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			for (int i = 0; i < packages.length; i++) {
 				if (monitor.isCanceled())
 					break;
-				if (isUnused(packages[i], new SubProgressMonitor(monitor, 1))) {
+				if (isUnused(packages[i], exportedPackages, new SubProgressMonitor(monitor, 1))) {
 					fList.add(packages[i]);
 					updateMonitor(monitor, fList.size());
 				} else 
@@ -137,7 +148,11 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		return !provideJavaClasses(plugins, monitor);
 	}
 	
-	private boolean isUnused(ImportPackageObject pkg, SubProgressMonitor monitor) {
+	private boolean isUnused(ImportPackageObject pkg, Collection exportedPackages, SubProgressMonitor monitor) {
+		if (exportedPackages != null && exportedPackages.contains(pkg.getValue())) {
+			monitor.done();
+			return false;
+		}
 		return !provideJavaClasses(pkg, monitor);
 	}
 	
