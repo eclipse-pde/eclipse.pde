@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.util;
 
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -20,6 +21,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
@@ -30,6 +32,16 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.SearchablePluginsManager;
+import org.eclipse.pde.internal.core.text.bundle.PackageObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.plugin.JavaAttributeValue;
@@ -40,6 +52,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.ide.IDE;
+import org.osgi.framework.Constants;
 
 public class PDEJavaHelper {
 	
@@ -166,4 +179,120 @@ public class PDEJavaHelper {
 			value = ""; //$NON-NLS-1$
 		return value;
 	}
+	
+    public static IPackageFragment getPackageFragment(PackageObject importObject, IBaseModel base, IProject project) {
+    	String packageName = importObject.getName();
+
+		if (base instanceof IModel && ((IModel)base).getUnderlyingResource() == null) 
+			return getExternalPackageFragment(packageName, importObject.getModel().getBundle().getHeader(Constants.BUNDLE_SYMBOLICNAME));
+		
+		IJavaProject jp = JavaCore.create(project);
+		if (jp != null)
+			try {
+				IPackageFragmentRoot[] roots = jp.getAllPackageFragmentRoots();
+				for (int i = 0; i < roots.length; i++) {
+					IPackageFragment frag = roots[i].getPackageFragment(packageName);
+					if (frag.exists()) {
+						return frag;
+					}
+				}
+			} catch (JavaModelException e) {
+			}
+		return null;
+    }
+    
+    private static IPackageFragment getExternalPackageFragment(String packageName, String pluginId) {
+    	IPluginModelBase base = null;
+    	try {
+    		IPluginModelBase plugin = PDECore.getDefault().getModelManager().findModel(pluginId);
+    		ImportPackageSpecification[] packages = plugin.getBundleDescription().getImportPackages();
+    		for (int i =0; i < packages.length; i++)
+    			if (packages[i].getName().equals(packageName)) {
+    				ExportPackageDescription desc = (ExportPackageDescription) packages[i].getSupplier();
+    				base = PDECore.getDefault().getModelManager().findModel(desc.getExporter().getSymbolicName());
+    				break;
+    			}
+    		if (base == null)
+    			return null;
+    		IResource res = base.getUnderlyingResource();
+    		if (res != null) {
+    			IJavaProject jp = JavaCore.create(res.getProject());
+    			if (jp != null)
+    				try {
+    					IPackageFragmentRoot[] roots = jp.getAllPackageFragmentRoots();
+    					for (int i = 0; i < roots.length; i++) {
+    						IPackageFragment frag = roots[i].getPackageFragment(packageName);
+    						if (frag.exists()) 
+    							return frag;
+    					}
+    				} catch (JavaModelException e) {
+    				}
+    		}
+			IProject proj = PDEPlugin.getWorkspace().getRoot().getProject(SearchablePluginsManager.PROXY_PROJECT_NAME);
+			if (proj == null)
+				return searchWorkspaceForPackage(packageName, base);
+			IJavaProject jp = JavaCore.create(proj);
+			IPath path = new Path(base.getInstallLocation());
+			// if model is in jar form
+			if (!path.toFile().isDirectory()) {
+				IPackageFragmentRoot root = jp.findPackageFragmentRoot(path);
+				if (root != null) {
+					IPackageFragment frag = root.getPackageFragment(packageName);
+					if (frag.exists())
+						return frag;
+				}
+			// else model is in folder form, try to find model's libraries on filesystem
+			} else {
+				IPluginLibrary[] libs = base.getPluginBase().getLibraries();
+				for (int i = 0; i < libs.length; i++) {
+					if (IPluginLibrary.RESOURCE.equals(libs[i].getType()))
+						continue;
+					String libName = ClasspathUtilCore.expandLibraryName(libs[i].getName());
+					IPackageFragmentRoot root = jp.findPackageFragmentRoot(path.append(libName));
+					if (root != null) {
+						IPackageFragment frag = root.getPackageFragment(packageName);
+						if (frag.exists())
+							return frag;
+					}
+				}
+			}
+		} catch (JavaModelException e){
+		}
+		return searchWorkspaceForPackage(packageName, base);
+    }
+    
+    private static IPackageFragment searchWorkspaceForPackage(String packageName, IPluginModelBase base) {
+    	IPluginLibrary[] libs = base.getPluginBase().getLibraries();
+    	ArrayList libPaths = new ArrayList();
+    	IPath path = new Path(base.getInstallLocation());
+    	if (libs.length == 0) {
+    		libPaths.add(path);
+    	}
+		for (int i = 0; i < libs.length; i++) {
+			if (IPluginLibrary.RESOURCE.equals(libs[i].getType()))
+				continue;
+			String libName = ClasspathUtilCore.expandLibraryName(libs[i].getName());
+			libPaths.add(path.append(libName));
+		}
+		IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();
+		for (int i = 0; i < projects.length; i++) {
+			try {
+				if(!projects[i].hasNature(JavaCore.NATURE_ID) || !projects[i].isOpen())
+					continue;
+				IJavaProject jp = JavaCore.create(projects[i]);
+				ListIterator li = libPaths.listIterator();
+				while (li.hasNext()) {
+					IPackageFragmentRoot root = jp.findPackageFragmentRoot((IPath)li.next());
+					if (root != null) {
+						IPackageFragment frag = root.getPackageFragment(packageName);
+						if (frag.exists())
+							return frag;
+					}
+				}
+			} catch (CoreException e) {
+			}
+		}
+		return null;
+    }
+	
 }

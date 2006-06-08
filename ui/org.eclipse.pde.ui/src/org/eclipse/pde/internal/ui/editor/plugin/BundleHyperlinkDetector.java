@@ -10,17 +10,23 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
+import org.eclipse.pde.internal.core.text.IEditingModel;
+import org.eclipse.pde.internal.core.text.bundle.BasePackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleActivatorHeader;
 import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
+import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
+import org.eclipse.pde.internal.ui.editor.text.BundleHyperlink;
 import org.eclipse.pde.internal.ui.editor.text.JavaHyperlink;
+import org.eclipse.pde.internal.ui.editor.text.PackageHyperlink;
 
 public class BundleHyperlinkDetector implements IHyperlinkDetector {
 
@@ -45,24 +51,87 @@ public class BundleHyperlinkDetector implements IHyperlinkDetector {
 			return null;
 		
 		ManifestHeader header = (ManifestHeader)element;
-		String target = null;
-		if (element instanceof BundleActivatorHeader) { // add else if statments for other headers
-			target = ((BundleActivatorHeader)element).getClassName();
+		if (!header.getModel().isEditable())
+			return null;
+		
+		if (region.getOffset() <= header.getOffset() + header.getName().length())
+			return null;
+		
+		if (header instanceof BundleActivatorHeader) { // add else if statments for other headers
+			String target = ((BundleActivatorHeader)element).getClassName();
+			if (target == null || target.length() == 0)
+				return null;
+			IDocumentRange range = BundleSourcePage.getSpecificRange(header.getModel(), header, target);
+			if (range == null)
+				return null;
+			return new IHyperlink[] { 
+					new JavaHyperlink(
+							new Region(range.getOffset(), range.getLength()),
+							header.getModel().getUnderlyingResource(),
+							target)};
+		} else if (header instanceof BasePackageHeader || header instanceof RequireBundleHeader) {
+			return matchLinkFor(header, region.getOffset());
 		}
-		
-		if (target == null || target.length() == 0)
-			return null;
-		
-		IProject project = header.getModel().getUnderlyingResource().getProject();
-		IDocumentRange range = BundleSourcePage.getSpecificRange(header.getModel(), header, target);
-		if (range == null)
-			return null;
-		IRegion linkRegion = new Region(range.getOffset(), range.getLength());
-		
-		if (element instanceof BundleActivatorHeader)
-			return new IHyperlink[] { new JavaHyperlink(linkRegion, project, target)};
-		
 		return null;
+	}
+
+	private IHyperlink[] matchLinkFor(ManifestHeader header, int mainOffset) {
+		IDocument doc = ((IEditingModel)header.getModel()).getDocument();
+		String value;
+		try {
+			value = doc.get(header.getOffset(), header.getLength());
+			int offset = mainOffset - header.getOffset();
+			
+			// ensure we are over a letter or period
+			char c = value.charAt(offset);
+			if (!elementChar(c, true))
+				return null;
+			
+			// scan backwards to find the start of the word
+			int downOffset = offset;
+			c = value.charAt(--downOffset);
+			while (c != ',' && c != ':' && downOffset > 0) {
+				// c == ';' means we are at a directive / attribute name (NOT value)
+				if (c == ';' || !elementChar(c, false))
+					return null;
+				downOffset -= 1;
+				c = value.charAt(downOffset);
+			}
+			// backtrack forwards to remove whitespace etc.
+			while (downOffset < offset && !elementChar(c, true))
+				c = value.charAt(++downOffset);
+			
+			// scan forwards to find the end of the word
+			int upOffset = offset;
+			c = value.charAt(++upOffset);
+			int length = value.length();
+			while (c != ';' && c != ',' && upOffset < length - 1) {
+				if (!elementChar(c, false))
+					return null;
+				upOffset += 1;
+				c = value.charAt(upOffset);
+			}
+			// backtrack to remove extra chars
+			if (c == ';' || c == ',')
+				upOffset -= 1;
+			
+			String match = value.substring(downOffset, upOffset + 1);
+			if (match.length() > 0) {
+				IRegion region = new Region(mainOffset - (offset - downOffset), match.length());
+				if (header instanceof BasePackageHeader)
+					return new IHyperlink[] { new PackageHyperlink(region, match, (BasePackageHeader)header)};
+				if (header instanceof RequireBundleHeader)
+					return new IHyperlink[] { new BundleHyperlink(region, match)};
+			}
+		} catch (BadLocationException e) {
+		}
+		return null;
+	}
+	
+	private boolean elementChar(char c, boolean noWhitespace) {
+		if (noWhitespace && Character.isWhitespace(c))
+			return false;
+		return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || c == '.' || Character.isWhitespace(c);
 	}
 	
 }

@@ -51,7 +51,7 @@ public class ManifestHyperlinkDetector implements IHyperlinkDetector {
 		while (node != null && !(node instanceof IPluginExtension))
 			node = node.getParentNode();
 		
-		if (node == null)
+		if (node == null || !((IPluginExtension)node).getModel().isEditable())
 			return null;
 		
 		ISchema schema = PDECore.getDefault().getSchemaRegistry().getSchema(((IPluginExtension)node).getPoint());
@@ -72,7 +72,7 @@ public class ManifestHyperlinkDetector implements IHyperlinkDetector {
 		if (sAttr.getKind() == IMetaAttribute.JAVA) {
 			return new IHyperlink[] { new JavaHyperlink(
 					new Region(attr.getValueOffset(), attr.getValueLength()),
-					((IPluginExtension)node).getModel().getUnderlyingResource().getProject(),
+					((IPluginExtension)node).getModel().getUnderlyingResource(),
 					((IPluginAttribute)attr).getValue())};
 		} else if (sAttr.getKind() == IMetaAttribute.RESOURCE) {
 			// TODO select OR open resource in package explorer

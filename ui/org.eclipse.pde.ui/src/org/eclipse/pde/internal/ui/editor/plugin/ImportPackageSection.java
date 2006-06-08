@@ -14,16 +14,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.ListIterator;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -48,19 +45,15 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.SearchablePluginsManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
@@ -84,6 +77,7 @@ import org.eclipse.pde.internal.ui.parts.ConditionalListSelectionDialog;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.search.dependencies.UnusedDependenciesAction;
 import org.eclipse.pde.internal.ui.util.ModelModification;
+import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.search.ui.NewSearchUI;
@@ -312,123 +306,12 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
     		IStructuredSelection selection = (IStructuredSelection) sel;
     		if (selection.size() != 1) 
     			return null;
-    		PackageObject importObject = (PackageObject)selection.getFirstElement();
-    		String packageName = importObject.getName();
-
-    		IBaseModel base = getPage().getModel();
-    		if (!(base instanceof IPluginModelBase)) 
-    			return null;
-    		IPluginModelBase model = (IPluginModelBase)base;
-    		if (model.getUnderlyingResource() == null) 
-    			return getExternalPackageFragment(packageName, model);
-    		IJavaProject jp = JavaCore.create(getPage().getPDEEditor().getCommonProject());
-    		if (jp != null)
-    			try {
-    				IPackageFragmentRoot[] roots = jp.getAllPackageFragmentRoots();
-    				for (int i = 0; i < roots.length; i++) {
-    					IPackageFragment frag = roots[i].getPackageFragment(packageName);
-    					if (frag.exists()) {
-    						return frag;
-    					}
-    				}
-    			} catch (JavaModelException e) {
-    			}
+    		PDEJavaHelper.getPackageFragment(
+    				(PackageObject)selection.getFirstElement(),
+    				getPage().getModel(),
+    				getPage().getPDEEditor().getCommonProject());
     	}
     	return null;
-    }
-    
-    private IPackageFragment getExternalPackageFragment(String packageName, IPluginModelBase model) {
-    	IPluginModelBase base = null;
-    	try {
-    		IPluginModelBase plugin = PDECore.getDefault().getModelManager().findModel(model.getPluginBase().getId());
-    		ImportPackageSpecification[] packages = plugin.getBundleDescription().getImportPackages();
-    		for (int i =0; i < packages.length; i++)
-    			if (packages[i].getName().equals(packageName)) {
-    				ExportPackageDescription desc = (ExportPackageDescription) packages[i].getSupplier();
-    				base = PDECore.getDefault().getModelManager().findModel(desc.getExporter().getSymbolicName());
-    				break;
-    			}
-    		if (base == null)
-    			return null;
-    		IResource res = base.getUnderlyingResource();
-    		if (res != null) {
-    			IJavaProject jp = JavaCore.create(res.getProject());
-    			if (jp != null)
-    				try {
-    					IPackageFragmentRoot[] roots = jp.getAllPackageFragmentRoots();
-    					for (int i = 0; i < roots.length; i++) {
-    						IPackageFragment frag = roots[i].getPackageFragment(packageName);
-    						if (frag.exists()) 
-    							return frag;
-    					}
-    				} catch (JavaModelException e) {
-    				}
-    		}
-			IProject proj = PDEPlugin.getWorkspace().getRoot().getProject(SearchablePluginsManager.PROXY_PROJECT_NAME);
-			if (proj == null)
-				return searchWorkspaceForPackage(packageName, base);
-			IJavaProject jp = JavaCore.create(proj);
-			IPath path = new Path(base.getInstallLocation());
-			// if model is in jar form
-			if (!path.toFile().isDirectory()) {
-				IPackageFragmentRoot root = jp.findPackageFragmentRoot(path);
-				if (root != null) {
-					IPackageFragment frag = root.getPackageFragment(packageName);
-					if (frag.exists())
-						return frag;
-				}
-			// else model is in folder form, try to find model's libraries on filesystem
-			} else {
-				IPluginLibrary[] libs = base.getPluginBase().getLibraries();
-				for (int i = 0; i < libs.length; i++) {
-					if (IPluginLibrary.RESOURCE.equals(libs[i].getType()))
-						continue;
-					String libName = ClasspathUtilCore.expandLibraryName(libs[i].getName());
-					IPackageFragmentRoot root = jp.findPackageFragmentRoot(path.append(libName));
-					if (root != null) {
-						IPackageFragment frag = root.getPackageFragment(packageName);
-						if (frag.exists())
-							return frag;
-					}
-				}
-			}
-		} catch (JavaModelException e){
-		}
-		return searchWorkspaceForPackage(packageName, base);
-    }
-    
-    private IPackageFragment searchWorkspaceForPackage(String packageName, IPluginModelBase base) {
-    	IPluginLibrary[] libs = base.getPluginBase().getLibraries();
-    	ArrayList libPaths = new ArrayList();
-    	IPath path = new Path(base.getInstallLocation());
-    	if (libs.length == 0) {
-    		libPaths.add(path);
-    	}
-		for (int i = 0; i < libs.length; i++) {
-			if (IPluginLibrary.RESOURCE.equals(libs[i].getType()))
-				continue;
-			String libName = ClasspathUtilCore.expandLibraryName(libs[i].getName());
-			libPaths.add(path.append(libName));
-		}
-		IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();
-		for (int i = 0; i < projects.length; i++) {
-			try {
-				if(!projects[i].hasNature(JavaCore.NATURE_ID) || !projects[i].isOpen())
-					continue;
-				IJavaProject jp = JavaCore.create(projects[i]);
-				ListIterator li = libPaths.listIterator();
-				while (li.hasNext()) {
-					IPackageFragmentRoot root = jp.findPackageFragmentRoot((IPath)li.next());
-					if (root != null) {
-						IPackageFragment frag = root.getPackageFragment(packageName);
-						if (frag.exists())
-							return frag;
-					}
-				}
-			} catch (CoreException e) {
-			}
-		}
-		return null;
     }
     
     private void handleGoToPackage(ISelection selection) {

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -26,12 +26,12 @@ import org.eclipse.ui.PartInitException;
 public class JavaHyperlink implements IHyperlink {
 
 	private IRegion fRegion;
-	private IProject fProject;
+	private IResource fResource;
 	private String fClazz;
 
-	public JavaHyperlink(IRegion region, IProject project, String clazz) {
+	public JavaHyperlink(IRegion region, IResource res, String clazz) {
 		fRegion = region;
-		fProject = project;
+		fResource = res;
 		fClazz = clazz;
 	}
 
@@ -49,8 +49,10 @@ public class JavaHyperlink implements IHyperlink {
 
 	public void open() {
 		try {
-			if (fProject.hasNature(JavaCore.NATURE_ID)) {
-				IJavaProject javaProject = JavaCore.create(fProject);
+			if (fResource == null)
+				return;
+			if (fResource.getProject().hasNature(JavaCore.NATURE_ID)) {
+				IJavaProject javaProject = JavaCore.create(fResource.getProject());
 				IJavaElement result = javaProject.findType(fClazz);
 				if (result != null)
 					JavaUI.openInEditor(result);
