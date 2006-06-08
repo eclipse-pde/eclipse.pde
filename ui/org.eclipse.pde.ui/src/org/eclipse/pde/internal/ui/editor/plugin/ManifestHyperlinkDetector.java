@@ -14,6 +14,7 @@ import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.schema.SchemaRootElement;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
@@ -93,6 +94,8 @@ public class ManifestHyperlinkDetector implements IHyperlinkDetector {
 				if (value.indexOf("$nl$/") == 0) //$NON-NLS-1$
 					value = value.substring(5);
 				return new IHyperlink[] { new ResourceHyperlink(linkRegion, value, res.getProject().findMember(value))};
+			} else if (sElement instanceof SchemaRootElement) {
+				return new IHyperlink[] { new ExtensionHyperLink(linkRegion, schema) };
 			}
 		}
 		
