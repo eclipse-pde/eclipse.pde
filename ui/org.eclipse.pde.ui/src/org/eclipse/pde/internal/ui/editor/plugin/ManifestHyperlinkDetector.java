@@ -1,5 +1,6 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
@@ -7,6 +8,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;
@@ -17,6 +19,8 @@ import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.text.JavaHyperlink;
+import org.eclipse.pde.internal.ui.editor.text.ResourceHyperlink;
+import org.eclipse.pde.internal.ui.editor.text.SchemaHyperlink;
 
 public class ManifestHyperlinkDetector implements IHyperlinkDetector {
 
@@ -48,34 +52,48 @@ public class ManifestHyperlinkDetector implements IHyperlinkDetector {
 		
 		// consult schema to make sure attribute is of kind IMetaAttribute.JAVA
 		IDocumentNode node = attr.getEnclosingElement();
-		while (node != null && !(node instanceof IPluginExtension))
+		while (node != null && 
+				!(node instanceof IPluginExtension) && 
+				!(node instanceof IPluginExtensionPoint))
 			node = node.getParentNode();
 		
-		if (node == null || !((IPluginExtension)node).getModel().isEditable())
-			return null;
-		
-		ISchema schema = PDECore.getDefault().getSchemaRegistry().getSchema(((IPluginExtension)node).getPoint());
-		if (schema == null)
-			return null;
-		
-		ISchemaElement sElement = schema.findElement(attr.getEnclosingElement().getXMLTagName());
-		if (sElement == null)
-			return null;
-		
-		ISchemaAttribute sAttr = sElement.getAttribute(attr.getAttributeName());
-		if (sAttr == null)
-			return null;
-		
-		if (((IPluginAttribute)attr).getValue().length() == 0)
-			return null;
-		
-		if (sAttr.getKind() == IMetaAttribute.JAVA) {
-			return new IHyperlink[] { new JavaHyperlink(
-					new Region(attr.getValueOffset(), attr.getValueLength()),
-					((IPluginExtension)node).getModel().getUnderlyingResource(),
-					((IPluginAttribute)attr).getValue())};
-		} else if (sAttr.getKind() == IMetaAttribute.RESOURCE) {
-			// TODO select OR open resource in package explorer
+		if (node instanceof IPluginExtensionPoint) {
+			if (attr.getAttributeName().equals(IPluginExtensionPoint.P_SCHEMA))
+				return new IHyperlink[] { new SchemaHyperlink(
+						new Region(attr.getValueOffset(),attr.getValueLength()),
+						((IPluginAttribute) attr).getValue(),
+						((IPluginExtensionPoint) node).getModel().getUnderlyingResource()) };
+		} else if (node instanceof IPluginExtension) {
+			if (node == null || !((IPluginExtension)node).getModel().isEditable())
+				return null;
+			
+			ISchema schema = PDECore.getDefault().getSchemaRegistry().getSchema(((IPluginExtension)node).getPoint());
+			if (schema == null)
+				return null;
+			
+			ISchemaElement sElement = schema.findElement(attr.getEnclosingElement().getXMLTagName());
+			if (sElement == null)
+				return null;
+			
+			ISchemaAttribute sAttr = sElement.getAttribute(attr.getAttributeName());
+			if (sAttr == null)
+				return null;
+			
+			if (((IPluginAttribute)attr).getValue().length() == 0)
+				return null;
+			
+			IRegion linkRegion = new Region(attr.getValueOffset(), attr.getValueLength());
+			IResource res = ((IPluginExtension)node).getModel().getUnderlyingResource();
+			String value = ((IPluginAttribute)attr).getValue();
+			if (sAttr.getKind() == IMetaAttribute.JAVA) {
+				return new IHyperlink[] { new JavaHyperlink(linkRegion, value, res)};
+			} else if (sAttr.getKind() == IMetaAttribute.RESOURCE) {
+				if (res == null)
+					return null;
+				if (value.indexOf("$nl$/") == 0) //$NON-NLS-1$
+					value = value.substring(5);
+				return new IHyperlink[] { new ResourceHyperlink(linkRegion, value, res.getProject().findMember(value))};
+			}
 		}
 		
 		return null;

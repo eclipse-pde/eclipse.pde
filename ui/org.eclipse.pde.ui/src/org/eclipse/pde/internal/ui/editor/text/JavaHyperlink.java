@@ -18,33 +18,17 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PartInitException;
 
-public class JavaHyperlink implements IHyperlink {
+public class JavaHyperlink extends AbstractHyperlink {
 
-	private IRegion fRegion;
 	private IResource fResource;
-	private String fClazz;
 
-	public JavaHyperlink(IRegion region, IResource res, String clazz) {
-		fRegion = region;
+	public JavaHyperlink(IRegion region, String clazz, IResource res) {
+		super(region, clazz);
 		fResource = res;
-		fClazz = clazz;
-	}
-
-	public IRegion getHyperlinkRegion() {
-		return fRegion;
-	}
-
-	public String getHyperlinkText() {
-		return null;
-	}
-
-	public String getTypeLabel() {
-		return null;
 	}
 
 	public void open() {
@@ -53,7 +37,7 @@ public class JavaHyperlink implements IHyperlink {
 				return;
 			if (fResource.getProject().hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject javaProject = JavaCore.create(fResource.getProject());
-				IJavaElement result = javaProject.findType(fClazz);
+				IJavaElement result = javaProject.findType(fElement);
 				if (result != null)
 					JavaUI.openInEditor(result);
 			}

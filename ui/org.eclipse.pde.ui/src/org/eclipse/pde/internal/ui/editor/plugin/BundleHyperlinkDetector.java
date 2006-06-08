@@ -67,8 +67,8 @@ public class BundleHyperlinkDetector implements IHyperlinkDetector {
 			return new IHyperlink[] { 
 					new JavaHyperlink(
 							new Region(range.getOffset(), range.getLength()),
-							header.getModel().getUnderlyingResource(),
-							target)};
+							target,
+							header.getModel().getUnderlyingResource())};
 		} else if (header instanceof BasePackageHeader || header instanceof RequireBundleHeader) {
 			return matchLinkFor(header, region.getOffset());
 		}

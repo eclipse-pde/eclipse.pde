@@ -34,14 +34,11 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
-import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
-import org.eclipse.pde.internal.core.text.bundle.PackageObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.plugin.JavaAttributeValue;
@@ -52,7 +49,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.ide.IDE;
-import org.osgi.framework.Constants;
 
 public class PDEJavaHelper {
 	
@@ -180,11 +176,16 @@ public class PDEJavaHelper {
 		return value;
 	}
 	
-    public static IPackageFragment getPackageFragment(PackageObject importObject, IBaseModel base, IProject project) {
-    	String packageName = importObject.getName();
-
-		if (base instanceof IModel && ((IModel)base).getUnderlyingResource() == null) 
-			return getExternalPackageFragment(packageName, importObject.getModel().getBundle().getHeader(Constants.BUNDLE_SYMBOLICNAME));
+	
+	/**
+	 * @param packageName - the name of the package
+	 * @param pluginID - the id of the containing plug-in - can be null if <code>project</code> is not null
+	 * @param project - if null will search for an external package fragment, otherwise will search in project
+	 * @return
+	 */
+    public static IPackageFragment getPackageFragment(String packageName, String pluginID, IProject project) {
+		if (project == null) 
+			return getExternalPackageFragment(packageName, pluginID);
 		
 		IJavaProject jp = JavaCore.create(project);
 		if (jp != null)
@@ -201,10 +202,14 @@ public class PDEJavaHelper {
 		return null;
     }
     
-    private static IPackageFragment getExternalPackageFragment(String packageName, String pluginId) {
+    private static IPackageFragment getExternalPackageFragment(String packageName, String pluginID) {
+    	if (pluginID == null)
+    		return null;
     	IPluginModelBase base = null;
     	try {
-    		IPluginModelBase plugin = PDECore.getDefault().getModelManager().findModel(pluginId);
+    		IPluginModelBase plugin = PDECore.getDefault().getModelManager().findModel(pluginID);
+    		if (plugin == null)
+    			return null;
     		ImportPackageSpecification[] packages = plugin.getBundleDescription().getImportPackages();
     		for (int i =0; i < packages.length; i++)
     			if (packages[i].getName().equals(packageName)) {

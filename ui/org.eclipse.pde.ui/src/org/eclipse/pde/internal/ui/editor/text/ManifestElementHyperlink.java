@@ -1,30 +1,13 @@
 package org.eclipse.pde.internal.ui.editor.text;
 
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.hyperlink.IHyperlink;
 
-public abstract class ManifestElementHyperlink implements IHyperlink {
-
-	private IRegion fRegion;
-	protected String fElement;
+public abstract class ManifestElementHyperlink extends AbstractHyperlink {
 
 	public ManifestElementHyperlink(IRegion region, String element) {
-		fRegion = region;
-		fElement = element;
+		super(region, element);
 	}
 
-	public IRegion getHyperlinkRegion() {
-		return fRegion;
-	}
-
-	public String getHyperlinkText() {
-		return null;
-	}
-
-	public String getTypeLabel() {
-		return null;
-	}
-	
 	protected abstract void open2();
 	
 	public void open() {

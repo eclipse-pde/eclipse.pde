@@ -306,9 +306,14 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
     		IStructuredSelection selection = (IStructuredSelection) sel;
     		if (selection.size() != 1) 
     			return null;
-    		PDEJavaHelper.getPackageFragment(
-    				(PackageObject)selection.getFirstElement(),
-    				getPage().getModel(),
+    		
+    		IBaseModel model = getPage().getModel();
+    		if (!(model instanceof IPluginModelBase))
+    			return null;
+    		
+    		return PDEJavaHelper.getPackageFragment(
+    				((PackageObject)selection.getFirstElement()).getName(),
+    				((IPluginModelBase)model).getPluginBase().getId(),
     				getPage().getPDEEditor().getCommonProject());
     	}
     	return null;

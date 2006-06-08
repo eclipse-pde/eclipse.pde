@@ -129,7 +129,7 @@ public class CompositeManifestHeader extends ManifestHeader {
 		return object;
 	}
 	
-	public PDEManifestElement[] getElements() {
+	protected PDEManifestElement[] getElements() {
 		if (fSort && fElementMap != null)
 			return (PDEManifestElement[])fElementMap.values().toArray(new PDEManifestElement[fElementMap.size()]);
 				
