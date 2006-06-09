@@ -52,16 +52,19 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 			return bundle.getManifestHeader(fLocationPath);
 		}
 		
-		IDocumentNode node = (IDocumentNode)base.getPluginBase();
+		IDocumentNode node = null;
 		StringTokenizer strtok = new StringTokenizer(
 				fLocationPath,
 				Character.toString(XMLErrorReporter.F_CHILD_SEP));
-		while (node != null && strtok.hasMoreTokens()) {
+		while (strtok.hasMoreTokens()) {
 			String token = strtok.nextToken();
-			int childIndex = Integer.parseInt(token.substring(1, token.indexOf(')')));
-			token = token.substring(token.indexOf(')') + 1);
-			IDocumentNode[] children = node.getChildNodes();
-			node = children[childIndex];
+			if (node != null) {
+				IDocumentNode[] children = node.getChildNodes();
+				int childIndex = Integer.parseInt(token.substring(1, token.indexOf(')')));
+				node = children[childIndex];
+			} else
+				node = (IDocumentNode)base.getPluginBase();
+			
 			int attr = token.indexOf(XMLErrorReporter.F_ATT_PREFIX); 
 			if (attr != -1) {
 				int valueIndex = token.indexOf(XMLErrorReporter.F_ATT_VALUE_PREFIX);

@@ -172,7 +172,7 @@ public class XMLErrorReporter extends DefaultHandler {
 
 	private String generateLocationPath(Node node, String attrName) {
 		if (node == null)
-			return null;
+			return new String();
 		
 		int childIndex = 0;
 		for (Node previousSibling = node.getPreviousSibling();
@@ -180,22 +180,26 @@ public class XMLErrorReporter extends DefaultHandler {
 			 previousSibling = previousSibling.getPreviousSibling())
 			childIndex += 1;
 		
+		StringBuffer sb = new StringBuffer();
 		Node parent = node.getParentNode();
-		if (parent instanceof Document)
-			return null;
-		if (parent != null) {
-			String prefix = generateLocationPath(parent, null);
-			if (prefix != null)
-				return prefix + F_CHILD_SEP + composeNodeString(node, childIndex, attrName);
+		if (parent != null && !(parent instanceof Document)) {
+			sb.append(generateLocationPath(parent, null));
+			sb.append(F_CHILD_SEP);
 		}
-		return composeNodeString(node, childIndex, attrName);
+		composeNodeString(node, childIndex, attrName, sb);
+		return sb.toString();
 	}
 	
-	private String composeNodeString(Node node, int index, String attrName) {
-		String nodeString = '(' + Integer.toString(index) + ')' + node.getNodeName();
-		if (attrName != null)
-			nodeString += F_ATT_PREFIX + attrName;
-		return nodeString;
+	private String composeNodeString(Node node, int index, String attrName, StringBuffer sb) {
+		sb.append('(');
+		sb.append(index);
+		sb.append(')');
+		sb.append(node.getNodeName());
+		if (attrName != null) {
+			sb.append(F_ATT_PREFIX);
+			sb.append(attrName);
+		}
+		return sb.toString();
 	}
 	
 	
