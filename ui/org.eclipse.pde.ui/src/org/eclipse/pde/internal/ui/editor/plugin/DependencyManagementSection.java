@@ -10,15 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
@@ -48,6 +51,7 @@ import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
@@ -73,6 +77,7 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.part.FileEditorInput;
 import org.osgi.service.prefs.BackingStoreException;
 
 public class DependencyManagementSection extends TableSection implements IModelChangedListener, IPluginModelListener {
@@ -103,7 +108,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		
 		private IBuildEntry getBuildInfo() {
 			IBuildEntry entry = null;
-			IBuildModel model = getBuildModel();
+			IBuildModel model = getBuildModel(false);
 			if (model == null)
 				return null;
 			IBuild buildObject = model.getBuild();
@@ -158,7 +163,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	public DependencyManagementSection(PDEFormPage formPage, Composite parent) {
 		super(formPage, parent, ExpandableComposite.TWISTIE|ExpandableComposite.COMPACT, new String[] { ADD, REMOVE});
 		getSection().setText(PDEUIMessages.SecondaryBundlesSection_title); 
-		IBuildModel model = getBuildModel();
+		IBuildModel model = getBuildModel(false);
 		if (model != null) {
 			IBuildEntry entry = model.getBuild().getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
 			if (entry != null && entry.getTokens().length > 0)
@@ -249,7 +254,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 			getTablePart().setButtonEnabled(0, model.isEditable());
 			getTablePart().setButtonEnabled(1, false);
 			
-			IBuildModel build = getBuildModel();
+			IBuildModel build = getBuildModel(false);
 			if (build != null) 
 				build.addModelChangedListener(this);
 			
@@ -313,11 +318,25 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		}
 	}
 	
-	private IBuildModel getBuildModel() {
+	private IBuildModel getBuildModel(boolean createIfMissing) {
 		InputContext context = getPage().getPDEEditor().getContextManager()
 			.findContext(BuildInputContext.CONTEXT_ID);
-		if (context == null)
-			return null;
+		if (context == null) {
+			if (createIfMissing) {
+				IFile buildFile = getPage().getPDEEditor().getCommonProject().getFile("build.properties");
+				try {
+					buildFile.create(new ByteArrayInputStream(new byte[0]), true, new NullProgressMonitor());
+				} catch (CoreException e ) {
+					return null;
+				}
+				FileEditorInput in = new FileEditorInput(buildFile);
+				PDEFormEditor editor = getPage().getPDEEditor();
+				context = new BuildInputContext(getPage().getPDEEditor(), in,
+						false);
+				editor.getContextManager().putContext(in, context);
+			} else
+				return null;
+		}
 		return (IBuildModel) context.getModel();
 	}
 
@@ -349,11 +368,12 @@ public class DependencyManagementSection extends TableSection implements IModelC
 				true);
 		dialog.create();
 		if (dialog.open() == Window.OK) {
-		    IBuild build = getBuildModel().getBuild();
+			IBuildModel model = getBuildModel(true);
+		    IBuild build = model.getBuild();
 			IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
 			try {
 			    if (entry == null) {
-			        entry = getBuildModel().getFactory().createEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
+			        entry = model.getFactory().createEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
 			        build.add(entry);
 			    }
 			    Object[] models = dialog.getResult();
@@ -391,13 +411,16 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	private void handleRemove(){
 		IStructuredSelection ssel = (IStructuredSelection) fAdditionalTable.getSelection();
 		
-		IBuildEntry entry = getBuildModel().getBuild().getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
+		IBuild build = getBuildModel(false).getBuild();
+		IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
 		Iterator it = ssel.iterator();
 		try {
 			while (it.hasNext()) {
 				String pluginName = (String) it.next();
 				entry.removeToken(pluginName);
 			}
+			if (entry.getTokens().length == 0)
+				build.remove(entry);
 		} catch (CoreException e){
 			PDEPlugin.logException( e );
 		}
