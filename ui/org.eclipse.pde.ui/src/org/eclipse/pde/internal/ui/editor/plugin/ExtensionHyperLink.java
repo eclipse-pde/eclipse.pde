@@ -11,21 +11,20 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.ui.editor.text.AbstractHyperlink;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
 
 public class ExtensionHyperLink extends AbstractHyperlink {
 
-	private ISchema fSchema;
+	private String fPointID;
 	
-	public ExtensionHyperLink(IRegion region, ISchema schema) {
+	public ExtensionHyperLink(IRegion region, String pointID) {
 		super(region, null);
-		fSchema = schema;
+		fPointID = pointID;
 	}
 	
 	public void open() {
-		new ShowDescriptionAction(fSchema).run();
+		new ShowDescriptionAction(fPointID).run();
 	}
 
 }

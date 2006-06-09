@@ -95,7 +95,7 @@ public class ManifestHyperlinkDetector implements IHyperlinkDetector {
 					value = value.substring(5);
 				return new IHyperlink[] { new ResourceHyperlink(linkRegion, value, res.getProject().findMember(value))};
 			} else if (sElement instanceof SchemaRootElement) {
-				return new IHyperlink[] { new ExtensionHyperLink(linkRegion, schema) };
+				return new IHyperlink[] { new ExtensionHyperLink(linkRegion, value) };
 			}
 		}
 		
