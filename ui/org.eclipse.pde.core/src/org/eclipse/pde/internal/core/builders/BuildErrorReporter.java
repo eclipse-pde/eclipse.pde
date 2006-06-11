@@ -165,7 +165,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		}
 		
 		validateSourceEntries(sourceEntries);
-		validateMissingSourceInBinIncludes(binIncludes, sourceEntryKeys);
+		validateMissingSourceInBinIncludes(binIncludes, sourceEntryKeys, build);
 		
 	}
 	
@@ -211,11 +211,18 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		}
 	}
 
-	private void validateMissingSourceInBinIncludes(IBuildEntry binIncludes, ArrayList sourceEntryKeys) {
+	private void validateMissingSourceInBinIncludes(IBuildEntry binIncludes, ArrayList sourceEntryKeys, IBuild build) {
 		if (binIncludes == null)
 			return;
 		for (int i = 0; i < sourceEntryKeys.size(); i++) {
 			String key = (String)sourceEntryKeys.get(i);
+			// We don't want to flag source.. = . as in  bug 146042 comment 1
+			if (DEF_SOURCE_ENTRY.equals(key)) {
+				IBuildEntry entry = build.getEntry(DEF_SOURCE_ENTRY);
+				String[] tokens = entry.getTokens();
+				if (tokens.length == 1 && tokens[0].equals("."))
+					continue;
+			}
 			key = key.substring(PROPERTY_SOURCE_PREFIX.length());
 			boolean found = false;
 			String[] binIncludesTokens = binIncludes.getTokens();
@@ -225,7 +232,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					found = true;
 			}
 			if (!found)
-				prepareError(PROPERTY_BIN_INCLUDES, key,
+ 				prepareError(PROPERTY_BIN_INCLUDES, key,
 						NLS.bind(PDECoreMessages.BuildErrorReporter_binIncludesMissing, key),
 						PDEMarkerFactory.B_ADDDITION);
 		}
@@ -236,6 +243,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			String name = ((IBuildEntry)sourceEntries.get(i)).getName();
 			String[] tokens = ((IBuildEntry)sourceEntries.get(i)).getTokens();
 			for (int j = 0; j < tokens.length; j++) {
+				if (".".equals(tokens[j]))
+					continue;
 				IResource folderEntry = fProject.findMember(tokens[j]);
 				if (folderEntry == null 
 						|| !folderEntry.exists() 

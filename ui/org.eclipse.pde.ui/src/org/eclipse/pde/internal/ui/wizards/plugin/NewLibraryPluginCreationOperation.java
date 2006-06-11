@@ -272,6 +272,17 @@ public class NewLibraryPluginCreationOperation extends
 
 	protected void createSourceOutputBuildEntries(WorkspaceBuildModel model,
 			IBuildModelFactory factory) throws CoreException {
+		if (fData.isUnzipLibraries()) {
+			// SOURCE.<LIBRARY_NAME>
+			IBuildEntry entry = factory.createEntry(IBuildEntry.JAR_PREFIX + ".");
+			entry.addToken("."); //$NON-NLS-1$
+			model.getBuild().add(entry);
+
+			// OUTPUT.<LIBRARY_NAME>
+			entry = factory.createEntry(IBuildEntry.OUTPUT_PREFIX + ".");
+			entry.addToken("."); //$NON-NLS-1$
+			model.getBuild().add(entry);		
+		}
 	}
 
 }
