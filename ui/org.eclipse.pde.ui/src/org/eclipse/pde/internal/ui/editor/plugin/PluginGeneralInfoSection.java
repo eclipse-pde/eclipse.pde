@@ -13,7 +13,11 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
+import org.eclipse.jface.contentassist.SubjectControlContentAssistant;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ICoreConstants;
@@ -28,14 +32,18 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.contentassist.TypeCompletionListener;
+import org.eclipse.pde.internal.ui.editor.contentassist.TypeCompletionProcessor;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.contentassist.ContentAssistHandler;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.TableWrapData;
@@ -93,6 +101,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	}
 	
 	private void createClassEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
+		boolean isEditable = isEditable();
 		fClassEntry = new FormEntry(
 							client,
 							toolkit,
@@ -118,7 +127,20 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 				doOpenSelectionDialog();
 			}
 		});
-		fClassEntry.setEditable(isEditable());
+		fClassEntry.setEditable(isEditable);
+		
+		if (isEditable) {
+			TypeCompletionProcessor processor = new TypeCompletionProcessor(
+					getProject(),
+					IJavaSearchConstants.CLASS
+					);
+			SubjectControlContentAssistant contentAssistant = new SubjectControlContentAssistant();
+			contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
+			contentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
+			contentAssistant.setProposalSelectorBackground(new Color(client.getDisplay(), 255, 255, 255));
+			ContentAssistHandler.createHandlerForText(fClassEntry.getText(), contentAssistant);
+			contentAssistant.addCompletionListener(new TypeCompletionListener());
+		}
 	}
 	
 	private void doOpenSelectionDialog() {

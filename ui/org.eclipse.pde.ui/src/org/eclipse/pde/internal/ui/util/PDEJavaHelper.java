@@ -72,7 +72,7 @@ public class PDEJavaHelper {
 		return null;
 	}	
 	
-	private static IJavaSearchScope getSearchScope(IProject project) {
+	public static IJavaSearchScope getSearchScope(IProject project) {
 		return SearchEngine.createJavaSearchScope(getNonJRERoots(JavaCore.create(project)));
 	}
 

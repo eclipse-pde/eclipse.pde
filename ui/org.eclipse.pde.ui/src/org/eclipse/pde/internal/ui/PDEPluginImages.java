@@ -51,7 +51,8 @@ public class PDEPluginImages {
 	public static final String IMG_ATT_IMPL_OBJ  = NAME_PREFIX + "IMG_ATT_IMPL_OBJ"; //$NON-NLS-1$
 	public static final String IMG_ATT_REQ_OBJ   = NAME_PREFIX + "IMG_ATT_REQ_OBJ"; //$NON-NLS-1$
 	public static final String IMG_GENERIC_XML_OBJ  = NAME_PREFIX + "IMG_GENERIC_XML_OBJ"; //$NON-NLS-1$
-
+	public static final String OBJ_DESC_GENERATE_CLASS  = NAME_PREFIX + "OBJ_DESC_GENERATE_CLASS"; //$NON-NLS-1$
+	public static final String OBJ_DESC_GENERATE_INTERFACE  = NAME_PREFIX + "OBJ_DESC_GENERATE_INTERFACE"; //$NON-NLS-1$
 
 	/**
 	 * OBJ16
@@ -158,6 +159,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_CLONE_ATT = create(PATH_LCL, "clone_att.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CLONE_EL = create(PATH_LCL, "clone_el.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_GENERATE_CLASS = create(PATH_LCL, "generate_class.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_GENERATE_INTERFACE = create(PATH_LCL, "generate_interface.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_GOTOOBJ = create(PATH_LCL, "goto_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PROPERTIES = create(PATH_LCL, "properties.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_REFRESH = create(PATH_LCL, "refresh.gif"); //$NON-NLS-1$
@@ -247,6 +249,8 @@ private static final void initialize() {
 	manage(IMG_ATT_IMPL_OBJ, DESC_ATT_IMPL_OBJ);
 	manage(IMG_ATT_REQ_OBJ,  DESC_ATT_REQ_OBJ);
 	manage(IMG_GENERIC_XML_OBJ, DESC_GENERIC_XML_OBJ);
+	manage(OBJ_DESC_GENERATE_CLASS, DESC_GENERATE_CLASS);
+	manage(OBJ_DESC_GENERATE_INTERFACE, DESC_GENERATE_INTERFACE);
 }
 
 private static URL makeImageURL(String prefix, String name) {

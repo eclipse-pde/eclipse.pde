@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.swt.dnd.Clipboard;
@@ -43,7 +44,9 @@ public abstract class PDESection extends SectionPart implements IModelChangedLis
 	public PDEFormPage getPage() {
 		return page;
 	}
-	
+	protected IProject getProject() {
+		return page.getPDEEditor().getCommonProject();
+	}	
 	public boolean doGlobalAction(String actionId) {
 		return false;
 	}
