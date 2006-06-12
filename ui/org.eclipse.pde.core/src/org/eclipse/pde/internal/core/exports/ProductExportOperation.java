@@ -531,7 +531,14 @@ public class ProductExportOperation extends FeatureExportOperation {
 			root.appendChild(target);
 			
 			Element copy = doc.createElement("copy"); //$NON-NLS-1$
-			copy.setAttribute("todir", "${eclipse.base}/macosx.carbon.ppc/${collectingFolder}");  //$NON-NLS-1$ //$NON-NLS-2$
+			StringBuffer toDir = new StringBuffer("${eclipse.base}/"); //$NON-NLS-1$
+			toDir.append(config[0]);
+			toDir.append("."); //$NON-NLS-1$
+			toDir.append(config[1]);
+			toDir.append("."); //$NON-NLS-1$
+			toDir.append(config[2]);
+			toDir.append("/${collectingFolder}"); //$NON-NLS-1$
+			copy.setAttribute("todir", toDir.toString());  //$NON-NLS-1$ 
 			copy.setAttribute("failonerror", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			copy.setAttribute("overwrite", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 			target.appendChild(copy);
