@@ -323,7 +323,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 			.findContext(BuildInputContext.CONTEXT_ID);
 		if (context == null) {
 			if (createIfMissing) {
-				IFile buildFile = getPage().getPDEEditor().getCommonProject().getFile("build.properties");
+				IFile buildFile = getPage().getPDEEditor().getCommonProject().getFile("build.properties"); //$NON-NLS-1$
 				try {
 					buildFile.create(new ByteArrayInputStream(new byte[0]), true, new NullProgressMonitor());
 				} catch (CoreException e ) {
