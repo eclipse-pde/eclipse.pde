@@ -274,12 +274,12 @@ public class NewLibraryPluginCreationOperation extends
 			IBuildModelFactory factory) throws CoreException {
 		if (fData.isUnzipLibraries()) {
 			// SOURCE.<LIBRARY_NAME>
-			IBuildEntry entry = factory.createEntry(IBuildEntry.JAR_PREFIX + ".");
+			IBuildEntry entry = factory.createEntry(IBuildEntry.JAR_PREFIX + "."); //$NON-NLS-1$
 			entry.addToken("."); //$NON-NLS-1$
 			model.getBuild().add(entry);
 
 			// OUTPUT.<LIBRARY_NAME>
-			entry = factory.createEntry(IBuildEntry.OUTPUT_PREFIX + ".");
+			entry = factory.createEntry(IBuildEntry.OUTPUT_PREFIX + "."); //$NON-NLS-1$
 			entry.addToken("."); //$NON-NLS-1$
 			model.getBuild().add(entry);		
 		}

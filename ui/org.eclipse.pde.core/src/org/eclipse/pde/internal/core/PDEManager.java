@@ -94,7 +94,7 @@ public class PDEManager {
 	}
 	
 	public static String getBundleLocalization(IPluginModelBase model) {
-		if (model.getUnderlyingResource() != null && model instanceof IBundlePluginModelBase)
+		if (model instanceof IBundlePluginModelBase && model.getUnderlyingResource() != null)
 				return((IBundlePluginModelBase)model).getBundleLocalization();
 		
 		if (model instanceof ExternalPluginModelBase)

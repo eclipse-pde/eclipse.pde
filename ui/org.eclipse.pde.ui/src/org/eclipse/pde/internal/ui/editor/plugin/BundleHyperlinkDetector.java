@@ -17,6 +17,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.text.bundle.BasePackageHeader;
@@ -27,6 +28,7 @@ import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.text.BundleHyperlink;
 import org.eclipse.pde.internal.ui.editor.text.JavaHyperlink;
 import org.eclipse.pde.internal.ui.editor.text.PackageHyperlink;
+import org.eclipse.pde.internal.ui.editor.text.TranslationHyperlink;
 
 public class BundleHyperlinkDetector implements IHyperlinkDetector {
 
@@ -56,6 +58,23 @@ public class BundleHyperlinkDetector implements IHyperlinkDetector {
 		
 		if (region.getOffset() <= header.getOffset() + header.getName().length())
 			return null;
+		
+		String[] translatable = ICoreConstants.TRANSLATABLE_HEADERS;
+		String headerName = header.getName();
+		for (int i = 0; i < translatable.length; i++) {
+			if (!headerName.equals(translatable[i]))
+				continue;
+			String value = header.getValue();
+			if (value == null || value.length() == 0 || value.charAt(0) != '%')
+				break;
+			
+			IDocumentRange range = BundleSourcePage.getSpecificRange(header.getModel(), header, value);
+			return new IHyperlink[] { 
+					new TranslationHyperlink(
+							new Region(range.getOffset(), range.getLength()),
+							value,
+							header.getModel())};
+		}
 		
 		if (header instanceof BundleActivatorHeader) { // add else if statments for other headers
 			String target = ((BundleActivatorHeader)element).getClassName();

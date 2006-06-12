@@ -220,7 +220,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			if (DEF_SOURCE_ENTRY.equals(key)) {
 				IBuildEntry entry = build.getEntry(DEF_SOURCE_ENTRY);
 				String[] tokens = entry.getTokens();
-				if (tokens.length == 1 && tokens[0].equals("."))
+				if (tokens.length == 1 && tokens[0].equals(".")) //$NON-NLS-1$
 					continue;
 			}
 			key = key.substring(PROPERTY_SOURCE_PREFIX.length());
@@ -243,7 +243,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			String name = ((IBuildEntry)sourceEntries.get(i)).getName();
 			String[] tokens = ((IBuildEntry)sourceEntries.get(i)).getTokens();
 			for (int j = 0; j < tokens.length; j++) {
-				if (".".equals(tokens[j]))
+				if (".".equals(tokens[j])) //$NON-NLS-1$
 					continue;
 				IResource folderEntry = fProject.findMember(tokens[j]);
 				if (folderEntry == null 

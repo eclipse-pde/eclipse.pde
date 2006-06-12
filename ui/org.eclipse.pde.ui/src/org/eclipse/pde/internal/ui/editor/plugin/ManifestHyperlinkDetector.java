@@ -9,6 +9,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;
@@ -22,6 +23,7 @@ import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.text.JavaHyperlink;
 import org.eclipse.pde.internal.ui.editor.text.ResourceHyperlink;
 import org.eclipse.pde.internal.ui.editor.text.SchemaHyperlink;
+import org.eclipse.pde.internal.ui.editor.text.TranslationHyperlink;
 
 public class ManifestHyperlinkDetector implements IHyperlinkDetector {
 
@@ -84,7 +86,8 @@ public class ManifestHyperlinkDetector implements IHyperlinkDetector {
 				return null;
 			
 			IRegion linkRegion = new Region(attr.getValueOffset(), attr.getValueLength());
-			IResource res = ((IPluginExtension)node).getModel().getUnderlyingResource();
+			IPluginModelBase base = ((IPluginExtension)node).getPluginModel();
+			IResource res = base.getUnderlyingResource();
 			String value = ((IPluginAttribute)attr).getValue();
 			if (sAttr.getKind() == IMetaAttribute.JAVA) {
 				return new IHyperlink[] { new JavaHyperlink(linkRegion, value, res)};
@@ -96,6 +99,9 @@ public class ManifestHyperlinkDetector implements IHyperlinkDetector {
 				return new IHyperlink[] { new ResourceHyperlink(linkRegion, value, res.getProject().findMember(value))};
 			} else if (sElement instanceof SchemaRootElement) {
 				return new IHyperlink[] { new ExtensionHyperLink(linkRegion, value) };
+			} else if (sAttr.isTranslatable()) {
+				if (value.charAt(0) == '%')
+					return new IHyperlink[] { new TranslationHyperlink(linkRegion, value, base) };
 			}
 		}
 		
