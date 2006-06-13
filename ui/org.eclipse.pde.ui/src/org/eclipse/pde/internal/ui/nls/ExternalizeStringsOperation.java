@@ -26,11 +26,13 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
-import org.eclipse.pde.internal.core.text.bundle.Bundle;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.ModelModification;
+import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
@@ -52,7 +54,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 				IFile pFile = change.getPropertiesFile();
 				checkPropertiesFile(pFile);
 				if (!change.localizationSet())
-					addBundleLocalization(change.getParentModel(), change.getBundleLocalization());
+					addBundleLocalization(change, monitor);
 				
 				ITextFileBufferManager pManager = FileBuffers.getTextFileBufferManager();
 				try {
@@ -104,20 +106,28 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		}
  	}
 	
-	private void addBundleLocalization(IPluginModelBase model, String localization)  {
-		if (model instanceof IBundlePluginModel) {
-			IBundlePluginModel bundleModel = (IBundlePluginModel)model;
-			IBundle bundle = bundleModel.getBundleModel().getBundle();
-			if (bundle instanceof Bundle)
-				((Bundle)bundle).setLocalization(localization);
-		}
+	private void addBundleLocalization(ModelChange change, IProgressMonitor mon) {
+		IPluginModelBase base = change.getParentModel();
+		IFile manifest = base.getUnderlyingResource().getProject().getFile(PDEModelUtility.F_MANIFEST_FP);
+		final String localiz = change.getBundleLocalization();
+		PDEModelUtility.modifyModel(new ModelModification(manifest) {
+			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
+				if (model instanceof IBundlePluginModel) {
+					IBundlePluginModel bundleModel = (IBundlePluginModel) model;
+					IBundle bundle = bundleModel.getBundleModel().getBundle();
+					bundle.setLocalization(localiz);
+				}
+			}
+		}, mon);
 	}
 	
 	public static InsertEdit getPropertiesInsertEdit(IDocument doc, ModelChangeElement element) {
 		String nl = TextUtilities.getDefaultLineDelimiter(doc);
-		return new InsertEdit(doc.getLength(), 
-				nl + element.getKey() + " = " +  //$NON-NLS-1$
-				StringHelper.preparePropertiesString(element.getValue(), nl.toCharArray()));
+		StringBuffer sb = new StringBuffer(nl);
+		sb.append(element.getKey());
+		sb.append(" = "); //$NON-NLS-1$
+		sb.append(StringHelper.preparePropertiesString(element.getValue(), nl.toCharArray()));
+		return new InsertEdit(doc.getLength(), sb.toString());
 	}
 	
 	public static void checkPropertiesFile(IFile file) {

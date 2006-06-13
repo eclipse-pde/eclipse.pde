@@ -13,53 +13,41 @@ package org.eclipse.pde.internal.ui.nls;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
+import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.IPluginParent;
+import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
-import org.eclipse.pde.internal.core.text.bundle.Bundle;
-import org.eclipse.pde.internal.core.text.bundle.BundleModel;
-import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
-import org.eclipse.pde.internal.core.text.plugin.PluginModel;
-import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
+import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.pde.internal.ui.util.ModelModification;
+import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 
-public class GetNonExternalizedStringsOperation 
-		implements IRunnableWithProgress {
+public class GetNonExternalizedStringsOperation implements IRunnableWithProgress {
 
-	public static final String MANIFEST_LOCATION = 
-		"META-INF/MANIFEST.MF"; //$NON-NLS-1$
-	private static final String[] PLUGIN_XML_FILES = 
-		new String[] {"plugin.xml", "fragment.xml"}; //$NON-NLS-1$ //$NON-NLS-2$
-	
 	private ISelection fSelection;
 	private ArrayList fSelectedModels;
 	private ModelChangeTable fModelChangeTable;
@@ -74,124 +62,95 @@ public class GetNonExternalizedStringsOperation
 		if (fSelection instanceof IStructuredSelection) {
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
 			fSelectedModels = new ArrayList(elems.length);
-			PluginModelManager manager = PDECore.getDefault().getModelManager();
 			for (int i = 0; i < elems.length; i++) {
-				IProject project = null;
-				if (elems[i] instanceof IFile) {
-					IFile file = (IFile) elems[i];
-					project = file.getProject();
-				} else if (elems[i] instanceof IProject) {
-					project = (IProject) elems[i];
-				}
-				if (project != null
-						&& !WorkspaceModelManager.isBinaryPluginProject(project)) {
-					IPluginModelBase model = manager.findModel(project);
-					if (model != null) {
-						fSelectedModels.add(model);
-					}
-				}
+				if (elems[i] instanceof IFile)
+					elems[i] = ((IFile) elems[i]).getProject();
+				
+				if (elems[i] instanceof IProject &&
+						!WorkspaceModelManager.isBinaryPluginProject((IProject)elems[i]))
+					fSelectedModels.add(elems[i]);
 			}
 		
 			fModelChangeTable = new ModelChangeTable();
 			
 			IPluginModelBase[] pluginModels = PDECore.getDefault().getModelManager().getWorkspaceModels();
 			monitor.beginTask(PDEUIMessages.GetNonExternalizedStringsOperation_taskMessage, pluginModels.length);
-			for (int i = 0; i < pluginModels.length; i++) {
+			for (int i = 0; i < pluginModels.length && !fCanceled; i++) {
 				IProject project = pluginModels[i].getUnderlyingResource().getProject();
-				if (!WorkspaceModelManager.isBinaryPluginProject(project) && !fCanceled) {
-					getUnExternalizedStrings(project, new SubProgressMonitor(monitor, 1) , pluginModels[i]);
-				}
-			}
-			
-		}
-	}
-	
-	private void getUnExternalizedStrings(IProject project, IProgressMonitor monitor, IModel model) {
-		// check manifest
-		if (model instanceof IBundlePluginModelBase) {
-			try {
-				inspectManifest(project, (IBundlePluginModelBase)model, monitor);
-			} catch (CoreException e) {}
-		}
-		if (model instanceof IPluginModelBase) {
-			String[] xmlFiles = PLUGIN_XML_FILES;
-			for (int i = 0; i < xmlFiles.length && !fCanceled; i++) {
-				IResource member = project.findMember(xmlFiles[i]);
-				try {
-					inspectXML(project, member, (IPluginModelBase)model, monitor);
-				} catch (CoreException e) {}
+				if (!WorkspaceModelManager.isBinaryPluginProject(project))
+					getUnExternalizedStrings(project, new SubProgressMonitor(monitor, 1));
 			}
 		}
-		monitor.done();
 	}
 	
-	private void inspectManifest(IProject project, IBundlePluginModelBase model, IProgressMonitor monitor) throws CoreException {
-		if (!ModelChange.modelLoaded(model)) return;
-		IFile manifestFile = project.getFile(MANIFEST_LOCATION);
-		Bundle bundle = getBundle(manifestFile, monitor);
-		for (int i = 0; i < ICoreConstants.TRANSLATABLE_HEADERS.length; i++) {
-			IManifestHeader header = bundle.getManifestHeader(ICoreConstants.TRANSLATABLE_HEADERS[i]);
-			if (header != null && isNotTranslated(header.getValue()))
-				fModelChangeTable.addToChangeTable(model, manifestFile, header, fSelectedModels.contains(model));
-		}
-	}
-	
-	private Bundle getBundle(IFile file, IProgressMonitor monitor) throws CoreException {
-		Bundle bundle = null;
-		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-		try {
-			manager.connect(file.getFullPath(), monitor);
-			IDocument document = manager.getTextFileBuffer(file.getFullPath()).getDocument();		
-			BundleModel model = new BundleModel(document, false);
-			if (ModelChange.modelLoaded(model)) bundle = (Bundle)model.getBundle();
-		} catch (MalformedTreeException e) {
-		} finally {
-			manager.disconnect(file.getFullPath(), monitor);
-		}
-		return bundle;
-	}
-	
-	
-	
-	private void inspectXML(IProject project, IResource resource, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
-		if (resource == null) return;
-		if (!(resource instanceof IFile)) return;
-		IFile file = (IFile)resource;
-		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-		try {
-			manager.connect(file.getFullPath(), monitor);
-			ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath());
-			IDocument document = buffer.getDocument();
-			PluginModelBase loadModel;
-			if ("fragment.xml".equals(file.getName())) //$NON-NLS-1$
-				loadModel = new FragmentModel(document, false);
-			else
-				loadModel = new PluginModel(document, false);
-
-			if (!ModelChange.modelLoaded(loadModel)) return;			
-			IPluginExtensionPoint[] points = loadModel.getPluginBase().getExtensionPoints();
-			for (int i = 0; i < points.length; i++) {
-				if (isNotTranslated(points[i].getName()))
-					fModelChangeTable.addToChangeTable(model, file, points[i], fSelectedModels.contains(model));
-			}
-			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
-			IPluginExtension[] extensions = loadModel.getPluginBase().getExtensions();
-			for (int i = 0; i < extensions.length; i++) {
+	private void getUnExternalizedStrings(IProject project, IProgressMonitor monitor) {
+		PDEModelUtility.modifyModel(new ModelModification(project) {
+			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
+				if (model instanceof IBundlePluginModelBase)
+					inspectManifest((IBundlePluginModelBase)model, monitor);
+				
 				if (monitor.isCanceled()) {
 					fCanceled = true;
 					return;
 				}
-				ISchema schema = registry.getSchema(extensions[i].getPoint());
-				if (schema != null)
-					inspectExtension(schema, extensions[i], loadModel, model, file);
+				
+				if (model instanceof IPluginModelBase)
+					inspectXML((IPluginModelBase)model, monitor);
+				
+				if (monitor.isCanceled()) {
+					fCanceled = true;
+					return;
+				}
 			}
-		} finally {
-			manager.disconnect(file.getFullPath(), monitor);
+		}, monitor);
+		monitor.done();
+	}
+	
+	private void inspectManifest(IBundlePluginModelBase model, IProgressMonitor monitor) throws CoreException {
+		IFile manifestFile = (IFile)model.getBundleModel().getUnderlyingResource();
+		IBundle bundle = model.getBundleModel().getBundle();
+		for (int i = 0; i < ICoreConstants.TRANSLATABLE_HEADERS.length; i++) {
+			IManifestHeader header = bundle.getManifestHeader(ICoreConstants.TRANSLATABLE_HEADERS[i]);
+			if (header != null && isNotTranslated(header.getValue()))
+				fModelChangeTable.addToChangeTable(model, manifestFile, header, selected(manifestFile));
+		}
+	}
+	
+	private void inspectXML(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
+		IFile file;
+		if (model instanceof IBundlePluginModelBase) {
+			ISharedExtensionsModel extModel = ((IBundlePluginModelBase)model).getExtensionsModel();
+			if (extModel == null)
+				return;
+			file = (IFile)extModel.getUnderlyingResource();
+		} else
+			file = (IFile)model.getUnderlyingResource();
+		
+		IPluginBase base = model.getPluginBase();
+		if (base instanceof IDocumentNode) {
+			// old style xml plugin
+			// check xml name declaration
+			IDocumentAttribute attr = ((IDocumentNode)base).getDocumentAttribute(IPluginObject.P_NAME);
+			if (attr != null && isNotTranslated(attr.getAttributeValue()))
+				fModelChangeTable.addToChangeTable(model, file, attr, selected(file));
+			
+			// check xml provider declaration
+			attr = ((IDocumentNode)base).getDocumentAttribute(IPluginBase.P_PROVIDER);
+			if (attr != null && isNotTranslated(attr.getAttributeValue()))
+				fModelChangeTable.addToChangeTable(model, file, attr, selected(file));
+		}
+		
+		SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
+		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
+		for (int i = 0; i < extensions.length; i++) {
+			ISchema schema = registry.getSchema(extensions[i].getPoint());
+			if (schema != null)
+				inspectExtension(schema, extensions[i], model, file);
 		}
 	}
 	
 	
-	private void inspectExtension(ISchema schema, IPluginParent parent, PluginModelBase model, IPluginModelBase memModel, IFile file) {
+	private void inspectExtension(ISchema schema, IPluginParent parent, IPluginModelBase memModel, IFile file) {
 		IPluginObject[] children = parent.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			IPluginElement child = (IPluginElement)children[i];
@@ -199,7 +158,7 @@ public class GetNonExternalizedStringsOperation
 			if (schemaElement != null) {
 				if (schemaElement.hasTranslatableContent())
 					if (isNotTranslated(child.getText()))
-						fModelChangeTable.addToChangeTable(memModel, file, child, fSelectedModels.contains(memModel));
+						fModelChangeTable.addToChangeTable(memModel, file, child, selected(file));
 				
 				IPluginAttribute[] attributes = child.getAttributes();
 				for (int j = 0; j < attributes.length; j++) {
@@ -207,26 +166,31 @@ public class GetNonExternalizedStringsOperation
 					ISchemaAttribute attInfo = schemaElement.getAttribute(attr.getName());
 					if (attInfo != null && attInfo.isTranslatable()) 
 						if (isNotTranslated(attr.getValue()))
-							fModelChangeTable.addToChangeTable(memModel, file, attr, fSelectedModels.contains(memModel));	
-					
+							fModelChangeTable.addToChangeTable(memModel, file, attr, selected(file));	
 				}
 			}
-			inspectExtension(schema, child, model, memModel, file);
+			inspectExtension(schema, child, memModel, file);
 		}
 	}
 	
 	private boolean isNotTranslated(String value) {
-		if (value != null && value.length() > 0)
-			return (value == null || value.length() == 0 || value.charAt(0) != '%' ||
-				(value.charAt(0) == '%' && value.length() == 1));
-		return false;
+		if (value == null)
+			return false;
+		if (value.length() > 0 && value.charAt(0) == '%')
+			return false;
+		return true;
 	}
 
 	protected ModelChangeTable getChangeTable() {
 		return fModelChangeTable;
 	}
-	protected boolean wasCanceled() {
+
+	public boolean wasCanceled() {
 		return fCanceled;
+	}
+	
+	private boolean selected(IFile file) {
+		return fSelectedModels.contains(file.getProject());
 	}
 }
 
