@@ -63,6 +63,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
@@ -76,6 +77,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
+import org.osgi.framework.Version;
 
 public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 
@@ -302,7 +304,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 							if (requestor.foundMatches() && !isDynamicallyImported(pkgName, dynamicImports)) {
 								fNewDependencies = true;
 								ignorePkgs.add(pkgName);
-								newDeps.put(pkgName, pluginId);
+								newDeps.put(exported[i], pluginId);
 								if (useRequireBundle) {
 									// since using require-bundle, rest of packages will be available when bundle is added.  
 									for (; i < exported.length; i++) 
@@ -438,13 +440,21 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		IManifestHeader mheader = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
 		if (mheader instanceof ImportPackageHeader) {
 			ImportPackageHeader header = (ImportPackageHeader) mheader;
-			while (it.hasNext()) 
-				header.addPackage((String)it.next());
+			String versionAttr = (BundlePluginBase.getBundleManifestVersion(bundle) < 2) ? 
+					ICoreConstants.PACKAGE_SPECIFICATION_VERSION : Constants.VERSION_ATTRIBUTE;  
+			while (it.hasNext())  {
+				ImportPackageObject obj = new ImportPackageObject(header, (ExportPackageDescription)it.next(), versionAttr);
+				header.addPackage(obj);
+			}
 		} else {
 			String currentValue = (mheader != null) ? mheader.getValue() : null;
 			StringBuffer buffer = (currentValue == null) ? new StringBuffer() : new StringBuffer(currentValue).append(", "); //$NON-NLS-1$
-			while(it.hasNext()) 
-				buffer.append((String)it.next()).append(", "); //$NON-NLS-1$
+			while(it.hasNext()) {
+				ExportPackageDescription desc = (ExportPackageDescription)it.next();
+				String value = (desc.getVersion().equals(Version.emptyVersion)) ? desc.getName() : 
+					desc.getName() + "; version=\"" + desc.getVersion() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+				buffer.append(value).append(", "); //$NON-NLS-1$
+			}	
 			if (buffer.length() > 0) 
 				buffer.setLength(buffer.length() - 2);
 			bundle.setHeader(Constants.IMPORT_PACKAGE, buffer.toString());
