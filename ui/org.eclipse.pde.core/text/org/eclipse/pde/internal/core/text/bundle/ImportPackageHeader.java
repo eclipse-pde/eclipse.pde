@@ -37,7 +37,7 @@ public class ImportPackageHeader extends BasePackageHeader {
     }
     
     public void addPackage(String id) {
-    	PackageObject obj = new ImportPackageObject(this, id, null, null);
+    	PackageObject obj = new ImportPackageObject(this, id, null, getVersionAttribute());
     	addManifestElement(obj);
     }
     
