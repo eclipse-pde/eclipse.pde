@@ -16,15 +16,12 @@ import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
 
 public class ExtensionHyperLink extends AbstractHyperlink {
 
-	private String fPointID;
-	
 	public ExtensionHyperLink(IRegion region, String pointID) {
-		super(region, null);
-		fPointID = pointID;
+		super(region, pointID);
 	}
 	
 	public void open() {
-		new ShowDescriptionAction(fPointID).run();
+		new ShowDescriptionAction(fElement).run();
 	}
 
 }

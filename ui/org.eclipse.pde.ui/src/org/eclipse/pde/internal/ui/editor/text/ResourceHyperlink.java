@@ -19,6 +19,11 @@ public class ResourceHyperlink extends AbstractHyperlink {
 	}
 
 	public void open() {
+		if (fResource == null)
+			return;
+		if (fElement.indexOf("$nl$/") == 0) //$NON-NLS-1$
+			fElement = fElement.substring(5);
+		fResource = fResource.getProject().findMember(fElement);
 		try {
 			if (fResource instanceof IFile)
 				IDE.openEditor(PDEPlugin.getActivePage(), (IFile)fResource, true);
