@@ -301,6 +301,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			if (framework != null) {
 				IEclipsePreferences pref = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
 				if (pref != null) {
+					pref.putBoolean(ICoreConstants.RESOLVE_WITH_REQUIRE_BUNDLE, false);
 					pref.putBoolean(ICoreConstants.EXTENSIONS_PROPERTY, false);
 					if (!ICoreConstants.EQUINOX.equals(framework))
 						pref.putBoolean(ICoreConstants.EQUINOX_PROPERTY, false);
