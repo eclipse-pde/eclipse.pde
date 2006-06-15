@@ -19,10 +19,8 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.pde.internal.core.BinaryRepositoryProvider;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
-import org.eclipse.team.core.RepositoryProvider;
 
 public class ImportAsSourceTestCase extends BaseImportTestCase {
 	
@@ -30,42 +28,35 @@ public class ImportAsSourceTestCase extends BaseImportTestCase {
 	private static int TYPE = PluginImportOperation.IMPORT_WITH_SOURCE;
 
 	public static Test suite() {
-		return new TestSuite(ImportWithLinksTestCase.class);
+		return new TestSuite(ImportAsSourceTestCase.class);
 	}
 	
 	public void testImportSourceJAR() {
 		runOperation(new String[] {"org.eclipse.pde.core"}, TYPE);
-		verifyLinkedProject("org.eclipse.pde.core", true);
+		verifySourceProject("org.eclipse.pde.core", true);
 	}
 	
 	public void testImportSourceFlat() {
 		runOperation(new String[] {"org.eclipse.jdt.debug"}, TYPE);
-		verifyLinkedProject("org.eclipse.jdt.debug", true);
-	}
-	
-	public void testImportSourceNotJavaFlat() {
-		runOperation(new String[] {"org.eclipse.pde"}, TYPE);
-		verifyLinkedProject("org.eclipse.pde", false);
+		verifySourceProject("org.eclipse.jdt.debug", true);
 	}
 	
 	public void testImportSourceNotJavaJARd() {
 		runOperation(new String[] {"org.eclipse.jdt.doc.user"}, TYPE);
-		verifyLinkedProject("org.eclipse.jdt.doc.user", false);
+		verifySourceProject("org.eclipse.jdt.doc.user", false);
 	}
 	
 	public void testImportSourceMultiple() {
 		runOperation(new String[] {"org.eclipse.core.filebuffers", "org.eclipse.jdt.doc.user", "org.eclipse.pde.build"},
 					TYPE);
-		verifyLinkedProject("org.eclipse.core.filebuffers", true);
-		verifyLinkedProject("org.eclipse.jdt.doc.user", false);
-		verifyLinkedProject("org.eclipse.pde.build", true);		
+		verifySourceProject("org.eclipse.core.filebuffers", true);
+		verifySourceProject("org.eclipse.jdt.doc.user", false);
+		verifySourceProject("org.eclipse.pde.build", true);		
 	}
 
-	private void verifyLinkedProject(String projectName, boolean isJava) {
+	private void verifySourceProject(String projectName, boolean isJava) {
 		try {
 			IProject project =  verifyProject(projectName);
-			RepositoryProvider provider = RepositoryProvider.getProvider(project);
-			assertTrue(provider instanceof BinaryRepositoryProvider);			
 			assertTrue(project.hasNature(PDE.PLUGIN_NATURE));
 			assertEquals(isJava, project.hasNature(JavaCore.NATURE_ID));
 			if (isJava) {
