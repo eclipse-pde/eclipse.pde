@@ -366,8 +366,6 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		}
 	}
 	protected HyperlinkAction getHyperlinkAction() {
-		if (fHyperlinkAction.isEnabled())
-			return fHyperlinkAction;
-		return null;
+		return fHyperlinkAction;
 	}
 }

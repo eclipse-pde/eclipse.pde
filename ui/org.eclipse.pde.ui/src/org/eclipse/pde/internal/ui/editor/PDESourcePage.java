@@ -43,6 +43,7 @@ import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.actions.HyperlinkAction;
+import org.eclipse.pde.internal.ui.actions.PDEActionConstants;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.text.PDESelectAnnotationRulerAction;
 import org.eclipse.swt.SWT;
@@ -380,6 +381,8 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		PDESelectAnnotationRulerAction action = new PDESelectAnnotationRulerAction(
 				getBundleForConstructedKeys(), "PDESelectAnnotationRulerAction.", this, getVerticalRuler()); //$NON-NLS-1$
 		setAction(ITextEditorActionConstants.RULER_CLICK, action);
+		if (editor != null)
+			setAction(PDEActionConstants.OPEN, editor.getContributor().getHyperlinkAction());
 	}
 	
 	public final void selectionChanged(SelectionChangedEvent event) {
@@ -431,12 +434,12 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	}
 
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
-		if (editor == null)
-			return;
-		HyperlinkAction action = editor.getContributor().getHyperlinkAction();
-		if (action != null) {
-			menu.add(new Separator());
-			menu.add(action);
+		if (editor != null) {
+			HyperlinkAction action = editor.getContributor().getHyperlinkAction();
+			if (action.isEnabled()) {
+				menu.add(new Separator());
+				menu.add(action);
+			}
 		}
 		super.editorContextMenuAboutToShow(menu);
 	}

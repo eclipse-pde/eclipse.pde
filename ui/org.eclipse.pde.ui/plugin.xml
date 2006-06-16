@@ -1911,20 +1911,4 @@
           <actionSet id="org.eclipse.debug.ui.breakpointActionSet"/>
        </perspectiveExtension>
     </extension>
-   <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            id="org.eclipse.pde.ui.actionSet.manifestNavigation"
-            label="%actionSet.label.0"
-            visible="false">
-         <action
-               allowLabelUpdate="true"
-               definitionId="org.eclipse.jdt.ui.edit.text.java.open.editor"
-               id="org.eclipse.pde.ui.actions.Open"
-               label="%HyperlinkAction.label"
-               retarget="true"
-               >
-         </action>
-      </actionSet>
-   </extension>
 </plugin>

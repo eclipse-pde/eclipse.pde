@@ -18,6 +18,5 @@ package org.eclipse.pde.internal.ui.actions;
 public class PDEActionConstants {
 
 	public static final String OPEN = "org.eclipse.pde.ui.actions.Open"; //$NON-NLS-1$
-	public static final String MANIFEST_NAV_SET = "org.eclipse.pde.ui.actionSet.manifestNavigation"; //$NON-NLS-1$
 	
 }

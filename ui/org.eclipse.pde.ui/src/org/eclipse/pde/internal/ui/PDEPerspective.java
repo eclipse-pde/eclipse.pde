@@ -74,7 +74,6 @@ public class PDEPerspective implements IPerspectiveFactory {
 		factory.addActionSet(JavaUI.ID_ACTION_SET);
 		factory.addActionSet(JavaUI.ID_ELEMENT_CREATION_ACTION_SET);	
 		factory.addActionSet("org.eclipse.debug.ui.breakpointActionSet"); //$NON-NLS-1$
-		//factory.addActionSet(PDEActionConstants.MANIFEST_NAV_SET);
 	}
 	
 	private void addNewWizardShortcuts() {
