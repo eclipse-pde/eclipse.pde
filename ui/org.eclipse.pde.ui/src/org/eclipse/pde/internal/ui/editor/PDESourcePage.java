@@ -431,7 +431,6 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	}
 
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
-		super.editorContextMenuAboutToShow(menu);
 		if (editor == null)
 			return;
 		HyperlinkAction action = editor.getContributor().getHyperlinkAction();
@@ -439,5 +438,6 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 			menu.add(new Separator());
 			menu.add(action);
 		}
+		super.editorContextMenuAboutToShow(menu);
 	}
 }

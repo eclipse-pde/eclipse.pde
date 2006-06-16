@@ -8,8 +8,9 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.plugin.ExtensionHyperLink;
+import org.eclipse.pde.internal.ui.editor.text.BundleHyperlink;
 import org.eclipse.pde.internal.ui.editor.text.JavaHyperlink;
-import org.eclipse.pde.internal.ui.editor.text.ManifestElementHyperlink;
+import org.eclipse.pde.internal.ui.editor.text.PackageHyperlink;
 import org.eclipse.pde.internal.ui.editor.text.ResourceHyperlink;
 import org.eclipse.pde.internal.ui.editor.text.SchemaHyperlink;
 import org.eclipse.pde.internal.ui.editor.text.TranslationHyperlink;
@@ -93,8 +94,10 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 			text = PDEUIMessages.HyperlinkActionOpenType;
 		else if (fLink instanceof ExtensionHyperLink)
 			text = PDEUIMessages.HyperlinkActionOpenDescription;
-		else if (fLink instanceof ManifestElementHyperlink)
-			text = PDEUIMessages.HyperlinkActionOpenManifest;
+		else if (fLink instanceof BundleHyperlink)
+			text = PDEUIMessages.HyperlinkActionOpenBundle;
+		else if (fLink instanceof PackageHyperlink)
+			text = PDEUIMessages.HyperlinkActionOpenPackage;
 		else if (fLink instanceof ResourceHyperlink)
 			text = PDEUIMessages.HyperlinkActionOpenResource;
 		else if (fLink instanceof SchemaHyperlink)

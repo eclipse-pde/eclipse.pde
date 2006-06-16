@@ -2888,7 +2888,8 @@ public class PDEUIMessages extends NLS {
 	// HyperlinkAction.java
 	public static String HyperlinkActionOpenType;
 	public static String HyperlinkActionOpenDescription;
-	public static String HyperlinkActionOpenManifest;
+	public static String HyperlinkActionOpenBundle;
+	public static String HyperlinkActionOpenPackage;
 	public static String HyperlinkActionOpenResource;
 	public static String HyperlinkActionOpenSchema;
 	public static String HyperlinkActionOpenTranslation;
