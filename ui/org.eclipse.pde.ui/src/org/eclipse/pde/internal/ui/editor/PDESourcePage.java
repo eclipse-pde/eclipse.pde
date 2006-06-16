@@ -19,6 +19,8 @@ package org.eclipse.pde.internal.ui.editor;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
@@ -40,6 +42,7 @@ import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.actions.HyperlinkAction;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.text.PDESelectAnnotationRulerAction;
 import org.eclipse.swt.SWT;
@@ -421,5 +424,20 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	 */
 	protected boolean isSelectionListener() {
 		return false;
+	}
+	
+	public ISourceViewer getViewer() {
+		return getSourceViewer();
+	}
+
+	protected void editorContextMenuAboutToShow(IMenuManager menu) {
+		super.editorContextMenuAboutToShow(menu);
+		if (editor == null)
+			return;
+		HyperlinkAction action = editor.getContributor().getHyperlinkAction();
+		if (action != null) {
+			menu.add(new Separator());
+			menu.add(action);
+		}
 	}
 }

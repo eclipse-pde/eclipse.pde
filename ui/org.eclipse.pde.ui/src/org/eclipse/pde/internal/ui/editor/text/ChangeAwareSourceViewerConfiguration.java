@@ -67,7 +67,7 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 	
  	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
  		if (fSourcePage != null)
- 			return (IHyperlinkDetector[]) fSourcePage.getAdapter(IHyperlinkDetector[].class);
+ 			return new IHyperlinkDetector[] { (IHyperlinkDetector)fSourcePage.getAdapter(IHyperlinkDetector.class) };
 		return super.getHyperlinkDetectors(sourceViewer);
 	}
 

@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jdt.ui.IContextMenuConstants;
+import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ICoolBarManager;
@@ -27,6 +28,8 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.actions.HyperlinkAction;
+import org.eclipse.pde.internal.ui.actions.PDEActionConstants;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
@@ -43,9 +46,8 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 
-public class PDEFormEditorContributor
-		extends
-			MultiPageEditorActionBarContributor {
+public class PDEFormEditorContributor extends MultiPageEditorActionBarContributor {
+	
 	private SubActionBars sourceActionBars;
 	private PDEFormEditor editor;
 	private IFormPage page;
@@ -57,6 +59,7 @@ public class PDEFormEditorContributor
 	private Hashtable globalActions = new Hashtable();
 	private TextEditorActionContributor sourceContributor;
 	private RetargetTextEditorAction fCorrectionAssist ;
+	private HyperlinkAction fHyperlinkAction;
 	class GlobalAction extends Action implements IUpdate {
 		private String id;
 		public GlobalAction(String id) {
@@ -145,6 +148,8 @@ public class PDEFormEditorContributor
 	public PDEFormEditorContributor(String menuName) {
 		fCorrectionAssist = new RetargetTextEditorAction(PDESourcePage.getBundleForConstructedKeys(), "CorrectionAssistProposal."); //$NON-NLS-1$
 		fCorrectionAssist.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICK_ASSIST);
+		fHyperlinkAction = new HyperlinkAction();
+		fHyperlinkAction.setActionDefinitionId(IJavaEditorActionDefinitionIds.OPEN_EDITOR);
 		sourceContributor = new TextEditorActionContributor() {
 			public void contributeToMenu(IMenuManager mm) {
 				super.contributeToMenu(mm);
@@ -171,6 +176,11 @@ public class PDEFormEditorContributor
 					textEditor = (ITextEditor)part;
 
 				fCorrectionAssist.setAction(getAction(textEditor, ITextEditorActionConstants.QUICK_ASSIST)); //$NON-NLS-1$
+				fHyperlinkAction.setTextEditor(textEditor);
+			}
+			public void contributeToToolBar(IToolBarManager toolBarManager) {
+				super.contributeToToolBar(toolBarManager);
+				toolBarManager.add(fHyperlinkAction);
 			}
 		};
 		makeActions();
@@ -325,6 +335,7 @@ public class PDEFormEditorContributor
 			sourceActionBars.deactivate();
 			registerGlobalActionHandlers();
 		}
+		rootBars.setGlobalActionHandler(PDEActionConstants.OPEN, active ? fHyperlinkAction : null);
 		rootBars.updateActionBars();
 	}
 	private void registerGlobalActionHandlers() {
@@ -353,5 +364,10 @@ public class PDEFormEditorContributor
 			copyAction.selectionChanged(selection);
 			pasteAction.selectionChanged(selection);
 		}
+	}
+	protected HyperlinkAction getHyperlinkAction() {
+		if (fHyperlinkAction.isEnabled())
+			return fHyperlinkAction;
+		return null;
 	}
 }

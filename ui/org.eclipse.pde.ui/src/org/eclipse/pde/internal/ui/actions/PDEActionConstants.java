@@ -1,0 +1,23 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.pde.internal.ui.actions;
+
+/**
+ * PDEActionConstants
+ *
+ */
+public class PDEActionConstants {
+
+	public static final String OPEN = "org.eclipse.pde.ui.actions.Open"; //$NON-NLS-1$
+	public static final String MANIFEST_NAV_SET = "org.eclipse.pde.ui.actionSet.manifestNavigation"; //$NON-NLS-1$
+	
+}

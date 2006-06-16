@@ -229,8 +229,8 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	}
 	
 	public Object getAdapter(Class adapter) {
-		if (IHyperlinkDetector[].class.equals(adapter))
-			return new IHyperlinkDetector[] { new BundleHyperlinkDetector(this) };
+		if (IHyperlinkDetector.class.equals(adapter))
+			return new BundleHyperlinkDetector(this);
 		return super.getAdapter(adapter);
 	}
 }

@@ -258,8 +258,8 @@ public class ManifestSourcePage extends XMLSourcePage {
 	}
 	
 	public Object getAdapter(Class adapter) {
-		if (IHyperlinkDetector[].class.equals(adapter))
-			return new IHyperlinkDetector[] { new ManifestHyperlinkDetector(this) };
+		if (IHyperlinkDetector.class.equals(adapter))
+			return new ManifestHyperlinkDetector(this);
 		return super.getAdapter(adapter);
 	}
 }
