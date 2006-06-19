@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text;
 
-public interface IDocumentTextNode {
+public interface IDocumentTextNode extends IDocumentRange {
 	
 	void setEnclosingElement(IDocumentNode node);	
 	IDocumentNode getEnclosingElement();
@@ -19,9 +19,6 @@ public interface IDocumentTextNode {
 	String getText();
 	
 	void setOffset(int offset);
-	int getOffset();
-	
 	void setLength(int length);
-	int getLength();
 	
 }
