@@ -9,6 +9,8 @@ import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.IDocumentRange;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 
 public abstract class XMLUtil {
 
@@ -32,8 +34,27 @@ public abstract class XMLUtil {
 		return node != null ? (IPluginObject)node : null;
 	}
 	
-	public static boolean withinAttributeValue(IDocumentAttribute attr, int offset) {
-		return attr.getValueOffset() <= offset && offset <= attr.getValueOffset() + attr.getValueLength();
+	private static boolean withinRange(int start, int len, int offset) {
+		return start <= offset && offset <= start + len;
+	}
+	
+	public static boolean withinRange(IDocumentRange range, int offset) {
+		if (range instanceof IDocumentAttribute)
+			return withinRange(
+					((IDocumentAttribute)range).getValueOffset(),
+					((IDocumentAttribute)range).getValueLength(),
+					offset);
+		if (range instanceof IDocumentNode)
+			return withinRange(
+					((IDocumentNode)range).getOffset(),
+					((IDocumentNode)range).getLength(),
+					offset);
+		if (range instanceof IDocumentTextNode)
+			return withinRange(
+					((IDocumentTextNode)range).getOffset(),
+					((IDocumentTextNode)range).getLength(),
+					offset);
+		return false;
 	}
 	
 	/**

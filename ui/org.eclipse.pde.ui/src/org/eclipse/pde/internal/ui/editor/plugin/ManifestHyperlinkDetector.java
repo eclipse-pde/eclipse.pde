@@ -16,6 +16,7 @@ import org.eclipse.pde.internal.core.schema.SchemaRootElement;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.text.JavaHyperlink;
 import org.eclipse.pde.internal.ui.editor.text.ResourceHyperlink;
@@ -39,16 +40,21 @@ public class ManifestHyperlinkDetector implements IHyperlinkDetector {
 			return null;
 
 		IDocumentRange element = fSourcePage.getRangeElement(region.getOffset());
-		if (!(element instanceof IDocumentAttribute))
+		if (!XMLUtil.withinRange(element, region.getOffset()))
 			return null;
 		
-		IDocumentAttribute attr = (IDocumentAttribute)element;
+		if (element instanceof IDocumentAttribute)
+			return detectAttributeHyperlink((IDocumentAttribute)element);
+		if (element instanceof IDocumentNode)
+			return detectNodeHyperlink((IDocumentNode)element);
+		if (element instanceof IDocumentTextNode)
+			return detectTextNodeHyperlink((IDocumentTextNode)element);
+		return null;
+	}
+
+	private IHyperlink[] detectAttributeHyperlink(IDocumentAttribute attr) {
 		String attrValue = attr.getAttributeValue();
 		if (attrValue.length() == 0)
-			return null;
-		
-		// only highlight if we are hovering inside of the attribute value
-		if (!XMLUtil.withinAttributeValue(attr, region.getOffset()))
 			return null;
 		
 		IPluginObject node = XMLUtil.getTopLevelParent((IDocumentNode)attr);
@@ -88,5 +94,39 @@ public class ManifestHyperlinkDetector implements IHyperlinkDetector {
 			return link;
 		return null;
 	}
-
+	
+	private IHyperlink[] detectNodeHyperlink(IDocumentNode node) {
+		// TODO what can we do here?
+		// suggestions:
+		//   - use SchemaEditor.openToElement(IPath path, ISchemaElement element)
+		//     to directly highlight this particular element in a schema editor
+		//      ? too fancy ?
+/*
+		IPluginObject parent = XMLUtil.getTopLevelParent(node);
+		if (parent == null || !parent.getModel().isEditable())
+			return null;
+		
+		if (parent instanceof IPluginExtension) { 
+			ISchemaElement sElement = XMLUtil.getSchemaElement(node, ((IPluginExtension)parent).getPoint());
+			if (sElement == null)
+				return null;
+			URL url = sElement.getSchema().getURL();
+			// only have access to URL now - extend SchemaEditor?
+			SchemaEditor.openToElement(url, sElement);
+		}
+*/
+		return null;
+	}
+	
+	private IHyperlink[] detectTextNodeHyperlink(IDocumentTextNode node) {
+		IDocumentNode enclosing = node.getEnclosingElement();
+		if (!(enclosing instanceof IPluginObject))
+			return null;
+		IPluginModelBase base = ((IPluginObject)enclosing).getPluginModel();
+		IRegion linkRegion = new Region(node.getOffset(), node.getLength());
+		if (node.getText().charAt(0) == '%')
+			return new IHyperlink[] {
+				new TranslationHyperlink(linkRegion, node.getText(), base)};
+		return null;
+	}
 }

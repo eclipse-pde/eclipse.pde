@@ -27,6 +27,7 @@ import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -220,26 +221,38 @@ public class ManifestSourcePage extends XMLSourcePage {
 		return node;
 	}
 
-	private IDocumentNode findNode(Object[] nodes, int offset) {
+	private IDocumentRange findNode(Object[] nodes, int offset) {
 		for (int i = 0; i < nodes.length; i++) {
 			IDocumentNode node = (IDocumentNode)nodes[i];
-			if (offset >= node.getOffset()
+			if (node.getOffset() < offset 
 					&& offset < node.getOffset() + node.getLength()) {
 				
-				if (offset >= node.getOffset() && 
+				if (node.getOffset() < offset && 
 						offset <= node.getOffset() + node.getXMLTagName().length() + 1)
 					return node;
 				
 				IDocumentAttribute[] attrs = node.getNodeAttributes();
-				for (int a = 0; attrs != null && a < attrs.length; a++)
-					if (attrs[a].getNameOffset() <= offset &&
-							attrs[a].getValueOffset() + attrs[a].getValueLength() >= offset)
-						return (IDocumentNode)attrs[a];
+				if (attrs != null)
+					for (int a = 0; a < attrs.length; a++)
+						if (attrs[a].getNameOffset() <= offset &&
+								offset <= attrs[a].getValueOffset() + attrs[a].getValueLength())
+							return (IDocumentNode)attrs[a];
+				
+				IDocumentTextNode textNode = node.getTextNode();
+				if (textNode != null && 
+						textNode.getOffset() <= offset &&
+						offset < textNode.getOffset() + textNode.getLength())
+					return textNode;
 				
 				IDocumentNode[] children = node.getChildNodes();
-				if (children == null || children.length == 0)
-					return node;
-				return findNode(children, offset);
+				if (children != null)
+					for (int c = 0; c < children.length; c++)
+						if (children[c].getOffset() < offset &&
+								offset < children[c].getOffset() + children[c].getLength())
+							return findNode(new Object[] {children[c]}, offset);
+				
+				// not contained inside any sub elements, must be inside node
+				return node;
 			}
 		}
 		return null;

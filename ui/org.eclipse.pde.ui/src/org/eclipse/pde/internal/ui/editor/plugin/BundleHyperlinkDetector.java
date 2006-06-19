@@ -56,11 +56,11 @@ public class BundleHyperlinkDetector implements IHyperlinkDetector {
 		if (!header.getModel().isEditable())
 			return null;
 		
-		if (region.getOffset() <= header.getOffset() + header.getName().length())
+		String headerName = header.getName();
+		if (region.getOffset() <= header.getOffset() + headerName.length())
 			return null;
 		
 		String[] translatable = ICoreConstants.TRANSLATABLE_HEADERS;
-		String headerName = header.getName();
 		for (int i = 0; i < translatable.length; i++) {
 			if (!headerName.equals(translatable[i]))
 				continue;
