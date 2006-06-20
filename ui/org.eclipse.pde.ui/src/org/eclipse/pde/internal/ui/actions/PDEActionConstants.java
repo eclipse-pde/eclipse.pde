@@ -17,6 +17,10 @@ package org.eclipse.pde.internal.ui.actions;
  */
 public class PDEActionConstants {
 
+	// action IDs
 	public static final String OPEN = "org.eclipse.pde.ui.actions.Open"; //$NON-NLS-1$
-	
+	public static final String FORMAT = "org.eclipse.pde.ui.actions.Format"; //$NON-NLS-1$
+
+	// command IDs
+	public static final String DEFN_FORMAT = "org.eclipse.pde.ui.edit.text.format"; //$NON-NLS-1$	
 }

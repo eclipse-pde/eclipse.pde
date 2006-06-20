@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.ui.util;
+package org.eclipse.pde.internal.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Enumeration;
@@ -18,13 +18,15 @@ import org.eclipse.pde.internal.core.text.bundle.Bundle;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.text.plugin.PluginBaseNode;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.ModelModification;
+import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.ui.IFileEditorInput;
 
-public class FormatManifestOperation implements IRunnableWithProgress {
+public class FormatOperation implements IRunnableWithProgress {
 
 	private Object[] fObjects;
 	
-	public FormatManifestOperation(Object[] objects) {
+	public FormatOperation(Object[] objects) {
 		fObjects = objects;
 	}
 	

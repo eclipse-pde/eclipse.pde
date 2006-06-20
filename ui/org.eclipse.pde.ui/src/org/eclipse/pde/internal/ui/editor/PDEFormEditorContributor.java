@@ -28,6 +28,7 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.actions.FormatAction;
 import org.eclipse.pde.internal.ui.actions.HyperlinkAction;
 import org.eclipse.pde.internal.ui.actions.PDEActionConstants;
 import org.eclipse.ui.IActionBars;
@@ -60,6 +61,8 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 	private TextEditorActionContributor sourceContributor;
 	private RetargetTextEditorAction fCorrectionAssist ;
 	private HyperlinkAction fHyperlinkAction;
+	private FormatAction fFormatAction;
+	
 	class GlobalAction extends Action implements IUpdate {
 		private String id;
 		public GlobalAction(String id) {
@@ -150,6 +153,8 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		fCorrectionAssist.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICK_ASSIST);
 		fHyperlinkAction = new HyperlinkAction();
 		fHyperlinkAction.setActionDefinitionId(IJavaEditorActionDefinitionIds.OPEN_EDITOR);
+		fFormatAction = new FormatAction();
+		fFormatAction.setActionDefinitionId(PDEActionConstants.DEFN_FORMAT);
 		sourceContributor = new TextEditorActionContributor() {
 			public void contributeToMenu(IMenuManager mm) {
 				super.contributeToMenu(mm);
@@ -177,6 +182,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 
 				fCorrectionAssist.setAction(getAction(textEditor, ITextEditorActionConstants.QUICK_ASSIST)); //$NON-NLS-1$
 				fHyperlinkAction.setTextEditor(textEditor);
+				fFormatAction.setTextEditor(textEditor);
 			}
 			public void contributeToToolBar(IToolBarManager toolBarManager) {
 				super.contributeToToolBar(toolBarManager);
@@ -336,6 +342,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 			registerGlobalActionHandlers();
 		}
 		rootBars.setGlobalActionHandler(PDEActionConstants.OPEN, active ? fHyperlinkAction : null);
+		rootBars.setGlobalActionHandler(PDEActionConstants.FORMAT, active ? fFormatAction : null);
 		rootBars.updateActionBars();
 	}
 	private void registerGlobalActionHandlers() {
@@ -367,5 +374,8 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 	}
 	protected HyperlinkAction getHyperlinkAction() {
 		return fHyperlinkAction;
+	}
+	protected FormatAction getFormatAction() {
+		return fFormatAction;
 	}
 }

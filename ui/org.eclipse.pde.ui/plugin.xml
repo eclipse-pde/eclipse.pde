@@ -729,7 +729,16 @@
             description="%SWTApplicationShortcut.description.run"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.pde.ui.swtLaunchShortcut.run">
-      </command>    
+      </command>
+      <command
+            categoryId="org.eclipse.pde.ui.category.source"
+            description="%command.format.description"
+            id="org.eclipse.pde.ui.edit.text.format"
+            name="%command.format.name"/>
+      <category
+            description="%category.source.description"
+            id="org.eclipse.pde.ui.category.source"
+            name="%category.source.name"/>    
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -1742,6 +1751,11 @@
             commandId="org.eclipse.pde.ui.swtLaunchShortcut.run"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>
+      <key
+            commandId="org.eclipse.pde.ui.edit.text.format"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+F"/>
    </extension>
    <extension
          point="org.eclipse.ltk.core.refactoring.renameParticipants">

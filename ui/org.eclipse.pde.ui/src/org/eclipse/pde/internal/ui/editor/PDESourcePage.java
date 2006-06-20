@@ -20,7 +20,6 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
@@ -42,6 +41,7 @@ import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.actions.FormatAction;
 import org.eclipse.pde.internal.ui.actions.HyperlinkAction;
 import org.eclipse.pde.internal.ui.actions.PDEActionConstants;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
@@ -381,8 +381,10 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		PDESelectAnnotationRulerAction action = new PDESelectAnnotationRulerAction(
 				getBundleForConstructedKeys(), "PDESelectAnnotationRulerAction.", this, getVerticalRuler()); //$NON-NLS-1$
 		setAction(ITextEditorActionConstants.RULER_CLICK, action);
-		if (editor != null)
+		if (editor != null) {
 			setAction(PDEActionConstants.OPEN, editor.getContributor().getHyperlinkAction());
+			setAction(PDEActionConstants.FORMAT, editor.getContributor().getFormatAction());
+		}
 	}
 	
 	public final void selectionChanged(SelectionChangedEvent event) {
@@ -436,10 +438,11 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		if (editor != null) {
 			HyperlinkAction action = editor.getContributor().getHyperlinkAction();
-			if (action.isEnabled()) {
-				menu.add(new Separator());
+			if (action.isEnabled())
 				menu.add(action);
-			}
+			FormatAction formatManifestAction = editor.getContributor().getFormatAction();
+			if (formatManifestAction.isEnabled())
+				menu.add(formatManifestAction);
 		}
 		super.editorContextMenuAboutToShow(menu);
 	}
