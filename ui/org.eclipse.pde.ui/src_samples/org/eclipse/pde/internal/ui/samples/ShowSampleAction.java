@@ -65,7 +65,6 @@ public class ShowSampleAction extends Action implements IIntroAction {
                     WizardDialog dialog = new WizardDialog(PDEPlugin
                             .getActiveWorkbenchShell(), wizard);
                     dialog.create();
-                    dialog.setPageSize(450, 500);
                     if (dialog.open() == Window.OK) {
                         switchToSampleStandby(wizard);
                     }
