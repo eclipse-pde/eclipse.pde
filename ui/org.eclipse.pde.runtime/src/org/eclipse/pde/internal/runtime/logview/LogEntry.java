@@ -28,7 +28,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 	
-	public static final String F_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SS"; //$NON-NLS-1$
+	public static final String F_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS"; //$NON-NLS-1$
 	
 	private ArrayList children;
 	private LogEntry parent;
