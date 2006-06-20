@@ -58,9 +58,7 @@ public class EquinoxSettingsTab extends AbstractLauncherTab {
 		container.setLayout(new GridLayout());
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		createStartingSpace(container, 1);
 		fJREBlock.createControl(container);
-		createStartingSpace(container, 1);
 		fConfigurationBlock.createControl(container);
 		
 		Dialog.applyDialogFont(container);
