@@ -33,7 +33,7 @@ import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.internal.core.builders.ValidatingSAXParser;
+import org.eclipse.pde.internal.core.builders.DefaultSAXParser;
 import org.eclipse.pde.internal.core.builders.XMLErrorReporter;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.util.ModelModification;
@@ -83,7 +83,7 @@ public class GetUnconvertedOperation implements IRunnableWithProgress {
 		for (int i = 0; i < tocs.size(); i++) {
 			IFile file = (IFile)tocs.get(i);
 			XMLErrorReporter xml = new XMLErrorReporter(file);
-			ValidatingSAXParser.parse(file, xml);
+			DefaultSAXParser.parse(file, xml);
 			Element root = xml.getDocumentRoot();
 			if (root != null)
 				checkXML(root, file);

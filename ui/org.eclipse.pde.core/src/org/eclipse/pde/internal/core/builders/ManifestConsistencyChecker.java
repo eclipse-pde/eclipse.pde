@@ -89,7 +89,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			reporter = new FragmentErrorReporter(file);
 		}
 		if (reporter != null) {
-			ValidatingSAXParser.parse(file, reporter);
+			DefaultSAXParser.parse(file, reporter);
 			reporter.validateContent(monitor);
 			monitor.subTask(PDECoreMessages.Builders_updating);
 		}

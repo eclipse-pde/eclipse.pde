@@ -96,7 +96,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 			NLS.bind(PDECoreMessages.Builders_verifying, file.getFullPath().toString());
 		monitor.subTask(message);
 		FeatureErrorReporter reporter = new FeatureErrorReporter(file);
-		ValidatingSAXParser.parse(file, reporter);
+		DefaultSAXParser.parse(file, reporter);
 		if (reporter.getErrorCount() == 0) {
 			reporter.validateContent(monitor);
 		}

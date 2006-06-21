@@ -97,7 +97,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		monitor.subTask(message);
 		
 		SchemaErrorReporter reporter = new SchemaErrorReporter(file);
-		ValidatingSAXParser.parse(file, reporter);
+		DefaultSAXParser.parse(file, reporter);
 		reporter.validateContent(monitor);
 
 		StringWriter swriter = new StringWriter();

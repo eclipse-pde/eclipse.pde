@@ -84,7 +84,7 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 			NLS.bind(PDECoreMessages.Builders_verifying, file.getFullPath().toString());
 		monitor.subTask(message);
 		UpdateSiteErrorReporter reporter = new UpdateSiteErrorReporter(file);
-		ValidatingSAXParser.parse(file, reporter);
+		DefaultSAXParser.parse(file, reporter);
 		if (reporter.getErrorCount() == 0) {
 			reporter.validateContent(monitor);
 		}

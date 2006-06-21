@@ -24,9 +24,6 @@ import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.Path;
@@ -43,11 +40,11 @@ import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
+import org.eclipse.pde.internal.core.util.SAXParserWrapper;
 import org.osgi.framework.Constants;
 
 public class ConvertSchemaToHTML extends Task {
 
-	private SAXParser fParser;
 	private SchemaTransformer fTransformer = new SchemaTransformer();
 	private String manifest;
 	private String destination;
@@ -74,14 +71,12 @@ public class ConvertSchemaToHTML extends Task {
 			if (schemaLocation == null || schemaLocation.equals("")) //$NON-NLS-1$
 				continue;
 			Schema schema=null;
+			SAXParserWrapper parser = null;
 			try {
-				if (fParser == null) {
-					SAXParserFactory factory = SAXParserFactory.newInstance();
-					fParser = factory.newSAXParser();
-				}
+				parser = new SAXParserWrapper();
 				File schemaFile = new File(model.getInstallLocation(), schemaLocation);
 				XMLDefaultHandler handler = new XMLDefaultHandler();
-				fParser.parse(schemaFile, handler);
+				parser.parse(schemaFile, handler);
 
 				URL url =  schemaFile.toURL(); 
 				SchemaDescriptor desc = new SchemaDescriptor(extPoints[i].getFullId(), url);

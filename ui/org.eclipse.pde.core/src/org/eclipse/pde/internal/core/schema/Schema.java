@@ -20,11 +20,6 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Vector;
 
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
@@ -46,13 +41,13 @@ import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.core.ischema.ISchemaType;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.SAXParserWrapper;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class Schema extends PlatformObject implements ISchema {
-	private SAXParser fParser;
 
 	private URL fURL;
 
@@ -383,15 +378,9 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 	}
 	
-	private SAXParser getParser() throws ParserConfigurationException, SAXException, FactoryConfigurationError {
-		if (fParser == null)
-			fParser = SAXParserFactory.newInstance().newSAXParser();
-		return fParser;	
-	}
-
 	public void load(InputStream stream) {
 		try {
-			SAXParser parser = getParser();
+			SAXParserWrapper parser = new SAXParserWrapper();
 			SchemaHandler handler = new SchemaHandler(fAbbreviated);
 			parser.parse(stream, handler);
 			traverseDocumentTree(handler.getDocumentElement());
