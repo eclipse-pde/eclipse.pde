@@ -470,17 +470,17 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         	if (id == null || forbidden.contains(id))
         		continue;
         	
-        	names.clear();
         	ExportPackageDescription[] exported = desc.getExportPackages();
         	for (int j = 0; j < exported.length; j++) {
         		String name = exported[j].getName();
-        		names.add(name);
     			if (("java".equals(name) || name.startsWith("java.")) && !allowJava) //$NON-NLS-1$ //$NON-NLS-2$
     				continue;        		
-    			if (fHeader == null || !fHeader.hasPackage(name))
-    				elements.add(new ImportItemWrapper(exported[j]));			
+    			if (names.add(name) && 
+    					(fHeader == null || !fHeader.hasPackage(name)))
+   					elements.add(new ImportItemWrapper(exported[j]));
         	}
-        	
+        }
+        for (int i = 0; i < models.length; i++) {
         	try {
     			// add un-exported packages in workspace non-binary plug-ins
     			IResource resource = models[i].getUnderlyingResource();
@@ -500,9 +500,8 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 							String name = f.getElementName();
 							if (name.equals("")) //$NON-NLS-1$
 								name = "."; //$NON-NLS-1$
-							if (names.contains(name))
-								continue;
-							if (f.hasChildren() || f.getNonJavaResources().length > 0)
+							if ((f.hasChildren() || f.getNonJavaResources().length > 0) &&
+									names.add(name))
 								conditional.add(new ImportItemWrapper(f));
 						}
 					}
