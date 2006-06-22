@@ -65,7 +65,7 @@ public class LaunchArgumentsHelper {
 
 	public static String[] getUserProgramArgumentArray(ILaunchConfiguration configuration) throws CoreException {
 		String args = getUserProgramArguments(configuration);
-		return new ExecutionArguments("", getSubstitutedString(args)).getProgramArgumentsArray(); //$NON-NLS-1$
+		return new ExecutionArguments("", args).getProgramArgumentsArray(); //$NON-NLS-1$
 	}
 	
 	public static String getUserProgramArguments(ILaunchConfiguration configuration) throws CoreException {
@@ -87,12 +87,12 @@ public class LaunchArgumentsHelper {
 				wc.doSave();			
 			}
 		}
-		return args == null ? "" : args; //$NON-NLS-1$
+		return args == null ? "" : getSubstitutedString(args); //$NON-NLS-1$
 	}
 	
 	public static String[] getUserVMArgumentArray(ILaunchConfiguration configuration) throws CoreException {
 		String args = getUserVMArguments(configuration);
-		return new ExecutionArguments(getSubstitutedString(args), "").getVMArgumentsArray(); //$NON-NLS-1$
+		return new ExecutionArguments(args, "").getVMArgumentsArray(); //$NON-NLS-1$
 	}
 	
 	public static String getUserVMArguments(ILaunchConfiguration configuration) throws CoreException {
@@ -114,7 +114,7 @@ public class LaunchArgumentsHelper {
 				wc.doSave();			
 			}
 		}
-		return args == null ? "" : args; //$NON-NLS-1$
+		return args == null ? "" : getSubstitutedString(args); //$NON-NLS-1$
 	}
 	
 	public static File getWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
