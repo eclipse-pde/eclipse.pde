@@ -208,13 +208,6 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fMinOccurSpinner = new Spinner(comp, SWT.BORDER);
 		fMinOccurSpinner.setMinimum(0);
 		fMinOccurSpinner.setMaximum(999);
-		fMinOccurSpinner.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				int minOccur = fMinOccurSpinner.getSelection();
-				if (minOccur > getMaxOccur())
-					fMinOccurSpinner.setSelection(minOccur - 1);
-			}
-		});
 		return comp;
 	}
 	
@@ -233,13 +226,6 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fMaxOccurSpinner.setMinimum(1);
 		fMaxOccurSpinner.setMaximum(999);
 		fMaxOccurSpinner.setIncrement(1);
-		fMaxOccurSpinner.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				int maxValue = fMaxOccurSpinner.getSelection();
-				if (maxValue < getMinOccur())
-					fMaxOccurSpinner.setSelection(maxValue + 1);
-			}
-		});
 		
 		fUnboundSelect = toolkit.createButton(comp, PDEUIMessages.AbstractSchemaDetails_unboundedButton, SWT.CHECK);
 		gd = new GridData();
@@ -286,11 +272,25 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	
 	protected void hookMinOccur(SelectionAdapter adapter) {
 		fMinOccurSpinner.addSelectionListener(adapter);
+		fMinOccurSpinner.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				int minOccur = fMinOccurSpinner.getSelection();
+				if (minOccur > getMaxOccur())
+					fMinOccurSpinner.setSelection(minOccur - 1);
+			}
+		});
 	}
 	
 	protected void hookMaxOccur(SelectionAdapter adapter) {
 		fUnboundSelect.addSelectionListener(adapter);
 		fMaxOccurSpinner.addSelectionListener(adapter);
+		fMaxOccurSpinner.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				int maxValue = fMaxOccurSpinner.getSelection();
+				if (maxValue < getMinOccur())
+					fMaxOccurSpinner.setSelection(maxValue + 1);
+			}
+		});
 	}
 	
 	protected void enableMinMax(boolean enable) {

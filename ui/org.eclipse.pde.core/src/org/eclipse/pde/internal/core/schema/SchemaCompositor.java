@@ -213,7 +213,7 @@ public class SchemaCompositor
 		if (tag == null)
 			return;
 		writer.print(indent + "<" + tag); //$NON-NLS-1$
-		if (getMinOccurs() != 1 && getMaxOccurs() != 1) {
+		if (getMinOccurs() != 1 || getMaxOccurs() != 1) {
 			String min = "" + getMinOccurs(); //$NON-NLS-1$
 			String max =
 				getMaxOccurs() == Integer.MAX_VALUE
