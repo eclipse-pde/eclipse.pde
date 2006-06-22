@@ -21,10 +21,12 @@ public class OpenTargetProfileAction extends Action {
 
 	private ITargetModel fTargetModel;
 	private Shell fShell;
+	private String fTargetName;
 
-	public OpenTargetProfileAction(Shell shell, ITargetModel model) {
+	public OpenTargetProfileAction(Shell shell, ITargetModel model, String targetName) {
 		fShell = shell;
 		fTargetModel = model;
+		fTargetName = targetName;
 	}
 	
 	public void run() {
@@ -38,7 +40,7 @@ public class OpenTargetProfileAction extends Action {
 			return;
 		}
 		
-		ApplicationWindow appWindow = new TargetProfileWindow(fShell, fTargetModel);
+		ApplicationWindow appWindow = new TargetProfileWindow(fShell, fTargetModel, fTargetName);
 		appWindow.create();
 		appWindow.open();		
 	}
