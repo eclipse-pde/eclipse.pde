@@ -45,7 +45,7 @@ public class CreateClassXMLResolution extends AbstractXMLMarkerResolution {
 		
 		JavaAttributeValue value = new JavaAttributeValue(project, model, getAttribute(attr), name);
 		name = PDEJavaHelper.createClass(name, project, value, true);
-		if (!name.equals(attr.getValue())) 
+		if (name != null && !name.equals(attr.getValue())) 
 			attr.getEnclosingElement().setXMLAttribute(attr.getName(), name);
 	}
 

@@ -41,7 +41,7 @@ public class CreateManifestClassResolution extends AbstractManifestMarkerResolut
 		
 		JavaAttributeValue value = new JavaAttributeValue(project, modelBase, null, name);
 		name = PDEJavaHelper.createClass(name, project, value, true);
-		if (!name.equals(header.getValue())) 
+		if (name != null && !name.equals(header.getValue())) 
 			header.setValue(name);
 	}
 
