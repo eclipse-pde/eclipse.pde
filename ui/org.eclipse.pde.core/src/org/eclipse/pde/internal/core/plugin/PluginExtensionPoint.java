@@ -39,9 +39,14 @@ public class PluginExtensionPoint extends IdentifiablePluginObject
 				return pointId;
 		}
 		String id = pluginBase.getId();
-		if (pluginBase instanceof IFragment)
+		if (pluginBase instanceof IFragment) {
 			id = ((IFragment) pluginBase).getPluginId();
-		return id + "." + getId(); //$NON-NLS-1$
+		}
+		String point_id = getId();
+		if (point_id.indexOf('.') == -1) {
+			return id + "." + point_id; //$NON-NLS-1$
+		}
+		return point_id;		
 	}
 	
 	public String getSchema() {

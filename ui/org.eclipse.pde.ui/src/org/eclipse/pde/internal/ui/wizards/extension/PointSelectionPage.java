@@ -588,9 +588,14 @@ public class PointSelectionPage
 				if (fragment != null)
 					id = fragment.getPluginId();
 			}
-			if (id == null)
+			if (id == null) {
 				id = fModel.getPluginBase().getId();
-			return id + "." + point.getId(); //$NON-NLS-1$
+			}
+			String point_id = point.getId();
+			if (point_id.indexOf('.') == -1) {
+				return id + "." + point_id; //$NON-NLS-1$
+			}
+			return point_id;
 		}
 		return point.getFullId();
 	}
