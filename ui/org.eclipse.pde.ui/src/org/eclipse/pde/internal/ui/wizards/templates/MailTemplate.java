@@ -227,7 +227,7 @@ public class MailTemplate extends PDETemplateSection {
             element = model.getPluginFactory().createElement(extension);
             element.setName("keyBinding"); //$NON-NLS-1$
             element.setAttribute("commandId", "org.eclipse.ui.file.exit"); //$NON-NLS-1$ //$NON-NLS-2$
-            element.setAttribute("keySequence", "CTRL+X"); //$NON-NLS-1$ //$NON-NLS-2$
+            element.setAttribute("keySequence", "CTRL+Q"); //$NON-NLS-1$ //$NON-NLS-2$
             element.setAttribute("keyConfigurationId", "org.eclipse.ui.defaultAcceleratorConfiguration");    //$NON-NLS-1$ //$NON-NLS-2$
             extension.add(element);
         }
