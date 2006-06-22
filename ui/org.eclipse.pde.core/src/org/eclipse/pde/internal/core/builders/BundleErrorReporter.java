@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -580,6 +582,15 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		HashMap exported = getAvailableExportedPackages(desc.getContainingState());
 			
 		ImportPackageSpecification[] imports = desc.getImportPackages();
+		if (desc.hasDynamicImports()) {
+			List staticImportsList = new ArrayList();
+			for (int i=0;i < imports.length; ++i) {
+				if (! imports[i].getDirective(Constants.RESOLUTION_DIRECTIVE).equals(ImportPackageSpecification.RESOLUTION_DYNAMIC))
+					staticImportsList.add(imports[i]);
+			}
+			imports = (ImportPackageSpecification[]) staticImportsList.toArray(new ImportPackageSpecification[staticImportsList.size()]);
+		}		
+		
 		ManifestElement[] elements = header.getElements();		
 		for (int i = 0; i < elements.length; i++) {
 			checkCanceled(monitor);			
