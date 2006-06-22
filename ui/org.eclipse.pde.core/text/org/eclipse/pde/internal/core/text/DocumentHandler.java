@@ -34,6 +34,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 	protected Stack fDocumentNodeStack = new Stack();
 	protected int fHighestOffset = 0;
 	private Locator fLocator;
+	private IDocumentNode fLastError;
 	
 	public DocumentHandler() {
 	}
@@ -44,6 +45,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 	public void startDocument() throws SAXException {
 		fDocumentNodeStack.clear();
 		fHighestOffset = 0;
+		fLastError = null;
 		fFindReplaceAdapter = new FindReplaceDocumentAdapter(getDocument());
 	}
 	
@@ -221,7 +223,10 @@ public abstract class DocumentHandler extends DefaultHandler {
 	 */
 	private void generateErrorElementHierarchy() {
 		while (!fDocumentNodeStack.isEmpty()) {
-			((IDocumentNode)fDocumentNodeStack.pop()).setIsErrorNode(true);
+			IDocumentNode node = (IDocumentNode)fDocumentNodeStack.pop(); 
+			node.setIsErrorNode(true);
+			if (fLastError == null)
+				fLastError = node;
 		}
 	}
 
@@ -248,4 +253,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 		return new InputSource(new StringReader("")); //$NON-NLS-1$
 	}
 	
+	public IDocumentNode getLastErrorNode() {
+		return fLastError;
+	}
 }
