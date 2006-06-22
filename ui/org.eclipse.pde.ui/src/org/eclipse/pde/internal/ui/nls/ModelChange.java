@@ -35,8 +35,8 @@ public class ModelChange {
 	private boolean fPreSelected;
 	
 	private String fBundleLocalization;
-	private IFile fPropertiesFile;
 	private Properties fProperties;
+	private boolean fReloadProperties = true;
 	
 	protected static boolean modelLoaded(IModel model) {
 		try {
@@ -97,23 +97,19 @@ public class ModelChange {
 	
 	public IFile getPropertiesFile() {
 		IProject project = fParent.getUnderlyingResource().getProject();
-		if (fBundleLocalization.indexOf(LOCALIZATION_FILE_SUFFIX) == -1)
-			fPropertiesFile = project.getFile(fBundleLocalization + LOCALIZATION_FILE_SUFFIX);
-		else
-			fPropertiesFile = project.getFile(fBundleLocalization);
-		return fPropertiesFile;
+		return project.getFile(getBundleLocalization() + LOCALIZATION_FILE_SUFFIX);
 	}
 	
 	public Properties getProperties() {
-		if (fPropertiesFile == null)
-			getPropertiesFile();
-		if (fProperties == null) {
+		if (fProperties == null || fReloadProperties) {
 			try {
 				fProperties = new Properties();
-				if (fPropertiesFile != null && fPropertiesFile.exists()) {
-					InputStream stream = fPropertiesFile.getContents();
+				IFile propertiesFile = getPropertiesFile();
+				if (propertiesFile != null && propertiesFile.exists()) {
+					InputStream stream = propertiesFile.getContents();
 					fProperties.load(stream);
 					stream.close();
+					fReloadProperties = false;
 				}
 			} catch (CoreException e) {
 			} catch (IOException e) {
@@ -157,7 +153,12 @@ public class ModelChange {
 	}
 	
 	public void setBundleLocalization(String bundleLocalization) {
+		if (bundleLocalization == null || bundleLocalization.endsWith(LOCALIZATION_FILE_SUFFIX))
+			throw new IllegalArgumentException();
+		if (bundleLocalization.equals(fBundleLocalization))
+			return;
 		fBundleLocalization = bundleLocalization;
+		fReloadProperties = true;
 	}
 	public String getBundleLocalization() {
 		return fBundleLocalization;

@@ -13,26 +13,24 @@ package org.eclipse.pde.internal.ui.nls;
 public class StringHelper {
 	
 	protected static String preparePropertiesString(String s, char[] newLine) {
-		if (s != null) {
-			int length = s.length();
-			StringBuffer sb = new StringBuffer(length);
-			for (int i = 0; i < length; i++) {
-				char c = s.charAt(i);
-				int nlLength = newLine.length;
-				if (i + nlLength < length) {
-					boolean notNewLine = false;
-					for (int j = 0; j < nlLength; j++) {
-						if (s.charAt(i + j) != newLine[j])
-							notNewLine = true;
-					}
-					if (!notNewLine)
-						sb.append("\\"); //$NON-NLS-1$
-				}
-				sb.append(c);
+		if (s == null)
+			return null;
+		int length = s.length();
+		int nlLength = newLine.length;
+		StringBuffer sb = new StringBuffer(length + nlLength);
+		for (int i = 0; i < length; i++) {
+			char c = s.charAt(i);
+			if (i + nlLength < length) {
+				boolean notNewLine = false;
+				for (int j = 0; j < nlLength; j++)
+					if (s.charAt(i + j) != newLine[j])
+						notNewLine = true;
+				if (!notNewLine)
+					sb.append("\\"); //$NON-NLS-1$
 			}
-			return sb.toString();
+			sb.append(c);
 		}
-		return null;
+		return sb.toString();
 	}
 	
 	protected static String unwindEscapeChars(String s) {
