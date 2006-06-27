@@ -266,9 +266,14 @@ public class ConvertedProjectsPage extends WizardPage  {
 		}
 		for (int i = 0; i < currentClassPath.length; i++) {
 			int contentType = currentClassPath[i].getEntryKind();
-			if (contentType == IClasspathEntry.CPE_SOURCE)
-				sources.add(getRelativePath(currentClassPath[i], project) + "/"); //$NON-NLS-1$
-			else if (contentType == IClasspathEntry.CPE_LIBRARY) {
+			if (contentType == IClasspathEntry.CPE_SOURCE) {
+				String relativePath = getRelativePath(currentClassPath[i], project);
+				if (relativePath.equals("")) { //$NON-NLS-1$
+					sources.add("."); //$NON-NLS-1$
+				} else {
+					sources.add(relativePath + "/"); //$NON-NLS-1$
+				}	
+			} else if (contentType == IClasspathEntry.CPE_LIBRARY) {
 				String path = getRelativePath(currentClassPath[i], project);
 				if (path.length() > 0)
 					libraries.add(path);
