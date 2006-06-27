@@ -55,8 +55,14 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 				url = SchemaRegistry.getSchemaFromSourceExtension(model.getPluginBase(), path);		
 		}
 		try {
-			if (url == null && parentURL != null){
-				File file = new File(parentURL.getFile(), "../../../" + pluginID + "/" + path.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			if (url == null && parentURL != null) {
+				String parentFile = parentURL.getFile();
+				if (parentFile == null)
+					return null;
+				int lastSep = parentFile.lastIndexOf(File.separatorChar);
+				parentFile = parentFile.substring(0, lastSep + 1);
+				// assuming schemas are located in: pluginId/schema/schemaFile.exsd
+				File file = new File(parentFile + "../../" + pluginID + "/" + path.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 				if (file.exists() && file.isFile())
 					url = file.toURL();
 			}
