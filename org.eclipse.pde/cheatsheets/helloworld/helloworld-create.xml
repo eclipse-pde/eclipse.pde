@@ -99,7 +99,7 @@
          To test your Eclipse plug-in inside a target Eclipse platform,
          perform the following steps:
       </description>
-      <subitem label="Select the &quot;Overviews&quot; tab" 
+      <subitem label="Select the &quot;Overview&quot; tab" 
                skip="true">
          <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.helloworld/META-INF/MANIFEST.MF)"/>
       </subitem>               

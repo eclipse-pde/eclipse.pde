@@ -65,7 +65,7 @@
          To run the RCP application,
          perform the following steps:
       </description>
-      <subitem label="Select the &quot;com.example.rcpapp&quot; plug-in editor from the workbench and select the &quot;Overviews&quot; tab within it" 
+      <subitem label="Select the &quot;com.example.rcpapp&quot; plug-in editor from the workbench and select the &quot;Overview&quot; tab within it" 
                skip="true">
          <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.rcpapp/META-INF/MANIFEST.MF)"/>
       </subitem>               
@@ -110,7 +110,7 @@
          To test the RCP application,
          perform the following steps:
       </description>
-      <subitem label="Select the &quot;com.example.rcpapp&quot; plug-in editor from the workbench and select the &quot;Overviews&quot; tab within it" 
+      <subitem label="Select the &quot;com.example.rcpapp&quot; plug-in editor from the workbench and select the &quot;Overview&quot; tab within it" 
                skip="true">
          <command serialization="org.eclipse.ui.navigate.openResource(filePath=/com.example.rcpapp/META-INF/MANIFEST.MF)"/>
       </subitem>               
