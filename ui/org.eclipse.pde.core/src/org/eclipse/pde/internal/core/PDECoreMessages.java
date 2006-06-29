@@ -217,4 +217,5 @@ public class PDECoreMessages extends NLS {
 
 	public static String XMLErrorReporter_ExternalEntityResolution;
 	
+	public static String ExtensionsErrorReporter_InvalidSchema;
 }

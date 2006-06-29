@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -330,6 +331,26 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			NodeList children = element.getChildNodes();
 			for (int i = 0; i < children.getLength(); i++)
 				reportIllegalElement((Element)children.item(i), severity);
+		}
+		
+		// Validate the "schema" attribute of the extension point
+		Attr attr = element.getAttributeNode(IPluginExtensionPoint.P_SCHEMA);
+		// Only validate the attribute if it was defined
+		if (attr != null) {
+			String schemaValue = attr.getValue();
+			IResource res = getFile().getProject().findMember(schemaValue);
+			String errorMessage = null;
+			// Check to see if the value specified is an extension point schema and it exists
+			if (!(res instanceof IFile && 
+					(res.getName().endsWith(".exsd") || //$NON-NLS-1$
+					 res.getName().endsWith(".mxsd")))) //$NON-NLS-1$
+				errorMessage = PDECoreMessages.ExtensionsErrorReporter_InvalidSchema;
+			// Report an error if one was found
+			if (errorMessage != null) {
+				severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_RESOURCE);
+				if (severity != CompilerFlags.IGNORE)
+					report(NLS.bind(errorMessage, schemaValue), getLine(element), severity);
+			}
 		}
 	}
 		
