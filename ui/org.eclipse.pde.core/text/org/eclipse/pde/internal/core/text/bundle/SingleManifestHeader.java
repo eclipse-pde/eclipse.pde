@@ -27,13 +27,12 @@ public class SingleManifestHeader extends ManifestHeader {
 	protected void processValue(String value) {
 		try {
 			ManifestElement[] elements = ManifestElement.parseHeader(getName(), value);
-			if (elements.length > 0) {
+			if (elements.length > 0)
 				fElement = new PDEManifestElement(this, elements[0]);
-			} else {
-				fElement = new PDEManifestElement(this, ""); //$NON-NLS-1$
-			}
 		} catch (BundleException e) {
 		}
+		if (fElement == null)
+			fElement = new PDEManifestElement(this, ""); //$NON-NLS-1$
 		fValue = value;
 	}
 	
