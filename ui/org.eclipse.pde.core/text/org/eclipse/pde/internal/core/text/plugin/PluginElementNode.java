@@ -92,18 +92,18 @@ public class PluginElementNode extends PluginParentNode
 		
 		IDocumentNode[] children = getChildNodes();
 		String text = getText();
+		buffer.append(writeShallow(false));
 		if (children.length > 0 || text.length() > 0) {
-			buffer.append(writeShallow(false) + sep);
+			buffer.append(sep);
 			if (text.length() > 0)
 				buffer.append(getIndent() + "   " + text + sep); //$NON-NLS-1$
 			for (int i = 0; i < children.length; i++) {
 				children[i].setLineIndent(getLineIndent() + 3);
 				buffer.append(children[i].write(true) + sep);
 			}
-			buffer.append(getIndent() + "</" + getXMLTagName() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
-		} else {
-			buffer.append(writeShallow(true));
+			buffer.append(getIndent());
 		}
+		buffer.append("</" + getXMLTagName() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 		return buffer.toString();
 	}
