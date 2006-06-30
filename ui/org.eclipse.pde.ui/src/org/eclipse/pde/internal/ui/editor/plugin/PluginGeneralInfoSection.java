@@ -44,6 +44,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.contentassist.ContentAssistHandler;
+import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.TableWrapData;
@@ -62,8 +63,10 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	}
 	
 	protected void createSpecificControls(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
-		createClassEntry(parent, toolkit, actionBars);		
-		if (isBundle()) {
+		createClassEntry(parent, toolkit, actionBars);
+		FormEditor formEditor = getPage().getEditor();
+		if (isBundle() && (formEditor instanceof ManifestEditor)
+				&& ((ManifestEditor) formEditor).isEquinox()) {
 			createLazyStart(parent, toolkit, actionBars);
 		}
 		if (isBundle()) {
