@@ -38,14 +38,14 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 	}
 	
 	protected void removeListeners() {
-		if (!hasDetector() || isTextDisposed())
+		if (!hasDetector())
 			return;
 		fStyledText.removeMouseListener(this);
 		fStyledText.removeKeyListener(this);
 	}
 	
 	protected void addListeners() {
-		if (!hasDetector() || isTextDisposed())
+		if (!hasDetector())
 			return;
 		fStyledText.addMouseListener(this);
 		fStyledText.addKeyListener(this);
@@ -53,7 +53,7 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 	
 	public boolean detectHyperlink() {
 		fLink = null;
-		if (!hasDetector() || isTextDisposed())
+		if (!hasDetector())
 			return false;
 		
 		int offset = fStyledText.getCaretOffset();
@@ -86,10 +86,6 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 
 	protected boolean hasDetector() {
 		return fDetector != null;
-	}
-	
-	private boolean isTextDisposed() {
-		return fStyledText == null || !fStyledText.isDisposed();
 	}
 	
 	public void generateActionText() {

@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -38,6 +40,7 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.KeyValueSourcePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.util.FormatManifestAction;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Constants;
 
@@ -215,6 +218,14 @@ public class BundleSourcePage extends KeyValueSourcePage {
 
 	protected boolean isSelectionListener() {
 		return true;
+	}
+	
+	protected void editorContextMenuAboutToShow(IMenuManager menu) {
+		super.editorContextMenuAboutToShow(menu);
+		menu.add(new Separator());
+		FormatManifestAction action = new FormatManifestAction();
+		action.setSourceInput(getEditorInput());
+		menu.add(action);
 	}
 	
 	public Object getAdapter(Class adapter) {
