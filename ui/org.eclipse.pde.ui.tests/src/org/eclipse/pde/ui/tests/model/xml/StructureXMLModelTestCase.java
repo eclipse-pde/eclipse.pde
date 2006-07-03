@@ -145,7 +145,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 		sb.append(lineDelim);
 		sb.append(FIRST_INDENT);
 		sb.append(ELEMENT_SHIFT);
-		sb.append("<child></child>");
+		sb.append("<child/>");
 		sb.append(lineDelim);
 		sb.append(FIRST_INDENT);
 		sb.append("</extension>");
@@ -224,7 +224,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 		sb.append(lineDelim);
 		sb.append(FIRST_INDENT);
 		sb.append(ELEMENT_SHIFT);
-		sb.append("<child></child>");
+		sb.append("<child/>");
 		sb.append(lineDelim);
 		sb.append(FIRST_INDENT);
 		sb.append("</extension>");
@@ -260,7 +260,7 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 		sb.append(FIRST_INDENT);
 		sb.append(ELEMENT_SHIFT);
 		sb.append(ELEMENT_SHIFT);
-		sb.append("<subchild></subchild>");
+		sb.append("<subchild/>");
 		sb.append(lineDelim);
 		sb.append(FIRST_INDENT);
 		sb.append(ELEMENT_SHIFT);
