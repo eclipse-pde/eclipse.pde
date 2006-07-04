@@ -15,7 +15,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -400,16 +399,13 @@ public abstract class PDEFormEditor extends FormEditor
 		if (pageId == null)
 			return;
 		if (input instanceof IFileEditorInput) {
-			IFile file = ((IFileEditorInput) input).getFile();
-			if (file != null) {
-				//set the settings on the resouce
+			IProject project = ((IFileEditorInput) input).getFile().getProject();
+			if (project != null) {
 				try {
-					file
-							.setPersistentProperty(
-									IPDEUIConstants.DEFAULT_EDITOR_PAGE_KEY_NEW,
-									pageId);
-				} catch (CoreException e) {
-				}
+					project.setPersistentProperty(
+							IPDEUIConstants.DEFAULT_EDITOR_PAGE_KEY_NEW,
+							pageId);
+				} catch (CoreException e) {}
 			}
 		} else if (input instanceof SystemFileEditorInput) {
 			File file = (File) ((SystemFileEditorInput) input)
@@ -417,17 +413,16 @@ public abstract class PDEFormEditor extends FormEditor
 			if (file == null)
 				return;
 			IDialogSettings section = getSettingsSection();
-			section.put(file.getPath(), pageId);
+			section.put(file.getParent(), pageId);
 		}
 	}
 	private String loadDefaultPage() {
 		IEditorInput input = getEditorInput();
 		if (input instanceof IFileEditorInput) {
-			// load the setting from the resource
-			IFile file = ((IFileEditorInput) input).getFile();
+			IProject project = ((IFileEditorInput) input).getFile().getProject();
 			try {
-				return file
-						.getPersistentProperty(IPDEUIConstants.DEFAULT_EDITOR_PAGE_KEY_NEW);
+				return project.getPersistentProperty(
+						IPDEUIConstants.DEFAULT_EDITOR_PAGE_KEY_NEW);
 			} catch (CoreException e) {
 				return null;
 			}
@@ -437,7 +432,7 @@ public abstract class PDEFormEditor extends FormEditor
 			if (file == null)
 				return null;
 			IDialogSettings section = getSettingsSection();
-			String key = file.getPath();
+			String key = file.getParent();
 			return section.get(key);
 		}
 		return null;
