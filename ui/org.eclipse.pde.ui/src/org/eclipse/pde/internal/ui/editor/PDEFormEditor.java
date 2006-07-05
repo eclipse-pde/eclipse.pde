@@ -407,13 +407,15 @@ public abstract class PDEFormEditor extends FormEditor
 							pageId);
 				} catch (CoreException e) {}
 			}
-		} else if (input instanceof SystemFileEditorInput) {
-			File file = (File) ((SystemFileEditorInput) input)
-					.getAdapter(File.class);
+		} else if (input instanceof IStorageEditorInput) {
+			File file = (File) input.getAdapter(File.class);
 			if (file == null)
 				return;
 			IDialogSettings section = getSettingsSection();
-			section.put(file.getParent(), pageId);
+			String key = file.getPath();
+			if(input instanceof SystemFileEditorInput)
+				key = file.getParent();
+			section.put(key, pageId);
 		}
 	}
 	private String loadDefaultPage() {
@@ -426,13 +428,14 @@ public abstract class PDEFormEditor extends FormEditor
 			} catch (CoreException e) {
 				return null;
 			}
-		} else if (input instanceof SystemFileEditorInput) {
-			File file = (File) ((SystemFileEditorInput) input)
-					.getAdapter(File.class);
+		} else if (input instanceof IStorageEditorInput) {
+			File file = (File) input.getAdapter(File.class);
 			if (file == null)
 				return null;
 			IDialogSettings section = getSettingsSection();
-			String key = file.getParent();
+			String key = file.getPath();
+			if(input instanceof SystemFileEditorInput)
+				key = file.getParent();
 			return section.get(key);
 		}
 		return null;
