@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-Version: 3.2.0.qualifier
+Bundle-Version: 3.2.100.qualifier
 Bundle-SymbolicName: org.eclipse.pde.build; singleton:=true
 Bundle-Vendor: %providerName
 Bundle-ClassPath: pdebuild.jar
@@ -16,8 +16,11 @@ Export-Package:
  org.eclipse.pde.internal.build;x-friends:="org.eclipse.pde.core,org.eclipse.pde.ui",
  org.eclipse.pde.internal.build.ant;x-internal:=true,
  org.eclipse.pde.internal.build.builder;x-internal:=true,
+ org.eclipse.pde.internal.build.fetch;x-internal:=true,
  org.eclipse.pde.internal.build.packager;x-internal:=true,
- org.eclipse.pde.internal.build.site;x-internal:=true
+ org.eclipse.pde.internal.build.properties;x-internal:=true,
+ org.eclipse.pde.internal.build.site;x-internal:=true,
+ org.eclipse.pde.internal.swt.tools;x-internal:=true
 Import-Package: com.ibm.icu.util
 Bundle-Localization: plugin
 Eclipse-LazyStart: true

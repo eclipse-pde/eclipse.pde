@@ -11,7 +11,7 @@
 package org.eclipse.pde.internal.build;
 
 import java.io.*;
-import org.eclipse.swt.tools.internal.IconExe;
+import org.eclipse.pde.internal.swt.tools.IconExe;
 
 /**
  *

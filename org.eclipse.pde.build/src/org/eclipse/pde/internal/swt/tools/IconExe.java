@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.swt.tools.internal;
+package org.eclipse.pde.internal.swt.tools;
 
 import java.io.*;
 import java.util.*;
