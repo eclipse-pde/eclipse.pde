@@ -420,7 +420,7 @@ public class Target extends TargetObject implements ITarget {
 		value = (env != null) ? env.getNL() : plugin.getNL();
 		if (value != null && result) {
 			String nl = (fEnvInfo != null) ? fEnvInfo.getNL() : null;
-			if (nl == null | nl.length() == 0)
+			if (nl == null || nl.length() == 0)
 				nl = Platform.getNL();
 			result = containsProperty(nl, value);
 		}
