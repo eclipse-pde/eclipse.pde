@@ -205,27 +205,30 @@ public class ManifestSourcePage extends XMLSourcePage {
 		return new OutlineSorter();
 	}
 	
-	public IDocumentRange getRangeElement(int offset) {
+	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
 		IPluginBase base = ((IPluginModelBase)getInputContext().getModel()).getPluginBase();
 		IDocumentRange 
-			node = findNode(base.getLibraries(), offset);
+			node = findNode(base.getLibraries(), offset, searchChildren);
 		if (node == null)
-			node = findNode(base.getImports(), offset);
+			node = findNode(base.getImports(), offset, searchChildren);
 		if (node == null)
-			node = findNode(base.getExtensionPoints(), offset);
+			node = findNode(base.getExtensionPoints(), offset, searchChildren);
 		if (node == null)
-			node = findNode(base.getExtensions(), offset);
+			node = findNode(base.getExtensions(), offset, searchChildren);
 		if (node == null)
-			node = findNode(new IPluginObject[] { base }, offset);
+			node = findNode(new IPluginObject[] { base }, offset, searchChildren);
 		
 		return node;
 	}
 
-	private IDocumentRange findNode(Object[] nodes, int offset) {
+	private IDocumentRange findNode(Object[] nodes, int offset, boolean searchChildren) {
 		for (int i = 0; i < nodes.length; i++) {
 			IDocumentNode node = (IDocumentNode)nodes[i];
-			if (node.getOffset() < offset 
+			if (node.getOffset() <= offset 
 					&& offset < node.getOffset() + node.getLength()) {
+				
+				if (!searchChildren)
+					return node;
 				
 				if (node.getOffset() < offset && 
 						offset <= node.getOffset() + node.getXMLTagName().length() + 1)
@@ -247,9 +250,9 @@ public class ManifestSourcePage extends XMLSourcePage {
 				IDocumentNode[] children = node.getChildNodes();
 				if (children != null)
 					for (int c = 0; c < children.length; c++)
-						if (children[c].getOffset() < offset &&
+						if (children[c].getOffset() <= offset &&
 								offset < children[c].getOffset() + children[c].getLength())
-							return findNode(new Object[] {children[c]}, offset);
+							return findNode(new Object[] {children[c]}, offset, searchChildren);
 				
 				// not contained inside any sub elements, must be inside node
 				return node;
@@ -259,10 +262,10 @@ public class ManifestSourcePage extends XMLSourcePage {
 	}
 	
 	public IDocumentRange findRange() {
-		if (fSel instanceof ImportObject)
-			fSel = ((ImportObject)fSel).getImport();
-		if (fSel instanceof IDocumentNode)
-			return (IDocumentNode)fSel;
+		if (fSelection instanceof ImportObject)
+			fSelection = ((ImportObject)fSelection).getImport();
+		if (fSelection instanceof IDocumentNode)
+			return (IDocumentNode)fSelection;
 		return null;
 	}
 	

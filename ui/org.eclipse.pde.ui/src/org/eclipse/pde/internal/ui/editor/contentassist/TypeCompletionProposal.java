@@ -23,22 +23,33 @@ public class TypeCompletionProposal implements ICompletionProposal {
 	protected String fReplacementString;
 	protected Image fImage;
 	protected String fDisplayString;
-
+	protected int fBeginInsertPoint;
+	protected int fLength;
+	
 	public TypeCompletionProposal(String replacementString, Image image, String displayString) {
+		this(replacementString, image, displayString, 0, 0);
+	}
+	
+	public TypeCompletionProposal(String replacementString, Image image, String displayString, int startOffset, int length) {
 		Assert.isNotNull(replacementString);
 		
 		fReplacementString = replacementString;
 		fImage = image;
 		fDisplayString = displayString;
+		fBeginInsertPoint = startOffset;
+		fLength = length;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#apply(org.eclipse.jface.text.IDocument)
 	 */
 	public void apply(IDocument document) {
-		String current = document.get();
+		if (fLength == -1) {
+			String current = document.get();
+			fLength = current.length();
+		}
 		try {
-			document.replace(0, current.length(), fReplacementString);
+			document.replace(fBeginInsertPoint, fLength, fReplacementString);
 		} catch (BadLocationException e) {
 			// DEBUG
 			// e.printStackTrace();
@@ -79,7 +90,16 @@ public class TypeCompletionProposal implements ICompletionProposal {
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getSelection(org.eclipse.jface.text.IDocument)
 	 */
 	public Point getSelection(IDocument document) {
-		return new Point(fDisplayString.length(), fDisplayString.length());
+		if (fReplacementString.equals("\"\"")) //$NON-NLS-1$
+			return new Point(fBeginInsertPoint + 1, 0);
+		return new Point(fBeginInsertPoint + fReplacementString.length(), 0);
 	}
 	
+	/**
+	 * @return
+	 */
+	public String getReplacementString() {
+		return fReplacementString;
+	}
+
 }

@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
-import org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor;
+import org.eclipse.pde.internal.ui.editor.PDEFormTextEditorContributor;
 import org.eclipse.swt.dnd.Clipboard;
 
-public class SiteEditorContributor extends PDEFormEditorContributor {
+public class SiteEditorContributor extends PDEFormTextEditorContributor {
 
 	public SiteEditorContributor() {
 		super("Site"); //$NON-NLS-1$

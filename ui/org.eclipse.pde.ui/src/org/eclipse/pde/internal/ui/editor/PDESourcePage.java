@@ -19,6 +19,7 @@ package org.eclipse.pde.internal.ui.editor;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
@@ -58,8 +59,10 @@ import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
+import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 public abstract class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker, ISelectionChangedListener {
 	
@@ -86,17 +89,15 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		 * @param selectionProvider
 		 */
 		public void install(ISelectionProvider selectionProvider) {
-			if (selectionProvider == null) {
-				return;
+			if (selectionProvider != null) {
+				if (selectionProvider instanceof IPostSelectionProvider) {
+					IPostSelectionProvider provider = (IPostSelectionProvider) selectionProvider;
+					provider.addPostSelectionChangedListener(this);
+				} else {
+					selectionProvider.addSelectionChangedListener(this);					
+				}
 			}
-
-			if (selectionProvider instanceof IPostSelectionProvider) {
-				IPostSelectionProvider provider = (IPostSelectionProvider) selectionProvider;
-				provider.addPostSelectionChangedListener(this);
-			} else {
-				selectionProvider.addSelectionChangedListener(this);
-			}
-		}
+ 		}
 
 		/*
 		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
@@ -104,7 +105,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		public void selectionChanged(SelectionChangedEvent event) {
 			ISelection selection = event.getSelection();
 			if (!selection.isEmpty() && selection instanceof ITextSelection) {
-				IDocumentRange rangeElement = getRangeElement(((ITextSelection) selection).getOffset());
+				IDocumentRange rangeElement = getRangeElement(((ITextSelection) selection).getOffset(), false);
 				if (rangeElement != null) {
 					setHighlightRange(rangeElement, false);
 				} else {
@@ -113,16 +114,12 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 				// notify outline page
 				if (PDEPlugin.getDefault().getPreferenceStore().getBoolean(
 						"ToggleLinkWithEditorAction.isChecked")) { //$NON-NLS-1$
-					outlinePage
-							.removeSelectionChangedListener(outlineSelectionChangedListener);
-					if (rangeElement != null) {
-						outlinePage.setSelection(new StructuredSelection(
-								rangeElement));
-					} else {
-						outlinePage.setSelection(StructuredSelection.EMPTY);
-					}
-					outlinePage
-							.addSelectionChangedListener(outlineSelectionChangedListener);
+					fOutlinePage.removeSelectionChangedListener(fOutlineSelectionChangedListener);
+					if (rangeElement != null)
+						fOutlinePage.setSelection(new StructuredSelection(rangeElement));
+					else
+						fOutlinePage.setSelection(StructuredSelection.EMPTY);
+					fOutlinePage.addSelectionChangedListener(fOutlineSelectionChangedListener);
 				}
 			}
 		}
@@ -134,15 +131,13 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		 * @param selectionProviderstyle
 		 */
 		public void uninstall(ISelectionProvider selectionProvider) {
-			if (selectionProvider == null) {
-				return;
-			}
-
-			if (selectionProvider instanceof IPostSelectionProvider) {
-				IPostSelectionProvider provider = (IPostSelectionProvider) selectionProvider;
-				provider.removePostSelectionChangedListener(this);
-			} else {
-				selectionProvider.removeSelectionChangedListener(this);
+			if (selectionProvider != null) {
+				if (selectionProvider instanceof IPostSelectionProvider) {
+					IPostSelectionProvider provider = (IPostSelectionProvider) selectionProvider;
+					provider.removePostSelectionChangedListener(this);
+				} else {
+					selectionProvider.removeSelectionChangedListener(this);
+				}
 			}
 		}
 
@@ -154,19 +149,17 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	 * @since 3.0
 	 */
 	private PDESourcePageChangedListener fEditorSelectionChangedListener;
-	private PDEFormEditor editor;
-	private Control control;
-	private int index;
-	private String id;
-	private InputContext inputContext;
-	private ISortableContentOutlinePage outlinePage;
-	private ISelectionChangedListener outlineSelectionChangedListener;
-	protected Object fSel;
-	/**
-	 * 
-	 */
+	private PDEFormEditor fEditor;
+	private Control fControl;
+	private int fIndex;
+	private String fId;
+	private InputContext fInputContext;
+	private ISortableContentOutlinePage fOutlinePage;
+	private ISelectionChangedListener fOutlineSelectionChangedListener;
+	protected Object fSelection;
+
 	public PDESourcePage(PDEFormEditor editor, String id, String title) {
-		this.id = id;
+		fId = id;
 		initialize(editor);
 		IPreferenceStore[] stores = new IPreferenceStore[2];
 		stores[0] = PDEPlugin.getDefault().getPreferenceStore();
@@ -176,67 +169,72 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		if (isSelectionListener())
 			getEditor().getSite().getSelectionProvider().addSelectionChangedListener(this);
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#initialize(org.eclipse.ui.forms.editor.FormEditor)
 	 */
 	public void initialize(FormEditor editor) {
-		this.editor = (PDEFormEditor)editor;
+		fEditor = (PDEFormEditor)editor;
 	}
+	
 	public void dispose() {
 		if (fEditorSelectionChangedListener != null)  {
 			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
 			fEditorSelectionChangedListener= null;
 		}
-		if (outlinePage != null) {
-			outlinePage.dispose();
-			outlinePage = null;
+		if (fOutlinePage != null) {
+			fOutlinePage.dispose();
+			fOutlinePage = null;
 		}
 		if (isSelectionListener())
 			getEditor().getSite().getSelectionProvider().removeSelectionChangedListener(this);
 		super.dispose();
 	}
 
-	protected void editorSaved() {
-		super.editorSaved();
-	}
-	
 	protected abstract ILabelProvider createOutlineLabelProvider();
+	
 	protected abstract ITreeContentProvider createOutlineContentProvider();
+	
 	protected abstract ViewerSorter createOutlineSorter();
+	
 	protected abstract void outlineSelectionChanged(SelectionChangedEvent e);
+	
 	protected ViewerSorter createDefaultOutlineSorter() {
 		return null;
 	}
+	
 	protected ISortableContentOutlinePage createOutlinePage() {
 		SourceOutlinePage sourceOutlinePage=
 		new SourceOutlinePage(
 				(IEditingModel) getInputContext().getModel(),
 				createOutlineLabelProvider(), createOutlineContentProvider(),
 				createDefaultOutlineSorter(), createOutlineSorter());
-		outlinePage = sourceOutlinePage;
-		outlineSelectionChangedListener = new ISelectionChangedListener() {
+		fOutlinePage = sourceOutlinePage;
+		fOutlineSelectionChangedListener = new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				outlineSelectionChanged(event);
 			}
 		};
-		outlinePage.addSelectionChangedListener(outlineSelectionChangedListener);
+		fOutlinePage.addSelectionChangedListener(fOutlineSelectionChangedListener);
 		getSelectionProvider().addSelectionChangedListener(sourceOutlinePage);
 		fEditorSelectionChangedListener= new PDESourcePageChangedListener();
 		fEditorSelectionChangedListener.install(getSelectionProvider());
-		return outlinePage;
+		return fOutlinePage;
 	}
 
 	public ISortableContentOutlinePage getContentOutline() {
-		if (outlinePage==null)
-			outlinePage = createOutlinePage();
-		return outlinePage;
+		if (fOutlinePage == null)
+			fOutlinePage = createOutlinePage();
+		return fOutlinePage;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#getEditor()
 	 */
 	public FormEditor getEditor() {
-		return editor;
+		return fEditor;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#getManagedForm()
 	 */
@@ -244,17 +242,19 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		// not a form page
 		return null;
 	}
+	
 	protected void firePropertyChange(int type) {
 		if (type == PROP_DIRTY) {
-			editor.fireSaveNeeded(getEditorInput(), true);
+			fEditor.fireSaveNeeded(getEditorInput(), true);
 		} else
 			super.firePropertyChange(type);
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#setActive(boolean)
 	 */
 	public void setActive(boolean active) {
-		inputContext.setSourceEditingMode(active);
+		fInputContext.setSourceEditingMode(active);
 	}
 
 	public boolean canLeaveThePage() {
@@ -265,58 +265,67 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	 * @see org.eclipse.ui.forms.editor.IFormPage#isActive()
 	 */
 	public boolean isActive() {
-		return this.equals(editor.getActivePageInstance());
+		return this.equals(fEditor.getActivePageInstance());
 	}
+	
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		Control[] children = parent.getChildren();
-		control = children[children.length - 1];
+		fControl = children[children.length - 1];
 		
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, IHelpContextIds.MANIFEST_SOURCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(fControl, IHelpContextIds.MANIFEST_SOURCE_PAGE);
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#getPartControl()
 	 */
 	public Control getPartControl() {
-		return control;
+		return fControl;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#getId()
 	 */
 	public String getId() {
-		return id;
+		return fId;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#getIndex()
 	 */
 	public int getIndex() {
-		return index;
+		return fIndex;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#setIndex(int)
 	 */
 	public void setIndex(int index) {
-		this.index = index;
+		fIndex = index;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#isSource()
 	 */
 	public boolean isEditor() {
 		return true;
 	}
+	
 	/**
 	 * @return Returns the inputContext.
 	 */
 	public InputContext getInputContext() {
-		return inputContext;
+		return fInputContext;
 	}
+	
 	/**
 	 * @param inputContext The inputContext to set.
 	 */
 	public void setInputContext(InputContext inputContext) {
-		this.inputContext = inputContext;
+		fInputContext = inputContext;
 		setDocumentProvider(inputContext.getDocumentProvider());
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#focusOn(java.lang.Object)
 	 */
@@ -328,7 +337,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		return false;
 	}
 	
-	public IDocumentRange getRangeElement(int offset) {
+	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
 		return null;
 	}
 
@@ -381,10 +390,24 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		PDESelectAnnotationRulerAction action = new PDESelectAnnotationRulerAction(
 				getBundleForConstructedKeys(), "PDESelectAnnotationRulerAction.", this, getVerticalRuler()); //$NON-NLS-1$
 		setAction(ITextEditorActionConstants.RULER_CLICK, action);
-		if (editor != null) {
-			setAction(PDEActionConstants.OPEN, editor.getContributor().getHyperlinkAction());
-			setAction(PDEActionConstants.FORMAT, editor.getContributor().getFormatAction());
+		PDEFormEditorContributor contributor = fEditor == null ? null : fEditor.getContributor();
+		if (contributor != null) {
+			if (contributor instanceof PDEFormTextEditorContributor) {
+				PDEFormTextEditorContributor textContributor = (PDEFormTextEditorContributor)contributor;
+				setAction(PDEActionConstants.OPEN, textContributor.getHyperlinkAction());
+				setAction(PDEActionConstants.FORMAT, textContributor.getFormatAction());			
+				if (textContributor.supportsContentAssist())
+					createContentAssistAction();
+			}
 		}
+	}
+	
+	private void createContentAssistAction() {
+		IAction contentAssist = new ContentAssistAction(
+				getBundleForConstructedKeys(), "ContentAssistProposal.", this); //$NON-NLS-1$
+		contentAssist.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+		setAction("ContentAssist", contentAssist); //$NON-NLS-1$
+		markAsStateDependentAction("ContentAssist", true); //$NON-NLS-1$		
 	}
 	
 	public final void selectionChanged(SelectionChangedEvent event) {
@@ -394,9 +417,9 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		if (sel instanceof ITextSelection)
 			return;
 		if (sel instanceof IStructuredSelection)
-			fSel = ((IStructuredSelection)sel).getFirstElement();
+			fSelection = ((IStructuredSelection)sel).getFirstElement();
 		else
-			fSel = null;
+			fSelection = null;
 	}
 	
 	/*
@@ -412,10 +435,11 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		IDocumentRange range = findRange();
 		if (range == null)
 			return;
-		if (range.getOffset() == -1) {
-			IBaseModel model = getInputContext().getModel();
-			if (!(model instanceof AbstractEditingModel))
-				return;
+		IBaseModel model = getInputContext().getModel();
+		if (!(model instanceof AbstractEditingModel))
+			return;
+		
+		if (range.getOffset() == -1 || isDirty()) {
 			((AbstractEditingModel)model).adjustOffsets(((AbstractEditingModel)model).getDocument());
 			range = findRange();
 		}
@@ -436,11 +460,13 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	}
 
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
-		if (editor != null) {
-			HyperlinkAction action = editor.getContributor().getHyperlinkAction();
+		PDEFormEditorContributor contributor = fEditor == null ? null : fEditor.getContributor();
+		if (contributor instanceof PDEFormTextEditorContributor) {
+			PDEFormTextEditorContributor textContributor = (PDEFormTextEditorContributor)contributor;
+			HyperlinkAction action = textContributor.getHyperlinkAction();
 			if (action.isEnabled())
 				menu.add(action);
-			FormatAction formatManifestAction = editor.getContributor().getFormatAction();
+			FormatAction formatManifestAction = textContributor.getFormatAction();
 			if (formatManifestAction.isEnabled())
 				menu.add(formatManifestAction);
 		}

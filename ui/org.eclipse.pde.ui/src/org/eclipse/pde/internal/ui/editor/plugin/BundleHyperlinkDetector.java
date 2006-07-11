@@ -48,7 +48,7 @@ public class BundleHyperlinkDetector implements IHyperlinkDetector {
 		if (region == null || canShowMultipleHyperlinks)
 			return null;
 
-		IDocumentRange element = fSourcePage.getRangeElement(region.getOffset());
+		IDocumentRange element = fSourcePage.getRangeElement(region.getOffset(), true);
 		if (!(element instanceof ManifestHeader))
 			return null;
 		
@@ -122,7 +122,7 @@ public class BundleHyperlinkDetector implements IHyperlinkDetector {
 			
 			// scan forwards to find the end of the word
 			int upOffset = offset;
-			c = value.charAt(++upOffset);
+			c = value.charAt(upOffset);
 			int length = value.length();
 			while (c != ';' && c != ',' && upOffset < length - 1) {
 				if (!elementChar(c, false))

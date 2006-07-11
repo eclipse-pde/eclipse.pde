@@ -89,7 +89,7 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 	}
 	
 	private boolean isTextDisposed() {
-		return fStyledText == null || !fStyledText.isDisposed();
+		return fStyledText == null || fStyledText.isDisposed();
 	}
 	
 	public void generateActionText() {

@@ -14,12 +14,12 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor;
+import org.eclipse.pde.internal.ui.editor.PDEFormTextEditorContributor;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
 
-public class SchemaEditorContributor extends PDEFormEditorContributor {
+public class SchemaEditorContributor extends PDEFormTextEditorContributor {
 	private PreviewAction fPreviewAction;
 
 	class PreviewAction extends Action {
@@ -59,7 +59,6 @@ public class SchemaEditorContributor extends PDEFormEditorContributor {
 	protected void makeActions() {
 		super.makeActions();
 		fPreviewAction = new PreviewAction();
-		fPreviewAction.setText(
-			PDEUIMessages.SchemaEditorContributor_previewAction); 
+		fPreviewAction.setText(PDEUIMessages.SchemaEditorContributor_previewAction); 
 	}
 }

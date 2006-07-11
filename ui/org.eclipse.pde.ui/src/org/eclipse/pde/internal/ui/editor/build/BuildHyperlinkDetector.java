@@ -43,7 +43,7 @@ public class BuildHyperlinkDetector implements IHyperlinkDetector {
 		if (region == null || canShowMultipleHyperlinks)
 			return null;
 
-		IDocumentRange element = fSourcePage.getRangeElement(region.getOffset());
+		IDocumentRange element = fSourcePage.getRangeElement(region.getOffset(), true);
 		if (!(element instanceof BuildEntry))
 			return null;
 		

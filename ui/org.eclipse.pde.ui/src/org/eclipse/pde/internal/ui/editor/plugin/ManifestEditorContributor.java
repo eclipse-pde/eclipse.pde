@@ -17,12 +17,12 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor;
+import org.eclipse.pde.internal.ui.editor.PDEFormTextEditorContributor;
 import org.eclipse.pde.internal.ui.nls.GetNonExternalizedStringsAction;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.custom.BusyIndicator;
 
-public class ManifestEditorContributor extends PDEFormEditorContributor {
+public class ManifestEditorContributor extends PDEFormTextEditorContributor {
 	
 	private ExternalizeAction fExternalizeAction;
 
@@ -60,5 +60,21 @@ public class ManifestEditorContributor extends PDEFormEditorContributor {
 		super.makeActions();
 		fExternalizeAction = new ExternalizeAction();
 		fExternalizeAction.setText(PDEUIMessages.ManifestEditorContributor_externStringsActionName); 
+	}
+	
+	public boolean supportsContentAssist() {
+		return true;
+	}
+	
+	public boolean supportsFormatAction() {
+		return true;
+	}
+	
+	public boolean supportsCorrectionAssist() {
+		return true;
+	}
+	
+	public boolean supportsHyperlinking() {
+		return true;
 	}
 }

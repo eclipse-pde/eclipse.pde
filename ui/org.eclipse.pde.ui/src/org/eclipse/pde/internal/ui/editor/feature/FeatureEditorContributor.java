@@ -13,12 +13,12 @@ package org.eclipse.pde.internal.ui.editor.feature;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor;
+import org.eclipse.pde.internal.ui.editor.PDEFormTextEditorContributor;
 import org.eclipse.pde.internal.ui.wizards.site.OpenProjectWizardAction;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.ui.IEditorPart;
 
-public class FeatureEditorContributor extends PDEFormEditorContributor {
+public class FeatureEditorContributor extends PDEFormTextEditorContributor {
 	private EditorBuildFeatureAction fBuildAction;
 
 	private SynchronizeVersionsAction fSynchronizeAction;
@@ -33,7 +33,6 @@ public class FeatureEditorContributor extends PDEFormEditorContributor {
 		super.contextMenuAboutToShow(mng);
 		mng.add(new Separator());
 		mng.add(fSynchronizeAction);
-		// mng.add(fNewSiteAction);
 		mng.add(fBuildAction);
 	}
 

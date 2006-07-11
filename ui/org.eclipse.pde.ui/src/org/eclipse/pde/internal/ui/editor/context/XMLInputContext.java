@@ -309,7 +309,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		int i = 0;
 		try {
 			for (i = 0; i + offset < doc.getLength() ;i++) {
-				if (ch == doc.get(offset + i, 1).toCharArray()[0])
+				if (ch == doc.getChar(offset + i))
 					break;
 			}
 		} catch (BadLocationException e) {
@@ -321,7 +321,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		try {
 			IDocument doc = getDocumentProvider().getDocument(getInput());
 			for (;;) {
-				char ch = doc.get(offset + length, 1).toCharArray()[0];
+				char ch = doc.getChar(offset + length);
 				if (!Character.isWhitespace(ch)) {
 					break;
 				}

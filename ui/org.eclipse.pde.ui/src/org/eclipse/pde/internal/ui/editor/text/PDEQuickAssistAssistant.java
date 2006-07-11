@@ -84,7 +84,6 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 		}
 
 		public IContextInformation getContextInformation() {
-			// TODO Auto-generated method stub
 			return null;
 		}
 		

@@ -11,6 +11,8 @@
 package org.eclipse.pde.internal.ui.editor.text;
 
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
@@ -24,6 +26,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
+import org.eclipse.pde.internal.ui.editor.contentassist.ManifestContentAssistProcessor;
 import org.osgi.framework.Constants;
 
 public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration {
@@ -32,6 +35,8 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	private BasePDEScanner fPropertyKeyScanner;
 	private BasePDEScanner fPropertyValueScanner;
 	private PDEQuickAssistAssistant fQuickAssistant;
+	private ContentAssistant fContentAssistant;
+	private ManifestContentAssistProcessor fContentAssistantProcessor;
 	
 	class ManifestHeaderScanner extends BasePDEScanner {
 		
@@ -239,5 +244,22 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	public void dispose() {
 		if (fQuickAssistant != null)
 			fQuickAssistant.dispose();
+		if (fContentAssistant != null)
+			fContentAssistantProcessor.disposeImages();
+	}
+	
+	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
+		if (fSourcePage != null && fSourcePage.isEditable()) {
+			if (fContentAssistant == null) {
+				fContentAssistant = new ContentAssistant();
+				fContentAssistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+				fContentAssistantProcessor = new ManifestContentAssistProcessor(fSourcePage);
+				fContentAssistant.setContentAssistProcessor(fContentAssistantProcessor, IDocument.DEFAULT_CONTENT_TYPE);
+				fContentAssistant.setContentAssistProcessor(fContentAssistantProcessor, ManifestPartitionScanner.MANIFEST_HEADER_VALUE);
+				fContentAssistant.addCompletionListener(fContentAssistantProcessor);
+			}
+			return fContentAssistant;
+		}
+		return null;
 	}
 }

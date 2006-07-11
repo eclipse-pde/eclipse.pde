@@ -92,19 +92,26 @@ public class PluginElementNode extends PluginParentNode
 		
 		IDocumentNode[] children = getChildNodes();
 		String text = getText();
+		buffer.append(writeShallow(false));
+		if (getAttributeCount() > 0 || children.length > 0 || text.length() > 0)
+			buffer.append(sep);
 		if (children.length > 0 || text.length() > 0) {
-			buffer.append(writeShallow(false) + sep);
-			if (text.length() > 0)
-				buffer.append(getIndent() + "   " + text + sep); //$NON-NLS-1$
+			if (text.length() > 0) {
+				buffer.append(getIndent());
+				buffer.append("   "); //$NON-NLS-1$
+				buffer.append(text);
+				buffer.append(sep);
+			}
 			for (int i = 0; i < children.length; i++) {
 				children[i].setLineIndent(getLineIndent() + 3);
-				buffer.append(children[i].write(true) + sep);
+				buffer.append(children[i].write(true));
+				buffer.append(sep);
 			}
-			buffer.append(getIndent() + "</" + getXMLTagName() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
-		} else {
-			buffer.append(writeShallow(true));
 		}
-	
+		if (getAttributeCount() > 0 || children.length > 0 || text.length() > 0)
+			buffer.append(getIndent());
+
+		buffer.append("</" + getXMLTagName() + ">"); //$NON-NLS-1$ //$NON-NLS-2$	
 		return buffer.toString();
 	}
 	
@@ -116,14 +123,9 @@ public class PluginElementNode extends PluginParentNode
 		StringBuffer buffer = new StringBuffer("<" + getXMLTagName()); //$NON-NLS-1$
 
 		IDocumentAttribute[] attrs = getNodeAttributes();
-		if (attrs.length == 1) {
-			if (attrs[0].getAttributeValue().length() > 0)
-				buffer.append(" " + attrs[0].write()); //$NON-NLS-1$
-		} else {
-			for (int i = 0; i < attrs.length; i++) {
-				if (attrs[i].getAttributeValue().length() > 0)
-					buffer.append(sep + getIndent() + "      " + attrs[i].write()); //$NON-NLS-1$
-			}
+		for (int i = 0; i < attrs.length; i++) {
+			if (attrs[i].getAttributeValue().length() > 0)
+				buffer.append(sep + getIndent() + "      " + attrs[i].write()); //$NON-NLS-1$
 		}
 		if (terminate)
 			buffer.append("/"); //$NON-NLS-1$

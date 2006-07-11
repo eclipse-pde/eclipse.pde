@@ -72,6 +72,7 @@ public class ClassAttributeRow extends ReferenceAttributeRow {
 			contentAssistant.setProposalSelectorBackground(new Color(parent.getDisplay(), 255, 255, 255));
 			ContentAssistHandler.createHandlerForText(text, contentAssistant);
 			contentAssistant.addCompletionListener(new TypeCompletionListener());
+			contentAssistant.enableAutoActivation(true);
 		}
 	}
 	

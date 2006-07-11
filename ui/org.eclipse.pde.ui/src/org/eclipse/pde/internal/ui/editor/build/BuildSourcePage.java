@@ -113,7 +113,7 @@ public class BuildSourcePage extends KeyValueSourcePage {
 		return ((BuildSourceViewerConfiguration)getSourceViewerConfiguration()).affectsTextPresentation(event) || super.affectsTextPresentation(event);
 	}
 	
-	public IDocumentRange getRangeElement(int offset) {
+	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
 		IBuildModel model = (IBuildModel) getInputContext().getModel();
 		IBuildEntry[] buildEntries = model.getBuild().getBuildEntries();
 

@@ -143,6 +143,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 			contentAssistant.setProposalSelectorBackground(new Color(client.getDisplay(), 255, 255, 255));
 			ContentAssistHandler.createHandlerForText(fClassEntry.getText(), contentAssistant);
 			contentAssistant.addCompletionListener(new TypeCompletionListener());
+			contentAssistant.enableAutoActivation(true);
 		}
 	}
 	

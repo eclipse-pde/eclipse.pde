@@ -173,14 +173,13 @@ public abstract class PDEFormEditor extends FormEditor
 			return getMultiPageEditor();
 		}
 	}
-	/**
-	 *  
-	 */
+
 	public PDEFormEditor() {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fInputContextManager = createInputContextManager();
 		fValidationStack = new EditorValidationStack(this);
 	}
+	
 	/**
 	 * We must override nested site creation so that we properly pass the source
 	 * editor contributor when asked.
@@ -286,10 +285,11 @@ public abstract class PDEFormEditor extends FormEditor
 		if (contributor != null)
 			contributor.contextMenuAboutToShow(manager);
 	}
+	
 	public PDEFormEditorContributor getContributor() {
-		return (PDEFormEditorContributor) getEditorSite()
-				.getActionBarContributor();
+		return (PDEFormEditorContributor) getEditorSite().getActionBarContributor();
 	}
+	
 	protected String computeInitialPageId() {
 		String firstPageId = null;
 		String storedFirstPageId = loadDefaultPage();

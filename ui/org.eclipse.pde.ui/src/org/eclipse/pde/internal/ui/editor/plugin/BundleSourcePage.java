@@ -95,7 +95,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	protected ITreeContentProvider createOutlineContentProvider() {
 		return new BundleOutlineContentProvider();
 	}
-	public IDocumentRange getRangeElement(int offset) {
+	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
 		IBundleModel model = (IBundleModel) getInputContext().getModel();
 		Dictionary manifest = ((Bundle) model.getBundle()).getHeaders();
 
@@ -119,35 +119,35 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	}
 	
 	public IDocumentRange findRange() {
-		if (fSel instanceof ImportObject) {
-			IPluginModelBase base = ((ImportObject)fSel).getImport().getPluginModel();
+		if (fSelection instanceof ImportObject) {
+			IPluginModelBase base = ((ImportObject)fSelection).getImport().getPluginModel();
 			if (base instanceof IBundlePluginModelBase)
 				return getSpecificRange(
 						((IBundlePluginModelBase)base).getBundleModel(),
 						Constants.REQUIRE_BUNDLE,
-						((ImportObject)fSel).getId());
-		} else if (fSel instanceof ImportPackageObject) {
+						((ImportObject)fSelection).getId());
+		} else if (fSelection instanceof ImportPackageObject) {
 			return getSpecificRange(
-					((ImportPackageObject)fSel).getModel(),
+					((ImportPackageObject)fSelection).getModel(),
 					Constants.IMPORT_PACKAGE,
-					((ImportPackageObject)fSel).getValue());
-		} else if (fSel instanceof ExportPackageObject) {
+					((ImportPackageObject)fSelection).getValue());
+		} else if (fSelection instanceof ExportPackageObject) {
 			return getSpecificRange(
-					((ExportPackageObject)fSel).getModel(),
+					((ExportPackageObject)fSelection).getModel(),
 					Constants.EXPORT_PACKAGE,
-					((ExportPackageObject)fSel).getValue());
-		} else if (fSel instanceof IPluginLibrary) {
-			IPluginModelBase base = ((IPluginLibrary)fSel).getPluginModel();
+					((ExportPackageObject)fSelection).getValue());
+		} else if (fSelection instanceof IPluginLibrary) {
+			IPluginModelBase base = ((IPluginLibrary)fSelection).getPluginModel();
 			if (base instanceof IBundlePluginModelBase)
 				return getSpecificRange(
 						((IBundlePluginModelBase)base).getBundleModel(),
 						Constants.BUNDLE_CLASSPATH,
-						((IPluginLibrary)fSel).getName());
-		} else if (fSel instanceof ExecutionEnvironment) {
+						((IPluginLibrary)fSelection).getName());
+		} else if (fSelection instanceof ExecutionEnvironment) {
 			return getSpecificRange(
-					((ExecutionEnvironment)fSel).getModel(),
+					((ExecutionEnvironment)fSelection).getModel(),
 					Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT,
-					((ExecutionEnvironment)fSel).getValue());
+					((ExecutionEnvironment)fSelection).getValue());
 		}
 		return null;
 	}

@@ -39,7 +39,7 @@ public class ManifestHyperlinkDetector implements IHyperlinkDetector {
 		if (region == null || canShowMultipleHyperlinks)
 			return null;
 
-		IDocumentRange element = fSourcePage.getRangeElement(region.getOffset());
+		IDocumentRange element = fSourcePage.getRangeElement(region.getOffset(), true);
 		if (!XMLUtil.withinRange(element, region.getOffset()))
 			return null;
 		
@@ -83,7 +83,8 @@ public class ManifestHyperlinkDetector implements IHyperlinkDetector {
 			} else if (sAttr.getKind() == IMetaAttribute.RESOURCE) {
 				link[0] = new ResourceHyperlink(linkRegion, attrValue, res);
 			} else if (sAttr.getParent() instanceof SchemaRootElement) {
-				link[0] = new ExtensionHyperLink(linkRegion, attrValue);
+				if (attr.getAttributeName().equals(IPluginExtension.P_POINT))
+					link[0] = new ExtensionHyperLink(linkRegion, attrValue);
 			} else if (sAttr.isTranslatable()) {
 				if (attrValue.charAt(0) == '%')
 					link[0] = new TranslationHyperlink(linkRegion, attrValue, base);
@@ -123,10 +124,10 @@ public class ManifestHyperlinkDetector implements IHyperlinkDetector {
 		if (!(enclosing instanceof IPluginObject))
 			return null;
 		IPluginModelBase base = ((IPluginObject)enclosing).getPluginModel();
-		IRegion linkRegion = new Region(node.getOffset(), node.getLength());
 		if (node.getText().charAt(0) == '%')
 			return new IHyperlink[] {
-				new TranslationHyperlink(linkRegion, node.getText(), base)};
+				new TranslationHyperlink(
+						new Region(node.getOffset(), node.getLength()), node.getText(), base)};
 		return null;
 	}
 }
