@@ -431,10 +431,10 @@ public class Target extends TargetObject implements ITarget {
 		if (value == null || property == null)
 			return false;
 		StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
-		boolean isFound = false;
-		while (tokenizer.hasMoreTokens()) 
+		while (tokenizer.hasMoreTokens()) {
 			if (property.equals(tokenizer.nextToken().trim()))
-				isFound = true;
-		return isFound;
+				return true;
+		}
+		return false;
 	}
 }
