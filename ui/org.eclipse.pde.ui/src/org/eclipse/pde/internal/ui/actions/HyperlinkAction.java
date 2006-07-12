@@ -19,6 +19,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 public class HyperlinkAction extends Action implements MouseListener, KeyListener {
@@ -56,8 +57,8 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 		if (!hasDetector() || isTextDisposed())
 			return false;
 		
-		int offset = fStyledText.getCaretOffset();
-		IHyperlink[] links = fDetector.detectHyperlinks(null, new Region(offset, 0), false);
+		Point p = fStyledText.getSelection();
+		IHyperlink[] links = fDetector.detectHyperlinks(null, new Region(p.x, p.y - p.x), false);
 		
 		if (links == null || links.length == 0)
 			return false;
@@ -117,12 +118,12 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 	}
 
 	public void mouseDown(MouseEvent e) {
-		setEnabled(detectHyperlink());
-		generateActionText();
+		// Ignore
 	}
 
 	public void mouseUp(MouseEvent e) {
-		// Ignore
+		setEnabled(detectHyperlink());
+		generateActionText();
 	}
 
 	public void keyPressed(KeyEvent e) {
