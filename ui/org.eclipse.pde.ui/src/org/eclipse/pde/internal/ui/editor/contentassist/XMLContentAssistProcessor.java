@@ -383,7 +383,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			list.add(object);
 		else {
 			String name = object.getName();
-			if (name.startsWith(filter))
+			if (filter.regionMatches(true, 0, name, 0, filter.length()))
 				list.add(object);
 		}
 	}
@@ -427,9 +427,9 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		} else if (parent instanceof IPluginBase) {
 			if (attr == null)
 				return computeAddChildProposal(parent, elRepOffset, doc, element);
-			if (element.equals(F_STR_EXT))
+			if (element.equalsIgnoreCase(F_STR_EXT))
 				return computeAddAttributeProposal(F_EX, null, atRepOffset, doc, attr, F_STR_EXT);
-			if (element.equals(F_STR_EXT_PT))
+			if (element.equalsIgnoreCase(F_STR_EXT_PT))
 				return computeAddAttributeProposal(F_EP, null, atRepOffset, doc, attr, F_STR_EXT_PT);
 		}
 		return null;
