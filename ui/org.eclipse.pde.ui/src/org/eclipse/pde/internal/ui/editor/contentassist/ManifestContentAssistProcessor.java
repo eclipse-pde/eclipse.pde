@@ -13,6 +13,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -31,6 +32,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
+import org.eclipse.pde.internal.ui.util.ImageOverlayIcon;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.BundleException;
@@ -578,9 +580,12 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 				case F_TYPE_CLASS:
 					return PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_CLASS);
 				case F_TYPE_ATTRIBUTE:
-					return fImages[type] = PDEPluginImages.DESC_EXT_POINT_OBJ.createImage();
-				case F_TYPE_DIRECTIVE:
 					return fImages[type] = PDEPluginImages.DESC_ATT_URI_OBJ.createImage();
+				case F_TYPE_DIRECTIVE:
+					fImages[F_TYPE_ATTRIBUTE] = PDEPluginImages.DESC_ATT_URI_OBJ.createImage();
+					ImageOverlayIcon icon = new ImageOverlayIcon(fImages[F_TYPE_ATTRIBUTE], 
+							new ImageDescriptor[][] {new ImageDescriptor[] {PDEPluginImages.DESC_DOC_CO}, null, null, null});
+					return fImages[type] = icon.createImage();
 				case F_TYPE_VALUE:
 					return null;
 				}
