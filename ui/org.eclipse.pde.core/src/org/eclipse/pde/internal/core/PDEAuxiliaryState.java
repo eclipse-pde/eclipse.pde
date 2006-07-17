@@ -49,7 +49,6 @@ public class PDEAuxiliaryState {
 	private static String ATTR_PATCH = "patch"; //$NON-NLS-1$
 	private static String ATTR_PROJECT = "project"; //$NON-NLS-1$
 	private static String ATTR_PROVIDER = "provider"; //$NON-NLS-1$
-	private static String ATTR_SCHEMA = "schema"; //$NON-NLS-1$
 	
 	private static String ELEMENT_BUNDLE = "bundle"; //$NON-NLS-1$
 	private static String ELEMENT_LIB = "library"; //$NON-NLS-1$
@@ -64,7 +63,6 @@ public class PDEAuxiliaryState {
 		boolean hasExtensibleAPI;
 		boolean isPatchFragment;
 		boolean hasBundleStructure;
-		String schema;
 		String[] libraries;
 		String project;
 		String localization;
@@ -83,8 +81,6 @@ public class PDEAuxiliaryState {
 		info.hasBundleStructure = !"false".equals(element.getAttribute(ATTR_BUNDLE_STRUCTURE)); //$NON-NLS-1$ 
 		if (element.hasAttribute(ATTR_PROJECT))
 			info.project = element.getAttribute(ATTR_PROJECT);
-		if (element.hasAttribute(ATTR_SCHEMA))
-			info.schema = element.getAttribute(ATTR_SCHEMA); 
 		if (element.hasAttribute(ATTR_LOCALIZATION))
 			info.localization = element.getAttribute(ATTR_LOCALIZATION); 
 		
@@ -119,11 +115,6 @@ public class PDEAuxiliaryState {
 		return info == null ? false : info.hasBundleStructure;		
 	}
 	
-	public String getSchemaVersion(long bundleID) {
-		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
-		return info == null ? null : info.schema;		
-	}
-
 	public String getPluginName(long bundleID) {
 		PluginInfo info = (PluginInfo)fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? null : info.name;
@@ -167,8 +158,6 @@ public class PDEAuxiliaryState {
 					element.setAttribute(ATTR_PROVIDER, info.providerName); 
 				if (info.name != null)
 					element.setAttribute(ATTR_NAME, info.name); 
-				if (info.schema != null)
-					element.setAttribute(ATTR_SCHEMA, info.schema); 
 				if (info.hasExtensibleAPI)
 					element.setAttribute(ATTR_EXTENSIBLE_API, "true"); //$NON-NLS-1$ 
 				if (info.isPatchFragment)
@@ -244,9 +233,6 @@ public class PDEAuxiliaryState {
 					element.setAttribute(ATTR_PATCH, "true"); //$NON-NLS-1$ 
 				if (!(models[i] instanceof IBundlePluginModelBase))
 					element.setAttribute(ATTR_BUNDLE_STRUCTURE, "false"); //$NON-NLS-1$ 
-				String schema = plugin.getSchemaVersion();
-				if (schema != null)
-					element.setAttribute(ATTR_SCHEMA, schema);  
 				if (models[i] instanceof IBundlePluginModelBase) {
 					String localization = ((IBundlePluginModelBase)models[i]).getBundleLocalization();
 					if (localization != null)

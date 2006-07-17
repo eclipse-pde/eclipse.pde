@@ -582,20 +582,18 @@ public class PointSelectionPage
 	
 	private String getFullId(IPluginExtensionPoint point) {
 		if (point instanceof PluginExtensionPointNode) {
+			String pointId = point.getId();
+			if ("3.2".equals(fModel.getPluginBase().getSchemaVersion()) && pointId.indexOf('.') > 0) //$NON-NLS-1$
+				return pointId;
 			String id = null;
 			if (fModel instanceof IFragmentModel) {
 				IFragment fragment = ((IFragmentModel)fModel).getFragment();
 				if (fragment != null)
 					id = fragment.getPluginId();
 			}
-			if (id == null) {
+			if (id == null)
 				id = fModel.getPluginBase().getId();
-			}
-			String point_id = point.getId();
-			if (point_id.indexOf('.') == -1) {
-				return id + "." + point_id; //$NON-NLS-1$
-			}
-			return point_id;
+			return id + '.' + pointId;
 		}
 		return point.getFullId();
 	}

@@ -31,22 +31,17 @@ public class PluginExtensionPoint extends IdentifiablePluginObject
 	}
 
 	public String getFullId() {
+		String pointId = getId();
 		IPluginModelBase modelBase = getPluginModel();
 		IPluginBase pluginBase = modelBase.getPluginBase();
 		if ("3.2".equals(pluginBase.getSchemaVersion())) { //$NON-NLS-1$
-			String pointId = getId();
 			if (pointId.indexOf('.') > 0)
 				return pointId;
 		}
-		String id = pluginBase.getId();
-		if (pluginBase instanceof IFragment) {
-			id = ((IFragment) pluginBase).getPluginId();
-		}
-		String point_id = getId();
-		if (point_id.indexOf('.') == -1) {
-			return id + "." + point_id; //$NON-NLS-1$
-		}
-		return point_id;		
+		
+		if (pluginBase instanceof IFragment)
+			return ((IFragment) pluginBase).getPluginId() + '.' + pointId;
+		return pluginBase.getId() + '.' + pointId;
 	}
 	
 	public String getSchema() {

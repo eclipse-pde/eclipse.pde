@@ -55,6 +55,7 @@ public class PDEExtensionRegistry {
 	private static String ATTR_BUNDLE_ID = "bundleID"; //$NON-NLS-1$
 	private static String ELEMENT_EXTENSION = "extension"; //$NON-NLS-1$
 	private static String ELEMENT_EXTENSION_POINT = "extension-point"; //$NON-NLS-1$
+	private static String ATTR_SCHEMA = "schema"; //$NON-NLS-1$
 	
 	private Map fExtensions = new HashMap();
 
@@ -176,6 +177,9 @@ public class PDEExtensionRegistry {
 					continue;
 				Element element = doc.createElement(ELEMENT_BUNDLE); //$NON-NLS-1$
 				element.setAttribute(ATTR_BUNDLE_ID, Long.toString(models[i].getBundleDescription().getBundleId())); //$NON-NLS-1$
+				String schema = plugin.getSchemaVersion();
+				if (schema != null)
+					element.setAttribute(ATTR_SCHEMA, schema);
 				for (int j = 0; j < extensions.length; j++) {
 					element.appendChild(writeExtension(doc, extensions[j]));
 				}				
@@ -236,6 +240,11 @@ public class PDEExtensionRegistry {
 	
 	protected void clear() {
 		fExtensions.clear();
+	}
+
+	public String getSchemaVersion(long bundleID) {
+		Element bundle = (Element)fExtensions.get(Long.toString(bundleID));
+		return bundle == null ? null : bundle.getAttribute(ATTR_SCHEMA);
 	}
 
 }
