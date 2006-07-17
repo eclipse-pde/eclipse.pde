@@ -3,6 +3,7 @@ package org.eclipse.pde.internal.ui.editor.contentassist;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jface.text.BadLocationException;
@@ -66,10 +67,11 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		F_ADD_CHILD = 2,
 		F_OPEN_TAG = 3;
 	
-	private static final ISchemaObject[] F_V_BOOLS = new ISchemaObject[] {
-		new VSchemaObject("true", null, F_AT_VAL), //$NON-NLS-1$
-		new VSchemaObject("false", null, F_AT_VAL) //$NON-NLS-1$
-	};
+	private static final ArrayList F_V_BOOLS = new ArrayList();
+	static {
+		F_V_BOOLS.add(new VSchemaObject("true", null, F_AT_VAL)); //$NON-NLS-1$
+		F_V_BOOLS.add(new VSchemaObject("false", null, F_AT_VAL)); //$NON-NLS-1$
+	}
 	
 	private static final String F_STR_EXT_PT = "extension-point"; //$NON-NLS-1$
 	private static final String F_STR_EXT = "extension"; //$NON-NLS-1$
@@ -91,23 +93,23 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	private PDESourcePage fSourcePage;
 	private final Image[] fImages = new Image[F_TOTAL_TYPES];
 	// TODO add a listener to add/remove extension points as they are added/removed from working models
-	private ISchemaObject[] fPoints; // available extension points
 	private IDocumentRange fRange;
 	private int fDocLen = -1;
+	private ArrayList fExternalExtPoints; // all extension points from other plugins
+	private ArrayList fAllPoints;
 	
 	public XMLContentAssistProcessor(PDESourcePage sourcePage) {
-		init();
 		fSourcePage = sourcePage;
 	}
 
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
-		IBaseModel model = getModel();
 		IDocument doc = viewer.getDocument();
 		int docLen = doc.getLength();
 		if (docLen == fDocLen)
 			return null; // left/right cursor has been pressed - cancel content assist
 		
 		fDocLen = docLen;
+		IBaseModel model = getModel();
 		if (model instanceof AbstractEditingModel
 				&& fSourcePage.isDirty()
 				&& ((AbstractEditingModel)model).isStale()
@@ -178,7 +180,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		if (obj instanceof IPluginExtension) {
 			if (attr.getAttributeName().equals(IPluginExtension.P_POINT) && 
 					offset >= attr.getValueOffset())
-				return computeAttributeProposal(attr, offset, attrValue, fPoints);
+				return computeAttributeProposal(attr, offset, attrValue, getAvailableExtensionPoints());
 			ISchemaAttribute sAttr = XMLUtil.getSchemaAttribute(attr, ((IPluginExtension)obj).getPoint());
 			if (sAttr == null)
 				return null;
@@ -209,17 +211,16 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				if (sAttr.getType() == null)
 					return null;
 				ISchemaRestriction sRestr = (sAttr.getType()).getRestriction();
-				ISchemaObject[] objs = null;
+				ArrayList objs = new ArrayList();
 				if (sRestr == null) {
 					ISchemaSimpleType type = sAttr.getType();
 					if (type != null && type.getName().equals("boolean")) //$NON-NLS-1$
 						objs = F_V_BOOLS;
 				} else {
 					Object[] restrictions = sRestr.getChildren();
-					objs = new ISchemaObject[restrictions.length];
 					for (int i = 0; i < restrictions.length; i++)
 						if (restrictions[i] instanceof ISchemaObject)
-							objs[i] = new VSchemaObject(((ISchemaObject)restrictions[i]).getName(), null, F_AT_VAL);
+							objs.add(new VSchemaObject(((ISchemaObject)restrictions[i]).getName(), null, F_AT_VAL));
 				}
 				return computeAttributeProposal(attr, offset, attrValue, objs);
 			}
@@ -232,12 +233,12 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		return null;
 	}
 	
-	private ICompletionProposal[] computeAttributeProposal(IDocumentAttribute attr, int offset, String currValue, ISchemaObject[] validValues) {
+	private ICompletionProposal[] computeAttributeProposal(IDocumentAttribute attr, int offset, String currValue, ArrayList validValues) {
 		if (validValues == null)
 			return null;
 		ArrayList list = new ArrayList();
-		for (int i = 0; i < validValues.length; i++)
-			addToList(list, currValue, validValues[i]);
+		for (int i = 0; i < validValues.size(); i++)
+			addToList(list, currValue, (ISchemaObject)validValues.get(i));
 		
 		return convertListToProposal(list, (IDocumentRange)attr, offset);
 	}
@@ -537,6 +538,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 
 	public void assistSessionEnded(ContentAssistEvent event) {
 		fRange = null;
+		fAllPoints = null;
 		fDocLen = -1;
 	}
 
@@ -546,20 +548,52 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	public void selectionChanged(ICompletionProposal proposal, boolean smartToggle) {
 	}
 
-	private void init() {
-		if (fPoints == null) {
-			ArrayList extPoints = new ArrayList();
+	private ArrayList getAvailableExtensionPoints() {
+		if (fAllPoints != null)
+			return fAllPoints;
+		
+		IPluginModelBase pModel = null;
+		String pModelId = null;
+		IBaseModel model = getModel();
+		
+		// TODO IPluginModelBase needs .getId()
+		// right now we will ignore
+		// currently open models by comparing projects
+		IProject project = null;
+		if (model instanceof IPluginModelBase) {
+			pModel = (IPluginModelBase)model;
+			project = pModel.getUnderlyingResource().getProject();
+		}
+		
+		if (fExternalExtPoints == null) {
+			fExternalExtPoints = new ArrayList();
 			IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
 			for (int i = 0; i < plugins.length; i++) {
+				
+				// TODO
+				// remove the following check if && after IPluginModelBase#getId()
+				// is implemented
+				IResource res = plugins[i].getUnderlyingResource();
+				if (res != null && pModel != null && project.equals(res.getProject()))
+					continue;
+				
 				IPluginExtensionPoint[] points = plugins[i].getPluginBase().getExtensionPoints();
+				String id = plugins[i].getPluginBase().getId();
+				if (pModel != null && id.equals(pModelId))
+					continue;
 				for (int j = 0; j < points.length; j++)
-					extPoints.add(points[j]);
+					fExternalExtPoints.add(new VSchemaObject(points[j].getFullId(), null, F_AT_EP));
 			}
-			
-			fPoints = new ISchemaObject[extPoints.size()];
-			for (int i = 0; i < fPoints.length; i++)
-				fPoints[i] = new VSchemaObject(((IPluginExtensionPoint)extPoints.get(i)).getFullId(), null, F_AT_EP);
 		}
+		
+		fAllPoints = (ArrayList)fExternalExtPoints.clone();
+		IPluginExtensionPoint[] points = new IPluginExtensionPoint[0];
+		if (pModel != null)
+			points = pModel.getPluginBase().getExtensionPoints();
+		
+		for (int j = 0; j < points.length; j++)
+			fAllPoints.add(new VSchemaObject(points[j].getFullId(), null, F_AT_EP));
+		return fAllPoints;
 	}
 	
 	public Image getImage(int type) {

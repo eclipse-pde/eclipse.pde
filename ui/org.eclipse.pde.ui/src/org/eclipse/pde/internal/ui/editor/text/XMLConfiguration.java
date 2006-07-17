@@ -23,6 +23,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.contentassist.XMLContentAssistProcessor;
+import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 
@@ -175,14 +176,17 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 	
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		if (fSourcePage != null && sourceViewer.isEditable() && fContentAssistant == null) {
-			fContentAssistant = new ContentAssistant();
-			fContentAssistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+			if (fSourcePage.getEditor() instanceof ManifestEditor)
+				fContentAssistProcessor = new XMLContentAssistProcessor(fSourcePage);
 			
-			fContentAssistProcessor = new XMLContentAssistProcessor(fSourcePage);
-			fContentAssistant.setContentAssistProcessor(fContentAssistProcessor, IDocument.DEFAULT_CONTENT_TYPE);
-			
-			fContentAssistant.setShowEmptyList(false);
-			fContentAssistant.addCompletionListener(fContentAssistProcessor);
+			if (fContentAssistProcessor != null) {
+				fContentAssistant = new ContentAssistant();
+				fContentAssistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+				fContentAssistant.setContentAssistProcessor(fContentAssistProcessor, IDocument.DEFAULT_CONTENT_TYPE);
+				
+				fContentAssistant.setShowEmptyList(false);
+				fContentAssistant.addCompletionListener(fContentAssistProcessor);
+			}
 		}
 		return fContentAssistant;
 	}
