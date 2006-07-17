@@ -684,11 +684,14 @@ public class PluginsView extends ViewPart {
 		ArrayList result = new ArrayList();
 
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
-			ModelEntry entry = (ModelEntry) iter.next();
-			if (entry.getWorkspaceModel() != null)
-				continue;
-			if (entry.isInJavaSearch() == !add)
-				result.add(entry);
+			Object model = iter.next();
+			if(model instanceof ModelEntry) {
+				ModelEntry entry = (ModelEntry) model;
+				if (entry.getWorkspaceModel() != null)
+					continue;
+				if (entry.isInJavaSearch() == !add)
+					result.add(entry);
+			}
 		}
 		if (result.size() == 0)
 			return;
