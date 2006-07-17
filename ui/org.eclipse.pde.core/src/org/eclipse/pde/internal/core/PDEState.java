@@ -370,7 +370,7 @@ public class PDEState extends MinimalState {
 	}
 	
 	public String getSchemaVersion(long bundleID) {
-		return fAuxiliaryState.getSchemaVersion(bundleID);	
+		return fExtensionRegistry.getSchemaVersion(bundleID);	
 	}
 
 	public String getPluginName(long bundleID) {

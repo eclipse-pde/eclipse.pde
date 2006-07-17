@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.internal.core.PDEState;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -46,7 +47,8 @@ public class Extensions extends AbstractExtensions {
 		fValid = hasRequiredAttributes();
 	}
 	
-	void load(Node[] nodes) {
+	void load(PDEState state, long bundleID) {
+		Node[] nodes = state.getAllExtensions(bundleID);
 		for (int i = 0; i < nodes.length; i++) {
 			Node child = nodes[i];
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
@@ -54,6 +56,7 @@ public class Extensions extends AbstractExtensions {
 			}
 		}
 		fValid = hasRequiredAttributes();	
+		fSchemaVersion = state.getSchemaVersion(bundleID);
 	}
 
 	public void reset() {
@@ -67,9 +70,9 @@ public class Extensions extends AbstractExtensions {
 
 	public void write(String indent, PrintWriter writer) {
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
-		writer.print(fIsFragment ? "<fragment>" : "<plugin>"); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		writer.println();
+		if (fSchemaVersion != null)
+			writer.println("<?eclipse version=\"" + fSchemaVersion + "\"?>"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.println(fIsFragment ? "<fragment>" : "<plugin>"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 		String firstIndent = "   "; //$NON-NLS-1$
 	

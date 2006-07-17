@@ -41,8 +41,11 @@ public class ExtensionsHandler extends DefaultHandler {
 	 */
 	public void processingInstruction(String target, String data)
 			throws SAXException {
+		if ("eclipse".equals(target)) { //$NON-NLS-1$
+			fParent.setAttribute("schema", "version=\"3.0\"".equals(data) ? "3.0" : "3.2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		}
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
