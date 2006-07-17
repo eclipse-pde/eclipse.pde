@@ -39,6 +39,7 @@ import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
 import org.eclipse.swt.graphics.Image;
@@ -352,16 +353,16 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			ISchemaObject[] sAttrs = sElem != null ?
 					sElem.getAttributes() :
 					new ISchemaObject[] {
-						new VSchemaObject(IIdentifiable.P_ID, "The ID of this extension.", F_AT),
-						new VSchemaObject(IPluginObject.P_NAME, "The name of this extension.", F_AT),
-						new VSchemaObject(IPluginExtension.P_POINT, "The ID of the extension-point this extension will contribute to.", F_AT)
+						new VSchemaObject(IIdentifiable.P_ID, PDEUIMessages.XMLContentAssistProcessor_extId, F_AT),
+						new VSchemaObject(IPluginObject.P_NAME, PDEUIMessages.XMLContentAssistProcessor_extName, F_AT),
+						new VSchemaObject(IPluginExtension.P_POINT, PDEUIMessages.XMLContentAssistProcessor_extPoint, F_AT)
 					};
 			return computeAttributeProposals(sAttrs, node, offset, filter, nodeName);
 		} else if (type == F_EP || node instanceof IPluginExtensionPoint) {
 			ISchemaObject[] sAttrs = new ISchemaObject[] {
-						new VSchemaObject(IIdentifiable.P_ID, "The ID of this extension-point.", F_AT),
-						new VSchemaObject(IPluginObject.P_NAME, "The name of this extension-point.", F_AT),
-						new VSchemaObject(IPluginExtensionPoint.P_SCHEMA, "The location of this extension-point's schema file.", F_AT)
+						new VSchemaObject(IIdentifiable.P_ID, PDEUIMessages.XMLContentAssistProcessor_extPointId, F_AT),
+						new VSchemaObject(IPluginObject.P_NAME, PDEUIMessages.XMLContentAssistProcessor_extPointName, F_AT),
+						new VSchemaObject(IPluginExtensionPoint.P_SCHEMA, PDEUIMessages.XMLContentAssistProcessor_schemaLocation, F_AT)
 					};
 			return computeAttributeProposals(sAttrs, node, offset, filter, nodeName);
 		} else {

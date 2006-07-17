@@ -2898,5 +2898,17 @@ public class PDEUIMessages extends NLS {
 	public static String XMLCompletionProposal_ErrorCycle;
 	public static String XMLCompletionProposal_InfoElement;
 
+	public static String XMLContentAssistProcessor_extId;
+
+	public static String XMLContentAssistProcessor_extName;
+
+	public static String XMLContentAssistProcessor_extPoint;
+
+	public static String XMLContentAssistProcessor_extPointId;
+
+	public static String XMLContentAssistProcessor_extPointName;
+
+	public static String XMLContentAssistProcessor_schemaLocation;
+
 	
 }
