@@ -13,8 +13,6 @@ package org.eclipse.pde.internal.ui.editor.text;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.TextAttribute;
-import org.eclipse.jface.text.contentassist.ContentAssistant;
-import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
@@ -22,8 +20,6 @@ import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
-import org.eclipse.pde.internal.ui.editor.contentassist.XMLContentAssistProcessor;
-import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 
@@ -37,8 +33,6 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 	private TextAttribute fXMLCommentAttr;
 	private MultilineDamagerRepairer fDamagerRepairer;
 	private PDEQuickAssistAssistant fQuickAssistant;
-	private ContentAssistant fContentAssistant;
-	private XMLContentAssistProcessor fContentAssistProcessor;
 	
 	public XMLConfiguration(IColorManager colorManager) {
 		this(colorManager, null);
@@ -173,24 +167,7 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 		}
 		return null;
 	}
-	
-	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
-		if (fSourcePage != null && sourceViewer.isEditable() && fContentAssistant == null) {
-			if (fSourcePage.getEditor() instanceof ManifestEditor)
-				fContentAssistProcessor = new XMLContentAssistProcessor(fSourcePage);
-			
-			if (fContentAssistProcessor != null) {
-				fContentAssistant = new ContentAssistant();
-				fContentAssistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-				fContentAssistant.setContentAssistProcessor(fContentAssistProcessor, IDocument.DEFAULT_CONTENT_TYPE);
-				
-				fContentAssistant.setShowEmptyList(false);
-				fContentAssistant.addCompletionListener(fContentAssistProcessor);
-			}
-		}
-		return fContentAssistant;
-	}
-	
+		
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
 		return XMLPartitionScanner.XML_TAG;
 	}
@@ -198,7 +175,5 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 	public void dispose() {
 		if (fQuickAssistant != null)
 			fQuickAssistant.dispose();
-		if (fContentAssistProcessor != null)
-			fContentAssistProcessor.disposeImages();
 	}
 }

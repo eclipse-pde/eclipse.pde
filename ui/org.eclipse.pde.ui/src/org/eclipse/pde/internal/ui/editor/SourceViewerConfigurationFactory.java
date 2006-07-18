@@ -15,16 +15,21 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.ui.editor.build.BuildSourcePage;
 import org.eclipse.pde.internal.ui.editor.build.BuildSourceViewerConfiguration;
 import org.eclipse.pde.internal.ui.editor.plugin.BundleSourcePage;
+import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
 import org.eclipse.pde.internal.ui.editor.text.ManifestConfiguration;
+import org.eclipse.pde.internal.ui.editor.text.PluginXMLConfiguration;
 import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
 
 public class SourceViewerConfigurationFactory {
 
 	public static ChangeAwareSourceViewerConfiguration createSourceViewerConfiguration(PDESourcePage page, IColorManager manager) {
-		if (page instanceof XMLSourcePage)
+		if (page instanceof XMLSourcePage) {
+			if (page.getEditor() instanceof ManifestEditor)
+				return new PluginXMLConfiguration(manager, page);
 			return new XMLConfiguration(manager, page);
+		}
 		if (page instanceof BundleSourcePage)
 			return new ManifestConfiguration(manager, page);
 		if (page instanceof BuildSourcePage) {

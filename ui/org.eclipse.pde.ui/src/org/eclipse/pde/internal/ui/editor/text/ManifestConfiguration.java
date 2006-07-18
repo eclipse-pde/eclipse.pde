@@ -245,7 +245,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 		if (fQuickAssistant != null)
 			fQuickAssistant.dispose();
 		if (fContentAssistant != null)
-			fContentAssistantProcessor.disposeImages();
+			fContentAssistantProcessor.dispose();
 	}
 	
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {

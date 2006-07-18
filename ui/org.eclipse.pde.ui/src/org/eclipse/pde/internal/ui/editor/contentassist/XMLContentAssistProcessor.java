@@ -615,7 +615,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		return fImages[type];
 	}
 	
-	public void disposeImages() {
+	public void dispose() {
 		for (int i = 0; i < fImages.length; i++)
 			if (fImages[i] != null && !fImages[i].isDisposed())
 				fImages[i].dispose();

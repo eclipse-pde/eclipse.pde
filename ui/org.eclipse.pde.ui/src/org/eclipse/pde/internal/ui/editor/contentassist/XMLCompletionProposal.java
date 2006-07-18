@@ -363,7 +363,7 @@ public class XMLCompletionProposal implements ICompletionProposal {
 		if (fSchemaObject instanceof ISchemaAttribute)
 			return fSchemaObject.getName();
 		if (fSchemaObject != null)
-			return '<' + fSchemaObject.getName() + '>';
+			return fSchemaObject.getName();
 		if (fRange instanceof IDocumentNode)
 			return "...> </" + ((IDocumentNode)fRange).getXMLTagName() + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 		return null;
