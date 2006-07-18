@@ -41,6 +41,7 @@ import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ibundle.IBundleFragmentModel;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
@@ -166,7 +167,25 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		
 		validateSourceEntries(sourceEntries);
 		validateMissingSourceInBinIncludes(binIncludes, sourceEntryKeys, build);
-		
+		validateBinIncludes(binIncludes);
+	}
+	
+	private void validateBinIncludes(IBuildEntry binIncludes) {
+		if(WorkspaceModelManager.hasBundleManifest(fProject)) {
+			String[] tokens = binIncludes.getTokens();
+			boolean exists = false;
+			String key = "META-INF/"; //$NON-NLS-1$
+			for(int i = 0; i < tokens.length; i++) {
+				if(tokens[i].startsWith(key))
+					exists = true;
+			}
+			if(!exists) {
+				prepareError(PROPERTY_BIN_INCLUDES, 
+						key,
+						NLS.bind(PDECoreMessages.BuildErrorReporter_binIncludesMissing, key),
+						PDEMarkerFactory.B_ADDDITION);
+			}
+		}
 	}
 	
 	private void validateJarsExtraClasspath(IBuildEntry javaExtra) {
@@ -550,4 +569,5 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		} catch (CoreException e) {
 		}
 	}
+	
  }
