@@ -47,6 +47,8 @@ import org.eclipse.swt.graphics.Image;
 
 public class XMLContentAssistProcessor extends TypePackageCompletionProcessor implements IContentAssistProcessor, ICompletionListener {
 
+	protected boolean fAssistSessionStarted;
+	
 	// specific assist types
 	protected static final int
 		F_XX = -1, // infer by passing object
@@ -113,8 +115,14 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		if (model instanceof AbstractEditingModel
 				&& fSourcePage.isDirty()
 				&& ((AbstractEditingModel)model).isStale()
-				&& fRange == null)
+				&& fRange == null) {
 			((AbstractEditingModel)model).reconciled(doc);
+		} else if (fAssistSessionStarted) {
+			// Always reconcile when content assist is first invoked
+			// Fix Bug # 149478
+			((AbstractEditingModel)model).reconciled(doc);
+			fAssistSessionStarted = false;
+		}
 
 		if (fRange == null) {
 			assignRange(offset);
@@ -543,6 +551,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	}
 
 	public void assistSessionStarted(ContentAssistEvent event) {
+		fAssistSessionStarted = true;
 	}
 
 	public void selectionChanged(ICompletionProposal proposal, boolean smartToggle) {
