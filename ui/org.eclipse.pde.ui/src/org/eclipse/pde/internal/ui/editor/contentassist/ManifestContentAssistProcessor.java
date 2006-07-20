@@ -203,11 +203,11 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		}
 				
 		if (value.startsWith(Constants.IMPORT_PACKAGE))
-			return handleImportPackageCompletion(value.substring(Constants.IMPORT_PACKAGE.length()), offset);
+			return handleImportPackageCompletion(value.substring(Constants.IMPORT_PACKAGE.length() + 1), offset);
 		if (value.startsWith(Constants.FRAGMENT_HOST))
-			return handleFragmentHostCompletion(value.substring(Constants.FRAGMENT_HOST.length()), offset);
+			return handleFragmentHostCompletion(value.substring(Constants.FRAGMENT_HOST.length() + 1), offset);
 		if (value.startsWith(Constants.REQUIRE_BUNDLE))
-			return handleRequireBundleCompletion(value.substring(Constants.REQUIRE_BUNDLE.length()), offset);
+			return handleRequireBundleCompletion(value.substring(Constants.REQUIRE_BUNDLE.length() + 1), offset);
 		if (value.startsWith(Constants.EXPORT_PACKAGE))
 			return handleExportPackageCompletion(value.substring(Constants.EXPORT_PACKAGE.length() + 1), offset);
 		if (value.startsWith(Constants.BUNDLE_ACTIVATOR))
@@ -224,10 +224,11 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	protected ICompletionProposal[] handleImportPackageCompletion(String currentValue, int offset) {
 		int comma = currentValue.lastIndexOf(',');
 		int semicolon = currentValue.lastIndexOf(';');
-		String value = comma != -1 ? currentValue.substring(comma + 1) : currentValue.substring(currentValue.indexOf(':') + 1);
+		String value = comma != -1 ? currentValue.substring(comma + 1) : currentValue;
 		if (comma > semicolon || comma == semicolon) {
 			HashSet set = (HashSet) fHeaders.get(Constants.IMPORT_PACKAGE);
-			if (set == null) set = new HashSet(0);
+			if (set == null) 
+				set = parseHeaderForValues(currentValue, offset);
 			HashSet importedBundles = (HashSet) fHeaders.get(Constants.REQUIRE_BUNDLE);
 			if (importedBundles == null) importedBundles = new HashSet(0);
 			value = removeLeadingSpaces(value);
@@ -236,19 +237,22 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			ArrayList completions = new ArrayList();
 			IPluginModelBase[] bases = PDECore.getDefault().getModelManager().getPlugins();
 			
-			for (int j = 0; j < bases.length; j++) {
+			for (int j = 0; j < bases.length; j++) {	// Remove any packages already imported through Require-Bundle
 				BundleDescription desc = bases[j].getBundleDescription();
 				if (desc == null || importedBundles.contains(desc.getSymbolicName()))
 					continue;
 				ExportPackageDescription[] expPkgs = desc.getExportPackages();
 				for (int i = 0; i < expPkgs.length; i++) {
 					String pkgName = expPkgs[i].getName();
-					if (pkgName.regionMatches(true, 0, value, 0, length) && !set.contains(pkgName))
+					if (pkgName.regionMatches(true, 0, value, 0, length) && !set.contains(pkgName)) {
 						completions.add(new TypeCompletionProposal(pkgName, getImage(F_TYPE_PKG), pkgName, offset - length, length));
+						set.add(pkgName);
+					}
 				}
 			}
-			return (ICompletionProposal[]) completions.toArray(new ICompletionProposal[completions.size()]);
-					
+			ICompletionProposal[] proposals = (ICompletionProposal[]) completions.toArray(new ICompletionProposal[completions.size()]);
+			sortCompletions(proposals);
+			return proposals;
 		}
 		int equals = currentValue.lastIndexOf('=');
 		if (equals == -1 || semicolon > equals) {
@@ -286,32 +290,29 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	}
 	
 	protected ICompletionProposal[] handleFragmentHostCompletion(String currentValue, int offset) {
-		int colon = currentValue.indexOf(':');
-		if (colon != -1) {
-			ArrayList completions = new ArrayList();
-			String pluginStart = removeLeadingSpaces(currentValue.substring(colon + 1));
-			int length = pluginStart.length();
-			IPluginModelBase [] bases = PDECore.getDefault().getModelManager().getPlugins();
-			for (int i = 0; i < bases.length; i++) {
-				BundleDescription desc = bases[i].getBundleDescription();
-				if (desc != null && desc.getHost() == null) {
-					String pluginID = bases[i].getBundleDescription().getSymbolicName();
-					if (pluginID.regionMatches(true, 0, pluginStart, 0, length))
-						completions.add(new TypeCompletionProposal(pluginID, getImage(F_TYPE_BUNDLE), pluginID, offset - length, length));
-				}
+		ArrayList completions = new ArrayList();
+		String pluginStart = removeLeadingSpaces(currentValue);
+		int length = pluginStart.length();
+		IPluginModelBase [] bases = PDECore.getDefault().getModelManager().getPlugins();
+		for (int i = 0; i < bases.length; i++) {
+			BundleDescription desc = bases[i].getBundleDescription();
+			if (desc != null && desc.getHost() == null) {
+				String pluginID = bases[i].getBundleDescription().getSymbolicName();
+				if (pluginID.regionMatches(true, 0, pluginStart, 0, length))
+					completions.add(new TypeCompletionProposal(pluginID, getImage(F_TYPE_BUNDLE), pluginID, offset - length, length));
 			}
-			return (ICompletionProposal[]) completions.toArray(new ICompletionProposal[completions.size()]);
 		}
-		return new ICompletionProposal[0];
+		return (ICompletionProposal[]) completions.toArray(new ICompletionProposal[completions.size()]);
 	}
 	
 	protected ICompletionProposal[] handleRequireBundleCompletion(String currentValue, int offset) {
 		int comma = currentValue.lastIndexOf(',');
 		int semicolon = currentValue.lastIndexOf(';');
-		String value = comma != -1 ? currentValue.substring(comma + 1) : currentValue.substring(currentValue.indexOf(':') + 1);
+		String value = comma != -1 ? currentValue.substring(comma + 1) : currentValue;
 		if (comma > semicolon || comma == semicolon) {
 			HashSet set = (HashSet) fHeaders.get(Constants.REQUIRE_BUNDLE);
-			if (set == null) set = new HashSet(0);
+			if (set == null)
+				set = parseHeaderForValues(currentValue, offset);
 			return handleBundleCompletions(value, set, F_TYPE_BUNDLE, offset);
 		}
 		int equals = currentValue.lastIndexOf('=');
@@ -339,12 +340,15 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		int length = value.length();
 		doNotInclude.remove(value);
 		ArrayList completions = new ArrayList();
-		BundleDescription [] descs = PDECore.getDefault().getModelManager().getState().getState().getResolvedBundles();
-		for (int i = 0; i < descs.length; i++) {
-			String bundleId = descs[i].getSymbolicName();
-			if (descs[i].getHost() == null && bundleId.regionMatches(true, 0, value, 0, value.length()) && 
-					!doNotInclude.contains(bundleId))
-				completions.add(new TypeCompletionProposal(bundleId, getImage(type), bundleId, offset - length, length));
+		IPluginModelBase [] bases = PDECore.getDefault().getModelManager().getPlugins();
+		for (int i = 0; i < bases.length; i++) {
+			BundleDescription desc = bases[i].getBundleDescription();
+			if (desc != null && desc.getHost() == null) {
+				String bundleId = desc.getSymbolicName();
+				if (bundleId.regionMatches(true, 0, value, 0, value.length()) && 
+						!doNotInclude.contains(bundleId))
+					completions.add(new TypeCompletionProposal(bundleId, getImage(type), bundleId, offset - length, length));
+			}
 		}
 		return (ICompletionProposal[]) completions.toArray(new ICompletionProposal[completions.size()]);
 	}
@@ -356,7 +360,8 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		if (!insideQuotes(currentValue) && comma > semicolon || comma == semicolon) {
 			String value = comma != -1 ? currentValue.substring(comma + 1) : currentValue;
 			HashSet set = (HashSet) fHeaders.get(Constants.EXPORT_PACKAGE);
-			if (set == null) set = new HashSet(0);
+			if (set == null) 
+				set = parseHeaderForValues(currentValue, offset);
 			value = removeLeadingSpaces(value);
 			int length = value.length();
 			IProject proj = ((PDEFormEditor)fSourcePage.getEditor()).getCommonProject();
@@ -482,7 +487,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	}
 	
 	protected ICompletionProposal[] handleAttrsAndDirectives(String value, ArrayList attrs, ArrayList types, int offset) {
-		String fullValue = findFullLine(value, offset);
+		String fullValue = findFullLine(value, offset, false);
 		int semicolon = value.lastIndexOf(';');
 		value = removeLeadingSpaces(value.substring(semicolon + 1));
 		StringTokenizer tokenizer = new StringTokenizer(fullValue, ";"); //$NON-NLS-1$
@@ -504,19 +509,32 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		return matchValueCompletion(value, (String[])attrs.toArray(new String[attrs.size()]), toIntArray(types), offset);
 	}
 	
-	private String findFullLine(String value, int offset) {
+	private HashSet parseHeaderForValues(String currentValue, int offset) {
+		HashSet set = new HashSet();
+		String fullValue = findFullLine(currentValue, offset, true);
+		StringTokenizer tokenizer = new StringTokenizer(fullValue, ","); //$NON-NLS-1$
+		while(tokenizer.hasMoreTokens()) {
+			String pkgValue = tokenizer.nextToken();
+			int index = pkgValue.indexOf(';');
+			set.add(index == -1 ? pkgValue.trim() : pkgValue.substring(0, index).trim());
+		}
+		return set;
+	}
+	
+	private String findFullLine(String value, int offset, boolean entireHeader) {
 		IDocument doc = fSourcePage.getDocumentProvider().getDocument(fSourcePage.getInputContext().getInput());
 		try {
 			int line = doc.getLineOfOffset(offset);
 			String newValue = ""; //$NON-NLS-1$
 			int startOfLine = 0;
+			int colon = -1;
 			do {
 				startOfLine = doc.getLineOffset(line);
 				newValue = doc.get(offset, doc.getLineLength(line) - offset + startOfLine);
 				++line;
-			} while ((newValue.lastIndexOf(':') == -1 || newValue.charAt(newValue.lastIndexOf(':') + 1) == '=') && 
-					newValue.indexOf(',') == -1 && !(doc.getNumberOfLines() == line));
-			int colon = newValue.lastIndexOf(':');
+				colon = newValue.lastIndexOf(':');
+			} while ((colon == -1 || (newValue.length() > colon && newValue.charAt(colon + 1) == '=')) && 
+					(entireHeader || newValue.indexOf(',') == -1) && !(doc.getNumberOfLines() == line));
 			if (colon > 0 && newValue.charAt(colon +1) != '=') {
 				newValue = doc.get(offset, startOfLine - 1 - offset);
 			} else {
@@ -547,7 +565,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			list.add(values[i]);
 		return list;
 	}
-	
+
 	private String removeLeadingSpaces(String value) {
 		char[] valueArray = value.toCharArray();
 		int i = 0;
