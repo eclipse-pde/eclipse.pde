@@ -29,13 +29,18 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.osgi.framework.Version;
 
 
 public class CoreUtility {
@@ -320,5 +325,46 @@ public class CoreUtility {
 		}
 		return result == null ? null : new org.eclipse.jface.text.Document(result);
 	}
+	
+	/**
+	 * @param versionString
+	 *            the version to be checked, null is allowed and will be treated
+	 *            as 0.0.0
+	 * @return IStatus
+	 */
+	public static IStatus validateVersionString(String versionString) {
+		try {
+			if (versionString != null)
+				new Version(versionString);
+		} catch (IllegalArgumentException e) {
+			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, 
+					PDECoreMessages.BundleErrorReporter_InvalidFormatInBundleVersion, e);
+		}
+		return Status.OK_STATUS;
+	}
+
+	public static IStatus validateVersionRange(String versionRangeString) {
+		try {
+			new VersionRange(versionRangeString);
+		} catch (IllegalArgumentException e) {
+			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, 
+					PDECoreMessages.BundleErrorReporter_invalidVersionRangeFormat, e); 
+		}
+
+		// need to do our extra checks for each piece of the versionRange
+		int comma = versionRangeString.indexOf(',');
+		if (comma < 0) {
+			return validateVersionString(versionRangeString);
+		}
+
+		IStatus status = validateVersionString(versionRangeString.substring(1, comma));
+		if(!status.isOK()){
+			return status;
+		}
+		return validateVersionString(versionRangeString
+				.substring(comma + 1, versionRangeString.length() - 1));
+	}
+
+
 
 }

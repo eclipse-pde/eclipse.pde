@@ -26,8 +26,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -61,46 +59,13 @@ import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.Version;
 
 public class BundleErrorReporter extends JarManifestErrorReporter {
-
-	/**
-	 * @param versionString
-	 *            the version to be checked, null is allowed and will be treated
-	 *            as 0.0.0
-	 * @return IStatus
-	 */
-	protected static IStatus validateVersionString(String versionString) {
-		if (versionString == null)
-			return Status.OK_STATUS;
-		return PluginVersionIdentifier.validateVersion(versionString);
-	}
-
-	protected static IStatus validateVersionRange(String versionRangeString) {
-		try {
-			new VersionRange(versionRangeString);
-		} catch (IllegalArgumentException e) {
-			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, 
-					PDECoreMessages.BundleErrorReporter_invalidVersionRangeFormat, e); 
-		}
-
-		// need to do our extra checks for each piece of the versionRange
-		int comma = versionRangeString.indexOf(',');
-		if (comma < 0) {
-			return validateVersionString(versionRangeString);
-		}
-
-		IStatus status = validateVersionString(versionRangeString.substring(1, comma));
-		if(!status.isOK()){
-			return status;
-		}
-		return validateVersionString(versionRangeString
-				.substring(comma + 1, versionRangeString.length() - 1));
-	}
 
 	private boolean fOsgiR4;
 	private IPluginModelBase fModel;
@@ -312,7 +277,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (header == null)
 			return;
 	
-		IStatus status = validateVersionString(header.getValue());		
+		IStatus status = CoreUtility.validateVersionString(header.getValue());		
 		if(!status.isOK()){
 			int line = getLine(header, header.getValue());
 			report(status.getMessage(), line, CompilerFlags.ERROR);
@@ -481,7 +446,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 			
 			String requiredRange = required[i].getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
-			if (requiredRange != null && validateVersionRange(requiredRange).isOK()) {
+			if (requiredRange != null && CoreUtility.validateVersionRange(requiredRange).isOK()) {
 				VersionRange versionRange = new VersionRange(requiredRange);
 				String version = model.getPlugin().getVersion();
 				if (version != null && !versionRange.isIncluded(new Version(version))) {
@@ -494,7 +459,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	
 	private void validateBundleVersionAttribute(IHeader header, ManifestElement element) {
 		String versionRange = element.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
-		if (versionRange != null && !validateVersionRange(versionRange).isOK()) {
+		if (versionRange != null && !CoreUtility.validateVersionRange(versionRange).isOK()) {
 			report(NLS.bind(PDECoreMessages.BundleErrorReporter_InvalidFormatInBundleVersion, 
 				  element.getValue()), getPackageLine(header, element),
 					CompilerFlags.ERROR); 
@@ -830,7 +795,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private void validateSpecificationVersionAttribute(IHeader header, ManifestElement element) {
 		String version = element.getAttribute(ICoreConstants.PACKAGE_SPECIFICATION_VERSION);
-		IStatus status = validateVersionString(version);
+		IStatus status = CoreUtility.validateVersionString(version);
 		if(!status.isOK()){
 			report(status.getMessage(), getPackageLine(header, element), CompilerFlags.ERROR); 
 		}
@@ -847,7 +812,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		String version = element.getAttribute(Constants.VERSION_ATTRIBUTE);
 		if (version == null)
 			return;
-		IStatus status = range ? validateVersionRange(version) : validateVersionString(version);
+		IStatus status = range ? CoreUtility.validateVersionRange(version) 
+							   : CoreUtility.validateVersionString(version);
 		if(!status.isOK()) {
 			report(status.getMessage(), getPackageLine(header, element), CompilerFlags.ERROR); 
 		}
