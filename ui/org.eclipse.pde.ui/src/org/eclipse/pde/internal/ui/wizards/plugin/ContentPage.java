@@ -13,10 +13,11 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.util.IdUtil;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.ui.IFieldData;
@@ -107,17 +108,9 @@ public abstract class ContentPage extends WizardPage {
 	}
 
 	protected boolean isVersionValid(String version) {
-		try {
-			new PluginVersionIdentifier(version);
-		} catch (Exception e) {
-			return false;
-		}
-		return true;
+		return VersionUtil.validateVersion(version).getSeverity() == IStatus.OK;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
-	 */
 	public IWizardPage getNextPage() {
 		updateData();
 		return super.getNextPage();

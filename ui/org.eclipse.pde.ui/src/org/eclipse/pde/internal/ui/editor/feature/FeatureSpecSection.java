@@ -14,7 +14,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -28,6 +27,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureURL;
 import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
@@ -384,7 +384,7 @@ public class FeatureSpecSection extends PDESection {
 
 	private boolean verifySetVersion(IFeature feature, String value) {
 		try {
-			if (PluginVersionIdentifier.validateVersion(value).isOK())
+			if (VersionUtil.validateVersion(value).isOK())
 				feature.setVersion(value);
 		} catch (Exception e) {
 			return false;
@@ -394,7 +394,7 @@ public class FeatureSpecSection extends PDESection {
 
 	private boolean verifySetVersion(IFeatureImport featureImport, String value) {
 		try {
-			if (PluginVersionIdentifier.validateVersion(value).isOK())
+			if (VersionUtil.validateVersion(value).isOK())
 				featureImport.setVersion(value);
 		} catch (Exception e) {
 			return false;

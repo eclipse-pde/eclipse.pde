@@ -12,12 +12,12 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.parts.PluginVersionPart;
@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.Version;
 
 public class FragmentContentPage extends ContentPage {
 
@@ -218,10 +219,10 @@ public class FragmentContentPage extends ContentPage {
 	
 	private String computeInitialPluginVersion(String pluginVersion) {
 		if (pluginVersion != null
-				&& PluginVersionIdentifier.validateVersion(pluginVersion).isOK()) {
-			PluginVersionIdentifier pvi = new PluginVersionIdentifier(pluginVersion);
-			return pvi.getMajorComponent() + "." + pvi.getMinorComponent() //$NON-NLS-1$
-						+ "." + pvi.getServiceComponent(); //$NON-NLS-1$
+				&& VersionUtil.validateVersion(pluginVersion).isOK()) {
+			Version pvi = Version.parseVersion(pluginVersion);
+			return pvi.getMajor() + "." + pvi.getMinor() //$NON-NLS-1$
+						+ "." + pvi.getMicro(); //$NON-NLS-1$
 		}
 		
 		return pluginVersion;

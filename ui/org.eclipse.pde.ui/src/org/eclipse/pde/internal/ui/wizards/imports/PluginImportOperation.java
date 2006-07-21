@@ -43,6 +43,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
@@ -629,14 +630,10 @@ public class PluginImportOperation extends JarImportOperation {
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < fModels.length; i++) {
 			if (fModels[i] instanceof IFragmentModel) {
-				IFragment fragment = ((IFragmentModel) fModels[i]).getFragment();
-				if (PDECore.compare(
-						model.getPluginBase().getId(),
-						model.getPluginBase().getVersion(),
-						fragment.getPluginId(),
-						fragment.getVersion(),
-						fragment.getRule())) {
-					result.add(fragment);
+				HostSpecification spec = fModels[i].getBundleDescription().getHost();
+				BundleDescription host = spec == null ? null : (BundleDescription)spec.getSupplier();
+				if (model.getBundleDescription().equals(host)) {
+					result.add(fModels[i]);
 				}
 			}
 		}

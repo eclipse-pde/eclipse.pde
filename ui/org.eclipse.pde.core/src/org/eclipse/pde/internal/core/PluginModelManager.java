@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -44,6 +43,8 @@ import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.util.VersionUtil;
+import org.osgi.framework.Version;
 
 public class PluginModelManager implements IAdaptable {
 	private static final String OSGI_RUNTIME ="org.eclipse.osgi"; //$NON-NLS-1$
@@ -77,10 +78,10 @@ public class PluginModelManager implements IAdaptable {
 		
 		IPluginModelBase model = entry.getActiveModel();
 		String version = model.getPluginBase().getVersion();
-		if (PluginVersionIdentifier.validateVersion(version).getSeverity() == IStatus.OK) {
-			PluginVersionIdentifier id = new PluginVersionIdentifier(version);
-			int major = id.getMajorComponent();
-			int minor = id.getMinorComponent();
+		if (VersionUtil.validateVersion(version).getSeverity() == IStatus.OK) {
+			Version vid = new Version(version);
+			int major = vid.getMajor();
+			int minor = vid.getMinor();
 			if (major == 3 && minor == 0)
 				return ICoreConstants.TARGET30;
 			if (major == 3 && minor == 1)

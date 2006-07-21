@@ -21,12 +21,10 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModel;
@@ -35,6 +33,7 @@ import org.eclipse.pde.internal.core.builders.FeatureRebuilder;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -57,51 +56,6 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 	private static PDECore inst;
 
 	private static boolean isDevLaunchMode = false;
-
-	public static boolean compare(
-		String id1,
-		String version1,
-		String id2,
-		String version2,
-		int match) {
-		if (!(id1.equals(id2)))
-			return false;
-		if (version1 == null)
-			return true;
-		if (version2 == null)
-			return false;
-		PluginVersionIdentifier pid1 = null;
-		PluginVersionIdentifier pid2 = null;
-
-		try {
-			pid1 = new PluginVersionIdentifier(version1);
-			pid2 = new PluginVersionIdentifier(version2);
-		} catch (RuntimeException e) {
-			// something is wrong with either - try direct comparison
-			return version2.equals(version1);
-		}
-
-		switch (match) {
-			case IMatchRules.NONE :
-			case IMatchRules.COMPATIBLE :
-				if (pid2.isCompatibleWith(pid1))
-					return true;
-				break;
-			case IMatchRules.EQUIVALENT :
-				if (pid2.isEquivalentTo(pid1))
-					return true;
-				break;
-			case IMatchRules.PERFECT :
-				if (pid2.isPerfect(pid1))
-					return true;
-				break;
-			case IMatchRules.GREATER_OR_EQUAL :
-				if (pid2.isGreaterOrEqualTo(pid1))
-					return true;
-				break;
-		}
-		return false;
-	}
 
 	public static PDECore getDefault() {
 		return inst;
@@ -253,7 +207,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 			IFeature feature = model.getFeature();
 			String pid = feature.getId();
 			String pversion = feature.getVersion();
-			if (compare(id, version, pid, pversion, match))
+			if (VersionUtil.compare(id, version, pid, pversion, match))
 				return feature;
 		}
 		return null;

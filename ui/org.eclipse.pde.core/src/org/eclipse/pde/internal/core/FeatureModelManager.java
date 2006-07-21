@@ -15,11 +15,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.IModelProviderListener;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.util.VersionUtil;
+import org.osgi.framework.Version;
 
 /**
  * Manages all feature models in the workspace, and maximum one external feature
@@ -155,10 +156,10 @@ public class FeatureModelManager {
 		if (model != null) {
 			return model;
 		}
-		PluginVersionIdentifier pvi = new PluginVersionIdentifier(version);
-		return findFeatureModel(id, pvi.getMajorComponent() + "." //$NON-NLS-1$
-				+ pvi.getMinorComponent() + "." //$NON-NLS-1$
-				+ pvi.getServiceComponent() + ".qualifier"); //$NON-NLS-1$
+		Version pvi = Version.parseVersion(version);
+		return findFeatureModel(id, pvi.getMajor() + "." //$NON-NLS-1$
+				+ pvi.getMinor() + "." //$NON-NLS-1$
+				+ pvi.getMicro() + ".qualifier"); //$NON-NLS-1$
 	}
 
 	/**
@@ -189,9 +190,9 @@ public class FeatureModelManager {
 			} else {
 				String version = model.getFeature().getVersion();
 				String version2 = models[i].getFeature().getVersion();
-				PluginVersionIdentifier vid = new PluginVersionIdentifier(version);
-				PluginVersionIdentifier vid2 = new PluginVersionIdentifier(version2);
-				if (vid2.isGreaterOrEqualTo(vid)) {
+				Version vid = Version.parseVersion(version);
+				Version vid2 = Version.parseVersion(version2);
+				if (VersionUtil.isGreaterOrEqualTo(vid2, vid)) {
 					model = models[i];
 				}
 			}

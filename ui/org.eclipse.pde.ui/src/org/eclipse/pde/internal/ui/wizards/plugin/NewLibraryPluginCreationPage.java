@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.util.IdUtil;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
@@ -188,12 +189,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	}
 
 	protected boolean isVersionValid(String version) {
-		try {
-			new PluginVersionIdentifier(version);
-		} catch (Exception e) {
-			return false;
-		}
-		return true;
+		return VersionUtil.validateVersion(version).getSeverity() == IStatus.OK;
 	}
 
 	public void updateData() {

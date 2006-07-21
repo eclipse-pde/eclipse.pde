@@ -18,8 +18,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.IdUtil;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -76,7 +76,7 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 	}
 	
 	protected void validateVersionAttribute(Element element, Attr attr) {
-		IStatus status = CoreUtility.validateVersionString(attr.getValue());
+		IStatus status = VersionUtil.validateVersion(attr.getValue());
 		if (status.getSeverity() != IStatus.OK)
 			report(status.getMessage(), getLine(element, attr.getName()), CompilerFlags.ERROR);
 	}

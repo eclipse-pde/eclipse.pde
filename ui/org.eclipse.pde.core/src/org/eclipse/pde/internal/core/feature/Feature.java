@@ -31,6 +31,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureInfo;
 import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.core.ifeature.IFeatureURL;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -356,7 +357,7 @@ public class Feature extends VersionableObject implements IFeature {
 			IFeaturePlugin fp = (IFeaturePlugin) fPlugins.get(i);
 			String pid = fp.getId();
 			String pversion = fp.getVersion();
-			if (PDECore.compare(id, version, pid, pversion, match))
+			if (VersionUtil.compare(id, version, pid, pversion, match))
 				return fp;
 		}
 		return null;

@@ -12,10 +12,10 @@
 package org.eclipse.pde.internal.ui.wizards.feature;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.IdUtil;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -136,7 +136,7 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 	
 	protected String verifyVersion() {
 		String value = fFeatureVersionText.getText();
-		if (PluginVersionIdentifier.validateVersion(value).getSeverity() != IStatus.OK)
+		if (VersionUtil.validateVersion(value).getSeverity() != IStatus.OK)
 			return PDEUIMessages.NewFeatureWizard_SpecPage_versionFormat;
 		return null;
 	}

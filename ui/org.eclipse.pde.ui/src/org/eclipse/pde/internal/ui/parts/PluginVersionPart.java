@@ -11,9 +11,9 @@
 package org.eclipse.pde.internal.ui.parts;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.VersionRange;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
@@ -128,7 +128,7 @@ public class PluginVersionPart {
 	
 	private IStatus validateVersion(String text) {
     	if (text.length() == 0) return Status.OK_STATUS;
-        if (PluginVersionIdentifier.validateVersion(text).getSeverity() != IStatus.OK)
+        if (VersionUtil.validateVersion(text).getSeverity() != IStatus.OK)
             return new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, PDEUIMessages.DependencyPropertiesDialog_invalidFormat, null); //$NON-NLS-1$
         return Status.OK_STATUS;
     }

@@ -15,12 +15,12 @@ import java.util.Properties;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Shell;
@@ -33,6 +33,7 @@ import org.eclipse.ui.intro.config.IntroURLFactory;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.configurator.IPlatformConfiguration;
 import org.eclipse.update.standalone.InstallCommand;
+import org.osgi.framework.Version;
 
 public class ShowSampleAction extends Action implements IIntroAction {
 	private static final String SAMPLE_FEATURE_ID = "org.eclipse.sdk.samples"; //$NON-NLS-1$
@@ -129,15 +130,13 @@ public class ShowSampleAction extends Action implements IIntroAction {
 				.getCurrentPlatformConfiguration();
 		IPlatformConfiguration.IFeatureEntry [] features = config
 				.getConfiguredFeatureEntries();
-		PluginVersionIdentifier sampleVersion = new PluginVersionIdentifier(
-				SAMPLE_FEATURE_VERSION);
+		Version sampleVersion = new Version(SAMPLE_FEATURE_VERSION);
 		for (int i = 0; i < features.length; i++) {
 			String id = features[i].getFeatureIdentifier();
 			if (SAMPLE_FEATURE_ID.equals(id)) {
 				String version = features[i].getFeatureVersion();
-				PluginVersionIdentifier fversion = new PluginVersionIdentifier(
-						version);
-				if (fversion.isCompatibleWith(sampleVersion))
+				Version fversion = Version.parseVersion(version);
+				if (VersionUtil.isCompatibleWith(fversion, sampleVersion))
 					return true;
 			}
 		}

@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
@@ -34,6 +33,7 @@ import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.osgi.framework.Version;
 
 public class BuildSiteJob extends FeatureExportJob {
 
@@ -81,18 +81,15 @@ public class BuildSiteJob extends FeatureExportJob {
 		try {
 			for (int i = 0; i < fFeatureModels.length; i++) {
 				IFeature feature = fFeatureModels[i].getFeature();
-				PluginVersionIdentifier pvi = new PluginVersionIdentifier(
-						feature.getVersion());
+				Version pvi = Version.parseVersion(feature.getVersion());
 
-				if ("qualifier".equals(pvi.getQualifierComponent())) { //$NON-NLS-1$
+				if ("qualifier".equals(pvi.getQualifier())) { //$NON-NLS-1$
 					String newVersion = findBuiltVersion(feature.getId(), pvi
-							.getMajorComponent(), pvi.getMinorComponent(), pvi
-							.getServiceComponent());
+							.getMajor(), pvi.getMinor(), pvi.getMicro());
 					if (newVersion == null) {
 						continue;
 					}
-					ISiteFeature reVersionCandidate = findSiteFeature(feature,
-							pvi);
+					ISiteFeature reVersionCandidate = findSiteFeature(feature,pvi);
 					if (reVersionCandidate != null) {
 						reVersionCandidate.setVersion(newVersion);
 						reVersionCandidate
@@ -107,14 +104,7 @@ public class BuildSiteJob extends FeatureExportJob {
 		}
 	}
 
-	/**
-	 * @param feature
-	 * @param pvi
-	 * @param siteFeatures
-	 * @return
-	 */
-	private ISiteFeature findSiteFeature(IFeature feature,
-			PluginVersionIdentifier pvi) {
+	private ISiteFeature findSiteFeature(IFeature feature, Version pvi) {
 		ISiteFeature reversionCandidate = null;
 		// first see if version with qualifier being qualifier is present among
 		// site features
@@ -130,20 +120,15 @@ public class BuildSiteJob extends FeatureExportJob {
 		// then find feature with the highest qualifier
 		for (int s = 0; s < siteFeatures.length; s++) {
 			if (siteFeatures[s].getId().equals(feature.getId())) {
-				PluginVersionIdentifier candidatePvi = new PluginVersionIdentifier(
-						siteFeatures[s].getVersion());
-				if (pvi.getMajorComponent() == candidatePvi.getMajorComponent()
-						&& pvi.getMinorComponent() == candidatePvi
-								.getMinorComponent()
-						&& pvi.getServiceComponent() == candidatePvi
-								.getServiceComponent()) {
+				Version candidatePvi = Version.parseVersion(siteFeatures[s].getVersion());
+				if (pvi.getMajor() == candidatePvi.getMajor()
+						&& pvi.getMinor() == candidatePvi.getMinor()
+						&& pvi.getMicro() == candidatePvi.getMicro()) {
 					if (reversionCandidate == null
-							|| candidatePvi.getQualifierComponent().compareTo(
-									highestQualifier) > 0) {
+							|| candidatePvi.getQualifier().compareTo(highestQualifier) > 0) {
 						reversionCandidate = siteFeatures[s];
-						highestQualifier = candidatePvi.getQualifierComponent();
+						highestQualifier = candidatePvi.getQualifier();
 					}
-
 				}
 			}
 		}
