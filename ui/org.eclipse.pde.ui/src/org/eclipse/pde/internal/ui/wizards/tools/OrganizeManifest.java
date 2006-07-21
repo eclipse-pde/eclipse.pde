@@ -93,7 +93,6 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 	private static String[] F_ICON_EXTENSIONS = new String[] {
 		"BMP", "ICO", "JPEG", "JPG", "GIF", "PNG", "TIFF" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 	};
-	private static String MANIFEST_FOLDER = "META-INF"; //$NON-NLS-1$
 	
 	public static void organizeRequireBundles(IBundle bundle, boolean removeImports) {
 		if (!(bundle instanceof Bundle))
@@ -145,8 +144,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 							String name = fragment.getElementName();
 							if (name.length() == 0)
 								name = "."; //$NON-NLS-1$
-							if ((fragment.hasChildren() || fragment.getNonJavaResources().length > 0) &&
-									name.charAt(0) != '.' && !name.equals(MANIFEST_FOLDER)){
+							if ((fragment.hasChildren() || fragment.getNonJavaResources().length > 0)){
 								if (addMissing && !header.hasPackage(name)) 
 									header.addPackage(new ExportPackageObject(header, fragment, Constants.VERSION_ATTRIBUTE));
 								else
