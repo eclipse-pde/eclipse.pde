@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
@@ -83,6 +84,9 @@ public class ExtensionsSection extends TreeSection
 	private Action newExtensionAction;
 	private Action collapseAllAction;
 	private Hashtable editorWizards;
+	
+	private boolean isSorted = false;
+	
 	private static final String[] COMMON_LABEL_PROPERTIES = {"label", "name", //$NON-NLS-1$ //$NON-NLS-2$
 			"id"}; //$NON-NLS-1$
 	class ExtensionContentProvider extends DefaultContentProvider
@@ -809,5 +813,16 @@ public class ExtensionsSection extends TreeSection
 		}
 		getTreePart().setButtonEnabled(3, upEnabled);
 		getTreePart().setButtonEnabled(4, downEnabled);
+	}
+	
+	public void toggleSort() {
+		ViewerSorter sorter;
+		if(isSorted) {
+			sorter = null;
+		} else {
+			sorter = new ViewerSorter();
+		}
+		extensionTree.setSorter(sorter);
+		isSorted = !isSorted;
 	}
 }

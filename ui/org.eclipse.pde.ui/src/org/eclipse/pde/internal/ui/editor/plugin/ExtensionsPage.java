@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginParent;
@@ -82,6 +83,16 @@ public class ExtensionsPage extends PDEFormPage {
 			collapseAction.setToolTipText(PDEUIMessages.ExtensionsPage_collapseAll); 
 			collapseAction.setImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL);
 			form.getToolBarManager().add(collapseAction);
+			
+			Action sortAction = new Action("sort", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
+				public void run() {
+					section.toggleSort();
+				}
+			};
+			sortAction.setToolTipText(PDEUIMessages.ExtensionsPage_sortAlpha);
+			sortAction.setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO);
+			form.getToolBarManager().add(sortAction);
+			
 			super.createToolBarActions(managedForm);
 		}
 	}

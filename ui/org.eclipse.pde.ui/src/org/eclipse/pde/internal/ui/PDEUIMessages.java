@@ -23,6 +23,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExportOptionsTab_antReservedMessage;
 
+	public static String ExtensionsPage_sortAlpha;
+
 	public static String FormatManifestAction_actionText;
 
 	public static String FormatManifestOperation_subtask;
