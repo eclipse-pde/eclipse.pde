@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
@@ -39,10 +40,13 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
 import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
+import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
+import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
+import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
@@ -90,10 +94,26 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	private static final String F_STR_EXT = "extension"; //$NON-NLS-1$
 	
 	protected static class VSchemaObject implements ISchemaObject {
-		String vName, vDesc; int vType;
-		public VSchemaObject(String name, String description, int type)
+		String vName; 
+		Object vDesc; 
+		int vType;
+		
+		public VSchemaObject(String name, Object description, int type)
 			{ vName = name; vDesc = description; vType = type; }
-		public String getDescription() {return vDesc;}
+		public String getDescription() {
+			if (vDesc instanceof String) {
+				return (String)vDesc;
+			} else if (vDesc instanceof IPluginExtensionPoint) {
+				// Making the description an Object was necessary to defer
+				// the retrieval of the schema description String to
+				// only when it is need - instead of ahead of time.
+				// Retrieval of the String involves reparsing the schema from
+				// file which is has a huge performance cost during content
+				// assist sessions.
+				return getSchemaDescription((IPluginExtensionPoint)vDesc);
+			}
+			return null;
+		}
 		public String getName() {return vName;}
 		public ISchemaObject getParent() {return null;}
 		public ISchema getSchema() {return null;}
@@ -315,8 +335,8 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	private ICompletionProposal[] computeAddChildProposal(IDocumentNode node, int offset, IDocument doc, String filter) {
 		ArrayList propList = new ArrayList();
 		if (node instanceof IPluginBase) {
-			addToList(propList, filter, new VSchemaObject(F_STR_EXT, null, F_EX));
-			addToList(propList, filter, new VSchemaObject(F_STR_EXT_PT, null, F_EP));
+			addToList(propList, filter, new VSchemaObject(F_STR_EXT, PDEUIMessages.XMLContentAssistProcessor_extensions, F_EX));
+			addToList(propList, filter, new VSchemaObject(F_STR_EXT_PT, PDEUIMessages.XMLContentAssistProcessor_extensionPoints, F_EP));
 		} else if (node instanceof IPluginExtensionPoint) {
 			return null;
 		} else {
@@ -602,7 +622,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				if (pModel != null && id.equals(pModelId))
 					continue;
 				for (int j = 0; j < points.length; j++)
-					fExternalExtPoints.add(new VSchemaObject(points[j].getFullId(), null, F_AT_EP));
+					fExternalExtPoints.add(new VSchemaObject(points[j].getFullId(), points[j], F_AT_EP));
 			}
 		}
 		
@@ -612,8 +632,30 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			points = pModel.getPluginBase().getExtensionPoints();
 		
 		for (int j = 0; j < points.length; j++)
-			fAllPoints.add(new VSchemaObject(points[j].getFullId(), null, F_AT_EP));
+			fAllPoints.add(new VSchemaObject(points[j].getFullId(), points[j], F_AT_EP));
 		return fAllPoints;
+	}
+
+	private static String getSchemaDescription(IPluginExtensionPoint point) {
+		String description = null;
+		URL url = null;
+		String pointID = null;
+		ISchema schema = null;
+		if (point != null) {
+			pointID = point.getFullId();
+			url = SchemaRegistry.getSchemaURL(point);
+			if (url != null) {
+				ISchemaDescriptor descriptor = new SchemaDescriptor(pointID, url);
+				// Note:  getting the schema is a very expensive operation
+				// use with care
+				schema = descriptor.getSchema(false);
+				description = schema.getDescription();
+			}
+		}
+		if (point == null || url == null || schema == null) {
+			description = PDEUIMessages.PointSelectionPage_noDescAvailable;
+		}
+		return description;
 	}
 	
 	public Image getImage(int type) {

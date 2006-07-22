@@ -59,6 +59,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.elements.ElementLabelProvider;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
+import org.eclipse.pde.internal.ui.util.PDEHTMLHelper;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.BaseWizardSelectionPage;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -536,7 +537,7 @@ public class PointSelectionPage
 		fTemplateLabel.setText(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_label, schemaName.toLowerCase(Locale.ENGLISH)));
 		fDescLink.setText(NLS.bind(PDEUIMessages.PointSelectionPage_extPointDesc, schemaName));
 		if (desc != null)
-			fPointDescription.setText(stripTags(desc.getDescription()));
+			fPointDescription.setText(PDEHTMLHelper.stripTags(desc.getDescription()));
 		else
 			fPointDescription.setText(PDEUIMessages.PointSelectionPage_noDescAvailable);
 		setSelectedNode(null);
@@ -599,26 +600,6 @@ public class PointSelectionPage
 			return id + '.' + pointId;
 		}
 		return point.getFullId();
-	}
-	
-	private String stripTags(String html) {
-		int length = html.length();
-		boolean write = true;
-		char oldChar = ' ';
-		StringBuffer sb = new StringBuffer(length);
-		for (int i = 0; i < length; i++) {
-			char curr = html.charAt(i);
-			if (curr == '<')
-				write = false;
-			else if (curr == '>')
-				write = true;
-			else if (write && curr != '\r' && curr != '\n' && curr != '\t')
-				if (!(curr == ' ') || !(oldChar == curr)) { // skip multiple spaces
-					sb.append(curr);
-					oldChar = curr;
-				}
-		}
-		return sb.toString();
 	}
 	
 	public void checkModel() {

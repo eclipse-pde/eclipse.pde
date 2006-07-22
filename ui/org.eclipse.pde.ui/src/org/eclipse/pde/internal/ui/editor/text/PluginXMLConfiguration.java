@@ -10,12 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
+import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
+import org.eclipse.pde.internal.ui.editor.contentassist.InfoControlTextPresenter;
 import org.eclipse.pde.internal.ui.editor.contentassist.XMLContentAssistProcessor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
 
 public class PluginXMLConfiguration extends XMLConfiguration {
 
@@ -32,12 +38,22 @@ public class PluginXMLConfiguration extends XMLConfiguration {
 			fContentAssistant = new ContentAssistant();
 			fContentAssistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 			fContentAssistant.setContentAssistProcessor(fContentAssistProcessor, IDocument.DEFAULT_CONTENT_TYPE);
-			
+			fContentAssistant.setInformationControlCreator(getInformationControlCreator(true));
 			fContentAssistant.setShowEmptyList(false);
 			fContentAssistant.addCompletionListener(fContentAssistProcessor);
 		}
 		return fContentAssistant;
 	}
+
+    protected IInformationControlCreator getInformationControlCreator(final boolean cutDown) {
+        return new IInformationControlCreator() {
+            public IInformationControl createInformationControl(Shell parent) {
+                int style = cutDown ? SWT.NONE : (SWT.V_SCROLL | SWT.H_SCROLL);
+                return new DefaultInformationControl(parent, style, 
+                		new InfoControlTextPresenter());
+            }
+        };
+    }
 	
 	public void dispose() {
 		if (fContentAssistProcessor != null)

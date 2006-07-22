@@ -30,19 +30,39 @@ public class SchemaHandler extends XMLDefaultHandler {
 			return;
 		}
 	
-		if (onAttributeDescription()) {
-			StringBuffer buff = new StringBuffer();
-			buff.append(characters, start, length);
-			Node node = ((Node)fElementStack.peek());
-			Node child = node.getFirstChild();
-			if (child == null)
-				node.appendChild(getDocument().createTextNode(buff.toString()));
-			else
-				((Text)child).appendData(buff.toString());
+		if (onDescription("attribute")) { //$NON-NLS-1$
+			// Add the attribute description to the model
+			addSchemaComponentContents(characters, start, length);
+		} else if (onDescription("element")) { //$NON-NLS-1$
+			// Add the element description to the model
+			addSchemaComponentContents(characters, start, length);
 		}
 	}
+
+	/**
+	 * Adds schema component contents to the schema model
+	 * @param characters
+	 * @param start
+	 * @param length
+	 */
+	private void addSchemaComponentContents(char[] characters, int start, int length) {
+		StringBuffer buff = new StringBuffer();
+		buff.append(characters, start, length);
+		Node node = ((Node)fElementStack.peek());
+		Node child = node.getFirstChild();
+		if (child == null)
+			node.appendChild(getDocument().createTextNode(buff.toString()));
+		else
+			((Text)child).appendData(buff.toString());
+	}	
 	
-	private boolean onAttributeDescription() {
+	/**
+	 * Detects whether we are within a description tag on the
+	 * specified schema component
+	 * @param schemaComponent
+	 * @return
+	 */
+	private boolean onDescription(String schemaComponent) {
 		Node node = (Node)fElementStack.peek();
 		if (node == null)
 			return false;
@@ -56,6 +76,6 @@ public class SchemaHandler extends XMLDefaultHandler {
 		node = node.getParentNode();
 		if (node == null)
 			return false;
-		return node.getNodeName().equals("attribute"); //$NON-NLS-1$
+		return node.getNodeName().equals(schemaComponent);
 	}
 }

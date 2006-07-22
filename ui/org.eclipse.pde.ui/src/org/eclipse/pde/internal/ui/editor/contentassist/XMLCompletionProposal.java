@@ -316,10 +316,6 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	}
 	
 	public String getAdditionalProposalInfo() {
-		// TODO:  MP:  This is not being called
-		// Investigated and JDT implements this method; but, it is not being
-		// called either.  However the getAdditionalProposalInfo method that
-		// returns an Object is being called implementing functionality there
 		if (fSchemaObject == null)
 			return null;
 		return fSchemaObject.getDescription();
@@ -365,10 +361,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	}
 
 	public Object getAdditionalProposalInfo(IProgressMonitor monitor) {
-		// TODO:  MP:  This is not being called
-		// Investigate what needs to be enabled to get this to be called
-		//return new String("TEST");
-		return null;
+		return getAdditionalProposalInfo();
 	}
 	
 }

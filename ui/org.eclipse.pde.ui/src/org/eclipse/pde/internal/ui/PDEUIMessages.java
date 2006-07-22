@@ -35,6 +35,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ImportActionGroup_importContributingPlugin;
 
+	public static String InfoControlTextPresenter_ContinuationChars;
+
 	public static String LibrarySection_addDialogButton;
 
 	public static String MainPreferencePage_group2;
@@ -2897,6 +2899,10 @@ public class PDEUIMessages extends NLS {
 	// XMLCompletionProposal
 	public static String XMLCompletionProposal_ErrorCycle;
 	public static String XMLCompletionProposal_InfoElement;
+
+	public static String XMLContentAssistProcessor_extensionPoints;
+
+	public static String XMLContentAssistProcessor_extensions;
 
 	public static String XMLContentAssistProcessor_extId;
 
