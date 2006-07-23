@@ -228,13 +228,15 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 						nodeIndex += 1;
 					newSearch = newSearch.getChildAt(nodeIndex);
 				}
-				IDocumentNode[] children = newSearch.getChildNodes();
-				for (int i = 0; i < children.length; i++) {
-					if (children[i].getOffset() == fOffset && 
-							children[i] instanceof IPluginElement) {
-						pluginParent = (IPluginElement)children[i];
-						schemaElement = (ISchemaElement)fSchemaObject; 
-						break;
+				if (newSearch != null) {
+					IDocumentNode[] children = newSearch.getChildNodes();
+					for (int i = 0; i < children.length; i++) {
+						if (children[i].getOffset() == fOffset && 
+								children[i] instanceof IPluginElement) {
+							pluginParent = (IPluginElement)children[i];
+							schemaElement = (ISchemaElement)fSchemaObject; 
+							break;
+						}
 					}
 				}
 			}
