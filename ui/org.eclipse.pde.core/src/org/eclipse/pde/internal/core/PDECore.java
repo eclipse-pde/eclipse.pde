@@ -298,6 +298,10 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		initializeModels();
 		return fWorkspaceModelManager;
 	}
+	
+	public boolean areModelsInitialized() {
+		return fModelManager != null;
+	}
 
 	private synchronized void initializeModels() {
 		if (fModelManager != null && fExternalModelManager != null && fWorkspaceModelManager != null)
@@ -306,6 +310,8 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		fWorkspaceModelManager = new WorkspaceModelManager();
 		fModelManager = new PluginModelManager(fWorkspaceModelManager, fExternalModelManager);
 		fFeatureModelManager = new FeatureModelManager(fWorkspaceModelManager);
+		fFeatureRebuilder = new FeatureRebuilder();
+		fFeatureRebuilder.start();
 	}
 
 	public void releasePlatform() {
@@ -335,8 +341,6 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		super.start(context);
 		fBundleContext = context;
 		CompilerFlags.initializeDefaults();
-		fFeatureRebuilder = new FeatureRebuilder();
-		fFeatureRebuilder.start();
 		fJavaElementChangeListener = new JavaElementChangeListener();
 		fJavaElementChangeListener.start();
 	}
@@ -350,6 +354,10 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		if (fJavaElementChangeListener != null) {
 			fJavaElementChangeListener.shutdown();
 			fJavaElementChangeListener = null;
+		}
+		if (fFeatureRebuilder != null) {
+			fFeatureRebuilder.stop();
+			fFeatureRebuilder = null;
 		}
 		if (fSchemaRegistry != null) {
 			fSchemaRegistry.shutdown();
@@ -374,10 +382,6 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 		if (fTargetProfileManager!=null) {
 			fTargetProfileManager.shutdown();
 			fTargetProfileManager = null;
-		}
-		if (fFeatureRebuilder != null) {
-			fFeatureRebuilder.stop();
-			fFeatureRebuilder = null;
 		}
 	}
 }
