@@ -92,6 +92,18 @@ public class ExtensionDetails extends PDEDetails {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 
+		point = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_point, null, false); 
+		point.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry entry) {
+				if (input!=null)
+					try {
+						input.setPoint(point.getValue());
+					} catch (CoreException e) {
+						PDEPlugin.logException(e);
+					}
+			}
+		});
+		
 		id = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_id, null, false); 
 		id.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
@@ -110,18 +122,6 @@ public class ExtensionDetails extends PDEDetails {
 				if (input!=null)
 					try {
 						input.setName(name.getValue());
-					} catch (CoreException e) {
-						PDEPlugin.logException(e);
-					}
-			}
-		});
-		
-		point = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_point, null, false); 
-		point.setFormEntryListener(new FormEntryAdapter(this) {
-			public void textValueChanged(FormEntry entry) {
-				if (input!=null)
-					try {
-						input.setPoint(point.getValue());
 					} catch (CoreException e) {
 						PDEPlugin.logException(e);
 					}
