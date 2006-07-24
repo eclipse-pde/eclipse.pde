@@ -8,7 +8,7 @@
 
    <intro href="/org.eclipse.platform.doc.user/reference/ref-cheatsheets.htm">
       <description>
-         This cheat sheet will demonstrate how to set up PDE and use it 
+         This cheat sheet will demonstrate how to configure PDE and use it 
          to create, modify and test a plug-in. 
          <br/>
          <br/>
@@ -19,20 +19,27 @@
 
    <!-- Item -->
 
-   <item title="Open the plug-in development perspective"
-         href="/org.eclipse.pde.doc.user/guide/pde_setup.htm"
-         dialog="false"
-         skip="true">
-      <description>
-         To open the plug-in development perspective,
-         select <b>Window-&gt;Open Perspective-&gt;Other...</b> 
-         and choose <b>Plug-in Development</b>.
-         <br/>
-         <br/>
-         Alternatively, click the following button to perform the task.
-      </description>
-      <command serialization="org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.pde.ui.PDEPerspective)"/>
-   </item>
+	<item
+		href="/org.eclipse.pde.doc.user/guide/tools/preference_pages/target_platform.htm"
+		dialog="true"
+		title="Configure PDE">
+		<description>
+			To configure PDE, perform the following steps
+		</description>			
+		<subitem label="Select &quot;Window-&gt;Open Perspective-&gt;Other...&quot; from the main menu and choose &quot;Plug-in Development&quot; in order to open the plug-in development perspective" 
+        	skip="false">
+			<command serialization="org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.pde.ui.PDEPerspective)"/>		</subitem>
+		<subitem label="Select &quot;Window-&gt;Preferences&quot; from the main menu, expand the &quot;Plug-in Development&quot; outline tree node within the resulting dialog, and choose &quot;Target Platform&quot;." 
+        	skip="false">
+			<command serialization="org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.pde.ui.TargetPlatformPreferencePage)"/>
+		</subitem>
+		<subitem label="Verify that the selected value in the &quot;Location:&quot; combo box points to a valid Eclipse install location." 
+			skip="true"/>
+		<subitem label="Verify that all checkboxes corresponding to plug-in entries listed in the list box on the &quot;Plug-ins&quot; tab are checked." 
+			skip="true"/>
+		<subitem label="Click &quot;OK&quot;." 
+			skip="false"/>
+	</item>
 
    <!-- Item -->
 
