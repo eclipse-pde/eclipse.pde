@@ -92,8 +92,6 @@ public class ExtensionsPage extends PDEFormPage {
 			sortAction.setToolTipText(PDEUIMessages.ExtensionsPage_sortAlpha);
 			sortAction.setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO);
 			form.getToolBarManager().add(sortAction);
-			
-			super.createToolBarActions(managedForm);
 		}
 	}
 	/**

@@ -51,6 +51,7 @@ public class ExtensionPointsPage extends PDEFormPage {
 				}
 			});
 		}
+		protected void createToolBarActions(IManagedForm managedForm) {}
 	}
 	/**
 	 * @param editor
