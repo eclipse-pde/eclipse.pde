@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -33,9 +34,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			return new IProject[0];
 
 		IProject project = getProject();
-		
-		// Ignore binary plug-in projects
-		if (!WorkspaceModelManager.isBinaryPluginProject(project))
+		IResourceDelta delta = getDelta(project);
+		boolean shouldBuild = delta == null || delta.getAffectedChildren().length > 0;
+		if (shouldBuild && !WorkspaceModelManager.isBinaryPluginProject(project))
 			checkThisProject(monitor);
 		return new IProject[0];
 	}
