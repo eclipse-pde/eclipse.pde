@@ -19,6 +19,7 @@ import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -134,7 +135,10 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		
 		fTargetCombo = new Combo(group, SWT.READ_ONLY|SWT.SINGLE);
 		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET32, ICoreConstants.TARGET31, ICoreConstants.TARGET30});
-		fTargetCombo.setText(TargetPlatform.getTargetVersionString());
+		if (PDECore.getDefault().areModelsInitialized())
+			fTargetCombo.setText(TargetPlatform.getTargetVersionString());
+		else
+			fTargetCombo.setText(ICoreConstants.TARGET32);
 		
 	    fOSGIButton = createButton(group, SWT.RADIO, 1, 30);
     	fOSGIButton.setText(PDEUIMessages.NewProjectCreationPage_pPureOSGi); 	   

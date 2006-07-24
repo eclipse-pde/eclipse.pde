@@ -63,8 +63,7 @@ public class FeatureRebuilder implements IFeatureModelListener,
 
 	public void stop() {
 		fResourcesPreferences.removePropertyChangeListener(this);
-		PDECore.getDefault().getFeatureModelManager()
-				.removeFeatureModelListener(this);
+		PDECore.getDefault().getFeatureModelManager().removeFeatureModelListener(this);
 		PDECore.getDefault().getModelManager().removePluginModelListener(this);
 	}
 
