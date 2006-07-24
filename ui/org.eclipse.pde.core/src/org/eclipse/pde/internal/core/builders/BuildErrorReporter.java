@@ -171,20 +171,37 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	}
 	
 	private void validateBinIncludes(IBuildEntry binIncludes) {
+		// make sure we have a manifest entry
 		if(WorkspaceModelManager.hasBundleManifest(fProject)) {
-			String[] tokens = binIncludes.getTokens();
-			boolean exists = false;
 			String key = "META-INF/"; //$NON-NLS-1$
-			for(int i = 0; i < tokens.length; i++) {
-				if(tokens[i].startsWith(key))
-					exists = true;
-			}
-			if(!exists) {
-				prepareError(PROPERTY_BIN_INCLUDES, 
-						key,
-						NLS.bind(PDECoreMessages.BuildErrorReporter_binIncludesMissing, key),
-						PDEMarkerFactory.B_ADDDITION);
-			}
+			validateBinIncludes(binIncludes, key);
+		}
+		
+		// make sure if we're a fragment, we have a fragment.xml entry
+		if(WorkspaceModelManager.hasFragmentManifest(fProject)) {
+			String key = "fragment.xml"; //$NON-NLS-1$
+			validateBinIncludes(binIncludes, key);
+		}
+		
+		// make sure if we're a plugin, we have a plugin.xml entry
+		if(WorkspaceModelManager.hasPluginManifest(fProject)) {
+			String key = "plugin.xml"; //$NON-NLS-1$
+			validateBinIncludes(binIncludes, key);
+		}
+	}
+	
+	private void validateBinIncludes(IBuildEntry binIncludes, String key) {
+		String[] tokens = binIncludes.getTokens();
+		boolean exists = false;
+		for(int i = 0; i < tokens.length; i++) {
+			if(tokens[i].startsWith(key))
+				exists = true;
+		}
+		if(!exists) {
+			prepareError(PROPERTY_BIN_INCLUDES, 
+					key,
+					NLS.bind(PDECoreMessages.BuildErrorReporter_binIncludesMissing, key),
+					PDEMarkerFactory.B_ADDDITION);
 		}
 	}
 	
