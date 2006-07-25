@@ -566,15 +566,6 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		return list;
 	}
 
-	private String removeLeadingSpaces(String value) {
-		char[] valueArray = value.toCharArray();
-		int i = 0;
-		for (; i < valueArray.length; i++) 
-			if (!Character.isWhitespace(valueArray[i])) 
-				break;
-		return (i == valueArray.length) ? "" : new String(valueArray, i, valueArray.length - i); //$NON-NLS-1$
-	}
-	
 	private boolean insideQuotes(String value) {
 		char[] chars = value.toCharArray();
 		int numOfQuotes = 0;
