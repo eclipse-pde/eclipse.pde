@@ -16,7 +16,17 @@ import java.util.Comparator;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.CompletionProposal;
+import org.eclipse.jdt.core.CompletionRequestor;
 import org.eclipse.jdt.core.Flags;
+import org.eclipse.jdt.core.IBuffer;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
@@ -77,14 +87,82 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 	
 	protected void generateTypePackageProposals(String currentContent, IProject project, Collection c, 
 			int startOffset, int typeScope, boolean replaceEntireContents) {
-		if (c == null)
+		currentContent = removeLeadingSpaces(currentContent);
+		if (c == null || currentContent.length() == 0)
 			return;
 		int length = (replaceEntireContents) ? -1 : currentContent.length();
-		generateTypeProposals(currentContent, project, c, startOffset, length, typeScope);
-//		generatePackageProposals(currentContent, project, c, startOffset, length);
+		generateProposals(currentContent, project, c, startOffset, length, typeScope);
 	}
 	
-	private void generateTypeProposals(String currentContent, IProject project, final Collection c, 
+	private void generateProposals(String currentContent, IProject project, final Collection c,
+			final int startOffset, final int length, final int typeScope) {
+		try {
+			ICompilationUnit unit = getWorkingCopy(project);
+			if (unit == null) {
+				generateTypeProposals(currentContent, project, c, startOffset, length, 1);
+				return;
+			}
+			IBuffer buff = unit.getBuffer();
+			buff.setContents("class Dummy2 { " + currentContent); //$NON-NLS-1$
+			CompletionRequestor req = new CompletionRequestor() {
+
+				public void accept(CompletionProposal proposal) {
+					if (proposal.getKind() == CompletionProposal.PACKAGE_REF) {
+						String pkgName = new String(proposal.getCompletion());
+						c.add(new TypeCompletionProposal(pkgName, PDEPluginImages.get(PDEPluginImages.OBJ_DESC_PACKAGE), 
+								pkgName, startOffset, length));
+					} else {
+						boolean isInterface = Flags.isInterface(proposal.getFlags());
+						String completion = new String(proposal.getCompletion());
+						if (isInterface && typeScope == IJavaSearchConstants.CLASS ||
+								completion.equals("Dummy2"))  //$NON-NLS-1$
+							// don't want Dummy class showing up as option.
+							return;
+						int period = completion.lastIndexOf('.');
+						String cName = null, pName = null;
+						if (period == -1) {
+							cName = completion;
+						} else {
+							cName = completion.substring(period + 1 );
+							pName = completion.substring(0, period);
+						}
+						Image image = isInterface ? PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_INTERFACE) :
+		    				PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_CLASS);
+						c.add(new TypeCompletionProposal(completion, image, cName + " - " + pName, startOffset, length)); //$NON-NLS-1$
+					}
+				}
+
+			};
+			for (int i = 1; i <= 20; i++) 
+				if (i != CompletionProposal.PACKAGE_REF && i != CompletionProposal.TYPE_REF) // ignore everything but class and package references
+					req.setIgnored(i, true);
+			unit.codeComplete(15 + currentContent.length(), req);
+			unit.discardWorkingCopy();
+		} catch (JavaModelException e) {
+		}
+	}
+	
+	private ICompilationUnit getWorkingCopy(IProject project) throws JavaModelException {
+		IPackageFragmentRoot[] roots = JavaCore.create(project).getPackageFragmentRoots();
+		if (roots.length > 0) { 
+			IPackageFragment frag = null;
+			for (int i = 0; i < roots.length; i++) 
+				if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE
+						|| project.equals(roots[i].getCorrespondingResource())
+						|| (roots[i].isArchive() && !roots[i].isExternal())) {
+					IJavaElement[] elems = roots[i].getChildren();
+					if (elems.length > 0 && elems[i] instanceof IPackageFragment) {
+						frag = (IPackageFragment)elems[i];
+						break;
+					}
+				}
+			if (frag != null) 
+				return frag.getCompilationUnit("Dummy2.java").getWorkingCopy(new NullProgressMonitor()); //$NON-NLS-1$
+		}
+		return null;
+	}
+	
+	protected void generateTypeProposals(String currentContent, IProject project, final Collection c, 
 			final int startOffset, final int length, int typeScope) {
 		// Dynamically adjust the search scope depending on the current
 		// state of the project
@@ -146,44 +224,6 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 		}
 	}
 
-//  Commented out function until we can improve package search performance
-	
-//	private void generatePackageProposals(String currentContent, IProject project, Collection c,
-//			int startOffset, int length) {
-//		// Get the package fragment roots
-//		IPackageFragmentRoot[] packageFragments = 
-//			PDEJavaHelper.getNonJRERoots(JavaCore.create(project));
-//		// Use set to avoid duplicate proposals
-//		HashSet set = new HashSet();
-//		// Do not allow an empty package proposals
-//		set.add("");  //$NON-NLS-1$
-//		// Check all package fragments
-//		for (int x = 0; x < packageFragments.length; x++) {
-//			IJavaElement[] javaElements = null;
-//			// Get packages
-//			try {
-//				javaElements = packageFragments[x].getChildren();
-//			} catch (JavaModelException e) {
-//				fErrorMessage = e.getMessage();
-//				break;
-//			}
-//			// Search for matching packages
-//			for (int j = 0; j < javaElements.length; j++) {
-//				String pName = javaElements[j].getElementName();
-//				if (pName.startsWith(currentContent, 0) && 
-//						set.add(pName)) {
-//					// Generate the proposal
-//					TypeCompletionProposal proposal = 
-//						new TypeCompletionProposal(pName, PDEPluginImages.get(PDEPluginImages.OBJ_DESC_PACKAGE),
-//								pName, startOffset, length);
-//
-//					// Add it to the search results
-//					c.add(proposal);
-//				}
-//			}
-//		}
-//	}
-	
 	public void sortCompletions(ICompletionProposal[] proposals) {
 		Arrays.sort(proposals, getComparator());
 	}
@@ -207,6 +247,15 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 			};
 		}
 		return fComparator;
+	}
+	
+	protected final String removeLeadingSpaces(String value) {
+		char[] valueArray = value.toCharArray();
+		int i = 0;
+		for (; i < valueArray.length; i++) 
+			if (!Character.isWhitespace(valueArray[i])) 
+				break;
+		return (i == valueArray.length) ? "" : new String(valueArray, i, valueArray.length - i); //$NON-NLS-1$
 	}
 
 }
