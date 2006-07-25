@@ -66,7 +66,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 	}
 	
 	private String[] getOutputFolders() {
-		IProject project = (IProject) getElement();
+		IProject project = (IProject)getElement().getAdapter(IProject.class);
 		ArrayList list = new ArrayList();
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
@@ -143,7 +143,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 	
 	private void initialize() {
 		fViewer.setAllChecked(true);
-		Preferences pref = getPreferences((IProject)getElement());
+		Preferences pref = getPreferences((IProject)getElement().getAdapter(IProject.class));
 		if (pref != null) {
 			String binExcludes = pref.get(ICoreConstants.SELFHOSTING_BIN_EXCLUDES, ""); //$NON-NLS-1$
 			StringTokenizer tokenizer = new StringTokenizer(binExcludes, ","); //$NON-NLS-1$

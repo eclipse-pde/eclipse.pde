@@ -1658,18 +1658,20 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            adaptable="true"
             class="org.eclipse.pde.internal.ui.properties.PluginDevelopmentPage"
             id="org.eclipse.pde.internal.ui.properties.pluginDevelopmentPage"
             name="%PropertyPage.pluginDevelopment"
-            objectClass="org.eclipse.core.resources.IProject">
+            >
          <filter
                name="projectNature"
                value="org.eclipse.pde.PluginNature"/>
+         <enabledWhen>
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+            </adapt>
+         </enabledWhen>
       </page> 
       <page
-            objectClass="org.eclipse.core.resources.IProject"
-            adaptable="true"
             class="org.eclipse.pde.internal.ui.properties.SelfHostingPropertyPage"
             name="%PropertyPage.selfHosting"
             category="org.eclipse.pde.internal.ui.properties.pluginDevelopmentPage"
@@ -1678,10 +1680,13 @@
                name="projectNature"
                value="org.eclipse.pde.PluginNature">
          </filter>
+         <enabledWhen>
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+            </adapt>
+         </enabledWhen>
       </page>      
       <page
-            objectClass="org.eclipse.core.resources.IProject"
-            adaptable="true"
             class="org.eclipse.pde.internal.ui.properties.CompilersPropertyPage"
             name="%PropertyPage.compilers"
             category="org.eclipse.pde.internal.ui.properties.pluginDevelopmentPage"
@@ -1689,6 +1694,11 @@
          <filter
                name="projectNature"
                value="org.eclipse.pde.PluginNature"/>
+         <enabledWhen>
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+            </adapt>
+         </enabledWhen>
       </page>      
    </extension>
    <extension

@@ -61,7 +61,7 @@ public class PluginDevelopmentPage extends PropertyPage implements
 	}
 
 	private void initialize() {
-		Preferences pref = getPreferences((IProject)getElement());
+		Preferences pref = getPreferences((IProject)getElement().getAdapter(IProject.class));
 		if (pref != null) {
 			fExtensionButton.setSelection(pref.getBoolean(ICoreConstants.EXTENSIONS_PROPERTY, true));
 			fEquinoxButton.setSelection(pref.getBoolean(ICoreConstants.EQUINOX_PROPERTY, true));
