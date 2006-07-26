@@ -73,7 +73,7 @@ public class PluginDevelopmentPage extends PropertyPage implements
 	}
 	
 	public boolean performOk() {
-		Preferences pref = getPreferences((IProject)getElement());
+		Preferences pref = getPreferences((IProject)getElement().getAdapter(IProject.class));
 		if (pref != null) {
 			if (!fExtensionButton.getSelection())
 				pref.putBoolean(ICoreConstants.EXTENSIONS_PROPERTY, false);	
