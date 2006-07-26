@@ -464,10 +464,10 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		if (contributor instanceof PDEFormTextEditorContributor) {
 			PDEFormTextEditorContributor textContributor = (PDEFormTextEditorContributor)contributor;
 			HyperlinkAction action = textContributor.getHyperlinkAction();
-			if (action.isEnabled())
+			if (action != null && action.isEnabled())
 				menu.add(action);
 			FormatAction formatManifestAction = textContributor.getFormatAction();
-			if (formatManifestAction.isEnabled())
+			if (formatManifestAction != null && formatManifestAction.isEnabled())
 				menu.add(formatManifestAction);
 		}
 		super.editorContextMenuAboutToShow(menu);
