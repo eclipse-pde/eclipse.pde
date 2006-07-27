@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +24,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.XMLDefaultHandler;
 import org.eclipse.pde.internal.core.ischema.IDocumentSection;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;
@@ -42,6 +42,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.core.ischema.ISchemaType;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.SAXParserWrapper;
+import org.eclipse.pde.internal.core.util.SchemaUtil;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -353,17 +354,11 @@ public class Schema extends PlatformObject implements ISchema {
 	public boolean isNotificationEnabled() {
 		return fNotificationEnabled;
 	}
-	
-	private InputStream getInputStream() throws IOException {
-		if ("file".equals(fURL.getProtocol())) //$NON-NLS-1$
-			return new FileInputStream(fURL.getFile());
-		return getURL().openStream();
-	}
 
 	public void load() {
 		InputStream input = null;
 		try {
-			input = getInputStream();
+			input = SchemaUtil.getInputStream(fURL);
 			load(input);
 		} catch (FileNotFoundException e) {
 			fLoaded = false;
@@ -377,11 +372,11 @@ public class Schema extends PlatformObject implements ISchema {
 			}		
 		}
 	}
-	
+
 	public void load(InputStream stream) {
 		try {
 			SAXParserWrapper parser = new SAXParserWrapper();
-			SchemaHandler handler = new SchemaHandler(fAbbreviated);
+			XMLDefaultHandler handler = new XMLDefaultHandler(fAbbreviated);
 			parser.parse(stream, handler);
 			traverseDocumentTree(handler.getDocumentElement());
 		} catch (SAXException e) {
@@ -667,7 +662,7 @@ public class Schema extends PlatformObject implements ISchema {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				if (child.getNodeName().equals("documentation")) { //$NON-NLS-1$
+				if (child.getNodeName().equals("documentation") && !fAbbreviated) { //$NON-NLS-1$
 					element.setDescription(getNormalizedText(child
 							.getFirstChild().getNodeValue()));
 				} else if (child.getNodeName().equals("appInfo")) { //$NON-NLS-1$

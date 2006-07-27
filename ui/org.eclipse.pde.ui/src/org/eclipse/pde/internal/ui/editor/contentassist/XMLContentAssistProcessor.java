@@ -11,8 +11,6 @@
 
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
-import java.io.PrintWriter;
-import java.net.URL;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
@@ -36,17 +34,13 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
 import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
-import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
-import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
-import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
@@ -86,42 +80,12 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	
 	private static final ArrayList F_V_BOOLS = new ArrayList();
 	static {
-		F_V_BOOLS.add(new VSchemaObject("true", null, F_AT_VAL)); //$NON-NLS-1$
-		F_V_BOOLS.add(new VSchemaObject("false", null, F_AT_VAL)); //$NON-NLS-1$
+		F_V_BOOLS.add(new VirtualSchemaObject("true", null, F_AT_VAL)); //$NON-NLS-1$
+		F_V_BOOLS.add(new VirtualSchemaObject("false", null, F_AT_VAL)); //$NON-NLS-1$
 	}
 	
 	private static final String F_STR_EXT_PT = "extension-point"; //$NON-NLS-1$
 	private static final String F_STR_EXT = "extension"; //$NON-NLS-1$
-	
-	protected static class VSchemaObject implements ISchemaObject {
-		String vName; 
-		Object vDesc; 
-		int vType;
-		
-		public VSchemaObject(String name, Object description, int type)
-			{ vName = name; vDesc = description; vType = type; }
-		public String getDescription() {
-			if (vDesc instanceof String) {
-				return (String)vDesc;
-			} else if (vDesc instanceof IPluginExtensionPoint) {
-				// Making the description an Object was necessary to defer
-				// the retrieval of the schema description String to
-				// only when it is need - instead of ahead of time.
-				// Retrieval of the String involves reparsing the schema from
-				// file which is has a huge performance cost during content
-				// assist sessions.
-				return getSchemaDescription((IPluginExtensionPoint)vDesc);
-			}
-			return null;
-		}
-		public String getName() {return vName;}
-		public ISchemaObject getParent() {return null;}
-		public ISchema getSchema() {return null;}
-		public void setParent(ISchemaObject parent) {}
-		public Object getAdapter(Class adapter) {return null;}
-		public void write(String indent, PrintWriter writer) {}
-		public int getVType() {return vType;}
-	}
 	
 	private PDESourcePage fSourcePage;
 	private final Image[] fImages = new Image[F_TOTAL_TYPES];
@@ -259,7 +223,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 					Object[] restrictions = sRestr.getChildren();
 					for (int i = 0; i < restrictions.length; i++)
 						if (restrictions[i] instanceof ISchemaObject)
-							objs.add(new VSchemaObject(((ISchemaObject)restrictions[i]).getName(), null, F_AT_VAL));
+							objs.add(new VirtualSchemaObject(((ISchemaObject)restrictions[i]).getName(), null, F_AT_VAL));
 				}
 				return computeAttributeProposal(attr, offset, attrValue, objs);
 			}
@@ -335,8 +299,8 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	private ICompletionProposal[] computeAddChildProposal(IDocumentNode node, int offset, IDocument doc, String filter) {
 		ArrayList propList = new ArrayList();
 		if (node instanceof IPluginBase) {
-			addToList(propList, filter, new VSchemaObject(F_STR_EXT, PDEUIMessages.XMLContentAssistProcessor_extensions, F_EX));
-			addToList(propList, filter, new VSchemaObject(F_STR_EXT_PT, PDEUIMessages.XMLContentAssistProcessor_extensionPoints, F_EP));
+			addToList(propList, filter, new VirtualSchemaObject(F_STR_EXT, PDEUIMessages.XMLContentAssistProcessor_extensions, F_EX));
+			addToList(propList, filter, new VirtualSchemaObject(F_STR_EXT_PT, PDEUIMessages.XMLContentAssistProcessor_extensionPoints, F_EP));
 		} else if (node instanceof IPluginExtensionPoint) {
 			return null;
 		} else {
@@ -393,16 +357,16 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			ISchemaObject[] sAttrs = sElem != null ?
 					sElem.getAttributes() :
 					new ISchemaObject[] {
-						new VSchemaObject(IIdentifiable.P_ID, PDEUIMessages.XMLContentAssistProcessor_extId, F_AT),
-						new VSchemaObject(IPluginObject.P_NAME, PDEUIMessages.XMLContentAssistProcessor_extName, F_AT),
-						new VSchemaObject(IPluginExtension.P_POINT, PDEUIMessages.XMLContentAssistProcessor_extPoint, F_AT)
+						new VirtualSchemaObject(IIdentifiable.P_ID, PDEUIMessages.XMLContentAssistProcessor_extId, F_AT),
+						new VirtualSchemaObject(IPluginObject.P_NAME, PDEUIMessages.XMLContentAssistProcessor_extName, F_AT),
+						new VirtualSchemaObject(IPluginExtension.P_POINT, PDEUIMessages.XMLContentAssistProcessor_extPoint, F_AT)
 					};
 			return computeAttributeProposals(sAttrs, node, offset, filter, nodeName);
 		} else if (type == F_EP || node instanceof IPluginExtensionPoint) {
 			ISchemaObject[] sAttrs = new ISchemaObject[] {
-						new VSchemaObject(IIdentifiable.P_ID, PDEUIMessages.XMLContentAssistProcessor_extPointId, F_AT),
-						new VSchemaObject(IPluginObject.P_NAME, PDEUIMessages.XMLContentAssistProcessor_extPointName, F_AT),
-						new VSchemaObject(IPluginExtensionPoint.P_SCHEMA, PDEUIMessages.XMLContentAssistProcessor_schemaLocation, F_AT)
+						new VirtualSchemaObject(IIdentifiable.P_ID, PDEUIMessages.XMLContentAssistProcessor_extPointId, F_AT),
+						new VirtualSchemaObject(IPluginObject.P_NAME, PDEUIMessages.XMLContentAssistProcessor_extPointName, F_AT),
+						new VirtualSchemaObject(IPluginExtensionPoint.P_SCHEMA, PDEUIMessages.XMLContentAssistProcessor_schemaLocation, F_AT)
 					};
 			return computeAttributeProposals(sAttrs, node, offset, filter, nodeName);
 		} else {
@@ -562,7 +526,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				addToList(list, filter, sAttrs[i]);
 		}
 		if (filter != null && filter.length() == 0)
-			list.add(0, new VSchemaObject(parentName, null, F_CL));
+			list.add(0, new VirtualSchemaObject(parentName, null, F_CL));
 		return convertListToProposal(list, node, offset);
 	}
 
@@ -622,7 +586,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				if (pModel != null && id.equals(pModelId))
 					continue;
 				for (int j = 0; j < points.length; j++)
-					fExternalExtPoints.add(new VSchemaObject(points[j].getFullId(), points[j], F_AT_EP));
+					fExternalExtPoints.add(new VirtualSchemaObject(points[j].getFullId(), points[j], F_AT_EP));
 			}
 		}
 		
@@ -632,30 +596,8 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			points = pModel.getPluginBase().getExtensionPoints();
 		
 		for (int j = 0; j < points.length; j++)
-			fAllPoints.add(new VSchemaObject(points[j].getFullId(), points[j], F_AT_EP));
+			fAllPoints.add(new VirtualSchemaObject(points[j].getFullId(), points[j], F_AT_EP));
 		return fAllPoints;
-	}
-
-	private static String getSchemaDescription(IPluginExtensionPoint point) {
-		String description = null;
-		URL url = null;
-		String pointID = null;
-		ISchema schema = null;
-		if (point != null) {
-			pointID = point.getFullId();
-			url = SchemaRegistry.getSchemaURL(point);
-			if (url != null) {
-				ISchemaDescriptor descriptor = new SchemaDescriptor(pointID, url);
-				// Note:  getting the schema is a very expensive operation
-				// use with care
-				schema = descriptor.getSchema(false);
-				description = schema.getDescription();
-			}
-		}
-		if (point == null || url == null || schema == null) {
-			description = PDEUIMessages.PointSelectionPage_noDescAvailable;
-		}
-		return description;
 	}
 	
 	public Image getImage(int type) {

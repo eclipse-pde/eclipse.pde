@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.core.schema;
 
 import java.io.PrintWriter;
 
+import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
 import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
@@ -19,6 +21,8 @@ import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaRepeatable;
 import org.eclipse.pde.internal.core.ischema.ISchemaType;
+import org.eclipse.pde.internal.core.util.PDEHTMLHelper;
+import org.eclipse.pde.internal.core.util.SchemaUtil;
 
 public class SchemaElement extends RepeatableSchemaObject implements
 		ISchemaElement {
@@ -280,5 +284,25 @@ public class SchemaElement extends RepeatableSchemaObject implements
 	
 	public String getExtendedAttributes() {
 		return null;
+	}
+	
+	public String getDescription() {
+		// If there is a description present, return it
+		if (super.getDescription() != null) {
+			return super.getDescription();
+		}
+		// Otherwise, get the description from the schema
+		ISchema schema = getSchema();
+		SchemaElementHandler handler = 
+			new SchemaElementHandler(getName());
+		SchemaUtil.parseURL(schema.getURL(), handler);
+		String description = PDEHTMLHelper.stripTags(handler.getDescription());
+		if (description == null) {
+			description = PDECoreMessages.Schema_NoDescriptionAvailable;
+		}	
+		return description;
+		// REVISIT:  Could create a simple singleton schema description 
+		// registry (using hash map) to store the descriptions and discard 
+		// on last editor close
 	}
 }

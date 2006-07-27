@@ -46,11 +46,12 @@ import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
-import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
+import org.eclipse.pde.internal.core.schema.SchemaAnnotationHandler;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.plugin.PluginExtensionPointNode;
+import org.eclipse.pde.internal.core.util.PDEHTMLHelper;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
+import org.eclipse.pde.internal.core.util.SchemaUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -59,7 +60,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.elements.ElementLabelProvider;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
-import org.eclipse.pde.internal.ui.util.PDEHTMLHelper;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.BaseWizardSelectionPage;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -528,18 +528,28 @@ public class PointSelectionPage
 	private void handlePointSelection(IPluginExtensionPoint element) {
 		fCurrentPoint = element;
 		fTemplateViewer.setInput(fCurrentPoint);
+		
 		URL url = SchemaRegistry.getSchemaURL(fCurrentPoint);
-		String fullID = fCurrentPoint.getFullId();
-		ISchema desc = new SchemaDescriptor(fullID, url).getSchema(false);
-		String schemaName = desc != null ? desc.getName() : fullID;
-		setDescription(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_pluginDescription, schemaName));
-		setDescriptionText(""); //$NON-NLS-1$
-		fTemplateLabel.setText(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_label, schemaName.toLowerCase(Locale.ENGLISH)));
-		fDescLink.setText(NLS.bind(PDEUIMessages.PointSelectionPage_extPointDesc, schemaName));
-		if (desc != null)
-			fPointDescription.setText(PDEHTMLHelper.stripTags(desc.getDescription()));
-		else
+		String description = null;
+		String name = null;
+		if (url != null) {
+			SchemaAnnotationHandler handler = new SchemaAnnotationHandler();
+			SchemaUtil.parseURL(url, handler);
+			description = PDEHTMLHelper.stripTags(handler.getDescription());
+			name = handler.getName();
+		}
+		if (description == null) {
 			fPointDescription.setText(PDEUIMessages.PointSelectionPage_noDescAvailable);
+		} else {
+			fPointDescription.setText(description);
+		}		
+		if (name == null) {
+			name = fCurrentPoint.getFullId();
+		}
+		setDescription(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_pluginDescription, name));
+		setDescriptionText(""); //$NON-NLS-1$
+		fTemplateLabel.setText(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_label, name.toLowerCase(Locale.ENGLISH)));
+		fDescLink.setText(NLS.bind(PDEUIMessages.PointSelectionPage_extPointDesc, name));
 		setSelectedNode(null);
 		setPageComplete(true);
 	}

@@ -21,7 +21,6 @@ import org.eclipse.jface.text.DefaultInformationControl.IInformationPresenterExt
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.LineBreakingReader;
-import org.eclipse.pde.internal.ui.util.PDEHTMLHelper;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Drawable;
 import org.eclipse.swt.graphics.Font;
@@ -123,7 +122,7 @@ public class InfoControlTextPresenter implements IInformationPresenter,
 			// Break continuous string into a set of lines that conform
 			// to the maximum width allowed
 			LineBreakingReader reader = new LineBreakingReader(
-					new StringReader(PDEHTMLHelper.stripTags(hoverInfo)), gc,
+					new StringReader(hoverInfo), gc,
 					maxWidth - LINE_REDUCTION);
 			boolean lastLineFormatted = false;
 			String line = reader.readLine();

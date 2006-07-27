@@ -40,7 +40,6 @@ import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.pde.internal.core.text.plugin.PluginAttribute;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.contentassist.XMLContentAssistProcessor.VSchemaObject;
 import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -109,8 +108,8 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 			sb.append(((ISchemaElement)fSchemaObject).getName());
 			sb.append('>');
 			doInternalWork = true;
-		} else if (fSchemaObject instanceof VSchemaObject) {
-			int type = ((VSchemaObject)fSchemaObject).getVType();
+		} else if (fSchemaObject instanceof VirtualSchemaObject) {
+			int type = ((VirtualSchemaObject)fSchemaObject).getVType();
 			switch (type) {
 			case XMLContentAssistProcessor.F_AT:
 				break;
@@ -190,8 +189,8 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 			IPluginParent pluginParent = null;
 			ISchemaElement schemaElement = null;
 			
-			if (fSchemaObject instanceof VSchemaObject) {
-				switch (((VSchemaObject)fSchemaObject).getVType()) {
+			if (fSchemaObject instanceof VirtualSchemaObject) {
+				switch (((VirtualSchemaObject)fSchemaObject).getVType()) {
 				case XMLContentAssistProcessor.F_AT_EP:
 					if (!(fRange instanceof IDocumentAttribute))
 						break;
@@ -318,8 +317,9 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	}
 	
 	public String getAdditionalProposalInfo() {
-		if (fSchemaObject == null)
+		if (fSchemaObject == null) {
 			return null;
+		}
 		return fSchemaObject.getDescription();
 	}
 
@@ -328,8 +328,8 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	}
 
 	public String getDisplayString() {
-		if (fSchemaObject instanceof VSchemaObject) {
-			switch (((VSchemaObject)fSchemaObject).getVType()) {
+		if (fSchemaObject instanceof VirtualSchemaObject) {
+			switch (((VirtualSchemaObject)fSchemaObject).getVType()) {
 			case XMLContentAssistProcessor.F_CL:
 				return "... />"; //$NON-NLS-1$
 			case XMLContentAssistProcessor.F_AT_EP:
@@ -347,8 +347,8 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	}
 
 	public Image getImage() {
-		if (fSchemaObject instanceof VSchemaObject)
-			return fProcessor.getImage(((VSchemaObject)fSchemaObject).getVType());
+		if (fSchemaObject instanceof VirtualSchemaObject)
+			return fProcessor.getImage(((VirtualSchemaObject)fSchemaObject).getVType());
 		if (fSchemaObject instanceof ISchemaAttribute)
 			return fProcessor.getImage(XMLContentAssistProcessor.F_AT);
 		if (fSchemaObject instanceof ISchemaElement || fSchemaObject == null)

@@ -40,6 +40,8 @@ public class PDECoreMessages extends NLS {
 	public static String RequiredPluginsClasspathContainer_description;
 	public static String ExternalJavaSearchClasspathContainer_description;
 
+	public static String Schema_NoDescriptionAvailable;
+
 	public static String SchemaElementReference_refElementMissing;
 	public static String TargetPlatform_exceptionThrown;
 
