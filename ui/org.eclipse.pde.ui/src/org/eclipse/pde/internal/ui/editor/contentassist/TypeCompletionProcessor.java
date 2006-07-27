@@ -71,7 +71,6 @@ public class TypeCompletionProcessor extends TypePackageCompletionProcessor impl
 	
 	public ICompletionProposal[] computeCompletionProposals(String currentContent) {
 		ICompletionProposal[] proposals = null;
-		currentContent = currentContent.toLowerCase();
 		// Determine method to obtain proposals based on current field contents
 		if ((fResults == null) ||
 			(currentContent.length() < fInitialContent.length()) ||
