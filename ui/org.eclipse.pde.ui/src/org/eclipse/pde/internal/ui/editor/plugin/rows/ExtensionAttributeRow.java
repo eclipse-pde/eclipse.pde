@@ -16,6 +16,7 @@ import com.ibm.icu.text.BreakIterator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
 import org.eclipse.swt.SWT;
@@ -93,7 +94,7 @@ public abstract class ExtensionAttributeRow {
 	
 	protected String getToolTipText(Control control) {
 		String text = getDescription();
-		if (text==null) return null;
+		if (text==null || text.equals(PDECoreMessages.Schema_NoDescriptionAvailable)) return null;
 		int dot = text.indexOf('.');
 		if (dot != -1) {
 			StringBuffer buf = new StringBuffer();
