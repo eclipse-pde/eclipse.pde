@@ -13,7 +13,9 @@ package org.eclipse.pde.internal.ui.editor.contentassist;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.StringTokenizer;
@@ -96,8 +98,9 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	F_TYPE_DIRECTIVE = 4, // directive proposal
 	F_TYPE_ATTRIBUTE = 5, // attribute proposal
 	F_TYPE_VALUE = 6, // value of attribute or directive proposal
+	F_TYPE_EXEC_ENV = 7, // value of execution env., added since we use a unique icon for exec envs.
 	
-	F_TOTAL_TYPES = 7;
+	F_TOTAL_TYPES = 8;
 	
 	private final Image[] fImages = new Image[F_TOTAL_TYPES];
 	
@@ -107,6 +110,11 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		fExecEnvs = new String[envs.length];
 		for (int i = 0; i < envs.length; i++) 
 			fExecEnvs[i] = envs[i].getId();
+		Arrays.sort(fExecEnvs, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				return ((String)o1).compareToIgnoreCase((String)o2);
+			}
+		});
 	}
 	
 	HashMap fHeaders;
@@ -465,7 +473,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		for (int i = 0; i < fExecEnvs.length; i++) 
 			if (fExecEnvs[i].regionMatches(true, 0, currentValue, 0, length) &&
 					!set.contains(fExecEnvs[i]))
-				completions.add(new TypeCompletionProposal(fExecEnvs[i], getImage(F_TYPE_VALUE), fExecEnvs[i], offset - length, length));
+				completions.add(new TypeCompletionProposal(fExecEnvs[i], getImage(F_TYPE_EXEC_ENV), fExecEnvs[i], offset - length, length));
 		return (ICompletionProposal[]) completions.toArray(new ICompletionProposal[completions.size()]);
 	}
 	
@@ -632,6 +640,8 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 					ImageOverlayIcon icon = new ImageOverlayIcon(fImages[F_TYPE_ATTRIBUTE], 
 							new ImageDescriptor[][] {new ImageDescriptor[] {PDEPluginImages.DESC_DOC_CO}, null, null, null});
 					return fImages[type] = icon.createImage();
+				case F_TYPE_EXEC_ENV:
+					return fImages[type] = PDEPluginImages.DESC_JAVA_LIB_OBJ.createImage();
 				case F_TYPE_VALUE:
 					return null;
 				}
