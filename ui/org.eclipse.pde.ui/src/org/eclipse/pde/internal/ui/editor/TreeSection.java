@@ -11,8 +11,10 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.pde.internal.ui.parts.StructuredViewerPart;
 import org.eclipse.pde.internal.ui.parts.TreePart;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -38,7 +40,16 @@ public abstract class TreeSection extends StructuredViewerSection {
 		protected void createButtons(Composite parent, FormToolkit toolkit) {
 			super.createButtons(parent, toolkit);
 			enableButtons();
+			if(parent.getData("filtered") != null) { //$NON-NLS-1$
+				GridLayout layout = (GridLayout) fButtonContainer.getLayout();
+				layout.marginHeight = 28;
+			}
 		}
+
+		protected TreeViewer createTreeViewer(Composite parent, int style) {
+			return TreeSection.this.createTreeViewer(parent, style);
+		}
+
 	}
 	/**
 	 * Constructor for TableSection.
@@ -56,10 +67,11 @@ public abstract class TreeSection extends StructuredViewerSection {
 		return (TreePart) viewerPart;
 	}
 
-	protected void selectionChanged(IStructuredSelection selection) {
+	protected TreeViewer createTreeViewer(Composite parent, int style) {
+		return new TreeViewer(parent, style);
 	}
-	protected void handleDoubleClick(IStructuredSelection selection) {
-	}
-	protected void enableButtons() {
-	}
+
+	protected void selectionChanged(IStructuredSelection selection) {}
+	protected void handleDoubleClick(IStructuredSelection selection) {}
+	protected void enableButtons() {}
 }

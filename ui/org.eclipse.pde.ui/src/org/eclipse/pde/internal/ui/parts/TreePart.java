@@ -23,13 +23,17 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class TreePart extends StructuredViewerPart {
-
+	
 	/**
 	 * Constructor for TreePart.
 	 * @param buttonLabels
 	 */
 	public TreePart(String[] buttonLabels) {
 		super(buttonLabels);
+	}
+	
+	protected TreeViewer createTreeViewer(Composite parent, int style) {
+		return new TreeViewer(parent, style);
 	}
 
 	/*
@@ -41,7 +45,7 @@ public class TreePart extends StructuredViewerPart {
 			style |= SWT.BORDER;
 		else
 			style |= toolkit.getBorderStyle();
-		TreeViewer	treeViewer = new TreeViewer(parent, style);
+		TreeViewer treeViewer = createTreeViewer(parent, style);
 		treeViewer.addSelectionChangedListener(new ISelectionChangedListener () {
 			public void selectionChanged(SelectionChangedEvent e) {
 				TreePart.this.selectionChanged((IStructuredSelection)e.getSelection());
