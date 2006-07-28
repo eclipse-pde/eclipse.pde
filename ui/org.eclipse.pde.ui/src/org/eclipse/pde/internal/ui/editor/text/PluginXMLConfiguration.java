@@ -18,8 +18,8 @@ import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
-import org.eclipse.pde.internal.ui.editor.contentassist.InfoControlTextPresenter;
 import org.eclipse.pde.internal.ui.editor.contentassist.XMLContentAssistProcessor;
+import org.eclipse.pde.internal.ui.editor.contentassist.display.InfoControlTextPresenter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 

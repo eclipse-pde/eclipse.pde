@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,9 +19,14 @@ import java.util.HashSet;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jdt.core.IBuffer;
+import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.ISourceRange;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -42,6 +49,8 @@ import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
+import org.eclipse.pde.internal.ui.editor.contentassist.display.JavaDocCommentReader;
+import org.eclipse.pde.internal.ui.editor.text.HTMLPrinter;
 import org.eclipse.pde.internal.ui.util.ImageOverlayIcon;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 import org.eclipse.swt.graphics.Image;
@@ -187,8 +196,12 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		if (model instanceof IBundleModel && !((IBundleModel)model).isFragmentModel())  
 			--length;
 		for (int i = 0; i < fHeader.length; i++) {
-			if (fHeader[i].regionMatches(true, 0, currentValue, 0, currentValue.length()) && fHeaders.get(fHeader[i]) == null)
-				completions.add(new TypeCompletionProposal(fHeader[i] + ": ", getImage(F_TYPE_HEADER), fHeader[i], startOffset, currentValue.length())); //$NON-NLS-1$
+			if (fHeader[i].regionMatches(true, 0, currentValue, 0, currentValue.length()) && fHeaders.get(fHeader[i]) == null) {
+				TypeCompletionProposal proposal = new TypeCompletionProposal(fHeader[i] + ": ", getImage(F_TYPE_HEADER),  //$NON-NLS-1$
+						fHeader[i], startOffset, currentValue.length());
+				proposal.setAdditionalProposalInfo(getJavaDoc(fHeader[i]));
+				completions.add(proposal); //$NON-NLS-1$
+			}
 		}
 		return (ICompletionProposal[]) completions.toArray(new ICompletionProposal[completions.size()]);
 	}
@@ -196,7 +209,8 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	protected ICompletionProposal[] computeValue(IDocument doc, int startOffset, int offset) throws BadLocationException {
 		String value = doc.get(startOffset, offset - startOffset);
 		int lineNum = doc.getLineOfOffset(startOffset) - 1;
-		while(value.indexOf(':') == -1 || value.charAt(value.indexOf(':') + 1 ) == '=') {
+		int index;
+		while((index = value.indexOf(':')) == -1 || ((value.length() - 1 != index) && (value.charAt(index + 1 ) == '='))) {
 			int startLine = doc.getLineOffset(lineNum);
 			value = doc.get(startLine, offset-startLine);
 			lineNum--;
@@ -263,7 +277,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		String attributeValue = removeLeadingSpaces(currentValue.substring(semicolon + 1));
 		if (Constants.RESOLUTION_DIRECTIVE.regionMatches(true, 0, attributeValue, 0, Constants.RESOLUTION_DIRECTIVE.length()))
 			return matchValueCompletion(currentValue.substring(equals + 1), new String[] {
-				Constants.RESOLUTION_MANDATORY, Constants.RESOLUTION_OPTIONAL} , new int[] {F_TYPE_VALUE, F_TYPE_VALUE}, offset);
+				Constants.RESOLUTION_MANDATORY, Constants.RESOLUTION_OPTIONAL} , new int[] {F_TYPE_VALUE, F_TYPE_VALUE}, offset, "RESOLUTION_"); //$NON-NLS-1$
 		if (Constants.VERSION_ATTRIBUTE.regionMatches(true, 0, attributeValue, 0, Constants.VERSION_ATTRIBUTE.length())) {
 			value = removeLeadingSpaces(currentValue.substring(equals + 1));
 			if (value.length() == 0)
@@ -324,10 +338,10 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		String attributeValue = removeLeadingSpaces(currentValue.substring(semicolon + 1));
 		if (Constants.VISIBILITY_DIRECTIVE.regionMatches(true, 0, attributeValue, 0, Constants.VISIBILITY_DIRECTIVE.length()))
 			return matchValueCompletion(currentValue.substring(equals + 1), new String[] {
-				Constants.VISIBILITY_PRIVATE, Constants.VISIBILITY_REEXPORT}, new int[] {F_TYPE_VALUE, F_TYPE_VALUE}, offset);
+				Constants.VISIBILITY_PRIVATE, Constants.VISIBILITY_REEXPORT}, new int[] {F_TYPE_VALUE, F_TYPE_VALUE}, offset, "VISIBILITY_"); //$NON-NLS-1$
 		if (Constants.RESOLUTION_DIRECTIVE.regionMatches(true, 0, attributeValue, 0, Constants.RESOLUTION_DIRECTIVE.length()))
 			return matchValueCompletion(currentValue.substring(equals + 1), new String[] {
-				Constants.RESOLUTION_MANDATORY, Constants.RESOLUTION_OPTIONAL} , new int[] {F_TYPE_VALUE, F_TYPE_VALUE}, offset);
+				Constants.RESOLUTION_MANDATORY, Constants.RESOLUTION_OPTIONAL} , new int[] {F_TYPE_VALUE, F_TYPE_VALUE}, offset, "RESOLUTION_"); //$NON-NLS-1$
 		if (Constants.BUNDLE_VERSION_ATTRIBUTE.regionMatches(true, 0, attributeValue, 0, Constants.RESOLUTION_DIRECTIVE.length()) && 
 				removeLeadingSpaces(currentValue.substring(equals + 1)).length() == 0)
 			return new ICompletionProposal[] {new TypeCompletionProposal("\"\"", getImage(F_TYPE_VALUE), "\"\"", offset, 0)}; //$NON-NLS-1$ //$NON-NLS-2$
@@ -428,8 +442,10 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 				int type = (o == null || o.toString().equals("1")) ? F_TYPE_ATTRIBUTE : F_TYPE_DIRECTIVE;//$NON-NLS-1$
 				if (Constants.SINGLETON_DIRECTIVE.regionMatches(true, 0, attribute, 0, attribute.length())) {
 					int length = attribute.length();
-					return new ICompletionProposal[] {new TypeCompletionProposal(Constants.SINGLETON_DIRECTIVE + ":=",  //$NON-NLS-1$
-							getImage(type), Constants.SINGLETON_DIRECTIVE, offset - length, length)};
+					TypeCompletionProposal proposal = new TypeCompletionProposal(Constants.SINGLETON_DIRECTIVE + ":=",  //$NON-NLS-1$
+							getImage(type), Constants.SINGLETON_DIRECTIVE, offset - length, length);
+					proposal.setAdditionalProposalInfo(getJavaDoc("SINGLETON_DIRECTIVE")); //$NON-NLS-1$
+					return new ICompletionProposal[] {proposal};
 				}
 			} else if (equals > semicolon) 
 				return handleTrueFalseValue(currentValue.substring(equals + 1), offset);
@@ -473,16 +489,27 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	}
 	
 	protected ICompletionProposal[] matchValueCompletion(String value, String[] attrs, int[] types, int offset) {
+		return matchValueCompletion(value, attrs, types, offset, ""); //$NON-NLS-1$
+	}
+	
+	protected ICompletionProposal[] matchValueCompletion(String value, String[] attrs, int[] types, int offset, String prefixCostant) {
 		ArrayList list = new ArrayList();
 		int length = value.length();
+		TypeCompletionProposal proposal = null;
 		for (int i = 0; i < attrs.length; i++) 
-			if (attrs[i].regionMatches(true, 0, value, 0, length))
-				if (types[i] == F_TYPE_ATTRIBUTE)
-					list.add(new TypeCompletionProposal(attrs[i] + "=", getImage(F_TYPE_ATTRIBUTE), attrs[i], offset - length, length)); //$NON-NLS-1$
-				else if (types[i] == F_TYPE_DIRECTIVE)
-					list.add(new TypeCompletionProposal(attrs[i] + ":=", getImage(F_TYPE_DIRECTIVE), attrs[i], offset - length, length)); //$NON-NLS-1$
-				else
-					list.add(new TypeCompletionProposal(attrs[i], getImage(types[i]), attrs[i], offset - length, length));
+			if (attrs[i].regionMatches(true, 0, value, 0, length)) {
+				if (types[i] == F_TYPE_ATTRIBUTE) {
+					proposal = new TypeCompletionProposal(attrs[i] + "=", getImage(F_TYPE_ATTRIBUTE), attrs[i], offset - length, length); //$NON-NLS-1$
+					proposal.setAdditionalProposalInfo(getJavaDoc(attrs[i] + "_ATTRIBUTE")); //$NON-NLS-1$
+				} else if (types[i] == F_TYPE_DIRECTIVE) {
+					proposal = new TypeCompletionProposal(attrs[i] + ":=", getImage(F_TYPE_DIRECTIVE), attrs[i], offset - length, length); //$NON-NLS-1$
+					proposal.setAdditionalProposalInfo(getJavaDoc(attrs[i] + "_DIRECTIVE")); //$NON-NLS-1$
+				} else {
+					proposal = new TypeCompletionProposal(attrs[i], getImage(types[i]), attrs[i], offset - length, length);
+					proposal.setAdditionalProposalInfo(getJavaDoc(prefixCostant + attrs[i]));
+				}
+				list.add(proposal);
+			}
 		return (ICompletionProposal[]) list.toArray(new ICompletionProposal[list.size()]);
 	}
 	
@@ -618,4 +645,55 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			if (fImages[i] != null && !fImages[i].isDisposed())
 				fImages[i].dispose();
 	}
+	
+	protected String getJavaDoc(String constant) {
+		// Doing search for JavaDoc in processor allows for performance optimizations (caching) in the future
+		IProject project = ((PDEFormEditor)fSourcePage.getEditor()).getCommonProject();
+		IJavaProject jp = JavaCore.create(project);
+		IType type = null;
+		try {
+			type = jp.findType("org.osgi.framework.Constants"); //$NON-NLS-1$
+			if (type != null) {
+				char[] chars = constant.toCharArray();
+				for (int i = 0; i < chars.length; i++)
+					chars[i] = chars[i] == '-' ? '_' : Character.toUpperCase(chars[i]);
+				IField field = type.getField(new String(chars));
+				ISourceRange range = field.getJavadocRange();
+				if (range == null)
+					return null;
+				IBuffer buff = type.getOpenable().getBuffer();
+				JavaDocCommentReader reader = new JavaDocCommentReader(buff, range.getOffset(), 
+						range.getOffset() + range.getLength() - 1);
+				String text = getString(reader);
+				return formatJavaDoc(text);
+			}
+		} catch (JavaModelException e) {
+		}
+		return null;
+	}
+
+	private String formatJavaDoc(String text) {
+		StringBuffer buffer = new StringBuffer();
+		HTMLPrinter.insertPageProlog(buffer, 0, HTMLPrinter.getJavaDocStyleSheerURL());
+		buffer.append(text);
+		HTMLPrinter.addPageEpilog(buffer);
+		return buffer.toString();
+	}
+
+	/**
+	 * Gets the reader content as a String
+	 */
+	private static String getString(Reader reader) {
+		StringBuffer buf= new StringBuffer();
+		char[] buffer= new char[1024];
+		int count;
+		try {
+			while ((count= reader.read(buffer)) != -1)
+				buf.append(buffer, 0, count);
+		} catch (IOException e) {
+			return null;
+		}
+		return buf.toString();
+	}
+
 }

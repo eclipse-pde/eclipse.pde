@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
+import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
@@ -27,6 +30,9 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.contentassist.ManifestContentAssistProcessor;
+import org.eclipse.pde.internal.ui.editor.contentassist.display.HTMLTextPresenter;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
 import org.osgi.framework.Constants;
 
 public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration {
@@ -257,9 +263,17 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 				fContentAssistant.setContentAssistProcessor(fContentAssistantProcessor, IDocument.DEFAULT_CONTENT_TYPE);
 				fContentAssistant.setContentAssistProcessor(fContentAssistantProcessor, ManifestPartitionScanner.MANIFEST_HEADER_VALUE);
 				fContentAssistant.addCompletionListener(fContentAssistantProcessor);
+				fContentAssistant.setInformationControlCreator(new IInformationControlCreator() {
+					public IInformationControl createInformationControl(Shell parent) {
+						return new DefaultInformationControl(parent, SWT.NONE, 
+		                		new HTMLTextPresenter(true));
+					}
+				});
+				fContentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
 			}
 			return fContentAssistant;
 		}
 		return null;
 	}
+
 }
