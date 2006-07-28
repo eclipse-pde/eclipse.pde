@@ -74,7 +74,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	}
 	
 	protected String getHelpResource() {
-		return "/org.eclipse.pde.doc.user/guide/pde_manifest_overview.htm"; //$NON-NLS-1$
+		return "/org.eclipse.pde.doc.user/guide/tools/editors/manifest_editor/overview.htm"; //$NON-NLS-1$
 	}
 	
 	protected void createFormContent(IManagedForm managedForm) {
@@ -196,7 +196,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		//info.setBackground(section.getTitleBarGradientBackground());
 		info.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				displayHelpResource("/org.eclipse.pde.doc.user/guide/pde_running.htm"); //$NON-NLS-1$
+				displayHelpResource("/org.eclipse.pde.doc.user/guide/tools/launchers/eclipse_application_launcher.htm"); //$NON-NLS-1$
 			}
 		});
 		section.setTextClient(info);
@@ -219,7 +219,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		info.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_HELP));
 		info.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				displayHelpResource("/org.eclipse.pde.doc.user/guide/pde_deploy.htm"); //$NON-NLS-1$
+				displayHelpResource("/org.eclipse.pde.doc.user/guide/tools/export_wizards/export_plugins.htm"); //$NON-NLS-1$
 			}
 		});
 		//info.setBackground(section.getTitleBarGradientBackground());
