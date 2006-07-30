@@ -132,7 +132,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 	
 	public static String stripPathInformation(String osgiBundles) {
-		osgiBundles = osgiBundles.replaceAll("\\s", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		StringBuffer result = new StringBuffer();
 		StringTokenizer tokenizer = new StringTokenizer(osgiBundles, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreElements()) {
@@ -141,6 +140,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			
 			// read up until the first @, if there
 			String bundle = index > 0 ? token.substring(0, index) : token;
+			bundle = bundle.trim();
 			
 			// strip [reference:][file:/] prefixes if any
 			if (bundle.startsWith(REFERENCE_PREFIX) && bundle.length() > REFERENCE_PREFIX.length())
@@ -156,7 +156,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 				result.append(","); //$NON-NLS-1$
 			result.append(id != null ? id : bundle);
 			if (index > -1)
-				result.append(token.substring(index));
+				result.append(token.substring(index).trim());
 		}
 		return result.toString();
 	}
