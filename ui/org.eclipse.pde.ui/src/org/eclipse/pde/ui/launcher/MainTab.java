@@ -57,8 +57,8 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	public void dispose() {
-		super.dispose();
 		fImage.dispose();
+		super.dispose();
 	}
 
 	/*
