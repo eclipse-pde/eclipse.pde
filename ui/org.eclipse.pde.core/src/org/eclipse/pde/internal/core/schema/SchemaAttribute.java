@@ -269,9 +269,6 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 				new SchemaAttributeHandler(elementName, getName());
 			SchemaUtil.parseURL(schema.getURL(), handler);
 			description = PDEHTMLHelper.stripTags(handler.getDescription());
-		} else {
-			// TODO: MP: Debug
-			System.out.println("REUSE " + hashkey);
 		}
 		if (description == null) {
 			description = PDECoreMessages.Schema_NoDescriptionAvailable;
