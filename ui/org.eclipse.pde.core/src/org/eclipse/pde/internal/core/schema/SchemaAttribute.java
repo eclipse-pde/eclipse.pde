@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.core.util.PDEHTMLHelper;
 import org.eclipse.pde.internal.core.util.SchemaUtil;
+import org.eclipse.pde.internal.core.util.XMLComponentRegistry;
 
 public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 
@@ -248,11 +249,9 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	}
 	
 	public String getDescription() {
-		// If there is a description present, return it
 		if (super.getDescription() != null ) {
 			return super.getDescription();
 		}
-		// Otherwise, get the description from the schema
 		ISchema schema = getSchema();
 		String elementName = null;
 		if (getParent() instanceof ISchemaElement) {
@@ -261,17 +260,25 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 				return null;
 			}
 		}
-		SchemaAttributeHandler handler = 
-			new SchemaAttributeHandler(elementName, getName());
-		SchemaUtil.parseURL(schema.getURL(), handler);
-		String description = PDEHTMLHelper.stripTags(handler.getDescription());
+		String hashkey = schema.getURL().hashCode() + "_" + elementName + "_" + getName(); //$NON-NLS-1$ //$NON-NLS-2$
+		String description = 
+			XMLComponentRegistry.Instance().getDescription(
+				hashkey, XMLComponentRegistry.F_ATTRIBUTE_COMPONENT);
+		if (description == null) {
+			SchemaAttributeHandler handler = 
+				new SchemaAttributeHandler(elementName, getName());
+			SchemaUtil.parseURL(schema.getURL(), handler);
+			description = PDEHTMLHelper.stripTags(handler.getDescription());
+		} else {
+			// TODO: MP: Debug
+			System.out.println("REUSE " + hashkey);
+		}
 		if (description == null) {
 			description = PDECoreMessages.Schema_NoDescriptionAvailable;
-		}	
+		}
+		XMLComponentRegistry.Instance().putDescription(hashkey, description,
+				XMLComponentRegistry.F_ATTRIBUTE_COMPONENT);
 		return description;
-		// REVISIT:  Could create a simple singleton schema description 
-		// registry (using hash map) to store the descriptions and discard 
-		// on last editor close
 	}
 	
 }

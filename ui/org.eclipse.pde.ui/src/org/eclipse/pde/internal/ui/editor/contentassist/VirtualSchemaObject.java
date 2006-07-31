@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.core.schema.SchemaAnnotationHandler;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.util.PDEHTMLHelper;
 import org.eclipse.pde.internal.core.util.SchemaUtil;
+import org.eclipse.pde.internal.core.util.XMLComponentRegistry;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class VirtualSchemaObject implements ISchemaObject {
@@ -83,25 +84,26 @@ public class VirtualSchemaObject implements ISchemaObject {
 	
 	private String getSchemaDescription(IPluginExtensionPoint point) {
 		String description = null;
-		URL url = null;
 		if (point != null) {
-			url = SchemaRegistry.getSchemaURL(point);
-			if (url != null) {
-				SchemaAnnotationHandler handler = 
-					new SchemaAnnotationHandler();
-				SchemaUtil.parseURL(url, handler);
-				description = PDEHTMLHelper.stripTags(handler.getDescription());
+			description = XMLComponentRegistry.Instance().getDescription(
+					point.getFullId(), XMLComponentRegistry.F_SCHEMA_COMPONENT);			
+			if (description == null) {
+				URL url = SchemaRegistry.getSchemaURL(point);
+				if (url != null) {
+					SchemaAnnotationHandler handler = 
+						new SchemaAnnotationHandler();
+					SchemaUtil.parseURL(url, handler);
+					description = PDEHTMLHelper.stripTags(handler.getDescription());
+				}
 			}
 		}
 		if ((point == null) || 
-				(url == null) ||
-					(description == null)) {
-			return PDEUIMessages.PointSelectionPage_noDescAvailable;	
+				(description == null)) {
+			description = PDEUIMessages.PointSelectionPage_noDescAvailable;	
 		}
+		XMLComponentRegistry.Instance().putDescription(point.getFullId(),
+				description, XMLComponentRegistry.F_SCHEMA_COMPONENT);
 		return description;
-		// REVISIT:  Could create a simple singleton schema description 
-		// registry (using hash map) to store the descriptions and discard 
-		// on last editor close
 	}
 	
 }

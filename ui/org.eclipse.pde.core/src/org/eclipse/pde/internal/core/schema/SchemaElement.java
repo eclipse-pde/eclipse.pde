@@ -23,6 +23,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaRepeatable;
 import org.eclipse.pde.internal.core.ischema.ISchemaType;
 import org.eclipse.pde.internal.core.util.PDEHTMLHelper;
 import org.eclipse.pde.internal.core.util.SchemaUtil;
+import org.eclipse.pde.internal.core.util.XMLComponentRegistry;
 
 public class SchemaElement extends RepeatableSchemaObject implements
 		ISchemaElement {
@@ -287,22 +288,25 @@ public class SchemaElement extends RepeatableSchemaObject implements
 	}
 	
 	public String getDescription() {
-		// If there is a description present, return it
 		if (super.getDescription() != null) {
 			return super.getDescription();
 		}
-		// Otherwise, get the description from the schema
 		ISchema schema = getSchema();
-		SchemaElementHandler handler = 
-			new SchemaElementHandler(getName());
-		SchemaUtil.parseURL(schema.getURL(), handler);
-		String description = PDEHTMLHelper.stripTags(handler.getDescription());
+		String hashkey = schema.getURL().hashCode() + "_" + getName(); //$NON-NLS-1$
+		String description = 
+			XMLComponentRegistry.Instance().getDescription(
+				hashkey, XMLComponentRegistry.F_ELEMENT_COMPONENT);
+		if (description == null) {
+			SchemaElementHandler handler = 
+				new SchemaElementHandler(getName());
+			SchemaUtil.parseURL(schema.getURL(), handler);
+			description = PDEHTMLHelper.stripTags(handler.getDescription());
+		}
 		if (description == null) {
 			description = PDECoreMessages.Schema_NoDescriptionAvailable;
 		}	
+		XMLComponentRegistry.Instance().putDescription(hashkey, description,
+				XMLComponentRegistry.F_ELEMENT_COMPONENT);
 		return description;
-		// REVISIT:  Could create a simple singleton schema description 
-		// registry (using hash map) to store the descriptions and discard 
-		// on last editor close
 	}
 }

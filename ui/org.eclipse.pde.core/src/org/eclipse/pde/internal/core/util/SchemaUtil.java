@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.core.util;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -31,7 +32,7 @@ public class SchemaUtil {
 	
 	public static InputStream getInputStream(URL url) throws IOException {
 		if (url == null) {
-			throw new IOException("URL specified is null"); //$NON-NLS-1$
+			throw new MalformedURLException("URL specified is null"); //$NON-NLS-1$
 		} else if ("file".equals(url.getProtocol())) { //$NON-NLS-1$
 			return new FileInputStream(url.getFile());
 		}
@@ -44,6 +45,11 @@ public class SchemaUtil {
 			input = getInputStream(url);
 			SAXParserWrapper parser = new SAXParserWrapper();
 			parser.parse(input, handler);
+		} catch (MalformedURLException e) {
+			// Ignore
+			// Caused when URL is null
+			// This occurs when the extension point schema is first
+			// created.
 		} catch (IOException e) {
 			PDECore.logException(e);
 		} catch (SAXException e) {

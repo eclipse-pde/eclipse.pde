@@ -37,6 +37,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IWritable;
+import org.eclipse.pde.internal.core.util.XMLComponentRegistry;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.context.IInputContextListener;
@@ -176,6 +177,7 @@ public abstract class PDEFormEditor extends FormEditor
 
 	public PDEFormEditor() {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
+		XMLComponentRegistry.Instance().connect(this);
 		fInputContextManager = createInputContextManager();
 		fValidationStack = new EditorValidationStack(this);
 	}
@@ -448,6 +450,7 @@ public abstract class PDEFormEditor extends FormEditor
 		}
 		//setSelection(new StructuredSelection());
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
+		XMLComponentRegistry.Instance().disconnect(this);
 		PDEModelUtility.disconnect(this);
 		if (clipboard != null) {
 			clipboard.dispose();

@@ -52,6 +52,7 @@ import org.eclipse.pde.internal.core.text.plugin.PluginExtensionPointNode;
 import org.eclipse.pde.internal.core.util.PDEHTMLHelper;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.core.util.SchemaUtil;
+import org.eclipse.pde.internal.core.util.XMLComponentRegistry;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -239,7 +240,6 @@ public class PointSelectionPage
 		fAvailableImports = PluginSelectionDialog.getExistingImports(model.getPluginBase());
 		setTitle(PDEUIMessages.NewExtensionWizard_PointSelectionPage_title); 
 		setDescription(PDEUIMessages.NewExtensionWizard_PointSelectionPage_desc); 
-		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 	
 	public void createControl(Composite parent) {
@@ -451,7 +451,6 @@ public class PointSelectionPage
 	}
 
 	public void dispose() {
-		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		fWizardsPage.dispose();
 		super.dispose();
 	}
@@ -528,10 +527,17 @@ public class PointSelectionPage
 	private void handlePointSelection(IPluginExtensionPoint element) {
 		fCurrentPoint = element;
 		fTemplateViewer.setInput(fCurrentPoint);
+		String fullPointID = fCurrentPoint.getFullId();
 		
-		URL url = SchemaRegistry.getSchemaURL(fCurrentPoint);
-		String description = null;
-		String name = null;
+		String description = 
+			XMLComponentRegistry.Instance().getDescription(fullPointID, XMLComponentRegistry.F_SCHEMA_COMPONENT);
+		String name = 
+			XMLComponentRegistry.Instance().getName(fullPointID, XMLComponentRegistry.F_SCHEMA_COMPONENT);
+		URL url = null;
+		if ((description == null) ||
+				(name == null)) {
+			url = SchemaRegistry.getSchemaURL(fCurrentPoint);
+		}
 		if (url != null) {
 			SchemaAnnotationHandler handler = new SchemaAnnotationHandler();
 			SchemaUtil.parseURL(url, handler);
@@ -544,7 +550,7 @@ public class PointSelectionPage
 			fPointDescription.setText(description);
 		}		
 		if (name == null) {
-			name = fCurrentPoint.getFullId();
+			name = fullPointID;
 		}
 		setDescription(NLS.bind(PDEUIMessages.NewExtensionWizard_PointSelectionPage_pluginDescription, name));
 		setDescriptionText(""); //$NON-NLS-1$
@@ -552,6 +558,9 @@ public class PointSelectionPage
 		fDescLink.setText(NLS.bind(PDEUIMessages.PointSelectionPage_extPointDesc, name));
 		setSelectedNode(null);
 		setPageComplete(true);
+		
+		XMLComponentRegistry.Instance().putDescription(fullPointID, fPointDescription.getText(), XMLComponentRegistry.F_SCHEMA_COMPONENT);
+		XMLComponentRegistry.Instance().putName(fullPointID, name, XMLComponentRegistry.F_SCHEMA_COMPONENT);
 	}
 	
 	private void updateTabSelection(int index) {
