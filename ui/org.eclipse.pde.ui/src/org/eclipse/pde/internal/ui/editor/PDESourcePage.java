@@ -19,6 +19,7 @@ package org.eclipse.pde.internal.ui.editor;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -440,7 +441,10 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 			return;
 		
 		if (range.getOffset() == -1 || isDirty()) {
-			((AbstractEditingModel)model).adjustOffsets(((AbstractEditingModel)model).getDocument());
+			try {
+				((AbstractEditingModel)model).adjustOffsets(((AbstractEditingModel)model).getDocument());
+			} catch (CoreException e) {
+			}
 			range = findRange();
 		}
 		setHighlightRange(range, true);

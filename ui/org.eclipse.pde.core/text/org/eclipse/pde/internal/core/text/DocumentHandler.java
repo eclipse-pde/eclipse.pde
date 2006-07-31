@@ -35,8 +35,10 @@ public abstract class DocumentHandler extends DefaultHandler {
 	protected int fHighestOffset = 0;
 	private Locator fLocator;
 	private IDocumentNode fLastError;
+	private boolean fReconciling;
 	
-	public DocumentHandler() {
+	public DocumentHandler(boolean reconciling) {
+		fReconciling = reconciling;
 	}
 
 	/* (non-Javadoc)
@@ -83,6 +85,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 					node.setXMLAttribute(attribute);
 				}
 			}
+			removeOrphanAttributes(node);
 		} catch (BadLocationException e) {
 		}
 		appendChildToParent(parent, node);
@@ -90,7 +93,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 	}
 	
 	protected void appendChildToParent(IDocumentNode parent, IDocumentNode child) {
-		if (parent != null && child != null) {
+		if (parent != null && child != null && child.getParentNode() == null) {
 			parent.addChildNode(child);
 		}
 	}
@@ -177,12 +180,16 @@ public abstract class DocumentHandler extends DefaultHandler {
 	 */
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
+		if (fDocumentNodeStack.isEmpty())
+			return;
+		
 		IDocumentNode node = (IDocumentNode)fDocumentNodeStack.pop();
 		try {
 			node.setLength(getElementLength(node, fLocator.getLineNumber() - 1, fLocator.getColumnNumber()));
 			setTextNodeOffset(node);
 		} catch (BadLocationException e) {
 		}
+		removeOrphanElements(node);
 	}
 	
 	protected void setTextNodeOffset(IDocumentNode node) throws BadLocationException {
@@ -225,6 +232,8 @@ public abstract class DocumentHandler extends DefaultHandler {
 		while (!fDocumentNodeStack.isEmpty()) {
 			IDocumentNode node = (IDocumentNode)fDocumentNodeStack.pop(); 
 			node.setIsErrorNode(true);
+			removeOrphanAttributes(node);
+			removeOrphanElements(node);
 			if (fLastError == null)
 				fLastError = node;
 		}
@@ -256,4 +265,53 @@ public abstract class DocumentHandler extends DefaultHandler {
 	public IDocumentNode getLastErrorNode() {
 		return fLastError;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
+	 */
+	public void characters(char[] ch, int start, int length) throws SAXException {	
+		if (!fReconciling || fDocumentNodeStack.isEmpty())
+			return;
+		
+		IDocumentNode parent = (IDocumentNode)fDocumentNodeStack.peek();
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(ch, start, length);
+		IDocumentTextNode textNode = parent.getTextNode();
+		if (textNode == null) {
+			if (buffer.toString().trim().length() > 0) {
+				textNode = new DocumentTextNode();
+				textNode.setEnclosingElement(parent);
+				parent.addTextNode(textNode);
+				textNode.setText(buffer.toString().trim());
+			}
+		} else {
+			textNode.setText(buffer.insert(0, textNode.getText()).toString());
+		}
+	}
+	
+	private void removeOrphanAttributes(IDocumentNode node) {
+		// when typing by hand, one element may overwrite a different existing one
+		// remove all attributes from previous element, if any.
+		if (fReconciling) {
+			IDocumentAttribute[] attrs = node.getNodeAttributes();
+			for (int i = 0; i < attrs.length; i++) {
+				if (attrs[i].getNameOffset() == -1)
+					node.removeDocumentAttribute(attrs[i]);
+			}
+		}		
+	}
+
+	private void removeOrphanElements(IDocumentNode node) {
+		// when typing by hand, one element may overwrite a different existing one
+		// remove all excess children elements, if any.
+		if (fReconciling) {
+			IDocumentNode[] children = node.getChildNodes();
+			for (int i = 0; i < children.length; i++) {
+				if (children[i].getOffset() == -1) {
+					node.removeChildNode(children[i]);
+				}
+			}
+		}
+	}
+	
 }

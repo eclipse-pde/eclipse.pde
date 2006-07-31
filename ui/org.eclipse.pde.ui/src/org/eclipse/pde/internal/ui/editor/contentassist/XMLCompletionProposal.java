@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ui.editor.contentassist;
 import java.util.HashSet;
 import java.util.Stack;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -244,7 +245,10 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 				XMLInsertionComputer.computeInsertion(schemaElement, pluginParent);
 				fProcessor.flushDocument();
 				if (model instanceof AbstractEditingModel) {
-					((AbstractEditingModel)model).adjustOffsets(document);
+					try {
+						((AbstractEditingModel)model).adjustOffsets(document);
+					} catch (CoreException e) {
+					}
 					setSelectionOffsets(document, schemaElement, pluginParent);
 				}
 			}

@@ -36,96 +36,29 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory {
 		
 		if (parent instanceof PluginBaseNode) {
 			if ("extension".equals(name)) //$NON-NLS-1$
-				return createExtension(parent);
+				return (IDocumentNode)createExtension();
 			if ("extension-point".equals(name)) //$NON-NLS-1$
-				return createExtensionPoint(parent);
+				return (IDocumentNode)createExtensionPoint();
 		} else {
 			if (name.equals("import") && parent instanceof PluginElementNode) { //$NON-NLS-1$
 				if (((PluginElementNode)parent).getName().equals("requires")) { //$NON-NLS-1$
 					IDocumentNode ancestor = parent.getParentNode();
 					if (ancestor != null && ancestor instanceof PluginBaseNode) {
-						return createImport(parent);
+						return (IDocumentNode)createImport();
 					}
 				}
 			} else if (name.equals("library") && parent instanceof PluginElementNode) { //$NON-NLS-1$
 				if (((PluginElementNode)parent).getName().equals("runtime")) { //$NON-NLS-1$
 					IDocumentNode ancestor = parent.getParentNode();
 					if (ancestor != null && ancestor instanceof PluginBaseNode) {
-						return createLibrary(parent);
+						return (IDocumentNode)createLibrary();
 					}
 				}				
-			}
-			
-			
+			}		
 		}
-		return createElement(name, parent);
+		return (IDocumentNode)createElement((IPluginObject)parent);
 	}
 	
-	/**
-	 * @param parent
-	 * @return
-	 */
-	private IDocumentNode createLibrary(IDocumentNode parent) {
-		PluginLibraryNode node = new PluginLibraryNode();
-		node.setParentNode(parent);
-		node.setModel(fModel);
-		node.setInTheModel(true);
-		return node;
-	}
-
-	/**
-	 * @param parent
-	 */
-	private IDocumentNode createImport(IDocumentNode parent) {
-		PluginImportNode node = new PluginImportNode();
-		node.setParentNode(parent);
-		node.setModel(fModel);
-		node.setInTheModel(true);
-		return node;
-	}
-
-	/**
-	 * @param name
-	 * @param parent
-	 * @return
-	 */
-	private IDocumentNode createElement(String name, IDocumentNode parent) {
-		PluginElementNode node = new PluginElementNode();
-		try {
-			node.setName(name);
-			node.setParentNode(parent);
-			node.setModel(fModel);
-			node.setInTheModel(true);
-		} catch (CoreException e) {
-		}
-		return node;
-	}
-
-	/**
-	 * @param name
-	 * @param parent
-	 * @return
-	 */
-	private PluginExtensionPointNode createExtensionPoint(IDocumentNode parent) {
-		PluginExtensionPointNode node = new PluginExtensionPointNode();
-		node.setParentNode(parent);
-		node.setModel(fModel);
-		node.setInTheModel(true);
-		return node;
-	}
-
-	/**
-	 * @param name
-	 * @return
-	 */
-	private PluginExtensionNode createExtension(IDocumentNode parent) {
-		PluginExtensionNode node = new PluginExtensionNode();
-		node.setParentNode(parent);
-		node.setModel(fModel);
-		node.setInTheModel(true);
-		return node;
-	}
-
 	public IDocumentAttribute createAttribute(String name, String value, IDocumentNode enclosingElement) {
 		PluginAttribute attribute = new PluginAttribute();
 		try {
@@ -177,7 +110,6 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory {
 	public IPluginElement createElement(IPluginObject parent) {
 		PluginElementNode node = new PluginElementNode();
 		node.setModel(fModel);
-		node.setParentNode((IDocumentNode)parent);
 		return node;
 	}
 

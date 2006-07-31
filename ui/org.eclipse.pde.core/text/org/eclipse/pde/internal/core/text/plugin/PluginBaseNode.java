@@ -35,7 +35,6 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		if (library instanceof PluginLibraryNode) {
 			PluginLibraryNode node = (PluginLibraryNode)library;
 			node.setModel(getModel());
-			library.setInTheModel(true);
 			parent.addChildNode(node);
 			fireStructureChanged(library, IModelChangedEvent.INSERT);
 		}
@@ -47,8 +46,6 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		IDocumentNode parent = getEnclosingElement("requires", true); //$NON-NLS-1$
 		if (pluginImport instanceof PluginImportNode) {
 			PluginImportNode node = (PluginImportNode)pluginImport;
-			node.setModel(getModel());
-			pluginImport.setInTheModel(true);
 			parent.addChildNode(node);
 			fireStructureChanged(pluginImport, IModelChangedEvent.INSERT);
 		}
@@ -192,7 +189,6 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		if (extension instanceof PluginExtensionNode) {
 			PluginExtensionNode node = (PluginExtensionNode)extension;
 			node.setModel(getModel());
-			extension.setInTheModel(true);
 			addChildNode(node);
 			fireStructureChanged(extension, IModelChangedEvent.INSERT);
 		}

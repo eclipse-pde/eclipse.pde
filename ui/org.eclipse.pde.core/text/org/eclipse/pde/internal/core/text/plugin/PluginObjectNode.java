@@ -236,6 +236,9 @@ public class PluginObjectNode extends PluginDocumentNode
 		return TextUtilities.getDefaultLineDelimiter(((IEditingModel)getModel()).getDocument());
 	}
 	
-
+	public void addChildNode(IDocumentNode child, int position) {
+		super.addChildNode(child, position);
+		((IPluginObject)child).setInTheModel(true);
+	}
 
 }

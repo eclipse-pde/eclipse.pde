@@ -127,4 +127,12 @@ public class PluginAttribute extends PluginObjectNode
 				.replaceAll("\\n", "&#x0A;"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
+	public void setAttributeName(String name) throws CoreException {
+		setName(name);
+	}
+	
+	public void setAttributeValue(String value) throws CoreException {
+		setValue(value);
+	}
+	
 }

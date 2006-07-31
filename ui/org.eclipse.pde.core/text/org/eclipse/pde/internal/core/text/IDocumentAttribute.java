@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.core.text;
 
 import java.io.Serializable;
 
+import org.eclipse.core.runtime.CoreException;
+
 public interface IDocumentAttribute extends Serializable {
 	
 	void setEnclosingElement(IDocumentNode node);	
@@ -31,6 +33,9 @@ public interface IDocumentAttribute extends Serializable {
 	
 	String getAttributeName();
 	String getAttributeValue();
+	
+	void setAttributeName(String name) throws CoreException;
+	void setAttributeValue(String value) throws CoreException;
 	
 	String write();
 	

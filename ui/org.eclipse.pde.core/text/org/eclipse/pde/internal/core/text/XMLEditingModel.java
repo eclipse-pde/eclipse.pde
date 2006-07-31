@@ -35,7 +35,7 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 		try {
 			fLoaded = true;
 			SAXParserWrapper parser = new SAXParserWrapper();
-			parser.parse(source, createDocumentHandler(this));
+			parser.parse(source, createDocumentHandler(this, true));
 		} catch (SAXException e) {
 			fLoaded = false;
 		} catch (IOException e) {
@@ -44,22 +44,16 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.AbstractEditingModel#adjustOffsets(org.eclipse.jface.text.IDocument)
-	 */
+	protected abstract DefaultHandler createDocumentHandler(IModel model, boolean reconciling);
+	
 	public void adjustOffsets(IDocument document) {
 		try {
 			SAXParserWrapper parser = new SAXParserWrapper();
-			parser.parse(getInputStream(document), createNodeOffsetHandler(this));
+			parser.parse(getInputStream(document), createDocumentHandler(this, false));
 		} catch (SAXException e) {
 		} catch (IOException e) {
 		} catch (ParserConfigurationException e) {
 		} catch (FactoryConfigurationError e) {
 		}
-	}
-	
-	protected abstract DefaultHandler createNodeOffsetHandler(IModel model);
-		
-	protected abstract DefaultHandler createDocumentHandler(IModel model);
-	
+	}	
 }

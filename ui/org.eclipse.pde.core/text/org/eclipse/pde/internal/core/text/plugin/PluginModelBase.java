@@ -33,7 +33,6 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	private PluginBaseNode fPluginBase;
 	private boolean fIsEnabled;
 	private PluginDocumentHandler fHandler;
-	private NodeOffsetHandler fNodeOffsetHandler;
 	private IPluginModelFactory fFactory;
 	
 	public PluginModelBase(IDocument document, boolean isReconciling) {
@@ -149,21 +148,12 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.XMLEditingModel#createDocumentHandler(org.eclipse.pde.core.IModel)
 	 */
-	protected DefaultHandler createDocumentHandler(IModel model) {
+	protected DefaultHandler createDocumentHandler(IModel model, boolean reconciling) {
 		if (fHandler == null)
-			fHandler = new PluginDocumentHandler(this);
+			fHandler = new PluginDocumentHandler(this, reconciling);
 		return fHandler;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.model.XMLEditingModel#createNodeOffsetHandler(org.eclipse.pde.core.IModel)
-	 */
-	protected DefaultHandler createNodeOffsetHandler(IModel model) {
-		if (fNodeOffsetHandler == null)
-			fNodeOffsetHandler = new NodeOffsetHandler(this);
-		return fNodeOffsetHandler;
-	}	
-	
+		
 	public IDocumentNode getLastErrorNode() {
 		if (fHandler != null)
 			return fHandler.getLastErrorNode();
