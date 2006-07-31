@@ -88,14 +88,10 @@ public abstract class DocumentHandler extends DefaultHandler {
 			removeOrphanAttributes(node);
 		} catch (BadLocationException e) {
 		}
-		appendChildToParent(parent, node);
-		fDocumentNodeStack.push(node);
-	}
-	
-	protected void appendChildToParent(IDocumentNode parent, IDocumentNode child) {
-		if (parent != null && child != null && child.getParentNode() == null) {
-			parent.addChildNode(child);
+		if (parent != null && node != null && node.getParentNode() == null) {
+			parent.addChildNode(node);
 		}
+		fDocumentNodeStack.push(node);
 	}
 	
 	protected abstract IDocumentNode getDocumentNode(String name, IDocumentNode parent);
@@ -312,6 +308,10 @@ public abstract class DocumentHandler extends DefaultHandler {
 				}
 			}
 		}
+	}
+	
+	protected boolean isReconciling() {
+		return fReconciling;
 	}
 	
 }

@@ -112,6 +112,12 @@ public class PluginDocumentHandler extends DocumentHandler {
 			child.setLength(-1);
 		}
 		
+		// clear text nodes if the user is typing on the source page
+		// they will be recreated in the characters() method
+		if (isReconciling()) {
+			node.removeTextNode();
+		}
+		
 		return node;
 	}
 	
