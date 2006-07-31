@@ -633,7 +633,7 @@ public class PluginImportOperation extends JarImportOperation {
 				HostSpecification spec = fModels[i].getBundleDescription().getHost();
 				BundleDescription host = spec == null ? null : (BundleDescription)spec.getSupplier();
 				if (model.getBundleDescription().equals(host)) {
-					result.add(fModels[i]);
+					result.add(((IFragmentModel)fModels[i]).getFragment());
 				}
 			}
 		}
