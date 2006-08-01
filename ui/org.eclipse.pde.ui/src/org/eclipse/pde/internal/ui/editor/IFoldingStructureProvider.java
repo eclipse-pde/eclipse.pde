@@ -22,4 +22,6 @@ public interface IFoldingStructureProvider {
 	
 	public void addFoldingRegions(Set currentRegions, IEditingModel model) throws BadLocationException;
 	
+	public void update();
+	
 }

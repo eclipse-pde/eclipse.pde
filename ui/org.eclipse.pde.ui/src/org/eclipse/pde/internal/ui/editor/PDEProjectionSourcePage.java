@@ -134,5 +134,9 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 		}
 		return super.getAdapter(key);
 	}
+	
+	public void updateFoldingProvider() {
+		fFoldingStructureProvider.update();
+	}
 
 }
