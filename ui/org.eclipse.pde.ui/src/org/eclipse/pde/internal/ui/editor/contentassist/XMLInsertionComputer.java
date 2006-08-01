@@ -31,6 +31,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
+import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.core.ischema.ISchemaType;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -240,9 +241,16 @@ public class XMLInsertionComputer {
 				int counter = 1;
 				if (attribute.getParent() instanceof ISchemaElement) {
 					ISchemaElement sElement = (ISchemaElement)attribute.getParent();
+					if (sElement instanceof ISchemaRootElement) {
+						// The parent element is either a extension or an 
+						// extension-point
+						// Do not auto-generate attribute values for those
+						// elements
+						return ""; //$NON-NLS-1$
+					}
 					// Generate a unique number for IDs
 					counter = XMLUtil.getCounterValue(sElement);
-				}					
+				}
 				return generateAttributeValue(resource.getProject(), counter, attribute);
 			}
 		}

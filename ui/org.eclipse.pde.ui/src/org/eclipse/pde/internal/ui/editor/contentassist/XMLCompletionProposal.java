@@ -69,111 +69,174 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 
 	public void apply(IDocument document) {
 		ITextSelection sel = fProcessor.getCurrentSelection();
-		if (sel == null)
+		if (sel == null) {
 			return;
-		
+		}
 		fLen = sel.getLength() + sel.getOffset() - fOffset;
 		String delim = TextUtilities.getDefaultLineDelimiter(document);
-		StringBuffer sb = new StringBuffer();
+		StringBuffer documentInsertBuffer = new StringBuffer();
 		boolean doInternalWork = false;
-		if (fSchemaObject == null && fRange instanceof IDocumentNode) {
-			// we are opening up an element
-			fSelOffset = fOffset;
-			fOffset -= 1;
-			fLen = 2;
-			sb.append("></"); //$NON-NLS-1$
-			sb.append(((IDocumentNode)fRange).getXMLTagName());
-			sb.append('>');
-		} else if (fSchemaObject instanceof ISchemaAttribute) {
-			if (fRange == null) {
-				// hacky hacky need to modify offsets
-				fLen -= 1;
-				fOffset += 1;
-			}
-			String attName = ((ISchemaAttribute)fSchemaObject).getName();
-			sb.append(attName);
-			sb.append("=\""); //$NON-NLS-1$
-			fSelOffset = fOffset + sb.length();
-			String value = XMLInsertionComputer.generateAttributeValue((ISchemaAttribute)fSchemaObject, fProcessor.getModel());
-			sb.append(value);
-			fSelLen = value.length();
-			sb.append('"');
+		// Generate the text to apply depending on the proposal type
+		if (fSchemaObject instanceof ISchemaAttribute) {
+			applyAttribute(documentInsertBuffer);
 		} else if (fSchemaObject instanceof ISchemaElement) {
-			sb.append('<');
-			sb.append(((ISchemaElement)fSchemaObject).getName());
-			sb.append('>'); //$NON-NLS-1$
-			sb.append(delim);
-			sb.append(getIndent(document, fOffset));
-			sb.append('<');
-			sb.append('/');
-			sb.append(((ISchemaElement)fSchemaObject).getName());
-			sb.append('>');
+			applyElement(getIndent(document, fOffset), delim, documentInsertBuffer);
 			doInternalWork = true;
 		} else if (fSchemaObject instanceof VirtualSchemaObject) {
-			int type = ((VirtualSchemaObject)fSchemaObject).getVType();
-			switch (type) {
-			case XMLContentAssistProcessor.F_AT:
-				break;
-			case XMLContentAssistProcessor.F_CL:
-				fOffset = sel.getOffset();
-				fLen = 0;
-				sb.append(" />"); //$NON-NLS-1$
-				break;
-			case XMLContentAssistProcessor.F_EX:
-				sb.append("<extension"); //$NON-NLS-1$
-				sb.append(delim);
-				String indent = getIndent(document, fOffset);
-				sb.append(indent);
-				sb.append(F_DEF_ATTR_INDENT);
-				sb.append("point=\"\">"); //$NON-NLS-1$
-				fSelOffset = fOffset + sb.length() - 2; // position rigth inside new point="" attribute
-				sb.append(delim);
-				sb.append(indent);
-				sb.append("</extension>"); //$NON-NLS-1$
-				break;
-			case XMLContentAssistProcessor.F_EP:
-				String id = "id"; //$NON-NLS-1$
-				sb.append("<extension-point id=\""); //$NON-NLS-1$
-				fSelOffset = fOffset + sb.length();
-				fSelLen = id.length();
-				sb.append(id);
-				sb.append("\" name=\"name\" />"); //$NON-NLS-1$
-				break;
-			case XMLContentAssistProcessor.F_AT_EP:
-				doInternalWork = true; // we will want to add required child nodes/attributes
-			case XMLContentAssistProcessor.F_AT_VAL:
-				if (fRange instanceof IDocumentAttribute) {
-					fOffset = ((IDocumentAttribute)fRange).getValueOffset();
-					String value = fSchemaObject.getName();
-					try {
-						// add indentation
-						int off = fOffset;
-						int docLen = document.getLength();
-						fLen = 0;
-						while (off < docLen) {
-							char c = document.getChar(off++);
-							if (c == '"')
-								break;
-							fLen += 1;
-						}
-					} catch (BadLocationException e) {
-					}
-					sb.append(value);
-					fSelOffset = fOffset + value.length();
-				}
-				break;
-			}
+			doInternalWork = applyVirtual(document, sel, delim, documentInsertBuffer, doInternalWork);
 		}
-		if (sb.length() == 0)
+		// Check if there is anything to apply
+		if (documentInsertBuffer.length() == 0) {
 			return;
+		}
+		// Apply the proposal to the document
 		try {
-			document.replace(fOffset, fLen, sb.toString());
+			document.replace(fOffset, fLen, documentInsertBuffer.toString());
 		} catch (BadLocationException e) {
 			PDEPlugin.log(e);
 		}
-		
-		if (doInternalWork)
+		// Update the model if necessary
+		if (doInternalWork) {
 			modifyModel(document);
+		}
+	}
+
+	/**
+	 * @param document
+	 * @param sel
+	 * @param delim
+	 * @param documentInsertBuffer
+	 * @param doInternalWork
+	 * @return
+	 */
+	private boolean applyVirtual(IDocument document, ITextSelection sel, String delim, StringBuffer documentInsertBuffer, boolean doInternalWork) {
+		int type = ((VirtualSchemaObject)fSchemaObject).getVType();
+		switch (type) {
+		case XMLContentAssistProcessor.F_ATTRIBUTE:
+			applyAttribute(documentInsertBuffer);
+			break;
+		case XMLContentAssistProcessor.F_CLOSE_TAG:
+			fOffset = sel.getOffset();
+			fLen = 0;
+			documentInsertBuffer.append(" />"); //$NON-NLS-1$
+			break;
+		case XMLContentAssistProcessor.F_EXTENSION:
+			applyExtension(document, delim, documentInsertBuffer);
+			break;
+		case XMLContentAssistProcessor.F_EXTENSION_POINT:
+			applyExtensionPoint(documentInsertBuffer);
+			break;
+		case XMLContentAssistProcessor.F_EXTENSION_ATTRIBUTE_POINT_VALUE:
+			doInternalWork = true; // we will want to add required child nodes/attributes
+		case XMLContentAssistProcessor.F_ATTRIBUTE_VALUE:
+			applyAttributeValue(document, documentInsertBuffer);
+			break;
+		}
+		return doInternalWork;
+	}
+
+	/**
+	 * @param document
+	 * @param documentInsertBuffer
+	 */
+	private void applyAttributeValue(IDocument document, StringBuffer documentInsertBuffer) {
+		if (fRange instanceof IDocumentAttribute) {
+			fOffset = ((IDocumentAttribute)fRange).getValueOffset();
+			String value = fSchemaObject.getName();
+			try {
+				// add indentation
+				int off = fOffset;
+				int docLen = document.getLength();
+				fLen = 0;
+				while (off < docLen) {
+					char c = document.getChar(off++);
+					if (c == '"')
+						break;
+					fLen += 1;
+				}
+			} catch (BadLocationException e) {
+			}
+			documentInsertBuffer.append(value);
+			fSelOffset = fOffset + value.length();
+		}
+	}
+
+	/**
+	 * @param documentInsertBuffer
+	 */
+	private void applyExtensionPoint(StringBuffer documentInsertBuffer) {
+		// TODO: Generate XML representation using model objects rather than
+		// hardcodings at a later date
+		String id = "id"; //$NON-NLS-1$
+		documentInsertBuffer.append("<extension-point id=\""); //$NON-NLS-1$
+		fSelOffset = fOffset + documentInsertBuffer.length();
+		fSelLen = id.length();
+		documentInsertBuffer.append(id);
+		documentInsertBuffer.append("\" name=\"name\" />"); //$NON-NLS-1$
+	}
+
+	/**
+	 * @param document
+	 * @param delim
+	 * @param documentInsertBuffer
+	 */
+	private void applyExtension(IDocument document, String delim, StringBuffer documentInsertBuffer) {
+		// TODO: Generate XML representation using model objects rather than
+		// hardcodings at a later date
+		documentInsertBuffer.append("<extension"); //$NON-NLS-1$
+		documentInsertBuffer.append(delim);
+		String indent = getIndent(document, fOffset);
+		documentInsertBuffer.append(indent);
+		documentInsertBuffer.append(F_DEF_ATTR_INDENT);
+		documentInsertBuffer.append("point=\"\">"); //$NON-NLS-1$
+		fSelOffset = fOffset + documentInsertBuffer.length() - 2; // position rigth inside new point="" attribute
+		documentInsertBuffer.append(delim);
+		documentInsertBuffer.append(indent);
+		documentInsertBuffer.append("</extension>"); //$NON-NLS-1$
+	}
+
+	/**
+	 * @param document
+	 * @param delim
+	 * @param sb
+	 */
+	private void applyElement(String indent, String delim, StringBuffer documentInsertBuffer) {
+		// TODO: Generate XML representation using model objects rather than
+		// hardcodings at a later date
+		documentInsertBuffer.append('<');
+		documentInsertBuffer.append(((ISchemaElement)fSchemaObject).getName());
+		documentInsertBuffer.append('>'); 
+		documentInsertBuffer.append(delim);
+		documentInsertBuffer.append(indent);
+		documentInsertBuffer.append('<');
+		documentInsertBuffer.append('/');
+		documentInsertBuffer.append(((ISchemaElement)fSchemaObject).getName());
+		documentInsertBuffer.append('>');
+	}
+
+	/**
+	 * @param sb
+	 */
+	private void applyAttribute(StringBuffer documentInsertBuffer) {
+		// TODO: Generate XML representation using model objects rather than
+		// hardcodings at a later date
+		if (fRange == null) {
+			// Model is broken
+			// Manually adjust offsets
+			fLen -= 1;
+			fOffset += 1;
+		}
+		String attName = fSchemaObject.getName();
+		documentInsertBuffer.append(attName);
+		documentInsertBuffer.append("=\""); //$NON-NLS-1$
+		fSelOffset = fOffset + documentInsertBuffer.length();
+		String value = ""; //$NON-NLS-1$
+		if (fSchemaObject instanceof ISchemaAttribute) {
+			value = XMLInsertionComputer.generateAttributeValue((ISchemaAttribute)fSchemaObject, fProcessor.getModel());
+		}
+		documentInsertBuffer.append(value);
+		fSelLen = value.length();
+		documentInsertBuffer.append('"');
 	}
 	
 	private void modifyModel(IDocument document) {
@@ -192,7 +255,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 			
 			if (fSchemaObject instanceof VirtualSchemaObject) {
 				switch (((VirtualSchemaObject)fSchemaObject).getVType()) {
-				case XMLContentAssistProcessor.F_AT_EP:
+				case XMLContentAssistProcessor.F_EXTENSION_ATTRIBUTE_POINT_VALUE:
 					if (!(fRange instanceof IDocumentAttribute))
 						break;
 					int offset = ((IDocumentAttribute)fRange).getEnclosingElement().getOffset();
@@ -334,10 +397,10 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	public String getDisplayString() {
 		if (fSchemaObject instanceof VirtualSchemaObject) {
 			switch (((VirtualSchemaObject)fSchemaObject).getVType()) {
-			case XMLContentAssistProcessor.F_CL:
+			case XMLContentAssistProcessor.F_CLOSE_TAG:
 				return "... />"; //$NON-NLS-1$
-			case XMLContentAssistProcessor.F_AT_EP:
-			case XMLContentAssistProcessor.F_AT_VAL:
+			case XMLContentAssistProcessor.F_EXTENSION_ATTRIBUTE_POINT_VALUE:
+			case XMLContentAssistProcessor.F_ATTRIBUTE_VALUE:
 				return fSchemaObject.getName();
 			}
 		}
@@ -354,9 +417,9 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		if (fSchemaObject instanceof VirtualSchemaObject)
 			return fProcessor.getImage(((VirtualSchemaObject)fSchemaObject).getVType());
 		if (fSchemaObject instanceof ISchemaAttribute)
-			return fProcessor.getImage(XMLContentAssistProcessor.F_AT);
+			return fProcessor.getImage(XMLContentAssistProcessor.F_ATTRIBUTE);
 		if (fSchemaObject instanceof ISchemaElement || fSchemaObject == null)
-			return fProcessor.getImage(XMLContentAssistProcessor.F_EL);
+			return fProcessor.getImage(XMLContentAssistProcessor.F_ELEMENT);
 		return null;
 	}
 

@@ -58,18 +58,25 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 
 	protected boolean fAssistSessionStarted;
 	
-	// specific assist types
-	protected static final int
-		F_XX = -1, // infer by passing object
-		F_EP = 0, // extension point
-		F_EX = 1, // extension
-		F_EL = 2, // element
-		F_AT = 3, // attribute
-		F_CL = 4, // close tag
-		F_AT_VAL = 5, // attribute value
-		F_AT_EP = 6, // extension attribute "point" value
-		
-		F_TOTAL_TYPES = 7;
+	// Specific assist types
+	
+	protected static final int F_INFER_BY_OBJECT = -1;
+
+	protected static final int F_EXTENSION_POINT = 0;
+
+	protected static final int F_EXTENSION = 1;
+
+	protected static final int F_ELEMENT = 2;
+
+	protected static final int F_ATTRIBUTE = 3;
+
+	protected static final int F_CLOSE_TAG = 4;
+
+	protected static final int F_ATTRIBUTE_VALUE = 5;
+
+	protected static final int F_EXTENSION_ATTRIBUTE_POINT_VALUE = 6;
+
+	protected static final int F_TOTAL_TYPES = 7;
 	
 	// proposal generation type
 	private static final int 
@@ -80,8 +87,8 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	
 	private static final ArrayList F_V_BOOLS = new ArrayList();
 	static {
-		F_V_BOOLS.add(new VirtualSchemaObject("true", null, F_AT_VAL)); //$NON-NLS-1$
-		F_V_BOOLS.add(new VirtualSchemaObject("false", null, F_AT_VAL)); //$NON-NLS-1$
+		F_V_BOOLS.add(new VirtualSchemaObject("true", null, F_ATTRIBUTE_VALUE)); //$NON-NLS-1$
+		F_V_BOOLS.add(new VirtualSchemaObject("false", null, F_ATTRIBUTE_VALUE)); //$NON-NLS-1$
 	}
 	
 	private static final String F_STR_EXT_PT = "extension-point"; //$NON-NLS-1$
@@ -223,7 +230,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 					Object[] restrictions = sRestr.getChildren();
 					for (int i = 0; i < restrictions.length; i++)
 						if (restrictions[i] instanceof ISchemaObject)
-							objs.add(new VirtualSchemaObject(((ISchemaObject)restrictions[i]).getName(), null, F_AT_VAL));
+							objs.add(new VirtualSchemaObject(((ISchemaObject)restrictions[i]).getName(), null, F_ATTRIBUTE_VALUE));
 				}
 				return computeAttributeProposal(attr, offset, attrValue, objs);
 			}
@@ -250,7 +257,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		int prop_type = determineAssistType(node, doc, offset);
 		switch (prop_type) {
 		case F_ADD_ATTRIB:
-			return computeAddAttributeProposal(F_XX, node, offset, doc, null, node.getXMLTagName());
+			return computeAddAttributeProposal(F_INFER_BY_OBJECT, node, offset, doc, null, node.getXMLTagName());
 		case F_OPEN_TAG:
 			return computeOpenTagProposal(node, offset, doc);
 		case F_ADD_CHILD:
@@ -299,8 +306,8 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	private ICompletionProposal[] computeAddChildProposal(IDocumentNode node, int offset, IDocument doc, String filter) {
 		ArrayList propList = new ArrayList();
 		if (node instanceof IPluginBase) {
-			addToList(propList, filter, new VirtualSchemaObject(F_STR_EXT, PDEUIMessages.XMLContentAssistProcessor_extensions, F_EX));
-			addToList(propList, filter, new VirtualSchemaObject(F_STR_EXT_PT, PDEUIMessages.XMLContentAssistProcessor_extensionPoints, F_EP));
+			addToList(propList, filter, new VirtualSchemaObject(F_STR_EXT, PDEUIMessages.XMLContentAssistProcessor_extensions, F_EXTENSION));
+			addToList(propList, filter, new VirtualSchemaObject(F_STR_EXT_PT, PDEUIMessages.XMLContentAssistProcessor_extensionPoints, F_EXTENSION_POINT));
 		} else if (node instanceof IPluginExtensionPoint) {
 			return null;
 		} else {
@@ -351,22 +358,22 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		String nodeName = tag;
 		if (nodeName == null && node != null)
 			nodeName = node.getXMLTagName();
-		if (type == F_EX || node instanceof IPluginExtension) {
+		if (type == F_EXTENSION || node instanceof IPluginExtension) {
 			ISchemaElement sElem = XMLUtil.getSchemaElement(node, node != null ?
 					((IPluginExtension)node).getPoint() : null);
 			ISchemaObject[] sAttrs = sElem != null ?
 					sElem.getAttributes() :
 					new ISchemaObject[] {
-						new VirtualSchemaObject(IIdentifiable.P_ID, PDEUIMessages.XMLContentAssistProcessor_extId, F_AT),
-						new VirtualSchemaObject(IPluginObject.P_NAME, PDEUIMessages.XMLContentAssistProcessor_extName, F_AT),
-						new VirtualSchemaObject(IPluginExtension.P_POINT, PDEUIMessages.XMLContentAssistProcessor_extPoint, F_AT)
+						new VirtualSchemaObject(IIdentifiable.P_ID, PDEUIMessages.XMLContentAssistProcessor_extId, F_ATTRIBUTE),
+						new VirtualSchemaObject(IPluginObject.P_NAME, PDEUIMessages.XMLContentAssistProcessor_extName, F_ATTRIBUTE),
+						new VirtualSchemaObject(IPluginExtension.P_POINT, PDEUIMessages.XMLContentAssistProcessor_extPoint, F_ATTRIBUTE)
 					};
 			return computeAttributeProposals(sAttrs, node, offset, filter, nodeName);
-		} else if (type == F_EP || node instanceof IPluginExtensionPoint) {
+		} else if (type == F_EXTENSION_POINT || node instanceof IPluginExtensionPoint) {
 			ISchemaObject[] sAttrs = new ISchemaObject[] {
-						new VirtualSchemaObject(IIdentifiable.P_ID, PDEUIMessages.XMLContentAssistProcessor_extPointId, F_AT),
-						new VirtualSchemaObject(IPluginObject.P_NAME, PDEUIMessages.XMLContentAssistProcessor_extPointName, F_AT),
-						new VirtualSchemaObject(IPluginExtensionPoint.P_SCHEMA, PDEUIMessages.XMLContentAssistProcessor_schemaLocation, F_AT)
+						new VirtualSchemaObject(IIdentifiable.P_ID, PDEUIMessages.XMLContentAssistProcessor_extPointId, F_ATTRIBUTE),
+						new VirtualSchemaObject(IPluginObject.P_NAME, PDEUIMessages.XMLContentAssistProcessor_extPointName, F_ATTRIBUTE),
+						new VirtualSchemaObject(IPluginExtensionPoint.P_SCHEMA, PDEUIMessages.XMLContentAssistProcessor_schemaLocation, F_ATTRIBUTE)
 					};
 			return computeAttributeProposals(sAttrs, node, offset, filter, nodeName);
 		} else {
@@ -433,9 +440,9 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			if (attr == null)
 				return computeAddChildProposal(parent, elRepOffset, doc, element);
 			if (element.equalsIgnoreCase(F_STR_EXT))
-				return computeAddAttributeProposal(F_EX, null, atRepOffset, doc, attr, F_STR_EXT);
+				return computeAddAttributeProposal(F_EXTENSION, null, atRepOffset, doc, attr, F_STR_EXT);
 			if (element.equalsIgnoreCase(F_STR_EXT_PT))
-				return computeAddAttributeProposal(F_EP, null, atRepOffset, doc, attr, F_STR_EXT_PT);
+				return computeAddAttributeProposal(F_EXTENSION_POINT, null, atRepOffset, doc, attr, F_STR_EXT_PT);
 		}
 		return null;
 	}
@@ -526,7 +533,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				addToList(list, filter, sAttrs[i]);
 		}
 		if (filter != null && filter.length() == 0)
-			list.add(0, new VirtualSchemaObject(parentName, null, F_CL));
+			list.add(0, new VirtualSchemaObject(parentName, null, F_CLOSE_TAG));
 		return convertListToProposal(list, node, offset);
 	}
 
@@ -586,7 +593,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				if (pModel != null && id.equals(pModelId))
 					continue;
 				for (int j = 0; j < points.length; j++)
-					fExternalExtPoints.add(new VirtualSchemaObject(points[j].getFullId(), points[j], F_AT_EP));
+					fExternalExtPoints.add(new VirtualSchemaObject(points[j].getFullId(), points[j], F_EXTENSION_ATTRIBUTE_POINT_VALUE));
 			}
 		}
 		
@@ -596,23 +603,23 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			points = pModel.getPluginBase().getExtensionPoints();
 		
 		for (int j = 0; j < points.length; j++)
-			fAllPoints.add(new VirtualSchemaObject(points[j].getFullId(), points[j], F_AT_EP));
+			fAllPoints.add(new VirtualSchemaObject(points[j].getFullId(), points[j], F_EXTENSION_ATTRIBUTE_POINT_VALUE));
 		return fAllPoints;
 	}
 	
 	public Image getImage(int type) {
 		if (fImages[type] == null) {
 			switch(type) {
-			case F_EP:
-			case F_AT_EP:
+			case F_EXTENSION_POINT:
+			case F_EXTENSION_ATTRIBUTE_POINT_VALUE:
 				return fImages[type] = PDEPluginImages.DESC_EXT_POINT_OBJ.createImage();
-			case F_EX:
+			case F_EXTENSION:
 				return fImages[type] = PDEPluginImages.DESC_EXTENSION_OBJ.createImage();
-			case F_EL:
-			case F_CL:
+			case F_ELEMENT:
+			case F_CLOSE_TAG:
 				return fImages[type] = PDEPluginImages.DESC_XML_ELEMENT_OBJ.createImage();
-			case F_AT:
-			case F_AT_VAL:
+			case F_ATTRIBUTE:
+			case F_ATTRIBUTE_VALUE:
 				return fImages[type] = PDEPluginImages.DESC_ATT_URI_OBJ.createImage();
 			}
 		}
