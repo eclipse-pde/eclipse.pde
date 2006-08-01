@@ -194,9 +194,23 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		String[] tokens = binIncludes.getTokens();
 		boolean exists = false;
 		for(int i = 0; i < tokens.length; i++) {
-			if(tokens[i].startsWith(key))
+			if(tokens[i].startsWith(key)) {
 				exists = true;
+				break;
+			}
+
+			// check for *. file extension entries
+			String[] matches = key.split("\\."); //$NON-NLS-1$
+			if(matches.length == 2) {
+				Pattern pattern = 
+					PatternConstructor.createPattern("*.".concat(matches[1]), false);
+				if(pattern.matcher(tokens[i]).matches()) {
+					exists = true;
+					break;
+				}
+			}
 		}
+
 		if(!exists) {
 			prepareError(PROPERTY_BIN_INCLUDES, 
 					key,
