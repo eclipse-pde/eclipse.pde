@@ -90,6 +90,20 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		Constants.FRAGMENT_HOST 
 	};
 	
+	private static final String BAUMAN = "Brian Bauman"; //$NON-NLS-1$
+	private static final String ANISZCZYK = "Chris Aniszczyk"; //$NON-NLS-1$
+	private static final String LASOCKI_BICZYSKO = "Janek Lasocki-Biczysko"; //$NON-NLS-1$
+	private static final String PAWLOWSKI = "Mike Pawlowski"; //$NON-NLS-1$
+	private static final String MELHEM = "Wassim Melhem"; //$NON-NLS-1$
+	
+	private static final String[] fNames = {
+		BAUMAN,
+		ANISZCZYK,
+		LASOCKI_BICZYSKO,
+		PAWLOWSKI,
+		MELHEM
+	};
+	
 	protected static final short
 	F_TYPE_HEADER = 0, // header proposal
 	F_TYPE_PKG = 1, // package proposal
@@ -240,9 +254,45 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			return handleRequiredExecEnv(value.substring(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT.length() + 1), offset);
 		if (value.startsWith(ICoreConstants.ECLIPSE_LAZYSTART))
 			return handleTrueFalseValue(value.substring(ICoreConstants.ECLIPSE_LAZYSTART.length() + 1), offset);
+		if (value.startsWith(Constants.BUNDLE_NAME))
+			return handleBundleNameCompletion(value.substring(Constants.BUNDLE_NAME.length() + 1), offset);
 		return new ICompletionProposal[0];
 	}
 	
+	/*
+	 * Easter Egg
+	 */
+	protected ICompletionProposal[] handleBundleNameCompletion(String currentValue, int offset) {
+		currentValue = removeLeadingSpaces(currentValue);
+		int length = currentValue.length();
+		
+		// only show when there is no bundle name
+		if(length == 0) {
+			return new ICompletionProposal[] {
+					new TypeCompletionProposal(BAUMAN, null, BAUMAN, offset - length, length),
+					new TypeCompletionProposal(ANISZCZYK, null, ANISZCZYK, offset - length, length),
+					new TypeCompletionProposal(LASOCKI_BICZYSKO, null, LASOCKI_BICZYSKO, offset - length, length),
+					new TypeCompletionProposal(PAWLOWSKI, null, PAWLOWSKI, offset - length, length),
+					new TypeCompletionProposal(MELHEM, null, MELHEM, offset - length, length)
+			};
+		}
+		
+		// only show when we are trying to complete a name
+		for (int i = 0; i < fNames.length; i++) {
+			StringTokenizer tokenizer = new StringTokenizer(currentValue, " "); //$NON-NLS-1$
+			while (tokenizer.hasMoreTokens()) {
+				String token = tokenizer.nextToken();
+				if (fNames[i].regionMatches(true, 0, token, 0, token.length())) {
+					return new ICompletionProposal[] {
+							new TypeCompletionProposal(
+									fNames[i], null, fNames[i], offset - token.length(), token.length())
+					};
+				}
+			}
+		}
+		return new ICompletionProposal[0];
+	}
+
 	protected ICompletionProposal[] handleImportPackageCompletion(String currentValue, int offset) {
 		int comma = currentValue.lastIndexOf(',');
 		int semicolon = currentValue.lastIndexOf(';');
