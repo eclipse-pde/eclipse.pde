@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.intro">
+<schema targetNamespace="org.eclipse.pde.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui.intro" id="samples" name="Samples"/>
+         <meta.schema plugin="org.eclipse.pde.ui" id="samples" name="Samples"/>
       </appInfo>
       <documentation>
          &lt;p&gt;
@@ -18,6 +18,11 @@ Each sample has a name, one or more project elements and a final perspective. Th
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="sample" minOccurs="1" maxOccurs="unbounded"/>

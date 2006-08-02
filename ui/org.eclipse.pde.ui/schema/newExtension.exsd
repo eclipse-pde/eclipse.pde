@@ -8,13 +8,18 @@
       <documentation>
          This extension point should be used to contribute wizards
 that will be used to create and edit new extensions in 
-PDE plug-in manifest editor. Wizards can create on
+PDE plug-in manifest editor. Wizards can create one
 or more extensions at the same time, as well
 as the code needed to implement those extensions. If a contributed wizard is specifically created for a particular extension point, it is advisable to also register a matching editor wizard. This wizard will be used to edit the extension point in the manifest editor after it has been created in the manifest file.
       </documentation>
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <documentation>
+            (no description available)
+         </documentation>
+      </annotation>
       <complexType>
          <choice minOccurs="0" maxOccurs="unbounded">
             <element ref="wizard"/>
@@ -196,6 +201,9 @@ interface.
          <appInfo>
             <meta.element labelAttribute="name"/>
          </appInfo>
+         <documentation>
+            (no description available)
+         </documentation>
       </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
