@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.ui.actions;
+package org.eclipse.pde.internal.ui.editor.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.Region;

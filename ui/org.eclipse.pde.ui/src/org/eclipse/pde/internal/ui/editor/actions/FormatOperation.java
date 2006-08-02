@@ -1,4 +1,4 @@
-package org.eclipse.pde.internal.ui.actions;
+package org.eclipse.pde.internal.ui.editor.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Enumeration;

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -27,7 +28,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
@@ -50,6 +50,8 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TreeSection;
+import org.eclipse.pde.internal.ui.editor.actions.CollapseAction;
+import org.eclipse.pde.internal.ui.editor.actions.SortAction;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
@@ -72,25 +74,21 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.DrillDownAdapter;
 
-public class ExtensionsSection extends TreeSection
-implements
-IModelChangedListener {
-	//private TableTreeViewer extensionTree;
-	private TreeViewer extensionTree;
-	private Image extensionImage;
-	private Image genericElementImage;
+public class ExtensionsSection extends TreeSection implements IModelChangedListener {
+	private TreeViewer fExtensionTree;
+	private Image fExtensionImage;
+	private Image fGenericElementImage;
 
-	private SchemaRegistry schemaRegistry;
-	private ExternalModelManager pluginInfoRegistry;
-	private DrillDownAdapter drillDownAdapter;
-	private Action newExtensionAction;
-	private Action collapseAllAction;
-	private Hashtable editorWizards;
+	private SchemaRegistry fSchemaRegistry;
+	private ExternalModelManager fPluginInfoRegistry;
+	private DrillDownAdapter fDrillDownAdapter;
+	private Action fNewExtensionAction;
+	private Hashtable fEditorWizards;
 
-	private boolean isSorted = false;
-
-	private static final String[] COMMON_LABEL_PROPERTIES = {"label", "name", //$NON-NLS-1$ //$NON-NLS-2$
-	"id"}; //$NON-NLS-1$
+	private static final String[] COMMON_LABEL_PROPERTIES = {
+		"label", //$NON-NLS-1$
+		"name", //$NON-NLS-1$
+		"id"}; //$NON-NLS-1$
 
 	class ExtensionContentProvider extends DefaultContentProvider
 	implements
@@ -139,8 +137,8 @@ IModelChangedListener {
 				PDEUIMessages.ManifestEditor_DetailExtension_up,
 				PDEUIMessages.ManifestEditor_DetailExtension_down});
 		getSection().setText(PDEUIMessages.ManifestEditor_DetailExtension_title);
-		pluginInfoRegistry = PDECore.getDefault().getExternalModelManager();
-		handleDefaultButton = false;
+		fPluginInfoRegistry = PDECore.getDefault().getExternalModelManager();
+		fHandleDefaultButton = false;
 	}
 	private static void addItemsForExtensionWithSchema(MenuManager menu,
 			IPluginExtension extension, IPluginParent parent) {
@@ -179,10 +177,10 @@ IModelChangedListener {
 		Composite container = createClientContainer(section, 2, toolkit);
 		TreePart treePart = getTreePart();
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
-		extensionTree = treePart.getTreeViewer();
-		extensionTree.setContentProvider(new ExtensionContentProvider());
-		extensionTree.setLabelProvider(new ExtensionLabelProvider());
-		drillDownAdapter = new DrillDownAdapter(extensionTree);
+		fExtensionTree = treePart.getTreeViewer();
+		fExtensionTree.setContentProvider(new ExtensionContentProvider());
+		fExtensionTree.setLabelProvider(new ExtensionLabelProvider());
+		fDrillDownAdapter = new DrillDownAdapter(fExtensionTree);
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		initialize((IPluginModelBase) getPage().getModel());
@@ -218,7 +216,7 @@ IModelChangedListener {
 		}
 	}
 	public void dispose() {
-		editorWizards = null;
+		fEditorWizards = null;
 		IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor()
 		.getAggregateModel();
 		if (model!=null)
@@ -245,13 +243,13 @@ IModelChangedListener {
 	public boolean setFormInput(Object object) {
 		if (object instanceof IPluginExtension
 				|| object instanceof IPluginElement) {
-			extensionTree.setSelection(new StructuredSelection(object), true);
+			fExtensionTree.setSelection(new StructuredSelection(object), true);
 			return true;
 		}
 		return false;
 	}
 	protected void fillContextMenu(IMenuManager manager) {
-		ISelection selection = extensionTree.getSelection();
+		ISelection selection = fExtensionTree.getSelection();
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 		IMenuManager newMenu = null;
 		if (ssel.size() == 1) {
@@ -281,11 +279,9 @@ IModelChangedListener {
 		}
 		if (!newMenu.isEmpty())
 			newMenu.add(new Separator());
-		newMenu.add(newExtensionAction);
+		newMenu.add(fNewExtensionAction);
 		manager.add(new Separator());
-		drillDownAdapter.addNavigationActions(manager);
-		manager.add(new Separator());
-		manager.add(collapseAllAction);
+		fDrillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator());
 		getPage().getPDEEditor().getContributor().addClipboardActions(manager);
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
@@ -361,7 +357,7 @@ IModelChangedListener {
 		return (IPluginExtension) parent;
 	}
 	private void handleDelete() {
-		IStructuredSelection sel = (IStructuredSelection) extensionTree
+		IStructuredSelection sel = (IStructuredSelection) fExtensionTree
 		.getSelection();
 		if (sel.isEmpty())
 			return;
@@ -384,7 +380,7 @@ IModelChangedListener {
 	}
 	private void handleNew() {
 		final IProject project = getPage().getPDEEditor().getCommonProject();
-		BusyIndicator.showWhile(extensionTree.getTree().getDisplay(),
+		BusyIndicator.showWhile(fExtensionTree.getTree().getDisplay(),
 				new Runnable() {
 			public void run() {
 				((ManifestEditor)getPage().getEditor()).ensurePluginContextPresence();
@@ -410,7 +406,7 @@ IModelChangedListener {
 		try {
 			final IExtensionEditorWizard wizard = (IExtensionEditorWizard)element.createExecutableExtension("class"); //$NON-NLS-1$
 			wizard.init(project, model, selection);
-			BusyIndicator.showWhile(extensionTree.getTree().getDisplay(),
+			BusyIndicator.showWhile(fExtensionTree.getTree().getDisplay(),
 					new Runnable() {
 				public void run() {
 					WizardDialog dialog = new WizardDialog(PDEPlugin
@@ -426,7 +422,7 @@ IModelChangedListener {
 		}
 	}
 	private void handleEdit() {
-		final IStructuredSelection selection = (IStructuredSelection)extensionTree.getSelection();
+		final IStructuredSelection selection = (IStructuredSelection)fExtensionTree.getSelection();
 		ArrayList editorWizards = getEditorWizards(selection);
 		if (editorWizards==null) return;
 		if (editorWizards.size()==1) {
@@ -437,7 +433,7 @@ IModelChangedListener {
 			IProject project = getPage().getPDEEditor().getCommonProject();
 			IPluginModelBase model = (IPluginModelBase)getPage().getModel();
 			final ExtensionEditorWizard wizard = new ExtensionEditorWizard(project, model, selection);
-			BusyIndicator.showWhile(extensionTree.getTree().getDisplay(),
+			BusyIndicator.showWhile(fExtensionTree.getTree().getDisplay(),
 					new Runnable() {
 				public void run() {
 					WizardDialog dialog = new WizardDialog(PDEPlugin
@@ -467,23 +463,23 @@ IModelChangedListener {
 			}
 		}
 		if (pointId==null) return null;
-		if (editorWizards==null)
+		if (fEditorWizards==null)
 			loadExtensionWizards();
-		return (ArrayList)editorWizards.get(pointId);
+		return (ArrayList)fEditorWizards.get(pointId);
 	}
 
 	private void loadExtensionWizards() {
-		editorWizards = new Hashtable();
+		fEditorWizards = new Hashtable();
 		IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.pde.ui.newExtension"); //$NON-NLS-1$
 		for (int i=0; i<elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (element.getName().equals("editorWizard")) { //$NON-NLS-1$
 				String pointId = element.getAttribute("point"); //$NON-NLS-1$
 				if (pointId==null) continue;
-				ArrayList list = (ArrayList)editorWizards.get(pointId);
+				ArrayList list = (ArrayList)fEditorWizards.get(pointId);
 				if (list==null) {
 					list = new ArrayList();
-					editorWizards.put(pointId, list);
+					fEditorWizards.put(pointId, list);
 				}
 				list.add(element);
 			}
@@ -494,11 +490,9 @@ IModelChangedListener {
 			return false;
 		return getEditorWizards(selection)!=null;
 	}
-	void handleCollapseAll() {
-		getTreePart().getTreeViewer().collapseAll();
-	}
+
 	public void initialize(IPluginModelBase model) {
-		extensionTree.setInput(model.getPluginBase());
+		fExtensionTree.setInput(model.getPluginBase());
 		selectFirstExtension();
 		boolean editable = model.isEditable();
 		TreePart treePart = getTreePart();
@@ -507,45 +501,39 @@ IModelChangedListener {
 		treePart.setButtonEnabled(3, false);
 		treePart.setButtonEnabled(4, false);
 		model.addModelChangedListener(this);
-		newExtensionAction = new Action() {
+		fNewExtensionAction = new Action() {
 			public void run() {
 				handleNew();
 			}
 		};
-		newExtensionAction.setText(PDEUIMessages.ManifestEditor_DetailExtension_newExtension);
-		newExtensionAction
+		fNewExtensionAction.setText(PDEUIMessages.ManifestEditor_DetailExtension_newExtension);
+		fNewExtensionAction
 		.setImageDescriptor(PDEPluginImages.DESC_EXTENSION_OBJ);
-		newExtensionAction.setEnabled(editable);
-		collapseAllAction = new Action() {
-			public void run() {
-				handleCollapseAll();
-			}
-		};
-		collapseAllAction.setText(PDEUIMessages.ManifestEditor_DetailExtension_collapseAll);
+		fNewExtensionAction.setEnabled(editable);
 	}
 	private void selectFirstExtension() {
-		Tree tree = extensionTree.getTree();
+		Tree tree = fExtensionTree.getTree();
 		TreeItem [] items = tree.getItems();
 		if (items.length==0) return;
 		TreeItem firstItem = items[0];
 		Object obj = firstItem.getData();
-		extensionTree.setSelection(new StructuredSelection(obj));
+		fExtensionTree.setSelection(new StructuredSelection(obj));
 	}
 	void fireSelection() {
-		extensionTree.setSelection(extensionTree.getSelection());
+		fExtensionTree.setSelection(fExtensionTree.getSelection());
 	}
 	public void initializeImages() {
 		PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
-		extensionImage = provider.get(PDEPluginImages.DESC_EXTENSION_OBJ);
-		genericElementImage = provider
+		fExtensionImage = provider.get(PDEPluginImages.DESC_EXTENSION_OBJ);
+		fGenericElementImage = provider
 		.get(PDEPluginImages.DESC_GENERIC_XML_OBJ);
 	}
 	public void refresh() {
 		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
-		extensionTree.setInput(model.getPluginBase());
+		fExtensionTree.setInput(model.getPluginBase());
 		selectFirstExtension();
 		getManagedForm().fireSelectionChanged(ExtensionsSection.this,
-				extensionTree.getSelection());
+				fExtensionTree.getSelection());
 		super.refresh();
 	}
 
@@ -559,12 +547,12 @@ IModelChangedListener {
 				&& event.getChangeType() == IModelChangedEvent.CHANGE
 				&& event.getChangedProperty().equals(
 						IExtensions.P_EXTENSION_ORDER)) {
-			IStructuredSelection sel = (IStructuredSelection) extensionTree
+			IStructuredSelection sel = (IStructuredSelection) fExtensionTree
 			.getSelection();
 			IPluginExtension extension = (IPluginExtension) sel
 			.getFirstElement();
-			extensionTree.refresh();
-			extensionTree.setSelection(new StructuredSelection(extension));
+			fExtensionTree.refresh();
+			fExtensionTree.setSelection(new StructuredSelection(extension));
 			return;
 		}
 		if (changeObject instanceof IPluginExtension
@@ -574,22 +562,22 @@ IModelChangedListener {
 			? ((IPluginModelBase) getPage().getModel()).getPluginBase()
 					: pobj.getParent();
 			if (event.getChangeType() == IModelChangedEvent.INSERT) {
-				extensionTree.add(parent, pobj);
-				extensionTree.setSelection(
+				fExtensionTree.add(parent, pobj);
+				fExtensionTree.setSelection(
 						new StructuredSelection(changeObject), true);
-				extensionTree.getTree().setFocus();
+				fExtensionTree.getTree().setFocus();
 			} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
-				extensionTree.remove(pobj);
+				fExtensionTree.remove(pobj);
 			} else {
 				if (event.getChangedProperty().equals(
 						IPluginParent.P_SIBLING_ORDER)) {
-					IStructuredSelection sel = (IStructuredSelection) extensionTree
+					IStructuredSelection sel = (IStructuredSelection) fExtensionTree
 					.getSelection();
 					IPluginObject child = (IPluginObject) sel.getFirstElement();
-					extensionTree.refresh(child.getParent());
-					extensionTree.setSelection(new StructuredSelection(child));
+					fExtensionTree.refresh(child.getParent());
+					fExtensionTree.setSelection(new StructuredSelection(child));
 				} else {
-					extensionTree.update(changeObject, null);
+					fExtensionTree.update(changeObject, null);
 				}
 			}
 		}
@@ -597,9 +585,9 @@ IModelChangedListener {
 
 	private Image resolveObjectImage(Object obj) {
 		if (obj instanceof IPluginExtension) {
-			return extensionImage;
+			return fExtensionImage;
 		}
-		Image elementImage = genericElementImage;
+		Image elementImage = fGenericElementImage;
 		if (obj instanceof IPluginElement) {
 			IPluginElement element = (IPluginElement) obj;
 			Image customImage = getCustomImage(element);
@@ -652,13 +640,13 @@ IModelChangedListener {
 		return PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(model, iconPathName);
 	}
 	private String resolveObjectName(Object obj) {
-		return resolveObjectName(getSchemaRegistry(), pluginInfoRegistry, obj);
+		return resolveObjectName(getSchemaRegistry(), fPluginInfoRegistry, obj);
 	}
 
 	private SchemaRegistry getSchemaRegistry() {
-		if (schemaRegistry == null)
-			schemaRegistry = PDECore.getDefault().getSchemaRegistry();
-		return schemaRegistry;
+		if (fSchemaRegistry == null)
+			fSchemaRegistry = PDECore.getDefault().getSchemaRegistry();
+		return fSchemaRegistry;
 	}
 
 	public static String resolveObjectName(SchemaRegistry schemaRegistry,
@@ -714,8 +702,8 @@ IModelChangedListener {
 		return obj.toString();
 	}
 	public void setFocus() {
-		if (extensionTree != null)
-			extensionTree.getTree().setFocus();
+		if (fExtensionTree != null)
+			fExtensionTree.getTree().setFocus();
 	}
 	public static String stripShortcuts(String input) {
 		StringBuffer output = new StringBuffer();
@@ -760,7 +748,7 @@ IModelChangedListener {
 		}*/
 	}
 	private void handleMove(boolean up) {
-		IStructuredSelection sel = (IStructuredSelection) extensionTree
+		IStructuredSelection sel = (IStructuredSelection) fExtensionTree
 		.getSelection();
 		IPluginObject object = (IPluginObject) sel.getFirstElement();
 		if (object instanceof IPluginElement) {
@@ -818,21 +806,20 @@ IModelChangedListener {
 		getTreePart().setButtonEnabled(4, downEnabled);
 	}
 
-	public void toggleSort() {
-		ViewerSorter sorter;
-		if(isSorted) {
-			sorter = null;
-		} else {
-			sorter = new ViewerSorter();
-		}
-		extensionTree.setSorter(sorter);
-		isSorted = !isSorted;
-	}
-
 	protected TreeViewer createTreeViewer(Composite parent, int style) {
 		FilteredTree tree = new FilteredTree(parent, style, new PatternFilter());
 		parent.setData("filtered", Boolean.TRUE); //$NON-NLS-1$
 		return tree.getViewer();
+	}
+	
+	public Object getAdapter(Class adapter) {
+		if(adapter.equals(IAction[].class)) {
+			return new IAction[] {
+					new CollapseAction(this, PDEUIMessages.ManifestEditor_DetailExtension_collapseAll),
+					new SortAction(this, PDEUIMessages.ExtensionsPage_sortAlpha)
+			};
+		}
+		return super.getAdapter(adapter);
 	}
 
 }

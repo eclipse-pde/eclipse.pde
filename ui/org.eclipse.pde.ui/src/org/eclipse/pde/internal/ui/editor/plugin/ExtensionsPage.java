@@ -9,14 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginParent;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
@@ -33,8 +30,9 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class ExtensionsPage extends PDEFormPage {
 	public static final String PAGE_ID = "extensions"; //$NON-NLS-1$
-	private ExtensionsBlock block;
-	private ExtensionsSection section;
+	
+	private ExtensionsSection fSection;
+	private ExtensionsBlock fBlock;
 	
 	public class ExtensionsBlock extends PDEMasterDetailsBlock implements IDetailsPageProvider {
 		public ExtensionsBlock() {
@@ -42,8 +40,8 @@ public class ExtensionsPage extends PDEFormPage {
 		}
 		protected PDESection createMasterSection(IManagedForm managedForm,
 				Composite parent) {
-			section = new ExtensionsSection(getPage(), parent);
-			return section;
+			fSection = new ExtensionsSection(getPage(), parent);
+			return fSection;
 		}
 		protected void registerPages(DetailsPart detailsPart) {
 			detailsPart.setPageLimit(10);
@@ -73,27 +71,8 @@ public class ExtensionsPage extends PDEFormPage {
 				return new ExtensionElementDetails(null);
 			return null;
 		}
-		protected void createToolBarActions(IManagedForm managedForm) {
-			final ScrolledForm form = managedForm.getForm();
-			Action collapseAction = new Action("col") { //$NON-NLS-1$
-				public void run() {
-					section.handleCollapseAll();
-				}
-			};
-			collapseAction.setToolTipText(PDEUIMessages.ExtensionsPage_collapseAll); 
-			collapseAction.setImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL);
-			form.getToolBarManager().add(collapseAction);
-			
-			Action sortAction = new Action("sort", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
-				public void run() {
-					section.toggleSort();
-				}
-			};
-			sortAction.setToolTipText(PDEUIMessages.ExtensionsPage_sortAlpha);
-			sortAction.setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO);
-			form.getToolBarManager().add(sortAction);
-		}
 	}
+	
 	/**
 	 * @param editor
 	 * @param id
@@ -101,20 +80,22 @@ public class ExtensionsPage extends PDEFormPage {
 	 */
 	public ExtensionsPage(FormEditor editor) {
 		super(editor, PAGE_ID, PDEUIMessages.ExtensionsPage_tabName);  
-		block = new ExtensionsBlock();
+		fBlock = new ExtensionsBlock();
 	}
+	
 	protected void createFormContent(IManagedForm managedForm) {
-		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
-		form.setText(PDEUIMessages.ExtensionsPage_title); 
-		block.createContent(managedForm);
+		form.setText(PDEUIMessages.ExtensionsPage_title);
+		fBlock.createContent(managedForm);
 		BodyTextSection bodyTextSection = new BodyTextSection(this, form.getBody());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
 		bodyTextSection.getSection().setLayoutData(gd);
 		bodyTextSection.getSection().marginWidth = 5;
 		managedForm.addPart(bodyTextSection);
 		//refire selection
-		section.fireSelection();
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_PLUGIN_EXTENSIONS);		
+		fSection.fireSelection();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_PLUGIN_EXTENSIONS);
+		super.createFormContent(managedForm);
 	}
+
 }

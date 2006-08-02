@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.pde.internal.ui.actions;
+package org.eclipse.pde.internal.ui.editor.actions;
 
 /**
  * PDEActionConstants

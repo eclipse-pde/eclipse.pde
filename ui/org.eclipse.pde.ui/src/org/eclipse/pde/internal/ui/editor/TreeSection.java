@@ -20,7 +20,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public abstract class TreeSection extends StructuredViewerSection {
-	protected boolean handleDefaultButton=true;
+	
+	protected boolean fHandleDefaultButton = true;
+	
 	class PartAdapter extends TreePart {
 		public PartAdapter(String[] buttonLabels) {
 			super(buttonLabels);
@@ -34,7 +36,7 @@ public abstract class TreeSection extends StructuredViewerSection {
 		}
 		public void buttonSelected(Button button, int index) {
 			TreeSection.this.buttonSelected(index);
-			if (handleDefaultButton)
+			if (fHandleDefaultButton)
 				button.getShell().setDefaultButton(null);
 		}
 		protected void createButtons(Composite parent, FormToolkit toolkit) {
@@ -64,7 +66,7 @@ public abstract class TreeSection extends StructuredViewerSection {
 	}
 
 	protected TreePart getTreePart() {
-		return (TreePart) viewerPart;
+		return (TreePart) fViewerPart;
 	}
 
 	protected TreeViewer createTreeViewer(Composite parent, int style) {

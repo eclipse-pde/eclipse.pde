@@ -15,6 +15,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
@@ -39,6 +40,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.editor.actions.SortAction;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.wizards.FeatureSelectionDialog;
@@ -462,4 +464,17 @@ public class IncludedFeaturesSection extends TableSection implements
 	}
 	
 	protected boolean createCount() { return true; }
+	
+	
+	public Object getAdapter(Class adapter) {
+		if(adapter.equals(IAction[].class)) {
+			return new IAction[] {
+					new SortAction(
+							this, 
+							PDEUIMessages.FeatureEditor_IncludedFeatures_sortAlpha, 
+							ListUtil.NAME_SORTER)
+			};
+		}
+		return super.getAdapter(adapter);
+	}
 }

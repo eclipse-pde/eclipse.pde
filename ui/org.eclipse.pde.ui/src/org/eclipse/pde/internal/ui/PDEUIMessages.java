@@ -258,6 +258,7 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureEditor_IncludedFeatures_title;
 	public static String FeatureEditor_IncludedFeatures_desc;
 	public static String FeatureEditor_IncludedFeatures_new;
+	public static String FeatureEditor_IncludedFeatures_sortAlpha;
 
 	public static String SiteEditor_IncludedFeaturesDetailsSection_title;
 	public static String SiteEditor_IncludedFeaturesDetailsSection_desc;
@@ -296,6 +297,7 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureEditor_PluginSection_pluginTitle;
 	public static String FeatureEditor_PluginSection_pluginDesc;
 	public static String FeatureEditor_PluginSection_new;
+	public static String FeatureEditor_PluginSection_sortAlpha;
 
 	public static String FeatureEditor_PluginPortabilitySection_title;
 	public static String FeatureEditor_PluginPortabilitySection_desc;
@@ -333,6 +335,7 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureEditor_RequiresSection_compute;
 	public static String FeatureEditor_RequiresSection_plugin;
 	public static String FeatureEditor_RequiresSection_feature;
+	public static String FeatureEditor_RequiresSection_sortAlpha;
 
 	public static String FeatureEditor_URLSection_desc;
 	public static String FeatureEditor_URLSection_new;

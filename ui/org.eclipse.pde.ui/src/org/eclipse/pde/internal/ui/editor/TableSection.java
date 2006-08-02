@@ -93,7 +93,7 @@ public abstract class TableSection extends StructuredViewerSection {
 		return getTablePart().getRenameAction();
 	}
 	protected EditableTablePart getTablePart() {
-		return (EditableTablePart) viewerPart;
+		return (EditableTablePart) fViewerPart;
 	}
 	protected void entryModified(Object entry, String value) {
 	}

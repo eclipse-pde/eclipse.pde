@@ -9,12 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.graphics.Color;
@@ -37,7 +40,42 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 public abstract class PDEFormPage extends FormPage {
 
 	private boolean fNewStyleHeader;
-	
+
+	public abstract class OrientableBlock extends PDEMasterDetailsBlock {
+
+		public OrientableBlock(PDEFormPage page) {
+			super(page);
+		}
+
+		protected void createToolBarActions(IManagedForm managedForm) {
+			final ScrolledForm form = managedForm.getForm();
+
+			Action haction = new Action("hor", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$
+				public void run() {
+					sashForm.setOrientation(SWT.HORIZONTAL);
+					form.reflow(true);
+				}
+			};
+			haction.setChecked(true);
+			haction.setToolTipText(PDEUIMessages.DetailsBlock_horizontal); 
+			haction.setImageDescriptor(PDEPluginImages.DESC_HORIZONTAL);
+			haction.setDisabledImageDescriptor(PDEPluginImages.DESC_HORIZONTAL_DISABLED);
+
+			Action vaction = new Action("ver", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$
+				public void run() {
+					sashForm.setOrientation(SWT.VERTICAL);
+					form.reflow(true);
+				}
+			};
+			vaction.setChecked(false);
+			vaction.setToolTipText(PDEUIMessages.DetailsBlock_vertical); 
+			vaction.setImageDescriptor(PDEPluginImages.DESC_VERTICAL);
+			vaction.setDisabledImageDescriptor(PDEPluginImages.DESC_VERTICAL_DISABLED);
+			form.getToolBarManager().add(haction);
+			form.getToolBarManager().add(vaction);
+		}		
+	}	
+
 	public PDEFormPage(FormEditor editor, String id, String title) {
 		super(editor, id, title);
 	}
@@ -46,7 +84,7 @@ public abstract class PDEFormPage extends FormPage {
 		this(editor, id, title);
 		fNewStyleHeader = newStyleHeader;
 	}
-	
+
 	public void dispose() {
 		Control c = getPartControl();
 		if (c!=null && !c.isDisposed()) {
@@ -69,11 +107,9 @@ public abstract class PDEFormPage extends FormPage {
 			c.setMenu(null);
 		}
 	}
-	
+
 	protected void createFormContent(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
-		//form.setBackgroundImage(PDEPlugin.getDefault().getLabelProvider().get(
-		//		PDEPluginImages.DESC_FORM_BANNER));
 		FormToolkit toolkit = managedForm.getToolkit();
 		FormColors colors = toolkit.getColors();
 		form.getForm().setSeparatorColor(colors.getColor(FormColors.TB_BORDER));
@@ -99,9 +135,24 @@ public abstract class PDEFormPage extends FormPage {
 			helpAction.setToolTipText(PDEUIMessages.PDEFormPage_help); 
 			helpAction.setImageDescriptor(PDEPluginImages.DESC_HELP);
 			manager.add(helpAction);
-			form.updateToolBar();
 		}
+		//check to see if our form parts are contributing actions
+		IFormPart[] parts = managedForm.getParts();
+		for(int i = 0; i < parts.length; i++) {
+			if(parts[i] instanceof IAdaptable) {
+				IAdaptable adapter = (IAdaptable) parts[i];
+				IAction[] actions = 
+					(IAction[]) adapter.getAdapter(IAction[].class);
+				if(actions != null) {
+					for(int j = 0; j < actions.length; j++) {
+						form.getToolBarManager().add(actions[j]);
+					}
+				}
+			}
+		}
+		form.updateToolBar();
 	}
+
 	public PDEFormEditor getPDEEditor() {
 		return (PDEFormEditor) getEditor();
 	}
@@ -113,7 +164,7 @@ public abstract class PDEFormPage extends FormPage {
 	}
 	public void contextMenuAboutToShow(IMenuManager menu) {
 	}
-	
+
 	protected Control getFocusControl() {
 		IManagedForm form = getManagedForm();
 		if (form == null)
@@ -156,7 +207,7 @@ public abstract class PDEFormPage extends FormPage {
 		}
 		return false;
 	}
-	
+
 	private AbstractFormPart getFocusSection() {
 		Control focusControl = getFocusControl();
 		if (focusControl == null)
@@ -213,10 +264,11 @@ public abstract class PDEFormPage extends FormPage {
 				((IContextPart)part).cancelEdit();
 		}
 	}
-	
+
 	public void setActive(boolean active) {
 		if (active)
 			getPDEEditor().getValidationStack().top();
 		super.setActive(active);
 	}
+
 }

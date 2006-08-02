@@ -25,7 +25,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public abstract class StructuredViewerSection extends PDESection {
-	protected StructuredViewerPart viewerPart;
+	protected StructuredViewerPart fViewerPart;
+
 	/**
 	 * Constructor for StructuredViewerSection.
 	 * @param formPage
@@ -40,14 +41,14 @@ public abstract class StructuredViewerSection extends PDESection {
 	 */
 	public StructuredViewerSection(PDEFormPage formPage, Composite parent, int style, boolean titleBar, String [] buttonLabels) {
 		super(formPage, parent, style, titleBar);
-		viewerPart = createViewerPart(buttonLabels);
-		viewerPart.setMinimumSize(50, 50);
+		fViewerPart = createViewerPart(buttonLabels);
+		fViewerPart.setMinimumSize(50, 50);
 		FormToolkit toolkit = formPage.getManagedForm().getToolkit();
 		createClient(getSection(), toolkit);
 	}
 
 	protected void createViewerPartControl(Composite parent, int style, int span, FormToolkit toolkit) {
-		viewerPart.createControl(parent, style, span, toolkit);
+		fViewerPart.createControl(parent, style, span, toolkit);
 		MenuManager popupMenuManager = new MenuManager();
 		IMenuListener listener = new IMenuListener() {
 			public void menuAboutToShow(IMenuManager mng) {
@@ -56,7 +57,7 @@ public abstract class StructuredViewerSection extends PDESection {
 		};
 		popupMenuManager.addMenuListener(listener);
 		popupMenuManager.setRemoveAllWhenShown(true);
-		Control control = viewerPart.getControl();
+		Control control = fViewerPart.getControl();
 		Menu menu = popupMenuManager.createContextMenu(control);
 		control.setMenu(menu);
 	}
@@ -106,7 +107,7 @@ public abstract class StructuredViewerSection extends PDESection {
 		return clipboard.getContents(TextTransfer.getInstance()) != null;
 	}
 	protected ISelection getViewerSelection() {
-		return viewerPart.getViewer().getSelection();
+		return fViewerPart.getViewer().getSelection();
 	}
 	protected void doPaste(Object target, Object[] objects) {
 	}
@@ -115,6 +116,10 @@ public abstract class StructuredViewerSection extends PDESection {
 		return false;
 	}
 	public void setFocus() {
-		viewerPart.getControl().setFocus();
+		fViewerPart.getControl().setFocus();
+	}
+	
+	public StructuredViewerPart getStructuredViewerPart() {
+		return this.fViewerPart;
 	}
 }

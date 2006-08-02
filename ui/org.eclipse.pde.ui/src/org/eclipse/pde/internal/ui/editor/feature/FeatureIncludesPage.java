@@ -44,7 +44,6 @@ public class FeatureIncludesPage extends PDEFormPage {
 	}
 
 	protected void createFormContent(IManagedForm managedForm) {
-		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		GridLayout layout = new GridLayout();
@@ -94,5 +93,6 @@ public class FeatureIncludesPage extends PDEFormPage {
 		// WorkbenchHelp.setHelp(form.getBody(),
 		// IHelpContextIds.MANIFEST_FEATURE_CONTENT);
 		fIncludedSection.fireSelection();
+		super.createFormContent(managedForm);
 	}
 }

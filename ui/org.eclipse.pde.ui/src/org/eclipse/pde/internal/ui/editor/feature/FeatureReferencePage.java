@@ -44,7 +44,6 @@ public class FeatureReferencePage extends PDEFormPage {
 	}
 
 	protected void createFormContent(IManagedForm managedForm) {
-		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		GridLayout layout = new GridLayout();
@@ -93,6 +92,7 @@ public class FeatureReferencePage extends PDEFormPage {
 		// IHelpContextIds.MANIFEST_FEATURE_CONTENT);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_FEATURE_CONTENT);
 		fPluginSection.fireSelection();
+		super.createFormContent(managedForm);
 	}
 
 	public void setFocus() {

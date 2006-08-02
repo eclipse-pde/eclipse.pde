@@ -25,18 +25,24 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class ExtensionPointsPage extends PDEFormPage {
+	
 	public static final String PAGE_ID = "ex-points"; //$NON-NLS-1$
-	private ExtensionPointsSection extensionPointsSection;
-	private ExtensionPointsBlock block;
+	
+	private ExtensionPointsSection fExtensionPointsSection;
+	private ExtensionPointsBlock fBlock;
+	
 	public class ExtensionPointsBlock extends PDEMasterDetailsBlock {
+		
 		public ExtensionPointsBlock() {
 			super(ExtensionPointsPage.this);
 		}
+		
 		protected PDESection createMasterSection(IManagedForm managedForm,
 				Composite parent) {
-			extensionPointsSection = new ExtensionPointsSection(getPage(), parent);
-			return extensionPointsSection;
+			fExtensionPointsSection = new ExtensionPointsSection(getPage(), parent);
+			return fExtensionPointsSection;
 		}
+		
 		protected void registerPages(DetailsPart detailsPart) {
 			detailsPart.setPageProvider(new IDetailsPageProvider() {
 				public Object getPageKey(Object object) {
@@ -51,23 +57,20 @@ public class ExtensionPointsPage extends PDEFormPage {
 				}
 			});
 		}
-		protected void createToolBarActions(IManagedForm managedForm) {}
 	}
-	/**
-	 * @param editor
-	 * @param id
-	 * @param title
-	 */
+	
 	public ExtensionPointsPage(FormEditor editor) {
 		super(editor, PAGE_ID, PDEUIMessages.ExtensionPointsPage_tabName);  
-		block = new ExtensionPointsBlock();
+		fBlock = new ExtensionPointsBlock();
 	}
+	
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		form.setText(PDEUIMessages.ExtensionPointsPage_title); 
-		block.createContent(managedForm);
-		extensionPointsSection.fireSelection();
+		fBlock.createContent(managedForm);
+		fExtensionPointsSection.fireSelection();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_PLUGIN_EXT_POINTS);
 	}
+	
 }

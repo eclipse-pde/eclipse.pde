@@ -43,7 +43,6 @@ public class FeatureDependenciesPage extends PDEFormPage {
 	}
 
 	protected void createFormContent(IManagedForm managedForm) {
-		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		GridLayout layout = new GridLayout();
@@ -81,6 +80,7 @@ public class FeatureDependenciesPage extends PDEFormPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),IHelpContextIds.MANIFEST_FEATURE_DEPENDENCIES);
 		initialize();
 		fRequiresSection.fireSelection();
+		super.createFormContent(managedForm);
 	}
 
 	public void initialize() {

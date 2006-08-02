@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.swt.dnd.Clipboard;
@@ -20,32 +21,31 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public abstract class PDESection extends SectionPart implements IModelChangedListener, IContextPart {
+public abstract class PDESection extends SectionPart implements IModelChangedListener, IContextPart, IAdaptable {
+	
 	public static final int CLIENT_VSPACING = 4;
-	private PDEFormPage page;
+	
+	private PDEFormPage fPage;
+	
 	public PDESection(PDEFormPage page, Composite parent, int style) {
 		this(page, parent, style, true);
-	}	
-	/**
-	 * @param section
-	 *	 
-	 */
+	}
+	
 	public PDESection(PDEFormPage page, Composite parent, int style, boolean titleBar) {
 		super(parent, page.getManagedForm().getToolkit(), titleBar?(ExpandableComposite.TITLE_BAR | style): style);
-		this.page = page;
+		fPage = page;
 		initialize(page.getManagedForm());
 		getSection().clientVerticalSpacing = CLIENT_VSPACING;
 		getSection().setData("part", this); //$NON-NLS-1$
-		//createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 	
 	protected abstract void createClient(Section section, FormToolkit toolkit);
 
 	public PDEFormPage getPage() {
-		return page;
+		return fPage;
 	}
 	protected IProject getProject() {
-		return page.getPDEEditor().getCommonProject();
+		return fPage.getPDEEditor().getCommonProject();
 	}	
 	public boolean doGlobalAction(String actionId) {
 		return false;
@@ -72,5 +72,9 @@ public abstract class PDESection extends SectionPart implements IModelChangedLis
 	}
 	public void cancelEdit() {
 		super.refresh();
+	}
+	
+	public Object getAdapter(Class adapter) {
+		return null;
 	}
 }
