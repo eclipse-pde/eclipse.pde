@@ -50,6 +50,17 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 			fireStructureChanged(pluginImport, IModelChangedEvent.INSERT);
 		}
 	}
+	
+	public void add(IPluginImport[] pluginImports) throws CoreException {
+		IDocumentNode parent = getEnclosingElement("requires", true); //$NON-NLS-1$
+		for (int i = 0; i < pluginImports.length; i++) {
+			if (pluginImports[i] != null && pluginImports[i] instanceof PluginImportNode) {
+				PluginImportNode node = (PluginImportNode)pluginImports[i];
+				parent.addChildNode(node);
+			}
+		}
+		fireStructureChanged(pluginImports, IModelChangedEvent.INSERT);
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#remove(org.eclipse.pde.core.plugin.IPluginImport)
 	 */
@@ -60,6 +71,17 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 			pluginImport.setInTheModel(false);
 			fireStructureChanged(pluginImport, IModelChangedEvent.REMOVE);
 		}	
+	}
+	
+	public void remove(IPluginImport[] pluginImports) throws CoreException {
+		IDocumentNode parent = getEnclosingElement("requires", false); //$NON-NLS-1$
+		if (parent != null) {
+			for (int i = 0; i < pluginImports.length; i++) {
+				parent.removeChildNode((IDocumentNode)pluginImports[i]);
+				pluginImports[i].setInTheModel(false);
+			}
+			fireStructureChanged(pluginImports, IModelChangedEvent.REMOVE);
+		}
 	}
 	
 	/* (non-Javadoc)

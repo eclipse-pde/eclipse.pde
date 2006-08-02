@@ -21,6 +21,7 @@ import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.osgi.framework.Constants;
 import org.w3c.dom.Node;
@@ -36,6 +37,15 @@ public class PluginImport
 	private String version;
 
 	public PluginImport() {
+	}
+	
+	public PluginImport(ISharedPluginModel model, String id) {
+		try {
+			setModel(model);
+			ensureModelEditable();
+			this.id = id;
+		} catch (CoreException e) {
+		}
 	}
 	
 	public boolean isValid() {

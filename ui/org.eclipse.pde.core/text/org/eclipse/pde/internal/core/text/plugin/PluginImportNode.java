@@ -18,6 +18,25 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 
 	private static final long serialVersionUID = 1L;
 
+	public PluginImportNode(String id) {
+		super();
+		String name = "plugin"; //$NON-NLS-1$
+		try {
+			if (id == null)
+				id = ""; //$NON-NLS-1$
+			PluginAttribute attr = new PluginAttribute();
+			attr.setName(name);
+			attr.setEnclosingElement(this);
+			fAttributes.put(name, attr);
+			attr.setValue(id);
+		} catch (CoreException e) {
+		}
+	}
+
+	public PluginImportNode() {
+		super();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginImport#isReexported()
 	 */

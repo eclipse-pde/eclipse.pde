@@ -61,6 +61,15 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		fImports.add(iimport);
 		fireStructureChanged(iimport, IModelChangedEvent.INSERT);
 	}
+	public void add(IPluginImport[] iimports) throws CoreException {
+		ensureModelEditable();
+		for (int i = 0; i < iimports.length; i++) {
+			((PluginImport) iimports[i]).setInTheModel(true);
+			((PluginImport) iimports[i]).setParent(this);
+			fImports.add(iimports[i]);
+		}
+		fireStructureChanged(iimports, IModelChangedEvent.INSERT);
+	}
 	public IPluginLibrary[] getLibraries() {
 		return (IPluginLibrary[])fLibraries.toArray(new IPluginLibrary[fLibraries.size()]);
 	}
@@ -242,6 +251,14 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		fImports.remove(iimport);
 		((PluginImport) iimport).setInTheModel(false);
 		fireStructureChanged(iimport, IModelChangedEvent.REMOVE);
+	}
+	public void remove(IPluginImport[] iimports) throws CoreException {
+		ensureModelEditable();
+		for (int i = 0; i < iimports.length; i++){
+			fImports.remove(iimports[i]);
+			((PluginImport) iimports[i]).setInTheModel(false);
+		}
+		fireStructureChanged(iimports, IModelChangedEvent.REMOVE);
 	}
 	public void reset() {
 		fLibraries = new ArrayList();

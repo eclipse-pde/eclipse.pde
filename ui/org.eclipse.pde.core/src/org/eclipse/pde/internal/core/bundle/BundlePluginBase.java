@@ -165,29 +165,43 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 */
 	public void add(IPluginImport iimport) throws CoreException {
 		if (imports != null) {
-			imports.add(iimport);
-			Object header = getManifestHeader(Constants.REQUIRE_BUNDLE);
-			if (header instanceof RequireBundleHeader) {
-				((RequireBundleHeader)header).addBundle(iimport);
-			} else {
-				StringBuffer buffer = new StringBuffer(iimport.getId());
-				int bundleManifestVersion = getBundleManifestVersion(getBundle());
-				if (iimport.isOptional())
-					if (bundleManifestVersion > 1)
-						buffer.append(";" + Constants.RESOLUTION_DIRECTIVE + ":=" + Constants.RESOLUTION_OPTIONAL); //$NON-NLS-1$ //$NON-NLS-2$
-					else
-						buffer.append(";" + ICoreConstants.OPTIONAL_ATTRIBUTE + "=true"); //$NON-NLS-1$ //$NON-NLS-2$
-				if (iimport.isReexported())
-					if (bundleManifestVersion > 1)
-						buffer.append(";" + Constants.VISIBILITY_DIRECTIVE + ":=" + Constants.VISIBILITY_REEXPORT); //$NON-NLS-1$ //$NON-NLS-2$
-					else
-						buffer.append(";" + ICoreConstants.REPROVIDE_ATTRIBUTE + "=true"); //$NON-NLS-1$ //$NON-NLS-2$
-				String version = iimport.getVersion();
-				if (version != null && version.trim().length() > 0)
-					buffer.append(";" + Constants.BUNDLE_VERSION_ATTRIBUTE + "=\"" + version.trim() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				getBundle().setHeader(Constants.REQUIRE_BUNDLE, buffer.toString());
-			}
+			addImport(iimport);
 			fireStructureChanged(iimport, true);
+		}
+	}
+	
+	public void add(IPluginImport[] iimports) throws CoreException {
+		if (imports != null && iimports.length > 0) {
+			for (int i = 0; i < iimports.length; i++) {
+				if (iimports[i] != null)
+					addImport(iimports[i]);
+			}
+			fireStructureChanged(iimports, true);
+		}
+	}
+	
+	private void addImport(IPluginImport iimport) {
+		imports.add(iimport);
+		Object header = getManifestHeader(Constants.REQUIRE_BUNDLE);
+		if (header instanceof RequireBundleHeader) {
+			((RequireBundleHeader)header).addBundle(iimport);
+		} else {
+			StringBuffer buffer = new StringBuffer(iimport.getId());
+			int bundleManifestVersion = getBundleManifestVersion(getBundle());
+			if (iimport.isOptional())
+				if (bundleManifestVersion > 1)
+					buffer.append(";" + Constants.RESOLUTION_DIRECTIVE + ":=" + Constants.RESOLUTION_OPTIONAL); //$NON-NLS-1$ //$NON-NLS-2$
+				else
+					buffer.append(";" + ICoreConstants.OPTIONAL_ATTRIBUTE + "=true"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (iimport.isReexported())
+				if (bundleManifestVersion > 1)
+					buffer.append(";" + Constants.VISIBILITY_DIRECTIVE + ":=" + Constants.VISIBILITY_REEXPORT); //$NON-NLS-1$ //$NON-NLS-2$
+				else
+					buffer.append(";" + ICoreConstants.REPROVIDE_ATTRIBUTE + "=true"); //$NON-NLS-1$ //$NON-NLS-2$
+			String version = iimport.getVersion();
+			if (version != null && version.trim().length() > 0)
+				buffer.append(";" + Constants.BUNDLE_VERSION_ATTRIBUTE + "=\"" + version.trim() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			getBundle().setHeader(Constants.REQUIRE_BUNDLE, buffer.toString());
 		}
 	}
 	
@@ -204,6 +218,19 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 				((RequireBundleHeader)header).removeBundle(pluginImport.getId());
 			}			
 			fireStructureChanged(pluginImport, false);	
+		}
+	}
+	
+	public void remove(IPluginImport[] pluginImports) throws CoreException {
+		if (imports != null) {
+			for (int i = 0; i < pluginImports.length; i++) {
+				imports.remove(pluginImports[i]);
+				Object header = getManifestHeader(Constants.REQUIRE_BUNDLE);
+				if (header instanceof RequireBundleHeader) {
+					((RequireBundleHeader)header).removeBundle(pluginImports[i].getId());
+				}			
+			}
+			fireStructureChanged(pluginImports, false);
 		}
 	}
 
@@ -373,6 +400,11 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	protected void fireStructureChanged(Object object, boolean added) {
 		int type = (added)?IModelChangedEvent.INSERT:IModelChangedEvent.REMOVE;
 		model.fireModelChanged(new ModelChangedEvent(model, type, new Object[]{object}, null ));
+	}
+	
+	protected void fireStructureChanged(Object[] objects, boolean added) {
+		int type = (added)?IModelChangedEvent.INSERT:IModelChangedEvent.REMOVE;
+		model.fireModelChanged(new ModelChangedEvent(model, type, objects, null ));
 	}
 
 	/*

@@ -166,6 +166,13 @@ public abstract class AbstractPluginModelBase
 		iimport.setParent(getPluginBase());
 		return iimport;
 	}
+	
+	public IPluginImport createImport(String pluginId) {
+		PluginImport iimport = new PluginImport(this, pluginId);
+		iimport.setParent(getPluginBase());
+		return iimport;
+	}
+	
 	public IPluginLibrary createLibrary() {
 		PluginLibrary library = new PluginLibrary();
 		library.setModel(this);

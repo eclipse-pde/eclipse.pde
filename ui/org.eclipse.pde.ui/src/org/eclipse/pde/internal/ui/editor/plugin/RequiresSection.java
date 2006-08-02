@@ -34,11 +34,18 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.internal.core.IPluginModelListener;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelDelta;
+import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
+import org.eclipse.pde.internal.core.bundle.BundlePluginModelBase;
+import org.eclipse.pde.internal.core.plugin.AbstractPluginModelBase;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
+import org.eclipse.pde.internal.core.plugin.PluginBase;
+import org.eclipse.pde.internal.core.text.plugin.PluginBaseNode;
+import org.eclipse.pde.internal.core.text.plugin.PluginDocumentNodeFactory;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.TableSection;
@@ -271,15 +278,26 @@ public class RequiresSection
 		IStructuredSelection ssel = (IStructuredSelection) fImportViewer.getSelection();
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		IPluginBase pluginBase = model.getPluginBase();
-		try {
-			for (Iterator iter = ssel.iterator(); iter.hasNext();) {
-				ImportObject iobj = (ImportObject) iter.next();
-				pluginBase.remove(iobj.getImport());
-			}
+		IPluginImport[] imports = new IPluginImport[ssel.size()];
+		int i = 0;
+		for (Iterator iter = ssel.iterator(); iter.hasNext();i++) 
+			imports[i] = ((ImportObject) iter.next()).getImport();
+
+		try {			
+			removeImports(pluginBase, imports);
 		} catch (CoreException e) {
             PDEPlugin.logException(e);
 		}
         updateButtons();
+	}
+	
+	private void removeImports(IPluginBase base, IPluginImport[] imports) throws CoreException{
+		if (base instanceof BundlePluginBase)
+			((BundlePluginBase)base).remove(imports);
+		else if (base instanceof PluginBase) 
+			((PluginBase)base).remove(imports);
+		else if (base instanceof PluginBaseNode) 
+			((PluginBaseNode)base).remove(imports);
 	}
     
 	private void handleAdd() {
@@ -292,16 +310,37 @@ public class RequiresSection
 		dialog.create();
 		if (dialog.open() == Window.OK) {
 			Object[] models = dialog.getResult();
-			for (int i = 0; i < models.length; i++) {
-				try {
+			IPluginImport[] imports = new IPluginImport[models.length];
+			try {
+				for (int i = 0; i < models.length; i++) {
 					IPluginModel candidate = (IPluginModel) models[i];
-					IPluginImport importNode = model.getPluginFactory().createImport();
-					importNode.setId(candidate.getPlugin().getId());
-					model.getPluginBase().add(importNode);
-				} catch (CoreException e) {
+					String pluginId = candidate.getPlugin().getId();
+					IPluginImport importNode = createImport(model.getPluginFactory(), pluginId);
+					imports[i] = importNode;
 				}
+				addImports(model.getPluginBase(), imports);
+			} catch (CoreException e) {
 			}
 		}
+	}
+	
+	private IPluginImport createImport(IPluginModelFactory factory, String id) {
+		if (factory instanceof AbstractPluginModelBase) 
+			return ((AbstractPluginModelBase)factory).createImport(id);
+		else if (factory instanceof BundlePluginModelBase)
+			return ((BundlePluginModelBase)factory).createImport(id);
+		else if (factory instanceof PluginDocumentNodeFactory)
+			return ((PluginDocumentNodeFactory)factory).createImport(id);
+		return null;
+	}
+	
+	private void addImports(IPluginBase base, IPluginImport[] imports) throws CoreException {
+		if (base instanceof BundlePluginBase)
+			((BundlePluginBase)base).add(imports);
+		else if (base instanceof PluginBase) 
+			((PluginBase)base).add(imports);
+		else if (base instanceof PluginBaseNode) 
+			((PluginBaseNode)base).add(imports);
 	}
 	
 	private void handleUp() {
@@ -424,36 +463,45 @@ public class RequiresSection
 			return;
 		}
 
-		Object changeObject = event.getChangedObjects()[0];		
-		if (changeObject instanceof IPluginImport) {
-			IPluginImport iimport = (IPluginImport) changeObject;
-			if (event.getChangeType() == IModelChangedEvent.INSERT) {
-				ImportObject iobj = new ImportObject(iimport);
-				if (fImports == null)
-					// creatImportObjects method will find new addition
-					createImportObjects();
-				else
-					fImports.add(iobj);
-				fImportViewer.add(iobj);
-				fImportViewer.setSelection(new StructuredSelection(iobj), true);
-				fImportViewer.getTable().setFocus();
-			} else {
-				ImportObject iobj = findImportObject(iimport);
-				if (iobj != null) {
-					if (event.getChangeType() == IModelChangedEvent.REMOVE) {
-						if (fImports == null)
-							// createImportObjects method will not include the removed import
-							createImportObjects();
-						else
-							fImports.remove(iobj);
-                        Table table = fImportViewer.getTable();
-                        int index = table.getSelectionIndex();
-						fImportViewer.remove(iobj);
-                        table.setSelection(index < table.getItemCount() ? index : table.getItemCount() -1);
-					} else {
-						fImportViewer.update(iobj, null);
+		Object[] changedObjects = event.getChangedObjects();
+		if (changedObjects[0] instanceof IPluginImport) {
+			ImportObject[] objects = new ImportObject[changedObjects.length];
+			int index = 0;
+			for (int i = 0; i < changedObjects.length; i++) {
+				Object changeObject = changedObjects[i];
+				IPluginImport iimport = (IPluginImport) changeObject;
+				if (event.getChangeType() == IModelChangedEvent.INSERT) {
+					ImportObject iobj = new ImportObject(iimport);
+					if (fImports == null)
+						// creatImportObjects method will find new addition
+						createImportObjects();
+					else
+						fImports.add(iobj);
+					fImportViewer.add(iobj);
+				} else {
+					ImportObject iobj = findImportObject(iimport);
+					if (iobj != null) {
+						if (event.getChangeType() == IModelChangedEvent.REMOVE) {
+							if (fImports == null)
+								// createImportObjects method will not include the removed import
+								createImportObjects();
+							else
+								fImports.remove(iobj);
+	                        Table table = fImportViewer.getTable();
+	                        index = table.getSelectionIndex();
+							fImportViewer.remove(iobj);
+						} else {
+							fImportViewer.update(iobj, null);
+						}
 					}
 				}
+			}
+			if (event.getChangeType() == IModelChangedEvent.INSERT) {
+				fImportViewer.setSelection(new StructuredSelection(objects), true);
+				fImportViewer.getTable().setFocus();
+			} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
+				Table table = fImportViewer.getTable();
+				table.setSelection(index < table.getItemCount() ? index : table.getItemCount() -1);
 			}
 		} else {
 			fImportViewer.update(((IStructuredSelection)fImportViewer.getSelection()).toArray(), null);

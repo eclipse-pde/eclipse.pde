@@ -189,6 +189,15 @@ public class PluginObjectNode extends PluginDocumentNode
 			fireModelChanged(e);
 		}
 	}
+	
+	protected void fireStructureChanged(IPluginObject[] children, int changeType) {
+		IModel model = getModel();
+		if (model.isEditable() && model instanceof IModelChangeProvider) {
+			IModelChangedEvent e = new ModelChangedEvent(fModel, changeType,
+					children, null);
+			fireModelChanged(e);
+		}
+	}
 
 	protected void fireModelChanged(IModelChangedEvent e) {
 		IModel model = getModel();

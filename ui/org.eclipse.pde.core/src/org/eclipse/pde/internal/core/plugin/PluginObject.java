@@ -91,6 +91,14 @@ public abstract class PluginObject
 			fireModelChanged(e);
 		}
 	}
+	protected void fireStructureChanged(IPluginObject[] children, int changeType) {
+		IModel model = getModel();
+		if (model.isEditable() && model instanceof IModelChangeProvider) {
+			IModelChangedEvent e =
+				new ModelChangedEvent((IModelChangeProvider)model, changeType, children, null);
+			fireModelChanged(e);
+		}
+	}
 	protected void fireModelChanged(IModelChangedEvent e) {
 		IModel model = getModel();
 		if (model.isEditable() && model instanceof IModelChangeProvider) {

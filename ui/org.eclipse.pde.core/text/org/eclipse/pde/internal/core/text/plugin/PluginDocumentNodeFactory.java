@@ -86,6 +86,13 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory {
 		node.setXMLTagName("import"); //$NON-NLS-1$
 		return node;
 	}
+	
+	public IPluginImport createImport(String pluginId) {
+		PluginImportNode node = new PluginImportNode(pluginId);
+		node.setModel(fModel);
+		node.setXMLTagName("import"); //$NON-NLS-1$
+		return node;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelFactory#createLibrary()
