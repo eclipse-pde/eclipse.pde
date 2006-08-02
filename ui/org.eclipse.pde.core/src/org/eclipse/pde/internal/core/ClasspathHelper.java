@@ -173,12 +173,11 @@ public class ClasspathHelper {
 				List excluded = getFoldersToExclude(project, checkExcluded);
 				IPath path = jProject.getOutputLocation();
 				if (path != null && !excluded.contains(path))
-					addPath(result, project, path, false);
+					addPath(result, project, path);
 				
 				IClasspathEntry[] entries = jProject.getRawClasspath();
 				for (int i = 0; i < entries.length; i++) {
 					path = null;
-					boolean addIfLinked = false;
 					if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 						path = entries[i].getOutputLocation();
 					} else if (entries[i].getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
@@ -187,12 +186,11 @@ public class ClasspathHelper {
 							if (set.isEmpty() || set.contains(".")) //$NON-NLS-1$
 								path = entries[i].getPath();
 						} else if (set.contains(candidate.toString())) {
-							addIfLinked = true;
 							path = entries[i].getPath();
 						}
 					}
 					if (path != null && !excluded.contains(path)) {
-						addPath(result, project, path, addIfLinked);
+						addPath(result, project, path);
 					}
 				}
 			}
@@ -202,26 +200,25 @@ public class ClasspathHelper {
 		return (IPath[])result.toArray(new IPath[result.size()]);	
 	}
 
-	private static void addPath(ArrayList result, IProject project, IPath path, boolean onlyIfLinked) {
-		IPath resultPath = null;
+	private static void addPath(ArrayList result, IProject project, IPath path) {
 		if (path.segmentCount() > 0 && path.segment(0).equals(project.getName())) {
 			path = path.removeFirstSegments(1);
-			if (path.segmentCount() == 0 && !onlyIfLinked)
-				resultPath = new Path("."); //$NON-NLS-1$
+			if (path.segmentCount() == 0)
+				path = new Path("."); //$NON-NLS-1$
 			else {
 				IResource resource = project.findMember(path);
 				if (resource != null) {
-					if (!onlyIfLinked)
-						resultPath = path;
-					if (resource.isLinked(IResource.CHECK_ANCESTORS)) {
-						resultPath = resource.getLocation();
+					if (resource.isLinked()) {
+						path = resource.getLocation();
 					} 
-				} 
+				} else {
+					path = null;
+				}
 			}
 		}
 		
-		if (resultPath != null && !result.contains(resultPath))
-			result.add(resultPath);
+		if (path != null && !result.contains(path))
+			result.add(path);
 	}
 	
 	private static List getFoldersToExclude(IProject project, boolean checkExcluded) {
