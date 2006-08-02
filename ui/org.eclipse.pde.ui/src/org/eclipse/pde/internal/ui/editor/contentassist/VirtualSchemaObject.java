@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class VirtualSchemaObject implements ISchemaObject {
 
-	// TODO: MP: PERFORMANCE IMPROVEMENT MARKER
+	// TODO: Performance improvement marker
 	// This object is not stored or cached anywhere
 	
 	private String fName; 

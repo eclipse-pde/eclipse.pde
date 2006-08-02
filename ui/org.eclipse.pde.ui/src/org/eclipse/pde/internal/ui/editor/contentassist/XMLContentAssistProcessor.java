@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -313,34 +314,114 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		} else {
 			IPluginObject obj = XMLUtil.getTopLevelParent(node);
 			if (obj instanceof IPluginExtension) {
-				ISchemaElement sElem = XMLUtil.getSchemaElement(node, ((IPluginExtension)obj).getPoint());
-				if (sElem != null && sElem.getType() instanceof ISchemaComplexType) {
-					IDocumentNode[] children = node.getChildNodes();
-					ISchemaCompositor comp = ((ISchemaComplexType)sElem.getType()).getCompositor();
-					if (comp == null)
-						return null;
-					ISchemaObject[] sChildren = comp.getChildren();
-					
-					// TODO need to check compositor max/min etc.
-					ArrayList list = new ArrayList();
-					for (int i = 0; i < sChildren.length && sChildren[i] instanceof ISchemaElement; i++) {
-						int k; // if we break early we wont add
-						for (k = 0; k < children.length; k++)
-							if (children[k].getXMLTagName().equals(sChildren[i].getName()) &&
-									((ISchemaElement)sChildren[i]).getMaxOccurs() == 1)
-								break;
-						if (k == children.length)
-							list.add(sChildren[i]);
-					}
-					int length = list.size();
-					for (int i = 0; i < length; i++)
-						addToList(propList, filter, (ISchemaElement)list.get(i));
+				ISchemaElement sElement = XMLUtil.getSchemaElement(node, 
+						((IPluginExtension)obj).getPoint());
+				if ((sElement != null) &&
+						(sElement.getType() instanceof ISchemaComplexType)) {
+					// Get the element's siblings
+					HashMap siblings = getXMLSiblings(node);
+					// Get this element's compositor
+					ISchemaCompositor compositor = 
+						((ISchemaComplexType)sElement.getType()).getCompositor();
+					// Track multiplicity
+					int multiplicityTracker = 1;
+					// Process the compositor
+					computeCompositorChildProposal(compositor, filter,
+							propList, siblings, multiplicityTracker);
+				} else {
+					return null;
 				}
 			}
 		}
 		return convertListToProposal(propList, node, offset);
 	}
 
+	/**
+	 * @param node
+	 * @return A hash containing singleton entries of node's children mapped
+	 * against the number of occurrences found
+	 * Key is children's XML tag name
+	 * Value is number of occurrences found amongst siblings
+	 */
+	private HashMap getXMLSiblings(IDocumentNode node) {
+		IDocumentNode[] children = node.getChildNodes();
+		HashMap siblings = new HashMap();
+		for (int i = 0; i < children.length; i++) {
+			String key = children[i].getXMLTagName();
+			if (siblings.containsKey(key)) {
+				int value = ((Integer)siblings.get(key)).intValue();
+				value++;
+				siblings.put(key, new Integer(value));
+			} else {
+				siblings.put(key, new Integer(1));
+			}
+		}
+		return siblings;
+	}
+	
+	private void computeCompositorChildProposal(ISchemaCompositor compositor, String filter, ArrayList propList, HashMap siblings, int multiplicityTracker) {
+		if (compositor == null) {
+			return;
+		}
+		// All we care about is choices and sequences (Alls and groups not 
+		// supported)
+		ISchemaObject[] schemaObject = compositor.getChildren();
+		// Multiply the max occurs amount to the overall multiplicity
+		if (multiplicityTracker < Integer.MAX_VALUE) {
+			multiplicityTracker = compositor.getMaxOccurs()
+					* multiplicityTracker;
+		}
+		// Process the compositors children
+		for (int i = 0; i < compositor.getChildCount(); i++) {
+			computeObjectChildProposal(schemaObject[i], filter, propList,
+					siblings, multiplicityTracker);
+		}
+	}
+
+	private void computeObjectChildProposal(ISchemaObject schemaObject,
+			String filter, ArrayList propList, HashMap siblings,
+			int multiplicityTracker) {
+		if (schemaObject instanceof ISchemaElement) {
+			ISchemaElement schemaElement = (ISchemaElement)schemaObject;
+			computeElementChildProposal(schemaElement, filter, propList,
+					siblings, multiplicityTracker);
+		} else if (schemaObject instanceof ISchemaCompositor) {
+			ISchemaCompositor sCompositor = (ISchemaCompositor)schemaObject;
+			computeCompositorChildProposal(sCompositor, filter, propList,
+					siblings, multiplicityTracker);
+		} else {
+			// Unknown schema object
+		}		
+	}
+	
+	private void computeElementChildProposal(ISchemaElement schemaElement,
+			String filter, ArrayList propList, HashMap siblings,
+			int multiplicityTracker) {
+
+		int occurrences = 0;
+		// Determine the number of occurrences found of this element
+		if (siblings.containsKey(schemaElement.getName())) {
+			occurrences = ((Integer) siblings.get(schemaElement.getName()))
+					.intValue();			
+		}
+		// Multiply the max occurs amount to the overall multiplicity
+		if (multiplicityTracker < Integer.MAX_VALUE) {
+			multiplicityTracker = schemaElement.getMaxOccurs()
+					* multiplicityTracker;
+		}		
+		// Only add a new proposal for a given element if it has not exceeded 
+		// the multiplicity
+		// Note:  This is a simple calculation that does not address all complex
+		// XML Schema multiplity rules.  For instance, multiple layers of
+		// choices and sequences compositors coupled with varying siblings
+		// elements require a regex processor
+		// For the PDE space this is not required as extension point schemas
+		// are always very simple
+		if (occurrences < multiplicityTracker) {
+			addToList(propList, filter, schemaElement);
+		}
+	}
+	
 	private ICompletionProposal[] computeOpenTagProposal(IDocumentNode node, int offset, IDocument doc) {
 		IPluginObject obj = XMLUtil.getTopLevelParent(node);
 		if (obj instanceof IPluginExtension) {

@@ -344,7 +344,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 					fSelLen = ((PluginAttribute)att).getValueLength();
 				}
 			} else if (XMLInsertionComputer.hasOptionalChildren(schemaElement, false, new HashSet()) && value != null) {
-				// TODO: MP:  PERFORMANCE IMPROVEMENT MARKER
+				// TODO: Performance improvement marker
 				// position caret for element insertion
 				int ind = value.indexOf('>');
 				if (ind > 0) {
@@ -352,7 +352,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 					fSelLen = 0;
 				}
 			} else if (XMLInsertionComputer.hasOptionalAttributes(schemaElement) && value != null) {
-				// TODO: MP:  PERFORMANCE IMPROVEMENT MARKER
+				// TODO: Performance improvement marker
 				// position caret for attribute insertion
 				int ind = value.indexOf('>');
 				if (ind != -1) {

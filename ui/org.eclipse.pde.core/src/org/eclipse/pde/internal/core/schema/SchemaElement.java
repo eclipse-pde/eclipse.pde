@@ -292,6 +292,11 @@ public class SchemaElement extends RepeatableSchemaObject implements
 			return super.getDescription();
 		}
 		ISchema schema = getSchema();
+		if ((schema == null) ||
+				(schema.getURL() == null)) {
+			// This can happen when creating a new extension point schema
+			return null;
+		}
 		String hashkey = schema.getURL().hashCode() + "_" + getName(); //$NON-NLS-1$
 		String description = 
 			XMLComponentRegistry.Instance().getDescription(

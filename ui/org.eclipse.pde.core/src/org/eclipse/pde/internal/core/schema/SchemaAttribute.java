@@ -249,10 +249,14 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	}
 	
 	public String getDescription() {
-		if (super.getDescription() != null ) {
+		if (super.getDescription() != null) {
 			return super.getDescription();
 		}
 		ISchema schema = getSchema();
+		if ((schema == null) ||
+				(schema.getURL() == null)) {
+			return null;
+		}
 		String elementName = null;
 		if (getParent() instanceof ISchemaElement) {
 			elementName = ((ISchemaElement)getParent()).getName();

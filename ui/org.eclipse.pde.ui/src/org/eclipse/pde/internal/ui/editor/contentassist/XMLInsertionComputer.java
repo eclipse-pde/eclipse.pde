@@ -117,7 +117,7 @@ public class XMLInsertionComputer {
 	 * @param pElement
 	 * @param compositor
 	 */
-	protected static boolean computeInsertionCompositor(IPluginParent pElement, ISchemaCompositor compositor) {
+	protected static boolean computeInsertionCompositor(ISchemaCompositor compositor) {
 		if (compositor == null) {
 			return false;
 		} else if (compositor.getKind() == ISchemaCompositor.CHOICE) {
@@ -269,7 +269,7 @@ public class XMLInsertionComputer {
 		// Process the compositor the minimum number of times
 		for (int k = 0; k < compositor.getMinOccurs(); k++) {
 			// Only continue processing if the compositor is a sequence
-			if (computeInsertionCompositor(pElement, compositor) == false)
+			if (computeInsertionCompositor(compositor) == false)
 				continue;
 			// We have a sequence
 			ISchemaObject[] schemaObject = compositor.getChildren();
@@ -308,9 +308,6 @@ public class XMLInsertionComputer {
 		}
 	}
 
-	// TODO:  MP:  REVISIT:  Functionality could be done implicitly in above
-	// helper methods and remembered?
-	
 	public static boolean hasOptionalAttributes(ISchemaElement ele) {
 		ISchemaAttribute[] attrs = ele.getAttributes();
 		for (int i = 0; i < attrs.length; i++)
@@ -320,9 +317,6 @@ public class XMLInsertionComputer {
 		return false;
 	}
 
-	// TODO:  MP:  REVISIT:  Functionality could be done implicitly in above
-	// helper methods and remembered?
-	
 	public static boolean hasOptionalChildren(ISchemaObject obj, boolean onChild, HashSet set) {
 		if (obj == null || set.contains(obj))
 			return false;
