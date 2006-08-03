@@ -11,26 +11,22 @@
 package org.eclipse.pde.internal.ui.editor.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.editor.StructuredViewerSection;
 
 public class CollapseAction extends Action {
 
-	private StructuredViewerSection fSection;
+	private AbstractTreeViewer fViewer;
 
-	public CollapseAction(StructuredViewerSection section, String tooltipText) {
+	public CollapseAction(AbstractTreeViewer viewer, String tooltipText) {
 		super("collapse"); //$NON-NLS-1$
 		setToolTipText(tooltipText);
 		setImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL);
-		fSection = section;
+		fViewer = viewer;
 	}
 
 	public void run() {
-		StructuredViewer viewer = fSection.getStructuredViewerPart().getViewer();
-		if(viewer instanceof TreeViewer)
-			((TreeViewer) viewer).collapseAll();
+		fViewer.collapseAll();
 	}
 
 }

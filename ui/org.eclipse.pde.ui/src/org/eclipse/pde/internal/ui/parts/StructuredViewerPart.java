@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
+
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -16,53 +17,52 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-
 public abstract class StructuredViewerPart extends SharedPartWithButtons {
-	private StructuredViewer viewer;
-	private Point minSize = null;
+
+	private StructuredViewer fViewer;
+
+	private Point fMinSize;
+
 	public StructuredViewerPart(String[] buttonLabels) {
 		super(buttonLabels);
 	}
+
 	public StructuredViewer getViewer() {
-		return viewer;
+		return fViewer;
 	}
+
 	public Control getControl() {
-		return viewer.getControl();
+		return fViewer.getControl();
 	}
-	/*
-	 * @see SharedPartWithButtons#createMainControl(Composite, int,
-	 *      FormWidgetFactory)
-	 */
-	protected void createMainControl(Composite parent, int style, int span,
-			FormToolkit toolkit) {
-		viewer = createStructuredViewer(parent, style, toolkit);
-		Control control = viewer.getControl();
-		/*
-		if (toolkit != null) {
-			toolkit.hookDeleteListener(control);
-		}
-		*/
+
+	protected void createMainControl(Composite parent, int style, int span, FormToolkit toolkit) {
+		fViewer = createStructuredViewer(parent, style, toolkit);
+		Control control = fViewer.getControl();
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = span;
 		control.setLayoutData(gd);
 		applyMinimumSize();
 	}
+
 	public void setMinimumSize(int width, int height) {
-		minSize = new Point(width, height);
-		if (viewer != null)
+		fMinSize = new Point(width, height);
+		if (fViewer != null)
 			applyMinimumSize();
 	}
+
 	private void applyMinimumSize() {
-		if (minSize != null) {
-			GridData gd = (GridData) viewer.getControl().getLayoutData();
-			gd.widthHint = minSize.x;
-			gd.heightHint = minSize.y;
+		if (fMinSize != null) {
+			GridData gd = (GridData) fViewer.getControl().getLayoutData();
+			gd.widthHint = fMinSize.x;
+			gd.heightHint = fMinSize.y;
 		}
 	}
+
 	protected void updateEnabledState() {
 		getControl().setEnabled(isEnabled());
 		super.updateEnabledState();
 	}
-	protected abstract StructuredViewer createStructuredViewer(
-			Composite parent, int style, FormToolkit toolkit);
+
+	protected abstract StructuredViewer createStructuredViewer(Composite parent,
+			int style, FormToolkit toolkit);
 }

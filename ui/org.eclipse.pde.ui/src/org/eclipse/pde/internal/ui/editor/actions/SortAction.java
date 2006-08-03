@@ -12,43 +12,31 @@ package org.eclipse.pde.internal.ui.editor.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.editor.StructuredViewerSection;
 
 public class SortAction extends Action {
 
 	private boolean fSorted = false;
-	private StructuredViewerSection fSection;
+	private StructuredViewer fViewer;
 	private ViewerSorter fSorter;
 
-	public SortAction(StructuredViewerSection section, String tooltipText) {
-		super(tooltipText, IAction.AS_CHECK_BOX); //$NON-NLS-1$
+	public SortAction(StructuredViewer viewer, String tooltipText, ViewerSorter sorter, IPropertyChangeListener listener) {
+		super(tooltipText, IAction.AS_CHECK_BOX);
 		setToolTipText(tooltipText);
 		setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO);
-		fSorted = section.getStructuredViewerPart().getViewer().getSorter() == null ? false : true;
+		fSorted = viewer.getSorter() == null ? false : true;
 		setChecked(fSorted);
-		fSection = section;
-	}
-	
-	public SortAction(StructuredViewerSection section, String tooltipText, ViewerSorter sorter) {
-		super(tooltipText, IAction.AS_CHECK_BOX); //$NON-NLS-1$
-		setToolTipText(tooltipText);
-		setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO);
-		fSorted = section.getStructuredViewerPart().getViewer().getSorter() == null ? false : true;
-		setChecked(fSorted);
-		fSection = section;
-		fSorter = sorter;
+		fViewer= viewer;
+		fSorter = sorter != null ? sorter : new ViewerSorter();
+		if (listener != null)
+			addListenerObject(listener);
 	}
 
 	public void run() {
-		ViewerSorter viewerSorter;
-		if(fSorted) {
-			viewerSorter = null;
-		} else {
-			viewerSorter = (fSorter == null ? new ViewerSorter() : fSorter);
-		}
-		fSection.getStructuredViewerPart().getViewer().setSorter(viewerSorter);
+		fViewer.setSorter(fSorted ? null : fSorter);
 		fSorted = !fSorted;
 	}
 

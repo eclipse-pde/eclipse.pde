@@ -22,11 +22,14 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -74,7 +77,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.part.DrillDownAdapter;
 
-public class ExtensionsSection extends TreeSection implements IModelChangedListener {
+public class ExtensionsSection extends TreeSection implements IModelChangedListener, IPropertyChangeListener {
 	private TreeViewer fExtensionTree;
 	private Image fExtensionImage;
 	private Image fGenericElementImage;
@@ -84,6 +87,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	private DrillDownAdapter fDrillDownAdapter;
 	private Action fNewExtensionAction;
 	private Hashtable fEditorWizards;
+	private SortAction fSortAction;
 
 	private static final String[] COMMON_LABEL_PROPERTIES = {
 		"label", //$NON-NLS-1$
@@ -779,29 +783,35 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	private void updateUpDownButtons(Object item) {
 		if (getPage().getModel().isEditable() == false)
 			return;
+		boolean sorted = fSortAction != null && fSortAction.isChecked();
+		if (sorted) {
+			getTreePart().setButtonEnabled(3, false);
+			getTreePart().setButtonEnabled(4, false);
+			return;
+		}
+		
 		boolean upEnabled = false;
 		boolean downEnabled = false;
-		if (item != null) {
-			if (item instanceof IPluginElement) {
-				IPluginElement element = (IPluginElement) item;
-				IPluginParent parent = (IPluginParent) element.getParent();
-				// check up
-				int index = parent.getIndexOf(element);
-				if (index > 0)
-					upEnabled = true;
-				if (index < parent.getChildCount() - 1)
-					downEnabled = true;
-			} else if (item instanceof IPluginExtension) {
-				IPluginExtension extension = (IPluginExtension) item;
-				IExtensions extensions = (IExtensions) extension.getParent();
-				int index = extensions.getIndexOf(extension);
-				int size = extensions.getExtensions().length;
-				if (index > 0)
-					upEnabled = true;
-				if (index < size - 1)
-					downEnabled = true;
-			}
+		if (item instanceof IPluginElement) {
+			IPluginElement element = (IPluginElement) item;
+			IPluginParent parent = (IPluginParent) element.getParent();
+			// check up
+			int index = parent.getIndexOf(element);
+			if (index > 0)
+				upEnabled = true;
+			if (index < parent.getChildCount() - 1)
+				downEnabled = true;
+		} else if (item instanceof IPluginExtension) {
+			IPluginExtension extension = (IPluginExtension) item;
+			IExtensions extensions = (IExtensions) extension.getParent();
+			int index = extensions.getIndexOf(extension);
+			int size = extensions.getExtensions().length;
+			if (index > 0)
+				upEnabled = true;
+			if (index < size - 1)
+				downEnabled = true;
 		}
+		
 		getTreePart().setButtonEnabled(3, upEnabled);
 		getTreePart().setButtonEnabled(4, downEnabled);
 	}
@@ -814,12 +824,22 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	
 	public Object getAdapter(Class adapter) {
 		if(adapter.equals(IAction[].class)) {
+			StructuredViewer viewer = getStructuredViewerPart().getViewer();
+			fSortAction = new SortAction(viewer, PDEUIMessages.ExtensionsPage_sortAlpha, null, this);
 			return new IAction[] {
-					new CollapseAction(this, PDEUIMessages.ManifestEditor_DetailExtension_collapseAll),
-					new SortAction(this, PDEUIMessages.ExtensionsPage_sortAlpha)
+					new CollapseAction((TreeViewer)viewer, PDEUIMessages.ManifestEditor_DetailExtension_collapseAll),
+					fSortAction
 			};
 		}
 		return super.getAdapter(adapter);
+	}
+	
+	public void propertyChange(PropertyChangeEvent event) {
+		if (fSortAction.equals(event.getSource())) {
+			StructuredViewer viewer = getStructuredViewerPart().getViewer();
+			IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
+			updateUpDownButtons(ssel.size() != 1 ? null : ssel.getFirstElement());
+		}
 	}
 
 }

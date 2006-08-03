@@ -552,9 +552,10 @@ public class RequiresSection extends TableSection implements
 		if(adapter.equals(IAction[].class)) {
 			return new IAction[] {
 					new SortAction(
-							this, 
+							getStructuredViewerPart().getViewer(), 
 							PDEUIMessages.FeatureEditor_RequiresSection_sortAlpha, 
-							ListUtil.NAME_SORTER)
+							ListUtil.NAME_SORTER,
+							null)
 			};
 		}
 		return super.getAdapter(adapter);
