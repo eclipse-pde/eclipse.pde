@@ -144,17 +144,21 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 					((IReconcilingParticipant)model).reconciled(doc);
 			}
 		}
-		
-		if (fRange instanceof IDocumentAttribute) 
+		// Get content assist text if any
+		XMLContentAssistText caText = XMLContentAssistText.parse(offset, doc);
+
+		if (caText != null) {
+			return computeCATextProposal(doc, offset, caText);
+		} else if (fRange instanceof IDocumentAttribute) {
 			return computeCompletionProposal((IDocumentAttribute)fRange, offset, doc);
-		else if (fRange instanceof IDocumentNode)
+		} else if (fRange instanceof IDocumentNode) {
 			return computeCompletionProposal((IDocumentNode)fRange, offset, doc);
-		else if (fRange instanceof IDocumentTextNode)
+		} else if (fRange instanceof IDocumentTextNode) {
 			return null;
-		else if (model instanceof PluginModelBase)
+		} else if (model instanceof PluginModelBase) {
 			// broken model - infer from text content
 			return computeBrokenModelProposal(((PluginModelBase)model).getLastErrorNode(), offset, doc);
-		
+		}
 		return null;
 	}
 
@@ -176,6 +180,23 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		}
 	}
 
+	private ICompletionProposal[] computeCATextProposal(IDocument doc,
+			int offset, XMLContentAssistText caText) {
+		fRange = fSourcePage.getRangeElement(offset, true);
+		if ((fRange != null) && 
+				(fRange instanceof IDocumentTextNode)) {
+			// We have a text node.
+			// Get its parent element
+			fRange = ((IDocumentTextNode)fRange).getEnclosingElement();
+		}
+		if ((fRange != null) && 
+				(fRange instanceof IDocumentNode)) {
+			return computeAddChildProposal((IDocumentNode)fRange, 
+					caText.getStartOffset(), doc, caText.getText());
+		}
+		return null;
+	}
+	
 	private ICompletionProposal[] computeCompletionProposal(IDocumentAttribute attr, int offset, IDocument doc) {
 		if (offset < attr.getValueOffset())
 			return null;

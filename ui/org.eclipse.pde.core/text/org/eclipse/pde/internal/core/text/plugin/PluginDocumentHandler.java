@@ -116,6 +116,7 @@ public class PluginDocumentHandler extends DocumentHandler {
 		// they will be recreated in the characters() method
 		if (isReconciling()) {
 			node.removeTextNode();
+			node.setIsErrorNode(false);
 		}
 		
 		return node;
