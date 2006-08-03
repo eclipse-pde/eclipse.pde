@@ -11,6 +11,8 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.reconciler.IReconciler;
+import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.projection.IProjectionListener;
@@ -24,6 +26,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
+import org.eclipse.pde.internal.ui.editor.text.ReconcilingStrategy;
 import org.eclipse.swt.widgets.Composite;
 
 
@@ -95,6 +98,11 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 				FoldingStructureProviderFactory.createProvider(this, (IEditingModel) model);
 			if(fFoldingStructureProvider != null)
 				fFoldingStructureProvider.initialize();
+			IReconciler rec = getSourceViewerConfiguration().getReconciler(getSourceViewer());
+			IReconcilingStrategy startegy = rec.getReconcilingStrategy(new String());
+			if (startegy instanceof ReconcilingStrategy) {
+				((ReconcilingStrategy)startegy).addParticipant(fFoldingStructureProvider);
+			}
 		}	
 	}
 
@@ -133,10 +141,6 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 			}
 		}
 		return super.getAdapter(key);
-	}
-	
-	public void updateFoldingProvider() {
-		fFoldingStructureProvider.update();
 	}
 
 }

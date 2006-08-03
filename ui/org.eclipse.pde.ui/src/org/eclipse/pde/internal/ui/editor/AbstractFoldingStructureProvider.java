@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
@@ -82,11 +83,14 @@ IFoldingStructureProvider, IModelChangedListener {
 	}
 
 	public void initialize() {
-		fModel.addModelChangedListener(this);
 		update();
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
+		update();
+	}
+	
+	public void reconciled(IDocument document){
 		update();
 	}
 

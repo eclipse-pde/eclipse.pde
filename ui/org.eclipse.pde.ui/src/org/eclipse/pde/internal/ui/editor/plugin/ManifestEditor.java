@@ -51,7 +51,6 @@ import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
 import org.eclipse.pde.internal.ui.editor.JarEntryFile;
 import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
@@ -611,8 +610,5 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 		IFormPage page = getActivePageInstance();
 		if (page instanceof PDESourcePage)
 			((PDESourcePage)page).updateTextSelection();
-		// call updateFoldingProvider after updateTextSelection.  updateTextSelection will synchronize model so folding offsets are accurate
-		if (page instanceof PDEProjectionSourcePage)
-			((PDEProjectionSourcePage)page).updateFoldingProvider();
 	}
 }
