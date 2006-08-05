@@ -79,9 +79,6 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 			return;
 		control.getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				if(control.isDisposed()){
-					return;
-				}
 				control.setRedraw(false);
 				getTreeViewer().refresh();
 				getTreeViewer().expandAll();
