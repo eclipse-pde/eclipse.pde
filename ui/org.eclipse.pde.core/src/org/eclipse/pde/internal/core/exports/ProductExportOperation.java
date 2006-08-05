@@ -315,14 +315,14 @@ public class ProductExportOperation extends FeatureExportOperation {
 		if (info != null) {
 			plugin = info.getLocation();
 		}
-		if (plugin == null)
+		if (plugin == null || plugin.trim().length() == 0)
 			plugin = getBrandingPlugin();
 		
 		if (plugin == null)
 			return null;
 		
 		StringBuffer buffer = new StringBuffer("platform:/base/plugins/"); //$NON-NLS-1$
-		buffer.append(plugin);
+		buffer.append(plugin.trim());
 		
 		State state = getState(os, ws, arch);
 		BundleDescription bundle = state.getBundle(plugin, null);
