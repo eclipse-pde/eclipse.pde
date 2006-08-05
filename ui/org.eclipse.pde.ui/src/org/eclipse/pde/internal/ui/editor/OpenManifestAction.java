@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ui.editor;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IAction;
@@ -23,6 +24,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -81,7 +83,7 @@ public class OpenManifestAction implements IWorkbenchWindowActionDelegate {
 										NLS.bind(PDEUIMessages.OpenManifestsAction_cannotFind, project.getName()));
 							else
 								try {
-									IDE.openEditor(PDEPlugin.getActivePage(), file);
+									IDE.openEditor(PDEPlugin.getActivePage(), file, IPDEUIConstants.MANIFEST_EDITOR_ID);
 								} catch (PartInitException e) {
 									MessageDialog.openError(PDEPlugin
 											.getActiveWorkbenchShell(),
