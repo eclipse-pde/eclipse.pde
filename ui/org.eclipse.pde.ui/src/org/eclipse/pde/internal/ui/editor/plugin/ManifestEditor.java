@@ -14,12 +14,15 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.zip.ZipFile;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.core.IBaseModel;
@@ -156,50 +159,45 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 		return null;		
 	}
 
-	protected void createResourceContexts(InputContextManager manager,
-			IFileEditorInput input) {
+	protected void createResourceContexts(InputContextManager manager, IFileEditorInput input) {
 		IFile file = input.getFile();
-		IProject project = file.getProject();
+		IContainer container = file.getParent();
+		
 		IFile manifestFile = null;
 		IFile buildFile = null;
 		IFile pluginFile = null;
 		boolean fragment = false;
+		
 		String name = file.getName().toLowerCase(Locale.ENGLISH);
 		if (name.equals("manifest.mf")) { //$NON-NLS-1$
+			if (container instanceof IFolder)
+				container = container.getParent();
 			manifestFile = file;
-			buildFile = project.getFile("build.properties"); //$NON-NLS-1$
-			pluginFile = createPluginFile(project);
-		} else if (name.equals("build.properties")) { //$NON-NLS-1$
-			buildFile = file;
-			pluginFile = createPluginFile(project);
-			manifestFile = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+			buildFile = container.getFile(new Path("build.properties")); //$NON-NLS-1$
+			pluginFile = createPluginFile(container);
 		} else if (name.equals("plugin.xml") || name.equals("fragment.xml")) { //$NON-NLS-1$ //$NON-NLS-2$
 			pluginFile = file;
 			fragment = name.equals("fragment.xml"); //$NON-NLS-1$
-			buildFile = project.getFile("build.properties"); //$NON-NLS-1$
-			manifestFile = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+			buildFile = container.getFile(new Path("build.properties")); //$NON-NLS-1$
+			manifestFile = container.getFile(new Path("META-INF/MANIFEST.MF")); //$NON-NLS-1$
 		}
 		if (manifestFile.exists()) {
 			IEditorInput in = new FileEditorInput(manifestFile);
-			manager.putContext(in, new BundleInputContext(this, in,
-					file == manifestFile));
+			manager.putContext(in, new BundleInputContext(this, in, file == manifestFile));
 		}
 		if (pluginFile.exists()) {
 			FileEditorInput in = new FileEditorInput(pluginFile);
-			manager.putContext(in, new PluginInputContext(this, in,
-					file == pluginFile, fragment));
+			manager.putContext(in, new PluginInputContext(this, in, file == pluginFile, fragment));
 		}
 		if (buildFile.exists()) {
 			FileEditorInput in = new FileEditorInput(buildFile);
-			manager.putContext(in, new BuildInputContext(this, in,
-					file == buildFile));
+			manager.putContext(in, new BuildInputContext(this, in, false));
 		}
 		manager.monitorFile(manifestFile);
-		manager.monitorFile(project.getFile("plugin.xml")); //$NON-NLS-1$
-		manager.monitorFile(project.getFile("fragment.xml")); //$NON-NLS-1$
+		manager.monitorFile(pluginFile); //$NON-NLS-1$
 		manager.monitorFile(buildFile);
 		
-		fPrefs = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
+		fPrefs = new ProjectScope(container.getProject()).getNode(PDECore.PLUGIN_ID);
 		if (fPrefs != null) {
 			fShowExtensions = fPrefs.getBoolean(ICoreConstants.EXTENSIONS_PROPERTY, true);
 			fEquinox = fPrefs.getBoolean(ICoreConstants.EQUINOX_PROPERTY, true);
@@ -370,10 +368,10 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
 		return pluginFile;
 	}
 	
-	private IFile createPluginFile(IProject project) {
-		IFile pluginFile = project.getFile("plugin.xml"); //$NON-NLS-1$
+	private IFile createPluginFile(IContainer container) {
+		IFile pluginFile = container.getFile(new Path("plugin.xml")); //$NON-NLS-1$
 		if (!pluginFile.exists())
-			pluginFile = project.getFile("fragment.xml"); //$NON-NLS-1$
+			pluginFile = container.getFile(new Path("fragment.xml")); //$NON-NLS-1$
 		return pluginFile;
 	}
 	
