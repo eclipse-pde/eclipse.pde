@@ -58,7 +58,6 @@ public abstract class DocumentHandler extends DefaultHandler {
 			Attributes attributes) throws SAXException {
 		IDocumentNode parent = fDocumentNodeStack.isEmpty() ? null : (IDocumentNode)fDocumentNodeStack.peek();		
 		IDocumentNode node = getDocumentNode(qName, parent);
-		node.setXMLTagName(qName);
 		try {
 			int nodeOffset = getStartOffset(qName);
 			node.setOffset(nodeOffset);
@@ -89,7 +88,21 @@ public abstract class DocumentHandler extends DefaultHandler {
 		} catch (BadLocationException e) {
 		}
 		if (parent != null && node != null && node.getParentNode() == null) {
-			parent.addChildNode(node);
+			if (fReconciling) {
+				// find right place for the child
+				// this is necessary to save as much as possible from the model
+				// we do not want an xml element with one tag to overwrite an element
+				// with a different tag
+				int position = 0;
+				IDocumentNode[] children = parent.getChildNodes();
+				for (; position < children.length; position++) {
+					if (children[position].getOffset() == -1)
+						break;
+				}
+				parent.addChildNode(node, position);
+			} else {
+				parent.addChildNode(node);
+			}
 		}
 		fDocumentNodeStack.push(node);
 	}

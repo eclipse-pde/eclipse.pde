@@ -56,7 +56,9 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory {
 				}				
 			}		
 		}
-		return (IDocumentNode)createElement((IPluginObject)parent);
+		IDocumentNode node = (IDocumentNode)createElement((IPluginObject)parent);
+		node.setXMLTagName(name);
+		return node;
 	}
 	
 	public IDocumentAttribute createAttribute(String name, String value, IDocumentNode enclosingElement) {
