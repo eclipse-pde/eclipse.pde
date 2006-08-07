@@ -91,8 +91,8 @@ public class PluginDocumentHandler extends DocumentHandler {
 				if (children[i].getOffset() < 0) {
 					if (name.equals(children[i].getXMLTagName())) {
 						node = children[i];
-						break;
 					}
+					break;
 				}
 			}
 		}
