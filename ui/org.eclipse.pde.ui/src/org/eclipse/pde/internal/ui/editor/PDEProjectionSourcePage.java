@@ -96,12 +96,13 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 		if(model instanceof IEditingModel) {
 			fFoldingStructureProvider = 
 				FoldingStructureProviderFactory.createProvider(this, (IEditingModel) model);
-			if(fFoldingStructureProvider != null)
+			if(fFoldingStructureProvider != null) {
 				fFoldingStructureProvider.initialize();
-			IReconciler rec = getSourceViewerConfiguration().getReconciler(getSourceViewer());
-			IReconcilingStrategy startegy = rec.getReconcilingStrategy(new String());
-			if (startegy instanceof ReconcilingStrategy) {
-				((ReconcilingStrategy)startegy).addParticipant(fFoldingStructureProvider);
+				IReconciler rec = getSourceViewerConfiguration().getReconciler(getSourceViewer());
+				IReconcilingStrategy startegy = rec.getReconcilingStrategy(new String());
+				if (startegy instanceof ReconcilingStrategy) {
+					((ReconcilingStrategy)startegy).addParticipant(fFoldingStructureProvider);
+				}
 			}
 		}	
 	}
