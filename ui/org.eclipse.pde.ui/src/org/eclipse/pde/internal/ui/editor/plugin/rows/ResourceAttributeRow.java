@@ -35,7 +35,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-public class ResourceAttributeRow extends ReferenceAttributeRow {
+public class ResourceAttributeRow extends ButtonAttributeRow {
 	public ResourceAttributeRow(IContextPart part, ISchemaAttribute att) {
 		super(part, att);
 	}

@@ -33,6 +33,7 @@ import org.eclipse.pde.internal.ui.editor.plugin.rows.ClassAttributeRow;
 import org.eclipse.pde.internal.ui.editor.plugin.rows.ExtensionAttributeRow;
 import org.eclipse.pde.internal.ui.editor.plugin.rows.ResourceAttributeRow;
 import org.eclipse.pde.internal.ui.editor.plugin.rows.TextAttributeRow;
+import org.eclipse.pde.internal.ui.editor.plugin.rows.TranslatableAttributeRow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -145,6 +146,8 @@ public class ExtensionElementDetails extends PDEDetails {
 			row = new ClassAttributeRow(this, att);
 		else if (att.getKind() == IMetaAttribute.RESOURCE)
 			row = new ResourceAttributeRow(this, att);
+		else if (att.isTranslatable())
+			row = new TranslatableAttributeRow(this, att);
 		else {
 			ISchemaSimpleType type = att.getType();
 			if (type.getName().equals("boolean")) //$NON-NLS-1$

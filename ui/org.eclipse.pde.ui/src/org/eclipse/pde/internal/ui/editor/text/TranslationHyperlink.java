@@ -18,6 +18,8 @@ public class TranslationHyperlink extends AbstractHyperlink {
 
 	private IModel fBase;
 	
+	private boolean fOpened;
+	
 	public TranslationHyperlink(IRegion region, String element, IModel base) {
 		super(region, element);
 		fBase = base;
@@ -32,24 +34,37 @@ public class TranslationHyperlink extends AbstractHyperlink {
 		return localiz;
 	}
 	
+	public boolean getOpened() {
+		return fOpened;
+	}
+	
 	public void open() {
+		fOpened = openHyperLink();
+	}
+	
+	public boolean openHyperLink() {
 		String localiz = getLocaliation();
-		if (localiz == null)
-			return;
+		if (localiz == null) {
+			return false;
+		} else if (fBase.getUnderlyingResource() == null) {
+			return false;
+		} else if (fElement.charAt(0) != '%') {
+			return false;
+		}
 		
 		IProject proj = fBase.getUnderlyingResource().getProject();
 		IFile file = proj.getFile(localiz + ".properties"); //$NON-NLS-1$
 		if (!file.exists())
-			return;
+			return false;
 		
 		try {
 			IEditorPart editor = IDE.openEditor(PDEPlugin.getActivePage(), file);
 			if (!(editor instanceof TextEditor))
-				return;
+				return false;
 			TextEditor tEditor = (TextEditor)editor;
 			IDocument doc = tEditor.getDocumentProvider().getDocument(tEditor.getEditorInput());
 			if (doc == null)
-				return;
+				return false;
 			
 			String key = fElement.substring(1);
 			int keyLen = key.length();
@@ -78,6 +93,8 @@ public class TranslationHyperlink extends AbstractHyperlink {
 				break;
 			}
 		} catch (PartInitException e) {
+			return false;
 		}
+		return true;
 	}
 }

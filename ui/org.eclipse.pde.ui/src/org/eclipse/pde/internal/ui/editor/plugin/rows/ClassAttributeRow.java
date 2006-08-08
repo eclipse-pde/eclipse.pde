@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.contentassist.ContentAssistHandler;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-public class ClassAttributeRow extends ReferenceAttributeRow {
+public class ClassAttributeRow extends ButtonAttributeRow {
 	public ClassAttributeRow(IContextPart part, ISchemaAttribute att) {
 		super(part, att);
 	}
