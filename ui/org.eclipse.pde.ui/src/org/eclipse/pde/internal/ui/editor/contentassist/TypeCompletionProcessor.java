@@ -103,6 +103,7 @@ public class TypeCompletionProcessor extends TypePackageCompletionProcessor impl
 		if (fResults == null) {
 			return null;
 		}
+		String lowerCaseCurrentContent = currentContent.toLowerCase();
 		ListIterator iterator = fResults.listIterator();
 		// Maintain a list of filtered search results
 		ArrayList filteredResults = new ArrayList();
@@ -111,7 +112,7 @@ public class TypeCompletionProcessor extends TypePackageCompletionProcessor impl
 			Object object = iterator.next();		
 			TypeCompletionProposal proposal = (TypeCompletionProposal)object;
 			String compareString = null;
-			if (currentContent.indexOf(F_DOT) == -1) {
+			if (lowerCaseCurrentContent.indexOf(F_DOT) == -1) {
 				// Use only the type name
 				compareString = proposal.getDisplayString().toLowerCase();
 			} else {
@@ -121,7 +122,7 @@ public class TypeCompletionProcessor extends TypePackageCompletionProcessor impl
 			// Filter out any proposal not matching the current contents
 			// except for the edge case where the proposal is identical to the
 			// current contents
-			if (compareString.startsWith(currentContent, 0)) {
+			if (compareString.startsWith(lowerCaseCurrentContent, 0)) {
 				filteredResults.add(proposal);
 			}
 		}
