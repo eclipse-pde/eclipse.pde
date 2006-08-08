@@ -206,6 +206,8 @@ public class CategoryDetailsSection extends PDESection implements IFormPart,
 		fDescriptionText.getText().setLayoutData(
 				new GridData(GridData.FILL_BOTH));
 
+		fDescriptionText.getLabel().setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+		
 		fDescriptionText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {
 				try {
