@@ -21,7 +21,6 @@
 
    <item title="Register the update site with Eclipse"
          dialog="true"
-         href="/org.eclipse.pde.doc.user/guide/pde_site_previewing.htm"
          skip="false">
       <description>
          To register the update site with Eclipse, perform the following steps:
@@ -49,7 +48,6 @@
 
    <item title="Install the feature"
          dialog="true"
-         href="/org.eclipse.pde.doc.user/guide/pde_site_previewing.htm"
          skip="false">
       <description>
          To install the feature, perform the following steps:
@@ -82,7 +80,6 @@
 
    <item title="Verify the feature installation"
          dialog="true"
-         href="/org.eclipse.pde.doc.user/guide/pde_site_previewing.htm"
          skip="false">
       <description>
          To verify the feature installation, perform the following steps after 
@@ -100,7 +97,6 @@
 
    <item title="Uninstall the feature"
          dialog="true"
-         href="/org.eclipse.pde.doc.user/guide/pde_site_previewing.htm"
          skip="false">
       <description>
          To uninstall the feature, perform the following steps:

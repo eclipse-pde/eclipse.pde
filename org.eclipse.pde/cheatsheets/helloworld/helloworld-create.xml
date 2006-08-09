@@ -20,17 +20,17 @@
    <!-- Item -->
 
 	<item
-		href="/org.eclipse.pde.doc.user/guide/tools/preference_pages/target_platform.htm"
+		href="/org.eclipse.pde.doc.user/guide/tools/views/views.htm"
 		dialog="true"
 		title="Configure PDE">
 		<description>
 			To configure PDE, perform the following steps
 		</description>			
 		<subitem label="Select &quot;Window-&gt;Open Perspective-&gt;Other...&quot; from the main menu and choose &quot;Plug-in Development&quot; in order to open the plug-in development perspective" 
-        	skip="false">
+        	skip="true">
 			<command serialization="org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.pde.ui.PDEPerspective)"/>		</subitem>
 		<subitem label="Select &quot;Window-&gt;Preferences&quot; from the main menu, expand the &quot;Plug-in Development&quot; outline tree node within the resulting dialog, and choose &quot;Target Platform&quot;." 
-        	skip="false">
+        	skip="true">
 			<command serialization="org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.pde.ui.TargetPlatformPreferencePage)"/>
 		</subitem>
 		<subitem label="Verify that the selected value in the &quot;Location:&quot; combo box points to a valid Eclipse install location." 
@@ -44,7 +44,7 @@
    <!-- Item -->
 
    <item title="Create the plug-in"
-         href="/org.eclipse.pde.doc.user/guide/pde_creating.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/project_wizards/new_plugin_project.htm"
          dialog="true"
          skip="false">
       <description>
@@ -69,7 +69,7 @@
 
    <item title="Modify the plug-in"
          dialog="false"
-         href="/org.eclipse.pde.doc.user/guide/pde_manifest_extensions.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/editors/manifest_editor/extensions.htm"
          skip="false">
       <description>
          After the new plug-in project wizard is finished from the previous step,
@@ -100,7 +100,7 @@
 
    <item title="Test the plug-in"
          dialog="false"
-         href="/org.eclipse.pde.doc.user/guide/pde_running.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/launchers/eclipse_application_launcher.htm"
          skip="false">
       <description>
          To test your Eclipse plug-in inside a target Eclipse platform,

@@ -21,7 +21,7 @@
    <!-- Item -->
 
    <item title="Open the plug-in development perspective"
-         href="/org.eclipse.pde.doc.user/guide/pde_setup.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/views/views.htm"
          dialog="false"
          skip="true">
       <description>
@@ -38,7 +38,7 @@
    <!-- Item -->
 
    <item title="Create the feature"
-         href="/org.eclipse.pde.doc.user/guide/pde_feature_setup.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/project_wizards/new_feature_project.htm"
          dialog="true"
          skip="false">
       <description>
@@ -60,7 +60,7 @@
 
    <item title="Add a feature description and license agreement"
          dialog="false"
-         href="/org.eclipse.pde.doc.user/guide/pde_feature_manifest.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/editors/feature_editor/information.htm"
          skip="false">
       <description>
          The <b>com.example.helloworld</b> feature editor should be opened

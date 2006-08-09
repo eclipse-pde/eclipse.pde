@@ -21,7 +21,7 @@
    <!-- Item -->
 
    <item title="Open the plug-in development perspective"
-         href="/org.eclipse.pde.doc.user/guide/pde_setup.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/views/views.htm"
          dialog="false"
          skip="true">
       <description>
@@ -38,7 +38,7 @@
    <!-- Item -->
 
    <item title="Open the product editor"
-         href="/org.eclipse.pde.doc.user/guide/product_editor.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/editors/product_editor/editor.htm"
          dialog="false"
          skip="true">
       <description>
@@ -54,7 +54,7 @@
    </item>
 
    <item title="Switch to a feature based product configuration"
-         href="/org.eclipse.pde.doc.user/guide/feature_based_product.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/editors/product_editor/overview.htm"
          dialog="true"
          skip="false">
       <description>
@@ -71,7 +71,7 @@
    </item>
 
    <item title="Create the feature"
-         href="/org.eclipse.pde.doc.user/guide/pde_feature_setup.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/project_wizards/new_feature_project.htm"
          dialog="true"
          skip="false">
       <description>
@@ -93,7 +93,7 @@
 
    <item title="Add a feature description and license agreement"
          dialog="false"
-         href="/org.eclipse.pde.doc.user/guide/pde_feature_manifest.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/editors/feature_editor/information.htm"
          skip="false">
       <description>
          The <b>com.example.rcpapp</b> feature editor should be opened
@@ -118,7 +118,7 @@
 
    <item title="Add features to the product configuration"
          dialog="true"
-         href="/org.eclipse.pde.doc.user/guide/feature_based_product.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/editors/product_editor/configuration.htm"
          skip="false">
       <description>
          To add features to the product configuration, perform the following steps:
@@ -138,7 +138,7 @@
    <!-- Item -->
 
    <item title="Export the feature based product"
-         href="/org.eclipse.pde.doc.user/guide/product_export.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/export_wizards/export_product.htm"
          dialog="true"
          skip="false">
       <description>

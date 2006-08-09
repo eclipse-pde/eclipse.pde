@@ -20,7 +20,7 @@
    <!-- Item -->
 
    <item title="Open the plug-in development perspective"
-         href="/org.eclipse.pde.doc.user/guide/pde_setup.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/views/views.htm"
          dialog="false"
          skip="true">
       <description>
@@ -37,7 +37,7 @@
    <!-- Item -->
 
    <item title="Open the plug-in editor"
-         href="/org.eclipse.pde.doc.user/guide/pde_manifest_extensions.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/editors/manifest_editor/editor.htm"
          dialog="false"
          skip="true">
       <description>
@@ -56,7 +56,7 @@
    <!-- Item -->
 
    <item title="Define a view extension"
-         href="/org.eclipse.pde.doc.user/guide/pde_manifest_extensions.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/editors/manifest_editor/extensions.htm"
          dialog="true"
          skip="false">
       <description>
@@ -71,6 +71,8 @@
    <!-- Item -->
 
    <item title="Add a view category"
+         href="/org.eclipse.pde.doc.user/guide/tools/editors/manifest_editor/extensions.htm"
+         dialog="false"
          skip="false">
       <description>
          To define a view category, perform the following steps:
@@ -90,6 +92,8 @@
    <!-- Item -->
 
    <item title="Add a view"
+         href="/org.eclipse.pde.doc.user/guide/tools/editors/manifest_editor/extensions.htm"
+         dialog="false"
          skip="false">
       <description>
          To define a view, perform the following steps:
@@ -162,7 +166,7 @@
 
    <item title="Test the plug-in"
          dialog="false"
-         href="/org.eclipse.pde.doc.user/guide/pde_running.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/launchers/eclipse_application_launcher.htm"
          skip="false">
       <description>
          To test your Eclipse plug-in inside a target Eclipse platform,

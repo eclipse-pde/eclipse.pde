@@ -21,7 +21,7 @@
    <!-- Item -->
 
    <item title="Open the plug-in development perspective"
-         href="/org.eclipse.pde.doc.user/guide/pde_setup.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/views/views.htm"
          dialog="false"
          skip="true">
       <description>
@@ -39,7 +39,7 @@
 
    <item title="Create the update site"
          dialog="true"
-         href="/org.eclipse.pde.doc.user/guide/pde_site_setup.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/project_wizards/new_update_site_project.htm"
          skip="false">
       <description>
          To create the update site, perform the following steps:
@@ -62,10 +62,10 @@
 
    <item title="Create the update site description"
          dialog="false"
-         href="/org.eclipse.pde.doc.user/guide/pde_site_editor.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/editors/site_editor/archives.htm"
          skip="false">
       <description>
-         The site editor should be open on the <b>Update Site Map</b>
+         The site editor should be open on the <b>Site Map</b> tab.
          page
          <br/>
          <br/>
@@ -85,7 +85,7 @@
 
    <item title="Create a feature category"
          dialog="false"
-         href="/org.eclipse.pde.doc.user/guide/pde_site_editor.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/editors/site_editor/site_map.htm"
          skip="false">
       <description>
          To create a feature category, perform the following steps:
@@ -106,7 +106,7 @@
 
    <item title="Add a feature to a feature category"
          dialog="true"
-         href="/org.eclipse.pde.doc.user/guide/pde_site_editor.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/editors/site_editor/site_map.htm"
          skip="false">
       <description>
          To add a feature to a feature category, perform the following steps:
@@ -125,7 +125,7 @@
 
    <item title="Build and export a feature to an update site"
          dialog="false"
-         href="/org.eclipse.pde.doc.user/guide/pde_site_building.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/editors/site_editor/site_map.htm"
          skip="false">
       <description>
          To build a feature and export it to an update site, perform the following steps:

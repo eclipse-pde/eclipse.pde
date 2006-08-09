@@ -21,7 +21,7 @@
    <!-- Item -->
 
    <item title="Open the plug-in development perspective"
-         href="/org.eclipse.pde.doc.user/guide/pde_setup.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/views/views.htm"
          dialog="false"
          skip="true">
       <description>
@@ -38,7 +38,7 @@
    <!-- Item -->
 
    <item title="Open the build configuration editor"
-         href="/org.eclipse.pde.doc.user/guide/pde_build_editor.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/editors/manifest_editor/build.htm"
          dialog="false"
          skip="true">
       <description>
@@ -60,7 +60,7 @@
    <!-- Item -->
 
    <item title="Modify the build configuration"
-         href="/org.eclipse.pde.doc.user/guide/pde_build_editor.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/editors/manifest_editor/build.htm"
          dialog="true"
          skip="false">
       <description>
@@ -81,7 +81,7 @@
    <!-- Item -->
 
    <item title="Open the product editor"
-         href="/org.eclipse.pde.doc.user/guide/product_editor.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/editors/product_editor/editor.htm"
          dialog="false"
          skip="true">
       <description>
@@ -99,7 +99,7 @@
    <!-- Item -->
 
    <item title="Export the plug-in based product"
-         href="/org.eclipse.pde.doc.user/guide/product_export.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/editors/product_editor/overview.htm"
          dialog="true"
          skip="false">
       <description>

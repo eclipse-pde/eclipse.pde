@@ -20,7 +20,7 @@
    <!-- Item -->
 
    <item title="Open the plug-in development perspective"
-         href="/org.eclipse.pde.doc.user/guide/pde_setup.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/views/views.htm"
          dialog="false"
          skip="true">
       <description>
@@ -37,7 +37,7 @@
    <!-- Item -->
 
    <item title="Create the plug-in"
-         href="/org.eclipse.pde.doc.user/guide/pde_creating.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/project_wizards/new_plugin_project.htm"
          dialog="true"
          skip="false">
       <description>
@@ -59,7 +59,7 @@
 
    <item title="Run the RCP Application"
          dialog="false"
-         href="/org.eclipse.pde.doc.user/guide/pde_running.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/launchers/eclipse_application_launcher.htm"
          skip="false">
       <description>
          To run the RCP application,
@@ -104,7 +104,7 @@
 
    <item title="Test the RCP Application"
          dialog="false"
-         href="/org.eclipse.pde.doc.user/guide/pde_running.htm"
+         href="/org.eclipse.pde.doc.user/guide/tools/launchers/eclipse_application_launcher.htm"
          skip="false">
       <description>
          To test the RCP application,
