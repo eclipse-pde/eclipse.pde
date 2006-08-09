@@ -234,7 +234,8 @@ public class XMLInsertionComputer {
 		return value;
 	}
 	
-	public static String generateAttributeValue(ISchemaAttribute attribute, IBaseModel baseModel) {
+	public static String generateAttributeValue(ISchemaAttribute attribute,
+			IBaseModel baseModel, String defaultValue) {
 		if (baseModel instanceof IModel) {
 			IResource resource = ((IModel)baseModel).getUnderlyingResource();
 			if (resource != null) {
@@ -246,7 +247,7 @@ public class XMLInsertionComputer {
 						// extension-point
 						// Do not auto-generate attribute values for those
 						// elements
-						return ""; //$NON-NLS-1$
+						return defaultValue; 
 					}
 					// Generate a unique number for IDs
 					counter = XMLUtil.getCounterValue(sElement);
@@ -254,7 +255,7 @@ public class XMLInsertionComputer {
 				return generateAttributeValue(resource.getProject(), counter, attribute);
 			}
 		}
-		return " "; //$NON-NLS-1$
+		return defaultValue;
 	}
 	
 	/**

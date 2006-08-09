@@ -230,9 +230,11 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		documentInsertBuffer.append(attName);
 		documentInsertBuffer.append("=\""); //$NON-NLS-1$
 		fSelOffset = fOffset + documentInsertBuffer.length();
-		String value = ""; //$NON-NLS-1$
+		String value = attName; //$NON-NLS-1$
 		if (fSchemaObject instanceof ISchemaAttribute) {
-			value = XMLInsertionComputer.generateAttributeValue((ISchemaAttribute)fSchemaObject, fProcessor.getModel());
+			value = XMLInsertionComputer.generateAttributeValue(
+					(ISchemaAttribute) fSchemaObject, fProcessor.getModel(),
+					attName);
 		}
 		documentInsertBuffer.append(value);
 		fSelLen = value.length();
