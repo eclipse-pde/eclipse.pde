@@ -191,6 +191,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	}
 	
 	private void validateBinIncludes(IBuildEntry binIncludes, String key) {
+		if (binIncludes == null)
+			return;
 		String[] tokens = binIncludes.getTokens();
 		boolean exists = false;
 		for(int i = 0; i < tokens.length; i++) {
