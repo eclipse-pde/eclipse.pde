@@ -22,6 +22,7 @@ import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.view.ImportActionGroup;
+import org.eclipse.pde.internal.ui.view.JavaSearchActionGroup;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PartInitException;
@@ -83,8 +84,12 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 			ImportActionGroup importActionGroup = new ImportActionGroup();
 			importActionGroup.setContext(context);
 			importActionGroup.fillContextMenu(mgr);
-			mgr.add(new Separator());
 		}
+		mgr.add(new Separator());
+		
+		JavaSearchActionGroup jsActionGroup = new JavaSearchActionGroup();
+		jsActionGroup.setContext(new ActionContext(selection));
+		jsActionGroup.fillContextMenu(mgr);
 	}
 
 	/* (non-Javadoc)

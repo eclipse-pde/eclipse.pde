@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,7 +23,6 @@ import java.util.Set;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaModelException;
@@ -37,7 +35,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -116,8 +113,6 @@ public class PluginsView extends ViewPart {
 	private Action openTextEditorAction;
 	private Action selectDependentAction;
 	private Action selectInJavaSearchAction;
-	private Action addToJavaSearchAction;
-	private Action removeFromJavaSearchAction;
 	private Action selectAllAction;
     private CollapseAllAction collapseAllAction;
 	private ShowInWorkspaceAction showInNavigatorAction;
@@ -384,20 +379,6 @@ public class PluginsView extends ViewPart {
 	        }
 		};
 		selectAllAction.setText(PDEUIMessages.PluginsView_SelectAllAction_label); 
-		
-		addToJavaSearchAction = new Action() {
-			public void run() {
-				handleJavaSearch(true);
-			}
-		};
-		addToJavaSearchAction.setText(PDEUIMessages.PluginsView_addToJavaSearch); 
-
-		removeFromJavaSearchAction = new Action() {
-			public void run() {
-				handleJavaSearch(false);
-			}
-		};
-		removeFromJavaSearchAction.setText(PDEUIMessages.PluginsView_removeFromJavaSearch); 
 
 		showInNavigatorAction =
 			new ShowInWorkspaceAction(IPageLayout.ID_RES_NAV, treeViewer);
@@ -505,18 +486,11 @@ public class PluginsView extends ViewPart {
 				actionGroup.fillContextMenu(manager);
 				manager.add(new Separator());
 			}
-			addSeparator = false;
-			if (canDoJavaSearchOperation(selection, true)) {
-				manager.add(addToJavaSearchAction);
-				addSeparator = true;
-			}
-			if (canDoJavaSearchOperation(selection, false)) {
-				manager.add(removeFromJavaSearchAction);
-				addSeparator = true;
-			}
-			if (addSeparator) {
-				manager.add(new Separator());
-			}
+			
+			JavaSearchActionGroup actionGroup = 
+				new JavaSearchActionGroup();
+			actionGroup.setContext(new ActionContext(selection));
+			actionGroup.fillContextMenu(manager);
 		}
 		copyAction.setSelection(selection);
 		manager.add(copyAction);
@@ -563,25 +537,6 @@ public class PluginsView extends ViewPart {
 		openSystemEditorAction.setImageDescriptor(desc);
 		openSystemEditorAction.setChecked(editorId != null && editorId.equals("@system"));  //$NON-NLS-1$
 		manager.add(openSystemEditorAction);
-	}
-
-	private boolean canDoJavaSearchOperation(
-		IStructuredSelection selection,
-		boolean add) {
-		int nhits = 0;
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
-			Object obj = iter.next();
-			if (obj instanceof ModelEntry) {
-				ModelEntry entry = (ModelEntry) obj;
-				if (entry.getWorkspaceModel() == null) {
-					if (add && entry.isInJavaSearch() == false)
-						nhits++;
-					if (!add && entry.isInJavaSearch())
-						nhits++;
-				}
-			}
-		}
-		return nhits > 0;
 	}
 
 	protected void initDragAndDrop() {
@@ -671,52 +626,6 @@ public class PluginsView extends ViewPart {
 		try {
 			page.openEditor(input, DEFAULT_EDITOR_ID);
 		} catch (PartInitException e) {
-			PDEPlugin.logException(e);
-		}
-	}
-
-	private void handleJavaSearch(final boolean add) {
-		IStructuredSelection selection =
-			(IStructuredSelection) treeViewer.getSelection();
-		if (selection.size() == 0)
-			return;
-
-		ArrayList result = new ArrayList();
-
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
-			Object model = iter.next();
-			if(model instanceof ModelEntry) {
-				ModelEntry entry = (ModelEntry) model;
-				if (entry.getWorkspaceModel() != null)
-					continue;
-				if (entry.isInJavaSearch() == !add)
-					result.add(entry);
-			}
-		}
-		if (result.size() == 0)
-			return;
-		final ModelEntry[] array =
-			(ModelEntry[]) result.toArray(new ModelEntry[result.size()]);
-
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-				throws InvocationTargetException {
-				PluginModelManager manager =
-					PDECore.getDefault().getModelManager();
-				try {
-					manager.setInJavaSearch(array, add, monitor);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
-				}
-			}
-		};
-
-		try {
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
-		} catch (InterruptedException e) {
-		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
 		}
 	}
