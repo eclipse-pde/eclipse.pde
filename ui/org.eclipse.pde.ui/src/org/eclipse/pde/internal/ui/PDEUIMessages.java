@@ -31,6 +31,12 @@ public class PDEUIMessages extends NLS {
 
 	public static String FormatManifestOperation_task;
 
+	public static String HelloOSGiServiceTemplate_howdy;
+
+	public static String HelloOSGiTemplate_goodbye;
+
+	public static String HelloOSGiTemplate_hello;
+
 	public static String HelpTemplate_sampleText;
 
 	public static String ImportActionGroup_binaryWithLinkedContent;
@@ -2920,6 +2926,11 @@ public class PDEUIMessages extends NLS {
 	public static String XMLContentAssistProcessor_extPointName;
 
 	public static String XMLContentAssistProcessor_schemaLocation;
-
 	
+	// Hello world OSGi Service template
+	public static String HelloOSGiServiceTemplate_greeting;
+	public static String HelloOSGiServiceTemplate_pageDescription;
+	public static String HelloOSGiServiceTemplate_pageTitle;
+	public static String HelloOSGiServiceNewWizard_title;
+
 }

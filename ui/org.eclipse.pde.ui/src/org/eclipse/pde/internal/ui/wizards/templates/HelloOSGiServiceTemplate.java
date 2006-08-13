@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,35 +20,33 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.templates.TemplateOption;
 
 
-public class HelloOSGiTemplate extends PDETemplateSection {
+public class HelloOSGiServiceTemplate extends PDETemplateSection {
 	
-	public static final String KEY_START_MESSAGE = "startMessage"; //$NON-NLS-1$
-	public static final String KEY_STOP_MESSAGE = "stopMessage"; //$NON-NLS-1$
+	public static final String GREETING = "greeting"; //$NON-NLS-1$
 	public static final String KEY_APPLICATION_CLASS = "applicationClass"; //$NON-NLS-1$
 	
-	private HelloOSGiNewWizard osgiWizard;
+	private HelloOSGiServiceNewWizard wizard;
 	
-	public HelloOSGiTemplate(HelloOSGiNewWizard wizard) {
+	public HelloOSGiServiceTemplate(HelloOSGiServiceNewWizard wizard) {
 		setPageCount(1);
-		osgiWizard = wizard;
-		addOption(KEY_START_MESSAGE, PDEUIMessages.HelloOSGiTemplate_startMessage, PDEUIMessages.HelloOSGiTemplate_hello, 0); 
-		addOption(KEY_STOP_MESSAGE, PDEUIMessages.HelloOSGiTemplate_stopMessage, PDEUIMessages.HelloOSGiTemplate_goodbye, 0); 
+		this.wizard = wizard;
+		addOption(GREETING, PDEUIMessages.HelloOSGiServiceTemplate_greeting, PDEUIMessages.HelloOSGiServiceTemplate_howdy, 0);
 	}
 	
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_RCP_MAIL);
-		page.setTitle(PDEUIMessages.HelloOSGiTemplate_pageTitle); 
-		page.setDescription(PDEUIMessages.HelloOSGiTemplate_pageDescription);  
+		page.setTitle(PDEUIMessages.HelloOSGiServiceTemplate_pageTitle); 
+		page.setDescription(PDEUIMessages.HelloOSGiServiceTemplate_pageDescription);  
 		wizard.addPage(page);
 		markPagesAdded();
 	}
 	
 	public String getReplacementString(String fileName, String key) {
 		if (KEY_APPLICATION_CLASS.equals(key)) {
-			String className = osgiWizard.fData.getClassname();
+			String className = wizard.fData.getClassname();
 			return className.substring(className.lastIndexOf(".") + 1); //$NON-NLS-1$
 		} else if (KEY_PACKAGE_NAME.equals(key))
-			return getFormattedPackageName(osgiWizard.fData.getId());
+			return getFormattedPackageName(wizard.fData.getId());
 		return super.getReplacementString(fileName, key);
 	}
 	
@@ -58,7 +56,7 @@ public class HelloOSGiTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
 	 */
 	public String getSectionId() {
-		return "helloOSGi"; //$NON-NLS-1$
+		return "helloOSGiService"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
