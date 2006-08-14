@@ -108,7 +108,6 @@ public class PluginClassCodeGenerator {
 		writer.println("\t * The constructor"); //$NON-NLS-1$
 		writer.println("\t */"); //$NON-NLS-1$
 		writer.println("\tpublic " + className + "() {"); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println("\t\tplugin = this;"); //$NON-NLS-1$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
 
@@ -121,6 +120,7 @@ public class PluginClassCodeGenerator {
 		writer.println("\t */"); //$NON-NLS-1$
 		writer.println("\tpublic void start(BundleContext context) throws Exception {"); //$NON-NLS-1$
 		writer.println("\t\tsuper.start(context);"); //$NON-NLS-1$
+		writer.println("\t\tplugin = this;"); //$NON-NLS-1$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
 
