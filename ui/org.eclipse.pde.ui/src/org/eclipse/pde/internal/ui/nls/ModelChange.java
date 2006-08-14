@@ -109,11 +109,11 @@ public class ModelChange {
 					InputStream stream = propertiesFile.getContents();
 					fProperties.load(stream);
 					stream.close();
-					fReloadProperties = false;
 				}
 			} catch (CoreException e) {
 			} catch (IOException e) {
 			}
+			fReloadProperties = false;
 		}
 		return fProperties;
 	}
