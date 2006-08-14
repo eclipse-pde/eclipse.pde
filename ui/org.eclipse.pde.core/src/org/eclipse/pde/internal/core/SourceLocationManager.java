@@ -64,13 +64,17 @@ public class SourceLocationManager implements ICoreConstants {
 
 	public File findSourceFile(IPluginBase pluginBase, IPath sourcePath) {
 		IPath relativePath = getRelativePath(pluginBase, sourcePath);
-		SearchResult result = findSourceLocation(pluginBase, relativePath);
-		return (result != null)? result.file : null;
+		SearchResult result = findSourceLocation(relativePath);
+		return result != null ? result.file : null;
+	}
+	
+	public File findSourcePlugin(IPluginBase pluginBase) {
+		return findSourceFile(pluginBase, null);
 	}
 
 	public IPath findSourcePath(IPluginBase pluginBase, IPath sourcePath) {
 		IPath relativePath = getRelativePath(pluginBase, sourcePath);
-		SearchResult result = findSourceLocation(pluginBase, relativePath);
+		SearchResult result = findSourceLocation(relativePath);
 		return result == null ? null : result.loc.getPath().append(relativePath);
 	}
 
@@ -84,13 +88,14 @@ public class SourceLocationManager implements ICoreConstants {
 				Version vid = new Version(version);
 				pluginDir += "_" + vid.toString(); //$NON-NLS-1$
 			}
-			return new Path(pluginDir).append(sourcePath);
+			IPath path = new Path(pluginDir);
+			return sourcePath == null ? path : path.append(sourcePath);
 		} catch (IllegalArgumentException e) {
 			return null;
 		}
 	}
 
-	public SearchResult findSourceLocation(IPluginBase pluginBase, IPath relativePath) {
+	public SearchResult findSourceLocation(IPath relativePath) {
 		if (relativePath == null)
 			return null;
 		SearchResult result = findSearchResult(getUserLocations(), relativePath);

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IFile;
@@ -274,12 +275,12 @@ public class PluginImportOperation extends JarImportOperation {
 	}
 
 	private void importAsBinary(IProject project, IPluginModelBase model, boolean markAsBinary, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask("", 2); //$NON-NLS-1$
+		monitor.beginTask("", 3); //$NON-NLS-1$
 		if (isJARd(model)) {
 			extractJARdPlugin(
 					project,
 					model,
-					new SubProgressMonitor(monitor, 1));
+					new SubProgressMonitor(monitor, 2));
 		} else {
 			importContent(
 					new File(model.getInstallLocation()),
@@ -308,17 +309,20 @@ public class PluginImportOperation extends JarImportOperation {
 				}
 			}
 		}
-		
-		if (markAsBinary)
+		if (markAsBinary) {
 			project.setPersistentProperty(
 					PDECore.EXTERNAL_PROJECT_PROPERTY,
-					PDECore.BINARY_PROJECT_VALUE);		
+					PDECore.BINARY_PROJECT_VALUE);	
+			importAdditionalResources(project, model, new SubProgressMonitor(monitor, 1));
+		} else {
+			monitor.done();
+		}
 	}
 
 	private void importAsSource(IProject project, IPluginModelBase model, SubProgressMonitor monitor) throws CoreException {
-		monitor.beginTask("", 3); //$NON-NLS-1$
+		monitor.beginTask("", 4); //$NON-NLS-1$
 		importAsBinary(project, model, false, new SubProgressMonitor(monitor, 2));
-		
+		List list = importAdditionalResources(project, model, new SubProgressMonitor(monitor, 1));	
 		WorkspaceBuildModel buildModel = new WorkspaceBuildModel(project.getFile("build.properties")); //$NON-NLS-1$
 		if (!isJARd(model) || containsCode(new File(model.getInstallLocation()))) {
 			String[] libraries = getLibraryNames(model, false);
@@ -339,11 +343,11 @@ public class PluginImportOperation extends JarImportOperation {
 						if (!dest.exists()) {
 							dest.create(true, true, null);
 						}
-						extractZipFile(srcZip.getLocation().toFile(), dest.getFullPath(), monitor);
+						extractZipFile(srcZip.getLocation().toFile(), dest.getFullPath(), new SubProgressMonitor(monitor, 1));
 						if (isJARd(model)) {
-							extractJavaResources(jarFile.getLocation().toFile(), dest, monitor);
+							extractJavaResources(jarFile.getLocation().toFile(), dest, new SubProgressMonitor(monitor, 1));
 						} else {
-							extractResources(jarFile.getLocation().toFile(), dest, monitor);
+							extractResources(jarFile.getLocation().toFile(), dest, new SubProgressMonitor(monitor, 1));
 						}
 						srcZip.delete(true, null);
 						jarFile.delete(true, null);
@@ -354,9 +358,35 @@ public class PluginImportOperation extends JarImportOperation {
 			}	
 		}
 		configureBinIncludes(buildModel, model);
+		if (list.size() > 0)
+			configureSrcIncludes(buildModel, list);
 		buildModel.save();
 	}
 	
+	private List importAdditionalResources(IProject project, IPluginModelBase model,
+			SubProgressMonitor monitor) throws CoreException {
+		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
+		File location = manager.findSourcePlugin(model.getPluginBase());
+		File[] children = location == null ? null : location.listFiles();
+		ArrayList list = new ArrayList();
+		if (children != null) {
+			for (int i = 0; i < children.length; i++) {
+				String name = children[i].getName();
+				if (!project.exists(new Path(name)) && !"src.zip".equals(name)) {
+					list.add(children[i]);
+				}
+			}
+ 			
+			importContent(
+					location,
+					project.getFullPath(),
+					FileSystemStructureProvider.INSTANCE,
+					list,
+					monitor);
+		}
+		return list;
+	}
+
 	private void configureBinIncludes(WorkspaceBuildModel buildModel, IPluginModelBase model) throws CoreException {
 		IBuildEntry entry = buildModel.getBuild(true).getEntry("bin.includes"); //$NON-NLS-1$
 		if (entry == null) {
@@ -379,7 +409,22 @@ public class PluginImportOperation extends JarImportOperation {
 			buildModel.getBuild().add(entry);
 		}
 	}
-	
+
+	private void configureSrcIncludes(WorkspaceBuildModel buildModel, List list) throws CoreException {
+		IBuildEntry entry = buildModel.getBuild(true).getEntry("src.includes"); //$NON-NLS-1$
+		if (entry == null) {
+			entry = buildModel.getFactory().createEntry("src.includes"); //$NON-NLS-1$
+			for (int i = 0; i < list.size(); i++) {
+				File location = (File)list.get(i);
+				String token = location.getName();
+				if (location.isDirectory())
+					token += "/";
+				entry.addToken(token);
+			}
+			buildModel.getBuild().add(entry);
+		}
+	}
+
 	private String addBuildEntry(WorkspaceBuildModel model, String key, String value) throws CoreException {
 		IBuild build = model.getBuild(true);
 		IBuildEntry entry = build.getEntry(key);
