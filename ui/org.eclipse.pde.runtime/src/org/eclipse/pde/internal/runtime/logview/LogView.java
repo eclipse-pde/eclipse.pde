@@ -25,7 +25,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -931,11 +930,10 @@ public class LogView extends ViewPart implements ILogListener {
         if (sortType == DATE) {
             fComparator = new Comparator() {
                 public int compare(Object e1, Object e2) {
-					Date date1 = ((LogEntry) e1).getDate();
-					Date date2 = ((LogEntry) e2).getDate();
-					if (DATE_ORDER == ASCENDING)
-						return date1.getTime() < date2.getTime() ? DESCENDING : ASCENDING;
-					return date1.getTime() > date2.getTime() ? DESCENDING : ASCENDING;
+                	int result = fLogs.indexOf(e2) - fLogs.indexOf(e1);
+					if (DATE_ORDER == DESCENDING)
+						result *= DESCENDING;
+					return result;
                 }
             };
         } else if (sortType == PLUGIN) {
@@ -977,11 +975,10 @@ public class LogView extends ViewPart implements ILogListener {
         } else {
             return new ViewerSorter() {
 				public int compare(Viewer viewer, Object e1, Object e2) {
-					Date date1 = ((LogEntry) e1).getDate();
-					Date date2 = ((LogEntry) e2).getDate();
-					if (DATE_ORDER == ASCENDING)
-						return date1.getTime() < date2.getTime() ? DESCENDING : ASCENDING;
-					return date1.getTime() > date2.getTime() ? DESCENDING : ASCENDING;
+					int result = fLogs.indexOf(e2) - fLogs.indexOf(e1);
+					if (DATE_ORDER == DESCENDING)
+						result *= DESCENDING;
+					return result;
                 }
             };
         }
