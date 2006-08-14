@@ -2932,5 +2932,18 @@ public class PDEUIMessages extends NLS {
 	public static String HelloOSGiServiceTemplate_pageDescription;
 	public static String HelloOSGiServiceTemplate_pageTitle;
 	public static String HelloOSGiServiceNewWizard_title;
+	
+	// Perspective Template
+	public static String PerspectiveTemplate_title;
+	public static String PerspectiveTemplate_desc;
+	public static String PerspectiveTemplate_packageName;
+	public static String PerspectiveTemplate_perspectiveClass;
+	public static String PerspectiveTemplate_perspectiveClassName;
+	public static String PerspectiveTemplate_perspective;
+	public static String PerspectiveTemplate_perspectiveName;
+	public static String PerspectiveTemplate_perspectiveShortcuts;
+	public static String PerspectiveTemplate_showViewShortcuts;
+	public static String PerspectiveTemplate_newWizardShortcuts;
+	public static String PerspectiveTemplate_actionSets;
 
 }
