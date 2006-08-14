@@ -372,7 +372,7 @@ public class PluginImportOperation extends JarImportOperation {
 		if (children != null) {
 			for (int i = 0; i < children.length; i++) {
 				String name = children[i].getName();
-				if (!project.exists(new Path(name)) && !"src.zip".equals(name)) {
+				if (!project.exists(new Path(name)) && !"src.zip".equals(name)) { //$NON-NLS-1$
 					list.add(children[i]);
 				}
 			}
@@ -418,7 +418,7 @@ public class PluginImportOperation extends JarImportOperation {
 				File location = (File)list.get(i);
 				String token = location.getName();
 				if (location.isDirectory())
-					token += "/";
+					token += "/"; //$NON-NLS-1$
 				entry.addToken(token);
 			}
 			buildModel.getBuild().add(entry);
