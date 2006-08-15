@@ -35,6 +35,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
@@ -162,7 +163,8 @@ public class ClasspathHelper {
 		ArrayList result = new ArrayList();
 		IProject project = model.getUnderlyingResource().getProject();
 		HashSet set = new HashSet();
-		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+		IPluginBase base = model.getPluginBase();
+		IPluginLibrary[] libraries = base.getLibraries();
 		for (int i = 0; i < libraries.length; i++) {
 			set.add(libraries[i].getName());
 		}
@@ -173,11 +175,12 @@ public class ClasspathHelper {
 				List excluded = getFoldersToExclude(project, checkExcluded);
 				IPath path = jProject.getOutputLocation();
 				if (path != null && !excluded.contains(path))
-					addPath(result, project, path);
+					addPath(result, project, path, false);
 				
 				IClasspathEntry[] entries = jProject.getRawClasspath();
 				for (int i = 0; i < entries.length; i++) {
 					path = null;
+					boolean addIfLinked = false;
 					if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 						path = entries[i].getOutputLocation();
 					} else if (entries[i].getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
@@ -186,11 +189,12 @@ public class ClasspathHelper {
 							if (set.isEmpty() || set.contains(".")) //$NON-NLS-1$
 								path = entries[i].getPath();
 						} else if (set.contains(candidate.toString())) {
+							addIfLinked = !base.getId().equals("org.eclipse.osgi"); //$NON-NLS-1$
 							path = entries[i].getPath();
 						}
 					}
 					if (path != null && !excluded.contains(path)) {
-						addPath(result, project, path);
+						addPath(result, project, path, addIfLinked);
 					}
 				}
 			}
@@ -200,25 +204,26 @@ public class ClasspathHelper {
 		return (IPath[])result.toArray(new IPath[result.size()]);	
 	}
 
-	private static void addPath(ArrayList result, IProject project, IPath path) {
+	private static void addPath(ArrayList result, IProject project, IPath path, boolean onlyIfLinked) {
+		IPath resultPath = null;
 		if (path.segmentCount() > 0 && path.segment(0).equals(project.getName())) {
 			path = path.removeFirstSegments(1);
-			if (path.segmentCount() == 0)
-				path = new Path("."); //$NON-NLS-1$
+			if (path.segmentCount() == 0 && !onlyIfLinked)
+				resultPath = new Path("."); //$NON-NLS-1$
 			else {
 				IResource resource = project.findMember(path);
 				if (resource != null) {
-					if (resource.isLinked()) {
-						path = resource.getLocation();
+					if (!onlyIfLinked)
+						resultPath = path;
+					if (resource.isLinked(IResource.CHECK_ANCESTORS)) {
+						resultPath = resource.getLocation();
 					} 
-				} else {
-					path = null;
-				}
+				} 
 			}
 		}
 		
-		if (path != null && !result.contains(path))
-			result.add(path);
+		if (resultPath != null && !result.contains(resultPath))
+			result.add(resultPath);
 	}
 	
 	private static List getFoldersToExclude(IProject project, boolean checkExcluded) {
