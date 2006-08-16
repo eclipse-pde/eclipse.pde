@@ -679,14 +679,14 @@
             name="%views.plugins.name"
             icon="$nl$/icons/eview16/plugin_depend.gif"
             category="org.eclipse.pde.ui"
-            class="org.eclipse.pde.internal.ui.view.PluginsView"
+            class="org.eclipse.pde.internal.ui.views.plugins.PluginsView"
             id="org.eclipse.pde.ui.PluginsView">
       </view>
       <view
             name="%views.dependencies.name"
             icon="$nl$/icons/obj16/req_plugins_obj.gif"
             category="org.eclipse.pde.ui"
-            class="org.eclipse.pde.internal.ui.view.DependenciesView"
+            class="org.eclipse.pde.internal.ui.views.dependencies.DependenciesView"
             id="org.eclipse.pde.ui.DependenciesView">
       </view>
    </extension>
@@ -1075,7 +1075,7 @@
          <action
                label="%OpenDependenciesAction.label"
                helpContextId="org.eclipse.pde.doc.user.open_dependencies"
-               class="org.eclipse.pde.internal.ui.view.OpenDependenciesAction"
+               class="org.eclipse.pde.internal.ui.views.dependencies.OpenDependenciesAction"
                menubarPath="org.eclipse.pde.ui.project.tools/group0"
                enablesFor="+"
                id="org.eclipse.pde.ui.OpenDependenciesAction3">

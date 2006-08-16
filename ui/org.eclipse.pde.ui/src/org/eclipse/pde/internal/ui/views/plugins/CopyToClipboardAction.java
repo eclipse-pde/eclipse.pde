@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.view;
+package org.eclipse.pde.internal.ui.views.plugins;
 
 import java.io.File;
 import java.util.ArrayList;

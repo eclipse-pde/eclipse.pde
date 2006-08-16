@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.view;
+package org.eclipse.pde.internal.ui.views.dependencies;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;

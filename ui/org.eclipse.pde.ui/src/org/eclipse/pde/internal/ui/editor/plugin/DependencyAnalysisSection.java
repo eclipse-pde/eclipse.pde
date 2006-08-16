@@ -30,7 +30,7 @@ import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.search.FindDeclarationsAction;
 import org.eclipse.pde.internal.ui.search.FindReferencesAction;
 import org.eclipse.pde.internal.ui.search.dependencies.UnusedDependenciesAction;
-import org.eclipse.pde.internal.ui.view.OpenDependenciesAction;
+import org.eclipse.pde.internal.ui.views.dependencies.OpenDependenciesAction;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
