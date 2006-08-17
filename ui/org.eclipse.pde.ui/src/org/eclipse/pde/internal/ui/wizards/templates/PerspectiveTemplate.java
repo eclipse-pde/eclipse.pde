@@ -200,9 +200,9 @@ public class PerspectiveTemplate extends PDETemplateSection {
 		perspectiveElement.setAttribute(
 				"name", getStringOption(PERSPECTIVE_NAME)); //$NON-NLS-1$
 		perspectiveElement.setAttribute(
-				"class", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(PERSPECTIVE_CLASS_NAME)); //$NON-NLS-1$
+				"class", getStringOption(KEY_PACKAGE_NAME) + "." + getStringOption(PERSPECTIVE_CLASS_NAME)); //$NON-NLS-1$ //$NON-NLS-2$
 		perspectiveElement.setAttribute(
-				"icon", "icons/releng_gears.gif"); //$NON-NLS-1$ $NON-NLS-2$
+				"icon", "icons/releng_gears.gif"); //$NON-NLS-1$ //$NON-NLS-2$ $NON-NLS-2$
 
 
 		extension.add(perspectiveElement);

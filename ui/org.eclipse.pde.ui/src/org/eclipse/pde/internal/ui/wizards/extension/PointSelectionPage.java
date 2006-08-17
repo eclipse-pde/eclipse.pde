@@ -527,7 +527,7 @@ public class PointSelectionPage
 	private void handlePointSelection(IPluginExtensionPoint element) {
 		fCurrentPoint = element;
 		fTemplateViewer.setInput(fCurrentPoint);
-		String fullPointID = fCurrentPoint.getFullId();
+		String fullPointID = getFullId(fCurrentPoint); 
 		
 		String description = 
 			XMLComponentRegistry.Instance().getDescription(fullPointID, XMLComponentRegistry.F_SCHEMA_COMPONENT);
@@ -536,7 +536,7 @@ public class PointSelectionPage
 		URL url = null;
 		if ((description == null) ||
 				(name == null)) {
-			url = SchemaRegistry.getSchemaURL(fCurrentPoint);
+			url = SchemaRegistry.getSchemaURL(fCurrentPoint, fModel);
 		}
 		if (url != null) {
 			SchemaAnnotationHandler handler = new SchemaAnnotationHandler();

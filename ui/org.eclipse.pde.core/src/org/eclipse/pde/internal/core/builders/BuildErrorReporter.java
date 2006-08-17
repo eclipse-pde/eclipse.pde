@@ -205,7 +205,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			String[] matches = key.split("\\."); //$NON-NLS-1$
 			if(matches.length == 2) {
 				Pattern pattern = 
-					PatternConstructor.createPattern("*.".concat(matches[1]), false);
+					PatternConstructor.createPattern("*.".concat(matches[1]), false); //$NON-NLS-1$
 				if(pattern.matcher(tokens[i]).matches()) {
 					exists = true;
 					break;

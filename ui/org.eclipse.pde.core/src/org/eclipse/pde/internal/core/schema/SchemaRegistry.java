@@ -17,6 +17,8 @@ import java.util.HashMap;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -25,6 +27,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
+import org.eclipse.pde.internal.core.text.plugin.PluginExtensionPointNode;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 
 
@@ -80,6 +83,20 @@ public class SchemaRegistry {
 		}
 		return desc;
 	}
+
+	public static URL getSchemaURL(IPluginExtensionPoint point,
+			IPluginModelBase base) {
+		URL url = getSchemaURL(point);
+		if (url != null) {
+			return url;
+		}
+		String schema = point.getSchema();
+		if ((schema == null) || 
+				(schema.trim().length() == 0)) {
+			return null;
+		}
+		return getSchemaURL(getId(point, base), schema);	
+	}	
 	
 	public static URL getSchemaURL(IPluginExtensionPoint point) {
 		String schema = point.getSchema();
@@ -151,4 +168,20 @@ public class SchemaRegistry {
 		fRegistry.clear();
 	}
 
+	private static String getId(IPluginExtensionPoint point, IPluginModelBase base) {
+		String id = null;
+		if (point instanceof PluginExtensionPointNode) {
+			if (base instanceof IFragmentModel) {
+				IFragment fragment = ((IFragmentModel)base).getFragment();
+				if (fragment != null) {
+					id = fragment.getPluginId();
+				}
+			}
+			if (id == null) {
+				id = base.getPluginBase().getId();
+			}
+		}
+		return id;
+	}	
+	
 }
