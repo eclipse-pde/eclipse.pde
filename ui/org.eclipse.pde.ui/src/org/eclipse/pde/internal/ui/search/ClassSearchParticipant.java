@@ -97,7 +97,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		if (querySpecification instanceof ElementQuerySpecification) {
 			IJavaElement element = ((ElementQuerySpecification)querySpecification).getElement();
 			if (element instanceof IType)
-				search = ((IType)element).getFullyQualifiedName();
+				search = ((IType)element).getFullyQualifiedName('.');
 			else
 				search = element.getElementName();
 			int type = element.getElementType();
@@ -180,16 +180,19 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		String value = null;
 		Matcher matcher = null;
 		if (fSearchFor == S_FOR_TYPES) {
-			value = attr.getValue();
+			value = attr.getValue().replaceAll("\\$", ".");
 			matcher = getMatcher(value);
 		}
 		if (value == null || (matcher != null && !matcher.matches()) ){
-			value = getProperValue(attr.getValue());
+			value = getProperValue(attr.getValue()).replaceAll("\\$", ".");
 			matcher = getMatcher(value);
 		}
 		if (matcher.matches()) {
 			String group = matcher.group(0);
-			int offset = ((IDocumentAttribute)attr).getValueOffset() + value.indexOf(group) + attr.getValue().indexOf(value);
+			int offset = ((IDocumentAttribute)attr).getValueOffset() + value.indexOf(group);
+			int attOffset = attr.getValue().indexOf(value);
+			if (attOffset != -1)
+				offset += attOffset;
 			int length = group.length();
 			fSearchRequestor.reportMatch(new Match(file, Match.UNIT_CHARACTER, offset, length));
 		}
