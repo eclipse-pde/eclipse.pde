@@ -930,10 +930,17 @@ public class LogView extends ViewPart implements ILogListener {
         if (sortType == DATE) {
             fComparator = new Comparator() {
                 public int compare(Object e1, Object e2) {
-                	int result = fLogs.indexOf(e2) - fLogs.indexOf(e1);
+                	long date1 = ((LogEntry) e1).getDate().getTime();
+					long date2 = ((LogEntry) e2).getDate().getTime();
+					if (date1 == date2) {
+						int result = fLogs.indexOf(e2) - fLogs.indexOf(e1);
+						if (DATE_ORDER == DESCENDING)
+							result *= DESCENDING;
+						return result;
+					}
 					if (DATE_ORDER == DESCENDING)
-						result *= DESCENDING;
-					return result;
+						return date1 > date2 ? DESCENDING : ASCENDING;
+					return date1 < date2 ? DESCENDING : ASCENDING;
                 }
             };
         } else if (sortType == PLUGIN) {
@@ -975,10 +982,17 @@ public class LogView extends ViewPart implements ILogListener {
         } else {
             return new ViewerSorter() {
 				public int compare(Viewer viewer, Object e1, Object e2) {
-					int result = fLogs.indexOf(e2) - fLogs.indexOf(e1);
+					long date1 = ((LogEntry) e1).getDate().getTime();
+					long date2 = ((LogEntry) e2).getDate().getTime();
+					if (date1 == date2) {
+						int result = fLogs.indexOf(e2) - fLogs.indexOf(e1);
+						if (DATE_ORDER == DESCENDING)
+							result *= DESCENDING;
+						return result;
+					}
 					if (DATE_ORDER == DESCENDING)
-						result *= DESCENDING;
-					return result;
+						return date1 > date2 ? DESCENDING : ASCENDING;
+					return date1 < date2 ? DESCENDING : ASCENDING;
                 }
             };
         }
