@@ -235,4 +235,6 @@ public abstract class PDEFormPage extends FormPage {
 		super.setActive(active);
 	}
 
+	public void updateFormSelection() {
+	}
 }

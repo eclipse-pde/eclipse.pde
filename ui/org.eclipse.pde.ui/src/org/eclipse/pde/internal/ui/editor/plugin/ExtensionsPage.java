@@ -9,15 +9,21 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginParent;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.text.IDocumentAttribute;
+import org.eclipse.pde.internal.core.text.IDocumentRange;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
@@ -26,6 +32,7 @@ import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.IDetailsPageProvider;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class ExtensionsPage extends PDEFormPage {
@@ -97,5 +104,27 @@ public class ExtensionsPage extends PDEFormPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_PLUGIN_EXTENSIONS);
 		super.createFormContent(managedForm);
 	}
-
+	
+	public void updateFormSelection() {
+		IFormPage page = getPDEEditor().findPage(PluginInputContext.CONTEXT_ID);
+		if (page instanceof ManifestSourcePage) {
+			ISourceViewer viewer = ((ManifestSourcePage)page).getViewer();
+			if (viewer == null)
+				return;
+			StyledText text = viewer.getTextWidget();
+			if (text == null)
+				return;
+			int offset = text.getCaretOffset();
+			if (offset < 0)
+				return;
+			
+			IDocumentRange range = ((ManifestSourcePage)page).getRangeElement(offset, true);
+			if (range instanceof IDocumentAttribute)
+				range = ((IDocumentAttribute)range).getEnclosingElement();
+			else if (range instanceof IDocumentTextNode)
+				range = ((IDocumentTextNode)range).getEnclosingElement();
+			if (range != null)
+				fSection.selectExtensionElement(new StructuredSelection(range));
+		}
+	}
 }

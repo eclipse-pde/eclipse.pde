@@ -842,4 +842,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		}
 	}
 
+	protected void selectExtensionElement(ISelection selection) {
+		fExtensionTree.setSelection(selection, true);
+	}
 }

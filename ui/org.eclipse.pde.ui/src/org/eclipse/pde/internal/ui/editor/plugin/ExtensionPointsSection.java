@@ -379,4 +379,8 @@ public class ExtensionPointsSection extends TableSection {
 			return true;
 		return false;
 	}
+	
+	protected void selectExtensionPoint(ISelection selection) {
+		pointTable.setSelection(selection, true);
+	}
 }
