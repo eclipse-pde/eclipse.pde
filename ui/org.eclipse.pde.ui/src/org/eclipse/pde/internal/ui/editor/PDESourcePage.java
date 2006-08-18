@@ -448,7 +448,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 			range = findRange();
 		}
 		setHighlightRange(range, true);
-		setSelectedRange(range, true);
+		setSelectedRange(range, false);
 	}
 	
 	/*
