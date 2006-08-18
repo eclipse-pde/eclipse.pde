@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.ui.search.ElementQuerySpecification;
 import org.eclipse.jdt.ui.search.IMatchPresentation;
 import org.eclipse.jdt.ui.search.IQueryParticipant;
@@ -94,8 +95,12 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		
 		String search;
 		if (querySpecification instanceof ElementQuerySpecification) {
-			search = ((ElementQuerySpecification)querySpecification).getElement().getElementName();
-			int type = ((ElementQuerySpecification)querySpecification).getElement().getElementType();
+			IJavaElement element = ((ElementQuerySpecification)querySpecification).getElement();
+			if (element instanceof IType)
+				search = ((IType)element).getFullyQualifiedName();
+			else
+				search = element.getElementName();
+			int type = element.getElementType();
 			if (type == IJavaElement.TYPE)
 				fSearchFor = S_FOR_TYPES;
 			else if (type == IJavaElement.PACKAGE_FRAGMENT || type == IJavaElement.PACKAGE_FRAGMENT_ROOT)
