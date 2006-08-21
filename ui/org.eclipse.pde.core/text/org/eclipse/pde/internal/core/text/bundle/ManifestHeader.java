@@ -31,7 +31,7 @@ public class ManifestHeader extends BundleObject implements IManifestHeader {
 	protected String fName;
 	protected String fValue;
 
-	protected IBundle fBundle;
+	protected transient IBundle fBundle;
 	protected String fLineDelimiter;
 	
 	public ManifestHeader() {

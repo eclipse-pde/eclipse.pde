@@ -31,12 +31,15 @@ public class PDEManifestElement extends BundleObject {
 	protected ManifestHeader fHeader;
 	
 	public PDEManifestElement(ManifestHeader header, String value) {
-		fHeader = header;
+		setHeader(header);
 		setValue(value);
+        setModel(fHeader.getBundle().getModel());
 	}
+	
 	protected PDEManifestElement(ManifestHeader header, ManifestElement manifestElement) {
-		fHeader = header;
+		setHeader(header);
 		init(manifestElement);
+        setModel(fHeader.getBundle().getModel());
 	}
 	
 	public String[] getValueComponents() {
@@ -248,6 +251,10 @@ public class PDEManifestElement extends BundleObject {
     
     public ManifestHeader getHeader() {
         return fHeader;
+    }
+    
+    public void setHeader(ManifestHeader header) {
+    	fHeader = header;
     }
    
 }

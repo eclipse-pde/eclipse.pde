@@ -283,26 +283,34 @@ public class ExecutionEnvironmentSection extends TableSection {
 		dialog.setTitle(PDEUIMessages.RequiredExecutionEnvironmentSection_dialog_title);
 		dialog.setMessage(PDEUIMessages.RequiredExecutionEnvironmentSection_dialogMessage);
 		if (dialog.open() == Window.OK) {
-			Object[] result = dialog.getResult();
-			IManifestHeader header = getHeader();
-			if (header == null) {
-				StringBuffer buffer = new StringBuffer();
-				for (int i = 0; i < result.length; i++) {
-					if (buffer.length() > 0) {
-						buffer.append(","); //$NON-NLS-1$
-						buffer.append(getLineDelimiter());
-						buffer.append(" "); //$NON-NLS-1$
-					}
-					buffer.append(((IExecutionEnvironment)result[i]).getId());
-				}
-				getBundle().setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, buffer.toString());
-			} else {
-				RequiredExecutionEnvironmentHeader ee = (RequiredExecutionEnvironmentHeader)header;
-				for (int i = 0; i < result.length; i++) {
-					ee.addExecutionEnvironment((IExecutionEnvironment)result[i]);
-				}
-			}
+			addExecutionEnvironments(dialog.getResult());
 		}
+	}
+	
+	private void addExecutionEnvironments(Object[] result) {
+		IManifestHeader header = getHeader();
+		if (header == null) {
+			StringBuffer buffer = new StringBuffer();
+			for (int i = 0; i < result.length; i++) {
+				String id = null;
+				if (result[i] instanceof IExecutionEnvironment)
+					id = ((IExecutionEnvironment)result[i]).getId();
+				else if (result[i] instanceof ExecutionEnvironment)
+					id = ((ExecutionEnvironment)result[i]).getName();
+				else
+					continue;
+				if (buffer.length() > 0) {
+					buffer.append(","); //$NON-NLS-1$
+					buffer.append(getLineDelimiter());
+					buffer.append(" "); //$NON-NLS-1$
+				}
+				buffer.append(id);
+			}
+			getBundle().setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, buffer.toString());
+		} else {
+			RequiredExecutionEnvironmentHeader ee = (RequiredExecutionEnvironmentHeader)header;
+			ee.addExecutionEnvironments(result);
+		}		
 	}
 	
     private String getLineDelimiter() {
@@ -385,13 +393,33 @@ public class ExecutionEnvironmentSection extends TableSection {
 		return model.isFragmentModel();
 	}
 	
-	public boolean doGlobalAction(String actionId) {
-		
+	public boolean doGlobalAction(String actionId) {		
 		if (!isEditable()) { return false; }
 		
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleRemove();
 			return true;
+		}
+		
+		if (actionId.equals(ActionFactory.CUT.getId())) {
+			// delete here and let the editor transfer
+			// the selection to the clipboard
+			handleRemove();
+			return false;
+		}
+		
+		if (actionId.equals(ActionFactory.PASTE.getId())) {
+			doPaste();
+			return true;
+		}
+
+		return false;
+	}
+	
+	protected boolean canPaste(Object target, Object[] objects) {
+		for (int i = 0; i < objects.length; i++) {
+			if (objects[i] instanceof ExecutionEnvironment)
+				return true;
 		}
 		return false;
 	}
@@ -401,6 +429,10 @@ public class ExecutionEnvironmentSection extends TableSection {
 		if (getPage().getModel().isEditable())
 			updateButtons();
 	}
+    
+    protected void doPaste(Object target, Object[] objects) {
+    	addExecutionEnvironments(objects);
+    }
 
 
 }

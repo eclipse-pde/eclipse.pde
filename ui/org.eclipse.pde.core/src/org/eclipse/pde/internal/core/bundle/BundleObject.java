@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bundle;
 
+import java.io.PrintWriter;
 import java.io.Serializable;
 
 import org.eclipse.core.runtime.CoreException;
@@ -17,11 +18,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 
-public class BundleObject implements Serializable {
+public class BundleObject implements Serializable, IWritable {
     private static final long serialVersionUID = 1L;
     
     private transient IBundleModel model;
@@ -65,6 +67,11 @@ public class BundleObject implements Serializable {
         IModelChangeProvider provider = model;
         provider.fireModelObjectChanged(object, property, oldValue, newValue);
     }
+
+	public void write(String indent, PrintWriter writer) {
+		writer.print(indent);
+		writer.print(toString());
+	}
 
 
 }

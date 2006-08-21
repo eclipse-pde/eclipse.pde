@@ -21,12 +21,10 @@ public class RequireBundleObject extends PDEManifestElement {
 
 	public RequireBundleObject(ManifestHeader header, String value) {
 		super(header, value);
-        setModel(fHeader.getBundle().getModel());
-	}
+ 	}
 
 	public RequireBundleObject(ManifestHeader header, ManifestElement manifestElement) {
 		super(header, manifestElement);
-        setModel(fHeader.getBundle().getModel());
 	}
 	
 	public void setId(String id) {

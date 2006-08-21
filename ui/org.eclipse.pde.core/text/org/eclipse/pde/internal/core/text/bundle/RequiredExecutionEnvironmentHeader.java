@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
+import java.util.ArrayList;
+
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -31,7 +33,28 @@ public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader 
     }
     
     public void addExecutionEnvironment(IExecutionEnvironment env) {
-    	addManifestElement(new ExecutionEnvironment(this, env.getId()));  	
+    	addManifestElement(new ExecutionEnvironment(this, env.getId()));
+    }
+    
+    public void addExecutionEnvironments(Object[] envs) {
+    	ArrayList list = new ArrayList(envs.length);
+    	for (int i = 0; i < envs.length; i++) {
+    		ExecutionEnvironment env = null;
+    		if (envs[i] instanceof ExecutionEnvironment) {
+    			env = (ExecutionEnvironment)envs[i];
+    		} else if (envs[i] instanceof IExecutionEnvironment) {
+    			env = new ExecutionEnvironment(this, ((IExecutionEnvironment)envs[i]).getId());
+    		}
+    		if (env != null && !hasElement(env.getName()))
+    			list.add(env);
+    	}
+    	
+    	if (list.size() > 0)
+    		addManifestElements((ExecutionEnvironment[])list.toArray(new ExecutionEnvironment[list.size()]));
+     }
+    
+    public void addExecutionEnvironments(ExecutionEnvironment[] envs) {
+    	addManifestElements(envs);
     }
     
     public ExecutionEnvironment removeExecutionEnvironment(ExecutionEnvironment env) {

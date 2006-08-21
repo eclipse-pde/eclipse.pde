@@ -88,9 +88,16 @@ public class CompositeManifestHeader extends ManifestHeader {
 	
 	protected void addManifestElement(PDEManifestElement element) {
 		addManifestElement(element, true);
+	}
+	
+	protected void addManifestElements(PDEManifestElement[] elements) {
+		for (int i = 0; i < elements.length; i++)
+			addManifestElement(elements[i], i == elements.length - 1);
 	}	
 	
 	protected void addManifestElement(PDEManifestElement element, boolean update) {
+		element.setModel(getModel());
+		element.setHeader(this);
 		if (fSort) {
 			if (fElementMap == null)
 				fElementMap = new TreeMap();

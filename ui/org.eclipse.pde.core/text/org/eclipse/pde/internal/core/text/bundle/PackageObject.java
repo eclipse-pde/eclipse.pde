@@ -21,7 +21,6 @@ public class PackageObject extends PDEManifestElement {
     public PackageObject(ManifestHeader header, ManifestElement element, String versionAttribute) {
     	super(header, element);
     	fVersionAttribute = versionAttribute;
-        setModel(fHeader.getBundle().getModel());
     }
     
     public PackageObject(ManifestHeader header, String name, String version, String versionAttribute) {
@@ -29,7 +28,6 @@ public class PackageObject extends PDEManifestElement {
         fVersionAttribute = versionAttribute;
         if (version != null) 
         	addAttribute(fVersionAttribute, version);
-        setModel(fHeader.getBundle().getModel());
     }
     
      public String toString() {

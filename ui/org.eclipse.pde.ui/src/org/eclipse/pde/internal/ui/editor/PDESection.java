@@ -21,59 +21,67 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public abstract class PDESection extends SectionPart implements IModelChangedListener, IContextPart, IAdaptable {
-	
+public abstract class PDESection extends SectionPart implements IModelChangedListener,
+		IContextPart, IAdaptable {
+
 	public static final int CLIENT_VSPACING = 4;
-	
+
 	private PDEFormPage fPage;
-	
+
 	public PDESection(PDEFormPage page, Composite parent, int style) {
 		this(page, parent, style, true);
 	}
-	
+
 	public PDESection(PDEFormPage page, Composite parent, int style, boolean titleBar) {
-		super(parent, page.getManagedForm().getToolkit(), titleBar?(ExpandableComposite.TITLE_BAR | style): style);
+		super(parent, page.getManagedForm().getToolkit(),
+				titleBar ? (ExpandableComposite.TITLE_BAR | style) : style);
 		fPage = page;
 		initialize(page.getManagedForm());
 		getSection().clientVerticalSpacing = CLIENT_VSPACING;
 		getSection().setData("part", this); //$NON-NLS-1$
 	}
-	
+
 	protected abstract void createClient(Section section, FormToolkit toolkit);
 
 	public PDEFormPage getPage() {
 		return fPage;
 	}
+
 	protected IProject getProject() {
 		return fPage.getPDEEditor().getCommonProject();
-	}	
+	}
+
 	public boolean doGlobalAction(String actionId) {
 		return false;
 	}
 
 	public void modelChanged(IModelChangedEvent e) {
-		if (e.getChangeType()==IModelChangedEvent.WORLD_CHANGED)
+		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED)
 			markStale();
 	}
-	
+
 	public String getContextId() {
 		return null;
 	}
+
 	public void fireSaveNeeded() {
 		markDirty();
-		if (getContextId()!=null)
+		if (getContextId() != null)
 			getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
 	}
+
 	public boolean isEditable() {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
 	}
+
 	public boolean canPaste(Clipboard clipboard) {
 		return false;
 	}
+
 	public void cancelEdit() {
 		super.refresh();
 	}
-	
+
 	public Object getAdapter(Class adapter) {
 		return null;
 	}
