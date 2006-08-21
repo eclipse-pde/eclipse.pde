@@ -47,7 +47,16 @@ public class BundleObject implements Serializable, IWritable {
 				null);
 		throw new CoreException(status);
 	}
-    
+
+    protected void fireStructureChanged(BundleObject[] children, int changeType) {
+        IModelChangedEvent e = new ModelChangedEvent(
+                model, 
+                changeType,
+                children, 
+                null);
+        fireModelChanged(e);
+ }
+
     protected void fireStructureChanged(BundleObject child, int changeType) {
             IModelChangedEvent e = new ModelChangedEvent(
                     model, 

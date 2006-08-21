@@ -92,7 +92,9 @@ public class CompositeManifestHeader extends ManifestHeader {
 	
 	protected void addManifestElements(PDEManifestElement[] elements) {
 		for (int i = 0; i < elements.length; i++)
-			addManifestElement(elements[i], i == elements.length - 1);
+			addManifestElement(elements[i], false);
+		update(false);
+		fireStructureChanged(elements, IModelChangedEvent.INSERT);
 	}	
 	
 	protected void addManifestElement(PDEManifestElement element, boolean update) {
