@@ -116,8 +116,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			return;
 
 		fModel = PDECore.getDefault().getModelManager().findModel(fProject);
-		// be paranoid.  something could have gone wrong reading the file etc.
-		// model will be null if Bundle-SymbolicName is not specified, but this will not cause exception in reporter.
+		// be paranoid.  something could have gone wrong reading the file etc. or Eclipse could have crashed
+		if (fModel == null)
+			return;
 		setOsgiR4();
 
 		if (!validateBundleSymbolicName())
