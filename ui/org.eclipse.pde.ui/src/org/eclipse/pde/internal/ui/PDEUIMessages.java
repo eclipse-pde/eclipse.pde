@@ -2945,5 +2945,12 @@ public class PDEUIMessages extends NLS {
 	public static String PerspectiveTemplate_showViewShortcuts;
 	public static String PerspectiveTemplate_newWizardShortcuts;
 	public static String PerspectiveTemplate_actionSets;
-
+	
+	// Preferences Service Template
+	public static String OSGiPreferencesServiceNewWizard_title;
+	public static String OSGiPreferencesServiceTemplate_label;
+	public static String OSGiPreferencesServiceTemplate_pageTitle;
+	public static String OSGiPreferencesServiceTemplate_pageDescription;
+	public static String OSGiPreferencesServiceTemplate_value;
+	
 }
