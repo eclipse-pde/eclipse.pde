@@ -417,9 +417,13 @@ public class ExecutionEnvironmentSection extends TableSection {
 	}
 	
 	protected boolean canPaste(Object target, Object[] objects) {
+		RequiredExecutionEnvironmentHeader header = getHeader();
 		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof ExecutionEnvironment)
+			if (objects[i] instanceof ExecutionEnvironment) {
+				String env = ((ExecutionEnvironment)objects[i]).getName();
+				if (header == null || !header.hasElement(env))
 				return true;
+			}
 		}
 		return false;
 	}
