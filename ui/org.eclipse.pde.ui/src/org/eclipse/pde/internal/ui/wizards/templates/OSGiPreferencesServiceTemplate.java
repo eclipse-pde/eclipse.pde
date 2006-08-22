@@ -22,7 +22,7 @@ import org.eclipse.pde.ui.templates.TemplateOption;
 public class OSGiPreferencesServiceTemplate extends PDETemplateSection {
 	
 	public static final String KEY_APPLICATION_CLASS = "applicationClass"; //$NON-NLS-1$
-	public static final String MESSAGE = "message"; //$NON-NLS-1$
+	public static final String COLOR = "color"; //$NON-NLS-1$
 	
 	private OSGiPreferencesServiceNewWizard osgiWizard;
 	
@@ -30,7 +30,7 @@ public class OSGiPreferencesServiceTemplate extends PDETemplateSection {
 		setPageCount(1);
 		osgiWizard = wizard;
 		addOption(
-				MESSAGE, 
+				COLOR, 
 				PDEUIMessages.OSGiPreferencesServiceTemplate_label, 
 				PDEUIMessages.OSGiPreferencesServiceTemplate_value, 
 				0);  

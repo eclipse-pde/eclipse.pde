@@ -10,7 +10,7 @@ public class $applicationClass$ implements BundleActivator {
 
 	private ServiceTracker tracker;
 	private PreferencesService service;
-	private static final String MESSAGE = "message"; //$NON-NLS-1$
+	private static final String COLOR = "color"; //$NON-NLS-1$
 	
 	/*
 	 * (non-Javadoc)
@@ -24,9 +24,9 @@ public class $applicationClass$ implements BundleActivator {
 		service = (PreferencesService) tracker.getService();
 		Preferences preferences = service.getSystemPreferences();
 		
-		preferences.put(MESSAGE, "$message$");
+		preferences.put(COLOR, "$color$");
 		
-		System.out.println(preferences.get(MESSAGE, "")); //$NON-NLS-1$
+		System.out.println("My favourite color is: " + preferences.get(COLOR, "")); 
 	}
 	
 	/*
