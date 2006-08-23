@@ -182,6 +182,16 @@
             %wizard.profile.name
          </description>
       </wizard>
+      <wizard
+            category="org.eclipse.pde.PDE"
+            class="org.eclipse.pde.internal.ui.wizards.cheatsheet.NewCheatSheetFileWizard"
+            icon="icons/obj16/cheatsheet_composite_obj.gif"
+            id="org.eclipse.pde.ui.NewCheatSheetWizard"
+            name="%new.cheat.sheet">
+         <description>
+         	%new.cheat.sheet.description
+         </description>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.importWizards">

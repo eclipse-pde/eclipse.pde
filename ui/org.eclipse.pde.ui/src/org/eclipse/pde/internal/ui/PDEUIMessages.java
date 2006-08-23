@@ -17,6 +17,24 @@ public class PDEUIMessages extends NLS {
 
 	public static String AddLibraryDialog_nospaces;
 
+	public static String BaseCheatSheetCreationOperation_0;
+
+	public static String CheatSheetFileWizardPage_1;
+
+	public static String CheatSheetFileWizardPage_2;
+
+	public static String CheatSheetFileWizardPage_4;
+
+	public static String CheatSheetFileWizardPage_5;
+
+	public static String CheatSheetFileWizardPage_6;
+
+	public static String CheatSheetFileWizardPage_7;
+
+	public static String CheatSheetFileWizardPage_8;
+
+	public static String CheatSheetFileWizardPage_9;
+
 	public static String CompilersConfigurationTab_incompatEnv;
 
 	public static String ContentSection_addDialogButtonLabel;
@@ -56,6 +74,8 @@ public class PDEUIMessages extends NLS {
 	public static String MissingResourcePage_unableToOpen;
 
 	public static String MissingResourcePage_unableToOpenFull;
+
+	public static String NewCheatSheetFileWizard_0;
 
 	public static String RemoveUnknownExecEnvironments_label;
 

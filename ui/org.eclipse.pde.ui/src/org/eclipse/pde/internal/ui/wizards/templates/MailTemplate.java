@@ -103,7 +103,7 @@ public class MailTemplate extends PDETemplateSection {
 		createApplicationExtension();
 		createPerspectiveExtension();
 		createViewExtension();
-		if ("3.2".compareTo(model.getPluginBase().getSchemaVersion()) > 0) {
+		if ("3.2".compareTo(model.getPluginBase().getSchemaVersion()) > 0) { //$NON-NLS-1$
             createCommandExtension(false);
             createBindingsExtension();
         } else {
