@@ -199,13 +199,14 @@ public class AntScript implements IAntScript {
 		}
 	}
 
-	public void printSubantTask(String antfile, String target, String buildpath, String failOnError, Map properties, Map references) {
+	public void printSubantTask(String antfile, String target, String buildpath, String failOnError, String inheritAll, Map properties, Map references) {
 		printTab();
 		output.print("<subant"); //$NON-NLS-1$
 		printAttribute("antfile", antfile, false); //$NON-NLS-1$
 		printAttribute("target", target, false); //$NON-NLS-1$
 		printAttribute("failonerror", failOnError, false);   //$NON-NLS-1$
 		printAttribute("buildpath", buildpath, false);  //$NON-NLS-1$
+		printAttribute("inheritall", inheritAll, false); //$NON-NLS-1$
 		if (properties == null && references == null)
 			output.println("/>"); //$NON-NLS-1$
 		else {

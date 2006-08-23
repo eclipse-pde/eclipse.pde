@@ -57,6 +57,9 @@ public interface IBuildPropertiesConstants {
 	public static final String PROPERTY_OVERWRITE_ROOTFILES = "overwriteRootFiles";  //$NON-NLS-1$
 	
 	public static final String PROPERTY_CUSTOM_BUILD_CALLBACKS = "customBuildCallbacks"; //$NON-NLS-1$
+	public static final String PROPERTY_CUSTOM_CALLBACKS_BUILDPATH = "customBuildCallbacks.buildpath"; //$NON-NLS-1$
+	public static final String PROPERTY_CUSTOM_CALLBACKS_FAILONERROR = "customBuildCallbacks.failonerror"; //$NON-NLS-1$
+	public static final String PROPERTY_CUSTOM_CALLBACKS_INHERITALL = "customBuildCallbacks.inheritall"; //$NON-NLS-1$
 	public static final String PROPERTY_JAVAC_SOURCE = "javacSource"; //$NON-NLS-1$
 	public static final String PROPERTY_JAVAC_TARGET = "javacTarget"; //$NON-NLS-1$
 	public static final String PROPERTY_BOOT_CLASSPATH = "bootClasspath"; //$NON-NLS-1$

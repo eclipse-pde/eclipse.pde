@@ -82,6 +82,9 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	//Cache the result of compteElements for performance
 	private List computedElements = null;
 	private String customFeatureCallbacks = null;
+	private String customCallbacksBuildpath = null;
+	private String customCallbacksFailOnError = null;
+	private String customCallbacksInheritAll = null;
 	private String product = null;
 	private static final String TEMPLATE = "data"; //$NON-NLS-1$
 	
@@ -489,7 +492,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			callbackParams = new HashMap(1);
 			callbackParams.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE)).append(DEFAULT_PLUGIN_LOCATION).toString());
 			callbackParams.put(PROPERTY_FEATURE_DIRECTORY, root);
-			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_BIN_PARTS, ".", FALSE, callbackParams, null); //$NON-NLS-1$
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, callbackParams, null); 
 		}
 		
 		Map params = new HashMap(1);
@@ -535,7 +538,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 		generateRootFilesAndPermissionsCalls();
 		if (customFeatureCallbacks != null) {
-			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_BIN_PARTS, ".", FALSE, callbackParams, null); //$NON-NLS-1$
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, callbackParams, null); 
 		}
 		script.printTargetEnd();
 		generateRootFilesAndPermissions();
@@ -988,11 +991,15 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			}
 		}
 		
-		customFeatureCallbacks = getBuildProperties().getProperty(PROPERTY_CUSTOM_BUILD_CALLBACKS);
+		Properties properties = getBuildProperties();
+		customFeatureCallbacks = properties.getProperty(PROPERTY_CUSTOM_BUILD_CALLBACKS);
 		if (TRUE.equalsIgnoreCase(customFeatureCallbacks))
 			customFeatureCallbacks = DEFAULT_CUSTOM_BUILD_CALLBACKS_FILE;
 		else if (FALSE.equalsIgnoreCase(customFeatureCallbacks))
 			customFeatureCallbacks = null;
+		customCallbacksBuildpath = properties.getProperty(PROPERTY_CUSTOM_CALLBACKS_BUILDPATH, "."); //$NON-NLS-1$
+		customCallbacksFailOnError= properties.getProperty(PROPERTY_CUSTOM_CALLBACKS_FAILONERROR, FALSE);
+		customCallbacksInheritAll = properties.getProperty(PROPERTY_CUSTOM_CALLBACKS_INHERITALL); 
 	}
 
 	private void initializeFeatureNames() throws CoreException {
