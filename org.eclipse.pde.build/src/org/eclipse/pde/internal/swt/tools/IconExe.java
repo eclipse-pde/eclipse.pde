@@ -50,7 +50,7 @@ public class IconExe {
 	 */
 	public static void main(String[] args) throws Exception {
 		if (args.length < 2) {
-			System.err.println("Usage: IconExe <windows executable> <ico file>");
+			System.err.println("Usage: IconExe <windows executable> <ico file>"); //$NON-NLS-1$
 			return;
 		}
 		ImageLoader loader = new ImageLoader();
@@ -72,7 +72,7 @@ public class IconExe {
 		
 		int nMissing = unloadIcons(args[0], data);
 		if (nMissing != 0)
-			System.err.println("Error - " + nMissing + " icon(s) not replaced in " + args[0] + " using " + args[1]);
+			System.err.println("Error - " + nMissing + " icon(s) not replaced in " + args[0] + " using " + args[1]); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	/* Implementation */
@@ -92,7 +92,7 @@ public class IconExe {
 	 * @param program the Windows executable e.g c:/eclipse/eclipse.exe
 	 */	
 	static ImageData[] loadIcons(String program) throws FileNotFoundException, IOException {
-		RandomAccessFile raf = new RandomAccessFile(program, "r");
+		RandomAccessFile raf = new RandomAccessFile(program, "r"); //$NON-NLS-1$
 		IconExe iconExe = new IconExe();
 		IconResInfo[] iconInfo = iconExe.getIcons(raf);
 		ImageData[] data = new ImageData[iconInfo.length];
@@ -132,7 +132,7 @@ public class IconExe {
 	 * @return the number of icons from the original program that were not successfully replaced (0 if success)
 	 */	
 	static int unloadIcons(String program, ImageData[] icons) throws FileNotFoundException, IOException {
-		RandomAccessFile raf = new RandomAccessFile(program, "rw");
+		RandomAccessFile raf = new RandomAccessFile(program, "rw"); //$NON-NLS-1$
 		IconExe iconExe = new IconExe();
 		IconResInfo[] iconInfo = iconExe.getIcons(raf);
 		int cnt = 0;
@@ -152,7 +152,7 @@ public class IconExe {
 		return iconInfo.length - cnt;
 	}
 	
-	public static final String VERSION = "20050124";
+	public static final String VERSION = "20050124"; //$NON-NLS-1$
 	
 	static final boolean DEBUG = false;
 	public static class IconResInfo {
@@ -179,7 +179,7 @@ public class IconExe {
 		// DumpResources
 		int resourcesRVA = imageNtHeaders.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE].VirtualAddress;
 		if (resourcesRVA == 0) return null;
-		if (DEBUG) System.out.println("* Resources (RVA= "+resourcesRVA+")");
+		if (DEBUG) System.out.println("* Resources (RVA= "+resourcesRVA+")"); //$NON-NLS-1$ //$NON-NLS-2$
 		IMAGE_SECTION_HEADER imageSectionHeader = new IMAGE_SECTION_HEADER();
 		int firstSectionOffset = imageNtHeadersOffset + IMAGE_NT_HEADERS.FIELD_OFFSET_OptionalHeader + imageNtHeaders.FileHeader.SizeOfOptionalHeader;
 		raf.seek(firstSectionOffset);
@@ -205,23 +205,23 @@ public class IconExe {
 	}
 
 void dumpResourceDirectory(RandomAccessFile raf, int imageResourceDirectoryOffset, int resourceBase, int delta, int type, int level, boolean rt_icon_root) throws IOException {
-	if (DEBUG) System.out.println("** LEVEL "+level);
+	if (DEBUG) System.out.println("** LEVEL "+level); //$NON-NLS-1$
 
 	IMAGE_RESOURCE_DIRECTORY imageResourceDirectory = new IMAGE_RESOURCE_DIRECTORY();
 	raf.seek(imageResourceDirectoryOffset);
 	read(raf, imageResourceDirectory);
 
 	if (DEBUG) {
-		String sType = ""+type;
+		String sType = ""+type; //$NON-NLS-1$
 		// level 1 resources are resource types
 		if (level == 1) {
-			System.out.println("___________________________");
-			if (type == RT_ICON) sType = "RT_ICON";
-			if (type == RT_GROUP_ICON) sType = "RT_GROUP_ICON";
+			System.out.println("___________________________"); //$NON-NLS-1$
+			if (type == RT_ICON) sType = "RT_ICON"; //$NON-NLS-1$
+			if (type == RT_GROUP_ICON) sType = "RT_GROUP_ICON"; //$NON-NLS-1$
 		}
-		System.out.println("Resource Directory ["+sType+"]"+" (Named "+imageResourceDirectory.NumberOfNamedEntries+", ID "+imageResourceDirectory.NumberOfIdEntries+")");
+		System.out.println("Resource Directory ["+sType+"]"+" (Named "+imageResourceDirectory.NumberOfNamedEntries+", ID "+imageResourceDirectory.NumberOfIdEntries+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
-	int IRDE_StartOffset = imageResourceDirectoryOffset + IMAGE_RESOURCE_DIRECTORY.SIZEOF;	
+
 	IMAGE_RESOURCE_DIRECTORY_ENTRY[] imageResourceDirectoryEntries = new IMAGE_RESOURCE_DIRECTORY_ENTRY[imageResourceDirectory.NumberOfIdEntries];
 	for (int i = 0; i < imageResourceDirectoryEntries.length; i++) {
 		imageResourceDirectoryEntries[i] = new IMAGE_RESOURCE_DIRECTORY_ENTRY();
@@ -237,9 +237,9 @@ void dumpResourceDirectory(RandomAccessFile raf, int imageResourceDirectoryOffse
 			IMAGE_RESOURCE_DATA_ENTRY data = new IMAGE_RESOURCE_DATA_ENTRY();
 			raf.seek(imageResourceDirectoryEntries[i].OffsetToData + resourceBase);
 			read(raf, data);
-			if (DEBUG) System.out.println("Resource Id "+irde.Id+" Data Offset RVA "+data.OffsetToData+", Size "+data.Size);
+			if (DEBUG) System.out.println("Resource Id "+irde.Id+" Data Offset RVA "+data.OffsetToData+", Size "+data.Size); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if (rt_icon_root) {
-				if (DEBUG) System.out.println("iconcnt "+iconCnt+" |"+iconInfo.length);
+				if (DEBUG) System.out.println("iconcnt "+iconCnt+" |"+iconInfo.length); //$NON-NLS-1$ //$NON-NLS-2$
 				iconInfo[iconCnt] = new IconResInfo();
 				iconInfo[iconCnt].data = parseIcon(raf, data.OffsetToData - delta, data.Size);
 				iconInfo[iconCnt].offset = data.OffsetToData - delta;
@@ -367,7 +367,7 @@ static byte[] loadData(BITMAPINFOHEADER bih, RandomAccessFile raf, int stride) t
 	if (cmp == 0) { // BMP_NO_COMPRESSION
 		raf.read(data);
 	} else {
-		if (DEBUG) System.out.println("ICO cannot be compressed?");
+		if (DEBUG) System.out.println("ICO cannot be compressed?"); //$NON-NLS-1$
 	}
 	return data;
 }
@@ -906,7 +906,7 @@ public int hashCode () {
  * @return a string representation of the <code>RGB</code>
  */
 public String toString () {
-	return "RGB {" + red + ", " + green + ", " + blue + "}"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ 
+	return "RGB {" + red + ", " + green + ", " + blue + "}"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
 
 //$NON-NLS-4$
 }
@@ -1007,14 +1007,14 @@ public int getPixel(RGB rgb) {
 		pixel |= (greenShift < 0 ? rgb.green << -greenShift : rgb.green >>> greenShift) & greenMask;
 		pixel |= (blueShift < 0 ? rgb.blue << -blueShift : rgb.blue >>> blueShift) & blueMask;
 		return pixel;
-	} else {
-		for (int i = 0; i < colors.length; i++) {
-			if (colors[i].equals(rgb)) return i;
-		}
-		/* The RGB did not exist in the palette */
-		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-		return 0;
+	} 
+
+	for (int i = 0; i < colors.length; i++) {
+		if (colors[i].equals(rgb)) return i;
 	}
+	/* The RGB did not exist in the palette */
+	SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+	return 0;
 }
 
 /**
@@ -1037,12 +1037,11 @@ public RGB getRGB(int pixel) {
 		int b = pixel & blueMask;
 		b = (blueShift < 0) ? b >>> -blueShift : b << blueShift;
 		return new RGB(r, g, b);
-	} else {
-		if (pixel < 0 || pixel >= colors.length) {
-			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-		}
-		return colors[pixel];
 	}
+	if (pixel < 0 || pixel >= colors.length) {
+		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+	}
+	return colors[pixel];
 }
 
 /**
@@ -1494,6 +1493,7 @@ public ImageData(String filename) {
  * Prevents uninitialized instances from being created outside the package.
  */
 ImageData() {
+	//empty constructor
 }
 
 /**
@@ -1998,9 +1998,8 @@ public RGB[] getRGBs() {
 public ImageData getTransparencyMask() {
 	if (getTransparencyType() == SWT.TRANSPARENCY_MASK) {
 		return new ImageData(width, height, 1, bwPalette(), maskPad, maskData);
-	} else {
-		return colorMaskImage(transparentPixel);
 	}
+	return colorMaskImage(transparentPixel);
 }
 
 /**
@@ -2457,6 +2456,7 @@ static final int MSB_FIRST = 1;
 /**
  * Data types (internal)
  */
+/*
 private static final int
 	// direct / true color formats with arbitrary masks & shifts
 	TYPE_GENERIC_8 = 0,
@@ -2471,7 +2471,7 @@ private static final int
 	TYPE_INDEX_2 = 8,
 	TYPE_INDEX_1_MSB = 9,
 	TYPE_INDEX_1_LSB = 10;
-
+*/
 /**
  * Computes the required channel shift from a mask.
  */
@@ -2981,11 +2981,9 @@ ImageData[] loadFromByteStream() {
 	byte[] data = loadData(infoHeader);
 	this.compression = (infoHeader[16] & 0xFF) | ((infoHeader[17] & 0xFF) << 8) | ((infoHeader[18] & 0xFF) << 16) | ((infoHeader[19] & 0xFF) << 24);
 	this.importantColors = (infoHeader[36] & 0xFF) | ((infoHeader[37] & 0xFF) << 8) | ((infoHeader[38] & 0xFF) << 16) | ((infoHeader[39] & 0xFF) << 24);
-	int xPelsPerMeter = (infoHeader[24] & 0xFF) | ((infoHeader[25] & 0xFF) << 8) | ((infoHeader[26] & 0xFF) << 16) | ((infoHeader[27] & 0xFF) << 24);
-	int yPelsPerMeter = (infoHeader[28] & 0xFF) | ((infoHeader[29] & 0xFF) << 8) | ((infoHeader[30] & 0xFF) << 16) | ((infoHeader[31] & 0xFF) << 24);
-	int type = (this.compression == 1 /*BMP_RLE8_COMPRESSION*/) || (this.compression == 2 
-
-/*BMP_RLE4_COMPRESSION*/) ? SWT.IMAGE_BMP_RLE : SWT.IMAGE_BMP;
+//	int xPelsPerMeter = (infoHeader[24] & 0xFF) | ((infoHeader[25] & 0xFF) << 8) | ((infoHeader[26] & 0xFF) << 16) | ((infoHeader[27] & 0xFF) << 24);
+//	int yPelsPerMeter = (infoHeader[28] & 0xFF) | ((infoHeader[29] & 0xFF) << 8) | ((infoHeader[30] & 0xFF) << 16) | ((infoHeader[31] & 0xFF) << 24);
+	int type = (this.compression == 1 /*BMP_RLE8_COMPRESSION*/) || (this.compression == 2 /*BMP_RLE4_COMPRESSION*/) ? SWT.IMAGE_BMP_RLE : SWT.IMAGE_BMP;
 	return new ImageData[] {
 		ImageData.internal_new(
 			width,
@@ -3280,7 +3278,7 @@ static class SWT {
 	public static final int IMAGE_BMP_RLE = 1;
 	
 	public static void error(int code) {
-		throw new RuntimeException("Error "+code);
+		throw new RuntimeException("Error "+code); //$NON-NLS-1$
 	}
 	public static void error(int code, Throwable t) {
 		throw new RuntimeException(t);
