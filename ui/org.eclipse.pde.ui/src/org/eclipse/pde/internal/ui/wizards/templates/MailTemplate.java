@@ -19,6 +19,8 @@ import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginReference;
+import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
+import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.IFieldData;
@@ -103,7 +105,8 @@ public class MailTemplate extends PDETemplateSection {
 		createApplicationExtension();
 		createPerspectiveExtension();
 		createViewExtension();
-		if ("3.2".compareTo(model.getPluginBase().getSchemaVersion()) > 0) { //$NON-NLS-1$
+		IPluginBase base = model.getPluginBase();
+        if (base instanceof BundlePluginBase || "3.1".compareTo(((PluginBase) base).getTargetVersion()) <= 0) { //$NON-NLS-1$
             createCommandExtension(false);
             createBindingsExtension();
         } else {
