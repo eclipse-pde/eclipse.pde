@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.ui.launcher;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Map;
@@ -29,7 +28,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -53,6 +51,8 @@ import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.osgi.framework.Version;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class SWTLaunchConfiguration extends
 		AbstractJavaLaunchConfigurationDelegate {
@@ -87,7 +87,7 @@ public class SWTLaunchConfiguration extends
 		}
 		
 		// Environment variables
-		String[] envp= DebugPlugin.getDefault().getLaunchManager().getEnvironment(configuration);
+		String[] envp = getEnvironment(configuration);
 		
 		// Program & VM args
 		String pgmArgs = getProgramArguments(configuration);
