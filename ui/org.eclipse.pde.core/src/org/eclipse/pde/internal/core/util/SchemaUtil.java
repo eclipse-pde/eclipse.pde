@@ -92,37 +92,25 @@ public class SchemaUtil {
 	 * @param length
 	 * @return
 	 */	
-	public static String getCharacters(String endElementName, char[] ch, int start, int length) {
-		char[] endElement = endElementName.toCharArray();
+	public static String getCharacters(char[] ch, int start, int length) {
 		StringBuffer buff = new StringBuffer();
-		boolean endFlag = true;
 		// Scan until we find the end element
 		for (int i = start; i < ch.length; i++) {
 			// Check for first character of end element tag
 			if (ch[i] == '<') {
 				// Potential match found
-				// Check to see if we can safely scan ahead in the character array
-				if ((endElement.length + 1 + i) < ch.length) {
-					// Check for second character of end element tag
-					if (ch[i + 1] == '/') {
-						int offset = i + 2;
-						// Check to see if the end element tag name matches
-						for (int j = 0; j < endElement.length; j++) {
-							if (endElement[j] != ch[offset + j]) {
-								// Wrong end element, abort
-								endFlag = false;
-								break;
-							}
-						}
-						if (endFlag) {
-							// Return what we have in the buffer so far
-							return buff.toString();
-						}
-					}
-				} else {
-					// If we can't scan ahead, that means the XML document is
-					// not well-formed
-					return null;
+				if (((i + 1) < ch.length) &&
+						(ch[i + 1] == '/')) {
+					// We definitely have an end element, no need to check 
+					// what that element is because the XML document is 
+					// well-formed
+					// Return what we have in the buffer so far
+					return buff.toString();
+				} else if ((i + 1) < ch.length) {
+					// We past the end of the array without verifying this is
+					// indeed an end element
+					// Return what we have in the buffer so far
+					return buff.toString();
 				}
 			}
 			// Store characters in the buffer until the end element tag is found
@@ -130,8 +118,10 @@ public class SchemaUtil {
 			buff.append(ch[i]);
 		}
 		// We past the end of the array without finding an end element tag
-		// Return nothing
-		return null;
+		// This means that another SAX characters event will be sent by the 
+		// parser to fill in the missing details
+		// Return what we have in the buffer so far
+		return buff.toString();
 	}
 	
 }

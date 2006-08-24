@@ -98,6 +98,7 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 		final Label simpleCSText = new Label(fGroup, SWT.WRAP);
 		simpleCSText.setText(PDEUIMessages.CheatSheetFileWizardPage_6);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 300;
 		simpleCSText.setLayoutData(gd);
 		
 		// Spacer
@@ -118,6 +119,7 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 		final Label compositeCSText = new Label(fGroup, SWT.WRAP);
 		compositeCSText.setText(PDEUIMessages.CheatSheetFileWizardPage_8);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 300;
 		compositeCSText.setLayoutData(gd);
 	}
 

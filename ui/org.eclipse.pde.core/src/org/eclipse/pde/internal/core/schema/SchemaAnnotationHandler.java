@@ -76,15 +76,12 @@ public class SchemaAnnotationHandler extends BaseSchemaHandler {
 	public void characters(char[] ch, int start, int length) throws SAXException {
 		
 		if (onTarget()) {
-			fDescription = SchemaUtil.getCharacters((String)fElementList.getFirst(), ch, start, length);
-			// We found the description we are looking for
-			// Throw an exception to indicate to the parser to stop parsing
-			// Saves parsing time and improves performance
-			
-			// REVISIT: There is a chance we won't get the name if we abort 
-			// early (rare case someone temporarily modifies XML source 
-			// directly)
-			throw new AbortParseSAXException();
+			String value = SchemaUtil.getCharacters(ch, start, length);
+			if (fDescription == null) {
+				fDescription = value; 
+			} else if (value != null){
+				fDescription = fDescription + value;
+			}
 		}
 	}		
 	

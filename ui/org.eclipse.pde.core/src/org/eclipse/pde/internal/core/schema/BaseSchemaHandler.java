@@ -54,13 +54,6 @@ public class BaseSchemaHandler extends DefaultHandler {
 			throw new SAXException("Serious error.  XML document is not well-formed"); //$NON-NLS-1$
 		}
 	}
-	
-	public static class AbortParseSAXException extends SAXException {
-		private static final long serialVersionUID = -2703148009130147804L;
-		public AbortParseSAXException() {
-			super("Parsing aborted to decrease parse time. Not an error"); //$NON-NLS-1$
-		}
-	}
 
 	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 		// Prevent the resolution of external entities in order to
