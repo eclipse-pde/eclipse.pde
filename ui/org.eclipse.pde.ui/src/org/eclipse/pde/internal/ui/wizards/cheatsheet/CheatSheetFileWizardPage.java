@@ -95,7 +95,6 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 		final Label simpleCSText = new Label(fGroup, SWT.WRAP);
 		simpleCSText.setText(PDEUIMessages.CheatSheetFileWizardPage_6);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = 100;
 		simpleCSText.setLayoutData(gd);
 		
 		// Spacer
@@ -116,7 +115,6 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 		final Label compositeCSText = new Label(fGroup, SWT.WRAP);
 		compositeCSText.setText(PDEUIMessages.CheatSheetFileWizardPage_8);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = 100;
 		compositeCSText.setLayoutData(gd);
 	}
 
@@ -124,16 +122,24 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validatePage()
 	 */
 	protected boolean validatePage() {
-		// Verify the filename ends with an XML extension
-		if (!getFileName().trim().endsWith(F_FILE_EXTENSION)) { 
-			setErrorMessage(PDEUIMessages.CheatSheetFileWizardPage_9
-					+ F_FILE_EXTENSION + "'."); //$NON-NLS-1$
+		String filename = getFileName().trim();
+		// Verify the filename contains a '.' 
+		int dotIndex = filename.indexOf('.');
+		if (dotIndex == -1) { 
+			setErrorMessage(PDEUIMessages.CheatSheetFileWizardPage_9);
 			return false;
 		}
-		// Verify that the name portion of the filename is not empty
-		if (getFileName().trim().length() <= F_FILE_EXTENSION.length()) {
+		String name = filename.substring(0, dotIndex);
+		// Verify that the name portion is non-empty
+		if (name.length() == 0) {
 			return false;
 		}
+		String extension = filename.substring(dotIndex + 1, filename.length());
+		// Verify that the extension portion is non-empty
+		if (extension.length() == 0) {
+			setErrorMessage(PDEUIMessages.CheatSheetFileWizardPage_0);
+			return false;
+		}		
 		return super.validatePage();
 	}
 	

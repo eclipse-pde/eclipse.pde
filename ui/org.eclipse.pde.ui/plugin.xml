@@ -183,15 +183,19 @@
          </description>
       </wizard>
       <wizard
-            category="org.eclipse.pde.PDE"
+            category="org.eclipse.pde.userAssistance"
             class="org.eclipse.pde.internal.ui.wizards.cheatsheet.NewCheatSheetFileWizard"
-            icon="icons/obj16/cheatsheet_composite_obj.gif"
+            icon="icons/etool16/new_cheatsheet_wizard.gif"
             id="org.eclipse.pde.ui.NewCheatSheetWizard"
             name="%new.cheat.sheet">
          <description>
          	%new.cheat.sheet.description
          </description>
       </wizard>
+      <category
+            id="org.eclipse.pde.userAssistance"
+            name="%category.name.user.assistance">
+      </category>
    </extension>
    <extension
          point="org.eclipse.ui.importWizards">

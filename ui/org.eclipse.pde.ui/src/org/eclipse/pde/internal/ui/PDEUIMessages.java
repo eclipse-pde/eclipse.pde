@@ -19,6 +19,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String BaseCheatSheetCreationOperation_0;
 
+	public static String CheatSheetFileWizardPage_0;
+
 	public static String CheatSheetFileWizardPage_1;
 
 	public static String CheatSheetFileWizardPage_2;
