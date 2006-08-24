@@ -67,6 +67,8 @@ public class NewCheatSheetFileWizard extends BasicNewFileResourceWizard implemen
 	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#performFinish()
 	 */
 	public boolean performFinish() {
+		// Post-process page data
+		fMainPage.finalizePage();
 		try {
 			getContainer().run(false, true, getOperation());
 		} catch (InvocationTargetException e) {

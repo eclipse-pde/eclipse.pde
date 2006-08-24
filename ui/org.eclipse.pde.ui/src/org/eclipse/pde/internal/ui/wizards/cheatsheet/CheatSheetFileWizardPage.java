@@ -42,6 +42,8 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 	
 	private static final String F_FILE_EXTENSION = ".xml"; //$NON-NLS-1$
 	
+	private boolean fHasExtension;
+	
 	public static final int F_SIMPLE_CHEAT_SHEET = 0;
 	
 	public static final int F_COMPOSITE_CHEAT_SHEET = 1;
@@ -55,6 +57,7 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 		super(pageName, selection);
 		setTitle(PDEUIMessages.CheatSheetFileWizardPage_1);
 		setDescription(PDEUIMessages.CheatSheetFileWizardPage_2);
+		fHasExtension = false;
 	}
 
 	/**
@@ -118,20 +121,39 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 		compositeCSText.setLayoutData(gd);
 	}
 
+	/**
+	 * 
+	 */
+	public void finalizePage() {
+		// If an extension has not been provided, append an '.xml' extension
+		if (fHasExtension == false) {
+			setFileName(getFileName() + F_FILE_EXTENSION);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validatePage()
 	 */
 	protected boolean validatePage() {
 		String filename = getFileName().trim();
-		// Verify the filename contains a '.' 
-		int dotIndex = filename.indexOf('.');
-		if (dotIndex == -1) { 
-			setErrorMessage(PDEUIMessages.CheatSheetFileWizardPage_9);
+		// Verify the filename is non-empty
+		if (filename.length() == 0) {
 			return false;
 		}
+		
+		// Check to see if the filename contains a '.' 
+		int dotIndex = filename.indexOf('.');
+		if (dotIndex == -1) {
+			// Filename contains no dot
+			fHasExtension = false;
+			return super.validatePage();
+		}
+		// Filename contains a dot
+		fHasExtension = true;
 		String name = filename.substring(0, dotIndex);
 		// Verify that the name portion is non-empty
 		if (name.length() == 0) {
+			setErrorMessage(PDEUIMessages.CheatSheetFileWizardPage_9);
 			return false;
 		}
 		String extension = filename.substring(dotIndex + 1, filename.length());
@@ -139,7 +161,8 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 		if (extension.length() == 0) {
 			setErrorMessage(PDEUIMessages.CheatSheetFileWizardPage_0);
 			return false;
-		}		
+		}
+		
 		return super.validatePage();
 	}
 	
@@ -157,7 +180,6 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		Dialog.applyDialogFont(fGroup);
-		setFileName(F_FILE_EXTENSION);
 	}
 
 	/* (non-Javadoc)
