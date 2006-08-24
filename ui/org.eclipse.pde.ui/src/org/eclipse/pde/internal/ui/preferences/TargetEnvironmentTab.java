@@ -117,7 +117,7 @@ public class TargetEnvironmentTab implements IEnvironmentVariables {
 	}
 	
 	private void addExtraChoices(Set set, String preference) {
-		StringTokenizer tokenizer = new StringTokenizer(preference);
+		StringTokenizer tokenizer = new StringTokenizer(preference,","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
 			set.add(tokenizer.nextToken().trim());
 		}
@@ -358,4 +358,5 @@ public class TargetEnvironmentTab implements IEnvironmentVariables {
 		}
 		return result;
 	}
+	
 }
