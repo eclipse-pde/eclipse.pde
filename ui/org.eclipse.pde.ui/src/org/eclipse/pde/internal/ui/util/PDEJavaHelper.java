@@ -72,6 +72,26 @@ public class PDEJavaHelper {
 		} catch (JavaModelException e) {
 		}
 		return null;
+	}
+	
+	public static String selectType(IResource resource, int scope, String filter) {
+		if (resource == null) return null;
+		IProject project = resource.getProject();
+		try {
+			SelectionDialog dialog = JavaUI.createTypeDialog(
+					PDEPlugin.getActiveWorkbenchShell(),
+					PlatformUI.getWorkbench().getProgressService(),
+					getSearchScope(project),
+					scope, 
+			        false, filter); //$NON-NLS-1$
+			dialog.setTitle(PDEUIMessages.ClassAttributeRow_dialogTitle); 
+			if (dialog.open() == Window.OK) {
+				IType type = (IType) dialog.getResult()[0];
+				return type.getFullyQualifiedName('$');
+			}
+		} catch (JavaModelException e) {
+		}
+		return null;
 	}	
 	
 	public static IJavaSearchScope getSearchScope(IProject project) {

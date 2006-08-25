@@ -127,7 +127,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 					fClassEntry.setValue(value);
 			}
 			public void browseButtonSelected(FormEntry entry) {
-				doOpenSelectionDialog();
+				doOpenSelectionDialog(entry.getValue());
 			}
 		});
 		fClassEntry.setEditable(isEditable);
@@ -147,9 +147,10 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		}
 	}
 	
-	private void doOpenSelectionDialog() {
+	private void doOpenSelectionDialog(String className) {
 		IResource resource = getPluginBase().getModel().getUnderlyingResource();
-		String type = PDEJavaHelper.selectType(resource, IJavaElementSearchConstants.CONSIDER_CLASSES);
+		String type = 
+			PDEJavaHelper.selectType(resource, IJavaElementSearchConstants.CONSIDER_CLASSES, className);
 		if (type != null)
 			fClassEntry.setValue(type);
 	}

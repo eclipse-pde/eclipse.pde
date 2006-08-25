@@ -95,7 +95,10 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 	}
 	private void doOpenSelectionDialog() {
 		IResource resource = getPluginBase().getModel().getUnderlyingResource();
-		String type = PDEJavaHelper.selectType(resource, IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES);
+		String type = PDEJavaHelper.selectType(
+				resource, 
+				IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES, 
+				text.getText());
 		if (type != null)
 			text.setText(type);
 
