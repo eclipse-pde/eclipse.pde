@@ -817,7 +817,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	}
 
 	protected TreeViewer createTreeViewer(Composite parent, int style) {
-		FilteredTree tree = new FilteredTree(parent, style, new PatternFilter());
+		FilteredTree tree = new FormFilteredTree(parent, style, new PatternFilter());
 		parent.setData("filtered", Boolean.TRUE); //$NON-NLS-1$
 		return tree.getViewer();
 	}
