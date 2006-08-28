@@ -114,7 +114,10 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
                 getWizard().getContainer().updateButtons();
 			}
 		});		
-
+		// TODO: MP: Temporarily disabled
+		fCompositeCheatSheetButton.setEnabled(false);
+		
+		
 		// Composite Cheat Sheet Description Label
 		final Label compositeCSText = new Label(fGroup, SWT.WRAP);
 		compositeCSText.setText(PDEUIMessages.CheatSheetFileWizardPage_8);

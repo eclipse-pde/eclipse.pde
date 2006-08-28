@@ -34,9 +34,10 @@ import org.eclipse.ui.part.ISetSelectionTarget;
  * BaseCheatSheetCreationOperation
  *
  */
-public class BaseCheatSheetCreationOperation extends WorkspaceModifyOperation {
+public abstract class BaseCheatSheetCreationOperation extends
+		WorkspaceModifyOperation {
 
-	private IFile fFile;
+	protected IFile fFile;
 	
 	/**
 	 * 
@@ -58,12 +59,16 @@ public class BaseCheatSheetCreationOperation extends WorkspaceModifyOperation {
 	protected void execute(IProgressMonitor monitor) throws CoreException,
 			InvocationTargetException, InterruptedException {
 		monitor.beginTask(PDEUIMessages.BaseCheatSheetCreationOperation_0, 2); 
-		// TODO: MP: Create file content when cheat sheet editor model is complete
-		//createContent();
+		createContent();
 		monitor.worked(1);
         openFile();
         monitor.done();
 	}
+	
+	/**
+	 * 
+	 */
+	protected abstract void createContent();
 	
 	/**
 	 * 

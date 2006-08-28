@@ -87,11 +87,15 @@ public class NewCheatSheetFileWizard extends BasicNewFileResourceWizard implemen
         IFile file = fMainPage.createNewFile();
 		int option = fMainPage.getCheatSheetType();
 		if (option == CheatSheetFileWizardPage.F_SIMPLE_CHEAT_SHEET) {
-			// TODO: MP: Do specific operation for simple cheat sheet
+			return new SimpleCheatSheetCreationOperation(file);
 		} else if (option == CheatSheetFileWizardPage.F_COMPOSITE_CHEAT_SHEET) {
 			// TODO: MP: Do specific operation for composite cheat sheet
+			return null;
 		}
-		// TODO: MP: Revisit when cheat sheet model is complete
-		return new BaseCheatSheetCreationOperation(file);
+		// This should never happen
+		// TODO: MP: Externalize
+		PDEPlugin.logErrorMessage("Unknown cheat sheet type encountered"); //$NON-NLS-1$
+		return null;
+		//return new BaseCheatSheetCreationOperation(file);
 	}	
 }
