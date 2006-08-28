@@ -277,11 +277,12 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	}
 
 	private void updateButtons() {
-        int size = ((IStructuredSelection)fPackageViewer.getSelection()).size();
+		Object[] selected = ((IStructuredSelection)fPackageViewer.getSelection()).toArray();
+        int size = selected.length;
         TablePart tablePart = getTablePart();
         tablePart.setButtonEnabled(ADD_INDEX, isEditable());
         tablePart.setButtonEnabled(REMOVE_INDEX, isEditable() && size > 0);
-        tablePart.setButtonEnabled(PROPERTIES_INDEX, size == 1);  
+        tablePart.setButtonEnabled(PROPERTIES_INDEX, shouldEnableProperties(selected)); 
     }
     
     protected void handleDoubleClick(IStructuredSelection selection) {
@@ -330,20 +331,29 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
     		}
     }
 
-	private void handleOpenProperties() {
-        Object object = ((IStructuredSelection)fPackageViewer.getSelection()).getFirstElement();
-        ImportPackageObject importObject = (ImportPackageObject)object;
-
-        DependencyPropertiesDialog dialog = new DependencyPropertiesDialog(isEditable(),importObject);
+    private void handleOpenProperties() {
+		Object[] selected = ((IStructuredSelection) fPackageViewer.getSelection()).toArray();
+		ImportPackageObject first = (ImportPackageObject)selected[0];
+        DependencyPropertiesDialog dialog = new DependencyPropertiesDialog(isEditable(), first);
         dialog.create();
         SWTUtil.setDialogSize(dialog, 400, -1);
-        dialog.setTitle(importObject.getName());
+        if (selected.length == 1)
+        	dialog.setTitle(((ImportPackageObject)selected[0]).getName());
+        else 
+        	dialog.setTitle(PDEUIMessages.ExportPackageSection_props);
         if (dialog.open() == Window.OK && isEditable()) {
-            importObject.setOptional(dialog.isOptional());
-            importObject.setVersion(dialog.getVersion());
+        	String newVersion = dialog.getVersion();
+        	boolean newOptional = dialog.isOptional();
+        	for (int i = 0; i < selected.length; i++) {
+        		ImportPackageObject object = (ImportPackageObject)selected[i];
+        		if (!newVersion.equals(object.getVersion()))
+        			object.setVersion(newVersion);
+        		if (!newOptional == object.isOptional())
+        			object.setOptional(newOptional);
+        	}
          }
     }
-
+    
 	private void handleRemove() {
         Object[] removed = ((IStructuredSelection) fPackageViewer.getSelection()).toArray();
         for (int i = 0; i < removed.length; i++) {
@@ -600,7 +610,8 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		}
 		if (((IModel)getPage().getModel()).getUnderlyingResource()!=null) 
 			manager.add(new UnusedDependenciesAction((IPluginModelBase) getPage().getModel(), false));
-        if (!fPackageViewer.getSelection().isEmpty()) {
+		
+		if (shouldEnableProperties(((IStructuredSelection)fPackageViewer.getSelection()).toArray())) {
             manager.add(new Separator());
             manager.add(fPropertiesAction);
         }
@@ -705,4 +716,26 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
     }
 
 	protected boolean createCount() { return true; }
+	
+	private boolean shouldEnableProperties(Object[] selected) {
+		if (selected.length == 0)
+			return false;
+		if (selected.length == 1)
+			return true;
+
+		String version = ((ImportPackageObject) selected[0]).getVersion();
+		boolean optional =((ImportPackageObject) selected[0]).isOptional();
+		for (int i = 1; i < selected.length; i++) {
+			ImportPackageObject object = (ImportPackageObject) selected[i];
+			if (version == null) {
+				if (object.getVersion() != null || !(optional == object.isOptional())) {
+					return false;
+				}
+			} else if (!version.equals(object.getVersion()) || !(optional == object.isOptional())) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 }
