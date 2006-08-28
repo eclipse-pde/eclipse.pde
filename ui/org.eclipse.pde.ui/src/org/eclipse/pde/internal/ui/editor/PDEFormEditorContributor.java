@@ -24,6 +24,7 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.actions.ActionFactory;
@@ -145,9 +146,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		}
 	}
 
-	public PDEFormEditorContributor(String menuName) {
-		makeActions();
-	}
+	public PDEFormEditorContributor(String menuName) {}
 	
 	private void addGlobalAction(String id) {
 		GlobalAction action = new GlobalAction(id);
@@ -156,6 +155,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 
 	private void addGlobalAction(String id, Action action) {
 		fGlobalActions.put(id, action);
+		getActionBars().setGlobalActionHandler(id, action);
 	}
 
 	public void addClipboardActions(IMenuManager mng) {
@@ -283,5 +283,10 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 	public IEditorActionBarContributor getSourceContributor() {
 		return null;
 	}
+	
+    public void init(IActionBars bars) {
+    	super.init(bars);
+    	makeActions();
+    }
 
 }
