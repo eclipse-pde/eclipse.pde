@@ -1245,7 +1245,8 @@
             sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"
             delegate="org.eclipse.pde.internal.ui.launcher.JUnitLaunchConfiguration"
             modes="run, debug"
-            id="org.eclipse.pde.ui.JunitLaunchConfig">
+            id="org.eclipse.pde.ui.JunitLaunchConfig"
+            migrationDelegate="org.eclipse.jdt.internal.junit.launcher.JUnitMigrationDelegate">
          <fileExtension
                default="false"
                extension="java">
