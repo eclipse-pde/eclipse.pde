@@ -19,7 +19,7 @@ Export-Package:
  org.eclipse.pde.internal.build.fetch;x-internal:=true,
  org.eclipse.pde.internal.build.packager;x-internal:=true,
  org.eclipse.pde.internal.build.properties;x-internal:=true,
- org.eclipse.pde.internal.build.site;x-internal:=true,
+ org.eclipse.pde.internal.build.site;x-friends:="org.eclipse.pde.core,org.eclipse.pde.ui",
  org.eclipse.pde.internal.swt.tools;x-internal:=true
 Import-Package: com.ibm.icu.util
 Bundle-Localization: plugin
