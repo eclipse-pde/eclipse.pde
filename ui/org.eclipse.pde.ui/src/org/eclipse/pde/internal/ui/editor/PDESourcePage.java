@@ -45,6 +45,7 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.actions.FormatAction;
 import org.eclipse.pde.internal.ui.editor.actions.HyperlinkAction;
+import org.eclipse.pde.internal.ui.editor.actions.InformationDispatchAction;
 import org.eclipse.pde.internal.ui.editor.actions.PDEActionConstants;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.text.PDESelectAnnotationRulerAction;
@@ -64,6 +65,8 @@ import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.ResourceAction;
+import org.eclipse.ui.texteditor.TextOperationAction;
 
 public abstract class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker, ISelectionChangedListener {
 	
@@ -392,15 +395,18 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 				getBundleForConstructedKeys(), "PDESelectAnnotationRulerAction.", this, getVerticalRuler()); //$NON-NLS-1$
 		setAction(ITextEditorActionConstants.RULER_CLICK, action);
 		PDEFormEditorContributor contributor = fEditor == null ? null : fEditor.getContributor();
-		if (contributor != null) {
-			if (contributor instanceof PDEFormTextEditorContributor) {
-				PDEFormTextEditorContributor textContributor = (PDEFormTextEditorContributor)contributor;
-				setAction(PDEActionConstants.OPEN, textContributor.getHyperlinkAction());
-				setAction(PDEActionConstants.FORMAT, textContributor.getFormatAction());			
-				if (textContributor.supportsContentAssist())
-					createContentAssistAction();
-			}
+		if (contributor instanceof PDEFormTextEditorContributor) {
+			PDEFormTextEditorContributor textContributor = (PDEFormTextEditorContributor)contributor;
+			setAction(PDEActionConstants.OPEN, textContributor.getHyperlinkAction());
+			setAction(PDEActionConstants.FORMAT, textContributor.getFormatAction());			
+			if (textContributor.supportsContentAssist())
+				createContentAssistAction();
 		}
+		
+		ResourceAction resAction= new TextOperationAction(getBundleForConstructedKeys(), "ShowTooltip.", this, ISourceViewer.INFORMATION, true); //$NON-NLS-1$
+		resAction= new InformationDispatchAction(getBundleForConstructedKeys(), "ShowTooltip.", (TextOperationAction) resAction, this); //$NON-NLS-1$
+		resAction.setActionDefinitionId(PDEActionConstants.DEFN_SRC_TOOLTIP);
+		setAction("ShowTooltip", resAction); //$NON-NLS-1$
 	}
 	
 	private void createContentAssistAction() {

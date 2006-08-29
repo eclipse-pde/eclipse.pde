@@ -79,6 +79,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String NewCheatSheetFileWizard_0;
 
+	public static String PDETextHover_0;
+
 	public static String RemoveUnknownExecEnvironments_label;
 
 	public static String RevertUnsupportSingletonResolution_desc;

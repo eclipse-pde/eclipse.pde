@@ -14,6 +14,7 @@ import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
@@ -43,6 +44,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	private PDEQuickAssistAssistant fQuickAssistant;
 	private ContentAssistant fContentAssistant;
 	private ManifestContentAssistProcessor fContentAssistantProcessor;
+	private ManifestTextHover fTextHover;
 	
 	class ManifestHeaderScanner extends BasePDEScanner {
 		
@@ -276,4 +278,9 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 		return null;
 	}
 
+	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
+		if (fTextHover == null)
+			fTextHover = new ManifestTextHover(fSourcePage);
+		return fTextHover;
+	}
 }

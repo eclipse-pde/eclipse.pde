@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,14 +19,9 @@ import java.util.HashSet;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jdt.core.IBuffer;
-import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.ISourceRange;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -51,8 +44,6 @@ import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
-import org.eclipse.pde.internal.ui.editor.contentassist.display.JavaDocCommentReader;
-import org.eclipse.pde.internal.ui.editor.text.HTMLPrinter;
 import org.eclipse.pde.internal.ui.util.ImageOverlayIcon;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 import org.eclipse.swt.graphics.Image;
@@ -62,6 +53,7 @@ import org.osgi.framework.Constants;
 public class ManifestContentAssistProcessor extends TypePackageCompletionProcessor implements ICompletionListener {
 	
 	protected PDESourcePage fSourcePage;
+	private IJavaProject fJP;
 	
 	private static final String[] fHeader = {
 		Constants.BUNDLE_ACTIVATOR,
@@ -706,54 +698,12 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 				fImages[i].dispose();
 	}
 	
-	protected String getJavaDoc(String constant) {
-		// Doing search for JavaDoc in processor allows for performance optimizations (caching) in the future
-		IProject project = ((PDEFormEditor)fSourcePage.getEditor()).getCommonProject();
-		IJavaProject jp = JavaCore.create(project);
-		IType type = null;
-		try {
-			type = jp.findType("org.osgi.framework.Constants"); //$NON-NLS-1$
-			if (type != null) {
-				char[] chars = constant.toCharArray();
-				for (int i = 0; i < chars.length; i++)
-					chars[i] = chars[i] == '-' ? '_' : Character.toUpperCase(chars[i]);
-				IField field = type.getField(new String(chars));
-				ISourceRange range = field.getJavadocRange();
-				if (range == null)
-					return null;
-				IBuffer buff = type.getOpenable().getBuffer();
-				JavaDocCommentReader reader = new JavaDocCommentReader(buff, range.getOffset(), 
-						range.getOffset() + range.getLength() - 1);
-				String text = getString(reader);
-				return formatJavaDoc(text);
-			}
-		} catch (JavaModelException e) {
+	private String getJavaDoc(String constant) {
+		if (fJP == null) {
+			IProject project = ((PDEFormEditor)fSourcePage.getEditor()).getCommonProject();
+			fJP = JavaCore.create(project);
 		}
-		return null;
-	}
-
-	private String formatJavaDoc(String text) {
-		StringBuffer buffer = new StringBuffer();
-		HTMLPrinter.insertPageProlog(buffer, 0, HTMLPrinter.getJavaDocStyleSheerURL());
-		buffer.append(text);
-		HTMLPrinter.addPageEpilog(buffer);
-		return buffer.toString();
-	}
-
-	/**
-	 * Gets the reader content as a String
-	 */
-	private static String getString(Reader reader) {
-		StringBuffer buf= new StringBuffer();
-		char[] buffer= new char[1024];
-		int count;
-		try {
-			while ((count= reader.read(buffer)) != -1)
-				buf.append(buffer, 0, count);
-		} catch (IOException e) {
-			return null;
-		}
-		return buf.toString();
+		return PDEJavaHelper.getOSGIConstantJavaDoc(constant, fJP);
 	}
 
 }

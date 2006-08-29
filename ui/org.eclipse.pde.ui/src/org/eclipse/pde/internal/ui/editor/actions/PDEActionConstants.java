@@ -23,4 +23,5 @@ public class PDEActionConstants {
 
 	// command IDs
 	public static final String DEFN_FORMAT = "org.eclipse.pde.ui.edit.text.format"; //$NON-NLS-1$	
+	public static final String DEFN_SRC_TOOLTIP = "org.eclipse.pde.ui.showTooltip"; //$NON-NLS-1$
 }

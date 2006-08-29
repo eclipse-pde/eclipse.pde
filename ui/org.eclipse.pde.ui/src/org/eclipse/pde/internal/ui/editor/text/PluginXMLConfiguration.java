@@ -14,6 +14,7 @@ import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -27,6 +28,7 @@ public class PluginXMLConfiguration extends XMLConfiguration {
 
 	private ContentAssistant fContentAssistant;
 	private XMLContentAssistProcessor fContentAssistProcessor;
+	private PluginXMLTextHover fTextHover;
 	
 	public PluginXMLConfiguration(IColorManager colorManager, PDESourcePage page) {
 		super(colorManager, page);
@@ -60,5 +62,10 @@ public class PluginXMLConfiguration extends XMLConfiguration {
 			fContentAssistProcessor.dispose();
 		super.dispose();
 	}
-
+	
+	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
+		if (fTextHover == null && fSourcePage != null)
+			fTextHover = new PluginXMLTextHover(fSourcePage);
+		return fTextHover;
+	}
 }

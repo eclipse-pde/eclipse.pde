@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,10 +23,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IBuffer;
+import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -43,8 +48,10 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.contentassist.display.JavaDocCommentReader;
 import org.eclipse.pde.internal.ui.editor.plugin.JavaAttributeValue;
 import org.eclipse.pde.internal.ui.editor.plugin.JavaAttributeWizard;
+import org.eclipse.pde.internal.ui.editor.text.HTMLPrinter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -53,6 +60,8 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.ide.IDE;
 
 public class PDEJavaHelper {
+	
+	private static HashMap fDocMap = new HashMap();
 	
 	public static String selectType(IResource resource, int scope) {
 		if (resource == null) return null;
@@ -358,4 +367,61 @@ public class PDEJavaHelper {
 		return (IPackageFragmentRoot[])result.toArray(new IPackageFragmentRoot[result.size()]);	
 	}
 	
+	public static String getOSGIConstantJavaDoc(String constant, IJavaProject jp) {
+		return getJavaDoc(constant, jp, "org.osgi.framework.Constants"); //$NON-NLS-1$
+	}
+	
+	public static String getJavaDoc(String constant, IJavaProject jp, String className) {
+		HashMap map = (HashMap)fDocMap.get(className);
+		if (map == null)
+			fDocMap.put(className, map = new HashMap());
+		String javaDoc = (String)map.get(constant);
+		
+		if (javaDoc == null) {
+			try {
+				IType type = jp.findType(className); 
+				if (type != null) {
+					char[] chars = constant.toCharArray();
+					for (int i = 0; i < chars.length; i++)
+						chars[i] = chars[i] == '-' ? '_' : Character.toUpperCase(chars[i]);
+					IField field = type.getField(new String(chars));
+					ISourceRange range = field.getJavadocRange();
+					if (range == null)
+						return null;
+					IBuffer buff = type.getOpenable().getBuffer();
+					JavaDocCommentReader reader = new JavaDocCommentReader(buff, range.getOffset(), 
+							range.getOffset() + range.getLength() - 1);
+					String text = getString(reader);
+					javaDoc = formatJavaDoc(text);
+					map.put(constant, javaDoc);
+				}
+			} catch (JavaModelException e) {
+			}
+		}
+		return javaDoc;
+	}
+
+	private static String formatJavaDoc(String text) {
+		StringBuffer buffer = new StringBuffer();
+		HTMLPrinter.insertPageProlog(buffer, 0, HTMLPrinter.getJavaDocStyleSheerURL());
+		buffer.append(text);
+		HTMLPrinter.addPageEpilog(buffer);
+		return buffer.toString();
+	}
+
+	/**
+	 * Gets the reader content as a String
+	 */
+	private static String getString(Reader reader) {
+		StringBuffer buf= new StringBuffer();
+		char[] buffer= new char[1024];
+		int count;
+		try {
+			while ((count= reader.read(buffer)) != -1)
+				buf.append(buffer, 0, count);
+		} catch (IOException e) {
+			return null;
+		}
+		return buf.toString();
+	}
 }

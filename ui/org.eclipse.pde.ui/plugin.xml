@@ -787,7 +787,12 @@
       <category
             description="%category.source.description"
             id="org.eclipse.pde.ui.category.source"
-            name="%category.source.name"/>    
+            name="%category.source.name"/> 
+      <command
+            name="%command.name.0"
+            categoryId="org.eclipse.jdt.ui.category.source"
+            id="org.eclipse.pde.ui.showTooltip">
+      </command>   
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -1821,6 +1826,11 @@
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M2+F"/>
+      <key
+            sequence="F2"
+            contextId="org.eclipse.ui.textEditorScope"
+            commandId="org.eclipse.pde.ui.showTooltip"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
    <extension
          point="org.eclipse.ltk.core.refactoring.renameParticipants">
