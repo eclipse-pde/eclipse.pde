@@ -11,7 +11,6 @@
 
 package org.eclipse.pde.internal.core.schema;
 
-import org.eclipse.pde.internal.core.util.SchemaUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -29,7 +28,7 @@ public class SchemaAttributeHandler extends BaseSchemaHandler {
 	
 	private String fTargetAttributeName;
 	
-	private String fDescription;
+	private StringBuffer fDescription;
 	
 	private final static String[] DESC_NESTED_ELEM = { "documentation", //$NON-NLS-1$
 			"annotation", "attribute", "complexType", "element" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -55,7 +54,7 @@ public class SchemaAttributeHandler extends BaseSchemaHandler {
 	
 	protected void reset() {
 		super.reset();
-		fDescription = null;		
+		fDescription = new StringBuffer();		
 		fElementName = null;
 		fAttributeName = null;
 	}
@@ -82,11 +81,8 @@ public class SchemaAttributeHandler extends BaseSchemaHandler {
 	public void characters(char[] ch, int start, int length) throws SAXException {
 		
 		if (onTarget()) {
-			String value = SchemaUtil.getCharacters(ch, start, length);
-			if (fDescription == null) {
-				fDescription = value; 
-			} else if (value != null){
-				fDescription = fDescription + value;
+			for (int i = 0; i < length; i++) {
+				fDescription.append(ch[start + i]);
 			}
 		}
 	}		
@@ -113,7 +109,7 @@ public class SchemaAttributeHandler extends BaseSchemaHandler {
 	}	
 	
 	public String getDescription() {
-		return fDescription;
+		return fDescription.toString();
 	}	
 	
 }
