@@ -357,7 +357,7 @@ public class PointSelectionPage
 			c = fPointDescBrowser = new Browser(templateComposite, SWT.BORDER);
 		} catch (SWTException e) {}
 		if (c == null)
-			c = fPointDescription = new Text(templateComposite, SWT.NONE | SWT.WRAP | SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.READ_ONLY);
+			c = fPointDescription = new Text(templateComposite, SWT.WRAP | SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.READ_ONLY);
 		
 		setPointDescriptionText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_extPointDescription); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
