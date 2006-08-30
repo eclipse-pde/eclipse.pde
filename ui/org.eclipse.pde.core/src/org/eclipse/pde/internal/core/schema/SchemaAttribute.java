@@ -12,13 +12,11 @@ package org.eclipse.pde.internal.core.schema;
 
 import java.io.PrintWriter;
 
-import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
-import org.eclipse.pde.internal.core.util.PDEHTMLHelper;
 import org.eclipse.pde.internal.core.util.SchemaUtil;
 import org.eclipse.pde.internal.core.util.XMLComponentRegistry;
 
@@ -272,13 +270,11 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 			SchemaAttributeHandler handler = 
 				new SchemaAttributeHandler(elementName, getName());
 			SchemaUtil.parseURL(schema.getURL(), handler);
-			description = PDEHTMLHelper.stripTags(handler.getDescription());
+			description = handler.getDescription();
+			XMLComponentRegistry.Instance().putDescription(hashkey, description,
+					XMLComponentRegistry.F_ATTRIBUTE_COMPONENT);
 		}
-		if (description == null) {
-			description = PDECoreMessages.Schema_NoDescriptionAvailable;
-		}
-		XMLComponentRegistry.Instance().putDescription(hashkey, description,
-				XMLComponentRegistry.F_ATTRIBUTE_COMPONENT);
+		
 		return description;
 	}
 	

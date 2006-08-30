@@ -176,4 +176,8 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 		if (fQuickAssistant != null)
 			fQuickAssistant.dispose();
 	}
+	
+	protected int getInfoImplementationType() {
+		return SourceInformationProvider.F_XML_IMP;
+	}
 }

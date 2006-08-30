@@ -283,4 +283,8 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 			fTextHover = new ManifestTextHover(fSourcePage);
 		return fTextHover;
 	}
+	
+	protected int getInfoImplementationType() {
+		return SourceInformationProvider.F_MANIFEST_IMP;
+	}
 }

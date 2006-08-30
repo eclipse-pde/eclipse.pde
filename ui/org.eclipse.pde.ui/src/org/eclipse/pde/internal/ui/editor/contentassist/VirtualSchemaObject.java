@@ -19,10 +19,8 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.schema.SchemaAnnotationHandler;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
-import org.eclipse.pde.internal.core.util.PDEHTMLHelper;
 import org.eclipse.pde.internal.core.util.SchemaUtil;
 import org.eclipse.pde.internal.core.util.XMLComponentRegistry;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class VirtualSchemaObject implements ISchemaObject {
 
@@ -93,16 +91,13 @@ public class VirtualSchemaObject implements ISchemaObject {
 					SchemaAnnotationHandler handler = 
 						new SchemaAnnotationHandler();
 					SchemaUtil.parseURL(url, handler);
-					description = PDEHTMLHelper.stripTags(handler.getDescription());
+					description = handler.getDescription();
+					XMLComponentRegistry.Instance().putDescription(point.getFullId(),
+							description, XMLComponentRegistry.F_SCHEMA_COMPONENT);
 				}
 			}
 		}
-		if ((point == null) || 
-				(description == null)) {
-			description = PDEUIMessages.PointSelectionPage_noDescAvailable;	
-		}
-		XMLComponentRegistry.Instance().putDescription(point.getFullId(),
-				description, XMLComponentRegistry.F_SCHEMA_COMPONENT);
+		
 		return description;
 	}
 	

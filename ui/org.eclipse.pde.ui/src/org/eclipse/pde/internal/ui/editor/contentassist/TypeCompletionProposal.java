@@ -22,6 +22,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposalExtension5;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.pde.internal.ui.editor.contentassist.display.AbstractReusableInformationControlCreator;
 import org.eclipse.pde.internal.ui.editor.contentassist.display.BrowserInformationControl;
+import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -132,7 +133,7 @@ public class TypeCompletionProposal implements ICompletionProposal, ICompletionP
 				 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
 				 */
 				public IInformationControl doCreateInformationControl(Shell parent) {
-					return new BrowserInformationControl(parent, SWT.NO_TRIM | SWT.TOOL, SWT.NONE, null);
+					return new BrowserInformationControl(parent, SWT.NO_TRIM | SWT.TOOL, SWT.NONE, PDETextHover.getTooltipAffordanceString());
 				}
 			};
 		}

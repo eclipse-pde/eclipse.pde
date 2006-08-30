@@ -18,9 +18,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.contentassist.ICompletionProposalExtension3;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension5;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.pde.core.IBaseModel;
@@ -41,11 +44,17 @@ import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.pde.internal.core.text.plugin.PluginAttribute;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.contentassist.display.AbstractReusableInformationControlCreator;
+import org.eclipse.pde.internal.ui.editor.contentassist.display.BrowserInformationControl;
+import org.eclipse.pde.internal.ui.editor.text.HTMLPrinter;
+import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
 import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Shell;
 
-public class XMLCompletionProposal implements ICompletionProposal, ICompletionProposalExtension5 {
+public class XMLCompletionProposal implements ICompletionProposal, ICompletionProposalExtension5, ICompletionProposalExtension3 {
 	
 	private static final String F_DEF_ATTR_INDENT = "      "; //$NON-NLS-1$
 	
@@ -56,6 +65,8 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	private int fSelOffset; 
 	private int fSelLen;
 	private XMLContentAssistProcessor fProcessor;
+	private String fAddInfo;
+	private IInformationControlCreator fCreator;
 	
 	public XMLCompletionProposal(IDocumentRange node, ISchemaObject object, int offset, XMLContentAssistProcessor processor) {
 		fLen = -1;
@@ -386,10 +397,16 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	}
 	
 	public String getAdditionalProposalInfo() {
-		if (fSchemaObject == null) {
-			return null;
+		if (fAddInfo == null) {
+			if (fSchemaObject == null)
+				return null;
+			StringBuffer sb = new StringBuffer();
+			HTMLPrinter.insertPageProlog(sb, 0, HTMLPrinter.getJavaDocStyleSheerURL());
+			sb.append(fSchemaObject.getDescription());
+			HTMLPrinter.addPageEpilog(sb);
+			fAddInfo = sb.toString();
 		}
-		return fSchemaObject.getDescription();
+		return fAddInfo;
 	}
 
 	public IContextInformation getContextInformation() {
@@ -433,6 +450,28 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 
 	public Object getAdditionalProposalInfo(IProgressMonitor monitor) {
 		return getAdditionalProposalInfo();
+	}
+
+	public IInformationControlCreator getInformationControlCreator() {
+		if (!BrowserInformationControl.isAvailable(null))
+			return null;
+		
+		if (fCreator == null) {
+			fCreator = new AbstractReusableInformationControlCreator() {
+				public IInformationControl doCreateInformationControl(Shell parent) {
+					return new BrowserInformationControl(parent, SWT.NO_TRIM | SWT.TOOL, SWT.NONE, PDETextHover.getTooltipAffordanceString());
+				}
+			};
+		}
+		return fCreator;
+	}
+
+	public int getPrefixCompletionStart(IDocument document, int completionOffset) {
+		return 0;
+	}
+
+	public CharSequence getPrefixCompletionText(IDocument document,	int completionOffset) {
+		return null;
 	}
 	
 }

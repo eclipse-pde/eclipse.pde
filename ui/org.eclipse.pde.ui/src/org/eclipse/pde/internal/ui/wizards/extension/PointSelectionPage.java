@@ -58,6 +58,7 @@ import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.text.HTMLPrinter;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.elements.ElementLabelProvider;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
@@ -72,6 +73,8 @@ import org.eclipse.pde.ui.IBasePluginWizard;
 import org.eclipse.pde.ui.IExtensionWizard;
 import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -114,6 +117,7 @@ public class PointSelectionPage
 	private WildcardFilter fWildCardFilter;
 	private Text fPointDescription;
 	private Link fDescLink;
+	private Browser fPointDescBrowser;
 	
 	class PointFilter extends ViewerFilter {
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -348,12 +352,17 @@ public class PointSelectionPage
 		});
 		fDescLink.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
+		Control c = null;
+		try {
+			c = fPointDescBrowser = new Browser(templateComposite, SWT.BORDER);
+		} catch (SWTException e) {}
+		if (c == null)
+			c = fPointDescription = new Text(templateComposite, SWT.NONE | SWT.WRAP | SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.READ_ONLY);
 		
-		fPointDescription = new Text(templateComposite, SWT.NONE | SWT.WRAP | SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.READ_ONLY);
-		fPointDescription.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_extPointDescription); 
+		setPointDescriptionText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_extPointDescription); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint = 55;
-		fPointDescription.setLayoutData(gd);
+		gd.heightHint = 80;
+		c.setLayoutData(gd);
 		
 		fTemplateLabel = new Label(templateComposite, SWT.NONE | SWT.WRAP);
 		fTemplateLabel.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_title); 
@@ -508,7 +517,7 @@ public class PointSelectionPage
 				setDescription(""); //$NON-NLS-1$
 				setDescriptionText(""); //$NON-NLS-1$
 				fTemplateLabel.setText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_contributedTemplates_title);
-				fPointDescription.setText(PDEUIMessages.PointSelectionPage_noDescAvailable);
+				setPointDescriptionText(PDEUIMessages.PointSelectionPage_noDescAvailable);
 				fDescLink.setText(NLS.bind(PDEUIMessages.PointSelectionPage_extPointDesc, "")); //$NON-NLS-1$
 				setSelectedNode(null);
 				setPageComplete(false);
@@ -541,13 +550,13 @@ public class PointSelectionPage
 		if (url != null) {
 			SchemaAnnotationHandler handler = new SchemaAnnotationHandler();
 			SchemaUtil.parseURL(url, handler);
-			description = PDEHTMLHelper.stripTags(handler.getDescription());
+			description = handler.getDescription();
 			name = handler.getName();
 		}
 		if (description == null) {
-			fPointDescription.setText(PDEUIMessages.PointSelectionPage_noDescAvailable);
+			setPointDescriptionText(PDEUIMessages.PointSelectionPage_noDescAvailable);
 		} else {
-			fPointDescription.setText(description);
+			setPointDescriptionText(description);
 		}		
 		if (name == null) {
 			name = fullPointID;
@@ -559,7 +568,7 @@ public class PointSelectionPage
 		setSelectedNode(null);
 		setPageComplete(true);
 		
-		XMLComponentRegistry.Instance().putDescription(fullPointID, fPointDescription.getText(), XMLComponentRegistry.F_SCHEMA_COMPONENT);
+		XMLComponentRegistry.Instance().putDescription(fullPointID, description, XMLComponentRegistry.F_SCHEMA_COMPONENT);
 		XMLComponentRegistry.Instance().putName(fullPointID, name, XMLComponentRegistry.F_SCHEMA_COMPONENT);
 	}
 	
@@ -641,5 +650,16 @@ public class PointSelectionPage
 		if (visible)
 			fFilterText.setFocus();
 		super.setVisible(visible);
+	}
+	
+	private void setPointDescriptionText(String text) {
+		if (fPointDescBrowser != null) {
+			StringBuffer desc = new StringBuffer();
+			HTMLPrinter.insertPageProlog(desc, 0, HTMLPrinter.getJavaDocStyleSheerURL());
+			desc.append(text);
+			HTMLPrinter.addPageEpilog(desc);
+			fPointDescBrowser.setText(desc.toString());
+		} else
+			fPointDescription.setText(PDEHTMLHelper.stripTags(text));
 	}
 }

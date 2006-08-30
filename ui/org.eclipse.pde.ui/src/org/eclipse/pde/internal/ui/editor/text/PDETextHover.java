@@ -19,7 +19,7 @@ import org.eclipse.ui.keys.IBindingService;
 
 public abstract class PDETextHover implements ITextHoverExtension, ITextHover {
 
-	private IBindingService fBindingService = (IBindingService)PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+	private static IBindingService fBindingService = (IBindingService)PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 	
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		return new Region(offset, 0);
@@ -33,7 +33,7 @@ public abstract class PDETextHover implements ITextHoverExtension, ITextHover {
 		};
 	}
 
-	protected String getTooltipAffordanceString() {
+	public static String getTooltipAffordanceString() {
 		if (fBindingService == null)
 			return null;
 

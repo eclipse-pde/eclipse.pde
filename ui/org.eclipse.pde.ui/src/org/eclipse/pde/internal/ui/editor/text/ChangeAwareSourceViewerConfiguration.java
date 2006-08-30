@@ -11,7 +11,13 @@
 package org.eclipse.pde.internal.ui.editor.text;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.DefaultInformationControl;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
+import org.eclipse.jface.text.information.IInformationPresenter;
+import org.eclipse.jface.text.information.IInformationProvider;
+import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -21,6 +27,9 @@ import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
+import org.eclipse.pde.internal.ui.editor.contentassist.display.HTMLTextPresenter;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
@@ -30,6 +39,7 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 	protected PDESourcePage fSourcePage;
 	protected IColorManager fColorManager;
 	private MonoReconciler fReconciler;
+	private InformationPresenter fInfoPresenter;
 
 	/**
 	 * @param page
@@ -64,6 +74,38 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 		}
 		return fReconciler;
 	}	
+	
+	public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer) {
+		if (fSourcePage == null)
+			return null;
+		if (fInfoPresenter == null && getInfoImplementationType() != SourceInformationProvider.F_NO_IMP) {
+			IInformationControlCreator icc = getInformationControlCreator(false);
+			fInfoPresenter = new InformationPresenter(icc);
+			fInfoPresenter.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+			
+			// Register information provider
+			IInformationProvider provider = new SourceInformationProvider(fSourcePage, icc, getInfoImplementationType());
+			String[] contentTypes = getConfiguredContentTypes(sourceViewer);
+			for (int i= 0; i < contentTypes.length; i++)
+				fInfoPresenter.setInformationProvider(provider, contentTypes[i]);
+			
+			fInfoPresenter.setSizeConstraints(60, 10, true, true);
+		}
+		return fInfoPresenter;
+	}
+	
+	protected int getInfoImplementationType() {
+		return SourceInformationProvider.F_NO_IMP;
+	}
+	
+	protected IInformationControlCreator getInformationControlCreator(final boolean cutDown) {
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+				int style = cutDown ? SWT.RESIZE : (SWT.V_SCROLL | SWT.H_SCROLL | SWT.RESIZE);
+				return new DefaultInformationControl(parent, style,	new HTMLTextPresenter(cutDown));
+			}
+		};
+	}
 	
  	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
  		if (fSourcePage != null)
