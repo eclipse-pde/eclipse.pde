@@ -279,7 +279,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	}
 
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
-		if (fTextHover == null)
+		if (fTextHover == null && fSourcePage != null)
 			fTextHover = new ManifestTextHover(fSourcePage);
 		return fTextHover;
 	}
