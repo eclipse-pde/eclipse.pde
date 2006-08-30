@@ -11,13 +11,25 @@
 
 package org.eclipse.pde.internal.core.cheatsheet.simple;
 
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
 
+import org.eclipse.pde.internal.core.XMLPrintHandler;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSOnCompletion;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * SimpleCSItem
@@ -25,15 +37,51 @@ import org.w3c.dom.Node;
  */
 public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 
+	
+	/**
+	 * Element:  onCompletion
+	 */
+	private ISimpleCSOnCompletion fOnCompletion;
+	
+	/**
+	 * Elements:  action, command, perform-when
+	 */
+	private ISimpleCSRunContainerObject fExecutable;
+	
+	/**
+	 * Attribute:  skip
+	 */
+	private boolean fSkip;
+
+	/**
+	 * Attribute:  dialog
+	 */
+	private boolean fDialog;
+	
 	/**
 	 * Element:  description
 	 */
-	private String fDescription;
+	private ISimpleCSDescription fDescription;
 	
 	/**
 	 * Attribute:  title
 	 */
 	private String fTitle;
+
+	/**
+	 * Attribute:  contextId
+	 */
+	private String fContextId;
+
+	/**
+	 * Attribute:  href
+	 */
+	private String fHref;	
+	
+	/**
+	 * Elements:  subitem
+	 */
+	private ArrayList fSubItems;
 	
 	/**
 	 * 
@@ -45,31 +93,27 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 */
 	public SimpleCSItem(ISimpleCSModel model) {
 		super(model);
-		// TODO: MP: Add a reset method
-		fDescription = null;
-		fTitle = null;
+		reset();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#addSubItems(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject[])
 	 */
 	public void addSubItems(ISimpleCSSubItemObject[] subitems) {
-		// TODO Auto-generated method stub
-
+		// TODO: MP: Are we going to need this?
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getContextId()
 	 */
 	public String getContextId() {
-		// TODO Auto-generated method stub
-		return null;
+		return fContextId;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getDescription()
 	 */
-	public String getDescription() {
+	public ISimpleCSDescription getDescription() {
 		return fDescription;
 	}
 
@@ -77,40 +121,36 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getDialog()
 	 */
 	public boolean getDialog() {
-		// TODO Auto-generated method stub
-		return false;
+		return fDialog;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getExecutable()
 	 */
 	public ISimpleCSRunContainerObject getExecutable() {
-		// TODO Auto-generated method stub
-		return null;
+		return fExecutable;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getHref()
 	 */
 	public String getHref() {
-		// TODO Auto-generated method stub
-		return null;
+		return fHref;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getSkip()
 	 */
 	public boolean getSkip() {
-		// TODO Auto-generated method stub
-		return false;
+		return fSkip;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getSubItems()
 	 */
 	public ISimpleCSSubItemObject[] getSubItems() {
-		// TODO Auto-generated method stub
-		return null;
+		return (ISimpleCSSubItemObject[]) fSubItems
+				.toArray(new ISimpleCSSubItemObject[fSubItems.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -124,22 +164,20 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#removeSubItems(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject[])
 	 */
 	public void removeSubItems(ISimpleCSSubItemObject[] subitems) {
-		// TODO Auto-generated method stub
-
+		// TODO: MP: Are we going to need this?
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setContextId(java.lang.String)
 	 */
 	public void setContextId(String contextId) {
-		// TODO Auto-generated method stub
-
+		fContextId = contextId;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setDescription(java.lang.String)
 	 */
-	public void setDescription(String description) {
+	public void setDescription(ISimpleCSDescription description) {
 		fDescription = description;
 	}
 
@@ -147,32 +185,28 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setDialog(boolean)
 	 */
 	public void setDialog(boolean dialog) {
-		// TODO Auto-generated method stub
-
+		fDialog = dialog;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setExecutable(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject)
 	 */
 	public void setExecutable(ISimpleCSRunContainerObject executable) {
-		// TODO Auto-generated method stub
-
+		fExecutable = executable;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setHref(java.lang.String)
 	 */
 	public void setHref(String href) {
-		// TODO Auto-generated method stub
-
+		fHref = href;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setSkip(boolean)
 	 */
 	public void setSkip(boolean skip) {
-		// TODO Auto-generated method stub
-
+		fSkip = skip;
 	}
 
 	/* (non-Javadoc)
@@ -182,40 +216,182 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 		fTitle = title;
 	}
 
-	public void parse(Node node) {
-		// TODO Auto-generated method stub
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#parse(org.w3c.dom.Element)
+	 */
+	public void parse(Element element) {
+		// Process title attribute
+		fTitle = element.getAttribute(ATTRIBUTE_TITLE);
+		// Process dialog attribute
+		if (element.getAttribute(ATTRIBUTE_DIALOG).compareTo(
+				ATTRIBUTE_VALUE_TRUE) == 0) {
+			fDialog = true;
+		}
+		// Process skip attribute
+		if (element.getAttribute(ATTRIBUTE_SKIP).compareTo(
+				ATTRIBUTE_VALUE_TRUE) == 0) {
+			fSkip = true;
+		}
+		// Process contextId attribute
+		fContextId = element.getAttribute(ATTRIBUTE_CONTEXTID);
+		// Process href attribute
+		fHref = element.getAttribute(ATTRIBUTE_HREF);
+		
+		// Process children
+
+		NodeList children = element.getChildNodes();
+		ISimpleCSModelFactory factory = getModel().getFactory();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				String name = child.getNodeName();
+				Element childElement = (Element)child;
+
+				if (name.equals(ELEMENT_DESCRIPTION)) {
+					fDescription = factory.createSimpleCSDescription();
+					fDescription.parse(childElement);
+				} else if (name.equals(ELEMENT_ACTION)) {
+					fExecutable = factory.createSimpleCSAction();
+					fExecutable.parse(childElement);
+				} else if (name.equals(ELEMENT_COMMAND)) {
+					fExecutable = factory.createSimpleCSCommand();
+					fExecutable.parse(childElement);
+				} else if (name.equals(ELEMENT_PERFORM_WHEN)) {
+					fExecutable = factory.createSimpleCSPerformWhen();
+					fExecutable.parse(childElement);
+				} else if (name.equals(ELEMENT_SUBITEM)) {
+					ISimpleCSSubItem subitem = factory.createSimpleCSSubItem();
+					addSubItem(subitem);
+					subitem.parse(childElement);
+				} else if (name.equals(ELEMENT_REPEATED_SUBITEM)) {
+					ISimpleCSRepeatedSubItem subitem = factory.createSimpleCSRepeatedSubItem();
+					addSubItem(subitem);
+					subitem.parse(childElement);
+				} else if (name.equals(ELEMENT_CONDITIONAL_SUBITEM)) {
+					ISimpleCSConditionalSubItem subitem = factory.createSimpleCSConditionalSubItem();
+					addSubItem(subitem);
+					subitem.parse(childElement);
+				} else if (name.equals(ELEMENT_ONCOMPLETION)) {
+					fOnCompletion = factory.createSimpleCSOnCompletion();
+					fOnCompletion.parse(childElement);
+				}
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
+	 */
+	public void write(String indent, PrintWriter writer) {
+
+		StringBuffer buffer = new StringBuffer();
+		String newIndent = indent + XMLPrintHandler.XML_INDENT;
+
+		try {
+			// Print item element
+			buffer.append(ELEMENT_ITEM); //$NON-NLS-1$
+			// Print title attribute
+			if ((fTitle != null) && 
+					(fTitle.length() > 0)) {
+				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+						ATTRIBUTE_TITLE, fTitle));
+			}
+			// Print dialog attribute
+			buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+					ATTRIBUTE_DIALOG, new Boolean(fDialog).toString()));
+			// Print skip attribute
+			buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+					ATTRIBUTE_SKIP, new Boolean(fSkip).toString()));
+			// Print contextId attribute
+			// Print href attribute
+			if ((fContextId != null) &&
+					(fContextId.length() > 0)) {
+				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+						ATTRIBUTE_CONTEXTID, fContextId));
+			} else if ((fHref != null) &&
+							(fHref.length() > 0)) {
+				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+						ATTRIBUTE_HREF, fHref));
+			}
+			// Start element
+			XMLPrintHandler.printBeginElement(writer, buffer.toString(),
+					indent, false);
+			// Print description element
+			if (fDescription != null) {
+				fDescription.write(newIndent, writer);
+			}
+			// Print action | command | perform-when element
+			if (fExecutable != null) {
+				fExecutable.write(newIndent, writer);
+			}
+			// Print subitem | repeated-subitem | conditional-subitem elements
+			Iterator iterator = fSubItems.iterator();
+			while (iterator.hasNext()) {
+				ISimpleCSSubItemObject subitem = (ISimpleCSSubItemObject)iterator.next();
+				subitem.write(newIndent, writer);
+			}
+			// Print onCompletion element
+			if (fOnCompletion != null) {
+				fOnCompletion.write(newIndent, writer);
+			}			
+			// End element
+			XMLPrintHandler.printEndElement(writer, ELEMENT_ITEM, indent);
+			
+		} catch (IOException e) {
+			// Suppress
+			//e.printStackTrace();
+		} 				
 		
 	}
 
-	public void write(String indent, PrintWriter writer) {
-		// TODO: MP: Revisit
-		// TODO: MP: Get rid of hardcodings
-		// TODO: MP: Use XMLPrinter		
-		writer.println(indent + "<!-- Item -->"); //$NON-NLS-1$
-		writer.println();
-		writer.print(indent + "<item"); //$NON-NLS-1$
-		if ((fTitle != null) && 
-				(fTitle.length() > 0)) {
-			writer.print(" " + ATTRIBUTE_TITLE + "=\"" +  //$NON-NLS-1$ //$NON-NLS-2$
-					getWritableString(fTitle) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-		writer.println(">"); //$NON-NLS-1$
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#reset()
+	 */
+	public void reset() {
+		fOnCompletion = null;
+		fExecutable = null;
+		fSkip = false;
+		fDialog = false;
+		fDescription = null;
+		fTitle = null;
+		fContextId = null;
+		fHref = null;
+		fSubItems = new ArrayList();
+	}
 
-		if (fDescription != null) {
-			writer.print(indent + "   " + "<description>"); //$NON-NLS-1$ //$NON-NLS-2$
-			writer.println();
-			writer.print(indent + "      " + getWritableString(fDescription)); //$NON-NLS-1$
-			writer.println();
-			writer.print(indent + "   " + "</description>"); //$NON-NLS-1$ //$NON-NLS-2$
-			
-			// TODO: MP: Create a description class
-			//fDescription.write(indent + "   ", writer); //$NON-NLS-1$
-		}
-		
-		writer.println();
-		writer.println(indent + "</item>"); //$NON-NLS-1$		
-		
-		
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#addSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
+	 */
+	public void addSubItem(ISimpleCSSubItemObject subitem) {
+		fSubItems.add(subitem);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getOnCompletion()
+	 */
+	public ISimpleCSOnCompletion getOnCompletion() {
+		return fOnCompletion;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#removeSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
+	 */
+	public void removeSubItem(ISimpleCSSubItemObject subitem) {
+		fSubItems.remove(subitem);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setOnCompletion(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSOnCompletion)
+	 */
+	public void setOnCompletion(ISimpleCSOnCompletion onCompletion) {
+		fOnCompletion = onCompletion;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getType()
+	 */
+	public int getType() {
+		return TYPE_ITEM;
 	}
 
 }

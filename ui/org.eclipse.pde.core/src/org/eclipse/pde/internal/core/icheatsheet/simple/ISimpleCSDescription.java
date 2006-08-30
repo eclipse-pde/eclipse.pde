@@ -12,9 +12,20 @@
 package org.eclipse.pde.internal.core.icheatsheet.simple;
 
 /**
- * ISimpleCSOnCompletion
+ * ISimpleCSDescription
  *
  */
-public interface ISimpleCSOnCompletion extends ISimpleCSDescription {
-	// TODO: MP: Just leave empty ?
+public interface ISimpleCSDescription extends ISimpleCSObject {
+
+	/**
+	 * Content (element)
+	 * @return
+	 */
+	public String getContent();
+	
+	/**
+	 * Content (element)
+	 * @param content
+	 */
+	public void setContent(String content);	
 }

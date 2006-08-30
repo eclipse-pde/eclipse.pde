@@ -16,6 +16,6 @@ package org.eclipse.pde.internal.core.icheatsheet.simple;
  *
  */
 public interface ISimpleCSRunContainerObject extends ISimpleCSObject {
-
-	// TODO: MP: Add interface methods or fields
+	// Used to store a generic type
+	// See type hierarchy
 }

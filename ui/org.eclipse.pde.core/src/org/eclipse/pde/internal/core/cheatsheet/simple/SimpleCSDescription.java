@@ -15,23 +15,24 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import org.eclipse.pde.internal.core.XMLPrintHandler;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSOnCompletion;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
 /**
- * SimpleCSOnCompletion
+ * SimpleCSDescription
  *
  */
-public class SimpleCSOnCompletion extends SimpleCSObject implements
-		ISimpleCSOnCompletion {
+public class SimpleCSDescription extends SimpleCSObject implements
+		ISimpleCSDescription {
 
+	
 	/**
 	 * Content (Element)
 	 */
-	private String fContent;	
+	private String fContent;
 	
 	/**
 	 * 
@@ -41,9 +42,23 @@ public class SimpleCSOnCompletion extends SimpleCSObject implements
 	/**
 	 * @param model
 	 */
-	public SimpleCSOnCompletion(ISimpleCSModel model) {
+	public SimpleCSDescription(ISimpleCSModel model) {
 		super(model);
 		reset();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription#getContent()
+	 */
+	public String getContent() {
+		return fContent;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription#setContent(java.lang.String)
+	 */
+	public void setContent(String content) {
+		fContent = content;
 	}
 
 	/* (non-Javadoc)
@@ -61,15 +76,22 @@ public class SimpleCSOnCompletion extends SimpleCSObject implements
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#reset()
+	 */
+	public void reset() {
+		fContent = null;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
-
+		
 		String newIndent = indent + XMLPrintHandler.XML_INDENT;
 		
 		try {
 			// Start element
-			XMLPrintHandler.printBeginElement(writer, ELEMENT_ONCOMPLETION,
+			XMLPrintHandler.printBeginElement(writer, ELEMENT_DESCRIPTION,
 					indent, false);
 			// Print contents
 			if ((fContent != null) &&
@@ -77,7 +99,7 @@ public class SimpleCSOnCompletion extends SimpleCSObject implements
 				XMLPrintHandler.printText(writer, fContent, newIndent);
 			}
 			// End element
-			XMLPrintHandler.printEndElement(writer, ELEMENT_ONCOMPLETION, indent);
+			XMLPrintHandler.printEndElement(writer, ELEMENT_DESCRIPTION, indent);
 		} catch (IOException e) {
 			// Suppress
 			//e.printStackTrace();
@@ -85,33 +107,10 @@ public class SimpleCSOnCompletion extends SimpleCSObject implements
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#reset()
-	 */
-	public void reset() {
-		fContent = null;
-	}
-
-	/**
-	 * Content (element)
-	 * @return
-	 */
-	public String getContent() {
-		return fContent;
-	}
-
-	/**
-	 * Content (element)
-	 * @param content
-	 */
-	public void setContent(String content) {
-		fContent = content;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getType()
 	 */
 	public int getType() {
-		return TYPE_ON_COMPLETION;
+		return TYPE_DESCRIPTION;
 	}
 
 }

@@ -36,7 +36,21 @@ public class XMLPrintHandler {
 	public static final String XML_END_TAG = ">"; //$NON-NLS-1$
 	public static final String XML_EQUAL = "="; //$NON-NLS-1$
 	public static final String XML_SLASH = "/"; //$NON-NLS-1$
+	public static final String XML_INDENT = "   "; //$NON-NLS-1$
 
+	
+	/**
+	 * @param level
+	 * @return
+	 */
+	public static String generateIndent(int level) {
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < level; i++) {
+			buffer.append(XML_INDENT);
+		}
+		return buffer.toString();
+	}
+	
 	public static void printBeginElement(Writer xmlWriter, String elementString, String indent, boolean terminate) throws IOException{
 		StringBuffer temp = new StringBuffer(indent);
 		temp.append(XML_BEGIN_TAG);
@@ -57,13 +71,18 @@ public class XMLPrintHandler {
 
 	}
 
-	public static void printText(Writer xmlWriter, String text) throws IOException{
-		xmlWriter.write(encode(text).toString());
+	public static void printText(Writer xmlWriter, String text, String indent) throws IOException{
+		StringBuffer temp = new StringBuffer(indent);
+		temp.append(encode(text).toString());
+		temp.append("\n"); //$NON-NLS-1$
+		xmlWriter.write(temp.toString());
 	}
 
-	public static void printComment(Writer xmlWriter, String comment)throws IOException {
-		StringBuffer temp = new StringBuffer(XML_COMMENT_BEGIN_TAG);
-		temp.append(encode(comment).toString()).append(XML_COMMENT_END_TAG).append("\n"); //$NON-NLS-1$
+	public static void printComment(Writer xmlWriter, String comment, String indent)throws IOException {
+		StringBuffer temp = new StringBuffer("\n"); //$NON-NLS-1$
+		temp.append(indent);
+		temp.append(XML_COMMENT_BEGIN_TAG);
+		temp.append(encode(comment).toString()).append(XML_COMMENT_END_TAG).append("\n\n"); //$NON-NLS-1$
 		xmlWriter.write(temp.toString());
 	}
 

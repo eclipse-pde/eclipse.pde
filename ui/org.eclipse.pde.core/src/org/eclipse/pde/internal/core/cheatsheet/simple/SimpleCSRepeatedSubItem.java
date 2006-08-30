@@ -16,7 +16,7 @@ import java.io.PrintWriter;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
-import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 
 /**
  * SimpleCSRepeatedSubItem
@@ -70,14 +70,35 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 
 	}
 
-	public void parse(Node node) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#parse(org.w3c.dom.Element)
+	 */
+	public void parse(Element element) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
+	 */
 	public void write(String indent, PrintWriter writer) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#reset()
+	 */
+	public void reset() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getType()
+	 */
+	public int getType() {
+		return TYPE_REPEATED_SUBITEM;
 	}
 
 }

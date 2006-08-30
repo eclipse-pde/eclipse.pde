@@ -14,7 +14,7 @@ package org.eclipse.pde.internal.core.icheatsheet.simple;
 import java.io.Serializable;
 
 import org.eclipse.pde.core.IWritable;
-import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 
 /**
  * ISimpleCSObject
@@ -41,6 +41,15 @@ public interface ISimpleCSObject extends Serializable, IWritable,
 	/**
 	 * @param node
 	 */
-	void parse(Node node);	
+	void parse(Element element);	
+
+	/**
+	 * 
+	 */
+	public void reset();
 	
+	/**
+	 * @return
+	 */
+	public int getType();
 }

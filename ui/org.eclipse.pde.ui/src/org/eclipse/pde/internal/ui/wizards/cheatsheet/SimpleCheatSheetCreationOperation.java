@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSWorkspaceModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
@@ -57,17 +58,42 @@ public class SimpleCheatSheetCreationOperation extends
 	 */
 	protected void initializeCS(ISimpleCS simpleCS) {
         // TODO: MP: Revisit and externalize
-		simpleCS.setTitle("Title"); //$NON-NLS-1$
+		simpleCS.setTitle("Cheat Sheet Title Text"); //$NON-NLS-1$
 		ISimpleCSModelFactory factory = simpleCS.getModel().getFactory();
 		ISimpleCSIntro intro = factory.createSimpleCSIntro();
+		ISimpleCSDescription description = factory.createSimpleCSDescription();
         // TODO: MP: Revisit and externalize
-		intro.setDescription("Description"); //$NON-NLS-1$
+		description.setContent("Cheat Sheet Introduction Text"); //$NON-NLS-1$
+		intro.setDescription(description); 
 		simpleCS.setIntro(intro);
 		ISimpleCSItem item = factory.createSimpleCSItem();
         // TODO: MP: Revisit and externalize
-		item.setTitle("Title"); //$NON-NLS-1$
+		item.setTitle("Item Title Text"); //$NON-NLS-1$
+		ISimpleCSDescription description2 = factory.createSimpleCSDescription();
         // TODO: MP: Revisit and externalize
-		item.setDescription("Description"); //$NON-NLS-1$
+		description2.setContent("Item Description"); //$NON-NLS-1$
+		item.setDescription(description2); //$NON-NLS-1$
 		simpleCS.addItem(item);
+		
+//		// TODO: MP: Optional stuff for testing now 
+//		ISimpleCSOnCompletion onCompletion = factory.createSimpleCSOnCompletion();
+//        // TODO: MP: Revisit and externalize
+//		onCompletion.setContent("Description"); //$NON-NLS-1$
+//		item.setOnCompletion(onCompletion);
+//		ISimpleCSSubItem subitem = factory.createSimpleCSSubItem();
+//        // TODO: MP: Revisit and externalize
+//		subitem.setLabel("Label"); //$NON-NLS-1$
+//		item.addSubItem(subitem);
+//
+//		ISimpleCSSubItem subitem2 = factory.createSimpleCSSubItem();
+//        // TODO: MP: Revisit and externalize
+//		subitem2.setLabel("Label"); //$NON-NLS-1$
+//		item.addSubItem(subitem2);
+//
+//		
+//		ISimpleCSCommand command = factory.createSimpleCSCommand();
+//        // TODO: MP: Revisit and externalize
+//		command.setSerialization("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.pde.ui.TargetPlatformPreferencePage)"); //$NON-NLS-1$
+//		subitem.setExecutable(command);
 	}		
 }

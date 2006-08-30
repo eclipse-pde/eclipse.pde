@@ -138,13 +138,6 @@ public class SimpleCSWorkspaceModel extends SimpleCSModel implements
 	 */
 	public void save(PrintWriter writer) {
 		if (isLoaded()) {
-			// TODO: MP: Write out programatically
-			// TODO: MP: Relocate ?
-			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
-			writer.println();
-			writer.println("<!-- Simple Cheat Sheet -->"); //$NON-NLS-1$
-			writer.println();
-			// TODO: MP: Update
 			getSimpleCS().write("", writer); //$NON-NLS-1$
 		}
 		setDirty(false);

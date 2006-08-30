@@ -21,13 +21,13 @@ public interface ISimpleCSItem extends ISimpleCSObject {
 	 * Element:  description
 	 * @return
 	 */
-	public String getDescription();
+	public ISimpleCSDescription getDescription();
 	
 	/**
 	 * Element:  description
 	 * @param description
 	 */
-	public void setDescription(String description);	
+	public void setDescription(ISimpleCSDescription description);	
 	
 	/**
 	 * Attribute: title
@@ -119,6 +119,28 @@ public interface ISimpleCSItem extends ISimpleCSObject {
 	 */
 	public void removeSubItems(ISimpleCSSubItemObject[] subitems);	
 	
-	// TODO: MP: Determine if to have add / remove single subitem
+	/**
+	 * Element:  subitem, repeated-subitem, conditional-subitem
+	 * @param subitem
+	 */
+	public void addSubItem(ISimpleCSSubItemObject subitem);
+	
+	/**
+	 * Element:  subitem, repeated-subitem, conditional-subitem
+	 * @param subitem
+	 */
+	public void removeSubItem(ISimpleCSSubItemObject subitem);
+	
+	/**
+	 * Element:  onCompletion
+	 * @return
+	 */
+	public ISimpleCSOnCompletion getOnCompletion();
+	
+	/**
+	 * Element:  onCompletion
+	 * @param onCompletion
+	 */
+	public void setOnCompletion(ISimpleCSOnCompletion onCompletion);
 	
 }

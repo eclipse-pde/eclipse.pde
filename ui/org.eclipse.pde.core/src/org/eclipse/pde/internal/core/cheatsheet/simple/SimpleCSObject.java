@@ -117,7 +117,13 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 	 * @return
 	 */
 	public String getWritableString(String source) {
+		// TODO: MP: Probably don't need this anymore since using xmlprinthandler
 		return CoreUtility.getWritableString(source);
-	}	
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getType()
+	 */
+	public abstract int getType();
 	
 }

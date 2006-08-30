@@ -15,7 +15,7 @@ import java.io.PrintWriter;
 
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSAction;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
-import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 
 /**
  * SimpleCSAction
@@ -76,14 +76,6 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSAction#getWhen(java.lang.String)
-	 */
-	public void getWhen(String when) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSAction#removeParams(java.lang.String[])
 	 */
 	public void removeParams(String[] subitems) {
@@ -116,19 +108,48 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSAction#setWhen()
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#parse(org.w3c.dom.Element)
 	 */
-	public String setWhen() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void parse(Node node) {
+	public void parse(Element element) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
+	 */
 	public void write(String indent, PrintWriter writer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#reset()
+	 */
+	public void reset() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getType()
+	 */
+	public int getType() {
+		return TYPE_ACTION;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#getWhen()
+	 */
+	public String getWhen() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject#setWhen(java.lang.String)
+	 */
+	public void setWhen(String when) {
 		// TODO Auto-generated method stub
 		
 	}

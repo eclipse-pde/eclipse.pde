@@ -15,6 +15,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSAction;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
@@ -110,4 +111,8 @@ public class SimpleCSModelFactory implements ISimpleCSModelFactory {
 		return new SimpleCSSubItem(fModel);
 	}
 
+	public ISimpleCSDescription createSimpleCSDescription() {
+		return new SimpleCSDescription(fModel);
+	}
+	
 }

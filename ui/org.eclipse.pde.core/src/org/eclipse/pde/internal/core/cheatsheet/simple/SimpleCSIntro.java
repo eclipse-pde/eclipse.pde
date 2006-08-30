@@ -11,11 +11,17 @@
 
 package org.eclipse.pde.internal.core.cheatsheet.simple;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 
+import org.eclipse.pde.internal.core.XMLPrintHandler;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * SimpleCSIntro
@@ -26,7 +32,17 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 	/**
 	 * Element:  description
 	 */
-	private String fDescription;	
+	private ISimpleCSDescription fDescription;	
+	
+	/**
+	 * Attribute:  contextId
+	 */
+	private String fContextId;
+	
+	/**
+	 * Attribute:  href
+	 */
+	private String fHref;
 	
 	/**
 	 * 
@@ -38,22 +54,20 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 	 */
 	public SimpleCSIntro(ISimpleCSModel model) {
 		super(model);
-		// TODO: MP: create reset method
-		fDescription = null;
+		reset();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro#getContextId()
 	 */
 	public String getContextId() {
-		// TODO Auto-generated method stub
-		return null;
+		return fContextId;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro#getDescription()
 	 */
-	public String getDescription() {
+	public ISimpleCSDescription getDescription() {
 		return fDescription;
 	}
 
@@ -61,22 +75,20 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro#getHref()
 	 */
 	public String getHref() {
-		// TODO Auto-generated method stub
-		return null;
+		return fHref;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro#setContextId(java.lang.String)
 	 */
 	public void setContextId(String contextId) {
-		// TODO Auto-generated method stub
-
+		fContextId = contextId;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro#setDescription(java.lang.String)
 	 */
-	public void setDescription(String description) {
+	public void setDescription(ISimpleCSDescription description) {
 		fDescription = description;
 	}
 
@@ -84,37 +96,82 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro#setHref(java.lang.String)
 	 */
 	public void setHref(String href) {
-		// TODO Auto-generated method stub
-
+		fHref = href;
 	}
 
-	public void parse(Node node) {
-		// TODO Auto-generated method stub
-		
+	/**
+	 * @param node
+	 */
+	public void parse(Element element) {
+		// Process contextId attribute
+		fContextId = element.getAttribute(ATTRIBUTE_CONTEXTID);
+		// Process href attribute
+		fHref = element.getAttribute(ATTRIBUTE_HREF);
+		// Process children
+		NodeList children = element.getChildNodes();
+		ISimpleCSModelFactory factory = getModel().getFactory();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				Element childElement = (Element)child;
+				String name = child.getNodeName();
+				if (name.equals(ELEMENT_DESCRIPTION)) {
+					fDescription = factory.createSimpleCSDescription();
+					fDescription.parse(childElement);
+				}
+			}
+		}
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		// TODO: MP: Revisit
-		// TODO: MP: Get rid of hardcodings
-		// TODO: MP: Use XMLPrinter		
-		writer.println(indent + "<!-- Introduction -->"); //$NON-NLS-1$
-		writer.println();
-		writer.println(indent + "<intro>"); //$NON-NLS-1$
 
-		if (fDescription != null) {
-			writer.print(indent + "   " + "<description>"); //$NON-NLS-1$ //$NON-NLS-2$
-			writer.println();
-			writer.print(indent + "      " + getWritableString(fDescription)); //$NON-NLS-1$
-			writer.println();
-			writer.print(indent + "   " + "</description>"); //$NON-NLS-1$ //$NON-NLS-2$
+		StringBuffer buffer = new StringBuffer();
+		String newIndent = indent + XMLPrintHandler.XML_INDENT;
+		
+		try {
+			// Print intro element
+			buffer.append(ELEMENT_INTRO); //$NON-NLS-1$
+			// Print contextId attribute
+			// Print href attribute
+			if ((fContextId != null) &&
+					(fContextId.length() > 0)) {
+				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+						ATTRIBUTE_CONTEXTID, fContextId));
+			} else if ((fHref != null) &&
+							(fHref.length() > 0)) {
+				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+						ATTRIBUTE_HREF, fHref));
+			}
+			// Start element
+			XMLPrintHandler.printBeginElement(writer, buffer.toString(),
+					indent, false);
+			// Print description element
+			if (fDescription != null) {
+				fDescription.write(newIndent, writer);
+			}
+			// End element
+			XMLPrintHandler.printEndElement(writer, ELEMENT_INTRO, indent);
 			
-			// TODO: MP: Create a description class
-			//fDescription.write(indent + "   ", writer); //$NON-NLS-1$
-		}
-		
-		writer.println();
-		writer.println(indent + "</intro>"); //$NON-NLS-1$		
-		
+		} catch (IOException e) {
+			// Suppress
+			//e.printStackTrace();
+		} 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro#reset()
+	 */
+	public void reset() {
+		fDescription = null;
+		fContextId = null;
+		fHref = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getType()
+	 */
+	public int getType() {
+		return TYPE_INTRO;
 	}
 
 }

@@ -21,13 +21,13 @@ public interface ISimpleCSIntro extends ISimpleCSObject {
 	 * Element:  description
 	 * @return
 	 */
-	public String getDescription();
+	public ISimpleCSDescription getDescription();
 	
 	/**
 	 * Element:  description
 	 * @param description
 	 */
-	public void setDescription(String description);
+	public void setDescription(ISimpleCSDescription description);
 	
 	/**
 	 * Attribute:  contextId

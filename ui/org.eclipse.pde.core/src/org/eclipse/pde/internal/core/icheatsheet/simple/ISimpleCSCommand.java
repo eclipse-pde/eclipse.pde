@@ -34,36 +34,13 @@ public interface ISimpleCSCommand extends ISimpleCSRunObject {
 	 * Attribute: returns
 	 * @return
 	 */
-	public boolean getReturns();
+	public String getReturns();
 	
 	/**
 	 * Attribute: returns
 	 * @param returns
 	 */
-	public void setReturns(boolean returns);		
-	
-	/**
-	 * Attribute: confirm
-	 * @return
-	 */
-	public boolean getConfirm();
-	
-	/**
-	 * Attribute: confirm
-	 * @param confirm
-	 */
-	public void setConfirm(boolean confirm);
-	
-	/**
-	 * Attribute: when
-	 * @return
-	 */
-	public String getWhen();
-	
-	/**
-	 * Attribute: when
-	 * @param when
-	 */
-	public void setWhen(String when);			
+	public void setReturns(String returns);		
+		
 	
 }

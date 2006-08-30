@@ -38,6 +38,8 @@ public interface ISimpleCSConstants {
 	public static final String ELEMENT_REPEATED_SUBITEM = "repeated-subitem"; //$NON-NLS-1$	
 
 	public static final String ELEMENT_CONDITIONAL_SUBITEM = "conditional-subitem"; //$NON-NLS-1$	
+
+	public static final String ELEMENT_ONCOMPLETION = "onCompletion"; //$NON-NLS-1$	
 	
 	// Attributes
 	
@@ -73,5 +75,37 @@ public interface ISimpleCSConstants {
 	
 	public static final String ATTRIBUTE_ONCOMPLETION = "onCompletion"; //$NON-NLS-1$	
 
+	// Attribute Values
+	
+	public static final String ATTRIBUTE_VALUE_ENCODING = "UTF-8"; //$NON-NLS-1$
+
+	public static final String ATTRIBUTE_VALUE_TRUE = "true"; //$NON-NLS-1$
+	
+	public static final String ATTRIBUTE_VALUE_FALSE = "false"; //$NON-NLS-1$
+	
+	// Types
+	
+	public static final int TYPE_CHEAT_SHEET = 0;
+
+	public static final int TYPE_ACTION = 1;
+
+	public static final int TYPE_COMMAND = 2;
+
+	public static final int TYPE_CONDITIONAL_SUBITEM = 3;
+
+	public static final int TYPE_DESCRIPTION = 4;
+
+	public static final int TYPE_INTRO = 5;
+
+	public static final int TYPE_ITEM = 6;
+
+	public static final int TYPE_ON_COMPLETION = 7;
+
+	public static final int TYPE_PERFORM_WHEN = 8;
+
+	public static final int TYPE_REPEATED_SUBITEM = 9;
+
+	public static final int TYPE_SUBITEM = 10;
+	
 }
 

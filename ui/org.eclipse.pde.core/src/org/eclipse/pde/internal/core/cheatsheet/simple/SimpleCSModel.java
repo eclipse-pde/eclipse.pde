@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 
 /**
  * SimpleCSModel
@@ -139,7 +139,7 @@ public class SimpleCSModel extends AbstractModel implements ISimpleCSModel {
 	 * @param doc
 	 */
 	private void processDocument(Document doc) {
-		Node rootNode = doc.getDocumentElement();
+		Element rootNode = doc.getDocumentElement();
 		if (fSimpleCS == null) {
 			fSimpleCS = getFactory().createSimpleCS();
 		} else {

@@ -11,15 +11,20 @@
 
 package org.eclipse.pde.internal.core.cheatsheet.simple;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * SimpleCS
@@ -59,8 +64,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#addItems(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem[])
 	 */
 	public void addItems(ISimpleCSItem[] items) {
-		// TODO Auto-generated method stub
-
+		// TODO: MP: Are we going to need this?
 	}
 
 	/* (non-Javadoc)
@@ -74,8 +78,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#getItems()
 	 */
 	public ISimpleCSItem[] getItems() {
-		// TODO Auto-generated method stub
-		return null;
+		return (ISimpleCSItem[])fItems.toArray(new ISimpleCSItem[fItems.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -89,8 +92,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#removeItems(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem[])
 	 */
 	public void removeItems(ISimpleCSItem[] items) {
-		// TODO Auto-generated method stub
-
+		// TODO: MP: Are we going to need this?
 	}
 
 	/* (non-Javadoc)
@@ -119,51 +121,93 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#parse(org.w3c.dom.Node)
 	 */
-	public void parse(Node node) {
-		// TODO Auto-generated method stub
-
+	public void parse(Element element) {
+		// Process cheatsheet element
+		if (element.getNodeName().equals(ELEMENT_CHEATSHEET)) {
+			// Process title attribute
+			fTitle = element.getAttribute(ATTRIBUTE_TITLE); 
+			// Process children
+			NodeList children = element.getChildNodes();
+			ISimpleCSModelFactory factory = getModel().getFactory();
+			for (int i = 0; i < children.getLength(); i++) {
+				Node child = children.item(i);
+				if (child.getNodeType() == Node.ELEMENT_NODE) {
+					String name = child.getNodeName();
+					Element childElement = (Element)child;
+					if (name.equals(ELEMENT_INTRO)) {
+						fIntro = factory.createSimpleCSIntro();
+						fIntro.parse(childElement);
+					} else if (name.equals(ELEMENT_ITEM)) { 
+						ISimpleCSItem item = factory.createSimpleCSItem();
+						addItem(item);
+						item.parse(childElement);
+					}
+				}
+			}
+		}
+		
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
-		// TODO: MP: Get rid of hardcodings
-		// TODO: MP: Use XMLPrinter
-		// TODO: MP: Revisit
-		writer.print(indent + "<cheatsheet"); //$NON-NLS-1$
-		if ((fTitle != null) && 
-				(fTitle.length() > 0)) {
-			writer.print(" " + ATTRIBUTE_TITLE + "=\"" +  //$NON-NLS-1$ //$NON-NLS-2$
-					getWritableString(fTitle) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-		writer.println(">"); //$NON-NLS-1$
 
-		if (fIntro != null) {
-			writer.println();
-			fIntro.write(indent + "   ", writer); //$NON-NLS-1$
-		}
+		StringBuffer buffer = new StringBuffer();
+		String newIndent = indent + XMLPrintHandler.XML_INDENT;
 		
-		writer.println();
-		Iterator iterator = fItems.iterator();
-		while (iterator.hasNext()) {
-			ISimpleCSItem item = (ISimpleCSItem)iterator.next();
-			item.write(indent + "   ", writer); //$NON-NLS-1$
-		}
-		
-		writer.println();
-		writer.println("</cheatsheet>"); //$NON-NLS-1$		
-
+		try {
+			// Print XML decl
+			XMLPrintHandler.printHead(writer, ATTRIBUTE_VALUE_ENCODING);
+			// Print cheatsheet element
+			buffer.append(ELEMENT_CHEATSHEET); //$NON-NLS-1$
+			// Print title attribute
+			if ((fTitle != null) && 
+					(fTitle.length() > 0)) {
+				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+						ATTRIBUTE_TITLE, fTitle));
+			}
+			// Start element
+			XMLPrintHandler.printBeginElement(writer, buffer.toString(),
+					indent, false);
+			// Print intro element
+			if (fIntro != null) {
+				fIntro.write(newIndent, writer);
+			}
+			// Print item elements
+			Iterator iterator = fItems.iterator();
+			while (iterator.hasNext()) {
+				ISimpleCSItem item = (ISimpleCSItem)iterator.next();
+				item.write(newIndent, writer);
+			}			
+			// End element
+			XMLPrintHandler.printEndElement(writer, ELEMENT_CHEATSHEET, indent);
+			
+		} catch (IOException e) {
+			// Suppress
+			//e.printStackTrace();
+		} 		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#addItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem)
+	 */
 	public void addItem(ISimpleCSItem item) {
-		// TODO: MP: Revisit
 		fItems.add(item);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#removeItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem)
+	 */
 	public void removeItem(ISimpleCSItem item) {
-		// TODO Auto-generated method stub
-		
+		fItems.remove(item);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getType()
+	 */
+	public int getType() {
+		return TYPE_CHEAT_SHEET;
 	}
 
 }

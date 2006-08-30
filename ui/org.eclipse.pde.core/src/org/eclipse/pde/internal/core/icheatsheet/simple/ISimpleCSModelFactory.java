@@ -67,4 +67,8 @@ public interface ISimpleCSModelFactory {
 	 */
 	public ISimpleCSSubItem createSimpleCSSubItem();
 	
+	/**
+	 * @return
+	 */
+	public ISimpleCSDescription createSimpleCSDescription();
 }

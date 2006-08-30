@@ -17,5 +17,28 @@ package org.eclipse.pde.internal.core.icheatsheet.simple;
  */
 public interface ISimpleCSRunObject extends ISimpleCSRunContainerObject {
 
-	// TODO: MP: Add interface methods or fields
+	/**
+	 * Attribute: confirm
+	 * @return
+	 */
+	public boolean getConfirm();
+	
+	/**
+	 * Attribute: confirm
+	 * @param confirm
+	 */
+	public void setConfirm(boolean confirm);
+	
+	/**
+	 * Attribute: when
+	 * @return
+	 */
+	public String getWhen();
+	
+	/**
+	 * Attribute: when
+	 * @param when
+	 */
+	public void setWhen(String when);
+	
 }

@@ -62,29 +62,5 @@ public interface ISimpleCSAction extends ISimpleCSRunObject {
 	public void removeParams(String[] subitems);	
 	
 	// TODO: MP: Determine if to have add / remove single params	
-
-	/**
-	 * Attribute: confirm
-	 * @return
-	 */
-	public boolean getConfirm();
-	
-	/**
-	 * Attribute: confirm
-	 * @param confirm
-	 */
-	public void setConfirm(boolean confirm);		
-
-	/**
-	 * Attribute: when
-	 * @return
-	 */
-	public String setWhen();
-	
-	/**
-	 * Attribute: when
-	 * @param when
-	 */
-	public void getWhen(String when);		
 	
 }
