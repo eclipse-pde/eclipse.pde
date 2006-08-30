@@ -2,6 +2,7 @@ package org.eclipse.pde.internal.ui.editor.text;
 
 import java.net.URL;
 
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
@@ -50,9 +51,23 @@ public class PluginXMLTextHover extends PDETextHover {
 			return getAttributeValueText((IPluginAttribute)range, (ISchemaElement)sObj);
 		} else if (range instanceof IPluginElement) {
 			IDocumentNode dn = (IDocumentNode)range;
-			if (dn.getOffset() + 1 <= offset &&
-					offset <= dn.getOffset() + dn.getXMLTagName().length() + 1)
+			int dnOff = dn.getOffset();
+			int dnLen = dn.getLength();
+			String dnName = dn.getXMLTagName();
+			if (dnOff + 1 <= offset && offset <= dnOff + dnName.length())
+				// inside opening tag
 				return getElementText((ISchemaElement)sObj);
+			try {
+				String nt = textViewer.getDocument().get(dnOff, dnLen);
+				if (nt.endsWith("</" + dnName + ">")) { //$NON-NLS-1$ //$NON-NLS-2$
+					offset = offset - dnOff;
+					if (nt.length() - dnName.length() - 1 <= offset &&
+							offset <= nt.length() - 2)
+						// inside closing tag
+						return getElementText((ISchemaElement)sObj);
+				}
+			} catch (BadLocationException e) {
+			}
 		}
 		return null;
 	}
