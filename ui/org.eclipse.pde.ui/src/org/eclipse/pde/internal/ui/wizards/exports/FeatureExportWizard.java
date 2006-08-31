@@ -98,7 +98,7 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 			export.setAttribute("exportSource", Boolean.toString(fPage.doExportSource())); //$NON-NLS-1$
 			String qualifier = fPage.getQualifier();
 			if (qualifier != null)
-				export.setAttribute("qualifier", qualifier);			
+				export.setAttribute("qualifier", qualifier);			 //$NON-NLS-1$
 			return doc;
 		} catch (DOMException e) {
 		} catch (FactoryConfigurationError e) {

@@ -33,9 +33,9 @@ public class HTMLPrinter {
 		StringBuffer pageProlog= new StringBuffer(300);
 
 		pageProlog.append("<html><head>"); //$NON-NLS-1$
-		pageProlog.append("<style type=\"text/css\">body {margin:0px;color:#000000;}</style>");
+		pageProlog.append("<style type=\"text/css\">body {margin:0px;color:#000000;}</style>"); //$NON-NLS-1$
 		appendStyleSheetURL(pageProlog, styleSheetURL);
-		pageProlog.append("</head>");
+		pageProlog.append("</head>"); //$NON-NLS-1$
 		pageProlog.append("<body>"); //$NON-NLS-1$
 		
 		buffer.insert(position,  pageProlog.toString());

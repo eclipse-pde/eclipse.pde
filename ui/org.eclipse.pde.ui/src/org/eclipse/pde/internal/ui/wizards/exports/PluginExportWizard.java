@@ -79,7 +79,7 @@ public class PluginExportWizard extends AntGeneratingExportWizard {
 			export.setAttribute("exportSource", Boolean.toString(fPage.doExportSource()));  //$NON-NLS-1$
 			String qualifier = fPage.getQualifier();
 			if (qualifier != null)
-				export.setAttribute("qualifier", qualifier);
+				export.setAttribute("qualifier", qualifier); //$NON-NLS-1$
 			target.appendChild(export);
 			return doc;
 		} catch (DOMException e) {
