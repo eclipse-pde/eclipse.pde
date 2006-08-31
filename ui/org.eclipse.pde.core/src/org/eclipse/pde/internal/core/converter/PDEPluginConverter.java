@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core;
+package org.eclipse.pde.internal.core.converter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,6 +31,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.util.tracker.ServiceTracker;

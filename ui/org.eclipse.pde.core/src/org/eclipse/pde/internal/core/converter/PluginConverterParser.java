@@ -8,13 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core;
+package org.eclipse.pde.internal.core.converter;
 
 import java.io.InputStream;
 import java.util.*;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Version;
 import org.osgi.util.tracker.ServiceTracker;

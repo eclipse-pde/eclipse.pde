@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core;
+package org.eclipse.pde.internal.core.converter;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -32,9 +32,12 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.internal.core.PluginConverterParser.PluginInfo;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.build.Build;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.converter.PluginConverterParser.PluginInfo;
 import org.osgi.framework.*;
 
 public class PluginConverter {
