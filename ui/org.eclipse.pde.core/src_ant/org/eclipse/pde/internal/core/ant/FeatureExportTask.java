@@ -30,6 +30,7 @@ public class FeatureExportTask extends BaseExportTask {
 		info.destinationDirectory = fDestination;
 		info.zipFileName = fZipFilename;
 		info.items = fFeatures;
+		info.qualifier = fQualifier;
 		return new FeatureExportOperation(info);
 	}
 	

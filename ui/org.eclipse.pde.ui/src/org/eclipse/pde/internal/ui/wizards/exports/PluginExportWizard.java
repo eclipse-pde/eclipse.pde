@@ -33,11 +33,11 @@ public class PluginExportWizard extends AntGeneratingExportWizard {
 	protected BaseExportWizardPage createPage1() {
 		return new PluginExportWizardPage(getSelection());
 	}
-	
+
 	protected String getSettingsSectionName() {
 		return STORE_SECTION;
 	}
-	
+
 	protected void scheduleExportJob() {
 		FeatureExportInfo info = new FeatureExportInfo();
 		info.toDirectory = fPage.doExportToDirectory();
@@ -47,7 +47,8 @@ public class PluginExportWizard extends AntGeneratingExportWizard {
 		info.zipFileName = fPage.getFileName();
 		info.items = fPage.getSelectedItems();
 		info.signingInfo = fPage.useJARFormat() ? fPage.getSigningInfo() : null;
-		
+		info.qualifier = fPage.getQualifier();
+
 		PluginExportJob job = new PluginExportJob(info);
 		job.setUser(true);
 		job.schedule();
@@ -62,11 +63,11 @@ public class PluginExportWizard extends AntGeneratingExportWizard {
 			root.setAttribute("name", "build"); //$NON-NLS-1$ //$NON-NLS-2$
 			root.setAttribute("default", "plugin_export"); //$NON-NLS-1$ //$NON-NLS-2$
 			doc.appendChild(root);
-			
+
 			Element target = doc.createElement("target"); //$NON-NLS-1$
 			target.setAttribute("name", "plugin_export"); //$NON-NLS-1$ //$NON-NLS-2$
 			root.appendChild(target);
-			
+
 			Element export = doc.createElement("pde.exportPlugins"); //$NON-NLS-1$
 			export.setAttribute("plugins", getPluginIDs()); //$NON-NLS-1$
 			export.setAttribute("destination", fPage.getDestination()); //$NON-NLS-1$
@@ -76,6 +77,9 @@ public class PluginExportWizard extends AntGeneratingExportWizard {
 			export.setAttribute("exportType", getExportOperation());  //$NON-NLS-1$
 			export.setAttribute("useJARFormat", Boolean.toString(fPage.useJARFormat()));  //$NON-NLS-1$
 			export.setAttribute("exportSource", Boolean.toString(fPage.doExportSource()));  //$NON-NLS-1$
+			String qualifier = fPage.getQualifier();
+			if (qualifier != null)
+				export.setAttribute("qualifier", qualifier);
 			target.appendChild(export);
 			return doc;
 		} catch (DOMException e) {
@@ -84,7 +88,7 @@ public class PluginExportWizard extends AntGeneratingExportWizard {
 		}
 		return null;
 	}
-	
+
 	private String getPluginIDs() {
 		StringBuffer buffer = new StringBuffer();
 		Object[] objects = fPage.getSelectedItems();

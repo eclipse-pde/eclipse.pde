@@ -31,6 +31,7 @@ public class PluginExportTask extends BaseExportTask {
 		info.destinationDirectory = fDestination;
 		info.zipFileName = fZipFilename;
 		info.items = fPlugins;
+		info.qualifier = fQualifier;
 		return new PluginExportOperation(info);
 	}
 	

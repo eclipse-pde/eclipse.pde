@@ -59,6 +59,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.BuildScriptGenerator;
 import org.eclipse.pde.internal.build.IXMLConstants;
+import org.eclipse.pde.internal.build.site.QualifierReplacer;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
@@ -79,6 +80,8 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.ibm.icu.util.Calendar;
+
 public class FeatureExportOperation implements IWorkspaceRunnable {
 	
 	// write to the ant build listener log
@@ -95,10 +98,31 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 	protected static String FEATURE_POST_PROCESSING = "features.postProcessingSteps.properties"; //$NON-NLS-1$
 	protected static String PLUGIN_POST_PROCESSING = "plugins.postProcessingSteps.properties"; //$NON-NLS-1$
 	
+	public static String getDate() {
+		final String empty = ""; //$NON-NLS-1$
+		int monthNbr = Calendar.getInstance().get(Calendar.MONTH) + 1;
+		String month = (monthNbr < 10 ? "0" : empty) + monthNbr; //$NON-NLS-1$
+
+		int dayNbr = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+		String day = (dayNbr < 10 ? "0" : empty) + dayNbr; //$NON-NLS-1$
+
+		int hourNbr = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+		String hour = (hourNbr < 10 ? "0" : empty) + hourNbr; //$NON-NLS-1$
+
+		int minuteNbr = Calendar.getInstance().get(Calendar.MINUTE);
+		String minute = (minuteNbr < 10 ? "0" : empty) + minuteNbr; //$NON-NLS-1$
+
+		return empty + Calendar.getInstance().get(Calendar.YEAR) + month + day + hour + minute;
+	}
+
 	protected FeatureExportInfo fInfo;
 	
 	public FeatureExportOperation(FeatureExportInfo info) {
 		fInfo = info;
+		String qualifier = info.qualifier;
+		if (qualifier == null)
+			qualifier = getDate();
+		QualifierReplacer.setGlobalQualifier(qualifier);
 		fBuildTempLocation = PDECore.getDefault().getStateLocation().append("temp").toString(); //$NON-NLS-1$
 	}
 

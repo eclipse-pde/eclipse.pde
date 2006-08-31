@@ -295,6 +295,10 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 	protected String getAntBuildFileName() {
 		return fOptionsTab.getAntBuildFileName();
 	}
+	
+	protected String getQualifier() {
+		return fOptionsTab.getQualifier();
+	}
 
 	protected String[] getSigningInfo() {
 		if (fJARSiginingTab == null || fTabFolder.getItemCount() < 3)

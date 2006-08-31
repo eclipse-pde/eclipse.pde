@@ -28,6 +28,7 @@ public abstract class BaseExportTask extends Task {
 	protected boolean fToDirectory;
 	protected boolean fUseJarFormat;
 	protected boolean fExportSource;
+	protected String fQualifier;
 
 	public BaseExportTask() {
 	}
@@ -73,6 +74,10 @@ public abstract class BaseExportTask extends Task {
 	
 	public void setFilename(String filename) {
 		fZipFilename = filename;
+	}
+	
+	public void setQualifier(String qualifier) {
+		fQualifier = qualifier;
 	}
 	
 	protected abstract FeatureExportOperation getExportOperation();

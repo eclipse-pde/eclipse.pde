@@ -66,6 +66,7 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 		info.items = fPage.getSelectedItems();
 		info.signingInfo = fPage.getSigningInfo();
 		info.jnlpInfo = ((FeatureExportWizardPage)fPage).getJNLPInfo();
+		info.qualifier = fPage.getQualifier();
 		
 		FeatureExportJob job = new FeatureExportJob(info);
 		job.setUser(true);
@@ -95,6 +96,9 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 			export.setAttribute("exportType", getExportOperation());  //$NON-NLS-1$
 			export.setAttribute("useJARFormat", Boolean.toString(fPage.useJARFormat())); //$NON-NLS-1$
 			export.setAttribute("exportSource", Boolean.toString(fPage.doExportSource())); //$NON-NLS-1$
+			String qualifier = fPage.getQualifier();
+			if (qualifier != null)
+				export.setAttribute("qualifier", qualifier);			
 			return doc;
 		} catch (DOMException e) {
 		} catch (FactoryConfigurationError e) {

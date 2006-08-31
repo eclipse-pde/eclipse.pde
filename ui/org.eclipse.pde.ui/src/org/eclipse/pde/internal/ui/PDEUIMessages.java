@@ -657,6 +657,7 @@ public class PDEUIMessages extends NLS {
 	public static String AdvancedFeatureExportPage_createJNLP;
 	public static String AdvancedFeatureExportPage_jreVersion;
 	public static String AdvancedLauncherTab_error_featureSetup;
+	public static String AdvancedPluginExportPage_qualifier;
 
 	public static String TracingLauncherTab_name;
 	public static String TracingLauncherTab_tracing;
