@@ -5,6 +5,9 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -29,10 +32,23 @@ public class ManifestTextHover extends PDETextHover {
 			IManifestHeader header = (IManifestHeader)range;
 			String headerName = header.getName();
 			if (offset >= header.getOffset() + headerName.length())
-				return null;
+				return checkForTranslatable(header);
 			return PDEJavaHelper.getOSGIConstantJavaDoc(headerName, fJP);
 		}
 		return null;
 	}
 
+	private String checkForTranslatable(IManifestHeader header) {
+		String name = header.getName();
+		String value = header.getValue();
+		for (int i = 0; i < ICoreConstants.TRANSLATABLE_HEADERS.length; i++) {
+			if (name.equals(ICoreConstants.TRANSLATABLE_HEADERS[i]) &&
+					value.startsWith("%")) { //$NON-NLS-1$
+				IBaseModel model = ((PDEFormEditor)fSourcePage.getEditor()).getAggregateModel();
+				if (model instanceof IModel)
+					return ((IModel)model).getResourceString(value);
+			}
+		}
+		return null;
+	}
 }
