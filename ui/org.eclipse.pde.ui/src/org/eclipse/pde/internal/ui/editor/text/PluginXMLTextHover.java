@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.core.schema.SchemaAnnotationHandler;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.util.SchemaUtil;
 import org.eclipse.pde.internal.core.util.XMLComponentRegistry;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
@@ -34,6 +35,8 @@ public class PluginXMLTextHover extends PDETextHover {
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		int offset = hoverRegion.getOffset();
 		IDocumentRange range = fSourcePage.getRangeElement(offset, true);
+		if (range instanceof IDocumentTextNode)
+			return checkTranslatedValue((IDocumentTextNode)range);
 		if (!(range instanceof IPluginObject))
 			return null;
 		
@@ -83,7 +86,7 @@ public class PluginXMLTextHover extends PDETextHover {
 				offset <= da.getValueOffset() + da.getValueLength() - 1) {
 			String value = da.getAttributeValue();
 			if (da.getAttributeName().equals(IPluginObject.P_NAME) && value.startsWith("%")) //$NON-NLS-1$
-				return object.getModel().getResourceString(value);
+				return object.getResourceString(value);
 		}
 		return null;
 		
@@ -131,7 +134,7 @@ public class PluginXMLTextHover extends PDETextHover {
 		
 		String value = attrib.getValue();
 		if (sAtt.isTranslatable() && value.startsWith("%")) //$NON-NLS-1$
-			return attrib.getModel().getResourceString(value);
+			return attrib.getResourceString(value);
 		return null;
 	}
 	
@@ -154,4 +157,11 @@ public class PluginXMLTextHover extends PDETextHover {
 		return sEle.getDescription();
 	}
 
+	private String checkTranslatedValue(IDocumentTextNode node) {
+		String value = node.getText();
+		if (value.startsWith("%")) //$NON-NLS-1$
+			return ((IPluginObject)node.getEnclosingElement()).getResourceString(value);
+		
+		return null;
+	}
 }
