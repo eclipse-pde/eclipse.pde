@@ -220,4 +220,12 @@ public class PDECoreMessages extends NLS {
 	public static String XMLErrorReporter_ExternalEntityResolution;
 	
 	public static String ExtensionsErrorReporter_InvalidSchema;
+	
+	public static String PluginConverter_BundleLocationIsNull;
+	public static String PluginConverter_EclipseConverterErrorCreatingBundleManifest;
+	public static String PluginConverter_EclipseConverterErrorParsingPluginManifest;
+	public static String PluginConverter_EclipseConverterFileNotFound;
+	
+	public static String PluginParser_EclipseConverterMissingAttribute;
+	
 }

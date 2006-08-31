@@ -29,7 +29,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
-import org.eclipse.osgi.service.pluginconversion.PluginConverter;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.osgi.framework.BundleException;
@@ -47,17 +46,13 @@ public class PDEPluginConverter {
 			File outputFile = new File(project.getLocation().append(
 					"META-INF/MANIFEST.MF").toOSString()); //$NON-NLS-1$
 			File inputFile = new File(project.getLocation().toOSString());
-			ServiceTracker tracker = new ServiceTracker(PDECore.getDefault()
-					.getBundleContext(), PluginConverter.class.getName(), null);
-			tracker.open();
-			PluginConverter converter = (PluginConverter) tracker.getService();
+			PluginConverter converter = PluginConverter.getDefault();
 			converter.convertManifest(inputFile, outputFile, false, target, true, dictionary);
 
 			if (newProps != null && newProps.size() > 0)
 				converter.writeManifest(outputFile, getProperties(outputFile, newProps), false);
 		
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
-			tracker.close();
 		} catch (PluginConversionException e) {
 		}  finally {
 			monitor.done();
@@ -69,10 +64,7 @@ public class PDEPluginConverter {
 			File outputFile = new File(project.getLocation().append(
 					"META-INF/MANIFEST.MF").toOSString()); //$NON-NLS-1$
 			File inputFile = new File(project.getLocation().toOSString());
-			ServiceTracker tracker = new ServiceTracker(PDECore.getDefault()
-					.getBundleContext(), PluginConverter.class.getName(), null);
-			tracker.open();
-			PluginConverter converter = (PluginConverter) tracker.getService();
+			PluginConverter converter = PluginConverter.getDefault();
 			double version = TargetPlatform.getTargetVersion();
 			String versionString =  version <= 3.1 ? ICoreConstants.TARGET31 : TargetPlatform.getTargetVersionString();
 			converter.convertManifest(inputFile, outputFile, false, versionString, true, null);
@@ -82,7 +74,6 @@ public class PDEPluginConverter {
 			prop.remove(ICoreConstants.ECLIPSE_LAZYSTART);
 			converter.writeManifest(outputFile, prop, false);
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
-			tracker.close();
 		} catch (PluginConversionException e) {
 		} catch (CoreException e) {
 		} finally {
