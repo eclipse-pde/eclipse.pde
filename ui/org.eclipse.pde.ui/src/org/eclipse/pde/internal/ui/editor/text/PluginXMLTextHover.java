@@ -8,6 +8,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
@@ -36,43 +37,59 @@ public class PluginXMLTextHover extends PDETextHover {
 		if (!(range instanceof IPluginObject))
 			return null;
 		
-		ISchema schema = getSchema((IPluginObject)range);
-		if (schema == null)
-			return null;
-		
-		ISchemaObject sObj = getSchemaObject(schema, (IPluginObject)range);
-		if (range instanceof IPluginAttribute && sObj instanceof ISchemaElement) {
-			IDocumentAttribute da = (IDocumentAttribute)range;
-			if (da.getNameOffset() <= offset && 
-					offset <= da.getNameOffset() + da.getNameLength())
-				// inside name
-				return getAttributeText((IPluginAttribute)range, (ISchemaElement)sObj);
-			// inside value
-			return getAttributeValueText((IPluginAttribute)range, (ISchemaElement)sObj);
-		} else if (range instanceof IPluginElement) {
-			IDocumentNode dn = (IDocumentNode)range;
-			int dnOff = dn.getOffset();
-			int dnLen = dn.getLength();
-			String dnName = dn.getXMLTagName();
-			if (dnOff + 1 <= offset && offset <= dnOff + dnName.length())
-				// inside opening tag
-				return getElementText((ISchemaElement)sObj);
-			try {
-				String nt = textViewer.getDocument().get(dnOff, dnLen);
-				if (nt.endsWith("</" + dnName + ">")) { //$NON-NLS-1$ //$NON-NLS-2$
-					offset = offset - dnOff;
-					if (nt.length() - dnName.length() - 1 <= offset &&
-							offset <= nt.length() - 2)
-						// inside closing tag
-						return getElementText((ISchemaElement)sObj);
+		ISchema schema = getExtensionSchema((IPluginObject)range);
+		if (schema != null) {
+			ISchemaObject sObj = getSchemaObject(schema, (IPluginObject)range);
+			if (range instanceof IPluginAttribute && sObj instanceof ISchemaElement) {
+				IDocumentAttribute da = (IDocumentAttribute)range;
+				if (da.getNameOffset() <= offset && 
+						offset <= da.getNameOffset() + da.getNameLength() - 1)
+					// inside name
+					return getAttributeText((IPluginAttribute)range, (ISchemaElement)sObj);
+				else if (da.getValueOffset() <= offset && 
+						offset <= da.getValueOffset() + da.getValueLength() - 1)
+					// inside value
+					return getAttributeValueText((IPluginAttribute)range, (ISchemaElement)sObj);
+			} else if (range instanceof IPluginElement) {
+				IDocumentNode dn = (IDocumentNode)range;
+				int dnOff = dn.getOffset();
+				int dnLen = dn.getLength();
+				String dnName = dn.getXMLTagName();
+				if (dnOff + 1 <= offset && offset <= dnOff + dnName.length())
+					// inside opening tag
+					return getElementText((ISchemaElement)sObj);
+				try {
+					String nt = textViewer.getDocument().get(dnOff, dnLen);
+					if (nt.endsWith("</" + dnName + '>')) { //$NON-NLS-1$
+						offset = offset - dnOff;
+						if (nt.length() - dnName.length() - 1 <= offset &&
+								offset <= nt.length() - 2)
+							// inside closing tag
+							return getElementText((ISchemaElement)sObj);
+					}
+				} catch (BadLocationException e) {
 				}
-			} catch (BadLocationException e) {
 			}
-		}
+		} else if (range instanceof IDocumentAttribute &&
+					((IDocumentAttribute)range).getEnclosingElement() instanceof IPluginExtensionPoint)
+				return getExtensionPointHoverInfo((IPluginObject)range, offset);
+		
 		return null;
 	}
 
-	private ISchema getSchema(IPluginObject object) {
+	private String getExtensionPointHoverInfo(IPluginObject object, int offset) {
+		IDocumentAttribute da = (IDocumentAttribute)object;
+		if (da.getValueOffset() <= offset && 
+				offset <= da.getValueOffset() + da.getValueLength() - 1) {
+			String value = da.getAttributeValue();
+			if (da.getAttributeName().equals(IPluginObject.P_NAME) && value.startsWith("%")) //$NON-NLS-1$
+				return object.getModel().getResourceString(value);
+		}
+		return null;
+		
+	}
+	
+	private ISchema getExtensionSchema(IPluginObject object) {
 		IPluginObject extension = object;
 		if (object instanceof IDocumentAttribute)
 			extension = (IPluginObject)((IDocumentAttribute)object).getEnclosingElement();
@@ -105,7 +122,8 @@ public class PluginXMLTextHover extends PDETextHover {
 	}
 	
 	private String getAttributeValueText(IPluginAttribute attrib, ISchemaElement sEle) {
-		if (sEle.getName().equals("extension")) //$NON-NLS-1$
+		if (sEle.getName().equals("extension") && //$NON-NLS-1$
+				attrib.getName().equals(IPluginExtension.P_POINT))
 			return getSchemaDescription(attrib, sEle);
 		ISchemaAttribute sAtt = sEle.getAttribute(attrib.getName());
 		if (sAtt == null)
