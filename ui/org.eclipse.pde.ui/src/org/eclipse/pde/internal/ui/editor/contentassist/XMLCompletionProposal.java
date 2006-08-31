@@ -44,6 +44,7 @@ import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.pde.internal.core.text.plugin.PluginAttribute;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.contentassist.display.AbstractReusableInformationControlCreator;
 import org.eclipse.pde.internal.ui.editor.contentassist.display.BrowserInformationControl;
 import org.eclipse.pde.internal.ui.editor.text.HTMLPrinter;
@@ -402,7 +403,15 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 				return null;
 			StringBuffer sb = new StringBuffer();
 			HTMLPrinter.insertPageProlog(sb, 0, HTMLPrinter.getJavaDocStyleSheerURL());
-			sb.append(fSchemaObject.getDescription());
+			String desc = null;
+			if (fSchemaObject == null)
+				desc = PDEUIMessages.BaseWizardSelectionPage_noDesc;
+			else {
+				desc = fSchemaObject.getDescription();
+				if (desc == null || desc.trim().length() == 0)
+					desc = PDEUIMessages.BaseWizardSelectionPage_noDesc;
+			}
+			sb.append(desc);
 			HTMLPrinter.addPageEpilog(sb);
 			fAddInfo = sb.toString();
 		}
