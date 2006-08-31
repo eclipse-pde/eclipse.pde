@@ -59,8 +59,8 @@ public class ExportOptionsTab extends AbstractExportTab {
 		addSourceOption(container);
 		addJAROption(container);
 		addCrossPlatformOption(container);
-		addAntSection(container);
 		addQualifierOption(container);
+		addAntSection(container);
 									
  		return container;
 	}
@@ -100,9 +100,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 		fSaveAsAntButton.setLayoutData(gd);
 		
 		fAntCombo = new Combo(comp, SWT.NONE);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalIndent = 15;
-		fAntCombo.setLayoutData(gd);
+		fAntCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fBrowseAnt = new Button(comp, SWT.PUSH);
 		fBrowseAnt.setText(PDEUIMessages.ExportWizard_browse); 
@@ -121,9 +119,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 		fQualifierButton.setText(PDEUIMessages.AdvancedPluginExportPage_qualifier);		
 		
 		fQualifierText = new Text(comp, SWT.SINGLE|SWT.BORDER);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalIndent = 15;
-		fQualifierText.setLayoutData(gd);
+		fQualifierText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fQualifierText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				fPage.pageChanged();
