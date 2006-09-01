@@ -58,10 +58,6 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 				.getUnderlyingResource() != null;
 	}
 	
-	public void createContents(Composite parent, FormToolkit toolkit, int span) {
-		super.createContents(parent, toolkit, span);
-	}
-	
 	protected abstract void openReference();
 
 }

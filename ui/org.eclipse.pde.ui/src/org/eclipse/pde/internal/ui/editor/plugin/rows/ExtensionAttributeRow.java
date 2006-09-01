@@ -25,8 +25,10 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 
 public abstract class ExtensionAttributeRow {
 	protected IContextPart part;
@@ -92,28 +94,47 @@ public abstract class ExtensionAttributeRow {
 		addHoverListener(label);
 	}
 	
-	protected void addHoverListener(final Control label) {
-		String text = getDescription();
-		if (text == null || text.trim().length() == 0)
-			return;
-		fIC = PDETextHover.getInformationControlCreator().createInformationControl(label.getShell());
-		fIC.setSizeConstraints(300, 500);
-		fIC.setInformation(text);
-		Point p = fIC.computeSizeHint();
-		fIC.setSize(p.x, p.y);
-		label.addMouseTrackListener(new MouseTrackListener() {
+	protected void addHoverListener(final Control control) {
+		fIC = PDETextHover.getInformationControlCreator().createInformationControl(control.getShell());
+		fIC.setSizeConstraints(300, 600);
+		
+		control.addMouseTrackListener(new MouseTrackListener() {
 			public void mouseEnter(MouseEvent e) {
 			}
 			public void mouseExit(MouseEvent e) {
 				fIC.setVisible(false);
 			}
 			public void mouseHover(MouseEvent e) {
-				fIC.setLocation(label.toDisplay(new Point(10, 25)));
-				fIC.setVisible(true);
+				String text = getDescription(control);
+				if (text == null || text.trim().length() == 0)
+					return;
+				updateHover(text);
+				fIC.setLocation(control.toDisplay(new Point(10, 25)));
 			}
 		});
 	}
 	
+	protected String getDescription(Control c) {
+		if (c instanceof Label || c instanceof Hyperlink)
+			return getDescription();
+		if (c instanceof Text) {
+			String text = ((Text)c).getText();
+			ISchemaAttribute sAtt = getAttribute();
+			String translated = null;
+			if (input != null && sAtt != null && sAtt.isTranslatable() && text.startsWith("%")) //$NON-NLS-1$
+				translated = input.getResourceString(text);
+			if (!text.equals(translated))
+				return translated;
+		}
+		return null;
+	}
+	
+	protected void updateHover(String text) {
+		fIC.setInformation(text);
+		Point p = fIC.computeSizeHint();
+		fIC.setSize(p.x, p.y);
+		fIC.setVisible(text != null && text.trim().length() > 0);
+	}
 	
 	public abstract void createContents(Composite parent, FormToolkit toolkit, int span);
 

@@ -41,9 +41,11 @@ public class TextAttributeRow extends ExtensionAttributeRow {
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (!blockNotification) markDirty();
+				updateHover(getDescription(text));
 			}
 		});
 		text.setEditable(part.isEditable());
+		addHoverListener(text);
 	}
 	protected GridData createGridData(int span) {
 		GridData gd = new GridData(span == 2
