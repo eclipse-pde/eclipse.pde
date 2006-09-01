@@ -110,6 +110,7 @@ public abstract class ExtensionAttributeRow {
 					return;
 				updateHover(text);
 				fIC.setLocation(control.toDisplay(new Point(10, 25)));
+				fIC.setVisible(true);
 			}
 		});
 	}
@@ -133,7 +134,8 @@ public abstract class ExtensionAttributeRow {
 		fIC.setInformation(text);
 		Point p = fIC.computeSizeHint();
 		fIC.setSize(p.x, p.y);
-		fIC.setVisible(text != null && text.trim().length() > 0);
+		if (text == null || text.trim().length() == 0)
+			fIC.setVisible(false);
 	}
 	
 	public abstract void createContents(Composite parent, FormToolkit toolkit, int span);
