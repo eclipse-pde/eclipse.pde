@@ -131,6 +131,84 @@ public class PDEUIMessages extends NLS {
 
 	public static String ShowDescriptionAction_schemaNotAvail;
 
+	public static String SimpleCheatSheetCreationOperation_0;
+
+	public static String SimpleCheatSheetCreationOperation_1;
+
+	public static String SimpleCheatSheetCreationOperation_2;
+
+	public static String SimpleCheatSheetCreationOperation_3;
+
+	public static String SimpleCSCommandDetails_0;
+
+	public static String SimpleCSCommandDetails_1;
+
+	public static String SimpleCSCommandDetails_2;
+
+	public static String SimpleCSCommandDetails_3;
+
+	public static String SimpleCSCommandDetails_4;
+
+	public static String SimpleCSCommandDetails_5;
+
+	public static String SimpleCSDescriptionDetails_0;
+
+	public static String SimpleCSDescriptionDetails_1;
+
+	public static String SimpleCSDescriptionDetails_2;
+
+	public static String SimpleCSDetails_0;
+
+	public static String SimpleCSDetails_1;
+
+	public static String SimpleCSDetails_2;
+
+	public static String SimpleCSElementSection_0;
+
+	public static String SimpleCSElementSection_1;
+
+	public static String SimpleCSElementSection_2;
+
+	public static String SimpleCSElementSection_3;
+
+	public static String SimpleCSElementSection_4;
+
+	public static String SimpleCSElementSection_5;
+
+	public static String SimpleCSIntroDetails_0;
+
+	public static String SimpleCSIntroDetails_1;
+
+	public static String SimpleCSIntroDetails_2;
+
+	public static String SimpleCSIntroDetails_3;
+
+	public static String SimpleCSItemDetails_0;
+
+	public static String SimpleCSItemDetails_1;
+
+	public static String SimpleCSItemDetails_2;
+
+	public static String SimpleCSItemDetails_3;
+
+	public static String SimpleCSItemDetails_4;
+
+	public static String SimpleCSItemDetails_5;
+
+	public static String SimpleCSItemDetails_6;
+
+	public static String SimpleCSPage_1;
+
+	public static String SimpleCSSubItemDetails_0;
+
+	public static String SimpleCSSubItemDetails_1;
+
+	public static String SimpleCSSubItemDetails_2;
+
+	public static String SimpleCSSubItemDetails_3;
+
+	public static String SimpleCSSubItemDetails_4;
+
 	public static String TableSection_itemCount;
 
 	public static String UpdateClasspathResolution_label;
@@ -2978,4 +3056,7 @@ public class PDEUIMessages extends NLS {
 	public static String OSGiPreferencesServiceTemplate_pageDescription;
 	public static String OSGiPreferencesServiceTemplate_value;
 	
+	public static String SimpleCSPage_0;	
+	
+	// TODO: MP: Clean-up redundant externalized strings in pderesources
 }

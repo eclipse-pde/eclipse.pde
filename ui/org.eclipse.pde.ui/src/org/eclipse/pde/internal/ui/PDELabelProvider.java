@@ -35,6 +35,8 @@ import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.feature.FeatureImport;
 import org.eclipse.pde.internal.core.feature.FeaturePlugin;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureData;
@@ -106,6 +108,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof ISchemaObject) {
 			return getObjectText((ISchemaObject) obj);
+		}
+		if (obj instanceof ISimpleCSObject) {
+			return getObjectText((ISimpleCSObject) obj);
 		}
 		if (obj instanceof FeaturePlugin) {
 			return getObjectText((FeaturePlugin) obj);
@@ -264,6 +269,11 @@ public class PDELabelProvider extends SharedLabelProvider {
 		
 		return text;
 	}
+	
+	public String getObjectText(ISimpleCSObject obj) {
+		// TODO: MP: Determine special cases
+		return obj.getName();
+	}
 
 	public String getObjectText(FeaturePlugin obj) {
 		String name =
@@ -410,6 +420,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof ISchemaElement) {
 			return getObjectImage((ISchemaElement) obj);
 		}
+		if (obj instanceof ISimpleCSObject) {
+			return getObjectImage((ISimpleCSObject)obj);
+		}		
 		if (obj instanceof ISchemaAttribute) {
 			return getObjectImage((ISchemaAttribute) obj);
 		}
@@ -606,6 +619,26 @@ public class PDELabelProvider extends SharedLabelProvider {
 		return get(PDEPluginImages.DESC_EXT_POINT_OBJ);
 	}
 
+	private Image getObjectImage(ISimpleCSObject object) {
+
+		if (object.getType() == ISimpleCSConstants.TYPE_ITEM) {
+			return get(PDEPluginImages.DESC_CSITEM_OBJ);
+		} else if (object.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
+			return get(PDEPluginImages.DESC_CSSUBITEM_OBJ);
+		} else if (object.getType() == ISimpleCSConstants.TYPE_DESCRIPTION) {
+			return get(PDEPluginImages.DESC_PAGE_OBJ);
+		} else if (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
+			return get(PDEPluginImages.DESC_SIMPLECS_OBJ);
+		} else if (object.getType() == ISimpleCSConstants.TYPE_INTRO) {
+			return get(PDEPluginImages.DESC_CSINTRO_OBJ);
+		} else if (object.getType() == ISimpleCSConstants.TYPE_ON_COMPLETION) {
+			return get(PDEPluginImages.DESC_CSONCOMPLETION_OBJ);
+		} else if (object.getType() == ISimpleCSConstants.TYPE_COMMAND) {
+			return get(PDEPluginImages.DESC_CSCOMMAND_OBJ);
+		}
+		return get(PDEPluginImages.DESC_SIMPLECS_OBJ, F_ERROR);
+	}	
+	
 	private Image getObjectImage(ISchemaElement element) {
 		int flags = getSchemaObjectFlags(element);
 		if (element instanceof ISchemaObjectReference &&

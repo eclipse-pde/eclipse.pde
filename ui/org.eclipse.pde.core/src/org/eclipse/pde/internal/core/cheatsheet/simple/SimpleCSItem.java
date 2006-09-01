@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem;
@@ -392,6 +393,38 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 */
 	public int getType() {
 		return TYPE_ITEM;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getName()
+	 */
+	public String getName() {
+		// TODO: MP: Update name
+		return ELEMENT_ITEM;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getChildren()
+	 */
+	public List getChildren() {
+		ArrayList list = new ArrayList();
+		// Add description
+		if (fDescription != null) {
+			list.add(fDescription);
+		}
+		// Add executable
+		if (fExecutable != null) {
+			list.add(fExecutable);
+		}
+		// Add subitems
+		if (fSubItems.size() > 0) {
+			list.addAll(fSubItems);
+		}
+		// Add onCompletion
+		if (fOnCompletion != null) {
+			list.add(fOnCompletion);
+		}
+		return list;
 	}
 
 }

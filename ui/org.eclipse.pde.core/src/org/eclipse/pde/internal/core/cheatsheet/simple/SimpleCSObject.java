@@ -11,6 +11,8 @@
 
 package org.eclipse.pde.internal.core.cheatsheet.simple;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.ModelChangedEvent;
@@ -125,5 +127,15 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getType()
 	 */
 	public abstract int getType();
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getName()
+	 */
+	public abstract String getName();
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getChildren()
+	 */
+	public abstract List getChildren();
 	
 }

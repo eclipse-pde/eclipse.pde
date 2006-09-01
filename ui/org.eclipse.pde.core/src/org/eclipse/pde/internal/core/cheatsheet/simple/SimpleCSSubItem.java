@@ -13,6 +13,8 @@ package org.eclipse.pde.internal.core.cheatsheet.simple;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
@@ -214,6 +216,25 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 */
 	public int getType() {
 		return TYPE_SUBITEM;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getName()
+	 */
+	public String getName() {
+		// TODO: MP: Update name
+		return ELEMENT_SUBITEM;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getChildren()
+	 */
+	public List getChildren() {
+		ArrayList list = new ArrayList();
+		if (fExecutable != null) {
+			list.add(fExecutable);
+		}
+		return list;
 	}
 
 }

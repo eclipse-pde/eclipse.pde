@@ -13,6 +13,8 @@ package org.eclipse.pde.internal.core.cheatsheet.simple;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
@@ -172,6 +174,25 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 	 */
 	public int getType() {
 		return TYPE_INTRO;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getName()
+	 */
+	public String getName() {
+		// TODO: MP: Update name
+		return ELEMENT_INTRO;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getChildren()
+	 */
+	public List getChildren() {
+		ArrayList list = new ArrayList();
+		if (fDescription != null) {
+			list.add(fDescription);
+		}
+		return list;
 	}
 
 }

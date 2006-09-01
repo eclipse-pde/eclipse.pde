@@ -12,6 +12,8 @@
 package org.eclipse.pde.internal.core.cheatsheet.simple;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSAction;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
@@ -152,6 +154,21 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 	public void setWhen(String when) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getName()
+	 */
+	public String getName() {
+		// TODO: MP: Update name
+		return ELEMENT_ACTION;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getChildren()
+	 */
+	public List getChildren() {
+		return new ArrayList();
 	}
 
 }

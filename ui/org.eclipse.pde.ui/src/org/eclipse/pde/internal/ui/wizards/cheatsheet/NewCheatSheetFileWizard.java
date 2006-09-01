@@ -93,7 +93,7 @@ public class NewCheatSheetFileWizard extends BasicNewFileResourceWizard implemen
 			return null;
 		}
 		// This should never happen
-		// TODO: MP: Externalize
+		// TODO: MP: Externalize: low priority - need to bind
 		PDEPlugin.logErrorMessage("Unknown cheat sheet type encountered"); //$NON-NLS-1$
 		return null;
 		//return new BaseCheatSheetCreationOperation(file);

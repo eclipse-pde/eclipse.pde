@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
@@ -208,6 +209,30 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 */
 	public int getType() {
 		return TYPE_CHEAT_SHEET;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getName()
+	 */
+	public String getName() {
+		// TODO: MP: Update name
+		return ELEMENT_CHEATSHEET;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getChildren()
+	 */
+	public List getChildren() {
+		ArrayList list = new ArrayList();
+		// Add intro
+		if (fIntro != null) {
+			list.add(fIntro);
+		}
+		// Add items
+		if (fItems.size() > 0) {
+			list.addAll(fItems);
+		}
+		return list;
 	}
 
 }

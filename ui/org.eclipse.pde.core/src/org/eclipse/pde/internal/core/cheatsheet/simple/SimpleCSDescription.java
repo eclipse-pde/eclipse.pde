@@ -13,6 +13,8 @@ package org.eclipse.pde.internal.core.cheatsheet.simple;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
@@ -111,6 +113,21 @@ public class SimpleCSDescription extends SimpleCSObject implements
 	 */
 	public int getType() {
 		return TYPE_DESCRIPTION;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getName()
+	 */
+	public String getName() {
+		// TODO: MP: Update name
+		return ELEMENT_DESCRIPTION;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getChildren()
+	 */
+	public List getChildren() {
+		return new ArrayList();
 	}
 
 }

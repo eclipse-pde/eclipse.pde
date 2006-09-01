@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.core.icheatsheet.simple;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.eclipse.pde.core.IWritable;
 import org.w3c.dom.Element;
@@ -49,7 +50,22 @@ public interface ISimpleCSObject extends Serializable, IWritable,
 	public void reset();
 	
 	/**
+	 * To avoid using instanceof all over the place
 	 * @return
 	 */
 	public int getType();
+	
+	
+	/**
+	 * For the label provider
+	 * @return
+	 */
+	public String getName();
+	
+	/**
+	 * For the content provider
+	 * @return A empty / non-empty list - never null
+	 */
+	public List getChildren();
+	
 }

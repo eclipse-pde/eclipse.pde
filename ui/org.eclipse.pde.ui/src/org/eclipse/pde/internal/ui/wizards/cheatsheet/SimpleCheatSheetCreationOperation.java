@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
  * SimpleCheatSheetCreationOperation
@@ -57,43 +58,27 @@ public class SimpleCheatSheetCreationOperation extends
 	 * @param simpleCS
 	 */
 	protected void initializeCS(ISimpleCS simpleCS) {
-        // TODO: MP: Revisit and externalize
-		simpleCS.setTitle("Cheat Sheet Title Text"); //$NON-NLS-1$
 		ISimpleCSModelFactory factory = simpleCS.getModel().getFactory();
+
+		// Element: intro
 		ISimpleCSIntro intro = factory.createSimpleCSIntro();
+		// Element: description
 		ISimpleCSDescription description = factory.createSimpleCSDescription();
-        // TODO: MP: Revisit and externalize
-		description.setContent("Cheat Sheet Introduction Text"); //$NON-NLS-1$
+		description.setContent(PDEUIMessages.SimpleCheatSheetCreationOperation_0);
 		intro.setDescription(description); 
-		simpleCS.setIntro(intro);
+
+		// Element: item
 		ISimpleCSItem item = factory.createSimpleCSItem();
-        // TODO: MP: Revisit and externalize
-		item.setTitle("Item Title Text"); //$NON-NLS-1$
+		item.setTitle(PDEUIMessages.SimpleCheatSheetCreationOperation_1);
+		// Element: description
 		ISimpleCSDescription description2 = factory.createSimpleCSDescription();
-        // TODO: MP: Revisit and externalize
-		description2.setContent("Item Description"); //$NON-NLS-1$
-		item.setDescription(description2); //$NON-NLS-1$
+		description2.setContent(PDEUIMessages.SimpleCheatSheetCreationOperation_2);
+		item.setDescription(description2);
+
+		// Attribute: title
+		simpleCS.setTitle(PDEUIMessages.SimpleCheatSheetCreationOperation_3);		
+		simpleCS.setIntro(intro);		
 		simpleCS.addItem(item);
 		
-//		// TODO: MP: Optional stuff for testing now 
-//		ISimpleCSOnCompletion onCompletion = factory.createSimpleCSOnCompletion();
-//        // TODO: MP: Revisit and externalize
-//		onCompletion.setContent("Description"); //$NON-NLS-1$
-//		item.setOnCompletion(onCompletion);
-//		ISimpleCSSubItem subitem = factory.createSimpleCSSubItem();
-//        // TODO: MP: Revisit and externalize
-//		subitem.setLabel("Label"); //$NON-NLS-1$
-//		item.addSubItem(subitem);
-//
-//		ISimpleCSSubItem subitem2 = factory.createSimpleCSSubItem();
-//        // TODO: MP: Revisit and externalize
-//		subitem2.setLabel("Label"); //$NON-NLS-1$
-//		item.addSubItem(subitem2);
-//
-//		
-//		ISimpleCSCommand command = factory.createSimpleCSCommand();
-//        // TODO: MP: Revisit and externalize
-//		command.setSerialization("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.pde.ui.TargetPlatformPreferencePage)"); //$NON-NLS-1$
-//		subitem.setExecutable(command);
 	}		
 }

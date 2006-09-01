@@ -12,6 +12,8 @@
 package org.eclipse.pde.internal.core.cheatsheet.simple;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
@@ -107,6 +109,22 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 	 */
 	public int getType() {
 		return TYPE_CONDITIONAL_SUBITEM;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getName()
+	 */
+	public String getName() {
+		// TODO: MP: Update name
+		return ELEMENT_CONDITIONAL_SUBITEM;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getChildren()
+	 */
+	public List getChildren() {
+		// TODO Auto-generated method stub
+		return new ArrayList();
 	}
 
 }

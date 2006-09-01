@@ -12,6 +12,8 @@
 package org.eclipse.pde.internal.core.cheatsheet.simple;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem;
@@ -99,6 +101,22 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 	 */
 	public int getType() {
 		return TYPE_REPEATED_SUBITEM;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getName()
+	 */
+	public String getName() {
+		// TODO: MP: Update name
+		return ELEMENT_REPEATED_SUBITEM;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getChildren()
+	 */
+	public List getChildren() {
+		// TODO Auto-generated method stub
+		return new ArrayList();
 	}
 
 }

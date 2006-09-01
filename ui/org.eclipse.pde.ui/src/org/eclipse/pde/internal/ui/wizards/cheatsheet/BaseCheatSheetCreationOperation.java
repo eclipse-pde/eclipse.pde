@@ -92,7 +92,8 @@ public abstract class BaseCheatSheetCreationOperation extends
 				}
 				try {
 					// TODO: MP: Update when cheat sheet editor is complete
-					IDE.openEditor(page, fFile, "org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
+					//IDE.openEditor(page, fFile, "org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
+					IDE.openEditor(page, fFile, "org.eclipse.pde.ui.simpleCheatSheetEditor"); //$NON-NLS-1$
 				} catch (PartInitException e) {
 					// Ignore
 				}
