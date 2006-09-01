@@ -72,6 +72,13 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	}
 	
 	public void setSchemaVersion(String value) throws CoreException {
+		IExtensions root = getExtensionsRoot();
+		if (root == null)
+			return;
+		if (root instanceof AbstractExtensions)
+			((AbstractExtensions)root).setSchemaVersion(value);
+		if (root instanceof IPluginBase) 
+			((IPluginBase)root).setSchemaVersion(value);
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
@@ -130,16 +137,21 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginLibrary)
 	 */
 	public void add(IPluginLibrary library) throws CoreException {
-		if (libraries != null) {
-			libraries.add(library);
-			Object header = getManifestHeader(Constants.BUNDLE_CLASSPATH);
-			if (header instanceof BundleClasspathHeader) {
-				((BundleClasspathHeader)header).addLibrary(library.getName());
-			} else {
-				getBundle().setHeader(Constants.BUNDLE_CLASSPATH, library.getName());
-			}
-			fireStructureChanged(library, true);
+		if (libraries == null)
+			libraries = new ArrayList();
+		libraries.add(library);
+		Object header = getManifestHeader(Constants.BUNDLE_CLASSPATH);
+		if (header instanceof BundleClasspathHeader) {
+			((BundleClasspathHeader)header).addLibrary(library.getName());
+		} else {
+			String value = ((IManifestHeader)header).getValue();
+			StringBuffer buffer = new StringBuffer(value == null ? "" : value); //$NON-NLS-1$
+			if (value != null)
+				buffer.append(",\n "); //$NON-NLS-1$
+			buffer.append(library.getName());
+			getBundle().setHeader(Constants.BUNDLE_CLASSPATH, buffer.toString());
 		}
+		fireStructureChanged(library, true);
 	}
 
 	/*
@@ -186,7 +198,11 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		if (header instanceof RequireBundleHeader) {
 			((RequireBundleHeader)header).addBundle(iimport);
 		} else {
-			StringBuffer buffer = new StringBuffer(iimport.getId());
+			String value = ((IManifestHeader)header).getValue();
+			StringBuffer buffer = new StringBuffer(value == null ? "" : value); //$NON-NLS-1$
+			if (value != null)
+				buffer.append(",\n "); //$NON-NLS-1$
+			buffer.append(iimport.getId());
 			int bundleManifestVersion = getBundleManifestVersion(getBundle());
 			if (iimport.isOptional())
 				if (bundleManifestVersion > 1)
@@ -505,10 +521,25 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		}
 	}
 
-	private void updateSingleton(boolean singleton) {
+	protected void updateSingleton(boolean singleton) {
 		IManifestHeader header = getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 		if (header instanceof BundleSymbolicNameHeader)
 			((BundleSymbolicNameHeader)header).setSingleton(singleton);
+		else {
+			if (singleton) {
+				String version = getBundle().getHeader(Constants.BUNDLE_MANIFESTVERSION);
+				String value = header.getValue();
+				String singletonValue = null;
+				if (version != null && Integer.parseInt(version) >= 2)
+					singletonValue = Constants.SINGLETON_DIRECTIVE + ":=true"; //$NON-NLS-1$
+				else
+					singletonValue = Constants.SINGLETON_DIRECTIVE + "=true"; //$NON-NLS-1$
+				if (value.indexOf(singletonValue) != -1) 
+					return;
+				getBundle().setHeader(Constants.BUNDLE_SYMBOLICNAME, value + "; " + singletonValue); //$NON-NLS-1$
+			}
+			// No current need to remove singleton directive outside of text model.
+		}
 	}
 
 	/*

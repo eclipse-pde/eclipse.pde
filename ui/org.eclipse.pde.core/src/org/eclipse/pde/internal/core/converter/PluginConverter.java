@@ -16,7 +16,6 @@ import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -61,7 +60,6 @@ public class PluginConverter {
 	private static final String LINE_SEPARATOR = "\n "; //$NON-NLS-1$
 	private static int MAXLINE = 511;
 	private BundleContext context;
-	private BufferedWriter out;
 	private PluginInfo pluginInfo;
 	private File pluginManifestLocation;
 	private Dictionary generatedManifest;
@@ -95,7 +93,6 @@ public class PluginConverter {
 
 	private void init() {
 		// need to make sure these fields are cleared out for each conversion.
-		out = null;
 		pluginInfo = null;
 		pluginManifestLocation = null;
 		generatedManifest = new Hashtable(10);
@@ -187,6 +184,7 @@ public class PluginConverter {
 
 	public void writeManifest(File generationLocation, Dictionary manifestToWrite, boolean compatibilityManifest) throws PluginConversionException {
 		long start = System.currentTimeMillis();
+		BufferedWriter out = null;
 		try {
 			File parentFile = new File(generationLocation.getParent());
 			parentFile.mkdirs();
@@ -195,33 +193,9 @@ public class PluginConverter {
  				String message = NLS.bind(PDECoreMessages.PluginConverter_EclipseConverterErrorCreatingBundleManifest, this.pluginInfo.getUniqueId(), generationLocation);
 				throw new PluginConversionException(message);
 			}
-			// replaces any eventual existing file
-			manifestToWrite = new Hashtable((Map) manifestToWrite);
 			// MANIFEST.MF files must be written using UTF-8
 			out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(generationLocation), UTF_8));
-			writeEntry(MANIFEST_VERSION, (String) manifestToWrite.remove(MANIFEST_VERSION));
-			writeEntry(GENERATED_FROM, (String) manifestToWrite.remove(GENERATED_FROM)); //Need to do this first uptoDate check expect the generated-from tag to be in the first line
-			// always attempt to write the Bundle-ManifestVersion header if it exists (bug 109863)
-			writeEntry(Constants.BUNDLE_MANIFESTVERSION, (String) manifestToWrite.remove(Constants.BUNDLE_MANIFESTVERSION));
-			writeEntry(Constants.BUNDLE_NAME, (String) manifestToWrite.remove(Constants.BUNDLE_NAME));
-			writeEntry(Constants.BUNDLE_SYMBOLICNAME, (String) manifestToWrite.remove(Constants.BUNDLE_SYMBOLICNAME));
-			writeEntry(Constants.BUNDLE_VERSION, (String) manifestToWrite.remove(Constants.BUNDLE_VERSION));
-			writeEntry(Constants.BUNDLE_CLASSPATH, (String) manifestToWrite.remove(Constants.BUNDLE_CLASSPATH));
-			writeEntry(Constants.BUNDLE_ACTIVATOR, (String) manifestToWrite.remove(Constants.BUNDLE_ACTIVATOR));
-			writeEntry(Constants.BUNDLE_VENDOR, (String) manifestToWrite.remove(Constants.BUNDLE_VENDOR));
-			writeEntry(Constants.FRAGMENT_HOST, (String) manifestToWrite.remove(Constants.FRAGMENT_HOST));
-			writeEntry(Constants.BUNDLE_LOCALIZATION, (String) manifestToWrite.remove(Constants.BUNDLE_LOCALIZATION));
-			// always attempt to write the Export-Package header if it exists (bug 109863)
-			writeEntry(Constants.EXPORT_PACKAGE, (String) manifestToWrite.remove(Constants.EXPORT_PACKAGE));
-			// always attempt to write the Provide-Package header if it exists (bug 109863)
-			writeEntry(ICoreConstants.PROVIDE_PACKAGE, (String) manifestToWrite.remove(ICoreConstants.PROVIDE_PACKAGE));
-			writeEntry(Constants.REQUIRE_BUNDLE, (String) manifestToWrite.remove(Constants.REQUIRE_BUNDLE));
-			Enumeration keys = manifestToWrite.keys();
-			while (keys.hasMoreElements()) {
-				String key = (String) keys.nextElement();
-				writeEntry(key, (String) manifestToWrite.get(key));
-			}
-			out.flush();
+			writeManifest(manifestToWrite, out);
 		} catch (IOException e) {
 			String message = NLS.bind(PDECoreMessages.PluginConverter_EclipseConverterErrorCreatingBundleManifest, this.pluginInfo.getUniqueId(), generationLocation); 
 			throw new PluginConversionException(message, e);
@@ -235,6 +209,35 @@ public class PluginConverter {
 		}
 		if (DEBUG)
 			System.out.println("Time to write out converted manifest to: " + generationLocation + ": "+ (System.currentTimeMillis() - start) + "ms.");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
+	
+	public void writeManifest(Dictionary manifestToWrite, Writer out) throws IOException {
+		// replaces any eventual existing file
+		manifestToWrite = new Hashtable((Map) manifestToWrite);
+		
+		writeEntry(out, MANIFEST_VERSION, (String) manifestToWrite.remove(MANIFEST_VERSION));
+		writeEntry(out, GENERATED_FROM, (String) manifestToWrite.remove(GENERATED_FROM)); //Need to do this first uptoDate check expect the generated-from tag to be in the first line
+		// always attempt to write the Bundle-ManifestVersion header if it exists (bug 109863)
+		writeEntry(out, Constants.BUNDLE_MANIFESTVERSION, (String) manifestToWrite.remove(Constants.BUNDLE_MANIFESTVERSION));
+		writeEntry(out, Constants.BUNDLE_NAME, (String) manifestToWrite.remove(Constants.BUNDLE_NAME));
+		writeEntry(out, Constants.BUNDLE_SYMBOLICNAME, (String) manifestToWrite.remove(Constants.BUNDLE_SYMBOLICNAME));
+		writeEntry(out, Constants.BUNDLE_VERSION, (String) manifestToWrite.remove(Constants.BUNDLE_VERSION));
+		writeEntry(out, Constants.BUNDLE_CLASSPATH, (String) manifestToWrite.remove(Constants.BUNDLE_CLASSPATH));
+		writeEntry(out, Constants.BUNDLE_ACTIVATOR, (String) manifestToWrite.remove(Constants.BUNDLE_ACTIVATOR));
+		writeEntry(out, Constants.BUNDLE_VENDOR, (String) manifestToWrite.remove(Constants.BUNDLE_VENDOR));
+		writeEntry(out, Constants.FRAGMENT_HOST, (String) manifestToWrite.remove(Constants.FRAGMENT_HOST));
+		writeEntry(out, Constants.BUNDLE_LOCALIZATION, (String) manifestToWrite.remove(Constants.BUNDLE_LOCALIZATION));
+		// always attempt to write the Export-Package header if it exists (bug 109863)
+		writeEntry(out, Constants.EXPORT_PACKAGE, (String) manifestToWrite.remove(Constants.EXPORT_PACKAGE));
+		// always attempt to write the Provide-Package header if it exists (bug 109863)
+		writeEntry(out, ICoreConstants.PROVIDE_PACKAGE, (String) manifestToWrite.remove(ICoreConstants.PROVIDE_PACKAGE));
+		writeEntry(out, Constants.REQUIRE_BUNDLE, (String) manifestToWrite.remove(Constants.REQUIRE_BUNDLE));
+		Enumeration keys = manifestToWrite.keys();
+		while (keys.hasMoreElements()) {
+			String key = (String) keys.nextElement();
+			writeEntry(out, key, (String) manifestToWrite.get(key));
+		}
+		out.flush();
 	}
 
 	private void generateLocalizationEntry() {
@@ -375,6 +378,10 @@ public class PluginConverter {
 		if (proj == null)
 			return null;
 		
+		return getExports(proj, libs);
+	}
+	
+	public Set getExports(IProject proj, Map libs) {
 		IFile buildProperties = proj.getFile("build.properties"); //$NON-NLS-1$
 		IBuild build = null;
 		if (buildProperties != null) {
@@ -397,7 +404,11 @@ public class PluginConverter {
 			if (libEntry != null) {
 				String[] tokens = libEntry.getTokens();
 				for (int i = 0; i < tokens.length; i++) {
-					IFolder folder = proj.getFolder(tokens[i]);
+					IResource folder = null;
+					if (tokens[i].equals(".")) //$NON-NLS-1$
+						folder = proj;
+					else 
+						folder = proj.getFolder(tokens[i]);
 					if (folder != null)
 						addPackagesFromFragRoot(jp.getPackageFragmentRoot(folder), result, filter);
 				}
@@ -514,7 +525,7 @@ public class PluginConverter {
 		return -1;
 	}
 
-	private void writeEntry(String key, String value) throws IOException {
+	private void writeEntry(Writer out, String key, String value) throws IOException {
 		if (value != null && value.length() > 0) {
 			out.write(splitOnComma(key + ": " + value)); //$NON-NLS-1$
 			out.write('\n');

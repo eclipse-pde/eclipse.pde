@@ -15,15 +15,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Properties;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IEditableModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.converter.PluginConverter;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModelFactory;
 import org.eclipse.pde.internal.core.text.bundle.BundleModelFactory;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 
 public class WorkspaceBundleModel extends BundleModel implements IEditableModel {
 	private static final long serialVersionUID = 1L;
@@ -35,6 +41,8 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 	private boolean fEditable = true;
 
 	private IBundleModelFactory fFactory;
+	
+	private static final String MANIFEST_VERSION = "Manifest-Version"; //$NON-NLS-1$
 
 	public WorkspaceBundleModel(IFile file) {
 		fUnderlyingResource = file;
@@ -105,6 +113,10 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 			if (fUnderlyingResource.exists()) {
 				fUnderlyingResource.setContents(stream, false, false, null);
 			} else {
+				// prevents Core Exception when META-INF folder does not exist
+				IContainer parent = fUnderlyingResource.getParent();
+				if (!parent.exists() && parent instanceof IFolder)
+					CoreUtility.createFolder((IFolder)parent);
 				fUnderlyingResource.create(stream, false, null);
 			}
 			stream.close();
@@ -115,6 +127,18 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 	}
 
 	public void save(PrintWriter writer) {
+		IBundle bundle = getBundle();
+		Properties headers = ((Bundle)bundle).getHeaders();
+		boolean addManifestVersion = !headers.contains(MANIFEST_VERSION);
+		if (addManifestVersion)
+			headers.put(MANIFEST_VERSION, "1.0"); //$NON-NLS-1$
+		try {
+			PluginConverter.getDefault().writeManifest(headers, writer);
+		} catch (IOException e) {
+		} finally {
+			if (addManifestVersion)
+				headers.remove(MANIFEST_VERSION);
+		}
 		fDirty = false;
 	}
 

@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -45,7 +44,11 @@ import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.core.converter.PDEPluginConverter;
+import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
+import org.eclipse.pde.internal.core.bundle.WorkspaceBundleFragmentModel;
+import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
+import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
@@ -90,52 +93,9 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		fContentWizard = contentWizard;
 	}
 
-	protected void adjustManifests(IProgressMonitor monitor, IProject project)
+	// function used to modify Manifest just before it is written out (after all project artifacts have been created.
+	protected void adjustManifests(IProgressMonitor monitor, IProject project, IBundle bundle)
 			throws CoreException {
-		String framework = fData instanceof AbstractFieldData 
-								? ((AbstractFieldData)fData).getOSGiFramework()
-								: null;
-
-		HashMap map = new HashMap();
-		if (fData instanceof IFragmentFieldData) {
-			IFragmentFieldData data = (IFragmentFieldData)fData;
-			StringBuffer buffer = new StringBuffer();
-			buffer.append(data.getPluginId());
-			buffer.append(";"); //$NON-NLS-1$
-			buffer.append(Constants.BUNDLE_VERSION_ATTRIBUTE);
-			buffer.append("=\""); //$NON-NLS-1$
-			buffer.append(data.getPluginVersion());
-			buffer.append("\""); //$NON-NLS-1$
-			map.put(Constants.FRAGMENT_HOST, buffer.toString());
-		}
-		if (framework != null) {
-			StringBuffer buffer = new StringBuffer();
-			Set packages = getImportPackagesSet();
-			Iterator iter = packages.iterator();
-			while (iter.hasNext()) {
-				if (buffer.length() > 0) {
-					buffer.append(","); //$NON-NLS-1$
-					buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
-					buffer.append(" "); //$NON-NLS-1$
-				}
-				buffer.append(iter.next().toString());
-			}
-			if (buffer.length() > 0)
-				map.put(Constants.IMPORT_PACKAGE, buffer.toString());
-			
-			PDEPluginConverter.createBundleForFramework(project, map, new SubProgressMonitor(monitor, 1));
-		} else {
-			PDEPluginConverter.convertToOSGIFormat(project,
-					((AbstractFieldData) fData).getTargetVersion(), null,
-					map.size() > 0 ? map : null,
-					new SubProgressMonitor(monitor, 1));
-		}
-		if (fModel.getPluginBase().getExtensions().length == 0) {
-			project.getFile(fData instanceof IPluginFieldData ? "plugin.xml" : "fragment.xml").delete(true, null); //$NON-NLS-1$ //$NON-NLS-2$
-		} else {
-			trimModel(fModel.getPluginBase());
-			fModel.save();
-		}
 	}
 	
 	private void createBuildPropertiesFile(IProject project)
@@ -187,19 +147,30 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	private void createManifest(IProject project) throws CoreException {
-		if (fData instanceof IFragmentFieldData) {
-			fModel = new WorkspaceFragmentModel(project.getFile("fragment.xml"), false); //$NON-NLS-1$
+		if (fData.hasBundleStructure()) {
+			if (fData instanceof IFragmentFieldData) {
+				fModel = new WorkspaceBundleFragmentModel(project.getFile("META-INF/MANIFEST.MF"), project.getFile("fragment.xml")); //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				fModel = new WorkspaceBundlePluginModel(project.getFile("META-INF/MANIFEST.MF"), project.getFile("plugin.xml")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		} else {
-			fModel = new WorkspacePluginModel(project.getFile("plugin.xml"), false); //$NON-NLS-1$
+			if (fData instanceof IFragmentFieldData) {
+				fModel = new WorkspaceFragmentModel(project.getFile("fragment.xml"), false); //$NON-NLS-1$
+			} else {
+				fModel = new WorkspacePluginModel(project.getFile("plugin.xml"), false); //$NON-NLS-1$
+			}
 		}
-		PluginBase pluginBase = (PluginBase) fModel.getPluginBase();
+		IPluginBase pluginBase = fModel.getPluginBase();
 		String targetVersion = ((AbstractFieldData) fData).getTargetVersion();
 		pluginBase.setSchemaVersion(Double.parseDouble(targetVersion) < 3.2 ? "3.0" : "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
 		pluginBase.setId(fData.getId());
 		pluginBase.setVersion(fData.getVersion());
 		pluginBase.setName(fData.getName());
 		pluginBase.setProviderName(fData.getProvider());
-		pluginBase.setTargetVersion(targetVersion);
+		if (pluginBase instanceof PluginBase)
+			((PluginBase)pluginBase).setTargetVersion(targetVersion);
+		else if (pluginBase instanceof BundlePluginBase)
+			((BundlePluginBase)pluginBase).getBundle().setHeader(Constants.BUNDLE_MANIFESTVERSION, "2"); //$NON-NLS-1$
 		if (pluginBase instanceof IFragment) {
 			IFragment fragment = (IFragment) pluginBase;
 			IFragmentFieldData data = (IFragmentFieldData) fData;
@@ -224,6 +195,20 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			iimport.setMatch(ref.getMatch());
 			pluginBase.add(iimport);
 		}
+		// add Bundle Specific fields if applicable
+		if (pluginBase instanceof BundlePluginBase) {
+			IBundle bundle = ((BundlePluginBase)pluginBase).getBundle();
+			if ( fData instanceof AbstractFieldData	&& ((AbstractFieldData)fData).getOSGiFramework() != null) {
+				String value = getCommaValueFromSet(getImportPackagesSet());
+				if (value.length() > 0)
+					bundle.setHeader(Constants.IMPORT_PACKAGE, value);
+			} else if (((IPluginFieldData)fData).doGenerateClass()) {
+				if (targetVersion.equals("3.1")) //$NON-NLS-1$
+					bundle.setHeader(ICoreConstants.ECLIPSE_AUTOSTART, "true"); //$NON-NLS-1$
+				else 
+					bundle.setHeader(ICoreConstants.ECLIPSE_LAZYSTART, "true"); //$NON-NLS-1$
+			}
+		} 
 	}
 
 	private IProject createProject() throws CoreException {
@@ -314,15 +299,13 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			}
 		}
 		
-		fModel.save();
-
-		if (fData.hasBundleStructure())
-			adjustManifests(monitor, project);
-		if (fData.hasBundleStructure()) {
-			openFile(project.getFile("META-INF/MANIFEST.MF")); //$NON-NLS-1$
-		} else {
-			openFile((IFile) fModel.getUnderlyingResource());
+		if (fData.hasBundleStructure() && fModel instanceof WorkspaceBundlePluginModelBase) {
+			adjustManifests(new SubProgressMonitor(monitor, 1), project,
+					((BundlePluginBase)fModel.getPluginBase()).getBundle());
 		}
+		
+		fModel.save();
+		openFile((IFile) fModel.getUnderlyingResource());
 		monitor.worked(1);
 
 		fResult = contentWizardResult;
@@ -470,7 +453,6 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 	protected void setPluginLibraries(WorkspacePluginModelBase model)
 			throws CoreException {
-		PluginBase pluginBase = (PluginBase) fModel.getPluginBase();
 		String libraryName = fData.getLibraryName();
 		if (libraryName == null && !fData.hasBundleStructure()) {
 			libraryName = "."; //$NON-NLS-1$
@@ -479,30 +461,20 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			IPluginLibrary library = model.getPluginFactory().createLibrary();
 			library.setName(libraryName);
 			library.setExported(!fData.hasBundleStructure());
-			pluginBase.add(library);
+			fModel.getPluginBase().add(library);
 		}
 	}
 
-	private void trimModel(IPluginBase base) throws CoreException {
-		base.setId(null);
-		base.setVersion(null);
-		base.setName(null);
-		base.setProviderName(null);
-		if (base instanceof IFragment) {
-			((IFragment) base).setPluginId(null);
-			((IFragment) base).setPluginVersion(null);
-			((IFragment) base).setRule(0);
-		} else {
-			((IPlugin) base).setClassName(null);
+	protected String getCommaValueFromSet(Set values) {
+		StringBuffer buffer = new StringBuffer();
+		Iterator iter = values.iterator();
+		while (iter.hasNext()) {
+			if (buffer.length() > 0) {
+				buffer.append(",\n "); //$NON-NLS-1$
+			}
+			buffer.append(iter.next().toString());
 		}
-		IPluginImport[] imports = base.getImports();
-		for (int i = 0; i < imports.length; i++) {
-			base.remove(imports[i]);
-		}
-		IPluginLibrary[] libraries = base.getLibraries();
-		for (int i = 0; i < libraries.length; i++) {
-			base.remove(libraries[i]);
-		}
+		return buffer.toString();
 	}
 
 }

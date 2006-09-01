@@ -67,4 +67,8 @@ public class Bundle extends BundleObject implements IBundle {
 	public IManifestHeader getManifestHeader(String key) {
 		return new ManifestHeader(key, getHeader(key), this, System.getProperty("line.separator")); //$NON-NLS-1$
 	}
+	
+	protected Properties getHeaders() {
+		return fProperties;
+	}
 }

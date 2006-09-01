@@ -36,7 +36,7 @@ import org.eclipse.pde.internal.core.PDEState;
 public abstract class AbstractPluginModelBase
 	extends AbstractModel
 	implements IPluginModelBase, IPluginModelFactory {
-	protected PluginBase fPluginBase;
+	protected IPluginBase fPluginBase;
 	private boolean enabled;
 	private BundleDescription fBundleDescription;
 	protected boolean fAbbreviated;
@@ -66,24 +66,23 @@ public abstract class AbstractPluginModelBase
 	}
 	public IPluginBase getPluginBase(boolean createIfMissing) {
 		if (fPluginBase == null && createIfMissing) {
-			fPluginBase = (PluginBase) createPluginBase();
+			fPluginBase = createPluginBase();
 			setLoaded(true);
 		}
 		return fPluginBase;
 	}
 	
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
-		if (fPluginBase == null) {
-			fPluginBase = (PluginBase) createPluginBase();
-			fPluginBase.setModel(this);
-		}
-		fPluginBase.reset();
+		if (fPluginBase == null) 
+			fPluginBase = createPluginBase();
+		
+		((PluginBase)fPluginBase).reset();
 		setLoaded(false);
 		try {
 			SAXParser parser = getSaxParser();
 			PluginHandler handler = new PluginHandler(fAbbreviated);
 			parser.parse(stream, handler);
-			fPluginBase.load(handler.getDocumentElement(), handler.getSchemaVersion());
+			((PluginBase)fPluginBase).load(handler.getDocumentElement(), handler.getSchemaVersion());
 			setLoaded(true);
 			if (!outOfSync)
 				updateTimeStamp();

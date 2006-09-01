@@ -16,6 +16,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IFile;
@@ -30,28 +33,25 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModelFactory;
+import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.converter.PluginConverter;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
-import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
-import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.util.ModelModification;
-import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.IPluginContentWizard;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 
 public class NewLibraryPluginCreationOperation extends
@@ -86,7 +86,7 @@ public class NewLibraryPluginCreationOperation extends
 		}
 	}
 
-	private void adjustExportRoot(IProgressMonitor monitor, IProject project)
+	private void adjustExportRoot(IProject project, IBundle bundle)
 			throws CoreException {
 		IResource[] resources = project.members(false);
 		for (int j = 0; j < resources.length; j++) {
@@ -103,15 +103,19 @@ public class NewLibraryPluginCreationOperation extends
 				return;
 			}
 		}
-		removeExportRoot(project.getFile("META-INF/MANIFEST.MF"), monitor); //$NON-NLS-1$
+		removeExportRoot(bundle);
 	}
 
-	protected void adjustManifests(IProgressMonitor monitor, IProject project)
+	protected void adjustManifests(IProgressMonitor monitor, IProject project, IBundle bundle)
 			throws CoreException {
-		super.adjustManifests(monitor, project);
-		if (fData.hasBundleStructure() && fData.isUnzipLibraries()) {
-			adjustExportRoot(monitor, project);
+		super.adjustManifests(monitor, project, bundle);
+		monitor.beginTask(new String(), 2);
+		if (bundle != null) {
+			adjustExportRoot(project, bundle);
+			monitor.worked(1);
+			addExportedPackages(project, bundle);
 		}
+		monitor.done();
 	}
 
 	protected void createContents(IProgressMonitor monitor, IProject project)
@@ -128,16 +132,15 @@ public class NewLibraryPluginCreationOperation extends
 			}
 			monitor.worked(1);
 		}
-		if (!fData.hasBundleStructure()) {
-			// delete manifest.mf imported from libraries
-			IFile importedManifest = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
-			if (importedManifest.exists()) {
-				importedManifest.delete(true, false, monitor);
-				if (!fData.hasBundleStructure()) {
-					IFolder meta_inf = project.getFolder("META-INF"); //$NON-NLS-1$
-					if (meta_inf.members().length == 0) {
-						meta_inf.delete(true, false, monitor);
-					}
+
+		// delete manifest.mf imported from libraries
+		IFile importedManifest = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+		if (importedManifest.exists()) {
+			importedManifest.delete(true, false, monitor);
+			if (!fData.hasBundleStructure()) {
+				IFolder meta_inf = project.getFolder("META-INF"); //$NON-NLS-1$
+				if (meta_inf.members().length == 0) {
+					meta_inf.delete(true, false, monitor);
 				}
 			}
 		}
@@ -234,25 +237,25 @@ public class NewLibraryPluginCreationOperation extends
 		}
 	}
 
-	private void removeExportRoot(IFile file, IProgressMonitor monitor) {
-		ModelModification mod = new ModelModification(file) {
-			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-				if (!(model instanceof IBundlePluginModelBase))
-					return;
-				IBundlePluginModelBase modelBase = (IBundlePluginModelBase)model;
-				IBundle bundle = modelBase.getBundleModel().getBundle();
-				IManifestHeader header = bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
-				if (header instanceof ExportPackageHeader)
-					if (((ExportPackageHeader)header).hasPackage(".")) //$NON-NLS-1$
-						((ExportPackageHeader)header).removePackage("."); //$NON-NLS-1$
+	private void removeExportRoot(IBundle bundle) {
+		String value = bundle.getHeader(Constants.BUNDLE_CLASSPATH);
+		if (value == null) 
+			value = "."; //$NON-NLS-1$
+		try {
+			ManifestElement [] elems = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, value);
+			StringBuffer buff = new StringBuffer(value.length());
+			for (int i = 0; i < elems.length; i++) {
+				if (!elems[i].getValue().equals(".")) //$NON-NLS-1$
+					buff.append(elems[i].getValue());
 			}
-		};
-		PDEModelUtility.modifyModel(mod, null);
+			bundle.setHeader(Constants.BUNDLE_CLASSPATH, buff.toString());
+		} catch (BundleException e) {
+		}		
 	}
 
 	protected void setPluginLibraries(WorkspacePluginModelBase model)
 			throws CoreException {
-		PluginBase pluginBase = (PluginBase) model.getPluginBase();
+		IPluginBase pluginBase = model.getPluginBase();
 		if (fData.isUnzipLibraries()) {
 			IPluginLibrary library = model.getPluginFactory().createLibrary();
 			library.setName("."); //$NON-NLS-1$
@@ -282,6 +285,25 @@ public class NewLibraryPluginCreationOperation extends
 			entry = factory.createEntry(IBuildEntry.OUTPUT_PREFIX + "."); //$NON-NLS-1$
 			entry.addToken("."); //$NON-NLS-1$
 			model.getBuild().add(entry);		
+		}
+	}
+	
+	private void addExportedPackages(IProject project, IBundle bundle) {
+		String value = bundle.getHeader(Constants.BUNDLE_CLASSPATH);
+		if (value == null)
+			value = "."; //$NON-NLS-1$
+		try {
+			ManifestElement[] elems = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, value);
+			HashMap map = new HashMap();
+			for (int i = 0; i < elems.length; i++) {
+				ArrayList filter = new ArrayList();
+				filter.add("*"); //$NON-NLS-1$
+				map.put(elems[i].getValue(), filter);
+			}
+			Set packages = PluginConverter.getDefault().getExports(project, map);
+			String pkgValue = getCommaValueFromSet(packages);
+			bundle.setHeader(Constants.EXPORT_PACKAGE, pkgValue);
+		} catch (BundleException e) {
 		}
 	}
 

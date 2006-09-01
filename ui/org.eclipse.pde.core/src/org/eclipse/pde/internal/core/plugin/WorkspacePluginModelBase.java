@@ -122,8 +122,7 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase
 				PDECore.logException(e);
 			}
 		} else {
-			fPluginBase = (PluginBase) createPluginBase();
-			fPluginBase.setModel(this);
+			fPluginBase = createPluginBase();
 			setLoaded(true);
 		}
 	}
