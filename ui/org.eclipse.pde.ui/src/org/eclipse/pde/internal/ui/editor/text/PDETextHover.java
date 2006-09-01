@@ -26,13 +26,17 @@ public abstract class PDETextHover implements ITextHoverExtension, ITextHover {
 	}
 
 	public IInformationControlCreator getHoverControlCreator() {
+		return getInformationControlCreator();
+	}
+
+	public static IInformationControlCreator getInformationControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
 				return new DefaultInformationControl(parent, SWT.NONE, new HTMLTextPresenter(true), getTooltipAffordanceString());
 			}
 		};
 	}
-
+	
 	public static String getTooltipAffordanceString() {
 		if (fBindingService == null)
 			return null;

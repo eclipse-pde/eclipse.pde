@@ -50,7 +50,7 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 				}
 			}
 		});
-		link.setToolTipText(getToolTipText(link));
+		addHoverListener(link);
 	}
 	
 	protected boolean isReferenceModel() {

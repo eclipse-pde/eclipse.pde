@@ -11,16 +11,16 @@
 
 package org.eclipse.pde.internal.ui.editor.plugin.rows;
 
-import com.ibm.icu.text.BreakIterator;
-
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
+import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -29,12 +29,12 @@ import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public abstract class ExtensionAttributeRow {
-	private static final int TOOLTIP_WIDTH_LIMIT = 300;
 	protected IContextPart part;
 	protected Object att;
 	protected IPluginElement input;
 	protected boolean blockNotification;
 	protected boolean dirty;
+	protected IInformationControl fIC;
 	
 	public ExtensionAttributeRow(IContextPart part, ISchemaAttribute att) {
 		this.part = part;
@@ -89,67 +89,31 @@ public abstract class ExtensionAttributeRow {
 	protected void createLabel(Composite parent, FormToolkit toolkit) {
 		Label label = toolkit.createLabel(parent, getPropertyLabel(), SWT.NULL);
 		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
-		label.setToolTipText(getToolTipText(label));
+		addHoverListener(label);
 	}
 	
-	protected String getToolTipText(Control control) {
+	protected void addHoverListener(final Control label) {
 		String text = getDescription();
-		if (text==null || text.equals(PDECoreMessages.Schema_NoDescriptionAvailable)) return null;
-		int dot = text.indexOf('.');
-		if (dot != -1) {
-			StringBuffer buf = new StringBuffer();
-			boolean inTag=false;
-			for (int i=0; i<text.length(); i++) {
-				char c = text.charAt(i);
-				if (inTag) {
-					if (c=='>') {
-						inTag = false;
-						continue;
-					}
-				}
-				else {
-					if (c=='<') {
-						inTag = true;
-						continue;
-					}
-					else if (c=='.') {
-						if (i<text.length()-1) {
-							char c2 = text.charAt(i+1);
-							if (c2==' ' || c2=='\t' || c2=='\n') break;
-						}
-					}
-					buf.append(c);
-				}
+		if (text == null || text.trim().length() == 0)
+			return;
+		fIC = PDETextHover.getInformationControlCreator().createInformationControl(label.getShell());
+		fIC.setSizeConstraints(300, 500);
+		fIC.setInformation(text);
+		Point p = fIC.computeSizeHint();
+		fIC.setSize(p.x, p.y);
+		label.addMouseTrackListener(new MouseTrackListener() {
+			public void mouseEnter(MouseEvent e) {
 			}
-			return wrapText(control, buf.toString(), TOOLTIP_WIDTH_LIMIT);
-		}
-		return text;
+			public void mouseExit(MouseEvent e) {
+				fIC.setVisible(false);
+			}
+			public void mouseHover(MouseEvent e) {
+				fIC.setLocation(label.toDisplay(new Point(10, 25)));
+				fIC.setVisible(true);
+			}
+		});
 	}
 	
-	private String wrapText(Control c, String src, int width) {
-		BreakIterator wb = BreakIterator.getWordInstance();
-		wb.setText(src);
-		int saved = 0;
-		int last = 0;
-		StringBuffer buff = new StringBuffer();
-		GC gc = new GC(c);
-		
-		for (int loc = wb.first(); loc != BreakIterator.DONE; loc = wb.next()) {
-			String word = src.substring(saved, loc);
-			Point extent = gc.textExtent(word);
-			if (extent.x > width) {
-				// overflow
-				String prevLine = src.substring(saved, last);
-				buff.append(prevLine);
-				buff.append(SWT.LF);
-				saved = last;
-			}
-			last = loc;
-		}
-		String lastLine = src.substring(saved, last);
-		buff.append(lastLine);
-		return buff.toString();
-	}
 	
 	public abstract void createContents(Composite parent, FormToolkit toolkit, int span);
 
@@ -168,6 +132,8 @@ public abstract class ExtensionAttributeRow {
 	}
 
 	public void dispose() {
+		if (fIC != null)
+			fIC.dispose();
 	}
 
 	public void setInput(IPluginElement input) {
