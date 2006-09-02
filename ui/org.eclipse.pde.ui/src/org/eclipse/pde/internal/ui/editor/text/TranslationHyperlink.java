@@ -48,7 +48,7 @@ public class TranslationHyperlink extends AbstractHyperlink {
 			return false;
 		} else if (fBase.getUnderlyingResource() == null) {
 			return false;
-		} else if (fElement.charAt(0) != '%') {
+		} else if (fElement.length() == 0 || fElement.charAt(0) != '%') {
 			return false;
 		}
 		
