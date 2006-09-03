@@ -154,9 +154,11 @@ public class FormOutlinePage extends PDEOutlinePage
 				return;
 			control.getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					fTreeViewer.refresh();
-					fTreeViewer.expandAll();
-					fStale=false;
+					if (!fTreeViewer.getControl().isDisposed()) {
+						fTreeViewer.refresh();
+						fTreeViewer.expandAll();
+						fStale=false;
+					}
 				}
 			});
 		}
