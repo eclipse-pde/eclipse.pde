@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.IFeatureModelDelta;
 import org.eclipse.pde.internal.core.IFeatureModelListener;
 import org.eclipse.pde.internal.core.IPluginModelListener;
@@ -58,14 +57,13 @@ public class FeatureRebuilder implements IFeatureModelListener, IPluginModelList
 			fTouchFeatures = true;
 		} else {
 			// listen for changes in checked/unchecked state
-			// of plug-ins on the Target Platform preference page
+			// of plug-ins on the Target Platform preference page.
+			// Only first entry will do, since workspace/target batch changes
+			// typically do not mix.
 			ModelEntry[] changed = delta.getChangedEntries();
-			for (int i = 0; i < changed.length; i++) {
-				IPluginModelBase model = changed[i].getActiveModel();
-				if (model.getUnderlyingResource() == null) {
+			if (changed.length > 0) {
+				if (changed[0].getActiveModel().getUnderlyingResource() == null)
 					touchFeatures();
-					break;
-				}
 			}
 		}
 	}
