@@ -354,7 +354,12 @@ public class PointSelectionPage
 		
 		Control c = null;
 		try {
-			c = fPointDescBrowser = new Browser(templateComposite, SWT.BORDER);
+			Composite comp = new Composite(templateComposite, SWT.BORDER);
+			layout = new GridLayout();
+			layout.marginHeight = layout.marginWidth = 0;
+			comp.setLayout(layout);
+			comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+			c = fPointDescBrowser = new Browser(comp, SWT.NONE);
 		} catch (SWTException e) {}
 		if (c == null)
 			c = fPointDescription = new Text(templateComposite, SWT.WRAP | SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.READ_ONLY);
