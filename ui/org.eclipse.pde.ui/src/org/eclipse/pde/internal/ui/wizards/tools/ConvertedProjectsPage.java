@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -41,10 +40,9 @@ import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.core.converter.PDEPluginConverter;
+import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.natures.PDE;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -62,6 +60,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
+import org.osgi.framework.Constants;
 	
 public class ConvertedProjectsPage extends WizardPage  {
 	private CheckboxTableViewer projectViewer;
@@ -149,10 +148,9 @@ public class ConvertedProjectsPage extends WizardPage  {
 	}
 	private void createManifestFile(IFile file, IProgressMonitor monitor)
 		throws CoreException {
-		WorkspacePluginModel model = new WorkspacePluginModel(file, false);
+		WorkspaceBundlePluginModel model = new WorkspaceBundlePluginModel(file, null);
 		model.load();
 		IPlugin plugin = model.getPlugin();
-		plugin.setSchemaVersion("3.0"); //$NON-NLS-1$
 		plugin.setId(IdUtil.getValidId(file.getProject().getName()));
 		plugin.setName(createInitialName(plugin.getId()));
 		plugin.setVersion("1.0.0"); //$NON-NLS-1$
@@ -171,10 +169,11 @@ public class ConvertedProjectsPage extends WizardPage  {
 			library.setExported(true);
 			base.add(library);
 		}
+		if (TargetPlatform.getTargetVersion() >= 3.1)
+			model.getBundleModel().getBundle().setHeader(Constants.BUNDLE_MANIFESTVERSION, "2"); //$NON-NLS-1$
 		model.save();
-		PDEPluginConverter.convertToOSGIFormat(file.getProject(), TargetPlatform.getTargetVersionString(), null, new SubProgressMonitor(monitor, 1));
+		monitor.done();
 		organizeExports(file.getProject());
-		file.delete(true, null);
 	}
 
 	private boolean isOldTarget() {
@@ -216,7 +215,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 		loadLibraryName(project);
 		
 		if (!WorkspaceModelManager.isPluginProject(project))
-			createManifestFile(project.getFile(PDEModelUtility.F_PLUGIN), monitor);
+			createManifestFile(project.getFile(PDEModelUtility.F_MANIFEST_FP), monitor);
 		IFile buildFile = project.getFile(PDEModelUtility.F_BUILD);
 		if (!buildFile.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(buildFile);

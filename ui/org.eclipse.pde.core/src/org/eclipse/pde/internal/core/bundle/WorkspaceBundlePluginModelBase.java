@@ -84,7 +84,7 @@ public abstract class WorkspaceBundlePluginModelBase extends WorkspacePluginMode
 	}
 
 	public ISharedExtensionsModel getExtensionsModel() {
-		if (fExtensionsModel == null) {
+		if (fExtensionsModel == null && fPluginFile != null) {
 			fExtensionsModel = new WorkspaceExtensionsModel(fPluginFile);
 			if (fPluginFile.exists())
 				try {
