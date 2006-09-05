@@ -91,9 +91,7 @@ public abstract class BaseCheatSheetCreationOperation extends
 					((ISetSelectionTarget) focusPart).selectReveal(selection);
 				}
 				try {
-					// TODO: MP: Update when cheat sheet editor is complete
-					//IDE.openEditor(page, fFile, "org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
-					IDE.openEditor(page, fFile, "org.eclipse.pde.ui.simpleCheatSheetEditor"); //$NON-NLS-1$
+					IDE.openEditor(page, fFile);
 				} catch (PartInitException e) {
 					// Ignore
 				}
