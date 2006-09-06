@@ -144,7 +144,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		if (header instanceof BundleClasspathHeader) {
 			((BundleClasspathHeader)header).addLibrary(library.getName());
 		} else {
-			String value = ((IManifestHeader)header).getValue();
+			String value = header == null ? null : ((IManifestHeader)header).getValue();
 			StringBuffer buffer = new StringBuffer(value == null ? "" : value); //$NON-NLS-1$
 			if (value != null)
 				buffer.append(",\n "); //$NON-NLS-1$
@@ -198,7 +198,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		if (header instanceof RequireBundleHeader) {
 			((RequireBundleHeader)header).addBundle(iimport);
 		} else {
-			String value = ((IManifestHeader)header).getValue();
+			String value = header == null ? null : ((IManifestHeader)header).getValue();
 			StringBuffer buffer = new StringBuffer(value == null ? "" : value); //$NON-NLS-1$
 			if (value != null)
 				buffer.append(",\n "); //$NON-NLS-1$
@@ -528,6 +528,8 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		else {
 			if (singleton) {
 				String version = getBundle().getHeader(Constants.BUNDLE_MANIFESTVERSION);
+				if (version == null) 
+					version = "1"; //$NON-NLS-1$
 				String value = header.getValue();
 				String singletonValue = null;
 				if (version != null && Integer.parseInt(version) >= 2)
