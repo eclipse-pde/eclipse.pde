@@ -93,16 +93,16 @@
          The following is an example of the &lt;code&gt;javadoc&lt;/code&gt; extension:
 &lt;pre&gt;
  &lt;extension point=&quot;org.eclipse.pde.core.javadoc&quot;&gt;
-     &lt;javadoc path=&quot;doc.zip!/references/api/&quot; archive=&quot;true&quot;/&gt;
+     &lt;javadoc path=&quot;doc.zip!/references/api/&quot; archive=&quot;true&quot;&gt;
         &lt;plugin id=&quot;com.example.abc&quot;/&gt;
         &lt;plugin id=&quot;com.example.def&quot;/&gt;
      &lt;/javadoc&gt;
      
-     &lt;javadoc path=&quot;http://www.sample-url.org/doc/&quot;/&gt;
+     &lt;javadoc path=&quot;http://www.sample-url.org/doc/&quot;&gt;
         &lt;plugin id=&quot;com.example.ghi&quot;/&gt;
      &lt;/javadoc&gt;
      
-     &lt;javadoc path=&quot;doc/&quot;/&gt;
+     &lt;javadoc path=&quot;doc/&quot;&gt;
         &lt;plugin id=&quot;com.example.jkl&quot;/&gt;
      &lt;/javadoc&gt;     
   &lt;/extension&gt;
