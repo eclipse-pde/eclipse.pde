@@ -17,7 +17,6 @@ as the code needed to implement those extensions. If a contributed wizard is spe
    <element name="extension">
       <annotation>
          <documentation>
-            (no description available)
          </documentation>
       </annotation>
       <complexType>
@@ -202,7 +201,6 @@ interface.
             <meta.element labelAttribute="name"/>
          </appInfo>
          <documentation>
-            (no description available)
          </documentation>
       </annotation>
       <complexType>

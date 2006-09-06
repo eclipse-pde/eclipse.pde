@@ -20,7 +20,6 @@ Each sample has a name, one or more project elements and a final perspective. Th
    <element name="extension">
       <annotation>
          <documentation>
-            (no description available)
          </documentation>
       </annotation>
       <complexType>
