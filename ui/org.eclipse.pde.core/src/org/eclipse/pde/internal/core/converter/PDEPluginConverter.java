@@ -33,11 +33,9 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
-import org.osgi.util.tracker.ServiceTracker;
 
 public class PDEPluginConverter {
 	
@@ -139,13 +137,9 @@ public class PDEPluginConverter {
 					}
 					prop.put(Constants.BUNDLE_CLASSPATH, buffer.toString());
 				}
-				ServiceTracker tracker = new ServiceTracker(PDECore.getDefault()
-						.getBundleContext(), PluginConverter.class.getName(), null);
-				tracker.open();
-				PluginConverter converter = (PluginConverter) tracker.getService();
+				PluginConverter converter = PluginConverter.getDefault();
 				converter.writeManifest(new File(file.getLocation().toOSString()), prop, false);
 				file.refreshLocal(1, null);
-				tracker.close();
 			} catch (FileNotFoundException e) {
 			} catch (IOException e) {
 			} catch (BundleException e) {
