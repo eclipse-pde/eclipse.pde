@@ -698,7 +698,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				String newVersion = QualifierReplacer.replaceQualifierInVersion(b.getVersion().toString(), b.getSymbolicName(), getQualifierPropery(b.getLocation()), null);
 				
 				//Here it is important to reuse the same bundle id than the bundle we are removing so that we don't loose the information about the classpath
-				BundleDescription newBundle = state.getFactory().createBundleDescription(b.getBundleId(), b.getSymbolicName(), new Version(newVersion), b.getLocation(), b.getRequiredBundles(), b.getHost(), b.getImportPackages(), b.getExportPackages(), null, b.isSingleton());
+				BundleDescription newBundle = state.getFactory().createBundleDescription(b.getBundleId(), b.getSymbolicName(), new Version(newVersion), b.getLocation(), b.getRequiredBundles(), b.getHost(), b.getImportPackages(), b.getExportPackages(), b.isSingleton(), b.attachFragments(), b.dynamicFragments(), b.getPlatformFilter(),  b.getExecutionEnvironments(), b.getGenericRequires(), b.getGenericCapabilities());
 				state.addBundle(newBundle);
 				rememberQualifierTagPresence(newBundle);
 			}
