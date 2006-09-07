@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IFile;
@@ -45,6 +46,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
@@ -57,7 +59,8 @@ import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.core.converter.PDEPluginConverter;
+import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -66,6 +69,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
+import org.osgi.framework.BundleException;
 
 public class PluginImportOperation extends JarImportOperation {
 
@@ -552,7 +556,7 @@ public class PluginImportOperation extends JarImportOperation {
 				}
 			}
 			if (fImportType != IMPORT_WITH_SOURCE) {
-				PDEPluginConverter.modifyBundleClasspathHeader(project, model);
+				modifyBundleClasspathHeader(project, model);
 			}
 			setPermissions(model, project);
 		} catch (IOException e) {
@@ -568,8 +572,38 @@ public class PluginImportOperation extends JarImportOperation {
 			}
 		}
 	}
-
-
+	
+	private void modifyBundleClasspathHeader(IProject project, IPluginModelBase base) {
+		IFile file = project.getFile(JarFile.MANIFEST_NAME);
+		if (file.exists()) {
+			WorkspaceBundleModel bmodel = new WorkspaceBundleModel(file);
+			IBundle bundle = bmodel.getBundle();
+			String classpath = bundle.getHeader(org.osgi.framework.Constants.BUNDLE_CLASSPATH);
+			if (classpath == null) {
+				bundle.setHeader(org.osgi.framework.Constants.BUNDLE_CLASSPATH, 
+						ClasspathUtilCore.getFilename(base));
+			} else {
+				try {
+					ManifestElement[] elements = ManifestElement.parseHeader(org.osgi.framework.Constants.BUNDLE_CLASSPATH, classpath);
+					StringBuffer buffer = new StringBuffer();
+					for (int i = 0; i < elements.length; i++) {
+						if (buffer.length() > 0) {
+							buffer.append(","); //$NON-NLS-1$
+							buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
+							buffer.append(" "); //$NON-NLS-1$
+						}
+						if (elements[i].getValue().equals(".")) //$NON-NLS-1$
+							buffer.append(ClasspathUtilCore.getFilename(base));
+						else
+							buffer.append(elements[i].getValue());
+					}
+					bundle.setHeader(org.osgi.framework.Constants.BUNDLE_CLASSPATH, buffer.toString());
+				} catch (BundleException e) {
+				}
+			}
+			bmodel.save();
+		}
+	}
 
 	private IProject findProject(String id) {
 		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(id);
