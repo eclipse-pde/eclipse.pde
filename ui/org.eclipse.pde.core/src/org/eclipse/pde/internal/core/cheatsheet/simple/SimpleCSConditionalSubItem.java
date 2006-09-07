@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
 import org.w3c.dom.Element;
 
@@ -34,9 +35,10 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 
 	/**
 	 * @param model
+	 * @param parent
 	 */
-	public SimpleCSConditionalSubItem(ISimpleCSModel model) {
-		super(model);
+	public SimpleCSConditionalSubItem(ISimpleCSModel model, ISimpleCSObject parent) {
+		super(model, parent);
 		// TODO Auto-generated constructor stub
 	}
 

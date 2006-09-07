@@ -127,9 +127,22 @@ public interface ISimpleCSItem extends ISimpleCSObject {
 	
 	/**
 	 * Element:  subitem, repeated-subitem, conditional-subitem
+	 * @param index
+	 * @param subitem
+	 */
+	public void addSubItem(int index, ISimpleCSSubItemObject subitem);
+	
+	/**
+	 * Element:  subitem, repeated-subitem, conditional-subitem
 	 * @param subitem
 	 */
 	public void removeSubItem(ISimpleCSSubItemObject subitem);
+	
+	/**
+	 * Element:  subitem, repeated-subitem, conditional-subitem
+	 * @param index
+	 */
+	public void removeSubItem(int index);
 	
 	/**
 	 * Element:  onCompletion
@@ -142,5 +155,26 @@ public interface ISimpleCSItem extends ISimpleCSObject {
 	 * @param onCompletion
 	 */
 	public void setOnCompletion(ISimpleCSOnCompletion onCompletion);
+	
+	/**
+	 * Element:  subitem, repeated-subitem, conditional-subitem
+	 * @param subitem
+	 * @return
+	 */
+	public boolean isFirstSubItem(ISimpleCSSubItemObject subitem);
+
+	/**
+	 * Element:  subitem, repeated-subitem, conditional-subitem
+	 * @param subitem
+	 * @return
+	 */
+	public boolean isLastSubItem(ISimpleCSSubItemObject subitem);
+	
+	/**
+	 * Element:  subitem, repeated-subitem, conditional-subitem
+	 * @param subitem
+	 * @return
+	 */
+	public int indexOfSubItem(ISimpleCSSubItemObject subitem);
 	
 }

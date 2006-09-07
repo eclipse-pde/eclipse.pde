@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSAction;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.w3c.dom.Element;
 
 /**
@@ -32,9 +33,10 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 
 	/**
 	 * @param model
+	 * @param parent
 	 */
-	public SimpleCSAction(ISimpleCSModel model) {
-		super(model);
+	public SimpleCSAction(ISimpleCSModel model, ISimpleCSObject parent) {
+		super(model, parent);
 	}
 
 	/* (non-Javadoc)

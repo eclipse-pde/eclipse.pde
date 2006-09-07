@@ -52,7 +52,9 @@ public class SimpleCSContentProvider extends DefaultContentProvider implements
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
-		// TODO: MP: Do we need to do anything here?
+		if (element instanceof ISimpleCSObject) {
+			return ((ISimpleCSObject)element).getParent();
+		}
 		return null;
 	}
 

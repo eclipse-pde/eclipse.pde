@@ -14,8 +14,11 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -71,17 +74,17 @@ public class SimpleCSCommandDetails extends SimpleCSAbstractDetails {
 		// Attribute: serialization
 		fSerialization = new FormEntry(parent, toolkit, PDEUIMessages.SimpleCSCommandDetails_0, SWT.NONE);
 
-		// Attribute: serialization
+		// Attribute: returns
 		fReturns = new FormEntry(parent, toolkit, PDEUIMessages.SimpleCSCommandDetails_1, SWT.NONE);
 		
-		// Attribute: dialog
+		// Attribute: confirm
 		label = toolkit.createLabel(parent, PDEUIMessages.SimpleCSCommandDetails_2);
 		label.setForeground(foreground);
 		Button[] dialogButtons = createTrueFalseButtons(parent, toolkit, 2);
 		fConfirmTrue = dialogButtons[0];
 		fConfirmFalse = dialogButtons[1];		
 
-		// Attribute: serialization
+		// Attribute: when
 		fWhen = new FormEntry(parent, toolkit, PDEUIMessages.SimpleCSCommandDetails_3, SWT.NONE);
 		
 		setText(PDEUIMessages.SimpleCSCommandDetails_4);
@@ -94,7 +97,34 @@ public class SimpleCSCommandDetails extends SimpleCSAbstractDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#hookListeners()
 	 */
 	public void hookListeners() {
-		// TODO Auto-generated method stub
+
+		// Attribute: serialization
+		fSerialization.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry entry) {
+				// TODO: MP: Can serialization ever be null?
+				fCommand.setSerialization(fSerialization.getValue());
+			}
+		});	
+		// Attribute: returns
+		fReturns.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry entry) {
+				// TODO: MP: Can returns ever be null?
+				fCommand.setReturns(fReturns.getValue());
+			}
+		});
+		// Attribute: confirm
+		fConfirmTrue.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fCommand.setConfirm(fConfirmTrue.getSelection());
+			}
+		});		
+		// Attribute: when
+		fWhen.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry entry) {
+				// TODO: MP: Can when ever be null?
+				fCommand.setWhen(fWhen.getValue());
+			}
+		});		
 
 	}
 
@@ -116,7 +146,7 @@ public class SimpleCSCommandDetails extends SimpleCSAbstractDetails {
 		fReturns.setValue(fCommand.getReturns(), true);
 		fReturns.setEditable(editable);		
 
-		// Attribute: skip
+		// Attribute: confirm
 		fConfirmTrue.setSelection(fCommand.getConfirm());
 		fConfirmTrue.setEnabled(editable);
 		fConfirmFalse.setSelection(!fCommand.getConfirm());

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
@@ -57,7 +58,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 * @param model
 	 */
 	public SimpleCS(ISimpleCSModel model) {
-		super(model);
+		super(model, null);
 		reset();
 	}
 	
@@ -116,7 +117,12 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#setTitle(java.lang.String)
 	 */
 	public void setTitle(String title) {
+		// TODO: MP: Where should we trim() the title ?
+		String old = fTitle;
 		fTitle = title;
+		if (isEditable()) {
+			firePropertyChanged(ATTRIBUTE_TITLE, old, fTitle);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -136,11 +142,11 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 					String name = child.getNodeName();
 					Element childElement = (Element)child;
 					if (name.equals(ELEMENT_INTRO)) {
-						fIntro = factory.createSimpleCSIntro();
+						fIntro = factory.createSimpleCSIntro(this);
 						fIntro.parse(childElement);
 					} else if (name.equals(ELEMENT_ITEM)) { 
-						ISimpleCSItem item = factory.createSimpleCSItem();
-						addItem(item);
+						ISimpleCSItem item = factory.createSimpleCSItem(this);
+						fItems.add(item);
 						item.parse(childElement);
 					}
 				}
@@ -195,6 +201,10 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 */
 	public void addItem(ISimpleCSItem item) {
 		fItems.add(item);
+		
+		if (isEditable()) {
+			fireStructureChanged(item, IModelChangedEvent.INSERT);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -202,6 +212,10 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 */
 	public void removeItem(ISimpleCSItem item) {
 		fItems.remove(item);
+		
+		if (isEditable()) {
+			fireStructureChanged(item, IModelChangedEvent.REMOVE);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -233,6 +247,63 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 			list.addAll(fItems);
 		}
 		return list;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#isFirstItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem)
+	 */
+	public boolean isFirstItem(ISimpleCSItem item) {
+		int position = fItems.indexOf(item);
+		if (position == 0) {
+			return true;
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#isLastItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem)
+	 */
+	public boolean isLastItem(ISimpleCSItem item) {
+		int position = fItems.indexOf(item);
+		int lastPosition = fItems.size() - 1;
+		if (position == lastPosition) {
+			return true;
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#addItem(int, org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem)
+	 */
+	public void addItem(int index, ISimpleCSItem item) {
+		
+		if (index < 0){
+			return;
+		}
+		if (index >= fItems.size()) {
+			fItems.add(item);
+		} else {
+			fItems.add(index, item);
+		}
+		
+		if (isEditable()) {
+			fireStructureChanged(item, IModelChangedEvent.INSERT);
+		}
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#indexOfItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem)
+	 */
+	public int indexOfItem(ISimpleCSItem item) {
+		return fItems.indexOf(item);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#removeItem(int, org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem)
+	 */
+	public void removeItem(int index) {
+		fItems.remove(index);
 	}
 
 }

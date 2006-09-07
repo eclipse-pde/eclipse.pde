@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -53,9 +54,10 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 
 	/**
 	 * @param model
+	 * @param parent
 	 */
-	public SimpleCSIntro(ISimpleCSModel model) {
-		super(model);
+	public SimpleCSIntro(ISimpleCSModel model, ISimpleCSObject parent) {
+		super(model, parent);
 		reset();
 	}
 
@@ -84,7 +86,11 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro#setContextId(java.lang.String)
 	 */
 	public void setContextId(String contextId) {
+		String old = fContextId;
 		fContextId = contextId;
+		if (isEditable()) {
+			firePropertyChanged(ATTRIBUTE_CONTEXTID, old, fContextId);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -98,7 +104,11 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro#setHref(java.lang.String)
 	 */
 	public void setHref(String href) {
+		String old = fHref;
 		fHref = href;
+		if (isEditable()) {
+			firePropertyChanged(ATTRIBUTE_HREF, old, fHref);
+		}		
 	}
 
 	/**
@@ -118,7 +128,7 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 				Element childElement = (Element)child;
 				String name = child.getNodeName();
 				if (name.equals(ELEMENT_DESCRIPTION)) {
-					fDescription = factory.createSimpleCSDescription();
+					fDescription = factory.createSimpleCSDescription(this);
 					fDescription.parse(childElement);
 				}
 			}

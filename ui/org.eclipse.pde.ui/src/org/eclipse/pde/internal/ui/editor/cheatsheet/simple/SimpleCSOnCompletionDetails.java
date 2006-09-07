@@ -12,34 +12,34 @@
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSOnCompletion;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
- * SimpleCSIntroDetails
+ * SimpleCSDescriptionDetails
  *
  */
-public class SimpleCSIntroDetails extends SimpleCSAbstractDetails {
+public class SimpleCSOnCompletionDetails extends SimpleCSAbstractDetails {
 
-	private ISimpleCSIntro fIntro;
+	private ISimpleCSOnCompletion fOnCompletion;
 	
-	private FormEntry fContextId;
-	
-	private FormEntry fHref;	
+	private FormEntry fContent;
 	
 	/**
 	 * @param elementSection
 	 */
-	public SimpleCSIntroDetails(ISimpleCSIntro intro, SimpleCSElementSection elementSection) {
+	public SimpleCSOnCompletionDetails(ISimpleCSOnCompletion onCompletion,
+			SimpleCSElementSection elementSection) {
 		super(elementSection);
-		fIntro = intro;
-		// TODO: MP: Set rest to null
+		fOnCompletion = onCompletion;
+		// TODO: MP: Set fields to null
 	}
 
 	/* (non-Javadoc)
@@ -49,23 +49,22 @@ public class SimpleCSIntroDetails extends SimpleCSAbstractDetails {
 
 		FormToolkit toolkit = getManagedForm().getToolkit();
 		// Configure layout
-		GridLayout glayout = new GridLayout(2, false);
+		GridLayout glayout = new GridLayout(1, false);
 		boolean paintedBorder = toolkit.getBorderStyle() != SWT.BORDER;
 		if (paintedBorder) {
 			glayout.verticalSpacing = 7;
 		}
 		parent.setLayout(glayout);		
+		
+		// Content (Element)
+		fContent = new FormEntry(parent, toolkit, PDEUIMessages.SimpleCSDescriptionDetails_0, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = 90;
+		fContent.getText().setLayoutData(gd);
 
-		// Attribute: contextId
-		fContextId = new FormEntry(parent, toolkit, PDEUIMessages.SimpleCSIntroDetails_0, SWT.NONE);
-		
-		// Attribute: href
-		fHref = new FormEntry(parent, toolkit, PDEUIMessages.SimpleCSIntroDetails_1, SWT.NONE);
-		
-		
-		setText(PDEUIMessages.SimpleCSIntroDetails_2);
-		setDecription(NLS.bind(PDEUIMessages.SimpleCSIntroDetails_3,
-				fIntro.getName()));		
+		setText(PDEUIMessages.SimpleCSDescriptionDetails_1);
+		setDecription(NLS.bind(PDEUIMessages.SimpleCSDescriptionDetails_2,
+				fOnCompletion.getName()));		
 		
 	}
 
@@ -73,18 +72,13 @@ public class SimpleCSIntroDetails extends SimpleCSAbstractDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#hookListeners()
 	 */
 	public void hookListeners() {
-		// Attribute: contextId
-		fContextId.setFormEntryListener(new FormEntryAdapter(this) {
+		// Content (Element)
+		fContent.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
-				fIntro.setContextId(fContextId.getValue());
+				fOnCompletion.setContent(fContent.getValue());
 			}
-		});		
-		// Attribute: href
-		fHref.setFormEntryListener(new FormEntryAdapter(this) {
-			public void textValueChanged(FormEntry entry) {
-				fIntro.setHref(fHref.getValue());
-			}
-		});	
+		});
+
 	}
 
 	/* (non-Javadoc)
@@ -94,18 +88,14 @@ public class SimpleCSIntroDetails extends SimpleCSAbstractDetails {
 
 		boolean editable = isEditableElement();
 		
-		if (fIntro == null) {
+		if (fOnCompletion == null) {
 			return;
-		}		
-
-		// Attribute: contextId
-		fContextId.setValue(fIntro.getContextId(), true);
-		fContextId.setEditable(editable);
+		}
 		
-		// Attribute: href
-		fHref.setValue(fIntro.getHref(), true);
-		fHref.setEditable(editable);		
-
+		// Content (Element)
+		fContent.setValue(fOnCompletion.getContent());
+		fContent.setEditable(editable);
+		// TODO: MP: Should strip existing newlines?  Where to do it?
 	}
 
 }

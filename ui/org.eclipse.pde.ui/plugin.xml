@@ -694,7 +694,6 @@
             class="org.eclipse.pde.internal.ui.samples.SampleEditor"
             id="org.eclipse.pde.ui.sampleEditor">
       </editor>
-      <!--
       <editor
             class="org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSEditorContributor"
@@ -705,7 +704,6 @@
                contentTypeId="org.eclipse.pde.simpleCheatSheet">
          </contentTypeBinding>
       </editor>
-      -->
    </extension>
    <extension
          point="org.eclipse.ui.views">

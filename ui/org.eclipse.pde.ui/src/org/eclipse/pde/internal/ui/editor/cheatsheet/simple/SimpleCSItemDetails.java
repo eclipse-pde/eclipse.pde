@@ -14,8 +14,11 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -107,8 +110,38 @@ public class SimpleCSItemDetails extends SimpleCSAbstractDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#hookListeners()
 	 */
 	public void hookListeners() {
-		// TODO Auto-generated method stub
-
+		
+		// Attribute: title
+		fTitle.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry entry) {
+				fItem.setTitle(fTitle.getValue());
+			}
+		});
+		// Attribute: dialog
+		fDialogTrue.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fItem.setDialog(fDialogTrue.getSelection());
+			}
+		});	
+		// Attribute: skip
+		fSkipTrue.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fItem.setSkip(fSkipTrue.getSelection());
+			}
+		});			
+		// Attribute: contextId
+		fContextId.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry entry) {
+				fItem.setContextId(fContextId.getValue());
+			}
+		});		
+		// Attribute: href
+		fHref.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry entry) {
+				fItem.setHref(fHref.getValue());
+			}
+		});	
+		
 	}
 
 	/* (non-Javadoc)

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
 import org.w3c.dom.Element;
@@ -34,9 +35,10 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 
 	/**
 	 * @param model
+	 * @param parent
 	 */
-	public SimpleCSRepeatedSubItem(ISimpleCSModel model) {
-		super(model);
+	public SimpleCSRepeatedSubItem(ISimpleCSModel model, ISimpleCSObject parent) {
+		super(model, parent);
 		// TODO Auto-generated constructor stub
 	}
 

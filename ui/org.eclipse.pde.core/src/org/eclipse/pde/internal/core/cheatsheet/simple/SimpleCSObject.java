@@ -29,6 +29,8 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 
 	private transient ISimpleCSModel fModel;
 	
+	private transient ISimpleCSObject fParent;
+	
 	/**
 	 * 
 	 */
@@ -37,8 +39,9 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 	/**
 	 * 
 	 */
-	public SimpleCSObject(ISimpleCSModel model) {
+	public SimpleCSObject(ISimpleCSModel model, ISimpleCSObject parent) {
 		fModel = model;
+		fParent = parent;
 	}
 
 	/* (non-Javadoc)
@@ -121,6 +124,13 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 	public String getWritableString(String source) {
 		// TODO: MP: Probably don't need this anymore since using xmlprinthandler
 		return CoreUtility.getWritableString(source);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getParent()
+	 */
+	public ISimpleCSObject getParent() {
+		return fParent;
 	}
 	
 	/* (non-Javadoc)

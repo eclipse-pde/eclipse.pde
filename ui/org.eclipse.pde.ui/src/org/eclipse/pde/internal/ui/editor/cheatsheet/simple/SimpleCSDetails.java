@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -67,8 +68,14 @@ public class SimpleCSDetails extends SimpleCSAbstractDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#hookListeners()
 	 */
 	public void hookListeners() {
-		// TODO Auto-generated method stub
-
+		// Attribute: title
+		fTitle.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry entry) {
+				// TODO: MP: Can cheat sheet ever be null?
+				fCheatSheet.setTitle(fTitle.getValue());
+			}
+		});		
+		
 	}
 
 	/* (non-Javadoc)
@@ -77,7 +84,7 @@ public class SimpleCSDetails extends SimpleCSAbstractDetails {
 	public void updateFields() {
 
 		boolean editable = isEditableElement();
-		
+		// TODO: MP: Can this ever happen ?
 		if (fCheatSheet == null) {
 			return;
 		}

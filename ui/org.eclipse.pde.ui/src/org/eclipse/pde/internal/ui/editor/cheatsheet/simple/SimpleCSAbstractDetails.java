@@ -95,7 +95,7 @@ public abstract class SimpleCSAbstractDetails extends PDEDetails {
 	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IFormPart part, ISelection selection) {
-		// TODO Auto-generated method stub
+		// TODO: MP: Anything needed here?
 
 	}
 
@@ -103,24 +103,22 @@ public abstract class SimpleCSAbstractDetails extends PDEDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#fireSaveNeeded()
 	 */
 	public void fireSaveNeeded() {
-		// TODO Auto-generated method stub
-
+		markDirty();
+		getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#getContextId()
 	 */
 	public String getContextId() {
-		// TODO Auto-generated method stub
-		return null;
+		return SimpleCSInputContext.CONTEXT_ID;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#getPage()
 	 */
 	public PDEFormPage getPage() {
-		// TODO Auto-generated method stub
-		return null;
+		return (PDEFormPage)getManagedForm().getContainer();
 	}
 
 	/* (non-Javadoc)
@@ -134,7 +132,7 @@ public abstract class SimpleCSAbstractDetails extends PDEDetails {
 	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	public void modelChanged(IModelChangedEvent event) {
-		// TODO Auto-generated method stub
+		// TODO: MP: Do we need to do anything here?
 
 	}
 

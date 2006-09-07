@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
@@ -43,9 +44,10 @@ public class SimpleCSDescription extends SimpleCSObject implements
 
 	/**
 	 * @param model
+	 * @param parent
 	 */
-	public SimpleCSDescription(ISimpleCSModel model) {
-		super(model);
+	public SimpleCSDescription(ISimpleCSModel model, ISimpleCSObject parent) {
+		super(model, parent);
 		reset();
 	}
 
@@ -60,7 +62,11 @@ public class SimpleCSDescription extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription#setContent(java.lang.String)
 	 */
 	public void setContent(String content) {
+		String old = fContent;
 		fContent = content;
+		if (isEditable()) {
+			firePropertyChanged(ELEMENT_DESCRIPTION, old, fContent);
+		}			
 	}
 
 	/* (non-Javadoc)

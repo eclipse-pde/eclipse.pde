@@ -139,6 +139,12 @@ public class PDEUIMessages extends NLS {
 
 	public static String SimpleCheatSheetCreationOperation_3;
 
+	public static String SimpleCSAddStepAction_0;
+
+	public static String SimpleCSAddSubStepAction_0;
+
+	public static String SimpleCSAddSubStepAction_1;
+
 	public static String SimpleCSCommandDetails_0;
 
 	public static String SimpleCSCommandDetails_1;
@@ -175,6 +181,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String SimpleCSElementSection_5;
 
+	public static String SimpleCSElementSection_6;
+
+	public static String SimpleCSElementSection_7;
+
 	public static String SimpleCSIntroDetails_0;
 
 	public static String SimpleCSIntroDetails_1;
@@ -198,6 +208,10 @@ public class PDEUIMessages extends NLS {
 	public static String SimpleCSItemDetails_6;
 
 	public static String SimpleCSPage_1;
+
+	public static String SimpleCSRemoveStepAction_0;
+
+	public static String SimpleCSRemoveSubStepAction_0;
 
 	public static String SimpleCSSubItemDetails_0;
 

@@ -11,7 +11,11 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IModelChangedListener;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
@@ -24,7 +28,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  * SimpleCSPage
  *
  */
-public class SimpleCSPage extends PDEFormPage {
+public class SimpleCSPage extends PDEFormPage implements IModelChangedListener {
 
 	public static final String PAGE_ID = "main"; //$NON-NLS-1$
 	
@@ -50,13 +54,13 @@ public class SimpleCSPage extends PDEFormPage {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		// Set page title
-		ISimpleCSModel simpleCSModel = (ISimpleCSModel)getModel();
+		ISimpleCSModel model = (ISimpleCSModel)getModel();
 		// TODO: MP: This probably a very bad idea
-		if (!simpleCSModel.isLoaded()) {
+		if (!model.isLoaded()) {
 			throw new RuntimeException(PDEUIMessages.SimpleCSPage_1);
 		}
 		
-		String title = simpleCSModel.getSimpleCS().getTitle();
+		String title = model.getSimpleCS().getTitle();
 		// TODO: MP: Check if model is null?
 		if ((title != null) &&
 				(title.length() > 0)) {
@@ -65,10 +69,16 @@ public class SimpleCSPage extends PDEFormPage {
 			// TODO: MP: Set on model?
 			form.setText(PDEUIMessages.SimpleCSPage_0);
 		}
-		
+		// Create the masters details block
 		fBlock.createContent(managedForm);
-		// TODO: MP: model change listener
-		//schema.addModelChangedListener(this);
+		// Force the selection in the masters tree section to load the 
+		// proper details section
+		fBlock.getMastersSection().fireSelection();
+		// TODO: MP: Now that we got the selection working, probably should
+		// force the tree to expand
+		
+		// Register this page to be informed of model change events
+		model.addModelChangedListener(this);
 	}
 
 	/* (non-Javadoc)
@@ -83,6 +93,38 @@ public class SimpleCSPage extends PDEFormPage {
 		}
 		fColorManager.dispose();
 		super.dispose();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
+	 */
+	public void modelChanged(IModelChangedEvent event) {
+		
+		Object[] objects = event.getChangedObjects();
+		for (int i = 0; i < objects.length; i++) {
+			ISimpleCSObject object = (ISimpleCSObject)objects[i];
+			// TODO: MP: How to avoid iterating through all events
+			// Actually probably want to register each component separately
+			// as an event listener - cleaner implementation
+			if (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
+				// TODO: MP: Refactor into private method?
+				if (event.getChangeType() == IModelChangedEvent.CHANGE) {
+					String changeProperty = event.getChangedProperty();
+					if ((changeProperty != null) && 
+							changeProperty.equals(ISimpleCSConstants.ATTRIBUTE_TITLE)) {
+						// Has to be a String if the property is a title
+						getManagedForm().getForm().setText((String)event.getNewValue());
+					}
+					// TODO: MP: Delegate to master block section
+					// Refresh the element in the tree viewer
+					//fTreeViewer.refresh(object.getParent());
+					// Select the new item in the tree
+					//fTreeViewer.setSelection(new StructuredSelection(object), true);
+				}
+			}
+		}
+
+		fBlock.modelChanged(event);
 	}
 	
 }

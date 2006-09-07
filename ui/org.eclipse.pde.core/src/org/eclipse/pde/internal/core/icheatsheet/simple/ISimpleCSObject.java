@@ -68,4 +68,9 @@ public interface ISimpleCSObject extends Serializable, IWritable,
 	 */
 	public List getChildren();
 	
+	/**
+	 * @return
+	 */
+	public ISimpleCSObject getParent();
+	
 }

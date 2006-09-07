@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSOnCompletion;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -42,9 +43,10 @@ public class SimpleCSOnCompletion extends SimpleCSObject implements
 
 	/**
 	 * @param model
+	 * @param parent
 	 */
-	public SimpleCSOnCompletion(ISimpleCSModel model) {
-		super(model);
+	public SimpleCSOnCompletion(ISimpleCSModel model, ISimpleCSObject parent) {
+		super(model, parent);
 		reset();
 	}
 
@@ -106,7 +108,11 @@ public class SimpleCSOnCompletion extends SimpleCSObject implements
 	 * @param content
 	 */
 	public void setContent(String content) {
+		String old = fContent;
 		fContent = content;
+		if (isEditable()) {
+			firePropertyChanged(ELEMENT_DESCRIPTION, old, fContent);
+		}	
 	}
 
 	/* (non-Javadoc)

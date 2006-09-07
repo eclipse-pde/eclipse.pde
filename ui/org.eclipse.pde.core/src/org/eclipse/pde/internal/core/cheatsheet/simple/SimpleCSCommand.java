@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.w3c.dom.Element;
 
 /**
@@ -54,9 +55,10 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 
 	/**
 	 * @param model
+	 * @param parent
 	 */
-	public SimpleCSCommand(ISimpleCSModel model) {
-		super(model);
+	public SimpleCSCommand(ISimpleCSModel model, ISimpleCSObject parent) {
+		super(model, parent);
 		reset();
 	}
 
@@ -92,28 +94,45 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand#setConfirm(boolean)
 	 */
 	public void setConfirm(boolean confirm) {
+		Boolean old =  Boolean.valueOf(fConfirm);
 		fConfirm = confirm;
+		if (isEditable()) {
+			firePropertyChanged(ATTRIBUTE_CONFIRM, old, Boolean.valueOf(fConfirm));
+		}	
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand#setReturns(boolean)
 	 */
 	public void setReturns(String returns) {
+		String old = fReturns;
 		fReturns = returns;
+		if (isEditable()) {
+			firePropertyChanged(ATTRIBUTE_RETURNS, old, fReturns);
+		}		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand#setSerialization(java.lang.String)
 	 */
 	public void setSerialization(String serialization) {
+		// TODO: MP: Where should we trim() ?
+		String old = fSerialization;
 		fSerialization = serialization;
+		if (isEditable()) {
+			firePropertyChanged(ATTRIBUTE_SERIALIZATION, old, fSerialization);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand#setWhen(java.lang.String)
 	 */
 	public void setWhen(String when) {
+		String old = fWhen;
 		fWhen = when;
+		if (isEditable()) {
+			firePropertyChanged(ATTRIBUTE_WHEN, old, fWhen);
+		}		
 	}
 
 	/* (non-Javadoc)

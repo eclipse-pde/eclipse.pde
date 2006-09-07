@@ -61,17 +61,17 @@ public class SimpleCheatSheetCreationOperation extends
 		ISimpleCSModelFactory factory = simpleCS.getModel().getFactory();
 
 		// Element: intro
-		ISimpleCSIntro intro = factory.createSimpleCSIntro();
+		ISimpleCSIntro intro = factory.createSimpleCSIntro(simpleCS);
 		// Element: description
-		ISimpleCSDescription description = factory.createSimpleCSDescription();
+		ISimpleCSDescription description = factory.createSimpleCSDescription(intro);
 		description.setContent(PDEUIMessages.SimpleCheatSheetCreationOperation_0);
 		intro.setDescription(description); 
 
 		// Element: item
-		ISimpleCSItem item = factory.createSimpleCSItem();
+		ISimpleCSItem item = factory.createSimpleCSItem(simpleCS);
 		item.setTitle(PDEUIMessages.SimpleCheatSheetCreationOperation_1);
 		// Element: description
-		ISimpleCSDescription description2 = factory.createSimpleCSDescription();
+		ISimpleCSDescription description2 = factory.createSimpleCSDescription(item);
 		description2.setContent(PDEUIMessages.SimpleCheatSheetCreationOperation_2);
 		item.setDescription(description2);
 

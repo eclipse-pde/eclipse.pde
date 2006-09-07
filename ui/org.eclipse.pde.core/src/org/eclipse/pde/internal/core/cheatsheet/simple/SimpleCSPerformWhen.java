@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject;
 import org.w3c.dom.Element;
@@ -34,9 +35,10 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 
 	/**
 	 * @param model
+	 * @param parent
 	 */
-	public SimpleCSPerformWhen(ISimpleCSModel model) {
-		super(model);
+	public SimpleCSPerformWhen(ISimpleCSModel model, ISimpleCSObject parent) {
+		super(model, parent);
 		// TODO Auto-generated constructor stub
 	}
 

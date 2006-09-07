@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSOnCompletion;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem;
@@ -51,68 +52,71 @@ public class SimpleCSModelFactory implements ISimpleCSModelFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory#createSimpleCSAction()
 	 */
-	public ISimpleCSAction createSimpleCSAction() {
-		return new SimpleCSAction(fModel);
+	public ISimpleCSAction createSimpleCSAction(ISimpleCSObject parent) {
+		return new SimpleCSAction(fModel, parent);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory#createSimpleCSCommand()
 	 */
-	public ISimpleCSCommand createSimpleCSCommand() {
-		return new SimpleCSCommand(fModel);
+	public ISimpleCSCommand createSimpleCSCommand(ISimpleCSObject parent) {
+		return new SimpleCSCommand(fModel, parent);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory#createSimpleCSConditionalSubItem()
 	 */
-	public ISimpleCSConditionalSubItem createSimpleCSConditionalSubItem() {
-		return new SimpleCSConditionalSubItem(fModel);
+	public ISimpleCSConditionalSubItem createSimpleCSConditionalSubItem(ISimpleCSObject parent) {
+		return new SimpleCSConditionalSubItem(fModel, parent);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory#createSimpleCSIntro()
 	 */
-	public ISimpleCSIntro createSimpleCSIntro() {
-		return new SimpleCSIntro(fModel);
+	public ISimpleCSIntro createSimpleCSIntro(ISimpleCSObject parent) {
+		return new SimpleCSIntro(fModel, parent);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory#createSimpleCSItem()
 	 */
-	public ISimpleCSItem createSimpleCSItem() {
-		return new SimpleCSItem(fModel);
+	public ISimpleCSItem createSimpleCSItem(ISimpleCSObject parent) {
+		return new SimpleCSItem(fModel, parent);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory#createSimpleCSOnCompletion()
 	 */
-	public ISimpleCSOnCompletion createSimpleCSOnCompletion() {
-		return new SimpleCSOnCompletion(fModel);
+	public ISimpleCSOnCompletion createSimpleCSOnCompletion(ISimpleCSObject parent) {
+		return new SimpleCSOnCompletion(fModel, parent);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory#createSimpleCSPerformWhen()
 	 */
-	public ISimpleCSPerformWhen createSimpleCSPerformWhen() {
-		return new SimpleCSPerformWhen(fModel);
+	public ISimpleCSPerformWhen createSimpleCSPerformWhen(ISimpleCSObject parent) {
+		return new SimpleCSPerformWhen(fModel, parent);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory#createSimpleCSRepeatedSubItem()
 	 */
-	public ISimpleCSRepeatedSubItem createSimpleCSRepeatedSubItem() {
-		return new SimpleCSRepeatedSubItem(fModel);
+	public ISimpleCSRepeatedSubItem createSimpleCSRepeatedSubItem(ISimpleCSObject parent) {
+		return new SimpleCSRepeatedSubItem(fModel, parent);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory#createSimpleCSSubItem()
 	 */
-	public ISimpleCSSubItem createSimpleCSSubItem() {
-		return new SimpleCSSubItem(fModel);
+	public ISimpleCSSubItem createSimpleCSSubItem(ISimpleCSObject parent) {
+		return new SimpleCSSubItem(fModel, parent);
 	}
 
-	public ISimpleCSDescription createSimpleCSDescription() {
-		return new SimpleCSDescription(fModel);
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory#createSimpleCSDescription(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject)
+	 */
+	public ISimpleCSDescription createSimpleCSDescription(ISimpleCSObject parent) {
+		return new SimpleCSDescription(fModel, parent);
 	}
 	
 }

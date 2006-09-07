@@ -17,12 +17,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSOnCompletion;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject;
@@ -91,9 +93,10 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 
 	/**
 	 * @param model
+	 * @param parent
 	 */
-	public SimpleCSItem(ISimpleCSModel model) {
-		super(model);
+	public SimpleCSItem(ISimpleCSModel model, ISimpleCSObject parent) {
+		super(model, parent);
 		reset();
 	}
 
@@ -172,7 +175,11 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setContextId(java.lang.String)
 	 */
 	public void setContextId(String contextId) {
+		String old = fContextId;
 		fContextId = contextId;
+		if (isEditable()) {
+			firePropertyChanged(ATTRIBUTE_CONTEXTID, old, fContextId);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -186,7 +193,11 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setDialog(boolean)
 	 */
 	public void setDialog(boolean dialog) {
+		Boolean old = Boolean.valueOf(fDialog);
 		fDialog = dialog;
+		if (isEditable()) {
+			firePropertyChanged(ATTRIBUTE_DIALOG, old, Boolean.valueOf(fDialog));
+		}
 	}
 
 	/* (non-Javadoc)
@@ -200,21 +211,33 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setHref(java.lang.String)
 	 */
 	public void setHref(String href) {
+		String old = fHref;
 		fHref = href;
+		if (isEditable()) {
+			firePropertyChanged(ATTRIBUTE_HREF, old, fHref);
+		}		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setSkip(boolean)
 	 */
 	public void setSkip(boolean skip) {
+		Boolean old = Boolean.valueOf(fSkip);
 		fSkip = skip;
+		if (isEditable()) {
+			firePropertyChanged(ATTRIBUTE_SKIP, old, Boolean.valueOf(fSkip));
+		}			
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setTitle(java.lang.String)
 	 */
 	public void setTitle(String title) {
+		String old = fTitle;
 		fTitle = title;
+		if (isEditable()) {
+			firePropertyChanged(ATTRIBUTE_TITLE, old, fTitle);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -249,31 +272,31 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 				Element childElement = (Element)child;
 
 				if (name.equals(ELEMENT_DESCRIPTION)) {
-					fDescription = factory.createSimpleCSDescription();
+					fDescription = factory.createSimpleCSDescription(this);
 					fDescription.parse(childElement);
 				} else if (name.equals(ELEMENT_ACTION)) {
-					fExecutable = factory.createSimpleCSAction();
+					fExecutable = factory.createSimpleCSAction(this);
 					fExecutable.parse(childElement);
 				} else if (name.equals(ELEMENT_COMMAND)) {
-					fExecutable = factory.createSimpleCSCommand();
+					fExecutable = factory.createSimpleCSCommand(this);
 					fExecutable.parse(childElement);
 				} else if (name.equals(ELEMENT_PERFORM_WHEN)) {
-					fExecutable = factory.createSimpleCSPerformWhen();
+					fExecutable = factory.createSimpleCSPerformWhen(this);
 					fExecutable.parse(childElement);
 				} else if (name.equals(ELEMENT_SUBITEM)) {
-					ISimpleCSSubItem subitem = factory.createSimpleCSSubItem();
-					addSubItem(subitem);
+					ISimpleCSSubItem subitem = factory.createSimpleCSSubItem(this);
+					fSubItems.add(subitem);
 					subitem.parse(childElement);
 				} else if (name.equals(ELEMENT_REPEATED_SUBITEM)) {
-					ISimpleCSRepeatedSubItem subitem = factory.createSimpleCSRepeatedSubItem();
-					addSubItem(subitem);
+					ISimpleCSRepeatedSubItem subitem = factory.createSimpleCSRepeatedSubItem(this);
+					fSubItems.add(subitem);
 					subitem.parse(childElement);
 				} else if (name.equals(ELEMENT_CONDITIONAL_SUBITEM)) {
-					ISimpleCSConditionalSubItem subitem = factory.createSimpleCSConditionalSubItem();
-					addSubItem(subitem);
+					ISimpleCSConditionalSubItem subitem = factory.createSimpleCSConditionalSubItem(this);
+					fSubItems.add(subitem);
 					subitem.parse(childElement);
 				} else if (name.equals(ELEMENT_ONCOMPLETION)) {
-					fOnCompletion = factory.createSimpleCSOnCompletion();
+					fOnCompletion = factory.createSimpleCSOnCompletion(this);
 					fOnCompletion.parse(childElement);
 				}
 			}
@@ -365,6 +388,10 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 */
 	public void addSubItem(ISimpleCSSubItemObject subitem) {
 		fSubItems.add(subitem);
+		
+		if (isEditable()) {
+			fireStructureChanged(subitem, IModelChangedEvent.INSERT);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -379,6 +406,10 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 */
 	public void removeSubItem(ISimpleCSSubItemObject subitem) {
 		fSubItems.remove(subitem);
+		
+		if (isEditable()) {
+			fireStructureChanged(subitem, IModelChangedEvent.REMOVE);
+		}		
 	}
 
 	/* (non-Javadoc)
@@ -425,6 +456,62 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 			list.add(fOnCompletion);
 		}
 		return list;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#addSubItem(int, org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
+	 */
+	public void addSubItem(int index, ISimpleCSSubItemObject subitem) {
+		if (index < 0){
+			return;
+		}
+		if (index >= fSubItems.size()) {
+			fSubItems.add(subitem);
+		} else {
+			fSubItems.add(index, subitem);
+		}
+		
+		if (isEditable()) {
+			fireStructureChanged(subitem, IModelChangedEvent.INSERT);
+		}
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#indexOfSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
+	 */
+	public int indexOfSubItem(ISimpleCSSubItemObject subitem) {
+		return fSubItems.indexOf(subitem);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#isFirstSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
+	 */
+	public boolean isFirstSubItem(ISimpleCSSubItemObject subitem) {
+		int position = fSubItems.indexOf(subitem);
+		if (position == 0) {
+			return true;
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#isLastSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
+	 */
+	public boolean isLastSubItem(ISimpleCSSubItemObject subitem) {
+		int position = fSubItems.indexOf(subitem);
+		int lastPosition = fSubItems.size() - 1;
+		if (position == lastPosition) {
+			return true;
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#removeSubItem(int)
+	 */
+	public void removeSubItem(int index) {
+		fSubItems.remove(index);
 	}
 
 }

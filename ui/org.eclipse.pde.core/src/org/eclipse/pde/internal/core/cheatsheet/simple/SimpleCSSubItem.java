@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
 import org.w3c.dom.Element;
@@ -59,9 +60,10 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 
 	/**
 	 * @param model
+	 * @param parent
 	 */
-	public SimpleCSSubItem(ISimpleCSModel model) {
-		super(model);
+	public SimpleCSSubItem(ISimpleCSModel model, ISimpleCSObject parent) {
+		super(model, parent);
 		reset();
 	}
 
@@ -104,21 +106,33 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem#setLabel(java.lang.String)
 	 */
 	public void setLabel(String label) {
+		String old = fLabel;
 		fLabel = label;
+		if (isEditable()) {
+			firePropertyChanged(ATTRIBUTE_LABEL, old, fLabel);
+		}		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem#setSkip(boolean)
 	 */
 	public void setSkip(boolean skip) {
+		Boolean old = Boolean.valueOf(fSkip);
 		fSkip = skip;
+		if (isEditable()) {
+			firePropertyChanged(ATTRIBUTE_SKIP, old, Boolean.valueOf(fSkip));
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem#setWhen(java.lang.String)
 	 */
 	public void setWhen(String when) {
+		String old = fWhen;
 		fWhen = when;
+		if (isEditable()) {
+			firePropertyChanged(ATTRIBUTE_WHEN, old, fWhen);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -144,13 +158,13 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 				Element childElement = (Element)child;
 
 				if (name.equals(ELEMENT_ACTION)) {
-					fExecutable = factory.createSimpleCSAction();
+					fExecutable = factory.createSimpleCSAction(this);
 					fExecutable.parse(childElement);
 				} else if (name.equals(ELEMENT_COMMAND)) {
-					fExecutable = factory.createSimpleCSCommand();
+					fExecutable = factory.createSimpleCSCommand(this);
 					fExecutable.parse(childElement);
 				} else if (name.equals(ELEMENT_PERFORM_WHEN)) {
-					fExecutable = factory.createSimpleCSPerformWhen();
+					fExecutable = factory.createSimpleCSPerformWhen(this);
 					fExecutable.parse(childElement);
 				}
 			}

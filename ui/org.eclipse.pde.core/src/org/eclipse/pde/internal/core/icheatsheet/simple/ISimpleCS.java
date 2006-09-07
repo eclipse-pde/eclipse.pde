@@ -59,7 +59,14 @@ public interface ISimpleCS extends ISimpleCSObject {
 	 * @param item
 	 */
 	public void addItem(ISimpleCSItem item);
-	
+
+	/**
+	 * Element:  item
+	 * @param item
+	 * @param index
+	 */
+	public void addItem(int index, ISimpleCSItem item);
+		
 	/**
 	 * Element:  item
 	 * @param items
@@ -71,6 +78,30 @@ public interface ISimpleCS extends ISimpleCSObject {
 	 * @param item
 	 */
 	public void removeItem(ISimpleCSItem item);
+	
+	/**
+	 * Element:  item
+	 * @param index
+	 */
+	public void removeItem(int index);
+	
+	/**
+	 * Element:  item
+	 * @param item
+	 */
+	public boolean isFirstItem(ISimpleCSItem item);
+	
+	/**
+	 * Element:  item
+	 * @param item
+	 */
+	public boolean isLastItem(ISimpleCSItem item);
+	
+	/**
+	 * @param item
+	 * @return
+	 */
+	public int indexOfItem(ISimpleCSItem item);
 	
 	/**
 	 * 

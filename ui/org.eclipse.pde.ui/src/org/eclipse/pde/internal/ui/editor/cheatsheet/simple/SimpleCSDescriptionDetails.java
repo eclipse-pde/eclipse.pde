@@ -14,14 +14,12 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
@@ -32,7 +30,7 @@ public class SimpleCSDescriptionDetails extends SimpleCSAbstractDetails {
 
 	private ISimpleCSDescription fDescription;
 	
-	private Text fContent;
+	private FormEntry fContent;
 	
 	/**
 	 * @param elementSection
@@ -57,17 +55,12 @@ public class SimpleCSDescriptionDetails extends SimpleCSAbstractDetails {
 		}
 		parent.setLayout(glayout);		
 		
-		Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
-		Label label = null;
-
-		// Content (Element)		
-		label = toolkit.createLabel(parent, PDEUIMessages.SimpleCSDescriptionDetails_0);
-		label.setForeground(foreground);
-		
-		fContent = toolkit.createText(parent, "", SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);//$NON-NLS-1$
+		// Content (Element)
+		fContent = new FormEntry(parent, toolkit, PDEUIMessages.SimpleCSDescriptionDetails_0, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 90;
-		fContent.setLayoutData(gd);		
+		fContent.getText().setLayoutData(gd);
+		
 
 		setText(PDEUIMessages.SimpleCSDescriptionDetails_1);
 		setDecription(NLS.bind(PDEUIMessages.SimpleCSDescriptionDetails_2,
@@ -79,7 +72,12 @@ public class SimpleCSDescriptionDetails extends SimpleCSAbstractDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#hookListeners()
 	 */
 	public void hookListeners() {
-		// TODO Auto-generated method stub
+		// Content (Element)
+		fContent.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry entry) {
+				fDescription.setContent(fContent.getValue());
+			}
+		});
 
 	}
 
@@ -95,7 +93,7 @@ public class SimpleCSDescriptionDetails extends SimpleCSAbstractDetails {
 		}
 		
 		// Content (Element)
-		fContent.setText(fDescription.getContent());
+		fContent.setValue(fDescription.getContent());
 		fContent.setEditable(editable);
 		// TODO: MP: Should strip existing newlines?  Where to do it?
 	}

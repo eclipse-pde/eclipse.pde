@@ -25,50 +25,50 @@ public interface ISimpleCSModelFactory {
 	/**
 	 * @return
 	 */
-	public ISimpleCSAction createSimpleCSAction();
+	public ISimpleCSAction createSimpleCSAction(ISimpleCSObject parent);
 	
 	/**
 	 * @return
 	 */
-	public ISimpleCSCommand createSimpleCSCommand();
+	public ISimpleCSCommand createSimpleCSCommand(ISimpleCSObject parent);
 	
 	/**
 	 * @return
 	 */
-	public ISimpleCSConditionalSubItem createSimpleCSConditionalSubItem();
+	public ISimpleCSConditionalSubItem createSimpleCSConditionalSubItem(ISimpleCSObject parent);
 	
 	/**
 	 * @return
 	 */
-	public ISimpleCSIntro createSimpleCSIntro();
+	public ISimpleCSIntro createSimpleCSIntro(ISimpleCSObject parent);
 	
 	/**
 	 * @return
 	 */
-	public ISimpleCSItem createSimpleCSItem();
+	public ISimpleCSItem createSimpleCSItem(ISimpleCSObject parent);
 	
 	/**
 	 * @return
 	 */
-	public ISimpleCSOnCompletion createSimpleCSOnCompletion();
+	public ISimpleCSOnCompletion createSimpleCSOnCompletion(ISimpleCSObject parent);
 	
 	/**
 	 * @return
 	 */
-	public ISimpleCSPerformWhen createSimpleCSPerformWhen();
+	public ISimpleCSPerformWhen createSimpleCSPerformWhen(ISimpleCSObject parent);
 	
 	/**
 	 * @return
 	 */
-	public ISimpleCSRepeatedSubItem createSimpleCSRepeatedSubItem();
+	public ISimpleCSRepeatedSubItem createSimpleCSRepeatedSubItem(ISimpleCSObject parent);
 	
 	/**
 	 * @return
 	 */
-	public ISimpleCSSubItem createSimpleCSSubItem();
+	public ISimpleCSSubItem createSimpleCSSubItem(ISimpleCSObject parent);
 	
 	/**
 	 * @return
 	 */
-	public ISimpleCSDescription createSimpleCSDescription();
+	public ISimpleCSDescription createSimpleCSDescription(ISimpleCSObject parent);
 }
