@@ -12,79 +12,60 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.internal.junit.launcher.AssertionVMArg;
-import org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration;
-import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchShortcut;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.junit.launcher.JUnitLaunchShortcut;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatform;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
 public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {	
-	
-	/**
-	 * Returns the local java launch config type
+		
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.junit.JUnitLaunchShortcut#getLaunchConfigurationTypeId()
 	 */
-	protected ILaunchConfigurationType getJUnitLaunchConfigType() {
-		ILaunchManager lm= DebugPlugin.getDefault().getLaunchManager();
-		return lm.getLaunchConfigurationType("org.eclipse.pde.ui.JunitLaunchConfig");		 //$NON-NLS-1$
+	protected String getLaunchConfigurationTypeId() {
+		return "org.eclipse.pde.ui.JunitLaunchConfig";
 	}
 	
-	protected ILaunchConfiguration createConfiguration(
-		IJavaProject project, String name, String mainType, String container, String testName) {
-		ILaunchConfiguration config = null;
-		try {
-			ILaunchConfigurationType configType= getJUnitLaunchConfigType();
-			String computedName = DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
-			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);
-			if (TargetPlatform.isRuntimeRefactored2())
-				wc.setAttribute("pde.version", "3.2a"); //$NON-NLS-1$ //$NON-NLS-2$
-			else if (TargetPlatform.isRuntimeRefactored1())
-				wc.setAttribute("pde.version", "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
-			wc.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultJUnitWorkspaceLocation());
-			setJavaArguments(wc);
-			wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
-			wc.setAttribute(IPDELauncherConstants.DOCLEAR, true);
-			wc.setAttribute(IPDELauncherConstants.ASKCLEAR, false);
-			wc.setAttribute(IPDELauncherConstants.TRACING_CHECKED, IPDELauncherConstants.TRACING_NONE);
-			wc.setAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true);
-			wc.setAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, false);
-			wc.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, LaunchArgumentsHelper.getDefaultJUnitConfigurationLocation());
-			wc.setAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, true);
-			wc.setAttribute(
-				IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
-				"org.eclipse.pde.ui.workbenchClasspathProvider"); //$NON-NLS-1$
-			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getElementName());
-			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainType);
-			wc.setAttribute(JUnitBaseLaunchConfiguration.ATTR_KEEPRUNNING, false);
-			wc.setAttribute(JUnitBaseLaunchConfiguration.LAUNCH_CONTAINER_ATTR, container);
-			if (testName.length() > 0)
-				wc.setAttribute(JUnitBaseLaunchConfiguration.TESTNAME_ATTR, testName);	
-			if (JUnitLaunchConfiguration.requiresUI(wc)) {
-				String product = TargetPlatform.getDefaultProduct();
-				if (product != null) {
-					wc.setAttribute(IPDELauncherConstants.USE_PRODUCT, true);
-					wc.setAttribute(IPDELauncherConstants.PRODUCT, product);
-				}
-			} else {
-				wc.setAttribute(IPDELauncherConstants.APPLICATION, JUnitLaunchConfiguration.CORE_APPLICATION);				
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.junit.JUnitLaunchShortcut#createLaunchConfiguration(org.eclipse.jdt.core.IJavaElement)
+	 */
+	protected ILaunchConfigurationWorkingCopy createLaunchConfiguration(IJavaElement element) throws CoreException {
+		ILaunchConfigurationWorkingCopy wc= super.createLaunchConfiguration(element);
+		
+		if (TargetPlatform.isRuntimeRefactored2())
+			wc.setAttribute("pde.version", "3.2a"); //$NON-NLS-1$ //$NON-NLS-2$
+		else if (TargetPlatform.isRuntimeRefactored1())
+			wc.setAttribute("pde.version", "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
+		wc.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultJUnitWorkspaceLocation());
+		setJavaArguments(wc);
+		wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
+		wc.setAttribute(IPDELauncherConstants.DOCLEAR, true);
+		wc.setAttribute(IPDELauncherConstants.ASKCLEAR, false);
+		wc.setAttribute(IPDELauncherConstants.TRACING_CHECKED, IPDELauncherConstants.TRACING_NONE);
+		wc.setAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true);
+		wc.setAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, false);
+		wc.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, LaunchArgumentsHelper.getDefaultJUnitConfigurationLocation());
+		wc.setAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, true);
+		wc.setAttribute(
+			IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
+			"org.eclipse.pde.ui.workbenchClasspathProvider"); //$NON-NLS-1$
+
+		if (JUnitLaunchConfiguration.requiresUI(wc)) {
+			String product = TargetPlatform.getDefaultProduct();
+			if (product != null) {
+				wc.setAttribute(IPDELauncherConstants.USE_PRODUCT, true);
+				wc.setAttribute(IPDELauncherConstants.PRODUCT, product);
 			}
-			AssertionVMArg.setArgDefault(wc);
-			config= wc.doSave();		
-		} catch (CoreException ce) {
-			PDEPlugin.log(ce);
+		} else {
+			wc.setAttribute(IPDELauncherConstants.APPLICATION, JUnitLaunchConfiguration.CORE_APPLICATION);				
 		}
-		return config;
+		return wc;
 	}
-	
+		
 	private void setJavaArguments(ILaunchConfigurationWorkingCopy wc) {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		String programArgs = preferences.getString(ICoreConstants.PROGRAM_ARGS);
