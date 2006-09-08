@@ -133,6 +133,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_NO_TRANSLATE_OBJ = create(PATH_OBJ, "incomplete_tsk.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DISCOVERY = create(PATH_OBJ, "discovery.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_XML_TEXT_NODE = create(PATH_OBJ, "xml_text_node.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CLIPBOARD = create(PATH_OBJ, "copyviewtoclipboard_tsk.gif"); //$NON-NLS-1$
 	/**
 	 * OVR16
 	 */

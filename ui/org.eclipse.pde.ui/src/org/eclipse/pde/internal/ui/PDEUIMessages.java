@@ -37,6 +37,60 @@ public class PDEUIMessages extends NLS {
 
 	public static String CheatSheetFileWizardPage_9;
 
+	public static String CommandCopyFilter_cheatsheet;
+
+	public static String CommandCopyFilter_cheatsheetDesc;
+
+	public static String CommandCopyFilter_help;
+
+	public static String CommandCopyFilter_helpDesc;
+
+	public static String CommandCopyFilter_intro;
+
+	public static String CommandCopyFilter_introDesc;
+
+	public static String CommandCopyFilter_noFilter;
+
+	public static String CommandCopyFilter_noFilterDesc;
+
+	public static String CommandDetails_clear;
+
+	public static String CommandDetails_copytooltip;
+
+	public static String CommandDetails_execError;
+
+	public static String CommandDetails_execute;
+
+	public static String CommandDetails_groupName;
+
+	public static String CommandDetails_id;
+
+	public static String CommandDetails_includeMarkup;
+
+	public static String CommandDetails_markupTooltip;
+
+	public static String CommandDetails_name;
+
+	public static String CommandDetails_noComSelected;
+
+	public static String CommandDetails_noParameters;
+
+	public static String CommandDetails_numParams;
+
+	public static String CommandDetails_param;
+
+	public static String CommandDetails_preview;
+
+	public static String CommandDetails_track;
+
+	public static String CommandDetails_undefined;
+
+	public static String CommandList_filterName;
+
+	public static String CommandList_groupName;
+
+	public static String CommandSerializerPart_name;
+
 	public static String CompilersConfigurationTab_incompatEnv;
 
 	public static String ContentSection_addDialogButtonLabel;

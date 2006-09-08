@@ -27,7 +27,7 @@ public class JUnitWorkbenchShortcut extends JUnitLaunchShortcut {
 	 * @see org.eclipse.jdt.junit.JUnitLaunchShortcut#getLaunchConfigurationTypeId()
 	 */
 	protected String getLaunchConfigurationTypeId() {
-		return "org.eclipse.pde.ui.JunitLaunchConfig";
+		return "org.eclipse.pde.ui.JunitLaunchConfig"; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
