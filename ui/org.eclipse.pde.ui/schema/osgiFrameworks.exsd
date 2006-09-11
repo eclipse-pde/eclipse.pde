@@ -68,10 +68,10 @@ This extension point is used to register new OSGi frameworks. Each framework is 
          <attribute name="launcherDelegate" type="string" use="required">
             <annotation>
                <documentation>
-                  a launch configuration delegate to launch the OSGi framework. The value of this attribute is the fully qualified name of the Java class that extends &lt;code&gt;org.eclipse.pde.ui.launcher.AbstractOSGiLaunchConfiguration&lt;/code&gt;.
+                  a launch configuration delegate to launch the OSGi framework. The value of this attribute is the fully qualified name of the Java class that extends &lt;code&gt;org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration&lt;/code&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.pde.ui.launcher.AbstractOSGiLaunchConfiguration"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration"/>
                </appInfo>
             </annotation>
          </attribute>
