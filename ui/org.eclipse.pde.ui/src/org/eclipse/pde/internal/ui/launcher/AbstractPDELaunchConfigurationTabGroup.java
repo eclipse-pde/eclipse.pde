@@ -20,14 +20,16 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
+import org.eclipse.pde.ui.launcher.PDESourcePathProvider;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 
 public abstract class AbstractPDELaunchConfigurationTabGroup extends
 		AbstractLaunchConfigurationTabGroup {
 
-	/**
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup#initializeFrom(ILaunchConfiguration)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		final ILaunchConfiguration config = configuration;
@@ -55,7 +57,7 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends
 		if (id == null) {
 			wc.setAttribute(
 				IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
-				"org.eclipse.pde.ui.workbenchClasspathProvider"); //$NON-NLS-1$
+				PDESourcePathProvider.ID);
 		}
 		
 		String value = wc.getAttribute("vmargs", (String)null); //$NON-NLS-1$
@@ -80,14 +82,15 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends
 		wc.doSave();
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		super.setDefaults(configuration);
 		configuration.setAttribute(
 			IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
-			"org.eclipse.pde.ui.workbenchClasspathProvider"); //$NON-NLS-1$
+			PDESourcePathProvider.ID); 
 		
 		// Set Program/VM arguments with preference values
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();

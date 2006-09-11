@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,17 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *     David Saff (saff@mit.edu) - bug 102632: [JUnit] Support for JUnit 4.
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.launcher;
+package org.eclipse.pde.ui.launcher;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,6 +29,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration;
@@ -42,14 +41,10 @@ import org.eclipse.jdt.launching.SocketUtil;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathHelper;
-import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDEManager;
 import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
@@ -57,12 +52,18 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
+import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
+import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
+import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
+import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
+import org.eclipse.pde.internal.ui.launcher.PluginValidationDialog;
+import org.eclipse.pde.internal.ui.launcher.PluginValidationOperation;
+import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 
 
-public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
+public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfiguration  {
 
 	public static final String CORE_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
 	public static final String UI_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$
@@ -388,7 +389,20 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 	}
 
 	protected void setDefaultSourceLocator(ILaunch launch, ILaunchConfiguration configuration) throws CoreException {
-		LauncherUtils.setDefaultSourceLocator(configuration);
+		ILaunchConfigurationWorkingCopy wc = null;
+		if (configuration.isWorkingCopy()) {
+			wc = (ILaunchConfigurationWorkingCopy) configuration;
+		} else {
+			wc = configuration.getWorkingCopy();
+		}
+		String id = configuration.getAttribute(
+				IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
+				(String) null);
+		if (!PDESourcePathProvider.ID.equals(id)) {
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
+							PDESourcePathProvider.ID); 
+			wc.doSave();
+		}
 	}
 	
 	protected String getDefaultWorkspace(ILaunchConfiguration config) throws CoreException {
@@ -406,73 +420,7 @@ public class JUnitLaunchConfiguration extends JUnitBaseLaunchConfiguration  {
 		}
 		return UI_APPLICATION;
 	}
-	
-	public static String getPluginID(ILaunchConfiguration configuration) {
-		try {
-			String projectID = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
-			if (projectID.length() > 0) {
-				IResource project = PDEPlugin.getWorkspace().getRoot().findMember(projectID);
-				if (project instanceof IProject) {
-					IPluginModelBase model = PDECore.getDefault().getModelManager().findModel((IProject)project);
-					if (model != null) {
-						return model.getPluginBase().getId();
-					}
-				}
-			}
-		} catch (CoreException e) {
-		}
-		return null;
-	}
-	
-	public static boolean requiresUI(ILaunchConfiguration configuration) {
-		String id = getPluginID(configuration);
-		if (id != null) {
-			IPluginModelBase[] models = getPluginAndPrereqs(id);
-			for (int i = 0; i < models.length; i++) {
-				if ("org.eclipse.swt".equals(models[i].getPluginBase().getId())) //$NON-NLS-1$
-					return true;
-			}
-			return false;
-		}
-		return true;
-	}
-	
-	public static IPluginModelBase[] getPluginAndPrereqs(String id) {
-		TreeMap map = new TreeMap();
-		addPluginAndPrereqs(id, map);
-		return (IPluginModelBase[])map.values().toArray(new IPluginModelBase[map.size()]);
-	}
-	
-	protected static void addPluginAndPrereqs(String id, TreeMap map) {
-		if (map.containsKey(id))
-			return;
 		
-		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(id);
-		if (entry == null)
-			return;
-		
-		IPluginModelBase model = entry.getActiveModel();
-		
-		map.put(id, model);
-		
-		IPluginImport[] imports = model.getPluginBase().getImports();
-		for (int i = 0; i < imports.length; i++) {
-			addPluginAndPrereqs(imports[i].getId(), map);
-		}
-		
-		if (model instanceof IFragmentModel) {
-			addPluginAndPrereqs(((IFragmentModel) model).getFragment().getPluginId(), map);
-		} else {
-			IFragmentModel[] fragments = PDEManager.findFragmentsFor(model);
-			for (int i = 0; i < fragments.length; i++) {
-				IFragment fragment = fragments[i].getFragment();
-				if (!"org.eclipse.ui.workbench.compatibility".equals(fragment.getId())) //$NON-NLS-1$
-					addPluginAndPrereqs(fragment.getId(), map);
-			}
-		}
-	}
-
-	
 	protected File getConfigDir(ILaunchConfiguration config) {
 		if (fConfigDir == null)
 			fConfigDir = LaunchConfigurationHelper.getConfigurationArea(config);

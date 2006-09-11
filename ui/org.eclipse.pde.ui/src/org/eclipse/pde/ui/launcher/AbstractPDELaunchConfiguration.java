@@ -12,7 +12,10 @@ package org.eclipse.pde.ui.launcher;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -22,17 +25,23 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
-import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
+import org.eclipse.pde.internal.ui.launcher.OSGiBundleBlock;
 import org.eclipse.pde.internal.ui.launcher.VMHelper;
 
 /**
@@ -65,9 +74,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 				return;
 			}
 	
-			VMRunnerConfiguration runnerConfig = new VMRunnerConfiguration(
-														"org.eclipse.core.launcher.Main",  //$NON-NLS-1$
-														getClasspath(configuration)); 
+			VMRunnerConfiguration runnerConfig = createVMRunnerConfiguration(configuration);
 			runnerConfig.setVMArguments(getVMArguments(configuration));
 			runnerConfig.setProgramArguments(programArgs);
 			runnerConfig.setWorkingDirectory(getWorkingDirectory(configuration).getAbsolutePath());
@@ -77,7 +84,6 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			monitor.worked(1);
 					
 			setDefaultSourceLocator(configuration);
-			LaunchConfigurationHelper.synchronizeManifests(configuration, getConfigDir(configuration));
 			PDEPlugin.getDefault().getLaunchListener().manage(launch);
 			IVMRunner runner = getVMRunner(configuration, mode);
 			if (runner != null)
@@ -116,7 +122,20 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 *                if unable to set the source locator
 	 */
 	protected void setDefaultSourceLocator(ILaunchConfiguration configuration) throws CoreException {
-		LauncherUtils.setDefaultSourceLocator(configuration);		
+		ILaunchConfigurationWorkingCopy wc = null;
+		if (configuration.isWorkingCopy()) {
+			wc = (ILaunchConfigurationWorkingCopy) configuration;
+		} else {
+			wc = configuration.getWorkingCopy();
+		}
+		String id = configuration.getAttribute(
+				IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
+				(String) null);
+		if (!PDESourcePathProvider.ID.equals(id)) {
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
+							PDESourcePathProvider.ID); 
+			wc.doSave();
+		}
 	}
 	
 	/**
@@ -289,6 +308,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		return fConfigDir;
 	}
 
+	/*
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
 	 */
@@ -296,8 +316,9 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			String mode) throws CoreException {
 		return computeBuildOrder(LaunchPluginValidator.getAffectedProjects(configuration));
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getProjectsForProblemSearch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
 	 */
 	protected IProject[] getProjectsForProblemSearch(
@@ -306,5 +327,68 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		return LaunchPluginValidator.getAffectedProjects(configuration);
 	}
 	
+	/**
+	 * Returns a map of workspace bundles
+	 * 
+	 * @param configuration
+	 * @return workspace bundles
+	 */
+	public Map getWorkspaceBundles(ILaunchConfiguration configuration) {
+		try {
+			return OSGiBundleBlock.retrieveWorkspaceMap(configuration);
+		} catch (CoreException e) {
+			PDECore.log(e);
+			return Collections.EMPTY_MAP;
+		}
+	}
+	
+	/**
+	 * Returns a map of target bundles
+	 * 
+	 * @param configuration
+	 * @return target bundles
+	 */
+	public Map getTargetBundles(ILaunchConfiguration configuration) {
+		return OSGiBundleBlock.retrieveTargetMap(configuration);
+	}
+	
+	public Map getBundlesToRun(Map workspace, Map target) throws CoreException {
+		Map plugins = new TreeMap();
+		Iterator iter = workspace.keySet().iterator();
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		while (iter.hasNext()) {
+			String id = iter.next().toString();
+			IPluginModelBase model = manager.findModel(id);
+			if (model != null && model.getUnderlyingResource() != null) {
+				plugins.put(id, model);
+			}
+		}
+			
+		iter = target.keySet().iterator();
+		while (iter.hasNext()) {
+			String id = iter.next().toString();
+			if (!plugins.containsKey(id)) {
+				ModelEntry entry = manager.findEntry(id);
+				if (entry != null && entry.getExternalModel() != null) {
+					plugins.put(id, entry.getExternalModel());
+				}
+			}
+		}
+		
+		return plugins;
+	}
+	
+	/**
+	 * Creates VMRunnerConfiguration used for launching Runtime.  OSGi Frameworks are encouraged to override this method.
+	 *  
+	 * @param configuration
+	 * @return
+	 * @throws CoreException 
+	 */
+	public VMRunnerConfiguration createVMRunnerConfiguration(ILaunchConfiguration configuration) throws CoreException {
+		return new VMRunnerConfiguration(
+				"org.eclipse.core.launcher.Main",  //$NON-NLS-1$
+				getClasspath(configuration));
+	}
 
 }

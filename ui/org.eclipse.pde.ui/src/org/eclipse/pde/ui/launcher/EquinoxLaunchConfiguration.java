@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
-import java.util.TreeMap;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -30,12 +29,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.ExternalModelManager;
-import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.launcher.EquinoxPluginBlock;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
 import org.eclipse.pde.internal.ui.launcher.PluginValidationDialog;
@@ -58,10 +53,10 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	public String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		ArrayList programArgs = new ArrayList();
 
-		Map workspace = EquinoxPluginBlock.retrieveWorkspaceMap(configuration);
-		Map target = EquinoxPluginBlock.retrieveTargetMap(configuration);
+		Map workspace = getWorkspaceBundles(configuration);
+		Map target = getTargetBundles(configuration);
 		
-		Map plugins = getPluginsToRun(workspace, target);
+		Map plugins = getBundlesToRun(workspace, target);
 		if (!plugins.containsKey("org.eclipse.osgi")) { //$NON-NLS-1$
 			final Display display = LauncherUtils.getDisplay();
 			display.syncExec(new Runnable() {
@@ -165,32 +160,6 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	}
 	
 
-	private Map getPluginsToRun(Map workspace, Map target) throws CoreException {
-		Map plugins = new TreeMap();
-		Iterator iter = workspace.keySet().iterator();
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		while (iter.hasNext()) {
-			String id = iter.next().toString();
-			IPluginModelBase model = manager.findModel(id);
-			if (model != null && model.getUnderlyingResource() != null) {
-				plugins.put(id, model);
-			}
-		}
-			
-		iter = target.keySet().iterator();
-		while (iter.hasNext()) {
-			String id = iter.next().toString();
-			if (!plugins.containsKey(id)) {
-				ModelEntry entry = manager.findEntry(id);
-				if (entry != null && entry.getExternalModel() != null) {
-					plugins.put(id, entry.getExternalModel());
-				}
-			}
-		}
-		
-		return plugins;
-	}
-
 	/**
 	 * checks that the target platform is >= 3.0 before proceeding.
 	 * 
@@ -206,6 +175,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 				CoreUtility.deleteContent(getConfigDir(configuration));
 			launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());
 
+			LaunchConfigurationHelper.synchronizeManifests(configuration, getConfigDir(configuration));
 			monitor.worked(1);
 		} finally {
 			monitor.done();

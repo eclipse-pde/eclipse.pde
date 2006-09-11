@@ -15,8 +15,9 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
+import org.eclipse.pde.internal.ui.launcher.OSGiFrameworkManager;
 
-public class PreferenceInitializer extends AbstractPreferenceInitializer implements IPreferenceConstants {
+public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
@@ -24,8 +25,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer impleme
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		ColorManager.initializeDefaults(store);
-		store.setDefault(PROP_SHOW_OBJECTS, VALUE_USE_IDS);
+		store.setDefault(IPreferenceConstants.PROP_SHOW_OBJECTS, IPreferenceConstants.VALUE_USE_IDS);
 		store.setDefault(IPreferenceConstants.EDITOR_FOLDING_ENABLED, true);
+		store.setDefault(IPreferenceConstants.DEFAULT_OSGI_FRAMEOWRK, OSGiFrameworkManager.DEFAULT_FRAMEWORK);
 	}
 
 }

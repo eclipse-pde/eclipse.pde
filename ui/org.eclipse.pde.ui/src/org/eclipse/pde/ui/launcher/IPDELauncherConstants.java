@@ -244,10 +244,18 @@ public interface IPDELauncherConstants {
 	 * is associated.
 	 */					
 	String PRODUCT_FILE = "productFile"; //$NON-NLS-1$
+	
+	/**
+	 * Launch configuration attribute key.  The value is the ID of an OSGi framework
+	 * declared in an <code>org.eclipse.pde.ui.osgiLaunchers</code> extension point.
+	 * 
+	 * @since 3.3
+	 */
+	String OSGI_FRAMEWORK_ID = "osgi_framework_id"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key.  The value is a boolean specifying
-	 * if the default Auto-Start for an Equinox Framework launch configuration 
+	 * if the default Auto-Start for an OSGi Framework launch configuration 
 	 * is <code>true</code> or <code>false</code>
 	 * 
 	 * @see IPDELauncherConstants#DEFAULT_START_LEVEL
@@ -256,7 +264,7 @@ public interface IPDELauncherConstants {
 	
 	/**
 	 * Launch configuration attribute key.  The value is an integer specifying
-	 * the default start level for bundles in an Equinox Framework launch configuration.
+	 * the default start level for bundles in an OSGi Framework launch configuration.
 	 * 
 	 * @see IPDELauncherConstants#DEFAULT_AUTO_START
 	 */
@@ -264,7 +272,7 @@ public interface IPDELauncherConstants {
 
 	/**
 	 * Launch configuration attribute key.  The value is a comma-separated list
-	 * of workspace bundles to launch with the Equinox framework.
+	 * of workspace bundles to launch with the OSGi framework.
 	 * 
 	 * Each token in the list is of the format:
 	 * <plugin-id>@<start-level>:<auto-start>
@@ -276,7 +284,7 @@ public interface IPDELauncherConstants {
 
 	/**
 	 * Launch configuration attribute key.  The value is a comma-separated list
-	 * of non-workspace bundles to launch with the Equinox framework.
+	 * of non-workspace bundles to launch with the OSGi framework.
 	 * 
 	 * Each token in the list is of the format:
 	 * <plugin-id>@<start-level>:<auto-start>

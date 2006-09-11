@@ -10,17 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
-import java.util.TreeMap;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
-import org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut;
 
 
 public class ProductFromExtensionOperation extends BaseProductCreationOperation {
@@ -44,18 +45,17 @@ public class ProductFromExtensionOperation extends BaseProductCreationOperation 
 		super.initializeProduct(product);
 	}
 	
-	private IPluginModelBase[] getPlugins() {
+	private String[] getPlugins() {
 		int lastDot = fId.lastIndexOf('.');
 		if (lastDot == -1)
-			return new IPluginModelBase[0];
+			return new String[0];
 		
-		TreeMap map = new TreeMap();
-		
+		Set plugins = new TreeSet();
 		// add plugin declaring product and its pre-reqs
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		IPluginModelBase model = manager.findModel(fId.substring(0, lastDot));
 		if (model != null)
-			RuntimeWorkbenchShortcut.addPluginAndDependencies(model, map);
+			plugins.addAll(DependencyManager.getSelfAndDependencies(model));
 		
 		// add plugin declaring product application and its pre-reqs
 		IPluginElement element = getProductExtension(fId);
@@ -67,12 +67,12 @@ public class ProductFromExtensionOperation extends BaseProductCreationOperation 
 				if (lastDot != -1) {
 					model = manager.findModel(appId.substring(0, lastDot));
 					if (model != null) {
-						RuntimeWorkbenchShortcut.addPluginAndDependencies(model, map);
+						plugins.addAll(DependencyManager.getSelfAndDependencies(model));
 					}
 				}
 			}
 		}
-		return (IPluginModelBase[])map.values().toArray(new IPluginModelBase[map.size()]);
+		return (String[])plugins.toArray(new String[plugins.size()]);
 	}
 
 }

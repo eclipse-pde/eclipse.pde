@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.launcher;
+package org.eclipse.pde.ui.launcher;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -20,15 +20,13 @@ import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
 import org.eclipse.jdt.internal.junit.launcher.AssertionVMArg;
 import org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.pde.ui.launcher.ConfigurationTab;
-import org.eclipse.pde.ui.launcher.PluginJUnitMainTab;
-import org.eclipse.pde.ui.launcher.PluginsTab;
-import org.eclipse.pde.ui.launcher.TracingTab;
+import org.eclipse.pde.internal.ui.launcher.AbstractPDELaunchConfigurationTabGroup;
 
 public class JUnitTabGroup extends AbstractPDELaunchConfigurationTabGroup {
 	
-	/**
-	 * @see ILaunchConfigurationTabGroup#createTabs(ILaunchConfigurationDialog, String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = null;
@@ -44,15 +42,16 @@ public class JUnitTabGroup extends AbstractPDELaunchConfigurationTabGroup {
 		setTabs(tabs);
 	}
 	
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.launcher.AbstractPDELaunchConfigurationTabGroup#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		super.setDefaults(configuration);
 		
 		String vmArgs;
 		try {
-			vmArgs= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$
+			vmArgs = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$
 		} catch (CoreException e) {
 			vmArgs= ""; //$NON-NLS-1$
 		}

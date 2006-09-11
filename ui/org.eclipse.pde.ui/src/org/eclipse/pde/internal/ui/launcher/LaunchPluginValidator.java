@@ -71,13 +71,9 @@ public class LaunchPluginValidator {
 		}
 		
 		String version = configuration.getAttribute("pde.version", (String) null); //$NON-NLS-1$
-		boolean upgrade = (TargetPlatform.isRuntimeRefactored1() && version == null)
-					   || (TargetPlatform.isRuntimeRefactored2() && !"3.2a".equals(version)); //$NON-NLS-1$
+		boolean upgrade = TargetPlatform.getTargetVersion() >= 3.2 && !"3.2a".equals(version); //$NON-NLS-1$
 		if (upgrade) {
-			if (TargetPlatform.isRuntimeRefactored2())
-				wc.setAttribute("pde.version", "3.2a"); //$NON-NLS-1$ //$NON-NLS-2$
-			else
-				wc.setAttribute("pde.version", "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
+			wc.setAttribute("pde.version", "3.2a"); //$NON-NLS-1$ //$NON-NLS-2$
 			boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 			boolean useFeatures = configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false);
 			boolean automaticAdd = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
@@ -90,8 +86,7 @@ public class LaunchPluginValidator {
 					list.add("org.eclipse.equinox.preferences"); //$NON-NLS-1$
 					list.add("org.eclipse.equinox.registry"); //$NON-NLS-1$
 				}
-				if (TargetPlatform.isRuntimeRefactored2())
-					list.add("org.eclipse.core.runtime.compatibility.registry"); //$NON-NLS-1$
+				list.add("org.eclipse.core.runtime.compatibility.registry"); //$NON-NLS-1$
 													
 				StringBuffer extensions = new StringBuffer(configuration.getAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, "")); //$NON-NLS-1$
 				StringBuffer target = new StringBuffer(configuration.getAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, "")); //$NON-NLS-1$
@@ -173,6 +168,11 @@ public class LaunchPluginValidator {
 	public static IPluginModelBase[] getPluginList(ILaunchConfiguration config) throws CoreException {
 		Map map = getPluginsToRun(config);
 		return (IPluginModelBase[])map.values().toArray(new IPluginModelBase[map.size()]);
+	}
+	
+	public static String[] getPluginIdList(ILaunchConfiguration config) throws CoreException {
+		Map map = getPluginsToRun(config);
+		return (String[])map.keySet().toArray(new String[map.size()]);
 	}
 	
 	public static Map getPluginsToRun(ILaunchConfiguration config)

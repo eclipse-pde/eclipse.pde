@@ -28,4 +28,6 @@ public interface IPreferenceConstants {
 	public static final String DEPS_VIEW_SHOW_CALLERS = "DependenciesView.show.callers"; //$NON-NLS-1$
 	public static final String DEPS_VIEW_SHOW_LIST = "DependenciesView.show.list"; //$NON-NLS-1$
 	
+	// OSGi Frameworks
+	public static final String DEFAULT_OSGI_FRAMEOWRK = "Preference.default.osgi.framework"; //$NON-NLS-1$
 }

@@ -30,6 +30,7 @@ import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationListener;
 import org.eclipse.pde.internal.ui.launcher.LaunchListener;
 import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
+import org.eclipse.pde.internal.ui.launcher.OSGiFrameworkManager;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.views.plugins.PluginsViewAdapterFactory;
 import org.eclipse.swt.widgets.Display;
@@ -64,6 +65,8 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	 * @since 3.2
 	 */
 	private IDocumentProvider fTextFileDocumentProvider;
+
+	private OSGiFrameworkManager fOSGiFrameworkManager;
 
 	public PDEPlugin() {
 		fInstance = this;
@@ -216,6 +219,12 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		if (fLaunchListener == null)
 			fLaunchListener = new LaunchListener();
 		return fLaunchListener;
+	}
+	
+	public OSGiFrameworkManager getOSGiFrameworkManager() {
+		if (fOSGiFrameworkManager == null)
+			fOSGiFrameworkManager = new OSGiFrameworkManager();
+		return fOSGiFrameworkManager;
 	}
 	
 	public static boolean isFullNameModeEnabled() {

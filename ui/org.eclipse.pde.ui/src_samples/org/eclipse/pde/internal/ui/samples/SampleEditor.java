@@ -30,7 +30,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut;
+import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Composite;
@@ -92,7 +92,7 @@ public class SampleEditor extends EditorPart {
 	 *  
 	 */
 	public SampleEditor() {
-		defaultShortcut = new RuntimeWorkbenchShortcut();
+		defaultShortcut = new EclipseLaunchShortcut();
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 	/**

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
@@ -21,10 +21,30 @@ import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
-public class RequiredDependencyManager {
+public class DependencyManager {
 	
-	public static Set addRequiredPlugins(Object[] selected, String[] implicit, State state) {
-		Set set = new HashSet();
+	/** 
+	 * @return a set of plug-in IDs
+	 * 
+	 */
+	public static Set getSelfAndDependencies(IPluginModelBase model) {
+		return getDependencies(new Object[] {model}, new String[0], TargetPlatform.getState(), false);
+	}
+	
+	/** 
+	 * @return a set of plug-in IDs
+	 * 
+	 */
+	public static Set getSelfandDependencies(IPluginModelBase[] models) {
+		return getDependencies(models, new String[0], TargetPlatform.getState(), false);
+	}
+	
+	/** 
+	 * @return a set of plug-in IDs
+	 * 
+	 */
+	public static Set getDependencies(Object[] selected, String[] implicit, State state, boolean removeSelf) {
+		Set set = new TreeSet();
 		for (int i = 0; i < selected.length; i++) {
 			if (!(selected[i] instanceof IPluginModelBase))
 				continue;
@@ -47,11 +67,13 @@ public class RequiredDependencyManager {
 			addBundleAndDependencies(state.getBundle(implicit[i], null), set);
 		}
 		
-		for (int i = 0; i < selected.length; i++) {
-			if (!(selected[i] instanceof IPluginModelBase))
-				continue;
-			IPluginModelBase model = (IPluginModelBase)selected[i];
-			set.remove(model.getPluginBase().getId());
+		if (removeSelf) {
+			for (int i = 0; i < selected.length; i++) {
+				if (!(selected[i] instanceof IPluginModelBase))
+					continue;
+				IPluginModelBase model = (IPluginModelBase)selected[i];
+				set.remove(model.getPluginBase().getId());
+			}
 		}
 		return set;
 	}
@@ -79,5 +101,6 @@ public class RequiredDependencyManager {
 				addBundleAndDependencies((BundleDescription)host.getSupplier(), set);
 		}
 	}
+	
 	
 }

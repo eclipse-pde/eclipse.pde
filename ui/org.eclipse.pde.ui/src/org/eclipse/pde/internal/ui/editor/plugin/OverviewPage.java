@@ -13,10 +13,12 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.build.IBuild;
@@ -35,10 +37,10 @@ import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.editor.build.BuildPage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
-import org.eclipse.pde.internal.ui.launcher.EquinoxLaunchShortcut;
-import org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsAction;
+import org.eclipse.pde.ui.launcher.OSGiLaunchShortcut;
+import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Composite;
@@ -65,8 +67,8 @@ import org.osgi.service.prefs.BackingStoreException;
 
 public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	public static final String PAGE_ID = "overview"; //$NON-NLS-1$
-	private RuntimeWorkbenchShortcut fLaunchShortcut;
-	private EquinoxLaunchShortcut fEquinoxShortcut;
+	private EclipseLaunchShortcut fLaunchShortcut;
+	private OSGiLaunchShortcut fOSGiShortcut;
 	private PluginExportAction fExportAction;
 
 	public OverviewPage(FormEditor editor) {
@@ -269,6 +271,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	 */
 	public void linkActivated(HyperlinkEvent e) {
 		String href = (String) e.getHref();
+		IStructuredSelection selection = new StructuredSelection(getPDEEditor().getCommonProject());
 		// try page references
 		if (href.equals("dependencies")) //$NON-NLS-1$
 			getEditor().setActivePage(DependenciesPage.PAGE_ID);
@@ -293,25 +296,24 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			getEditor().setActivePage(BuildPage.PAGE_ID);	
 		} else if (href.equals("action.run")) { //$NON-NLS-1$ {
 			getEditor().doSave(null);
-			getLaunchShortcut().run(getPDEEditor().getCommonProject());
+			getLaunchShortcut().launch(selection, ILaunchManager.RUN_MODE);
 		} else if (href.equals("action.debug")) { //$NON-NLS-1$
 			getEditor().doSave(null);
-			getLaunchShortcut().debug(getPDEEditor().getCommonProject());
+			getLaunchShortcut().launch(selection, ILaunchManager.DEBUG_MODE);
 		} else if (href.equals("export")) { //$NON-NLS-1$
 			getExportAction().run();
 		} else if (href.equals("action.convert")) { //$NON-NLS-1$
 			handleConvert();
 		} else if (href.equals("action.runEquinox")) { //$NON-NLS-1$ {
 			getEditor().doSave(null);
-			getEquinoxShortcut().run(getPDEEditor().getCommonProject());
+			getOSGiShortcut().launch(selection, ILaunchManager.RUN_MODE);
 		} else if (href.equals("action.debugEquinox")) { //$NON-NLS-1$
 			getEditor().doSave(null);
-			getEquinoxShortcut().debug(getPDEEditor().getCommonProject());
+			getOSGiShortcut().launch(selection, ILaunchManager.DEBUG_MODE);
 		} else if (href.equals("organize")) { //$NON-NLS-1$
 			getEditor().doSave(null);
 			OrganizeManifestsAction organizeAction = new OrganizeManifestsAction();
-			organizeAction.selectionChanged(null, 
-					new StructuredSelection(getPDEEditor().getCommonProject()));
+			organizeAction.selectionChanged(null, selection);
 			organizeAction.run(null);
 		}
 	}
@@ -338,16 +340,16 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		mng.setMessage(null);
 	}
 	
-	private RuntimeWorkbenchShortcut getLaunchShortcut() {
+	private EclipseLaunchShortcut getLaunchShortcut() {
 		if (fLaunchShortcut == null)
-			fLaunchShortcut = new RuntimeWorkbenchShortcut();
+			fLaunchShortcut = new EclipseLaunchShortcut();
 		return fLaunchShortcut;
 	}
 	
-	private EquinoxLaunchShortcut getEquinoxShortcut() {
-		if (fEquinoxShortcut == null)
-			fEquinoxShortcut = new EquinoxLaunchShortcut();
-		return fEquinoxShortcut;
+	private OSGiLaunchShortcut getOSGiShortcut() {
+		if (fOSGiShortcut == null)
+			fOSGiShortcut = new OSGiLaunchShortcut();
+		return fOSGiShortcut;
 	}
 	
 	private PluginExportAction getExportAction() {

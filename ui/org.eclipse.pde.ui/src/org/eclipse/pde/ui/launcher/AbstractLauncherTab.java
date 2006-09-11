@@ -34,12 +34,14 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 		return getErrorMessage() == null;
 	}
 	
+	/*
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 	}
 	
+	/*
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */

@@ -258,6 +258,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 			CoreUtility.deleteContent(getConfigDir(configuration));
 		launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());
 			
+		LaunchConfigurationHelper.synchronizeManifests(configuration, getConfigDir(configuration));
 		monitor.worked(1);
 	}
 }

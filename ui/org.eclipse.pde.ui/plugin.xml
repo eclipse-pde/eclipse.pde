@@ -8,6 +8,7 @@
    <extension-point id="newExtension" name="%expoint.newExtension.name" schema="schema/newExtension.exsd"/>
    <extension-point id="templates" name="%expoint.templates.name" schema="schema/templates.exsd"/>
    <extension-point id="samples" name="%expoint.samples.name" schema="schema/samples.exsd"/>
+   <extension-point id="osgiFrameworks" name="%expoint.osgiLauncher.name" schema="schema/osgiFrameworks.exsd"/>
 
 <!-- Extensions -->
    <extension
@@ -54,6 +55,13 @@
             id="org.eclipse.pde.ui.CompilersPreferencePage">
             <keywordReference id="org.eclipse.pde.ui.pde"/>
             <keywordReference id="org.eclipse.pde.ui.CompilersPreferencePage"/>
+      </page>
+      <page
+            name="%page.name.0"
+            category="org.eclipse.pde.ui.MainPreferencePage"
+            class="org.eclipse.pde.internal.ui.preferences.OSGiFrameworkPreferencePage"
+            id="org.eclipse.pde.ui.OSGiFrameworksPreferencePage">
+            <keywordReference id="org.eclipse.pde.ui.pde"/>
       </page>
    </extension>
    <extension
@@ -185,7 +193,7 @@
       <wizard
             category="org.eclipse.pde.userAssistance"
             class="org.eclipse.pde.internal.ui.wizards.cheatsheet.NewCheatSheetFileWizard"
-            icon="icons/etool16/new_cheatsheet_wizard.gif"
+            icon="$nl$/icons/etool16/new_cheatsheet_wizard.gif"
             id="org.eclipse.pde.ui.NewCheatSheetWizard"
             name="%new.cheat.sheet">
          <description>
@@ -697,7 +705,7 @@
       <editor
             class="org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSEditorContributor"
-            icon="icons/etool16/new_cheatsheet_wizard.gif"
+            icon="$nl$/icons/etool16/new_cheatsheet_wizard.gif"
             id="org.eclipse.pde.ui.simpleCheatSheetEditor"
             name="%cheat.sheat.editor.name">
          <contentTypeBinding
@@ -754,14 +762,14 @@
             id="org.eclipse.pde.ui.runtimeWorkbenchShortcut.run">
       </command>    
       <command
-            name="%EquinoxShortcut.description.debug"
-            description="%EquinoxShortcut.description.debug"
+            name="%OSGiShortcut.description.debug"
+            description="%OSGiShortcut.description.debug"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.pde.ui.EquinoxLaunchShortcut.debug">
       </command>    
       <command
-            name="%EquinoxShortcut.description.run"
-            description="%EquinoxShortcut.description.run"
+            name="%OSGiShortcut.description.run"
+            description="%OSGiShortcut.description.run"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.pde.ui.EquinoxLaunchShortcut.run">
       </command>    
@@ -1238,14 +1246,6 @@
             id="org.eclipse.pde.ui.RuntimeWorkbench">
       </launchConfigurationType>
       <launchConfigurationType
-            sourceLocatorId="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
-            name="%launcher.framework.name"
-            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"
-            delegate="org.eclipse.pde.ui.launcher.EquinoxLaunchConfiguration"
-            modes="run, debug"
-            id="org.eclipse.pde.ui.EquinoxLauncher">
-      </launchConfigurationType>
-      <launchConfigurationType
             sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
             name="%launcher.swt.name"
             sourcePathComputerId="org.eclipse.pde.ui.swtSourcePathComputer"
@@ -1258,7 +1258,7 @@
             sourceLocatorId="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
             name="%launcher.junit.name"
             sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"
-            delegate="org.eclipse.pde.internal.ui.launcher.JUnitLaunchConfiguration"
+            delegate="org.eclipse.pde.ui.launcher.JUnitLaunchConfigurationDelegate"
             modes="run, debug"
             id="org.eclipse.pde.ui.JunitLaunchConfig"
             migrationDelegate="org.eclipse.jdt.internal.junit.launcher.JUnitMigrationDelegate">
@@ -1271,6 +1271,14 @@
                extension="class">
          </fileExtension>
       </launchConfigurationType>
+      <launchConfigurationType
+            delegate="org.eclipse.pde.ui.launcher.OSGiLaunchConfigurationDelegate"
+            id="org.eclipse.pde.ui.EquinoxLauncher"
+            modes="run, debug"
+            name="%launcher.framework.name"
+            public="true"
+            sourceLocatorId="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
+            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"/>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
@@ -1299,7 +1307,7 @@
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
             type="org.eclipse.pde.ui.RuntimeWorkbench"
-            class="org.eclipse.pde.internal.ui.launcher.EclipseApplicationLauncherTabGroup"
+            class="org.eclipse.pde.ui.launcher.EclipseLauncherTabGroup"
             id="org.eclipse.pde.ui.launcher.WorkbenchLauncherTabGroup">
          <launchMode
                description="%workbenchLauncherTabGroup.description.debug"
@@ -1313,15 +1321,15 @@
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             type="org.eclipse.pde.ui.EquinoxLauncher"
-            class="org.eclipse.pde.internal.ui.launcher.EquinoxLauncherTabGroup"
+            class="org.eclipse.pde.ui.launcher.OSGiLauncherTabGroup"
             id="org.eclipse.pde.ui.launcher.EquinoxLauncherTabGroup">
          <launchMode
-               description="%equinoxLauncherTabGroup.description.debug"
+               description="%osgiLauncherTabGroup.description.debug"
                perspective="org.eclipse.debug.ui.DebugPerspective"
                mode="debug">
          </launchMode>
          <launchMode
-               description="%equinoxLauncherTabGroup.description.run"
+               description="%osgiLauncherTabGroup.description.run"
                mode="run">
          </launchMode>
       </launchConfigurationTabGroup>
@@ -1341,7 +1349,7 @@
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             type="org.eclipse.pde.ui.JunitLaunchConfig"
-            class="org.eclipse.pde.internal.ui.launcher.JUnitTabGroup"
+            class="org.eclipse.pde.ui.launcher.JUnitTabGroup"
             id="org.eclipse.pde.ui.launcher.JUnitTabGroup">
          <launchMode
                description="%jUnitTabGroup.description.debug"
@@ -1366,7 +1374,7 @@
             label="%launcher.junit.name"
             icon="$nl$/icons/obj16/julaunchpgn.gif"
             modes="run, debug"
-            class="org.eclipse.pde.internal.ui.launcher.JUnitWorkbenchShortcut"
+            class="org.eclipse.pde.ui.launcher.JUnitWorkbenchLaunchShortcut"
             id="org.eclipse.pde.ui.junitWorkbenchShortcut">
          <contextualLaunch>
             <enablement>
@@ -1411,7 +1419,7 @@
             label="%launcher.shortcut.label"
             icon="$nl$/icons/etool16/eclipse_launcher.gif"
             modes="run, debug"
-            class="org.eclipse.pde.internal.ui.launcher.RuntimeWorkbenchShortcut"
+            class="org.eclipse.pde.ui.launcher.EclipseLaunchShortcut"
             id="org.eclipse.pde.ui.runtimeWorkbenchShortcut">
          <enablement>
            <with variable="selection">
@@ -1454,7 +1462,7 @@
             label="%Equinox.shortcut.label"
             icon="$nl$/icons/obj16/bundle_obj.gif"
             modes="run, debug"
-            class="org.eclipse.pde.internal.ui.launcher.EquinoxLaunchShortcut"
+            class="org.eclipse.pde.ui.launcher.OSGiLaunchShortcut"
             id="org.eclipse.pde.ui.EquinoxLaunchShortcut">
          <enablement>
            <with variable="selection">
@@ -1707,7 +1715,7 @@
    <extension
          point="org.eclipse.jdt.launching.classpathProviders">
       <classpathProvider
-            class="org.eclipse.pde.internal.ui.launcher.WorkbenchSourcePathProvider"
+            class="org.eclipse.pde.ui.launcher.PDESourcePathProvider"
             id="org.eclipse.pde.ui.workbenchClasspathProvider">
       </classpathProvider>
    </extension>
@@ -1802,12 +1810,12 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>      
       <key
-            sequence="M3+M2+D X"
+            sequence="M3+M2+D O"
             commandId="org.eclipse.pde.ui.EquinoxLaunchShortcut.debug"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>      
       <key
-            sequence="M3+M2+X X"
+            sequence="M3+M2+X O"
             commandId="org.eclipse.pde.ui.EquinoxLaunchShortcut.run"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>      
@@ -2009,5 +2017,13 @@
        <perspectiveExtension targetID="org.eclipse.pde.ui.PDEPerspective">
           <actionSet id="org.eclipse.debug.ui.breakpointActionSet"/>
        </perspectiveExtension>
+    </extension>
+    <extension
+         point="org.eclipse.pde.ui.osgiFrameworks">
+      <framework
+            launcherDelegate="org.eclipse.pde.ui.launcher.EquinoxLaunchConfiguration"
+            id="org.eclipse.pde.ui.EquinoxLauncher"
+            name="%Equinox.shortcut.label" 
+            initializer="org.eclipse.pde.internal.ui.launcher.EquinoxInitializer"/>
     </extension>
 </plugin>

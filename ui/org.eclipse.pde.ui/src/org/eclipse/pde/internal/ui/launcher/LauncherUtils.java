@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
@@ -43,6 +44,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
@@ -67,34 +69,6 @@ public class LauncherUtils {
 			display = Display.getDefault();
 		}
 		return display;
-	}
-
-	public static void setDefaultSourceLocator(ILaunchConfiguration configuration)
-			throws CoreException {
-		ILaunchConfigurationWorkingCopy wc = null;
-		if (configuration.isWorkingCopy()) {
-			wc = (ILaunchConfigurationWorkingCopy) configuration;
-		} else {
-			wc = configuration.getWorkingCopy();
-		}
-
-		// set any old source locators to null. Source locator is now declared
-		// in the plugin.xml
-		String locator = configuration.getAttribute(
-				ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String) null);
-		if (locator != null)
-			wc.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String) null);
-
-		// set source path provider on pre-2.1 configurations
-		String id = configuration.getAttribute(
-				IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
-				(String) null);
-		if (id == null)
-			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
-					"org.eclipse.pde.ui.workbenchClasspathProvider"); //$NON-NLS-1$
-
-		if (locator != null || id == null)
-			wc.doSave();
 	}
 
 	public static boolean clearWorkspace(ILaunchConfiguration configuration,
@@ -363,5 +337,24 @@ public class LauncherUtils {
 			return true;
 		return ((projTS.compareTo(launcherTS) < 0) || (projTS.compareTo(fileSystemTS) < 0));
 	}
+	
+	public static boolean requiresUI(ILaunchConfiguration configuration) {
+		try {
+			String projectID = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
+			if (projectID.length() > 0) {
+				IResource project = PDEPlugin.getWorkspace().getRoot().findMember(projectID);
+				if (project instanceof IProject) {
+					IPluginModelBase model = PDECore.getDefault().getModelManager().findModel((IProject)project);
+					if (model != null) {							
+						Set plugins = DependencyManager.getSelfAndDependencies(model);
+						return plugins.contains("org.eclipse.swt"); //$NON-NLS-1$
+					}
+				}
+			}
+		} catch (CoreException e) {
+		}
+		return true;
+	}
+
 
 }

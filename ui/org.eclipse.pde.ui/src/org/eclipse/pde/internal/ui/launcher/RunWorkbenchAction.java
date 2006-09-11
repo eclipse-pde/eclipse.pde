@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.launcher;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.PlatformUI;
 /**
@@ -22,7 +23,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class RunWorkbenchAction extends Action {
 	public void run() {
-		final RuntimeWorkbenchShortcut shortcut = new RuntimeWorkbenchShortcut();
+		final EclipseLaunchShortcut shortcut = new EclipseLaunchShortcut();
 		BusyIndicator.showWhile(PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getShell().getDisplay(),
 				new Runnable() {

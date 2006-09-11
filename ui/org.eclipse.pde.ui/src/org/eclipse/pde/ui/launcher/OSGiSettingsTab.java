@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.ConfigurationAreaBlock;
-import org.eclipse.pde.internal.ui.launcher.ConfigurationTemplateBlock;
+import org.eclipse.pde.internal.ui.launcher.JREBlock;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -27,39 +27,28 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * A launch configuration tab that displays and edits the configuration area
- * location and template for a PDE launch configuration.
+ * A launch configuration tab that displays and edits the VM install 
+ * launch configuration attributes.
  * <p>
- * This class may be instantiated. This class is not intended to be subclassed by clients.
+ * This class may be instantiated. This class is not intended to be subclassed.
  * </p>
- * @since 3.2
+ * @since 3.3
  */
-public class ConfigurationTab extends AbstractLauncherTab implements IPDELauncherConstants {
+public class OSGiSettingsTab extends AbstractLauncherTab {
 	
-	private ConfigurationAreaBlock fConfigurationArea;
-	private ConfigurationTemplateBlock fTemplateArea;
+	private JREBlock fJREBlock;
+	private ConfigurationAreaBlock fConfigurationBlock;
 	private Image fImage;
-	private boolean fJUnitConfig;
-	
-	/**
-	 * Constructor.  Equivalent to ConfigurationTab(false).
-	 * 
-	 * @see #ConfigurationTab(boolean)
-	 */
-	public ConfigurationTab() {
-		this(false);
-	}
+	private boolean fInitializing = false;
 	
 	/**
 	 * Constructor
-	 * 
-	 * @param isJUnitConfig  a flag to indicate if the tab is to be used with a Plug-in JUnit launch configuration.
+	 *
 	 */
-	public ConfigurationTab(boolean isJUnitConfig) {
+	public OSGiSettingsTab() {
 		fImage = PDEPluginImages.DESC_PLUGIN_CONFIG_OBJ.createImage();
-		fConfigurationArea = new ConfigurationAreaBlock(this);
-		fTemplateArea = new ConfigurationTemplateBlock(this);
-		fJUnitConfig = isJUnitConfig;
+		fJREBlock = new JREBlock(this);
+		fConfigurationBlock = new ConfigurationAreaBlock(this);
 	}
 	
 	/*
@@ -71,20 +60,20 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 		container.setLayout(new GridLayout());
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		fConfigurationArea.createControl(container);
-		fTemplateArea.createControl(container);
+		fJREBlock.createControl(container);
+		fConfigurationBlock.createControl(container);
 		
 		Dialog.applyDialogFont(container);
 		setControl(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.LAUNCHER_CONFIGURATION);
 	}
 	
-	/*
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		fConfigurationArea.setDefaults(configuration, fJUnitConfig);
-		fTemplateArea.setDefaults(configuration);
+		fJREBlock.setDefaults(configuration);
+		fConfigurationBlock.setDefaults(configuration, false);
 	}
 	
 	/* (non-Javadoc)
@@ -92,19 +81,20 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			fConfigurationArea.initializeFrom(configuration);
-			fTemplateArea.initializeFrom(configuration);
+			fInitializing = true;
+			fJREBlock.initializeFrom(configuration);
+			fConfigurationBlock.initializeFrom(configuration);
+			fInitializing = false;
 		} catch (CoreException e) {
 		}
 	}
 	
-	/*
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		fConfigurationArea.performApply(configuration);
-		fTemplateArea.performApply(configuration);
+		fJREBlock.performApply(configuration);
+		fConfigurationBlock.performApply(configuration);
 	}
 	
 	/*
@@ -112,7 +102,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return PDEUIMessages.ConfigurationTab_name; 
+		return PDEUIMessages.EquinoxSettingsTab_name; 
 	}
 	
 	/*
@@ -132,16 +122,19 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 			fImage.dispose();
 	}
 
-	/**
-	 * Validates the page and flags an error if the configuration area
-	 * location or the configuration template location does not exist.
-	 * 
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validateTab()
 	 */
 	public void validateTab() {
-		String error = fConfigurationArea.validate();
-		if (error == null)
-			error = fTemplateArea.validate();
-		setErrorMessage(error);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#updateLaunchConfigurationDialog()
+	 */
+	public void updateLaunchConfigurationDialog() {
+		if (!fInitializing)
+			super.updateLaunchConfigurationDialog();
 	}
 }

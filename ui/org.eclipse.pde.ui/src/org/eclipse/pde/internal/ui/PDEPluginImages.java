@@ -65,6 +65,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_ATT_IMPL_OBJ  = create(PATH_OBJ, "att_impl_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ATT_REQ_OBJ   = create(PATH_OBJ, "att_req_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ATT_URI_OBJ   = create(PATH_OBJ, "att_URI_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_BUNDLE_OBJ = create(PATH_OBJ, "bundle_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CHOICE_SC_OBJ = create(PATH_OBJ, "choice_sc_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FEATURE_JAR_OBJ  = create(PATH_OBJ, "ftr_jar_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FEATURE_MF_OBJ   = create(PATH_OBJ, "ftr_mf_obj.gif"); //$NON-NLS-1$

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.launcher;
+package org.eclipse.pde.ui.launcher;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,12 +27,16 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.StandardSourcePathProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
+import org.eclipse.pde.internal.ui.launcher.VMHelper;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
-import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 /**
  * Generates a source lookup path for Runtime Workbench launch configurations.
  */
-public class WorkbenchSourcePathProvider extends StandardSourcePathProvider {
+public class PDESourcePathProvider extends StandardSourcePathProvider {
+
+	public static final String ID = "org.eclipse.pde.ui.workbenchClasspathProvider"; //$NON-NLS-1$
+	
 	/**
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathProvider#computeUnresolvedClasspath(org.eclipse.debug.core.ILaunchConfiguration)
 	 */

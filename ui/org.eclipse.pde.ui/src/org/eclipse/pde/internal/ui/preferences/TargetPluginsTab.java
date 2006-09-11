@@ -54,7 +54,7 @@ import org.eclipse.pde.internal.core.ModelProviderEvent;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.PluginPathFinder;
-import org.eclipse.pde.internal.core.RequiredDependencyManager;
+import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
@@ -826,7 +826,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			return;
 		String[] implicit = fPage.getImplicitPlugins();
 		State state = getCurrentState().getState();
-		Set set = RequiredDependencyManager.addRequiredPlugins(checked, implicit, state);
+		Set set = DependencyManager.getDependencies(checked, implicit, state, true);
 		Set parents = new HashSet();
 		IPluginModelBase[] models = getCurrentModels();
 		int counter = 0;

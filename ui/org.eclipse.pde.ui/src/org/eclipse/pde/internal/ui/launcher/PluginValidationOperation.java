@@ -38,6 +38,7 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
+import org.eclipse.pde.ui.launcher.JUnitLaunchConfigurationDelegate;
 import org.eclipse.swt.graphics.Image;
 
 
@@ -257,7 +258,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 				String appToRun = configuration.getAttribute(IPDELauncherConstants.APP_TO_TEST, (String)null);
 				if(appToRun == null)
 					appToRun = configuration.getAttribute(IPDELauncherConstants.APPLICATION, LaunchConfigurationHelper.getDefaultApplicationName());				
-				fApplicationID = JUnitLaunchConfiguration.CORE_APPLICATION.equals(appToRun) ? null : appToRun;
+				fApplicationID = JUnitLaunchConfigurationDelegate.CORE_APPLICATION.equals(appToRun) ? null : appToRun;
 			}
 		} catch (CoreException e) {
 		}

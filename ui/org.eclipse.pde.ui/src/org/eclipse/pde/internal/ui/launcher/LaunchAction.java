@@ -48,6 +48,7 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
+import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 public class LaunchAction extends Action {
@@ -244,7 +245,6 @@ public class LaunchAction extends Action {
 		wc.setAttribute(IPDELauncherConstants.ASKCLEAR, true);
 		wc.setAttribute(IPDELauncherConstants.USE_PRODUCT, true);
 		wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, false);
-		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, RuntimeWorkbenchShortcut.CLASSPATH_PROVIDER);
 		wc.setAttribute(IPDELauncherConstants.PRODUCT_FILE, fPath);
 		return refreshConfiguration(wc);		
 	}
@@ -257,7 +257,7 @@ public class LaunchAction extends Action {
 	private ILaunchConfiguration[] getLaunchConfigurations() throws CoreException {
 		ArrayList result = new ArrayList();
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfigurationType type = manager.getLaunchConfigurationType(RuntimeWorkbenchShortcut.CONFIGURATION_TYPE);	
+		ILaunchConfigurationType type = manager.getLaunchConfigurationType(EclipseLaunchShortcut.CONFIGURATION_TYPE);	
 		ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
 		for (int i = 0; i < configs.length; i++) {
 			if (!DebugUITools.isPrivate(configs[i])) {
@@ -272,7 +272,7 @@ public class LaunchAction extends Action {
 	
 	protected ILaunchConfigurationType getWorkbenchLaunchConfigType() {
 		ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
-		return lm.getLaunchConfigurationType(RuntimeWorkbenchShortcut.CONFIGURATION_TYPE);	
+		return lm.getLaunchConfigurationType(EclipseLaunchShortcut.CONFIGURATION_TYPE);	
 	}	
 	
 }

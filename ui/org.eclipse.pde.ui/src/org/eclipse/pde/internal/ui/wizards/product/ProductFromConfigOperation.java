@@ -51,7 +51,7 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 				String appName = fLaunchConfiguration.getAttribute(IPDELauncherConstants.APPLICATION, LaunchConfigurationHelper.getDefaultApplicationName());
 				product.setApplication(appName);
 			}
-			addPlugins(factory, product, LaunchPluginValidator.getPluginList(fLaunchConfiguration));
+			addPlugins(factory, product, LaunchPluginValidator.getPluginIdList(fLaunchConfiguration));
 			if (fLaunchConfiguration.getAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true)) {
 				super.initializeProduct(product);
 			} else {

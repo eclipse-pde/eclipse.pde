@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
-import org.eclipse.pde.ui.launcher.EquinoxPluginsTab;
+import org.eclipse.pde.ui.launcher.BundlesTab;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -44,9 +44,9 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
-public class EquinoxPluginBlock extends AbstractPluginBlock {
+public class OSGiBundleBlock extends AbstractPluginBlock {
 	
-	class EquinoxLabelProvider extends PDELabelProvider {		
+	class OSGiLabelProvider extends PDELabelProvider {		
 		public Image getColumnImage(Object obj, int index) {
 			return index == 0 ? super.getColumnImage(obj, index) : null;
 		}
@@ -60,7 +60,7 @@ public class EquinoxPluginBlock extends AbstractPluginBlock {
 		}
 	}
 
-	public EquinoxPluginBlock(EquinoxPluginsTab tab) {
+	public OSGiBundleBlock(BundlesTab tab) {
 		super(tab);
 	}
 	
@@ -159,7 +159,7 @@ public class EquinoxPluginBlock extends AbstractPluginBlock {
 	}
 	
 	protected ILabelProvider getLabelProvider() {
-		return new EquinoxLabelProvider();
+		return new OSGiLabelProvider();
 	}
 	
 	protected void savePluginState(ILaunchConfigurationWorkingCopy config) {		
@@ -388,12 +388,6 @@ public class EquinoxPluginBlock extends AbstractPluginBlock {
 				resetText((IPluginModelBase)selected[i]);
 			}
 		}
-	}
-	
-	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-		super.setDefaults(config);
-		EquinoxLaunchShortcut.initializePluginState(config, 
-				PDECore.getDefault().getModelManager().getWorkspaceModels());
 	}
 	
 	protected PluginValidationOperation createValidationOperation() {

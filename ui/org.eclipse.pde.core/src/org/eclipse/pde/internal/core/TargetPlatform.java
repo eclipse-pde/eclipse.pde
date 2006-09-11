@@ -514,16 +514,6 @@ public class TargetPlatform implements IEnvironmentVariables {
 		return set.contains("org.eclipse.platform.ide") ? "org.eclipse.platform.ide" : null; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
-	public static boolean isRuntimeRefactored1() {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		return manager.findEntry("org.eclipse.equinox.common") != null; //$NON-NLS-1$
-	}
-	
-	public static boolean isRuntimeRefactored2() {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		return manager.findEntry("org.eclipse.core.runtime.compatibility.registry") != null;		 //$NON-NLS-1$
-	}
-	
 	public static boolean matchesCurrentEnvironment(IPluginModelBase model) {
         BundleContext context = PDECore.getDefault().getBundleContext();	        
 		Dictionary environment = getTargetEnvironment();

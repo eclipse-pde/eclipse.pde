@@ -133,6 +133,14 @@ public class PDEUIMessages extends NLS {
 
 	public static String NewCheatSheetFileWizard_0;
 
+	public static String OSGiFrameworkBlock_defaultGroup;
+
+	public static String OSGiFrameworkPreferencePage_default;
+
+	public static String OSGiFrameworkPreferencePage_installed;
+
+	public static String OSGiFrameworkPreferencePage_setAs;
+
 	public static String PDETextHover_0;
 
 	public static String RemoveUnknownExecEnvironments_label;
@@ -877,6 +885,10 @@ public class PDEUIMessages extends NLS {
 	public static String OpenLogDialog_title;
 	public static String OpenLogDialog_message;
 	public static String OpenLogDialog_cannotDisplay;
+
+	public static String OSGiBundlesTab_frameworkLabel;
+	public static String OSGiLaunchConfiguration_cannotFindLaunchConfiguration;
+	public static String OSGiLaunchConfiguration_selected;
 
 	// Preferences ####################################
 	public static String Preferences_MainPage_Description;
