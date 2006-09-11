@@ -2022,7 +2022,7 @@
          point="org.eclipse.pde.ui.osgiFrameworks">
       <framework
             launcherDelegate="org.eclipse.pde.ui.launcher.EquinoxLaunchConfiguration"
-            id="org.eclipse.pde.ui.EquinoxLauncher"
+            id="org.eclipse.pde.ui.EquinoxFramework"
             name="%Equinox.shortcut.label" 
             initializer="org.eclipse.pde.internal.ui.launcher.EquinoxInitializer"/>
     </extension>
