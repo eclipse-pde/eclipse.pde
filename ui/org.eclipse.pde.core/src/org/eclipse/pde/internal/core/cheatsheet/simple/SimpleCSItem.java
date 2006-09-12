@@ -430,8 +430,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getName()
 	 */
 	public String getName() {
-		// TODO: MP: Update name
-		return ELEMENT_ITEM;
+		return fTitle;
 	}
 
 	/* (non-Javadoc)
@@ -439,21 +438,9 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 */
 	public List getChildren() {
 		ArrayList list = new ArrayList();
-		// Add description
-		if (fDescription != null) {
-			list.add(fDescription);
-		}
-		// Add executable
-		if (fExecutable != null) {
-			list.add(fExecutable);
-		}
 		// Add subitems
 		if (fSubItems.size() > 0) {
 			list.addAll(fSubItems);
-		}
-		// Add onCompletion
-		if (fOnCompletion != null) {
-			list.add(fOnCompletion);
 		}
 		return list;
 	}

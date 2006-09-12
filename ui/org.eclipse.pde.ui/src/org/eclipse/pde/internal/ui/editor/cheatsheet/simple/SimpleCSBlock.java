@@ -14,15 +14,17 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSOnCompletion;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.SimpleCSAbstractDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.SimpleCSDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.SimpleCSIntroDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.SimpleCSItemDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.SimpleCSSubItemDetails;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IDetailsPage;
@@ -36,7 +38,6 @@ import org.eclipse.ui.forms.IManagedForm;
 public class SimpleCSBlock extends PDEMasterDetailsBlock implements
 		IDetailsPageProvider, IModelChangedListener {
 
-	// TODO: MP: Update name to master section ?
 	private SimpleCSElementSection fMasterSection;
 	// TODO: MP: Create a new interface 
 	private SimpleCSAbstractDetails fCurrentDetailsSection;
@@ -77,14 +78,8 @@ public class SimpleCSBlock extends PDEMasterDetailsBlock implements
 			fCurrentDetailsSection = new SimpleCSSubItemDetails((ISimpleCSSubItem)key, fMasterSection);
 		} else if (key instanceof ISimpleCS) {
 			fCurrentDetailsSection = new SimpleCSDetails((ISimpleCS)key, fMasterSection);
-		} else if (key instanceof ISimpleCSDescription) {
-			fCurrentDetailsSection = new SimpleCSDescriptionDetails((ISimpleCSDescription)key, fMasterSection);
 		} else if (key instanceof ISimpleCSIntro) {
 			fCurrentDetailsSection = new SimpleCSIntroDetails((ISimpleCSIntro)key, fMasterSection);
-		} else if (key instanceof ISimpleCSCommand) {
-			fCurrentDetailsSection = new SimpleCSCommandDetails((ISimpleCSCommand)key, fMasterSection);
-		} else if (key instanceof ISimpleCSOnCompletion) {
-			fCurrentDetailsSection = new SimpleCSOnCompletionDetails((ISimpleCSOnCompletion)key, fMasterSection);
 		} else {
 			fCurrentDetailsSection = null;
 		}

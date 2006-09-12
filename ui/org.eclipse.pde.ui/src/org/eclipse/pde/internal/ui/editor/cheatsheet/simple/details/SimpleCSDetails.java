@@ -9,17 +9,21 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
+package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details;
 
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSElementSection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
 
 /**
  * SimpleCSDetails
@@ -31,37 +35,62 @@ public class SimpleCSDetails extends SimpleCSAbstractDetails {
 	
 	private FormEntry fTitle;
 	
+	private Section fMainSection;
+	
 	/**
 	 * 
 	 */
 	public SimpleCSDetails(ISimpleCS cheatsheet, SimpleCSElementSection section) {
 		super(section);
 		fCheatSheet = cheatsheet;
+		
 		fTitle = null;
+		fMainSection = null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createDetails(Composite parent) {
-		
-		FormToolkit toolkit = getManagedForm().getToolkit();
-		// Configure layout
-		GridLayout glayout = new GridLayout(2, false);
-		boolean paintedBorder = toolkit.getBorderStyle() != SWT.BORDER;
-		if (paintedBorder) {
-			glayout.verticalSpacing = 7;
-		}
-		parent.setLayout(glayout);
-		
-		//Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
-		// Attribute: title
-		fTitle = new FormEntry(parent, toolkit, PDEUIMessages.SimpleCSDetails_0, SWT.NONE);
-	
-		setText(PDEUIMessages.SimpleCSDetails_1);
-		setDecription(NLS.bind(PDEUIMessages.SimpleCSDetails_2,
-				fCheatSheet.getName()));
 
+		FormToolkit toolkit = getManagedForm().getToolkit();
+		//Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
+		GridData data = null;
+		boolean paintedBorder = toolkit.getBorderStyle() != SWT.BORDER;
+		//Label label = null;
+		
+		// Set parent layout
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		parent.setLayout(layout);
+		
+		// Create main section
+		fMainSection = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
+		fMainSection.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
+		fMainSection.marginHeight = 5;
+		fMainSection.marginWidth = 5; 
+		fMainSection.setText(PDEUIMessages.SimpleCSDetails_3);
+		fMainSection.setDescription(PDEUIMessages.SimpleCSDetails_2);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		fMainSection.setLayoutData(data);
+		
+		// Create container for main section
+		Composite mainSectionClient = toolkit.createComposite(fMainSection);	
+		layout = new GridLayout(2, false);
+		if (paintedBorder) {
+			layout.verticalSpacing = 7;
+		}
+		mainSectionClient.setLayout(layout);		
+
+		// Attribute: title
+		fTitle = new FormEntry(mainSectionClient, toolkit, PDEUIMessages.SimpleCSDetails_0, SWT.NONE);
+
+		// Bind widgets
+		toolkit.paintBordersFor(mainSectionClient);
+		fMainSection.setClient(mainSectionClient);
+		markDetailsPart(fMainSection);		
+		
 	}
 
 	/* (non-Javadoc)

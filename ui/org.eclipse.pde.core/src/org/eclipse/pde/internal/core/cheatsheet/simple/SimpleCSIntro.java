@@ -190,19 +190,14 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getName()
 	 */
 	public String getName() {
-		// TODO: MP: Update name
-		return ELEMENT_INTRO;
+		return fDescription.getName();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getChildren()
 	 */
 	public List getChildren() {
-		ArrayList list = new ArrayList();
-		if (fDescription != null) {
-			list.add(fDescription);
-		}
-		return list;
+		return new ArrayList();
 	}
 
 }

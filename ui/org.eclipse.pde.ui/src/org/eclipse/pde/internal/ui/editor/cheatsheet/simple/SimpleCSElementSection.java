@@ -153,7 +153,7 @@ public class SimpleCSElementSection extends TreeSection {
 	 */
 	private void createTree(Composite container, FormToolkit toolkit) {
 		TreePart treePart = getTreePart();
-		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
+		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
 		fTreeViewer = treePart.getTreeViewer();
 		// TODO: MP: Complete content provider
 		fTreeViewer.setContentProvider(new SimpleCSContentProvider());
@@ -361,7 +361,8 @@ public class SimpleCSElementSection extends TreeSection {
 		Object[] objects = event.getChangedObjects();
 		for (int i = 0; i < objects.length; i++) {
 			ISimpleCSObject object = (ISimpleCSObject)objects[i];
-			
+			// TODO: MP: Refactor, item is same actions as subitem
+			// Consider checking for change type first
 			if (object.getType() == ISimpleCSConstants.TYPE_ITEM) {
 				if (event.getChangeType() == IModelChangedEvent.INSERT) {
 					// Refresh the parent element in the tree viewer
@@ -374,6 +375,9 @@ public class SimpleCSElementSection extends TreeSection {
 					// Select the parent in the tree
 					// TODO: MP: Think about making the sibling item selected instead
 					fTreeViewer.setSelection(new StructuredSelection(object.getParent()), true);
+				} else if (event.getChangeType() == IModelChangedEvent.CHANGE) {
+					// Refresh the element in the tree viewer
+					fTreeViewer.refresh(object);
 				}
 			} else if (object.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
 				// TODO: MP: Can probably merge with Item above
@@ -388,7 +392,23 @@ public class SimpleCSElementSection extends TreeSection {
 					// Select the parent in the tree
 					// TODO: MP: Think about making the sibling subitem selected instead
 					fTreeViewer.setSelection(new StructuredSelection(object.getParent()), true);
+				} else if (event.getChangeType() == IModelChangedEvent.CHANGE) {
+					// Refresh the element in the tree viewer
+					fTreeViewer.refresh(object);
 				}
+			} else if (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
+				// Note:  Cannot add or delete cheatsheet nodes
+				if (event.getChangeType() == IModelChangedEvent.CHANGE) {
+					// Refresh the element in the tree viewer
+					fTreeViewer.refresh(object);
+				}						
+			} else if ((object.getType() == ISimpleCSConstants.TYPE_DESCRIPTION)
+					&& (object.getParent().getType() == ISimpleCSConstants.TYPE_INTRO)) {
+				// Note:  Cannot add or delete intro nodes
+				if (event.getChangeType() == IModelChangedEvent.CHANGE) {
+					// Refresh the parent element in the tree viewer
+					fTreeViewer.refresh(object.getParent());
+				}				
 			}
 
 		}

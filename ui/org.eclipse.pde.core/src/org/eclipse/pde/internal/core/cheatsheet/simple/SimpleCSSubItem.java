@@ -236,19 +236,14 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getName()
 	 */
 	public String getName() {
-		// TODO: MP: Update name
-		return ELEMENT_SUBITEM;
+		return fLabel;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getChildren()
 	 */
 	public List getChildren() {
-		ArrayList list = new ArrayList();
-		if (fExecutable != null) {
-			list.add(fExecutable);
-		}
-		return list;
+		return new ArrayList();
 	}
 
 }

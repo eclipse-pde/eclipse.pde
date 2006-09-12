@@ -52,6 +52,7 @@ public class SimpleCSPage extends PDEFormPage implements IModelChangedListener {
 	 */
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
+		// TODO: MP: Scrolled form created here
 		ScrolledForm form = managedForm.getForm();
 		// Set page title
 		ISimpleCSModel model = (ISimpleCSModel)getModel();
@@ -70,6 +71,7 @@ public class SimpleCSPage extends PDEFormPage implements IModelChangedListener {
 			form.setText(PDEUIMessages.SimpleCSPage_0);
 		}
 		// Create the masters details block
+		// TODO: MP: Scrolled form created here two
 		fBlock.createContent(managedForm);
 		// Force the selection in the masters tree section to load the 
 		// proper details section

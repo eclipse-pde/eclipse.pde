@@ -229,8 +229,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getName()
 	 */
 	public String getName() {
-		// TODO: MP: Update name
-		return ELEMENT_CHEATSHEET;
+		return fTitle;
 	}
 
 	/* (non-Javadoc)

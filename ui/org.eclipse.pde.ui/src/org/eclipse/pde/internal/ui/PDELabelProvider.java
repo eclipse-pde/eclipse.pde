@@ -67,6 +67,7 @@ import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
 import org.eclipse.pde.internal.core.text.bundle.PackageObject;
+import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -271,8 +272,20 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 	
 	public String getObjectText(ISimpleCSObject obj) {
-		// TODO: MP: Determine special cases
-		return obj.getName();
+		
+		int limit = 50;
+		
+		if (obj.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
+			limit = 40;
+		} else if (obj.getType() == ISimpleCSConstants.TYPE_ITEM) {
+			limit = 36;
+		} else if (obj.getType() == ISimpleCSConstants.TYPE_INTRO) {
+			limit = 36;
+		} else if (obj.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
+			limit = 32;
+		}
+			
+		return PDETextHelper.truncateAndTrailOffText(obj.getName(), limit);
 	}
 
 	public String getObjectText(FeaturePlugin obj) {
@@ -625,16 +638,17 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return get(PDEPluginImages.DESC_CSITEM_OBJ);
 		} else if (object.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
 			return get(PDEPluginImages.DESC_CSSUBITEM_OBJ);
-		} else if (object.getType() == ISimpleCSConstants.TYPE_DESCRIPTION) {
-			return get(PDEPluginImages.DESC_PAGE_OBJ);
+		// TODO: MP: Remove associated images with commented out types
+//		} else if (object.getType() == ISimpleCSConstants.TYPE_DESCRIPTION) {
+//			return get(PDEPluginImages.DESC_PAGE_OBJ);
 		} else if (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
 			return get(PDEPluginImages.DESC_SIMPLECS_OBJ);
 		} else if (object.getType() == ISimpleCSConstants.TYPE_INTRO) {
 			return get(PDEPluginImages.DESC_CSINTRO_OBJ);
-		} else if (object.getType() == ISimpleCSConstants.TYPE_ON_COMPLETION) {
-			return get(PDEPluginImages.DESC_CSONCOMPLETION_OBJ);
-		} else if (object.getType() == ISimpleCSConstants.TYPE_COMMAND) {
-			return get(PDEPluginImages.DESC_CSCOMMAND_OBJ);
+//		} else if (object.getType() == ISimpleCSConstants.TYPE_ON_COMPLETION) {
+//			return get(PDEPluginImages.DESC_CSONCOMPLETION_OBJ);
+//		} else if (object.getType() == ISimpleCSConstants.TYPE_COMMAND) {
+//			return get(PDEPluginImages.DESC_CSCOMMAND_OBJ);
 		}
 		return get(PDEPluginImages.DESC_SIMPLECS_OBJ, F_ERROR);
 	}	

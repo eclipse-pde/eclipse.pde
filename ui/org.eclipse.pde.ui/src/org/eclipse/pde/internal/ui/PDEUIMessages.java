@@ -231,6 +231,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String SimpleCSDetails_2;
 
+	public static String SimpleCSDetails_3;
+
 	public static String SimpleCSElementSection_0;
 
 	public static String SimpleCSElementSection_1;
@@ -259,9 +261,19 @@ public class PDEUIMessages extends NLS {
 
 	public static String SimpleCSItemDetails_1;
 
+	public static String SimpleCSItemDetails_11;
+
+	public static String SimpleCSItemDetails_10;
+
+	public static String SimpleCSItemDetails_12;
+
 	public static String SimpleCSItemDetails_2;
 
+	public static String SimpleCSItemDetails_13;
+
 	public static String SimpleCSItemDetails_3;
+
+	public static String SimpleCSItemDetails_14;
 
 	public static String SimpleCSItemDetails_4;
 
@@ -269,21 +281,49 @@ public class PDEUIMessages extends NLS {
 
 	public static String SimpleCSItemDetails_6;
 
+	public static String SimpleCSItemDetails_7;
+
+	public static String SimpleCSItemDetails_8;
+
+	public static String SimpleCSItemDetails_9;
+
 	public static String SimpleCSPage_1;
 
 	public static String SimpleCSRemoveStepAction_0;
 
 	public static String SimpleCSRemoveSubStepAction_0;
 
+	public static String SimpleCSSharedUIFactory_1;
+
+	public static String SimpleCSSharedUIFactory_2;
+
+	public static String SimpleCSSharedUIFactory_3;
+
+	public static String SimpleCSSharedUIFactory_4;
+
 	public static String SimpleCSSubItemDetails_0;
 
 	public static String SimpleCSSubItemDetails_1;
 
+	public static String SimpleCSSubItemDetails_10;
+
 	public static String SimpleCSSubItemDetails_2;
+
+	public static String SimpleCSSubItemDetails_11;
 
 	public static String SimpleCSSubItemDetails_3;
 
 	public static String SimpleCSSubItemDetails_4;
+
+	public static String SimpleCSSubItemDetails_5;
+
+	public static String SimpleCSSubItemDetails_6;
+
+	public static String SimpleCSSubItemDetails_7;
+
+	public static String SimpleCSSubItemDetails_8;
+
+	public static String SimpleCSSubItemDetails_9;
 
 	public static String TableSection_itemCount;
 

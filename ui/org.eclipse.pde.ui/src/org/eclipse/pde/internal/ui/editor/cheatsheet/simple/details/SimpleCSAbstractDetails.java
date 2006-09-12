@@ -9,22 +9,16 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
+package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.ui.editor.PDEDetails;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSElementSection;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
 
 /**
  * SimpleCSAbstractDetails
@@ -32,13 +26,7 @@ import org.eclipse.ui.forms.widgets.Section;
  */
 public abstract class SimpleCSAbstractDetails extends PDEDetails {
 
-	private Section fSection;
-	
 	private SimpleCSElementSection fElementSection;
-	
-	// TODO: MP: Can refactor with copied method from AbstractSchemaDetails
-	protected static final String[] BOOLS = 
-		new String[] { Boolean.toString(true), Boolean.toString(false) };
 	
 	/**
 	 * 
@@ -51,28 +39,9 @@ public abstract class SimpleCSAbstractDetails extends PDEDetails {
 	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	public final void createContents(Composite parent) {
-		
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = layout.marginWidth = 0;
-		parent.setLayout(layout);
-		FormToolkit toolkit = getManagedForm().getToolkit();
-		fSection = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
-		fSection.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
-		fSection.marginHeight = 5;
-		fSection.marginWidth = 5; 
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		fSection.setLayoutData(gd);
-		Composite client = toolkit.createComposite(fSection);
-		
-		createDetails(client);
+		createDetails(parent);
 		updateFields();
-		
-		toolkit.paintBordersFor(client);
-		fSection.setClient(client);
-		markDetailsPart(fSection);
-		
 		hookListeners();
-		
 	}
 
 	/**
@@ -135,20 +104,6 @@ public abstract class SimpleCSAbstractDetails extends PDEDetails {
 		// TODO: MP: Do we need to do anything here?
 
 	}
-
-	/**
-	 * @param description
-	 */
-	protected void setDecription(String description) {
-		fSection.setDescription(description); 
-	}
-	
-	/**
-	 * @param title
-	 */
-	protected void setText(String title) {
-		fSection.setText(title);
-	}	
 	
 	/**
 	 * @return
@@ -156,27 +111,5 @@ public abstract class SimpleCSAbstractDetails extends PDEDetails {
 	public boolean isEditableElement() {
 		return fElementSection.isEditable();
 	}	
-	
-	/**
-	 * @param parent
-	 * @param toolkit
-	 * @param colSpan
-	 * @return
-	 */
-	protected Button[] createTrueFalseButtons(Composite parent, FormToolkit toolkit, int colSpan) {
-		// TODO: MP: Can refactor with copied method from AbstractSchemaDetails
-		Composite comp = toolkit.createComposite(parent, SWT.NONE);
-		GridLayout gl = new GridLayout(2, false);
-		gl.marginHeight = gl.marginWidth = 0;
-		comp.setLayout(gl);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = colSpan;
-		comp.setLayoutData(gd);
-		Button tButton = toolkit.createButton(comp, BOOLS[0], SWT.RADIO);
-		Button fButton = toolkit.createButton(comp, BOOLS[1], SWT.RADIO);
-		gd = new GridData();
-		gd.horizontalIndent = 20;
-		fButton.setLayoutData(gd);
-		return new Button[] {tButton, fButton};
-	}
+
 }
