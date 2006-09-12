@@ -65,7 +65,7 @@ public class CommandComposerDialog extends Dialog implements IDialogButtonCreato
 		Composite comp = fCSP.createComposite(
 				parent, 
 				GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_END, 
-				2, false);
+				0, false); // 0 columns since createButton(...) increments col num
 		
 		fOKButton = createButton(comp, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		fOKButton.setEnabled(false);

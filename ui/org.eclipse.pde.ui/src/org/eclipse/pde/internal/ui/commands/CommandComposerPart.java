@@ -90,6 +90,7 @@ public class CommandComposerPart implements ISelectionChangedListener {
 		fCommandList = new CommandList(this, sashForm, fNotifier);
 		fCommandDetails = new CommandDetails(this, sashForm, fNotifier);
 		
+		sashForm.setWeights(new int[] {4,5});
 		fToolkit.adapt(sashForm, true, true);
 	}
 	

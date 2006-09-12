@@ -40,7 +40,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISelectionListener;
@@ -50,8 +49,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.forms.widgets.Section;
 
 public class CommandDetails {
 	
@@ -67,7 +68,6 @@ public class CommandDetails {
 	private FormToolkit fToolkit;
 	private Command fSelectedCommand;
 	
-	private Text fComNameT;
 	private Text fComIDT;
 	private Text fComPrev;
 	private Button fSurroundCopyText;
@@ -85,29 +85,28 @@ public class CommandDetails {
 	}
 	
 	private void createCommandDetails(Composite parent, IDialogButtonCreator buttonCreator) {
-		Composite comp = fCSP.createComposite(parent);
+		Composite c = fCSP.createComposite(parent);
 		
-		Group previewGroup = new Group(comp, SWT.NONE);
-		previewGroup.setLayout(new GridLayout());
-		previewGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fToolkit.adapt(previewGroup);
-		previewGroup.setText(PDEUIMessages.CommandDetails_groupName);
+		Section section = fToolkit.createSection(c, ExpandableComposite.SHORT_TITLE_BAR);
+		section.setText(PDEUIMessages.CommandDetails_groupName);
+		section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		createBasicInfo(previewGroup);
+		Composite comp = fCSP.createComposite(section);
+		
+		createBasicInfo(comp);
 		
 		if (fCSP.getFilterType() == CommandComposerPart.F_FILTER_NOT_SET)
-			createPreviewLabelComp(previewGroup);
-		createParameters(previewGroup);
+			createPreviewLabelComp(comp);
+		createParameters(comp);
+		
+		section.setClient(comp);
+		
 		if (buttonCreator != null)
-			buttonCreator.createButtons(comp);
+			buttonCreator.createButtons(c);
 	}
 	
 	private void createBasicInfo(Composite parent) {
 		Composite comp = fCSP.createComposite(parent, GridData.FILL_HORIZONTAL, 2, false);
-		fToolkit.createLabel(comp, PDEUIMessages.CommandDetails_name);
-		fComNameT = fToolkit.createText(comp, F_NO_SEL, SWT.BORDER);
-		fComNameT.setEditable(false);
-		fComNameT.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fToolkit.createLabel(comp, PDEUIMessages.CommandDetails_id);
 		fComIDT = fToolkit.createText(comp, F_NO_SEL, SWT.BORDER);
 		fComIDT.setEditable(false);
@@ -123,16 +122,20 @@ public class CommandDetails {
 		fCopyLink = fToolkit.createImageHyperlink(comp, SWT.NONE);
 		final Image clipImage = PDEPluginImages.DESC_CLIPBOARD.createImage();
 		fCopyLink.setImage(clipImage);
+		fCopyLink.setText(PDEUIMessages.CommandDetails_copyToClipboard);
 		fCopyLink.setToolTipText(PDEUIMessages.CommandDetails_copytooltip);
 		fCopyLink.addHyperlinkListener(new CopyToClipboard());
+		fCopyLink.setEnabled(false);
 		fCopyLink.addDisposeListener(new DisposeListener()
 			{ public void widgetDisposed(DisposeEvent e) { clipImage.dispose(); }} );
 		
 		fExecLink = fToolkit.createImageHyperlink(comp, SWT.NONE);
 		final Image execImage = PDEPluginImages.DESC_RUN_EXC.createImage();
 		fExecLink.setImage(execImage);
+		fExecLink.setText(PDEUIMessages.CommandDetails_executeText);
 		fExecLink.setToolTipText(PDEUIMessages.CommandDetails_execute);
 		fExecLink.addHyperlinkListener(new ExecCommand());
+		fExecLink.setEnabled(false);
 		fExecLink.addDisposeListener(new DisposeListener()
 			{ public void widgetDisposed(DisposeEvent e) { execImage.dispose(); } });
 		
@@ -190,14 +193,23 @@ public class CommandDetails {
 			ParameterizedCommand pCommand = buildParameterizedCommand();
 			try {
 				Object obj = pCommand.executeWithChecks(null, null);
-				if (obj != null)
+				String resultString = null;
+				if (obj instanceof String) {
+					resultString = (String)obj;
+				} else {
+					ParameterType returnType = pCommand.getCommand().getReturnType();
+					if (returnType != null && returnType.getValueConverter() != null)
+						resultString = returnType.getValueConverter().convertToString(obj);
+				}
+				if (resultString != null) {
 					MessageDialog.openInformation(
-							fComNameT.getShell(),
+							fComIDT.getShell(),
 							PDEUIMessages.CommandDetails_commandResult,
-							obj.toString());
+							resultString);
+				}
 			} catch (CommandException ex) {
 				MessageDialog.openError(
-						fComNameT.getShell(),
+						fComIDT.getShell(),
 						PDEUIMessages.CommandDetails_execError,
 						ex.toString());
 			}
@@ -473,11 +485,6 @@ public class CommandDetails {
 		}
 		fSelectedCommand = (Command)object;
 		fComIDT.setText(fSelectedCommand.getId());
-		try {
-			fComNameT.setText(fSelectedCommand.getName());
-		} catch (NotDefinedException e1) {
-			fComNameT.setText(PDEUIMessages.CommandDetails_undefined);
-		}
 		fExecLink.setEnabled(true);
 		fCopyLink.setEnabled(true);
 		try {
@@ -490,10 +497,8 @@ public class CommandDetails {
 	
 	private void resetAllFields() {
 		fSelectedCommand = null;
-		fComNameT.setText(F_NO_SEL);
 		fComIDT.setText(F_NO_SEL);
 		
-		fParamLabel.setText(""); //$NON-NLS-1$
 		if (fComPrev != null)
 			fComPrev.setText(""); //$NON-NLS-1$
 		

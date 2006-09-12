@@ -6,9 +6,6 @@ import java.util.regex.PatternSyntaxException;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -20,6 +17,8 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.commands.CommandComposerPart.IDialogButtonCreator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
@@ -28,11 +27,14 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.forms.widgets.Section;
 
 public class CommandList {
 
@@ -101,14 +103,14 @@ public class CommandList {
 		if (obj instanceof Command) {
 			Command com = (Command)obj;
 			try {
-				return com.getName() + ' ' + '(' + com.getId() + ')';
+				return com.getName();
 			} catch (NotDefinedException e) {
 				return com.getId();
 			}
 		} else if (obj instanceof Category) {
 			Category cat = (Category)obj;
 			try {
-				return cat.getName() + ' ' + '(' + cat.getId() + ')';
+				return cat.getName();
 			} catch (NotDefinedException e) {
 				return cat.getId();
 			}
@@ -128,17 +130,19 @@ public class CommandList {
 		createTree(parent, creator);
 	}
 	private void createTree(Composite parent, IDialogButtonCreator creator) {
-		Group commandGroup = new Group(parent, SWT.NONE);
-		commandGroup.setLayout(new GridLayout());
-		commandGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fToolkit.adapt(commandGroup);
-		commandGroup.setText(PDEUIMessages.CommandList_groupName);
+		Section section = fToolkit.createSection(parent, ExpandableComposite.SHORT_TITLE_BAR);
+		section.setText(PDEUIMessages.CommandList_groupName);
+		section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		createFilterText(commandGroup);
+		Composite c = fCSP.createComposite(section);
 		
-		Tree tree = fToolkit.createTree(commandGroup, SWT.V_SCROLL | SWT.H_SCROLL);
+		createFilterText(c);
+		
+		Tree tree = fToolkit.createTree(c, SWT.V_SCROLL | SWT.H_SCROLL);
 		tree.setLayout(new GridLayout());
-		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 150;
+		tree.setLayoutData(gd);
 		fTreeViewer = new TreeViewer(tree);
 		fContentProvider = new CommandTreeContentProvider(fCSP.getCommandService());
 		fTreeViewer.setContentProvider(fContentProvider);
@@ -148,6 +152,8 @@ public class CommandList {
 		fTreeViewer.setInput(new Object());
 		fTreeViewer.addSelectionChangedListener(fCSP);
 		fTreeViewer.addSelectionChangedListener(creator.getButtonEnablementListener());
+		
+		section.setClient(c);
 	}
 	
 	private void createFilterText(Composite parent) {
@@ -160,29 +166,30 @@ public class CommandList {
             }
         });
 		
-		ToolBar toolBar = new ToolBar(c, SWT.FLAT | SWT.HORIZONTAL);
-		fToolkit.adapt(toolBar, true, true);
-        ToolBarManager filterToolkbar = new ToolBarManager(toolBar);
-
-        final IAction clearTextAction = new Action("", IAction.AS_PUSH_BUTTON) {//$NON-NLS-1$
-            public void run() {
-            	fFilterText.setText(""); //$NON-NLS-1$
-            }
-        };
-
-        clearTextAction.setToolTipText(PDEUIMessages.CommandList_clearTooltip);
-        clearTextAction.setImageDescriptor(PDEPluginImages.DESC_CLEAR);
-        clearTextAction.setDisabledImageDescriptor(PDEPluginImages.DESC_DCLEAR);
-        clearTextAction.setEnabled(false);
-        
-        filterToolkbar.add(clearTextAction);
-        filterToolkbar.update(false);
-        
+		final ImageHyperlink clearButton = fToolkit.createImageHyperlink(c, SWT.NONE);
+		final Image clearImg = PDEPluginImages.DESC_DCLEAR.createImage();
+		final Image hoverImg = PDEPluginImages.DESC_CLEAR.createImage();
+		clearButton.setImage(clearImg);
+		clearButton.setHoverImage(hoverImg);
+		clearButton.setToolTipText(PDEUIMessages.CommandList_clearTooltip);
+		clearButton.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				clearImg.dispose();
+				hoverImg.dispose();
+			}
+		});
+		clearButton.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				fFilterText.setText(""); //$NON-NLS-1$
+			}
+		});
+		clearButton.setEnabled(false);
+		
         fFilterText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				fTreeViewer.refresh();
-				if (clearTextAction != null)
-					clearTextAction.setEnabled(fFilterText.getText().length() > 0);
+				if (clearButton != null)
+					clearButton.setEnabled(fFilterText.getText().length() > 0);
 			}
         });
 	}

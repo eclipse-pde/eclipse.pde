@@ -57,11 +57,15 @@ public class PDEUIMessages extends NLS {
 
 	public static String CommandDetails_commandResult;
 
+	public static String CommandDetails_copyToClipboard;
+
 	public static String CommandDetails_copytooltip;
 
 	public static String CommandDetails_execError;
 
 	public static String CommandDetails_execute;
+
+	public static String CommandDetails_executeText;
 
 	public static String CommandDetails_groupName;
 
@@ -70,8 +74,6 @@ public class PDEUIMessages extends NLS {
 	public static String CommandDetails_includeMarkup;
 
 	public static String CommandDetails_markupTooltip;
-
-	public static String CommandDetails_name;
 
 	public static String CommandDetails_noComSelected;
 
@@ -84,8 +86,6 @@ public class PDEUIMessages extends NLS {
 	public static String CommandDetails_preview;
 
 	public static String CommandDetails_track;
-
-	public static String CommandDetails_undefined;
 
 	public static String CommandList_clearTooltip;
 
