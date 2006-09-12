@@ -76,9 +76,7 @@ public abstract class GeneralInfoSection extends PDESection {
 		createSpecificControls(client, toolkit, actionBars);
 		toolkit.paintBordersFor(client);
 		
-		IBaseModel model = getPage().getModel();
-		if (model instanceof IModelChangeProvider)
-			((IModelChangeProvider) model).addModelChangedListener(this);
+		addListeners();
 	}
 	
 	protected abstract String getSectionDescription();
@@ -234,10 +232,20 @@ public abstract class GeneralInfoSection extends PDESection {
 	}
 	
 	public void dispose() {
+		removeListeners();
+		super.dispose();
+	}
+	
+	protected void removeListeners() {
 		IBaseModel model = getPage().getModel();
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider) model).removeModelChangedListener(this);
-		super.dispose();
+	}
+	
+	protected void addListeners() {
+		IBaseModel model = getPage().getModel();
+		if (model instanceof IModelChangeProvider)
+			((IModelChangeProvider) model).addModelChangedListener(this);
 	}
 	
 	public boolean canPaste(Clipboard clipboard) {

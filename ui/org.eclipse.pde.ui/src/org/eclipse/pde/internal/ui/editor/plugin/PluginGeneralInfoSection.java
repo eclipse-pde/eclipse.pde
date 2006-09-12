@@ -69,20 +69,24 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 				&& ((ManifestEditor) formEditor).isEquinox()) {
 			createLazyStart(parent, toolkit, actionBars);
 		}
+	}
+
+	protected void addListeners() {
 		if (isBundle()) {
 			IBundleModel model = getBundle().getModel();
 			if (model != null)
 				model.addModelChangedListener(this);
 		}
+		super.addListeners();
 	}
-	
-	public void dispose() {
+
+	protected void removeListeners() {
 		if (isBundle()) {
 			IBundleModel model = getBundle().getModel();
 			if (model != null)
 				model.removeModelChangedListener(this);
 		}
-		super.dispose();
+		super.removeListeners();
 	}
 	
 	private void createLazyStart(Composite parent, FormToolkit toolkit, IActionBars actionBars) {

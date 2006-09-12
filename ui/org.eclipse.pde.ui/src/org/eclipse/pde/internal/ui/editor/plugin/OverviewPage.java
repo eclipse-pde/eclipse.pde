@@ -39,8 +39,8 @@ import org.eclipse.pde.internal.ui.editor.build.BuildPage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsAction;
-import org.eclipse.pde.ui.launcher.OSGiLaunchShortcut;
 import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
+import org.eclipse.pde.ui.launcher.OSGiLaunchShortcut;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Composite;
@@ -70,6 +70,8 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	private EclipseLaunchShortcut fLaunchShortcut;
 	private OSGiLaunchShortcut fOSGiShortcut;
 	private PluginExportAction fExportAction;
+	private GeneralInfoSection fInfoSection;
+	private boolean fDisposed = false;
 
 	public OverviewPage(FormEditor editor) {
 		super(editor, PAGE_ID, PDEUIMessages.OverviewPage_tabName);  
@@ -104,12 +106,11 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		layout.verticalSpacing = 20;
 		left.setLayout(layout);
 		left.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		GeneralInfoSection general = null;
 		if (isFragment())
-			general = new FragmentGeneralInfoSection(this, left);
+			fInfoSection = new FragmentGeneralInfoSection(this, left);
 		else
-			general = new PluginGeneralInfoSection(this, left);
-		managedForm.addPart(general);		
+			fInfoSection = new PluginGeneralInfoSection(this, left);
+		managedForm.addPart(fInfoSection);		
 		if (isBundle())
 			managedForm.addPart(new ExecutionEnvironmentSection(this, left));
 			
@@ -364,6 +365,9 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	
 	private void handleConvert() {
 		try {
+			// remove listeners of Info section before we convert.  If we don't 
+			// we may get a model changed event while disposing the page.  Bug 156414
+			fInfoSection.removeListeners();
 			PDEFormEditor editor = getPDEEditor();
 			IPluginModelBase model = (IPluginModelBase)editor.getAggregateModel();
 			IRunnableWithProgress op = new CreateManifestOperation(model);
@@ -373,8 +377,14 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
             updateBuildProperties();
             editor.doSave(null);
 		} catch (InvocationTargetException e) {
-			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OverviewPage_error, e.getCause().getMessage()); 
+			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OverviewPage_error, e.getCause().getMessage());
+			// if convert failed and this OverviewPage hasn't been removed from the editor, reattach listeners
+			if (!fDisposed)
+				fInfoSection.addListeners();
 		} catch (InterruptedException e) {
+			// if convert failed and this OverviewPage hasn't been removed from the editor, reattach listeners
+			if (!fDisposed)
+				fInfoSection.addListeners();
 		}
 	}
     
@@ -412,5 +422,10 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		} catch (PartInitException e) {
 		} catch (BackingStoreException e) {
 		}
+    }
+    
+    public void dispose() {
+    	fDisposed = true;
+    	super.dispose();
     }
 }
