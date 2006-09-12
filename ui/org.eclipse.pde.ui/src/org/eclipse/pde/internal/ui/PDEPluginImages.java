@@ -100,7 +100,8 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_CSINTRO_OBJ = create(PATH_OBJ, "cheatsheet_intro_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CSONCOMPLETION_OBJ = create(PATH_OBJ, "cheatsheet_oncompletion_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CSCOMMAND_OBJ = create(PATH_OBJ, "cheatsheet_command_obj.gif"); //$NON-NLS-1$
-	
+	public static final ImageDescriptor DESC_COMGROUP_OBJ = create(PATH_OBJ, "keygroups_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_GENCOM_OBJ = create(PATH_OBJ, "command_obj.gif"); //$NON-NLS-1$
 	
 	public static final ImageDescriptor DESC_PLUGIN_OBJ   = create(PATH_OBJ, "plugin_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PLUGIN_DIS_OBJ   = create(PATH_OBJ, "plugin_dis_obj.gif"); //$NON-NLS-1$

@@ -1,11 +1,14 @@
 package org.eclipse.pde.internal.ui.commands;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -29,18 +32,20 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.internal.commands.ICommandImageService;
 
 public class CommandList {
 
 	protected class CommandTreeLabelProvider extends LabelProvider {
-		private Image fCatImage;
-		private Image fComImage;
+		private HashMap fImgMap = new HashMap();
+		private Image fDefaultImage;
 		public String getText(Object element) {
 			if (element instanceof Category)
 				return CommandList.getText(element);
@@ -49,22 +54,32 @@ public class CommandList {
 			return null;
 		}
 		public Image getImage(Object element) {
-			if (element instanceof Category) {
-				if (fCatImage == null)
-					fCatImage = PDEPluginImages.DESC_CATEGORY_OBJ.createImage();
-				return fCatImage;
-			} else if (element instanceof Command) {
-				if (fComImage == null)
-					fComImage = PDEPluginImages.DESC_CATEGORY_OBJ.createImage();
-				return fComImage;
+			Image img = (Image)fImgMap.get(element);
+			if (img != null)
+				return img;
+			
+			if (element instanceof Category)
+				img = PDEPluginImages.DESC_COMGROUP_OBJ.createImage();
+			else if (element instanceof Command) {
+				ImageDescriptor desc = fComImgServ.getImageDescriptor(((Command)element).getId());
+				if (desc == null) {
+					if (fDefaultImage == null)
+						fDefaultImage = PDEPluginImages.DESC_GENCOM_OBJ.createImage();
+					return fDefaultImage;
+				}
+				img = desc.createImage();
 			}
-			return super.getImage(element);
+		
+			if (img != null)
+				fImgMap.put(element, img);
+			
+			return img;
 		}
 		public void dispose() {
-			if (fCatImage != null)
-				fCatImage.dispose();
-			if (fComImage != null)
-				fComImage.dispose();
+			for (Iterator i = fImgMap.keySet().iterator(); i.hasNext();)
+				((Image)fImgMap.get(i.next())).dispose();
+			if (fDefaultImage != null)
+				fDefaultImage.dispose();
 			super.dispose();
 		}
 	}
@@ -123,11 +138,13 @@ public class CommandList {
 	private Text fFilterText;
 	private TreeViewer fTreeViewer;
 	private CommandTreeContentProvider fContentProvider;
+	private ICommandImageService fComImgServ;
 
 	public CommandList(CommandComposerPart cv, Composite parent, IDialogButtonCreator creator) {
 		fCSP = cv;
 		fToolkit = cv.getToolkit();
 		createTree(parent, creator);
+		fComImgServ = (ICommandImageService) PlatformUI.getWorkbench().getAdapter(ICommandImageService.class);
 	}
 	private void createTree(Composite parent, IDialogButtonCreator creator) {
 		Section section = fToolkit.createSection(parent, ExpandableComposite.SHORT_TITLE_BAR);
