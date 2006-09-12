@@ -17,6 +17,7 @@ import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
+import org.eclipse.pde.internal.ui.editor.text.PDEDefaultInformationControl;
 import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
@@ -102,9 +103,13 @@ public abstract class ExtensionAttributeRow {
 			public void mouseEnter(MouseEvent e) {
 			}
 			public void mouseExit(MouseEvent e) {
+				if (fIC instanceof PDEDefaultInformationControl && ((PDEDefaultInformationControl)fIC).isDisposed())
+					return;
 				fIC.setVisible(false);
 			}
 			public void mouseHover(MouseEvent e) {
+				if (fIC instanceof PDEDefaultInformationControl && ((PDEDefaultInformationControl)fIC).isDisposed())
+					return;
 				String text = getDescription(control);
 				if (text == null || text.trim().length() == 0)
 					return;

@@ -1,6 +1,5 @@
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
@@ -32,7 +31,7 @@ public abstract class PDETextHover implements ITextHoverExtension, ITextHover {
 	public static IInformationControlCreator getInformationControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, SWT.NONE, new HTMLTextPresenter(true), getTooltipAffordanceString());
+				return new PDEDefaultInformationControl(parent, SWT.NONE, new HTMLTextPresenter(true), getTooltipAffordanceString());
 			}
 		};
 	}
