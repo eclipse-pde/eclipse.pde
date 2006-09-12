@@ -55,6 +55,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String CommandDetails_clear;
 
+	public static String CommandDetails_commandResult;
+
 	public static String CommandDetails_copytooltip;
 
 	public static String CommandDetails_execError;
@@ -85,7 +87,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String CommandDetails_undefined;
 
-	public static String CommandList_filterName;
+	public static String CommandList_clearTooltip;
 
 	public static String CommandList_groupName;
 

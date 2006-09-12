@@ -24,12 +24,12 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public abstract class QueryControl {
 	
-	protected final CommandSerializerPart fCSP;
+	protected final CommandComposerPart fCSP;
 	protected final FormToolkit fToolkit;
 	protected Button fRadioButton;
 	protected Group fGroup;
 	
-	protected QueryControl(CommandSerializerPart csp, Composite parent) {
+	protected QueryControl(CommandComposerPart csp, Composite parent) {
 		fCSP = csp;
 		fToolkit = csp.getToolkit();
 		createGroup(parent);

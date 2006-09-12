@@ -6,6 +6,9 @@ import java.util.regex.PatternSyntaxException;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -15,6 +18,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.commands.CommandComposerPart.IDialogButtonCreator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -26,6 +30,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -111,18 +116,18 @@ public class CommandList {
 		return new String();
 	}
 	
-	private CommandSerializerPart fCSP;
+	private CommandComposerPart fCSP;
 	private FormToolkit fToolkit;
 	private Text fFilterText;
 	private TreeViewer fTreeViewer;
 	private CommandTreeContentProvider fContentProvider;
 
-	public CommandList(CommandSerializerPart cv, Composite parent) {
+	public CommandList(CommandComposerPart cv, Composite parent, IDialogButtonCreator creator) {
 		fCSP = cv;
 		fToolkit = cv.getToolkit();
-		createTree(parent);
+		createTree(parent, creator);
 	}
-	private void createTree(Composite parent) {
+	private void createTree(Composite parent, IDialogButtonCreator creator) {
 		Group commandGroup = new Group(parent, SWT.NONE);
 		commandGroup.setLayout(new GridLayout());
 		commandGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -142,24 +147,43 @@ public class CommandList {
 		fTreeViewer.addFilter(new WildcardFilter());
 		fTreeViewer.setInput(new Object());
 		fTreeViewer.addSelectionChangedListener(fCSP);
+		fTreeViewer.addSelectionChangedListener(creator.getButtonEnablementListener());
 	}
 	
 	private void createFilterText(Composite parent) {
-		Composite c = fCSP.createComposite(parent, GridData.FILL_HORIZONTAL, 1, true);
-		
-		Composite filterComp = fCSP.createComposite(c, GridData.FILL_HORIZONTAL, 2, false);
-		fToolkit.createLabel(filterComp, PDEUIMessages.CommandList_filterName, SWT.NONE);
-		fFilterText = fToolkit.createText(filterComp, "", SWT.BORDER); //$NON-NLS-1$
+		Composite c = fCSP.createComposite(parent, GridData.FILL_HORIZONTAL, 2, false);
+		fFilterText = fToolkit.createText(c, "", SWT.BORDER); //$NON-NLS-1$
 		fFilterText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fFilterText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				fTreeViewer.refresh();
-			}
-        });
 		fFilterText.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if (e.keyCode == SWT.ARROW_DOWN) fTreeViewer.getControl().setFocus();
             }
+        });
+		
+		ToolBar toolBar = new ToolBar(c, SWT.FLAT | SWT.HORIZONTAL);
+		fToolkit.adapt(toolBar, true, true);
+        ToolBarManager filterToolkbar = new ToolBarManager(toolBar);
+
+        final IAction clearTextAction = new Action("", IAction.AS_PUSH_BUTTON) {//$NON-NLS-1$
+            public void run() {
+            	fFilterText.setText(""); //$NON-NLS-1$
+            }
+        };
+
+        clearTextAction.setToolTipText(PDEUIMessages.CommandList_clearTooltip);
+        clearTextAction.setImageDescriptor(PDEPluginImages.DESC_CLEAR);
+        clearTextAction.setDisabledImageDescriptor(PDEPluginImages.DESC_DCLEAR);
+        clearTextAction.setEnabled(false);
+        
+        filterToolkbar.add(clearTextAction);
+        filterToolkbar.update(false);
+        
+        fFilterText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				fTreeViewer.refresh();
+				if (clearTextAction != null)
+					clearTextAction.setEnabled(fFilterText.getText().length() > 0);
+			}
         });
 	}
 	

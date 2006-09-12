@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.commands.CommandSerializerPart.IDialogButtonCreator;
+import org.eclipse.pde.internal.ui.commands.CommandComposerPart.IDialogButtonCreator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
@@ -63,7 +63,7 @@ public class CommandDetails {
 	private final ArrayList fValueParamList = new ArrayList();
 	private final ArrayList fTextParamList = new ArrayList();
 	
-	private CommandSerializerPart fCSP;
+	private CommandComposerPart fCSP;
 	private FormToolkit fToolkit;
 	private Command fSelectedCommand;
 	
@@ -78,7 +78,7 @@ public class CommandDetails {
 	private ImageHyperlink fCopyLink;
 	private ImageHyperlink fExecLink;
 
-	public CommandDetails(CommandSerializerPart cv, Composite parent, IDialogButtonCreator buttonCreator) {
+	public CommandDetails(CommandComposerPart cv, Composite parent, IDialogButtonCreator buttonCreator) {
 		fCSP = cv;
 		fToolkit = cv.getToolkit();
 		createCommandDetails(parent, buttonCreator);
@@ -95,7 +95,7 @@ public class CommandDetails {
 		
 		createBasicInfo(previewGroup);
 		
-		if (fCSP.getFilterType() == CommandSerializerPart.F_FILTER_NOT_SET)
+		if (fCSP.getFilterType() == CommandComposerPart.F_FILTER_NOT_SET)
 			createPreviewLabelComp(previewGroup);
 		createParameters(previewGroup);
 		if (buttonCreator != null)
@@ -171,7 +171,7 @@ public class CommandDetails {
 		fComPrev.setEditable(false);
 	}
 	
-	private ParameterizedCommand buildParameterizedCommand() {
+	protected ParameterizedCommand buildParameterizedCommand() {
 		
 		ArrayList list = new ArrayList();
 		for (Iterator i = fParameterToValue.keySet().iterator(); i.hasNext(); ) {
@@ -189,9 +189,17 @@ public class CommandDetails {
 		public void linkActivated(HyperlinkEvent e) {
 			ParameterizedCommand pCommand = buildParameterizedCommand();
 			try {
-				pCommand.executeWithChecks(null, null);
+				Object obj = pCommand.executeWithChecks(null, null);
+				if (obj != null)
+					MessageDialog.openInformation(
+							fComNameT.getShell(),
+							PDEUIMessages.CommandDetails_commandResult,
+							obj.toString());
 			} catch (CommandException ex) {
-				MessageDialog.openError(fComNameT.getShell(), PDEUIMessages.CommandDetails_execError, ex.toString());
+				MessageDialog.openError(
+						fComNameT.getShell(),
+						PDEUIMessages.CommandDetails_execError,
+						ex.toString());
 			}
 		}
 	}
@@ -207,7 +215,7 @@ public class CommandDetails {
 		}
 		int index;
 		boolean surroundWithMarkup = false;
-		if (fCSP.getFilterType() == CommandSerializerPart.F_FILTER_NOT_SET) {
+		if (fCSP.getFilterType() == CommandComposerPart.F_FILTER_NOT_SET) {
 			surroundWithMarkup = fSurroundCopyText.getSelection();
 			index = fFilterCombo.getSelectionIndex();
 		} else {

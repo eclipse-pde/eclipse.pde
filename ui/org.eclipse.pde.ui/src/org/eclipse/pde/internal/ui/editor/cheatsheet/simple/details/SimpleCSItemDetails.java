@@ -11,7 +11,6 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -25,9 +24,8 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.commands.CommandSerializerDialog;
-import org.eclipse.pde.internal.ui.commands.CommandSerializerPart;
-import org.eclipse.pde.internal.ui.commands.CommandSerializerDialog.CommandResult;
+import org.eclipse.pde.internal.ui.commands.CommandComposerDialog;
+import org.eclipse.pde.internal.ui.commands.CommandComposerPart;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSElementSection;
@@ -350,28 +348,29 @@ public class SimpleCSItemDetails extends SimpleCSAbstractDetails implements
 				}
 			}
 			public void browseButtonSelected(FormEntry entry) {
-				CommandSerializerDialog dialog = new CommandSerializerDialog(
+				CommandComposerDialog dialog = new CommandComposerDialog(
 						entry.getButton().getShell(),
-						CommandSerializerPart.F_CHEATSHEET_FILTER);	
+						CommandComposerPart.F_CHEATSHEET_FILTER);	
 				if (dialog.open() == Window.OK) {
 
-					CommandResult result = dialog.getCommand();
+					ParameterizedCommand result = dialog.getCommand();
 					if (result == null) {
 						return;
 					}
-					String serialization = result.getSerializedString();
-					String commandName = result.getCommandName();
-					HashMap parameters = result.getParameterMap();
-					if (PDETextHelper.isDefined(commandName)) {
-						fCommandEntry.setValue(commandName);
-					}
-					if (PDETextHelper.isDefined(serialization)) {
-						ISimpleCSCommand command = fItem.getModel().getFactory().createSimpleCSCommand(fItem);
-						command.setSerialization(serialization);
-						fItem.setExecutable(command);
-					}
-					// TODO: MP: Figure out why command is not being written back to file
-					updateCommandParameters(parameters);
+					// TODO: Mike, do your thing
+//					String serialization = result.getSerializedString();
+//					String commandName = result.getCommandName();
+//					HashMap parameters = result.getParameterMap();
+//					if (PDETextHelper.isDefined(commandName)) {
+//						fCommandEntry.setValue(commandName);
+//					}
+//					if (PDETextHelper.isDefined(serialization)) {
+//						ISimpleCSCommand command = fItem.getModel().getFactory().createSimpleCSCommand(fItem);
+//						command.setSerialization(serialization);
+//						fItem.setExecutable(command);
+//					}
+//					// TODO: MP: Figure out why command is not being written back to file
+//					updateCommandParameters(parameters);
 
 				}					
 			}

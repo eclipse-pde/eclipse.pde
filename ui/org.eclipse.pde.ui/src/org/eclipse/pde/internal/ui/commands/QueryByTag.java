@@ -25,7 +25,7 @@ public class QueryByTag extends QueryControl {
 	private Combo fTagsCombo;
 	private TagManager.Listener fTagManagerListener;
 	
-	public QueryByTag(CommandSerializerPart csp, Composite comp) {
+	public QueryByTag(CommandComposerPart csp, Composite comp) {
 		super(csp, comp);
 	}
 	

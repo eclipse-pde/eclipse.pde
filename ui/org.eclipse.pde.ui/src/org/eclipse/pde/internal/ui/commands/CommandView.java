@@ -19,10 +19,10 @@ import org.eclipse.ui.part.ViewPart;
 
 public class CommandView extends ViewPart implements ISelectionChangedListener {
 	
-	private CommandSerializerPart fCSP;
+	private CommandComposerPart fCSP;
 	
 	public void createPartControl(Composite parent) {
-		fCSP = new CommandSerializerPart();
+		fCSP = new CommandComposerPart();
 		fCSP.createPartControl(parent);
 	}
 	

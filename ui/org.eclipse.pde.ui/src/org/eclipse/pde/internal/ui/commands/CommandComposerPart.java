@@ -2,6 +2,7 @@ package org.eclipse.pde.internal.ui.commands;
 
 import java.util.HashMap;
 
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -18,7 +19,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-public class CommandSerializerPart implements ISelectionChangedListener {
+public class CommandComposerPart implements ISelectionChangedListener {
 	
 	public static final int F_FILTER_NOT_SET = CommandCopyFilter.indexOf(CommandCopyFilter.NONE);
 	public static final int F_HELP_FILTER = CommandCopyFilter.indexOf(CommandCopyFilter.HELP);
@@ -35,8 +36,22 @@ public class CommandSerializerPart implements ISelectionChangedListener {
 	private IDialogButtonCreator fNotifier;
 	private int fFilterType = F_FILTER_NOT_SET;
 	
+	/**
+	 * Any Dialogs that use this UI Part should implement this interface.
+	 */
 	protected interface IDialogButtonCreator {
+		/**
+		 * Create the neccesary buttons for the dialog, the parent Composite
+		 * will be right below the details group.
+		 * @param parent The parent composite of the buttons
+		 */
 		public void createButtons(Composite parent);
+		/**
+		 * Returns a listener which sets the enabled state of the buttons 
+		 * created.  This listener will be hooked to the command list tree.
+		 * @return an ISelectionChangedListener
+		 */
+		public ISelectionChangedListener getButtonEnablementListener();
 	}
 	
 	private static ICommandService initCommandService() {
@@ -72,7 +87,7 @@ public class CommandSerializerPart implements ISelectionChangedListener {
 		SashForm sashForm = new SashForm(body, SWT.HORIZONTAL);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		fCommandList = new CommandList(this, sashForm);
+		fCommandList = new CommandList(this, sashForm, fNotifier);
 		fCommandDetails = new CommandDetails(this, sashForm, fNotifier);
 		
 		fToolkit.adapt(sashForm, true, true);
@@ -132,6 +147,10 @@ public class CommandSerializerPart implements ISelectionChangedListener {
 			fCommandDetails.showDetailsFor(((IStructuredSelection)selection).getFirstElement());
 		else
 			fCommandDetails.showDetailsFor(null);
+	}
+
+	public ParameterizedCommand getParameterizedCommand() {
+		return fCommandDetails.buildParameterizedCommand();
 	}
 	
 }

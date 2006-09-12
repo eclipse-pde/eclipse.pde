@@ -39,7 +39,7 @@ public class QueryByObjectSelection extends QueryControl {
 	private SelectionTracker fSelectionTracker;
 	private Object fObjectSelection;
 	
-	public QueryByObjectSelection(CommandSerializerPart csp, Composite comp) {
+	public QueryByObjectSelection(CommandComposerPart csp, Composite comp) {
 		super(csp, comp);
 	}
 	
