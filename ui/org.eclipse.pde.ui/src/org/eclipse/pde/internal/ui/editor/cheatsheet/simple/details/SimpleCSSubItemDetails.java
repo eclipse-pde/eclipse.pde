@@ -293,20 +293,26 @@ public class SimpleCSSubItemDetails extends SimpleCSAbstractDetails {
 					if (result == null) {
 						return;
 					}
-					// TODO: Mike, do your thing
-//					String serialization = result.getSerializedString();
-//					String commandName = result.getCommandName();
-//					HashMap parameters = result.getParameterMap();
-//					if (PDETextHelper.isDefined(commandName)) {
-//						fCommandEntry.setValue(commandName);
-//					}
-//					if (PDETextHelper.isDefined(serialization)) {
-//						ISimpleCSCommand command = fSubItem.getModel().getFactory().createSimpleCSCommand(fSubItem);
-//						command.setSerialization(serialization);
-//						fSubItem.setExecutable(command);
-//					}
-//					// TODO: MP: Figure out why command is not being written back to file
-//					updateCommandParameters(parameters);
+
+					try {
+						String serialization = result.serialize();
+						String commandName = result.getCommand().getName();
+						Map parameters = result.getParameterMap();
+						if (PDETextHelper.isDefined(commandName)) {
+							fCommandEntry.setValue(commandName);
+						}
+						if (PDETextHelper.isDefined(serialization)) {
+							ISimpleCSCommand command = fSubItem.getModel()
+									.getFactory().createSimpleCSCommand(fSubItem);
+							command.setSerialization(serialization);
+							fSubItem.setExecutable(command);
+						}
+						updateCommandParameters(parameters);
+					} catch (NotDefinedException e) {
+						// TODO: MP: Auto-generated catch block
+						e.printStackTrace();
+					}
+
 
 				}					
 			}
