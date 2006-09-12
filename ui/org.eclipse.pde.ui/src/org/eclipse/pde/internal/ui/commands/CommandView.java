@@ -31,7 +31,8 @@ public class CommandView extends ViewPart implements ISelectionChangedListener {
 	}
 	
 	public ScrolledForm getForm() {
-		return fCSP.getForm();
+		return null;
+//		return fCSP.getForm();
 	}
 	
 	public TagManager getTagManager() {

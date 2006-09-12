@@ -24,10 +24,10 @@ public class CommandComposerDialog extends Dialog implements IDialogButtonCreato
 	
 	public CommandComposerDialog(Shell parentShell, int filterType) {
 		super(parentShell);
-		setShellStyle(SWT.MODELESS | SWT.DIALOG_TRIM);
+		setShellStyle(SWT.MODELESS | SWT.SHELL_TRIM | SWT.BORDER);
 		fCSP = new CommandComposerPart();
 		fCSP.setFilterType(filterType);
-		fCSP.setNotifier(this);
+		fCSP.setButtonCreator(this);
 	}
 	
 	protected void configureShell(Shell newShell) {
@@ -36,8 +36,7 @@ public class CommandComposerDialog extends Dialog implements IDialogButtonCreato
 	}
 	
 	protected Control createDialogArea(Composite parent) {
-		fCSP.createPartControl(parent);
-		Control c = fCSP.getForm().getBody();
+		Control c = fCSP.createPartControl(parent);
 		applyDialogFont(c);
 		return c;
 	}

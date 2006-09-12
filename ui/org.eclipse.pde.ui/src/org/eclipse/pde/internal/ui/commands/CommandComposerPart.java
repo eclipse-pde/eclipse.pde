@@ -7,7 +7,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridData;
@@ -17,7 +16,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class CommandComposerPart implements ISelectionChangedListener {
 	
@@ -30,10 +28,9 @@ public class CommandComposerPart implements ISelectionChangedListener {
 	
 	private final TagManager fTagManager = new TagManager();
 	private FormToolkit fToolkit;
-	private ScrolledForm fForm;
 	private CommandList fCommandList;
 	private CommandDetails fCommandDetails;
-	private IDialogButtonCreator fNotifier;
+	private IDialogButtonCreator fCreator;
 	private int fFilterType = F_FILTER_NOT_SET;
 	
 	/**
@@ -70,36 +67,32 @@ public class CommandComposerPart implements ISelectionChangedListener {
 		return fFilterType;
 	}
 	
-	public void setNotifier(IDialogButtonCreator notifier) {
-		fNotifier = notifier;
+	public void setButtonCreator(IDialogButtonCreator creator) {
+		fCreator = creator;
 	}
 	
 	
-	public void createPartControl(Composite parent) {
+	public Composite createPartControl(Composite parent) {
 		fToolkit = new FormToolkit(parent.getDisplay());
 		
-		fForm = fToolkit.createScrolledForm(parent);
-		fForm.setText(PDEUIMessages.CommandSerializerPart_name);
-		Composite body = fForm.getBody();
+		Composite body = createComposite(parent);
+		
 		body.setLayout(new GridLayout());
 		body.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		SashForm sashForm = new SashForm(body, SWT.HORIZONTAL);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		fCommandList = new CommandList(this, sashForm, fNotifier);
-		fCommandDetails = new CommandDetails(this, sashForm, fNotifier);
+		fCommandList = new CommandList(this, sashForm, fCreator);
+		fCommandDetails = new CommandDetails(this, sashForm, fCreator);
 		
 		sashForm.setWeights(new int[] {4,5});
 		fToolkit.adapt(sashForm, true, true);
+		return body;
 	}
 	
 	public FormToolkit getToolkit() {
 		return fToolkit;
-	}
-	
-	public ScrolledForm getForm() {
-		return fForm;
 	}
 	
 	public ICommandService getCommandService() {
