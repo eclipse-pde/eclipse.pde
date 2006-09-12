@@ -92,7 +92,8 @@ public class SimpleCSSharedUIFactory {
 		GridLayout layout = null;
 		
 		// Create help section
-		helpSection = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE);
+		helpSection = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
+		// | ExpandableComposite.TWISTIE
 		helpSection.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		helpSection.marginHeight = 5;
 		helpSection.marginWidth = 5;

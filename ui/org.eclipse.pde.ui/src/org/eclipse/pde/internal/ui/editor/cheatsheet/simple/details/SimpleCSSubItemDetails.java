@@ -179,7 +179,8 @@ public class SimpleCSSubItemDetails extends SimpleCSAbstractDetails {
 		GridLayout layout = null;		
 		
 		// Create command section
-		fCommandSection = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE);
+		fCommandSection = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
+		//| ExpandableComposite.TWISTIE
 		fCommandSection.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		fCommandSection.marginHeight = 5;
 		fCommandSection.marginWidth = 5;

@@ -62,7 +62,8 @@ public class SimpleCSBlock extends PDEMasterDetailsBlock implements
 	 * @see org.eclipse.ui.forms.MasterDetailsBlock#registerPages(org.eclipse.ui.forms.DetailsPart)
 	 */
 	protected void registerPages(DetailsPart detailsPart) {
-		// We Need to store current page in this object		
+		// TODO: MP: Set limit to 4 and add update methods accordingly to reuse
+		// the section
 		detailsPart.setPageLimit(0); 
 		detailsPart.setPageProvider(this);
 	}
