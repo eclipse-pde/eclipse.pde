@@ -387,6 +387,9 @@ public class SimpleCSItemDetails extends SimpleCSAbstractDetails implements
 	 * @param parameters
 	 */
 	private void updateCommandParameters(Map parameters) {
+		
+		fCommandTable.clearAll();
+		
 		if ((parameters != null) && 
 				(parameters.isEmpty() == false)) {
 

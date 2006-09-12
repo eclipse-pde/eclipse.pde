@@ -324,6 +324,9 @@ public class SimpleCSSubItemDetails extends SimpleCSAbstractDetails {
 	 * @param parameters
 	 */
 	private void updateCommandParameters(Map parameters) {
+		
+		fCommandTable.clearAll();
+		
 		if ((parameters != null) && 
 				(parameters.isEmpty() == false)) {
 
