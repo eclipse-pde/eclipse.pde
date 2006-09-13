@@ -9,25 +9,29 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.pde.internal.core.icheatsheet.simple;
+package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details;
+
+import org.eclipse.swt.widgets.Composite;
 
 /**
- * ISimpleCSIntro
+ * ISimpleCSDetails
  *
  */
-public interface ISimpleCSIntro extends ISimpleCSObject, ISimpleCSHelpObject {
+public interface ISimpleCSDetails {
 
 	/**
-	 * Element:  description
-	 * @return
+	 * @param parent
 	 */
-	public ISimpleCSDescription getDescription();
+	public void createDetails(Composite parent);
 	
 	/**
-	 * Element:  description
-	 * @param description
+	 * 
 	 */
-	public void setDescription(ISimpleCSDescription description);
+	public void updateFields();
 	
+	/**
+	 * 
+	 */
+	public void hookListeners();
 	
 }

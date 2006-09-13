@@ -57,7 +57,6 @@ public class SimpleCSDetails extends SimpleCSAbstractDetails {
 		//Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
 		GridData data = null;
 		boolean paintedBorder = toolkit.getBorderStyle() != SWT.BORDER;
-		//Label label = null;
 		
 		// Set parent layout
 		GridLayout layout = new GridLayout();

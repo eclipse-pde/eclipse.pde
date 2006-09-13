@@ -9,38 +9,36 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details;
-
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Text;
+package org.eclipse.pde.internal.core.icheatsheet.simple;
 
 /**
- * ISimpleCSHelpDetails
+ * ISimpleCSHelpObject
  *
  */
-public interface ISimpleCSHelpDetails {
+public interface ISimpleCSHelpObject extends ISimpleCSObject {
 
-	// TODO: MP: Determine if having this interface here is good style
+	/**
+	 * Attribute:  contextId
+	 * @return
+	 */
+	public String getContextId();
 	
 	/**
+	 * Attribute:  contextId
 	 * @param contextId
 	 */
-	public void setContextId(Text contextId);
+	public void setContextId(String contextId);
 	
 	/**
+	 * Attribute:  href
+	 * @return
+	 */
+	public String getHref();
+	
+	/**
+	 * Attribute:  href
 	 * @param href
 	 */
-	public void setHref(Text href);
-	
-	/**
-	 * @param contextIdRadio
-	 */
-	public void setContextIdRadio(Button contextIdRadio);
-	
-	/**
-	 * @param hrefRadio
-	 */
-	public void setHrefRadio(Button hrefRadio);
-	
+	public void setHref(String href);	
 	
 }

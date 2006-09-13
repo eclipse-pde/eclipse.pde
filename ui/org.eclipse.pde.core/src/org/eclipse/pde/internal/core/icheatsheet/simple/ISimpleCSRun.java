@@ -12,22 +12,21 @@
 package org.eclipse.pde.internal.core.icheatsheet.simple;
 
 /**
- * ISimpleCSIntro
+ * ISimpleCSRun
  *
  */
-public interface ISimpleCSIntro extends ISimpleCSObject, ISimpleCSHelpObject {
+public interface ISimpleCSRun extends ISimpleCSObject {
 
 	/**
-	 * Element:  description
+	 * Elements:  action, command, perform-when
 	 * @return
 	 */
-	public ISimpleCSDescription getDescription();
-	
+	public ISimpleCSRunContainerObject getExecutable();	
+
 	/**
-	 * Element:  description
-	 * @param description
+	 * Elements:  action, command, perform-when
+	 * @param executable
 	 */
-	public void setDescription(ISimpleCSDescription description);
-	
+	public void setExecutable(ISimpleCSRunContainerObject executable);	
 	
 }

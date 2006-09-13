@@ -15,7 +15,7 @@ package org.eclipse.pde.internal.core.icheatsheet.simple;
  * ISimpleCSSubItem
  *
  */
-public interface ISimpleCSSubItem extends ISimpleCSSubItemObject {
+public interface ISimpleCSSubItem extends ISimpleCSSubItemObject, ISimpleCSRun {
 
 	/**
 	 * Attribute: label
@@ -52,17 +52,5 @@ public interface ISimpleCSSubItem extends ISimpleCSSubItemObject {
 	 * @param when
 	 */
 	public void setWhen(String when);		
-
-	/**
-	 * Elements:  action, command, perform-when
-	 * @return
-	 */
-	public ISimpleCSRunContainerObject getExecutable();	
-
-	/**
-	 * Elements:  action, command, perform-when
-	 * @param executable
-	 */
-	public void setExecutable(ISimpleCSRunContainerObject executable);	
 	
 }

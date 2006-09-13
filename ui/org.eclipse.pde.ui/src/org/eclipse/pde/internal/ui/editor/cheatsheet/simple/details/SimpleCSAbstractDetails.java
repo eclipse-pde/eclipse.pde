@@ -19,20 +19,25 @@ import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSElementSecti
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
  * SimpleCSAbstractDetails
  *
  */
-public abstract class SimpleCSAbstractDetails extends PDEDetails {
+public abstract class SimpleCSAbstractDetails extends PDEDetails implements
+		ISimpleCSDetails {
 
 	private SimpleCSElementSection fElementSection;
+	
+	protected FormToolkit fToolkit;
 	
 	/**
 	 * 
 	 */
 	public SimpleCSAbstractDetails(SimpleCSElementSection elementSection) {
 		fElementSection = elementSection;
+		fToolkit = null;
 	}
 
 	/* (non-Javadoc)
@@ -111,5 +116,11 @@ public abstract class SimpleCSAbstractDetails extends PDEDetails {
 	public boolean isEditableElement() {
 		return fElementSection.isEditable();
 	}	
-
+	
+	/**
+	 * @return
+	 */
+	public FormToolkit getToolkit() {
+		return fToolkit;
+	}
 }

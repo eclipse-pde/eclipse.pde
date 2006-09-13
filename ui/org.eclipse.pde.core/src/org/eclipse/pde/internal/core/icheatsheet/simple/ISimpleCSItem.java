@@ -15,7 +15,7 @@ package org.eclipse.pde.internal.core.icheatsheet.simple;
  * ISimpleCSItem
  *
  */
-public interface ISimpleCSItem extends ISimpleCSObject {
+public interface ISimpleCSItem extends ISimpleCSObject, ISimpleCSHelpObject, ISimpleCSRun {
 
 	/**
 	 * Element:  description
@@ -64,42 +64,6 @@ public interface ISimpleCSItem extends ISimpleCSObject {
 	 * @param skip
 	 */
 	public void setSkip(boolean skip);		
-
-	/**
-	 * Attribute:  contextId
-	 * @return
-	 */
-	public String getContextId();
-	
-	/**
-	 * Attribute:  contextId
-	 * @param contextId
-	 */
-	public void setContextId(String contextId);
-	
-	/**
-	 * Attribute:  href
-	 * @return
-	 */
-	public String getHref();
-	
-	/**
-	 * Attribute:  href
-	 * @param href
-	 */
-	public void setHref(String href);	
-	
-	/**
-	 * Elements:  action, command, perform-when
-	 * @return
-	 */
-	public ISimpleCSRunContainerObject getExecutable();	
-
-	/**
-	 * Elements:  action, command, perform-when
-	 * @param executable
-	 */
-	public void setExecutable(ISimpleCSRunContainerObject executable);	
 
 	/**
 	 * Elements:  subitem, repeated-subitem, conditional-subitem
