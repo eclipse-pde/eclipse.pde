@@ -505,4 +505,23 @@ public class SimpleCSElementSection extends TreeSection {
 		}		
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#setFormInput(java.lang.Object)
+	 */
+	public boolean setFormInput(Object object) {
+		// This method allows the outline view to select items in the tree
+		// Invoked by
+		// org.eclipse.ui.forms.editor.IFormPage.selectReveal(Object object)
+		if (object instanceof ISimpleCSObject) {
+			// Select the item in the tree
+			fTreeViewer.setSelection(new StructuredSelection(object), true);
+			// Verify that something was actually selected
+			ISelection selection = fTreeViewer.getSelection();
+			if ((selection != null) && 
+					(selection.isEmpty() == false)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

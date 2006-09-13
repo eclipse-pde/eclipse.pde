@@ -30,7 +30,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  */
 public class SimpleCSPage extends PDEFormPage implements IModelChangedListener {
 
-	public static final String PAGE_ID = "main"; //$NON-NLS-1$
+	public static final String PAGE_ID = "simpleCSPage"; //$NON-NLS-1$
 	
 	private SimpleCSBlock fBlock;
 	
