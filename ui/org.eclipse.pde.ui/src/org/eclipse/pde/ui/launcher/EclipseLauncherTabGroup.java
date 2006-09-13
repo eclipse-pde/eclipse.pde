@@ -19,9 +19,9 @@ import org.eclipse.pde.internal.ui.launcher.AbstractPDELaunchConfigurationTabGro
 
 public class EclipseLauncherTabGroup extends AbstractPDELaunchConfigurationTabGroup {
 
-	/**
-	 * @see ILaunchConfigurationTabGroup#createTabs(ILaunchConfigurationDialog,
-	 *      String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = null;

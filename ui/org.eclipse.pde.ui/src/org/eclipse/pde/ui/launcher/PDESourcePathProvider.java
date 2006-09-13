@@ -37,8 +37,9 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 
 	public static final String ID = "org.eclipse.pde.ui.workbenchClasspathProvider"; //$NON-NLS-1$
 	
-	/**
-	 * @see org.eclipse.jdt.launching.IRuntimeClasspathProvider#computeUnresolvedClasspath(org.eclipse.debug.core.ILaunchConfiguration)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.StandardSourcePathProvider#computeUnresolvedClasspath(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public IRuntimeClasspathEntry[] computeUnresolvedClasspath(
 			ILaunchConfiguration configuration) throws CoreException {
@@ -90,9 +91,10 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 		IProject[] projects = LaunchPluginValidator.getAffectedProjects(configuration);
 		return PDEPlugin.getWorkspace().computeProjectOrder(projects).projects;
 	}
-	/**
-	 * @see IRuntimeClasspathProvider#resolveClasspath(IRuntimeClasspathEntry[],
-	 *      ILaunchConfiguration)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.StandardSourcePathProvider#resolveClasspath(org.eclipse.jdt.launching.IRuntimeClasspathEntry[], org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public IRuntimeClasspathEntry[] resolveClasspath(
 			IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration)

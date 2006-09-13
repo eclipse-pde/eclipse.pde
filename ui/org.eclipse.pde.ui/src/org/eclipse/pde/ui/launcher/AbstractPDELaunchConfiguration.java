@@ -382,7 +382,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * Creates VMRunnerConfiguration used for launching Runtime.  OSGi Frameworks are encouraged to override this method.
 	 *  
 	 * @param configuration
-	 * @return
+	 * @return a VM runner configuration
 	 * @throws CoreException 
 	 */
 	public VMRunnerConfiguration createVMRunnerConfiguration(ILaunchConfiguration configuration) throws CoreException {
