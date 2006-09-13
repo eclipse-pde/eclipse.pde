@@ -11,19 +11,21 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions;
 
-import org.eclipse.jface.action.Action;
+import java.util.HashSet;
+
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
  * SimpleCSAddStepAction
  *
  */
-public class SimpleCSAddSubStepAction extends Action {
+public class SimpleCSAddSubStepAction extends SimpleCSAbstractAdd {
 
 	private ISimpleCSObject fObject;
 	
@@ -57,15 +59,42 @@ public class SimpleCSAddSubStepAction extends Action {
 		
 		// Element: subitem
 		ISimpleCSSubItem subitem = factory.createSimpleCSSubItem(fObject);
-		subitem.setLabel(PDEUIMessages.SimpleCSAddSubStepAction_1);
 		// Set on the proper parent object
 		if (fObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
-			((ISimpleCSItem)fObject).addSubItem(subitem);
+			ISimpleCSItem item = (ISimpleCSItem)fObject;
+			subitem.setLabel(generateSubItemLabel(item, PDEUIMessages.SimpleCSAddSubStepAction_1));
+
+			item.addSubItem(subitem);
 		} else if (fObject.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) {
-			// TODO: MP: Do for conditional subitem
+			// Not supported by editor
 		} else if (fObject.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) {
-			// TODO: MP: Do for repeated subitem
+			// Note supported by editor
 		}
 		
 	}
+	
+	/**
+	 * @return
+	 */
+	private String generateSubItemLabel(ISimpleCSItem item, String base) {
+		StringBuffer result = new StringBuffer(base);
+		ISimpleCSSubItemObject[] subitems = item.getSubItems();
+		// Used to track auto-generated numbers used
+		HashSet set = new HashSet();
+
+		// Linear search O(n).  
+		// Performance hit unnoticeable because number of items per cheatsheet
+		// should be minimal.
+		for (int i = 0; i < subitems.length; i++) {
+			ISimpleCSSubItemObject object = subitems[i];
+			if (object.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
+				ISimpleCSSubItem subitem = (ISimpleCSSubItem)object;
+				compareTitleWithBase(base, set, subitem.getLabel());
+			}
+		}
+		// Add an auto-generated number
+		addNumberToBase(result, set);
+		
+		return result.toString();
+	}	
 }

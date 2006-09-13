@@ -11,7 +11,8 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions;
 
-import org.eclipse.jface.action.Action;
+import java.util.HashSet;
+
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
@@ -22,7 +23,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
  * SimpleCSAddStepAction
  *
  */
-public class SimpleCSAddStepAction extends Action {
+public class SimpleCSAddStepAction extends SimpleCSAbstractAdd {
 
 	private ISimpleCS fCheatsheet;
 	
@@ -51,7 +52,7 @@ public class SimpleCSAddStepAction extends Action {
 
 		// Element: item
 		ISimpleCSItem item = factory.createSimpleCSItem(fCheatsheet);
-		item.setTitle(PDEUIMessages.SimpleCheatSheetCreationOperation_1);
+		item.setTitle(generateItemTitle(PDEUIMessages.SimpleCheatSheetCreationOperation_1));
 		// Element: description
 		ISimpleCSDescription description = factory.createSimpleCSDescription(item);
 		description.setContent(PDEUIMessages.SimpleCheatSheetCreationOperation_2);
@@ -59,4 +60,29 @@ public class SimpleCSAddStepAction extends Action {
 		// TODO: MP: Can configure to add at a specific index
 		fCheatsheet.addItem(item);
 	}
+	
+	/**
+	 * @return
+	 */
+	private String generateItemTitle(String base) {
+		StringBuffer result = new StringBuffer(base);
+		ISimpleCSItem[] items = fCheatsheet.getItems();
+		// Used to track auto-generated numbers used
+		HashSet set = new HashSet();
+
+		// Linear search O(n).  
+		// Performance hit unnoticeable because number of items per cheatsheet
+		// should be minimal.
+		for (int i = 0; i < items.length; i++) {
+			ISimpleCSItem item = items[i];
+			compareTitleWithBase(base, set, item.getTitle());
+		}
+		// Add an auto-generated number
+		addNumberToBase(result, set);
+		
+		return result.toString();
+	}
+
+
+	
 }
