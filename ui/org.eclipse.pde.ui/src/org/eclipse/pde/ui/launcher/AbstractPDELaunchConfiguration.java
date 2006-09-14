@@ -12,10 +12,7 @@ package org.eclipse.pde.ui.launcher;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -31,17 +28,12 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
-import org.eclipse.pde.internal.ui.launcher.OSGiBundleBlock;
 import org.eclipse.pde.internal.ui.launcher.VMHelper;
 
 /**
@@ -74,7 +66,8 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 				return;
 			}
 	
-			VMRunnerConfiguration runnerConfig = createVMRunnerConfiguration(configuration);
+			VMRunnerConfiguration runnerConfig =  new VMRunnerConfiguration(
+												getMainClass(), getClasspath(configuration));
 			runnerConfig.setVMArguments(getVMArguments(configuration));
 			runnerConfig.setProgramArguments(programArgs);
 			runnerConfig.setWorkingDirectory(getWorkingDirectory(configuration).getAbsolutePath());
@@ -328,67 +321,13 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	}
 	
 	/**
-	 * Returns a map of workspace bundles
+	 * Returns the fully-qualified name of the class to launch. 
 	 * 
-	 * @param configuration
-	 * @return workspace bundles
+	 * @return the fully-qualified name of the class to launch.  Must not return <code>null</code>. 
+	 * @since 3.3
 	 */
-	public Map getWorkspaceBundles(ILaunchConfiguration configuration) {
-		try {
-			return OSGiBundleBlock.retrieveWorkspaceMap(configuration);
-		} catch (CoreException e) {
-			PDECore.log(e);
-			return Collections.EMPTY_MAP;
-		}
-	}
-	
-	/**
-	 * Returns a map of target bundles
-	 * 
-	 * @param configuration
-	 * @return target bundles
-	 */
-	public Map getTargetBundles(ILaunchConfiguration configuration) {
-		return OSGiBundleBlock.retrieveTargetMap(configuration);
-	}
-	
-	public Map getBundlesToRun(Map workspace, Map target) throws CoreException {
-		Map plugins = new TreeMap();
-		Iterator iter = workspace.keySet().iterator();
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		while (iter.hasNext()) {
-			String id = iter.next().toString();
-			IPluginModelBase model = manager.findModel(id);
-			if (model != null && model.getUnderlyingResource() != null) {
-				plugins.put(id, model);
-			}
-		}
-			
-		iter = target.keySet().iterator();
-		while (iter.hasNext()) {
-			String id = iter.next().toString();
-			if (!plugins.containsKey(id)) {
-				ModelEntry entry = manager.findEntry(id);
-				if (entry != null && entry.getExternalModel() != null) {
-					plugins.put(id, entry.getExternalModel());
-				}
-			}
-		}
-		
-		return plugins;
-	}
-	
-	/**
-	 * Creates VMRunnerConfiguration used for launching Runtime.  OSGi Frameworks are encouraged to override this method.
-	 *  
-	 * @param configuration
-	 * @return a VM runner configuration
-	 * @throws CoreException 
-	 */
-	public VMRunnerConfiguration createVMRunnerConfiguration(ILaunchConfiguration configuration) throws CoreException {
-		return new VMRunnerConfiguration(
-				"org.eclipse.core.launcher.Main",  //$NON-NLS-1$
-				getClasspath(configuration));
+	protected String getMainClass() {
+		return "org.eclipse.core.launcher.Main"; //$NON-NLS-1$
 	}
 
 }

@@ -13,9 +13,11 @@ package org.eclipse.pde.ui.launcher;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -29,10 +31,14 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.ExternalModelManager;
+import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
+import org.eclipse.pde.internal.ui.launcher.OSGiBundleBlock;
 import org.eclipse.pde.internal.ui.launcher.PluginValidationDialog;
 import org.eclipse.pde.internal.ui.launcher.PluginValidationOperation;
 import org.eclipse.swt.widgets.Display;
@@ -180,6 +186,69 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		} finally {
 			monitor.done();
 		}
+	}
+	
+	/**
+	 * Returns a map of workspace bundles
+	 * 
+	 * @param configuration
+	 * @return workspace bundles
+	 * 
+	 * @since 3.3
+	 */
+	public Map getWorkspaceBundles(ILaunchConfiguration configuration) {
+		try {
+			return OSGiBundleBlock.retrieveWorkspaceMap(configuration);
+		} catch (CoreException e) {
+			PDECore.log(e);
+			return Collections.EMPTY_MAP;
+		}
+	}
+	
+	/**
+	 * Returns a map of target bundles
+	 * 
+	 * @param configuration
+	 * @return target bundles
+	 * 
+	 * @since 3.3
+	 */
+	public Map getTargetBundles(ILaunchConfiguration configuration) {
+		return OSGiBundleBlock.retrieveTargetMap(configuration);
+	}
+	
+	/**
+	 * 
+	 * @param workspace
+	 * @param target
+	 * @return
+	 * @throws CoreException
+	 * 
+	 * @since 3.3
+	 */
+	public Map getBundlesToRun(Map workspace, Map target) throws CoreException {
+		Map plugins = new TreeMap();
+		Iterator iter = workspace.keySet().iterator();
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		while (iter.hasNext()) {
+			String id = iter.next().toString();
+			IPluginModelBase model = manager.findModel(id);
+			if (model != null && model.getUnderlyingResource() != null) {
+				plugins.put(id, model);
+			}
+		}
+			
+		iter = target.keySet().iterator();
+		while (iter.hasNext()) {
+			String id = iter.next().toString();
+			if (!plugins.containsKey(id)) {
+				ModelEntry entry = manager.findEntry(id);
+				if (entry != null && entry.getExternalModel() != null) {
+					plugins.put(id, entry.getExternalModel());
+				}
+			}
+		}		
+		return plugins;
 	}
 
 }

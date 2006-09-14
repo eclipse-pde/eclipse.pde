@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * A launch configuration tab that lets the user customize the list of bundles to launch with,
+ * A launch configuration tab that customizes the list of bundles to launch with,
  * their start level and their auto-start attributes.
  * <p>
  * This class may be instantiated. This class is not intended to be subclassed by clients.
@@ -38,10 +38,7 @@ public class BundlesTab extends AbstractLauncherTab {
 
 	private Image fImage;
 	private OSGiBundleBlock fPluginBlock;
-	
 	private OSGiFrameworkBlock fFrameworkBlock;
-	private boolean fUpdateRequired;
-	private boolean fInitializing = false;
 
 	public BundlesTab() {
 		fImage = PDEPluginImages.DESC_REQ_PLUGINS_OBJ.createImage();
@@ -49,8 +46,8 @@ public class BundlesTab extends AbstractLauncherTab {
 		fFrameworkBlock = new OSGiFrameworkBlock(this);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Dispose images
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	public void dispose() {
@@ -82,14 +79,8 @@ public class BundlesTab extends AbstractLauncherTab {
 	 */
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
-			fInitializing = true;
 			fFrameworkBlock.initializeFrom(config);
 			fPluginBlock.initializeFrom(config);
-			fInitializing = false;
-			if (fUpdateRequired) {
-				fUpdateRequired = false;
-				updateLaunchConfigurationDialog();
-			}
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
 		}
@@ -128,15 +119,6 @@ public class BundlesTab extends AbstractLauncherTab {
 		return fImage;
 	}
 
-	/**
-	 * Returns the default start level for the launch configuration
-	 * 
-	 * @return the default start level
-	 */
-	public int getDefaultStartLevel() {
-		return fFrameworkBlock.getDefaultStartLevel();
-	}
-
 	/*
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
@@ -149,13 +131,6 @@ public class BundlesTab extends AbstractLauncherTab {
 	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validateTab()
 	 */
 	public void validateTab() {
-	}
-
-	public void updateLaunchConfigurationDialog() {
-		if (!fInitializing)
-			super.updateLaunchConfigurationDialog();
-		else 
-			fUpdateRequired = true;
 	}
 
 }

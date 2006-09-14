@@ -26,8 +26,34 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
+/**
+ * An abstract class subclassed by the Eclipse Application and OSGi Framework launch shortcuts.
+ * <p>
+ * This class may be subclassed by clients.
+ * </p>
+ * @since 3.3
+ */
 public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 
+	/**
+	 * Launches the application in the specified mode.
+	 * 
+	 * This method first tries to locate existing launch configurations that are suitable
+	 * for the application or framework being launched.
+	 * <p>
+	 * <ul>
+	 * <li>If none are found, a new launch configuration is created and initialized</li>
+	 * <li>If one is found, it is launched automatically</li>
+	 * <li>If more than one is found, a selection dialog is presented to the user and the chosen
+	 * one will be launched</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param mode 
+	 * 			mode of launch (run, debug or profile)
+	 * 
+	 * @see org.eclipse.debug.core.ILaunchManager
+	 */
 	protected void launch(String mode) {
 		ILaunchConfiguration[] configs = getLaunchConfigurations();
 		ILaunchConfiguration configuration = null;
@@ -43,7 +69,13 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 			DebugUITools.launch(configuration, mode);		
 	}
 	
-	protected ILaunchConfiguration[] getLaunchConfigurations() {
+	/**
+	 * Returns a list of existing launch configurations that are suitable to launch to selected
+	 * application or framework.
+	 * 
+	 * @return an array of launch configurations
+	 */
+	private ILaunchConfiguration[] getLaunchConfigurations() {
 		ArrayList result = new ArrayList();
 		try {
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
@@ -59,6 +91,16 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 		return (ILaunchConfiguration[]) result.toArray(new ILaunchConfiguration[result.size()]);
 	}
 
+	/**
+	 * Display to the user a list of matching existing launch configurations and return the user's selection.
+	 * 
+	 * @param configs  
+	 * 			an array of matching existing launch configurations
+	 * @param mode 
+	 * 			mode of launch
+	 * @return
+	 * 			the launch configuration selected by the user or <code>null</code> if Cancel was pressed
+	 */
 	private ILaunchConfiguration chooseConfiguration(ILaunchConfiguration[] configs, String mode) {
 		IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), labelProvider);
@@ -75,6 +117,11 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 		return (result == Window.OK) ? (ILaunchConfiguration)dialog.getFirstResult() : null;
 	}
 	
+	/**
+	 * Create, initialize and return a new launch configuration of the given type
+	 * 
+	 * @return a new, properly-initialized launch configuration 
+	 */
 	private ILaunchConfiguration createNewConfiguration() {
 		try {
 			ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
@@ -89,10 +136,36 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 		return null;
 	}
 	
+	/**
+	 * Initialize launch attributes on the new launch configuration.
+	 * Must be overridden by subclasses.
+	 * 
+	 * @param wc 
+	 * 			the launch configuration working copy to be initialize
+	 * 
+	 * @see IPDELauncherConstants
+	 */
 	protected abstract void initializeConfiguration(ILaunchConfigurationWorkingCopy wc);
 	
+	/**
+	 * Returns the launch configuration type name.
+	 * Must be overridden by subclasses
+	 * 
+	 * @return the launch configuration type name
+	 */
 	protected abstract String getLaunchConfigurationTypeName();
 	
+	/**
+	 * Determines whether a given launch configuration is a good match given the current application or framework
+	 * being launched.  This method must be overridden by subclasses.  Its purpose is to add criteria on 
+	 * what makes a good match or not.
+	 * 
+	 * @param configuration 
+	 * 			the launch configuration being evaluated
+	 * @return
+	 * 		<code>true</code> if the launch configuration is a good match for the application or 
+	 * 		framework being launched, <code>false</code> otherwise.
+	 */
 	protected abstract boolean isGoodMatch(ILaunchConfiguration configuration);
 
 }
