@@ -84,7 +84,7 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 			IType[] testTypes = testSearchResult.getTypes();
 			monitor.worked(1);
 			
-			LauncherUtils.validateProjectDependencies(configuration, new SubProgressMonitor(monitor, 1));
+			validateProjectDependencies(configuration, new SubProgressMonitor(monitor, 1));
 			
 			promptToClear(configuration, new SubProgressMonitor(monitor, 1));
 			launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());
