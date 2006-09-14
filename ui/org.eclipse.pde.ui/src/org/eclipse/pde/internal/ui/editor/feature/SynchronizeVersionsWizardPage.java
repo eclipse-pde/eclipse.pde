@@ -99,7 +99,7 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getWorkspaceModels();
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase modelBase = models[i];
-			if (modelBase.getPluginBase().getId().equals(id))
+			if (modelBase != null && id.equals(modelBase.getPluginBase().getId()))
 				return modelBase;
 		}
 		return null;
