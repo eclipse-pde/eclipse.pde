@@ -152,8 +152,9 @@ public class FeatureImport
 	public void write(String indent, PrintWriter writer) {
 		String typeAtt = fType == FEATURE ? "feature" : "plugin"; //$NON-NLS-1$ //$NON-NLS-2$
 		writer.print(indent + "<import " + typeAtt + "=\"" + getId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (getVersion() != null) {
-			writer.print(" version=\"" + getVersion() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		String version = getVersion();
+		if (version != null && version.length() > 0) {
+			writer.print(" version=\"" + version + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (!fPatch && fMatch != NONE) {
 			writer.print(" match=\"" + RULE_NAME_TABLE[fMatch] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
