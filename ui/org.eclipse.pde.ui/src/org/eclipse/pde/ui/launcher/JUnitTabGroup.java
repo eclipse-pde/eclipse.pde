@@ -20,7 +20,6 @@ import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
 import org.eclipse.jdt.internal.junit.launcher.AssertionVMArg;
 import org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.pde.internal.ui.launcher.AbstractPDELaunchConfigurationTabGroup;
 
 public class JUnitTabGroup extends AbstractPDELaunchConfigurationTabGroup {
 	

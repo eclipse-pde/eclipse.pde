@@ -49,6 +49,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
+import org.eclipse.pde.ui.launcher.PDESourcePathProvider;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 public class LaunchAction extends Action {
@@ -246,6 +247,7 @@ public class LaunchAction extends Action {
 		wc.setAttribute(IPDELauncherConstants.USE_PRODUCT, true);
 		wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, false);
 		wc.setAttribute(IPDELauncherConstants.PRODUCT_FILE, fPath);
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, PDESourcePathProvider.ID);
 		return refreshConfiguration(wc);		
 	}
 	

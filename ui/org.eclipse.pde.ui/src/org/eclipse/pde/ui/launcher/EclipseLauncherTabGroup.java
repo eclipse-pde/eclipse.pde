@@ -15,7 +15,6 @@ import org.eclipse.debug.ui.EnvironmentTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
-import org.eclipse.pde.internal.ui.launcher.AbstractPDELaunchConfigurationTabGroup;
 
 public class EclipseLauncherTabGroup extends AbstractPDELaunchConfigurationTabGroup {
 

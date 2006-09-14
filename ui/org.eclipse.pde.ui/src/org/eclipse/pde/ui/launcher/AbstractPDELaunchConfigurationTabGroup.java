@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.launcher;
+package org.eclipse.pde.ui.launcher;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
@@ -19,16 +19,23 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
-import org.eclipse.pde.ui.launcher.PDESourcePathProvider;
+import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 
+/**
+ * 
+ * 
+ * @since 3.3
+ */
 public abstract class AbstractPDELaunchConfigurationTabGroup extends
 		AbstractLaunchConfigurationTabGroup {
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * The tab group delegates to all tabs in the group.
+	 * Prior to the delegation, it migrates all pre-3.2 launch configurations
+	 * to make them 3.2-compliant.
+	 * 
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
@@ -50,6 +57,15 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends
 		});
 	}
 	
+	/**
+	 * Checks if the launch configuration is 3.2-compliant and migrates it if it's not.
+	 * 
+	 * @param wc 
+	 * 			the launch configuration to be migrated if it's not 3.2-compliant
+	 * @throws CoreException
+	 * 			a CoreException is thrown if there was an error retrieving launch 
+	 * 			configuration attributes
+	 */
 	private void checkBackwardCompatibility(ILaunchConfigurationWorkingCopy wc) throws CoreException {
 		String id = wc.getAttribute(
 						IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
@@ -82,8 +98,11 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends
 		wc.doSave();
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Delegates to all tabs to set defaults.
+	 * It then sets program and VM arguments based on values on the 
+	 * <b>Plug-in Development > Target Platform > Launching Arguments</b> preference page.
+	 * 
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
