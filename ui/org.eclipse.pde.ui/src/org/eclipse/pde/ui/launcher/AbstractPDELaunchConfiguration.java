@@ -298,7 +298,6 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	protected File getConfigDir(ILaunchConfiguration configuration) {
 		if (fConfigDir == null)
 			fConfigDir = LaunchConfigurationHelper.getConfigurationArea(configuration);
-	
 		return fConfigDir;
 	}
 
@@ -327,19 +326,42 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * @return the fully-qualified name of the class to launch.  Must not return <code>null</code>. 
 	 * @since 3.3
 	 */
-	protected String getMainClass() {
+	public String getMainClass() {
 		return "org.eclipse.core.launcher.Main"; //$NON-NLS-1$
 	}
 	
-	public void manageLaunch(ILaunch launch) {
+	/**
+	 * Adds a listener to the launch to be notified at interesting launch lifecycle
+	 * events such as when the launch terminates.
+	 * 
+	 * @param launch
+	 * 			the launch 			
+	 */
+	protected void manageLaunch(ILaunch launch) {
 		PDEPlugin.getDefault().getLaunchListener().manage(launch);		
 	}
 	
-	public void synchronizeManifests(ILaunchConfiguration configuration) {
-		LaunchConfigurationHelper.synchronizeManifests(configuration, getConfigDir(configuration));
-		
+	/**
+	 * Checks for old-style plugin.xml files that have become stale since the last launch.
+	 * For any stale plugin.xml files found, the corresponding MANIFEST.MF is deleted 
+	 * from the runtime configuration area so that it gets regenerated upon startup.
+	 * 
+	 * @param configuration
+	 * 			the launch configuration
+	 */
+	protected void synchronizeManifests(ILaunchConfiguration configuration) {
+		LaunchConfigurationHelper.synchronizeManifests(configuration, getConfigDir(configuration));	
 	}
 	
+	/**
+	 * Checks if the Automated Management of Dependencies option is turned on.
+	 * If so, it makes aure all manifests are updated with the correct dependencies.
+	 * 
+	 * @param configuration
+	 * 			the launch configuration
+	 * @param monitor
+	 * 			a progress monitor
+	 */
 	protected void validateProjectDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		LauncherUtils.validateProjectDependencies(configuration, monitor);
 	}

@@ -221,12 +221,11 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	 * 
 	 * @param workspace
 	 * @param target
-	 * @return
-	 * @throws CoreException
+	 * @return a combined map of target and workspace bundles that will run
 	 * 
 	 * @since 3.3
 	 */
-	public Map getBundlesToRun(Map workspace, Map target) throws CoreException {
+	public Map getBundlesToRun(Map workspace, Map target) {
 		Map plugins = new TreeMap();
 		Iterator iter = workspace.keySet().iterator();
 		PluginModelManager manager = PDECore.getDefault().getModelManager();

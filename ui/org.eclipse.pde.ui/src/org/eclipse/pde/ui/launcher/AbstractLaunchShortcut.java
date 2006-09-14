@@ -36,18 +36,8 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 
 	/**
-	 * Launches the application in the specified mode.
-	 * 
-	 * This method first tries to locate existing launch configurations that are suitable
-	 * for the application or framework being launched.
-	 * <p>
-	 * <ul>
-	 * <li>If none are found, a new launch configuration is created and initialized</li>
-	 * <li>If one is found, it is launched automatically</li>
-	 * <li>If more than one is found, a selection dialog is presented to the user and the chosen
-	 * one will be launched</li>
-	 * </ul>
-	 * </p>
+	 * Launches the application in the specified mode, or does nothing if the user canceled
+	 * the launch when offered to select one of several available launch configurations.
 	 * 
 	 * @param mode 
 	 * 			mode of launch (run, debug or profile)
@@ -61,9 +51,20 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 	}
 	
 	/**
+	 * This method first tries to locate existing launch configurations that are suitable
+	 * for the application or framework being launched.
+	 * <p>
+	 * <ul>
+	 * <li>If none are found, a new launch configuration is created and initialized</li>
+	 * <li>If one is found, it is launched automatically</li>
+	 * <li>If more than one is found, a selection dialog is presented to the user and the chosen
+	 * one will be launched</li>
+	 * </ul>
+	 * </p>
+	 * @param mode 
+	 * 			mode of launch (run, debug or profile)
 	 * 
-	 * @param mode
-	 * @return
+	 * @return a launch configuration to run or <code>null</code> if launch is canceled
 	 */
 	protected ILaunchConfiguration findLaunchConfiguration(String mode) {
 		ILaunchConfiguration[] configs = getLaunchConfigurations();
