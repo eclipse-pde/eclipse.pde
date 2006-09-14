@@ -55,6 +55,17 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 	 * @see org.eclipse.debug.core.ILaunchManager
 	 */
 	protected void launch(String mode) {
+		ILaunchConfiguration configuration = findLaunchConfiguration(mode);
+		if (configuration != null)
+			DebugUITools.launch(configuration, mode);		
+	}
+	
+	/**
+	 * 
+	 * @param mode
+	 * @return
+	 */
+	protected ILaunchConfiguration findLaunchConfiguration(String mode) {
 		ILaunchConfiguration[] configs = getLaunchConfigurations();
 		ILaunchConfiguration configuration = null;
 		if (configs.length == 0) {
@@ -64,9 +75,7 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 		} else {
 			configuration = chooseConfiguration(configs, mode);
 		}
-		
-		if (configuration != null)
-			DebugUITools.launch(configuration, mode);		
+		return configuration;
 	}
 	
 	/**
@@ -101,7 +110,7 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 	 * @return
 	 * 			the launch configuration selected by the user or <code>null</code> if Cancel was pressed
 	 */
-	private ILaunchConfiguration chooseConfiguration(ILaunchConfiguration[] configs, String mode) {
+	protected ILaunchConfiguration chooseConfiguration(ILaunchConfiguration[] configs, String mode) {
 		IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), labelProvider);
 		dialog.setElements(configs);

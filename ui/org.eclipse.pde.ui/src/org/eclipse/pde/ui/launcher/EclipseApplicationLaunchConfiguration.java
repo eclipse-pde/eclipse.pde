@@ -244,8 +244,15 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 			monitor.beginTask("", 3); //$NON-NLS-1$
 		}
 		
-		LauncherUtils.validateProjectDependencies(configuration, new SubProgressMonitor(monitor, 1));
+		validateProjectDependencies(configuration, new SubProgressMonitor(monitor, 1));
+		promptToClear(configuration, new SubProgressMonitor(monitor, 1));
+		launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());		
+		synchronizeManifests(configuration);
 		
+		monitor.worked(1);
+	}
+	
+	protected void promptToClear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		String workspace = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
 		// Clear workspace and prompt, if necessary
 		if (!LauncherUtils.clearWorkspace(configuration, workspace, new SubProgressMonitor(monitor, 1))) {
@@ -255,10 +262,6 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 
 		// clear config area, if necessary
 		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
-			CoreUtility.deleteContent(getConfigDir(configuration));
-		launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());
-			
-		LaunchConfigurationHelper.synchronizeManifests(configuration, getConfigDir(configuration));
-		monitor.worked(1);
+			CoreUtility.deleteContent(getConfigDir(configuration));	
 	}
 }

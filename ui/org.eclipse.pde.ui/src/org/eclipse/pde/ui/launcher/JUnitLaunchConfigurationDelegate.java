@@ -86,14 +86,7 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 			
 			LauncherUtils.validateProjectDependencies(configuration, new SubProgressMonitor(monitor, 1));
 			
-			String workspace = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
-			if (!LauncherUtils.clearWorkspace(configuration, workspace, new SubProgressMonitor(monitor, 1))) {
-				monitor.setCanceled(true);
-				return;
-			}
-
-			if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
-				CoreUtility.deleteContent(getConfigDir(configuration));
+			promptToClear(configuration, new SubProgressMonitor(monitor, 1));
 			launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());
 			
 			int port = SocketUtil.findFreePort();
@@ -105,10 +98,10 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 			monitor.worked(1);
 			
 			setDefaultSourceLocator(launch, configuration);
-			LaunchConfigurationHelper.synchronizeManifests(configuration, getConfigDir(configuration));
+			synchronizeManifests(configuration);
 			launch.setAttribute(PORT_ATTR, Integer.toString(port));
 			launch.setAttribute(TESTTYPE_ATTR, testTypes[0].getHandleIdentifier());
-			PDEPlugin.getDefault().getLaunchListener().manage(launch);
+			manageLaunch(launch);
 			IVMRunner runner = getVMRunner(configuration, mode);
 			if (runner != null)
 				runner.run(runnerConfig, launch, monitor);
@@ -443,6 +436,31 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 			ILaunchConfiguration configuration, String mode)
 			throws CoreException {
 		return LaunchPluginValidator.getAffectedProjects(configuration);
+	}
+	
+	public void manageLaunch(ILaunch launch) {
+		PDEPlugin.getDefault().getLaunchListener().manage(launch);		
+	}
+	
+	public void synchronizeManifests(ILaunchConfiguration configuration) {
+		LaunchConfigurationHelper.synchronizeManifests(configuration, getConfigDir(configuration));
+	}
+
+	protected void promptToClear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+		String workspace = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
+		// Clear workspace and prompt, if necessary
+		if (!LauncherUtils.clearWorkspace(configuration, workspace, new SubProgressMonitor(monitor, 1))) {
+			monitor.setCanceled(true);
+			return;
+		}
+
+		// clear config area, if necessary
+		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
+			CoreUtility.deleteContent(getConfigDir(configuration));	
+	}
+
+	protected void validateProjectDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) {
+		LauncherUtils.validateProjectDependencies(configuration, monitor);
 	}
 
 

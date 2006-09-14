@@ -174,14 +174,14 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		try {
 			monitor.beginTask("", 2); //$NON-NLS-1$
-			LauncherUtils.validateProjectDependencies(configuration, new SubProgressMonitor(monitor, 1));
+			validateProjectDependencies(configuration, new SubProgressMonitor(monitor, 1));
 
 			// clear config area, if necessary
 			if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
 				CoreUtility.deleteContent(getConfigDir(configuration));
 			launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());
 
-			LaunchConfigurationHelper.synchronizeManifests(configuration, getConfigDir(configuration));
+			synchronizeManifests(configuration);
 			monitor.worked(1);
 		} finally {
 			monitor.done();

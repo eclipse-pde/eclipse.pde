@@ -34,6 +34,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
+import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
 import org.eclipse.pde.internal.ui.launcher.VMHelper;
 
 /**
@@ -77,7 +78,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			monitor.worked(1);
 					
 			setDefaultSourceLocator(configuration);
-			PDEPlugin.getDefault().getLaunchListener().manage(launch);
+			manageLaunch(launch);
 			IVMRunner runner = getVMRunner(configuration, mode);
 			if (runner != null)
 				runner.run(runnerConfig, launch, monitor);
@@ -328,6 +329,19 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 */
 	protected String getMainClass() {
 		return "org.eclipse.core.launcher.Main"; //$NON-NLS-1$
+	}
+	
+	public void manageLaunch(ILaunch launch) {
+		PDEPlugin.getDefault().getLaunchListener().manage(launch);		
+	}
+	
+	public void synchronizeManifests(ILaunchConfiguration configuration) {
+		LaunchConfigurationHelper.synchronizeManifests(configuration, getConfigDir(configuration));
+		
+	}
+	
+	protected void validateProjectDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) {
+		LauncherUtils.validateProjectDependencies(configuration, monitor);
 	}
 
 }
