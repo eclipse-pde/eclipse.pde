@@ -11,6 +11,7 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -213,5 +214,10 @@ public class CommandList {
 	
 	public void setFocus() {
 		fFilterText.setFocus();
+	}
+	
+	protected void setSelection(Object object) {
+		if (fTreeViewer != null && object != null)
+			fTreeViewer.setSelection(new StructuredSelection(object));
 	}
 }

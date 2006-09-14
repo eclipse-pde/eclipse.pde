@@ -159,7 +159,8 @@ public class SimpleCSCommandDetails implements ISimpleCSDetails {
 			public void browseButtonSelected(FormEntry entry) {
 				CommandComposerDialog dialog = new CommandComposerDialog(
 						entry.getButton().getShell(),
-						CommandComposerPart.F_CHEATSHEET_FILTER);	
+						CommandComposerPart.F_CHEATSHEET_FILTER,
+						getParameterizedCommand(fRun));	
 				if (dialog.open() == Window.OK) {
 
 					ParameterizedCommand result = dialog.getCommand();
@@ -197,13 +198,38 @@ public class SimpleCSCommandDetails implements ISimpleCSDetails {
 	 */
 	public void updateFields() {
 		
-		boolean editable = fDetails.isEditableElement();
-		
 		if (fRun == null) {
 			return;
 		}
+		
+		try {
+			ParameterizedCommand parameterizedCommand = getParameterizedCommand(fRun);
+				if (parameterizedCommand != null) {
+				fCommandEntry.setValue(parameterizedCommand.getCommand().getName(), true);
+				Map parameters = parameterizedCommand.getParameterMap();
+				updateCommandParameters(parameters);
+			}
+		} catch (NotDefinedException e) {
+			// TODO: MP: Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		boolean editable = fDetails.isEditableElement();
+		fCommandEntry.setEditable(editable);
+		fCommandEntry.getText().setEditable(false);	
+		
+		fCommandTable.setEnabled(editable);
+		
+	}
 
-		ISimpleCSRunContainerObject object = fRun.getExecutable();
+	/*
+	 * return the current command and its parameters in a ParameterizedCommand object
+	 */
+	private ParameterizedCommand getParameterizedCommand(ISimpleCSRun run) {
+		if (run == null)
+			return null;
+
+		ISimpleCSRunContainerObject object = run.getExecutable();
 		if ((object != null) && 
 				(object.getType() == ISimpleCSConstants.TYPE_COMMAND)) {
 			ISimpleCSCommand command = (ISimpleCSCommand)object;
@@ -213,11 +239,7 @@ public class SimpleCSCommandDetails implements ISimpleCSDetails {
 				ICommandService service = getCommandService();
 				if (service != null) {
 					try {
-						ParameterizedCommand parameterizedCommand = service.deserialize(serialization);
-						fCommandEntry.setValue(parameterizedCommand.getCommand().getName(), true);
-						Map parameters = parameterizedCommand.getParameterMap();
-						updateCommandParameters(parameters);
-						
+						return service.deserialize(serialization);
 					} catch (NotDefinedException e) {
 						// TODO: MP: Auto-generated catch block
 						e.printStackTrace();
@@ -229,11 +251,7 @@ public class SimpleCSCommandDetails implements ISimpleCSDetails {
 				}
 			}
 		}
-		fCommandEntry.setEditable(editable);
-		fCommandEntry.getText().setEditable(false);	
-		
-		fCommandTable.setEnabled(editable);
-		
+		return null;
 	}
 
 	/**

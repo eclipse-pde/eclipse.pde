@@ -3,7 +3,6 @@ package org.eclipse.pde.internal.ui.commands;
 import java.util.HashMap;
 
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -32,6 +31,7 @@ public class CommandComposerPart implements ISelectionChangedListener {
 	private CommandDetails fCommandDetails;
 	private IDialogButtonCreator fCreator;
 	private int fFilterType = F_FILTER_NOT_SET;
+	private ParameterizedCommand fPC;
 	
 	/**
 	 * Any Dialogs that use this UI Part should implement this interface.
@@ -88,6 +88,11 @@ public class CommandComposerPart implements ISelectionChangedListener {
 		
 		sashForm.setWeights(new int[] {4,5});
 		fToolkit.adapt(sashForm, true, true);
+		
+		if (fPC != null)
+			fCommandList.setSelection(fPC.getCommand());
+		
+		fPC = null;
 		return body;
 	}
 	
@@ -136,15 +141,21 @@ public class CommandComposerPart implements ISelectionChangedListener {
 	}
 
 	public void selectionChanged(SelectionChangedEvent event) {
-		ISelection selection = event.getSelection();
-		if (selection instanceof IStructuredSelection)
-			fCommandDetails.showDetailsFor(((IStructuredSelection)selection).getFirstElement());
-		else
-			fCommandDetails.showDetailsFor(null);
+		Object selectionObject = null;
+		// if preselection exists use that
+		if (fPC != null)
+			selectionObject = fPC;
+		else if (event.getSelection() instanceof IStructuredSelection)
+			selectionObject = (((IStructuredSelection)event.getSelection()).getFirstElement());
+		fCommandDetails.showDetailsFor(selectionObject);
 	}
 
 	public ParameterizedCommand getParameterizedCommand() {
 		return fCommandDetails.buildParameterizedCommand();
 	}
 	
+	protected void setPresetCommand(ParameterizedCommand pc) {
+		fPC = pc;
+	}
+
 }

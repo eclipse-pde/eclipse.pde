@@ -67,6 +67,7 @@ public class CommandDetails {
 	private CommandComposerPart fCSP;
 	private FormToolkit fToolkit;
 	private Command fSelectedCommand;
+	private ParameterizedCommand fPreSel;
 	
 	private Text fComIDT;
 	private Text fComPrev;
@@ -261,6 +262,18 @@ public class CommandDetails {
 			
 			fValuesCombo = valuesCombo;
 			fValuesCombo.addModifyListener(this);
+			if (fPreSel != null && fValues != null) {
+				Object obj = fPreSel.getParameterMap().get(parameter.getId());
+				if (obj != null) {
+					for (Iterator i = fValues.keySet().iterator(); i.hasNext();) {
+						Object next = i.next();
+						if (obj.equals(fValues.get(next))) {
+							fValuesCombo.setText(next.toString());
+							break;
+						}
+					}
+				}
+			}
 			
 			fClearButton = clearButton;
 			fClearButton.addSelectionListener(this);
@@ -303,6 +316,11 @@ public class CommandDetails {
 			
 			fParameterText = parameterText;
 			fParameterText.addModifyListener(this);
+			if (fPreSel != null) {
+				Object obj = fPreSel.getParameterMap().get(parameter.getId());
+				if (obj != null)
+					fParameterText.setText(obj.toString());
+			}
 			
 			fTrackSelectionButton = trackSelectionButton;
 			fTrackSelectionButton.addSelectionListener(this);
@@ -385,6 +403,12 @@ public class CommandDetails {
 			fParameter = parameter;
 			fParameterText = parameterText;
 			fParameterText.addModifyListener(this);
+			
+			if (fPreSel != null) {
+				Object obj = fPreSel.getParameterMap().get(parameter.getId());
+				if (obj != null)
+					fParameterText.setText(obj.toString());
+			}
 		}
 		public void modifyText(ModifyEvent e) {
 			String text = fParameterText.getText();
@@ -466,6 +490,8 @@ public class CommandDetails {
 				fTextParamList.add(new TextParameterControl(parameter, parameterText));
 			}
 		}
+		// only use preselected on the first details showing
+		fPreSel = null;
 		fParamParent.layout();
 	}
 	
@@ -479,12 +505,20 @@ public class CommandDetails {
 	}
 
 	public void showDetailsFor(Object object) {
+		if (object instanceof ParameterizedCommand)
+			object = (fPreSel = (ParameterizedCommand)object).getCommand();
+		
 		if (!(object instanceof Command)) {
 			resetAllFields();
 			return;
 		}
 		fSelectedCommand = (Command)object;
 		fComIDT.setText(fSelectedCommand.getId());
+		
+		fParameterToValue.clear();
+		fObjectParamList.clear();
+		fValueParamList.clear();
+		
 		fExecLink.setEnabled(true);
 		fCopyLink.setEnabled(true);
 		try {

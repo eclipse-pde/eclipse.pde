@@ -22,12 +22,13 @@ public class CommandComposerDialog extends Dialog implements IDialogButtonCreato
 	private ParameterizedCommand fPC;
 	private Button fOKButton;
 	
-	public CommandComposerDialog(Shell parentShell, int filterType) {
+	public CommandComposerDialog(Shell parentShell, int filterType, ParameterizedCommand preselectedCommand) {
 		super(parentShell);
 		setShellStyle(SWT.MODELESS | SWT.SHELL_TRIM | SWT.BORDER);
 		fCSP = new CommandComposerPart();
 		fCSP.setFilterType(filterType);
 		fCSP.setButtonCreator(this);
+		fCSP.setPresetCommand(preselectedCommand);
 	}
 	
 	protected void configureShell(Shell newShell) {
