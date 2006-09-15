@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
+import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -132,7 +133,8 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 		// Process cheatsheet element
 		if (element.getNodeName().equals(ELEMENT_CHEATSHEET)) {
 			// Process title attribute
-			fTitle = element.getAttribute(ATTRIBUTE_TITLE); 
+			fTitle = PDETextHelper.translateReadText(element
+					.getAttribute(ATTRIBUTE_TITLE)); 
 			// Process children
 			NodeList children = element.getChildNodes();
 			ISimpleCSModelFactory factory = getModel().getFactory();
@@ -172,7 +174,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 			if ((fTitle != null) && 
 					(fTitle.length() > 0)) {
 				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
-						ATTRIBUTE_TITLE, fTitle));
+						ATTRIBUTE_TITLE, PDETextHelper.translateWriteText(fTitle)));
 			}
 			// Start element
 			XMLPrintHandler.printBeginElement(writer, buffer.toString(),
@@ -276,7 +278,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 */
 	public void addItem(int index, ISimpleCSItem item) {
 		
-		if (index < 0){
+		if (index < 0) {
 			return;
 		}
 		if (index >= fItems.size()) {

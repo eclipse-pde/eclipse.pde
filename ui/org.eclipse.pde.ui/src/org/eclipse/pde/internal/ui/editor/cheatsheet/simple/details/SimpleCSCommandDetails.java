@@ -204,7 +204,7 @@ public class SimpleCSCommandDetails implements ISimpleCSDetails {
 		
 		try {
 			ParameterizedCommand parameterizedCommand = getParameterizedCommand(fRun);
-				if (parameterizedCommand != null) {
+			if (parameterizedCommand != null) {
 				fCommandEntry.setValue(parameterizedCommand.getCommand().getName(), true);
 				Map parameters = parameterizedCommand.getParameterMap();
 				updateCommandParameters(parameters);

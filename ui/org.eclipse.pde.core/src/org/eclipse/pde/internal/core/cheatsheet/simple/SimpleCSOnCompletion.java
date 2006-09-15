@@ -20,9 +20,8 @@ import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSOnCompletion;
+import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.Text;
 
 /**
  * SimpleCSOnCompletion
@@ -54,14 +53,7 @@ public class SimpleCSOnCompletion extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#parse(org.w3c.dom.Node)
 	 */
 	public void parse(Element element) {
-		// Process content
-		element.normalize();
-		if (element.getChildNodes().getLength() > 0) {
-			Node text = element.getFirstChild();
-			if (text.getNodeType() == Node.TEXT_NODE) {
-				fContent = ((Text)text).getData().trim();
-			}
-		}
+		fContent = PDETextHelper.translateReadText(parseElementText(element));
 	}
 
 	/* (non-Javadoc)
@@ -78,7 +70,10 @@ public class SimpleCSOnCompletion extends SimpleCSObject implements
 			// Print contents
 			if ((fContent != null) &&
 					(fContent.length() > 0)) {
-				XMLPrintHandler.printText(writer, fContent, newIndent);
+				//XMLPrintHandler.printText(writer, fContent, newIndent);
+				writer.write(newIndent
+						+ PDETextHelper.translateWriteText(fContent,
+								TAG_EXCEPTIONS, TAG_EXCEPTIONS.size()) + "\n");				 //$NON-NLS-1$
 			}
 			// End element
 			XMLPrintHandler.printEndElement(writer, ELEMENT_ONCOMPLETION, indent);

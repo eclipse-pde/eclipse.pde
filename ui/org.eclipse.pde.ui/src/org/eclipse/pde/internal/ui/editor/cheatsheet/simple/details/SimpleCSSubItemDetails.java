@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details;
 
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
+import org.eclipse.pde.internal.core.util.PDEHTMLHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDESection;
@@ -135,7 +136,10 @@ public class SimpleCSSubItemDetails extends SimpleCSAbstractDetails {
 		fLabel.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				// TODO: MP: Can when ever be null?
-				fSubItem.setLabel(fLabel.getValue());
+				// TODO: MP: Check all text fields and see what we can strip
+				// i.e. trailing and leading space, duplicate spaces, newlines, tabs, carriage returns
+//				 TODO: MP: HIGH: Replace with internal utility stripper
+				fSubItem.setLabel(PDEHTMLHelper.stripTags(fLabel.getValue()));
 			}
 		});	
 		// Attribute: skip

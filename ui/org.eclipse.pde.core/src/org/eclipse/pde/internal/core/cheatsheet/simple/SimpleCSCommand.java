@@ -140,8 +140,10 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 	 */
 	public void parse(Element element) {
 		// Process serialization attribute
+		// Read as is.  Do not translate
 		fSerialization = element.getAttribute(ATTRIBUTE_SERIALIZATION);
 		// Process returns attribute
+		// Read as is.  Do not translate
 		fReturns = element.getAttribute(ATTRIBUTE_RETURNS);
 		// Process confirm attribute
 		if (element.getAttribute(ATTRIBUTE_CONFIRM).compareTo(
@@ -165,11 +167,13 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 			// Print serialization attribute
 			if ((fSerialization != null) && 
 					(fSerialization.length() > 0)) {
+				// Write as is.  Do not translate
 				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
 						ATTRIBUTE_SERIALIZATION, fSerialization));
 			}
 			if ((fReturns != null) && 
 					(fReturns.length() > 0)) {
+				// Write as is.  Do not translate
 				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
 						ATTRIBUTE_RETURNS, fReturns));
 			}

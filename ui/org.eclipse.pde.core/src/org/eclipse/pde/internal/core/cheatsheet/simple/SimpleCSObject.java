@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.core.cheatsheet.simple;
 
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.runtime.PlatformObject;
@@ -20,6 +21,10 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 /**
  * SimpleCSObject
@@ -31,11 +36,15 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 	
 	private transient ISimpleCSObject fParent;
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
+	protected static final HashSet TAG_EXCEPTIONS = new HashSet(3);
+	static {
+		TAG_EXCEPTIONS.add("b"); //$NON-NLS-1$
+		TAG_EXCEPTIONS.add("/b"); //$NON-NLS-1$
+		TAG_EXCEPTIONS.add("br/"); //$NON-NLS-1$
+	}
+	
 	/**
 	 * 
 	 */
@@ -147,5 +156,50 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getChildren()
 	 */
 	public abstract List getChildren();
+	
+	/**
+	 * Recursively finds and acculates all element's text and element 
+	 * children into a String in raw XML form 
+	 * @param element
+	 * @return 
+	 */
+	protected String parseElementText(Element element) {
+		// Puts all Text nodes in the full depth of the sub-tree 
+		// underneath this Node
+		// i.e., there are neither adjacent Text nodes nor empty Text nodes. 
+		element.normalize();
+		// Process only if there are children
+		if (element.getChildNodes().getLength() > 0) {
+			NodeList children = element.getChildNodes();
+			StringBuffer buffer = new StringBuffer();
+			// Traverse over each childe
+			for (int i = 0; i < children.getLength(); i++) {
+				Node node = children.item(i);
+				if (node.getNodeType() == Node.TEXT_NODE) {
+					// Accumulate the text children
+					buffer.append(((Text)node).getData());
+				} else if (node.getNodeType() == Node.ELEMENT_NODE) {
+					Element subElement = (Element)node;
+					// Recursively accumulate element children
+					String value = parseElementText(subElement);
+					if (value.length() > 0) {
+						// The element had children
+						// Enclose the accumulated children with start and end tags
+						buffer.append('<' + subElement.getNodeName() + '>');
+						buffer.append(value);
+						buffer.append("</" + subElement.getNodeName() + '>'); //$NON-NLS-1$
+					} else {
+						// The element had no children
+						// Generate an abbreviated element tag
+						buffer.append('<' + subElement.getNodeName() + "/>"); //$NON-NLS-1$
+					}
+				}
+			}
+			// Return all accumulated children under the input element as a raw
+			// XML string
+			return buffer.toString();
+		}
+		return ""; //$NON-NLS-1$
+	}
 	
 }

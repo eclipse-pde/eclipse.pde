@@ -43,6 +43,8 @@ public class PDECoreMessages extends NLS {
 	public static String Schema_NoDescriptionAvailable;
 
 	public static String SchemaElementReference_refElementMissing;
+
+	public static String SimpleCSIntro_0;
 	public static String TargetPlatform_exceptionThrown;
 
 	public static String FeatureInfo_description;

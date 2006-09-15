@@ -30,6 +30,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject;
+import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -245,7 +246,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 */
 	public void parse(Element element) {
 		// Process title attribute
-		fTitle = element.getAttribute(ATTRIBUTE_TITLE);
+		fTitle = PDETextHelper.translateReadText(element.getAttribute(ATTRIBUTE_TITLE));
 		// Process dialog attribute
 		if (element.getAttribute(ATTRIBUTE_DIALOG).compareTo(
 				ATTRIBUTE_VALUE_TRUE) == 0) {
@@ -257,9 +258,9 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 			fSkip = true;
 		}
 		// Process contextId attribute
-		fContextId = element.getAttribute(ATTRIBUTE_CONTEXTID);
+		fContextId = PDETextHelper.translateReadText(element.getAttribute(ATTRIBUTE_CONTEXTID));
 		// Process href attribute
-		fHref = element.getAttribute(ATTRIBUTE_HREF);
+		fHref = PDETextHelper.translateReadText(element.getAttribute(ATTRIBUTE_HREF));
 		
 		// Process children
 
@@ -318,7 +319,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 			if ((fTitle != null) && 
 					(fTitle.length() > 0)) {
 				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
-						ATTRIBUTE_TITLE, fTitle));
+						ATTRIBUTE_TITLE, PDETextHelper.translateWriteText(fTitle)));
 			}
 			// Print dialog attribute
 			buffer.append(XMLPrintHandler.wrapAttributeForPrint(
@@ -331,11 +332,11 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 			if ((fContextId != null) &&
 					(fContextId.length() > 0)) {
 				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
-						ATTRIBUTE_CONTEXTID, fContextId));
+						ATTRIBUTE_CONTEXTID, PDETextHelper.translateWriteText(fContextId)));
 			} else if ((fHref != null) &&
 							(fHref.length() > 0)) {
 				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
-						ATTRIBUTE_HREF, fHref));
+						ATTRIBUTE_HREF, PDETextHelper.translateWriteText(fHref)));
 			}
 			// Start element
 			XMLPrintHandler.printBeginElement(writer, buffer.toString(),

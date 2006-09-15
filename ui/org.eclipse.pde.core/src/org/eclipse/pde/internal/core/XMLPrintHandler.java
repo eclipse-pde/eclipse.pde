@@ -148,7 +148,6 @@ public class XMLPrintHandler {
 
 	public static StringBuffer encode(String value) {
 		StringBuffer buf = new StringBuffer();
-		// TODO: MP: Maybe do the trim() here ?
 		for (int i = 0; i < value.length(); i++) {
 			char c = value.charAt(i);
 			switch (c) {

@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
+import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -140,13 +141,14 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 */
 	public void parse(Element element) {
 		// Process label attribute
-		fLabel = element.getAttribute(ATTRIBUTE_LABEL);
+		fLabel = PDETextHelper.translateReadText(element.getAttribute(ATTRIBUTE_LABEL));
 		// Process skip attribute
 		if (element.getAttribute(ATTRIBUTE_SKIP).compareTo(
 				ATTRIBUTE_VALUE_TRUE) == 0) {
 			fSkip = true;
 		}
 		// Process when attribute
+		// Read as is.  Do not translate
 		fWhen = element.getAttribute(ATTRIBUTE_WHEN);
 		// Process children
 		NodeList children = element.getChildNodes();
@@ -187,7 +189,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 			if ((fLabel != null) && 
 					(fLabel.length() > 0)) {
 				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
-						ATTRIBUTE_LABEL, fLabel));
+						ATTRIBUTE_LABEL, PDETextHelper.translateWriteText(fLabel)));
 			}
 			// Print skip attribute
 			buffer.append(XMLPrintHandler.wrapAttributeForPrint(
@@ -195,6 +197,7 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 			// Print when attribute
 			if ((fWhen != null) && 
 					(fWhen.length() > 0)) {
+				// Write as is.  Do not translate
 				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
 						ATTRIBUTE_WHEN, fWhen));
 			}

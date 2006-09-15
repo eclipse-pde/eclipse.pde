@@ -16,12 +16,14 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
+import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -116,9 +118,9 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 	 */
 	public void parse(Element element) {
 		// Process contextId attribute
-		fContextId = element.getAttribute(ATTRIBUTE_CONTEXTID);
+		fContextId = PDETextHelper.translateReadText(element.getAttribute(ATTRIBUTE_CONTEXTID));
 		// Process href attribute
-		fHref = element.getAttribute(ATTRIBUTE_HREF);
+		fHref = PDETextHelper.translateReadText(element.getAttribute(ATTRIBUTE_HREF));
 		// Process children
 		NodeList children = element.getChildNodes();
 		ISimpleCSModelFactory factory = getModel().getFactory();
@@ -148,11 +150,11 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 			if ((fContextId != null) &&
 					(fContextId.length() > 0)) {
 				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
-						ATTRIBUTE_CONTEXTID, fContextId));
+						ATTRIBUTE_CONTEXTID, PDETextHelper.translateWriteText(fContextId)));
 			} else if ((fHref != null) &&
 							(fHref.length() > 0)) {
 				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
-						ATTRIBUTE_HREF, fHref));
+						ATTRIBUTE_HREF, PDETextHelper.translateWriteText(fHref)));
 			}
 			// Start element
 			XMLPrintHandler.printBeginElement(writer, buffer.toString(),
@@ -190,7 +192,7 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getName()
 	 */
 	public String getName() {
-		return fDescription.getName();
+		return PDECoreMessages.SimpleCSIntro_0;
 	}
 
 	/* (non-Javadoc)
