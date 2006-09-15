@@ -247,15 +247,26 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		validateProjectDependencies(configuration, new SubProgressMonitor(monitor, 1));
 		promptToClear(configuration, new SubProgressMonitor(monitor, 1));
 		launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());		
-		synchronizeManifests(configuration);
-		
+		synchronizeManifests(configuration);		
 		monitor.worked(1);
 	}
 	
+	/**
+	 * Prompts to clear the workspace prior to launching if the workspace exists and the option to 
+	 * clear it is turned on.  Also clears the configuration area if that option is chosen.
+	 * 
+	 * @param configuration
+	 * 			the launch configuration
+	 * @param monitor
+	 * 			the progress monitor
+	 * @throws CoreException
+	 * 			if unable to retrieve launch attribute values
+	 * @since 3.3
+	 */
 	protected void promptToClear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		String workspace = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
 		// Clear workspace and prompt, if necessary
-		if (!LauncherUtils.clearWorkspace(configuration, workspace, new SubProgressMonitor(monitor, 1))) {
+		if (!LauncherUtils.clearWorkspace(configuration, workspace, monitor)) {
 			monitor.setCanceled(true);
 			return;
 		}

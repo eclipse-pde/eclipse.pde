@@ -38,7 +38,16 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.launcher.ApplicationSelectionDialog;
 import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
 import org.eclipse.ui.IEditorPart;
- 
+
+/**
+ * A launch shortcut capable of launching an Eclipse application.
+ * Given the current selection, either a new Eclipse Application launch configuration is created with default settings, or the user is presented
+ * with a list of suitable existing Eclipse Application launch configurations to choose from.
+ * <p>
+ * This class may be substantiated or subclassed by clients.
+ * </p>
+ * @since 3.3
+ */
 public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	
 	public static final String CONFIGURATION_TYPE = "org.eclipse.pde.ui.RuntimeWorkbench"; //$NON-NLS-1$
@@ -140,6 +149,16 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		return null;
 	}
 
+	/**
+	 * Returns a boolean value indicating whether the launch configuration is a good match for
+	 * the application or product to launch.
+	 * 
+	 * @param configuration 
+	 * 			the launch configuration being evaluated
+	 * 
+	 * @return <code>true</coded> if the launch configuration is suitable for the application
+	 * or product to launch with, <code>false</code> otherwise.
+	 */
 	protected boolean isGoodMatch(ILaunchConfiguration configuration) {
 		try {
 			if (!configuration.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
@@ -155,6 +174,22 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		return false;
 	}
 	
+	/**
+	 * Initializes a new Eclipse Application launch configuration with defaults based
+	 * on the current selection:
+	 * <ul>
+	 * <li>If there is no selection or the selected project is a plug-in that does not declare an application,
+	 * the default product is launched.</li>
+	 * <li>If the selected project is a plug-in that declares an application, then that application is launched.</li>
+	 * <li>If the selected project is a plug-in that declares more than one application, then the user is presented
+	 * with a list of choices to choose from.</li>
+	 * </ul>
+	 * Once an application is chosen, the plug-in is searched to see if there is a product
+	 * bound to this application.  If a product is found, the product is launched instead, since
+	 * a product provides a richer branded experience.
+	 * 
+	 * @since 3.3
+	 */
 	protected void initializeConfiguration(ILaunchConfigurationWorkingCopy wc) {
 		if (TargetPlatform.getTargetVersion() >= 3.2)
 			wc.setAttribute("pde.version", "3.2a"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -209,20 +244,25 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, PDESourcePathProvider.ID);
 	}
 	
-	protected void initializeProgramArguments(ILaunchConfigurationWorkingCopy wc) {
+	private void initializeProgramArguments(ILaunchConfigurationWorkingCopy wc) {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		String programArgs = preferences.getString(ICoreConstants.PROGRAM_ARGS);
 		if (programArgs.length()  > 0)
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, programArgs);
 	}
 	
-	protected void initializeVMArguments(ILaunchConfigurationWorkingCopy wc) {
+	private void initializeVMArguments(ILaunchConfigurationWorkingCopy wc) {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		String vmArgs = preferences.getString(ICoreConstants.VM_ARGS);
 		if (vmArgs.length() > 0)
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
 	}	
 	
+	/**
+	 * Returns the Eclipse application configuration type ID as declared in the plugin.xml
+	 * 
+	 * @return the Eclipse application configuration type ID
+	 */
 	protected String getLaunchConfigurationTypeName() {
 		return CONFIGURATION_TYPE;
 	}	

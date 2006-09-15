@@ -16,6 +16,13 @@ import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
 
+/**
+ * Creates and initializes the tabs for the Eclipse Application launch configuration.
+ * <p>
+ * This class may be instantiated or subclassed by clients.
+ * </p>
+ * @since 3.3
+ */
 public class EclipseLauncherTabGroup extends AbstractPDELaunchConfigurationTabGroup {
 
 	/*
