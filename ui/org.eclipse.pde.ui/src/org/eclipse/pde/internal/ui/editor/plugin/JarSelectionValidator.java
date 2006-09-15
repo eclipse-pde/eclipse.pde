@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 	/**

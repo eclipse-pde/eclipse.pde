@@ -12,9 +12,9 @@ package org.eclipse.pde.internal.ui.util;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.pde.core.IBaseModel;
 
 /**
