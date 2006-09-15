@@ -149,11 +149,11 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 			// Print href attribute
 			if ((fContextId != null) &&
 					(fContextId.length() > 0)) {
-				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+				buffer.append(XMLPrintHandler.wrapAttribute(
 						ATTRIBUTE_CONTEXTID, PDETextHelper.translateWriteText(fContextId)));
 			} else if ((fHref != null) &&
 							(fHref.length() > 0)) {
-				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+				buffer.append(XMLPrintHandler.wrapAttribute(
 						ATTRIBUTE_HREF, PDETextHelper.translateWriteText(fHref)));
 			}
 			// Start element

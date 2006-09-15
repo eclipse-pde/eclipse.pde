@@ -168,22 +168,22 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 			if ((fSerialization != null) && 
 					(fSerialization.length() > 0)) {
 				// Write as is.  Do not translate
-				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+				buffer.append(XMLPrintHandler.wrapAttribute(
 						ATTRIBUTE_SERIALIZATION, fSerialization));
 			}
 			if ((fReturns != null) && 
 					(fReturns.length() > 0)) {
 				// Write as is.  Do not translate
-				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+				buffer.append(XMLPrintHandler.wrapAttribute(
 						ATTRIBUTE_RETURNS, fReturns));
 			}
 			// Print skip attribute
-			buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+			buffer.append(XMLPrintHandler.wrapAttribute(
 					ATTRIBUTE_CONFIRM, new Boolean(fConfirm).toString()));
 			// Print when attribute
 			if ((fWhen != null) && 
 					(fWhen.length() > 0)) {
-				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+				buffer.append(XMLPrintHandler.wrapAttribute(
 						ATTRIBUTE_WHEN, fWhen));
 			}
 			// Start element

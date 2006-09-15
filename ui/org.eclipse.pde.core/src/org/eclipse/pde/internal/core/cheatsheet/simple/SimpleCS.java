@@ -173,7 +173,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 			// Print title attribute
 			if ((fTitle != null) && 
 					(fTitle.length() > 0)) {
-				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+				buffer.append(XMLPrintHandler.wrapAttribute(
 						ATTRIBUTE_TITLE, PDETextHelper.translateWriteText(fTitle)));
 			}
 			// Start element

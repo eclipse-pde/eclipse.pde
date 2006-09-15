@@ -97,9 +97,18 @@ public class XMLPrintHandler {
 		temp.append(attribute).append(XML_EQUAL).append(XML_DBL_QUOTES)
 				.append(encode(value).toString()).append(XML_DBL_QUOTES);
 		return temp.toString();
-
 	}
 
+	public static String wrapAttribute(String attribute, String value) {
+		StringBuffer buffer = new StringBuffer(XML_SPACE);
+		buffer.append(attribute);
+		buffer.append(XML_EQUAL);
+		buffer.append(XML_DBL_QUOTES);
+		buffer.append(value);
+		buffer.append(XML_DBL_QUOTES);
+		return buffer.toString();
+	}	
+	
 	public static void printNode(Writer xmlWriter, Node node,String encoding, String indent) throws IOException {
 		if (node == null) {
 			return;

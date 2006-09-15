@@ -188,17 +188,17 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 			// Print label attribute
 			if ((fLabel != null) && 
 					(fLabel.length() > 0)) {
-				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+				buffer.append(XMLPrintHandler.wrapAttribute(
 						ATTRIBUTE_LABEL, PDETextHelper.translateWriteText(fLabel)));
 			}
 			// Print skip attribute
-			buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+			buffer.append(XMLPrintHandler.wrapAttribute(
 					ATTRIBUTE_SKIP, new Boolean(fSkip).toString()));
 			// Print when attribute
 			if ((fWhen != null) && 
 					(fWhen.length() > 0)) {
 				// Write as is.  Do not translate
-				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+				buffer.append(XMLPrintHandler.wrapAttribute(
 						ATTRIBUTE_WHEN, fWhen));
 			}
 			// Start element

@@ -318,24 +318,24 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 			// Print title attribute
 			if ((fTitle != null) && 
 					(fTitle.length() > 0)) {
-				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+				buffer.append(XMLPrintHandler.wrapAttribute(
 						ATTRIBUTE_TITLE, PDETextHelper.translateWriteText(fTitle)));
 			}
 			// Print dialog attribute
-			buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+			buffer.append(XMLPrintHandler.wrapAttribute(
 					ATTRIBUTE_DIALOG, new Boolean(fDialog).toString()));
 			// Print skip attribute
-			buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+			buffer.append(XMLPrintHandler.wrapAttribute(
 					ATTRIBUTE_SKIP, new Boolean(fSkip).toString()));
 			// Print contextId attribute
 			// Print href attribute
 			if ((fContextId != null) &&
 					(fContextId.length() > 0)) {
-				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+				buffer.append(XMLPrintHandler.wrapAttribute(
 						ATTRIBUTE_CONTEXTID, PDETextHelper.translateWriteText(fContextId)));
 			} else if ((fHref != null) &&
 							(fHref.length() > 0)) {
-				buffer.append(XMLPrintHandler.wrapAttributeForPrint(
+				buffer.append(XMLPrintHandler.wrapAttribute(
 						ATTRIBUTE_HREF, PDETextHelper.translateWriteText(fHref)));
 			}
 			// Start element
