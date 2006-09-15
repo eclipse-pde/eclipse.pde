@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -46,26 +44,5 @@ public abstract class PDEDetails extends AbstractFormPart implements IDetailsPag
 	}
 	public void cancelEdit() {
 		super.refresh();
-	}
-	
-	/**
-	 * @param parent
-	 * @param toolkit
-	 * @param columnSpan
-	 * @param text
-	 */
-	public Label createLabel(Composite parent, FormToolkit toolkit,
-			int columnSpan, String text, Color foreground) {
-		
-		Label label = toolkit.createLabel(parent, text, SWT.WRAP);
-		//label.setForeground(foreground);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		//data.widthHint = 150;
-		data.horizontalSpan = columnSpan;
-		label.setLayoutData(data);
-		if (foreground != null) {
-			label.setForeground(foreground);
-		}
-		return label;
 	}
 }

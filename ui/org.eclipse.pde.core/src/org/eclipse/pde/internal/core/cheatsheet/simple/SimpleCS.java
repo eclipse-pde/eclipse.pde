@@ -62,13 +62,6 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 		super(model, null);
 		reset();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#addItems(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem[])
-	 */
-	public void addItems(ISimpleCSItem[] items) {
-		// TODO: MP: Are we going to need this?
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#getIntro()
@@ -92,13 +85,6 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#removeItems(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem[])
-	 */
-	public void removeItems(ISimpleCSItem[] items) {
-		// TODO: MP: Are we going to need this?
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#reset()
 	 */
 	public void reset() {
@@ -112,6 +98,10 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 */
 	public void setIntro(ISimpleCSIntro intro) {
 		fIntro = intro;
+		
+		if (isEditable()) {
+			fireStructureChanged(intro, IModelChangedEvent.INSERT);
+		}
 	}
 
 	/* (non-Javadoc)

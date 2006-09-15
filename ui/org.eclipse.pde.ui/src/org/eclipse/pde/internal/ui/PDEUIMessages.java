@@ -221,6 +221,12 @@ public class PDEUIMessages extends NLS {
 
 	public static String SimpleCSCommandDetails_5;
 
+	public static String SimpleCSCommandDetails_6;
+
+	public static String SimpleCSCommandDetails_DFErrorBody;
+
+	public static String SimpleCSCommandDetails_DFErrorTitle;
+
 	public static String SimpleCSDescriptionDetails_0;
 
 	public static String SimpleCSDescriptionDetails_1;

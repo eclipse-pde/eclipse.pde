@@ -72,18 +72,6 @@ public interface ISimpleCSItem extends ISimpleCSObject, ISimpleCSHelpObject, ISi
 	public ISimpleCSSubItemObject[] getSubItems();
 	
 	/**
-	 * Elements:  subitem, repeated-subitem, conditional-subitem
-	 * @param subitems
-	 */
-	public void addSubItems(ISimpleCSSubItemObject[] subitems);
-	
-	/**
-	 * Elements:  subitem, repeated-subitem, conditional-subitem
-	 * @param subitems
-	 */
-	public void removeSubItems(ISimpleCSSubItemObject[] subitems);	
-	
-	/**
 	 * Element:  subitem, repeated-subitem, conditional-subitem
 	 * @param subitem
 	 */

@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
@@ -100,6 +101,10 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 	 */
 	public void setDescription(ISimpleCSDescription description) {
 		fDescription = description;
+		
+		if (isEditable()) {
+			fireStructureChanged(description, IModelChangedEvent.INSERT);
+		}
 	}
 
 	/* (non-Javadoc)

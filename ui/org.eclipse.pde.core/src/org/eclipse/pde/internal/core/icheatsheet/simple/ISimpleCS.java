@@ -47,12 +47,6 @@ public interface ISimpleCS extends ISimpleCSObject {
 	 * @return
 	 */
 	public ISimpleCSItem[] getItems();
-	
-	/**
-	 * Element:  item
-	 * @param items
-	 */
-	public void addItems(ISimpleCSItem[] items);
 
 	/**
 	 * Element:  item
@@ -66,12 +60,6 @@ public interface ISimpleCS extends ISimpleCSObject {
 	 * @param index
 	 */
 	public void addItem(int index, ISimpleCSItem item);
-		
-	/**
-	 * Element:  item
-	 * @param items
-	 */
-	public void removeItems(ISimpleCSItem[] items);
 
 	/**
 	 * Element:  item

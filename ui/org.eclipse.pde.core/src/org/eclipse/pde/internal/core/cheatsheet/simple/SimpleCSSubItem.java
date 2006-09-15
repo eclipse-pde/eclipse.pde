@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
@@ -101,6 +102,9 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 */
 	public void setExecutable(ISimpleCSRunContainerObject executable) {
 		fExecutable = executable;
+		if (isEditable()) {
+			fireStructureChanged(executable, IModelChangedEvent.INSERT);
+		}		
 	}
 
 	/* (non-Javadoc)

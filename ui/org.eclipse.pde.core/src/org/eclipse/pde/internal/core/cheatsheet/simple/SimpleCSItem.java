@@ -102,13 +102,6 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#addSubItems(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject[])
-	 */
-	public void addSubItems(ISimpleCSSubItemObject[] subitems) {
-		// TODO: MP: Are we going to need this?
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getContextId()
 	 */
 	public String getContextId() {
@@ -166,13 +159,6 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#removeSubItems(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject[])
-	 */
-	public void removeSubItems(ISimpleCSSubItemObject[] subitems) {
-		// TODO: MP: Are we going to need this?
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setContextId(java.lang.String)
 	 */
 	public void setContextId(String contextId) {
@@ -188,6 +174,10 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 */
 	public void setDescription(ISimpleCSDescription description) {
 		fDescription = description;
+		
+		if (isEditable()) {
+			fireStructureChanged(description, IModelChangedEvent.INSERT);
+		}		
 	}
 
 	/* (non-Javadoc)
@@ -206,6 +196,10 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 */
 	public void setExecutable(ISimpleCSRunContainerObject executable) {
 		fExecutable = executable;
+		
+		if (isEditable()) {
+			fireStructureChanged(executable, IModelChangedEvent.INSERT);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -418,6 +412,10 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 */
 	public void setOnCompletion(ISimpleCSOnCompletion onCompletion) {
 		fOnCompletion = onCompletion;
+		
+		if (isEditable()) {
+			fireStructureChanged(onCompletion, IModelChangedEvent.INSERT);
+		}		
 	}
 
 	/* (non-Javadoc)

@@ -332,6 +332,7 @@ public class SimpleCSElementSection extends TreeSection {
 	 * 
 	 */
 	private void handlePreviewAction() {
+		// TODO: MP: LOW: Refactor into action
 		// TODO: MP: If the file needs saving, save to a temporary file and give
 		// that as the input. Need to figure out which temporary directory to 
 		// use
@@ -361,9 +362,12 @@ public class SimpleCSElementSection extends TreeSection {
 		Object[] objects = event.getChangedObjects();
 		for (int i = 0; i < objects.length; i++) {
 			ISimpleCSObject object = (ISimpleCSObject)objects[i];
+			
 			// TODO: MP: Refactor, item is same actions as subitem
 			// Consider checking for change type first
-			if (object.getType() == ISimpleCSConstants.TYPE_ITEM) {
+			if (object == null) {
+				// Ignore
+			} else if (object.getType() == ISimpleCSConstants.TYPE_ITEM) {
 				if (event.getChangeType() == IModelChangedEvent.INSERT) {
 					// Refresh the parent element in the tree viewer
 					fTreeViewer.refresh(object.getParent());

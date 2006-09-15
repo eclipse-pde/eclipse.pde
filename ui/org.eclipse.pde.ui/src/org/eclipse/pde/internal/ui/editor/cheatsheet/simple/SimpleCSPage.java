@@ -105,10 +105,13 @@ public class SimpleCSPage extends PDEFormPage implements IModelChangedListener {
 		Object[] objects = event.getChangedObjects();
 		for (int i = 0; i < objects.length; i++) {
 			ISimpleCSObject object = (ISimpleCSObject)objects[i];
+			
 			// TODO: MP: How to avoid iterating through all events
 			// Actually probably want to register each component separately
 			// as an event listener - cleaner implementation
-			if (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
+			if (object == null) {
+				// Ignore
+			} else if (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
 				// TODO: MP: Refactor into private method?
 				if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 					String changeProperty = event.getChangedProperty();
