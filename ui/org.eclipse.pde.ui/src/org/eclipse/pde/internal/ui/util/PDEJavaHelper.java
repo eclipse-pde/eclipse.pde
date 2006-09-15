@@ -403,7 +403,7 @@ public class PDEJavaHelper {
 
 	private static String formatJavaDoc(String text) {
 		StringBuffer buffer = new StringBuffer();
-		HTMLPrinter.insertPageProlog(buffer, 0, HTMLPrinter.getJavaDocStyleSheerURL());
+		HTMLPrinter.insertPageProlog(buffer, 0, HTMLPrinter.getJavaDocStyleSheerURL(), false);
 		buffer.append(text);
 		HTMLPrinter.addPageEpilog(buffer);
 		return buffer.toString();

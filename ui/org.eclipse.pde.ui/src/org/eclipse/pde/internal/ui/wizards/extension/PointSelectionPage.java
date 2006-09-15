@@ -660,7 +660,7 @@ public class PointSelectionPage
 	private void setPointDescriptionText(String text) {
 		if (fPointDescBrowser != null) {
 			StringBuffer desc = new StringBuffer();
-			HTMLPrinter.insertPageProlog(desc, 0, HTMLPrinter.getJavaDocStyleSheerURL());
+			HTMLPrinter.insertPageProlog(desc, 0, HTMLPrinter.getJavaDocStyleSheerURL(), false);
 			desc.append(text);
 			HTMLPrinter.addPageEpilog(desc);
 			fPointDescBrowser.setText(desc.toString());

@@ -18,6 +18,10 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 
 
@@ -27,13 +31,36 @@ import org.osgi.framework.Bundle;
 public class HTMLPrinter {
 
 	private static URL fJavaDocStyleSheet = null;
+	private static RGB BG_COLOR_RGB;
 
-	public static void insertPageProlog(StringBuffer buffer, int position, URL styleSheetURL) {
+	static {
+		final Display display= Display.getDefault();
+		if (display != null && !display.isDisposed()) {
+			try {
+				display.asyncExec(new Runnable() {
+					/*
+					 * @see java.lang.Runnable#run()
+					 */
+					public void run() {
+						BG_COLOR_RGB= display.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB();
+					}
+				});
+			} catch (SWTError err) {
+				// see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=45294
+				if (err.code != SWT.ERROR_DEVICE_DISPOSED)
+					throw err;
+			}
+		}
+	}
+	
+	public static void insertPageProlog(StringBuffer buffer, int position, URL styleSheetURL, boolean useColorBG) {
 
 		StringBuffer pageProlog= new StringBuffer(300);
 
 		pageProlog.append("<html><head>"); //$NON-NLS-1$
-		pageProlog.append("<style type=\"text/css\">body {margin:0px;color:#000000;}</style>"); //$NON-NLS-1$
+		pageProlog.append("<style type=\"text/css\">"); //$NON-NLS-1$
+		pageProlog.append(getBodyStyle(useColorBG));
+		pageProlog.append("</style>"); //$NON-NLS-1$
 		appendStyleSheetURL(pageProlog, styleSheetURL);
 		pageProlog.append("</head>"); //$NON-NLS-1$
 		pageProlog.append("<body>"); //$NON-NLS-1$
@@ -41,6 +68,17 @@ public class HTMLPrinter {
 		buffer.insert(position,  pageProlog.toString());
 	}
 
+	private static String getBodyStyle(boolean useInfoBG) {
+		StringBuffer sb = new StringBuffer("body {margin:0px;color:#000000;"); //$NON-NLS-1$
+		if (useInfoBG && BG_COLOR_RGB != null) {
+			sb.append("background-color:"); //$NON-NLS-1$
+			appendColor(sb, BG_COLOR_RGB);
+			sb.append(';');
+		}
+		sb.append('}');
+		return sb.toString();
+	}
+	
 	public static void insertStyles(StringBuffer buffer, String[] styles) {
 		if (styles == null || styles.length == 0)
 			return;
@@ -64,7 +102,7 @@ public class HTMLPrinter {
 		if (styleSheetURL == null)
 			return;
 
-		buffer.append("<link rel=\"stylesheet\" href= \""); //$NON-NLS-1$
+		buffer.append("<link rel=\"stylesheet\" href=\""); //$NON-NLS-1$
 		buffer.append(styleSheetURL);
 		buffer.append("\" charset=\"ISO-8859-1\" type=\"text/css\" />"); //$NON-NLS-1$
 	}
@@ -86,5 +124,12 @@ public class HTMLPrinter {
 			}
 		}
 		return fJavaDocStyleSheet;
+	}
+	
+	private static void appendColor(StringBuffer buffer, RGB rgb) {
+		buffer.append('#');
+		buffer.append(Integer.toHexString(rgb.red));
+		buffer.append(Integer.toHexString(rgb.green));
+		buffer.append(Integer.toHexString(rgb.blue));
 	}
 }

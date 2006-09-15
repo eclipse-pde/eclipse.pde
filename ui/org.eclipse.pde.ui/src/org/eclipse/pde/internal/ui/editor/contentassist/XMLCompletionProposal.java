@@ -48,7 +48,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.contentassist.display.AbstractReusableInformationControlCreator;
 import org.eclipse.pde.internal.ui.editor.contentassist.display.BrowserInformationControl;
 import org.eclipse.pde.internal.ui.editor.text.HTMLPrinter;
-import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
 import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -402,7 +401,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 			if (fSchemaObject == null)
 				return null;
 			StringBuffer sb = new StringBuffer();
-			HTMLPrinter.insertPageProlog(sb, 0, HTMLPrinter.getJavaDocStyleSheerURL());
+			HTMLPrinter.insertPageProlog(sb, 0, HTMLPrinter.getJavaDocStyleSheerURL(), true);
 			String desc = null;
 			if (fSchemaObject == null)
 				desc = PDEUIMessages.BaseWizardSelectionPage_noDesc;
@@ -468,7 +467,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		if (fCreator == null) {
 			fCreator = new AbstractReusableInformationControlCreator() {
 				public IInformationControl doCreateInformationControl(Shell parent) {
-					return new BrowserInformationControl(parent, SWT.NO_TRIM | SWT.TOOL, SWT.NONE, PDETextHover.getTooltipAffordanceString());
+					return new BrowserInformationControl(parent, SWT.NO_TRIM | SWT.TOOL, SWT.NONE);
 				}
 			};
 		}
