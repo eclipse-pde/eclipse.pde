@@ -30,7 +30,7 @@ import org.eclipse.ui.PlatformUI;
  * A launch configuration tab that customizes the list of bundles to launch with,
  * their start level and their auto-start attributes.
  * <p>
- * This class may be instantiated. This class is not intended to be subclassed by clients.
+ * This class may be instantiated, but it is not intended to be subclassed by clients.
  * </p>
  * @since 3.3
  */

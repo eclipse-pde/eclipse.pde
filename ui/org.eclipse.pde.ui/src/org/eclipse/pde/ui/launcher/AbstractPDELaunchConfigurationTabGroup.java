@@ -24,8 +24,11 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * 
- * 
+ * An abstract class subclassed by the Eclipse application and JUnit Plug-in launch
+ * configuration tab groups.
+ * <p>
+ * This class is not intended to be subclassed by clients.
+ * </p>
  * @since 3.3
  */
 public abstract class AbstractPDELaunchConfigurationTabGroup extends
