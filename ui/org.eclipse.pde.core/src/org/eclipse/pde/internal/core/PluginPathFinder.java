@@ -24,7 +24,10 @@ import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.configurator.IPlatformConfiguration;
 
 public class PluginPathFinder {
-	
+
+	private static final String URL_PROPERTY = "org.eclipse.update.resolution_url"; //$NON-NLS-1$
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+
 	/**
 	 * 
 	 * @param platformHome
@@ -90,8 +93,14 @@ public class PluginPathFinder {
 		File file = new File(platformHome, "configuration/org.eclipse.update/platform.xml"); //$NON-NLS-1$
 		if (file.exists()) {
 			try {
-				IPlatformConfiguration config = ConfiguratorUtils.getPlatformConfiguration(file.toURL());
-				return getConfiguredSitesPaths(platformHome, config, false);
+				String value = new Path(platformHome).toFile().toURL().toExternalForm();
+				System.setProperty(URL_PROPERTY, value);
+				try {
+					IPlatformConfiguration config = ConfiguratorUtils.getPlatformConfiguration(file.toURL());
+					return getConfiguredSitesPaths(platformHome, config, false);
+				} finally {
+					System.setProperty(URL_PROPERTY, EMPTY_STRING);
+				}
 			} catch (MalformedURLException e) {
 			} catch (IOException e) {
 			}
@@ -103,8 +112,14 @@ public class PluginPathFinder {
 		File file = new File(platformHome, "configuration/org.eclipse.update/platform.xml"); //$NON-NLS-1$
 		if (file.exists()) {
 			try {
-				IPlatformConfiguration config = ConfiguratorUtils.getPlatformConfiguration(file.toURL());
-				return getConfiguredSitesPaths(platformHome, config, true);
+				String value = new Path(platformHome).toFile().toURL().toExternalForm();
+				System.setProperty(URL_PROPERTY, value);
+				try {
+					IPlatformConfiguration config = ConfiguratorUtils.getPlatformConfiguration(file.toURL());
+					return getConfiguredSitesPaths(platformHome, config, true);
+				} finally {
+					System.setProperty(URL_PROPERTY, EMPTY_STRING);
+				}
 			} catch (MalformedURLException e) {
 			} catch (IOException e) {
 			}
