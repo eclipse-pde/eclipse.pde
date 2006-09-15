@@ -13,7 +13,6 @@ package org.eclipse.pde.ui.launcher;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -59,8 +58,8 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	public String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		ArrayList programArgs = new ArrayList();
 
-		Map workspace = getWorkspaceBundles(configuration);
-		Map target = getTargetBundles(configuration);
+		Map workspace = OSGiBundleBlock.retrieveWorkspaceMap(configuration);
+		Map target = OSGiBundleBlock.retrieveTargetMap(configuration);
 		
 		Map plugins = getBundlesToRun(workspace, target);
 		if (!plugins.containsKey("org.eclipse.osgi")) { //$NON-NLS-1$
@@ -188,34 +187,6 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		}
 	}
 	
-	/**
-	 * Returns a map of workspace bundles
-	 * 
-	 * @param configuration
-	 * @return workspace bundles
-	 * 
-	 * @since 3.3
-	 */
-	public Map getWorkspaceBundles(ILaunchConfiguration configuration) {
-		try {
-			return OSGiBundleBlock.retrieveWorkspaceMap(configuration);
-		} catch (CoreException e) {
-			PDECore.log(e);
-			return Collections.EMPTY_MAP;
-		}
-	}
-	
-	/**
-	 * Returns a map of target bundles
-	 * 
-	 * @param configuration
-	 * @return target bundles
-	 * 
-	 * @since 3.3
-	 */
-	public Map getTargetBundles(ILaunchConfiguration configuration) {
-		return OSGiBundleBlock.retrieveTargetMap(configuration);
-	}
 	
 	/**
 	 * 
@@ -225,7 +196,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	 * 
 	 * @since 3.3
 	 */
-	public Map getBundlesToRun(Map workspace, Map target) {
+	protected Map getBundlesToRun(Map workspace, Map target) {
 		Map plugins = new TreeMap();
 		Iterator iter = workspace.keySet().iterator();
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
