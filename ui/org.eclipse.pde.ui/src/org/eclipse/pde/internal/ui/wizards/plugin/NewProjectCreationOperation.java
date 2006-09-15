@@ -202,7 +202,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 				String value = getCommaValueFromSet(getImportPackagesSet());
 				if (value.length() > 0)
 					bundle.setHeader(Constants.IMPORT_PACKAGE, value);
-			} else if (((IPluginFieldData)fData).doGenerateClass()) {
+			} 
+			if (fData instanceof IPluginFieldData && ((IPluginFieldData)fData).doGenerateClass()) {
 				if (targetVersion.equals("3.1")) //$NON-NLS-1$
 					bundle.setHeader(ICoreConstants.ECLIPSE_AUTOSTART, "true"); //$NON-NLS-1$
 				else 
