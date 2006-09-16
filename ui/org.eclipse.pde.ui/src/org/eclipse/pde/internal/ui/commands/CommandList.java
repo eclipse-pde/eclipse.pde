@@ -65,7 +65,7 @@ public class CommandList {
 				ImageDescriptor desc = fComImgServ.getImageDescriptor(((Command)element).getId());
 				if (desc == null) {
 					if (fDefaultImage == null)
-						fDefaultImage = PDEPluginImages.DESC_GENCOM_OBJ.createImage();
+						fDefaultImage = PDEPluginImages.DESC_BUILD_VAR_OBJ.createImage();
 					return fDefaultImage;
 				}
 				img = desc.createImage();
@@ -159,7 +159,7 @@ public class CommandList {
 		Tree tree = fToolkit.createTree(c, SWT.V_SCROLL | SWT.H_SCROLL);
 		tree.setLayout(new GridLayout());
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint = 150;
+		gd.widthHint = 200;
 		tree.setLayoutData(gd);
 		fTreeViewer = new TreeViewer(tree);
 		fContentProvider = new CommandTreeContentProvider(fCSP.getCommandService());
@@ -175,7 +175,7 @@ public class CommandList {
 	}
 	
 	private void createFilterText(Composite parent) {
-		Composite c = fCSP.createComposite(parent, GridData.FILL_HORIZONTAL, 2, false);
+		Composite c = fCSP.createComposite(parent, GridData.FILL_HORIZONTAL, 3, false);
 		fFilterText = fToolkit.createText(c, "", SWT.BORDER); //$NON-NLS-1$
 		fFilterText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fFilterText.addKeyListener(new KeyAdapter() {
@@ -202,6 +202,24 @@ public class CommandList {
 			}
 		});
 		clearButton.setEnabled(false);
+		
+		final ImageHyperlink collapseAll = fToolkit.createImageHyperlink(c, SWT.NONE);
+		final Image collImg = PDEPluginImages.DESC_COLLAPSE_ALL_DISABLED.createImage();
+		final Image collEnabledImg = PDEPluginImages.DESC_COLLAPSE_ALL.createImage();
+		collapseAll.setImage(collImg);
+		collapseAll.setHoverImage(collEnabledImg);
+		collapseAll.setToolTipText(PDEUIMessages.CommandList_collapseAll0);
+		collapseAll.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				collImg.dispose();
+				collEnabledImg.dispose();
+			}
+		});
+		collapseAll.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				fTreeViewer.collapseAll();
+			}
+		});
 		
         fFilterText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {

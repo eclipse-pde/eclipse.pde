@@ -89,6 +89,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String CommandList_clearTooltip;
 
+	public static String CommandList_collapseAll0;
+
 	public static String CommandList_groupName;
 
 	public static String CommandSerializerPart_name;

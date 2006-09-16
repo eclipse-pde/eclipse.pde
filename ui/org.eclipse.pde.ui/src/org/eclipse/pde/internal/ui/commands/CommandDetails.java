@@ -128,7 +128,7 @@ public class CommandDetails {
 	private void createLinks(Composite parent) {
 		Composite comp = fCSP.createComposite(parent,
 				GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END,
-				2, false);
+				1, false);
 		
 		fExecLink = fToolkit.createImageHyperlink(comp, SWT.NONE);
 		final Image execImage = PDEPluginImages.DESC_RUN_EXC.createImage();
@@ -136,6 +136,7 @@ public class CommandDetails {
 		fExecLink.setText(PDEUIMessages.CommandDetails_executeText);
 		fExecLink.setToolTipText(PDEUIMessages.CommandDetails_execute);
 		fExecLink.addHyperlinkListener(new ExecCommand());
+		fExecLink.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		fExecLink.setVisible(false);
 		fExecLink.addDisposeListener(new DisposeListener()
 			{ public void widgetDisposed(DisposeEvent e) { execImage.dispose(); } });
@@ -146,6 +147,7 @@ public class CommandDetails {
 		fCopyLink.setText(PDEUIMessages.CommandDetails_copyToClipboard);
 		fCopyLink.setToolTipText(PDEUIMessages.CommandDetails_copytooltip);
 		fCopyLink.addHyperlinkListener(new CopyToClipboard());
+		fCopyLink.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		fCopyLink.setVisible(false);
 		fCopyLink.addDisposeListener(new DisposeListener()
 			{ public void widgetDisposed(DisposeEvent e) { clipImage.dispose(); }} );
