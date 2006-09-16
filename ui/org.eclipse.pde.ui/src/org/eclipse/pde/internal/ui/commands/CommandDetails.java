@@ -102,6 +102,7 @@ public class CommandDetails {
 		
 		section.setClient(comp);
 		
+		createLinks(c);
 		if (buttonCreator != null)
 			buttonCreator.createButtons(c);
 	}
@@ -115,20 +116,19 @@ public class CommandDetails {
 	}
 	
 	private void createParameters(Composite parent) {
-		Composite comp = fCSP.createComposite(parent, GridData.FILL_HORIZONTAL, 3, false);
+		Composite comp = fCSP.createComposite(parent, GridData.FILL_HORIZONTAL, 1, false);
 		
 		fParamLabel = fToolkit.createLabel(comp, F_NO_PARAM);
 		fParamLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		fCopyLink = fToolkit.createImageHyperlink(comp, SWT.NONE);
-		final Image clipImage = PDEPluginImages.DESC_CLIPBOARD.createImage();
-		fCopyLink.setImage(clipImage);
-		fCopyLink.setText(PDEUIMessages.CommandDetails_copyToClipboard);
-		fCopyLink.setToolTipText(PDEUIMessages.CommandDetails_copytooltip);
-		fCopyLink.addHyperlinkListener(new CopyToClipboard());
-		fCopyLink.setEnabled(false);
-		fCopyLink.addDisposeListener(new DisposeListener()
-			{ public void widgetDisposed(DisposeEvent e) { clipImage.dispose(); }} );
+		fParamParent = parent;
+		createBlankParamComp();
+	}
+	
+	private void createLinks(Composite parent) {
+		Composite comp = fCSP.createComposite(parent,
+				GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END,
+				2, false);
 		
 		fExecLink = fToolkit.createImageHyperlink(comp, SWT.NONE);
 		final Image execImage = PDEPluginImages.DESC_RUN_EXC.createImage();
@@ -136,12 +136,19 @@ public class CommandDetails {
 		fExecLink.setText(PDEUIMessages.CommandDetails_executeText);
 		fExecLink.setToolTipText(PDEUIMessages.CommandDetails_execute);
 		fExecLink.addHyperlinkListener(new ExecCommand());
-		fExecLink.setEnabled(false);
+		fExecLink.setVisible(false);
 		fExecLink.addDisposeListener(new DisposeListener()
 			{ public void widgetDisposed(DisposeEvent e) { execImage.dispose(); } });
 		
-		fParamParent = parent;
-		createBlankParamComp();
+		fCopyLink = fToolkit.createImageHyperlink(comp, SWT.NONE);
+		final Image clipImage = PDEPluginImages.DESC_CLIPBOARD.createImage();
+		fCopyLink.setImage(clipImage);
+		fCopyLink.setText(PDEUIMessages.CommandDetails_copyToClipboard);
+		fCopyLink.setToolTipText(PDEUIMessages.CommandDetails_copytooltip);
+		fCopyLink.addHyperlinkListener(new CopyToClipboard());
+		fCopyLink.setVisible(false);
+		fCopyLink.addDisposeListener(new DisposeListener()
+			{ public void widgetDisposed(DisposeEvent e) { clipImage.dispose(); }} );
 	}
 	
 	private void createPreviewLabelComp(Composite parent) {
@@ -519,8 +526,8 @@ public class CommandDetails {
 		fObjectParamList.clear();
 		fValueParamList.clear();
 		
-		fExecLink.setEnabled(true);
-		fCopyLink.setEnabled(true);
+		fExecLink.setVisible(fSelectedCommand.isEnabled());
+		fCopyLink.setVisible(true);
 		try {
 			populateParams(fSelectedCommand, object);
 		} catch (NotDefinedException e) {
@@ -532,12 +539,13 @@ public class CommandDetails {
 	private void resetAllFields() {
 		fSelectedCommand = null;
 		fComIDT.setText(F_NO_SEL);
+		fParamLabel.setText(F_NO_PARAM);
 		
 		if (fComPrev != null)
 			fComPrev.setText(""); //$NON-NLS-1$
 		
-		fExecLink.setEnabled(false);
-		fCopyLink.setEnabled(false);
+		fExecLink.setVisible(false);
+		fCopyLink.setVisible(false);
 		
 		fParameterToValue.clear();
 		fObjectParamList.clear();
