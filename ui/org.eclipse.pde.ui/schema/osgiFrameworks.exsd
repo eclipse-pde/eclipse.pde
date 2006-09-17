@@ -78,10 +78,10 @@ This extension point is used to register new OSGi frameworks. Each framework is 
          <attribute name="initializer" type="string">
             <annotation>
                <documentation>
-                  initializes new OSGi Framework launch configurations with suitable defaults.  The value of this attribute must be a fully-qualified name of a Java class that implements &lt;code&gt;org.eclipse.pde.ui.launcher.ILaunchConfigurationInitializer&lt;/code&gt;.
+                  initializes new OSGi Framework launch configurations with suitable defaults.  The value of this attribute must be a fully-qualified name of a Java class that extends the default implementation &lt;code&gt;org.eclipse.pde.ui.launcher.OSGiLaunchConfigurationInitializer&lt;/code&gt;.  If not specified, the default initializer &lt;code&gt;org.eclipse.pde.ui.launcher.OSGiLaunchConfigurationInitializer&lt;/code&gt; is instantiated.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.pde.ui.launcher.ILaunchConfigurationInitializer"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.pde.ui.launcher.OSGiLaunchConfigurationInitializer"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -126,7 +126,7 @@ The following is an example of the extension point:
 The value of the attribute &lt;code&gt;launcherDelegate&lt;/code&gt; must be a fully qualified name of a Java class that extends &lt;code&gt;org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration&lt;/code&gt;.  If the launcher is to provide its own source lookup order, then the method &lt;code&gt;setDefaultSourceLocator&lt;/code&gt; should be overridden.
 &lt;/p&gt;
 &lt;p&gt;
-The value of the attribute &lt;code&gt;initializer&lt;/code&gt; must be a fully qualified name of a Java class that extends &lt;code&gt;org.eclipse.ui.launcher.ILaunchConfigurationInitializer&lt;/code&gt;.
+The value of the attribute &lt;code&gt;initializer&lt;/code&gt; must be a fully qualified name of a Java class that extends &lt;code&gt;org.eclipse.ui.launcher.OSGiLaunchConfigurationInitializer&lt;/code&gt;.
 &lt;/p&gt;
       </documentation>
    </annotation>
