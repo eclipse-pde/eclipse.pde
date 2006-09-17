@@ -21,6 +21,8 @@ public class ManifestPartitionScanner extends RuleBasedPartitionScanner {
 	
 	public static final String MANIFEST_HEADER_VALUE = "__mf_bundle_header_value"; //$NON-NLS-1$
 	
+	public static final String MANIFEST_FILE_PARTITIONING= "___mf_partitioning";  //$NON-NLS-1$
+	
 	public static final String[] PARTITIONS = new String[] {MANIFEST_HEADER_VALUE};
 	
 	public ManifestPartitionScanner() {

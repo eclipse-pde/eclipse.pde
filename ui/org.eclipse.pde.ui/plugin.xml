@@ -1968,7 +1968,7 @@
          point="org.eclipse.compare.contentMergeViewers">
       <viewer
             class="org.eclipse.pde.internal.ui.compare.ManifestContentMergeViewerCreator"
-            extensions="MF"
+            extensions="MF,MF2"
             id="org.eclipse.pde.internal.ui.compare.ManifestContentMergeViewerCreator"/>
       <contentTypeBinding
             contentMergeViewerId="org.eclipse.pde.internal.ui.compare.ManifestContentMergeViewerCreator"

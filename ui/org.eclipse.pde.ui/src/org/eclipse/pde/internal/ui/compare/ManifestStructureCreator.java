@@ -10,35 +10,41 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.compare;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
-import org.eclipse.compare.CompareUI;
-import org.eclipse.compare.IEditableContent;
-import org.eclipse.compare.IEncodedStreamContentAccessor;
-import org.eclipse.compare.IStreamContentAccessor;
-import org.eclipse.compare.ITypedElement;
-import org.eclipse.compare.structuremergeviewer.DocumentRangeNode;
-import org.eclipse.compare.structuremergeviewer.IStructureComparator;
-import org.eclipse.compare.structuremergeviewer.IStructureCreator;
+import org.eclipse.compare.*;
+import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.text.ManifestPartitionScanner;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.services.IDisposable;
 
-public class ManifestStructureCreator implements IStructureCreator {
-
-	private ManifestNode fRootNode;
-	private Document fDocument;
+public class ManifestStructureCreator extends StructureCreator {
 	
+	private final class RootManifestNode extends ManifestNode implements IDisposable {
+		private final Object input;
+		private final IDisposable disposable;
+
+		private RootManifestNode(IDocument doc, boolean editable, Object input, IDisposable disposable) {
+			super(doc, editable);
+			this.input = input;
+			this.disposable = disposable;
+		}
+
+		void nodeChanged(ManifestNode node) {
+			save(this, input);
+		}
+
+		public void dispose() {
+			if (disposable != null)
+				disposable.dispose();
+		}
+	}
+
 	static class ManifestNode extends DocumentRangeNode implements ITypedElement {
 		
 		private boolean fIsEditable;
@@ -63,7 +69,7 @@ public class ManifestStructureCreator implements IStructureCreator {
 		}
 
 		public String getType() {
-			return "MF"; //$NON-NLS-1$
+			return "MF2"; //$NON-NLS-1$
 		}
 		
 		public Image getImage() {
@@ -103,25 +109,10 @@ public class ManifestStructureCreator implements IStructureCreator {
 				return null;
 			}
 		}
-		fDocument = new Document(content != null ? content : ""); //$NON-NLS-1$
-		setupManifestDocument(fDocument);
-				
-		boolean isEditable= false;
-		if (input instanceof IEditableContent)
-			isEditable= ((IEditableContent) input).isEditable();
-
-		fRootNode = new ManifestNode(fDocument, isEditable) {
-			void nodeChanged(ManifestNode node) {
-				save(this, input);
-			}
-		};
-				
-		try {
-			parseManifest(fRootNode, fDocument);
-		} catch (IOException ex) {
-		}
+		IDocument document = new Document(content != null ? content : ""); //$NON-NLS-1$
+		setupDocument(document);
 		
-		return fRootNode;
+		return createStructureComparator(input, document, null);
 	}
 
 	public IStructureComparator locate(Object path, Object input) {
@@ -162,7 +153,7 @@ public class ManifestStructureCreator implements IStructureCreator {
 				return;
 				
 			if (line.length() <= 0) {
-				saveNode(headerBuffer.toString(), headerStart); // empty line, save buffer to node
+				saveNode(root, doc, headerBuffer.toString(), headerStart); // empty line, save buffer to node
 				continue;
 			}
 			if (line.charAt(0) == ' ') {
@@ -172,18 +163,18 @@ public class ManifestStructureCreator implements IStructureCreator {
 			}
 			
 			// save old buffer and start loading again
-			saveNode(headerBuffer.toString(), headerStart);
+			saveNode(root, doc, headerBuffer.toString(), headerStart);
 			
 			headerStart = lineStart;
 			headerBuffer.replace(0, headerBuffer.length(), line);
 		}
 	}
 
-	private void saveNode(String header, int start) {
+	private void saveNode(ManifestNode root, IDocument doc, String header, int start) {
 		if (header.length() > 0)
 			new ManifestNode(
-				fRootNode, 0, extractKey(header),
-				fDocument, start, header.length());
+				root, 0, extractKey(header),
+				doc, start, header.length());
 	}
 
 	private String extractKey(String headerBuffer) {
@@ -258,9 +249,29 @@ public class ManifestStructureCreator implements IStructureCreator {
 		return null;
 	}
 	
-	private void setupManifestDocument(IDocument document) {
-		IDocumentPartitioner partitioner= new FastPartitioner(new ManifestPartitionScanner(), ManifestPartitionScanner.PARTITIONS);
-		document.setDocumentPartitioner(partitioner);
-		partitioner.connect(document);
+	protected IDocumentPartitioner getDocumentPartitioner() {
+		return new FastPartitioner(new ManifestPartitionScanner(), ManifestPartitionScanner.PARTITIONS);
 	}
+	
+	protected String getDocumentPartitioning() {
+		return ManifestPartitionScanner.MANIFEST_FILE_PARTITIONING;
+	}
+	
+	protected IStructureComparator createStructureComparator(Object input,
+			IDocument document, IDisposable disposable) {
+		
+		boolean isEditable= false;
+		if (input instanceof IEditableContent)
+			isEditable= ((IEditableContent) input).isEditable();
+
+		ManifestNode rootNode = new RootManifestNode(document, isEditable, input, disposable);
+				
+		try {
+			parseManifest(rootNode, document);
+		} catch (IOException ex) {
+		}
+		
+		return rootNode;
+	}
+	
 }

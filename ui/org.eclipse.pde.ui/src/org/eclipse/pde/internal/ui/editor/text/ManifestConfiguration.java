@@ -45,6 +45,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	private ContentAssistant fContentAssistant;
 	private ManifestContentAssistProcessor fContentAssistantProcessor;
 	private ManifestTextHover fTextHover;
+	private String fDocumentPartitioning;
 	
 	class ManifestHeaderScanner extends BasePDEScanner {
 		
@@ -177,15 +178,20 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	}
 
 	public ManifestConfiguration(IColorManager manager) {
-		this(manager, null);
+		this(manager, null, null);
 	}
 	
 	public ManifestConfiguration(IColorManager manager, PDESourcePage page) {
+		this(manager, page, null);
+	}
+	
+	public ManifestConfiguration(IColorManager manager, PDESourcePage page, String documentPartitioning) {
 		super(page, manager);
 		fPropertyKeyScanner = new ManifestHeaderScanner();
 		fPropertyValueScanner = new ManifestValueScanner();
+		this.fDocumentPartitioning = documentPartitioning;
 	}
-	
+
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		String[] partitions = ManifestPartitionScanner.PARTITIONS;
 		String[] all = new String[partitions.length + 1];
@@ -286,5 +292,11 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	
 	protected int getInfoImplementationType() {
 		return SourceInformationProvider.F_MANIFEST_IMP;
+	}
+	
+	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
+		if (fDocumentPartitioning != null)
+			return fDocumentPartitioning;
+		return super.getConfiguredDocumentPartitioning(sourceViewer);
 	}
 }

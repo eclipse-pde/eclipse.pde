@@ -38,7 +38,7 @@ public class ManifestContentMergeViewer extends TextMergeViewer {
 		if (textViewer instanceof SourceViewer) {
 			if (fColorManager == null)
 				fColorManager = ColorManager.getDefault();
-			((SourceViewer)textViewer).configure(new ManifestConfiguration(fColorManager));
+			((SourceViewer)textViewer).configure(new ManifestConfiguration(fColorManager, null, getDocumentPartitioning()));
 			Font font = JFaceResources.getFont(ManifestContentMergeViewer.class.getName());
 			if (font != null)
 				((SourceViewer)textViewer).getTextWidget().setFont(font);
@@ -47,6 +47,10 @@ public class ManifestContentMergeViewer extends TextMergeViewer {
 
 	protected IDocumentPartitioner getDocumentPartitioner() {
 		return new FastPartitioner(new ManifestPartitionScanner(), ManifestPartitionScanner.PARTITIONS);
+	}
+	
+	protected String getDocumentPartitioning() {
+		return ManifestPartitionScanner.MANIFEST_FILE_PARTITIONING;
 	}
 	
 	public String getTitle() {
