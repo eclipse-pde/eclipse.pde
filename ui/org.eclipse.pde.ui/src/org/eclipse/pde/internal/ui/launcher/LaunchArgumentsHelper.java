@@ -90,11 +90,6 @@ public class LaunchArgumentsHelper {
 		return args == null ? "" : getSubstitutedString(args); //$NON-NLS-1$
 	}
 	
-	public static String[] getUserVMArgumentArray(ILaunchConfiguration configuration) throws CoreException {
-		String args = getUserVMArguments(configuration);
-		return new ExecutionArguments(args, "").getVMArgumentsArray(); //$NON-NLS-1$
-	}
-	
 	public static String getUserVMArguments(ILaunchConfiguration configuration) throws CoreException {
 		String args = configuration.getAttribute(
 				IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, 

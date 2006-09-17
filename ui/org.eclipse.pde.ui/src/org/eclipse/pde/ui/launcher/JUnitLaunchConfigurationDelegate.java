@@ -12,17 +12,15 @@
 package org.eclipse.pde.ui.launcher;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -34,18 +32,17 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration;
 import org.eclipse.jdt.internal.junit.launcher.TestSearchResult;
+import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.SocketUtil;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.util.CoreUtility;
@@ -56,70 +53,84 @@ import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
 import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
-import org.eclipse.pde.internal.ui.launcher.PluginValidationDialog;
-import org.eclipse.pde.internal.ui.launcher.PluginValidationOperation;
 import org.eclipse.pde.internal.ui.launcher.VMHelper;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.update.configurator.ConfiguratorUtils;
 
-
+/**
+ * A launch delegate for launching JUnit Plug-in tests.
+ * <p>
+ * <b>
+ * Note: This class may still undergo significant changes in 3.3 before it stabilizes
+ * </b>
+ * </p>
+ * @since 3.3
+ */
 public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfiguration  {
 
 	public static final String CORE_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
 	public static final String UI_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$
 	
-	protected static IPluginModelBase[] registryPlugins;
-	protected File fConfigDir = null;
+	public static String[] REQUIRED_PLUGINS = {"org.junit", "org.eclipse.jdt.junit.runtime", "org.eclipse.pde.junit.runtime"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-	public void launch(
-		ILaunchConfiguration configuration,
-		String mode,
-		ILaunch launch,
-		IProgressMonitor monitor)
-		throws CoreException {
+	protected File fConfigDir = null;
+	private Map fPluginMap;
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
+				throws CoreException {
 		try {
 			fConfigDir = null;
-			monitor.beginTask("", 7); //$NON-NLS-1$
-			TestSearchResult testSearchResult = findTestTypes(configuration, monitor);
+			monitor.beginTask("", 4); //$NON-NLS-1$
+			TestSearchResult testSearchResult = findTestTypes(configuration, new SubProgressMonitor(monitor, 1));
 			IType[] testTypes = testSearchResult.getTypes();
-			monitor.worked(1);
 			
-			validateProjectDependencies(configuration, new SubProgressMonitor(monitor, 1));
+			// Get the list of plug-ins to run
+			fPluginMap = LaunchPluginValidator.getPluginsToRun(configuration);
 			
-			promptToClear(configuration, new SubProgressMonitor(monitor, 1));
-			launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());
+			// implicitly add the plug-ins required for JUnit testing if necessary
+			for (int i = 0; i < REQUIRED_PLUGINS.length; i++) {
+				String id = REQUIRED_PLUGINS[i];
+				if (!fPluginMap.containsKey(id)) {
+					fPluginMap.put(id, findPlugin(id));
+				}
+			}
+			
+			preLaunchCheck(configuration, launch, new SubProgressMonitor(monitor, 2));
 			
 			int port = SocketUtil.findFreePort();
+			launch.setAttribute(PORT_ATTR, Integer.toString(port));
+			launch.setAttribute(TESTTYPE_ATTR, testTypes[0].getHandleIdentifier());
 			VMRunnerConfiguration runnerConfig = createVMRunner(configuration, testSearchResult, port, mode);
-			if (runnerConfig == null) {
-				monitor.setCanceled(true);
-				return;
-			}
 			monitor.worked(1);
 			
 			setDefaultSourceLocator(launch, configuration);
-			synchronizeManifests(configuration);
-			launch.setAttribute(PORT_ATTR, Integer.toString(port));
-			launch.setAttribute(TESTTYPE_ATTR, testTypes[0].getHandleIdentifier());
 			manageLaunch(launch);
 			IVMRunner runner = getVMRunner(configuration, mode);
 			if (runner != null)
 				runner.run(runnerConfig, launch, monitor);
 			else
 				monitor.setCanceled(true);
-			monitor.worked(1);
+			monitor.done();
 		} catch (CoreException e) {
 			monitor.setCanceled(true);
 			throw e;
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getVMRunner(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
+	 */
 	public IVMRunner getVMRunner(ILaunchConfiguration configuration, String mode) throws CoreException {
 		IVMInstall launcher = VMHelper.createLauncher(configuration);
 		return launcher.getVMRunner(mode);
 	}
+	
 	/*
-	 * @see JUnitBaseLauncherDelegate#configureVM(IType[], int, String)
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration#createVMRunner(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.jdt.internal.junit.launcher.TestSearchResult, int, java.lang.String)
 	 */
 	protected VMRunnerConfiguration createVMRunner(
 		ILaunchConfiguration configuration,
@@ -128,22 +139,17 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 		String runMode)
 		throws CoreException {
 
-		// Program arguments
-		String[] programArgs = getProgramArgumentsArray(configuration, testTypes, port, runMode);
-		if (programArgs == null)
-			return null;
-
 		VMRunnerConfiguration runnerConfig =
 			new VMRunnerConfiguration("org.eclipse.core.launcher.Main", getClasspath(configuration)); //$NON-NLS-1$
-		runnerConfig.setVMArguments(getVMArgumentsArray(configuration));
-		runnerConfig.setProgramArguments(programArgs);
+		runnerConfig.setVMArguments(new ExecutionArguments(getVMArguments(configuration), "").getVMArgumentsArray()); //$NON-NLS-1$
+		runnerConfig.setProgramArguments(getProgramArgumentsArray(configuration, testTypes, port, runMode));
 		runnerConfig.setEnvironment(getEnvironment(configuration));
 		runnerConfig.setWorkingDirectory(getWorkingDirectory(configuration).getAbsolutePath());
 		runnerConfig.setVMSpecificAttributesMap(getVMSpecificAttributesMap(configuration));
 		return runnerConfig;
 	}
 
-	protected String getTestPluginId(ILaunchConfiguration configuration)
+	private String getTestPluginId(ILaunchConfiguration configuration)
 		throws CoreException {
 		IJavaProject javaProject = getJavaProject(configuration);
 		IPluginModelBase model =
@@ -162,12 +168,30 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 		return model.getPluginBase().getId();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration#abort(java.lang.String, java.lang.Throwable, int)
+	 */
 	protected void abort(String message, Throwable exception, int code)
 		throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, code, message, exception));
 	}
 	
-	public String[] getProgramArgumentsArray(
+	/**
+	 * Returns the program arguments to launch with.
+	 * This list is a combination of arguments computed by PDE based on attributes
+	 * specified in the given launch configuration, followed by the program arguments
+	 * that the entered directly into the launch configuration.
+	 *  
+	 * @param configuration
+	 *            launch configuration
+	 * @return the program arguments necessary for launching
+	 * 
+	 * @exception CoreException
+	 *                if unable to retrieve the attribute or create the
+	 *                necessary configuration files            
+	 */
+	private String[] getProgramArgumentsArray(
 		ILaunchConfiguration configuration,
 		TestSearchResult testSearchResult,
 		int port,
@@ -175,38 +199,16 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 		throws CoreException {
 		ArrayList programArgs = new ArrayList();
 		
-		// Get the list of plug-ins to run
-		Map pluginMap = LaunchPluginValidator.getPluginsToRun(configuration);
-		
-		if (configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false)) {
-			IPluginModelBase[] models = (IPluginModelBase[])pluginMap.values().toArray(new IPluginModelBase[pluginMap.size()]);
-			final PluginValidationOperation op = new PluginValidationOperation(models);
-			try {
-				op.run(new NullProgressMonitor());
-			} catch (InvocationTargetException e) {
-			} catch (InterruptedException e) {
-			} finally {
-				if (op.hasErrors()) {
-					final int[] result = new int[1];
-					final Display display = LauncherUtils.getDisplay();
-					display.syncExec(new Runnable() {
-						public void run() {
-							result[0] = new PluginValidationDialog(display.getActiveShell(), op).open();
-					}});
-					if (result[0] == IDialogConstants.CANCEL_ID) {
-						return null;
-					}
-				}
-			}
-		}
-
-		addRequiredPlugins(pluginMap, testSearchResult);
-		
 		programArgs.addAll(getBasicArguments(configuration, port, runMode, testSearchResult));
 		
-		// Specify the application to launch based on the list of plug-ins to run.
+		// Specify the JUnit Plug-in test application to launch
 		programArgs.add("-application"); //$NON-NLS-1$
-		programArgs.add(getApplicationName(pluginMap, configuration));
+		String application = null;
+		try {
+			application = configuration.getAttribute(IPDELauncherConstants.APPLICATION, (String)null);
+		} catch (CoreException e) {
+		}
+		programArgs.add(application != null ? application : UI_APPLICATION);
 		
 		// If a product is specified, then add it to the program args
 		if (configuration.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
@@ -231,9 +233,9 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 		// Create the platform configuration for the runtime workbench
 		String productID = LaunchConfigurationHelper.getProductID(configuration);
 		LaunchConfigurationHelper.createConfigIniFile(configuration,
-				productID, pluginMap, getConfigDir(configuration));
+				productID, fPluginMap, getConfigDir(configuration));
 		TargetPlatform.createPlatformConfigurationArea(
-				pluginMap,
+				fPluginMap,
 				getConfigDir(configuration),
 				LaunchConfigurationHelper.getContributingPlugin(productID));
 		
@@ -242,11 +244,11 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 		
 		// Specify the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
-		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", pluginMap)); //$NON-NLS-1$
+		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fPluginMap)); //$NON-NLS-1$
 		
 		// necessary for PDE to know how to load plugins when target platform = host platform
 		// see PluginPathFinder.getPluginPaths()
-		if (pluginMap.containsKey(PDECore.getPluginId()))
+		if (fPluginMap.containsKey(PDECore.getPluginId()))
 			programArgs.add("-pdelaunch"); //$NON-NLS-1$	
 
 		// Create the .options file if tracing is turned on
@@ -308,63 +310,49 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 		return (String[]) programArgs.toArray(new String[programArgs.size()]);
 	}
 		
-	protected IPluginModelBase[] addRequiredPlugins(Map pluginMap, TestSearchResult result)
-		throws CoreException {
-		addRequiredPlugin(pluginMap, "org.eclipse.pde.junit.runtime"); //$NON-NLS-1$
-		addRequiredPlugin(pluginMap, "org.eclipse.jdt.junit.runtime"); //$NON-NLS-1$
-		addRequiredPlugin(pluginMap, "org.junit"); //$NON-NLS-1$
-		addRequiredPlugin(pluginMap, result.getTestKind().getLoaderPluginId());
-		return (IPluginModelBase[]) pluginMap.values().toArray(
-			new IPluginModelBase[pluginMap.size()]);
-	}
-	
-	private void addRequiredPlugin(Map pluginMap, final String pluginId) throws CoreException {
-		if (!pluginMap.containsKey(pluginId)) { //$NON-NLS-1$
-			pluginMap.put(pluginId, findPlugin(pluginId)); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-	
-	protected IPluginModelBase findPlugin(String id) throws CoreException {
+	private IPluginModelBase findPlugin(String id) throws CoreException {
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		IPluginModelBase model = manager.findModel(id);
-		if (model != null)
-			return model;
-
-		if (registryPlugins == null) {
-			URL[] pluginPaths = ConfiguratorUtils.getCurrentPlatformConfiguration().getPluginPath();
-			PDEState state = new PDEState(pluginPaths, false, new NullProgressMonitor());
-			registryPlugins = state.getTargetModels();
-		}
-
-		for (int i = 0; i < registryPlugins.length; i++) {
-			if (registryPlugins[i].getPluginBase().getId().equals(id))
-				return registryPlugins[i];
-		}
-		abort(
-			NLS.bind(PDEUIMessages.JUnitLaunchConfiguration_error_missingPlugin, id),
-			null,
-			IStatus.OK);
-		return null;
+		if (model == null)
+			model = PDECore.getDefault().findPluginInHost(id);
+		if (model == null)
+			abort(
+				NLS.bind(PDEUIMessages.JUnitLaunchConfiguration_error_missingPlugin, id),
+				null,
+				IStatus.OK);
+		return model;
 	}
-	
-	public String[] getVMArgumentsArray(ILaunchConfiguration configuration) throws CoreException {
-		return LaunchArgumentsHelper.getUserVMArgumentArray(configuration);
-	}
-	
+		
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getProgramArguments(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
 	public String getProgramArguments(ILaunchConfiguration configuration)
 		throws CoreException {
 		return LaunchArgumentsHelper.getUserProgramArguments(configuration);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getVMArguments(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
 	public String getVMArguments(ILaunchConfiguration configuration)
 		throws CoreException {
 		return LaunchArgumentsHelper.getUserVMArguments(configuration);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getEnvironment(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
 	public String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException {
 		return DebugPlugin.getDefault().getLaunchManager().getEnvironment(configuration);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getClasspath(org.eclipse.debug.core.ILaunchConfiguration)
+	 */	
 	public String[] getClasspath(ILaunchConfiguration configuration) throws CoreException {
 		String[] classpath = LaunchArgumentsHelper.constructClasspath(configuration);
 		if (classpath == null) {
@@ -373,14 +361,26 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 		return classpath;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getWorkingDirectory(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
 	public File getWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
 		return LaunchArgumentsHelper.getWorkingDirectory(configuration);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getVMSpecificAttributesMap(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
 	public Map getVMSpecificAttributesMap(ILaunchConfiguration configuration) throws CoreException {
 		return LaunchArgumentsHelper.getVMSpecificAttributesMap(configuration);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#setDefaultSourceLocator(org.eclipse.debug.core.ILaunch, org.eclipse.debug.core.ILaunchConfiguration)
+	 */
 	protected void setDefaultSourceLocator(ILaunch launch, ILaunchConfiguration configuration) throws CoreException {
 		ILaunchConfigurationWorkingCopy wc = null;
 		if (configuration.isWorkingCopy()) {
@@ -398,39 +398,24 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 		}
 	}
 	
-	protected String getDefaultWorkspace(ILaunchConfiguration config) throws CoreException {
-		if (config.getAttribute(IPDELauncherConstants.APPLICATION, UI_APPLICATION).equals(UI_APPLICATION))
-			return "${workspace_loc}/../junit-workbench-workspace"; //$NON-NLS-1$
-		return "${workspace_loc}/../junit-core-workspace"; //$NON-NLS-1$
-	}
-	
-	protected String getApplicationName(Map pluginMap, ILaunchConfiguration configuration) {
-		try {
-			String application = configuration.getAttribute(IPDELauncherConstants.APPLICATION, (String)null);
-			if (CORE_APPLICATION.equals(application)) 
-				return CORE_APPLICATION;				
-		} catch (CoreException e) {
-		}
-		return UI_APPLICATION;
-	}
-		
-	protected File getConfigDir(ILaunchConfiguration config) {
+	private File getConfigDir(ILaunchConfiguration config) {
 		if (fConfigDir == null)
-			fConfigDir = LaunchConfigurationHelper.getConfigurationArea(config);
-	
+			fConfigDir = LaunchConfigurationHelper.getConfigurationArea(config);	
 		return fConfigDir;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getBuildOrder(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
 	 */
 	protected IProject[] getBuildOrder(ILaunchConfiguration configuration,
 			String mode) throws CoreException {
 		return computeBuildOrder(LaunchPluginValidator.getAffectedProjects(configuration));
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getProjectsForProblemSearch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getProjectsForProblemSearch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
 	 */
 	protected IProject[] getProjectsForProblemSearch(
 			ILaunchConfiguration configuration, String mode)
@@ -438,15 +423,68 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 		return LaunchPluginValidator.getAffectedProjects(configuration);
 	}
 	
-	public void manageLaunch(ILaunch launch) {
+	/**
+	 * Adds a listener to the launch to be notified at interesting launch lifecycle
+	 * events such as when the launch terminates.
+	 * 
+	 * @param launch
+	 * 			the launch 			
+	 */
+	protected void manageLaunch(ILaunch launch) {
 		PDEPlugin.getDefault().getLaunchListener().manage(launch);		
 	}
 	
-	public void synchronizeManifests(ILaunchConfiguration configuration) {
+	/**
+ 	 * Does sanity checking before launching.  The criteria whether the launch should 
+ 	 * proceed or not is specific to the launch configuration type.
+ 	 * 
+ 	 * @param configuration launch configuration
+ 	 * @param launch the launch object to contribute processes and debug targets to
+ 	 * @param monitor a progress monitor
+ 	 * 
+ 	 * @throws CoreException exception thrown if launch fails or canceled or if unable to retrieve attributes
+ 	 * from the launch configuration
+ 	 * 				
+ 	 */
+	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) 
+			throws CoreException {
+		boolean autoValidate = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
+		monitor.beginTask("", autoValidate ? 3 : 4); //$NON-NLS-1$
+		if (autoValidate)
+			validatePluginDependencies(configuration, new SubProgressMonitor(monitor, 1));
+		validateProjectDependencies(configuration, new SubProgressMonitor(monitor, 1));
+		clear(configuration, new SubProgressMonitor(monitor, 1));
+		launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());		
+		synchronizeManifests(configuration, new SubProgressMonitor(monitor, 1));		
+	}
+	/**
+	 * Checks for old-style plugin.xml files that have become stale since the last launch.
+	 * For any stale plugin.xml files found, the corresponding MANIFEST.MF is deleted 
+	 * from the runtime configuration area so that it gets regenerated upon startup.
+	 * 
+	 * @param configuration
+	 * 			the launch configuration
+	 * @param monitor
+	 * 			the progress monitor
+	 */
+	protected void synchronizeManifests(ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		LaunchConfigurationHelper.synchronizeManifests(configuration, getConfigDir(configuration));
+		monitor.done();
 	}
 
-	protected void promptToClear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+	/**
+	 * Clears the workspace prior to launching if the workspace exists and the option to 
+	 * clear it is turned on.  Also clears the configuration area if that option is chosen.
+	 * 
+	 * @param configuration
+	 * 			the launch configuration
+	 * @param monitor
+	 * 			the progress monitor
+	 * @throws CoreException
+	 * 			if unable to retrieve launch attribute values
+	 * @since 3.3
+	 */
+	protected void clear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		String workspace = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
 		// Clear workspace and prompt, if necessary
 		if (!LauncherUtils.clearWorkspace(configuration, workspace, new SubProgressMonitor(monitor, 1))) {
@@ -459,9 +497,31 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 			CoreUtility.deleteContent(getConfigDir(configuration));	
 	}
 
+	/**
+	 * Checks if the Automated Management of Dependencies option is turned on.
+	 * If so, it makes aure all manifests are updated with the correct dependencies.
+	 * 
+	 * @param configuration
+	 * 			the launch configuration
+	 * @param monitor
+	 * 			a progress monitor
+	 */
 	protected void validateProjectDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		LauncherUtils.validateProjectDependencies(configuration, monitor);
 	}
-
-
+	
+	/**
+	 * Validates inter-bundle dependencies automatically prior to launching
+	 * if that option is turned on.
+	 * 
+	 * @param configuration
+	 * 			the launch configuration
+	 * @param monitor
+	 * 			a progress monitor
+	 */
+	protected void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+		Assert.isNotNull(fPluginMap);
+		IPluginModelBase[] models = (IPluginModelBase[])fPluginMap.values().toArray(new IPluginModelBase[fPluginMap.size()]);
+		LaunchPluginValidator.validatePluginDependencies(models, monitor);
+	}
 }

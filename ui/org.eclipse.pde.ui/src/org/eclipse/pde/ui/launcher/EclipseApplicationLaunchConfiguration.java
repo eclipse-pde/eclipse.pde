@@ -11,19 +11,14 @@
 package org.eclipse.pde.ui.launcher;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.PDECore;
@@ -34,11 +29,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
-import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
-import org.eclipse.pde.internal.ui.launcher.PluginValidationDialog;
-import org.eclipse.pde.internal.ui.launcher.PluginValidationOperation;
 import org.eclipse.pde.internal.ui.launcher.VMHelper;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * A launch delegate for launching Eclipse applications
@@ -93,9 +84,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
      		programArgs.add("-pdelaunch"); //$NON-NLS-1$           
 		} else {
 			Map pluginMap = LaunchPluginValidator.getPluginsToRun(configuration);
-			if (pluginMap == null) 
-				return null;
-				
+
 			String productID = LaunchConfigurationHelper.getProductID(configuration);
 			Properties prop = LaunchConfigurationHelper.createConfigIniFile(configuration,
 					productID, pluginMap, getConfigDir(configuration));
@@ -183,7 +172,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		File configDir = new File(productDir, "configuration"); //$NON-NLS-1$
 		if (!configDir.exists())
 			configDir.mkdirs();		
-		File ini = new File(configDir, "config.ini");			 //$NON-NLS-1$
+		File ini = new File(configDir, "config.ini"); //$NON-NLS-1$
 		if (!ini.exists())
 			CoreUtility.copyFile(eclipsePath.append("configuration"), "config.ini", ini); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -211,68 +200,5 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		}
 		return fConfigDir;
 	}
-
-	/**
-	 * Prompts and clears the workspace area and/or the configuration area, if appropriate
-	 * 
-	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) 
-		throws CoreException {
-		if (configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false)) {
-			monitor.beginTask("", 4); //$NON-NLS-1$
-			final PluginValidationOperation op = new PluginValidationOperation(configuration);
-			try {
-				op.run(new SubProgressMonitor(monitor, 1));
-			} catch (InvocationTargetException e) {
-			} catch (InterruptedException e) {
-			} finally {
-				if (op.hasErrors()) {
-					final int[] result = new int[1];
-					final Display display = LauncherUtils.getDisplay();
-					display.syncExec(new Runnable() {
-						public void run() {
-							result[0] = new PluginValidationDialog(display.getActiveShell(), op).open();
-					}});
-					if (result[0] == IDialogConstants.CANCEL_ID) {
-						monitor.setCanceled(true);
-						return;
-					}
-				}
-			}
-		} else {
-			monitor.beginTask("", 3); //$NON-NLS-1$
-		}
-		
-		validateProjectDependencies(configuration, new SubProgressMonitor(monitor, 1));
-		promptToClear(configuration, new SubProgressMonitor(monitor, 1));
-		launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());		
-		synchronizeManifests(configuration);		
-		monitor.worked(1);
-	}
 	
-	/**
-	 * Prompts to clear the workspace prior to launching if the workspace exists and the option to 
-	 * clear it is turned on.  Also clears the configuration area if that option is chosen.
-	 * 
-	 * @param configuration
-	 * 			the launch configuration
-	 * @param monitor
-	 * 			the progress monitor
-	 * @throws CoreException
-	 * 			if unable to retrieve launch attribute values
-	 * @since 3.3
-	 */
-	protected void promptToClear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		String workspace = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
-		// Clear workspace and prompt, if necessary
-		if (!LauncherUtils.clearWorkspace(configuration, workspace, monitor)) {
-			monitor.setCanceled(true);
-			return;
-		}
-
-		// clear config area, if necessary
-		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
-			CoreUtility.deleteContent(getConfigDir(configuration));	
-	}
 }

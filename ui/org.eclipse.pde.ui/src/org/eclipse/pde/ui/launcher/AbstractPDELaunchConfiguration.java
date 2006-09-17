@@ -18,17 +18,21 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
+import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
@@ -57,20 +61,19 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		try {
 			fConfigDir = null;
 			monitor.beginTask("", 4); //$NON-NLS-1$
-						
-			preLaunchCheck(configuration, launch, new SubProgressMonitor(monitor, 2));
-			
-			// Program arguments
-			String[] programArgs = getProgramArguments(configuration);
-			if (programArgs == null) {
-				monitor.setCanceled(true);
-				return;
+			try {
+				preLaunchCheck(configuration, launch, new SubProgressMonitor(monitor, 2));
+			} catch (CoreException e) {
+				if (e.getStatus().getCode() == IStatus.CANCEL) {
+					monitor.setCanceled(true);
+					return;
+				}
+				throw e;
 			}
-	
 			VMRunnerConfiguration runnerConfig =  new VMRunnerConfiguration(
 												getMainClass(), getClasspath(configuration));
 			runnerConfig.setVMArguments(getVMArguments(configuration));
-			runnerConfig.setProgramArguments(programArgs);
+			runnerConfig.setProgramArguments(getProgramArguments(configuration));
 			runnerConfig.setWorkingDirectory(getWorkingDirectory(configuration).getAbsolutePath());
 			runnerConfig.setEnvironment(getEnvironment(configuration));
 			runnerConfig.setVMSpecificAttributesMap(getVMSpecificAttributesMap(configuration));
@@ -84,7 +87,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 				runner.run(runnerConfig, launch, monitor);
 			else
 				monitor.setCanceled(true);
-			monitor.worked(1);
+			monitor.done();
 		} catch (CoreException e) {
 			monitor.setCanceled(true);
 			throw e;
@@ -205,7 +208,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 *                if unable to retrieve the attribute
 	 */
 	public String[] getVMArguments(ILaunchConfiguration configuration) throws CoreException {
-		return LaunchArgumentsHelper.getUserVMArgumentArray(configuration);
+		return new ExecutionArguments(LaunchArgumentsHelper.getUserVMArguments(configuration), "").getVMArgumentsArray(); //$NON-NLS-1$
 	}
 
 	/**
@@ -214,18 +217,13 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * specified in the given launch configuration, followed by the program arguments
 	 * that the entered directly into the launch configuration.
 	 * 
-	 * This computation may require user interaction (i.e an answer to a question), etc.
-	 * If the answer is to not proceed, then this method returns null.
-	 * 
 	 * @param configuration
 	 *            launch configuration
-	 * @return the program arguments necessar for launching
-	 * 				 or <code>null</null>
+	 * @return the program arguments necessary for launching
+	 * 
 	 * @exception CoreException
-	 *                if unable to retrieve the attribute or if self-hosting could not
-	 *                proceed due to a bad setup, missing plug-ins, inability to create the
-	 *                necessary configuration files.
-	 *              
+	 *                if unable to retrieve the attribute or create the
+	 *                necessary configuration files      
 	 */
  	public String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
  		ArrayList programArgs = new ArrayList();
@@ -279,12 +277,21 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
  	 * @param launch the launch object to contribute processes and debug targets to
  	 * @param monitor a progress monitor
  	 * 
- 	 * @throws CoreException exception thrown if launch fails or if unable to retrieve attributes
+ 	 * @throws CoreException exception thrown if launch fails or canceled or if unable to retrieve attributes
  	 * from the launch configuration
  	 * 				
  	 */
-	protected abstract void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) 
-			throws CoreException;
+	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) 
+			throws CoreException {
+		boolean autoValidate = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
+		monitor.beginTask("", autoValidate ? 3 : 4); //$NON-NLS-1$
+		if (autoValidate)
+			validatePluginDependencies(configuration, new SubProgressMonitor(monitor, 1));
+		validateProjectDependencies(configuration, new SubProgressMonitor(monitor, 1));
+		clear(configuration, new SubProgressMonitor(monitor, 1));
+		launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());		
+		synchronizeManifests(configuration, new SubProgressMonitor(monitor, 1));		
+	}
 
 	/**
 	 * Returns the configuration area specified by the given launch
@@ -335,7 +342,9 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * events such as when the launch terminates.
 	 * 
 	 * @param launch
-	 * 			the launch 			
+	 * 			the launch 		
+	 * 
+	 * @since 3.3	
 	 */
 	protected void manageLaunch(ILaunch launch) {
 		PDEPlugin.getDefault().getLaunchListener().manage(launch);		
@@ -348,9 +357,14 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * 
 	 * @param configuration
 	 * 			the launch configuration
+	 * @param monitor
+	 * 			a progress monitor
+	 * 
+	 * @since 3.3
 	 */
-	protected void synchronizeManifests(ILaunchConfiguration configuration) {
+	protected void synchronizeManifests(ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		LaunchConfigurationHelper.synchronizeManifests(configuration, getConfigDir(configuration));	
+		monitor.done();
 	}
 	
 	/**
@@ -361,9 +375,48 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * 			the launch configuration
 	 * @param monitor
 	 * 			a progress monitor
+	 * 
+	 * @since 3.3
 	 */
 	protected void validateProjectDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) {
 		LauncherUtils.validateProjectDependencies(configuration, monitor);
 	}
+	
+	/**
+	 * Clears the workspace prior to launching if the workspace exists and the option to 
+	 * clear it is turned on.  Also clears the configuration area if that option is chosen.
+	 * 
+	 * @param configuration
+	 * 			the launch configuration
+	 * @param monitor
+	 * 			the progress monitor
+	 * @throws CoreException
+	 * 			if unable to retrieve launch attribute values
+	 * @since 3.3
+	 */
+	protected void clear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+		String workspace = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
+		// Clear workspace and prompt, if necessary
+		if (!LauncherUtils.clearWorkspace(configuration, workspace, monitor))
+			throw new CoreException(Status.CANCEL_STATUS);
 
+		// clear config area, if necessary
+		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
+			CoreUtility.deleteContent(getConfigDir(configuration));	
+	}
+	
+	/**
+	 * Validates inter-bundle dependencies automatically prior to launching
+	 * if that option is turned on.
+	 * 
+	 * @param configuration
+	 * 			the launch configuration
+	 * @param monitor
+	 * 			a progress monitor
+	 * @since 3.3
+	 */
+	protected void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+		LaunchPluginValidator.validatePluginDependencies(configuration, monitor);
+	}
+	
 }

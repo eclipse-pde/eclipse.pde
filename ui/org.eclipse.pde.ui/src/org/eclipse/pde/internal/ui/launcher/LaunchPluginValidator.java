@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
@@ -19,16 +20,20 @@ import java.util.TreeSet;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
+import org.eclipse.swt.widgets.Display;
 
 public class LaunchPluginValidator {
 	
@@ -238,6 +243,33 @@ public class LaunchPluginValidator {
 				projects.add(project);
 		}
 		return (IProject[]) projects.toArray(new IProject[projects.size()]);
+	}
+	
+	public static void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+		runValidationOperation(new PluginValidationOperation(configuration), monitor);
+	}	
+	
+	public static void validatePluginDependencies(IPluginModelBase[] models, IProgressMonitor monitor) throws CoreException {
+		runValidationOperation(new PluginValidationOperation(models), monitor);
+	}
+
+	private static void runValidationOperation(final PluginValidationOperation op, IProgressMonitor monitor) throws CoreException{
+		try {
+			op.run(monitor);
+		} catch (InvocationTargetException e) {
+		} catch (InterruptedException e) {
+		} finally {
+			if (op.hasErrors()) {
+				final int[] result = new int[1];
+				final Display display = LauncherUtils.getDisplay();
+				display.syncExec(new Runnable() {
+					public void run() {
+						result[0] = new PluginValidationDialog(display.getActiveShell(), op).open();
+				}});
+				if (result[0] == IDialogConstants.CANCEL_ID)
+					throw new CoreException(Status.CANCEL_STATUS);
+			}
+		}
 	}
 
 }

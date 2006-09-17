@@ -21,6 +21,13 @@ import org.eclipse.jdt.internal.junit.launcher.AssertionVMArg;
 import org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
+/**
+ * Creates and initializes the tabs for the Plug-in JUnit test launch configuration.
+ * <p>
+ * This class may be instantiated or subclassed by clients.
+ * </p>
+ * @since 3.3
+ */
 public class JUnitTabGroup extends AbstractPDELaunchConfigurationTabGroup {
 	
 	/*

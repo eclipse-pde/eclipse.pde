@@ -32,8 +32,10 @@ import org.eclipse.pde.internal.ui.launcher.OSGiFrameworkManager;
  */
 public class OSGiLaunchConfigurationDelegate extends LaunchConfigurationDelegate {
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Delegates to the launcher delegate associated with the OSGi framwork
+	 * selected in the launch configuration.
+	 * 
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void launch(ILaunchConfiguration configuration, String mode,

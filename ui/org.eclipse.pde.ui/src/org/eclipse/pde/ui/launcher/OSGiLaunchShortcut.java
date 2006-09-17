@@ -17,6 +17,13 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.launcher.OSGiFrameworkManager;
 import org.eclipse.ui.IEditorPart;
 
+/**
+ * A launch shortcut capable of launching an OSGi frameowrk
+ * <p>
+ * This class may be substantiated or subclassed by clients.
+ * </p>
+ * @since 3.3
+ */
 public class OSGiLaunchShortcut extends AbstractLaunchShortcut {
 	
 	/*
@@ -35,15 +42,31 @@ public class OSGiLaunchShortcut extends AbstractLaunchShortcut {
 		launch(mode);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.ui.launcher.AbstractLaunchShortcut#getLaunchConfigurationTypeName()
+	 */
 	protected String getLaunchConfigurationTypeName() {
 		return "org.eclipse.pde.ui.EquinoxLauncher";	 //$NON-NLS-1$
 	}
 	
+	/**
+	 * Delegates to the initializer associated with the selected OSGI framework
+	 * to initialize the launch configuration
+	 * <p>
+	 * Refer to the <code>org.eclipse.pde.ui.osgiFrameworks</code> extension point.
+	 * </p>
+	 * @see org.eclipse.pde.ui.launcher.AbstractLaunchShortcut#initializeConfiguration(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
 	protected void initializeConfiguration(ILaunchConfigurationWorkingCopy configuration) {
 		OSGiFrameworkManager manager = PDEPlugin.getDefault().getOSGiFrameworkManager();
 		manager.getDefaultInitializer().initialize(configuration);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.ui.launcher.AbstractLaunchShortcut#isGoodMatch(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
 	protected boolean isGoodMatch(ILaunchConfiguration configuration) {
 		return true;
 	}

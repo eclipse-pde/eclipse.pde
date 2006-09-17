@@ -19,6 +19,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.QualifiedName;
@@ -28,12 +29,14 @@ import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.builders.FeatureRebuilder;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.util.VersionUtil;
+import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -54,6 +57,7 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 
 	// Shared instance
 	private static PDECore inst;
+	private static IPluginModelBase[] registryPlugins;
 
 	private static boolean isDevLaunchMode = false;
 
@@ -240,6 +244,20 @@ public class PDECore extends Plugin implements IEnvironmentVariables {
 
 	public IPlugin findPlugin(String id) {
 		return findPlugin(id, null, 0);
+	}
+	
+	public IPluginModelBase findPluginInHost(String id) {
+		if (registryPlugins == null) {
+			URL[] pluginPaths = ConfiguratorUtils.getCurrentPlatformConfiguration().getPluginPath();
+			PDEState state = new PDEState(pluginPaths, false, new NullProgressMonitor());
+			registryPlugins = state.getTargetModels();
+		}
+
+		for (int i = 0; i < registryPlugins.length; i++) {
+			if (registryPlugins[i].getPluginBase().getId().equals(id))
+				return registryPlugins[i];
+		}
+		return null;
 	}
 
 	public IPlugin findPlugin(String id, String version, int match) {
