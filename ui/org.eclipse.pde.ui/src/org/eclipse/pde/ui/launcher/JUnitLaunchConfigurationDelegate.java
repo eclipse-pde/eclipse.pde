@@ -97,7 +97,15 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 				}
 			}
 			
-			preLaunchCheck(configuration, launch, new SubProgressMonitor(monitor, 2));
+			try {
+				preLaunchCheck(configuration, launch, new SubProgressMonitor(monitor, 2));
+			} catch (CoreException e) {
+				if (e.getStatus().getSeverity() == IStatus.CANCEL) {
+					monitor.setCanceled(true);
+					return;
+				}
+				throw e;
+			}
 			
 			int port = SocketUtil.findFreePort();
 			launch.setAttribute(PORT_ATTR, Integer.toString(port));

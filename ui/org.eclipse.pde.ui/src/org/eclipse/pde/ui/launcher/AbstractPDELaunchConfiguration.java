@@ -64,7 +64,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			try {
 				preLaunchCheck(configuration, launch, new SubProgressMonitor(monitor, 2));
 			} catch (CoreException e) {
-				if (e.getStatus().getCode() == IStatus.CANCEL) {
+				if (e.getStatus().getSeverity() == IStatus.CANCEL) {
 					monitor.setCanceled(true);
 					return;
 				}
