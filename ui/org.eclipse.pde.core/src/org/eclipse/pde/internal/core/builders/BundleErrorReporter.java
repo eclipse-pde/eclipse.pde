@@ -82,12 +82,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 		fModel = PDECore.getDefault().getModelManager().findModel(fProject);
 		// be paranoid.  something could have gone wrong reading the file etc.
-		if (fModel == null)
+		if (!validateBundleSymbolicName() || fModel == null)
 			return;
 		setOsgiR4();
 
-		if (!validateBundleSymbolicName())
-			return;
 		validateFragmentHost();	
 		validateRequiredHeader(Constants.BUNDLE_NAME);
 		validateBundleVersion();
