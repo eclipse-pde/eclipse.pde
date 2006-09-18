@@ -50,7 +50,7 @@
       <description>
          To create the plug-in perform the following steps
       </description>
-      <subitem label="Select &quot;File-&gt;New-&gt;Project...&quot; from the main menu and choose &quot;Plug-in Project&quot; from the resulting &quot;New Project&quot; dialog box" 
+      <subitem label="Select &quot;File-&gt;New-&gt;Project...&quot; from the main menu, expand the &quot;Plug-in Development&quot; category within the resulting &quot;New Project&quot; dialog box, and choose &quot;Plug-in Project&quot;" 
                skip="true">
          <command serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.pde.ui.NewProjectWizard)"/>
       </subitem>
