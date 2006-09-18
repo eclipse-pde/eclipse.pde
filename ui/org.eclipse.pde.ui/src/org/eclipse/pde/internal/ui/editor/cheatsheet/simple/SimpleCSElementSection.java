@@ -28,13 +28,16 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TreeSection;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSAddStepAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSAddSubStepAction;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSRemoveRunObjectAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSRemoveStepAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSRemoveSubStepAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSMaster;
@@ -83,6 +86,7 @@ public class SimpleCSElementSection extends TreeSection implements
 	
 	private SimpleCSAddSubStepAction fAddSubStepAction;
 	
+	private SimpleCSRemoveRunObjectAction fRemoveRunObjectAction;
 	
 	/**
 	 * @param formPage
@@ -108,6 +112,7 @@ public class SimpleCSElementSection extends TreeSection implements
 		fRemoveStepAction = new SimpleCSRemoveStepAction();
 		fRemoveSubStepAction = new SimpleCSRemoveSubStepAction();
 		fAddSubStepAction = new SimpleCSAddSubStepAction();
+		fRemoveRunObjectAction = new SimpleCSRemoveRunObjectAction();
 	}
 
 	/* (non-Javadoc)
@@ -236,14 +241,9 @@ public class SimpleCSElementSection extends TreeSection implements
 				if (item.getExecutable() == null) {
 					canAddSubItem = true;
 				}
-				// TODO: MP: HIGH: Have to disable add subitem button explicitly
-				// from the command details section when command is selected
 			} else if (csObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
 				ISimpleCSSubItem subitem = (ISimpleCSSubItem)csObject;
 				ISimpleCSObject parent = subitem.getParent();
-				// TODO: MP: Handle for conditional-subitems later
-				// Actually probably beter to use some interface method if 
-				// possible
 				if (parent.getType() == ISimpleCSConstants.TYPE_ITEM) {
 					ISimpleCSItem item = (ISimpleCSItem)parent;
 					if (item.isFirstSubItem(subitem) == false) {
@@ -254,6 +254,15 @@ public class SimpleCSElementSection extends TreeSection implements
 					}
 				}
 			
+				canRemove = true;
+			} else if ((csObject.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) ||
+						(csObject.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) ||
+						(csObject.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN) ||
+						(csObject.getType() == ISimpleCSConstants.TYPE_ACTION) ||
+						(csObject.getType() == ISimpleCSConstants.TYPE_COMMAND)) {
+				// Specifically for perform-when, repeated-subitem, 
+				// conditional-subitem edge cases
+				// Action and command supported; but, will never be applicable
 				canRemove = true;
 			}
 		}
@@ -367,70 +376,87 @@ public class SimpleCSElementSection extends TreeSection implements
 	 * 
 	 */
 	public void handleModelChanged(IModelChangedEvent event) {
-		// TODO: MP: Not sure when this happens - untested
+
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
-			return;
-		}
-		
-		Object[] objects = event.getChangedObjects();
-		for (int i = 0; i < objects.length; i++) {
-			ISimpleCSObject object = (ISimpleCSObject)objects[i];
-			
-			// TODO: MP: Refactor, item is same actions as subitem
-			// Consider checking for change type first
-			if (object == null) {
-				// Ignore
-			} else if (object.getType() == ISimpleCSConstants.TYPE_ITEM) {
-				if (event.getChangeType() == IModelChangedEvent.INSERT) {
-					// Refresh the parent element in the tree viewer
-					fTreeViewer.refresh(object.getParent());
-					// Select the new item in the tree
-					fTreeViewer.setSelection(new StructuredSelection(object), true);
-				} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
-					// Remove the item
-					fTreeViewer.remove(object);
-					// Select the parent in the tree
-					// TODO: MP: Think about making the sibling item selected instead
-					fTreeViewer.setSelection(new StructuredSelection(object.getParent()), true);
-				} else if (event.getChangeType() == IModelChangedEvent.CHANGE) {
-					// Refresh the element in the tree viewer
-					fTreeViewer.refresh(object);
-				}
-			} else if (object.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
-				// TODO: MP: Can probably merge with Item above
-				if (event.getChangeType() == IModelChangedEvent.INSERT) {
-					// Refresh the parent element in the tree viewer
-					fTreeViewer.refresh(object.getParent());
-					// Select the new sub-item in the tree
-					fTreeViewer.setSelection(new StructuredSelection(object), true);
-				} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
-					// Remove the subitem
-					fTreeViewer.remove(object);
-					// Select the parent in the tree
-					// TODO: MP: Think about making the sibling subitem selected instead
-					fTreeViewer.setSelection(new StructuredSelection(object.getParent()), true);
-				} else if (event.getChangeType() == IModelChangedEvent.CHANGE) {
-					// Refresh the element in the tree viewer
-					fTreeViewer.refresh(object);
-				}
-			} else if (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
-				// Note:  Cannot add or delete cheatsheet nodes
-				if (event.getChangeType() == IModelChangedEvent.CHANGE) {
-					// Refresh the element in the tree viewer
-					fTreeViewer.refresh(object);
-				}						
-			} else if ((object.getType() == ISimpleCSConstants.TYPE_DESCRIPTION)
-					&& (object.getParent().getType() == ISimpleCSConstants.TYPE_INTRO)) {
-				// Note:  Cannot add or delete intro nodes
-				if (event.getChangeType() == IModelChangedEvent.CHANGE) {
-					// Refresh the parent element in the tree viewer
-					fTreeViewer.refresh(object.getParent());
-				}				
-			}
-
+		} else if (event.getChangeType() == IModelChangedEvent.INSERT) {
+			handleModelInsertType(event);
+		} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
+			handleModelRemoveType(event);
+		} else if (event.getChangeType() == IModelChangedEvent.CHANGE) {
+			handleModelChangeType(event);
 		}
 	}
+
+	/**
+	 * @param event
+	 */
+	private void handleModelInsertType(IModelChangedEvent event) {
+		// Insert event
+		// TODO: MP: LOW: Go through all changed objects or just first?		
+		Object[] objects = event.getChangedObjects();
+		for (int i = 0; i < objects.length; i++) {
+			ISimpleCSObject object = (ISimpleCSObject)objects[i];		
+			if (object == null) {
+				// Ignore
+			} else if ((object.getType() == ISimpleCSConstants.TYPE_ITEM) ||
+						(object.getType() == ISimpleCSConstants.TYPE_SUBITEM)) {
+				// Refresh the parent element in the tree viewer
+				fTreeViewer.refresh(object.getParent());
+				// Select the new item in the tree
+				fTreeViewer.setSelection(new StructuredSelection(object), true);
+			}		
+		}
+	}
+
+	/**
+	 * @param event
+	 */
+	private void handleModelRemoveType(IModelChangedEvent event) {
+		// Remove event
+		// TODO: MP: LOW: Go through all changed objects or just first?		
+		Object[] objects = event.getChangedObjects();
+		for (int i = 0; i < objects.length; i++) {
+			ISimpleCSObject object = (ISimpleCSObject)objects[i];		
+			if (object == null) {
+				// Ignore
+			} else if ((object.getType() == ISimpleCSConstants.TYPE_ITEM) ||
+						(object.getType() == ISimpleCSConstants.TYPE_SUBITEM)) {
+				// Remove the subitem
+				fTreeViewer.remove(object);
+				// Select the parent in the tree
+				// TODO: MP: LOW: Make the sibling subitem selected instead
+				fTreeViewer.setSelection(new StructuredSelection(object.getParent()), true);
+			} else if ((object.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) ||
+					(object.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) ||
+					(object.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN)) {
+				// Remove the object
+				fTreeViewer.remove(object);
+				// Select the parent in the tree
+				fTreeViewer.setSelection(new StructuredSelection(object.getParent()), true);
+			}
+		}		
+	}
+	
+	/**
+	 * @param event
+	 */
+	private void handleModelChangeType(IModelChangedEvent event) {
+		// Change event
+		// TODO: MP: LOW: Go through all changed objects or just first?		
+		Object[] objects = event.getChangedObjects();
+		for (int i = 0; i < objects.length; i++) {
+			ISimpleCSObject object = (ISimpleCSObject)objects[i];		
+			if (object == null) {
+				// Ignore
+			} else if ((object.getType() == ISimpleCSConstants.TYPE_ITEM) ||
+						(object.getType() == ISimpleCSConstants.TYPE_SUBITEM) ||
+						(object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET)) {
+				// Refresh the element in the tree viewer
+				fTreeViewer.refresh(object);
+			}
+		}		
+	}	
 	
 	/**
 	 * Special case:  Need to set the selection after the full UI is created
@@ -463,7 +489,6 @@ public class SimpleCSElementSection extends TreeSection implements
 			fAddStepAction.setSimpleCS(fModel.getSimpleCS());
 			fAddStepAction.setEnabled(fModel.isEditable());
 			submenu.add(fAddStepAction);
-			// TODO: MP: Prevent last item from being deleted
 		} else if (csObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
 			ISimpleCSItem item = (ISimpleCSItem)csObject;
 			// Add to the "New" submenu
@@ -491,14 +516,28 @@ public class SimpleCSElementSection extends TreeSection implements
 				fRemoveStepAction.setEnabled(false);
 			}
 			manager.add(fRemoveStepAction);
-		} else if (csObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
+		} else if ((csObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) ||
+					(csObject.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) ||
+					(csObject.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM)) {
 			// Add to the main context menu
 			// Add a separator to the main context menu
 			manager.add(new Separator());
 			// Delete sub-step action
-			fRemoveSubStepAction.setSubItem((ISimpleCSSubItem)csObject);
+			fRemoveSubStepAction.setSubItem((ISimpleCSSubItemObject)csObject);
 			fRemoveSubStepAction.setEnabled(fModel.isEditable());
 			manager.add(fRemoveSubStepAction);			
+		} else if ((csObject.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN) ||
+					(csObject.getType() == ISimpleCSConstants.TYPE_ACTION) ||
+					(csObject.getType() == ISimpleCSConstants.TYPE_COMMAND)) {
+			// Specifically for perform-when edge case
+			// Action and command supported; but, will never be applicable
+			// Add to the main context menu
+			// Add a separator to the main context menu
+			manager.add(new Separator());
+			// Delete run object action
+			fRemoveRunObjectAction.setRunObject((ISimpleCSRunContainerObject)csObject);
+			fRemoveRunObjectAction.setEnabled(fModel.isEditable());
+			manager.add(fRemoveRunObjectAction);				
 		}
 		// Add normal edit operations
 		// TODO: MP: Enable
@@ -510,8 +549,8 @@ public class SimpleCSElementSection extends TreeSection implements
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
 	 */
 	public boolean doGlobalAction(String actionId) {
-		// TODO: MP: Do Cut
-		// TODO: MP: Do Paste
+		// TODO: MP: LOW: Do Cut
+		// TODO: MP: LOW: Do Paste
 		
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDeleteAction();
@@ -538,9 +577,14 @@ public class SimpleCSElementSection extends TreeSection implements
 					// Produce audible beep
 					Display.getCurrent().beep();
 				}
-			} else if (object instanceof ISimpleCSSubItem) {
-				fRemoveSubStepAction.setSubItem((ISimpleCSSubItem)object);
+			} else if (object instanceof ISimpleCSSubItemObject) {
+				fRemoveSubStepAction.setSubItem((ISimpleCSSubItemObject)object);
 				fRemoveSubStepAction.run();
+			} else if (object instanceof ISimpleCSRunContainerObject) {
+				// Specifically for perform-when edge case
+				// Action and command supported; but, will never be applicable
+				fRemoveRunObjectAction.setRunObject((ISimpleCSRunContainerObject)object);
+				fRemoveRunObjectAction.run();
 			} else if (object instanceof ISimpleCS) {
 				// Preserve cheat sheet validity
 				// Semantic Rule:  Cannot have a cheat sheet with no root

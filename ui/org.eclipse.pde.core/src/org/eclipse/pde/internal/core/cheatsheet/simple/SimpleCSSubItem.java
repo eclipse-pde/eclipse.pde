@@ -16,8 +16,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
@@ -101,10 +101,12 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem#setExecutable(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject)
 	 */
 	public void setExecutable(ISimpleCSRunContainerObject executable) {
+		ISimpleCSObject old = fExecutable;		
 		fExecutable = executable;
+
 		if (isEditable()) {
-			fireStructureChanged(executable, IModelChangedEvent.INSERT);
-		}		
+			fireStructureChanged(executable, old);
+		}	
 	}
 
 	/* (non-Javadoc)
@@ -250,7 +252,12 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getChildren()
 	 */
 	public List getChildren() {
-		return new ArrayList();
+		ArrayList list = new ArrayList();
+		if ((fExecutable != null) &&
+				(fExecutable.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN)) {
+			list.add(fExecutable);
+		}
+		return list;
 	}
 
 }

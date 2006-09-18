@@ -102,33 +102,24 @@ public class SimpleCSPage extends PDEFormPage implements IModelChangedListener {
 	 */
 	public void modelChanged(IModelChangedEvent event) {
 		
-		Object[] objects = event.getChangedObjects();
-		for (int i = 0; i < objects.length; i++) {
-			ISimpleCSObject object = (ISimpleCSObject)objects[i];
-			
-			// TODO: MP: How to avoid iterating through all events
-			// Actually probably want to register each component separately
-			// as an event listener - cleaner implementation
-			if (object == null) {
-				// Ignore
-			} else if (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
-				// TODO: MP: Refactor into private method?
-				if (event.getChangeType() == IModelChangedEvent.CHANGE) {
+		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
+			// TODO: MP: LOW: Go through all changed objects or just first?
+			Object[] objects = event.getChangedObjects();
+			for (int i = 0; i < objects.length; i++) {
+				ISimpleCSObject object = (ISimpleCSObject)objects[i];
+				if (object == null) {
+					// Ignore
+				} else if (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
 					String changeProperty = event.getChangedProperty();
 					if ((changeProperty != null) && 
 							changeProperty.equals(ISimpleCSConstants.ATTRIBUTE_TITLE)) {
 						// Has to be a String if the property is a title
 						getManagedForm().getForm().setText((String)event.getNewValue());
-					}
-					// TODO: MP: Delegate to master block section
-					// Refresh the element in the tree viewer
-					//fTreeViewer.refresh(object.getParent());
-					// Select the new item in the tree
-					//fTreeViewer.setSelection(new StructuredSelection(object), true);
+					}				 
 				}
 			}
 		}
-
+		// Inform the block
 		fBlock.modelChanged(event);
 	}
 	

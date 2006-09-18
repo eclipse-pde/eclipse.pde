@@ -11,15 +11,23 @@
 
 package org.eclipse.pde.internal.core.cheatsheet.simple;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * SimpleCSConditionalSubItem
@@ -28,6 +36,16 @@ import org.w3c.dom.Element;
 public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 		ISimpleCSConditionalSubItem {
 
+	/**
+	 * Attribute:  condition
+	 */
+	private String fCondition;
+
+	/**
+	 * Elements:  subitem
+	 */
+	private ArrayList fSubItems;	
+	
 	/**
 	 * 
 	 */
@@ -39,54 +57,61 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 	 */
 	public SimpleCSConditionalSubItem(ISimpleCSModel model, ISimpleCSObject parent) {
 		super(model, parent);
-		// TODO Auto-generated constructor stub
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem#addSubItems(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem[])
-	 */
-	public void addSubItems(ISimpleCSSubItem[] subitems) {
-		// TODO Auto-generated method stub
-
+		reset();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem#getCondition()
 	 */
 	public String getCondition() {
-		// TODO Auto-generated method stub
-		return null;
+		return fCondition;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem#getSubItems()
 	 */
 	public ISimpleCSSubItem[] getSubItems() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem#removeSubItems(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem[])
-	 */
-	public void removeSubItems(ISimpleCSSubItem[] subitems) {
-		// TODO Auto-generated method stub
-
+		return (ISimpleCSSubItem[]) fSubItems.toArray(
+				new ISimpleCSSubItemObject[fSubItems.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem#setCondition(java.lang.String)
 	 */
 	public void setCondition(String condition) {
-		// TODO Auto-generated method stub
-
+		String old = fCondition;
+		fCondition = condition;
+		if (isEditable()) {
+			firePropertyChanged(ATTRIBUTE_CONDITION, old, fCondition);
+		}	
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#parse(org.w3c.dom.Element)
 	 */
 	public void parse(Element element) {
-		// TODO Auto-generated method stub
+
+		// Process condition attribute
+		// Read as is.  Do not translate
+		fCondition = element.getAttribute(ATTRIBUTE_CONDITION);
+		
+		// Process children
+
+		NodeList children = element.getChildNodes();
+		ISimpleCSModelFactory factory = getModel().getFactory();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				String name = child.getNodeName();
+				Element childElement = (Element)child;
+
+				if (name.equals(ELEMENT_SUBITEM)) {
+					ISimpleCSSubItem subitem = factory.createSimpleCSSubItem(this);
+					fSubItems.add(subitem);
+					subitem.parse(childElement);
+				}
+			}
+		}		
 		
 	}
 
@@ -94,7 +119,36 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
-		// TODO Auto-generated method stub
+
+		StringBuffer buffer = new StringBuffer();
+		String newIndent = indent + XMLPrintHandler.XML_INDENT;
+
+		try {
+			// Print conditional-subitem element
+			buffer.append(ELEMENT_CONDITIONAL_SUBITEM);
+			// Print condition attribute
+			// Write as is.  Do not translate
+			if ((fCondition != null) && 
+					(fCondition.length() > 0)) {
+				buffer.append(XMLPrintHandler.wrapAttribute(
+						ATTRIBUTE_CONDITION, fCondition));
+			}
+			// Start element
+			XMLPrintHandler.printBeginElement(writer, buffer.toString(),
+					indent, false);
+			// Print subitems
+			Iterator iterator = fSubItems.iterator();
+			while (iterator.hasNext()) {
+				ISimpleCSSubItem subitem = (ISimpleCSSubItem)iterator.next();
+				subitem.write(newIndent, writer);
+			}
+			// End element
+			XMLPrintHandler.printEndElement(writer, ELEMENT_CONDITIONAL_SUBITEM, indent);
+			
+		} catch (IOException e) {
+			// Suppress
+			//e.printStackTrace();
+		} 				
 		
 	}
 
@@ -102,8 +156,8 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#reset()
 	 */
 	public void reset() {
-		// TODO Auto-generated method stub
-		
+		fCondition = null;
+		fSubItems = new ArrayList();		
 	}
 
 	/* (non-Javadoc)
@@ -117,7 +171,7 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getName()
 	 */
 	public String getName() {
-		// TODO: MP: Update name
+		// Leave as is.  Not supported in editor UI
 		return ELEMENT_CONDITIONAL_SUBITEM;
 	}
 
@@ -125,8 +179,34 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getChildren()
 	 */
 	public List getChildren() {
-		// TODO Auto-generated method stub
-		return new ArrayList();
+		ArrayList list = new ArrayList();
+		// Add subitems
+		if (fSubItems.size() > 0) {
+			list.addAll(fSubItems);
+		}
+		return list;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem#addSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem)
+	 */
+	public void addSubItem(ISimpleCSSubItem subitem) {
+		fSubItems.add(subitem);
+		
+		if (isEditable()) {
+			fireStructureChanged(subitem, IModelChangedEvent.INSERT);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem#removeSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem)
+	 */
+	public void removeSubItem(ISimpleCSSubItem subitem) {
+		fSubItems.remove(subitem);
+		
+		if (isEditable()) {
+			fireStructureChanged(subitem, IModelChangedEvent.REMOVE);
+		}	
 	}
 
 }

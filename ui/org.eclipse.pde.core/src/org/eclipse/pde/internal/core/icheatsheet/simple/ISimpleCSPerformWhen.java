@@ -39,14 +39,12 @@ public interface ISimpleCSPerformWhen extends ISimpleCSRunContainerObject {
 	 * Elements:  command, action
 	 * @param executables
 	 */
-	public void addExecutables(ISimpleCSRunObject[] executables);
+	public void addExecutable(ISimpleCSRunObject executable);
 	
 	/**
 	 * Elements:  command, action
 	 * @param executables
 	 */
-	public void removeExecutables(ISimpleCSRunObject[] executables);	
-	
-	// TODO: MP: Determine if to have add / remove single executables	
+	public void removeExecutable(ISimpleCSRunObject executable);	
 	
 }

@@ -12,58 +12,60 @@
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSPerformWhen;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
  * SimpleCSAddStepAction
  *
  */
-public class SimpleCSRemoveSubStepAction extends Action {
+public class SimpleCSRemoveRunObjectAction extends Action {
 
-	private ISimpleCSSubItemObject fSubItem;
+	private ISimpleCSRunContainerObject fRunContainerObject;
 	
 	/**
 	 * 
 	 */
-	public SimpleCSRemoveSubStepAction() {
-		// TODO: MP: Update
-		setText(PDEUIMessages.SimpleCSRemoveSubStepAction_0);
+	public SimpleCSRemoveRunObjectAction() {
+		setText(PDEUIMessages.SimpleCSRemoveStepAction_0);
 //		setImageDescriptor(PDEPluginImages.DESC_GEL_SC_OBJ);
 //		setToolTipText(PDEUIMessages.SchemaEditor_NewElement_tooltip);
 	}
 
 	/**
-	 * @param subitem
+	 * @param cheatsheet
 	 */
-	public void setSubItem(ISimpleCSSubItemObject subitem) {
-		fSubItem = subitem;
+	public void setRunObject(ISimpleCSRunContainerObject runObject) {
+		fRunContainerObject = runObject;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
-		if (fSubItem != null) {
+		if (fRunContainerObject != null) {
 			// Determine parent type and remove accordingly 
-			ISimpleCSObject parent = fSubItem.getParent();
+			ISimpleCSObject parent = fRunContainerObject.getParent();
 			if (parent.getType() == ISimpleCSConstants.TYPE_ITEM) {
 				ISimpleCSItem item = (ISimpleCSItem)parent;
-				item.removeSubItem(fSubItem);
-			} else if ((parent.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) &&
-					(fSubItem.getType() == ISimpleCSConstants.TYPE_SUBITEM)) {
-				ISimpleCSRepeatedSubItem item = (ISimpleCSRepeatedSubItem)parent;
-				item.setSubItem(null);
-			} else if ((parent.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) &&
-					(fSubItem.getType() == ISimpleCSConstants.TYPE_SUBITEM)) {
-				ISimpleCSConditionalSubItem item = (ISimpleCSConditionalSubItem)parent;
-				item.removeSubItem((ISimpleCSSubItem)fSubItem);
+				item.setExecutable(null);
+			} else if (parent.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
+				ISimpleCSSubItem subitem = (ISimpleCSSubItem)parent;
+				subitem.setExecutable(null);				
+			} else if (parent.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN) {
+				// Specifically for perform-when edge case
+				// Action and command supported; but, will never be applicable
+				if ((fRunContainerObject.getType() == ISimpleCSConstants.TYPE_ACTION) ||
+						(fRunContainerObject.getType() == ISimpleCSConstants.TYPE_COMMAND)) {
+					ISimpleCSPerformWhen performWhen = (ISimpleCSPerformWhen)parent;
+					performWhen.removeExecutable((ISimpleCSRunObject)fRunContainerObject);
+				}
 			}
 		}
 	}

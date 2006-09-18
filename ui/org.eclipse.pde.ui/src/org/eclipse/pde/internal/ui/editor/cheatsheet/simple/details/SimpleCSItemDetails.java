@@ -116,7 +116,7 @@ public class SimpleCSItemDetails extends SimpleCSAbstractDetails {
 		//data.horizontalSpan = 2;
 		fContent.getText().setLayoutData(data);	
 		data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END);
-		fContent.getLabel().setLayoutData(data);		
+		fContent.getLabel().setLayoutData(data);
 
 		// Attribute: dialog
 		fDialog = fToolkit.createButton(mainSectionClient, PDEUIMessages.SimpleCSItemDetails_13, SWT.CHECK);
@@ -223,7 +223,7 @@ public class SimpleCSItemDetails extends SimpleCSAbstractDetails {
 
 		// description:  Content (Element)
 		if (PDETextHelper.isDefined(fItem.getDescription().getContent())) {
-			fContent.setValue(fItem.getDescription().getContent());
+			fContent.setValue(fItem.getDescription().getContent(), true);
 		}
 		fContent.setEditable(editable);			
 

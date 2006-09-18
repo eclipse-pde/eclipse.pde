@@ -20,6 +20,7 @@ import java.util.List;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConditionalSubItem;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
@@ -173,11 +174,12 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setDescription(java.lang.String)
 	 */
 	public void setDescription(ISimpleCSDescription description) {
+		ISimpleCSObject old = fDescription;		
 		fDescription = description;
-		
+
 		if (isEditable()) {
-			fireStructureChanged(description, IModelChangedEvent.INSERT);
-		}		
+			fireStructureChanged(description, old);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -195,10 +197,11 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setExecutable(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject)
 	 */
 	public void setExecutable(ISimpleCSRunContainerObject executable) {
+		ISimpleCSObject old = fExecutable;		
 		fExecutable = executable;
-		
+
 		if (isEditable()) {
-			fireStructureChanged(executable, IModelChangedEvent.INSERT);
+			fireStructureChanged(executable, old);
 		}
 	}
 
@@ -411,11 +414,12 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#setOnCompletion(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSOnCompletion)
 	 */
 	public void setOnCompletion(ISimpleCSOnCompletion onCompletion) {
+		ISimpleCSObject old = fOnCompletion;		
 		fOnCompletion = onCompletion;
-		
+
 		if (isEditable()) {
-			fireStructureChanged(onCompletion, IModelChangedEvent.INSERT);
-		}		
+			fireStructureChanged(onCompletion, old);
+		}	
 	}
 
 	/* (non-Javadoc)
@@ -440,6 +444,11 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 		// Add subitems
 		if (fSubItems.size() > 0) {
 			list.addAll(fSubItems);
+		}
+		// Add unsupported perform-when if it is set as the executable
+		if ((fExecutable != null) &&
+				(fExecutable.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN)) {
+			list.add(fExecutable);
 		}
 		return list;
 	}

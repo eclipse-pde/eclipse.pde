@@ -151,6 +151,7 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 			fConfirm = true;
 		}		
 		// Process when attribute
+		// Read as is.  Do not translate
 		fWhen = element.getAttribute(ATTRIBUTE_WHEN);
 	}
 
@@ -177,12 +178,13 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 				buffer.append(XMLPrintHandler.wrapAttribute(
 						ATTRIBUTE_RETURNS, fReturns));
 			}
-			// Print skip attribute
+			// Print confirm attribute
 			buffer.append(XMLPrintHandler.wrapAttribute(
 					ATTRIBUTE_CONFIRM, new Boolean(fConfirm).toString()));
 			// Print when attribute
 			if ((fWhen != null) && 
 					(fWhen.length() > 0)) {
+				// Write as is.  Do not translate				
 				buffer.append(XMLPrintHandler.wrapAttribute(
 						ATTRIBUTE_WHEN, fWhen));
 			}
@@ -220,7 +222,7 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getName()
 	 */
 	public String getName() {
-		// TODO: MP: Update name
+		// Leave as is.  Not a separate node in tree view
 		return ELEMENT_COMMAND;
 	}
 

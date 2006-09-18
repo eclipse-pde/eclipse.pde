@@ -225,6 +225,8 @@ public class SimpleCSCommandDetails implements ISimpleCSDetails {
 			return;
 		}
 		
+		// TODO: MP: MED: Allow actions to be loaded in the command combo ?
+		// i.e. Action: class
 		updateCommandCombo(getParameterizedCommand(fRun));
 		updateCommandEnablement();
 	}

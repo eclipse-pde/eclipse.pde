@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -97,10 +98,11 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#setIntro(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro)
 	 */
 	public void setIntro(ISimpleCSIntro intro) {
+		ISimpleCSObject old = fIntro;
 		fIntro = intro;
-		
+
 		if (isEditable()) {
-			fireStructureChanged(intro, IModelChangedEvent.INSERT);
+			fireStructureChanged(intro, old);
 		}
 	}
 

@@ -42,25 +42,22 @@ public interface ISimpleCSAction extends ISimpleCSRunObject {
 	public void setPluginId(String pluginId);	
 
 	/**
-	 * Elements:  param1, param2, ..., param9
+	 * Attributes:  param1, param2, ..., param9
 	 * @return
 	 */
 	public String[] getParams();
 
-	// TODO: MP: Determine if to have get single params	
+	/**
+	 * Attributes:  param1, param2, ..., param9
+	 * @return
+	 */
+	public String getParam(int index);
 	
 	/**
-	 * Elements:  param1, param2, ..., param9
-	 * @param params
+	 * Attributes:  param1, param2, ..., param9
+	 * @param param
+	 * @param index
 	 */
-	public void addParams(String[] params);
-	
-	/**
-	 * Elements:  param1, param2, ..., param9
-	 * @param params
-	 */
-	public void removeParams(String[] subitems);	
-	
-	// TODO: MP: Determine if to have add / remove single params	
+	public void setParam(String param, int index);
 	
 }

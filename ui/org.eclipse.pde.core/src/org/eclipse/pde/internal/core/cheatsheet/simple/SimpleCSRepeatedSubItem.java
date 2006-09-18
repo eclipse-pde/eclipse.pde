@@ -11,15 +11,21 @@
 
 package org.eclipse.pde.internal.core.cheatsheet.simple;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
+import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * SimpleCSRepeatedSubItem
@@ -28,6 +34,16 @@ import org.w3c.dom.Element;
 public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 		ISimpleCSRepeatedSubItem {
 
+	/**
+	 * Attribute:  values
+	 */
+	private String fValues;	
+	
+	/**
+	 * Element:  subitem
+	 */
+	private ISimpleCSSubItem fSubItem;
+	
 	/**
 	 * 
 	 */
@@ -39,46 +55,70 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 	 */
 	public SimpleCSRepeatedSubItem(ISimpleCSModel model, ISimpleCSObject parent) {
 		super(model, parent);
-		// TODO Auto-generated constructor stub
+		reset();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem#getSubItem()
 	 */
 	public ISimpleCSSubItem getSubItem() {
-		// TODO Auto-generated method stub
-		return null;
+		return fSubItem;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem#getValues()
 	 */
 	public String getValues() {
-		// TODO Auto-generated method stub
-		return null;
+		return fValues;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem#setSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem)
 	 */
 	public void setSubItem(ISimpleCSSubItem subitem) {
-		// TODO Auto-generated method stub
+		ISimpleCSObject old = fSubItem;
+		fSubItem = subitem;
 
+		if (isEditable()) {
+			fireStructureChanged(subitem, old);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem#setValues(java.lang.String)
 	 */
 	public void setValues(String values) {
-		// TODO Auto-generated method stub
-
+		String old = fValues;
+		fValues = values;
+		if (isEditable()) {
+			firePropertyChanged(ATTRIBUTE_VALUES, old, fValues);
+		}	
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#parse(org.w3c.dom.Element)
 	 */
 	public void parse(Element element) {
-		// TODO Auto-generated method stub
+		// Process values attribute
+		fValues = PDETextHelper.translateReadText(element.getAttribute(ATTRIBUTE_VALUES));
+
+		// Process subitem element
+		NodeList children = element.getChildNodes();
+		ISimpleCSModelFactory factory = getModel().getFactory();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				String name = child.getNodeName();
+				Element childElement = (Element)child;
+
+				if (name.equals(ELEMENT_SUBITEM)) {
+					fSubItem = factory.createSimpleCSSubItem(this);
+					fSubItem.parse(childElement);
+					// We are looking for only one subitem
+					break;
+				}
+			}
+		}			
 		
 	}
 
@@ -86,7 +126,33 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
 	 */
 	public void write(String indent, PrintWriter writer) {
-		// TODO Auto-generated method stub
+
+		StringBuffer buffer = new StringBuffer();
+		String newIndent = indent + XMLPrintHandler.XML_INDENT;
+
+		try {
+			// Print repeated-subitem element
+			buffer.append(ELEMENT_REPEATED_SUBITEM);
+			// Print values attribute
+			if ((fValues != null) && 
+					(fValues.length() > 0)) {
+				buffer.append(XMLPrintHandler.wrapAttribute(
+						ATTRIBUTE_VALUES, PDETextHelper.translateWriteText(fValues)));
+			}
+			// Start element
+			XMLPrintHandler.printBeginElement(writer, buffer.toString(),
+					indent, false);
+			// Print subitem
+			if (fSubItem != null) {
+				fSubItem.write(newIndent, writer);
+			}
+			// End element
+			XMLPrintHandler.printEndElement(writer, ELEMENT_REPEATED_SUBITEM, indent);
+			
+		} catch (IOException e) {
+			// Suppress
+			//e.printStackTrace();
+		} 				
 		
 	}
 
@@ -94,8 +160,8 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#reset()
 	 */
 	public void reset() {
-		// TODO Auto-generated method stub
-		
+		fValues = null;
+		fSubItem = null;
 	}
 
 	/* (non-Javadoc)
@@ -109,7 +175,7 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getName()
 	 */
 	public String getName() {
-		// TODO: MP: Update name
+		// Leave as is.  Not supported in editor UI		
 		return ELEMENT_REPEATED_SUBITEM;
 	}
 
@@ -117,8 +183,12 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getChildren()
 	 */
 	public List getChildren() {
-		// TODO Auto-generated method stub
-		return new ArrayList();
+		ArrayList list = new ArrayList();
+		// Add subitem
+		if (fSubItem != null) {
+			list.add(fSubItem);
+		}
+		return list;
 	}
 
 }

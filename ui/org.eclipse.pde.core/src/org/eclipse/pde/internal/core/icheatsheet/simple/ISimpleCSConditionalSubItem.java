@@ -39,13 +39,12 @@ public interface ISimpleCSConditionalSubItem extends ISimpleCSSubItemObject {
 	 * Elements:  subitem
 	 * @param subitems
 	 */
-	public void addSubItems(ISimpleCSSubItem[] subitems);
+	public void addSubItem(ISimpleCSSubItem subitem);
 	
 	/**
 	 * Elements:  subitem
 	 * @param subitems
 	 */
-	public void removeSubItems(ISimpleCSSubItem[] subitems);	
+	public void removeSubItem(ISimpleCSSubItem subitem);	
 	
-	// TODO: MP: Determine if to have add / remove single subitem	
 }

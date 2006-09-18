@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.IModelChangeProvider;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
@@ -104,6 +105,26 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 	 */
 	protected void fireStructureChanged(ISimpleCSObject child, int changeType) {
 		fireStructureChanged(new ISimpleCSObject[] { child }, changeType);
+	}
+	
+	/**
+	 * @param newValue
+	 * @param oldValue
+	 * @param changeType
+	 */
+	protected void fireStructureChanged(ISimpleCSObject newValue,
+			ISimpleCSObject oldValue) {
+
+		int changeType = -1;
+		ISimpleCSObject object = null;
+		if (newValue == null) {
+			changeType = IModelChangedEvent.REMOVE;
+			object = oldValue;
+		} else {
+			changeType = IModelChangedEvent.INSERT;
+			object = newValue;
+		}
+		fireStructureChanged(object, changeType);
 	}
 	
 	/**
