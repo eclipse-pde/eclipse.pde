@@ -12,8 +12,8 @@ package org.eclipse.pde.internal.runtime.logview;
 
 import java.util.Comparator;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.swt.widgets.Shell;
