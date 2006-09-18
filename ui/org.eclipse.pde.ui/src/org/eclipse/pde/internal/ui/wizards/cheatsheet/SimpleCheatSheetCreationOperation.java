@@ -48,7 +48,7 @@ public class SimpleCheatSheetCreationOperation extends
 	protected void createContent() {
         SimpleCSWorkspaceModel model = new SimpleCSWorkspaceModel(fFile, false);
         initializeCS(model.getSimpleCS());
-        // TODO: MP: Figure out how to prevent overwrite of file with same name
+        // TODO: MP: HIGH: Figure out how to prevent overwrite of file with same name
         // check if exists ? Do in wizard somehow ?
         model.save();
         model.dispose();

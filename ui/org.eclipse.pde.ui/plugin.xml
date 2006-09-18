@@ -193,7 +193,7 @@
       <wizard
             category="org.eclipse.pde.userAssistance"
             class="org.eclipse.pde.internal.ui.wizards.cheatsheet.NewCheatSheetFileWizard"
-            icon="$nl$/icons/etool16/new_cheatsheet_wizard.gif"
+            icon="$nl$/icons/etool16/new_cheatsheet_wiz.gif"
             id="org.eclipse.pde.ui.NewCheatSheetWizard"
             name="%new.cheat.sheet">
          <description>
@@ -705,7 +705,7 @@
       <editor
             class="org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSEditor"
             contributorClass="org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSEditorContributor"
-            icon="$nl$/icons/etool16/new_cheatsheet_wizard.gif"
+            icon="$nl$/icons/obj16/cheatsheet_obj.gif"
             id="org.eclipse.pde.ui.simpleCheatSheetEditor"
             name="%cheat.sheat.editor.name">
          <contentTypeBinding

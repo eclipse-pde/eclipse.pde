@@ -239,6 +239,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_FEATURE_EXPORT_WIZ = create(PATH_WIZBAN, "exp_deployfeat_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_MIGRATE_30_WIZ = create(PATH_WIZBAN, "migrate_30_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PRODUCT_WIZ = create(PATH_WIZBAN, "product_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CHEATSHEET_WIZ = create(PATH_WIZBAN, "new_cheatsheet_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PRODUCT_EXPORT_WIZ = create(PATH_WIZBAN, "exp_product.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_JAR_TO_PLUGIN_WIZ = create(PATH_WIZBAN, "jarToPlugin_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXTSTR_WIZ = create(PATH_WIZBAN, "extstr_wiz.png"); //$NON-NLS-1$

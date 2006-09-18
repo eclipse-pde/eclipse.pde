@@ -59,8 +59,7 @@ public class NewCheatSheetFileWizard extends BasicNewFileResourceWizard implemen
 	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#initializeDefaultPageImageDescriptor()
 	 */
 	protected void initializeDefaultPageImageDescriptor() {
-		// TODO: MP: Update with proper image
-		setDefaultPageImageDescriptor(PDEPluginImages.DESC_PRODUCT_WIZ);
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_CHEATSHEET_WIZ);
 	}
 	
 	/* (non-Javadoc)
@@ -84,18 +83,20 @@ public class NewCheatSheetFileWizard extends BasicNewFileResourceWizard implemen
 	 * @return
 	 */
 	private IRunnableWithProgress getOperation() {
+		// TODO: MP: DEFER: Re-enable when composite cheat sheet editor is finished
+		
         IFile file = fMainPage.createNewFile();
-		int option = fMainPage.getCheatSheetType();
-		if (option == CheatSheetFileWizardPage.F_SIMPLE_CHEAT_SHEET) {
+//		int option = fMainPage.getCheatSheetType();
+//		if (option == CheatSheetFileWizardPage.F_SIMPLE_CHEAT_SHEET) {
 			return new SimpleCheatSheetCreationOperation(file);
-		} else if (option == CheatSheetFileWizardPage.F_COMPOSITE_CHEAT_SHEET) {
+//		} else if (option == CheatSheetFileWizardPage.F_COMPOSITE_CHEAT_SHEET) {
 			// TODO: MP: Do specific operation for composite cheat sheet
-			return null;
-		}
+//			return null;
+//		}
 		// This should never happen
 		// TODO: MP: Externalize: low priority - need to bind
-		PDEPlugin.logErrorMessage("Unknown cheat sheet type encountered"); //$NON-NLS-1$
-		return null;
+//		PDEPlugin.logErrorMessage("Unknown cheat sheet type encountered"); //$NON-NLS-1$
+//		return null;
 		//return new BaseCheatSheetCreationOperation(file);
 	}	
 }

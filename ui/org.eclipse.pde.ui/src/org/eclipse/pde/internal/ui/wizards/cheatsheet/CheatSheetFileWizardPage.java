@@ -13,19 +13,10 @@ package org.eclipse.pde.internal.ui.wizards.cheatsheet;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
 /**
@@ -34,11 +25,14 @@ import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
  */
 public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 
-	private Button fSimpleCheatSheetButton;
+	// TODO: MP: DEFER: Re-enable when composite cheat sheet editor is finished
+	//private Button fSimpleCheatSheetButton;
 	
-	private Button fCompositeCheatSheetButton;
+	// TODO: MP: DEFER: Re-enable when composite cheat sheet editor is finished
+	//private Button fCompositeCheatSheetButton;
 	
-	private Group fGroup;
+	// TODO: MP: DEFER: Re-enable when composite cheat sheet editor is finished
+	//private Group fGroup;
 	
 	private static final String F_FILE_EXTENSION = ".xml"; //$NON-NLS-1$
 	
@@ -64,11 +58,12 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 	 * @return
 	 */
 	public int getCheatSheetType() {
-		if (fSimpleCheatSheetButton.getSelection()) {
-			return F_SIMPLE_CHEAT_SHEET;
-		} else if (fCompositeCheatSheetButton.getSelection()) {
-			return F_COMPOSITE_CHEAT_SHEET;
-		}
+		// TODO: MP: DEFER: Re-enable when composite cheat sheet editor is finished
+//		if (fSimpleCheatSheetButton.getSelection()) {
+//			return F_SIMPLE_CHEAT_SHEET;
+//		} else if (fCompositeCheatSheetButton.getSelection()) {
+//			return F_COMPOSITE_CHEAT_SHEET;
+//		}
 		// Neither selected. Unknown type
 		return -1;
 	}
@@ -78,52 +73,53 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 	 */
 	protected void createAdvancedControls(Composite parent) {
 
+		// TODO: MP: DEFER: Re-enable when composite cheat sheet editor is finished
 		// Cheat Sheet Group
-		fGroup = new Group(parent, SWT.NONE);
-		fGroup.setText(PDEUIMessages.CheatSheetFileWizardPage_4); 
-		fGroup.setLayout(new GridLayout(1, false));
-		fGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
-		
-		// Simple Cheat Sheet Button
-		fSimpleCheatSheetButton = new Button(fGroup, SWT.RADIO);
-		fSimpleCheatSheetButton.setText(PDEUIMessages.CheatSheetFileWizardPage_5); 
-		fSimpleCheatSheetButton.setSelection(true);
-		fSimpleCheatSheetButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-                getWizard().getContainer().updateButtons();
-			}
-		});
-		
-		// Simple Cheat Sheet Description Label
-		final Label simpleCSText = new Label(fGroup, SWT.WRAP);
-		simpleCSText.setText(PDEUIMessages.CheatSheetFileWizardPage_6);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = 300;
-		simpleCSText.setLayoutData(gd);
-		
-		// Spacer
-		new Label(fGroup, SWT.NULL);
-		
-		// Composite Cheat Sheet Button
-		fCompositeCheatSheetButton = new Button(fGroup, SWT.RADIO);
-		fCompositeCheatSheetButton.setSelection(false);
-		fCompositeCheatSheetButton
-				.setText(PDEUIMessages.CheatSheetFileWizardPage_7); 
-		fCompositeCheatSheetButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-                getWizard().getContainer().updateButtons();
-			}
-		});		
-		// TODO: MP: Temporarily disabled
-		fCompositeCheatSheetButton.setEnabled(false);
-		
-		
-		// Composite Cheat Sheet Description Label
-		final Label compositeCSText = new Label(fGroup, SWT.WRAP);
-		compositeCSText.setText(PDEUIMessages.CheatSheetFileWizardPage_8);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint = 300;
-		compositeCSText.setLayoutData(gd);
+//		fGroup = new Group(parent, SWT.NONE);
+//		fGroup.setText(PDEUIMessages.CheatSheetFileWizardPage_4); 
+//		fGroup.setLayout(new GridLayout(1, false));
+//		fGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
+//		
+//		// Simple Cheat Sheet Button
+//		fSimpleCheatSheetButton = new Button(fGroup, SWT.RADIO);
+//		fSimpleCheatSheetButton.setText(PDEUIMessages.CheatSheetFileWizardPage_5); 
+//		fSimpleCheatSheetButton.setSelection(true);
+//		fSimpleCheatSheetButton.addSelectionListener(new SelectionAdapter() {
+//			public void widgetSelected(SelectionEvent e) {
+//                getWizard().getContainer().updateButtons();
+//			}
+//		});
+//		
+//		// Simple Cheat Sheet Description Label
+//		final Label simpleCSText = new Label(fGroup, SWT.WRAP);
+//		simpleCSText.setText(PDEUIMessages.CheatSheetFileWizardPage_6);
+//		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+//		gd.widthHint = 300;
+//		simpleCSText.setLayoutData(gd);
+//		
+//		// Spacer
+//		new Label(fGroup, SWT.NULL);
+//		
+//		// Composite Cheat Sheet Button
+//		fCompositeCheatSheetButton = new Button(fGroup, SWT.RADIO);
+//		fCompositeCheatSheetButton.setSelection(false);
+//		fCompositeCheatSheetButton
+//				.setText(PDEUIMessages.CheatSheetFileWizardPage_7); 
+//		fCompositeCheatSheetButton.addSelectionListener(new SelectionAdapter() {
+//			public void widgetSelected(SelectionEvent e) {
+//                getWizard().getContainer().updateButtons();
+//			}
+//		});		
+//		// TODO: MP: Temporarily disabled
+//		fCompositeCheatSheetButton.setEnabled(false);
+//		
+//		
+//		// Composite Cheat Sheet Description Label
+//		final Label compositeCSText = new Label(fGroup, SWT.WRAP);
+//		compositeCSText.setText(PDEUIMessages.CheatSheetFileWizardPage_8);
+//		gd = new GridData(GridData.FILL_HORIZONTAL);
+//		gd.widthHint = 300;
+//		compositeCSText.setLayoutData(gd);
 	}
 
 	/**
@@ -184,7 +180,8 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		Dialog.applyDialogFont(fGroup);
+		// TODO: MP: DEFER: Re-enable when composite cheat sheet editor is finished
+		//Dialog.applyDialogFont(fGroup);
 	}
 
 	/* (non-Javadoc)
