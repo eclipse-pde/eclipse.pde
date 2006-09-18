@@ -241,18 +241,18 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 		// Create the platform configuration for the runtime workbench
 		String productID = LaunchConfigurationHelper.getProductID(configuration);
 		LaunchConfigurationHelper.createConfigIniFile(configuration,
-				productID, fPluginMap, getConfigDir(configuration));
+				productID, fPluginMap, getConfigurationDirectory(configuration));
 		TargetPlatform.createPlatformConfigurationArea(
 				fPluginMap,
-				getConfigDir(configuration),
+				getConfigurationDirectory(configuration),
 				LaunchConfigurationHelper.getContributingPlugin(productID));
 		
 		programArgs.add("-configuration"); //$NON-NLS-1$
-		programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
+		programArgs.add("file:" + new Path(getConfigurationDirectory(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
 		
 		// Specify the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
-		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fPluginMap)); //$NON-NLS-1$
+		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigurationDirectory(configuration).toString() + "/dev.properties", fPluginMap)); //$NON-NLS-1$
 		
 		// necessary for PDE to know how to load plugins when target platform = host platform
 		// see PluginPathFinder.getPluginPaths()
@@ -264,7 +264,7 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 				&& !IPDELauncherConstants.TRACING_NONE.equals(configuration.getAttribute(
 						IPDELauncherConstants.TRACING_CHECKED, (String) null))) {
 			programArgs.add("-debug"); //$NON-NLS-1$
-			String path = getConfigDir(configuration).getPath() + IPath.SEPARATOR + ".options"; //$NON-NLS-1$
+			String path = getConfigurationDirectory(configuration).getPath() + IPath.SEPARATOR + ".options"; //$NON-NLS-1$
 			programArgs.add(LaunchArgumentsHelper.getTracingFileArgument(configuration, path));
 		}
 		
@@ -406,9 +406,16 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 		}
 	}
 	
-	private File getConfigDir(ILaunchConfiguration config) {
+	/**
+	 * Returns the location of the configuration area
+	 * 
+	 * @param configuration
+	 * 				the launch configuration
+	 * @return a directory where the configuration area is located
+	 */
+	protected File getConfigurationDirectory(ILaunchConfiguration configuration) {
 		if (fConfigDir == null)
-			fConfigDir = LaunchConfigurationHelper.getConfigurationArea(config);	
+			fConfigDir = LaunchConfigurationHelper.getConfigurationArea(configuration);	
 		return fConfigDir;
 	}
 	
@@ -462,7 +469,7 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 			validatePluginDependencies(configuration, new SubProgressMonitor(monitor, 1));
 		validateProjectDependencies(configuration, new SubProgressMonitor(monitor, 1));
 		clear(configuration, new SubProgressMonitor(monitor, 1));
-		launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());		
+		launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigurationDirectory(configuration).toString());		
 		synchronizeManifests(configuration, new SubProgressMonitor(monitor, 1));		
 	}
 	/**
@@ -476,7 +483,7 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 	 * 			the progress monitor
 	 */
 	protected void synchronizeManifests(ILaunchConfiguration configuration, IProgressMonitor monitor) {
-		LaunchConfigurationHelper.synchronizeManifests(configuration, getConfigDir(configuration));
+		LaunchConfigurationHelper.synchronizeManifests(configuration, getConfigurationDirectory(configuration));
 		monitor.done();
 	}
 
@@ -502,7 +509,7 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 
 		// clear config area, if necessary
 		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
-			CoreUtility.deleteContent(getConfigDir(configuration));	
+			CoreUtility.deleteContent(getConfigurationDirectory(configuration));	
 	}
 
 	/**
