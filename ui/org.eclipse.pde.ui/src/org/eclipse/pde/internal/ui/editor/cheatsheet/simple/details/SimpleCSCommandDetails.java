@@ -207,7 +207,7 @@ public class SimpleCSCommandDetails implements ISimpleCSDetails {
 				if (dialog.open() == Window.OK) {
 					// Command composer exited successfully
 					// Update accordingly
-					updateCommandCombo(dialog.getCommand());
+					updateCommandCombo(dialog.getCommand(), true);
 					// Update the master section buttons
 					fDetails.getMasterSection().updateButtons();
 				}						
@@ -227,7 +227,7 @@ public class SimpleCSCommandDetails implements ISimpleCSDetails {
 		
 		// TODO: MP: MED: Allow actions to be loaded in the command combo ?
 		// i.e. Action: class
-		updateCommandCombo(getParameterizedCommand(fRun));
+		updateCommandCombo(getParameterizedCommand(fRun), false);
 		updateCommandEnablement();
 	}
 
@@ -266,8 +266,10 @@ public class SimpleCSCommandDetails implements ISimpleCSDetails {
 	
 	/**
 	 * @param result
+	 * @param createInModel
 	 */
-	private void updateCommandCombo(ParameterizedCommand result) {
+	private void updateCommandCombo(ParameterizedCommand result,
+			boolean createInModel) {
 
 		if (result == null) {
 			return;
@@ -286,8 +288,10 @@ public class SimpleCSCommandDetails implements ISimpleCSDetails {
 
 		if (PDETextHelper.isDefined(serialization)
 				&& PDETextHelper.isDefined(commandId)) {
-			// Create the new command in the model
-			createCommandInModel(serialization);
+			if (createInModel) {
+				// Create the new command in the model
+				createCommandInModel(serialization);
+			}
 			// Determine the presentable name to use in the combo box and the
 			// key to store the serialization data against in the widget
 			String nameToUse = null;

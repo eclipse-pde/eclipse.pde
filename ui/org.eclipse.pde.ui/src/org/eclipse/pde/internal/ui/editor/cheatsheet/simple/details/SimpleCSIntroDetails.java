@@ -137,7 +137,7 @@ public class SimpleCSIntroDetails extends SimpleCSAbstractDetails {
 		}
 
 		// description:  Content (Element)
-		fContent.setValue(fIntro.getDescription().getContent());
+		fContent.setValue(fIntro.getDescription().getContent(), true);
 		fContent.setEditable(editable);		
 
 	}

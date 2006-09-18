@@ -169,7 +169,7 @@ public class SimpleCSSubItemDetails extends SimpleCSAbstractDetails {
 			return;
 		}
 		// Attribute: label
-		fLabel.setValue(fSubItem.getLabel());
+		fLabel.setValue(fSubItem.getLabel(), true);
 		fLabel.setEditable(editable);
 		
 		// Attribute: skip
