@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
@@ -36,9 +37,11 @@ import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSAddS
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSAddSubStepAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSRemoveStepAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSRemoveSubStepAction;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSMaster;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.cheatsheets.OpenCheatSheetAction;
@@ -49,10 +52,9 @@ import org.eclipse.ui.forms.widgets.Section;
  * SimpleCSElementSection
  *
  */
-public class SimpleCSElementSection extends TreeSection {
+public class SimpleCSElementSection extends TreeSection implements
+		ISimpleCSMaster {
 
-	// TODO: MP: Add button: Add subitem - context sensitive
-	// TODO: MP: Add button: Remove - context sensitive
 	private static final int F_BUTTON_ADD_STEP = 0;
 
 	private static final int F_BUTTON_ADD_SUBSTEP = 1;
@@ -201,7 +203,7 @@ public class SimpleCSElementSection extends TreeSection {
 	/**
 	 * 
 	 */
-	private void updateButtons() {
+	public void updateButtons() {
 		if (!fModel.isEditable()) {
 			return;
 		}
@@ -221,9 +223,21 @@ public class SimpleCSElementSection extends TreeSection {
 				if (item.getSimpleCS().isLastItem(item) == false) {
 					canMoveDown = true;
 				}
-				// TODO: MP: Have to make sure it is not the last item
-				canRemove = true;
-				canAddSubItem = true;
+				
+				// Preserve cheat sheet validity
+				// Semantic Rule:  Cannot have a cheat sheet with no items
+				if (item.getSimpleCS().getItemCount() > 1) {
+					canRemove = true;
+				}
+				
+				// Preserve cheat sheet validity
+				// Semantic Rule:  Cannot have a subitem and any of the following
+				// together:  perform-when, command, action
+				if (item.getExecutable() == null) {
+					canAddSubItem = true;
+				}
+				// TODO: MP: HIGH: Have to disable add subitem button explicitly
+				// from the command details section when command is selected
 			} else if (csObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
 				ISimpleCSSubItem subitem = (ISimpleCSSubItem)csObject;
 				ISimpleCSObject parent = subitem.getParent();
@@ -451,17 +465,31 @@ public class SimpleCSElementSection extends TreeSection {
 			submenu.add(fAddStepAction);
 			// TODO: MP: Prevent last item from being deleted
 		} else if (csObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
+			ISimpleCSItem item = (ISimpleCSItem)csObject;
 			// Add to the "New" submenu
 			// Add sub-step action
 			fAddSubStepAction.setObject(csObject);
-			fAddSubStepAction.setEnabled(fModel.isEditable());
+			// Preserve cheat sheet validity
+			// Semantic Rule:  Cannot have a subitem and any of the following
+			// together:  perform-when, command, action			
+			if (item.getExecutable() == null) {
+				fAddSubStepAction.setEnabled(fModel.isEditable());
+			} else {
+				fAddSubStepAction.setEnabled(false);
+			}
 			submenu.add(fAddSubStepAction);
 			// Add to the main context menu
 			// Add a separator to the main context menu
 			manager.add(new Separator());
 			// Delete step action
 			fRemoveStepAction.setItem((ISimpleCSItem)csObject);
-			fRemoveStepAction.setEnabled(fModel.isEditable());
+			// Preserve cheat sheet validity
+			// Semantic Rule:  Cannot have a cheat sheet with no items
+			if (item.getSimpleCS().getItemCount() > 1) {
+				fRemoveStepAction.setEnabled(fModel.isEditable());
+			} else {
+				fRemoveStepAction.setEnabled(false);
+			}
 			manager.add(fRemoveStepAction);
 		} else if (csObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
 			// Add to the main context menu
@@ -500,11 +528,31 @@ public class SimpleCSElementSection extends TreeSection {
 		Object object = ((IStructuredSelection) sel).getFirstElement();
 		if (object != null) {
 			if (object instanceof ISimpleCSItem) {
-				fRemoveStepAction.setItem((ISimpleCSItem)object);
-				fRemoveStepAction.run();
+				ISimpleCSItem item = (ISimpleCSItem)object;
+				// Preserve cheat sheet validity
+				// Semantic Rule:  Cannot have a cheat sheet with no items
+				if (item.getSimpleCS().getItemCount() > 1) {
+					fRemoveStepAction.setItem(item);
+					fRemoveStepAction.run();
+				} else {
+					// Produce audible beep
+					Display.getCurrent().beep();
+				}
 			} else if (object instanceof ISimpleCSSubItem) {
 				fRemoveSubStepAction.setSubItem((ISimpleCSSubItem)object);
 				fRemoveSubStepAction.run();
+			} else if (object instanceof ISimpleCS) {
+				// Preserve cheat sheet validity
+				// Semantic Rule:  Cannot have a cheat sheet with no root
+				// cheatsheet node
+				// Produce audible beep
+				Display.getCurrent().beep();				
+			} else if (object instanceof ISimpleCSIntro) {
+				// Preserve cheat sheet validity
+				// Semantic Rule:  Cannot have a cheat sheet with no 
+				// introduction
+				// Produce audible beep
+				Display.getCurrent().beep();				
 			}
 		}		
 	}
@@ -528,4 +576,5 @@ public class SimpleCSElementSection extends TreeSection {
 		}
 		return false;
 	}
+
 }

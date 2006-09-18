@@ -95,5 +95,17 @@ public interface ISimpleCS extends ISimpleCSObject {
 	 * 
 	 */
 	public void reset();
+
+	/**
+	 * Element:  item
+	 * @return
+	 */	
+	public int getItemCount();
+
+	/**
+	 * Element:  item
+	 * @return
+	 */	
+	public boolean hasItems();	
 	
 }

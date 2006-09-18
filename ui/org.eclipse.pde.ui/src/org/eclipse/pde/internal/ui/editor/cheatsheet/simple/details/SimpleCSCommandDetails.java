@@ -20,6 +20,7 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRun;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRunContainerObject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
@@ -189,7 +190,8 @@ public class SimpleCSCommandDetails implements ISimpleCSDetails {
 					fRun.setExecutable(null);
 					fCommandTable.clearAll();
 				}
-			
+				// Update the master section buttons
+				fDetails.getMasterSection().updateButtons();
 			}
 		});
 		
@@ -206,6 +208,8 @@ public class SimpleCSCommandDetails implements ISimpleCSDetails {
 					// Command composer exited successfully
 					// Update accordingly
 					updateCommandCombo(dialog.getCommand());
+					// Update the master section buttons
+					fDetails.getMasterSection().updateButtons();
 				}						
 			}
 		});	
@@ -222,14 +226,32 @@ public class SimpleCSCommandDetails implements ISimpleCSDetails {
 		}
 		
 		updateCommandCombo(getParameterizedCommand(fRun));
-		
-		boolean editable = fDetails.isEditableElement();
-		fCommandCombo.setEnabled(editable);
-		
-		fCommandTable.setEnabled(editable);
-		
+		updateCommandEnablement();
 	}
 
+	/**
+	 * 
+	 */
+	private void updateCommandEnablement() {
+		
+		boolean editable = fDetails.isEditableElement();
+		
+		if (fRun.getType() == ISimpleCSConstants.TYPE_ITEM) {
+			ISimpleCSItem item = (ISimpleCSItem)fRun;
+			// Preserve cheat sheet validity
+			// Semantic Rule:  Cannot have a subitem and any of the following
+			// together:  perform-when, command, action			
+			if (item.hasSubItems()) {
+				editable = false;
+			}
+		}
+		
+		fCommandCombo.setEnabled(editable);
+		fCommandTable.setEnabled(true);
+		fCommandBrowse.setEnabled(editable);
+		
+	}
+	
 	/**
 	 * @param serialization
 	 */

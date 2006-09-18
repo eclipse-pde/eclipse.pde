@@ -500,4 +500,21 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 		fSubItems.remove(index);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getSubItemCount()
+	 */
+	public int getSubItemCount() {
+		return fSubItems.size();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#hasSubItems()
+	 */
+	public boolean hasSubItems() {
+		if (fSubItems.isEmpty()) {
+			return false;
+		}
+		return true;
+	}
+
 }

@@ -297,4 +297,21 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 		fItems.remove(index);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#getItemCount()
+	 */
+	public int getItemCount() {
+		return fItems.size();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#hasItems()
+	 */
+	public boolean hasItems() {
+		if (fItems.isEmpty()) {
+			return false;
+		}
+		return true;
+	}
+
 }

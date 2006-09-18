@@ -129,4 +129,16 @@ public interface ISimpleCSItem extends ISimpleCSObject, ISimpleCSHelpObject, ISi
 	 */
 	public int indexOfSubItem(ISimpleCSSubItemObject subitem);
 	
+	/**
+	 * Element:  subitem, repeated-subitem, conditional-subitem
+	 * @return
+	 */	
+	public int getSubItemCount();
+
+	/**
+	 * Element:  subitem, repeated-subitem, conditional-subitem
+	 * @return
+	 */	
+	public boolean hasSubItems();
+
 }

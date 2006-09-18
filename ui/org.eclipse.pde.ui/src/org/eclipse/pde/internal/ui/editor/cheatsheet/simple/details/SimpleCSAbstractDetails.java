@@ -123,4 +123,12 @@ public abstract class SimpleCSAbstractDetails extends PDEDetails implements
 	public FormToolkit getToolkit() {
 		return fToolkit;
 	}
+	
+	/**
+	 * @return
+	 */
+	public ISimpleCSMaster getMasterSection() {
+		return fElementSection;
+	}
+	
 }

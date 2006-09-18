@@ -206,7 +206,7 @@ public class SimpleCSItemDetails extends SimpleCSAbstractDetails {
 		
 		// Attribute: skip
 		fSkip.setSelection(fItem.getSkip());
-		fSkip.setEnabled(editable);
+		updateSkipEnablement();
 		
 		fHelpSection.updateFields();
 
@@ -227,6 +227,22 @@ public class SimpleCSItemDetails extends SimpleCSAbstractDetails {
 		}
 		fContent.setEditable(editable);			
 
+	}
+	
+	/**
+	 * 
+	 */
+	private void updateSkipEnablement() {
+
+		boolean editable = isEditableElement();
+		// Preserve cheat sheet validity
+		// Semantic Rule:  Specifying whether an item can be skipped or not has
+		// no effect when subitems are present (because the item delegates the
+		// control to the subitem to skip).
+		if (fItem.hasSubItems()) {
+			editable = false;
+		}		
+		fSkip.setEnabled(editable);		
 	}
 	
 }
