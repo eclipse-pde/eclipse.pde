@@ -99,6 +99,7 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 			String qualifier = fPage.getQualifier();
 			if (qualifier != null)
 				export.setAttribute("qualifier", qualifier);			 //$NON-NLS-1$
+			target.appendChild(export);
 			return doc;
 		} catch (DOMException e) {
 		} catch (FactoryConfigurationError e) {
