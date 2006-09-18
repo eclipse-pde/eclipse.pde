@@ -183,9 +183,16 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		LaunchPluginValidator.validatePluginDependencies(models, monitor);
 	}	
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#clear(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.runtime.IProgressMonitor)
+	/**
+	 * Clears the configuration area if the area exists and that option is selected.
+	 * 
+	 * @param configuration
+	 * 			the launch configuration
+	 * @param monitor
+	 * 			the progress monitor
+	 * @throws CoreException
+	 * 			if unable to retrieve launch attribute values
+	 * @since 3.3
 	 */
 	protected void clear(ILaunchConfiguration configuration, IProgressMonitor monitor)
 			throws CoreException {

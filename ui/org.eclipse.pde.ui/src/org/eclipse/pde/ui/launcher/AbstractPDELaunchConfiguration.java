@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -32,7 +31,6 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.pde.internal.core.TargetPlatform;
-import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
@@ -383,8 +381,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	}
 	
 	/**
-	 * Clears the workspace prior to launching if the workspace exists and the option to 
-	 * clear it is turned on.  Also clears the configuration area if that option is chosen.
+	 * Clears workspace or configuration data where/if applicable
 	 * 
 	 * @param configuration
 	 * 			the launch configuration
@@ -394,16 +391,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * 			if unable to retrieve launch attribute values
 	 * @since 3.3
 	 */
-	protected void clear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		String workspace = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
-		// Clear workspace and prompt, if necessary
-		if (!LauncherUtils.clearWorkspace(configuration, workspace, monitor))
-			throw new CoreException(Status.CANCEL_STATUS);
-
-		// clear config area, if necessary
-		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
-			CoreUtility.deleteContent(getConfigDir(configuration));	
-	}
+	protected abstract void clear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Validates inter-bundle dependencies automatically prior to launching

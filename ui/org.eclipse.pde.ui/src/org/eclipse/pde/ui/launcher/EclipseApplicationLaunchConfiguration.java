@@ -17,7 +17,9 @@ import java.util.Properties;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.ExternalModelManager;
@@ -29,6 +31,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
+import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
 import org.eclipse.pde.internal.ui.launcher.VMHelper;
 
 /**
@@ -199,6 +202,29 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 			}
 		}
 		return fConfigDir;
+	}
+	
+	/**
+	 * Clears the workspace prior to launching if the workspace exists and the option to 
+	 * clear it is turned on.  Also clears the configuration area if that option is chosen.
+	 * 
+	 * @param configuration
+	 * 			the launch configuration
+	 * @param monitor
+	 * 			the progress monitor
+	 * @throws CoreException
+	 * 			if unable to retrieve launch attribute values
+	 * @since 3.3
+	 */
+	protected void clear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+		String workspace = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
+		// Clear workspace and prompt, if necessary
+		if (!LauncherUtils.clearWorkspace(configuration, workspace, monitor))
+			throw new CoreException(Status.CANCEL_STATUS);
+
+		// clear config area, if necessary
+		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
+			CoreUtility.deleteContent(getConfigDir(configuration));	
 	}
 	
 }
