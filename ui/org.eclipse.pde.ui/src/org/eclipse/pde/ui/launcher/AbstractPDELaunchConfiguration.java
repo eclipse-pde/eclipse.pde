@@ -381,7 +381,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	}
 	
 	/**
-	 * Clears workspace or configuration data where/if applicable
+	 * By default, this method does nothing.  Clients should override, if appropriate.
 	 * 
 	 * @param configuration
 	 * 			the launch configuration
@@ -391,7 +391,8 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * 			if unable to retrieve launch attribute values
 	 * @since 3.3
 	 */
-	protected abstract void clear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException;
+	protected void clear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+	}
 	
 	/**
 	 * Validates inter-bundle dependencies automatically prior to launching
