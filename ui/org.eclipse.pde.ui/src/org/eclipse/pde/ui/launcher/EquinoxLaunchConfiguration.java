@@ -29,6 +29,7 @@ import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
@@ -181,5 +182,16 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		IPluginModelBase[] models = (IPluginModelBase[])fAllBundles.values().toArray(new IPluginModelBase[fAllBundles.size()]);
 		LaunchPluginValidator.validatePluginDependencies(models, monitor);
 	}	
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#clear(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void clear(ILaunchConfiguration configuration, IProgressMonitor monitor)
+			throws CoreException {
+		// clear config area, if necessary
+		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
+			CoreUtility.deleteContent(getConfigDir(configuration));	
+	}
 
 }
