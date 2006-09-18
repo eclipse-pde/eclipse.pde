@@ -136,7 +136,7 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 		try {
 			ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
 			ILaunchConfigurationType type = lm.getLaunchConfigurationType(getLaunchConfigurationTypeName());
-			String name = lm.generateUniqueLaunchConfigurationNameFrom(type.getName());	
+			String name = lm.generateUniqueLaunchConfigurationNameFrom(getName(type));	
 			ILaunchConfigurationWorkingCopy wc = type.newInstance(null, name);  
 			initializeConfiguration(wc);
 			return wc.doSave();		
@@ -144,6 +144,15 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 			PDEPlugin.logException(ce);
 		} 
 		return null;
+	}
+	
+	/**
+	 * Returns the name assigned to the new launch configuration
+	 * 
+	 * @return a name for the new launch configuration
+	 */
+	protected String getName(ILaunchConfigurationType type) {
+		return type.getName();
 	}
 	
 	/**

@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.viewers.ISelection;
@@ -265,5 +266,16 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	 */
 	protected String getLaunchConfigurationTypeName() {
 		return CONFIGURATION_TYPE;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.launcher.AbstractLaunchShortcut#getName(org.eclipse.debug.core.ILaunchConfigurationType)
+	 */
+	protected String getName(ILaunchConfigurationType type) {
+		// if launching default product, use default naming convention
+		if (fApplicationName == null)
+			return super.getName(type);
+		String product = getProduct(fApplicationName);
+		return (product == null) ? fApplicationName : product;
 	}	
 }
