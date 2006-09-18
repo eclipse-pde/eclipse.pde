@@ -3188,5 +3188,13 @@ public class PDEUIMessages extends NLS {
 	
 	public static String SimpleCSPage_0;	
 	
+	// OSGi Log Service Template
+	public static String OSGiSimpleLogServiceNewWizard_title;
+	public static String OSGiSimpleLogServiceTemplate_logMessage;
+	public static String OSGiSimpleLogServiceTemplate_pageDescription;
+	public static String OSGiSimpleLogServiceTemplate_pageTitle;
+	public static String OSGiSimpleLogServiceTemplate_startLogMessage;
+	public static String OSGiSimpleLogServiceTemplate_stopLogMessage;
+	
 	// TODO: MP: Clean-up redundant externalized strings in pderesources
 }

@@ -466,6 +466,18 @@
             %pluginContent.OSGiPreferencesService.description
          </description>
       </wizard>
+      <wizard
+            class="org.eclipse.pde.internal.ui.wizards.templates.OSGiSimpleLogServiceNewWizard"
+            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            id="org.eclipse.pde.ui.pluginContent.OSGiSimpleLogService"
+            name="%pluginContent.OSGiSimpleLogService.name"
+            pureOSGi="true"
+            requiresActivator="true"
+            ui-content="false">
+         <description>
+            %pluginContent.OSGiSimpleLogService.description
+         </description>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.pde.ui.newExtension">
