@@ -16,9 +16,8 @@ import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -42,11 +41,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.ISelectionService;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -55,9 +49,6 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class CommandDetails {
-	
-	private static String F_NO_SEL = PDEUIMessages.CommandDetails_noComSelected;
-	private static String F_NO_PARAM = PDEUIMessages.CommandDetails_noParameters;
 	
 	private final HashMap fParameterToValue = new HashMap();
 	private final ArrayList fObjectParamList = new ArrayList();
@@ -110,7 +101,7 @@ public class CommandDetails {
 	private void createBasicInfo(Composite parent) {
 		Composite comp = fCSP.createComposite(parent, GridData.FILL_HORIZONTAL, 2, false);
 		fToolkit.createLabel(comp, PDEUIMessages.CommandDetails_id);
-		fComIDT = fToolkit.createText(comp, F_NO_SEL, SWT.BORDER);
+		fComIDT = fToolkit.createText(comp, PDEUIMessages.CommandDetails_noComSelected, SWT.BORDER);
 		fComIDT.setEditable(false);
 		fComIDT.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
@@ -118,7 +109,7 @@ public class CommandDetails {
 	private void createParameters(Composite parent) {
 		Composite comp = fCSP.createComposite(parent, GridData.FILL_HORIZONTAL, 1, false);
 		
-		fParamLabel = fToolkit.createLabel(comp, F_NO_PARAM);
+		fParamLabel = fToolkit.createLabel(comp, PDEUIMessages.CommandDetails_noParameters);
 		fParamLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fParamParent = parent;
@@ -313,48 +304,24 @@ public class CommandDetails {
 		}
 	}
 	
-	private class ObjectParameterControl extends SelectionAdapter implements ModifyListener {
+	private class ObjectParameterControl implements ModifyListener {
 		private final IParameter fParameter;
 		private final AbstractParameterValueConverter fValueConverter;
 		private final Text fParameterText;
-		private final Button fTrackSelectionButton;
-		private SelectionTracker fSelectionTracker;
-		public ObjectParameterControl(IParameter parameter, AbstractParameterValueConverter valueConverter, Text parameterText, Button trackSelectionButton, Object selectedObject) {
+		public ObjectParameterControl(IParameter parameter, AbstractParameterValueConverter valueConverter, Text parameterText, Object selectedObject) {
 			fParameter = parameter;
 			fValueConverter = valueConverter;
 			
 			fParameterText = parameterText;
 			fParameterText.addModifyListener(this);
+			
+			if (selectedObject != null)
+				setParameterText(selectedObject);
+			
 			if (fPreSel != null) {
 				Object obj = fPreSel.getParameterMap().get(parameter.getId());
 				if (obj != null)
 					fParameterText.setText(obj.toString());
-			}
-			
-			fTrackSelectionButton = trackSelectionButton;
-			fTrackSelectionButton.addSelectionListener(this);
-			
-			if (selectedObject != null)
-				setParameterText(selectedObject);
-		}
-		
-		private ISelectionService getSelectionService() {
-			IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			if (activeWindow == null) return null;
-			return activeWindow.getSelectionService();
-		}
-		
-		// track selection button pressed
-		public void widgetSelected(SelectionEvent e) {
-			ISelectionService selectionService = getSelectionService();
-			if (selectionService == null) return;
-			if (fTrackSelectionButton.getSelection()) {
-				fSelectionTracker = new SelectionTracker(selectionService);
-			} else {
-				if (fSelectionTracker != null) {
-					fSelectionTracker.dispose();
-					fSelectionTracker = null;
-				}
 			}
 		}
 		
@@ -365,6 +332,7 @@ public class CommandDetails {
 			else
 				fParameterToValue.put(fParameter, text);
 			updatePreviewText();
+			validate();
 		}
 		
 		private void setParameterText(Object selectedObject) {
@@ -377,31 +345,27 @@ public class CommandDetails {
 			}
 		}
 		
-		private class SelectionTracker implements ISelectionListener {
-			private final ISelectionService fSelectionService;
-			public SelectionTracker(ISelectionService selectionService) {
-				fSelectionService = selectionService;
-				fSelectionService.addSelectionListener(this);
-			}
-			
-			public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-				if (selection instanceof IStructuredSelection) {
-					Object selectedObject = ((IStructuredSelection)selection).getFirstElement();
-					setParameterText(selectedObject);
-				}
-			}
-			
-			public void dispose() {
-				fSelectionService.removeSelectionListener(this);
-			}
-		}
-		
 		protected void dispose() {
 			if (!fParameterText.isDisposed())
 				fParameterText.removeModifyListener(this);
-			if (!fTrackSelectionButton.isDisposed())
-				fTrackSelectionButton.removeSelectionListener(this);
-			fSelectionTracker = null;
+		}
+
+		private void validate() {
+			String text = fParameterText.getText();
+			String error = null;
+			if (text.length() > 0) {
+				try {
+					fValueConverter.convertToObject(text);
+				} catch (ParameterValueConversionException e1) {
+					error = e1.getMessage();
+				}
+			}
+			if (error == null)
+				fCSP.setMessage(null, IMessageProvider.NONE);
+			else
+				fCSP.setMessage(
+						NLS.bind(PDEUIMessages.CommandDetails_paramValueMessage, fParameter.getName(), error),
+						IMessageProvider.WARNING);
 		}
 	}
 	
@@ -448,7 +412,7 @@ public class CommandDetails {
 		
 		IParameter[] parameters = command.getParameters();
 		if (parameters == null || parameters.length == 0) {
-			fParamLabel.setText(F_NO_PARAM);
+			fParamLabel.setText(PDEUIMessages.CommandDetails_noParameters);
 		} else {
 			fParamLabel.setText(NLS.bind(PDEUIMessages.CommandDetails_numParams, Integer.toString(parameters.length)));
 			Composite paramLine = fToolkit.createComposite(fParamComposite);
@@ -485,9 +449,10 @@ public class CommandDetails {
 				ParameterType parameterType = command.getParameterType(parameter.getId());
 				if ((parameterType != null) && (parameterType.getValueConverter() != null)) {
 					Text parameterText = fToolkit.createText(paramLine, "", SWT.SINGLE | SWT.BORDER); //$NON-NLS-1$
-					parameterText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-					Button trackSelectionButton = fToolkit.createButton(paramLine, PDEUIMessages.CommandDetails_track, SWT.CHECK);
-					fObjectParamList.add(new ObjectParameterControl(parameter, parameterType.getValueConverter(), parameterText, trackSelectionButton, selectedObject));
+					GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+					gd.horizontalSpan = 2;
+					parameterText.setLayoutData(gd);
+					fObjectParamList.add(new ObjectParameterControl(parameter, parameterType.getValueConverter(), parameterText, selectedObject));
 			
 					continue;
 				}
@@ -540,8 +505,8 @@ public class CommandDetails {
 	
 	private void resetAllFields() {
 		fSelectedCommand = null;
-		fComIDT.setText(F_NO_SEL);
-		fParamLabel.setText(F_NO_PARAM);
+		fComIDT.setText(PDEUIMessages.CommandDetails_noComSelected);
+		fParamLabel.setText(PDEUIMessages.CommandDetails_noParameters);
 		
 		if (fComPrev != null)
 			fComPrev.setText(""); //$NON-NLS-1$
@@ -572,6 +537,10 @@ public class CommandDetails {
 			fComPrev.setText(getFilteredCommand());
 	}
 
+	protected Command getCommand() {
+		return fSelectedCommand;
+	}
+	
 	public String getCommandName() {
 		if (fSelectedCommand != null)
 			try {

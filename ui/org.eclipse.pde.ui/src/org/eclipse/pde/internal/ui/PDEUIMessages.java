@@ -83,6 +83,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String CommandDetails_param;
 
+	public static String CommandDetails_paramValueMessage;
+
 	public static String CommandDetails_preview;
 
 	public static String CommandDetails_track;

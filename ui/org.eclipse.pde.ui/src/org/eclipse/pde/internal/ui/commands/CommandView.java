@@ -23,7 +23,6 @@ public class CommandView extends ViewPart implements ISelectionChangedListener {
 	
 	public void createPartControl(Composite parent) {
 		fCSP = new CommandComposerPart();
-		fCSP.createPartControl(parent);
 	}
 	
 	public FormToolkit getToolkit() {

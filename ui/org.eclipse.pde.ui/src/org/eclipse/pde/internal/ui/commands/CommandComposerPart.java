@@ -6,6 +6,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridData;
@@ -15,7 +16,21 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 
+/**
+ * This class is meant to be used to integrate the Command Composer into a UI (View, Dialog)
+ * 
+ * setFilterType(int)
+ * setButtonCreator(IDialogButtonCreator)
+ * setPresetCommand(ParameterizedCommand)
+ * 
+ * should all be called before creating the actual control:
+ * 
+ * Scrolled form = CommandComposerPart#createForm(Composite)
+ * CommandComposerPart#createPartControl(form)
+ * 
+ */
 public class CommandComposerPart implements ISelectionChangedListener {
 	
 	public static final int F_FILTER_NOT_SET = CommandCopyFilter.indexOf(CommandCopyFilter.NONE);
@@ -27,6 +42,7 @@ public class CommandComposerPart implements ISelectionChangedListener {
 	
 	private final TagManager fTagManager = new TagManager();
 	private FormToolkit fToolkit;
+	private ScrolledForm fScrolledForm;
 	private CommandList fCommandList;
 	private CommandDetails fCommandDetails;
 	private IDialogButtonCreator fCreator;
@@ -72,10 +88,17 @@ public class CommandComposerPart implements ISelectionChangedListener {
 	}
 	
 	
-	public Composite createPartControl(Composite parent) {
+	protected ScrolledForm createForm(Composite parent) {
 		fToolkit = new FormToolkit(parent.getDisplay());
-		
-		Composite body = createComposite(parent);
+		fScrolledForm = fToolkit.createScrolledForm(parent);
+		fScrolledForm.setText(PDEUIMessages.CommandSerializerPart_name);
+		fScrolledForm.setLayout(new GridLayout());
+		fScrolledForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+		return fScrolledForm;
+	}
+	
+	protected Composite createPartControl() {
+		Composite body = fScrolledForm.getBody();
 		
 		body.setLayout(new GridLayout());
 		body.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -94,6 +117,10 @@ public class CommandComposerPart implements ISelectionChangedListener {
 		
 		fPC = null;
 		return body;
+	}
+	
+	protected void setMessage(String message, int newType) {
+		fScrolledForm.getForm().setMessage(message, newType);
 	}
 	
 	public FormToolkit getToolkit() {
@@ -147,6 +174,9 @@ public class CommandComposerPart implements ISelectionChangedListener {
 			selectionObject = fPC;
 		else if (event.getSelection() instanceof IStructuredSelection)
 			selectionObject = (((IStructuredSelection)event.getSelection()).getFirstElement());
+		if (selectionObject != null &&
+				selectionObject.equals(fCommandDetails.getCommand()))
+			return;
 		fCommandDetails.showDetailsFor(selectionObject);
 	}
 

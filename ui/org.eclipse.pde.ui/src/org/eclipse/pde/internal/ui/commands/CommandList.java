@@ -169,7 +169,8 @@ public class CommandList {
 		fTreeViewer.addFilter(new WildcardFilter());
 		fTreeViewer.setInput(new Object());
 		fTreeViewer.addSelectionChangedListener(fCSP);
-		fTreeViewer.addSelectionChangedListener(creator.getButtonEnablementListener());
+		if (creator != null)
+			fTreeViewer.addSelectionChangedListener(creator.getButtonEnablementListener());
 		
 		section.setClient(c);
 	}

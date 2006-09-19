@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class CommandComposerDialog extends Dialog implements IDialogButtonCreator {
 	
@@ -36,15 +37,12 @@ public class CommandComposerDialog extends Dialog implements IDialogButtonCreato
 		super.configureShell(newShell);
 	}
 	
-	protected Control createDialogArea(Composite parent) {
-		Control c = fCSP.createPartControl(parent);
-		applyDialogFont(c);
-		return c;
-	}
-	
-	protected Control createButtonBar(Composite parent) {
-		// custom buttons in part control
-		return null;
+	protected Control createContents(Composite parent) {
+		ScrolledForm form = fCSP.createForm(parent);
+		initializeDialogUnits(form);
+		fCSP.createPartControl();
+		applyDialogFont(form);
+		return form;
 	}
 	
 	public void okPressed() {
