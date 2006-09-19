@@ -373,9 +373,9 @@ public class SimpleCSCommandDetails implements ISimpleCSDetails {
 				(parameters.isEmpty() == false)) {
 			// Iterate over the keys in the map
 		    Iterator it = parameters.keySet().iterator();
+	    	int rowCount = 0;
 		    while (it.hasNext()) {
 		    	// Track number of keys / rows processed
-		    	int rowCount = 0;
 		    	TableItem item = null;
 		    	// Determine if there is an existing row already at that index
 		    	if (rowCount < fCommandTable.getItemCount()) {
