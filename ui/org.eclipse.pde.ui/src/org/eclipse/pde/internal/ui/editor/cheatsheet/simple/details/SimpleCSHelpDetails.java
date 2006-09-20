@@ -47,6 +47,7 @@ public class SimpleCSHelpDetails implements ISimpleCSDetails {
 	
 	private SimpleCSAbstractDetails fDetails;
 
+	private Section fHelpSection;
 	
 	public SimpleCSHelpDetails(ISimpleCSHelpObject helpObject,
 			SimpleCSAbstractDetails details) {
@@ -57,6 +58,8 @@ public class SimpleCSHelpDetails implements ISimpleCSDetails {
 		fHref = null;
 		fContextIdRadio = null;
 		fHrefRadio = null;
+		
+		fHelpSection = null;
 	}
 
 	/* (non-Javadoc)
@@ -65,7 +68,6 @@ public class SimpleCSHelpDetails implements ISimpleCSDetails {
 	public void createDetails(Composite parent) {
 
 		int columnSpan = 1;
-		Section helpSection = null;
 		FormToolkit toolkit = fDetails.getToolkit();
 		
 		boolean paintedBorder = toolkit.getBorderStyle() != SWT.BORDER;
@@ -73,18 +75,18 @@ public class SimpleCSHelpDetails implements ISimpleCSDetails {
 		GridLayout layout = null;
 		
 		// Create help section
-		helpSection = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
-		// | ExpandableComposite.TWISTIE
-		helpSection.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
-		helpSection.marginHeight = 5;
-		helpSection.marginWidth = 5;
-		helpSection.setText(PDEUIMessages.SimpleCSSharedUIFactory_1);
-		helpSection.setDescription(PDEUIMessages.SimpleCSSharedUIFactory_2);
+		fHelpSection = toolkit.createSection(parent, Section.DESCRIPTION
+				| ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE);
+		fHelpSection.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
+		fHelpSection.marginHeight = 5;
+		fHelpSection.marginWidth = 5;
+		fHelpSection.setText(PDEUIMessages.SimpleCSSharedUIFactory_1);
+		fHelpSection.setDescription(PDEUIMessages.SimpleCSSharedUIFactory_2);
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		helpSection.setLayoutData(data);
+		fHelpSection.setLayoutData(data);
 		
 		// Create container for help section		
-		Composite helpSectionClient = toolkit.createComposite(helpSection);	
+		Composite helpSectionClient = toolkit.createComposite(fHelpSection);	
 		layout = new GridLayout(columnSpan, false);
 		if (paintedBorder) {
 			layout.verticalSpacing = 7;
@@ -125,7 +127,7 @@ public class SimpleCSHelpDetails implements ISimpleCSDetails {
 		
 		// Bind widgets
 		toolkit.paintBordersFor(helpSectionClient);
-		helpSection.setClient(helpSectionClient);
+		fHelpSection.setClient(helpSectionClient);
 		// TODO: MP: What does this do?
 		//markDetailsPart(fHelpSection);		
 		
@@ -163,11 +165,12 @@ public class SimpleCSHelpDetails implements ISimpleCSDetails {
 	 */
 	public void updateFields() {
 
-		boolean editable = fDetails.isEditableElement();
-		
 		if (fHelpObject == null) {
 			return;
 		}			
+
+		boolean editable = fDetails.isEditableElement();
+		boolean expanded = false;
 		
 		// Attribute: contextId
 		// Attribute: href		
@@ -178,13 +181,15 @@ public class SimpleCSHelpDetails implements ISimpleCSDetails {
 			fContextId.setEnabled(true && editable);
 			fContextIdRadio.setSelection(true && editable);
 			fHref.setEnabled(false);	
-			fHrefRadio.setSelection(false);			
+			fHrefRadio.setSelection(false);
+			expanded = true;
 		} else if (PDETextHelper.isDefined(fHelpObject.getHref())) {
 			fHref.setText(fHelpObject.getHref());
 			fContextId.setEnabled(false);
 			fContextIdRadio.setSelection(false);			
 			fHref.setEnabled(true && editable);			
 			fHrefRadio.setSelection(true && editable);
+			expanded = true;
 		} else {
 			fContextId.setEnabled(true && editable);
 			fContextIdRadio.setSelection(true && editable);
@@ -192,6 +197,8 @@ public class SimpleCSHelpDetails implements ISimpleCSDetails {
 			fHrefRadio.setSelection(false);					
 		}
 
+		fHelpSection.setExpanded(expanded);
+		
 	}
 	
 	
