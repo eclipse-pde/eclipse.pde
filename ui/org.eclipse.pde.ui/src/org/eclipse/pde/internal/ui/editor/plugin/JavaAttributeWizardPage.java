@@ -15,7 +15,6 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.IClassFile;
@@ -25,7 +24,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.wizards.NewClassWizardPage;
@@ -43,7 +41,6 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 	private IPluginModelBase model;
 	private InitialClassProperties initialValues;
 	private IJavaProject javaProject;
-	private IStatus fClassNameStatus, fPackageNameStatus;
 	
 	class InitialClassProperties {
 		// populate new wizard page
@@ -145,15 +142,11 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			else if (loc == 0)
 				initialValues.className = ""; //$NON-NLS-1$
 		}
-		fClassNameStatus = JavaConventions
-		.validateJavaTypeName(initialValues.className);
 		
 		loc = className.lastIndexOf('.');
 		if (loc != -1) {
 			initialValues.packageName = className.substring(0, loc);
 			initialValues.className = className.substring(loc + 1);
-			fPackageNameStatus = JavaConventions.validatePackageName(initialValues.packageName);
-			fClassNameStatus = JavaConventions.validateJavaTypeName(initialValues.className);
 		}
 		if (javaProject == null)
 			return;
@@ -234,21 +227,6 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 		} catch (JavaModelException e) {
 			PDEPlugin.logException(e);
 		}
-	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.ui.wizards.NewClassWizardPage#setVisible(boolean)
-	 */
-	public void setVisible(boolean visible) {
-		super.setVisible(visible);
-		// policy: wizards are not allowed to come up with an error message;
-		// in this wizard, some fields may need initial validation and thus,
-		// potentially start with an error message.
-		if (fClassNameStatus !=null && !fClassNameStatus.isOK())
-		updateStatus(fClassNameStatus);
-		if (fPackageNameStatus != null && !fPackageNameStatus.isOK())
-		updateStatus(fPackageNameStatus);
 	}
 	
 	public String getClassArgs(){
