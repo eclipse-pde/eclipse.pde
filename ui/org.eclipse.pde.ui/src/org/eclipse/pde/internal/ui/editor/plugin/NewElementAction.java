@@ -19,6 +19,8 @@ import org.eclipse.pde.core.plugin.IPluginParent;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.text.IDocumentNode;
+import org.eclipse.pde.internal.core.text.plugin.PluginElementNode;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -83,6 +85,7 @@ public class NewElementAction extends Action {
 		IPluginElement newElement = parent.getModel().getFactory().createElement(parent);
 		try {
 			newElement.setName(getElementName());
+			((PluginElementNode)newElement).setParentNode((IDocumentNode)parent);
 			initializeAttributes(newElement);
 			parent.add(newElement);
 		} catch (CoreException e) {
