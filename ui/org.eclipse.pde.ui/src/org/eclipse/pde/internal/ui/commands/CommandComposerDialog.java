@@ -7,9 +7,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.commands.CommandComposerPart.IDialogButtonCreator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -18,30 +16,40 @@ import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.internal.provisional.forms.FormDialog;
 
-public class CommandComposerDialog extends FormDialog implements IDialogButtonCreator {
+public class CommandComposerDialog extends FormDialog {
 	
-	private CommandComposerPart fCSP;
+	private CommandComposerPart fCCP;
 	private ParameterizedCommand fPC;
 	private Button fOKButton;
 	
 	public CommandComposerDialog(Shell parentShell, int filterType, ParameterizedCommand preselectedCommand) {
 		super(parentShell);
 		setShellStyle(SWT.MODELESS | SWT.SHELL_TRIM | SWT.BORDER);
-		fCSP = new CommandComposerPart();
-		fCSP.setFilterType(filterType);
-		fCSP.setButtonCreator(this);
-		fCSP.setPresetCommand(preselectedCommand);
+		fCCP = new CommandComposerPart();
+		fCCP.setFilterType(filterType);
+		fCCP.setPresetCommand(preselectedCommand);
+	}
+	
+	protected Control createContents(Composite parent) {
+		Control control = super.createContents(parent);
+		fOKButton = getButton(IDialogConstants.OK_ID);
+		fOKButton.setEnabled(false);
+		return control;
 	}
 	
 	protected void createFormContent(IManagedForm mform) {
 		ScrolledForm form = mform.getForm();
 		initializeDialogUnits(form);
-		fCSP.createPartControl(form, mform.getToolkit());
+		fCCP.createCC(form, mform.getToolkit(), new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				if (fOKButton != null) {
+					Object obj = event.getSelection();
+					fOKButton.setEnabled(obj instanceof IStructuredSelection &&
+							((IStructuredSelection)obj).getFirstElement() instanceof Command);
+				}
+			}
+		});
 		applyDialogFont(form);
-	}
-	
-	protected Control createButtonBar(Composite parent) {
-		return null;
 	}
 	
 	protected void configureShell(Shell newShell) {
@@ -50,40 +58,16 @@ public class CommandComposerDialog extends FormDialog implements IDialogButtonCr
 	}
 	
 	public void okPressed() {
-		fPC = fCSP.getParameterizedCommand();
+		fPC = fCCP.getParameterizedCommand();
 		super.okPressed();
 	}
 	
 	public boolean close() {
-		fCSP.dispose();
+		fCCP.dispose();
 		return super.close();
 	}
 	
 	public ParameterizedCommand getCommand() {
 		return fPC;
-	}
-
-	public void createButtons(Composite parent) {
-		Composite comp = fCSP.createComposite(
-				parent, 
-				GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_END, 
-				0, false); // 0 columns since createButton(...) increments col num
-		
-		fOKButton = createButton(comp, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-		fOKButton.setEnabled(false);
-		fCSP.getToolkit().adapt(fOKButton, true, true);
-		fCSP.getToolkit().adapt(createButton(comp, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false), true, true);
-	}
-	
-	public ISelectionChangedListener getButtonEnablementListener() {
-		return new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				if (fOKButton != null) {
-					Object obj = event.getSelection();
-					fOKButton.setEnabled(obj instanceof IStructuredSelection &&
-							((IStructuredSelection)obj).getFirstElement() instanceof Command);
-				}
-			}
-		};
 	}
 }

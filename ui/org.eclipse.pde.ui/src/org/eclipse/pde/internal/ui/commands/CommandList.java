@@ -9,6 +9,7 @@ import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -19,7 +20,6 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.commands.CommandComposerPart.IDialogButtonCreator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -134,25 +134,25 @@ public class CommandList {
 		return new String();
 	}
 	
-	private CommandComposerPart fCSP;
+	private CommandComposerPart fCCP;
 	private FormToolkit fToolkit;
 	private Text fFilterText;
 	private TreeViewer fTreeViewer;
 	private CommandTreeContentProvider fContentProvider;
 	private ICommandImageService fComImgServ;
 
-	public CommandList(CommandComposerPart cv, Composite parent, IDialogButtonCreator creator) {
-		fCSP = cv;
+	public CommandList(CommandComposerPart cv, Composite parent) {
+		fCCP = cv;
 		fToolkit = cv.getToolkit();
-		createTree(parent, creator);
+		createTree(parent);
 		fComImgServ = (ICommandImageService) PlatformUI.getWorkbench().getAdapter(ICommandImageService.class);
 	}
-	private void createTree(Composite parent, IDialogButtonCreator creator) {
+	private void createTree(Composite parent) {
 		Section section = fToolkit.createSection(parent, ExpandableComposite.SHORT_TITLE_BAR);
 		section.setText(PDEUIMessages.CommandList_groupName);
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		Composite c = fCSP.createComposite(section);
+		Composite c = fCCP.createComposite(section);
 		
 		createFilterText(c);
 		
@@ -162,21 +162,24 @@ public class CommandList {
 		gd.widthHint = 200;
 		tree.setLayoutData(gd);
 		fTreeViewer = new TreeViewer(tree);
-		fContentProvider = new CommandTreeContentProvider(fCSP.getCommandService());
+		fContentProvider = new CommandTreeContentProvider(fCCP.getCommandService());
 		fTreeViewer.setContentProvider(fContentProvider);
 		fTreeViewer.setLabelProvider(new CommandTreeLabelProvider());
 		fTreeViewer.setSorter(new CommandTreeSorter());
 		fTreeViewer.addFilter(new WildcardFilter());
 		fTreeViewer.setInput(new Object());
-		fTreeViewer.addSelectionChangedListener(fCSP);
-		if (creator != null)
-			fTreeViewer.addSelectionChangedListener(creator.getButtonEnablementListener());
+		fTreeViewer.addSelectionChangedListener(fCCP);
 		
 		section.setClient(c);
 	}
 	
+	protected void addTreeSelectionListener(ISelectionChangedListener listener) {
+		if (listener != null)
+			fTreeViewer.addSelectionChangedListener(listener);
+	}
+	
 	private void createFilterText(Composite parent) {
-		Composite c = fCSP.createComposite(parent, GridData.FILL_HORIZONTAL, 3, false);
+		Composite c = fCCP.createComposite(parent, GridData.FILL_HORIZONTAL, 3, false);
 		fFilterText = fToolkit.createText(c, "", SWT.BORDER); //$NON-NLS-1$
 		fFilterText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fFilterText.addKeyListener(new KeyAdapter() {

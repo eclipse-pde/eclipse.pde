@@ -45,27 +45,8 @@ public class CommandComposerPart implements ISelectionChangedListener {
 	private ScrolledForm fScrolledForm;
 	private CommandList fCommandList;
 	private CommandDetails fCommandDetails;
-	private IDialogButtonCreator fCreator;
 	private int fFilterType = F_FILTER_NOT_SET;
 	private ParameterizedCommand fPC;
-	
-	/**
-	 * Any Dialogs that use this UI Part should implement this interface.
-	 */
-	protected interface IDialogButtonCreator {
-		/**
-		 * Create the neccesary buttons for the dialog, the parent Composite
-		 * will be right below the details group.
-		 * @param parent The parent composite of the buttons
-		 */
-		public void createButtons(Composite parent);
-		/**
-		 * Returns a listener which sets the enabled state of the buttons 
-		 * created.  This listener will be hooked to the command list tree.
-		 * @return an ISelectionChangedListener
-		 */
-		public ISelectionChangedListener getButtonEnablementListener();
-	}
 	
 	private static ICommandService initCommandService() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
@@ -83,11 +64,7 @@ public class CommandComposerPart implements ISelectionChangedListener {
 		return fFilterType;
 	}
 	
-	public void setButtonCreator(IDialogButtonCreator creator) {
-		fCreator = creator;
-	}
-	
-	protected Composite createPartControl(ScrolledForm form, FormToolkit toolkit) {
+	protected void createCC(ScrolledForm form, FormToolkit toolkit, ISelectionChangedListener listener) {
 		fToolkit = toolkit;
 		fScrolledForm = form;
 		fScrolledForm.setText(PDEUIMessages.CommandSerializerPart_name);
@@ -99,8 +76,10 @@ public class CommandComposerPart implements ISelectionChangedListener {
 		SashForm sashForm = new SashForm(body, SWT.HORIZONTAL);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		fCommandList = new CommandList(this, sashForm, fCreator);
-		fCommandDetails = new CommandDetails(this, sashForm, fCreator);
+		fCommandList = new CommandList(this, sashForm);
+		if (listener != null)
+			fCommandList.addTreeSelectionListener(listener);
+		fCommandDetails = new CommandDetails(this, sashForm);
 		
 		sashForm.setWeights(new int[] {4,5});
 		fToolkit.adapt(sashForm, true, true);
@@ -109,7 +88,6 @@ public class CommandComposerPart implements ISelectionChangedListener {
 			fCommandList.setSelection(fPC.getCommand());
 		
 		fPC = null;
-		return body;
 	}
 	
 	protected void setMessage(String message, int newType) {

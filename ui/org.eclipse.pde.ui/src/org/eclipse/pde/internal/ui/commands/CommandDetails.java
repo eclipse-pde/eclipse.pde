@@ -21,7 +21,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.commands.CommandComposerPart.IDialogButtonCreator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
@@ -55,7 +54,7 @@ public class CommandDetails {
 	private final ArrayList fValueParamList = new ArrayList();
 	private final ArrayList fTextParamList = new ArrayList();
 	
-	private CommandComposerPart fCSP;
+	private CommandComposerPart fCCP;
 	private FormToolkit fToolkit;
 	private Command fSelectedCommand;
 	private ParameterizedCommand fPreSel;
@@ -70,36 +69,34 @@ public class CommandDetails {
 	private ImageHyperlink fCopyLink;
 	private ImageHyperlink fExecLink;
 
-	public CommandDetails(CommandComposerPart cv, Composite parent, IDialogButtonCreator buttonCreator) {
-		fCSP = cv;
+	public CommandDetails(CommandComposerPart cv, Composite parent) {
+		fCCP = cv;
 		fToolkit = cv.getToolkit();
-		createCommandDetails(parent, buttonCreator);
+		createCommandDetails(parent);
 	}
 	
-	private void createCommandDetails(Composite parent, IDialogButtonCreator buttonCreator) {
-		Composite c = fCSP.createComposite(parent);
+	private void createCommandDetails(Composite parent) {
+		Composite c = fCCP.createComposite(parent);
 		
 		Section section = fToolkit.createSection(c, ExpandableComposite.SHORT_TITLE_BAR);
 		section.setText(PDEUIMessages.CommandDetails_groupName);
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		Composite comp = fCSP.createComposite(section);
+		Composite comp = fCCP.createComposite(section);
 		
 		createBasicInfo(comp);
 		
-		if (fCSP.getFilterType() == CommandComposerPart.F_FILTER_NOT_SET)
+		if (fCCP.getFilterType() == CommandComposerPart.F_FILTER_NOT_SET)
 			createPreviewLabelComp(comp);
 		createParameters(comp);
 		
 		section.setClient(comp);
 		
 		createLinks(c);
-		if (buttonCreator != null)
-			buttonCreator.createButtons(c);
 	}
 	
 	private void createBasicInfo(Composite parent) {
-		Composite comp = fCSP.createComposite(parent, GridData.FILL_HORIZONTAL, 2, false);
+		Composite comp = fCCP.createComposite(parent, GridData.FILL_HORIZONTAL, 2, false);
 		fToolkit.createLabel(comp, PDEUIMessages.CommandDetails_id);
 		fComIDT = fToolkit.createText(comp, PDEUIMessages.CommandDetails_noComSelected, SWT.BORDER);
 		fComIDT.setEditable(false);
@@ -107,7 +104,7 @@ public class CommandDetails {
 	}
 	
 	private void createParameters(Composite parent) {
-		Composite comp = fCSP.createComposite(parent, GridData.FILL_HORIZONTAL, 1, false);
+		Composite comp = fCCP.createComposite(parent, GridData.FILL_HORIZONTAL, 1, false);
 		
 		fParamLabel = fToolkit.createLabel(comp, PDEUIMessages.CommandDetails_noParameters);
 		fParamLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -117,7 +114,7 @@ public class CommandDetails {
 	}
 	
 	private void createLinks(Composite parent) {
-		Composite comp = fCSP.createComposite(parent,
+		Composite comp = fCCP.createComposite(parent,
 				GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END,
 				1, false);
 		
@@ -145,7 +142,7 @@ public class CommandDetails {
 	}
 	
 	private void createPreviewLabelComp(Composite parent) {
-		Composite preLabelComp = fCSP.createComposite(parent, GridData.FILL_HORIZONTAL, 3, false);
+		Composite preLabelComp = fCCP.createComposite(parent, GridData.FILL_HORIZONTAL, 3, false);
 		fToolkit.createLabel(preLabelComp, PDEUIMessages.CommandDetails_preview, SWT.NONE).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fSurroundCopyText = fToolkit.createButton(preLabelComp, PDEUIMessages.CommandDetails_includeMarkup, SWT.CHECK);
@@ -228,11 +225,11 @@ public class CommandDetails {
 		}
 		int index;
 		boolean surroundWithMarkup = false;
-		if (fCSP.getFilterType() == CommandComposerPart.F_FILTER_NOT_SET) {
+		if (fCCP.getFilterType() == CommandComposerPart.F_FILTER_NOT_SET) {
 			surroundWithMarkup = fSurroundCopyText.getSelection();
 			index = fFilterCombo.getSelectionIndex();
 		} else {
-			index = fCSP.getFilterType();
+			index = fCCP.getFilterType();
 		}
 		CommandCopyFilter ccf = CommandCopyFilter.getFilter(index);
 		return ccf.filter(serializedCommand, surroundWithMarkup, markupLabel);
@@ -361,9 +358,9 @@ public class CommandDetails {
 				}
 			}
 			if (error == null)
-				fCSP.setMessage(null, IMessageProvider.NONE);
+				fCCP.setMessage(null, IMessageProvider.NONE);
 			else
-				fCSP.setMessage(
+				fCCP.setMessage(
 						NLS.bind(PDEUIMessages.CommandDetails_paramValueMessage, fParameter.getName(), error),
 						IMessageProvider.WARNING);
 		}
@@ -529,7 +526,7 @@ public class CommandDetails {
 	private void createBlankParamComp() {
 		if (fParamComposite != null)
 			fParamComposite.dispose();
-		fParamComposite = fCSP.createComposite(fParamParent, GridData.FILL_BOTH, 1, true);
+		fParamComposite = fCCP.createComposite(fParamParent, GridData.FILL_BOTH, 1, true);
 	}
 	
 	private void updatePreviewText() {
