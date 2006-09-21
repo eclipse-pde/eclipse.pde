@@ -73,7 +73,7 @@ import org.eclipse.pde.ui.IBasePluginWizard;
 import org.eclipse.pde.ui.IExtensionWizard;
 import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTException;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.KeyEvent;
@@ -353,16 +353,16 @@ public class PointSelectionPage
 		fDescLink.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Control c = null;
+		Composite comp = new Composite(templateComposite, SWT.BORDER);
+		layout = new GridLayout();
+		layout.marginHeight = layout.marginWidth = 0;
+		comp.setLayout(layout);
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		try {
-			Composite comp = new Composite(templateComposite, SWT.BORDER);
-			layout = new GridLayout();
-			layout.marginHeight = layout.marginWidth = 0;
-			comp.setLayout(layout);
-			comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 			c = fPointDescBrowser = new Browser(comp, SWT.NONE);
-		} catch (SWTException e) {}
+		} catch (SWTError e) {}
 		if (c == null)
-			c = fPointDescription = new Text(templateComposite, SWT.WRAP | SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.READ_ONLY);
+			c = fPointDescription = new Text(comp, SWT.WRAP | SWT.MULTI | SWT.V_SCROLL | SWT.READ_ONLY);
 		
 		setPointDescriptionText(PDEUIMessages.NewExtensionWizard_PointSelectionPage_extPointDescription); 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
