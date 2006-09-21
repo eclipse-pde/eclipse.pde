@@ -2,7 +2,6 @@ package org.eclipse.pde.internal.ui.commands;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -15,9 +14,11 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.internal.provisional.forms.FormDialog;
 
-public class CommandComposerDialog extends Dialog implements IDialogButtonCreator {
+public class CommandComposerDialog extends FormDialog implements IDialogButtonCreator {
 	
 	private CommandComposerPart fCSP;
 	private ParameterizedCommand fPC;
@@ -32,17 +33,20 @@ public class CommandComposerDialog extends Dialog implements IDialogButtonCreato
 		fCSP.setPresetCommand(preselectedCommand);
 	}
 	
+	protected void createFormContent(IManagedForm mform) {
+		ScrolledForm form = mform.getForm();
+		initializeDialogUnits(form);
+		fCSP.createPartControl(form, mform.getToolkit());
+		applyDialogFont(form);
+	}
+	
+	protected Control createButtonBar(Composite parent) {
+		return null;
+	}
+	
 	protected void configureShell(Shell newShell) {
 		newShell.setText(PDEUIMessages.CommandSerializerPart_name);
 		super.configureShell(newShell);
-	}
-	
-	protected Control createContents(Composite parent) {
-		ScrolledForm form = fCSP.createForm(parent);
-		initializeDialogUnits(form);
-		fCSP.createPartControl();
-		applyDialogFont(form);
-		return form;
 	}
 	
 	public void okPressed() {

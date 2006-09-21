@@ -87,17 +87,10 @@ public class CommandComposerPart implements ISelectionChangedListener {
 		fCreator = creator;
 	}
 	
-	
-	protected ScrolledForm createForm(Composite parent) {
-		fToolkit = new FormToolkit(parent.getDisplay());
-		fScrolledForm = fToolkit.createScrolledForm(parent);
+	protected Composite createPartControl(ScrolledForm form, FormToolkit toolkit) {
+		fToolkit = toolkit;
+		fScrolledForm = form;
 		fScrolledForm.setText(PDEUIMessages.CommandSerializerPart_name);
-		fScrolledForm.setLayout(new GridLayout());
-		fScrolledForm.setLayoutData(new GridData(GridData.FILL_BOTH));
-		return fScrolledForm;
-	}
-	
-	protected Composite createPartControl() {
 		Composite body = fScrolledForm.getBody();
 		
 		body.setLayout(new GridLayout());
@@ -140,7 +133,6 @@ public class CommandComposerPart implements ISelectionChangedListener {
 	}
 	
 	public void dispose() {
-		fToolkit.dispose();
 		fCommandDetails.dispose();
 	}
 	
