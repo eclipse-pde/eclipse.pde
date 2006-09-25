@@ -198,10 +198,16 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		// add Bundle Specific fields if applicable
 		if (pluginBase instanceof BundlePluginBase) {
 			IBundle bundle = ((BundlePluginBase)pluginBase).getBundle();
-			if ( fData instanceof AbstractFieldData	&& ((AbstractFieldData)fData).getOSGiFramework() != null) {
-				String value = getCommaValueFromSet(getImportPackagesSet());
-				if (value.length() > 0)
-					bundle.setHeader(Constants.IMPORT_PACKAGE, value);
+			if (fData instanceof AbstractFieldData) {
+				String framework = ((AbstractFieldData)fData).getOSGiFramework();
+				if (framework != null) {
+					String value = getCommaValueFromSet(getImportPackagesSet());
+					if (value.length() > 0)
+						bundle.setHeader(Constants.IMPORT_PACKAGE, value);
+					// if framework is not equinox, skip equinox step below to add extra headers
+					if (!framework.equals(ICoreConstants.EQUINOX))
+						return;
+				}
 			} 
 			if (fData instanceof IPluginFieldData && ((IPluginFieldData)fData).doGenerateClass()) {
 				if (targetVersion.equals("3.1")) //$NON-NLS-1$
