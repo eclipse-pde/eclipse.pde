@@ -4,15 +4,16 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     G&H Softwareentwicklung GmbH - internationalization implementation (bug 150933)
  *******************************************************************************/
 
 package org.eclipse.pde.internal.build.tasks;
 
 import java.io.*;
-import java.net.MalformedURLException;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.xml.parsers.*;
@@ -20,7 +21,7 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * 
+ *
  * @since 3.1
  */
 public class JNLPGenerator extends DefaultHandler {
@@ -52,11 +53,13 @@ public class JNLPGenerator extends DefaultHandler {
 	private boolean resourceWritten = false;
 	private String currentOS = null;
 	private String currentArch = null;
-	
+	private Locale locale = null;
+	private PropertyResourceBundle nlsBundle = null;
+
 	/**
 	 * For testing purposes only.
 	 */
-	public static void main(String[] args) throws MalformedURLException {
+	public static void main(String[] args) {
 		JNLPGenerator generator = new JNLPGenerator(args[0], args[1], args[2], args[3]);
 		generator.process();
 	}
@@ -65,11 +68,19 @@ public class JNLPGenerator extends DefaultHandler {
 	 * Constructs a feature parser.
 	 */
 	public JNLPGenerator(String feature, String destination, String codebase, String j2se) {
+		this(feature, destination, codebase, j2se, Locale.getDefault());
+	}
+
+	/**
+	 * Constructs a feature parser.
+	 */
+	public JNLPGenerator(String feature, String destination, String codebase, String j2se, Locale locale) {
 		super();
 		this.featureRoot = new File(feature);
 		this.destination = destination;
 		this.codebase = codebase;
 		this.j2se = j2se;
+		this.locale = locale;
 		try {
 			parserFactory.setNamespaceAware(true);
 			parser = parserFactory.newSAXParser();
@@ -85,21 +96,34 @@ public class JNLPGenerator extends DefaultHandler {
 	 */
 	public void process() {
 		InputStream in = null;
+		final String FEATURE_XML = "feature.xml"; //$NON-NLS-1$
 
 		try {
 			ZipFile featureArchive = null;
+			InputStream nlsStream = null;
 			if (featureRoot.isFile()) {
 				featureArchive = new ZipFile(featureRoot);
-				ZipEntry featureXML = featureArchive.getEntry("feature.xml");
+				nlsStream = getNLSStream(featureArchive);
+				ZipEntry featureXML = featureArchive.getEntry(FEATURE_XML);
 				in = featureArchive.getInputStream(featureXML);
 			} else {
-				in = new FileInputStream(new File(featureRoot, "feature.xml"));
+				nlsStream = getNLSStream(this.featureRoot);
+				in = new FileInputStream(new File(featureRoot, FEATURE_XML));
+			}
+			try {
+				if (nlsStream != null) {
+					nlsBundle = new PropertyResourceBundle(nlsStream);
+					nlsStream.close();
+				}
+			} catch (IOException e) {
+				// do nothing
 			}
 			try {
 				parser.parse(new InputSource(in), this);
 				writeResourceEpilogue();
 				writeEpilogue();
 			} catch (SAXException e) {
+				//Ignore the exception
 			} finally {
 				in.close();
 				if (out != null)
@@ -108,7 +132,114 @@ public class JNLPGenerator extends DefaultHandler {
 					featureArchive.close();
 			}
 		} catch (IOException e) {
+			//Ignore the exception
 		}
+	}
+
+	/**
+	 * Search for nls properties files and return the stream if files are found.
+	 * First try to load the default properties file, then one with the default
+	 * locale settings and if nothing matches, return the stream of the first
+	 * properties file found.
+	 */
+	private InputStream getNLSStream(File root) {
+		String appendix = ".properties"; //$NON-NLS-1$
+		String[] potentials = createNLSPotentials();
+
+		Map validEntries = new HashMap();
+		File[] files = root.listFiles();
+		for (int i = 0; i < files.length; i++) {
+			String filename = files[i].getName();
+			if (filename.endsWith(appendix)) {
+				validEntries.put(filename, files[i]);
+			}
+		}
+		InputStream stream = null;
+		if (validEntries.size() > 0) {
+			for (int i = 0; i < potentials.length; i++) {
+				File file = (File) validEntries.get(potentials[i]);
+				if (file != null) {
+					try {
+						stream = new FileInputStream(file);
+						break;
+					} catch (IOException e) {
+						// do nothing
+					}
+				}
+			}
+			if (stream == null) {
+				File file = (File) validEntries.values().iterator().next();
+				try {
+					stream = new FileInputStream(file);
+				} catch (IOException e) {
+					// do nothing
+				}
+			}
+		}
+		return stream;
+	}
+
+	/**
+	 * Search for nls properties files and return the stream if files are found.
+	 * First try to load the default properties file, then one with the default
+	 * locale settings and if nothing matches, return the stream of the first
+	 * founded properties file.
+	 */
+	private InputStream getNLSStream(ZipFile featureArchive) {
+		String appendix = ".properties"; //$NON-NLS-1$
+		String[] potentials = createNLSPotentials();
+
+		Map validEntries = new HashMap();
+		for (Enumeration enumeration = featureArchive.entries(); enumeration.hasMoreElements();) {
+			ZipEntry entry = (ZipEntry) enumeration.nextElement();
+			String entryName = entry.getName();
+			if (entryName.endsWith(appendix)) {
+				validEntries.put(entryName, entry);
+			}
+		}
+		InputStream stream = null;
+		if (validEntries.size() > 0) {
+			for (int i = 0; i < potentials.length; i++) {
+				ZipEntry entry = (ZipEntry) validEntries.get(potentials[i]);
+				if (entry != null) {
+					try {
+						stream = featureArchive.getInputStream(entry);
+						break;
+					} catch (IOException e) {
+						// do nothing
+					}
+				}
+			}
+			if (stream == null) {
+				ZipEntry entry = (ZipEntry) validEntries.values().iterator().next();
+				try {
+					stream = featureArchive.getInputStream(entry);
+				} catch (IOException e) {
+					// do nothing
+				}
+			}
+		}
+		return stream;
+	}
+
+	private String[] createNLSPotentials() {
+		String suffix = "feature"; //$NON-NLS-1$
+		String appendix = ".properties"; //$NON-NLS-1$
+
+		String language = locale.getLanguage();
+		String country = locale.getCountry();
+		String variant = locale.getVariant();
+
+		String potential1 = '_' + language + '_' + country + '_' + variant;
+		String potential2 = '_' + language + '_' + country;
+		String potential3 = '_' + language;
+		String potential4 = ""; //$NON-NLS-1$
+
+		String[] potentials = new String[] {potential1, potential2, potential3, potential4};
+		for (int i = 0; i < potentials.length; i++) {
+			potentials[i] = suffix + potentials[i] + appendix;
+		}
+		return potentials;
 	}
 
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -129,19 +260,19 @@ public class JNLPGenerator extends DefaultHandler {
 
 	private void processPlugin(Attributes attributes) throws IOException {
 		writePrologue();
-		String id = attributes.getValue("id"); //$NON-NLS-1$
-		String version = attributes.getValue("version"); //$NON-NLS-1$
+		String pluginId = attributes.getValue("id"); //$NON-NLS-1$
+		String pluginVersion = attributes.getValue("version"); //$NON-NLS-1$
 		String os = attributes.getValue("os"); //$NON-NLS-1$
 		String ws = attributes.getValue("ws"); //$NON-NLS-1$
 		String arch = attributes.getValue("arch"); //$NON-NLS-1$
 		writeResourcePrologue(os, ws, arch);
-		out.println("\t\t<jar href=\"plugins/" + id + "_" + version + ".jar\"/>");
+		out.println("\t\t<jar href=\"plugins/" + pluginId + "_" + pluginVersion + ".jar\"/>");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	private void writeResourceEpilogue() {
 		if (!resourceWritten)
 			return;
-		out.println("\t</resources>");
+		out.println("\t</resources>"); //$NON-NLS-1$
 		resourceWritten = false;
 		currentOS = null;
 	}
@@ -155,7 +286,7 @@ public class JNLPGenerator extends DefaultHandler {
 			return;
 		if (resourceWritten)
 			writeResourceEpilogue();
-		out.println("\t<resources" + (os == null ? "" : " os=\"" + os + "\"") + (arch == null ? "" : " arch=\"" + arch + "\"") + ">");
+		out.println("\t<resources" + (os == null ? "" : " os=\"" + os + "\"") + (arch == null ? "" : " arch=\"" + arch + "\"") + ">");    //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$//$NON-NLS-7$ //$NON-NLS-8$
 		resourceWritten = true;
 		currentOS = os;
 		currentArch = arch;
@@ -222,7 +353,7 @@ public class JNLPGenerator extends DefaultHandler {
 			return false;
 		return arch.equals(currentArch);
 	}
-	
+
 	private void processDescription(Attributes attributes) {
 	}
 
@@ -235,23 +366,53 @@ public class JNLPGenerator extends DefaultHandler {
 		String ws = attributes.getValue("ws"); //$NON-NLS-1$
 		String arch = attributes.getValue("arch"); //$NON-NLS-1$
 		writeResourcePrologue(os, ws, arch);
-		out.print("\t\t<extension ");
+		out.print("\t\t<extension ");//$NON-NLS-1$
 		if (name != null)
-			out.print("name=\"" + name + "\" ");
+			out.print("name=\"" + name + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		if (inclusionId != null) {
-			out.print("href=\"features/" + inclusionId);
+			out.print("href=\"features/" + inclusionId); //$NON-NLS-1$
 			if (inclusionVersion != null)
-				out.print("_" + inclusionVersion);
-			out.print(".jnlp\" ");
+				out.print('_' + inclusionVersion);
+			out.print(".jnlp\" "); //$NON-NLS-1$
 		}
-		out.println("/>");
+		out.println("/>"); //$NON-NLS-1$
 	}
 
-	private void processFeature(Attributes attributes) throws IOException {
+	private void processFeature(Attributes attributes) {
 		id = attributes.getValue("id"); //$NON-NLS-1$
 		version = attributes.getValue("version"); //$NON-NLS-1$
-		label = attributes.getValue("label"); //$NON-NLS-1$
-		provider = attributes.getValue("provider-name"); //$NON-NLS-1$
+		label = processNLS(attributes.getValue("label")); //$NON-NLS-1$
+		provider = processNLS(attributes.getValue("provider-name")); //$NON-NLS-1$
+	}
+
+	/**
+	 * Search for a human readable string in the feature.properties file(s) if
+	 * the given string is a translateable key.
+	 *
+	 * @param string a translateable key or a normal string(nothing is done)
+	 *
+	 * @return a translateabled string or the given string if it is not a
+	 *         translateable key
+	 */
+	private String processNLS(String string) {
+		string = string.trim();
+		if (!string.startsWith("%")) { //$NON-NLS-1$
+			return string;
+		}
+		if (string.startsWith("%%")) { //$NON-NLS-1$
+			return string.substring(1);
+		}
+		int index = string.indexOf(" "); //$NON-NLS-1$
+		String key = index == -1 ? string : string.substring(0, index);
+		String dflt = index == -1 ? string : string.substring(index + 1);
+		if (nlsBundle == null) {
+			return dflt;
+		}
+		try {
+			return nlsBundle.getString(key.substring(1));
+		} catch (MissingResourceException e) {
+			return dflt;
+		}
 	}
 
 	private void writePrologue() throws IOException {
@@ -261,34 +422,34 @@ public class JNLPGenerator extends DefaultHandler {
 			featureRoot.getParentFile();
 			destination = featureRoot.getParent() + '/';
 		}
-		if (destination.endsWith("/") || destination.endsWith("\\"))
-			destination = new File(featureRoot.getParentFile(), id + "_" + version + ".jnlp").getAbsolutePath();
+		if (destination.endsWith("/") || destination.endsWith("\\")) //$NON-NLS-1$  //$NON-NLS-2$
+			destination = new File(featureRoot.getParentFile(), id + "_" + version + ".jnlp").getAbsolutePath(); //$NON-NLS-1$ //$NON-NLS-2$
 		out = new PrintWriter(new FileOutputStream(destination));
 		writePrologue();
-		out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		out.print("<jnlp spec=\"1.0+\" ");
+		out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
+		out.print("<jnlp spec=\"1.0+\" "); //$NON-NLS-1$
 		if (codebase != null)
-			out.print("codebase=\"" + codebase);
-		out.println("\">");
-		out.println("\t<information>");
+			out.print("codebase=\"" + codebase); //$NON-NLS-1$
+		out.println("\">"); //$NON-NLS-1$
+		out.println("\t<information>"); //$NON-NLS-1$
 		if (label != null)
-			out.println("\t\t<title>" + label + "</title>");
+			out.println("\t\t<title>" + label + "</title>"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (provider != null)
-			out.println("\t\t<vendor>" + provider + "</vendor>");
+			out.println("\t\t<vendor>" + provider + "</vendor>"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (description != null)
-			out.println("\t\t<description>" + description + "</description>");
-		out.println("\t\t<offline-allowed/>");
-		out.println("\t</information>");
-		out.println("\t<security>");
-		out.println("\t\t<all-permissions/>");
-		out.println("\t</security>");
-		out.println("\t<component-desc/>");
-		out.println("\t<resources>");
-		out.println("\t\t<j2se version=\"" + j2se + "\" />");
-		out.println("\t</resources>");
+			out.println("\t\t<description>" + description + "</description>"); //$NON-NLS-1$ //$NON-NLS-2$
+		out.println("\t\t<offline-allowed/>"); //$NON-NLS-1$
+		out.println("\t</information>"); //$NON-NLS-1$
+		out.println("\t<security>"); //$NON-NLS-1$
+		out.println("\t\t<all-permissions/>"); //$NON-NLS-1$
+		out.println("\t</security>"); //$NON-NLS-1$
+		out.println("\t<component-desc/>"); //$NON-NLS-1$
+		out.println("\t<resources>"); //$NON-NLS-1$
+		out.println("\t\t<j2se version=\"" + j2se + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$
+		out.println("\t</resources>"); //$NON-NLS-1$
 	}
 
 	private void writeEpilogue() {
-		out.println("</jnlp>");
+		out.println("</jnlp>"); //$NON-NLS-1$
 	}
 }

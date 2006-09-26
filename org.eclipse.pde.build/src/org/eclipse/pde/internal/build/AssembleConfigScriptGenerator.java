@@ -4,9 +4,10 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     G&H Softwareentwicklung GmbH - internationalization implementation (bug 150933)
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
@@ -398,7 +399,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 		String dir = type == BUNDLE ? Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) : Utils.getPropertyFormat(PROPERTY_ECLIPSE_FEATURES);
 		String location = dir + '/' + name + '_' + version + ".jar"; //$NON-NLS-1$
-		script.println("<eclipse.jnlpGenerator feature=\"" + location + "\"  codebase=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CODEBASE) + "\" j2se=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_J2SE) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
+		script.println("<eclipse.jnlpGenerator feature=\"" + location + "\"  codebase=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_CODEBASE) + "\" j2se=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_J2SE) + "\" locale=\"" + Utils.getPropertyFormat(PROPERTY_JNLP_LOCALE) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
 
 	private boolean getUnpackClause(BundleDescription bundle) {

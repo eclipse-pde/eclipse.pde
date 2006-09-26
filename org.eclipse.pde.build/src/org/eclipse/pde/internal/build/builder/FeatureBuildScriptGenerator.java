@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM - Initial API and implementation
+ *     G&H Softwareentwicklung GmbH - internationalization implementation (bug 150933)
  *******************************************************************************/
 package org.eclipse.pde.internal.build.builder;
 
@@ -639,14 +640,14 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		// do this is
 		// to clear all inherited values. Must remember to setup anything that
 		// is really expected.
-		script.printAntCallTask(TARGET_GATHER_BIN_PARTS, false, params); //$NON-NLS-1$
+		script.printAntCallTask(TARGET_GATHER_BIN_PARTS, false, params);
 		String jar = Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION) + '/' + featureFullName + ".jar"; //$NON-NLS-1$
 		script.printJarTask(jar, featureTempFolder + '/' + featureFolderName, null);
 		script.printDeleteTask(featureTempFolder, null, null);
 		if (generateJnlp)
-			script.println("<eclipse.jnlpGenerator feature=\"" + jar + "\"  codebase=\"" + Utils.getPropertyFormat("jnlp.codebase") + "\" j2se=\"" + Utils.getPropertyFormat("jnlp.j2se") + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
+			script.println("<eclipse.jnlpGenerator feature=\"" + jar + "\"  codebase=\"" + Utils.getPropertyFormat(IXMLConstants.PROPERTY_JNLP_CODEBASE) + "\" j2se=\"" + Utils.getPropertyFormat(IXMLConstants.PROPERTY_JNLP_J2SE) + "\" locale=\"" + Utils.getPropertyFormat(IXMLConstants.PROPERTY_JNLP_LOCALE) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		if (signJars)
-			script.println("<signjar jar=\"" + jar + "\" alias=\"" + Utils.getPropertyFormat("sign.alias") + "\" keystore=\"" + Utils.getPropertyFormat("sign.keystore") + "\" storepass=\"" + Utils.getPropertyFormat("sign.storepass") + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ 
+			script.println("<signjar jar=\"" + jar + "\" alias=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_ALIAS) + "\" keystore=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_KEYSTORE) + "\" storepass=\"" + Utils.getPropertyFormat(PROPERTY_SIGN_STOREPASS) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		script.printTargetEnd();
 	}
 
