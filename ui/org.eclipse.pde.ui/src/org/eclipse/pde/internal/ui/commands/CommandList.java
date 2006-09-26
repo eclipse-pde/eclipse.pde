@@ -8,6 +8,9 @@ import java.util.regex.PatternSyntaxException;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -27,11 +30,14 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -93,7 +99,10 @@ public class CommandList {
 	
 	protected class WildcardFilter extends ViewerFilter {
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			String wMatch = '*' + fFilterText.getText() + '*';
+			String filterText = fFilterText.getText();
+			if (filterText.length() == 0)
+				return true;
+			String wMatch = '*' + filterText + '*';
 			Pattern pattern = null;
 			try {
 				pattern = PatternConstructor.createPattern(wMatch, false);
@@ -134,6 +143,15 @@ public class CommandList {
 		return new String();
 	}
 	
+	private class CollapseAction extends Action {
+		public CollapseAction() {
+			super(PDEUIMessages.CommandList_collapseAll0, IAction.AS_PUSH_BUTTON);
+			setImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL);
+			setToolTipText(PDEUIMessages.CommandList_collapseAll0);
+		}
+		
+	}
+	
 	private CommandComposerPart fCCP;
 	private FormToolkit fToolkit;
 	private Text fFilterText;
@@ -148,15 +166,35 @@ public class CommandList {
 		fComImgServ = (ICommandImageService) PlatformUI.getWorkbench().getAdapter(ICommandImageService.class);
 	}
 	private void createTree(Composite parent) {
-		Section section = fToolkit.createSection(parent, ExpandableComposite.SHORT_TITLE_BAR);
+		Composite c = fCCP.createComposite(parent, GridData.FILL_BOTH, 1, true, 5);
+		
+		Section section = fToolkit.createSection(c, ExpandableComposite.SHORT_TITLE_BAR);
 		section.setText(PDEUIMessages.CommandList_groupName);
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		Composite c = fCCP.createComposite(section);
+		Composite comp = fCCP.createComposite(section);
 		
-		createFilterText(c);
+		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
+		ToolBar toolbar = toolBarManager.createControl(section);
+		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		toolbar.setCursor(handCursor);
+		toolBarManager.add(new CollapseAction() {
+			public void run() {
+				fTreeViewer.collapseAll();
+			}
+		});
+		toolbar.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				handCursor.dispose();
+			}
+		});
+		fToolkit.adapt(toolbar, true, true);
+		section.setTextClient(toolbar);
+		toolBarManager.update(true);
 		
-		Tree tree = fToolkit.createTree(c, SWT.V_SCROLL | SWT.H_SCROLL);
+		createFilterText(comp);
+		
+		Tree tree = fToolkit.createTree(comp, SWT.V_SCROLL | SWT.H_SCROLL);
 		tree.setLayout(new GridLayout());
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 200;
@@ -170,7 +208,7 @@ public class CommandList {
 		fTreeViewer.setInput(new Object());
 		fTreeViewer.addSelectionChangedListener(fCCP);
 		
-		section.setClient(c);
+		section.setClient(comp);
 	}
 	
 	protected void addTreeSelectionListener(ISelectionChangedListener listener) {
@@ -179,7 +217,7 @@ public class CommandList {
 	}
 	
 	private void createFilterText(Composite parent) {
-		Composite c = fCCP.createComposite(parent, GridData.FILL_HORIZONTAL, 3, false);
+		Composite c = fCCP.createComposite(parent, GridData.FILL_HORIZONTAL, 3, false, 0);
 		fFilterText = fToolkit.createText(c, "", SWT.BORDER); //$NON-NLS-1$
 		fFilterText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fFilterText.addKeyListener(new KeyAdapter() {
@@ -189,14 +227,11 @@ public class CommandList {
         });
 		
 		final ImageHyperlink clearButton = fToolkit.createImageHyperlink(c, SWT.NONE);
-		final Image clearImg = PDEPluginImages.DESC_DCLEAR.createImage();
 		final Image hoverImg = PDEPluginImages.DESC_CLEAR.createImage();
-		clearButton.setImage(clearImg);
-		clearButton.setHoverImage(hoverImg);
+		clearButton.setImage(hoverImg);
 		clearButton.setToolTipText(PDEUIMessages.CommandList_clearTooltip);
 		clearButton.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				clearImg.dispose();
 				hoverImg.dispose();
 			}
 		});
@@ -205,31 +240,12 @@ public class CommandList {
 				fFilterText.setText(""); //$NON-NLS-1$
 			}
 		});
-		clearButton.setEnabled(false);
-		
-		final ImageHyperlink collapseAll = fToolkit.createImageHyperlink(c, SWT.NONE);
-		final Image collImg = PDEPluginImages.DESC_COLLAPSE_ALL_DISABLED.createImage();
-		final Image collEnabledImg = PDEPluginImages.DESC_COLLAPSE_ALL.createImage();
-		collapseAll.setImage(collImg);
-		collapseAll.setHoverImage(collEnabledImg);
-		collapseAll.setToolTipText(PDEUIMessages.CommandList_collapseAll0);
-		collapseAll.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				collImg.dispose();
-				collEnabledImg.dispose();
-			}
-		});
-		collapseAll.addHyperlinkListener(new HyperlinkAdapter() {
-			public void linkActivated(HyperlinkEvent e) {
-				fTreeViewer.collapseAll();
-			}
-		});
+		clearButton.setVisible(false);
 		
         fFilterText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				fTreeViewer.refresh();
-				if (clearButton != null)
-					clearButton.setEnabled(fFilterText.getText().length() > 0);
+				clearButton.setVisible(fFilterText.getText().length() > 0);
 			}
         });
 	}

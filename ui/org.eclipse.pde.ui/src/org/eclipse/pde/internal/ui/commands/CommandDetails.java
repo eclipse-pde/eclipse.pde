@@ -76,7 +76,7 @@ public class CommandDetails {
 	}
 	
 	private void createCommandDetails(Composite parent) {
-		Composite c = fCCP.createComposite(parent);
+		Composite c = fCCP.createComposite(parent, GridData.FILL_BOTH, 1, true, 5);
 		
 		Section section = fToolkit.createSection(c, ExpandableComposite.SHORT_TITLE_BAR);
 		section.setText(PDEUIMessages.CommandDetails_groupName);
@@ -96,7 +96,7 @@ public class CommandDetails {
 	}
 	
 	private void createBasicInfo(Composite parent) {
-		Composite comp = fCCP.createComposite(parent, GridData.FILL_HORIZONTAL, 2, false);
+		Composite comp = fCCP.createComposite(parent, GridData.FILL_HORIZONTAL, 2, false, 0);
 		fToolkit.createLabel(comp, PDEUIMessages.CommandDetails_id);
 		fComIDT = fToolkit.createText(comp, PDEUIMessages.CommandDetails_noComSelected, SWT.BORDER);
 		fComIDT.setEditable(false);
@@ -104,7 +104,7 @@ public class CommandDetails {
 	}
 	
 	private void createParameters(Composite parent) {
-		Composite comp = fCCP.createComposite(parent, GridData.FILL_HORIZONTAL, 1, false);
+		Composite comp = fCCP.createComposite(parent, GridData.FILL_HORIZONTAL, 1, false, 0);
 		
 		fParamLabel = fToolkit.createLabel(comp, PDEUIMessages.CommandDetails_noParameters);
 		fParamLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -116,7 +116,7 @@ public class CommandDetails {
 	private void createLinks(Composite parent) {
 		Composite comp = fCCP.createComposite(parent,
 				GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END,
-				1, false);
+				1, false, 0);
 		
 		fExecLink = fToolkit.createImageHyperlink(comp, SWT.NONE);
 		final Image execImage = PDEPluginImages.DESC_RUN_EXC.createImage();
@@ -142,7 +142,7 @@ public class CommandDetails {
 	}
 	
 	private void createPreviewLabelComp(Composite parent) {
-		Composite preLabelComp = fCCP.createComposite(parent, GridData.FILL_HORIZONTAL, 3, false);
+		Composite preLabelComp = fCCP.createComposite(parent, GridData.FILL_HORIZONTAL, 3, false, 0);
 		fToolkit.createLabel(preLabelComp, PDEUIMessages.CommandDetails_preview, SWT.NONE).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fSurroundCopyText = fToolkit.createButton(preLabelComp, PDEUIMessages.CommandDetails_includeMarkup, SWT.CHECK);
@@ -411,7 +411,7 @@ public class CommandDetails {
 		if (parameters == null || parameters.length == 0) {
 			fParamLabel.setText(PDEUIMessages.CommandDetails_noParameters);
 		} else {
-			fParamLabel.setText(NLS.bind(PDEUIMessages.CommandDetails_numParams, Integer.toString(parameters.length)));
+			fParamLabel.setText(PDEUIMessages.CommandDetails_numParams);
 			Composite paramLine = fToolkit.createComposite(fParamComposite);
 			
 			GridLayout paramLineLayout = new GridLayout();
@@ -526,7 +526,7 @@ public class CommandDetails {
 	private void createBlankParamComp() {
 		if (fParamComposite != null)
 			fParamComposite.dispose();
-		fParamComposite = fCCP.createComposite(fParamParent, GridData.FILL_BOTH, 1, true);
+		fParamComposite = fCCP.createComposite(fParamParent, GridData.FILL_BOTH, 1, true, 0);
 	}
 	
 	private void updatePreviewText() {

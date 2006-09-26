@@ -125,13 +125,13 @@ public class CommandComposerPart implements ISelectionChangedListener {
 	}
 	
 	protected Composite createComposite(Composite parent) {
-		return createComposite(parent, GridData.FILL_BOTH, 1, true);
+		return createComposite(parent, GridData.FILL_BOTH, 1, true, 0);
 	}
 	
-	protected Composite createComposite(Composite parent, int gdStyle, int numCol, boolean colEqual) {
+	protected Composite createComposite(Composite parent, int gdStyle, int numCol, boolean colEqual, int margin) {
 		Composite comp = fToolkit.createComposite(parent);
 		GridLayout layout = new GridLayout(numCol, colEqual);
-		layout.marginHeight = layout.marginWidth = 0;
+		layout.marginHeight = layout.marginWidth = margin;
 		comp.setLayout(layout);
 		comp.setLayoutData(new GridData(gdStyle));
 		return comp;

@@ -87,8 +87,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String CommandDetails_preview;
 
-	public static String CommandDetails_track;
-
 	public static String CommandList_clearTooltip;
 
 	public static String CommandList_collapseAll0;
