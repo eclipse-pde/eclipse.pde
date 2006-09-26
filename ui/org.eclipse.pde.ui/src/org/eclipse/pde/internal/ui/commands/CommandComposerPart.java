@@ -157,5 +157,9 @@ public class CommandComposerPart implements ISelectionChangedListener {
 	protected void setPresetCommand(ParameterizedCommand pc) {
 		fPC = pc;
 	}
+	
+	protected ParameterizedCommand getPresetCommand() {
+		return fPC;
+	}
 
 }

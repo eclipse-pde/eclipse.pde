@@ -33,7 +33,7 @@ public class CommandComposerDialog extends FormDialog {
 	protected Control createContents(Composite parent) {
 		Control control = super.createContents(parent);
 		fOKButton = getButton(IDialogConstants.OK_ID);
-		fOKButton.setEnabled(false);
+		fOKButton.setEnabled(fCCP.getPresetCommand() != null);
 		return control;
 	}
 	
