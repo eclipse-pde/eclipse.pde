@@ -48,6 +48,8 @@ import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSRemo
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSMaster;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -144,9 +146,17 @@ public class SimpleCSElementSection extends TreeSection implements
 		
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		ToolBar toolbar = toolBarManager.createControl(section);
-		Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
 		toolbar.setCursor(handCursor);
-		
+		// Cursor needs to be explicitly disposed
+		toolbar.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if ((handCursor != null) &&
+						(handCursor.isDisposed() == false)) {
+					handCursor.dispose();
+				}
+			}
+		});		
 		// Add collapse action to the tool bar
 		fCollapseAction = new CollapseAction(fTreeViewer, 
 				PDEUIMessages.ExtensionsPage_collapseAll, 
