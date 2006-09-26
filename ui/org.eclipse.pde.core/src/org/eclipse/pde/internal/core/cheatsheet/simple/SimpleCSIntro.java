@@ -123,9 +123,9 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 	 */
 	public void parse(Element element) {
 		// Process contextId attribute
-		fContextId = PDETextHelper.translateReadText(element.getAttribute(ATTRIBUTE_CONTEXTID));
+		fContextId = element.getAttribute(ATTRIBUTE_CONTEXTID).trim();
 		// Process href attribute
-		fHref = PDETextHelper.translateReadText(element.getAttribute(ATTRIBUTE_HREF));
+		fHref = element.getAttribute(ATTRIBUTE_HREF).trim();
 		// Process children
 		NodeList children = element.getChildNodes();
 		ISimpleCSModelFactory factory = getModel().getFactory();
@@ -155,11 +155,15 @@ public class SimpleCSIntro extends SimpleCSObject implements ISimpleCSIntro {
 			if ((fContextId != null) &&
 					(fContextId.length() > 0)) {
 				buffer.append(XMLPrintHandler.wrapAttribute(
-						ATTRIBUTE_CONTEXTID, PDETextHelper.translateWriteText(fContextId)));
+						ATTRIBUTE_CONTEXTID, 
+						PDETextHelper.translateWriteText(
+								fContextId.trim(), SUBSTITUTE_CHARS)));
 			} else if ((fHref != null) &&
 							(fHref.length() > 0)) {
 				buffer.append(XMLPrintHandler.wrapAttribute(
-						ATTRIBUTE_HREF, PDETextHelper.translateWriteText(fHref)));
+						ATTRIBUTE_HREF, 
+						PDETextHelper.translateWriteText(
+								fHref.trim(), SUBSTITUTE_CHARS)));
 			}
 			// Start element
 			XMLPrintHandler.printBeginElement(writer, buffer.toString(),

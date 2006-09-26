@@ -285,7 +285,8 @@ public class PDELabelProvider extends SharedLabelProvider {
 			limit = 32;
 		}
 			
-		return PDETextHelper.truncateAndTrailOffText(obj.getName(), limit);
+		return PDETextHelper.truncateAndTrailOffText(
+				PDETextHelper.translateReadText(obj.getName()), limit);
 	}
 
 	public String getObjectText(FeaturePlugin obj) {

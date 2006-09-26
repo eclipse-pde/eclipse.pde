@@ -46,7 +46,6 @@ public class SimpleCSRemoveStepAction extends Action {
 	 */
 	public void run() {
 		if (fItem != null) {
-			// TODO: MP: Do not remove the last step
 			// Parent can only be a cheat sheet
 			ISimpleCS cheatsheet = (ISimpleCS)fItem.getParent(); 
 			cheatsheet.removeItem(fItem);

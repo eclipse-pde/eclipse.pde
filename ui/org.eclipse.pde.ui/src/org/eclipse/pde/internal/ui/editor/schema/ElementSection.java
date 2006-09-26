@@ -16,6 +16,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -44,6 +45,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TreeSection;
+import org.eclipse.pde.internal.ui.editor.actions.CollapseAction;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.swt.SWT;
@@ -51,7 +53,10 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -63,6 +68,7 @@ public class ElementSection extends TreeSection {
 	private NewAttributeAction fNewAttributeAction = new NewAttributeAction();
 	private Clipboard fClipboard;
 	private SchemaRearranger fRearranger;
+	private CollapseAction fCollapseAction;	
 
 	class ContentProvider extends DefaultContentProvider implements	ITreeContentProvider {
 		public Object[] getElements(Object object) {
@@ -120,8 +126,30 @@ public class ElementSection extends TreeSection {
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		initialize();
+		createSectionToolbar(section, toolkit);
 	}
 
+	/**
+	 * @param section
+	 * @param toolkit
+	 */
+	private void createSectionToolbar(Section section, FormToolkit toolkit) {
+		
+		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
+		ToolBar toolbar = toolBarManager.createControl(section);
+		Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		toolbar.setCursor(handCursor);
+		
+		// Add collapse action to the tool bar
+		fCollapseAction = new CollapseAction(fTreeViewer, 
+				PDEUIMessages.ExtensionsPage_collapseAll);
+		toolBarManager.add(fCollapseAction);
+
+		toolBarManager.update(true);
+
+		section.setTextClient(toolbar);
+	}		
+	
 	private void createTree(Composite container, FormToolkit toolkit) {
 		TreePart treePart = getTreePart();
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
@@ -526,10 +554,6 @@ public class ElementSection extends TreeSection {
 	protected void fireSelection(ISelection selection) {
 		if (selection == null) selection = fTreeViewer.getSelection();
 		fTreeViewer.setSelection(selection);
-	}
-
-	public void handleCollapseAll() {
-		fTreeViewer.collapseAll();
 	}
 
 	protected void doPaste(Object target, Object[] objects) {

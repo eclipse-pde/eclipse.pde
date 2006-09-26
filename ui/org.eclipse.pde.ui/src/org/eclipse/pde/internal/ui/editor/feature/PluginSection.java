@@ -15,9 +15,9 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -51,8 +51,11 @@ import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -67,6 +70,8 @@ public class PluginSection extends TableSection implements
 
 	private Action fDeleteAction;
 
+	private SortAction fSortAction;	
+	
 	class PluginContentProvider extends DefaultContentProvider implements
 			IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
@@ -105,10 +110,35 @@ public class PluginSection extends TableSection implements
 		toolkit.paintBordersFor(container);
 		makeActions();
 		section.setClient(container);
-
 		initialize();
+		createSectionToolbar(section, toolkit);
 	}
 
+	/**
+	 * @param section
+	 * @param toolkit
+	 */
+	private void createSectionToolbar(Section section, FormToolkit toolkit) {
+		
+		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
+		ToolBar toolbar = toolBarManager.createControl(section);
+		Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		toolbar.setCursor(handCursor);
+		
+		// Add sort action to the tool bar
+		fSortAction = new SortAction(
+				getStructuredViewerPart().getViewer(), 
+				PDEUIMessages.FeatureEditor_PluginSection_sortAlpha, 
+				ListUtil.NAME_SORTER,
+				null);
+		
+		toolBarManager.add(fSortAction);
+
+		toolBarManager.update(true);
+
+		section.setTextClient(toolbar);
+	}		
+	
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		fOpenAction.run();
 	}
@@ -448,18 +478,5 @@ public class PluginSection extends TableSection implements
 	}
 	
 	protected boolean createCount() { return true; }
-
-	public Object getAdapter(Class adapter) {
-		if(adapter.equals(IAction[].class)) {
-			return new IAction[] {
-					new SortAction(
-							getStructuredViewerPart().getViewer(), 
-							PDEUIMessages.FeatureEditor_PluginSection_sortAlpha, 
-							ListUtil.NAME_SORTER,
-							null)
-			};
-		}
-		return super.getAdapter(adapter);
-	}
 
 }

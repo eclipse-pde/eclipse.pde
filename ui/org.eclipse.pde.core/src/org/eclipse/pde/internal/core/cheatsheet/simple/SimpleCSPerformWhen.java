@@ -92,7 +92,7 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 	 */
 	public void parse(Element element) {
 		// Process condition attribute
-		// Read as is.  Do not translate
+		// Read as is. Do not translate
 		fCondition = element.getAttribute(ATTRIBUTE_CONDITION);
 		
 		// Process children
@@ -131,9 +131,9 @@ public class SimpleCSPerformWhen extends SimpleCSObject implements
 			// Print perform-when element
 			buffer.append(ELEMENT_PERFORM_WHEN);
 			// Print condition attribute
-			// Write as is.  Do not translate
 			if ((fCondition != null) && 
 					(fCondition.length() > 0)) {
+				// Write as is.  Do not translate
 				buffer.append(XMLPrintHandler.wrapAttribute(
 						ATTRIBUTE_CONDITION, fCondition));
 			}

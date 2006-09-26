@@ -22,7 +22,6 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSRepeatedSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
-import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -100,7 +99,8 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 	 */
 	public void parse(Element element) {
 		// Process values attribute
-		fValues = PDETextHelper.translateReadText(element.getAttribute(ATTRIBUTE_VALUES));
+		// Read as is. Do not translate
+		fValues = element.getAttribute(ATTRIBUTE_VALUES);
 
 		// Process subitem element
 		NodeList children = element.getChildNodes();
@@ -136,8 +136,9 @@ public class SimpleCSRepeatedSubItem extends SimpleCSObject implements
 			// Print values attribute
 			if ((fValues != null) && 
 					(fValues.length() > 0)) {
+				// Write as is. Do not translate
 				buffer.append(XMLPrintHandler.wrapAttribute(
-						ATTRIBUTE_VALUES, PDETextHelper.translateWriteText(fValues)));
+						ATTRIBUTE_VALUES, fValues));
 			}
 			// Start element
 			XMLPrintHandler.printBeginElement(writer, buffer.toString(),

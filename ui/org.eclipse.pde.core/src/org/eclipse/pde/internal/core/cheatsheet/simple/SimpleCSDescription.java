@@ -71,7 +71,7 @@ public class SimpleCSDescription extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#parse(org.w3c.dom.Node)
 	 */
 	public void parse(Element element) {
-		fContent = PDETextHelper.translateReadText(parseElementText(element));
+		fContent = parseElementText(element).trim();
 	}
 	
 	/* (non-Javadoc)
@@ -95,10 +95,9 @@ public class SimpleCSDescription extends SimpleCSObject implements
 			// Print contents
 			if ((fContent != null) &&
 					(fContent.length() > 0)) {
-				//XMLPrintHandler.printText(writer, fContent, newIndent);
 				writer.write(newIndent
-						+ PDETextHelper.translateWriteText(fContent,
-								TAG_EXCEPTIONS, TAG_EXCEPTIONS.size()) + "\n"); //$NON-NLS-1$
+						+ PDETextHelper.translateWriteText(fContent.trim(),
+								TAG_EXCEPTIONS, SUBSTITUTE_CHARS) + "\n"); //$NON-NLS-1$
 			}
 			// End element
 			XMLPrintHandler.printEndElement(writer, ELEMENT_DESCRIPTION, indent);

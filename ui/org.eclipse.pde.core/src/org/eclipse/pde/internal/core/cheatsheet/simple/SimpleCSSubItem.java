@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.core.cheatsheet.simple;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.pde.internal.core.XMLPrintHandler;
@@ -60,6 +61,14 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private static final HashMap LABEL_SUBSTITUTE_CHARS = new HashMap(7);
+	
+	static {
+		LABEL_SUBSTITUTE_CHARS.putAll(SUBSTITUTE_CHARS);
+		LABEL_SUBSTITUTE_CHARS.put(new Character('\n'), " "); //$NON-NLS-1$
+		LABEL_SUBSTITUTE_CHARS.put(new Character('\r'), ""); //$NON-NLS-1$
+	}		
+	
 	/**
 	 * @param model
 	 * @param parent
@@ -147,14 +156,14 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 	 */
 	public void parse(Element element) {
 		// Process label attribute
-		fLabel = PDETextHelper.translateReadText(element.getAttribute(ATTRIBUTE_LABEL));
+		fLabel = element.getAttribute(ATTRIBUTE_LABEL).trim();
 		// Process skip attribute
 		if (element.getAttribute(ATTRIBUTE_SKIP).compareTo(
 				ATTRIBUTE_VALUE_TRUE) == 0) {
 			fSkip = true;
 		}
 		// Process when attribute
-		// Read as is.  Do not translate
+		// Read as is. Do not translate
 		fWhen = element.getAttribute(ATTRIBUTE_WHEN);
 		// Process children
 		NodeList children = element.getChildNodes();
@@ -195,7 +204,9 @@ public class SimpleCSSubItem extends SimpleCSObject implements ISimpleCSSubItem 
 			if ((fLabel != null) && 
 					(fLabel.length() > 0)) {
 				buffer.append(XMLPrintHandler.wrapAttribute(
-						ATTRIBUTE_LABEL, PDETextHelper.translateWriteText(fLabel)));
+						ATTRIBUTE_LABEL, 
+						PDETextHelper.translateWriteText(
+								fLabel.trim(), LABEL_SUBSTITUTE_CHARS)));
 			}
 			// Print skip attribute
 			buffer.append(XMLPrintHandler.wrapAttribute(

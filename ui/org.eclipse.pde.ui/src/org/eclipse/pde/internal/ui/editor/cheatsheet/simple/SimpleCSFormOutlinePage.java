@@ -64,7 +64,8 @@ public class SimpleCSFormOutlinePage extends FormOutlinePage {
 			limit = 22;
 		}
 
-		return PDETextHelper.truncateAndTrailOffText(obj.getName(), limit);
+		return PDETextHelper.truncateAndTrailOffText(
+				PDETextHelper.translateReadText(obj.getName()), limit);
 	}	
 	
 	/* (non-Javadoc)

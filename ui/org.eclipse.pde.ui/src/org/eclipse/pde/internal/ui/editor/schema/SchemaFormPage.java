@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
-import org.eclipse.jface.action.Action;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.ischema.ISchema;
@@ -20,7 +19,6 @@ import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
 import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -75,17 +73,6 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 			else
 				fCurrDetails = null;
 			return fCurrDetails;
-		}
-		protected void createToolBarActions(IManagedForm managedForm) {
-			final ScrolledForm form = managedForm.getForm();
-			Action collapseAction = new Action("col") { //$NON-NLS-1$
-				public void run() {
-					fSection.handleCollapseAll();
-				}
-			};
-			collapseAction.setToolTipText(PDEUIMessages.ExtensionsPage_collapseAll); 
-			collapseAction.setImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL);
-			form.getToolBarManager().add(collapseAction);
 		}
 	}
 	

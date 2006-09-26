@@ -184,9 +184,6 @@ public class SimpleCSSubItemDetails extends SimpleCSAbstractDetails {
 		
 		fCommandSection.updateFields();
 		
-		// TODO: MP: Add update function for table
-		// TODO: MP: remove qualifyer from qualified parameter names
-
 		
 	}
 

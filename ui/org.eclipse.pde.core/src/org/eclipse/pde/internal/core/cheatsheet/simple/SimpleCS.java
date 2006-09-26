@@ -110,7 +110,6 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#setTitle(java.lang.String)
 	 */
 	public void setTitle(String title) {
-		// TODO: MP: Where should we trim() the title ?
 		String old = fTitle;
 		fTitle = title;
 		if (isEditable()) {
@@ -125,8 +124,8 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 		// Process cheatsheet element
 		if (element.getNodeName().equals(ELEMENT_CHEATSHEET)) {
 			// Process title attribute
-			fTitle = PDETextHelper.translateReadText(element
-					.getAttribute(ATTRIBUTE_TITLE)); 
+			// Trim leading and trailing whitespace
+			fTitle = element.getAttribute(ATTRIBUTE_TITLE).trim(); 
 			// Process children
 			NodeList children = element.getChildNodes();
 			ISimpleCSModelFactory factory = getModel().getFactory();
@@ -165,8 +164,12 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 			// Print title attribute
 			if ((fTitle != null) && 
 					(fTitle.length() > 0)) {
+				// Trim leading and trailing whitespace
+				// Encode characters
 				buffer.append(XMLPrintHandler.wrapAttribute(
-						ATTRIBUTE_TITLE, PDETextHelper.translateWriteText(fTitle)));
+						ATTRIBUTE_TITLE, 
+						PDETextHelper.translateWriteText(
+								fTitle.trim(), SUBSTITUTE_CHARS)));
 			}
 			// Start element
 			XMLPrintHandler.printBeginElement(writer, buffer.toString(),

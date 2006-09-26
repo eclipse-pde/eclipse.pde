@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.core.cheatsheet.simple;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -40,10 +41,20 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 	private static final long serialVersionUID = 1L;
 
 	protected static final HashSet TAG_EXCEPTIONS = new HashSet(3);
+	
+	protected static final HashMap SUBSTITUTE_CHARS = new HashMap(5);
+
+	
 	static {
 		TAG_EXCEPTIONS.add("b"); //$NON-NLS-1$
 		TAG_EXCEPTIONS.add("/b"); //$NON-NLS-1$
 		TAG_EXCEPTIONS.add("br/"); //$NON-NLS-1$
+		
+		SUBSTITUTE_CHARS.put(new Character('&'), "&amp;"); //$NON-NLS-1$
+		SUBSTITUTE_CHARS.put(new Character('<'), "&lt;"); //$NON-NLS-1$
+		SUBSTITUTE_CHARS.put(new Character('>'), "&gt;"); //$NON-NLS-1$
+		SUBSTITUTE_CHARS.put(new Character('\''), "&apos;"); //$NON-NLS-1$
+		SUBSTITUTE_CHARS.put(new Character('\"'), "&quot;"); //$NON-NLS-1$
 	}
 	
 	/**

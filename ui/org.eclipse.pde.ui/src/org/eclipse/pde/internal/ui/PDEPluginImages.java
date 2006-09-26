@@ -166,6 +166,7 @@ public class PDEPluginImages {
 	 */
 	public static final ImageDescriptor DESC_ADD_ATT = create(PATH_LCL, "add_att.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ALPHAB_SORT_CO = create(PATH_LCL, "alphab_sort_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ALPHAB_SORT_CO_MINI = create(PATH_LCL, "alphab_sort_co_mini.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CLONE_ATT = create(PATH_LCL, "clone_att.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CLONE_EL = create(PATH_LCL, "clone_el.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_GENERATE_CLASS = create(PATH_LCL, "generate_class.gif"); //$NON-NLS-1$
@@ -181,6 +182,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_HORIZONTAL = create(PATH_LCL, "th_horizontal.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_VERTICAL = create(PATH_LCL, "th_vertical.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_COLLAPSE_ALL = create(PATH_LCL, "collapseall.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_COLLAPSE_ALL_MINI = create(PATH_LCL, "collapse_all_mini.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_HELP = create(PATH_LCL, "help.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_LINK_WITH_EDITOR = create(PATH_LCL, "synced.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CALLEES = create(PATH_LCL, "ch_callees.gif"); //$NON-NLS-1$

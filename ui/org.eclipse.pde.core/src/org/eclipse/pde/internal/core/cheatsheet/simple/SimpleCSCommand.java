@@ -116,7 +116,6 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand#setSerialization(java.lang.String)
 	 */
 	public void setSerialization(String serialization) {
-		// TODO: MP: Where should we trim() ?
 		String old = fSerialization;
 		fSerialization = serialization;
 		if (isEditable()) {
@@ -140,10 +139,10 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 	 */
 	public void parse(Element element) {
 		// Process serialization attribute
-		// Read as is.  Do not translate
+		// Read as is. Do not translate
 		fSerialization = element.getAttribute(ATTRIBUTE_SERIALIZATION);
 		// Process returns attribute
-		// Read as is.  Do not translate
+		// Read as is. Do not translate
 		fReturns = element.getAttribute(ATTRIBUTE_RETURNS);
 		// Process confirm attribute
 		if (element.getAttribute(ATTRIBUTE_CONFIRM).compareTo(
@@ -151,7 +150,7 @@ public class SimpleCSCommand extends SimpleCSObject implements ISimpleCSCommand 
 			fConfirm = true;
 		}		
 		// Process when attribute
-		// Read as is.  Do not translate
+		// Read as is. Do not translate
 		fWhen = element.getAttribute(ATTRIBUTE_WHEN);
 	}
 

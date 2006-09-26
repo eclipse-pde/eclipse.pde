@@ -26,7 +26,7 @@ public class SortAction extends Action {
 	public SortAction(StructuredViewer viewer, String tooltipText, ViewerSorter sorter, IPropertyChangeListener listener) {
 		super(tooltipText, IAction.AS_CHECK_BOX);
 		setToolTipText(tooltipText);
-		setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO);
+		setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO_MINI);
 		fSorted = viewer.getSorter() == null ? false : true;
 		setChecked(fSorted);
 		fViewer= viewer;

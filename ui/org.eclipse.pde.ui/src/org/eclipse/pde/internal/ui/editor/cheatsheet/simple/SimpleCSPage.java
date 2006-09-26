@@ -16,6 +16,7 @@ import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
+import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
@@ -65,7 +66,8 @@ public class SimpleCSPage extends PDEFormPage implements IModelChangedListener {
 		// TODO: MP: Check if model is null?
 		if ((title != null) &&
 				(title.length() > 0)) {
-			form.setText(title);
+			// TODO: MP: LOW: Revisit if we need to translate at all
+			form.setText(PDETextHelper.translateReadText(title));
 		} else {
 			// TODO: MP: Set on model?
 			form.setText(PDEUIMessages.SimpleCSPage_0);
@@ -114,7 +116,10 @@ public class SimpleCSPage extends PDEFormPage implements IModelChangedListener {
 					if ((changeProperty != null) && 
 							changeProperty.equals(ISimpleCSConstants.ATTRIBUTE_TITLE)) {
 						// Has to be a String if the property is a title
-						getManagedForm().getForm().setText((String)event.getNewValue());
+						// TODO: MP: LOW: Revisit if we need to translate at all
+						getManagedForm().getForm().setText(
+								PDETextHelper.translateReadText(
+										(String)event.getNewValue()));
 					}				 
 				}
 			}

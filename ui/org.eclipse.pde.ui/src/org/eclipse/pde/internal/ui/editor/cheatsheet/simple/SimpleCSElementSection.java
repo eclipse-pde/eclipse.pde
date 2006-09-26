@@ -11,16 +11,20 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
@@ -35,6 +39,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TreeSection;
+import org.eclipse.pde.internal.ui.editor.actions.CollapseAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSAddStepAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSAddSubStepAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSRemoveRunObjectAction;
@@ -43,8 +48,10 @@ import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSRemo
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSMaster;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.cheatsheets.OpenCheatSheetAction;
@@ -88,6 +95,8 @@ public class SimpleCSElementSection extends TreeSection implements
 	
 	private SimpleCSRemoveRunObjectAction fRemoveRunObjectAction;
 	
+	private CollapseAction fCollapseAction;
+	
 	/**
 	 * @param formPage
 	 * @param parent
@@ -103,18 +112,18 @@ public class SimpleCSElementSection extends TreeSection implements
 				PDEUIMessages.SimpleCSElementSection_2, 
 				PDEUIMessages.SimpleCSElementSection_3});
 		getSection().setText(PDEUIMessages.SimpleCSElementSection_4);
-		// TODO: MP: Put for details section
-		//getSection().setDescription("The following properties are available for this cheat sheet element:");
 		getSection().setDescription(PDEUIMessages.SimpleCSElementSection_5);
-		
+
 		// Create actions
 		fAddStepAction = new SimpleCSAddStepAction();
 		fRemoveStepAction = new SimpleCSRemoveStepAction();
 		fRemoveSubStepAction = new SimpleCSRemoveSubStepAction();
 		fAddSubStepAction = new SimpleCSAddSubStepAction();
 		fRemoveRunObjectAction = new SimpleCSRemoveRunObjectAction();
+		fCollapseAction = null;
 	}
 
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
@@ -124,7 +133,31 @@ public class SimpleCSElementSection extends TreeSection implements
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		initialize();
+		createSectionToolbar(section, toolkit);
 	}
+
+	/**
+	 * @param section
+	 * @param toolkit
+	 */
+	private void createSectionToolbar(Section section, FormToolkit toolkit) {
+		
+		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
+		ToolBar toolbar = toolBarManager.createControl(section);
+		Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		toolbar.setCursor(handCursor);
+		
+		// Add collapse action to the tool bar
+		fCollapseAction = new CollapseAction(fTreeViewer, 
+				PDEUIMessages.ExtensionsPage_collapseAll, 
+				1, 
+				fModel.getSimpleCS());
+		toolBarManager.add(fCollapseAction);
+
+		toolBarManager.update(true);
+
+		section.setTextClient(toolbar);
+	}	
 	
 	/**
 	 * 
@@ -146,11 +179,9 @@ public class SimpleCSElementSection extends TreeSection implements
 		getTreePart().setButtonEnabled(F_BUTTON_PREVIEW, true);
 		
 		ISimpleCS cheatsheet = fModel.getSimpleCS();
-		if (cheatsheet != null) {
-			// Select the cheatsheet node in the tree
-			fTreeViewer.setSelection(new StructuredSelection(cheatsheet), true);
-			fTreeViewer.expandToLevel(2);
-		}
+		// Select the cheatsheet node in the tree
+		fTreeViewer.setSelection(new StructuredSelection(cheatsheet), true);
+		fTreeViewer.expandToLevel(2);
 		
 	}
 
@@ -355,21 +386,31 @@ public class SimpleCSElementSection extends TreeSection implements
 	 * 
 	 */
 	private void handlePreviewAction() {
-		// TODO: MP: LOW: Refactor into action
-		// TODO: MP: If the file needs saving, save to a temporary file and give
-		// that as the input. Need to figure out which temporary directory to 
-		// use
-		// Launch in the cheat sheet view
+		
+		if (!(fModel instanceof IEditable)) {
+			return;
+		}
+
 		IFileEditorInput input = (IFileEditorInput)getPage().getEditorInput();
 		IFile file  = input.getFile();
+		
 		try {
-			// TODO: MP: Determine unique ID and Name
-			OpenCheatSheetAction openAction = new OpenCheatSheetAction("ID", //$NON-NLS-1$
-					"NAME", file.getRawLocationURI().toURL()); //$NON-NLS-1$
+			// Write the current model into a String as raw XML
+			StringWriter swriter = new StringWriter();
+			PrintWriter writer = new PrintWriter(swriter);
+			fModel.getSimpleCS().write("", writer); //$NON-NLS-1$
+			writer.flush();
+			swriter.close();
+			// Launch in the cheat sheet view
+			OpenCheatSheetAction openAction = new OpenCheatSheetAction(
+					file.getName(),
+					file.getName(), 
+					swriter.toString());
 			openAction.run();
-		} catch (MalformedURLException e) {
+		} catch (IOException e) {
 			PDEPlugin.logException(e);
-		}		
+		}
+
 	}
 	
 	/**
@@ -473,7 +514,6 @@ public class SimpleCSElementSection extends TreeSection implements
 	protected void fillContextMenu(IMenuManager manager) {
 		// Get the current selection
 		ISelection selection = fTreeViewer.getSelection();
-		// TODO: MP: Verify can cast null ...
 		Object object = ((IStructuredSelection) selection).getFirstElement();
 		// Do blind cast - has to be a simple CS object
 		// Could be null

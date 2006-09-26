@@ -11,7 +11,9 @@
 
 package org.eclipse.pde.internal.core.util;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 
 
@@ -22,17 +24,6 @@ import java.util.HashSet;
 public class PDETextHelper {
 
 	public static final String F_DOTS = "..."; //$NON-NLS-1$
-
-	public static final String F_AMPERSAND = "&amp;"; //$NON-NLS-1$
-
-	public static final String F_LESS_THAN = "&lt;"; //$NON-NLS-1$
-
-	public static final String F_GREATER_THAN = "&gt;"; //$NON-NLS-1$
-
-	public static final String F_APOSTROPHE = "&apos;"; //$NON-NLS-1$
-
-	public static final String F_QUOTE = "&quot;"; //$NON-NLS-1$
-
 	
 	/**
 	 * @param text
@@ -87,6 +78,12 @@ public class PDETextHelper {
 		// Visit each character in text
 		for (int i = 0; i < length; i++) {
 			char currentChar = inputText.charAt(i);
+
+			if ((currentChar == '\r') || (currentChar == '\n') ||
+					(currentChar == '\t')) {
+				// Convert newlines, carriage returns and tabs to spaces
+				currentChar = ' ';
+			}
 			
 			if (currentChar == ' ') {
 				// Skip multiple spaces
@@ -94,11 +91,9 @@ public class PDETextHelper {
 					buffer.append(currentChar);
 					previousChar = currentChar;
 				}
-			} else if ((currentChar != '\r') && (currentChar != '\n') &&
-						(currentChar != '\t')) {
-				// Skip carriage returns, newlines and tabs
+			} else {
 				buffer.append(currentChar);
-				previousChar = currentChar;
+				previousChar = currentChar;				
 			}
 		}
 		result = buffer.toString();
@@ -108,137 +103,197 @@ public class PDETextHelper {
 		return result;
 	}	
 
-
 	/**
-	 * Strips \n, \r, \t
-	 * Strips leading spaces, trailing spaces, duplicate spaces
-	 * Translates &, <, >, ', "
-	 * To &amp;, &lt;, &gt;, &apos;, &quot;
 	 * @param text
+	 * @param substituteChars
 	 * @return
 	 */
-	public static String translateWriteText(String text) {
-		return translateWriteText(text, null, 0);
+	public static String translateWriteText(String text, HashMap substituteChars) {
+		return translateWriteText(text, null, substituteChars);
 	}
 	
 	/**
-	 * Strips \n, \r, \t
-	 * Strips leading spaces, trailing spaces, duplicate spaces
-	 * Translates &, <, >, ', "
-	 * To &amp;, &lt;, &gt;, &apos;, &quot;
-	 * Leaves tag exceptions specified intact
 	 * @param text
-	 * @param exceptions
-	 * @param scanLimit
+	 * @param tagExceptions
+	 * @param substituteChars
 	 * @return
 	 */
-	public static String translateWriteText(String text, HashSet exceptions, 
-			int scanLimit) {
+	public static String translateWriteText(String text, HashSet tagExceptions, 
+			HashMap substituteChars) {
+
 		// Ensure not null
 		if (text == null) {
 			return ""; //$NON-NLS-1$
 		}
-		// Process exceptions if provided
-		boolean processExceptions = false;
-		if ((exceptions != null) && 
-				(exceptions.isEmpty() == false)) {
-			processExceptions = true;
+		
+		// Process tag exceptions if provided
+		boolean processTagExceptions = false;
+		int scanLimit = 0;		
+		if ((tagExceptions != null) && 
+				(tagExceptions.isEmpty() == false)) {
+			processTagExceptions = true;
+			// Use the biggest entry in the set as the limit
+			scanLimit = determineMaxLength(tagExceptions);
 		}
-		String result = ""; //$NON-NLS-1$
-		// Trim leading and trailing whitespace
-		String inputText = text.trim();
-		int length = inputText.length();
-		char previousChar = ' ';
-		StringBuffer buffer = new StringBuffer(length);
+		
+		// Process substitute characters if provided
+		boolean processSubstituteChars = false;
+		if ((substituteChars != null) && 
+				(substituteChars.isEmpty() == false)) {
+			processSubstituteChars = true;
+		}
+		
+		StringBuffer buffer = new StringBuffer(text.length());
+		
 		// Visit each character in text
-		for (int i = 0; i < length; i++) {
-			char currentChar = inputText.charAt(i);
+		for (IntegerPointer index = new IntegerPointer(0); 
+				index.getInteger() < text.length(); 
+				index.increment()) {
 			
-			if ((processExceptions == true) && 
-					(currentChar == '<')) {
-				// Determine whether this bracket is part of a tag that is a
-				// valid tag exception
-				// Respect character array boundaries. Adjust accordingly
-				int limit = scanLimit + i + 2;
-				if (length < limit) {
-					limit = length;
-				}
-				boolean foundMatch = false;
-				StringBuffer parsedText = new StringBuffer();
-				// Scan ahead in text to parse out a possible element tag name
-				for (int j = i + 1; j < limit; j++) {
-					char futureChar = inputText.charAt(j);
-					if (futureChar == '>') {
-						// An ending bracket was found
-						// This is indeed a element tag
-						// Determine if the element tag we found is a valid 
-						// tag exception
-						String futureBuffer = parsedText.toString();
-						if (exceptions.contains(futureBuffer)) {
-							// The element tag is a valid tag exception
-							buffer.append('<' + futureBuffer + '>');
-							// Fast forward the current index to the scanned ahead
-							// index to skip what we just found
-							i = j;
-							foundMatch = true;
-						}					
-						break;
-					}
-					// Accumulate the possible element tag name
-					parsedText.append(futureChar);
-				}
-				if (foundMatch ==  false) {
-					// No match to a valid tag exception was found
-					// Escape the bracket
-					buffer.append(F_LESS_THAN); 
-				}
-			} else if (currentChar == ' ') {
-				// Skip multiple spaces
-				if (previousChar != ' ') {
-					buffer.append(currentChar);
-					previousChar = currentChar;
-				}
-			} else if ((currentChar != '\r') && (currentChar != '\n') &&
-						(currentChar != '\t')) {
-				// Skip carriage returns, newlines and tabs
-				buffer.append(encode(currentChar));
-				previousChar = currentChar;
+			char currentChar = text.charAt(index.getInteger());
+			boolean processed = false;
+			
+			if ((processed == false) && 
+					(processTagExceptions == true)) {
+				processed = processTagExceptions(currentChar, tagExceptions, 
+						buffer, scanLimit, text, index);
+			}
+
+			if ((processed == false) && 
+					(processSubstituteChars == true)) {
+				processed = processSubstituteChars(currentChar, substituteChars,
+						buffer);
+			}			
+			
+			if (processed == false) {
+				buffer.append(currentChar);					
 			}
 		}
-		result = buffer.toString();
-		if (PDEHTMLHelper.isAllWhitespace(result)) {
-			return ""; //$NON-NLS-1$
+
+		return buffer.toString();
+	}
+
+	/**
+	 * @param currentChar
+	 * @param substituteChars
+	 * @param buffer
+	 * @return
+	 */
+	private static boolean processSubstituteChars(char currentChar, 
+			HashMap substituteChars, StringBuffer buffer) {
+		Character character = new Character(currentChar);
+		if (substituteChars.containsKey(character)) {
+			String value = (String)substituteChars.get(character);
+			if (isDefined(value)) {
+				// Append the value if defined
+				buffer.append(value);
+			}
+			// If the value was not defined, then we will strip the character
+			return true;
 		}
-		return result;
+		return false;
 	}
 	
 	/**
-	 * @param value
+	 * @param currentChar
+	 * @param tagExceptions
+	 * @param buffer
+	 * @param scanLimit
+	 * @param inputText
+	 * @param index
 	 * @return
 	 */
-	public static String encode(char value) {
-		String result = null;
-		switch (value) {
-			case '&':
-				result = F_AMPERSAND; 
-				break;
-			case '<':
-				result = F_LESS_THAN; 
-				break;
-			case '>':
-				result = F_GREATER_THAN; 
-				break;
-			case '\'':
-				result = F_APOSTROPHE; 
-				break;
-			case '\"':
-				result = F_QUOTE; 
-				break;
-			default:
-				result = (new Character(value)).toString();
-				break;
+	private static boolean processTagExceptions(char currentChar, 
+			HashSet tagExceptions, StringBuffer buffer, int scanLimit, 
+			String text, IntegerPointer index) {
+
+		if (currentChar == '<') {
+			// Determine whether this bracket is part of a tag that is a
+			// valid tag exception
+			// Respect character array boundaries. Adjust accordingly
+			int limit = scanLimit + index.getInteger() + 2;
+			if (text.length() < limit) {
+				limit = text.length();
+			}
+			StringBuffer parsedText = new StringBuffer();
+			// Scan ahead in text to parse out a possible element tag name
+			for (int j = index.getInteger() + 1; j < limit; j++) {
+				char futureChar = text.charAt(j);
+				if (futureChar == '>') {
+					// An ending bracket was found
+					// This is indeed a element tag
+					// Determine if the element tag we found is a valid 
+					// tag exception
+					String futureBuffer = parsedText.toString();
+					if (tagExceptions.contains(futureBuffer)) {
+						// The element tag is a valid tag exception
+						buffer.append('<' + futureBuffer + '>');
+						// Fast forward the current index to the scanned ahead
+						// index to skip what we just found
+						index.setInteger(j);
+						return true;
+					}					
+					return false;
+				}
+				// Accumulate the possible element tag name
+				parsedText.append(futureChar);
+			}
 		}
-		return result;
+		return false;
+	}	
+	
+	/**
+	 * @param set
+	 * @return
+	 */
+	private static int determineMaxLength(HashSet set) {
+		Iterator iterator = set.iterator();
+		int maxLength = -1;
+		while (iterator.hasNext()) {
+			// Has to be a String
+			String object = (String)iterator.next();
+			if (object.length() > maxLength) {
+				maxLength = object.length();
+			}
+		}
+		return maxLength;
+	}
+	
+	/**
+	 * IntegerPointer
+	 *
+	 */
+	private static class IntegerPointer {
+
+		private int fInteger;
+		
+		/**
+		 * 
+		 */
+		public IntegerPointer(int integer) {
+			fInteger = integer;
+		}
+		
+		/**
+		 * @return
+		 */
+		public int getInteger() {
+			return fInteger;
+		}
+		
+		/**
+		 * @param integer
+		 */
+		public void setInteger(int integer) {
+			fInteger = integer;
+		}
+		
+		/**
+		 * 
+		 */
+		public void increment() {
+			fInteger++;
+		}
 	}
 	
 }

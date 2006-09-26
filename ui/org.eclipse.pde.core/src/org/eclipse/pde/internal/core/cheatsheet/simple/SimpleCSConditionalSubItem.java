@@ -92,7 +92,7 @@ public class SimpleCSConditionalSubItem extends SimpleCSObject implements
 	public void parse(Element element) {
 
 		// Process condition attribute
-		// Read as is.  Do not translate
+		// Read as is. Do not translate
 		fCondition = element.getAttribute(ATTRIBUTE_CONDITION);
 		
 		// Process children

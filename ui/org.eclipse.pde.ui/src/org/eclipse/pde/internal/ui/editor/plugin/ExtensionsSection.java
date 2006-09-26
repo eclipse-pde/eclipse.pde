@@ -18,10 +18,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -65,8 +65,11 @@ import org.eclipse.pde.internal.ui.wizards.extension.NewExtensionWizard;
 import org.eclipse.pde.ui.IExtensionEditorWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.actions.ActionContext;
@@ -88,6 +91,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	private Action fNewExtensionAction;
 	private Hashtable fEditorWizards;
 	private SortAction fSortAction;
+	private CollapseAction fCollapseAction;
 
 	private static final String[] COMMON_LABEL_PROPERTIES = {
 		"label", //$NON-NLS-1$
@@ -188,7 +192,34 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		initialize((IPluginModelBase) getPage().getModel());
+		createSectionToolbar(section, toolkit);
 	}
+	
+	/**
+	 * @param section
+	 * @param toolkit
+	 */
+	private void createSectionToolbar(Section section, FormToolkit toolkit) {
+		
+		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
+		ToolBar toolbar = toolBarManager.createControl(section);
+		Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		toolbar.setCursor(handCursor);
+		
+		// Add sort action to the tool bar
+		fSortAction = new SortAction(fExtensionTree, 
+				PDEUIMessages.ExtensionsPage_sortAlpha, null, this);
+		toolBarManager.add(fSortAction);
+		// Add collapse action to the tool bar
+		fCollapseAction = new CollapseAction(fExtensionTree, 
+				PDEUIMessages.ExtensionsPage_collapseAll);
+		toolBarManager.add(fCollapseAction);
+
+		toolBarManager.update(true);
+
+		section.setTextClient(toolbar);
+	}
+	
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		updateUpDownButtons(selection.getFirstElement());
@@ -820,18 +851,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		FilteredTree tree = new FormFilteredTree(parent, style, new PatternFilter());
 		parent.setData("filtered", Boolean.TRUE); //$NON-NLS-1$
 		return tree.getViewer();
-	}
-	
-	public Object getAdapter(Class adapter) {
-		if(adapter.equals(IAction[].class)) {
-			StructuredViewer viewer = getStructuredViewerPart().getViewer();
-			fSortAction = new SortAction(viewer, PDEUIMessages.ExtensionsPage_sortAlpha, null, this);
-			return new IAction[] {
-					new CollapseAction((TreeViewer)viewer, PDEUIMessages.ManifestEditor_DetailExtension_collapseAll),
-					fSortAction
-			};
-		}
-		return super.getAdapter(adapter);
 	}
 	
 	public void propertyChange(PropertyChangeEvent event) {

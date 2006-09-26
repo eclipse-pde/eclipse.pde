@@ -136,23 +136,25 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 	 */
 	public void parse(Element element) {
 		// Process class attribute
-		fClazz = PDETextHelper.translateReadText(element.getAttribute(ATTRIBUTE_CLASS));
+		// Read as is. Do not translate
+		fClazz = element.getAttribute(ATTRIBUTE_CLASS);
 		// Process pluginId attribute
-		fPluginId = PDETextHelper.translateReadText(element.getAttribute(ATTRIBUTE_PLUGINID));
+		// Read as is. Do not translate
+		fPluginId = element.getAttribute(ATTRIBUTE_PLUGINID);
 		// Process confirm attribute
 		if (element.getAttribute(ATTRIBUTE_CONFIRM).compareTo(
 				ATTRIBUTE_VALUE_TRUE) == 0) {
 			fConfirm = true;
 		}		
 		// Process when attribute
-		// Read as is.  Do not translate
+		// Read as is. Do not translate
 		fWhen = element.getAttribute(ATTRIBUTE_WHEN);
 
 		// Process attributes:  param1, param2, ..., param9
 		for (int i = 0; i < F_MAX_PARAMS; i++) {
 			int adjustedIndex = i + 1;
 			String parameter = ATTRIBUTE_PARAM + adjustedIndex;
-			// Read as is.  Do not translate
+			// Read as is. Do not translate
 			String value = element.getAttribute(parameter);
 			fParams.add(i, value);
 		}
@@ -171,14 +173,16 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 			// Print class attribute
 			if ((fClazz != null) && 
 					(fClazz.length() > 0)) {
+				// Write as is. Do not translate
 				buffer.append(XMLPrintHandler.wrapAttribute(
-						ATTRIBUTE_CLASS, PDETextHelper.translateWriteText(fClazz)));
+						ATTRIBUTE_CLASS, fClazz));
 			}
 			// Print pluginId attribute
 			if ((fPluginId != null) && 
 					(fPluginId.length() > 0)) {
+				// Write as is. Do not translate
 				buffer.append(XMLPrintHandler.wrapAttribute(
-						ATTRIBUTE_PLUGINID, PDETextHelper.translateWriteText(fPluginId)));
+						ATTRIBUTE_PLUGINID, fPluginId));
 			}
 			// Print confirm attribute
 			buffer.append(XMLPrintHandler.wrapAttribute(
@@ -186,7 +190,7 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 			// Print when attribute
 			if ((fWhen != null) && 
 					(fWhen.length() > 0)) {
-				// Write as is.  Do not translate
+				// Write as is. Do not translate
 				buffer.append(XMLPrintHandler.wrapAttribute(
 						ATTRIBUTE_WHEN, fWhen));
 			}
@@ -194,12 +198,12 @@ public class SimpleCSAction extends SimpleCSObject implements ISimpleCSAction {
 			for (int i = 0; i < F_MAX_PARAMS; i++) {
 				int adjustedIndex = i + 1;
 				String parameter = ATTRIBUTE_PARAM + adjustedIndex;
-				// Write as is.  Do not translate
 				String value = (String)fParams.get(i);
 				// Preserve cheat sheet validity
 				// Ignore Semantic Rule:  Only contiguously defined parameters allowed
 				// Write only if defined
 				if (PDETextHelper.isDefined(value)) {
+					// Write as is. Do not translate
 					buffer.append(XMLPrintHandler.wrapAttribute(
 							parameter, value));
 				}

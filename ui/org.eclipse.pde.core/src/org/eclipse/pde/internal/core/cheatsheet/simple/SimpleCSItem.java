@@ -243,7 +243,7 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 */
 	public void parse(Element element) {
 		// Process title attribute
-		fTitle = PDETextHelper.translateReadText(element.getAttribute(ATTRIBUTE_TITLE));
+		fTitle = element.getAttribute(ATTRIBUTE_TITLE).trim();
 		// Process dialog attribute
 		if (element.getAttribute(ATTRIBUTE_DIALOG).compareTo(
 				ATTRIBUTE_VALUE_TRUE) == 0) {
@@ -255,9 +255,9 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 			fSkip = true;
 		}
 		// Process contextId attribute
-		fContextId = PDETextHelper.translateReadText(element.getAttribute(ATTRIBUTE_CONTEXTID));
+		fContextId = element.getAttribute(ATTRIBUTE_CONTEXTID).trim();
 		// Process href attribute
-		fHref = PDETextHelper.translateReadText(element.getAttribute(ATTRIBUTE_HREF));
+		fHref = element.getAttribute(ATTRIBUTE_HREF).trim();
 		
 		// Process children
 
@@ -316,7 +316,9 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 			if ((fTitle != null) && 
 					(fTitle.length() > 0)) {
 				buffer.append(XMLPrintHandler.wrapAttribute(
-						ATTRIBUTE_TITLE, PDETextHelper.translateWriteText(fTitle)));
+						ATTRIBUTE_TITLE, 
+						PDETextHelper.translateWriteText(
+								fTitle.trim(), SUBSTITUTE_CHARS)));
 			}
 			// Print dialog attribute
 			buffer.append(XMLPrintHandler.wrapAttribute(
@@ -329,11 +331,15 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 			if ((fContextId != null) &&
 					(fContextId.length() > 0)) {
 				buffer.append(XMLPrintHandler.wrapAttribute(
-						ATTRIBUTE_CONTEXTID, PDETextHelper.translateWriteText(fContextId)));
+						ATTRIBUTE_CONTEXTID, 
+						PDETextHelper.translateWriteText(
+								fContextId.trim(), SUBSTITUTE_CHARS)));
 			} else if ((fHref != null) &&
 							(fHref.length() > 0)) {
 				buffer.append(XMLPrintHandler.wrapAttribute(
-						ATTRIBUTE_HREF, PDETextHelper.translateWriteText(fHref)));
+						ATTRIBUTE_HREF, 
+						PDETextHelper.translateWriteText(
+								fHref.trim(), SUBSTITUTE_CHARS)));
 			}
 			// Start element
 			XMLPrintHandler.printBeginElement(writer, buffer.toString(),
