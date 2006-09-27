@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
@@ -99,7 +99,7 @@ public class TargetImplicitPluginsTab {
 		fElementViewer.setContentProvider(new ContentProvider());
 		fElementViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fElementViewer.setInput(PDEPlugin.getDefault());
-		fElementViewer.setSorter(new ViewerSorter());
+		fElementViewer.setComparator(new ViewerComparator());
 		fElementViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateButtons();

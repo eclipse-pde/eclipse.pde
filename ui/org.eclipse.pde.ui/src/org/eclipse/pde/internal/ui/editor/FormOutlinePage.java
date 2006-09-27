@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -41,7 +41,7 @@ public class FormOutlinePage extends PDEOutlinePage
 		implements IModelChangedListener, ISortableContentOutlinePage {
 	
 	private boolean fStale;
-	private ViewerSorter fViewerSorter;
+	private ViewerComparator fViewerComparator;
 	private boolean fSorted;
 	
 	public class BasicContentProvider extends DefaultContentProvider
@@ -72,7 +72,7 @@ public class FormOutlinePage extends PDEOutlinePage
 			return PDEPlugin.getDefault().getLabelProvider().getImage(obj);
 		}
 	}
-	public class BasicSorter extends ViewerSorter {
+	public class BasicComparator extends ViewerComparator {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
 		 */
@@ -95,9 +95,9 @@ public class FormOutlinePage extends PDEOutlinePage
 	protected ITreeContentProvider createContentProvider() {
 		return new BasicContentProvider();
 	}
-	protected ViewerSorter createOutlineSorter(){
-		fViewerSorter = new BasicSorter();
-		return fViewerSorter;
+	protected ViewerComparator createOutlineSorter(){
+		fViewerComparator = new BasicComparator();
+		return fViewerComparator;
 	}
 	public void createControl(Composite parent) {
 		Tree widget = new Tree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -107,9 +107,9 @@ public class FormOutlinePage extends PDEOutlinePage
 		fTreeViewer.setLabelProvider(createLabelProvider());
 		createOutlineSorter();
 		if(fSorted)
-			fTreeViewer.setSorter(fViewerSorter);
+			fTreeViewer.setComparator(fViewerComparator);
 		else
-			fTreeViewer.setSorter(null);
+			fTreeViewer.setComparator(null);
 		fTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		fTreeViewer.setUseHashlookup(true);
 		fTreeViewer.setInput(fEditor);
@@ -215,9 +215,9 @@ public class FormOutlinePage extends PDEOutlinePage
 		fSorted = sorting;
 		if(fTreeViewer!=null)
 			if(sorting)
-				fTreeViewer.setSorter(fViewerSorter);
+				fTreeViewer.setComparator(fViewerComparator);
 			else
-				fTreeViewer.setSorter(null);
+				fTreeViewer.setComparator(null);
 	}
 	/*
 	 * (non-Javadoc) Method declared on ISelectionProvider.

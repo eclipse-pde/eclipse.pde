@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -71,7 +71,7 @@ public class ImplicitDependenciesSection extends TableSection {
 			}
 		});
 		fViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		fViewer.setSorter(new ViewerSorter() {
+		fViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				ITargetPlugin p1 = (ITargetPlugin) e1;
 				ITargetPlugin p2 = (ITargetPlugin) e2;

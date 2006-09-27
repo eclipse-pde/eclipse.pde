@@ -11,12 +11,12 @@
 package org.eclipse.pde.internal.ui.wizards;
 
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
-public class WizardCollectionSorter extends ViewerSorter {
+public class WizardCollectionComparator extends ViewerComparator {
 	private String baseCategory;
 
-public WizardCollectionSorter(String baseCategory) {
+public WizardCollectionComparator(String baseCategory) {
 	this.baseCategory = baseCategory;
 }
 public int compare(Viewer viewer, Object o1, Object o2) {

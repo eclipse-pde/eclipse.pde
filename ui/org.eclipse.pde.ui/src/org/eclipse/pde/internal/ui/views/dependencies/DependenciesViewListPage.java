@@ -50,7 +50,7 @@ public class DependenciesViewListPage extends DependenciesViewPage {
 				labelProvider.dispose();
 			}
 		});
-		fViewer.setSorter(ListUtil.PLUGIN_SORTER);
+		fViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 
 		return fViewer;
 	}

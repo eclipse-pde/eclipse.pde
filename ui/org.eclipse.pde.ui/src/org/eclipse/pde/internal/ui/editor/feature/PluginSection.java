@@ -108,7 +108,7 @@ public class PluginSection extends TableSection implements
 		fPluginViewer.setContentProvider(new PluginContentProvider());
 		fPluginViewer.setLabelProvider(PDEPlugin.getDefault()
 				.getLabelProvider());
-		fPluginViewer.setSorter(ListUtil.NAME_SORTER);
+		fPluginViewer.setComparator(ListUtil.NAME_COMPARATOR);
 		toolkit.paintBordersFor(container);
 		makeActions();
 		section.setClient(container);
@@ -139,7 +139,7 @@ public class PluginSection extends TableSection implements
 		fSortAction = new SortAction(
 				getStructuredViewerPart().getViewer(), 
 				PDEUIMessages.FeatureEditor_PluginSection_sortAlpha, 
-				ListUtil.NAME_SORTER,
+				ListUtil.NAME_COMPARATOR,
 				null);
 		
 		toolBarManager.add(fSortAction);

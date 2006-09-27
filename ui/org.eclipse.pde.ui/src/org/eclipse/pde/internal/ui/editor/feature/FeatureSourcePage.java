@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.ui.editor.feature;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
@@ -37,7 +37,7 @@ public class FeatureSourcePage extends XMLSourcePage {
 	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
 	 */
-	protected ViewerSorter createOutlineSorter() {
+	protected ViewerComparator createOutlineComparator() {
 		return null;
 	}
 

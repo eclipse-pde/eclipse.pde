@@ -106,7 +106,7 @@ public class IncludedFeaturesSection extends TableSection implements
 				.setContentProvider(new IncludedFeaturesContentProvider());
 		fIncludesViewer.setLabelProvider(PDEPlugin.getDefault()
 				.getLabelProvider());
-		fIncludesViewer.setSorter(ListUtil.NAME_SORTER);
+		fIncludesViewer.setComparator(ListUtil.NAME_COMPARATOR);
 		toolkit.paintBordersFor(container);
 		makeActions();
 		section.setClient(container);
@@ -137,7 +137,7 @@ public class IncludedFeaturesSection extends TableSection implements
 		fSortAction = new SortAction(
 				getStructuredViewerPart().getViewer(), 
 				PDEUIMessages.FeatureEditor_IncludedFeatures_sortAlpha, 
-				ListUtil.NAME_SORTER,
+				ListUtil.NAME_COMPARATOR,
 				null);
 		
 		toolBarManager.add(fSortAction);

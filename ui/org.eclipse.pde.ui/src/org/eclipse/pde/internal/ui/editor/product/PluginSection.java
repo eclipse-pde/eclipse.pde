@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -110,7 +110,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		fPluginTable = tablePart.getTableViewer();
 		fPluginTable.setContentProvider(new ContentProvider());
 		fPluginTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		fPluginTable.setSorter(new ViewerSorter() {
+		fPluginTable.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				IProductPlugin p1 = (IProductPlugin)e1;
 				IProductPlugin p2 = (IProductPlugin)e2;

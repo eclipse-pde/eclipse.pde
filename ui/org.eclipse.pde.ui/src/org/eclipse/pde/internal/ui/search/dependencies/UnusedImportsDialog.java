@@ -20,7 +20,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.WizardCheckboxTablePart;
-import org.eclipse.pde.internal.ui.wizards.ListUtil.PluginSorter;
+import org.eclipse.pde.internal.ui.wizards.ListUtil.PluginComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -34,7 +34,7 @@ public class UnusedImportsDialog extends TrayDialog {
 	private WizardCheckboxTablePart checkboxTablePart;
 	private CheckboxTableViewer choiceViewer;
 	
-	static class Sorter extends PluginSorter {
+	static class Comparator extends PluginComparator {
 
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			if (e1.getClass() == e2.getClass())
@@ -86,7 +86,7 @@ public class UnusedImportsDialog extends TrayDialog {
 		choiceViewer = checkboxTablePart.getTableViewer();
 		choiceViewer.setContentProvider(new ContentProvider());
 		choiceViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		choiceViewer.setSorter(new Sorter());
+		choiceViewer.setComparator(new Comparator());
 
 		gd = (GridData) checkboxTablePart.getControl().getLayoutData();
 		gd.widthHint = 250;

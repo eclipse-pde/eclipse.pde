@@ -15,7 +15,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
@@ -102,8 +102,8 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.search.AbstractSearchResultPage#createViewerSorter()
 	 */
-	protected ViewerSorter createViewerSorter() {
-		return new ViewerSorter();
+	protected ViewerComparator createViewerComparator() {
+		return new ViewerComparator();
 	}
 	
 	/* (non-Javadoc)

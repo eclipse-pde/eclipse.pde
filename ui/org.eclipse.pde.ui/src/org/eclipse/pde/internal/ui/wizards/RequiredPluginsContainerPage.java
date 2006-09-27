@@ -24,7 +24,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
@@ -64,14 +64,14 @@ public class RequiredPluginsContainerPage
 		}
 	}
 
-	class EntrySorter extends ViewerSorter {
-		public int category(Object obj) {
-			IClasspathEntry entry = (IClasspathEntry) obj;
-			return entry.getEntryKind() == IClasspathEntry.CPE_PROJECT
-				? -10
-				: 0;
-		}
-	}
+//	class EntrySorter extends ViewerSorter {
+//		public int category(Object obj) {
+//			IClasspathEntry entry = (IClasspathEntry) obj;
+//			return entry.getEntryKind() == IClasspathEntry.CPE_PROJECT
+//				? -10
+//				: 0;
+//		}
+//	}
 
 	class EntryLabelProvider
 		extends LabelProvider
@@ -141,7 +141,7 @@ public class RequiredPluginsContainerPage
 				SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		viewer.setContentProvider(new EntryContentProvider());
 		viewer.setLabelProvider(new EntryLabelProvider());
-		viewer.setSorter(new ViewerSorter());
+		viewer.setComparator(new ViewerComparator());
 
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 400;

@@ -276,7 +276,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 				setPageComplete(hasCheckedElements());
 			}
 		});
-		fInputViewer.setSorter(ListUtil.PLUGIN_SORTER);
+		fInputViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 		
 		Composite buttonComposite = new Composite(fileComposite, SWT.NONE);
 		GridLayout layout = new GridLayout(2, true);

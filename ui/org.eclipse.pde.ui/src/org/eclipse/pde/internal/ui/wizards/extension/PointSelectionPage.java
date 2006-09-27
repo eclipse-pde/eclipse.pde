@@ -329,7 +329,7 @@ public class PointSelectionPage
 			}
 		});
 		fPointListViewer.addFilter(fWildCardFilter);
-		fPointListViewer.setSorter(ListUtil.NAME_SORTER);
+		fPointListViewer.setComparator(ListUtil.NAME_COMPARATOR);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 150;
 		fPointListViewer.getTable().setLayoutData(gd);
@@ -393,7 +393,7 @@ public class PointSelectionPage
 		fTemplateViewer = new TableViewer(wizardComposite, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		fTemplateViewer.setContentProvider(new TemplateContentProvider());
 		fTemplateViewer.setLabelProvider(ElementLabelProvider.INSTANCE);
-		fTemplateViewer.setSorter(ListUtil.NAME_SORTER);
+		fTemplateViewer.setComparator(ListUtil.NAME_COMPARATOR);
 		fTemplateViewer.addSelectionChangedListener(this);
 		gd = new GridData(GridData.FILL_BOTH);
 

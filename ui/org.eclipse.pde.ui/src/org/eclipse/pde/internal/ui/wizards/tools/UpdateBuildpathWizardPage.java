@@ -60,7 +60,7 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 			FormToolkit toolkit) {
 			StructuredViewer viewer =
 				super.createStructuredViewer(parent, style, toolkit);
-			viewer.setSorter(ListUtil.PLUGIN_SORTER);
+			viewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 			return viewer;
 		}
 	}

@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
@@ -155,7 +155,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 		}
 	}
 		
-	class OutlineSorter extends ViewerSorter{
+	class OutlineComparator extends ViewerComparator{
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
 		 */
@@ -201,8 +201,8 @@ public class ManifestSourcePage extends XMLSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
 	 */
-	protected ViewerSorter createOutlineSorter() {
-		return new OutlineSorter();
+	protected ViewerComparator createOutlineComparator() {
+		return new OutlineComparator();
 	}
 	
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {

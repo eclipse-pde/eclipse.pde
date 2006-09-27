@@ -77,7 +77,7 @@ public class ShowResultsAction extends Action {
 		});
 		dialog.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		dialog.setInput(this);
-		dialog.getTableViewer().setSorter(new UnusedImportsDialog.Sorter());
+		dialog.getTableViewer().setComparator(new UnusedImportsDialog.Comparator());
 		return dialog;
 	}
 }

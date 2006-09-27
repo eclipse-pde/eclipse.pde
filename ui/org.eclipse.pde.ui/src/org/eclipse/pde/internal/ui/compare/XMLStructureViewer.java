@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
@@ -45,9 +45,9 @@ import org.eclipse.ui.PlatformUI;
  */
 public class XMLStructureViewer extends StructureDiffViewer {
 	
-	class XMLSorter extends ViewerSorter {
+	class XMLComparator extends ViewerComparator {
 
-		public XMLSorter() {
+		public XMLComparator() {
 			super();
 		}
 
@@ -81,7 +81,7 @@ public class XMLStructureViewer extends StructureDiffViewer {
 							new ArrayList(Arrays.asList(parent.getChildren()));
 						Arrays.sort(elements, new Comparator() {
 							public int compare(Object a, Object b) {
-								return XMLSorter.this.compare(
+								return XMLComparator.this.compare(
 									(DiffNode) a,
 									(DiffNode) b,
 									originalTree);
@@ -113,7 +113,7 @@ public class XMLStructureViewer extends StructureDiffViewer {
 	public XMLStructureViewer(Composite parent, CompareConfiguration configuration) {
 		super(parent, configuration);
 		setStructureCreator(new XMLStructureCreator());
-		setSorter(new XMLSorter());
+		setComparator(new XMLComparator());
 	}
 
 

@@ -114,7 +114,7 @@ public class TracingBlock {
 		fPluginViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
 		fPluginViewer.setContentProvider(new ArrayContentProvider());
 		fPluginViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		fPluginViewer.setSorter(new ListUtil.PluginSorter());
+		fPluginViewer.setComparator(new ListUtil.PluginComparator());
 		fPluginViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
 				pluginSelected(getSelectedModel());

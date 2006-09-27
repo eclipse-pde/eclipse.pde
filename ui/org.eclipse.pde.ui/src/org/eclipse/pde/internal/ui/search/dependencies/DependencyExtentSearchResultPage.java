@@ -21,7 +21,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginObject;
@@ -43,7 +43,7 @@ public class DependencyExtentSearchResultPage extends
 		AbstractSearchResultPage {
 	
 
-	class Sorter extends ViewerSorter {
+	class Comparator extends ViewerComparator {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
 		 */
@@ -175,8 +175,8 @@ public class DependencyExtentSearchResultPage extends
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.search.AbstractSearchResultPage#createViewerSorter()
 	 */
-	protected ViewerSorter createViewerSorter() {
-		return new Sorter();
+	protected ViewerComparator createViewerComparator() {
+		return new Comparator();
 	}
 
 }

@@ -28,7 +28,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
@@ -168,7 +168,7 @@ public class ContentSection extends TableSection {
 		fContentViewer = tablePart.getTableViewer();
 		fContentViewer.setContentProvider(new ContentProvider());
 		fContentViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		fContentViewer.setSorter(new ViewerSorter() {
+		fContentViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if (e1 instanceof ITargetPlugin) {
 					ITargetPlugin p1 = (ITargetPlugin) e1;

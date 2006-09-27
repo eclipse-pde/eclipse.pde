@@ -15,7 +15,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.swt.widgets.Composite;
@@ -30,20 +30,20 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 	private IEditingModel fModel;
 	private IBaseLabelProvider fLabelProvider;
 	private IContentProvider fContentProvider;
-	private ViewerSorter fDefaultSorter;
-	private ViewerSorter fViewerSorter;
+	private ViewerComparator fDefaultComparator;
+	private ViewerComparator fViewerComparator;
 	private boolean sorted;
 	TreeViewer viewer;
 	
 	public SourceOutlinePage(IEditingModel model, IBaseLabelProvider lProvider,
-			IContentProvider cProvider, ViewerSorter defaultSorter,
-			ViewerSorter sorter) {
+			IContentProvider cProvider, ViewerComparator defaultComparator,
+			ViewerComparator comparator) {
 		super();
 		fModel = model;
 		fLabelProvider = lProvider;
 		fContentProvider = cProvider;
-		fDefaultSorter = defaultSorter;
-		fViewerSorter = sorter;
+		fDefaultComparator = defaultComparator;
+		fViewerComparator = comparator;
 	}
 		
 	/**  
@@ -55,9 +55,9 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 		viewer.setContentProvider(fContentProvider);
 		viewer.setLabelProvider(fLabelProvider);
 		if(sorted)
-			viewer.setSorter(fViewerSorter);
+			viewer.setComparator(fViewerComparator);
 		else
-			viewer.setSorter(fDefaultSorter);
+			viewer.setComparator(fDefaultComparator);
 		viewer.setInput(fModel);
 		viewer.expandAll();
 	}
@@ -90,8 +90,8 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 		sorted = sorting;
 		if(viewer!=null)
 			if(sorting)
-				viewer.setSorter(fViewerSorter);
+				viewer.setComparator(fViewerComparator);
 			else
-				viewer.setSorter(fDefaultSorter);
+				viewer.setComparator(fDefaultComparator);
 	}
 }

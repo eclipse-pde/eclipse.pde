@@ -24,7 +24,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration;
@@ -220,7 +220,7 @@ public abstract class SyntaxColorTab {
 			}
 		});
 		fElementViewer.setInput(getColorData());
-		fElementViewer.setSorter(new ViewerSorter());
+		fElementViewer.setComparator(new ViewerComparator());
 		fElementViewer.setSelection(new StructuredSelection(fElementViewer.getElementAt(0)));
 	}	
 	

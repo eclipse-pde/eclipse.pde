@@ -23,9 +23,10 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -124,7 +125,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 		fViewer.setContentProvider(new ContentProvider());
 		fViewer.setLabelProvider(new FolderLabelProvider());
 		fViewer.setInput(getElement());
-		fViewer.setSorter(new ViewerSorter());
+		fViewer.setComparator(new ViewerComparator());
 		fViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		initialize();

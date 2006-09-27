@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.PDECore;
@@ -86,7 +86,7 @@ public class LocationsSection extends TableSection {
 				updateButtons();
 			}
 		});
-		fContentViewer.setSorter(new ViewerSorter() {
+		fContentViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				IAdditionalLocation loc1 = (IAdditionalLocation)e1;
 				return loc1.getPath().compareToIgnoreCase(((IAdditionalLocation)e2).getPath());

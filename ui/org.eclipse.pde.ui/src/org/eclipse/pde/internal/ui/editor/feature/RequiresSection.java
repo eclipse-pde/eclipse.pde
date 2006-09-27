@@ -119,7 +119,7 @@ public class RequiresSection extends TableSection implements
 		TablePart tablePart = getTablePart();
 		fPluginViewer = tablePart.getTableViewer();
 		fPluginViewer.setContentProvider(new ImportContentProvider());
-		fPluginViewer.setSorter(ListUtil.NAME_SORTER);
+		fPluginViewer.setComparator(ListUtil.NAME_COMPARATOR);
 		fPluginViewer.setLabelProvider(PDEPlugin.getDefault()
 				.getLabelProvider());
 
@@ -158,7 +158,7 @@ public class RequiresSection extends TableSection implements
 		fSortAction = new SortAction(
 				getStructuredViewerPart().getViewer(), 
 				PDEUIMessages.FeatureEditor_RequiresSection_sortAlpha, 
-				ListUtil.NAME_SORTER,
+				ListUtil.NAME_COMPARATOR,
 				null);
 		
 		toolBarManager.add(fSortAction);

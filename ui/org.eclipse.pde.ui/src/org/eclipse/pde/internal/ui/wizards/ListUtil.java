@@ -14,7 +14,7 @@ import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ModelEntry;
@@ -27,17 +27,17 @@ import org.eclipse.swt.graphics.Image;
 
 
 public class ListUtil {
-	static class NameSorter extends ViewerSorter {
+	static class NameComparator extends ViewerComparator {
 		public boolean isSorterProperty(Object element, Object propertyId) {
 			return propertyId.equals(IBasicPropertyConstants.P_TEXT);
 		}
 	}
-	static class FeatureSorter extends NameSorter {
+	static class FeatureComparator extends NameComparator {
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			if (e1 instanceof IFeatureModel && e2 instanceof IFeatureModel) {
 				IFeature feature1 = ((IFeatureModel)e1).getFeature();
 				IFeature feature2 = ((IFeatureModel)e2).getFeature();
-				int result = collator.compare(feature1.getId(),feature2.getId());
+				int result = getComparator().compare(feature1.getId(),feature2.getId());
 				if (result != 0) {
 					return result;
 				}
@@ -45,13 +45,13 @@ public class ListUtil {
 			return super.compare(viewer,e1,e2);
 		}
 	}
-	public static class PluginSorter extends NameSorter {
+	public static class PluginComparator extends NameComparator {
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			int result = 0;
 			String name1 = getName(e1);
 			String name2 = getName(e2);
 			if (name1 != null && name2 != null)
-				result = collator.compare(name1, name2);
+				result = getComparator().compare(name1, name2);
 			return (result != 0) ? result : super.compare(viewer, e1, e2);
 		}
 
@@ -78,11 +78,11 @@ public class ListUtil {
 	}
 	
 
-	public static final ViewerSorter NAME_SORTER = new NameSorter();
+	public static final ViewerComparator NAME_COMPARATOR = new NameComparator();
 	
-	public static final ViewerSorter PLUGIN_SORTER = new PluginSorter();
+	public static final ViewerComparator PLUGIN_COMPARATOR = new PluginComparator();
 	
-	public static final ViewerSorter FEATURE_SORTER = new FeatureSorter();
+	public static final ViewerComparator FEATURE_COMPARATOR = new FeatureComparator();
 
 	static class TableLabelProvider extends ElementLabelProvider implements ITableLabelProvider {
 		public String getColumnText(Object o, int index) {

@@ -35,7 +35,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
@@ -199,11 +199,11 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	
 	protected abstract ITreeContentProvider createOutlineContentProvider();
 	
-	protected abstract ViewerSorter createOutlineSorter();
+	protected abstract ViewerComparator createOutlineComparator();
 	
 	protected abstract void outlineSelectionChanged(SelectionChangedEvent e);
 	
-	protected ViewerSorter createDefaultOutlineSorter() {
+	protected ViewerComparator createDefaultOutlineComparator() {
 		return null;
 	}
 	
@@ -212,7 +212,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		new SourceOutlinePage(
 				(IEditingModel) getInputContext().getModel(),
 				createOutlineLabelProvider(), createOutlineContentProvider(),
-				createDefaultOutlineSorter(), createOutlineSorter());
+				createDefaultOutlineComparator(), createOutlineComparator());
 		fOutlinePage = sourceOutlinePage;
 		fOutlineSelectionChangedListener = new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {

@@ -74,7 +74,7 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 				labelProvider.dispose();
 			}
 		});
-		fTreeViewer.setSorter(ListUtil.PLUGIN_SORTER);
+		fTreeViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 		fTreeViewer.setAutoExpandLevel(2);
 
 		return fTreeViewer;

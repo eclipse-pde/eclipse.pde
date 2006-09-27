@@ -40,7 +40,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
@@ -218,7 +218,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		fPackageViewer = tablePart.getTableViewer();
 		fPackageViewer.setContentProvider(new ImportPackageContentProvider());
 		fPackageViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		fPackageViewer.setSorter(new ViewerSorter() {
+		fPackageViewer.setComparator(new ViewerComparator() {
             public int compare(Viewer viewer, Object e1, Object e2) {
                 String s1 = e1.toString();
                 String s2 = e2.toString();

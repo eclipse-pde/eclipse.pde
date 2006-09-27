@@ -92,7 +92,7 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage
 		wizardSelectionViewer = new TableViewer(sashForm, SWT.BORDER);
 		wizardSelectionViewer.setContentProvider(new ListContentProvider());
 		wizardSelectionViewer.setLabelProvider(ListUtil.TABLE_LABEL_PROVIDER);
-		wizardSelectionViewer.setSorter(ListUtil.NAME_SORTER);
+		wizardSelectionViewer.setComparator(ListUtil.NAME_COMPARATOR);
 		wizardSelectionViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				doubleClickAction.run();

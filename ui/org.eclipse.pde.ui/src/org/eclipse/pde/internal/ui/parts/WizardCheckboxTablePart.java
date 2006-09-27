@@ -102,7 +102,7 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 		int style,
 		FormToolkit toolkit) {
 		StructuredViewer viewer = super.createStructuredViewer(parent, style, toolkit);
-		viewer.setSorter(ListUtil.NAME_SORTER);
+		viewer.setComparator(ListUtil.NAME_COMPARATOR);
 		return viewer;
 	}
 

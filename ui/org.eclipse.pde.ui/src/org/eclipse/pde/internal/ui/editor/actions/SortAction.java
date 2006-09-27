@@ -14,29 +14,29 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 
 public class SortAction extends Action {
 
 	private boolean fSorted = false;
 	private StructuredViewer fViewer;
-	private ViewerSorter fSorter;
+	private ViewerComparator fComparator;
 
-	public SortAction(StructuredViewer viewer, String tooltipText, ViewerSorter sorter, IPropertyChangeListener listener) {
+	public SortAction(StructuredViewer viewer, String tooltipText, ViewerComparator sorter, IPropertyChangeListener listener) {
 		super(tooltipText, IAction.AS_CHECK_BOX);
 		setToolTipText(tooltipText);
 		setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO_MINI);
 		fSorted = viewer.getSorter() == null ? false : true;
 		setChecked(fSorted);
 		fViewer= viewer;
-		fSorter = sorter != null ? sorter : new ViewerSorter();
+		fComparator = sorter != null ? sorter : new ViewerComparator();
 		if (listener != null)
 			addListenerObject(listener);
 	}
 
 	public void run() {
-		fViewer.setSorter(fSorted ? null : fSorter);
+		fViewer.setComparator(fSorted ? null : fComparator);
 		fSorted = !fSorted;
 	}
 

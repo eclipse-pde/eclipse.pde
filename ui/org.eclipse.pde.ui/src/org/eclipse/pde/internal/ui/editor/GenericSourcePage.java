@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.ui.editor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 /**
  *
@@ -42,7 +42,7 @@ public class GenericSourcePage extends PDESourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#createOutlineContentProvider()
 	 */
-	protected ViewerSorter createOutlineSorter() {
+	protected ViewerComparator createOutlineComparator() {
 		return null;
 	}
 	/* (non-Javadoc)

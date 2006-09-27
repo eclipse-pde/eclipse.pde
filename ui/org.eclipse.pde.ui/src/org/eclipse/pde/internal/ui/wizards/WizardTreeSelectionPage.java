@@ -73,7 +73,7 @@ public abstract class WizardTreeSelectionPage
 		categoryTreeViewer.setContentProvider(new TreeContentProvider());
 		categoryTreeViewer.setLabelProvider(ElementLabelProvider.INSTANCE);
 
-		categoryTreeViewer.setSorter(new WizardCollectionSorter(baseCategory));
+		categoryTreeViewer.setComparator(new WizardCollectionComparator(baseCategory));
 		categoryTreeViewer.addSelectionChangedListener(this);
 
 		// wizard actions pane
@@ -86,7 +86,7 @@ public abstract class WizardTreeSelectionPage
 		wizardSelectionViewer = new TableViewer(table);
 		wizardSelectionViewer.setContentProvider(new ListContentProvider());
 		wizardSelectionViewer.setLabelProvider(ListUtil.TABLE_LABEL_PROVIDER);
-		wizardSelectionViewer.setSorter(ListUtil.NAME_SORTER);
+		wizardSelectionViewer.setComparator(ListUtil.NAME_COMPARATOR);
 		wizardSelectionViewer.addSelectionChangedListener(this);
 		wizardSelectionViewer
 			.addDoubleClickListener(new IDoubleClickListener() {

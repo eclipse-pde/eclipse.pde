@@ -163,7 +163,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		CheckboxTableViewer viewer = tablePart.getTableViewer();
 		viewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		viewer.setContentProvider(new PluginContentProvider());
-		viewer.setSorter(ListUtil.PLUGIN_SORTER);
+		viewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 		viewer.setInput(PDEPlugin.getWorkspace().getRoot());
 		
 		return container;

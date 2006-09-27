@@ -104,7 +104,7 @@ public class FeatureImportWizardPage extends WizardPage {
 		}
 		protected StructuredViewer createStructuredViewer(Composite parent, int style, FormToolkit toolkit) {
 			StructuredViewer viewer = super.createStructuredViewer(parent, style, toolkit);
-			viewer.setSorter(ListUtil.FEATURE_SORTER);
+			viewer.setComparator(ListUtil.FEATURE_COMPARATOR);
 			return viewer;
 		}
 		protected void buttonSelected(Button button, int index) {

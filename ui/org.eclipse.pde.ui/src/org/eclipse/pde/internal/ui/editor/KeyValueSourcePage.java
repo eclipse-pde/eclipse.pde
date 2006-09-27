@@ -16,7 +16,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
 
@@ -29,8 +29,8 @@ public abstract class KeyValueSourcePage extends PDEProjectionSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#createViewerSorter()
 	 */
-	protected ViewerSorter createDefaultOutlineSorter() {
-		return new ViewerSorter() {
+	protected ViewerComparator createDefaultOutlineComparator() {
+		return new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				IDocumentKey key1 = (IDocumentKey)e1;
 				IDocumentKey key2 = (IDocumentKey)e2;
@@ -75,8 +75,8 @@ public abstract class KeyValueSourcePage extends PDEProjectionSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
 	 */
-	protected ViewerSorter createOutlineSorter() {
-		return new ViewerSorter();
+	protected ViewerComparator createOutlineComparator() {
+		return new ViewerComparator();
 	}
 
 }

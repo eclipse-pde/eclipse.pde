@@ -88,7 +88,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		fImportListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fImportListViewer.setContentProvider(new ContentProvider());
 		fImportListViewer.setInput(PDECore.getDefault().getExternalModelManager());
-		fImportListViewer.setSorter(ListUtil.PLUGIN_SORTER);
+		fImportListViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 		return container;
 	}
 	

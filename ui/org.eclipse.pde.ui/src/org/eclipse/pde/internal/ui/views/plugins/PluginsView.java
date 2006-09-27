@@ -222,7 +222,7 @@ public class PluginsView extends ViewPart {
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		fTreeViewer.setContentProvider(new PluginsContentProvider(this, manager));
 		fTreeViewer.setLabelProvider(new PluginsLabelProvider());
-		fTreeViewer.setSorter(ListUtil.PLUGIN_SORTER);
+		fTreeViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 		initDragAndDrop();
 		makeActions();
 		initFilters();

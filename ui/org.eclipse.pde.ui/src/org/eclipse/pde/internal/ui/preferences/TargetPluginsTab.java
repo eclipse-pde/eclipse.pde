@@ -323,7 +323,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		fPluginListViewer.getControl().setLayoutData(gd);
 		fPluginListViewer.setContentProvider(new PluginContentProvider());
 		fPluginListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		fPluginListViewer.setSorter(ListUtil.PLUGIN_SORTER);
+		fPluginListViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 		fPluginListViewer.addCheckStateListener(new ICheckStateListener() {
 
 			public void checkStateChanged(CheckStateChangedEvent event) {
@@ -364,7 +364,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		gd.widthHint = 250;
 		fPluginTreeViewer.getControl().setLayoutData(gd);
 		fPluginTreeViewer.setContentProvider(new TreePluginContentProvider());
-		fPluginTreeViewer.setSorter(ListUtil.PLUGIN_SORTER);
+		fPluginTreeViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 		fPluginTreeViewer.setLabelProvider(new PDELabelProvider() {
 			
 			public Image getImage(Object obj) {

@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 
@@ -101,7 +101,7 @@ public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPag
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#configureTableViewer(org.eclipse.jface.viewers.TableViewer)
 	 */
 	protected void configureTableViewer(TableViewer viewer) {
-		viewer.setSorter(createViewerSorter());
+		viewer.setComparator(createViewerComparator());
 		viewer.setLabelProvider(createLabelProvider());
 		fContentProvider= new ContentProvider();
 		viewer.setContentProvider(fContentProvider);
@@ -109,7 +109,7 @@ public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPag
 	
 	protected abstract ILabelProvider createLabelProvider();
 	
-	protected abstract ViewerSorter createViewerSorter();
+	protected abstract ViewerComparator createViewerComparator();
 	
 
 }

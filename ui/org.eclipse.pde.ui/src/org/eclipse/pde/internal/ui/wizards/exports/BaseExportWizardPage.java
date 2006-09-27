@@ -171,7 +171,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		TableViewer viewer = fExportPart.getTableViewer();
 		viewer.setContentProvider(new ExportListProvider());
 		viewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		viewer.setSorter(ListUtil.PLUGIN_SORTER);
+		viewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 		fExportPart.getTableViewer().setInput(PDECore.getDefault().getWorkspaceModelManager());
 	}
 	

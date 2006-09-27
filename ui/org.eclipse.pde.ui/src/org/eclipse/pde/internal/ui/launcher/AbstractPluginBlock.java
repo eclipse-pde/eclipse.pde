@@ -212,7 +212,7 @@ public abstract class AbstractPluginBlock {
 				fTab.updateLaunchConfigurationDialog();
 			}
 		});
-		fPluginTreeViewer.setSorter(new ListUtil.PluginSorter() {
+		fPluginTreeViewer.setComparator(new ListUtil.PluginComparator() {
 			public int category(Object obj) {
 				if (obj == fWorkspacePlugins)
 					return -1;

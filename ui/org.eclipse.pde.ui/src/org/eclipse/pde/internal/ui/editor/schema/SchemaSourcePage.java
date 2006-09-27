@@ -14,7 +14,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
@@ -47,7 +47,7 @@ public class SchemaSourcePage extends XMLSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
 	 */
-	protected ViewerSorter createOutlineSorter() {
+	protected ViewerComparator createOutlineComparator() {
 		return null;
 	}
 	protected void outlineSelectionChanged(SelectionChangedEvent e) {

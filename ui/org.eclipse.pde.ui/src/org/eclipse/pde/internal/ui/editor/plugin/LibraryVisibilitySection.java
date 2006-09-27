@@ -28,7 +28,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
@@ -163,7 +163,7 @@ public class LibraryVisibilitySection extends TableSection
 		fPackageExportViewer = tablePart.getTableViewer();
 		fPackageExportViewer.setContentProvider(new TableContentProvider());
 		fPackageExportViewer.setLabelProvider(new TableLabelProvider());
-		fPackageExportViewer.setSorter(new ViewerSorter());
+		fPackageExportViewer.setComparator(new ViewerComparator());
 		toolkit.paintBordersFor(parent);
 	}
     

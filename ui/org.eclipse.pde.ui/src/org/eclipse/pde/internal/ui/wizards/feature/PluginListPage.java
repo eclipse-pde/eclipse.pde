@@ -53,7 +53,7 @@ public class PluginListPage extends BasePluginListPage {
 		CheckboxTableViewer pluginViewer = tablePart.getTableViewer();
 		pluginViewer.setContentProvider(new PluginContentProvider());
 		pluginViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		pluginViewer.setSorter(ListUtil.PLUGIN_SORTER);
+		pluginViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 		GridData gd = (GridData) tablePart.getControl().getLayoutData();
 		gd.heightHint = 250;
 		gd.widthHint = 300;

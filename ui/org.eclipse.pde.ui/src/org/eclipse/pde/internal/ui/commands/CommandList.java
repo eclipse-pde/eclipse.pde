@@ -18,8 +18,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -91,7 +91,7 @@ public class CommandList {
 		}
 	}
 	
-	protected class CommandTreeSorter extends ViewerSorter {
+	protected class CommandTreeComparator extends ViewerComparator {
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			return getText(e1).compareTo(getText(e2));
 		}
@@ -203,7 +203,7 @@ public class CommandList {
 		fContentProvider = new CommandTreeContentProvider(fCCP.getCommandService());
 		fTreeViewer.setContentProvider(fContentProvider);
 		fTreeViewer.setLabelProvider(new CommandTreeLabelProvider());
-		fTreeViewer.setSorter(new CommandTreeSorter());
+		fTreeViewer.setComparator(new CommandTreeComparator());
 		fTreeViewer.addFilter(new WildcardFilter());
 		fTreeViewer.setInput(new Object());
 		fTreeViewer.addSelectionChangedListener(fCCP);
