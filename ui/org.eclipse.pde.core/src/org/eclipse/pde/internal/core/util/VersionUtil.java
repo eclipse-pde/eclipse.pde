@@ -23,7 +23,7 @@ public class VersionUtil {
 	public static IStatus validateVersion(String versionString) {
 		try {
 			if (versionString != null)
-				new Version(versionString);
+				new Version(versionString.trim());
 		} catch (IllegalArgumentException e) {
 			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, 
 					PDECoreMessages.BundleErrorReporter_InvalidFormatInBundleVersion, e);
@@ -38,17 +38,7 @@ public class VersionUtil {
 			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, 
 					PDECoreMessages.BundleErrorReporter_invalidVersionRangeFormat, e); 
 		}
-
-		// need to do our extra checks for each piece of the versionRange
-		int comma = versionRangeString.indexOf(',');
-		if (comma < 0) 
-			return validateVersion(versionRangeString);
-
-		IStatus status = validateVersion(versionRangeString.substring(1, comma));
-		if(!status.isOK())
-			return status;
-		
-		return validateVersion(versionRangeString.substring(comma + 1, versionRangeString.length() - 1));
+		return Status.OK_STATUS;
 	}
 
 	public static boolean compare(String id1, String version1, String id2, String version2, int match) {
