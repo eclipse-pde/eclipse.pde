@@ -24,7 +24,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.internal.runtime.IHelpContextIds;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
@@ -149,7 +149,7 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		fTreeViewer.setContentProvider(new RegistryBrowserContentProvider(fTreeViewer, showRunning));
 		fTreeViewer.setLabelProvider(new RegistryBrowserLabelProvider(fTreeViewer));
 		fTreeViewer.setUseHashlookup(true);
-		fTreeViewer.setSorter(new ViewerSorter() {
+		fTreeViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if (e1 instanceof PluginObjectAdapter)
 					e1 = ((PluginObjectAdapter)e1).getObject();
