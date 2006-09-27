@@ -180,7 +180,8 @@ public class FeatureOutlinePage extends FormOutlinePage {
 		if (object instanceof IFeatureImport || object instanceof IFeatureInfo
 				|| object instanceof IFeaturePlugin
 				|| object instanceof IFeatureData
-				|| object instanceof IFeatureURLElement) {
+				|| object instanceof IFeatureURLElement
+				|| object instanceof IFeatureChild) {
 			if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 				fTreeViewer.update(object, null);
 			} else {
