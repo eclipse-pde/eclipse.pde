@@ -117,13 +117,13 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			if (fAdditionalLocations.size() == 0)
 				return base;
 			
-			File[] extraLocations = new File[fAdditionalLocations.size()];
+			File[] extraLocations = new File[fAdditionalLocations.size() * 2];
 			for (int i = 0; i < extraLocations.length; i++) {
-				String location = fAdditionalLocations.get(i).toString();
-				File dir = new File(location, "plugins"); //$NON-NLS-1$
-				if (!dir.exists() || !dir.isDirectory())
-					dir = new File(location);
+				String location = fAdditionalLocations.get(i/2).toString();
+				File dir = new File(location);
 				extraLocations[i] = dir;
+				dir = new File(dir, "plugins"); //$NON-NLS-1$
+				extraLocations[++i] = dir;
 			}
 
 			URL[] additional = PluginPathFinder.scanLocations(extraLocations);			
