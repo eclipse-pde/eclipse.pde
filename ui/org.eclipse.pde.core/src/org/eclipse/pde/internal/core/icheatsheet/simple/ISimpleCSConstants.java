@@ -11,11 +11,13 @@
 
 package org.eclipse.pde.internal.core.icheatsheet.simple;
 
+import org.eclipse.pde.internal.core.icheatsheet.ICSConstants;
+
 /**
  * ISimpleCSConstants
  *
  */
-public interface ISimpleCSConstants {
+public interface ISimpleCSConstants extends ICSConstants{
 
 	// Elements
 	
@@ -76,12 +78,6 @@ public interface ISimpleCSConstants {
 	public static final String ATTRIBUTE_ONCOMPLETION = "onCompletion"; //$NON-NLS-1$	
 
 	// Attribute Values
-	
-	public static final String ATTRIBUTE_VALUE_ENCODING = "UTF-8"; //$NON-NLS-1$
-
-	public static final String ATTRIBUTE_VALUE_TRUE = "true"; //$NON-NLS-1$
-	
-	public static final String ATTRIBUTE_VALUE_FALSE = "false"; //$NON-NLS-1$
 	
 	// Types
 	

@@ -90,11 +90,6 @@ public interface ISimpleCS extends ISimpleCSObject {
 	 * @return
 	 */
 	public int indexOfItem(ISimpleCSItem item);
-	
-	/**
-	 * 
-	 */
-	public void reset();
 
 	/**
 	 * Element:  item

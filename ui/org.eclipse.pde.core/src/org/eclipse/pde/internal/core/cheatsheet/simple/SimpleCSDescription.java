@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
+import org.eclipse.pde.internal.core.util.CheatSheetUtil;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.w3c.dom.Element;
 
@@ -71,7 +72,7 @@ public class SimpleCSDescription extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#parse(org.w3c.dom.Node)
 	 */
 	public void parse(Element element) {
-		fContent = parseElementText(element).trim();
+		fContent = CheatSheetUtil.parseElementText(element).trim();
 	}
 	
 	/* (non-Javadoc)

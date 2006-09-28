@@ -86,7 +86,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#reset()
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#reset()
 	 */
 	public void reset() {
 		fIntro = null;
@@ -160,7 +160,7 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 			// Print XML decl
 			XMLPrintHandler.printHead(writer, ATTRIBUTE_VALUE_ENCODING);
 			// Print cheatsheet element
-			buffer.append(ELEMENT_CHEATSHEET); //$NON-NLS-1$
+			buffer.append(ELEMENT_CHEATSHEET);
 			// Print title attribute
 			if ((fTitle != null) && 
 					(fTitle.length() > 0)) {
@@ -299,7 +299,17 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#removeItem(int, org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem)
 	 */
 	public void removeItem(int index) {
-		fItems.remove(index);
+		
+		if ((index < 0) ||
+				(index > (fItems.size() - 1))) {
+			return;
+		}		
+		
+		ISimpleCSItem item = (ISimpleCSItem)fItems.remove(index);
+		
+		if (isEditable()) {
+			fireStructureChanged(item, IModelChangedEvent.REMOVE);
+		}		
 	}
 
 	/* (non-Javadoc)

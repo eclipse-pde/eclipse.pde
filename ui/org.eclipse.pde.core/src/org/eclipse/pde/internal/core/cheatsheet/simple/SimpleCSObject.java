@@ -22,11 +22,6 @@ import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
-import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 
 /**
  * SimpleCSObject
@@ -37,8 +32,6 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 	private transient ISimpleCSModel fModel;
 	
 	private transient ISimpleCSObject fParent;
-	
-	private static final long serialVersionUID = 1L;
 
 	protected static final HashSet TAG_EXCEPTIONS = new HashSet(3);
 	
@@ -102,7 +95,7 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 	 * @param oldValue
 	 * @param newValue
 	 */
-	protected void firePropertyChanged(ISimpleCSObject object, String property,
+	private void firePropertyChanged(ISimpleCSObject object, String property,
 		Object oldValue, Object newValue) {
 		if (fModel.isEditable()) {
 			IModelChangeProvider provider = fModel;
@@ -142,7 +135,7 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 	 * @param children
 	 * @param changeType
 	 */
-	protected void fireStructureChanged(ISimpleCSObject[] children,
+	private void fireStructureChanged(ISimpleCSObject[] children,
 			int changeType) {
 		if (fModel.isEditable()) {
 			IModelChangeProvider provider = fModel;
@@ -155,16 +148,7 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 	 * @return
 	 */
 	protected boolean isEditable() {
-		return getModel().isEditable();
-	}
-		
-	/**
-	 * @param source
-	 * @return
-	 */
-	public String getWritableString(String source) {
-		// TODO: MP: Probably don't need this anymore since using xmlprinthandler
-		return CoreUtility.getWritableString(source);
+		return fModel.isEditable();
 	}
 	
 	/* (non-Javadoc)
@@ -188,50 +172,5 @@ public abstract class SimpleCSObject extends PlatformObject implements ISimpleCS
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject#getChildren()
 	 */
 	public abstract List getChildren();
-	
-	/**
-	 * Recursively finds and acculates all element's text and element 
-	 * children into a String in raw XML form 
-	 * @param element
-	 * @return 
-	 */
-	protected String parseElementText(Element element) {
-		// Puts all Text nodes in the full depth of the sub-tree 
-		// underneath this Node
-		// i.e., there are neither adjacent Text nodes nor empty Text nodes. 
-		element.normalize();
-		// Process only if there are children
-		if (element.getChildNodes().getLength() > 0) {
-			NodeList children = element.getChildNodes();
-			StringBuffer buffer = new StringBuffer();
-			// Traverse over each childe
-			for (int i = 0; i < children.getLength(); i++) {
-				Node node = children.item(i);
-				if (node.getNodeType() == Node.TEXT_NODE) {
-					// Accumulate the text children
-					buffer.append(((Text)node).getData());
-				} else if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Element subElement = (Element)node;
-					// Recursively accumulate element children
-					String value = parseElementText(subElement);
-					if (value.length() > 0) {
-						// The element had children
-						// Enclose the accumulated children with start and end tags
-						buffer.append('<' + subElement.getNodeName() + '>');
-						buffer.append(value);
-						buffer.append("</" + subElement.getNodeName() + '>'); //$NON-NLS-1$
-					} else {
-						// The element had no children
-						// Generate an abbreviated element tag
-						buffer.append('<' + subElement.getNodeName() + "/>"); //$NON-NLS-1$
-					}
-				}
-			}
-			// Return all accumulated children under the input element as a raw
-			// XML string
-			return buffer.toString();
-		}
-		return ""; //$NON-NLS-1$
-	}
-	
+
 }

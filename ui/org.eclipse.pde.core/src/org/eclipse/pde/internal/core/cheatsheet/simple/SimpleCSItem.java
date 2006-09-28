@@ -512,7 +512,17 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#removeSubItem(int)
 	 */
 	public void removeSubItem(int index) {
-		fSubItems.remove(index);
+		
+		if ((index < 0) ||
+				(index > (fSubItems.size() - 1))) {
+			return;
+		}
+		
+		ISimpleCSSubItemObject subitem = (ISimpleCSSubItemObject)fSubItems.remove(index);
+		
+		if (isEditable()) {
+			fireStructureChanged(subitem, IModelChangedEvent.REMOVE);
+		}			
 	}
 
 	/* (non-Javadoc)
