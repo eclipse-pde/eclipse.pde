@@ -27,7 +27,7 @@ public class SortAction extends Action {
 		super(tooltipText, IAction.AS_CHECK_BOX);
 		setToolTipText(tooltipText);
 		setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO_MINI);
-		fSorted = viewer.getSorter() == null ? false : true;
+		fSorted = viewer.getComparator() == null ? false : true;
 		setChecked(fSorted);
 		fViewer= viewer;
 		fComparator = sorter != null ? sorter : new ViewerComparator();
