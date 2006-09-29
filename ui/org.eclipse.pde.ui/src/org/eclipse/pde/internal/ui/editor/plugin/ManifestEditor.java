@@ -54,7 +54,6 @@ import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
 import org.eclipse.pde.internal.ui.editor.JarEntryFile;
 import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
@@ -69,7 +68,6 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IShowEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.osgi.service.prefs.BackingStoreException;
@@ -603,13 +601,4 @@ public class ManifestEditor extends MultiSourceEditor implements IShowEditorInpu
     	}
     	fShowExtensions = show;
     }
-    
-	protected void pageChange(int newPageIndex) {
-		super.pageChange(newPageIndex);
-		IFormPage page = getActivePageInstance();
-		if (page instanceof PDESourcePage)
-			((PDESourcePage)page).updateTextSelection();
-		else if (page instanceof PDEFormPage)
-			((PDEFormPage)page).updateFormSelection();
-	}
 }

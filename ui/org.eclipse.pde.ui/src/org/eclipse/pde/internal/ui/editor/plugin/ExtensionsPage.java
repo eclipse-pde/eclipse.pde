@@ -106,6 +106,7 @@ public class ExtensionsPage extends PDEFormPage {
 	}
 	
 	public void updateFormSelection() {
+		super.updateFormSelection();
 		IFormPage page = getPDEEditor().findPage(PluginInputContext.CONTEXT_ID);
 		if (page instanceof ManifestSourcePage) {
 			ISourceViewer viewer = ((ManifestSourcePage)page).getViewer();
@@ -123,8 +124,10 @@ public class ExtensionsPage extends PDEFormPage {
 				range = ((IDocumentAttribute)range).getEnclosingElement();
 			else if (range instanceof IDocumentTextNode)
 				range = ((IDocumentTextNode)range).getEnclosingElement();
-			if (range != null)
+			if ((range instanceof IPluginExtension) || 
+					(range instanceof IPluginElement)) {
 				fSection.selectExtensionElement(new StructuredSelection(range));
+			}
 		}
 	}
 }

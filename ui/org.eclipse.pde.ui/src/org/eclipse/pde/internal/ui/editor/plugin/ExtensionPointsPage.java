@@ -80,6 +80,7 @@ public class ExtensionPointsPage extends PDEFormPage {
 	}
 	
 	public void updateFormSelection() {
+		super.updateFormSelection();
 		IFormPage page = getPDEEditor().findPage(PluginInputContext.CONTEXT_ID);
 		if (page instanceof ManifestSourcePage) {
 			ISourceViewer viewer = ((ManifestSourcePage)page).getViewer();

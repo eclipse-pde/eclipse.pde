@@ -269,13 +269,24 @@ public abstract class PDEFormEditor extends FormEditor
 		updateTitle();
 		PDEModelUtility.connect(this);
 	}
-	protected void pageChange(int newPageIndex) {
-		super.pageChange(newPageIndex);
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.MultiPageEditorPart#setFocus()
+	 */
+	public void setFocus() {
+		super.setFocus();
 		IFormPage page = getActivePageInstance();
 		updateContentOutline(page);
-		if (page!=null)
+		if (page != null) {
 			fLastActivePageId = page.getId();
+			if (page instanceof PDESourcePage) {
+				((PDESourcePage)page).updateTextSelection();
+			} else if (page instanceof PDEFormPage) {
+				((PDEFormPage)page).updateFormSelection();
+			}		
+		}		
 	}
+	
 	public Clipboard getClipboard() {
 		return clipboard;
 	}
