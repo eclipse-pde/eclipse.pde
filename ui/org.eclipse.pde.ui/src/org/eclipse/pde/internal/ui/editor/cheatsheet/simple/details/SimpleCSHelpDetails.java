@@ -15,16 +15,19 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSHelpObject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -35,29 +38,36 @@ import org.eclipse.ui.forms.widgets.Section;
  */
 public class SimpleCSHelpDetails implements ISimpleCSDetails {
 
-	private Text fContextId;
+	private Text fHelpText;
 	
-	private Text fHref;	
+	private ComboPart fHelpCombo;	
 	
-	private Button fContextIdRadio;	
-
-	private Button fHrefRadio;
+	private Label fHelpLabel;
 	
 	private ISimpleCSHelpObject fHelpObject;
 	
 	private SimpleCSAbstractDetails fDetails;
 
 	private Section fHelpSection;
+
+	private static final String F_NO_HELP = PDEUIMessages.SimpleCSCommandDetails_6;
 	
+	private static final String F_HELP_CONTEXT_ID = PDEUIMessages.SimpleCSHelpDetails_HelpContextID;
+
+	private static final String F_HELP_DOCUMENT_LINK = PDEUIMessages.SimpleCSHelpDetails_HelpDocumentLink;
+	
+	/**
+	 * @param helpObject
+	 * @param details
+	 */
 	public SimpleCSHelpDetails(ISimpleCSHelpObject helpObject,
 			SimpleCSAbstractDetails details) {
 		fHelpObject = helpObject;
 		fDetails = details;
 		
-		fContextId = null;
-		fHref = null;
-		fContextIdRadio = null;
-		fHrefRadio = null;
+		fHelpText = null;
+		fHelpCombo = null;
+		fHelpLabel = null;
 		
 		fHelpSection = null;
 	}
@@ -67,12 +77,14 @@ public class SimpleCSHelpDetails implements ISimpleCSDetails {
 	 */
 	public void createDetails(Composite parent) {
 
-		int columnSpan = 1;
+		int columnSpan = 2;
 		FormToolkit toolkit = fDetails.getToolkit();
 		
 		boolean paintedBorder = toolkit.getBorderStyle() != SWT.BORDER;
 		GridData data = null;
 		GridLayout layout = null;
+		Label label = null;
+		Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
 		
 		// Create help section
 		fHelpSection = toolkit.createSection(parent, Section.DESCRIPTION
@@ -92,72 +104,100 @@ public class SimpleCSHelpDetails implements ISimpleCSDetails {
 			layout.verticalSpacing = 7;
 		}
 		helpSectionClient.setLayout(layout);		
-		
-		// Create the radio button for the contextId
-		fContextIdRadio = toolkit.createButton(helpSectionClient, PDEUIMessages.SimpleCSSharedUIFactory_3, SWT.RADIO);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		fContextIdRadio.setLayoutData(data);
-		//data.horizontalSpan = 2;
-		
-		// Attribute: contextId
-		//contextId = new FormEntry(helpSectionClient, toolkit, null, 20, 0);
-		fContextId = toolkit.createText(helpSectionClient, null);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalIndent = 20;
-		fContextId.setLayoutData(data);
-		// TODO: MP: Delete
-		//PDEUIMessages.SimpleCSIntroDetails_0
 
-		// Create the radio button for the href
-		fHrefRadio = toolkit.createButton(helpSectionClient, PDEUIMessages.SimpleCSSharedUIFactory_4, SWT.RADIO);
+		// Attribute: href		
+		// Attribute: contextId
+		label = toolkit.createLabel(helpSectionClient, 
+				PDEUIMessages.SimpleCSHelpDetails_Type, SWT.WRAP);
+		label.setForeground(foreground);
+
+		// Attribute: href		
+		// Attribute: contextId
+		fHelpCombo = new ComboPart();
+		fHelpCombo.createControl(helpSectionClient, toolkit, SWT.READ_ONLY);
+		fHelpCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fHelpCombo.add(F_NO_HELP);
+		fHelpCombo.add(F_HELP_CONTEXT_ID);
+		fHelpCombo.add(F_HELP_DOCUMENT_LINK);
+		fHelpCombo.setText(F_NO_HELP);
+		
+		// Attribute: href		
+		// Attribute: contextId
+		fHelpLabel = toolkit.createLabel(helpSectionClient, 
+				PDEUIMessages.SimpleCSHelpDetails_Value, SWT.WRAP);
+		fHelpLabel.setForeground(foreground);
+		
+		// Attribute: href		
+		// Attribute: contextId
+		fHelpText = toolkit.createText(helpSectionClient, null);
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		fHrefRadio.setLayoutData(data);
-		//data.horizontalSpan = 2;
-		
-		// Attribute: href
-		//href = new FormEntry(helpSectionClient, toolkit, null, 20, 0);
-		fHref = toolkit.createText(helpSectionClient, null);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalIndent = 20;
-		fHref.setLayoutData(data);		
-		// TODO: MP: Delete
-		//PDEUIMessages.SimpleCSIntroDetails_1
-		
-		//createSpacer(helpSectionClient, toolkit, columnSpan);
-		
+		fHelpText.setLayoutData(data);
+	
 		// Bind widgets
 		toolkit.paintBordersFor(helpSectionClient);
 		fHelpSection.setClient(helpSectionClient);
-		// TODO: MP: What does this do?
+		
+		// TODO: MP: LOW: SimpleCS: What does this do?
 		//markDetailsPart(fHelpSection);		
-		
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSDetails#hookListeners()
 	 */
 	public void hookListeners() {
-		// Attribute: contextId
-		fContextId.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				fHelpObject.setContextId(fContextId.getText());
-			}
-		});		
-		// Attribute: href
-		fHref.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				fHelpObject.setHref(fHref.getText());
-			}
-		});	
-		// Radio button for contextId
-		fContextIdRadio.addSelectionListener(new SelectionAdapter() {
+
+		// Attribute: href		
+		// Attribute: contextId		
+		fHelpCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				boolean selected = fContextIdRadio.getSelection();
-				fContextId.setEnabled(selected);
-				fHref.setEnabled(!selected);				
+				String selection = fHelpCombo.getSelection();
+				if (selection.equals(F_NO_HELP) ==  false) {
+					// Help was selected
+					if (selection.equals(F_HELP_CONTEXT_ID)) {
+						// Help context ID was selected, clear the help 
+						// document link value
+						fHelpObject.setHref(null);
+					} else {
+						// Help document link was selected, clear the help 
+						// context ID value
+						fHelpObject.setContextId(null);
+					}
+					// Make the label and text field visible
+					fHelpLabel.setVisible(true);
+					fHelpText.setVisible(true);
+					// Set the focus on the text field
+					fHelpText.setFocus();
+					// Clear the previous contents of the text field
+					// (Will cause field to become dirty)
+					fHelpText.setText(""); //$NON-NLS-1$
+				} else {
+					// No help was selected
+					// Make the label and text field invisible
+					fHelpLabel.setVisible(false);
+					fHelpText.setVisible(false);
+					// Clear values for help in model
+					fHelpObject.setContextId(null);
+					fHelpObject.setHref(null);
+				}
+			}		
+		});		
+		// Attribute: href		
+		// Attribute: contextId		
+		fHelpText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				String selection = fHelpCombo.getSelection();
+				if (selection.equals(F_HELP_CONTEXT_ID)) {
+					// Help context ID was selected, save the field contents
+					// as such
+					fHelpObject.setContextId(fHelpText.getText());
+				} else {
+					// Help document link was selected, save the field contents
+					// as such
+					fHelpObject.setHref(fHelpText.getText());
+				}
 			}
 		});		
+	
 	}
 
 	/* (non-Javadoc)
@@ -174,32 +214,20 @@ public class SimpleCSHelpDetails implements ISimpleCSDetails {
 		
 		// Attribute: contextId
 		// Attribute: href		
-		// Radio button for contextId
-		// Radio button for contextId		
 		if (PDETextHelper.isDefined(fHelpObject.getContextId())) {
-			fContextId.setText(fHelpObject.getContextId());
-			fContextId.setEnabled(true && editable);
-			fContextIdRadio.setSelection(true && editable);
-			fHref.setEnabled(false);	
-			fHrefRadio.setSelection(false);
+			fHelpText.setText(fHelpObject.getContextId());
+			fHelpCombo.setText(F_HELP_CONTEXT_ID);
 			expanded = true;
 		} else if (PDETextHelper.isDefined(fHelpObject.getHref())) {
-			fHref.setText(fHelpObject.getHref());
-			fContextId.setEnabled(false);
-			fContextIdRadio.setSelection(false);			
-			fHref.setEnabled(true && editable);			
-			fHrefRadio.setSelection(true && editable);
+			fHelpText.setText(fHelpObject.getHref());
+			fHelpCombo.setText(F_HELP_DOCUMENT_LINK);
 			expanded = true;
-		} else {
-			fContextId.setEnabled(true && editable);
-			fContextIdRadio.setSelection(true && editable);
-			fHref.setEnabled(false);	
-			fHrefRadio.setSelection(false);					
 		}
 
 		fHelpSection.setExpanded(expanded);
-		
+		fHelpText.setEnabled(editable);
+		fHelpText.setVisible(expanded);
+		fHelpLabel.setVisible(expanded);
 	}
-	
-	
+
 }

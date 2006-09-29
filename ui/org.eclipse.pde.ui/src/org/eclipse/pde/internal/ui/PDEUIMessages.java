@@ -259,9 +259,13 @@ public class PDEUIMessages extends NLS {
 
 	public static String SimpleCSElementSection_7;
 
-	public static String SimpleCSIntroDetails_0;
+	public static String SimpleCSHelpDetails_HelpContextID;
 
-	public static String SimpleCSIntroDetails_1;
+	public static String SimpleCSHelpDetails_HelpDocumentLink;
+
+	public static String SimpleCSHelpDetails_Type;
+
+	public static String SimpleCSHelpDetails_Value;
 
 	public static String SimpleCSIntroDetails_2;
 
@@ -306,10 +310,6 @@ public class PDEUIMessages extends NLS {
 	public static String SimpleCSSharedUIFactory_1;
 
 	public static String SimpleCSSharedUIFactory_2;
-
-	public static String SimpleCSSharedUIFactory_3;
-
-	public static String SimpleCSSharedUIFactory_4;
 
 	public static String SimpleCSSubItemDetails_0;
 
