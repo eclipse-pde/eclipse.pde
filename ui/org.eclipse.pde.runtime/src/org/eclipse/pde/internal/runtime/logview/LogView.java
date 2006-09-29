@@ -22,7 +22,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -43,6 +42,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -51,7 +51,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.IHelpContextIds;
@@ -130,7 +130,6 @@ public class LogView extends ViewPart implements ILogListener {
     private String fDirectory;
 
     private Comparator fComparator;
-    private Collator fCollator;
     
     // hover text
     private boolean fCanOpenTextShell;
@@ -413,9 +412,8 @@ public class LogView extends ViewPart implements ILogListener {
         fColumn1.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 MESSAGE_ORDER *= -1;
-                ViewerSorter sorter = getViewerSorter(MESSAGE);
-                fTreeViewer.setSorter(sorter);
-                fCollator = sorter.getCollator();
+                ViewerComparator comparator = getViewerComparator(MESSAGE);
+                fTreeViewer.setComparator(comparator);
                 boolean isComparatorSet = 
                 	((EventDetailsDialogAction) fPropertiesAction).resetSelection(MESSAGE, MESSAGE_ORDER);
                 setComparator(MESSAGE);
@@ -433,9 +431,8 @@ public class LogView extends ViewPart implements ILogListener {
         fColumn2.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 PLUGIN_ORDER *= -1;
-                ViewerSorter sorter = getViewerSorter(PLUGIN);
-                fTreeViewer.setSorter(sorter);
-                fCollator = sorter.getCollator();
+                ViewerComparator comparator = getViewerComparator(PLUGIN);
+                fTreeViewer.setComparator(comparator);
                 boolean isComparatorSet = 
                 	((EventDetailsDialogAction) fPropertiesAction).resetSelection(PLUGIN, PLUGIN_ORDER);
                 setComparator(PLUGIN);
@@ -453,9 +450,8 @@ public class LogView extends ViewPart implements ILogListener {
         fColumn3.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 DATE_ORDER *= -1;
-                ViewerSorter sorter = getViewerSorter(DATE);
-                fTreeViewer.setSorter(sorter);
-                fCollator = sorter.getCollator();
+                ViewerComparator comparator = getViewerComparator(DATE);
+                fTreeViewer.setComparator(comparator);
                 setComparator(DATE);
 				((EventDetailsDialogAction) fPropertiesAction).setComparator(fComparator);
                 fMemento.putInteger(P_ORDER_VALUE, DATE_ORDER);
@@ -469,8 +465,8 @@ public class LogView extends ViewPart implements ILogListener {
 
 	private void initializeViewerSorter() {
 		byte orderType = fMemento.getInteger(P_ORDER_TYPE).byteValue();
-        ViewerSorter sorter = getViewerSorter(orderType);
-        fTreeViewer.setSorter(sorter);
+        ViewerComparator comparator = getViewerComparator(orderType);
+        fTreeViewer.setComparator(comparator);
         if (orderType == MESSAGE )
         	setColumnSorting(fColumn1, MESSAGE_ORDER);
         else if (orderType == PLUGIN)
@@ -756,8 +752,6 @@ public class LogView extends ViewPart implements ILogListener {
 			MESSAGE_ORDER = DESCENDING;
 			PLUGIN_ORDER = DESCENDING;
         }
-		if (fCollator == null)
-			fCollator = Collator.getInstance();
 		setComparator(fMemento.getInteger(P_ORDER_TYPE).byteValue());
     }
 
@@ -948,7 +942,7 @@ public class LogView extends ViewPart implements ILogListener {
                 public int compare(Object e1, Object e2) {
                     LogEntry entry1 = (LogEntry) e1;
                     LogEntry entry2 = (LogEntry) e2;
-                    return fCollator.compare(entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
+                    return getDefaultComparator().compare(entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
                 }
             };
         } else {
@@ -956,31 +950,35 @@ public class LogView extends ViewPart implements ILogListener {
                 public int compare(Object e1, Object e2) {
                     LogEntry entry1 = (LogEntry) e1;
                     LogEntry entry2 = (LogEntry) e2;
-                    return fCollator.compare(entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
+                    return getDefaultComparator().compare(entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
                 }
             };
         }
     }
+    
+    private Comparator getDefaultComparator() {
+    	return Policy.getComparator();
+    }
 
-    private ViewerSorter getViewerSorter(byte sortType) {
+    private ViewerComparator getViewerComparator(byte sortType) {
         if (sortType == PLUGIN) {
-            return new ViewerSorter() {
+            return new ViewerComparator() {
                 public int compare(Viewer viewer, Object e1, Object e2) {
                     LogEntry entry1 = (LogEntry) e1;
                     LogEntry entry2 = (LogEntry) e2;
-                    return super.compare(viewer, entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
+                    return getComparator().compare(entry1.getPluginId(), entry2.getPluginId()) * PLUGIN_ORDER;
                 }
             };
         } else if (sortType == MESSAGE) {
-            return new ViewerSorter() {
+            return new ViewerComparator() {
                 public int compare(Viewer viewer, Object e1, Object e2) {
                     LogEntry entry1 = (LogEntry) e1;
                     LogEntry entry2 = (LogEntry) e2;
-                    return super.compare(viewer, entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
+                    return getComparator().compare(entry1.getMessage(), entry2.getMessage()) * MESSAGE_ORDER;
                 }
             };
         } else {
-            return new ViewerSorter() {
+            return new ViewerComparator() {
 				public int compare(Viewer viewer, Object e1, Object e2) {
 					long date1 = ((LogEntry) e1).getDate().getTime();
 					long date2 = ((LogEntry) e2).getDate().getTime();
