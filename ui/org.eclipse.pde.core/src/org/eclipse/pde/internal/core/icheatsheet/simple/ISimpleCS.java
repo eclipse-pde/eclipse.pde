@@ -103,4 +103,18 @@ public interface ISimpleCS extends ISimpleCSObject {
 	 */	
 	public boolean hasItems();	
 	
+	/**
+	 * Element:  item
+	 * @param item
+	 * @return
+	 */
+	public ISimpleCSItem getNextSibling(ISimpleCSItem item);
+	
+	/**
+	 * Element:  item
+	 * @param item
+	 * @return
+	 */
+	public ISimpleCSItem getPreviousSibling(ISimpleCSItem item);
+	
 }

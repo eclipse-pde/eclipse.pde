@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
@@ -24,14 +25,18 @@ public class SimpleCSRemoveStepAction extends Action {
 
 	private ISimpleCSItem fItem;
 	
+	private ISimpleCSObject fObjectToSelect;
+	
 	/**
 	 * 
 	 */
 	public SimpleCSRemoveStepAction() {
-		// TODO: MP: Update
 		setText(PDEUIMessages.SimpleCSRemoveStepAction_0);
+		// TODO: MP: LOW: SimpleCS:  Add tool-tip / image ?
 //		setImageDescriptor(PDEPluginImages.DESC_GEL_SC_OBJ);
 //		setToolTipText(PDEUIMessages.SchemaEditor_NewElement_tooltip);
+		fItem = null;
+		fObjectToSelect = null;
 	}
 
 	/**
@@ -48,7 +53,35 @@ public class SimpleCSRemoveStepAction extends Action {
 		if (fItem != null) {
 			// Parent can only be a cheat sheet
 			ISimpleCS cheatsheet = (ISimpleCS)fItem.getParent(); 
+			// Determine the item to select after the deletion takes place 
+			determineItemToSelect(cheatsheet);
+			// Remove the item
 			cheatsheet.removeItem(fItem);
 		}
+	}
+	
+	/**
+	 * @param cheatsheet
+	 */
+	private void determineItemToSelect(ISimpleCS cheatsheet) {
+		// Select the next sibling
+		fObjectToSelect = cheatsheet.getNextSibling(fItem);
+		if (fObjectToSelect == null) {
+			// No next sibling
+			// Select the previous sibling
+			fObjectToSelect = cheatsheet.getPreviousSibling(fItem);
+			if (fObjectToSelect == null) {
+				// No previous sibling
+				// Select the parent
+				fObjectToSelect = cheatsheet;
+			}
+		}
+	}
+	
+	/**
+	 * @return
+	 */
+	public ISimpleCSObject getObjectToSelect() {
+		return fObjectToSelect;
 	}
 }

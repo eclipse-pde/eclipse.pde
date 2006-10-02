@@ -329,4 +329,33 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#getNextSibling(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem)
+	 */
+	public ISimpleCSItem getNextSibling(ISimpleCSItem item) {
+		int position = fItems.indexOf(item);
+		int lastIndex = fItems.size() - 1;
+		if ((position == -1) ||
+				(position == lastIndex)) {
+			// Either the item was not found or the item was found but it is 
+			// at the last index
+			return null;
+		}
+		return (ISimpleCSItem)fItems.get(position + 1);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#getPreviousSibling(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem)
+	 */
+	public ISimpleCSItem getPreviousSibling(ISimpleCSItem item) {
+		int position = fItems.indexOf(item);
+		if ((position == -1) ||
+				(position == 0)) {
+			// Either the item was not found or the item was found but it is 
+			// at the first index
+			return null;
+		}
+		return (ISimpleCSItem)fItems.get(position - 1);
+	}
+
 }

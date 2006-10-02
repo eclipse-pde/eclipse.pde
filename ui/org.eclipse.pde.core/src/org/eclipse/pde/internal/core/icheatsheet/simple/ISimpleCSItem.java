@@ -140,5 +140,19 @@ public interface ISimpleCSItem extends ISimpleCSObject, ISimpleCSHelpObject, ISi
 	 * @return
 	 */	
 	public boolean hasSubItems();
+	
+	/**
+	 * Element:  subitem, repeated-subitem, conditional-subitem
+	 * @param subitem
+	 * @return
+	 */
+	public ISimpleCSSubItemObject getNextSibling(ISimpleCSSubItemObject subitem);
+	
+	/**
+	 * Element:  subitem, repeated-subitem, conditional-subitem
+	 * @param subitem
+	 * @return
+	 */
+	public ISimpleCSSubItemObject getPreviousSibling(ISimpleCSSubItemObject subitem);
 
 }

@@ -542,4 +542,34 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getNextSibling(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
+	 */
+	public ISimpleCSSubItemObject getNextSibling(ISimpleCSSubItemObject subitem) {
+		int position = fSubItems.indexOf(subitem);
+		int lastIndex = fSubItems.size() - 1;
+		if ((position == -1) ||
+				(position == lastIndex)) {
+			// Either the subitem was not found or the subitem was found but it is 
+			// at the last index
+			return null;
+		}
+		return (ISimpleCSSubItemObject)fSubItems.get(position + 1);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#getPreviousSibling(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject)
+	 */
+	public ISimpleCSSubItemObject getPreviousSibling(
+			ISimpleCSSubItemObject subitem) {
+		int position = fSubItems.indexOf(subitem);
+		if ((position == -1) ||
+				(position == 0)) {
+			// Either the sub item was not found or the subitem was found but it is 
+			// at the first index
+			return null;
+		}
+		return (ISimpleCSSubItemObject)fSubItems.get(position - 1);
+	}
+
 }

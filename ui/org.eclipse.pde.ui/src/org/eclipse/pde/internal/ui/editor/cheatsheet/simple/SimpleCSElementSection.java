@@ -471,13 +471,24 @@ public class SimpleCSElementSection extends TreeSection implements
 			ISimpleCSObject object = (ISimpleCSObject)objects[i];		
 			if (object == null) {
 				// Ignore
-			} else if ((object.getType() == ISimpleCSConstants.TYPE_ITEM) ||
-						(object.getType() == ISimpleCSConstants.TYPE_SUBITEM)) {
+			} else if (object.getType() == ISimpleCSConstants.TYPE_ITEM) {
+				// Remove the item
+				fTreeViewer.remove(object);
+				// Select the appropriate object
+				ISimpleCSObject csObject = fRemoveStepAction.getObjectToSelect();
+				if (csObject == null) {
+					csObject = object.getParent();
+				}
+				fTreeViewer.setSelection(new StructuredSelection(csObject), true);
+			} else if (object.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
 				// Remove the subitem
 				fTreeViewer.remove(object);
-				// Select the parent in the tree
-				// TODO: MP: LOW: Make the sibling subitem selected instead
-				fTreeViewer.setSelection(new StructuredSelection(object.getParent()), true);
+				// Select the appropriate object
+				ISimpleCSObject csObject = fRemoveSubStepAction.getObjectToSelect();
+				if (csObject == null) {
+					csObject = object.getParent();
+				}
+				fTreeViewer.setSelection(new StructuredSelection(csObject), true);
 			} else if ((object.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) ||
 					(object.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) ||
 					(object.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN)) {

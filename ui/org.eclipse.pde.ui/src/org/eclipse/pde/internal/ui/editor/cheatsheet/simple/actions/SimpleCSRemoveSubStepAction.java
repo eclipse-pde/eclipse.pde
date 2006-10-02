@@ -28,15 +28,19 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 public class SimpleCSRemoveSubStepAction extends Action {
 
 	private ISimpleCSSubItemObject fSubItem;
+
+	private ISimpleCSObject fObjectToSelect;	
 	
 	/**
 	 * 
 	 */
 	public SimpleCSRemoveSubStepAction() {
-		// TODO: MP: Update
+		// TODO: MP: LOW: SimpleCS:  Add tool-tip / image ?
 		setText(PDEUIMessages.SimpleCSRemoveSubStepAction_0);
 //		setImageDescriptor(PDEPluginImages.DESC_GEL_SC_OBJ);
 //		setToolTipText(PDEUIMessages.SchemaEditor_NewElement_tooltip);
+		fSubItem = null;
+		fObjectToSelect = null;		
 	}
 
 	/**
@@ -54,17 +58,63 @@ public class SimpleCSRemoveSubStepAction extends Action {
 			// Determine parent type and remove accordingly 
 			ISimpleCSObject parent = fSubItem.getParent();
 			if (parent.getType() == ISimpleCSConstants.TYPE_ITEM) {
+				// Parent is an item
 				ISimpleCSItem item = (ISimpleCSItem)parent;
+				// Determine the item to select after the deletion takes place 
+				determineItemToSelect(item);
+				// Remove the subitem
 				item.removeSubItem(fSubItem);
 			} else if ((parent.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) &&
 					(fSubItem.getType() == ISimpleCSConstants.TYPE_SUBITEM)) {
-				ISimpleCSRepeatedSubItem item = (ISimpleCSRepeatedSubItem)parent;
-				item.setSubItem(null);
+				// Parent is a repeated subitem
+				ISimpleCSRepeatedSubItem subitem = (ISimpleCSRepeatedSubItem)parent;
+				// Determine the item to select after the deletion takes place 
+				determineItemToSelect(subitem);
+				// Remove the subitem
+				subitem.setSubItem(null);
 			} else if ((parent.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) &&
 					(fSubItem.getType() == ISimpleCSConstants.TYPE_SUBITEM)) {
-				ISimpleCSConditionalSubItem item = (ISimpleCSConditionalSubItem)parent;
-				item.removeSubItem((ISimpleCSSubItem)fSubItem);
+				// Parent is a conditional subitem
+				ISimpleCSConditionalSubItem subitem = (ISimpleCSConditionalSubItem)parent;
+				// Determine the item to select after the deletion takes place 
+				determineItemToSelect(subitem);
+				// Remove the subitem
+				subitem.removeSubItem((ISimpleCSSubItem)fSubItem);
 			}
 		}
 	}
+
+	/**
+	 * @param item
+	 */
+	private void determineItemToSelect(ISimpleCSItem item) {
+		// Select the next sibling
+		fObjectToSelect = item.getNextSibling(fSubItem);
+		if (fObjectToSelect == null) {
+			// No next sibling
+			// Select the previous sibling
+			fObjectToSelect = item.getPreviousSibling(fSubItem);
+			if (fObjectToSelect == null) {
+				// No previous sibling
+				// Select the parent
+				fObjectToSelect = item;
+			}
+		}
+	}
+	
+	/**
+	 * @param item
+	 */
+	private void determineItemToSelect(ISimpleCSObject object) {
+		// The parent itself
+		fObjectToSelect = object;
+	}
+	
+	/**
+	 * @return
+	 */
+	public ISimpleCSObject getObjectToSelect() {
+		return fObjectToSelect;
+	}	
+	
 }
