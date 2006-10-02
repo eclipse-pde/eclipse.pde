@@ -295,7 +295,11 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		if ("jar".equalsIgnoreCase(basePath.getFileExtension())) { //$NON-NLS-1$
 			path = basePath.toOSString();
 		} else {
-			path = basePath.append(libraryName).toString();
+			Path libraryPath = new Path(libraryName);
+			if (libraryPath.isAbsolute())
+				path = libraryPath.toOSString();
+			else
+				path = basePath.append(libraryPath).toOSString();
 		}
 		path = generator.replaceVariables(path, pluginId == null ? false : generator.getCompiledElements().contains(pluginId));
 		String secondaryPath = null;
