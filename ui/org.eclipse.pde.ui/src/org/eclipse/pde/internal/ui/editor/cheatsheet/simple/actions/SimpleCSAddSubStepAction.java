@@ -27,13 +27,13 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
  */
 public class SimpleCSAddSubStepAction extends SimpleCSAbstractAdd {
 
-	private ISimpleCSObject fObject;
+	private ISimpleCSObject fParentObject;
 	
 	/**
 	 * 
 	 */
 	public SimpleCSAddSubStepAction() {
-		// TODO: MP: Update
+		// TODO: MP: LOW: SimpleCS: Add tooltip / image ?
 		setText(PDEUIMessages.SimpleCSAddSubStepAction_0);
 //		setImageDescriptor(PDEPluginImages.DESC_GEL_SC_OBJ);
 //		setToolTipText(PDEUIMessages.SchemaEditor_NewElement_tooltip);
@@ -42,8 +42,8 @@ public class SimpleCSAddSubStepAction extends SimpleCSAbstractAdd {
 	/**
 	 * @param cheatsheet
 	 */
-	public void setObject(ISimpleCSObject object) {
-		fObject = object;
+	public void setParentObject(ISimpleCSObject object) {
+		fParentObject = object;
 	}
 
 	/* (non-Javadoc)
@@ -51,23 +51,23 @@ public class SimpleCSAddSubStepAction extends SimpleCSAbstractAdd {
 	 */
 	public void run() {
 		
-		if (fObject == null) {
+		if (fParentObject == null) {
 			return;
 		}
 		
-		ISimpleCSModelFactory factory = fObject.getModel().getFactory();
+		ISimpleCSModelFactory factory = fParentObject.getModel().getFactory();
 		
 		// Element: subitem
-		ISimpleCSSubItem subitem = factory.createSimpleCSSubItem(fObject);
+		ISimpleCSSubItem subitem = factory.createSimpleCSSubItem(fParentObject);
 		// Set on the proper parent object
-		if (fObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
-			ISimpleCSItem item = (ISimpleCSItem)fObject;
+		if (fParentObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
+			ISimpleCSItem item = (ISimpleCSItem)fParentObject;
 			subitem.setLabel(generateSubItemLabel(item, PDEUIMessages.SimpleCSAddSubStepAction_1));
 
 			item.addSubItem(subitem);
-		} else if (fObject.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) {
+		} else if (fParentObject.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) {
 			// Not supported by editor
-		} else if (fObject.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) {
+		} else if (fParentObject.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) {
 			// Note supported by editor
 		}
 		

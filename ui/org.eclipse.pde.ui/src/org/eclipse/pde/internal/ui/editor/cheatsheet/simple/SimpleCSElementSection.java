@@ -293,9 +293,15 @@ public class SimpleCSElementSection extends TreeSection implements
 					if (item.isLastSubItem(subitem) == false) {
 						canMoveDown = true;
 					}
+					// Preserve cheat sheet validity
+					// Semantic Rule:  Cannot have a subitem and any of the following
+					// together:  perform-when, command, action
+					if (item.getExecutable() == null) {
+						canAddSubItem = true;
+					}					
 				}
-			
 				canRemove = true;
+				
 			} else if ((csObject.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) ||
 						(csObject.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) ||
 						(csObject.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN) ||
@@ -329,12 +335,16 @@ public class SimpleCSElementSection extends TreeSection implements
 		
 		ISelection sel = fTreeViewer.getSelection();
 		Object object = ((IStructuredSelection) sel).getFirstElement();
-		if (object != null) {
-			if (object instanceof ISimpleCSItem) {
-				fAddSubStepAction.setObject((ISimpleCSItem)object);
-				fAddSubStepAction.run();
-			}
-		}	
+		if (object == null) {
+			return;
+		}
+		if (object instanceof ISimpleCSItem) {
+			fAddSubStepAction.setParentObject((ISimpleCSObject)object);
+			fAddSubStepAction.run();
+		} else if (object instanceof ISimpleCSSubItem) {
+			fAddSubStepAction.setParentObject(((ISimpleCSObject)object).getParent());
+			fAddSubStepAction.run();
+		}
 		
 	}	
 	
@@ -554,7 +564,7 @@ public class SimpleCSElementSection extends TreeSection implements
 			ISimpleCSItem item = (ISimpleCSItem)csObject;
 			// Add to the "New" submenu
 			// Add sub-step action
-			fAddSubStepAction.setObject(csObject);
+			fAddSubStepAction.setParentObject(csObject);
 			// Preserve cheat sheet validity
 			// Semantic Rule:  Cannot have a subitem and any of the following
 			// together:  perform-when, command, action			
