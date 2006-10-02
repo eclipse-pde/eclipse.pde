@@ -77,7 +77,14 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	}
 	
 	private void initialize() throws CoreException{
-		if (productFile != null && !productFile.startsWith("${")) { //$NON-NLS-1$
+		//get rid of old feature that we will be overwriting, we don't want it in the state accidently.
+		File dir = new File(getWorkingDirectory(), IPDEBuildConstants.DEFAULT_FEATURE_LOCATION + '/' + featureId);
+		File xml = new File(dir, Constants.FEATURE_FILENAME_DESCRIPTOR);
+		if(xml.exists()){
+			xml.delete();
+		}
+		
+		if (productFile != null && !productFile.startsWith("${") && productFile.length() > 0) { //$NON-NLS-1$
 			String productPath = findFile(productFile, false);
 			if (productPath == null)
 				productPath = productFile;

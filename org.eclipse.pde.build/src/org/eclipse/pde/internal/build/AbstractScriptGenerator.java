@@ -305,7 +305,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	//Find a file in a bundle or a feature.
 	//location is assumed to be structured like : /<featureId | pluginId>/path.to.the.file
 	protected String findFile(String location, boolean makeRelative) {
-		if (location == null)
+		if (location == null || location.length() == 0)
 			return null;
 		PDEState state;
 		try {
