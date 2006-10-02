@@ -37,9 +37,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	public void generate() throws CoreException {
 		initialize();
 
-		List plugins = pluginList != null ? Arrays.asList(pluginList) : new ArrayList();
-		List features = featureList != null ? Arrays.asList(featureList) : new ArrayList();
-		List fragments = fragmentList != null ? Arrays.asList(fragmentList) : new ArrayList();
+		List plugins = pluginList != null ? new ArrayList(Arrays.asList(pluginList)) : new ArrayList();
+		List features = featureList != null ? new ArrayList(Arrays.asList(featureList)) : new ArrayList();
+		List fragments = fragmentList != null ? new ArrayList(Arrays.asList(fragmentList)) : new ArrayList();
 		if (product != null) {
 			if(product.useFeatures()) {
 				features.addAll(product.getFeatures());
