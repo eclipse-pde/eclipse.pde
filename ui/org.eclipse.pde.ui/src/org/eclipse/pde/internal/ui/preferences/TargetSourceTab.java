@@ -17,6 +17,7 @@ import java.util.Arrays;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -33,7 +34,6 @@ import org.eclipse.pde.internal.core.SourceLocation;
 import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -71,6 +71,8 @@ public class TargetSourceTab {
 	private Button fRemoveButton;
 	private String fLastUserPath = null;
 	
+	private DialogPage fPage = null;
+
 	class NamedElement {
 		String text;
 		public NamedElement(String text) {
@@ -127,13 +129,14 @@ public class TargetSourceTab {
 		}	
 	}
 
-	public TargetSourceTab() {
+	public TargetSourceTab(DialogPage page) {
 		initializeImages();
 		fSystemNode = new NamedElement(PDEUIMessages.SourceBlock_target); 
 		fUserNode = new NamedElement(PDEUIMessages.SourceBlock_additional); 
 		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
 		fExtensionLocations = manager.getExtensionLocations();
 		fUserLocations.addAll(Arrays.asList(manager.getUserLocations()));
+		fPage = page;
 	}
 	
 	private void initializeImages() {
@@ -199,7 +202,7 @@ public class TargetSourceTab {
 	}
 	
 	private DirectoryDialog getDirectoryDialog(String filterPath) {
-		DirectoryDialog dialog = new DirectoryDialog(PDEPlugin.getActiveWorkbenchShell());
+		DirectoryDialog dialog = new DirectoryDialog(fPage.getShell());
 		dialog.setMessage(PDEUIMessages.SourcePreferencePage_dialogMessage); 
 		if (filterPath != null)
 			dialog.setFilterPath(filterPath);

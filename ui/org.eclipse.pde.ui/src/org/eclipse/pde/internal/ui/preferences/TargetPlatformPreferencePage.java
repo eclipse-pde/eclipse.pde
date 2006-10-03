@@ -293,7 +293,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	}
 	
 	private void createSourceTab(TabFolder folder) {
-		fSourceTab = new TargetSourceTab();
+		fSourceTab = new TargetSourceTab(this);
 		Control block = fSourceTab.createContents(folder);
 		
 		TabItem tab = new TabItem(folder, SWT.NONE);
