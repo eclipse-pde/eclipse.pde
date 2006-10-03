@@ -70,6 +70,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.osgi.framework.Version;
 
 public class CategorySection extends TreeSection implements
 		IFeatureModelListener {
@@ -772,13 +773,22 @@ public class CategorySection extends TreeSection implements
 		// + "/" + feature.getId() + "_" + feature.getVersion() + ".jar");
 		// //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		sfeature
-				.setURL("features/" + feature.getId() + "_" + feature.getVersion() + ".jar"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				.setURL("features/" + feature.getId() + "_" + formatVersion(feature.getVersion()) + ".jar"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		sfeature.setOS(feature.getOS());
 		sfeature.setWS(feature.getWS());
 		sfeature.setArch(feature.getArch());
 		sfeature.setNL(feature.getNL());
 		sfeature.setIsPatch(isFeaturePatch(feature));
 		return sfeature;
+	}
+	
+	private static String formatVersion(String version) {
+		try {
+			Version v = new Version(version);
+			return v.toString();
+		} catch (IllegalArgumentException e){ 
+		}
+		return version;
 	}
 
 	private static boolean isFeaturePatch(IFeature feature) {
