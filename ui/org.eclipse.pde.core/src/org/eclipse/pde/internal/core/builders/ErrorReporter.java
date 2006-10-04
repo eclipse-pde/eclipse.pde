@@ -41,9 +41,9 @@ public abstract class ErrorReporter {
 	}
 
 	protected IMarker addMarker(String message, int lineNumber, int severity,
-			int problemID) {
+			int problemID, String category) {
 		try {
-			IMarker marker = getMarkerFactory().createMarker(fFile, problemID);
+			IMarker marker = getMarkerFactory().createMarker(fFile, problemID, category);
 			marker.setAttribute(IMarker.MESSAGE, message);
 			marker.setAttribute(IMarker.SEVERITY, severity);
 			if (lineNumber == -1)
@@ -100,29 +100,29 @@ public abstract class ErrorReporter {
 		}
 	}
 
-	public IMarker report(String message, int line, int severity, int problemID) {
+	public IMarker report(String message, int line, int severity, int problemID, String category) {
 		if (severity == CompilerFlags.ERROR)
-			return addMarker(message, line, IMarker.SEVERITY_ERROR, problemID);
+			return addMarker(message, line, IMarker.SEVERITY_ERROR, problemID, category);
 		else if (severity == CompilerFlags.WARNING)
-			return addMarker(message, line, IMarker.SEVERITY_WARNING, problemID);
+			return addMarker(message, line, IMarker.SEVERITY_WARNING, problemID, category);
 		return null;
 	}
 
-	public IMarker report(String message, int line, int severity) {
-		return report(message, line, severity, PDEMarkerFactory.NO_RESOLUTION);
+	public IMarker report(String message, int line, int severity, String category) {
+		return report(message, line, severity, PDEMarkerFactory.NO_RESOLUTION, category);
 	}
 
 	protected IMarker report(String message, int line, String compilerFlag,
-			int problemID) {
+			int problemID, String category) {
 		int severity = CompilerFlags.getFlag(fProject, compilerFlag);
 		if (severity != CompilerFlags.IGNORE) {
-			return report(message, line, severity, problemID);
+			return report(message, line, severity, problemID, category);
 		}
 		return null;
 	}
 
-	protected void report(String message, int line, String compilerFlag) {
-		report(message, line, compilerFlag, PDEMarkerFactory.NO_RESOLUTION);
+	protected void report(String message, int line, String compilerFlag, String category) {
+		report(message, line, compilerFlag, PDEMarkerFactory.NO_RESOLUTION, category);
 	}
 
 	public void validateContent(IProgressMonitor monitor) {

@@ -107,9 +107,9 @@ public class XMLErrorReporter extends DefaultHandler {
 		return fFile;
 	}
 
-	private IMarker addMarker(String message, int lineNumber, int severity, int fixId) {
+	private IMarker addMarker(String message, int lineNumber, int severity, int fixId, String category) {
 		try {
-			IMarker marker = getMarkerFactory().createMarker(fFile, fixId);
+			IMarker marker = getMarkerFactory().createMarker(fFile, fixId, category);
 			marker.setAttribute(IMarker.MESSAGE, message);
 			marker.setAttribute(IMarker.SEVERITY, severity);
 			if (lineNumber == -1)
@@ -131,7 +131,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	}
 
 	private void addMarker(SAXParseException e, int severity) {
-		addMarker(e.getMessage(), e.getLineNumber(), severity, PDEMarkerFactory.NO_RESOLUTION);
+		addMarker(e.getMessage(), e.getLineNumber(), severity, PDEMarkerFactory.NO_RESOLUTION, PDEMarkerFactory.CAT_OTHER);
 	}
 
 	public void error(SAXParseException exception) throws SAXException {
@@ -158,8 +158,8 @@ public class XMLErrorReporter extends DefaultHandler {
 		}
 	}
 
-	public void report(String message, int line, int severity, int fixId, Element element, String attrName) {
-		IMarker marker = report(message, line, severity, fixId);
+	public void report(String message, int line, int severity, int fixId, Element element, String attrName, String category) {
+		IMarker marker = report(message, line, severity, fixId, category);
 		if (marker == null)
 			return;
 		try {
@@ -203,16 +203,16 @@ public class XMLErrorReporter extends DefaultHandler {
 	}
 	
 	
-	public IMarker report(String message, int line, int severity, int fixId) {
+	public IMarker report(String message, int line, int severity, int fixId, String category) {
 		if (severity == CompilerFlags.ERROR)
-			return addMarker(message, line, IMarker.SEVERITY_ERROR, fixId);
+			return addMarker(message, line, IMarker.SEVERITY_ERROR, fixId, category);
 		if (severity == CompilerFlags.WARNING)
-			return addMarker(message, line, IMarker.SEVERITY_WARNING, fixId);
+			return addMarker(message, line, IMarker.SEVERITY_WARNING, fixId, category);
 		return null;
 	}
 	
-	public IMarker report(String message, int line, int severity) {
-		return report(message, line, severity, PDEMarkerFactory.NO_RESOLUTION);
+	public IMarker report(String message, int line, int severity, String category) {
+		return report(message, line, severity, PDEMarkerFactory.NO_RESOLUTION, category);
 	}
 
 	public void warning(SAXParseException exception) throws SAXException {
@@ -439,7 +439,7 @@ public class XMLErrorReporter extends DefaultHandler {
 		if (x > 0) {
 			try {
 				int line = fTextDocument.getLineOfOffset(x) + 1;
-				report(PDECoreMessages.XMLErrorReporter_ExternalEntityResolution, line, CompilerFlags.WARNING);
+				report(PDECoreMessages.XMLErrorReporter_ExternalEntityResolution, line, CompilerFlags.WARNING, PDEMarkerFactory.CAT_OTHER);
 			} catch (BadLocationException e) {
 			}
 		}

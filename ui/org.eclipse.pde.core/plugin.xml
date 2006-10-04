@@ -183,12 +183,13 @@
 <!-- Markers                                                                           -->
 <!-- ================================================================================= -->
    <extension
-         id="org.eclipse.pde.validation-marker"
+         id="problem"
          name="%builders.marker.label"
          point="org.eclipse.core.resources.markers">
       <super type="org.eclipse.core.resources.problemmarker"/>
       <super type="org.eclipse.core.resources.textmarker"/>
       <attribute name="id"/>
+      <attribute name="PDECategoryId"/>
       <persistent value="true"/>
    </extension>
    

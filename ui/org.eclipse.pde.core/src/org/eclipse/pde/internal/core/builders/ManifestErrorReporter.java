@@ -39,20 +39,20 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 	protected void reportIllegalElement(Element element, int severity) {
 		Node parent = element.getParentNode();
 		if (parent == null || parent instanceof org.w3c.dom.Document) {
-			report(PDECoreMessages.Builders_Manifest_illegalRoot, getLine(element), severity); 
+			report(PDECoreMessages.Builders_Manifest_illegalRoot, getLine(element), severity, PDEMarkerFactory.CAT_FATAL); 
 		} else {
 			report(NLS.bind(
 							PDECoreMessages.Builders_Manifest_child,
 							new String[] { element.getNodeName(), parent.getNodeName() }),
 					getLine(element),
 					severity,
-					PDEMarkerFactory.P_ILLEGAL_XML_NODE, element, null);
+					PDEMarkerFactory.P_ILLEGAL_XML_NODE, element, null, PDEMarkerFactory.CAT_FATAL);
 		}
 	}
 	
 	protected void reportMissingRequiredAttribute(Element element, String attName, int severity) {
 		String message = NLS.bind(PDECoreMessages.Builders_Manifest_missingRequired, (new String[] { attName, element.getNodeName() })); //			
-		report(message, getLine(element), severity);
+		report(message, getLine(element), severity, PDEMarkerFactory.CAT_FATAL);
 	}
 
 	protected boolean assertAttributeDefined(Element element, String attrName, int severity) {
@@ -67,18 +67,18 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 	protected void reportUnknownAttribute(Element element, String attName, int severity) {
 		String message = NLS.bind(PDECoreMessages.Builders_Manifest_attribute, attName);
 		report(message, getLine(element, attName), severity,
-				PDEMarkerFactory.P_ILLEGAL_XML_NODE, element, attName);
+				PDEMarkerFactory.P_ILLEGAL_XML_NODE, element, attName, PDEMarkerFactory.CAT_OTHER);
 	}
 	
 	protected void reportIllegalAttributeValue(Element element, Attr attr) {
 		String message = NLS.bind(PDECoreMessages.Builders_Manifest_att_value, (new String[] { attr.getValue(), attr.getName() }));
-		report(message,	getLine(element, attr.getName()), CompilerFlags.ERROR);
+		report(message,	getLine(element, attr.getName()), CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 	}
 	
 	protected void validateVersionAttribute(Element element, Attr attr) {
 		IStatus status = VersionUtil.validateVersion(attr.getValue());
 		if (status.getSeverity() != IStatus.OK)
-			report(status.getMessage(), getLine(element, attr.getName()), CompilerFlags.ERROR);
+			report(status.getMessage(), getLine(element, attr.getName()), CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 	}
 	
 	protected void validateMatch(Element element, Attr attr) {
@@ -105,7 +105,7 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 
 	private void reportMissingElementContent(Element element) {
 		report(NLS.bind(PDECoreMessages.Builders_Feature_empty, element 
-		.getNodeName()), getLine(element), CompilerFlags.ERROR);
+		.getNodeName()), getLine(element), CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 	}
 	
 	protected void reportExtraneousElements(NodeList elements, int maximum) {
@@ -113,7 +113,7 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 			for (int i = maximum; i < elements.getLength(); i++) {
 				Element element = (Element) elements.item(i);
 				report(NLS.bind(PDECoreMessages.Builders_Feature_multiplicity, element.getNodeName()), getLine(element),
-						CompilerFlags.ERROR);
+						CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 			}
 		}
 	}
@@ -125,7 +125,7 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 				value = "file:" + value; //$NON-NLS-1$
 			new URL(value);
 		} catch (MalformedURLException e) {
-			report(NLS.bind(PDECoreMessages.Builders_Feature_badURL, attName), getLine(element, attName), CompilerFlags.ERROR); 
+			report(NLS.bind(PDECoreMessages.Builders_Feature_badURL, attName), getLine(element, attName), CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL); 
 		}
 	}
 	
@@ -138,7 +138,8 @@ public class ManifestErrorReporter extends XMLErrorReporter {
         if (!IdUtil.isValidCompositeID(attr.getValue())) {
             String message = NLS.bind(PDECoreMessages.Builders_Manifest_compositeID, attr.getValue(), attr.getName());
             report(message, getLine(element, attr.getName()),
-                    CompilerFlags.WARNING);
+                    CompilerFlags.WARNING,
+                    PDEMarkerFactory.CAT_OTHER);
             return false;
         }
         return true;
@@ -180,7 +181,7 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 	protected void reportDeprecatedAttribute(Element element, Attr attr) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
 		if (severity != CompilerFlags.IGNORE) {
-			report(NLS.bind(PDECoreMessages.Builders_Manifest_deprecated_attribute, attr.getName()), getLine(element, attr.getName()), severity);
+			report(NLS.bind(PDECoreMessages.Builders_Manifest_deprecated_attribute, attr.getName()), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_DEPRECATION);
 		}	
 	}
 }

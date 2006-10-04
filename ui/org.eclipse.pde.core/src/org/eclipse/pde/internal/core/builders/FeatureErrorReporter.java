@@ -157,7 +157,8 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 						report(
 								NLS.bind(PDECoreMessages.Builders_Feature_patchedMatch, attr.getValue()), 
 								getLine(element, attr.getValue()), 
-								CompilerFlags.ERROR);
+								CompilerFlags.ERROR,
+								PDEMarkerFactory.CAT_FATAL);
 					} else {
 						validateMatch(element, attr);
 					}
@@ -166,12 +167,14 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 						report(
 								NLS.bind(PDECoreMessages.Builders_Feature_patchPlugin, attr.getValue()), 
 								getLine(element, attr.getValue()), 
-								CompilerFlags.ERROR);
+								CompilerFlags.ERROR,
+								PDEMarkerFactory.CAT_FATAL);
 					} else if ("true".equalsIgnoreCase(attr.getValue()) && element.getAttributeNode("version") == null) { //$NON-NLS-1$ //$NON-NLS-2$
 						report(
 								NLS.bind(PDECoreMessages.Builders_Feature_patchedVersion, attr.getValue()), 
 								getLine(element, attr.getValue()), 
-								CompilerFlags.ERROR);
+								CompilerFlags.ERROR,
+								PDEMarkerFactory.CAT_FATAL);
 					} else {
 						validateBoolean(element, attr);
 					}
@@ -391,7 +394,8 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 					|| (!isFragment && model.isFragmentModel())) {
 				report(NLS.bind(PDECoreMessages.Builders_Feature_reference, id),  
 						getLine(element, attr.getName()),
-						severity);
+						severity,
+						PDEMarkerFactory.CAT_OTHER);
 			}
 		}
 	}
@@ -403,13 +407,14 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			if (feature == null) {
 				report(NLS.bind(PDECoreMessages.Builders_Feature_freference, attr.getValue()),  
 						getLine(element, attr.getName()),
-						severity);
+						severity,
+						PDEMarkerFactory.CAT_OTHER);
 			}
 		}
 	}
 	protected void reportExclusiveAttributes(Element element, String attName1, String attName2, int severity) {
 		String message = NLS.bind(PDECoreMessages.Builders_Feature_exclusiveAttributes, (new String[] {attName1, attName2}));
-		report(message, getLine(element, attName2), severity);
+		report(message, getLine(element, attName2), severity, PDEMarkerFactory.CAT_OTHER);
 	}
 
 	private void validateUnpack(Element parent) {
@@ -436,7 +441,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 								PDECoreMessages.Builders_Feature_missingUnpackFalse,
 								(new String[] {
 										parent.getAttribute("id"), "unpack=\"false\"" })); //$NON-NLS-1$ //$NON-NLS-2$			
-				report(message, getLine(parent), severity);
+				report(message, getLine(parent), severity, PDEMarkerFactory.CAT_OTHER);
 		}
 	}
 

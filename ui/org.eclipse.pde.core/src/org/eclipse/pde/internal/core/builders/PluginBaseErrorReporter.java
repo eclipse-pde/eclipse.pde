@@ -161,13 +161,14 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 			if (model == null || !model.isEnabled()) {
 				report(NLS.bind(PDECoreMessages.Builders_Manifest_dependency, attr.getValue()),  
 						getLine(element, attr.getName()),
-						severity);
+						severity,
+						PDEMarkerFactory.CAT_FATAL);
 			}
 		}
 	}
 	
 	private void reportDeprecatedElement(Element element, int severity) {
-		report(NLS.bind(PDECoreMessages.Builders_Manifest_deprecated_3_0, element.getNodeName()), getLine(element), severity);
+		report(NLS.bind(PDECoreMessages.Builders_Manifest_deprecated_3_0, element.getNodeName()), getLine(element), severity, PDEMarkerFactory.CAT_DEPRECATION);
 	}
 
 }

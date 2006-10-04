@@ -61,14 +61,16 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		String fEntryToken;
 		String fEntryName;
 		String fMessage;
+		String fCategory;
 		int fFixId;
 		int fSeverity;
-		BuildProblem(String name, String token, String message, int fixId, int severity) {
+		BuildProblem(String name, String token, String message, int fixId, int severity, String category) {
 			fEntryName = name;
 			fEntryToken = token;
 			fMessage = message;
 			fFixId = fixId;
 			fSeverity = severity;
+			fCategory = category;
 		}
 		public boolean equals(Object obj) {
 			if (!(obj instanceof BuildProblem))
@@ -122,7 +124,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			if (entries[i].getTokens().length == 0)
 				prepareError(name, null,
 						PDECoreMessages.BuildErrorReporter_emptyEntry,
-						PDEMarkerFactory.B_REMOVAL);
+						PDEMarkerFactory.B_REMOVAL,
+						PDEMarkerFactory.CAT_FATAL);
 			else if (name.equals(PROPERTY_BIN_INCLUDES))
 				binIncludes = entries[i];
 			else if (name.equals(PROPERTY_SRC_INCLUDES))
@@ -217,7 +220,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			prepareError(PROPERTY_BIN_INCLUDES, 
 					key,
 					NLS.bind(PDECoreMessages.BuildErrorReporter_binIncludesMissing, key),
-					PDEMarkerFactory.B_ADDDITION);
+					PDEMarkerFactory.B_ADDDITION,
+					PDEMarkerFactory.CAT_FATAL);
 		}
 	}
 	
@@ -259,7 +263,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				prepareError(PROPERTY_JAR_EXTRA_CLASSPATH, tokens[i],
 						NLS.bind(PDECoreMessages.BuildErrorReporter_cannotFindJar, tokens[i]),
 						PDEMarkerFactory.NO_RESOLUTION, 
-						fClasspathSeverity);
+						fClasspathSeverity,
+						PDEMarkerFactory.CAT_OTHER);
 		}
 	}
 
@@ -286,7 +291,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			if (!found)
  				prepareError(PROPERTY_BIN_INCLUDES, key,
 						NLS.bind(PDECoreMessages.BuildErrorReporter_binIncludesMissing, key),
-						PDEMarkerFactory.B_ADDDITION);
+						PDEMarkerFactory.B_ADDDITION,
+						PDEMarkerFactory.CAT_FATAL);
 		}
 	}
 
@@ -303,7 +309,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 						|| !(folderEntry instanceof IFolder))
 					prepareError(name, tokens[j],
 							NLS.bind(PDECoreMessages.BuildErrorReporter_missingFolder, tokens[j]),
-							PDEMarkerFactory.B_REMOVAL);
+							PDEMarkerFactory.B_REMOVAL,
+							PDEMarkerFactory.CAT_OTHER);
 			}
 			
 		}
@@ -323,7 +330,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 						if (!sourceEntryKeys.contains(DEF_SOURCE_ENTRY))
 							prepareError(DEF_SOURCE_ENTRY, null,
 									PDECoreMessages.BuildErrorReporter_sourceMissing,
-									PDEMarkerFactory.NO_RESOLUTION);
+									PDEMarkerFactory.NO_RESOLUTION,
+									PDEMarkerFactory.CAT_OTHER);
 						break;
 					}
 				}
@@ -339,7 +347,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 						if (!sourceEntryKeys.contains(DEF_SOURCE_ENTRY))
 							prepareError(DEF_SOURCE_ENTRY, null,
 									PDECoreMessages.BuildErrorReporter_sourceMissing,
-									PDEMarkerFactory.NO_RESOLUTION);
+									PDEMarkerFactory.NO_RESOLUTION,
+									PDEMarkerFactory.CAT_OTHER);
 						break;
 					}
 				}
@@ -354,7 +363,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					&& !containedInFragment(manager, model.getBundleDescription().getFragments(), libname))
 				prepareError(sourceEntryKey, null,
 						NLS.bind(PDECoreMessages.BuildErrorReporter_missingEntry, sourceEntryKey),
-						PDEMarkerFactory.B_SOURCE_ADDITION);
+						PDEMarkerFactory.B_SOURCE_ADDITION,
+						PDEMarkerFactory.CAT_OTHER);
 		}
 	}
 
@@ -411,11 +421,13 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			String name = ((IBuildEntry)sourceEntries.get(0)).getName();
 			prepareError(name, null,
 					NLS.bind(PDECoreMessages.BuildErrorReporter_classpathEntryMissing1, unlistedEntries, name),
-					PDEMarkerFactory.B_SOURCE_ADDITION);
+					PDEMarkerFactory.B_SOURCE_ADDITION,
+					PDEMarkerFactory.CAT_OTHER);
 		} else
 			prepareError(DEF_SOURCE_ENTRY, null,
 					NLS.bind(PDECoreMessages.BuildErrorReporter_classpathEntryMissing, unlistedEntries),
-					PDEMarkerFactory.B_SOURCE_ADDITION);
+					PDEMarkerFactory.B_SOURCE_ADDITION,
+					PDEMarkerFactory.CAT_OTHER);
 		
 	}
 	
@@ -481,7 +493,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			}
 			
 			if (message != null)
-				prepareError(includes.getName(), token, message, fixId);
+				prepareError(includes.getName(), token, message, fixId, PDEMarkerFactory.CAT_OTHER);
 		}
 	}
 
@@ -518,7 +530,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				lineNum = getLineNumber(buildEntry, bp.fEntryToken);
 			
 			if (lineNum > 0)
-				report(bp.fMessage, lineNum, bp.fFixId, bp.fEntryName, bp.fEntryToken, bp.fSeverity);
+				report(bp.fMessage, lineNum, bp.fFixId, bp.fEntryName, bp.fEntryToken, bp.fSeverity, bp.fCategory);
 		}
 	}
 	
@@ -578,12 +590,12 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		return 0;
 	}
 
-	private void prepareError(String name, String token, String message, int fixId) {
-		prepareError(name, token, message, fixId, fBuildSeverity);
+	private void prepareError(String name, String token, String message, int fixId, String category) {
+		prepareError(name, token, message, fixId, fBuildSeverity, category);
 	}
 	
-	private void prepareError(String name, String token, String message, int fixId, int severity) {
-		BuildProblem bp = new BuildProblem(name, token, message, fixId, severity);
+	private void prepareError(String name, String token, String message, int fixId, int severity, String category) {
+		BuildProblem bp = new BuildProblem(name, token, message, fixId, severity, category);
 		for (int i = 0; i < fProblemList.size(); i++) {
 			BuildProblem listed = (BuildProblem)fProblemList.get(i);
 			if (listed.equals(bp))
@@ -592,8 +604,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		fProblemList.add(bp);
 	}
 	
-	private void report(String message, int line, int problemID, String buildEntry, String buildToken, int severity) {
-		IMarker marker = report(message, line, severity, problemID);
+	private void report(String message, int line, int problemID, String buildEntry, String buildToken, int severity, String category) {
+		IMarker marker = report(message, line, severity, problemID, category);
 		if (marker == null)
 			return;
 		try {

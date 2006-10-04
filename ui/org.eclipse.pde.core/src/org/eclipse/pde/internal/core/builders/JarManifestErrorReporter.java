@@ -144,7 +144,8 @@ public class JarManifestErrorReporter extends ErrorReporter {
 				if (byteBuf.limit() + lineDelimiter.length() > 512) {
 					report(
 							PDECoreMessages.BundleErrorReporter_lineTooLong, 
-							l + 1, CompilerFlags.ERROR);
+							l + 1, CompilerFlags.ERROR,
+							PDEMarkerFactory.CAT_FATAL);
 					return;
 				}
 				// parse
@@ -153,7 +154,8 @@ public class JarManifestErrorReporter extends ErrorReporter {
 					if (l == 0) {
 						report(
 								PDECoreMessages.BundleErrorReporter_noMainSection, 
-								1, CompilerFlags.ERROR);
+								1, CompilerFlags.ERROR,
+								PDEMarkerFactory.CAT_FATAL);
 						return;
 					}
 					/* flush last line */
@@ -168,7 +170,8 @@ public class JarManifestErrorReporter extends ErrorReporter {
 					if (l == 0) { /* if no previous line */
 						report(
 								PDECoreMessages.BundleErrorReporter_noMainSection, 
-								1, CompilerFlags.ERROR);
+								1, CompilerFlags.ERROR,
+								PDEMarkerFactory.CAT_FATAL);
 						return;
 					}
 					if (header != null) {
@@ -187,26 +190,30 @@ public class JarManifestErrorReporter extends ErrorReporter {
 				if (colon == -1) { /* no colon */
 					report(
 							PDECoreMessages.BundleErrorReporter_noColon, 
-							l + 1, CompilerFlags.ERROR);
+							l + 1, CompilerFlags.ERROR,
+							PDEMarkerFactory.CAT_FATAL);
 					return;
 				}
 				String headerName = getHeaderName(line);
 				if (headerName == null) {
 					report(
 							PDECoreMessages.BundleErrorReporter_invalidHeaderName, 
-							l + 1, CompilerFlags.ERROR);
+							l + 1, CompilerFlags.ERROR,
+							PDEMarkerFactory.CAT_FATAL);
 					return;
 				}
 				if (line.length() < colon + 2 || line.charAt(colon + 1) != ' ') {
 					report(
 							PDECoreMessages.BundleErrorReporter_noSpaceValue, 
-							l + 1, CompilerFlags.ERROR);
+							l + 1, CompilerFlags.ERROR,
+							PDEMarkerFactory.CAT_FATAL);
 					return;
 				}
 				if ("Name".equals(headerName)) { //$NON-NLS-1$
 					report(
 							PDECoreMessages.BundleErrorReporter_nameHeaderInMain, 
-							l + 1, CompilerFlags.ERROR);
+							l + 1, CompilerFlags.ERROR,
+							PDEMarkerFactory.CAT_FATAL);
 					return;
 				}
 				header = new JarManifestHeader(headerName, line
@@ -214,7 +221,8 @@ public class JarManifestErrorReporter extends ErrorReporter {
 				if (fHeaders.containsKey(header.getName())) {
 					report(
 							PDECoreMessages.BundleErrorReporter_duplicateHeader, 
-							l + 1, CompilerFlags.WARNING);
+							l + 1, CompilerFlags.WARNING,
+							PDEMarkerFactory.CAT_OTHER);
 				}
 
 			}
@@ -222,7 +230,8 @@ public class JarManifestErrorReporter extends ErrorReporter {
 				// lingering header, line not terminated
 				report(
 						PDECoreMessages.BundleErrorReporter_noLineTermination, 
-						l, CompilerFlags.ERROR);
+						l, CompilerFlags.ERROR,
+						PDEMarkerFactory.CAT_FATAL);
 				return;
 			}
 			// If there is any more headers, not starting with a Name header
@@ -237,7 +246,8 @@ public class JarManifestErrorReporter extends ErrorReporter {
 				if (!line.startsWith("Name:")) { //$NON-NLS-1$
 					report(
 							PDECoreMessages.BundleErrorReporter_noNameHeader, 
-							l, CompilerFlags.ERROR);
+							l, CompilerFlags.ERROR,
+							PDEMarkerFactory.CAT_FATAL);
 				} 
 				break;
 			}
@@ -251,18 +261,20 @@ public class JarManifestErrorReporter extends ErrorReporter {
 	protected void reportIllegalAttributeValue(IHeader header, String key,
 			String value) {
 		String msg = NLS.bind(PDECoreMessages.BundleErrorReporter_att_value, (new String[] { value, key })); 
-		report(msg, getLine(header, key + "="), CompilerFlags.ERROR); //$NON-NLS-1$
+		report(msg, getLine(header, key + "="), CompilerFlags.ERROR,  //$NON-NLS-1$
+				PDEMarkerFactory.CAT_FATAL);
 	}
 
 	protected void reportIllegalValue(IHeader header, String value) {
 		String msg = NLS.bind(PDECoreMessages.BundleErrorReporter_illegal_value, value); 
-		report(msg, getLine(header, value), CompilerFlags.ERROR); 
+		report(msg, getLine(header, value), CompilerFlags.ERROR,
+				PDEMarkerFactory.CAT_FATAL); 
 	}
 
 	protected void reportIllegalDirectiveValue(IHeader header, String key,
 			String value) {
 		String msg = NLS.bind(PDECoreMessages.BundleErrorReporter_dir_value, (new String[] { value, key })); 
-		report(msg, getLine(header, key + ":="), CompilerFlags.ERROR); //$NON-NLS-1$
+		report(msg, getLine(header, key + ":="), CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL); //$NON-NLS-1$
 	}
 
 	protected void validateAttributeValue(IHeader header,
@@ -324,7 +336,9 @@ public class JarManifestErrorReporter extends ErrorReporter {
 	protected IHeader validateRequiredHeader(String name) {
 		IHeader header = (IHeader) fHeaders.get(name);
 		if (header == null) {
-			report(NLS.bind(PDECoreMessages.BundleErrorReporter_headerMissing, name), 1, CompilerFlags.ERROR);		
+			report(NLS.bind(PDECoreMessages.BundleErrorReporter_headerMissing, name), 1, 
+					CompilerFlags.ERROR,
+					PDEMarkerFactory.CAT_FATAL);		
 		}
 		return header;
 	}

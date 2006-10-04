@@ -130,7 +130,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNRESOLVED_EX_POINTS);
 			if (severity != CompilerFlags.IGNORE) {
 				report(NLS.bind(PDECoreMessages.Builders_Manifest_ex_point, pointID), 
-					getLine(element, "point"), severity); //$NON-NLS-1$
+					getLine(element, "point"), severity, PDEMarkerFactory.CAT_OTHER); //$NON-NLS-1$
 			}
 		} else {
 			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
@@ -309,7 +309,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
             }
            
             if (message != null)   
-            	report(message, getLine(element, idAttr.getName()), CompilerFlags.WARNING);
+            	report(message, getLine(element, idAttr.getName()), CompilerFlags.WARNING, PDEMarkerFactory.CAT_OTHER);
         }
 
 		assertAttributeDefined(element, "name", CompilerFlags.ERROR); //$NON-NLS-1$
@@ -349,7 +349,8 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			if (errorMessage != null) {
 				severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_RESOURCE);
 				if (severity != CompilerFlags.IGNORE)
-					report(NLS.bind(errorMessage, schemaValue), getLine(element), severity);
+					report(NLS.bind(errorMessage, schemaValue), getLine(element), severity,
+							PDEMarkerFactory.CAT_OTHER);
 			}
 		}
 	}
@@ -366,11 +367,13 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 					getLine(element, attr.getName()),
 					severity,
 					PDEMarkerFactory.P_UNTRANSLATED_NODE,
-					element, attr.getName());
+					element, attr.getName(),
+					PDEMarkerFactory.CAT_NLS);
 		} else if (fModel instanceof AbstractModel) {
 			NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
 			if (helper == null || !helper.resourceExists(value)) {
-				report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(element, attr.getName()), severity); 
+				report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(element, attr.getName()), severity,
+						PDEMarkerFactory.CAT_NLS); 
 			}
 		}
 	}
@@ -387,11 +390,11 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 					getLine(element),
 					severity,
 					PDEMarkerFactory.P_UNTRANSLATED_NODE,
-					element, null); 
+					element, null, PDEMarkerFactory.CAT_NLS); 
 		} else if (fModel instanceof AbstractModel) {
 			NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
 			if (helper == null || !helper.resourceExists(value)) {
-				report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(element), severity); 
+				report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(element), severity, PDEMarkerFactory.CAT_NLS); 
 			}
 		}
 	}
@@ -402,7 +405,8 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			report(NLS.bind(PDECoreMessages.Builders_Manifest_resource, (new String[] { attr.getValue(), attr.getName() })),  
 							getLine(element,
 							attr.getName()), 
-							severity);
+							severity,
+							PDEMarkerFactory.CAT_OTHER);
 		}
 	}
 	
@@ -499,7 +503,8 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 						element, attr.getName()), severity,
 						PDEMarkerFactory.P_UNKNOWN_CLASS,
 						element,
-						attr.getName() + F_ATT_VALUE_PREFIX + attr.getValue());
+						attr.getName() + F_ATT_VALUE_PREFIX + attr.getValue(),
+						PDEMarkerFactory.CAT_FATAL);
 			} 
 		} catch (JavaModelException e) {
 		}
@@ -522,20 +527,21 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	
 	protected void reportUnusedAttribute(Element element, String attName, int severity) {
 		String message = NLS.bind(PDECoreMessages.Builders_Manifest_unused_attribute, attName);
-		report(message, getLine(element, attName), severity);
+		report(message, getLine(element, attName), severity, PDEMarkerFactory.CAT_OTHER);
 	}
 	
 	protected void reportUnusedElement(Element element, int severity) {
 		Node parent = element.getParentNode();
 			report(NLS.bind(PDECoreMessages.Builders_Manifest_unused_element, (new String[] { 
 			element.getNodeName(), parent.getNodeName() })),
-					getLine(element), severity);
+					getLine(element), severity,
+					PDEMarkerFactory.CAT_OTHER);
 	}
 	
 	protected void reportDeprecatedElement(Element element) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
 		if (severity != CompilerFlags.IGNORE) {
-			report(NLS.bind(PDECoreMessages.Builders_Manifest_deprecated_element, element.getNodeName()), getLine(element), severity);
+			report(NLS.bind(PDECoreMessages.Builders_Manifest_deprecated_element, element.getNodeName()), getLine(element), severity, PDEMarkerFactory.CAT_DEPRECATION);
 		}	
 	}
 
@@ -549,7 +555,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				message = NLS.bind(PDECoreMessages.Builders_Manifest_deprecated_rootElementSuggestion, point, suggestion);
 			else
 				message = NLS.bind(PDECoreMessages.Builders_Manifest_deprecated_rootElement, point);
-			report(message, getLine(element, "point"), severity); //$NON-NLS-1$
+			report(message, getLine(element, "point"), severity, PDEMarkerFactory.CAT_DEPRECATION); //$NON-NLS-1$
 		}	
 	}
 }

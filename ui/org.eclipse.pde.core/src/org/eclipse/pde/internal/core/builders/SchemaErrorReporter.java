@@ -138,7 +138,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 								if (tagName.endsWith("/")) { //$NON-NLS-1$
 									tagName = getTagName(tagName.substring(0, tagName.length() - 1));
 									if (forbiddenEndTag(tagName)) {
-										report(NLS.bind(PDECoreMessages.Builders_Schema_forbiddenEndTag, tagName), lineNumber, flag); 
+										report(NLS.bind(PDECoreMessages.Builders_Schema_forbiddenEndTag, tagName), lineNumber, flag, PDEMarkerFactory.CAT_OTHER); 
 										errorReported = true;
 									}
 								} else if (tagName.startsWith("/")) { //$NON-NLS-1$
@@ -158,7 +158,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 										}
 									}
 									if (stack.isEmpty() && !found) {
-										report(NLS.bind(PDECoreMessages.Builders_Schema_noMatchingStartTag, tagName), lineNumber, flag); 
+										report(NLS.bind(PDECoreMessages.Builders_Schema_noMatchingStartTag, tagName), lineNumber, flag, PDEMarkerFactory.CAT_OTHER); 
 										errorReported = true;
 									}
 								} else {
@@ -177,7 +177,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 					if (!stack.isEmpty()) {
 						StackEntry entry = (StackEntry)stack.pop();
 						if (!optionalEndTag(entry.tag))
-							report(NLS.bind(PDECoreMessages.Builders_Schema_noMatchingEndTag, entry.tag), entry.line, flag);
+							report(NLS.bind(PDECoreMessages.Builders_Schema_noMatchingEndTag, entry.tag), entry.line, flag, PDEMarkerFactory.CAT_OTHER);
 					}
 					stack.clear();
 				}
@@ -226,11 +226,13 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 		if (use != null && "default".equals(use.getValue()) && value == null) { //$NON-NLS-1$
 			report(NLS.bind(PDECoreMessages.Builders_Schema_valueRequired, element.getNodeName()),  
 					getLine(element),
-					CompilerFlags.ERROR);
+					CompilerFlags.ERROR,
+					PDEMarkerFactory.CAT_OTHER);
 		} else if (use == null && value != null) {
 			report(NLS.bind(PDECoreMessages.Builders_Schema_valueNotRequired, element.getNodeName()),  
 					getLine(element),
-					CompilerFlags.ERROR);
+					CompilerFlags.ERROR,
+					PDEMarkerFactory.CAT_OTHER);
 		}
 	}
 
