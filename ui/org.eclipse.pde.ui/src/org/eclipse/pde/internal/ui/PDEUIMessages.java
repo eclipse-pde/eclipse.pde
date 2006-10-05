@@ -137,6 +137,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String NewCheatSheetFileWizard_0;
 
+	public static String NewLibraryPluginCreationPage_pdependencies;
+
 	public static String OSGiFrameworkBlock_defaultGroup;
 
 	public static String OSGiFrameworkPreferencePage_default;

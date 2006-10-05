@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -39,12 +40,18 @@ import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModelFactory;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.converter.PluginConverter;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.search.dependencies.AddNewDependenciesOperation;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.IPluginContentWizard;
@@ -106,14 +113,18 @@ public class NewLibraryPluginCreationOperation extends
 		removeExportRoot(bundle);
 	}
 
-	protected void adjustManifests(IProgressMonitor monitor, IProject project, IBundle bundle)
+	protected void adjustManifests(IProgressMonitor monitor, IProject project, IPluginBase base)
 			throws CoreException {
-		super.adjustManifests(monitor, project, bundle);
-		monitor.beginTask(new String(), 2);
+		super.adjustManifests(monitor, project, base);
+		monitor.beginTask(new String(), fData.doFindDependencies() ? 4 : 2);
+		IBundle bundle = (base instanceof BundlePluginBase) ? ((BundlePluginBase)base).getBundle() : null;
 		if (bundle != null) {
 			adjustExportRoot(project, bundle);
 			monitor.worked(1);
 			addExportedPackages(project, bundle);
+			monitor.worked(1);
+			if (fData.doFindDependencies())
+				addDependencies(project, base.getModel(), new SubProgressMonitor(monitor, 2));
 		}
 		monitor.done();
 	}
@@ -304,6 +315,26 @@ public class NewLibraryPluginCreationOperation extends
 			String pkgValue = getCommaValueFromSet(packages);
 			bundle.setHeader(Constants.EXPORT_PACKAGE, pkgValue);
 		} catch (BundleException e) {
+		}
+	}
+	
+	private void addDependencies(IProject project, ISharedPluginModel model, IProgressMonitor monitor) {
+		if (!(model instanceof IBundlePluginModelBase)) {
+			monitor.done();
+			return;
+		}
+		try {
+			new AddNewDependenciesOperation(project, (IBundlePluginModelBase)model){
+				protected String[] findSecondaryBundles(IBundle bundle, Set ignorePkgs) {
+					IPluginModelBase[] bases = PDECore.getDefault().getModelManager().getPlugins();
+					String[] ids = new String[bases.length];
+					for (int i = 0; i < bases.length; i++) 
+						ids[i] = bases[i].getBundleDescription().getSymbolicName();
+					return ids;
+				}
+			}.run(monitor);
+		} catch (InvocationTargetException e) {
+		} catch (InterruptedException e) {
 		}
 	}
 

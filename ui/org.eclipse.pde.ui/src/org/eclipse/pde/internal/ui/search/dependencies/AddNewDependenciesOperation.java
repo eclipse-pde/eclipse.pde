@@ -129,7 +129,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		return fNewDependencies;
 	}
 	
-	protected final String[] findSecondaryBundles(IBundle bundle, Set ignorePkgs) {
+	protected String[] findSecondaryBundles(IBundle bundle, Set ignorePkgs) {
 		String[] secDeps = getSecondaryDependencies();
 		if (secDeps == null)
 			return null;
@@ -258,7 +258,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 
 	protected final void findImportPackages(IBundle bundle, Set ignorePkgs) {
 		IManifestHeader header = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
-		if (header == null) 
+		if (header == null || header.getValue() == null) 
 			return;
 		if (header instanceof ImportPackageHeader) {
 			ImportPackageObject[] pkgs = ((ImportPackageHeader)header).getPackages();
@@ -514,7 +514,8 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 					plugin.setModel(base.getModel());
 					base.add(plugin);
 					added.add(pluginId);
-					entry.removeToken(pluginId);
+					if (entry != null && entry.contains(pluginId))
+						entry.removeToken(pluginId);
 				} catch (BundleException e){
 				} catch (CoreException e) {
 				}

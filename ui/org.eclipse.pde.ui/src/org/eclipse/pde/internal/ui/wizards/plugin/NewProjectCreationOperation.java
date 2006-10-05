@@ -94,7 +94,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	// function used to modify Manifest just before it is written out (after all project artifacts have been created.
-	protected void adjustManifests(IProgressMonitor monitor, IProject project, IBundle bundle)
+	protected void adjustManifests(IProgressMonitor monitor, IProject project, IPluginBase bundle)
 			throws CoreException {
 	}
 	
@@ -308,7 +308,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		
 		if (fData.hasBundleStructure() && fModel instanceof WorkspaceBundlePluginModelBase) {
 			adjustManifests(new SubProgressMonitor(monitor, 1), project,
-					((BundlePluginBase)fModel.getPluginBase()).getBundle());
+					fModel.getPluginBase());
 		}
 		
 		fModel.save();

@@ -72,6 +72,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	private Combo fOSGiCombo;
 	private Combo fTargetCombo;
 	protected Button fJarredCheck;
+	protected Button fFindDependencies;
 
 	public NewLibraryPluginCreationPage(String pageName, LibraryPluginFieldData data) {
 		super(pageName);
@@ -164,7 +165,12 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		label = new Label(propertiesGroup, SWT.NONE);
 		label.setText(PDEUIMessages.NewLibraryPluginCreationPage_pprovider); 
 		fProviderText = createText(propertiesGroup, fPropertiesListener);
-
+		
+		fFindDependencies = new Button(propertiesGroup, SWT.CHECK);
+		fFindDependencies.setText(PDEUIMessages.NewLibraryPluginCreationPage_pdependencies);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		fFindDependencies.setLayoutData(data);
 	}
 
 	protected Text createText(Composite parent, ModifyListener listener) {
@@ -208,6 +214,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		fData.setOSGiFramework(fOSGIButton.getSelection() ? fOSGiCombo.getText() : null);
 		fData.setUnzipLibraries(fJarredCheck.isEnabled()
 				&& fJarredCheck.getSelection());
+		fData.setFindDependencies(fFindDependencies.getSelection());
 		
 		PluginFieldData data = fData;
 		data.setClassname(null);

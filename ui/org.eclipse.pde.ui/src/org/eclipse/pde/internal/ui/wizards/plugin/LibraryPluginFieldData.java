@@ -14,6 +14,7 @@ public class LibraryPluginFieldData extends PluginFieldData {
 	private String[] fLibraryPaths;
 
 	private boolean fUnzipLibraries = false;
+	private boolean fFindDependencies = false;
 
 	public String[] getLibraryPaths() {
 		return fLibraryPaths;
@@ -29,6 +30,14 @@ public class LibraryPluginFieldData extends PluginFieldData {
 
 	public void setUnzipLibraries(boolean jarred) {
 		fUnzipLibraries = jarred;
+	}
+	
+	public void setFindDependencies(boolean findDependencies) {
+		fFindDependencies = findDependencies;
+	}
+	
+	public boolean doFindDependencies() {
+		return fFindDependencies;
 	}
 
 }
