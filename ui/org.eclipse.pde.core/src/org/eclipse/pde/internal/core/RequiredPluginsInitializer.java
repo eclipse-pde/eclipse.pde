@@ -11,10 +11,12 @@
 package org.eclipse.pde.internal.core;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.ClasspathContainerInitializer;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 /**
  * 
@@ -39,7 +41,15 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 		if (entry == null) {
 			ModelEntry.updateUnknownClasspathContainer(javaProject);
 		} else {
-			entry.updateClasspathContainer(false);
+			// check to make sure project in ModelEntry object corresponds to the IProject we are initializing (bug 159989)
+			IPluginModelBase base = entry.getWorkspaceModel();
+			if (base != null) {
+				IResource res = base.getUnderlyingResource();
+				if (res != null) {
+					if (project.equals(res.getProject()))
+						entry.updateClasspathContainer(false);
+				}
+			}
 		}
 	}
 	
