@@ -53,4 +53,8 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 			
 		return containerPath.segment(0) + "/" + project.getPath().segment(0); //$NON-NLS-1$
 	}
+
+	public String getDescription(IPath containerPath, IJavaProject project) {
+		return PDECoreMessages.RequiredPluginsClasspathContainer_description;
+	}
 }
