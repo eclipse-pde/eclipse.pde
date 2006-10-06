@@ -10,8 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
+import java.io.IOException;
+import java.net.URL;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.osgi.framework.Bundle;
+
 public abstract class TextUtil {
 
+	private static URL fJavaDocStyleSheet = null;
+	
 	public static String createMultiLine(String text, int limit) {
 		return createMultiLine(text, limit, false);
 	}
@@ -109,4 +120,20 @@ public abstract class TextUtil {
 			return false;
 		return true;
 	}
+	
+	public static URL getJavaDocStyleSheerURL() {
+		if (fJavaDocStyleSheet == null) {
+			Bundle bundle= Platform.getBundle(IPDEUIConstants.PLUGIN_ID);
+			fJavaDocStyleSheet= bundle.getEntry("/JavadocHoverStyleSheet.css"); //$NON-NLS-1$
+			if (fJavaDocStyleSheet != null) {
+				try {
+					fJavaDocStyleSheet= FileLocator.toFileURL(fJavaDocStyleSheet);
+				} catch (IOException ex) {
+					PDEPlugin.log(ex);
+				}
+			}
+		}
+		return fJavaDocStyleSheet;
+	}
+	
 }
