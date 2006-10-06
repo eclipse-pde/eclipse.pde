@@ -101,6 +101,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		validateLazyStart();
 		validateExtensibleAPI();		
 		validateTranslatableHeaders();
+		validateImportExportServices();
 	}
 	
 	private void setOsgiR4() {
@@ -960,4 +961,33 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		} catch (CoreException e) {
 		}
 	}
+	
+
+	private void validateImportExportServices() {
+		if(fOsgiR4) {
+			IHeader importHeader = (IHeader) fHeaders.get(ICoreConstants.IMPORT_SERVICE);
+			IHeader exportHeader = (IHeader) fHeaders.get(ICoreConstants.EXPORT_SERVICE);
+			int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
+
+			if (severity == CompilerFlags.IGNORE)
+				return;
+			
+			if(importHeader != null) {
+				int line = importHeader.getLineNumber();
+				report(NLS.bind(PDECoreMessages.BundleErrorReporter_importexport_servicesDeprecated,  ICoreConstants.IMPORT_SERVICE), 
+						line + 1, severity, 
+						PDEMarkerFactory.M_DEPRECATED_IMPORT_SERVICE,
+						PDEMarkerFactory.CAT_DEPRECATION);
+			}
+			
+			if (exportHeader != null) {
+				int line = exportHeader.getLineNumber();
+				report(NLS.bind(PDECoreMessages.BundleErrorReporter_importexport_servicesDeprecated, ICoreConstants.EXPORT_SERVICE),
+						line + 1, severity, 
+						PDEMarkerFactory.M_DEPRECATED_EXPORT_SERVICE,
+						PDEMarkerFactory.CAT_DEPRECATION);
+			}
+		}
+	}
+
 }

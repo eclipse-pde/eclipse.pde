@@ -35,6 +35,8 @@ public class PDEMarkerFactory implements IMarkerFactory {
 	public static final int M_DIRECTIVE_HAS_NO_EFFECT = 0x1012; // other problem
 	public static final int M_MISMATCHED_EXEC_ENV = 0x1013; // fatal error
 	public static final int M_UNKNOW_EXEC_ENV = 0x1014; // other problem
+	public static final int M_DEPRECATED_IMPORT_SERVICE = 0x1015; // deprecation
+	public static final int M_DEPRECATED_EXPORT_SERVICE = 0x1016; // deprecation
 	
 	// build properties fixes
 	public static final int B_APPEND_SLASH_FOLDER_ENTRY = 0x2001;

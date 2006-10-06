@@ -66,6 +66,9 @@ public interface ICoreConstants {
 	public static final String FRIENDS_DIRECTIVE = "x-friends"; //$NON-NLS-1$
 	public static final String PLATFORM_FILTER = "Eclipse-PlatformFilter"; //$NON-NLS-1$
 	
+	public static final String IMPORT_SERVICE = "Import-Service"; //$NON-NLS-1$
+	public static final String EXPORT_SERVICE = "Export-Service"; //$NON-NLS-1$
+	
 	public static final String[] TRANSLATABLE_HEADERS = new String[] {
 		Constants.BUNDLE_VENDOR, Constants.BUNDLE_NAME,
 		Constants.BUNDLE_DESCRIPTION, Constants.BUNDLE_COPYRIGHT

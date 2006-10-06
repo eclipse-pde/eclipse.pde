@@ -3133,6 +3133,9 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExternalizeStringsWizardPage_value;
 	
+	public static String RemoveImportExportServices_label;
+	public static String RemoveImportExportServices_description;
+	
 	// HyperlinkAction.java
 	public static String HyperlinkActionOpenType;
 	public static String HyperlinkActionOpenDescription;
