@@ -30,7 +30,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.core.schema.ChoiceRestriction;
@@ -103,9 +103,8 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 	private Composite fNotebook;
 	private StackLayout fNotebookLayout;
 	
-	public SchemaAttributeDetails(ISchemaAttribute attribute, ElementSection section) {
+	public SchemaAttributeDetails(ElementSection section) {
 		super(section, false);
-		fAttribute = (SchemaAttribute)attribute;
 	}
 
 	class SchemaAttributeContentProvider extends DefaultTableProvider {
@@ -158,7 +157,6 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		toolkit.paintBordersFor(fJavaTypeComp);
 		toolkit.paintBordersFor(fStringTypeComp);
 		setText(PDEUIMessages.SchemaAttributeDetails_title);
-		setDecription(NLS.bind(PDEUIMessages.SchemaAttributeDetails_description, fAttribute.getName()));
 	}
 
 	private Composite createEmptyComposite(Composite parent, FormToolkit toolkit) {
@@ -209,7 +207,6 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		fRestrictionsTable = new TableViewer(table);
 		fRestrictionsTable.setContentProvider(new SchemaAttributeContentProvider());
 		fRestrictionsTable.setLabelProvider(new LabelProvider());
-		fRestrictionsTable.setInput(new Object());
 		
 		Composite resButtonComp = toolkit.createComposite(comp);
 		layout = new GridLayout(); layout.marginHeight = layout.marginWidth = 0;
@@ -222,9 +219,12 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		return comp;
 	}
 	
-	public void updateFields() {
-		if (fAttribute == null)
+	public void updateFields(ISchemaObject object) {
+		if (!(object instanceof SchemaAttribute))
 			return;
+		fAttribute = (SchemaAttribute)object;
+		setDecription(NLS.bind(PDEUIMessages.SchemaAttributeDetails_description, fAttribute.getName()));
+		fRestrictionsTable.setInput(new Object());
 		fName.setValue(fAttribute.getName(), true); //$NON-NLS-1$
 		fDepTrue.setSelection(fAttribute.isDeprecated());
 		fDepFalse.setSelection(!fAttribute.isDeprecated());
@@ -283,27 +283,37 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		fValue.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
+				if (blockListeners())
+					return;
 				fAttribute.setValue(fValue.getValue());
 			}
 		});
 		fName.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
+				if (blockListeners())
+					return;
 				fAttribute.setName(fName.getValue());
 				setDecription(NLS.bind(PDEUIMessages.SchemaAttributeDetails_description, fAttribute.getName()));
 			}
 		});
 		fDepTrue.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (blockListeners())
+					return;
 				fAttribute.setDeprecatedProperty(fDepTrue.getSelection());
 			}
 		});
 		fTransTrue.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (blockListeners())
+					return;
 				fAttribute.setTranslatableProperty(fTransTrue.getSelection());
 			}
 		});
 		fType.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (blockListeners())
+					return;
 				String typeString = fType.getSelection();
 				if (!typeString.equals(BOOLEAN_TYPE))
 					typeString = STRING_TYPE;
@@ -324,6 +334,8 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		});
 		fUse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (blockListeners())
+					return;
 				int use = fUse.getSelectionIndex();
 				fAttribute.setUse(use);
 				fValue.getLabel().setEnabled(use == 2);
@@ -339,36 +351,50 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		});
 		fClassEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
+				if (blockListeners())
+					return;
 				setBasedOn();
 			}
 			public void linkActivated(HyperlinkEvent e) {
+				if (blockListeners())
+					return;
 				String value = fClassEntry.getValue();
 				value = handleLinkActivated(value, false);
 				if (value != null)
 					fClassEntry.setValue(value);
 			}
 			public void browseButtonSelected(FormEntry entry) {
+				if (blockListeners())
+					return;
 				doOpenSelectionDialog(
 						IJavaElementSearchConstants.CONSIDER_CLASSES, fClassEntry);
 			}
 		});
 		fInterfaceEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
+				if (blockListeners())
+					return;
 				setBasedOn();
 			}
 			public void linkActivated(HyperlinkEvent e) {
+				if (blockListeners())
+					return;
 				String value = fInterfaceEntry.getValue();
 				value = handleLinkActivated(value, true);
 				if (value != null)
 					fInterfaceEntry.setValue(value);
 			}
 			public void browseButtonSelected(FormEntry entry) {
+				if (blockListeners())
+					return;
 				doOpenSelectionDialog(
 						IJavaElementSearchConstants.CONSIDER_INTERFACES, fInterfaceEntry);
 			}
 		});
 		fAddRestriction.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (blockListeners())
+					return;
 				NewRestrictionDialog dialog = new NewRestrictionDialog(getPage().getSite().getShell());
 				if (dialog.open() != Window.OK) return;
 				String text = dialog.getNewRestriction();
@@ -394,6 +420,8 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		});
 		fRemoveRestriction.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (blockListeners())
+					return;
 				ISelection selection = fRestrictionsTable.getSelection();
 				if (selection.isEmpty()) return;
 				if (!(selection instanceof IStructuredSelection)) return;
@@ -425,6 +453,8 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		});
 		fRestrictionsTable.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
+				if (blockListeners())
+					return;
 				fRemoveRestriction.setEnabled(fAttribute.getSchema().isEditable()
 						&& !event.getSelection().isEmpty());
 			}

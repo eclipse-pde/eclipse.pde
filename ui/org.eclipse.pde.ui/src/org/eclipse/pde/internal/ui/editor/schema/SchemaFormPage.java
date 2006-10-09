@@ -39,8 +39,8 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 	public static final String PAGE_ID = "form"; //$NON-NLS-1$
 	private ElementSection fSection;
 	private SchemaBlock fBlock;
-	private AbstractSchemaDetails fCurrDetails;
 	private IColorManager fColorManager;
+	private DetailsPart fDetailsPart;
 	
 	public class SchemaBlock extends PDEMasterDetailsBlock implements IDetailsPageProvider {
 		
@@ -52,27 +52,32 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 			return fSection;
 		}
 		protected void registerPages(DetailsPart detailsPart) {
-			detailsPart.setPageLimit(0); // need to store current page in this object
+			fDetailsPart = detailsPart;
+			detailsPart.setPageLimit(5);
+			detailsPart.registerPage(ISchemaObjectReference.class, new SchemaElementReferenceDetails(fSection));
+			detailsPart.registerPage(ISchemaRootElement.class, new SchemaRootElementDetails(fSection));
+			detailsPart.registerPage(ISchemaElement.class, new SchemaElementDetails(fSection));
+			detailsPart.registerPage(ISchemaCompositor.class, new SchemaCompositorDetails(fSection));
+			detailsPart.registerPage(ISchemaAttribute.class, new SchemaAttributeDetails(fSection));
 			detailsPart.setPageProvider(this);
 		}
 		public Object getPageKey(Object object) {
-			return object;
-		}
-		public IDetailsPage getPage(Object object) {
 			if (object instanceof ISchemaObjectReference)
-				fCurrDetails = new SchemaElementReferenceDetails((ISchemaObjectReference)object, fSection);
-			else if (object instanceof ISchemaElement) {
-				if (object instanceof ISchemaRootElement)
-					fCurrDetails = new SchemaRootElementDetails((ISchemaElement)object, fSection);
-				else
-					fCurrDetails = new SchemaElementDetails((ISchemaElement)object, fSection);
-			} else if (object instanceof ISchemaCompositor)
-				fCurrDetails = new SchemaCompositorDetails((ISchemaCompositor)object, fSection);
+				return ISchemaObjectReference.class;
+			else if (object instanceof ISchemaRootElement)
+				return ISchemaRootElement.class;
+			else if (object instanceof ISchemaElement)
+				return ISchemaElement.class;
+			else if (object instanceof ISchemaCompositor)
+				return ISchemaCompositor.class;
 			else if (object instanceof ISchemaAttribute)
-				fCurrDetails = new SchemaAttributeDetails((ISchemaAttribute)object, fSection);
+				return ISchemaAttribute.class;
 			else
-				fCurrDetails = null;
-			return fCurrDetails;
+				return null;
+		}
+		
+		public IDetailsPage getPage(Object object) {
+			return null;
 		}
 	}
 	
@@ -117,7 +122,8 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 		}
 		if (fSection != null)
 			fSection.handleModelChanged(event);
-		if (fCurrDetails != null)
-			fCurrDetails.modelChanged(event);
+		IDetailsPage page = fDetailsPart.getCurrentPage();
+		if (page instanceof IModelChangedListener)
+			((IModelChangedListener)page).modelChanged(event);
 	}
 }

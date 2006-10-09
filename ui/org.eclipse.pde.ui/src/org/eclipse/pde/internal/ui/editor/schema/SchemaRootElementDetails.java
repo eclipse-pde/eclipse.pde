@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.schema.SchemaElementReference;
 import org.eclipse.pde.internal.core.schema.SchemaRootElement;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -35,11 +36,8 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 	private Button fDepFalse;
 	private FormEntry fSuggestion;
 	
-	public SchemaRootElementDetails(ISchemaElement element, ElementSection section) {
+	public SchemaRootElementDetails(ElementSection section) {
 		super(section, true);
-		if (element instanceof SchemaElementReference)
-			element = (SchemaRootElement)((SchemaElementReference)element).getReferencedObject();
-		fElement = (SchemaRootElement)element;
 	}
 
 	public void createDetails(Composite parent) {
@@ -57,12 +55,18 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		fSuggestion = new FormEntry(parent, toolkit, PDEUIMessages.SchemaRootElementDetails_replacement, null, false, 6);
 		
 		setText(PDEUIMessages.SchemaElementDetails_title);
-		setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
 	}
 
-	public void updateFields() {
+	public void updateFields(ISchemaObject element) {
+		if (!(element instanceof ISchemaElement))
+			return;
+		if (element instanceof SchemaElementReference)
+			element = ((SchemaElementReference)element).getReferencedObject();
+		fElement = (SchemaRootElement)element;
 		if (fElement == null)
 			return;
+		
+		setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
 		fName.setValue(fElement.getName(), true);		
 		fDepTrue.setSelection(fElement.isDeprecated());
 		fDepFalse.setSelection(!fElement.isDeprecated());
@@ -83,12 +87,16 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 	public void hookListeners() {
 		fName.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
+				if (blockListeners())
+					return;
 				fElement.setName(fName.getValue());
 				setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
 			}
 		});
 		fDepTrue.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (blockListeners())
+					return;
 				boolean deprecated = fDepTrue.getSelection();
 				fElement.setDeprecatedProperty(deprecated);				
 				fSuggestion.getLabel().setEnabled(deprecated);
@@ -97,6 +105,8 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		});
 		fSuggestion.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
+				if (blockListeners())
+					return;
 				fElement.setDeprecatedSuggestion(fSuggestion.getValue());
 			}
 		});

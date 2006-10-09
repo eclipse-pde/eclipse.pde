@@ -16,7 +16,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaElementReference;
@@ -45,11 +45,8 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 	private Button fTransTrue;
 	private Button fTransFalse;
 	
-	public SchemaElementDetails(ISchemaElement element, ElementSection section) {
+	public SchemaElementDetails(ElementSection section) {
 		super(section, true);
-		if (element instanceof SchemaElementReference)
-			element = (SchemaElement)((SchemaElementReference)element).getReferencedObject();
-		fElement = (SchemaElement)element;
 	}
 
 	public void createDetails(Composite parent) {
@@ -66,11 +63,11 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		
 		label = toolkit.createLabel(parent, PDEUIMessages.SchemaElementDetails_labelProperty);
 		label.setForeground(foreground);
-		fLabelProperty = createComboPart(parent, toolkit, getLabelItems(), 2);
+		fLabelProperty = createComboPart(parent, toolkit, new String[0], 2);
 		
 		label = toolkit.createLabel(parent, PDEUIMessages.SchemaElementDetails_icon);
 		label.setForeground(foreground);
-		fIcon = createComboPart(parent, toolkit, getIconItems(), 2);
+		fIcon = createComboPart(parent, toolkit, new String[0], 2);
 
 		label = toolkit.createLabel(parent, PDEUIMessages.SchemaDetails_translatable);
 		label.setForeground(foreground);
@@ -79,16 +76,21 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		fTransFalse = buttons[1];
 		
 		setText(PDEUIMessages.SchemaElementDetails_title);
-		setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
 	}
 
-	public void updateFields() {
+	public void updateFields(ISchemaObject object) {
+		if (object instanceof SchemaElementReference)
+			object = ((SchemaElementReference)object).getReferencedObject();
+		fElement = (SchemaElement)object;
 		if (fElement == null)
 			return;
+		setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
 		fName.setValue(fElement.getName(), true);
 		String labProp = fElement.getLabelProperty();
+		fLabelProperty.setItems(getLabelItems());
 		fLabelProperty.setText(labProp != null ? labProp : ""); //$NON-NLS-1$
 		String icProp = fElement.getIconProperty();
+		fIcon.setItems(getIconItems());
 		fIcon.setText(icProp != null ? icProp : ""); //$NON-NLS-1$
 		
 		fDepTrue.setSelection(fElement.isDeprecated());
@@ -111,6 +113,8 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 	public void hookListeners() {
 		fIcon.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (blockListeners())
+					return;
 				String icon = fIcon.getSelection();
 				if (icon == null || icon.equals("")) //$NON-NLS-1$
 					fElement.setIconProperty(null);
@@ -120,6 +124,8 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		});
 		fLabelProperty.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (blockListeners())
+					return;
 				String label = fLabelProperty.getSelection();
 				if (label == null || label.equals("")) //$NON-NLS-1$
 					fElement.setLabelProperty(null);
@@ -129,6 +135,8 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		});
 		fName.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
+				if (blockListeners())
+					return;
 				fElement.setName(fName.getValue());
 				((Schema)fElement.getSchema()).updateReferencesFor(fElement, ISchema.REFRESH_RENAME);
 				setDecription(NLS.bind(PDEUIMessages.SchemaElementDetails_description, fElement.getName()));
@@ -136,11 +144,15 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		});
 		fDepTrue.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (blockListeners())
+					return;
 				fElement.setDeprecatedProperty(fDepTrue.getSelection());
 			}
 		});
 		fTransTrue.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (blockListeners())
+					return;
 				fElement.setTranslatableProperty(fTransTrue.getSelection());
 			}
 		});

@@ -15,6 +15,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEDetails;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -55,6 +56,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	private Button fUnboundSelect;
 	private Label fMinLabel;
 	private Label fMaxLabel;
+	private boolean fBlockListeners = false;
 	
 	public AbstractSchemaDetails(ElementSection section, boolean showDTD) {
 		fElementSection = section;
@@ -89,7 +91,6 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		client.setLayout(glayout);
 		
 		createDetails(client);
-		updateFields();
 		
 		if (fShowDTD) {
 			Label label = toolkit.createLabel(client, PDEUIMessages.AbstractSchemaDetails_dtdLabel);
@@ -117,7 +118,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	}
 	
 	public abstract void createDetails(Composite parent);
-	public abstract void updateFields();
+	public abstract void updateFields(ISchemaObject obj);
 	public abstract void hookListeners();
 	
 	public boolean isEditableElement() {
@@ -146,7 +147,13 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		if (!(part instanceof ElementSection))
 			return;
-		updateDTDLabel(((IStructuredSelection)selection).getFirstElement());
+		Object obj = ((IStructuredSelection)selection).getFirstElement();
+		updateDTDLabel(obj);
+		if (obj instanceof ISchemaObject) {
+			setBlockListeners(true);
+			updateFields((ISchemaObject)obj);
+			setBlockListeners(false);
+		}
 	}
 	
 	private void updateDTDLabel(Object changeObject) {
@@ -233,6 +240,8 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fUnboundSelect.setLayoutData(gd);
 		fUnboundSelect.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (blockListeners())
+					return;
 				fMaxOccurSpinner.setEnabled(!fUnboundSelect.getSelection() 
 						&& isEditableElement());
 			}
@@ -274,6 +283,8 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fMinOccurSpinner.addSelectionListener(adapter);
 		fMinOccurSpinner.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
+				if (blockListeners())
+					return;
 				int minOccur = fMinOccurSpinner.getSelection();
 				if (minOccur > getMaxOccur())
 					fMinOccurSpinner.setSelection(minOccur - 1);
@@ -286,6 +297,8 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fMaxOccurSpinner.addSelectionListener(adapter);
 		fMaxOccurSpinner.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
+				if (blockListeners())
+					return;
 				int maxValue = fMaxOccurSpinner.getSelection();
 				if (maxValue < getMinOccur())
 					fMaxOccurSpinner.setSelection(maxValue + 1);
@@ -299,5 +312,13 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fUnboundSelect.setEnabled(enable);
 		fMinLabel.setEnabled(enable);
 		fMaxLabel.setEnabled(enable);
+	}
+	
+	protected boolean blockListeners() {
+		return fBlockListeners;
+	}
+	
+	protected void setBlockListeners(boolean blockListeners) {
+		fBlockListeners = blockListeners;
 	}
 }

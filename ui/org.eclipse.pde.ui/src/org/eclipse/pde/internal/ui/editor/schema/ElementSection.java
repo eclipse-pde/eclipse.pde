@@ -448,8 +448,8 @@ public class ElementSection extends TreeSection {
 	}
 
 	protected void selectionChanged(IStructuredSelection selection) {
-		getPage().getManagedForm().fireSelectionChanged(this, selection);
-		getPage().getPDEEditor().setSelection(selection);
+//		getPage().getManagedForm().fireSelectionChanged(this, selection);
+//		getPage().getPDEEditor().setSelection(selection);
 		updateButtons();
 	}
 

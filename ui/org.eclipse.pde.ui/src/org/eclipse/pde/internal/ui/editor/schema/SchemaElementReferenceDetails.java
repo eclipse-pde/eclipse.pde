@@ -11,7 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.schema;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.schema.SchemaElementReference;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
@@ -32,9 +32,8 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 	private Hyperlink fReferenceLink;
 	private Label fRefLabel;
 	
-	public SchemaElementReferenceDetails(ISchemaObjectReference compositor, ElementSection section) {
+	public SchemaElementReferenceDetails(ElementSection section) {
 		super(section, true);
-		fElement = (SchemaElementReference)compositor;
 	}
 
 	public void createDetails(Composite parent) {
@@ -45,16 +44,21 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 		
 		fRefLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaElementReferenceDetails_reference);
 		fRefLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
-		fReferenceLink = toolkit.createHyperlink(parent, fElement.getName(), SWT.NONE);
-		GridData gd = new GridData();
+		fReferenceLink = toolkit.createHyperlink(parent, new String(), SWT.NONE);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fReferenceLink.setLayoutData(gd);
 		
 		setText(PDEUIMessages.SchemaElementReferenceDetails_title);
-		setDecription(NLS.bind(PDEUIMessages.SchemaElementReferenceDetails_description, fElement.getName()));
 	}
 
-	public void updateFields() {
+	public void updateFields(ISchemaObject object) {
+		if (!(object instanceof SchemaElementReference))
+			return;
+		fElement = (SchemaElementReference)object;
+		
+		setDecription(NLS.bind(PDEUIMessages.SchemaElementReferenceDetails_description, fElement.getName()));
+		fReferenceLink.setText(fElement.getName());
 		updateMinOccur(fElement.getMinOccurs());
 		updateMaxOccur(fElement.getMaxOccurs());
 		boolean editable = isEditableElement();
@@ -66,16 +70,22 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 	public void hookListeners() {
 		hookMinOccur(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (blockListeners())
+					return;
 				fElement.setMinOccurs(getMinOccur());
 			}
 		});
 		hookMaxOccur(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (blockListeners())
+					return;
 				fElement.setMaxOccurs(getMaxOccur());
 			}
 		});
 		fReferenceLink.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
+				if (blockListeners())
+					return;
 				fireMasterSelection(new StructuredSelection(fElement.getReferencedObject()));
 			}
 		});
