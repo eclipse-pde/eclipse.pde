@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -279,7 +278,6 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			ignorePkgs = new HashSet(2);
 		monitor.beginTask(PDEUIMessages.AddNewDependenciesOperation_searchProject, secDeps.length);
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		List dynamicImports = getDynamicImports(bundle);
 		for (int j = 0; j < secDeps.length; j++) {
 			try {
 				if (monitor.isCanceled())
@@ -301,7 +299,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 									searchScope,
 									requestor, 
 									null);
-							if (requestor.foundMatches() && !isDynamicallyImported(pkgName, dynamicImports)) {
+							if (requestor.foundMatches()) {
 								fNewDependencies = true;
 								ignorePkgs.add(pkgName);
 								newDeps.put(exported[i], pluginId);
@@ -375,39 +373,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		} catch (JavaModelException e) {
 		}
 	}
-	
-	protected final List getDynamicImports(IBundle bundle) {
-		String value = bundle.getHeader(Constants.DYNAMICIMPORT_PACKAGE);
-		if (value == null) 
-			return new ArrayList(0);
-		ManifestElement elems[] = null;
-		try {
-			elems = ManifestElement.parseHeader(Constants.DYNAMICIMPORT_PACKAGE, value);
-		} catch (BundleException e) {
-		}
-		if (elems != null) {
-			List imports = new ArrayList();
-			for (int i = 0 ; i < elems.length; i++) {
-				String pkg = elems[i].getValue();
-				if (pkg.endsWith("*")) //$NON-NLS-1$
-					pkg = pkg.substring(0, pkg.length() - 1);
-				imports.add(pkg);
-			}
-			return imports;
-		}
-		return new ArrayList(0);
-	}
-	
-	protected final boolean isDynamicallyImported(String pkgName, List dynamicImports) {
-		ListIterator li = dynamicImports.listIterator();
-		while (li.hasNext()) {
-			String pkgImport = (String)li.next();
-			if (pkgName.startsWith(pkgImport))
-				return true;
-		}
-		return false;
-	}
-	
+
 	protected void handleNewDependencies(final Map additionalDeps, final boolean useRequireBundle, IProgressMonitor monitor) {
 		if (!additionalDeps.isEmpty()) 
 			addDependencies(additionalDeps, useRequireBundle);
