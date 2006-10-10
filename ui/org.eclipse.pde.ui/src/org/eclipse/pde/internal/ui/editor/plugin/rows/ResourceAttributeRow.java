@@ -15,11 +15,14 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package org.eclipse.pde.internal.ui.editor.plugin.rows;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.ui.actions.ShowInNavigatorViewAction;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
@@ -28,6 +31,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
@@ -48,14 +53,24 @@ public class ResourceAttributeRow extends ButtonAttributeRow {
 		return !part.getPage().getModel().isEditable();
 	}	
 	protected void openReference() {
-		IFile file = getFile();
+		IResource file = getFile();
+		boolean successful = false;
+		if (file instanceof IFile) 
+			successful = openFile((IFile)file);
+		else if (file instanceof IContainer) 
+			successful = openContainer((IContainer)file);
+		if (!successful)
+			Display.getCurrent().beep();
+	}
+	private boolean openFile(IFile file) {
 		if (file!=null && file.exists()) {
 			try {
 				IDE.openEditor(PDEPlugin.getActivePage(), file, true);
 			} catch (PartInitException e) {
 				PDEPlugin.logException(e);
+				return false;
 			}
-			return;
+			return true;
 		} 
 		file = getNLFile();
 		if (file != null && file.exists()) {
@@ -63,16 +78,28 @@ public class ResourceAttributeRow extends ButtonAttributeRow {
 				IDE.openEditor(PDEPlugin.getActivePage(), file, true);
 			} catch (PartInitException e) {
 				PDEPlugin.logException(e);
+				return false;
 			}
-			return;
+			return true;
 		} 
-		Display.getCurrent().beep();
+		return false;
 	}
-	private IFile getFile() {
+	private boolean openContainer(IContainer container) {
+		if (container != null && container.exists())
+		try {
+			IViewPart part = PDEPlugin.getActivePage().showView(IPageLayout.ID_RES_NAV);
+			ShowInNavigatorViewAction action = new ShowInNavigatorViewAction(part.getSite());
+			action.run(container);
+		} catch (PartInitException e) {
+			return false;
+		}
+		return true;
+	}
+	private IResource getFile() {
 		String value = text.getText();
 		if (value.length()==0) return null;
 		IPath path = getProject().getFullPath().append(value);
-		return getProject().getWorkspace().getRoot().getFile(path);
+		return getProject().getWorkspace().getRoot().findMember(path);
 	}
 	private IFile getNLFile() {
 		String value = text.getText();
@@ -92,9 +119,9 @@ public class ResourceAttributeRow extends ButtonAttributeRow {
 				PDEPlugin.getActiveWorkbenchShell(),
 				new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 		dialog.setInput(project.getWorkspace());
-		IFile file = getFile();
-		if (file!=null)
-			dialog.setInitialSelection(file);
+		IResource resource = getFile();
+		if (resource!=null)
+			dialog.setInitialSelection(resource);
 		dialog.addFilter(new ViewerFilter() {
 			public boolean select(Viewer viewer, Object parentElement,
 					Object element) {
@@ -111,7 +138,7 @@ public class ResourceAttributeRow extends ButtonAttributeRow {
 		dialog.setValidator(new ISelectionStatusValidator() {
 			public IStatus validate(Object[] selection) {
 				if (selection != null && selection.length > 0
-						&& selection[0] instanceof IFile)
+						&& (selection[0] instanceof IFile || selection[0] instanceof IContainer))
 					return new Status(IStatus.OK, PDEPlugin.getPluginId(),
 							IStatus.OK, "", null); //$NON-NLS-1$
 				
@@ -120,8 +147,11 @@ public class ResourceAttributeRow extends ButtonAttributeRow {
 			}
 		});
 		if (dialog.open() == Window.OK) {
-			file = (IFile) dialog.getFirstResult();
-			String value = file.getProjectRelativePath().toString();
+			IResource res = (IResource) dialog.getFirstResult();
+			IPath path = res.getProjectRelativePath();
+			if (res instanceof IContainer)
+				path = path.addTrailingSeparator();
+			String value = path.toString();
 			text.setText(value);
 		}
 	}
