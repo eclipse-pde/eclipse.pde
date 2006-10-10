@@ -66,7 +66,7 @@ public class PDEMarkerFactory implements IMarkerFactory {
 	 * @see org.eclipse.pde.internal.core.builders.IMarkerFactory#createMarker(org.eclipse.core.resources.IFile)
 	 */
 	public IMarker createMarker(IFile file) throws CoreException {
-		return createMarker(file, NO_RESOLUTION, "");
+		return createMarker(file, NO_RESOLUTION, ""); //$NON-NLS-1$
 	}
 	
 	public IMarker createMarker(IFile file, int id, String category) throws CoreException {
