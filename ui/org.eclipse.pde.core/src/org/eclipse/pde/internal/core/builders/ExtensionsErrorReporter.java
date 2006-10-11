@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.builders;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
@@ -141,9 +142,45 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		}
 	}
 	
+	/**
+	 * @param parentElement
+	 * @param childElement
+	 * @param severity
+	 */
+	private void reportMaxOccurenceViolation(Element parentElement, Element childElement, int severity) {
+		String message = NLS.bind(
+				PDECoreMessages.ExtensionsErrorReporter_maxOccurrence,
+				new String[] { childElement.getNodeName(),
+						parentElement.getNodeName() }); 
+		report(message, getLine(childElement), severity,
+				PDEMarkerFactory.P_ILLEGAL_XML_NODE, childElement, null,
+				PDEMarkerFactory.CAT_FATAL);
+	}
+
+	/**
+	 * @param parentElement
+	 * @param childElement
+	 * @param severity
+	 */
+	private void reportMinOccurenceViolation(Element parentElement, ISchemaElement childElement, int severity) {
+		String message = NLS.bind(
+				PDECoreMessages.ExtensionsErrorReporter_minOccurrence,
+				new String[] { childElement.getName(),
+						parentElement.getNodeName() });
+		report(message, getLine(parentElement), severity,
+				PDEMarkerFactory.CAT_FATAL);
+	}	
+	
 	protected void validateElement(Element element, ISchema schema) {
 		String elementName = element.getNodeName();
 		ISchemaElement schemaElement = schema.findElement(elementName);
+		
+		// Validate element occurrence violations
+		if ((schemaElement != null) &&
+				(schemaElement.getType() instanceof ISchemaComplexType)) {		
+			validateMaxElementMult(element, schemaElement);
+			validateMinElementMult(element, schemaElement);
+		}
 		
 		ISchemaElement parentSchema = null;
 		if (!"extension".equals(elementName)) { //$NON-NLS-1$
@@ -188,6 +225,47 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			for (int i = 0; i < children.getLength(); i++) {
 				validateElement((Element)children.item(i), schema);
 			}
+		}
+	}
+
+	/**
+	 * @param element
+	 * @param schemaElement
+	 */
+	private void validateMinElementMult(Element element,
+			ISchemaElement schemaElement) {
+		// Validate min element occurence violations
+		int minSeverity = CompilerFlags.getFlag(fProject,
+				CompilerFlags.P_UNKNOWN_ELEMENT);	
+		if (minSeverity != CompilerFlags.IGNORE) {			
+			HashSet minElementSet = ElementOccurenceChecker
+					.findMinOccurenceViolations(schemaElement, element);
+			Iterator minIterator = minElementSet.iterator();
+
+			while (minIterator.hasNext()) {
+				reportMinOccurenceViolation(element,
+						(ISchemaElement) minIterator.next(), minSeverity);
+			}		
+		}
+	}
+
+	/**
+	 * @param element
+	 * @param schemaElement
+	 */
+	private void validateMaxElementMult(Element element,
+			ISchemaElement schemaElement) {
+		// Validate max element occurence violations
+		int maxSeverity = CompilerFlags.getFlag(fProject,
+				CompilerFlags.P_UNKNOWN_ELEMENT);
+		if (maxSeverity != CompilerFlags.IGNORE) {
+			HashSet maxElementSet = ElementOccurenceChecker
+					.findMaxOccurenceViolations(schemaElement, element);
+			Iterator maxIterator = maxElementSet.iterator();
+			while (maxIterator.hasNext()) {
+				reportMaxOccurenceViolation(element, (Element) maxIterator
+						.next(), maxSeverity);
+			}	
 		}
 	}
 	

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 
@@ -45,8 +46,10 @@ import org.eclipse.pde.core.plugin.IPluginParent;
 import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
+import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -55,6 +58,7 @@ import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TreeSection;
 import org.eclipse.pde.internal.ui.editor.actions.CollapseAction;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
+import org.eclipse.pde.internal.ui.editor.contentassist.XMLElementProposalComputer;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
@@ -155,13 +159,22 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		ISchema schema = getSchema(extension);
 		String tagName = (parent == extension ? "extension" : parent.getName()); //$NON-NLS-1$
 		ISchemaElement elementInfo = schema.findElement(tagName);
-		if (elementInfo == null)
-			return;
-		ISchemaElement[] candidates = schema.getCandidateChildren(elementInfo);
-		for (int i = 0; i < candidates.length; i++) {
-			ISchemaElement candidateInfo = candidates[i];
-			Action action = new NewElementAction(candidateInfo, parent);
-			menu.add(action);
+		
+		if ((elementInfo != null) &&
+				(elementInfo.getType() instanceof ISchemaComplexType) &&
+				(parent instanceof IDocumentNode)) {
+			// We have a schema complex type.  Either the element has attributes
+			// or the element has children.
+			// Generate the list of element proposals
+			HashSet elementSet = XMLElementProposalComputer
+					.computeElementProposal(elementInfo, (IDocumentNode)parent);
+			// Create a corresponding menu entry for each element proposal
+			Iterator iterator = elementSet.iterator();
+			while (iterator.hasNext()) {
+				Action action = new NewElementAction((ISchemaElement) iterator
+						.next(), parent);
+				menu.add(action);	
+			}			
 		}
 	}
 	private static ISchema getSchema(IPluginExtension extension) {

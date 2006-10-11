@@ -33,6 +33,10 @@ public class PDECoreMessages extends NLS {
 
 	public static String BundleErrorReporter_unsupportedSingletonDirective;
 
+	public static String ExtensionsErrorReporter_maxOccurrence;
+
+	public static String ExtensionsErrorReporter_minOccurrence;
+
 	public static String PluginModelManager_outOfSync;
 
 	// Status text #####################################
