@@ -150,7 +150,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				null,
 				PDEUIMessages.ManifestEditor_DetailExtension_up,
 				PDEUIMessages.ManifestEditor_DetailExtension_down});
-		getSection().setText(PDEUIMessages.ManifestEditor_DetailExtension_title);
 		fPluginInfoRegistry = PDECore.getDefault().getExternalModelManager();
 		fHandleDefaultButton = false;
 	}
@@ -206,6 +205,8 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		fDrillDownAdapter = new DrillDownAdapter(fExtensionTree);
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
+		// See Bug # 160554: Set text before text client
+		section.setText(PDEUIMessages.ManifestEditor_DetailExtension_title);
 		initialize((IPluginModelBase) getPage().getModel());
 		createSectionToolbar(section, toolkit);
 	}
@@ -215,7 +216,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	 * @param toolkit
 	 */
 	private void createSectionToolbar(Section section, FormToolkit toolkit) {
-		
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		ToolBar toolbar = toolBarManager.createControl(section);
 		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
