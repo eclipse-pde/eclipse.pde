@@ -418,7 +418,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			try {
 				feature = factory.createFeature(featureLocation.toURL(), null, null);
 				featureProperties = new Properties();
-				InputStream featureStream = new FileInputStream(new File(featureLocation, PROPERTIES_FILE));
+				InputStream featureStream = new BufferedInputStream(new FileInputStream(new File(featureLocation, PROPERTIES_FILE)));
 				featureProperties.load(featureStream);
 				featureStream.close();
 				return;
@@ -431,7 +431,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		File target = new File(root, DEFAULT_RETRIEVE_FILENAME_DESCRIPTOR);
 		IPath destination = new Path(root.getAbsolutePath()).append("tempFeature/"); //$NON-NLS-1$
 		try {
-			AntScript retrieve = new AntScript(new FileOutputStream(target));
+			AntScript retrieve = new AntScript(new BufferedOutputStream(new FileOutputStream(target)));
 			try {
 				retrieve.printProjectDeclaration("RetrieveFeature", "main", "."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				retrieve.printTargetDeclaration(TARGET_MAIN, null, null, null, null);
@@ -463,7 +463,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			//We only delete here, so if an exception is thrown the user can still see the retrieve.xml 
 			target.delete();
 			featureProperties = new Properties();
-			InputStream featureStream = new FileInputStream(new File(featureFolder, PROPERTIES_FILE));
+			InputStream featureStream = new BufferedInputStream(new FileInputStream(new File(featureFolder, PROPERTIES_FILE)));
 			featureProperties.load(featureStream);
 			featureStream.close();
 			clear(featureFolder);

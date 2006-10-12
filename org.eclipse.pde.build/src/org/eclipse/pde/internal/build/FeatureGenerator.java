@@ -109,7 +109,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 
 		//Create feature.xml
 		File file = new File(directory, Constants.FEATURE_FILENAME_DESCRIPTOR);
-		OutputStream output = new FileOutputStream(file);
+		OutputStream output = new BufferedOutputStream(new FileOutputStream(file));
 		XMLWriter writer = null;
 		try {
 			writer = new XMLWriter(output);
@@ -232,9 +232,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		file = new File(directory, IPDEBuildConstants.PROPERTIES_FILE);
 		Properties prop = new Properties();
 		prop.put("pde", "marker"); //$NON-NLS-1$ //$NON-NLS-2$
-		FileOutputStream stream = null;
+		OutputStream stream = null;
 		try{
-			stream = new FileOutputStream(file);
+			stream = new BufferedOutputStream(new FileOutputStream(file));
 			prop.store(stream, "Marker File so that the file gets written");  //$NON-NLS-1$
 			stream.flush();
 		} catch (IOException e) {

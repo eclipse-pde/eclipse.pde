@@ -220,7 +220,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 					manifestStream = jarFile.getInputStream(manifestEntry);
 				}
 			} else {
-				manifestStream = new FileInputStream(new File(bundleLocation, JarFile.MANIFEST_NAME));
+				manifestStream = new BufferedInputStream(new FileInputStream(new File(bundleLocation, JarFile.MANIFEST_NAME)));
 			}
 		} catch (IOException e) {
 			//ignore
@@ -580,7 +580,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		File profileList = new File (bundleLocation, "profile.list");
 		if (profileList.exists())
 			try {
-				return getJavaProfiles(new FileInputStream(profileList));
+				return getJavaProfiles(new BufferedInputStream(new FileInputStream(profileList)));
 			} catch (IOException e) {
 				// this should not happen because we just checked if the file exists
 			}
@@ -654,7 +654,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		ZipFile zipFile = null;
 		try {
 			if (location.isDirectory()) {
-				is = new FileInputStream(new File(location, javaProfile));
+				is = new BufferedInputStream(new FileInputStream(new File(location, javaProfile)));
 			} else {
 				zipFile = null;
 				try {

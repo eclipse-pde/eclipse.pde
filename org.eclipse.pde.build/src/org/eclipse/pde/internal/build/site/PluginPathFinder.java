@@ -31,7 +31,7 @@ public class PluginPathFinder {
 		String prefix = new Path(platformHome).removeLastSegments(1).toString();
 		Properties properties = new Properties();
 		try {
-			FileInputStream fis = new FileInputStream(file);
+			InputStream fis = new BufferedInputStream(new FileInputStream(file));
 			properties.load(fis);
 			fis.close();
 			String path = properties.getProperty("path"); //$NON-NLS-1$

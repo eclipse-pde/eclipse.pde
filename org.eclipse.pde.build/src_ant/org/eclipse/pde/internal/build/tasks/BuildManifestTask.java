@@ -47,7 +47,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_ELEMENT_MISSING, message, null));
 			}
 			readDirectory();
-			PrintWriter output = new PrintWriter(new FileOutputStream(destination));
+			PrintWriter output = new PrintWriter(new BufferedOutputStream(new FileOutputStream(destination)));
 			try {
 				List entries = new ArrayList(20);
 				for (int i = 0; i < elements.length; i++)
@@ -211,7 +211,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 		try {
 			directory = new Properties();
 			File file = new File(directoryLocation);
-			InputStream is = new FileInputStream(file);
+			InputStream is = new BufferedInputStream(new FileInputStream(file));
 			try {
 				directory.load(is);
 			} finally {

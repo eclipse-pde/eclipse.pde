@@ -113,7 +113,7 @@ public class ProductFile extends DefaultHandler implements IPDEBuildConstants {
 		try {
 			parserFactory.setNamespaceAware(true);
 			parser = parserFactory.newSAXParser();
-			InputStream in = new FileInputStream(location);
+			InputStream in = new BufferedInputStream(new FileInputStream(location));
 			parser.parse(new InputSource(in), this);
 		} catch (ParserConfigurationException e) {
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PRODUCT_FORMAT, NLS.bind(Messages.exception_productParse, location), e));

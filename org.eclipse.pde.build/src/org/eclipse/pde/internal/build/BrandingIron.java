@@ -398,8 +398,8 @@ public class BrandingIron implements IXMLConstants {
 		InputStream in = null;
 		OutputStream out = null;
 		try {
-			in = new FileInputStream(source);
-			out = new FileOutputStream(destination);
+			in = new BufferedInputStream(new FileInputStream(source));
+			out = new BufferedOutputStream(new  FileOutputStream(destination));
 			final byte[] buffer = new byte[8192];
 			while (true) {
 				int bytesRead = -1;

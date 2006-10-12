@@ -108,7 +108,7 @@ public class JNLPGenerator extends DefaultHandler {
 				in = featureArchive.getInputStream(featureXML);
 			} else {
 				nlsStream = getNLSStream(this.featureRoot);
-				in = new FileInputStream(new File(featureRoot, FEATURE_XML));
+				in = new BufferedInputStream(new FileInputStream(new File(featureRoot, FEATURE_XML)));
 			}
 			try {
 				if (nlsStream != null) {
@@ -160,7 +160,7 @@ public class JNLPGenerator extends DefaultHandler {
 				File file = (File) validEntries.get(potentials[i]);
 				if (file != null) {
 					try {
-						stream = new FileInputStream(file);
+						stream = new BufferedInputStream(new FileInputStream(file));
 						break;
 					} catch (IOException e) {
 						// do nothing
@@ -170,7 +170,7 @@ public class JNLPGenerator extends DefaultHandler {
 			if (stream == null) {
 				File file = (File) validEntries.values().iterator().next();
 				try {
-					stream = new FileInputStream(file);
+					stream = new BufferedInputStream(new FileInputStream(file));
 				} catch (IOException e) {
 					// do nothing
 				}
@@ -424,7 +424,7 @@ public class JNLPGenerator extends DefaultHandler {
 		}
 		if (destination.endsWith("/") || destination.endsWith("\\")) //$NON-NLS-1$  //$NON-NLS-2$
 			destination = new File(featureRoot.getParentFile(), id + "_" + version + ".jnlp").getAbsolutePath(); //$NON-NLS-1$ //$NON-NLS-2$
-		out = new PrintWriter(new FileOutputStream(destination));
+		out = new PrintWriter(new BufferedOutputStream(new FileOutputStream(destination)));
 		writePrologue();
 		out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 		out.print("<jnlp spec=\"1.0+\" "); //$NON-NLS-1$

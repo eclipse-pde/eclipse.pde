@@ -1663,7 +1663,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		// write the source feature to the feature.xml
 		File file = new File(sourceFeatureDir + '/' + Constants.FEATURE_FILENAME_DESCRIPTOR);
 		try {
-			SourceFeatureWriter writer = new SourceFeatureWriter(new FileOutputStream(file), sourceFeature, this);
+			SourceFeatureWriter writer = new SourceFeatureWriter(new BufferedOutputStream(new FileOutputStream(file)), sourceFeature, this);
 			try {
 				writer.printFeature();
 			} finally {
@@ -1688,7 +1688,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		sourceBuildProperties.put(PROPERTY_BIN_INCLUDES, Utils.getStringFromCollection(copiedFiles, ",")); //$NON-NLS-1$
 		OutputStream output = null;
 		try {
-			output = new FileOutputStream(buildProperty);
+			output = new BufferedOutputStream(new FileOutputStream(buildProperty));
 			try {
 				sourceBuildProperties.store(output, null);
 			} finally {

@@ -117,8 +117,8 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		InputStream in = null;
 		OutputStream out = null;
 		try {
-			in = new FileInputStream(source);
-			out = new FileOutputStream(destination);
+			in = new BufferedInputStream(new FileInputStream(source));
+			out = new BufferedOutputStream(new FileOutputStream(destination));
 
 			//Transfer bytes from in to out
 			byte[] buf = new byte[1024];
@@ -263,10 +263,10 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		if (bundle != null)
 			properties.put("version", bundle.getVersion().toString()); //$NON-NLS-1$
 
-		FileOutputStream stream = null;
+		OutputStream stream = null;
 		try {
 			File file = new File(dir, ".eclipseproduct"); //$NON-NLS-1$
-			stream = new FileOutputStream(file);
+			stream = new BufferedOutputStream(new FileOutputStream(file));
 			properties.store(stream, "Eclipse Product File"); //$NON-NLS-1$
 			stream.flush();
 		} catch (IOException e) {
