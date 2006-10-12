@@ -238,7 +238,7 @@ public class ElementOccurenceChecker {
 			// Multiply the min occurs amount to the overall multiplicity
 			multiplicityTracker = compositor.getMinOccurs() * multiplicityTracker;
 		}		
-		adjustChoiceSiblings(compositor, siblings);
+		adjustChoiceMinSiblings(compositor, siblings);
 		
 		ISchemaObject[] schemaObject = compositor.getChildren();
 		// Process the compositors children
@@ -263,7 +263,7 @@ public class ElementOccurenceChecker {
 			// Multiply the max occurs amount to the overall multiplicity
 			multiplicityTracker = compositor.getMaxOccurs() * multiplicityTracker;
 		}		
-		adjustChoiceSiblings(compositor, siblings);
+		adjustChoiceMaxSiblings(compositor, siblings);
 		
 		ISchemaObject[] schemaObject = compositor.getChildren();
 		// Process the compositors children
@@ -272,14 +272,85 @@ public class ElementOccurenceChecker {
 					siblings, multiplicityTracker, element);
 		}			
 	}
+
+	/**
+	 * @param compositor
+	 * @param siblings
+	 */
+	private static void adjustChoiceMaxSiblings(ISchemaCompositor compositor, 
+			HashMap siblings) {
+
+		if (isSimpleChoice(compositor)) {
+			// Supported
+			// Update all child element occurrences of the choice compositor
+			// to the number of occurences found
+			// Each choice occurence counts as one occurence for all child elements
+			// of that choice			
+			int childElementCount = 
+				countChoiceElementChildren(compositor, siblings);
+			updateChoiceElementChildren(compositor, siblings, childElementCount);
+		} else {
+			// Not supported
+			// IMPORTANT:  Any child of choice that is not an element (e.g.
+			// sequence, choice) is not supported, in future could recursively
+			// caculate, but time vs benefit is not worth it
+			// Remove all elements nested in compositors from validation check
+			// by setting their occurrences to integer MIN
+			updateChoiceElementChildren(compositor, siblings, Integer.MIN_VALUE);
+		}	
+	}	
+	
+	/**
+	 * @param compositor
+	 * @return
+	 */
+	private static boolean isSimpleChoice(ISchemaCompositor compositor) {
+		ISchemaObject[] schemaObject = compositor.getChildren();
+		// Simple choice compositors only have elements as children
+		// Complex choice compositors have one or more choice or sequence
+		// compositors as children
+		for (int i = 0; i < compositor.getChildCount(); i++) {
+			if (schemaObject[i] instanceof ISchemaCompositor) {			
+				return false;
+			}
+		}
+		return true;
+	}
 	
 	/**
 	 * @param compositor
 	 * @param siblings
 	 */
-	private static void adjustChoiceSiblings(ISchemaCompositor compositor, 
+	private static void adjustChoiceMinSiblings(ISchemaCompositor compositor, 
 			HashMap siblings) {
 
+		if (isSimpleChoice(compositor)) {
+			// Supported
+			// Update all child element occurrences of the choice compositor
+			// to the number of occurences found
+			// Each choice occurence counts as one occurence for all child elements
+			// of that choice			
+			int childElementCount = 
+				countChoiceElementChildren(compositor, siblings);
+			updateChoiceElementChildren(compositor, siblings, childElementCount);
+		} else {
+			// Not supported
+			// IMPORTANT:  Any child of choice that is not an element (e.g.
+			// sequence, choice) is not supported, in future could recursively
+			// caculate, but time vs benefit is not worth it
+			// Remove all elements nested in compositors from validation check
+			// by setting their occurrences to integer MAX
+			updateChoiceElementChildren(compositor, siblings, Integer.MAX_VALUE);
+		}
+	}
+	
+	/**
+	 * @param compositor
+	 * @param siblings
+	 * @return
+	 */
+	private static int countChoiceElementChildren(ISchemaCompositor compositor, 
+			HashMap siblings) {
 		ISchemaObject[] schemaObject = compositor.getChildren();
 		// Count the number of child element occurrences of the choice
 		// Compositor
@@ -289,22 +360,31 @@ public class ElementOccurenceChecker {
 				String name = schemaObject[i].getName();
 				if (siblings.containsKey(name)) {
 					int occurences = ((Integer)siblings.get(name)).intValue();
-					childElementCount = childElementCount + occurences;
+					if (childElementCount < Integer.MAX_VALUE) {
+						childElementCount = childElementCount + occurences;
+					}
 				}
 			}
 		}
-		// Update all child element occurrences of the choice compositor
-		// to the number of occurences found
-		// Each choice occurence counts as one occurence for all child elements
-		// of that choice
-		// IMPORTANT:  Any child of choice that is not an element (e.g.
-		// sequence, choice) is not supported, in future could recursively
-		// caculate, but time vs benefit is not worth it
+		return childElementCount;
+	}
+	
+	/**
+	 * @param compositor
+	 * @param siblings
+	 * @param childElementCount
+	 */
+	private static void updateChoiceElementChildren(ISchemaCompositor compositor, 
+			HashMap siblings, int childElementCount) {
+		ISchemaObject[] schemaObject = compositor.getChildren();
 		for (int i = 0; i < compositor.getChildCount(); i++) {
 			if (schemaObject[i] instanceof ISchemaElement) {
 				String name = schemaObject[i].getName();
 				siblings.put(name, new Integer(childElementCount));
-			}			
+			} else if (schemaObject[i] instanceof ISchemaCompositor) {
+				updateChoiceElementChildren((ISchemaCompositor)schemaObject[i], 
+						siblings, childElementCount);
+			}
 		}		
 	}
 	
