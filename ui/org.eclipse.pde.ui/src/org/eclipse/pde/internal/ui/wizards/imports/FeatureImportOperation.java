@@ -14,8 +14,10 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -34,7 +36,9 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
@@ -181,10 +185,10 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 						PDECore.EXTERNAL_PROJECT_PROPERTY,
 						PDECore.BINARY_PROJECT_VALUE);
 			}
-			
-				setProjectNatures(project, model, monitor);
-				if (project.hasNature(JavaCore.NATURE_ID))
-					setClasspath(project, model, monitor);
+			createBuildProperties(project);
+			setProjectNatures(project, model, monitor);
+			if (project.hasNature(JavaCore.NATURE_ID))
+				setClasspath(project, model, monitor);
 
 		} finally {
 			monitor.done();
@@ -280,6 +284,25 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		}
 		File lib = new File(model.getInstallLocation(), libName);
 		return lib.exists();
+	}
+	
+	private void createBuildProperties(IProject project) {
+		IFile file = project.getFile("build.properties"); //$NON-NLS-1$
+		if (!file.exists()) {
+			WorkspaceBuildModel model = new WorkspaceBuildModel(file);
+			IBuildEntry ientry = model.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
+			try {
+				IResource[] res = project.members();
+				for (int i = 0; i < res.length; i++) {
+					String path = res[i].getProjectRelativePath().toString();
+					if (!path.equals(".project")) //$NON-NLS-1$
+						ientry.addToken(path);
+				}
+				model.getBuild().add(ientry);
+				model.save();
+			} catch (CoreException e) {
+			}
+		}
 	}
 
 }
