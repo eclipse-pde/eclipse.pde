@@ -56,6 +56,8 @@ import org.eclipse.pde.internal.ui.wizards.tools.IOrganizeManifestsSettings;
 import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsOperation;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
 
 public class LauncherUtils {
 
@@ -69,6 +71,18 @@ public class LauncherUtils {
 			display = Display.getDefault();
 		}
 		return display;
+	}
+	
+	public final static Shell getActiveShell() {
+		IWorkbenchWindow window = 
+			PDEPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+		if (window == null) {
+			IWorkbenchWindow[] windows = PDEPlugin.getDefault().getWorkbench().getWorkbenchWindows();
+			if (windows.length > 0)
+				return windows[0].getShell();
+		} else
+			return window.getShell();
+		return getDisplay().getActiveShell();
 	}
 
 	public static boolean clearWorkspace(ILaunchConfiguration configuration,
@@ -106,7 +120,7 @@ public class LauncherUtils {
 						.bind(
 								PDEUIMessages.WorkbenchLauncherConfigurationDelegate_confirmDeleteWorkspace,
 								workspaceFile.getPath());
-				MessageDialog dialog = new MessageDialog(getDisplay().getActiveShell(),
+				MessageDialog dialog = new MessageDialog(getActiveShell(),
 						title, null, message, MessageDialog.QUESTION, new String[] {
 								IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL,
 								IDialogConstants.CANCEL_LABEL }, 0);
