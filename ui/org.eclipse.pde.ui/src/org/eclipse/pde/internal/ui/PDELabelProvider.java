@@ -640,15 +640,15 @@ public class PDELabelProvider extends SharedLabelProvider {
 		} else if (object.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
 			return get(PDEPluginImages.DESC_CSSUBITEM_OBJ);
 		} else if (object.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) {
-			return get(PDEPluginImages.DESC_CSSUBITEM_OBJ);
+			return get(PDEPluginImages.DESC_CSUNSUPPORTED_OBJ);
 		} else if (object.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) {
-			return get(PDEPluginImages.DESC_CSSUBITEM_OBJ);
+			return get(PDEPluginImages.DESC_CSUNSUPPORTED_OBJ);
 		} else if (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
 			return get(PDEPluginImages.DESC_SIMPLECS_OBJ);
 		} else if (object.getType() == ISimpleCSConstants.TYPE_INTRO) {
 			return get(PDEPluginImages.DESC_CSINTRO_OBJ);
 		} else if (object.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN) {
-			return get(PDEPluginImages.DESC_CSSUBITEM_OBJ);
+			return get(PDEPluginImages.DESC_CSUNSUPPORTED_OBJ);
 		}
 		return get(PDEPluginImages.DESC_SIMPLECS_OBJ, F_ERROR);
 	}	
