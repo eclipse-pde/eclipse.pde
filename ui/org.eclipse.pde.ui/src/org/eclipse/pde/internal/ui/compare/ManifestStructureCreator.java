@@ -16,11 +16,13 @@ import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.text.ManifestPartitionScanner;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.services.IDisposable;
 
 public class ManifestStructureCreator extends StructureCreator {
@@ -43,9 +45,26 @@ public class ManifestStructureCreator extends StructureCreator {
 			if (disposable != null)
 				disposable.dispose();
 		}
+		
+		public Object getAdapter(Class adapter) {
+			if (adapter == ISharedDocumentAdapter.class) {
+				ISharedDocumentAdapter elementAdapter = SharedDocumentAdapterWrapper.getAdapter(input);
+				if (elementAdapter != null) {
+					return new SharedDocumentAdapterWrapper(elementAdapter) {
+						public IEditorInput getDocumentKey(Object element) {
+							if (element instanceof ManifestNode) {
+								return getWrappedAdapter().getDocumentKey(input);
+							}
+							return super.getDocumentKey(element);
+						}
+					};
+				}
+			}
+			return super.getAdapter(adapter);
+		}
 	}
 
-	static class ManifestNode extends DocumentRangeNode implements ITypedElement {
+	static class ManifestNode extends DocumentRangeNode implements ITypedElement, IAdaptable {
 		
 		private boolean fIsEditable;
 		private ManifestNode fParent;
@@ -94,6 +113,12 @@ public class ManifestStructureCreator extends StructureCreator {
 			if (fParent != null)
 				fParent.nodeChanged(node);
 		}
+		
+		public Object getAdapter(Class adapter) {
+			if (adapter == ISharedDocumentAdapter.class && fParent != null)
+				return fParent.getAdapter(adapter);
+			return null;
+		}
 	}
 	
 	public String getName() {
@@ -130,14 +155,6 @@ public class ManifestStructureCreator extends StructureCreator {
 		return null;
 	}
 
-	public void save(IStructureComparator node, Object input) {
-		if (input instanceof IEditableContent && node instanceof ManifestNode) {
-			IDocument doc = ((ManifestNode)node).getDocument();
-			IEditableContent bca = (IEditableContent) input;
-			String content = doc.get();
-			bca.setContent(content.getBytes());
-		}
-	}
 	private void parseManifest(ManifestNode root, IDocument doc) throws IOException {
 		int lineStart = 0;
 		int[] args = new int[2];
