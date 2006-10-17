@@ -719,9 +719,19 @@
             contributorClass="org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSEditorContributor"
             icon="$nl$/icons/obj16/cheatsheet_obj.gif"
             id="org.eclipse.pde.ui.simpleCheatSheetEditor"
-            name="%cheat.sheat.editor.name">
+            name="%simple.cheat.sheat.editor.name">
          <contentTypeBinding
                contentTypeId="org.eclipse.pde.simpleCheatSheet">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="org.eclipse.pde.internal.ui.editor.cheatsheet.comp.CompCSEditor"
+            contributorClass="org.eclipse.pde.internal.ui.editor.cheatsheet.comp.CompCSEditorContributor"
+            icon="$nl$/icons/obj16/cheatsheet_obj.gif"
+            id="org.eclipse.pde.ui.compositeCheatSheetEditor"
+            name="%composite.cheat.sheat.editor.name">
+         <contentTypeBinding
+               contentTypeId="org.eclipse.pde.compositeCheatSheet">
          </contentTypeBinding>
       </editor>
    </extension>

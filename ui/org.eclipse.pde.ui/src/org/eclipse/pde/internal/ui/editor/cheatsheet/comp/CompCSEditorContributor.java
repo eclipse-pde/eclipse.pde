@@ -9,17 +9,21 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details;
+package org.eclipse.pde.internal.ui.editor.cheatsheet.comp;
+
+import org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor;
 
 /**
- * ISimpleCSMaster
+ * CompCSEditorContributor
  *
  */
-public interface ISimpleCSMaster {
+public class CompCSEditorContributor extends PDEFormEditorContributor {
 
 	/**
-	 * 
+	 * @param menuName
 	 */
-	public void updateButtons();
-	
+	public CompCSEditorContributor() {
+		super("compCSEditor"); //$NON-NLS-1$
+	}
+
 }

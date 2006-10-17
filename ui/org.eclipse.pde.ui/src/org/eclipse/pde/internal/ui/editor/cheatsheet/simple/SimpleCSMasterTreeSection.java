@@ -40,12 +40,12 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TreeSection;
 import org.eclipse.pde.internal.ui.editor.actions.CollapseAction;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSAddStepAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSAddSubStepAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSRemoveRunObjectAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSRemoveStepAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions.SimpleCSRemoveSubStepAction;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSMaster;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -64,8 +64,8 @@ import org.eclipse.ui.forms.widgets.Section;
  * SimpleCSElementSection
  *
  */
-public class SimpleCSElementSection extends TreeSection implements
-		ISimpleCSMaster {
+public class SimpleCSMasterTreeSection extends TreeSection implements
+		ICSMaster {
 
 	private static final int F_BUTTON_ADD_STEP = 0;
 
@@ -105,7 +105,7 @@ public class SimpleCSElementSection extends TreeSection implements
 	 * @param style
 	 * @param buttonLabels
 	 */
-	public SimpleCSElementSection(PDEFormPage formPage, Composite parent) {
+	public SimpleCSMasterTreeSection(PDEFormPage formPage, Composite parent) {
 		super(formPage, parent, Section.DESCRIPTION, new String[] {
 				PDEUIMessages.SimpleCSElementSection_0,
 				PDEUIMessages.SimpleCSElementSection_6,
@@ -173,8 +173,10 @@ public class SimpleCSElementSection extends TreeSection implements
 	 * 
 	 */
 	private void initialize() {
-		// TODO: MP: Check if model is null
 		fModel = (ISimpleCSModel)getPage().getModel();
+		if (fModel == null) {
+			return;
+		}
 		fTreeViewer.setInput(fModel);
 
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_STEP, fModel.isEditable());
@@ -192,7 +194,6 @@ public class SimpleCSElementSection extends TreeSection implements
 		// Select the cheatsheet node in the tree
 		fTreeViewer.setSelection(new StructuredSelection(cheatsheet), true);
 		fTreeViewer.expandToLevel(2);
-		
 	}
 
 	/**
@@ -203,11 +204,10 @@ public class SimpleCSElementSection extends TreeSection implements
 		TreePart treePart = getTreePart();
 		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
 		fTreeViewer = treePart.getTreeViewer();
-		// TODO: MP: Complete content provider
 		fTreeViewer.setContentProvider(new SimpleCSContentProvider());
 		fTreeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
-		// TODO: MP: Future drag and drop
+		// TODO: MP: LOW: SimpleCS: Implement drag and drop move feature
 	}	
 
 	/* (non-Javadoc)
@@ -240,9 +240,6 @@ public class SimpleCSElementSection extends TreeSection implements
 	 * @see org.eclipse.pde.internal.ui.editor.TreeSection#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected void selectionChanged(IStructuredSelection selection) {
-		// TODO: MP: What to do here?
-		//getPage().getManagedForm().fireSelectionChanged(this, selection);
-		//getPage().getPDEEditor().setSelection(selection);
 		updateButtons();
 	}	
 
@@ -433,10 +430,12 @@ public class SimpleCSElementSection extends TreeSection implements
 
 	}
 	
-	/**
-	 * 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
-	public void handleModelChanged(IModelChangedEvent event) {
+	public void modelChanged(IModelChangedEvent event) {
+		// No need to call super, world changed event handled here
+		// TODO: MP: HIGH: SimpleCS:  STYLE CHANGE: If anything goes wrong revert change back
 
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
@@ -446,7 +445,7 @@ public class SimpleCSElementSection extends TreeSection implements
 			handleModelRemoveType(event);
 		} else if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 			handleModelChangeType(event);
-		}
+		}		
 	}
 
 	/**
@@ -454,7 +453,6 @@ public class SimpleCSElementSection extends TreeSection implements
 	 */
 	private void handleModelInsertType(IModelChangedEvent event) {
 		// Insert event
-		// TODO: MP: LOW: Go through all changed objects or just first?		
 		Object[] objects = event.getChangedObjects();
 		for (int i = 0; i < objects.length; i++) {
 			ISimpleCSObject object = (ISimpleCSObject)objects[i];		
@@ -475,7 +473,6 @@ public class SimpleCSElementSection extends TreeSection implements
 	 */
 	private void handleModelRemoveType(IModelChangedEvent event) {
 		// Remove event
-		// TODO: MP: LOW: Go through all changed objects or just first?		
 		Object[] objects = event.getChangedObjects();
 		for (int i = 0; i < objects.length; i++) {
 			ISimpleCSObject object = (ISimpleCSObject)objects[i];		
@@ -515,7 +512,6 @@ public class SimpleCSElementSection extends TreeSection implements
 	 */
 	private void handleModelChangeType(IModelChangedEvent event) {
 		// Change event
-		// TODO: MP: LOW: Go through all changed objects or just first?		
 		Object[] objects = event.getChangedObjects();
 		for (int i = 0; i < objects.length; i++) {
 			ISimpleCSObject object = (ISimpleCSObject)objects[i];		
@@ -530,10 +526,8 @@ public class SimpleCSElementSection extends TreeSection implements
 		}		
 	}	
 	
-	/**
-	 * Special case:  Need to set the selection after the full UI is created
-	 * in order to properly fire an event to summon up the right details 
-	 * section
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster#fireSelection()
 	 */
 	public void fireSelection() {
 		fTreeViewer.setSelection(fTreeViewer.getSelection());
@@ -611,7 +605,7 @@ public class SimpleCSElementSection extends TreeSection implements
 			manager.add(fRemoveRunObjectAction);				
 		}
 		// Add normal edit operations
-		// TODO: MP: Enable
+		// TODO: MP: LOW: SimpleCS:  Enable context menu edit operations
 		//getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 		//manager.add(new Separator());
 	}
@@ -620,9 +614,6 @@ public class SimpleCSElementSection extends TreeSection implements
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
 	 */
 	public boolean doGlobalAction(String actionId) {
-		// TODO: MP: LOW: Do Cut
-		// TODO: MP: LOW: Do Paste
-		
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDeleteAction();
 			return true;

@@ -15,7 +15,10 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSIntro;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSElementSection;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -28,7 +31,7 @@ import org.eclipse.ui.forms.widgets.Section;
  * SimpleCSIntroDetails
  *
  */
-public class SimpleCSIntroDetails extends SimpleCSAbstractDetails {
+public class SimpleCSIntroDetails extends CSAbstractDetails {
 
 	private ISimpleCSIntro fIntro;
 	
@@ -36,13 +39,13 @@ public class SimpleCSIntroDetails extends SimpleCSAbstractDetails {
 	
 	private Section fMainSection;	
 	
-	private ISimpleCSDetails fHelpSection;
+	private ICSDetails fHelpSection;
 	
 	/**
 	 * @param elementSection
 	 */
-	public SimpleCSIntroDetails(ISimpleCSIntro intro, SimpleCSElementSection elementSection) {
-		super(elementSection);
+	public SimpleCSIntroDetails(ISimpleCSIntro intro, ICSMaster elementSection) {
+		super(elementSection, SimpleCSInputContext.CONTEXT_ID);
 		fIntro = intro;
 		
 		fContent = null;
@@ -56,22 +59,11 @@ public class SimpleCSIntroDetails extends SimpleCSAbstractDetails {
 	 */
 	public void createDetails(Composite parent) {
 
-		// TODO: MP: Probably can refactor this back into super class as utility
-		// Creation of section and composite
-		// TODO: MP: make the toolkit a member var for all details classes for consistency
-		fToolkit = getManagedForm().getToolkit();
-		//Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
 		GridData data = null;
-		boolean paintedBorder = fToolkit.getBorderStyle() != SWT.BORDER;
-		
-		// Set parent layout
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		parent.setLayout(layout);
+		boolean paintedBorder = getToolkit().getBorderStyle() != SWT.BORDER;
 		
 		// Create main section
-		fMainSection = fToolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
+		fMainSection = getToolkit().createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fMainSection.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		fMainSection.marginHeight = 5;
 		fMainSection.marginWidth = 5; 
@@ -81,8 +73,8 @@ public class SimpleCSIntroDetails extends SimpleCSAbstractDetails {
 		fMainSection.setLayoutData(data);
 		
 		// Create container for main section
-		Composite mainSectionClient = fToolkit.createComposite(fMainSection);	
-		layout = new GridLayout(2, false);
+		Composite mainSectionClient = getToolkit().createComposite(fMainSection);	
+		GridLayout layout = new GridLayout(2, false);
 		if (paintedBorder) {
 			layout.verticalSpacing = 7;
 		}
@@ -90,7 +82,7 @@ public class SimpleCSIntroDetails extends SimpleCSAbstractDetails {
 
 	
 		// description:  Content (Element)
-		fContent = new FormEntry(mainSectionClient, fToolkit, PDEUIMessages.SimpleCSDescriptionDetails_0, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+		fContent = new FormEntry(mainSectionClient, getToolkit(), PDEUIMessages.SimpleCSDescriptionDetails_0, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = 90;
 		fContent.getText().setLayoutData(data);		
@@ -98,7 +90,7 @@ public class SimpleCSIntroDetails extends SimpleCSAbstractDetails {
 		fContent.getLabel().setLayoutData(data);				
 
 		// Bind widgets
-		fToolkit.paintBordersFor(mainSectionClient);
+		getToolkit().paintBordersFor(mainSectionClient);
 		fMainSection.setClient(mainSectionClient);
 		markDetailsPart(fMainSection);
 		

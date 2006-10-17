@@ -15,6 +15,8 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSHelpObject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetailsSurrogate;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -36,7 +38,7 @@ import org.eclipse.ui.forms.widgets.Section;
  * SimpleCSHelpDetailsSection
  *
  */
-public class SimpleCSHelpDetails implements ISimpleCSDetails {
+public class SimpleCSHelpDetails implements ICSDetails {
 
 	private Text fHelpText;
 	
@@ -46,7 +48,7 @@ public class SimpleCSHelpDetails implements ISimpleCSDetails {
 	
 	private ISimpleCSHelpObject fHelpObject;
 	
-	private SimpleCSAbstractDetails fDetails;
+	private ICSDetailsSurrogate fDetails;
 
 	private Section fHelpSection;
 
@@ -61,7 +63,7 @@ public class SimpleCSHelpDetails implements ISimpleCSDetails {
 	 * @param details
 	 */
 	public SimpleCSHelpDetails(ISimpleCSHelpObject helpObject,
-			SimpleCSAbstractDetails details) {
+			ICSDetailsSurrogate details) {
 		fHelpObject = helpObject;
 		fDetails = details;
 		
@@ -136,9 +138,7 @@ public class SimpleCSHelpDetails implements ISimpleCSDetails {
 		// Bind widgets
 		toolkit.paintBordersFor(helpSectionClient);
 		fHelpSection.setClient(helpSectionClient);
-		
-		// TODO: MP: LOW: SimpleCS: What does this do?
-		//markDetailsPart(fHelpSection);		
+	
 	}
 
 	/* (non-Javadoc)

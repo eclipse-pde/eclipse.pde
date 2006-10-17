@@ -9,46 +9,59 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details;
+package org.eclipse.pde.internal.ui.editor.cheatsheet;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.ui.editor.PDEDetails;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSElementSection;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
+import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
 
 /**
- * SimpleCSAbstractDetails
+ * CSAbstractDetails
  *
  */
-public abstract class SimpleCSAbstractDetails extends PDEDetails implements
-		ISimpleCSDetails {
+public abstract class CSAbstractDetails extends PDEDetails implements
+		ICSDetailsSurrogate, ICSDetails {
 
-	private SimpleCSElementSection fElementSection;
+	private ICSMaster fMasterSection;
 	
-	protected FormToolkit fToolkit;
+	private String fContextID;
 	
 	/**
 	 * 
 	 */
-	public SimpleCSAbstractDetails(SimpleCSElementSection elementSection) {
-		fElementSection = elementSection;
-		fToolkit = null;
+	public CSAbstractDetails(ICSMaster masterSection, String contextID) {
+		fMasterSection = masterSection;
+		fContextID = contextID;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	public final void createContents(Composite parent) {
+		configureParentLayout(parent);
 		createDetails(parent);
 		updateFields();
 		hookListeners();
 	}
 
+	/**
+	 * @param parent
+	 */
+	private void configureParentLayout(Composite parent) {
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		parent.setLayout(layout);		
+	}
+	
 	/**
 	 * @param parent
 	 */
@@ -69,8 +82,7 @@ public abstract class SimpleCSAbstractDetails extends PDEDetails implements
 	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IFormPart part, ISelection selection) {
-		// TODO: MP: Anything needed here?
-
+		// NO-OP
 	}
 
 	/* (non-Javadoc)
@@ -85,7 +97,7 @@ public abstract class SimpleCSAbstractDetails extends PDEDetails implements
 	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#getContextId()
 	 */
 	public String getContextId() {
-		return SimpleCSInputContext.CONTEXT_ID;
+		return fContextID;
 	}
 
 	/* (non-Javadoc)
@@ -99,36 +111,61 @@ public abstract class SimpleCSAbstractDetails extends PDEDetails implements
 	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#isEditable()
 	 */
 	public boolean isEditable() {
-		return fElementSection.isEditable();
+		return fMasterSection.isEditable();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	public void modelChanged(IModelChangedEvent event) {
-		// TODO: MP: Do we need to do anything here?
-
+		// NO-OP
 	}
 	
 	/**
 	 * @return
 	 */
 	public boolean isEditableElement() {
-		return fElementSection.isEditable();
+		return fMasterSection.isEditable();
 	}	
 	
 	/**
 	 * @return
 	 */
 	public FormToolkit getToolkit() {
-		return fToolkit;
+		return getManagedForm().getToolkit();
 	}
 	
 	/**
 	 * @return
 	 */
-	public ISimpleCSMaster getMasterSection() {
-		return fElementSection;
+	public ICSMaster getMasterSection() {
+		return fMasterSection;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetailsSurrogate#createUISectionContainer(org.eclipse.swt.widgets.Composite, int)
+	 */
+	public Composite createUISectionContainer(Composite parent, int columns) {
+		Composite container = getManagedForm().getToolkit().createComposite(parent);
+		GridLayout layout = new GridLayout(columns, false);
+		container.setLayout(layout);
+		return container;		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetailsSurrogate#createUISection(org.eclipse.swt.widgets.Composite, java.lang.String, java.lang.String, int)
+	 */
+	public Section createUISection(Composite parent, String text,
+			String description, int style) {
+		Section section = getManagedForm().getToolkit().createSection(parent, style);
+		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
+		section.marginHeight = 5;
+		section.marginWidth = 5; 
+		section.setText(text);
+		section.setDescription(description);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		section.setLayoutData(data);
+		return section;
 	}
 	
 }

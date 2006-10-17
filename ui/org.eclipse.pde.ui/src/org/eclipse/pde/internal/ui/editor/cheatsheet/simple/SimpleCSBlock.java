@@ -20,7 +20,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
 import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.SimpleCSAbstractDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.SimpleCSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.SimpleCSIntroDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.SimpleCSItemDetails;
@@ -38,9 +38,9 @@ import org.eclipse.ui.forms.IManagedForm;
 public class SimpleCSBlock extends PDEMasterDetailsBlock implements
 		IDetailsPageProvider, IModelChangedListener {
 
-	private SimpleCSElementSection fMasterSection;
-	// TODO: MP: Create a new interface 
-	private SimpleCSAbstractDetails fCurrentDetailsSection;
+	private SimpleCSMasterTreeSection fMasterSection;
+
+	private IDetailsPage fCurrentDetailsSection;
 	
 	/**
 	 * @param page
@@ -54,7 +54,7 @@ public class SimpleCSBlock extends PDEMasterDetailsBlock implements
 	 */
 	protected PDESection createMasterSection(IManagedForm managedForm,
 			Composite parent) {
-		fMasterSection = new SimpleCSElementSection(getPage(), parent);
+		fMasterSection = new SimpleCSMasterTreeSection(getPage(), parent);
 		return fMasterSection;
 	}
 
@@ -62,8 +62,7 @@ public class SimpleCSBlock extends PDEMasterDetailsBlock implements
 	 * @see org.eclipse.ui.forms.MasterDetailsBlock#registerPages(org.eclipse.ui.forms.DetailsPart)
 	 */
 	protected void registerPages(DetailsPart detailsPart) {
-		// TODO: MP: Set limit to 4 and add update methods accordingly to reuse
-		// the section
+		// TODO: MP: HIGH: SimpleCS: Set limit to 4 and add update methods accordingly to reuse the section
 		detailsPart.setPageLimit(0); 
 		detailsPart.setPageProvider(this);
 	}
@@ -74,13 +73,17 @@ public class SimpleCSBlock extends PDEMasterDetailsBlock implements
 	public IDetailsPage getPage(Object key) {
 
 		if (key instanceof ISimpleCSItem) {
-			fCurrentDetailsSection = new SimpleCSItemDetails((ISimpleCSItem)key, fMasterSection);
+			fCurrentDetailsSection = new SimpleCSItemDetails(
+					(ISimpleCSItem) key, fMasterSection);
 		} else if (key instanceof ISimpleCSSubItem) {
-			fCurrentDetailsSection = new SimpleCSSubItemDetails((ISimpleCSSubItem)key, fMasterSection);
+			fCurrentDetailsSection = new SimpleCSSubItemDetails(
+					(ISimpleCSSubItem) key, fMasterSection);
 		} else if (key instanceof ISimpleCS) {
-			fCurrentDetailsSection = new SimpleCSDetails((ISimpleCS)key, fMasterSection);
+			fCurrentDetailsSection = new SimpleCSDetails((ISimpleCS) key,
+					fMasterSection);
 		} else if (key instanceof ISimpleCSIntro) {
-			fCurrentDetailsSection = new SimpleCSIntroDetails((ISimpleCSIntro)key, fMasterSection);
+			fCurrentDetailsSection = new SimpleCSIntroDetails(
+					(ISimpleCSIntro) key, fMasterSection);
 		} else {
 			fCurrentDetailsSection = null;
 		}
@@ -99,31 +102,22 @@ public class SimpleCSBlock extends PDEMasterDetailsBlock implements
 	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	public void modelChanged(IModelChangedEvent event) {
-		
 		// Inform the master section
 		if (fMasterSection != null) {
-			fMasterSection.handleModelChanged(event);
+			fMasterSection.modelChanged(event);
 		}
 		// Inform the details section
-		if (fCurrentDetailsSection != null) {
-			fCurrentDetailsSection.modelChanged(event);
-		}
+		// Unnecessary
+		//if (fCurrentDetailsSection != null) {
+		//	fCurrentDetailsSection.modelChanged(event);
+		//}
 	}
 	
 	/**
 	 * @return
 	 */
-	public SimpleCSElementSection getMastersSection() {
+	public ICSMaster getMastersSection() {
 		return fMasterSection;
-	}
-	
-	/**
-	 * @return
-	 */
-	public SimpleCSAbstractDetails getCurrentDetailsSection() {
-		// TODO: MP: Should use inteface instead of abstract class
-		// Method not used at the moment
-		return fCurrentDetailsSection;
 	}
 	
 }

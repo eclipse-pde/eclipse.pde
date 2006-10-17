@@ -9,13 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
+package org.eclipse.pde.internal.ui.editor.cheatsheet.comp;
 
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
-import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
+import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
+import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModel;
+import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -24,23 +24,27 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
- * SimpleCSPage
+ * CompCSPage
  *
  */
-public class SimpleCSPage extends PDEFormPage implements IModelChangedListener {
+public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 
-	public static final String PAGE_ID = "simpleCSPage"; //$NON-NLS-1$
-	
-	private SimpleCSBlock fBlock;
+	public static final String PAGE_ID = "compCSPage"; //$NON-NLS-1$
+
+	private CompCSBlock fBlock;
 	
 	/**
 	 * @param editor
 	 */
-	public SimpleCSPage(FormEditor editor) {
+	public CompCSPage(FormEditor editor) {
 		super(editor, PAGE_ID, PDEUIMessages.SimpleCSPage_0);
-		fBlock = new SimpleCSBlock(this);
+
+		fBlock = new CompCSBlock(this);
 	}
 
+	// TODO: MP: HIGH: CompCS: Define mnemonics for UI
+	// TODO: MP: LOW: CompCS: Clean-up and reuse externalized strings
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
@@ -51,15 +55,15 @@ public class SimpleCSPage extends PDEFormPage implements IModelChangedListener {
 		// Note: Scrolled form #1 created here
 		ScrolledForm form = managedForm.getForm();
 		// Set page title
-		ISimpleCSModel model = (ISimpleCSModel)getModel();
-		// TODO: MP: LOW: SimpleCS:  Create formatted error page
+		ICompCSModel model = (ICompCSModel)getModel();
+		// TODO: MP: LOW: CompCS:  Create formatted error page
 		if ((model == null) || 
 				(model.isLoaded() == false)) {
 			throw new RuntimeException(PDEUIMessages.SimpleCSPage_1);
 		}
 		
-		String title = PDETextHelper.translateReadText(model.getSimpleCS()
-				.getTitle());
+		String title = PDETextHelper.translateReadText(model.getCompCS()
+				.getFieldName());
 		if (title.length() > 0) {
 			form.setText(title);
 		} else {
@@ -73,20 +77,20 @@ public class SimpleCSPage extends PDEFormPage implements IModelChangedListener {
 		fBlock.getMastersSection().fireSelection();
 		// Register this page to be informed of model change events
 		model.addModelChangedListener(this);
-	}
+	}	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#dispose()
 	 */
 	public void dispose() {
 		
-		ISimpleCSModel simpleCSModel = (ISimpleCSModel)getModel();
-		if (simpleCSModel != null) {
-			simpleCSModel.removeModelChangedListener(this);
+		ICompCSModel compCSModel = (ICompCSModel)getModel();
+		if (compCSModel != null) {
+			compCSModel.removeModelChangedListener(this);
 		}
 		super.dispose();
-	}
-
+	}	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
@@ -95,13 +99,13 @@ public class SimpleCSPage extends PDEFormPage implements IModelChangedListener {
 		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object[] objects = event.getChangedObjects();
 			for (int i = 0; i < objects.length; i++) {
-				ISimpleCSObject object = (ISimpleCSObject)objects[i];
+				ICompCSObject object = (ICompCSObject)objects[i];
 				if (object == null) {
 					// Ignore
-				} else if (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
+				} else if (object.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET) {
 					String changeProperty = event.getChangedProperty();
 					if ((changeProperty != null) && 
-							changeProperty.equals(ISimpleCSConstants.ATTRIBUTE_TITLE)) {
+							changeProperty.equals(ICompCSConstants.ATTRIBUTE_NAME)) {
 						// Has to be a String if the property is a title
 						// Update the form page title
 						getManagedForm().getForm().setText(
@@ -114,5 +118,5 @@ public class SimpleCSPage extends PDEFormPage implements IModelChangedListener {
 		// Inform the block
 		fBlock.modelChanged(event);
 	}
-	
+
 }

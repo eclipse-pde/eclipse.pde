@@ -29,6 +29,8 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.commands.CommandComposerDialog;
 import org.eclipse.pde.internal.ui.commands.CommandComposerPart;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetailsSurrogate;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -54,11 +56,11 @@ import org.eclipse.ui.forms.widgets.Section;
  * SimpleCSCommandDetailsSection
  *
  */
-public class SimpleCSCommandDetails implements ISimpleCSDetails {
+public class SimpleCSCommandDetails implements ICSDetails {
 
 	private ISimpleCSRun fRun;
 
-	private SimpleCSAbstractDetails fDetails;	
+	private ICSDetailsSurrogate fDetails;	
 	
 	private Table fCommandTable;
 	
@@ -72,7 +74,7 @@ public class SimpleCSCommandDetails implements ISimpleCSDetails {
 	 * 
 	 */
 	public SimpleCSCommandDetails(ISimpleCSRun run,
-			SimpleCSAbstractDetails details) {
+			ICSDetailsSurrogate details) {
 		fRun = run;
 		fDetails = details;		
 
@@ -156,8 +158,6 @@ public class SimpleCSCommandDetails implements ISimpleCSDetails {
 		// Bind widgets
 		toolkit.paintBordersFor(commandSectionClient);
 		commandSection.setClient(commandSectionClient);
-		// TODO: MP: Need to do anything here?
-		//markDetailsPart(fCommandSection);	
 	}
 
 	/* (non-Javadoc)

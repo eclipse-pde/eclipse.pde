@@ -95,6 +95,60 @@ public class PDEUIMessages extends NLS {
 
 	public static String CommandSerializerPart_name;
 
+	public static String CompCSDependenciesDetails_Dependencies;
+
+	public static String CompCSDependenciesDetails_group;
+
+	public static String CompCSDependenciesDetails_SectionDescription;
+
+	public static String CompCSDependenciesDetails_task;
+
+	public static String CompCSDetails_Name;
+
+	public static String CompCSDetails_sectionDescription;
+
+	public static String CompCSEnclosingTextDetails_Conclusion;
+
+	public static String CompCSEnclosingTextDetails_ConclusionDescription;
+
+	public static String CompCSEnclosingTextDetails_EnclosingText;
+
+	public static String CompCSEnclosingTextDetails_Introduction;
+
+	public static String CompCSEnclosingTextDetails_IntroductionDescription;
+
+	public static String CompCSEnclosingTextDetails_SectionDescription;
+
+	public static String CompCSEnclosingTextDetails_SkipIntroLabel;
+
+	public static String CompCSMasterTreeSection_addGroup;
+
+	public static String CompCSMasterTreeSection_addTask;
+
+	public static String CompCSTaskDetails_Name;
+
+	public static String CompCSTaskDetails_Path;
+
+	public static String CompCSTaskDetails_SectionDescription;
+
+	public static String CompCSTaskDetails_SkipLabel;
+
+	public static String CompCSTaskGroupDetails_Choice;
+
+	public static String CompCSTaskGroupDetails_KindToolTip;
+
+	public static String CompCSTaskGroupDetails_Name;
+
+	public static String CompCSTaskGroupDetails_SectionDescription;
+
+	public static String CompCSTaskGroupDetails_Sequence;
+
+	public static String CompCSTaskGroupDetails_Set;
+
+	public static String CompCSTaskGroupDetails_SkipLabel;
+
+	public static String CompCSTaskGroupDetails_Type;
+
 	public static String CompilersConfigurationTab_incompatEnv;
 
 	public static String ContentSection_addDialogButtonLabel;

@@ -9,29 +9,29 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details;
-
-import org.eclipse.swt.widgets.Composite;
+package org.eclipse.pde.internal.ui.editor.cheatsheet;
 
 /**
- * ISimpleCSDetails
+ * ICSMaster
  *
  */
-public interface ISimpleCSDetails {
+public interface ICSMaster {
 
 	/**
-	 * @param parent
-	 */
-	public void createDetails(Composite parent);
-	
-	/**
 	 * 
 	 */
-	public void updateFields();
+	public void updateButtons();
 	
 	/**
-	 * 
+	 * @return
 	 */
-	public void hookListeners();
+	public boolean isEditable();
+	
+	/**
+	 * Special case:  Need to set the selection after the full UI is created
+	 * in order to properly fire an event to summon up the right details 
+	 * section
+	 */
+	public void fireSelection();
 	
 }

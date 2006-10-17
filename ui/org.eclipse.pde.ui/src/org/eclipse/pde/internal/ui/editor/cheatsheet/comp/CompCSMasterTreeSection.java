@@ -1,0 +1,678 @@
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.pde.internal.ui.editor.cheatsheet.comp;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.pde.core.IEditable;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCS;
+import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
+import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModel;
+import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.TreeSection;
+import org.eclipse.pde.internal.ui.editor.actions.CollapseAction;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
+import org.eclipse.pde.internal.ui.parts.TreePart;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.cheatsheets.OpenCheatSheetAction;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
+
+/**
+ * CompCSMasterTreeSection
+ *
+ */
+public class CompCSMasterTreeSection extends TreeSection implements
+		ICSMaster {
+
+	private static final int F_BUTTON_ADD_TASK = 0;
+
+	private static final int F_BUTTON_ADD_GROUP = 1;
+	
+	private static final int F_BUTTON_REMOVE = 2;
+	
+	private static final int F_BUTTON_UP = 3;
+	
+	private static final int F_BUTTON_DOWN = 4;
+
+	private static final int F_BUTTON_PREVIEW = 5;
+	
+	private static final int F_UP_FLAG = -1;
+
+	private static final int F_DOWN_FLAG = -2;
+	
+	private TreeViewer fTreeViewer;
+	
+	private ICompCSModel fModel;	
+	
+	private CollapseAction fCollapseAction;
+	
+	/**
+	 * @param formPage
+	 * @param parent
+	 * @param style
+	 * @param buttonLabels
+	 */
+	public CompCSMasterTreeSection(PDEFormPage formPage, Composite parent) {
+		// TODO: MP: HIGH: CompCS:  Update master tree section buttons
+		super(formPage, parent, Section.DESCRIPTION, new String[] {
+				PDEUIMessages.CompCSMasterTreeSection_addTask,
+				PDEUIMessages.CompCSMasterTreeSection_addGroup,
+				PDEUIMessages.SimpleCSElementSection_7,
+				PDEUIMessages.SimpleCSElementSection_1, 
+				PDEUIMessages.SimpleCSElementSection_2, 
+				PDEUIMessages.SimpleCSElementSection_3});
+		// TODO: MP: LOW: CompCS: Consider putting in createClient
+		getSection().setText(PDEUIMessages.SimpleCSElementSection_4);
+		// TODO: MP: LOW: CompCS: Consider putting in createClient
+		getSection().setDescription(PDEUIMessages.SimpleCSElementSection_5);
+
+		// Create actions
+		// TODO: MP: HIGH: CompCS: Add actions
+//		fAddStepAction = new SimpleCSAddStepAction();
+//		fRemoveStepAction = new SimpleCSRemoveStepAction();
+//		fRemoveSubStepAction = new SimpleCSRemoveSubStepAction();
+//		fAddSubStepAction = new SimpleCSAddSubStepAction();
+//		fRemoveRunObjectAction = new SimpleCSRemoveRunObjectAction();
+//		fCollapseAction = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
+	 */
+	protected void createClient(Section section, FormToolkit toolkit) {
+		Composite container = createClientContainer(section, 2, toolkit);
+		createTree(container, toolkit);
+		toolkit.paintBordersFor(container);
+		section.setClient(container);
+		initialize();
+		createSectionToolbar(section, toolkit);
+	}
+
+	/**
+	 * @param container
+	 * @param toolkit
+	 */
+	private void createTree(Composite container, FormToolkit toolkit) {
+		TreePart treePart = getTreePart();
+		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
+		fTreeViewer = treePart.getTreeViewer();
+		fTreeViewer.setContentProvider(new CompCSContentProvider());
+		fTreeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
+		// TODO: MP: LOW: CompCS: Implement drag and drop move feature
+	}		
+
+	/**
+	 * 
+	 */
+	private void initialize() {
+		fModel = (ICompCSModel)getPage().getModel();
+		if (fModel == null) {
+			return;
+		}
+		fTreeViewer.setInput(fModel);
+		ICompCS cheatsheet = fModel.getCompCS();
+
+		// If the cheat sheet already has a task object, then the object has
+		// to be deleted first before a new task or group can be added to
+		// the root cheatsheet node
+		boolean addFlag = false;
+		if (cheatsheet.getFieldTaskObject() == null) {
+			addFlag = fModel.isEditable();
+		}
+		getTreePart().setButtonEnabled(F_BUTTON_ADD_TASK, addFlag);
+		getTreePart().setButtonEnabled(F_BUTTON_ADD_GROUP, addFlag);
+
+		// Set to false because initial node selected is the root cheatsheet node
+		getTreePart().setButtonEnabled(F_BUTTON_REMOVE, false);
+		// Set to false because initial node selected is the root cheatsheet node
+		getTreePart().setButtonEnabled(F_BUTTON_UP, false);
+		// Set to false because initial node selected is the root cheatsheet node
+		getTreePart().setButtonEnabled(F_BUTTON_DOWN, false);
+		// TODO: MP: HIGH: Revisit. Some calculation will probably have to be done to determine preview enablement
+		getTreePart().setButtonEnabled(F_BUTTON_PREVIEW, true);
+		
+		// Select the cheatsheet node in the tree
+		fTreeViewer.setSelection(new StructuredSelection(cheatsheet), true);
+		fTreeViewer.expandToLevel(2);
+	}	
+
+	/**
+	 * @param section
+	 * @param toolkit
+	 */
+	private void createSectionToolbar(Section section, FormToolkit toolkit) {
+		
+		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
+		ToolBar toolbar = toolBarManager.createControl(section);
+		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		toolbar.setCursor(handCursor);
+		// Cursor needs to be explicitly disposed
+		toolbar.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if ((handCursor != null) &&
+						(handCursor.isDisposed() == false)) {
+					handCursor.dispose();
+				}
+			}
+		});		
+		// Add collapse action to the tool bar
+		fCollapseAction = new CollapseAction(fTreeViewer, 
+				PDEUIMessages.ExtensionsPage_collapseAll, 
+				1, 
+				fModel.getCompCS());
+		toolBarManager.add(fCollapseAction);
+
+		toolBarManager.update(true);
+
+		section.setTextClient(toolbar);
+	}		
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected(int)
+	 */
+	protected void buttonSelected(int index) {
+		switch (index) {
+		case F_BUTTON_ADD_TASK:
+			handleAddTaskAction();
+			break;
+		case F_BUTTON_ADD_GROUP:
+			handleAddGroupAction();
+			break;
+		case F_BUTTON_REMOVE:
+			// TODO: MP: HIGH: CompCS: Handle action
+			// handleDeleteAction();
+			break;
+		case F_BUTTON_UP:
+			handleMoveStepAction(F_UP_FLAG);
+			break;
+		case F_BUTTON_DOWN:
+			handleMoveStepAction(F_DOWN_FLAG);
+			break;
+		case F_BUTTON_PREVIEW:
+			handlePreviewAction();
+			break;
+		}
+	}	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.TreeSection#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	protected void selectionChanged(IStructuredSelection selection) {
+		updateButtons();
+	}		
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSMaster#updateButtons()
+	 */
+	public void updateButtons() {
+		// TODO: MP: HIGH: CompCS:  Update buttons
+//		if (!fModel.isEditable()) {
+//			return;
+//		}
+//		Object object = ((IStructuredSelection) fTreeViewer.getSelection()).getFirstElement();
+//		ISimpleCSObject csObject = (ISimpleCSObject)object;
+//		boolean canAddSubItem = false;
+//		boolean canRemove = false;
+//		boolean canMoveUp = false;
+//		boolean canMoveDown = false;
+//
+//		if (csObject != null) {
+//			if (csObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
+//				ISimpleCSItem item = (ISimpleCSItem)csObject;
+//				if (item.getSimpleCS().isFirstItem(item) == false) {
+//					canMoveUp = true;
+//				}
+//				if (item.getSimpleCS().isLastItem(item) == false) {
+//					canMoveDown = true;
+//				}
+//				
+//				// Preserve cheat sheet validity
+//				// Semantic Rule:  Cannot have a cheat sheet with no items
+//				if (item.getSimpleCS().getItemCount() > 1) {
+//					canRemove = true;
+//				}
+//				
+//				// Preserve cheat sheet validity
+//				// Semantic Rule:  Cannot have a subitem and any of the following
+//				// together:  perform-when, command, action
+//				if (item.getExecutable() == null) {
+//					canAddSubItem = true;
+//				}
+//			} else if (csObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
+//				ISimpleCSSubItem subitem = (ISimpleCSSubItem)csObject;
+//				ISimpleCSObject parent = subitem.getParent();
+//				if (parent.getType() == ISimpleCSConstants.TYPE_ITEM) {
+//					ISimpleCSItem item = (ISimpleCSItem)parent;
+//					if (item.isFirstSubItem(subitem) == false) {
+//						canMoveUp = true;
+//					}
+//					if (item.isLastSubItem(subitem) == false) {
+//						canMoveDown = true;
+//					}
+//					// Preserve cheat sheet validity
+//					// Semantic Rule:  Cannot have a subitem and any of the following
+//					// together:  perform-when, command, action
+//					if (item.getExecutable() == null) {
+//						canAddSubItem = true;
+//					}					
+//				}
+//				canRemove = true;
+//				
+//			} else if ((csObject.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) ||
+//						(csObject.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) ||
+//						(csObject.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN) ||
+//						(csObject.getType() == ISimpleCSConstants.TYPE_ACTION) ||
+//						(csObject.getType() == ISimpleCSConstants.TYPE_COMMAND)) {
+//				// Specifically for perform-when, repeated-subitem, 
+//				// conditional-subitem edge cases
+//				// Action and command supported; but, will never be applicable
+//				canRemove = true;
+//			}
+//		}
+//
+//		getTreePart().setButtonEnabled(F_BUTTON_ADD_SUBSTEP, canAddSubItem);
+//		getTreePart().setButtonEnabled(F_BUTTON_REMOVE, canRemove);
+//		getTreePart().setButtonEnabled(F_BUTTON_UP, canMoveUp);
+//		getTreePart().setButtonEnabled(F_BUTTON_DOWN, canMoveDown);
+	}
+
+	/**
+	 * 
+	 */
+	private void handleAddTaskAction() {
+		// TODO: MP: HIGH: CompCS:  Handle action
+		//fAddStepAction.setSimpleCS(fModel.getSimpleCS());
+		//fAddStepAction.run();
+	}	
+
+	/**
+	 * 
+	 */
+	private void handleAddGroupAction() {
+		// TODO: MP: HIGH: CompCS:  Handle action
+		
+//		ISelection sel = fTreeViewer.getSelection();
+//		Object object = ((IStructuredSelection) sel).getFirstElement();
+//		if (object == null) {
+//			return;
+//		}
+//		if (object instanceof ISimpleCSItem) {
+//			fAddSubStepAction.setParentObject((ISimpleCSObject)object);
+//			fAddSubStepAction.run();
+//		} else if (object instanceof ISimpleCSSubItem) {
+//			fAddSubStepAction.setParentObject(((ISimpleCSObject)object).getParent());
+//			fAddSubStepAction.run();
+//		}
+		
+	}		
+
+	/**
+	 * 
+	 */
+	private void handleMoveStepAction(int index) {
+		// TODO: MP: HIGH: CompCS:  Handle action
+		
+//		ISelection sel = fTreeViewer.getSelection();
+//		Object object = ((IStructuredSelection) sel).getFirstElement();
+//		// TODO: MP: Refactor candidate
+//		// i.e. calculating the index for up and down or separate method
+//		// TODO: MP: There is a flicker when adding and removing items / subitems
+//		// probably do to focus going to the parent
+//		if (object != null) {
+//			if (object instanceof ISimpleCSItem) {
+//				ISimpleCSItem item = (ISimpleCSItem)object;
+//				// Get the current index of the item
+//				int currentIndex = item.getSimpleCS().indexOfItem(item);
+//				// Remove the item
+//				item.getSimpleCS().removeItem(item);
+//				// Calculate the new index
+//				int newIndex = index;
+//				if (index == F_UP_FLAG) {
+//					newIndex = currentIndex - 1;
+//				} else if (index == F_DOWN_FLAG) {
+//					newIndex = currentIndex + 1;
+//				}
+//				// Add the item back at the specified index
+//				item.getSimpleCS().addItem(newIndex, item);
+//
+//			} else if (object instanceof ISimpleCSSubItem) {
+//				ISimpleCSSubItem subitem = (ISimpleCSSubItem)object;
+//				// Get the current index of the subitem
+//				ISimpleCSObject parent = subitem.getParent();
+//				// TODO: MP: Handle for conditional-subitems later
+//				// Actually probably beter to use some interface method if 
+//				// possible
+//				if (parent.getType() == ISimpleCSConstants.TYPE_ITEM) {
+//					ISimpleCSItem item = (ISimpleCSItem)parent;				
+//					int currentIndex = item.indexOfSubItem(subitem);
+//					// Remove the item
+//					item.removeSubItem(subitem);
+//					// Calculate the new index
+//					int newIndex = index;
+//					if (index == F_UP_FLAG) {
+//						newIndex = currentIndex - 1;
+//					} else if (index == F_DOWN_FLAG) {
+//						newIndex = currentIndex + 1;
+//					}
+//					// Add the item back at the specified index
+//					item.addSubItem(newIndex, subitem);
+//				}
+//			}
+//		}	
+//		
+	}	
+
+	/**
+	 * 
+	 */
+	private void handlePreviewAction() {
+		
+		if (!(fModel instanceof IEditable)) {
+			return;
+		}
+
+		IFileEditorInput input = (IFileEditorInput)getPage().getEditorInput();
+		IFile file  = input.getFile();
+		
+		try {
+			// Write the current model into a String as raw XML
+			StringWriter swriter = new StringWriter();
+			PrintWriter writer = new PrintWriter(swriter);
+			fModel.getCompCS().write("", writer); //$NON-NLS-1$
+			writer.flush();
+			swriter.close();
+			// Launch in the cheat sheet view
+			OpenCheatSheetAction openAction = new OpenCheatSheetAction(
+					file.getName(),
+					file.getName(), 
+					swriter.toString());
+			openAction.run();
+		} catch (IOException e) {
+			PDEPlugin.logException(e);
+		}
+
+	}	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
+	 */
+	public void modelChanged(IModelChangedEvent event) {
+		// No need to call super, world changed event handled here
+		// TODO: MP: HIGH: CompCS:  STYLE CHANGE: If anything goes wrong revert change back
+
+		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			markStale();
+		} else if (event.getChangeType() == IModelChangedEvent.INSERT) {
+			handleModelInsertType(event);
+		} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
+			handleModelRemoveType(event);
+		} else if (event.getChangeType() == IModelChangedEvent.CHANGE) {
+			handleModelChangeType(event);
+		}		
+	}	
+
+	/**
+	 * @param event
+	 */
+	private void handleModelInsertType(IModelChangedEvent event) {
+		// Insert event
+		Object[] objects = event.getChangedObjects();
+		for (int i = 0; i < objects.length; i++) {
+			ICompCSObject object = (ICompCSObject)objects[i];		
+			if (object == null) {
+				// Ignore
+			} else if ((object.getType() == ICompCSConstants.TYPE_TASK) ||
+						(object.getType() == ICompCSConstants.TYPE_TASKGROUP)) {
+				// Refresh the parent element in the tree viewer
+				fTreeViewer.refresh(object.getParent());
+				// Select the new task / group in the tree
+				fTreeViewer.setSelection(new StructuredSelection(object), true);
+			}		
+		}
+	}	
+
+	/**
+	 * @param event
+	 */
+	private void handleModelRemoveType(IModelChangedEvent event) {
+		// Remove event
+		Object[] objects = event.getChangedObjects();
+		for (int i = 0; i < objects.length; i++) {
+			ICompCSObject object = (ICompCSObject)objects[i];		
+			if (object == null) {
+				// Ignore
+			} else if (object.getType() == ICompCSConstants.TYPE_TASK) {
+				// Remove the item
+				fTreeViewer.remove(object);
+				// TODO: MP: HIGH: CompCS: Update
+				// Select the appropriate object
+//				ISimpleCSObject csObject = fRemoveStepAction.getObjectToSelect();
+//				if (csObject == null) {
+//					csObject = object.getParent();
+//				}
+//				fTreeViewer.setSelection(new StructuredSelection(csObject), true);
+			} else if (object.getType() == ICompCSConstants.TYPE_TASKGROUP) {
+				// TODO: MP: HIGH: CompCS: Update
+				// Remove the subitem
+				fTreeViewer.remove(object);
+				// Select the appropriate object
+//				ISimpleCSObject csObject = fRemoveSubStepAction.getObjectToSelect();
+//				if (csObject == null) {
+//					csObject = object.getParent();
+//				}
+//				fTreeViewer.setSelection(new StructuredSelection(csObject), true);
+			}
+		}		
+	}	
+
+	/**
+	 * @param event
+	 */
+	private void handleModelChangeType(IModelChangedEvent event) {
+		// Change event
+		Object[] objects = event.getChangedObjects();
+		for (int i = 0; i < objects.length; i++) {
+			ICompCSObject object = (ICompCSObject)objects[i];		
+			if (object == null) {
+				// Ignore
+			} else if ((object.getType() == ICompCSConstants.TYPE_TASK) ||
+						(object.getType() == ICompCSConstants.TYPE_TASKGROUP) ||
+						(object.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET)) {
+				// Refresh the element in the tree viewer
+				fTreeViewer.refresh(object);
+			}
+		}		
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster#fireSelection()
+	 */
+	public void fireSelection() {
+		fTreeViewer.setSelection(fTreeViewer.getSelection());
+	}	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu(org.eclipse.jface.action.IMenuManager)
+	 */
+	protected void fillContextMenu(IMenuManager manager) {
+		// TODO: MP: HIGH: CompCS: Implement
+		// Get the current selection
+//		ISelection selection = fTreeViewer.getSelection();
+//		Object object = ((IStructuredSelection) selection).getFirstElement();
+//		// Do blind cast - has to be a simple CS object
+//		// Could be null
+//		ISimpleCSObject csObject = (ISimpleCSObject)object;
+//		// Create the "New" submenu
+//		MenuManager submenu = new MenuManager(PDEUIMessages.Menus_new_label);
+//		// Add the "New" submenu to the main context menu
+//		manager.add(submenu);
+//		if ((csObject == null) ||
+//				(csObject.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET)) {
+//			// Add to the "New" submenu
+//			// Add step action
+//			fAddStepAction.setSimpleCS(fModel.getSimpleCS());
+//			fAddStepAction.setEnabled(fModel.isEditable());
+//			submenu.add(fAddStepAction);
+//		} else if (csObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
+//			ISimpleCSItem item = (ISimpleCSItem)csObject;
+//			// Add to the "New" submenu
+//			// Add sub-step action
+//			fAddSubStepAction.setParentObject(csObject);
+//			// Preserve cheat sheet validity
+//			// Semantic Rule:  Cannot have a subitem and any of the following
+//			// together:  perform-when, command, action			
+//			if (item.getExecutable() == null) {
+//				fAddSubStepAction.setEnabled(fModel.isEditable());
+//			} else {
+//				fAddSubStepAction.setEnabled(false);
+//			}
+//			submenu.add(fAddSubStepAction);
+//			// Add to the main context menu
+//			// Add a separator to the main context menu
+//			manager.add(new Separator());
+//			// Delete step action
+//			fRemoveStepAction.setItem((ISimpleCSItem)csObject);
+//			// Preserve cheat sheet validity
+//			// Semantic Rule:  Cannot have a cheat sheet with no items
+//			if (item.getSimpleCS().getItemCount() > 1) {
+//				fRemoveStepAction.setEnabled(fModel.isEditable());
+//			} else {
+//				fRemoveStepAction.setEnabled(false);
+//			}
+//			manager.add(fRemoveStepAction);
+//		} else if ((csObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) ||
+//					(csObject.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) ||
+//					(csObject.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM)) {
+//			// Add to the main context menu
+//			// Add a separator to the main context menu
+//			manager.add(new Separator());
+//			// Delete sub-step action
+//			fRemoveSubStepAction.setSubItem((ISimpleCSSubItemObject)csObject);
+//			fRemoveSubStepAction.setEnabled(fModel.isEditable());
+//			manager.add(fRemoveSubStepAction);			
+//		} else if ((csObject.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN) ||
+//					(csObject.getType() == ISimpleCSConstants.TYPE_ACTION) ||
+//					(csObject.getType() == ISimpleCSConstants.TYPE_COMMAND)) {
+//			// Specifically for perform-when edge case
+//			// Action and command supported; but, will never be applicable
+//			// Add to the main context menu
+//			// Add a separator to the main context menu
+//			manager.add(new Separator());
+//			// Delete run object action
+//			fRemoveRunObjectAction.setRunObject((ISimpleCSRunContainerObject)csObject);
+//			fRemoveRunObjectAction.setEnabled(fModel.isEditable());
+//			manager.add(fRemoveRunObjectAction);				
+//		}
+		// Add normal edit operations
+		// TODO: MP: LOW: SimpleCS:  Enable context menu edit operations
+		//getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
+		//manager.add(new Separator());
+	}	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
+	 */
+	public boolean doGlobalAction(String actionId) {
+		if (actionId.equals(ActionFactory.DELETE.getId())) {
+			handleDeleteAction();
+			return true;
+		}		
+		return false;
+	}	
+
+	/**
+	 * @param object
+	 */
+	private void handleDeleteAction() {
+		// TODO: MP: HIGH: CompCS: Implement delete action
+//		ISelection sel = fTreeViewer.getSelection();
+//		Object object = ((IStructuredSelection) sel).getFirstElement();
+//		if (object != null) {
+//			if (object instanceof ISimpleCSItem) {
+//				ISimpleCSItem item = (ISimpleCSItem)object;
+//				// Preserve cheat sheet validity
+//				// Semantic Rule:  Cannot have a cheat sheet with no items
+//				if (item.getSimpleCS().getItemCount() > 1) {
+//					fRemoveStepAction.setItem(item);
+//					fRemoveStepAction.run();
+//				} else {
+//					// Produce audible beep
+//					Display.getCurrent().beep();
+//				}
+//			} else if (object instanceof ISimpleCSSubItemObject) {
+//				fRemoveSubStepAction.setSubItem((ISimpleCSSubItemObject)object);
+//				fRemoveSubStepAction.run();
+//			} else if (object instanceof ISimpleCSRunContainerObject) {
+//				// Specifically for perform-when edge case
+//				// Action and command supported; but, will never be applicable
+//				fRemoveRunObjectAction.setRunObject((ISimpleCSRunContainerObject)object);
+//				fRemoveRunObjectAction.run();
+//			} else if (object instanceof ISimpleCS) {
+//				// Preserve cheat sheet validity
+//				// Semantic Rule:  Cannot have a cheat sheet with no root
+//				// cheatsheet node
+//				// Produce audible beep
+//				Display.getCurrent().beep();				
+//			} else if (object instanceof ISimpleCSIntro) {
+//				// Preserve cheat sheet validity
+//				// Semantic Rule:  Cannot have a cheat sheet with no 
+//				// introduction
+//				// Produce audible beep
+//				Display.getCurrent().beep();				
+//			}
+//		}		
+	}	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#setFormInput(java.lang.Object)
+	 */
+	public boolean setFormInput(Object object) {
+		// This method allows the outline view to select items in the tree
+		// Invoked by
+		// org.eclipse.ui.forms.editor.IFormPage.selectReveal(Object object)
+		if (object instanceof ICompCSObject) {
+			// Select the item in the tree
+			fTreeViewer.setSelection(new StructuredSelection(object), true);
+			// Verify that something was actually selected
+			ISelection selection = fTreeViewer.getSelection();
+			if ((selection != null) && 
+					(selection.isEmpty() == false)) {
+				return true;
+			}
+		}
+		return false;
+	}	
+	
+}

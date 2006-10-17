@@ -35,6 +35,8 @@ import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.feature.FeatureImport;
 import org.eclipse.pde.internal.core.feature.FeaturePlugin;
+import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
+import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
@@ -113,6 +115,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof ISimpleCSObject) {
 			return getObjectText((ISimpleCSObject) obj);
 		}
+		if (obj instanceof ICompCSObject) {
+			return getObjectText((ICompCSObject) obj);
+		}		
 		if (obj instanceof FeaturePlugin) {
 			return getObjectText((FeaturePlugin) obj);
 		}
@@ -271,8 +276,11 @@ public class PDELabelProvider extends SharedLabelProvider {
 		return text;
 	}
 	
+	/**
+	 * @param obj
+	 * @return
+	 */
 	public String getObjectText(ISimpleCSObject obj) {
-		
 		int limit = 50;
 		
 		if (obj.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
@@ -284,11 +292,25 @@ public class PDELabelProvider extends SharedLabelProvider {
 		} else if (obj.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
 			limit = 32;
 		}
-			
 		return PDETextHelper.truncateAndTrailOffText(
 				PDETextHelper.translateReadText(obj.getName()), limit);
 	}
 
+	/**
+	 * @param obj
+	 * @return
+	 */
+	public String getObjectText(ICompCSObject obj) {
+		int limit = 40;
+		ICompCSObject parent = obj.getParent();
+		while(parent != null) {
+			limit = limit - 4;
+			parent = parent.getParent();
+		}
+		return PDETextHelper.truncateAndTrailOffText(
+				PDETextHelper.translateReadText(obj.getName()), limit);
+	}	
+	
 	public String getObjectText(FeaturePlugin obj) {
 		String name =
 			isFullNameModeEnabled() ? obj.getLabel() : obj.getId();
@@ -436,6 +458,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof ISimpleCSObject) {
 			return getObjectImage((ISimpleCSObject)obj);
+		}		
+		if (obj instanceof ICompCSObject) {
+			return getObjectImage((ICompCSObject)obj);
 		}		
 		if (obj instanceof ISchemaAttribute) {
 			return getObjectImage((ISchemaAttribute) obj);
@@ -652,6 +677,22 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		return get(PDEPluginImages.DESC_SIMPLECS_OBJ, F_ERROR);
 	}	
+
+	/**
+	 * @param object
+	 * @return
+	 */
+	private Image getObjectImage(ICompCSObject object) {
+
+		if (object.getType() == ICompCSConstants.TYPE_TASK) {
+			return get(PDEPluginImages.DESC_SIMPLECS_OBJ);
+		} else if (object.getType() == ICompCSConstants.TYPE_TASKGROUP) {
+			return get(PDEPluginImages.DESC_CSTASKGROUP_OBJ);
+		} else if (object.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET) {
+			return get(PDEPluginImages.DESC_COMPCS_OBJ);
+		}
+		return get(PDEPluginImages.DESC_SIMPLECS_OBJ, F_ERROR);
+	}		
 	
 	private Image getObjectImage(ISchemaElement element) {
 		int flags = getSchemaObjectFlags(element);

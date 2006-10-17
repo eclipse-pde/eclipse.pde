@@ -15,7 +15,9 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSElementSection;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -29,7 +31,7 @@ import org.eclipse.ui.forms.widgets.Section;
  * SimpleCSDetails
  *
  */
-public class SimpleCSDetails extends SimpleCSAbstractDetails {
+public class SimpleCSDetails extends CSAbstractDetails {
 
 	private ISimpleCS fCheatSheet;
 	
@@ -40,8 +42,8 @@ public class SimpleCSDetails extends SimpleCSAbstractDetails {
 	/**
 	 * 
 	 */
-	public SimpleCSDetails(ISimpleCS cheatsheet, SimpleCSElementSection section) {
-		super(section);
+	public SimpleCSDetails(ISimpleCS cheatsheet, ICSMaster section) {
+		super(section, SimpleCSInputContext.CONTEXT_ID);
 		fCheatSheet = cheatsheet;
 		
 		fTitle = null;
@@ -58,12 +60,6 @@ public class SimpleCSDetails extends SimpleCSAbstractDetails {
 		GridData data = null;
 		boolean paintedBorder = toolkit.getBorderStyle() != SWT.BORDER;
 		
-		// Set parent layout
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		parent.setLayout(layout);
-		
 		// Create main section
 		fMainSection = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fMainSection.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
@@ -76,7 +72,7 @@ public class SimpleCSDetails extends SimpleCSAbstractDetails {
 		
 		// Create container for main section
 		Composite mainSectionClient = toolkit.createComposite(fMainSection);	
-		layout = new GridLayout(2, false);
+		GridLayout layout = new GridLayout(2, false);
 		if (paintedBorder) {
 			layout.verticalSpacing = 7;
 		}

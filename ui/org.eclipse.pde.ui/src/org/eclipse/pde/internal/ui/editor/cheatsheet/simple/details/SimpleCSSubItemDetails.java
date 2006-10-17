@@ -15,7 +15,10 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSElementSection;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -31,7 +34,7 @@ import org.eclipse.ui.forms.widgets.Section;
  * SimpleCSSubItemDetails
  *
  */
-public class SimpleCSSubItemDetails extends SimpleCSAbstractDetails {
+public class SimpleCSSubItemDetails extends CSAbstractDetails {
 
 	private ISimpleCSSubItem fSubItem;
 	
@@ -41,7 +44,7 @@ public class SimpleCSSubItemDetails extends SimpleCSAbstractDetails {
 	
 	private Section fMainSection;
 
-	private ISimpleCSDetails fCommandSection;
+	private ICSDetails fCommandSection;
 	
 	// Not supporting when at this moment; since, we are not supporting
 	// conditional-subitem
@@ -50,8 +53,8 @@ public class SimpleCSSubItemDetails extends SimpleCSAbstractDetails {
 	/**
 	 * @param elementSection
 	 */
-	public SimpleCSSubItemDetails(ISimpleCSSubItem subItem, SimpleCSElementSection elementSection) {
-		super(elementSection);
+	public SimpleCSSubItemDetails(ISimpleCSSubItem subItem, ICSMaster masterTreeSection) {
+		super(masterTreeSection, SimpleCSInputContext.CONTEXT_ID);
 		fSubItem = subItem;
 
 		fLabel = null;
@@ -69,19 +72,11 @@ public class SimpleCSSubItemDetails extends SimpleCSAbstractDetails {
 	 */
 	public void createDetails(Composite parent) {
 
-		fToolkit = getManagedForm().getToolkit();
-		//Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
 		GridData data = null;
-		boolean paintedBorder = fToolkit.getBorderStyle() != SWT.BORDER;
-
-		// Set parent layout
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		parent.setLayout(layout);
+		boolean paintedBorder = getToolkit().getBorderStyle() != SWT.BORDER;
 		
 		// Create main section
-		fMainSection = fToolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
+		fMainSection = getToolkit().createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fMainSection.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		fMainSection.marginHeight = 5;
 		fMainSection.marginWidth = 5; 
@@ -91,15 +86,15 @@ public class SimpleCSSubItemDetails extends SimpleCSAbstractDetails {
 		fMainSection.setLayoutData(data);
 		
 		// Create container for main section
-		Composite mainSectionClient = fToolkit.createComposite(fMainSection);	
-		layout = new GridLayout(2, false);
+		Composite mainSectionClient = getToolkit().createComposite(fMainSection);	
+		GridLayout layout = new GridLayout(2, false);
 		if (paintedBorder) {
 			layout.verticalSpacing = 7;
 		}
 		mainSectionClient.setLayout(layout);
 		
 		// Attribute: label
-		fLabel = new FormEntry(mainSectionClient, fToolkit, PDEUIMessages.SimpleCSSubItemDetails_0, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+		fLabel = new FormEntry(mainSectionClient, getToolkit(), PDEUIMessages.SimpleCSSubItemDetails_0, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = 50;
 		fLabel.getText().setLayoutData(data);
@@ -107,13 +102,13 @@ public class SimpleCSSubItemDetails extends SimpleCSAbstractDetails {
 		fLabel.getLabel().setLayoutData(data);		
 
 		// Attribute: skip
-		fSkip = fToolkit.createButton(mainSectionClient, PDEUIMessages.SimpleCSSubItemDetails_3, SWT.CHECK);
+		fSkip = getToolkit().createButton(mainSectionClient, PDEUIMessages.SimpleCSSubItemDetails_3, SWT.CHECK);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		fSkip.setLayoutData(data);
 
 		// Bind widgets
-		fToolkit.paintBordersFor(mainSectionClient);
+		getToolkit().paintBordersFor(mainSectionClient);
 		fMainSection.setClient(mainSectionClient);
 		markDetailsPart(fMainSection);
 

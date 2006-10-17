@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
+package org.eclipse.pde.internal.ui.editor.cheatsheet.comp;
 
 import java.io.File;
 
@@ -26,15 +26,15 @@ import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PartInitException;
 
 /**
- * SimpleCheatSheetEditor
+ * CompCSEditor
  *
  */
-public class SimpleCSEditor extends PDEFormEditor {
+public class CompCSEditor extends PDEFormEditor {
 
 	/**
 	 * 
 	 */
-	public SimpleCSEditor() {
+	public CompCSEditor() {
 		super();
 	}
 
@@ -43,7 +43,8 @@ public class SimpleCSEditor extends PDEFormEditor {
 	 */
 	protected void addEditorPages() {
 		try {
-			addPage(new SimpleCSPage(this));
+			// TODO: MP: HIGH: Create page
+			addPage(new CompCSPage(this));
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
@@ -53,14 +54,16 @@ public class SimpleCSEditor extends PDEFormEditor {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createContentOutline()
 	 */
 	protected ISortableContentOutlinePage createContentOutline() {
-		return new SimpleCSFormOutlinePage(this);
+		// TODO: MP: LOW: CompCS: Add outline page later
+		// return new SimpleCSFormOutlinePage(this);
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createInputContextManager()
 	 */
 	protected InputContextManager createInputContextManager() {
-		return new SimpleCSInputContextManager(this);
+		return new CompCSInputContextManager(this);
 	}
 
 	/* (non-Javadoc)
@@ -68,7 +71,7 @@ public class SimpleCSEditor extends PDEFormEditor {
 	 */
 	protected void createResourceContexts(InputContextManager contexts,
 			IFileEditorInput input) {
-		contexts.putContext(input, new SimpleCSInputContext(this, input, true));
+		contexts.putContext(input, new CompCSInputContext(this, input, true));
 		contexts.monitorFile(input.getFile());
 	}
 
@@ -77,7 +80,7 @@ public class SimpleCSEditor extends PDEFormEditor {
 	 */
 	protected void createStorageContexts(InputContextManager contexts,
 			IStorageEditorInput input) {
-		contexts.putContext(input, new SimpleCSInputContext(this, input, true));
+		contexts.putContext(input, new CompCSInputContext(this, input, true));
 	}
 
 	/* (non-Javadoc)
@@ -85,10 +88,10 @@ public class SimpleCSEditor extends PDEFormEditor {
 	 */
 	protected void createSystemFileContexts(InputContextManager contexts,
 			SystemFileEditorInput input) {
-		File file = (File) input.getAdapter(File.class);
+		File file = (File)input.getAdapter(File.class);
 		if (file != null) {
 			IEditorInput in = new SystemFileEditorInput(file);
-			contexts.putContext(in, new SimpleCSInputContext(this, in, true));
+			contexts.putContext(in, new CompCSInputContext(this, in, true));
 		}
 	}
 
@@ -103,7 +106,7 @@ public class SimpleCSEditor extends PDEFormEditor {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
 	 */
 	protected InputContext getInputContext(Object object) {
-		return fInputContextManager.findContext(SimpleCSInputContext.CONTEXT_ID);
+		return fInputContextManager.findContext(CompCSInputContext.CONTEXT_ID);
 	}
 
 	/* (non-Javadoc)
