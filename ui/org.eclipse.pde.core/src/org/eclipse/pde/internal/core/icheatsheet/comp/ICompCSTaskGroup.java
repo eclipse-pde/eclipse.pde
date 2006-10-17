@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.core.icheatsheet.comp;
 
 
+
 /**
  * ICompCSTaskGroup
  *
@@ -83,5 +84,19 @@ public interface ICompCSTaskGroup extends ICompCSTaskObject {
 	 * @return
 	 */
 	public boolean hasFieldTaskObjects();	
+	
+	/**
+	 * Elements:  taskGroup, task
+	 * @param taskObject
+	 * @return
+	 */
+	public ICompCSTaskObject getNextSibling(ICompCSTaskObject taskObject);
+	
+	/**
+	 * Elements:  taskGroup, task
+	 * @param taskObject
+	 * @return
+	 */
+	public ICompCSTaskObject getPreviousSibling(ICompCSTaskObject taskObject);	
 	
 }

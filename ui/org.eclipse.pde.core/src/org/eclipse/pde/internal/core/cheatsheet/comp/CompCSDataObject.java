@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
 import org.eclipse.pde.internal.core.util.CheatSheetUtil;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 /**
  * CompCSDataObject
@@ -66,6 +67,15 @@ public abstract class CompCSDataObject extends CompCSObject implements
 	public abstract int getType();
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseContent(org.w3c.dom.Element)
+	 */
+	protected void parseContent(Element element) {
+		// Override to handle unusual mixed content as in this case
+		// Trim leading and trailing whitespace		
+		fFieldContent = CheatSheetUtil.parseElementText(element).trim();
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseAttributes(org.w3c.dom.Element)
 	 */
 	protected void parseAttributes(Element element) {
@@ -76,10 +86,16 @@ public abstract class CompCSDataObject extends CompCSObject implements
 	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseElement(org.w3c.dom.Element)
 	 */
 	protected void parseElement(Element element) {
-		// Trim leading and trailing whitespace		
-		fFieldContent = CheatSheetUtil.parseElementText(element).trim();
+		// NO-OP
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseText(org.w3c.dom.Text)
+	 */
+	protected void parseText(Text text) {
+		// NO-OP
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#reset()
 	 */

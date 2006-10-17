@@ -234,5 +234,34 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 	public String getElement() {
 		return ELEMENT_TASKGROUP;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup#getNextSibling(org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskObject)
+	 */
+	public ICompCSTaskObject getNextSibling(ICompCSTaskObject taskObject) {
+		int position = fFieldTaskObjects.indexOf(taskObject);
+		int lastIndex = fFieldTaskObjects.size() - 1;
+		if ((position == -1) ||
+				(position == lastIndex)) {
+			// Either the item was not found or the item was found but it is 
+			// at the last index
+			return null;
+		}
+		return (ICompCSTaskObject)fFieldTaskObjects.get(position + 1);		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup#getPreviousSibling(org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskObject)
+	 */
+	public ICompCSTaskObject getPreviousSibling(ICompCSTaskObject taskObject) {
+		int position = fFieldTaskObjects.indexOf(taskObject);
+		if ((position == -1) ||
+				(position == 0)) {
+			// Either the item was not found or the item was found but it is 
+			// at the first index
+			return null;
+		}
+		return (ICompCSTaskObject)fFieldTaskObjects.get(position - 1);		
+	}
 	
 }

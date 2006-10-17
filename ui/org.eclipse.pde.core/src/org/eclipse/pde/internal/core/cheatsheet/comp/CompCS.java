@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskObject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 /**
  * CompCS
@@ -193,6 +194,13 @@ public class CompCS extends CompCSObject implements ICompCS {
 	 */
 	public String getElement() {
 		return ELEMENT_COMPOSITE_CHEATSHEET;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseText(org.w3c.dom.Text)
+	 */
+	protected void parseText(Text text) {
+		// NO-OP
 	}
 
 }

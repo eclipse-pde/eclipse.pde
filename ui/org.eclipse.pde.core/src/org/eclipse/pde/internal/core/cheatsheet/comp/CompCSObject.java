@@ -28,6 +28,7 @@ import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 /**
  * CompCSObject
@@ -109,7 +110,7 @@ public abstract class CompCSObject extends PlatformObject implements
 	public void parse(Element element) {
 		if (element.getNodeName().equals(getElement())) {
 			parseAttributes(element);
-			parseElements(element);
+			parseContent(element);
 		}
 	}
 
@@ -229,13 +230,15 @@ public abstract class CompCSObject extends PlatformObject implements
 	/**
 	 * @param element
 	 */
-	protected void parseElements(Element element) {
+	protected void parseContent(Element element) {
 		// Process children
 		NodeList children = element.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				parseElement((Element)child);
+			} else if (child.getNodeType() == Node.TEXT_NODE) {
+				parseText((Text)child);
 			}
 		}		
 	}
@@ -244,6 +247,11 @@ public abstract class CompCSObject extends PlatformObject implements
 	 * @param element
 	 */
 	protected abstract void parseElement(Element element);
+
+	/**
+	 * @param element
+	 */
+	protected abstract void parseText(Text text);
 	
 	/**
 	 * @param buffer

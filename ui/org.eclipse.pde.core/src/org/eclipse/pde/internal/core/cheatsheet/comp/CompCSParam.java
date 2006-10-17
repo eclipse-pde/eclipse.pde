@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSParam;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 /**
  * CompCSParam
@@ -166,6 +167,13 @@ public class CompCSParam extends CompCSObject implements ICompCSParam {
 		if (isEditable()) {
 			firePropertyChanged(ATTRIBUTE_VALUE, old, fFieldValue);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.cheatsheet.comp.CompCSObject#parseText(org.w3c.dom.Text)
+	 */
+	protected void parseText(Text text) {
+		// NO-OP
 	}
 
 }
