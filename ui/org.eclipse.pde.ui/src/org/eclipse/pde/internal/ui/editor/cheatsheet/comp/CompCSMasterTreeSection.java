@@ -417,7 +417,8 @@ public class CompCSMasterTreeSection extends TreeSection implements
 			OpenCheatSheetAction openAction = new OpenCheatSheetAction(
 					file.getName(),
 					file.getName(), 
-					swriter.toString());
+					swriter.toString(),
+					file.getLocationURI().toURL());
 			openAction.run();
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
