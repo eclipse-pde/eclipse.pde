@@ -59,6 +59,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.text.HTMLPrinter;
+import org.eclipse.pde.internal.ui.editor.text.TextUtil;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.elements.ElementLabelProvider;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
@@ -83,6 +84,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -660,7 +662,7 @@ public class PointSelectionPage
 	private void setPointDescriptionText(String text) {
 		if (fPointDescBrowser != null) {
 			StringBuffer desc = new StringBuffer();
-			HTMLPrinter.insertPageProlog(desc, 0, HTMLPrinter.getJavaDocStyleSheerURL(), false);
+			HTMLPrinter.insertPageProlog(desc, 0, new RGB(255,255,255), TextUtil.getJavaDocStyleSheerURL());
 			desc.append(text);
 			HTMLPrinter.addPageEpilog(desc);
 			fPointDescBrowser.setText(desc.toString());

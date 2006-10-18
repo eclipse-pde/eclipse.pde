@@ -48,6 +48,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.contentassist.display.AbstractReusableInformationControlCreator;
 import org.eclipse.pde.internal.ui.editor.contentassist.display.BrowserInformationControl;
 import org.eclipse.pde.internal.ui.editor.text.HTMLPrinter;
+import org.eclipse.pde.internal.ui.editor.text.TextUtil;
 import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -401,7 +402,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 			if (fSchemaObject == null)
 				return null;
 			StringBuffer sb = new StringBuffer();
-			HTMLPrinter.insertPageProlog(sb, 0, HTMLPrinter.getJavaDocStyleSheerURL(), true);
+			HTMLPrinter.insertPageProlog(sb, 0, TextUtil.getJavaDocStyleSheerURL());
 			String desc = null;
 			if (fSchemaObject == null)
 				desc = PDEUIMessages.BaseWizardSelectionPage_noDesc;
