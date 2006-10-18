@@ -52,6 +52,7 @@ import org.eclipse.pde.internal.ui.editor.contentassist.display.JavaDocCommentRe
 import org.eclipse.pde.internal.ui.editor.plugin.JavaAttributeValue;
 import org.eclipse.pde.internal.ui.editor.plugin.JavaAttributeWizard;
 import org.eclipse.pde.internal.ui.editor.text.HTMLPrinter;
+import org.eclipse.pde.internal.ui.editor.text.TextUtil;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -403,7 +404,7 @@ public class PDEJavaHelper {
 
 	private static String formatJavaDoc(String text) {
 		StringBuffer buffer = new StringBuffer();
-		HTMLPrinter.insertPageProlog(buffer, 0, HTMLPrinter.getJavaDocStyleSheerURL(), false);
+		HTMLPrinter.insertPageProlog(buffer, 0, TextUtil.getJavaDocStyleSheerURL());
 		buffer.append(text);
 		HTMLPrinter.addPageEpilog(buffer);
 		return buffer.toString();
