@@ -37,7 +37,6 @@ import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.internal.text.html.HTMLPrinter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
@@ -52,7 +51,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.contentassist.display.JavaDocCommentReader;
 import org.eclipse.pde.internal.ui.editor.plugin.JavaAttributeValue;
 import org.eclipse.pde.internal.ui.editor.plugin.JavaAttributeWizard;
-import org.eclipse.pde.internal.ui.editor.text.TextUtil;
+import org.eclipse.pde.internal.ui.editor.text.HTMLPrinter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -404,7 +403,7 @@ public class PDEJavaHelper {
 
 	private static String formatJavaDoc(String text) {
 		StringBuffer buffer = new StringBuffer();
-		HTMLPrinter.insertPageProlog(buffer, 0, TextUtil.getJavaDocStyleSheerURL());
+		HTMLPrinter.insertPageProlog(buffer, 0, HTMLPrinter.getJavaDocStyleSheerURL(), false);
 		buffer.append(text);
 		HTMLPrinter.addPageEpilog(buffer);
 		return buffer.toString();

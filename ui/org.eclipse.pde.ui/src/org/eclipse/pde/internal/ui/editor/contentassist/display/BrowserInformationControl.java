@@ -16,12 +16,9 @@ import java.io.StringReader;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jface.internal.text.html.HTMLPrinter;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlExtension;
-import org.eclipse.jface.text.IInformationControlExtension3;
-import org.eclipse.jface.text.TextPresentation;
+
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.text.HTMLPrinter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -50,6 +47,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlExtension;
+import org.eclipse.jface.text.IInformationControlExtension3;
+import org.eclipse.jface.text.TextPresentation;
 
 
 /**
