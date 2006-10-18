@@ -10,14 +10,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.compare;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
-import org.eclipse.compare.*;
-import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.IEditableContent;
+import org.eclipse.compare.IEncodedStreamContentAccessor;
+import org.eclipse.compare.ISharedDocumentAdapter;
+import org.eclipse.compare.IStreamContentAccessor;
+import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.structuremergeviewer.DocumentRangeNode;
+import org.eclipse.compare.structuremergeviewer.IStructureComparator;
+import org.eclipse.compare.structuremergeviewer.SharedDocumentAdapterWrapper;
+import org.eclipse.compare.structuremergeviewer.StructureCreator;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.text.ManifestPartitionScanner;
