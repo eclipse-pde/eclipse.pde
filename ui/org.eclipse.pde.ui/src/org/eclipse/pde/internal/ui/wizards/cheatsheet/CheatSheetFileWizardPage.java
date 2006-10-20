@@ -13,10 +13,19 @@ package org.eclipse.pde.internal.ui.wizards.cheatsheet;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
 /**
@@ -25,18 +34,13 @@ import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
  */
 public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 
-	// TODO: MP: DEFER: Re-enable when composite cheat sheet editor is finished
-	//private Button fSimpleCheatSheetButton;
+	private Button fSimpleCheatSheetButton;
 	
-	// TODO: MP: DEFER: Re-enable when composite cheat sheet editor is finished
-	//private Button fCompositeCheatSheetButton;
+	private Button fCompositeCheatSheetButton;
 	
-	// TODO: MP: DEFER: Re-enable when composite cheat sheet editor is finished
-	//private Group fGroup;
+	private Group fGroup;
 	
 	private static final String F_FILE_EXTENSION = ".xml"; //$NON-NLS-1$
-	
-	private boolean fHasExtension;
 	
 	public static final int F_SIMPLE_CHEAT_SHEET = 0;
 	
@@ -51,19 +55,17 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 		super(pageName, selection);
 		setTitle(PDEUIMessages.CheatSheetFileWizardPage_1);
 		setDescription(PDEUIMessages.CheatSheetFileWizardPage_2);
-		fHasExtension = false;
 	}
 
 	/**
 	 * @return
 	 */
 	public int getCheatSheetType() {
-		// TODO: MP: DEFER: Re-enable when composite cheat sheet editor is finished
-//		if (fSimpleCheatSheetButton.getSelection()) {
-//			return F_SIMPLE_CHEAT_SHEET;
-//		} else if (fCompositeCheatSheetButton.getSelection()) {
-//			return F_COMPOSITE_CHEAT_SHEET;
-//		}
+		if (fSimpleCheatSheetButton.getSelection()) {
+			return F_SIMPLE_CHEAT_SHEET;
+		} else if (fCompositeCheatSheetButton.getSelection()) {
+			return F_COMPOSITE_CHEAT_SHEET;
+		}
 		// Neither selected. Unknown type
 		return -1;
 	}
@@ -73,63 +75,56 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 	 */
 	protected void createAdvancedControls(Composite parent) {
 
-		// TODO: MP: DEFER: Re-enable when composite cheat sheet editor is finished
+		GridData data = null;
+		
 		// Cheat Sheet Group
-//		fGroup = new Group(parent, SWT.NONE);
-//		fGroup.setText(PDEUIMessages.CheatSheetFileWizardPage_4); 
-//		fGroup.setLayout(new GridLayout(1, false));
-//		fGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
-//		
-//		// Simple Cheat Sheet Button
-//		fSimpleCheatSheetButton = new Button(fGroup, SWT.RADIO);
-//		fSimpleCheatSheetButton.setText(PDEUIMessages.CheatSheetFileWizardPage_5); 
-//		fSimpleCheatSheetButton.setSelection(true);
-//		fSimpleCheatSheetButton.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent e) {
-//                getWizard().getContainer().updateButtons();
-//			}
-//		});
-//		
-//		// Simple Cheat Sheet Description Label
-//		final Label simpleCSText = new Label(fGroup, SWT.WRAP);
-//		simpleCSText.setText(PDEUIMessages.CheatSheetFileWizardPage_6);
-//		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-//		gd.widthHint = 300;
-//		simpleCSText.setLayoutData(gd);
-//		
-//		// Spacer
-//		new Label(fGroup, SWT.NULL);
-//		
-//		// Composite Cheat Sheet Button
-//		fCompositeCheatSheetButton = new Button(fGroup, SWT.RADIO);
-//		fCompositeCheatSheetButton.setSelection(false);
-//		fCompositeCheatSheetButton
-//				.setText(PDEUIMessages.CheatSheetFileWizardPage_7); 
-//		fCompositeCheatSheetButton.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent e) {
-//                getWizard().getContainer().updateButtons();
-//			}
-//		});		
-//		// TODO: MP: Temporarily disabled
-//		fCompositeCheatSheetButton.setEnabled(false);
-//		
-//		
-//		// Composite Cheat Sheet Description Label
-//		final Label compositeCSText = new Label(fGroup, SWT.WRAP);
-//		compositeCSText.setText(PDEUIMessages.CheatSheetFileWizardPage_8);
-//		gd = new GridData(GridData.FILL_HORIZONTAL);
-//		gd.widthHint = 300;
-//		compositeCSText.setLayoutData(gd);
-	}
-
-	/**
-	 * 
-	 */
-	public void finalizePage() {
-		// If an extension has not been provided, append an '.xml' extension
-		if (fHasExtension == false) {
-			setFileName(getFileName() + F_FILE_EXTENSION);
-		}
+		fGroup = new Group(parent, SWT.NONE);
+		fGroup.setText(PDEUIMessages.CheatSheetFileWizardPage_4); 
+		fGroup.setLayout(new GridLayout(1, false));
+		fGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
+		
+		// Simple Cheat Sheet Button
+		fSimpleCheatSheetButton = new Button(fGroup, SWT.RADIO);
+		fSimpleCheatSheetButton.setText(PDEUIMessages.CheatSheetFileWizardPage_5); 
+		fSimpleCheatSheetButton.setSelection(true);
+		fSimpleCheatSheetButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+                getWizard().getContainer().updateButtons();
+			}
+		});
+		
+		// Simple Cheat Sheet Description Label
+		final Label simpleCSLabel = new Label(fGroup, SWT.WRAP);
+		simpleCSLabel.setText(PDEUIMessages.CheatSheetFileWizardPage_6);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = 300;
+		data.horizontalIndent = 20;
+		simpleCSLabel.setLayoutData(data);
+		
+		// Composite Cheat Sheet Button
+		fCompositeCheatSheetButton = new Button(fGroup, SWT.RADIO);
+		fCompositeCheatSheetButton.setSelection(false);
+		fCompositeCheatSheetButton
+				.setText(PDEUIMessages.CheatSheetFileWizardPage_7);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.verticalIndent = 10;
+		fCompositeCheatSheetButton.setLayoutData(data);
+		fCompositeCheatSheetButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+                getWizard().getContainer().updateButtons();
+			}
+		});		
+		
+		// Composite Cheat Sheet Description Label
+		final Label compositeCSLabel = new Label(fGroup, SWT.WRAP);
+		compositeCSLabel.setText(PDEUIMessages.CheatSheetFileWizardPage_8);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = 300;
+		data.horizontalIndent = 20;
+		compositeCSLabel.setLayoutData(data);
+		
+		// Initialize the filename to contain an '.xml' extension
+		setFileName(F_FILE_EXTENSION);
 	}
 	
 	/* (non-Javadoc)
@@ -139,31 +134,35 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 		String filename = getFileName().trim();
 		// Verify the filename is non-empty
 		if (filename.length() == 0) {
+			setErrorMessage(null);
 			return false;
 		}
-		
-		// Check to see if the filename contains a '.' 
+		// Check to see if the filename contains a '.'
+		String errorMessage = PDEUIMessages.CheatSheetFileWizardPage_0 +
+		' ' + "\'" + F_FILE_EXTENSION + "\'"; //$NON-NLS-1$ //$NON-NLS-2$
 		int dotIndex = filename.indexOf('.');
 		if (dotIndex == -1) {
 			// Filename contains no dot
-			fHasExtension = false;
-			return super.validatePage();
+			setErrorMessage(errorMessage);
+			return false;
 		}
 		// Filename contains a dot
-		fHasExtension = true;
 		String name = filename.substring(0, dotIndex);
-		// Verify that the name portion is non-empty
+		// Verify that the name portion of the file is non-empty
 		if (name.length() == 0) {
-			setErrorMessage(PDEUIMessages.CheatSheetFileWizardPage_9);
+			setErrorMessage(PDEUIMessages.CheatSheetFileWizardPage_emptyNamePortion);
 			return false;
 		}
-		String extension = filename.substring(dotIndex + 1, filename.length());
-		// Verify that the extension portion is non-empty
-		if (extension.length() == 0) {
-			setErrorMessage(PDEUIMessages.CheatSheetFileWizardPage_0);
+		// Include the dot
+		String extension = filename.substring(dotIndex, filename.length());
+		// Verify that the extension portion of the file equals the XML
+		// file extension
+		if ((extension.length() == 0) ||
+				(extension.compareTo(F_FILE_EXTENSION) != 0)) {
+			setErrorMessage(errorMessage);
 			return false;
 		}
-		
+		// Perform default validation
 		return super.validatePage();
 	}
 	
@@ -180,8 +179,7 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		// TODO: MP: DEFER: Re-enable when composite cheat sheet editor is finished
-		//Dialog.applyDialogFont(fGroup);
+		Dialog.applyDialogFont(fGroup);
 	}
 
 	/* (non-Javadoc)

@@ -25,20 +25,20 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
  * SimpleCheatSheetCreationOperation
  *
  */
-public class SimpleCheatSheetCreationOperation extends
+public class SimpleCSCreationOperation extends
 		BaseCheatSheetCreationOperation {
 
 	/**
 	 * @param file
 	 */
-	public SimpleCheatSheetCreationOperation(IFile file) {
+	public SimpleCSCreationOperation(IFile file) {
 		super(file);
 	}
 
 	/**
 	 * @param rule
 	 */
-	public SimpleCheatSheetCreationOperation(ISchedulingRule rule) {
+	public SimpleCSCreationOperation(ISchedulingRule rule) {
 		super(rule);
 	}
 
@@ -48,8 +48,6 @@ public class SimpleCheatSheetCreationOperation extends
 	protected void createContent() {
         SimpleCSWorkspaceModel model = new SimpleCSWorkspaceModel(fFile, false);
         initializeCS(model.getSimpleCS());
-        // TODO: MP: HIGH: Figure out how to prevent overwrite of file with same name
-        // check if exists ? Do in wizard somehow ?
         model.save();
         model.dispose();
 	}	

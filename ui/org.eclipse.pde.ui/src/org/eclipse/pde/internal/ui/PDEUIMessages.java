@@ -35,7 +35,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String CheatSheetFileWizardPage_8;
 
-	public static String CheatSheetFileWizardPage_9;
+	public static String CheatSheetFileWizardPage_emptyNamePortion;
 
 	public static String CommandCopyFilter_cheatsheet;
 
@@ -94,6 +94,16 @@ public class PDEUIMessages extends NLS {
 	public static String CommandList_groupName;
 
 	public static String CommandSerializerPart_name;
+
+	public static String CompCSCreationOperation_conclusion;
+
+	public static String CompCSCreationOperation_group;
+
+	public static String CompCSCreationOperation_introduction;
+
+	public static String CompCSCreationOperation_task;
+
+	public static String CompCSCreationOperation_title;
 
 	public static String CompCSDependenciesDetails_Dependencies;
 

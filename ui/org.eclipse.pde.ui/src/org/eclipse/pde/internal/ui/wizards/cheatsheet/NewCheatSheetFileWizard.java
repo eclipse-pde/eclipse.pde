@@ -66,8 +66,6 @@ public class NewCheatSheetFileWizard extends BasicNewFileResourceWizard implemen
 	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#performFinish()
 	 */
 	public boolean performFinish() {
-		// Post-process page data
-		fMainPage.finalizePage();
 		try {
 			getContainer().run(false, true, getOperation());
 		} catch (InvocationTargetException e) {
@@ -83,20 +81,16 @@ public class NewCheatSheetFileWizard extends BasicNewFileResourceWizard implemen
 	 * @return
 	 */
 	private IRunnableWithProgress getOperation() {
-		// TODO: MP: DEFER: Re-enable when composite cheat sheet editor is finished
 		
         IFile file = fMainPage.createNewFile();
-//		int option = fMainPage.getCheatSheetType();
-//		if (option == CheatSheetFileWizardPage.F_SIMPLE_CHEAT_SHEET) {
-			return new SimpleCheatSheetCreationOperation(file);
-//		} else if (option == CheatSheetFileWizardPage.F_COMPOSITE_CHEAT_SHEET) {
-			// TODO: MP: Do specific operation for composite cheat sheet
-//			return null;
-//		}
-		// This should never happen
-		// TODO: MP: Externalize: low priority - need to bind
-//		PDEPlugin.logErrorMessage("Unknown cheat sheet type encountered"); //$NON-NLS-1$
-//		return null;
-		//return new BaseCheatSheetCreationOperation(file);
+		int option = fMainPage.getCheatSheetType();
+		if (option == CheatSheetFileWizardPage.F_SIMPLE_CHEAT_SHEET) {
+			return new SimpleCSCreationOperation(file);
+		} else if (option == CheatSheetFileWizardPage.F_COMPOSITE_CHEAT_SHEET) {
+			return new CompCSCreationOperation(file);
+		}
+		// This can never happen
+		PDEPlugin.logErrorMessage("Unknown cheat sheet type encountered"); //$NON-NLS-1$
+		return null;
 	}	
 }
