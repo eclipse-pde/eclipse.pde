@@ -176,9 +176,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		ISchemaElement schemaElement = schema.findElement(elementName);
 		
 		// Validate element occurrence violations
-		// TODO: MP: HIGH: MultVal: Re-enable
-		if (false &&
-				(schemaElement != null) &&
+		if ((schemaElement != null) &&
 				(schemaElement.getType() instanceof ISchemaComplexType)) {		
 			validateMaxElementMult(element, schemaElement);
 			validateMinElementMult(element, schemaElement);
