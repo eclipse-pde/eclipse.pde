@@ -45,8 +45,6 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	
 	private ICompCSTaskGroup fDataTaskGroup;
 	
-	private ICSDetails fDependenciesSection;	
-	
 	private ICSDetails fEnclosingTextSection;
 
 	private static final String F_KIND_VALUE_SET = PDEUIMessages.CompCSTaskGroupDetails_Set;
@@ -69,8 +67,6 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 
 		fDefinitionSection = null;
 		fEnclosingTextSection = new CompCSEnclosingTextDetails(fDataTaskGroup,
-				this);
-		fDependenciesSection = new CompCSDependenciesDetails(fDataTaskGroup,
 				this);
 	}
 
@@ -95,8 +91,6 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		createUISkipButton(sectionClient);
 		// Create the enclosing text section
 		fEnclosingTextSection.createDetails(parent);
-		// Create the dependencies section
-		fDependenciesSection.createDetails(parent);
 		// Bind widgets
 		getManagedForm().getToolkit().paintBordersFor(sectionClient);
 		fDefinitionSection.setClient(sectionClient);

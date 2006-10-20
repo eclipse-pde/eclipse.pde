@@ -28,7 +28,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -68,8 +67,6 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 	private Composite fIntroductionComposite;
 	
 	private Composite fCompositeConclusion;		
-
-	private Button fShowIntro;		
 	
 	private String fTaskObjectLabelName;	
 	
@@ -90,7 +87,6 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 		fNotebookLayout = null;
 		fIntroductionComposite = null;
 		fCompositeConclusion = null;
-		fShowIntro = null;
 		
 		defineTaskObjectLabelName();
 	}
@@ -218,24 +214,8 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = 60;
 		fIntroductionText.setLayoutData(data);
-		
-		// TODO: MP: HIGH: CompCS: Delete show intro button altogether ?
-		if (fDataTaskObject.getType() == ICompCSConstants.TYPE_TASK) {
-			createUIShowIntroButton(fIntroductionComposite);
-		}
-	}
 
-	/**
-	 * @param parent
-	 */
-	private void createUIShowIntroButton(Composite parent) {
-		Color foreground = fDetails.getToolkit().getColors().getColor(FormColors.TITLE);		
-		fShowIntro = fDetails.getToolkit().createButton(parent, PDEUIMessages.CompCSEnclosingTextDetails_SkipIntroLabel, SWT.CHECK);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		//data.horizontalSpan = 3;
-		fShowIntro.setLayoutData(data);
-		fShowIntro.setForeground(foreground);
-	}		
+	}
 	
 	/**
 	 * 

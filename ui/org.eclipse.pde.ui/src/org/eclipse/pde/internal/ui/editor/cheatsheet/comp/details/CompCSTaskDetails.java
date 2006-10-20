@@ -43,8 +43,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	
 	private ICompCSTask fDataTask;
 	
-	private ICSDetails fDependenciesSection;		
-
 	private ICSDetails fEnclosingTextSection;		
 	
 	
@@ -62,8 +60,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 
 		fDefinitionSection = null;
 		fEnclosingTextSection = new CompCSEnclosingTextDetails(fDataTask, this);
-		fDependenciesSection = new CompCSDependenciesDetails(fDataTask,
-				this);		
 	}
 
 	/* (non-Javadoc)
@@ -85,8 +81,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		createUISkipButton(sectionClient);
 		// Create the enclosing text section
 		fEnclosingTextSection.createDetails(parent);
-		// Create the dependencies section
-		fDependenciesSection.createDetails(parent);
 		// Bind widgets
 		getManagedForm().getToolkit().paintBordersFor(sectionClient);
 		fDefinitionSection.setClient(sectionClient);
