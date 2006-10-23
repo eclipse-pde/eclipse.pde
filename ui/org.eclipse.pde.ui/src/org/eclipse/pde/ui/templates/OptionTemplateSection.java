@@ -34,7 +34,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
  * section.
  * <p>
  * It also assumes that all wizard pages associated with this template will be
- * based on <code>OptionWizardTemplatePage</code>.
+ * based on <code>OptionTemplateWizardPage</code>.
  * 
  * 
  * @since 2.0
