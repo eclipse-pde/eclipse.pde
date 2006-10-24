@@ -161,11 +161,15 @@ public class PDEUIMessages extends NLS {
 
 	public static String CompilersConfigurationTab_incompatEnv;
 
+	public static String ContainerRenameParticipant_renameFolders;
+
 	public static String ContentSection_addDialogButtonLabel;
 
 	public static String ExportOptionsTab_antReservedMessage;
 
 	public static String ExtensionsPage_sortAlpha;
+
+	public static String FileRenameParticipant_renameFiles;
 
 	public static String FormatManifestAction_actionText;
 

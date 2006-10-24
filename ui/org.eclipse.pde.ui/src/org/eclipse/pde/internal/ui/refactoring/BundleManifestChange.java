@@ -64,7 +64,7 @@ public class BundleManifestChange {
 		return null;
 	}
 	
-	public static MoveFromChange createMovePackageChange(IFile file, IJavaElement[] elements, IProgressMonitor monitor) throws CoreException {
+	public static MoveFromChange createMovePackageChange(IFile file, Object[] elements, IProgressMonitor monitor) throws CoreException {
 		try {
 			Bundle bundle = getBundle(file, monitor);
 			if (bundle == null)
@@ -76,11 +76,13 @@ public class BundleManifestChange {
 			
 			ArrayList list = new ArrayList();
 			for (int i = 0; i < elements.length; i++) {
-				String packageName = elements[i].getElementName();
-				PDEManifestElement export = removePackage(bundle.getManifestHeader(Constants.EXPORT_PACKAGE), 
-														  		packageName);
-				if (export != null)
-					list.add(export);
+				if (elements[i] instanceof IJavaElement) {
+					String packageName = ((IJavaElement)elements[i]).getElementName();
+					PDEManifestElement export = removePackage(bundle.getManifestHeader(Constants.EXPORT_PACKAGE), 
+							packageName);
+					if (export != null)
+						list.add(export);
+				}
 			}
 
 			TextEdit[] operations = listener.getTextOperations();
@@ -102,7 +104,7 @@ public class BundleManifestChange {
 		return null;
 	}
 
-	public static Change createRenameChange(IFile file, IJavaElement[] elements, String[] newTexts,
+	public static Change createRenameChange(IFile file, Object[] elements, String[] newTexts,
 			IProgressMonitor monitor) throws CoreException {
 		try {
 			Bundle bundle = getBundle(file, monitor);
@@ -113,7 +115,7 @@ public class BundleManifestChange {
 			BundleTextChangeListener listener = new BundleTextChangeListener(model.getDocument());
 			bundle.getModel().addModelChangedListener(listener);
 			for (int i = 0; i < elements.length; i++) {
-				IJavaElement element = elements[i];
+				Object element = elements[i];
 				String newText = newTexts[i];
 				if (element instanceof IType) {
 					String oldText = ((IType)element).getFullyQualifiedName('$');
@@ -126,7 +128,7 @@ public class BundleManifestChange {
 							oldText, 
 							newText);
 				} else if (element instanceof IPackageFragment) {
-					String oldText = element.getElementName();				
+					String oldText = ((IPackageFragment)element).getElementName();				
 					resetHeaderValue(bundle.getManifestHeader(Constants.BUNDLE_ACTIVATOR), 
 							true,
 							oldText, 

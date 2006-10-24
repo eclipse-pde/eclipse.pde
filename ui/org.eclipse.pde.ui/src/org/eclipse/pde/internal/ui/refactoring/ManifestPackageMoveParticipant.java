@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -35,8 +35,8 @@ public class ManifestPackageMoveParticipant extends PDEMoveParticipant {
 			IProject project = javaProject.getProject();
 			if (WorkspaceModelManager.hasBundleManifest(project)) {
 				fProject = javaProject.getProject();
-				fElements = new ArrayList();
-				fElements.add(fragment);
+				fElements = new HashMap();
+				fElements.put(fragment, getNewName(getArguments().getDestination(), element));
 				return true;
 			}
 		}
@@ -47,13 +47,13 @@ public class ManifestPackageMoveParticipant extends PDEMoveParticipant {
 		return PDEUIMessages.ManifestPackageRenameParticipant_packageRename;
 	}
 
-	protected void addBundleManifestChange(CompositeChange result, IProgressMonitor pm) throws CoreException {
+	protected void addChange(CompositeChange result, IProgressMonitor pm) throws CoreException {
 		IFile file = fProject.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
 		if (file.exists()) {
 			IProject destProject = getDestinationProject();
 			if (destProject != null && !fProject.equals(destProject)) {
 				MoveFromChange change = BundleManifestChange.createMovePackageChange(file, 
-						(IJavaElement[])fElements.toArray(new IJavaElement[fElements.size()]), 
+						fElements.keySet().toArray(), 
 						pm);
 				if (change != null) {
 					result.add(change);

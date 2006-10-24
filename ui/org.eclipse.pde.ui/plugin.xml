@@ -1900,6 +1900,32 @@
             </with>
          </enablement>        
       </renameParticipant>
+      <renameParticipant
+            class="org.eclipse.pde.internal.ui.refactoring.FileRenameParticipant"
+            id="org.eclipse.pde.ui.manifestFileRenameParticipant"
+            name="%rename.file.participant">
+         <enablement>
+            <with
+                  variable="element">
+               <instanceof
+                     value="org.eclipse.core.resources.IFile">
+               </instanceof>
+            </with>
+         </enablement>    
+      </renameParticipant>
+       <renameParticipant
+            class="org.eclipse.pde.internal.ui.refactoring.ContainerRenameParticipant"
+            id="org.eclipse.pde.ui.manifestFolderRenameParticipant"
+            name="%rename.container.participant">
+         <enablement>
+            <with
+                  variable="element">
+               <instanceof
+                     value="org.eclipse.core.resources.IContainer">
+               </instanceof>
+            </with>
+         </enablement>    
+      </renameParticipant>
    </extension>
    <extension
          point="org.eclipse.ltk.core.refactoring.moveParticipants">
@@ -1925,6 +1951,32 @@
                   variable="element">
                <instanceof
                      value="org.eclipse.jdt.core.IPackageFragment">
+               </instanceof>
+            </with>
+         </enablement>        
+      </moveParticipant>
+      <moveParticipant
+            class="org.eclipse.pde.internal.ui.refactoring.FileMoveParticipant"
+            id="org.eclipse.pde.ui.manifestFileMoveParticipant"
+            name="%move.file.participant">
+         <enablement>
+            <with
+                  variable="element">
+               <instanceof
+                     value="org.eclipse.core.resources.IFile">
+               </instanceof>
+            </with>
+         </enablement>        
+      </moveParticipant>
+      <moveParticipant
+            class="org.eclipse.pde.internal.ui.refactoring.ContainerMoveParticipant"
+            id="org.eclipse.pde.ui.manifestFolderMoveParticipant"
+            name="%move.container.participant">
+         <enablement>
+            <with
+                  variable="element">
+               <instanceof
+                     value="org.eclipse.core.resources.IContainer">
                </instanceof>
             </with>
          </enablement>        

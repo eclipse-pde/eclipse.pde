@@ -12,11 +12,12 @@ package org.eclipse.pde.internal.ui.refactoring;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jdt.core.IJavaElement;
@@ -40,7 +41,12 @@ public abstract class PDERenameParticipant extends RenameParticipant implements 
 	}
 	
 	public void addElement(Object element, RefactoringArguments arguments) {
-		fElements.put(element, ((RenameArguments)arguments).getNewName());
+		String newName = ((RenameArguments)arguments).getNewName();
+		if (element instanceof IResource) {
+			IPath projectPath = ((IResource)element).getProjectRelativePath();
+			newName = projectPath.removeLastSegments(1).append(newName).toString();
+		}
+		fElements.put(element, newName);
 	}
 
 	public Change createChange(IProgressMonitor pm) throws CoreException,
@@ -48,7 +54,10 @@ public abstract class PDERenameParticipant extends RenameParticipant implements 
 		if (!getArguments().getUpdateReferences())
 			return null;
 		CompositeChange result = new CompositeChange(getName());
-		addBundleManifestChange(result, pm);
+		if (updateManifest())
+			addBundleManifestChange(result, pm);
+		if (updateBuildProperties())
+			addBuildPropertiesChange(result, pm);
 		addChange(result, "plugin.xml", pm); //$NON-NLS-1$
 		addChange(result, "fragment.xml", pm); //$NON-NLS-1$
 		return (result.getChildren().length == 0) ? null : result;
@@ -59,15 +68,10 @@ public abstract class PDERenameParticipant extends RenameParticipant implements 
 		IFile file = fProject.getFile(filename);
 		if (file.exists()) {
 			Change change = PluginManifestChange.createRenameChange(
-					file, getAffectedElements(), getNewNames(), pm);
+					file, fElements.keySet().toArray(), getNewNames(), getTextChange(file), pm);
 			if (change != null)
 				result.add(change);
 		}
-	}
-	
-	protected IJavaElement[] getAffectedElements() {
-		Set objects = fElements.keySet();
-		return (IJavaElement[])objects.toArray(new IJavaElement[objects.size()]);
 	}
 	
 	protected String[] getNewNames() {
@@ -88,7 +92,7 @@ public abstract class PDERenameParticipant extends RenameParticipant implements 
 		if (file.exists()) {
 			Change change = BundleManifestChange.createRenameChange(
 							file, 
-							(IJavaElement[])fElements.keySet().toArray(new IJavaElement[fElements.size()]),
+							fElements.keySet().toArray(),
 							getNewNames(), 
 							pm);
 			if (change != null)
@@ -96,4 +100,32 @@ public abstract class PDERenameParticipant extends RenameParticipant implements 
 		}
 	}
 
+	protected void addBuildPropertiesChange(CompositeChange result, IProgressMonitor pm) throws CoreException {
+		IFile file = fProject.getFile("build.properties"); //$NON-NLS-1$
+		if (file.exists()) {
+			Change change = BuildPropertiesChange.createRenameChange(
+					file, 
+					fElements.keySet().toArray(),
+					getNewNames(), 
+					pm);
+			if (change != null)
+				result.add(change);
+		}
+	}
+	
+	protected boolean updateManifest() {
+		return containsElement(true);
+	}
+	
+	protected boolean updateBuildProperties() {
+		return containsElement(false);
+	}
+	
+	protected boolean containsElement(boolean javaElement) {
+		Object[] objs = fElements.keySet().toArray();
+		for (int i = 0; i < objs.length; i++) 
+			if (objs[i] instanceof IJavaElement == javaElement)
+				return true;
+		return false;
+	}
 }

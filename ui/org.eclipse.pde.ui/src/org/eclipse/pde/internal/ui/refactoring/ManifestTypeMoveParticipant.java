@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -35,8 +35,8 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 			IProject project = javaProject.getProject();
 			if (WorkspaceModelManager.isPluginProject(project)) {
 				fProject = javaProject.getProject();
-				fElements = new ArrayList();
-				fElements.add(element);
+				fElements = new HashMap();
+				fElements.put(element, getNewName(getArguments().getDestination(), element));
 				return true;
 			}
 		}
@@ -62,40 +62,33 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 		IFile file = fProject.getFile(filename);
 		if (file.exists()) {
 			Change change = PluginManifestChange.createRenameChange(file, 
-					getAffectedElements(), 
+					fElements.keySet().toArray(), 
 					getNewNames(), 
+					getTextChange(file),
 					pm);
 			if (change != null)
 				result.add(change);				
 		}
 	}
 	
-	protected IJavaElement[] getAffectedElements() {
-		return (IJavaElement[])fElements.toArray(new IJavaElement[fElements.size()]);
-	}
-	
-	private String[] getNewNames() {
-		Object destination = getArguments().getDestination();
-		StringBuffer buffer = new StringBuffer();
-		if (destination instanceof IPackageFragment) {
+	protected String getNewName(Object destination, Object element) {
+		if (destination instanceof IPackageFragment && element instanceof IJavaElement) {
+			StringBuffer buffer = new StringBuffer();
 			buffer.append(((IPackageFragment)destination).getElementName());
 			if (buffer.length() > 0)
-				buffer.append("."); //$NON-NLS-1$
+				buffer.append('.');
+			return buffer.append(((IJavaElement)element).getElementName()).toString();
 		}
-		String[] result = new String[fElements.size()];
-		for (int i = 0; i < fElements.size(); i++) {
-			result[i] = buffer.toString() + ((IJavaElement)fElements.get(i)).getElementName();
-		}
-		return result;
+		return super.getNewName(destination, element);
 	}
 
-	protected void addBundleManifestChange(CompositeChange result, IProgressMonitor pm)
+	protected void addChange(CompositeChange result, IProgressMonitor pm)
 			throws CoreException {
 		IFile file = fProject.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
 		if (file.exists()) {
 			Change change = BundleManifestChange.createRenameChange(
 										file, 
-										(IJavaElement[])fElements.toArray(new IJavaElement[fElements.size()]),
+										fElements.keySet().toArray(),
 										getNewNames(), 
 										pm);
 			if (change != null)

@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -21,13 +22,14 @@ import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.ISharableParticipant;
+import org.eclipse.ltk.core.refactoring.participants.MoveArguments;
 import org.eclipse.ltk.core.refactoring.participants.MoveParticipant;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 
 public abstract class PDEMoveParticipant extends MoveParticipant implements ISharableParticipant {
 
 	protected IProject fProject;
-	protected ArrayList fElements;
+	protected HashMap fElements;
 
 	public RefactoringStatus checkConditions(IProgressMonitor pm,
 			CheckConditionsContext context) throws OperationCanceledException {
@@ -35,13 +37,14 @@ public abstract class PDEMoveParticipant extends MoveParticipant implements ISha
 	}
 	
 	public void addElement(Object element, RefactoringArguments arguments) {
-		fElements.add(element);
+		Object destination = ((MoveArguments)arguments).getDestination();
+		fElements.put(element, getNewName(destination, element));
 	}
 
 	public Change createChange(IProgressMonitor pm) throws CoreException,
 			OperationCanceledException {
 		CompositeChange result = new CompositeChange(getName());
-		addBundleManifestChange(result, pm);
+		addChange(result, pm);
 		if (isInterestingForExtensions()) {
 			addChange(result, "plugin.xml", pm); //$NON-NLS-1$
 			addChange(result, "fragment.xml", pm); //$NON-NLS-1$
@@ -55,8 +58,21 @@ public abstract class PDEMoveParticipant extends MoveParticipant implements ISha
 		throws CoreException {		
 	}
 	
-	protected void addBundleManifestChange(CompositeChange result, IProgressMonitor pm)
+	// add main change (whether to Manifest or build.properties)
+	protected void addChange(CompositeChange result, IProgressMonitor pm)
 		throws CoreException {
+	}
+	
+	protected String getNewName(Object destination, Object element) {
+		return element.toString();
+	}
+	
+	protected String[] getNewNames() {
+		String[] result = new String[fElements.size()];
+		Iterator iter = fElements.values().iterator();
+		for (int i = 0; i < fElements.size(); i++)
+			result[i] = iter.next().toString();
+		return result;
 	}
 
 }
