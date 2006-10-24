@@ -191,7 +191,8 @@ public class ManifestSourcePage extends XMLSourcePage {
 			Object first= structuredSelection.getFirstElement();
 			if (first instanceof IDocumentNode && !((IDocumentNode)first).isErrorNode()) {
 				setHighlightRange((IDocumentNode)first, true);
-				setSelectedRange((IDocumentNode)first, false);				
+				setSelectedRange((IDocumentNode)first, false);
+				fSelection = structuredSelection;
 			} else {
 				//resetHighlightRange();
 			}
