@@ -228,6 +228,7 @@ public class SimpleCSHelpDetails implements ICSDetails {
 		fHelpText.setEnabled(editable);
 		fHelpText.setVisible(expanded);
 		fHelpLabel.setVisible(expanded);
+		fHelpCombo.setEnabled(editable);
 	}
 
 }

@@ -17,6 +17,8 @@ import java.io.StringWriter;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -28,12 +30,18 @@ import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCS;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
+import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTask;
+import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup;
+import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TreeSection;
 import org.eclipse.pde.internal.ui.editor.actions.CollapseAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.actions.CompCSAddGroupAction;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.actions.CompCSAddTaskAction;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.actions.CompCSRemoveTaskObjectAction;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -77,6 +85,14 @@ public class CompCSMasterTreeSection extends TreeSection implements
 	
 	private CollapseAction fCollapseAction;
 	
+	private CompCSRemoveTaskObjectAction fRemoveTaskObjectAction;
+	
+	private CompCSAddGroupAction fAddGroupAction;
+	
+	private CompCSAddTaskAction fAddTaskAction;
+	
+	private CompCSGroupValidator fGroupValidator;
+	
 	/**
 	 * @param formPage
 	 * @param parent
@@ -84,7 +100,6 @@ public class CompCSMasterTreeSection extends TreeSection implements
 	 * @param buttonLabels
 	 */
 	public CompCSMasterTreeSection(PDEFormPage formPage, Composite parent) {
-		// TODO: MP: HIGH: CompCS:  Update master tree section buttons
 		super(formPage, parent, Section.DESCRIPTION, new String[] {
 				PDEUIMessages.CompCSMasterTreeSection_addTask,
 				PDEUIMessages.CompCSMasterTreeSection_addGroup,
@@ -92,19 +107,12 @@ public class CompCSMasterTreeSection extends TreeSection implements
 				PDEUIMessages.SimpleCSElementSection_1, 
 				PDEUIMessages.SimpleCSElementSection_2, 
 				PDEUIMessages.SimpleCSElementSection_3});
-		// TODO: MP: LOW: CompCS: Consider putting in createClient
-		getSection().setText(PDEUIMessages.SimpleCSElementSection_4);
-		// TODO: MP: LOW: CompCS: Consider putting in createClient
-		getSection().setDescription(PDEUIMessages.SimpleCSElementSection_5);
 
 		// Create actions
-		// TODO: MP: HIGH: CompCS: Add actions
-//		fAddStepAction = new SimpleCSAddStepAction();
-//		fRemoveStepAction = new SimpleCSRemoveStepAction();
-//		fRemoveSubStepAction = new SimpleCSRemoveSubStepAction();
-//		fAddSubStepAction = new SimpleCSAddSubStepAction();
-//		fRemoveRunObjectAction = new SimpleCSRemoveRunObjectAction();
-//		fCollapseAction = null;
+		fAddGroupAction = new CompCSAddGroupAction();
+		fAddTaskAction = new CompCSAddTaskAction();
+		fRemoveTaskObjectAction = new CompCSRemoveTaskObjectAction();
+		fCollapseAction = null;
 	}
 
 	/* (non-Javadoc)
@@ -114,6 +122,8 @@ public class CompCSMasterTreeSection extends TreeSection implements
 		Composite container = createClientContainer(section, 2, toolkit);
 		createTree(container, toolkit);
 		toolkit.paintBordersFor(container);
+		section.setText(PDEUIMessages.SimpleCSElementSection_4);
+		section.setDescription(PDEUIMessages.SimpleCSElementSection_5);
 		section.setClient(container);
 		initialize();
 		createSectionToolbar(section, toolkit);
@@ -144,6 +154,12 @@ public class CompCSMasterTreeSection extends TreeSection implements
 		fTreeViewer.setInput(fModel);
 		ICompCS cheatsheet = fModel.getCompCS();
 
+		// Create the group validator and register all existing groups to be
+		// validated within the workspace model
+		fGroupValidator = new CompCSGroupValidator(cheatsheet, 
+				getManagedForm().getForm().getForm(), 
+				PDEUIMessages.SimpleCSElementSection_4);
+		
 		// If the cheat sheet already has a task object, then the object has
 		// to be deleted first before a new task or group can be added to
 		// the root cheatsheet node
@@ -160,8 +176,12 @@ public class CompCSMasterTreeSection extends TreeSection implements
 		getTreePart().setButtonEnabled(F_BUTTON_UP, false);
 		// Set to false because initial node selected is the root cheatsheet node
 		getTreePart().setButtonEnabled(F_BUTTON_DOWN, false);
-		// TODO: MP: HIGH: Revisit. Some calculation will probably have to be done to determine preview enablement
-		getTreePart().setButtonEnabled(F_BUTTON_PREVIEW, true);
+
+		// Validate initial file content
+		// TODO: MP: LOW: CompCS: The error message does not show up in the form on load for some reason
+		// TODO: MP: LOW: CompCS: Implement error image overlay on icon ILightWeightLabelDecorator
+		// TODO: MP: LOW: CompCS: The error message dissapears on up / down movement
+		updatePreviewButton(fGroupValidator.validate());
 		
 		// Select the cheatsheet node in the tree
 		fTreeViewer.setSelection(new StructuredSelection(cheatsheet), true);
@@ -211,14 +231,13 @@ public class CompCSMasterTreeSection extends TreeSection implements
 			handleAddGroupAction();
 			break;
 		case F_BUTTON_REMOVE:
-			// TODO: MP: HIGH: CompCS: Handle action
-			// handleDeleteAction();
+			handleDeleteAction();
 			break;
 		case F_BUTTON_UP:
-			handleMoveStepAction(F_UP_FLAG);
+			handleMoveTaskObjectAction(F_UP_FLAG);
 			break;
 		case F_BUTTON_DOWN:
-			handleMoveStepAction(F_DOWN_FLAG);
+			handleMoveTaskObjectAction(F_DOWN_FLAG);
 			break;
 		case F_BUTTON_PREVIEW:
 			handlePreviewAction();
@@ -237,161 +256,128 @@ public class CompCSMasterTreeSection extends TreeSection implements
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSMaster#updateButtons()
 	 */
 	public void updateButtons() {
-		// TODO: MP: HIGH: CompCS:  Update buttons
-//		if (!fModel.isEditable()) {
-//			return;
-//		}
-//		Object object = ((IStructuredSelection) fTreeViewer.getSelection()).getFirstElement();
-//		ISimpleCSObject csObject = (ISimpleCSObject)object;
-//		boolean canAddSubItem = false;
-//		boolean canRemove = false;
-//		boolean canMoveUp = false;
-//		boolean canMoveDown = false;
-//
-//		if (csObject != null) {
-//			if (csObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
-//				ISimpleCSItem item = (ISimpleCSItem)csObject;
-//				if (item.getSimpleCS().isFirstItem(item) == false) {
-//					canMoveUp = true;
-//				}
-//				if (item.getSimpleCS().isLastItem(item) == false) {
-//					canMoveDown = true;
-//				}
-//				
-//				// Preserve cheat sheet validity
-//				// Semantic Rule:  Cannot have a cheat sheet with no items
-//				if (item.getSimpleCS().getItemCount() > 1) {
-//					canRemove = true;
-//				}
-//				
-//				// Preserve cheat sheet validity
-//				// Semantic Rule:  Cannot have a subitem and any of the following
-//				// together:  perform-when, command, action
-//				if (item.getExecutable() == null) {
-//					canAddSubItem = true;
-//				}
-//			} else if (csObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
-//				ISimpleCSSubItem subitem = (ISimpleCSSubItem)csObject;
-//				ISimpleCSObject parent = subitem.getParent();
-//				if (parent.getType() == ISimpleCSConstants.TYPE_ITEM) {
-//					ISimpleCSItem item = (ISimpleCSItem)parent;
-//					if (item.isFirstSubItem(subitem) == false) {
-//						canMoveUp = true;
-//					}
-//					if (item.isLastSubItem(subitem) == false) {
-//						canMoveDown = true;
-//					}
-//					// Preserve cheat sheet validity
-//					// Semantic Rule:  Cannot have a subitem and any of the following
-//					// together:  perform-when, command, action
-//					if (item.getExecutable() == null) {
-//						canAddSubItem = true;
-//					}					
-//				}
-//				canRemove = true;
-//				
-//			} else if ((csObject.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) ||
-//						(csObject.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) ||
-//						(csObject.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN) ||
-//						(csObject.getType() == ISimpleCSConstants.TYPE_ACTION) ||
-//						(csObject.getType() == ISimpleCSConstants.TYPE_COMMAND)) {
-//				// Specifically for perform-when, repeated-subitem, 
-//				// conditional-subitem edge cases
-//				// Action and command supported; but, will never be applicable
-//				canRemove = true;
-//			}
-//		}
-//
-//		getTreePart().setButtonEnabled(F_BUTTON_ADD_SUBSTEP, canAddSubItem);
-//		getTreePart().setButtonEnabled(F_BUTTON_REMOVE, canRemove);
-//		getTreePart().setButtonEnabled(F_BUTTON_UP, canMoveUp);
-//		getTreePart().setButtonEnabled(F_BUTTON_DOWN, canMoveDown);
+		if (!fModel.isEditable()) {
+			return;
+		}
+		Object object = ((IStructuredSelection) fTreeViewer.getSelection()).getFirstElement();
+		ICompCSObject csObject = (ICompCSObject)object;
+		boolean canAddTask = false;
+		boolean canAddGroup = false;
+		boolean canRemove = false;
+		boolean canMoveUp = false;
+		boolean canMoveDown = false;
+
+		if (csObject != null) {
+			ICompCSObject parent = csObject.getParent();
+			if ((csObject.getType() == ICompCSConstants.TYPE_TASK) ||
+					(csObject.getType() == ICompCSConstants.TYPE_TASKGROUP)) {
+				
+				if ((parent.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET) &&
+						(csObject.getType() == ICompCSConstants.TYPE_TASKGROUP)) {
+					canAddTask = true;
+					canAddGroup = true;
+				} else if (parent.getType() == ICompCSConstants.TYPE_TASKGROUP) {
+					ICompCSTaskGroup taskGroup = (ICompCSTaskGroup)parent;
+					ICompCSTaskObject taskObject = (ICompCSTaskObject)csObject;
+					if (taskGroup.isFirstFieldTaskObject(taskObject) == false) {
+						canMoveUp = true;
+					}
+					if (taskGroup.isLastFieldTaskObject(taskObject) == false) {
+						canMoveDown = true;
+					}
+					canRemove = canRemoveTaskObject(taskGroup);
+					canAddTask = true;
+					canAddGroup = true;
+				}
+			}
+		}
+
+		getTreePart().setButtonEnabled(F_BUTTON_ADD_TASK, canAddTask);
+		getTreePart().setButtonEnabled(F_BUTTON_ADD_GROUP, canAddGroup);
+		getTreePart().setButtonEnabled(F_BUTTON_REMOVE, canRemove);
+		getTreePart().setButtonEnabled(F_BUTTON_UP, canMoveUp);
+		getTreePart().setButtonEnabled(F_BUTTON_DOWN, canMoveDown);
 	}
 
 	/**
 	 * 
 	 */
 	private void handleAddTaskAction() {
-		// TODO: MP: HIGH: CompCS:  Handle action
-		//fAddStepAction.setSimpleCS(fModel.getSimpleCS());
-		//fAddStepAction.run();
+		
+		ISelection sel = fTreeViewer.getSelection();
+		Object object = ((IStructuredSelection) sel).getFirstElement();
+		if (object == null) {
+			return;
+		}
+		if (object instanceof ICompCSTaskGroup) {
+			fAddTaskAction.setParentObject((ICompCSObject)object);
+			fAddTaskAction.run();
+		} else if (object instanceof ICompCSTask) {
+			fAddTaskAction.setParentObject(((ICompCSObject)object).getParent());
+			fAddTaskAction.run();
+		}
 	}	
 
+	/**
+	 * @param flag
+	 */
+	private void updatePreviewButton(boolean flag) {
+		getTreePart().setButtonEnabled(F_BUTTON_PREVIEW, flag);
+	}
+	
 	/**
 	 * 
 	 */
 	private void handleAddGroupAction() {
-		// TODO: MP: HIGH: CompCS:  Handle action
 		
-//		ISelection sel = fTreeViewer.getSelection();
-//		Object object = ((IStructuredSelection) sel).getFirstElement();
-//		if (object == null) {
-//			return;
-//		}
-//		if (object instanceof ISimpleCSItem) {
-//			fAddSubStepAction.setParentObject((ISimpleCSObject)object);
-//			fAddSubStepAction.run();
-//		} else if (object instanceof ISimpleCSSubItem) {
-//			fAddSubStepAction.setParentObject(((ISimpleCSObject)object).getParent());
-//			fAddSubStepAction.run();
-//		}
-		
+		ISelection sel = fTreeViewer.getSelection();
+		Object object = ((IStructuredSelection) sel).getFirstElement();
+		if (object == null) {
+			return;
+		}
+		if (object instanceof ICompCSTaskGroup) {
+			fAddGroupAction.setParentObject((ICompCSObject)object);
+			fAddGroupAction.run();
+		} else if (object instanceof ICompCSTask) {
+			fAddGroupAction.setParentObject(((ICompCSObject)object).getParent());
+			fAddGroupAction.run();
+		}
 	}		
 
 	/**
 	 * 
 	 */
-	private void handleMoveStepAction(int index) {
-		// TODO: MP: HIGH: CompCS:  Handle action
-		
-//		ISelection sel = fTreeViewer.getSelection();
-//		Object object = ((IStructuredSelection) sel).getFirstElement();
-//		// TODO: MP: Refactor candidate
-//		// i.e. calculating the index for up and down or separate method
-//		// TODO: MP: There is a flicker when adding and removing items / subitems
-//		// probably do to focus going to the parent
-//		if (object != null) {
-//			if (object instanceof ISimpleCSItem) {
-//				ISimpleCSItem item = (ISimpleCSItem)object;
-//				// Get the current index of the item
-//				int currentIndex = item.getSimpleCS().indexOfItem(item);
-//				// Remove the item
-//				item.getSimpleCS().removeItem(item);
-//				// Calculate the new index
-//				int newIndex = index;
-//				if (index == F_UP_FLAG) {
-//					newIndex = currentIndex - 1;
-//				} else if (index == F_DOWN_FLAG) {
-//					newIndex = currentIndex + 1;
-//				}
-//				// Add the item back at the specified index
-//				item.getSimpleCS().addItem(newIndex, item);
-//
-//			} else if (object instanceof ISimpleCSSubItem) {
-//				ISimpleCSSubItem subitem = (ISimpleCSSubItem)object;
-//				// Get the current index of the subitem
-//				ISimpleCSObject parent = subitem.getParent();
-//				// TODO: MP: Handle for conditional-subitems later
-//				// Actually probably beter to use some interface method if 
-//				// possible
-//				if (parent.getType() == ISimpleCSConstants.TYPE_ITEM) {
-//					ISimpleCSItem item = (ISimpleCSItem)parent;				
-//					int currentIndex = item.indexOfSubItem(subitem);
-//					// Remove the item
-//					item.removeSubItem(subitem);
-//					// Calculate the new index
-//					int newIndex = index;
-//					if (index == F_UP_FLAG) {
-//						newIndex = currentIndex - 1;
-//					} else if (index == F_DOWN_FLAG) {
-//						newIndex = currentIndex + 1;
-//					}
-//					// Add the item back at the specified index
-//					item.addSubItem(newIndex, subitem);
-//				}
-//			}
-//		}	
-//		
+	private void handleMoveTaskObjectAction(int index) {
+	
+		ISelection sel = fTreeViewer.getSelection();
+		Object object = ((IStructuredSelection) sel).getFirstElement();
+		if (object == null) {
+			return;
+		} else if (object instanceof ICompCSTaskObject) {
+			ICompCSTaskObject taskObject = (ICompCSTaskObject)object;
+			ICompCSTaskGroup parent = null;
+			// Determine the parents type
+			if (taskObject.getParent().getType() == ICompCSConstants.TYPE_TASKGROUP) {
+				parent = (ICompCSTaskGroup)taskObject.getParent();
+			} else {
+				return;
+			}
+			// Get the current index of the task object
+			int currentIndex = parent.indexOfFieldTaskObject(taskObject);
+			// Remove the task object
+			parent.removeFieldTaskObject(taskObject);
+			// Calculate the new index
+			int newIndex = index;
+			if (index == F_UP_FLAG) {
+				newIndex = currentIndex - 1;
+			} else if (index == F_DOWN_FLAG) {
+				newIndex = currentIndex + 1;
+			}
+			// Add the task object back at the specified index
+			parent.addFieldTaskObject(newIndex, taskObject);
+			// TODO: MP: LOW: CompCS: There is a flicker when adding and removing items / subitems
+			// probably do to focus going to the parent
+		}	
 	}	
 
 	/**
@@ -431,8 +417,6 @@ public class CompCSMasterTreeSection extends TreeSection implements
 	 */
 	public void modelChanged(IModelChangedEvent event) {
 		// No need to call super, world changed event handled here
-		// TODO: MP: HIGH: CompCS:  STYLE CHANGE: If anything goes wrong revert change back
-
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
 		} else if (event.getChangeType() == IModelChangedEvent.INSERT) {
@@ -441,7 +425,13 @@ public class CompCSMasterTreeSection extends TreeSection implements
 			handleModelRemoveType(event);
 		} else if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 			handleModelChangeType(event);
-		}		
+		}
+		
+		// Validate registered groups regardless of change type
+		// Validation is not required for task and composite cheat sheet 
+		// change types (performance savings available); but, is required for
+		// everything else
+		updatePreviewButton(fGroupValidator.validate());
 	}	
 
 	/**
@@ -454,16 +444,26 @@ public class CompCSMasterTreeSection extends TreeSection implements
 			ICompCSObject object = (ICompCSObject)objects[i];		
 			if (object == null) {
 				// Ignore
-			} else if ((object.getType() == ICompCSConstants.TYPE_TASK) ||
-						(object.getType() == ICompCSConstants.TYPE_TASKGROUP)) {
-				// Refresh the parent element in the tree viewer
-				fTreeViewer.refresh(object.getParent());
-				// Select the new task / group in the tree
-				fTreeViewer.setSelection(new StructuredSelection(object), true);
+			} else if (object.getType() == ICompCSConstants.TYPE_TASK) {
+				handleTaskObjectInsert(object);
+			} else if (object.getType() == ICompCSConstants.TYPE_TASKGROUP) {
+				handleTaskObjectInsert(object);
+				// Register the group for validation
+				fGroupValidator.addGroup((ICompCSTaskGroup)object);
 			}		
 		}
 	}	
 
+	/**
+	 * @param object
+	 */
+	private void handleTaskObjectInsert(ICompCSObject object) {
+		// Refresh the parent element in the tree viewer
+		fTreeViewer.refresh(object.getParent());
+		// Select the new task / group in the tree
+		fTreeViewer.setSelection(new StructuredSelection(object), true);		
+	}
+	
 	/**
 	 * @param event
 	 */
@@ -475,27 +475,27 @@ public class CompCSMasterTreeSection extends TreeSection implements
 			if (object == null) {
 				// Ignore
 			} else if (object.getType() == ICompCSConstants.TYPE_TASK) {
-				// Remove the item
-				fTreeViewer.remove(object);
-				// TODO: MP: HIGH: CompCS: Update
-				// Select the appropriate object
-//				ISimpleCSObject csObject = fRemoveStepAction.getObjectToSelect();
-//				if (csObject == null) {
-//					csObject = object.getParent();
-//				}
-//				fTreeViewer.setSelection(new StructuredSelection(csObject), true);
+				handleTaskObjectRemove(object);
 			} else if (object.getType() == ICompCSConstants.TYPE_TASKGROUP) {
-				// TODO: MP: HIGH: CompCS: Update
-				// Remove the subitem
-				fTreeViewer.remove(object);
-				// Select the appropriate object
-//				ISimpleCSObject csObject = fRemoveSubStepAction.getObjectToSelect();
-//				if (csObject == null) {
-//					csObject = object.getParent();
-//				}
-//				fTreeViewer.setSelection(new StructuredSelection(csObject), true);
+				handleTaskObjectRemove(object);
+				// Unregister the group from validation
+				fGroupValidator.removeGroup((ICompCSTaskGroup)object);
 			}
 		}		
+	}
+
+	/**
+	 * @param object
+	 */
+	private void handleTaskObjectRemove(ICompCSObject object) {
+		// Remove the item
+		fTreeViewer.remove(object);
+		// Select the appropriate object
+		ICompCSObject csObject = fRemoveTaskObjectAction.getObjectToSelect();
+		if (csObject == null) {
+			csObject = object.getParent();
+		}
+		fTreeViewer.setSelection(new StructuredSelection(csObject), true);
 	}	
 
 	/**
@@ -508,9 +508,13 @@ public class CompCSMasterTreeSection extends TreeSection implements
 			ICompCSObject object = (ICompCSObject)objects[i];		
 			if (object == null) {
 				// Ignore
-			} else if ((object.getType() == ICompCSConstants.TYPE_TASK) ||
-						(object.getType() == ICompCSConstants.TYPE_TASKGROUP) ||
-						(object.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET)) {
+			} else if (object.getType() == ICompCSConstants.TYPE_TASK) {
+				// Refresh the element in the tree viewer
+				fTreeViewer.refresh(object);
+			} else if (object.getType() == ICompCSConstants.TYPE_TASKGROUP) {
+				// Refresh the element in the tree viewer
+				fTreeViewer.refresh(object);
+			} else if (object.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET) {
 				// Refresh the element in the tree viewer
 				fTreeViewer.refresh(object);
 			}
@@ -528,78 +532,61 @@ public class CompCSMasterTreeSection extends TreeSection implements
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	protected void fillContextMenu(IMenuManager manager) {
-		// TODO: MP: HIGH: CompCS: Implement
 		// Get the current selection
-//		ISelection selection = fTreeViewer.getSelection();
-//		Object object = ((IStructuredSelection) selection).getFirstElement();
-//		// Do blind cast - has to be a simple CS object
-//		// Could be null
-//		ISimpleCSObject csObject = (ISimpleCSObject)object;
-//		// Create the "New" submenu
-//		MenuManager submenu = new MenuManager(PDEUIMessages.Menus_new_label);
-//		// Add the "New" submenu to the main context menu
-//		manager.add(submenu);
-//		if ((csObject == null) ||
-//				(csObject.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET)) {
-//			// Add to the "New" submenu
-//			// Add step action
-//			fAddStepAction.setSimpleCS(fModel.getSimpleCS());
-//			fAddStepAction.setEnabled(fModel.isEditable());
-//			submenu.add(fAddStepAction);
-//		} else if (csObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
-//			ISimpleCSItem item = (ISimpleCSItem)csObject;
-//			// Add to the "New" submenu
-//			// Add sub-step action
-//			fAddSubStepAction.setParentObject(csObject);
-//			// Preserve cheat sheet validity
-//			// Semantic Rule:  Cannot have a subitem and any of the following
-//			// together:  perform-when, command, action			
-//			if (item.getExecutable() == null) {
-//				fAddSubStepAction.setEnabled(fModel.isEditable());
-//			} else {
-//				fAddSubStepAction.setEnabled(false);
-//			}
-//			submenu.add(fAddSubStepAction);
-//			// Add to the main context menu
-//			// Add a separator to the main context menu
-//			manager.add(new Separator());
-//			// Delete step action
-//			fRemoveStepAction.setItem((ISimpleCSItem)csObject);
-//			// Preserve cheat sheet validity
-//			// Semantic Rule:  Cannot have a cheat sheet with no items
-//			if (item.getSimpleCS().getItemCount() > 1) {
-//				fRemoveStepAction.setEnabled(fModel.isEditable());
-//			} else {
-//				fRemoveStepAction.setEnabled(false);
-//			}
-//			manager.add(fRemoveStepAction);
-//		} else if ((csObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) ||
-//					(csObject.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) ||
-//					(csObject.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM)) {
-//			// Add to the main context menu
-//			// Add a separator to the main context menu
-//			manager.add(new Separator());
-//			// Delete sub-step action
-//			fRemoveSubStepAction.setSubItem((ISimpleCSSubItemObject)csObject);
-//			fRemoveSubStepAction.setEnabled(fModel.isEditable());
-//			manager.add(fRemoveSubStepAction);			
-//		} else if ((csObject.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN) ||
-//					(csObject.getType() == ISimpleCSConstants.TYPE_ACTION) ||
-//					(csObject.getType() == ISimpleCSConstants.TYPE_COMMAND)) {
-//			// Specifically for perform-when edge case
-//			// Action and command supported; but, will never be applicable
-//			// Add to the main context menu
-//			// Add a separator to the main context menu
-//			manager.add(new Separator());
-//			// Delete run object action
-//			fRemoveRunObjectAction.setRunObject((ISimpleCSRunContainerObject)csObject);
-//			fRemoveRunObjectAction.setEnabled(fModel.isEditable());
-//			manager.add(fRemoveRunObjectAction);				
-//		}
+		ISelection selection = fTreeViewer.getSelection();
+		Object object = ((IStructuredSelection) selection).getFirstElement();
+		// Do blind cast - has to be a composite CS object
+		// Could be null
+		ICompCSObject csObject = (ICompCSObject)object;
+		// Create the "New" sub-menu
+		MenuManager submenu = new MenuManager(PDEUIMessages.Menus_new_label);
+		// Add the "New" sub-menu to the main context menu
+		manager.add(submenu);
+		if ((csObject == null) ||
+				(csObject.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET)) {
+			// NO-OP
+		} else if (csObject.getType() == ICompCSConstants.TYPE_TASK) {
+			// Remove task action
+			fillContextMenuRemoveAction(manager, (ICompCSTaskObject)csObject);
+		} else if (csObject.getType() == ICompCSConstants.TYPE_TASKGROUP) {
+			ICompCSTaskGroup group = (ICompCSTaskGroup)csObject;
+			// Add to the "New" sub-menu
+			// Add task action
+			fAddTaskAction.setParentObject(group);
+			fAddTaskAction.setEnabled(fModel.isEditable());
+			submenu.add(fAddTaskAction);
+			// Add to the "New" sub-menu
+			// Add group action
+			fAddGroupAction.setParentObject(group);
+			fAddGroupAction.setEnabled(fModel.isEditable());
+			submenu.add(fAddGroupAction);
+			// Remove task group action
+			fillContextMenuRemoveAction(manager, (ICompCSTaskObject)csObject);
+		}
 		// Add normal edit operations
 		// TODO: MP: LOW: SimpleCS:  Enable context menu edit operations
 		//getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 		//manager.add(new Separator());
+	}
+
+	/**
+	 * @param manager
+	 * @param csObject
+	 */
+	private void fillContextMenuRemoveAction(IMenuManager manager,
+			ICompCSTaskObject taskObject) {
+		// Add to the main context menu
+		// Add a separator to the main context menu
+		manager.add(new Separator());
+		// Delete task object action
+		fRemoveTaskObjectAction.setTaskObject(taskObject);
+		manager.add(fRemoveTaskObjectAction);
+		ICompCSObject parent = taskObject.getParent();
+		if (canRemoveTaskObject(parent) == false) {
+			fRemoveTaskObjectAction.setEnabled(false);
+		} else {
+			fRemoveTaskObjectAction.setEnabled(fModel.isEditable());
+		}
 	}	
 
 	/* (non-Javadoc)
@@ -617,45 +604,49 @@ public class CompCSMasterTreeSection extends TreeSection implements
 	 * @param object
 	 */
 	private void handleDeleteAction() {
-		// TODO: MP: HIGH: CompCS: Implement delete action
-//		ISelection sel = fTreeViewer.getSelection();
-//		Object object = ((IStructuredSelection) sel).getFirstElement();
-//		if (object != null) {
-//			if (object instanceof ISimpleCSItem) {
-//				ISimpleCSItem item = (ISimpleCSItem)object;
-//				// Preserve cheat sheet validity
-//				// Semantic Rule:  Cannot have a cheat sheet with no items
-//				if (item.getSimpleCS().getItemCount() > 1) {
-//					fRemoveStepAction.setItem(item);
-//					fRemoveStepAction.run();
-//				} else {
-//					// Produce audible beep
-//					Display.getCurrent().beep();
-//				}
-//			} else if (object instanceof ISimpleCSSubItemObject) {
-//				fRemoveSubStepAction.setSubItem((ISimpleCSSubItemObject)object);
-//				fRemoveSubStepAction.run();
-//			} else if (object instanceof ISimpleCSRunContainerObject) {
-//				// Specifically for perform-when edge case
-//				// Action and command supported; but, will never be applicable
-//				fRemoveRunObjectAction.setRunObject((ISimpleCSRunContainerObject)object);
-//				fRemoveRunObjectAction.run();
-//			} else if (object instanceof ISimpleCS) {
-//				// Preserve cheat sheet validity
-//				// Semantic Rule:  Cannot have a cheat sheet with no root
-//				// cheatsheet node
-//				// Produce audible beep
-//				Display.getCurrent().beep();				
-//			} else if (object instanceof ISimpleCSIntro) {
-//				// Preserve cheat sheet validity
-//				// Semantic Rule:  Cannot have a cheat sheet with no 
-//				// introduction
-//				// Produce audible beep
-//				Display.getCurrent().beep();				
-//			}
-//		}		
+
+		ISelection sel = fTreeViewer.getSelection();
+		Object object = ((IStructuredSelection) sel).getFirstElement();
+		if (object != null) {
+			if (object instanceof ICompCSTaskObject) {
+				ICompCSTaskObject taskObject = (ICompCSTaskObject)object;
+				ICompCSObject parent = taskObject.getParent();
+				if (canRemoveTaskObject(parent) == false) {
+					// Preserve cheat sheet validity
+					// Semantic Rule:  Cannot have a task group with no tasks					
+					Display.getCurrent().beep();
+				} else {
+					fRemoveTaskObjectAction.setTaskObject(taskObject);
+					fRemoveTaskObjectAction.run();
+				}
+			} else if (object instanceof ICompCS) {
+				// Preserve cheat sheet validity
+				// Semantic Rule:  Cannot have a cheat sheet with no root
+				// cheatsheet node
+				// Produce audible beep
+				Display.getCurrent().beep();				
+			}
+		}		
 	}	
 
+	/**
+	 * @param parent
+	 * @return
+	 */
+	private boolean canRemoveTaskObject(ICompCSObject parent) {
+		if (parent.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET) {
+			// Preserve cheat sheet validity
+			// Semantic Rule: Cannot delete the task object directly under
+			// the root cheat sheet node
+			// Wizard by default creates a task group as the only allowed
+			// child of the root cheat sheet node. No good reason to
+			// substitute with a task instead. Specification supports its,
+			// but cheat sheet editor will not support it
+			return false;
+		}
+		return true;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#setFormInput(java.lang.Object)
 	 */

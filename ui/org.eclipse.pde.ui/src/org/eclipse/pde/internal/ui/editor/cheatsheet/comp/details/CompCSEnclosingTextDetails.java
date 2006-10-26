@@ -13,7 +13,10 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.comp.details;
 
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
+import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSIntro;
+import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSOnCompletion;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskObject;
+import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -41,8 +44,6 @@ import org.eclipse.ui.forms.widgets.Section;
  *
  */
 public class CompCSEnclosingTextDetails implements ICSDetails {
-
-	// TODO: MP: HIGH: Review Enclosing Text Class and Code Clean-up
 
 	private ICompCSTaskObject fDataTaskObject;
 	
@@ -95,7 +96,6 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 	 * 
 	 */
 	private void defineTaskObjectLabelName() {
-		// TODO: MP: LOW: CompCS: Refactor into shared method
 		if (fDataTaskObject.getType() == ICompCSConstants.TYPE_TASK) {
 			fTaskObjectLabelName = PDEUIMessages.CompCSDependenciesDetails_task;
 		} else {
@@ -117,7 +117,8 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 				PDEUIMessages.CompCSEnclosingTextDetails_EnclosingText,
 				description, style);
 		// Create the container for the main section
-		Composite sectionClient = fDetails.createUISectionContainer(fEnclosingTextSection, 1);		
+		Composite sectionClient = fDetails.createUISectionContainer(
+				fEnclosingTextSection, 1);		
 		// Create the tab folder
 		createUITabFolder(sectionClient);
 		// Create the introduction folder tab
@@ -143,7 +144,6 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 		fTabFolder = new CTabFolder(parent, SWT.FLAT | SWT.TOP);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.heightHint = 2;
-		//data.horizontalSpan = 2;
 		fTabFolder.setLayoutData(data);
 		
 		fDetails.getToolkit().adapt(fTabFolder, true, true);
@@ -163,7 +163,6 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 	private void createUIIntroductionTab() {
 		CTabItem item = new CTabItem(fTabFolder, SWT.NULL);
 		item.setText(PDEUIMessages.CompCSEnclosingTextDetails_Introduction);
-		// TODO: MP: LOW: CompCS:  Update image
 		item.setImage(PDEPlugin.getDefault().getLabelProvider().get(
 				PDEPluginImages.DESC_CSINTRO_OBJ));	
 	}
@@ -185,7 +184,6 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 	private void createUINotebookComposite(Composite parent) {
 		fNotebookComposite = fDetails.getToolkit().createComposite(parent);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		//data.horizontalSpan = 2;
 		fNotebookComposite.setLayoutData(data);
 		fNotebookLayout = new StackLayout();
 		fNotebookComposite.setLayout(fNotebookLayout);		
@@ -210,7 +208,8 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 		label.setLayoutData(data);		
 		// Create text
 		int style = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL;
-		fIntroductionText = fDetails.getToolkit().createText(fIntroductionComposite, "", style);  //$NON-NLS-1$
+		fIntroductionText = fDetails.getToolkit().createText(
+				fIntroductionComposite, "", style); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = 60;
 		fIntroductionText.setLayoutData(data);
@@ -236,7 +235,8 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 		label.setLayoutData(data);		
 		// Create text
 		int style = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL;		
-		fConclusionText = fDetails.getToolkit().createText(fCompositeConclusion, "", style);  //$NON-NLS-1$
+		fConclusionText = fDetails.getToolkit().createText(
+				fCompositeConclusion, "", style); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = 60;
 		fConclusionText.setLayoutData(data);
@@ -261,18 +261,37 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails#hookListeners()
 	 */
 	public void hookListeners() {
-		// TODO: MP: MED: Current: Auto-generated method stub
-
-		createUITabFolderListener();
+		// Create the listeners for the introduction text
+		createListenersIntroductionText();
+		// Create the listeners for the conclusion text
+		createListenersConclusionText();
+		// Create the listeners for the tab folder
+		createListenersTabFolder();
 	}
 
 	/**
 	 * 
 	 */
-	private void createUITabFolderListener() {
+	private void createListenersIntroductionText() {
+		fIntroductionText.addModifyListener(
+				new CompCSIntroductionTextListener(fDataTaskObject));
+	}
+
+	/**
+	 * 
+	 */
+	private void createListenersConclusionText() {
+		fConclusionText.addModifyListener(
+				new CompCSConclusionTextListener(fDataTaskObject));
+	}
+
+	/**
+	 * 
+	 */
+	private void createListenersTabFolder() {
 		fTabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				updateUITabFolderSelection();
+				updateTabFolder();
 			}
 		});
 	}	
@@ -280,7 +299,7 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 	/**
 	 * 
 	 */
-	private void updateUITabFolderSelection() {
+	private void updateTabFolder() {
 
 		int index = fTabFolder.getSelectionIndex();
 		Control oldControl = fNotebookLayout.topControl;
@@ -301,13 +320,43 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails#updateFields()
 	 */
 	public void updateFields() {
-		// TODO: MP: MED: Current: Auto-generated method stub
-		// TODO: MP: MED: CompCS:  Determine which tab to show
-		
+
+		boolean editable = fDetails.isEditableElement();
+		// Select the introduction tab
 		fTabFolder.setSelection(F_INTRODUCTION_TAB);
-		updateUITabFolderSelection();		
+		// Update tab folder
+		updateTabFolder();
+		// Update introduction text
+		updateIntroductionText(editable);
+		// Update conclusion text
+		updateConclusionText(editable);
 		
-		if (fDataTaskObject == null) {}
+		// TODO: MP: LOW: CompCS: Visually indicate which tab has contents
+		// specified (perhaps using different image?
+	}
+
+	/**
+	 * @param editable
+	 */
+	private void updateIntroductionText(boolean editable) {
+		ICompCSIntro intro = fDataTaskObject.getFieldIntro();
+		if ((intro != null) &&
+				PDETextHelper.isDefined(intro.getFieldContent())) {
+			fIntroductionText.setText(intro.getFieldContent());
+		}
+		fIntroductionText.setEditable(editable);
+	}
+
+	/**
+	 * @param editable
+	 */
+	private void updateConclusionText(boolean editable) {
+		ICompCSOnCompletion conclusion = fDataTaskObject.getFieldOnCompletion();
+		if ((conclusion != null) &&
+				PDETextHelper.isDefined(conclusion.getFieldContent())) {
+			fConclusionText.setText(conclusion.getFieldContent());
+		}
+		fConclusionText.setEditable(editable);		
 	}
 
 }

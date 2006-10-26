@@ -144,7 +144,6 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 	public void hookListeners() {
 
 		// description: Content (Element)
-		// TODO: MP: HIGH:  Figure out why form entry is marking things dirty on lost focus
 		fContent.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				if (fItem.getDescription() != null) {

@@ -18,12 +18,13 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSDescription;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModelFactory;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractAddAction;
 
 /**
  * SimpleCSAddStepAction
  *
  */
-public class SimpleCSAddStepAction extends SimpleCSAbstractAdd {
+public class SimpleCSAddStepAction extends CSAbstractAddAction {
 
 	private ISimpleCS fCheatsheet;
 	

@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCS;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSIntro;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModelFactory;
+import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSOnCompletion;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTask;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup;
@@ -28,7 +29,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
  * CompCSCreationOperation
  *
  */
-public class CompCSCreationOperation extends BaseCheatSheetCreationOperation
+public class CompCSCreationOperation extends BaseCSCreationOperation
 		implements IRunnableWithProgress {
 
 	/**
@@ -59,17 +60,29 @@ public class CompCSCreationOperation extends BaseCheatSheetCreationOperation
 	 * @param compCS
 	 */
 	private void initializeCS(ICompCS compCS) {
-		
-		ICompCSModelFactory factory = compCS.getModel().getFactory();
-		
 		// Create Task Group
 		// Element: taskGroup
-		ICompCSTaskGroup taskGroup = factory.createCompCSTaskGroup(compCS);
-
+		ICompCSTaskGroup taskGroup = createBasicGroup(compCS);
 		// Create Task
 		// Element: task
-		ICompCSTask task = factory.createCompCSTask(taskGroup);
+		ICompCSTask task = createBasicTask(taskGroup);
+		// Configure Group
+		taskGroup.addFieldTaskObject(task);
+		// Configure Cheat Sheet
+		// Attribute: name
+		compCS.setFieldName(PDEUIMessages.CompCSCreationOperation_title);
+		compCS.setFieldTaskObject(taskGroup);
+	}
 
+	/**
+	 * @param parent
+	 * @return
+	 */
+	public static ICompCSTask createBasicTask(ICompCSObject parent) {
+		ICompCSModelFactory factory = parent.getModel().getFactory();
+		// Create Task
+		// Element: task
+		ICompCSTask task = factory.createCompCSTask(parent);
 		// Configure Task
 		// Element: intro
 		ICompCSIntro taskIntro = factory.createCompCSIntro(task);
@@ -83,8 +96,20 @@ public class CompCSCreationOperation extends BaseCheatSheetCreationOperation
 		// Attribute: kind
 		task.setFieldKind(ICompCSConstants.ATTRIBUTE_VALUE_CHEATSHEET);
 		task.setFieldIntro(taskIntro);
-		task.setFieldOnCompletion(taskConclusion);
+		task.setFieldOnCompletion(taskConclusion);		
 		
+		return task;
+	}
+	
+	/**
+	 * @param parent
+	 * @return
+	 */
+	public static ICompCSTaskGroup createBasicGroup(ICompCSObject parent) {
+		ICompCSModelFactory factory = parent.getModel().getFactory();
+		// Create Task Group
+		// Element: taskGroup
+		ICompCSTaskGroup taskGroup = factory.createCompCSTaskGroup(parent);
 		// Configure Task Group
 		// Element: intro
 		ICompCSIntro taskGroupIntro = factory.createCompCSIntro(taskGroup);
@@ -98,14 +123,8 @@ public class CompCSCreationOperation extends BaseCheatSheetCreationOperation
 		// Attribute: kind
 		taskGroup.setFieldKind(ICompCSConstants.ATTRIBUTE_VALUE_SET);
 		taskGroup.setFieldIntro(taskGroupIntro);
-		taskGroup.setFieldOnCompletion(taskGroupConclusion);
-		taskGroup.addFieldTaskObject(task);
-
-		// Configure Cheat Sheet
-		// Attribute: name
-		compCS.setFieldName(PDEUIMessages.CompCSCreationOperation_title);
-		compCS.setFieldTaskObject(taskGroup);
+		taskGroup.setFieldOnCompletion(taskGroupConclusion);	
 		
+		return taskGroup;
 	}
-
 }

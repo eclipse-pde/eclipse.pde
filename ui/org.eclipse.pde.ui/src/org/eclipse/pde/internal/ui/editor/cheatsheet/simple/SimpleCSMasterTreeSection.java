@@ -351,9 +351,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	private void handleMoveStepAction(int index) {
 		ISelection sel = fTreeViewer.getSelection();
 		Object object = ((IStructuredSelection) sel).getFirstElement();
-		// TODO: MP: Refactor candidate
-		// i.e. calculating the index for up and down or separate method
-		// TODO: MP: There is a flicker when adding and removing items / subitems
+		// TODO: MP: LOW: SimpleCS:  There is a flicker when adding and removing items / subitems
 		// probably do to focus going to the parent
 		if (object != null) {
 			if (object instanceof ISimpleCSItem) {
@@ -376,9 +374,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 				ISimpleCSSubItem subitem = (ISimpleCSSubItem)object;
 				// Get the current index of the subitem
 				ISimpleCSObject parent = subitem.getParent();
-				// TODO: MP: Handle for conditional-subitems later
-				// Actually probably beter to use some interface method if 
-				// possible
 				if (parent.getType() == ISimpleCSConstants.TYPE_ITEM) {
 					ISimpleCSItem item = (ISimpleCSItem)parent;				
 					int currentIndex = item.indexOfSubItem(subitem);

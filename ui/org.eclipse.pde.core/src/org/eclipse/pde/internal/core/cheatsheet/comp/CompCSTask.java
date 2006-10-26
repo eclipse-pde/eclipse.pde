@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
@@ -140,5 +141,32 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 			ICompCSParam param = (ICompCSParam)iterator.next();
 			param.write(newIndent, writer);
 		}		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTask#hasFieldParams()
+	 */
+	public boolean hasFieldParams() {
+		if (fFieldParams.isEmpty()) {
+			return false;
+		}
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTask#getFieldParam(java.lang.String)
+	 */
+	public ICompCSParam getFieldParam(String name) {
+		if (fFieldParams.isEmpty()) {
+			return null;
+		}
+		ListIterator iterator = fFieldParams.listIterator();
+		while (iterator.hasNext()) {
+			ICompCSParam parameter = (ICompCSParam)iterator.next();
+			if (parameter.getFieldName().equals(name)) {
+				return parameter;
+			}
+		}
+		return null;
 	}	
 }

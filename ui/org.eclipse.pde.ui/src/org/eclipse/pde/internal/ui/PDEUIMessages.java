@@ -131,6 +131,12 @@ public class PDEUIMessages extends NLS {
 
 	public static String CompCSEnclosingTextDetails_SkipIntroLabel;
 
+	public static String CompCSFileValidator_abortParseExceptionMessage;
+
+	public static String CompCSFileValidator_errorInvalidSimpleCS;
+
+	public static String CompCSGroupValidator_errorChildlessGroup;
+
 	public static String CompCSMasterTreeSection_addGroup;
 
 	public static String CompCSMasterTreeSection_addTask;
@@ -140,6 +146,10 @@ public class PDEUIMessages extends NLS {
 	public static String CompCSTaskDetails_Path;
 
 	public static String CompCSTaskDetails_SectionDescription;
+
+	public static String CompCSTaskDetails_simpleCSWizardDescription;
+
+	public static String CompCSTaskDetails_simpleCSWizardTitle;
 
 	public static String CompCSTaskDetails_SkipLabel;
 
@@ -328,6 +338,10 @@ public class PDEUIMessages extends NLS {
 	public static String SimpleCSElementSection_6;
 
 	public static String SimpleCSElementSection_7;
+
+	public static String SimpleCSFileWizardPage_errorInvalidProjectSelected;
+
+	public static String SimpleCSFileWizardPage_simpleCSWizardDescription;
 
 	public static String SimpleCSHelpDetails_HelpContextID;
 

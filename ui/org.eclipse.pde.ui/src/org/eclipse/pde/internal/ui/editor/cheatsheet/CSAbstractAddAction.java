@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.actions;
+package org.eclipse.pde.internal.ui.editor.cheatsheet;
 
 import java.util.HashSet;
 
@@ -19,12 +19,12 @@ import org.eclipse.jface.action.Action;
  * SimpleCSAbstractAdd
  *
  */
-public abstract class SimpleCSAbstractAdd extends Action {
+public abstract class CSAbstractAddAction extends Action {
 
 	/**
 	 * 
 	 */
-	public SimpleCSAbstractAdd() {
+	public CSAbstractAddAction() {
 	}
 
 	/**

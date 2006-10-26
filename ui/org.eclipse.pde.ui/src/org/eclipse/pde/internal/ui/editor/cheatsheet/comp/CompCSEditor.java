@@ -43,7 +43,6 @@ public class CompCSEditor extends PDEFormEditor {
 	 */
 	protected void addEditorPages() {
 		try {
-			// TODO: MP: HIGH: Create page
 			addPage(new CompCSPage(this));
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);

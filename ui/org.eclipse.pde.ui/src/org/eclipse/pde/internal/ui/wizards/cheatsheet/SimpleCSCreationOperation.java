@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
  *
  */
 public class SimpleCSCreationOperation extends
-		BaseCheatSheetCreationOperation {
+		BaseCSCreationOperation {
 
 	/**
 	 * @param file

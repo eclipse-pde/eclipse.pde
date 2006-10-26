@@ -35,4 +35,17 @@ public interface ICompCSTask extends ICompCSTaskObject {
 	 */
 	public ICompCSParam[] getFieldParams();
 	
+	/**
+	 * Element: param
+	 * @return
+	 */
+	public boolean hasFieldParams();
+	
+	/**
+	 * Element: param
+	 * @param name
+	 * @return
+	 */
+	public ICompCSParam getFieldParam(String name);
+	
 }

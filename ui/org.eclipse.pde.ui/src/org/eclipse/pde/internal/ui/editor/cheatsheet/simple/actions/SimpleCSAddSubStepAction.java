@@ -20,12 +20,13 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractAddAction;
 
 /**
  * SimpleCSAddStepAction
  *
  */
-public class SimpleCSAddSubStepAction extends SimpleCSAbstractAdd {
+public class SimpleCSAddSubStepAction extends CSAbstractAddAction {
 
 	private ISimpleCSObject fParentObject;
 	
@@ -33,10 +34,7 @@ public class SimpleCSAddSubStepAction extends SimpleCSAbstractAdd {
 	 * 
 	 */
 	public SimpleCSAddSubStepAction() {
-		// TODO: MP: LOW: SimpleCS: Add tooltip / image ?
 		setText(PDEUIMessages.SimpleCSAddSubStepAction_0);
-//		setImageDescriptor(PDEPluginImages.DESC_GEL_SC_OBJ);
-//		setToolTipText(PDEUIMessages.SchemaEditor_NewElement_tooltip);
 	}
 
 	/**

@@ -32,7 +32,7 @@ import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
  * CheatSheetFileWizardPage
  *
  */
-public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
+public class CSFileWizardPage extends WizardNewFileCreationPage {
 
 	private Button fSimpleCheatSheetButton;
 	
@@ -40,7 +40,7 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 	
 	private Group fGroup;
 	
-	private static final String F_FILE_EXTENSION = ".xml"; //$NON-NLS-1$
+	protected static final String F_FILE_EXTENSION = ".xml"; //$NON-NLS-1$
 	
 	public static final int F_SIMPLE_CHEAT_SHEET = 0;
 	
@@ -50,13 +50,23 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 	 * @param pageName
 	 * @param selection
 	 */
-	public CheatSheetFileWizardPage(String pageName,
+	public CSFileWizardPage(String pageName,
 			IStructuredSelection selection) {
 		super(pageName, selection);
-		setTitle(PDEUIMessages.CheatSheetFileWizardPage_1);
-		setDescription(PDEUIMessages.CheatSheetFileWizardPage_2);
+		
+		initialize();
 	}
 
+	/**
+	 * 
+	 */
+	protected void initialize() {
+		setTitle(PDEUIMessages.CheatSheetFileWizardPage_1);
+		setDescription(PDEUIMessages.CheatSheetFileWizardPage_2);
+		// Initialize the filename to contain an '.xml' extension
+		setFileName(F_FILE_EXTENSION);		
+	}
+	
 	/**
 	 * @return
 	 */
@@ -123,8 +133,6 @@ public class CheatSheetFileWizardPage extends WizardNewFileCreationPage {
 		data.horizontalIndent = 20;
 		compositeCSLabel.setLayoutData(data);
 		
-		// Initialize the filename to contain an '.xml' extension
-		setFileName(F_FILE_EXTENSION);
 	}
 	
 	/* (non-Javadoc)

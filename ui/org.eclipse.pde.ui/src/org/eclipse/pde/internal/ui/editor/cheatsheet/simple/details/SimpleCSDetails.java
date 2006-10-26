@@ -95,7 +95,6 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		// Attribute: title
 		fTitle.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
-				// TODO: MP: Can cheat sheet ever be null?
 				fCheatSheet.setTitle(fTitle.getValue());
 			}
 		});		
@@ -108,16 +107,9 @@ public class SimpleCSDetails extends CSAbstractDetails {
 	public void updateFields() {
 
 		boolean editable = isEditableElement();
-		// TODO: MP: Can this ever happen ?
-		if (fCheatSheet == null) {
-			return;
-		}
-
 		// Attribute: title
 		fTitle.setValue(fCheatSheet.getTitle(), true);
 		fTitle.setEditable(editable);
-		
-
 	}
 
 }

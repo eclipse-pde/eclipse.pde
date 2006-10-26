@@ -34,7 +34,7 @@ import org.eclipse.ui.part.ISetSelectionTarget;
  * BaseCheatSheetCreationOperation
  *
  */
-public abstract class BaseCheatSheetCreationOperation extends
+public abstract class BaseCSCreationOperation extends
 		WorkspaceModifyOperation {
 
 	protected IFile fFile;
@@ -42,14 +42,14 @@ public abstract class BaseCheatSheetCreationOperation extends
 	/**
 	 * 
 	 */
-	public BaseCheatSheetCreationOperation(IFile file) {
+	public BaseCSCreationOperation(IFile file) {
 		fFile = file;
 	}
 
 	/**
 	 * @param rule
 	 */
-	public BaseCheatSheetCreationOperation(ISchedulingRule rule) {
+	public BaseCSCreationOperation(ISchedulingRule rule) {
 		super(rule);
 	}
 

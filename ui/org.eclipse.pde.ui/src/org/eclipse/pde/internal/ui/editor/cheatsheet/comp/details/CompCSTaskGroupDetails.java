@@ -11,8 +11,10 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp.details;
 
+import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
@@ -20,6 +22,8 @@ import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -150,21 +154,108 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#hookListeners()
 	 */
 	public void hookListeners() {
-		// TODO: MP: MED: Current: Auto-generated method stub
-
+		// Create listeners for the name entry
+		createListenersNameEntry();
+		// Create listeners for the kind combo
+		createListenersKindCombo();
+		// Create listeners for the skip button
+		createListenersSkipButton();
+		// Create listeners within the enclosing text section
 		fEnclosingTextSection.hookListeners();
-		
 	}
 
+	/**
+	 * 
+	 */
+	private void createListenersNameEntry() {
+		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry entry) {
+				fDataTaskGroup.setFieldName(fNameEntry.getValue());
+			}
+		});			
+	}	
+
+	/**
+	 * 
+	 */
+	private void createListenersKindCombo() {
+		fKindCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				String selection = fKindCombo.getSelection();
+				if (selection.equals(F_KIND_VALUE_CHOICE)) {
+					fDataTaskGroup.setFieldKind(
+							ICompCSConstants.ATTRIBUTE_VALUE_CHOICE);
+				} else if (selection.equals(F_KIND_VALUE_SEQUENCE)) {
+					fDataTaskGroup.setFieldKind(
+							ICompCSConstants.ATTRIBUTE_VALUE_SEQUENCE);
+				} else if (selection.equals(F_KIND_VALUE_SET)) {
+					fDataTaskGroup.setFieldKind(
+							ICompCSConstants.ATTRIBUTE_VALUE_SET);
+				}
+			}
+		});
+	}	
+
+	/**
+	 * 
+	 */
+	private void createListenersSkipButton() {
+		fSkip.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fDataTaskGroup.setFieldSkip(fSkip.getSelection());
+			}
+		});		
+	}	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#updateFields()
 	 */
 	public void updateFields() {
-		// TODO: MP: MED: Current: Auto-generated method stub
-		if (fNameEntry == null) {}
 
+		boolean editable = isEditableElement();
+		// Update name entry
+		updateNameEntry(editable);
+		// Update kind combo
+		updateKindCombo(editable);
+		// Update skip button
+		updateSkipButton(editable);
+		// Update fields within enclosing text section
 		fEnclosingTextSection.updateFields();
-		
 	}
 
+	/**
+	 * @param editable
+	 */
+	private void updateNameEntry(boolean editable) {
+		fNameEntry.setValue(fDataTaskGroup.getFieldName(), true);
+		fNameEntry.setEditable(editable);			
+	}	
+
+	/**
+	 * @param editable
+	 */
+	private void updateKindCombo(boolean editable) {
+		String kind = fDataTaskGroup.getFieldKind();
+		
+		if (kind == null) {
+			// NO-OP
+		} else if (kind.compareTo(ICompCSConstants.ATTRIBUTE_VALUE_SEQUENCE) == 0) {
+			fKindCombo.setText(F_KIND_VALUE_SEQUENCE);
+		} else if (kind.compareTo(ICompCSConstants.ATTRIBUTE_VALUE_CHOICE) == 0) {
+			fKindCombo.setText(F_KIND_VALUE_CHOICE);
+		} else {
+			fKindCombo.setText(F_KIND_VALUE_SET);
+		}
+		
+		fKindCombo.setEnabled(editable);
+	}	
+
+	/**
+	 * @param editable
+	 */
+	private void updateSkipButton(boolean editable) {
+		fSkip.setSelection(fDataTaskGroup.getFieldSkip());
+		fSkip.setEnabled(editable);	
+	}	
+	
 }

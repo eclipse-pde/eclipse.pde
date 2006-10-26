@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.comp.details;
 
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCS;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.CompCSInputContext;
@@ -73,23 +74,40 @@ public class CompCSDetails extends CSAbstractDetails {
 		fNameEntry = new FormEntry(parent, getManagedForm().getToolkit(), 
 				PDEUIMessages.CompCSDetails_Name, SWT.NONE);
 	}
-	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#hookListeners()
 	 */
 	public void hookListeners() {
-		// TODO: MP: MED: Current: Auto-generated method stub
+		// Create the listeners for the name entry
+		createListenersNameEntry();
+	}
 
+	/**
+	 * 
+	 */
+	private void createListenersNameEntry() {
+		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry entry) {
+				fDataCheatSheet.setFieldName(fNameEntry.getValue());
+			}
+		});			
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#updateFields()
 	 */
 	public void updateFields() {
-		// TODO: MP: MED: Current: Auto-generated method stub
-		if (fNameEntry == null) {}
-		if (fDataCheatSheet == null) {}
+		// Update name entry
+		updateNameEntry(isEditableElement());
+	}
+
+	/**
+	 * @param editable
+	 */
+	private void updateNameEntry(boolean editable) {
+		fNameEntry.setValue(fDataCheatSheet.getFieldName(), true);
+		fNameEntry.setEditable(editable);			
 	}
 
 }

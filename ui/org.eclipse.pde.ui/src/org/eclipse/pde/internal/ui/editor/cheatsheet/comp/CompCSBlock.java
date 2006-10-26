@@ -72,7 +72,6 @@ public class CompCSBlock extends PDEMasterDetailsBlock implements
 		if (fMasterSection != null) {
 			fMasterSection.modelChanged(event);
 		}
-		// TODO: MP: HIGH: CompCS:  Inform the slave section
 		// Inform the details section
 		// Unnecessary
 		//if (fCurrentDetailsSection != null) {

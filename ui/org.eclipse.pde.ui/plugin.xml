@@ -192,7 +192,7 @@
       </wizard>
       <wizard
             category="org.eclipse.pde.userAssistance"
-            class="org.eclipse.pde.internal.ui.wizards.cheatsheet.NewCheatSheetFileWizard"
+            class="org.eclipse.pde.internal.ui.wizards.cheatsheet.NewCSFileWizard"
             icon="$nl$/icons/etool16/new_cheatsheet_wiz.gif"
             id="org.eclipse.pde.ui.NewCheatSheetWizard"
             name="%new.cheat.sheet">

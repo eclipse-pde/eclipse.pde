@@ -27,14 +27,14 @@ import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
  * NewCheatSheetWizard
  *
  */
-public class NewCheatSheetFileWizard extends BasicNewFileResourceWizard implements INewWizard {
+public class NewCSFileWizard extends BasicNewFileResourceWizard implements INewWizard {
 
-	private CheatSheetFileWizardPage fMainPage;
+	protected CSFileWizardPage fMainPage;
 	
 	/**
 	 * 
 	 */
-	public NewCheatSheetFileWizard() {
+	public NewCSFileWizard() {
 		super();
 	}
 
@@ -42,7 +42,7 @@ public class NewCheatSheetFileWizard extends BasicNewFileResourceWizard implemen
 	 * @see org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard#addPages()
 	 */
 	public void addPages() {
-		fMainPage = new CheatSheetFileWizardPage("cheatsheet", getSelection()); //$NON-NLS-1$
+		fMainPage = new CSFileWizardPage("cheatsheet", getSelection()); //$NON-NLS-1$
 		addPage(fMainPage);
 	}
 
@@ -84,9 +84,9 @@ public class NewCheatSheetFileWizard extends BasicNewFileResourceWizard implemen
 		
         IFile file = fMainPage.createNewFile();
 		int option = fMainPage.getCheatSheetType();
-		if (option == CheatSheetFileWizardPage.F_SIMPLE_CHEAT_SHEET) {
+		if (option == CSFileWizardPage.F_SIMPLE_CHEAT_SHEET) {
 			return new SimpleCSCreationOperation(file);
-		} else if (option == CheatSheetFileWizardPage.F_COMPOSITE_CHEAT_SHEET) {
+		} else if (option == CSFileWizardPage.F_COMPOSITE_CHEAT_SHEET) {
 			return new CompCSCreationOperation(file);
 		}
 		// This can never happen
