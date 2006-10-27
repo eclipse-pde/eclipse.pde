@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IEditable;
@@ -85,8 +86,8 @@ public class FeatureInputContext extends XMLInputContext {
 			return null;
 		}
 		ExternalFeatureModel model = new ExternalFeatureModel();
-		String path = input.getStorage().getFullPath().removeLastSegments(1).toOSString();
-		model.setInstallLocation(path);
+		IPath path = input.getStorage().getFullPath();
+		model.setInstallLocation(path == null ? "" : path.removeLastSegments(1).toOSString()); //$NON-NLS-1$
 		try {
 			model.load(stream, false);
 		} catch (CoreException e) {
