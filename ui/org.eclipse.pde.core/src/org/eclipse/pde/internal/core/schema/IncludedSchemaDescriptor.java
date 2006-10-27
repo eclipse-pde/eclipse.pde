@@ -35,13 +35,17 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 	}
 	
 	public static URL computeURL(ISchemaDescriptor parentDesc, String schemaLocation) throws MalformedURLException {
+		URL parentURL = parentDesc == null ? null : parentDesc.getSchemaURL();
 		if (schemaLocation.startsWith("schema://")) { //$NON-NLS-1$
 			// extract plug-in ID
 			IPath path = new Path( schemaLocation.substring(9));
-			return getPluginRelativePath(path.segment(0), path.removeFirstSegments(1), parentDesc.getSchemaURL());
+			return getPluginRelativePath(path.segment(0), path.removeFirstSegments(1), parentURL);
 		}
+		
+		if (parentURL == null)
+			return null;
+		
 		// parent-relative location
-		URL parentURL = parentDesc.getSchemaURL();
 		IPath path = new Path(parentURL.getPath());
 		path = path.removeLastSegments(1).append(schemaLocation);
 		return new URL(parentURL.getProtocol(), parentURL.getHost(), path.toString());	
