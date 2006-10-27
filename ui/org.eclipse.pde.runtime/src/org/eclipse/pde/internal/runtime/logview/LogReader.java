@@ -165,7 +165,7 @@ class LogReader {
 			currentSession = session;	
 	}
 	
-	public static void addEntry(LogEntry current, ArrayList entries, IMemento memento, boolean useCurrentSession) {
+	public synchronized static void addEntry(LogEntry current, ArrayList entries, IMemento memento, boolean useCurrentSession) {
 		int severity = current.getSeverity();
 		boolean doAdd = true;
 		switch(severity) {
