@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet;
 
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -52,5 +53,10 @@ public interface ICSDetailsSurrogate {
 	 */
 	public Section createUISection(Composite parent, String text,
 			String description, int style);
+	
+	/**
+	 * @return
+	 */
+	public PDEFormPage getPage();
 	
 }

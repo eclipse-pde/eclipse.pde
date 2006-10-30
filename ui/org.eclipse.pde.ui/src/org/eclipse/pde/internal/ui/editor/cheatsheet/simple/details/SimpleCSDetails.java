@@ -15,8 +15,8 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
@@ -38,6 +38,8 @@ public class SimpleCSDetails extends CSAbstractDetails {
 	private FormEntry fTitle;
 	
 	private Section fMainSection;
+
+	//private ICSDetails fRegisterCSArea;
 	
 	/**
 	 * 
@@ -48,6 +50,7 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		
 		fTitle = null;
 		fMainSection = null;
+		//fRegisterCSArea = new CSRegisterCSDetails(this, fCheatSheet.getModel());
 	}
 
 	/* (non-Javadoc)
@@ -86,6 +89,8 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		fMainSection.setClient(mainSectionClient);
 		markDetailsPart(fMainSection);		
 		
+		// Create the register cheat sheet area
+		//fRegisterCSArea.createDetails(parent);		
 	}
 
 	/* (non-Javadoc)
@@ -98,7 +103,8 @@ public class SimpleCSDetails extends CSAbstractDetails {
 				fCheatSheet.setTitle(fTitle.getValue());
 			}
 		});		
-		
+		// Create the listeners within the register cheat sheet area
+		//fRegisterCSArea.hookListeners();		
 	}
 
 	/* (non-Javadoc)
@@ -110,6 +116,8 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		// Attribute: title
 		fTitle.setValue(fCheatSheet.getTitle(), true);
 		fTitle.setEditable(editable);
+		// Update the fields within the register cheat sheet area
+		//fRegisterCSArea.updateFields();			
 	}
 
 }

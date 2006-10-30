@@ -163,6 +163,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_NEWFRAGPRJ_TOOL = create(PATH_TOOL, "newfragprj_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_WORKBENCH_LAUNCHER_WIZ = create(PATH_TOOL, "eclipse_launcher_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWEXP_WIZ_TOOL = create(PATH_TOOL, "newexp_wiz.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_DEPLOYCS_TOOL = create(PATH_TOOL, "new_cheatsheet_wiz.gif"); //$NON-NLS-1$
 
 
 	/**

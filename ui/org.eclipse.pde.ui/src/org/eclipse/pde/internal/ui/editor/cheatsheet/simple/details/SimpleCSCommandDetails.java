@@ -102,7 +102,6 @@ public class SimpleCSCommandDetails implements ICSDetails {
 		
 		// Create command section
 		commandSection = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
-		//| ExpandableComposite.TWISTIE
 		commandSection.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		commandSection.marginHeight = 5;
 		commandSection.marginWidth = 5;
@@ -113,7 +112,6 @@ public class SimpleCSCommandDetails implements ICSDetails {
 		
 		// Create container for command section		
 		Composite commandSectionClient = toolkit.createComposite(commandSection);	
-		// TODO: MP: Make column magic number constant
 		layout = new GridLayout(columnSpan, false);
 		if (paintedBorder) {
 			layout.verticalSpacing = 7;

@@ -16,9 +16,9 @@ import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
@@ -54,6 +54,8 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 	private ICSDetails fHelpSection;	
 	
 	private ICSDetails fCommandSection;
+
+	//private ICSDetails fRegisterCSArea;
 	
 	/**
 	 * 
@@ -70,6 +72,7 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		
 		fHelpSection = new SimpleCSHelpDetails(fItem, this);
 		fCommandSection = new SimpleCSCommandDetails(fItem, this);
+		//fRegisterCSArea = new CSRegisterCSDetails(this, fItem.getModel());
 	}
 
 	/* (non-Javadoc)
@@ -135,7 +138,8 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		fCommandSection.createDetails(parent);
 		
 		fHelpSection.createDetails(parent);
-		
+		// Create the register cheat sheet area
+		//fRegisterCSArea.createDetails(parent);		
 	}
 	
 	/* (non-Javadoc)
@@ -173,7 +177,8 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		fHelpSection.hookListeners();
 		
 		fCommandSection.hookListeners();
-		
+		// Create the listeners within the register cheat sheet area
+		//fRegisterCSArea.hookListeners();		
 	}
 	
 	/* (non-Javadoc)
@@ -204,7 +209,8 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		fHelpSection.updateFields();
 
 		fCommandSection.updateFields();
-		
+		// Update the fields within the register cheat sheet area
+		//fRegisterCSArea.updateFields();			
 		// TODO: MP: Important: revist all parameters and check we are simply
 		// looking for null - okay for non-String types
 		// TODO: MP: Reevaluate write methods and make sure not writing empty string

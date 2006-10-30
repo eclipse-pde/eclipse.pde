@@ -35,6 +35,8 @@ public class CompCSDetails extends CSAbstractDetails {
 	
 	private FormEntry fNameEntry;
 	
+	//private ICSDetails fRegisterCSArea;
+	
 	/**
 	 * @param masterSection
 	 * @param contextID
@@ -45,6 +47,8 @@ public class CompCSDetails extends CSAbstractDetails {
 		fDataCheatSheet = dataCheatSheet;
 		fNameEntry = null;
 		fMainSection = null;		
+		
+		//fRegisterCSArea = new CSRegisterCSDetails(this, fDataCheatSheet.getModel());
 	}
 
 	/* (non-Javadoc)
@@ -60,7 +64,8 @@ public class CompCSDetails extends CSAbstractDetails {
 		Composite sectionClient = createUISectionContainer(fMainSection, 2);		
 		// Create the name widget
 		createUINameEntry(sectionClient);
-
+		// Create the register cheat sheet area
+		//fRegisterCSArea.createDetails(parent);
 		// Bind widgets
 		getManagedForm().getToolkit().paintBordersFor(sectionClient);
 		fMainSection.setClient(sectionClient);
@@ -81,6 +86,8 @@ public class CompCSDetails extends CSAbstractDetails {
 	public void hookListeners() {
 		// Create the listeners for the name entry
 		createListenersNameEntry();
+		// Create the listeners within the register cheat sheet area
+		//fRegisterCSArea.hookListeners();
 	}
 
 	/**
@@ -100,6 +107,8 @@ public class CompCSDetails extends CSAbstractDetails {
 	public void updateFields() {
 		// Update name entry
 		updateNameEntry(isEditableElement());
+		// Update the fields within the register cheat sheet area
+		//fRegisterCSArea.updateFields();
 	}
 
 	/**

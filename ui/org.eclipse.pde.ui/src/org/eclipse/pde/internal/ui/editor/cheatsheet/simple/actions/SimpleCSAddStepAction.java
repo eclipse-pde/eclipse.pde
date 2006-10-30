@@ -32,10 +32,7 @@ public class SimpleCSAddStepAction extends CSAbstractAddAction {
 	 * 
 	 */
 	public SimpleCSAddStepAction() {
-		// TODO: MP: Update
 		setText(PDEUIMessages.SimpleCSAddStepAction_0);
-//		setImageDescriptor(PDEPluginImages.DESC_GEL_SC_OBJ);
-//		setToolTipText(PDEUIMessages.SchemaEditor_NewElement_tooltip);
 	}
 
 	/**

@@ -50,7 +50,9 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	private ICompCSTaskGroup fDataTaskGroup;
 	
 	private ICSDetails fEnclosingTextSection;
-
+	
+	//private ICSDetails fRegisterCSArea;
+	
 	private static final String F_KIND_VALUE_SET = PDEUIMessages.CompCSTaskGroupDetails_Set;
 	
 	private static final String F_KIND_VALUE_CHOICE = PDEUIMessages.CompCSTaskGroupDetails_Choice;
@@ -72,6 +74,7 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		fDefinitionSection = null;
 		fEnclosingTextSection = new CompCSEnclosingTextDetails(fDataTaskGroup,
 				this);
+		//fRegisterCSArea = new CSRegisterCSDetails(this, fDataTaskGroup.getModel());
 	}
 
 	/* (non-Javadoc)
@@ -95,6 +98,8 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		createUISkipButton(sectionClient);
 		// Create the enclosing text section
 		fEnclosingTextSection.createDetails(parent);
+		// Create the register cheat sheet area
+		//fRegisterCSArea.createDetails(parent);		
 		// Bind widgets
 		getManagedForm().getToolkit().paintBordersFor(sectionClient);
 		fDefinitionSection.setClient(sectionClient);
@@ -122,7 +127,6 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		Label label = getToolkit().createLabel(parent, 
 				PDEUIMessages.CompCSTaskGroupDetails_Type, SWT.WRAP);
 		label.setForeground(foreground);
-		// TODO: MP: MED: CompCS: Update kind tooltip text
 		label.setToolTipText(PDEUIMessages.CompCSTaskGroupDetails_KindToolTip);
 	}
 	
@@ -138,8 +142,8 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		fKindCombo.add(F_KIND_VALUE_SEQUENCE);
 		fKindCombo.add(F_KIND_VALUE_CHOICE);
 		fKindCombo.setText(F_KIND_VALUE_SET);	
-		// TODO: MP: MED: CompCS: Update kind tooltip text
-		fKindCombo.getControl().setToolTipText(PDEUIMessages.CompCSTaskGroupDetails_KindToolTip); 
+		fKindCombo.getControl().setToolTipText(
+				PDEUIMessages.CompCSTaskGroupDetails_KindToolTip); 
 	}
 
 	/**
@@ -162,6 +166,8 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		createListenersSkipButton();
 		// Create listeners within the enclosing text section
 		fEnclosingTextSection.hookListeners();
+		// Create the listeners within the register cheat sheet area
+		//fRegisterCSArea.hookListeners();		
 	}
 
 	/**
@@ -221,6 +227,8 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		updateSkipButton(editable);
 		// Update fields within enclosing text section
 		fEnclosingTextSection.updateFields();
+		// Update the fields within the register cheat sheet area
+		//fRegisterCSArea.updateFields();		
 	}
 
 	/**

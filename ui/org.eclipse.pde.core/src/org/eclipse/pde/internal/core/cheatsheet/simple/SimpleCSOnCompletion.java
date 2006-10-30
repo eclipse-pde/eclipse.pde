@@ -121,7 +121,6 @@ public class SimpleCSOnCompletion extends SimpleCSObject implements
 	 * @see org.eclipse.pde.internal.core.cheatsheet.simple.SimpleCSObject#getName()
 	 */
 	public String getName() {
-		// TODO: MP: Update name
 		return ELEMENT_ONCOMPLETION;
 	}
 

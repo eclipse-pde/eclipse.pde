@@ -175,6 +175,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ContentSection_addDialogButtonLabel;
 
+	public static String CSRegisterCSDetails_linkFormattingTags;
+
 	public static String ExportOptionsTab_antReservedMessage;
 
 	public static String ExtensionsPage_sortAlpha;
@@ -213,6 +215,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String MissingResourcePage_unableToOpenFull;
 
+	public static String NewCategoryNameDialog_instructionLabel;
+
+	public static String NewCategoryNameDialog_name;
+
 	public static String NewCheatSheetFileWizard_0;
 
 	public static String NewLibraryPluginCreationPage_pdependencies;
@@ -226,6 +232,24 @@ public class PDEUIMessages extends NLS {
 	public static String OSGiFrameworkPreferencePage_setAs;
 
 	public static String PDETextHover_0;
+
+	public static String RegisterCSWizard_registerCheatSheet;
+
+	public static String RegisterCSWizardPage_buttonNew;
+
+	public static String RegisterCSWizardPage_dialogTitleNewCategory;
+
+	public static String RegisterCSWizardPage_groupRegistration;
+
+	public static String RegisterCSWizardPage_labelCategory;
+
+	public static String RegisterCSWizardPage_labelDescription;
+
+	public static String RegisterCSWizardPage_labelInstructionText;
+
+	public static String RegisterCSWizardPage_toolTipNewCategory;
+
+	public static String RegisterCSWizardPage_wizardPageDescription;
 
 	public static String RemoveUnknownExecEnvironments_label;
 

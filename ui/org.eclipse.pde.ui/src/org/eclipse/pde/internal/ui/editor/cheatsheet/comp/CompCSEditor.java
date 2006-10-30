@@ -53,9 +53,7 @@ public class CompCSEditor extends PDEFormEditor {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createContentOutline()
 	 */
 	protected ISortableContentOutlinePage createContentOutline() {
-		// TODO: MP: LOW: CompCS: Add outline page later
-		// return new SimpleCSFormOutlinePage(this);
-		return null;
+		return new CompCSFormOutlinePage(this);
 	}
 
 	/* (non-Javadoc)

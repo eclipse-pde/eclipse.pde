@@ -15,9 +15,9 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
@@ -45,6 +45,8 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 	private Section fMainSection;
 
 	private ICSDetails fCommandSection;
+
+	//private ICSDetails fRegisterCSArea;
 	
 	// Not supporting when at this moment; since, we are not supporting
 	// conditional-subitem
@@ -64,7 +66,7 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		//fWhen = null;
 		fMainSection = null;
 		fCommandSection = new SimpleCSCommandDetails(fSubItem, this);		
-		
+		//fRegisterCSArea = new CSRegisterCSDetails(this, fSubItem.getModel());
 	}
 
 	/* (non-Javadoc)
@@ -113,7 +115,8 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		markDetailsPart(fMainSection);
 
 		fCommandSection.createDetails(parent);
-
+		// Create the register cheat sheet area
+		//fRegisterCSArea.createDetails(parent);
 		// Attribute: when
 		// Not supporting when at this moment; since, we are not supporting
 		// conditional-subitem
@@ -150,7 +153,8 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 //		});			
 		
 		fCommandSection.hookListeners();
-		
+		// Create the listeners within the register cheat sheet area
+		//fRegisterCSArea.hookListeners();		
 	}
 	
 	/* (non-Javadoc)
@@ -178,7 +182,8 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 //		fWhen.setEditable(editable);
 		
 		fCommandSection.updateFields();
-		
+		// Update the fields within the register cheat sheet area
+		//fRegisterCSArea.updateFields();			
 		
 	}
 

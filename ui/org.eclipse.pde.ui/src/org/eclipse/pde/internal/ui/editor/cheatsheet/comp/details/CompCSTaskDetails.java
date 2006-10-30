@@ -73,6 +73,8 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	
 	private ICSDetails fEnclosingTextSection;		
 	
+	//private ICSDetails fRegisterCSArea;
+	
 	private final static String F_PATH_SEPARATOR = "/"; //$NON-NLS-1$
 	
 	private final static String F_DOT_DOT = ".."; //$NON-NLS-1$
@@ -91,6 +93,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 
 		fDefinitionSection = null;
 		fEnclosingTextSection = new CompCSEnclosingTextDetails(fDataTask, this);
+		//fRegisterCSArea = new CSRegisterCSDetails(this, fDataTask.getModel());		
 	}
 
 	/* (non-Javadoc)
@@ -112,6 +115,8 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		createUISkipButton(sectionClient);
 		// Create the enclosing text section
 		fEnclosingTextSection.createDetails(parent);
+		// Create the register cheat sheet area
+		//fRegisterCSArea.createDetails(parent);		
 		// Bind widgets
 		getManagedForm().getToolkit().paintBordersFor(sectionClient);
 		fDefinitionSection.setClient(sectionClient);
@@ -158,6 +163,8 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		createListenersSkipButton();
 		// Create listeners within the enclosing text section
 		fEnclosingTextSection.hookListeners();
+		// Create the listeners within the register cheat sheet area
+		//fRegisterCSArea.hookListeners();		
 	}
 
 	/**
@@ -209,7 +216,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		dialog.setMessage(PDEUIMessages.CompCSTaskDetails_simpleCSWizardDescription); 
 		dialog.addFilter(new FileExtensionFilter("xml"));  //$NON-NLS-1$
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot().getProject(
-				extractProjectName(fDataTask.getModel().getUnderlyingResource())));
+			fDataTask.getModel().getUnderlyingResource().getProject().getName()));
 
 		if (dialog.open() == Window.OK) {
 			IFile file = (IFile)dialog.getFirstResult();
@@ -219,16 +226,6 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 			entry.setValue(newValue);
 			handleTextEventPathEntry(newValue);
 		}	
-	}
-	
-	/**
-	 * @return
-	 */
-	private String extractProjectName(IResource resource) {
-		// Form: /<project-name>/<dir>/<dir>/<file>
-		String path = resource.getFullPath().toPortableString();
-		StringTokenizer tokenizer = new StringTokenizer(path, F_PATH_SEPARATOR);
-		return tokenizer.nextToken();
 	}
 	
 	/**
@@ -376,12 +373,13 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		// Set the initial file name
 		String initialValue = fPathEntry.getValue().trim();
 		if (initialValue.length() > 0) {
+			// It is a relative file name
 			page.setFileName(extractFileName(initialValue));
 		}
 		// Restrict user choices of where to store the new simple cheat sheet
 		// to only the project name this composite cheat sheet is stored in
-		page.setProjectName(extractProjectName(fDataTask.getModel()
-				.getUnderlyingResource()));
+		page.setProjectName(fDataTask.getModel().getUnderlyingResource()
+				.getProject().getName());
 		// Check the result
 		if (dialog.open() == Window.OK) {
 			String newValue = convertPathAbsToRelative(page
@@ -499,7 +497,8 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		updateSkipButton(editable);
 		// Update fields within enclosing text section		
 		fEnclosingTextSection.updateFields();
-
+		// Update the fields within the register cheat sheet area
+		//fRegisterCSArea.updateFields();		
 	}
 
 	/**

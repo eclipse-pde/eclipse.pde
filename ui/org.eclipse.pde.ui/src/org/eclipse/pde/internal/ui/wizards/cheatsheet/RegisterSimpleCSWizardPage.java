@@ -9,23 +9,21 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.pde.internal.core.icheatsheet.simple;
+package org.eclipse.pde.internal.ui.wizards.cheatsheet;
+
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 
 /**
- * ISimpleCSOnCompletion
+ * RegisterSimpleCSWizardPage
  *
  */
-public interface ISimpleCSOnCompletion extends ISimpleCSObject {
-	
+public class RegisterSimpleCSWizardPage extends RegisterCSWizardPage {
+
 	/**
-	 * Content (element)
-	 * @return
+	 * @param model
 	 */
-	public String getContent();
-	
-	/**
-	 * Content (element)
-	 * @param content
-	 */
-	public void setContent(String content);	
+	public RegisterSimpleCSWizardPage(ISimpleCSModel model) {
+		super(model);
+	}
+
 }
