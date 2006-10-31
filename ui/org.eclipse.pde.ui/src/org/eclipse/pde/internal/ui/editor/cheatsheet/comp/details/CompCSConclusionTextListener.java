@@ -59,7 +59,7 @@ public class CompCSConclusionTextListener implements ModifyListener {
 	 * @param text
 	 */
 	private void updateConclusionText(String text) {
-		if (fDataTaskObject.getFieldIntro() == null) {
+		if (fDataTaskObject.getFieldOnCompletion() == null) {
 			// Create a new conclusion
 			addConclusionText(text);
 		} else {

@@ -18,7 +18,7 @@ import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.CompCSInputContext;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
@@ -64,7 +64,7 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	 * @param contextID
 	 */
 	public CompCSTaskGroupDetails(ICompCSTaskGroup taskGroup, ICSMaster section) {
-		super(section, SimpleCSInputContext.CONTEXT_ID);
+		super(section, CompCSInputContext.CONTEXT_ID);
 		
 		fDataTaskGroup = taskGroup;
 		fNameEntry = null;

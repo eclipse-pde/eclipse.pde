@@ -32,7 +32,7 @@ import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.CompCSFileValidator;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.CompCSInputContext;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.FileExtensionFilter;
 import org.eclipse.pde.internal.ui.wizards.cheatsheet.NewSimpleCSFileWizard;
@@ -84,7 +84,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	 * @param contextID
 	 */
 	public CompCSTaskDetails(ICompCSTask task, ICSMaster section) {
-		super(section, SimpleCSInputContext.CONTEXT_ID);
+		super(section, CompCSInputContext.CONTEXT_ID);
 
 		fDataTask = task;
 		fNameEntry = null;
