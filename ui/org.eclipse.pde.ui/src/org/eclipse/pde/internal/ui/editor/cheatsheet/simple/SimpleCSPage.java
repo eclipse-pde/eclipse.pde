@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
@@ -113,6 +114,13 @@ public class SimpleCSPage extends PDEFormPage implements IModelChangedListener {
 		}
 		// Inform the block
 		fBlock.modelChanged(event);
+	}
+
+	/**
+	 * @return
+	 */
+	public ISelection getSelection() {
+		return fBlock.getSelection();
 	}
 	
 }

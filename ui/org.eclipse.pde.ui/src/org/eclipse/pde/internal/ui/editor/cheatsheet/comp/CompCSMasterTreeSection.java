@@ -140,9 +140,27 @@ public class CompCSMasterTreeSection extends TreeSection implements
 		fTreeViewer.setContentProvider(new CompCSContentProvider());
 		fTreeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
+		createTreeListeners();
 		// TODO: MP: LOW: CompCS: Implement drag and drop move feature
 	}		
 
+	/**
+	 * 
+	 */
+	private void createTreeListeners() {
+		// Create listener for the outline view 'link with editor' toggle 
+		// button
+		fTreeViewer.addPostSelectionChangedListener(
+				getPage().getPDEEditor().new PDEFormEditorChangeListener());
+	}
+
+	/**
+	 * @return
+	 */
+	public ISelection getSelection() {
+		return fTreeViewer.getSelection();
+	}
+	
 	/**
 	 * 
 	 */

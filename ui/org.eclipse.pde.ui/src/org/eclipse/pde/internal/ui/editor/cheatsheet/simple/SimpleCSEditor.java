@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.simple;
 import java.io.File;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -24,6 +25,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.forms.editor.IFormPage;
 
 /**
  * SimpleCheatSheetEditor
@@ -127,4 +129,24 @@ public class SimpleCSEditor extends PDEFormEditor {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getSelection()
+	 */
+	public ISelection getSelection() {
+		// Override the parent getSelection because it doesn't work.
+		// The selection provider operates at the form level and does not 
+		// track selections made in the master tree view.
+		// The selection is required to synchronize the master tree view with 
+		// the outline view
+		IFormPage formPage = getActivePageInstance();	
+		if ((formPage != null) && 
+				(formPage instanceof SimpleCSPage)) {
+			// Synchronizes the selection made in the master tree view with the
+			// selection in the outline view when the link with editor button
+			// is toggled on
+			return ((SimpleCSPage)formPage).getSelection();
+		}
+		return super.getSelection();
+	}
+	
 }

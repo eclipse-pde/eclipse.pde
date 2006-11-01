@@ -74,11 +74,9 @@ public class CompCSFormOutlinePage extends FormOutlinePage {
 			ICompCSModel cheatsheet = (ICompCSModel)fEditor.getAggregateModel();
 			if ((cheatsheet != null)
 					&& cheatsheet.isLoaded()) {
-				List list = cheatsheet.getCompCS().getChildren();
-				// List is never null
-				if (list.size() > 0) {
-					return list.toArray();
-				}				
+				Object[] list = new Object[1];
+				list[0] = cheatsheet.getCompCS();
+				return list;
 			}
 		} else if (parent instanceof ICompCSObject) {
 			List list = ((ICompCSObject)parent).getChildren();

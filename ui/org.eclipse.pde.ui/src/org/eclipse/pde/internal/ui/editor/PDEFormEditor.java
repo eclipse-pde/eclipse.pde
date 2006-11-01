@@ -87,7 +87,7 @@ public abstract class PDEFormEditor extends FormEditor
 	 * 
 	 * @since 3.0
 	 */
-	private class PDEFormEditorChangeListener implements
+	public class PDEFormEditorChangeListener implements
 			ISelectionChangedListener {
 
 		/**

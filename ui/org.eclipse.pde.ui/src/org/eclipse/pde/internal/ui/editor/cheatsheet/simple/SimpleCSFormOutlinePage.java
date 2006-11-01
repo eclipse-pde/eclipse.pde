@@ -76,11 +76,9 @@ public class SimpleCSFormOutlinePage extends FormOutlinePage {
 			ISimpleCSModel cheatsheet = (ISimpleCSModel)fEditor.getAggregateModel();
 			if ((cheatsheet != null)
 					&& cheatsheet.isLoaded()) {
-				List list = cheatsheet.getSimpleCS().getChildren();
-				// List is never null
-				if (list.size() > 0) {
-					return list.toArray();
-				}				
+				Object[] list = new Object[1];
+				list[0] = cheatsheet.getSimpleCS();
+				return list;			
 			}
 		} else if (parent instanceof ISimpleCSObject) {
 			List list = ((ISimpleCSObject)parent).getChildren();

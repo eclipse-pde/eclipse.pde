@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp;
 
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
@@ -42,7 +43,6 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 		fBlock = new CompCSBlock(this);
 	}
 
-	// TODO: MP: HIGH: CompCS: Define mnemonics for UI
 	// TODO: MP: LOW: CompCS: Clean-up and reuse externalized strings
 	
 	/* (non-Javadoc)
@@ -119,4 +119,11 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 		fBlock.modelChanged(event);
 	}
 
+	/**
+	 * @return
+	 */
+	public ISelection getSelection() {
+		return fBlock.getSelection();
+	}
+	
 }

@@ -207,9 +207,27 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		fTreeViewer.setContentProvider(new SimpleCSContentProvider());
 		fTreeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
+		createTreeListeners();		
 		// TODO: MP: LOW: SimpleCS: Implement drag and drop move feature
 	}	
 
+	/**
+	 * 
+	 */
+	private void createTreeListeners() {
+		// Create listener for the outline view 'link with editor' toggle 
+		// button
+		fTreeViewer.addPostSelectionChangedListener(
+				getPage().getPDEEditor().new PDEFormEditorChangeListener());
+	}	
+
+	/**
+	 * @return
+	 */
+	public ISelection getSelection() {
+		return fTreeViewer.getSelection();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected(int)
 	 */

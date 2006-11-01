@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp;
 
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCS;
@@ -112,6 +113,16 @@ public class CompCSBlock extends PDEMasterDetailsBlock implements
 	 */
 	public CompCSMasterTreeSection getMastersSection() {
 		return fMasterSection;
+	}
+	
+	/**
+	 * @return
+	 */
+	public ISelection getSelection() {
+		if (fMasterSection != null) {
+			return fMasterSection.getSelection();
+		}
+		return null;
 	}
 	
 }
