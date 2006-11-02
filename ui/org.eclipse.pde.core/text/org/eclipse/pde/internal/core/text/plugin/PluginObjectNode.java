@@ -249,5 +249,9 @@ public class PluginObjectNode extends PluginDocumentNode
 		super.addChildNode(child, position);
 		((IPluginObject)child).setInTheModel(true);
 	}
+	
+	public String toString() {
+		return write(false);
+	}
 
 }
