@@ -429,4 +429,8 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	}
 	
 	protected abstract String[] getSpecificAttributes();
+	
+	public boolean isRoot() {
+		return true;
+	}
 }

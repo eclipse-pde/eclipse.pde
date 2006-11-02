@@ -253,5 +253,9 @@ public class PluginObjectNode extends PluginDocumentNode
 	public String toString() {
 		return write(false);
 	}
+	
+	public boolean isRoot() {
+		return false;
+	}
 
 }

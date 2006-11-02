@@ -116,7 +116,9 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		TextEdit op = null;
 		node = getHighestNodeToBeWritten(node);
 		if (node.getParentNode() == null) {
-			op = new InsertEdit(0, node.write(true));
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=163161
+			if (node.isRoot())
+				op = new InsertEdit(0, node.write(true));
 		} else {
 			if (node.getOffset() > -1) {
 				// this is an element that was of the form <element/>
@@ -134,8 +136,10 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		TextEdit old = (TextEdit) fOperationTable.get(node);
 		if (old != null)
 			ops.remove(old);
-		ops.add(op);
-		fOperationTable.put(node, op);				
+		if (op != null) {
+			ops.add(op);
+			fOperationTable.put(node, op);	
+		}
 	}
 
 	private InsertEdit insertAfterSibling(IDocumentNode node) {

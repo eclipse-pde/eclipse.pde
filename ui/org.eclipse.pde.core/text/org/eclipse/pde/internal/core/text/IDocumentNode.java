@@ -48,6 +48,8 @@ public interface IDocumentNode extends Serializable, IDocumentRange {
 	boolean isErrorNode();	
 	void setIsErrorNode(boolean isErrorNode);
 	
+	boolean isRoot();
+	
 	void setOffset(int offset);
 	void setLength(int length);
 		
