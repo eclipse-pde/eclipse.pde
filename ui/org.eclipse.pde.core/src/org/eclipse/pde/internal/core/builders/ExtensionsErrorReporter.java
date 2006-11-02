@@ -147,11 +147,14 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	 * @param childElement
 	 * @param severity
 	 */
-	private void reportMaxOccurenceViolation(Element parentElement, Element childElement, int severity) {
+	private void reportMaxOccurenceViolation(ElementOccurrenceResult result,
+			int severity) {
+		Element childElement = result.getElement();
+		String allowedOccurrences = 
+			new Integer(result.getAllowedOccurrences()).toString();		
 		String message = NLS.bind(
 				PDECoreMessages.ExtensionsErrorReporter_maxOccurrence,
-				new String[] { childElement.getNodeName(),
-						parentElement.getNodeName() }); 
+				new String[] { allowedOccurrences, childElement.getNodeName() }); 
 		report(message, getLine(childElement), severity,
 				PDEMarkerFactory.P_ILLEGAL_XML_NODE, childElement, null,
 				PDEMarkerFactory.CAT_FATAL);
@@ -162,11 +165,15 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	 * @param childElement
 	 * @param severity
 	 */
-	private void reportMinOccurenceViolation(Element parentElement, ISchemaElement childElement, int severity) {
+	private void reportMinOccurenceViolation(Element parentElement,
+			ElementOccurrenceResult result, int severity) {
+		
+		ISchemaElement childElement = result.getSchemaElement();
+		String allowedOccurrences = 
+			new Integer(result.getAllowedOccurrences()).toString();
 		String message = NLS.bind(
 				PDECoreMessages.ExtensionsErrorReporter_minOccurrence,
-				new String[] { childElement.getName(),
-						parentElement.getNodeName() });
+				new String[] { allowedOccurrences, childElement.getName()});
 		report(message, getLine(parentElement), severity,
 				PDEMarkerFactory.CAT_FATAL);
 	}	
@@ -244,7 +251,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 
 			while (minIterator.hasNext()) {
 				reportMinOccurenceViolation(element,
-						(ISchemaElement) minIterator.next(), minSeverity);
+						(ElementOccurrenceResult) minIterator.next(), minSeverity);
 			}		
 		}
 	}
@@ -263,8 +270,9 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 					.findMaxOccurenceViolations(schemaElement, element);
 			Iterator maxIterator = maxElementSet.iterator();
 			while (maxIterator.hasNext()) {
-				reportMaxOccurenceViolation(element, (Element) maxIterator
-						.next(), maxSeverity);
+				reportMaxOccurenceViolation(
+						(ElementOccurrenceResult) maxIterator.next(),
+						maxSeverity);
 			}	
 		}
 	}

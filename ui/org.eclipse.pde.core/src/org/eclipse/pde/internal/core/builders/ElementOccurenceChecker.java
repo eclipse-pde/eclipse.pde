@@ -461,7 +461,8 @@ public class ElementOccurenceChecker {
 		// For the PDE space this is not required as extension point schemas
 		// are always very simple
 		if (occurrences > multiplicityTracker) {
-			elementSet.add(element);
+			elementSet.add(new ElementOccurrenceResult(element, schemaElement,
+					occurrences, multiplicityTracker));
 		}
 	}		
 
@@ -495,7 +496,8 @@ public class ElementOccurenceChecker {
 		// For the PDE space this is not required as extension point schemas
 		// are always very simple
 		if (occurrences < multiplicityTracker) {
-			elementSet.add(schemaElement);
+			elementSet.add(new ElementOccurrenceResult(null, schemaElement,
+					occurrences, multiplicityTracker));
 		}
 	}			
 	
@@ -506,16 +508,22 @@ public class ElementOccurenceChecker {
 	 */
 	private static Element findChildElement(Element element, String name) {
 		NodeList children = element.getChildNodes();
+		Element match = null;
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				String key = child.getNodeName();
 				if (key.equals(name)) {
-					return (Element)child;
+					// Normally we would return as soon as an matching element
+					// is found; however, we want to return the last 
+					// occurrence at the expense of performance in order to 
+					// flag the last element exceeding allowed maximum
+					// occurrence
+					match = (Element)child;
 				}
 			}
 		}	
-		return null;
+		return match;
 	}
 	
 }
