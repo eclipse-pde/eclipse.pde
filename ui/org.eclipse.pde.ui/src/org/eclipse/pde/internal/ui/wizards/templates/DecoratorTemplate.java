@@ -167,39 +167,11 @@ public class DecoratorTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#validateOptions(org.eclipse.pde.ui.templates.TemplateOption)
 	 */
 	public void validateOptions(TemplateOption source) {
-		//Validate page upon change in option state and alter
-		//the page if the read-only boolean changes
 		if (source == readOnlyOption){
 			alterOptionStates();
 		}		
-		
-		if (source.isRequired() && source.isEmpty()) {
-			flagMissingRequiredOption(source);
-		} else {
-			validateContainerPage(source);
-		}
+		super.validateOptions(source);
 	}
-
-	/**
-	 * Given a required option whose value has been changed by the user,
-	 * this method elects to check all options on the wizard page to
-	 * confirm that none of the required options are empty.
-	 * 
-	 * @param source
-	 * 			the TemplateOption whose value has been changed by the user
-	 */
-	private void validateContainerPage(TemplateOption source) {
-		TemplateOption[] allPageOptions = getOptions(0);
-		for (int i = 0; i < allPageOptions.length; i++) {
-			TemplateOption nextOption = allPageOptions[i];
-			if (nextOption.isRequired() && nextOption.isEmpty()) {
-				flagMissingRequiredOption(nextOption);
-				return;
-			}
-		}
-		resetPageState();
-	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#isDependentOnParentWizard()

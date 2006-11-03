@@ -26,7 +26,7 @@ import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.IFieldData;
-import org.eclipse.pde.ui.templates.TemplateOption;
+import org.eclipse.pde.ui.templates.AbstractTemplateSection;
 
 /**
  * Creates a template for contributing to the Universal Welcome
@@ -88,27 +88,6 @@ public class UniversalWelcomeTemplate extends PDETemplateSection {
 
 	public void initializeFields(IPluginModelBase model) {
 		pluginId = model.getPluginBase().getId();
-	}
-
-	public void validateOptions(TemplateOption source) {
-
-		if (source.isRequired() && source.isEmpty()) {
-			flagMissingRequiredOption(source);
-		} else {
-			validateContainerPage(source);
-		}
-	}
-
-	private void validateContainerPage(TemplateOption source) {
-		TemplateOption[] allPageOptions = getOptions(0);
-		for (int i = 0; i < allPageOptions.length; i++) {
-			TemplateOption nextOption = allPageOptions[i];
-			if (nextOption.isRequired() && nextOption.isEmpty()) {
-				flagMissingRequiredOption(nextOption);
-				return;
-			}
-		}
-		resetPageState();
 	}
 
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {

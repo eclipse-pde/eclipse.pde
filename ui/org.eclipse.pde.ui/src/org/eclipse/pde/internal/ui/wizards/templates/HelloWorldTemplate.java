@@ -22,7 +22,6 @@ import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.IFieldData;
-import org.eclipse.pde.ui.templates.TemplateOption;
 
 public class HelloWorldTemplate extends PDETemplateSection {
 	public static final String KEY_CLASS_NAME = "className"; //$NON-NLS-1$
@@ -71,28 +70,7 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		page.setDescription(PDEUIMessages.HelloWorldTemplate_desc);
 		wizard.addPage(page);
 		markPagesAdded();
-	}
-
-	public void validateOptions(TemplateOption source) {
-		if (source.isRequired() && source.isEmpty()) {
-			flagMissingRequiredOption(source);
-		} else {
-			validateContainerPage(source);
-		}
-	}
-
-	private void validateContainerPage(TemplateOption source) {
-		TemplateOption[] allPageOptions = getOptions(0);
-		for (int i = 0; i < allPageOptions.length; i++) {
-			TemplateOption nextOption = allPageOptions[i];
-			if (nextOption.isRequired() && nextOption.isEmpty()) {
-				flagMissingRequiredOption(nextOption);
-				return;
-			}
-		}
-		resetPageState();
-	}
-
+	}	
 
 	public boolean isDependentOnParentWizard() {
 		return true;

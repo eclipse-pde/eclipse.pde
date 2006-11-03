@@ -29,7 +29,6 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.BooleanOption;
-import org.eclipse.pde.ui.templates.TemplateOption;
 
 public class ViewTemplate extends PDETemplateSection {
 	private BooleanOption addToPerspective;
@@ -103,26 +102,6 @@ public class ViewTemplate extends PDETemplateSection {
 		page1.setDescription(PDEUIMessages.ViewTemplate_desc1);
 		wizard.addPage(page1);
 		markPagesAdded();
-	}
-
-	public void validateOptions(TemplateOption source) {
-		if (source.isRequired() && source.isEmpty()) {
-			flagMissingRequiredOption(source);
-		} else {
-			validateContainerPage(source);
-		}	
-	}
-
-	private void validateContainerPage(TemplateOption source) {
-		TemplateOption[] allPageOptions = getOptions(0);
-		for (int i = 0; i < allPageOptions.length; i++) {
-			TemplateOption nextOption = allPageOptions[i];
-			if (nextOption.isRequired() && nextOption.isEmpty()) {
-				flagMissingRequiredOption(nextOption);
-				return;
-			}
-		}
-		resetPageState();
 	}
 	
 	public String getUsedExtensionPoint() {

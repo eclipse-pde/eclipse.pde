@@ -102,7 +102,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		URL url = getInstallURL();
 		try {
 			String location = getTemplateDirectory() + "/" //$NON-NLS-1$
-					+ getSectionId() + "/"; //$NON-NLS-1$
+			+ getSectionId() + "/"; //$NON-NLS-1$
 			return new URL(url, location);
 		} catch (MalformedURLException e) {
 			return null;
@@ -210,7 +210,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 			return new TemplateOption[0];
 		TemplatePage page = (TemplatePage) pages.get(pageIndex);
 		return (TemplateOption[]) page.options
-				.toArray(new TemplateOption[page.options.size()]);
+		.toArray(new TemplateOption[page.options.size()]);
 	}
 
 	/**
@@ -320,4 +320,27 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 			tpage.options.add(option);
 		}
 	}
+
+	/**
+	 * Validate options given a template option
+	 */
+	public void validateOptions(TemplateOption source) {
+		if (source.isRequired() && source.isEmpty()) {
+			flagMissingRequiredOption(source);
+		}
+		validateContainerPage(source);
+	}
+
+	private void validateContainerPage(TemplateOption source) {
+		TemplateOption[] allPageOptions = getOptions(0);
+		for (int i = 0; i < allPageOptions.length; i++) {
+			TemplateOption nextOption = allPageOptions[i];
+			if (nextOption.isRequired() && nextOption.isEmpty()) {
+				flagMissingRequiredOption(nextOption);
+				return;
+			}
+		}
+		resetPageState();
+	}
+	
 }

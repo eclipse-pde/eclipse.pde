@@ -25,7 +25,8 @@ import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.IFieldData;
-import org.eclipse.pde.ui.templates.TemplateOption;
+import org.eclipse.pde.ui.templates.AbstractTemplateSection;
+import org.eclipse.pde.ui.templates.ITemplateSection;
 
 public class PropertyPageTemplate extends PDETemplateSection {
 	public static final String KEY_CLASSNAME = "className"; //$NON-NLS-1$
@@ -100,29 +101,6 @@ public class PropertyPageTemplate extends PDETemplateSection {
 		// we can initialize directly from it
 		String pluginId = model.getPluginBase().getId();
 		initializeOption(KEY_PACKAGE_NAME,getFormattedPackageName(pluginId)); 
-	}
-
-	/**
-	 * @see GenericTemplateSection#validateOptions(TemplateOption)
-	 */
-	public void validateOptions(TemplateOption source) {
-		if (source.isRequired() && source.isEmpty()) {
-			flagMissingRequiredOption(source);
-		} else {
-			validateContainerPage(source);
-		}
-	}
-
-	private void validateContainerPage(TemplateOption source) {
-		TemplateOption[] allPageOptions = getOptions(0);
-		for (int i = 0; i < allPageOptions.length; i++) {
-			TemplateOption nextOption = allPageOptions[i];
-			if (nextOption.isRequired() && nextOption.isEmpty()) {
-				flagMissingRequiredOption(nextOption);
-				return;
-			}
-		}
-		resetPageState();
 	}
 
 	/**

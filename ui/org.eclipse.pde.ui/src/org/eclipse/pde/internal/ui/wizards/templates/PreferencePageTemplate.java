@@ -29,7 +29,6 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.IFieldData;
-import org.eclipse.pde.ui.templates.TemplateOption;
 
 public class PreferencePageTemplate extends PDETemplateSection {
 	private static final String KEY_PAGE_NAME = "pageName"; //$NON-NLS-1$
@@ -150,13 +149,6 @@ public class PreferencePageTemplate extends PDETemplateSection {
 		page.setDescription(PDEUIMessages.PreferencePageTemplate_desc);
 		wizard.addPage(page);
 		markPagesAdded();
-	}
-
-	public void validateOptions(TemplateOption source) {
-		if (source.isRequired() && source.isEmpty()) {
-			flagMissingRequiredOption(source);
-		} else
-			resetPageState();
 	}
 
 	public String getUsedExtensionPoint() {
