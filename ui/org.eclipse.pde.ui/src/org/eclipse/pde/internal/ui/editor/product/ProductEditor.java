@@ -37,6 +37,20 @@ public class ProductEditor extends PDEFormEditor {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
+	 */
+	public boolean isSaveAsAllowed() {
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getContextIDForSaveAs()
+	 */
+	public String getContextIDForSaveAs() {
+		return ProductInputContext.CONTEXT_ID;
+	}		
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createInputContextManager()
 	 */
 	protected InputContextManager createInputContextManager() {

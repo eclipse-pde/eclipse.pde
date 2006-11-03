@@ -41,6 +41,20 @@ public class SimpleCSEditor extends PDEFormEditor {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
+	 */
+	public boolean isSaveAsAllowed() {
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getContextIDForSaveAs()
+	 */
+	public String getContextIDForSaveAs() {
+		return SimpleCSInputContext.CONTEXT_ID;
+	}	
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#addEditorPages()
 	 */
 	protected void addEditorPages() {

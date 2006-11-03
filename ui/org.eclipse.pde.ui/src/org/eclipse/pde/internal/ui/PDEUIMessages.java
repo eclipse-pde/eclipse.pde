@@ -203,6 +203,12 @@ public class PDEUIMessages extends NLS {
 
 	public static String InfoControlTextPresenter_ContinuationChars;
 
+	public static String InputContext_errorMessageFileDoesNotExist;
+
+	public static String InputContext_errorMessageLocationNotSet;
+
+	public static String InputContextManager_errorMessageInputContextNotFound;
+
 	public static String LibrarySection_addDialogButton;
 
 	public static String MainPreferencePage_group2;
@@ -230,6 +236,10 @@ public class PDEUIMessages extends NLS {
 	public static String OSGiFrameworkPreferencePage_installed;
 
 	public static String OSGiFrameworkPreferencePage_setAs;
+
+	public static String PDEFormEditor_errorMessageSaveNotCompleted;
+
+	public static String PDEFormEditor_errorTitleProblemSaveAs;
 
 	public static String PDETextHover_0;
 

@@ -39,7 +39,21 @@ public class CompCSEditor extends PDEFormEditor {
 	public CompCSEditor() {
 		super();
 	}
-
+ 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
+	 */
+	public boolean isSaveAsAllowed() {
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getContextIDForSaveAs()
+	 */
+	public String getContextIDForSaveAs() {
+		return CompCSInputContext.CONTEXT_ID;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#addEditorPages()
 	 */

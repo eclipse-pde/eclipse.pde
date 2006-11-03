@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.IModelUndoManager;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.swt.widgets.Display;
@@ -125,6 +126,53 @@ public abstract class InputContextManager implements IResourceChangeListener {
 		inputContexts.put(input, context);
 		fireContextChange(context, true);
 	}
+	
+	/**
+	 * Update the key (the editor input in this case) associated with the
+	 * input context without firing a context change event.
+	 * Used for save as operations.
+	 * @param newInput
+	 * @param oldInput
+	 * @throws Exception
+	 */
+	private void updateInputContext(IEditorInput newInput, IEditorInput oldInput)
+			throws Exception {
+		Object value = null;
+		// Retrieve the input context referenced by the old editor input and
+		// remove it from the context manager
+		if (inputContexts.containsKey(oldInput)) {
+			value = inputContexts.remove(oldInput);
+		} else {
+			throw new Exception(PDEUIMessages.InputContextManager_errorMessageInputContextNotFound);
+		}
+		// Re-insert the input context back into the context manager using the
+		// new editor input as its key
+		inputContexts.put(newInput, value);
+	}
+
+	/**
+	 * @param monitor
+	 * @param contextID
+	 * @throws Exception
+	 */
+	public void saveAs(IProgressMonitor monitor, String contextID)
+			throws Exception {
+		// Find the existing context
+		InputContext inputContext = findContext(contextID);
+		if (inputContext != null) {
+			// Keep the old editor input
+			IEditorInput oldInput = editor.getEditorInput();
+			// Perform the save as operation
+			inputContext.doSaveAs(monitor);
+			// Get the new editor input
+			IEditorInput newInput = inputContext.getInput();
+			// Update the context manager accordingly
+			updateInputContext(newInput, oldInput);
+		} else {
+			throw new Exception(PDEUIMessages.InputContextManager_errorMessageInputContextNotFound);
+		}
+	}
+	
 	public InputContext getPrimaryContext() {
 		for (Enumeration contexts = inputContexts.elements(); contexts
 				.hasMoreElements();) {

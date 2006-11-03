@@ -38,6 +38,20 @@ import org.eclipse.ui.part.FileEditorInput;
 
 public class SchemaEditor extends MultiSourceEditor {
 	private ShowDescriptionAction fPreviewAction;
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
+	 */
+	public boolean isSaveAsAllowed() {
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getContextIDForSaveAs()
+	 */
+	public String getContextIDForSaveAs() {
+		return SchemaInputContext.CONTEXT_ID;
+	}	
 	
 	protected void createResourceContexts(InputContextManager manager, IFileEditorInput input) {
 		IFile file = input.getFile();

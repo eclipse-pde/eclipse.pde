@@ -9,19 +9,26 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.context;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.core.IModelChangeProvider;
@@ -30,6 +37,7 @@ import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEStorageDocumentProvider;
 import org.eclipse.swt.widgets.Shell;
@@ -40,7 +48,11 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
 /**
@@ -396,4 +408,136 @@ public abstract class InputContext {
 		}
 		return System.getProperty("line.separator"); //$NON-NLS-1$
 	}
+	
+	/**
+	 * @param input
+	 * @throws CoreException
+	 */
+	private void updateInput(IEditorInput newInput) throws CoreException {
+		deinitializeDocumentProvider();	
+		fEditorInput = newInput;
+		initializeDocumentProvider();		
+	}
+
+	/**
+	 * 
+	 */
+	private void deinitializeDocumentProvider() {
+		IAnnotationModel amodel = 
+			fDocumentProvider.getAnnotationModel(fEditorInput);
+		if (amodel != null) {
+			amodel.disconnect(fDocumentProvider.getDocument(fEditorInput));
+		}
+		fDocumentProvider.removeElementStateListener(fElementListener);
+		fDocumentProvider.disconnect(fEditorInput);
+	}
+
+	/**
+	 * @throws CoreException
+	 */
+	private void initializeDocumentProvider() throws CoreException {
+		fDocumentProvider.connect(fEditorInput);
+		IAnnotationModel amodel = fDocumentProvider.getAnnotationModel(fEditorInput);
+		if (amodel != null) {
+			amodel.connect(fDocumentProvider.getDocument(fEditorInput));
+		}
+		fDocumentProvider.addElementStateListener(fElementListener);
+	}
+	
+	/**
+	 * @param monitor
+	 */
+	public void doSaveAs(IProgressMonitor monitor) throws Exception {
+		// Get the editor shell
+		Shell shell = getEditor().getSite().getShell();
+		// Create the save as dialog
+		SaveAsDialog dialog = new SaveAsDialog(shell);
+		// Set the initial file name to the original file name
+		IFile file = null;
+		if (fEditorInput instanceof IFileEditorInput) {
+			file = ((IFileEditorInput) fEditorInput).getFile();		
+			dialog.setOriginalFile(file);
+		}
+		// Create the dialog
+		dialog.create();
+		// Warn the user if the underlying file does not exist
+		if (fDocumentProvider.isDeleted(fEditorInput) && 
+				(file != null)) {
+			String message = NLS.bind(PDEUIMessages.InputContext_errorMessageFileDoesNotExist, file.getName());
+			dialog.setErrorMessage(null);
+			dialog.setMessage(message, IMessageProvider.WARNING);
+		}
+		// Open the dialog
+		if (dialog.open() == Window.OK) {
+			// Get the path to where the new file will be stored
+			IPath path = dialog.getResult();
+			handleSaveAs(monitor, path);
+		}	
+	}
+	
+	/**
+	 * @param monitor
+	 * @param path
+	 * @throws Exception
+	 * @throws CoreException
+	 * @throws InterruptedException
+	 * @throws InvocationTargetException
+	 */
+	private void handleSaveAs(IProgressMonitor monitor, IPath path)
+			throws Exception, CoreException, InterruptedException,
+			InvocationTargetException {
+		// Ensure a new location was selected
+		if (path == null) {
+			monitor.setCanceled(true);
+			throw new Exception(PDEUIMessages.InputContext_errorMessageLocationNotSet);
+		}
+		// Resolve the new file location	
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IFile newFile = workspace.getRoot().getFile(path);
+		// Create the new editor input
+		final IEditorInput newInput = new FileEditorInput(newFile);
+		// Send notice of editor input changes
+		fDocumentProvider.aboutToChange(newInput);
+		// Flush any unsaved changes
+		flushModel(fDocumentProvider.getDocument(fEditorInput));
+		try {
+			// Execute the workspace modification in a separate thread
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
+					createWorkspaceModifyOperation(newInput));
+			monitor.setCanceled(false);
+			// Store the new editor input in this context
+			updateInput(newInput);
+		} catch (InterruptedException e) {
+			monitor.setCanceled(true);
+			throw e;
+		} catch (InvocationTargetException e) {
+			monitor.setCanceled(true);
+			throw e;
+		} finally {
+			fDocumentProvider.changed(newInput);
+		}
+	}	
+	
+	/**
+	 * @param newInput
+	 * @return
+	 */
+	private WorkspaceModifyOperation createWorkspaceModifyOperation(
+			final IEditorInput newInput) {
+		WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
+			public void execute(final IProgressMonitor monitor) throws CoreException {
+				// Save the old editor input content to the new editor input
+				// location
+				fDocumentProvider.saveDocument(
+						monitor,
+						// New editor input location 
+						newInput,  
+						// Old editor input content
+						fDocumentProvider.getDocument(fEditorInput), 
+						true);
+			}
+		};
+		return operation;
+	}
+	
 }

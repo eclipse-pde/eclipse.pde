@@ -21,9 +21,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.IDocument;
@@ -40,6 +42,7 @@ import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.internal.core.util.XMLComponentRegistry;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.context.IInputContextListener;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
@@ -390,13 +393,52 @@ public abstract class PDEFormEditor extends FormEditor
 				mform.commit(true);
 		}
 	}
+	
+	/**
+	 * @return
+	 */
+	public String getContextIDForSaveAs() {
+		// Sub-classes must override this method and the isSaveAsAllowed 
+		// method to perform save as operations
+		return null;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
 	 */
 	public void doSaveAs() {
+		try {
+			// Get the context for which the save as operation should be 
+			// performed
+			String contextID = getContextIDForSaveAs();
+			// Perform the same as operation
+			getContextManager().saveAs(getProgressMonitor(),
+					contextID);
+			// Get the new editor input
+			IEditorInput input = 
+				getContextManager().findContext(
+						contextID).getInput();
+			// Store the new editor input
+			setInputWithNotify(input);
+			// Update the title of the editor using the name of the new editor
+			// input
+			setPartName(input.getName());
+			// Fire a property change accordingly
+			firePropertyChange(PROP_DIRTY);
+		} catch (InterruptedException e) {
+			// Ignore
+		} catch (Exception e) {
+			String title = PDEUIMessages.PDEFormEditor_errorTitleProblemSaveAs; 
+			String message = PDEUIMessages.PDEFormEditor_errorMessageSaveNotCompleted;
+			if (e.getMessage() != null) {
+				message = message + ' ' + e.getMessage();
+			}
+			PDEPlugin.logException(e, title, message);
+		}
 	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -774,4 +816,28 @@ public abstract class PDEFormEditor extends FormEditor
 	}
 	
 	public abstract void editorContextAdded(InputContext context);
+	
+	/**
+	 * @return
+	 */
+	protected IProgressMonitor getProgressMonitor() {
+		IProgressMonitor monitor = null;
+		IStatusLineManager manager = getStatusLineManager();
+		if (manager != null) {
+			monitor = manager.getProgressMonitor();
+		}
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+		return monitor;
+	}	
+
+	/**
+	 * @return
+	 */
+	protected IStatusLineManager getStatusLineManager() {
+		return getEditorSite().getActionBars().getStatusLineManager();
+	}	
+
+
 }
