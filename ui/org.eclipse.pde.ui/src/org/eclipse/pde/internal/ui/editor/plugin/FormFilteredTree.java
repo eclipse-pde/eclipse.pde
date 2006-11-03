@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.FilteredTree;
@@ -23,6 +25,36 @@ public class FormFilteredTree extends FilteredTree {
 	public FormFilteredTree(Composite parent, int treeStyle,
 			PatternFilter filter) {
 		super(parent, treeStyle, filter);
+	}
+	
+	protected void createControl(Composite parent, int treeStyle) {
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 1;
+		layout.marginWidth = 1;
+		setLayout(layout);
+		setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+        if (showFilterControls){
+        	filterComposite = new Composite(this, SWT.NONE);
+            GridLayout filterLayout = new GridLayout(2, false);
+            filterLayout.marginHeight = 2;
+            filterLayout.marginWidth = 2;
+            filterComposite.setLayout(filterLayout);
+            filterComposite.setFont(parent.getFont());
+            
+        	createFilterControls(filterComposite);
+        	filterComposite.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING,
+					true, false));
+        }
+        
+        treeComposite = new Composite(this, SWT.NONE);
+        GridLayout treeCompositeLayout = new GridLayout();
+        treeCompositeLayout.marginHeight = 1;
+        treeCompositeLayout.marginWidth = 1;
+		treeComposite.setLayout(treeCompositeLayout);
+        GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+        treeComposite.setLayoutData(data);
+        createTreeControl(treeComposite, treeStyle); 
 	}
 
 	protected Text doCreateFilterText(Composite parent) {
