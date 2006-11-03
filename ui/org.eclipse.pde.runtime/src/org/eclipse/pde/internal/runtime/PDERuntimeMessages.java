@@ -15,7 +15,6 @@ import org.eclipse.osgi.util.NLS;
 public class PDERuntimeMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.runtime.pderuntimeresources";//$NON-NLS-1$
 
-	public static String LogView_column_severity;
 	public static String LogView_column_message;
 	public static String LogView_column_plugin;
 	public static String LogView_column_date;
@@ -58,25 +57,7 @@ public class PDERuntimeMessages extends NLS {
 	public static String LogView_FilterDialog_recentSession;
 
 	public static String LogViewLabelProvider_truncatedMessage;
-
-	public static String RegistryView_extensionPointPR_id;
-	public static String RegistryView_extensionPointPR_name;
-
-	public static String RegistryView_extensionPR_id;
-	public static String RegistryView_extensionPR_name;
-	public static String RegistryView_extensionPR_point;
-
-	public static String RegistryView_libraryPR_path;
-	public static String RegistryView_libraryPR_exported;
-	public static String RegistryView_libraryPR_fullyExported;
-
-	public static String RegistryView_pluginPR_installURL;
-	public static String RegistryView_pluginPR_name;
-	public static String RegistryView_pluginPR_id;
-	public static String RegistryView_pluginPR_providerName;
-	public static String RegistryView_pluginPR_version;
-	public static String RegistryView_pluginPR_activated;
-
+	
 	public static String RegistryView_refresh_label;
 	public static String RegistryView_refresh_tooltip;
 	public static String RegistryView_collapseAll_label;
@@ -98,18 +79,6 @@ public class PDERuntimeMessages extends NLS {
 	public static String EventDetailsDialog_copy;
 
 	public static String RegistryView_showRunning_label;
-
-	public static String RegistryView_showPropertiesSheet_label;
-	public static String RegistryView_showPropertiesSheet_tooltip;
-	public static String RegistryView_showPropertiesSheet_desc;
-
-	public static String RegistryView_verticalOrientation_label;
-	public static String RegistryView_verticalOrientation_tooltip;
-	public static String RegistryView_verticalOrientation_desc;
-
-	public static String RegistryView_horizontalOrientation_label;
-	public static String RegistryView_horizontalOrientation_tooltip;
-	public static String RegistryView_horizontalOrientation_desc;
 
 	public static String RegistryView_titleSummary;
 	public static String OpenLogDialog_title;
