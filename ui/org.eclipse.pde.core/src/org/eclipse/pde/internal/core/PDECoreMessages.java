@@ -37,14 +37,10 @@ public class PDECoreMessages extends NLS {
 
 	public static String ExtensionsErrorReporter_minOccurrence;
 
-	public static String PluginModelManager_outOfSync;
-
 	// Status text #####################################
 	public static String BinaryRepositoryProvider_veto;
 	public static String RequiredPluginsClasspathContainer_description;
 	public static String ExternalJavaSearchClasspathContainer_description;
-
-	public static String Schema_NoDescriptionAvailable;
 
 	public static String SchemaElementReference_refElementMissing;
 
@@ -61,7 +57,6 @@ public class PDECoreMessages extends NLS {
 
 	public static String SearchablePluginsManager_saving;
 	public static String BuildObject_readOnlyException;
-	public static String BundleObject_readOnlyException;
 	public static String PluginBase_librariesNotFoundException;
 	public static String PluginParent_siblingsNotFoundException;
 	public static String PluginBase_importsNotFoundException;
@@ -70,7 +65,6 @@ public class PDECoreMessages extends NLS {
 	public static String SchemaCompositor_choice;
 	public static String SchemaCompositor_group;
 	public static String SchemaCompositor_sequence;
-	public static String SiteBuildObject_readOnlyException;
 
 	static {
 		// load message values from bundle file
@@ -113,7 +107,6 @@ public class PDECoreMessages extends NLS {
 	public static String Builders_Manifest_compositeID;
 	public static String Builders_Manifest_simpleID;
 	public static String Builders_Manifest_non_ext_attribute;
-	public static String Builders_Manifest_dont_translate_att;
 	public static String Builders_Manifest_non_ext_element;
 	public static String Builders_Manifest_deprecated_attribute;
 	public static String Builders_Manifest_deprecated_element;
@@ -162,11 +155,9 @@ public class PDECoreMessages extends NLS {
 	public static String BundleErrorReporter_HostNotExistPDE;
 	public static String BundleErrorReporter_HostNeeded;
 	public static String BundleErrorReporter_PackageNotExported;
-	public static String BundleErrorReporter_UnknownDirective;
 	public static String BundleErrorReporter_InvalidSymbolicName;
 	public static String BundleErrorReporter_invalidFilterSyntax;
 	public static String BundleErrorReporter_importexport_servicesDeprecated;
-	public static String FeatureConsistencyTrigger_JobName;
 
 	public static String BundleErrorReporter_startHeader_autoStartDeprecated;
 
