@@ -105,11 +105,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String CompCSCreationOperation_title;
 
-	public static String CompCSDependenciesDetails_Dependencies;
-
 	public static String CompCSDependenciesDetails_group;
-
-	public static String CompCSDependenciesDetails_SectionDescription;
 
 	public static String CompCSDependenciesDetails_task;
 
@@ -128,8 +124,6 @@ public class PDEUIMessages extends NLS {
 	public static String CompCSEnclosingTextDetails_IntroductionDescription;
 
 	public static String CompCSEnclosingTextDetails_SectionDescription;
-
-	public static String CompCSEnclosingTextDetails_SkipIntroLabel;
 
 	public static String CompCSFileValidator_abortParseExceptionMessage;
 
@@ -291,11 +285,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String OpenManifestAction_noManifest;
 
-	public static String ProjectStructurePage_sourceName;
 	public static String ProjectNamesPage_duplicateNames;
-	public static String ProjectStructurePage_fsourceName;
-	public static String DefaultCodeGenerationPage_initialName;
-	public static String DefaultCodeGenerationPage_initialFName;
 
 	public static String RemoveNodeXMLResolution_attrLabel;
 
@@ -325,18 +315,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String SimpleCSAddSubStepAction_1;
 
-	public static String SimpleCSCommandDetails_0;
-
-	public static String SimpleCSCommandDetails_1;
-
-	public static String SimpleCSCommandDetails_2;
-
-	public static String SimpleCSCommandDetails_3;
-
-	public static String SimpleCSCommandDetails_4;
-
-	public static String SimpleCSCommandDetails_5;
-
 	public static String SimpleCSCommandDetails_6;
 
 	public static String SimpleCSCommandDetails_DFErrorBody;
@@ -345,13 +323,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String SimpleCSDescriptionDetails_0;
 
-	public static String SimpleCSDescriptionDetails_1;
-
-	public static String SimpleCSDescriptionDetails_2;
-
 	public static String SimpleCSDetails_0;
-
-	public static String SimpleCSDetails_1;
 
 	public static String SimpleCSDetails_2;
 
@@ -391,23 +363,15 @@ public class PDEUIMessages extends NLS {
 
 	public static String SimpleCSItemDetails_0;
 
-	public static String SimpleCSItemDetails_1;
-
 	public static String SimpleCSItemDetails_11;
 
 	public static String SimpleCSItemDetails_10;
 
 	public static String SimpleCSItemDetails_12;
 
-	public static String SimpleCSItemDetails_2;
-
 	public static String SimpleCSItemDetails_13;
 
-	public static String SimpleCSItemDetails_3;
-
 	public static String SimpleCSItemDetails_14;
-
-	public static String SimpleCSItemDetails_4;
 
 	public static String SimpleCSItemDetails_5;
 
@@ -431,27 +395,11 @@ public class PDEUIMessages extends NLS {
 
 	public static String SimpleCSSubItemDetails_0;
 
-	public static String SimpleCSSubItemDetails_1;
-
 	public static String SimpleCSSubItemDetails_10;
-
-	public static String SimpleCSSubItemDetails_2;
 
 	public static String SimpleCSSubItemDetails_11;
 
 	public static String SimpleCSSubItemDetails_3;
-
-	public static String SimpleCSSubItemDetails_4;
-
-	public static String SimpleCSSubItemDetails_5;
-
-	public static String SimpleCSSubItemDetails_6;
-
-	public static String SimpleCSSubItemDetails_7;
-
-	public static String SimpleCSSubItemDetails_8;
-
-	public static String SimpleCSSubItemDetails_9;
 
 	public static String TableSection_itemCount;
 
@@ -476,30 +424,9 @@ public class PDEUIMessages extends NLS {
 	public static String PluginModelManager_outOfSync;
 
 	// Status text #####################################
-	public static String ExternalModelManager_scanningProblems;
 	public static String ExtensionElementDetails_setSelectedDesc;
-	public static String ExternalModelManager_processingPath;
-	public static String Errors_SetupError;
-	public static String Errors_SetupError_NoPlatformHome;
 	public static String Errors_CreationError;
 	public static String Errors_CreationError_NoWizard;
-
-	public static String MissingPDENature_title;
-	public static String MissingPDENature_message;
-	public static String MissingPDENature_stopWarning;
-	public static String MissingPDENature_keepWarning;
-	public static String MissingPDENature_openWizard;
-
-	public static String MultiPageEditor_wrongEditor;
-	public static String MultiPageEditor_defaultPage_source;
-	public static String MultiPageEditor_defaultPage_overview;
-
-	public static String CodeGenerator_missing_title;
-	public static String CodeGenerator_missing_type;
-	public static String CodeGenerator_missing_types;
-	public static String CodeGenerator_desc_class;
-	public static String CodeGenerator_desc_constructor;
-	public static String CodeGenerator_desc_method;
 
 	// Reusable Parts ################################
 	public static String WizardCheckboxTablePart_selectAll;
@@ -509,8 +436,6 @@ public class PDEUIMessages extends NLS {
 	// Editors #######################################
 
 	// Source ##################################
-	public static String SourcePage_title;
-	public static String SourcePage_errorTitle;
 	public static String SourcePage_errorMessage;
 
 	// Outline #################################
@@ -522,21 +447,13 @@ public class PDEUIMessages extends NLS {
 	public static String PDEMultiPageContentOutline_SortingAction_description;
 
 	// build.properties editor #####################
-	public static String BuildEditor_header;
 	public static String BuildEditor_BuildPage_title;
-	public static String BuildEditor_Custom_plugin;
-	public static String BuiltFeaturesWizard_title;
-	public static String BuildEditor_Custom_fragment;
-	public static String BuildEditor_Custom_feature;
-
-	public static String BuildEditor_AddLibraryDialog_duplicate;
 	public static String BuildEditor_AddLibraryDialog_label;
 
 	public static String BuildEditor_RuntimeInfoSection_title;
 	public static String BuildEditor_RuntimeInfoSection_desc;
 	public static String BuildEditor_RuntimeInfoSection_duplicateLibrary;
 	public static String BuildEditor_RuntimeInfoSection_duplicateFolder;
-	public static String BuildEditor_RuntimeInfoSection_buildInclude;
 	public static String BuildEditor_RuntimeInfoSection_addLibrary;
 	public static String BuildEditor_RuntimeInfoSection_popupAdd;
 	public static String BuildEditor_RuntimeInfoSection_addFolder;
@@ -556,10 +473,7 @@ public class PDEUIMessages extends NLS {
 	public static String BuildEditor_ClasspathSection_jarsDesc;
 
 	// Feature Manifest Editor ####################
-	public static String FeatureEditor_previewAction_label;
 	public static String FeatureEditor_BuildAction_label;
-	public static String FeatureEditor_Unresolved_title;
-	public static String FeatureEditor_Unresolved_message;
 	public static String FeatureEditor_FeaturePage_title;
 	public static String FeatureEditor_InfoPage_title;
 	public static String FeatureEditor_InfoPage_heading;
@@ -567,12 +481,8 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureEditor_ReferencePage_heading;
 	public static String FeatureEditor_IncludesPage_title;
 	public static String FeatureEditor_IncludesPage_heading;
-	public static String FeatureEditor_ReferencePage_portabilityTitle;
-	public static String FeatureEditor_ReferencePage_portabilityDesc;
 	public static String FeatureEditor_DependenciesPage_heading;
 	public static String FeatureEditor_DependenciesPage_title;
-	public static String FeatureEditor_Version_title;
-	public static String FeatureEditor_Version_message;
 	public static String FeatureEditor_AdvancedPage_title;
 	public static String FeatureEditor_AdvancedPage_heading;
 
@@ -589,11 +499,8 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureEditor_SpecSection_patchedVersion;
 	public static String FeatureEditor_SpecSection_provider;
 	public static String FeatureEditor_SpecSection_plugin;
-	public static String FeatureEditor_SpecSection_browse;
-	public static String FeatureEditor_SpecSection_updateSite;
 	public static String FeatureEditor_SpecSection_updateUrlLabel;
 	public static String FeatureEditor_SpecSection_updateUrl;
-	public static String FeatureEditor_SpecSection_createJar;
 	public static String FeatureEditor_SpecSection_synchronize;
 	public static String FeatureEditor_SpecSection_badVersionTitle;
 	public static String FeatureEditor_SpecSection_badVersionMessage;
@@ -635,10 +542,8 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureEditor_InstallSection_colocation;
 	public static String FeatureEditor_InstallSection_exclusive;
 
-	public static String FeatureEditor_InfoSection_heading;
 	public static String FeatureEditor_InfoSection_desc;
 
-	public static String FeatureEditor_InfoSection_info;
 	public static String FeatureEditor_InfoSection_url;
 	public static String FeatureEditor_InfoSection_text;
 	public static String FeatureEditor_info_description;
@@ -673,13 +578,9 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureEditor_DataDetailsSection_title;
 	public static String FeatureEditor_DataDetailsSection_desc;
 
-	public static String FeatureEditor_modelsInUse_title;
-	public static String FeatureEditor_modelsInUse_message;
 	public static String FeatureExportJob_problems;
 	public static String FeatureExportJob_name;
 	public static String FeatureExportJob_error;
-
-	public static String BuildSiteJob_refresh;
 	
 	public static String FeatureEditor_RequiresSection_title;
 	public static String FeatureEditor_RequiresSection_desc;
@@ -708,15 +609,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureEditor_InfoPage_PublishingSection_title;
 	public static String FeatureEditor_InfoPage_PublishingSection_text;
-	public static String FeatureExportWizardPage_targetEnvironmentText;
 
 	public static String FeatureOutlinePage_discoverUrls;
 
 	// Plug-in Manifest Editor ########################
-	public static String ManifestEditor_DependenciesForm_title;
-
-	public static String ManifestEditor_DetailChildrenSection_title;
-	public static String ManifestEditor_DetailChildrenSection_bodyText;
 
 	public static String ManifestEditor_DetailExtensionPointSection_title;
 	public static String ManifestEditor_DetailExtensionPointSection_new;
@@ -727,7 +623,6 @@ public class PDEUIMessages extends NLS {
 	public static String ManifestEditor_DetailExtension_new;
 	public static String ManifestEditor_DetailExtension_edit;
 	public static String ManifestEditor_DetailExtension_newExtension;
-	public static String ManifestEditor_DetailExtension_collapseAll;
 	public static String ManifestEditor_DetailExtension_up;
 	public static String ManifestEditor_DetailExtension_down;
 
@@ -742,45 +637,9 @@ public class PDEUIMessages extends NLS {
 	public static String ManifestEditor_ExportSection_remove;
 	public static String PackageSelectionDialog_label;
 	public static String PackageSelectionDialog_title;
-	public static String PackageSelectionDialog_nopackages_message;
-
-	public static String ManifestEditor_LibraryTypeSection_title;
-	public static String ManifestEditor_LibraryTypeSection_desc;
-	public static String ManifestEditor_LibraryTypeSection_code;
-	public static String ManifestEditor_LibraryTypeSection_resources;
-
-	public static String ManifestEditor_ExtensionElementPR_finish;
-
-	public static String ManifestEditor_ExtensionPointForm_title;
-
-	public static String ManifestEditor_ExtensionPointSection_title;
-	public static String ManifestEditor_ExtensionPointSection_desc;
-	public static String ManifestEditor_ExtensionPointSection_fdesc;
-	public static String ManifestEditor_ExtensionPointSection_more;
 
 	public static String ManifestEditor_ExtensionSection_title;
-	public static String ManifestEditor_ExtensionSection_desc;
-	public static String ManifestEditor_ExtensionSection_fdesc;
-	public static String ManifestEditor_ExtensionSection_more;
-
-	public static String ManifestEditor_ExtensionForm_title;
-
-	public static String ManifestEditor_ExtensionsPropertySheet_newAttribute;
-	public static String ManifestEditor_ExtensionsPropertySheet_addAttAction_label;
-	public static String ManifestEditor_ExtensionsPropertySheet_addAttAction_tooltip;
-	public static String ManifestEditor_ExtensionsPropertySheet_removeAttAction_label;
-	public static String ManifestEditor_ExtensionsPropertySheet_removeAttAction_tooltip;
-	public static String ManifestEditor_ExtensionsPropertySheet_cloneAction_text;
-	public static String ManifestEditor_ExtensionsPropertySheet_cloneAction_tooltip;
-	public static String ManifestEditor_ExtensionsPropertySheet_newAttributeEntry;
-
-	public static String ManifestEditor_TemplatePage_title;
-	public static String ManifestEditor_templatePage_heading;
 	public static String ManifestEditor_OverviewPage_title;
-	public static String ManifestEditor_DependenciesPage_title;
-	public static String ManifestEditor_RuntimePage_title;
-	public static String ManifestEditor_ExtensionsPage_title;
-	public static String ManifestEditor_ExtensionPointsPage_title;
 
 	public static String ManifestEditor_ExtensionPointDetails_validate_errorStatus;
 	public static String ManifestEditor_ExtensionPointDetails_schemaLocation_title;
@@ -791,19 +650,13 @@ public class PDEUIMessages extends NLS {
 
 	public static String ManifestEditor_DeployingSection_title;
 
-	public static String ManifestEditor_JarsSection_title;
-	public static String ManifestEditor_JarsSection_desc;
 	public static String ManifestSourcePage_dependencies;
-	public static String ManifestEditor_JarsSection_new;
 	public static String ManifestEditor_JarsSection_dialogTitle;
 	public static String ManifestEditor_JarsSection_dialogMessage;
-	public static String ManifestEditor_JarsSection_rtitle;
-	public static String ManifestEditor_JarsSection_missingSource_duplicateFolder;
 
 	public static String ManifestEditor_LibrarySection_title;
 	public static String ManifestEditor_LibrarySection_fdesc;
 	public static String ManifestEditor_LibrarySection_desc;
-	public static String ManifestEditor_LibrarySection_new;
 	public static String ManifestEditor_LibrarySection_up;
 	public static String ManifestEditor_LibrarySection_down;
 	public static String ManifestEditor_LibrarySection_newLibrary;
@@ -815,36 +668,14 @@ public class PDEUIMessages extends NLS {
 	public static String ManifestEditor_RuntimeLibraryDialog_default;
 	public static String ManifestEditor_RuntimeLibraryDialog_validationError;
 
-	public static String ManifestEditor_noPlatformHome;
 	public static String ManifestSourcePage_libraries;
 	public static String ManifestSourcePage_extensions;
 	public static String MainMethodSearchEngine_search;
-	public static String ManifestEditor_ManifestPropertySheet_gotoAction_label;
-	public static String ManifestEditor_ManifestPropertySheet_gotoAction_tooltip;
-
-	public static String ManifestEditor_ImportListSection_title;
-	public static String ManifestEditor_ImportListSection_desc;
-	public static String ManifestEditor_ImportListSection_fdesc;
-	public static String ManifestEditor_ImportListSection_new;
-	public static String ManifestEditor_ImportListSection_loopWarning;
-	public static String ManifestEditor_ImportListSection_updateBuildPath;
-	public static String ManifestEditor_ImportListSection_updatingBuildPath;
-
-	public static String ManifestEditor_ImportStatusSection_title;
-	public static String ManifestEditor_ImportStatusSection_desc;
-	public static String ManifestEditor_ImportStatusSection_comboLabel;
-	public static String ManifestEditor_ImportStatusSection_comboLoops;
-	public static String ManifestEditor_ImportStatusSection_comboRefs;
-	public static String ManifestEditor_ImportStatusSection_comboFrefs;
-
-	public static String ManifestEditor_MatchSection_title;
+	
 	public static String MainTypeSelectionDialog_qualifier;
-	public static String ManifestEditor_MatchSection_desc;
 	public static String ManifestEditor_MatchSection_optional;
 	public static String ManifestEditor_MatchSection_reexport;
 	public static String ManifestEditor_MatchSection_version;
-	public static String ManifestEditor_MatchSection_rule;
-	public static String ManifestEditor_MatchSection_none;
 	public static String ManifestEditor_MatchSection_perfect;
 	public static String ManifestEditor_MatchSection_equivalent;
 	public static String ManifestEditor_MatchSection_compatible;
@@ -856,31 +687,15 @@ public class PDEUIMessages extends NLS {
 
 	public static String ManifestEditor_PluginSpecSection_versionMatch;
 
-	public static String ManifestEditor_PointUsageSection_title;
-	public static String ManifestEditor_PointUsageSection_desc;
-	public static String ManifestEditor_PointUsageSection_fdesc;
-
-	public static String ManifestEditor_RequiresSection_title;
-	public static String ManifestEditor_RequiresSection_desc;
-	public static String ManifestEditor_RequiresSection_fdesc;
-	public static String ManifestEditor_RequiresSection_more;
-
 	public static String ResourceAttributeCellEditor_title;
 	public static String ResourceAttributeCellEditor_message;
 
 	public static String ManifestEditor_RuntimeForm_title;
 	public static String MainTypeSelectionDialog_matching;
-
-	public static String ManifestEditor_RuntimeSection_title;
-	public static String ManifestEditor_RuntimeSection_fdesc;
-	public static String ManifestEditor_RuntimeSection_desc;
-	public static String ManifestEditor_RuntimeSection_more;
 	public static String ManifestSourcePage_extensionPoints;
 	public static String MainTypeSelectionDialog_chooseType;
 
 	public static String ManifestEditor_TestingSection_title;
-
-	public static String ManifestEditor_PropertyPage_tagName;
 
 	// Schema Editor ##################################
 	public static String SchemaEditorContributor_previewAction;
@@ -907,12 +722,6 @@ public class PDEUIMessages extends NLS {
 	public static String SchemaEditor_ElementSection_newElement;
 	public static String SchemaEditor_ElementSection_newAttribute;
 
-	public static String RestrictionDialog_wtitle;
-	public static String RestrictionDialog_type;
-	public static String RestrictionDialog_choices;
-	public static String RestrictionDialog_newChoice;
-	public static String RestrictionDialog_add;
-	public static String RestrictionDialog_remove;
 	public static String ReviewPage_noSampleFound;
 
 	public static String SchemaEditor_NewAttribute_label;
@@ -928,7 +737,6 @@ public class PDEUIMessages extends NLS {
 	public static String SchemaEditor_FormPage_title;
 	public static String SchemaEditor_DocPage_title;
 
-	public static String AbstractPluginModelBase_error;
 	// Launchers #######################################
 	public static String MainTab_name;
 	public static String WorkspaceDataBlock_workspace;
@@ -939,13 +747,10 @@ public class PDEUIMessages extends NLS {
 	public static String ProgramBlock_runProduct;
 	public static String BasicLauncherTab_jre;
 	public static String BasicLauncherTab_installedJREs;
-	public static String BasicLauncherTab_jrePreferencePage;
 	public static String ProgramBlock_programToRun;
 	public static String BasicLauncherTab_bootstrap;
 	public static String BasicLauncherTab_javaExecDefault;
 	public static String ProgramBlock_runApplication;
-	public static String BasicLauncherTab_noJRE;
-	public static String WorkspaceDataBlock_noWorkspace;
 	public static String JUnitProgramBlock_headless;
 
 	public static String AdvancedLauncherTab_name;
@@ -966,7 +771,6 @@ public class PDEUIMessages extends NLS {
 	public static String AdvancedLauncherTab_noProblems;
 	public static String AdvancedFeatureExportPage_jnlp;
 	public static String AdvancedPluginExportPage_alias;
-	public static String AdvancedLauncherTab_includeFragments;
 	public static String AdvancedLauncherTab_includeOptional;
 	public static String AdvancedFeatureExportPage_siteURL;
 	public static String AdvancedPluginExportPage_keystore;
@@ -996,7 +800,6 @@ public class PDEUIMessages extends NLS {
 	public static String ConfigurationSection_title;
 	public static String ConfigurationSection_desc;
 	public static String ConfigurationSection_file;
-	public static String ConfigurationTab_configBrowse;
 	public static String ConfigurationSection_existing;
 	public static String ConfigurationTab_configLocMessage;
 	public static String ConfigurationTab_configFileGroup;
@@ -1006,7 +809,6 @@ public class PDEUIMessages extends NLS {
 	public static String ConfigurationSection_default;
 	public static String ConfigurationSection_browse;
 	public static String ConfigurationSection_message;
-	public static String ConfigurationTab_templateBrowse;
 	public static String ConfigurationTab_fileSelection;
 	public static String ConfigurationSection_selection;
 	public static String ConfigurationTab_fileDialogMessage;
@@ -1015,11 +817,8 @@ public class PDEUIMessages extends NLS {
 	public static String WorkbenchLauncherConfigurationDelegate_noJRE;
 	public static String WorkbenchLauncherConfigurationDelegate_jrePathNotFound;
 	public static String WorkbenchLauncherConfigurationDelegate_badFeatureSetup;
-	public static String WorkbenchLauncherConfigurationDelegate_starting;
 	public static String WorkbenchLauncherConfigurationDelegate_noStartup;
 	public static String WorkbenchLauncherConfigurationDelegate_confirmDeleteWorkspace;
-	public static String JUnitLaunchConfiguration_error_invalidproject;
-	public static String JUnitLaunchConfiguration_error_notests;
 	public static String JUnitLaunchConfiguration_error_notaplugin;
 	public static String JUnitLaunchConfiguration_error_missingPlugin;
 
@@ -1060,21 +859,17 @@ public class PDEUIMessages extends NLS {
 
 	// Preferences ####################################
 	public static String Preferences_MainPage_Description;
-	public static String Preferences_MainPage_noPDENature;
 
 	public static String Preferences_MainPage_showObjects;
 	public static String Preferences_MainPage_useIds;
 	public static String Preferences_MainPage_useFullNames;
 
 	public static String Preferences_TargetPlatformPage_Description;
-	public static String Preferences_TargetPlatformPage_useThis;
 	public static String Preferences_TargetPlatformPage_PlatformHome;
 	public static String Preferences_TargetPlatformPage_PlatformHome_Button;
 	public static String Preferences_TargetPlatformPage_title;
 	public static String Preferences_TargetPlatformPage_question;
 	public static String ExternalPluginsBlock_reload;
-	public static String ExternalPluginsBlock_selectAll;
-	public static String ExternalPluginsBlock_deselectAll;
 	public static String ExternalPluginsBlock_addRequired;
 	public static String ExternalPluginsBlock_workingSet;
 
@@ -1090,7 +885,6 @@ public class PDEUIMessages extends NLS {
 	public static String SourceBlock_desc;
 
 	//
-	public static String PluginPathUpdater_updating;
 
 	// Wizards #######################################
 	public static String NewFragmentProjectWizard_title;
@@ -1102,17 +896,12 @@ public class PDEUIMessages extends NLS {
 	public static String NewProjectWizard_MainPage_title;
 	public static String NewProjectWizard_MainPage_desc;
 
-	public static String ProjectStructurePage_title;
 	public static String ProjectNamesPage_emptyName;
-	public static String ProjectStructurePage_ftitle;
-	public static String ProjectStructurePage_desc;
 	public static String ProjectStructurePage_settings;
-	public static String ProjectStructurePage_simple;
 	public static String ProjectStructurePage_java;
 	public static String ProjectStructurePage_library;
 	public static String ProjectStructurePage_source;
 	public static String ProjectStructurePage_output;
-	public static String ProjectStructurePage_noOutput;
 
 	public static String ProjectNamesPage_projectName;
 	public static String ProjectNamesPage_multiProjectName;
@@ -1164,9 +953,6 @@ public class PDEUIMessages extends NLS {
 	public static String NewLibraryPluginProjectWizard_title;
 	public static String NewLibraryPluginCreationPage_title;
 	public static String NewLibraryPluginCreationPage_desc;
-	public static String NewLibraryPluginCreationPage_pformat;
-	public static String NewLibraryPluginCreationPage_pTarget;
-	public static String NewLibraryPluginCreationPage_bundle;
 	public static String NewLibraryPluginCreationPage_jarred;
 	public static String NewLibraryPluginCreationPage_pGroup;
 	public static String NewLibraryPluginCreationPage_pid;
@@ -1214,13 +1000,9 @@ public class PDEUIMessages extends NLS {
 	public static String NewFeatureWizard_SpecPage_name;
 	public static String NewFeatureWizard_SpecPage_version;
 	public static String NewFeatureWizard_SpecPage_provider;
-	public static String NewFeatureWizard_SpecPage_description;
 	public static String NewFeatureWizard_SpecPage_versionFormat;
-	public static String NewFeatureWizard_sampleCopyrightURL;
 	public static String NewFeatureWizard_sampleCopyrightDesc;
-	public static String NewFeatureWizard_sampleLicenseURL;
 	public static String NewFeatureWizard_sampleLicenseDesc;
-	public static String NewFeatureWizard_sampleDescriptionURL;
 	public static String NewFeatureWizard_sampleDescriptionDesc;
 	public static String NewSiteProjectCreationPage_webTitle;
 	public static String NewFeatureWizard_SpecPage_missing;
@@ -1231,12 +1013,9 @@ public class PDEUIMessages extends NLS {
 	public static String NewFeatureWizard_PlugPage_desc;
 
 	public static String NewFeatureWizard_creatingProject;
-	public static String NewFeatureWizard_creatingFolders;
 	public static String NewFeatureWizard_creatingManifest;
 	public static String NewFeatureWizard_overwriteFeature;
 	public static String NewFeatureWizard_SpecPage_library;
-	public static String NewFeatureWizard_SpecPage_customProject;
-	public static String NewFeatureWizard_SpecPage_patch_customProject;
 	public static String NewFeatureWizard_SpecPage_patchProperties;
 
 	public static String FeatureDetailsSection_title;
@@ -1264,8 +1043,6 @@ public class PDEUIMessages extends NLS {
 	public static String NewFeaturePatch_SpecPage_notFound;
 	public static String FeatureSelectionDialog_title;
 	public static String FeatureSelectionDialog_message;
-	public static String PatchPlugins_title;
-	public static String PatchPlugins_desc;
 
 	public static String VersionSyncWizard_wtitle;
 	public static String VersionSyncWizard_title;
@@ -1324,7 +1101,6 @@ public class PDEUIMessages extends NLS {
 	public static String BaseExtensionPoint_sections_copyright;
 	public static String BaseExportWizard_confirmReplace_title;
 	public static String BaseExtensionPoint_generating;
-	public static String GenericExtensionWizard_wtitle;
 	public static String GeneralInfoSection_version;
 	public static String GeneralInfoSection_provider;
 	public static String GeneralInfoSection_pluginId;
@@ -1334,22 +1110,17 @@ public class PDEUIMessages extends NLS {
 
 	public static String NewWizard_wtitle;
 	public static String NewExtensionWizard_wtitle;
-	public static String NewExtensionWizard_title;
 	public static String NewElementAction_generic;
-	public static String NewExtensionWizard_desc;
-	public static String NewExtensionWizard_statusMessage;
 	public static String NewExtensionWizard_PointSelectionPage_title;
 	public static String NewExtensionWizard_PointSelectionPage_desc;
 	public static String NewExtensionRegistryReader_missingProperty;
 	public static String NewExtensionTemplateWizard_generating;
 	public static String NewExtensionWizard_PointSelectionPage_filterCheck;
-	public static String NewExtensionWizard_PointSelectionPage_descButton;
 	public static String NewExtensionWizard_PointSelectionPage_dependencyTitle;
 	public static String NewExtensionWizard_PointSelectionPage_dependencyMessage;
 	public static String NewExtensionWizard_PointSelectionPage_availExtPoints_label;
 	public static String NewExtensionWizard_PointSelectionPage_contributedTemplates_title;
 	public static String NewExtensionWizard_PointSelectionPage_contributedTemplates_label;
-	public static String NewExtensionWizard_PointSelectionPage_showDetails;
 	public static String NewExtensionWizard_PointSelectionPage_templateDescription;
 	public static String NewExtensionWizard_PointSelectionPage_pluginDescription;
 	public static String NewExtensionWizard_PointSelectionPage_extPointDescription;
@@ -1381,7 +1152,6 @@ public class PDEUIMessages extends NLS {
 	public static String ConvertedProjectWizard_desc;
 	public static String ConvertedProjectWizard_projectList;
 	public static String ConvertedProjectWizard_converting;
-	public static String ConvertedProjectWizard_updating;
 	public static String ConvertProjectsAction_find;
 	public static String ConvertProjectsAction_none;
 
@@ -1389,7 +1159,6 @@ public class PDEUIMessages extends NLS {
 	// Supplied templates
 
 	public static String PluginCodeGeneratorWizard_title;
-	public static String PluginContentPage_invalidAppID;
 
 	public static String EditorNewWizard_wtitle;
 	public static String EditorTemplate_title;
@@ -1484,7 +1253,6 @@ public class PDEUIMessages extends NLS {
 	public static String PreferencePageTemplate_className;
 	public static String PreferencePageTemplate_pageName;
 	public static String PreferencePageTemplate_defaultPageName;
-	public static String Product_PluginSection_includeFragments;
 	public static String ProductDefinitonWizardPage_productGroup;
 	public static String ProductDefinitonWizardPage_productExists;
 	public static String ProductDefinitonWizardPage_application;
@@ -1495,7 +1263,6 @@ public class PDEUIMessages extends NLS {
 	public static String ProductDefinitonWizardPage_applicationGroup;
 	public static String ProductDefinitonWizardPage_notInWorkspace;
 	public static String ProductDefinitionOperation_readOnly;
-	public static String ProductDefinitionOperation_malformed;
 
 	public static String PropertyPageNewWizard_wtitle;
 	public static String PropertyPageTemplate_title;
@@ -1533,7 +1300,6 @@ public class PDEUIMessages extends NLS {
 	public static String ViewTemplate_toolbar;
 	public static String ViewTemplate_pulldown;
 	public static String ViewTemplate_sorting;
-	public static String ViewTemplate_filtering;
 	public static String ViewTemplate_addToPerspective;
 
 	public static String HelpTemplate_title;
@@ -1597,10 +1363,8 @@ public class PDEUIMessages extends NLS {
 	public static String PluginSelectionDialog_message;
 	public static String PluginImportOperation_linking;
 	public static String PluginContentPage_appQuestion;
-	public static String PluginSelectionDialog_workspacePlugins;
 	public static String PluginValidationOperation_invalidSingular;
 	public static String PluginValidationOperation_invalidPlural;
-	public static String PluginSelectionDialog_externalPlugins;
 
 	public static String ImportWizard_title;
 	public static String ImportWizard_noToAll;
@@ -1657,15 +1421,12 @@ public class PDEUIMessages extends NLS {
 
 	public static String ImportWizard_operation_creating;
 	public static String ImportWizard_operation_multiProblem;
-	public static String ImportWizard_operation_problem;
 	public static String ImportWizard_operation_creating2;
-	public static String ImportWizard_operation_extracting;
 	public static String ImportWizard_operation_copyingSource;
 
 	public static String FeatureImportWizard_FirstPage_title;
 	public static String FeatureImportWizard_FirstPage_desc;
 	public static String FeatureImportWizard_FirstPage_runtimeLocation;
-	public static String FeatureImportWizard_FirstPage_otherLocation;
 	public static String FeatureImportWizard_FirstPage_otherFolder;
 	public static String FeatureImportWizard_FirstPage_binaryImport;
 	public static String FeatureImportWizard_FirstPage_browse;
@@ -1675,10 +1436,8 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureImportWizard_errors_buildFolderInvalid;
 	public static String FeatureImportWizard_errors_buildFolderMissing;
 
-	public static String FeatureImportWizard_messages_loadingRuntime;
 	public static String FeatureImportWizard_messages_updating;
 	public static String FeatureImportWizard_title;
-	public static String FeatureMatchSection_patch;
 	public static String FeatureSection_removeAll;
 	public static String FeatureImportWizard_noToAll;
 	public static String FeatureImportWizard_messages_noFeatures;
@@ -1687,7 +1446,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureImportWizard_operation_creating;
 	public static String FeatureImportWizard_operation_multiProblem;
-	public static String FeatureImportWizard_operation_problem;
 	public static String FeatureImportWizard_operation_creating2;
 
 	public static String UpdateBuildpathWizard_wtitle;
@@ -1701,18 +1459,11 @@ public class PDEUIMessages extends NLS {
 	public static String EditorActions_copy;
 	public static String EditorActions_paste;
 	public static String EditorActions_revert;
-	public static String Actions_properties_label;
 	public static String Actions_open_label;
-	public static String Actions_refresh_label;
 	public static String Actions_delete_label;
 	public static String Actions_synchronizeVersions_label;
-	public static String Actions_edit_label;
-
-	public static String Actions_delete_flabel;
-
+	
 	public static String Menus_new_label;
-	public static String Menus_edit_label;
-	public static String Menus_goTo_label;
 
 	public static String Actions_Feature_OpenProjectWizardAction;
 	public static String Actions_Site_OpenProjectWizardAction;
@@ -1722,11 +1473,9 @@ public class PDEUIMessages extends NLS {
 	public static String UpdateClasspathJob_task;
 	public static String UpdateClasspathJob_title;
 
-	public static String RuntimeWorkbenchShortcut_launchFailed;
 	public static String RuntimeWorkbenchShortcut_title;
 	public static String RuntimeWorkbenchShortcut_select_debug;
 	public static String RuntimeWorkbenchShortcut_select_run;
-	public static String RuntimeWorkbenchShortcut_name;
 	public static String RuntimeInfoSection_addEntry;
 	public static String RuntimeInfoSection_rename;
 	public static String BaseExtensionPointMainPage_pluginId_tooltip;
@@ -1737,9 +1486,6 @@ public class PDEUIMessages extends NLS {
 	public static String BaseExtensionPointMainPage_since;
 	public static String BaseExtensionPointMainPage_schemaLocation_title;
 	public static String BaseExtensionPointMainPage_schemaLocation_desc;
-	public static String SourcePreferencePage_new_title;
-	public static String SourcePreferencePage_column_name;
-	public static String SourcePreferencePage_column_path;
 	public static String SourcePreferencePage_dialogMessage;
 	public static String EditorPreferencePage_colorSettings;
 	public static String EditorPreferencePage_text;
@@ -1766,10 +1512,8 @@ public class PDEUIMessages extends NLS {
 	public static String SearchPage_all;
 	public static String SearchPage_enabledOnly;
 	public static String SearchPage_none;
-	public static String Search_singleMatch;
 	public static String SearchResult_match;
 	public static String SelectionPage_desc;
-	public static String Search_multipleMatches;
 	public static String SearchAction_references;
 	public static String SearchAction_Declaration;
 	public static String ShowDescriptionAction_label;
@@ -1779,22 +1523,18 @@ public class PDEUIMessages extends NLS {
 	public static String DependencyExtent_plural;
 	public static String DetailsBlock_horizontal;
 	public static String DependencyExtent_found;
-	public static String DependencyExtent_searching;
 	public static String DependencyExtentAction_label;
-	public static String DependencyExtent_references;
 	public static String DependencyExtentQuery_label;
 	public static String UnusedDependencies_title;
 	public static String UnusedDependencies_action;
 	public static String UnusedDependencies_notFound;
 	public static String UnusedDependenciesJob_viewResults;
 	public static String UnusedDependenciesAction_jobName;
-	public static String UnusedDependencies_found;
 	public static String UnusedDependencies_remove;
 	public static String UnusedDependencies_analyze;
 	public static String UnusedDependencies_unused;
 	public static String RemoveExportPkgs_label;
 	public static String RemoveExportPkgs_description;
-	public static String RemoveExportPkgs_jobName;
 
 	public static String DependenciesView_open;
 	public static String DependenciesView_ShowCalleesAction_label;
@@ -1829,7 +1569,6 @@ public class PDEUIMessages extends NLS {
 	public static String DependencyAnalysisSection_loops;
 	public static String DependencyAnalysisSection_noCycles;
 	public static String DependencyAnalysisSection_references;
-	public static String DependencyAnalysisSection_dialogtitle;
 	public static String DependencyExtentOperation_searching;
 	public static String DependencyExtentOperation_inspecting;
 	public static String DependencyExtentSearchResult_dependency;
@@ -1860,7 +1599,6 @@ public class PDEUIMessages extends NLS {
 	public static String PluginsView_systemEditor;
 	public static String PluginsView_manifestEditor;
 	public static String PluginContentPage_rcpGroup;
-	public static String PluginContentPage_appClass;
 	public static String PluginWorkingSet_emptyName;
 	public static String PluginWorkingSet_nameInUse;
 	public static String PluginsView_schemaEditor;
@@ -1890,8 +1628,6 @@ public class PDEUIMessages extends NLS {
 	public static String PluginsView_unableToOpen;
 	public static String PluginWorkingSet_setName;
 	public static String PluginStatusDialog_label;
-	public static String PluginContentPage_appID;
-	public static String PluginContentPage_noApp;
 	public static String PluginSection_removeAll;
 	public static String PluginsView_disabled;
 	public static String PluginContentPage_no;
@@ -1903,10 +1639,8 @@ public class PDEUIMessages extends NLS {
 	public static String NewSiteWizard_wtitle;
 	public static String NewSiteWizard_MainPage_title;
 	public static String NewSiteWizard_creatingProject;
-	public static String NewSiteWizard_creatingFolders;
 	public static String NewSiteWizard_creatingManifest;
 	public static String NewSiteWizard_MainPage_desc;
-	public static String NewFeatureWizard_overwriteSite;
 
 	//
 	public static String SiteHTML_checkLabel;
@@ -1915,7 +1649,6 @@ public class PDEUIMessages extends NLS {
 	public static String SiteHTML_loadError;
 
 	//
-	public static String FeatureBuildOperation_running;
 
 	public static String CompilersConfigurationBlock_error;
 	public static String CompilersConfigurationBlock_warning;
@@ -1923,7 +1656,6 @@ public class PDEUIMessages extends NLS {
 	public static String CompilersConfigurationBlock_plugins;
 	public static String CompilersConfigurationBlock_schemas;
 	public static String CompilersConfigurationBlock_features;
-	public static String CompilersConfigurationBlock_sites;
 	public static String CompilersConfigurationBlock_label;
 	public static String CompilersConfigurationBlock_altlabel;
 
@@ -1946,8 +1678,6 @@ public class PDEUIMessages extends NLS {
 	public static String compilers_s_create_docs;
 	public static String compilers_s_doc_folder;
 	public static String compilers_s_open_tags;
-	public static String compilers_s_forbidden_end_tags;
-	public static String compilers_s_optional_end_tags;
 
 	public static String compilers_f_unresolved_plugins;
 	public static String compilers_f_unresolved_features;
@@ -1957,9 +1687,6 @@ public class PDEUIMessages extends NLS {
 	public static String CompilersConfigurationBlock_rebuild_many_title;
 	public static String CompilersConfigurationBlock_rebuild_many_message;
 	public static String CompilersConfigurationBlock_building;
-
-	public static String SchemaMarkerResolutionGenerator_label;
-
 
 	public static String ExportWizard_Plugin_pageTitle;
 	public static String ExportWizard_Feature_pageTitle;
@@ -1977,7 +1704,6 @@ public class PDEUIMessages extends NLS {
 	public static String ExportWizard_antCheck;
 	public static String ExportWizard_dialog_title;
 	public static String ExportWizard_dialog_message;
-	public static String ExportWizard_error_message;
 	public static String ExportWizard_status_noselection;
 	public static String ExportWizard_status_nodirectory;
 	public static String ExportWizard_status_nofile;
@@ -1989,27 +1715,10 @@ public class PDEUIMessages extends NLS {
 	public static String ExtensionDetails_id;
 	public static String ExtensionDetails_name;
 	public static String ExtensionDetails_point;
-	public static String ExportWizard_zipFileExists;
-	public static String ExportWizard_targetEnv_button;
-	public static String ExportSection_successfulSync;
 
 	public static String ExportJob_error_message;
-	public static String ExportJob_exporting;
-	public static String ExportJob_jobTitle;
-	public static String ExportSection_sync;
-
-	public static String SiteEditorContributor_build;
-	public static String SiteEditorContributor_rebuildAll;
-	public static String GrammarPropertySource_minOccursFormat;
-	public static String GrammarPropertySource_maxOccursFormat;
-	public static String GrammarPropertySource_minOccursValue;
-	public static String GrammarPropertySource_maxOccursValue;
-	public static String ReferencePropertySource_minOccurs_value;
-	public static String ReferencePropertySource_maxOccurs_value;
 	public static String FeatureImportWizard_DetailedPage_problemsLoading;
-	public static String NewFeatureDialog_alreadyDefined;
 	public static String NewArchiveDialog_alreadyExists;
-	public static String UpdateClasspathAction_missingPlugin_title;
 	public static String UpdateClasspathAction_find;
 	public static String UpdateClasspathAction_none;
 	public static String RenameDialog_label;
@@ -2094,8 +1803,6 @@ public class PDEUIMessages extends NLS {
 	public static String RequiresSection_add;
 	public static String RequiresSection_up;
 	public static String RequiresSection_open;
-	public static String RequiresSection_compute;
-	public static String RequiresSection_update;
 	public static String RequiresSection_delete;
 	public static String LoopDialog_title;
 	public static String MatchSection_title;
@@ -2104,7 +1811,6 @@ public class PDEUIMessages extends NLS {
 	public static String MatchSection_desc;
 	public static String MailTemplate_desc;
 	public static String ClasspathSection_jarsMessage;
-	public static String ClasspathSection_rename;
 	public static String OverviewPage_exportingTitle;
 	public static String OverviewPage_content;
 	public static String OverviewPage_osgi;
@@ -2119,10 +1825,6 @@ public class PDEUIMessages extends NLS {
 	public static String OverviewPage_fTesting;
 	public static String OverviewPage_fDeploying;
 	public static String ClassAttributeRow_dialogTitle;
-	public static String AttributePropertySource_assertBoolean;
-	public static String AttributePropertySource_translatable;
-	public static String AttributePropertySource_deprecated;
-	public static String AttributePropertySource_invalidRestriction;
 	public static String ArchivePage_title;
 	public static String ArchivePage_name;
 
@@ -2160,8 +1862,6 @@ public class PDEUIMessages extends NLS {
 	public static String PluginValidationOperation_missingImport;
 	public static String PluginValidationOperation_missingParent;
 	public static String PluginValidationOperation_disabledParent;
-	public static String ElementPropertySource_translatable;
-	public static String ElementPropertySource_deprecated;
 	public static String TargetPlatformPreferencePage_pluginsTab;
 	public static String TargetPlatformPreferencePage_sourceCode;
 	public static String TargetPlatformPreferencePage_environmentTab;
@@ -2178,7 +1878,6 @@ public class PDEUIMessages extends NLS {
 	public static String ProductInfoSection_titleLabel;
 	public static String Product_PluginSection_required;
 	public static String ProductInfoSection_prodIdLabel;
-	public static String ProductExportAction_errorTitle;
 	public static String ProductExportWizardPage_title;
 	public static String ProductExportWizardPage_config;
 	public static String ProductExportWizardPage_browse;
@@ -2191,11 +1890,8 @@ public class PDEUIMessages extends NLS {
 	public static String ProductInfoSection_title;
 	public static String Product_PluginSection_add;
 	public static String Product_PluginSection_title;
-	public static String Product_ExportSection_title;
 	public static String Product_FeatureSection_desc;
 	public static String ProductInfoSection_appLabel;
-	public static String ProductExportAction_jobName;
-	public static String ProductExportJob_jobName;
 	public static String ProductExportWizardPage_desc;
 	public static String ProductExportWizardPage_root;
 	public static String ProductExportWizardPage_sync;
@@ -2213,10 +1909,8 @@ public class PDEUIMessages extends NLS {
 	public static String ProductDefinitonWizardPage_noPluginId;
 	public static String ProductDefinitonWizardPage_noPlugin;
 	public static String ProductDefinitonWizardPage_invalidId;
-	public static String Product_ExportSection_includeSource;
 	public static String Product_FeatureSection_title;
 	public static String Product_FeatureSection_newFeature;
-	public static String ProductExportAction_noDestination;
 	public static String ProductExportWizardPage_productGroup;
 	public static String ProductExportWizardPage_productNotExists;
 	public static String ProductExportWizardPage_wrongExtension;
@@ -2227,7 +1921,6 @@ public class PDEUIMessages extends NLS {
 	public static String ProductExportWizardPage_noProduct;
 	public static String Product_OverviewPage_testing;
 	public static String Product_PluginSection_desc;
-	public static String Product_ExportSection_desc;
 	public static String Product_FeatureSection_add;
 	public static String ProductFileWizadPage_title;
 	public static String ProductFileWizadPage_basic;
@@ -2301,8 +1994,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExportPackageVisibilitySection_hideAll;
 
-	public static String ExportPackageVisibilitySection_hideOnly;
-
 	public static String ExportPackageSection_0;
 
 	public static String ExportPackageSection_add;
@@ -2339,8 +2030,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String DependencyPropertiesDialog_version;
 
-	public static String DependencyPropertiesDialog_invalidRange;
-
 	public static String DependencyPropertiesDialog_invalidFormat;
 
 	public static String RequiresSection_properties;
@@ -2374,8 +2063,6 @@ public class PDEUIMessages extends NLS {
 	public static String OverviewPage_buildTitle;
 
 	public static String OverviewPage_buildQuestion;
-
-	public static String BaseExportWizardPage_compilerOptions;
 
 	public static String PluginWorkingSet_message;
 
@@ -2613,8 +2300,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String OptionalRequireBundleResolution_label;
 
-	public static String OrganizeManifestJob_ok;
-
 	public static String OrganizeManifestJob_taskName;
 
 	public static String RemoveImportPkgResolution_description;
@@ -2624,8 +2309,6 @@ public class PDEUIMessages extends NLS {
 	public static String OptionalImportPkgResolution_description;
 
 	public static String OptionalImportPkgResolution_label;
-
-	public static String OrganizeManifestAction_name;
 
 	public static String OrganizeRequireBundleResolution_Description;
 
@@ -2768,8 +2451,6 @@ public class PDEUIMessages extends NLS {
 	public static String SecondaryBundlesSection_title;
 
 	public static String SecondaryBundlesSection_desc;
-
-	public static String SecondaryBundlesSection_check;
 
 	public static String SecondaryBundlesSection_resolve;
 
@@ -2965,8 +2646,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String XHTMLConversionWizardPage_desc;
 
-	public static String XHTMLConversionWizardPage_invalidText;
-
 	public static String XHTMLConversionWizardPage_selectAll;
 
 	public static String XHTMLConversionWizardPage_deselectAll;
@@ -3014,8 +2693,6 @@ public class PDEUIMessages extends NLS {
 	public static String TargetPluginsTab_groupPlugins;
 
 	public static String CompilersConfigurationTab_buildPropertiesErrors;
-
-	public static String XHTMLConversionOperation_updatingToc;
 
 	public static String XHTMLConversionOperation_failed;
 
