@@ -43,6 +43,8 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.dialogs.FilteredTree;
+import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 import org.osgi.framework.Bundle;
@@ -52,6 +54,7 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 	
 	public static final String SHOW_RUNNING_PLUGINS = "RegistryView.showRunning.label"; //$NON-NLS-1$
 	
+	private FilteredTree fFilteredTree;
 	private TreeViewer fTreeViewer;
 	private IMemento fMemento;
 	
@@ -128,7 +131,6 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		makeActions();
 		createTreeViewer(composite);
 		fillToolBar();
-		fTreeViewer.refresh();
 		setContentDescription(((RegistryBrowserContentProvider)fTreeViewer.getContentProvider()).getTitleSummary());
 		
 		Platform.getExtensionRegistry().addRegistryChangeListener(this);
@@ -141,10 +143,12 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));	
 		
-		Tree tree = new Tree(composite, SWT.FLAT | SWT.MULTI);
+		fFilteredTree = new RegistryFilteredTree(composite, SWT.MULTI, new PatternFilter());
+		fFilteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		Tree tree = fFilteredTree.getViewer().getTree();
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		tree.setLayoutData(gd);
-		fTreeViewer = new TreeViewer(tree);
+		fFilteredTree.setLayoutData(gd);
+		fTreeViewer = fFilteredTree.getViewer();
 		boolean showRunning = fMemento.getString(SHOW_RUNNING_PLUGINS).equals("true") ? true : false; //$NON-NLS-1$
 		fTreeViewer.setContentProvider(new RegistryBrowserContentProvider(fTreeViewer, showRunning));
 		fTreeViewer.setLabelProvider(new RegistryBrowserLabelProvider(fTreeViewer));
@@ -244,7 +248,7 @@ public class RegistryBrowser extends ViewPart implements BundleListener, IRegist
 	}
 	
 	public void setFocus() {
-		fTreeViewer.getTree().setFocus();
+		fFilteredTree.getFilterControl().setFocus();
 	}
 	
 	/*
