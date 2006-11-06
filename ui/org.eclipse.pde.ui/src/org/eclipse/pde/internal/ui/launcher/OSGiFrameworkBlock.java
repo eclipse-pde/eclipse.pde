@@ -68,7 +68,7 @@ public class OSGiFrameworkBlock {
 		fLauncherCombo = new Combo(composite, SWT.READ_ONLY);
 		for (int i = 0; i < fConfigElements.length; i++) 
 			fLauncherCombo.add(fConfigElements[i].getAttribute("name")); //$NON-NLS-1$
-		fLauncherCombo.addModifyListener(fListener);
+		fLauncherCombo.addSelectionListener(fListener);
 		
 		label = new Label(composite, SWT.NONE);
 		GridData gd = new GridData();
