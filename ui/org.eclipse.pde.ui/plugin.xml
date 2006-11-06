@@ -1284,14 +1284,6 @@
             modes="run, debug"
             id="org.eclipse.pde.ui.JunitLaunchConfig"
             migrationDelegate="org.eclipse.jdt.internal.junit.launcher.JUnitMigrationDelegate">
-         <fileExtension
-               default="false"
-               extension="java">
-         </fileExtension>
-         <fileExtension
-               default="false"
-               extension="class">
-         </fileExtension>
       </launchConfigurationType>
       <launchConfigurationType
             delegate="org.eclipse.pde.ui.launcher.OSGiLaunchConfigurationDelegate"
