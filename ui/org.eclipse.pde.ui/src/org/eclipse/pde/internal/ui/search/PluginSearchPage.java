@@ -268,8 +268,10 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		patternCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int index = previousQueries.size() - patternCombo.getSelectionIndex() - 1;
-				QueryData data = (QueryData)previousQueries.get(index);
-				resetPage(data);
+				if(previousQueries.size() > index) {
+					QueryData data = (QueryData)previousQueries.get(index);
+					resetPage(data);
+				}
 				container.setPerformActionEnabled(patternCombo.getText().length() > 0);
 			}
 		});
