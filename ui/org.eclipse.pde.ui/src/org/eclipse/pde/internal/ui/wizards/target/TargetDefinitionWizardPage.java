@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -114,7 +115,7 @@ public class TargetDefinitionWizardPage extends WizardNewFileCreationPage {
 				try {
 					URL url = getExternalTargetURL();
 					if (url != null)
-						stream = url.openStream();
+						stream = new BufferedInputStream(url.openStream());
  					if (stream != null) {
 						ITargetModel model = new TargetModel();
 						model.load(stream, false);

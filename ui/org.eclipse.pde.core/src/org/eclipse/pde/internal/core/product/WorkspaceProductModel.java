@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +48,7 @@ public class WorkspaceProductModel extends ProductModel implements IEditableMode
 		if (fFile.exists()) {
 			InputStream stream = null;
 			try {
-				stream = fFile.getContents(true);
+				stream = new BufferedInputStream(fFile.getContents(true));
 				load(stream, false);
 			} catch (CoreException e) {
 			} 

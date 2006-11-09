@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
 
@@ -37,7 +38,7 @@ public class TargetDefinitionFromTargetOperation extends
 		URL url = TargetDefinitionManager.getResourceURL(symbolicName, path);
 		if (url != null) {
 			try {
-				model.load(url.openStream(), false);
+				model.load(new BufferedInputStream(url.openStream()), false);
 			} catch (CoreException e) {
 			} catch (IOException e) {
 			}

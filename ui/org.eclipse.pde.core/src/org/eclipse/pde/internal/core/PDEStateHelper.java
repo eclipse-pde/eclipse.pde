@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -144,11 +145,11 @@ public class PDEStateHelper {
 				jarFile = new ZipFile(file, ZipFile.OPEN_READ);
 				ZipEntry manifestEntry = jarFile.getEntry(filename); 
 				if (manifestEntry != null) 
-					stream = jarFile.getInputStream(manifestEntry);				
+					stream = new BufferedInputStream(jarFile.getInputStream(manifestEntry));				
 			} else if (file.isDirectory()) {
 				File manifest = new File(file, filename);
 				if (manifest.exists() && manifest.isFile()) {
-					stream = new FileInputStream(manifest);
+					stream = new BufferedInputStream(new FileInputStream(manifest));
 				}
 			}
 			if (stream != null)

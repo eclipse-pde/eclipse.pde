@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -629,7 +630,7 @@ public class WorkspaceModelManager
 	private void loadModel(IModel model, boolean reload) {
 		IFile file = (IFile) model.getUnderlyingResource();
 		try {
-			InputStream stream = file.getContents(true);
+			InputStream stream = new BufferedInputStream(file.getContents(true));
 			if (reload)
 				model.reload(stream, false);
 			else

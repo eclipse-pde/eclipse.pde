@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -27,7 +28,7 @@ public class DefaultSAXParser {
 		SAXParserWrapper parser = null;
 		try {
 			parser = new SAXParserWrapper();
-			stream = file.getContents();
+			stream = new BufferedInputStream(file.getContents());
 			parser.parse(stream, reporter);
 		} catch (CoreException e) {
 		} catch (SAXException e) {

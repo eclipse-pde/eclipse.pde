@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -399,7 +400,7 @@ public class RequiresSection
 			
 			// Load model from a String representing the contents of an equivalent plugin.xml file
 			String pluginInfo = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><plugin id=\"system.bundle\" name=\"System Bundle\"></plugin>"; //$NON-NLS-1$
-			InputStream is = new ByteArrayInputStream(pluginInfo.getBytes());
+			InputStream is = new BufferedInputStream(new ByteArrayInputStream(pluginInfo.getBytes()));
 			model.load(is, false);
 			
 			list.add(model);

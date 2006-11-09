@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ant;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -172,7 +173,7 @@ public class ConvertSchemaToHTML extends Task {
 				: new File(getProject().getBaseDir(), manifest);
 		InputStream stream = null;
 		try {
-			stream = new FileInputStream(file);
+			stream = new BufferedInputStream(new FileInputStream(file));
 		} catch (Exception e) {
 			if (e.getMessage() != null)
 				System.out.println(e.getMessage());

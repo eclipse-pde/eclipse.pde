@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.preferences;
 
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -353,7 +354,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 				// If a saved workspace profile no longer exists in the workspace, skip it.
 				if (file != null && file.exists()) {
 					TargetModel model = new TargetModel();
-					model.load(file.getContents(), false);
+					model.load(new BufferedInputStream(file.getContents()), false);
 					String value = model.getTarget().getName();
 					value = value + " [" + file.getFullPath().toString() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 					if (fProfileCombo.indexOf(value) == -1)
@@ -399,7 +400,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			IFile file = (IFile)dialog.getFirstResult();
 			TargetModel model = new TargetModel();
 			try {
-				model.load(file.getContents(), false);
+				model.load(new BufferedInputStream(file.getContents()), false);
 				String value = model.getTarget().getName();
 				value = value + " [" + file.getFullPath().toString() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 				if (fProfileCombo.indexOf(value) == -1) 
@@ -455,12 +456,12 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			IFile file = getTargetFile();
 			String desc = null;
 			if (file != null)
-				stream = file.getContents();
+				stream = new BufferedInputStream(file.getContents());
 			if (stream == null) {
 				URL url = getExternalTargetURL();
 				desc = getTargetDescription();
 				if (url != null)
-					stream = url.openStream();
+					stream = new BufferedInputStream(url.openStream());
 			}
 			
 			if (stream != null) {

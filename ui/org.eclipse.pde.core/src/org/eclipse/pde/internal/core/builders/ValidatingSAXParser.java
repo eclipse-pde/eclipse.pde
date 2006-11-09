@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -28,7 +29,7 @@ public class ValidatingSAXParser {
 	public static void parse(IFile file, XMLErrorReporter reporter) {
 		InputStream stream = null;
 		try {
-			stream = file.getContents();
+			stream = new BufferedInputStream(file.getContents());
 			getParser().parse(stream, reporter);
 		} catch (CoreException e) {
 		} catch (SAXException e) {

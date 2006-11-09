@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.target;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -61,7 +62,7 @@ public class TargetInputContext extends UTF8InputContext {
 					model = new WorkspaceTargetModel(file, true);
 					model.load();
 				} else if (input instanceof IStorageEditorInput) {
-					InputStream is = ((IStorageEditorInput) input).getStorage().getContents();
+					InputStream is = new BufferedInputStream(((IStorageEditorInput) input).getStorage().getContents());
 					model =  new TargetModel();
 					model.load(is, false);
 				}

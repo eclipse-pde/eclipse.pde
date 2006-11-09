@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -430,7 +431,7 @@ public class FeatureImportWizardPage extends WizardPage {
 		InputStream stream = null;
 
 		try {
-			stream = new FileInputStream(manifest);
+			stream = new BufferedInputStream(new FileInputStream(manifest));
 			model.load(stream, false);
 			if(!model.isValid()){
 				status = new Status(

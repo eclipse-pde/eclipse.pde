@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -106,7 +107,7 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel
 			return;
 		if (file.exists()) {
 			try {
-				InputStream stream = file.getContents(true);
+				InputStream stream = new BufferedInputStream(file.getContents(true));
 				load(stream, false);
 				stream.close();
 			} catch (CoreException e) {

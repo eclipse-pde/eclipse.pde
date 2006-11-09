@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -80,7 +81,7 @@ public class FeatureInputContext extends XMLInputContext {
 		InputStream stream = null;
 		IStorage storage = input.getStorage();
 		try {
-			stream = storage.getContents();
+			stream = new BufferedInputStream(storage.getContents());
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 			return null;

@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.core.cheatsheet.simple;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,7 +59,7 @@ public class SimpleCSWorkspaceModel extends SimpleCSModel implements
 		if (fFile.exists()) {
 			InputStream stream = null;
 			try {
-				stream = fFile.getContents(true);
+				stream = new BufferedInputStream(fFile.getContents(true));
 				load(stream, false);
 			} catch (CoreException e) {
 			} 

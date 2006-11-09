@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,11 +54,11 @@ public class SiteInputContext extends XMLInputContext {
 			try {
 				if (input instanceof IFileEditorInput) {
 					IFile file = ((IFileEditorInput) input).getFile();
-					is = file.getContents();
+					is = new BufferedInputStream(file.getContents());
 					model = createWorkspaceModel(file, is, true);
 				} else if (input instanceof IStorageEditorInput) {
-					is = ((IStorageEditorInput) input).getStorage()
-							.getContents();
+					is = new BufferedInputStream(((IStorageEditorInput) input).getStorage()
+							.getContents());
 					model =  createStorageModel(is);
 				}
 			} catch (CoreException e) {

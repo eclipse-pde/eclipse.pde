@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -46,7 +47,7 @@ public class ExternalFeatureModelManager implements
 		model.setInstallLocation(manifest.getParent());
 		InputStream stream = null;
 		try {
-			stream = new FileInputStream(manifest);
+			stream = new BufferedInputStream(new FileInputStream(manifest));
 			model.load(stream, false);
 			return model;
 		} catch (Exception e) {

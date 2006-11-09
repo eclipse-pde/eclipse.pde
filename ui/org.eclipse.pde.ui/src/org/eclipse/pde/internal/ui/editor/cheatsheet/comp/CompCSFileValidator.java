@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -73,7 +74,7 @@ public class CompCSFileValidator implements ISelectionStatusValidator {
 		SimpleCSContentTypeHandler handler = new SimpleCSContentTypeHandler();
 		try {
 			SAXParserWrapper parser = new SAXParserWrapper();
-			parser.parse(file.getContents(), handler);
+			parser.parse(new BufferedInputStream(file.getContents()), handler);
 		} catch (ParserConfigurationException e) {
 			return false;
 		} catch (AbortParseException e) {

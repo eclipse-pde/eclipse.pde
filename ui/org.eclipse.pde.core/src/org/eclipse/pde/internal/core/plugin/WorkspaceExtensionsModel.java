@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -101,7 +102,7 @@ public class WorkspaceExtensionsModel
 			return;
 		if (fUnderlyingResource.exists()) {
 			try {
-				InputStream stream = fUnderlyingResource.getContents(true);
+				InputStream stream = new BufferedInputStream(fUnderlyingResource.getContents(true));
 				load(stream, false);
 				stream.close();
 			} catch (Exception e) {

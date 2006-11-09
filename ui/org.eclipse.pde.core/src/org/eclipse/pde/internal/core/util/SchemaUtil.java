@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.core.util;
 
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,9 +35,9 @@ public class SchemaUtil {
 		if (url == null) {
 			throw new MalformedURLException("URL specified is null"); //$NON-NLS-1$
 		} else if ("file".equals(url.getProtocol())) { //$NON-NLS-1$
-			return new FileInputStream(url.getFile());
+			return new BufferedInputStream(new FileInputStream(url.getFile()));
 		}
-		return url.openStream();
+		return new BufferedInputStream(url.openStream());
 	}		
 
 	public static void parseURL(URL url, DefaultHandler handler) {

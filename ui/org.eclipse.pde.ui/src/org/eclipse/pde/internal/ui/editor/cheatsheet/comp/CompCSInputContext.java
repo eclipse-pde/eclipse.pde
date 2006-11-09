@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -71,8 +72,9 @@ public class CompCSInputContext extends UTF8InputContext {
 					model = new CompCSWorkspaceModel(file, true);
 					model.load();
 				} else if (input instanceof IStorageEditorInput) {
-					InputStream is = ((IStorageEditorInput) input).getStorage()
-							.getContents();
+					InputStream is = new BufferedInputStream(
+							((IStorageEditorInput) input).getStorage()
+									.getContents());
 					model = new CompCSModel();
 					model.load(is, false);
 				}
