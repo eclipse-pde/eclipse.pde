@@ -17,6 +17,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -70,7 +71,7 @@ public class PluginHandler extends DefaultHandler {
 		fOpenElements.push(element);
 	}
 	
-	private boolean isInterestingExtension(Element element) {
+	protected boolean isInterestingExtension(Element element) {
 		String point = element.getAttribute("point"); //$NON-NLS-1$
 		return CoreUtility.isInterestingExtensionPoint(point);
 	}
@@ -122,6 +123,17 @@ public class PluginHandler extends DefaultHandler {
 		if (fAbbreviated)
 			return;
 		
+		processCharacters(characters, start, length);
+	}
+
+	/**
+	 * @param characters
+	 * @param start
+	 * @param length
+	 * @throws DOMException
+	 */
+	protected void processCharacters(char[] characters, int start, int length)
+			throws DOMException {
 		StringBuffer buff = new StringBuffer();
 		for (int i = 0; i < length; i++) {
 			buff.append(characters[start + i]);

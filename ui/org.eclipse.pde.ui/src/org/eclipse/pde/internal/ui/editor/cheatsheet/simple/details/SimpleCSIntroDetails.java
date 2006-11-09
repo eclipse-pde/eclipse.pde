@@ -16,6 +16,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.CSRegisterCSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
@@ -41,7 +42,7 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 	
 	private ICSDetails fHelpSection;
 	
-	//private ICSDetails fRegisterCSArea;	
+	private ICSDetails fRegisterCSArea;	
 	
 	/**
 	 * @param elementSection
@@ -53,7 +54,7 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		fContent = null;
 		fMainSection = null;
 		fHelpSection = new SimpleCSHelpDetails(fIntro, this);
-		//fRegisterCSArea = new CSRegisterCSDetails(this, fIntro.getModel());
+		fRegisterCSArea = new CSRegisterCSDetails(this, fIntro.getModel());
 	}
 
 	/* (non-Javadoc)
@@ -98,7 +99,7 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		
 		fHelpSection.createDetails(parent);
 		// Create the register cheat sheet area
-		//fRegisterCSArea.createDetails(parent);		
+		fRegisterCSArea.createDetails(parent);		
 	}
 
 	/* (non-Javadoc)
@@ -116,7 +117,7 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 		
 		fHelpSection.hookListeners();
 		// Create the listeners within the register cheat sheet area
-		//fRegisterCSArea.hookListeners();			
+		fRegisterCSArea.hookListeners();			
 	}
 
 	/* (non-Javadoc)
@@ -126,7 +127,7 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 
 		fHelpSection.updateFields();
 		// Update the fields within the register cheat sheet area
-		//fRegisterCSArea.updateFields();	
+		fRegisterCSArea.updateFields();	
 		
 		boolean editable = isEditableElement();
 		

@@ -237,6 +237,16 @@ public class PDEUIMessages extends NLS {
 
 	public static String PDETextHover_0;
 
+	public static String RegisterCSOperation_addNewCSExtensionNewPlugin;
+
+	public static String RegisterCSOperation_errorManifestReadOnly;
+
+	public static String RegisterCSOperation_modCSElementExistingPlugin;
+
+	public static String RegisterCSOperation_modCSExtensionExistingPlugin;
+
+	public static String RegisterCSOperation_newCSExtensionExistingPlugin;
+
 	public static String RegisterCSWizard_registerCheatSheet;
 
 	public static String RegisterCSWizardPage_buttonNew;

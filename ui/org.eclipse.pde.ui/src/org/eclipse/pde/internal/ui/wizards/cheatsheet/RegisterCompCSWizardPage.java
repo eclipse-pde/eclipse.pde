@@ -26,4 +26,18 @@ public class RegisterCompCSWizardPage extends RegisterCSWizardPage {
 		super(model);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.RegisterCSWizardPage#getDataName()
+	 */
+	public String getDataCheatSheetName() {
+		return ((ICompCSModel)fCheatSheetModel).getCompCS().getFieldName();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.cheatsheet.RegisterCSWizardPage#isCompositeCheatSheet()
+	 */
+	public boolean isCompositeCheatSheet() {
+		return true;
+	}
+
 }

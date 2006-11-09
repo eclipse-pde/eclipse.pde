@@ -73,6 +73,10 @@ public abstract class AbstractPluginModelBase
 	}
 	
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
+		load(stream, outOfSync, new PluginHandler(fAbbreviated));
+	}
+	
+	public void load(InputStream stream, boolean outOfSync, PluginHandler handler) throws CoreException {
 		if (fPluginBase == null) 
 			fPluginBase = createPluginBase();
 		
@@ -80,14 +84,13 @@ public abstract class AbstractPluginModelBase
 		setLoaded(false);
 		try {
 			SAXParser parser = getSaxParser();
-			PluginHandler handler = new PluginHandler(fAbbreviated);
 			parser.parse(stream, handler);
 			((PluginBase)fPluginBase).load(handler.getDocumentElement(), handler.getSchemaVersion());
 			setLoaded(true);
 			if (!outOfSync)
 				updateTimeStamp();
 		} catch (Exception e) {
-		}
+		}		
 	}
 	
 	public void load(BundleDescription description, PDEState state) {

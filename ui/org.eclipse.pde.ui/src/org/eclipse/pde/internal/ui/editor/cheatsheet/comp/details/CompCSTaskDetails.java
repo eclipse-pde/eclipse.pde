@@ -29,6 +29,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.CSRegisterCSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.CompCSFileValidator;
@@ -73,7 +74,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	
 	private ICSDetails fEnclosingTextSection;		
 	
-	//private ICSDetails fRegisterCSArea;
+	private ICSDetails fRegisterCSArea;
 	
 	private final static String F_PATH_SEPARATOR = "/"; //$NON-NLS-1$
 	
@@ -93,7 +94,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 
 		fDefinitionSection = null;
 		fEnclosingTextSection = new CompCSEnclosingTextDetails(fDataTask, this);
-		//fRegisterCSArea = new CSRegisterCSDetails(this, fDataTask.getModel());		
+		fRegisterCSArea = new CSRegisterCSDetails(this, fDataTask.getModel());		
 	}
 
 	/* (non-Javadoc)
@@ -116,7 +117,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		// Create the enclosing text section
 		fEnclosingTextSection.createDetails(parent);
 		// Create the register cheat sheet area
-		//fRegisterCSArea.createDetails(parent);		
+		fRegisterCSArea.createDetails(parent);		
 		// Bind widgets
 		getManagedForm().getToolkit().paintBordersFor(sectionClient);
 		fDefinitionSection.setClient(sectionClient);
@@ -164,7 +165,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		// Create listeners within the enclosing text section
 		fEnclosingTextSection.hookListeners();
 		// Create the listeners within the register cheat sheet area
-		//fRegisterCSArea.hookListeners();		
+		fRegisterCSArea.hookListeners();		
 	}
 
 	/**
@@ -498,7 +499,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		// Update fields within enclosing text section		
 		fEnclosingTextSection.updateFields();
 		// Update the fields within the register cheat sheet area
-		//fRegisterCSArea.updateFields();		
+		fRegisterCSArea.updateFields();		
 	}
 
 	/**

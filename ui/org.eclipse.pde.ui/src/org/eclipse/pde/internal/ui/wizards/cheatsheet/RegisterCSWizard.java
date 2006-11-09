@@ -74,17 +74,7 @@ public class RegisterCSWizard extends Wizard implements INewWizard {
 	 * @return
 	 */
 	private IRunnableWithProgress getOperation() {
-		// TODO: MP: MED: CompCS: Create register cheat sheet operation
-//        IFile file = fMainPage.createNewFile();
-//		int option = fMainPage.getCheatSheetType();
-//		if (option == CSFileWizardPage.F_SIMPLE_CHEAT_SHEET) {
-//			return new SimpleCSCreationOperation(file);
-//		} else if (option == CSFileWizardPage.F_COMPOSITE_CHEAT_SHEET) {
-//			return new CompCSCreationOperation(file);
-//		}
-		// This can never happen
-		//PDEPlugin.logErrorMessage("Unknown cheat sheet type encountered"); //$NON-NLS-1$
-		return null;
+		return new RegisterCSOperation(fMainPage, getShell());
 	}		
 	
 	/* (non-Javadoc)
@@ -96,7 +86,5 @@ public class RegisterCSWizard extends Wizard implements INewWizard {
         setDefaultPageImageDescriptor(PDEPluginImages.DESC_CHEATSHEET_WIZ);
         setNeedsProgressMonitor(true);
 	}
-
-	
 	
 }

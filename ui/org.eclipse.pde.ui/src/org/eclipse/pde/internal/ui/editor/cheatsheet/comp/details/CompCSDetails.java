@@ -15,6 +15,8 @@ import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCS;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.CSRegisterCSDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.CompCSInputContext;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
@@ -35,7 +37,7 @@ public class CompCSDetails extends CSAbstractDetails {
 	
 	private FormEntry fNameEntry;
 	
-	//private ICSDetails fRegisterCSArea;
+	private ICSDetails fRegisterCSArea;
 	
 	/**
 	 * @param masterSection
@@ -48,7 +50,7 @@ public class CompCSDetails extends CSAbstractDetails {
 		fNameEntry = null;
 		fMainSection = null;		
 		
-		//fRegisterCSArea = new CSRegisterCSDetails(this, fDataCheatSheet.getModel());
+		fRegisterCSArea = new CSRegisterCSDetails(this, fDataCheatSheet.getModel());
 	}
 
 	/* (non-Javadoc)
@@ -65,7 +67,7 @@ public class CompCSDetails extends CSAbstractDetails {
 		// Create the name widget
 		createUINameEntry(sectionClient);
 		// Create the register cheat sheet area
-		//fRegisterCSArea.createDetails(parent);
+		fRegisterCSArea.createDetails(parent);
 		// Bind widgets
 		getManagedForm().getToolkit().paintBordersFor(sectionClient);
 		fMainSection.setClient(sectionClient);
@@ -87,7 +89,7 @@ public class CompCSDetails extends CSAbstractDetails {
 		// Create the listeners for the name entry
 		createListenersNameEntry();
 		// Create the listeners within the register cheat sheet area
-		//fRegisterCSArea.hookListeners();
+		fRegisterCSArea.hookListeners();
 	}
 
 	/**
@@ -108,7 +110,7 @@ public class CompCSDetails extends CSAbstractDetails {
 		// Update name entry
 		updateNameEntry(isEditableElement());
 		// Update the fields within the register cheat sheet area
-		//fRegisterCSArea.updateFields();
+		fRegisterCSArea.updateFields();
 	}
 
 	/**

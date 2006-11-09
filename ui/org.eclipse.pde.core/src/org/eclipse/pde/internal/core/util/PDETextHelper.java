@@ -57,6 +57,21 @@ public class PDETextHelper {
 		}
 		return true;
 	}
+
+	/**
+	 * @param text
+	 * @return
+	 */
+	public static boolean isDefinedAfterTrim(String text) {
+		if (text == null) {
+			return false;
+		}
+		String trimmedText = text.trim();
+		if (trimmedText.length() == 0) {
+			return false;
+		}
+		return true;
+	}	
 	
 	/**
 	 * Strips \n, \r, \t
