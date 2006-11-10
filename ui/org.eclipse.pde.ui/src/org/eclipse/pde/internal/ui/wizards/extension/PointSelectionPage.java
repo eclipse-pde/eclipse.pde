@@ -489,7 +489,8 @@ public class PointSelectionPage
 			ISchemaElement schemaElement = null;
 			// Get the extension's schema
 			Object object = extension.getSchema();
-			if (object instanceof Schema) {
+			if ((object != null) &&
+					(object instanceof Schema)) {
 				Schema schema = (Schema)object;
 				if (extension instanceof PluginExtensionNode) {
 					// Get the extension's XML element name
