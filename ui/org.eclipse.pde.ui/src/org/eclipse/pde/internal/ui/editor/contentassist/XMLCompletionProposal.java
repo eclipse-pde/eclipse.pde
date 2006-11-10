@@ -177,8 +177,6 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	 * @param documentInsertBuffer
 	 */
 	private void applyExtensionPoint(StringBuffer documentInsertBuffer) {
-		// TODO: Generate XML representation using model objects rather than
-		// hardcodings at a later date
 		String id = "id"; //$NON-NLS-1$
 		documentInsertBuffer.append("<extension-point id=\""); //$NON-NLS-1$
 		fSelOffset = fOffset + documentInsertBuffer.length();
@@ -193,8 +191,6 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	 * @param documentInsertBuffer
 	 */
 	private void applyExtension(IDocument document, String delim, StringBuffer documentInsertBuffer) {
-		// TODO: Generate XML representation using model objects rather than
-		// hardcodings at a later date
 		documentInsertBuffer.append("<extension"); //$NON-NLS-1$
 		documentInsertBuffer.append(delim);
 		String indent = getIndent(document, fOffset);
@@ -213,8 +209,6 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	 * @param sb
 	 */
 	private void applyElement(String indent, String delim, StringBuffer documentInsertBuffer) {
-		// TODO: Generate XML representation using model objects rather than
-		// hardcodings at a later date
 		documentInsertBuffer.append('<');
 		documentInsertBuffer.append(((ISchemaElement)fSchemaObject).getName());
 		documentInsertBuffer.append('>'); 
@@ -230,8 +224,6 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	 * @param sb
 	 */
 	private void applyAttribute(StringBuffer documentInsertBuffer) {
-		// TODO: Generate XML representation using model objects rather than
-		// hardcodings at a later date
 		if (fRange == null) {
 			// Model is broken
 			// Manually adjust offsets
@@ -358,16 +350,12 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 					fSelLen = ((PluginAttribute)att).getValueLength();
 				}
 			} else if (XMLInsertionComputer.hasOptionalChildren(schemaElement, false, new HashSet()) && value != null) {
-				// TODO: Performance improvement marker
-				// position caret for element insertion
 				int ind = value.indexOf('>');
 				if (ind > 0) {
 					fSelOffset = offset + ind + 1;
 					fSelLen = 0;
 				}
 			} else if (XMLInsertionComputer.hasOptionalAttributes(schemaElement) && value != null) {
-				// TODO: Performance improvement marker
-				// position caret for attribute insertion
 				int ind = value.indexOf('>');
 				if (ind != -1) {
 					fSelOffset = offset + ind;

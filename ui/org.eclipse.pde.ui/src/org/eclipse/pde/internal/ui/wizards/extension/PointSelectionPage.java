@@ -46,8 +46,11 @@ import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaAnnotationHandler;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
+import org.eclipse.pde.internal.core.text.plugin.PluginExtensionNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginExtensionPointNode;
 import org.eclipse.pde.internal.core.util.PDEHTMLHelper;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
@@ -58,6 +61,7 @@ import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.contentassist.XMLInsertionComputer;
 import org.eclipse.pde.internal.ui.editor.text.HTMLPrinter;
 import org.eclipse.pde.internal.ui.editor.text.TextUtil;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -479,6 +483,26 @@ public class PointSelectionPage
 				fModel.getFactory().createExtension();
 			extension.setPoint(point);
 			fModel.getPluginBase().add(extension);
+			
+			// Recursively auto-insert required child elements and attributes 
+			// respecting multiplicity
+			ISchemaElement schemaElement = null;
+			// Get the extension's schema
+			Object object = extension.getSchema();
+			if (object instanceof Schema) {
+				Schema schema = (Schema)object;
+				if (extension instanceof PluginExtensionNode) {
+					// Get the extension's XML element name
+					String elementName = 
+						((PluginExtensionNode)extension).getXMLTagName();
+					// Find the extension's corresponding schema element
+					schemaElement = schema.findElement(elementName);
+				}
+				// If there is an associated schema, do the auto-insert
+				if (schemaElement != null) {
+					XMLInsertionComputer.computeInsertion(schemaElement, extension);
+				}
+			}
 			
 			String pluginID = fCurrentPoint.getPluginBase().getId();
 			if (!(fCurrentPoint instanceof PluginExtensionPointNode)

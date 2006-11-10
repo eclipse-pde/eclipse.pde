@@ -44,7 +44,6 @@ import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
  */
 public class XMLInsertionComputer {
 
-
 	/**
 	 * @param sElement
 	 * @param pElement
@@ -52,17 +51,127 @@ public class XMLInsertionComputer {
 	public static void computeInsertion(ISchemaElement sElement,
 			IPluginParent pElement) {
 		HashSet visited = new HashSet();
+		if ((sElement == null) ||
+				(pElement == null)) {
+			// If there is no corresponding schema information or plug-in 
+			// model, then there is nothing to augment
+			return;
+		}
 		visited.add(sElement.getName());
-		computeInsertionType(sElement, pElement, visited);
+		// Process the parent element or extension
+		try {
+			computeInsertionParent(sElement, pElement, visited);
+		} catch (CoreException e) {
+			// All exceptions bubble up to this point
+			PDEPlugin.logException(e);
+		}
 	}
 	
 	/**
 	 * @param sElement
 	 * @param pElement
 	 * @param visited
+	 * @throws CoreException
+	 */
+	protected static void computeInsertionParent(ISchemaElement sElement,
+			IPluginParent pElement, HashSet visited) throws CoreException {
+		// Determine if the edge case is applicable
+		if (isSingleZeroElementEdgeCase(sElement, pElement)) {
+			// Process the edge case
+			computeInsertionZeroElementEdgeCase(sElement, pElement, visited);
+		} else {
+			// Process the normal case
+			computeInsertionType(sElement, pElement, visited);
+		}
+	}
+	
+	/**
+	 * Edge Case:
+	 * Extension element has a sequence compositor containing one child element
+	 * whose min occurs is 0. 
+	 * This is an extension point schema bug. However, to mask this bug and make
+	 * life easier for the user, interpret the child element min occurs as 1;
+	 * since, it makes no sense for an extension not to have any child elements
+	 * In essence, we auto-generate the child element when none should have 
+	 * been.
+	 * See Bug # 162379 for details.
+	 * @param sElement
+	 * @param pElement
+	 * @param visited
+	 * @throws CoreException
+	 */
+	protected static void computeInsertionZeroElementEdgeCase(
+			ISchemaElement sElement, IPluginParent pElement, HashSet visited)
+			throws CoreException {
+		// We can make a variety of assumptions because of the single zero
+		// element edge case check
+		// We know we have a schema complex type
+		// Insert the extension attributes
+		computeInsertionAllAttributes(pElement, sElement);
+		// Get the extension compositor
+		ISchemaCompositor compositor = 
+			((ISchemaComplexType)sElement.getType()).getCompositor();
+		// We know that there is only one child that is an element with a 
+		// min occurs of 0
+		ISchemaElement childSchemaElement = 
+			(ISchemaElement)compositor.getChildren()[0];
+		// Process the element as if the min occurs was 1
+		// Create the element
+		IPluginElement childElement = createElement(pElement, childSchemaElement);
+		// Track visited
+		visited.add(childSchemaElement.getName());
+		// Revert back to the normal process
+		computeInsertionType(childSchemaElement, childElement, visited);			
+	}
+		
+	/**
+	 * @param sElement
+	 * @param pElement
+	 * @return
+	 */
+	protected static boolean isSingleZeroElementEdgeCase(ISchemaElement sElement,
+			IPluginParent pElement) {
+		// Determine whether the edge case is applicable
+		if ((sElement.getType() instanceof ISchemaComplexType) &&
+				(pElement instanceof IPluginExtension)) {
+			// We have an extension
+			// Get the extension's compositor
+			ISchemaCompositor compositor = 
+				((ISchemaComplexType)sElement.getType()).getCompositor();
+			// Determine if the compositor is a sequence compositor with one
+			// child and a min occurs of one
+			if ((compositor == null) || 
+					(isSequenceCompositor(compositor) == false) ||
+					(compositor.getChildCount() != 1) ||
+					(compositor.getMinOccurs() != 1)) {
+				return false;
+			}
+			// We have a non-null sequence compositor that has one child and
+			// a min occurs of 1
+			// Get the compositor's one child
+			ISchemaObject schemaObject = compositor.getChildren()[0];
+			// Determine if the child is an element
+			if ((schemaObject instanceof ISchemaElement) == false) {
+				return false;
+			}
+			// We have a child element
+			ISchemaElement schemaElement = (ISchemaElement)schemaObject;
+			// Determine if the child element has a min occurs of 0
+			if (schemaElement.getMinOccurs() == 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param sElement
+	 * @param pElement
+	 * @param visited
+	 * @throws CoreException
 	 */
 	protected static void computeInsertionType(ISchemaElement sElement,
-			IPluginParent pElement, HashSet visited) {
+			IPluginParent pElement, HashSet visited) throws CoreException {
 		
 		if ((sElement == null) ||
 				(pElement == null)) {
@@ -87,7 +196,8 @@ public class XMLInsertionComputer {
 			// Insert element attributes
 			computeInsertionAllAttributes(pElement, sElement);
 			// Get this element's compositor
-			ISchemaCompositor compositor = ((ISchemaComplexType)sElement.getType()).getCompositor();
+			ISchemaCompositor compositor = 
+				((ISchemaComplexType)sElement.getType()).getCompositor();
 			// Process the compositor
 			computeInsertionSequence(compositor, pElement, visited);
 		} else {
@@ -100,8 +210,10 @@ public class XMLInsertionComputer {
 	 * @param pElement
 	 * @param visited
 	 * @param schemaObject
+	 * @throws CoreException
 	 */
-	protected static void computeInsertionObject(IPluginParent pElement, HashSet visited, ISchemaObject schemaObject) {
+	protected static void computeInsertionObject(IPluginParent pElement,
+			HashSet visited, ISchemaObject schemaObject) throws CoreException {
 		if (schemaObject instanceof ISchemaElement) {
 			ISchemaElement schemaElement = (ISchemaElement) schemaObject;
 			computeInsertionElement(pElement, visited, schemaElement);
@@ -117,7 +229,7 @@ public class XMLInsertionComputer {
 	 * @param pElement
 	 * @param compositor
 	 */
-	protected static boolean computeInsertionCompositor(ISchemaCompositor compositor) {
+	protected static boolean isSequenceCompositor(ISchemaCompositor compositor) {
 		if (compositor == null) {
 			return false;
 		} else if (compositor.getKind() == ISchemaCompositor.CHOICE) {
@@ -143,27 +255,38 @@ public class XMLInsertionComputer {
 	 * @param pElement
 	 * @param visited
 	 * @param schemaElement
+	 * @throws CoreException
 	 */
-	protected static void computeInsertionElement(IPluginParent pElement, HashSet visited, ISchemaElement schemaElement) {
-		try {
-			for (int j = 0; j < schemaElement.getMinOccurs(); j++) {
-				// Update Model
-				IPluginElement childElement = null;
-				childElement = 
-					pElement.getModel().getFactory().createElement(pElement);
-				childElement.setName(schemaElement.getName());
-				pElement.add(childElement);
-				// Track visited
-				HashSet newSet = (HashSet) visited.clone();
-				if (newSet.add(schemaElement.getName())) {
-					computeInsertionType(schemaElement, childElement, newSet);
-				} else {
-					childElement.setText(PDEUIMessages.XMLCompletionProposal_ErrorCycle);
-				}
+	protected static void computeInsertionElement(IPluginParent pElement,
+			HashSet visited, ISchemaElement schemaElement) throws CoreException {
+		for (int j = 0; j < schemaElement.getMinOccurs(); j++) {
+			// Update Model
+			IPluginElement childElement = createElement(pElement, schemaElement);
+			// Track visited
+			HashSet newSet = (HashSet) visited.clone();
+			if (newSet.add(schemaElement.getName())) {
+				computeInsertionType(schemaElement, childElement, newSet);
+			} else {
+				childElement.setText(
+						PDEUIMessages.XMLCompletionProposal_ErrorCycle);
 			}
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
 		}
+	}
+
+	/**
+	 * @param pElement
+	 * @param schemaElement
+	 * @return
+	 * @throws CoreException
+	 */
+	protected static IPluginElement createElement(IPluginParent pElement,
+			ISchemaElement schemaElement) throws CoreException {
+		IPluginElement childElement = null;
+		childElement = 
+			pElement.getModel().getFactory().createElement(pElement);
+		childElement.setName(schemaElement.getName());
+		pElement.add(childElement);
+		return childElement;
 	}
 
 	/**
@@ -171,7 +294,8 @@ public class XMLInsertionComputer {
 	 * @param type
 	 * @param attributes
 	 */
-	protected static void computeInsertionAllAttributes(IPluginParent pElement, ISchemaElement sElement) {
+	protected static void computeInsertionAllAttributes(IPluginParent pElement,
+			ISchemaElement sElement) {
 		// Has to be a complex type if there are attributes
 		ISchemaComplexType type = (ISchemaComplexType)sElement.getType();
 		// Get the underlying project
@@ -208,7 +332,8 @@ public class XMLInsertionComputer {
 	 * @param attribute
 	 * @return
 	 */
-	protected static String generateAttributeValue(IProject project, int counter, ISchemaAttribute attribute) {
+	protected static String generateAttributeValue(IProject project,
+			int counter, ISchemaAttribute attribute) {
 		String value = ""; //$NON-NLS-1$
 		ISchemaRestriction restriction = 
 			attribute.getType().getRestriction();
@@ -264,13 +389,13 @@ public class XMLInsertionComputer {
 	 * @param visited
 	 */
 	protected static void computeInsertionSequence(ISchemaCompositor compositor,
-			IPluginParent pElement, HashSet visited) {
+			IPluginParent pElement, HashSet visited) throws CoreException {
 		if (compositor == null)
 			return;
 		// Process the compositor the minimum number of times
 		for (int k = 0; k < compositor.getMinOccurs(); k++) {
 			// Only continue processing if the compositor is a sequence
-			if (computeInsertionCompositor(compositor) == false)
+			if (isSequenceCompositor(compositor) == false)
 				continue;
 			// We have a sequence
 			ISchemaObject[] schemaObject = compositor.getChildren();
