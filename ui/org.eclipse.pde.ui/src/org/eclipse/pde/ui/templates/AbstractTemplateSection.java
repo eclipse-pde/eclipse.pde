@@ -85,7 +85,7 @@ public abstract class AbstractTemplateSection
 	 * 
 	 * @since 3.3
 	 */
-	public static final String KEY_ACTIVATOR_SIMPLE = "activator";
+	public static final String KEY_ACTIVATOR_SIMPLE = "activator"; //$NON-NLS-1$
 	/**
 	 * The key for the plug-in id of the plug-in that the template is used for
 	 * (value="pluginId").

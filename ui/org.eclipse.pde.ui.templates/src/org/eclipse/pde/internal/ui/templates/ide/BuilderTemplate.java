@@ -121,7 +121,7 @@ public class BuilderTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
 	 */
 	public String getUsedExtensionPoint() {
-		return "org.eclipse.core.resources.builders";
+		return "org.eclipse.core.resources.builders"; //$NON-NLS-1$
 	}
 
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
