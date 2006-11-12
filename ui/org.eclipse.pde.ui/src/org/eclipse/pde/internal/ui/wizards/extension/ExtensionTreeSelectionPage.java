@@ -20,10 +20,10 @@ import org.eclipse.pde.internal.ui.wizards.WizardCollectionElement;
 import org.eclipse.pde.internal.ui.wizards.WizardElement;
 import org.eclipse.pde.internal.ui.wizards.WizardNode;
 import org.eclipse.pde.internal.ui.wizards.WizardTreeSelectionPage;
+import org.eclipse.pde.internal.ui.wizards.templates.NewExtensionTemplateWizard;
 import org.eclipse.pde.ui.IBasePluginWizard;
 import org.eclipse.pde.ui.IExtensionWizard;
 import org.eclipse.pde.ui.templates.ITemplateSection;
-import org.eclipse.pde.ui.templates.NewExtensionTemplateWizard;
 
 /**
  *

@@ -104,7 +104,7 @@
          </description>
       </wizard>
       <wizard
-            class="org.eclipse.pde.internal.ui.templates.ide.BuilderNewExtensionWizard"
+            template="org.eclipse.pde.internal.ui.templates.ide.BuilderNewExtensionWizard"
             icon="$nl$/icons/etool16/newex_wiz.gif"
             category="templates"
             availableAsShortcut="true"
@@ -235,6 +235,11 @@
 			contributingId="org.eclipse.ui.perspectives"
 			id="org.eclipse.pde.ui.templates.perspective"
 			name="%template.perspective.name"/>
+      <template
+			class="org.eclipse.pde.internal.ui.templates.ide.BuilderTemplate"
+			contributingId="org.eclipse.core.resources.builders"
+			id="org.eclipse.pde.ui.templates.builder"
+			name="%template.builder.name"/>
    </extension>
    <extension
          point="org.eclipse.pde.ui.pluginContent">

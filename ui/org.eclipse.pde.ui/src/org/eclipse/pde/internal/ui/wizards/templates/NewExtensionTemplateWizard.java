@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.ui.templates;
+package org.eclipse.pde.internal.ui.wizards.templates;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -26,6 +26,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.IExtensionWizard;
+import org.eclipse.pde.ui.templates.BaseOptionTemplateSection;
+import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
@@ -36,9 +38,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  * content (Java classes, directory structure and
  * extensions).
  * <p>
- * The wizard provides a common first page that will
- * initialize the plug-in itself. This plug-in will
- * be passed on to the templates to generate additional
+ * This plug-in will be passed on to the templates to generate additional
  * content. After all templates have executed, 
  * the wizard will use the collected list of required
  * plug-ins to set up Java buildpath so that all the
