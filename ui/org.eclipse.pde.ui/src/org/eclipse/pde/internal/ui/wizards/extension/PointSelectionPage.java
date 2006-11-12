@@ -77,6 +77,7 @@ import org.eclipse.pde.internal.ui.wizards.WizardNode;
 import org.eclipse.pde.ui.IBasePluginWizard;
 import org.eclipse.pde.ui.IExtensionWizard;
 import org.eclipse.pde.ui.templates.ITemplateSection;
+import org.eclipse.pde.ui.templates.NewExtensionTemplateWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;

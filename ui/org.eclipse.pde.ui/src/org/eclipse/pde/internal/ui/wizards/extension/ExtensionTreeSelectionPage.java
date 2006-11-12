@@ -23,6 +23,7 @@ import org.eclipse.pde.internal.ui.wizards.WizardTreeSelectionPage;
 import org.eclipse.pde.ui.IBasePluginWizard;
 import org.eclipse.pde.ui.IExtensionWizard;
 import org.eclipse.pde.ui.templates.ITemplateSection;
+import org.eclipse.pde.ui.templates.NewExtensionTemplateWizard;
 
 /**
  *

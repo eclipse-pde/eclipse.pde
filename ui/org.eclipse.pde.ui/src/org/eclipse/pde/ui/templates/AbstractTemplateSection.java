@@ -47,6 +47,8 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginReference;
+import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.templates.ControlStack;
 import org.eclipse.pde.internal.ui.wizards.templates.PluginReference;
@@ -74,9 +76,16 @@ public abstract class AbstractTemplateSection
 	protected IPluginModelBase model;
 	/**
 	 * The key for the main plug-in class of the plug-in that the template is
-	 * used for (value="pluginClass");
+	 * used for (value="pluginClass").  The return value is a fully-qualified class name.
 	 */
 	public static final String KEY_PLUGIN_CLASS = "pluginClass"; //$NON-NLS-1$
+	
+	/**
+	 * The key for the simple class name of a bundle activator (value="activator")
+	 * 
+	 * @since 3.3
+	 */
+	public static final String KEY_ACTIVATOR_SIMPLE = "activator";
 	/**
 	 * The key for the plug-in id of the plug-in that the template is used for
 	 * (value="pluginId").
@@ -102,19 +111,38 @@ public abstract class AbstractTemplateSection
 	 * @see ITemplateSection#getReplacementString(String,String)
 	 */
 	public String getReplacementString(String fileName, String key) {
-		if (key.equals(KEY_PLUGIN_CLASS) && model != null) {
-			if (model instanceof IPluginModel) {
-				IPlugin plugin = (IPlugin) model.getPluginBase();
-				return plugin.getClassName();
+		if (model == null)
+			return key;
+		
+		if (key.equals(KEY_PLUGIN_CLASS) && model instanceof IPluginModel) {
+			IPlugin plugin = (IPlugin) model.getPluginBase();
+			return plugin.getClassName();
+		}
+		
+		if (key.equals(KEY_ACTIVATOR_SIMPLE) && model instanceof IPluginModel) {
+			IPlugin plugin = (IPlugin) model.getPluginBase();
+			String qualified = plugin.getClassName();
+			if (qualified != null) {
+				int lastDot = qualified.lastIndexOf('.');
+				return (lastDot != -1 && lastDot < qualified.length() - 1) ? qualified.substring(lastDot + 1) : qualified;
 			}
 		}
-		if (key.equals(KEY_PLUGIN_ID) && model != null) {
+		if (key.equals(KEY_PLUGIN_ID)) {
 			IPluginBase plugin = model.getPluginBase();
 			return plugin.getId();
 		}
-		if (key.equals(KEY_PLUGIN_NAME) && model != null) {
+		if (key.equals(KEY_PLUGIN_NAME)) {
 			IPluginBase plugin = model.getPluginBase();
 			return plugin.getTranslatedName();
+		}
+		
+		if (key.equals(KEY_PACKAGE_NAME) && model instanceof IPluginModel) {
+			IPlugin plugin = (IPlugin) model.getPluginBase();
+			String qualified = plugin.getClassName();
+			if (qualified != null) {
+				int lastDot = qualified.lastIndexOf('.');
+				return (lastDot != -1) ? qualified.substring(0, lastDot) : qualified;
+			}
 		}
 		return key;
 	}
@@ -699,6 +727,17 @@ public abstract class AbstractTemplateSection
 			}
 		}
 		return new ByteArrayInputStream(outBuffer.toString().getBytes(project.getDefaultCharset()));
+	}
+	
+	protected double getTargetVersion() {
+		IPluginBase plugin = model.getPluginBase();
+	       // workaround to not introduce new API for IPluginBase
+        try {
+			if (plugin instanceof PluginBase)
+			    return Double.parseDouble(((PluginBase)plugin).getTargetVersion());
+		} catch (NumberFormatException e) {
+		}
+        return TargetPlatform.getTargetVersion();
 	}
 
 }

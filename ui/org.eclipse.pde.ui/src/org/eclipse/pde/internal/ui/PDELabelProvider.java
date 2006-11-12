@@ -470,8 +470,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 			return get(PDEPluginImages.DESC_PAGE_OBJ, schema == null || !schema.isValid() ? F_ERROR : 0);
 		}
 		if (obj instanceof IDocumentSection || obj instanceof ISchema) {
-			int flags = getSchemaObjectFlags((ISchemaObject) obj);
-			return get(PDEPluginImages.DESC_DOC_SECTION_OBJ, flags);
+			return get(PDEPluginImages.DESC_DOC_SECTION_OBJ);
 		}
 		if (obj instanceof ISchemaCompositor) {
 			return getObjectImage((ISchemaCompositor) obj);
@@ -695,21 +694,24 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}		
 	
 	private Image getObjectImage(ISchemaElement element) {
-		int flags = getSchemaObjectFlags(element);
+		int flags = 0;
 		if (element instanceof ISchemaObjectReference &&
 				((ISchemaObjectReference)element).getReferencedObject() == null)
 			flags |= F_ERROR;
-		return get(PDEPluginImages.DESC_GEL_SC_OBJ, flags);
+		ImageDescriptor desc = element instanceof ISchemaObjectReference 
+								? PDEPluginImages.DESC_XML_ELEMENT_REF_OBJ
+								: PDEPluginImages.DESC_GEL_SC_OBJ;
+		return get(desc, flags);
 	}
+	
 	private Image getObjectImage(ISchemaAttribute att) {
-		int flags = getSchemaObjectFlags(att);
 		if (att.getKind() == IMetaAttribute.JAVA)
-			return get(PDEPluginImages.DESC_ATT_CLASS_OBJ, flags);
+			return get(PDEPluginImages.DESC_ATT_CLASS_OBJ);
 		if (att.getKind() == IMetaAttribute.RESOURCE)
-			return get(PDEPluginImages.DESC_ATT_FILE_OBJ, flags);
+			return get(PDEPluginImages.DESC_ATT_FILE_OBJ);
 		if (att.getUse() == ISchemaAttribute.REQUIRED)
-			return get(PDEPluginImages.DESC_ATT_REQ_OBJ, flags);
-		return get(PDEPluginImages.DESC_ATT_IMPL_OBJ, flags);
+			return get(PDEPluginImages.DESC_ATT_REQ_OBJ);
+		return get(PDEPluginImages.DESC_ATT_IMPL_OBJ);
 	}
 
 	private Image getObjectImage(ISchemaCompositor compositor) {
@@ -724,18 +726,6 @@ public class PDELabelProvider extends SharedLabelProvider {
 				return get(PDEPluginImages.DESC_GROUP_SC_OBJ);
 		}
 		return null;
-	}
-
-	private int getSchemaObjectFlags(ISchemaObject sobj) {
-		int flags = 0;
-		String text = sobj.getDescription();
-		if (text != null)
-			text = text.trim();
-		if (text != null && text.length() > 0 && text.charAt(0)!='[') {
-			// complete
-			flags = F_EDIT;
-		}
-		return flags;
 	}
 
 	private Image getObjectImage(IFeatureURLElement url) {
