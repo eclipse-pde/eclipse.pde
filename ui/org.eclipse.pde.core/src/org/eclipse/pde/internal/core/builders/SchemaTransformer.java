@@ -18,6 +18,7 @@ import java.util.Locale;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.IDocumentSection;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
@@ -65,6 +66,8 @@ public class SchemaTransformer {
 		}
 		if (fCssURL == null && fCssPurpose != BUILD)
 			fCssURL = getResourceURL(getProductPlugin(), PLATFORM_CSS);
+		if (fCssURL == null && fCssPurpose != BUILD)
+			fCssURL = getResourceURL(PDECore.PLUGIN_ID, PLATFORM_CSS);
 	}
 	
 	private String getCssURL() {
@@ -74,7 +77,8 @@ public class SchemaTransformer {
 	private String getSchemaCssURL() {
 		if (fCssPurpose == BUILD)
 			return "../../" +  SCHEMA_CSS; //$NON-NLS-1$
-		return getResourceURL(PLATFORM_PLUGIN_DOC, SCHEMA_CSS).toString();
+		String url = getResourceURL(PLATFORM_PLUGIN_DOC, SCHEMA_CSS).toString();
+		return url != null ? url : getResourceURL(PDECore.PLUGIN_ID, SCHEMA_CSS).toString();
 	}
 	
 	private void printHTMLContent() {
