@@ -287,7 +287,8 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	
 	public void refresh() {
 		fAdditionalBundles = null;
-		fAdditionalTable.refresh();
+		if (!fAdditionalTable.getControl().isDisposed())
+			fAdditionalTable.refresh();
 		super.refresh();
 	}
 	
