@@ -1491,7 +1491,7 @@
             <with
                   variable="element">
                <instanceof
-                     value="org.eclipse.core.resources.IContainer">
+                     value="org.eclipse.core.resources.IFolder">
                </instanceof>
             </with>
          </enablement>    
@@ -1546,7 +1546,7 @@
             <with
                   variable="element">
                <instanceof
-                     value="org.eclipse.core.resources.IContainer">
+                     value="org.eclipse.core.resources.IFolder">
                </instanceof>
             </with>
          </enablement>        

@@ -4,6 +4,7 @@ import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -44,6 +45,9 @@ public class BuildPropertiesChange {
 					if (affectedElements[i] instanceof IJavaElement)
 						continue;
 					IResource res = (IResource)affectedElements[i];
+					// if resource instanceof IProject, then the project is being renamed and there is no action to do in the build.properties for the resource// if resource instanceof IProject, then the project is being renamed and there is no action to do in the build.properties for the resource
+					if (res instanceof IProject) 
+						continue;
 					for (int j = 0; j < entries.length; j++) {
 						addBuildEntryEdit(entries[j], res, newNames[i]);
 					}
