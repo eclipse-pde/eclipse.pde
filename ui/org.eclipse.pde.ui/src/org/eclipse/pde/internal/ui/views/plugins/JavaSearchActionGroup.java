@@ -95,7 +95,7 @@ public class JavaSearchActionGroup extends ActionGroup {
 			}
 
 		}
-		return nhits == selection.size();
+		return nhits > 0;
 	}
 	
 	private ModelEntry getModelEntry(Object object) {
