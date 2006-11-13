@@ -58,14 +58,6 @@ public class PluginManifestChange {
 			MultiTextEdit multiEdit = new MultiTextEdit();
 			
 			IDocument document = buffer.getDocument();
-			// add to existing text edits.  If you create a new MultiText edit, the file will get corrupted since the edits are applied independently
-			if (textChange != null) {
-				TextEdit edit = textChange.getEdit();
-				if (edit instanceof MultiTextEdit)
-					multiEdit = (MultiTextEdit)edit;
-				else
-					multiEdit.addChild(edit);
-			}
 	
 			try {
 				PluginModelBase model;
@@ -97,6 +89,16 @@ public class PluginManifestChange {
 				}
 				
 				if (multiEdit.hasChildren()) {
+					// add to existing text edits.  If you create a new MultiText edit, the file will get corrupted since the edits are applied independently
+					if (textChange != null) {
+						TextEdit edit = textChange.getEdit();
+						if (edit instanceof MultiTextEdit) {
+							((MultiTextEdit)edit).addChild(multiEdit);
+							multiEdit = ((MultiTextEdit)edit);
+						}
+						else
+							multiEdit.addChild(edit);
+					}
 					TextFileChange change = new TextFileChange("", file); //$NON-NLS-1$
 					change.setEdit(multiEdit);
 					return change;
