@@ -19,15 +19,12 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Dictionary;
-import java.util.Iterator;
 import java.util.Locale;
-import java.util.Properties;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.osgi.framework.util.Headers;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
@@ -121,8 +118,7 @@ public class ConvertSchemaToHTML extends Task {
 
 		if (OSGiFile.exists()) {
 			try {
-				Manifest OSGiManifest = new Manifest(new FileInputStream(OSGiFile));
-				Dictionary headers = manifestToProperties(OSGiManifest.getMainAttributes());
+				Dictionary headers = Headers.parseManifest(new FileInputStream(OSGiFile));
 				String value = headers.get(Constants.BUNDLE_SYMBOLICNAME).toString();
 				if (value == null)
 					return null;
@@ -204,17 +200,6 @@ public class ConvertSchemaToHTML extends Task {
 		return model;
 	}
 	
-	private Properties manifestToProperties(Attributes d) {
-		Iterator iter = d.keySet().iterator();
-		Properties result = new Properties();
-		while (iter.hasNext()) {
-			Attributes.Name key = (Attributes.Name) iter.next();
-			result.put(key.toString(), d.get(key));
-		}
-		return result;
-	}
-
-
 	private boolean validateDestination() {
 		boolean valid = true;
 		if (destination == null) {

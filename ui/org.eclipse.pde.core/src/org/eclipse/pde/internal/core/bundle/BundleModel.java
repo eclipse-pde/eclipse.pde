@@ -10,13 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bundle;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.Properties;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
+import org.eclipse.osgi.framework.util.Headers;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -26,6 +23,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 
 public abstract class BundleModel
@@ -57,12 +55,11 @@ public abstract class BundleModel
 
 	public void load(InputStream source, boolean outOfSync) {
 		try {
-			Manifest m = new Manifest(source);
-			fBundle.load(manifestToProperties(m.getMainAttributes()));
+			fBundle.load(Headers.parseManifest(source));
 			if (!outOfSync)
 				updateTimeStamp();
 			setLoaded(true);
-		} catch (IOException e) {
+		} catch (BundleException e) {
 		} finally {
 		}
 	}
@@ -120,18 +117,6 @@ public abstract class BundleModel
 		}
 		return buffer.toString();
 	}
-
-	
-	private Properties manifestToProperties(Attributes d) {
-		Iterator iter = d.keySet().iterator();
-		Properties result = new Properties();
-		while (iter.hasNext()) {
-			Attributes.Name key = (Attributes.Name) iter.next();
-			result.put(key.toString(), d.get(key));
-		}
-		return result;
-	}
-
 
 	public void reload(InputStream source, boolean outOfSync) {
 		load(source, outOfSync);

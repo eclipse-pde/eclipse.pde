@@ -17,11 +17,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.Iterator;
 import java.util.Properties;
-import java.util.jar.Attributes;
 import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -31,6 +28,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.framework.util.Headers;
 import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.osgi.service.pluginconversion.PluginConverter;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -208,29 +206,16 @@ public class MinimalState {
 		if (manifestStream == null)
 			return null;
 		try {
-			Manifest m = new Manifest(manifestStream);
-			return manifestToProperties(m.getMainAttributes());
+			return Headers.parseManifest(manifestStream);
+		} catch (BundleException e) {
 		} finally {
-			try {
-				manifestStream.close();
-			} catch (IOException e1) {
-			}
 			try {
 				if (jarFile != null)
 					jarFile.close();
 			} catch (IOException e2) {
 			}
 		}
-	}
-
-	private static Properties manifestToProperties(Attributes d) {
-		Iterator iter = d.keySet().iterator();
-		Properties result = new Properties();
-		while (iter.hasNext()) {
-			Attributes.Name key = (Attributes.Name) iter.next();
-			result.put(key.toString(), d.get(key));
-		}
-		return result;
+		return null;
 	}
 
 	public StateDelta resolveState(boolean incremental) {

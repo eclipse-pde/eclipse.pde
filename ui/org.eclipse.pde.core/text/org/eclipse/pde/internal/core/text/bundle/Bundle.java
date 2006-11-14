@@ -11,11 +11,9 @@
 package org.eclipse.pde.internal.core.text.bundle;
 
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -39,24 +37,24 @@ public class Bundle implements IBundle {
 		fDocumentHeaders.clear();
 	}
 	
-	public void load(Manifest manifest) {
-		Map attributes = manifest.getMainAttributes();
-		Iterator iter = attributes.keySet().iterator();
-		while (iter.hasNext()) {
-			Attributes.Name key = (Attributes.Name) iter.next();
-			if (key.toString().equals(Constants.BUNDLE_MANIFESTVERSION)) {				
-	            String value = (String)attributes.get(key);
+	public void load(Dictionary headers) {
+		Enumeration keys = headers.keys();
+		while (keys.hasMoreElements())  {
+			String key = keys.nextElement().toString();
+			if (key.equals(Constants.BUNDLE_MANIFESTVERSION)) {				
+	            String value = headers.get(key).toString();
 				IManifestHeader header = fModel.getFactory().createHeader(key.toString(), value);
 				fDocumentHeaders.put(key.toString(), header);
 				break;
 			}
 		}
-		iter = attributes.keySet().iterator();
-		while (iter.hasNext()) {
-			Attributes.Name key = (Attributes.Name) iter.next();
-			if (key.toString().equals(Constants.BUNDLE_MANIFESTVERSION))
+		
+		keys = headers.keys();
+		while (keys.hasMoreElements())  {
+			String key = keys.nextElement().toString();
+			if (key.equals(Constants.BUNDLE_MANIFESTVERSION))			
 				continue;
-            String value = (String)attributes.get(key);
+            String value = headers.get(key).toString();
 			IManifestHeader header = fModel.getFactory().createHeader(key.toString(), value);
 			fDocumentHeaders.put(key.toString(), header);
 		}

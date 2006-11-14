@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bundle;
 
+import java.util.Dictionary;
 import java.util.Properties;
 
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -19,7 +20,7 @@ import org.osgi.framework.Constants;
 
 public class Bundle extends BundleObject implements IBundle {
     private static final long serialVersionUID = 1L;
-    private Properties fProperties;
+    private Dictionary fProperties;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#setHeader(java.lang.String, java.lang.String)
@@ -44,7 +45,7 @@ public class Bundle extends BundleObject implements IBundle {
 		return (String)fProperties.get(key);
 	}
 	
-	public void load(Properties properties) {
+	public void load(Dictionary properties) {
 		fProperties = properties;
 	}
 	
@@ -59,7 +60,7 @@ public class Bundle extends BundleObject implements IBundle {
 	public void renameHeader(String key, String newKey) {
 		if (fProperties == null)
 			fProperties = new Properties();
-		if (fProperties.containsKey(key)) {
+		if (fProperties.get(key) != null) {
 			fProperties.put(newKey, fProperties.remove(key));
 		}
 	}
@@ -68,7 +69,7 @@ public class Bundle extends BundleObject implements IBundle {
 		return new ManifestHeader(key, getHeader(key), this, System.getProperty("line.separator")); //$NON-NLS-1$
 	}
 	
-	protected Properties getHeaders() {
+	protected Dictionary getHeaders() {
 		return fProperties;
 	}
 }

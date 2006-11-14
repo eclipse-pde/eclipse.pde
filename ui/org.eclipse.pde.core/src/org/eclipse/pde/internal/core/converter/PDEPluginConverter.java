@@ -13,22 +13,20 @@ package org.eclipse.pde.internal.core.converter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.framework.util.Headers;
 import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatform;
+import org.osgi.framework.BundleException;
 
 public class PDEPluginConverter {
 	
@@ -64,7 +62,7 @@ public class PDEPluginConverter {
 			String versionString =  version <= 3.1 ? ICoreConstants.TARGET31 : TargetPlatform.getTargetVersionString();
 			converter.convertManifest(inputFile, outputFile, false, versionString, true, null);
 			
-			Properties prop = getProperties(outputFile, newProps);
+			Dictionary prop = getProperties(outputFile, newProps);
 			prop.remove(ICoreConstants.ECLIPSE_AUTOSTART); 
 			prop.remove(ICoreConstants.ECLIPSE_LAZYSTART);
 			converter.writeManifest(outputFile, prop, false);
@@ -76,12 +74,9 @@ public class PDEPluginConverter {
 		}
 	}
 	
-	private static Properties getProperties(File file, HashMap newProps) {
-		InputStream manifestStream = null;
+	private static Dictionary getProperties(File file, HashMap newProps) {
 		try {
-			manifestStream = new FileInputStream(file);
-			Manifest manifest = new Manifest(manifestStream);
-			Properties prop = manifestToProperties(manifest.getMainAttributes());
+			Dictionary prop = Headers.parseManifest(new FileInputStream(file));
 			if (newProps != null && newProps.size() > 0) {
 				Iterator iter = newProps.keySet().iterator();
 				while (iter.hasNext()) {
@@ -91,25 +86,9 @@ public class PDEPluginConverter {
 			}
 			return prop;
 		} catch (FileNotFoundException e) {
-		} catch (IOException e) {
-		} finally {
-			try {
-				if (manifestStream != null)
-					manifestStream.close();
-			} catch (IOException e) {
-			}
+		} catch (BundleException e) {
 		}
 		return new Properties();
-	}
-	
-	private static Properties manifestToProperties(Attributes d) {
-		Iterator iter = d.keySet().iterator();
-		Properties result = new Properties();
-		while (iter.hasNext()) {
-			Attributes.Name key = (Attributes.Name) iter.next();
-			result.put(key.toString(), d.get(key));
-		}
-		return result;
 	}
 	
 }

@@ -10,17 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.jar.Manifest;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.osgi.framework.util.Headers;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundleModelFactory;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 
 public class BundleModel extends AbstractEditingModel implements IBundleModel {
@@ -55,8 +55,8 @@ public class BundleModel extends AbstractEditingModel implements IBundleModel {
 		try {
 			fLoaded = true;
 			((Bundle)getBundle()).clearHeaders();
-			((Bundle)getBundle()).load(new Manifest(source));
-		} catch (IOException e) {
+			((Bundle)getBundle()).load(Headers.parseManifest(source));
+		} catch (BundleException e) {
 			fLoaded = false;
 		}
 	}
