@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -177,7 +178,10 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 				FileSystemStructureProvider.INSTANCE,
 				null,
 				new SubProgressMonitor(monitor, 1));
-
+			IFolder folder = project.getFolder("META-INF");
+			if (folder.exists()) {
+				folder.delete(true, null);
+			}
 			if (fBinary) {
 				// Mark this project so that we can show image overlay
 				// using the label decorator
