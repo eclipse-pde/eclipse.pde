@@ -178,7 +178,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 				FileSystemStructureProvider.INSTANCE,
 				null,
 				new SubProgressMonitor(monitor, 1));
-			IFolder folder = project.getFolder("META-INF");
+			IFolder folder = project.getFolder("META-INF"); //$NON-NLS-1$
 			if (folder.exists()) {
 				folder.delete(true, null);
 			}
