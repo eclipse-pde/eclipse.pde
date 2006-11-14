@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.bundle;
 
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.Properties;
 
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -46,7 +47,13 @@ public class Bundle extends BundleObject implements IBundle {
 	}
 	
 	public void load(Dictionary properties) {
-		fProperties = properties;
+		// Passed dictionary is read-only
+		fProperties = new Properties();
+		Enumeration keys = properties.keys();
+		while (keys.hasMoreElements()) {
+			String key = keys.nextElement().toString();
+			fProperties.put(key, properties.get(key));
+		}
 	}
 	
 	public String getLocalization() {
