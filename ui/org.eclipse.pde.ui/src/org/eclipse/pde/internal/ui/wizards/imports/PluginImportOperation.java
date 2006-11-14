@@ -557,6 +557,8 @@ public class PluginImportOperation extends JarImportOperation {
 			}
 			if (fImportType != IMPORT_WITH_SOURCE) {
 				modifyBundleClasspathHeader(project, model);
+			} else {
+				removeSignedHeaders(project);
 			}
 			setPermissions(model, project);
 		} catch (IOException e) {
@@ -603,6 +605,14 @@ public class PluginImportOperation extends JarImportOperation {
 			}
 			bmodel.save();
 		}
+	}
+	
+	private void removeSignedHeaders(IProject project) {
+		IFile file = project.getFile(JarFile.MANIFEST_NAME);
+		if (!file.exists())
+			return;
+		WorkspaceBundleModel model = new WorkspaceBundleModel(file);
+		model.save();
 	}
 
 	private IProject findProject(String id) {
