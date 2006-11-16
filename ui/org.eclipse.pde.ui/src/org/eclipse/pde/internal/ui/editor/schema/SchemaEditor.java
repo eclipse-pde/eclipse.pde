@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
+import java.io.File;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -173,6 +175,38 @@ public class SchemaEditor extends MultiSourceEditor {
 		}
 		Display.getDefault().beep();
 		return false;
+	}
+	
+	/**
+	 * @param file
+	 * @return
+	 */
+	public static boolean openSchema(File file) {
+
+		IEditorPart part = null;
+		// Ensure the file exists
+		if ((file == null) || 
+				(file.exists() == false)) {
+			Display.getDefault().beep();
+			return false;
+		}
+		// Create the editor input
+		IEditorInput input = new SystemFileEditorInput(file);
+		try {
+			// Open the schema editor using the editor input
+			part = PDEPlugin.getActivePage().openEditor(input,
+					IPDEUIConstants.SCHEMA_EDITOR_ID);
+		} catch (PartInitException e) {
+			Display.getDefault().beep();
+			return false;
+		}
+		// Ensure the schema editor was opened properly
+		if (part == null) {
+			Display.getDefault().beep();
+			return false;
+		}
+		
+		return true;
 	}
 	
 	public static void openToElement(IPath path, ISchemaElement element) {

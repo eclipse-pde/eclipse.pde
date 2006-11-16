@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -35,9 +36,11 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
+import org.eclipse.pde.internal.ui.editor.actions.OpenSchemaAction;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
 
 public class ManifestSourcePage extends XMLSourcePage {
 	
@@ -45,6 +48,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 	private Object fImports = new Object();
 	private Object fExtensionPoints = new Object();
 	private Object fExtensions = new Object();
+	private ExtensionAttributePointDectector fDetector;
 	
 	class OutlineLabelProvider extends LabelProvider {		
 		private PDELabelProvider fProvider;
@@ -174,7 +178,8 @@ public class ManifestSourcePage extends XMLSourcePage {
 	
 	public ManifestSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
-		
+		fDetector = new ExtensionAttributePointDectector();
+		fDetector.setOpenSchemaAction(new OpenSchemaAction());
 	}
 
 	protected ILabelProvider createOutlineLabelProvider() {
@@ -279,4 +284,27 @@ public class ManifestSourcePage extends XMLSourcePage {
 			return new ManifestHyperlinkDetector(this);
 		return super.getAdapter(adapter);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
+	 */
+	protected void editorContextMenuAboutToShow(IMenuManager menu) {
+		OpenSchemaAction openSchemaAction = fDetector.getOpenSchemaAction();
+		if ((openSchemaAction != null) &&
+				(openSchemaAction.isEnabled())) {
+			menu.add(openSchemaAction);
+		}		
+		super.editorContextMenuAboutToShow(menu);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#createPartControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+		// At this point the source page is fully initialized including the 
+		// underlying text viewer
+		fDetector.setTextEditor(this);
+	}
+	
 }
