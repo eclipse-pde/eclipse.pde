@@ -116,6 +116,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		IBuildEntry binIncludes = null;
 		IBuildEntry srcIncludes = null;
 		IBuildEntry jarsExtra = null;
+		IBuildEntry bundleList = null;
 		ArrayList sourceEntries = new ArrayList();
 		ArrayList sourceEntryKeys = new ArrayList();
 		IBuildEntry[] entries = build.getBuildEntries();
@@ -134,6 +135,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				sourceEntries.add(entries[i]);
 			else if (name.equals(PROPERTY_JAR_EXTRA_CLASSPATH))
 				jarsExtra = entries[i];
+			else if (name.equals(IBuildEntry.SECONDARY_DEPENDENCIES))
+				bundleList = entries[i];
 			else if (name.equals(PROPERTY_CUSTOM)) {
 				String[] tokens = entries[i].getTokens();
 				if (tokens.length == 1 && tokens[0].equalsIgnoreCase("true")) //$NON-NLS-1$
@@ -147,8 +150,12 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		}
 
 		// validation not relying on build flag
-		if (fClasspathSeverity != CompilerFlags.IGNORE && jarsExtra != null)
-			validateJarsExtraClasspath(jarsExtra);
+		if (fClasspathSeverity != CompilerFlags.IGNORE) {
+			if (jarsExtra != null)
+				validateJarsExtraClasspath(jarsExtra);
+			if (bundleList != null)
+				validateDependencyManagement(bundleList);
+		}
 
 		// rest of validation relies on build flag
 		if (fBuildSeverity == CompilerFlags.IGNORE)
@@ -500,6 +507,18 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			if (message != null)
 				prepareError(includes.getName(), token, message, fixId, PDEMarkerFactory.CAT_OTHER);
 		}
+	}
+	
+	private void validateDependencyManagement(IBuildEntry bundleList) {
+		String[] bundles = bundleList.getTokens();
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		for (int i = 0; i < bundles.length; i++) {
+			if (manager.findModel(bundles[i]) == null)
+				prepareError(IBuildEntry.SECONDARY_DEPENDENCIES, bundles[i], 
+						NLS.bind(PDECoreMessages.BuildErrorReporter_cannotFindBundle, bundles[i]), 
+						PDEMarkerFactory.NO_RESOLUTION, fClasspathSeverity, PDEMarkerFactory.CAT_OTHER);
+		}
+		
 	}
 
 	private BuildModel prepareTextBuildModel(IProgressMonitor monitor)  {
