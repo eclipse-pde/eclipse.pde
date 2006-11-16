@@ -25,7 +25,7 @@ public class PluginBlock extends AbstractPluginBlock {
 		super(tab);
 	}
 	
-	public void initializeFrom(ILaunchConfiguration config, boolean defaultSelection) throws CoreException {
+	public void initializeFrom(ILaunchConfiguration config, boolean defaultSelection, boolean useList) throws CoreException {
 		super.initializeFrom(config);
 		if (defaultSelection) {
 			handleRestoreDefaults();
@@ -33,7 +33,7 @@ public class PluginBlock extends AbstractPluginBlock {
 			initWorkspacePluginsState(config);
 			initExternalPluginsState(config);
 		}
-		enableViewer(!defaultSelection);
+		enableViewer(useList);
 		updateCounter();
 		fTab.updateLaunchConfigurationDialog();
 	}

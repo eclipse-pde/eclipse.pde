@@ -129,7 +129,7 @@ public class PluginsTab extends AbstractLauncherTab {
 			} else {
 				fUseListRadio.setSelection(!fUseDefaultRadio.getSelection());
 			}
-			fPluginBlock.initializeFrom(configuration, fUseDefaultRadio.getSelection());
+			fPluginBlock.initializeFrom(configuration, fUseDefaultRadio.getSelection(), fUseListRadio.getSelection());
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
 		}
