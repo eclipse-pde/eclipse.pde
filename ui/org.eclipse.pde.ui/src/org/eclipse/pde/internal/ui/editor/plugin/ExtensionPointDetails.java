@@ -35,6 +35,7 @@ import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEDetails;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.actions.OpenSchemaAction;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.search.FindReferencesAction;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
@@ -256,7 +257,7 @@ public class ExtensionPointDetails extends PDEDetails {
 		td.grabHorizontal = true;
 		td.indent = 10;
 		fRichText.setLayoutData(td);
-		fRichText.setImage("schema", PDEPlugin.getDefault().getLabelProvider().get( //$NON-NLS-1$
+		fRichText.setImage("open", PDEPlugin.getDefault().getLabelProvider().get( //$NON-NLS-1$
 				PDEPluginImages.DESC_SCHEMA_OBJ));
 		fRichText.setImage("desc", PDEPlugin.getDefault().getLabelProvider().get( //$NON-NLS-1$
 				PDEPluginImages.DESC_DOC_SECTION_OBJ));
@@ -269,6 +270,11 @@ public class ExtensionPointDetails extends PDEDetails {
 				String pointID = pluginID + "." + fInput.getId(); //$NON-NLS-1$
 				if (e.getHref().equals("search")) { //$NON-NLS-1$
 					new FindReferencesAction(fInput, pluginID).run();
+				} else if (e.getHref().equals("open")) { //$NON-NLS-1$
+					OpenSchemaAction action = new OpenSchemaAction();
+					action.setInput(pointID);
+					action.setEnabled(true);
+					action.run();
 				} else {
 					new ShowDescriptionAction(pointID).run();
 				}

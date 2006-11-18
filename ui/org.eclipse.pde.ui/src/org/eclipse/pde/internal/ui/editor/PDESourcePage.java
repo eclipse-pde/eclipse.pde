@@ -48,6 +48,7 @@ import org.eclipse.pde.internal.ui.editor.actions.HyperlinkAction;
 import org.eclipse.pde.internal.ui.editor.actions.InformationDispatchAction;
 import org.eclipse.pde.internal.ui.editor.actions.PDEActionConstants;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
+import org.eclipse.pde.internal.ui.editor.plugin.ExtensionHyperLink;
 import org.eclipse.pde.internal.ui.editor.text.PDESelectAnnotationRulerAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -474,8 +475,15 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		if (contributor instanceof PDEFormTextEditorContributor) {
 			PDEFormTextEditorContributor textContributor = (PDEFormTextEditorContributor)contributor;
 			HyperlinkAction action = textContributor.getHyperlinkAction();
-			if (action != null && action.isEnabled())
+			if ((action != null) && 
+					action.isEnabled() &&
+					((action.getHyperLink() instanceof ExtensionHyperLink) == false)) {
+				// Another detector handles this the extension hyperlink case
+				// org.eclipse.pde.internal.ui.editor.plugin.ExtensionAttributePointDectector.java
+				// Implemented at a higher level.  As a result, need to disable
+				// the action here to prevent duplicate entries in the context menu
 				menu.add(action);
+			}
 			FormatAction formatManifestAction = textContributor.getFormatAction();
 			if (formatManifestAction != null && formatManifestAction.isEnabled())
 				menu.add(formatManifestAction);

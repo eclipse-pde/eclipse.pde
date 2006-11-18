@@ -335,15 +335,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			newMenu = new MenuManager(PDEUIMessages.Menus_new_label);
 			manager.add(newMenu);
 		}
-		if (!newMenu.isEmpty())
-			newMenu.add(new Separator());
-		newMenu.add(fNewExtensionAction);
-		manager.add(new Separator());
-		fDrillDownAdapter.addNavigationActions(manager);
-		manager.add(new Separator());
-		getPage().getPDEEditor().getContributor().addClipboardActions(manager);
-		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
-				manager, false);
 		if (ssel.size() == 1) {
 			manager.add(new Separator());
 			Object object = ssel.getFirstElement();
@@ -354,7 +345,17 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				manager.add(new Separator());
 			}
 			//manager.add(new PropertiesAction(getFormPage().getEditor()));
-		}
+		}		
+		if (!newMenu.isEmpty())
+			newMenu.add(new Separator());
+		newMenu.add(fNewExtensionAction);
+		manager.add(new Separator());
+		fDrillDownAdapter.addNavigationActions(manager);
+		manager.add(new Separator());
+		getPage().getPDEEditor().getContributor().addClipboardActions(manager);
+		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(
+				manager, false);
+
 	}
 	static IMenuManager fillContextMenu(PDEFormPage page,
 			final IPluginParent parent, IMenuManager manager) {

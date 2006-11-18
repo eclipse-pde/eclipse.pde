@@ -29,6 +29,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -44,6 +45,7 @@ public class ShowDescriptionAction extends Action {
 	
 	public ShowDescriptionAction(String pointID) {
 		fPointID = pointID;
+		initialize();
 	}
 
 	public ShowDescriptionAction(IPluginExtensionPoint point) {
@@ -53,15 +55,22 @@ public class ShowDescriptionAction extends Action {
 	public ShowDescriptionAction(IPluginExtensionPoint point, boolean forceExternal) {
 		setExtensionPoint(point, point.getFullId());
 		fForceExternal = forceExternal;
+		initialize();
 	}
 	
 	public ShowDescriptionAction(IPluginExtensionPoint point, String pointID) {
 		setExtensionPoint(point, pointID);
 		fForceExternal = false;
+		initialize();
 	}
 	
 	public ShowDescriptionAction(ISchema schema) {
 		setSchema(schema);
+		initialize();
+	}
+	
+	private void initialize() {
+		setImageDescriptor(PDEPluginImages.DESC_DOC_SECTION_OBJ);
 	}
 	
 	public void setSchema(ISchema schema) {

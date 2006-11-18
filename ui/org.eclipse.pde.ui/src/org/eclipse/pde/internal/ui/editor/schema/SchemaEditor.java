@@ -11,9 +11,13 @@
 package org.eclipse.pde.internal.ui.editor.schema;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
@@ -23,6 +27,8 @@ import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
+import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
+import org.eclipse.pde.internal.ui.editor.JarEntryFile;
 import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
@@ -182,8 +188,6 @@ public class SchemaEditor extends MultiSourceEditor {
 	 * @return
 	 */
 	public static boolean openSchema(File file) {
-
-		IEditorPart part = null;
 		// Ensure the file exists
 		if ((file == null) || 
 				(file.exists() == false)) {
@@ -192,6 +196,14 @@ public class SchemaEditor extends MultiSourceEditor {
 		}
 		// Create the editor input
 		IEditorInput input = new SystemFileEditorInput(file);
+		return openEditor(input);
+	}
+
+	/**
+	 * @param input
+	 */
+	private static boolean openEditor(IEditorInput input) {
+		IEditorPart part = null;
 		try {
 			// Open the schema editor using the editor input
 			part = PDEPlugin.getActivePage().openEditor(input,
@@ -205,9 +217,44 @@ public class SchemaEditor extends MultiSourceEditor {
 			Display.getDefault().beep();
 			return false;
 		}
-		
 		return true;
 	}
+	
+	/**
+	 * @param jarFile
+	 * @param schemaJarFileEntry
+	 * @return
+	 */
+	public static boolean openSchema(File jarFile, String schemaJarFileEntry) {
+		// Ensure the file exists
+		if ((jarFile == null) || 
+				(jarFile.exists() == false)) {
+			Display.getDefault().beep();
+			return false;
+		}
+		// Open the jar archive
+		ZipFile zipFile;
+		try {
+			zipFile = new ZipFile(jarFile);
+		} catch (ZipException e) {
+			Display.getDefault().beep();
+			return false;
+		} catch (IOException e) {
+			Display.getDefault().beep();
+			return false;
+		}
+		// Ensure the schema file exists in the jar archive
+		if ((schemaJarFileEntry == null) ||
+				zipFile.getEntry(schemaJarFileEntry) == null) {
+			Display.getDefault().beep();
+			return false;			
+		}
+		// Create the editor input
+		IStorage storage = new JarEntryFile(zipFile, schemaJarFileEntry);
+		IEditorInput input = new JarEntryEditorInput(storage);
+		return openEditor(input);		
+	}
+	
 	
 	public static void openToElement(IPath path, ISchemaElement element) {
 		if (openSchema(path)) {

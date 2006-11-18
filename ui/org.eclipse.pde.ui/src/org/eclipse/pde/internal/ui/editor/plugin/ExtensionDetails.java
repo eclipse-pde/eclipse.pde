@@ -27,6 +27,7 @@ import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEDetails;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.actions.OpenSchemaAction;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.search.FindDeclarationsAction;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
@@ -136,12 +137,18 @@ public class ExtensionDetails extends PDEDetails {
 		td.indent = 10;
 		rtext.setLayoutData(td);
 		rtext.setImage("desc", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_DOC_SECTION_OBJ)); //$NON-NLS-1$
+		rtext.setImage("open", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_SCHEMA_OBJ));  //$NON-NLS-1$
 		rtext.setImage("search", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PSEARCH_OBJ));		 //$NON-NLS-1$
 		rtext.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				if (e.getHref().equals("search")){ //$NON-NLS-1$
 					FindDeclarationsAction findDeclarationsAction = new FindDeclarationsAction(input);
 					findDeclarationsAction.run();
+				} else if (e.getHref().equals("open")) { //$NON-NLS-1$
+					OpenSchemaAction action = new OpenSchemaAction();
+					action.setInput(input);
+					action.setEnabled(true);
+					action.run();
 				} else {
 					if (input == null || input.getPoint() == null)
 						return;

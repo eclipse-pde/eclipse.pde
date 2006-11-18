@@ -11,11 +11,10 @@
 
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import java.io.File;
-import java.net.URL;
-
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
@@ -23,7 +22,6 @@ import org.eclipse.pde.internal.core.schema.SchemaRootElement;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
-import org.eclipse.pde.internal.ui.editor.actions.OpenSchemaAction;
 import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyEvent;
@@ -42,31 +40,23 @@ public class ExtensionAttributePointDectector implements MouseListener,
 	private ManifestSourcePage fSourcePage;
 	
 	private StyledText fStyledText;
-
-	private OpenSchemaAction fOpenSchemaAction;
+	
+	private ISelection fSelection;
 	
 	/**
 	 * 
 	 */
 	public ExtensionAttributePointDectector() {
-		
+		fSelection = null;
 		fStyledText = null;
 		fSourcePage = null;		
-		fOpenSchemaAction = null;
-	}
-	
-	/**
-	 * @param action
-	 */
-	public void setOpenSchemaAction(OpenSchemaAction action) {
-		fOpenSchemaAction = action;
 	}
 	
 	/**
 	 * @return
 	 */
-	public OpenSchemaAction getOpenSchemaAction() {
-		return fOpenSchemaAction;
+	public ISelection getSelection() {
+		return fSelection;
 	}
 	
 	/**
@@ -94,16 +84,18 @@ public class ExtensionAttributePointDectector implements MouseListener,
 		addListeners();
 		// Enable this action if the selection is within the point attribute on
 		// an extension
-		fOpenSchemaAction.setEnabled(isOnExtensionAttributePointRegion());
+		checkIfOnTarget();
 	}
 	
 	/**
 	 * @return
 	 */
-	private boolean isOnExtensionAttributePointRegion() {
-
+	private void checkIfOnTarget() {
+		// Reset the Selection
+		fSelection = null;
+		// Ensure the input is valid
 		if (isInputInitialized() == false) {
-			return false;
+			return;
 		}
 		// Get the region selected
 		Point selectionPoint = fStyledText.getSelection();
@@ -111,36 +103,20 @@ public class ExtensionAttributePointDectector implements MouseListener,
 				selectionPoint.y - selectionPoint.x);
 		// Determine whether the region selected is the point attribute of
 		// and extension
-		File schemaFile = detectExtensionAttributePoint(selectionRegion);
-		// Set the schema file to open on the action (null or not)
-		fOpenSchemaAction.setFile(schemaFile);
-		// Determine whether the file is defined
-		if (schemaFile == null) {
-			return false;
-		}
-		return true;
-	}
-	
-	/**
-	 * @param selectionRegion
-	 * @return
-	 */
-	private File detectExtensionAttributePoint(Region selectionRegion) {
-
 		if ((selectionRegion == null) ||
 				(fSourcePage == null)) {
-			return null;
+			return;
 		}
 		// Retrieve the document range corresponding to the selection region
 		IDocumentRange element = 
 			fSourcePage.getRangeElement(selectionRegion.getOffset(), true);
 		// Validate the obtained document range
 		if (XMLUtil.withinRange(element, selectionRegion.getOffset()) == false) {
-			return null;
+			return;
 		}
 		// Ensure we have a document attribute 
 		if ((element instanceof IDocumentAttribute) == false) {
-			return null;
+			return;
 		}
 		// Ignore IDocumentNode
 		// Ignore IDocumentTextNode
@@ -149,7 +125,7 @@ public class ExtensionAttributePointDectector implements MouseListener,
 		// Ensure the attribute value is defined
 		if ((attributeValue == null) || 
 				(attributeValue.length() == 0)) {
-			return null;
+			return;
 		}
 		// Get the parent node: either extension or extension point
 		IPluginObject node = 
@@ -157,40 +133,34 @@ public class ExtensionAttributePointDectector implements MouseListener,
 		// Ensure the node is defined and comes from and editable model
 		if ((node == null) || 
 				(node.getModel().isEditable() == false)) {
-			return null;
+			return;
 		}
 		// Ensure the node is an extension
 		if ((node instanceof IPluginExtension) == false) {
-			return null;
+			return;
 		}
 		// Ignore IPluginExtensionPoint
+		IPluginExtension extension = (IPluginExtension)node;
 		// Retrieve the corresponding schema attribute to this node
 		ISchemaAttribute schemaAttribute = 
 			XMLUtil.getSchemaAttribute(documentAttribute, 
-					((IPluginExtension)node).getPoint());
+					extension.getPoint());
 		// Ensure the schema attribute is defined
 		if (schemaAttribute == null) {
-			return null;
+			return;
 		}
 		// Ensure the attribute is a point
 		if (((schemaAttribute.getParent() instanceof SchemaRootElement) == false) ||
 				(documentAttribute.getAttributeName().equals(IPluginExtension.P_POINT) == false)) {
-			return null;
+			return;
 		}
-		// Retrieve the schema URL
-		URL schemaURL = schemaAttribute.getSchema().getURL();
-		// Ensure the URL is defined
-		if (schemaURL == null) {
-			return null;
-		}
-		return new File(schemaURL.getPath());
+		fSelection = new StructuredSelection(extension);
 	}
 
 	/**
 	 * 
 	 */
 	private void removeListeners() {
-		
 		if (isInputInitialized() == false) {
 			return;
 		}
@@ -235,15 +205,11 @@ public class ExtensionAttributePointDectector implements MouseListener,
 	}
 
 	public void mouseUp(MouseEvent e) {
-		// Enable this action if the selection is within the point attribute on
-		// an extension
-		fOpenSchemaAction.setEnabled(isOnExtensionAttributePointRegion());
+		checkIfOnTarget();
 	}
 
 	public void keyPressed(KeyEvent e) {
-		// Enable this action if the selection is within the point attribute on
-		// an extension
-		fOpenSchemaAction.setEnabled(isOnExtensionAttributePointRegion());
+		checkIfOnTarget();
 	}
 
 	/* (non-Javadoc)

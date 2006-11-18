@@ -38,6 +38,10 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 			fLink.open();
 	}
 	
+	public IHyperlink getHyperLink() {
+		return fLink;
+	}
+	
 	protected void removeListeners() {
 		if (!hasDetector() || isTextDisposed())
 			return;

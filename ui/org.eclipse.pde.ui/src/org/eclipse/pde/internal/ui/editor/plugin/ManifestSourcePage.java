@@ -36,11 +36,12 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
-import org.eclipse.pde.internal.ui.editor.actions.OpenSchemaAction;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.actions.ActionContext;
 
 public class ManifestSourcePage extends XMLSourcePage {
 	
@@ -49,6 +50,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 	private Object fExtensionPoints = new Object();
 	private Object fExtensions = new Object();
 	private ExtensionAttributePointDectector fDetector;
+	private PluginSearchActionGroup fActionGroup;
 	
 	class OutlineLabelProvider extends LabelProvider {		
 		private PDELabelProvider fProvider;
@@ -179,7 +181,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 	public ManifestSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
 		fDetector = new ExtensionAttributePointDectector();
-		fDetector.setOpenSchemaAction(new OpenSchemaAction());
+		fActionGroup = new PluginSearchActionGroup();
 	}
 
 	protected ILabelProvider createOutlineLabelProvider() {
@@ -289,11 +291,12 @@ public class ManifestSourcePage extends XMLSourcePage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
-		OpenSchemaAction openSchemaAction = fDetector.getOpenSchemaAction();
-		if ((openSchemaAction != null) &&
-				(openSchemaAction.isEnabled())) {
-			menu.add(openSchemaAction);
-		}		
+		
+		ISelection selection = fDetector.getSelection();
+		if (selection != null) {
+			fActionGroup.setContext(new ActionContext(selection));
+			fActionGroup.fillContextMenu(menu);
+		}
 		super.editorContextMenuAboutToShow(menu);
 	}
 	

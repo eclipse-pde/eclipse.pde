@@ -16,6 +16,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.internal.core.search.PluginSearchInput;
 import org.eclipse.pde.internal.core.search.PluginSearchScope;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.search.ui.ISearchQuery;
 
@@ -26,6 +27,7 @@ public class FindDeclarationsAction extends BaseSearchAction {
 
 	public FindDeclarationsAction(Object object) {
 		super(PDEUIMessages.SearchAction_Declaration);
+		setImageDescriptor(PDEPluginImages.DESC_PSEARCH_OBJ);
 		this.fSelectedObject = object;
 	}
 	

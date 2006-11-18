@@ -16,6 +16,7 @@ import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.search.PluginSearchInput;
 import org.eclipse.pde.internal.core.search.PluginSearchScope;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.search.ui.ISearchQuery;
 
@@ -33,8 +34,13 @@ public class FindReferencesAction extends BaseSearchAction {
 		super(PDEUIMessages.SearchAction_references);
 		fSelectedObject = object;
 		fPluginID = pluginID;
+		initialize();
 	}
 	
+	private void initialize() {
+		setImageDescriptor(PDEPluginImages.DESC_PSEARCH_OBJ);
+	}
+
 	protected ISearchQuery createSearchQuery() {
 		PluginSearchInput input = new PluginSearchInput();
 		if (fSelectedObject instanceof IPlugin) {

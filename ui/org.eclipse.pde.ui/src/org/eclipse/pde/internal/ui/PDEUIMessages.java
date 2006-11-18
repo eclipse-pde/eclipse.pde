@@ -215,6 +215,12 @@ public class PDEUIMessages extends NLS {
 
 	public static String NewLibraryPluginCreationPage_pdependencies;
 
+	public static String OpenSchemaAction_errorMsgSchemaNotFound;
+
+	public static String OpenSchemaAction_msgUnknown;
+
+	public static String OpenSchemaAction_titleExtensionPointSchema;
+
 	public static String OSGiFrameworkBlock_defaultGroup;
 
 	public static String OSGiFrameworkPreferencePage_default;

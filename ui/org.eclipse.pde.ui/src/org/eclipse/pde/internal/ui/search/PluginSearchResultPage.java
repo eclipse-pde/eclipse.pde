@@ -81,6 +81,7 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 		actionGroup.setContext(context);
 		actionGroup.fillContextMenu(mgr);
 		if (ImportActionGroup.canImport(selection)) {
+			mgr.add(new Separator());
 			ImportActionGroup importActionGroup = new ImportActionGroup();
 			importActionGroup.setContext(context);
 			importActionGroup.fillContextMenu(mgr);
