@@ -417,6 +417,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 		result.put ("osgi.nl", TargetPlatform.getNL()); //$NON-NLS-1$
 		result.put ("osgi.arch", TargetPlatform.getOSArch()); //$NON-NLS-1$
 		result.put("osgi.resolveOptional", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+		result.put("osgi.resolverMode", "development"); //$NON-NLS-1$ //$NON-NLS-2$
 		return result;
 	}
 

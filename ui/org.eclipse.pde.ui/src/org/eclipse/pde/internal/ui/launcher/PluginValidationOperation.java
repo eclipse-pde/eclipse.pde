@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -240,13 +242,22 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 	}
 	
 	public PluginValidationOperation(ILaunchConfiguration configuration) {
-		fState = new MinimalState(TargetPlatform.getTargetEnvironment());
+		fState = new MinimalState(getTargetEnvironment());
 		initialize(configuration);
 	}
 	
 	public PluginValidationOperation(IPluginModelBase[] models) {
-		fState = new MinimalState(TargetPlatform.getTargetEnvironment());
+		fState = new MinimalState(getTargetEnvironment());
 		fModels = models;
+	}
+	
+	public Dictionary getTargetEnvironment() {
+		Dictionary result = new Hashtable();
+		result.put ("osgi.os", TargetPlatform.getOS()); //$NON-NLS-1$
+		result.put ("osgi.ws", TargetPlatform.getWS()); //$NON-NLS-1$
+		result.put ("osgi.nl", TargetPlatform.getNL()); //$NON-NLS-1$
+		result.put ("osgi.arch", TargetPlatform.getOSArch()); //$NON-NLS-1$
+		return result;
 	}
 
 	private void initialize(ILaunchConfiguration configuration) {

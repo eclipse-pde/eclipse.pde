@@ -37,6 +37,10 @@ public class PDEClasspathContainer {
 				return false;
 			return discouraged == ((Rule)other).discouraged && path.equals(((Rule)other).path);
 		}
+		
+		public String toString() {
+			return discouraged ? path.toString() + " [discouraged]" : path.toString();
+		}
 	}
 	
 	private static HashMap ACCESSIBLE_RULES = new HashMap();

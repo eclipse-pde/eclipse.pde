@@ -127,8 +127,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			
 			HostSpecification host = desc.getHost();
 			if (host != null) {
-				if (desc.isResolved())
-					addHostPlugin(host, added, map, entries);
+				addHostPlugin(host, added, map, entries);
 			} else if ("true".equals(System.getProperty("pde.allowCycles"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				BundleDescription[] fragments = desc.getFragments();
 				for (int i = 0; i < fragments.length; i++) {
@@ -141,7 +140,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			// add dependencies
 			BundleSpecification[] required = desc.getRequiredBundles();
 			for (int i = 0; i < required.length; i++) {
-				addDependency(getSupplier(required[i]), added, map, entries);
+				addDependency((BundleDescription)required[i].getSupplier(), added, map, entries);
 			}
 			
 			IBuild build = ClasspathUtilCore.getBuild(fModel);
@@ -165,27 +164,18 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		return (IClasspathEntry[])entries.toArray(new IClasspathEntry[entries.size()]);
 	}
 	
-	private BundleDescription getSupplier(BundleSpecification spec) {
-		if (spec.isResolved())
-			return (BundleDescription)spec.getSupplier();
-		
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(spec.getName());
-		return model != null && model.isEnabled() ? model.getBundleDescription() : null;	
-	}
-	
-	private Map retrieveVisiblePackagesFromState(BundleDescription bundle) {
+	private Map retrieveVisiblePackagesFromState(BundleDescription desc) {
 		Map visiblePackages = new TreeMap();
-		if (bundle.isResolved()) {
-			BundleDescription desc = bundle;
-			StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
-			addVisiblePackagesFromState(helper, desc, visiblePackages);
-			if (desc.getHost() != null)
-				addVisiblePackagesFromState(helper, (BundleDescription)desc.getHost().getSupplier(), visiblePackages);
-		}
+		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
+		addVisiblePackagesFromState(helper, desc, visiblePackages);
+		if (desc.getHost() != null)
+			addVisiblePackagesFromState(helper, (BundleDescription)desc.getHost().getSupplier(), visiblePackages);
 		return visiblePackages;
 	}
 
 	private void addVisiblePackagesFromState(StateHelper helper, BundleDescription desc, Map visiblePackages) {
+		if (desc == null)
+			return;
 		ExportPackageDescription[] exports = helper.getVisiblePackages(desc);
 		for (int i = 0; i < exports.length; i++) {
 			BundleDescription exporter = exports[i].getExporter();
@@ -252,7 +242,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		BundleSpecification[] required = desc.getRequiredBundles();
 		for (int i = 0; i < required.length; i++) {
 			if (required[i].isExported()) {
-				addDependency(getSupplier(required[i]), added, map, entries, useInclusion);
+				addDependency((BundleDescription)required[i].getSupplier(), added, map, entries, useInclusion);
 			}
 		}
 	}	
@@ -273,16 +263,11 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 	
 	private Rule[] getInclusions(Map map, IPluginModelBase model) {
-		if ("false".equals(System.getProperty("pde.restriction")) //$NON-NLS-1$ //$NON-NLS-2$
-				||!fModel.getBundleDescription().isResolved()
-				|| !(fModel instanceof IBundlePluginModelBase))
-			return null;
-		
-		if (TargetPlatform.getTargetVersion() < 3.1)
-			return null;
-		
 		BundleDescription desc = model.getBundleDescription();
-		if (desc == null || !desc.isResolved())
+		if (desc == null
+				|| "false".equals(System.getProperty("pde.restriction")) //$NON-NLS-1$ //$NON-NLS-2$
+				|| !(fModel instanceof IBundlePluginModelBase)
+				|| TargetPlatform.getTargetVersion() < 3.1)
 			return null;
 		
 		Rule[] rules;
@@ -309,10 +294,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			if (addPlugin(host, false, map, entries)) {			
 				BundleSpecification[] required = host.getRequiredBundles();
 				for (int i = 0; i < required.length; i++) {
-					desc = getSupplier(required[i]);
-					if (desc != null && desc instanceof BundleDescription) {
-						addDependency((BundleDescription)desc, added, map, entries);
-					}
+					addDependency((BundleDescription)required[i].getSupplier(), added, map, entries);
 				}
 				
 				// add Import-Package
