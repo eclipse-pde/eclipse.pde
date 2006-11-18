@@ -39,7 +39,7 @@ public class PDEClasspathContainer {
 		}
 		
 		public String toString() {
-			return discouraged ? path.toString() + " [discouraged]" : path.toString();
+			return discouraged ? path.toString() + " [discouraged]" : path.toString(); //$NON-NLS-1$
 		}
 	}
 	
