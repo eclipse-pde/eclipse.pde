@@ -76,7 +76,6 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 	public void createDetails(Composite parent) {
 
 		GridData data = null;
-		boolean paintedBorder = getToolkit().getBorderStyle() != SWT.BORDER;
 		
 		// Create main section
 		fMainSection = getToolkit().createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
@@ -91,9 +90,6 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		// Create container for main section
 		Composite mainSectionClient = getToolkit().createComposite(fMainSection);	
 		GridLayout layout = new GridLayout(2, false);
-		if (paintedBorder) {
-			layout.verticalSpacing = 7;
-		}
 		mainSectionClient.setLayout(layout);
 		
 		// Attribute: label
@@ -148,7 +144,6 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		// conditional-subitem
 //		fWhen.setFormEntryListener(new FormEntryAdapter(this) {
 //			public void textValueChanged(FormEntry entry) {
-//				// TODO: MP: Can when ever be null?
 //				fSubItem.setWhen(fWhen.getValue());
 //			}
 //		});			

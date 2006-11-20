@@ -92,9 +92,6 @@ public class SimpleCSCommandDetails implements ICSDetails {
 		int columnSpan = 3;
 		Section commandSection = null;
 		FormToolkit toolkit = fDetails.getToolkit();
-		// TODO: MP: Remove painted border check - only applicable to the 
-		// page not sections
-		boolean paintedBorder = toolkit.getBorderStyle() != SWT.BORDER;
 		Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
 		GridData data = null;
 		GridLayout layout = null;
@@ -113,9 +110,6 @@ public class SimpleCSCommandDetails implements ICSDetails {
 		// Create container for command section		
 		Composite commandSectionClient = toolkit.createComposite(commandSection);	
 		layout = new GridLayout(columnSpan, false);
-		if (paintedBorder) {
-			layout.verticalSpacing = 7;
-		}
 		commandSectionClient.setLayout(layout);
 
 		// Element:  command
@@ -223,7 +217,6 @@ public class SimpleCSCommandDetails implements ICSDetails {
 			return;
 		}
 		
-		// TODO: MP: MED: Allow actions to be loaded in the command combo ?
 		// i.e. Action: class
 		updateCommandCombo(getParameterizedCommand(fRun), false);
 		updateCommandEnablement();

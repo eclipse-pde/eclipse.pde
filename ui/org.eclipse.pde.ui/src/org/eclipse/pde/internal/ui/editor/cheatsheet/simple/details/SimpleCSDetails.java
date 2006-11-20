@@ -61,9 +61,7 @@ public class SimpleCSDetails extends CSAbstractDetails {
 	public void createDetails(Composite parent) {
 
 		FormToolkit toolkit = getManagedForm().getToolkit();
-		//Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
 		GridData data = null;
-		boolean paintedBorder = toolkit.getBorderStyle() != SWT.BORDER;
 		
 		// Create main section
 		fMainSection = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
@@ -78,9 +76,6 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		// Create container for main section
 		Composite mainSectionClient = toolkit.createComposite(fMainSection);	
 		GridLayout layout = new GridLayout(2, false);
-		if (paintedBorder) {
-			layout.verticalSpacing = 7;
-		}
 		mainSectionClient.setLayout(layout);		
 
 		// Attribute: title

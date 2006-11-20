@@ -83,11 +83,10 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 
 		Color foreground = getToolkit().getColors().getColor(FormColors.TITLE);
 		GridData data = null;
-		boolean paintedBorder = getToolkit().getBorderStyle() != SWT.BORDER;
 		
 		// Create main section
-		// TODO: MP: Do make section scrollable
-		fMainSection = getToolkit().createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
+		fMainSection = getToolkit().createSection(parent,
+				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fMainSection.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
 		fMainSection.marginHeight = 5;
 		fMainSection.marginWidth = 5; 
@@ -99,9 +98,6 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		// Create container for main section
 		Composite mainSectionClient = getToolkit().createComposite(fMainSection);	
 		GridLayout layout = new GridLayout(2, false);
-		if (paintedBorder) {
-			layout.verticalSpacing = 7;
-		}
 		mainSectionClient.setLayout(layout);				
 
 		// Attribute: title

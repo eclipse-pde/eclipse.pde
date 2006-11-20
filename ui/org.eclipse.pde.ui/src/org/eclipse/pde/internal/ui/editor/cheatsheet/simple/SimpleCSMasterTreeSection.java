@@ -449,7 +449,6 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	 */
 	public void modelChanged(IModelChangedEvent event) {
 		// No need to call super, world changed event handled here
-		// TODO: MP: HIGH: SimpleCS:  STYLE CHANGE: If anything goes wrong revert change back
 
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();

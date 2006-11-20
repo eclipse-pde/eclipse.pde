@@ -55,7 +55,6 @@ public class SimpleCSAddStepAction extends CSAbstractAddAction {
 		ISimpleCSDescription description = factory.createSimpleCSDescription(item);
 		description.setContent(PDEUIMessages.SimpleCheatSheetCreationOperation_2);
 		item.setDescription(description);		
-		// TODO: MP: Can configure to add at a specific index
 		fCheatsheet.addItem(item);
 	}
 	

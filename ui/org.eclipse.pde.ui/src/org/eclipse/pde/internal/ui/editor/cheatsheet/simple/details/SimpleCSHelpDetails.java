@@ -82,7 +82,6 @@ public class SimpleCSHelpDetails implements ICSDetails {
 		int columnSpan = 2;
 		FormToolkit toolkit = fDetails.getToolkit();
 		
-		boolean paintedBorder = toolkit.getBorderStyle() != SWT.BORDER;
 		GridData data = null;
 		GridLayout layout = null;
 		Label label = null;
@@ -102,9 +101,6 @@ public class SimpleCSHelpDetails implements ICSDetails {
 		// Create container for help section		
 		Composite helpSectionClient = toolkit.createComposite(fHelpSection);	
 		layout = new GridLayout(columnSpan, false);
-		if (paintedBorder) {
-			layout.verticalSpacing = 7;
-		}
 		helpSectionClient.setLayout(layout);		
 
 		// Attribute: href		
