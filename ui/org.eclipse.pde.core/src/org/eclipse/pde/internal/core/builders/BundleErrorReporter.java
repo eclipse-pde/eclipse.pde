@@ -572,7 +572,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			imports = (ImportPackageSpecification[]) staticImportsList.toArray(new ImportPackageSpecification[staticImportsList.size()]);
 		}		
 		
-		ManifestElement[] elements = header.getElements();		
+		ManifestElement[] elements = header.getElements();	
+		int index = 0;
 		for (int i = 0; i < elements.length; i++) {
 			checkCanceled(monitor);			
 			
@@ -583,53 +584,57 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			
 			validateVersionAttribute(header, elements[i], true);
 
-			String name = imports[i].getName();
-			if (name.equals("java") || name.startsWith("java.")) { //$NON-NLS-1$ //$NON-NLS-2$
-				IHeader jreHeader = (IHeader)fHeaders.get(ICoreConstants.ECLIPSE_JREBUNDLE);
-				if (jreHeader == null || !"true".equals(jreHeader.getValue())) { //$NON-NLS-1$
-					report(PDECoreMessages.BundleErrorReporter_importNoJRE, getPackageLine(header, elements[i]), CompilerFlags.ERROR, 
-							PDEMarkerFactory.M_JAVA_PACKAGE__PORTED,
-							PDEMarkerFactory.CAT_FATAL);
-					continue;
+			int length = elements[i].getValueComponents().length;
+			for (int j = 0; j < length; j++) {
+				ImportPackageSpecification importSpec = imports[index++];
+				String name = importSpec.getName();
+				if (name.equals("java") || name.startsWith("java.")) { //$NON-NLS-1$ //$NON-NLS-2$
+					IHeader jreHeader = (IHeader)fHeaders.get(ICoreConstants.ECLIPSE_JREBUNDLE);
+					if (jreHeader == null || !"true".equals(jreHeader.getValue())) { //$NON-NLS-1$
+						report(PDECoreMessages.BundleErrorReporter_importNoJRE, getPackageLine(header, elements[i]), CompilerFlags.ERROR, 
+								PDEMarkerFactory.M_JAVA_PACKAGE__PORTED,
+								PDEMarkerFactory.CAT_FATAL);
+						continue;
+					}
 				}
-			}
 			
-			if (imports[i].isResolved() || !isCheckUnresolvedImports())
-				continue;
+				if (importSpec.isResolved() || !isCheckUnresolvedImports())
+					continue;
 
-			boolean optional = isOptional(elements[i]);
-			int severity = getRequireBundleSeverity(elements[i], optional);
-			
-			ExportPackageDescription export = (ExportPackageDescription)exported.get(name);
-			if (export != null) {
-				if (export.getSupplier().isResolved()) {
-					Version version = export.getVersion();
-					VersionRange range = imports[i].getVersionRange();
-					if (range != null && !range.isIncluded(version)) {
-						report(NLS.bind(PDECoreMessages.BundleErrorReporter_unsatisfiedConstraint, imports[i].toString()), 
-							   getPackageLine(header, elements[i]), severity,
-							   PDEMarkerFactory.CAT_FATAL);	
+				boolean optional = isOptional(elements[i]);
+				int severity = getRequireBundleSeverity(elements[i], optional);
+
+				ExportPackageDescription export = (ExportPackageDescription)exported.get(name);
+				if (export != null) {
+					if (export.getSupplier().isResolved()) {
+						Version version = export.getVersion();
+						VersionRange range = importSpec.getVersionRange();
+						if (range != null && !range.isIncluded(version)) {
+							report(NLS.bind(PDECoreMessages.BundleErrorReporter_unsatisfiedConstraint, importSpec.toString()), 
+									getPackageLine(header, elements[i]), severity,
+									PDEMarkerFactory.CAT_FATAL);	
+						}
+					} else {
+						report(NLS.bind(PDECoreMessages.BundleErrorReporter_unresolvedExporter,
+								new String[] {export.getSupplier().getSymbolicName(), name}), 
+								getPackageLine(header, elements[i]), severity,
+								PDEMarkerFactory.CAT_OTHER);
 					}
 				} else {
-					report(NLS.bind(PDECoreMessages.BundleErrorReporter_unresolvedExporter,
-									new String[] {export.getSupplier().getSymbolicName(), name}), 
-						   getPackageLine(header, elements[i]), severity,
-						   PDEMarkerFactory.CAT_OTHER);
-				}
-			} else {
-				IMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_PackageNotExported, name), 
-										getPackageLine(header, elements[i]),
-										severity, PDEMarkerFactory.M_IMPORT_PKG_NOT_AVAILABLE,
-										PDEMarkerFactory.CAT_FATAL);
-				try {
-					if (marker != null) {
-						marker.setAttribute("packageName", name); //$NON-NLS-1$
-						if (optional)
-							marker.setAttribute("optional", true); //$NON-NLS-1$
+					IMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_PackageNotExported, name), 
+							getPackageLine(header, elements[i]),
+							severity, PDEMarkerFactory.M_IMPORT_PKG_NOT_AVAILABLE,
+							PDEMarkerFactory.CAT_FATAL);
+					try {
+						if (marker != null) {
+							marker.setAttribute("packageName", name); //$NON-NLS-1$
+							if (optional)
+								marker.setAttribute("optional", true); //$NON-NLS-1$
+						}
+					} catch (CoreException e) {
 					}
-				} catch (CoreException e) {
 				}
-			}			
+			}
 		}
 	}
 	
@@ -669,38 +674,41 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			validateX_InternalDirective(header, elements[i]);		
 			validateX_FriendsDirective(header, elements[i]);
 			
-			String name = elements[i].getValue();
-			if (name.equals("java") || name.startsWith("java.")) { //$NON-NLS-1$ //$NON-NLS-2$
-				IHeader jreHeader = (IHeader)fHeaders.get(ICoreConstants.ECLIPSE_JREBUNDLE);
-				if (jreHeader == null || !"true".equals(jreHeader.getValue())) { //$NON-NLS-1$
-					message = PDECoreMessages.BundleErrorReporter_exportNoJRE;
-					report(message, getPackageLine(header, elements[i]), 
-							CompilerFlags.ERROR, 
-							PDEMarkerFactory.M_JAVA_PACKAGE__PORTED,
-							PDEMarkerFactory.CAT_FATAL);
+			String[] valueComps = elements[i].getValueComponents();
+			for (int j = 0; j < valueComps.length; j++) {
+				String name = valueComps[j];
+				if (name.equals("java") || name.startsWith("java.")) { //$NON-NLS-1$ //$NON-NLS-2$
+					IHeader jreHeader = (IHeader)fHeaders.get(ICoreConstants.ECLIPSE_JREBUNDLE);
+					if (jreHeader == null || !"true".equals(jreHeader.getValue())) { //$NON-NLS-1$
+						message = PDECoreMessages.BundleErrorReporter_exportNoJRE;
+						report(message, getPackageLine(header, elements[i]), 
+								CompilerFlags.ERROR, 
+								PDEMarkerFactory.M_JAVA_PACKAGE__PORTED,
+								PDEMarkerFactory.CAT_FATAL);
+					}
+				} else if (".".equals(name.trim())) { //$NON-NLS-1$
+					// workaround for manifest converter generating "."
+					continue;
 				}
-			} else if (".".equals(name.trim())) { //$NON-NLS-1$
-				// workaround for manifest converter generating "."
-				continue;
-			}
 
-			if (!isCheckUnresolvedImports()) {
-				continue;
-			}
-	
-			/* The exported package does not exist in the bundle */
-			if (!getExportedPackages().contains(name)) {
-				message = NLS.bind(PDECoreMessages.BundleErrorReporter_NotExistInProject, name); 
-				IMarker marker = report(message, getPackageLine(header, elements[i]),
-						CompilerFlags.P_UNRESOLVED_IMPORTS, 
-						PDEMarkerFactory.M_EXPORT_PKG_NOT_EXIST,
-						PDEMarkerFactory.CAT_OTHER);
-				try {
-					if (marker != null)
-						marker.setAttribute("packageName", name); //$NON-NLS-1$
-				} catch (CoreException e) {
+				if (!isCheckUnresolvedImports()) {
+					continue;
 				}
-			}		
+
+				/* The exported package does not exist in the bundle */
+				if (!getExportedPackages().contains(name)) {
+					message = NLS.bind(PDECoreMessages.BundleErrorReporter_NotExistInProject, name); 
+					IMarker marker = report(message, getPackageLine(header, elements[i]),
+							CompilerFlags.P_UNRESOLVED_IMPORTS, 
+							PDEMarkerFactory.M_EXPORT_PKG_NOT_EXIST,
+							PDEMarkerFactory.CAT_OTHER);
+					try {
+						if (marker != null)
+							marker.setAttribute("packageName", name); //$NON-NLS-1$
+					} catch (CoreException e) {
+					}
+				}		
+			}
 		}
 	}
 	

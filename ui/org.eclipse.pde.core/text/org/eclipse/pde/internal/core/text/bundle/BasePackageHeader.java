@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 
 public abstract class BasePackageHeader extends CompositeManifestHeader {
@@ -53,5 +55,25 @@ public abstract class BasePackageHeader extends CompositeManifestHeader {
     	}
     	return false;
     }
+    
+	protected void processValue(String value) {
+		try {
+			ManifestElement[] elements = ManifestElement.parseHeader(fName, value);
+			for (int i = 0; i < elements.length; i++) {
+				if (elements[i].getValueComponents().length > 1) {
+					// if package element has multiple value components, create a new Element to represent each value (bug 160233)
+					String[] values = elements[i].getValueComponents();
+					for (int j = 0; j < values.length; j++) {
+						PDEManifestElement elem = createElement(elements[i]);
+						elem.setValueComponents(new String[] { values [j] });
+						addManifestElement(elem, false);
+					}
+				} else {
+					addManifestElement(createElement(elements[i]), false);
+				}
+			}
+		} catch (BundleException e) {
+		}
+	}
 
 }
