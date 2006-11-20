@@ -37,6 +37,14 @@ import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.fieldassist.ContentProposalAdapter;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.jface.fieldassist.IContentProposalListener;
+import org.eclipse.jface.fieldassist.IContentProposalListener2;
+import org.eclipse.jface.fieldassist.TextContentAdapter;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
@@ -48,16 +56,23 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.contentassist.TypeContentProposalListener;
+import org.eclipse.pde.internal.ui.editor.contentassist.TypeContentProposalProvider;
+import org.eclipse.pde.internal.ui.editor.contentassist.TypeFieldAssistDisposer;
+import org.eclipse.pde.internal.ui.editor.contentassist.TypeProposalLabelProvider;
 import org.eclipse.pde.internal.ui.editor.contentassist.display.JavaDocCommentReader;
 import org.eclipse.pde.internal.ui.editor.plugin.JavaAttributeValue;
 import org.eclipse.pde.internal.ui.editor.plugin.JavaAttributeWizard;
 import org.eclipse.pde.internal.ui.editor.text.HTMLPrinter;
 import org.eclipse.pde.internal.ui.editor.text.TextUtil;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
 import org.eclipse.ui.ide.IDE;
 
 public class PDEJavaHelper {
@@ -425,4 +440,70 @@ public class PDEJavaHelper {
 		}
 		return buf.toString();
 	}
+	
+	/**
+	 * Disposer returned used to dispose of label provider and remove listeners
+	 * Callers responsibility to call dispose method when underlying text 
+	 * widget is being disposed
+	 * @param text
+	 * @param project
+	 * @return
+	 */
+	public static TypeFieldAssistDisposer addTypeFieldAssistToText(
+			Text text, IProject project, int searchScope) {
+		// Decorate the text widget with the light-bulb image denoting content
+		// assist
+		int bits = SWT.TOP | SWT.LEFT;
+		ControlDecoration controlDecoration = new ControlDecoration(text, bits);
+		// Configure text widget decoration
+		// No margin
+		controlDecoration.setMarginWidth(0);
+		// Custom hover tip text
+		controlDecoration.setDescriptionText(
+				PDEUIMessages.PDEJavaHelper_msgContentAssistAvailable);
+		// Custom hover properties
+		controlDecoration.setShowHover(true);
+		controlDecoration.setShowOnlyOnFocus(true);
+		// Hover image to use
+		FieldDecoration contentProposalImage = 
+			FieldDecorationRegistry.getDefault().getFieldDecoration(
+				FieldDecorationRegistry.DEC_CONTENT_PROPOSAL);			
+		controlDecoration.setImage(contentProposalImage.getImage());
+		
+		// Create the proposal provider
+		TypeContentProposalProvider proposalProvider = 
+			new TypeContentProposalProvider(project, 
+					searchScope);
+		// Default text widget adapter for field assist
+		TextContentAdapter textContentAdapter = new TextContentAdapter();
+		// Content assist command
+		String command = "org.eclipse.ui.edit.text.contentAssist.proposals"; //$NON-NLS-1$
+		// Set auto activation character to be a '.'
+		char[] autoActivationChars = new char[]{TypeContentProposalProvider.F_DOT};
+		// Create the adapter
+		ContentAssistCommandAdapter adapter = 
+			new ContentAssistCommandAdapter(
+					text, 
+					textContentAdapter, 
+					proposalProvider, 
+					command, 
+					autoActivationChars);	
+		// Configure the adapter
+		// Add label provider
+		ILabelProvider labelProvider = new TypeProposalLabelProvider();		
+		adapter.setLabelProvider(labelProvider);
+		// Replace text field contents with accepted proposals
+		adapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
+		// Disable default filtering - custom filtering done
+		adapter.setFilterStyle(ContentProposalAdapter.FILTER_NONE);
+		// Add listeners required to reset state for custom filtering
+		TypeContentProposalListener proposalListener = 
+			new TypeContentProposalListener();		
+		adapter.addContentProposalListener((IContentProposalListener)proposalListener);	
+		adapter.addContentProposalListener((IContentProposalListener2)proposalListener);
+		
+		return new TypeFieldAssistDisposer(adapter, proposalListener);
+	}
+	
+	
 }

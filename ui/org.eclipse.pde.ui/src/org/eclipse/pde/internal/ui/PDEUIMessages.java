@@ -2750,4 +2750,7 @@ public class PDEUIMessages extends NLS {
 	public static String SimpleCSPage_0;	
 	
 	// TODO: MP: Clean-up redundant externalized strings in pderesources
+	
+	public static String PDEJavaHelper_msgContentAssistAvailable;
+	
 }

@@ -15,9 +15,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
-import org.eclipse.jface.contentassist.SubjectControlContentAssistant;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ICoreConstants;
@@ -32,18 +29,15 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.contentassist.TypeCompletionListener;
-import org.eclipse.pde.internal.ui.editor.contentassist.TypeCompletionProcessor;
+import org.eclipse.pde.internal.ui.editor.contentassist.TypeFieldAssistDisposer;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.contentassist.ContentAssistHandler;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -53,6 +47,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 
 	private FormEntry fClassEntry;
 	private Button fLazyStart;
+	private TypeFieldAssistDisposer fTypeFieldAssistDisposer;
 
 	public PluginGeneralInfoSection(PDEFormPage page, Composite parent) {
 		super(page, parent);
@@ -137,17 +132,10 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		fClassEntry.setEditable(isEditable);
 		
 		if (isEditable) {
-			TypeCompletionProcessor processor = new TypeCompletionProcessor(
+			fTypeFieldAssistDisposer = PDEJavaHelper.addTypeFieldAssistToText(
+					fClassEntry.getText(), 
 					getProject(),
-					IJavaSearchConstants.CLASS
-					);
-			SubjectControlContentAssistant contentAssistant = new SubjectControlContentAssistant();
-			contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
-			contentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
-			contentAssistant.setProposalSelectorBackground(new Color(client.getDisplay(), 255, 255, 255));
-			ContentAssistHandler.createHandlerForText(fClassEntry.getText(), contentAssistant);
-			contentAssistant.addCompletionListener(new TypeCompletionListener());
-			contentAssistant.enableAutoActivation(true);
+					IJavaSearchConstants.CLASS);
 		}
 	}
 	
@@ -178,7 +166,12 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	public void refresh() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		IPlugin plugin = (IPlugin)model.getPluginBase();
-		fClassEntry.setValue(plugin.getClassName(), true);
+		// Only update this field if it already has not been modified
+		// This will prevent the cursor from being set to position 0 after
+		// accepting a field assist proposal using \r
+		if (fClassEntry.isDirty() == false) {
+			fClassEntry.setValue(plugin.getClassName(), true);
+		}
 		if (fLazyStart != null) {
 			IManifestHeader header = getLazyStartHeader();
 			fLazyStart.setSelection(header instanceof LazyStartHeader 
@@ -205,4 +198,14 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		return ICoreConstants.ECLIPSE_AUTOSTART;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.plugin.GeneralInfoSection#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		if (fTypeFieldAssistDisposer != null) {
+			fTypeFieldAssistDisposer.dispose();
+		}
+	}
+	
 }

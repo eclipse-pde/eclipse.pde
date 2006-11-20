@@ -43,9 +43,9 @@ import org.eclipse.swt.graphics.Image;
 
 public abstract class TypePackageCompletionProcessor implements IContentAssistProcessor {
 	
-	protected String fErrorMessage;
-	protected SearchEngine fSearchEngine;
-	protected Comparator fComparator;
+	private String fErrorMessage;
+	private SearchEngine fSearchEngine;
+	private Comparator fComparator;
 	
 	abstract class ProposalGenerator {
 		abstract protected ICompletionProposal generateClassCompletion(String pName, String cName, boolean isClass);
@@ -109,8 +109,8 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 				public void accept(CompletionProposal proposal) {
 					if (proposal.getKind() == CompletionProposal.PACKAGE_REF) {
 						String pkgName = new String(proposal.getCompletion());
-						c.add(new TypeCompletionProposal(pkgName, PDEPluginImages.get(PDEPluginImages.OBJ_DESC_PACKAGE), 
-								pkgName, startOffset, length));
+		    			addProposalToCollection(c, startOffset, length, pkgName,
+		    					pkgName, PDEPluginImages.get(PDEPluginImages.OBJ_DESC_PACKAGE));
 					} else {
 						boolean isInterface = Flags.isInterface(proposal.getFlags());
 						String completion = new String(proposal.getCompletion());
@@ -128,7 +128,8 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 						}
 						Image image = isInterface ? PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_INTERFACE) :
 		    				PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_CLASS);
-						c.add(new TypeCompletionProposal(completion, image, cName + " - " + pName, startOffset, length)); //$NON-NLS-1$
+		    			addProposalToCollection(c, startOffset, length, cName + " - " + pName, //$NON-NLS-1$
+		    					completion, image);
 					}
 				}
 
@@ -203,9 +204,8 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 	    			String content = pName + "." + cName; //$NON-NLS-1$
 	    			Image image = (Flags.isInterface(modifiers)) ? PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_CLASS) :
 	    				PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_CLASS);
-	    			TypeCompletionProposal proposal =  new TypeCompletionProposal(content, image, label, 
-	    					startOffset, length);
-	    			c.add(proposal);
+	    			addProposalToCollection(c, startOffset, length, label,
+							content, image);
 	    		}
 	    	};
 	    	// Note:  Do not use the search() method, its performance is
@@ -256,6 +256,22 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 			if (!Character.isWhitespace(valueArray[i])) 
 				break;
 		return (i == valueArray.length) ? "" : new String(valueArray, i, valueArray.length - i); //$NON-NLS-1$
+	}
+
+	/**
+	 * @param c
+	 * @param startOffset
+	 * @param length
+	 * @param label
+	 * @param content
+	 * @param image
+	 */
+	protected void addProposalToCollection(final Collection c,
+			final int startOffset, final int length, String label,
+			String content, Image image) {
+		TypeCompletionProposal proposal =  new TypeCompletionProposal(content, image, label, 
+				startOffset, length);
+		c.add(proposal);
 	}
 
 }

@@ -14,25 +14,22 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
-import org.eclipse.jface.contentassist.SubjectControlContentAssistant;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
-import org.eclipse.pde.internal.ui.editor.contentassist.TypeCompletionListener;
-import org.eclipse.pde.internal.ui.editor.contentassist.TypeCompletionProcessor;
+import org.eclipse.pde.internal.ui.editor.contentassist.TypeFieldAssistDisposer;
 import org.eclipse.pde.internal.ui.editor.plugin.JavaAttributeValue;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.contentassist.ContentAssistHandler;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class ClassAttributeRow extends ButtonAttributeRow {
+	
+	private TypeFieldAssistDisposer fTypeFieldAssistDisposer;
+	
 	public ClassAttributeRow(IContextPart part, ISchemaAttribute att) {
 		super(part, att);
 	}
@@ -62,17 +59,10 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 		super.createContents(parent, toolkit, span);
 
 		if (part.isEditable()) {
-			TypeCompletionProcessor processor = new TypeCompletionProcessor(
-					getProject(),
-					IJavaSearchConstants.CLASS_AND_INTERFACE
-					);
-			SubjectControlContentAssistant contentAssistant = new SubjectControlContentAssistant();
-			contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
-			contentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
-			contentAssistant.setProposalSelectorBackground(new Color(parent.getDisplay(), 255, 255, 255));
-			ContentAssistHandler.createHandlerForText(text, contentAssistant);
-			contentAssistant.addCompletionListener(new TypeCompletionListener());
-			contentAssistant.enableAutoActivation(true);
+			fTypeFieldAssistDisposer = 
+				PDEJavaHelper.addTypeFieldAssistToText(text, 
+						getProject(),
+						IJavaSearchConstants.CLASS_AND_INTERFACE);			
 		}
 	}
 	
@@ -106,5 +96,15 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 	private IPluginBase getPluginBase() {
 		IBaseModel model = part.getPage().getPDEEditor().getAggregateModel();
 		return ((IPluginModelBase) model).getPluginBase();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.plugin.rows.ExtensionAttributeRow#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		if (fTypeFieldAssistDisposer != null) {
+			fTypeFieldAssistDisposer.dispose();
+		}		
 	}
 }
