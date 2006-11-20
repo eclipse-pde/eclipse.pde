@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ProjectScope;
@@ -35,9 +36,13 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 
 public class ClasspathHelper {
 
@@ -56,7 +61,7 @@ public class ClasspathHelper {
 			String id = models[i].getPluginBase().getId();
 			if (id == null)
 				continue;
-			String entry = writeEntry(getOutputFolders(models[i], checkExcluded));
+			String entry = writeEntry(getDevPaths(models[i], checkExcluded, null));
 			if (entry.length() > 0)
 				properties.put(id, entry);
 		}
@@ -93,7 +98,7 @@ public class ClasspathHelper {
         while (iter.hasNext()) {
             IPluginModelBase model = (IPluginModelBase)iter.next();
             if (model.getUnderlyingResource() != null) {
-                String entry = writeEntry(getOutputFolders(model, true));
+                String entry = writeEntry(getDevPaths(model, true, map));
                 if (entry.length() > 0)
                     properties.put(model.getPluginBase().getId(), entry);                
             }
@@ -125,7 +130,7 @@ public class ClasspathHelper {
 			String id = models[i].getPluginBase().getId();
 			if (id == null || id.trim().length() == 0)
 				continue;
-			IPath[] paths = getOutputFolders(models[i], checkExcluded);
+			IPath[] paths = getDevPaths(models[i], checkExcluded, null);
 			for (int j = 0; j < paths.length; j++) {
 				list.add(paths[j]);
 			}
@@ -151,7 +156,7 @@ public class ClasspathHelper {
 		String id = model.getPluginBase().getId();
 		if (id == null || id.trim().length() == 0)
 			return null;
-		IPath[] paths = getOutputFolders(model, false);
+		IPath[] paths = getDevPaths(model, false, null);
 		String entry = writeEntry(paths);
 		Hashtable map = new Hashtable(2);
 		map.put("@ignoredot@", "true"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -159,43 +164,76 @@ public class ClasspathHelper {
 		return map;		
 	}
 
-	private static IPath[] getOutputFolders(IPluginModelBase model, boolean checkExcluded) {
+	private static IPath[] getDevPaths(IPluginModelBase model, boolean checkExcluded, Map pluginsMap) {
 		ArrayList result = new ArrayList();
 		IProject project = model.getUnderlyingResource().getProject();
-		HashSet set = new HashSet();
 		IPluginBase base = model.getPluginBase();
 		IPluginLibrary[] libraries = base.getLibraries();
-		for (int i = 0; i < libraries.length; i++) {
-			set.add(libraries[i].getName());
-		}
+		List excluded = getFoldersToExclude(project, checkExcluded);
  		try {
-			if (project.hasNature(JavaCore.NATURE_ID)) {
-				IJavaProject jProject = JavaCore.create(project);
-				
-				List excluded = getFoldersToExclude(project, checkExcluded);
-				IPath path = jProject.getOutputLocation();
-				if (path != null && !excluded.contains(path))
-					addPath(result, project, path, false);
-				
-				IClasspathEntry[] entries = jProject.getRawClasspath();
-				for (int i = 0; i < entries.length; i++) {
-					path = null;
-					boolean addIfLinked = false;
-					if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-						path = entries[i].getOutputLocation();
-					} else if (entries[i].getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
-						IPath candidate = entries[i].getPath().removeFirstSegments(1);
-						if (candidate.segmentCount() == 0) {
-							if (set.isEmpty() || set.contains(".")) //$NON-NLS-1$
-								path = entries[i].getPath();
-						} else if (set.contains(candidate.toString())) {
-							addIfLinked = !base.getId().equals("org.eclipse.osgi"); //$NON-NLS-1$
-							path = entries[i].getPath();
-						}
-					}
-					if (path != null && !excluded.contains(path)) {
-						addPath(result, project, path, addIfLinked);
-					}
+ 			if (project.hasNature(JavaCore.NATURE_ID)) {
+ 				IFile file = project.getFile("build.properties"); //$NON-NLS-1$
+ 				if (file.exists()) {
+ 					WorkspaceBuildModel bModel = new WorkspaceBuildModel(file);
+ 					IBuild build = bModel.getBuild();
+ 					for (int i = 0; i < libraries.length;i++) {
+ 						IBuildEntry entry = build.getEntry(IBuildEntry.OUTPUT_PREFIX + libraries[i].getName());
+ 						if (entry != null) {
+ 							String [] resources = entry.getTokens();
+ 							for (int j = 0; j < resources.length; j++)  {
+ 								IResource res = project.findMember(resources[j]);
+ 								if (res.exists()) {
+ 									IPath path = res.getFullPath().makeRelative();
+ 									if (!excluded.contains(path)) {
+ 										addPath(result, project, path, false);
+ 									}
+ 								}
+ 							}
+ 						} else {
+ 	 						boolean found = false;
+ 							IResource res = project.findMember(libraries[i].getName());
+ 							if (res != null) {
+ 								IPath path = res.getProjectRelativePath();
+ 								if (!excluded.contains(path)) {
+ 									addPath(result, project, path, true);
+ 									found = true;
+ 								}
+ 							}
+ 							if (!found)
+ 								addLibraryFromFragments(libraries[i].getName(), model, result, checkExcluded, pluginsMap);
+ 						}
+ 					}
+ 				} else {
+ 					// if no build.properties, add all output folders
+ 					IJavaProject jProject = JavaCore.create(project);
+ 					HashSet set = new HashSet();
+ 					for (int i = 0; i < libraries.length; i++)
+ 						set.add(libraries[i].getName());
+
+ 					IPath path = jProject.getOutputLocation();
+ 					if (path != null && !excluded.contains(path))
+ 						addPath(result, project, path.makeRelative(), false);
+
+ 					IClasspathEntry[] entries = jProject.getRawClasspath();
+ 					for (int i = 0; i < entries.length; i++) {
+ 						path = null;
+ 						boolean addIfLinked = false;
+ 						if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+ 							path = entries[i].getOutputLocation();
+ 						} else if (entries[i].getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
+ 							IPath candidate = entries[i].getPath().removeFirstSegments(1);
+ 							if (candidate.segmentCount() == 0) {
+ 								if (set.isEmpty() || set.contains(".")) //$NON-NLS-1$
+ 									path = entries[i].getPath();
+ 							} else if (set.contains(candidate.toString())) {
+ 								addIfLinked = !base.getId().equals("org.eclipse.osgi"); //$NON-NLS-1$
+ 								path = entries[i].getPath();
+ 							}
+ 						}
+ 						if (path != null && !excluded.contains(path)) {
+ 							addPath(result, project, path.makeRelative(), addIfLinked);
+ 						}
+ 					}
 				}
 			}
 		} catch (JavaModelException e) {
@@ -203,10 +241,63 @@ public class ClasspathHelper {
 		}
 		return (IPath[])result.toArray(new IPath[result.size()]);	
 	}
+	
+	private static void addLibraryFromFragments(String libName, IPluginModelBase model, ArrayList result, boolean checkExcluded, Map plugins) {
+		IFragmentModel[] frags = PDEManager.findFragmentsFor(model);
+		for (int i  = 0; i < frags.length; i++) {
+			if (plugins != null && !plugins.containsKey(frags[i].getBundleDescription().getSymbolicName()))
+				continue;
+			// look in project first
+			if (frags[i].getUnderlyingResource() != null) {
+				IProject project = frags[i].getUnderlyingResource().getProject();
+				List excluded = getFoldersToExclude(project, checkExcluded);
+				IFile file = project.getFile("build.properties"); //$NON-NLS-1$
+				if (file.exists()) {
+					WorkspaceBuildModel bModel = new WorkspaceBuildModel(file);
+					IBuild build = bModel.getBuild();
+					IBuildEntry entry = build.getEntry(IBuildEntry.OUTPUT_PREFIX + libName);
+					if (entry != null) {
+						String [] resources = entry.getTokens();
+						for (int j = 0; j < resources.length; j++)  {
+							IResource res = project.findMember(resources[j]);
+							if (res.exists()) {
+								IPath path = res.getProjectRelativePath();
+								if (!excluded.contains(path)) {
+									addPath(result, project, res.getRawLocation(), false);
+									return;
+								}
+							}
+						}
+					} else {
+						IResource res = project.findMember(libName);
+						if (res != null) {
+							IPath path = res.getProjectRelativePath();
+							if (!excluded.contains(path)) {
+								addPath(result, project, res.getRawLocation(), true);
+								return;
+							}
+						}
+					}
+				}
+			// if external plugin, look in child directories for library
+			} else {
+				File file = new File(frags[i].getInstallLocation());
+				if (file.isDirectory()) {
+					file = new File(file, libName);
+					if (file.exists()) {
+						addPath(result, null, new Path(file.getPath()), false);
+						return;
+					}
+				}
+			}
+		}
+	}
 
 	private static void addPath(ArrayList result, IProject project, IPath path, boolean onlyIfLinked) {
 		IPath resultPath = null;
-		if (path.segmentCount() > 0 && path.segment(0).equals(project.getName())) {
+		if (path.isAbsolute())
+			resultPath = path;
+		else if (path.segmentCount() > 0 && path.segment(0).equals(project.getName())) {
 			path = path.removeFirstSegments(1);
 			if (path.segmentCount() == 0 && !onlyIfLinked)
 				resultPath = new Path("."); //$NON-NLS-1$
