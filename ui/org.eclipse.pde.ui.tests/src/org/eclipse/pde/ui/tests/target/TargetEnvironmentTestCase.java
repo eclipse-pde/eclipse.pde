@@ -45,7 +45,7 @@ public class TargetEnvironmentTestCase extends TestCase {
 	
 	public void testEnvironmentDictionarySize() {
 		Dictionary dictionary = TargetPlatform.getTargetEnvironment();
-		assertEquals(5, dictionary.size());
+		assertEquals(6, dictionary.size());
 	}
 	
 	public void testDictionaryOS() {
