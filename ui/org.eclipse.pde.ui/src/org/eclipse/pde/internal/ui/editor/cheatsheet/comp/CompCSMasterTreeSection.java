@@ -77,7 +77,7 @@ public class CompCSMasterTreeSection extends TreeSection implements
 	
 	private static final int F_UP_FLAG = -1;
 
-	private static final int F_DOWN_FLAG = -2;
+	private static final int F_DOWN_FLAG = 1;
 	
 	private TreeViewer fTreeViewer;
 	
@@ -365,7 +365,7 @@ public class CompCSMasterTreeSection extends TreeSection implements
 	/**
 	 * 
 	 */
-	private void handleMoveTaskObjectAction(int index) {
+	private void handleMoveTaskObjectAction(int positionFlag) {
 	
 		ISelection sel = fTreeViewer.getSelection();
 		Object object = ((IStructuredSelection) sel).getFirstElement();
@@ -380,21 +380,8 @@ public class CompCSMasterTreeSection extends TreeSection implements
 			} else {
 				return;
 			}
-			// Get the current index of the task object
-			int currentIndex = parent.indexOfFieldTaskObject(taskObject);
-			// Remove the task object
-			parent.removeFieldTaskObject(taskObject);
-			// Calculate the new index
-			int newIndex = index;
-			if (index == F_UP_FLAG) {
-				newIndex = currentIndex - 1;
-			} else if (index == F_DOWN_FLAG) {
-				newIndex = currentIndex + 1;
-			}
-			// Add the task object back at the specified index
-			parent.addFieldTaskObject(newIndex, taskObject);
-			// TODO: MP: LOW: CompCS: There is a flicker when adding and removing items / subitems
-			// probably do to focus going to the parent
+			// Move the task object up or down one position
+			parent.moveFieldTaskObject(taskObject, positionFlag);
 		}	
 	}	
 
@@ -458,18 +445,16 @@ public class CompCSMasterTreeSection extends TreeSection implements
 	private void handleModelInsertType(IModelChangedEvent event) {
 		// Insert event
 		Object[] objects = event.getChangedObjects();
-		for (int i = 0; i < objects.length; i++) {
-			ICompCSObject object = (ICompCSObject)objects[i];		
-			if (object == null) {
-				// Ignore
-			} else if (object.getType() == ICompCSConstants.TYPE_TASK) {
-				handleTaskObjectInsert(object);
-			} else if (object.getType() == ICompCSConstants.TYPE_TASKGROUP) {
-				handleTaskObjectInsert(object);
-				// Register the group for validation
-				fGroupValidator.addGroup((ICompCSTaskGroup)object);
-			}		
-		}
+		ICompCSObject object = (ICompCSObject) objects[0];
+		if (object == null) {
+			// Ignore
+		} else if (object.getType() == ICompCSConstants.TYPE_TASK) {
+			handleTaskObjectInsert(object);
+		} else if (object.getType() == ICompCSConstants.TYPE_TASKGROUP) {
+			handleTaskObjectInsert(object);
+			// Register the group for validation
+			fGroupValidator.addGroup((ICompCSTaskGroup) object);
+		}		
 	}	
 
 	/**
@@ -477,6 +462,7 @@ public class CompCSMasterTreeSection extends TreeSection implements
 	 */
 	private void handleTaskObjectInsert(ICompCSObject object) {
 		// Refresh the parent element in the tree viewer
+		// TODO: MP: CompCS: LOW: Can we get away with an update instead of a refresh here?
 		fTreeViewer.refresh(object.getParent());
 		// Select the new task / group in the tree
 		fTreeViewer.setSelection(new StructuredSelection(object), true);		
@@ -488,18 +474,16 @@ public class CompCSMasterTreeSection extends TreeSection implements
 	private void handleModelRemoveType(IModelChangedEvent event) {
 		// Remove event
 		Object[] objects = event.getChangedObjects();
-		for (int i = 0; i < objects.length; i++) {
-			ICompCSObject object = (ICompCSObject)objects[i];		
-			if (object == null) {
-				// Ignore
-			} else if (object.getType() == ICompCSConstants.TYPE_TASK) {
-				handleTaskObjectRemove(object);
-			} else if (object.getType() == ICompCSConstants.TYPE_TASKGROUP) {
-				handleTaskObjectRemove(object);
-				// Unregister the group from validation
-				fGroupValidator.removeGroup((ICompCSTaskGroup)object);
-			}
-		}		
+		ICompCSObject object = (ICompCSObject) objects[0];
+		if (object == null) {
+			// Ignore
+		} else if (object.getType() == ICompCSConstants.TYPE_TASK) {
+			handleTaskObjectRemove(object);
+		} else if (object.getType() == ICompCSConstants.TYPE_TASKGROUP) {
+			handleTaskObjectRemove(object);
+			// Unregister the group from validation
+			fGroupValidator.removeGroup((ICompCSTaskGroup) object);
+		}
 	}
 
 	/**
@@ -522,24 +506,24 @@ public class CompCSMasterTreeSection extends TreeSection implements
 	private void handleModelChangeType(IModelChangedEvent event) {
 		// Change event
 		Object[] objects = event.getChangedObjects();
-		for (int i = 0; i < objects.length; i++) {
-			ICompCSObject object = (ICompCSObject)objects[i];		
-			if (object == null) {
-				// Ignore
-			} else if (object.getType() == ICompCSConstants.TYPE_TASK) {
-				// Refresh the element in the tree viewer
-				fTreeViewer.refresh(object);
-			} else if (object.getType() == ICompCSConstants.TYPE_TASKGROUP) {
-				// Refresh the element in the tree viewer
-				fTreeViewer.refresh(object);
-			} else if (object.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET) {
-				// Refresh the element in the tree viewer
-				fTreeViewer.refresh(object);
-			}
-		}		
+		ICompCSObject object = (ICompCSObject) objects[0];
+		if (object == null) {
+			// Ignore
+		} else if (object.getType() == ICompCSConstants.TYPE_TASK) {
+			// Update the element in the tree viewer
+			fTreeViewer.update(object, null);
+		} else if (object.getType() == ICompCSConstants.TYPE_TASKGROUP) {
+			// Refresh the element in the tree viewer
+			fTreeViewer.update(object, null);
+		} else if (object.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET) {
+			// Refresh the element in the tree viewer
+			fTreeViewer.update(object, null);
+		}
 	}	
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster#fireSelection()
 	 */
 	public void fireSelection() {

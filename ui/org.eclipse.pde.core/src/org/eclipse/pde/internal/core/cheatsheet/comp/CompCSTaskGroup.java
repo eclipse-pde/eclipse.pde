@@ -263,5 +263,33 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 		}
 		return (ICompCSTaskObject)fFieldTaskObjects.get(position - 1);		
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskGroup#moveFieldTaskObject(org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSTaskObject, int)
+	 */
+	public void moveFieldTaskObject(ICompCSTaskObject taskObject,
+			int newRelativeIndex) {
+		// Get the current index of the task object
+		int currentIndex = indexOfFieldTaskObject(taskObject);
+		// Ensure the object is found
+		if (currentIndex == -1) {
+			return;
+		}
+		// Calculate the new index
+		int newIndex = newRelativeIndex + currentIndex;
+		// Validate the new index
+		if ((newIndex < 0) ||
+				(newIndex >= fFieldTaskObjects.size())) {
+			return;
+		}
+		// Remove the task object
+		fFieldTaskObjects.remove(taskObject);
+		// Add the task object back at the specified index
+		fFieldTaskObjects.add(newIndex, taskObject);
+		// Send an insert event
+		if (isEditable()) {
+			fireStructureChanged(taskObject, IModelChangedEvent.INSERT);
+		}	
+	}
 	
 }

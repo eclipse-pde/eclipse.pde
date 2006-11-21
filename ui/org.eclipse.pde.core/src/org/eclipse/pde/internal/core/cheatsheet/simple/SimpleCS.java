@@ -358,4 +358,31 @@ public class SimpleCS extends SimpleCSObject implements ISimpleCS {
 		return (ISimpleCSItem)fItems.get(position - 1);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS#moveItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem, int)
+	 */
+	public void moveItem(ISimpleCSItem item, int newRelativeIndex) {
+		// Get the current index of the task object
+		int currentIndex = fItems.indexOf(item);
+		// Ensure the object is found
+		if (currentIndex == -1) {
+			return;
+		}
+		// Calculate the new index
+		int newIndex = newRelativeIndex + currentIndex;
+		// Validate the new index
+		if ((newIndex < 0) ||
+				(newIndex >= fItems.size())) {
+			return;
+		}
+		// Remove the task object
+		fItems.remove(item);
+		// Add the task object back at the specified index
+		fItems.add(newIndex, item);
+		// Send an insert event
+		if (isEditable()) {
+			fireStructureChanged(item, IModelChangedEvent.INSERT);
+		}	
+	}
+
 }

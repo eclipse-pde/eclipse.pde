@@ -38,7 +38,15 @@ public interface ICompCSTaskGroup extends ICompCSTaskObject {
 	 * @return
 	 */
 	public void removeFieldTaskObject(ICompCSTaskObject taskObject);	
-
+	
+	/**
+	 * Elements:  taskGroup, task
+	 * @param taskObject
+	 * @param newRelativeIndex
+	 */
+	public void moveFieldTaskObject(ICompCSTaskObject taskObject, 
+			int newRelativeIndex);
+	
 	/**
 	 * Elements:  taskGroup, task
 	 * @param index

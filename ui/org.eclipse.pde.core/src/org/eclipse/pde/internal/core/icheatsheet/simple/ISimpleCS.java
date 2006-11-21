@@ -72,6 +72,13 @@ public interface ISimpleCS extends ISimpleCSObject {
 	 * @param index
 	 */
 	public void removeItem(int index);
+
+	/**
+	 * Element:  item
+	 * @param item
+	 * @param newRelativeIndex
+	 */
+	public void moveItem(ISimpleCSItem item, int newRelativeIndex);	
 	
 	/**
 	 * Element:  item

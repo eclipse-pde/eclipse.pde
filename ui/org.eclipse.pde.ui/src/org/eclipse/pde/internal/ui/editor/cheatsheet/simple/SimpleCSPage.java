@@ -95,20 +95,19 @@ public class SimpleCSPage extends PDEFormPage implements IModelChangedListener {
 		
 		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object[] objects = event.getChangedObjects();
-			for (int i = 0; i < objects.length; i++) {
-				ISimpleCSObject object = (ISimpleCSObject)objects[i];
-				if (object == null) {
-					// Ignore
-				} else if (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
-					String changeProperty = event.getChangedProperty();
-					if ((changeProperty != null) && 
-							changeProperty.equals(ISimpleCSConstants.ATTRIBUTE_TITLE)) {
-						// Has to be a String if the property is a title
-						// Update the form page title
-						getManagedForm().getForm().setText(
-								PDETextHelper.translateReadText(
-										(String)event.getNewValue()));
-					}				 
+			ISimpleCSObject object = (ISimpleCSObject) objects[0];
+			if (object == null) {
+				// Ignore
+			} else if (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
+				String changeProperty = event.getChangedProperty();
+				if ((changeProperty != null)
+						&& changeProperty
+								.equals(ISimpleCSConstants.ATTRIBUTE_TITLE)) {
+					// Has to be a String if the property is a title
+					// Update the form page title
+					getManagedForm().getForm().setText(
+							PDETextHelper.translateReadText((String) event
+									.getNewValue()));
 				}
 			}
 		}

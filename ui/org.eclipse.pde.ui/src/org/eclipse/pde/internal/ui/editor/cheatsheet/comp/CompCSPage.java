@@ -98,20 +98,19 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 		
 		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object[] objects = event.getChangedObjects();
-			for (int i = 0; i < objects.length; i++) {
-				ICompCSObject object = (ICompCSObject)objects[i];
-				if (object == null) {
-					// Ignore
-				} else if (object.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET) {
-					String changeProperty = event.getChangedProperty();
-					if ((changeProperty != null) && 
-							changeProperty.equals(ICompCSConstants.ATTRIBUTE_NAME)) {
-						// Has to be a String if the property is a title
-						// Update the form page title
-						getManagedForm().getForm().setText(
-								PDETextHelper.translateReadText(
-										(String)event.getNewValue()));
-					}				 
+			ICompCSObject object = (ICompCSObject) objects[0];
+			if (object == null) {
+				// Ignore
+			} else if (object.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET) {
+				String changeProperty = event.getChangedProperty();
+				if ((changeProperty != null)
+						&& changeProperty
+								.equals(ICompCSConstants.ATTRIBUTE_NAME)) {
+					// Has to be a String if the property is a title
+					// Update the form page title
+					getManagedForm().getForm().setText(
+							PDETextHelper.translateReadText((String) event
+									.getNewValue()));
 				}
 			}
 		}

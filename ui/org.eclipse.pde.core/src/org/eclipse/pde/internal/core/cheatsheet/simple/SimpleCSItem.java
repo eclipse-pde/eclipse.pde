@@ -572,4 +572,31 @@ public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 		return (ISimpleCSSubItemObject)fSubItems.get(position - 1);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem#moveSubItem(org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItemObject, int)
+	 */
+	public void moveSubItem(ISimpleCSSubItemObject subitem, int newRelativeIndex) {
+		// Get the current index of the task object
+		int currentIndex = fSubItems.indexOf(subitem);
+		// Ensure the object is found
+		if (currentIndex == -1) {
+			return;
+		}
+		// Calculate the new index
+		int newIndex = newRelativeIndex + currentIndex;
+		// Validate the new index
+		if ((newIndex < 0) ||
+				(newIndex >= fSubItems.size())) {
+			return;
+		}
+		// Remove the task object
+		fSubItems.remove(subitem);
+		// Add the task object back at the specified index
+		fSubItems.add(newIndex, subitem);
+		// Send an insert event
+		if (isEditable()) {
+			fireStructureChanged(subitem, IModelChangedEvent.INSERT);
+		}
+	}
+
 }

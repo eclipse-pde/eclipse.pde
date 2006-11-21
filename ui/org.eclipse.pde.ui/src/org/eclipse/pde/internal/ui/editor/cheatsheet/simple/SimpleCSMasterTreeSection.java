@@ -81,7 +81,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	
 	private static final int F_UP_FLAG = -1;
 
-	private static final int F_DOWN_FLAG = -2;
+	private static final int F_DOWN_FLAG = 1;
 	
 	private TreeViewer fTreeViewer;
 	
@@ -366,50 +366,23 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	/**
 	 * 
 	 */
-	private void handleMoveStepAction(int index) {
+	private void handleMoveStepAction(int positionFlag) {
 		ISelection sel = fTreeViewer.getSelection();
 		Object object = ((IStructuredSelection) sel).getFirstElement();
-		// TODO: MP: LOW: SimpleCS:  There is a flicker when adding and removing items / subitems
-		// probably do to focus going to the parent
 		if (object != null) {
 			if (object instanceof ISimpleCSItem) {
 				ISimpleCSItem item = (ISimpleCSItem)object;
-				// Get the current index of the item
-				int currentIndex = item.getSimpleCS().indexOfItem(item);
-				// Remove the item
-				item.getSimpleCS().removeItem(item);
-				// Calculate the new index
-				int newIndex = index;
-				if (index == F_UP_FLAG) {
-					newIndex = currentIndex - 1;
-				} else if (index == F_DOWN_FLAG) {
-					newIndex = currentIndex + 1;
-				}
-				// Add the item back at the specified index
-				item.getSimpleCS().addItem(newIndex, item);
-
+				item.getSimpleCS().moveItem(item, positionFlag);
 			} else if (object instanceof ISimpleCSSubItem) {
 				ISimpleCSSubItem subitem = (ISimpleCSSubItem)object;
 				// Get the current index of the subitem
 				ISimpleCSObject parent = subitem.getParent();
 				if (parent.getType() == ISimpleCSConstants.TYPE_ITEM) {
 					ISimpleCSItem item = (ISimpleCSItem)parent;				
-					int currentIndex = item.indexOfSubItem(subitem);
-					// Remove the item
-					item.removeSubItem(subitem);
-					// Calculate the new index
-					int newIndex = index;
-					if (index == F_UP_FLAG) {
-						newIndex = currentIndex - 1;
-					} else if (index == F_DOWN_FLAG) {
-						newIndex = currentIndex + 1;
-					}
-					// Add the item back at the specified index
-					item.addSubItem(newIndex, subitem);
+					item.moveSubItem(subitem, positionFlag);
 				}
 			}
 		}	
-		
 	}
 	
 	/**
@@ -467,18 +440,16 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	private void handleModelInsertType(IModelChangedEvent event) {
 		// Insert event
 		Object[] objects = event.getChangedObjects();
-		for (int i = 0; i < objects.length; i++) {
-			ISimpleCSObject object = (ISimpleCSObject)objects[i];		
-			if (object == null) {
-				// Ignore
-			} else if ((object.getType() == ISimpleCSConstants.TYPE_ITEM) ||
-						(object.getType() == ISimpleCSConstants.TYPE_SUBITEM)) {
-				// Refresh the parent element in the tree viewer
-				fTreeViewer.refresh(object.getParent());
-				// Select the new item in the tree
-				fTreeViewer.setSelection(new StructuredSelection(object), true);
-			}		
-		}
+		ISimpleCSObject object = (ISimpleCSObject) objects[0];
+		if (object == null) {
+			// Ignore
+		} else if ((object.getType() == ISimpleCSConstants.TYPE_ITEM)
+				|| (object.getType() == ISimpleCSConstants.TYPE_SUBITEM)) {
+			// Refresh the parent element in the tree viewer
+			fTreeViewer.refresh(object.getParent());
+			// Select the new item in the tree
+			fTreeViewer.setSelection(new StructuredSelection(object), true);
+		}		
 	}
 
 	/**
@@ -487,37 +458,36 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	private void handleModelRemoveType(IModelChangedEvent event) {
 		// Remove event
 		Object[] objects = event.getChangedObjects();
-		for (int i = 0; i < objects.length; i++) {
-			ISimpleCSObject object = (ISimpleCSObject)objects[i];		
-			if (object == null) {
-				// Ignore
-			} else if (object.getType() == ISimpleCSConstants.TYPE_ITEM) {
-				// Remove the item
-				fTreeViewer.remove(object);
-				// Select the appropriate object
-				ISimpleCSObject csObject = fRemoveStepAction.getObjectToSelect();
-				if (csObject == null) {
-					csObject = object.getParent();
-				}
-				fTreeViewer.setSelection(new StructuredSelection(csObject), true);
-			} else if (object.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
-				// Remove the subitem
-				fTreeViewer.remove(object);
-				// Select the appropriate object
-				ISimpleCSObject csObject = fRemoveSubStepAction.getObjectToSelect();
-				if (csObject == null) {
-					csObject = object.getParent();
-				}
-				fTreeViewer.setSelection(new StructuredSelection(csObject), true);
-			} else if ((object.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM) ||
-					(object.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM) ||
-					(object.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN)) {
-				// Remove the object
-				fTreeViewer.remove(object);
-				// Select the parent in the tree
-				fTreeViewer.setSelection(new StructuredSelection(object.getParent()), true);
+		ISimpleCSObject object = (ISimpleCSObject) objects[0];
+		if (object == null) {
+			// Ignore
+		} else if (object.getType() == ISimpleCSConstants.TYPE_ITEM) {
+			// Remove the item
+			fTreeViewer.remove(object);
+			// Select the appropriate object
+			ISimpleCSObject csObject = fRemoveStepAction.getObjectToSelect();
+			if (csObject == null) {
+				csObject = object.getParent();
 			}
-		}		
+			fTreeViewer.setSelection(new StructuredSelection(csObject), true);
+		} else if (object.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
+			// Remove the subitem
+			fTreeViewer.remove(object);
+			// Select the appropriate object
+			ISimpleCSObject csObject = fRemoveSubStepAction.getObjectToSelect();
+			if (csObject == null) {
+				csObject = object.getParent();
+			}
+			fTreeViewer.setSelection(new StructuredSelection(csObject), true);
+		} else if ((object.getType() == ISimpleCSConstants.TYPE_CONDITIONAL_SUBITEM)
+				|| (object.getType() == ISimpleCSConstants.TYPE_REPEATED_SUBITEM)
+				|| (object.getType() == ISimpleCSConstants.TYPE_PERFORM_WHEN)) {
+			// Remove the object
+			fTreeViewer.remove(object);
+			// Select the parent in the tree
+			fTreeViewer.setSelection(
+					new StructuredSelection(object.getParent()), true);
+		}
 	}
 	
 	/**
@@ -526,17 +496,15 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	private void handleModelChangeType(IModelChangedEvent event) {
 		// Change event
 		Object[] objects = event.getChangedObjects();
-		for (int i = 0; i < objects.length; i++) {
-			ISimpleCSObject object = (ISimpleCSObject)objects[i];		
-			if (object == null) {
-				// Ignore
-			} else if ((object.getType() == ISimpleCSConstants.TYPE_ITEM) ||
-						(object.getType() == ISimpleCSConstants.TYPE_SUBITEM) ||
-						(object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET)) {
-				// Refresh the element in the tree viewer
-				fTreeViewer.refresh(object);
-			}
-		}		
+		ISimpleCSObject object = (ISimpleCSObject)objects[0];		
+		if (object == null) {
+			// Ignore
+		} else if ((object.getType() == ISimpleCSConstants.TYPE_ITEM)
+				|| (object.getType() == ISimpleCSConstants.TYPE_SUBITEM)
+				|| (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET)) {
+			// Refresh the element in the tree viewer
+			fTreeViewer.update(object, null);
+		}
 	}	
 	
 	/* (non-Javadoc)

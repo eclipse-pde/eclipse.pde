@@ -95,6 +95,14 @@ public interface ISimpleCSItem extends ISimpleCSObject, ISimpleCSHelpObject, ISi
 	 * @param index
 	 */
 	public void removeSubItem(int index);
+
+	/**
+	 * Element:  subitem, repeated-subitem, conditional-subitem
+	 * @param subitem
+	 * @param newRelativeIndex
+	 */
+	public void moveSubItem(ISimpleCSSubItemObject subitem, 
+			int newRelativeIndex);	
 	
 	/**
 	 * Element:  onCompletion
