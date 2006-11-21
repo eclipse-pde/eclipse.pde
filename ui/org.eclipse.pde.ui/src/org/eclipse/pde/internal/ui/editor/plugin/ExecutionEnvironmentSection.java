@@ -13,7 +13,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -157,8 +163,12 @@ public class ExecutionEnvironmentSection extends TableSection {
 						try {
 							getPage().getEditor().doSave(null);
 							IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
-							if (model != null)
+							if (model != null) {
 								ClasspathComputer.setClasspath(project, model);
+								if (PDEPlugin.getWorkspace().isAutoBuilding()) {
+									doFullBuild(project);
+								}
+							}
 						} catch (CoreException e1) {
 						}
 					}
@@ -438,5 +448,24 @@ public class ExecutionEnvironmentSection extends TableSection {
     	addExecutionEnvironments(objects);
     }
 
+    private void doFullBuild(final IProject project) {
+		Job buildJob = new Job(PDEUIMessages.CompilersConfigurationBlock_building) { 
+			public boolean belongsTo(Object family) {
+				return ResourcesPlugin.FAMILY_MANUAL_BUILD == family;
+			}
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					project.build(IncrementalProjectBuilder.FULL_BUILD, 
+								  JavaCore.BUILDER_ID, 
+								  null, 
+								  monitor);
+				} catch (CoreException e) {
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		buildJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
+		buildJob.schedule();
+	}
 
 }
