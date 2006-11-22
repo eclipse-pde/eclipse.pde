@@ -12,9 +12,7 @@
 package org.eclipse.pde.internal.ui.editor.cheatsheet;
 
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
 
 /**
  * ICSDetailsSurrogate
@@ -37,23 +35,6 @@ public interface ICSDetailsSurrogate {
 	 */
 	public ICSMaster getMasterSection();
 
-	/**
-	 * @param parent
-	 * @param columns
-	 * @return
-	 */
-	public Composite createUISectionContainer(Composite parent, int columns);
-	
-	/**
-	 * @param parent
-	 * @param text
-	 * @param description
-	 * @param style
-	 * @return
-	 */
-	public Section createUISection(Composite parent, String text,
-			String description, int style);
-	
 	/**
 	 * @return
 	 */

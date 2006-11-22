@@ -57,13 +57,12 @@ public class CompCSDetails extends CSAbstractDetails {
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createDetails(Composite parent) {
-		
 		// Create the main section
 		int style = Section.DESCRIPTION | ExpandableComposite.TITLE_BAR;
-		fMainSection = createUISection(parent, PDEUIMessages.SimpleCSDetails_3, 
+		fMainSection = getPage().createUISection(parent, PDEUIMessages.SimpleCSDetails_3, 
 			PDEUIMessages.CompCSDetails_sectionDescription, style);
 		// Create the container for the main section
-		Composite sectionClient = createUISectionContainer(fMainSection, 2);		
+		Composite sectionClient = getPage().createUISectionContainer(fMainSection, 2);		
 		// Create the name widget
 		createUINameEntry(sectionClient);
 		// Create the register cheat sheet area

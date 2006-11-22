@@ -233,6 +233,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String PDEFormEditor_errorTitleProblemSaveAs;
 
+	public static String PDEFormPage_titleDetails;
+
+	public static String PDEFormPage_titleMessage;
+
 	public static String PDETextHover_0;
 
 	public static String RegisterCSOperation_addNewCSExtensionNewPlugin;
@@ -388,8 +392,6 @@ public class PDEUIMessages extends NLS {
 	public static String SimpleCSItemDetails_8;
 
 	public static String SimpleCSItemDetails_9;
-
-	public static String SimpleCSPage_1;
 
 	public static String SimpleCSRemoveStepAction_0;
 
@@ -2749,6 +2751,10 @@ public class PDEUIMessages extends NLS {
 	public static String XMLContentAssistProcessor_schemaLocation;
 		
 	public static String SimpleCSPage_0;	
+	
+	public static String SimpleCSPage_msgCheatSheetLoadFailure;
+
+	public static String SimpleCSPage_msgCheatSheetParsingFailure;	
 	
 	// TODO: MP: Clean-up redundant externalized strings in pderesources
 	

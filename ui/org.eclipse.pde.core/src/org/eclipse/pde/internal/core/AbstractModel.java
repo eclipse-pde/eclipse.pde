@@ -40,7 +40,8 @@ public abstract class AbstractModel
 	protected transient NLResourceHelper nlHelper;
 	protected boolean disposed;
 	private long timeStamp;
-
+	private Exception fException;
+	
 	public AbstractModel() {
 		super();
 		listeners = Collections.synchronizedList(new ArrayList());
@@ -143,6 +144,14 @@ public abstract class AbstractModel
 		this.loaded = loaded;
 	}
 
+	public void setException(Exception e) {
+		fException = e;
+	}
+	
+	public Exception getException() {
+		return fException;
+	}
+	
 	public void removeModelChangedListener(IModelChangedListener listener) {
 		listeners.remove(listener);
 	}

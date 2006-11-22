@@ -85,10 +85,10 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		
 		// Create the main section
 		int style = Section.DESCRIPTION | ExpandableComposite.TITLE_BAR;
-		fDefinitionSection = createUISection(parent, PDEUIMessages.SimpleCSDetails_3, 
+		fDefinitionSection = getPage().createUISection(parent, PDEUIMessages.SimpleCSDetails_3, 
 			PDEUIMessages.CompCSTaskGroupDetails_SectionDescription, style);
 		// Create the container for the main section
-		Composite sectionClient = createUISectionContainer(fDefinitionSection, 2);		
+		Composite sectionClient = getPage().createUISectionContainer(fDefinitionSection, 2);		
 		// Create the name entry
 		createUINameEntry(sectionClient);
 		// Create the kind label

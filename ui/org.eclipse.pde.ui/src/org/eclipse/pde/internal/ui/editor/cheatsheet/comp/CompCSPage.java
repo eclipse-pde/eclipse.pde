@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.comp;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
+import org.eclipse.pde.internal.core.AbstractModel;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
@@ -56,10 +57,19 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 		ScrolledForm form = managedForm.getForm();
 		// Set page title
 		ICompCSModel model = (ICompCSModel)getModel();
-		// TODO: MP: LOW: CompCS:  Create formatted error page
+		// Ensure the model was loaded properly
 		if ((model == null) || 
 				(model.isLoaded() == false)) {
-			throw new RuntimeException(PDEUIMessages.SimpleCSPage_1);
+			Exception e = null;
+			if (model instanceof AbstractModel) {
+				e = ((AbstractModel)model).getException();
+			}
+			// Create a formatted error page
+			createFormErrorContent(managedForm, 
+					PDEUIMessages.SimpleCSPage_msgCheatSheetLoadFailure, 
+					PDEUIMessages.SimpleCSPage_msgCheatSheetParsingFailure, 
+					e);
+			return;
 		}
 		
 		String title = PDETextHelper.translateReadText(model.getCompCS()

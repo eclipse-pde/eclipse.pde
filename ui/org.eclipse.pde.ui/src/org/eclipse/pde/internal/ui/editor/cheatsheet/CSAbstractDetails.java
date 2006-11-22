@@ -15,13 +15,10 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.ui.editor.PDEDetails;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Section;
 
 /**
  * CSAbstractDetails
@@ -140,32 +137,6 @@ public abstract class CSAbstractDetails extends PDEDetails implements
 	 */
 	public ICSMaster getMasterSection() {
 		return fMasterSection;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetailsSurrogate#createUISectionContainer(org.eclipse.swt.widgets.Composite, int)
-	 */
-	public Composite createUISectionContainer(Composite parent, int columns) {
-		Composite container = getManagedForm().getToolkit().createComposite(parent);
-		GridLayout layout = new GridLayout(columns, false);
-		container.setLayout(layout);
-		return container;		
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetailsSurrogate#createUISection(org.eclipse.swt.widgets.Composite, java.lang.String, java.lang.String, int)
-	 */
-	public Section createUISection(Composite parent, String text,
-			String description, int style) {
-		Section section = getManagedForm().getToolkit().createSection(parent, style);
-		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
-		section.marginHeight = 5;
-		section.marginWidth = 5; 
-		section.setText(text);
-		section.setDescription(description);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		section.setLayoutData(data);
-		return section;
 	}
 	
 }

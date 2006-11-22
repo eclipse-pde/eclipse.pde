@@ -113,11 +113,11 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 		String description = NLS.bind(
 				PDEUIMessages.CompCSEnclosingTextDetails_SectionDescription,
 				fTaskObjectLabelName);		
-		fEnclosingTextSection = fDetails.createUISection(parent,
+		fEnclosingTextSection = fDetails.getPage().createUISection(parent,
 				PDEUIMessages.CompCSEnclosingTextDetails_EnclosingText,
 				description, style);
 		// Create the container for the main section
-		Composite sectionClient = fDetails.createUISectionContainer(
+		Composite sectionClient = fDetails.getPage().createUISectionContainer(
 				fEnclosingTextSection, 1);		
 		// Create the tab folder
 		createUITabFolder(sectionClient);

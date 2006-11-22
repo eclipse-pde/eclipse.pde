@@ -9,14 +9,20 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CTabFolder;
@@ -24,6 +30,8 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -46,9 +54,11 @@ import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.forms.widgets.Section;
 
 public abstract class PDEFormPage extends FormPage {
 
@@ -96,11 +106,7 @@ public abstract class PDEFormPage extends FormPage {
 		FormColors colors = toolkit.getColors();
 		form.getForm().setSeparatorColor(colors.getColor(FormColors.TB_BORDER));
 		if (fNewStyleHeader) {
-			colors.initializeSectionToolBarColors();
-			Color gbg = colors.getColor(FormColors.TB_GBG);
-			Color bg = colors.getBackground();
-			form.getForm().setTextBackground(new Color[]{bg, gbg}, new int [] {100}, true);
-			form.getForm().setSeparatorVisible(true);
+			createNewStyleHeader(form, colors);
 		}
 		final String href = getHelpResource();
 		if (href != null) {
@@ -339,5 +345,131 @@ public abstract class PDEFormPage extends FormPage {
 				text.setSelection(0, text.getText().length());
 			}
 		}
+	}
+	
+	/**
+	 * @param managedForm
+	 * @param errorTitle
+	 * @param errorMessage
+	 */
+	protected void createFormErrorContent(IManagedForm managedForm,
+			String errorTitle, String errorMessage) {
+		createFormErrorContent(managedForm, errorTitle, errorMessage, null);
+	}
+	
+	/**
+	 * @param managedForm
+	 * @param errorTitle
+	 * @param errorMessage
+	 * @param e
+	 */
+	protected void createFormErrorContent(IManagedForm managedForm,
+			String errorTitle, String errorMessage, Exception e) {
+		
+		ScrolledForm form = managedForm.getForm();
+		FormToolkit toolkit = managedForm.getToolkit();
+		FormColors colors = toolkit.getColors();
+		form.getForm().setSeparatorColor(colors.getColor(FormColors.TB_BORDER));
+		if (fNewStyleHeader) {
+			createNewStyleHeader(form, colors);
+		}
+
+		Composite parent = form.getBody();
+		GridLayout layout = new GridLayout();
+		GridData data2 = new GridData(GridData.FILL_BOTH);
+		layout.marginWidth = 7;
+		layout.marginHeight = 7;
+		parent.setLayout(layout);
+		parent.setLayoutData(data2);
+		// Set the title and image of the form
+		form.setText(errorTitle);
+        form.setImage(JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR));
+        
+        int sectionStyle = Section.DESCRIPTION | ExpandableComposite.TITLE_BAR;
+        // Create the message section
+        Section messageSection = createUISection(parent, PDEUIMessages.PDEFormPage_titleMessage, 
+        		errorMessage, sectionStyle);
+        Composite messageClient = createUISectionContainer(messageSection, 1);
+        // Bind the widgets
+		toolkit.paintBordersFor(messageClient);
+		messageSection.setClient(messageClient);			
+		// Ensure the exception was defined
+		if (e == null) {
+			return;
+		}
+		// Create the details section
+        Section detailsSection = createUISection(parent, PDEUIMessages.PDEFormPage_titleDetails, 
+        		e.getMessage(), sectionStyle);
+        Composite detailsClient = createUISectionContainer(detailsSection, 1);
+		// Create text widget holding the exception trace
+		int style = SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.READ_ONLY;		
+		Text text = toolkit.createText(detailsClient, getStackTrace(e), style); 
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.heightHint = 160;
+		data.widthHint  = 200;
+		text.setLayoutData(data);
+        // Bind the widgets
+		toolkit.paintBordersFor(detailsClient);
+		detailsSection.setClient(detailsClient);
+		// Note: The veritical scrollbar fails to appear when text widget is
+		// not entirely shown
+	}
+
+	/**
+	 * @param parent
+	 * @param text
+	 * @param description
+	 * @param style
+	 * @return
+	 */
+	public Section createUISection(Composite parent, String text,
+			String description, int style) {
+		Section section = 
+			getManagedForm().getToolkit().createSection(parent, style);
+		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
+		section.marginHeight = 5;
+		section.marginWidth = 5; 
+		section.setText(text);
+		section.setDescription(description);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		section.setLayoutData(data);
+		return section;
+	}
+	
+	/**
+	 * @param parent
+	 * @param columns
+	 * @return
+	 */
+	public Composite createUISectionContainer(Composite parent, int columns) {
+		Composite container = getManagedForm().getToolkit().createComposite(parent);
+		GridLayout layout = new GridLayout(columns, false);
+		container.setLayout(layout);
+		return container;		
+	}
+	
+    /**
+     * @param throwable
+     * @return
+     */
+    public String getStackTrace(Throwable throwable) {
+        StringWriter swriter = new StringWriter();
+        PrintWriter pwriter = new PrintWriter(swriter);
+        throwable.printStackTrace(pwriter);
+        pwriter.flush();
+        pwriter.close();
+        return swriter.toString();
+    }
+	
+	/**
+	 * @param form
+	 * @param colors
+	 */
+	private void createNewStyleHeader(final ScrolledForm form, FormColors colors) {
+		colors.initializeSectionToolBarColors();
+		Color gbg = colors.getColor(FormColors.TB_GBG);
+		Color bg = colors.getBackground();
+		form.getForm().setTextBackground(new Color[]{bg, gbg}, new int [] {100}, true);
+		form.getForm().setSeparatorVisible(true);
 	}
 }

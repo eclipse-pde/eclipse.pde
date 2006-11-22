@@ -106,6 +106,7 @@ public class CompCSModel extends AbstractModel implements ICompCSModel {
 				setLoaded(true);
 			}
 		} catch (Exception e) {
+			setException(e);
 			PDECore.logException(e);
 		} finally {
 			try {

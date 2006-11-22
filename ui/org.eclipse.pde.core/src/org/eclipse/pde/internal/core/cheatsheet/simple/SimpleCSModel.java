@@ -105,6 +105,7 @@ public class SimpleCSModel extends AbstractModel implements ISimpleCSModel {
 				setLoaded(true);
 			}
 		} catch (Exception e) {
+			setException(e);
 			PDECore.logException(e);
 		} finally {
 			try {
