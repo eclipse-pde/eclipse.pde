@@ -64,7 +64,9 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 			case PDEMarkerFactory.M_DEPRECATED_IMPORT_SERVICE: 
 				return new IMarkerResolution[] { new RemoveImportExportServicesResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, ICoreConstants.IMPORT_SERVICE) };
 			case PDEMarkerFactory.M_DEPRECATED_EXPORT_SERVICE: 
-				return new IMarkerResolution[] { new RemoveImportExportServicesResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, ICoreConstants.EXPORT_SERVICE) };				
+				return new IMarkerResolution[] { new RemoveImportExportServicesResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, ICoreConstants.EXPORT_SERVICE) };
+			case PDEMarkerFactory.M_UNECESSARY_DEP:
+				return new IMarkerResolution[] {new RemoveRequireBundleResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker.getAttribute("bundleId", null))}; //$NON-NLS-1$
 			case PDEMarkerFactory.B_REMOVE_SLASH_FILE_ENTRY:
 				return new IMarkerResolution[] { new RemoveSeperatorBuildEntryResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
 			case PDEMarkerFactory.B_APPEND_SLASH_FOLDER_ENTRY:

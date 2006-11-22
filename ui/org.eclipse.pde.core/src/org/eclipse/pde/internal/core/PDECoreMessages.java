@@ -160,6 +160,7 @@ public class PDECoreMessages extends NLS {
 	public static String BundleErrorReporter_InvalidSymbolicName;
 	public static String BundleErrorReporter_invalidFilterSyntax;
 	public static String BundleErrorReporter_importexport_servicesDeprecated;
+	public static String BundleErrorReporter_unecessaryDependencyDueToFragmentHost;
 
 	public static String BundleErrorReporter_startHeader_autoStartDeprecated;
 
