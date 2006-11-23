@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core;
 import java.io.File;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -137,6 +138,13 @@ public class ModelEntry extends PlatformObject {
 			new IClasspathContainer[] {
 				 new RequiredPluginsClasspathContainer(null)},
 			null);
+	}
+
+	public Object getAdapter(Class adapter) {
+		if(adapter == IResource.class && fWorkspaceModel != null) {
+			return fWorkspaceModel.getUnderlyingResource().getProject();
+		}
+		return super.getAdapter(adapter);
 	}
 	
 }
