@@ -58,8 +58,12 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
 import org.eclipse.pde.internal.core.util.IdUtil;
+import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
@@ -97,11 +101,65 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		validateRequireBundle(monitor);
 		validateImportPackage(monitor);
 		validateExportPackage(monitor);
+		validateExportPackages();
 		validateAutoStart();
 		validateLazyStart();
 		validateExtensibleAPI();		
 		validateTranslatableHeaders();
 		validateImportExportServices();
+	}
+
+	private void validateExportPackages() {
+		IHeader header = (IHeader) fHeaders.get(Constants.EXPORT_PACKAGE);
+
+		// check for missing exported packages
+		if(fModel instanceof IBundlePluginModelBase) {
+			IBundlePluginModelBase bundleModel = (IBundlePluginModelBase) fModel;
+			IBundle bundle = bundleModel.getBundleModel().getBundle();
+			IManifestHeader bundleClasspathheader = 
+				(IManifestHeader) bundle.getManifestHeader(Constants.BUNDLE_CLASSPATH);
+
+			IPackageFragmentRoot[] roots = ManifestUtils.findPackageFragmentRoots(bundleClasspathheader, fProject);
+			// Running list of packages in the project
+			//Set packages = new HashSet();
+			StringBuffer packages = new StringBuffer();
+			for (int i = 0; i < roots.length; i++) {
+				try {
+					if (ManifestUtils.isImmediateRoot(roots[i])) {
+						IJavaElement[] javaElements = roots[i].getChildren();
+						for (int j = 0; j < javaElements.length; j++)
+							if (javaElements[j] instanceof IPackageFragment) {
+								IPackageFragment fragment = (IPackageFragment) javaElements[j];
+								String name = fragment.getElementName();
+								if (name.length() == 0)
+									name = "."; //$NON-NLS-1$
+								if ((fragment.hasChildren() || fragment.getNonJavaResources().length > 0)){
+									if (!containsPackage(header, name)) {
+										packages.append(name);
+										if(j < javaElements.length - 1)
+											packages.append(",");
+
+									}
+								}
+							}
+					}
+				} catch (JavaModelException e) {}
+			}
+
+			// if we actually have packages to add
+			if(packages.toString().length() > 0) {
+				IMarker marker = report(PDECoreMessages.BundleErrorReporter_missingPackagesInProject, header == null ? 1 : header.getLineNumber() + 1,
+						CompilerFlags.P_MISSING_EXPORT_PKGS, 
+						PDEMarkerFactory.M_MISSING_EXPORT_PKGS,
+						PDEMarkerFactory.CAT_OTHER);
+				try {
+					if (marker != null)
+						marker.setAttribute("packages", packages.toString()); //$NON-NLS-1$
+				} catch (CoreException e) {}
+			}
+
+		}
+
 	}
 
 	private void setOsgiR4() {
@@ -711,6 +769,18 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				}		
 			}
 		}
+
+	}
+
+	private boolean containsPackage(IHeader header, String name) {
+		if(header != null) {
+			ManifestElement[] elements = header.getElements();
+			for (int i = 0; i < elements.length; i++) {
+				if(elements[i].getValue().equals(name))
+					return true;
+			}
+		}
+		return false;
 	}
 
 	private Set getExportedPackages() {

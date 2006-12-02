@@ -13,11 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.tools;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
@@ -27,10 +23,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -54,7 +48,6 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEManager;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TargetPlatform;
-import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
@@ -68,7 +61,6 @@ import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
-import org.eclipse.pde.internal.core.text.bundle.BundleClasspathHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
@@ -80,6 +72,7 @@ import org.eclipse.pde.internal.core.text.bundle.SingleManifestHeader;
 import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
 import org.eclipse.pde.internal.core.text.plugin.PluginModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
@@ -131,7 +124,9 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		} else  
 			currentPkgs = header.getPackages();
 		
-		IPackageFragmentRoot[] roots = findPackageFragmentRoots(bundle, project);
+		IManifestHeader bundleClasspathheader = bundle.getManifestHeader(Constants.BUNDLE_CLASSPATH);
+		
+		IPackageFragmentRoot[] roots = ManifestUtils.findPackageFragmentRoots(bundleClasspathheader, project);
 		// Running list of packages in the project
 		Set packages = new HashSet();
 		for (int i = 0; i < roots.length; i++) {
@@ -163,59 +158,6 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 					header.removePackage(currentPkgs[i]);
 	}
 	
-	private static IPackageFragmentRoot[] findPackageFragmentRoots(IBundle bundle, IProject proj) {
-		IJavaProject jproj = JavaCore.create(proj);
-		BundleClasspathHeader cpHeader = (BundleClasspathHeader)bundle.getManifestHeader(Constants.BUNDLE_CLASSPATH);
-		Vector libs;
-		if (cpHeader == null) 
-			libs = new Vector();
-		else 
-		    libs = cpHeader.getElementNames();
-		if (libs.size() == 0) 
-			libs.add("."); //$NON-NLS-1$
-		
-		List pkgFragRoots = new LinkedList();
-		IBuild build = null;
-		
-		Iterator it = libs.iterator();
-		while (it.hasNext()) {
-			String lib = (String)it.next();
-			IPackageFragmentRoot root = null;
-			if (!lib.equals(".")) //$NON-NLS-1$
-				root = jproj.getPackageFragmentRoot(proj.getFile(lib));
-			if (root != null && root.exists()) {
-				pkgFragRoots.add(root);
-			} else {
-				// Parse build.properties only once
-				if (build == null) 
-					build = getBuild(proj);
-				// if valid build.properties exists.  Do NOT use else statement!  getBuild() could return null.
-				if (build != null) {  
-					IBuildEntry entry = build.getEntry("source." + lib); //$NON-NLS-1$
-					if (entry == null)
-						continue;
-					String[] tokens = entry.getTokens();
-					for (int i = 0; i < tokens.length; i++) {
-						root = jproj.getPackageFragmentRoot(proj.getFolder(tokens[i]));
-						if (root != null && root.exists())
-							pkgFragRoots.add(root);
-					}
-				}
-			}
-		}
-		return (IPackageFragmentRoot[]) pkgFragRoots.toArray(new IPackageFragmentRoot[pkgFragRoots.size()]);
-	}
-	
-	private final static IBuild getBuild(IProject proj){
-		IFile buildProps = proj.getFile("build.properties"); //$NON-NLS-1$
-		if (buildProps != null) {
-			WorkspaceBuildModel model = new WorkspaceBuildModel(buildProps);
-			if (model != null) 
-				return model.getBuild();
-		}
-		return null;
-	}
-
 	private static boolean isImmediateRoot(IPackageFragmentRoot root) throws JavaModelException {
 		int kind = root.getKind();
 		return kind == IPackageFragmentRoot.K_SOURCE

@@ -65,6 +65,8 @@ public class CompilerFlags {
 	public static final String P_BUILD = "compilers.p.build"; //$NON-NLS-1$
 	
 	public static final String P_INCOMPATIBLE_ENV = "compilers.incompatible-environment"; //$NON-NLS-1$
+	
+	public static final String P_MISSING_EXPORT_PKGS = "compilers.p.missing-packages"; //$NON-NLS-1$
 
 	public static final String P_DEPRECATED = "compilers.p.deprecated"; //$NON-NLS-1$
 
@@ -89,7 +91,8 @@ public class CompilerFlags {
 			  P_UNKNOWN_CLASS, 
 			  P_UNKNOWN_RESOURCE, 
 			  P_NOT_EXTERNALIZED,
-			  P_BUILD},
+			  P_BUILD,
+			  P_MISSING_EXPORT_PKGS},
 			{ S_CREATE_DOCS, 
 			  S_DOC_FOLDER, 
 			  S_OPEN_TAGS },
@@ -225,6 +228,7 @@ public class CompilerFlags {
 		node.putInt(P_NOT_EXTERNALIZED, IGNORE);
 		node.putInt(P_BUILD, WARNING);
 		node.putInt(P_INCOMPATIBLE_ENV, WARNING);
+		node.putInt(P_MISSING_EXPORT_PKGS, IGNORE);
 
 		node.putBoolean(S_CREATE_DOCS, false);
 		node.put(S_DOC_FOLDER, "doc"); //$NON-NLS-1$
