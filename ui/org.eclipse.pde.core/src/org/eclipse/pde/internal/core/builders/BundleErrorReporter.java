@@ -137,7 +137,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 									if (!containsPackage(header, name)) {
 										packages.append(name);
 										if(j < javaElements.length - 1)
-											packages.append(",");
+											packages.append(","); //$NON-NLS-1$
 
 									}
 								}
