@@ -192,7 +192,9 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	 * @since 3.3
 	 */
 	protected void initializeConfiguration(ILaunchConfigurationWorkingCopy wc) {
-		if (TargetPlatform.getTargetVersion() >= 3.2)
+		if (TargetPlatform.usesNewApplicationModel())
+			wc.setAttribute("pde.version", "3.3"); //$NON-NLS-1$ //$NON-NLS-2$
+		else if (TargetPlatform.getTargetVersion() >= 3.2)
 			wc.setAttribute("pde.version", "3.2a"); //$NON-NLS-1$ //$NON-NLS-2$
 		wc.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(wc.getName())); //$NON-NLS-1$
 		initializeProgramArguments(wc);

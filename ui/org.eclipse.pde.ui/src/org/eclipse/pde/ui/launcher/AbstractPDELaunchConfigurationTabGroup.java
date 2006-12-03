@@ -19,6 +19,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -110,6 +111,11 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		super.setDefaults(configuration);
+		if (TargetPlatform.usesNewApplicationModel())
+			configuration.setAttribute("pde.version", "3.3"); //$NON-NLS-1$ //$NON-NLS-2$
+		else if (TargetPlatform.getTargetVersion() >= 3.2)
+			configuration.setAttribute("pde.version", "3.2a"); //$NON-NLS-1$ //$NON-NLS-2$
+
 		configuration.setAttribute(
 			IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER,
 			PDESourcePathProvider.ID); 
