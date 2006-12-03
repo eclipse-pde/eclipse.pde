@@ -58,7 +58,9 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 
 	private String[] getDirectoryCandidates() {
 		double version = getTargetVersion();
-		ArrayList result = new ArrayList();		
+		ArrayList result = new ArrayList();
+		if (version >= 3.3)
+			result.add("templates_3.3" + "/" + getSectionId() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (version >= 3.2)
 			result.add("templates_3.2" + "/" + getSectionId() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (version >= 3.1)

@@ -48,7 +48,7 @@ import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.core.TargetPlatform;
-import org.eclipse.pde.internal.core.plugin.PluginBase;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.templates.ControlStack;
 import org.eclipse.pde.internal.ui.wizards.templates.PluginReference;
@@ -730,14 +730,13 @@ public abstract class AbstractTemplateSection
 	}
 	
 	protected double getTargetVersion() {
-		IPluginBase plugin = model.getPluginBase();
-	       // workaround to not introduce new API for IPluginBase
         try {
-			if (plugin instanceof PluginBase)
-			    return Double.parseDouble(((PluginBase)plugin).getTargetVersion());
+    		IPluginBase plugin = model.getPluginBase();
+			if (plugin instanceof IBundlePluginBase)
+			    return Double.parseDouble(((IBundlePluginBase)plugin).getTargetVersion());
 		} catch (NumberFormatException e) {
 		}
-        return TargetPlatform.getTargetVersion();
+       return TargetPlatform.getTargetVersion();
 	}
 
 }

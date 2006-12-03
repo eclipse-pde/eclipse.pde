@@ -45,8 +45,6 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 	private String fVersion;
 	private boolean fHasBundleStructure;
 
-	private String fTargetVersion = "3.2"; //$NON-NLS-1$
-
 	public void add(IPluginLibrary library) throws CoreException {
 		ensureModelEditable();
 		fLibraries.add(library);
@@ -378,14 +376,6 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 			return IMatchRules.PERFECT; // this is as close as we got
 
 		return IMatchRules.NONE;  // no real match rule for this
-	}
-	
-	public void setTargetVersion(String target) {
-		fTargetVersion = target;
-	}
-	
-	public String getTargetVersion() {
-		return fTargetVersion;
 	}
 	
 	public boolean hasBundleStructure() {

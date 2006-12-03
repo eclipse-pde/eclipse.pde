@@ -22,4 +22,8 @@ import org.eclipse.pde.core.plugin.IPluginBase;
  * plug-ins with META-INF/MANIFEST.MF file.
  */
 public interface IBundlePluginBase extends IPluginBase, IModelChangedListener {
+	
+	String getTargetVersion();
+	
+	void setTargetVersion(String target);
 }

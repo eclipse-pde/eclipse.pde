@@ -122,7 +122,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		});
 		
 		fTargetCombo = new Combo(group, SWT.READ_ONLY|SWT.SINGLE);
-		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET32, ICoreConstants.TARGET31, ICoreConstants.TARGET30});
+		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31, ICoreConstants.TARGET30});
 		fTargetCombo.setText(TargetPlatform.getTargetVersionString());
 		
 	    fOSGIButton = createButton(group, SWT.RADIO, 1, 30);

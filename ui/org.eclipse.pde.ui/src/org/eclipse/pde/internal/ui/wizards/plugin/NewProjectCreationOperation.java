@@ -49,8 +49,9 @@ import org.eclipse.pde.internal.core.bundle.WorkspaceBundleFragmentModel;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.natures.PDE;
-import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
@@ -167,10 +168,11 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		pluginBase.setVersion(fData.getVersion());
 		pluginBase.setName(fData.getName());
 		pluginBase.setProviderName(fData.getProvider());
-		if (pluginBase instanceof PluginBase)
-			((PluginBase)pluginBase).setTargetVersion(targetVersion);
-		else if (pluginBase instanceof BundlePluginBase)
-			((BundlePluginBase)pluginBase).getBundle().setHeader(Constants.BUNDLE_MANIFESTVERSION, "2"); //$NON-NLS-1$
+		if (fModel instanceof IBundlePluginModelBase) {
+			IBundlePluginModelBase bmodel = ((IBundlePluginModelBase)fModel);
+			((IBundlePluginBase)bmodel.getPluginBase()).setTargetVersion(targetVersion);
+			bmodel.getBundleModel().getBundle().setHeader(Constants.BUNDLE_MANIFESTVERSION, "2"); //$NON-NLS-1$
+		}
 		if (pluginBase instanceof IFragment) {
 			IFragment fragment = (IFragment) pluginBase;
 			IFragmentFieldData data = (IFragmentFieldData) fData;
