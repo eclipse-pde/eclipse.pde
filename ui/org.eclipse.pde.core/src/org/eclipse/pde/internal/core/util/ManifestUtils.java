@@ -32,12 +32,10 @@ public class ManifestUtils {
 		IJavaProject javaProject = JavaCore.create(project);
 
 		String[] libs;
-		if (header == null) 
-			libs = new String[0];
+		if (header == null || header.getValue() == null) 
+			libs = new String[] {"."}; //$NON-NLS-1$
 		else 
-			libs = header.getValue().split(",");
-		if (libs.length == 0) 
-			libs[0] = new String("."); //$NON-NLS-1$
+			libs = header.getValue().split(","); //$NON-NLS-1$
 
 		List pkgFragRoots = new LinkedList();
 		IBuild build = null;
