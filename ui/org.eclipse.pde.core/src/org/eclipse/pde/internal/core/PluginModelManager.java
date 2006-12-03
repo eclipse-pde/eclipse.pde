@@ -74,7 +74,7 @@ public class PluginModelManager implements IAdaptable {
 	public String getTargetVersion() {
 		ModelEntry entry = findEntry(OSGI_RUNTIME); 
 		if (entry == null) 
-			return ICoreConstants.TARGET33;
+			return ICoreConstants.TARGET32;
 		
 		IPluginModelBase model = entry.getActiveModel();
 		String version = model.getPluginBase().getVersion();
@@ -86,10 +86,8 @@ public class PluginModelManager implements IAdaptable {
 				return ICoreConstants.TARGET30;
 			if (major == 3 && minor == 1)
 				return ICoreConstants.TARGET31;
-			if (major == 3 && minor == 2)
-				return ICoreConstants.TARGET32;
 		}			
-		return ICoreConstants.TARGET33;	
+		return ICoreConstants.TARGET32;	
 	}
 
 	public Object getAdapter(Class key) {
