@@ -88,10 +88,10 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 			rule.addWord(Constants.REQUIRE_BUNDLE, fToken);
 			rule.addWord(Constants.DYNAMICIMPORT_PACKAGE, fToken);
 			rule.addWord(Constants.EXPORT_PACKAGE, fToken);
-			rule.addWord(Constants.EXPORT_SERVICE, fToken);
+			rule.addWord(ICoreConstants.EXPORT_SERVICE, fToken);
 			rule.addWord(Constants.FRAGMENT_HOST, fToken);
 			rule.addWord(Constants.IMPORT_PACKAGE, fToken);
-			rule.addWord(Constants.IMPORT_SERVICE, fToken);
+			rule.addWord(ICoreConstants.IMPORT_SERVICE, fToken);
 			rule.addWord(ICoreConstants.PROVIDE_PACKAGE, fToken);
 			setRules(new IRule[] {rule});
 			setDefaultReturnToken(new Token(createTextAttribute(IPDEColorConstants.P_HEADER_KEY)));

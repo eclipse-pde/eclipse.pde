@@ -75,9 +75,9 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		Constants.DYNAMICIMPORT_PACKAGE,
 		ICoreConstants.ECLIPSE_LAZYSTART,
 		Constants.EXPORT_PACKAGE,
-		Constants.EXPORT_SERVICE,
+		ICoreConstants.EXPORT_SERVICE,
 		Constants.IMPORT_PACKAGE,
-		Constants.IMPORT_SERVICE,
+		ICoreConstants.IMPORT_SERVICE,
 		Constants.REQUIRE_BUNDLE,
 		Constants.FRAGMENT_HOST 
 	};
