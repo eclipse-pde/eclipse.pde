@@ -23,78 +23,34 @@ import org.eclipse.compare.IStreamContentAccessor;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.DocumentRangeNode;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
-import org.eclipse.compare.structuremergeviewer.SharedDocumentAdapterWrapper;
 import org.eclipse.compare.structuremergeviewer.StructureCreator;
+import org.eclipse.compare.structuremergeviewer.StructureRootNode;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.FastPartitioner;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.text.ManifestPartitionScanner;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.services.IDisposable;
 
 public class ManifestStructureCreator extends StructureCreator {
-	
-	private final class RootManifestNode extends ManifestNode implements IDisposable {
-		private final Object input;
-		private final IDisposable disposable;
 
-		private RootManifestNode(IDocument doc, boolean editable, Object input, IDisposable disposable) {
-			super(doc, editable);
-			this.input = input;
-			this.disposable = disposable;
-		}
-
-		void nodeChanged(ManifestNode node) {
-			save(this, input);
-		}
-
-		public void dispose() {
-			if (disposable != null)
-				disposable.dispose();
-		}
+	static class ManifestNode extends DocumentRangeNode implements ITypedElement {
 		
-		public Object getAdapter(Class adapter) {
-			if (adapter == ISharedDocumentAdapter.class) {
-				ISharedDocumentAdapter elementAdapter = SharedDocumentAdapterWrapper.getAdapter(input);
-				if (elementAdapter != null) {
-					return new SharedDocumentAdapterWrapper(elementAdapter) {
-						public IEditorInput getDocumentKey(Object element) {
-							if (element instanceof ManifestNode) {
-								return getWrappedAdapter().getDocumentKey(input);
-							}
-							return super.getDocumentKey(element);
-						}
-					};
-				}
-			}
-			return super.getAdapter(adapter);
-		}
-	}
-
-	static class ManifestNode extends DocumentRangeNode implements ITypedElement, IAdaptable {
-		
-		private boolean fIsEditable;
-		private ManifestNode fParent;
-		
-		public ManifestNode(ManifestNode parent, int type, String id , IDocument doc, int start, int length) {
-			super(type, id, doc, start, length);
-			fParent = parent;
+		public ManifestNode(DocumentRangeNode parent, int type, String id , IDocument doc, int start, int length) {
+			super(parent, type, id, doc, start, length);
 			if (parent != null) {
 				parent.addChild(ManifestNode.this);
-				fIsEditable = parent.isEditable();
 			}
-		}
-						
-		public ManifestNode(IDocument doc, boolean editable) {
-			super(0, "root", doc, 0, doc.getLength()); //$NON-NLS-1$
-			fIsEditable = editable;
 		}
 		
 		public String getName() {
@@ -108,50 +64,10 @@ public class ManifestStructureCreator extends StructureCreator {
 		public Image getImage() {
 			return CompareUI.getImage(getType());
 		}
-		
-		public boolean isEditable() {
-			return fIsEditable;
-		}
-		
-		public void setContent(byte[] content) {
-			super.setContent(content);
-			nodeChanged(this);
-		}
-		
-		public ITypedElement replace(ITypedElement child, ITypedElement other) {
-			nodeChanged(this);
-			return child;
-		}
-
-		void nodeChanged(ManifestNode node) {
-			if (fParent != null)
-				fParent.nodeChanged(node);
-		}
-		
-		public Object getAdapter(Class adapter) {
-			if (adapter == ISharedDocumentAdapter.class && fParent != null)
-				return fParent.getAdapter(adapter);
-			return null;
-		}
 	}
 	
 	public String getName() {
 		return PDEUIMessages.ManifestStructureCreator_name;
-	}
-
-	public IStructureComparator getStructure(final Object input) {
-		String content= null;
-		if (input instanceof IStreamContentAccessor) {
-			try {
-				content = readString(((IStreamContentAccessor) input));
-			} catch(CoreException ex) {
-				return null;
-			}
-		}
-		IDocument document = new Document(content != null ? content : ""); //$NON-NLS-1$
-		setupDocument(document);
-		
-		return createStructureComparator(input, document, null);
 	}
 
 	public IStructureComparator locate(Object path, Object input) {
@@ -169,39 +85,57 @@ public class ManifestStructureCreator extends StructureCreator {
 		return null;
 	}
 
-	private void parseManifest(ManifestNode root, IDocument doc) throws IOException {
+	private void parseManifest(DocumentRangeNode root, IDocument doc, IProgressMonitor monitor) throws IOException {
 		int lineStart = 0;
 		int[] args = new int[2];
 		args[0] = 0;	// here we return the line number
 		args[1] = 0;	// and here the offset of the first character of the line 
 		
-		StringBuffer headerBuffer = new StringBuffer();
-		int headerStart = 0;
-		while (true) {
-			lineStart = args[1];		// start of current line
-            String line = readLine(args, doc);
-			if (line == null)
-				return;
+		try {
+			monitor = beginWork(monitor);
+			StringBuffer headerBuffer = new StringBuffer();
+			int headerStart = 0;
+			while (true) {
+				lineStart = args[1];		// start of current line
+	            String line = readLine(args, doc);
+				if (line == null)
+					return;
+					
+				if (line.length() <= 0) {
+					saveNode(root, doc, headerBuffer.toString(), headerStart); // empty line, save buffer to node
+					continue;
+				}
+				if (line.charAt(0) == ' ') {
+					if (headerBuffer.length() > 0)
+						headerBuffer.append(line);
+					continue;
+				}
 				
-			if (line.length() <= 0) {
-				saveNode(root, doc, headerBuffer.toString(), headerStart); // empty line, save buffer to node
-				continue;
+				// save old buffer and start loading again
+				saveNode(root, doc, headerBuffer.toString(), headerStart);
+				
+				headerStart = lineStart;
+				headerBuffer.replace(0, headerBuffer.length(), line);
+				worked(monitor);
 			}
-			if (line.charAt(0) == ' ') {
-				if (headerBuffer.length() > 0)
-					headerBuffer.append(line);
-				continue;
-			}
-			
-			// save old buffer and start loading again
-			saveNode(root, doc, headerBuffer.toString(), headerStart);
-			
-			headerStart = lineStart;
-			headerBuffer.replace(0, headerBuffer.length(), line);
+		} finally {
+			monitor.done();
 		}
 	}
 
-	private void saveNode(ManifestNode root, IDocument doc, String header, int start) {
+	private void worked(IProgressMonitor monitor) {
+		if (monitor.isCanceled())
+			throw new OperationCanceledException();
+		monitor.worked(1);
+	}
+
+	private IProgressMonitor beginWork(IProgressMonitor monitor) {
+		if (monitor == null)
+			return new NullProgressMonitor();
+		return new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
+	}
+
+	private void saveNode(DocumentRangeNode root, IDocument doc, String header, int start) {
 		if (header.length() > 0)
 			new ManifestNode(
 				root, 0, extractKey(header),
@@ -289,17 +223,25 @@ public class ManifestStructureCreator extends StructureCreator {
 	}
 	
 	protected IStructureComparator createStructureComparator(Object input,
-			IDocument document, IDisposable disposable) {
+			IDocument document, ISharedDocumentAdapter adapter, IProgressMonitor monitor) throws CoreException {
 		
-		boolean isEditable= false;
+		final boolean isEditable;
 		if (input instanceof IEditableContent)
 			isEditable= ((IEditableContent) input).isEditable();
+		else 
+			isEditable= false;
 
-		ManifestNode rootNode = new RootManifestNode(document, isEditable, input, disposable);
-				
+		DocumentRangeNode rootNode = new StructureRootNode(document, input, this, adapter) {
+			public boolean isEditable() {
+				return isEditable;
+			}
+		};
 		try {
-			parseManifest(rootNode, document);
+			parseManifest(rootNode, document, monitor);
 		} catch (IOException ex) {
+			if (adapter != null)
+				adapter.disconnect(input);
+			throw new CoreException(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), 0, PDEUIMessages.ManifestStructureCreator_errorMessage, ex));
 		}
 		
 		return rootNode;

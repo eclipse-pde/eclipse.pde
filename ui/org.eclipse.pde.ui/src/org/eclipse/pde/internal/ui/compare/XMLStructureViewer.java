@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.compare;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -23,14 +22,11 @@ import org.eclipse.compare.structuremergeviewer.IStructureComparator;
 import org.eclipse.compare.structuremergeviewer.StructureDiffViewer;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * An XML diff tree viewer that can be configured with a <code>IStructureCreator</code>
@@ -139,55 +135,40 @@ public class XMLStructureViewer extends StructureDiffViewer {
 
 	}
 
-
-	public IRunnableWithProgress getMatchingRunnable(
-			final XMLNode left,
-			final XMLNode right,
-			final XMLNode ancestor) {
-		
-		return new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws
-					InvocationTargetException,
-					InterruptedException,
-					OperationCanceledException {
-				
-				if (monitor == null)
-					monitor = new NullProgressMonitor();
-				
-				int totalWork;
-				if (ancestor != null)
-					totalWork = 1;
-				else
-					totalWork = 3;
-				monitor.beginTask("Running Matching algorithm...", totalWork);  //$NON-NLS-1$
-				
-				AbstractMatching m = new OrderedMatching();
-				try {
-					m.match(left, right, false, monitor);
-					if (ancestor != null) {
-						m.match(left, ancestor, true,
-							new SubProgressMonitor(monitor, 1));
-						m.match(right, ancestor, true,
-							new SubProgressMonitor(monitor, 1));
-					}
-				} finally {
-					monitor.done();
-				}
-			}
-		};
-	}
-
 	protected void preDiffHook(
 			IStructureComparator ancestor,
 			IStructureComparator left,
-			IStructureComparator right) {
+			IStructureComparator right, IProgressMonitor monitor) {
 		if (left != null && right != null) {
-			try {
-				PlatformUI.getWorkbench().getProgressService().run(true, true,
-					getMatchingRunnable((XMLNode) left, (XMLNode) right, (XMLNode) ancestor));
-			} catch (Exception e) {
-				PDEPlugin.log(e);
+			performMatching((XMLNode)left, (XMLNode)right, (XMLNode)ancestor, monitor);
+		}
+	}
+
+
+	private void performMatching(final XMLNode left, final XMLNode right,
+			final XMLNode ancestor, IProgressMonitor monitor) {
+		
+		if (monitor == null)
+			monitor = new NullProgressMonitor();
+		
+		int totalWork;
+		if (ancestor != null)
+			totalWork = 1;
+		else
+			totalWork = 3;
+		monitor.beginTask(PDEUIMessages.XMLStructureViewer_taskName, totalWork);
+		
+		AbstractMatching m = new OrderedMatching();
+		try {
+			m.match(left, right, false, monitor);
+			if (ancestor != null) {
+				m.match(left, ancestor, true,
+					new SubProgressMonitor(monitor, 1));
+				m.match(right, ancestor, true,
+					new SubProgressMonitor(monitor, 1));
 			}
+		} finally {
+			monitor.done();
 		}
 	}
 

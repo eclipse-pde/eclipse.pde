@@ -201,6 +201,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String MainPreferencePage_updateStale;
 
+	public static String ManifestStructureCreator_errorMessage;
+
 	public static String MissingResourcePage_missingResource;
 
 	public static String MissingResourcePage_unableToOpen;
@@ -2760,5 +2762,7 @@ public class PDEUIMessages extends NLS {
 	// TODO: MP: Clean-up redundant externalized strings in pderesources
 	
 	public static String PDEJavaHelper_msgContentAssistAvailable;
+
+	public static String XMLStructureViewer_taskName;
 	
 }

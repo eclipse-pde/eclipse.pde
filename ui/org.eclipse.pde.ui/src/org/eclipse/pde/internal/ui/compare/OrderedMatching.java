@@ -89,7 +89,7 @@ public class OrderedMatching extends AbstractMatching {
 
 	/* matches two trees according to paper "X-Diff", p. 16 */
 	public void match(XMLNode LeftTree, XMLNode RightTree, boolean rightTreeIsAncestor,
-			IProgressMonitor monitor) throws InterruptedException {
+			IProgressMonitor monitor) {
 
 		fNLeft = new Vector();
 		//numbering LeftTree: Mapping nodes in LeftTree to numbers to be used as array indexes
