@@ -57,6 +57,7 @@ public class Feature extends VersionableObject implements IFeature {
 	private String fApplication;
 	private String fPlugin;
 	private boolean fValid;
+	private String fCopyright;
 
 	public void addPlugins(IFeaturePlugin[] newPlugins) throws CoreException {
 		ensureModelEditable();
@@ -657,6 +658,9 @@ public class Feature extends VersionableObject implements IFeature {
 	}
 
 	public void write(String indent, PrintWriter writer) {
+		if (fCopyright != null) {
+			writer.println("<!--" + fCopyright + "-->"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		writer.print(indent + "<feature"); //$NON-NLS-1$
 		String indent2 = indent + INDENT;
 		String indenta = indent + INDENT + INDENT;
@@ -741,5 +745,14 @@ public class Feature extends VersionableObject implements IFeature {
 	 */
 	public String getImageName() {
 		return fImageName;
+	}
+	
+	
+	public String getCopyright() {
+		return fCopyright;
+	}
+	
+	public void setCopyright(String copyright) {
+		fCopyright = copyright;
 	}
 }

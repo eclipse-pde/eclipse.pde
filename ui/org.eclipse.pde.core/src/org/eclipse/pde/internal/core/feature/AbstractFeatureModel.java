@@ -19,6 +19,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.AbstractModel;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.XMLCopyrightHandler;
 import org.eclipse.pde.internal.core.XMLDefaultHandler;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -63,9 +64,14 @@ public abstract class AbstractFeatureModel
 		try {
 			SAXParser parser = getSaxParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();
+			XMLCopyrightHandler chandler = new XMLCopyrightHandler(handler);
+			parser.setProperty("http://xml.org/sax/properties/lexical-handler", chandler); //$NON-NLS-1$
 			parser.parse(stream, handler);
 			if (handler.isPrepared()) {
 				processDocument(handler.getDocument());
+				String copyright = chandler.getCopyright();
+				if (copyright != null)
+					feature.setCopyright(copyright);
 				setLoaded(true);
 				if (!outOfSync)
 					updateTimeStamp();
