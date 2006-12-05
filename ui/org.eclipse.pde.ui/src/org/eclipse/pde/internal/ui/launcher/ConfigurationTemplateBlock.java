@@ -106,7 +106,7 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, fGenerateFileButton.getSelection());
 		if (!fGenerateFileButton.getSelection())
-			configuration.setAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, getLocation());
+			configuration.setAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, fLocationText.getText().trim());
 	}
 	
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {		
