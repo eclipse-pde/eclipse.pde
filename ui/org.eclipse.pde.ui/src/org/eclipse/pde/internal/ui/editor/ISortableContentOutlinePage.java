@@ -21,4 +21,5 @@ public interface ISortableContentOutlinePage extends IContentOutlinePage {
 	 * @param sorting - boolean value indicating if sorting should be enabled
 	 */
 	public void sort(boolean sorting);
+	
 }

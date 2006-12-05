@@ -82,7 +82,7 @@ public class FeatureOutlinePage extends FormOutlinePage {
 				folderImage);
 	}
 
-	protected ITreeContentProvider createContentProvider() {
+	public ITreeContentProvider createContentProvider() {
 		return new ContentProvider();
 	}
 

@@ -16,10 +16,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -184,32 +182,31 @@ public class ManifestSourcePage extends XMLSourcePage {
 		fActionGroup = new PluginSearchActionGroup();
 	}
 
-	protected ILabelProvider createOutlineLabelProvider() {
+	public ILabelProvider createOutlineLabelProvider() {
 		return new OutlineLabelProvider();
 	}
-	protected ITreeContentProvider createOutlineContentProvider() {
+	public ITreeContentProvider createOutlineContentProvider() {
 		return new ContentProvider();
 	}
-
-	protected void outlineSelectionChanged(SelectionChangedEvent event) {
-		ISelection selection= event.getSelection();
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection structuredSelection= (IStructuredSelection) selection;
-			Object first= structuredSelection.getFirstElement();
-			if (first instanceof IDocumentNode && !((IDocumentNode)first).isErrorNode()) {
-				setHighlightRange((IDocumentNode)first, true);
-				setSelectedRange((IDocumentNode)first, false);
-				fSelection = structuredSelection;
-			} else {
-				//resetHighlightRange();
-			}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
+	 */
+	public void updateSelection(Object object) {
+		if ((object instanceof IDocumentNode) && 
+				!((IDocumentNode)object).isErrorNode()) {
+			fSelection = object;
+			setHighlightRange((IDocumentNode)object, true);
+			setSelectedRange((IDocumentNode)object, false);
+		} else {
+			//resetHighlightRange();
 		}
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
 	 */
-	protected ViewerComparator createOutlineComparator() {
+	public ViewerComparator createOutlineComparator() {
 		return new OutlineComparator();
 	}
 	
@@ -308,6 +305,13 @@ public class ManifestSourcePage extends XMLSourcePage {
 		// At this point the source page is fully initialized including the 
 		// underlying text viewer
 		fDetector.setTextEditor(this);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#isQuickOutlineEnabled()
+	 */
+	public boolean isQuickOutlineEnabled() {
+		return true;
 	}
 	
 }

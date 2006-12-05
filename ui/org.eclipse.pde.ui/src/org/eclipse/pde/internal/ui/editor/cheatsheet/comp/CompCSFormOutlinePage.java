@@ -91,7 +91,7 @@ public class CompCSFormOutlinePage extends FormOutlinePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#createLabelProvider()
 	 */
-	protected ILabelProvider createLabelProvider() {
+	public ILabelProvider createLabelProvider() {
 		return new CompCSLabelProvider();
 	}
 	

@@ -239,7 +239,11 @@ public class PDEUIMessages extends NLS {
 
 	public static String PDEFormPage_titleMessage;
 
+	public static String PDESourcePage_actionTextQuickOutline;
+
 	public static String PDETextHover_0;
+
+	public static String QuickOutlinePopupDialog_infoTextPressEscToExit;
 
 	public static String RegisterCSOperation_addNewCSExtensionNewPlugin;
 
@@ -2758,8 +2762,6 @@ public class PDEUIMessages extends NLS {
 	public static String SimpleCSPage_msgCheatSheetLoadFailure;
 
 	public static String SimpleCSPage_msgCheatSheetParsingFailure;	
-	
-	// TODO: MP: Clean-up redundant externalized strings in pderesources
 	
 	public static String PDEJavaHelper_msgContentAssistAvailable;
 

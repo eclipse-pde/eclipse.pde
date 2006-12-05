@@ -12,9 +12,6 @@ package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
@@ -32,24 +29,15 @@ public abstract class KeyValueSourcePage extends PDEProjectionSourcePage {
 	protected ViewerComparator createDefaultOutlineComparator() {
 		return new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				IDocumentKey key1 = (IDocumentKey)e1;
-				IDocumentKey key2 = (IDocumentKey)e2;
-				return key1.getOffset() < key2.getOffset() ? -1 : 1;
+				if ((e1 instanceof IDocumentKey) &&
+						(e2 instanceof IDocumentKey)) {
+					IDocumentKey key1 = (IDocumentKey)e1;
+					IDocumentKey key2 = (IDocumentKey)e2;
+					return key1.getOffset() < key2.getOffset() ? -1 : 1;
+				}
+				return super.compare(viewer, e1, e2);
 			}
 		};
-	}
-	
-	protected void outlineSelectionChanged(SelectionChangedEvent event) {
-		ISelection selection= event.getSelection();
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection structuredSelection= (IStructuredSelection) selection;
-			Object first= structuredSelection.getFirstElement();
-			if (first instanceof IDocumentKey) {
-				setHighlightRange((IDocumentKey)first);				
-			} else {
-				resetHighlightRange();
-			}
-		}
 	}
 	
 	public void setHighlightRange(IDocumentKey key) {
@@ -75,8 +63,15 @@ public abstract class KeyValueSourcePage extends PDEProjectionSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
 	 */
-	protected ViewerComparator createOutlineComparator() {
+	public ViewerComparator createOutlineComparator() {
 		return new ViewerComparator();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#isQuickOutlineEnabled()
+	 */
+	public boolean isQuickOutlineEnabled() {
+		return true;
+	}
+	
 }

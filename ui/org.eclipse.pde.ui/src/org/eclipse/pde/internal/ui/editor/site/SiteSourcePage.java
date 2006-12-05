@@ -27,23 +27,43 @@ public class SiteSourcePage extends XMLSourcePage {
 	public IContentOutlinePage createContentOutlinePage() {
 		return null;
 	}
-	protected ILabelProvider createOutlineLabelProvider() {
+	public ILabelProvider createOutlineLabelProvider() {
 		return null;
 	}
-	protected ITreeContentProvider createOutlineContentProvider() {
+	public ITreeContentProvider createOutlineContentProvider() {
 		return null;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
 	 */
-	protected ViewerComparator createOutlineComparator() {
+	public ViewerComparator createOutlineComparator() {
 		return null;
 	}
-	protected void outlineSelectionChanged(SelectionChangedEvent e) {
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(org.eclipse.jface.viewers.SelectionChangedEvent)
+	 */
+	public void updateSelection(SelectionChangedEvent e) {
+		// NO-OP
 	}
+	
 	protected ISortableContentOutlinePage createOutlinePage() {
 		// TODO remove this method when the above three stubs
 		// are implemented
 		return new SiteOutlinePage((PDEFormEditor) getEditor());
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#isQuickOutlineEnabled()
+	 */
+	public boolean isQuickOutlineEnabled() {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
+	 */
+	public void updateSelection(Object object) {
+		// NO-OP
 	}
 }

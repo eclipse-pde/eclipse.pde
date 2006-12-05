@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
@@ -23,6 +25,7 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.actions.PDEActionConstants;
 import org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
@@ -58,16 +61,22 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 	}
 
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		ISourceViewer viewer = new ProjectionViewer(
+		ISourceViewer viewer = new PDEProjectionViewer(
 				parent, 
 				ruler,
 				getOverviewRuler(), 
 				isOverviewRulerVisible(), 
-				styles);
+				styles,
+				isQuickOutlineEnabled());
 		getSourceViewerDecorationSupport(viewer);
 		return viewer;
 	}
 
+	/**
+	 * @return
+	 */
+	public abstract boolean isQuickOutlineEnabled();
+	
 	public void dispose() {
 		((ProjectionViewer) getSourceViewer()).removeProjectionListener(this);
 		if (fProjectionSupport != null) {
@@ -144,4 +153,34 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 		return super.getAdapter(key);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
+	 */
+	protected void editorContextMenuAboutToShow(IMenuManager menu) {
+		// Add the quick outline menu entry to the context menu
+		addQuickOutlineMenuEntry(menu);
+		// Add the rest
+		super.editorContextMenuAboutToShow(menu);
+	}
+	
+	/**
+	 * @param menu
+	 */
+	private void addQuickOutlineMenuEntry(IMenuManager menu) {
+		// Only add the action if the source page supports it
+		if (isQuickOutlineEnabled() == false) {
+			return;
+		}
+		// Get the appropriate quick outline action associated with the active
+		// source page
+		IAction quickOutlineAction = getAction(
+				PDEActionConstants.COMMAND_ID_QUICK_OUTLINE);
+		// Ensure it is defined
+		if (quickOutlineAction == null) {
+			return;
+		}
+		// Insert the quick outline action after the "Show In" menu contributed
+		menu.add(quickOutlineAction);
+	}	
+	
 }

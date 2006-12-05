@@ -487,6 +487,12 @@
             name="%command.name.0"
             categoryId="org.eclipse.jdt.ui.category.source"
             id="org.eclipse.pde.ui.showTooltip">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.category.navigate"
+            description="%quick.outline.description"
+            id="org.eclipse.pde.ui.quickOutline"
+            name="%quick.outline.name">
       </command>   
    </extension>
    <extension
@@ -1441,6 +1447,12 @@
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.pde.ui.showTooltip"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            commandId="org.eclipse.pde.ui.quickOutline"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+O">
+      </key>
    </extension>
    <extension
          point="org.eclipse.ltk.core.refactoring.renameParticipants">

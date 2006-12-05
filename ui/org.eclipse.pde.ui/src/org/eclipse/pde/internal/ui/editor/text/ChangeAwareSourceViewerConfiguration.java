@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.text;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
@@ -27,7 +28,9 @@ import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
+import org.eclipse.pde.internal.ui.editor.actions.PDEActionConstants;
 import org.eclipse.pde.internal.ui.editor.contentassist.display.HTMLTextPresenter;
+import org.eclipse.pde.internal.ui.editor.outline.QuickOutlinePopupDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.editors.text.EditorsUI;
@@ -40,6 +43,7 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 	protected IColorManager fColorManager;
 	private MonoReconciler fReconciler;
 	private InformationPresenter fInfoPresenter;
+	private InformationPresenter fOutlinePresenter;
 
 	/**
 	 * @param page
@@ -93,6 +97,60 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 		}
 		return fInfoPresenter;
 	}
+	
+	/**
+	 * @param sourceViewer
+	 * @return
+	 */
+	public IInformationPresenter getOutlinePresenter(ISourceViewer sourceViewer) {
+		// Ensure the source page is defined
+		if (fSourcePage == null) {
+			return null;
+		}
+		// Reuse the old outline presenter
+		if (fOutlinePresenter != null) {
+			return fOutlinePresenter;
+		}
+		// Define a new outline presenter
+		fOutlinePresenter = 
+			new InformationPresenter(getOutlinePresenterControlCreator(
+					sourceViewer, PDEActionConstants.COMMAND_ID_QUICK_OUTLINE));
+		fOutlinePresenter.setDocumentPartitioning(
+				getConfiguredDocumentPartitioning(sourceViewer));
+		fOutlinePresenter.setAnchor(
+				AbstractInformationControlManager.ANCHOR_GLOBAL);
+		// Define a new outline provider
+		IInformationProvider provider = new PDESourceInfoProvider(fSourcePage);
+		// Set the provider on all defined content types
+		String[] contentTypes = getConfiguredContentTypes(sourceViewer);
+		for (int i= 0; i < contentTypes.length; i++) {
+			fOutlinePresenter.setInformationProvider(provider, contentTypes[i]);
+		}
+		// Set the presenter size constraints
+		fOutlinePresenter.setSizeConstraints(50, 20, true, false);
+		
+		return fOutlinePresenter;
+	}
+	
+	/**
+	 * Returns the outline presenter control creator. The creator is a 
+	 * factory creating outline presenter controls for the given source viewer. 
+	 *
+	 * @param sourceViewer the source viewer to be configured by this configuration
+	 * @param commandId the ID of the command that opens this control
+	 * @return an information control creator
+	 */
+	private IInformationControlCreator getOutlinePresenterControlCreator(
+			ISourceViewer sourceViewer, final String commandId) {
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+				int shellStyle = SWT.RESIZE;
+				QuickOutlinePopupDialog dialog = new QuickOutlinePopupDialog(
+						parent, shellStyle, fSourcePage, fSourcePage);
+				return dialog;
+			}
+		};
+	}	
 	
 	protected int getInfoImplementationType() {
 		return SourceInformationProvider.F_NO_IMP;

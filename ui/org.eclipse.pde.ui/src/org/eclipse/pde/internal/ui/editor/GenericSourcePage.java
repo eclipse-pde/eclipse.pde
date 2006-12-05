@@ -30,27 +30,37 @@ public class GenericSourcePage extends PDESourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#createOutlineLabelProvider()
 	 */
-	protected ILabelProvider createOutlineLabelProvider() {
+	public ILabelProvider createOutlineLabelProvider() {
 		return null;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#createOutlineContentProvider()
 	 */
-	protected ITreeContentProvider createOutlineContentProvider() {
+	public ITreeContentProvider createOutlineContentProvider() {
 		return null;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#createOutlineContentProvider()
 	 */
-	protected ViewerComparator createOutlineComparator() {
+	public ViewerComparator createOutlineComparator() {
 		return null;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#outlineSelectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
-	protected void outlineSelectionChanged(SelectionChangedEvent e) {
+	public void updateSelection(SelectionChangedEvent e) {
+		// NO-OP
 	}
+	
 	protected ISortableContentOutlinePage createOutlinePage() {
 		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
+	 */
+	public void updateSelection(Object object) {
+		// NO-OP
 	}
 }

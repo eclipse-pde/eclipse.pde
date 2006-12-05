@@ -92,20 +92,28 @@ public class FormOutlinePage extends PDEOutlinePage
 	public FormOutlinePage(PDEFormEditor editor) {
 		super(editor);
 	}
-	protected ITreeContentProvider createContentProvider() {
+	
+	/**
+	 * @return
+	 */
+	public ITreeContentProvider createContentProvider() {
 		return new BasicContentProvider();
 	}
-	protected ViewerComparator createOutlineSorter(){
-		fViewerComparator = new BasicComparator();
-		return fViewerComparator;
+	
+	/**
+	 * @return
+	 */
+	public ViewerComparator createOutlineSorter(){
+		return new BasicComparator();
 	}
+	
 	public void createControl(Composite parent) {
 		Tree widget = new Tree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		fTreeViewer = new TreeViewer(widget);
 		fTreeViewer.addSelectionChangedListener(this);
 		fTreeViewer.setContentProvider(createContentProvider());
 		fTreeViewer.setLabelProvider(createLabelProvider());
-		createOutlineSorter();
+		fViewerComparator = createOutlineSorter();
 		if(fSorted)
 			fTreeViewer.setComparator(fViewerComparator);
 		else
@@ -117,9 +125,14 @@ public class FormOutlinePage extends PDEOutlinePage
 		if (model instanceof IModelChangeProvider)
 			((IModelChangeProvider)model).addModelChangedListener(this);
 	}
-	protected ILabelProvider createLabelProvider() {
+	
+	/**
+	 * @return
+	 */
+	public  ILabelProvider createLabelProvider() {
 		return new BasicLabelProvider();
 	}
+	
 	public void dispose() {
 		IBaseModel model = fEditor.getAggregateModel();
 		if (model instanceof IModelChangeProvider)

@@ -101,7 +101,7 @@ public class SiteOutlinePage extends FormOutlinePage {
 	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#createLabelProvider()
 	 */
-	protected ILabelProvider createLabelProvider() {
+	public ILabelProvider createLabelProvider() {
 		fLabelProvider = new SiteLabelProvider();
 		return fLabelProvider;
 	}

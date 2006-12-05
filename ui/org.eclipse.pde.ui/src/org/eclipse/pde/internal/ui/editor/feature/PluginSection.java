@@ -140,7 +140,8 @@ public class PluginSection extends TableSection implements
 				getStructuredViewerPart().getViewer(), 
 				PDEUIMessages.FeatureEditor_PluginSection_sortAlpha, 
 				ListUtil.NAME_COMPARATOR,
-				null);
+				null,
+				true);
 		
 		toolBarManager.add(fSortAction);
 

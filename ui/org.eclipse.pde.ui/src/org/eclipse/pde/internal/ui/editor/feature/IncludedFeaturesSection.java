@@ -138,7 +138,8 @@ public class IncludedFeaturesSection extends TableSection implements
 				getStructuredViewerPart().getViewer(), 
 				PDEUIMessages.FeatureEditor_IncludedFeatures_sortAlpha, 
 				ListUtil.NAME_COMPARATOR,
-				null);
+				null,
+				true);
 		
 		toolBarManager.add(fSortAction);
 

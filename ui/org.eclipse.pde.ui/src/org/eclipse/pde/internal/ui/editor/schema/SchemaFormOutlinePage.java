@@ -53,7 +53,7 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 		super(editor);
 	}
 	
-	protected ILabelProvider createLabelProvider() {
+	public ILabelProvider createLabelProvider() {
 		return new SchemaLabelProvider();
 	}
 

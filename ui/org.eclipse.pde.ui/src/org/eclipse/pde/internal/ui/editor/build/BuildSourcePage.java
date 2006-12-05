@@ -76,11 +76,11 @@ public class BuildSourcePage extends KeyValueSourcePage {
 		super.setPreferenceStore(store);
 	}
 	
-	protected ILabelProvider createOutlineLabelProvider() {
+	public ILabelProvider createOutlineLabelProvider() {
 		return new BuildLabelProvider();
 	}
 	
-	protected ITreeContentProvider createOutlineContentProvider() {
+	public ITreeContentProvider createOutlineContentProvider() {
 		return new BuildOutlineContentProvider();
 	}
 	protected IDocumentRange getRangeElement(ITextSelection selection) {
@@ -130,4 +130,16 @@ public class BuildSourcePage extends KeyValueSourcePage {
 			return new IHyperlinkDetector[] { new BuildHyperlinkDetector(this) };
 		return super.getAdapter(adapter);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
+	 */
+	public void updateSelection(Object object) {
+		if (object instanceof IDocumentKey) {
+			setHighlightRange((IDocumentKey)object);				
+		} else {
+			resetHighlightRange();
+		}
+	}	
+	
 }

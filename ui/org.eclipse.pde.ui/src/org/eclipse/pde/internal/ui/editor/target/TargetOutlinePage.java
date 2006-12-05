@@ -98,7 +98,7 @@ public class TargetOutlinePage extends FormOutlinePage {
 		return new Object[0];
 	}
 	
-	protected ILabelProvider createLabelProvider() {
+	public ILabelProvider createLabelProvider() {
 		return new BasicLabelProvider() {
 			public Image getImage(Object element) {
 				PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();

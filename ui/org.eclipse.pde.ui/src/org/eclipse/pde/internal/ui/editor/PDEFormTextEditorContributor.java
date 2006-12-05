@@ -189,6 +189,8 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 		fPage = fEditor.getActivePageInstance();
 		if (fPage == null)
 			return;
+		// Update the quick outline action to the navigate menu
+		updateQuickOutlineMenuEntry();
 		
 		updateActions();
 		if (oldPage != null && !oldPage.isEditor() && !fPage.isEditor()) {
@@ -203,6 +205,54 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 		setSourceActionBarsActive(isSourcePage);
 	}
 	
+	/**
+	 * 
+	 */
+	private void updateQuickOutlineMenuEntry() {
+		// Get the main action bar
+		IActionBars actionBars = getActionBars();
+		IMenuManager menuManager = actionBars.getMenuManager();
+		// Get the navigate menu
+		IMenuManager navigateMenu = 
+			menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_NAVIGATE);
+		// Ensure there is a navigate menu
+		if (navigateMenu == null) {
+			return;
+		}
+		// Remove the previous version of the quick outline menu entry - if
+		// one exists 
+		// Prevent duplicate menu entries 
+		// Prevent wrong quick outline menu from being brought up for the wrong
+		// page
+		navigateMenu.remove(PDEActionConstants.COMMAND_ID_QUICK_OUTLINE);
+		// Ensure the active page is a source page
+		// Only add the quick outline menu to the source pages
+		if ((fPage instanceof PDEProjectionSourcePage) == false) {
+			return;
+		}
+		PDEProjectionSourcePage page = (PDEProjectionSourcePage)fPage;
+		// Only add the action if the source page supports it
+		if (page.isQuickOutlineEnabled() == false) {
+			return;
+		}
+		// Get the appropriate quick outline action associated with the active
+		// source page
+		IAction quickOutlineAction = page.getAction(
+				PDEActionConstants.COMMAND_ID_QUICK_OUTLINE);
+		// Ensure it is defined
+		if (quickOutlineAction == null) {
+			return;
+		}
+		// Add the quick outline action after the "Show In" menu contributed
+		// by JDT
+		// This could break if JDT changes the "Show In" menu ID
+		try {
+			navigateMenu.insertAfter("showIn", quickOutlineAction); //$NON-NLS-1$
+		} catch (IllegalArgumentException e) {
+			// Ignore
+		}
+	}
+
 	protected TextEditorActionContributor createSourceContributor() {
 		return new PDETextEditorActionContributor();
 	}

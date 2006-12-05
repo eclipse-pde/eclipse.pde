@@ -159,7 +159,8 @@ public class RequiresSection extends TableSection implements
 				getStructuredViewerPart().getViewer(), 
 				PDEUIMessages.FeatureEditor_RequiresSection_sortAlpha, 
 				ListUtil.NAME_COMPARATOR,
-				null);
+				null,
+				true);
 		
 		toolBarManager.add(fSortAction);
 

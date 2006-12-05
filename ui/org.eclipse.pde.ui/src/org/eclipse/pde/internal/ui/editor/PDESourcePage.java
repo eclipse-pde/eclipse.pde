@@ -43,11 +43,15 @@ import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.actions.FormatAction;
 import org.eclipse.pde.internal.ui.editor.actions.HyperlinkAction;
 import org.eclipse.pde.internal.ui.editor.actions.InformationDispatchAction;
 import org.eclipse.pde.internal.ui.editor.actions.PDEActionConstants;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
+import org.eclipse.pde.internal.ui.editor.outline.IOutlineContentCreator;
+import org.eclipse.pde.internal.ui.editor.outline.IOutlineSelectionHandler;
 import org.eclipse.pde.internal.ui.editor.plugin.ExtensionHyperLink;
 import org.eclipse.pde.internal.ui.editor.text.PDESelectAnnotationRulerAction;
 import org.eclipse.swt.SWT;
@@ -69,7 +73,9 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.ResourceAction;
 import org.eclipse.ui.texteditor.TextOperationAction;
 
-public abstract class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker, ISelectionChangedListener {
+public abstract class PDESourcePage extends TextEditor implements IFormPage,
+		IGotoMarker, ISelectionChangedListener, IOutlineContentCreator,
+		IOutlineSelectionHandler {
 	
 	private static String RES_BUNDLE_LOCATION = "org.eclipse.pde.internal.ui.editor.text.ConstructedPDEEditorMessages"; //$NON-NLS-1$
 	private static ResourceBundle fgBundleForConstructedKeys = ResourceBundle.getBundle(RES_BUNDLE_LOCATION);
@@ -196,13 +202,36 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		super.dispose();
 	}
 
-	protected abstract ILabelProvider createOutlineLabelProvider();
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineContentCreator#createOutlineLabelProvider()
+	 */
+	public abstract ILabelProvider createOutlineLabelProvider();
 	
-	protected abstract ITreeContentProvider createOutlineContentProvider();
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineContentCreator#createOutlineContentProvider()
+	 */
+	public abstract ITreeContentProvider createOutlineContentProvider();
 	
-	protected abstract ViewerComparator createOutlineComparator();
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineContentCreator#createOutlineComparator()
+	 */
+	public abstract ViewerComparator createOutlineComparator();
 	
-	protected abstract void outlineSelectionChanged(SelectionChangedEvent e);
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineSelectionHandler#updateSelection(org.eclipse.jface.viewers.SelectionChangedEvent)
+	 */
+	public void updateSelection(SelectionChangedEvent event) {
+		ISelection sel = event.getSelection();
+		if (sel instanceof IStructuredSelection) {
+			IStructuredSelection structuredSelection = (IStructuredSelection) sel;
+			updateSelection(structuredSelection.getFirstElement());
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineSelectionHandler#updateSelection(java.lang.Object)
+	 */
+	public abstract void updateSelection(Object object);
 	
 	protected ViewerComparator createDefaultOutlineComparator() {
 		return null;
@@ -217,7 +246,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		fOutlinePage = sourceOutlinePage;
 		fOutlineSelectionChangedListener = new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				outlineSelectionChanged(event);
+				updateSelection(event);
 			}
 		};
 		fOutlinePage.addSelectionChangedListener(fOutlineSelectionChangedListener);
@@ -227,6 +256,9 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		return fOutlinePage;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineSelectionHandler#getContentOutline()
+	 */
 	public ISortableContentOutlinePage getContentOutline() {
 		if (fOutlinePage == null)
 			fOutlinePage = createOutlinePage();
@@ -408,8 +440,26 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		resAction= new InformationDispatchAction(getBundleForConstructedKeys(), "ShowTooltip.", (TextOperationAction) resAction, this); //$NON-NLS-1$
 		resAction.setActionDefinitionId(PDEActionConstants.DEFN_SRC_TOOLTIP);
 		setAction("ShowTooltip", resAction); //$NON-NLS-1$
+		
+		// Create the quick outline action
+		createQuickOutlineAction();
 	}
 	
+	/**
+	 * 
+	 */
+	private void createQuickOutlineAction() {
+		// Quick Outline Action
+		ResourceAction action = new TextOperationAction(
+				getBundleForConstructedKeys(), "QuickOutline.", this,  //$NON-NLS-1$
+				PDEProjectionViewer.QUICK_OUTLINE, true); 
+		action.setActionDefinitionId(PDEActionConstants.COMMAND_ID_QUICK_OUTLINE);
+		action.setText(PDEUIMessages.PDESourcePage_actionTextQuickOutline);
+		action.setId(PDEActionConstants.COMMAND_ID_QUICK_OUTLINE);
+		action.setImageDescriptor(PDEPluginImages.DESC_OVERVIEW_OBJ);
+		setAction(PDEActionConstants.COMMAND_ID_QUICK_OUTLINE, action);
+	}
+
 	private void createContentAssistAction() {
 		IAction contentAssist = new ContentAssistAction(
 				getBundleForConstructedKeys(), "ContentAssistProposal.", this); //$NON-NLS-1$
@@ -490,4 +540,21 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		}
 		super.editorContextMenuAboutToShow(menu);
 	}
+
+	/**
+	 * @return
+	 */
+	public Object getSelection() {
+		return fSelection;
+	}
+	
+	// TODO: MP: QO: LOW:  Create method to set selection and make fSelection private
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineContentCreator#getOutlineInput()
+	 */
+	public Object getOutlineInput() {
+		return getInputContext().getModel();
+	}
+	
 }

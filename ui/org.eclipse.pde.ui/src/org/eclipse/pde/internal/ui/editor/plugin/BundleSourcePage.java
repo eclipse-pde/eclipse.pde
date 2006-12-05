@@ -13,43 +13,90 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
+import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
+import org.eclipse.pde.internal.core.text.bundle.BundleClasspathHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
+import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
+import org.eclipse.pde.internal.core.text.bundle.PackageObject;
+import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
+import org.eclipse.pde.internal.core.text.bundle.RequireBundleObject;
+import org.eclipse.pde.internal.core.text.bundle.RequiredExecutionEnvironmentHeader;
+import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.KeyValueSourcePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.forms.editor.FormEditor;
 import org.osgi.framework.Constants;
 
 public class BundleSourcePage extends KeyValueSourcePage {
 
-	class BundleOutlineContentProvider extends DefaultContentProvider
+	/**
+	 * BundleOutlineContentProvider
+	 *
+	 */
+	private class BundleOutlineContentProvider extends DefaultContentProvider
 			implements ITreeContentProvider {
+		
 		public Object[] getChildren(Object parent) {
+			// Need an identifying class for label provider
+			if (parent instanceof ImportPackageHeader) {
+				return ((ImportPackageHeader)parent).getPackages();
+			} else if (parent instanceof ExportPackageHeader) {
+				return ((ExportPackageHeader)parent).getPackages();
+			} else if (parent instanceof RequiredExecutionEnvironmentHeader) {
+				return ((RequiredExecutionEnvironmentHeader)parent).getEnvironments();
+			} else if (parent instanceof RequireBundleHeader) {
+				return ((RequireBundleHeader)parent).getRequiredBundles();
+			} else if (parent instanceof BundleClasspathHeader) {
+				return getPluginLibraries();
+			}
 			return new Object[0];
 		}
+		
+		private Object[] getPluginLibraries() {
+			// The bundle classpath header has no model data members
+			// Retrieve the plug-in library equivalents from the editor model
+			FormEditor editor = getEditor();
+			if (editor instanceof PDEFormEditor) {
+				PDEFormEditor formEditor = (PDEFormEditor)editor;
+				IBaseModel baseModel = formEditor.getAggregateModel();
+				if (baseModel instanceof IPluginModelBase) {
+					IPluginLibrary[] libraries = 
+						((IPluginModelBase)baseModel).getPluginBase().getLibraries();
+					return libraries;
+				}
+			}
+			return new Object[0];
+		}
+		
 		public boolean hasChildren(Object parent) {
-			return false;
+			return getChildren(parent).length > 0;
 		}
 		public Object getParent(Object child) {
 			return null;
@@ -69,17 +116,62 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			return new Object[0];
 		}
 	}
-	class BundleLabelProvider extends LabelProvider {
+	
+	private class BundleLabelProvider extends LabelProvider {
+		// TODO: MP: QO: LOW: Move to PDELabelProvider  
 		public String getText(Object obj) {
-			if (obj instanceof ManifestHeader) {
+			if (obj instanceof PackageObject) {
+				return ((PackageObject)obj).getName();
+			} else if (obj instanceof ExecutionEnvironment) {
+				return ((ExecutionEnvironment)obj).getName();
+			} else if (obj instanceof RequireBundleObject) {
+				return getTextRequireBundle(((RequireBundleObject)obj));
+			} else if (obj instanceof ManifestHeader) {
 				return ((ManifestHeader) obj).getName();
 			}
 			return super.getText(obj);
 		}
+		
+		private String getTextRequireBundle(RequireBundleObject bundle) {
+			// Should be using bundle.getVersion();
+			// This is a work-around for a bug
+			// TODO: MP: QO: LOW:  Push solution into the manifest model
+			StringBuffer label = new StringBuffer(bundle.getId());
+			label.append(' ');
+			String[] versionSegments = 
+				bundle.getAttributes(Constants.BUNDLE_VERSION_ATTRIBUTE);
+			if (versionSegments.length == 1) {
+				label.append(versionSegments[0]);
+			} else if (versionSegments.length == 2) {
+				label.append(versionSegments[0]);
+				label.append(',');
+				label.append(versionSegments[1]);
+			}
+			return label.toString();
+		}
+		
 		public Image getImage(Object obj) {
-			if (obj instanceof ManifestHeader)
-				return PDEPlugin.getDefault().getLabelProvider().get(
-					PDEPluginImages.DESC_BUILD_VAR_OBJ);
+			PDELabelProvider labelProvider = 
+				PDEPlugin.getDefault().getLabelProvider();
+			if (obj instanceof PackageObject) {
+				return labelProvider.get(
+						PDEPluginImages.DESC_PACKAGE_OBJ);
+			} else if (obj instanceof ExecutionEnvironment) {
+				return labelProvider.get(
+						PDEPluginImages.DESC_JAVA_LIB_OBJ);
+			} else if (obj instanceof RequireBundleObject) {
+				int flags = SharedLabelProvider.F_EXTERNAL;
+				if (((RequireBundleObject)obj).isReexported()) {
+					flags = flags | SharedLabelProvider.F_EXPORT;
+				}
+				return labelProvider.get(PDEPluginImages.DESC_REQ_PLUGIN_OBJ, flags);
+			} else if (obj instanceof ManifestHeader) {
+				return labelProvider.get(
+						PDEPluginImages.DESC_BUILD_VAR_OBJ);
+			} else if (obj instanceof IPluginLibrary) {
+				return labelProvider.get(
+						PDEPluginImages.DESC_JAVA_LIB_OBJ);
+			}
 			return null;
 		}
 	}
@@ -88,11 +180,11 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		super(editor, id, title);
 	}
 	
-	protected ILabelProvider createOutlineLabelProvider() {
+	public ILabelProvider createOutlineLabelProvider() {
 		return new BundleLabelProvider();
 	}
 	
-	protected ITreeContentProvider createOutlineContentProvider() {
+	public ITreeContentProvider createOutlineContentProvider() {
 		return new BundleOutlineContentProvider();
 	}
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
@@ -148,6 +240,11 @@ public class BundleSourcePage extends KeyValueSourcePage {
 					((ExecutionEnvironment)fSelection).getModel(),
 					Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT,
 					((ExecutionEnvironment)fSelection).getValue());
+		} else if (fSelection instanceof RequireBundleObject) {
+			return getSpecificRange(
+					((RequireBundleObject)fSelection).getModel(),
+					Constants.REQUIRE_BUNDLE,
+					((RequireBundleObject)fSelection).getId());
 		}
 		return null;
 	}
@@ -222,4 +319,48 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			return new BundleHyperlinkDetector(this);
 		return super.getAdapter(adapter);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
+	 */
+	public void updateSelection(Object object) {
+		// Update the global selection
+		fSelection = object;
+		// Highlight the selection if it is a manifest header
+		if (object instanceof IDocumentKey) {
+			setHighlightRange((IDocumentKey)object);
+			// We don't set the selected range because it will cause the 
+			// manifest header and all its value to be selected
+			return;
+		}
+		// Handle manifest header values
+		// Determine the selection range
+		IDocumentRange range = findRange();
+		// Ensure there is a range
+		if (range == null) {
+			return;
+		}
+		// Get the model
+		IBaseModel model = getInputContext().getModel();
+		// Ensure we have an editing model
+		if ((model instanceof AbstractEditingModel) == false) {
+			return;
+		}
+		// If the range offset is undefined or the source viewer is dirty,
+		// forcibly adjust the offsets and try to find the range again
+		if ((range.getOffset() == -1) || 
+				isDirty()) {
+			try {
+				((AbstractEditingModel)model).adjustOffsets(
+						((AbstractEditingModel)model).getDocument());
+			} catch (CoreException e) {
+				// Ignore
+			}
+			range = findRange();
+		}
+		// Set the highlight and selected range with whatever we found
+		setHighlightRange(range, true);
+		setSelectedRange(range, false);		
+	}	
+	
 }

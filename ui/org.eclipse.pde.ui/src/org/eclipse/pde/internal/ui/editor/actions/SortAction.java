@@ -23,10 +23,16 @@ public class SortAction extends Action {
 	private StructuredViewer fViewer;
 	private ViewerComparator fComparator;
 
-	public SortAction(StructuredViewer viewer, String tooltipText, ViewerComparator sorter, IPropertyChangeListener listener) {
+	public SortAction(StructuredViewer viewer, String tooltipText,
+			ViewerComparator sorter, IPropertyChangeListener listener,
+			boolean useMiniImage) {
 		super(tooltipText, IAction.AS_CHECK_BOX);
 		setToolTipText(tooltipText);
-		setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO_MINI);
+		if (useMiniImage) {
+			setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO_MINI);
+		} else {
+			setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO);
+		}
 		fSorted = viewer.getComparator() == null ? false : true;
 		setChecked(fSorted);
 		fViewer= viewer;
