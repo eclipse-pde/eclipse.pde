@@ -194,7 +194,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	private Rule getRule(StateHelper helper, BundleDescription desc, ExportPackageDescription export) {
 		Rule rule = new Rule();
 		rule.discouraged = helper.getAccessCode(desc, export) == StateHelper.ACCESS_DISCOURAGED;
-		rule.path = new Path(export.getName().replaceAll("\\.", "/") + "/*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String name = export.getName();
+		rule.path = (name.equals(".")) ? new Path("*") : new Path(name.replaceAll("\\.", "/") + "/*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		return rule;
 	}
 	

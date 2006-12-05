@@ -356,6 +356,8 @@ public class PDEJavaHelper {
 				for (int j = 0; j < children.length; j++) {
 					IPackageFragment fragment = (IPackageFragment)children[j];
 					String name = fragment.getElementName();
+					if (name.length() == 0)
+						name = "."; //$NON-NLS-1$
 					if (fragment.hasChildren() && !existingPackages.contains(name)) {
 						if (!name.equals("java") || !name.startsWith("java.") || allowJava) //$NON-NLS-1$ //$NON-NLS-2$
 							map.put(fragment.getElementName(), fragment);
