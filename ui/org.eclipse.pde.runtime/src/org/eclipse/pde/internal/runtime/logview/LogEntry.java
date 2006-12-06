@@ -141,10 +141,11 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 		//!ENTRY <pluginID> <date> if logged by the framework!!!
 		StringTokenizer stok = new StringTokenizer(line, " "); //$NON-NLS-1$
 		int tokenCount = stok.countTokens();		
-		boolean byFrameWork = stok.countTokens() < 5;
+		boolean noSeverity = stok.countTokens() < 5;
 		
-		if (byFrameWork) {
-			severity = 4;
+		// no severity means it should be represented as OK
+		if (noSeverity) {
+			severity = 0;
 			code = 0;
 		}
 		StringBuffer dateBuffer = new StringBuffer();
@@ -157,7 +158,7 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 					pluginId = token;
 					break;
 				case 2:
-					if (byFrameWork) {
+					if (noSeverity) {
 						if (dateBuffer.length() > 0)
 							dateBuffer.append(" "); //$NON-NLS-1$
 						dateBuffer.append(token);
@@ -166,7 +167,7 @@ public class LogEntry extends PlatformObject implements IWorkbenchAdapter {
 					}
 					break;
 				case 3:
-					if (byFrameWork) {
+					if (noSeverity) {
 						if (dateBuffer.length() > 0)
 							dateBuffer.append(" "); //$NON-NLS-1$
 						dateBuffer.append(token);
