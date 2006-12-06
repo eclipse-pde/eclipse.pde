@@ -277,7 +277,10 @@ public class ClasspathHelper {
  					Iterator it = classpathMap.entrySet().iterator();
  					while (it.hasNext()) {
  						Map.Entry entry = (Map.Entry) it.next();
- 						entry.getValue();
+ 						ArrayList list = (ArrayList) entry.getValue();
+ 						ListIterator li = list.listIterator();
+ 						while (li.hasNext())
+ 							addPath(result, project, (IPath)li.next());
  					}
 				}
 			}
