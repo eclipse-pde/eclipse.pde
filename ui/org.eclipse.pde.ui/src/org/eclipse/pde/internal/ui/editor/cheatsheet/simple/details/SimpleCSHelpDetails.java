@@ -15,8 +15,9 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSHelpObject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetailsSurrogate;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractSubDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -38,7 +39,7 @@ import org.eclipse.ui.forms.widgets.Section;
  * SimpleCSHelpDetailsSection
  *
  */
-public class SimpleCSHelpDetails implements ICSDetails {
+public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 
 	private Text fHelpText;
 	
@@ -48,8 +49,6 @@ public class SimpleCSHelpDetails implements ICSDetails {
 	
 	private ISimpleCSHelpObject fHelpObject;
 	
-	private ICSDetailsSurrogate fDetails;
-
 	private Section fHelpSection;
 
 	private static final String F_NO_HELP = PDEUIMessages.SimpleCSCommandDetails_6;
@@ -63,9 +62,9 @@ public class SimpleCSHelpDetails implements ICSDetails {
 	 * @param details
 	 */
 	public SimpleCSHelpDetails(ISimpleCSHelpObject helpObject,
-			ICSDetailsSurrogate details) {
+			ICSMaster section) {
+		super(section, SimpleCSInputContext.CONTEXT_ID);
 		fHelpObject = helpObject;
-		fDetails = details;
 		
 		fHelpText = null;
 		fHelpCombo = null;
@@ -80,7 +79,7 @@ public class SimpleCSHelpDetails implements ICSDetails {
 	public void createDetails(Composite parent) {
 
 		int columnSpan = 2;
-		FormToolkit toolkit = fDetails.getToolkit();
+		FormToolkit toolkit = getToolkit();
 		
 		GridData data = null;
 		GridLayout layout = null;
@@ -134,7 +133,8 @@ public class SimpleCSHelpDetails implements ICSDetails {
 		// Bind widgets
 		toolkit.paintBordersFor(helpSectionClient);
 		fHelpSection.setClient(helpSectionClient);
-	
+		// Mark as a details part to enable cut, copy, paste, etc.
+		markDetailsPart(fHelpSection);
 	}
 
 	/* (non-Javadoc)
@@ -205,7 +205,7 @@ public class SimpleCSHelpDetails implements ICSDetails {
 			return;
 		}			
 
-		boolean editable = fDetails.isEditableElement();
+		boolean editable = isEditableElement();
 		boolean expanded = false;
 		
 		// Attribute: contextId

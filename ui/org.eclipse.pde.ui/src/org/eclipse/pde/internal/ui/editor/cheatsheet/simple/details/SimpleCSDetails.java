@@ -25,6 +25,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.IFormPart;
+import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -52,9 +54,24 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		
 		fTitle = null;
 		fMainSection = null;
-		fRegisterCSArea = new CSRegisterCSDetails(this, fCheatSheet.getModel());
+		fRegisterCSArea = new CSRegisterCSDetails(fCheatSheet.getModel(), 
+				section, SimpleCSInputContext.CONTEXT_ID);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
+	 */
+	public void initialize(IManagedForm form) {
+		super.initialize(form);
+		// Unfortunately this has to be explicitly called for sub detail
+		// sections through its main section parent; since, it never is 
+		// registered directly.
+		// Initialize managed form for register area
+		if (fRegisterCSArea instanceof IFormPart) {
+			((IFormPart)fRegisterCSArea).initialize(form);
+		}
+	}	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
 	 */

@@ -24,8 +24,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  * CSAbstractDetails
  *
  */
-public abstract class CSAbstractDetails extends PDEDetails implements
-		ICSDetailsSurrogate, ICSDetails {
+public abstract class CSAbstractDetails extends PDEDetails implements ICSDetails {
 
 	private ICSMaster fMasterSection;
 	
@@ -42,7 +41,7 @@ public abstract class CSAbstractDetails extends PDEDetails implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
-	public final void createContents(Composite parent) {
+	public void createContents(Composite parent) {
 		configureParentLayout(parent);
 		createDetails(parent);
 		updateFields();

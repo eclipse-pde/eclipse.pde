@@ -31,10 +31,8 @@ import org.eclipse.ui.forms.widgets.FormText;
  * CompCSDeployDetails
  *
  */
-public class CSRegisterCSDetails implements ICSDetails {
+public class CSRegisterCSDetails extends CSAbstractSubDetails {
 
-	private ICSDetailsSurrogate fDetails;	
-	
 	private FormText fRegisterCSFormText;
 	
 	private IModel fModel;
@@ -42,8 +40,8 @@ public class CSRegisterCSDetails implements ICSDetails {
 	/**
 	 * 
 	 */
-	public CSRegisterCSDetails(ICSDetailsSurrogate details, IModel model) {
-		fDetails = details;
+	public CSRegisterCSDetails(IModel model, ICSMaster section, String contextID) {
+		super(section, contextID);
 		fModel = model;
 		
 		fRegisterCSFormText = null;
@@ -54,20 +52,22 @@ public class CSRegisterCSDetails implements ICSDetails {
 	 */
 	public void createDetails(Composite parent) {
 		// Create the container for the hyperlink
-		Composite container = fDetails.getToolkit().createComposite(parent);
+		Composite container = getToolkit().createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.marginTop = 10;
 		layout.marginLeft = 8;
 		container.setLayout(layout);
 		// Create the register cheat sheet form text
 		createUIRegisterCSFormText(container);
+		// Mark as a details part to enable cut, copy, paste, etc.
+		markDetailsPart(container);
 	}
 
 	/**
 	 * @param parent
 	 */
 	private void createUIRegisterCSFormText(Composite parent) {
-		fRegisterCSFormText = fDetails.getToolkit().createFormText(parent, true);
+		fRegisterCSFormText = getToolkit().createFormText(parent, true);
 		fRegisterCSFormText.setImage("register", PDEPlugin.getDefault().getLabelProvider().get( //$NON-NLS-1$
 				PDEPluginImages.DESC_DEPLOYCS_TOOL));
 		String text = PDEUIMessages.CSRegisterCSDetails_linkFormattingTags;
@@ -122,7 +122,7 @@ public class CSRegisterCSDetails implements ICSDetails {
 		SWTUtil.setDialogSize(dialog, 400, 300);
 		// Check the result
 		if (dialog.open() == Window.OK) {
-			
+			// TODO: MP: COMPCS: HIGH: Automatic save of editor after creating simple cheat sheet?
 		}			
 	}	
 
@@ -130,7 +130,7 @@ public class CSRegisterCSDetails implements ICSDetails {
 	 * @param message
 	 */
 	private void handleLinkEntryRegisterCS(String message) {
-		IEditorSite site = fDetails.getPage().getEditor().getEditorSite();
+		IEditorSite site = getPage().getEditor().getEditorSite();
 		site.getActionBars().getStatusLineManager().setMessage(message);
 	}	
 	

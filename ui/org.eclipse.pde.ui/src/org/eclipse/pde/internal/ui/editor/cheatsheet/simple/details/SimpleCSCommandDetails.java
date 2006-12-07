@@ -29,8 +29,9 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.commands.CommandComposerDialog;
 import org.eclipse.pde.internal.ui.commands.CommandComposerPart;
 import org.eclipse.pde.internal.ui.editor.PDESection;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetailsSurrogate;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractSubDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -56,12 +57,10 @@ import org.eclipse.ui.forms.widgets.Section;
  * SimpleCSCommandDetailsSection
  *
  */
-public class SimpleCSCommandDetails implements ICSDetails {
+public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 
 	private ISimpleCSRun fRun;
 
-	private ICSDetailsSurrogate fDetails;	
-	
 	private Table fCommandTable;
 	
 	private ComboPart fCommandCombo;
@@ -73,10 +72,9 @@ public class SimpleCSCommandDetails implements ICSDetails {
 	/**
 	 * 
 	 */
-	public SimpleCSCommandDetails(ISimpleCSRun run,
-			ICSDetailsSurrogate details) {
+	public SimpleCSCommandDetails(ISimpleCSRun run, ICSMaster section) {
+		super(section, SimpleCSInputContext.CONTEXT_ID);
 		fRun = run;
-		fDetails = details;		
 
 		fCommandTable = null;
 		fCommandCombo = null;
@@ -91,7 +89,7 @@ public class SimpleCSCommandDetails implements ICSDetails {
 
 		int columnSpan = 3;
 		Section commandSection = null;
-		FormToolkit toolkit = fDetails.getToolkit();
+		FormToolkit toolkit = getToolkit();
 		Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
 		GridData data = null;
 		GridLayout layout = null;
@@ -150,6 +148,8 @@ public class SimpleCSCommandDetails implements ICSDetails {
 		// Bind widgets
 		toolkit.paintBordersFor(commandSectionClient);
 		commandSection.setClient(commandSectionClient);
+		// Mark as a details part to enable cut, copy, paste, etc.
+		markDetailsPart(commandSection);
 	}
 
 	/* (non-Javadoc)
@@ -183,7 +183,7 @@ public class SimpleCSCommandDetails implements ICSDetails {
 					fCommandTable.clearAll();
 				}
 				// Update the master section buttons
-				fDetails.getMasterSection().updateButtons();
+				getMasterSection().updateButtons();
 			}
 		});
 		
@@ -201,7 +201,7 @@ public class SimpleCSCommandDetails implements ICSDetails {
 					// Update accordingly
 					updateCommandCombo(dialog.getCommand(), true);
 					// Update the master section buttons
-					fDetails.getMasterSection().updateButtons();
+					getMasterSection().updateButtons();
 				}						
 			}
 		});	
@@ -227,7 +227,7 @@ public class SimpleCSCommandDetails implements ICSDetails {
 	 */
 	private void updateCommandEnablement() {
 		
-		boolean editable = fDetails.isEditableElement();
+		boolean editable = isEditableElement();
 		
 		if (fRun.getType() == ISimpleCSConstants.TYPE_ITEM) {
 			ISimpleCSItem item = (ISimpleCSItem)fRun;

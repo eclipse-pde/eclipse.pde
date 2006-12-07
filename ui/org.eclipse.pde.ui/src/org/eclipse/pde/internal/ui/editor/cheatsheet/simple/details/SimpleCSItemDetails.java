@@ -31,6 +31,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormPart;
+import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -71,11 +73,34 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		fContent = null;
 		fMainSection = null;
 		
-		fHelpSection = new SimpleCSHelpDetails(fItem, this);
-		fCommandSection = new SimpleCSCommandDetails(fItem, this);
-		fRegisterCSArea = new CSRegisterCSDetails(this, fItem.getModel());
+		fHelpSection = new SimpleCSHelpDetails(fItem, section);
+		fCommandSection = new SimpleCSCommandDetails(fItem, section);
+		fRegisterCSArea = new CSRegisterCSDetails(fItem.getModel(), section,
+				SimpleCSInputContext.CONTEXT_ID);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
+	 */
+	public void initialize(IManagedForm form) {
+		super.initialize(form);
+		// Unfortunately this has to be explicitly called for sub detail
+		// sections through its main section parent; since, it never is 
+		// registered directly.
+		// Initialize managed form for help section
+		if (fHelpSection instanceof IFormPart) {
+			((IFormPart)fHelpSection).initialize(form);
+		}
+		// Initialized managed form for command section
+		if (fCommandSection instanceof IFormPart) {
+			((IFormPart)fCommandSection).initialize(form);
+		}
+		// Initialize managed form for register area
+		if (fRegisterCSArea instanceof IFormPart) {
+			((IFormPart)fRegisterCSArea).initialize(form);
+		}
+	}	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
 	 */

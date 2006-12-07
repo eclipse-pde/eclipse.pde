@@ -28,6 +28,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.IFormPart;
+import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -66,10 +68,30 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		// conditional-subitem
 		//fWhen = null;
 		fMainSection = null;
-		fCommandSection = new SimpleCSCommandDetails(fSubItem, this);		
-		fRegisterCSArea = new CSRegisterCSDetails(this, fSubItem.getModel());
+		fCommandSection = new SimpleCSCommandDetails(fSubItem, 
+				masterTreeSection);		
+		fRegisterCSArea = new CSRegisterCSDetails(fSubItem.getModel(), 
+				masterTreeSection, SimpleCSInputContext.CONTEXT_ID);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
+	 */
+	public void initialize(IManagedForm form) {
+		super.initialize(form);
+		// Unfortunately this has to be explicitly called for sub detail
+		// sections through its main section parent; since, it never is 
+		// registered directly.
+		// Initialize managed form for command section
+		if (fCommandSection instanceof IFormPart) {
+			((IFormPart)fCommandSection).initialize(form);
+		}
+		// Initialize managed form for register area
+		if (fRegisterCSArea instanceof IFormPart) {
+			((IFormPart)fRegisterCSArea).initialize(form);
+		}
+	}		
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
 	 */

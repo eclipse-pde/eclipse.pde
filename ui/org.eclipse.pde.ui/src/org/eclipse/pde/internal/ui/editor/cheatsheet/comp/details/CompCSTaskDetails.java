@@ -49,6 +49,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormPart;
+import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
@@ -93,10 +95,29 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 		fSkip = null;
 
 		fDefinitionSection = null;
-		fEnclosingTextSection = new CompCSEnclosingTextDetails(fDataTask, this);
-		fRegisterCSArea = new CSRegisterCSDetails(this, fDataTask.getModel());		
+		fEnclosingTextSection = new CompCSEnclosingTextDetails(fDataTask, section);
+		fRegisterCSArea = new CSRegisterCSDetails(fDataTask.getModel(), section,
+				CompCSInputContext.CONTEXT_ID);		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
+	 */
+	public void initialize(IManagedForm form) {
+		super.initialize(form);
+		// Unfortunately this has to be explicitly called for sub detail
+		// sections through its main section parent; since, it never is 
+		// registered directly.
+		// Initialize managed form for enclosing text section
+		if (fEnclosingTextSection instanceof IFormPart) {
+			((IFormPart)fEnclosingTextSection).initialize(form);
+		}
+		// Initialize managed form for register area
+		if (fRegisterCSArea instanceof IFormPart) {
+			((IFormPart)fRegisterCSArea).initialize(form);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails#createDetails(org.eclipse.swt.widgets.Composite)
 	 */

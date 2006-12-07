@@ -20,8 +20,9 @@ import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
-import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetailsSurrogate;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractSubDetails;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.CompCSInputContext;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -43,12 +44,10 @@ import org.eclipse.ui.forms.widgets.Section;
  * CompCSEnclosingTextDetails
  *
  */
-public class CompCSEnclosingTextDetails implements ICSDetails {
+public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 
 	private ICompCSTaskObject fDataTaskObject;
 	
-	private ICSDetailsSurrogate fDetails;
-
 	private Section fEnclosingTextSection;		
 	
 	private Text fIntroductionText;
@@ -75,10 +74,10 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 	 * 
 	 */
 	public CompCSEnclosingTextDetails(ICompCSTaskObject taskObject, 
-			ICSDetailsSurrogate details) {
-
+			ICSMaster section) {
+		super(section, CompCSInputContext.CONTEXT_ID);
+		
 		fDataTaskObject = taskObject;
-		fDetails = details;		
 		
 		fEnclosingTextSection = null;
 		fIntroductionText = null;
@@ -113,11 +112,11 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 		String description = NLS.bind(
 				PDEUIMessages.CompCSEnclosingTextDetails_SectionDescription,
 				fTaskObjectLabelName);		
-		fEnclosingTextSection = fDetails.getPage().createUISection(parent,
+		fEnclosingTextSection = getPage().createUISection(parent,
 				PDEUIMessages.CompCSEnclosingTextDetails_EnclosingText,
 				description, style);
 		// Create the container for the main section
-		Composite sectionClient = fDetails.getPage().createUISectionContainer(
+		Composite sectionClient = getPage().createUISectionContainer(
 				fEnclosingTextSection, 1);		
 		// Create the tab folder
 		createUITabFolder(sectionClient);
@@ -132,9 +131,10 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 		// Create the conclusion text
 		createUIConclusionText();	
 		// Bind widgets
-		fDetails.getToolkit().paintBordersFor(sectionClient);
+		getToolkit().paintBordersFor(sectionClient);
 		fEnclosingTextSection.setClient(sectionClient);		
-		
+		// Mark as a details part to enable cut, copy, paste, etc.		
+		markDetailsPart(fEnclosingTextSection);
 	}
 
 	/**
@@ -146,9 +146,9 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 		data.heightHint = 2;
 		fTabFolder.setLayoutData(data);
 		
-		fDetails.getToolkit().adapt(fTabFolder, true, true);
+		getToolkit().adapt(fTabFolder, true, true);
 		
-		FormColors colors = fDetails.getToolkit().getColors();
+		FormColors colors = getToolkit().getColors();
 		colors.initializeSectionToolBarColors();
 		Color selectedColor1 = colors.getColor(FormColors.TB_BG);
 		Color selectedColor2 = colors.getColor(FormColors.TB_GBG);
@@ -182,7 +182,7 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 	 * @param parent
 	 */
 	private void createUINotebookComposite(Composite parent) {
-		fNotebookComposite = fDetails.getToolkit().createComposite(parent);
+		fNotebookComposite = getToolkit().createComposite(parent);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		fNotebookComposite.setLayoutData(data);
 		fNotebookLayout = new StackLayout();
@@ -201,14 +201,14 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 		String description = NLS.bind(
 				PDEUIMessages.CompCSEnclosingTextDetails_IntroductionDescription,
 				fTaskObjectLabelName);			
-		final Label label = fDetails.getToolkit().createLabel(
+		final Label label = getToolkit().createLabel(
 				fIntroductionComposite, description, SWT.WRAP);
 		data = new GridData();
 		data.horizontalSpan = columns;
 		label.setLayoutData(data);		
 		// Create text
 		int style = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL;
-		fIntroductionText = fDetails.getToolkit().createText(
+		fIntroductionText = getToolkit().createText(
 				fIntroductionComposite, "", style); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = 60;
@@ -228,14 +228,14 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 		String description = NLS.bind(
 				PDEUIMessages.CompCSEnclosingTextDetails_ConclusionDescription,
 				fTaskObjectLabelName);		
-		final Label label = fDetails.getToolkit().createLabel(
+		final Label label = getToolkit().createLabel(
 				fCompositeConclusion, description, SWT.WRAP);
 		data = new GridData();
 		data.horizontalSpan = columns;
 		label.setLayoutData(data);		
 		// Create text
 		int style = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL;		
-		fConclusionText = fDetails.getToolkit().createText(
+		fConclusionText = getToolkit().createText(
 				fCompositeConclusion, "", style); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = 60;
@@ -248,7 +248,7 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 	 * @return
 	 */
 	private Composite createUIContainer(Composite parent, int columns) {
-		Composite container = fDetails.getToolkit().createComposite(parent);
+		Composite container = getToolkit().createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 2; 
 		layout.marginHeight = 2;
@@ -321,7 +321,7 @@ public class CompCSEnclosingTextDetails implements ICSDetails {
 	 */
 	public void updateFields() {
 
-		boolean editable = fDetails.isEditableElement();
+		boolean editable = isEditableElement();
 		// Select the introduction tab
 		fTabFolder.setSelection(F_INTRODUCTION_TAB);
 		// Update tab folder
