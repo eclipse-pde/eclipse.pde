@@ -129,7 +129,13 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		TextEdit op = null;
 		node = getHighestNodeToBeWritten(node);
 		if (node.getParentNode() == null) {
-			op = new InsertEdit(0, node.write(true));
+			// Only add the insertion edit operation if the node is a root node
+			// Otherwise the insertion edit operation will specify to add the
+			// node to the beginning of the file and corrupt it
+			// See Bugs 163161, 166520
+			if (node.isRoot()) {
+				op = new InsertEdit(0, node.write(true));
+			}
 		} else {
 			if (node.getOffset() > -1) {
 				// this is an element that was of the form <element/>
