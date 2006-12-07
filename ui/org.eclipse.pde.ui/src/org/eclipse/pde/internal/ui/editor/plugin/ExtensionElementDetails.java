@@ -245,8 +245,7 @@ public class ExtensionElementDetails extends PDEDetails {
 			String iname = input.getName();
 			section.setDescription(NLS.bind(PDEUIMessages.ExtensionElementDetails_setDesc, iname)); 
 		} else {
-			section
-					.setDescription(PDEUIMessages.ExtensionElementDetails_setSelectedDesc); 
+			section.setDescription(PDEUIMessages.ExtensionElementDetails_desc); 
 		}
 		section.layout();
 	}

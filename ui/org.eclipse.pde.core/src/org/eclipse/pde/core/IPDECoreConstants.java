@@ -34,5 +34,8 @@ public interface IPDECoreConstants {
 	
 	/** Constant for the string <code>3.2</code> */
 	public final static String ECLIPSE_VERSION_3_2 = "3.2"; //$NON-NLS-1$	
+
+	/** Constant for the string <code>extension</code> */	
+	public final static String EXTENSION_NAME = "extension"; //$NON-NLS-1$	
 	
 }

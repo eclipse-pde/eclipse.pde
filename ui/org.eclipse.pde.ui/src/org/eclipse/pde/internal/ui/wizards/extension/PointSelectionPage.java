@@ -482,6 +482,8 @@ public class PointSelectionPage
 		try {
 			IPluginExtension extension =
 				fModel.getFactory().createExtension();
+			// Set the point attribute
+			// The point value overrides an auto-generated value
 			extension.setPoint(point);
 			fModel.getPluginBase().add(extension);
 			

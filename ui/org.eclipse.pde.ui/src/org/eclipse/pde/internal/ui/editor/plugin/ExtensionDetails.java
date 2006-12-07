@@ -15,11 +15,17 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.IIdentifiable;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IPDECoreConstants;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -35,6 +41,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -49,7 +57,6 @@ public class ExtensionDetails extends PDEDetails {
 	private IPluginExtension input;
 	private FormEntry id;
 	private FormEntry name;
-	private FormEntry point;
 	private FormText rtext;
 
 	private static final String RTEXT_DATA =
@@ -82,6 +89,7 @@ public class ExtensionDetails extends PDEDetails {
 		TableWrapData td = new TableWrapData(TableWrapData.FILL, TableWrapData.TOP);
 		td.grabHorizontal = true;
 		section.setLayoutData(td);
+		
 		//toolkit.createCompositeSeparator(section);
 		Composite client = toolkit.createComposite(section);
 		GridLayout glayout = new GridLayout();
@@ -93,41 +101,9 @@ public class ExtensionDetails extends PDEDetails {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 
-		point = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_point, null, false); 
-		point.setFormEntryListener(new FormEntryAdapter(this) {
-			public void textValueChanged(FormEntry entry) {
-				if (input!=null)
-					try {
-						input.setPoint(point.getValue());
-					} catch (CoreException e) {
-						PDEPlugin.logException(e);
-					}
-			}
-		});
+		createIDEntryField(toolkit, client);
 		
-		id = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_id, null, false); 
-		id.setFormEntryListener(new FormEntryAdapter(this) {
-			public void textValueChanged(FormEntry entry) {
-				if (input!=null)
-					try {
-						input.setId(id.getValue());
-					} catch (CoreException e) {
-						PDEPlugin.logException(e);
-					}
-			}
-		});
-		
-		name = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_name, null, false); 
-		name.setFormEntryListener(new FormEntryAdapter(this) {
-			public void textValueChanged(FormEntry entry) {
-				if (input!=null)
-					try {
-						input.setName(name.getValue());
-					} catch (CoreException e) {
-						PDEPlugin.logException(e);
-					}
-			}
-		});
+		createNameEntryField(toolkit, client);
 		
 		createSpacer(toolkit, client, 2);
 		
@@ -165,13 +141,48 @@ public class ExtensionDetails extends PDEDetails {
 		rtext.setText(RTEXT_DATA, true, false);
 		id.setEditable(isEditable());
 		name.setEditable(isEditable());
-		point.setEditable(isEditable());
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
 		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
 		model.addModelChangedListener(this);
 		markDetailsPart(section);
+	}
+	
+	/**
+	 * @param toolkit
+	 * @param client
+	 */
+	private void createNameEntryField(FormToolkit toolkit, Composite client) {
+		name = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_name, null, false); 
+		name.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry entry) {
+				if (input!=null)
+					try {
+						input.setName(name.getValue());
+					} catch (CoreException e) {
+						PDEPlugin.logException(e);
+					}
+			}
+		});
+	}
+	
+	/**
+	 * @param toolkit
+	 * @param client
+	 */
+	private void createIDEntryField(FormToolkit toolkit, Composite client) {
+		id = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_id, null, false); 
+		id.setFormEntryListener(new FormEntryAdapter(this) {
+			public void textValueChanged(FormEntry entry) {
+				if (input!=null)
+					try {
+						input.setId(id.getValue());
+					} catch (CoreException e) {
+						PDEPlugin.logException(e);
+					}
+			}
+		});
 	}
 	
 	/* (non-Javadoc)
@@ -190,12 +201,80 @@ public class ExtensionDetails extends PDEDetails {
 	private void update() {
 		id.setValue(input!=null?input.getId():null, true);
 		name.setValue(input!=null?input.getName():null, true);
-		point.setValue(input!=null?input.getPoint():null, true);
+		
+		// Update the ID label
+		updateLabel(isFieldRequired(IIdentifiable.P_ID), id,
+				PDEUIMessages.ExtensionDetails_id);
+		// Update the Name label
+		updateLabel(isFieldRequired(IPluginObject.P_NAME), name, 
+				PDEUIMessages.ExtensionDetails_name);
 	}
+	
+	/**
+	 * Denote a field as required by updating their label
+	 * @param attributeName
+	 * @param field
+	 */
+	private boolean isFieldRequired(String attributeName) {
+		// Ensure we have input
+		if (input == null) {
+			return false;
+		}
+		// Get the associated schema
+		Object object = input.getSchema();
+		// Ensure we have a schema
+		if ((object == null) ||
+				(object instanceof Schema) == false) {
+			return false;
+		}
+		Schema schema = (Schema)object;
+		// Find the extension element
+		ISchemaElement element = 
+			schema.findElement(IPDECoreConstants.EXTENSION_NAME);
+		// Ensure we found the element
+		if (element == null) {
+			return false;
+		}
+		// Get the attribute
+		ISchemaAttribute attribute = element.getAttribute(attributeName);
+		// Ensure we found the attribute
+		if (attribute == null) {
+			return false;
+		}
+		// Determine whether the attribute is required
+		if (attribute.getUse() == ISchemaAttribute.REQUIRED) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * @param field
+	 * @param required
+	 */
+	private void updateLabel(boolean required, FormEntry field, String label) {
+		// Get the label
+		Control control = field.getLabel();
+		// Ensure label is defined
+		if ((control == null) ||
+				((control instanceof Label) == false)) {
+			return;
+		}
+		Label labelControl = ((Label)control);
+		// If the label is required, add the '*' to indicate that
+		if (required) {
+			labelControl.setText(label + '*' + ':');
+		} else {
+			labelControl.setText(label + ':');
+		}
+		// Force the label's parent composite to relayout because 
+		// clippage can occur when updating the text
+		labelControl.getParent().layout();
+	}
+	
 	public void cancelEdit() {
 		id.cancelEdit();
 		name.cancelEdit();
-		point.cancelEdit();
 		super.cancelEdit();
 	}
 	/* (non-Javadoc)
@@ -204,7 +283,6 @@ public class ExtensionDetails extends PDEDetails {
 	public void commit(boolean onSave) {
 		id.commit();
 		name.commit();
-		point.commit();
 		super.commit(onSave);
 	}
 	/* (non-Javadoc)

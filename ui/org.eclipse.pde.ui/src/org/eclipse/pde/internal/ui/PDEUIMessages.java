@@ -438,7 +438,6 @@ public class PDEUIMessages extends NLS {
 	public static String PluginModelManager_outOfSync;
 
 	// Status text #####################################
-	public static String ExtensionElementDetails_setSelectedDesc;
 	public static String Errors_CreationError;
 	public static String Errors_CreationError_NoWizard;
 
@@ -1551,7 +1550,6 @@ public class PDEUIMessages extends NLS {
 	public static String ExtensionDetails_desc;
 	public static String ExtensionDetails_id;
 	public static String ExtensionDetails_name;
-	public static String ExtensionDetails_point;
 
 	public static String ExportJob_error_message;
 	public static String FeatureImportWizard_DetailedPage_problemsLoading;

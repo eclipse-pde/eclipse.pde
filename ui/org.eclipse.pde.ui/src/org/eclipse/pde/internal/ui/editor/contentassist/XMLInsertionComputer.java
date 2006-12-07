@@ -317,7 +317,7 @@ public class XMLInsertionComputer {
 						attribute.getUse() == ISchemaAttribute.DEFAULT) {
 					String value = generateAttributeValue(project, counter, attribute);
 					// Update Model
-					setAttribute(pElement, attribute.getName(), value);
+					setAttribute(pElement, attribute.getName(), value, counter);
 				}
 				// Ignore optional attributes
 			} catch (CoreException e) {
@@ -405,23 +405,29 @@ public class XMLInsertionComputer {
 			}
 		}		
 	}
-	
+
 	/**
 	 * @param parent
 	 * @param attName
 	 * @param attValue
+	 * @param counter
 	 * @throws CoreException
 	 */
-	
-	protected static void setAttribute(IPluginParent parent, String attName, String attValue) throws CoreException {
+	protected static void setAttribute(IPluginParent parent, String attName,
+			String attValue, int counter) throws CoreException {
 		if (parent instanceof IPluginElement) {
 			((IPluginElement)parent).setAttribute(attName, attValue);
 		} else if (parent instanceof IPluginExtension) {
 			IPluginExtension pe = (IPluginExtension)parent;
 			if (attName.equals(IIdentifiable.P_ID)) {
 				String currValue = pe.getId();
-				if (currValue == null || currValue.length() == 0)
-					pe.setId(attValue);
+				// If a value was already defined, do not override it with the
+				// auto-generated value
+				if (currValue == null || currValue.length() == 0) {
+					// Ignore the auto-generated attribute value and use the
+					// attribute name
+					pe.setId(attName + counter);
+				}
 			} else if (attName.equals(IPluginObject.P_NAME)) {
 				String currValue = pe.getName();
 				if (currValue == null || currValue.length() == 0)
