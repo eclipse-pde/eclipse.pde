@@ -255,24 +255,32 @@ public class ClasspathHelper {
  			if (project.hasNature(JavaCore.NATURE_ID)) {
  				Map classpathMap = getClasspathMap(project, checkExcluded, !base.getId().equals("org.eclipse.osgi"), false); //$NON-NLS-1$
  				IFile file = project.getFile("build.properties"); //$NON-NLS-1$
- 				if (file.exists()) {
+ 				boolean searchBuild = file.exists();
+ 				if (searchBuild) {
  					WorkspaceBuildModel bModel = new WorkspaceBuildModel(file);
  					IBuild build = bModel.getBuild();
- 					if (libraries.length == 0) {
- 						IPath[] paths = findLibrary(DOT, project, classpathMap, build);
- 						for (int j = 0; j < paths.length; j++) 
- 							addPath(result, project, paths[j]);
- 					} else {
- 						for (int i = 0; i < libraries.length;i++) {
- 							IPath[] paths = findLibrary(libraries[i].getName(), project, classpathMap, build);
- 							if (paths.length == 0 && !libraries[i].getName().equals(DOT)) {
- 								paths = findLibraryFromFragments(libraries[i].getName(), model, checkExcluded, pluginsMap);
- 							}
- 							for (int j = 0; j < paths.length; j++)
+ 					// if it is a custom build, act like there is no build.properties (add everything)
+ 					IBuildEntry entry = build.getEntry("custom"); //$NON-NLS-1$
+ 					if (entry != null) 
+ 						searchBuild = false;
+ 					else {
+ 						if (libraries.length == 0) {
+ 							IPath[] paths = findLibrary(DOT, project, classpathMap, build);
+ 							for (int j = 0; j < paths.length; j++) 
  								addPath(result, project, paths[j]);
+ 						} else {
+ 							for (int i = 0; i < libraries.length;i++) {
+ 								IPath[] paths = findLibrary(libraries[i].getName(), project, classpathMap, build);
+ 								if (paths.length == 0 && !libraries[i].getName().equals(DOT)) {
+ 									paths = findLibraryFromFragments(libraries[i].getName(), model, checkExcluded, pluginsMap);
+ 								}
+ 								for (int j = 0; j < paths.length; j++)
+ 									addPath(result, project, paths[j]);
+ 							}
  						}
  					}
- 				} else {
+ 				} 
+ 				if (!searchBuild){
  					// if no build.properties, add all output folders
  					Iterator it = classpathMap.entrySet().iterator();
  					while (it.hasNext()) {
