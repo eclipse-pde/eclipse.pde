@@ -58,6 +58,13 @@ public class PDEExtensionRegistry {
 	private static String ATTR_SCHEMA = "schema"; //$NON-NLS-1$
 	
 	private Map fExtensions = new HashMap();
+	
+	protected PDEExtensionRegistry() { 
+	}
+	
+	protected PDEExtensionRegistry(PDEExtensionRegistry registry) {
+		this.fExtensions = new HashMap(registry.fExtensions);
+	}
 
 	protected void saveExtensions(State state, File dir) {
 		try {

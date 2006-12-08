@@ -14,16 +14,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardNode;
+import org.eclipse.jface.wizard.WizardSelectionPage;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.IBasePluginWizard;
 import org.eclipse.swt.graphics.Point;
 
 public abstract class WizardNode implements IWizardNode {
 	private IWizard wizard;
-	private BaseWizardSelectionPage parentWizardPage;
+	private WizardSelectionPage parentWizardPage;
 	protected WizardElement wizardElement;
 
-public WizardNode(BaseWizardSelectionPage parentPage, WizardElement element) {
+public WizardNode(WizardSelectionPage parentPage, WizardElement element) {
 	parentWizardPage = parentPage;
 	wizardElement = element;
 }
@@ -48,7 +49,8 @@ public IWizard getWizard() {
 	try {
 		pluginWizard = createWizard(); // create instance of target wizard
 	} catch (CoreException e) {
-		parentWizardPage.setDescriptionText(""); //$NON-NLS-1$
+		if (parentWizardPage instanceof BaseWizardSelectionPage)
+			((BaseWizardSelectionPage)parentWizardPage).setDescriptionText(""); //$NON-NLS-1$
 		parentWizardPage.setErrorMessage(PDEUIMessages.Errors_CreationError_NoWizard);
 		MessageDialog.openError(
 			parentWizardPage.getWizard().getContainer().getShell(), 

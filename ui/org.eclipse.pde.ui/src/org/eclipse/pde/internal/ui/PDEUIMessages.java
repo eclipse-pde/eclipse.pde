@@ -17,6 +17,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String AddLibraryDialog_nospaces;
 
+	public static String AddTargetPluginsWizard_windowTitle;
+
 	public static String BaseCheatSheetCreationOperation_0;
 
 	public static String CheatSheetFileWizardPage_0;
@@ -171,11 +173,25 @@ public class PDEUIMessages extends NLS {
 
 	public static String CSRegisterCSDetails_linkFormattingTags;
 
+	public static String DirectorySelectionPage_add;
+
+	public static String DirectorySelectionPage_description;
+
+	public static String DirectorySelectionPage_edit;
+
+	public static String DirectorySelectionPage_label;
+
+	public static String DirectorySelectionPage_remove;
+
+	public static String DirectorySelectionPage_title;
+
 	public static String ExportOptionsTab_antReservedMessage;
 
 	public static String ExtensionsPage_sortAlpha;
 
 	public static String FileRenameParticipant_renameFiles;
+
+	public static String FileSystemProvisionerWizard_title;
 
 	public static String FormatManifestAction_actionText;
 
@@ -242,6 +258,14 @@ public class PDEUIMessages extends NLS {
 	public static String PDESourcePage_actionTextQuickOutline;
 
 	public static String PDETextHover_0;
+	
+	public static String ProvisionerListSelectionPage_description;
+
+	public static String ProvisionerListSelectionPage_pageName;
+
+	public static String ProvisionerListSelectionPage_tableLabel;
+
+	public static String ProvisionerListSelectionPage_title;
 
 	public static String QuickOutlinePopupDialog_infoTextPressEscToExit;
 
@@ -416,6 +440,8 @@ public class PDEUIMessages extends NLS {
 	public static String SimpleCSSubItemDetails_3;
 
 	public static String TableSection_itemCount;
+
+	public static String TargetPluginsTab_add;
 
 	public static String UpdateClasspathResolution_label;
 

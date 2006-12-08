@@ -9,6 +9,7 @@
    <extension-point id="templates" name="%expoint.templates.name" schema="schema/templates.exsd"/>
    <extension-point id="samples" name="%expoint.samples.name" schema="schema/samples.exsd"/>
    <extension-point id="osgiFrameworks" name="%expoint.osgiLauncher.name" schema="schema/osgiFrameworks.exsd"/>
+   <extension-point id="provisioners" name="Provisioners" schema="schema/provisioners.exsd"/>
 
 <!-- Extensions -->
    <extension
@@ -1750,5 +1751,16 @@
             %pluginContent.choice.description
          </description>
       </wizard>
+    </extension>
+    <extension
+          point="org.eclipse.pde.ui.provisioners">
+       <provisioner
+             class="org.eclipse.pde.internal.ui.wizards.provisioner.FileSystemProvisionerWizard"
+             id="org.eclipse.pde.ui.directory"
+             name="%provisioner.file.name">
+          <description>
+             %provisioner.file.description
+          </description>
+       </provisioner>
     </extension>
 </plugin>

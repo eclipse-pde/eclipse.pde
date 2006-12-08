@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.PDECore;
@@ -35,6 +36,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
+import org.eclipse.pde.internal.ui.parts.LocationDialog;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -161,13 +163,32 @@ public class LocationsSection extends TableSection {
 	
 	private void showDialog(final IAdditionalLocation location) {
 		final ITarget model = getTarget();
+		final String locationPath = (location == null) ? null : location.getPath();
 		BusyIndicator.showWhile(fContentViewer.getTable().getDisplay(), new Runnable() {
 			public void run() {
 				LocationDialog dialog = new LocationDialog(fContentViewer.getTable()
-						.getShell(), model, location);
+						.getShell(), locationPath) {
+					
+					protected boolean hasPath(String path) {
+						Path checkPath = new Path(path);
+						Path currentPath = (locationPath != null) ? new Path(locationPath) : null;
+						if (currentPath != null && ExternalModelManager.arePathsEqual(checkPath, currentPath))
+							return false;
+						return containsPath(path);
+					}
+					
+				};
 				dialog.create();
 				SWTUtil.setDialogSize(dialog, 500, -1);
-				dialog.open();
+				if (dialog.open() == Window.OK) {
+					String newLocationPath = dialog.getLocation();
+					boolean add = location == null;
+					IAdditionalLocation newLocation = (add) ? model.getModel().getFactory().createAdditionalLocation() :
+						location;
+					newLocation.setPath(newLocationPath);
+					if (add) 
+						model.addAdditionalDirectories(new IAdditionalLocation[]{newLocation});
+				}
 			}
 		});
 	}
@@ -226,7 +247,7 @@ public class LocationsSection extends TableSection {
 	protected void doPaste(Object target, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof IAdditionalLocation &&
-					!hasPath(((IAdditionalLocation)objects[i]).getPath())) {
+					!containsPath(((IAdditionalLocation)objects[i]).getPath())) {
 				IAdditionalLocation loc = (IAdditionalLocation)objects[i];
 				loc.setModel(getModel());
 				getTarget().addAdditionalDirectories(new IAdditionalLocation[] {loc});	
@@ -234,7 +255,7 @@ public class LocationsSection extends TableSection {
 		}
 	}
 	
-	protected boolean hasPath(String path) {
+	protected boolean containsPath(String path) {
 		Path checkPath = new Path(path);
 		IAdditionalLocation[] locs = getModel().getTarget().getAdditionalDirectories();
 		for (int i = 0; i < locs.length; i++) {
