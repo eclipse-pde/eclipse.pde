@@ -40,13 +40,37 @@ public class RequireBundleObject extends PDEManifestElement {
 	
 	public void setVersion(String version) {
         String old = getVersion();
-        setAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE, version);
+        // Reset the previous value
+        setAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE, null); 
+        // Parse the version String into segments
+		String[] values = ManifestElement.getArrayFromList(version);
+		// If there are values, add them
+		if ((values != null) && 
+				(values.length > 0)) {
+			for (int i = 0; i < values.length; i++) {
+				addAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE, values[i]);   
+			}
+		}
         fHeader.update();
         firePropertyChanged(this, Constants.BUNDLE_VERSION_ATTRIBUTE, old, version);
 	}
 	
 	public String getVersion() {
-		return getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
+		String[] versionSegments = 
+			getAttributes(Constants.BUNDLE_VERSION_ATTRIBUTE);
+		StringBuffer version = new StringBuffer();
+		if (versionSegments == null) {
+			return null;
+		} else if (versionSegments.length == 0) {
+			return null;
+		} else if (versionSegments.length == 1) {
+			version.append(versionSegments[0]);
+		} else if (versionSegments.length == 2) {
+			version.append(versionSegments[0]);
+			version.append(',');
+			version.append(versionSegments[1]);
+		}
+		return version.toString();
 	}
 	
 	public void setOptional(boolean optional) {

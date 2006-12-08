@@ -133,20 +133,37 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		}
 		
 		private String getTextRequireBundle(RequireBundleObject bundle) {
-			// Should be using bundle.getVersion();
-			// This is a work-around for a bug
-			// TODO: MP: QO: LOW:  Push solution into the manifest model
-			StringBuffer label = new StringBuffer(bundle.getId());
-			label.append(' ');
-			String[] versionSegments = 
-				bundle.getAttributes(Constants.BUNDLE_VERSION_ATTRIBUTE);
-			if (versionSegments.length == 1) {
-				label.append(versionSegments[0]);
-			} else if (versionSegments.length == 2) {
-				label.append(versionSegments[0]);
-				label.append(',');
-				label.append(versionSegments[1]);
+			StringBuffer label = new StringBuffer();
+			// Append the ID
+			label.append(bundle.getId());
+			// Get the version
+			String version = bundle.getVersion();
+			// If there is no version, just return what we have
+			if ((version == null) ||
+					(version.length() == 0)) {
+				return label.toString();
 			}
+			// Append a space
+			label.append(' ');
+			// If the first character does not have a range indicator,
+			// add a default one.  This can happen when there is only one
+			// value specified for either min or max
+			char firstChar = version.charAt(0);
+			if ((firstChar != '(') &&
+					(firstChar != '[')) {
+				label.append('(');
+			}
+			// Append the version
+			label.append(version);
+			// If the last character does not have a range indicator,
+			// add a default one.  This can happen when there is only one
+			// value specified for either min or max			
+			char lastChar = version.charAt(version.length() - 1);
+			if ((lastChar != ')') &&
+					(lastChar != ']')) {
+				label.append(')');
+			}
+			// Return what we have
 			return label.toString();
 		}
 		

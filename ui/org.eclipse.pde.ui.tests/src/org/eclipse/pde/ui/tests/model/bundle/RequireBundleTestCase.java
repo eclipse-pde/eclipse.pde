@@ -183,6 +183,26 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		assertNotNull(bundle);
 		assertTrue(bundle.isOptional());
 	}
+
+	public void testSetGetVersion() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Manifest-Version: 1.0\n");
+		buffer.append("Bundle-ManifestVersion: 2\n");
+		buffer.append("Bundle-SymoblicName: com.example.xyz\n");
+		buffer.append("Require-Bundle: org.eclipse.osgi;bundle-version=\"[3.1.0,4.0.0)\"\n");
+		fDocument.set(buffer.toString());
+		load();
+		
+		IManifestHeader header = fModel.getBundle().getManifestHeader(Constants.REQUIRE_BUNDLE);
+		assertNotNull(header);
+		
+		RequireBundleObject bundle = getBundle((RequireBundleHeader)header, "org.eclipse.osgi");
+		assertNotNull(bundle);
+		assertEquals("[3.1.0,4.0.0)", bundle.getVersion());		
+		
+		bundle.setVersion("(1.9.9,3.0.9]");
+		assertEquals("(1.9.9,3.0.9]", bundle.getVersion());		
+	}	
 	
 	public void testReadBundleWithVersion() {
 		StringBuffer buffer = new StringBuffer();
