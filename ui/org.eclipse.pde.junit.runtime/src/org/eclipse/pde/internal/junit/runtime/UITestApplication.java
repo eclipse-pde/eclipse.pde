@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPlatformRunnable;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.equinox.app.IApplication;
+import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.testing.ITestHarness;
 import org.eclipse.ui.testing.TestableObject;
@@ -26,31 +28,44 @@ import org.eclipse.ui.testing.TestableObject;
  * A Workbench that runs a test suite specified in the
  * command line arguments.
  */ 
-public class UITestApplication implements IPlatformRunnable, ITestHarness {
+public class UITestApplication implements IApplication, ITestHarness {
 	
 	private static final String DEFAULT_APP_3_0 = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 	
 	private TestableObject fTestableObject;
+	private IApplication application;
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IPlatformRunnable#run(java.lang.Object)
+	 * @see org.eclipse.equinox.app.IApplication#start(java.lang.Object)
 	 */
-	public Object run(final Object args) throws Exception {
-		IPlatformRunnable application = getApplication((String[]) args);
+	public Object start(IApplicationContext context) throws Exception {
+		String[] args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
+		Object app = getApplication(args);
 
-		Assert.assertNotNull(application);
+		Assert.assertNotNull(app);
 
 		fTestableObject = PlatformUI.getTestableObject();
 		fTestableObject.setTestHarness(this);
-		return application.run(args);
+		if (app instanceof IApplication) {
+			application = (IApplication) app;
+			return application.start(context);
+		}
+		return ((IPlatformRunnable) app).run(args);
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.equinox.app.IApplication#stop()
+	 */
+	public void stop() {
+		if (application != null)
+			application.stop();
+	}
 
 	/*
 	 * return the application to run, or null if not even the default application
 	 * is found.
 	 */
-	private IPlatformRunnable getApplication(String[] args) throws CoreException {
+	private Object getApplication(String[] args) throws CoreException {
 		// Find the name of the application as specified by the PDE JUnit launcher.
 		// If no application is specified, the 3.0 default workbench application
 		// is returned.
@@ -70,8 +85,8 @@ public class UITestApplication implements IPlatformRunnable, ITestHarness {
 			IConfigurationElement[] runs = elements[0].getChildren("run"); //$NON-NLS-1$
 			if (runs.length > 0) {
 				Object runnable = runs[0].createExecutableExtension("class"); //$NON-NLS-1$
-				if (runnable instanceof IPlatformRunnable)
-					return (IPlatformRunnable) runnable;
+				if (runnable instanceof IPlatformRunnable || runnable instanceof IApplication)
+					return runnable;
 			}
 		}
 		return null;
