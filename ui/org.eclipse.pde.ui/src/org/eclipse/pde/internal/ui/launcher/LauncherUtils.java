@@ -87,9 +87,15 @@ public class LauncherUtils {
 
 	public static boolean clearWorkspace(ILaunchConfiguration configuration,
 			String workspace, IProgressMonitor monitor) throws CoreException {
-		if (workspace.length() == 0)
-			return false;
-
+		// If the workspace is not defined, there is no workspace to clear
+		// What will happen is that the workspace chooser dialog will be 
+		// brought up because no -data parameter will be specified on the 
+		// launch
+		if (workspace.length() == 0) {
+			monitor.done();
+			return true;		
+		}
+		
 		File workspaceFile = new Path(workspace).toFile().getAbsoluteFile();
 		if (configuration.getAttribute(IPDELauncherConstants.DOCLEAR, false)
 				&& workspaceFile.exists()) {
