@@ -12,6 +12,15 @@
       </application>
    </extension>
    <extension
+         id="legacytestapplication"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.eclipse.pde.internal.junit.runtime.LegacyUITestApplication">
+         </run>
+      </application>
+   </extension>
+   <extension
          id="coretestapplication"
          point="org.eclipse.core.runtime.applications">
       <application>

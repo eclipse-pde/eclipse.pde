@@ -68,6 +68,7 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 
 	public static final String CORE_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
 	public static final String UI_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$
+	public static final String LEGACY_UI_APPLICATION = "org.eclipse.pde.junit.runtime.legacytestapplication"; //$NON-NLS-1$
 	
 	public static String[] REQUIRED_PLUGINS = {"org.junit", "org.eclipse.jdt.junit.runtime", "org.eclipse.pde.junit.runtime"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
@@ -216,7 +217,9 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 			application = configuration.getAttribute(IPDELauncherConstants.APPLICATION, (String)null);
 		} catch (CoreException e) {
 		}
-		programArgs.add(application != null ? application : UI_APPLICATION);
+		if (application == null)
+			application = TargetPlatform.usesNewApplicationModel() ? UI_APPLICATION : LEGACY_UI_APPLICATION;
+		programArgs.add(application);
 		
 		// If a product is specified, then add it to the program args
 		if (configuration.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
