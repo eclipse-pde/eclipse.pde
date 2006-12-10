@@ -586,37 +586,71 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	private void generateCopyRootFiles(Config aConfig) throws CoreException {
-		String configName;
+		Properties properties = getBuildProperties();
+		Map foldersToCopy = new HashMap(2);
+
+		/* normal root files */
 		String baseList = getBuildProperties().getProperty(ROOT, ""); //$NON-NLS-1$
 		String fileList = getBuildProperties().getProperty(ROOT_PREFIX + aConfig.toString("."), ""); //$NON-NLS-1$ //$NON-NLS-2$
 		fileList = (fileList.length() == 0 ? "" : fileList + ',') + baseList; //$NON-NLS-1$
-		if (fileList.equals("")) //$NON-NLS-1$
-			return;
+		if (fileList.length() > 0)
+			foldersToCopy.put("", fileList); //$NON-NLS-1$
 
-		assemblyData.addRootFileProvider(aConfig, feature);
-		configName = aConfig.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$
-		script.printMkdirTask(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE) + '/' + configName + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER));
-		String[] files = Utils.getArrayFromString(fileList, ","); //$NON-NLS-1$
-		FileSet[] fileSet = new FileSet[files.length];
-		for (int i = 0; i < files.length; i++) {
-			String fromDir = Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/';
-			String file = files[i];
-			if (file.startsWith("absolute:")) { //$NON-NLS-1$
-				file = file.substring(9);
-				fromDir = ""; //$NON-NLS-1$
+		/* root files going to subfolders */
+		String configPrefix = ROOT_PREFIX + aConfig.toString(".") + FOLDER_INFIX; //$NON-NLS-1$
+		for (Iterator it = properties.keySet().iterator(); it.hasNext();) {
+			String key = (String) it.next();
+			String folder = null;
+			if (key.startsWith(ROOT_FOLDER_PREFIX)) {
+				folder = key.substring(ROOT_FOLDER_PREFIX.length(), key.length());
+			} else if (key.startsWith(configPrefix)) {
+				folder = key.substring(configPrefix.length(), key.length());
 			}
-			if (file.startsWith("file:")) { //$NON-NLS-1$
-				IPath target = new Path(file.substring(5));
-				fileSet[i] = new FileSet(fromDir + target.removeLastSegments(1), null, target.lastSegment(), null, null, null, null);
-			} else {
-				fileSet[i] = new FileSet(fromDir + file, null, "**", null, null, null, null); //$NON-NLS-1$
+			if (folder != null && folder.length() > 0) {
+				String value = properties.getProperty(key);
+				if (foldersToCopy.containsKey(folder)) {
+					String set = (String) foldersToCopy.get(folder);
+					set += "," + value; //$NON-NLS-1$
+					foldersToCopy.put(folder, set);
+				} else {
+					foldersToCopy.put(folder, value);
+				}
 			}
 		}
-		String shouldOverwrite =  getBuildProperties().getProperty(PROPERTY_OVERWRITE_ROOTFILES, "true"); //$NON-NLS-1$
-		script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_FEATURE_BASE) + '/' + configName + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER), fileSet, true, Boolean.valueOf(shouldOverwrite).booleanValue());
+
+		if (foldersToCopy.isEmpty())
+			return;
+
+		String configName = aConfig.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$
+		String shouldOverwrite = properties.getProperty(PROPERTY_OVERWRITE_ROOTFILES, "true"); //$NON-NLS-1$
+		boolean overwrite = Boolean.valueOf(shouldOverwrite).booleanValue();
+
+		assemblyData.addRootFileProvider(aConfig, feature);
+
+		Object[] folders = foldersToCopy.keySet().toArray();
+		for (int i = 0; i < folders.length; i++) {
+			String folder = (String) folders[i];
+			fileList = (String) foldersToCopy.get(folder);
+			String[] files = Utils.getArrayFromString(fileList, ","); //$NON-NLS-1$
+			FileSet[] fileSet = new FileSet[files.length];
+			for (int j = 0; j < files.length; j++) {
+				String file = files[j];
+				String fromDir = Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/';
+				if (file.startsWith("absolute:")) { //$NON-NLS-1$
+					file = file.substring(9);
+					fromDir = ""; //$NON-NLS-1$
+				}
+				if (file.startsWith("file:")) { //$NON-NLS-1$
+					IPath target = new Path(file.substring(5));
+					fileSet[j] = new FileSet(fromDir + target.removeLastSegments(1), null, target.lastSegment(), null, null, null, null);
+				} else {
+					fileSet[j] = new FileSet(fromDir + file, null, "**", null, null, null, null); //$NON-NLS-1$
+				}
+			}
+			script.printMkdirTask(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE) + '/' + configName + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + folder);
+			script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_FEATURE_BASE) + '/' + configName + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER) + '/' + folder, fileSet, true, overwrite);
+		}
 	}
-
-
 
 	/**
 	 * Add the <code>build.update.jar</code> target to the given script.
