@@ -606,7 +606,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			} else if (key.startsWith(configPrefix)) {
 				folder = key.substring(configPrefix.length(), key.length());
 			}
-			if (folder != null && folder.length() > 0) {
+			if (folder != null) {
 				String value = properties.getProperty(key);
 				if (foldersToCopy.containsKey(folder)) {
 					String set = (String) foldersToCopy.get(folder);
