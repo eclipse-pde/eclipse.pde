@@ -313,8 +313,7 @@ public class XMLInsertionComputer {
 			// Note:  If an attribute is deprecated, it does not affect
 			// auto-generation.
 			try {
-				if (attribute.getUse() == ISchemaAttribute.REQUIRED || 
-						attribute.getUse() == ISchemaAttribute.DEFAULT) {
+				if (attribute.getUse() == ISchemaAttribute.REQUIRED) {
 					String value = generateAttributeValue(project, counter, attribute);
 					// Update Model
 					setAttribute(pElement, attribute.getName(), value, counter);
@@ -342,9 +341,6 @@ public class XMLInsertionComputer {
 			project != null) {
 			value = XMLUtil.createDefaultClassName(project,
 					attribute, counter);
-		} else if ((attribute.getUse() == ISchemaAttribute.DEFAULT) &&
-					(attribute.getValue() != null)) {
-			value = attribute.getValue().toString();
 		} else if (restriction != null) {
 			// Check for enumeration restrictions, if there is one, 
 			// just pick the first enumerated value
