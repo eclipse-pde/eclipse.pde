@@ -9,7 +9,7 @@
    <extension-point id="templates" name="%expoint.templates.name" schema="schema/templates.exsd"/>
    <extension-point id="samples" name="%expoint.samples.name" schema="schema/samples.exsd"/>
    <extension-point id="osgiFrameworks" name="%expoint.osgiLauncher.name" schema="schema/osgiFrameworks.exsd"/>
-   <extension-point id="provisioners" name="Provisioners" schema="schema/provisioners.exsd"/>
+   <extension-point id="provisioners" name="%extension-point.name.0" schema="schema/provisioners.exsd"/>
 
 <!-- Extensions -->
    <extension
