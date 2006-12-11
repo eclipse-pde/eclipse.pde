@@ -121,7 +121,10 @@ public class XMLInsertionComputer {
 		// Track visited
 		visited.add(childSchemaElement.getName());
 		// Revert back to the normal process
-		computeInsertionType(childSchemaElement, childElement, visited);			
+		computeInsertionType(childSchemaElement, childElement, visited);		
+		// Add the new child element to the parent after its own child 
+		// elements and attributes have been recursively added
+		pElement.add(childElement);
 	}
 		
 	/**
@@ -270,10 +273,15 @@ public class XMLInsertionComputer {
 				childElement.setText(
 						PDEUIMessages.XMLCompletionProposal_ErrorCycle);
 			}
+			// Add the new child element to the parent after its own child 
+			// elements and attributes have been recursively added
+			pElement.add(childElement);
 		}
 	}
 
 	/**
+	 * Important: Element is created but not added as a child to the plug-in
+	 * parent.  Callers responsibility to add the child element to the parent.
 	 * @param pElement
 	 * @param schemaElement
 	 * @return
@@ -285,7 +293,6 @@ public class XMLInsertionComputer {
 		childElement = 
 			pElement.getModel().getFactory().createElement(pElement);
 		childElement.setName(schemaElement.getName());
-		pElement.add(childElement);
 		return childElement;
 	}
 
