@@ -506,11 +506,17 @@ public class QuickOutlinePopupDialog extends PopupDialog implements
 			public void modifyText(ModifyEvent e) {
 				String text = ((Text)e.widget).getText();
 				int length = text.length();
-				// Append a '*' pattern at the end of the text value if it is
-				// defined and does not already have a '*' pattern
-				if ((length > 0) && 
-						(text.charAt(length - 1) != '*')) {
-					text = text + '*';
+				if (length > 0) { 
+					// Append a '*' pattern to the end of the text value if it
+					// does not have one already
+					if (text.charAt(length - 1) != '*') {
+						text = text + '*';
+					}
+					// Prepend a '*' pattern to the beginning of the text value
+					// if it does not have one already
+					if (text.charAt(0) != '*') {
+						text = '*' + text;
+					}
 				}
 				// Set and update the pattern
 				setMatcherString(text, true);
@@ -533,10 +539,7 @@ public class QuickOutlinePopupDialog extends PopupDialog implements
 		if (pattern.length() == 0) {
 			fStringMatcher = null;
 		} else {
-			// If there are no upper case characters, ignore case when string
-			// matching
-			boolean ignoreCase = pattern.toLowerCase().equals(pattern);
-			fStringMatcher = new StringMatcher(pattern, ignoreCase, false);
+			fStringMatcher = new StringMatcher(pattern, true, false);
 		}
 		// Update the name pattern filter on the tree viewer
 		fNamePatternFilter.setStringMatcher(fStringMatcher);
