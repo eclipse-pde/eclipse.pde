@@ -138,7 +138,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		if (PDECore.getDefault().areModelsInitialized())
 			fTargetCombo.setText(TargetPlatform.getTargetVersionString());
 		else
-			fTargetCombo.setText(ICoreConstants.TARGET32);
+			fTargetCombo.setText(ICoreConstants.TARGET33);
 		
 	    fOSGIButton = createButton(group, SWT.RADIO, 1, 30);
     	fOSGIButton.setText(PDEUIMessages.NewProjectCreationPage_pPureOSGi); 	   
