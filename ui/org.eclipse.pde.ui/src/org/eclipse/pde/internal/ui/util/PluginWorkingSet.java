@@ -17,10 +17,12 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -46,21 +48,34 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
-
+import org.eclipse.ui.dialogs.PatternFilter;
 
 public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
-	
-	class ContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+
+	class ContentProvider extends DefaultContentProvider implements ITreeContentProvider {
 		public Object[] getElements(Object inputElement) {
 			return PDECore.getDefault().getModelManager().getAllPlugins();
+		}
+
+		public Object[] getChildren(Object parentElement) {
+			return null;
+		}
+
+		public Object getParent(Object element) {
+			return null;
+		}
+
+		public boolean hasChildren(Object element) {
+			return false;
 		}	
 	}
-	
+
 	class WorkingSetLabelProvider extends LabelProvider {
-		
+
 		Preferences pref = PDEPlugin.getDefault().getPluginPreferences();
-		
+
 		public WorkingSetLabelProvider() {
 			PDEPlugin.getDefault().getLabelProvider().connect(this);
 		}
@@ -77,14 +92,14 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 			}
 			return super.getText(element);
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
 		 */
 		public Image getImage(Object element) {
 			return PDEPlugin.getDefault().getLabelProvider().getImage(element);
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.LabelProvider#dispose()
 		 */
@@ -92,12 +107,30 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 			super.dispose();
 			PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		}
+
+	}
+	
+	class CheckboxFilteredTree extends FilteredTree {
+		
+		public CheckboxFilteredTree(Composite parent, int treeStyle,
+				PatternFilter filter) {
+			super(parent, treeStyle, filter);
+		}
+
+		protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
+			return new CheckboxTreeViewer(parent, style);
+		}
+		
+		public CheckboxTreeViewer getCheckboxTreeViewer() {
+			return (CheckboxTreeViewer) getViewer();
+		}
+		
 		
 	}
 
 	private IWorkingSet fWorkingSet;
 	private Text fWorkingSetName;
-	private CheckboxTableViewer fTable;
+	private CheckboxFilteredTree fTree;
 	private boolean fFirstCheck;
 
 	public PluginWorkingSet() {
@@ -109,7 +142,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 	 * @see org.eclipse.ui.dialogs.IWorkingSetPage#finish()
 	 */
 	public void finish() {
-		Object[] checked = fTable.getCheckedElements();
+		Object[] checked = fTree.getCheckboxTreeViewer().getCheckedElements();
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < checked.length; i++) {
 			String id = ((IPluginModelBase)checked[i]).getPluginBase().getId();
@@ -117,7 +150,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 				list.add(new PersistablePluginObject(id));
 		}
 		PersistablePluginObject[] objects = (PersistablePluginObject[])list.toArray(new PersistablePluginObject[list.size()]);
-		
+
 		String workingSetName = fWorkingSetName.getText().trim();
 		if (fWorkingSet == null) {
 			IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
@@ -158,29 +191,29 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		fWorkingSetName= new Text(composite, SWT.SINGLE | SWT.BORDER);
 		fWorkingSetName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fWorkingSetName.addModifyListener(
-			new ModifyListener() {
-				public void modifyText(ModifyEvent e) {
-					validatePage();
+				new ModifyListener() {
+					public void modifyText(ModifyEvent e) {
+						validatePage();
+					}
 				}
-			}
 		);
 		fWorkingSetName.setFocus();
-		
+
 		label= new Label(composite, SWT.WRAP);
 		label.setText(PDEUIMessages.PluginWorkingSet_setContent); 
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		fTable= CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
+		fTree = new CheckboxFilteredTree(composite, SWT.BORDER, new PatternFilter());
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 250;
-		fTable.getControl().setLayoutData(gd);
+		fTree.getViewer().getControl().setLayoutData(gd);
 		final IStructuredContentProvider fTableContentProvider = new ContentProvider(); 
-		fTable.setContentProvider(fTableContentProvider);
-		fTable.setLabelProvider(new WorkingSetLabelProvider());
-		fTable.setUseHashlookup(true);
-		fTable.setInput(PDECore.getDefault().getModelManager());
+		fTree.getCheckboxTreeViewer().setContentProvider(fTableContentProvider);
+		fTree.getCheckboxTreeViewer().setLabelProvider(new WorkingSetLabelProvider());
+		fTree.getCheckboxTreeViewer().setUseHashlookup(true);
+		fTree.getCheckboxTreeViewer().setInput(PDECore.getDefault().getModelManager());
 
-		fTable.addCheckStateListener(new ICheckStateListener() {
+		fTree.getCheckboxTreeViewer().addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				validatePage();
 			}
@@ -190,13 +223,13 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		Composite buttonComposite = new Composite(composite, SWT.NONE);
 		buttonComposite.setLayout(new GridLayout(2, true));
 		buttonComposite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-		
+
 		Button selectAllButton = new Button(buttonComposite, SWT.PUSH);
 		selectAllButton.setText(PDEUIMessages.PluginWorkingSet_selectAll_label);
 		selectAllButton.setToolTipText(PDEUIMessages.PluginWorkingSet_selectAll_toolTip);
 		selectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {
-				fTable.setCheckedElements(fTableContentProvider.getElements(fTable.getInput()));
+				fTree.getCheckboxTreeViewer().setCheckedElements(fTableContentProvider.getElements(fTree.getCheckboxTreeViewer().getInput()));
 				validatePage();
 			}
 		});
@@ -208,7 +241,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		deselectAllButton.setToolTipText(PDEUIMessages.PluginWorkingSet_deselectAll_toolTip);
 		deselectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {
-				fTable.setCheckedElements(new Object[0]);
+				fTree.getCheckboxTreeViewer().setCheckedElements(new Object[0]);
 				validatePage();
 			}
 		});
@@ -216,13 +249,13 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		SWTUtil.setButtonDimensionHint(deselectAllButton);
 		setPageComplete(false);
 		setMessage(PDEUIMessages.PluginWorkingSet_message);
-		
+
 		initialize();
 		Dialog.applyDialogFont(composite);
-		
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.PLUGIN_WORKING_SET);
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -233,13 +266,15 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 			for (int i = 0; i < elements.length; i++) {
 				set.add(((PersistablePluginObject)elements[i]).getPluginID());
 			}
-			for (int i = 0; i < fTable.getTable().getItemCount(); i++) {
-				IPluginModelBase model = (IPluginModelBase)fTable.getElementAt(i);
+
+			for (int i = 0; i < fTree.getCheckboxTreeViewer().getTree().getItemCount(); i++) {
+
+				IPluginModelBase model = (IPluginModelBase)fTree.getCheckboxTreeViewer().getTree().getItem(i);
 				String id = model.getPluginBase().getId();
 				if (id == null)
 					continue;
 				if (set.contains(id)) {
-					fTable.setChecked(model, true);
+					fTree.getCheckboxTreeViewer().setChecked(model, true);
 					set.remove(id);
 				}
 				if (set.isEmpty())
@@ -255,7 +290,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
-	
+
 	private void validatePage() {
 		String errorMessage= null; 
 		String newText= fWorkingSetName.getText();
@@ -268,10 +303,10 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 				return;
 			}
 		}
-		if (errorMessage == null && fTable.getCheckedElements().length == 0) {
+		if (errorMessage == null && fTree.getCheckboxTreeViewer().getCheckedElements().length == 0) {
 			errorMessage = PDEUIMessages.PluginWorkingSet_noPluginsChecked; 
 		}
-		
+
 		if (errorMessage == null && fWorkingSet == null) {
 			IWorkingSet[] workingSets = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets();
 			for (int i = 0; i < workingSets.length; i++) {
