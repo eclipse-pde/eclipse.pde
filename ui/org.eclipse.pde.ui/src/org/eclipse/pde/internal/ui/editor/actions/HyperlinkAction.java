@@ -27,43 +27,43 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 	protected IHyperlinkDetector fDetector;
 	protected StyledText fStyledText;
 	protected IHyperlink fLink;
-		
+
 	public HyperlinkAction() {
 		setImageDescriptor(PDEPluginImages.DESC_LINK_OBJ);
 		setEnabled(false);
 	}
-	
+
 	public void run() {
 		if (fLink != null)
 			fLink.open();
 	}
-	
+
 	public IHyperlink getHyperLink() {
 		return fLink;
 	}
-	
+
 	protected void removeListeners() {
 		if (!hasDetector() || isTextDisposed())
 			return;
 		fStyledText.removeMouseListener(this);
 		fStyledText.removeKeyListener(this);
 	}
-	
+
 	protected void addListeners() {
 		if (!hasDetector() || isTextDisposed())
 			return;
 		fStyledText.addMouseListener(this);
 		fStyledText.addKeyListener(this);
 	}
-	
+
 	public boolean detectHyperlink() {
 		fLink = null;
 		if (!hasDetector() || isTextDisposed())
 			return false;
-		
+
 		Point p = fStyledText.getSelection();
 		IHyperlink[] links = fDetector.detectHyperlinks(null, new Region(p.x, p.y - p.x), false);
-		
+
 		if (links == null || links.length == 0)
 			return false;
 
@@ -74,31 +74,30 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 	public void setTextEditor(ITextEditor editor) {
 		StyledText newText = editor instanceof PDESourcePage ? 
 				((PDESourcePage)editor).getViewer().getTextWidget() : null;
-		if (fStyledText != null && fStyledText.equals(newText))
-			return;
-		
-		// remove the previous listeners if there were any
-		removeListeners();
-		fStyledText = newText;
-		fDetector = editor instanceof PDESourcePage ? 
-				(IHyperlinkDetector)((PDESourcePage)editor).getAdapter(IHyperlinkDetector.class) : null;
-		// Add new listeners, if hyperlinks are present
-		addListeners();
-		
-		setEnabled(detectHyperlink());
-		generateActionText();
+				if (fStyledText != null && fStyledText.equals(newText))
+					return;
+
+				// remove the previous listeners if there were any
+				removeListeners();
+				fStyledText = newText;
+				fDetector = editor instanceof PDESourcePage ? (IHyperlinkDetector)((PDESourcePage)editor).getAdapter(IHyperlinkDetector.class) : null;
+				// Add new listeners, if hyperlinks are present
+				addListeners();
+
+				setEnabled(detectHyperlink());
+				generateActionText();
 	}
 
 	protected boolean hasDetector() {
 		return fDetector != null;
 	}
-	
+
 	private boolean isTextDisposed() {
 		return fStyledText == null || fStyledText.isDisposed();
 	}
-	
+
 	public void generateActionText() {
-		String text = null;
+		String text = PDEUIMessages.HyperlinkActionNoLinksAvailable;
 		if (fLink instanceof JavaHyperlink)
 			text = PDEUIMessages.HyperlinkActionOpenType;
 		else if (fLink instanceof ExtensionHyperLink)
@@ -116,7 +115,7 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 		setText(text);
 		setToolTipText(text);
 	}	
-	
+
 	public void mouseDoubleClick(MouseEvent e) {
 		// Ignore
 	}

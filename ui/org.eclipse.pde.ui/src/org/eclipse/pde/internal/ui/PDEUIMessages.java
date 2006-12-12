@@ -2762,6 +2762,7 @@ public class PDEUIMessages extends NLS {
 	public static String HyperlinkActionOpenResource;
 	public static String HyperlinkActionOpenSchema;
 	public static String HyperlinkActionOpenTranslation;
+	public static String HyperlinkActionNoLinksAvailable;
 
 	// XMLCompletionProposal
 	public static String XMLCompletionProposal_ErrorCycle;
