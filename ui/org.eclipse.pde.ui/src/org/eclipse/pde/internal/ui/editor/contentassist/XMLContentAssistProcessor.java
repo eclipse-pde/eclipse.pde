@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jface.text.BadLocationException;
@@ -52,9 +51,12 @@ import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
+import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.forms.editor.FormEditor;
 
 public class XMLContentAssistProcessor extends TypePackageCompletionProcessor implements IContentAssistProcessor, ICompletionListener {
 
@@ -101,8 +103,15 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	// TODO add a listener to add/remove extension points as they are added/removed from working models
 	private IDocumentRange fRange;
 	private int fDocLen = -1;
-	private ArrayList fExternalExtPoints; // all extension points from other plugins
-	private ArrayList fAllPoints;
+	
+	/** All external plug-in extension points */
+	private ArrayList fExternalExtPoints;
+
+	/** All internal plug-in extension points */
+	private ArrayList fInternalExtPoints;
+
+	/** All external and internal plug-in extension points */
+	private ArrayList fAllExtPoints;
 	
 	public XMLContentAssistProcessor(PDESourcePage sourcePage) {
 		fSourcePage = sourcePage;
@@ -213,7 +222,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		if (obj instanceof IPluginExtension) {
 			if (attr.getAttributeName().equals(IPluginExtension.P_POINT) && 
 					offset >= attr.getValueOffset())
-				return computeAttributeProposal(attr, offset, attrValue, getAvailableExtensionPoints());
+				return computeAttributeProposal(attr, offset, attrValue, getAllExtensionPoints());
 			ISchemaAttribute sAttr = XMLUtil.getSchemaAttribute(attr, ((IPluginExtension)obj).getPoint());
 			if (sAttr == null)
 				return null;
@@ -565,7 +574,15 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 
 	public void assistSessionEnded(ContentAssistEvent event) {
 		fRange = null;
-		fAllPoints = null;
+		
+		// Reset cached internal and external extension point proposals
+		fAllExtPoints = null;
+		// Reset cached internal point proposals
+		// Note: Not resetting cached external point proposals
+		// Assumption is that the users workspace can change; but, not the
+		// platform including all the external plugins
+		fInternalExtPoints = null;
+		
 		fDocLen = -1;
 	}
 
@@ -576,52 +593,118 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	public void selectionChanged(ICompletionProposal proposal, boolean smartToggle) {
 	}
 
-	private ArrayList getAvailableExtensionPoints() {
-		if (fAllPoints != null)
-			return fAllPoints;
-		
-		IPluginModelBase pModel = null;
-		String pModelId = null;
-		IBaseModel model = getModel();
-		
-		// TODO IPluginModelBase needs .getId()
-		// right now we will ignore
-		// currently open models by comparing projects
-		IProject project = null;
-		if (model instanceof IPluginModelBase) {
-			pModel = (IPluginModelBase)model;
-			project = pModel.getUnderlyingResource().getProject();
+	/**
+	 * @return
+	 */
+	private ArrayList getAllExtensionPoints() {
+		// Return the previous extension points if defined
+		if (fAllExtPoints != null) {
+			return fAllExtPoints;
 		}
+		// Get the plugin model base 
+		IPluginModelBase model = getPluginModelBase();
+		// Note: All plug-in extension points are cached except the 
+		// extension points defined by the plugin.xml we are currently 
+		// editing. This means if a plug-in in the workspace defines a new
+		// extension point and the plugin.xml editor is still open, the 
+		// new extension point will not show up as a proposal because it is
+		// using a cached list of extension points.
+		// External extensions points are all extension points not defined by
+		// the plugin currently being edited - opposed to non-workpspace
+		// plugins.  Internal extension points are the extension points defined
+		// by the plugin currently being edited.  May want to modify this
+		// behaviour in the future.
+		// Add all external extension point proposals to the list
+		fAllExtPoints = (ArrayList)getExternalExtensionPoints(model).clone();
+		// Add all internal extension point proposals to the list
+		fAllExtPoints.addAll(getInternalExtensionPoints(model));
 		
-		if (fExternalExtPoints == null) {
-			fExternalExtPoints = new ArrayList();
-			IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
-			for (int i = 0; i < plugins.length; i++) {
-				
-				// TODO
-				// remove the following check if && after IPluginModelBase#getId()
-				// is implemented
-				IResource res = plugins[i].getUnderlyingResource();
-				if (res != null && pModel != null && project.equals(res.getProject()))
-					continue;
-				
-				IPluginExtensionPoint[] points = plugins[i].getPluginBase().getExtensionPoints();
-				String id = plugins[i].getPluginBase().getId();
-				if (pModel != null && id.equals(pModelId))
-					continue;
-				for (int j = 0; j < points.length; j++)
-					fExternalExtPoints.add(new VirtualSchemaObject(points[j].getFullId(), points[j], F_EXTENSION_ATTRIBUTE_POINT_VALUE));
+		return fAllExtPoints;
+	}
+	
+	/**
+	 * @param model
+	 * @return
+	 */
+	private ArrayList getExternalExtensionPoints(IPluginModelBase model) {
+		// Return the previous external extension points if defined
+		if (fExternalExtPoints != null) {
+			return fExternalExtPoints;
+		}
+		// Query for all external extension points
+		fExternalExtPoints = new ArrayList();
+		// Get all plug-ins in the workspace
+		IPluginModelBase[] plugins = 
+			PDECore.getDefault().getModelManager().getPlugins();
+		// Process each plugin
+		for (int i = 0; i < plugins.length; i++) {
+			// Make sure this plugin is not the one we are currently 
+			// editing which defines internal extension points.
+			// We don't want to cache internal extension points because the
+			// workspace can change.
+			if (plugins[i].getPluginBase().getId().equals(
+					model.getPluginBase().getId())) {
+				// Skip this plugin
+				continue;
+			}
+			// Get all extension points defined by this plugin
+			IPluginExtensionPoint[] points = 
+				plugins[i].getPluginBase().getExtensionPoints();
+			// Process each extension point
+			for (int j = 0; j < points.length; j++) {
+				VirtualSchemaObject vObject = new VirtualSchemaObject(
+						PDEJavaHelper.getFullId(points[j], model),
+						points[j], 
+						F_EXTENSION_ATTRIBUTE_POINT_VALUE);
+				// Add the proposal to the list
+				fExternalExtPoints.add(vObject);
 			}
 		}
-		
-		fAllPoints = (ArrayList)fExternalExtPoints.clone();
-		IPluginExtensionPoint[] points = new IPluginExtensionPoint[0];
-		if (pModel != null)
-			points = pModel.getPluginBase().getExtensionPoints();
-		
-		for (int j = 0; j < points.length; j++)
-			fAllPoints.add(new VirtualSchemaObject(points[j].getFullId(), points[j], F_EXTENSION_ATTRIBUTE_POINT_VALUE));
-		return fAllPoints;
+		return fExternalExtPoints;
+	}
+	
+	/**
+	 * @param model
+	 * @return
+	 */
+	private ArrayList getInternalExtensionPoints(IPluginModelBase model) {
+		// Return the previous internal extension points if defined
+		if (fInternalExtPoints != null) {
+			// Realistically, this line should never be hit
+			return fInternalExtPoints;
+		}
+		fInternalExtPoints = new ArrayList();
+		// Get all extension points defined by this plugin
+		IPluginExtensionPoint[] points = 
+			model.getPluginBase().getExtensionPoints();
+		// Process each extension point
+		for (int j = 0; j < points.length; j++) {
+			VirtualSchemaObject vObject = new VirtualSchemaObject(
+					PDEJavaHelper.getFullId(points[j], model), 
+					points[j], 
+					F_EXTENSION_ATTRIBUTE_POINT_VALUE);
+			// Add the proposal to the list
+			fInternalExtPoints.add(vObject);
+		}
+		return fInternalExtPoints;
+	}
+	
+	/**
+	 * Returns a BundlePluginModel which has a getId() method that works.
+	 * getModel() method returns a PluginModel whose getId() method does not
+	 * work.
+	 * @return 
+	 */
+	private IPluginModelBase getPluginModelBase() {
+		FormEditor formEditor = fSourcePage.getEditor();
+		if ((formEditor instanceof PDEFormEditor) == false) {
+			return null;
+		}
+		IBaseModel bModel = ((PDEFormEditor)formEditor).getAggregateModel();
+		if ((bModel instanceof IPluginModelBase) == false) {
+			return null;
+		}
+		return (IPluginModelBase)bModel;
 	}
 	
 	public Image getImage(int type) {

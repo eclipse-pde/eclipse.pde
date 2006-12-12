@@ -39,7 +39,6 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginImport;
@@ -67,6 +66,7 @@ import org.eclipse.pde.internal.ui.editor.text.TextUtil;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.elements.ElementLabelProvider;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
+import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.BaseWizardSelectionPage;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -162,7 +162,7 @@ public class PointSelectionPage
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IPluginExtensionPoint){
 				IPluginExtensionPoint point = (IPluginExtensionPoint)inputElement;
-				String pointID = getFullId(point);
+				String pointID = PDEJavaHelper.getFullId(point, fModel);
 				ArrayList result = new ArrayList();
 				if (fTemplateCollection.getWizards() != null) {
 					Object[] wizards = fTemplateCollection.getWizards().getChildren();
@@ -216,7 +216,7 @@ public class PointSelectionPage
 			if (provider.isFullNameModeEnabled())
 				return provider.getText(extPoint);
 			
-			return getFullId(extPoint);
+			return PDEJavaHelper.getFullId(extPoint, fModel);
 		}
 		
 		public Image getImage(Object obj) {
@@ -477,7 +477,7 @@ public class PointSelectionPage
 	}
 
 	public boolean finish() {
-		String point = getFullId(fCurrentPoint);
+		String point = PDEJavaHelper.getFullId(fCurrentPoint, fModel);
 		
 		try {
 			IPluginExtension extension =
@@ -571,7 +571,7 @@ public class PointSelectionPage
 	private void handlePointSelection(IPluginExtensionPoint element) {
 		fCurrentPoint = element;
 		fTemplateViewer.setInput(fCurrentPoint);
-		String fullPointID = getFullId(fCurrentPoint); 
+		String fullPointID = PDEJavaHelper.getFullId(fCurrentPoint, fModel); 
 		
 		String description = 
 			XMLComponentRegistry.Instance().getDescription(fullPointID, XMLComponentRegistry.F_SCHEMA_COMPONENT);
@@ -645,24 +645,6 @@ public class PointSelectionPage
 				return (IExtensionWizard) element.createExecutableExtension();
 			}
 		};
-	}
-	
-	private String getFullId(IPluginExtensionPoint point) {
-		if (point instanceof PluginExtensionPointNode) {
-			String pointId = point.getId();
-			if ("3.2".equals(fModel.getPluginBase().getSchemaVersion()) && pointId.indexOf('.') > 0) //$NON-NLS-1$
-				return pointId;
-			String id = null;
-			if (fModel instanceof IFragmentModel) {
-				IFragment fragment = ((IFragmentModel)fModel).getFragment();
-				if (fragment != null)
-					id = fragment.getPluginId();
-			}
-			if (id == null)
-				id = fModel.getPluginBase().getId();
-			return id + '.' + pointId;
-		}
-		return point.getFullId();
 	}
 	
 	public void checkModel() {

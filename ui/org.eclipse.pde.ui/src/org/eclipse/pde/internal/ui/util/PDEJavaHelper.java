@@ -49,11 +49,15 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
+import org.eclipse.pde.internal.core.text.plugin.PluginExtensionPointNode;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.contentassist.TypeContentProposalListener;
@@ -506,6 +510,32 @@ public class PDEJavaHelper {
 		
 		return new TypeFieldAssistDisposer(adapter, proposalListener);
 	}
+
+	/**
+	 * @param point
+	 * @param fModel
+	 * @return
+	 */
+	public static String getFullId(IPluginExtensionPoint point,
+			IPluginModelBase model) {
+		
+		if ((point instanceof PluginExtensionPointNode) &&
+				(model != null)) {
+			String pointId = point.getId();
+			if ("3.2".equals(model.getPluginBase().getSchemaVersion()) && pointId.indexOf('.') > 0) //$NON-NLS-1$
+				return pointId;
+			String id = null;
+			if (model instanceof IFragmentModel) {
+				IFragment fragment = ((IFragmentModel)model).getFragment();
+				if (fragment != null)
+					id = fragment.getPluginId();
+			}
+			if (id == null)
+				id = model.getPluginBase().getId();
+			return id + '.' + pointId;
+		}
+		return point.getFullId();
+	}	
 	
 	
 }

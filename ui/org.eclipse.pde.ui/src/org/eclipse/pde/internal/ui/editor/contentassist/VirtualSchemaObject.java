@@ -24,9 +24,6 @@ import org.eclipse.pde.internal.core.util.XMLComponentRegistry;
 
 public class VirtualSchemaObject implements ISchemaObject {
 
-	// TODO: Performance improvement marker
-	// This object is not stored or cached anywhere
-	
 	private String fName; 
 	
 	private Object fDescription; 
