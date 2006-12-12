@@ -4,6 +4,6 @@ import java.io.File;
 
 public interface IProvisionerWizard extends IBasePluginWizard {
 
-	public abstract File[] getDirectories();
+	public File[] getDirectories();
 
 }
