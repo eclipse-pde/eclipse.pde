@@ -34,19 +34,19 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 public class JavaAttributeWizard extends Wizard {
-	
+
 	private static String STORE_SECTION = "JavaAttributeWizard"; //$NON-NLS-1$
-	
+
 	private String fClassName;
 	private IProject fProject;
 	private ISchemaAttribute fAttInfo;
 	private IPluginModelBase fModel;
 	protected NewTypeWizardPage fMainPage;
-	
+
 	public JavaAttributeWizard(JavaAttributeValue value) {
 		this(value.getProject(), value.getModel(), value.getAttributeInfo(), value.getClassName());
 	}
-	
+
 	public JavaAttributeWizard(IProject project, IPluginModelBase model, ISchemaAttribute attInfo, String className) {
 		fClassName = className;
 		fModel = model;
@@ -58,59 +58,61 @@ public class JavaAttributeWizard extends Wizard {
 		setWindowTitle(PDEUIMessages.JavaAttributeWizard_wtitle); 
 		setNeedsProgressMonitor(true);
 	}
-	
+
 	private IDialogSettings getSettingsSection(IDialogSettings master) {
 		IDialogSettings setting = master.getSection(STORE_SECTION);
 		if (setting == null)
 			setting = master.addNewSection(STORE_SECTION);
 		return setting;
 	}
-	
+
 	public void addPages() {
 		fMainPage = new JavaAttributeWizardPage(fProject, fModel, fAttInfo, fClassName);
 		addPage(fMainPage);
 		((JavaAttributeWizardPage)fMainPage).init();
 	}
-	
+
 	public boolean performFinish() {
 		IRunnableWithProgress op = new WorkspaceModifyOperation() {
-			protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
+			protected void execute(IProgressMonitor monitor) throws CoreException, InterruptedException {
 				fMainPage.createType(monitor);
-				IResource resource = fMainPage.getModifiedResource();
-				if (resource != null) {
-					selectAndReveal(resource);
-					if (fProject.hasNature(JavaCore.NATURE_ID)) {
-						IJavaProject jProject = JavaCore.create(fProject);
-						IJavaElement jElement = jProject.findElement(resource.getProjectRelativePath().removeFirstSegments(1));
-						if (jElement != null)
-							JavaUI.openInEditor(jElement);
-					} else if (resource instanceof IFile) {
-						IWorkbenchPage page = PDEPlugin.getActivePage();
-						IDE.openEditor(page, (IFile) resource, true);
-					}
-				}
 			}
 		};
 		try {
-			getContainer().run(false, true, op);
+			getContainer().run(true, true, op);
+			IResource resource = fMainPage.getModifiedResource();
+			if (resource != null) {
+				selectAndReveal(resource);
+				if (fProject.hasNature(JavaCore.NATURE_ID)) {
+					IJavaProject jProject = JavaCore.create(fProject);
+					IJavaElement jElement = jProject.findElement(resource.getProjectRelativePath().removeFirstSegments(1));
+					if (jElement != null)
+						JavaUI.openInEditor(jElement);
+				} else if (resource instanceof IFile) {
+					IWorkbenchPage page = PDEPlugin.getActivePage();
+					IDE.openEditor(page, (IFile) resource, true);
+				}
+			}
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
 		} catch (InterruptedException e) {
 			PDEPlugin.logException(e);
+		} catch (CoreException e) {
+			PDEPlugin.logException(e);
 		}
 		return true;
 	}
-	
+
 	protected void selectAndReveal(IResource newResource) {
 		BasicNewResourceWizard.selectAndReveal(newResource, PDEPlugin.getActiveWorkbenchWindow());
 	}
-	
+
 	public String getQualifiedName() {
 		if (fMainPage.getCreatedType() == null)
 			return null;
 		return fMainPage.getCreatedType().getFullyQualifiedName('$');
 	}
-	
+
 	public String getQualifiedNameWithArgs() {
 		String name = getQualifiedName();
 		if (name == null)
