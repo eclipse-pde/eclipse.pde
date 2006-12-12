@@ -90,11 +90,10 @@ public class ConvertSchemaToHTML extends Task {
 						return;
 					}
 
-				File file =
-					new File(
-						directory,
-						(extPoints[i].getFullId()).replace('.', '_') + ".html"); //$NON-NLS-1$ //$NON-NLS-2$
-				
+				String id = extPoints[i].getId();
+				if (id.indexOf('.') == -1)
+					id = pluginID + "." + id;
+				File file = new File(directory, id.replace('.', '_') + ".html"); //$NON-NLS-1$ //$NON-NLS-2$				
 				out = new PrintWriter(new FileWriter(file), true);
 				fTransformer.transform(schema, out, cssURL, SchemaTransformer.BUILD);
 			} catch (Exception e) {
