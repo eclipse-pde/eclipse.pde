@@ -77,7 +77,7 @@ public class ProductExportWizard extends BaseExportWizard {
 		String rootDirectory = fPage.getRootDirectory();
 		if ("".equals(rootDirectory.trim())) //$NON-NLS-1$
 			rootDirectory = ".";  //$NON-NLS-1$
-		ProductExportJob job = new ProductExportJob(info, fProductModel, rootDirectory);
+		ProductExportJob job = new ProductExportJob(info, fProductModel, rootDirectory, fPage.getJRE());
 		job.setUser(true);
 		job.schedule();
 		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_FEATURE_OBJ);

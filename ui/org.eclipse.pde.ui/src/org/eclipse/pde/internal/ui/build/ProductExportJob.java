@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.build;
 
+import java.io.File;
+
 import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
 import org.eclipse.pde.internal.core.exports.FeatureExportOperation;
 import org.eclipse.pde.internal.core.exports.ProductExportOperation;
@@ -18,17 +20,19 @@ import org.eclipse.pde.internal.core.iproduct.IProductModel;
 
 public class ProductExportJob extends FeatureExportJob {
 	
-	IProduct fProduct;
-	String fRoot;
+	private IProduct fProduct;
+	private String fRoot;
+	private File fJRELocation;
 	
-	public ProductExportJob(FeatureExportInfo info, IProductModel model, String productRoot) {
+	public ProductExportJob(FeatureExportInfo info, IProductModel model, String productRoot, File jreLocation) {
 		super(info);
 		fProduct = model.getProduct();
 		fRoot = productRoot;
+		fJRELocation = jreLocation;
 	}
 	
 	protected FeatureExportOperation createOperation() {
-		return new ProductExportOperation(fInfo, fProduct, fRoot);
+		return new ProductExportOperation(fInfo, fProduct, fRoot, fJRELocation);
 	}
 
 }

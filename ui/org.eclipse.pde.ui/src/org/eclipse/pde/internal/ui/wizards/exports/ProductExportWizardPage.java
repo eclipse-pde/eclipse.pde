@@ -10,7 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstallType;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -23,6 +30,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -34,6 +42,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 	private static final String S_SYNC_PRODUCT = "syncProduct"; //$NON-NLS-1$
 	private static final String S_EXPORT_SOURCE = "exportSource"; //$NON-NLS-1$
 	private static final String S_MULTI_PLATFORM = "multiplatform"; //$NON-NLS-1$
+	private static final String S_EXPORT_JRE = "exportJRE"; //$NON-NLS-1$
 
 	private Button fSyncButton;
 	private IStructuredSelection fSelection;
@@ -41,6 +50,9 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 	private ProductConfigurationSection fConfigurationGroup;
 	private Button fExportSource;
 	private Button fMultiPlatform;
+	private Button fExportJRE;
+	private Combo fExportJRECombo;
+	private Map fJREs;
 
 	public ProductExportWizardPage(IStructuredSelection selection) {
 		super("productExport"); //$NON-NLS-1$
@@ -114,6 +126,18 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		fExportSource = new Button(group, SWT.CHECK);
 		fExportSource.setText(PDEUIMessages.ExportWizard_includeSource);
 		
+		Composite jreComposite = new Composite(group, SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = layout.marginWidth = 0;
+		jreComposite.setLayout(layout);
+		jreComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		fExportJRE = new Button(jreComposite, SWT.CHECK);
+		fExportJRE.setText(PDEUIMessages.ExportWizard_includeJRE);
+		
+		fExportJRECombo = new Combo(jreComposite, SWT.READ_ONLY);
+		fExportJRECombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
 		if (getWizard().getPages().length > 1) {
 			fMultiPlatform = new Button(group, SWT.CHECK);
 			fMultiPlatform.setText(PDEUIMessages.ExportWizard_multi_platform);
@@ -137,6 +161,14 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		fExportSource.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
 		if (fMultiPlatform != null)
 			fMultiPlatform.setSelection(settings.getBoolean(S_MULTI_PLATFORM));
+		
+		fExportJRE.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+            	fExportJRECombo.setEnabled(fExportJRE.getSelection());
+            }}
+        );
+		
+		initializeJREs(settings.get(S_EXPORT_JRE));
 	}
 	
 	protected void updateProductFields() {
@@ -164,8 +196,33 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		settings.put(S_SYNC_PRODUCT, fSyncButton.getSelection());
 		fExportGroup.saveSettings(settings);
 		settings.put(S_EXPORT_SOURCE, doExportSource());
+		
+		settings.put(S_EXPORT_JRE, fExportJRE.getSelection() ? fExportJRECombo.getText() : ""); //$NON-NLS-1$
+		
 		if (fMultiPlatform != null)
 			settings.put(S_MULTI_PLATFORM, fMultiPlatform.getSelection());
+	}
+	
+	private void initializeJREs(String jre) {
+		fJREs = new HashMap();
+		int index = 0;
+		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
+		for (int i = 0; i < types.length; i++) {
+			IVMInstallType type = types[i];
+			IVMInstall[] installs = type.getVMInstalls();
+			for (int j = 0; j < installs.length; j++) {
+				IVMInstall install = installs[j];
+				fJREs.put(install.getName(), install.getInstallLocation());
+				fExportJRECombo.add(install.getName(), j);
+				if(jre != null && jre.equals(install.getName()))
+					index = j;
+			}
+		}
+		
+		boolean selected = (jre != null && !jre.equals("")); //$NON-NLS-1$
+		fExportJRE.setSelection(selected);
+		fExportJRECombo.setEnabled(selected);
+		fExportJRECombo.select(index);
 	}
 
 	protected boolean doSync() {
@@ -198,6 +255,12 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 
 	protected IFile getProductFile() {
 		return fConfigurationGroup.getProductFile();
+	}
+	
+	protected File getJRE() {
+		if(fExportJRE.getSelection())
+			return (File) fJREs.get(fExportJRECombo.getText());
+		return null;
 	}
 
 }
