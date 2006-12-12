@@ -8,14 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.parts;
+package org.eclipse.pde.internal.ui.editor.target;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.window.Window;
+import org.eclipse.pde.internal.core.ExternalModelManager;
+import org.eclipse.pde.internal.core.itarget.IAdditionalLocation;
+import org.eclipse.pde.internal.core.itarget.ILocationInfo;
+import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -34,15 +39,17 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public abstract class LocationDialog extends StatusDialog {
+public class LocationDialog extends StatusDialog {
 	
 	private Text fPath;
-	private String fLocation;
+	private ITarget fTarget;
+	private IAdditionalLocation fLocation;
 	private IStatus fOkStatus;
 	private IStatus fErrorStatus;
 
-	public LocationDialog(Shell parent, String location) {
+	public LocationDialog(Shell parent, ITarget target, IAdditionalLocation location) {
 		super(parent);
+		fTarget = target;
 		fLocation = location;
 	}
 	
@@ -82,7 +89,7 @@ public abstract class LocationDialog extends StatusDialog {
 		fPath.setLayoutData(gd);
 		
 		if (fLocation != null) {
-			fPath.setText(fLocation);
+			fPath.setText(fLocation.getPath());
 		}
 		
 		label = new Label(container, SWT.NONE);
@@ -143,8 +150,28 @@ public abstract class LocationDialog extends StatusDialog {
 		return fErrorStatus;
 	}
 	
-	protected abstract boolean hasPath(String path);
-		
+	protected boolean hasPath(String path) {
+		Path checkPath = new Path(path);
+		Path currentPath = (fLocation != null) ? new Path(fLocation.getPath()) : null;
+		if (currentPath != null && ExternalModelManager.arePathsEqual(checkPath, currentPath))
+			return false;
+		IAdditionalLocation[] locs = fTarget.getAdditionalDirectories();
+		for (int i = 0; i < locs.length; i++) {
+			if (ExternalModelManager.arePathsEqual(new Path(locs[i].getPath()), checkPath))
+				return true;
+		}
+		return isTargetLocation(checkPath);
+	}
+	
+	private boolean isTargetLocation(Path path) {
+		ILocationInfo info = fTarget.getLocationInfo();
+		if (info.useDefault()) {
+			Path home = new Path(ExternalModelManager.computeDefaultPlatformPath());
+			return ExternalModelManager.arePathsEqual(home, path);
+		} 
+		return ExternalModelManager.arePathsEqual(new Path(info.getPath()) , path);
+	}
+	
 	protected void handleBrowseFileSystem() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setFilterPath(fPath.getText());
@@ -165,11 +192,13 @@ public abstract class LocationDialog extends StatusDialog {
 	}
 	
 	protected void okPressed() {
-		fLocation = fPath.getText();
+		boolean add = fLocation == null;
+		if (add) {
+			fLocation = fTarget.getModel().getFactory().createAdditionalLocation();
+		}
+		fLocation.setPath(fPath.getText());
+		if (add) 
+			fTarget.addAdditionalDirectories(new IAdditionalLocation[]{fLocation});
 		super.okPressed();
-	}
-	
-	public String getLocation() {
-		return fLocation;
 	}
 }
