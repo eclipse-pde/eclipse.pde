@@ -123,10 +123,7 @@ public class DirectorySelectionPage extends WizardPage {
 				handleRemove();
 			}
 		});
-		updateButtons();
-		
-		// automatically bring up dialog so user doesn't click "Add..." to add a directory
-		handleAdd();
+		updateButtons();		
 	}
 	
 	private void handleAdd() {
