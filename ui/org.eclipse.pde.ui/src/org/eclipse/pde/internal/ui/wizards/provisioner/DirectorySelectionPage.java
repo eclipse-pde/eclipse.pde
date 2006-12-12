@@ -3,20 +3,21 @@ package org.eclipse.pde.internal.ui.wizards.provisioner;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.parts.LocationDialog;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -26,6 +27,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -36,19 +38,25 @@ public class DirectorySelectionPage extends WizardPage {
 			return get(PDEPluginImages.DESC_SITE_OBJ);
 		}
 	}
-
+	
+	private static String LAST_LOCATION = "last_location"; //$NON-NLS-1$
+	
 	Text fDir = null;
 	private TableViewer fTableViewer = null;
 	private ArrayList fElements = new ArrayList();
 	private Button fAddButton = null;
-	private Button fEditButton = null;
 	private Button fRemoveButton = null;
+	private String fLastLocation = null;
 
 	protected DirectorySelectionPage(String pageName) {
 		super(pageName);
 		setTitle(PDEUIMessages.DirectorySelectionPage_title);
 		setDescription(PDEUIMessages.DirectorySelectionPage_description);
 		setPageComplete(false);
+		Preferences pref = PDECore.getDefault().getPluginPreferences();
+		fLastLocation = pref.getString(LAST_LOCATION);
+		if (fLastLocation.length() == 0)
+			fLastLocation = pref.getString(ICoreConstants.PLATFORM_PATH);
 	}
 
 	public void createControl(Composite parent) {
@@ -87,6 +95,8 @@ public class DirectorySelectionPage extends WizardPage {
 				}
 			}
 		});
+		Dialog.applyDialogFont(fTableViewer.getControl());
+		Dialog.applyDialogFont(label);
 		
 		createButtons(client);
 		
@@ -104,16 +114,6 @@ public class DirectorySelectionPage extends WizardPage {
 			}
 		});
 		
-		fEditButton = new Button(parent, SWT.PUSH);
-		fEditButton.setText(PDEUIMessages.DirectorySelectionPage_edit);
-		fEditButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-		SWTUtil.setButtonDimensionHint(fEditButton);
-		fEditButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleEdit();
-			}
-		});
-		
 		fRemoveButton = new Button(parent, SWT.PUSH);
 		fRemoveButton.setText(PDEUIMessages.DirectorySelectionPage_remove);
 		fRemoveButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
@@ -124,14 +124,23 @@ public class DirectorySelectionPage extends WizardPage {
 			}
 		});
 		updateButtons();
+		
+		// automatically bring up dialog so user doesn't click "Add..." to add a directory
+		handleAdd();
 	}
 	
 	private void handleAdd() {
-		showDialog(-1);
-	}
-	
-	private void handleEdit() {
-		showDialog(fTableViewer.getTable().getSelectionIndex());
+		DirectoryDialog dialog = new DirectoryDialog(getShell());
+		dialog.setMessage(PDEUIMessages.DirectorySelectionPage_message);
+		dialog.setFilterPath(fLastLocation);
+		String path = dialog.open();
+		if (path != null) {
+			fLastLocation = path;
+			File newDirectory = new File(path);
+			fElements.add(newDirectory);
+			fTableViewer.add(newDirectory);
+			setPageComplete(true);
+		}
 	}
 	
 	private void handleRemove() {
@@ -142,44 +151,14 @@ public class DirectorySelectionPage extends WizardPage {
 		setPageComplete(!fElements.isEmpty());
 	}
 		
-	
-	private void showDialog(final int selectionIndex) {
-		final Object selection = fTableViewer.getElementAt(selectionIndex);
-		final String location = (selection != null) ? ((File)selection).getPath() : null;
-		BusyIndicator.showWhile(fTableViewer.getTable().getDisplay(), new Runnable() {
-			public void run() {
-				LocationDialog dialog = new LocationDialog(fTableViewer.getTable()
-						.getShell(), location) {
-
-					protected boolean hasPath(String path) {
-						return fElements.contains(new File(path));
-					}
-
-				};
-				dialog.create();
-				SWTUtil.setDialogSize(dialog, 500, -1);
-				if (dialog.open() == Window.OK) {
-					String path = dialog.getLocation();
-					File newDirectory = new File(path);
-					fElements.add(newDirectory);
-					if (selectionIndex > -1) {
-						fTableViewer.replace(newDirectory, selectionIndex);
-						fElements.remove(selection);
-					} else
-						fTableViewer.add(newDirectory);
-					setPageComplete(true);
-				}
-			}
-		});
-	}
-	
 	public File[] getLocations() {
+		Preferences pref = PDECore.getDefault().getPluginPreferences();
+		pref.setValue(LAST_LOCATION, fLastLocation);
 		return (File[]) fElements.toArray(new File[fElements.size()]);
 	}
 	
 	protected void updateButtons() {
 		int num = fTableViewer.getTable().getSelectionCount();
-		fEditButton.setEnabled(num == 1);
 		fRemoveButton.setEnabled(num > 0);
 	}
 

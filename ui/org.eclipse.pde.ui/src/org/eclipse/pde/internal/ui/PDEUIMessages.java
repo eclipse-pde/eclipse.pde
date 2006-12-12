@@ -181,6 +181,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String DirectorySelectionPage_label;
 
+	public static String DirectorySelectionPage_message;
+
 	public static String DirectorySelectionPage_remove;
 
 	public static String DirectorySelectionPage_title;

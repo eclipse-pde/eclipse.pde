@@ -17,7 +17,7 @@ public class FileSystemProvisionerWizard extends Wizard implements IProvisionerW
 		setWindowTitle(PDEUIMessages.FileSystemProvisionerWizard_title); 
 	}
 
-	public File[] getDirectories() {
+	public File[] getLocations() {
 		return fDirs;
 	}
 
