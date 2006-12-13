@@ -418,7 +418,9 @@ public class PDEState extends MinimalState {
 		for (int i = 0; i < newBundleURLs.length; i++) {
 			File file = new File(newBundleURLs[i].getFile());
 			try {
-				descriptions.add(addBundle(file, -1));
+				BundleDescription desc = addBundle(file, -1);
+				if (desc != null)
+					descriptions.add(desc);
 			} catch (PluginConversionException e) {
 			} catch (CoreException e) {
 			} catch (IOException e) {
