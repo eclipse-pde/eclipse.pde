@@ -9,7 +9,7 @@
    <extension-point id="templates" name="%expoint.templates.name" schema="schema/templates.exsd"/>
    <extension-point id="samples" name="%expoint.samples.name" schema="schema/samples.exsd"/>
    <extension-point id="osgiFrameworks" name="%expoint.osgiLauncher.name" schema="schema/osgiFrameworks.exsd"/>
-   <extension-point id="provisioners" name="%extension-point.name.0" schema="schema/provisioners.exsd"/>
+   <extension-point id="targetProvisioners" name="%extension-point.name.0" schema="schema/targetProvisioners.exsd"/>
 
 <!-- Extensions -->
    <extension
@@ -1753,7 +1753,7 @@
       </wizard>
     </extension>
     <extension
-          point="org.eclipse.pde.ui.provisioners">
+          point="org.eclipse.pde.ui.targetProvisioners">
        <provisioner
              class="org.eclipse.pde.internal.ui.wizards.provisioner.FileSystemProvisionerWizard"
              id="org.eclipse.pde.ui.directory"

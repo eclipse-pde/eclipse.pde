@@ -21,7 +21,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class AddTargetPluginsWizard extends NewWizard {
 	
-	private static final String PROVISIONER_POINT = "provisioners"; //$NON-NLS-1$
+	private static final String PROVISIONER_POINT = "targetProvisioners"; //$NON-NLS-1$
 	private ProvisionerListSelectionPage fSelectionPage = null;
 	private File[] fDirs = null;
 	private IProvisionerWizard fWizard = null;
