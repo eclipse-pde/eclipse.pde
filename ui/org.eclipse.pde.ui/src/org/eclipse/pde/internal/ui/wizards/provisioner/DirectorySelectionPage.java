@@ -13,7 +13,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
@@ -29,17 +29,23 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
 public class DirectorySelectionPage extends WizardPage {
 	
-	class FileLabelProvider extends SharedLabelProvider {
+	private static final Image fFolderImage = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
+            ISharedImages.IMG_OBJ_FOLDER).createImage();
+	private static final String LAST_LOCATION = "last_location"; //$NON-NLS-1$
+	
+	class FolderLabelProvider extends SharedLabelProvider {
+		
 		public Image getImage(Object obj) {
-			return get(PDEPluginImages.DESC_SITE_OBJ);
+			return fFolderImage;
 		}
 	}
-	
-	private static String LAST_LOCATION = "last_location"; //$NON-NLS-1$
 	
 	Text fDir = null;
 	private TableViewer fTableViewer = null;
@@ -74,7 +80,7 @@ public class DirectorySelectionPage extends WizardPage {
 		label.setLayoutData(gd);
 		
 		fTableViewer = new TableViewer(client);
-		fTableViewer.setLabelProvider(new FileLabelProvider());
+		fTableViewer.setLabelProvider(new FolderLabelProvider());
 		fTableViewer.setContentProvider(new ArrayContentProvider());
 		fTableViewer.setInput(fElements);
 		gd = new GridData(GridData.FILL_BOTH);
@@ -99,6 +105,8 @@ public class DirectorySelectionPage extends WizardPage {
 		Dialog.applyDialogFont(label);
 		
 		createButtons(client);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(client,
+							IHelpContextIds.FILE_SYSTEM_PROVISIONING_PAGE);
 		
 		setControl(client);
 	}
@@ -144,7 +152,16 @@ public class DirectorySelectionPage extends WizardPage {
 		Object[] elements = ((IStructuredSelection)fTableViewer.getSelection()).toArray();
 		for (int i = 0; i < elements.length; i++)
 			fElements.remove(elements[i]);
+		
+		Table table = fTableViewer.getTable();
+		int index = table.getSelectionIndex() - fElements.size();
+		if (index > fElements.size())
+			index = fElements.size() - 1;
+		
 		fTableViewer.remove(elements);
+		table.setSelection(index);
+		
+		updateButtons();
 		setPageComplete(!fElements.isEmpty());
 	}
 		

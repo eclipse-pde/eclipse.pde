@@ -181,4 +181,7 @@ public interface IHelpContextIds {
 	// Tools
 	public static final String ORGANIZE_MANIFESTS = PREFIX + "organize_manifest"; //$NON-NLS-1$
 	
+	// Provisioning
+	public static final String FILE_SYSTEM_PROVISIONING_PAGE = PREFIX + "file_system_provisioning_page"; //$NON-NLS-1$
+	
 }
