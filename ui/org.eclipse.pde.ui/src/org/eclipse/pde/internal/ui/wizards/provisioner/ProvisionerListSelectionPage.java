@@ -12,9 +12,9 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.jface.wizard.WizardSelectionPage;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.ElementList;
+import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.internal.ui.wizards.WizardElement;
 import org.eclipse.pde.internal.ui.wizards.WizardNode;
 import org.eclipse.pde.ui.IBasePluginWizard;
@@ -57,7 +57,7 @@ public class ProvisionerListSelectionPage extends WizardSelectionPage {
 			
 		fTableViewer = new TableViewer(sashForm, SWT.BORDER);
 		
-		fTableViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
+		fTableViewer.setLabelProvider(ListUtil.TABLE_LABEL_PROVIDER);
 		fTableViewer.setContentProvider(new ArrayContentProvider());
 		fTableViewer.setInput(fElements.getChildren());
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {

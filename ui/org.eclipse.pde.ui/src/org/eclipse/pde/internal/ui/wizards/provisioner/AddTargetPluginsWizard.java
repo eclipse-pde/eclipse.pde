@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.ElementList;
 import org.eclipse.pde.internal.ui.wizards.NewWizard;
@@ -62,12 +61,11 @@ public class AddTargetPluginsWizard extends NewWizard {
 		if (point == null)
 			return list;
 		IExtension[] extensions = point.getExtensions();
-		Image image = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_CATEGORY_OBJ);
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement[] elements =
 				extensions[i].getConfigurationElements();
 			for (int j = 0; j < elements.length; j++) {
-				WizardElement element = createWizardElement(elements[j], image);
+				WizardElement element = createWizardElement(elements[j]);
 				if (element != null) {
 					list.add(element);
 				}
@@ -76,12 +74,20 @@ public class AddTargetPluginsWizard extends NewWizard {
 		return list;
 	}
 	
-	protected WizardElement createWizardElement(IConfigurationElement config, Image image) {
+	protected WizardElement createWizardElement(IConfigurationElement config) {
 		String name = config.getAttribute(WizardElement.ATT_NAME);
 		String id = config.getAttribute(WizardElement.ATT_ID);
 		if (name == null || id == null)
 			return null;
 		WizardElement element = new WizardElement(config);
+		
+		String imageName = config.getAttribute(WizardElement.ATT_ICON);
+		Image image = null;
+		if (imageName != null) {
+			String pluginID = config.getNamespaceIdentifier();
+			image =
+				PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(pluginID, imageName);
+		}
 		element.setImage(image);
 		return element;
 	}
