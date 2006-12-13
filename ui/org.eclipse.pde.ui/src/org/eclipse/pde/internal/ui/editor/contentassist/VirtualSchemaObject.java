@@ -77,6 +77,10 @@ public class VirtualSchemaObject implements ISchemaObject {
 		return fType;
 	}
 	
+	public void setVType(int type) {
+		fType = type;
+	}
+	
 	private String getSchemaDescription(IPluginExtensionPoint point) {
 		String description = null;
 		if (point != null) {

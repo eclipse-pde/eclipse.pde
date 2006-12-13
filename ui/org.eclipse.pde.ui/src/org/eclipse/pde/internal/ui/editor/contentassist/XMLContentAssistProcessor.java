@@ -80,7 +80,9 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 
 	protected static final int F_EXTENSION_ATTRIBUTE_POINT_VALUE = 6;
 
-	protected static final int F_TOTAL_TYPES = 7;
+	protected static final int F_EXTENSION_POINT_AND_VALUE = 7;
+	
+	protected static final int F_TOTAL_TYPES = 8;
 	
 	// proposal generation type
 	private static final int 
@@ -222,7 +224,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		if (obj instanceof IPluginExtension) {
 			if (attr.getAttributeName().equals(IPluginExtension.P_POINT) && 
 					offset >= attr.getValueOffset())
-				return computeAttributeProposal(attr, offset, attrValue, getAllExtensionPoints());
+				return computeAttributeProposal(attr, offset, attrValue, getAllExtensionPoints(F_EXTENSION_ATTRIBUTE_POINT_VALUE));
 			ISchemaAttribute sAttr = XMLUtil.getSchemaAttribute(attr, ((IPluginExtension)obj).getPoint());
 			if (sAttr == null)
 				return null;
@@ -338,8 +340,16 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	private ICompletionProposal[] computeAddChildProposal(IDocumentNode node, int offset, IDocument doc, String filter) {
 		ArrayList propList = new ArrayList();
 		if (node instanceof IPluginBase) {
+			// Add extension to the list
 			addToList(propList, filter, new VirtualSchemaObject(F_STR_EXT, PDEUIMessages.XMLContentAssistProcessor_extensions, F_EXTENSION));
+			// Add extension point to the list
 			addToList(propList, filter, new VirtualSchemaObject(F_STR_EXT_PT, PDEUIMessages.XMLContentAssistProcessor_extensionPoints, F_EXTENSION_POINT));
+			// Add all avaliable extensions with point attribute values to the list
+			ArrayList allExtPts = getAllExtensionPoints(F_EXTENSION_POINT_AND_VALUE);
+			Iterator proposals = allExtPts.iterator();
+			while (proposals.hasNext()) {
+				addToList(propList, filter, (ISchemaObject)proposals.next());
+			}
 		} else if (node instanceof IPluginExtensionPoint) {
 			return null;
 		} else {
@@ -594,9 +604,10 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	}
 
 	/**
+	 * @param vSchemaType
 	 * @return
 	 */
-	private ArrayList getAllExtensionPoints() {
+	private ArrayList getAllExtensionPoints(int vSchemaType) {
 		// Return the previous extension points if defined
 		if (fAllExtPoints != null) {
 			return fAllExtPoints;
@@ -615,9 +626,10 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		// by the plugin currently being edited.  May want to modify this
 		// behaviour in the future.
 		// Add all external extension point proposals to the list
-		fAllExtPoints = (ArrayList)getExternalExtensionPoints(model).clone();
+		fAllExtPoints = 
+			(ArrayList)getExternalExtensionPoints(model, vSchemaType).clone();
 		// Add all internal extension point proposals to the list
-		fAllExtPoints.addAll(getInternalExtensionPoints(model));
+		fAllExtPoints.addAll(getInternalExtensionPoints(model, vSchemaType));
 		
 		return fAllExtPoints;
 	}
@@ -626,9 +638,11 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	 * @param model
 	 * @return
 	 */
-	private ArrayList getExternalExtensionPoints(IPluginModelBase model) {
+	private ArrayList getExternalExtensionPoints(IPluginModelBase model, 
+			int vSchemaType) {
 		// Return the previous external extension points if defined
 		if (fExternalExtPoints != null) {
+			updateExternalExtPointTypes(vSchemaType);
 			return fExternalExtPoints;
 		}
 		// Query for all external extension points
@@ -655,7 +669,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				VirtualSchemaObject vObject = new VirtualSchemaObject(
 						PDEJavaHelper.getFullId(points[j], model),
 						points[j], 
-						F_EXTENSION_ATTRIBUTE_POINT_VALUE);
+						vSchemaType);
 				// Add the proposal to the list
 				fExternalExtPoints.add(vObject);
 			}
@@ -664,10 +678,41 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	}
 	
 	/**
+	 * Handles edge case.
+	 * External extension points are cached.
+	 * As a result, these types persist over each other depending on what 
+	 * context content assist is invoked first:
+	 * F_EXTENSION_ATTRIBUTE_POINT_VALUE
+	 * F_EXTENSION_POINT_AND_VALUE
+	 * @param newVType
+	 */
+	private void updateExternalExtPointTypes(int newVType) {
+		// Ensure we have proposals
+		if (fExternalExtPoints.size() == 0) {
+			return;
+		}
+		// Get the first proposal
+		VirtualSchemaObject vObject = 
+			(VirtualSchemaObject)fExternalExtPoints.get(0);
+		// If the first proposals type is the same as the new type, then we
+		// do not have to do the update.  That is because all the proposals
+		// have the same type. 
+		if (vObject.getVType() == newVType) {
+			return;
+		}
+		// Update all the proposals with the new type
+		Iterator iterator = fExternalExtPoints.iterator();
+		while (iterator.hasNext()) {
+			((VirtualSchemaObject)iterator.next()).setVType(newVType);
+		}
+	}
+	
+	/**
 	 * @param model
 	 * @return
 	 */
-	private ArrayList getInternalExtensionPoints(IPluginModelBase model) {
+	private ArrayList getInternalExtensionPoints(IPluginModelBase model, 
+			int vSchemaType) {
 		// Return the previous internal extension points if defined
 		if (fInternalExtPoints != null) {
 			// Realistically, this line should never be hit
@@ -682,7 +727,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			VirtualSchemaObject vObject = new VirtualSchemaObject(
 					PDEJavaHelper.getFullId(points[j], model), 
 					points[j], 
-					F_EXTENSION_ATTRIBUTE_POINT_VALUE);
+					vSchemaType);
 			// Add the proposal to the list
 			fInternalExtPoints.add(vObject);
 		}
@@ -712,6 +757,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			switch(type) {
 			case F_EXTENSION_POINT:
 			case F_EXTENSION_ATTRIBUTE_POINT_VALUE:
+			case F_EXTENSION_POINT_AND_VALUE:
 				return fImages[type] = PDEPluginImages.DESC_EXT_POINT_OBJ.createImage();
 			case F_EXTENSION:
 				return fImages[type] = PDEPluginImages.DESC_EXTENSION_OBJ.createImage();
@@ -730,6 +776,13 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		for (int i = 0; i < fImages.length; i++)
 			if (fImages[i] != null && !fImages[i].isDisposed())
 				fImages[i].dispose();
+	}
+	
+	/**
+	 * @return
+	 */
+	public PDESourcePage getSourcePage() {
+		return fSourcePage;
 	}
 	
 }
