@@ -29,6 +29,11 @@ public interface IOutlineContentCreator {
 	/**
 	 * @return
 	 */
+	public ViewerComparator createDefaultOutlineComparator();
+	
+	/**
+	 * @return
+	 */
 	public ILabelProvider createOutlineLabelProvider();
 	
 	/**

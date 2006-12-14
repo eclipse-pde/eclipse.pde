@@ -141,6 +141,7 @@ public class PluginSection extends TableSection implements
 				PDEUIMessages.FeatureEditor_PluginSection_sortAlpha, 
 				ListUtil.NAME_COMPARATOR,
 				null,
+				null,
 				true);
 		
 		toolBarManager.add(fSortAction);

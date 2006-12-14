@@ -233,7 +233,10 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage,
 	 */
 	public abstract void updateSelection(Object object);
 	
-	protected ViewerComparator createDefaultOutlineComparator() {
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineContentCreator#createDefaultOutlineComparator()
+	 */
+	public ViewerComparator createDefaultOutlineComparator() {
 		return null;
 	}
 	

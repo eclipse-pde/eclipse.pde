@@ -160,6 +160,7 @@ public class RequiresSection extends TableSection implements
 				PDEUIMessages.FeatureEditor_RequiresSection_sortAlpha, 
 				ListUtil.NAME_COMPARATOR,
 				null,
+				null,
 				true);
 		
 		toolBarManager.add(fSortAction);

@@ -26,7 +26,7 @@ public abstract class KeyValueSourcePage extends PDEProjectionSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#createViewerSorter()
 	 */
-	protected ViewerComparator createDefaultOutlineComparator() {
+	public ViewerComparator createDefaultOutlineComparator() {
 		return new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if ((e1 instanceof IDocumentKey) &&
@@ -35,7 +35,9 @@ public abstract class KeyValueSourcePage extends PDEProjectionSourcePage {
 					IDocumentKey key2 = (IDocumentKey)e2;
 					return key1.getOffset() < key2.getOffset() ? -1 : 1;
 				}
-				return super.compare(viewer, e1, e2);
+				// Bundle manifest header elements
+				// Do not sort by default
+				return 0;
 			}
 		};
 	}

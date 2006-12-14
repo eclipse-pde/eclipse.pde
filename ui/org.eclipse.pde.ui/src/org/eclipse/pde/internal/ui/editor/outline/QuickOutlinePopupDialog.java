@@ -80,6 +80,8 @@ public class QuickOutlinePopupDialog extends PopupDialog implements
 	
 	private ViewerComparator fTreeViewerComparator;
 
+	private ViewerComparator fTreeViewerDefaultComparator;
+	
 	public QuickOutlinePopupDialog(Shell parent, int shellStyle, 
 			IOutlineContentCreator creator,
 			IOutlineSelectionHandler handler) {
@@ -109,6 +111,7 @@ public class QuickOutlinePopupDialog extends PopupDialog implements
 		fTreeContentProvider = null;
 		fTreeLabelProvider = null;
 		fTreeViewerComparator = null;		
+		fTreeViewerDefaultComparator = null;
 	}
 
 	/* (non-Javadoc)
@@ -140,7 +143,8 @@ public class QuickOutlinePopupDialog extends PopupDialog implements
 		// Add sort action to dialog menu
 		fSortAction = new SortAction(fTreeViewer,
 				PDEUIMessages.PDEMultiPageContentOutline_SortingAction_tooltip,
-				fTreeViewerComparator, null, false);
+				fTreeViewerComparator, fTreeViewerDefaultComparator, null, 
+				false);
 	}
 
 	/* (non-Javadoc)
@@ -160,9 +164,9 @@ public class QuickOutlinePopupDialog extends PopupDialog implements
 	 */
 	private void createUIWidgetTreeViewer(Composite parent) {
 		
-		// TODO: MP: QO: DEFER: Implement for PDE form pages
+		// NOTE: Instructions to implement for PDE form pages:
 		// Need to call PDEFormEditor.getFormOutline()
-		// PDE form editor is input
+		// Specify PDE form editor as input
 		// Need to adjust commandId="org.eclipse.pde.ui.quickOutline" 
 		// scope:  contextId="org.eclipse.ui.textEditorScope"
 		// SEE org.eclipse.ui.contexts.window
@@ -190,7 +194,11 @@ public class QuickOutlinePopupDialog extends PopupDialog implements
 		fTreeViewerComparator = fOutlineContentCreator.createOutlineComparator();	
 		// Set the comparator to null (sort action will be disabled initially 
 		// because of this)
-		fTreeViewer.setComparator(null);
+		// Create the default outline sorter (Most like this will just return
+		// null to indicate sorting disabled
+		fTreeViewerDefaultComparator = 
+			fOutlineContentCreator.createDefaultOutlineComparator();
+		fTreeViewer.setComparator(fTreeViewerDefaultComparator);
 		fTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		fTreeViewer.setUseHashlookup(true);
 		fTreeViewer.setInput(fOutlineContentCreator.getOutlineInput());

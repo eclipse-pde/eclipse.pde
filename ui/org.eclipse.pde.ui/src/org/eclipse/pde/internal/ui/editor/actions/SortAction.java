@@ -19,31 +19,79 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 
 public class SortAction extends Action {
 
-	private boolean fSorted = false;
+	private boolean fSorted;
+
 	private StructuredViewer fViewer;
+
 	private ViewerComparator fComparator;
 
+	private ViewerComparator fDefaultComparator;
+
+	/**
+	 * @param viewer
+	 * @param tooltipText
+	 * @param sorter
+	 * @param defaultSorter
+	 * @param listener
+	 * @param useMiniImage
+	 */
 	public SortAction(StructuredViewer viewer, String tooltipText,
-			ViewerComparator sorter, IPropertyChangeListener listener,
+			ViewerComparator sorter, ViewerComparator defaultSorter, 
+			IPropertyChangeListener listener,
 			boolean useMiniImage) {
+		
 		super(tooltipText, IAction.AS_CHECK_BOX);
+		// Set the tooltip
 		setToolTipText(tooltipText);
+		// Set the image
 		if (useMiniImage) {
 			setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO_MINI);
 		} else {
 			setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO);
 		}
-		fSorted = viewer.getComparator() == null ? false : true;
+		// Set the default comparator
+		fDefaultComparator = defaultSorter;
+		// Set the viewer
+		fViewer = viewer;
+		// Set the comparator
+		// If one was not specified, use the default
+		if (sorter == null) {
+			fComparator = new ViewerComparator();
+		} else {
+			fComparator = sorter;
+		}
+		// Determine if the viewer is already sorted
+		// Note: Most likely the default comparator is null
+		if (viewer.getComparator() == fDefaultComparator) {
+			fSorted = false;
+		} else {
+			fSorted = true;
+		}
+		// Set the status of this action depending on whether it is sorted or
+		// not
 		setChecked(fSorted);
-		fViewer= viewer;
-		fComparator = sorter != null ? sorter : new ViewerComparator();
-		if (listener != null)
+		// If a listener was specified, use it
+		if (listener != null) {
 			addListenerObject(listener);
+		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
 	public void run() {
-		fViewer.setComparator(fSorted ? null : fComparator);
-		fSorted = !fSorted;
+		// Toggle sorting on/off
+		if (fSorted) {
+			// Sorting is on
+			// Turn it off
+			fViewer.setComparator(fDefaultComparator);
+			fSorted = false;
+		} else {
+			// Sorting is off
+			// Turn it on
+			fViewer.setComparator(fComparator);
+			fSorted = true;
+		}
 	}
 
 }

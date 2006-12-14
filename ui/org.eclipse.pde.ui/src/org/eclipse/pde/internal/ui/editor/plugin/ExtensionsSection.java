@@ -231,7 +231,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		});			
 		// Add sort action to the tool bar
 		fSortAction = new SortAction(fExtensionTree, 
-				PDEUIMessages.ExtensionsPage_sortAlpha, null, this, true);
+				PDEUIMessages.ExtensionsPage_sortAlpha, null, null, this, true);
 		toolBarManager.add(fSortAction);
 		// Add collapse action to the tool bar
 		fCollapseAction = new CollapseAction(fExtensionTree, 
