@@ -1756,7 +1756,7 @@
           point="org.eclipse.pde.ui.targetProvisioners">
        <provisioner
              class="org.eclipse.pde.internal.ui.wizards.provisioner.FileSystemProvisionerWizard"
-             icon="icons/obj16/fldr_obj.gif"
+             icon="$nl$/icons/obj16/fldr_obj.gif"
              id="org.eclipse.pde.ui.directory"
              name="%provisioner.file.name">
           <description>
