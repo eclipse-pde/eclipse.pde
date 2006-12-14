@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.pde.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.pde.ui" id="provisioners" name="Provisioner"/>
+         <meta.schema plugin="org.eclipse.pde.ui" id="targetProvisioners" name="Target Provisioners"/>
       </appInfo>
       <documentation>
          &lt;p&gt;
@@ -66,7 +66,7 @@ This extension point is used to register new target plug-in provisioners. Each p
                </appInfo>
             </annotation>
          </attribute>
-          <attribute name="icon" type="string">
+         <attribute name="icon" type="string">
             <annotation>
                <documentation>
                   a relative path of an icon that will be used to visually 
