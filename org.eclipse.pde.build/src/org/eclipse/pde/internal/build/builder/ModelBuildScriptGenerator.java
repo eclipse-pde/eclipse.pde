@@ -203,14 +203,14 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 		return false;
 	}
-	
+
 	public static boolean specialDotProcessing(Properties properties, String[] classpathInfo) {
 		findAndReplaceDot(classpathInfo);
 		String sourceFolder = properties.getProperty(PROPERTY_SOURCE_PREFIX + DOT);
 		if (sourceFolder != null) {
 			properties.setProperty(PROPERTY_SOURCE_PREFIX + EXPANDED_DOT, sourceFolder);
 			properties.remove(PROPERTY_SOURCE_PREFIX + DOT);
-			
+
 			String outputValue = properties.getProperty(PROPERTY_OUTPUT_PREFIX + DOT);
 			if (outputValue != null) {
 				properties.setProperty(PROPERTY_OUTPUT_PREFIX + EXPANDED_DOT, outputValue);
@@ -335,7 +335,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			String jarName = availableJars[i].getName(true);
 			String jarLocation = getJARLocation(jarName);
 			//avoid destructive cleans
-			if(jarLocation.equals("") || jarLocation.startsWith(DOT + DOT) || jarLocation.equals(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER))) //$NON-NLS-1$
+			if (jarLocation.equals("") || jarLocation.startsWith(DOT + DOT) || jarLocation.equals(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER))) //$NON-NLS-1$
 				continue;
 			if (availableJars[i].type == CompiledEntry.JAR) {
 				script.printDeleteTask(null, jarLocation, null);
@@ -368,7 +368,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (customBuildCallbacks != null) {
 			params = new HashMap(1);
 			params.put(PROPERTY_DESTINATION_TEMP_FOLDER, baseDestination.toString());
-			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_LOGS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null); 
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_LOGS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 		}
 		List destinations = new ArrayList(5);
 		Properties properties = getBuildProperties();
@@ -384,7 +384,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 
 		if (customBuildCallbacks != null) {
-			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_LOGS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null); 
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_LOGS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 		}
 		script.printTargetEnd();
 	}
@@ -417,7 +417,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (customBuildCallbacks != null) {
 			params = new HashMap(1);
 			params.put(PROPERTY_TARGET_FOLDER, baseDestination.toString());
-			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_SOURCES, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null); 
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_SOURCES, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 		}
 		List destinations = new ArrayList(5);
 		Properties properties = getBuildProperties();
@@ -439,7 +439,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 
 		if (customBuildCallbacks != null) {
-			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_SOURCES, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null); 
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_SOURCES, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 		}
 		script.printTargetEnd();
 	}
@@ -456,15 +456,15 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		destination = destination.append(fullName);
 		String root = destination.toString();
 		script.printMkdirTask(root);
-		
+
 		Map params = null;
 		if (customBuildCallbacks != null) {
 			params = new HashMap(3);
 			params.put(PROPERTY_TARGET_FOLDER, root);
 			params.put(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
-			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null); 
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 		}
-		
+
 		List destinations = new ArrayList(5);
 		destinations.add(destination);
 		String include = (String) getBuildProperties().get(PROPERTY_BIN_INCLUDES);
@@ -511,7 +511,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		genarateIdReplacementCall(destination.toString());
 
 		if (customBuildCallbacks != null) {
-			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null); 
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 		}
 
 		script.printTargetEnd();
@@ -694,11 +694,15 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (javacTarget == null)
 			script.printProperty(IXMLConstants.PROPERTY_JAVAC_TARGET, "1.2"); //$NON-NLS-1$  
 		if (bootClasspath == null) {
-			script.println("<path id=\"path_bootclasspath\">"); //$NON-NLS-1$
-			script.println("\t<fileset dir=\"${java.home}/lib\">"); //$NON-NLS-1$
-			script.println("\t\t<include name=\"*.jar\"/>"); //$NON-NLS-1$
-			script.println("\t</fileset>"); //$NON-NLS-1$
-			script.println("</path>"); //$NON-NLS-1$
+			script.println("<condition property=\"dir_bootclasspath\" value=\"${java.home}/../Classes\">");//$NON-NLS-1$  
+			script.println("\t<os family=\"mac\"/>");//$NON-NLS-1$  
+			script.println("</condition>");//$NON-NLS-1$  
+			script.println("<property name=\"dir_bootclasspath\" value=\"${java.home}/lib\"/>");//$NON-NLS-1$  
+			script.println("<path id=\"path_bootclasspath\">");//$NON-NLS-1$  
+			script.println("\t<fileset dir=\"${dir_bootclasspath}\">");//$NON-NLS-1$  
+			script.println("\t\t<include name=\"*.jar\"/>");//$NON-NLS-1$  
+			script.println("\t</fileset>");//$NON-NLS-1$  
+			script.println("</path>");//$NON-NLS-1$  
 			script.printPropertyRefid(PROPERTY_BOOTCLASSPATH, "path_bootclasspath"); //$NON-NLS-1$
 		}
 
@@ -710,21 +714,21 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			}
 			jreProfile = null;
 		}
-		
+
 		if (javacSource != null)
 			script.printProperty(PROPERTY_BUNDLE_JAVAC_SOURCE, javacSource);
 		if (javacTarget != null)
 			script.printProperty(PROPERTY_BUNDLE_JAVAC_TARGET, javacTarget);
 		if (bootClasspath != null)
 			script.printProperty(PROPERTY_BUNDLE_BOOTCLASSPATH, bootClasspath);
-				
+
 		String source, target = null;
 		String[] modelEnvironments = model.getExecutionEnvironments();
 		String[] environments = null;
 		if (jreProfile != null) {
 			environments = new String[modelEnvironments.length + 1];
 			environments[0] = jreProfile;
-			System.arraycopy(modelEnvironments, 0, environments, 1, modelEnvironments.length);	
+			System.arraycopy(modelEnvironments, 0, environments, 1, modelEnvironments.length);
 		} else {
 			environments = modelEnvironments;
 		}
@@ -867,7 +871,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (customBuildCallbacks != null) {
 			params = new HashMap(1);
 			params.put(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
-			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_BUILD_JARS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null); 
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_BUILD_JARS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 		}
 		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
 			String name = ((CompiledEntry) iter.next()).getName(false);
@@ -875,14 +879,14 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printAntCallTask(name, true, null);
 		}
 		if (customBuildCallbacks != null) {
-			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_BUILD_JARS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null); 
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_BUILD_JARS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 		}
 		script.printTargetEnd();
 
 		script.println();
 		script.printTargetDeclaration(TARGET_BUILD_SOURCES, TARGET_INIT, null, null, null);
 		if (customBuildCallbacks != null) {
-			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_BUILD_SOURCES, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null); 
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_BUILD_SOURCES, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 		}
 		for (Iterator iter = compiledJarNames.iterator(); iter.hasNext();) {
 			String jarName = ((CompiledEntry) iter.next()).getName(false);
@@ -891,7 +895,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printAntCallTask(srcName, true, null);
 		}
 		if (customBuildCallbacks != null) {
-			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_BUILD_SOURCES, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null); 
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + TARGET_BUILD_SOURCES, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 		}
 		script.printTargetEnd();
 	}
@@ -1010,7 +1014,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 			references = new HashMap(1);
 			references.put(name + PROPERTY_CLASSPATH, null);
-			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + name, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, references); 
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + name, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, references);
 		}
 
 		script.printComment("compile the source code"); //$NON-NLS-1$
@@ -1037,14 +1041,14 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			String excludedFromJar = entry.getExcludedFromJar();
 			if (excludedFromJar != null)
 				excludes += ',' + excludedFromJar;
-			
+
 			fileSets[i] = new FileSet(sources[i], null, null, null, excludes, null, null);
 		}
 
 		script.printCopyTask(null, destdir, fileSets, true, false);
 
 		if (customBuildCallbacks != null) {
-			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST_COMPILE + name, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, references); 
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST_COMPILE + name, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, references);
 		}
 
 		String jarLocation = getJARLocation(entry.getName(true));
@@ -1061,7 +1065,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (customBuildCallbacks != null) {
 			params.clear();
 			params.put(PROPERTY_JAR_LOCATION, jarLocation);
-			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + name, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, references); 
+			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_POST + name, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, references);
 		}
 		script.printTargetEnd();
 	}
