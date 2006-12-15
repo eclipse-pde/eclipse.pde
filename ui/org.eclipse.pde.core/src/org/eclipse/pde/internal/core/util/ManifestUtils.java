@@ -58,6 +58,7 @@ public class ManifestUtils {
 						continue;
 					String[] tokens = entry.getTokens();
 					for (int i = 0; i < tokens.length; i++) {
+						if(tokens[i].length() == 0) continue;
 						root = javaProject.getPackageFragmentRoot(project.getFolder(tokens[i]));
 						if (root != null && root.exists())
 							pkgFragRoots.add(root);
