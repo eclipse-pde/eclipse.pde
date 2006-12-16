@@ -45,6 +45,11 @@ This extension point is used to register new target plug-in provisioners. Each p
    </element>
 
    <element name="provisioner">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name" icon="icon"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
@@ -96,7 +101,7 @@ represent the provisioner.
             <meta.element translatable="true"/>
          </appInfo>
          <documentation>
-            human readable description of the provisioner
+            human-readable description of the provisioner
          </documentation>
       </annotation>
    </element>
