@@ -757,8 +757,8 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			switch(type) {
 			case F_EXTENSION_POINT:
 			case F_EXTENSION_ATTRIBUTE_POINT_VALUE:
-			case F_EXTENSION_POINT_AND_VALUE:
 				return fImages[type] = PDEPluginImages.DESC_EXT_POINT_OBJ.createImage();
+			case F_EXTENSION_POINT_AND_VALUE:
 			case F_EXTENSION:
 				return fImages[type] = PDEPluginImages.DESC_EXTENSION_OBJ.createImage();
 			case F_ELEMENT:
