@@ -196,6 +196,8 @@ public class ClasspathUtilCore {
 	}
 	
 	public static String getSourceZipName(String libraryName) {
+		if (libraryName.equals(".")) //$NON-NLS-1$
+			return ""; //$NON-NLS-1$
 		int dot = libraryName.lastIndexOf('.');
 		return (dot != -1) ? libraryName.substring(0, dot) + "src.zip" : libraryName;	 //$NON-NLS-1$
 	}
