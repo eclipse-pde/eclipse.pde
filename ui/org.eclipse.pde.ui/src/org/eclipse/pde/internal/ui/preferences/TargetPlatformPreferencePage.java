@@ -117,8 +117,11 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	}
 	
 	public void dispose() {
-		fPluginsTab.dispose();
-		fSourceTab.dispose();
+		// null pointer check - bug 168337
+		if (fPluginsTab != null)
+			fPluginsTab.dispose();
+		if (fSourceTab != null)
+			fSourceTab.dispose();
 		super.dispose();
 	}
 
