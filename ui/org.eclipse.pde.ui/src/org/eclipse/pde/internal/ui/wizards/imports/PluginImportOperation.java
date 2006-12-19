@@ -14,11 +14,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Stack;
 import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -62,6 +66,7 @@ import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.plugin.ClasspathComputer;
@@ -330,6 +335,8 @@ public class PluginImportOperation extends JarImportOperation {
 		WorkspaceBuildModel buildModel = new WorkspaceBuildModel(project.getFile("build.properties")); //$NON-NLS-1$
 		if (!isJARd(model) || containsCode(new File(model.getInstallLocation()))) {
 			String[] libraries = getLibraryNames(model, false);
+			if (libraries.length == 0) 
+				libraries = new String[]{"."}; //$NON-NLS-1$
 			for (int i = 0; i < libraries.length; i++) {
 				if (ClasspathUtilCore.containsVariables(libraries[i]))
 					continue;
@@ -339,7 +346,13 @@ public class PluginImportOperation extends JarImportOperation {
 										: new Path(name);
 				IResource jarFile = project.findMember(libraryPath);
 				if (jarFile != null) {
-					IResource srcZip = jarFile.getProject().findMember(ClasspathUtilCore.getSourceZipName(jarFile.getName()));
+					String srcName = ClasspathUtilCore.getSourceZipName(libraryPath.lastSegment());
+					IResource srcZip = jarFile.getProject().findMember(srcName);
+					// srcZip == null if plug-in has embedded source
+					// if it jarred, all necessary files already in src folder
+					if (srcZip == null && libraries[i].equals(".")  && !isJARd(model)) //$NON-NLS-1$
+						// if src does not exist (and returns null), then must not be plug-in with embedded source
+						srcZip = jarFile.getProject().findMember("src"); //$NON-NLS-1$
 					if (srcZip != null) {
 						String jarName = libraries[i].equals(".") ? "" : libraryPath.removeFileExtension().lastSegment(); //$NON-NLS-1$ //$NON-NLS-2$
 						String folder = addBuildEntry(buildModel, "source." + libraries[i], "src" + (jarName.length() == 0 ? "/" : "-" + jarName + "/")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
@@ -347,26 +360,85 @@ public class PluginImportOperation extends JarImportOperation {
 						if (!dest.exists()) {
 							dest.create(true, true, null);
 						}
-						extractZipFile(srcZip.getLocation().toFile(), dest.getFullPath(), new SubProgressMonitor(monitor, 1));
-						if (isJARd(model)) {
-							extractJavaResources(jarFile.getLocation().toFile(), dest, new SubProgressMonitor(monitor, 1));
+						if (srcZip instanceof IFile) {
+							extractZipFile(srcZip.getLocation().toFile(), dest.getFullPath(), new SubProgressMonitor(monitor, 1));
+							srcZip.delete(true, null);
+						} else 
+							monitor.worked(1);
+
+						if (jarFile instanceof IFile) {
+							if (isJARd(model)) {
+								extractJavaResources(jarFile.getLocation().toFile(), dest, new SubProgressMonitor(monitor, 1));
+							} else {
+								extractResources(jarFile.getLocation().toFile(), dest, new SubProgressMonitor(monitor, 1));
+							}
+							jarFile.delete(true, null);
 						} else {
-							extractResources(jarFile.getLocation().toFile(), dest, new SubProgressMonitor(monitor, 1));
+							copyAndDeleteBinaryContents((IContainer)jarFile, dest, new SubProgressMonitor(monitor, 1));
 						}
-						srcZip.delete(true, null);
-						jarFile.delete(true, null);
 					}
 				} else if (name.equals(".") && project.getFolder("src").exists()) { //$NON-NLS-1$ //$NON-NLS-2$
 					addBuildEntry(buildModel, "source..", "src/"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}	
 		}
-		configureBinIncludes(buildModel, model);
+		configureBinIncludes(buildModel, model, project);
 		if (list.size() > 0)
 			configureSrcIncludes(buildModel, list);
 		buildModel.save();
 	}
 	
+	private void copyAndDeleteBinaryContents(IContainer srcFolder, IFolder dest, IProgressMonitor monitor) {
+		try {
+			// get all the folders for which we want to search
+			IResource[] children = dest.members();
+			ArrayList validFolders = new ArrayList();
+			for (int i = 0; i < children.length; i++) 
+				if (children[i] instanceof IFolder) {
+					String folderName = children[i].getName();
+					IResource folder = srcFolder.findMember(folderName);
+					if (folder != null && folder instanceof IFolder)
+						validFolders.add(folder);
+				}
+			
+			monitor.beginTask(new String(), validFolders.size());
+			
+			ListIterator li = validFolders.listIterator();
+			while (li.hasNext()) {
+				IFolder folder = (IFolder)li.next();
+				int pathSegments = folder.getProjectRelativePath().segmentCount() - 1;
+				Stack stack = new Stack();
+				IResource[] resources = folder.members();
+				for (int i = 0; i < resources.length; i++) 
+					stack.push(resources[i]);
+				
+				while (!stack.isEmpty()) {
+					IResource res = (IResource) stack.pop();
+					if (res instanceof IFile) {
+						if (!res.getName().endsWith(".class")) { //$NON-NLS-1$
+							String pathName = res.getProjectRelativePath().removeFirstSegments(pathSegments).toString();
+ 							IFile destFile = dest.getFile(pathName);
+							if(!destFile.getParent().exists()) {
+								CoreUtility.createFolder((IFolder)destFile.getParent());
+							}
+							// file might exist if previous project was deleted without removing underlying resources
+							if (destFile.exists())
+								destFile.delete(true, null);
+							res.move(destFile.getFullPath(), true, null);
+						}
+					} else {
+						resources = ((IFolder)res).members();
+						for (int i = 0; i < resources.length; i++) 
+							stack.push(resources[i]);
+					}
+				}
+				folder.delete(true, null);
+				monitor.worked(1);
+			}
+		} catch (CoreException e) {
+		}
+	}
+
 	private List importAdditionalResources(IProject project, IPluginModelBase model,
 			SubProgressMonitor monitor) throws CoreException {
 		SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
@@ -391,8 +463,10 @@ public class PluginImportOperation extends JarImportOperation {
 		return list;
 	}
 
-	private void configureBinIncludes(WorkspaceBuildModel buildModel, IPluginModelBase model) throws CoreException {
-		IBuildEntry entry = buildModel.getBuild(true).getEntry("bin.includes"); //$NON-NLS-1$
+	private void configureBinIncludes(WorkspaceBuildModel buildModel, IPluginModelBase model, IProject project) throws CoreException {
+		IBuild build = buildModel.getBuild(true);
+		IBuildEntry entry = build.getEntry("bin.includes"); //$NON-NLS-1$
+		HashMap libraryDirs = getSourceDirectories(build);
 		if (entry == null) {
 			entry = buildModel.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
 			File location = new File(model.getInstallLocation());
@@ -400,18 +474,44 @@ public class PluginImportOperation extends JarImportOperation {
 				File[] files = location.listFiles();
 				for (int i = 0; i < files.length; i++) {
 					String token = files[i].getName();
-					if (files[i].isDirectory())
+					if ((project.findMember(token) == null) && (build.getEntry(IBuildEntry.JAR_PREFIX + token) == null))
+							continue;
+					if (files[i].isDirectory()) {
 						token = token + "/"; //$NON-NLS-1$
+						if (libraryDirs.containsKey(token))
+							token = libraryDirs.get(token).toString();
+					}
 					entry.addToken(token);
 				}
 			} else {
 				String[] tokens = getTopLevelResources(location);
 				for (int i = 0; i < tokens.length; i++) {
+					IResource res = project.findMember(tokens[i]);
+					if ((res == null) && (build.getEntry(IBuildEntry.JAR_PREFIX + tokens[i]) == null))
+						continue;
+					if ((res instanceof IFolder) && (libraryDirs.containsKey(tokens[i])))
+						continue;
 					entry.addToken(tokens[i]);
 				}
 			}
 			buildModel.getBuild().add(entry);
 		}
+	}
+	
+	private HashMap getSourceDirectories(IBuild build) {
+		HashMap set = new HashMap();
+		IBuildEntry[] entries = build.getBuildEntries();
+		for (int i = 0; i < entries.length; i++) {
+			String name = entries[i].getName();
+			if (name.startsWith(IBuildEntry.JAR_PREFIX)) {
+				name = name.substring(7);
+				String[] tokens = entries[i].getTokens();
+				for (int j = 0; j < tokens.length; j++) {
+					set.put(tokens[j], name);
+				}
+			}
+		}
+		return set;
 	}
 
 	private void configureSrcIncludes(WorkspaceBuildModel buildModel, List list) throws CoreException {
