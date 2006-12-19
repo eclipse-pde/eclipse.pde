@@ -179,7 +179,7 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 					return features[i].getFeature(null);
 		}
 		int qualifierIdx = -1;
-		if (versionId != null && (qualifierIdx = versionId.indexOf('.' + IBuildPropertiesConstants.PROPERTY_QUALIFIER))!= -1) {
+		if (versionId != null && (((qualifierIdx = versionId.indexOf('.' + IBuildPropertiesConstants.PROPERTY_QUALIFIER)) != -1) || ((qualifierIdx = versionId.indexOf(IBuildPropertiesConstants.PROPERTY_QUALIFIER)) != -1))) {
 			Version versionToMatch = Version.parseVersion(versionId.substring(0, qualifierIdx));
 			for (int i = 0; i < features.length; i++) {
 				Version featureVersion = Version.parseVersion(features[i].getVersionedIdentifier().getVersion().toString());

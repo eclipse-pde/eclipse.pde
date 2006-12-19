@@ -431,7 +431,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			return description;
 
 		int qualifierIdx = -1;
-		if ((qualifierIdx = version.indexOf('.' + IBuildPropertiesConstants.PROPERTY_QUALIFIER)) != -1) {
+		if ((qualifierIdx = version.indexOf(IBuildPropertiesConstants.PROPERTY_QUALIFIER)) != -1) {
 			BundleDescription[] bundles = getState().getBundles(bundleId);
 			Version versionToMatch = Version.parseVersion(version.substring(0, qualifierIdx));
 			for (int i = 0; i < bundles.length; i++) {
@@ -692,7 +692,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	private void forceQualifiers() {
 		BundleDescription[] resolvedBundles = state.getResolvedBundles(); //We only get the resolved bundles since, changing the qualifier should not change the resolution state 
 		for (int i = 0; i < resolvedBundles.length; i++) {
-			if (resolvedBundles[i].getVersion().getQualifier().equals(PROPERTY_QUALIFIER)) {
+			if (resolvedBundles[i].getVersion().getQualifier().endsWith(PROPERTY_QUALIFIER)) {
 				BundleDescription b = resolvedBundles[i];
 				unqualifiedBundles.add(state.removeBundle(b.getBundleId())); //We keep the removed bundle so we can reinsert it in the state when we are done
 				String newVersion = QualifierReplacer.replaceQualifierInVersion(b.getVersion().toString(), b.getSymbolicName(), getQualifierPropery(b.getLocation()), null);
