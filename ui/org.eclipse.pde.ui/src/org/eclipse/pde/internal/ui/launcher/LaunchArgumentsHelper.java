@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -26,6 +27,7 @@ import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
@@ -173,7 +175,7 @@ public class LaunchArgumentsHelper {
 	}
 	
 	public static String[] constructClasspath(ILaunchConfiguration configuration) throws CoreException {
-		String jarPath = getStartupJarPath();
+		String jarPath = TargetPlatform.usesEquinoxStartup() ? getEquinoxStartupPath() : getStartupJarPath();
 		if (jarPath == null)
 			return null;
 		
@@ -185,6 +187,33 @@ public class LaunchArgumentsHelper {
 		while (tok.hasMoreTokens())
 			entries.add(tok.nextToken().trim());
 		return (String[])entries.toArray(new String[entries.size()]);
+	}
+	
+	private static String getEquinoxStartupPath() throws CoreException {
+		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel("org.eclipse.equinox.launcher"); //$NON-NLS-1$
+		if (model != null) {
+			IResource resource = model.getUnderlyingResource();
+			if (resource == null) 
+				return model.getInstallLocation();
+			IProject project = resource.getProject();
+			if (project.hasNature(JavaCore.NATURE_ID)) {
+				IJavaProject jProject = JavaCore.create(project);
+				IClasspathEntry[] entries = jProject.getRawClasspath();
+				for (int i = 0; i < entries.length; i++) {
+					int kind = entries[i].getEntryKind();
+					if (kind == IClasspathEntry.CPE_SOURCE || kind == IClasspathEntry.CPE_LIBRARY) {
+						IPackageFragmentRoot[] roots = jProject.findPackageFragmentRoots(entries[i]);
+						for (int j = 0; j < roots.length; j++) {
+							if (roots[i].getPackageFragment("org.eclipse.equinox.launcher").exists()) { //$NON-NLS-1$
+								IPath path = entries[i].getOutputLocation().removeFirstSegments(1);
+								return project.getLocation().append(path).toOSString();
+							}
+						}
+					}
+				}
+			}
+		}
+		return null;
 	}
 		
 	private static String getStartupJarPath() throws CoreException {

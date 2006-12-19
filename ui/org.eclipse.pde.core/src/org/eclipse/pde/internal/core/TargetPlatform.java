@@ -531,4 +531,8 @@ public class TargetPlatform implements IEnvironmentVariables {
 		return PDECore.getDefault().getModelManager().findEntry("org.eclipse.equinox.app") != null; //$NON-NLS-1$
 	}
 	
+	public static boolean usesEquinoxStartup() {
+		return PDECore.getDefault().getModelManager().findEntry("org.eclipse.equinox.launcher") != null; //$NON-NLS-1$
+	}	
+	
 }

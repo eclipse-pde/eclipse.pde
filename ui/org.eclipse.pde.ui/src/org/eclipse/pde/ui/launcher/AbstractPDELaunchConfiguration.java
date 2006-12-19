@@ -332,6 +332,8 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * @since 3.3
 	 */
 	public String getMainClass() {
+		if (TargetPlatform.usesEquinoxStartup())
+			return "org.eclipse.equinox.launcher.Main"; //$NON-NLS-1$
 		return "org.eclipse.core.launcher.Main"; //$NON-NLS-1$
 	}
 	

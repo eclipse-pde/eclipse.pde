@@ -92,7 +92,7 @@ public class ConvertSchemaToHTML extends Task {
 
 				String id = extPoints[i].getId();
 				if (id.indexOf('.') == -1)
-					id = pluginID + "." + id;
+					id = pluginID + "." + id; //$NON-NLS-1$
 				File file = new File(directory, id.replace('.', '_') + ".html"); //$NON-NLS-1$ //$NON-NLS-2$				
 				out = new PrintWriter(new FileWriter(file), true);
 				fTransformer.transform(schema, out, cssURL, SchemaTransformer.BUILD);
