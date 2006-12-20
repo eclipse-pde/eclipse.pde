@@ -49,6 +49,7 @@ import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -56,7 +57,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -304,9 +307,9 @@ public abstract class AbstractPluginBlock {
 		} catch (InterruptedException e) {
 		} finally {
 			if (op.hasErrors())
-				new PluginStatusDialog(fTab.getControl().getShell(), op).open();
+				new PluginStatusDialog(getShell(), op).open();
 			else
-				MessageDialog.openInformation(fTab.getControl().getShell(), PDEUIMessages.AdvancedLauncherTab_pluginValidation, PDEUIMessages.AdvancedLauncherTab_noProblems); // 
+				MessageDialog.openInformation(getShell(), PDEUIMessages.AdvancedLauncherTab_pluginValidation, PDEUIMessages.AdvancedLauncherTab_noProblems); // 
 		}
 	}
 	
@@ -321,7 +324,7 @@ public abstract class AbstractPluginBlock {
 
 	private void handleWorkingSets() {
 		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
-		IWorkingSetSelectionDialog dialog = workingSetManager.createWorkingSetSelectionDialog(fTab.getControl().getShell(), true);
+		IWorkingSetSelectionDialog dialog = workingSetManager.createWorkingSetSelectionDialog(getShell(), true);
 		if (dialog.open() == Window.OK) {
 			String[] ids = getPluginIDs(dialog.getSelection());
 			PluginModelManager manager = PDECore.getDefault().getModelManager();
@@ -552,6 +555,17 @@ public abstract class AbstractPluginBlock {
 			}
 		}
 		adjustGroupState();
+	}
+	
+	protected Shell getShell() {
+		// use Shell of launcher window.  If launcher window is disposed (not sure how it could happen), use workbenchwindow.  Bug 168198
+		try {
+			Control c = fTab.getControl();
+			if (!c.isDisposed())
+				return c.getShell();
+		} catch (SWTException e) {
+		}
+		return PDEPlugin.getActiveWorkbenchShell();
 	}
 	
 }
