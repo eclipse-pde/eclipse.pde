@@ -908,7 +908,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 	
 	private void handleAdd() {
 		AddTargetPluginsWizard wizard = new AddTargetPluginsWizard();
-		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+		WizardDialog dialog = new WizardDialog(fPage.getShell(), wizard);
 		dialog.create();
 		SWTUtil.setDialogSize(dialog, 400, 450);
 		dialog.open();
