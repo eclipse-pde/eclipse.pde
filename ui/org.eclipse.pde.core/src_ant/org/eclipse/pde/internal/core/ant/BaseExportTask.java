@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.internal.core.PDECoreMessages;
@@ -53,7 +54,17 @@ public abstract class BaseExportTask extends Task {
 				return Status.OK_STATUS;
 			}
 		};
-		job.schedule(2000);
+		
+		// if running in ant runner, block until job is done.  Prevents Exiting before completed
+		// blocking will cause errors if done when running in regular runtime.
+		if (isAntRunner()) {
+			try {
+				job.schedule();
+				job.join();
+			} catch (InterruptedException e) {
+			}
+		} else 
+			job.schedule(2000);
 	}
 	
 	public void setExportType(String type) {
@@ -78,6 +89,15 @@ public abstract class BaseExportTask extends Task {
 	
 	public void setQualifier(String qualifier) {
 		fQualifier = qualifier;
+	}
+	
+	public boolean isAntRunner() {
+		String args [] = Platform.getCommandLineArgs();
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].equals("-application")) //$NON-NLS-1$
+				return args[i+1].equals("org.eclipse.ant.core.antRunner"); //$NON-NLS-1$
+		}
+		return false;
 	}
 	
 	protected abstract FeatureExportOperation getExportOperation();
