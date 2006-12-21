@@ -31,6 +31,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.ICoreConstants;
@@ -49,6 +50,7 @@ import org.eclipse.pde.internal.ui.editor.target.OpenTargetProfileAction;
 import org.eclipse.pde.internal.ui.util.FileExtensionFilter;
 import org.eclipse.pde.internal.ui.util.FileValidator;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.wizards.target.NewTargetDefinitionWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ModifyEvent;
@@ -151,6 +153,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			public void widgetSelected(SelectionEvent e) {
 				if (!fProfileCombo.getText().equals("")) //$NON-NLS-1$
 					new OpenTargetProfileAction(getShell(), getTargetModel(), fProfileCombo.getText()).run();
+				else 
+					openTargetWizard();
 			}
 		});
 		
@@ -352,19 +356,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		if (pref.startsWith("${workspace_loc:")) { //$NON-NLS-1$
 			try {
 				pref = pref.substring(16, pref.length() -1);
-				IPath targetPath = new Path(pref);
-				IFile file = PDEPlugin.getWorkspace().getRoot().getFile(targetPath);
-				// If a saved workspace profile no longer exists in the workspace, skip it.
-				if (file != null && file.exists()) {
-					TargetModel model = new TargetModel();
-					model.load(new BufferedInputStream(file.getContents()), false);
-					String value = model.getTarget().getName();
-					value = value + " [" + file.getFullPath().toString() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-					if (fProfileCombo.indexOf(value) == -1)
-						fProfileCombo.add(value, 1); //index 0 for "" (null target)
-					fProfileCombo.setText(value);
-					fContainsWorkspaceProfile = true;
-				} 
+				IFile file = PDEPlugin.getWorkspace().getRoot().getFile(new Path(pref));
+				addWorkspaceTarget(file);
 			}catch (CoreException e) {
 			}
 		} else if (pref.length() > 3){ //$NON-NLS-1$
@@ -381,6 +374,20 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			if (id.equals(prefId))
 				fProfileCombo.setText(name);
 		}
+	}
+	
+	private void addWorkspaceTarget(IFile file) throws CoreException {
+		// If a saved workspace profile no longer exists in the workspace, skip it.
+		if (file != null && file.exists()) {
+			TargetModel model = new TargetModel();
+			model.load(new BufferedInputStream(file.getContents()), false);
+			String value = model.getTarget().getName();
+			value = value + " [" + file.getFullPath().toString() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+			if (fProfileCombo.indexOf(value) == -1)
+				fProfileCombo.add(value, 1); //index 0 for "" (null target)
+			fProfileCombo.setText(value);
+			fContainsWorkspaceProfile = true;
+		} 
 	}
 	
 	private void handleTargetBrowse() {
@@ -401,15 +408,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 		if (dialog.open() == Window.OK) {
 			IFile file = (IFile)dialog.getFirstResult();
-			TargetModel model = new TargetModel();
 			try {
-				model.load(new BufferedInputStream(file.getContents()), false);
-				String value = model.getTarget().getName();
-				value = value + " [" + file.getFullPath().toString() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-				if (fProfileCombo.indexOf(value) == -1) 
-					fProfileCombo.add(value, 1); // index 0 for "" null profile so add at 1
-				fProfileCombo.setText(value);
-				fContainsWorkspaceProfile = true;
+				addWorkspaceTarget(file);
 			} catch (CoreException e) {
 			}
 		}
@@ -641,5 +641,21 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	
 	protected String[] getImplicitPlugins() {
 		return fImplicitDependenciesTab.getImplicitPlugins();
+	}
+	
+	private void openTargetWizard() {
+		NewTargetDefinitionWizard wizard = new NewTargetDefinitionWizard();
+		WizardDialog dialog = new WizardDialog(getShell(), wizard);
+		wizard.setInitialPath(new Path(new String()));
+		dialog.create();
+		SWTUtil.setDialogSize(dialog, 400, 450);
+		if (dialog.open() == Window.OK) {
+			IPath filePath = wizard.getFilePath();
+			IFile file = PDEPlugin.getWorkspace().getRoot().getFile(filePath);
+			try {
+				addWorkspaceTarget(file);
+			} catch (CoreException e) {
+			}
+		}
 	}
 }

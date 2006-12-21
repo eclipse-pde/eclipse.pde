@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.wizards.target;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -22,15 +23,20 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 public class NewTargetDefinitionWizard extends BasicNewResourceWizard {
 	
 	TargetDefinitionWizardPage fPage;
+	IPath fInitialPath = null;
+	IPath fFilePath = null;
 	
 	public void addPages() {
 		fPage = new TargetDefinitionWizardPage("profile", getSelection()); //$NON-NLS-1$
+		if (fInitialPath != null)
+			fPage.setContainerFullPath(fInitialPath);
 		addPage(fPage);
 	}
 
 	public boolean performFinish() {
 		try {
 			getContainer().run(false, true, getOperation());
+			fFilePath = fPage.getContainerFullPath().append(fPage.getFileName());
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
 			return false;
@@ -57,6 +63,14 @@ public class NewTargetDefinitionWizard extends BasicNewResourceWizard {
 		else if (option == TargetDefinitionWizardPage.USE_CURRENT_TP)
 			return new TargetDefinitionFromPlatformOperation(fPage.createNewFile());
 		return new TargetDefinitionFromTargetOperation(fPage.createNewFile(), fPage.getTargetId());
+	}
+	
+	public void setInitialPath(IPath path) {
+		fInitialPath = path;
+	}
+	
+	public IPath getFilePath() {
+		return fFilePath;
 	}
 
 }
