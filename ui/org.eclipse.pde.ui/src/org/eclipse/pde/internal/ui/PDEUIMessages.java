@@ -2794,4 +2794,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String XMLStructureViewer_taskName;
 	
+	public static String AddExportPackageResolution_Label;
+	
 }

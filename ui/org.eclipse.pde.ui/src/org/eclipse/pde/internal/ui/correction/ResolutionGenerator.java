@@ -58,15 +58,17 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 			case PDEMarkerFactory.M_DIRECTIVE_HAS_NO_EFFECT:
 				return getRemoveInternalDirectiveResolution(marker);
 			case PDEMarkerFactory.M_MISMATCHED_EXEC_ENV:
-				return new IMarkerResolution[] { new UpdateClasspathResolution(AbstractPDEMarkerResolution.RENAME_TYPE) };
+				return new IMarkerResolution[] { new UpdateClasspathResolution(AbstractPDEMarkerResolution.RENAME_TYPE)};
 			case PDEMarkerFactory.M_UNKNOW_EXEC_ENV:
-				return new IMarkerResolution[] { new RemoveUnknownExecEnvironments(AbstractPDEMarkerResolution.REMOVE_TYPE) };
+				return new IMarkerResolution[] { new RemoveUnknownExecEnvironments(AbstractPDEMarkerResolution.REMOVE_TYPE)};
 			case PDEMarkerFactory.M_DEPRECATED_IMPORT_SERVICE: 
-				return new IMarkerResolution[] { new RemoveImportExportServicesResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, ICoreConstants.IMPORT_SERVICE) };
+				return new IMarkerResolution[] { new RemoveImportExportServicesResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, ICoreConstants.IMPORT_SERVICE)};
 			case PDEMarkerFactory.M_DEPRECATED_EXPORT_SERVICE: 
-				return new IMarkerResolution[] { new RemoveImportExportServicesResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, ICoreConstants.EXPORT_SERVICE) };
+				return new IMarkerResolution[] { new RemoveImportExportServicesResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, ICoreConstants.EXPORT_SERVICE)};
 			case PDEMarkerFactory.M_UNECESSARY_DEP:
 				return new IMarkerResolution[] {new RemoveRequireBundleResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker.getAttribute("bundleId", null))}; //$NON-NLS-1$
+			case PDEMarkerFactory.M_MISSING_EXPORT_PKGS:
+				return new IMarkerResolution[] {new AddExportPackageMarkerResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker.getAttribute("packages", null))}; //$NON-NLS-1$
 			case PDEMarkerFactory.B_REMOVE_SLASH_FILE_ENTRY:
 				return new IMarkerResolution[] { new RemoveSeperatorBuildEntryResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
 			case PDEMarkerFactory.B_APPEND_SLASH_FOLDER_ENTRY:
