@@ -35,6 +35,10 @@ public class ExportPackageObject extends PackageObject {
         super(header, fragment.getElementName(), null, versionAttribute);
     }
     
+    public ExportPackageObject(ManifestHeader header, String id, String version, String versionAttribute) {
+    	super(header, id, version, versionAttribute);
+    }
+    
     protected void processFriends() {
     	String[] friends = getDirectives(FRIENDS);
     	if (friends != null) {
