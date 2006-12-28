@@ -18,7 +18,9 @@ import java.util.Iterator;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -30,6 +32,7 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
@@ -135,6 +138,10 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 			String propertiesFileComment = NLS.bind(PDEUIMessages.ExternalizeStringsOperation_propertiesComment, file.getProject().getName());
 			ByteArrayInputStream pStream = new ByteArrayInputStream(propertiesFileComment.getBytes());
 			try {
+				IContainer container = file.getParent();
+				if (!container.exists())
+					// project will exists, therefore we can assume if !IContainer.exist(), the object is an IFolder
+					CoreUtility.createFolder((IFolder)container);
 				file.create(pStream, true, new NullProgressMonitor());
 				pStream.close();
 			} catch (CoreException e1) {
