@@ -327,7 +327,15 @@ public class WorkspaceModelManager
 		} else if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
 			if (model instanceof IBundlePluginModelBase) {
 				if (isBundleManifestFile(file)) {
+					// check to see if localization changed (bug 146912)
+					String oldLocalization = ((IBundlePluginModelBase)model).getBundleLocalization();
 					loadModel(((IBundlePluginModelBase)model).getBundleModel(), true);
+					String newLocalization = ((IBundlePluginModelBase)model).getBundleLocalization();
+					if (model instanceof AbstractModel && 
+							(oldLocalization != null && (newLocalization == null || !oldLocalization.equals(newLocalization))) ||
+							(newLocalization != null && (oldLocalization == null || !newLocalization.equals(oldLocalization))))
+						((AbstractModel)model).resetNLResourceHelper();
+					
 				} else {
 					ISharedExtensionsModel extensions = ((IBundlePluginModelBase)model).getExtensionsModel();
 					boolean reload = extensions != null;
