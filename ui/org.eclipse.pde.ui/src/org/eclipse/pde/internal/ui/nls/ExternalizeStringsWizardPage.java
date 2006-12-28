@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -243,6 +244,7 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 
 		createTableViewer(sash);
 		createSourceViewer(sash);
+		initialize();
 		
 		setPageComplete(hasCheckedElements());
 		
@@ -327,7 +329,6 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		fLocalizationText.addModifyListener(fModifyListener);
 		
 		fInputViewer.setInput(PDEPlugin.getDefault());
-		fInputViewer.setCheckedElements(fModelChangeTable.getPreSelected());
 	}
 
 	private void createTableViewer(Composite parent) {
@@ -410,6 +411,13 @@ public class ExternalizeStringsWizardPage extends WizardPage {
 		
 		fEmptyDoc = new Document();
 		fSourceViewer.setDocument(fEmptyDoc);
+	}
+	
+	// must set selection after source viewer is created, otherwise you get an NPE.
+	private void initialize() {
+		Object[] preSelect = fModelChangeTable.getPreSelected();
+		fInputViewer.setSelection(new StructuredSelection(preSelect));
+		fInputViewer.setCheckedElements(fModelChangeTable.getPreSelected());
 	}
 	
 	private void handleSelectionChanged(SelectionChangedEvent event) {
