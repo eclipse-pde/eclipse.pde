@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.core.IEditableModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECore;
@@ -41,7 +42,7 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 	private boolean fEditable = true;
 
 	private IBundleModelFactory fFactory;
-	
+
 	private static final String MANIFEST_VERSION = "Manifest-Version"; //$NON-NLS-1$
 
 	public WorkspaceBundleModel(IFile file) {
@@ -70,7 +71,10 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 	}
 
 	public String getInstallLocation() {
-		return fUnderlyingResource.getLocation().removeLastSegments(2).addTrailingSeparator().toOSString();
+		IPath path = fUnderlyingResource.getLocation();
+		if(path == null)
+			return null;
+		return path.removeLastSegments(2).addTrailingSeparator().toOSString();
 	}
 
 	public boolean isDirty() {
