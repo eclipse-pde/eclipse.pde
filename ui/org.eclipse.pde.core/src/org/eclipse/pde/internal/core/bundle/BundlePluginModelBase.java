@@ -41,6 +41,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.PluginImport;
 import org.eclipse.pde.internal.core.plugin.PluginLibrary;
+import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 
 public abstract class BundlePluginModelBase extends AbstractModel
 		implements IBundlePluginModelBase, IPluginModelFactory {
@@ -124,6 +125,9 @@ public abstract class BundlePluginModelBase extends AbstractModel
 			fExtensionsModel.removeModelChangedListener(fBundlePluginBase);
 		}
 		fExtensionsModel = extensionsModel;
+		if (fExtensionsModel instanceof PluginModelBase) {
+			((PluginModelBase)fExtensionsModel).setLocalization(getBundleLocalization());
+		}
 		if (extensionsModel != null && fBundlePluginBase != null)
 			extensionsModel.addModelChangedListener(fBundlePluginBase);
 	}

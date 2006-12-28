@@ -34,6 +34,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	private boolean fIsEnabled;
 	private PluginDocumentHandler fHandler;
 	private IPluginModelFactory fFactory;
+	private String fLocalization;
 	
 	public PluginModelBase(IDocument document, boolean isReconciling) {
 		super(document, isReconciling);	
@@ -142,7 +143,8 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 		URL[] locations = PDEManager.getNLLookupLocations(this);
 		return (locations.length == 0)
 				? null 
-				: new NLResourceHelper("plugin", locations); //$NON-NLS-1$
+				: new NLResourceHelper(fLocalization == null ? "plugin" : fLocalization, //$NON-NLS-1$
+						locations);
 	}
 	
 	/* (non-Javadoc)
@@ -158,5 +160,9 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 		if (fHandler != null)
 			return fHandler.getLastErrorNode();
 		return null;
+	}
+	
+	public void setLocalization(String localization) {
+		fLocalization = localization;
 	}
 }
