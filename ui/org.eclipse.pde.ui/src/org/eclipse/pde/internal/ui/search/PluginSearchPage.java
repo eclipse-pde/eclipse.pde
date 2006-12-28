@@ -18,6 +18,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.text.TextSelection;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.search.PluginSearchInput;
 import org.eclipse.pde.internal.core.search.PluginSearchScope;
@@ -345,12 +347,20 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 					patterns[j] = ((QueryData) previousQueries.get(i)).text;
 				}
 				patternCombo.setItems(patterns);
+				initSelections();
 				container.setPerformActionEnabled(
 					patternCombo.getText().length() > 0);
 			}
 			patternCombo.setFocus();
 		}
 		super.setVisible(visible);
+	}
+
+	private void initSelections() {
+		ISelection selection = container.getSelection();
+		if(selection instanceof TextSelection) {
+			patternCombo.setText(((TextSelection) selection).getText());
+		}
 	}
 
 }
