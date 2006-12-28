@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -107,6 +108,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		validateExtensibleAPI();		
 		validateTranslatableHeaders();
 		validateImportExportServices();
+		validateBundleLocalization();
 	}
 
 	private void validateExportPackages() {
@@ -1067,6 +1069,43 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						PDEMarkerFactory.CAT_DEPRECATION);
 			}
 		}
+	}
+
+	private void validateBundleLocalization() {
+		IHeader header = (IHeader) fHeaders.get(Constants.BUNDLE_LOCALIZATION);
+		if (header == null)
+			return;
+		String location = header.getValue();
+		String fileName = null; 
+		int index = location.lastIndexOf('/');
+		if (index > 0) {
+			fileName = location.substring(index + 1);
+			location = location.substring(0, index);
+		} else {
+			fileName = location;
+			location = new String();
+		} 
+		
+		IResource res = fProject.findMember(location);
+		if (res == null || !(res instanceof IContainer)) {
+			report(PDECoreMessages.BundleErrorReporter_localization_folder_not_exist, header.getLineNumber() + 1, 
+					CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_RESOURCE), PDEMarkerFactory.CAT_OTHER);
+			return;
+		}
+		IContainer folder = (IContainer)res;
+		try {
+			IResource[] children = folder.members();
+			for (int i = 0; i < children.length; i++) {
+				if (!(children[i] instanceof IFile))
+					continue;
+				String childName = children[i].getName();
+				if (childName.endsWith(".properties") && childName.startsWith(fileName)) //$NON-NLS-1$
+					return;
+			}
+		} catch (CoreException e) {
+		}
+		report(PDECoreMessages.BundleErrorReporter_localization_properties_file_not_exist, header.getLineNumber() + 1, 
+				CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_RESOURCE), PDEMarkerFactory.CAT_OTHER);
 	}
 
 	private void validateFragmentHost(IHeader requireBundleHeader, ManifestElement element) {

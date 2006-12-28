@@ -23,6 +23,10 @@ public class PDECoreMessages extends NLS {
 
 	public static String BundleErrorReporter_badFilter;
 
+	public static String BundleErrorReporter_localization_folder_not_exist;
+
+	public static String BundleErrorReporter_localization_properties_file_not_exist;
+
 	public static String BundleErrorReporter_reqExecEnv_conflict;
 
 	public static String BundleErrorReporter_reqExecEnv_unknown;
