@@ -10,17 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.osgi.util.NLS;
@@ -55,7 +54,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 	 * @see org.eclipse.jface.wizard.IWizard#addPages
 	 */
 	public void addPages() {
-		setNeedsProgressMonitor(true);
+		setNeedsProgressMonitor(false);
 
 		fPage = new FeatureImportWizardPage();
 		addPage(fPage);
@@ -73,20 +72,26 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 	 * @see Wizard#performFinish()
 	 */
 	public boolean performFinish() {
-		try {
-			IFeatureModel[] models = fPage.getSelectedModels();
-			fPage.storeSettings(true);
-			IPath targetPath = computeTargetPath();
+		IFeatureModel[] models = fPage.getSelectedModels();
+		fPage.storeSettings(true);
+		IPath targetPath = computeTargetPath();
 
-			IRunnableWithProgress op = getImportOperation(
-					getShell(), fPage.isBinary(), models, targetPath);
-			getContainer().run(true, true, op);
-		} catch (InterruptedException e) {
-			return false;
-		} catch (InvocationTargetException e) {
-			PDEPlugin.logException(e);
-			return true; // exception handled
-		}
+		IReplaceQuery query = new ReplaceQuery(getShell());
+		final FeatureImportOperation op =
+			new FeatureImportOperation(models, fPage.isBinary(), targetPath, query);
+		Job job = new Job(PDEUIMessages.FeatureImportWizard_title) {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					PDEPlugin.getWorkspace().run(op, monitor);
+				} catch (CoreException e) {
+					PDEPlugin.logException(e);
+					return Status.CANCEL_STATUS;
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.setUser(true);
+		job.schedule();
 		return true;
 	}
 
@@ -94,98 +99,67 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 	 * 
 	 * @return IPath or null
 	 */private IPath computeTargetPath() {
-		IPath pluginsLocation = PDEPlugin.getWorkspace().getRoot().getLocation();
-		if("plugins".equals(pluginsLocation.lastSegment())) //$NON-NLS-1$
-			return pluginsLocation.removeLastSegments(1).append("features"); //$NON-NLS-1$
-		return null;
-	}
+		 IPath pluginsLocation = PDEPlugin.getWorkspace().getRoot().getLocation();
+		 if("plugins".equals(pluginsLocation.lastSegment())) //$NON-NLS-1$
+			 return pluginsLocation.removeLastSegments(1).append("features"); //$NON-NLS-1$
+		 return null;
+	 }
 
-	/**
-	 * 
-	 * @param shell
-	 * @param models
-	 * @param targetPath null to use default workspace location
-	 * @return the import operation
-	 */
-	public static IRunnableWithProgress getImportOperation(
-		final Shell shell,
-		final boolean binary,
-		final IFeatureModel[] models,
-		final IPath targetPath) {
-		return new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-				throws InvocationTargetException, InterruptedException {
-				try {
-					IReplaceQuery query = new ReplaceQuery(shell);
-					FeatureImportOperation op =
-						new FeatureImportOperation(models, binary, targetPath, query);
-					PDEPlugin.getWorkspace().run(op, monitor);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				} catch (OperationCanceledException e) {
-					throw new InterruptedException(e.getMessage());
-				} finally {
-					monitor.done();
-				}
-			}
-		};
-	}
+	 private static class ReplaceDialog extends MessageDialog {
+		 public ReplaceDialog(Shell parentShell, String dialogMessage) {
+			 super(
+					 parentShell,
+					 PDEUIMessages.FeatureImportWizard_messages_title,
+					 null,
+					 dialogMessage,
+					 MessageDialog.QUESTION,
+					 new String[] {
+							 IDialogConstants.YES_LABEL,
+							 IDialogConstants.YES_TO_ALL_LABEL,
+							 IDialogConstants.NO_LABEL,
+							 PDEUIMessages.FeatureImportWizard_noToAll, 
+							 IDialogConstants.CANCEL_LABEL },
+							 0);
+		 }
+	 }
 
-	private static class ReplaceDialog extends MessageDialog {
-		public ReplaceDialog(Shell parentShell, String dialogMessage) {
-			super(
-				parentShell,
-				PDEUIMessages.FeatureImportWizard_messages_title,
-				null,
-				dialogMessage,
-				MessageDialog.QUESTION,
-				new String[] {
-					IDialogConstants.YES_LABEL,
-					IDialogConstants.YES_TO_ALL_LABEL,
-					IDialogConstants.NO_LABEL,
-					PDEUIMessages.FeatureImportWizard_noToAll, 
-					IDialogConstants.CANCEL_LABEL },
-				0);
-		}
-	}
+	 private static class ReplaceQuery implements IReplaceQuery {
+		 private Shell fShell;
+		 public ReplaceQuery(Shell shell) {
+			 this.fShell = shell;
+		 }
 
-	private static class ReplaceQuery implements IReplaceQuery {
-		private Shell fShell;
-		public ReplaceQuery(Shell shell) {
-			this.fShell = shell;
-		}
+		 private int yesToAll = 0;
+		 private int[] RETURNCODES = {
+				 IReplaceQuery.YES,
+				 IReplaceQuery.YES,
+				 IReplaceQuery.NO,
+				 IReplaceQuery.NO,
+				 IReplaceQuery.CANCEL };
 
-		private int yesToAll = 0;
-		private int[] RETURNCODES = {
-				IReplaceQuery.YES,
-				IReplaceQuery.YES,
-				IReplaceQuery.NO,
-				IReplaceQuery.NO,
-				IReplaceQuery.CANCEL };
+		 public int doQuery(IProject project) {
+			 if (yesToAll != 0)
+				 return yesToAll > 0 ? IReplaceQuery.YES : IReplaceQuery.NO;
 
-		public int doQuery(IProject project) {
-			if (yesToAll != 0)
-				return yesToAll > 0 ? IReplaceQuery.YES : IReplaceQuery.NO;
-
-			final String message = NLS.bind(
-					PDEUIMessages.FeatureImportWizard_messages_exists,
-					project.getName());
-			final int[] result = { IReplaceQuery.CANCEL };
-			fShell.getDisplay().syncExec(new Runnable() {
-				public void run() {
-					ReplaceDialog dialog = new ReplaceDialog(fShell, message);
-					int retVal = dialog.open();
-					if (retVal >= 0) {
-						result[0] = RETURNCODES[retVal];
-						if (retVal == 1) {
-							yesToAll = 1;
-						} else if (retVal == 3) {
-							yesToAll = -1;
-						}
-					}
-				}
-			});
-			return result[0];
-		}
-	}
+				 final String message = NLS.bind(
+						 PDEUIMessages.FeatureImportWizard_messages_exists,
+						 project.getName());
+				 final int[] result = { IReplaceQuery.CANCEL };
+				 fShell.getDisplay().syncExec(new Runnable() {
+					 public void run() {
+						 ReplaceDialog dialog = new ReplaceDialog(fShell, message);
+						 int retVal = dialog.open();
+						 if (retVal >= 0) {
+							 result[0] = RETURNCODES[retVal];
+							 if (retVal == 1) {
+								 yesToAll = 1;
+							 } else if (retVal == 3) {
+								 yesToAll = -1;
+							 }
+						 }
+					 }
+				 });
+				 return result[0];
+		 }
+	 }
 }

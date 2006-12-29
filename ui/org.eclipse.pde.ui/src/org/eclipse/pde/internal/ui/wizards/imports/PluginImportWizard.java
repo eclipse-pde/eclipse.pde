@@ -10,15 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
@@ -34,7 +33,7 @@ import org.eclipse.ui.IWorkbench;
 public class PluginImportWizard extends Wizard implements IImportWizard {
 
 	private static final String STORE_SECTION = "PluginImportWizard"; //$NON-NLS-1$
-		
+
 	private IStructuredSelection selection;	
 	private PluginImportWizardFirstPage page1;
 	private BaseImportWizardSecondPage page2;
@@ -78,67 +77,52 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	public boolean performFinish() {
 		page1.storeSettings();
 		((BaseImportWizardSecondPage)page1.getNextPage()).storeSettings();
-		
-		try {
-			final IPluginModelBase[] models = getModelsToImport();
-			IRunnableWithProgress op =
-				getImportOperation(
-					getShell(),
-					page1.getImportType(),
-					models,
-					page2.forceAutoBuild());
-			getContainer().run(true, true, op);
 
-		} catch (InterruptedException e) {
-			return false;
-		} catch (InvocationTargetException e) {
-			PDEPlugin.logException(e);
-			return true; // exception handled
-		}		
+		final IPluginModelBase[] models = getModelsToImport();
+		doImportOperation(getShell(), page1.getImportType(), models, page2.forceAutoBuild());
 		return true;
 	}
-	
-	public static IRunnableWithProgress getImportOperation(
-		final Shell shell,
-		final int importType,
-		final IPluginModelBase[] models,
-		final boolean forceAutobuild) {
-		return new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-				throws InvocationTargetException, InterruptedException {
+
+	public static void doImportOperation(
+			final Shell shell,
+			final int importType,
+			final IPluginModelBase[] models,
+			final boolean forceAutobuild) {
+		PluginImportOperation.IImportQuery query = new ImportQuery(shell);
+		PluginImportOperation.IImportQuery executionQuery = new ImportQuery(shell);
+		final PluginImportOperation op =
+			new PluginImportOperation(models, importType, query, executionQuery, forceAutobuild);
+		Job job = new Job(PDEUIMessages.ImportWizard_title) {
+			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					PluginImportOperation.IImportQuery query = new ImportQuery(shell);
-					PluginImportOperation.IImportQuery executionQuery = new ImportQuery(shell);
-					PluginImportOperation op =
-						new PluginImportOperation(models, importType, query, executionQuery, forceAutobuild);
 					PDEPlugin.getWorkspace().run(op, monitor);
 				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				} catch (OperationCanceledException e) {
-					throw new InterruptedException(e.getMessage());
-				} finally {
-					monitor.done();
+					PDEPlugin.logException(e);
+					return Status.CANCEL_STATUS;
 				}
+				return Status.OK_STATUS;
 			}
 		};
+		job.setUser(true);
+		job.schedule();
 	}
-	
+
 
 	private static class ReplaceDialog extends MessageDialog {
 		public ReplaceDialog(Shell parentShell, String dialogMessage) {
 			super(
-				parentShell,
-				PDEUIMessages.ImportWizard_messages_title, 
-				null,
-				dialogMessage,
-				MessageDialog.QUESTION,
-				new String[] {
-					IDialogConstants.YES_LABEL,
-					IDialogConstants.YES_TO_ALL_LABEL,
-					IDialogConstants.NO_LABEL,
-					PDEUIMessages.ImportWizard_noToAll, 
-					IDialogConstants.CANCEL_LABEL },
-				0);
+					parentShell,
+					PDEUIMessages.ImportWizard_messages_title, 
+					null,
+					dialogMessage,
+					MessageDialog.QUESTION,
+					new String[] {
+							IDialogConstants.YES_LABEL,
+							IDialogConstants.YES_TO_ALL_LABEL,
+							IDialogConstants.NO_LABEL,
+							PDEUIMessages.ImportWizard_noToAll, 
+							IDialogConstants.CANCEL_LABEL },
+							0);
 		}
 	}
 
@@ -150,7 +134,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 
 		private int yesToAll = 0;
 		private int[] RETURNCODES =
-			{
+		{
 				IImportQuery.YES,
 				IImportQuery.YES,
 				IImportQuery.NO,
@@ -180,7 +164,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			return result[0];
 		}
 	}
-	
+
 	public IWizardPage getNextPage(IWizardPage page) {
 		if (page.equals(page1)) {
 			if (page1.getScanAllPlugins()) {
@@ -190,11 +174,11 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		}
 		return null;
 	}
-	
+
 	public IWizardPage getPreviousPage(IWizardPage page) {
 		return page.equals(page1) ? null : page1;
 	}
-	
+
 	public boolean canFinish() {
 		return !page1.isCurrentPage() && page1.getNextPage().isPageComplete();
 	}
