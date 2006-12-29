@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.plugins;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginBase;
@@ -25,12 +23,10 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizard;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 
@@ -58,7 +54,7 @@ public class ImportActionGroup extends ActionGroup {
 			handleImport(fImportType, fSel);
 		}
 	}
-	
+
 	public void fillContextMenu(IMenuManager menu) {
 		ActionContext context = getContext();
 		ISelection selection = context.getSelection();
@@ -77,7 +73,7 @@ public class ImportActionGroup extends ActionGroup {
 			menu.add(importMenu);
 		}
 	}
-	
+
 	private void handleImport(int importType, IStructuredSelection selection) {
 		ArrayList externalModels = new ArrayList();
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
@@ -91,7 +87,7 @@ public class ImportActionGroup extends ActionGroup {
 				model = ((IPluginExtension)next).getPluginModel();
 			else if (next instanceof IPluginExtensionPoint)
 				model = ((IPluginExtensionPoint)next).getPluginModel();
-			
+
 			if (model != null && model.getUnderlyingResource() == null)
 				externalModels.add(model);
 		}
@@ -100,18 +96,11 @@ public class ImportActionGroup extends ActionGroup {
 			display = Display.getDefault();
 		IPluginModelBase[] models =
 			(IPluginModelBase[]) externalModels.toArray(
-				new IPluginModelBase[externalModels.size()]);
-		try {		
-			IRunnableWithProgress op =
-				PluginImportWizard.getImportOperation(display.getActiveShell(), importType, models, false);
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
-		} catch (InterruptedException e) {
-		} catch (InvocationTargetException e) {
-			PDEPlugin.logException(e);
-		} catch (Exception e) {
-		}
+					new IPluginModelBase[externalModels.size()]);
+
+		PluginImportWizard.doImportOperation(display.getActiveShell(), importType, models, false);
 	}
-	
+
 	public static boolean canImport(IStructuredSelection selection) {
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
@@ -135,5 +124,5 @@ public class ImportActionGroup extends ActionGroup {
 		}
 		return false;
 	}
-	
+
 }
