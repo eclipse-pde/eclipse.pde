@@ -73,7 +73,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 public class LibrarySection extends TableSection implements IModelChangedListener, IBuildPropertiesConstants {
 
@@ -478,7 +478,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		dialog.addFilter(new LibraryFilter(set));
 		IProject project = ((IModel)getPage().getModel()).getUnderlyingResource().getProject();
 		dialog.setInput(project);
-		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+		dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 
 		if (dialog.open() == Window.OK) {
 			Object[] elements = dialog.getResult();

@@ -63,7 +63,7 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 public class ExtensionPointDetails extends PDEDetails {
 	private IPluginExtensionPoint fInput;
@@ -236,7 +236,7 @@ public class ExtensionPointDetails extends PDEDetails {
 				dialog.setDoubleClickSelects(true);
 				dialog.setStatusLineAboveButtons(true);
 				dialog.setInput(project);
-				dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+				dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 				String filePath = fSchemaEntry.getValue();
 				if (filePath!=null && filePath.length()!=0 && project.exists(new Path(filePath)))
 					dialog.setInitialSelection(project.getFile(new Path(filePath)));

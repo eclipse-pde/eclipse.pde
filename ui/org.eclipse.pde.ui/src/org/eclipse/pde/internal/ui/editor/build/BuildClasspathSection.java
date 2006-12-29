@@ -60,7 +60,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 public class BuildClasspathSection extends TableSection implements IModelChangedListener {
 
@@ -320,7 +320,7 @@ public class BuildClasspathSection extends TableSection implements IModelChanged
 			}
 		});
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
-		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+		dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		dialog.setInitialSelection(getBuildModel().getUnderlyingResource().getProject());
 
 	}
