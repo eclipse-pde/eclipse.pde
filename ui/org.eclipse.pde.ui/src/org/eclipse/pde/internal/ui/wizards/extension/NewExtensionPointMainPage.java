@@ -69,7 +69,7 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 		if (schema.length() > 0) {
 			IRunnableWithProgress operation = getOperation();
 			try {
-				getContainer().run(false, true, operation);
+				getContainer().run(true, true, operation);
 			} catch (InvocationTargetException e) {
 				PDEPlugin.logException(e);
 				return false;

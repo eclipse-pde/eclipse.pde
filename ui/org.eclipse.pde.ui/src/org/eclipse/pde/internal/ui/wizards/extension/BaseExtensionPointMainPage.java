@@ -71,7 +71,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 public abstract class BaseExtensionPointMainPage extends WizardPage {
 	public static final String SETTINGS_PLUGIN_ID = "BaseExtensionPoint.settings.pluginId"; //$NON-NLS-1$
 	public static final String SCHEMA_DIR = "schema"; //$NON-NLS-1$
@@ -86,7 +86,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	protected Button fSharedSchemaButton;
 	protected Button fPluginBrowseButton;
 	protected Button fFindLocationButton;
-	
+
 	public BaseExtensionPointMainPage(IContainer container) {
 		super("newExtensionPoint"); //$NON-NLS-1$
 		fContainer = container;
@@ -279,7 +279,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			boolean shared, String schema, IProgressMonitor monitor)
 	throws CoreException {
 		IFile schemaFile = null;
-		
+
 		IWorkspace workspace = fContainer.getWorkspace();
 		IPath schemaPath = new Path(schema).removeLastSegments(1);
 		IPath newSchemaPath = fContainer.getProjectRelativePath().append(schemaPath);
@@ -308,25 +308,33 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		final boolean shared = fSharedSchemaButton != null ? fSharedSchemaButton
 				.getSelection() : false;
 				IRunnableWithProgress operation = new WorkspaceModifyOperation() {
-					public void execute(IProgressMonitor monitor) {
+					public void execute(final IProgressMonitor monitor) {
 						try {
-							String schemaName = schema;
-							if (!schema.endsWith(".exsd")) //$NON-NLS-1$
-								schemaName = schema + ".exsd"; //$NON-NLS-1$
-							
-							IFile file = fContainer.getFile(new Path(schema));
-							// do not overwrite if schema already exists
-							if (!file.exists())
-								file = generateSchemaFile(getPluginId(), id, name,
-									shared, schemaName, monitor);
-							
-							if (file != null && openFile){
-								fSchemaText.setText(file.getProjectRelativePath().toString());
-								openSchemaFile(file);
-							}
-							
-						} catch (CoreException e) {
-							PDEPlugin.logException(e);
+							Display.getDefault().asyncExec(new Runnable() {
+
+								public void run() {
+									String schemaName = schema;
+									if (!schema.endsWith(".exsd")) //$NON-NLS-1$
+										schemaName = schema + ".exsd"; //$NON-NLS-1$
+
+									IFile file = fContainer.getFile(new Path(schema));
+									// do not overwrite if schema already exists
+									if (!file.exists())
+										try {
+											file = generateSchemaFile(getPluginId(), id, name,
+													shared, schemaName, monitor);
+										} catch (CoreException e) {
+											PDEPlugin.logException(e);
+										}
+
+										if (file != null && openFile){ 
+											fSchemaText.setText(file.getProjectRelativePath().toString());
+											openSchemaFile(file);
+										}
+								}
+
+							});
+
 						} finally {
 							monitor.done();
 						}
@@ -345,7 +353,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 				}
 				return SCHEMA_DIR;
 			}
-			
+
 			int loc = schema.lastIndexOf("/"); //$NON-NLS-1$
 			if (loc!=-1)
 				return schema.substring(0,loc);
@@ -358,7 +366,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		}
 		return ""; //$NON-NLS-1$
 	}
-	
+
 	protected boolean isPluginIdNeeded() {
 		return false;
 	}
@@ -393,9 +401,9 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	}
 
 	protected abstract String validateFieldContents();
-	
+
 	protected abstract void initializeValues();
-	
+
 	protected String validateExtensionPointID() {
 
 		// Verify not zero length
@@ -417,12 +425,12 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 
 		return null;
 	}
-	
+
 	protected String validateExtensionPointName() {
 		// Verify not zero length
 		if ( fNameText.getText().length() == 0 )
 			return PDEUIMessages.BaseExtensionPointMainPage_missingExtensionPointName;
-		
+
 		return null;
 	}
 
@@ -430,7 +438,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		// Verify not zero length
 		if ( fSchemaText.getText().length() == 0 )
 			return PDEUIMessages.BaseExtensionPointMainPage_missingExtensionPointSchema; 
-		
+
 		return null;
 	}
 
@@ -445,9 +453,9 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	private void handleSchemaLocation(){
 		ElementTreeSelectionDialog dialog =
 			new ElementTreeSelectionDialog(
-				getShell(),
-				new WorkbenchLabelProvider(),
-				new WorkbenchContentProvider());
+					getShell(),
+					new WorkbenchLabelProvider(),
+					new WorkbenchContentProvider());
 		dialog.setTitle(PDEUIMessages.BaseExtensionPointMainPage_schemaLocation_title); 
 		dialog.setMessage(PDEUIMessages.BaseExtensionPointMainPage_schemaLocation_desc); 
 		dialog.setDoubleClickSelects(false);
@@ -459,9 +467,9 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 				return true;
 			}
 		});
-		
+
 		dialog.setInput(PDEPlugin.getWorkspace().getRoot());
-		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+		dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		dialog.setInitialSelection(fContainer);
 		if (dialog.open() == Window.OK) {
 			Object[] elements = dialog.getResult();

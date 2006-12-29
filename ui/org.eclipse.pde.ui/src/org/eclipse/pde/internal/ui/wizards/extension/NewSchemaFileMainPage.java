@@ -44,7 +44,7 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 	public boolean finish() {
 		IRunnableWithProgress operation = getOperation();
 		try {
-			getContainer().run(false, true, operation);
+			getContainer().run(true, true, operation);
 			if (fPoint != null){
 				fPoint.setId(fIdText.getText());
 				fPoint.setName(fNameText.getText());
