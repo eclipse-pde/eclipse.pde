@@ -40,6 +40,7 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -152,12 +153,10 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	
 	
 	private Composite createButtonArea(Composite parent) {
-		Composite comp = new Composite(parent, SWT.NONE);
+		ScrolledComposite comp = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
-		comp.setLayout(layout);
 		comp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-		
 		Composite container = new Composite(comp, SWT.NONE);
 		layout = new GridLayout();
 		layout.marginWidth = 0;
@@ -248,7 +247,11 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		SWTUtil.setButtonDimensionHint(button);
 		
 		fCountLabel = new Label(comp, SWT.NONE);
-		fCountLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));		
+		fCountLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
+		comp.setContent(container);
+		comp.setMinHeight(250);
+		comp.setExpandHorizontal(true);
+		comp.setExpandVertical(true);
 		return container;
 	}
 	
