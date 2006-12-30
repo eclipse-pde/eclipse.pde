@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.build;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -43,7 +44,7 @@ public class FeatureExportJob extends Job {
 	public FeatureExportJob(FeatureExportInfo info) {
 		super(PDEUIMessages.FeatureExportJob_name); 
 		fInfo = info;
-		setRule(new SchedulingRule());
+		setRule(ResourcesPlugin.getWorkspace().getRoot());
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
