@@ -117,11 +117,14 @@ public class TracingBlock {
 		fPluginViewer.setComparator(new ListUtil.PluginComparator());
 		fPluginViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
-				pluginSelected(getSelectedModel());
+				CheckboxTableViewer tableViewer = (CheckboxTableViewer) e.getSource();
+				boolean selected = tableViewer.getChecked(getSelectedModel());
+				pluginSelected(getSelectedModel(), selected);
 			}
 		});
 		fPluginViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
+				pluginSelected(getSelectedModel(), event.getChecked());
 				fTab.updateLaunchConfigurationDialog();
 			}
 		});
@@ -212,7 +215,7 @@ public class TracingBlock {
 			if (model != null) {
 				fPluginViewer.setSelection(new StructuredSelection(model));
 			} else {
-				pluginSelected(null);
+				pluginSelected(null, false);
 			}
 			String checked = config.getAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null);
 			if (checked == null) {
@@ -304,9 +307,9 @@ public class TracingBlock {
 		return null;
 	}
 	
-	private void pluginSelected(IPluginModelBase model) {
+	private void pluginSelected(IPluginModelBase model, boolean checked) {
 		TracingPropertySource source = getPropertySource(model);
-		if (source == null) {
+		if (source == null || checked == false) {
 			fPageBook.showEmptyPage();
 		} else {
 			if (!fPageBook.hasPage(model)) {
@@ -366,8 +369,9 @@ public class TracingBlock {
 		boolean enabled = fTracingCheck.getSelection();
 		fPluginViewer.getTable().setEnabled(enabled);
 		Control currentPage = fPageBook.getCurrentPage();
-		if (currentPage != null)
-			currentPage.setEnabled(enabled);
+		if (currentPage != null && enabled == false) {
+			fPageBook.showEmptyPage();
+		}
 		fSelectAllButton.setEnabled(enabled);
 		fDeselectAllButton.setEnabled(enabled);
 	}
