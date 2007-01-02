@@ -126,7 +126,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 		}
 	}
 
-	private static class ImportQuery implements IImportQuery {
+	public static class ImportQuery implements IImportQuery {
 		private Shell shell;
 		public ImportQuery(Shell shell) {
 			this.shell = shell;
