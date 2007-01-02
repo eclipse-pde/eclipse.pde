@@ -123,7 +123,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 		 }
 	 }
 
-	 private static class ReplaceQuery implements IReplaceQuery {
+	 public static class ReplaceQuery implements IReplaceQuery {
 		 private Shell fShell;
 		 public ReplaceQuery(Shell shell) {
 			 this.fShell = shell;

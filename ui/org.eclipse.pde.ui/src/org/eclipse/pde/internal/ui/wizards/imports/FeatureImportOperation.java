@@ -238,8 +238,6 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 	}
 
 	private boolean queryReplace(IProject project) throws OperationCanceledException {
-		if (fReplaceQuery == null)
-			return false;
 		switch (fReplaceQuery.doQuery(project)) {
 			case IReplaceQuery.CANCEL :
 				throw new OperationCanceledException();
