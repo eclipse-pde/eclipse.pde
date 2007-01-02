@@ -122,7 +122,9 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 			}
 		};
 		try {
-			getContainer().run(false, true, operation);
+			PlatformUI.getWorkbench().getProgressService().runInUI(
+					PDEPlugin.getActiveWorkbenchWindow(), operation,
+					PDEPlugin.getWorkspace().getRoot());
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
 			return false;
@@ -176,7 +178,7 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 				break;
 			default: // USE_PLUGINS_AT_BUILD
 				fUsePluginsAtBuildButton.setSelection(true);
-				break;
+			break;
 			}
 		} else
 			fUsePluginsAtBuildButton.setSelection(true);

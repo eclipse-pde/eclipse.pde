@@ -30,6 +30,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
@@ -79,7 +80,9 @@ public class JavaAttributeWizard extends Wizard {
 			}
 		};
 		try {
-			getContainer().run(true, true, op);
+			PlatformUI.getWorkbench().getProgressService().runInUI(
+					PDEPlugin.getActiveWorkbenchWindow(), op,
+					PDEPlugin.getWorkspace().getRoot());
 			IResource resource = fMainPage.getModifiedResource();
 			if (resource != null) {
 				selectAndReveal(resource);
