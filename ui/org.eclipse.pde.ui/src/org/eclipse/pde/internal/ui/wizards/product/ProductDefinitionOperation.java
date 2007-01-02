@@ -249,6 +249,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		
 		element.setAttribute("application", fApplication); //$NON-NLS-1$
 		element.setAttribute("name", fProduct.getName()); //$NON-NLS-1$
+		synchronizeChild(element, IProductConstants.APP_NAME, fProduct.getName());
 		
 		synchronizeChild(element, IProductConstants.ABOUT_IMAGE, getAboutImage());
 		synchronizeChild(element, IProductConstants.ABOUT_TEXT, getAboutText());
@@ -256,6 +257,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		synchronizeChild(element, IProductConstants.STARTUP_FOREGROUND_COLOR, getForegroundColor());
 		synchronizeChild(element, IProductConstants.STARTUP_MESSAGE_RECT, getMessageRect());
 		synchronizeChild(element, IProductConstants.STARTUP_PROGRESS_RECT, getProgressRect());
+		
 	}
 	
 	private void synchronizeChild(IPluginElement element, String propertyName, String value) throws CoreException {
