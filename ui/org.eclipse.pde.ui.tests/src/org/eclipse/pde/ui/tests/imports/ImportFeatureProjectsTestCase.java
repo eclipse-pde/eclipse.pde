@@ -1,22 +1,21 @@
 package org.eclipse.pde.ui.tests.imports;
 
-import java.lang.reflect.InvocationTargetException;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.core.natures.PDE;
-import org.eclipse.pde.internal.ui.wizards.imports.FeatureImportWizard;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.wizards.imports.FeatureImportOperation;
+import org.eclipse.pde.internal.ui.wizards.imports.FeatureImportWizard.ReplaceQuery;
 import org.eclipse.pde.ui.tests.NewProjectTestCase;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.IProgressService;
 
 public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 
@@ -50,15 +49,15 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 	}
 	
 	private void importFeature(IFeatureModel[] models, boolean binary) {
-		IRunnableWithProgress op = FeatureImportWizard.getImportOperation(getShell(), binary, models, null);
-		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
+		 FeatureImportOperation op =
+			 new FeatureImportOperation(models, binary, null, new ReplaceQuery(getShell()));
 		try {
-			progressService.runInUI(progressService, op, null);
+			PDEPlugin.getWorkspace().run(op, new NullProgressMonitor());
 			if (models.length > 0)
 				lookingAtProject(models[0]);
-		} catch (InvocationTargetException e) {
+		} catch (OperationCanceledException e) {
 			fail("Feature import failed...");
-		} catch (InterruptedException e) {
+		} catch (CoreException e) {
 			fail("Feature import failed...");
 		}
 	}
