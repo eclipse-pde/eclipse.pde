@@ -15,6 +15,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -56,7 +57,9 @@ public class FeatureExportJob extends Job {
 			final Display display = getStandardDisplay();
 			display.asyncExec(new Runnable() {
 				public void run() {
-					ErrorDialog.openError(display.getActiveShell(), PDEUIMessages.FeatureExportJob_error, PDEUIMessages.FeatureExportJob_problems, e.getStatus()); // 
+					MultiStatus status = 
+						new MultiStatus(e.getStatus().getPlugin(), e.getStatus().getCode(), new IStatus[] { e.getStatus() }, PDEUIMessages.FeatureExportJob_problems, e);
+					ErrorDialog.openError(display.getActiveShell(), PDEUIMessages.FeatureExportJob_error, PDEUIMessages.FeatureExportJob_error, status); // 
 					done(new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null)); //$NON-NLS-1$
 				}
 			});
