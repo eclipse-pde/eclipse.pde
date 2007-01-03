@@ -190,6 +190,9 @@ public class PDEUIMessages extends NLS {
 	public static String UpdateSiteProvisionerWizard_title;
 	public static String UpdateSiteWizardPage_title;
 	public static String UpdateSiteWizardPage_description;
+	public static String UpdateSiteWizardPage_label;
+	public static String UpdateSiteWizardPage_add;
+	public static String UpdateSiteWizardPage_remove;
 
 	public static String ExportOptionsTab_antReservedMessage;
 

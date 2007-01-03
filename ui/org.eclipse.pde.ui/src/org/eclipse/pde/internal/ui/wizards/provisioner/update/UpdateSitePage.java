@@ -50,7 +50,7 @@ public class UpdateSitePage extends WizardPage {
 		client.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label label = new Label(client, SWT.None);
-		label.setText(PDEUIMessages.DirectorySelectionPage_label);
+		label.setText(PDEUIMessages.UpdateSiteWizardPage_label);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -65,7 +65,7 @@ public class UpdateSitePage extends WizardPage {
 
 	protected void createButtons(Composite parent) {
 		fAddButton = new Button(parent, SWT.PUSH);
-		fAddButton.setText(PDEUIMessages.DirectorySelectionPage_add);
+		fAddButton.setText(PDEUIMessages.UpdateSiteWizardPage_add);
 		fAddButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fAddButton);
 		fAddButton.addSelectionListener(new SelectionAdapter() {
@@ -75,7 +75,7 @@ public class UpdateSitePage extends WizardPage {
 		});
 
 		fRemoveButton = new Button(parent, SWT.PUSH);
-		fRemoveButton.setText(PDEUIMessages.DirectorySelectionPage_remove);
+		fRemoveButton.setText(PDEUIMessages.UpdateSiteWizardPage_remove);
 		fRemoveButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fRemoveButton);
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
