@@ -218,7 +218,8 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 		} catch (CoreException e) {
 		}
 		if (application == null)
-			application = TargetPlatform.usesNewApplicationModel() ? UI_APPLICATION : LEGACY_UI_APPLICATION;
+			application = TargetPlatform.usesNewApplicationModel() || TargetPlatform.getTargetVersion() <= 3.2 ? 
+					UI_APPLICATION : LEGACY_UI_APPLICATION;
 		programArgs.add(application);
 		
 		// If a product is specified, then add it to the program args
