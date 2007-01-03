@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
@@ -58,8 +59,9 @@ public class ManifestUtils {
 						continue;
 					String[] tokens = entry.getTokens();
 					for (int i = 0; i < tokens.length; i++) {
-						if(tokens[i].length() == 0) continue;
-						root = javaProject.getPackageFragmentRoot(project.getFolder(tokens[i]));
+						IResource resource = project.findMember(tokens[i]);
+						if (resource == null) continue;
+						root = javaProject.getPackageFragmentRoot(resource);
 						if (root != null && root.exists())
 							pkgFragRoots.add(root);
 					}
