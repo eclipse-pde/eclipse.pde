@@ -28,6 +28,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.imports.FeatureImportOperation.IReplaceQuery;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
@@ -124,10 +125,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 	 }
 
 	 public static class ReplaceQuery implements IReplaceQuery {
-		 private Shell fShell;
-		 public ReplaceQuery(Shell shell) {
-			 this.fShell = shell;
-		 }
+		 public ReplaceQuery(Shell shell) {}
 
 		 private int yesToAll = 0;
 		 private int[] RETURNCODES = {
@@ -145,9 +143,11 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 						 PDEUIMessages.FeatureImportWizard_messages_exists,
 						 project.getName());
 				 final int[] result = { IReplaceQuery.CANCEL };
-				 fShell.getDisplay().syncExec(new Runnable() {
+
+				 Display.getDefault().syncExec(new Runnable() {
 					 public void run() {
-						 ReplaceDialog dialog = new ReplaceDialog(fShell, message);
+						 ReplaceDialog dialog = 
+							 new ReplaceDialog(Display.getDefault().getActiveShell(), message);
 						 int retVal = dialog.open();
 						 if (retVal >= 0) {
 							 result[0] = RETURNCODES[retVal];
