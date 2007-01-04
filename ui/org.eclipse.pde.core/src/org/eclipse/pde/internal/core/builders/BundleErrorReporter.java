@@ -135,7 +135,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 								String name = fragment.getElementName();
 								if (name.length() == 0)
 									name = "."; //$NON-NLS-1$
-								if (fragment.containsJavaResources()){
+								if (fragment.containsJavaResources() || fragment.getNonJavaResources().length > 0){
 									if (!containsPackage(header, name)) {
 										packages.append(name);
 										if(j < javaElements.length - 1)
