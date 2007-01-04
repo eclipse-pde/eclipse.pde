@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation.IImportQuery;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
@@ -127,10 +128,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 	}
 
 	public static class ImportQuery implements IImportQuery {
-		private Shell shell;
-		public ImportQuery(Shell shell) {
-			this.shell = shell;
-		}
+		public ImportQuery(Shell shell) {}
 
 		private int yesToAll = 0;
 		private int[] RETURNCODES =
@@ -147,9 +145,9 @@ public class PluginImportWizard extends Wizard implements IImportWizard {
 			}
 
 			final int[] result = { IImportQuery.CANCEL };
-			shell.getDisplay().syncExec(new Runnable() {
+			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
-					ReplaceDialog dialog = new ReplaceDialog(shell, message);
+					ReplaceDialog dialog = new ReplaceDialog(Display.getDefault().getActiveShell(), message);
 					int retVal = dialog.open();
 					if (retVal >= 0) {
 						result[0] = RETURNCODES[retVal];
