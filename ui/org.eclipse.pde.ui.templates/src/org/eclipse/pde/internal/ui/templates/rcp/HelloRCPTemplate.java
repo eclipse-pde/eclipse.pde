@@ -177,7 +177,7 @@ public class HelloRCPTemplate extends PDETemplateSection {
 	
 	public String[] getNewFiles() {
 		if (copyBrandingDirectory())
-			return new String[] { "icons/" }; //$NON-NLS-1$
+			return new String[] { "icons/", "splash.bmp" }; //$NON-NLS-1$ //$NON-NLS-2$
 		return super.getNewFiles();
 	}
 }
