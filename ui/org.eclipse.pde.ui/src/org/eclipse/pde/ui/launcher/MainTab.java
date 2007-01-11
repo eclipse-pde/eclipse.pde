@@ -21,11 +21,19 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.JREBlock;
 import org.eclipse.pde.internal.ui.launcher.ProgramBlock;
 import org.eclipse.pde.internal.ui.launcher.WorkspaceDataBlock;
+import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
+import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.PlatformUI;
 
 
@@ -66,7 +74,11 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
+		final ScrolledComposite scrollContainer = new ScrolledComposite(parent, SWT.V_SCROLL);
+		scrollContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		Composite composite = new Composite(scrollContainer, SWT.NONE);
+		scrollContainer.setContent(composite);
 		GridLayout layout = new GridLayout();
 		layout.verticalSpacing = 15;
 		composite.setLayout(layout);
@@ -76,7 +88,28 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 		fProgramBlock.createControl(composite);
 		fJreBlock.createControl(composite);
 		
-		setControl(composite);
+		// Add listener for each control to recalculate scroll bar when it is entered.
+		// This results in scrollbar scrolling when user tabs to a control that is not in the field of view.
+		Listener listener = new Listener() {
+			public void handleEvent(Event e) {
+				Control child = (Control)e.widget;
+				Rectangle bounds = child.getBounds();
+				Rectangle area = scrollContainer.getClientArea();
+				Point origin = scrollContainer.getOrigin();
+				if (origin.x > bounds.x) origin.x = Math.max(0, bounds.x);
+				if (origin.y > bounds.y) origin.y = Math.max(0, bounds.y);
+				if (origin.x + area.width < bounds.x + bounds.width) origin.x = Math.max(0, bounds.x + bounds.width - area.width);
+				if (origin.y + area.height < bounds.y + bounds.height) origin.y = Math.max(0, bounds.y + bounds.height - area.height);
+				scrollContainer.setOrigin(origin);
+			}
+		};
+		Control[] controls = composite.getChildren();
+		for (int i = 0; i < controls.length; i++) 
+			controls[i].addListener(SWT.Activate, listener);
+				
+		composite.setSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		scrollContainer.setExpandHorizontal(true);
+		setControl(scrollContainer);
 		Dialog.applyDialogFont(composite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.LAUNCHER_BASIC);
 	}
