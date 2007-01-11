@@ -1054,24 +1054,15 @@
             id="org.eclipse.pde.ui.junitWorkbenchShortcut">
          <contextualLaunch>
             <enablement>
-               <with
-                     variable="selection">
-                  <count
-                        value="1">
-                  </count>
-               		<iterate>
-               		  <and>
-               		    <test property="org.eclipse.jdt.launching.hasProjectNature" args="org.eclipse.pde.PluginNature"/>
-                 		<or>
-             			    <test property="org.eclipse.jdt.launching.extendsInterface" args="junit.framework.Test"/>
-                 			<test property="org.eclipse.jdt.launching.hasMethod" args="suite, ()QTest;, public static"/>
-                 			<and>
-                 				<test property="org.eclipse.jdt.launching.isContainer"/>
-                 				<test property="org.eclipse.jdt.launching.buildpathReference" args="junit"/>
-                 			</and>
-                 		</or>
-                      </and>
-               		</iterate>
+               <with variable="selection">
+                  <count value="1"/>
+               	  <iterate>
+                     <adapt type="org.eclipse.jdt.core.IJavaElement">
+		                <test property="org.eclipse.jdt.core.isInJavaProject"/>
+		                <test property="org.eclipse.jdt.core.hasTypeOnClasspath" value="junit.framework.Test"/>
+		                <test property="org.eclipse.jdt.junit.canLaunchAsJUnit" forcePluginActivation="true"/>
+		             </adapt>
+		          </iterate>
                </with>
             </enablement>
          </contextualLaunch>

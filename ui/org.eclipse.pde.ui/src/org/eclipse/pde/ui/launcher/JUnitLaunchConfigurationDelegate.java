@@ -12,7 +12,7 @@
 package org.eclipse.pde.ui.launcher;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
@@ -29,15 +29,9 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration;
-import org.eclipse.jdt.internal.junit.launcher.TestSearchResult;
-import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
-import org.eclipse.jdt.launching.SocketUtil;
-import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -64,7 +58,7 @@ import org.eclipse.pde.internal.ui.launcher.VMHelper;
  * </p>
  * @since 3.3
  */
-public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfiguration  {
+public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationDelegate  {
 
 	public static final String CORE_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
 	public static final String UI_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$
@@ -74,59 +68,6 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 
 	protected File fConfigDir = null;
 	private Map fPluginMap;
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
-				throws CoreException {
-		try {
-			fConfigDir = null;
-			monitor.beginTask("", 4); //$NON-NLS-1$
-			TestSearchResult testSearchResult = findTestTypes(configuration, new SubProgressMonitor(monitor, 1));
-			IType[] testTypes = testSearchResult.getTypes();
-			
-			// Get the list of plug-ins to run
-			fPluginMap = LaunchPluginValidator.getPluginsToRun(configuration);
-			
-			// implicitly add the plug-ins required for JUnit testing if necessary
-			for (int i = 0; i < REQUIRED_PLUGINS.length; i++) {
-				String id = REQUIRED_PLUGINS[i];
-				if (!fPluginMap.containsKey(id)) {
-					fPluginMap.put(id, findPlugin(id));
-				}
-			}
-			
-			try {
-				preLaunchCheck(configuration, launch, new SubProgressMonitor(monitor, 2));
-			} catch (CoreException e) {
-				if (e.getStatus().getSeverity() == IStatus.CANCEL) {
-					monitor.setCanceled(true);
-					return;
-				}
-				throw e;
-			}
-			
-			int port = SocketUtil.findFreePort();
-			launch.setAttribute(PORT_ATTR, Integer.toString(port));
-			launch.setAttribute(TESTTYPE_ATTR, testTypes[0].getHandleIdentifier());
-			VMRunnerConfiguration runnerConfig = createVMRunner(configuration, testSearchResult, port, mode);
-			monitor.worked(1);
-			
-			setDefaultSourceLocator(launch, configuration);
-			manageLaunch(launch);
-			IVMRunner runner = getVMRunner(configuration, mode);
-			if (runner != null)
-				runner.run(runnerConfig, launch, monitor);
-			else
-				monitor.setCanceled(true);
-			monitor.done();
-		} catch (CoreException e) {
-			monitor.setCanceled(true);
-			throw e;
-		}
-	}
 	
 	/*
 	 * (non-Javadoc)
@@ -137,27 +78,13 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 		return launcher.getVMRunner(mode);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration#createVMRunner(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.jdt.internal.junit.launcher.TestSearchResult, int, java.lang.String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationDelegate#verifyMainTypeName(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	protected VMRunnerConfiguration createVMRunner(
-		ILaunchConfiguration configuration,
-		TestSearchResult testTypes,
-		int port,
-		String runMode)
-		throws CoreException {
-
-		VMRunnerConfiguration runnerConfig =
-			new VMRunnerConfiguration("org.eclipse.core.launcher.Main", getClasspath(configuration)); //$NON-NLS-1$
-		runnerConfig.setVMArguments(new ExecutionArguments(getVMArguments(configuration), "").getVMArgumentsArray()); //$NON-NLS-1$
-		runnerConfig.setProgramArguments(getProgramArgumentsArray(configuration, testTypes, port, runMode));
-		runnerConfig.setEnvironment(getEnvironment(configuration));
-		runnerConfig.setWorkingDirectory(getWorkingDirectory(configuration).getAbsolutePath());
-		runnerConfig.setVMSpecificAttributesMap(getVMSpecificAttributesMap(configuration));
-		return runnerConfig;
+	public String verifyMainTypeName(ILaunchConfiguration configuration) throws CoreException {
+		return "org.eclipse.core.launcher.Main";
 	}
-
+	
 	private String getTestPluginId(ILaunchConfiguration configuration)
 		throws CoreException {
 		IJavaProject javaProject = getJavaProject(configuration);
@@ -185,30 +112,12 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 		throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, code, message, exception));
 	}
-	
-	/**
-	 * Returns the program arguments to launch with.
-	 * This list is a combination of arguments computed by PDE based on attributes
-	 * specified in the given launch configuration, followed by the program arguments
-	 * that the entered directly into the launch configuration.
-	 *  
-	 * @param configuration
-	 *            launch configuration
-	 * @return the program arguments necessary for launching
-	 * 
-	 * @exception CoreException
-	 *                if unable to retrieve the attribute or create the
-	 *                necessary configuration files            
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationDelegate#collectExecutionArguments(org.eclipse.debug.core.ILaunchConfiguration, java.util.List, java.util.List)
 	 */
-	private String[] getProgramArgumentsArray(
-		ILaunchConfiguration configuration,
-		TestSearchResult testSearchResult,
-		int port,
-		String runMode)
-		throws CoreException {
-		ArrayList programArgs = new ArrayList();
-		
-		programArgs.addAll(getBasicArguments(configuration, port, runMode, testSearchResult));
+	protected void collectExecutionArguments(ILaunchConfiguration configuration, List/*String*/ vmArguments, List/*String*/ programArgs) throws CoreException {
+		super.collectExecutionArguments(configuration, vmArguments, programArgs);
 		
 		// Specify the JUnit Plug-in test application to launch
 		programArgs.add("-application"); //$NON-NLS-1$
@@ -297,29 +206,6 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 			
 		programArgs.add("-testpluginname"); //$NON-NLS-1$
 		programArgs.add(getTestPluginId(configuration));
-		
-		programArgs.add("-loaderpluginname"); //$NON-NLS-1$
-		programArgs.add(testSearchResult.getTestKind().getLoaderPluginId());
-		
-		String testFailureNames = configuration.getAttribute(JUnitBaseLaunchConfiguration.FAILURES_FILENAME_ATTR, ""); //$NON-NLS-1$
-		if (testFailureNames.length() > 0) {
-			programArgs.add("-testfailures"); //$NON-NLS-1$
-			programArgs.add(testFailureNames);			
-		}
-
-		// a testname was specified just run the single test
-		IType[] testTypes = testSearchResult.getTypes();
-		String testName =
-			configuration.getAttribute(JUnitBaseLaunchConfiguration.TESTNAME_ATTR, ""); //$NON-NLS-1$
-		if (testName.length() > 0) {
-			programArgs.add("-test"); //$NON-NLS-1$
-			programArgs.add(testTypes[0].getFullyQualifiedName() + ":" + testName); //$NON-NLS-1$
-		} else {
-			programArgs.add("-classnames"); //$NON-NLS-1$
-			for (int i = 0; i < testTypes.length; i++)
-			programArgs.add(testTypes[i].getFullyQualifiedName());
-		}
-		return (String[]) programArgs.toArray(new String[programArgs.size()]);
 	}
 		
 	private IPluginModelBase findPlugin(String id) throws CoreException {
@@ -408,6 +294,8 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 							PDESourcePathProvider.ID); 
 			wc.doSave();
 		}
+		
+		manageLaunch(launch);
 	}
 	
 	/**
@@ -453,20 +341,21 @@ public class JUnitLaunchConfigurationDelegate extends JUnitBaseLaunchConfigurati
 		PDEPlugin.getDefault().getLaunchListener().manage(launch);		
 	}
 	
-	/**
- 	 * Does sanity checking before launching.  The criteria whether the launch should 
- 	 * proceed or not is specific to the launch configuration type.
- 	 * 
- 	 * @param configuration launch configuration
- 	 * @param launch the launch object to contribute processes and debug targets to
- 	 * @param monitor a progress monitor
- 	 * 
- 	 * @throws CoreException exception thrown if launch fails or canceled or if unable to retrieve attributes
- 	 * from the launch configuration
- 	 * 				
- 	 */
-	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) 
-			throws CoreException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationDelegate#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		// Get the list of plug-ins to run
+		fPluginMap = LaunchPluginValidator.getPluginsToRun(configuration);
+		
+		// implicitly add the plug-ins required for JUnit testing if necessary
+		for (int i = 0; i < REQUIRED_PLUGINS.length; i++) {
+			String id = REQUIRED_PLUGINS[i];
+			if (!fPluginMap.containsKey(id)) {
+				fPluginMap.put(id, findPlugin(id));
+			}
+		}
+	
 		boolean autoValidate = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
 		monitor.beginTask("", autoValidate ? 3 : 4); //$NON-NLS-1$
 		if (autoValidate)
