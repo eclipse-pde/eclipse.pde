@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,19 +88,18 @@ public class LaunchConfigurationHelper {
 	
 	public static Properties createConfigIniFile(ILaunchConfiguration configuration, String productID, Map map, File directory) throws CoreException {
 		Properties properties = null;
+		// if we are to generate a config.ini, start with the values in the target platform's config.ini - bug 141918
 		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true)) {
-			properties = createNewPropertiesFile(productID, map);
+			properties = TargetPlatform.getConfigIniProperties();
 		} else {
 			String templateLoc = configuration.getAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, (String)null);
-			if (templateLoc != null) {
+			if (templateLoc != null) 
 				properties = loadFromTemplate(getSubstitutedString(templateLoc));
-				String osgiBundles = properties.getProperty("osgi.bundles"); //$NON-NLS-1$
-				if (osgiBundles != null) {
-					properties.put("osgi.bundles", TargetPlatform.stripPathInformation(osgiBundles)); //$NON-NLS-1$
-				}
-			}
 		}
-		if (properties == null)
+		// whether we create a new config.ini or read from one as a template, we should add the required properties - bug 161265
+		if (properties != null)
+			addRequiredProperties(properties, productID, map);
+		else
 			properties = new Properties();
 		setBundleLocations(map, properties);
 		if (!directory.exists())
@@ -109,48 +108,57 @@ public class LaunchConfigurationHelper {
 		return properties;
 	}
 	
-	private static Properties createNewPropertiesFile(String productID, Map map) {
-		Properties properties = new Properties();
-		properties.setProperty("osgi.install.area", "file:" + ExternalModelManager.getEclipseHome().toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
-		properties.setProperty("osgi.configuration.cascaded", "false"); //$NON-NLS-1$ //$NON-NLS-2$
-		properties.setProperty("osgi.framework", "org.eclipse.osgi"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (productID != null)
+	private static void addRequiredProperties(Properties properties, String productID, Map map) {
+		if (!properties.containsKey("osgi.install.area")) //$NON-NLS-1$
+			properties.setProperty("osgi.install.area", "file:" + ExternalModelManager.getEclipseHome().toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
+		if (!properties.containsKey("osgi.configuration.cascaded")) //$NON-NLS-1$
+			properties.setProperty("osgi.configuration.cascaded", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (!properties.containsKey("osgi.framework")) //$NON-NLS-1$
+			properties.setProperty("osgi.framework", "org.eclipse.osgi"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (productID != null && !properties.containsKey("osgi.splashPath")) //$NON-NLS-1$
 			addSplashLocation(properties, productID, map);
+		// if osgi.splashPath is set, try to resolve relative paths to absolute paths
+		else if (properties.containsKey("osgi.splashPath")) //$NON-NLS-1$
+			resolveLocationPath(properties.getProperty("osgi.splashPath"), properties, map); //$NON-NLS-1$
 		
-		String bundleList = TargetPlatform.getBundleList();
-		StringBuffer buffer = new StringBuffer();
-		
-		// include only bundles that are actually in the list of plug-ins to launch
-		Set initialBundleSet = new HashSet();
-		StringTokenizer tokenizer = new StringTokenizer(bundleList, ","); //$NON-NLS-1$
-		while (tokenizer.hasMoreTokens()) {
-			String token = tokenizer.nextToken();
-			int index = token.indexOf('@');
-			String id = index != -1 ? token.substring(0, index) : token;
-			if (map.containsKey(id)) {
-				if (buffer.length() > 0)
-					buffer.append(',');
-				buffer.append(id);
-				if (index != -1 && index < token.length() -1)
-					buffer.append(token.substring(index));				
-				initialBundleSet.add(id);
-			}
-		}
-		if (!initialBundleSet.contains("org.eclipse.update.configurator")) { //$NON-NLS-1$
-			initialBundleSet.add("org.eclipse.osgi"); //$NON-NLS-1$
-			Iterator iter = map.keySet().iterator();
-			while (iter.hasNext()) {
-				String id = iter.next().toString();
-				if (!initialBundleSet.contains(id)) {
+		if (!properties.containsKey("osgi.bundles")) { //$NON-NLS-1$
+			String bundleList = TargetPlatform.getBundleList();
+			StringBuffer buffer = new StringBuffer();
+
+			// include only bundles that are actually in the list of plug-ins to launch
+			Set initialBundleSet = new HashSet();
+			StringTokenizer tokenizer = new StringTokenizer(bundleList, ","); //$NON-NLS-1$
+			while (tokenizer.hasMoreTokens()) {
+				String token = tokenizer.nextToken();
+				int index = token.indexOf('@');
+				String id = index != -1 ? token.substring(0, index) : token;
+				if (map.containsKey(id)) {
 					if (buffer.length() > 0)
 						buffer.append(',');
 					buffer.append(id);
+					if (index != -1 && index < token.length() -1)
+						buffer.append(token.substring(index));				
+					initialBundleSet.add(id);
 				}
 			}
+			if (!initialBundleSet.contains("org.eclipse.update.configurator")) { //$NON-NLS-1$
+				initialBundleSet.add("org.eclipse.osgi"); //$NON-NLS-1$
+				Iterator iter = map.keySet().iterator();
+				while (iter.hasNext()) {
+					String id = iter.next().toString();
+					if (!initialBundleSet.contains(id)) {
+						if (buffer.length() > 0)
+							buffer.append(',');
+						buffer.append(id);
+					}
+				}
+			}
+			properties.setProperty("osgi.bundles", buffer.toString()); //$NON-NLS-1$
+		} else {
+			properties.put("osgi.bundles", TargetPlatform.stripPathInformation(properties.getProperty("osgi.bundles"))); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		properties.setProperty("osgi.bundles", buffer.toString()); //$NON-NLS-1$
-		properties.setProperty("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
-		return properties;
+		if (!properties.containsKey("osgi.bundles.defaultStartLevel")) //$NON-NLS-1$
+			properties.setProperty("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private static Properties loadFromTemplate(String templateLoc) throws CoreException {
@@ -187,8 +195,8 @@ public class LaunchConfigurationHelper {
 		Properties targetConfig = TargetPlatform.getConfigIniProperties(); 
 		String targetProduct = targetConfig == null ? null : targetConfig.getProperty("eclipse.product"); //$NON-NLS-1$
 		String targetSplash = targetConfig == null ? null : targetConfig.getProperty("osgi.splashPath"); //$NON-NLS-1$
-		ArrayList locations = new ArrayList();
 		if (!productID.equals(targetProduct) || targetSplash == null) {
+			ArrayList locations = new ArrayList();
 			String plugin = getContributingPlugin(productID);
 			locations.add(plugin);
 			IPluginModelBase model = (IPluginModelBase)map.get(plugin);
@@ -200,12 +208,20 @@ public class LaunchConfigurationHelper {
 						locations.add(fragments[i].getSymbolicName());
 				}
 			}
-		} else {
-			StringTokenizer tok = new StringTokenizer(targetSplash, ","); //$NON-NLS-1$
-			while (tok.hasMoreTokens())
-				locations.add(tok.nextToken());			
-		}
+			resolveLocationPath(locations, properties, map);
+		} else 
+			resolveLocationPath(targetSplash, properties, map);
+	}
+	
+	private static void resolveLocationPath(String splashPath, Properties properties, Map map) {
+		ArrayList locations = new ArrayList();
+		StringTokenizer tok = new StringTokenizer(splashPath, ","); //$NON-NLS-1$
+		while (tok.hasMoreTokens())
+			locations.add(tok.nextToken());
+		resolveLocationPath(locations, properties, map);
+	}
 		
+	private static void resolveLocationPath(ArrayList locations, Properties properties, Map map) { 
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < locations.size(); i++) {
 			String location = (String)locations.get(i);
