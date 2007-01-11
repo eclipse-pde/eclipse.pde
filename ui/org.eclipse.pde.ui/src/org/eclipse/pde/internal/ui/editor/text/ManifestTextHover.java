@@ -27,7 +27,7 @@ public class ManifestTextHover extends PDETextHover {
 	
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		int offset = hoverRegion.getOffset();
-		IDocumentRange range = fSourcePage.getRangeElement(offset, true);
+		IDocumentRange range = fSourcePage.getRangeElement(offset, false);
 		if (range instanceof IManifestHeader) {
 			IManifestHeader header = (IManifestHeader)range;
 			String headerName = header.getName();

@@ -11,9 +11,12 @@
 
 package org.eclipse.pde.internal.ui.editor;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.internal.core.text.IEditingModel;
@@ -35,6 +38,13 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 	private boolean sorted;
 	TreeViewer viewer;
 	
+	/**
+	 * This list is redundant; but, required because we can't access 
+	 * org.eclipse.ui.views.contentoutline.ContentOutlinePage.selectionChangedListeners
+	 * from our parent
+	 */
+	private ArrayList fListenerList;
+	
 	public SourceOutlinePage(IEditingModel model, IBaseLabelProvider lProvider,
 			IContentProvider cProvider, ViewerComparator defaultComparator,
 			ViewerComparator comparator) {
@@ -44,6 +54,7 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 		fContentProvider = cProvider;
 		fDefaultComparator = defaultComparator;
 		fViewerComparator = comparator;
+		fListenerList = new ArrayList();
 	}
 		
 	/**  
@@ -80,7 +91,13 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 		control.getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				control.setRedraw(false);
+				// Temporarily remove all selection listeners from the tree
+				// viewer.  This is required because the refresh fires a 
+				// selection event back to the source page (observered in
+				// the bundle source page) when typing
+				removeAllSelectionChangedListeners();
 				getTreeViewer().refresh();
+				addAllSelectionChangedListeners();
 				getTreeViewer().expandAll();
 				control.setRedraw(true);
 			}
@@ -93,5 +110,52 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 				viewer.setComparator(fViewerComparator);
 			else
 				viewer.setComparator(fDefaultComparator);
+	}
+	
+	/**
+	 * Used for restoral after temporary removal.  Uses listeners cached.
+	 */
+	public void addAllSelectionChangedListeners() {
+		// Re-add the tree listener added by our parent for our parent:
+		// org.eclipse.ui.views.contentoutline.ContentOutlinePage		
+		viewer.addSelectionChangedListener(this);
+		// Add all current listeners
+		for (int i = 0; i < fListenerList.size(); i++) {
+			super.addSelectionChangedListener(
+					(ISelectionChangedListener)fListenerList.get(i));
+		}
+	}
+	
+	/**
+	 * Used for temporary removal.  Listeners cached.
+	 */
+	public void removeAllSelectionChangedListeners() {
+		// Remove the tree listener added by our parent for our parent:
+		// org.eclipse.ui.views.contentoutline.ContentOutlinePage
+		viewer.removeSelectionChangedListener(this);
+		// Remove all current listeners
+		for (int i = 0; i < fListenerList.size(); i++) {
+			super.removeSelectionChangedListener(
+					(ISelectionChangedListener)fListenerList.get(i));
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.contentoutline.ContentOutlinePage#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+	 */
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
+		// Add the listener to our private list
+		fListenerList.add(listener);
+		super.addSelectionChangedListener(listener);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.contentoutline.ContentOutlinePage#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+	 */
+	public void removeSelectionChangedListener(
+			ISelectionChangedListener listener) {
+		// Remove the listener from our private list
+		fListenerList.remove(listener);
+		super.removeSelectionChangedListener(listener);
 	}
 }

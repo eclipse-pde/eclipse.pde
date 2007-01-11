@@ -763,9 +763,24 @@ public abstract class PDEFormEditor extends FormEditor
 		if (undoManager != null)
 			undoManager.setActions(undoAction, redoAction);
 	}
-	void synchronizeOutlinePage() {
-		if (getFormOutline() != null) {
-			getFormOutline().setSelection(getSelection());
+	
+	/**
+	 * Triggered by toggling the 'Link with Editor' button in the outline view
+	 */
+	public void synchronizeOutlinePage() {
+		// Get current page
+		IFormPage page = getActivePageInstance();
+
+		if (page instanceof PDESourcePage) {
+			// Synchronize with current source page
+			((PDESourcePage) page).synchronizeOutlinePage();
+		} else {
+			// Synchronize with current form page
+			// This currently does not work
+			// TODO: Fix 'Link with Editor' functionality for form pages
+			if (getFormOutline() != null) {
+				getFormOutline().setSelection(getSelection());
+			}
 		}
 	}
 	

@@ -114,25 +114,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage,
 		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 		 */
 		public void selectionChanged(SelectionChangedEvent event) {
-			ISelection selection = event.getSelection();
-			if (!selection.isEmpty() && selection instanceof ITextSelection) {
-				IDocumentRange rangeElement = getRangeElement(((ITextSelection) selection).getOffset(), false);
-				if (rangeElement != null) {
-					setHighlightRange(rangeElement, false);
-				} else {
-					resetHighlightRange();
-				}
-				// notify outline page
-				if (PDEPlugin.getDefault().getPreferenceStore().getBoolean(
-						"ToggleLinkWithEditorAction.isChecked")) { //$NON-NLS-1$
-					fOutlinePage.removeSelectionChangedListener(fOutlineSelectionChangedListener);
-					if (rangeElement != null)
-						fOutlinePage.setSelection(new StructuredSelection(rangeElement));
-					else
-						fOutlinePage.setSelection(StructuredSelection.EMPTY);
-					fOutlinePage.addSelectionChangedListener(fOutlineSelectionChangedListener);
-				}
-			}
+			handleSelectionChangedSourcePage(event);
 		}
 
 		/**
@@ -559,5 +541,71 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage,
 	public Object getOutlineInput() {
 		return getInputContext().getModel();
 	}
+
+	/**
+	 * @param rangeElement
+	 */
+	protected void updateOutlinePageSelection(Object rangeElement) {
+		// Set selection in source outline page if the 'Link with Editor' 
+		// feature is on
+		if (PDEPlugin.getDefault().getPreferenceStore().getBoolean(
+				"ToggleLinkWithEditorAction.isChecked")) { //$NON-NLS-1$
+			// Ensure we have a source outline page
+			if ((fOutlinePage instanceof SourceOutlinePage) == false) {
+				return;
+			}
+			SourceOutlinePage outlinePage = (SourceOutlinePage)fOutlinePage; 
+			// Temporarily remove the listener to prevent a selection event being fired 
+			// back at this page			
+			outlinePage.removeAllSelectionChangedListeners();
+			if (rangeElement != null) {
+				outlinePage.setSelection(new StructuredSelection(rangeElement));
+			} else {
+				outlinePage.setSelection(StructuredSelection.EMPTY);
+			}
+			outlinePage.addAllSelectionChangedListeners();
+		}
+	}
+
+	/**
+	 * @param event
+	 */
+	protected void handleSelectionChangedSourcePage(SelectionChangedEvent event) {
+		ISelection selection = event.getSelection();
+		if (!selection.isEmpty() && selection instanceof ITextSelection) {
+			synchronizeOutlinePage(((ITextSelection) selection).getOffset());
+		}
+	}
+
+	/**
+	 * @param rangeElement
+	 */
+	protected void updateHighlightRange(IDocumentRange rangeElement) {
+		if (rangeElement != null) {
+			setHighlightRange(rangeElement, false);
+		} else {
+			resetHighlightRange();
+		}
+	}
 	
+	/**
+	 * @param offset
+	 */
+	protected void synchronizeOutlinePage(int offset) {
+		IDocumentRange rangeElement = getRangeElement(offset, false);
+		updateHighlightRange(rangeElement);
+		updateOutlinePageSelection(rangeElement);
+	}
+
+	/**
+	 * Triggered by toggling the 'Link with Editor' button in the outline
+	 * view
+	 * @param offset
+	 */
+	public void synchronizeOutlinePage() {
+		// Get the current position of the cursor in this page
+		int current_offset = getSourceViewer().getSelectedRange().x;
+		synchronizeOutlinePage(current_offset);
+	}
+
 }

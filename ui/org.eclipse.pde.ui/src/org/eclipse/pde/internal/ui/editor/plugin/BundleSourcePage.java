@@ -15,10 +15,13 @@ import java.util.Enumeration;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -33,12 +36,14 @@ import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
 import org.eclipse.pde.internal.core.text.bundle.BundleClasspathHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
+import org.eclipse.pde.internal.core.text.bundle.CompositeManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
+import org.eclipse.pde.internal.core.text.bundle.PDEManifestElement;
 import org.eclipse.pde.internal.core.text.bundle.PackageObject;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleObject;
@@ -56,6 +61,14 @@ import org.osgi.framework.Constants;
 
 public class BundleSourcePage extends KeyValueSourcePage {
 
+	/**
+	 * Used to set the selection in the outline view with the link with editor
+	 * feature is enabled
+	 * Cannot use a document range object because manifest header elements
+	 * do not have ranges associated with them in the bundle model
+	 */
+	private Object fTargetOutlineSelection;
+	
 	/**
 	 * BundleOutlineContentProvider
 	 *
@@ -80,19 +93,12 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		}
 		
 		private Object[] getPluginLibraries() {
-			// The bundle classpath header has no model data members
-			// Retrieve the plug-in library equivalents from the editor model
-			FormEditor editor = getEditor();
-			if (editor instanceof PDEFormEditor) {
-				PDEFormEditor formEditor = (PDEFormEditor)editor;
-				IBaseModel baseModel = formEditor.getAggregateModel();
-				if (baseModel instanceof IPluginModelBase) {
-					IPluginLibrary[] libraries = 
-						((IPluginModelBase)baseModel).getPluginBase().getLibraries();
-					return libraries;
-				}
+			IPluginLibrary[] libraries = getBundleClasspathLibraries();
+			if ((libraries == null) ||
+					(libraries.length == 0)) {
+				return new Object[0];
 			}
-			return new Object[0];
+			return libraries;
 		}
 		
 		public boolean hasChildren(Object parent) {
@@ -115,6 +121,25 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			}
 			return new Object[0];
 		}
+	}
+	
+	/**
+	 * @return
+	 */
+	private IPluginLibrary[] getBundleClasspathLibraries() {
+		// The bundle classpath header has no model data members
+		// Retrieve the plug-in library equivalents from the editor model
+		FormEditor editor = getEditor();
+		if (editor instanceof PDEFormEditor) {
+			PDEFormEditor formEditor = (PDEFormEditor)editor;
+			IBaseModel baseModel = formEditor.getAggregateModel();
+			if (baseModel instanceof IPluginModelBase) {
+				IPluginLibrary[] libraries = 
+					((IPluginModelBase)baseModel).getPluginBase().getLibraries();
+				return libraries;
+			}
+		}
+		return null;
 	}
 	
 	private class BundleLabelProvider extends LabelProvider {
@@ -193,8 +218,35 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		}
 	}
 	
+	/**
+	 * @param editor
+	 * @param id
+	 * @param title
+	 */
 	public BundleSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
+		resetTargetOutlineSelection();
+	}
+	
+	/**
+	 * 
+	 */
+	private void resetTargetOutlineSelection() {
+		fTargetOutlineSelection = null;
+	}
+	
+	/**
+	 * @param object
+	 */
+	private void setTargetOutlineSelection(Object object) {
+		fTargetOutlineSelection = object;
+	}
+	
+	/**
+	 * @return
+	 */
+	private Object getTargetOutlineSelection() {
+		return fTargetOutlineSelection;
 	}
 	
 	public ILabelProvider createOutlineLabelProvider() {
@@ -204,19 +256,215 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	public ITreeContentProvider createOutlineContentProvider() {
 		return new BundleOutlineContentProvider();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#getRangeElement(int, boolean)
+	 */
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
 		IBundleModel model = (IBundleModel) getInputContext().getModel();
 		Dictionary manifest = ((Bundle) model.getBundle()).getHeaders();
-
+		// Reset
+		resetTargetOutlineSelection();		
+		// Search each manifest header
 		for (Enumeration elements = manifest.elements(); elements.hasMoreElements();) {
 		    IDocumentRange node = (IDocumentRange) elements.nextElement();
-
-		    if (offset >= node.getOffset() &&
-		        offset < node.getOffset() + node.getLength()) {
-		        return node;
+		    // Check to see if the parent is within range
+		    if (isWithinCurrentRange(offset, node)) {
+			    // Search the children of composite manifest headers first if
+			    // specified
+			    if (searchChildren && 
+			    		(node instanceof CompositeManifestHeader)) {
+			    	IDocumentRange child_node = getRangeElementChild(model, offset, 
+			    			(CompositeManifestHeader)node);
+			    	// If the child node is specified return it; otherwise, we 
+			    	// will default to the parent node
+			    	if (child_node != null) {
+			    		return child_node;
+			    	}
+			    }		    	
+		    	// A manifest header object can be used both for setting the
+		    	// highlight range and making a selection in the outline view
+		    	setTargetOutlineSelection(node);
+		    	return node;
 		    }
 		}
 		return null;
+	}
+	
+	/**
+	 * @param offset
+	 * @param range
+	 * @return true if the offset is within the range; false, otherwise
+	 */
+	private boolean isWithinCurrentRange(int offset, IDocumentRange range) {
+		
+		if (range == null) {
+			// Range not set
+			return false;
+		} else if (offset >= range.getOffset()
+				&& (offset <= (range.getOffset() + range.getLength()))) {
+			// Offset within range
+			return true;
+		}
+		// Offset not within range
+	    return false;
+	}
+
+	/**
+	 * This method is required because the calculated ranges, do NOT include
+	 * their parameters (e.g. x-friends, bundle-version)
+	 * @param offset
+	 * @param current_range
+	 * @param previous_range
+	 * @return true if the offset falls in between the end of the previous range
+	 * and before the current range (e.g. the previous ranges parameters)
+	 */
+	private boolean isWithinPreviousRange(int offset,
+			IDocumentRange current_range, IDocumentRange previous_range) {
+		
+		if ((current_range == null) ||
+				(previous_range == null)) {
+			// Range not set
+			return false;
+		} else if ((offset >= previous_range.getOffset() + previous_range.getLength()) &&
+				((offset <= current_range.getOffset()))) {
+			// Offset within range
+			return true;
+		}
+		// Offset not within range
+	    return false;
+	}	
+
+	/**
+	 * @param offset
+	 * @param previousRange
+	 * @return
+	 */
+	private boolean isBeforePreviousRange(int offset,
+			IDocumentRange previousRange) {
+		
+		if (previousRange == null) {
+			return false;
+		} else if (offset < previousRange.getOffset()) {
+			return true;
+		}
+		return false;
+	}	
+	
+	/**
+	 * @param model
+	 * @param offset
+	 * @param header
+	 * @return
+	 */
+	private IDocumentRange getRangeElementChild(IBundleModel model,
+			int offset, CompositeManifestHeader header) {
+		// Ensure the header has associated elements
+		if (header.isEmpty()) {
+			return null;
+		}		
+		// Get the header elements
+		PDEManifestElement[] elements = header.getElements();
+		// Get the header elements name (assume that all elements are the same
+		// as the first element)
+		String headerName = getHeaderName(elements[0]);
+		PDEManifestElement previousElement = null;
+		PDEManifestElement currentElement = null;
+		IDocumentRange previousRange = null;
+		IDocumentRange currentRange = null;
+		// Process each element
+		for (int i = 0; i < elements.length; i++) {
+			currentElement = elements[i];
+			// Find the range for the element
+			currentRange = getSpecificRange(
+		    		model,
+					headerName,
+					currentElement.getValue());
+		    // Determine whether the element is within range
+		    if (isBeforePreviousRange(offset, previousRange)) {
+		    	return null;
+		    } else if (isWithinCurrentRange(offset, currentRange)) {
+		    	setChildTargetOutlineSelection(headerName, currentElement);
+		    	// Use for setting the highlight range
+		    	return currentRange;
+		    } else if (isWithinPreviousRange(offset, currentRange, previousRange)) {
+		    	setChildTargetOutlineSelection(headerName, previousElement);
+		    	// Use for setting the highlight range
+		    	return previousRange;
+		    }
+		    // Update for the next iteration
+		    previousRange = currentRange;
+		    previousElement = currentElement;
+		}
+		// No element found within range
+    	setChildTargetOutlineSelection(headerName, currentElement);
+    	// Use for setting the highlight range
+    	return currentRange;
+	}
+
+	/**
+	 * @param headerName
+	 * @param element
+	 */
+	private void setChildTargetOutlineSelection(String headerName,
+			PDEManifestElement element) {
+		// Use for setting the outline view selection
+		if (headerName.equals(Constants.BUNDLE_CLASSPATH)) {
+			setTargetOutlineSelection(
+					getBundleClasspathOutlineSelection(element));
+		} else {
+			setTargetOutlineSelection(element);
+		}
+	}
+
+	/**
+	 * Edge Case:  Cannot use the PDEManifestElement directly to select bundle
+	 * classpath elements in the outline view.  Need to use IPluginLibrary
+	 * objects
+	 * @param manifestElement
+	 * @return
+	 */
+	private Object getBundleClasspathOutlineSelection(
+			PDEManifestElement manifestElement) {
+		
+		IPluginLibrary[] libraries = getBundleClasspathLibraries();
+		// Ensure there are libraries
+		if ((libraries == null) ||
+				(libraries.length == 0)) {
+			return null;
+		}
+		// Linearly search for the equivalent library object
+		for (int i = 0; i < libraries.length; i++) {
+			if (manifestElement.getValue().equals(libraries[i].getName())) {
+				// Found
+				return libraries[i];
+			}
+		}
+		// None found
+		return null;
+	}
+
+	/**
+	 * @param element
+	 * @return
+	 */
+	private String getHeaderName(PDEManifestElement element) {
+		if (element instanceof ExportPackageObject) {
+			return Constants.EXPORT_PACKAGE;
+		} else if (element instanceof ImportPackageObject) {
+			return Constants.IMPORT_PACKAGE;
+		} else if (element instanceof ExecutionEnvironment) {
+			return Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT;
+		} else if (element instanceof RequireBundleObject) {
+			return Constants.REQUIRE_BUNDLE;
+		} else {
+			// Bundle classpath elements do not have their own model class
+			// They are created as PDEManifestElements directly whose value
+			// is just a String
+			// Assume that if the element is none of the above types it is this
+			// type
+			return Constants.BUNDLE_CLASSPATH;
+		}		
 	}
 	
 	protected String[] collectContextMenuPreferencePages() {
@@ -298,7 +546,13 @@ public class BundleSourcePage extends KeyValueSourcePage {
 						// search string is contained by another
 						continue headLoop;
 					
-					c = headerChar[i + sChar.length];
+					int index = i + sChar.length;
+					if (index >= headerChar.length) {
+						// Current match is longer than search
+						// Occurs when match is '.' or a single character
+						continue;
+					}
+					c = headerChar[index];
 					if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '.')
 						// current match is longer than search
 						continue headLoop;
@@ -379,5 +633,45 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		setHighlightRange(range, true);
 		setSelectedRange(range, false);		
 	}	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#handleSelectionChangedSourcePage(org.eclipse.jface.viewers.SelectionChangedEvent)
+	 */
+	protected void handleSelectionChangedSourcePage(SelectionChangedEvent event) {
+		ISelection selection = event.getSelection();
+		// Ensure we have a selection
+		if (selection.isEmpty() || 
+				((selection instanceof ITextSelection) == false)) {
+			return;
+		}
+		// If the page has been edited, adjust the offsets; otherwise, our
+		// caculated ranges will be out of sync
+		IBaseModel model = getInputContext().getModel();
+		if (model instanceof AbstractEditingModel
+				&& isDirty()) {
+			try {
+				((AbstractEditingModel)model).adjustOffsets(
+						((AbstractEditingModel)model).getDocument());
+			} catch (CoreException e) {
+				// Ignore
+			}
+		}
+		// Synchronize using the current cursor position in this page
+		synchronizeOutlinePage(((ITextSelection) selection).getOffset());
+	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#synchronizeOutlinePage(int)
+	 */
+	protected void synchronizeOutlinePage(int offset) {
+		// Find the range header (parent) or element (children) within range of 
+		// the text selection offset
+		IDocumentRange rangeElement = 
+			getRangeElement(offset, true);
+		// Set the highlight range 
+		updateHighlightRange(rangeElement);
+		// Set the outline view selection
+		updateOutlinePageSelection(getTargetOutlineSelection()); 
+	}
+
 }

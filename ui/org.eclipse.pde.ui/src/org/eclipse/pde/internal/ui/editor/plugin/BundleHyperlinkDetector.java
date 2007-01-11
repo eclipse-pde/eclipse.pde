@@ -48,7 +48,7 @@ public class BundleHyperlinkDetector implements IHyperlinkDetector {
 		if (region == null || canShowMultipleHyperlinks)
 			return null;
 
-		IDocumentRange element = fSourcePage.getRangeElement(region.getOffset(), true);
+		IDocumentRange element = fSourcePage.getRangeElement(region.getOffset(), false);
 		if (!(element instanceof ManifestHeader))
 			return null;
 		
@@ -100,6 +100,10 @@ public class BundleHyperlinkDetector implements IHyperlinkDetector {
 		try {
 			value = doc.get(header.getOffset(), header.getLength());
 			int offset = mainOffset - header.getOffset();
+			// Our offset falls outside the value range
+			if (offset >= value.length()) {
+				return null;
+			}
 			
 			// ensure we are over a letter or period
 			char c = value.charAt(offset);
