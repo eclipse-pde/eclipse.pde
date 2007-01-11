@@ -27,7 +27,7 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 	private static final long serialVersionUID = 1L;
 
 	public String getPluginId() {
-		return getValue(Constants.FRAGMENT_HOST);
+		return getValue(Constants.FRAGMENT_HOST, true);
 	}
 
 	/* (non-Javadoc)
@@ -122,7 +122,7 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 	}
 	
 	public boolean isPatch() {
-		return "true".equals(getValue(ICoreConstants.PATCH_FRAGMENT)); //$NON-NLS-1$ 
+		return "true".equals(getValue(ICoreConstants.PATCH_FRAGMENT, false)); //$NON-NLS-1$ 
 	}
 
 }

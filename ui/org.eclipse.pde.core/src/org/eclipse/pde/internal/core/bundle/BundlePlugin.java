@@ -29,7 +29,7 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 	 * @see org.eclipse.pde.core.plugin.IPlugin#getClassName()
 	 */
 	public String getClassName() {
-		return getValue(getClassHeader());
+		return getValue(getClassHeader(), false);
 	}
 
 	/*
@@ -61,7 +61,7 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 	}
 
 	public boolean hasExtensibleAPI() {
-		return "true".equals(getValue(ICoreConstants.EXTENSIBLE_API)); //$NON-NLS-1$ 
+		return "true".equals(getValue(ICoreConstants.EXTENSIBLE_API, false)); //$NON-NLS-1$ 
 	}
 	
 }

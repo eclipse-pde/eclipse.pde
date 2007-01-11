@@ -374,7 +374,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 			Version version = desc.getVersion();
 			return (version != null) ? version.toString() : null;
 		} 
-		return getValue(Constants.BUNDLE_VERSION);
+		return getValue(Constants.BUNDLE_VERSION, false);
 	}
 	
 	/*
@@ -584,16 +584,17 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 * @see org.eclipse.pde.core.IIdentifiable#getId()
 	 */
 	public String getId() {
-		return getValue(Constants.BUNDLE_SYMBOLICNAME);
+		return getValue(Constants.BUNDLE_SYMBOLICNAME, true);
 	}
 	
-	protected String getValue(String key) {
+	// The key should be a manifest header key, and parse should be true if it needs to be parsed by ManifestElement.parseHeader() 
+	protected String getValue(String key, boolean parse) {
 		IBundle bundle = getBundle();
 		if (bundle == null)
 			return null;
 		String value = bundle.getHeader(key);
-		if (value == null)
-			return null;
+		if (value == null || !parse)
+			return value;
 		try {
 			ManifestElement[] elements = ManifestElement.parseHeader(key, value);
 			if (elements.length > 0)
@@ -636,7 +637,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 * @see org.eclipse.pde.core.plugin.IPluginObject#getName()
 	 */
 	public String getName() {
-		return getValue(Constants.BUNDLE_NAME);
+		return getValue(Constants.BUNDLE_NAME, false);
 	}
 
 	/*
