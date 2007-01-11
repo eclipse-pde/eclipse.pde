@@ -183,8 +183,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		});
 		fLoadProfileButton.setEnabled(!fProfileCombo.getText().equals("")); //$NON-NLS-1$
 		
-		fProfileCombo.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+		fProfileCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
 				fLoadProfileButton.setEnabled(!fProfileCombo.getText().equals("")); //$NON-NLS-1$
 			}
 		});
