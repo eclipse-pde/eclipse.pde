@@ -1090,6 +1090,9 @@
          <perspective
                id="org.eclipse.pde.PDEPerspective">
          </perspective>
+         <configurationType
+               id="org.eclipse.pde.ui.JunitLaunchConfig">
+         </configurationType>
       </shortcut>
       <shortcut
             label="%launcher.shortcut.label"
@@ -1133,6 +1136,9 @@
          <perspective
                id="org.eclipse.pde.PDEPerspective">
          </perspective>
+         <configurationType
+               id="org.eclipse.pde.ui.RuntimeWorkbench">
+         </configurationType>
       </shortcut>
       <shortcut
             label="%Equinox.shortcut.label"
@@ -1176,6 +1182,9 @@
          <perspective
                id="org.eclipse.pde.PDEPerspective">
          </perspective>
+         <configurationType
+               id="org.eclipse.pde.ui.EquinoxLauncher">
+         </configurationType>
       </shortcut>
       <!-- <shortcut
             label="%launcher.swt.name"
