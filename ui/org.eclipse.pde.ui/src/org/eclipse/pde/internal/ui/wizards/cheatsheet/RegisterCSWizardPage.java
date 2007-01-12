@@ -21,13 +21,13 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.IPDECoreConstants;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
 import org.eclipse.pde.internal.core.plugin.AbbreviatedFragmentModel;
@@ -136,8 +136,8 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 	 * 
 	 */
 	private void initializePluginModel() {
-		IPath pluginPath = new Path(IPDECoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
-		IPath fragmentPath = new Path(IPDECoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
+		IPath pluginPath = new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
+		IPath fragmentPath = new Path(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
 		// Check to see if a plugin or fragment file exists in the project
 		// storing the cheat sheet
 		if (fPluginProject.exists(pluginPath)) {

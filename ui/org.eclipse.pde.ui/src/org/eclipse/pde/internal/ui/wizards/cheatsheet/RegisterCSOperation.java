@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.IPDECoreConstants;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
@@ -31,6 +30,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.build.BuildObject;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
@@ -387,9 +387,9 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		double targetVersion = TargetPlatform.getTargetVersion();
 		String version = null;
 		if (targetVersion < 3.2) {
-			version = IPDECoreConstants.ECLIPSE_VERSION_3_0;
+			version = ICoreConstants.TARGET30;
 		} else {
-			version = IPDECoreConstants.ECLIPSE_VERSION_3_2;
+			version = ICoreConstants.TARGET32;
 		}
 		base.setSchemaVersion(version);
 		// Create the cheat sheet extension
@@ -487,8 +487,8 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		}
 		// Add the plugin.xml file to the bin.includes build entry if it does
 		// not exist
-		if (entry.contains(IPDECoreConstants.PLUGIN_FILENAME_DESCRIPTOR) == false) {
-			entry.addToken(IPDECoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
+		if (entry.contains(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) == false) {
+			entry.addToken(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 		}
 		// There does not seem to be any support in PDEModelUtility or the 
 		// ModelModification framework to save build.properties modifications

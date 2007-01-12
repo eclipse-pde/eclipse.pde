@@ -13,6 +13,9 @@ package org.eclipse.pde.internal.core;
 import org.osgi.framework.Constants;
 
 public interface ICoreConstants {
+
+	
+	
 	
 	// Target Platform
 	String PLATFORM_PATH = "platform_path"; //$NON-NLS-1$
@@ -34,6 +37,21 @@ public interface ICoreConstants {
 	
 	// Target JRE
 	String TARGET_JRE = "targetJRE"; //$NON-NLS-1$
+	
+	/** Constant for the string <code>extension</code> */	
+	public final static String EXTENSION_NAME = "extension"; //$NON-NLS-1$	
+	
+	/** Constant for the string <code>plugin.xml</code> */
+	public final static String PLUGIN_FILENAME_DESCRIPTOR = "plugin.xml"; //$NON-NLS-1$
+
+	/** Constant for the string <code>feature.xml</code> */
+	public final static String FEATURE_FILENAME_DESCRIPTOR = "feature.xml"; //$NON-NLS-1$
+
+	/** Constant for the string <code>fragment.xml</code> */
+	public final static String FRAGMENT_FILENAME_DESCRIPTOR = "fragment.xml"; //$NON-NLS-1$
+
+	/** Constant for the string <code>META-INF/MANIFEST.MF</code> */
+	public final static String BUNDLE_FILENAME_DESCRIPTOR = "META-INF/MANIFEST.MF"; //$NON-NLS-1$		
 	
 	public final static String TARGET30 = "3.0"; //$NON-NLS-1$
 	public final static String TARGET31 = "3.1"; //$NON-NLS-1$

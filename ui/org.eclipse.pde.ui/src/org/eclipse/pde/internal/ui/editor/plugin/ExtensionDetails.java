@@ -17,11 +17,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IIdentifiable;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IPDECoreConstants;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
@@ -230,7 +230,7 @@ public class ExtensionDetails extends PDEDetails {
 		Schema schema = (Schema)object;
 		// Find the extension element
 		ISchemaElement element = 
-			schema.findElement(IPDECoreConstants.EXTENSION_NAME);
+			schema.findElement(ICoreConstants.EXTENSION_NAME);
 		// Ensure we found the element
 		if (element == null) {
 			return false;
