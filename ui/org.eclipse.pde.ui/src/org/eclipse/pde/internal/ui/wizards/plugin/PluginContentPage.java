@@ -20,6 +20,7 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -234,7 +235,10 @@ public class PluginContentPage extends ContentPage {
 	protected void validatePage() {
 		String errorMessage = validateProperties();
 		if (errorMessage == null && fGenerateClass.isEnabled() && fGenerateClass.getSelection()) {
-			IStatus status = JavaConventions.validateJavaTypeName(fClassText.getText().trim());
+			IStatus status = JavaConventions.validateJavaTypeName(
+					fClassText.getText().trim(), 
+					PDEJavaHelper.getJavaSourceLevel(null), 
+					PDEJavaHelper.getJavaComplianceLevel(null));
 			if (status.getSeverity() == IStatus.ERROR) {
 				errorMessage = status.getMessage();
 			} else if (status.getSeverity() == IStatus.WARNING) {

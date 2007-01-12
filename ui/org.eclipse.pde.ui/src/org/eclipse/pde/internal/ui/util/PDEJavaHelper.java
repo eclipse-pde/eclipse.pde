@@ -537,5 +537,56 @@ public class PDEJavaHelper {
 		return point.getFullId();
 	}	
 	
+	/**
+	 * @param project
+	 * @return
+	 */
+	public static String getJavaSourceLevel(IProject project) {
+		return getJavaLevel(project, JavaCore.COMPILER_SOURCE);	
+	}
+	
+	/**
+	 * @param project
+	 * @return
+	 */
+	public static String getJavaComplianceLevel(IProject project) {
+		return getJavaLevel(project, JavaCore.COMPILER_COMPLIANCE);		
+	}	
+	
+	/**
+	 * Precedence order from high to low:  (1) Project specific option;
+	 * (2) General preference option; (3) Default option; (4) Java 1.3
+	 * @param project
+	 * @param optionName
+	 * @return
+	 */
+	public static String getJavaLevel(IProject project, String optionName) {
+		// Returns the corresponding java project
+		// No need to check for null, will return null		
+		IJavaProject javaProject = JavaCore.create(project);
+		String value = null;
+		// Preferred to use the project
+		if ((javaProject != null) && 
+				javaProject.exists()) {
+			// Get the project specific option if one exists. Rolls up to the 
+			// general preference option if no project specific option exists.
+			value = javaProject.getOption(optionName, true);
+			if (value != null) {
+				return value;
+			}
+		} 
+		// Get the general preference option
+		value = JavaCore.getJavaCore().getPluginPreferences().getString(optionName);
+		if (value != null) {
+			return value;
+		}
+		// Get the default option
+		value = JavaCore.getOption(optionName);
+		if (value != null) {
+			return value;
+		}
+		// Return the default
+		return JavaCore.VERSION_1_3;
+	}
 	
 }

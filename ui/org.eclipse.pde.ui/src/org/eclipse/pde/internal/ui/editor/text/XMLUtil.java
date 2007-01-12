@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.core.text.IDocumentNode;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 
 public abstract class XMLUtil {
 
@@ -135,7 +136,7 @@ public abstract class XMLUtil {
 					&& Character.isUpperCase(className.charAt(1)))
 				className = className.substring(1);
 		}
-		String packageName = createDefaultPackageName(project.getName(), className);
+		String packageName = createDefaultPackageName(project, className);
 		className += counter;
 		return packageName + "." + className; //$NON-NLS-1$
 	}
@@ -146,7 +147,8 @@ public abstract class XMLUtil {
 	 * @param className
 	 * @return
 	 */
-	public static String createDefaultPackageName(String id, String className) {
+	public static String createDefaultPackageName(IProject project, String className) {
+		String id = project.getName();
 		StringBuffer buffer = new StringBuffer();
 		IStatus status;
 		for (int i = 0; i < id.length(); i++) {
@@ -158,7 +160,10 @@ public abstract class XMLUtil {
 				if (Character.isJavaIdentifierPart(ch))
 					buffer.append(ch);
 				else if (ch == '.') {
-					status = JavaConventions.validatePackageName(buffer.toString());
+					status = JavaConventions.validatePackageName(
+							buffer.toString(),
+							PDEJavaHelper.getJavaSourceLevel(project),
+							PDEJavaHelper.getJavaComplianceLevel(project));
 					if (status.getSeverity() == IStatus.ERROR)
 						buffer.append(className.toLowerCase(Locale.ENGLISH));
 					buffer.append(ch);
@@ -166,7 +171,10 @@ public abstract class XMLUtil {
 			}
 		}
 
-		status = JavaConventions.validatePackageName(buffer.toString());
+		status = JavaConventions.validatePackageName(
+				buffer.toString(),
+				PDEJavaHelper.getJavaSourceLevel(project),
+				PDEJavaHelper.getJavaComplianceLevel(project));
 		if (status.getSeverity() == IStatus.ERROR)
 			buffer.append(className.toLowerCase(Locale.ENGLISH));
 
@@ -208,5 +216,7 @@ public abstract class XMLUtil {
 		return elementInfo.getSchema().getQualifiedPointId()
 				+ "." + elementInfo.getName(); //$NON-NLS-1$
 	}
+	
+
 	
 }
