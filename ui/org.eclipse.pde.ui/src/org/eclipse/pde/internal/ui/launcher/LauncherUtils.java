@@ -118,14 +118,22 @@ public class LauncherUtils {
 	}
 
 	private static int confirmDeleteWorkspace(final File workspaceFile) {
+		String message = NLS.bind(
+				PDEUIMessages.WorkbenchLauncherConfigurationDelegate_confirmDeleteWorkspace,
+				workspaceFile.getPath());
+		return generateDialog(message);
+	}
+	
+	public static boolean generateConfigIni() {
+		String message = PDEUIMessages.LauncherUtils_generateConfigIni;
+		return generateDialog(message) == 0;
+	}
+	
+	private static int generateDialog(final String message) {
 		final int[] result = new int[1];
 		getDisplay().syncExec(new Runnable() {
 			public void run() {
 				String title = PDEUIMessages.LauncherUtils_title;
-				String message = NLS
-						.bind(
-								PDEUIMessages.WorkbenchLauncherConfigurationDelegate_confirmDeleteWorkspace,
-								workspaceFile.getPath());
 				MessageDialog dialog = new MessageDialog(getActiveShell(),
 						title, null, message, MessageDialog.QUESTION, new String[] {
 								IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL,

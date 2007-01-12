@@ -186,6 +186,8 @@ public class PDEUIMessages extends NLS {
 	public static String DirectorySelectionPage_remove;
 
 	public static String DirectorySelectionPage_title;
+
+	public static String LauncherUtils_generateConfigIni;
 	
 	public static String UpdateSiteProvisionerWizard_title;
 	public static String UpdateSiteWizardPage_title;

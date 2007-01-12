@@ -20,6 +20,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.ExternalModelManager;
@@ -225,6 +228,31 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		// clear config area, if necessary
 		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
 			CoreUtility.deleteContent(getConfigDir(configuration));	
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void preLaunchCheck(ILaunchConfiguration configuration,
+			ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		validateConfigIni(configuration);
+		super.preLaunchCheck(configuration, launch, monitor);
+	}
+	
+	private void validateConfigIni(ILaunchConfiguration configuration) throws CoreException {
+		if (!configuration.getAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true)) {
+			String templateLoc = configuration.getAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, "");			 //$NON-NLS-1$
+			IStringVariableManager mgr = VariablesPlugin.getDefault().getStringVariableManager();
+			templateLoc = mgr.performStringSubstitution(templateLoc);
+			
+			File templateFile = new File(templateLoc);
+			if (!templateFile.exists()) { 
+				if (!LauncherUtils.generateConfigIni())
+					throw new CoreException(Status.CANCEL_STATUS);
+				// with the way the launcher works, if a config.ini file is not found one will be generated automatically.
+				// This check was to warn the user a config.ini needs to be generated. - bug 161265, comment #7
+			}
+		}
 	}
 	
 }
