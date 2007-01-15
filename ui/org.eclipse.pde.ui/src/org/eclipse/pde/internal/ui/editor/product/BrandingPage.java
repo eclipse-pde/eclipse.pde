@@ -48,7 +48,7 @@ public class BrandingPage extends PDEFormPage {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth = true;
-		layout.marginWidth = 10;
+		layout.marginWidth = 6;
 		layout.verticalSpacing = 15;
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);

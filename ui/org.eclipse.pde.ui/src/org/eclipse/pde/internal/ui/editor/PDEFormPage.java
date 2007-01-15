@@ -29,7 +29,6 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -49,7 +48,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.forms.AbstractFormPart;
-import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -62,7 +60,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public abstract class PDEFormPage extends FormPage {
 
-	private boolean fNewStyleHeader;
+	private boolean fNewStyleHeader=true;
 	private Control fLastFocusControl;
 	private boolean fListenersAdded;
 
@@ -103,10 +101,11 @@ public abstract class PDEFormPage extends FormPage {
 	protected void createFormContent(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		FormColors colors = toolkit.getColors();
-		form.getForm().setSeparatorColor(colors.getColor(FormColors.TB_BORDER));
+		//FormColors colors = toolkit.getColors();
+		//form.getForm().setSeparatorColor(colors.getColor(FormColors.TB_BORDER));
 		if (fNewStyleHeader) {
-			createNewStyleHeader(form, colors);
+			//createNewStyleHeader(form, colors);
+			toolkit.decorateFormHeading(form.getForm());
 		}
 		final String href = getHelpResource();
 		if (href != null) {
@@ -369,10 +368,11 @@ public abstract class PDEFormPage extends FormPage {
 		
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		FormColors colors = toolkit.getColors();
-		form.getForm().setSeparatorColor(colors.getColor(FormColors.TB_BORDER));
+		//FormColors colors = toolkit.getColors();
+		//form.getForm().setSeparatorColor(colors.getColor(FormColors.TB_BORDER));
 		if (fNewStyleHeader) {
-			createNewStyleHeader(form, colors);
+			//createNewStyleHeader(form, colors);
+			toolkit.decorateFormHeading(form.getForm());
 		}
 
 		Composite parent = form.getBody();
@@ -466,11 +466,13 @@ public abstract class PDEFormPage extends FormPage {
 	 * @param form
 	 * @param colors
 	 */
+    /*
 	private void createNewStyleHeader(final ScrolledForm form, FormColors colors) {
 		colors.initializeSectionToolBarColors();
-		Color gbg = colors.getColor(FormColors.TB_GBG);
+		Color gbg = colors.getColor(IFormColors.TB_BG);
 		Color bg = colors.getBackground();
 		form.getForm().setTextBackground(new Color[]{bg, gbg}, new int [] {100}, true);
 		form.getForm().setSeparatorVisible(true);
 	}
+	*/
 }
