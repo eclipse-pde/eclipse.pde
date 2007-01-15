@@ -16,13 +16,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 
 public abstract class SharedPartWithButtons extends SharedPart {
 	private String[] fButtonLabels;
-	private Control[] fControls;
+	private Button[] fButtons;
 	protected Composite fButtonContainer;
 	private class SelectionHandler implements SelectionListener {
 		public void widgetSelected(SelectionEvent e) {
@@ -41,10 +40,8 @@ public abstract class SharedPartWithButtons extends SharedPart {
 		fButtonLabels = buttonLabels;
 	}
 	public void setButtonEnabled(int index, boolean enabled) {
-		if (fControls != null && index >= 0 && fControls.length > index) {
-			Control c = fControls[index];
-			if (c instanceof Button)
-				c.setEnabled(enabled);
+		if (fButtons != null && index >= 0 && fButtons.length > index) {
+			fButtons[index].setEnabled(enabled);
 		}
 	}
 	protected abstract void createMainControl(Composite parent, int style,
@@ -65,7 +62,7 @@ public abstract class SharedPartWithButtons extends SharedPart {
 			GridData gd = new GridData(GridData.FILL_VERTICAL);
 			fButtonContainer.setLayoutData(gd);
 			fButtonContainer.setLayout(createButtonsLayout());
-			fControls = new Control[fButtonLabels.length];
+			fButtons = new Button[fButtonLabels.length];
 			SelectionHandler listener = new SelectionHandler();
 			for (int i = 0; i < fButtonLabels.length; i++) {
 				String label = fButtonLabels[i];
@@ -73,7 +70,7 @@ public abstract class SharedPartWithButtons extends SharedPart {
 					Button button = createButton(fButtonContainer, label, i,
 							toolkit);
 					button.addSelectionListener(listener);
-					fControls[i] = button;
+					fButtons[i] = button;
 				} else {
 					createEmptySpace(fButtonContainer, 1, toolkit);
 				}
@@ -101,13 +98,26 @@ public abstract class SharedPartWithButtons extends SharedPart {
 		return button;
 	}
 	protected void updateEnabledState() {
-		for (int i = 0; i < fControls.length; i++) {
-			Control c = fControls[i];
-			if (c instanceof Button)
-				c.setEnabled(isEnabled());
+		for (int i = 0; i < fButtons.length; i++) {
+			fButtons[i].setEnabled(isEnabled());
 		}
 	}
 	protected void createMainLabel(Composite parent, int span,
 			FormToolkit toolkit) {
+	}
+	
+	/**
+	 * @param index
+	 * @return
+	 */
+	public Button getButton(int index) {
+		//
+		if ((fButtons == null) ||
+				(index < 0) ||
+				(index >= fButtons.length)) {
+			return null;
+		}
+		//
+		return fButtons[index];
 	}
 }

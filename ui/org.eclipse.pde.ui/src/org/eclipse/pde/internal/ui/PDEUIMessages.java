@@ -188,6 +188,14 @@ public class PDEUIMessages extends NLS {
 	public static String DirectorySelectionPage_title;
 
 	public static String LauncherUtils_generateConfigIni;
+
+	public static String SimpleCSCommandDetails_msgFieldDisabledCommand;
+
+	public static String SimpleCSItemDetails_msgFieldDisabledOptional;
+
+	public static String SimpleCSMasterTreeSection_msgButtonDisabledCommand;
+
+	public static String SimpleCSMasterTreeSection_msgButtonDisabledOptional;
 	
 	public static String UpdateSiteProvisionerWizard_title;
 	public static String UpdateSiteWizardPage_title;

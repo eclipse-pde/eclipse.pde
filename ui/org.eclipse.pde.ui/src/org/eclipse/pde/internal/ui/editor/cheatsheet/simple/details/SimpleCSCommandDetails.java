@@ -17,6 +17,8 @@ import java.util.Map;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.SerializationException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSCommand;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
@@ -65,6 +67,8 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 	
 	private ComboPart fCommandCombo;
 	
+	private ControlDecoration fCommandInfoDecoration;
+	
 	private Button fCommandBrowse;
 
 	private static final String F_NO_COMMAND = PDEUIMessages.SimpleCSCommandDetails_6;
@@ -78,8 +82,8 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 
 		fCommandTable = null;
 		fCommandCombo = null;
+		fCommandInfoDecoration = null;
 		fCommandBrowse = null;
-
 	}
 
 	/* (non-Javadoc)
@@ -114,6 +118,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		// Label
 		label = toolkit.createLabel(commandSectionClient, PDEUIMessages.SimpleCSItemDetails_7, SWT.WRAP);
 		label.setForeground(foreground);
+		createCommandInfoDecoration(label);
 		// Combo box
 		fCommandCombo = new ComboPart();
 		fCommandCombo.createControl(commandSectionClient, toolkit, SWT.READ_ONLY);
@@ -150,6 +155,21 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		commandSection.setClient(commandSectionClient);
 		// Mark as a details part to enable cut, copy, paste, etc.
 		markDetailsPart(commandSection);
+	}
+
+	/**
+	 * @param label
+	 */
+	private void createCommandInfoDecoration(Label label) {
+		// Command info decoration
+		int bits = SWT.TOP | SWT.LEFT;
+		fCommandInfoDecoration = new ControlDecoration(label, bits);
+		fCommandInfoDecoration.setMarginWidth(1);
+		fCommandInfoDecoration.setDescriptionText(PDEUIMessages.SimpleCSCommandDetails_msgFieldDisabledCommand);
+		updateCommandInfoDecoration(false);
+		fCommandInfoDecoration.setImage(
+			FieldDecorationRegistry.getDefault().getFieldDecoration(
+				FieldDecorationRegistry.DEC_CONTENT_PROPOSAL).getImage());
 	}
 
 	/* (non-Javadoc)
@@ -236,6 +256,9 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 			// together:  perform-when, command, action			
 			if (item.hasSubItems()) {
 				editable = false;
+				updateCommandInfoDecoration(true);
+			} else {
+				updateCommandInfoDecoration(false);			
 			}
 		}
 		
@@ -414,5 +437,18 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		return (ICommandService)workbench.getAdapter(ICommandService.class);
 	}	
+	
+	/**
+	 * 
+	 */
+	private void updateCommandInfoDecoration(boolean showDecoration) {
+		//
+		if (showDecoration) {
+			fCommandInfoDecoration.show();
+		} else {
+			fCommandInfoDecoration.hide();
+		}
+		fCommandInfoDecoration.setShowHover(showDecoration);
+	}
 	
 }

@@ -20,6 +20,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -51,6 +53,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
@@ -98,6 +101,8 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 	private SimpleCSRemoveRunObjectAction fRemoveRunObjectAction;
 	
 	private CollapseAction fCollapseAction;
+	
+	private ControlDecoration fSubStepInfoDecoration;
 	
 	/**
 	 * @param formPage
@@ -209,8 +214,47 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		createTreeListeners();		
 		// TODO: MP: LOW: SimpleCS: Implement drag and drop move feature
+		createSubStepInfoDecoration();		
+	}
+
+
+	/**
+	 * 
+	 */
+	private void createSubStepInfoDecoration() {
+		//
+		Button button = getStructuredViewerPart().getButton(F_BUTTON_ADD_SUBSTEP);
+		int bits = SWT.TOP | SWT.RIGHT;
+		fSubStepInfoDecoration = new ControlDecoration(button, bits);
+		fSubStepInfoDecoration.setMarginWidth(0);
+		updateSubStepInfoDecoration(false, false, false);
+		fSubStepInfoDecoration.setImage(
+			FieldDecorationRegistry.getDefault().getFieldDecoration(
+				FieldDecorationRegistry.DEC_CONTENT_PROPOSAL).getImage());
 	}	
 
+	/**
+	 * @param show
+	 * @param itemHasNoExecutable
+	 * @param itemIsNotOptional
+	 */
+	private void updateSubStepInfoDecoration(boolean show, 
+			boolean itemHasNoExecutable, boolean itemIsNotOptional) {
+		//
+		if (show) {
+			fSubStepInfoDecoration.show();
+			if (itemHasNoExecutable == false) {
+				fSubStepInfoDecoration.setDescriptionText(PDEUIMessages.SimpleCSMasterTreeSection_msgButtonDisabledCommand);
+			} else if (itemIsNotOptional == false){
+				fSubStepInfoDecoration.setDescriptionText(PDEUIMessages.SimpleCSMasterTreeSection_msgButtonDisabledOptional);
+			}
+		} else {
+			fSubStepInfoDecoration.hide();
+		}	
+		fSubStepInfoDecoration.setShowHover(show);
+	}
+		
+	
 	/**
 	 * 
 	 */
@@ -275,6 +319,10 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 		boolean canMoveUp = false;
 		boolean canMoveDown = false;
 
+		boolean itemHasNoExecutable = false;
+		boolean itemIsNotOptional = false;		
+		boolean showDecoration = false;
+		
 		if (csObject != null) {
 			if (csObject.getType() == ISimpleCSConstants.TYPE_ITEM) {
 				ISimpleCSItem item = (ISimpleCSItem)csObject;
@@ -294,9 +342,16 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 				// Preserve cheat sheet validity
 				// Semantic Rule:  Cannot have a subitem and any of the following
 				// together:  perform-when, command, action
-				if (item.getExecutable() == null) {
+				// Preserve cheat sheet validity
+				// Semantic Rule:  Cannot add subitems to an item that is 
+				// optional		
+				itemHasNoExecutable = (item.getExecutable() == null);
+				itemIsNotOptional = (item.getSkip() == false);
+				if (itemHasNoExecutable && itemIsNotOptional) {
 					canAddSubItem = true;
 				}
+				showDecoration = (canAddSubItem == false);
+				
 			} else if (csObject.getType() == ISimpleCSConstants.TYPE_SUBITEM) {
 				ISimpleCSSubItem subitem = (ISimpleCSSubItem)csObject;
 				ISimpleCSObject parent = subitem.getParent();
@@ -311,9 +366,15 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 					// Preserve cheat sheet validity
 					// Semantic Rule:  Cannot have a subitem and any of the following
 					// together:  perform-when, command, action
-					if (item.getExecutable() == null) {
+					// Preserve cheat sheet validity
+					// Semantic Rule:  Cannot add subitems to an item that is 
+					// optional				
+					itemHasNoExecutable = (item.getExecutable() == null);
+					itemIsNotOptional = (item.getSkip() == false);					
+					if (itemHasNoExecutable && itemIsNotOptional) {
 						canAddSubItem = true;
-					}					
+					}
+					showDecoration = (canAddSubItem == false);					
 				}
 				canRemove = true;
 				
@@ -327,6 +388,9 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 				// Action and command supported; but, will never be applicable
 				canRemove = true;
 			}
+
+			updateSubStepInfoDecoration(showDecoration, itemHasNoExecutable, 
+					itemIsNotOptional);
 		}
 
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_SUBSTEP, canAddSubItem);
@@ -543,7 +607,11 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			// Preserve cheat sheet validity
 			// Semantic Rule:  Cannot have a subitem and any of the following
 			// together:  perform-when, command, action			
-			if (item.getExecutable() == null) {
+			// Preserve cheat sheet validity
+			// Semantic Rule:  Cannot add subitems to an item that is 
+			// optional				
+			if ((item.getExecutable() == null) &&
+					(item.getSkip() == false)) {
 				fAddSubStepAction.setEnabled(fModel.isEditable());
 			} else {
 				fAddSubStepAction.setEnabled(false);

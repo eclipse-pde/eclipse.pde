@@ -11,6 +11,8 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details;
 
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -60,6 +62,8 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 
 	private ICSDetails fRegisterCSArea;
 	
+	private ControlDecoration fSkipInfoDecoration;
+	
 	/**
 	 * 
 	 */
@@ -70,6 +74,7 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		fTitle = null;
 		fDialog = null;
 		fSkip = null;
+		fSkipInfoDecoration = null;
 		fContent = null;
 		fMainSection = null;
 		
@@ -151,7 +156,7 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		data.horizontalSpan = 2;
 		fSkip.setLayoutData(data);
 		fSkip.setForeground(foreground);
-		
+		createSkipInfoDecoration();			
 		// Bind widgets
 		getToolkit().paintBordersFor(mainSectionClient);
 		fMainSection.setClient(mainSectionClient);
@@ -162,6 +167,21 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		fHelpSection.createDetails(parent);
 		// Create the register cheat sheet area
 		fRegisterCSArea.createDetails(parent);		
+	}
+
+	/**
+	 * 
+	 */
+	private void createSkipInfoDecoration() {
+		// Skip info decoration
+		int bits = SWT.TOP | SWT.LEFT;
+		fSkipInfoDecoration = new ControlDecoration(fSkip, bits);
+		fSkipInfoDecoration.setMarginWidth(1);
+		fSkipInfoDecoration.setDescriptionText(PDEUIMessages.SimpleCSItemDetails_msgFieldDisabledOptional);
+		updateSkipInfoDecoration(false);
+		fSkipInfoDecoration.setImage( 
+			FieldDecorationRegistry.getDefault().getFieldDecoration(
+				FieldDecorationRegistry.DEC_CONTENT_PROPOSAL).getImage());
 	}
 	
 	/* (non-Javadoc)
@@ -193,6 +213,7 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		fSkip.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fItem.setSkip(fSkip.getSelection());
+				getMasterSection().updateButtons();
 			}
 		});	
 
@@ -262,8 +283,24 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		// control to the subitem to skip).
 		if (fItem.hasSubItems()) {
 			editable = false;
-		}		
+			updateSkipInfoDecoration(true);
+		} else {
+			updateSkipInfoDecoration(false);
+		}
 		fSkip.setEnabled(editable);		
+	}
+	
+	/**
+	 * @param show
+	 */
+	private void updateSkipInfoDecoration(boolean show) {
+		//
+		if (show) {
+			fSkipInfoDecoration.show();
+		} else {
+			fSkipInfoDecoration.hide();
+		}	
+		fSkipInfoDecoration.setShowHover(show);
 	}
 	
 }
