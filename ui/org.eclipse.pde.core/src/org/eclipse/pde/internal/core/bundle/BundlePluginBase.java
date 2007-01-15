@@ -140,7 +140,8 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 */
 	public void add(IPluginLibrary library) throws CoreException {
 		if (libraries == null)
-			libraries = new ArrayList();
+			// if libraries == null, initialize the libraries varible by calling getLibraries()
+			getLibraries();
 		libraries.add(library);
 		Object header = getManifestHeader(Constants.BUNDLE_CLASSPATH);
 		if (header instanceof BundleClasspathHeader) {
@@ -178,14 +179,20 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#add(org.eclipse.pde.core.plugin.IPluginImport)
 	 */
 	public void add(IPluginImport iimport) throws CoreException {
-		if (imports != null) {
-			addImport(iimport);
-			fireStructureChanged(iimport, true);
-		}
+		if (iimport == null)
+			return;
+		if (imports == null)
+			// if imports == null, intitialize the imports list by calling getImports()
+			getImports();
+		addImport(iimport);
+		fireStructureChanged(iimport, true);
 	}
 	
 	public void add(IPluginImport[] iimports) throws CoreException {
-		if (imports != null && iimports.length > 0) {
+		if (iimports != null && iimports.length > 0) {
+			if (imports == null) 
+				// if imports == null, intitialize the imports list by calling getImports()
+				getImports();
 			for (int i = 0; i < iimports.length; i++) {
 				if (iimports[i] != null)
 					addImport(iimports[i]);
