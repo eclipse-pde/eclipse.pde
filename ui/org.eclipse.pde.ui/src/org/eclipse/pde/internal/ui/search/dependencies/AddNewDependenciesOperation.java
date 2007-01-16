@@ -338,14 +338,20 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			IJavaProject jProject = JavaCore.create(fProject);
 			for (int i = 0; i < elems.length; i++) {
 				String library = elems[i].getValue();
+				// we only want to include packages that will be avialable after exporting (ie. whatever is included in bin.includes)
 				if (binIncludes.contains(library)) {
+					// if the library is in the bin.includes, see if it is source folder that will be compile.  This way we can search source folders
 					IBuildEntry entry = build.getEntry(IBuildEntry.JAR_PREFIX + library);
 					if (entry != null) {
 						String [] resources = entry.getTokens();
 						for (int j = 0; j < resources.length; j++) 
 							addPackagesFromResource(jProject, fProject.findMember(resources[j]), ignorePkgs);
+					} else {
+						// if there is no source entry for the library, assume it is a binary jar and try to add it if it exists
+						addPackagesFromResource(jProject, fProject.findMember(library), ignorePkgs);
 					}
 				} else {
+					// if it is not found in the bin.includes, see if a parent folder is.  This is common for binary jar.
 					StringTokenizer tokenizer = new StringTokenizer(library,"/"); //$NON-NLS-1$
 					StringBuffer buffer = new StringBuffer();
 					while (tokenizer.hasMoreTokens()) {
