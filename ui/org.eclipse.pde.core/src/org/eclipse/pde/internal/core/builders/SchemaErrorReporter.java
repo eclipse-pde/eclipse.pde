@@ -130,7 +130,11 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 							String tagName = text.nextToken();
 							String closing = text.nextToken();
 							if (closing.equals(">")) { //$NON-NLS-1$
-								if (tagName.startsWith("!--") || tagName.endsWith("--")) { //$NON-NLS-1$ //$NON-NLS-2$
+								// Skip comments and processing instructions
+								if (tagName.startsWith("!--") ||  //$NON-NLS-1$
+										tagName.endsWith("--") || //$NON-NLS-1$
+										tagName.startsWith("?") || //$NON-NLS-1$
+										tagName.endsWith("?")) {  //$NON-NLS-1$
 									lineNumber += getLineBreakCount(tagName);
 									continue;
 								}
