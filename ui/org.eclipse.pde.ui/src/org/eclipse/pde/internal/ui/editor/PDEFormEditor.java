@@ -66,7 +66,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.editors.text.ILocationProvider;
-import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -356,7 +355,7 @@ public abstract class PDEFormEditor extends FormEditor
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor monitor) {
-		commitFormPages(true);
+		commitPages(true);
 		fInputContextManager.save(monitor);
 		editorDirtyStateChanged();
 	}
@@ -383,15 +382,6 @@ public abstract class PDEFormEditor extends FormEditor
 		    spage.doRevertToSaved();
 		}
 		editorDirtyStateChanged();
-	}
-	private void commitFormPages(boolean onSave) {
-		IFormPage[] pages = getPages();
-		for (int i = 0; i < pages.length; i++) {
-			IFormPage page = pages[i];
-			IManagedForm mform = page.getManagedForm();
-			if (mform != null && mform.isDirty())
-				mform.commit(true);
-		}
 	}
 	
 	/**
