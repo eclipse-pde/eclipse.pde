@@ -94,10 +94,19 @@ public class LaunchConfigurationHelper {
 			// if target's config.ini does not exist, lets try to fill in default values
 			if (properties == null)
 				properties = new Properties();
+			// if target's config.ini has the osgi.bundles header, then parse and compute the proper osgi.bundles value
+			String bundleList = properties.getProperty("osgi.bundles"); //$NON-NLS-1$
+			if (bundleList != null)
+				properties.setProperty("osgi.bundles", computeOSGiBundles(TargetPlatform.stripPathInformation(bundleList), map)); //$NON-NLS-1$
 		} else {
 			String templateLoc = configuration.getAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, (String)null);
-			if (templateLoc != null) 
+			if (templateLoc != null) {
 				properties = loadFromTemplate(getSubstitutedString(templateLoc));
+				// if template contains osgi.bundles, then only strip the path, do not compute the value
+				String osgiBundles = properties.getProperty("osgi.bundles"); //$NON-NLS-1$
+				if (osgiBundles != null)
+					properties.setProperty("osgi.bundles", TargetPlatform.stripPathInformation(osgiBundles)); //$NON-NLS-1$
+			}
 		}
 		// whether we create a new config.ini or read from one as a template, we should add the required properties - bug 161265
 		if (properties != null)
@@ -123,14 +132,14 @@ public class LaunchConfigurationHelper {
 		// if osgi.splashPath is set, try to resolve relative paths to absolute paths
 		else if (properties.containsKey("osgi.splashPath")) //$NON-NLS-1$
 			resolveLocationPath(properties.getProperty("osgi.splashPath"), properties, map); //$NON-NLS-1$
-		
-		// must parse osgi.bundles whether it exists or we create the value.  If we don't, we can't find out if org.eclipse.update.configurator is included.
-		// If the org.eclipse.update.configurator plug-in is not included, we need to put all the bundles in osgi.bundles - bug 
-		String bundleList = properties.containsKey("osgi.bundles") ?  //$NON-NLS-1$ 
-				TargetPlatform.stripPathInformation(properties.getProperty("osgi.bundles")) : TargetPlatform.getBundleList(); //$NON-NLS-1$
+		if (!properties.containsKey("osgi.bundles")) //$NON-NLS-1$
+			properties.setProperty("osgi.bundles", computeOSGiBundles(TargetPlatform.getBundleList(), map)); //$NON-NLS-1$
+		if (!properties.containsKey("osgi.bundles.defaultStartLevel")) //$NON-NLS-1$
+			properties.setProperty("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	private static String computeOSGiBundles(String bundleList, Map map) {
 		StringBuffer buffer = new StringBuffer();
-
-		// include only bundles that are actually in the list of plug-ins to launch
 		Set initialBundleSet = new HashSet();
 		StringTokenizer tokenizer = new StringTokenizer(bundleList, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
@@ -159,9 +168,7 @@ public class LaunchConfigurationHelper {
 				}
 			}
 		}
-		properties.setProperty("osgi.bundles", buffer.toString()); //$NON-NLS-1$
-		if (!properties.containsKey("osgi.bundles.defaultStartLevel")) //$NON-NLS-1$
-			properties.setProperty("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
+		return buffer.toString();
 	}
 	
 	private static Properties loadFromTemplate(String templateLoc) throws CoreException {
