@@ -17,7 +17,6 @@ import org.eclipse.debug.ui.EnvironmentTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
-import org.eclipse.jdt.internal.junit.launcher.AssertionVMArg;
 import org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
@@ -61,7 +60,6 @@ public class JUnitTabGroup extends AbstractPDELaunchConfigurationTabGroup {
 		} catch (CoreException e) {
 			vmArgs= ""; //$NON-NLS-1$
 		}
-		vmArgs = AssertionVMArg.enableAssertInArgString(vmArgs);
 		if (vmArgs.length() > 0)
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
 	}
