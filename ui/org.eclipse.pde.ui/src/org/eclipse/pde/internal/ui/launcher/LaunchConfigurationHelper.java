@@ -91,6 +91,9 @@ public class LaunchConfigurationHelper {
 		// if we are to generate a config.ini, start with the values in the target platform's config.ini - bug 141918
 		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true)) {
 			properties = TargetPlatform.getConfigIniProperties();
+			// if target's config.ini does not exist, lets try to fill in default values
+			if (properties == null)
+				properties = new Properties();
 		} else {
 			String templateLoc = configuration.getAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, (String)null);
 			if (templateLoc != null) 
@@ -121,42 +124,42 @@ public class LaunchConfigurationHelper {
 		else if (properties.containsKey("osgi.splashPath")) //$NON-NLS-1$
 			resolveLocationPath(properties.getProperty("osgi.splashPath"), properties, map); //$NON-NLS-1$
 		
-		if (!properties.containsKey("osgi.bundles")) { //$NON-NLS-1$
-			String bundleList = TargetPlatform.getBundleList();
-			StringBuffer buffer = new StringBuffer();
+		// must parse osgi.bundles whether it exists or we create the value.  If we don't, we can't find out if org.eclipse.update.configurator is included.
+		// If the org.eclipse.update.configurator plug-in is not included, we need to put all the bundles in osgi.bundles - bug 
+		String bundleList = properties.containsKey("osgi.bundles") ?  //$NON-NLS-1$ 
+				TargetPlatform.stripPathInformation(properties.getProperty("osgi.bundles")) : TargetPlatform.getBundleList(); //$NON-NLS-1$
+		StringBuffer buffer = new StringBuffer();
 
-			// include only bundles that are actually in the list of plug-ins to launch
-			Set initialBundleSet = new HashSet();
-			StringTokenizer tokenizer = new StringTokenizer(bundleList, ","); //$NON-NLS-1$
-			while (tokenizer.hasMoreTokens()) {
-				String token = tokenizer.nextToken();
-				int index = token.indexOf('@');
-				String id = index != -1 ? token.substring(0, index) : token;
-				if (map.containsKey(id)) {
+		// include only bundles that are actually in the list of plug-ins to launch
+		Set initialBundleSet = new HashSet();
+		StringTokenizer tokenizer = new StringTokenizer(bundleList, ","); //$NON-NLS-1$
+		while (tokenizer.hasMoreTokens()) {
+			String token = tokenizer.nextToken();
+			int index = token.indexOf('@');
+			String id = index != -1 ? token.substring(0, index) : token;
+			if (map.containsKey(id)) {
+				if (buffer.length() > 0)
+					buffer.append(',');
+				buffer.append(id);
+				if (index != -1 && index < token.length() -1)
+					buffer.append(token.substring(index));				
+				initialBundleSet.add(id);
+			}
+		}
+		// if org.eclipse.update.configurator is not included (LIKE IN BASIC RCP APPLICATION), then write out all bundles in osgi.bundles - bug 170772
+		if (!initialBundleSet.contains("org.eclipse.update.configurator")) { //$NON-NLS-1$
+			initialBundleSet.add("org.eclipse.osgi"); //$NON-NLS-1$
+			Iterator iter = map.keySet().iterator();
+			while (iter.hasNext()) {
+				String id = iter.next().toString();
+				if (!initialBundleSet.contains(id)) {
 					if (buffer.length() > 0)
 						buffer.append(',');
 					buffer.append(id);
-					if (index != -1 && index < token.length() -1)
-						buffer.append(token.substring(index));				
-					initialBundleSet.add(id);
 				}
 			}
-			if (!initialBundleSet.contains("org.eclipse.update.configurator")) { //$NON-NLS-1$
-				initialBundleSet.add("org.eclipse.osgi"); //$NON-NLS-1$
-				Iterator iter = map.keySet().iterator();
-				while (iter.hasNext()) {
-					String id = iter.next().toString();
-					if (!initialBundleSet.contains(id)) {
-						if (buffer.length() > 0)
-							buffer.append(',');
-						buffer.append(id);
-					}
-				}
-			}
-			properties.setProperty("osgi.bundles", buffer.toString()); //$NON-NLS-1$
-		} else {
-			properties.put("osgi.bundles", TargetPlatform.stripPathInformation(properties.getProperty("osgi.bundles"))); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		properties.setProperty("osgi.bundles", buffer.toString()); //$NON-NLS-1$
 		if (!properties.containsKey("osgi.bundles.defaultStartLevel")) //$NON-NLS-1$
 			properties.setProperty("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
