@@ -30,7 +30,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.commands.CommandComposerDialog;
 import org.eclipse.pde.internal.ui.commands.CommandComposerPart;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractSubDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
@@ -40,7 +40,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -96,23 +95,20 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		FormToolkit toolkit = getToolkit();
 		Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
 		GridData data = null;
-		GridLayout layout = null;
 		Label label = null;
 		
 		// Create command section
 		commandSection = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
-		commandSection.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
-		commandSection.marginHeight = 5;
-		commandSection.marginWidth = 5;
+		commandSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		commandSection.setText(PDEUIMessages.SimpleCSItemDetails_5);
 		commandSection.setDescription(PDEUIMessages.SimpleCSItemDetails_6);
+		commandSection.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		commandSection.setLayoutData(data);
 		
 		// Create container for command section		
 		Composite commandSectionClient = toolkit.createComposite(commandSection);	
-		layout = new GridLayout(columnSpan, false);
-		commandSectionClient.setLayout(layout);
+		commandSectionClient.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, columnSpan));
 
 		// Element:  command
 		// Label

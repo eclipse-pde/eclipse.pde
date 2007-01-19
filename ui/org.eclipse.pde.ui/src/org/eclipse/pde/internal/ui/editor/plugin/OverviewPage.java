@@ -31,9 +31,9 @@ import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.editor.build.BuildPage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
@@ -59,7 +59,6 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.IProgressService;
 import org.osgi.service.prefs.BackingStoreException;
@@ -92,19 +91,10 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.bottomMargin = 10;
-		layout.topMargin = 5;
-		layout.leftMargin = 10;
-		layout.rightMargin = 10;
-		layout.numColumns = 2;
-		layout.horizontalSpacing = 10;
-		body.setLayout(layout);
+		body.setLayout(FormLayoutFactory.createFormTableWrapLayout(false, 2));
 
 		Composite left = toolkit.createComposite(body);
-		layout = new TableWrapLayout();
-		layout.verticalSpacing = 20;
-		left.setLayout(layout);
+		left.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
 		left.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		if (isFragment())
 			fInfoSection = new FragmentGeneralInfoSection(this, left);
@@ -115,9 +105,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			managedForm.addPart(new ExecutionEnvironmentSection(this, left));
 			
 		Composite right = toolkit.createComposite(body);			
-		layout = new TableWrapLayout();
-		layout.verticalSpacing = 20;
-		right.setLayout(layout);
+		right.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
 		right.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		createContentSection(managedForm, right, toolkit);
 		if (isEditable() || getPDEEditor().hasInputContext(PluginInputContext.CONTEXT_ID))
@@ -142,9 +130,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 							sectionTitle);
 
 		Composite container = toolkit.createComposite(section, SWT.NONE);
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.leftMargin = layout.rightMargin = layout.topMargin = layout.bottomMargin = 0;
-		container.setLayout(layout);
+		container.setLayout(FormLayoutFactory.createSectionClientTableWrapLayout(false, 1));
 		container.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		
 		FormText text = createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fContent : PDEUIMessages.OverviewPage_content, toolkit);
@@ -173,9 +159,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 							sectionTitle);
 
 		Composite container = toolkit.createComposite(section, SWT.NONE);
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.leftMargin = layout.rightMargin = layout.topMargin = layout.bottomMargin = 0;
-		container.setLayout(layout);
+		container.setLayout(FormLayoutFactory.createSectionClientTableWrapLayout(false, 1));
 		container.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		
 		FormText text  = createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fExtensionContent : PDEUIMessages.OverviewPage_extensionContent, toolkit);
@@ -204,14 +188,18 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		});
 		section.setTextClient(info);
 		
+		Composite container = toolkit.createComposite(section, SWT.NONE);
+		container.setLayout(FormLayoutFactory.createSectionClientTableWrapLayout(false, 1));
+		container.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		
 		FormText text;
 		if (!((ManifestEditor)getEditor()).showExtensionTabs())
-			text = createClient(section, PDEUIMessages.OverviewPage_OSGiTesting, toolkit);
+			text = createClient(container, PDEUIMessages.OverviewPage_OSGiTesting, toolkit);
 		else
-			text = createClient(section, isFragment() ? PDEUIMessages.OverviewPage_fTesting : PDEUIMessages.OverviewPage_testing, toolkit);
+			text = createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fTesting : PDEUIMessages.OverviewPage_testing, toolkit);
 		text.setImage("run", lp.get(PDEPluginImages.DESC_RUN_EXC)); //$NON-NLS-1$
 		text.setImage("debug", lp.get(PDEPluginImages.DESC_DEBUG_EXC)); //$NON-NLS-1$
-		section.setClient(text);
+		section.setClient(container);
 	}
 	
 	private void createExportingSection(IManagedForm managedForm,
@@ -225,17 +213,23 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 				displayHelpResource("/org.eclipse.pde.doc.user/guide/tools/export_wizards/export_plugins.htm"); //$NON-NLS-1$
 			}
 		});
+		
+		Composite container = toolkit.createComposite(section, SWT.NONE);
+		container.setLayout(FormLayoutFactory.createSectionClientTableWrapLayout(false, 1));
+		container.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		//info.setBackground(section.getTitleBarGradientBackground());
 		//no need for the background - transparency will take care of it
 		info.setBackground(null);
 		section.setTextClient(info);
-		section.setClient(createClient(section, isFragment() ? PDEUIMessages.OverviewPage_fDeploying : PDEUIMessages.OverviewPage_deploying, toolkit));
+		createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fDeploying : PDEUIMessages.OverviewPage_deploying, toolkit);
+		section.setClient(container);
 	}
 	
 	private Section createStaticSection(FormToolkit toolkit, Composite parent, String text) {
 		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR);
-		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
+		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText(text);
+		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
 		return section;
 	}
 	

@@ -24,9 +24,9 @@ import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEDetails;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.plugin.rows.BooleanAttributeRow;
 import org.eclipse.pde.internal.ui.editor.plugin.rows.ChoiceAttributeRow;
 import org.eclipse.pde.internal.ui.editor.plugin.rows.ClassAttributeRow;
@@ -34,7 +34,7 @@ import org.eclipse.pde.internal.ui.editor.plugin.rows.ExtensionAttributeRow;
 import org.eclipse.pde.internal.ui.editor.plugin.rows.ResourceAttributeRow;
 import org.eclipse.pde.internal.ui.editor.plugin.rows.TextAttributeRow;
 import org.eclipse.pde.internal.ui.editor.plugin.rows.TranslatableAttributeRow;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
@@ -42,8 +42,6 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.SharedScrolledComposite;
-import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 
 public class ExtensionElementDetails extends PDEDetails {
@@ -77,34 +75,22 @@ public class ExtensionElementDetails extends PDEDetails {
 	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createContents(Composite parent) {
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.topMargin = 0;
-		layout.leftMargin = 5;
-		layout.rightMargin = 0;
-		layout.bottomMargin = 0;
-		parent.setLayout(layout);
+		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
 		FormToolkit toolkit = getManagedForm().getToolkit();
 		section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR
 				| Section.DESCRIPTION);
-		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
-		section.marginHeight = 5;
-		section.marginWidth = 5;
+		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText(PDEUIMessages.ExtensionElementDetails_title); 
 		section.setDescription(PDEUIMessages.ExtensionElementDetails_desc); 
-		TableWrapData td = new TableWrapData(TableWrapData.FILL,
-				TableWrapData.TOP);
-		td.grabHorizontal = true;
-		section.setLayoutData(td);
-		//toolkit.createCompositeSeparator(section);
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		section.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING));
+		
 		Composite client = toolkit.createComposite(section);
-		GridLayout glayout = new GridLayout();
-		boolean paintedBorder = toolkit.getBorderStyle() != SWT.BORDER;
-		glayout.marginWidth = glayout.marginHeight = 2;//paintedBorder?2:0;
 		int span = 2;
-		glayout.numColumns = span;
-		if (paintedBorder)
-			glayout.verticalSpacing = 7;
+		GridLayout glayout = FormLayoutFactory.createSectionClientGridLayout(false, span);
 		client.setLayout(glayout);
+		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
 		if (schemaElement != null) {
 			ISchemaAttribute atts[] = schemaElement.getAttributes();
 			// Compute horizontal span

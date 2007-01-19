@@ -13,10 +13,10 @@ import java.util.ArrayList;
 
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
@@ -39,20 +39,14 @@ public class DependenciesPage extends PDEFormPage {
 		ScrolledForm form = managedForm.getForm();
 		form.setText(PDEUIMessages.DependenciesPage_title); 
 		Composite body = form.getBody();
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginWidth = 10;
-		layout.verticalSpacing = 20;
-		layout.horizontalSpacing = 10;
-		layout.makeColumnsEqualWidth = isBundle;
-		body.setLayout(layout);
+		body.setLayout(FormLayoutFactory.createFormGridLayout(isBundle, 2));
 		Composite left, right;
 		FormToolkit toolkit = managedForm.getToolkit();
 		left = toolkit.createComposite(body, SWT.NONE);
-		left.setLayout(new GridLayout());
+		left.setLayout(FormLayoutFactory.createFormPaneGridLayout(false, 1));
 		left.setLayoutData(new GridData(GridData.FILL_BOTH));
 		right = toolkit.createComposite(body, SWT.NONE);
-		right.setLayout(new GridLayout());
+		right.setLayout(FormLayoutFactory.createFormPaneGridLayout(false, 1));
 		right.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		managedForm.addPart(new RequiresSection(this, left, getRequiredSectionLabels()));		

@@ -14,7 +14,7 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSSubItem;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSRegisterCSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
@@ -25,7 +25,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
@@ -101,18 +100,16 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 		
 		// Create main section
 		fMainSection = getToolkit().createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
-		fMainSection.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
-		fMainSection.marginHeight = 5;
-		fMainSection.marginWidth = 5; 
+		fMainSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		fMainSection.setText(PDEUIMessages.SimpleCSSubItemDetails_10);
 		fMainSection.setDescription(PDEUIMessages.SimpleCSSubItemDetails_11);
+		fMainSection.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		fMainSection.setLayoutData(data);
 		
 		// Create container for main section
 		Composite mainSectionClient = getToolkit().createComposite(fMainSection);	
-		GridLayout layout = new GridLayout(2, false);
-		mainSectionClient.setLayout(layout);
+		mainSectionClient.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
 		
 		// Attribute: label
 		fLabel = new FormEntry(mainSectionClient, getToolkit(), PDEUIMessages.SimpleCSSubItemDetails_0, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);

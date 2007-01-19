@@ -49,6 +49,7 @@ import org.eclipse.pde.internal.core.text.plugin.PluginBaseNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginDocumentNodeFactory;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
@@ -117,6 +118,7 @@ public class RequiresSection
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.minimumWidth = 250;
 		gd.grabExcessVerticalSpace = true;
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(gd);
 		initialize();
 	}

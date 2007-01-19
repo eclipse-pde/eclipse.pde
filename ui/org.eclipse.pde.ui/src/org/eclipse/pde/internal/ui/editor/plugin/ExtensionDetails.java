@@ -30,16 +30,15 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEDetails;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.actions.OpenSchemaAction;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.search.FindDeclarationsAction;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -50,8 +49,6 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class ExtensionDetails extends PDEDetails {
 	private IPluginExtension input;
@@ -70,36 +67,19 @@ public class ExtensionDetails extends PDEDetails {
 	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createContents(Composite parent) {
-		TableWrapLayout layout = new TableWrapLayout();
 		FormToolkit toolkit = getManagedForm().getToolkit();
-		boolean paintedBorder = toolkit.getBorderStyle()!=SWT.BORDER;
-		layout.topMargin = 0;
-		layout.leftMargin = 5;
-		layout.rightMargin = 0;
-		layout.bottomMargin = 0;
-		parent.setLayout(layout);
-
+		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
 
 		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION);
-		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
-		section.marginHeight = 5;		
-		section.marginWidth = 5;
+		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText(PDEUIMessages.ExtensionDetails_title); 
-		section.setDescription(PDEUIMessages.ExtensionDetails_desc); 
-		TableWrapData td = new TableWrapData(TableWrapData.FILL, TableWrapData.TOP);
-		td.grabHorizontal = true;
-		section.setLayoutData(td);
+		section.setDescription(PDEUIMessages.ExtensionDetails_desc);
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 		
-		//toolkit.createCompositeSeparator(section);
 		Composite client = toolkit.createComposite(section);
-		GridLayout glayout = new GridLayout();
-		glayout.marginWidth = glayout.marginHeight = 2;//paintedBorder?2:0;
-		glayout.numColumns = 2;
-		if (paintedBorder) glayout.verticalSpacing = 7;
-		client.setLayout(glayout);
-		
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
+		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
+		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		createIDEntryField(toolkit, client);
 		
@@ -107,11 +87,11 @@ public class ExtensionDetails extends PDEDetails {
 		
 		createSpacer(toolkit, client, 2);
 		
-		rtext = toolkit.createFormText(parent, true);
-		td = new TableWrapData(TableWrapData.FILL, TableWrapData.TOP);
-		td.grabHorizontal = true;
-		td.indent = 10;
-		rtext.setLayoutData(td);
+		Composite container = toolkit.createComposite(parent, SWT.NONE);
+		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
+		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));		
+		
+		rtext = toolkit.createFormText(container, true);
 		rtext.setImage("desc", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_DOC_SECTION_OBJ)); //$NON-NLS-1$
 		rtext.setImage("open", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_SCHEMA_OBJ));  //$NON-NLS-1$
 		rtext.setImage("search", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PSEARCH_OBJ));		 //$NON-NLS-1$

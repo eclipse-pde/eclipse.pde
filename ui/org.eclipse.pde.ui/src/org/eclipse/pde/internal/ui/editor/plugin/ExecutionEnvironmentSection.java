@@ -42,6 +42,7 @@ import org.eclipse.pde.internal.core.text.bundle.RequiredExecutionEnvironmentHea
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
@@ -123,6 +124,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 		else
 			section.setDescription(PDEUIMessages.RequiredExecutionEnvironmentSection_pluginDesc);		
 		
+		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		
 		Composite container = createClientContainer(section, 2, toolkit);

@@ -14,7 +14,7 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSHelpObject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractSubDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.simple.SimpleCSInputContext;
@@ -26,7 +26,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -82,25 +81,22 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		FormToolkit toolkit = getToolkit();
 		
 		GridData data = null;
-		GridLayout layout = null;
 		Label label = null;
 		Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
 		
 		// Create help section
 		fHelpSection = toolkit.createSection(parent, Section.DESCRIPTION
 				| ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE);
-		fHelpSection.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
-		fHelpSection.marginHeight = 5;
-		fHelpSection.marginWidth = 5;
+		fHelpSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		fHelpSection.setText(PDEUIMessages.SimpleCSSharedUIFactory_1);
 		fHelpSection.setDescription(PDEUIMessages.SimpleCSSharedUIFactory_2);
+		fHelpSection.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		fHelpSection.setLayoutData(data);
 		
 		// Create container for help section		
 		Composite helpSectionClient = toolkit.createComposite(fHelpSection);	
-		layout = new GridLayout(columnSpan, false);
-		helpSectionClient.setLayout(layout);		
+		helpSectionClient.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, columnSpan));		
 
 		// Attribute: href		
 		// Attribute: contextId

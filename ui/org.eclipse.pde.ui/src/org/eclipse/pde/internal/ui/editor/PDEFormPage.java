@@ -427,7 +427,7 @@ public abstract class PDEFormPage extends FormPage {
 			String description, int style) {
 		Section section = 
 			getManagedForm().getToolkit().createSection(parent, style);
-		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
+		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.marginHeight = 5;
 		section.marginWidth = 5; 
 		section.setText(text);

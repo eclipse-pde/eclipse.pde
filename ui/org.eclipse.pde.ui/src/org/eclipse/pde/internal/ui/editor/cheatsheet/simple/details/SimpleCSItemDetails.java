@@ -17,7 +17,7 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSItem;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSAbstractDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.CSRegisterCSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
@@ -29,7 +29,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.FormColors;
@@ -117,18 +116,16 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 		// Create main section
 		fMainSection = getToolkit().createSection(parent,
 				Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
-		fMainSection.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
-		fMainSection.marginHeight = 5;
-		fMainSection.marginWidth = 5; 
+		fMainSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		fMainSection.setText(PDEUIMessages.SimpleCSItemDetails_11);
 		fMainSection.setDescription(PDEUIMessages.SimpleCSItemDetails_12);
+		fMainSection.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		fMainSection.setLayoutData(data);
 		
 		// Create container for main section
 		Composite mainSectionClient = getToolkit().createComposite(fMainSection);	
-		GridLayout layout = new GridLayout(2, false);
-		mainSectionClient.setLayout(layout);				
+		mainSectionClient.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));				
 
 		// Attribute: title
 		fTitle = new FormEntry(mainSectionClient, getToolkit(), PDEUIMessages.SimpleCSItemDetails_0, SWT.NONE);

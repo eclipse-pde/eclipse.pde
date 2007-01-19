@@ -61,6 +61,7 @@ import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
@@ -73,7 +74,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
@@ -327,14 +327,16 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 	
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout(2, true);
-		layout.marginHeight = layout.marginWidth = 0;
-		container.setLayout(layout);
+		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
 		
 		createLeftSection(container, toolkit);
 		createRightSection(container, toolkit);
 		
 		toolkit.paintBordersFor(container);
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		section.setLayoutData(data);
 		section.setClient(container);
 	}
 	
@@ -391,9 +393,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 	
 	private Composite createContainer(Composite parent, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(parent);
-		GridLayout layout = new GridLayout(2, false);
-		layout.marginHeight = layout.marginWidth = 2;
-		container.setLayout(layout);
+		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 100;
 		container.setLayoutData(gd);

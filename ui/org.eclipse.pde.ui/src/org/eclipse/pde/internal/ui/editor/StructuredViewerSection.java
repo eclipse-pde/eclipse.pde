@@ -18,7 +18,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.ui.parts.StructuredViewerPart;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -64,10 +63,7 @@ public abstract class StructuredViewerSection extends PDESection {
 	
 	protected Composite createClientContainer(Composite parent, int span, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(parent);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 2;
-		layout.numColumns = span;
-		container.setLayout(layout);
+		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, span));
 		return container;
 	}
 	

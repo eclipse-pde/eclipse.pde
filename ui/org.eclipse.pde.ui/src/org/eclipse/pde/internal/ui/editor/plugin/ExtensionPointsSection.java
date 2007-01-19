@@ -73,8 +73,9 @@ public class ExtensionPointsSection extends TableSection {
 	}
 
 	public ExtensionPointsSection(PDEFormPage page, Composite parent) {
-		super(page, parent, ExpandableComposite.TITLE_BAR, new String[] { PDEUIMessages.ManifestEditor_DetailExtensionPointSection_new });
+		super(page, parent, ExpandableComposite.TITLE_BAR | Section.DESCRIPTION, new String[] { PDEUIMessages.ManifestEditor_DetailExtensionPointSection_new });
 		getSection().setText(PDEUIMessages.ManifestEditor_DetailExtensionPointSection_title);
+		getSection().setDescription(PDEUIMessages.ExtensionPointsSection_sectionDescAllExtensionPoints);
 		fHandleDefaultButton = false;
 		getTablePart().setEditable(false);
 	}

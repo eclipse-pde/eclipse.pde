@@ -31,6 +31,7 @@ import org.eclipse.pde.internal.core.text.bundle.PackageFriend;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
@@ -96,9 +97,7 @@ public class ExportPackageVisibilitySection extends TableSection
         section.setText(PDEUIMessages.ExportPackageVisibilitySection_title);
         section.setDescription(PDEUIMessages.ExportPackageVisibilitySection_default);
 		Composite comp = toolkit.createComposite(section);
-        GridLayout layout = new GridLayout();
-        layout.verticalSpacing = 5;
-		comp.setLayout(layout);
+		comp.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
         
         fVisibleButton = toolkit.createButton(comp, PDEUIMessages.ExportPackageVisibilitySection_unconditional, SWT.RADIO);
 
@@ -117,7 +116,7 @@ public class ExportPackageVisibilitySection extends TableSection
         });
         
         Composite container = toolkit.createComposite(comp);
-        layout = new GridLayout();
+        GridLayout layout = new GridLayout();
         layout.marginWidth = 1;
         layout.marginHeight = 1;
         layout.numColumns = 2;
@@ -137,6 +136,7 @@ public class ExportPackageVisibilitySection extends TableSection
         update(null);
         getBundleModel().addModelChangedListener(this);
         
+        section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
         section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		section.setClient(comp);
 	}

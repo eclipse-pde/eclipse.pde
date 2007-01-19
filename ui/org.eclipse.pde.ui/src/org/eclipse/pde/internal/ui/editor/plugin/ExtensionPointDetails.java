@@ -32,9 +32,9 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEDetails;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.actions.OpenSchemaAction;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.search.FindReferencesAction;
@@ -44,7 +44,6 @@ import org.eclipse.pde.internal.ui.wizards.extension.NewSchemaFileWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -58,8 +57,6 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.FileEditorInput;
@@ -96,34 +93,18 @@ public class ExtensionPointDetails extends PDEDetails {
 	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createContents(Composite parent) {
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.topMargin = 0;
-		layout.leftMargin = 5;
-		layout.rightMargin = 0;
-		layout.bottomMargin = 0;
-		parent.setLayout(layout);
+		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
 		FormToolkit toolkit = getManagedForm().getToolkit();
 		Section section = toolkit.createSection(parent, Section.DESCRIPTION|ExpandableComposite.TITLE_BAR);
-		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
-		section.marginHeight = 5;
-		section.marginWidth = 5;
+		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText(PDEUIMessages.ExtensionPointDetails_title); 
-		section
-				.setDescription(PDEUIMessages.ExtensionPointDetails_desc); 
-		TableWrapData td = new TableWrapData(TableWrapData.FILL,
-				TableWrapData.TOP);
-		td.grabHorizontal = true;
-		section.setLayoutData(td);
-		//toolkit.createCompositeSeparator(section);
+		section.setDescription(PDEUIMessages.ExtensionPointDetails_desc); 
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+		
 		Composite client = toolkit.createComposite(section);
-		GridLayout glayout = new GridLayout();
-		boolean paintedBorder = toolkit.getBorderStyle()!=SWT.BORDER;
-		glayout.marginWidth = glayout.marginHeight = 2;//paintedBorder?2:0;
-		glayout.numColumns = 3;
-		if (paintedBorder) glayout.verticalSpacing = 7;
-		client.setLayout(glayout);
-		GridData gd = new GridData();
-		gd.horizontalSpan = 3;
+		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 3));
+		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fIdEntry = new FormEntry(client, toolkit, PDEUIMessages.ExtensionPointDetails_id, null, false); 
 		fIdEntry.setFormEntryListener(new FormEntryAdapter(this) {
@@ -252,11 +233,12 @@ public class ExtensionPointDetails extends PDEDetails {
 			}
 		});
 		createSpacer(toolkit, client, 2);
-		fRichText = toolkit.createFormText(parent, true);
-		td = new TableWrapData(TableWrapData.FILL, TableWrapData.TOP);
-		td.grabHorizontal = true;
-		td.indent = 10;
-		fRichText.setLayoutData(td);
+		
+		Composite container = toolkit.createComposite(parent, SWT.NONE);
+		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
+		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));			
+		
+		fRichText = toolkit.createFormText(container, true);
 		fRichText.setImage("open", PDEPlugin.getDefault().getLabelProvider().get( //$NON-NLS-1$
 				PDEPluginImages.DESC_SCHEMA_OBJ));
 		fRichText.setImage("desc", PDEPlugin.getDefault().getLabelProvider().get( //$NON-NLS-1$

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.MasterDetailsBlock;
@@ -29,15 +30,24 @@ public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {
 	
 	protected void createMasterPart(final IManagedForm managedForm,
 			Composite parent) {
-		fSection = createMasterSection(managedForm, parent);
+		Composite container = managedForm.getToolkit().createComposite(parent);
+		container.setLayout(FormLayoutFactory.createMasterGridLayout(false, 1));
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		fSection = createMasterSection(managedForm, container);
 		managedForm.addPart(fSection);
-		Section sc = fSection.getSection();
-		sc.marginWidth = 10;
-		sc.marginHeight = 5;
+		Section section = fSection.getSection();
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		section.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 	
 	protected void createToolBarActions(IManagedForm managedForm) {}
 	
 	protected abstract PDESection createMasterSection(IManagedForm managedForm, Composite parent);
+	
+	public void createContent(IManagedForm managedForm) {
+		super.createContent(managedForm);
+		//
+		managedForm.getForm().getBody().setLayout(FormLayoutFactory.createFormGridLayout(false, 1));
+	}
 	
 }

@@ -13,8 +13,8 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -31,12 +31,7 @@ public class RuntimePage extends PDEFormPage {
 		super.createFormContent(mform);
 		ScrolledForm form = mform.getForm();
 		form.setText(PDEUIMessages.ManifestEditor_RuntimeForm_title); 
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginWidth = 10;
-		layout.horizontalSpacing = 10;
-		layout.verticalSpacing = 20;
-        form.getBody().setLayout(layout);
+		form.getBody().setLayout(FormLayoutFactory.createFormGridLayout(false, 2));
 		
         if (isBundle()) {
             mform.addPart(new ExportPackageSection(this, form.getBody()));

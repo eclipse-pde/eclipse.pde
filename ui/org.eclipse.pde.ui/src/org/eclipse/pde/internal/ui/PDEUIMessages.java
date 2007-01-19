@@ -187,6 +187,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String DirectorySelectionPage_title;
 
+	public static String ExtensionPointsSection_sectionDescAllExtensionPoints;
+
 	public static String LauncherUtils_generateConfigIni;
 
 	public static String SimpleCSCommandDetails_msgFieldDisabledCommand;

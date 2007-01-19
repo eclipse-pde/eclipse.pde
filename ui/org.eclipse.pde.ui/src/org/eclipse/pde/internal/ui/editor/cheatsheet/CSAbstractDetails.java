@@ -13,9 +13,9 @@ package org.eclipse.pde.internal.ui.editor.cheatsheet;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEDetails;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -52,10 +52,7 @@ public abstract class CSAbstractDetails extends PDEDetails implements ICSDetails
 	 * @param parent
 	 */
 	private void configureParentLayout(Composite parent) {
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		parent.setLayout(layout);		
+		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));	
 	}
 	
 	/**

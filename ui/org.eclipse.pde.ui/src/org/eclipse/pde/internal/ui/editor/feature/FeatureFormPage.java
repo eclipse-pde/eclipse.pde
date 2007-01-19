@@ -18,9 +18,9 @@ import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.build.BuildPage;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.SWTException;
@@ -198,7 +198,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 	private Section createStaticSection(Composite parent, FormToolkit toolkit) {
 		Section section = toolkit.createSection(parent,
 				ExpandableComposite.TITLE_BAR);
-		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
+		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		// toolkit.createCompositeSeparator(section);
 		return section;
 	}

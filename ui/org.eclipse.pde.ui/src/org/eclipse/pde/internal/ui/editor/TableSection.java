@@ -21,6 +21,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public abstract class TableSection extends StructuredViewerSection {
@@ -53,6 +54,7 @@ public abstract class TableSection extends StructuredViewerSection {
 				comp.setLayout(createButtonsLayout());
 				comp.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_END | GridData.FILL_BOTH));
 				fCount = toolkit.createLabel(comp, ""); //$NON-NLS-1$
+				fCount.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 				fCount.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 				getTablePart().getTableViewer().getTable().addPaintListener(new PaintListener() {
 					public void paintControl(PaintEvent e) {

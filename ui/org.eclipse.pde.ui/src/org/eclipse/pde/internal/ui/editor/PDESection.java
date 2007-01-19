@@ -24,8 +24,6 @@ import org.eclipse.ui.forms.widgets.Section;
 public abstract class PDESection extends SectionPart implements IModelChangedListener,
 		IContextPart, IAdaptable {
 
-	public static final int CLIENT_VSPACING = 4;
-
 	private PDEFormPage fPage;
 
 	public PDESection(PDEFormPage page, Composite parent, int style) {
@@ -37,7 +35,7 @@ public abstract class PDESection extends SectionPart implements IModelChangedLis
 				titleBar ? (ExpandableComposite.TITLE_BAR | style) : style);
 		fPage = page;
 		initialize(page.getManagedForm());
-		getSection().clientVerticalSpacing = CLIENT_VSPACING;
+		getSection().clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		getSection().setData("part", this); //$NON-NLS-1$
 	}
 

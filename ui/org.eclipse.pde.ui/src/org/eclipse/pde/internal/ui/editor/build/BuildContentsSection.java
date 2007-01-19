@@ -43,6 +43,7 @@ import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
@@ -50,7 +51,6 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -174,9 +174,7 @@ public abstract class BuildContentsSection extends TableSection
 		fBuildModel = getBuildModel();
 		if (fBuildModel.getUnderlyingResource() != null)
 			fProject = fBuildModel.getUnderlyingResource().getProject();
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = layout.marginWidth = 2;
-		container.setLayout(layout);
+
 		fTreeViewer = new CheckboxTreeViewer(toolkit.createTree(container,
 				SWT.CHECK));
 		fTreeViewer.setContentProvider(new TreeContentProvider());
@@ -208,6 +206,8 @@ public abstract class BuildContentsSection extends TableSection
 		initializeCheckState();
 		toolkit.paintBordersFor(container);
 		createViewerPartControl(container, SWT.FULL_SELECTION, 2, toolkit);
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		section.setClient(container);
 	}
 

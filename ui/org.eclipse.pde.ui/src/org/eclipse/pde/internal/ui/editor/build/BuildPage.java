@@ -18,13 +18,13 @@ import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
@@ -49,15 +49,9 @@ public class BuildPage extends PDEFormPage {
 	protected void createFormContent(IManagedForm mform) {
 		super.createFormContent(mform);
 		FormToolkit toolkit = mform.getToolkit();
-		GridLayout layout = new GridLayout();
 		ScrolledForm form = mform.getForm();
 		form.setText(PDEUIMessages.BuildEditor_BuildPage_title);
-		layout.numColumns = 2;
-		layout.marginWidth = 10;
-		layout.horizontalSpacing = 15;
-		layout.verticalSpacing = 10;
-		layout.makeColumnsEqualWidth = true;
-		form.getBody().setLayout(layout);
+		form.getBody().setLayout(FormLayoutFactory.createFormGridLayout(true, 2));
 
 		fCustomButton =
 			toolkit.createButton(
@@ -79,9 +73,6 @@ public class BuildPage extends PDEFormPage {
 		});
 		
 		fRuntimeSection = new RuntimeInfoSection(this, form.getBody());
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		fRuntimeSection.getSection().setLayoutData(gd);
 		
 		fBinSection = new BinSection(this, form.getBody());
 		fBinSection.getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -90,9 +81,6 @@ public class BuildPage extends PDEFormPage {
 		fSrcSection.getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		fClasspathSection = new BuildClasspathSection(this, form.getBody());
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		fClasspathSection.getSection().setLayoutData(gd);
 		
 		mform.addPart(fRuntimeSection);
 		mform.addPart(fSrcSection);

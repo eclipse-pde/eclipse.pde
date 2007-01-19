@@ -20,11 +20,11 @@ import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -33,7 +33,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public abstract class GeneralInfoSection extends PDESection {
 	private static String PLATFORM_FILTER = "Eclipse-PlatformFilter"; //$NON-NLS-1$
@@ -56,14 +55,11 @@ public abstract class GeneralInfoSection extends PDESection {
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.ManifestEditor_PluginSpecSection_title); 
+		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		section.setDescription(getSectionDescription()); 
-		
 		Composite client = toolkit.createComposite(section);
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.leftMargin = layout.rightMargin = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
-		layout.numColumns = 3;
-		client.setLayout(layout);
+		client.setLayout(FormLayoutFactory.createSectionClientTableWrapLayout(false, 3));
 		section.setClient(client);
 		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();

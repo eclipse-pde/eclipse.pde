@@ -34,6 +34,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -99,7 +100,7 @@ public class LibraryVisibilitySection extends TableSection
     
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(section);
-		container.setLayout(new GridLayout());
+		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
         
 		String label = PDEUIMessages.ManifestEditor_ExportSection_fullExport;
 		fFullExportButton = toolkit.createButton(container, label, SWT.RADIO);
@@ -127,6 +128,7 @@ public class LibraryVisibilitySection extends TableSection
         IPluginModelBase model = (IPluginModelBase) getPage().getModel();
         model.addModelChangedListener(this);
         
+        section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
         section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		section.setClient(container);
 	}

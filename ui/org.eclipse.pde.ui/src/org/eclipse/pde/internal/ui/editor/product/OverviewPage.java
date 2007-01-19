@@ -26,8 +26,8 @@ import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.launcher.LaunchAction;
 import org.eclipse.pde.internal.ui.wizards.product.SynchronizationOperation;
 import org.eclipse.swt.SWTException;
@@ -97,7 +97,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	
 	private void createTestingSection(Composite parent, FormToolkit toolkit) {
 		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR);
-		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
+		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText(PDEUIMessages.Product_OverviewPage_testing); 
 		FormText text = createClient(section, PDEUIMessages.Product_overview_testing, toolkit); 
 		text.setImage("run", getImage(PDEPluginImages.DESC_RUN_EXC)); //$NON-NLS-1$
@@ -109,7 +109,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	
 	private void createExportingSection(Composite parent, FormToolkit toolkit) {
 		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR);
-		section.clientVerticalSpacing = PDESection.CLIENT_VSPACING;
+		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText(PDEUIMessages.OverviewPage_exportingTitle); 
 		FormText text = createClient(section, PDEUIMessages.Product_overview_exporting, toolkit); 
 		text.addHyperlinkListener(this);

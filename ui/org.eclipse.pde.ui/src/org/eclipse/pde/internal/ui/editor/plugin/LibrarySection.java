@@ -48,6 +48,7 @@ import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
@@ -171,6 +172,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
         
         makeActions();
         updateButtons();
+        section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
         section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		section.setClient(container);
 

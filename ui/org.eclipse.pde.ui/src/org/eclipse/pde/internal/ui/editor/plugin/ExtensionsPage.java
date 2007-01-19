@@ -24,7 +24,6 @@ import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.DetailsPart;
@@ -95,9 +94,6 @@ public class ExtensionsPage extends PDEFormPage {
 		form.setText(PDEUIMessages.ExtensionsPage_title);
 		fBlock.createContent(managedForm);
 		BodyTextSection bodyTextSection = new BodyTextSection(this, form.getBody());
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING);
-		bodyTextSection.getSection().setLayoutData(gd);
-		bodyTextSection.getSection().marginWidth = 5;
 		managedForm.addPart(bodyTextSection);
 		//refire selection
 		fSection.fireSelection();
