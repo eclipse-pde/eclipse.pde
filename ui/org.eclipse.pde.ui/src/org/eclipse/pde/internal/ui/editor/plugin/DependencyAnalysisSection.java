@@ -25,15 +25,12 @@ import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.search.FindDeclarationsAction;
 import org.eclipse.pde.internal.ui.search.FindReferencesAction;
 import org.eclipse.pde.internal.ui.search.dependencies.UnusedDependenciesAction;
 import org.eclipse.pde.internal.ui.views.dependencies.OpenDependenciesAction;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -68,11 +65,7 @@ public class DependencyAnalysisSection extends PDESection {
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.DependencyAnalysisSection_title); 
 
-		Composite container = toolkit.createComposite(section, SWT.NONE);
-		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
-		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
-		
-		formText = toolkit.createFormText(container, true);
+		formText = toolkit.createFormText(section, true);
 		formText.setText(getFormText(), true, false);		
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		formText.setImage("loops", lp.get(PDEPluginImages.DESC_LOOP_OBJ)); //$NON-NLS-1$
@@ -91,7 +84,7 @@ public class DependencyAnalysisSection extends PDESection {
 			}
 		});
 		
-		section.setClient(container);
+		section.setClient(formText);
 	}
 
 	protected void doFindLoops() {

@@ -24,7 +24,6 @@ import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
@@ -34,6 +33,7 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -87,7 +87,11 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(section);
-		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.verticalSpacing = 9;
+		layout.marginWidth = layout.marginHeight = 2;
+		container.setLayout(layout);
 		if (fAddReexport) {
 			createOptionalButton(toolkit, container);
 			createReexportButton(toolkit, container);
@@ -133,7 +137,6 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		section.setClient(container);		
 		section.setText(PDEUIMessages.MatchSection_title); 
 		section.setDescription(PDEUIMessages.MatchSection_desc); 
-		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING));
 	}
 	
