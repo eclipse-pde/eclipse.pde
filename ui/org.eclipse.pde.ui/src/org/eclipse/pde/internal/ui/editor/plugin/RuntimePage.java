@@ -12,6 +12,9 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -27,9 +30,17 @@ public class RuntimePage extends PDEFormPage {
 		super(editor, PAGE_ID, PDEUIMessages.RuntimePage_tabName);  
 	}
     
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
+	 */
+	protected String getHelpResource() {
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/manifest_editor/runtime.htm"; //$NON-NLS-1$
+	}    
+    
 	protected void createFormContent(IManagedForm mform) {
 		super.createFormContent(mform);
 		ScrolledForm form = mform.getForm();
+		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_JAVA_LIB_OBJ));
 		form.setText(PDEUIMessages.ManifestEditor_RuntimeForm_title); 
 		form.getBody().setLayout(FormLayoutFactory.createFormGridLayout(false, 2));
 		

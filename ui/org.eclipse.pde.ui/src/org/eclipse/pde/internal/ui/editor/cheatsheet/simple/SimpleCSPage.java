@@ -19,6 +19,8 @@ import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.ui.forms.IManagedForm;
@@ -68,7 +70,10 @@ public class SimpleCSPage extends PDEFormPage implements IModelChangedListener {
 					e);
 			return;
 		}
-		
+		// Form image
+		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(
+				PDEPluginImages.DESC_CHEATSHEET_OBJ));
+		// Form title
 		String title = PDETextHelper.translateReadText(model.getSimpleCS()
 				.getTitle());
 		if (title.length() > 0) {

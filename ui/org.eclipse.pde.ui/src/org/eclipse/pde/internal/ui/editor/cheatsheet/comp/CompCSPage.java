@@ -19,6 +19,8 @@ import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.ui.forms.IManagedForm;
@@ -71,7 +73,10 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 					e);
 			return;
 		}
-		
+		// Form image
+		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(
+				PDEPluginImages.DESC_CHEATSHEET_OBJ));
+		// Form title
 		String title = PDETextHelper.translateReadText(model.getCompCS()
 				.getFieldName());
 		if (title.length() > 0) {

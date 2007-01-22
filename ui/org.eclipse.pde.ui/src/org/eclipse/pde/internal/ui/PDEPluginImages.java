@@ -102,6 +102,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_CSSUBITEM_OBJ = create(PATH_OBJ, "cheatsheet_subitem_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CSINTRO_OBJ = create(PATH_OBJ, "cheatsheet_intro_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CSUNSUPPORTED_OBJ = create(PATH_OBJ, "cheatsheet_unsupported_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CHEATSHEET_OBJ = create(PATH_OBJ, "cheatsheet_obj.gif"); //$NON-NLS-1$
 	
 	public static final ImageDescriptor DESC_COMGROUP_OBJ = create(PATH_OBJ, "keygroups_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_GENCOM_OBJ = create(PATH_OBJ, "command_obj.gif"); //$NON-NLS-1$
@@ -139,6 +140,8 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_DISCOVERY = create(PATH_OBJ, "discovery.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_XML_TEXT_NODE = create(PATH_OBJ, "xml_text_node.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CLIPBOARD = create(PATH_OBJ, "copyviewtoclipboard_tsk.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_BUILD_EXEC = create(PATH_OBJ, "build_exec.gif"); //$NON-NLS-1$
+	
 	/**
 	 * OVR16
 	 */

@@ -12,6 +12,9 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import java.util.ArrayList;
 
 import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -33,10 +36,18 @@ public class DependenciesPage extends PDEFormPage {
 		super(editor, PAGE_ID, PDEUIMessages.DependenciesPage_tabName);  
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
+	 */
+	protected String getHelpResource() {
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/manifest_editor/dependencies.htm"; //$NON-NLS-1$
+	}
+	
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		boolean isBundle = isBundle();
 		ScrolledForm form = managedForm.getForm();
+		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REQ_PLUGINS_OBJ));
 		form.setText(PDEUIMessages.DependenciesPage_title); 
 		Composite body = form.getBody();
 		body.setLayout(FormLayoutFactory.createFormGridLayout(isBundle, 2));

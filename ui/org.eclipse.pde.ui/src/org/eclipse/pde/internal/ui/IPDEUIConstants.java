@@ -42,4 +42,6 @@ public interface IPDEUIConstants {
 		new QualifiedName(PLUGIN_ID, "product-export-type");	 //$NON-NLS-1$
 	QualifiedName DEFAULT_PRODUCT_EXPORT_ROOT =
 		new QualifiedName(PLUGIN_ID, "product-export-root");	 //$NON-NLS-1$
+	
+	public final static String PLUGIN_DOC_ROOT = "/org.eclipse.pde.doc.user/"; //$NON-NLS-1$
 }

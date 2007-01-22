@@ -16,7 +16,9 @@ import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -46,10 +48,18 @@ public class BuildPage extends PDEFormPage {
 		super(editor, PAGE_ID, PDEUIMessages.BuildPage_name);  
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
+	 */
+	protected String getHelpResource() {
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/manifest_editor/build.htm"; //$NON-NLS-1$
+	}	
+	
 	protected void createFormContent(IManagedForm mform) {
 		super.createFormContent(mform);
 		FormToolkit toolkit = mform.getToolkit();
 		ScrolledForm form = mform.getForm();
+		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_BUILD_EXEC));
 		form.setText(PDEUIMessages.BuildEditor_BuildPage_title);
 		form.getBody().setLayout(FormLayoutFactory.createFormGridLayout(true, 2));
 
