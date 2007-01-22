@@ -46,6 +46,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.EclipseHomeInitializer;
 import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
@@ -56,7 +57,7 @@ import org.eclipse.pde.internal.core.ModelProviderEvent;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.PluginPathFinder;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -253,7 +254,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 		fChangedModels.clear();
 		if (type != 0) {
 			ExternalModelManager registry =
-				PDECore.getDefault().getExternalModelManager();
+				PDECore.getDefault().getModelManager().getExternalModelManager();
 			ModelProviderEvent event =
 				new ModelProviderEvent(
 					registry,
@@ -564,8 +565,8 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			} catch (InvocationTargetException e) {
 			} catch (InterruptedException e) {
 			}
-			fPluginListViewer.setInput(PDECore.getDefault().getExternalModelManager());
-			fPluginTreeViewer.setInput(PDECore.getDefault().getExternalModelManager());
+			fPluginListViewer.setInput(PDECore.getDefault().getModelManager().getExternalModelManager());
+			fPluginTreeViewer.setInput(PDECore.getDefault().getModelManager().getExternalModelManager());
 			fChangedModels.clear();
 			handleSelectAll(true);
 			if (fTreeViewerContents.size() > 1)
@@ -587,7 +588,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			return;
 		
 		fPluginTreeViewer.setUseHashlookup(true);
-		ExternalModelManager manager = PDECore.getDefault().getExternalModelManager();
+		ExternalModelManager manager = PDECore.getDefault().getModelManager().getExternalModelManager();
 		fPluginListViewer.setInput(manager);
 		fPluginTreeViewer.setInput(manager);
 		IPluginModelBase[] allModels = getCurrentModels();
@@ -668,7 +669,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 						fCurrentState.resolveState(true);
 					updateModels();
 					computeDelta();
-					PDECore.getDefault().getExternalModelManager().setModels(fCurrentState.getTargetModels());
+					PDECore.getDefault().getModelManager().getExternalModelManager().setModels(fCurrentState.getTargetModels());
 					PDECore.getDefault().getModelManager().setState(fCurrentState);
 					PDECore.getDefault().getFeatureModelManager().targetReloaded();				
 				} else {
@@ -682,9 +683,9 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 	private void savePreferences() {
 		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		IPath newPath = new Path(fPage.getPlatformPath());
-		IPath defaultPath = new Path(ExternalModelManager.computeDefaultPlatformPath());
+		IPath defaultPath = new Path(org.eclipse.pde.core.plugin.TargetPlatform.getDefaultLocation());
 		String mode =
-			ExternalModelManager.arePathsEqual(newPath, defaultPath)
+			newPath.equals(defaultPath)
 				? ICoreConstants.VALUE_USE_THIS
 				: ICoreConstants.VALUE_USE_OTHER;
 		preferences.setValue(ICoreConstants.TARGET_MODE, mode);
@@ -817,7 +818,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 					if (element instanceof IJavaProject)
 						element = ((IJavaProject)element).getProject();
 					if (element instanceof IProject) {
-						IPluginModelBase model = PDECore.getDefault().getModelManager().findModel((IProject)element);
+						IPluginModelBase model = PluginRegistry.findModel((IProject)element);
 						if (model != null)
 							set.add(model.getPluginBase().getId());
 					}
@@ -863,7 +864,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 	}
 	
 	protected PDEState getCurrentState() {
-		return (fCurrentState != null) ? fCurrentState : TargetPlatform.getPDEState();
+		return (fCurrentState != null) ? fCurrentState : TargetPlatformHelper.getPDEState();
 	}
 	
 	protected void handleSwitchView() {
@@ -936,7 +937,7 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 	}
 	
 	private void createCopyState() {
-		fCurrentState = new PDEState(PDECore.getDefault().getModelManager().getState());
+		fCurrentState = new PDEState(TargetPlatformHelper.getPDEState());
 		IPluginModelBase[] bases = fCurrentState.getTargetModels();
 		for (int j = 0; j < bases.length; j++) {
 			long bundleId = bases[j].getBundleDescription().getBundleId();
@@ -951,8 +952,8 @@ public class TargetPluginsTab extends SharedPartWithButtons{
 			// add new models to tree viewer
 			Set parents = initializeTreeContents(models);
 			
-			fPluginListViewer.setInput(PDECore.getDefault().getExternalModelManager());
-			fPluginTreeViewer.setInput(PDECore.getDefault().getExternalModelManager());
+			fPluginListViewer.setInput(PDECore.getDefault().getModelManager().getExternalModelManager());
+			fPluginTreeViewer.setInput(PDECore.getDefault().getModelManager().getExternalModelManager());
 			
 			if (checkedPlugins == null) {
 				for (int i = 0; i < models.length; i++) {

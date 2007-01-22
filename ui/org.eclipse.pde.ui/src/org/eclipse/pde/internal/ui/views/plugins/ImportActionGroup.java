@@ -22,7 +22,6 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizard;
@@ -77,17 +76,7 @@ public class ImportActionGroup extends ActionGroup {
 	private void handleImport(int importType, IStructuredSelection selection) {
 		ArrayList externalModels = new ArrayList();
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
-			Object next = iter.next();
-			IPluginModelBase model = null;
-			if (next instanceof ModelEntry)
-				model = ((ModelEntry) next).getActiveModel();
-			else if (next instanceof IPluginBase)
-				model = ((IPluginBase)next).getPluginModel();
-			else if (next instanceof IPluginExtension)
-				model = ((IPluginExtension)next).getPluginModel();
-			else if (next instanceof IPluginExtensionPoint)
-				model = ((IPluginExtensionPoint)next).getPluginModel();
-
+			IPluginModelBase model = getModel(iter.next());
 			if (model != null && model.getUnderlyingResource() == null)
 				externalModels.add(model);
 		}
@@ -103,26 +92,23 @@ public class ImportActionGroup extends ActionGroup {
 
 	public static boolean canImport(IStructuredSelection selection) {
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
-			Object obj = iter.next();
-			if (obj instanceof ModelEntry) {
-				ModelEntry entry = (ModelEntry) obj;
-				if (entry.getWorkspaceModel() == null)
-					return true;
-			} else if (obj instanceof IPluginBase) {
-				IPluginBase base = (IPluginBase)obj;
-				if (base.getPluginModel().getUnderlyingResource() == null)
-					return true;
-			} else if (obj instanceof IPluginExtension) {
-				IPluginExtension ext = (IPluginExtension)obj;
-				if (ext.getPluginModel().getUnderlyingResource() == null)
-					return true;
-			} else if (obj instanceof IPluginExtensionPoint) {
-				IPluginExtensionPoint exp = (IPluginExtensionPoint)obj;
-				if (exp.getPluginModel().getUnderlyingResource() == null)
-					return true;
-			}
+			IPluginModelBase model = getModel(iter.next());
+			if (model != null && model.getUnderlyingResource() == null)
+				return true;
 		}
 		return false;
 	}
-
+	
+	private static IPluginModelBase getModel(Object next) {
+		IPluginModelBase model = null;
+		if (next instanceof IPluginModelBase)
+			model = (IPluginModelBase) next;
+		else if (next instanceof IPluginBase)
+			model = ((IPluginBase)next).getPluginModel();
+		else if (next instanceof IPluginExtension)
+			model = ((IPluginExtension)next).getPluginModel();
+		else if (next instanceof IPluginExtensionPoint)
+			model = ((IPluginExtensionPoint)next).getPluginModel();
+		return model;
+	}
 }

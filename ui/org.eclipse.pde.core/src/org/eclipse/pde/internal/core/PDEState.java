@@ -32,6 +32,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.bundle.BundleFragmentModel;
 import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
 import org.eclipse.pde.internal.core.bundle.BundlePluginModelBase;
@@ -172,6 +173,7 @@ public class PDEState extends MinimalState {
 						&& fAuxiliaryState.readPluginInfoCache(dir) 
 						&& fExtensionRegistry.readExtensionsCache(dir);
 		if (fCombined) {
+			long targetCount = fId;
 			BundleDescription[] bundles = localState.getBundles();
 			for (int i = 0; i < bundles.length; i++) {
 				BundleDescription desc = bundles[i];
@@ -179,7 +181,11 @@ public class PDEState extends MinimalState {
 				BundleDescription[] conflicts = fState.getBundles(id);
 				
 				for (int j = 0; j < conflicts.length; j++) {
-					fState.removeBundle(conflicts[j]);
+					// only remove bundles with a conflicting symblic name
+					// if the conflicting bundles come from the target.
+					// Workspace bundles with conflicting symbolic names are allowed
+					if (conflicts[j].getBundleId() <= targetCount)
+						fState.removeBundle(conflicts[j]);
 				}
 				
 				BundleDescription newbundle = stateObjectFactory.createBundleDescription(desc);
@@ -246,7 +252,7 @@ public class PDEState extends MinimalState {
  		IProject project = PDECore.getWorkspace().getRoot().getProject(projectName);
  		if (!project.exists())
  			return null;
- 		if (WorkspaceModelManager.hasBundleManifest(project)) {
+ 		if (project.exists(ICoreConstants.MANIFEST_PATH)) {
  			BundlePluginModelBase model = null;
  			if (desc.getHost() == null)
  				model = new BundlePluginModel();
@@ -299,7 +305,7 @@ public class PDEState extends MinimalState {
  	}
  	
 	public void shutdown() {
-		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getWorkspaceModels();
+		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		long timestamp = 0;
 		if (!"true".equals(System.getProperty("pde.nocache")) && shouldSaveState(models)) { //$NON-NLS-1$ //$NON-NLS-2$
 			timestamp = computeTimestamp(models);

@@ -17,9 +17,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.DependencyManager;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
 
@@ -52,8 +51,7 @@ public class ProductFromExtensionOperation extends BaseProductCreationOperation 
 		
 		Set plugins = new TreeSet();
 		// add plugin declaring product and its pre-reqs
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		IPluginModelBase model = manager.findModel(fId.substring(0, lastDot));
+		IPluginModelBase model = PluginRegistry.findModel(fId.substring(0, lastDot));
 		if (model != null)
 			plugins.addAll(DependencyManager.getSelfAndDependencies(model));
 		
@@ -65,7 +63,7 @@ public class ProductFromExtensionOperation extends BaseProductCreationOperation 
 				String appId = attr.getValue();
 				lastDot = appId.lastIndexOf('.');
 				if (lastDot != -1) {
-					model = manager.findModel(appId.substring(0, lastDot));
+					model = PluginRegistry.findModel(appId.substring(0, lastDot));
 					if (model != null) {
 						plugins.addAll(DependencyManager.getSelfAndDependencies(model));
 					}

@@ -30,6 +30,8 @@ import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.BundleFragment;
 import org.eclipse.pde.internal.core.bundle.BundlePlugin;
@@ -113,9 +115,9 @@ public class ClasspathUtilCore {
 	}
 	
 	public static boolean isPatchFragment(BundleDescription desc) {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		IFragmentModel model = manager.findFragmentModel(desc.getSymbolicName());
-		return model != null ? isPatchFragment(model.getFragment()) : false;
+		IPluginModelBase model = PluginRegistry.findModel(desc);
+		return model instanceof IFragmentModel 
+					? isPatchFragment(((IFragmentModel)model).getFragment()) : false;
 	}
 	
 	public static boolean isPatchFragment(IPluginModelBase model) {
@@ -210,19 +212,6 @@ public class ClasspathUtilCore {
 			IPath path = getPath(fragments[i], libraryName);
 			if (path != null)
 				return fragments[i];
-			
-			// the following case is to account for cases when a plugin like org.eclipse.swt.win32 is checked out from
-			// cvs (i.e. it has no library) and org.eclipse.swt is not in the workspace.
-			// we have to find the external swt.win32 fragment to locate the $ws$/swt.jar.
-			if (fragments[i].getUnderlyingResource() != null) {
-				ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(fragments[i].getFragment().getId());
-				IPluginModelBase model = entry.getExternalModel();
-				if (model != null && model instanceof IFragmentModel) {
-					path = getPath(model, libraryName);
-					if (path != null)
-						return model;
-				}
-			}
 		}
 		return null;
 	}

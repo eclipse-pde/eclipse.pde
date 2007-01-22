@@ -33,7 +33,7 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ExternalModelManager;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEState;
@@ -250,7 +250,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		SWTUtil.setButtonDimensionHint(fResetButton);
 		fResetButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fHomeText.setText(ExternalModelManager.computeDefaultPlatformPath());
+				fHomeText.setText(TargetPlatform.getDefaultLocation());
 				fPluginsTab.handleReload(new ArrayList());
 				resetTargetProfile();
 			}
@@ -337,8 +337,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		if (fHomeText.getText().length() > 0)
 			dialog.setFilterPath(fHomeText.getText());
 		String newPath = dialog.open();
-		if (newPath != null
-				&& !ExternalModelManager.arePathsEqual(new Path(fHomeText.getText()), new Path(newPath))) {
+		if (newPath != null && !new Path(fHomeText.getText()).equals(new Path(newPath))) {
 			if (fHomeText.indexOf(newPath) == -1)
 				fHomeText.add(newPath, 0);
 			fHomeText.setText(newPath);
@@ -503,7 +502,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		ILocationInfo info = target.getLocationInfo();
 		String path;
 		if (info == null || info.useDefault()) {
-			path = ExternalModelManager.computeDefaultPlatformPath();
+			path = TargetPlatform.getDefaultLocation();
 		} else {
 			try {
 				IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
@@ -512,7 +511,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 				return;
 			}			
 		}
-		if (!ExternalModelManager.arePathsEqual(new Path(path), new Path(fHomeText.getText()))
+		if (!new Path(path).equals(new Path(fHomeText.getText()))
 				|| !areAdditionalLocationsEqual(target)) {
 			fHomeText.setText(path);
 			ArrayList additional = new ArrayList();
@@ -558,7 +557,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	}
 	
 	public void performDefaults() {
-		fHomeText.setText(ExternalModelManager.computeDefaultPlatformPath());
+		fHomeText.setText(TargetPlatform.getDefaultLocation());
 		fPluginsTab.handleReload(new ArrayList());
 		fEnvironmentTab.performDefaults();
 		fArgumentsTab.performDefaults();
@@ -570,7 +569,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 	public boolean performOk() {
 		fEnvironmentTab.performOk();
-		if (fNeedsReload && !ExternalModelManager.arePathsEqual(new Path(fOriginalText), new Path(fHomeText.getText()))) {
+		if (fNeedsReload && !new Path(fOriginalText).equals(new Path(fHomeText.getText()))) {
 			MessageDialog dialog =
 				new MessageDialog(
 					getShell(),

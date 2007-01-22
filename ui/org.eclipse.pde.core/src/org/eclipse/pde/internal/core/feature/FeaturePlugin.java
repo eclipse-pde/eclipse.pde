@@ -18,9 +18,7 @@ import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.w3c.dom.Node;
 
@@ -47,15 +45,11 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		if (id == null) {
 			return null;
 		}
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		ModelEntry entry = manager.findEntry(id);
-		if (entry != null) {
-			IPluginModelBase model = entry.getActiveModel();
-			if (fFragment && model instanceof IFragmentModel)
+		IPluginModelBase model = PluginRegistry.findModel(id);
+		if (fFragment && model instanceof IFragmentModel)
+			return model.getPluginBase();
+		if (!fFragment && model instanceof IPluginModel)
 				return model.getPluginBase();
-			else if (!fFragment && model instanceof IPluginModel)
-				return model.getPluginBase();
-		}
 		return null;
 	}
 	

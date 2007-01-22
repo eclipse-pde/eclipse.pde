@@ -20,7 +20,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
@@ -173,7 +173,7 @@ public class SchemaEditor extends MultiSourceEditor {
 
 	public static boolean openSchema(IPath path) {
 		String pluginId = path.segment(0);
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginId);
+		IPluginModelBase model = PluginRegistry.findModel(pluginId);
 		if (model != null && model.getUnderlyingResource() != null) {
 			IProject project = model.getUnderlyingResource().getProject();
 			IFile file = project.getFile(path.removeFirstSegments(1));

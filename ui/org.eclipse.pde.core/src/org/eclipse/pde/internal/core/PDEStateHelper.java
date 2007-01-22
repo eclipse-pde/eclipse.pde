@@ -10,104 +10,50 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-import org.eclipse.osgi.util.ManifestElement;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.Constants;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 
 
 public class PDEStateHelper {
-	private static SAXParser parser;
 
-	public static BundleDescription[] getDependentBundles(BundleDescription root) {
-		BundleDescription[] imported = getImportedBundles(root);  // Import-Package
-		BundleDescription[] required = getRequiredBundles(root);  // require-bundle <=> <import> from plugin.xml
-		BundleDescription[] dependents = new BundleDescription[imported.length + required.length];
-		System.arraycopy(imported, 0, dependents, 0, imported.length);
-		System.arraycopy(required, 0, dependents, imported.length, required.length);
-		return dependents;
-	}
-	public static BundleDescription[] getDependentBundlesWithFragments(BundleDescription root) {
-		BundleDescription[] imported = getImportedBundles(root);
-		BundleDescription[] importedByFragments = getImportedByFragments(root);
-		BundleDescription[] required = getRequiredBundles(root);
-		BundleDescription[] requiredByFragments = getRequiredByFragments(root);
-		BundleDescription[] dependents = new BundleDescription[imported.length + importedByFragments.length + required.length + requiredByFragments.length];
-		System.arraycopy(imported, 0, dependents, 0, imported.length);
-		System.arraycopy(importedByFragments, 0, dependents, imported.length, importedByFragments.length);
-		System.arraycopy(required, 0, dependents, imported.length + importedByFragments.length, required.length);
-		System.arraycopy(requiredByFragments, 0, dependents, imported.length + importedByFragments.length + required.length, requiredByFragments.length);
-		return dependents;
-	}
+	/**
+	 * Returns the bundles that export packages being imported via the Import-Package header
+	 * by resolved fragments of a given bundle
+	 * 
+	 * @param root the bundle
+	 * @return
+	 * 			an array of bundles supplying packages to resolved fragments of the given bundle
+	 */
 	public static BundleDescription[] getImportedByFragments(BundleDescription root) {
 		BundleDescription[] fragments = root.getFragments();
-		List importedByFragments = new ArrayList();
+		List list = new ArrayList();
 		for (int i = 0; i < fragments.length; i++) {
-			if (!fragments[i].isResolved())
-				continue;
-			merge(importedByFragments, getImportedBundles(fragments[i]));
-		}
-		BundleDescription[] result = new BundleDescription[importedByFragments.size()];
-		return (BundleDescription[]) importedByFragments.toArray(result);
-	}
-	public static BundleDescription[] getRequiredByFragments(BundleDescription root) {
-		BundleDescription[] fragments = root.getFragments();
-		List importedByFragments = new ArrayList();
-		for (int i = 0; i < fragments.length; i++) {
-			if (!fragments[i].isResolved())
-				continue;
-			merge(importedByFragments, getRequiredBundles(fragments[i]));
-		}
-		BundleDescription[] result = new BundleDescription[importedByFragments.size()];
-		return (BundleDescription[]) importedByFragments.toArray(result);
-	}
-	public static void merge(List source, BundleDescription[] toAdd) {
-		for (int i = 0; i < toAdd.length; i++) {
-			if (!source.contains(toAdd[i]))
-				source.add(toAdd[i]);
-		}
-	}
-	public static String[] getClasspath(Dictionary manifest) {
-		String fullClasspath = (String) manifest.get(Constants.BUNDLE_CLASSPATH);
-		String[] result = new String[0];
-		try {
-			if (fullClasspath != null) {
-				ManifestElement[] classpathEntries = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, fullClasspath);
-				result = new String[classpathEntries.length];
-				for (int i = 0; i < classpathEntries.length; i++) {
-					result[i] = classpathEntries[i].getValue();
+			if (fragments[i].isResolved()) {
+				BundleDescription[] toAdd = getImportedBundles(fragments[i]);
+				for (int j = 0; j < toAdd.length; j++) {
+					if (!list.contains(toAdd[j]))
+						list.add(toAdd[j]);
 				}
 			}
-		} catch (BundleException e) {
 		}
-		return result;
+		BundleDescription[] result = new BundleDescription[list.size()];
+		return (BundleDescription[]) list.toArray(result);
 	}
+	
 	/**
-	 * This methods return the bundleDescriptions to which imports have been
-	 * bound to.
+	 * Returns the bundles that export packages imported by the given bundle
+	 * via the Import-Package header
 	 * 
-	 * @param bundleId
-	 * @param version
-	 * @return
+	 * @param root the given bundle
+	 * 
+	 * @return an array of bundles that export packages being imported by the given bundle
 	 */
 	public static BundleDescription[] getImportedBundles(BundleDescription root) {
 		if (root == null)
@@ -115,68 +61,38 @@ public class PDEStateHelper {
 		ExportPackageDescription[] packages = root.getResolvedImports();
 		ArrayList resolvedImports = new ArrayList(packages.length);
 		for (int i = 0; i < packages.length; i++)
-			if (!root.getLocation().equals(packages[i].getExporter().getLocation()) && !resolvedImports.contains(packages[i].getExporter()))
+			if (!root.getLocation().equals(packages[i].getExporter().getLocation())
+					&& !resolvedImports.contains(packages[i].getExporter()))
 				resolvedImports.add(packages[i].getExporter());
 		return (BundleDescription[]) resolvedImports.toArray(new BundleDescription[resolvedImports.size()]);
-		}
-	/**
-	 * This methods return the bundleDescriptions to which required bundles
-	 * have been bound to.
-	 * 
-	 * @param bundleId
-	 * @param version
-	 * @return
-	 */
-	public static BundleDescription[] getRequiredBundles(BundleDescription root) {
-		if (root == null)
-			return new BundleDescription[0];
-		return root.getResolvedRequires();
-		}
-	
-	public static synchronized void parseExtensions(BundleDescription desc, Element parent) {
-		ZipFile jarFile = null;
-		InputStream stream = null;
-		try {
-			String filename = desc.getHost() == null ? "plugin.xml" : "fragment.xml"; //$NON-NLS-1$ //$NON-NLS-2$
-			String path = desc.getLocation();
-
-			File file = new File(path);
-			if (file.isFile()) {
-				jarFile = new ZipFile(file, ZipFile.OPEN_READ);
-				ZipEntry manifestEntry = jarFile.getEntry(filename); 
-				if (manifestEntry != null) 
-					stream = new BufferedInputStream(jarFile.getInputStream(manifestEntry));				
-			} else if (file.isDirectory()) {
-				File manifest = new File(file, filename);
-				if (manifest.exists() && manifest.isFile()) {
-					stream = new BufferedInputStream(new FileInputStream(manifest));
-				}
-			}
-			if (stream != null)
-				getParser().parse(stream, new ExtensionsHandler(parent));
-			
-		} catch (IOException e) {
-		} catch (ParserConfigurationException e) {
-		} catch (SAXException e) {
-		} catch (FactoryConfigurationError e) {
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e1) {
-			}
-			try {
-				if (jarFile != null)
-					jarFile.close();
-			} catch (IOException e2) {
-			}
-		}
-	}
-	
-	private static SAXParser getParser() throws ParserConfigurationException, SAXException{
-		if (parser == null)
-			parser = SAXParserFactory.newInstance().newSAXParser();
-		return parser;
 	}
 
+	public static IPluginExtensionPoint findExtensionPoint(String fullID) {
+		if (fullID == null || fullID.length() == 0)
+			return null;
+		// separate plugin ID first
+		int lastDot = fullID.lastIndexOf('.');
+		if (lastDot == -1)
+			return null;
+		String pluginID = fullID.substring(0, lastDot);
+		IPluginModelBase model = PluginRegistry.findModel(pluginID);
+		if (model == null)
+			return PDEManager.findExtensionPoint(fullID);
+		String pointID = fullID.substring(lastDot + 1);
+		IPluginExtensionPoint[] points = model.getPluginBase().getExtensionPoints();
+		for (int i = 0; i < points.length; i++) {
+			IPluginExtensionPoint point = points[i];
+			if (point.getId().equals(pointID))
+				return point;
+		}
+		IFragmentModel[] fragments = PDEManager.findFragmentsFor(model);
+		for (int i = 0; i < fragments.length; i++) {
+			points = fragments[i].getPluginBase().getExtensionPoints();
+			for (int j = 0; j < points.length; j++)
+				if (points[j].getId().equals(pointID))
+					return points[j];
+		}
+		return PDEManager.findExtensionPoint(fullID);
+	}
+	
 }

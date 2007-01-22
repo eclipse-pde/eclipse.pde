@@ -33,12 +33,12 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ExternalModelManager;
-import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.TracingOptionsManager;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
@@ -134,15 +134,17 @@ public class LaunchArgumentsHelper {
 		String javaCommand = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, (String)null); 
 		map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, javaCommand);
 		if (TargetPlatform.getOS().equals("macosx")) { //$NON-NLS-1$
-			ModelEntry entry = PDECore.getDefault().getModelManager().findEntry("org.eclipse.jdt.debug"); //$NON-NLS-1$
+			ModelEntry entry = PluginRegistry.findEntry("org.eclipse.jdt.debug"); //$NON-NLS-1$
 			if (entry != null) {
-				IPluginModelBase model = entry.getExternalModel();
-				if (model != null) {
-                    File file = new File(model.getInstallLocation());
+				IPluginModelBase[] models = entry.getExternalModels();
+				for (int i = 0; i < models.length; i++) {
+                    File file = new File(models[i].getInstallLocation());
                     if (!file.isFile())
                         file = new File(file, "jdi.jar"); //$NON-NLS-1$
-					if (file.exists())
+					if (file.exists()) {
 						map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND, new String[] {file.getAbsolutePath()});
+						break;
+					}
 				}
 			}
 		}
@@ -175,7 +177,7 @@ public class LaunchArgumentsHelper {
 	}
 	
 	public static String[] constructClasspath(ILaunchConfiguration configuration) throws CoreException {
-		String jarPath = TargetPlatform.usesEquinoxStartup() ? getEquinoxStartupPath() : getStartupJarPath();
+		String jarPath = TargetPlatformHelper.usesEquinoxStartup() ? getEquinoxStartupPath() : getStartupJarPath();
 		if (jarPath == null)
 			return null;
 		
@@ -190,7 +192,7 @@ public class LaunchArgumentsHelper {
 	}
 	
 	private static String getEquinoxStartupPath() throws CoreException {
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel("org.eclipse.equinox.launcher"); //$NON-NLS-1$
+		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.equinox.launcher"); //$NON-NLS-1$
 		if (model != null) {
 			IResource resource = model.getUnderlyingResource();
 			if (resource == null) 
@@ -226,9 +228,9 @@ public class LaunchArgumentsHelper {
 	}
 		
 	private static String getStartupJarPath() throws CoreException {
-		IPlugin plugin = PDECore.getDefault().findPlugin("org.eclipse.platform"); //$NON-NLS-1$
-		if (plugin != null && plugin.getModel().getUnderlyingResource() != null) {
-			IProject project = plugin.getModel().getUnderlyingResource().getProject();
+		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.platform"); //$NON-NLS-1$
+		if (model != null && model.getUnderlyingResource() != null) {
+			IProject project = model.getUnderlyingResource().getProject();
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject jProject = JavaCore.create(project);
 				IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
@@ -244,12 +246,12 @@ public class LaunchArgumentsHelper {
 				return project.getFile("startup.jar").getLocation().toOSString(); //$NON-NLS-1$
 		}
 		File startupJar =
-			ExternalModelManager.getEclipseHome().append("startup.jar").toFile(); //$NON-NLS-1$
+			new Path(TargetPlatform.getLocation()).append("startup.jar").toFile(); //$NON-NLS-1$
 		
 		// if something goes wrong with the preferences, fall back on the startup.jar 
 		// in the running eclipse.  
 		if (!startupJar.exists())
-			startupJar = new Path(ExternalModelManager.computeDefaultPlatformPath()).append("startup.jar").toFile(); //$NON-NLS-1$
+			startupJar = new Path(TargetPlatform.getDefaultLocation()).append("startup.jar").toFile(); //$NON-NLS-1$
 		
 		return startupJar.exists() ? startupJar.getAbsolutePath() : null;
 	}

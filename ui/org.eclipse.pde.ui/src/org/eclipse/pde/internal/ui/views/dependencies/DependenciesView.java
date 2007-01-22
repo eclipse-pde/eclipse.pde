@@ -23,6 +23,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.builders.DependencyLoop;
 import org.eclipse.pde.internal.core.builders.DependencyLoopFinder;
@@ -404,7 +405,7 @@ public class DependenciesView extends PageBookView implements
 			return;
 		String id = memento.getString(MEMENTO_KEY_INPUT);
 		if (id != null) {
-			IPluginModelBase plugin = PDECore.getDefault().getModelManager().findModel(id);
+			IPluginModelBase plugin = PluginRegistry.findModel(id);
 			if (plugin != null) {
 				fInput = plugin;
 				addHistoryEntry(id);
@@ -574,7 +575,7 @@ public class DependenciesView extends PageBookView implements
 	private void updateHistoryEntries() {
 		for (int i= fInputHistory.size() - 1; i >= 0; i--) {
 			String type= (String) fInputHistory.get(i);
-			if (PDECore.getDefault().getModelManager().findModel(type)==null) {
+			if (PluginRegistry.findModel(type)==null) {
 				fInputHistory.remove(i);
 			}
 		}
@@ -588,7 +589,7 @@ public class DependenciesView extends PageBookView implements
 	 */	
 	public void gotoHistoryEntry(String entry) {
 		if (fInputHistory.contains(entry)) {	
-			updateInput(PDECore.getDefault().getModelManager().findModel(entry));
+			updateInput(PluginRegistry.findModel(entry));
 		}
 	}	
 	

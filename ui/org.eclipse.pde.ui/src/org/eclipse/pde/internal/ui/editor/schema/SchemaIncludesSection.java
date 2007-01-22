@@ -26,7 +26,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
 import org.eclipse.pde.internal.core.natures.PDE;
@@ -212,8 +212,7 @@ public class SchemaIncludesSection extends TableSection {
 			String location = sb.toString() + currPath.toString(); 
 			return location.trim().length() > 0 ? location : null;  
 		}
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(
-				file.getProject());
+		IPluginModelBase model = PluginRegistry.findModel(file.getProject());
 		String id = model.getPluginBase().getId();
 		if (id != null)
 			return "schema://" + id + "/" + file.getProjectRelativePath().toString(); //$NON-NLS-1$ //$NON-NLS-2$

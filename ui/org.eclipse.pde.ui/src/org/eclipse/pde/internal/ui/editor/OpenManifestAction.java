@@ -59,9 +59,7 @@ public class OpenManifestAction implements IWorkbenchWindowActionDelegate {
 					proj = ((IFile) element).getProject();
 				else if (element instanceof IProject)
 					proj = (IProject) element;
-				if (proj != null
-						&& (WorkspaceModelManager.hasBundleManifest(proj) 
-							|| WorkspaceModelManager.hasPluginManifest(proj)))
+				if (WorkspaceModelManager.isPluginProject(proj))
 					projects.add(proj);
 			}
 			if (projects.size() > 0) {

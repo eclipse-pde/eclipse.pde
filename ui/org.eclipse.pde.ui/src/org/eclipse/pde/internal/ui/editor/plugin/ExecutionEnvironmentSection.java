@@ -33,7 +33,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
@@ -164,7 +164,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 					public void linkActivated(HyperlinkEvent e) {
 						try {
 							getPage().getEditor().doSave(null);
-							IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
+							IPluginModelBase model = PluginRegistry.findModel(project);
 							if (model != null) {
 								ClasspathComputer.setClasspath(project, model);
 								if (PDEPlugin.getWorkspace().isAutoBuilding()) {

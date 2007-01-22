@@ -33,7 +33,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ExternalModelManager;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEState;
@@ -300,7 +301,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private void handleChangeTargetPlatform() {
 		IPreferenceNode targetNode = new TargetPlatformPreferenceNode();
 		if (PDEPreferencesUtil.showPreferencePage(targetNode))
-			dropLocation.setText(ExternalModelManager.getEclipseHome().toOSString());
+			dropLocation.setText(TargetPlatform.getLocation());
 	}
 	
 	private void handleSourceLocations() {
@@ -394,7 +395,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private void resolveTargetPlatform() {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				models = PDECore.getDefault().getModelManager().getExternalModels();
+				models = PluginRegistry.getExternalModels();
 				monitor.done();
 			}
 		};

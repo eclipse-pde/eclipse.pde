@@ -27,12 +27,11 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.HostSpecification;
+import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.IObjectActionDelegate;
@@ -100,26 +99,23 @@ public class CreateHelpIndexAction implements IObjectActionDelegate {
 	}
 
 	private File getManifest() {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		ModelEntry entry = manager.findEntry(fProject);
-		if (entry != null)
-			return getManifest(manager, entry.getActiveModel());
-		return null;
+		IPluginModelBase model = PluginRegistry.findModel(fProject);
+		return (model != null) ? getManifest(model) : null;
 	}
 	
-	private File getManifest(PluginModelManager manager, IPluginModelBase modelBase) {
-		IPluginBase pluginBase = modelBase.getPluginBase();
-		if (pluginBase instanceof IFragment) {
-			// fragment
-			IFragment fragment = (IFragment)pluginBase;
-			String pluginId = fragment.getPluginId();
-			String pluginVersion = fragment.getPluginVersion();
-			int match = fragment.getRule();
-			IPluginModelBase pluginModel = manager.findPlugin(pluginId, pluginVersion, match);
-			if (pluginModel.getUnderlyingResource() == null)
-				return null;
-			IFile pluginFile = pluginModel.getUnderlyingResource().getProject().getFile("plugin.xml"); //$NON-NLS-1$
-			return (pluginFile.exists()) ? pluginFile.getLocation().toFile() : null;
+	private File getManifest(IPluginModelBase model) {
+		if (model instanceof IFragmentModel) {
+			BundleDescription desc = model.getBundleDescription();
+			HostSpecification hostSpec = desc.getHost();
+			BundleDescription host = hostSpec == null ? null : (BundleDescription)hostSpec.getSupplier();
+			if (host != null) {
+				IPluginModelBase hostModel = PluginRegistry.findModel(host);
+				if (hostModel != null && hostModel.getUnderlyingResource() != null) {
+					IProject project = hostModel.getUnderlyingResource().getProject();
+					IFile pluginFile = project.getFile("plugin.xml"); //$NON-NLS-1$
+					return (pluginFile.exists()) ? pluginFile.getLocation().toFile() : null;					
+				}
+			}
 		}
 		return fProject.getFile("plugin.xml").getLocation().toFile(); //$NON-NLS-1$
 	}

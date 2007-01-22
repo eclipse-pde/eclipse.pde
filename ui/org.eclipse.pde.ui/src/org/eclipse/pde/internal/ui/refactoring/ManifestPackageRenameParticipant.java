@@ -27,8 +27,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -61,15 +60,14 @@ public class ManifestPackageRenameParticipant extends PDERenameParticipant {
 	
 	protected void addBundleManifestChange(CompositeChange result, IProgressMonitor pm) throws CoreException {
 		super.addBundleManifestChange(result, pm);
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		IPluginModelBase model = manager.findModel(fProject);
+		IPluginModelBase model = PluginRegistry.findModel(fProject);
 		if (model != null) {
 			BundleDescription desc = model.getBundleDescription();
 			if (desc != null) {
 				BundleDescription[] dependents = desc.getDependents();
 				for (int i = 0; i < dependents.length; i++) {
 					if (isAffected(desc, dependents[i])) {
-						IPluginModelBase candidate = manager.findModel(dependents[i]);
+						IPluginModelBase candidate = PluginRegistry.findModel(dependents[i]);
 						if (candidate instanceof IBundlePluginModelBase) {
 							IFile file = (IFile)candidate.getUnderlyingResource();
 							addBundleManifestChange(file, result, pm);

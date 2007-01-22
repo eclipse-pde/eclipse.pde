@@ -58,9 +58,9 @@ import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -174,14 +174,13 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 	}
 	
 	private Set findManifestPlugins(RequireBundleHeader header, Set ignorePkgs) {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		RequireBundleObject[] bundles = header.getRequiredBundles();
 		Set result = new HashSet((4/3) * (bundles.length) + 2);
 		ArrayList plugins = new ArrayList();
 		for (int i = 0; i < bundles.length; i++) { 
 			String id = bundles[i].getId();
 			result.add(id);
-			IPluginModelBase base = manager.findModel(id);
+			IPluginModelBase base = PluginRegistry.findModel(id);
 			if (base != null) {
 				ExportPackageDescription[] exportedPkgs = findExportedPackages(base.getBundleDescription());
 				for (int j = 0; j < exportedPkgs.length; j++)
@@ -193,14 +192,13 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 	}
 	
 	private Set findManifestPlugins(Set ignorePkgs) {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		BundleSpecification[] bundles = fBase.getBundleDescription().getRequiredBundles();
 		Set result = new HashSet((4/3) * (bundles.length) + 2);
 		ArrayList plugins = new ArrayList();
 		for (int i = 0; i < bundles.length; i++) {
 			String id = bundles[i].getName();
 			result.add(id);
-			IPluginModelBase base = manager.findModel(id);
+			IPluginModelBase base = PluginRegistry.findModel(id);
 			if (base != null) {
 				ExportPackageDescription[] exportedPkgs = findExportedPackages(base.getBundleDescription());
 				for (int j = 0; j < exportedPkgs.length; j++)
@@ -277,14 +275,13 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		if (ignorePkgs == null) 
 			ignorePkgs = new HashSet(2);
 		monitor.beginTask(PDEUIMessages.AddNewDependenciesOperation_searchProject, secDeps.length);
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		for (int j = 0; j < secDeps.length; j++) {
 			try {
 				if (monitor.isCanceled())
 					return;
 				IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
 				String pluginId = secDeps[j];
-				IPluginModelBase base = manager.findModel(secDeps[j]);
+				IPluginModelBase base = PluginRegistry.findModel(secDeps[j]);
 				if (base != null) {
 					ExportPackageDescription[] exported = findExportedPackages(base.getBundleDescription());
 					IJavaSearchScope searchScope = PluginJavaSearchUtil.createSeachScope(jProject);
@@ -496,13 +493,12 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 	
 	protected final void minimizeBundles(Collection pluginIds) {
 		Stack stack = new Stack();
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		Iterator it = pluginIds.iterator();
 		while (it.hasNext()) 
 			stack.push(it.next().toString());
 		
 		while (!stack.isEmpty()) {
-			IPluginModelBase base = manager.findModel(stack.pop().toString());
+			IPluginModelBase base = PluginRegistry.findModel(stack.pop().toString());
 			IPluginImport[] imports = base.getPluginBase().getImports();
 			
 			for (int j = 0; j < imports.length; j++) 

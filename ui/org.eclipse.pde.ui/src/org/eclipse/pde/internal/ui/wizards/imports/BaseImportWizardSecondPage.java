@@ -65,7 +65,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		super(pageName);
 		fPage1 = page;
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
-		PDECore.getDefault().getExternalModelManager().addModelProviderListener(this);
+		PDECore.getDefault().getModelManager().getExternalModelManager().addModelProviderListener(this);
 	}
 
 	protected Composite createImportList(Composite parent) {
@@ -87,7 +87,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		fImportListViewer = new TableViewer(table);
 		fImportListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fImportListViewer.setContentProvider(new ContentProvider());
-		fImportListViewer.setInput(PDECore.getDefault().getExternalModelManager());
+		fImportListViewer.setInput(PDECore.getDefault().getModelManager().getExternalModelManager());
 		fImportListViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 		return container;
 	}
@@ -119,7 +119,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
-		PDECore.getDefault().getExternalModelManager().removeModelProviderListener(this);
+		PDECore.getDefault().getModelManager().getExternalModelManager().removeModelProviderListener(this);
 	}
 	
 	public void setVisible(boolean visible) {

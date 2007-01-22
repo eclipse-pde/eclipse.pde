@@ -23,8 +23,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -50,7 +49,6 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 		if (fSelection instanceof IStructuredSelection) {
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
 			ArrayList models = new ArrayList(elems.length);
-			PluginModelManager manager = PDECore.getDefault().getModelManager();
 			for (int i = 0; i < elems.length; i++) {
 				Object elem = elems[i];
 				IProject project = null;
@@ -63,12 +61,17 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 				} else if (elem instanceof IJavaProject) {
 					project = ((IJavaProject) elem).getProject();
 				}
-				if (project != null
-						&& WorkspaceModelManager.isJavaPluginProject(project)) {
-					IPluginModelBase model = manager.findModel(project);
-					if (model != null) {
-						models.add(model);
+				try {
+					if (project != null
+							&& WorkspaceModelManager.isPluginProject(project)
+							&& project.hasNature(JavaCore.NATURE_ID)) {
+						IPluginModelBase model = PluginRegistry.findModel(project);
+						if (model != null) {
+							models.add(model);
+						}
 					}
+				} catch (CoreException e) {
+					PDEPlugin.log(e);
 				}
 			}
 
@@ -101,10 +104,9 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 	}
 	
 	private IPluginModelBase[] getModelsToUpdate(){
-		IPluginModelBase[] models =
-			PDECore.getDefault().getModelManager().getWorkspaceModels();
+		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		ArrayList modelArray = new ArrayList();
-		try{
+		try {
 			for (int i = 0; i < models.length; i++) {
 				if (models[i].getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID))
 					modelArray.add(models[i]);

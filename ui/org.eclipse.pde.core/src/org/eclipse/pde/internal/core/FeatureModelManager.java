@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.IModelProviderListener;
@@ -46,7 +47,7 @@ public class FeatureModelManager {
 	
 	private boolean fReloadExternalNeeded = false;
 
-	private WorkspaceModelManager fWorkspaceManager;
+	private WorkspaceFeatureModelManager fWorkspaceManager;
 
 	private IModelProviderListener fProviderListener;
 
@@ -55,8 +56,8 @@ public class FeatureModelManager {
 	 */
 	private ArrayList fListeners;
 
-	public FeatureModelManager(WorkspaceModelManager wm) {
-		fWorkspaceManager = wm;
+	public FeatureModelManager() {
+		fWorkspaceManager = new WorkspaceFeatureModelManager();
 		fListeners = new ArrayList();
 	}
 
@@ -119,6 +120,11 @@ public class FeatureModelManager {
 	public IFeatureModel[] getWorkspaceModels() {
 		init();
 		return fWorkspaceManager.getFeatureModels();
+	}
+	
+	public IFeatureModel getFeatureModel(IProject project) {
+		init();
+		return fWorkspaceManager.getFeatureModel(project);
 	}
 
 	/**

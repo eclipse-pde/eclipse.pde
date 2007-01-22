@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -120,13 +120,12 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 			return PDEUIMessages.NewSchemaFileMainPage_missingPluginID;
 
 		// Verify plug-in ID exists
-		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(pluginID);
-		if (entry == null)
+		IPluginModelBase model = PluginRegistry.findModel(pluginID);
+		if (model == null)
 			return PDEUIMessages.NewSchemaFileMainPage_nonExistingPluginID;
 
 		// Verify plug-in ID is not an external model
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginID);
-		if (model == null || model.getUnderlyingResource() == null)
+		if (model.getUnderlyingResource() == null)
 			return PDEUIMessages.NewSchemaFileMainPage_externalPluginID;
 
 		return null;

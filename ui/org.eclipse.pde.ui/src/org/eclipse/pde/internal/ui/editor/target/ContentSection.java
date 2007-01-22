@@ -35,8 +35,9 @@ import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.itarget.ITarget;
@@ -306,14 +307,12 @@ public class ContentSection extends TableSection {
 	private TreeMap getBundles() {
 		TreeMap map = new TreeMap();
 		ITarget target = getTarget();
-		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getExternalModels();
+		IPluginModelBase[] models = PluginRegistry.getExternalModels();
 		for (int i = 0; i < models.length; i++) {
-			if (models[i] instanceof ExternalPluginModelBase) {
-				BundleDescription desc = ((ExternalPluginModelBase)models[i]).getBundleDescription();
-				String id = desc.getSymbolicName();
-				if (!target.containsPlugin(id))
-					map.put(id, desc);
-			}
+			BundleDescription desc = ((ExternalPluginModelBase)models[i]).getBundleDescription();
+			String id = desc.getSymbolicName();
+			if (!target.containsPlugin(id))
+				map.put(id, desc);
 		}
 		return map;
 	}
@@ -321,7 +320,7 @@ public class ContentSection extends TableSection {
 	protected TreeMap getWorkspaceBundles(TreeMap used) {
 		TreeMap map = new TreeMap();
 		ITarget target = getTarget();
-		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getWorkspaceModels();
+		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		for (int i = 0; i < models.length; i++) {
 			BundleDescription desc = models[i].getBundleDescription();
 			String id = desc.getSymbolicName();
@@ -445,9 +444,9 @@ public class ContentSection extends TableSection {
 		if (object instanceof IJavaProject)
 			object = ((IJavaProject)object).getProject();
 		if (object instanceof IProject)
-			return PDECore.getDefault().getModelManager().findModel((IProject)object);
+			return PluginRegistry.findModel((IProject)object);
 		if (object instanceof PersistablePluginObject) {
-			return PDECore.getDefault().getModelManager().findModel(((PersistablePluginObject)object).getPluginID());
+			return PluginRegistry.findModel(((PersistablePluginObject)object).getPluginID());
 		}
 		return null;
 	}
@@ -458,7 +457,7 @@ public class ContentSection extends TableSection {
 		
 		HashSet set = new HashSet();
 		for (int i = 0; i < plugins.length; i++) {
-			addDependencies(TargetPlatform.getState().getBundle(plugins[i].getId(), null), set);
+			addDependencies(TargetPlatformHelper.getState().getBundle(plugins[i].getId(), null), set);
 		}
 		
 		ITarget target = plugins[0].getTarget();
@@ -518,7 +517,7 @@ public class ContentSection extends TableSection {
 	
 	private static BundleDescription[] getAllFragments() {
 		ArrayList list = new ArrayList();
-		BundleDescription[] bundles = TargetPlatform.getState().getBundles();
+		BundleDescription[] bundles = TargetPlatformHelper.getState().getBundles();
 		for (int i = 0; i < bundles.length; i++) {
 			if (bundles[i].getHost() != null)
 				list.add(bundles[i]);

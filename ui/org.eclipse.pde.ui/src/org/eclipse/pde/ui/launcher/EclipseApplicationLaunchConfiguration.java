@@ -24,10 +24,10 @@ import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ClasspathHelper;
-import org.eclipse.pde.internal.core.ExternalModelManager;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -95,7 +95,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 			Properties prop = LaunchConfigurationHelper.createConfigIniFile(configuration,
 					productID, pluginMap, getConfigDir(configuration));
 			showSplash = prop.containsKey("osgi.splashPath") || prop.containsKey("splashLocation"); //$NON-NLS-1$ //$NON-NLS-2$
-			TargetPlatform.createPlatformConfigurationArea(
+			TargetPlatformHelper.createPlatformConfigurationArea(
 					pluginMap,
 					getConfigDir(configuration),
 					LaunchConfigurationHelper.getContributingPlugin(productID));
@@ -109,7 +109,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
  
     		// necessary for PDE to know how to load plugins when target platform = host platform
     		// see PluginPathFinder.getPluginPaths()
-    		if (pluginMap.containsKey(PDECore.getPluginId()))
+    		if (pluginMap.containsKey(PDECore.PLUGIN_ID))
     			programArgs.add("-pdelaunch"); //$NON-NLS-1$	
 		}
 		
@@ -119,14 +119,14 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		}
 		
 		if (!programArgs.contains("-nosplash") && showSplash) { //$NON-NLS-1$
-			if (TargetPlatform.getTargetVersion() >= 3.1) {
+			if (TargetPlatformHelper.getTargetVersion() >= 3.1) {
 				programArgs.add(0, "-launcher");  //$NON-NLS-1$
 				
 				IPath path = null;
 				if (TargetPlatform.getOS().equals("macosx") ) { //$NON-NLS-1$
-					path = ExternalModelManager.getEclipseHome().append("Eclipse.app/Contents/Resources/Splash.app/Contents/MacOS/eclipse"); //$NON-NLS-1$
+					path = new Path(TargetPlatform.getLocation()).append("Eclipse.app/Contents/Resources/Splash.app/Contents/MacOS/eclipse"); //$NON-NLS-1$
 				} else {
-					path = ExternalModelManager.getEclipseHome().append("eclipse"); //$NON-NLS-1$	
+					path = new Path(TargetPlatform.getLocation()).append("eclipse"); //$NON-NLS-1$	
 				}
 				
 				programArgs.add(1, path.toOSString()); //This could be the branded launcher if we want (also this does not bring much)
@@ -163,7 +163,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	}
 
 	private String computeShowsplashArgument() {
-		IPath eclipseHome = ExternalModelManager.getEclipseHome();
+		IPath eclipseHome = new Path(TargetPlatform.getLocation());
 		IPath fullPath = eclipseHome.append("eclipse"); //$NON-NLS-1$
 		return fullPath.toOSString() + " -showsplash 600"; //$NON-NLS-1$
 	}
@@ -171,7 +171,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	private void ensureProductFilesExist(IPath productArea) {
 		File productDir = productArea.toFile();		
 		File marker = new File(productDir, ".eclipseproduct"); //$NON-NLS-1$
-		IPath eclipsePath = ExternalModelManager.getEclipseHome();
+		IPath eclipsePath = new Path(TargetPlatform.getLocation());
 		if (!marker.exists()) 
 			CoreUtility.copyFile(eclipsePath, ".eclipseproduct", marker); //$NON-NLS-1$
 		

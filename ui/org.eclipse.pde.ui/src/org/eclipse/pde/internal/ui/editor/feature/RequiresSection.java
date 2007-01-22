@@ -27,10 +27,11 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.IFeatureModelDelta;
 import org.eclipse.pde.internal.core.IFeatureModelListener;
 import org.eclipse.pde.internal.core.IPluginModelListener;
-import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelDelta;
 import org.eclipse.pde.internal.core.feature.FeatureImport;
@@ -190,8 +191,7 @@ public class RequiresSection extends TableSection implements
 		BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(),
 				new Runnable() {
 					public void run() {
-						IPluginModelBase[] allModels = PDECore.getDefault()
-								.getModelManager().getPlugins();
+						IPluginModelBase[] allModels = PluginRegistry.getActiveModels();
 						ArrayList newModels = new ArrayList();
 						for (int i = 0; i < allModels.length; i++) {
 							if (canAdd(allModels[i]))
@@ -343,8 +343,7 @@ public class RequiresSection extends TableSection implements
 		if (model != null)
 			model.removeModelChangedListener(this);
 		PDECore.getDefault().getModelManager().removePluginModelListener(this);
-		PDECore.getDefault().getFeatureModelManager()
-				.removeFeatureModelListener(this);
+		PDECore.getDefault().getFeatureModelManager().removeFeatureModelListener(this);
 		super.dispose();
 	}
 

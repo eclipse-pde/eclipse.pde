@@ -18,78 +18,81 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.EntryFileAdapter;
 import org.eclipse.pde.internal.core.FileAdapter;
-import org.eclipse.pde.internal.core.IPluginModelListener;
-import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.core.PluginModelDelta;
+import org.eclipse.pde.internal.core.ModelFileAdapter;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 
-public class PluginsContentProvider
-	extends DefaultContentProvider
-	implements ITreeContentProvider, IStructuredContentProvider, IPluginModelListener {
-	private PluginModelManager manager;
-	private TreeViewer viewer;
-	private PluginsView view;
-	private StandardJavaElementContentProvider javaProvider;
+public class PluginsContentProvider extends DefaultContentProvider
+				implements ITreeContentProvider, IStructuredContentProvider {
+	
+	private PluginsView fView;
+	private StandardJavaElementContentProvider fJavaProvider;
 
 	/**
 	 * Constructor for PluginsContentProvider.
 	 */
-	public PluginsContentProvider(PluginsView view, PluginModelManager manager) {
-		this.manager = manager;
-		manager.addPluginModelListener(this);
-		this.view = view;
-		javaProvider = new StandardJavaElementContentProvider();
+	public PluginsContentProvider(PluginsView view) {
+		fView = view;
+		fJavaProvider = new StandardJavaElementContentProvider();
 	}
 
-	public void dispose() {
-		manager.removePluginModelListener(this);
-	}
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		this.viewer = (TreeViewer) viewer;
-		if (newInput==null) return;
-		view.updateTitle(newInput);
+		if (newInput == null) return;
+		fView.updateTitle(newInput);
 	}
 
-	/**
-	 * @see ITreeContentProvider#getChildren(Object)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof PluginModelManager) {
-			return ((PluginModelManager) parentElement).getEntries();
+			return ((PluginModelManager) parentElement).getAllModels();
 		}
-		if (parentElement instanceof ModelEntry) {
-			ModelEntry entry = (ModelEntry) parentElement;
-			return entry.getChildren();
+		if (parentElement instanceof IPluginModelBase) {
+			IPluginModelBase model = (IPluginModelBase)parentElement;
+			if (model != null) {
+				File file = new File(model.getInstallLocation());
+				if (!file.isFile()) {
+					FileAdapter adapter =
+						new ModelFileAdapter(
+							model,
+							file,
+							PDECore.getDefault().getSearchablePluginsManager());
+					return adapter.getChildren();
+				}
+			}
 		}
+			
 		if (parentElement instanceof FileAdapter) {
 			return ((FileAdapter) parentElement).getChildren();
 		}
+		
 		if (parentElement instanceof IPackageFragmentRoot ||
 			parentElement instanceof IPackageFragment ||
 			parentElement instanceof ICompilationUnit) 
-			return javaProvider.getChildren(parentElement);
+			return fJavaProvider.getChildren(parentElement);
+		
 		return new Object[0];
 	}
 
-	/**
-	 * @see ITreeContentProvider#getParent(Object)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
 		if (element instanceof PluginModelManager) {
 			return null;
 		}
-		if (element instanceof ModelEntry) {
-			return manager;
+		if (element instanceof IPluginModelBase) {
+			return PDECore.getDefault().getModelManager();
 		}
-		if (element instanceof EntryFileAdapter) {
-			return ((EntryFileAdapter) element).getEntry();
+		if (element instanceof ModelFileAdapter) {
+			return ((ModelFileAdapter) element).getModel();
 		}
 		if (element instanceof FileAdapter) {
 			return ((FileAdapter) element).getParent();
@@ -97,18 +100,18 @@ public class PluginsContentProvider
 		return null;
 	}
 
-	/**
-	 * @see ITreeContentProvider#hasChildren(Object)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
 		if (element instanceof PluginModelManager) {
-			return ((PluginModelManager) element).isEmpty() == false;
+			return !((PluginModelManager) element).isEmpty();
 		}
-		if (element instanceof ModelEntry) {
-			ModelEntry entry = (ModelEntry) element;
-			IPluginModelBase model = entry.getActiveModel();
-			File file = new File(model.getInstallLocation());
-			return !file.isFile() && model.getUnderlyingResource() == null;
+		if (element instanceof IPluginModelBase) {
+			IPluginModelBase model = (IPluginModelBase)element;
+			return model.getUnderlyingResource() == null 
+					&& !new File(model.getInstallLocation()).isFile();
 		}
 		if (element instanceof FileAdapter) {
 			FileAdapter fileAdapter = (FileAdapter) element;
@@ -117,7 +120,7 @@ public class PluginsContentProvider
 		if (element instanceof IPackageFragmentRoot ||
 			element instanceof IPackageFragment ||
 			element instanceof ICompilationUnit)
-			return javaProvider.hasChildren(element);
+			return fJavaProvider.hasChildren(element);
 		return false;
 	}
 
@@ -128,42 +131,4 @@ public class PluginsContentProvider
 		return getChildren(inputElement);
 	}
 
-	public void modelsChanged(final PluginModelDelta delta) {
-		if (viewer == null || viewer.getTree().isDisposed())
-			return;
-
-		viewer.getTree().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				int kind = delta.getKind();
-				if (viewer.getTree().isDisposed())
-					return;
-				if ((kind & PluginModelDelta.CHANGED) !=0) {
-					// Don't know exactly what change - 
-					// the safest way out is to refresh
-					viewer.refresh();
-					return;
-				}
-				if ((kind & PluginModelDelta.REMOVED) != 0) {
-					ModelEntry[] removed = delta.getRemovedEntries();
-					viewer.remove(removed);
-				}
-				if ((kind & PluginModelDelta.ADDED) != 0) {
-					ModelEntry[] added = delta.getAddedEntries();
-					for (int i = 0; i < added.length; i++) {
-						if (isVisible(added[i]))
-							viewer.add(manager, added[i]);
-					}
-				}
-			}
-		});
-	}
-	private boolean isVisible(ModelEntry entry) {
-		ViewerFilter[] filters = viewer.getFilters();
-		for (int i = 0; i < filters.length; i++) {
-			ViewerFilter filter = filters[i];
-			if (!filter.select(viewer, manager, entry))
-				return false;
-		}
-		return true;
-	}
 }

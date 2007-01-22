@@ -20,7 +20,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.OSGiLaunchConfigurationInitializer;
 
@@ -81,7 +81,7 @@ public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 	private void initializeBundleState() {
 		if (fStartLevels == null)
 			fStartLevels = new HashMap();
-		Properties props = TargetPlatform.getConfigIniProperties();
+		Properties props = TargetPlatformHelper.getConfigIniProperties();
 		if (props != null) {
 			String value = (String)props.get("osgi.bundles"); //$NON-NLS-1$
 			if (value != null) {

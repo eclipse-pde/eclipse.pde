@@ -30,11 +30,11 @@ import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.internal.core.AbstractModel;
+import org.eclipse.pde.internal.core.AbstractNLModel;
 import org.eclipse.pde.internal.core.PDEState;
 
 public abstract class AbstractPluginModelBase
-	extends AbstractModel
+	extends AbstractNLModel
 	implements IPluginModelBase, IPluginModelFactory {
 	protected IPluginBase fPluginBase;
 	private boolean enabled;

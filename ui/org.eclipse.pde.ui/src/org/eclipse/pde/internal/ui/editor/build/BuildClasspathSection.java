@@ -35,9 +35,9 @@ import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
-import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -371,9 +371,9 @@ public class BuildClasspathSection extends TableSection implements IModelChanged
 		if (thisProject == elemProject)
 			return projectRelative;
 		
-		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(elemProject);
-		if (entry != null)
-			return "platform:/plugin/" + entry.getId() + '/' + projectRelative; //$NON-NLS-1$
+		IPluginModelBase model = PluginRegistry.findModel(elemProject);
+		if (model != null)
+			return "platform:/plugin/" + model.getPluginBase().getId() + '/' + projectRelative; //$NON-NLS-1$
 		return null;
 	}
 

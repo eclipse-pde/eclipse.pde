@@ -28,11 +28,11 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.IPluginModelListener;
-import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelDelta;
-import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.feature.FeaturePlugin;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -165,9 +165,7 @@ public class PluginSection extends TableSection implements
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (model != null)
-			model.removeModelChangedListener(this);
-		PluginModelManager mng = PDECore.getDefault().getModelManager();
-		mng.removePluginModelListener(this);
+		PDECore.getDefault().getModelManager().removePluginModelListener(this);
 		super.dispose();
 	}
 
@@ -195,8 +193,7 @@ public class PluginSection extends TableSection implements
 		BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(),
 				new Runnable() {
 					public void run() {
-						IPluginModelBase[] allModels = PDECore.getDefault()
-								.getModelManager().getPlugins();
+						IPluginModelBase[] allModels = PluginRegistry.getActiveModels();
 						ArrayList newModels = new ArrayList();
 						for (int i = 0; i < allModels.length; i++) {
 							if (canAdd(allModels[i]))
@@ -335,9 +332,7 @@ public class PluginSection extends TableSection implements
 		getTablePart().setButtonEnabled(0, model.isEditable());
 		getTablePart().setButtonEnabled(2, model.isEditable());
 		model.addModelChangedListener(this);
-		PluginModelManager mng = PDECore.getDefault()
-				.getModelManager();
-		mng.addPluginModelListener(this);
+		PDECore.getDefault().getModelManager().addPluginModelListener(this);
 	}
 
 	public void modelChanged(IModelChangedEvent e) {

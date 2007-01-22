@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.ui.views.dependencies;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -44,8 +44,7 @@ public class HistoryListAction extends Action {
 			if (id == null) {
 				fView.openTo(null);
 			} else {
-				fView.openTo(PDECore.getDefault().getModelManager().findModel(
-						id));
+				fView.openTo(PluginRegistry.findModel(id));
 			}
 		}
 	}

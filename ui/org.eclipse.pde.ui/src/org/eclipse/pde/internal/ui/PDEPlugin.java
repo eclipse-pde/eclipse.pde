@@ -17,22 +17,17 @@ import java.util.Hashtable;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.pde.internal.core.FileAdapter;
-import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationListener;
 import org.eclipse.pde.internal.ui.launcher.LaunchListener;
 import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
 import org.eclipse.pde.internal.ui.launcher.OSGiFrameworkManager;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.pde.internal.ui.views.plugins.PluginsViewAdapterFactory;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
@@ -174,11 +169,6 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		this.fBundleContext = context;
-		IAdapterManager manager = Platform.getAdapterManager();
-		PluginsViewAdapterFactory factory = new PluginsViewAdapterFactory();
-		manager.registerAdapters(factory, ModelEntry.class);
-		manager.registerAdapters(factory, FileAdapter.class);
-
 		fLaunchConfigurationListener = new LaunchConfigurationListener();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(fLaunchConfigurationListener);
 	}
@@ -191,11 +181,11 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		if (fLaunchListener!=null)
+		if (fLaunchListener != null)
 			fLaunchListener.shutdown();
-		if (fFormColors!=null) {
+		if (fFormColors != null) {
 			fFormColors.dispose();
-			fFormColors=null;
+			fFormColors = null;
 		}
 		if (fLabelProvider != null) {
 			fLabelProvider.dispose();
@@ -210,7 +200,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	}
 
 	public PDELabelProvider getLabelProvider() {
-		if (fLabelProvider==null)
+		if (fLabelProvider == null)
 			fLabelProvider = new PDELabelProvider();
 		return fLabelProvider;
 	}

@@ -17,7 +17,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 
@@ -54,7 +54,7 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 	private static URL getPluginRelativePath(String pluginID, IPath path, URL parentURL) {		
 		URL url = SchemaRegistry.getSchemaURL(pluginID, path.toString());
 		if (url == null) {
-			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginID);
+			IPluginModelBase model = PluginRegistry.findModel(pluginID);
 			if (model != null)
 				url = SchemaRegistry.getSchemaFromSourceExtension(model.getPluginBase(), path);		
 		}

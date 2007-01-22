@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.core;
 
 import java.util.ArrayList;
 
+import org.eclipse.pde.core.plugin.ModelEntry;
+
 public class PluginModelDelta {
 	public static final int ADDED = 1;
 	public static final int REMOVED = 2;

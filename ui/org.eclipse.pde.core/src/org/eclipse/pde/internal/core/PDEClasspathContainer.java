@@ -26,6 +26,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 
 public class PDEClasspathContainer {
 	
@@ -91,7 +92,7 @@ public class PDEClasspathContainer {
 				IPath path = getPath(model, expandedName);
 				if (path == null && !model.isFragmentModel() && ClasspathUtilCore.containsVariables(name)) {
 					model = resolveLibraryInFragments(model, expandedName);
-					if (model != null)
+					if (model != null && model.isEnabled())
 						path = getPath(model, expandedName);
 				}
 				if (path != null && !path.toFile().isDirectory())
@@ -170,7 +171,7 @@ public class PDEClasspathContainer {
 			BundleDescription[] fragments = desc.getFragments();
 			for (int i = 0; i < fragments.length; i++) {
 				if (new File(fragments[i].getLocation(), libraryName).exists())
-					return PDECore.getDefault().getModelManager().findModel(fragments[i]);
+					return PluginRegistry.findModel(fragments[i]);
 			}
 		}
 		return null;

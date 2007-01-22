@@ -30,12 +30,14 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.AbstractModel;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.core.AbstractNLModel;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.PDEStateHelper;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
@@ -66,7 +68,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	
 	public ExtensionsErrorReporter(IFile file) {
 		super(file);
-		fModel = PDECore.getDefault().getModelManager().findModel(file.getProject());
+		fModel = PluginRegistry.findModel(file.getProject());
 		try {
 			if (fModel != null && fModel.getUnderlyingResource() != null)
 				fBuildModel = ClasspathUtilCore.getBuild(fModel);
@@ -126,7 +128,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		if (!assertAttributeDefined(element, "point", CompilerFlags.ERROR)) //$NON-NLS-1$
 			return;
 		String pointID = element.getAttribute("point"); //$NON-NLS-1$
-		IPluginExtensionPoint point = PDECore.getDefault().findExtensionPoint(pointID);
+		IPluginExtensionPoint point = PDEStateHelper.findExtensionPoint(pointID);
 		if (point == null) {
 			int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNRESOLVED_EX_POINTS);
 			if (severity != CompilerFlags.IGNORE) {
@@ -455,8 +457,8 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 					PDEMarkerFactory.P_UNTRANSLATED_NODE,
 					element, attr.getName(),
 					PDEMarkerFactory.CAT_NLS);
-		} else if (fModel instanceof AbstractModel) {
-			NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
+		} else if (fModel instanceof AbstractNLModel) {
+			NLResourceHelper helper = ((AbstractNLModel)fModel).getNLResourceHelper();
 			if (helper == null || !helper.resourceExists(value)) {
 				report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(element, attr.getName()), severity,
 						PDEMarkerFactory.CAT_NLS); 
@@ -477,8 +479,8 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 					severity,
 					PDEMarkerFactory.P_UNTRANSLATED_NODE,
 					element, null, PDEMarkerFactory.CAT_NLS); 
-		} else if (fModel instanceof AbstractModel) {
-			NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
+		} else if (fModel instanceof AbstractNLModel) {
+			NLResourceHelper helper = ((AbstractNLModel)fModel).getNLResourceHelper();
 			if (helper == null || !helper.resourceExists(value)) {
 				report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(element), severity, PDEMarkerFactory.CAT_NLS); 
 			}
@@ -502,7 +504,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		if ("platform:".equals(path.getDevice()) && path.segmentCount() > 2) { //$NON-NLS-1$
 			if ("plugin".equals(path.segment(0))) { //$NON-NLS-1$
 				String id = path.segment(1);
-				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(id);
+				IPluginModelBase model = PluginRegistry.findModel(id);
 				if (model != null && model.isEnabled()) {
 					path = path.setDevice(null).removeFirstSegments(2);
 					String bundleLocation = model.getInstallLocation();
@@ -517,7 +519,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		} else if (path.getDevice()==null && path.segmentCount() > 3 && "platform:".equals(path.segment(0))){ //$NON-NLS-1$
 			if ("plugin".equals(path.segment(1))) { //$NON-NLS-1$
 				String id = path.segment(2);
-				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(id);
+				IPluginModelBase model = PluginRegistry.findModel(id);
 				if (model != null && model.isEnabled()) {
 					path = path.removeFirstSegments(3);
 					String bundleLocation = model.getInstallLocation();

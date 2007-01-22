@@ -16,7 +16,7 @@ import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -69,7 +69,7 @@ public class DependenciesLabelProvider extends LabelProvider {
 			id = (String) obj;
 		}
 		if (id != null) {
-			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(id);
+			IPluginModelBase model = PluginRegistry.findModel(id);
 			if (model != null) {
 				if (model.getUnderlyingResource() == null)
 					flags |= SharedLabelProvider.F_EXTERNAL;

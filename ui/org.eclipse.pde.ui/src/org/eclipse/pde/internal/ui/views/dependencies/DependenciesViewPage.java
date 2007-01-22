@@ -27,13 +27,12 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.plugin.PluginReference;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -220,9 +219,9 @@ public abstract class DependenciesViewPage extends Page {
 		if (newFocus instanceof IPluginImport) {
 			IPluginImport pluginImport = ((IPluginImport) newFocus);
 			String id = pluginImport.getId();
-			IPlugin importedPlugin = PDECore.getDefault().findPlugin(id);
-			if (importedPlugin != null) {
-				fView.openTo(importedPlugin.getModel());
+			IPluginModelBase model = PluginRegistry.findModel(id);
+			if (model != null) {
+				fView.openTo(model);
 			} else {
 				fView.openTo(null);
 			}

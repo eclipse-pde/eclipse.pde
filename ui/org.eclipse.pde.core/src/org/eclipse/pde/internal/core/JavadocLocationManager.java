@@ -27,6 +27,7 @@ import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 
 public class JavadocLocationManager {
@@ -69,7 +70,7 @@ public class JavadocLocationManager {
 	private synchronized void initialize() {
 		if (fLocations != null) return;
 		fLocations = new HashMap();
-		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getExternalModels();
+		IPluginModelBase[] models = PluginRegistry.getExternalModels();
 		for (int i = 0; i < models.length; i++) {
 			IPluginExtension[] extensions = models[i].getPluginBase().getExtensions();
 			for (int j = 0; j < extensions.length; j++) {

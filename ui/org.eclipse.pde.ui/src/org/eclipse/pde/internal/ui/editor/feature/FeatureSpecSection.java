@@ -20,7 +20,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.feature.FeatureImport;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
@@ -286,16 +286,14 @@ public class FeatureSpecSection extends PDESection {
 			public void textValueChanged(FormEntry text) {
 				try {
 					String value = text.getValue();
-					feature
-							.setPlugin((value.length() > 0 ? value : null));
+					feature.setPlugin((value.length() > 0 ? value : null));
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
 			}
 			public void linkActivated(HyperlinkEvent e) {
 				String plugin = fPluginText.getValue();
-				if (PDECore.getDefault().getModelManager().findPluginModel(
-						plugin) == null) {
+				if (PluginRegistry.findModel(plugin) == null) {
 					createFeaturePlugin();
 				}
 				ManifestEditor.openPluginEditor(fPluginText.getValue());

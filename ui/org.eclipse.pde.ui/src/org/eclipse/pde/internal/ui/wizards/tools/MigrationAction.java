@@ -22,8 +22,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -63,7 +62,6 @@ public class MigrationAction implements IObjectActionDelegate {
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
 			ArrayList models = new ArrayList(elems.length);
 
-			PluginModelManager manager = PDECore.getDefault().getModelManager();
 			for (int i = 0; i < elems.length; i++) {
 				Object elem = elems[i];
 				IProject project = null;
@@ -77,7 +75,7 @@ public class MigrationAction implements IObjectActionDelegate {
 					project = ((IJavaProject) elem).getProject();
 				}
 				if (project != null) {
-					IPluginModelBase model = manager.findModel(project);
+					IPluginModelBase model = PluginRegistry.findModel(project);
 					if (model != null) {
 						models.add(model);
 					}
@@ -120,8 +118,7 @@ public class MigrationAction implements IObjectActionDelegate {
 
 	private IPluginModelBase[] getModelsToMigrate() {
 		Vector result = new Vector();
-		IPluginModelBase[] models = PDECore.getDefault()
-				.getModelManager().getWorkspaceModels();
+		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		for (int i = 0; i < models.length; i++) {
 			if (!models[i].getUnderlyingResource().isLinked()
 					&& models[i].isLoaded()

@@ -21,7 +21,8 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.PDEStateHelper;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -141,7 +142,7 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 	private void validatePage() {
 		String error = null;
 		String pluginId = getDefiningPlugin();
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginId);
+		IPluginModelBase model = PluginRegistry.findModel(pluginId);
 		if (model == null){ 
 			error = PDEUIMessages.ProductDefinitonWizardPage_noPlugin; 
 		} else if (model.getUnderlyingResource() == null) {
@@ -173,7 +174,7 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 	}
 
 	private void handleBrowse() {
-		PluginSelectionDialog dialog = new PluginSelectionDialog(getShell(), PDECore.getDefault().getModelManager().getWorkspaceModels(), false);
+		PluginSelectionDialog dialog = new PluginSelectionDialog(getShell(), PluginRegistry.getWorkspaceModels(), false);
 		if (dialog.open() == Window.OK) {
 			IPluginModelBase model = (IPluginModelBase)dialog.getFirstResult();
 			String id = model.getPluginBase().getId();
@@ -196,7 +197,7 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 	private TreeSet getCurrentIntroIds() {
 		String introId;
 		TreeSet result = new TreeSet();
-		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
+		IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
 		for (int i = 0; i < plugins.length; i++) {
 			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
 			for (int j = 0; j < extensions.length; j++) {
@@ -228,7 +229,7 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 
 	private String getPluginId() {
 		IProject project = fProduct.getModel().getUnderlyingResource().getProject();
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
+		IPluginModelBase model = PluginRegistry.findModel(project);
 		return (model == null) ? null : model.getPluginBase().getId();
 	}
 
@@ -240,7 +241,7 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 
 	public void linkActivated(HyperlinkEvent e) {
 		String extPoint = "org.eclipse.ui." + e.getHref().toString(); //$NON-NLS-1$
-		IPluginExtensionPoint point = PDECore.getDefault().findExtensionPoint(extPoint);
+		IPluginExtensionPoint point = PDEStateHelper.findExtensionPoint(extPoint);
 		if (point != null)
 			new ShowDescriptionAction(point, true).run();
 		

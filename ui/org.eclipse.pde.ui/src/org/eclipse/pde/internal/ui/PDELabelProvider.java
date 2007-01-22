@@ -28,8 +28,9 @@ import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
@@ -217,9 +218,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public String getObjectText(IProductPlugin obj) {
 		if (isFullNameModeEnabled()) {
 			String id = obj.getId();
-			IPlugin plugin = PDECore.getDefault().findPlugin(obj.getId());
-			if (plugin != null) {
-				return plugin.getTranslatedName();
+			IPluginModelBase model = PluginRegistry.findModel(obj.getId());
+			if (model != null) {
+				return model.getPluginBase().getTranslatedName();
 			}
 			return id != null ? id : "?"; //$NON-NLS-1$
 		}
@@ -229,9 +230,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public String getObjectText(BundleDescription bundle) {
 		String id = bundle.getSymbolicName();
 		if (isFullNameModeEnabled()) {
-			IPlugin plugin = PDECore.getDefault().findPlugin(id);
-			if (plugin != null) {
-				return plugin.getTranslatedName();
+			IPluginModelBase model = PluginRegistry.findModel(bundle);
+			if (model != null) {
+				return model.getPluginBase().getTranslatedName();
 			}
 			return id != null ? id : "?"; //$NON-NLS-1$
 		}
@@ -241,9 +242,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public String getObjectText(IPluginImport obj) {
 		if (isFullNameModeEnabled()) {
 			String id = obj.getId();
-			IPlugin plugin = PDECore.getDefault().findPlugin(obj.getId());
-			if (plugin != null) {
-				return plugin.getTranslatedName();
+			IPluginModelBase model = PluginRegistry.findModel(obj.getId());
+			if (model != null) {
+				return model.getPluginBase().getTranslatedName();
 			}
 			return id != null ? id : "?"; //$NON-NLS-1$
 		}
@@ -397,9 +398,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 	public String getObjectText(ITargetPlugin obj) {
 		if (isFullNameModeEnabled()) {
 			String id = obj.getId();
-			IPlugin plugin = PDECore.getDefault().findPlugin(obj.getId());
-			if (plugin != null) {
-				return plugin.getTranslatedName();
+			IPluginModelBase model = PluginRegistry.findModel(obj.getId());
+			if (model != null) {
+				return model.getPluginBase().getTranslatedName();
 			}
 			return id != null ? id : "?"; //$NON-NLS-1$
 		}
@@ -574,7 +575,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		} else {
 			IProject project = resource.getProject();
 			try {
-				if (WorkspaceModelManager.isBinaryPluginProject(project)) {
+				if (WorkspaceModelManager.isBinaryProject(project)) {
 					String property =
 						project.getPersistentProperty(
 							PDECore.EXTERNAL_PROJECT_PROPERTY);
@@ -606,7 +607,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (javaSearch)
 			flags |= F_JAVA;
 		ImageDescriptor desc = PDEPluginImages.DESC_FRAGMENT_OBJ;
-		if (checkEnabled && model.isEnabled() == false)
+		if (checkEnabled && !model.isEnabled())
 			desc = PDEPluginImages.DESC_EXT_FRAGMENT_OBJ;
 		return get(desc, flags);
 	}
@@ -638,7 +639,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 	
 	private Image getObjectImage(IProductPlugin obj) {
-		BundleDescription desc = TargetPlatform.getState().getBundle(obj.getId(), null);
+		BundleDescription desc = TargetPlatformHelper.getState().getBundle(obj.getId(), null);
 		if (desc != null) {
 			return desc.getHost() == null 
 				? get(PDEPluginImages.DESC_PLUGIN_OBJ)
@@ -829,7 +830,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 	
 	public Image getObjectImage(ITargetPlugin obj) {
-		BundleDescription desc = TargetPlatform.getState().getBundle(obj.getId(), null);
+		BundleDescription desc = TargetPlatformHelper.getState().getBundle(obj.getId(), null);
 		if (desc != null) {
 			return desc.getHost() == null 
 				? get(PDEPluginImages.DESC_PLUGIN_OBJ)

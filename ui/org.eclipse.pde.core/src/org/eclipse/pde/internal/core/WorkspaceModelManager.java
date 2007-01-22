@@ -13,15 +13,10 @@ package org.eclipse.pde.internal.core;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -31,48 +26,51 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
-import org.eclipse.pde.core.IModelProviderListener;
-import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
-import org.eclipse.pde.internal.core.bundle.BundleFragmentModel;
-import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
-import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
-import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.plugin.WorkspaceExtensionsModel;
-import org.eclipse.pde.internal.core.plugin.WorkspaceFragmentModel;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
-import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.team.core.RepositoryProvider;
 
-public class WorkspaceModelManager
-		implements
-			IResourceChangeListener,
-			IResourceDeltaVisitor {
+public abstract class WorkspaceModelManager extends AbstractModelManager 
+		implements IResourceChangeListener, IResourceDeltaVisitor {
 	
+	public static boolean isPluginProject(IProject project) {
+		if (project.isOpen())
+			return project.exists(ICoreConstants.MANIFEST_PATH)
+				   || project.exists(ICoreConstants.PLUGIN_PATH)
+				   || project.exists(ICoreConstants.FRAGMENT_PATH);
+		return false;
+	}
+
+	public static boolean isFeatureProject(IProject project) {
+		return project.isOpen() && project.exists(ICoreConstants.FEATURE_PATH); 
+	}
+
+	public static boolean isBinaryProject(IProject project) {
+		try {
+			if (project.isOpen()) {
+				String binary = project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY);
+				if (binary != null) {
+					RepositoryProvider provider = RepositoryProvider.getProvider(project);
+					return provider == null || provider instanceof BinaryRepositoryProvider;
+				}
+			}
+		} catch (CoreException e) {
+			PDECore.logException(e);
+		}
+		return false;
+	}
+	
+	public static boolean isUnsharedProject(IProject project) {
+		return RepositoryProvider.getProvider(project) == null || isBinaryProject(project);
+	}
+
 	class ModelChange {
 		IModel model;
 		int type;		
-		public ModelChange(IModel model, boolean added) {
+		public ModelChange(IModel model, int type) {
 			this.model = model;
-			this.type = added
-					? IModelProviderEvent.MODELS_ADDED
-					: IModelProviderEvent.MODELS_REMOVED;
-		}
-		public ModelChange(IModel model) {
-			this.model = model;
-			this.type = IModelProviderEvent.MODELS_CHANGED;
+			this.type = type;
 		}
 		
 		public boolean equals(Object obj) {
@@ -84,422 +82,56 @@ public class WorkspaceModelManager
 		}
 	}
 	
-	private Map fModels;
-	private Map fFragmentModels;	
-	private Map fFeatureModels;	
+	protected Map fModels = null;
 	private ArrayList fChangedModels;	
-	private ArrayList fListeners = new ArrayList();
-	private boolean fInitialized = false;
-	private boolean fModelsLocked;
 	
-	public static boolean isPluginProject(IProject project) {
-		if (project.isOpen())
-			return hasBundleManifest(project) || hasPluginManifest(project)
-			|| hasFragmentManifest(project);
-		return false;
-	}
-	
-	public static boolean hasBundleManifest(IProject project) {
-		return project.exists(new Path("META-INF/MANIFEST.MF")); //$NON-NLS-1$
-	}
-	
-	public static boolean hasPluginManifest(IProject project) {
-		return project.exists(new Path("plugin.xml")); //$NON-NLS-1$
-	}
-	
-	public static boolean hasFragmentManifest(IProject project) {
-		return project.exists(new Path("fragment.xml")); //$NON-NLS-1$
-	}
-	
-	public static boolean hasFeatureManifest(IProject project) {
-		return project.exists(new Path("feature.xml")); //$NON-NLS-1$
-	}
-	
-	public static boolean isFeatureProject(IProject project) {
-		if (project.isOpen())
-			return project.exists(new Path("feature.xml")); //$NON-NLS-1$
-		return false;
-	}
-	
-	public static boolean isBinaryFeatureProject(IProject project) {
-		return isFeatureProject(project) && isBinaryProject(project);
-	}
-	
-	public static boolean isBinaryPluginProject(IProject project) {
-		return isPluginProject(project) && isBinaryProject(project);
-	}
-
-	public static boolean isBinaryProject(IProject project) {
-		try {
-			String binary = project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY);
-			if (binary != null) {
-				RepositoryProvider provider = RepositoryProvider.getProvider(project);
-				return provider==null || provider instanceof BinaryRepositoryProvider;
-			}
-		} catch (CoreException e) {
-			PDECore.logException(e);
-		}
-		return false;
-	}
-
-	public static boolean isNonBinaryPluginProject(IProject project) {
-		return isPluginProject(project) && !isBinaryProject(project);
-	}
-	
-	public static boolean isJavaPluginProject(IProject project) {
-		if (isPluginProject(project)) {
-			try {
-				if (project.hasNature(JavaCore.NATURE_ID))
-					return true;
-			} catch (CoreException e) {
-			}			
-		}
-		return false;
-	}
-	
-	public static boolean isUnsharedPluginProject(IProject project) {
-		return RepositoryProvider.getProvider(project) == null
-				|| isBinaryPluginProject(project);
-	}
-	
-	public static URL[] getPluginPaths() {
-		ArrayList list = new ArrayList();
-		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
+	protected synchronized void initialize() {
+		if (fModels != null)
+			return;
+		
+		fModels = Collections.synchronizedMap(new HashMap());		
+		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();	
 		for (int i = 0; i < projects.length; i++) {
-			if (isPluginProject(projects[i])) {			
-				try {
-					IPath path = projects[i].getLocation();
-					if (path != null) {
-						list.add(path.toFile().toURL());
-					}
-				} catch (MalformedURLException e) {
-				}
-			}
+			if (isInterestingProject(projects[i]))
+				createModel(projects[i], false);			
 		}
-		return (URL[])list.toArray(new URL[list.size()]);
+		addListeners();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IWorkspaceModelManager#getWorkspaceModel(org.eclipse.core.resources.IProject)
-	 */
-	private IModel getWorkspaceModel(IProject project) {
-		initializeWorkspaceModels();
-		
-		if (hasFeatureManifest(project)){
-			return (IModel)fFeatureModels.get(project);
-		}
-		
-		if (hasBundleManifest(project)) {
-			IModel model = (IModel)fModels.get(project);
-			return (model != null) ? model : (IModel)fFragmentModels.get(project);
-		}
-		
-		if (hasPluginManifest(project))
-			return (IModel)fModels.get(project);
-			
-		if (hasFragmentManifest(project))
-				return (IModel)fFragmentModels.get(project);
-		
-		return null;
+	protected abstract boolean isInterestingProject(IProject project);
+	
+	protected abstract void createModel(IProject project, boolean notify);
+	
+	protected abstract void addListeners();
+	
+	protected Object getModel(IProject project) {
+		initialize();
+		return fModels.get(project);
 	}
 	
-	protected IPluginModelBase getWorkspacePluginModel(IProject project) {
-		IModel model = getWorkspaceModel(project);
-		return (model instanceof IPluginModelBase) ? (IPluginModelBase)model : null;
+	protected Object[] getModels() {
+		initialize();
+		return fModels.values().toArray();
 	}
 	
-	public IFeatureModel getFeatureModel(IProject project) {
-		IModel model = getWorkspaceModel(project);
-		return (model instanceof IFeatureModel) ? (IFeatureModel)model : null;
-	}
-	
-	private void handleFileDelta(IResourceDelta delta) {
-		IFile file = (IFile)delta.getResource();
-		if (file.getName().equals(".options")) { //$NON-NLS-1$
-			PDECore.getDefault().getTracingOptionsManager().reset();
-			return;
-		}
-		if (file.getName().equals("build.properties") && isPluginProject(file.getProject())) { //$NON-NLS-1$
-			if (fChangedModels == null)
-				fChangedModels = new ArrayList();
-			IModel model = getWorkspaceModel(file.getProject());
-			if (model != null) {
-				ModelChange change = new ModelChange(model);
-				if (!fChangedModels.contains(change))
-					fChangedModels.add(change);
-			}
-			return;
-		}
-		
-		if (file.getName().equals("plugin.properties")) { //$NON-NLS-1$
-			IProject project = file.getProject();
-			if (isPluginProject(project) && !isBinaryPluginProject(project)) {
-				IPluginModelBase model = getWorkspacePluginModel(project);
-				if (model != null && model instanceof AbstractModel) {
-					((AbstractModel)model).resetNLResourceHelper();
-				}
-			}
-		}
-		
-		if (file.getName().equals("feature.properties")) { //$NON-NLS-1$
-			IProject project = file.getProject();
-			if (isFeatureProject(project)) {
-				IFeatureModel model = getFeatureModel(project);
-				if (model != null && model instanceof AbstractModel) {
-					((AbstractModel)model).resetNLResourceHelper();
-				}
-			}
-		}
-		
-		if (!isSupportedFile(file))
-			return;
-		
-		int kind = delta.getKind();
-		switch (kind) {
-			case IResourceDelta.REMOVED:
-				handleFileRemoved(file);
-				break;
-			case IResourceDelta.CHANGED:
-				handleFileChanged(file, delta);
-				break;
-			case IResourceDelta.ADDED:
-				handleFileChanged(file, delta);
-		}		
-	}
-	
-	private void handleFileRemoved(IFile file) {
-		IModel model = getWorkspaceModel(file);
-		String fileName = file.getName().toLowerCase(Locale.ENGLISH);
-		if (model != null) {
-			if (model instanceof IBundlePluginModelBase) {
-				IBundlePluginModelBase bModel = (IBundlePluginModelBase)model;
-				if (fileName.equals("plugin.xml") || fileName.equals("fragment.xml")) { //$NON-NLS-1$ //$NON-NLS-2$
-					bModel.setExtensionsModel(null);
-				} else {
-					removeWorkspaceModel(file.getProject());
-					if (bModel.getExtensionsModel() != null)
-						switchToPluginMode(bModel);
-				}					
-			} else {
-				removeWorkspaceModel(file.getProject());
-			}
-		}
-	}
-	
-	private void switchToPluginMode(IBundlePluginModelBase bModel) {
-		IPluginModelBase model = null;
-		IProject project = bModel.getUnderlyingResource().getProject();
-		if (bModel instanceof IBundlePluginModel) {
-			model = createWorkspacePluginModel(project.getFile("plugin.xml")); //$NON-NLS-1$
-		} else {
-			model = createWorkspaceFragmentModel(project.getFile("fragment.xml")); //$NON-NLS-1$
-		}
-			
-		if (model != null && model.getPluginBase().getId() != null) {
-			if (model instanceof IPluginModel) {
-				fModels.put(project, model);
-			} else {
-				fFragmentModels.put(project, model);
-			}
-			if (fChangedModels == null)
-				fChangedModels = new ArrayList();
-			fChangedModels.add(new ModelChange(model, true));
-		}
-	}
-	
-	private void handleFileChanged(IFile file, IResourceDelta delta) {
-		IModel model = getWorkspaceModel(file);
-		String filename = file.getName();
-		if (model == null) {
-			addWorkspaceModel(file.getProject(), true);
-		} else if (delta.getKind() == IResourceDelta.ADDED) {
-			if (model instanceof WorkspacePluginModelBase && filename.equals("MANIFEST.MF")) { //$NON-NLS-1$
-				addWorkspaceModel(file.getProject(), true);
-			} else if (model instanceof IBundlePluginModelBase && (filename.equals("plugin.xml") || filename.equals("fragment.xml"))) { //$NON-NLS-1$ //$NON-NLS-2$
-				WorkspaceExtensionsModel extensions = new WorkspaceExtensionsModel(file);
-				((IBundlePluginModelBase)model).setExtensionsModel(extensions);
-				extensions.setBundleModel((IBundlePluginModelBase)model);
-				loadModel(extensions, false);
-				// no need to fire any notifications if the plugin.xml/fragment.xml
-				// of a bundle is modified.
-				return;
-			}
-		} else if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
-			if (model instanceof IBundlePluginModelBase) {
-				if (isBundleManifestFile(file)) {
-					// check to see if localization changed (bug 146912)
-					String oldLocalization = ((IBundlePluginModelBase)model).getBundleLocalization();
-					loadModel(((IBundlePluginModelBase)model).getBundleModel(), true);
-					String newLocalization = ((IBundlePluginModelBase)model).getBundleLocalization();
-					if (model instanceof AbstractModel && 
-							(oldLocalization != null && (newLocalization == null || !oldLocalization.equals(newLocalization))) ||
-							(newLocalization != null && (oldLocalization == null || !newLocalization.equals(oldLocalization))))
-						((AbstractModel)model).resetNLResourceHelper();
-					
-				} else {
-					ISharedExtensionsModel extensions = ((IBundlePluginModelBase)model).getExtensionsModel();
-					boolean reload = extensions != null;
-					if (extensions == null) {
-						extensions = new WorkspaceExtensionsModel(file);
-						((IBundlePluginModelBase)model).setExtensionsModel(extensions);
-						((WorkspaceExtensionsModel)extensions).setBundleModel((IBundlePluginModelBase)model);
-					}
-					loadModel(extensions, reload);
-					// no need to fire any notifications if the plugin.xml/fragment.xml
-					// of a bundle is modified.
-					return;
-				}
-			} else {
-				loadModel(model, true);
-			}
-			if (fChangedModels == null)
-				fChangedModels = new ArrayList();
-			ModelChange change = new ModelChange(model);
-			if (!fChangedModels.contains(change))
-				fChangedModels.add(change);
-		}		
-	}
-	
-	private boolean isSupportedFile(IFile file) {
-		if (isBundleManifestFile(file))
-			return true;
-		String name = file.getName().toLowerCase(Locale.ENGLISH);
-		if (!name.equals("plugin.xml") && !name.equals("fragment.xml") //$NON-NLS-1$ //$NON-NLS-2$
-				&& !name.equals("feature.xml")) //$NON-NLS-1$
-			return false;
-		IPath expectedPath = file.getProject().getFullPath().append(name);
-		return expectedPath.equals(file.getFullPath());
-	}
-
-	
-	private boolean isBundleManifestFile(IFile file) {
-		IPath path = file.getProjectRelativePath();
-		return (
-			path.segmentCount() == 2
-				&& path.segment(0).equals("META-INF") //$NON-NLS-1$
-				&& path.segment(1).equals("MANIFEST.MF")); //$NON-NLS-1$
-	}
-	
-	private IModel getWorkspaceModel(IFile file) {
-		IProject project = file.getProject();
-		if (isBundleManifestFile(file)) {
-			IModel model = (IModel)fModels.get(project);
-			return (model != null) ? model : (IModel)fFragmentModels.get(project);
-		}		
-		IPath path = file.getProjectRelativePath();
-		if (path.equals(new Path("plugin.xml"))) //$NON-NLS-1$
-			return (IModel)fModels.get(project);
-		if (path.equals(new Path("fragment.xml"))) //$NON-NLS-1$
-			return (IModel)fFragmentModels.get(project);
-		if (path.equals(new Path("feature.xml"))) //$NON-NLS-1$
-			return (IModel)fFeatureModels.get(project);
-		return null;		
-	}
-	
-	protected void initializeModels(IPluginModelBase[] models) {
-		fModels = Collections.synchronizedMap(new HashMap());
-		fFragmentModels = Collections.synchronizedMap(new HashMap());
-		fFeatureModels = Collections.synchronizedMap(new HashMap());
-		
-		for (int i = 0; i < models.length; i++) {
-			IProject project = models[i].getUnderlyingResource().getProject();
-			if (models[i] instanceof IPluginModel) {
-				fModels.put(project, models[i]);
-			} else {
-				fFragmentModels.put(project, models[i]);
-			}
-		}
-		fFeatureModels = Collections.synchronizedMap(new HashMap());
-		
-		IWorkspace workspace = PDECore.getWorkspace();
-		IProject[] projects = workspace.getRoot().getProjects();
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
-			if (!isFeatureProject(project))
-				continue;
-			addWorkspaceModel(project, false);			
-		}
-
-		PDECore.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_CLOSE);
-		JavaCore.addPreProcessingResourceChangedListener(this, IResourceChangeEvent.POST_CHANGE);
-		fInitialized = true;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelManager#getAllModels()
-	 */
-	protected IPluginModelBase[] getAllModels() {
-		initializeWorkspaceModels();
-		
-		ArrayList result = new ArrayList();
-		Iterator iter = fModels.values().iterator();
-		while (iter.hasNext()) {
-			result.add(iter.next());
-		}
-		
-		iter = fFragmentModels.values().iterator();
-		while (iter.hasNext()) {
-			result.add(iter.next());
-		}
-		return (IPluginModelBase[]) result.toArray(
-			new IPluginModelBase[result.size()]);
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelProvider#removeModelProviderListener(org.eclipse.pde.core.IModelProviderListener)
-	 */
-	public synchronized void removeModelProviderListener(IModelProviderListener listener) {
-		fListeners.remove(listener);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelProvider#addModelProviderListener(org.eclipse.pde.core.IModelProviderListener)
-	 */
-	public synchronized void addModelProviderListener(IModelProviderListener listener) {
-		if (!fListeners.contains(listener))
-			fListeners.add(listener);
-	}
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		switch (event.getType()) {
-			case IResourceChangeEvent.POST_CHANGE :
-				handleResourceDelta(event.getDelta());
-				processModelChanges();
-				break;
-			case IResourceChangeEvent.PRE_CLOSE :
-				IProject project = (IProject)event.getResource();
-				removeWorkspaceModel(project);
-				processModelChanges();
-				break;
-		}
-	}
-	/**
-	 * @param project
-	 */
-	private void removeWorkspaceModel(IProject project) {
-		IModel model = null;
-		if (fModels.containsKey(project)) {
-			model = (IModel)fModels.remove(project);
-		} else if (fFragmentModels.containsKey(project)) {
-			model = (IModel)fFragmentModels.remove(project);
-		} else {
-			model = (IModel)fFeatureModels.remove(project);
-		}
-		if (model != null) {
-			if (model instanceof IPluginModelBase) {
-				PDECore.getDefault().getTracingOptionsManager().reset();
-			}
-			if (fChangedModels == null)
-				fChangedModels = new ArrayList();
-			fChangedModels.add(new ModelChange(model, false));
+		case IResourceChangeEvent.POST_CHANGE:
+			handleResourceDelta(event.getDelta());
+			processModelChanges();
+			break;
+		case IResourceChangeEvent.PRE_CLOSE:
+			removeModel((IProject)event.getResource());
+			processModelChanges();
+			break;
 		}
 	}
 
-	/**
-	 * @param delta
-	 */
 	private void handleResourceDelta(IResourceDelta delta) {
 		try {
 			delta.accept(this);
@@ -507,7 +139,9 @@ public class WorkspaceModelManager
 			PDECore.logException(e);
 		}
 	}
-	/* (non-Javadoc)
+	
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
 	 */
 	public boolean visit(IResourceDelta delta) throws CoreException {
@@ -515,191 +149,46 @@ public class WorkspaceModelManager
 			IResource resource = delta.getResource();
 			if (resource instanceof IProject) {
 				IProject project = (IProject) resource;
-				if (delta.getKind() == IResourceDelta.ADDED || (project.isOpen() && (delta.getFlags()&IResourceDelta.OPEN) != 0)) {
-					addWorkspaceModel(project, true);
+				if (isInterestingProject(project) 
+						&& (delta.getKind() == IResourceDelta.ADDED || (delta.getFlags() & IResourceDelta.OPEN) != 0)) {
+					createModel(project, true);
 					return false;
 				} else if (delta.getKind() == IResourceDelta.REMOVED) {
-					removeWorkspaceModel(project);
+					removeModel(project);
 					return false;
 				}
 				return true;
 			} else if (resource instanceof IFile) {
 				handleFileDelta(delta);
 			} else if (resource instanceof IFolder) {
-				return resource.getName().equals("META-INF"); //$NON-NLS-1$
+				return isInterestingFolder((IFolder)resource);
 			}
 		}
 		return true;
 	}
 	
-	private synchronized void initializeWorkspaceModels() {
-		if (fInitialized || fModelsLocked)
-			return;
-		fModelsLocked = true;
-		fModels = Collections.synchronizedMap(new HashMap());
-		fFragmentModels = Collections.synchronizedMap(new HashMap());
-		fFeatureModels = Collections.synchronizedMap(new HashMap());
-		
-		IWorkspace workspace = PDECore.getWorkspace();
-		IProject[] projects = workspace.getRoot().getProjects();
-		
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
-			if (isPluginProject(project) || isFeatureProject(project))
-				addWorkspaceModel(project, false);			
-		}
-		
-		workspace.addResourceChangeListener(this, IResourceChangeEvent.PRE_CLOSE);
-		JavaCore.addPreProcessingResourceChangedListener(this, IResourceChangeEvent.POST_CHANGE);
-		
-		fModelsLocked = false;
-		fInitialized = true;
+	protected boolean isInterestingFolder(IFolder folder) {
+		return false;
 	}
-
-	/**
-	 * @param project
-	 * @return
-	 */
-	private IFeatureModel createFeatureModel(IFile file) {
-		if (!file.exists())
-			return null;
-		
-		WorkspaceFeatureModel model = new WorkspaceFeatureModel(file);
-		loadModel(model, false);
-		return model;
-	}
-
-	private IPluginModelBase createPluginModel(IProject project) {
-		if (hasBundleManifest(project))
-			return createWorkspaceBundleModel(project.getFile("META-INF/MANIFEST.MF")); //$NON-NLS-1$
-		
-		if (hasPluginManifest(project))
-			return createWorkspacePluginModel(project.getFile("plugin.xml")); //$NON-NLS-1$
-		
-		return createWorkspaceFragmentModel(project.getFile("fragment.xml")); //$NON-NLS-1$
-	}
-
-	/**
-	 * @param file
-	 * @return
-	 */
-	private IPluginModelBase createWorkspacePluginModel(IFile file) {
-		if (!file.exists())
-			return null;
-		
-		WorkspacePluginModel model = new WorkspacePluginModel(file, true);
-		loadModel(model, false);
+	
+	protected abstract void handleFileDelta(IResourceDelta delta);
+	
+	protected Object removeModel(IProject project) {
+		Object model = fModels != null ? fModels.remove(project) : null;
+		addChange(model, IModelProviderEvent.MODELS_REMOVED);
 		return model;
 	}
 	
-	/**
-	 * @param file
-	 * @return
-	 */
-	private IPluginModelBase createWorkspaceFragmentModel(IFile file) {
-		if (!file.exists())
-			return null;
-		
-		WorkspaceFragmentModel model = new WorkspaceFragmentModel(file, true);
-		loadModel(model, false);
-		return model;
-	}
-
-	/**
-	 * @param file
-	 * @return
-	 */
-	private IPluginModelBase createWorkspaceBundleModel(IFile file) {
-		if (!file.exists())
-			return null;
-		
-		WorkspaceBundleModel model = new WorkspaceBundleModel(file);
-		loadModel(model, false);
-		
-		IBundlePluginModelBase bmodel = null;
-		boolean fragment = model.isFragmentModel();
-		if (fragment)
-			bmodel = new BundleFragmentModel();
-		else
-			bmodel = new BundlePluginModel();
-		bmodel.setEnabled(true);
-		bmodel.setBundleModel(model);
-		
-		IFile efile = file.getProject().getFile(fragment ? "fragment.xml" : "plugin.xml"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (efile.exists()) {
-			WorkspaceExtensionsModel extModel = new WorkspaceExtensionsModel(efile);
-			loadModel(extModel, false);
-			bmodel.setExtensionsModel(extModel);
-			extModel.setBundleModel(bmodel);
+	protected void addChange(Object model, int eventType) {
+		if (model instanceof IModel) {
+			if (fChangedModels == null)
+				fChangedModels = new ArrayList();
+			ModelChange change = new ModelChange((IModel)model, eventType);
+			if (!fChangedModels.contains(change))
+				fChangedModels.add(change);
 		}
-		return bmodel;
 	}
 	
-	private void loadModel(IModel model, boolean reload) {
-		IFile file = (IFile) model.getUnderlyingResource();
-		try {
-			InputStream stream = new BufferedInputStream(file.getContents(true));
-			if (reload)
-				model.reload(stream, false);
-			else
-				model.load(stream, false);
-			stream.close();
-		} catch (CoreException e) {
-			PDECore.logException(e);
-			return;
-		} catch (IOException e) {
-		}
-	}
-
-	/**
-	 * @param project
-	 */
-	private void addWorkspaceModel(IProject project, boolean notify) {
-		IModel model = null;
-		if (isPluginProject(project)) {
-			model = createPluginModel(project);
-			if (model != null) {			
-				if (model instanceof IFragmentModel)
-					fFragmentModels.put(project, model);
-				else
-					fModels.put(project, model);
-				if (notify) {
-					if (fChangedModels == null)
-						fChangedModels = new ArrayList();
-					fChangedModels.add(new ModelChange(model, true));					
-				}
-				if (project.getFile(".options").exists()) //$NON-NLS-1$
-					PDECore.getDefault().getTracingOptionsManager().reset();
-			}
-		} else if (isFeatureProject(project) && !fFeatureModels.containsKey(project)) {
-			model = createFeatureModel(project.getFile("feature.xml")); //$NON-NLS-1$
-			if (model != null) {
-				fFeatureModels.put(project, model);
-				if (notify) {
-					if (fChangedModels == null)
-						fChangedModels = new ArrayList();
-					fChangedModels.add(new ModelChange(model, true));
-				}
-			}
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelManager#getFeatureModels()
-	 */
-	public IFeatureModel[] getFeatureModels() {
-		initializeWorkspaceModels();
-		return (IFeatureModel[]) fFeatureModels.values().toArray(new IFeatureModel[fFeatureModels.size()]);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelManager#shutdown()
-	 */
-	public void shutdown() {
-		PDECore.getWorkspace().removeResourceChangeListener(this);
-		JavaCore.removePreProcessingResourceChangedListener(this);
-	}
-
 	private void processModelChanges() {
 		if (fChangedModels == null)
 			return;
@@ -709,9 +198,9 @@ public class WorkspaceModelManager
 			return;
 		}
 
-		Vector added = new Vector();
-		Vector removed = new Vector();
-		Vector changed = new Vector();
+		ArrayList added = new ArrayList();
+		ArrayList removed = new ArrayList();
+		ArrayList changed = new ArrayList();
 		for (int i = 0; i < fChangedModels.size(); i++) {
 			ModelChange change = (ModelChange) fChangedModels.get(i);
 			switch (change.type) {
@@ -725,24 +214,13 @@ public class WorkspaceModelManager
 					changed.add(change.model);
 			}
 		}
-		IModel[] addedArray =
-			added.size() > 0
-				? (IModel[]) added.toArray(new IModel[added.size()])
-				: (IModel[]) null;
-		IModel[] removedArray =
-			removed.size() > 0
-				? (IModel[]) removed.toArray(new IModel[removed.size()])
-				: (IModel[]) null;
-		IModel[] changedArray = 
-			changed.size() > 0
-			? (IModel[]) changed.toArray(new IModel[changed.size()])
-			: (IModel[]) null;
+
 		int type = 0;
-		if (addedArray != null)
+		if (added.size() > 0)
 			type |= IModelProviderEvent.MODELS_ADDED;
-		if (removedArray != null)
+		if (removed.size() > 0)
 			type |= IModelProviderEvent.MODELS_REMOVED;
-		if (changedArray != null)
+		if (changed.size() > 0)
 			type |= IModelProviderEvent.MODELS_CHANGED;
 
 		fChangedModels = null;
@@ -751,17 +229,31 @@ public class WorkspaceModelManager
 				new ModelProviderEvent(
 					this,
 					type,
-					addedArray,
-					removedArray,
-					changedArray);
+					(IModel[])added.toArray(new IModel[added.size()]),
+					(IModel[])removed.toArray(new IModel[removed.size()]),
+					(IModel[])changed.toArray(new IModel[changed.size()]));
 			fireModelProviderEvent(event);
 		}
 	}
 	
-	private synchronized void fireModelProviderEvent(ModelProviderEvent event) {
-		for (Iterator iter = fListeners.iterator(); iter.hasNext();) {
-			((IModelProviderListener) iter.next()).modelsChanged(event);
+	protected void loadModel(IModel model, boolean reload) {
+		IFile file = (IFile) model.getUnderlyingResource();
+		InputStream stream = null;
+		try {
+			stream = new BufferedInputStream(file.getContents(true));
+			if (reload)
+				model.reload(stream, false);
+			else
+				model.load(stream, false);
+		} catch (CoreException e) {
+			PDECore.logException(e);
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException e) {
+				PDECore.log(e);
+			}
 		}
 	}
-
 }

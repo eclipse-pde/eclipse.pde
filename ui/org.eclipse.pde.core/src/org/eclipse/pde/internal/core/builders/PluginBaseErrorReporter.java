@@ -14,7 +14,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -157,7 +157,7 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 		if ("true".equals(element.getAttribute("optional")) && severity == CompilerFlags.ERROR)  //$NON-NLS-1$ //$NON-NLS-2$
 			severity = CompilerFlags.WARNING;
 		if (severity != CompilerFlags.IGNORE) {
-			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(attr.getValue());
+			IPluginModelBase model = PluginRegistry.findModel(attr.getValue());
 			if (model == null || !model.isEnabled()) {
 				report(NLS.bind(PDECoreMessages.Builders_Manifest_dependency, attr.getValue()),  
 						getLine(element, attr.getName()),

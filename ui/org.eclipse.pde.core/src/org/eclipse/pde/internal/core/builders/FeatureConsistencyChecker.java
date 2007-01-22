@@ -67,7 +67,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		if (PDECore.getDefault().getBundle().getState() != Bundle.ACTIVE || monitor.isCanceled())
 			return new IProject[0];
 
-		if (WorkspaceModelManager.isBinaryFeatureProject(getProject()))
+		if (WorkspaceModelManager.isBinaryProject(getProject()))
 			return new IProject[0];
 		
 		IResourceDelta delta = null;

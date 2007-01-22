@@ -31,6 +31,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 
 
 public class JavaElementChangeListener implements IElementChangedListener {
@@ -122,32 +123,30 @@ public class JavaElementChangeListener implements IElementChangedListener {
 	
 	private boolean isInterestingProject(IJavaProject jProject) {
 		IProject project = jProject.getProject();
-		return WorkspaceModelManager.isNonBinaryPluginProject(project)
-				&& !WorkspaceModelManager.hasBundleManifest(project);
+		return WorkspaceModelManager.isPluginProject(project)
+				&& !WorkspaceModelManager.isBinaryProject(project)
+				&& !project.exists(ICoreConstants.MANIFEST_PATH);
 	}
 	
 	private void updateTable(IJavaElement element) {		
 		IJavaProject jProject = (IJavaProject)element.getAncestor(IJavaElement.JAVA_PROJECT);
 		if (jProject != null) {
 			IProject project = jProject.getProject();
-			ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(project);
-			if (entry != null) {
-				IPluginModelBase model = entry.getActiveModel();
+			IPluginModelBase model = PluginRegistry.findModel(project);
+			if (model != null) {
 				String id = model.getPluginBase().getId();
-				if (id == null)
-					return;
-				fTable.put(id, Long.toString(System.currentTimeMillis()));
+				if (id != null)
+					fTable.put(id, Long.toString(System.currentTimeMillis()));
 			}
 		}
 	}
 	
 	private void save() {
 		// start by cleaning up extraneous keys.
-		PluginModelManager mgr = PDECore.getDefault().getModelManager();
 		Enumeration keys = fTable.keys();
 		while(keys.hasMoreElements()) {
 			String id = keys.nextElement().toString();
-			IPluginModelBase model = mgr.findModel(id);
+			IPluginModelBase model = PluginRegistry.findModel(id);
 			if (model == null || model.getUnderlyingResource() == null)
 				fTable.remove(id);
 		}
@@ -199,7 +198,7 @@ public class JavaElementChangeListener implements IElementChangedListener {
 		Enumeration keys = fTable.keys();
 		while (keys.hasMoreElements()) {
 			String id = keys.nextElement().toString();
-			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(id);
+			IPluginModelBase model = PluginRegistry.findModel(id);
 			if (model != null) {
 				File file = new File(cacheDirectory, id + "_" + model.getPluginBase().getVersion() + ".MF"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (file.exists() && file.isFile() && file.lastModified() < Long.parseLong(fTable.get(id).toString()))

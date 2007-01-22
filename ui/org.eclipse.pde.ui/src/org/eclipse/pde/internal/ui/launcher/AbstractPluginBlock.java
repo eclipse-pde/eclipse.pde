@@ -29,15 +29,13 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -138,8 +136,8 @@ public abstract class AbstractPluginBlock {
 	public AbstractPluginBlock(AbstractLauncherTab tab) {
 		fTab = tab;
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
-		fExternalModels = PDECore.getDefault().getModelManager().getExternalModels();
-		fWorkspaceModels = PDECore.getDefault().getModelManager().getWorkspaceModels();
+		fExternalModels = PluginRegistry.getExternalModels();
+		fWorkspaceModels = PluginRegistry.getWorkspaceModels();
 	}
 	
 	protected void updateCounter() {
@@ -327,11 +325,9 @@ public abstract class AbstractPluginBlock {
 		IWorkingSetSelectionDialog dialog = workingSetManager.createWorkingSetSelectionDialog(getShell(), true);
 		if (dialog.open() == Window.OK) {
 			String[] ids = getPluginIDs(dialog.getSelection());
-			PluginModelManager manager = PDECore.getDefault().getModelManager();
 			for (int i = 0; i < ids.length; i++) {
-				ModelEntry entry = manager.findEntry(ids[i]);
-				if (entry != null) {
-					IPluginModelBase model = entry.getActiveModel();
+				IPluginModelBase model = PluginRegistry.findModel(ids[i]);
+				if (model != null) {
 					if (!fPluginTreeViewer.getChecked(model)) {
 						setChecked(model, true);
 						if (model.getUnderlyingResource() == null)
@@ -361,7 +357,7 @@ public abstract class AbstractPluginBlock {
 					if (element instanceof IJavaProject)
 						element = ((IJavaProject)element).getProject();
 					if (element instanceof IProject) {
-						IPluginModelBase model = PDECore.getDefault().getModelManager().findModel((IProject)element);
+						IPluginModelBase model = PluginRegistry.findModel((IProject)element);
 						if (model != null)
 							set.add(model.getPluginBase().getId());
 					}
@@ -426,7 +422,7 @@ public abstract class AbstractPluginBlock {
 				findPlugin(((IFragmentModel) model).getFragment().getPluginId());
 			addPluginAndDependencies(parent, map);
 		} else {
-			IFragmentModel[] fragments = findFragments(model.getPluginBase());
+			IFragmentModel[] fragments = findFragments(model);
 			for (int i = 0; i < fragments.length; i++) {
 				addPluginAndDependencies(fragments[i], map);
 			}
@@ -442,41 +438,49 @@ public abstract class AbstractPluginBlock {
 	}
 
 	private IPluginModelBase findPlugin(String id) {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		ModelEntry entry = manager.findEntry(id);
+		ModelEntry entry = PluginRegistry.findEntry(id);
 		if (entry != null) {
-			IPluginModelBase model = entry.getActiveModel();
+			IPluginModelBase model = entry.getModel();
 			if (fPluginTreeViewer.getChecked(model))
 				return model;
 
-			model = entry.getExternalModel();
-			if (model != null && fPluginTreeViewer.getChecked(model)) {
-				return model;
+			IPluginModelBase[] models = entry.getWorkspaceModels();
+			for (int i = 0; i < models.length; i++) {
+				if (fPluginTreeViewer.getChecked(models[i]))
+					return models[i];
 			}
-			return entry.getActiveModel();
+			
+			models = entry.getExternalModels();
+			for (int i = 0; i < models.length; i++) {
+				if (fPluginTreeViewer.getChecked(models[i]))
+					return models[i];
+			}
 		}
 		return null;
 	}
 
-	private IFragmentModel[] findFragments(IPluginBase plugin) {
-		ModelEntry[] entries = PDECore.getDefault().getModelManager().getEntries();
-		ArrayList result = new ArrayList();
-		for (int i = 0; i < entries.length; i++) {
-			ModelEntry entry = entries[i];
-			IPluginModelBase model = entry.getActiveModel();
-			if ("org.eclipse.ui.workbench.compatibility".equals(model.getPluginBase().getId())) //$NON-NLS-1$
+	private IFragmentModel[] findFragments(IPluginModelBase model) {
+		BundleDescription desc = model.getBundleDescription();
+		BundleDescription[] fragments = desc.getFragments();
+		ArrayList result = new ArrayList(fragments.length);
+		for (int i = 0; i < fragments.length; i++) {
+			String id = fragments[i].getSymbolicName();
+			if (!fragments[i].isResolved() ||
+					"org.eclipse.ui.workbench.compatibility".equals(id)) //$NON-NLS-1$
 				continue;
-			if (model instanceof IFragmentModel && TargetPlatform.matchesCurrentEnvironment(model)) {
-				String id = ((IFragmentModel) model).getFragment().getPluginId();
-				if (id.equals(plugin.getId())) {
-					if (fPluginTreeViewer.getChecked(model)) {
-						result.add(model);
-					} else {
-						model = entry.getExternalModel();
-						if (model != null && fPluginTreeViewer.getChecked(model)) {
-							result.add(model);
-						} else {
-							result.add(entry.getActiveModel());
+			IPluginModelBase fragment = PluginRegistry.findModel(fragments[i]);
+			if (fragment instanceof IFragmentModel ) {
+				if (fPluginTreeViewer.getChecked(fragment)) {
+					result.add(fragment);
+				} else {
+					ModelEntry entry = PluginRegistry.findEntry(id);
+					if (entry != null) {
+						IPluginModelBase[] candidates = entry.getExternalModels();
+						for (int j = 0; j < candidates.length; j++) {
+							if (j == candidates.length - 1 
+								|| fPluginTreeViewer.getChecked(candidates[j])) {
+								result.add(candidates[j]);
+							}
 						}
 					}
 				}

@@ -145,7 +145,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		fAvailableListViewer = new TableViewer(table);
 		fAvailableListViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fAvailableListViewer.setContentProvider(new ContentProvider());
-		fAvailableListViewer.setInput(PDECore.getDefault().getExternalModelManager());
+		fAvailableListViewer.setInput(PDECore.getDefault().getModelManager());
 		fAvailableListViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 
 		return container;
@@ -435,8 +435,8 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			IProject project =
 				(IProject) PDEPlugin.getWorkspace().getRoot().findMember(id);
 			if (project != null
-				&& project.isOpen()
-				&& WorkspaceModelManager.isUnsharedPluginProject(project)) {
+				&& WorkspaceModelManager.isUnsharedProject(project)
+				&& WorkspaceModelManager.isPluginProject(project)) {
 				result.add(fModels[i]);
 			}
 		}

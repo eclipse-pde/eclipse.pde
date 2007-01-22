@@ -16,72 +16,72 @@ import java.util.Locale;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class FileAdapter extends PlatformObject {
-	private File file;
-	private Object[] children;
-	private FileAdapter parent;
-	private String editorId;
-	private IFileAdapterFactory factory;
+	private File fFile;
+	private Object[] fChildren;
+	private FileAdapter fParent;
+	private String fEditorId;
+	private IFileAdapterFactory fFactory;
 
 	/**
 	 * Constructor for FileAdapter.
 	 */
 	public FileAdapter(FileAdapter parent, File file, IFileAdapterFactory factory) {
-		this.file = file;
-		this.parent = parent;
-		this.factory = factory;
+		fFile = file;
+		fParent = parent;
+		fFactory = factory;
 	}
 
 	public boolean isManifest() {
-		String fileName = file.getName();
+		String fileName = fFile.getName();
 		return (fileName.equals("plugin.xml") || fileName.equals("fragment.xml") || fileName.equalsIgnoreCase("manifest.mf")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	public boolean isSchema() {
-		String fileName = file.getName().toLowerCase(Locale.ENGLISH);
-		return fileName.endsWith(".mxsd") || fileName.endsWith(".exsd"); //$NON-NLS-1$ //$NON-NLS-2$
+		String fileName = fFile.getName().toLowerCase(Locale.ENGLISH);
+		return fileName.endsWith(".exsd"); //$NON-NLS-1$
 	}
 			
 	public FileAdapter getParent() {
-		return parent;
+		return fParent;
 	}
 
 	public void setEditorId(String editorId) {
-		this.editorId = editorId;
+		this.fEditorId = editorId;
 	}
 
 	public String getEditorId() {
-		return editorId;
+		return fEditorId;
 	}
 
 	public File getFile() {
-		return file;
+		return fFile;
 	}
 
 	public boolean isDirectory() {
-		return file.isDirectory();
+		return fFile.isDirectory();
 	}
 
 	public boolean hasChildren() {
-		if (file.isDirectory() == false)
+		if (fFile.isDirectory() == false)
 			return false;
-		if (children == null)
+		if (fChildren == null)
 			createChildren();
-		return children.length > 0;
+		return fChildren.length > 0;
 	}
 
 	public Object[] getChildren() {
-		if (file.isDirectory() && children == null)
+		if (fFile.isDirectory() && fChildren == null)
 			createChildren();
-		return children != null ? children : new Object[0];
+		return fChildren != null ? fChildren : new Object[0];
 	}
 
 	private void createChildren() {
-		File[] files = file.listFiles();
-		children = new Object[files.length];
+		File[] files = fFile.listFiles();
+		fChildren = new Object[files.length];
 		for (int i = 0; i < files.length; i++) {
-			if (factory==null)	
-				children[i] = new FileAdapter(this, files[i], null);
+			if (fFactory == null)	
+				fChildren[i] = new FileAdapter(this, files[i], null);
 			else
-				children[i] = factory.createAdapterChild(this, files[i]);
+				fChildren[i] = fFactory.createAdapterChild(this, files[i]);
 		}
 	}
 }

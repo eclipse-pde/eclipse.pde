@@ -22,9 +22,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.PackageFriend;
@@ -206,9 +205,9 @@ public class ExportPackageVisibilitySection extends TableSection
     
     private IPluginModelBase[] getModels() {
         ArrayList list = new ArrayList();
-        IPluginModel[] models = PDECore.getDefault().getModelManager().getPluginsOnly();
+        IPluginModelBase[] models = PluginRegistry.getActiveModels(false);
         for (int i = 0; i < models.length; i++) {
-        	String id = models[i].getPlugin().getId();
+        	String id = models[i].getPluginBase().getId();
             if (!fSelectedObjects[0].hasFriend(id))
                 list.add(models[i]);
         }

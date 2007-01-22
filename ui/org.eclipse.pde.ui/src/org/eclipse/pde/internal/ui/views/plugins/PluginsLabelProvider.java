@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.views.plugins;
 
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -27,7 +26,8 @@ import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.FileAdapter;
-import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.SearchablePluginsManager;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -38,7 +38,9 @@ import org.eclipse.ui.ide.IDE;
 
 public class PluginsLabelProvider extends LabelProvider {
 	private PDELabelProvider sharedProvider;
+
 	private Image projectImage;
+
 	private Image folderImage;
 
 	/**
@@ -47,11 +49,9 @@ public class PluginsLabelProvider extends LabelProvider {
 	public PluginsLabelProvider() {
 		super();
 		sharedProvider = PDEPlugin.getDefault().getLabelProvider();
-		folderImage =
-			PlatformUI.getWorkbench().getSharedImages().getImage(
+		folderImage = PlatformUI.getWorkbench().getSharedImages().getImage(
 				ISharedImages.IMG_OBJ_FOLDER);
-		projectImage =
-			PlatformUI.getWorkbench().getSharedImages().getImage(
+		projectImage = PlatformUI.getWorkbench().getSharedImages().getImage(
 				IDE.SharedImages.IMG_OBJ_PROJECT);
 		sharedProvider.connect(this);
 	}
@@ -62,76 +62,78 @@ public class PluginsLabelProvider extends LabelProvider {
 	}
 
 	public String getText(Object obj) {
-		if (obj instanceof ModelEntry) {
-			return getText((ModelEntry) obj);
+		if (obj instanceof IPluginModelBase) {
+			return getText((IPluginModelBase) obj);
 		}
+
 		if (obj instanceof FileAdapter) {
 			return getText((FileAdapter) obj);
 		}
+		
 		if (obj instanceof IPackageFragmentRoot) {
 			// use the short name
-			IPath path = ((IPackageFragmentRoot) obj).getPath();
-			return path.lastSegment();
+			return ((IPackageFragmentRoot) obj).getPath().lastSegment();
 		}
+		
 		if (obj instanceof IJavaElement) {
 			return ((IJavaElement) obj).getElementName();
 		}
+		
 		if (obj instanceof IStorage) {
 			return ((IStorage) obj).getName();
 		}
+		
 		return super.getText(obj);
 	}
 
 	public Image getImage(Object obj) {
-		if (obj instanceof ModelEntry) {
-			return getImage((ModelEntry) obj);
+		if (obj instanceof IPluginModelBase) {
+			return getImage((IPluginModelBase) obj);
 		}
+
 		if (obj instanceof FileAdapter) {
 			return getImage((FileAdapter) obj);
 		}
+
 		if (obj instanceof IPackageFragmentRoot) {
 			IPackageFragmentRoot root = (IPackageFragmentRoot) obj;
 			boolean hasSource = false;
-			
+
 			try {
 				hasSource = root.getSourceAttachmentPath() != null;
-			}
-			catch (JavaModelException e) {
+			} catch (JavaModelException e) {
 			}
 			return JavaUI.getSharedImages().getImage(
-				hasSource
-					? org
-						.eclipse
-						.jdt
-						.ui
-						.ISharedImages
-						.IMG_OBJS_EXTERNAL_ARCHIVE_WITH_SOURCE
-					: org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE);
+							hasSource ? org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE_WITH_SOURCE
+									: org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE);
 		}
+
 		if (obj instanceof IPackageFragment) {
 			return JavaUI.getSharedImages().getImage(
-				org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PACKAGE);
+					org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PACKAGE);
 		}
+
 		if (obj instanceof ICompilationUnit) {
 			return JavaUI.getSharedImages().getImage(
-				org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CUNIT);
+					org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CUNIT);
 		}
+
 		if (obj instanceof IClassFile) {
 			return JavaUI.getSharedImages().getImage(
-				org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CFILE);
+					org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CFILE);
 		}
+
 		if (obj instanceof IStorage) {
-			String name = ((IStorage) obj).getName();
-			return getFileImage(name);
+			return getFileImage(((IStorage) obj).getName());
 		}
+
 		return null;
 	}
 
-	private String getText(ModelEntry entry) {
-		IPluginModelBase model = entry.getActiveModel();
+	private String getText(IPluginModelBase model) {
 		String text = sharedProvider.getText(model);
-		if (model.isEnabled() == false)
-			text = NLS.bind(PDEUIMessages.PluginsView_disabled, text); 
+		if (!model.isEnabled())
+			text = NLS.bind(PDEUIMessages.PluginsView_disabled, text);
 		return text;
 	}
 
@@ -139,19 +141,23 @@ public class PluginsLabelProvider extends LabelProvider {
 		return file.getFile().getName();
 	}
 
-	private Image getImage(ModelEntry entry) {
-		IPluginModelBase model = entry.getActiveModel();
+	private Image getImage(IPluginModelBase model) {
 		if (model.getUnderlyingResource() != null)
 			return projectImage;
+
 		if (model instanceof IPluginModel)
-			return sharedProvider.getObjectImage(
-				(IPlugin) model.getPluginBase(),
-				true,
-				entry.isInJavaSearch());
-		return sharedProvider.getObjectImage(
-			(IFragment) model.getPluginBase(),
-			true,
-			entry.isInJavaSearch());
+			return sharedProvider.getObjectImage((IPlugin) model.getPluginBase(), true,
+					isInJavaSearch(model));
+
+		return sharedProvider.getObjectImage((IFragment) model.getPluginBase(), true,
+				isInJavaSearch(model));
+	}
+
+	private boolean isInJavaSearch(IPluginModelBase model) {
+		String id = model.getPluginBase().getId();
+		SearchablePluginsManager manager = PDECore.getDefault()
+				.getSearchablePluginsManager();
+		return manager.isInJavaSearch(id);
 	}
 
 	private Image getImage(FileAdapter fileAdapter) {
@@ -162,9 +168,8 @@ public class PluginsLabelProvider extends LabelProvider {
 	}
 
 	private Image getFileImage(String fileName) {
-		ImageDescriptor desc =
-			PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(
-				fileName);
+		ImageDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry()
+				.getImageDescriptor(fileName);
 		return sharedProvider.get(desc);
 	}
 }

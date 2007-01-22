@@ -27,7 +27,7 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -260,7 +260,7 @@ public class EditorUtilities {
 			return new Path("file:", resource.getLocation().toString()); //$NON-NLS-1$
 		
 		// look in external models
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(product.getDefiningPluginId());
+		IPluginModelBase model = PluginRegistry.findModel(product.getDefiningPluginId());
 		if (model != null && model.getInstallLocation() != null) {
 			File modelNode = new File(model.getInstallLocation());
 			String pluginPath = modelNode.getAbsolutePath();
@@ -273,7 +273,7 @@ public class EditorUtilities {
 	}
 	
 	private static IPath getRootPath(IPath path, String definingPluginId) { 
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(definingPluginId);
+		IPluginModelBase model = PluginRegistry.findModel(definingPluginId);
 		if (model != null && model.getInstallLocation() != null) {
 			IPath newPath = new Path(model.getInstallLocation()).append(path);
 			IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();

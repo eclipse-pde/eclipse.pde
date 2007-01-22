@@ -41,11 +41,11 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ExternalModelManager;
-import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.PDEClasspathContainer;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public class PDESourceLookupQuery implements ISafeRunnable {
@@ -135,7 +135,7 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 				return result;
 			
 			// don't give up yet, search fragments attached to this host
-			State state = TargetPlatform.getState();
+			State state = TargetPlatformHelper.getState();
 			BundleDescription desc = state.getBundle(id, null);
 			if (desc != null) {
 				BundleDescription[] fragments = desc.getFragments();
@@ -162,17 +162,26 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	
 	protected ISourceContainer[] getSourceContainers(String location, String id) throws CoreException {
 		ArrayList result = new ArrayList();		
-		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(id);
-		IPluginModelBase model = entry.getWorkspaceModel();
-		if (isPerfectMatch(model, new Path(location))) {
-			IResource resource = model.getUnderlyingResource();
-			// if the plug-in matches a workspace model,
-			// add the project and any libraries not coming via a container
-			// to the list of source containers, in that order
-			if (resource != null) {
-				addProjectSourceContainers(resource.getProject(), result);
+		ModelEntry entry = PluginRegistry.findEntry(id);
+		
+		boolean match = false;
+
+		IPluginModelBase[] models = entry.getWorkspaceModels();		
+		for (int i = 0; i < models.length; i++) {
+			if (isPerfectMatch(models[i], new Path(location))) {
+				IResource resource = models[i].getUnderlyingResource();
+				// if the plug-in matches a workspace model,
+				// add the project and any libraries not coming via a container
+				// to the list of source containers, in that order
+				if (resource != null) {
+					addProjectSourceContainers(resource.getProject(), result);
+				}
+				match = true;
+				break;
 			}
-		} else {
+		}
+
+		if (!match) {
 			File file = new File(location);
 			if (file.isFile()) {
 				// in case of linked plug-in projects that map to an external JARd plug-in,
@@ -181,14 +190,18 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 				if (container != null)
 					return new ISourceContainer[] {container};				
 			} 
-			model = entry.getExternalModel();
-			if (isPerfectMatch(model, new Path(location))) {
-				// try all source zips found in the source code locations
-				IClasspathEntry[] entries = PDEClasspathContainer.getExternalEntries(model);
-				for (int i = 0; i < entries.length; i++) {
-					IRuntimeClasspathEntry rte = convertClasspathEntry(entries[i]);
-					if (rte != null)
-						result.add(rte);
+			
+			models = entry.getExternalModels();
+			for (int i = 0; i < models.length; i++) {
+				if (isPerfectMatch(models[i], new Path(location))) {
+					// try all source zips found in the source code locations
+					IClasspathEntry[] entries = PDEClasspathContainer.getExternalEntries(models[i]);
+					for (int j = 0; j < entries.length; j++) {
+						IRuntimeClasspathEntry rte = convertClasspathEntry(entries[j]);
+						if (rte != null)
+							result.add(rte);
+					}
+					break;
 				}
 			}
 		}
@@ -232,11 +245,7 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	}
 	
 	private boolean isPerfectMatch(IPluginModelBase model, IPath path) {
-		if (model != null) {
-			IPath path2 = new Path(model.getInstallLocation());
-			return ExternalModelManager.arePathsEqual(path, path2);
-		}
-		return false;
+		return model == null ? false : path.equals(new Path(model.getInstallLocation()));
 	}
 	
 	private ISourceContainer getArchiveSourceContainer(String location) throws JavaModelException {

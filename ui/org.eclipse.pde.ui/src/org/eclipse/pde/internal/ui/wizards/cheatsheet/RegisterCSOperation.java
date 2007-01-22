@@ -31,7 +31,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.build.BuildObject;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -384,7 +384,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		
 		IPluginBase base = model.getPluginBase();
 		// Set schema version
-		double targetVersion = TargetPlatform.getTargetVersion();
+		double targetVersion = TargetPlatformHelper.getTargetVersion();
 		String version = null;
 		if (targetVersion < 3.2) {
 			version = ICoreConstants.TARGET30;

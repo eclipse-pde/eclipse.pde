@@ -12,28 +12,33 @@ package org.eclipse.pde.internal.core;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jdt.core.ClasspathContainerInitializer;
+import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 
-/**
- * 
- */
 public class ExternalJavaSearchInitializer extends ClasspathContainerInitializer {
+	
+	ExternalJavaSearchClasspathContainer fContainer;
 
-	/**
-	 * Constructor for RequiredPluginsInitializer.
-	 */
-	public ExternalJavaSearchInitializer() {
-		super();
-	}
-
-	/**
-	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#initialize(IPath, IJavaProject)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#initialize(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
 	 */
 	public void initialize(IPath containerPath, IJavaProject javaProject)
 		throws CoreException {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		SearchablePluginsManager searchManager = manager.getSearchablePluginsManager();
-		searchManager.updateClasspathContainer(javaProject);
+		try {
+			JavaCore.setClasspathContainer(
+					PDECore.JAVA_SEARCH_CONTAINER_PATH, 
+					new IJavaProject[] {javaProject}, 
+					new IClasspathContainer[]{new ExternalJavaSearchClasspathContainer()}, 
+					null);
+		} catch (OperationCanceledException e) {
+			throw e;
+		}
+		
 	}
+	
+	
 }

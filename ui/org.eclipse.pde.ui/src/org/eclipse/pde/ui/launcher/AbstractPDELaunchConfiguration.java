@@ -30,7 +30,8 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
@@ -332,7 +333,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * @since 3.3
 	 */
 	public String getMainClass() {
-		if (TargetPlatform.usesEquinoxStartup())
+		if (TargetPlatformHelper.usesEquinoxStartup())
 			return "org.eclipse.equinox.launcher.Main"; //$NON-NLS-1$
 		return "org.eclipse.core.launcher.Main"; //$NON-NLS-1$
 	}

@@ -34,7 +34,7 @@ import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDEStateHelper;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
@@ -746,7 +746,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	}
 
 	public String getTargetVersion() {
-		return fTarget != null ? fTarget : TargetPlatform.getTargetVersionString();
+		return fTarget != null ? fTarget : TargetPlatformHelper.getTargetVersionString();
 	}
 
 	public void setTargetVersion(String target) {

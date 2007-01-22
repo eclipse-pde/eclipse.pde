@@ -39,9 +39,9 @@ import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.IPluginModelListener;
-import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelDelta;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
@@ -143,7 +143,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		
 		public Image getColumnImage(Object obj, int index) {
 			String pluginID = obj.toString();
-			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginID);
+			IPluginModelBase model = PluginRegistry.findModel(pluginID);
 			if (model == null)
 			{	
 				return get(PDEPluginImages.DESC_REQ_PLUGIN_OBJ, F_ERROR);
@@ -312,7 +312,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 			IStructuredSelection ssel = (IStructuredSelection) sel;
 			if (ssel.size() == 1) {
 				Object obj = ssel.getFirstElement();
-				IPluginModelBase base = PDECore.getDefault().getModelManager().findModel((String)obj);
+				IPluginModelBase base = PluginRegistry.findModel((String)obj);
 				if (base != null) 
 					ManifestEditor.open(base.getPluginBase(), false);
 			}
@@ -391,14 +391,13 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	}
 	
 	private IPluginModelBase[] getAvailablePlugins() {
-		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPluginsOnly();
+		IPluginModelBase[] plugins = PluginRegistry.getActiveModels(false);
 		HashSet currentPlugins = new HashSet(
 				 (fAdditionalBundles == null) ? new Vector(1) : fAdditionalBundles);
 		IProject currentProj = getPage().getPDEEditor().getCommonProject();
-		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(currentProj);
-		if (entry != null) {
-			String project_id = entry.getId();
-			currentPlugins.add(project_id);
+		IPluginModelBase model = PluginRegistry.findModel(currentProj);
+		if (model != null) {
+			currentPlugins.add(model.getPluginBase().getId());
 		}
 		
 		ArrayList result = new ArrayList();

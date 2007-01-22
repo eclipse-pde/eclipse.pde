@@ -19,6 +19,7 @@ import org.eclipse.jdt.core.JavaCore;
 
 public class EclipseHomeInitializer extends ClasspathVariableInitializer {
 
+	public static final String ECLIPSE_HOME_VARIABLE = "ECLIPSE_HOME"; //$NON-NLS-1$
 	
 	/**
 	 * @see ClasspathVariableInitializer#initialize(String)
@@ -32,7 +33,7 @@ public class EclipseHomeInitializer extends ClasspathVariableInitializer {
 			Preferences pref = PDECore.getDefault().getPluginPreferences();
 			String platformHome = pref.getString(ICoreConstants.PLATFORM_PATH);
 			JavaCore.setClasspathVariable(
-				PDECore.ECLIPSE_HOME_VARIABLE,
+				ECLIPSE_HOME_VARIABLE,
 				new Path(platformHome),
 				null);
 		} catch (CoreException e) {

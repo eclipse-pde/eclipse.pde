@@ -17,7 +17,7 @@ import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.window.Window;
-import org.eclipse.pde.internal.core.ExternalModelManager;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.itarget.IAdditionalLocation;
 import org.eclipse.pde.internal.core.itarget.ILocationInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
@@ -153,11 +153,11 @@ public class LocationDialog extends StatusDialog {
 	protected boolean hasPath(String path) {
 		Path checkPath = new Path(path);
 		Path currentPath = (fLocation != null) ? new Path(fLocation.getPath()) : null;
-		if (currentPath != null && ExternalModelManager.arePathsEqual(checkPath, currentPath))
+		if (checkPath.equals(currentPath))
 			return false;
 		IAdditionalLocation[] locs = fTarget.getAdditionalDirectories();
 		for (int i = 0; i < locs.length; i++) {
-			if (ExternalModelManager.arePathsEqual(new Path(locs[i].getPath()), checkPath))
+			if (new Path(locs[i].getPath()).equals(checkPath))
 				return true;
 		}
 		return isTargetLocation(checkPath);
@@ -166,10 +166,10 @@ public class LocationDialog extends StatusDialog {
 	private boolean isTargetLocation(Path path) {
 		ILocationInfo info = fTarget.getLocationInfo();
 		if (info.useDefault()) {
-			Path home = new Path(ExternalModelManager.computeDefaultPlatformPath());
-			return ExternalModelManager.arePathsEqual(home, path);
+			Path home = new Path(TargetPlatform.getDefaultLocation());
+			return home.equals(path);
 		} 
-		return ExternalModelManager.arePathsEqual(new Path(info.getPath()) , path);
+		return new Path(info.getPath()).equals(path);
 	}
 	
 	protected void handleBrowseFileSystem() {

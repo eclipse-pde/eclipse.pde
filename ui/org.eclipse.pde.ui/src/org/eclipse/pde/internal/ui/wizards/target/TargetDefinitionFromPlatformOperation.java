@@ -16,8 +16,8 @@ import java.util.StringTokenizer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.IEnvironmentVariables;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.itarget.IAdditionalLocation;
 import org.eclipse.pde.internal.core.itarget.IArgumentsInfo;
@@ -64,10 +64,10 @@ public class TargetDefinitionFromPlatformOperation extends BaseTargetDefinitionO
 	
 	protected void initializeEnvironmentInfo(Preferences preferences, ITarget target, ITargetModelFactory factory) {
 		IEnvironmentInfo info = factory.createEnvironment();
-		info.setOS(preferences.getString(IEnvironmentVariables.OS));
-		info.setWS(preferences.getString(IEnvironmentVariables.WS));
-		info.setNL(preferences.getString(IEnvironmentVariables.NL));
-		info.setArch(preferences.getString(IEnvironmentVariables.ARCH));
+		info.setOS(preferences.getString(ICoreConstants.OS));
+		info.setWS(preferences.getString(ICoreConstants.WS));
+		info.setNL(preferences.getString(ICoreConstants.NL));
+		info.setArch(preferences.getString(ICoreConstants.ARCH));
 		target.setEnvironment(info);
 	}
 	
@@ -127,7 +127,7 @@ public class TargetDefinitionFromPlatformOperation extends BaseTargetDefinitionO
 		if (value.equals(ICoreConstants.VALUE_SAVED_ALL)) {
 			target.setUseAllPlugins(true);
 		} else {
-			IPluginModelBase [] models = PDECore.getDefault().getModelManager().getExternalModels();
+			IPluginModelBase [] models = PluginRegistry.getExternalModels();
 			ArrayList list = new ArrayList(models.length);
 			for (int i = 0; i < models.length; i++) {
 				if (models[i].isEnabled()) {

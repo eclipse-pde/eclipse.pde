@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.exports.FeatureExportOperation;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -159,7 +159,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 	protected boolean getInitialJarButtonSelection(IDialogSettings settings){
 		String selected = settings.get(S_JAR_FORMAT);
 		return selected == null
-					? TargetPlatform.getTargetVersion() >= 3.1
+					? TargetPlatformHelper.getTargetVersion() >= 3.1
 					: "true".equals(selected); //$NON-NLS-1$
 	}
 	

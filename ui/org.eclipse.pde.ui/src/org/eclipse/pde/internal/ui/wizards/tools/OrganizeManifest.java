@@ -43,11 +43,11 @@ import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.IPluginParent;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEManager;
-import org.eclipse.pde.internal.core.PluginModelManager;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
@@ -91,13 +91,12 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		if (!(bundle instanceof Bundle))
 			return;
 		
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		RequireBundleHeader header = (RequireBundleHeader)((Bundle)bundle).getManifestHeader(Constants.REQUIRE_BUNDLE);
 		if (header != null) {
 			RequireBundleObject[] bundles = header.getRequiredBundles();
 			for (int i = 0; i < bundles.length; i++) {
 				String pluginId = bundles[i].getId();
-				if (manager.findEntry(pluginId) == null) {
+				if (PluginRegistry.findModel(pluginId) == null) {
 					if (removeImports)
 						header.removeBundle(bundles[i]);
 					else {
@@ -206,7 +205,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 	}
 	
 	private static final Set getAvailableExportedPackages() {
-		State state = TargetPlatform.getState();
+		State state = TargetPlatformHelper.getState();
 		ExportPackageDescription[] packages = state.getExportedPackages();
 		Set set = new HashSet();
 		for (int i = 0; i < packages.length; i++) {
@@ -298,15 +297,14 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		findTranslatedXMLStrings(pluginModel, list);
 		findTranslatedMFStrings(bundle, list);
 		
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		IPluginModelBase model = manager.findModel(project);
+		IPluginModelBase model = PluginRegistry.findModel(project);
 		
 		BundleDescription bundleDesc = model.getBundleDescription();
 		HostSpecification hostSpec = bundleDesc.getHost();
 		if (hostSpec != null) {
 			BundleDescription[] hosts = hostSpec.getHosts();
 			for (int i = 0; i < hosts.length; i++) {
-				IPluginModelBase hostModel = manager.findModel(hosts[i].getName());
+				IPluginModelBase hostModel = PluginRegistry.findModel(hosts[i]);
 				if (hostModel != null) {
 					findTranslatedXMLStrings(getTextModel(hostModel, false), list);
 					findTranslatedMFStrings(getTextBundle(hostModel), list);

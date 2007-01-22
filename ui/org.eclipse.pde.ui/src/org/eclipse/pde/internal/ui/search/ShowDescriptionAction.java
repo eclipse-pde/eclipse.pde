@@ -22,7 +22,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEStateHelper;
 import org.eclipse.pde.internal.core.builders.SchemaTransformer;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
@@ -86,7 +86,7 @@ public class ShowDescriptionAction extends Action {
 	
 	public void run() {
 		if (fSchema == null) {
-			IPluginExtensionPoint point = PDECore.getDefault().findExtensionPoint(fPointID);
+			IPluginExtensionPoint point = PDEStateHelper.findExtensionPoint(fPointID);
 			URL url = null;
 			if (point != null) {
 				url = SchemaRegistry.getSchemaURL(point);

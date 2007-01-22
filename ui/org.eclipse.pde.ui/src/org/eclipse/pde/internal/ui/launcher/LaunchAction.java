@@ -31,10 +31,10 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -47,8 +47,8 @@ import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
+import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.PDESourcePathProvider;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
@@ -133,7 +133,6 @@ public class LaunchAction extends Action {
 	
 	private IPluginModelBase[] getModels() {
 		HashMap map = new HashMap();
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		if (fProduct.useFeatures()) {
 			IFeatureModel[] features = getUniqueFeatures();
 			for (int i = 0; i < features.length; i++) {
@@ -145,8 +144,8 @@ public class LaunchAction extends Action {
 				String id = plugins[i].getId();
 				if (id == null || map.containsKey(id))
 					continue;
-				IPluginModelBase model = manager.findModel(id);
-				if (model != null && TargetPlatform.matchesCurrentEnvironment(model))
+				IPluginModelBase model = PluginRegistry.findModel(id);
+				if (model != null && TargetPlatformHelper.matchesCurrentEnvironment(model))
 					map.put(id, model);				
 			}
 		}
@@ -179,14 +178,13 @@ public class LaunchAction extends Action {
 	}
 	
 	private void addFeaturePlugins(IFeature feature, HashMap map) {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		IFeaturePlugin[] plugins = feature.getPlugins();
 		for (int i = 0; i < plugins.length; i++) {
 			String id = plugins[i].getId();
 			if (id == null || map.containsKey(id))
 				continue;
-			IPluginModelBase model = manager.findModel(id);
-			if (model != null && TargetPlatform.matchesCurrentEnvironment(model))
+			IPluginModelBase model = PluginRegistry.findModel(id);
+			if (model != null && TargetPlatformHelper.matchesCurrentEnvironment(model))
 				map.put(id, model);
 		}
 	}

@@ -28,6 +28,9 @@ import org.eclipse.team.core.RepositoryProvider;
 public class BinaryRepositoryProvider extends RepositoryProvider {
 	private IMoveDeleteHook moveDeleteHook;
 	private IFileModificationValidator fileModificationValidator;
+	
+	public static final String EXTERNAL_PROJECT_VALUE = "external"; //$NON-NLS-1$
+	
 	class BinaryMoveDeleteHook implements IMoveDeleteHook {
 		/**
 		 * @see org.eclipse.core.resources.team.IMoveDeleteHook#deleteFile(org.eclipse.core.resources.team.IResourceTree, org.eclipse.core.resources.IFile, int, org.eclipse.core.runtime.IProgressMonitor)
@@ -150,7 +153,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 	 */
 	public void configureProject() throws CoreException {
 		IProject project = getProject();
-		project.setPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY, PDECore.EXTERNAL_PROJECT_VALUE);
+		project.setPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY, EXTERNAL_PROJECT_VALUE);
 	}
 
 	/**

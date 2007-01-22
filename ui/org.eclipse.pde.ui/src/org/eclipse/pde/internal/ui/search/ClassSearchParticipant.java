@@ -37,6 +37,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.IPluginParent;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -115,7 +116,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		fSearchRequestor = requestor;
 		
 		IPath[] enclosingPaths = querySpecification.getScope().enclosingProjectsAndJars();
-		IPluginModelBase[] pluginModels = PDECore.getDefault().getModelManager().getWorkspaceModels();
+		IPluginModelBase[] pluginModels = PluginRegistry.getWorkspaceModels();
 		monitor.beginTask(PDEUIMessages.ClassSearchParticipant_taskMessage, pluginModels.length);
 		for (int i = 0; i < pluginModels.length; i++) {
 			IProject project = pluginModels[i].getUnderlyingResource().getProject();

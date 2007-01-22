@@ -33,7 +33,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
@@ -648,8 +648,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		// Query for all external extension points
 		fExternalExtPoints = new ArrayList();
 		// Get all plug-ins in the workspace
-		IPluginModelBase[] plugins = 
-			PDECore.getDefault().getModelManager().getPlugins();
+		IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
 		// Process each plugin
 		for (int i = 0; i < plugins.length; i++) {
 			// Make sure this plugin is not the one we are currently 

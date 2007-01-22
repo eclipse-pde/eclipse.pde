@@ -35,9 +35,10 @@ import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.internal.core.ExternalModelManager;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
@@ -90,14 +91,14 @@ public class LaunchConfigurationHelper {
 		Properties properties = null;
 		// if we are to generate a config.ini, start with the values in the target platform's config.ini - bug 141918
 		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true)) {
-			properties = TargetPlatform.getConfigIniProperties();
+			properties = TargetPlatformHelper.getConfigIniProperties();
 			// if target's config.ini does not exist, lets try to fill in default values
 			if (properties == null)
 				properties = new Properties();
 			// if target's config.ini has the osgi.bundles header, then parse and compute the proper osgi.bundles value
 			String bundleList = properties.getProperty("osgi.bundles"); //$NON-NLS-1$
 			if (bundleList != null)
-				properties.setProperty("osgi.bundles", computeOSGiBundles(TargetPlatform.stripPathInformation(bundleList), map)); //$NON-NLS-1$
+				properties.setProperty("osgi.bundles", computeOSGiBundles(TargetPlatformHelper.stripPathInformation(bundleList), map)); //$NON-NLS-1$
 		} else {
 			String templateLoc = configuration.getAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, (String)null);
 			if (templateLoc != null) {
@@ -105,7 +106,7 @@ public class LaunchConfigurationHelper {
 				// if template contains osgi.bundles, then only strip the path, do not compute the value
 				String osgiBundles = properties.getProperty("osgi.bundles"); //$NON-NLS-1$
 				if (osgiBundles != null)
-					properties.setProperty("osgi.bundles", TargetPlatform.stripPathInformation(osgiBundles)); //$NON-NLS-1$
+					properties.setProperty("osgi.bundles", TargetPlatformHelper.stripPathInformation(osgiBundles)); //$NON-NLS-1$
 			}
 		}
 		// whether we create a new config.ini or read from one as a template, we should add the required properties - bug 161265
@@ -122,7 +123,7 @@ public class LaunchConfigurationHelper {
 	
 	private static void addRequiredProperties(Properties properties, String productID, Map map) {
 		if (!properties.containsKey("osgi.install.area")) //$NON-NLS-1$
-			properties.setProperty("osgi.install.area", "file:" + ExternalModelManager.getEclipseHome().toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
+			properties.setProperty("osgi.install.area", "file:" + TargetPlatform.getLocation()); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!properties.containsKey("osgi.configuration.cascaded")) //$NON-NLS-1$
 			properties.setProperty("osgi.configuration.cascaded", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!properties.containsKey("osgi.framework")) //$NON-NLS-1$
@@ -133,7 +134,7 @@ public class LaunchConfigurationHelper {
 		else if (properties.containsKey("osgi.splashPath")) //$NON-NLS-1$
 			resolveLocationPath(properties.getProperty("osgi.splashPath"), properties, map); //$NON-NLS-1$
 		if (!properties.containsKey("osgi.bundles")) //$NON-NLS-1$
-			properties.setProperty("osgi.bundles", computeOSGiBundles(TargetPlatform.getBundleList(), map)); //$NON-NLS-1$
+			properties.setProperty("osgi.bundles", computeOSGiBundles(TargetPlatformHelper.getBundleList(), map)); //$NON-NLS-1$
 		if (!properties.containsKey("osgi.bundles.defaultStartLevel")) //$NON-NLS-1$
 			properties.setProperty("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -202,7 +203,7 @@ public class LaunchConfigurationHelper {
 	}
 
 	private static void addSplashLocation(Properties properties, String productID, Map map)  {
-		Properties targetConfig = TargetPlatform.getConfigIniProperties(); 
+		Properties targetConfig = TargetPlatformHelper.getConfigIniProperties(); 
 		String targetProduct = targetConfig == null ? null : targetConfig.getProperty("eclipse.product"); //$NON-NLS-1$
 		String targetSplash = targetConfig == null ? null : targetConfig.getProperty("osgi.splashPath"); //$NON-NLS-1$
 		if (!productID.equals(targetProduct) || targetSplash == null) {
@@ -324,7 +325,7 @@ public class LaunchConfigurationHelper {
 		} else {
 			// find the product associated with the application, and return its contributing plug-in
 			String appID = configuration.getAttribute(IPDELauncherConstants.APPLICATION, getDefaultApplicationName());
-			IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
+			IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
 			for (int i = 0; i < plugins.length; i++) {
 				String id = plugins[i].getPluginBase().getId();
 				IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
@@ -348,12 +349,12 @@ public class LaunchConfigurationHelper {
 		if (result != null)
 			return result;
 		
-		Properties properties = TargetPlatform.getConfigIniProperties();
+		Properties properties = TargetPlatformHelper.getConfigIniProperties();
 		return properties == null ? null : properties.getProperty("eclipse.product"); //$NON-NLS-1$
 	}
 
 	public static String getDefaultApplicationName() {
-		Properties properties = TargetPlatform.getConfigIniProperties(); 
+		Properties properties = TargetPlatformHelper.getConfigIniProperties(); 
 		String appName = (properties != null) ? properties.getProperty("eclipse.application") : null; //$NON-NLS-1$
 		return (appName != null) ? appName : "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 	}

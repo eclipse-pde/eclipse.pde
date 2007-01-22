@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -56,14 +56,16 @@ public class ListUtil {
 		}
 
 		private String getName(Object object) {
+			
 			if (object instanceof IPluginBase)
 				return getPluginName((IPluginBase) object);
 			if (object instanceof IPluginModelBase)
 				return getPluginName(
 					((IPluginModelBase) object).getPluginBase());
-			if (object instanceof ModelEntry)
+			if (object instanceof ModelEntry) {
 				return getPluginName(
-					((ModelEntry) object).getActiveModel().getPluginBase());
+					((ModelEntry) object).getModel().getPluginBase());
+			}
 			if (object instanceof ModelChange)
 				return getPluginName(
 						((ModelChange)object).getParentModel().getPluginBase());

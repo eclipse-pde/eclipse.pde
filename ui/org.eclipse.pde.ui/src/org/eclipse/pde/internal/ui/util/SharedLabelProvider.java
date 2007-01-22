@@ -24,9 +24,8 @@ import java.util.zip.ZipFile;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -191,10 +190,9 @@ public class SharedLabelProvider
             int index = relativePath.indexOf('/');
             if (index == -1)
             	return null;
-            IPlugin plugin = PDECore.getDefault().findPlugin(relativePath.substring(0, index));
-            if (plugin == null)
+            model = PluginRegistry.findModel(relativePath.substring(0, index));
+            if (model == null)
             	return null;
-            model = plugin.getPluginModel(); 
             relativePath = relativePath.substring(index + 1);
         }
 		

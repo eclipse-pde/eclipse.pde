@@ -41,7 +41,7 @@ public class BundleObject implements Serializable, IWritable {
 		Status status =
 			new Status(
 				IStatus.ERROR,
-				PDECore.getPluginId(),
+				PDECore.PLUGIN_ID,
 				IStatus.OK,
 				message,
 				null);

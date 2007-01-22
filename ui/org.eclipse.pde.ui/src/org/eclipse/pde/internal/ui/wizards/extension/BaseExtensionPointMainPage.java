@@ -32,6 +32,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.IDocumentSection;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
@@ -414,7 +415,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		// For 3.2 or greater plug-ins verify that it is a valid composite ID
 		// and that it has a valid namespace
 		// For 3.1 and lower plug-ins verify that it is a valid simple ID
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(getPluginId());
+		IPluginModelBase model = PluginRegistry.findModel(getPluginId());
 		String schemaVersion = model.getPluginBase().getSchemaVersion();
 		if (schemaVersion == null || Float.parseFloat(schemaVersion) >= 3.2) {
 			if (!IdUtil.isValidCompositeID(id))
@@ -443,7 +444,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	}
 
 	private void handlePluginBrowse(){
-		PluginSelectionDialog dialog = new PluginSelectionDialog(getShell(), PDECore.getDefault().getModelManager().getWorkspaceModels(), false);
+		PluginSelectionDialog dialog = new PluginSelectionDialog(getShell(), PluginRegistry.getWorkspaceModels(), false);
 		dialog.create();
 		if (dialog.open() == Window.OK){
 			IPluginModelBase workspaceModelBase = (IPluginModelBase)dialog.getFirstResult();

@@ -18,10 +18,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.IFeatureModelDelta;
 import org.eclipse.pde.internal.core.IFeatureModelListener;
 import org.eclipse.pde.internal.core.IPluginModelListener;
-import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelDelta;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -62,7 +63,7 @@ public class FeatureRebuilder implements IFeatureModelListener, IPluginModelList
 			// typically do not mix.
 			ModelEntry[] changed = delta.getChangedEntries();
 			if (changed.length > 0) {
-				if (changed[0].getActiveModel().getUnderlyingResource() == null)
+				if (!changed[0].hasWorkspaceModels())
 					touchFeatures();
 			}
 		}
@@ -75,7 +76,8 @@ public class FeatureRebuilder implements IFeatureModelListener, IPluginModelList
 	}
 	
 	private void touchFeatures() {
-		IFeatureModel[] workspaceFeatures = PDECore.getDefault().getWorkspaceModelManager().getFeatureModels();
+		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
+		IFeatureModel[] workspaceFeatures = manager.getWorkspaceModels();
 		if (workspaceFeatures.length > 0) {
 			IProgressMonitor monitor = new NullProgressMonitor();
 			monitor.beginTask("", workspaceFeatures.length); //$NON-NLS-1$

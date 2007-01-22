@@ -17,8 +17,7 @@ import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.builders.DependencyLoop;
 import org.eclipse.pde.internal.core.builders.DependencyLoopFinder;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
@@ -115,10 +114,9 @@ public class DependencyAnalysisSection extends PDESection {
 		} else if (model instanceof IFragmentModel){
 			IFragment fragment = ((IFragmentModel)model).getFragment();
 			String id = fragment.getPluginId();
-			ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(id);
-			if (entry != null) {
-				IPluginModelBase pluginModel = entry.getActiveModel();
-				new FindDeclarationsAction(pluginModel.getPluginBase()).run();
+			IPluginModelBase host = PluginRegistry.findModel(id);
+			if (host != null) {
+				new FindDeclarationsAction(host.getPluginBase()).run();
 			} else {
 				MessageDialog.openInformation(
 						PDEPlugin.getActiveWorkbenchShell(), 

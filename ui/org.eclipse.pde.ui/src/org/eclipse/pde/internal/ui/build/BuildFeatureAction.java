@@ -21,7 +21,7 @@ import org.eclipse.pde.internal.build.BuildScriptGenerator;
 import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
@@ -55,10 +55,10 @@ public class BuildFeatureAction extends BaseBuildAction {
 		AbstractScriptGenerator.setConfigInfo(AbstractScriptGenerator.getDefaultConfigInfos()); //This needs to be set before we set the format
 		generator.setArchivesFormat(AbstractScriptGenerator.getDefaultConfigInfos() + '-' + IXMLConstants.FORMAT_ANTZIP);
 		generator.setElements(new String[] { "feature@" + fFeatureModel.getFeature().getId() + (fFeatureModel.getFeature().getVersion() == null ? "" : ":" + fFeatureModel.getFeature().getVersion()) }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		generator.setPluginPath(TargetPlatform.getFeaturePaths());
-		generator.setPDEState(TargetPlatform.getState());
-		generator.setNextId(TargetPlatform.getPDEState().getNextId());
-		generator.setStateExtraData(TargetPlatform.getBundleClasspaths(TargetPlatform.getPDEState()), TargetPlatform.getPatchMap(TargetPlatform.getPDEState()));
+		generator.setPluginPath(TargetPlatformHelper.getFeaturePaths());
+		generator.setPDEState(TargetPlatformHelper.getState());
+		generator.setNextId(TargetPlatformHelper.getPDEState().getNextId());
+		generator.setStateExtraData(TargetPlatformHelper.getBundleClasspaths(TargetPlatformHelper.getPDEState()), TargetPlatformHelper.getPatchMap(TargetPlatformHelper.getPDEState()));
 		generator.setGenerateAssembleScript(false);
 		generator.generate();	
 	}

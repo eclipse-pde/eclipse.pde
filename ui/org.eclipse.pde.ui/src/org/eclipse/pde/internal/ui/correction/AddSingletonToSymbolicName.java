@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
@@ -46,9 +46,9 @@ public class AddSingletonToSymbolicName extends AbstractManifestMarkerResolution
 			Bundle bun = (Bundle)bundle;
 			IManifestHeader header = bun.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 			if (header instanceof BundleSymbolicNameHeader) {
-				if (fisDirective && TargetPlatform.getTargetVersion() >= 3.1)
+				if (fisDirective && TargetPlatformHelper.getTargetVersion() >= 3.1)
 					bundle.setHeader(Constants.BUNDLE_MANIFESTVERSION, "2"); //$NON-NLS-1$
-				else if (!fisDirective && TargetPlatform.getTargetVersion() < 3.1)
+				else if (!fisDirective && TargetPlatformHelper.getTargetVersion() < 3.1)
 					bundle.setHeader(Constants.BUNDLE_MANIFESTVERSION, null);
 				((BundleSymbolicNameHeader)header).setSingleton(true);
 			}

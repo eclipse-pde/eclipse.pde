@@ -15,7 +15,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
@@ -306,7 +306,7 @@ public class SplashSection extends PDESection {
 	
 	private void handleBrowse() {
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getDefault().getLabelProvider());
-		dialog.setElements(PDECore.getDefault().getModelManager().getAllPlugins());
+		dialog.setElements(PluginRegistry.getActiveModels());
 		dialog.setMultipleSelection(false);
 		dialog.setTitle(PDEUIMessages.SplashSection_selection); 
 		dialog.setMessage(PDEUIMessages.SplashSection_message); 

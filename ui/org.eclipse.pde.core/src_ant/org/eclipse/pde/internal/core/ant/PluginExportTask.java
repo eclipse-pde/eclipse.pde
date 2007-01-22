@@ -15,8 +15,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
 import org.eclipse.pde.internal.core.exports.FeatureExportOperation;
 import org.eclipse.pde.internal.core.exports.PluginExportOperation;
@@ -44,11 +43,10 @@ public class PluginExportTask extends BaseExportTask {
 	
 	public void setPlugins(String plugins) {
 		StringTokenizer tok = new StringTokenizer(plugins, ","); //$NON-NLS-1$
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		ArrayList models = new ArrayList();
 		while (tok.hasMoreTokens()) {
 			String id = tok.nextToken().trim();
-			IPluginModelBase model = manager.findModel(id);
+			IPluginModelBase model = PluginRegistry.findModel(id);
 			if (model != null)
 				models.add(model);
 		}

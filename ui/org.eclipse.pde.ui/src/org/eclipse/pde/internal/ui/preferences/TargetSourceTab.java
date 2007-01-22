@@ -30,6 +30,7 @@ import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEStateHelper;
 import org.eclipse.pde.internal.core.SourceLocation;
 import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.core.itarget.ITarget;
@@ -239,7 +240,7 @@ public class TargetSourceTab {
 		text.setLayoutData(gd);
 		text.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-			IPluginExtensionPoint point = PDECore.getDefault().findExtensionPoint("org.eclipse.pde.core.source"); //$NON-NLS-1$
+			IPluginExtensionPoint point = PDEStateHelper.findExtensionPoint("org.eclipse.pde.core.source"); //$NON-NLS-1$
 			if (point != null)
 				new ShowDescriptionAction(point, true).run();	
 			}

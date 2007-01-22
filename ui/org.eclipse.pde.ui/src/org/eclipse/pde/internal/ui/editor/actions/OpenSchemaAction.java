@@ -19,7 +19,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEStateHelper;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
@@ -104,8 +104,7 @@ public class OpenSchemaAction extends Action  {
 		}		
 		fFullPointID = fullPointID;
 		// Find the corresponding extension point
-		IPluginExtensionPoint point = 
-			PDECore.getDefault().findExtensionPoint(fFullPointID);
+		IPluginExtensionPoint point = PDEStateHelper.findExtensionPoint(fFullPointID);
 		// Ensure the extension point is defined
 		if (point == null) {
 			fSchema = null;
@@ -128,8 +127,7 @@ public class OpenSchemaAction extends Action  {
 		// Get the full extension point ID
 		fFullPointID = extension.getPoint();
 		// Find the corresponding extension point
-		IPluginExtensionPoint point = 
-			PDECore.getDefault().findExtensionPoint(fFullPointID);
+		IPluginExtensionPoint point = PDEStateHelper.findExtensionPoint(fFullPointID);
 		// Ensure the extension point is defined
 		if (point == null) {
 			fSchema = null;

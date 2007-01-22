@@ -15,8 +15,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.search.PluginSearchInput;
 import org.eclipse.pde.internal.core.search.PluginSearchScope;
 import org.eclipse.search.ui.ISearchQuery;
@@ -26,13 +25,16 @@ import org.eclipse.ui.IWorkbenchPart;
 
 public class FindPluginReferencesAction implements IObjectActionDelegate {
 	private String fSearchString = null;
-	/**
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
@@ -51,7 +53,8 @@ public class FindPluginReferencesAction implements IObjectActionDelegate {
 		return new PluginSearchQuery(input);
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
@@ -60,13 +63,9 @@ public class FindPluginReferencesAction implements IObjectActionDelegate {
 			IStructuredSelection sSelection = (IStructuredSelection) selection;
 			if (sSelection.size() == 1) {
 				IFile file = (IFile) sSelection.getFirstElement();
-				ModelEntry entry =
-					PDECore.getDefault().getModelManager().findEntry(file.getProject());
-				if (entry != null) {
-					IPluginModelBase model = entry.getActiveModel();
-					if (model != null)
-						fSearchString = model.getPluginBase().getId();
-				}
+				IPluginModelBase model = PluginRegistry.findModel(file.getProject());
+				if (model != null)
+					fSearchString = model.getPluginBase().getId();
 			}
 		}
 	}

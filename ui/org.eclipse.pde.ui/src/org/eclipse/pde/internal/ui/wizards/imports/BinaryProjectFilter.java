@@ -11,26 +11,18 @@
 package org.eclipse.pde.internal.ui.wizards.imports;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.pde.internal.core.BinaryRepositoryProvider;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 
 public class BinaryProjectFilter extends ViewerFilter {
 
 	/**
-	 * Constructor for BinaryProjectFilter.
-	 */
-	public BinaryProjectFilter() {
-		super();
-	}
-
-	/**
-	 * @see ViewerFilter#select(Viewer, Object, Object)
+	 * Returns <code>false</code> if the given element is a binary plug-in/feature project,
+	 * and <code>true</code> otherwise.
+	 *  
+	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		IProject project = null;
@@ -41,36 +33,12 @@ public class BinaryProjectFilter extends ViewerFilter {
 			project = (IProject) element;
 		}
 		if (project != null) {
-			if (isPluginProject(project) || isFeatureProject(project)) {
-				return !isBinary(project);
+			if (WorkspaceModelManager.isPluginProject(project) 
+					|| WorkspaceModelManager.isFeatureProject(project)) {
+				return !WorkspaceModelManager.isBinaryProject(project);
 			}
 		}
 		return true;
 	}
 	
-	private boolean isPluginProject(IProject project) {
-		if (project.isOpen() == false)
-			return false;
-		return project.exists(new Path("plugin.xml")) //$NON-NLS-1$
-			|| project.exists(new Path("fragment.xml")) || project.exists(new Path("META-INF/MANIFEST.MF")); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-	
-	private boolean isFeatureProject(IProject project) {
-		if (project.isOpen() == false)
-			return false;
-		return project.exists(new Path("feature.xml")); //$NON-NLS-1$
-	}
-	
-	private boolean isBinary(IProject project) {
-		try {
-			String binary = project.getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY);
-			if (binary != null) {
-				RepositoryProvider provider = RepositoryProvider.getProvider(project);
-				return provider==null || provider instanceof BinaryRepositoryProvider;
-			}
-		} catch (CoreException e) {
-			PDECore.logException(e);
-		}
-		return false;
-	}
 }

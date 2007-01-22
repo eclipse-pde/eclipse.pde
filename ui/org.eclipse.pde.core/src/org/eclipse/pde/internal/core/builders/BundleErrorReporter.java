@@ -51,14 +51,13 @@ import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.AbstractModel;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.AbstractNLModel;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.PluginModelManager;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
@@ -85,7 +84,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (fHeaders == null || getErrorCount() > 0)
 			return;
 
-		fModel = PDECore.getDefault().getModelManager().findModel(fProject);
+		fModel = PluginRegistry.findModel(fProject);
 		// be paranoid.  something could have gone wrong reading the file etc.
 		if (fModel == null || !validateBundleSymbolicName())
 			return;
@@ -215,7 +214,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				|| base.getExtensions().length > 0);
 
 		if (hasExtensions) {
-			if (TargetPlatform.getTargetVersion() >= 3.1) {
+			if (TargetPlatformHelper.getTargetVersion() >= 3.1) {
 				if (!"true".equals(singletonDir)) { //$NON-NLS-1$
 					if ("true".equals(singletonAttr)) { //$NON-NLS-1$
 						if (isCheckDeprecated()) {
@@ -238,7 +237,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 		}
 
-		if (TargetPlatform.getTargetVersion() >= 3.1) {
+		if (TargetPlatformHelper.getTargetVersion() >= 3.1) {
 			if (singletonAttr != null) {
 				if (isCheckDeprecated()) {
 					String message = PDECoreMessages.BundleErrorReporter_deprecated_attribute_singleton;
@@ -325,8 +324,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 		} 
 
-		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(name);
-		IPluginModelBase model = entry == null ? null : entry.getActiveModel();
+		IPluginModelBase model = PluginRegistry.findModel(name);
 		if (model == null || model instanceof IFragmentModel || !model.isEnabled()) {
 			report(NLS.bind(PDECoreMessages.BundleErrorReporter_HostNotExistPDE, name), 
 					getLine(header, name), CompilerFlags.P_UNRESOLVED_IMPORTS, PDEMarkerFactory.CAT_FATAL);				
@@ -500,8 +498,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			boolean optional = isOptional(required[i]);
 			int severity = getRequireBundleSeverity(required[i], optional);
 
-			IPluginModel model = PDECore.getDefault().getModelManager().findPluginModel(bundleID);
-			if (model == null || !model.isEnabled()) {
+			IPluginModelBase model = PluginRegistry.findModel(bundleID);
+			if (!(model instanceof IPluginModel) || !model.isEnabled()) {
 				IMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_NotExistPDE, bundleID), 
 						getPackageLine(header, required[i]),
 						severity, 
@@ -521,7 +519,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			String requiredRange = required[i].getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
 			if (requiredRange != null && VersionUtil.validateVersionRange(requiredRange).isOK()) {
 				VersionRange versionRange = new VersionRange(requiredRange);
-				String version = model.getPlugin().getVersion();
+				String version = model.getPluginBase().getVersion();
 				if (version != null && !versionRange.isIncluded(new Version(version))) {
 					report(NLS.bind(PDECoreMessages.BundleErrorReporter_BundleRangeInvalidInBundleVersion, bundleID + ": " + versionRange.toString()),  //$NON-NLS-1$
 							getPackageLine(header, required[i]), severity,
@@ -803,8 +801,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 	private void addHostPackages(String hostID) {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		IPluginModel model = manager.findPluginModel(hostID);
+		IPluginModelBase model = PluginRegistry.findModel(hostID);
 		if (model != null) {
 			IResource resource = model.getUnderlyingResource();
 			if (resource != null) {
@@ -825,11 +822,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 	private void addFragmentPackages(BundleDescription[] fragments) {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		for (int i = 0; i < fragments.length; i++) {
 			String id = fragments[i].getSymbolicName();
-			IFragmentModel model = manager.findFragmentModel(id);
-			IResource resource = model == null ? null : model.getUnderlyingResource();
+			IPluginModelBase model = PluginRegistry.findModel(id);
+			IResource resource = model instanceof IFragmentModel ? model.getUnderlyingResource() : null;
 			if (resource != null) {
 				addProjectPackages(resource.getProject());
 			}
@@ -892,8 +888,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 							severity,
 							PDEMarkerFactory.P_UNTRANSLATED_NODE, header.getName(),
 							PDEMarkerFactory.CAT_NLS); 
-				} else if (fModel instanceof AbstractModel) {
-					NLResourceHelper helper = ((AbstractModel)fModel).getNLResourceHelper();
+				} else if (fModel instanceof AbstractNLModel) {
+					NLResourceHelper helper = ((AbstractNLModel)fModel).getNLResourceHelper();
 					if (helper == null || !helper.resourceExists(value))
 						report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, 
 								value.substring(1)), getLine(header, value), severity,
@@ -973,7 +969,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (!validateStartHeader(header))
 			return; // valid start header problems already reported
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
-		if (severity != CompilerFlags.IGNORE && TargetPlatform.getTargetVersion() >= 3.2) {
+		if (severity != CompilerFlags.IGNORE && TargetPlatformHelper.getTargetVersion() >= 3.2) {
 			int line = header.getLineNumber();
 			report(PDECoreMessages.BundleErrorReporter_startHeader_autoStartDeprecated, line + 1, severity, 
 					PDEMarkerFactory.M_DEPRECATED_AUTOSTART,
@@ -984,7 +980,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	private void validateLazyStart() {
 		IHeader header = (IHeader) fHeaders.get(ICoreConstants.ECLIPSE_LAZYSTART);
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
-		if (header != null && TargetPlatform.getTargetVersion() < 3.2 && severity != CompilerFlags.IGNORE) {
+		if (header != null && TargetPlatformHelper.getTargetVersion() < 3.2 && severity != CompilerFlags.IGNORE) {
 			report(PDECoreMessages.BundleErrorReporter_lazyStart_unsupported,
 					header.getLineNumber() + 1, severity,
 					PDEMarkerFactory.NO_RESOLUTION,

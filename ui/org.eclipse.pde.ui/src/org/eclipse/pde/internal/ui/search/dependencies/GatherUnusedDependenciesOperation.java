@@ -41,8 +41,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
@@ -292,7 +292,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		
 		while (!(plugins.isEmpty())) {
 			String pluginId = (String)plugins.pop();
-			IPluginModelBase base = PDECore.getDefault().getModelManager().findModel(pluginId);
+			IPluginModelBase base = PluginRegistry.findModel(pluginId);
 			IPluginImport[] imports = base.getPluginBase().getImports();
 			
 			for (int j = 0; j < imports.length; j++) 

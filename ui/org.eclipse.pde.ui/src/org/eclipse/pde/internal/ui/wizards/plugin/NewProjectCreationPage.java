@@ -20,7 +20,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
@@ -136,7 +136,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fTargetCombo = new Combo(group, SWT.READ_ONLY|SWT.SINGLE);
 		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31, ICoreConstants.TARGET30});
 		if (PDECore.getDefault().areModelsInitialized())
-			fTargetCombo.setText(TargetPlatform.getTargetVersionString());
+			fTargetCombo.setText(TargetPlatformHelper.getTargetVersionString());
 		else
 			fTargetCombo.setText(ICoreConstants.TARGET33);
 		

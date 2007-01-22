@@ -11,11 +11,10 @@
 package org.eclipse.pde.internal.ui.views.dependencies;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 
 public class CalleesTreeContentProvider extends CalleesContentProvider
 		implements ITreeContentProvider {
@@ -37,9 +36,9 @@ public class CalleesTreeContentProvider extends CalleesContentProvider
 		} else if (parentElement instanceof IPluginImport) {
 			IPluginImport pluginImport = (IPluginImport) parentElement;
 			String id = pluginImport.getId();
-			IPlugin importedPlugin = PDECore.getDefault().findPlugin(id);
+			IPluginModelBase importedPlugin = PluginRegistry.findModel(id);
 			if (importedPlugin != null)
-				return findCallees(importedPlugin);
+				return findCallees(importedPlugin.getPluginBase());
 
 		}
 		return new Object[0];

@@ -28,6 +28,7 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 
 public class TracingOptionsManager {
 	private Properties template;
@@ -38,7 +39,7 @@ public class TracingOptionsManager {
 
 	private void createTemplate() {
 		template = new Properties();
-		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getPlugins();
+		IPluginModelBase[] models = PluginRegistry.getAllModels();
 		for (int i = 0; i < models.length; i++) {
 			addToTemplate(models[i]);
 		}		

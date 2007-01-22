@@ -27,8 +27,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -60,12 +59,10 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		public Object[] getElements(Object parent) {
 			IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();
 			ArrayList result = new ArrayList();
-			PluginModelManager manager = PDECore.getDefault().getModelManager();
 			for (int i = 0; i < projects.length; i++) {
-				if (projects[i].isOpen()
-					&& WorkspaceModelManager.isPluginProject(projects[i])
-					&& !WorkspaceModelManager.isBinaryPluginProject(projects[i])) {
-					IPluginModelBase model = manager.findModel(projects[i]);
+				if (WorkspaceModelManager.isPluginProject(projects[i])
+					&& !WorkspaceModelManager.isBinaryProject(projects[i])) {
+					IPluginModelBase model = PluginRegistry.findModel(projects[i]);
 					if (model != null)
 						result.add(model);
 				}
@@ -182,8 +179,6 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	private void initialize() {
 		Object[] items = initialSelection.toArray();
 		ArrayList list = new ArrayList();
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		
 		for (int i = 0; i < items.length; i++) {
 			Object item = items[i];
 			if (item instanceof IJavaProject) {
@@ -191,10 +186,9 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			}
 			if (item instanceof IProject) {
 				IProject project = (IProject) item;
-				if (project.isOpen()
-					&& WorkspaceModelManager.isPluginProject(project)
-					&& !WorkspaceModelManager.isBinaryPluginProject(project)) {
-					IPluginModelBase model = manager.findModel(project);
+				if (WorkspaceModelManager.isPluginProject(project)
+					&& !WorkspaceModelManager.isBinaryProject(project)) {
+					IPluginModelBase model = PluginRegistry.findModel(project);
 					if (model != null)
 						list.add(model);
 				}
@@ -224,15 +218,14 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	
 	private void removeSharedModels(ArrayList result) {
 		IPluginModelBase[] smodels = (IPluginModelBase[])result.toArray(new IPluginModelBase[result.size()]);
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		for (int i = 0; i < smodels.length; i++) {
 			String id = smodels[i].getPluginBase().getId();
-			IPluginModelBase model = manager.findModel(id);
+			IPluginModelBase model = PluginRegistry.findModel(id);
 			if (model != null) {
 				IResource resource = model.getUnderlyingResource();
 				if (resource != null) {
 					IProject project = resource.getProject();
-					if (!WorkspaceModelManager.isUnsharedPluginProject(project)) {
+					if (!WorkspaceModelManager.isUnsharedProject(project)) {
 						result.remove(smodels[i]);
 					}
 				}

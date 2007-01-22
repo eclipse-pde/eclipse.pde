@@ -22,6 +22,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.osgi.framework.Version;
 
 public class SourceLocationManager implements ICoreConstants {
@@ -47,11 +48,9 @@ public class SourceLocationManager implements ICoreConstants {
 	public SourceLocation[] getExtensionLocations() {
 		if (fExtensionLocations == null) {
 			ArrayList list = new ArrayList();
-			ModelEntry[] entries = PDECore.getDefault().getModelManager().getEntries();
-			for (int i = 0; i < entries.length; i++) {
-				IPluginModelBase model = entries[i].getExternalModel();
-				if (model != null)
-					processExtensions(model, list);
+			IPluginModelBase[] models = PluginRegistry.getExternalModels();
+			for (int i = 0; i < models.length; i++) {
+				processExtensions(models[i], list);
 			}
 			fExtensionLocations = (SourceLocation[]) list.toArray(new SourceLocation[list.size()]);
 		}
@@ -154,7 +153,7 @@ public class SourceLocationManager implements ICoreConstants {
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 		for (int j = 0; j < extensions.length; j++) {
 			IPluginExtension extension = extensions[j];
-			if ((PDECore.getPluginId() + ".source").equals(extension.getPoint())) { //$NON-NLS-1$
+			if ((PDECore.PLUGIN_ID + ".source").equals(extension.getPoint())) { //$NON-NLS-1$
 				processExtension(extension, result);
 			}
 		}				

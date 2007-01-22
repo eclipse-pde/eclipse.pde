@@ -36,11 +36,12 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
 import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.IEnvironmentVariables;
 import org.eclipse.pde.internal.core.ModelProviderEvent;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEState;
@@ -105,15 +106,15 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		IEnvironmentInfo env = fTarget.getEnvironment();
 		monitor.beginTask(PDECoreMessages.LoadTargetOperation_envTaskName, 1);
 		if (env == null) {
-			pref.setToDefault(IEnvironmentVariables.ARCH);
-			pref.setToDefault(IEnvironmentVariables.NL);
-			pref.setToDefault(IEnvironmentVariables.OS);
-			pref.setToDefault(IEnvironmentVariables.WS);
+			pref.setToDefault(ICoreConstants.ARCH);
+			pref.setToDefault(ICoreConstants.NL);
+			pref.setToDefault(ICoreConstants.OS);
+			pref.setToDefault(ICoreConstants.WS);
 		} else {
-			pref.setValue(IEnvironmentVariables.ARCH, env.getDisplayArch());
-			pref.setValue(IEnvironmentVariables.NL, env.getDisplayNL());
-			pref.setValue(IEnvironmentVariables.OS, env.getDisplayOS());
-			pref.setValue(IEnvironmentVariables.WS, env.getDisplayWS());
+			pref.setValue(ICoreConstants.ARCH, env.getDisplayArch());
+			pref.setValue(ICoreConstants.NL, env.getDisplayNL());
+			pref.setValue(ICoreConstants.OS, env.getDisplayOS());
+			pref.setValue(ICoreConstants.WS, env.getDisplayWS());
 		}
 		monitor.done();
 	}
@@ -168,7 +169,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		String currentPath = pref.getString(ICoreConstants.PLATFORM_PATH);
 		String path;
 		if (info == null || info.useDefault()) { 
-			path = ExternalModelManager.computeDefaultPlatformPath();
+			path = TargetPlatform.getDefaultLocation();
 		} else {
 			try {
 				IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
@@ -178,8 +179,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 			}			
 		}
 		monitor.worked(10);
-		if (!ExternalModelManager.arePathsEqual(new Path(path), new Path(currentPath))
-				|| !areAdditionalLocationsEqual(pref)) {
+		if (!new Path(path).equals(new Path(currentPath)) || !areAdditionalLocationsEqual(pref)) {
 			// reload required
 			List additional = getAdditionalLocs();
 			handleReload(path, additional, pref, new SubProgressMonitor(monitor, 85));
@@ -187,7 +187,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 			// update preferences (Note: some preferences updated in handleReload())
 			pref.setValue(ICoreConstants.PLATFORM_PATH, path);
 			String mode =
-				ExternalModelManager.isTargetEqualToHost(path)
+				new Path(path).equals(new Path(TargetPlatform.getDefaultLocation()))
 				? ICoreConstants.VALUE_USE_THIS
 						: ICoreConstants.VALUE_USE_OTHER;
 			pref.setValue(ICoreConstants.TARGET_MODE, mode);
@@ -211,10 +211,10 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 			}	
 		} else {
 			PDECore core = PDECore.getDefault();
-			IPluginModelBase[] changed = handlePluginSelection(core.getModelManager().getState(), core.getFeatureModelManager(),
+			IPluginModelBase[] changed = handlePluginSelection(TargetPlatformHelper.getPDEState(), core.getFeatureModelManager(),
 					pref, new SubProgressMonitor(monitor,85));
 			if (changed.length > 0) {
-				ExternalModelManager pluginManager = core.getExternalModelManager();
+				ExternalModelManager pluginManager = core.getModelManager().getExternalModelManager();
 				pluginManager.fireModelProviderEvent(
 						new ModelProviderEvent(
 							pluginManager,
@@ -281,17 +281,17 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 		handlePluginSelection(state, features, pref, new SubProgressMonitor(monitor,25));
 		
 		IPluginModelBase[] targetModels = state.getTargetModels();
-		ExternalModelManager pluginManager = PDECore.getDefault().getExternalModelManager();
+		ExternalModelManager pluginManager = PDECore.getDefault().getModelManager().getExternalModelManager();
 		pluginManager.fireModelProviderEvent(
 				new ModelProviderEvent(
 					pluginManager,
 					IModelProviderEvent.MODELS_REMOVED | IModelProviderEvent.MODELS_ADDED | IModelProviderEvent.TARGET_CHANGED,
 					targetModels,
-					PDECore.getDefault().getModelManager().getExternalModels(),
+					PluginRegistry.getExternalModels(),
 					null));
 		pluginManager.setModels(targetModels);
 		addProjectsToState(state);
-		PDECore.getDefault().getModelManager().setState(state);
+		TargetPlatformHelper.setState(state);
 		PDECore.getDefault().getFeatureModelManager().targetReloaded();	
 		
 		PDECore.getDefault().getSourceLocationManager().setExtensionLocations(SourceLocationManager.computeSourceLocations(targetModels));
@@ -321,7 +321,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 	}
 	
 	private void addProjectsToState(PDEState state) {
-		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getWorkspaceModels();
+		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		for (int i = 0; i < models.length; i++) {
 			BundleDescription bundle = models[i].getBundleDescription();
 			if (bundle == null)
@@ -379,7 +379,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 	private void getPluginIds(Map featureMap, FeatureModelManager manager, Set optionalPlugins, IProgressMonitor monitor) {
 		ITargetFeature[] targetFeatures = fTarget.getFeatures();
 		ITargetPlugin[] plugins = fTarget.getPlugins();
-		IPluginModelBase workspacePlugins[] = PDECore.getDefault().getModelManager().getWorkspaceModels();
+		IPluginModelBase workspacePlugins[] = PluginRegistry.getWorkspaceModels();
 		
 		monitor.beginTask(PDECoreMessages.LoadTargetOperation_findPluginsTaskName, targetFeatures.length + plugins.length + workspacePlugins.length);
 		if (fTarget.useAllPlugins()) {

@@ -13,8 +13,8 @@ package org.eclipse.pde.internal.ui.views.dependencies;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.internal.core.IPluginModelListener;
-import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelDelta;
 import org.eclipse.pde.internal.core.PluginModelManager;
@@ -44,10 +44,12 @@ public class DependenciesViewPageContentProvider extends DefaultContentProvider
 	private void handleRemoved(ModelEntry[] removed) {
 		for (int i = 0; i < removed.length; i++) {
 			ModelEntry entry = removed[i];
-			IPluginModelBase model = entry.getActiveModel();
-			if (model != null && model.equals(fViewer.getInput())) {
-				fViewer.setInput(null);
-				return;
+			IPluginModelBase[] models = entry.getActiveModels();
+			for (int j = 0; j < models.length; j++) {
+				if (models[j].equals(fViewer.getInput())) {
+					fViewer.setInput(null);
+					return;
+				}
 			}
 		}
 		fViewer.refresh();

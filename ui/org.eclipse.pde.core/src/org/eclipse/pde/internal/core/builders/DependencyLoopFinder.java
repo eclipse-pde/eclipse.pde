@@ -17,7 +17,7 @@ import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 
 public class DependencyLoopFinder {
@@ -129,8 +129,8 @@ public class DependencyLoopFinder {
 	}
 
 	private static IPlugin findPlugin(String id) {
-		IPluginModelBase childModel = PDECore.getDefault().getModelManager().findPlugin(id, null, 0);
-		if (childModel==null || !(childModel instanceof IPluginModel)) return null;
+		IPluginModelBase childModel = PluginRegistry.findModel(id);
+		if (childModel == null || !(childModel instanceof IPluginModel)) return null;
 		return (IPlugin)childModel.getPluginBase();
 	}
 	

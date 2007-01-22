@@ -29,9 +29,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.TracingOptionsManager;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -225,13 +224,11 @@ public class TracingBlock {
 			} else {
 				StringTokenizer tokenizer = new StringTokenizer(checked, ","); //$NON-NLS-1$
 				ArrayList list = new ArrayList();
-				PluginModelManager manager = PDECore.getDefault()
-						.getModelManager();
 				while (tokenizer.hasMoreTokens()) {
 					String id = tokenizer.nextToken();
-					ModelEntry entry = manager.findEntry(id);
-					if (entry != null) {
-						list.add(entry.getActiveModel());
+					model = PluginRegistry.findModel(id);
+					if (model != null) {
+						list.add(model);
 					}
 				}
 				fPluginViewer.setCheckedElements(list.toArray());
@@ -330,8 +327,7 @@ public class TracingBlock {
 
 	private IPluginModelBase[] getTraceableModels() {
 		if (fTraceableModels == null) {
-			PluginModelManager manager = PDECore.getDefault().getModelManager();
-			IPluginModelBase[] models = manager.getPlugins();
+			IPluginModelBase[] models = PluginRegistry.getActiveModels();
 			ArrayList result = new ArrayList();
 			for (int i = 0; i < models.length; i++) {
 				if (TracingOptionsManager.isTraceable(models[i]))
@@ -345,11 +341,7 @@ public class TracingBlock {
 	private IPluginModelBase getLastSelectedPlugin(ILaunchConfiguration config)
 			throws CoreException {
 		String pluginID = config.getAttribute(IPDELauncherConstants.TRACING_SELECTED_PLUGIN, (String) null);
-		if (pluginID != null) {
-			ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(pluginID);
-			return (entry == null) ? null : entry.getActiveModel();
-		}
-		return null;
+		return pluginID == null ? null : PluginRegistry.findModel(pluginID);
 	}
 
 	private TracingPropertySource getPropertySource(IPluginModelBase model) {

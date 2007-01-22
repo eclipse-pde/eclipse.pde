@@ -43,6 +43,7 @@ import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 
 public class ClasspathHelper {
@@ -58,8 +59,7 @@ public class ClasspathHelper {
 			}
 		}
 		Properties properties = new Properties();
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		IPluginModelBase[] models = manager.getWorkspaceModels();
+		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getPluginBase().getId();
 			if (id == null)
@@ -127,7 +127,7 @@ public class ClasspathHelper {
     }
 
 	public static String getDevEntries(boolean checkExcluded) {
-		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getWorkspaceModels();
+		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getPluginBase().getId();

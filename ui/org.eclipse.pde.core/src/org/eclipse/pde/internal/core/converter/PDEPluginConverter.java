@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.framework.util.Headers;
 import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.osgi.framework.BundleException;
 
 public class PDEPluginConverter {
@@ -58,8 +58,8 @@ public class PDEPluginConverter {
 					"META-INF/MANIFEST.MF").toOSString()); //$NON-NLS-1$
 			File inputFile = new File(project.getLocation().toOSString());
 			PluginConverter converter = PluginConverter.getDefault();
-			double version = TargetPlatform.getTargetVersion();
-			String versionString =  version <= 3.1 ? ICoreConstants.TARGET31 : TargetPlatform.getTargetVersionString();
+			double version = TargetPlatformHelper.getTargetVersion();
+			String versionString =  version <= 3.1 ? ICoreConstants.TARGET31 : TargetPlatformHelper.getTargetVersionString();
 			converter.convertManifest(inputFile, outputFile, false, versionString, true, null);
 			
 			Dictionary prop = getProperties(outputFile, newProps);

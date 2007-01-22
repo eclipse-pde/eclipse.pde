@@ -33,7 +33,8 @@ public class ManifestTextHover extends PDETextHover {
 			String headerName = header.getName();
 			if (offset >= header.getOffset() + headerName.length())
 				return checkForTranslatable(header);
-			return PDEJavaHelper.getOSGIConstantJavaDoc(headerName, fJP);
+			if (fJP != null)
+				return PDEJavaHelper.getOSGIConstantJavaDoc(headerName, fJP);
 		}
 		return null;
 	}

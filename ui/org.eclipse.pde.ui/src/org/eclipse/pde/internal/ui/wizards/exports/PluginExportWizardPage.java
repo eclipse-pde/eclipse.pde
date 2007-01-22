@@ -20,7 +20,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -39,14 +39,18 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 			PDEUIMessages.ExportWizard_Plugin_pageBlock); 
 		setTitle(PDEUIMessages.ExportWizard_Plugin_pageTitle); 
 	}
+	
+	protected Object getInput() {
+		return PDECore.getDefault().getModelManager();
+	}
 
 	public Object[] getListElements() {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < projects.length; i++) {
-			if (!WorkspaceModelManager.isBinaryPluginProject(projects[i])
+			if (!WorkspaceModelManager.isBinaryProject(projects[i])
 				&& WorkspaceModelManager.isPluginProject(projects[i])) {
-				IModel model = PDECore.getDefault().getModelManager().findModel(projects[i]);
+				IModel model = PluginRegistry.findModel(projects[i]);
 				if (model != null && isValidModel(model) && hasBuildProperties((IPluginModelBase)model)) {
 					result.add(model);
 				}
@@ -78,11 +82,11 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 		if (object instanceof IJavaProject)
 			object = ((IJavaProject)object).getProject();
 		if (object instanceof IProject)
-			return PDECore.getDefault().getModelManager().findModel((IProject)object);
+			return PluginRegistry.findModel((IProject)object);
 		if (object instanceof PersistablePluginObject) {
-			ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(((PersistablePluginObject)object).getPluginID());
-			if (entry != null) {
-				return entry.getWorkspaceModel();
+			IPluginModelBase model = PluginRegistry.findModel(((PersistablePluginObject)object).getPluginID());
+			if (model != null && model.getUnderlyingResource() != null) {
+				return model;
 			}
 		}
 		return null;

@@ -24,7 +24,7 @@ import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
@@ -108,7 +108,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 		if (lastDot == -1)
 			return null;
 		String pluginId = productId.substring(0, lastDot);
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginId);
+		IPluginModelBase model = PluginRegistry.findModel(pluginId);
 		if (model != null) {
 			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 			for (int i = 0; i < extensions.length; i++) {

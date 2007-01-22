@@ -24,11 +24,13 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -269,12 +271,28 @@ public class PDEAuxiliaryState {
 		
 		String className = (String)manifest.get(ICoreConstants.PLUGIN_CLASS);
 		info.className	= className != null ? className : (String)manifest.get(Constants.BUNDLE_ACTIVATOR);	
-		info.libraries = PDEStateHelper.getClasspath(manifest);
+		info.libraries = getClasspath(manifest);
 		info.hasExtensibleAPI = "true".equals(manifest.get(ICoreConstants.EXTENSIBLE_API)); //$NON-NLS-1$ 
 		info.isPatchFragment = "true".equals(manifest.get(ICoreConstants.PATCH_FRAGMENT)); //$NON-NLS-1$
 		info.localization = (String)manifest.get(Constants.BUNDLE_LOCALIZATION);
 		info.hasBundleStructure = hasBundleStructure;
 		fPluginInfos.put(Long.toString(desc.getBundleId()), info);
+	}
+	
+	protected String[] getClasspath(Dictionary manifest) {
+		String fullClasspath = (String) manifest.get(Constants.BUNDLE_CLASSPATH);
+		String[] result = new String[0];
+		try {
+			if (fullClasspath != null) {
+				ManifestElement[] classpathEntries = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, fullClasspath);
+				result = new String[classpathEntries.length];
+				for (int i = 0; i < classpathEntries.length; i++) {
+					result[i] = classpathEntries[i].getValue();
+				}
+			}
+		} catch (BundleException e) {
+		}
+		return result;
 	}
 	
 	protected void clear() {

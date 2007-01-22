@@ -25,9 +25,9 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.itarget.IImplicitDependenciesInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetPlugin;
@@ -119,9 +119,8 @@ public class TargetImplicitPluginsTab {
 		String value = preferences.getString(ICoreConstants.IMPLICIT_DEPENDENCIES);
 		StringTokenizer tokens = new StringTokenizer(value,","); //$NON-NLS-1$
 		fElements = new HashSet((4/3) * tokens.countTokens() + 1);
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		while (tokens.hasMoreElements()) {
-			IPluginModelBase base = manager.findModel(tokens.nextToken());
+			IPluginModelBase base = PluginRegistry.findModel(tokens.nextToken());
 			if (base != null) {
 				BundleDescription desc = base.getBundleDescription();
 				fElements.add(desc);

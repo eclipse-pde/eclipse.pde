@@ -33,7 +33,7 @@ import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.search.ui.ISearchResult;
@@ -85,7 +85,7 @@ public class DependencyExtentOperation {
 		fSearchResult = (DependencyExtentSearchResult)searchResult;
 		fProject = project;
 		fImportID = importID;
-		fModel = PDECore.getDefault().getModelManager().findModel(project);
+		fModel = PluginRegistry.findModel(project);
 	}
 	
 	public void execute(IProgressMonitor monitor) {

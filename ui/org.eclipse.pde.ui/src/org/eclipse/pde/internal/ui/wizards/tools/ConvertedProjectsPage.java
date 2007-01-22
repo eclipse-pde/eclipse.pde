@@ -37,7 +37,7 @@ import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelFactory;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
@@ -169,7 +169,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 			library.setExported(true);
 			base.add(library);
 		}
-		if (TargetPlatform.getTargetVersion() >= 3.1)
+		if (TargetPlatformHelper.getTargetVersion() >= 3.1)
 			model.getBundleModel().getBundle().setHeader(Constants.BUNDLE_MANIFESTVERSION, "2"); //$NON-NLS-1$
 		model.save();
 		monitor.done();
@@ -177,7 +177,7 @@ public class ConvertedProjectsPage extends WizardPage  {
 	}
 
 	private boolean isOldTarget() {
-		return TargetPlatform.getTargetVersion() < 3.1;
+		return TargetPlatformHelper.getTargetVersion() < 3.1;
 	}
 	
 	public boolean finish() {

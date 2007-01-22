@@ -35,13 +35,12 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
-import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.PluginModelManager;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ibundle.IBundleFragmentModel;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
@@ -182,19 +181,19 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 	private void validateBinIncludes(IBuildEntry binIncludes) {
 		// make sure we have a manifest entry
-		if(WorkspaceModelManager.hasBundleManifest(fProject)) {
+		if(fProject.exists(ICoreConstants.MANIFEST_PATH)) {
 			String key = "META-INF/"; //$NON-NLS-1$
 			validateBinIncludes(binIncludes, key);
 		}
 
 		// make sure if we're a fragment, we have a fragment.xml entry
-		if(WorkspaceModelManager.hasFragmentManifest(fProject)) {
+		if(fProject.exists(ICoreConstants.FRAGMENT_PATH)) {
 			String key = "fragment.xml"; //$NON-NLS-1$
 			validateBinIncludes(binIncludes, key);
 		}
 
 		// make sure if we're a plugin, we have a plugin.xml entry
-		if(WorkspaceModelManager.hasPluginManifest(fProject)) {
+		if(fProject.exists(ICoreConstants.PLUGIN_PATH)) {
 			String key = "plugin.xml"; //$NON-NLS-1$
 			validateBinIncludes(binIncludes, key);
 		}
@@ -235,7 +234,6 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	private void validateJarsExtraClasspath(IBuildEntry javaExtra) {
 		String platform = "platform:/plugin/";  //$NON-NLS-1$
 		String[] tokens = javaExtra.getTokens();
-		PluginModelManager manager =  PDECore.getDefault().getModelManager();
 		IPath projectPath = javaExtra.getModel().getUnderlyingResource().getProject().getLocation();
 		for (int i = 0; i < tokens.length; i++) {
 			boolean exists = true;
@@ -243,14 +241,14 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				String path = tokens[i].substring(platform.length());
 				int sep = path.indexOf(IPath.SEPARATOR);
 				if (sep > -1) {
-					ModelEntry entry = manager.findEntry(path.substring(0, sep));
-					if (entry == null)
+					IPluginModelBase model = PluginRegistry.findModel(path.substring(0, sep));
+					if (model == null)
 						exists = false;
 					else {
-						IResource resource = entry.getActiveModel().getUnderlyingResource();
+						IResource resource = model.getUnderlyingResource();
 						path = path.substring(sep + 1);
 						if (resource == null) {
-							String location = entry.getActiveModel().getInstallLocation();
+							String location = model.getInstallLocation();
 							File external = new File(location);
 							if (external.isDirectory()) {
 								IPath p = new Path(location).addTrailingSeparator().append(path);
@@ -324,8 +322,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	}
 
 	private void validateMissingLibraries(ArrayList sourceEntryKeys, IClasspathEntry[] cpes) {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		IPluginModelBase model = manager.findModel(fProject);
+		IPluginModelBase model = PluginRegistry.findModel(fProject);
 		if (model == null)
 			return;
 		if (model instanceof IBundlePluginModelBase && !(model instanceof IBundleFragmentModel)) {
@@ -367,7 +364,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			}
 			String sourceEntryKey = PROPERTY_SOURCE_PREFIX + libname;
 			if (!sourceEntryKeys.contains(sourceEntryKey) 
-					&& !containedInFragment(manager, model.getBundleDescription(), libname))
+					&& !containedInFragment(model.getBundleDescription(), libname))
 				prepareError(sourceEntryKey, null,
 						NLS.bind(PDECoreMessages.BuildErrorReporter_missingEntry, sourceEntryKey),
 						PDEMarkerFactory.B_SOURCE_ADDITION,
@@ -375,7 +372,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		}
 	}
 
-	private boolean containedInFragment(PluginModelManager manager, BundleDescription description, String libname) {
+	private boolean containedInFragment(BundleDescription description, String libname) {
 		if(description == null)
 			return false;
 
@@ -384,9 +381,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		if (fragments == null)
 			return false;
 		for (int j = 0; j < fragments.length; j++) {
-			ModelEntry entry = manager.findEntry(fragments[j].getSymbolicName());
-			IPluginModelBase fragmentModel = entry.getWorkspaceModel();
-			if (fragmentModel != null) {
+			IPluginModelBase fragmentModel = PluginRegistry.findModel(fragments[j]);
+			if (fragmentModel != null && fragmentModel.getUnderlyingResource() != null) {
 				IProject project = fragmentModel.getUnderlyingResource().getProject();
 				if (project.findMember(libname) != null)
 					return true;
@@ -511,9 +507,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	
 	private void validateDependencyManagement(IBuildEntry bundleList) {
 		String[] bundles = bundleList.getTokens();
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		for (int i = 0; i < bundles.length; i++) {
-			if (manager.findModel(bundles[i]) == null)
+			if (PluginRegistry.findModel(bundles[i]) == null)
 				prepareError(IBuildEntry.SECONDARY_DEPENDENCIES, bundles[i], 
 						NLS.bind(PDECoreMessages.BuildErrorReporter_cannotFindBundle, bundles[i]), 
 						PDEMarkerFactory.NO_RESOLUTION, fClasspathSeverity, PDEMarkerFactory.CAT_OTHER);

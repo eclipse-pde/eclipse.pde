@@ -36,10 +36,10 @@ import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.IPluginModelListener;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelDelta;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
@@ -119,7 +119,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		});
 		GridData data = (GridData)tablePart.getControl().getLayoutData();
 		data.minimumWidth = 200;
-		fPluginTable.setInput(PDECore.getDefault().getModelManager());
+		fPluginTable.setInput(getProduct());
 		
 		tablePart.setButtonEnabled(0, isEditable());
 		tablePart.setButtonEnabled(1, isEditable());
@@ -285,7 +285,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		
 		HashSet set = new HashSet();
 		for (int i = 0; i < plugins.length; i++) {
-			addDependencies(TargetPlatform.getState().getBundle(plugins[i].getId(), null), set);
+			addDependencies(TargetPlatformHelper.getState().getBundle(plugins[i].getId(), null), set);
 		}
 		
 		IProduct product = plugins[0].getProduct();
@@ -345,7 +345,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	
 	private static BundleDescription[] getAllFragments() {
 		ArrayList list = new ArrayList();
-		BundleDescription[] bundles = TargetPlatform.getState().getBundles();
+		BundleDescription[] bundles = TargetPlatformHelper.getState().getBundles();
 		for (int i = 0; i < bundles.length; i++) {
 			if (bundles[i].getHost() != null)
 				list.add(bundles[i]);
@@ -411,7 +411,7 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	private BundleDescription[] getBundles() {
 		TreeMap map = new TreeMap();
 		IProduct product = getProduct();
-		BundleDescription[] bundles = TargetPlatform.getState().getBundles();
+		BundleDescription[] bundles = TargetPlatformHelper.getState().getBundles();
 		for (int i = 0; i < bundles.length; i++) {
 			String id = bundles[i].getSymbolicName();
 			if (!product.containsPlugin(id)) {
@@ -507,9 +507,9 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		if (object instanceof IJavaProject)
 			object = ((IJavaProject)object).getProject();
 		if (object instanceof IProject)
-			return PDECore.getDefault().getModelManager().findModel((IProject)object);
+			return PluginRegistry.findModel((IProject)object);
 		if (object instanceof PersistablePluginObject) {
-			return PDECore.getDefault().getModelManager().findModel(((PersistablePluginObject)object).getPluginID());
+			return PluginRegistry.findModel(((PersistablePluginObject)object).getPluginID());
 		}
 		return null;
 	}

@@ -35,10 +35,11 @@ import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -82,7 +83,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 * @see org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationDelegate#verifyMainTypeName(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public String verifyMainTypeName(ILaunchConfiguration configuration) throws CoreException {
-		if (TargetPlatform.usesEquinoxStartup())
+		if (TargetPlatformHelper.usesEquinoxStartup())
 			return "org.eclipse.equinox.launcher.Main"; //$NON-NLS-1$
 		return "org.eclipse.core.launcher.Main"; //$NON-NLS-1$
 	}
@@ -91,7 +92,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		throws CoreException {
 		IJavaProject javaProject = getJavaProject(configuration);
 		IPluginModelBase model =
-			PDECore.getDefault().getModelManager().findModel(javaProject.getProject());
+			PluginRegistry.findModel(javaProject.getProject());
 		if (model == null)
 			throw new CoreException(
 				new Status(
@@ -129,7 +130,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		} catch (CoreException e) {
 		}
 		if (application == null)
-			application = TargetPlatform.usesNewApplicationModel() || TargetPlatform.getTargetVersion() <= 3.2 ? 
+			application = TargetPlatformHelper.usesNewApplicationModel() || TargetPlatformHelper.getTargetVersion() <= 3.2 ? 
 					UI_APPLICATION : LEGACY_UI_APPLICATION;
 		programArgs.add(application);
 		
@@ -157,7 +158,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		String productID = LaunchConfigurationHelper.getProductID(configuration);
 		LaunchConfigurationHelper.createConfigIniFile(configuration,
 				productID, fPluginMap, getConfigurationDirectory(configuration));
-		TargetPlatform.createPlatformConfigurationArea(
+		TargetPlatformHelper.createPlatformConfigurationArea(
 				fPluginMap,
 				getConfigurationDirectory(configuration),
 				LaunchConfigurationHelper.getContributingPlugin(productID));
@@ -171,7 +172,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		
 		// necessary for PDE to know how to load plugins when target platform = host platform
 		// see PluginPathFinder.getPluginPaths()
-		if (fPluginMap.containsKey(PDECore.getPluginId()))
+		if (fPluginMap.containsKey(PDECore.PLUGIN_ID))
 			programArgs.add("-pdelaunch"); //$NON-NLS-1$	
 
 		// Create the .options file if tracing is turned on
@@ -211,8 +212,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	}
 		
 	private IPluginModelBase findPlugin(String id) throws CoreException {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		IPluginModelBase model = manager.findModel(id);
+		IPluginModelBase model = PluginRegistry.findModel(id);
 		if (model == null)
 			model = PDECore.getDefault().findPluginInHost(id);
 		if (model == null)

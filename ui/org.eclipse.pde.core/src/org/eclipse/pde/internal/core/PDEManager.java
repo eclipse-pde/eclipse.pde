@@ -21,6 +21,7 @@ import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 
@@ -30,10 +31,9 @@ public class PDEManager {
 		ArrayList result = new ArrayList();	
 		BundleDescription desc = getBundleDescription(model);
 		if (desc != null) {
-			PluginModelManager manager = PDECore.getDefault().getModelManager();
 			BundleDescription[] fragments = desc.getFragments();
 			for (int i = 0; i < fragments.length; i++) {
-				IPluginModelBase candidate = manager.findModel(fragments[i]);
+				IPluginModelBase candidate = PluginRegistry.findModel(fragments[i]);
 				if (candidate instanceof IFragmentModel) {
 					result.add(candidate);
 				}
@@ -47,8 +47,7 @@ public class PDEManager {
 		if (desc != null) {
 			HostSpecification spec = desc.getHost();
 			if (spec != null) {
-				PluginModelManager manager = PDECore.getDefault().getModelManager();
-				IPluginModelBase host = manager.findModel(spec.getName());
+				IPluginModelBase host = PluginRegistry.findModel(spec.getName());
 				if (host instanceof IPluginModel)
 					return (IPluginModel)host;
 			}
@@ -64,7 +63,7 @@ public class PDEManager {
 			// editor models don't carry a bundle description
 			// get the core model counterpart.
 			IProject project = model.getUnderlyingResource().getProject();
-			IPluginModelBase coreModel = PDECore.getDefault().getModelManager().findModel(project);
+			IPluginModelBase coreModel = PluginRegistry.findModel(project);
 			if (coreModel != null)
 				desc = coreModel.getBundleDescription();
 		}
@@ -104,7 +103,7 @@ public class PDEManager {
 	}
 	
 	public static IPluginExtensionPoint findExtensionPoint(String fullID) {
-		IPluginModelBase[] bases = PDECore.getDefault().getModelManager().getAllPlugins();
+		IPluginModelBase[] bases = PluginRegistry.getActiveModels();
 		for (int i = 0; i < bases.length; i++) {
 			IExtensions extensions = bases[i].getExtensions();
 			if (extensions == null) 

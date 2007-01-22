@@ -43,7 +43,6 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.IPluginParent;
-import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
@@ -92,7 +91,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	private Image fGenericElementImage;
 
 	private SchemaRegistry fSchemaRegistry;
-	private ExternalModelManager fPluginInfoRegistry;
 	private DrillDownAdapter fDrillDownAdapter;
 	private Action fNewExtensionAction;
 	private Hashtable fEditorWizards;
@@ -150,7 +148,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				null,
 				PDEUIMessages.ManifestEditor_DetailExtension_up,
 				PDEUIMessages.ManifestEditor_DetailExtension_down});
-		fPluginInfoRegistry = PDECore.getDefault().getExternalModelManager();
 		fHandleDefaultButton = false;
 	}
 	private static void addItemsForExtensionWithSchema(MenuManager menu,
@@ -699,7 +696,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		return PDEPlugin.getDefault().getLabelProvider().getImageFromPlugin(model, iconPathName);
 	}
 	private String resolveObjectName(Object obj) {
-		return resolveObjectName(getSchemaRegistry(), fPluginInfoRegistry, obj);
+		return resolveObjectName(getSchemaRegistry(), obj);
 	}
 
 	private SchemaRegistry getSchemaRegistry() {
@@ -708,8 +705,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		return fSchemaRegistry;
 	}
 
-	public static String resolveObjectName(SchemaRegistry schemaRegistry,
-			ExternalModelManager pluginInfoRegistry, Object obj) {
+	public static String resolveObjectName(SchemaRegistry schemaRegistry, Object obj) {
 		boolean fullNames = PDEPlugin.isFullNameModeEnabled();
 		if (obj instanceof IPluginExtension) {
 			IPluginExtension extension = (IPluginExtension) obj;

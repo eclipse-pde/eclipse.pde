@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.core.variables;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IDynamicVariableResolver;
-import org.eclipse.pde.internal.core.ExternalModelManager;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 
 public class TargetHomeDynamicVariableResolver implements
 		IDynamicVariableResolver {
@@ -25,7 +25,7 @@ public class TargetHomeDynamicVariableResolver implements
 	 */
 	public String resolveValue(IDynamicVariable variable, String argument)
 			throws CoreException {
-		return ExternalModelManager.getEclipseHome().toOSString();
+		return TargetPlatform.getLocation();
 	}
 
 }

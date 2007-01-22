@@ -17,7 +17,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.ApplicationWindow;
-import org.eclipse.pde.internal.core.ExternalModelManager;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.itarget.IAdditionalLocation;
 import org.eclipse.pde.internal.core.itarget.IArgumentsInfo;
 import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
@@ -233,7 +233,7 @@ public class TargetProfileWindow extends ApplicationWindow {
 	private String getLocation(ITarget target) {
 		ILocationInfo info = target.getLocationInfo();
 		if (info == null || info.useDefault())
-			return ExternalModelManager.computeDefaultPlatformPath();
+			return TargetPlatform.getDefaultLocation();
 		try {
 			return VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(info.getPath());
 		} catch (CoreException e) {

@@ -52,9 +52,9 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -471,7 +471,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 
         ArrayList elements = new ArrayList();
         ArrayList conditional = new ArrayList();
-        IPluginModelBase[] models = PDECore.getDefault().getModelManager().getPlugins();
+        IPluginModelBase[] models = PluginRegistry.getActiveModels();
         Set names = new HashSet();
         
         for (int i = 0; i < models.length; i++) {
@@ -495,9 +495,10 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
     			// add un-exported packages in workspace non-binary plug-ins
     			IResource resource = models[i].getUnderlyingResource();
     			IProject project = resource != null ? resource.getProject() : null;
-    			if (project == null || !project.hasNature(JavaCore.NATURE_ID) 
-    				|| WorkspaceModelManager.isBinaryProject(project)
-    				|| !WorkspaceModelManager.hasBundleManifest(project))
+    			if (project == null 
+    					|| !project.hasNature(JavaCore.NATURE_ID) 
+    					|| WorkspaceModelManager.isBinaryProject(project)
+    					|| !project.exists(ICoreConstants.MANIFEST_PATH))
     				continue;
 				IJavaProject jp = JavaCore.create(project);
 				IPackageFragmentRoot[] roots = jp.getPackageFragmentRoots();
@@ -687,7 +688,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
         if (id != null)
             set.add(id);
         IPluginImport[] imports = model.getPluginBase().getImports();
-        State state = TargetPlatform.getState();
+        State state = TargetPlatformHelper.getState();
         for (int i = 0; i < imports.length; i++) {
             addDependency(state, imports[i].getId(), set);
         }

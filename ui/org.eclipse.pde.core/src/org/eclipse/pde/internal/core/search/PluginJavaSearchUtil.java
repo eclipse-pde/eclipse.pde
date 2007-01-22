@@ -31,8 +31,8 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEManager;
 
 public class PluginJavaSearchUtil {
@@ -43,17 +43,17 @@ public class PluginJavaSearchUtil {
 
 	public static IPlugin[] getPluginImports(String pluginImportID) {
 		HashSet set = new HashSet();
-		collectAllPrerequisites(PDECore.getDefault().findPlugin(pluginImportID), set);
+		collectAllPrerequisites(PluginRegistry.findModel(pluginImportID), set);
 		return (IPlugin[]) set.toArray(new IPlugin[set.size()]);
 	}
 	
-	public static void collectAllPrerequisites(IPlugin plugin, HashSet set) {
-		if (plugin == null || !set.add(plugin))
+	public static void collectAllPrerequisites(IPluginModelBase model, HashSet set) {
+		if (model == null || !set.add(model))
 			return;
-		IPluginImport[] imports = plugin.getImports();
+		IPluginImport[] imports = model.getPluginBase().getImports();
 		for (int i = 0; i < imports.length; i++) {
 			if (imports[i].isReexported()) {
-				IPlugin child = PDECore.getDefault().findPlugin(imports[i].getId());
+				IPluginModelBase child = PluginRegistry.findModel(imports[i].getId());
 				if (child != null)
 					collectAllPrerequisites(child, set);
 			}

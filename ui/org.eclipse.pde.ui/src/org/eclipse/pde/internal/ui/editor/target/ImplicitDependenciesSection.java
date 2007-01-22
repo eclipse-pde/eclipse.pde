@@ -24,7 +24,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.itarget.IImplicitDependenciesInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
@@ -163,7 +163,7 @@ public class ImplicitDependenciesSection extends TableSection {
 			currentPlugins.add(plugins[i].getId());
 		}
 		
-		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getAllPlugins();
+		IPluginModelBase[] models = PluginRegistry.getActiveModels(false);
 		Set result = new HashSet((4/3) * models.length + 1);
 		for (int i = 0; i < models.length; i++) {
 			BundleDescription desc = models[i].getBundleDescription();

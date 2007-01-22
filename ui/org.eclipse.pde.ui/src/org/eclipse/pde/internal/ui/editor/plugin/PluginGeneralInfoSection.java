@@ -18,7 +18,7 @@ import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
@@ -192,7 +192,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	}
 	
 	private String getLazyStartHeaderName() {
-		if (TargetPlatform.getTargetVersion() >= 3.2
+		if (TargetPlatformHelper.getTargetVersion() >= 3.2
 				&& BundlePluginBase.getBundleManifestVersion(getBundle()) >= 2)
 			return ICoreConstants.ECLIPSE_LAZYSTART;
 		return ICoreConstants.ECLIPSE_AUTOSTART;

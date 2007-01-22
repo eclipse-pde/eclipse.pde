@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.ui.correction;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -35,7 +35,7 @@ public class CreateManifestClassResolution extends AbstractManifestMarkerResolut
 		String name = PDEJavaHelper.trimNonAlphaChars(header.getValue()).replace('$', '.');
 		IProject project = model.getUnderlyingResource().getProject();
 		
-		IPluginModelBase modelBase = PDECore.getDefault().getModelManager().findModel(project);
+		IPluginModelBase modelBase = PluginRegistry.findModel(project);
 		if (modelBase == null)
 			return;
 		

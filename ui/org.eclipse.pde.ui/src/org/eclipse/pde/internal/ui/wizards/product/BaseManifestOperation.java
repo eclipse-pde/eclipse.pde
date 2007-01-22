@@ -21,7 +21,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
@@ -51,7 +51,7 @@ public abstract class BaseManifestOperation implements IRunnableWithProgress {
 	}
 
 	protected IFile getFile() {
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(fPluginId);
+		IPluginModelBase model = PluginRegistry.findModel(fPluginId);
 		IProject project = model.getUnderlyingResource().getProject();
 		String filename = model instanceof IFragmentModel ? "fragment.xml" : "plugin.xml"; //$NON-NLS-1$ //$NON-NLS-2$
 		return project.getFile(filename);	
@@ -64,7 +64,7 @@ public abstract class BaseManifestOperation implements IRunnableWithProgress {
 	}
 	
 	protected void updateSingleton(IProgressMonitor monitor) throws CoreException {
-		IPluginModelBase plugin = PDECore.getDefault().getModelManager().findModel(fPluginId);
+		IPluginModelBase plugin = PluginRegistry.findModel(fPluginId);
 		if (plugin instanceof IBundlePluginModel) {
 			IFile file = (IFile)plugin.getUnderlyingResource();
 			IStatus status = PDEPlugin.getWorkspace().validateEdit(new IFile[] { file }, fShell);

@@ -16,11 +16,11 @@ import java.util.HashSet;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -387,7 +387,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 		}
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.F_UNRESOLVED_PLUGINS);
 		if (severity != CompilerFlags.IGNORE) {
-			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(id);
+			IPluginModelBase model = PluginRegistry.findModel(id);
 			if (model == null 
 					|| !model.isEnabled() 
 					|| (isFragment && !model.isFragmentModel())
@@ -403,8 +403,8 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	private void validateFeatureID(Element element, Attr attr) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.F_UNRESOLVED_FEATURES);
 		if (severity != CompilerFlags.IGNORE) {
-			IFeature feature = PDECore.getDefault().findFeature(attr.getValue());	
-			if (feature == null) {
+			IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().findFeatureModels(attr.getValue());
+			if (models.length == 0) {
 				report(NLS.bind(PDECoreMessages.Builders_Feature_freference, attr.getValue()),  
 						getLine(element, attr.getName()),
 						severity,
@@ -430,8 +430,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 		String unpack = parent.getAttribute("unpack"); //$NON-NLS-1$
 		if ("false".equals(unpack)) //$NON-NLS-1$
 			return;
-		IPluginModel pModel = PDECore.getDefault().getModelManager()
-				.findPluginModel(parent.getAttribute("id")); //$NON-NLS-1$
+		IPluginModelBase pModel = PluginRegistry.findModel(parent.getAttribute("id")); //$NON-NLS-1$
 		if (pModel == null) {
 			return;
 		}

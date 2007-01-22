@@ -38,8 +38,8 @@ import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -299,7 +299,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			int length = value.length();
 			set.remove(value);
 			ArrayList completions = new ArrayList();
-			IPluginModelBase[] bases = PDECore.getDefault().getModelManager().getPlugins();
+			IPluginModelBase[] bases = PluginRegistry.getActiveModels();
 			
 			for (int j = 0; j < bases.length; j++) {	// Remove any packages already imported through Require-Bundle
 				BundleDescription desc = bases[j].getBundleDescription();
@@ -357,7 +357,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		ArrayList completions = new ArrayList();
 		String pluginStart = removeLeadingSpaces(currentValue);
 		int length = pluginStart.length();
-		IPluginModelBase [] bases = PDECore.getDefault().getModelManager().getPlugins();
+		IPluginModelBase [] bases = PluginRegistry.getActiveModels();
 		for (int i = 0; i < bases.length; i++) {
 			BundleDescription desc = bases[i].getBundleDescription();
 			if (desc != null && desc.getHost() == null) {
@@ -404,7 +404,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		int length = value.length();
 		doNotInclude.remove(value);
 		ArrayList completions = new ArrayList();
-		IPluginModelBase [] bases = PDECore.getDefault().getModelManager().getPlugins();
+		IPluginModelBase [] bases = PluginRegistry.getActiveModels();
 		for (int i = 0; i < bases.length; i++) {
 			BundleDescription desc = bases[i].getBundleDescription();
 			if (desc != null && desc.getHost() == null) {

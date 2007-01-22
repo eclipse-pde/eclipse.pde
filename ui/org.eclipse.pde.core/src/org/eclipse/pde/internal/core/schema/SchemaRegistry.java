@@ -22,8 +22,10 @@ import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEStateHelper;
 import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
@@ -36,7 +38,7 @@ public class SchemaRegistry {
 	private HashMap fRegistry = new HashMap();
 	
 	public ISchema getSchema(String extPointID) {
-		IPluginExtensionPoint point = PDECore.getDefault().findExtensionPoint(extPointID);
+		IPluginExtensionPoint point = PDEStateHelper.findExtensionPoint(extPointID);
 		if (point == null) {
 			// if there is an old schema associated with this extension point, release it.
 			if (fRegistry.containsKey(extPointID))
@@ -126,11 +128,22 @@ public class SchemaRegistry {
 			return null;
 		
 		URL url = null;
-		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(pluginID);
+		ModelEntry entry = PluginRegistry.findEntry(pluginID);
 		if (entry != null) {
-			url = getSchemaURL(entry.getWorkspaceModel(), schema);
-			if (url == null)
-				url = getSchemaURL(entry.getExternalModel(), schema);
+			IPluginModelBase[] models = entry.getWorkspaceModels();
+			for (int i = 0; i < models.length; i++) {
+				url = getSchemaURL(models[i], schema);
+				if (url != null)
+					break;
+			}
+			if (url == null) {
+				models = entry.getExternalModels();
+				for (int i = 0; i < models.length; i++) {
+					url = getSchemaURL(models[i], schema);
+					if (url != null)
+						break;
+				}
+			}
 		}
 		return url;
 	}

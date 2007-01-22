@@ -36,6 +36,7 @@ import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginModelFactory;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.IPluginModelListener;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelDelta;
@@ -374,8 +375,8 @@ public class RequiresSection
 	}
 	
 	private IPluginModelBase[] getAvailablePlugins(IPluginModelBase model) {
-		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPluginsOnly();
-		HashSet existingImports = PluginSelectionDialog.getExistingImports(model.getPluginBase());
+		IPluginModelBase[] plugins = PluginRegistry.getActiveModels(false);
+		HashSet existingImports = PluginSelectionDialog.getExistingImports(model);
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < plugins.length; i++) {
 			if (!existingImports.contains(plugins[i].getPluginBase().getId())) {
@@ -393,7 +394,7 @@ public class RequiresSection
 			ExternalPluginModel model = new ExternalPluginModel();
 			
 			// Need Install Location to load model.  Giving it org.eclipse.osgi's install location
-			IPluginModelBase osgi = PDECore.getDefault().getModelManager().findModel("org.eclipse.osgi"); //$NON-NLS-1$
+			IPluginModelBase osgi = PluginRegistry.findModel("org.eclipse.osgi"); //$NON-NLS-1$
 			if (osgi == null)
 				return;
 			model.setInstallLocation(osgi.getInstallLocation());

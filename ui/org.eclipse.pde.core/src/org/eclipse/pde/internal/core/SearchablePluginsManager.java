@@ -16,20 +16,20 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -41,7 +41,8 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 
 /**
  * This class manages the ability of external plug-ins in the model manager to
@@ -50,15 +51,15 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
  * JARs to the proxy project. This makes the libraries visible to the Java
  * model, and they can take part in various Java searches.
  */
-public class SearchablePluginsManager implements IFileAdapterFactory {
-	private IJavaProject proxyProject;
-	private PluginModelManager manager;
+public class SearchablePluginsManager implements IFileAdapterFactory, IPluginModelListener {
+	
 	private static final String PROXY_FILE_NAME = ".searchable"; //$NON-NLS-1$
 	public static final String PROXY_PROJECT_NAME = "External Plug-in Libraries"; //$NON-NLS-1$
 	private static final String KEY = "searchablePlugins"; //$NON-NLS-1$
 
-	private Listener elementListener;
-	private ExternalJavaSearchClasspathContainer classpathContainer;
+	private Listener fElementListener;
+	private Set fPluginIdSet;
+	private ArrayList fListeners;
 
 	class Listener implements IElementChangedListener {
 		public void elementChanged(ElementChangedEvent e) {
@@ -66,311 +67,174 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 				handleDelta(e.getDelta());
 			}
 		}
-	}
-
-	private String getProxyProjectName() {
-		return PROXY_PROJECT_NAME;
-	}
-
-	public SearchablePluginsManager(PluginModelManager manager) {
-		this.manager = manager;
-		elementListener = new Listener();
-	}
-
-	public void initialize() {
-		initializeProxyProject();
-		if (proxyProject == null)
-			return;
-		IProject project = proxyProject.getProject();
-		IFile proxyFile = project.getFile(PROXY_FILE_NAME);
-		initializeStates(proxyFile);
-		JavaCore.addElementChangedListener(elementListener);
-	}
-
-	public void shutdown() {
-		JavaCore.removeElementChangedListener(elementListener);
-	}
-
-	private void initializeProxyProject() {
-		IProject project = PDECore.getWorkspace().getRoot().getProject(
-				getProxyProjectName());
-		if (project == null)
-			return;
-		proxyProject = JavaCore.create(project);
-	}
-
-	private void initializeStates(IFile proxyFile) {
-		if (proxyFile.exists() == false)
-			return;
-		Properties properties = new Properties();
-		try {
-			InputStream stream = proxyFile.getContents(true);
-			properties.load(stream);
-			stream.close();
-			String value = properties.getProperty(KEY);
-			if (value == null)
-				return;
-			ArrayList ids = new ArrayList();
-			StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
-			for (; stok.hasMoreTokens();) {
-				ids.add(stok.nextToken());
+		private boolean handleDelta(IJavaElementDelta delta) {
+			Object element = delta.getElement();
+			if (element instanceof IJavaModel) {
+				IJavaElementDelta[] projectDeltas = delta.getAffectedChildren();
+				for (int i = 0; i < projectDeltas.length; i++) {
+					if (handleDelta(projectDeltas[i]))
+						break;
+				}
+				return true;
 			}
-			initializeStates(ids);
-		} catch (IOException e) {
-		} catch (CoreException e) {
+			if (delta.getElement() instanceof IJavaProject) {
+				IJavaProject project = (IJavaProject) delta.getElement();
+				if (project.getElementName().equals(PROXY_PROJECT_NAME)) {
+					if (delta.getKind() == IJavaElementDelta.REMOVED) {
+						fPluginIdSet.clear();
+					} else if (delta.getKind() == IJavaElementDelta.ADDED) {
+						initializeStates();
+					}
+				}
+				return true;
+			}
+			return false;
 		}
 	}
-	private void initializeStates(ArrayList ids) {
-		for (int i = 0; i < ids.size(); i++) {
-			String id = (String) ids.get(i);
-			ModelEntry entry = manager.findEntry(id);
-			if (entry != null)
-				entry.setInJavaSearch(true);
-		}
+
+	public SearchablePluginsManager() {
+		initializeStates();
+		fElementListener = new Listener();
+		JavaCore.addElementChangedListener(fElementListener);
+		PDECore.getDefault().getModelManager().addPluginModelListener(this);
 	}
 
-	public void persistStates(IProgressMonitor monitor) throws CoreException {
-		ModelEntry[] entries = manager.getEntries();
-		StringBuffer buffer = new StringBuffer();
-
-		monitor.beginTask(PDECoreMessages.SearchablePluginsManager_saving, 3); 
-
-		int counter = 0;
-
-		for (int i = 0; i < entries.length; i++) {
-			ModelEntry entry = entries[i];
-			if (entry.isInJavaSearch()) {
-				if (counter++ > 0)
-					buffer.append(","); //$NON-NLS-1$
-				buffer.append(entry.getId());
+	private void initializeStates() {
+		fPluginIdSet = new TreeSet();
+		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
+		IProject project = root.getProject(PROXY_PROJECT_NAME);
+		if (project.exists() && project.isOpen()) {
+			IFile proxyFile = project.getFile(PROXY_FILE_NAME);
+			if (proxyFile.exists()) {
+				Properties properties = new Properties();
+				try {
+					InputStream stream = proxyFile.getContents(true);
+					properties.load(stream);
+					stream.close();
+					String value = properties.getProperty(KEY);
+					if (value != null) {
+						StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
+						while(stok.hasMoreTokens())
+							fPluginIdSet.add(stok.nextToken());
+					}
+				} catch (IOException e) {
+				} catch (CoreException e) {
+				}				
 			}
 		}
-		createProxyProject(monitor);
-		if (proxyProject == null)
-			return;
-		monitor.worked(1);
-		IFile file = proxyProject.getProject().getFile(PROXY_FILE_NAME);
-		persistStates(file, buffer.toString(), new SubProgressMonitor(monitor,
-				1));
-		updateClasspathContainer();
 	}
 	
-	public void updateClasspathContainer() {
-		if (proxyProject==null) return;
+	public IJavaProject getProxyProject() {
+		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
+		IProject project = root.getProject(PROXY_PROJECT_NAME);
 		try {
-			updateClasspathContainer(proxyProject);
+			if (project.exists() && project.isOpen() && project.hasNature(JavaCore.NATURE_ID)) {
+				return JavaCore.create(project);
+			}
+		} catch (CoreException e) {
 		}
-		catch (CoreException e) {
-			PDECore.logException(e);
-		}
+		return null;
 	}
 
-	public void updateClasspathContainer(IJavaProject project)
-			throws CoreException {
-		IJavaProject[] javaProjects = new IJavaProject[]{project};
-		IClasspathContainer[] containers = new IClasspathContainer[]{getClasspathContainer()};
-		IPath path = new Path(PDECore.JAVA_SEARCH_CONTAINER_ID);
-		try {
-			getClasspathContainer().reset();
-			JavaCore
-					.setClasspathContainer(path, javaProjects, containers, null);
-		} catch (OperationCanceledException e) {
-			getClasspathContainer().reset();
-			throw e;
+	public void shutdown() throws CoreException {		
+		// remove listener
+		JavaCore.removeElementChangedListener(fElementListener);
+		PDECore.getDefault().getModelManager().removePluginModelListener(this);
+		if (fListeners != null)
+			fListeners.clear();
+		
+		// persist state
+		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
+		IProject project = root.getProject(PROXY_PROJECT_NAME);
+		if (project.exists() && project.isOpen()) {
+			IFile file = project.getFile(PROXY_FILE_NAME);
+			Properties properties = new Properties();
+			StringBuffer buffer = new StringBuffer();
+			Iterator iter = fPluginIdSet.iterator();
+			while (iter.hasNext()) {
+				if (buffer.length() > 0)
+					buffer.append(","); //$NON-NLS-1$
+				buffer.append(iter.next().toString());
+			}
+			properties.setProperty(KEY, buffer.toString());
+			try {
+				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+				properties.store(outStream, ""); //$NON-NLS-1$
+				outStream.flush();
+				outStream.close();
+				ByteArrayInputStream inStream = new ByteArrayInputStream(outStream
+						.toByteArray());
+				if (file.exists())
+					file.setContents(inStream, true, false, new NullProgressMonitor());
+				else
+					file.create(inStream, true, new NullProgressMonitor());
+				inStream.close();
+			} catch (IOException e) {
+				PDECore.log(e);
+			}
 		}
 	}
-
-	public ExternalJavaSearchClasspathContainer getClasspathContainer() {
-		/*
-		if (classpathContainer == null)
-		*/
-		classpathContainer = new ExternalJavaSearchClasspathContainer(this);
-		return classpathContainer;
-	}
-
+	
 	public IClasspathEntry[] computeContainerClasspathEntries()
 			throws CoreException {
 		ArrayList result = new ArrayList();
-
-		ModelEntry[] entries = manager.getEntries();
-		for (int i = 0; i < entries.length; i++) {
-			ModelEntry entry = entries[i];
-			ArrayList entryResult = new ArrayList();			
-			if (entry.getWorkspaceModel() != null) {
-				// We used to skip workspace models before.
-				// If we add them as references,
-				// scoped searches will work according
-				// to bug 52667
-				IProject eproject = entry.getWorkspaceModel().getUnderlyingResource().getProject();
-				if (eproject.hasNature(JavaCore.NATURE_ID)) {
-					IClasspathEntry pentry =
-						JavaCore.newProjectEntry(eproject.getFullPath());
-					entryResult.add(pentry);
-				}
-			}
-			else {
-				if (entry.isInJavaSearch() == false)
-					continue;				
-				IPluginModelBase model = entry.getExternalModel();
-				if (model == null)
-					continue;
-				ClasspathUtilCore.addLibraries(model, entryResult);
-			}
-			addUniqueEntries(result, entryResult);			
-		}
-		return (IClasspathEntry[]) result.toArray(new IClasspathEntry[result
-				.size()]);
-	}
-
-	private void computeClasspath(ModelEntry[] entries, IJavaProject project,
-			IProgressMonitor monitor) throws CoreException {
-		ArrayList list = new ArrayList();
-
-		//The project has the dynamic classpath container for
-		// searchable entries + JRE
-		list.add(JavaCore.newContainerEntry(new Path(
-				PDECore.JAVA_SEARCH_CONTAINER_ID)));
-		list.add(JavaCore.newContainerEntry(new Path("org.eclipse.jdt.launching.JRE_CONTAINER"))); //$NON-NLS-1$
-		try {
-			project.setRawClasspath((IClasspathEntry[]) list
-					.toArray(new IClasspathEntry[list.size()]), monitor);
-		} catch (JavaModelException e) {
-			throwCoreException(e);
-		}
-	}
-
-	private void addUniqueEntries(ArrayList result, ArrayList localResult) {
-		ArrayList resultCopy = (ArrayList) result.clone();
-		for (int i = 0; i < localResult.size(); i++) {
-			IClasspathEntry localEntry = (IClasspathEntry) localResult.get(i);
-			boolean duplicate = false;
-			for (int j = 0; j < resultCopy.size(); j++) {
-				IClasspathEntry entry = (IClasspathEntry) resultCopy.get(j);
-				if (entry.getEntryKind() == localEntry.getEntryKind()
-						&& entry.getContentKind() == localEntry
-								.getContentKind()
-						&& entry.getPath().equals(localEntry.getPath())) {
-					duplicate = true;
-					break;
-				}
-			}
-			if (!duplicate)
-				result.add(localEntry);
-		}
-	}
-
-	private void persistStates(IFile file, String value,
-			IProgressMonitor monitor) throws CoreException {
-		Properties properties = new Properties();
-		properties.setProperty(KEY, value);
-		try {
-			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-			properties.store(outStream, ""); //$NON-NLS-1$
-			outStream.flush();
-			outStream.close();
-			ByteArrayInputStream inStream = new ByteArrayInputStream(outStream
-					.toByteArray());
-			if (file.exists())
-				file.setContents(inStream, true, false, monitor);
-			else
-				file.create(inStream, true, monitor);
-			inStream.close();
-		} catch (IOException e) {
-			throwCoreException(e);
-		}
-	}
-
-	private void throwCoreException(Throwable e) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
-				IStatus.OK, e.getMessage(), e);
-		throw new CoreException(status);
-	}
-
-	private void createProxyProject(IProgressMonitor monitor) {
-		IProject project = PDECore.getWorkspace().getRoot().getProject(
-				getProxyProjectName());
-		if (project.exists())
-			return;
-		monitor.beginTask("", 5); //$NON-NLS-1$
-
-		try {
-			project.create(new SubProgressMonitor(monitor, 1));
-			project.open(new SubProgressMonitor(monitor, 1));
-
-			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID,
-					new SubProgressMonitor(monitor, 1));
-			proxyProject = JavaCore.create(project);
-			proxyProject.setOutputLocation(project.getFullPath(),
-					new SubProgressMonitor(monitor, 1));
-			computeClasspath(manager.getEntries(), proxyProject,
-					new SubProgressMonitor(monitor, 1));
-		} catch (CoreException e) {
-		}
-	}
-
-	private boolean handleDelta(IJavaElementDelta delta) {
-		Object element = delta.getElement();
-		if (element instanceof IJavaModel) {
-			IJavaElementDelta[] projectDeltas = delta.getAffectedChildren();
-			for (int i = 0; i < projectDeltas.length; i++) {
-				if (handleDelta(projectDeltas[i]))
-					break;
-			}
-			return true;
-		}
-		if (delta.getElement() instanceof IJavaProject) {
-			IJavaProject project = (IJavaProject) delta.getElement();
-
-			if (project.equals(proxyProject)
-					&& delta.getKind() == IJavaElementDelta.REMOVED) {
-				manager.searchablePluginsRemoved();
-				proxyProject = null;
-				return true;
+		
+		IPluginModelBase[] wModels = PluginRegistry.getWorkspaceModels();
+		for (int i = 0; i < wModels.length; i++) {
+			IProject project = wModels[i].getUnderlyingResource().getProject();
+			if (project.hasNature(JavaCore.NATURE_ID)) {
+				result.add(JavaCore.newProjectEntry(project.getFullPath()));
 			}
 		}
-		return false;
+		Iterator iter = fPluginIdSet.iterator();
+		while (iter.hasNext()) {
+			IPluginModelBase model = PluginRegistry.findModel(iter.next().toString());
+			if (model != null && model.getUnderlyingResource() == null) {
+				ClasspathUtilCore.addLibraries(model, result);
+			}
+		}
+		return (IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
 	}
 
 	public Object createAdapterChild(FileAdapter parent, File file) {
 		if (file.isDirectory() == false) {
 			String name = file.getName().toLowerCase(Locale.ENGLISH);
-			if (name.endsWith(".jar")) { //$NON-NLS-1$
-				IPackageFragmentRoot root = findPackageFragmentRoot(file
-						.getAbsolutePath());
-				if (root != null)
-					return root;
+			try {
+				if (name.endsWith(".jar")) { //$NON-NLS-1$
+					IPackageFragmentRoot root = findPackageFragmentRoot(new Path(file.getAbsolutePath()));
+					if (root != null)
+						return root;
+				}
+			} catch (CoreException e) {
+				PDECore.log(e);
 			}
 		}
 		return new FileAdapter(parent, file, this);
 	}
 
-	private IPackageFragmentRoot findPackageFragmentRoot(String absolutePath) {
-		IPath jarPath = new Path(absolutePath);
-		// Find in proxy project jars
-		if (proxyProject != null) {
+	private IPackageFragmentRoot findPackageFragmentRoot(IPath jarPath) throws CoreException {
+		IJavaProject jProject = getProxyProject();
+		if (jProject != null) {
 			try {
-				IPackageFragmentRoot[] roots = proxyProject
-						.getAllPackageFragmentRoots();
+				IPackageFragmentRoot[] roots = jProject.getAllPackageFragmentRoots();
 				for (int i = 0; i < roots.length; i++) {
 					IPackageFragmentRoot root = roots[i];
 					IPath path = root.getPath();
 					if (path.equals(jarPath))
 						return root;
-
+	
 				}
 			} catch (JavaModelException e) {
 			}
 		}
+	
 		// Find in other plugin (and fragments) projects dependencies
-		IPluginModelBase[] pluginModels = PDECore.getDefault()
-				.getModelManager().getWorkspaceModels();
+		IPluginModelBase[] pluginModels = PluginRegistry.getWorkspaceModels();
 		for (int i = 0; i < pluginModels.length; i++) {
-			IProject project = pluginModels[i].getUnderlyingResource()
-					.getProject();
+			IProject project = pluginModels[i].getUnderlyingResource().getProject();
 			IJavaProject javaProject = JavaCore.create(project);
 			try {
-				IPackageFragmentRoot[] roots = javaProject
-						.getAllPackageFragmentRoots();
+				IPackageFragmentRoot[] roots = javaProject.getAllPackageFragmentRoots();
 				for (int j = 0; j < roots.length; j++) {
 					IPackageFragmentRoot root = roots[j];
 					IPath path = root.getPath();
@@ -383,8 +247,108 @@ public class SearchablePluginsManager implements IFileAdapterFactory {
 
 		return null;
 	}
-	
-	public IJavaProject getProxyProject() {
-		return proxyProject;
+		
+	public void addToJavaSearch(IPluginModelBase[] models) {
+		PluginModelDelta delta = new PluginModelDelta();
+		int size = fPluginIdSet.size();
+		for (int i = 0; i < models.length; i++) {
+			String id = models[i].getPluginBase().getId();
+			if (fPluginIdSet.add(id)) {
+				ModelEntry entry = PluginRegistry.findEntry(id);
+				if (entry != null)
+					delta.addEntry(entry, PluginModelDelta.CHANGED);
+			}
+		}
+		if (fPluginIdSet.size() > size) {
+			resetContainer();
+			fireDelta(delta);
+		}
 	}
+	
+	public void removeFromJavaSearch(IPluginModelBase[] models) {
+		PluginModelDelta delta = new PluginModelDelta();
+		int size = fPluginIdSet.size();
+		for (int i = 0; i < models.length; i++) {
+			String id = models[i].getPluginBase().getId();
+			if (fPluginIdSet.remove(id)) {
+				ModelEntry entry = PluginRegistry.findEntry(id);
+				if (entry != null) {
+					delta.addEntry(entry, PluginModelDelta.CHANGED);
+				}
+			}
+		}
+		if (fPluginIdSet.size() < size) {
+			resetContainer();
+			fireDelta(delta);
+		}
+	}
+	
+	public boolean isInJavaSearch(String symbolicName) {
+		return fPluginIdSet.contains(symbolicName);
+	}
+	
+	private void resetContainer() {
+		IJavaProject jProject = getProxyProject();
+		try {
+			if (jProject != null) {
+				JavaCore.setClasspathContainer(
+						PDECore.JAVA_SEARCH_CONTAINER_PATH, 
+						new IJavaProject[] {jProject}, 
+						new IClasspathContainer[]{new ExternalJavaSearchClasspathContainer()}, 
+						null);	
+			}
+		} catch (JavaModelException e) {
+		}
+	}
+
+	public void modelsChanged(PluginModelDelta delta) {
+		boolean resetContainer = false;
+
+		ModelEntry[] entries = delta.getAddedEntries();
+		for (int i = 0; i < entries.length; i++) {
+			if (fPluginIdSet.contains(entries[i].getId())) {
+				resetContainer = true;
+				break;
+			}
+		}
+		
+		entries = delta.getChangedEntries();
+		for (int i = 0; i < entries.length; i++) {
+			if (fPluginIdSet.contains(entries[i].getId())) {
+				resetContainer = true;
+				break;
+			}
+		}
+
+		int size = fPluginIdSet.size();
+		entries = delta.getRemovedEntries();
+		for (int i = 0; i < entries.length; i++) {
+			if (fPluginIdSet.contains(entries[i].getId())) {
+				fPluginIdSet.remove(entries[i].getId());
+			}
+		}
+		if (fPluginIdSet.size() < size || resetContainer)
+			resetContainer();
+	}
+	
+	private void fireDelta(PluginModelDelta delta) {
+		if (fListeners !=  null) {
+			for (int i = 0; i < fListeners.size(); i++) {
+				((IPluginModelListener)fListeners.get(i)).modelsChanged(delta);
+			}
+		}
+	}
+	
+	public void addPluginModelListener(IPluginModelListener listener) {
+		if (fListeners == null)
+			fListeners = new ArrayList();
+		if (!fListeners.contains(listener))
+			fListeners.add(listener);
+	}
+	
+	public void removePluginModelListener(IPluginModelListener listener) {
+		if (fListeners != null)
+			fListeners.remove(listener);
+	}
+	
 }

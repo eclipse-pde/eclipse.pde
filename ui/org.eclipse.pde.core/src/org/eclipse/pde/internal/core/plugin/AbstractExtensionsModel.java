@@ -30,12 +30,12 @@ import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.internal.core.AbstractModel;
+import org.eclipse.pde.internal.core.AbstractNLModel;
 import org.eclipse.pde.internal.core.PDEState;
 import org.xml.sax.SAXException;
 
 public abstract class AbstractExtensionsModel
-	extends AbstractModel
+	extends AbstractNLModel
 	implements IExtensionsModel, IExtensionsModelFactory {
 	protected Extensions fExtensions;
 

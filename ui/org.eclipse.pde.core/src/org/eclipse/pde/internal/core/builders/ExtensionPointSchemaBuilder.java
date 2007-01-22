@@ -34,6 +34,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.natures.PDE;
@@ -88,7 +89,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	}
 	
 	private boolean isInterestingProject(IProject project) {
-		return PDE.hasPluginNature(project) && !WorkspaceModelManager.isBinaryPluginProject(project);
+		return PDE.hasPluginNature(project) && !WorkspaceModelManager.isBinaryProject(project);
 	}
 
 	private void compileFile(IFile file, IProgressMonitor monitor) {
@@ -185,7 +186,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	
 	private String getMangledPluginId(IFile file) {
 		IProject project = file.getProject();
-		IModel model = PDECore.getDefault().getModelManager().findModel(project);
+		IModel model = PluginRegistry.findModel(project);
 		if (model instanceof IPluginModelBase) {
 			IPluginBase plugin = ((IPluginModelBase) model).getPluginBase();
 			if (plugin != null) {

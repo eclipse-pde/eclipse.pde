@@ -20,7 +20,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -58,7 +58,7 @@ public class OrganizeManifestsAction implements IWorkbenchWindowActionDelegate {
 					proj = ((IFile)element).getProject();
 				else if (element instanceof IProject)
 					proj = (IProject) element;
-				if (proj != null && WorkspaceModelManager.hasBundleManifest(proj))
+				if (proj != null && proj.exists(ICoreConstants.MANIFEST_PATH))
 					projects.add(proj);
 			}
 			if (projects.size() > 0) {

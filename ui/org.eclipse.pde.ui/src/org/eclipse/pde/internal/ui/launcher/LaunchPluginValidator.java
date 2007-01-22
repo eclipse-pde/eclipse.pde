@@ -28,10 +28,10 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 import org.eclipse.swt.widgets.Display;
 
@@ -76,10 +76,10 @@ public class LaunchPluginValidator {
 		}
 		
 		String version = configuration.getAttribute("pde.version", (String) null); //$NON-NLS-1$
-		boolean newApp = TargetPlatform.usesNewApplicationModel();
+		boolean newApp = TargetPlatformHelper.usesNewApplicationModel();
 		boolean upgrade = !"3.3".equals(version) && newApp; //$NON-NLS-1$
 		if (!upgrade)
-			upgrade = TargetPlatform.getTargetVersion() >= 3.2 && version == null; //$NON-NLS-1$
+			upgrade = TargetPlatformHelper.getTargetVersion() >= 3.2 && version == null; //$NON-NLS-1$
 		if (upgrade) {
 			wc.setAttribute("pde.version", newApp ? "3.3" : "3.2a"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
@@ -99,10 +99,9 @@ public class LaunchPluginValidator {
 					list.add("org.eclipse.equinox.app"); //$NON-NLS-1$
 				StringBuffer extensions = new StringBuffer(configuration.getAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, "")); //$NON-NLS-1$
 				StringBuffer target = new StringBuffer(configuration.getAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, "")); //$NON-NLS-1$
-				PluginModelManager manager = PDECore.getDefault().getModelManager();
 				for (int i = 0; i < list.size(); i++) {
 					String plugin = list.get(i).toString();
-					IPluginModelBase model = manager.findModel(plugin);
+					IPluginModelBase model = PluginRegistry.findModel(plugin);
 					if (model == null)
 						continue;
 					if (model.getUnderlyingResource() != null) {
@@ -134,7 +133,7 @@ public class LaunchPluginValidator {
 		boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 		boolean useFeatures = configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false);
 		
-		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getWorkspaceModels();
+		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		
 		if (usedefault || useFeatures || models.length == 0)
 			return models;
@@ -191,7 +190,7 @@ public class LaunchPluginValidator {
 				
 		TreeMap map = new TreeMap();
 		if (config.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
-			IPluginModelBase[] models = PDECore.getDefault().getModelManager().getPlugins();
+			IPluginModelBase[] models = PluginRegistry.getActiveModels();
 			for (int i = 0; i < models.length; i++) {
 				String id = models[i].getPluginBase().getId();
 				if (id != null)
@@ -201,7 +200,7 @@ public class LaunchPluginValidator {
 		}
 		
 		if (config.getAttribute(IPDELauncherConstants.USEFEATURES, false)) {
-			IPluginModelBase[] models = PDECore.getDefault().getModelManager().getWorkspaceModels();
+			IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 			for (int i = 0; i < models.length; i++) {
 				String id = models[i].getPluginBase().getId();
 				if (id != null)
@@ -218,7 +217,7 @@ public class LaunchPluginValidator {
 		}
 
 		Set exModels = parsePlugins(config, IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
-		IPluginModelBase[] exmodels = PDECore.getDefault().getModelManager().getExternalModels();
+		IPluginModelBase[] exmodels = PluginRegistry.getExternalModels();
 		for (int i = 0; i < exmodels.length; i++) {
 			String id = exmodels[i].getPluginBase().getId();
 			if (id != null && exModels.contains(id) && !map.containsKey(id))
@@ -238,13 +237,10 @@ public class LaunchPluginValidator {
 		}
 
 		// add fake "Java Search" project
-		SearchablePluginsManager manager = PDECore.getDefault().getModelManager()
-				.getSearchablePluginsManager();
+		SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
 		IJavaProject proxy = manager.getProxyProject();
 		if (proxy != null) {
-			IProject project = proxy.getProject();
-			if (project.isOpen())
-				projects.add(project);
+			projects.add(proxy.getProject());
 		}
 		return (IProject[]) projects.toArray(new IProject[projects.size()]);
 	}

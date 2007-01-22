@@ -47,7 +47,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginReference;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.templates.ControlStack;
@@ -736,7 +736,7 @@ public abstract class AbstractTemplateSection
 			    return Double.parseDouble(((IBundlePluginBase)plugin).getTargetVersion());
 		} catch (NumberFormatException e) {
 		}
-       return TargetPlatform.getTargetVersion();
+       return TargetPlatformHelper.getTargetVersion();
 	}
 
 }

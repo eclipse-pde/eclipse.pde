@@ -19,8 +19,9 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.PDEStateHelper;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -169,7 +170,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		
 		fApplicationCombo = new Combo(group, SWT.SINGLE|SWT.READ_ONLY);
 		fApplicationCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fApplicationCombo.setItems(TargetPlatform.getApplicationNames());
+		fApplicationCombo.setItems(TargetPlatformHelper.getApplicationNames());
 		if (fApplicationCombo.getItemCount() > 0)
 			fApplicationCombo.setText(fApplicationCombo.getItem(0));	
 	}
@@ -196,7 +197,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 	private void validateIdAndProduct(String error) {
 		if (error == null) {
 			String pluginId = getDefiningPlugin();
-			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginId);
+			IPluginModelBase model = PluginRegistry.findModel(pluginId);
 			if (pluginId.length() == 0) {
 				error = PDEUIMessages.ProductDefinitonWizardPage_noPluginId; 
 			} else if (model == null){ 
@@ -234,13 +235,13 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 
 	public void linkActivated(HyperlinkEvent e) {
 		String extPoint = Platform.PI_RUNTIME + "." + e.getHref().toString(); //$NON-NLS-1$
-		IPluginExtensionPoint point = PDECore.getDefault().findExtensionPoint(extPoint);
+		IPluginExtensionPoint point = PDEStateHelper.findExtensionPoint(extPoint);
 		if (point != null)
 			new ShowDescriptionAction(point, true).run();
 	}
 
 	private void handleBrowse() {
-		PluginSelectionDialog dialog = new PluginSelectionDialog(getShell(), PDECore.getDefault().getModelManager().getWorkspaceModels(), false);
+		PluginSelectionDialog dialog = new PluginSelectionDialog(getShell(), PluginRegistry.getWorkspaceModels(), false);
 		if (dialog.open() == Window.OK) {
 			IPluginModelBase model = (IPluginModelBase)dialog.getFirstResult();
 			fPluginText.setText(model.getPluginBase().getId());
@@ -249,7 +250,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 	
 	private Set getProductNameSet() {
 		if (fProductSet == null)
-			fProductSet = TargetPlatform.getProductNameSet();
+			fProductSet = TargetPlatformHelper.getProductNameSet();
 		return fProductSet;
 	}
 	
@@ -275,7 +276,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 	
 	private String getPluginId() {
 		IProject project = fProduct.getModel().getUnderlyingResource().getProject();
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
+		IPluginModelBase model = PluginRegistry.findModel(project);
 		return (model == null) ? null : model.getPluginBase().getId();
 	}
 }

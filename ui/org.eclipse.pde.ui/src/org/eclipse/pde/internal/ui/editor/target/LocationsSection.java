@@ -24,8 +24,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.ExternalModelManager;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.itarget.IAdditionalLocation;
 import org.eclipse.pde.internal.core.itarget.ILocationInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
@@ -76,7 +75,7 @@ public class LocationsSection extends TableSection {
 		fContentViewer = tablePart.getTableViewer();
 		fContentViewer.setContentProvider(new ContentProvider());
 		fContentViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		fContentViewer.setInput(PDECore.getDefault().getModelManager());
+		fContentViewer.setInput(getTarget());
 		fContentViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateButtons();
@@ -235,7 +234,7 @@ public class LocationsSection extends TableSection {
 		Path checkPath = new Path(path);
 		IAdditionalLocation[] locs = getModel().getTarget().getAdditionalDirectories();
 		for (int i = 0; i < locs.length; i++) {
-			if (ExternalModelManager.arePathsEqual(new Path(locs[i].getPath()), checkPath))
+			if (new Path(locs[i].getPath()).equals(checkPath))
 				return true;
 		}
 		return isTargetLocation(checkPath);
@@ -244,10 +243,10 @@ public class LocationsSection extends TableSection {
 	private boolean isTargetLocation(Path path) {
 		ILocationInfo info = getModel().getTarget().getLocationInfo();
 		if (info.useDefault()) {
-			Path home = new Path(ExternalModelManager.computeDefaultPlatformPath());
-			return ExternalModelManager.arePathsEqual(home, path);
+			Path home = new Path(TargetPlatform.getDefaultLocation());
+			return home.equals(path);
 		} 
-		return ExternalModelManager.arePathsEqual(new Path(info.getPath()) , path);
+		return new Path(info.getPath()).equals(path);
 	}
 
 	public void dispose() {

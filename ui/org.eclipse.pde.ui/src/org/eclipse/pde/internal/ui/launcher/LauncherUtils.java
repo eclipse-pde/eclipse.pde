@@ -44,9 +44,9 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
@@ -267,12 +267,11 @@ public class LauncherUtils {
 	
 	private static void handleSelectedPlugins(String timeStamp, String value, ArrayList projects) {
 		StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		while(tokenizer.hasMoreTokens()) {
 			value = tokenizer.nextToken();
 			int index = value.indexOf('@');
 			String id = index > 0 ? value.substring(0, index) : value;
-			IPluginModelBase base = manager.findModel(id);
+			IPluginModelBase base = PluginRegistry.findModel(id);
 			if (base != null) {
 				IResource res = base.getUnderlyingResource();
 				if (res != null) {
@@ -292,12 +291,11 @@ public class LauncherUtils {
 		while (tokenizer.hasMoreTokens()) 
 			deSelectedProjs.add(tokenizer.nextToken());
 		
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		IProject[] projs = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projs.length; i++) {
 			if (!WorkspaceModelManager.isPluginProject(projs[i])) 
 				continue;
-			IPluginModelBase base = manager.findModel(projs[i]);
+			IPluginModelBase base = PluginRegistry.findModel(projs[i]);
 			if (base == null || base != null && deSelectedProjs.contains(base.getPluginBase().getId()))
 				continue;
 			String timestamp = getTimeStamp(projs[i]);
@@ -372,7 +370,7 @@ public class LauncherUtils {
 			if (projectID.length() > 0) {
 				IResource project = PDEPlugin.getWorkspace().getRoot().findMember(projectID);
 				if (project instanceof IProject) {
-					IPluginModelBase model = PDECore.getDefault().getModelManager().findModel((IProject)project);
+					IPluginModelBase model = PluginRegistry.findModel((IProject)project);
 					if (model != null) {							
 						Set plugins = DependencyManager.getSelfAndDependencies(model);
 						return plugins.contains("org.eclipse.swt"); //$NON-NLS-1$

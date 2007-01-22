@@ -56,16 +56,16 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.BuildScriptGenerator;
 import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
 import org.eclipse.pde.internal.core.ClasspathHelper;
-import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.PluginModelManager;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
@@ -156,7 +156,7 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 		if (message != null && message.length() > 0) {	
 			throw new CoreException(new Status(
 					IStatus.ERROR,
-					PDECore.getPluginId(),
+					PDECore.PLUGIN_ID,
 					IStatus.ERROR,
 					message,
 					null));
@@ -229,7 +229,7 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 	public void deleteBuildFiles(Object object) throws CoreException {
 		IModel model = null;
 		if (object instanceof BundleDescription) {
-			model = PDECore.getDefault().getModelManager().findModel((BundleDescription)object);
+			model = PluginRegistry.findModel((BundleDescription)object);
 		} else if (object instanceof IModel){
 			model = (IModel)object;
 		}
@@ -271,11 +271,10 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 			}
 
 			IFeaturePlugin[] plugins = feature.getPlugins();
-			PluginModelManager manager = PDECore.getDefault().getModelManager();
 			for (int i = 0; i < plugins.length; i++) {
-				ModelEntry entry = manager.findEntry(plugins[i].getId());
-				if (entry != null) {
-					deleteBuildFiles(entry.getActiveModel());
+				IPluginModelBase plugin = PluginRegistry.findModel(plugins[i].getId());
+				if (plugin != null) {
+					deleteBuildFiles(plugin);
 				}
 			}
 		}
@@ -467,14 +466,14 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 			format = config + '-' + IXMLConstants.FORMAT_ANTZIP;
 		generator.setArchivesFormat(format);
 		generator.setPDEState(getState(os, ws, arch));
-		generator.setNextId(TargetPlatform.getPDEState().getNextId());
-		generator.setStateExtraData(TargetPlatform.getBundleClasspaths(TargetPlatform.getPDEState()), TargetPlatform.getPatchMap(TargetPlatform.getPDEState()));
+		generator.setNextId(TargetPlatformHelper.getPDEState().getNextId());
+		generator.setStateExtraData(TargetPlatformHelper.getBundleClasspaths(TargetPlatformHelper.getPDEState()), TargetPlatformHelper.getPatchMap(TargetPlatformHelper.getPDEState()));
 		AbstractScriptGenerator.setForceUpdateJar(false);
 		AbstractScriptGenerator.setEmbeddedSource(fInfo.exportSource);		
 	}
 	
 	protected State getState(String os, String ws, String arch) {
-		State main = TargetPlatform.getState();
+		State main = TargetPlatformHelper.getState();
 		if (os.equals(TargetPlatform.getOS()) 
 				&& ws.equals(TargetPlatform.getWS())
 				&& arch.equals(TargetPlatform.getOSArch())) {
@@ -529,7 +528,7 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 	}
 
 	protected String[] getPaths() {
-		return TargetPlatform.getFeaturePaths();
+		return TargetPlatformHelper.getFeaturePaths();
 	}
 	
 	protected void cleanup(String[] config, IProgressMonitor monitor) {

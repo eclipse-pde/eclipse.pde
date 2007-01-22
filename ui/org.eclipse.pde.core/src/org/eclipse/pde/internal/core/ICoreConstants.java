@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.osgi.framework.Constants;
 
 public interface ICoreConstants {
@@ -34,6 +36,17 @@ public interface ICoreConstants {
 	String IMPLICIT_DEPENDENCIES = "implicit_dependencies"; //$NON-NLS-1$
 	String GROUP_PLUGINS_VIEW = "group_plugins"; //$NON-NLS-1$
 	String ADDITIONAL_LOCATIONS = "additional_locations"; //$NON-NLS-1$
+	
+	// Target Environment
+	String OS = "org.eclipse.pde.ui.os"; //$NON-NLS-1$
+	String WS = "org.eclipse.pde.ui.ws"; //$NON-NLS-1$
+	String NL = "org.eclipse.pde.ui.nl"; //$NON-NLS-1$
+	String ARCH = "org.eclipse.pde.ui.arch"; //$NON-NLS-1$
+	
+	String OS_EXTRA = "org.eclipse.pde.os.extra"; //$NON-NLS-1$
+	String WS_EXTRA = "org.eclipse.pde.ws.extra"; //$NON-NLS-1$
+	String NL_EXTRA = "org.eclipse.pde.nl.extra"; //$NON-NLS-1$
+	String ARCH_EXTRA = "org.eclipse.pde.arch.extra"; //$NON-NLS-1$
 	
 	// Target JRE
 	String TARGET_JRE = "targetJRE"; //$NON-NLS-1$
@@ -97,4 +110,12 @@ public interface ICoreConstants {
 	public static final String[] EE_TOKENS = new String[] {
 		"wassim", "zx", "cherie", "jlb" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	};
+	
+	// Common paths
+	public static IPath MANIFEST_PATH = new Path("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+	public static IPath PLUGIN_PATH = new Path("plugin.xml"); //$NON-NLS-1$
+	public static IPath FRAGMENT_PATH = new Path("fragment.xml"); //$NON-NLS-1$
+	public static IPath FEATURE_PATH = new Path("feature.xml"); //$NON-NLS-1$
+	
+
 }

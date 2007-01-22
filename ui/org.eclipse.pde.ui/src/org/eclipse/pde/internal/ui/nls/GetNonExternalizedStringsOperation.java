@@ -30,6 +30,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.IPluginParent;
 import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
@@ -66,18 +67,19 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 				if (elems[i] instanceof IFile)
 					elems[i] = ((IFile) elems[i]).getProject();
 				
-				if (elems[i] instanceof IProject &&
-						!WorkspaceModelManager.isBinaryPluginProject((IProject)elems[i]))
+				if (elems[i] instanceof IProject 
+						&& WorkspaceModelManager.isPluginProject((IProject)elems[i])
+						&& !WorkspaceModelManager.isBinaryProject((IProject)elems[i]))
 					fSelectedModels.add(elems[i]);
 			}
 		
 			fModelChangeTable = new ModelChangeTable();
 			
-			IPluginModelBase[] pluginModels = PDECore.getDefault().getModelManager().getWorkspaceModels();
+			IPluginModelBase[] pluginModels = PluginRegistry.getWorkspaceModels();
 			monitor.beginTask(PDEUIMessages.GetNonExternalizedStringsOperation_taskMessage, pluginModels.length);
 			for (int i = 0; i < pluginModels.length && !fCanceled; i++) {
 				IProject project = pluginModels[i].getUnderlyingResource().getProject();
-				if (!WorkspaceModelManager.isBinaryPluginProject(project))
+				if (!WorkspaceModelManager.isBinaryProject(project))
 					getUnExternalizedStrings(project, new SubProgressMonitor(monitor, 1));
 			}
 		}

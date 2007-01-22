@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
@@ -56,7 +57,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 
 	class ContentProvider extends DefaultContentProvider implements ITreeContentProvider {
 		public Object[] getElements(Object inputElement) {
-			return PDECore.getDefault().getModelManager().getAllPlugins();
+			return PluginRegistry.getAllModels();
 		}
 
 		public Object[] getChildren(Object parentElement) {
@@ -211,7 +212,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		fTree.getCheckboxTreeViewer().setContentProvider(fTableContentProvider);
 		fTree.getCheckboxTreeViewer().setLabelProvider(new WorkingSetLabelProvider());
 		fTree.getCheckboxTreeViewer().setUseHashlookup(true);
-		fTree.getCheckboxTreeViewer().setInput(PDECore.getDefault().getModelManager());
+		fTree.getCheckboxTreeViewer().setInput(PDECore.getDefault());
 
 		fTree.getCheckboxTreeViewer().addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {

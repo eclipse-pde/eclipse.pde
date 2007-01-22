@@ -21,8 +21,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureData;
@@ -127,9 +126,7 @@ public class Feature extends VersionableObject implements IFeature {
 	}
 
 	public IPluginModelBase getReferencedModel(IFeaturePlugin reference) {
-		PluginModelManager mng = PDECore.getDefault().getModelManager();
-		IPluginModelBase model = mng.findModel(reference.getId());
-		
+		IPluginModelBase model = PluginRegistry.findModel(reference.getId());	
 		return (model != null && model.isEnabled()) ? model : null;
 	}
 	public IFeatureURL getURL() {
@@ -248,10 +245,9 @@ public class Feature extends VersionableObject implements IFeature {
 		ArrayList newImports = new ArrayList();
 		for (int i = 0; i < fPlugins.size(); i++) {
 			IFeaturePlugin fp = (IFeaturePlugin) fPlugins.get(i);
-			IPluginBase plugin = PDECore.getDefault().findPlugin(fp.getId(),
-					fp.getVersion(), 0);
-			if (plugin != null) {
-				addPluginImports(preservedImports, newImports, plugin);
+			IPluginModelBase model = PluginRegistry.findModel(fp.getId());
+			if (model != null) {
+				addPluginImports(preservedImports, newImports, model.getPluginBase());
 			}
 		}
 		// preserve imports of features

@@ -21,8 +21,7 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEStateHelper;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
 import org.eclipse.pde.internal.ui.editor.actions.OpenSchemaAction;
 import org.eclipse.pde.internal.ui.search.dependencies.DependencyExtentAction;
@@ -108,7 +107,7 @@ public class PluginSearchActionGroup extends ActionGroup {
 			menu.add(new ShowDescriptionAction(extPoint, pointID));
 		} else if (object instanceof IPluginExtension) {
 			String point = ((IPluginExtension)object).getPoint();
-			IPluginExtensionPoint extPoint = PDECore.getDefault().findExtensionPoint(point);
+			IPluginExtensionPoint extPoint = PDEStateHelper.findExtensionPoint(point);
 			if (extPoint != null)
 				menu.add(new ShowDescriptionAction(extPoint));
 		}
@@ -127,8 +126,8 @@ public class PluginSearchActionGroup extends ActionGroup {
 	}
 
 	private void addFindReferencesAction(Object object, IMenuManager menu) {
-		if (object instanceof ModelEntry) {
-			object = ((ModelEntry) object).getActiveModel().getPluginBase();
+		if (object instanceof IPluginModelBase) {
+			object = ((IPluginModelBase)object).getPluginBase();
 		} else if (object instanceof ImportObject) {
 			object = ((ImportObject) object).getImport();
 		}

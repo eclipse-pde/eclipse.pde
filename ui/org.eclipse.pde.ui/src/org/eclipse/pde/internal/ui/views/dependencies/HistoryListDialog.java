@@ -193,7 +193,7 @@ public class HistoryListDialog extends StatusDialog {
 			}
 		});
 		fHistoryViewer.setContentProvider(new ContentProvider());
-		fHistoryViewer.setInput(PDECore.getDefault().getExternalModelManager());
+		fHistoryViewer.setInput(PDECore.getDefault().getModelManager());
 		fHistoryViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 
 		ISelection sel;

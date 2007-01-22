@@ -143,7 +143,7 @@ public abstract class FeatureObject
 	}
 	protected void throwCoreException(String message) throws CoreException {
 		Status status =
-			new Status(IStatus.ERROR, PDECore.getPluginId(), IStatus.OK, message, null);
+			new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, message, null);
 		CoreException ce = new CoreException(status);
 		ce.fillInStackTrace();
 		throw ce;

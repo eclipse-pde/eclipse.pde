@@ -58,8 +58,8 @@ import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
-import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
@@ -716,12 +716,12 @@ public class PluginImportOperation extends JarImportOperation {
 	}
 
 	private IProject findProject(String id) {
-		ModelEntry entry = PDECore.getDefault().getModelManager().findEntry(id);
-		if (entry != null) {
-			IPluginModelBase model = entry.getWorkspaceModel();
-			if (model != null)
-				return model.getUnderlyingResource().getProject();
-		}
+		IPluginModelBase model = PluginRegistry.findModel(id);
+		if (model != null) {
+			IResource resource = model.getUnderlyingResource();
+			if (resource != null)
+				return resource.getProject();
+		}		
 		return PDEPlugin.getWorkspace().getRoot().getProject(id);
 	}
 

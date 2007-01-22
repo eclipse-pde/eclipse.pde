@@ -22,7 +22,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
@@ -230,7 +230,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		Map map = retrieveMap(configuration, IPDELauncherConstants.WORKSPACE_BUNDLES);
 		if (configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true)) {
 			TreeSet deselectedPlugins = LaunchPluginValidator.parsePlugins(configuration, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS);
-			IPluginModelBase[] models = PDECore.getDefault().getModelManager().getWorkspaceModels();
+			IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 			for (int i = 0; i < models.length; i++) {
 				String id = models[i].getPluginBase().getId();
 				if (id != null && !map.containsKey(id) && !deselectedPlugins.contains(id)) {
@@ -396,7 +396,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	
 	protected IPluginModelBase[] getPluginsToValidate() {
 		if (!fPluginTreeViewer.getTree().isEnabled())
-			return PDECore.getDefault().getModelManager().getPlugins();
+			return PluginRegistry.getActiveModels();
 		
 		Map map = new HashMap();
 		Object[] objects = fPluginTreeViewer.getCheckedElements();

@@ -16,7 +16,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -252,7 +252,7 @@ public class FragmentContentPage extends ContentPage {
 					fPluginIdText_newV.getText().trim() : fPluginIdText_oldV.getText().trim();
 			if (pluginID.length() == 0) {
 				errorMessage = PDEUIMessages.ContentPage_nopid; 
-			} else if (PDECore.getDefault().getModelManager().findEntry(pluginID) == null) {
+			} else if (!(PluginRegistry.findModel(pluginID) instanceof IPluginModel)) {
 				errorMessage = PDEUIMessages.ContentPage_pluginNotFound; 
 			} else {
 				if (fNewVersion) {

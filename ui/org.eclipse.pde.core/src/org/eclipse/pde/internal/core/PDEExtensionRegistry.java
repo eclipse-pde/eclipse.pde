@@ -10,16 +10,23 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -38,6 +45,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class PDEExtensionRegistry {
 	
@@ -56,6 +64,8 @@ public class PDEExtensionRegistry {
 	private static String ELEMENT_EXTENSION = "extension"; //$NON-NLS-1$
 	private static String ELEMENT_EXTENSION_POINT = "extension-point"; //$NON-NLS-1$
 	private static String ATTR_SCHEMA = "schema"; //$NON-NLS-1$
+
+	private static SAXParser parser;
 	
 	private Map fExtensions = new HashMap();
 	
@@ -126,7 +136,7 @@ public class PDEExtensionRegistry {
 			BundleDescription desc = bundles[i];
 			Element element = doc.createElement(ELEMENT_BUNDLE); //$NON-NLS-1$
 			element.setAttribute(ATTR_BUNDLE_ID, Long.toString(desc.getBundleId())); //$NON-NLS-1$
-			PDEStateHelper.parseExtensions(desc, element);
+			parseExtensions(desc, element);
 			if (element.hasChildNodes()) {
 				root.appendChild(element);
 				fExtensions.put(Long.toString(desc.getBundleId()), element);
@@ -252,6 +262,48 @@ public class PDEExtensionRegistry {
 	public String getSchemaVersion(long bundleID) {
 		Element bundle = (Element)fExtensions.get(Long.toString(bundleID));
 		return bundle == null ? null : bundle.getAttribute(ATTR_SCHEMA);
+	}
+	
+	public static synchronized void parseExtensions(BundleDescription desc, Element parent) {
+		ZipFile jarFile = null;
+		InputStream stream = null;
+		try {
+			String filename = desc.getHost() == null ? "plugin.xml" : "fragment.xml"; //$NON-NLS-1$ //$NON-NLS-2$
+			String path = desc.getLocation();
+
+			File file = new File(path);
+			if (file.isFile()) {
+				jarFile = new ZipFile(file, ZipFile.OPEN_READ);
+				ZipEntry manifestEntry = jarFile.getEntry(filename); 
+				if (manifestEntry != null) 
+					stream = new BufferedInputStream(jarFile.getInputStream(manifestEntry));				
+			} else if (file.isDirectory()) {
+				File manifest = new File(file, filename);
+				if (manifest.exists() && manifest.isFile()) {
+					stream = new BufferedInputStream(new FileInputStream(manifest));
+				}
+			}
+			if (stream != null) {
+				if (parser == null)
+					parser = SAXParserFactory.newInstance().newSAXParser();
+				parser.parse(stream, new ExtensionsHandler(parent));
+			}			
+		} catch (IOException e) {
+		} catch (ParserConfigurationException e) {
+		} catch (SAXException e) {
+		} catch (FactoryConfigurationError e) {
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException e1) {
+			}
+			try {
+				if (jarFile != null)
+					jarFile.close();
+			} catch (IOException e2) {
+			}
+		}
 	}
 
 }

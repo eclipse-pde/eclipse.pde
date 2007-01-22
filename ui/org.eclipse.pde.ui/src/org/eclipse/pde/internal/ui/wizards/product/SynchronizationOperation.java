@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Shell;
@@ -43,7 +43,7 @@ public class SynchronizationOperation extends ProductDefinitionOperation {
 	}
 	
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(fPluginId);
+		IPluginModelBase model = PluginRegistry.findModel(fPluginId);
 		if (model == null) {
 			String message = PDEUIMessages.SynchronizationOperation_noDefiningPlugin; 
 			throw new InvocationTargetException(createCoreException(message));

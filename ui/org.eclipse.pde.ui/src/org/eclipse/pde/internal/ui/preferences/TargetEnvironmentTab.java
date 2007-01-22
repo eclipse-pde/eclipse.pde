@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.pde.internal.core.IEnvironmentVariables;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 
-public class TargetEnvironmentTab implements IEnvironmentVariables {
+public class TargetEnvironmentTab  {
 	private Combo fOSCombo;
 	private Combo fWSCombo;
 	private Combo fNLCombo;
@@ -67,25 +67,25 @@ public class TargetEnvironmentTab implements IEnvironmentVariables {
 		String[] os = Platform.knownOSValues();
 		for (int i = 0; i < os.length; i++)
 			fOSChoices.add(os[i]);
-		addExtraChoices(fOSChoices, preferences.getString(OS_EXTRA));
+		addExtraChoices(fOSChoices, preferences.getString(ICoreConstants.OS_EXTRA));
 		
 		fWSChoices = new TreeSet();
 		String[] ws = Platform.knownWSValues();
 		for (int i = 0; i < ws.length; i++)
 			fWSChoices.add(ws[i]);
-		addExtraChoices(fWSChoices, preferences.getString(WS_EXTRA));
+		addExtraChoices(fWSChoices, preferences.getString(ICoreConstants.WS_EXTRA));
 		
 		fArchChoices = new TreeSet();
 		String[] arch = Platform.knownOSArchValues();
 		for (int i = 0; i < arch.length; i++)
 			fArchChoices.add(arch[i]);
-		addExtraChoices(fArchChoices, preferences.getString(ARCH_EXTRA));
+		addExtraChoices(fArchChoices, preferences.getString(ICoreConstants.ARCH_EXTRA));
 		
 		fNLChoices = new TreeSet();
 		if (LOCALES_INITIALIZED) {
 			initializeAllLocales();
 		} else {
-			fNLChoices.add(expandLocaleName(preferences.getString(NL)));
+			fNLChoices.add(expandLocaleName(preferences.getString(ICoreConstants.NL)));
 		}
 	}
 	
@@ -113,7 +113,7 @@ public class TargetEnvironmentTab implements IEnvironmentVariables {
 		String[] nl = getLocales();
 		for (int i = 0; i < nl.length; i++)
 			fNLChoices.add(nl[i]);
-		addExtraChoices(fNLChoices, preferences.getString(NL_EXTRA));	
+		addExtraChoices(fNLChoices, preferences.getString(ICoreConstants.NL_EXTRA));	
 	}
 	
 	private void addExtraChoices(Set set, String preference) {
@@ -202,10 +202,10 @@ public class TargetEnvironmentTab implements IEnvironmentVariables {
 		fNLCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fNLCombo.setItems((String[])fNLChoices.toArray(new String[fNLChoices.size()]));
 				
-		fOSCombo.setText(preferences.getString(OS));
-		fWSCombo.setText(preferences.getString(WS));
-		fNLCombo.setText(expandLocaleName(preferences.getString(NL)));
-		fArchCombo.setText(preferences.getString(ARCH));		
+		fOSCombo.setText(preferences.getString(ICoreConstants.OS));
+		fWSCombo.setText(preferences.getString(ICoreConstants.WS));
+		fNLCombo.setText(expandLocaleName(preferences.getString(ICoreConstants.NL)));
+		fArchCombo.setText(preferences.getString(ICoreConstants.ARCH));		
 	}
 	
 	protected void loadTargetProfile(ITarget target) {
@@ -256,10 +256,10 @@ public class TargetEnvironmentTab implements IEnvironmentVariables {
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		fOSCombo.setText(preferences.getDefaultString(OS));
-		fWSCombo.setText(preferences.getDefaultString(WS));
-		fNLCombo.setText(expandLocaleName(preferences.getDefaultString(NL)));
-		fArchCombo.setText(preferences.getDefaultString(ARCH));
+		fOSCombo.setText(preferences.getDefaultString(ICoreConstants.OS));
+		fWSCombo.setText(preferences.getDefaultString(ICoreConstants.WS));
+		fNLCombo.setText(expandLocaleName(preferences.getDefaultString(ICoreConstants.NL)));
+		fArchCombo.setText(preferences.getDefaultString(ICoreConstants.ARCH));
 		fJRECombo.setText(VMHelper.getDefaultVMInstallName());
 	}
 
@@ -284,45 +284,45 @@ public class TargetEnvironmentTab implements IEnvironmentVariables {
 		String os = fOSCombo.getText().trim();
 		if (os.length() > 0) {
 			if (!fOSChoices.contains(os)) {
-				String value = preferences.getString(OS_EXTRA);
+				String value = preferences.getString(ICoreConstants.OS_EXTRA);
 				value = (value.length() > 0) ? value + "," + os : os; //$NON-NLS-1$
-				preferences.setValue(OS_EXTRA, value);
+				preferences.setValue(ICoreConstants.OS_EXTRA, value);
 			}
-			preferences.setValue(OS, os);
+			preferences.setValue(ICoreConstants.OS, os);
 		}
 		
 		String ws = fWSCombo.getText().trim();
 		if (ws.length() > 0) {
 			if (!fWSChoices.contains(ws)) {
-				String value = preferences.getString(WS_EXTRA);
+				String value = preferences.getString(ICoreConstants.WS_EXTRA);
 				value = (value.length() > 0) ? value + "," + ws : ws; //$NON-NLS-1$
-				preferences.setValue(WS_EXTRA, value);
+				preferences.setValue(ICoreConstants.WS_EXTRA, value);
 			}
-			preferences.setValue(WS, ws);
+			preferences.setValue(ICoreConstants.WS, ws);
 		}
 		
 		String arch = fArchCombo.getText().trim();
 		if (arch.length() > 0) {
 			if (!fArchChoices.contains(arch)) {
-				String value = preferences.getString(ARCH_EXTRA);
+				String value = preferences.getString(ICoreConstants.ARCH_EXTRA);
 				value = (value.length() > 0) ? value + "," + arch : arch; //$NON-NLS-1$
-				preferences.setValue(ARCH_EXTRA, value);
+				preferences.setValue(ICoreConstants.ARCH_EXTRA, value);
 			}
-			preferences.setValue(ARCH, arch);
+			preferences.setValue(ICoreConstants.ARCH, arch);
 		}
 		
 		String locale = fNLCombo.getText().trim();
 		if (locale.length() > 0) {
 			if (!fNLChoices.contains(locale)) {
-				String value = preferences.getString(NL_EXTRA);
+				String value = preferences.getString(ICoreConstants.NL_EXTRA);
 				value = (value.length() > 0) ? value + "," + locale : locale; //$NON-NLS-1$
-				preferences.setValue(NL_EXTRA, value);
+				preferences.setValue(ICoreConstants.NL_EXTRA, value);
 			}			
 			int dash = locale.indexOf("-"); //$NON-NLS-1$
 			if (dash != -1)
 				locale = locale.substring(0, dash);
 			locale = locale.trim();
-			preferences.setValue(NL, locale);
+			preferences.setValue(ICoreConstants.NL, locale);
 		}
 		PDECore.getDefault().savePluginPreferences();
 	}

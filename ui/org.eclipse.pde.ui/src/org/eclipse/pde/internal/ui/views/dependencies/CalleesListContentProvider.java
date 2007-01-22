@@ -18,11 +18,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 
 public class CalleesListContentProvider extends CalleesContentProvider
 		implements IStructuredContentProvider {
@@ -53,14 +52,13 @@ public class CalleesListContentProvider extends CalleesContentProvider
 					}else /*if (candidate instanceof IPluginBase)*/{
 						id = ((IPluginBase)candidate).getId();
 					}
-					IPlugin callee = PDECore.getDefault()
-							.findPlugin(id);
+					IPluginModelBase callee = PluginRegistry.findModel(id);
 					it.remove();
 					if (!elements.containsKey(id)) {
 						elements.put(id, candidate);
 						if (callee != null) {
 							newCandidates.addAll(Arrays
-									.asList(findCallees(callee)));
+									.asList(findCallees(callee.getPluginBase())));
 						}
 					}
 				}

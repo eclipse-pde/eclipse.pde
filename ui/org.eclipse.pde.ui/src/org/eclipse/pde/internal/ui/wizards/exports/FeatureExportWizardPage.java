@@ -16,8 +16,8 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -39,10 +39,14 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 			PDEUIMessages.ExportWizard_Feature_pageBlock); 
 		setTitle(PDEUIMessages.ExportWizard_Feature_pageTitle); 
 	}
+	
+	protected Object getInput() {
+		return PDECore.getDefault().getFeatureModelManager();
+	}
 
 	public Object[] getListElements() {
-		WorkspaceModelManager manager = PDECore.getDefault().getWorkspaceModelManager();
-		return manager.getFeatureModels();
+		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
+		return manager.getWorkspaceModels();
 	}
 	
 	protected void hookHelpContext(Control control) {
@@ -85,7 +89,7 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 	protected IModel findModelFor(IAdaptable object) {
 		IProject project = (IProject) object.getAdapter(IProject.class);
 		if (project != null)
-			return PDECore.getDefault().getWorkspaceModelManager().getFeatureModel(project);
+			return PDECore.getDefault().getFeatureModelManager().getFeatureModel(project);
 		return null;
 	}
 	

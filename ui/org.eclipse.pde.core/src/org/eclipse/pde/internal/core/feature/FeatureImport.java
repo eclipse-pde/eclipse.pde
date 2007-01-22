@@ -14,9 +14,14 @@ import java.io.PrintWriter;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.w3c.dom.Node;
 
 public class FeatureImport
@@ -33,17 +38,49 @@ public class FeatureImport
 
 	public IPlugin getPlugin() {
 		if (id != null && fType == PLUGIN) {
-			return PDECore.getDefault().findPlugin(id, getVersion(), fMatch);
+			IPluginModelBase model = PluginRegistry.findModel(id);
+			return model instanceof IPluginModel ? ((IPluginModel)model).getPlugin() : null;
 		}
 		return null;
 	}
 
 	public IFeature getFeature() {
 		if (id != null && fType == FEATURE) { 
-			return PDECore.getDefault().findFeature(id, getVersion(), fMatch);
+			return findFeature(id, getVersion(), fMatch);
 		}
 		return null;
 	}
+
+	private IFeature findFeature(
+			IFeatureModel[] models,
+			String id,
+			String version,
+			int match) {
+
+			for (int i = 0; i < models.length; i++) {
+				IFeatureModel model = models[i];
+
+				IFeature feature = model.getFeature();
+				String pid = feature.getId();
+				String pversion = feature.getVersion();
+				if (VersionUtil.compare(id, version, pid, pversion, match))
+					return feature;
+			}
+			return null;
+		}
+
+		/**
+		 * Finds a feature with the given ID and satisfying constraints
+		 * of the version and the match.
+		 * @param id
+		 * @param version
+		 * @param match
+		 * @return IFeature or null
+		 */
+		public IFeature findFeature(String id, String version, int match) {
+			IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().findFeatureModels(id);
+			return findFeature(models, id, version, match);
+		}
 
 	public int getIdMatch() {
 		return fIdMatch;

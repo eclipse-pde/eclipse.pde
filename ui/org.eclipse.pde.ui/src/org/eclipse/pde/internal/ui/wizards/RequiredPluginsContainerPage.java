@@ -26,9 +26,9 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.RequiredPluginsClasspathContainer;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -201,10 +201,9 @@ public class RequiredPluginsContainerPage
 
 		if (entry == null) {
 			entry = ClasspathComputer.createContainerEntry();
-			PluginModelManager mng = PDECore.getDefault().getModelManager();
-			ModelEntry entry = mng.findEntry(javaProject.getProject());
-			if (entry!=null) {
-				IClasspathContainer container = entry.getClasspathContainer(false);
+			IPluginModelBase model = PluginRegistry.findModel(javaProject.getProject());
+			if (model != null) {
+				IClasspathContainer container = new RequiredPluginsClasspathContainer(model);
 				if (container!=null)
 					realEntries = container.getClasspathEntries();
 			}

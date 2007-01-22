@@ -54,8 +54,8 @@ import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
 import org.eclipse.pde.internal.core.text.plugin.PluginExtensionPointNode;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -258,14 +258,14 @@ public class PDEJavaHelper {
     		return null;
     	IPluginModelBase base = null;
     	try {
-    		IPluginModelBase plugin = PDECore.getDefault().getModelManager().findModel(pluginID);
+    		IPluginModelBase plugin = PluginRegistry.findModel(pluginID);
     		if (plugin == null)
     			return null;
     		ImportPackageSpecification[] packages = plugin.getBundleDescription().getImportPackages();
     		for (int i =0; i < packages.length; i++)
     			if (packages[i].getName().equals(packageName)) {
     				ExportPackageDescription desc = (ExportPackageDescription) packages[i].getSupplier();
-    				base = PDECore.getDefault().getModelManager().findModel(desc.getExporter().getSymbolicName());
+    				base = PluginRegistry.findModel(desc.getExporter().getSymbolicName());
     				break;
     			}
     		if (base == null)

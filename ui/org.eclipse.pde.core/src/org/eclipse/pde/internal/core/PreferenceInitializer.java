@@ -15,9 +15,9 @@ import java.util.Locale;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 
-public class PreferenceInitializer extends AbstractPreferenceInitializer
-		implements IEnvironmentVariables {
+public class PreferenceInitializer extends AbstractPreferenceInitializer  {
 
 	/*
 	 * (non-Javadoc)
@@ -35,17 +35,17 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
 		if (preferences.getString(ICoreConstants.TARGET_MODE).equals(ICoreConstants.VALUE_USE_THIS))
 			preferences.setValue(
 					ICoreConstants.PLATFORM_PATH,
-					ExternalModelManager.computeDefaultPlatformPath());
+					TargetPlatform.getDefaultLocation());
 		else
 			preferences.setDefault(
 					ICoreConstants.PLATFORM_PATH,
-					ExternalModelManager.computeDefaultPlatformPath());
+					TargetPlatform.getDefaultLocation());
 
 		// set defaults for the target environment variables.
-		preferences.setDefault(OS, Platform.getOS());
-		preferences.setDefault(WS, Platform.getWS());
-		preferences.setDefault(NL, Locale.getDefault().toString());
-		preferences.setDefault(ARCH, Platform.getOSArch());
+		preferences.setDefault(ICoreConstants.OS, Platform.getOS());
+		preferences.setDefault(ICoreConstants.WS, Platform.getWS());
+		preferences.setDefault(ICoreConstants.NL, Locale.getDefault().toString());
+		preferences.setDefault(ICoreConstants.ARCH, Platform.getOSArch());
 	}
 
 }

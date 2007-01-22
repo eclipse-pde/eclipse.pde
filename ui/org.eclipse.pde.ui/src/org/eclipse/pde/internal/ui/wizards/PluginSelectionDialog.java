@@ -12,14 +12,12 @@ package org.eclipse.pde.internal.ui.wizards;
 
 import java.util.HashSet;
 
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Shell;
@@ -46,32 +44,25 @@ public class PluginSelectionDialog extends ElementListSelectionDialog {
 	}
 	
 	private static IPluginModelBase[] getElements(boolean includeFragments) {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		return includeFragments ? manager.getPlugins() : manager.getPluginsOnly();
+		return PluginRegistry.getActiveModels(includeFragments);
 	}
 	
-	public static HashSet getExistingImports(IPluginBase model) {
+	public static HashSet getExistingImports(IPluginModelBase model) {
 		HashSet existingImports = new HashSet();
 		addSelfAndDirectImports(existingImports, model);
-		if (model instanceof IFragment) {
-			IPlugin parent = getParentPlugin((IFragment) model);
-			if (parent != null) {
-				addSelfAndDirectImports(existingImports, parent);
-			}
+		BundleDescription desc = model.getBundleDescription();
+		HostSpecification hostSpec = desc == null ? null : desc.getHost();
+		BundleDescription host = hostSpec == null ? null : (BundleDescription)hostSpec.getSupplier();
+		if (host != null) {
+			addSelfAndDirectImports(existingImports, PluginRegistry.findModel(desc));
 		}
 		return existingImports;
 	}
 	
-	private static IPlugin getParentPlugin(IFragment fragment) {
-		String targetId = fragment.getPluginId();
-		String targetVersion = fragment.getPluginVersion();
-		int match = fragment.getRule();
-		return PDECore.getDefault().findPlugin(targetId, targetVersion, match);
-	}
-
-	private static void addSelfAndDirectImports(HashSet set, IPluginBase pluginBase) {
-		set.add(pluginBase.getId());
-		IPluginImport[] imports = pluginBase.getImports();
+	private static void addSelfAndDirectImports(HashSet set, IPluginModelBase model) {
+		IPluginBase plugin = model.getPluginBase();
+		set.add(plugin.getId());
+		IPluginImport[] imports = plugin.getImports();
 		for (int i = 0; i < imports.length; i++) {
 			String id = imports[i].getId();
 			if (set.add(id)) {
@@ -80,11 +71,9 @@ public class PluginSelectionDialog extends ElementListSelectionDialog {
 		}
 	}
 	
-	private static void addReexportedImport(HashSet set, String id) {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		ModelEntry entry = manager.findEntry(id);
-		if (entry != null) {
-			IPluginModelBase model = entry.getActiveModel();
+	private static void addReexportedImport(HashSet set, String id) {		
+		IPluginModelBase model = PluginRegistry.findModel(id);
+		if (model != null) {
 			IPluginImport[] imports = model.getPluginBase().getImports();
 			for (int i = 0; i < imports.length; i++) {
 				if (imports[i].isReexported() && set.add(imports[i].getId())) {

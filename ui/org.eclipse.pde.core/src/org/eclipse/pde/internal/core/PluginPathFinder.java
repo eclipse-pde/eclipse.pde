@@ -20,6 +20,8 @@ import java.util.Properties;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.configurator.IPlatformConfiguration;
 
@@ -87,7 +89,7 @@ public class PluginPathFinder {
 	}
 	
 	public static URL[] getPluginPaths(String platformHome) {
-		if (ExternalModelManager.isTargetEqualToHost(platformHome) && !PDECore.isDevLaunchMode())
+		if (new Path(platformHome).equals(new Path(TargetPlatform.getDefaultLocation())) && !isDevLaunchMode())
 			return ConfiguratorUtils.getCurrentPlatformConfiguration().getPluginPath();
 		
 		File file = new File(platformHome, "configuration/org.eclipse.update/platform.xml"); //$NON-NLS-1$
@@ -188,5 +190,15 @@ public class PluginPathFinder {
 		}
 		return (URL[]) result.toArray(new URL[result.size()]);	
 	}
+	
+	public static boolean isDevLaunchMode() {
+		String[] args = Platform.getApplicationArgs();
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].equals("-pdelaunch")) //$NON-NLS-1$
+				return true;		
+		}
+		return false;
+	}
+
 	
 }

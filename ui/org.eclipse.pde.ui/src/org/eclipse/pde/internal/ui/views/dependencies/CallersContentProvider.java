@@ -17,7 +17,7 @@ import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 
 public class CallersContentProvider extends DependenciesViewPageContentProvider {
 	public CallersContentProvider(DependenciesView view) {
@@ -29,10 +29,10 @@ public class CallersContentProvider extends DependenciesViewPageContentProvider 
 	 * @return Set of IPluginBase
 	 */
 	protected Set findReferences(String id) {
-		ModelEntry[] entries = getPluginManager().getEntries();
-		Set l = new HashSet(entries.length);
-		for (int i = 0; i < entries.length; i++) {
-			IPluginModelBase candidate = entries[i].getActiveModel();
+		IPluginModelBase[] models = PluginRegistry.getAllModels();
+		Set l = new HashSet(models.length);
+		for (int i = 0; i < models.length; i++) {
+			IPluginModelBase candidate = models[i];
 			IPluginBase candidateBase = candidate.getPluginBase(false);
 			if (candidateBase == null) {
 				continue;

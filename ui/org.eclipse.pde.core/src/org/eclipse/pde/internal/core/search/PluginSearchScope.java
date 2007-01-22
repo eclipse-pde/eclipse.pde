@@ -14,9 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 
 public class PluginSearchScope {
 
@@ -76,15 +74,12 @@ public class PluginSearchScope {
 		
 	public IPluginModelBase[] getMatchingModels() {
 		ArrayList result = new ArrayList();
-		PluginModelManager modelManager =
-			PDECore.getDefault().getModelManager();
-		ModelEntry[] entries = modelManager.getEntries();
-		for (int i = 0; i < entries.length; i++) {
-			IPluginModelBase candidate = entries[i].getActiveModel();
-			if (candidate.getUnderlyingResource() != null) {
-				addWorkspaceModel(candidate, result);
+		IPluginModelBase[] models = PluginRegistry.getAllModels();
+		for (int i = 0; i < models.length; i++) {
+			if (models[i].getUnderlyingResource() != null) {
+				addWorkspaceModel(models[i], result);
 			} else {
-				addExternalModel(candidate, result);
+				addExternalModel(models[i], result);
 			}
 		}		
 		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);

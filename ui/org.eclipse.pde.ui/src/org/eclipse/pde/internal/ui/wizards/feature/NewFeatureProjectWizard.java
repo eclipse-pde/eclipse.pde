@@ -11,7 +11,7 @@
 package org.eclipse.pde.internal.ui.wizards.feature;
 
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
@@ -35,7 +35,7 @@ public class NewFeatureProjectWizard extends AbstractNewFeatureWizard {
 	}
 	
 	private boolean hasInterestingProjects() {
-		return PDECore.getDefault().getModelManager().getPlugins().length > 0;
+		return PluginRegistry.getActiveModels().length > 0;
 	}
 	
 	protected AbstractFeatureSpecPage createFirstPage() {

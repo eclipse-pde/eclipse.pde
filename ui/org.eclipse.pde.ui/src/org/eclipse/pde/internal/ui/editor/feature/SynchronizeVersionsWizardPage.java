@@ -22,7 +22,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
@@ -96,7 +96,7 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 	}
 
 	private IPluginModelBase findModel(String id) {
-		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getWorkspaceModels();
+		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase modelBase = models[i];
 			if (modelBase != null && id.equals(modelBase.getPluginBase().getId()))
@@ -214,7 +214,7 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 			if (!"0.0.0".equals(ref.getVersion())) //$NON-NLS-1$
 				ref.setVersion("0.0.0"); //$NON-NLS-1$
 		} else if (mode == USE_PLUGINS) {
-			IPluginModelBase modelBase = PDECore.getDefault().getModelManager().findModel(id);
+			IPluginModelBase modelBase = PluginRegistry.findModel(id);
 			if (modelBase == null)
 				return;
 			String baseVersion = modelBase.getPluginBase().getVersion();

@@ -13,40 +13,46 @@ package org.eclipse.pde.internal.core.plugin;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 
 public class PluginReference extends PlatformObject {
-	private String id;
-	private transient IPlugin plugin;
-	
-	public PluginReference() {}
-	
+	private String fId;
+
+	private transient IPlugin fPlugin;
+
+	public PluginReference() {
+	}
+
 	public PluginReference(String id) {
-		this.id = id;
-		if (id!=null)
-			plugin = PDECore.getDefault().findPlugin(id);
+		fId = id;
 	}
+
 	public PluginReference(IPlugin plugin) {
-		this.id = plugin.getId();
-		this.plugin = plugin;
+		fId = plugin.getId();
+		fPlugin = plugin;
 	}
+
 	public String getId() {
-		return id;
+		return fId;
 	}
+
 	public IPlugin getPlugin() {
-		if (plugin == null && id !=null) {
-			IPluginModel model = PDECore.getDefault().getModelManager().findPluginModel(id);
-			plugin = model != null ? model.getPlugin() : null;
+		if (fPlugin == null && fId != null) {
+			IPluginModelBase model = PluginRegistry.findModel(fId);
+			fPlugin = model instanceof IPluginModel ? ((IPluginModel)model).getPlugin() : null;
 		}
-		return plugin;
+		return fPlugin;
 	}
+
 	public String toString() {
-		if (plugin!=null) {
-			return plugin.getTranslatedName();
+		if (fPlugin != null) {
+			return fPlugin.getTranslatedName();
 		}
-		return id!=null?id:"?"; //$NON-NLS-1$
+		return fId != null ? fId : "?"; //$NON-NLS-1$
 	}
+
 	public boolean isResolved() {
-		return plugin!=null;
+		return getPlugin() != null;
 	}
 }

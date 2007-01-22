@@ -36,7 +36,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		IProject project = getProject();
 		IResourceDelta delta = getDelta(project);
 		boolean shouldBuild = delta == null || delta.getAffectedChildren().length > 0;
-		if (shouldBuild && !WorkspaceModelManager.isBinaryPluginProject(project))
+		if (shouldBuild && !WorkspaceModelManager.isBinaryProject(project))
 			checkThisProject(monitor);
 		return new IProject[0];
 	}

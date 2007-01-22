@@ -28,8 +28,8 @@ import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
@@ -75,7 +75,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 	private void createNewFile(IFile file) throws CoreException {
 		WorkspacePluginModelBase model = (WorkspacePluginModelBase)getModel(file);
 		IPluginBase base = model.getPluginBase();
-		base.setSchemaVersion(TargetPlatform.getTargetVersion() < 3.2 ? "3.0" : "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
+		base.setSchemaVersion(TargetPlatformHelper.getTargetVersion() < 3.2 ? "3.0" : "3.2"); //$NON-NLS-1$ //$NON-NLS-2$
 		base.add(createExtension(model));
 		model.save();
 	}
@@ -155,7 +155,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		String projectName = path.segment(0);
 		IProject project = PDEPlugin.getWorkspace().getRoot().getProject(projectName);
 		if (project.exists()) {
-			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
+			IPluginModelBase model = PluginRegistry.findModel(project);
 			if (model != null) {
 				String id = model.getPluginBase().getId();
 				if (fPluginId.equals(id))

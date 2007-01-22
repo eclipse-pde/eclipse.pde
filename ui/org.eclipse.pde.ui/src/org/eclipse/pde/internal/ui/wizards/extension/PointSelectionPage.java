@@ -43,8 +43,8 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaAnnotationHandler;
@@ -185,8 +185,7 @@ public class PointSelectionPage
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			ArrayList extPoints = new ArrayList();
-			PluginModelManager manager = (PluginModelManager)parent;
-			IPluginModelBase[] plugins = manager.getPlugins();
+			IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
 			for (int i = 0; i < plugins.length; i++) {
 				IPluginExtensionPoint[] points = plugins[i].getPluginBase().getExtensionPoints();
 				String id = plugins[i].getPluginBase().getId();
@@ -248,7 +247,7 @@ public class PointSelectionPage
 		this.fWizard= wizard;
 		this.fProject=project;
 		fWildCardFilter = new WildcardFilter();
-		fAvailableImports = PluginSelectionDialog.getExistingImports(model.getPluginBase());
+		fAvailableImports = PluginSelectionDialog.getExistingImports(model);
 		setTitle(PDEUIMessages.NewExtensionWizard_PointSelectionPage_title); 
 		setDescription(PDEUIMessages.NewExtensionWizard_PointSelectionPage_desc); 
 	}

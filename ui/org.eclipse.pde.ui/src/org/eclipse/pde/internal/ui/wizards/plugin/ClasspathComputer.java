@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -311,7 +310,7 @@ public class ClasspathComputer {
 	}
 	
 	public static IClasspathEntry createContainerEntry() {
-		return JavaCore.newContainerEntry(new Path(PDECore.CLASSPATH_CONTAINER_ID));
+		return JavaCore.newContainerEntry(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH);
 	}
 
 }

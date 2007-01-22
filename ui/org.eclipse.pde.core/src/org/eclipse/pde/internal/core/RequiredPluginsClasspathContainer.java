@@ -38,6 +38,7 @@ import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 
@@ -61,33 +62,32 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		fModel = model;
 	}
 
-	
-	public void reset() {
-		fEntries = null;
-	}
-
-	/**
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getKind()
 	 */
 	public int getKind() {
 		return K_APPLICATION;
 	}
 
-	/**
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getPath()
 	 */
 	public IPath getPath() {
-		return new Path(PDECore.CLASSPATH_CONTAINER_ID);
+		return PDECore.REQUIRED_PLUGINS_CONTAINER_PATH;
 	}
 	
-	/**
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getDescription()
 	 */
 	public String getDescription() {
 		return PDECoreMessages.RequiredPluginsClasspathContainer_description; 
 	}
 	
-	/**
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.core.IClasspathContainer#getClasspathEntries()
 	 */
 	public IClasspathEntry[] getClasspathEntries() {
@@ -151,7 +151,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			Iterator iter = map.keySet().iterator();
 			while (iter.hasNext()) {
 				String symbolicName = iter.next().toString();
-				IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(symbolicName);
+				IPluginModelBase model = PluginRegistry.findModel(symbolicName);
 				if (model != null && model.isEnabled())
 					addDependencyViaImportPackage(model.getBundleDescription(), added, map, entries);
 			}
@@ -250,7 +250,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	
 	private boolean addPlugin(BundleDescription desc, boolean useInclusions, Map map, ArrayList entries)
 			throws CoreException {		
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(desc);
+		IPluginModelBase model = PluginRegistry.findModel(desc);
 		if (model == null || !model.isEnabled())
 			return false;
 		IResource resource = model.getUnderlyingResource();
@@ -268,7 +268,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		if (desc == null
 				|| "false".equals(System.getProperty("pde.restriction")) //$NON-NLS-1$ //$NON-NLS-2$
 				|| !(fModel instanceof IBundlePluginModelBase)
-				|| TargetPlatform.getTargetVersion() < 3.1)
+				|| TargetPlatformHelper.getTargetVersion() < 3.1)
 			return null;
 		
 		Rule[] rules;
@@ -311,7 +311,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 	
 	private boolean hasExtensibleAPI(BundleDescription desc) {
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(desc);
+		IPluginModelBase model = PluginRegistry.findModel(desc);
 		return model != null ? ClasspathUtilCore.hasExtensibleAPI(model) : false;
 	}
 	
@@ -354,7 +354,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 					String pluginID = path.segment(count-2);
 					if (added.contains(pluginID))
 						continue;
-					IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginID);
+					IPluginModelBase model = PluginRegistry.findModel(pluginID);
 					if (model != null && model.isEnabled()) {
 						path = path.setDevice(null);
 						path = path.removeFirstSegments(count-1);
@@ -386,7 +386,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				  if (added.contains(pluginId))
 					  continue;
 				  // Get PluginModelBase first to resolve system.bundle entry if it exists
-				  IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(pluginId);
+				  IPluginModelBase model = PluginRegistry.findModel(pluginId);
 				  if (model != null) {
 					  TreeMap rules = new TreeMap();
 					  findExportedPackages(model.getBundleDescription(), desc, rules);

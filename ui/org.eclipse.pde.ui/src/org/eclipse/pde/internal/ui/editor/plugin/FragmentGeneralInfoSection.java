@@ -18,7 +18,7 @@ import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -83,8 +83,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 			}
 			public void linkActivated(HyperlinkEvent e) {
 				String plugin = fPluginIdEntry.getValue();				
-				if (PDECore.getDefault().getModelManager().findPluginModel(
-						plugin) == null) {
+				if (!(PluginRegistry.findModel(plugin) instanceof IPluginModel)) {
 					createFragmentPlugin();
 				}
 				ManifestEditor.openPluginEditor(fPluginIdEntry.getValue());

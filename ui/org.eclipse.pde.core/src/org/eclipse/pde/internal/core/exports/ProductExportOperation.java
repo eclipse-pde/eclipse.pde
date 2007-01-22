@@ -43,12 +43,13 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.build.BuildScriptGenerator;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.build.IXMLConstants;
-import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
@@ -171,7 +172,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 	private String getRootFileLocations(boolean hasLaunchers) {
 		StringBuffer buffer = new StringBuffer();
 
-		File homeDir = ExternalModelManager.getEclipseHome().toFile();
+		File homeDir = new File(TargetPlatform.getLocation());
 		if (!hasLaunchers) {
 			if (homeDir.exists() && homeDir.isDirectory()) {
 				buffer.append("absolute:file:"); //$NON-NLS-1$
@@ -208,7 +209,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 		if (!dir.exists() || !dir.isDirectory())
 			dir.mkdirs();
 		Properties properties = new Properties();
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(getBrandingPlugin());
+		IPluginModelBase model = PluginRegistry.findModel(getBrandingPlugin());
 		if (model != null)
 			properties.put("name", model.getResourceString(fProduct.getName())); //$NON-NLS-1$
 		else
@@ -309,7 +310,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 			if (location != null)
 				writer.println("osgi.splashPath=" + location); //$NON-NLS-1$
 			writer.println("eclipse.product=" + fProduct.getId()); //$NON-NLS-1$
-			writer.println("osgi.bundles=" + getPluginList(config, TargetPlatform.getBundleList()));  //$NON-NLS-1$
+			writer.println("osgi.bundles=" + getPluginList(config, TargetPlatformHelper.getBundleList()));  //$NON-NLS-1$
 			writer.println("osgi.bundles.defaultStartLevel=4"); //$NON-NLS-1$ 		
 		} catch (IOException e) {
 		} finally {
@@ -573,7 +574,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 				map.put(IXMLConstants.PROPERTY_ASSEMBLY_TMP, fInfo.destinationDirectory);
 			}
 			map.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, fRoot); 
-			map.put("installFolder", ExternalModelManager.getEclipseHome().toOSString()); //$NON-NLS-1$
+			map.put("installFolder",  TargetPlatform.getLocation()); //$NON-NLS-1$
 			map.put("template", location); //$NON-NLS-1$
 			runner.addUserProperties(map);
 			runner.setBuildFileLocation(scriptFile.getAbsolutePath());

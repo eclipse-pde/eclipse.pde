@@ -21,7 +21,7 @@ import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.iproduct.IProductFeature;
@@ -99,7 +99,7 @@ public class ProductExportWizard extends BaseExportWizard {
 
 	private BundleDescription[] getPluginModels() {
 		ArrayList list = new ArrayList();
-		State state = TargetPlatform.getState();
+		State state = TargetPlatformHelper.getState();
 		IProductPlugin[] plugins = fProductModel.getProduct().getPlugins();
 		for (int i = 0; i < plugins.length; i++) {
 			BundleDescription bundle = state.getBundle(plugins[i].getId(), null);

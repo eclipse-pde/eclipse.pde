@@ -27,10 +27,8 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
-import org.eclipse.pde.internal.core.ModelEntry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelProvider;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.w3c.dom.Comment;
@@ -180,7 +178,7 @@ public abstract class PluginObject
 		Status status =
 			new Status(
 				IStatus.ERROR,
-				PDECore.getPluginId(),
+				PDECore.PLUGIN_ID,
 				IStatus.OK,
 				message,
 				null);
@@ -237,11 +235,11 @@ public abstract class PluginObject
 	}
 	
 	public Object getAdapter(Class adapter) {
-		if(adapter.equals(ModelEntry.class)) {
-			PluginModelManager manager = PDECore.getDefault().getModelManager();
-			return manager.findEntry(getPluginBase().getId());
+		if(adapter.equals(IPluginModelBase.class)) {
+			return getModel();
 		}
 		return super.getAdapter(adapter);
 	}
 
+	
 }

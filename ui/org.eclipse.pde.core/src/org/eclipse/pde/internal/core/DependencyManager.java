@@ -28,7 +28,7 @@ public class DependencyManager {
 	 * 
 	 */
 	public static Set getSelfAndDependencies(IPluginModelBase model) {
-		return getDependencies(new Object[] {model}, new String[0], TargetPlatform.getState(), false);
+		return getDependencies(new Object[] {model}, new String[0], TargetPlatformHelper.getState(), false);
 	}
 	
 	/** 
@@ -36,7 +36,7 @@ public class DependencyManager {
 	 * 
 	 */
 	public static Set getSelfandDependencies(IPluginModelBase[] models) {
-		return getDependencies(models, new String[0], TargetPlatform.getState(), false);
+		return getDependencies(models, new String[0], TargetPlatformHelper.getState(), false);
 	}
 	
 	/** 

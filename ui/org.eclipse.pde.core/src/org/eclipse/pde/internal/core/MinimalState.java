@@ -94,14 +94,10 @@ public class MinimalState {
 		fState = stateObjectFactory.createState(true);
         fState.setPlatformProperties(properties);		
 	}
-	
+		
 	public void addBundle(IPluginModelBase model, boolean update) {
-		if (!update) {
-			BundleDescription[] bundles = fState.getBundles(model.getPluginBase().getId());
-			for (int i = 0; i < bundles.length; i++) {
-				fState.removeBundle(bundles[i]);
-			}
-		}
+		if (model == null)
+			return;
 		
 		BundleDescription desc = model.getBundleDescription();
 		long bundleId = desc == null || !update ? -1 : desc.getBundleId();
@@ -245,14 +241,14 @@ public class MinimalState {
 
 	private Dictionary[] getProfilePlatformProperties() {
 		if (fExecutionEnvironments == null || fExecutionEnvironments.length == 0)
-			return new Dictionary[] {TargetPlatform.getTargetEnvironment()};
+			return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
 		
 		// add java profiles for those EE's that have a .profile file in the current system bundle
 		ArrayList result = new ArrayList(fExecutionEnvironments.length);
 		for (int i = 0; i < fExecutionEnvironments.length; i++) {
 			Properties profileProps = getJavaProfileProperties(fExecutionEnvironments[i]);
 			if (profileProps != null) {
-				Dictionary props = TargetPlatform.getTargetEnvironment();
+				Dictionary props = TargetPlatformHelper.getTargetEnvironment();
 				String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
 				if (systemPackages != null)
 					props.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
@@ -264,7 +260,7 @@ public class MinimalState {
 		}
 		if (result.size() > 0)
 			return (Dictionary[])result.toArray(new Dictionary[result.size()]);
-		return new Dictionary[] {TargetPlatform.getTargetEnvironment()};
+		return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
 	}
 
 	private Properties getJavaProfileProperties(String ee) {
@@ -341,7 +337,8 @@ public class MinimalState {
 	}
 	
 	public void addBundleDescription(BundleDescription toAdd) {
-		fState.addBundle(toAdd);
+		if (toAdd != null)
+			fState.addBundle(toAdd);
 	}
 
 	private PluginConverter acquirePluginConverter() {
@@ -369,7 +366,7 @@ public class MinimalState {
 	}
 
 	protected void logResolutionErrors() {
-		MultiStatus errors = new MultiStatus(PDECore.getPluginId(), 1,
+		MultiStatus errors = new MultiStatus(PDECore.PLUGIN_ID, 1,
 				"Problems occurred during the resolution of the target platform",  //$NON-NLS-1$
 				null);
 

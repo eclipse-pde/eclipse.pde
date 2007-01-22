@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.ui.IContainmentAdapter;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
@@ -87,7 +87,7 @@ public class PersistablePluginObject extends PlatformObject implements
 	}
 	
 	public IResource getResource() {
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(fPluginID);
+		IPluginModelBase model = PluginRegistry.findModel(fPluginID);
 		IResource resource = (model != null) ? model.getUnderlyingResource() : null;
 		return resource == null ? null : resource.getProject();
 	}

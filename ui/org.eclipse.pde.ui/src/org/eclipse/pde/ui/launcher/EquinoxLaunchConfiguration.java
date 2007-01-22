@@ -24,11 +24,10 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ClasspathHelper;
-import org.eclipse.pde.internal.core.ExternalModelManager;
-import org.eclipse.pde.internal.core.ModelEntry;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
@@ -77,7 +76,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	
 	private void saveConfigurationFile(ILaunchConfiguration configuration) throws CoreException {
 		Properties properties = new Properties();
-		properties.setProperty("osgi.install.area", "file:" + ExternalModelManager.getEclipseHome().toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.setProperty("osgi.install.area", "file:" + TargetPlatform.getLocation()); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.setProperty("osgi.configuration.cascaded", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("osgi.framework", LaunchConfigurationHelper.getBundleURL("org.eclipse.osgi", fAllBundles)); //$NON-NLS-1$ //$NON-NLS-2$
 		int start = configuration.getAttribute(IPDELauncherConstants.DEFAULT_START_LEVEL, 4);
@@ -130,10 +129,9 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	private Map getBundlesToRun(Map workspace, Map target) {
 		Map plugins = new TreeMap();
 		Iterator iter = workspace.keySet().iterator();
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		while (iter.hasNext()) {
 			String id = iter.next().toString();
-			IPluginModelBase model = manager.findModel(id);
+			IPluginModelBase model = PluginRegistry.findModel(id);
 			if (model != null && model.getUnderlyingResource() != null) {
 				plugins.put(id, model);
 			}
@@ -143,9 +141,13 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		while (iter.hasNext()) {
 			String id = iter.next().toString();
 			if (!plugins.containsKey(id)) {
-				ModelEntry entry = manager.findEntry(id);
-				if (entry != null && entry.getExternalModel() != null) {
-					plugins.put(id, entry.getExternalModel());
+				ModelEntry entry = PluginRegistry.findEntry(id);
+				if (entry != null) {
+					IPluginModelBase[] models = entry.getExternalModels();
+					for (int i = 0; i < models.length; i++) {
+						if (models[i].isEnabled() || i == models.length - 1)
+							plugins.put(id, models[i]);
+					}
 				}
 			}
 		}		

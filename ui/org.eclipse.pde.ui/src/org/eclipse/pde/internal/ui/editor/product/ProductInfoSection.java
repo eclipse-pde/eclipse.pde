@@ -14,7 +14,7 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -117,7 +117,7 @@ public class ProductInfoSection extends PDESection {
 		fProductCombo = new ComboPart();
 		fProductCombo.createControl(client, toolkit, SWT.READ_ONLY);
 		fProductCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fProductCombo.setItems(TargetPlatform.getProductNames());
+		fProductCombo.setItems(TargetPlatformHelper.getProductNames());
 		fProductCombo.add(""); //$NON-NLS-1$
 		fProductCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -159,7 +159,7 @@ public class ProductInfoSection extends PDESection {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = NUM_COLUMNS - 1;
 		fAppCombo.getControl().setLayoutData(gd);
-		fAppCombo.setItems(TargetPlatform.getApplicationNames());
+		fAppCombo.setItems(TargetPlatformHelper.getApplicationNames());
 		fAppCombo.add(""); //$NON-NLS-1$
 		fAppCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

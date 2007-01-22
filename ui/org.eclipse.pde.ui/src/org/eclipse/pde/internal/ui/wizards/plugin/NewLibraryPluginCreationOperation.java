@@ -42,7 +42,7 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.converter.PluginConverter;
@@ -326,7 +326,7 @@ public class NewLibraryPluginCreationOperation extends
 		try {
 			new AddNewDependenciesOperation(project, (IBundlePluginModelBase)model){
 				protected String[] findSecondaryBundles(IBundle bundle, Set ignorePkgs) {
-					IPluginModelBase[] bases = PDECore.getDefault().getModelManager().getPlugins();
+					IPluginModelBase[] bases = PluginRegistry.getActiveModels();
 					String[] ids = new String[bases.length];
 					for (int i = 0; i < bases.length; i++) 
 						ids[i] = bases[i].getBundleDescription().getSymbolicName();

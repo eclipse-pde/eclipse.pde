@@ -35,6 +35,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 
 
@@ -194,7 +195,7 @@ public class CoreUtility {
 			}
 		}		
 		
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(bundle);
+		IPluginModelBase model = PluginRegistry.findModel(bundle);
 		if (model == null)
 			return true;
 	

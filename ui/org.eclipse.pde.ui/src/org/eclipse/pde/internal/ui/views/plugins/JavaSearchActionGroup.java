@@ -14,18 +14,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
+import org.eclipse.pde.internal.core.SearchablePluginsManager;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.PlatformUI;
@@ -44,7 +42,6 @@ public class JavaSearchActionGroup extends ActionGroup {
 				setText(PDEUIMessages.PluginsView_addToJavaSearch);
 			else
 				setText(PDEUIMessages.PluginsView_removeFromJavaSearch);
-
 		}
 
 		public void run() {
@@ -72,79 +69,56 @@ public class JavaSearchActionGroup extends ActionGroup {
 				menu.add(new Separator());
 			}
 		}
-
 	}
 
-	private boolean canDoJavaSearchOperation(
-			IStructuredSelection selection,
-			boolean add) {
+	private boolean canDoJavaSearchOperation(IStructuredSelection selection, boolean add) {
 		int nhits = 0;
-		ModelEntry entry = null;
-
+		IPluginModelBase model = null;
+		SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
-			entry = getModelEntry(iter.next());
-			
-			if (entry == null)
+			model = getModel(iter.next());		
+			if (model == null)
 				return false;
 			
-			if (entry.getWorkspaceModel() == null) {
-				if (add && entry.isInJavaSearch() == false)
-					nhits++;
-				if (!add && entry.isInJavaSearch())
+			if (model.getUnderlyingResource() == null) {
+				if (add == !manager.isInJavaSearch(model.getPluginBase().getId()))
 					nhits++;
 			}
-
 		}
 		return nhits > 0;
 	}
 	
-	private ModelEntry getModelEntry(Object object) {
-		ModelEntry entry = null;
+	private IPluginModelBase getModel(Object object) {
+		IPluginModelBase model = null;
 		if (object instanceof IAdaptable) {
-			entry = (ModelEntry) ((IAdaptable) object).getAdapter(ModelEntry.class);
+			model = (IPluginModelBase) ((IAdaptable) object).getAdapter(IPluginModelBase.class);
+		} else if (object instanceof IPluginModelBase) {
+			model = (IPluginModelBase) object;
 		}
-		if (object instanceof ModelEntry) {
-			entry = (ModelEntry) object;
-		}
-		return entry;
+		return model;
 	}
 
 	private void handleJavaSearch(final boolean add) {
-		IStructuredSelection selection =
-			(IStructuredSelection) getContext().getSelection();
+		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 		if (selection.size() == 0)
 			return;
 
 		ArrayList result = new ArrayList();
-
+		SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
-			ModelEntry entry = getModelEntry(iter.next());
-
-				if (entry.getWorkspaceModel() != null)
-					continue;
-				if (entry.isInJavaSearch() == !add)
-					result.add(entry);
+			IPluginModelBase model = getModel(iter.next());
+				if (model != null 
+					  && model.getUnderlyingResource() == null
+					  && manager.isInJavaSearch(model.getPluginBase().getId()) != add) {
+					result.add(model);
+				}
 			}
 		if (result.size() == 0)
 			return;
-		final ModelEntry[] array =
-			(ModelEntry[]) result.toArray(new ModelEntry[result.size()]);
+		final IPluginModelBase[] array =
+			(IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
 
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-			throws InvocationTargetException {
-				PluginModelManager manager =
-					PDECore.getDefault().getModelManager();
-				try {
-					manager.setInJavaSearch(array, add, monitor);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
-				}
-			}
-		};
-
+		IRunnableWithProgress op = new JavaSearchOperation(array, add);
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
 		} catch (InterruptedException e) {

@@ -23,7 +23,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
-import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class ManifestPackageMoveParticipant extends PDEMoveParticipant {
@@ -33,7 +33,7 @@ public class ManifestPackageMoveParticipant extends PDEMoveParticipant {
 			IPackageFragment fragment = (IPackageFragment)element;
 			IJavaProject javaProject = (IJavaProject)fragment.getAncestor(IJavaElement.JAVA_PROJECT);
 			IProject project = javaProject.getProject();
-			if (WorkspaceModelManager.hasBundleManifest(project)) {
+			if (project.exists(ICoreConstants.MANIFEST_PATH)) {
 				fProject = javaProject.getProject();
 				fElements = new HashMap();
 				fElements.put(fragment, getNewName(getArguments().getDestination(), element));

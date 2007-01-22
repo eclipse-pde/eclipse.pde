@@ -25,7 +25,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -172,8 +171,10 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		viewer.setContentProvider(new ExportListProvider());
 		viewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		viewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
-		fExportPart.getTableViewer().setInput(PDECore.getDefault().getWorkspaceModelManager());
+		fExportPart.getTableViewer().setInput(getInput());
 	}
+	
+	protected abstract Object getInput();
 	
 	protected void initializeViewer() {
 		Object[] elems = fSelection.toArray();

@@ -13,7 +13,7 @@ package org.eclipse.pde.ui.launcher;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 
 /**
  * Initilizes launch configuration attributes for newly-created OSGi Framework 
@@ -72,7 +72,7 @@ public class OSGiLaunchConfigurationInitializer {
 	protected void initializeBundleState(ILaunchConfigurationWorkingCopy configuration) {
 		StringBuffer explugins = new StringBuffer();
 		StringBuffer wsplugins = new StringBuffer();
-		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getPlugins();
+		IPluginModelBase[] models = PluginRegistry.getActiveModels();
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getPluginBase().getId();
 			boolean inWorkspace = models[i].getUnderlyingResource() != null;

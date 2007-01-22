@@ -11,10 +11,10 @@
 package org.eclipse.pde.internal.ui.views.dependencies;
 
 import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 
 public class CalleesContentProvider extends DependenciesViewPageContentProvider {
 	public CalleesContentProvider(DependenciesView view) {
@@ -28,12 +28,12 @@ public class CalleesContentProvider extends DependenciesViewPageContentProvider 
 	protected Object[] findCallees(IPluginBase plugin) {
 		if (plugin instanceof IFragment) {
 			String hostId = ((IFragment) plugin).getPluginId();
-			IPlugin hostPlugin = PDECore.getDefault().findPlugin(hostId);
+			IPluginModelBase hostPlugin = PluginRegistry.findModel(hostId);
 			if (hostPlugin != null) {
 				IPluginImport[] imports = plugin.getImports();
 				Object[] result = new Object[imports.length + 1];
 				System.arraycopy(imports, 0, result, 0, imports.length);
-				result[imports.length] = hostPlugin;
+				result[imports.length] = hostPlugin.getPluginBase();
 				return result;
 			}
 		}

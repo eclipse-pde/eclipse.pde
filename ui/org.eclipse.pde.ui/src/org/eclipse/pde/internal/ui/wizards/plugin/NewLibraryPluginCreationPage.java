@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -123,7 +123,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		
 		fTargetCombo = new Combo(group, SWT.READ_ONLY|SWT.SINGLE);
 		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31, ICoreConstants.TARGET30});
-		fTargetCombo.setText(TargetPlatform.getTargetVersionString());
+		fTargetCombo.setText(TargetPlatformHelper.getTargetVersionString());
 		
 	    fOSGIButton = createButton(group, SWT.RADIO, 1, 30);
     	fOSGIButton.setText(PDEUIMessages.NewProjectCreationPage_pPureOSGi); 	   

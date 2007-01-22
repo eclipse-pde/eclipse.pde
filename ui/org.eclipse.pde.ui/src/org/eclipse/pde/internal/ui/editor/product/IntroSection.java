@@ -24,8 +24,8 @@ import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.TargetPlatform;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
@@ -77,7 +77,7 @@ public class IntroSection extends PDESection {
 		
 		Composite client = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
-		boolean canCreateNew = TargetPlatform.getTargetVersion() >= NEW_INTRO_SUPPORT_VERSION;
+		boolean canCreateNew = TargetPlatformHelper.getTargetVersion() >= NEW_INTRO_SUPPORT_VERSION;
 		layout.numColumns = canCreateNew ? 3 : 2;
 		layout.marginHeight = 5;
 		client.setLayout(layout);
@@ -134,7 +134,7 @@ public class IntroSection extends PDESection {
 	private void loadManifestAndIntroIds(boolean onlyLoadManifest) {
 		TreeSet result = new TreeSet();
 		String introId;
-		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
+		IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
 		for (int i = 0; i < plugins.length; i++) {
 			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
 			for (int j = 0; j < extensions.length; j++) {

@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -32,7 +33,7 @@ public class PluginListPage extends BasePluginListPage {
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			return PDECore.getDefault().getModelManager().getPlugins();
+			return PluginRegistry.getActiveModels();
 		}
 	}
 
