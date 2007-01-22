@@ -205,6 +205,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		text.setImage("run", lp.get(PDEPluginImages.DESC_RUN_EXC)); //$NON-NLS-1$
 		text.setImage("debug", lp.get(PDEPluginImages.DESC_DEBUG_EXC)); //$NON-NLS-1$
 		section.setClient(container);
+		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 	}
 	
 	private void createExportingSection(IManagedForm managedForm,
@@ -228,6 +229,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		section.setTextClient(info);
 		createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fDeploying : PDEUIMessages.OverviewPage_deploying, toolkit);
 		section.setClient(container);
+		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 	}
 	
 	private Section createStaticSection(FormToolkit toolkit, Composite parent, String text) {
