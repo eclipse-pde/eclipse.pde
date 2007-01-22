@@ -34,6 +34,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
 import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.core.ischema.ISchemaType;
+import org.eclipse.pde.internal.core.schema.SchemaAttribute;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
@@ -344,18 +345,25 @@ public class XMLInsertionComputer {
 		ISchemaRestriction restriction = 
 			attribute.getType().getRestriction();
 
-		if (attribute.getKind() == IMetaAttribute.JAVA &&
+	 	if (attribute.getKind() == IMetaAttribute.JAVA &&
 			project != null) {
+	 		// JAVA
 			value = XMLUtil.createDefaultClassName(project,
 					attribute, counter);
 		} else if (restriction != null) {
+			// STRING &&
+			// RESTRICTION
 			// Check for enumeration restrictions, if there is one, 
 			// just pick the first enumerated value
 			value = restriction.getChildren()[0].toString();
+		} else if ((attribute instanceof SchemaAttribute) && 
+					((SchemaAttribute)attribute).isTranslatable()) {
+			// STRING &&		
+			// TRANSLATABLE
+			value = attribute.getName();	
 		} else if (project != null) {
-			// Cases:
-			// IMetaAttribute.STRING
-			// IMetaAttribute.RESOURCE
+			// STRING ||
+			// RESOURCE
 			value = XMLUtil.createDefaultName(project,
 					attribute, counter);
 		}
