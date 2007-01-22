@@ -105,6 +105,7 @@ public class TargetEditor extends PDEFormEditor {
 	protected void addEditorPages() {
 		try {
 			addPage(new OverviewPage(this));
+			addPage(new ContentPage(this));
 			addPage(new EnvironmentPage(this));
 		} catch (PartInitException e) {
 			PDEPlugin.log(e);

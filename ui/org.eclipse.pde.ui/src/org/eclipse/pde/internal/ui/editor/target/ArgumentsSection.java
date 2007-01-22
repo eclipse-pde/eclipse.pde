@@ -17,6 +17,7 @@ import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
@@ -29,13 +30,12 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -66,7 +66,7 @@ public class ArgumentsSection extends PDESection {
 		section.setLayoutData(data);
 		
 		Composite client = toolkit.createComposite(section);
-		client.setLayout(new GridLayout());
+		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 100;
 		client.setLayoutData(gd);
@@ -77,11 +77,10 @@ public class ArgumentsSection extends PDESection {
 		fTabFolder.setLayoutData(gd);
 		gd.heightHint = 2;
 		toolkit.getColors().initializeSectionToolBarColors();
-		Color selectedColor1 = toolkit.getColors().getColor(FormColors.TB_BG);
-		Color selectedColor2 = toolkit.getColors().getColor(FormColors.TB_GBG);
-		fTabFolder.setSelectionBackground(new Color[] { selectedColor1,
-				selectedColor2, toolkit.getColors().getBackground() },
-				new int[] { 50, 100 }, true);
+		Color selectedColor = toolkit.getColors().getColor(IFormColors.TB_BG);
+		fTabFolder.setSelectionBackground(new Color[] { selectedColor,
+				toolkit.getColors().getBackground() },
+				new int[] { 100 }, true);
 		fTabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (fArgument.isDirty())

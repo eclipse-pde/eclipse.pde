@@ -15,6 +15,8 @@ import org.eclipse.osgi.util.NLS;
 public class PDEUIMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ui.pderesources";//$NON-NLS-1$
 
+	public static String AbstractTargetPage_setTarget;
+
 	public static String AddLibraryDialog_nospaces;
 
 	public static String AddTargetPluginsWizard_windowTitle;
@@ -191,6 +193,14 @@ public class PDEUIMessages extends NLS {
 
 	public static String LauncherUtils_generateConfigIni;
 
+	public static String OverviewPage_contentDescription;
+
+	public static String OverviewPage_contentTitle;
+
+	public static String OverviewPage_environmentDescription;
+
+	public static String OverviewPage_environmentTitle;
+
 	public static String SimpleCSCommandDetails_msgFieldDisabledCommand;
 
 	public static String SimpleCSItemDetails_msgFieldDisabledOptional;
@@ -198,6 +208,8 @@ public class PDEUIMessages extends NLS {
 	public static String SimpleCSMasterTreeSection_msgButtonDisabledCommand;
 
 	public static String SimpleCSMasterTreeSection_msgButtonDisabledOptional;
+
+	public static String TargetContentPage_title;
 	
 	public static String UpdateSiteProvisionerWizard_title;
 	public static String UpdateSiteWizardPage_title;
@@ -2701,8 +2713,6 @@ public class PDEUIMessages extends NLS {
 	public static String TargetErrorDialog_title;
 
 	public static String TargetErrorDialog_description;
-	
-	public static String TargetDefinitionSection_description;
 
 	public static String FeatureImportWizardPage_reloadLocation;
 

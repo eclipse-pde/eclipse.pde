@@ -32,6 +32,7 @@ import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
@@ -40,12 +41,11 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.TableWrapData;
 
 public class LocationsSection extends TableSection {
 	
@@ -59,17 +59,13 @@ public class LocationsSection extends TableSection {
 	}
 
 	public LocationsSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION | ExpandableComposite.TWISTIE, new String[] {PDEUIMessages.LocationsSection_add,PDEUIMessages.LocationsSection_edit, PDEUIMessages.LocationsSection_remove});
+		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.LocationsSection_add,PDEUIMessages.LocationsSection_edit, PDEUIMessages.LocationsSection_remove});
 	}
 
 	protected void createClient(Section section, FormToolkit toolkit) {
 		Composite client = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
-		layout.numColumns = 2;
-		layout.verticalSpacing = 15;
-		client.setLayout(layout);
-		client.setLayoutData(new GridData(GridData.FILL_BOTH));
+		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
+		client.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL));
 		
 		createViewerPartControl(client, SWT.MULTI, 2, toolkit);
 		
@@ -104,10 +100,11 @@ public class LocationsSection extends TableSection {
 		section.setClient(client);	
 		section.setText(PDEUIMessages.LocationsSection_title);
 		section.setDescription(PDEUIMessages.LocationsSection_description);
-		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		TableWrapData tdata = new TableWrapData(TableWrapData.FILL_GRAB);
+		tdata.colspan = 2;
+		tdata.grabVertical = true;
+		section.setLayoutData(tdata);
 		updateButtons();
-		if (getModel().getTarget().getAdditionalDirectories().length > 0)
-			section.setExpanded(true);
 		
 		getModel().addModelChangedListener(this);
 	}

@@ -48,6 +48,7 @@ import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.feature.FeatureEditor;
@@ -65,7 +66,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
@@ -75,7 +75,7 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -122,11 +122,7 @@ public class ContentSection extends TableSection {
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		Composite client = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
-		layout.numColumns = 2;
-		layout.verticalSpacing = 15;
-		client.setLayout(layout);
+		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
 		client.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		fUseAllPlugins = toolkit.createButton(client, PDEUIMessages.ContentSection_allTarget, SWT.CHECK);
@@ -146,11 +142,10 @@ public class ContentSection extends TableSection {
 		fTabFolder.setLayoutData(gd);
 		toolkit.adapt(fTabFolder, true, true);
 		toolkit.getColors().initializeSectionToolBarColors();
-		Color selectedColor1 = toolkit.getColors().getColor(FormColors.TB_BG);
-		Color selectedColor2 = toolkit.getColors().getColor(FormColors.TB_GBG);
-		fTabFolder.setSelectionBackground(new Color[] { selectedColor1,
-				selectedColor2, toolkit.getColors().getBackground() },
-				new int[] { 50, 100 }, true);
+		Color selectedColor = toolkit.getColors().getColor(IFormColors.TB_BG);
+		fTabFolder.setSelectionBackground(new Color[] { selectedColor,
+				toolkit.getColors().getBackground() },
+				new int[] { 100 }, true);
 		fTabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				refresh();

@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetJRE;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.launcher.VMHelper;
@@ -29,7 +30,6 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -53,14 +53,14 @@ public class JRESection extends PDESection {
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.JRESection_title);
 		section.setDescription(PDEUIMessages.JRESection_description);
-		section.setLayout(new GridLayout());
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.verticalAlignment = SWT.TOP;
 		data.horizontalSpan = 2;
 		section.setLayoutData(data);
 
 		Composite client = toolkit.createComposite(section);
-		client.setLayout(new GridLayout(2, false));
+		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
 		
 		initializeValues();
 		

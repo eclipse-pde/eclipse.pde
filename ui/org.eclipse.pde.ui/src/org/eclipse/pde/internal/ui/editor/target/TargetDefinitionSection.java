@@ -10,22 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.target;
 
-import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
-import org.eclipse.pde.internal.core.LoadTargetOperation;
 import org.eclipse.pde.internal.core.itarget.ILocationInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
@@ -34,7 +27,6 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -43,15 +35,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.FormColors;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.forms.widgets.TableWrapData;
 
 public class TargetDefinitionSection extends PDESection {
 
@@ -64,29 +52,16 @@ public class TargetDefinitionSection extends PDESection {
 	private static int NUM_COLUMNS = 5;
 	
 	public TargetDefinitionSection(PDEFormPage page, Composite parent) {
-		super(page, parent, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE);
+		super(page, parent, ExpandableComposite.TITLE_BAR);
 		createClient(getSection(), page.getEditor().getToolkit());
-		getSection().setExpanded(true);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		FormText text = toolkit.createFormText(section, true);
-		text.setText(PDEUIMessages.TargetDefinitionSection_description, true, false);
-		text.addHyperlinkListener(new HyperlinkAdapter() {
-			public void linkActivated(HyperlinkEvent e) {
-				doLoadTarget();
-			}
-		});
-		section.setDescriptionControl(text);
-		
 		Composite client = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
-		layout.numColumns = NUM_COLUMNS ;
-		client.setLayout(layout);
+		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, NUM_COLUMNS));
 
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		
@@ -97,7 +72,9 @@ public class TargetDefinitionSection extends PDESection {
 		toolkit.paintBordersFor(client);
 		section.setClient(client);	
 		section.setText(PDEUIMessages.TargetDefinitionSection_title); 
-		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
+		data.colspan = 2;
+		section.setLayoutData(data);
 	}
 	
 	private void createNameEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
@@ -111,47 +88,10 @@ public class TargetDefinitionSection extends PDESection {
 		gd.horizontalSpan = 4;
 		fNameEntry.setEditable(isEditable());
 	}
-	
-	private void doLoadTarget() {
-		IRunnableWithProgress run = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					ITargetModel model = getModel();
-					if (!model.isLoaded()) {
-						MessageDialog.openError(getSection().getShell(), PDEUIMessages.TargetPlatformPreferencePage_invalidTitle, PDEUIMessages.TargetPlatformPreferencePage_invalidDescription);
-						monitor.done();
-						return;
-					}
-					LoadTargetOperation op = new LoadTargetOperation(getTarget());
-					PDEPlugin.getWorkspace().run(op, monitor);
-					Object[] features = op.getMissingFeatures();
-					Object[] plugins = op.getMissingPlugins();
-					if (plugins.length + features.length > 0)
-						handleWarningDialog(features, plugins);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				} catch (OperationCanceledException e) {
-					throw new InterruptedException(e.getMessage());
-				} finally {
-					monitor.done();
-				}
-			}
-		};
-		IProgressService service = PlatformUI.getWorkbench().getProgressService();
-		try {
-			service.runInUI(service, run, PDEPlugin.getWorkspace().getRoot());
-		} catch (InvocationTargetException e) {
-		} catch (InterruptedException e) {
-		}
-	}
-	
-	private void handleWarningDialog(Object[] features, Object[] plugins) {
-		TargetErrorDialog.showDialog(getSection().getShell(), features, plugins);
-	}
 
 	private void createLocation(Composite client, FormToolkit toolkit, IActionBars actionBars) {
 		Label label = toolkit.createLabel(client, PDEUIMessages.TargetDefinitionSection_targetLocation);
-		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		
 		fUseDefault = toolkit.createButton(client, PDEUIMessages.TargetDefinitionSection_sameAsHost, SWT.RADIO);
 		GridData gd = new GridData();

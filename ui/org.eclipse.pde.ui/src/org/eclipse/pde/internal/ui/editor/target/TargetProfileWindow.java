@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
@@ -71,11 +71,10 @@ public class TargetProfileWindow extends ApplicationWindow {
 		fToolkit.adapt(folder, true, true);
 		fToolkit.adapt(parent);
 		fToolkit.getColors().initializeSectionToolBarColors();
-		Color selectedColor1 = fToolkit.getColors().getColor(FormColors.TB_BG);
-		Color selectedColor2 = fToolkit.getColors().getColor(FormColors.TB_GBG);
-		folder.setSelectionBackground(new Color[] { selectedColor1,
-				selectedColor2, fToolkit.getColors().getBackground() },
-				new int[] { 50, 100 }, true);
+		Color selectedColor = fToolkit.getColors().getColor(IFormColors.TB_BG);
+		folder.setSelectionBackground(new Color[] { selectedColor,
+				fToolkit.getColors().getBackground() },
+				new int[] { 100 }, true);
 		
 		CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setControl(createDefinitionTab(folder, fToolkit));
@@ -132,7 +131,7 @@ public class TargetProfileWindow extends ApplicationWindow {
 		IAdditionalLocation[] locs = target.getAdditionalDirectories();
 		if (locs.length > 0) {
 			Label label = toolkit.createLabel(body, PDEUIMessages.TargetProfileWindow_additionalLocations);
-			label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+			label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 			label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 			createTable(body, toolkit, locs);
 		}

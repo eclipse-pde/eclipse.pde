@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
@@ -32,7 +33,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -62,21 +63,21 @@ public class EnvironmentSection extends PDESection {
 		section.setLayoutData(data);
 		
 		Composite client = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout(2, true);
-		layout.marginHeight = layout.marginWidth = 0;
-		layout.horizontalSpacing = 5;
-		client.setLayout(layout);
+		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(true, 2));
 		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Composite left = toolkit.createComposite(client);
 		left.setLayout(new GridLayout(2, false));
+		GridLayout layout= FormLayoutFactory.createClearGridLayout(false, 2);
+		layout.horizontalSpacing = layout.verticalSpacing = 5;
+		left.setLayout(layout);
 		left.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		IEnvironmentInfo orgEnv = getEnvironment();
 		initializeChoices(orgEnv);
 		
 		Label label = toolkit.createLabel(left, PDEUIMessages.EnvironmentSection_operationSystem);
-		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		
 		fOSCombo = new ComboPart();
 		fOSCombo.createControl(left, toolkit, SWT.SINGLE | SWT.BORDER );
@@ -84,7 +85,7 @@ public class EnvironmentSection extends PDESection {
 		fOSCombo.setItems((String[])fOSChoices.toArray(new String[fOSChoices.size()]));
 
 		label = toolkit.createLabel(left, PDEUIMessages.EnvironmentSection_windowingSystem);
-		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		
 		fWSCombo = new ComboPart();
 		fWSCombo.createControl(left, toolkit, SWT.SINGLE | SWT.BORDER);
@@ -92,11 +93,13 @@ public class EnvironmentSection extends PDESection {
 		fWSCombo.setItems((String[])fWSChoices.toArray(new String[fWSChoices.size()]));
 
 		Composite right = toolkit.createComposite(client);
-		right.setLayout(new GridLayout(2, false));
+		layout= FormLayoutFactory.createClearGridLayout(false, 2);
+		layout.verticalSpacing = layout.horizontalSpacing = 5;
+		right.setLayout(layout);
 		right.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		label = toolkit.createLabel(right, PDEUIMessages.EnvironmentSection_architecture);
-		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		
 		fArchCombo = new ComboPart();
 		fArchCombo.createControl(right, toolkit, SWT.SINGLE | SWT.BORDER);
@@ -105,7 +108,7 @@ public class EnvironmentSection extends PDESection {
 		
 		
 		label = toolkit.createLabel(right, PDEUIMessages.EnvironmentSection_locale);
-		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		
 		fNLCombo = new ComboPart();
 		fNLCombo.createControl(right, toolkit, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
