@@ -18,13 +18,12 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Dictionary;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.osgi.framework.util.Headers;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
@@ -117,7 +116,7 @@ public class ConvertSchemaToHTML extends Task {
 
 		if (OSGiFile.exists()) {
 			try {
-				Dictionary headers = Headers.parseManifest(new FileInputStream(OSGiFile));
+				Map headers = ManifestElement.parseBundleManifest(new FileInputStream(OSGiFile), null);
 				String value = headers.get(Constants.BUNDLE_SYMBOLICNAME).toString();
 				if (value == null)
 					return null;

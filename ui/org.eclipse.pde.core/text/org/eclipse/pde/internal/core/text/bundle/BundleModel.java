@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.osgi.framework.util.Headers;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
@@ -55,8 +56,10 @@ public class BundleModel extends AbstractEditingModel implements IBundleModel {
 		try {
 			fLoaded = true;
 			((Bundle)getBundle()).clearHeaders();
-			((Bundle)getBundle()).load(Headers.parseManifest(source));
+			((Bundle)getBundle()).load(ManifestElement.parseBundleManifest(source, null));
 		} catch (BundleException e) {
+			fLoaded = false;
+		} catch (IOException e) {
 			fLoaded = false;
 		}
 	}

@@ -11,9 +11,9 @@
 package org.eclipse.pde.internal.core.text.bundle;
 
 import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -37,10 +37,10 @@ public class Bundle implements IBundle {
 		fDocumentHeaders.clear();
 	}
 	
-	public void load(Dictionary headers) {
-		Enumeration keys = headers.keys();
-		while (keys.hasMoreElements())  {
-			String key = keys.nextElement().toString();
+	public void load(Map headers) {
+		Iterator iter = headers.keySet().iterator();
+		while (iter.hasNext())  {
+			String key = iter.next().toString();
 			if (key.equals(Constants.BUNDLE_MANIFESTVERSION)) {				
 	            String value = headers.get(key).toString();
 				IManifestHeader header = fModel.getFactory().createHeader(key.toString(), value);
@@ -49,9 +49,9 @@ public class Bundle implements IBundle {
 			}
 		}
 		
-		keys = headers.keys();
-		while (keys.hasMoreElements())  {
-			String key = keys.nextElement().toString();
+		iter = headers.keySet().iterator();
+		while (iter.hasNext())  {
+			String key = iter.next().toString();
 			if (key.equals(Constants.BUNDLE_MANIFESTVERSION))			
 				continue;
             String value = headers.get(key).toString();
