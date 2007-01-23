@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
@@ -40,17 +39,21 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.configurator.IPlatformConfiguration;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.Version;
 
-public class TargetPlatform implements IEnvironmentVariables {
+public class TargetPlatformHelper {
 	
 	private static String REFERENCE_PREFIX = "reference:"; //$NON-NLS-1$
 	private static String FILE_URL_PREFIX = "file:"; //$NON-NLS-1$
@@ -97,7 +100,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 	private static Map fCachedLocations;
 	
 	public static Properties getConfigIniProperties() {
-		File iniFile = new File(ExternalModelManager.getEclipseHome().toOSString(), "configuration/config.ini"); //$NON-NLS-1$
+		File iniFile = new File(TargetPlatform.getLocation(), "configuration/config.ini"); //$NON-NLS-1$
 		if (!iniFile.exists())
 			return null;
 		Properties pini = new Properties();
@@ -204,7 +207,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 			throw new CoreException(
 				new Status(
 					IStatus.ERROR,
-					PDECore.getPluginId(),
+					PDECore.PLUGIN_ID,
 					IStatus.ERROR,
 					message,
 					e));
@@ -337,34 +340,10 @@ public class TargetPlatform implements IEnvironmentVariables {
 				root);
 		config.configureFeatureEntry(featureEntry);
 	}
-
-	public static String getOS() {
-		String value = getProperty(OS);
-		return value.equals("") ? Platform.getOS() : value; //$NON-NLS-1$
-	}
-
-	public static String getWS() {
-		String value = getProperty(WS);
-		return value.equals("") ? Platform.getWS() : value; //$NON-NLS-1$
-	}
-
-	public static String getNL() {
-		String value = getProperty(NL);
-		return value.equals("") ? Platform.getNL() : value; //$NON-NLS-1$
-	}
-
-	public static String getOSArch() {
-		String value = getProperty(ARCH);
-		return value.equals("") ? Platform.getOSArch() : value; //$NON-NLS-1$
-	}
-
-	private static String getProperty(String key) {
-		return PDECore.getDefault().getPluginPreferences().getString(key);
-	}
 	
 	public static String[] getApplicationNames() {
 		TreeSet result = new TreeSet();
-		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
+		IPluginModelBase[] plugins = PluginRegistry.getAllModels();
 		for (int i = 0; i < plugins.length; i++) {
 			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
 			for (int j = 0; j < extensions.length; j++) {
@@ -383,7 +362,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 	
 	public static TreeSet getProductNameSet() {
 		TreeSet result = new TreeSet();
-		IPluginModelBase[] plugins = PDECore.getDefault().getModelManager().getPlugins();
+		IPluginModelBase[] plugins = PluginRegistry.getAllModels();
 		for (int i = 0; i < plugins.length; i++) {
 			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
 			for (int j = 0; j < extensions.length; j++) {
@@ -422,7 +401,23 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 
 	public static String getTargetVersionString() {
-		return PDECore.getDefault().getModelManager().getTargetVersion();
+		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.osgi"); //$NON-NLS-1$
+		if (model == null) 
+			return ICoreConstants.TARGET33;
+		
+		String version = model.getPluginBase().getVersion();
+		if (VersionUtil.validateVersion(version).getSeverity() == IStatus.OK) {
+			Version vid = new Version(version);
+			int major = vid.getMajor();
+			int minor = vid.getMinor();
+			if (major == 3 && minor == 0)
+				return ICoreConstants.TARGET30;
+			if (major == 3 && minor == 1)
+				return ICoreConstants.TARGET31;
+			if (major == 3 && minor == 2)
+				return ICoreConstants.TARGET32;
+		}			
+		return ICoreConstants.TARGET33;	
 	}
 	
 	public static double getTargetVersion() {
@@ -432,6 +427,10 @@ public class TargetPlatform implements IEnvironmentVariables {
 	public static PDEState getPDEState() {
 		return PDECore.getDefault().getModelManager().getState();
 	}
+	
+	public static void setState(PDEState state) {
+		PDECore.getDefault().getModelManager().setState(state);
+	}
 
 	public static State getState() {
 		return getPDEState().getState();
@@ -439,8 +438,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 	
 	public static Map getPatchMap(PDEState state) {
 		HashMap properties = new HashMap();
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		IPluginModelBase[] models = manager.getAllPlugins();
+		IPluginModelBase[] models = PluginRegistry.getActiveModels();
 		for (int i = 0; i < models.length; i++) {
 			BundleDescription desc = models[i].getBundleDescription();
 			if (desc == null)
@@ -465,7 +463,7 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 	
 	private static String[] getValue(BundleDescription bundle, PDEState state) {
-		IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(bundle);
+		IPluginModelBase model = PluginRegistry.findModel(bundle);
 		String[] result = null;
 		if (model != null) {
 			IPluginLibrary[] libs = model.getPluginBase().getLibraries();
@@ -528,11 +526,12 @@ public class TargetPlatform implements IEnvironmentVariables {
 	}
 	
 	public static boolean usesNewApplicationModel() {
-		return PDECore.getDefault().getModelManager().findEntry("org.eclipse.equinox.app") != null; //$NON-NLS-1$
+		return PluginRegistry.findModel("org.eclipse.equinox.app") != null; //$NON-NLS-1$
 	}
 	
 	public static boolean usesEquinoxStartup() {
-		return PDECore.getDefault().getModelManager().findEntry("org.eclipse.equinox.launcher") != null; //$NON-NLS-1$
+		return PluginRegistry.findModel("org.eclipse.equinox.launcher") != null; //$NON-NLS-1$
 	}	
+
 	
 }

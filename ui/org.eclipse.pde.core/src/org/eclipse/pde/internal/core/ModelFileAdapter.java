@@ -12,20 +12,17 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 
-public class EntryFileAdapter extends FileAdapter {
-	private ModelEntry entry;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 
-	/**
-	 * Constructor for EntryFileAdapter.
-	 * @param parent
-	 * @param file
-	 */
-	public EntryFileAdapter(ModelEntry entry, File file, IFileAdapterFactory factory) {
+public class ModelFileAdapter extends FileAdapter {
+	private IPluginModelBase fModel;
+
+	public ModelFileAdapter(IPluginModelBase model, File file, IFileAdapterFactory factory) {
 		super(null, file, factory);
-		this.entry = entry;
+		fModel = model;
 	}
 	
-	public ModelEntry getEntry() {
-		return entry;
+	public IPluginModelBase getModel() {
+		return fModel;
 	}
 }
