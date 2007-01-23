@@ -42,9 +42,10 @@ public class ExportPackageHeader extends BasePackageHeader {
         return result;
     }
     
-    public void addPackage(String id) {
-    	PackageObject obj = new ExportPackageObject(this, id, null, getVersionAttribute());
+    public ExportPackageObject addPackage(String id) {
+    	ExportPackageObject obj = new ExportPackageObject(this, id, null, getVersionAttribute());
     	addManifestElement(obj);
+    	return obj;
     }
     
 }

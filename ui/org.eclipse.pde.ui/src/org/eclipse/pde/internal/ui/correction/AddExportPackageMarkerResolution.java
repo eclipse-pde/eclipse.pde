@@ -10,11 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import java.util.regex.Pattern;
+
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
+import org.eclipse.pde.internal.core.util.PatternConstructor;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.wizards.tools.IOrganizeManifestsSettings;
 import org.osgi.framework.Constants;
 
 public class AddExportPackageMarkerResolution extends
@@ -46,8 +52,14 @@ AbstractManifestMarkerResolution {
 
 	private void processPackages(ExportPackageHeader header) {
 		String[] packages = fValues.split(","); //$NON-NLS-1$
+		String filter = PDEPlugin.getDefault().getDialogSettings().get(IOrganizeManifestsSettings.PROP_INTERAL_PACKAGE_FILTER);
+		if (filter == null)
+			filter = IOrganizeManifestsSettings.VALUE_DEFAULT_FILTER;
+		Pattern pat = PatternConstructor.createPattern(filter, false);
 		for(int i = 0; i < packages.length; i++) {
-			header.addPackage(packages[i]);
+			ExportPackageObject obj = header.addPackage(packages[i]);
+			if (pat.matcher(packages[i]).matches())
+				obj.setInternal(true);
 		}
 	}
 
