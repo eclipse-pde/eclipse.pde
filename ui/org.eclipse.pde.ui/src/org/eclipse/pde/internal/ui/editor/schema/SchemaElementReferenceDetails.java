@@ -20,7 +20,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -43,7 +43,7 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 		createMaxOccurComp(parent, toolkit);
 		
 		fRefLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaElementReferenceDetails_reference);
-		fRefLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		fRefLabel.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		fReferenceLink = toolkit.createHyperlink(parent, new String(), SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;

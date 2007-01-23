@@ -21,7 +21,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class SchemaCompositorDetails extends AbstractSchemaDetails {
@@ -41,7 +41,7 @@ public class SchemaCompositorDetails extends AbstractSchemaDetails {
 		createMaxOccurComp(parent, toolkit);
 		
 		fKindLabel = toolkit.createLabel(parent, PDEUIMessages.SchemaCompositorDetails_type);
-		fKindLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		fKindLabel.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		fKind = new ComboPart();
 		fKind.createControl(parent, toolkit, SWT.READ_ONLY);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);

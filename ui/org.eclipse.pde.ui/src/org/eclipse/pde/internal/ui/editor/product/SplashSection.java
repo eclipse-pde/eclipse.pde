@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -123,7 +123,7 @@ public class SplashSection extends PDESection {
 			}
 		});
 		
-		Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
+		Color foreground = toolkit.getColors().getColor(IFormColors.TITLE);
 		
 		fBarControls[0] = createLabel(parent, toolkit, foreground, PDEUIMessages.SplashSection_progressX);
 		fBarControls[1] = fBarSpinners[0] = createSpinner(parent, toolkit);
@@ -160,7 +160,7 @@ public class SplashSection extends PDESection {
 			}
 		});
 		
-		Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
+		Color foreground = toolkit.getColors().getColor(IFormColors.TITLE);
 		
 		fMessageControls[0] = createLabel(parent, toolkit, foreground, PDEUIMessages.SplashSection_messageX);
 		fMessageControls[1] = fMessageSpinners[0] = createSpinner(parent, toolkit);

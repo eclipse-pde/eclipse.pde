@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.TableWrapData;
@@ -100,7 +100,7 @@ public class FormEntry implements IEditorValidationProvider {
 		} else {
 			if (labelText != null) {
 				fLabel = toolkit.createLabel(parent, labelText);
-				fLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+				fLabel.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 			}
 		}
 		fText = toolkit.createText(parent, "", style); //$NON-NLS-1$

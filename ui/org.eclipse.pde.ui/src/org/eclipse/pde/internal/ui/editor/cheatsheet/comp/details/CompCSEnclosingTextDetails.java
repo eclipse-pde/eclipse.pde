@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -150,11 +151,10 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		
 		FormColors colors = getToolkit().getColors();
 		colors.initializeSectionToolBarColors();
-		Color selectedColor1 = colors.getColor(FormColors.TB_BG);
-		Color selectedColor2 = colors.getColor(FormColors.TB_GBG);
-		fTabFolder.setSelectionBackground(new Color[] { selectedColor1,
-				selectedColor2, colors.getBackground() },
-				new int[] { 50, 100 }, true);		
+		Color selectedColor = colors.getColor(IFormColors.TB_BG);
+		fTabFolder.setSelectionBackground(new Color[] { selectedColor,
+				colors.getBackground() },
+				new int[] { 100 }, true);		
 	}	
 
 	/**

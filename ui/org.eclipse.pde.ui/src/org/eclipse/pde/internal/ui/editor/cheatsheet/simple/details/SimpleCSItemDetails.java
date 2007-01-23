@@ -31,7 +31,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -110,7 +110,7 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 	 */
 	public void createDetails(Composite parent) {
 
-		Color foreground = getToolkit().getColors().getColor(FormColors.TITLE);
+		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);
 		GridData data = null;
 		
 		// Create main section

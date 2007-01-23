@@ -50,7 +50,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -92,9 +92,9 @@ public class DocSection extends PDESection {
 		fTabFolder.setLayoutData(gd);
 		
 		toolkit.getColors().initializeSectionToolBarColors();
-		Color selectedColor1 = toolkit.getColors().getColor(FormColors.TB_BG);
-		Color selectedColor2 = toolkit.getColors().getColor(FormColors.TB_GBG);
-		fTabFolder.setSelectionBackground(new Color[] {selectedColor1, selectedColor2, toolkit.getColors().getBackground()}, new int[] {50, 100}, true);
+		Color selectedColor = toolkit.getColors().getColor(IFormColors.TB_BG);
+		fTabFolder.setSelectionBackground(new Color[] {selectedColor, 
+				toolkit.getColors().getBackground()}, new int[] {100}, true);
 
 		fTabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

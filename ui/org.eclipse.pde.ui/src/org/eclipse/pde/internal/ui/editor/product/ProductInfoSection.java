@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormText;
@@ -112,7 +112,7 @@ public class ProductInfoSection extends PDESection {
 		createLabel(client, toolkit, PDEUIMessages.ProductInfoSection_prodIdLabel); 
 
 		Label label = toolkit.createLabel(client, PDEUIMessages.ProductInfoSection_id); 
-		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		
 		fProductCombo = new ComboPart();
 		fProductCombo.createControl(client, toolkit, SWT.READ_ONLY);
@@ -152,7 +152,7 @@ public class ProductInfoSection extends PDESection {
 		createLabel(client, toolkit, PDEUIMessages.ProductInfoSection_appLabel); 
 		
 		Label label = toolkit.createLabel(client, PDEUIMessages.ProductInfoSection_app, SWT.WRAP); 
-		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		
 		fAppCombo = new ComboPart();
 		fAppCombo.createControl(client, toolkit, SWT.READ_ONLY);

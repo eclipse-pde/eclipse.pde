@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -94,7 +94,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		
 		if (fShowDTD) {
 			Label label = toolkit.createLabel(client, PDEUIMessages.AbstractSchemaDetails_dtdLabel);
-			label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+			label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 3;
 			gd.verticalIndent = 15;
@@ -204,7 +204,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	
 	protected Composite createMinOccurComp(Composite parent, FormToolkit toolkit) {
 		fMinLabel = toolkit.createLabel(parent, PDEUIMessages.AbstractSchemaDetails_minOccurLabel);
-		fMinLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		fMinLabel.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		Composite comp = toolkit.createComposite(parent);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
@@ -220,7 +220,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	
 	protected Composite createMaxOccurComp(Composite parent, FormToolkit toolkit) {
 		fMaxLabel = toolkit.createLabel(parent, PDEUIMessages.AbstractSchemaDetails_maxOccurLabel);
-		fMaxLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		fMaxLabel.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		Composite comp = toolkit.createComposite(parent);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;

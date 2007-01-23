@@ -52,7 +52,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.osgi.framework.Constants;
@@ -89,7 +89,7 @@ public class IntroSection extends PDESection {
 		label.setLayoutData(td);
 		
 		Label introLabel = toolkit.createLabel(client, PDEUIMessages.IntroSection_introInput); 
-		introLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		introLabel.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		
 		fIntroCombo = new ComboPart();
 		fIntroCombo.createControl(client, toolkit, SWT.READ_ONLY);

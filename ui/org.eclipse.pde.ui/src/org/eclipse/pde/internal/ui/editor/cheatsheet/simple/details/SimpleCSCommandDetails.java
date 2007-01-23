@@ -49,7 +49,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -93,7 +93,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		int columnSpan = 3;
 		Section commandSection = null;
 		FormToolkit toolkit = getToolkit();
-		Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
+		Color foreground = toolkit.getColors().getColor(IFormColors.TITLE);
 		GridData data = null;
 		Label label = null;
 		

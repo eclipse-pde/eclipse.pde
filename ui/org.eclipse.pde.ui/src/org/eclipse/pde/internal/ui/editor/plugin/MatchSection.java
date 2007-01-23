@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IPartSelectionListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -109,7 +109,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		});
 		
 		Label matchLabel = toolkit.createLabel(container, PDEUIMessages.ManifestEditor_PluginSpecSection_versionMatch);
-		matchLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		matchLabel.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 
 		fMatchCombo = new ComboPart();
 		fMatchCombo.createControl(container, toolkit, SWT.READ_ONLY);

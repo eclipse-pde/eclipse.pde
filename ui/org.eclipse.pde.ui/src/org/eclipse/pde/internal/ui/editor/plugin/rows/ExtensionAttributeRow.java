@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
@@ -91,7 +91,7 @@ public abstract class ExtensionAttributeRow {
 	}
 	protected void createLabel(Composite parent, FormToolkit toolkit) {
 		Label label = toolkit.createLabel(parent, getPropertyLabel(), SWT.NULL);
-		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		addHoverListener(label);
 	}
 	

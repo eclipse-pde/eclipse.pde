@@ -59,7 +59,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -129,11 +129,10 @@ public class InfoSection extends PDESection {
 		fTabFolder.setLayoutData(gd);
 		gd.heightHint = 2;
 		toolkit.getColors().initializeSectionToolBarColors();
-		Color selectedColor1 = toolkit.getColors().getColor(FormColors.TB_BG);
-		Color selectedColor2 = toolkit.getColors().getColor(FormColors.TB_GBG);
-		fTabFolder.setSelectionBackground(new Color[] { selectedColor1,
-				selectedColor2, toolkit.getColors().getBackground() },
-				new int[] { 50, 100 }, true);
+		Color selectedColor = toolkit.getColors().getColor(IFormColors.TB_BG);
+		fTabFolder.setSelectionBackground(new Color[] { selectedColor,
+				toolkit.getColors().getBackground() },
+				new int[] { 100 }, true);
 
 		fTabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -175,7 +174,7 @@ public class InfoSection extends PDESection {
 		page.setLayout(layout);
 		GridData gd;
 		Label label = toolkit.createLabel(page, PDEUIMessages.FeatureEditor_InfoSection_url);
-		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		fUrlText = toolkit.createText(page, null, SWT.SINGLE);
 		fUrlText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -186,7 +185,7 @@ public class InfoSection extends PDESection {
 		fUrlText.setLayoutData(gd);
 		label = toolkit
 				.createLabel(page, PDEUIMessages.FeatureEditor_InfoSection_text);
-		label.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
 		int styles = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL;

@@ -35,7 +35,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.TableWrapData;
@@ -219,7 +219,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 	private void createMatchCombo(Composite client, FormToolkit toolkit,
 			IActionBars actionBars) {
 		Label matchLabel = toolkit.createLabel(client, PDEUIMessages.ManifestEditor_PluginSpecSection_versionMatch);
-		matchLabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		matchLabel.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		TableWrapData td = new TableWrapData();
 		td.valign = TableWrapData.MIDDLE;
 		matchLabel.setLayoutData(td);

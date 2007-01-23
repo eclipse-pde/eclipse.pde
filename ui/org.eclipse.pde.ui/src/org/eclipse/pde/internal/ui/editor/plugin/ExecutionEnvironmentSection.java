@@ -58,7 +58,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -137,7 +137,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 		fEETable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		
 		Hyperlink link = toolkit.createHyperlink(container, PDEUIMessages.BuildExecutionEnvironmentSection_configure, SWT.NONE);
-		link.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		link.addHyperlinkListener(new IHyperlinkListener() {
 			public void linkEntered(HyperlinkEvent e) {
 			}
@@ -155,7 +155,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 		try {
 			if (project != null && project.hasNature(JavaCore.NATURE_ID)) {
 				link = toolkit.createHyperlink(container, PDEUIMessages.ExecutionEnvironmentSection_updateClasspath, SWT.NONE);
-				link.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+				link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 				link.addHyperlinkListener(new IHyperlinkListener() {
 					public void linkEntered(HyperlinkEvent e) {
 					}

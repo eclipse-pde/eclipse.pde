@@ -60,7 +60,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -119,7 +119,7 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 	
 	public void createDetails(Composite parent) {
 		FormToolkit toolkit = getManagedForm().getToolkit();
-		Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
+		Color foreground = toolkit.getColors().getColor(IFormColors.TITLE);
 		
 		fName = new FormEntry(parent, toolkit, PDEUIMessages.SchemaDetails_name, SWT.NONE);
 		

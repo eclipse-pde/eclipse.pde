@@ -29,7 +29,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -82,7 +82,7 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		
 		GridData data = null;
 		Label label = null;
-		Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
+		Color foreground = toolkit.getColors().getColor(IFormColors.TITLE);
 		
 		// Create help section
 		fHelpSection = toolkit.createSection(parent, Section.DESCRIPTION

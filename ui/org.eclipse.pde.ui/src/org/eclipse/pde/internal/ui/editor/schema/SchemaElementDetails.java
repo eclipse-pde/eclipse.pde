@@ -31,7 +31,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class SchemaElementDetails extends AbstractSchemaDetails {
@@ -51,7 +51,7 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 
 	public void createDetails(Composite parent) {
 		FormToolkit toolkit = getManagedForm().getToolkit();
-		Color foreground = toolkit.getColors().getColor(FormColors.TITLE);
+		Color foreground = toolkit.getColors().getColor(IFormColors.TITLE);
 		
 		fName = new FormEntry(parent, toolkit, PDEUIMessages.SchemaDetails_name, SWT.NONE);
 		

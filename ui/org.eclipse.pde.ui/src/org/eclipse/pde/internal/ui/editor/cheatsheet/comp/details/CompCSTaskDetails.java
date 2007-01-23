@@ -48,7 +48,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -165,7 +165,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 	 * @param parent
 	 */
 	private void createUISkipButton(Composite parent) {
-		Color foreground = getToolkit().getColors().getColor(FormColors.TITLE);		
+		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);		
 		fSkip = getToolkit().createButton(parent, PDEUIMessages.CompCSTaskDetails_SkipLabel, SWT.CHECK);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 3;

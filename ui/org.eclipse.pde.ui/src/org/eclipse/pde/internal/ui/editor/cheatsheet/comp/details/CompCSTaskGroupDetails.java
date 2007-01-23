@@ -30,7 +30,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -133,7 +133,7 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	 * @param parent
 	 */
 	private void createUISkipButton(Composite parent) {
-		Color foreground = getToolkit().getColors().getColor(FormColors.TITLE);		
+		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);		
 		fSkip = getToolkit().createButton(parent, PDEUIMessages.CompCSTaskGroupDetails_SkipLabel, SWT.CHECK);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
@@ -145,7 +145,7 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 	 * @param parent
 	 */
 	private void createUIKindLabel(Composite parent) {
-		Color foreground = getToolkit().getColors().getColor(FormColors.TITLE);		
+		Color foreground = getToolkit().getColors().getColor(IFormColors.TITLE);		
 		Label label = getToolkit().createLabel(parent, 
 				PDEUIMessages.CompCSTaskGroupDetails_Type, SWT.WRAP);
 		label.setForeground(foreground);
