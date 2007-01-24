@@ -105,16 +105,34 @@ public class TargetPlatform {
 		return value.equals("") ? defaultValue : value; //$NON-NLS-1$
 	}
 	
+	/**
+	 * Returns a list of identifiers for all available applications 
+	 * (i.e. <code>org.eclipse.core.runtime.applications</code> extensions) in the workspace
+	 * and target platform plug-ins
+	 * <p>
+	 * If a workspace plug-in has the same ID as a plug-in in the target platform, the extensions
+	 * in the target counterpart are ignored.
+	 * </p>
+	 * 
+	 * @return a list of identifiers for all available applications
+	 */
 	public static String[] getApplications() {
 		return TargetPlatformHelper.getApplicationNames();
 	}
 	
+	/**
+	 * Returns a list of identifiers for all available products 
+	 * (i.e. <code>org.eclipse.core.runtime.products</code> extensions) in the workspace
+	 * and target platform plug-ins
+	 * <p>
+	 * If a workspace plug-in has the same ID as a plug-in in the target platform, the extensions
+	 * in the target counterpart are ignored.
+	 * </p>
+	 * 
+	 * @return a list of identifiers for all available products
+	 */
 	public static String[] getProducts() {
 		return TargetPlatformHelper.getProductNames();
 	}
 	
-	public static String getDefaultProduct() {
-		return TargetPlatformHelper.getDefaultProduct();
-	}
-
 }
