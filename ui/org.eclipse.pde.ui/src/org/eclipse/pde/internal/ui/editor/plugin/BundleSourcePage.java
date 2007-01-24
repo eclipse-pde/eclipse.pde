@@ -70,6 +70,17 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	private Object fTargetOutlineSelection;
 	
 	/**
+	 * Offset used to set the current highlight range.
+	 * Used to prevent cyclic event firing when a selection is made in the
+	 * outline view with the link with editor feature on.  When a selection
+	 * is made in the source viewer, an event is fired back to the outline
+	 * view to unnecessarily update the selection.
+	 */
+	private int fCurrentHighlightRangeOffset;
+	
+	private final int F_NOT_SET = -1;
+	
+	/**
 	 * BundleOutlineContentProvider
 	 *
 	 */
@@ -226,6 +237,36 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	public BundleSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);
 		resetTargetOutlineSelection();
+		resetCurrentHighlightRangeOffset();
+	}
+	
+	/**
+	 * @param offset
+	 */
+	private void setCurrentHighlightRangeOffset(int offset) {
+		fCurrentHighlightRangeOffset = offset;
+	}
+	
+	/**
+	 * 
+	 */
+	private void resetCurrentHighlightRangeOffset() {
+		fCurrentHighlightRangeOffset = F_NOT_SET;
+	}
+	
+	/**
+	 * @return
+	 */
+	private int getCurrentHighlightRangeOffset() {
+		return fCurrentHighlightRangeOffset;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#resetHighlightRange()
+	 */
+	public void resetHighlightRange() {
+		resetCurrentHighlightRangeOffset();
+		super.resetHighlightRange();
 	}
 	
 	/**
@@ -396,12 +437,34 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		    previousRange = currentRange;
 		    previousElement = currentElement;
 		}
-		// No element found within range
-    	setChildTargetOutlineSelection(headerName, currentElement);
-    	// Use for setting the highlight range
-    	return currentRange;
+		
+		if (isWithinLastElementParamRange(offset, currentRange, header)) {
+			// No element found within range
+	    	setChildTargetOutlineSelection(headerName, currentElement);
+	    	// Use for setting the highlight range
+	    	return currentRange;
+		}
+		return null;
 	}
 
+	
+	/**
+	 * @param offset
+	 * @param currentRange
+	 * @param headerRange
+	 * @return
+	 */
+	private boolean isWithinLastElementParamRange(int offset,
+			IDocumentRange currentRange, IDocumentRange headerRange) {
+		if (currentRange == null) {
+			return false;
+		} else if ((offset >= currentRange.getOffset() + currentRange.getLength()) &&
+				(offset <= (headerRange.getOffset() + headerRange.getLength()))) {
+			return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * @param headerName
 	 * @param element
@@ -567,8 +630,10 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		} catch (BadLocationException e) {
 		}
 		if (range[0] == -1) { // if un-set offset use header range
-			range[0] = header.getOffset();
-			range[1] = header.getLength();
+			range[0] = header.getOffset(); 
+			// Only select the length of the header name; otherwise, the 
+			// header value will be included in the selection
+			range[1] = header.getName().length();
 		}
 		return new IDocumentRange() {
 			public int getOffset() { return range[0]; }
@@ -600,6 +665,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		// Highlight the selection if it is a manifest header
 		if (object instanceof IDocumentKey) {
 			setHighlightRange((IDocumentKey)object);
+			setCurrentHighlightRangeOffset(((IDocumentKey)object).getOffset());
 			// We don't set the selected range because it will cause the 
 			// manifest header and all its value to be selected
 			return;
@@ -630,6 +696,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			range = findRange();
 		}
 		// Set the highlight and selected range with whatever we found
+		setCurrentHighlightRangeOffset(range.getOffset());
 		setHighlightRange(range, true);
 		setSelectedRange(range, false);		
 	}	
@@ -664,6 +731,14 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#synchronizeOutlinePage(int)
 	 */
 	protected void synchronizeOutlinePage(int offset) {
+		// Prevent cyclical firing of events between source page and outline
+		// view
+		// If the previous offset is the same as the current offset, then 
+		// the selection does not need to be updated in the outline view
+		int previous_offset = getCurrentHighlightRangeOffset();
+		if (previous_offset == offset) {
+			return;
+		}
 		// Find the range header (parent) or element (children) within range of 
 		// the text selection offset
 		IDocumentRange rangeElement = 
