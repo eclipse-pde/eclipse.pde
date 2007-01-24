@@ -107,11 +107,11 @@ public class TargetPlatform {
 	
 	/**
 	 * Returns a list of identifiers for all available applications 
-	 * (i.e. <code>org.eclipse.core.runtime.applications</code> extensions) in the workspace
-	 * and target platform plug-ins
+	 * (i.e. <code>org.eclipse.core.runtime.applications</code> extensions) declared in the workspace
+	 * and target platform plug-ins.
 	 * <p>
 	 * If a workspace plug-in has the same ID as a plug-in in the target platform, the extensions
-	 * in the target counterpart are ignored.
+	 * declared in the target counterpart are ignored.
 	 * </p>
 	 * 
 	 * @return a list of identifiers for all available applications
@@ -122,11 +122,11 @@ public class TargetPlatform {
 	
 	/**
 	 * Returns a list of identifiers for all available products 
-	 * (i.e. <code>org.eclipse.core.runtime.products</code> extensions) in the workspace
-	 * and target platform plug-ins
+	 * (i.e. <code>org.eclipse.core.runtime.products</code> extensions) declared in the workspace
+	 * and target platform plug-ins.
 	 * <p>
 	 * If a workspace plug-in has the same ID as a plug-in in the target platform, the extensions
-	 * in the target counterpart are ignored.
+	 * declared in the target counterpart are ignored.
 	 * </p>
 	 * 
 	 * @return a list of identifiers for all available products

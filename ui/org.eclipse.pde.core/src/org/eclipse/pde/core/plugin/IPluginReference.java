@@ -13,7 +13,7 @@ package org.eclipse.pde.core.plugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IIdentifiable;
 /**
- * Object that implement this interface represent references of
+ * Objects that implement this interface represent references of
  * plug-ins. Plug-ins are referenced using their identifiers,
  * and optionally versions and match rules.
  */
