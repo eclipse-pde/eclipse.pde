@@ -182,7 +182,7 @@ public class PluginConverter {
 		}
 	}
 
-	public void writeManifest(File generationLocation, Dictionary manifestToWrite, boolean compatibilityManifest) throws PluginConversionException {
+	public void writeManifest(File generationLocation, Map manifestToWrite, boolean compatibilityManifest) throws PluginConversionException {
 		long start = System.currentTimeMillis();
 		BufferedWriter out = null;
 		try {
@@ -211,9 +211,9 @@ public class PluginConverter {
 			System.out.println("Time to write out converted manifest to: " + generationLocation + ": "+ (System.currentTimeMillis() - start) + "ms.");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
-	public void writeManifest(Dictionary manifestToWrite, Writer out) throws IOException {
+	public void writeManifest(Map manifestToWrite, Writer out) throws IOException {
 		// replaces any eventual existing file
-		manifestToWrite = new Hashtable((Map) manifestToWrite);
+		manifestToWrite = new Hashtable(manifestToWrite);
 		
 		writeEntry(out, MANIFEST_VERSION, (String) manifestToWrite.remove(MANIFEST_VERSION));
 		writeEntry(out, GENERATED_FROM, (String) manifestToWrite.remove(GENERATED_FROM)); //Need to do this first uptoDate check expect the generated-from tag to be in the first line
@@ -232,9 +232,10 @@ public class PluginConverter {
 		// always attempt to write the Provide-Package header if it exists (bug 109863)
 		writeEntry(out, ICoreConstants.PROVIDE_PACKAGE, (String) manifestToWrite.remove(ICoreConstants.PROVIDE_PACKAGE));
 		writeEntry(out, Constants.REQUIRE_BUNDLE, (String) manifestToWrite.remove(Constants.REQUIRE_BUNDLE));
-		Enumeration keys = manifestToWrite.keys();
-		while (keys.hasMoreElements()) {
-			String key = (String) keys.nextElement();
+		Iterator keys = manifestToWrite.keySet().iterator();
+		// TODO makes sure the update works from Dictionary
+		while (keys.hasNext()) {
+			String key = (String) keys.next();
 			writeEntry(out, key, (String) manifestToWrite.get(key));
 		}
 		out.flush();
@@ -589,7 +590,7 @@ public class PluginConverter {
 		convertManifest(pluginBaseLocation, compatibilityManifest, target, analyseJars, devProperties);
 		if (upToDate(bundleManifestLocation, pluginManifestLocation, manifestType))
 			return bundleManifestLocation;
-		writeManifest(bundleManifestLocation, generatedManifest, compatibilityManifest);
+		writeManifest(bundleManifestLocation, (Map)generatedManifest, compatibilityManifest);
 		return bundleManifestLocation;
 	}
 

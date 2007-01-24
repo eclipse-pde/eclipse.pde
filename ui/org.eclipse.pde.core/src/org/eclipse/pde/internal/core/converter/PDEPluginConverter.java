@@ -13,17 +13,18 @@ package org.eclipse.pde.internal.core.converter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Properties;
+import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.osgi.framework.util.Headers;
 import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.osgi.framework.BundleException;
@@ -62,7 +63,7 @@ public class PDEPluginConverter {
 			String versionString =  version <= 3.1 ? ICoreConstants.TARGET31 : TargetPlatformHelper.getTargetVersionString();
 			converter.convertManifest(inputFile, outputFile, false, versionString, true, null);
 			
-			Dictionary prop = getProperties(outputFile, newProps);
+			Map prop = getProperties(outputFile, newProps);
 			prop.remove(ICoreConstants.ECLIPSE_AUTOSTART); 
 			prop.remove(ICoreConstants.ECLIPSE_LAZYSTART);
 			converter.writeManifest(outputFile, prop, false);
@@ -74,9 +75,9 @@ public class PDEPluginConverter {
 		}
 	}
 	
-	private static Dictionary getProperties(File file, HashMap newProps) {
+	private static Map getProperties(File file, HashMap newProps) {
 		try {
-			Dictionary prop = Headers.parseManifest(new FileInputStream(file));
+			Map prop = ManifestElement.parseBundleManifest(new FileInputStream(file), null);
 			if (newProps != null && newProps.size() > 0) {
 				Iterator iter = newProps.keySet().iterator();
 				while (iter.hasNext()) {
@@ -87,8 +88,9 @@ public class PDEPluginConverter {
 			return prop;
 		} catch (FileNotFoundException e) {
 		} catch (BundleException e) {
+		} catch (IOException e) {
 		}
-		return new Properties();
+		return new HashMap();
 	}
 	
 }

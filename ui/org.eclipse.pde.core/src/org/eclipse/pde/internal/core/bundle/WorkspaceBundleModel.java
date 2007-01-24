@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Dictionary;
+import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -132,7 +132,7 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 
 	public void save(PrintWriter writer) {
 		IBundle bundle = getBundle();
-		Dictionary headers = ((Bundle)bundle).getHeaders();
+		Map headers = ((Bundle)bundle).getHeaders();
 		boolean addManifestVersion = headers.get(MANIFEST_VERSION) == null;
 		if (addManifestVersion)
 			headers.put(MANIFEST_VERSION, "1.0"); //$NON-NLS-1$

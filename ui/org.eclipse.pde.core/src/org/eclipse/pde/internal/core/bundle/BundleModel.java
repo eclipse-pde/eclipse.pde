@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bundle;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.eclipse.osgi.framework.util.Headers;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.AbstractModel;
@@ -55,11 +56,12 @@ public abstract class BundleModel
 
 	public void load(InputStream source, boolean outOfSync) {
 		try {
-			fBundle.load(Headers.parseManifest(source));
+			fBundle.load(ManifestElement.parseBundleManifest(source, null));
 			if (!outOfSync)
 				updateTimeStamp();
 			setLoaded(true);
 		} catch (BundleException e) {
+		} catch (IOException e) {
 		} finally {
 		}
 	}

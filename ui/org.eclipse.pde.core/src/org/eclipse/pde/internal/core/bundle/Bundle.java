@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bundle;
 
-import java.util.Dictionary;
-import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -21,7 +21,7 @@ import org.osgi.framework.Constants;
 
 public class Bundle extends BundleObject implements IBundle {
     private static final long serialVersionUID = 1L;
-    private Dictionary fProperties;
+    private Map fProperties;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#setHeader(java.lang.String, java.lang.String)
@@ -46,13 +46,13 @@ public class Bundle extends BundleObject implements IBundle {
 		return (String)fProperties.get(key);
 	}
 	
-	public void load(Dictionary properties) {
+	public void load(Map properties) {
 		// Passed dictionary is read-only
 		fProperties = new Properties();
-		Enumeration keys = properties.keys();
-		while (keys.hasMoreElements()) {
-			String key = keys.nextElement().toString();
-			fProperties.put(key, properties.get(key));
+		Iterator it = properties.keySet().iterator();
+		while (it.hasNext()) {
+			Object o = it.next();
+			fProperties.put(o, properties.get(o));
 		}
 	}
 	
@@ -76,7 +76,7 @@ public class Bundle extends BundleObject implements IBundle {
 		return new ManifestHeader(key, getHeader(key), this, System.getProperty("line.separator")); //$NON-NLS-1$
 	}
 	
-	protected Dictionary getHeaders() {
+	protected Map getHeaders() {
 		return fProperties;
 	}
 }
