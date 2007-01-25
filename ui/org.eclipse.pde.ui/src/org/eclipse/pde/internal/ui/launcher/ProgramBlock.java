@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
@@ -139,7 +140,7 @@ public class ProgramBlock {
 			
 			// use default application as specified in the install.ini of the target platform
 			if (index == -1)
-				index = fApplicationCombo.indexOf(LaunchConfigurationHelper.getDefaultApplicationName());
+				index = fApplicationCombo.indexOf(TargetPlatform.getDefaultApplication());
 			
 			if (index != -1) {
 				fApplicationCombo.setText(fApplicationCombo.getItem(index));
@@ -164,14 +165,14 @@ public class ProgramBlock {
 	protected void saveApplicationSection(ILaunchConfigurationWorkingCopy config) {
 		String text = fApplicationCombo.getText();
 		String attribute = getApplicationAttribute();
-		if (text.length() == 0 || text.equals(LaunchConfigurationHelper.getDefaultApplicationName()))
+		if (text.length() == 0 || text.equals(TargetPlatform.getDefaultApplication()))
 			config.setAttribute(attribute, (String) null);
 		else
 			config.setAttribute(attribute, text);
 	}
 	
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {		
-		String product = TargetPlatformHelper.getDefaultProduct();
+		String product = TargetPlatform.getDefaultProduct();
 		if (product != null) {
 			config.setAttribute(IPDELauncherConstants.USE_PRODUCT, true);
 			config.setAttribute(IPDELauncherConstants.PRODUCT, product); 

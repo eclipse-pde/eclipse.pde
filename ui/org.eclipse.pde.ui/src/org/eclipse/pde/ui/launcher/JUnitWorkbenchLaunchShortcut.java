@@ -16,6 +16,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.junit.launcher.JUnitLaunchShortcut;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
@@ -53,7 +54,7 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 
 		// Program to launch
 		if (LauncherUtils.requiresUI(configuration)) {
-			String product = TargetPlatformHelper.getDefaultProduct();
+			String product = TargetPlatform.getDefaultProduct();
 			if (product != null) {
 				configuration.setAttribute(IPDELauncherConstants.USE_PRODUCT, true);
 				configuration.setAttribute(IPDELauncherConstants.PRODUCT, product);

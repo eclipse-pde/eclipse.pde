@@ -324,7 +324,7 @@ public class LaunchConfigurationHelper {
 			result = configuration.getAttribute(IPDELauncherConstants.PRODUCT, (String)null);
 		} else {
 			// find the product associated with the application, and return its contributing plug-in
-			String appID = configuration.getAttribute(IPDELauncherConstants.APPLICATION, getDefaultApplicationName());
+			String appID = configuration.getAttribute(IPDELauncherConstants.APPLICATION, TargetPlatform.getDefaultApplication());
 			IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
 			for (int i = 0; i < plugins.length; i++) {
 				String id = plugins[i].getPluginBase().getId();
@@ -351,12 +351,6 @@ public class LaunchConfigurationHelper {
 		
 		Properties properties = TargetPlatformHelper.getConfigIniProperties();
 		return properties == null ? null : properties.getProperty("eclipse.product"); //$NON-NLS-1$
-	}
-
-	public static String getDefaultApplicationName() {
-		Properties properties = TargetPlatformHelper.getConfigIniProperties(); 
-		String appName = (properties != null) ? properties.getProperty("eclipse.application") : null; //$NON-NLS-1$
-		return (appName != null) ? appName : "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 	}
 
 }

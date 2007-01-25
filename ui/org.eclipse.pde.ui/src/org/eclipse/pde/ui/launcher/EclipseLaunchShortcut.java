@@ -31,6 +31,7 @@ import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
@@ -128,7 +129,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 
 	private String getProduct(String appName) {
 		if (appName == null)
-			return TargetPlatformHelper.getDefaultProduct();
+			return TargetPlatform.getDefaultProduct();
 		if (fModel != null && appName != null) {
 			IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
@@ -236,7 +237,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, wsplugins.toString());
 			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, explugins.toString());
 		} else {
-			String defaultProduct = TargetPlatformHelper.getDefaultProduct();
+			String defaultProduct = TargetPlatform.getDefaultProduct();
 			if (defaultProduct != null) {
 				wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 				wc.setAttribute(IPDELauncherConstants.USE_PRODUCT, true);

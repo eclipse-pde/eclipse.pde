@@ -268,7 +268,7 @@ public class PluginValidationOperation implements IRunnableWithProgress {
 			} else {
 				String appToRun = configuration.getAttribute(IPDELauncherConstants.APP_TO_TEST, (String)null);
 				if(appToRun == null)
-					appToRun = configuration.getAttribute(IPDELauncherConstants.APPLICATION, LaunchConfigurationHelper.getDefaultApplicationName());				
+					appToRun = configuration.getAttribute(IPDELauncherConstants.APPLICATION, TargetPlatform.getDefaultApplication());				
 				fApplicationID = JUnitLaunchConfigurationDelegate.CORE_APPLICATION.equals(appToRun) ? null : appToRun;
 			}
 		} catch (CoreException e) {

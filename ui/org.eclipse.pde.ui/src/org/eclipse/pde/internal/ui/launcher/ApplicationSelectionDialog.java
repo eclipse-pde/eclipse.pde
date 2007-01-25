@@ -14,6 +14,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -66,7 +67,7 @@ public class ApplicationSelectionDialog extends TrayDialog {
 		applicationCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		applicationCombo.setItems(fApplicationNames);
 		
-		String defaultApp = LaunchConfigurationHelper.getDefaultApplicationName();
+		String defaultApp = TargetPlatform.getDefaultApplication();
 		if (applicationCombo.indexOf(defaultApp) == -1)
 			applicationCombo.add(defaultApp);
 		
@@ -86,7 +87,7 @@ public class ApplicationSelectionDialog extends TrayDialog {
 	}
 	
 	public String getSelectedApplication() {
-		if (fSelectedApplication.equals(LaunchConfigurationHelper.getDefaultApplicationName()))
+		if (fSelectedApplication.equals(TargetPlatform.getDefaultApplication()))
 			return null;
 		return fSelectedApplication;
 	}

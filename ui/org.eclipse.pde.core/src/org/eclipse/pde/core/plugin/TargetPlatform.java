@@ -11,6 +11,8 @@
 package org.eclipse.pde.core.plugin;
 
 import java.net.URL;
+import java.util.Properties;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -34,6 +36,14 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
  * </p>
  */
 public class TargetPlatform {
+	
+	private static String PRODUCT_PROPERTY = "eclipse.product"; //$NON-NLS-1$
+	private static String APPLICATION_PROPERTY = "eclipse.application"; //$NON-NLS-1$
+	
+	private static String SDK_PRODUCT = "org.eclipse.sdk.ide"; //$NON-NLS-1$
+	private static String PLATFORM_PRODUCT = "org.eclipse.platform.ide"; //$NON-NLS-1$
+	
+	private static String IDE_APPLICATION = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 	
 	/**
 	 * Returns the target platform's main location as specified on the <b>Environment</b>
@@ -133,6 +143,44 @@ public class TargetPlatform {
 	 */
 	public static String[] getProducts() {
 		return TargetPlatformHelper.getProductNames();
+	}
+	
+	/**
+	 * Returns the ID for the default product 
+	 * (<code>org.eclipse.core.runtime.products</code> extension) for the current target platform,
+	 * or <code>null</code> if none can be determined.
+	 * 
+	 * If any of the 
+	 * 
+	 * @return the ID for the default product or <code>null</code> if none could be determined
+	 */
+	public static String getDefaultProduct() {
+		Properties config = TargetPlatformHelper.getConfigIniProperties();
+		Set set = TargetPlatformHelper.getProductNameSet();
+		if (config != null) {
+			String product = (String) config.get(PRODUCT_PROPERTY);
+			if (product != null && set.contains(product))
+				return product;
+		}
+
+		if (set.contains(SDK_PRODUCT))
+			return SDK_PRODUCT;
+		
+		return set.contains(PLATFORM_PRODUCT) ? PLATFORM_PRODUCT : null;
+	}
+
+	/**
+	 * Returns the ID for the default application
+	 * (<code>org.eclipse.core.runtime.applications</code> extension) for the current target
+	 * application.  If none could be determined, then the default <code>org.eclipse.ui.ide.workbench</code>
+	 * application is returned.
+	 * 
+	 * @return the default application 
+	 */
+	public static String getDefaultApplication() {
+		Properties properties = TargetPlatformHelper.getConfigIniProperties(); 
+		String appName = properties != null ? properties.getProperty(APPLICATION_PROPERTY) : null; 
+		return appName != null ? appName : IDE_APPLICATION;
 	}
 	
 }

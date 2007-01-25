@@ -60,7 +60,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		} else {
 			// specify the application to launch
 			programArgs.add("-application"); //$NON-NLS-1$
-			programArgs.add(configuration.getAttribute(IPDELauncherConstants.APPLICATION, LaunchConfigurationHelper.getDefaultApplicationName()));
+			programArgs.add(configuration.getAttribute(IPDELauncherConstants.APPLICATION, TargetPlatform.getDefaultApplication()));
 		}
 		
 		// specify the workspace location for the runtime workbench

@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
@@ -328,7 +327,6 @@ public class TargetPlatformHelper {
 			return;
 		
 		URL pluginURL = new URL("file:" + primaryPlugin.getInstallLocation()); //$NON-NLS-1$
-		URL[] root = new URL[] { pluginURL };
 		IPlatformConfiguration.IFeatureEntry featureEntry =
 			config.createFeatureEntry(
 				brandingPluginID,
@@ -337,7 +335,7 @@ public class TargetPlatformHelper {
 				primaryPlugin.getPluginBase().getVersion(),
 				true,
 				null,
-				root);
+				new URL[] { pluginURL });
 		config.configureFeatureEntry(featureEntry);
 	}
 	
@@ -494,25 +492,6 @@ public class TargetPlatformHelper {
 		return (String[]) list.toArray(new String[list.size()]);
 	}
 
-	/**
-	 * Obtains product ID
-	 * 
-	 * @return String or null
-	 */
-	public static String getDefaultProduct() {
-		Properties config = getConfigIniProperties();
-		if (config != null) {
-			String product = (String) config.get("eclipse.product"); //$NON-NLS-1$
-			if (product != null && getProductNameSet().contains(product))
-				return product;
-		}
-		Set set = getProductNameSet();
-		if (set.contains("org.eclipse.sdk.ide")) //$NON-NLS-1$
-			return "org.eclipse.sdk.ide"; //$NON-NLS-1$
-		
-		return set.contains("org.eclipse.platform.ide") ? "org.eclipse.platform.ide" : null; //$NON-NLS-1$ //$NON-NLS-2$
-	}
-	
 	public static boolean matchesCurrentEnvironment(IPluginModelBase model) {
         BundleContext context = PDECore.getDefault().getBundleContext();	        
 		Dictionary environment = getTargetEnvironment();
