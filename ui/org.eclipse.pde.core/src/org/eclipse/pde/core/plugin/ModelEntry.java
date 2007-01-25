@@ -76,7 +76,6 @@ public class ModelEntry extends PlatformObject {
 	 * one of those plug-ins is randomly returned.
 	 * </p>
 	 * 
-	 * @param id the plug-in ID
 	 * @return the plug-in model for the best match plug-in with the given ID
 	 */
 	public IPluginModelBase getModel() {
