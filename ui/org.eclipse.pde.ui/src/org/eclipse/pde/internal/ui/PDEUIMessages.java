@@ -189,6 +189,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String DirectorySelectionPage_title;
 
+	public static String ExtensionElementBodyTextDetails_sectionDescElementGeneral;
+
+	public static String ExtensionElementBodyTextDetails_sectionDescElementSpecific;
+
 	public static String ExtensionPointsSection_sectionDescAllExtensionPoints;
 
 	public static String LauncherUtils_generateConfigIni;
@@ -697,9 +701,6 @@ public class PDEUIMessages extends NLS {
 	public static String ManifestEditor_DetailExtension_newExtension;
 	public static String ManifestEditor_DetailExtension_up;
 	public static String ManifestEditor_DetailExtension_down;
-
-	public static String ManifestEditor_BodyTextSection_title;
-	public static String ManifestEditor_BodyTextSection_titleFull;
 
 	public static String ManifestEditor_ExportSection_title;
 	public static String ManifestEditor_ExportSection_desc;

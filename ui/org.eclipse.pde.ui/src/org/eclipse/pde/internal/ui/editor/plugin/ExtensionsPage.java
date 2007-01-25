@@ -15,6 +15,7 @@ import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginParent;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.core.text.IDocumentAttribute;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
@@ -56,6 +57,11 @@ public class ExtensionsPage extends PDEFormPage {
 			detailsPart.setPageLimit(10);
 			// register static page for the extensions
 			detailsPart.registerPage(IPluginExtension.class, new ExtensionDetails());
+			// Register a static page for the extension elements that contain 
+			// only body text (no child elements or attributes)
+			// (e.g. schema simple type)
+			detailsPart.registerPage(ExtensionElementBodyTextDetails.class,
+					new ExtensionElementBodyTextDetails());
 			// register a dynamic provider for elements
 			detailsPart.setPageProvider(this);
 		}
@@ -64,9 +70,24 @@ public class ExtensionsPage extends PDEFormPage {
 				return IPluginExtension.class;
 			if (object instanceof IPluginElement) {
 				ISchemaElement element = ExtensionsSection.getSchemaElement((IPluginElement)object);
-				if (element!=null) return element;
+				// Extension point schema exists
+				if (element != null) {
+					// Use the body text page if the element has no child 
+					// elements or attributes
+					if (element.getType() instanceof ISchemaSimpleType) {
+						return ExtensionElementBodyTextDetails.class;
+					}
+					return element;
+				}
+				// No Extension point schema
 				// no element - construct one
 				IPluginElement pelement = (IPluginElement)object;
+				// Use the body text page if the element has no child 
+				// elements or attributes
+				if ((pelement.getAttributeCount() == 0) &&
+						(pelement.getChildCount() == 0)) {
+					return ExtensionElementBodyTextDetails.class;					
+				}
 				String ename = pelement.getName();
 				IPluginExtension extension = ExtensionsSection.getExtension((IPluginParent)pelement.getParent());
 				return extension.getPoint()+"/"+ename; //$NON-NLS-1$
@@ -104,8 +125,6 @@ public class ExtensionsPage extends PDEFormPage {
 		form.setText(PDEUIMessages.ExtensionsPage_title);
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_EXTENSIONS_OBJ));
 		fBlock.createContent(managedForm);
-		BodyTextSection bodyTextSection = new BodyTextSection(this, form.getBody());
-		managedForm.addPart(bodyTextSection);
 		//refire selection
 		fSection.fireSelection();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_PLUGIN_EXTENSIONS);
