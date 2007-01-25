@@ -12,14 +12,15 @@ package org.eclipse.pde.ui.tests.target;
 
 import java.util.Dictionary;
 
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.pde.internal.core.ExecutionEnvironmentAnalyzer;
-import org.eclipse.pde.internal.core.TargetPlatform;
-import org.osgi.framework.Constants;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.core.ExecutionEnvironmentAnalyzer;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.osgi.framework.Constants;
 
 public class TargetEnvironmentTestCase extends TestCase {
 
@@ -44,56 +45,56 @@ public class TargetEnvironmentTestCase extends TestCase {
 	}
 	
 	public void testEnvironmentDictionarySize() {
-		Dictionary dictionary = TargetPlatform.getTargetEnvironment();
+		Dictionary dictionary = TargetPlatformHelper.getTargetEnvironment();
 		assertEquals(6, dictionary.size());
 	}
 	
 	public void testDictionaryOS() {
-		Dictionary dictionary = TargetPlatform.getTargetEnvironment();
+		Dictionary dictionary = TargetPlatformHelper.getTargetEnvironment();
 		assertEquals(Platform.getOS(), dictionary.get("osgi.os"));
 	}
 
 	public void testDictionaryWS() {
-		Dictionary dictionary = TargetPlatform.getTargetEnvironment();
+		Dictionary dictionary = TargetPlatformHelper.getTargetEnvironment();
 		assertEquals(Platform.getWS(), dictionary.get("osgi.ws"));
 	}
 	
 	public void testDictionaryArch() {
-		Dictionary dictionary = TargetPlatform.getTargetEnvironment();
+		Dictionary dictionary = TargetPlatformHelper.getTargetEnvironment();
 		assertEquals(Platform.getOSArch(), dictionary.get("osgi.arch"));
 	}
 	
 	public void testDictionaryNL() {
-		Dictionary dictionary = TargetPlatform.getTargetEnvironment();
+		Dictionary dictionary = TargetPlatformHelper.getTargetEnvironment();
 		assertEquals(Platform.getNL(), dictionary.get("osgi.nl"));
 	}
 	
 	public void testResolveOptional() {
-		Dictionary dictionary = TargetPlatform.getTargetEnvironment();
+		Dictionary dictionary = TargetPlatformHelper.getTargetEnvironment();
 		assertTrue("true".equals(dictionary.get("osgi.resolveOptional")));		
 	}
 	
 	public void testStateDictionaryNumber() {
-		Dictionary[] dictionaries = TargetPlatform.getState().getPlatformProperties();
+		Dictionary[] dictionaries = TargetPlatformHelper.getState().getPlatformProperties();
 		String[] envs = ExecutionEnvironmentAnalyzer.getKnownExecutionEnvironments();
 		assertEquals(envs.length, dictionaries.length);
 	}
 	
 	public void testStateDictionaryLength() {
-		Dictionary[] dictionaries = TargetPlatform.getState().getPlatformProperties();
-		Dictionary dictionary = TargetPlatform.getTargetEnvironment();
+		Dictionary[] dictionaries = TargetPlatformHelper.getState().getPlatformProperties();
+		Dictionary dictionary = TargetPlatformHelper.getTargetEnvironment();
 		for (int i = 0; i < dictionaries.length; i++) 
 			assertTrue(dictionary.size() + 2 <= dictionaries[i].size());
 	}
 
 	public void testSystemPackages() {
-		Dictionary[] dictionaries = TargetPlatform.getState().getPlatformProperties();
+		Dictionary[] dictionaries = TargetPlatformHelper.getState().getPlatformProperties();
 		for (int i = 0; i < dictionaries.length; i++) 
 			assertNotNull(dictionaries[i].get(Constants.FRAMEWORK_SYSTEMPACKAGES));
 	}
 
 	public void testExecutionEnvironment() {
-		Dictionary[] dictionaries = TargetPlatform.getState().getPlatformProperties();
+		Dictionary[] dictionaries = TargetPlatformHelper.getState().getPlatformProperties();
 		for (int i = 0; i < dictionaries.length; i++) 
 			assertNotNull(dictionaries[i].get(Constants.FRAMEWORK_EXECUTIONENVIRONMENT));
 	}

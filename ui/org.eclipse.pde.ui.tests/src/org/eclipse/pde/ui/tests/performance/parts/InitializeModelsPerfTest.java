@@ -17,8 +17,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ExecutionEnvironmentAnalyzer;
-import org.eclipse.pde.internal.core.ExternalModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.PluginPathFinder;
@@ -77,8 +77,7 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 	}
 	
 	private URL[] getURLs() {
-		String path = ExternalModelManager.getEclipseHome().toOSString();
-		URL[] paths = PluginPathFinder.getPluginPaths(path);
+		URL[] paths = PluginPathFinder.getPluginPaths(TargetPlatform.getLocation());
 		// FAIR ANALYSIS: this is the number of plug-ins in 3.1.x
 		URL[] result = new URL[89];
 		System.arraycopy(paths, 0, result, 0, 89);

@@ -15,6 +15,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
@@ -27,7 +28,7 @@ public class SchemaPerfTest extends PerformanceTestCase {
 	
 	public void testLoadAllSchemas() throws Exception {
 		tagAsGlobalSummary("Loading Schemas", Dimension.ELAPSED_PROCESS);
-		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getAllPlugins();
+		IPluginModelBase[] models = PluginRegistry.getAllModels();
 		startMeasuring();
 		int count = 0;
 		for (int i = 0; i < models.length; i++) {

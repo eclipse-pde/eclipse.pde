@@ -16,14 +16,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizard.ImportQuery;
 import org.eclipse.pde.ui.tests.PDETestCase;
@@ -46,12 +44,11 @@ public abstract class BaseImportTestCase extends PDETestCase {
 	}
 
 	protected IPluginModelBase[] getModels(String[] symbolicNames) {
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		IPluginModelBase[] models = new IPluginModelBase[symbolicNames.length];
-
 		for (int i = 0; i < symbolicNames.length; i++) {
-			ModelEntry entry = manager.findEntry(symbolicNames[i]);
-			models[i] = entry.getExternalModel();
+			IPluginModelBase model = PluginRegistry.findModel(symbolicNames[i]);
+			assertNull(model.getUnderlyingResource());
+			models[i] = model;
 		}
 		return models;
 	}
@@ -69,7 +66,7 @@ public abstract class BaseImportTestCase extends PDETestCase {
 			IClasspathEntry entry = roots[i].getRawClasspathEntry();
 			if (entry.getEntryKind() != IClasspathEntry.CPE_LIBRARY 
 					|| entry.getEntryKind() != IClasspathEntry.CPE_CONTAINER 
-					|| !entry.getPath().equals(new Path(PDECore.CLASSPATH_CONTAINER_ID)))
+					|| !entry.getPath().equals(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH))
 				continue;
 			if (roots[i].getSourceAttachmentPath() == null)
 				return false;
