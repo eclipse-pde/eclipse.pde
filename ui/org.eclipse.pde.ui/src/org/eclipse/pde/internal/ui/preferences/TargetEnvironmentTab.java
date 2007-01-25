@@ -105,8 +105,10 @@ public class TargetEnvironmentTab  {
 		} catch (InterruptedException e) {
 			PDEPlugin.log(e);
 		}
-		fNLCombo.setItems((String[])fNLChoices.toArray(new String[fNLChoices.size()]));
-		fNLCombo.setText(current);
+		if (!fNLCombo.isDisposed()) {
+			fNLCombo.setItems((String[])fNLChoices.toArray(new String[fNLChoices.size()]));
+			fNLCombo.setText(current);
+		}
 	}
 	
 	private void initializeAllLocales() {
