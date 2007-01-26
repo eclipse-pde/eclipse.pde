@@ -83,8 +83,8 @@ public class TargetOutlinePage extends FormOutlinePage {
 	}
 	
 	protected Object[] getChildren(Object parent) {
-		if (parent instanceof OverviewPage) {
-			OverviewPage page = (OverviewPage)parent;
+		if (parent instanceof ContentPage) {
+			ContentPage page = (ContentPage)parent;
 			ITarget target = ((ITargetModel)page.getModel()).getTarget();
 			if (target.useAllPlugins())
 				return new Object[0];
