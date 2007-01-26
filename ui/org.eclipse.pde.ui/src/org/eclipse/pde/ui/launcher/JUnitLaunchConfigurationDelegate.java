@@ -158,10 +158,12 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		String productID = LaunchConfigurationHelper.getProductID(configuration);
 		LaunchConfigurationHelper.createConfigIniFile(configuration,
 				productID, fPluginMap, getConfigurationDirectory(configuration));
-		TargetPlatformHelper.createPlatformConfigurationArea(
-				fPluginMap,
+		String brandingId = LaunchConfigurationHelper.getContributingPlugin(productID);
+		TargetPlatform.createPlatformConfiguration(
 				getConfigurationDirectory(configuration),
-				LaunchConfigurationHelper.getContributingPlugin(productID));
+				(IPluginModelBase[])fPluginMap.values().toArray(new IPluginModelBase[fPluginMap.size()]),
+				brandingId != null ? (IPluginModelBase) fPluginMap.get(brandingId) : null);
+		TargetPlatformHelper.checkPluginPropertiesConsistency(fPluginMap, getConfigurationDirectory(configuration));
 		
 		programArgs.add("-configuration"); //$NON-NLS-1$
 		programArgs.add("file:" + new Path(getConfigurationDirectory(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$

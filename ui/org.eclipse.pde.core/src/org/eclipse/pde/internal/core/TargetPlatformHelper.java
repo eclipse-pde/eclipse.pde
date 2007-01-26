@@ -13,24 +13,19 @@ package org.eclipse.pde.internal.core;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.ManifestElement;
@@ -40,12 +35,9 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.VersionUtil;
-import org.eclipse.update.configurator.ConfiguratorUtils;
-import org.eclipse.update.configurator.IPlatformConfiguration;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
@@ -56,45 +48,6 @@ public class TargetPlatformHelper {
 	
 	private static String REFERENCE_PREFIX = "reference:"; //$NON-NLS-1$
 	private static String FILE_URL_PREFIX = "file:"; //$NON-NLS-1$
-
-	static class LocalSite {
-		private ArrayList plugins;
-		private IPath path;
-
-		public LocalSite(IPath path) {
-			if (path.getDevice() != null)
-				this.path = path.setDevice(path.getDevice().toUpperCase(Locale.ENGLISH));
-			else
-				this.path = path;
-			plugins = new ArrayList();
-		}
-
-		public IPath getPath() {
-			return path;
-		}
-
-		public URL getURL() throws MalformedURLException {
-			return new URL("file:" + path.removeTrailingSeparator()); //$NON-NLS-1$
-		}
-
-		public void add(IPluginModelBase model) {
-			plugins.add(model);
-		}
-
-		public String[] getRelativePluginList() {
-			String[] list = new String[plugins.size()];
-			for (int i = 0; i < plugins.size(); i++) {
-				IPluginModelBase model = (IPluginModelBase) plugins.get(i);
-				IPath location = new Path(model.getInstallLocation());
-				// defect 37319
-				if (location.segmentCount() > 2)
-					location = location.removeFirstSegments(location.segmentCount() - 2);
-				//31489 - entry must be relative
-				list[i] = location.setDevice(null).makeRelative().toString();
-			}
-			return list;
-		}
-	}
 
 	private static Map fCachedLocations;
 	
@@ -186,34 +139,7 @@ public class TargetPlatformHelper {
 	}
 
 	
-	public static void createPlatformConfigurationArea(
-		Map pluginMap,
-		File configDir,
-		String brandingPluginID)
-		throws CoreException {
-		try {
-			if (pluginMap.containsKey("org.eclipse.update.configurator"))   //$NON-NLS-1$
-				savePlatformConfiguration(ConfiguratorUtils.getPlatformConfiguration(null),configDir, pluginMap, brandingPluginID);			
-			checkPluginPropertiesConsistency(pluginMap, configDir);
-		} catch (CoreException e) {
-			// Rethrow
-			throw e;
-		} catch (Exception e) {
-			// Wrap everything else in a core exception.
-			String message = e.getMessage();
-			if (message==null || message.length() == 0)
-				message = PDECoreMessages.TargetPlatform_exceptionThrown; 
-			throw new CoreException(
-				new Status(
-					IStatus.ERROR,
-					PDECore.PLUGIN_ID,
-					IStatus.ERROR,
-					message,
-					e));
-		}
-	}
-	
-	private static void checkPluginPropertiesConsistency(Map map, File configDir) {
+	public static void checkPluginPropertiesConsistency(Map map, File configDir) {
 		File runtimeDir = new File(configDir, "org.eclipse.core.runtime"); //$NON-NLS-1$
 		if (runtimeDir.exists() && runtimeDir.isDirectory()) {
 			long timestamp = runtimeDir.lastModified();
@@ -243,102 +169,6 @@ public class TargetPlatformHelper {
         return false;
     }
 
-	private static void savePlatformConfiguration(
-		IPlatformConfiguration platformConfiguration,
-		File configFile,
-		Map pluginMap,
-		String primaryFeatureId)
-		throws IOException, CoreException, MalformedURLException {
-		ArrayList sites = new ArrayList();
-
-		// Compute local sites
-		Iterator iter = pluginMap.values().iterator();
-		while(iter.hasNext()) {
-			IPluginModelBase model = (IPluginModelBase)iter.next();
-			IPath sitePath = getTransientSitePath(model);
-			addToSite(sitePath, model, sites);
-		}
-
-		createConfigurationEntries(platformConfiguration,sites);
-		if (primaryFeatureId != null)
-			createFeatureEntries(platformConfiguration, pluginMap, primaryFeatureId);
-		platformConfiguration.refresh();
-		platformConfiguration.save(new URL("file:" + configFile.getPath())); //$NON-NLS-1$
-	}
-
-	private static IPath getTransientSitePath(IPluginModelBase model) {
-		return new Path(model.getInstallLocation()).removeLastSegments(2);		
-	}
-	
-	private static void addToSite(
-		IPath path,
-		IPluginModelBase model,
-		ArrayList sites) {
-		if (path.getDevice() != null)
-			path = path.setDevice(path.getDevice().toUpperCase(Locale.ENGLISH));
-		for (int i = 0; i < sites.size(); i++) {
-			LocalSite localSite = (LocalSite) sites.get(i);
-			if (localSite.getPath().equals(path)) {
-				localSite.add(model);
-				return;
-			}
-		}
-		// First time - add site
-		LocalSite localSite = new LocalSite(path);
-		localSite.add(model);
-		sites.add(localSite);
-	}
-
-	private static void createConfigurationEntries(
-		IPlatformConfiguration config,
-		ArrayList sites)
-		throws CoreException, MalformedURLException {
-
-		for (int i = 0; i < sites.size(); i++) {
-			LocalSite localSite = (LocalSite) sites.get(i);
-			String[] plugins = localSite.getRelativePluginList();
-
-			int policy = IPlatformConfiguration.ISitePolicy.USER_INCLUDE;
-			IPlatformConfiguration.ISitePolicy sitePolicy =
-				config.createSitePolicy(policy, plugins);
-			IPlatformConfiguration.ISiteEntry siteEntry =
-				config.createSiteEntry(localSite.getURL(), sitePolicy);
-			config.configureSite(siteEntry);
-		}
-		config.isTransient(true);
-	}
-
-
-	private static void createFeatureEntries(
-		IPlatformConfiguration config,
-		Map pluginMap,
-		String brandingPluginID)
-		throws MalformedURLException {
-
-		// We have primary feature Id.
-		IFeatureModel featureModel = PDECore.getDefault().getFeatureModelManager().findFeatureModel(brandingPluginID);
-		if (featureModel == null)
-			return;
-		
-		IFeature feature = featureModel.getFeature();
-		String featureVersion = feature.getVersion();
-		IPluginModelBase primaryPlugin = (IPluginModelBase)pluginMap.get(brandingPluginID);
-		if (primaryPlugin == null)
-			return;
-		
-		URL pluginURL = new URL("file:" + primaryPlugin.getInstallLocation()); //$NON-NLS-1$
-		IPlatformConfiguration.IFeatureEntry featureEntry =
-			config.createFeatureEntry(
-				brandingPluginID,
-				featureVersion,
-				brandingPluginID,
-				primaryPlugin.getPluginBase().getVersion(),
-				true,
-				null,
-				new URL[] { pluginURL });
-		config.configureFeatureEntry(featureEntry);
-	}
-	
 	public static String[] getApplicationNames() {
 		TreeSet result = new TreeSet();
 		IPluginModelBase[] plugins = PluginRegistry.getAllModels();

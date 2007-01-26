@@ -24,10 +24,11 @@ import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ClasspathHelper;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -95,11 +96,12 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 			Properties prop = LaunchConfigurationHelper.createConfigIniFile(configuration,
 					productID, pluginMap, getConfigDir(configuration));
 			showSplash = prop.containsKey("osgi.splashPath") || prop.containsKey("splashLocation"); //$NON-NLS-1$ //$NON-NLS-2$
-			TargetPlatformHelper.createPlatformConfigurationArea(
-					pluginMap,
+			String brandingId = LaunchConfigurationHelper.getContributingPlugin(productID);
+			TargetPlatform.createPlatformConfiguration(
 					getConfigDir(configuration),
-					LaunchConfigurationHelper.getContributingPlugin(productID));
-
+					(IPluginModelBase[])pluginMap.values().toArray(new IPluginModelBase[pluginMap.size()]),
+					brandingId != null ? (IPluginModelBase) pluginMap.get(brandingId) : null);
+			TargetPlatformHelper.checkPluginPropertiesConsistency(pluginMap, getConfigDir(configuration));
 			programArgs.add("-configuration"); //$NON-NLS-1$
 			programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
 			

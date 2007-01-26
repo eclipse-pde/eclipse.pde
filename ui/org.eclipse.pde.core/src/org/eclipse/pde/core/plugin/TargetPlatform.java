@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.core.plugin;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Properties;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -21,6 +23,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.UpdateManagerHelper;
 
 /**
  * The central class for the plug-in development target platform. This class cannot
@@ -183,4 +186,22 @@ public class TargetPlatform {
 		return appName != null ? appName : IDE_APPLICATION;
 	}
 	
+	/**
+	 * Creates a platform configuration to be used when launching an Eclipse
+	 * application that uses Update Manager as a configurator
+	 * 
+	 * @param location the location where the configuration should be persisted
+	 * @param plugins the list of plug-ins that make up the configuration
+	 * @param brandingPlugin  if specified, a entry for the feature containing the branding plug-in will
+	 * 					be created in the platform configuration
+	 * 
+	 * @throws CoreException an exception is thrown if there was a problem writing the platform
+	 * 			configuration file
+	 */
+	public static void createPlatformConfiguration(
+			File location, IPluginModelBase[] plugins, IPluginModelBase brandingPlugin)
+			throws CoreException {
+		UpdateManagerHelper.createPlatformConfiguration(location, plugins, brandingPlugin);
+	}
+		
 }
