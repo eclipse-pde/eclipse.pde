@@ -113,9 +113,5 @@ public class OverviewPage extends AbstractTargetPage implements IHyperlinkListen
 		IStatusLineManager mng = getEditor().getEditorSite().getActionBars().getStatusLineManager();
 		mng.setMessage(null);
 	}
-	
-	protected String getHelpResource() {
-		return "/org.eclipse.pde.doc.user/guide/tools/file_wizards/new_target_definition.htm"; //$NON-NLS-1$
-	}
 
 }
