@@ -50,13 +50,11 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
@@ -180,19 +178,6 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		Section section = createStaticSection(toolkit, parent, PDEUIMessages.ManifestEditor_TestingSection_title); 
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		
-		ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
-		toolkit.adapt(info, true, true);
-		info.setImage(lp.get(PDEPluginImages.DESC_HELP));
-		//no need for the background - transparency will take care of it
-		info.setBackground(null);
-		//info.setBackground(section.getTitleBarGradientBackground());
-		info.addHyperlinkListener(new HyperlinkAdapter() {
-			public void linkActivated(HyperlinkEvent e) {
-				displayHelpResource("/org.eclipse.pde.doc.user/guide/tools/launchers/eclipse_application_launcher.htm"); //$NON-NLS-1$
-			}
-		});
-		section.setTextClient(info);
-		
 		Composite container = toolkit.createComposite(section, SWT.NONE);
 		container.setLayout(FormLayoutFactory.createSectionClientTableWrapLayout(false, 1));
 		container.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
@@ -211,22 +196,9 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	private void createExportingSection(IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(toolkit, parent, PDEUIMessages.ManifestEditor_DeployingSection_title); 
-		ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
-		toolkit.adapt(info, true, true);
-		info.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_HELP));
-		info.addHyperlinkListener(new HyperlinkAdapter() {
-			public void linkActivated(HyperlinkEvent e) {
-				displayHelpResource("/org.eclipse.pde.doc.user/guide/tools/export_wizards/export_plugins.htm"); //$NON-NLS-1$
-			}
-		});
-		
 		Composite container = toolkit.createComposite(section, SWT.NONE);
 		container.setLayout(FormLayoutFactory.createSectionClientTableWrapLayout(false, 1));
 		container.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		//info.setBackground(section.getTitleBarGradientBackground());
-		//no need for the background - transparency will take care of it
-		info.setBackground(null);
-		section.setTextClient(info);
 		createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fDeploying : PDEUIMessages.OverviewPage_deploying, toolkit);
 		section.setClient(container);
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
@@ -358,10 +330,6 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		if (fExportAction == null)
 			fExportAction = new PluginExportAction((PDEFormEditor) getEditor());
 		return fExportAction;
-	}
-	
-	private void displayHelpResource(String resource) {
-		PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(resource);
 	}
 	
 	private void handleConvert() {
