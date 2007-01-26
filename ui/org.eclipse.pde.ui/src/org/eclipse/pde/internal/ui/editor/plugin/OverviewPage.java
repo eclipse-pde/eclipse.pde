@@ -87,9 +87,9 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		if (isFragment()) {
-			form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FRAGMENT_OBJ));
+			form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FRAGMENT_MF_OBJ));
 		} else {
-			form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGIN_OBJ));
+			form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PLUGIN_MF_OBJ));
 		}
 		form.setText(PDEUIMessages.ManifestEditor_OverviewPage_title); 
 		fillBody(managedForm, toolkit);
