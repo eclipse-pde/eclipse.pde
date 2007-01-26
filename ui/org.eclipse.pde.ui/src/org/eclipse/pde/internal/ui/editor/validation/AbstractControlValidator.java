@@ -1,0 +1,169 @@
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.pde.internal.ui.editor.validation;
+
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.forms.IManagedForm;
+
+
+/**
+ * AbstractControlValidator
+ *
+ */
+public abstract class AbstractControlValidator implements IControlValidator {
+
+	private boolean fEnabled;
+	
+	private IManagedForm fManagedForm;
+	
+	private Control fControl;
+	
+	private String fMessagePrefix;
+	
+	private boolean fIsValid;
+	
+	/**
+	 * @param managedForm
+	 * @param control
+	 * @param prefix
+	 */
+	public AbstractControlValidator(IManagedForm managedForm, Control control,
+			String prefix) {
+		
+		fManagedForm = managedForm;
+		fControl = control;
+		fMessagePrefix = prefix;
+		fEnabled = fControl.getEnabled();
+		reset();
+	}
+
+	/**
+	 * @param managedForm
+	 * @param control
+	 */
+	public AbstractControlValidator(IManagedForm managedForm, Control control) {
+		fEnabled = control.getEnabled();
+		fManagedForm = managedForm;
+		fControl = control;
+		fMessagePrefix = null;
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.IControlValdiator#getEnabled()
+	 */
+	public boolean getEnabled() {
+		return fEnabled;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.IControlValdiator#setEnabled(boolean)
+	 */
+	public void setEnabled(boolean enabled) {
+		fEnabled = enabled;
+		if (fEnabled) {
+			// Re-validate control if validator is enabled
+			validate();
+		} else {
+			// Reset validation state if validator is disabled
+			reset();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.IControlValdiator#validate()
+	 */
+	public boolean validate() {
+		// Skip validation if the validator is disabled
+		if (fEnabled == false) {
+			return fIsValid;
+		}
+		// Validate the control
+		fIsValid = validateControl();
+		// If the control is valid, remove all the messages associated with 
+		// the control (in case they were not individually removed by the
+		// child class)
+		if (fIsValid) {
+			fManagedForm.getMessageManager().removeMessages(fControl);
+		}
+		return fIsValid;
+	}
+
+	/**
+	 * @return
+	 */
+	protected abstract boolean validateControl();
+	
+	/**
+	 * @param key
+	 * @param messageText
+	 * @param messageType
+	 */
+	protected void addMessage(Object key, String messageText, int messageType) {
+		// Add a prefix, if one was specified
+		if (fMessagePrefix != null) {
+			messageText = fMessagePrefix + ' ' + messageText;
+		}
+		// Delegate to message manager
+		fManagedForm.getMessageManager().addMessage(key, messageText, null, 
+				messageType, fControl);
+	} 
+
+	/**
+	 * @param key
+	 */
+	protected void removeMessage(Object key) {
+		fManagedForm.getMessageManager().removeMessage(key, fControl);
+	}	
+	
+	/**
+	 * @param prefix
+	 */
+	protected void setMessagePrefix(String prefix) {
+		fMessagePrefix = prefix;
+	}
+	
+	/**
+	 * @return
+	 */
+	protected String getMessagePrefix() {
+		return fMessagePrefix;
+	}
+	
+	/**
+	 * @return
+	 */
+	protected IManagedForm getManagedForm() {
+		return fManagedForm;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.validation.IControlValdiator#getControl()
+	 */
+	public Control getControl() {
+		return fControl;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.validation.IControlValidator#isValid()
+	 */
+	public boolean isValid() {
+		return fIsValid;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.validation.IControlValidator#reset()
+	 */
+	public void reset() {
+		fIsValid = true;
+		fManagedForm.getMessageManager().removeMessages(fControl);
+	}
+}

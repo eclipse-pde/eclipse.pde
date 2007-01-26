@@ -158,7 +158,6 @@ public abstract class PDEFormEditor extends FormEditor
 	private PDEMultiPageContentOutline fContentOutline;
 	private String fLastActivePageId;
 	private boolean fLastDirtyState;
-	private IEditorValidationStack fValidationStack;
 	private boolean fError;
 
 	private static class PDEMultiPageEditorSite extends MultiPageEditorSite {
@@ -181,7 +180,6 @@ public abstract class PDEFormEditor extends FormEditor
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		XMLComponentRegistry.Instance().connect(this);
 		fInputContextManager = createInputContextManager();
-		fValidationStack = new EditorValidationStack(this);
 	}
 	
 	/**
@@ -791,10 +789,6 @@ public abstract class PDEFormEditor extends FormEditor
 	}
 	
 	protected abstract InputContext getInputContext(Object object);
-	
-	public IEditorValidationStack getValidationStack() {
-		return fValidationStack;
-	}
 	
 	protected final void addPages() {
 		fError = getAggregateModel() == null;

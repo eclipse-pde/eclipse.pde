@@ -258,7 +258,6 @@ public abstract class PDEFormPage extends FormPage {
 	public void setActive(boolean active) {
 		IManagedForm managedForm = getManagedForm();
 		if (active && managedForm != null) {
-			getPDEEditor().getValidationStack().top();
 			if (fListenersAdded == false) {
 				// Dynamically add focus listeners all the forms children
 				// if it has not been done already

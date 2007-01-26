@@ -2399,8 +2399,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetDefinitionSection_name;
 
-	public static String AbstractFormValidator_noMessageSet;
-
 	public static String TargetDefinitionSection_targetLocation;
 
 	public static String TargetDefinitionSection_sameAsHost;

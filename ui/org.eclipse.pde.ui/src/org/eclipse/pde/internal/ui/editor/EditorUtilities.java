@@ -32,7 +32,9 @@ import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.product.ImageEntryValidator;
 import org.eclipse.pde.internal.ui.editor.product.LauncherSection;
+import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
@@ -49,7 +51,7 @@ public class EditorUtilities {
 	
 	static class ValidationMessage {
 		String fMessage;
-		int fSeverity = -1;
+		int fSeverity = IMessageProvider.WARNING;
 		boolean fShowField = true;
 		ValidationMessage(String message) {
 			fMessage = message;
@@ -69,9 +71,10 @@ public class EditorUtilities {
 	}
 	
 	
-	private static ImageData[] getImageData(IEditorValidationProvider provider,
+	private static ImageData[] getImageData(ImageEntryValidator validator, 
+			FormEntry provider,
 			IProduct product) {
-		String imagePath = provider.getProviderValue();
+		String imagePath = provider.getText().getText();
 		String message = null;
 		try {
 			IPath path = getFullPath(new Path(imagePath), product);
@@ -90,36 +93,18 @@ public class EditorUtilities {
 		} catch (IOException e) {
 			message = PDEUIMessages.EditorUtilities_invalidFilePath;
 		}
-		handleMessage(message, -1, true, provider);
+		validator.handleMessage(message, IMessageProvider.WARNING, true, provider);
 		return null;
 	}
 	
-	private static boolean containsEmptyField(IEditorValidationProvider provider) {
-		return provider.getProviderValue().length() == 0;
+	private static boolean containsEmptyField(FormEntry provider) {
+		return provider.getText().getText().length() == 0;
 	}
-	
-	private static void handleMessage(String message, int severity, boolean writeField, IEditorValidationProvider provider) {
-		if (message != null) {
-			StringBuffer sb = new StringBuffer();
-			if (writeField) {
-				String desc = provider.getProviderDescription();
-				if (desc != null) {
-					sb.append(desc);
-					sb.append(' ');
-				}
-				sb.append(provider.getProviderValue());
-				sb.append(" - "); //$NON-NLS-1$
-			}
-			sb.append(message);
-			provider.getValidator().setMessage(sb.toString());
-			provider.getValidator().setSeverity(severity);
-		}
-	}
-	
-	private static boolean imageEntryInternalValidate(IEditorValidationProvider provider, IProduct product, ValidationInfo info, int validationType) {
+
+	private static boolean imageEntryInternalValidate(ImageEntryValidator validator, FormEntry provider, IProduct product, ValidationInfo info, int validationType) {
 		if (containsEmptyField(provider))
 			return true;
-		ImageData[] idata = getImageData(provider, product);
+		ImageData[] idata = getImageData(validator, provider, product);
 		if (idata == null)
 			return false;
 		
@@ -140,41 +125,44 @@ public class EditorUtilities {
 		}
 		
 		if (ms != null)
-			handleMessage(ms.fMessage, ms.fSeverity, ms.fShowField, provider);
+			validator.handleMessage(ms.fMessage, ms.fSeverity, ms.fShowField, provider);
 		
 		return ms == null;
 	}
 	
-	public static boolean imageEntryHasValidIco(IEditorValidationProvider provider, IProduct product) {
+	public static boolean imageEntryHasValidIco(ImageEntryValidator validator, FormEntry provider, IProduct product) {
 		ValidationInfo info = new ValidationInfo();
-		return imageEntryInternalValidate(provider, product, info, F_ICO_IMAGE);
+		return imageEntryInternalValidate(validator, provider, product, info, F_ICO_IMAGE);
 	}
 	
-	public static boolean imageEntrySizeDoesNotExceed(IEditorValidationProvider provider,
+	public static boolean imageEntrySizeDoesNotExceed(ImageEntryValidator validator, 
+			FormEntry provider,
 			IProduct product, int mwidth, int mheight, int wwidth, int wheight) {
 		ValidationInfo info = new ValidationInfo();
 		info.maxWidth = mwidth;
 		info.maxHeight = mheight;
 		info.warningWidth = wwidth;
 		info.warningHeight = wheight;
-		return imageEntryInternalValidate(provider, product, info, F_MAX_IMAGE_SIZE);
+		return imageEntryInternalValidate(validator, provider, product, info, F_MAX_IMAGE_SIZE);
 	}
 	
-	public static boolean imageEntryHasExactSize(IEditorValidationProvider provider,
+	public static boolean imageEntryHasExactSize(ImageEntryValidator validator, 
+			FormEntry provider,
 			IProduct product, int width, int height) {
 		ValidationInfo info = new ValidationInfo();
 		info.maxWidth = width;
 		info.maxHeight = height;
-		return imageEntryInternalValidate(provider, product, info, F_EXACT_IMAGE_SIZE);
+		return imageEntryInternalValidate(validator, provider, product, info, F_EXACT_IMAGE_SIZE);
 	}
 	
-	public static boolean imageEntryHasExactDepthAndSize(IEditorValidationProvider provider,
+	public static boolean imageEntryHasExactDepthAndSize(ImageEntryValidator validator, 
+			FormEntry provider,
 			IProduct product, int width, int height, int depth) {
 		ValidationInfo info = new ValidationInfo();
 		info.maxWidth = width;
 		info.maxHeight = height;
 		info.requiredDepth = depth;
-		return imageEntryInternalValidate(provider, product, info, F_IMAGE_DEPTH);
+		return imageEntryInternalValidate(validator, provider, product, info, F_IMAGE_DEPTH);
 	}
 	
 	private static ValidationMessage getMS_icoImage(ImageData[] imagedata) {	

@@ -17,7 +17,6 @@ import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.AbstractFormValidator;
 import org.eclipse.pde.internal.ui.editor.EditorUtilities;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -27,6 +26,8 @@ import org.eclipse.pde.internal.ui.util.FileExtensionFilter;
 import org.eclipse.pde.internal.ui.util.FileValidator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -46,6 +47,8 @@ public class AboutSection extends PDESection {
 
 	private FormEntry fImageEntry;
 	private FormEntry fTextEntry;
+	
+	private ImageEntryValidator fImageEntryValidator;
 
 	public AboutSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
@@ -65,7 +68,17 @@ public class AboutSection extends PDESection {
 		client.setLayout(layout);
 		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-		fImageEntry = new FormEntry(client, toolkit, PDEUIMessages.AboutSection_image, PDEUIMessages.AboutSection_browse, isEditable()); // 
+		fImageEntry = new FormEntry(client, toolkit, PDEUIMessages.AboutSection_image, PDEUIMessages.AboutSection_browse, isEditable());
+		fImageEntry.setEditable(isEditable());
+		// Create validator
+		fImageEntryValidator = new ImageEntryValidator(
+				getManagedForm(), fImageEntry.getText()) {
+			protected boolean validateControl() {
+				return EditorUtilities.imageEntrySizeDoesNotExceed(
+						fImageEntryValidator, fImageEntry, getProduct(),
+						500, 330, 250, 330);
+			}
+		};
 		fImageEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getAboutInfo().setImagePath(entry.getValue());
@@ -77,12 +90,10 @@ public class AboutSection extends PDESection {
 				EditorUtilities.openImage(fImageEntry.getValue(), getProduct().getDefiningPluginId());
 			}
 		});
-		fImageEntry.setEditable(isEditable());
-		fImageEntry.setValidator(new AbstractFormValidator(this) {
-			public boolean inputValidates() {
-				return EditorUtilities.imageEntrySizeDoesNotExceed(
-						fImageEntry, getProduct(),
-						500, 330, 250, 330);
+		// Validate on modify
+		fImageEntry.getText().addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				fImageEntryValidator.validate();
 			}
 		});
 		

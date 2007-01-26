@@ -25,7 +25,6 @@ import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.AbstractFormValidator;
 import org.eclipse.pde.internal.ui.editor.EditorUtilities;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -38,6 +37,8 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -65,6 +66,10 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 
 public class LauncherSection extends PDESection {
+	
+	private ImageEntryValidator[] fMultipleWinIconValidator;
+	
+	private ImageEntryValidator fSingleWinIconValidator;
 	
 	private static final String[] F_WIN_ICON_LABELS = new String[] {
 		PDEUIMessages.LauncherSection_Low16,
@@ -238,19 +243,31 @@ public class LauncherSection extends PDESection {
 		td.colspan = 3;
 		fBmpButton.setLayoutData(td);
 		fBmpButton.setEnabled(isEditable());		
-
+		// Store all win icon validators
+		fMultipleWinIconValidator = new ImageEntryValidator[F_WIN_ICON_LABELS.length];
 		for (int i = 0; i < F_WIN_ICON_LABELS.length; i++) {
 			final IconEntry ientry = new IconEntry(comp, toolkit, F_WIN_ICON_LABELS[i], F_WIN_ICON_IDS[i]);
 			final int index = i;
-			ientry.setValidator(new AbstractFormValidator(this) {
-				public boolean inputValidates() {
+			// Create validator
+			fMultipleWinIconValidator[index] = new ImageEntryValidator(
+					getManagedForm(), ientry.getText()) {
+				protected boolean validateControl() {
 					return EditorUtilities.imageEntryHasExactDepthAndSize(
-							ientry, getProduct(),
+							fMultipleWinIconValidator[index], 
+							ientry, 
+							getProduct(),
 							F_WIN_ICON_DIMENSIONS[index][0],
 							F_WIN_ICON_DIMENSIONS[index][1],
-							F_WIN_ICON_DEPTHS[index]);
+							F_WIN_ICON_DEPTHS[index]);					
+				}
+			};
+			// Validate on modify
+			ientry.getText().addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
+					fMultipleWinIconValidator[index].validate();
 				}
 			});
+			
 			fIcons.add(ientry);
 		}
 		
@@ -268,11 +285,21 @@ public class LauncherSection extends PDESection {
 		fIcoButton.setEnabled(isEditable());
 		
 		final IconEntry ientry = new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_file, ILauncherInfo.P_ICO_PATH);
-		ientry.setValidator(new AbstractFormValidator(this) {
-			public boolean inputValidates() {
-				return EditorUtilities.imageEntryHasValidIco(ientry, getProduct());
+		// Create validator
+		fSingleWinIconValidator = new ImageEntryValidator(getManagedForm(), 
+				ientry.getText()) {
+			protected boolean validateControl() {
+				return EditorUtilities.imageEntryHasValidIco(
+						fSingleWinIconValidator, ientry, getProduct());
 			}
-		});
+		};
+		// Validate on modify
+		ientry.getText().addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				fSingleWinIconValidator.validate();
+			}
+		});		
+
 		fIcons.add(ientry); 
 		
 		toolkit.paintBordersFor(comp);
@@ -352,7 +379,10 @@ public class LauncherSection extends PDESection {
 			IconEntry entry = (IconEntry)fIcons.get(i);
 			String id = entry.getIconId();
 			if (id.equals(ILauncherInfo.P_ICO_PATH)) {
-				entry.setEditable(isEditable() && useIco);
+				boolean enabled = isEditable() && useIco;
+				entry.setEditable(enabled);
+				// Update validator
+				fSingleWinIconValidator.setEnabled(enabled);
 			} else if (id.equals(ILauncherInfo.WIN32_16_HIGH) 
 					|| id.equals(ILauncherInfo.WIN32_16_LOW)
 					|| id.equals(ILauncherInfo.WIN32_24_LOW)
@@ -362,6 +392,10 @@ public class LauncherSection extends PDESection {
 					|| id.equals(ILauncherInfo.WIN32_48_LOW)) {
 				entry.setEditable(isEditable() && !useIco);
 			}
+		}
+		// Update validators
+		for (int i = 0; i < fMultipleWinIconValidator.length; i++) {
+			fMultipleWinIconValidator[i].setEnabled(isEditable() && !useIco);
 		}
 	}
 	

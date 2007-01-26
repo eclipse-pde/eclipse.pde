@@ -17,7 +17,6 @@ import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IWindowImages;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.AbstractFormValidator;
 import org.eclipse.pde.internal.ui.editor.EditorUtilities;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -26,6 +25,8 @@ import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.FileExtensionFilter;
 import org.eclipse.pde.internal.ui.util.FileValidator;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -43,6 +44,8 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class WindowImagesSection extends PDESection {
 
+	private ImageEntryValidator[] fWinImageEntryValidator;
+	
 	private static final int[][] F_ICON_DIMENSIONS = new int[][] {
 		{16, 16}, {32, 32}, {48, 48}, {64, 64}, {128, 128}
 	};
@@ -71,13 +74,27 @@ public class WindowImagesSection extends PDESection {
 		client.setLayout(new GridLayout(3, false));
 		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-		
+		// Store all image entry validators
+		fWinImageEntryValidator = new ImageEntryValidator[F_ICON_LABELS.length];
 		for (int i = 0; i < fImages.length; i++) {
 			final int index = i;
 			fImages[index] = new FormEntry(client, 
 					toolkit, F_ICON_LABELS[index], 
 					PDEUIMessages.WindowImagesSection_browse, 
 					isEditable());
+			fImages[index].setEditable(isEditable());
+			// Create validator
+			fWinImageEntryValidator[index] = new ImageEntryValidator(
+					getManagedForm(), fImages[index].getText()) {
+				protected boolean validateControl() {
+					return EditorUtilities.imageEntryHasExactSize(
+							fWinImageEntryValidator[index], 
+							fImages[index],	
+							getProduct(),
+							F_ICON_DIMENSIONS[index][0],
+							F_ICON_DIMENSIONS[index][1]);				
+				}
+			};				
 			fImages[index].setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 				public void textValueChanged(FormEntry entry) {
 					getWindowImages().setImagePath(entry.getValue(), index);
@@ -89,13 +106,10 @@ public class WindowImagesSection extends PDESection {
 					EditorUtilities.openImage(fImages[index].getValue(), getProduct().getDefiningPluginId());
 				}
 			});
-			fImages[index].setEditable(isEditable());
-			fImages[index].setValidator(new AbstractFormValidator(this) {
-				public boolean inputValidates() {
-					return EditorUtilities.imageEntryHasExactSize(
-							fImages[index],	getProduct(),
-							F_ICON_DIMENSIONS[index][0],
-							F_ICON_DIMENSIONS[index][1]);
+			// Validate on modify
+			fImages[index].getText().addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
+					fWinImageEntryValidator[index].validate();
 				}
 			});
 		}

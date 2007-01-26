@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
-import org.eclipse.pde.internal.ui.editor.IEditorValidationProvider;
-import org.eclipse.pde.internal.ui.editor.IEditorValidator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -25,7 +23,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IFormColors;
@@ -40,7 +37,7 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
  * is called is 'valueChanged' method called (and only if 'dirty' flag is set).
  * This allows delayed commit.
  */
-public class FormEntry implements IEditorValidationProvider {
+public class FormEntry {
 	private Control fLabel;
 	private Text fText;
 	private Button fBrowse;
@@ -48,8 +45,6 @@ public class FormEntry implements IEditorValidationProvider {
 	private boolean fDirty;
 	boolean fIgnoreModify = false;
 	private IFormEntryListener fListener;
-	private boolean fSkipValidation;
-	private IEditorValidator fValidator;
 	/**
 	 * The default constructor. Call 'createControl' to make it.
 	 *  
@@ -117,8 +112,6 @@ public class FormEntry implements IEditorValidationProvider {
 		fillIntoGrid(parent, indent, tcolspan);
 	}
 	public void setEditable(boolean editable) {
-		if (fValidator != null)
-			fValidator.setEnabled(editable);
 		fText.setEditable(editable);
 		if (fLabel instanceof Hyperlink)
 			((Hyperlink)fLabel).setUnderlined(editable);
@@ -143,6 +136,9 @@ public class FormEntry implements IEditorValidationProvider {
 			}
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 			gd.horizontalSpan = tspan;
+			if (fLabel != null) {
+				gd.horizontalIndent = 3;
+			}
 			gd.grabExcessHorizontalSpace = (tspan == 1);
 			gd.widthHint = 10;
 			fText.setLayoutData(gd);
@@ -165,6 +161,9 @@ public class FormEntry implements IEditorValidationProvider {
 			}
 			td = new TableWrapData(TableWrapData.FILL);
 			td.colspan = tspan;
+			if (fLabel != null) {
+				td.indent = 3;
+			}			
 			td.grabHorizontal = (tspan == 1);
 			td.valign = TableWrapData.MIDDLE;
 			fText.setLayoutData(td);
@@ -231,8 +230,6 @@ public class FormEntry implements IEditorValidationProvider {
 		fDirty = false;
 	}
 	private void editOccured(ModifyEvent e) {
-		if (!fSkipValidation)
-			validate();
 		if (fIgnoreModify)
 			return;
 		fDirty = true;
@@ -312,19 +309,6 @@ public class FormEntry implements IEditorValidationProvider {
 		fIgnoreModify = false;
 	}
 	
-	/**
-	 * Sets the value of this entry with the possibility to turn the
-	 * notification and validation off.
-	 * 
-	 * @param value
-	 * @param blockNotification
-	 */
-	public void setValue(String value, boolean blockNotification, boolean skipValidation) {
-		fSkipValidation = skipValidation;
-		setValue(value, blockNotification);
-		fSkipValidation = false;
-	}
-	
 	public void setVisible(boolean visible) {
 		if (fLabel != null)
 			fLabel.setVisible(visible);
@@ -333,31 +317,5 @@ public class FormEntry implements IEditorValidationProvider {
 		if (fBrowse != null)
 			fBrowse.setVisible(visible);
 	}
-	
-	public void setValidator(IEditorValidator validator) {
-		fValidator = validator;
-	}
-	
-	public IEditorValidator getValidator() {
-		return fValidator;
-	}
-	
-	public void validate() {
-		if (fValidator != null)
-			fValidator.validate(true);
-	}
-	
-	public String getProviderValue() {
-		return fText.getText();
-	}
-	
-	public String getProviderDescription() {
-		if (fLabel == null)
-			return null;
-		if (fLabel instanceof Label)
-			return ((Label)fLabel).getText();
-		else if (fLabel instanceof Hyperlink)
-			return ((Hyperlink)fLabel).getText();
-		return null;
-	}
+
 }
