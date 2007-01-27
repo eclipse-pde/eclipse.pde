@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
 import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
 import org.eclipse.pde.internal.core.iproduct.IIntroInfo;
+import org.eclipse.pde.internal.core.iproduct.IJVMInfo;
 import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductFeature;
@@ -43,6 +44,7 @@ public class Product extends ProductObject implements IProduct {
 	private TreeMap fPlugins = new TreeMap();
 	private TreeMap fFeatures = new TreeMap();
 	private IConfigurationFileInfo fConfigIniInfo;
+	private IJVMInfo fJVMInfo;
 	private boolean fUseFeatures;
 	private IWindowImages fWindowImages;
 	private ISplashInfo fSplashInfo;
@@ -435,6 +437,14 @@ public class Product extends ProductObject implements IProduct {
 
 	public void setIntroInfo(IIntroInfo introInfo) {
 		fIntroInfo = introInfo;
+	}
+
+	public IJVMInfo getJVMLocations() {
+		return fJVMInfo;
+	}
+
+	public void setJVMLocations(IJVMInfo info) {
+		fJVMInfo = info;
 	}
 
 }
