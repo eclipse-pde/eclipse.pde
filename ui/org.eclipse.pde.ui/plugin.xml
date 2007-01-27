@@ -902,24 +902,30 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            sourceLocatorId="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
-            name="%launchConfigurationType.name"
-            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"
             delegate="org.eclipse.pde.ui.launcher.EclipseApplicationLaunchConfiguration"
+            delegateDescription="%PDELaunchDelegate.description"
+            delegateName="%PDELaunchDelegate.name"
+            id="org.eclipse.pde.ui.RuntimeWorkbench"
             modes="run, debug"
-            id="org.eclipse.pde.ui.RuntimeWorkbench">
+            name="%launchConfigurationType.name"
+            sourceLocatorId="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
+            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">
       </launchConfigurationType>
       <launchConfigurationType
-            sourceLocatorId="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
-            name="%launcher.junit.name"
-            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"
             delegate="org.eclipse.pde.ui.launcher.JUnitLaunchConfigurationDelegate"
-            modes="run, debug"
+            delegateDescription="%JUnitPluginLaunchDelegate.description"
+            delegateName="%JUnitPluginLaunchDelegate.name"
             id="org.eclipse.pde.ui.JunitLaunchConfig"
-            migrationDelegate="org.eclipse.jdt.internal.junit.launcher.JUnitMigrationDelegate">
+            migrationDelegate="org.eclipse.jdt.internal.junit.launcher.JUnitMigrationDelegate"
+            modes="run, debug"
+            name="%launcher.junit.name"
+            sourceLocatorId="org.eclipse.pde.ui.launcher.PDESourceLookupDirector"
+            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">
       </launchConfigurationType>
       <launchConfigurationType
             delegate="org.eclipse.pde.ui.launcher.OSGiLaunchConfigurationDelegate"
+            delegateDescription="%OSGiLaunchDelegate.description"
+            delegateName="%OSGiLaunchDelegate.name"
             id="org.eclipse.pde.ui.EquinoxLauncher"
             modes="run, debug"
             name="%launcher.framework.name"
