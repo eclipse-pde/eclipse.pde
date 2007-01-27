@@ -12,10 +12,10 @@ package org.eclipse.pde.internal.core.iproduct;
 
 public interface IJVMInfo extends IProductObject {
 	
-	public static final String JVM_LIN = "jvmLocationLin"; //$NON-NLS-1$
-	public static final String JVM_MAC = "jvmLocationMac"; //$NON-NLS-1$
-	public static final String JVM_SOL = "jvmLocationSol"; //$NON-NLS-1$
-	public static final String JVM_WIN = "jvmLocationWin"; //$NON-NLS-1$$
+	public static final String JVM_LIN = "linux"; //$NON-NLS-1$
+	public static final String JVM_MAC = "macos"; //$NON-NLS-1$
+	public static final String JVM_SOL = "solaris"; //$NON-NLS-1$
+	public static final String JVM_WIN = "windows"; //$NON-NLS-1$$
 	
 	public static final int LINUX = 0;
 	public static final int MACOS = 1;

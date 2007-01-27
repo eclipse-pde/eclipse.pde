@@ -173,6 +173,11 @@ public class Product extends ProductObject implements IProduct {
 			fIntroInfo.write(indent + "   ", writer); //$NON-NLS-1$
 		}
 		
+		if (fJVMInfo != null) {
+			writer.println();
+			fJVMInfo.write(indent + "   ", writer); //$NON-NLS-1$
+		}
+		
 		writer.println();
 		writer.println(indent + "   <plugins>"); //$NON-NLS-1$  
 		Iterator iter = fPlugins.values().iterator();
@@ -213,6 +218,7 @@ public class Product extends ProductObject implements IProduct {
 		fId = null;
 		fName = null;
 		fIntroInfo = null;
+		fJVMInfo = null;
 		fPlugins.clear();
 	}
 	
@@ -258,6 +264,9 @@ public class Product extends ProductObject implements IProduct {
 					} else if (name.equals("intro")) { //$NON-NLS-1$
 						fIntroInfo = factory.createIntroInfo();
 						fIntroInfo.parse(child);
+					} else if (name.equals("vm")) { //$NON-NLS-1$
+						fJVMInfo = factory.createJVMInfo();
+						fJVMInfo.parse(child);
 					}
 				}
 			}

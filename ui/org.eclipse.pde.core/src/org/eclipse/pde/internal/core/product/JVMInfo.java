@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 import org.eclipse.pde.internal.core.iproduct.IJVMInfo;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class JVMInfo extends ProductObject implements IJVMInfo {
 
@@ -75,13 +76,47 @@ public class JVMInfo extends ProductObject implements IJVMInfo {
 	}
 
 	public void parse(Node node) {
-		// TODO Auto-generated method stub
-
+		NodeList list = node.getChildNodes();
+		for (int i = 0; i < list.getLength(); i++) {
+			Node child = list.item(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				if (child.getNodeName().equals(JVM_LIN)) {
+					fJVMLin = getText(child);
+				} else if (child.getNodeName().equals(JVM_MAC)) {
+					fJVMMac = getText(child);
+				} else if (child.getNodeName().equals(JVM_SOL)) {
+					fJVMSol = getText(child);
+				} else if (child.getNodeName().equals(JVM_WIN)) {
+					fJVMWin = getText(child);
+				}
+			}
+		}
+	}
+	
+	private String getText(Node node) {
+		node.normalize();
+		Node text = node.getFirstChild();
+		if (text != null && text.getNodeType() == Node.TEXT_NODE) {
+			return text.getNodeValue();
+		}
+		return ""; //$NON-NLS-1$
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		// TODO Auto-generated method stub
-
+		writer.println(indent + "<vm>"); //$NON-NLS-1$
+		if (fJVMLin.length() > 0) {
+			writer.println(indent + "   " + "<" + JVM_LIN + ">" + getWritableString(fJVMLin) + "</" + JVM_LIN + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		}
+		if (fJVMMac.length() > 0) {
+			writer.println(indent + "   " + "<" + JVM_MAC + ">" + getWritableString(fJVMMac) + "</" + JVM_MAC + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		}
+		if (fJVMSol.length() > 0) {
+			writer.println(indent + "   " + "<" + JVM_SOL + ">" + getWritableString(fJVMSol) + "</" + JVM_SOL + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		}
+		if (fJVMWin.length() > 0) {
+			writer.println(indent + "   " + "<" + JVM_WIN + ">" + getWritableString(fJVMWin) + "</" + JVM_WIN + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		}
+		writer.println(indent + "</vm>"); //$NON-NLS-1$
 	}
 
 }
