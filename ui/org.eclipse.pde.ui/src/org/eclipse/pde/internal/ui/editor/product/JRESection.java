@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.ui.ISharedImages;
@@ -18,6 +19,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.IJREInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
@@ -147,6 +149,16 @@ public class JRESection extends PDESection {
 		}
 		fLastTab = 0;
 		fTabFolder.setSelection(fLastTab);
+
+		String currentTarget = TargetPlatform.getOS();
+
+		if (Platform.OS_WIN32.equals(currentTarget)) {
+			fTabFolder.setSelection(3);
+		} else if (Platform.OS_MACOSX.equals(currentTarget)) {
+			fTabFolder.setSelection(1);
+		} else if (Platform.OS_SOLARIS.equals(currentTarget)) {
+			fTabFolder.setSelection(2);
+		} 
 	}
 
 	public void refresh() {
