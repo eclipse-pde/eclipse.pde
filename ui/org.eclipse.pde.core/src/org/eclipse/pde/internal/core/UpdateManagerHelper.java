@@ -152,7 +152,7 @@ public class UpdateManagerHelper {
 					plugin.getPluginBase().getVersion(),
 					true,
 					null,
-					new URL[] { new URL("file:" + plugin.getInstallLocation()) });
+					new URL[] { new URL("file:" + plugin.getInstallLocation()) }); //$NON-NLS-1$
 			config.configureFeatureEntry(featureEntry);
 		}
 	}
