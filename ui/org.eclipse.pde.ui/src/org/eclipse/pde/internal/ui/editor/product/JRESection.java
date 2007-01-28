@@ -49,7 +49,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.dialogs.ListDialog;
 import org.eclipse.ui.forms.IFormColors;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -72,13 +71,14 @@ public class JRESection extends PDESection {
 	private int fLastTab;
 
 	public JRESection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION | ExpandableComposite.TWISTIE);
+		super(page, parent, Section.DESCRIPTION);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.ProductJRESection_title); 
 		section.setDescription(PDEUIMessages.ProductJRESection_desc); 
+
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Composite client = toolkit.createComposite(section);
@@ -191,7 +191,11 @@ public class JRESection extends PDESection {
 
 	protected void handleBrowseFileSystem() {
 		DirectoryDialog dialog = new DirectoryDialog(getSection().getShell());
-		dialog.setFilterPath(fPath.getValue());
+		String path = fPath.getValue();
+		if(path == null || path.length() == 0)
+			path = VMHelper.getDefaultVMInstallLocation();
+
+		dialog.setFilterPath(path);
 		dialog.setText(PDEUIMessages.BaseBlock_dirSelection); 
 		dialog.setMessage(PDEUIMessages.BaseBlock_dirChoose); 
 		String result = dialog.open();

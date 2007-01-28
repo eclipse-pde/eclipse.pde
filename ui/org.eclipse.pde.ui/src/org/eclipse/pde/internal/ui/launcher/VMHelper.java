@@ -54,6 +54,13 @@ public class VMHelper {
 		return null;
 	}
 	
+	public static String getDefaultVMInstallLocation() {
+		IVMInstall install = JavaRuntime.getDefaultVMInstall();
+		if (install != null)
+			return install.getInstallLocation().getAbsolutePath();
+		return null;
+	}
+	
 	public static IVMInstall getVMInstall(String name) {
 		if (name != null) {
 			IVMInstall[] installs = getAllVMInstances();
