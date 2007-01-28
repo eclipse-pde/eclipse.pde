@@ -29,7 +29,7 @@ public abstract class AbstractModelManager {
 			fListeners.add(listener);
 	}
 	
-	public synchronized void fireModelProviderEvent(IModelProviderEvent event) {
+	public void fireModelProviderEvent(IModelProviderEvent event) {
 		for (Iterator iter = fListeners.iterator(); iter.hasNext();) {
 			((IModelProviderListener) iter.next()).modelsChanged(event);
 		}
