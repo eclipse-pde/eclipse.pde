@@ -111,7 +111,7 @@ public class ProductEditor extends PDEFormEditor {
 		try {
 			addPage(new OverviewPage(this));
 			addPage(new ConfigurationPage(this, useFeatures()));
-			addPage(new LauncherPage(this));
+			addPage(new LaunchingPage(this));
 			addPage(new BrandingPage(this));
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);

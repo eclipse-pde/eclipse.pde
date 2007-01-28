@@ -1846,6 +1846,13 @@ public class PDEUIMessages extends NLS {
 	public static String ArgumentsSection_desc;
 	public static String ArgumentsSection_program;
 	public static String ArgumentsSection_vm;
+	
+	public static String ProductJRESection_title;
+	public static String ProductJRESection_desc;
+	public static String ProductJRESection_location;
+	public static String ProductJRESection_browseJREs;
+	public static String ProductJRESection_selectJREsTitle;
+	public static String ProductJRESection_selectJREsMessage;
 
 	public static String Product_FeatureSection_remove;
 	public static String Product_FeatureSection_open;

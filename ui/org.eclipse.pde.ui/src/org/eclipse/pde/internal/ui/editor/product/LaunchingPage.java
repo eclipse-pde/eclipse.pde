@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
@@ -22,11 +24,11 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 
-public class LauncherPage extends PDEFormPage {
+public class LaunchingPage extends PDEFormPage {
 	
 	public static final String PAGE_ID = "launcher"; //$NON-NLS-1$
 
-	public LauncherPage(FormEditor editor) {
+	public LaunchingPage(FormEditor editor) {
 		super(editor, PAGE_ID, PDEUIMessages.LauncherPage_title); 
 	}
 	
@@ -54,6 +56,15 @@ public class LauncherPage extends PDEFormPage {
 		// sections
 		managedForm.addPart(new LauncherSection(this, body));
 		managedForm.addPart(new ArgumentsSection(this, body));
+		
+		Composite comp = toolkit.createComposite(body);
+		layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 0;
+		layout.verticalSpacing = 15;
+		comp.setLayout(layout);
+		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(comp);
+		
+		managedForm.addPart(new JRESection(this, comp));
 	}
 
 
