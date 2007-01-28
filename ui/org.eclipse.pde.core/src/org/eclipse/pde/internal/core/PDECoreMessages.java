@@ -61,7 +61,6 @@ public class PDECoreMessages extends NLS {
 	public static String SiteObject_readOnlyChange;
 
 
-	public static String SearchablePluginsManager_saving;
 	public static String BuildObject_readOnlyException;
 	public static String PluginBase_librariesNotFoundException;
 	public static String PluginParent_siblingsNotFoundException;

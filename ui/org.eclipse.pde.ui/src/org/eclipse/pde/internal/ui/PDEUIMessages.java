@@ -179,8 +179,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String DirectorySelectionPage_description;
 
-	public static String DirectorySelectionPage_edit;
-
 	public static String DirectorySelectionPage_label;
 
 	public static String DirectorySelectionPage_message;
@@ -693,7 +691,6 @@ public class PDEUIMessages extends NLS {
 	public static String ManifestEditor_DetailExtensionPointSection_title;
 	public static String ManifestEditor_DetailExtensionPointSection_new;
 	public static String ManifestEditor_DetailExtensionPointSection_newExtensionPoint;
-	public static String ManifestEditor_DetailExtensionPointSection_openSchema;
 
 	public static String ManifestEditor_DetailExtension_title;
 	public static String ManifestEditor_DetailExtension_new;
@@ -743,9 +740,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String ManifestSourcePage_libraries;
 	public static String ManifestSourcePage_extensions;
-	public static String MainMethodSearchEngine_search;
-	
-	public static String MainTypeSelectionDialog_qualifier;
+
 	public static String ManifestEditor_MatchSection_optional;
 	public static String ManifestEditor_MatchSection_reexport;
 	public static String ManifestEditor_MatchSection_version;
@@ -764,9 +759,7 @@ public class PDEUIMessages extends NLS {
 	public static String ResourceAttributeCellEditor_message;
 
 	public static String ManifestEditor_RuntimeForm_title;
-	public static String MainTypeSelectionDialog_matching;
 	public static String ManifestSourcePage_extensionPoints;
-	public static String MainTypeSelectionDialog_chooseType;
 
 	public static String ManifestEditor_TestingSection_title;
 
@@ -1849,16 +1842,6 @@ public class PDEUIMessages extends NLS {
 	public static String LauncherSection_dialogTitle;
 	public static String LauncherSection_dialogMessage;
 	public static String ProductDefinitonWizardPage_applicationDefinition;
-	public static String SWTApplicationLaunchShortcut_noMainInEditor;
-	public static String SWTApplicationLaunchShortcut_noMainInSelection;
-	public static String SWTApplicationLaunchShortcut_debug;
-	public static String SWTApplicationLaunchShortcut_run;
-	public static String SWTApplicationLaunchShortcut_launch;
-	public static String SWTApplicationLaunchShortcut_failed;
-	public static String SWTApplicationLaunchShortcut_chooseRun;
-	public static String SWTApplicationLaunchShortcut_chooseDebug;
-	public static String SWTApplicationLaunchShortcut_error;
-	public static String SWTApplicationLaunchShortcut_exception;
 	public static String ArgumentsSection_title;
 	public static String ArgumentsSection_desc;
 	public static String ArgumentsSection_program;
@@ -1944,8 +1927,6 @@ public class PDEUIMessages extends NLS {
 	public static String ExportPackageVisibilitySection_unconditional;
 
 	public static String ExportPackageSection_props;
-
-	public static String ExtensionPointsSection_showDescription;
 
 	public static String OverviewPage_buildTitle;
 
@@ -2472,10 +2453,6 @@ public class PDEUIMessages extends NLS {
 	public static String ExecutionEnvironmentSection_updateClasspath;
 
 	public static String EditorUtilities_incorrectImageDepth;
-
-	public static String ExtensionPointsSection_openSchema;
-
-	public static String ExtensionPointsSection_schemaNotFound;
 
 	public static String TargetPlatformPreferencePage_TargetGroupTitle;
 
