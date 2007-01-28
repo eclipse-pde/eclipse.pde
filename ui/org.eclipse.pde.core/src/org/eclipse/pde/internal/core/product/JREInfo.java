@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.core.iproduct.IJREInfo;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.w3c.dom.Node;
@@ -39,6 +40,19 @@ public class JREInfo extends ProductObject implements IJREInfo {
 			return fJVMSol;
 		case WIN32:
 			return fJVMWin;
+		}
+		return ""; //$NON-NLS-1$
+	}
+
+	public String getJVM(String os) {
+		if (Platform.OS_WIN32.equals(os)) {
+			return getJVM(WIN32);
+		} else if (Platform.OS_LINUX.equals(os)) {
+			return getJVM(LINUX);
+		} else if (Platform.OS_MACOSX.equals(os)) {
+			return getJVM(MACOS);
+		} else if (Platform.OS_SOLARIS.equals(os)) {
+			return getJVM(SOLAR);
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -92,7 +106,7 @@ public class JREInfo extends ProductObject implements IJREInfo {
 			}
 		}
 	}
-	
+
 	private String getText(Node node) {
 		node.normalize();
 		Node text = node.getFirstChild();

@@ -22,8 +22,11 @@ public interface IJREInfo extends IProductObject {
 	public static final int SOLAR = 2;
 	public static final int WIN32 = 3;
 	
-	void setJVM(String args, int platform);
+	public String getJVM(int platform);
+	public String getJVM(String os);
+	public void setJVM(String args, int platform);
 	
-	String getJVM(int platform);
+	
+	
 	
 }

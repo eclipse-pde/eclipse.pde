@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,13 +67,11 @@ public class ProductExportOperation extends FeatureExportOperation {
 	private String fFeatureLocation;
 	private String fRoot;
 	private IProduct fProduct;
-	private File fJRELocation;
 
-	public ProductExportOperation(FeatureExportInfo info, IProduct product, String root, File jreLocation) {
+	public ProductExportOperation(FeatureExportInfo info, IProduct product, String root) {
 		super(info);
 		fProduct = product;
 		fRoot = root;
-		fJRELocation = jreLocation;
 	}
 
 	public void run(IProgressMonitor monitor) throws CoreException {
@@ -91,7 +89,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 				fFeatureLocation = fBuildTempLocation + File.separator + featureID;
 				
 				createFeature(featureID, fFeatureLocation, config, true);
-				createBuildPropertiesFile(fFeatureLocation);
+				createBuildPropertiesFile(fFeatureLocation, config);
 				createConfigIniFile(config);
 				createEclipseProductFile();
 				createLauncherIniFile(config[0]);
@@ -141,7 +139,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 		return all;
 	}
 
-	private void createBuildPropertiesFile(String featureLocation) {
+	private void createBuildPropertiesFile(String featureLocation, String[] config) {
 		File file = new File(featureLocation);
 		if (!file.exists() || !file.isDirectory())
 			file.mkdirs();
@@ -160,11 +158,11 @@ public class ProductExportOperation extends FeatureExportOperation {
 			}
 		}
 		
-		if(fJRELocation != null) {
+		String vm = fProduct.getJVMLocations().getJVM(config[0]);
+		if(vm != null) {
 			properties.put("root.folder.jre", //$NON-NLS-1$
-					"absolute:" + fJRELocation.getAbsolutePath()); //$NON-NLS-1$
+					"absolute:" + vm); //$NON-NLS-1$
 		}
-		
 		
 		save(new File(file, "build.properties"), properties, "Build Configuration"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
