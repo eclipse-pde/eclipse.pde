@@ -38,7 +38,6 @@ import org.eclipse.jdt.core.search.SearchParticipant;
 import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -144,8 +143,8 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 	}
 	
 	private boolean isUnused(IPluginImport plugin, SubProgressMonitor monitor) {
-		IPlugin[] plugins = PluginJavaSearchUtil.getPluginImports(plugin);
-		return !provideJavaClasses(plugins, monitor);
+		IPluginModelBase[] models = PluginJavaSearchUtil.getPluginImports(plugin);
+		return !provideJavaClasses(models, monitor);
 	}
 	
 	private boolean isUnused(ImportPackageObject pkg, Collection exportedPackages, SubProgressMonitor monitor) {
@@ -156,14 +155,14 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		return !provideJavaClasses(pkg, monitor);
 	}
 	
-	private boolean provideJavaClasses(IPlugin[] plugins, IProgressMonitor monitor) {
+	private boolean provideJavaClasses(IPluginModelBase[] models, IProgressMonitor monitor) {
 		try {
 			IProject project = fModel.getUnderlyingResource().getProject();
 			if (!project.hasNature(JavaCore.NATURE_ID))
 				return false;
 			
 			IJavaProject jProject = JavaCore.create(project);
-			IPackageFragment[] packageFragments = PluginJavaSearchUtil.collectPackageFragments(plugins, jProject, true);
+			IPackageFragment[] packageFragments = PluginJavaSearchUtil.collectPackageFragments(models, jProject, true);
 			SearchEngine engine = new SearchEngine();
 			IJavaSearchScope searchScope = PluginJavaSearchUtil.createSeachScope(jProject);
 			

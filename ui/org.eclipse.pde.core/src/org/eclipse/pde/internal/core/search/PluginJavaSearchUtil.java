@@ -37,14 +37,14 @@ import org.eclipse.pde.internal.core.PDEManager;
 
 public class PluginJavaSearchUtil {
 	
-	public static IPlugin[] getPluginImports(IPluginImport dep) {
+	public static IPluginModelBase[] getPluginImports(IPluginImport dep) {
 		return getPluginImports(dep.getId());
 	}
 
-	public static IPlugin[] getPluginImports(String pluginImportID) {
+	public static IPluginModelBase[] getPluginImports(String pluginImportID) {
 		HashSet set = new HashSet();
 		collectAllPrerequisites(PluginRegistry.findModel(pluginImportID), set);
-		return (IPlugin[]) set.toArray(new IPlugin[set.size()]);
+		return (IPluginModelBase[]) set.toArray(new IPluginModelBase[set.size()]);
 	}
 	
 	public static void collectAllPrerequisites(IPluginModelBase model, HashSet set) {
@@ -61,15 +61,15 @@ public class PluginJavaSearchUtil {
 	}
 	
 	public static IPackageFragment[] collectPackageFragments(
-		IPluginBase[] plugins,
+		IPluginModelBase[] models,
 		IJavaProject parentProject,
         boolean filterEmptyPackages)
 		throws JavaModelException {
 		ArrayList result = new ArrayList();
 		IPackageFragmentRoot[] roots = parentProject.getAllPackageFragmentRoots();
 
-		for (int i = 0; i < plugins.length; i++) {
-			IPluginModelBase model = (IPluginModelBase)plugins[i].getModel();
+		for (int i = 0; i < models.length; i++) {
+			IPluginModelBase model = models[i];
 			IResource resource = model.getUnderlyingResource();
 			if (resource == null) {
 				ArrayList libraryPaths = new ArrayList();

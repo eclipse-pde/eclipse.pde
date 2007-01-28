@@ -29,7 +29,6 @@ import org.eclipse.jdt.core.search.SearchParticipant;
 import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
 import org.eclipse.pde.core.ISourceObject;
-import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -89,7 +88,7 @@ public class DependencyExtentOperation {
 	}
 	
 	public void execute(IProgressMonitor monitor) {
-		IPlugin[] plugins = PluginJavaSearchUtil.getPluginImports(fImportID);
+		IPluginModelBase[] plugins = PluginJavaSearchUtil.getPluginImports(fImportID);
 		monitor.beginTask(PDEUIMessages.DependencyExtentOperation_searching + " " + fImportID + "...", 10);  //$NON-NLS-1$//$NON-NLS-2$ 
 		checkForJavaDependencies(plugins, new SubProgressMonitor(monitor, 9));
 		for (int i = 0; i < plugins.length; i++) {
@@ -98,8 +97,8 @@ public class DependencyExtentOperation {
 		monitor.done();
 	}
 
-	private void checkForExtensionPointsUsed(IPlugin plugin) {
-		IPluginExtensionPoint[] extPoints = plugin.getExtensionPoints();
+	private void checkForExtensionPointsUsed(IPluginModelBase model) {
+		IPluginExtensionPoint[] extPoints = model.getPluginBase().getExtensionPoints();
 		for (int i = 0; i < extPoints.length; i++) {
 			findMatches(extPoints[i]);
 		}
@@ -122,13 +121,13 @@ public class DependencyExtentOperation {
 		}
 	}
 	
-	private void checkForJavaDependencies(IPlugin[] plugins, IProgressMonitor monitor) {
+	private void checkForJavaDependencies(IPluginModelBase[] models, IProgressMonitor monitor) {
 		try {
 			if (!fProject.hasNature(JavaCore.NATURE_ID)) 
 				return;
 			
 			IJavaProject jProject = JavaCore.create(fProject);
-			IPackageFragment[] packageFragments = PluginJavaSearchUtil.collectPackageFragments(plugins, jProject, true);
+			IPackageFragment[] packageFragments = PluginJavaSearchUtil.collectPackageFragments(models, jProject, true);
 			monitor.beginTask("", packageFragments.length); //$NON-NLS-1$
 			SearchEngine engine = new SearchEngine();
 			for (int i = 0; i < packageFragments.length; i++) {

@@ -809,8 +809,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			} else {
 				try {
 					if (fProject.hasNature(JavaCore.NATURE_ID)) {
-						IPackageFragment[] packages = PluginJavaSearchUtil.collectPackageFragments( new IPluginBase[] { model
-								.getPluginBase() },
+						IPackageFragment[] packages = PluginJavaSearchUtil.collectPackageFragments( new IPluginModelBase[] { model},
 								JavaCore.create(fProject), false);
 						for (int i = 0; i < packages.length; i++)
 							fProjectPackages.add(packages[i].getElementName());
