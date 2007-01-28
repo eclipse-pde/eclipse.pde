@@ -69,16 +69,15 @@ public class PluginElementNode extends PluginParentNode
 	 * @see org.eclipse.pde.core.plugin.IPluginElement#setText(java.lang.String)
 	 */
 	public void setText(String text) throws CoreException {
-		IDocumentTextNode old = getTextNode();
-		IDocumentTextNode newNode = null;
-		if (old == null) {
-			newNode = new DocumentTextNode();
-			newNode.setEnclosingElement(this);
-			addTextNode(newNode);
-			newNode.setText(text.trim());
-		} else
-			old.setText(text.trim());
-		firePropertyChanged(this, P_TEXT, old, newNode);
+		IDocumentTextNode node = getTextNode();
+		String oldText = node == null ? null : node.getText();
+		if (node == null) {
+			node = new DocumentTextNode();
+			node.setEnclosingElement(this);
+			addTextNode(node);
+		}	
+		node.setText(text.trim());
+		firePropertyChanged(node, P_TEXT, oldText, text);
 	}
 	
 	/* (non-Javadoc)
