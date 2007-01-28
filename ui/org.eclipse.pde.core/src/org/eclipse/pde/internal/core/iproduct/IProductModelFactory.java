@@ -33,6 +33,6 @@ public interface IProductModelFactory {
 	
 	IIntroInfo createIntroInfo();
 	
-	IJVMInfo createJVMInfo();
+	IJREInfo createJVMInfo();
 	
 }

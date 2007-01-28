@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.iproduct;
 
-public interface IJVMInfo extends IProductObject {
+public interface IJREInfo extends IProductObject {
 	
-	public static final String JVM_LIN = "linux"; //$NON-NLS-1$
-	public static final String JVM_MAC = "macos"; //$NON-NLS-1$
-	public static final String JVM_SOL = "solaris"; //$NON-NLS-1$
-	public static final String JVM_WIN = "windows"; //$NON-NLS-1$$
+	public static final String JRE_LIN = "linux"; //$NON-NLS-1$
+	public static final String JRE_MAC = "macos"; //$NON-NLS-1$
+	public static final String JRE_SOL = "solaris"; //$NON-NLS-1$
+	public static final String JRE_WIN = "windows"; //$NON-NLS-1$$
 	
 	public static final int LINUX = 0;
 	public static final int MACOS = 1;

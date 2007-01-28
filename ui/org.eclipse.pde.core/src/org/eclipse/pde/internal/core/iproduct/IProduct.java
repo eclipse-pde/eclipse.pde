@@ -36,7 +36,7 @@ public interface IProduct extends IProductObject {
 	
 	IArgumentsInfo getLauncherArguments();
 	
-	IJVMInfo getJVMLocations();
+	IJREInfo getJVMLocations();
 	
 	IWindowImages getWindowImages();
 	
@@ -70,7 +70,7 @@ public interface IProduct extends IProductObject {
 	
 	void setLauncherArguments(IArgumentsInfo info);
 	
-	void setJVMLocations(IJVMInfo info);
+	void setJVMLocations(IJREInfo info);
 	
 	void setWindowImages(IWindowImages images);
 	

@@ -12,12 +12,12 @@ package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
 
-import org.eclipse.pde.internal.core.iproduct.IJVMInfo;
+import org.eclipse.pde.internal.core.iproduct.IJREInfo;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class JVMInfo extends ProductObject implements IJVMInfo {
+public class JREInfo extends ProductObject implements IJREInfo {
 
 	private static final long serialVersionUID = 1L;
 	private String fJVMLin = ""; //$NON-NLS-1$
@@ -25,7 +25,7 @@ public class JVMInfo extends ProductObject implements IJVMInfo {
 	private String fJVMSol = ""; //$NON-NLS-1$
 	private String fJVMWin = ""; //$NON-NLS-1$
 
-	public JVMInfo(IProductModel model) {
+	public JREInfo(IProductModel model) {
 		super(model);
 	}
 
@@ -52,25 +52,25 @@ public class JVMInfo extends ProductObject implements IJVMInfo {
 			old = fJVMLin;
 			fJVMLin = args;
 			if (isEditable())
-				firePropertyChanged(JVM_LIN, old, fJVMLin);
+				firePropertyChanged(JRE_LIN, old, fJVMLin);
 			break;
 		case MACOS:
 			old = fJVMMac;
 			fJVMMac = args;
 			if (isEditable())
-				firePropertyChanged(JVM_MAC, old, fJVMMac);
+				firePropertyChanged(JRE_MAC, old, fJVMMac);
 			break;
 		case SOLAR:
 			old = fJVMSol;
 			fJVMSol = args;
 			if (isEditable())
-				firePropertyChanged(JVM_SOL, old, fJVMSol);
+				firePropertyChanged(JRE_SOL, old, fJVMSol);
 			break;
 		case WIN32:
 			old = fJVMWin;
 			fJVMWin = args;
 			if (isEditable())
-				firePropertyChanged(JVM_WIN, old, fJVMWin);
+				firePropertyChanged(JRE_WIN, old, fJVMWin);
 			break;
 		}
 	}
@@ -80,13 +80,13 @@ public class JVMInfo extends ProductObject implements IJVMInfo {
 		for (int i = 0; i < list.getLength(); i++) {
 			Node child = list.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				if (child.getNodeName().equals(JVM_LIN)) {
+				if (child.getNodeName().equals(JRE_LIN)) {
 					fJVMLin = getText(child);
-				} else if (child.getNodeName().equals(JVM_MAC)) {
+				} else if (child.getNodeName().equals(JRE_MAC)) {
 					fJVMMac = getText(child);
-				} else if (child.getNodeName().equals(JVM_SOL)) {
+				} else if (child.getNodeName().equals(JRE_SOL)) {
 					fJVMSol = getText(child);
-				} else if (child.getNodeName().equals(JVM_WIN)) {
+				} else if (child.getNodeName().equals(JRE_WIN)) {
 					fJVMWin = getText(child);
 				}
 			}
@@ -105,16 +105,16 @@ public class JVMInfo extends ProductObject implements IJVMInfo {
 	public void write(String indent, PrintWriter writer) {
 		writer.println(indent + "<vm>"); //$NON-NLS-1$
 		if (fJVMLin.length() > 0) {
-			writer.println(indent + "   " + "<" + JVM_LIN + ">" + getWritableString(fJVMLin) + "</" + JVM_LIN + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			writer.println(indent + "   " + "<" + JRE_LIN + ">" + getWritableString(fJVMLin) + "</" + JRE_LIN + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		}
 		if (fJVMMac.length() > 0) {
-			writer.println(indent + "   " + "<" + JVM_MAC + ">" + getWritableString(fJVMMac) + "</" + JVM_MAC + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			writer.println(indent + "   " + "<" + JRE_MAC + ">" + getWritableString(fJVMMac) + "</" + JRE_MAC + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		}
 		if (fJVMSol.length() > 0) {
-			writer.println(indent + "   " + "<" + JVM_SOL + ">" + getWritableString(fJVMSol) + "</" + JVM_SOL + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			writer.println(indent + "   " + "<" + JRE_SOL + ">" + getWritableString(fJVMSol) + "</" + JRE_SOL + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		}
 		if (fJVMWin.length() > 0) {
-			writer.println(indent + "   " + "<" + JVM_WIN + ">" + getWritableString(fJVMWin) + "</" + JVM_WIN + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			writer.println(indent + "   " + "<" + JRE_WIN + ">" + getWritableString(fJVMWin) + "</" + JRE_WIN + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		}
 		writer.println(indent + "</vm>"); //$NON-NLS-1$
 	}

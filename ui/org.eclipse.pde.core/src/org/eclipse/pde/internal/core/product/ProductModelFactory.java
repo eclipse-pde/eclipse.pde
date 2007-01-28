@@ -14,7 +14,7 @@ import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
 import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
 import org.eclipse.pde.internal.core.iproduct.IIntroInfo;
-import org.eclipse.pde.internal.core.iproduct.IJVMInfo;
+import org.eclipse.pde.internal.core.iproduct.IJREInfo;
 import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductFeature;
@@ -85,8 +85,8 @@ public class ProductModelFactory implements IProductModelFactory {
 		return new IntroInfo(fModel);
 	}
 	
-	public IJVMInfo createJVMInfo() {
-		return new JVMInfo(fModel);
+	public IJREInfo createJVMInfo() {
+		return new JREInfo(fModel);
 	}
 
 }

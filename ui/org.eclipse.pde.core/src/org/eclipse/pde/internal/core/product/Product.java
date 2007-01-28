@@ -19,7 +19,7 @@ import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
 import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
 import org.eclipse.pde.internal.core.iproduct.IIntroInfo;
-import org.eclipse.pde.internal.core.iproduct.IJVMInfo;
+import org.eclipse.pde.internal.core.iproduct.IJREInfo;
 import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductFeature;
@@ -44,7 +44,7 @@ public class Product extends ProductObject implements IProduct {
 	private TreeMap fPlugins = new TreeMap();
 	private TreeMap fFeatures = new TreeMap();
 	private IConfigurationFileInfo fConfigIniInfo;
-	private IJVMInfo fJVMInfo;
+	private IJREInfo fJVMInfo;
 	private boolean fUseFeatures;
 	private IWindowImages fWindowImages;
 	private ISplashInfo fSplashInfo;
@@ -448,11 +448,11 @@ public class Product extends ProductObject implements IProduct {
 		fIntroInfo = introInfo;
 	}
 
-	public IJVMInfo getJVMLocations() {
+	public IJREInfo getJVMLocations() {
 		return fJVMInfo;
 	}
 
-	public void setJVMLocations(IJVMInfo info) {
+	public void setJVMLocations(IJREInfo info) {
 		fJVMInfo = info;
 	}
 
