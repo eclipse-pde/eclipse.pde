@@ -838,31 +838,19 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 				int kind = delta.getKind();
 				if (fTreeViewer.getTree().isDisposed())
 					return;
-				if ((kind & PluginModelDelta.CHANGED) !=0) {
+				if ((kind & PluginModelDelta.CHANGED) !=0 || (kind & PluginModelDelta.REMOVED) != 0) {
 					// Don't know exactly what change - 
 					// the safest way out is to refresh
 					fTreeViewer.refresh();
-				}
-				else {
-					if ((kind & PluginModelDelta.REMOVED) != 0) {
-						ModelEntry[] removed = delta.getRemovedEntries();
-						for (int i = 0; i < removed.length; i++) {
-							IPluginModelBase[] models = getModels(removed[i]);
-							for (int j = 0; j < models.length; j++) {
-								fTreeViewer.remove(models[j]);
-							}
+				} else if ((kind & PluginModelDelta.ADDED) != 0) {
+					ModelEntry[] added = delta.getAddedEntries();
+					for (int i = 0; i < added.length; i++) {
+						IPluginModelBase[] models = getModels(added[i]);
+						for (int j = 0; j < models.length; j++) {
+							if (isVisible(models[j]))
+								fTreeViewer.add(fManager, models[j]);							
 						}
-					}
-					if ((kind & PluginModelDelta.ADDED) != 0) {
-						ModelEntry[] added = delta.getAddedEntries();
-						for (int i = 0; i < added.length; i++) {
-							IPluginModelBase[] models = getModels(added[i]);
-							for (int j = 0; j < models.length; j++) {
-								if (isVisible(models[j]))
-									fTreeViewer.add(fManager, models[j]);							
-							}
-						}
-					}
+					}				
 				}
 				updateContentDescription();
 			}
