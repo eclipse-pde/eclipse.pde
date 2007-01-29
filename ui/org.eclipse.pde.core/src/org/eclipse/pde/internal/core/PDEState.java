@@ -18,7 +18,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -52,7 +51,7 @@ public class PDEState extends MinimalState {
 	private PDEExtensionRegistry fExtensionRegistry;
 	private PDEAuxiliaryState fAuxiliaryState;
 	
-	private Map fTargetModels = new HashMap();
+	private ArrayList fTargetModels = new ArrayList();
 	private ArrayList fWorkspaceModels = new ArrayList();
 	private boolean fCombined;
 	private long fTargetTimestamp;
@@ -60,7 +59,7 @@ public class PDEState extends MinimalState {
 	
 	public PDEState(PDEState state) {
 		super(state);
-		fTargetModels = new HashMap(state.fTargetModels);
+		fTargetModels = new ArrayList(state.fTargetModels);
 		fCombined = false;
 		fTargetTimestamp = state.fTargetTimestamp;
 		fAuxiliaryState = new PDEAuxiliaryState(state.fAuxiliaryState);
@@ -144,7 +143,7 @@ public class PDEState extends MinimalState {
 		for (int i = 0; i < bundleDescriptions.length; i++) {
 			BundleDescription desc = bundleDescriptions[i];
 			IPluginModelBase base = createExternalModel(desc);
-			fTargetModels.put(desc.getSymbolicName(), base);
+			fTargetModels.add(base);
 			models.put(desc.getSymbolicName(), base);
 		}
 		if (models.isEmpty())
@@ -284,7 +283,7 @@ public class PDEState extends MinimalState {
  	}
  	
  	public IPluginModelBase[] getTargetModels() {
- 		return (IPluginModelBase[])fTargetModels.values().toArray(new IPluginModelBase[fTargetModels.size()]);
+ 		return (IPluginModelBase[])fTargetModels.toArray(new IPluginModelBase[fTargetModels.size()]);
  	}
  	
  	public IPluginModelBase[] getWorkspaceModels() {
