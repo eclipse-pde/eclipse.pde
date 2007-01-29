@@ -38,10 +38,25 @@ import org.eclipse.pde.internal.core.plugin.WorkspacePluginModel;
 
 public class WorkspacePluginModelManager extends WorkspaceModelManager {
 
+	/**
+	 * The workspace plug-in model manager is only interested
+	 * in changes to plug-in projects.
+	 */
 	protected boolean isInterestingProject(IProject project) {
 		return isPluginProject(project);
 	}
 
+	/**
+	 * Creates a plug-in model based on the project structure.
+	 * <p>
+	 * A bundle model is created if the project has a MANIFEST.MF file and optionally 
+	 * a plugin.xml/fragment.xml file.
+	 * </p>
+	 * <p>
+	 * An old-style plugin model is created if the project only has a plugin.xml/fragment.xml
+	 * file.
+	 * </p>
+	 */
 	protected void createModel(IProject project, boolean notify) {
 		IPluginModelBase model = null;
 		if (project.exists(ICoreConstants.MANIFEST_PATH)) {
@@ -83,23 +98,67 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 		}
 	}
 	
+	/**
+	 * Reacts to changes in files of interest to PDE
+	 */
 	protected void handleFileDelta(IResourceDelta delta) {
 		IFile file = (IFile)delta.getResource();
 		String filename = file.getName();
 		if (filename.equals(".options")) { //$NON-NLS-1$
 			PDECore.getDefault().getTracingOptionsManager().reset();
-		} else if (filename.equals("build.properties")) { //$NON-NLS-1$
-			Object model = getModel(file.getProject());
-			if (model != null)
-				addChange(model, IModelProviderEvent.MODELS_CHANGED);
-		} else if (file.getProjectRelativePath().equals(ICoreConstants.PLUGIN_PATH)
-					|| file.getProjectRelativePath().equals(ICoreConstants.FRAGMENT_PATH)){
-			handleExtensionFileDelta(file, delta);
-		} else if (file.getProjectRelativePath().equals(ICoreConstants.MANIFEST_PATH)) {
-			handleBundleManifestDelta(file, delta);
+		} else if (filename.endsWith(".properties")) {	
+			// change in build.properties should trigger a Classpath Update
+			// we therefore fire a notification
+			//TODO this is inefficient.  we could do better.
+			 if (filename.equals("build.properties")) { //$NON-NLS-1$
+				Object model = getModel(file.getProject());
+				if (model != null)
+					addChange(model, IModelProviderEvent.MODELS_CHANGED);
+			 } else {
+				 // reset bundle resource if localization file has changed.
+				 IPluginModelBase model = getPluginModel(file.getProject());
+				 String localization = null;
+				 if (model instanceof IBundlePluginModelBase) {
+					localization = ((IBundlePluginModelBase)model).getBundleLocalization();			 
+				 } else if (model != null) {
+					 localization = "plugin";
+				 }
+				 if (localization != null && filename.startsWith(localization)) {
+					((AbstractNLModel)model).resetNLResourceHelper();					 
+				 }
+			 }
+		} else {
+			IPath path = file.getProjectRelativePath();
+			if (path.equals(ICoreConstants.PLUGIN_PATH) 
+					|| path.equals(ICoreConstants.FRAGMENT_PATH)){
+				handleExtensionFileDelta(file, delta);
+			} else if (path.equals(ICoreConstants.MANIFEST_PATH)) {
+				handleBundleManifestDelta(file, delta);
+			}
 		}
 	}
 	
+	/**
+	 * Reacts to changes in the plugin.xml or fragment.xml file.
+	 * <ul>
+	 * <li>If the file has been deleted and the project has a MANIFEST.MF file,
+	 * then this deletion only affects extensions and extension points.</li>
+	 * <li>If the file has been deleted and the project does not have a MANIFEST.MF file,
+	 * then it's an old-style plug-in and the entire model must be removed from the table.</li>
+	 * <li>If the file has been added and the project already has a MANIFEST.MF, then
+	 * this file only contributes extensions and extensions.  No need to send a notification
+	 * to trigger update classpath of dependent plug-ins</li>
+	 * <li>If the file has been added and the project does not have a MANIFEST.MF, then
+	 * an old-style plug-in has been created.</li>
+	 * <li>If the file has been modified and the project already has a MANIFEST.MF,
+	 * then reload the extensions model but do not send out notifications</li>
+	 * </li>If the file has been modified and the project has no MANIFEST.MF, then
+	 * it's an old-style plug-in, reload and send out notifications to trigger a classpath update
+	 * for dependent plug-ins</li>
+	 * </ul>
+	 * @param file the manifest file
+	 * @param delta the resource delta
+	 */
 	private void handleExtensionFileDelta(IFile file, IResourceDelta delta) {
 		int kind = delta.getKind();
 		IPluginModelBase model = (IPluginModelBase)getModel(file.getProject());
@@ -136,6 +195,18 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 		}
 	}
 	
+	/**
+	 * Reacts to changes in the MANIFEST.MF file.
+	 * <ul>
+	 * <li>If the file has been deleted, switch to the old-style plug-in if a plugin.xml file exists</li>
+	 * <li>If the file has been added, create a new bundle model</li>
+	 * <li>If the file has been modified, reload the model, reset the resource bundle
+	 * if the localization has changed and fire a notification that the model has changed</li>
+	 * </ul>
+	 * 
+	 * @param file the manifest file that was modified
+	 * @param delta the resource delta
+	 */
 	private void handleBundleManifestDelta(IFile file, IResourceDelta delta) {
 		int kind = delta.getKind();
 		IProject project = file.getProject();
@@ -163,6 +234,10 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 		}		
 	}
 	
+	/**
+	 * Removes the model associated with the given project from the table,
+	 * if the given project is a plug-in project
+	 */
 	protected Object removeModel(IProject project) {
 		Object model = super.removeModel(project);
 		if (model != null && project.exists(new Path(".options"))) //$NON-NLS-1$
@@ -170,31 +245,70 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 		return model;
 	}
 	
+	/**
+	 * Returns a plug-in model associated with the given project, or <code>null</code>
+	 * if the project is not a plug-in project or the manifest file is missing vital data
+	 * such as a symbolic name or version
+	 * 
+	 * @param project the given project
+	 * 
+	 * @return a plug-in model associated with the given project or <code>null</code>
+	 * if no such valid model exists
+	 */
 	protected IPluginModelBase getPluginModel(IProject project) {
 		return (IPluginModelBase)getModel(project);
 	}
 	
+	/**
+	 * Returns a list of all workspace plug-in models
+	 * 
+	 * @return an array of workspace plug-in models
+	 */
 	protected IPluginModelBase[] getPluginModels() {
 		initialize();
 		return (IPluginModelBase[])fModels.values().toArray(new IPluginModelBase[fModels.size()]);
 	}
 	
+	/**
+	 * Adds listeners to the workspace and to the java model
+	 * to be notified of PRE_CLOSE events and POST_CHANGE events.
+	 */
 	protected void addListeners() {
 		IWorkspace workspace = PDECore.getWorkspace();
 		workspace.addResourceChangeListener(this, IResourceChangeEvent.PRE_CLOSE);
+		// PDE must process the POST_CHANGE events before the Java model
+		// for the PDE container classpath update to proceed smoothly
 		JavaCore.addPreProcessingResourceChangedListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
 
+	/**
+	 * Removes listeners that the model manager attached on others, 
+	 * as well as listeners attached on the model manager
+	 */
 	protected void removeListeners() {
 		PDECore.getWorkspace().removeResourceChangeListener(this);
 		JavaCore.removePreProcessingResourceChangedListener(this);
 		super.removeListeners();
 	}
 	
+	/**
+	 * Returns true if the folder being visited is of interest to PDE.
+	 * In this case, PDE is only interested in META-INF folders at the root of a plug-in project
+	 * 
+	 * @return <code>true</code> if the folder (and its children) is of interest to PDE;
+	 * <code>false</code> otherwise.
+	 * 
+	 */
 	protected boolean isInterestingFolder(IFolder folder) {
 		return folder.getName().equals("META-INF") && folder.getParent() instanceof IProject; //$NON-NLS-1$;
 	}
 	
+	/**
+	 * This method is called when workspace models are read and initialized
+	 * from the cache.  No need to read the workspace plug-ins from scratch.
+	 * 
+	 * @param models  the workspace plug-in models
+	 */
 	protected void initializeModels(IPluginModelBase[] models) {
 		fModels = Collections.synchronizedMap(new HashMap());		
 		for (int i = 0; i < models.length; i++) {
@@ -204,6 +318,12 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 		addListeners();
 	}
 	
+	/**
+	 * Return URLs to projects in the workspace that have a manifest file (MANIFEST.MF
+	 * or plugin.xml)
+	 * 
+	 * @return an array of URLs to workspace plug-ins
+	 */
 	protected URL[] getPluginPaths() {
 		ArrayList list = new ArrayList();
 		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
