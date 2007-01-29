@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -143,22 +142,10 @@ public class PDEState extends MinimalState {
 	public IPluginModelBase[] createTargetModels(BundleDescription[] bundleDescriptions) {
 		HashMap models = new HashMap((4/3) * bundleDescriptions.length + 1); 
 		for (int i = 0; i < bundleDescriptions.length; i++) {
-			boolean add = true;
-			if (!bundleDescriptions[i].isResolved()) {
-				ResolverError[] error = fState.getResolverErrors(bundleDescriptions[i]);
-				for (int j = 0; j < error.length; j++) {
-					if (error[j].getType() == ResolverError.SINGLETON_SELECTION) {
-						add = false;
-						break;
-					}
-				}
-			}
-			if (add) {
-				BundleDescription desc = bundleDescriptions[i];
-				IPluginModelBase base = createExternalModel(desc);
-				fTargetModels.put(desc.getSymbolicName(), base);
-				models.put(desc.getSymbolicName(), base);
-			}
+			BundleDescription desc = bundleDescriptions[i];
+			IPluginModelBase base = createExternalModel(desc);
+			fTargetModels.put(desc.getSymbolicName(), base);
+			models.put(desc.getSymbolicName(), base);
 		}
 		if (models.isEmpty())
 			return new IPluginModelBase[0];
