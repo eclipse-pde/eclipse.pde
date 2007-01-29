@@ -12,10 +12,10 @@ package org.eclipse.pde.internal.ui.wizards;
 
 import java.util.HashSet;
 
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -25,44 +25,46 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 public class PluginSelectionDialog extends ElementListSelectionDialog {
 
-	public PluginSelectionDialog(Shell parentShell, boolean includeFragments, boolean multipleSelection) {
+	public PluginSelectionDialog(Shell parentShell, boolean includeFragments,
+			boolean multipleSelection) {
 		this(parentShell, getElements(includeFragments), multipleSelection);
 	}
-	
-	public PluginSelectionDialog(Shell parentShell, IPluginModelBase[] models, boolean multipleSelection) {
+
+	public PluginSelectionDialog(Shell parentShell, IPluginModelBase[] models,
+			boolean multipleSelection) {
 		super(parentShell, PDEPlugin.getDefault().getLabelProvider());
-		setTitle(PDEUIMessages.PluginSelectionDialog_title); 
-		setMessage(PDEUIMessages.PluginSelectionDialog_message); 
+		setTitle(PDEUIMessages.PluginSelectionDialog_title);
+		setMessage(PDEUIMessages.PluginSelectionDialog_message);
 		setElements(models);
 		setMultipleSelection(multipleSelection);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
-	
+
 	public boolean close() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		return super.close();
 	}
-	
+
 	private static IPluginModelBase[] getElements(boolean includeFragments) {
 		return PluginRegistry.getActiveModels(includeFragments);
 	}
-	
+
 	public static HashSet getExistingImports(IPluginModelBase model) {
 		HashSet existingImports = new HashSet();
 		addSelfAndDirectImports(existingImports, model);
-		BundleDescription desc = model.getBundleDescription();
-		HostSpecification hostSpec = desc == null ? null : desc.getHost();
-		BundleDescription host = hostSpec == null ? null : (BundleDescription)hostSpec.getSupplier();
-		if (host != null) {
-			addSelfAndDirectImports(existingImports, PluginRegistry.findModel(desc));
+		if (model instanceof IFragmentModel) {
+			IFragment fragment = ((IFragmentModel)model).getFragment();
+			IPluginModelBase host = PluginRegistry.findModel(fragment.getPluginId());
+			if (host instanceof IPluginModel) {
+				addSelfAndDirectImports(existingImports, host);
+			}
 		}
 		return existingImports;
 	}
-	
+
 	private static void addSelfAndDirectImports(HashSet set, IPluginModelBase model) {
-		IPluginBase plugin = model.getPluginBase();
-		set.add(plugin.getId());
-		IPluginImport[] imports = plugin.getImports();
+		set.add(model.getPluginBase().getId());
+		IPluginImport[] imports = model.getPluginBase().getImports();
 		for (int i = 0; i < imports.length; i++) {
 			String id = imports[i].getId();
 			if (set.add(id)) {
@@ -70,8 +72,8 @@ public class PluginSelectionDialog extends ElementListSelectionDialog {
 			}
 		}
 	}
-	
-	private static void addReexportedImport(HashSet set, String id) {		
+
+	private static void addReexportedImport(HashSet set, String id) {
 		IPluginModelBase model = PluginRegistry.findModel(id);
 		if (model != null) {
 			IPluginImport[] imports = model.getPluginBase().getImports();
