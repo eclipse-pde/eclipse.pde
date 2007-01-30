@@ -104,7 +104,7 @@
          </description>
       </wizard>
       <wizard
-            template="org.eclipse.pde.internal.ui.templates.ide.BuilderNewExtensionWizard"
+            template="org.eclipse.pde.ui.templates.builder"
             icon="$nl$/icons/etool16/newex_wiz.gif"
             category="templates"
             availableAsShortcut="true"
