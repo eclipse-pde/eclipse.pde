@@ -65,7 +65,7 @@ public class JRESection extends PDESection {
 		initializeValues();
 		
 		fDefaultJREButton = toolkit.createButton(client, PDEUIMessages.JRESection_defaultJRE, SWT.RADIO);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		fDefaultJREButton.setLayoutData(gd);
 		fDefaultJREButton.addSelectionListener(new SelectionAdapter() {
