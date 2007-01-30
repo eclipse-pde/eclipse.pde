@@ -106,7 +106,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 		String filename = file.getName();
 		if (filename.equals(".options")) { //$NON-NLS-1$
 			PDECore.getDefault().getTracingOptionsManager().reset();
-		} else if (filename.endsWith(".properties")) {	
+		} else if (filename.endsWith(".properties")) {	 //$NON-NLS-1$
 			// change in build.properties should trigger a Classpath Update
 			// we therefore fire a notification
 			//TODO this is inefficient.  we could do better.
@@ -121,7 +121,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 				 if (model instanceof IBundlePluginModelBase) {
 					localization = ((IBundlePluginModelBase)model).getBundleLocalization();			 
 				 } else if (model != null) {
-					 localization = "plugin";
+					 localization = "plugin"; //$NON-NLS-1$
 				 }
 				 if (localization != null && filename.startsWith(localization)) {
 					((AbstractNLModel)model).resetNLResourceHelper();					 
