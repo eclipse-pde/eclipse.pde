@@ -46,7 +46,8 @@ public class TargetPlatform {
 	private static String SDK_PRODUCT = "org.eclipse.sdk.ide"; //$NON-NLS-1$
 	private static String PLATFORM_PRODUCT = "org.eclipse.platform.ide"; //$NON-NLS-1$
 	
-	private static String IDE_APPLICATION = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
+	private static String IDE_APPLICATION_LEGACY = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
+	private static String IDE_APPLICATION = "org.eclipse.ui.ide.application.workbench"; //$NON-NLS-1$
 	
 	/**
 	 * Returns the target platform's main location as specified on the <b>Environment</b>
@@ -175,15 +176,29 @@ public class TargetPlatform {
 	/**
 	 * Returns the ID for the default application
 	 * (<code>org.eclipse.core.runtime.applications</code> extension) for the current target
-	 * application.  If none could be determined, then the default <code>org.eclipse.ui.ide.workbench</code>
-	 * application is returned.
-	 * 
-	 * @return the default application 
+	 * platform.  
+	 * <p>
+	 * If none could be determined, then <code>org.eclipse.ui.ide.application.workbench</code>
+	 * application is returned if the target platform uses the new application model.
+	 * </p>
+	 * <p>
+	 * As a last resort, the legacy <code>org.eclipse.ui.ide.workbench</code> application is returned.
+	 * </p>
+	 * @return the default application to run when launching an Eclipse application
 	 */
 	public static String getDefaultApplication() {
-		Properties properties = TargetPlatformHelper.getConfigIniProperties(); 
-		String appName = properties != null ? properties.getProperty(APPLICATION_PROPERTY) : null; 
-		return appName != null ? appName : IDE_APPLICATION;
+		Properties config = TargetPlatformHelper.getConfigIniProperties();
+		Set set = TargetPlatformHelper.getApplicationNameSet();
+		if (config != null) {
+			String application = (String) config.get(APPLICATION_PROPERTY);
+			if (application != null && set.contains(application))
+				return application;
+		}
+
+		if (set.contains(IDE_APPLICATION))
+			return IDE_APPLICATION;
+		
+		return IDE_APPLICATION_LEGACY;
 	}
 	
 	/**

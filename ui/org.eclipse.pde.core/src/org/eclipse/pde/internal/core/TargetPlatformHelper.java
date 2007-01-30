@@ -20,6 +20,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
@@ -168,8 +169,8 @@ public class TargetPlatformHelper {
         }
         return false;
     }
-
-	public static String[] getApplicationNames() {
+    
+    public static Set getApplicationNameSet() {
 		TreeSet result = new TreeSet();
 		IPluginModelBase[] plugins = PluginRegistry.getAllModels();
 		for (int i = 0; i < plugins.length; i++) {
@@ -185,6 +186,11 @@ public class TargetPlatformHelper {
 				}
 			}
 		}
+		return result;
+    }
+
+	public static String[] getApplicationNames() {
+		Set result = getApplicationNameSet();
 		return (String[])result.toArray(new String[result.size()]);
 	}
 	
