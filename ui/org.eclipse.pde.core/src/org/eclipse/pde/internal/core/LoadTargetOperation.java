@@ -24,6 +24,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
@@ -38,14 +39,6 @@ import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
-import org.eclipse.pde.internal.core.ExternalModelManager;
-import org.eclipse.pde.internal.core.FeatureModelManager;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.ModelProviderEvent;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDEState;
-import org.eclipse.pde.internal.core.PluginPathFinder;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -65,9 +58,15 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 	private ITarget fTarget;
 	private Map fRequiredPlugins = new HashMap();
 	private List fMissingFeatures = new ArrayList();
+	private IPath fPath = null;
 	
 	public LoadTargetOperation(ITarget target) {
+		this(target, (IPath)null);
+	}
+	
+	public LoadTargetOperation(ITarget target, IPath workspaceLoc) {
 		fTarget = target;
+		fPath = workspaceLoc;
 	}
 
 	public void run(IProgressMonitor monitor) throws CoreException {
@@ -79,6 +78,7 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 			loadJREInfo(preferences, new SubProgressMonitor(monitor, 15));
 			loadImplicitPlugins(preferences, new SubProgressMonitor(monitor, 15));
 			loadPlugins(preferences, new SubProgressMonitor(monitor, 60));
+			loadAdditionalPreferences(preferences);
 			PDECore.getDefault().savePluginPreferences();
 		} finally {
 			monitor.done();
@@ -225,6 +225,13 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 			}
 		}
 		monitor.done();
+	}
+	
+	protected void loadAdditionalPreferences(Preferences pref) {
+		if (fPath == null)
+			return;
+		String newValue = "${workspace_loc:".concat(fPath.toOSString()).concat("}"); //$NON-NLS-1$ //$NON-NLS-2$
+		pref.setValue(ICoreConstants.TARGET_PROFILE, newValue);
 	}
 	
 	private boolean areAdditionalLocationsEqual(Preferences pref) {
