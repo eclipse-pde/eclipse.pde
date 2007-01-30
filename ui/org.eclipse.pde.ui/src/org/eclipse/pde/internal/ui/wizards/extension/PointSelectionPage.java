@@ -20,7 +20,9 @@ import java.util.regex.PatternSyntaxException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -629,6 +631,8 @@ public class PointSelectionPage
 		return new WizardNode(this, element) {
 			public IBasePluginWizard createWizard() throws CoreException {
 				IExtensionWizard wizard = createWizard(wizardElement);
+				if (wizard == null) 
+					throw new CoreException(new Status(IStatus.ERROR, wizardElement.getConfigurationElement().getNamespaceIdentifier(), PDEUIMessages.PointSelectionPage_cannotFindTemplate));
 				wizard.init(fProject, fModel);
 				return wizard;
 			}

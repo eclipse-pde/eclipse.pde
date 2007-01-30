@@ -15,7 +15,7 @@ import org.eclipse.osgi.util.NLS;
 public class PDEUIMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ui.pderesources";//$NON-NLS-1$
 
-	public static String AbstractTargetPage_setTarget;
+	public static String AbstractTargetPage_openTargetPlatform;
 
 	public static String AddLibraryDialog_nospaces;
 
@@ -202,6 +202,8 @@ public class PDEUIMessages extends NLS {
 	public static String OverviewPage_environmentDescription;
 
 	public static String OverviewPage_environmentTitle;
+
+	public static String PointSelectionPage_cannotFindTemplate;
 
 	public static String SimpleCSCommandDetails_msgFieldDisabledCommand;
 
