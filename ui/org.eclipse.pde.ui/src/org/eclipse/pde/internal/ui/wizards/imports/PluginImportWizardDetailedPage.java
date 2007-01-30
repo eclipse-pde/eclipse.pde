@@ -246,7 +246,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		});
 		SWTUtil.setButtonDimensionHint(button);
 		
-		fCountLabel = new Label(comp, SWT.NONE);
+		fCountLabel = new Label(container, SWT.NONE);
 		fCountLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
 		comp.setContent(container);
 		comp.setMinHeight(250);
