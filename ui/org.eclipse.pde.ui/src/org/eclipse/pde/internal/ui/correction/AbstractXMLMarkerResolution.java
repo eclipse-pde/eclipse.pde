@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.builders.XMLErrorReporter;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -62,6 +63,11 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 				IDocumentNode[] children = node.getChildNodes();
 				int childIndex = Integer.parseInt(token.substring(1, token.indexOf(')')));
 				node = children[childIndex];
+			// when externalizing Strings in plugin.xml, we pass in both Manifest and plug-in file (bug 172080 comment #1)
+			} else if (base instanceof IBundlePluginModelBase) {
+				ISharedExtensionsModel sharedModel = ((IBundlePluginModelBase)base).getExtensionsModel();
+				if (sharedModel instanceof IPluginModelBase) 
+					node = (IDocumentNode)((IPluginModelBase)sharedModel).getPluginBase();
 			} else
 				node = (IDocumentNode)base.getPluginBase();
 			
