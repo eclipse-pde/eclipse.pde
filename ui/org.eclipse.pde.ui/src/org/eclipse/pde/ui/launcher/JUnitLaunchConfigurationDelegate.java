@@ -32,6 +32,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -49,25 +50,19 @@ import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
 import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
 import org.eclipse.pde.internal.ui.launcher.VMHelper;
+import org.osgi.framework.Version;
 
 /**
  * A launch delegate for launching JUnit Plug-in tests.
- * <p>
- * <b>
- * Note: This class may still undergo significant changes in 3.3 before it stabilizes
- * </b>
- * </p>
+ *
  * @since 3.3
  */
 public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationDelegate  {
 
-	public static final String CORE_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
-	public static final String UI_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$
-	public static final String LEGACY_UI_APPLICATION = "org.eclipse.pde.junit.runtime.legacytestapplication"; //$NON-NLS-1$
-	
-	public static String[] REQUIRED_PLUGINS = {"org.junit", "org.eclipse.jdt.junit.runtime", "org.eclipse.pde.junit.runtime"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private static String[] REQUIRED_PLUGINS = {"org.junit", "org.eclipse.jdt.junit.runtime", "org.eclipse.pde.junit.runtime"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	protected File fConfigDir = null;
+	
 	private Map fPluginMap;
 	
 	/*
@@ -126,12 +121,32 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		programArgs.add("-application"); //$NON-NLS-1$
 		String application = null;
 		try {
+			// if application is set, it must be a headless app.
 			application = configuration.getAttribute(IPDELauncherConstants.APPLICATION, (String)null);
 		} catch (CoreException e) {
 		}
+		
+		// if application is not set, we should launch the default UI test app
+		// Check to see if we should launch the legacy UI app
+		if (application == null) {
+			IPluginModelBase model = (IPluginModelBase)fPluginMap.get("org.eclipse.pde.junit.runtime");
+			BundleDescription desc = model != null ? model.getBundleDescription() : null;
+			if (desc != null) {
+				Version version = desc.getVersion();
+				int major = version.getMajor();
+				// launch legacy UI app only if we are launching a target that does 
+				// not use the new application model and we are launching with a 
+				// org.eclipse.pde.junit.runtime whose version is >= 3.3
+				if (major >= 3 && version.getMinor() >= 3 && !TargetPlatformHelper.usesNewApplicationModel()) {
+					application = IPDEUIConstants.LEGACY_UI_TEST_APPLICATION;
+				}		
+			}
+		}
+		
+		// launch the UI test application
 		if (application == null)
-			application = TargetPlatformHelper.usesNewApplicationModel() || TargetPlatformHelper.getTargetVersion() <= 3.2 ? 
-					UI_APPLICATION : LEGACY_UI_APPLICATION;
+			application = IPDEUIConstants.UI_TEST_APPLICATION;
+		
 		programArgs.add(application);
 		
 		// If a product is specified, then add it to the program args

@@ -42,6 +42,12 @@ public interface IPDEUIConstants {
 		new QualifiedName(PLUGIN_ID, "product-export-type");	 //$NON-NLS-1$
 	QualifiedName DEFAULT_PRODUCT_EXPORT_ROOT =
 		new QualifiedName(PLUGIN_ID, "product-export-root");	 //$NON-NLS-1$
+
+	String PLUGIN_DOC_ROOT = "/org.eclipse.pde.doc.user/"; //$NON-NLS-1$
 	
-	public final static String PLUGIN_DOC_ROOT = "/org.eclipse.pde.doc.user/"; //$NON-NLS-1$
+	// JUnit application identifiers
+	String LEGACY_UI_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.legacytestapplication"; //$NON-NLS-1$
+	String UI_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$
+	String CORE_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$
+	
 }

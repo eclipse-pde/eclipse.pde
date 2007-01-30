@@ -20,6 +20,7 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
 
@@ -60,7 +61,7 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 				configuration.setAttribute(IPDELauncherConstants.PRODUCT, product);
 			}
 		} else {
-			configuration.setAttribute(IPDELauncherConstants.APPLICATION, JUnitLaunchConfigurationDelegate.CORE_APPLICATION);				
+			configuration.setAttribute(IPDELauncherConstants.APPLICATION, IPDEUIConstants.CORE_TEST_APPLICATION);				
 		}
 		
 		// Plug-ins to launch

@@ -15,10 +15,10 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
-import org.eclipse.pde.ui.launcher.JUnitLaunchConfigurationDelegate;
 
 public class JUnitProgramBlock extends ProgramBlock {
 
@@ -33,7 +33,7 @@ public class JUnitProgramBlock extends ProgramBlock {
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		if (!LauncherUtils.requiresUI(config))
 			config.setAttribute(IPDELauncherConstants.APPLICATION, 
-					JUnitLaunchConfigurationDelegate.CORE_APPLICATION);
+					IPDEUIConstants.CORE_TEST_APPLICATION);
 		else
 			super.setDefaults(config);
 	}
@@ -54,7 +54,7 @@ public class JUnitProgramBlock extends ProgramBlock {
 	protected void initializeApplicationSection(ILaunchConfiguration config)
 			throws CoreException {
 		String application = config.getAttribute(IPDELauncherConstants.APPLICATION, (String)null);
-		if (JUnitLaunchConfigurationDelegate.CORE_APPLICATION.equals(application)) 
+		if (IPDEUIConstants.CORE_TEST_APPLICATION.equals(application)) 
 			fApplicationCombo.setText(PDEUIMessages.JUnitProgramBlock_headless); 
 		else
 			super.initializeApplicationSection(config);
@@ -65,7 +65,7 @@ public class JUnitProgramBlock extends ProgramBlock {
 	 */
 	protected void saveApplicationSection(ILaunchConfigurationWorkingCopy config) {
 		if (fApplicationCombo.getText().equals(PDEUIMessages.JUnitProgramBlock_headless)) { 
-			config.setAttribute(IPDELauncherConstants.APPLICATION, JUnitLaunchConfigurationDelegate.CORE_APPLICATION);
+			config.setAttribute(IPDELauncherConstants.APPLICATION, IPDEUIConstants.CORE_TEST_APPLICATION);
 			config.setAttribute(IPDELauncherConstants.APP_TO_TEST, (String)null);
 		} else {
 			config.setAttribute(IPDELauncherConstants.APPLICATION, (String)null);
