@@ -128,10 +128,10 @@ public class LaunchConfigurationHelper {
 			properties.setProperty("osgi.configuration.cascaded", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!properties.containsKey("osgi.framework")) //$NON-NLS-1$
 			properties.setProperty("osgi.framework", "org.eclipse.osgi"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (productID != null && !properties.containsKey("osgi.splashPath")) //$NON-NLS-1$
+		if (productID != null && !productID.equals(properties.get("eclipse.product"))) //$NON-NLS-1$
 			addSplashLocation(properties, productID, map);
 		// if osgi.splashPath is set, try to resolve relative paths to absolute paths
-		else if (properties.containsKey("osgi.splashPath")) //$NON-NLS-1$
+		if (properties.containsKey("osgi.splashPath")) //$NON-NLS-1$
 			resolveLocationPath(properties.getProperty("osgi.splashPath"), properties, map); //$NON-NLS-1$
 		if (!properties.containsKey("osgi.bundles")) //$NON-NLS-1$
 			properties.setProperty("osgi.bundles", computeOSGiBundles(TargetPlatformHelper.getBundleList(), map)); //$NON-NLS-1$
