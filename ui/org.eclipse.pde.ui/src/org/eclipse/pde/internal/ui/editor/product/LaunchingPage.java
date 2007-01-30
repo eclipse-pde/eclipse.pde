@@ -53,18 +53,18 @@ public class LaunchingPage extends PDEFormPage {
 		layout.horizontalSpacing = 10;
 		body.setLayout(layout);
 
-		// sections
-		managedForm.addPart(new LauncherSection(this, body));
-		managedForm.addPart(new ArgumentsSection(this, body));
-		
-		Composite comp = toolkit.createComposite(body);
 		layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
 		layout.verticalSpacing = 15;
+		Composite comp = toolkit.createComposite(body);
 		comp.setLayout(layout);
 		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(comp);
-		
 		managedForm.addPart(new JRESection(this, comp));
+		
+		// sections
+		managedForm.addPart(new LauncherSection(this, body));
+		managedForm.addPart(new ArgumentsSection(this, body));
+
 	}
 
 
