@@ -45,6 +45,9 @@ public class FormLayoutFactory {
 	public static final int SECTION_CLIENT_MARGIN_RIGHT = 2;	
 	public static final int SECTION_CLIENT_HORIZONTAL_SPACING = 5;
 	public static final int SECTION_CLIENT_VERTICAL_SPACING = 5;
+	public static final int SECTION_CLIENT_MARGIN_TOP = 5;
+	public static final int SECTION_CLIENT_MARGIN_BOTTOM = 5;
+	public static final int SECTION_CLIENT_MARGIN_HEIGHT = 5;
 
 	public static final int SECTION_HEADER_VERTICAL_SPACING = 6;
 
@@ -309,7 +312,7 @@ public class FormLayoutFactory {
 			int numColumns) {
 		GridLayout layout = new GridLayout();
 
-		layout.marginHeight = 0;
+		layout.marginHeight = SECTION_CLIENT_MARGIN_HEIGHT;
 		layout.marginWidth = 0;
 
 		layout.marginTop = 0;
@@ -337,8 +340,8 @@ public class FormLayoutFactory {
 			int numColumns) {
 		TableWrapLayout layout = new TableWrapLayout();
 		
-		layout.topMargin = 0;
-		layout.bottomMargin = 0;
+		layout.topMargin = SECTION_CLIENT_MARGIN_TOP;
+		layout.bottomMargin = SECTION_CLIENT_MARGIN_BOTTOM;
 		layout.leftMargin = SECTION_CLIENT_MARGIN_LEFT;
 		layout.rightMargin = SECTION_CLIENT_MARGIN_RIGHT;
 

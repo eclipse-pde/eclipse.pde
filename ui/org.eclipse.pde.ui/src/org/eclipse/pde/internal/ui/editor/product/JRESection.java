@@ -233,7 +233,7 @@ public class JRESection extends PDESection {
 
 			public String getText(Object element) {
 				IVMInstall vm = (IVMInstall) element;
-				return vm.getName() + " (" + vm.getInstallLocation().getAbsolutePath() + ")";
+				return vm.getName() + " (" + vm.getInstallLocation().getAbsolutePath() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			public Image getImage(Object element) {

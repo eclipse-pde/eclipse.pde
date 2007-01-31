@@ -129,7 +129,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		// if application is not set, we should launch the default UI test app
 		// Check to see if we should launch the legacy UI app
 		if (application == null) {
-			IPluginModelBase model = (IPluginModelBase)fPluginMap.get("org.eclipse.pde.junit.runtime");
+			IPluginModelBase model = (IPluginModelBase)fPluginMap.get("org.eclipse.pde.junit.runtime"); //$NON-NLS-1$
 			BundleDescription desc = model != null ? model.getBundleDescription() : null;
 			if (desc != null) {
 				Version version = desc.getVersion();
