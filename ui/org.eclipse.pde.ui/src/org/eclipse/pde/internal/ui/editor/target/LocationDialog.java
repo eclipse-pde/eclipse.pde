@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.target;
 
+import java.net.URL;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.itarget.IAdditionalLocation;
 import org.eclipse.pde.internal.core.itarget.ILocationInfo;
@@ -46,6 +50,16 @@ public class LocationDialog extends StatusDialog {
 	private IAdditionalLocation fLocation;
 	private IStatus fOkStatus;
 	private IStatus fErrorStatus;
+	
+	private static String LAST_PATH;
+	static {
+		Location installLoc = Platform.getInstallLocation();
+		if (installLoc == null) {
+			LAST_PATH = "";
+		}
+		URL url = installLoc.getURL();
+		LAST_PATH = new Path(url.getPath()).toOSString();
+	}
 
 	public LocationDialog(Shell parent, ITarget target, IAdditionalLocation location) {
 		super(parent);
@@ -174,12 +188,16 @@ public class LocationDialog extends StatusDialog {
 	
 	protected void handleBrowseFileSystem() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		dialog.setFilterPath(fPath.getText());
+		String text = fPath.getText();
+		if (text.length() == 0)
+			text = LAST_PATH;
+		dialog.setFilterPath(text);
 		dialog.setText(PDEUIMessages.BaseBlock_dirSelection); 
 		dialog.setMessage(PDEUIMessages.BaseBlock_dirChoose); 
 		String result = dialog.open();
 		if (result != null) {
 			fPath.setText(result);
+			LAST_PATH = result;
 		}
 	}
 	
