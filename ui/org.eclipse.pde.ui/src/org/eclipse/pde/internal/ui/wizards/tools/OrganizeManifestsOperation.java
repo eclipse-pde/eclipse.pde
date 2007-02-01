@@ -28,6 +28,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.search.dependencies.AddNewDependenciesOperation;
+import org.eclipse.pde.internal.ui.search.dependencies.CalculateUsesOperation;
 import org.eclipse.pde.internal.ui.search.dependencies.GatherUnusedDependenciesOperation;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
@@ -39,6 +40,7 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 	protected boolean fMarkInternal = true; // mark export-package as internal
 	protected String fPackageFilter = VALUE_DEFAULT_FILTER;
 	protected boolean fRemoveUnresolved = true; // remove unresolved export-package
+	protected boolean fCalculateUses = false; // calculate the 'uses' directive for exported packages
 	protected boolean fModifyDep = true; // modify import-package / require-bundle
 	protected boolean fRemoveDependencies = true; // if true: remove, else mark optional
 	protected boolean fUnusedDependencies; // find/remove unused dependencies - long running op
@@ -124,6 +126,14 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 			monitor.worked(1);
 		}
 		
+		if (fCalculateUses) {
+			// we don't set the subTask because it is done in the CalculateUsesOperation, for each package it scans
+			if (!monitor.isCanceled()) {
+				CalculateUsesOperation op = new CalculateUsesOperation(fCurrentProject, modelBase);
+				op.run(new SubProgressMonitor(monitor, 2));
+			}
+		}
+		
 		if (fAddDependencies) {
 			monitor.subTask(NLS.bind (PDEUIMessages.OrganizeManifestsOperation_additionalDeps, projectName));
 			if (!monitor.isCanceled()) {
@@ -170,6 +180,7 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 		if (fAddMissing)		ticks += 1;
 		if (fMarkInternal)		ticks += 1;
 		if (fRemoveUnresolved)	ticks += 1;
+		if (fCalculateUses)		ticks += 4;
 		if (fModifyDep)			ticks += 2;
 		if (fUnusedDependencies)ticks += 4;
 		if (fAddDependencies)	ticks += 4;
@@ -185,6 +196,7 @@ public class OrganizeManifestsOperation implements IRunnableWithProgress, IOrgan
 		fMarkInternal = !settings.getBoolean(PROP_MARK_INTERNAL);
 		fPackageFilter = settings.get(PROP_INTERAL_PACKAGE_FILTER);
 		fRemoveUnresolved = !settings.getBoolean(PROP_REMOVE_UNRESOLVED_EX);
+		fCalculateUses = settings.getBoolean(PROP_CALCULATE_USES);
 		fModifyDep = !settings.getBoolean(PROP_MODIFY_DEP);
 		fRemoveDependencies = !settings.getBoolean(PROP_RESOLVE_IMP_MARK_OPT);
 		fUnusedDependencies = settings.getBoolean(PROP_UNUSED_DEPENDENCIES);

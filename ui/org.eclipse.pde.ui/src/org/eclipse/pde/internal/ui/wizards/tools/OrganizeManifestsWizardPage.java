@@ -31,6 +31,7 @@ import org.eclipse.ui.PlatformUI;
 public class OrganizeManifestsWizardPage extends WizardPage implements IPreferenceConstants, IOrganizeManifestsSettings {
 	
 	private Button fRemoveUnresolved;
+	private Button fCalculateUses;
 	private Button fAddMissing;
 	private Button fMarkInternal;
 	private Text fPackageFilter;
@@ -102,6 +103,12 @@ public class OrganizeManifestsWizardPage extends WizardPage implements IPreferen
 		gd = new GridData();
 		gd.verticalIndent = 5;
 		fRemoveUnresolved.setLayoutData(gd);
+		
+		fCalculateUses = new Button(group, SWT.CHECK);
+		fCalculateUses.setText(PDEUIMessages.OrganizeManifestsWizardPage_calculateUses);
+		gd = new GridData();
+		gd.verticalIndent = 5;
+		fCalculateUses.setLayoutData(gd);
 	}
 	
 	private void createRequireImportGroup(Composite container) {
@@ -165,6 +172,7 @@ public class OrganizeManifestsWizardPage extends WizardPage implements IPreferen
 		String filter = settings.get(PROP_INTERAL_PACKAGE_FILTER);
 		fPackageFilter.setText(filter != null ? filter : VALUE_DEFAULT_FILTER);
 		fRemoveUnresolved.setSelection(!settings.getBoolean(PROP_REMOVE_UNRESOLVED_EX));
+		fCalculateUses.setSelection(settings.getBoolean(PROP_CALCULATE_USES));
 		
 		fModifyDependencies.setSelection(!settings.getBoolean(PROP_MODIFY_DEP));
 
@@ -190,6 +198,7 @@ public class OrganizeManifestsWizardPage extends WizardPage implements IPreferen
 		settings.put(PROP_MARK_INTERNAL, !fMarkInternal.getSelection());
 		settings.put(PROP_INTERAL_PACKAGE_FILTER, fPackageFilter.getText());
 		settings.put(PROP_REMOVE_UNRESOLVED_EX, !fRemoveUnresolved.getSelection());
+		settings.put(PROP_CALCULATE_USES, fCalculateUses.getSelection());
 		
 
 		settings.put(PROP_MODIFY_DEP, !fModifyDependencies.getSelection());
@@ -217,7 +226,7 @@ public class OrganizeManifestsWizardPage extends WizardPage implements IPreferen
 	private void setButtonArrays() {
 		fTopLevelButtons = new Button[] {
 			fRemoveUnresolved, fAddMissing,	fModifyDependencies, fMarkInternal,
-			fUnusedDependencies, fAdditonalDependencies, fFixIconNLSPaths, fRemovedUnusedKeys, fRemoveLazy	
+			fUnusedDependencies, fAdditonalDependencies, fFixIconNLSPaths, fRemovedUnusedKeys, fRemoveLazy, fCalculateUses	
 		};
 		fParentButtons = new Button[] {
 			fMarkInternal, fModifyDependencies

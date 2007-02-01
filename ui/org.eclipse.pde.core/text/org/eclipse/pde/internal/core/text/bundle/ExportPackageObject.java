@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.osgi.framework.Constants;
 
 public class ExportPackageObject extends PackageObject {
     
@@ -118,6 +121,66 @@ public class ExportPackageObject extends PackageObject {
     			return false;
     	}
     	return true;
+    }
+    
+    public void setUsesDirective(String value) {
+    	String oldValue = getUsesDirective();
+    	setDirective(Constants.USES_DIRECTIVE, value);
+    	fHeader.update();
+    	firePropertyChanged(this, Constants.USES_DIRECTIVE, oldValue, value);
+    }
+    
+    public String getUsesDirective() {
+    	return getDirective(Constants.USES_DIRECTIVE);
+    }
+    
+    protected void appendValuesToBuffer(StringBuffer sb, TreeMap table) {
+    	if (table == null)
+    		return;
+    	Object usesValue = null;
+    	// remove the Uses directive, we will make sure to put it at the end
+    	if (table.containsKey(Constants.USES_DIRECTIVE))
+    		usesValue = table.remove(Constants.USES_DIRECTIVE);
+    	super.appendValuesToBuffer(sb, table);
+    	if (usesValue != null) {
+    		table.put(Constants.USES_DIRECTIVE, usesValue);
+    		formatUsesDirective(sb, usesValue);
+    	}
+    }
+    
+    private void formatUsesDirective(StringBuffer sb, Object usesValue) {
+    	StringTokenizer tokenizer = null;
+		if (usesValue instanceof String) 
+			tokenizer = new StringTokenizer((String)usesValue, ","); //$NON-NLS-1$
+		boolean newLine = (tokenizer != null) ? tokenizer.countTokens() > 3 :
+			((ArrayList)usesValue).size() > 3;
+		String eol = getHeader().getLineLimiter();
+		sb.append(';');
+		if (newLine)
+			sb.append(eol).append("  "); //$NON-NLS-1$
+		sb.append(Constants.USES_DIRECTIVE);
+		sb.append(":=\""); //$NON-NLS-1$
+		if (tokenizer != null) 
+			while (tokenizer.hasMoreTokens()) {
+				sb.append(tokenizer.nextToken());
+				if (tokenizer.hasMoreTokens()) {
+					sb.append(',');
+					if (newLine) 
+						sb.append(eol).append("   "); //$NON-NLS-1$
+				}
+			}
+		else {
+			ArrayList list = ((ArrayList)usesValue);
+			for (int i = 0; i < list.size(); i++) {
+				if (i != 0) {
+					sb.append(',');
+					if (newLine) 
+						sb.append(eol).append("   "); //$NON-NLS-1$
+				}
+				sb.append(list.get(i));
+			}
+		}
+		sb.append("\""); //$NON-NLS-1$
     }
 
 }

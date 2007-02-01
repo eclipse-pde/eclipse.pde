@@ -17,6 +17,7 @@ public interface IOrganizeManifestsSettings {
 	public static final String PROP_INTERAL_PACKAGE_FILTER = "OrganizeManifests.ExportedPackages.packageFilter"; //$NON-NLS-1$
 	public static final String VALUE_DEFAULT_FILTER = "*.internal*"; //$NON-NLS-1$
 	public static final String PROP_REMOVE_UNRESOLVED_EX = "OrganizeManifests.ExportedPackages.removeUnresolved"; //$NON-NLS-1$
+	public static final String PROP_CALCULATE_USES = "OrganizeManifests.calculateUses"; //$NON-NLS-1$
 	public static final String PROP_MODIFY_DEP = "OrganizeManifests.RequireImport.modifyDep"; //$NON-NLS-1$
 	public static final String PROP_RESOLVE_IMP_MARK_OPT = "OrganizeManifests.RequireImport.resolve:markOptional"; //$NON-NLS-1$
 	public static final String PROP_UNUSED_DEPENDENCIES = "OrganizeManifests.RequireImport.findRemoveUnused"; //$NON-NLS-1$

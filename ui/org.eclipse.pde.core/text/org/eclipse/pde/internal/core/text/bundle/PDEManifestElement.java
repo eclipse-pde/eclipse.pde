@@ -209,7 +209,7 @@ public class PDEManifestElement extends BundleObject {
     	return sb.toString();
     }
     
-    private void appendValuesToBuffer(StringBuffer sb, TreeMap table) {
+    protected void appendValuesToBuffer(StringBuffer sb, TreeMap table) {
     	if (table == null)
     		return;
     	Iterator dkeys = table.keySet().iterator();
