@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.pde.internal.build.site.PDEState;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.IncludedFeatureReferenceModel;
 import org.eclipse.update.core.model.URLEntryModel;
+import org.osgi.framework.Version;
 
 /**
  * Generates build.xml script for features.
@@ -39,6 +40,11 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private static final String FRAGMENT_START_TAG = "<fragment"; //$NON-NLS-1$
 	private static final String VERSION = "version";//$NON-NLS-1$
 	private static final String PLUGIN_VERSION = "plugin-version"; //$NON-NLS-1$
+
+	// The 64 characters that are legal in a version qualifier, in lexicographical order.
+	private static final String BASE_64_ENCODING = "-0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; //$NON-NLS-1$
+
+	private static final int QUALIFIER_SUFFIX_VERSION = 0;
 	
 	// GENERATION FLAGS
 	/**
@@ -841,107 +847,206 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		generateModels(Utils.extractPlugins(getSite(false).getRegistry().getSortedBundles(), plugins));
 	}
 
+	// Integer to character conversion in our base-64 encoding scheme.  If the
+	// input is out of range, an illegal character will be returned.
+	private static char base64Character(int number) {
+		if (number < 0 || number > 63) {
+			return ' ';
+		}
+		return BASE_64_ENCODING.charAt(number);
+	}
+
+	// Encode a non-negative number as a variable length string, with the
+	// property that if X > Y then the encoding of X is lexicographically
+	// greater than the enocding of Y.  This is accomplished by encoding the
+	// length of the string at the beginning of the string.  The string is a
+	// series of base 64 (6-bit) characters.  The first three bits of the first
+	// character indicate the number of additional characters in the string.
+	// The last three bits of the first character and all of the rest of the
+	// characters encode the actual value of the number.  Examples:
+	//     0 --> 000 000 --> "-"
+	//     7 --> 000 111 --> "6"
+	//     8 --> 001 000 001000 --> "77"
+	//    63 --> 001 000 111111 --> "7z"
+	//    64 --> 001 001 000000 --> "8-"
+	//   511 --> 001 111 111111 --> "Dz"
+	//   512 --> 010 000 001000 000000 --> "E7-"
+	//   2^32 - 1 --> 101 011 111111 ... 111111 --> "fzzzzz"
+	//   2^45 - 1 --> 111 111 111111 ... 111111 --> "zzzzzzzz"
+	// (There are some wasted values in this encoding.  For example,
+	// "7-" through "76" and "E--" through "E6z" are not legal encodings of
+	// any number.  But the benefit of filling in those wasted ranges would not
+	// be worth the added complexity.)
+	private static String lengthPrefixBase64(long number) {
+		int length = 7;
+		for (int i = 0; i < 7; ++i) {
+			if (number < (1L << ((i * 6) + 3))) {
+				length = i;
+				break;
+			}
+		}
+		StringBuffer result = new StringBuffer(length + 1);
+		result.append(base64Character((length << 3) + (int) ((number >> (6 * length)) & 0x7)));
+		while (--length >= 0) {
+			result.append(base64Character((int) ((number >> (6 * length)) & 0x3f)));
+		}
+		return result.toString();
+	}
+
+	private static int charValue(char c) {
+		int index = BASE_64_ENCODING.indexOf(c);
+		// The "+ 1" is very intentional.  For a blank (or anything else that
+		// is not a legal character), we want to return 0.  For legal
+		// characters, we want to return one greater than their position, so
+		// that a blank is correctly distinguished from '-'.
+		return index + 1;
+	}
+
+	private static void appendEncodedCharacter(StringBuffer buffer, int c) {
+		while (c > 62) {
+			buffer.append('z');
+			c -= 63;
+		}
+		buffer.append(base64Character(c));
+	}
+
+	private static int getIntProperty(String property, int defaultValue) {
+		int result = defaultValue;
+		if (property != null) {
+			try {
+				result = Integer.parseInt(property);
+				if (result < 1) {
+					// It has to be a positive integer.  Use the default.
+					result = defaultValue;
+				}
+			} catch (NumberFormatException e) {
+				// Leave as default value
+			}
+		}
+		return result;
+	}
+
 	private String generateFeatureVersionSuffix(BuildTimeFeature buildFeature, List plugins) throws CoreException {
-		if (!generateVersionSuffix || buildFeature.getContextQualifierLength() == -1)
-			return null; //no qualifier, do nothing 
+		if (!generateVersionSuffix || buildFeature.getContextQualifierLength() == -1) {
+			return null; // do nothing
+		}
 
 		Properties properties = getBuildProperties();
-		String significantDigits = (String) properties.get(PROPERTY_SIGNIFICANT_VERSION_DIGITS);
-		int maxDigits = 15;
-		if (significantDigits != null) {
-			try {
-				maxDigits = Integer.parseInt(significantDigits);
-			} catch (NumberFormatException e) {
-				//exception, leave at default
-			}
-		}
-		String generatedLength = (String) properties.get(PROPERTY_GENERATED_VERSION_LENGTH);
-		int finalLength = 15;
-		if (generatedLength != null) {
-			try {
-				finalLength = Integer.parseInt(generatedLength);
-				if (finalLength < maxDigits)
-					finalLength = maxDigits;
-			} catch (NumberFormatException e) {
-				//exception, leave at default
-			}
-		}
+		int significantDigits = getIntProperty((String) properties.get(PROPERTY_SIGNIFICANT_VERSION_DIGITS), Integer.MAX_VALUE);
+		int maxGeneratedLength = getIntProperty((String) properties.get(PROPERTY_GENERATED_VERSION_LENGTH), Integer.MAX_VALUE);
+
+		long majorSum = 0L;
+		long minorSum = 0L;
+		long serviceSum = 0L;
+
+		// Include the version of this algorithm as part of the suffix, so that
+		// we have a way to make sure all suffixes increase when the algorithm
+		// changes.
+		majorSum += QUALIFIER_SUFFIX_VERSION;
 
 		IIncludedFeatureReference[] referencedFeatures = buildFeature.getIncludedFeatureReferences();
 		int numElements = plugins.size() + referencedFeatures.length;
-		char[][] versions = new char[numElements][];
+		if (numElements == 0) {
+			// Empty feature.
+			return null;
+		}
+		String[] qualifiers = new String[numElements];
 		int idx = -1;
-		int longestArray = 0;
-		int shift = '-';
-		String qualifier;
-		if (referencedFeatures != null) {
-			for (int i = 0; i < referencedFeatures.length; i++) {
-				BuildTimeFeature refFeature = (BuildTimeFeature) getSite(false).findFeature(referencedFeatures[i].getVersionedIdentifier().getIdentifier(), null, false);
-				if (refFeature == null)
-					continue;
-				int contextLength = refFeature.getContextQualifierLength();
-				contextLength++; //account for the '-' separating the context qualifier and suffix
-				qualifier = refFeature.getVersionedIdentifier().getVersion().getQualifierComponent();
-				if (qualifier.length() > contextLength) {
-					char [] chars = qualifier.toCharArray();
-					versions[++idx] = new char[chars.length - contextLength];
-					System.arraycopy(chars, contextLength, versions[idx], 0, chars.length - contextLength);
-					if (versions[idx].length > longestArray)
-						longestArray = versions[idx].length;
-				}
+
+		// Loop through the included features, adding the version number parts
+		// to the running totals and storing the qualifier suffixes.
+		for (int i = 0; i < referencedFeatures.length; i++) {
+			BuildTimeFeature refFeature = (BuildTimeFeature) getSite(false).findFeature(referencedFeatures[i].getVersionedIdentifier().getIdentifier(), null, false);
+			if (refFeature == null) {
+				qualifiers[++idx] = ""; //$NON-NLS-1$
+				continue;
+			}
+			PluginVersionIdentifier version = refFeature.getVersionedIdentifier().getVersion();
+			majorSum += version.getMajorComponent();
+			minorSum += version.getMinorComponent();
+			serviceSum += version.getServiceComponent();
+			int contextLength = refFeature.getContextQualifierLength();
+			++contextLength; //account for the '-' separating the context qualifier and suffix
+			String qualifier = version.getQualifierComponent();
+			// The entire qualifier of the nested feature is often too long to
+			// include in the suffix computation for the containing feature,
+			// and using it would result in extremely long qualifiers for
+			// umbrella features.  So instead we want to use just the suffix
+			// part of the qualifier, or just the context part (if there is no
+			// suffix part).  See bug #162022.
+			if (qualifier.length() > contextLength) {
+				// Use the suffix part
+				qualifiers[++idx] = qualifier.substring(contextLength);
+			} else {
+				// Use the context part
+				qualifiers[++idx] = qualifier;
 			}
 		}
+
+		// Loop through the included plugins and fragmnets, adding the version
+		// number parts to the running totals and storing the qualifiers.
 		for (Iterator iterator = plugins.iterator(); iterator.hasNext();) {
 			BundleDescription model = (BundleDescription) iterator.next();
-			qualifier = model.getVersion().getQualifier();
-			if (qualifier.length() > 0) {
-				versions[++idx] = qualifier.toCharArray();
-				if (versions[idx].length > longestArray)
-					longestArray = versions[idx].length;
+			Version version = model.getVersion();
+			majorSum += version.getMajor();
+			minorSum += version.getMinor();
+			serviceSum += version.getMicro();
+			qualifiers[++idx] = version.getQualifier();
+		}
+
+		// Limit the qualifiers to the specified number of significant digits,
+		// and figure out what the longest qualifier is.
+		int longestQualifier = 0;
+		for (int i = 0; i < numElements; ++i) {
+			if (qualifiers[i].length() > significantDigits) {
+				qualifiers[i] = qualifiers[i].substring(0, significantDigits);
+			}
+			if (qualifiers[i].length() > longestQualifier) {
+				longestQualifier = qualifiers[i].length();
 			}
 		}
-		
-		if (idx == -1)
-			return null;
-		
-		if (longestArray > maxDigits)
-			longestArray = maxDigits;
 
-		int[] sums = new int[longestArray];
-		for (int i = 0; i <= idx; i++) {
-			for (int j = 0; j < longestArray; j++) {
-				if (versions[i].length > j)
-					sums[j] += versions[i][j] - shift;
+		StringBuffer result = new StringBuffer();
+
+		// Encode the sums of the first three parts of the version numbers.
+		result.append(lengthPrefixBase64(majorSum));
+		result.append(lengthPrefixBase64(minorSum));
+		result.append(lengthPrefixBase64(serviceSum));
+
+		if (longestQualifier > 0) {
+			// Calculate the sum at each position of the qualifiers.
+			int[] qualifierSums = new int[longestQualifier];
+			for (int i = 0; i < numElements; ++i) {
+				for (int j = 0; j < qualifiers[i].length(); ++j) {
+					qualifierSums[j] += charValue(qualifiers[i].charAt(j));
+				}
+			}
+			// Normalize the sums to be base 65.
+			int carry = 0;
+			for (int k = longestQualifier - 1; k >= 0; --k) {
+				qualifierSums[k] += carry;
+				carry = qualifierSums[k] / 65;
+				qualifierSums[k] = qualifierSums[k] % 65;
+			}
+			// Always use one character for overflow.  This will be handled
+			// correctly even when the overflow character itself overflows.
+			appendEncodedCharacter(result, carry);
+			for (int m = 0; m < longestQualifier; ++m) {
+				appendEncodedCharacter(result, qualifierSums[m]);
 			}
 		}
-		char[] result = new char[finalLength];
-		int x = 0, val = 0, carry = 0;
-		char c = 0;
-
-		int i = -1;
-		while ((++i < longestArray || carry != 0) && i < finalLength) {
-			x = carry + ((i < longestArray) ? sums[longestArray - i - 1] : 0);
-			val = x % 64;
-			carry = x >> 6;
-
-			if (val == 0)
-				c = '-';
-			else if (val > 0 && val <= 10)
-				c = (char) ('0' + val - 1);
-			else if (val == 11)
-				c = '_';
-			else if (val > 11 && val <= 37)
-				c = (char) ('A' + val - 12);
-			else if (val > 37 && val <= 63)
-				c = (char) ('a' + val - 38);
-
-			result[finalLength - i - 1] = c;
-		}
-		for (; i < finalLength; i++) {
-			result[finalLength - i - 1] = '-';
+		// It is safe to strip any '-' characters from the end of the suffix.
+		// (This won't happen very often, but it will save us a character or
+		// two when it does.)
+		while (result.length() > 0 && result.charAt(result.length() - 1) == '-') {
+			result.deleteCharAt(result.length() - 1);
 		}
 
-		return String.valueOf(result);
+		// If the resulting suffix is too long, shorten it to the designed length.
+		if (maxGeneratedLength > result.length()) {
+			return result.toString();
+		}
+		return result.substring(0, maxGeneratedLength);
 	}
 
 	/**
