@@ -107,7 +107,7 @@ public abstract class PluginObject
 		}
 	}
 	public ISharedPluginModel getModel() {
-		return fModel;
+		return getPluginModel();
 	}
 	
 	public IPluginModelBase getPluginModel() {
