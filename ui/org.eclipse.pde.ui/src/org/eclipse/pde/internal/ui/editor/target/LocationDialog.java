@@ -55,7 +55,7 @@ public class LocationDialog extends StatusDialog {
 	static {
 		Location installLoc = Platform.getInstallLocation();
 		if (installLoc == null) {
-			LAST_PATH = "";
+			LAST_PATH = ""; //$NON-NLS-1$
 		}
 		URL url = installLoc.getURL();
 		LAST_PATH = new Path(url.getPath()).toOSString();
