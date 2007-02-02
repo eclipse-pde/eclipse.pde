@@ -81,7 +81,7 @@ public class ExtensionElementDetails extends PDEDetails {
 				| Section.DESCRIPTION);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText(PDEUIMessages.ExtensionElementDetails_title); 
-		section.setDescription(PDEUIMessages.ExtensionElementDetails_desc); 
+		section.setDescription("");  //$NON-NLS-1$
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING));
 		
@@ -228,10 +228,15 @@ public class ExtensionElementDetails extends PDEDetails {
 	}
 	private void updateDescription() {
 		if (input != null) {
-			String iname = input.getName();
-			section.setDescription(NLS.bind(PDEUIMessages.ExtensionElementDetails_setDesc, iname)); 
+			if (0 == input.getAttributeCount()) {
+				section.setDescription(PDEUIMessages.ExtensionElementDetails_descNoAttributes);
+			} else {
+				String iname = input.getName();
+				section.setDescription(NLS.bind(PDEUIMessages.ExtensionElementDetails_setDesc, iname));
+			}
 		} else {
-			section.setDescription(PDEUIMessages.ExtensionElementDetails_desc); 
+			// no extensions = no description
+			section.setDescription(""); //$NON-NLS-1$
 		}
 		section.layout();
 	}

@@ -1140,7 +1140,7 @@ public class PDEUIMessages extends NLS {
 	public static String ExtensionPointDetails_browse;
 	public static String ExtensionPointsSection_title;
 	public static String ExtensionPointDetails_noSchemaLinks;
-	public static String ExtensionElementDetails_desc;
+	public static String ExtensionElementDetails_descNoAttributes;
 	public static String ExtensionDetails_noPoint_title;
 	public static String ExtensionDetails_extensionPointLinks;
 	public static String ExtensionElementDetails_setDesc;
