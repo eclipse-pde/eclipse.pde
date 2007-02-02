@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,8 +71,8 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		return factory;
 	}
 
-	public void addBundleDescription(BundleDescription toAdd) {
-		state.addBundle(toAdd);
+	public boolean addBundleDescription(BundleDescription toAdd) {
+		return state.addBundle(toAdd);
 	}
 
 	private PluginConverter acquirePluginConverter() throws Exception {
@@ -90,7 +90,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			if (patchValue != null)
 				patchBundles.put(new Long(descriptor.getBundleId()), patchValue);
 			rememberQualifierTagPresence(descriptor);
-			if (state.addBundle(descriptor) == true && addedBundle != null)
+			if (addBundleDescription(descriptor) == true && addedBundle != null)
 				addedBundle.add(descriptor);
 		} catch (BundleException e) {
 			IStatus status = new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_STATE_PROBLEM, NLS.bind(Messages.exception_stateAddition, enhancedManifest.get(Constants.BUNDLE_NAME)), e);
@@ -127,12 +127,12 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		}
 		return result;
 	}
-	
+
 	private String fillPatchData(Dictionary manifest) {
 		if (manifest.get("Eclipse-ExtensibleAPI") != null) {
 			return "Eclipse-ExtensibleAPI: true";
 		}
-		
+
 		if (manifest.get("Eclipse-PatchFragment") != null) {
 			return "Eclipse-PatchFragment: true";
 		}
@@ -172,7 +172,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			String symbolicName = (String) manifest.get(Constants.BUNDLE_SYMBOLICNAME);
 			if (symbolicName == null)
 				return;
-			
+
 			symbolicName = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, symbolicName)[0].getValue();
 			newVersion = QualifierReplacer.replaceQualifierInVersion((String) manifest.get(Constants.BUNDLE_VERSION), symbolicName, (String) manifest.get(PROPERTY_QUALIFIER), repositoryVersions);
 		} catch (BundleException e) {
@@ -191,7 +191,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		ManifestElement[] versionInfo = ManifestElement.parseHeader(Constants.BUNDLE_VERSION, (String) manifest.get(Constants.BUNDLE_VERSION));
 		if (versionInfo != null) {
 			if (versionInfo[0].getValue().endsWith(PROPERTY_QUALIFIER)) {
-				manifest.put(PROPERTY_QUALIFIER,  getQualifierPropery(bundleLocation.getAbsolutePath()));
+				manifest.put(PROPERTY_QUALIFIER, getQualifierPropery(bundleLocation.getAbsolutePath()));
 			}
 		}
 	}
@@ -433,7 +433,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		int qualifierIdx = -1;
 		if ((qualifierIdx = version.indexOf(IBuildPropertiesConstants.PROPERTY_QUALIFIER)) != -1) {
 			BundleDescription[] bundles = getState().getBundles(bundleId);
-			Version versionToMatch = Version.parseVersion(version.substring(0, qualifierIdx));
+			Version versionToMatch = Version.parseVersion(version.substring(0, qualifierIdx - 1));
 			for (int i = 0; i < bundles.length; i++) {
 				Version bundleVersion = bundles[i].getVersion();
 				if (bundleVersion.getMajor() == versionToMatch.getMajor() && bundleVersion.getMinor() == versionToMatch.getMinor() && bundleVersion.getMicro() >= versionToMatch.getMicro() && bundleVersion.getQualifier().compareTo(versionToMatch.getQualifier()) >= 0)
@@ -530,7 +530,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	public Map getPatchData() {
 		return patchBundles;
 	}
-	
+
 	public List getSortedBundles() {
 		BundleDescription[] toSort = getState().getResolvedBundles();
 		Platform.getPlatformAdmin().getStateHelper().sortBundles(toSort);
@@ -549,7 +549,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		for (Iterator iter = unqualifiedBundles.iterator(); iter.hasNext();) {
 			BundleDescription toAddBack = (BundleDescription) iter.next();
 			state.removeBundle(toAddBack.getBundleId());
-			state.addBundle(toAddBack);
+			addBundleDescription(toAddBack);
 		}
 
 		BundleDescription[] allBundles = state.getBundles();
@@ -577,7 +577,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 	private String[] getDirJavaProfiles(File bundleLocation) {
 		// try the profile list first
-		File profileList = new File (bundleLocation, "profile.list");
+		File profileList = new File(bundleLocation, "profile.list");
 		if (profileList.exists())
 			try {
 				return getJavaProfiles(new BufferedInputStream(new FileInputStream(profileList)));
@@ -604,7 +604,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				} catch (IOException e) {
 					// this should not happen, just incase do the default
 				}
-			
+
 			Enumeration entries = zipFile.entries();
 			while (entries.hasMoreElements()) {
 				String entryName = ((ZipEntry) entries.nextElement()).getName();
@@ -696,10 +696,10 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				BundleDescription b = resolvedBundles[i];
 				unqualifiedBundles.add(state.removeBundle(b.getBundleId())); //We keep the removed bundle so we can reinsert it in the state when we are done
 				String newVersion = QualifierReplacer.replaceQualifierInVersion(b.getVersion().toString(), b.getSymbolicName(), getQualifierPropery(b.getLocation()), null);
-				
+
 				//Here it is important to reuse the same bundle id than the bundle we are removing so that we don't loose the information about the classpath
-				BundleDescription newBundle = state.getFactory().createBundleDescription(b.getBundleId(), b.getSymbolicName(), new Version(newVersion), b.getLocation(), b.getRequiredBundles(), b.getHost(), b.getImportPackages(), b.getExportPackages(), b.isSingleton(), b.attachFragments(), b.dynamicFragments(), b.getPlatformFilter(),  b.getExecutionEnvironments(), b.getGenericRequires(), b.getGenericCapabilities());
-				state.addBundle(newBundle);
+				BundleDescription newBundle = state.getFactory().createBundleDescription(b.getBundleId(), b.getSymbolicName(), new Version(newVersion), b.getLocation(), b.getRequiredBundles(), b.getHost(), b.getImportPackages(), b.getExportPackages(), b.isSingleton(), b.attachFragments(), b.dynamicFragments(), b.getPlatformFilter(), b.getExecutionEnvironments(), b.getGenericRequires(), b.getGenericCapabilities());
+				addBundleDescription(newBundle);
 				rememberQualifierTagPresence(newBundle);
 			}
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,11 +31,16 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 	private PDEState state;
 	private Properties repositoryVersions; //version for the features
 	private boolean reportResolutionErrors;
-	
+
+	//Support for filtering what is added to the state
+	private List rootFeaturesForFilter;
+	private List rootPluginsForFiler;
+	private boolean filter = false;
+
 	public void setReportResolutionErrors(boolean value) {
 		reportResolutionErrors = value;
 	}
-	
+
 	public Properties getFeatureVersions() {
 		if (repositoryVersions == null) {
 			repositoryVersions = new Properties();
@@ -63,14 +68,23 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 				state = new PDEState(contentProvider.getInitialState());
 				return state;
 			}
-			
+
 			if (AbstractScriptGenerator.isBuildingOSGi()) {
-				state = new PDEState(); 
+				if (filter) {
+					state = new FilteringState();
+					((FilteringState) state).setFilter(findAllReferencedPlugins());
+				} else {
+					state = new PDEState();
+				}
 			} else {
 				state = new PluginRegistryConverter();
 			}
 			state.addBundles(contentProvider.getPluginPaths());
 
+			//Once all the elements have been added to the state, the filter is removed to allow for the generated plug-ins to be added
+			if (state instanceof FilteringState) {
+				((FilteringState) state).setFilter(null);
+			}
 			state.resolveState();
 			BundleDescription[] allBundles = state.getState().getBundles();
 			BundleDescription[] resolvedBundles = state.getState().getResolvedBundles();
@@ -85,11 +99,11 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 					if (!all[i].isResolved()) {
 						ResolverError[] resolutionErrors = state.getState().getResolverErrors(all[i]);
 						VersionConstraint[] versionErrors = helper.getUnsatisfiedConstraints(all[i]);
-						
+
 						//ignore problems when they are caused by bundles not being built for the right config
 						if (isConfigError(all[i], resolutionErrors, AbstractScriptGenerator.getConfigInfos()))
 							continue;
-						
+
 						String errorMessage = "Bundle " + all[i].getSymbolicName() + ":\n" + getResolutionErrorMessage(resolutionErrors);
 						for (int j = 0; j < versionErrors.length; j++) {
 							errorMessage += '\t' + getResolutionFailureMessage(versionErrors[j]) + '\n';
@@ -123,7 +137,7 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 		}
 		return false;
 	}
-	
+
 	//Check if the set of errors contain a platform filter
 	private ResolverError hasPlatformFilterError(ResolverError[] errors) {
 		for (int i = 0; i < errors.length; i++) {
@@ -132,16 +146,16 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 		}
 		return null;
 	}
-	
+
 	private String getResolutionErrorMessage(ResolverError[] errors) {
 		String errorMessage = ""; //$NON-NLS-1$
 		for (int i = 0; i < errors.length; i++) {
-			if ((errors[i].getType() & (ResolverError.SINGLETON_SELECTION | ResolverError.FRAGMENT_CONFLICT |	ResolverError.IMPORT_PACKAGE_USES_CONFLICT |ResolverError.REQUIRE_BUNDLE_USES_CONFLICT |ResolverError.MISSING_EXECUTION_ENVIRONMENT)) != 0)
+			if ((errors[i].getType() & (ResolverError.SINGLETON_SELECTION | ResolverError.FRAGMENT_CONFLICT | ResolverError.IMPORT_PACKAGE_USES_CONFLICT | ResolverError.REQUIRE_BUNDLE_USES_CONFLICT | ResolverError.MISSING_EXECUTION_ENVIRONMENT)) != 0)
 				errorMessage += '\t' + errors[i].toString() + '\n';
 		}
 		return errorMessage;
 	}
-	
+
 	public String getResolutionFailureMessage(VersionConstraint unsatisfied) {
 		if (unsatisfied.isResolved())
 			throw new IllegalArgumentException();
@@ -170,7 +184,7 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 			IFeature verifiedFeature;
 			try {
 				verifiedFeature = features[i].getFeature(null);
-			} catch(CoreException e) {
+			} catch (CoreException e) {
 				String message = NLS.bind(Messages.exception_featureParse, features[i].getURL());
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
 			}
@@ -183,13 +197,9 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 			Version versionToMatch = Version.parseVersion(versionId.substring(0, qualifierIdx));
 			for (int i = 0; i < features.length; i++) {
 				Version featureVersion = Version.parseVersion(features[i].getVersionedIdentifier().getVersion().toString());
-				if (features[i].getVersionedIdentifier().getIdentifier().equals(featureId) &&
-						featureVersion.getMajor() == versionToMatch.getMajor() &&
-						featureVersion.getMinor() == versionToMatch.getMinor() &&
-						featureVersion.getMicro() >= versionToMatch.getMicro() &&
-						featureVersion.getQualifier().compareTo(versionToMatch.getQualifier()) >= 0)
+				if (features[i].getVersionedIdentifier().getIdentifier().equals(featureId) && featureVersion.getMajor() == versionToMatch.getMajor() && featureVersion.getMinor() == versionToMatch.getMinor() && featureVersion.getMicro() >= versionToMatch.getMicro() && featureVersion.getQualifier().compareTo(versionToMatch.getQualifier()) >= 0)
 					return features[i].getFeature(null);
-			}		
+			}
 		}
 		if (throwsException) {
 			String message = NLS.bind(Messages.exception_missingFeature, featureId);
@@ -218,5 +228,58 @@ public class BuildTimeSite extends Site implements ISite, IPDEBuildConstants, IX
 				BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, PI_PDEBUILD, WARNING_MISSING_SOURCE, NLS.bind(Messages.warning_cannotLocateSource, featureXML.getAbsolutePath()), e));
 			}
 		}
+	}
+
+	private SortedSet findAllReferencedPlugins() throws CoreException {
+		ArrayList rootFeatures = new ArrayList();
+		SortedSet allPlugins = new TreeSet();
+		for (Iterator iter = rootFeaturesForFilter.iterator(); iter.hasNext();) {
+			IFeature correspondingFeature = findFeature((String) iter.next(), null, true);
+			if (correspondingFeature == null)
+				return null;
+			rootFeatures.add(correspondingFeature);
+		}
+		for (Iterator iter = rootPluginsForFiler.iterator(); iter.hasNext();) {
+			allPlugins.add(new ReachablePlugin((String) iter.next(), ReachablePlugin.WIDEST_RANGE));
+		}
+		int it = 0;
+		while (it < rootFeatures.size()) {
+			IFeature toAnalyse = null;
+			try {
+				toAnalyse = (IFeature) rootFeatures.get(it++);
+			} catch (RuntimeException e) {
+				e.printStackTrace();
+			}
+			IIncludedFeatureReference[] includedRefs = toAnalyse.getIncludedFeatureReferences();
+			for (int i = 0; i < includedRefs.length; i++) {
+				rootFeatures.add(findFeature(includedRefs[i].getVersionedIdentifier().getIdentifier(), includedRefs[i].getVersionedIdentifier().getVersion().toString(), true));
+			}
+			IPluginEntry[] entries = toAnalyse.getPluginEntries();
+			for (int i = 0; i < entries.length; i++) {
+				allPlugins.add(new ReachablePlugin(entries[i]));
+			}
+			IImport[] imports = toAnalyse.getImports();
+			for (int i = 0; i < imports.length; i++) {
+				if (((Import) imports[i]).isFeatureImport()) {
+					VersionedIdentifier requiredFeature = imports[i].getVersionedIdentifier();
+					rootFeatures.add(findFeature(requiredFeature.getIdentifier(), requiredFeature.getVersion().toString(), true));
+				} else {
+					allPlugins.add(new ReachablePlugin(imports[i]));
+				}
+			}
+		}
+		return allPlugins;
+	}
+
+	public void setFilter(boolean filter) {
+		this.filter = filter;
+	}
+
+	public void setRootFeaturesForFilter(List rootFeaturesForFilter) {
+		this.rootFeaturesForFilter = rootFeaturesForFilter;
+	}
+
+	public void setRootPluginsForFiler(List rootPluginsForFiler) {
+		this.rootPluginsForFiler = rootPluginsForFiler;
 	}
 }

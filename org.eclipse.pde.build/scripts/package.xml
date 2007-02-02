@@ -40,7 +40,8 @@
 									baseLocation="${tempDirectory}/${featurePaths}" 
 									packagePropertyFile="${packagingPropertyFile}" 
 									deltaPack="${deltaPack}"
-									archivesFormat="${archivesFormat}"/> 
+									archivesFormat="${archivesFormat}"
+									filteredDependencyCheck="${filteredDependencyCheck}"/> 
 	</target>
 
 	<!-- Call the assemble.xml script -->
@@ -53,6 +54,7 @@
 		<property file="${packagingInfo}/packager.properties"/>
 		<property name="customTargets" location="${packagingInfo}/customTargets.xml"/>
 		<property name="packagingPropertyFile" location="${packagingInfo}/${packagingProperties}"/>
+		<property name="filteredDependencyCheck" value="false"/>
 		
 		<antcall target="init"/>
 		<antcall target="retrieveMapFiles"/>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,13 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	protected String[] sitePaths;
 	protected String[] pluginPath;
 	protected BuildTimeSiteFactory siteFactory;
+
+	/**
+	 * Indicate whether the content of the pdestate should only contain the plugins that are in the transitive closure of the features being built
+	 */
+	protected boolean filterState = false;
+	protected List featuresForFilterRoots = new ArrayList();
+	protected List pluginsForFilterRoots = new ArrayList();
 
 	protected boolean reportResolutionErrors;
 
@@ -153,7 +160,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			return;
 
 		try {
-			OutputStream scriptStream = new BufferedOutputStream(new FileOutputStream(scriptLocation + '/' + scriptName)); 
+			OutputStream scriptStream = new BufferedOutputStream(new FileOutputStream(scriptLocation + '/' + scriptName));
 			try {
 				script = new AntScript(scriptStream);
 			} catch (IOException e) {
@@ -227,6 +234,8 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 		if (siteFactory == null || refresh == true) {
 			siteFactory = new BuildTimeSiteFactory();
+			siteFactory.setFilterState(filterState);
+			siteFactory.setFilterRoots(featuresForFilterRoots, pluginsForFilterRoots);
 			siteFactory.setReportResolutionErrors(reportResolutionErrors);
 		}
 
@@ -297,11 +306,11 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		if (pdeUIState == null)
 			pdeUIState = new PDEUIStateWrapper();
 	}
-	
+
 	protected boolean havePDEUIState() {
 		return pdeUIState != null;
 	}
-	
+
 	//Find a file in a bundle or a feature.
 	//location is assumed to be structured like : /<featureId | pluginId>/path.to.the.file
 	protected String findFile(String location, boolean makeRelative) {
@@ -331,7 +340,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		} catch (CoreException e) {
 			//Ignore
 		}
-		if (feature == null) 
+		if (feature == null)
 			return null;
 		ISiteFeatureReference ref = feature.getSite().getFeatureReference(feature);
 		IPath featureBase = new Path(ref.getURL().getFile()).removeLastSegments(1);
@@ -346,5 +355,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		if (makeRelative)
 			return Utils.makeRelative(path, new Path(workingDirectory)).toOSString();
 		return result;
+	}
+
+	public void setFilterState(boolean filter) {
+		filterState = filter;
 	}
 }

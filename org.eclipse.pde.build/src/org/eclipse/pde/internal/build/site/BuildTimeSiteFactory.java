@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,11 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 	private boolean reportResolutionErrors;
 
 	private PDEUIStateWrapper pdeUIState;
+
+	//Support for filtering the state
+	private List rootFeaturesForFilter;
+	private List rootPluginsForFilter;
+	private boolean filterState;
 	
 	/** 
 	 * Create a build time site, using the sitePaths, and the installedBaseLocation.
@@ -101,7 +106,6 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 		ISiteContentProvider contentProvider = new BuildTimeSiteContentProvider(sitePaths, installedBaseURL, pdeUIState);
 		site.setSiteContentProvider(contentProvider);
 		contentProvider.setSite(site);
-		((BuildTimeSite) site).setReportResolutionErrors(reportResolutionErrors);
 		return site;
 	}
 
@@ -114,7 +118,12 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 	}
 
 	public SiteModel createSiteMapModel() {
-		return new BuildTimeSite();
+		BuildTimeSite model = new BuildTimeSite();
+		model.setReportResolutionErrors(reportResolutionErrors);
+		model.setFilter(filterState);
+		model.setRootFeaturesForFilter(rootFeaturesForFilter);
+		model.setRootPluginsForFiler(rootPluginsForFilter);
+		return model;
 	}
 
 	public static void setInstalledBaseSite(String installedBaseSite) {
@@ -168,6 +177,15 @@ public class BuildTimeSiteFactory extends BaseSiteFactory implements ISiteFactor
 
 	public void setInitialState(PDEUIStateWrapper uiState) {
 		this.pdeUIState = uiState;
+	}
+
+	public void setFilterState(boolean b) {
+		this.filterState = b;
+	}
+
+	public void setFilterRoots(List featuresForFilterRoots, List pluginsForFilterRoots) {
+		this.rootFeaturesForFilter = featuresForFilterRoots;
+		this.rootPluginsForFilter = pluginsForFilterRoots;
 	}
 	
 }

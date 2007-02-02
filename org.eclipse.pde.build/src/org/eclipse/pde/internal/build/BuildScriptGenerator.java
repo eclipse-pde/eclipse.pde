@@ -36,7 +36,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 * Indicates whether the resulting archive will contain a group of all the configurations
 	 */
 	protected boolean groupConfigs = false;
-	
+
 	/**
 	 * Source elements for script generation.
 	 */
@@ -64,7 +64,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	/** flag indicating if missing properties file should be logged */
 	private boolean ignoreMissingPropertiesFile = true;
-	
+
 	/** flag indicating if we should generate the plugin & feature versions lists */
 	private boolean generateVersionsList = false;
 
@@ -78,6 +78,11 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		List plugins = new ArrayList(5);
 		List features = new ArrayList(5);
 		sortElements(features, plugins);
+		pluginsForFilterRoots = plugins;
+		featuresForFilterRoots = features;
+		getSite(true); //This forces the creation of the siteFactory which contains all the parameters necessary to initialize.
+		//TODO To avoid this. What would be necessary is use the BuildTimeSiteFactory to store the values that are stored in the AbstractScriptGenerator and to pass the parameters to a new BuildTimeSiteFacotry when created.
+		//More over this would allow us to remove some of the setters when creating a new featurebuildscriptgenerator.
 
 		// It is not required to filter in the two first generateModels, since
 		// it is only for the building of a single plugin
@@ -116,9 +121,9 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 				//Filtering is not required here, since we are only generating the
 				// build for a plugin or a fragment
 				String model = (String) iterator.next();
-				generator.setBuildSiteFactory(null);
+				generator.setBuildSiteFactory(siteFactory);
 				generator.setModelId(model);
-				
+
 				generator.setPluginPath(pluginPath);
 				generator.setDevEntries(devEntries);
 				generator.setCompiledElements(generator.getCompiledElements());
@@ -158,7 +163,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 				generator.setBinaryFeatureGeneration(true);
 				generator.setScriptGeneration(generateBuildScript);
 				generator.setPluginPath(pluginPath);
-				generator.setBuildSiteFactory(null);
+				generator.setBuildSiteFactory(siteFactory);
 				generator.setDevEntries(devEntries);
 				generator.setSourceToGather(new SourceFeatureInformation());//
 				generator.setCompiledElements(generator.getCompiledElements());
@@ -210,7 +215,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		for (Iterator iter = configs.iterator(); iter.hasNext();) {
 			Config config = (Config) iter.next();
 			String configString = config.toStringReplacingAny("_", ANY_STRING); //$NON-NLS-1$
-			
+
 			//Features
 			Collection list = assemblageInformation.getFeatures(config);
 			versions.clear();
@@ -240,7 +245,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		//Create a file containing all the feature versions  
 		versions.clear();
 		String featureFile = DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX;
-		readVersions(versions,featureFile);
+		readVersions(versions, featureFile);
 		for (Iterator i = features.iterator(); i.hasNext();) {
 			IFeature feature = (IFeature) i.next();
 			VersionedIdentifier id = feature.getVersionedIdentifier();
@@ -258,7 +263,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		}
 		saveVersions(versions, pluginVersion);
 	}
-	
+
 	protected void recordVersion(String name, Version version, Properties properties) {
 		String versionString = version.toString();
 		if (properties.containsKey(name)) {
@@ -272,7 +277,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		String suffix = '_' + String.valueOf(version.getMajor()) + '.' + String.valueOf(version.getMinor()) + '.' + String.valueOf(version.getMicro());
 		properties.put(name + suffix, versionString);
 	}
- 
+
 	private String getFilePath(String fileName) {
 		return workingDirectory + '/' + fileName;
 	}
@@ -305,7 +310,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, null));
 		}
 	}
- 
+
 	protected void generatePackageScripts(AssemblyInformation assemblageInformation, String[] featureInfo, BuildTimeSiteFactory factory) throws CoreException {
 		PackageScriptGenerator assembler = null;
 		assembler = new PackageScriptGenerator(workingDirectory, assemblageInformation, featureInfo[0]);
@@ -383,7 +388,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	public void setGenerateVersionsList(boolean generateVersionsList) {
 		this.generateVersionsList = generateVersionsList;
 	}
-	
+
 	/**
 	 * @param value The reportResolutionErrors to set.
 	 */
@@ -409,23 +414,26 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	public void setGenerateJnlp(boolean value) {
 		generateJnlp = value;
 	}
-	
+
 	public void setGenerateFeatureVersionSuffix(boolean value) {
 		generateFeatureVersionSuffix = value;
 	}
 
 	private class ArchiveTable extends HashMap {
 		private static final long serialVersionUID = -3063402400461435816L;
+
 		public ArchiveTable(int size) {
 			super(size);
 		}
-		public  Object get(Object arg0) {
+
+		public Object get(Object arg0) {
 			Object result = super.get(arg0);
 			if (result == null)
 				result = IXMLConstants.FORMAT_ANTZIP;
 			return result;
 		}
 	}
+
 	public void setArchivesFormat(String archivesFormatAsString) throws CoreException {
 		if (Utils.getPropertyFormat(PROPERTY_ARCHIVESFORMAT).equalsIgnoreCase(archivesFormatAsString)) {
 			archivesFormat = new ArchiveTable(0);
@@ -468,4 +476,5 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	public void setGroupConfigs(boolean value) {
 		groupConfigs = value;
 	}
+
 }
