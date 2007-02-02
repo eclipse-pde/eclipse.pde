@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.Stack;
 import java.util.zip.ZipFile;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -34,6 +36,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuildEntry;
@@ -51,7 +54,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.search.dependencies.AddNewDependenciesOperation;
+import org.eclipse.pde.internal.ui.search.dependencies.AddNewBinaryDependenciesOperation;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.IPluginContentWizard;
@@ -323,14 +326,46 @@ public class NewLibraryPluginCreationOperation extends
 			monitor.done();
 			return;
 		}
+		final boolean unzip = fData.isUnzipLibraries(); 
 		try {
-			new AddNewDependenciesOperation(project, (IBundlePluginModelBase)model){
+			new AddNewBinaryDependenciesOperation(project, (IBundlePluginModelBase)model){
+				// Need to override this function to include every bundle in the target platform as a possible dependency
 				protected String[] findSecondaryBundles(IBundle bundle, Set ignorePkgs) {
 					IPluginModelBase[] bases = PluginRegistry.getActiveModels();
 					String[] ids = new String[bases.length];
-					for (int i = 0; i < bases.length; i++) 
-						ids[i] = bases[i].getBundleDescription().getSymbolicName();
+					for (int i = 0; i < bases.length; i++) {
+						BundleDescription desc = bases[i].getBundleDescription();
+						if (desc == null)
+							ids[i] = bases[i].getPluginBase().getId();
+						else
+							ids[i] = desc.getSymbolicName();
+					}
 					return ids;
+				}
+				
+				// Need to override this function because when jar is unzipped, build.properties does not contain entry for '.'.
+				// Therefore, the super.addProjectPackages will not find the project packages(it includes only things in bin.includes)
+				protected void addProjectPackages(IBundle bundle, Set ignorePkgs) {
+					if (!unzip)
+						super.addProjectPackages(bundle, ignorePkgs);
+					Stack stack = new Stack();
+					stack.push(fProject);
+					try {
+						while (!stack.isEmpty()) {
+							IContainer folder = (IContainer)stack.pop();
+							IResource[] children = folder.members();
+							for (int i = 0; i < children.length; i++) {
+								if (children[i] instanceof IContainer)
+									stack.push(children[i]);
+								else if ("class".equals(((IFile)children[i]).getFileExtension())) { //$NON-NLS-1$
+									String path = folder.getProjectRelativePath().toString();
+									ignorePkgs.add(path.replace('/', '.'));
+								}
+							}
+						}
+					} catch(CoreException e) {
+					}
+					
 				}
 			}.run(monitor);
 		} catch (InvocationTargetException e) {

@@ -223,6 +223,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String OverviewPage_environmentTitle;
 
+	public static String PackageFinder_taskName;
+
 	public static String PointSelectionPage_cannotFindTemplate;
 
 	public static String SimpleCSCommandDetails_msgFieldDisabledCommand;
