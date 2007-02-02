@@ -55,6 +55,14 @@ public class FeatureGeneratorTask extends Task {
 	}
 
 	/**
+	 * Set whether or not to automatically include the launchers in the product
+	 * Default is true
+	 * @param includeLaunchers
+	 */
+	public void setIncludeLaunchers(boolean includeLaunchers) {
+		generator.setIncludeLaunchers(includeLaunchers);
+	}
+	/**
 	 * Set a location that contains plugins and features required by plugins and features 
 	 * for which the feature is being generated
 	 * @param baseLocation

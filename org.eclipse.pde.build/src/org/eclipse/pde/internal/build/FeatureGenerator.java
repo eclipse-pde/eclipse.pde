@@ -17,29 +17,59 @@ import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.site.PDEState;
+import org.eclipse.update.core.IFeature;
+import org.osgi.framework.Version;
 
 public class FeatureGenerator extends AbstractScriptGenerator {
-	private static final String LAUNCHER_FEATURE_NAME = "org.eclipse.platform.launchers"; //$NON-NLS-1$
 
+	private static final String FEATURE_PLATFORM_LAUNCHERS = "org.eclipse.platform.launchers"; //$NON-NLS-1$
+	private static final String FEATURE_EXECUTABLE = "org.eclipse.equinox.executable"; //$NON-NLS-1$
+	private static final String BUNDLE_OSGI = "org.eclipse.osgi"; //$NON-NLS-1$
+	private static final String BUNDLE_LAUNCHER = "org.eclipse.equinox.launcher"; //$NON-NLS-1$
+	private static final String FRAGMENT_LAUNCHER_WIN32 = "org.eclipse.equinox.launcher.win32.win32.x86"; //$NON-NLS-1$
+	private static final String FRAGMENT_LAUNCHER_MACOSX = "org.eclipse.equinox.launcher.carbon.macosx"; //$NON-NLS-1$
+	private static final String FRAGMENT_LAUNCHER_AIX = "org.eclipse.equinox.launcher.motif.aix.ppc"; //$NON-NLS-1$
+	private static final String FRAGMENT_LAUNCHER_HPUX = "org.eclipse.equinox.launcher.motif.hpux.PA_RISC"; //$NON-NLS-1$
+	private static final String FRAGMENT_LAUNCHER_SOLARIS = "org.eclipse.equinox.launcher.gtk.solaris.sparc"; //$NON-NLS-1$
+	private static final String FRAGMENT_LAUNCHER_LINUX_PPC = "org.eclipse.equinox.launcher.gtk.linux.ppc"; //$NON-NLS-1$
+	private static final String FRAGMENT_LAUNCHER_LINUX = "org.eclipse.equinox.launcher.gtk.linux.x86"; //$NON-NLS-1$
+	private static final String FRAGMENT_LAUNCHER_LINUX64 = "org.eclipse.equinox.launcher.gtk.linux.x86_64"; //$NON-NLS-1$
+			
 	private String featureId = null;
 	private String productFile = null;
 	private String[] pluginList = null;
 	private String [] fragmentList = null;
 	private String[] featureList = null;
+	
+	private boolean includeLaunchers = true;
 
 	private ProductFile product = null;
 
 	private boolean verify = false;
 	
+	/*
+	 * Create and return a new Set with the given contents. If the arg
+	 * is null then return an empty set.
+	 */
+	private static Set createSet(String[] contents) {
+		if (contents == null)
+			return new HashSet(0);
+		Set result = new HashSet(contents.length);
+		for (int i = 0; i < contents.length; i++)
+			if (contents[i] != null)
+				result.add(contents[i]);
+		return result;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.build.AbstractScriptGenerator#generate()
 	 */
 	public void generate() throws CoreException {
 		initialize();
 
-		List plugins = pluginList != null ? new ArrayList(Arrays.asList(pluginList)) : new ArrayList();
-		List features = featureList != null ? new ArrayList(Arrays.asList(featureList)) : new ArrayList();
-		List fragments = fragmentList != null ? new ArrayList(Arrays.asList(fragmentList)) : new ArrayList();
+		Set plugins = createSet(pluginList);
+		Set features = createSet(featureList);
+		Set fragments = createSet(fragmentList);
 		if (product != null) {
 			if(product.useFeatures()) {
 				features.addAll(product.getFeatures());
@@ -76,6 +106,10 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		this.featureId = featureId;
 	}
 	
+	public void setIncludeLaunchers(boolean includeLaunchers) {
+		this.includeLaunchers = includeLaunchers;
+	}
+	
 	private void initialize() throws CoreException{
 		//get rid of old feature that we will be overwriting, we don't want it in the state accidently.
 		File dir = new File(getWorkingDirectory(), IPDEBuildConstants.DEFAULT_FEATURE_LOCATION + '/' + featureId);
@@ -97,8 +131,47 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			}
 		} 
 	}
-	
-	protected void createFeature(String feature, List plugins, List fragments, List features) throws CoreException, FileNotFoundException {
+
+	/*
+	 * Based on the version of OSGi that we have in our state, add the appropriate plug-ins/fragments/features
+	 * for the launcher.
+	 */
+	private void addLauncher(PDEState state, Set plugins, Set fragments, Set features) {
+		BundleDescription bundle = state.getResolvedBundle(BUNDLE_OSGI);
+		if (bundle == null)
+			return;
+		Version version = bundle.getVersion();
+		if (version.compareTo(new Version("3.3")) < 0) { //$NON-NLS-1$
+			// we have an OSGi version that is less than 3.3 so add the old launcher
+			features.add(FEATURE_PLATFORM_LAUNCHERS);
+		} else {
+			// we have OSGi version 3.3 or greater so add the executable feature
+			// and the launcher plug-in and fragments
+			IFeature executableFeature = null;
+			try {
+				 executableFeature = getSite(false).findFeature(FEATURE_EXECUTABLE, null, false);
+			} catch (CoreException e) {
+				// ignore
+			}
+			if (executableFeature != null ) {
+				/* the executable feature includes the launcher and fragments already */
+				features.add(FEATURE_EXECUTABLE);
+			} else {
+				// We don't have the executable feature, at least try and get the launcher jar and fragments 
+				plugins.add(BUNDLE_LAUNCHER);
+				fragments.add(FRAGMENT_LAUNCHER_WIN32);
+				fragments.add(FRAGMENT_LAUNCHER_MACOSX);
+				fragments.add(FRAGMENT_LAUNCHER_AIX);
+				fragments.add(FRAGMENT_LAUNCHER_HPUX);
+				fragments.add(FRAGMENT_LAUNCHER_SOLARIS);
+				fragments.add(FRAGMENT_LAUNCHER_LINUX_PPC);
+				fragments.add(FRAGMENT_LAUNCHER_LINUX);
+				fragments.add(FRAGMENT_LAUNCHER_LINUX64);
+			}
+		}
+	}
+
+	protected void createFeature(String feature, Set plugins, Set fragments, Set features) throws CoreException, FileNotFoundException {
 		String location = IPDEBuildConstants.DEFAULT_FEATURE_LOCATION + '/' + feature;
 		File directory = new File(getWorkingDirectory(), location);
 		if (!directory.exists())
@@ -106,6 +179,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 
 		PDEState state = verify ? getSite(false).getRegistry() : null;
 		BundleHelper helper = BundleHelper.getDefault();
+
+		if (verify && includeLaunchers)
+			addLauncher(state, plugins, fragments, features);
 
 		//Create feature.xml
 		File file = new File(directory, Constants.FEATURE_FILENAME_DESCRIPTOR);
@@ -129,7 +205,12 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		//we do the generic config first as a special case
 		configs.remove(Config.genericConfig());
 		Iterator configIterator = configs.iterator();
-		ListIterator listIter = plugins.listIterator();
+		Iterator listIter = plugins.iterator();
+		if(!listIter.hasNext()) {
+			// no plugins, do fragments
+			fragment = true;
+			listIter = fragments.iterator();
+		}
 		for (	Config currentConfig = Config.genericConfig(); currentConfig != null; currentConfig = (Config) configIterator.next()) {
 			environment.put("osgi.os", currentConfig.getOs()); //$NON-NLS-1$
 			environment.put("osgi.ws", currentConfig.getWs()); //$NON-NLS-1$
@@ -190,25 +271,21 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 				if (!fragment && !listIter.hasNext() && fragments.size() > 0) {
 					//finished the list of plugins, do the fragments now
 					fragment = true;
-					listIter = fragments.listIterator();
+					listIter = fragments.iterator();
 				}
 			}
 			if(!verify || !configIterator.hasNext()){
 				break;
 			} else if(plugins.size() > 0 ){
 				fragment = false;
-				listIter = plugins.listIterator();
+				listIter = plugins.iterator();
 			} else {
-				listIter = fragments.listIterator();
+				listIter = fragments.iterator();
 			}
 		}
 		
-		boolean hasLaunchers = false;
 		for (Iterator iter = features.iterator(); iter.hasNext();) {
 			String name = (String) iter.next();
-			if (name.equals(LAUNCHER_FEATURE_NAME)) {
-				hasLaunchers = true;	
-			}
 			if (verify) {
 				//this will throw an exception if the feature is not found.
 				getSite(false).findFeature(name, null, true);
@@ -216,13 +293,6 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			parameters.clear();
 			parameters.put("id", name); //$NON-NLS-1$
 			parameters.put("version", "0.0.0");  //$NON-NLS-1$//$NON-NLS-2$
-			writer.printTag("includes", parameters, true, true, true); //$NON-NLS-1$
-		}
-		if (!hasLaunchers) {
-			parameters.clear();
-			parameters.put("id", LAUNCHER_FEATURE_NAME); //$NON-NLS-1$
-			parameters.put("version", "0.0.0");  //$NON-NLS-1$//$NON-NLS-2$
-			parameters.put("optional", "true");  //$NON-NLS-1$//$NON-NLS-2$
 			writer.printTag("includes", parameters, true, true, true); //$NON-NLS-1$
 		}
 		writer.endTag("feature"); //$NON-NLS-1$

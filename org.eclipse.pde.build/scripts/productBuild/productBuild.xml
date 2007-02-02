@@ -9,6 +9,7 @@
 <property name="pluginPath" value=""/>
 <property name="pluginList" value=""/>
 <property name="featureList" value=""/>
+<property name="includeLaunchers" value="true"/>
 
 <!-- ===================================================================== -->
 <!-- main entry point to setup, fetch, generate, build etc. Use -->
@@ -46,6 +47,7 @@
 		configInfo="${configs}"
 		pluginList="${pluginList}"
 		featureList="${featureList}"
+		includeLaunchers="${includeLaunchers}"
 	/>
 </target>
 
