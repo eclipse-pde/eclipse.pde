@@ -499,6 +499,8 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		
 		while (!stack.isEmpty()) {
 			IPluginModelBase base = PluginRegistry.findModel(stack.pop().toString());
+			if (base == null)
+				continue;
 			IPluginImport[] imports = base.getPluginBase().getImports();
 			
 			for (int j = 0; j < imports.length; j++) 
