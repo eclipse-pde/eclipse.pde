@@ -236,7 +236,7 @@ public abstract class PluginObject
 	
 	public Object getAdapter(Class adapter) {
 		if(adapter.equals(IPluginModelBase.class)) {
-			return getModel();
+			return getPluginModel();
 		}
 		return super.getAdapter(adapter);
 	}
