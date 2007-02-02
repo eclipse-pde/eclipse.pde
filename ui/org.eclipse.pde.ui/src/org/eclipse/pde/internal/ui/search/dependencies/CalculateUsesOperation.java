@@ -62,7 +62,7 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 			if (packages.isEmpty())
 				return;
 			Map pkgsAndUses = findPackageReferences(packages, monitor);
-			setUsesDirectives(pkgsAndUses);
+			handleSetUsesDirectives(pkgsAndUses);
 		} finally {
 			monitor.done();
 		}
@@ -172,6 +172,12 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 	protected final void addPackages(String[] typeSignatures, Set pkgs, IType type, boolean binary) throws JavaModelException {
 		for (int i = 0; i < typeSignatures.length; i++) 
 			addPackage(typeSignatures[i], pkgs, type, binary);
+	}
+	
+	protected void handleSetUsesDirectives(Map pkgsAndUses) {
+		if (pkgsAndUses.isEmpty())
+			return;
+		setUsesDirectives(pkgsAndUses);
 	}
 	
 	protected void setUsesDirectives(Map pkgsAndUses) {

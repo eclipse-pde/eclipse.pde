@@ -43,6 +43,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
@@ -55,6 +56,7 @@ import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.search.dependencies.CalculateUsesAction;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.search.ui.NewSearchUI;
@@ -76,6 +78,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
     private static final int ADD_INDEX = 0;
     private static final int REMOVE_INDEX = 1;
     private static final int PROPERTIES_INDEX = 2;
+    private static final int CALCULATE_USE_INDEX = 3;
     
 	class ExportPackageContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
@@ -118,7 +121,8 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 				page,
 				parent,
 				Section.DESCRIPTION,
-				new String[] {PDEUIMessages.ExportPackageSection_add, PDEUIMessages.ExportPackageSection_remove, PDEUIMessages.ExportPackageSection_properties}); 
+				new String[] {PDEUIMessages.ExportPackageSection_add, PDEUIMessages.ExportPackageSection_remove,
+						PDEUIMessages.ExportPackageSection_properties, PDEUIMessages.ExportPackageSection_uses}); 
 	}
 
     private boolean isFragment() {
@@ -216,6 +220,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
         tablePart.setButtonEnabled(ADD_INDEX, isEditable());
         tablePart.setButtonEnabled(REMOVE_INDEX, isEditable() && selected.length > 0);
     	tablePart.setButtonEnabled(PROPERTIES_INDEX, shouldEnableProperties(selected));  
+    	tablePart.setButtonEnabled(CALCULATE_USE_INDEX, isEditable() && fPackageViewer.getTable().getItemCount() > 0);
         
     }
 	
@@ -282,6 +287,9 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
             break;
         case PROPERTIES_INDEX:
             handleOpenProperties();
+            break;
+        case CALCULATE_USE_INDEX:
+        	calculateUses();
         }
 	}
 
@@ -488,4 +496,10 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
     }
 
 	protected boolean createCount() { return true; }
+	
+	private void calculateUses() {
+		final IProject proj = getPage().getPDEEditor().getCommonProject();
+		Action action = new CalculateUsesAction(proj, (IBundlePluginModelBase)getPage().getModel());
+		action.run();
+	}
 }
