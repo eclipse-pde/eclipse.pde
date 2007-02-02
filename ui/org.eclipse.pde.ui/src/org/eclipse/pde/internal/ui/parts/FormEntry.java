@@ -45,6 +45,9 @@ public class FormEntry {
 	private boolean fDirty;
 	boolean fIgnoreModify = false;
 	private IFormEntryListener fListener;
+	
+	public static final int F_DEFAULT_TEXT_WIDTH_HINT = 100;
+	
 	/**
 	 * The default constructor. Call 'createControl' to make it.
 	 *  
@@ -110,6 +113,9 @@ public class FormEntry {
 			});
 		}
 		fillIntoGrid(parent, indent, tcolspan);
+		// Set the default text width hint and let clients modify accordingly
+		// after the fact
+		setTextWidthHint(F_DEFAULT_TEXT_WIDTH_HINT);
 	}
 	public void setEditable(boolean editable) {
 		fText.setEditable(editable);
@@ -318,4 +324,20 @@ public class FormEntry {
 			fBrowse.setVisible(visible);
 	}
 
+	/**
+	 * If GridData was used, set the width hint.  If TableWrapData was used
+	 * set the max width.  If no layout data was specified, this method does
+	 * nothing.
+	 * @param width
+	 */
+	public void setTextWidthHint(int width) {
+		Object data = getText().getLayoutData();
+		if (data == null) {
+			return;
+		} else if (data instanceof GridData) {
+			((GridData)data).widthHint = width;
+		} else if (data instanceof TableWrapData) {
+			((TableWrapData)data).maxWidth = width;
+		}
+	}
 }

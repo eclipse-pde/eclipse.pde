@@ -21,13 +21,12 @@ import org.eclipse.pde.internal.ui.editor.EditorUtilities;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.validation.TextValidator;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.FileExtensionFilter;
 import org.eclipse.pde.internal.ui.util.FileValidator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -48,7 +47,7 @@ public class AboutSection extends PDESection {
 	private FormEntry fImageEntry;
 	private FormEntry fTextEntry;
 	
-	private ImageEntryValidator fImageEntryValidator;
+	private TextValidator fImageEntryValidator;
 
 	public AboutSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
@@ -71,12 +70,10 @@ public class AboutSection extends PDESection {
 		fImageEntry = new FormEntry(client, toolkit, PDEUIMessages.AboutSection_image, PDEUIMessages.AboutSection_browse, isEditable());
 		fImageEntry.setEditable(isEditable());
 		// Create validator
-		fImageEntryValidator = new ImageEntryValidator(
-				getManagedForm(), fImageEntry.getText()) {
+		fImageEntryValidator = new TextValidator(
+				getManagedForm(), fImageEntry.getText(), getProject(), true) {
 			protected boolean validateControl() {
-				return EditorUtilities.imageEntrySizeDoesNotExceed(
-						fImageEntryValidator, fImageEntry, getProduct(),
-						500, 330, 250, 330);
+				return validateImageEntry();
 			}
 		};
 		fImageEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
@@ -88,12 +85,6 @@ public class AboutSection extends PDESection {
 			}
 			public void linkActivated(HyperlinkEvent e) {
 				EditorUtilities.openImage(fImageEntry.getValue(), getProduct().getDefiningPluginId());
-			}
-		});
-		// Validate on modify
-		fImageEntry.getText().addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				fImageEntryValidator.validate();
 			}
 		});
 		
@@ -114,6 +105,15 @@ public class AboutSection extends PDESection {
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
+	}
+	
+	/**
+	 * @return
+	 */
+	private boolean validateImageEntry() {
+		return EditorUtilities.imageEntrySizeDoesNotExceed(
+				fImageEntryValidator, fImageEntry, getProduct(),
+				500, 330, 250, 330);
 	}
 	
 	private void handleBrowse() {

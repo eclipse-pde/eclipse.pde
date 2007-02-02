@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -24,6 +26,8 @@ import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
+import org.eclipse.pde.internal.ui.editor.validation.ControlValidationUtility;
+import org.eclipse.pde.internal.ui.editor.validation.TextValidator;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Composite;
@@ -42,7 +46,20 @@ public abstract class GeneralInfoSection extends PDESection {
 	private FormEntry fNameEntry;
 	private FormEntry fProviderEntry;
 	private FormEntry fPlatformFilterEntry;
+	
+	private TextValidator fIdEntryValidator;
 
+	private TextValidator fVersionEntryValidator;
+
+	private TextValidator fNameEntryValidator;
+
+	private TextValidator fProviderEntryValidator;
+
+	private TextValidator fPlatformEntryValidator;
+	
+	private IPluginModelBase fModel; 
+	
+	
 	public GeneralInfoSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
 		createClient(getSection(), page.getEditor().getToolkit());
@@ -84,6 +101,21 @@ public abstract class GeneralInfoSection extends PDESection {
 		return ((IPluginModelBase) model).getPluginBase();
 	}
 	
+	/**
+	 * Not using the aggregate model from the form editor because it is 
+	 * a different model instance from the one used by the bundle error
+	 * reporter.  Things get out of sync between the form validator and 
+	 * source validator
+	 * @return
+	 */
+	protected IPluginModelBase getModelBase() {
+		// Find the model only on the first call
+		if (fModel == null) {
+			fModel = PluginRegistry.findModel(getProject());
+		}
+		return fModel;
+	}
+	
 	protected boolean isBundle() {
 		return getBundleContext() != null;
 	}
@@ -114,6 +146,22 @@ public abstract class GeneralInfoSection extends PDESection {
 			}
 		});
 		fIdEntry.setEditable(isEditable());
+		// Create validator
+		fIdEntryValidator = new TextValidator(getManagedForm(), 
+				fIdEntry.getText(), getProject(), true) {
+			protected boolean validateControl() {
+				return validateIdEntry();
+			}
+		};
+	}
+	
+	/**
+	 * @return
+	 */
+	private boolean validateIdEntry() {
+		// Value must be specified
+		return ControlValidationUtility.validateRequiredField(
+				fIdEntry.getText().getText(), fIdEntryValidator, IMessageProvider.ERROR);
 	}
 	
 	private void createVersionEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
@@ -128,6 +176,28 @@ public abstract class GeneralInfoSection extends PDESection {
 			}
 		});
 		fVersionEntry.setEditable(isEditable());
+		// Create validator
+		fVersionEntryValidator = new TextValidator(getManagedForm(), 
+				fVersionEntry.getText(), getProject(), true) {
+			protected boolean validateControl() {
+				return validateVersionEntry();
+			}
+		};
+	}
+	
+	/**
+	 * @return
+	 */
+	private boolean validateVersionEntry() {
+		// Value must be specified
+		if (ControlValidationUtility.validateRequiredField(
+				fVersionEntry.getText().getText(), 
+				fVersionEntryValidator, IMessageProvider.ERROR) == false) {
+			return false;
+		}
+		// Value must be a valid version
+		return ControlValidationUtility.validateVersionField(
+				fVersionEntry.getText().getText(), fVersionEntryValidator);
 	}
 	
 	private void createNameEntry(Composite client, FormToolkit toolkit,IActionBars actionBars) {
@@ -142,6 +212,29 @@ public abstract class GeneralInfoSection extends PDESection {
 			}
 		});
 		fNameEntry.setEditable(isEditable());
+		// Create validator
+		fNameEntryValidator = new TextValidator(getManagedForm(), 
+				fNameEntry.getText(), getProject(), true) {
+			protected boolean validateControl() {
+				return validateNameEntry();
+			}
+		};
+	}
+	
+	/**
+	 * @return
+	 */
+	private boolean validateNameEntry() {
+		// Value must be specified
+		if (ControlValidationUtility.validateRequiredField(
+				fNameEntry.getText().getText(), fNameEntryValidator,
+				IMessageProvider.ERROR) == false) {
+			return false;
+		}
+		// Value must be externalized
+		return ControlValidationUtility.validateTranslatableField(
+				fNameEntry.getText().getText(), fNameEntryValidator,
+				getModelBase(), getProject());
 	}
 	
 	private void createProviderEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
@@ -156,6 +249,27 @@ public abstract class GeneralInfoSection extends PDESection {
 			}
 		});
 		fProviderEntry.setEditable(isEditable());
+		// Create validator
+		fProviderEntryValidator = new TextValidator(getManagedForm(), 
+				fProviderEntry.getText(), getProject(), true) {
+			protected boolean validateControl() {
+				return validateProviderEntry();
+			}
+		};
+	}
+	
+	/**
+	 * @return
+	 */
+	private boolean validateProviderEntry() {
+		// No validation required for an optional field
+		if (fProviderEntry.getText().getText().length() == 0) {
+			return true;
+		}		
+		// Value must be externalized
+		return ControlValidationUtility.validateTranslatableField(
+				fProviderEntry.getText().getText(), fProviderEntryValidator,
+				getModelBase(), getProject());
 	}
 	
 	private void createPlatformFilterEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
@@ -166,8 +280,28 @@ public abstract class GeneralInfoSection extends PDESection {
 			}
 		});
 		fPlatformFilterEntry.setEditable(isEditable());
+		// Create validator
+		fPlatformEntryValidator = new TextValidator(getManagedForm(), 
+				fPlatformFilterEntry.getText(), getProject(), true) {
+			protected boolean validateControl() {
+				return validatePlatformEntry();
+			}
+		};
 	}
-
+	
+	/**
+	 * @return
+	 */
+	private boolean validatePlatformEntry() {
+		// No validation required for an optional field
+		if (fPlatformFilterEntry.getText().getText().length() == 0) {
+			return true;
+		}
+		// Value must match the current environment and contain valid syntax
+		return ControlValidationUtility.validatePlatformFilterField(
+				fPlatformFilterEntry.getText().getText(), 
+				fPlatformEntryValidator);
+	}
 	
 	public void commit(boolean onSave) {
 		fIdEntry.commit();

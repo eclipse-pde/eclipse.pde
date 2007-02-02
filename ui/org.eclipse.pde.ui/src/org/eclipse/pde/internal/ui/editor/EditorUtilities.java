@@ -32,8 +32,8 @@ import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.product.ImageEntryValidator;
 import org.eclipse.pde.internal.ui.editor.product.LauncherSection;
+import org.eclipse.pde.internal.ui.editor.validation.IValidatorMessageHandler;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.ImageData;
@@ -71,7 +71,7 @@ public class EditorUtilities {
 	}
 	
 	
-	private static ImageData[] getImageData(ImageEntryValidator validator, 
+	private static ImageData[] getImageData(IValidatorMessageHandler validator, 
 			FormEntry provider,
 			IProduct product) {
 		String imagePath = provider.getText().getText();
@@ -93,7 +93,7 @@ public class EditorUtilities {
 		} catch (IOException e) {
 			message = PDEUIMessages.EditorUtilities_invalidFilePath;
 		}
-		validator.handleMessage(message, IMessageProvider.WARNING, true, provider);
+		handleMessage(validator, message, IMessageProvider.WARNING, true, provider);
 		return null;
 	}
 	
@@ -101,7 +101,7 @@ public class EditorUtilities {
 		return provider.getText().getText().length() == 0;
 	}
 
-	private static boolean imageEntryInternalValidate(ImageEntryValidator validator, FormEntry provider, IProduct product, ValidationInfo info, int validationType) {
+	private static boolean imageEntryInternalValidate(IValidatorMessageHandler validator, FormEntry provider, IProduct product, ValidationInfo info, int validationType) {
 		if (containsEmptyField(provider))
 			return true;
 		ImageData[] idata = getImageData(validator, provider, product);
@@ -125,17 +125,17 @@ public class EditorUtilities {
 		}
 		
 		if (ms != null)
-			validator.handleMessage(ms.fMessage, ms.fSeverity, ms.fShowField, provider);
+			handleMessage(validator, ms.fMessage, ms.fSeverity, ms.fShowField, provider);
 		
 		return ms == null;
 	}
 	
-	public static boolean imageEntryHasValidIco(ImageEntryValidator validator, FormEntry provider, IProduct product) {
+	public static boolean imageEntryHasValidIco(IValidatorMessageHandler validator, FormEntry provider, IProduct product) {
 		ValidationInfo info = new ValidationInfo();
 		return imageEntryInternalValidate(validator, provider, product, info, F_ICO_IMAGE);
 	}
 	
-	public static boolean imageEntrySizeDoesNotExceed(ImageEntryValidator validator, 
+	public static boolean imageEntrySizeDoesNotExceed(IValidatorMessageHandler validator, 
 			FormEntry provider,
 			IProduct product, int mwidth, int mheight, int wwidth, int wheight) {
 		ValidationInfo info = new ValidationInfo();
@@ -146,7 +146,7 @@ public class EditorUtilities {
 		return imageEntryInternalValidate(validator, provider, product, info, F_MAX_IMAGE_SIZE);
 	}
 	
-	public static boolean imageEntryHasExactSize(ImageEntryValidator validator, 
+	public static boolean imageEntryHasExactSize(IValidatorMessageHandler validator, 
 			FormEntry provider,
 			IProduct product, int width, int height) {
 		ValidationInfo info = new ValidationInfo();
@@ -155,7 +155,7 @@ public class EditorUtilities {
 		return imageEntryInternalValidate(validator, provider, product, info, F_EXACT_IMAGE_SIZE);
 	}
 	
-	public static boolean imageEntryHasExactDepthAndSize(ImageEntryValidator validator, 
+	public static boolean imageEntryHasExactDepthAndSize(IValidatorMessageHandler validator, 
 			FormEntry provider,
 			IProduct product, int width, int height, int depth) {
 		ValidationInfo info = new ValidationInfo();
@@ -296,4 +296,26 @@ public class EditorUtilities {
 		} catch (PartInitException e) {
 		}		
 	}
+	
+	/**
+	 * @param validator
+	 * @param message
+	 * @param severity
+	 * @param writeField
+	 * @param provider
+	 */
+	public static void handleMessage(IValidatorMessageHandler validator,
+			String message, int severity, boolean writeField, FormEntry provider) {
+		if (message != null) {
+			StringBuffer sb = new StringBuffer();
+			if (writeField) {
+				sb.append(provider.getText().getText());
+				sb.append(" - "); //$NON-NLS-1$
+			}
+			sb.append(message);
+			// Delegate message handling 
+			validator.addMessage(sb.toString(), severity);
+		}
+	}	
+	
 }

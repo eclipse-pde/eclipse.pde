@@ -175,6 +175,18 @@ public class PDEUIMessages extends NLS {
 
 	public static String ContentSection_addDialogButtonLabel;
 
+	public static String ControlValidationUtility_errorMsgFilterInvalidSyntax;
+
+	public static String ControlValidationUtility_errorMsgKeyNotFound;
+
+	public static String ControlValidationUtility_errorMsgNotOnClasspath;
+
+	public static String ControlValidationUtility_errorMsgPluginUnresolved;
+
+	public static String ControlValidationUtility_errorMsgValueMustBeSpecified;
+
+	public static String ControlValidationUtility_errorMsgValueNotExternalized;
+
 	public static String CSRegisterCSDetails_linkFormattingTags;
 
 	public static String DirectorySelectionPage_add;

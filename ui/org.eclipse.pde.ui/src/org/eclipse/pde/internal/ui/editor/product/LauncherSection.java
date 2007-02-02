@@ -29,6 +29,7 @@ import org.eclipse.pde.internal.ui.editor.EditorUtilities;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.validation.TextValidator;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.FileExtensionFilter;
 import org.eclipse.pde.internal.ui.util.FileValidator;
@@ -67,9 +68,9 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class LauncherSection extends PDESection {
 	
-	private ImageEntryValidator[] fMultipleWinIconValidator;
+	private TextValidator[] fMultipleWinIconValidator;
 	
-	private ImageEntryValidator fSingleWinIconValidator;
+	private TextValidator fSingleWinIconValidator;
 	
 	private static final String[] F_WIN_ICON_LABELS = new String[] {
 		PDEUIMessages.LauncherSection_Low16,
@@ -244,23 +245,19 @@ public class LauncherSection extends PDESection {
 		fBmpButton.setLayoutData(td);
 		fBmpButton.setEnabled(isEditable());		
 		// Store all win icon validators
-		fMultipleWinIconValidator = new ImageEntryValidator[F_WIN_ICON_LABELS.length];
+		fMultipleWinIconValidator = new TextValidator[F_WIN_ICON_LABELS.length];
 		for (int i = 0; i < F_WIN_ICON_LABELS.length; i++) {
 			final IconEntry ientry = new IconEntry(comp, toolkit, F_WIN_ICON_LABELS[i], F_WIN_ICON_IDS[i]);
 			final int index = i;
 			// Create validator
-			fMultipleWinIconValidator[index] = new ImageEntryValidator(
-					getManagedForm(), ientry.getText()) {
+			fMultipleWinIconValidator[index] = new TextValidator(
+					getManagedForm(), ientry.getText(), getProject(), true) {
 				protected boolean validateControl() {
-					return EditorUtilities.imageEntryHasExactDepthAndSize(
-							fMultipleWinIconValidator[index], 
-							ientry, 
-							getProduct(),
-							F_WIN_ICON_DIMENSIONS[index][0],
-							F_WIN_ICON_DIMENSIONS[index][1],
-							F_WIN_ICON_DEPTHS[index]);					
+					return validateMultipleWinIcon(ientry, index);
 				}
 			};
+			// Disable initially
+			fMultipleWinIconValidator[index].setEnabled(false);
 			// Validate on modify
 			ientry.getText().addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
@@ -286,24 +283,43 @@ public class LauncherSection extends PDESection {
 		
 		final IconEntry ientry = new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_file, ILauncherInfo.P_ICO_PATH);
 		// Create validator
-		fSingleWinIconValidator = new ImageEntryValidator(getManagedForm(), 
-				ientry.getText()) {
+		fSingleWinIconValidator = new TextValidator(getManagedForm(), 
+				ientry.getText(), getProject(), true) {
 			protected boolean validateControl() {
-				return EditorUtilities.imageEntryHasValidIco(
-						fSingleWinIconValidator, ientry, getProduct());
+				return validateSingleWinIcon(ientry);
 			}
 		};
-		// Validate on modify
-		ientry.getText().addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				fSingleWinIconValidator.validate();
-			}
-		});		
+		// Disable initially
+		fSingleWinIconValidator.setEnabled(false);
 
 		fIcons.add(ientry); 
 		
 		toolkit.paintBordersFor(comp);
 		return comp;
+	}
+	
+	/**
+	 * @param ientry
+	 * @return
+	 */
+	private boolean validateSingleWinIcon(IconEntry ientry) {
+		return EditorUtilities.imageEntryHasValidIco(
+				fSingleWinIconValidator, ientry, getProduct());
+	}
+	
+	/**
+	 * @param ientry
+	 * @param index
+	 * @return
+	 */
+	private boolean validateMultipleWinIcon(IconEntry ientry, int index) {
+		return EditorUtilities.imageEntryHasExactDepthAndSize(
+				fMultipleWinIconValidator[index], 
+				ientry, 
+				getProduct(),
+				F_WIN_ICON_DIMENSIONS[index][0],
+				F_WIN_ICON_DIMENSIONS[index][1],
+				F_WIN_ICON_DEPTHS[index]);	
 	}
 	
 	private void createLabel(Composite parent, FormToolkit toolkit, String text, int span) {
@@ -366,11 +382,17 @@ public class LauncherSection extends PDESection {
 		fIcoButton.setSelection(useIco);
 		fBmpButton.setSelection(!useIco);
 		
+		// Turn off auto message update until after values are set
+		fSingleWinIconValidator.setRefresh(false);
 		for (int i = 0; i < fIcons.size(); i++) {
 			IconEntry entry = (IconEntry)fIcons.get(i);
 			entry.setValue(info.getIconPath(entry.getIconId()), true);
 		}
+		// Turn back on auto message update
+		fSingleWinIconValidator.setRefresh(true);
+		
 		updateWinEntries(useIco);
+		
 		super.refresh();
 	}
 	
@@ -381,8 +403,6 @@ public class LauncherSection extends PDESection {
 			if (id.equals(ILauncherInfo.P_ICO_PATH)) {
 				boolean enabled = isEditable() && useIco;
 				entry.setEditable(enabled);
-				// Update validator
-				fSingleWinIconValidator.setEnabled(enabled);
 			} else if (id.equals(ILauncherInfo.WIN32_16_HIGH) 
 					|| id.equals(ILauncherInfo.WIN32_16_LOW)
 					|| id.equals(ILauncherInfo.WIN32_24_LOW)
@@ -394,11 +414,25 @@ public class LauncherSection extends PDESection {
 			}
 		}
 		// Update validators
+		updateWinEntryValidators(useIco);
+	}
+	
+	/**
+	 * @param useIco
+	 */
+	private void updateWinEntryValidators(boolean useIco) {
+		// Turn off auto message update until after values are set
+		fSingleWinIconValidator.setRefresh(false);
+		// Update validator
+		fSingleWinIconValidator.setEnabled(isEditable() && useIco);			
+		// Update validators
 		for (int i = 0; i < fMultipleWinIconValidator.length; i++) {
 			fMultipleWinIconValidator[i].setEnabled(isEditable() && !useIco);
 		}
+		// Turn back on auto message update
+		fSingleWinIconValidator.setRefresh(true);
 	}
-	
+
 	private ILauncherInfo getLauncherInfo() {
 		ILauncherInfo info = getProduct().getLauncherInfo();
 		if (info == null) {

@@ -24,6 +24,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.validation.ControlValidationUtility;
+import org.eclipse.pde.internal.ui.editor.validation.TextValidator;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -51,6 +53,13 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 	private ComboPart fPluginMaxVersionBound;
 	private ComboPart fMatchCombo;
 
+	private TextValidator fPluginIdValidator;
+
+	private TextValidator fPluginMinVersionValidator;
+
+	private TextValidator fPluginMaxVersionValidator;
+	
+	
 	public FragmentGeneralInfoSection(PDEFormPage page, Composite parent) {
 		super(page, parent);
 	}
@@ -109,6 +118,23 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 			}
 		});
 		fPluginIdEntry.setEditable(isEditable());		
+		// Create validator
+		fPluginIdValidator = new TextValidator(getManagedForm(), 
+				fPluginIdEntry.getText(), getProject(), true) {
+			protected boolean validateControl() {
+				return validatePluginId();
+			}
+		};
+	}
+	
+	/**
+	 * @return
+	 */
+	private boolean validatePluginId() {
+		// Validate host plugin
+		return ControlValidationUtility.validateFragmentHostPluginField(
+				fPluginIdEntry.getText().getText(), fPluginIdValidator, 
+				getProject());
 	}
 
 	protected void handleOpenDialog() {
@@ -154,6 +180,14 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 			}
 		});
 		fPluginMinVersionEntry.setEditable(isEditable());
+		// Create validator
+		fPluginMinVersionValidator = new TextValidator(getManagedForm(), 
+				fPluginMinVersionEntry.getText(), getProject(), true) {
+			protected boolean validateControl() {
+				return validatePluginMinVersion();
+			}
+		};
+		
 		fPluginMinVersionBound = new ComboPart();
 		fPluginMinVersionBound.createControl(client, toolkit, SWT.READ_ONLY);
 		fPluginMinVersionBound.getControl().setLayoutData(new TableWrapData(TableWrapData.FILL));
@@ -181,6 +215,13 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 			}
 		});
 		fPluginMaxVersionEntry.setEditable(isEditable());
+		// Create validator
+		fPluginMaxVersionValidator = new TextValidator(getManagedForm(), 
+				fPluginMaxVersionEntry.getText(), getProject(), true) {
+			protected boolean validateControl() {
+				return validatePluginMaxVersion();
+			}
+		};
 		fPluginMaxVersionBound = new ComboPart();
 		fPluginMaxVersionBound.createControl(client, toolkit, SWT.READ_ONLY);
 		fPluginMaxVersionBound.getControl().setLayoutData(new TableWrapData(TableWrapData.FILL));
@@ -195,6 +236,32 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 				}
 			}			
 		});
+	}
+
+	/**
+	 * @return
+	 */
+	private boolean validatePluginMaxVersion() {
+		// No validation required for an optional field
+		if (fPluginMaxVersionEntry.getText().getText().length() == 0) {
+			return true;
+		}		
+		// Value must be a valid version
+		return ControlValidationUtility.validateVersionField(
+				fPluginMaxVersionEntry.getText().getText(), fPluginMaxVersionValidator);
+	}
+
+	/**
+	 * @return
+	 */
+	private boolean validatePluginMinVersion() {
+		// No validation required for an optional field
+		if (fPluginMinVersionEntry.getText().getText().length() == 0) {
+			return true;
+		}			
+		// Value must be a valid version
+		return ControlValidationUtility.validateVersionField(
+				fPluginMinVersionEntry.getText().getText(), fPluginMinVersionValidator);
 	}
 
 	private void createNonBundlePluginVersionEntry(Composite client,
