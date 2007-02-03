@@ -160,9 +160,12 @@ public class ProductExportOperation extends FeatureExportOperation {
 		
 		String vm = fProduct.getJVMLocations().getJVMLocation(config[0]);
 		if(vm != null) {
-			properties.put("root.folder.jre", //$NON-NLS-1$
+			properties.put("root."+config[0]+ //$NON-NLS-1$
+					"."+config[1]+ //$NON-NLS-1$
+					"."+config[2]+ //$NON-NLS-1$
+			        ".folder.jre", //$NON-NLS-1$
 					"absolute:" + vm); //$NON-NLS-1$
-			properties.put("root.permissions.755", "java,javaw");
+			properties.put("root.permissions.755", "jre/bin/java");
 		}
 		
 		save(new File(file, "build.properties"), properties, "Build Configuration"); //$NON-NLS-1$ //$NON-NLS-2$
