@@ -34,7 +34,7 @@ public class EnvironmentPage extends AbstractTargetPage {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		form.setText(PDEUIMessages.EnvironmentPage_title);
-		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_DEFINITION));
+		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_ENVIRONMENT));
 		FormToolkit toolkit = managedForm.getToolkit();
 		fillBody(managedForm, toolkit);
 		
