@@ -228,7 +228,7 @@ public class LauncherSection extends PDESection {
 		CTabItem item = new CTabItem(fTabFolder, SWT.NULL);
 		item.setText(label);
 		item.setImage(PDEPlugin.getDefault().getLabelProvider().get(
-				PDEPluginImages.DESC_PLUGIN_CONFIG_OBJ));
+				PDEPluginImages.DESC_OPERATING_SYSTEM_OBJ));
 	}
 	
 	private Composite addWin32Section(Composite parent, FormToolkit toolkit) {

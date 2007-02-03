@@ -119,12 +119,8 @@ public class ArgumentsSection extends PDESection {
 		for (int i = 0; i < TAB_LABELS.length; i++) {
 			CTabItem item = new CTabItem(fTabFolder, SWT.NULL);
 			item.setText(TAB_LABELS[i]);
-			if (i == 0)
-				item.setImage(PDEPlugin.getDefault().getLabelProvider().get(
-						PDEPluginImages.DESC_PLUGIN_CONFIGS_OBJ));
-			else
-				item.setImage(PDEPlugin.getDefault().getLabelProvider().get(
-						PDEPluginImages.DESC_PLUGIN_CONFIG_OBJ));
+			item.setImage(PDEPlugin.getDefault().getLabelProvider().get(
+						PDEPluginImages.DESC_OPERATING_SYSTEM_OBJ));
 		}
 		fLastTab = 0;
 		fTabFolder.setSelection(fLastTab);

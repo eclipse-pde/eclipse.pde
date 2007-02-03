@@ -129,7 +129,7 @@ public class JRESection extends PDESection {
 			CTabItem item = new CTabItem(fTabFolder, SWT.NULL);
 			item.setText(TAB_LABELS[i]);
 			item.setImage(PDEPlugin.getDefault().getLabelProvider().get(
-					PDEPluginImages.DESC_PLUGIN_CONFIG_OBJ));
+					PDEPluginImages.DESC_OPERATING_SYSTEM_OBJ));
 		}
 		fLastTab = 0;
 		fTabFolder.setSelection(fLastTab);
