@@ -11,8 +11,8 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -26,7 +26,6 @@ import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
@@ -43,10 +42,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.dialogs.ListDialog;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -56,8 +53,7 @@ public class JRESection extends PDESection {
 
 	private FormEntry fPath;
 	private Button fBrowseJREsButton;
-	private Button fBrowseFileSystemButton;
-	private Button fBrowseVariablesButton;
+	private Button fBrowseEEsButton;
 
 	private static final String[] TAB_LABELS = new String[4];
 	static {
@@ -82,14 +78,14 @@ public class JRESection extends PDESection {
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Composite client = toolkit.createComposite(section);
-		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 5));
+		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 4));
 
 		fTabFolder = new CTabFolder(client, SWT.FLAT | SWT.TOP);
 		toolkit.adapt(fTabFolder, true, true);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		fTabFolder.setLayoutData(gd);
 		gd.heightHint = 2;
-		gd.horizontalSpan = 5;
+		gd.horizontalSpan = 4;
 		gd.grabExcessHorizontalSpace = true;
 		toolkit.getColors().initializeSectionToolBarColors();
 		Color selectedColor = toolkit.getColors().getColor(IFormColors.TB_BG);
@@ -103,15 +99,10 @@ public class JRESection extends PDESection {
 			}
 		});
 		fTabFolder.setUnselectedImageVisible(false);
-		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 
-		fPath = new FormEntry(client, toolkit, PDEUIMessages.ProductJRESection_location, null, false); 
+		fPath = new FormEntry(client, toolkit, PDEUIMessages.ProductJRESection_jre, null, false); 
 		fPath.getText().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fPath.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
-			public void textValueChanged(FormEntry entry) {
-				getJVMLocations().setJVM(entry.getValue().trim(), fLastTab);
-			}
-		});
+		fPath.setEditable(false);
 
 		fBrowseJREsButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_browseJREs, SWT.PUSH);
 		fBrowseJREsButton.addSelectionListener(new SelectionAdapter() {
@@ -120,17 +111,10 @@ public class JRESection extends PDESection {
 			}
 		});
 
-		fBrowseFileSystemButton = toolkit.createButton(client, PDEUIMessages.TargetDefinitionSection_fileSystem, SWT.PUSH);
-		fBrowseFileSystemButton.addSelectionListener(new SelectionAdapter() {
+		fBrowseEEsButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_browseEEs, SWT.PUSH);
+		fBrowseEEsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleBrowseFileSystem();
-			}
-		});
-
-		fBrowseVariablesButton = toolkit.createButton(client, PDEUIMessages.TargetDefinitionSection_variables, SWT.PUSH);
-		fBrowseVariablesButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleInsertVariable();
+				handleBrowseEEs();
 			}
 		});
 
@@ -189,30 +173,38 @@ public class JRESection extends PDESection {
 		return d.getFocusControl() instanceof Text;
 	}
 
-	protected void handleBrowseFileSystem() {
-		DirectoryDialog dialog = new DirectoryDialog(getSection().getShell());
-		String path = fPath.getValue();
-		if(path == null || path.length() == 0)
-			path = VMHelper.getDefaultVMInstallLocation();
+	protected void handleBrowseEEs() {
+		ListDialog dialog = new ListDialog(getSection().getShell());
+		dialog.setContentProvider(new IStructuredContentProvider() {
 
-		dialog.setFilterPath(path);
-		dialog.setText(PDEUIMessages.BaseBlock_dirSelection); 
-		dialog.setMessage(PDEUIMessages.BaseBlock_dirChoose); 
-		String result = dialog.open();
-		if (result != null) {
-			fPath.setValue(result);
-			getJVMLocations().setJVM(result, fLastTab);
-		}
-	}
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 
-	private void handleInsertVariable() {
-		StringVariableSelectionDialog dialog = 
-			new StringVariableSelectionDialog(getSection().getShell());
+			public void dispose() {}
+
+			public Object[] getElements(Object inputElement) {
+				return VMHelper.getExecutionEnvironments();
+			}
+
+		});
+		dialog.setLabelProvider(new LabelProvider() {
+
+			public String getText(Object element) {
+				IExecutionEnvironment ee = (IExecutionEnvironment) element;
+				return ee.getId();
+			}
+
+			public Image getImage(Object element) {
+				return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY);
+			}
+
+		});
+		dialog.setInput(this);
+		dialog.setTitle(PDEUIMessages.ProductJRESection_selectEEsTitle);
+		dialog.setMessage(PDEUIMessages.ProductJRESection_selectEEsMessage);
 		if (dialog.open() == Window.OK) {
-			fPath.getText().insert(dialog.getVariableExpression());
-			// have to setValue to make sure getValue reflects the actual text in the Text object.
-			fPath.setValue(fPath.getText().getText());
-			getJVMLocations().setJVM(fPath.getText().getText(), fLastTab);
+			IExecutionEnvironment ee = (IExecutionEnvironment) dialog.getResult()[0];
+			fPath.setValue(ee.getId());
+			getJVMLocations().setJVM(ee.getId(), fLastTab, IJREInfo.TYPE_EE);
 		}
 	}
 
@@ -246,8 +238,8 @@ public class JRESection extends PDESection {
 		dialog.setMessage(PDEUIMessages.ProductJRESection_selectJREsMessage);
 		if (dialog.open() == Window.OK) {
 			IVMInstall vm = (IVMInstall) dialog.getResult()[0];
-			fPath.setValue(vm.getInstallLocation().getAbsolutePath());
-			getJVMLocations().setJVM(vm.getInstallLocation().getAbsolutePath(), fLastTab);
+			fPath.setValue(vm.getName());
+			getJVMLocations().setJVM(vm.getName(), fLastTab, IJREInfo.TYPE_JRE);
 		}
 	}
 

@@ -158,10 +158,11 @@ public class ProductExportOperation extends FeatureExportOperation {
 			}
 		}
 		
-		String vm = fProduct.getJVMLocations().getJVM(config[0]);
+		String vm = fProduct.getJVMLocations().getJVMLocation(config[0]);
 		if(vm != null) {
 			properties.put("root.folder.jre", //$NON-NLS-1$
 					"absolute:" + vm); //$NON-NLS-1$
+			properties.put("root.permissions.755", "java,javaw");
 		}
 		
 		save(new File(file, "build.properties"), properties, "Build Configuration"); //$NON-NLS-1$ //$NON-NLS-2$

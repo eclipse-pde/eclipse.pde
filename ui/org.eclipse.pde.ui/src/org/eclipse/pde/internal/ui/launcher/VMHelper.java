@@ -19,13 +19,15 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
 public class VMHelper {
-	
+
 	public static IVMInstall[] getAllVMInstances() {
 		ArrayList res = new ArrayList();
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
@@ -37,7 +39,7 @@ public class VMHelper {
 		}
 		return (IVMInstall[]) res.toArray(new IVMInstall[res.size()]);
 	}
-	
+
 	public static String[] getVMInstallNames() {
 		IVMInstall[] installs = getAllVMInstances();
 		String[] names = new String[installs.length];
@@ -46,21 +48,21 @@ public class VMHelper {
 		}
 		return names;
 	}
-	
+
 	public static String getDefaultVMInstallName() {
 		IVMInstall install = JavaRuntime.getDefaultVMInstall();
 		if (install != null)
 			return install.getName();
 		return null;
 	}
-	
+
 	public static String getDefaultVMInstallLocation() {
 		IVMInstall install = JavaRuntime.getDefaultVMInstall();
 		if (install != null)
 			return install.getInstallLocation().getAbsolutePath();
 		return null;
 	}
-	
+
 	public static IVMInstall getVMInstall(String name) {
 		if (name != null) {
 			IVMInstall[] installs = getAllVMInstances();
@@ -74,28 +76,34 @@ public class VMHelper {
 
 	public static IVMInstall createLauncher(
 			ILaunchConfiguration configuration)
-			throws CoreException {
+	throws CoreException {
 		String vm = configuration.getAttribute(IPDELauncherConstants.VMINSTALL, (String) null);
 		IVMInstall launcher = getVMInstall(vm);
 
 		if (launcher == null) 
 			throw new CoreException(
-				createErrorStatus(NLS.bind(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_noJRE, vm)));
-		
+					createErrorStatus(NLS.bind(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_noJRE, vm)));
+
 		if (!launcher.getInstallLocation().exists()) 
 			throw new CoreException(
-				createErrorStatus(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_jrePathNotFound));
-		
+					createErrorStatus(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_jrePathNotFound));
+
 		return launcher;
+	}
+
+	public static IExecutionEnvironment[] getExecutionEnvironments() {
+		IExecutionEnvironmentsManager manager = 
+			JavaRuntime.getExecutionEnvironmentsManager();
+		return manager.getExecutionEnvironments();
 	}
 
 	public static IStatus createErrorStatus(String message) {
 		return new Status(
-			IStatus.ERROR,
-			PDEPlugin.getPluginId(),
-			IStatus.OK,
-			message,
-			null);
+				IStatus.ERROR,
+				PDEPlugin.getPluginId(),
+				IStatus.OK,
+				message,
+				null);
 	}
 
 }
