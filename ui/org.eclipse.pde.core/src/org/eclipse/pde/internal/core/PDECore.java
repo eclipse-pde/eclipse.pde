@@ -206,8 +206,14 @@ public class PDECore extends Plugin {
 	}
 	
 	public SearchablePluginsManager getSearchablePluginsManager() {
-		if (fSearchablePluginsManager == null)
+		if (fSearchablePluginsManager == null) {
 			fSearchablePluginsManager = new SearchablePluginsManager();
+			try {
+				getWorkspace().addSaveParticipant(inst, fSearchablePluginsManager);
+			} catch (CoreException e) {
+				log(e);
+			}
+		}
 		return fSearchablePluginsManager;
 	}
 	
@@ -244,6 +250,7 @@ public class PDECore extends Plugin {
 			fTargetProfileManager = null;
 		}
 		if (fSearchablePluginsManager != null) {
+			getWorkspace().removeSaveParticipant(inst);
 			fSearchablePluginsManager.shutdown();
 			fSearchablePluginsManager = null;
 		}

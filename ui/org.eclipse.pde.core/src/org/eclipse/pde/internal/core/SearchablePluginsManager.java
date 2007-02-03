@@ -25,6 +25,8 @@ import java.util.TreeSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -51,7 +53,8 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
  * JARs to the proxy project. This makes the libraries visible to the Java
  * model, and they can take part in various Java searches.
  */
-public class SearchablePluginsManager implements IFileAdapterFactory, IPluginModelListener {
+public class SearchablePluginsManager 
+		implements IFileAdapterFactory, IPluginModelListener, ISaveParticipant {
 	
 	private static final String PROXY_FILE_NAME = ".searchable"; //$NON-NLS-1$
 	public static final String PROXY_PROJECT_NAME = "External Plug-in Libraries"; //$NON-NLS-1$
@@ -141,38 +144,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 		JavaCore.removeElementChangedListener(fElementListener);
 		PDECore.getDefault().getModelManager().removePluginModelListener(this);
 		if (fListeners != null)
-			fListeners.clear();
-		
-		// persist state
-		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
-		IProject project = root.getProject(PROXY_PROJECT_NAME);
-		if (project.exists() && project.isOpen()) {
-			IFile file = project.getFile(PROXY_FILE_NAME);
-			Properties properties = new Properties();
-			StringBuffer buffer = new StringBuffer();
-			Iterator iter = fPluginIdSet.iterator();
-			while (iter.hasNext()) {
-				if (buffer.length() > 0)
-					buffer.append(","); //$NON-NLS-1$
-				buffer.append(iter.next().toString());
-			}
-			properties.setProperty(KEY, buffer.toString());
-			try {
-				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-				properties.store(outStream, ""); //$NON-NLS-1$
-				outStream.flush();
-				outStream.close();
-				ByteArrayInputStream inStream = new ByteArrayInputStream(outStream
-						.toByteArray());
-				if (file.exists())
-					file.setContents(inStream, true, false, new NullProgressMonitor());
-				else
-					file.create(inStream, true, new NullProgressMonitor());
-				inStream.close();
-			} catch (IOException e) {
-				PDECore.log(e);
-			}
-		}
+			fListeners.clear();	
 	}
 	
 	public IClasspathEntry[] computeContainerClasspathEntries()
@@ -349,6 +321,54 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	public void removePluginModelListener(IPluginModelListener listener) {
 		if (fListeners != null)
 			fListeners.remove(listener);
+	}
+
+	public void doneSaving(ISaveContext context) {
+		// nothing is required here
+	}
+
+	public void prepareToSave(ISaveContext context) throws CoreException {
+		// no need for preparation
+	}
+
+	public void rollback(ISaveContext context) {
+		// do nothing.  not the end of the world.
+	}
+
+	public void saving(ISaveContext context) throws CoreException {
+		if (context.getKind() != ISaveContext.FULL_SAVE)
+			return;
+		
+		// persist state
+		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
+		IProject project = root.getProject(PROXY_PROJECT_NAME);
+		if (project.exists() && project.isOpen()) {
+			IFile file = project.getFile(PROXY_FILE_NAME);
+			Properties properties = new Properties();
+			StringBuffer buffer = new StringBuffer();
+			Iterator iter = fPluginIdSet.iterator();
+			while (iter.hasNext()) {
+				if (buffer.length() > 0)
+					buffer.append(","); //$NON-NLS-1$
+				buffer.append(iter.next().toString());
+			}
+			properties.setProperty(KEY, buffer.toString());
+			try {
+				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+				properties.store(outStream, ""); //$NON-NLS-1$
+				outStream.flush();
+				outStream.close();
+				ByteArrayInputStream inStream = new ByteArrayInputStream(outStream
+						.toByteArray());
+				if (file.exists())
+					file.setContents(inStream, true, false, new NullProgressMonitor());
+				else
+					file.create(inStream, true, new NullProgressMonitor());
+				inStream.close();
+			} catch (IOException e) {
+				PDECore.log(e);
+			}
+		}
 	}
 	
 }
