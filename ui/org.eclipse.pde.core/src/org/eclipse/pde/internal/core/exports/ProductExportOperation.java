@@ -165,7 +165,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 					"."+config[2]+ //$NON-NLS-1$
 			        ".folder.jre", //$NON-NLS-1$
 					"absolute:" + vm); //$NON-NLS-1$
-			properties.put("root.permissions.755", "jre/bin/java");
+			properties.put("root.permissions.755", "jre/bin/java"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		save(new File(file, "build.properties"), properties, "Build Configuration"); //$NON-NLS-1$ //$NON-NLS-2$
