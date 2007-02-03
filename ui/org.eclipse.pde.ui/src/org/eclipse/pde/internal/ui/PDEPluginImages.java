@@ -110,7 +110,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_PLUGIN_OBJ   = create(PATH_OBJ, "plugin_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PLUGIN_DIS_OBJ   = create(PATH_OBJ, "plugin_dis_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OPERATING_SYSTEM_OBJ = create(PATH_OBJ, "operating_system_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_PLUGIN_CONFIG_OBJ   = create(PATH_OBJ, "plugin_config_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_SETTINGS_OBJ   = create(PATH_OBJ, "settings.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FRAGMENT_OBJ   = create(PATH_OBJ, "frgmt_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FRAGMENT_DIS_OBJ   = create(PATH_OBJ, "frgmt_dis_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_REQ_PLUGINS_OBJ   = create(PATH_OBJ, "req_plugins_obj.gif"); //$NON-NLS-1$

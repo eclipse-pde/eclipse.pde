@@ -56,7 +56,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	 * @param isJUnitConfig  a flag to indicate if the tab is to be used with a Plug-in JUnit launch configuration.
 	 */
 	public ConfigurationTab(boolean isJUnitConfig) {
-		fImage = PDEPluginImages.DESC_PLUGIN_CONFIG_OBJ.createImage();
+		fImage = PDEPluginImages.DESC_SETTINGS_OBJ.createImage();
 		fConfigurationArea = new ConfigurationAreaBlock(this);
 		fTemplateArea = new ConfigurationTemplateBlock(this);
 		fJUnitConfig = isJUnitConfig;

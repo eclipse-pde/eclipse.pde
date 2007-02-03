@@ -46,7 +46,7 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 	 *
 	 */
 	public OSGiSettingsTab() {
-		fImage = PDEPluginImages.DESC_PLUGIN_CONFIG_OBJ.createImage();
+		fImage = PDEPluginImages.DESC_SETTINGS_OBJ.createImage();
 		fJREBlock = new JREBlock(this);
 		fConfigurationBlock = new ConfigurationAreaBlock(this);
 	}
