@@ -65,6 +65,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText(PDEUIMessages.OverviewPage_title);  
+		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_DEFINITION));
 		fillBody(managedForm, toolkit);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.OVERVIEW_PAGE);
 	}

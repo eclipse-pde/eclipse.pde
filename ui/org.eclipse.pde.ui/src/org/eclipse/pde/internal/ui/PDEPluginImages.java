@@ -142,6 +142,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_CLIPBOARD = create(PATH_OBJ, "copyviewtoclipboard_tsk.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILD_EXEC = create(PATH_OBJ, "build_exec.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_TARGET_DEFINITION = create(PATH_OBJ, "target_profile_xml_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_PRODUCT_DEFINITION = create(PATH_OBJ, "product_xml_obj.gif"); //$NON-NLS-1$
 	
 	/**
 	 * OVR16
