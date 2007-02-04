@@ -134,7 +134,7 @@ public class LaunchConfigurationHelper {
 		if (properties.containsKey("osgi.splashPath")) //$NON-NLS-1$
 			resolveLocationPath(properties.getProperty("osgi.splashPath"), properties, map); //$NON-NLS-1$
 		if (!properties.containsKey("osgi.bundles")) //$NON-NLS-1$
-			properties.setProperty("osgi.bundles", computeOSGiBundles(TargetPlatformHelper.getBundleList(), map)); //$NON-NLS-1$
+			properties.setProperty("osgi.bundles", computeOSGiBundles(TargetPlatform.getBundleList(), map)); //$NON-NLS-1$
 		if (!properties.containsKey("osgi.bundles.defaultStartLevel")) //$NON-NLS-1$
 			properties.setProperty("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
 	}

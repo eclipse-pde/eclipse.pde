@@ -218,5 +218,26 @@ public class TargetPlatform {
 			throws CoreException {
 		UpdateManagerHelper.createPlatformConfiguration(location, plugins, brandingPlugin);
 	}
+	
+	/**
+	* The comma-separated list of bundles which are automatically installed 
+	* and optionally started.
+	* <p>
+	* Each entry if of the form <bundleID>[@ [<startlevel>] [":start"]]
+	* If the startlevel is omitted then the framework will use the default start level for the bundle.
+	* If the "start" tag is added then the bundle will be marked as started after being installed.
+	* </p>
+	* <p>
+	* The list computed is based on the <b>osgi.bundles</b> key found in the config.ini
+	* file of the target platform.  If no such key is found, then a suitable list is computed
+	* based on the target platform version.
+	* </p>
+	* 
+	* @return a comma-separated list of bundles that are automatically installed
+	* and optionally started when a runtime Eclipse application is launched.
+	*/
+	public static String getBundleList() {
+		return TargetPlatformHelper.getBundleList();
+	}
 		
 }
