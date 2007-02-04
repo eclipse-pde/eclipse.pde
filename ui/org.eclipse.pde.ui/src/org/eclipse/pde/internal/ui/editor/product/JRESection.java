@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import java.util.TreeSet;
+
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.jdt.ui.ISharedImages;
-import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.Window;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.IJREInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
@@ -30,30 +27,38 @@ import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.launcher.VMHelper;
-import org.eclipse.pde.internal.ui.parts.FormEntry;
+import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.dialogs.ListDialog;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class JRESection extends PDESection {
 
-	private FormEntry fPath;
-	private Button fBrowseJREsButton;
-	private Button fBrowseEEsButton;
+	private Button fJRERadioButton;
+	private Button fEERadioButton;
+	private Button fInstalledJREsButton;
+	private Button fExecutionEnvironmentsButton;
+	private ComboPart fJREsCombo;
+	private ComboPart fEEsCombo;
+	private TreeSet fEEChoices;
+	private boolean fBlockChanges;
 
 	private static final String[] TAB_LABELS = new String[4];
 	static {
@@ -78,14 +83,16 @@ public class JRESection extends PDESection {
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Composite client = toolkit.createComposite(section);
-		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 4));
+		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 3));
 
+		initializeValues();
+		
 		fTabFolder = new CTabFolder(client, SWT.FLAT | SWT.TOP);
 		toolkit.adapt(fTabFolder, true, true);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		fTabFolder.setLayoutData(gd);
 		gd.heightHint = 2;
-		gd.horizontalSpan = 4;
+		gd.horizontalSpan = 3;
 		gd.grabExcessHorizontalSpace = true;
 		toolkit.getColors().initializeSectionToolBarColors();
 		Color selectedColor = toolkit.getColors().getColor(IFormColors.TB_BG);
@@ -100,28 +107,70 @@ public class JRESection extends PDESection {
 		});
 		fTabFolder.setUnselectedImageVisible(false);
 
-		fPath = new FormEntry(client, toolkit, PDEUIMessages.ProductJRESection_jre, null, false); 
-		fPath.getText().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fPath.setEditable(false);
-
-		fBrowseJREsButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_browseJREs, SWT.PUSH);
-		fBrowseJREsButton.addSelectionListener(new SelectionAdapter() {
+		fJRERadioButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_jreName, SWT.RADIO);
+		fJRERadioButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleBrowseJREs();
+				updateWidgets();
+				getJVMLocations().setJVM(fJREsCombo.getSelection(), fLastTab, IJREInfo.TYPE_JRE);
 			}
 		});
 
-		fBrowseEEsButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_browseEEs, SWT.PUSH);
-		fBrowseEEsButton.addSelectionListener(new SelectionAdapter() {
+		fJREsCombo = new ComboPart();
+		fJREsCombo.createControl(client, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
+		fJREsCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		String[] installs = VMHelper.getVMInstallNames();
+		fJREsCombo.setItems(installs);
+		fJREsCombo.add("", 0); //$NON-NLS-1$
+		fJREsCombo.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if(!fBlockChanges)
+					getJVMLocations().setJVM(fJREsCombo.getSelection(), fLastTab, IJREInfo.TYPE_JRE);
+			}
+		});
+
+		fInstalledJREsButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_browseJREs, SWT.PUSH); 
+		fInstalledJREsButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				PreferencesUtil.createPreferenceDialogOn(
+						getSection().getShell(), 
+						"org.eclipse.jdt.debug.ui.preferences.VMPreferencePage", //$NON-NLS-1$
+						new String[] { "org.eclipse.jdt.debug.ui.preferences.VMPreferencePage" }, null).open(); //$NON-NLS-1$ 
+			}
+		});
+
+		fEERadioButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_eeName, SWT.RADIO);
+		fEERadioButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleBrowseEEs();
+				updateWidgets();
+				getJVMLocations().setJVM(fEEsCombo.getSelection(), fLastTab, IJREInfo.TYPE_EE);
+			}
+		});
+
+		fEEsCombo = new ComboPart();
+		fEEsCombo.createControl(client, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
+		fEEsCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fEEsCombo.setItems((String[])fEEChoices.toArray(new String[fEEChoices.size()]));
+
+		fEEsCombo.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if(!fBlockChanges)
+					getJVMLocations().setJVM(fEEsCombo.getSelection(), fLastTab, IJREInfo.TYPE_EE);
+			}
+		});
+		
+		fExecutionEnvironmentsButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_browseEEs, SWT.PUSH); 
+		fExecutionEnvironmentsButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				PreferencesUtil.createPreferenceDialogOn(
+						getSection().getShell(), 
+						"org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
+						new String[] { "org.eclipse.jdt.debug.ui.jreProfiles" }, null).open(); //$NON-NLS-1$ 
 			}
 		});
 
 		createTabs();
 		toolkit.paintBordersFor(client);
 		section.setClient(client);	
-
 	}
 
 	private void createTabs() {
@@ -146,9 +195,29 @@ public class JRESection extends PDESection {
 	}
 
 	public void refresh() {
+		fBlockChanges = true;
 		fLastTab = fTabFolder.getSelectionIndex();
-		fPath.setValue(getJVMLocations().getJVM(fLastTab), true);
+		int type = getJVMLocations().getJVMType(fLastTab);
+		String name = getJVMLocations().getJVM(fLastTab);
+		switch(type) {
+		case IJREInfo.TYPE_JRE:
+			if (fJREsCombo.indexOf(name) < 0)
+				fJREsCombo.add(name);
+			fJREsCombo.setText(name);
+			fJRERadioButton.setSelection(true);
+			fEERadioButton.setSelection(false);
+			break;
+		case IJREInfo.TYPE_EE:
+			if (fEEsCombo.indexOf(name) < 0)
+				fEEsCombo.add(name);
+			fEEsCombo.setText(name);
+			fEERadioButton.setSelection(true);
+			fJRERadioButton.setSelection(false);
+			break;
+		}
+		updateWidgets();
 		super.refresh();
+		fBlockChanges = false;
 	}
 
 	private IJREInfo getJVMLocations() {
@@ -173,74 +242,17 @@ public class JRESection extends PDESection {
 		return d.getFocusControl() instanceof Text;
 	}
 
-	protected void handleBrowseEEs() {
-		ListDialog dialog = new ListDialog(getSection().getShell());
-		dialog.setContentProvider(new IStructuredContentProvider() {
-
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
-
-			public void dispose() {}
-
-			public Object[] getElements(Object inputElement) {
-				return VMHelper.getExecutionEnvironments();
-			}
-
-		});
-		dialog.setLabelProvider(new LabelProvider() {
-
-			public String getText(Object element) {
-				IExecutionEnvironment ee = (IExecutionEnvironment) element;
-				return ee.getId();
-			}
-
-			public Image getImage(Object element) {
-				return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY);
-			}
-
-		});
-		dialog.setInput(this);
-		dialog.setTitle(PDEUIMessages.ProductJRESection_selectEEsTitle);
-		dialog.setMessage(PDEUIMessages.ProductJRESection_selectEEsMessage);
-		if (dialog.open() == Window.OK) {
-			IExecutionEnvironment ee = (IExecutionEnvironment) dialog.getResult()[0];
-			fPath.setValue(ee.getId());
-			getJVMLocations().setJVM(ee.getId(), fLastTab, IJREInfo.TYPE_EE);
-		}
+	protected void updateWidgets() {
+		fJREsCombo.setEnabled(fJRERadioButton.getSelection());
+		fEEsCombo.setEnabled(fEERadioButton.getSelection());
 	}
 
-	protected void handleBrowseJREs() {
-		ListDialog dialog = new ListDialog(getSection().getShell());
-		dialog.setContentProvider(new IStructuredContentProvider() {
-
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
-
-			public void dispose() {}
-
-			public Object[] getElements(Object inputElement) {
-				return VMHelper.getAllVMInstances();
-			}
-
-		});
-		dialog.setLabelProvider(new LabelProvider() {
-
-			public String getText(Object element) {
-				IVMInstall vm = (IVMInstall) element;
-				return vm.getName() + " (" + vm.getInstallLocation().getAbsolutePath() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-			}
-
-			public Image getImage(Object element) {
-				return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY);
-			}
-
-		});
-		dialog.setInput(this);
-		dialog.setTitle(PDEUIMessages.ProductJRESection_selectJREsTitle);
-		dialog.setMessage(PDEUIMessages.ProductJRESection_selectJREsMessage);
-		if (dialog.open() == Window.OK) {
-			IVMInstall vm = (IVMInstall) dialog.getResult()[0];
-			fPath.setValue(vm.getName());
-			getJVMLocations().setJVM(vm.getName(), fLastTab, IJREInfo.TYPE_JRE);
-		}
+	protected void initializeValues() {
+		fEEChoices = new TreeSet();
+		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
+		for (int i = 0; i < envs.length; i++)
+			fEEChoices.add(envs[i].getId()); 
 	}
 
 }

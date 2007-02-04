@@ -29,6 +29,7 @@ public interface IJREInfo extends IProductObject {
 	public static final int WIN32 = 3;
 	
 	public String getJVM(int platform);
+	public int getJVMType(int platform);
 	public String getJVMLocation(String os);
 	public void setJVM(String args, int platform, int type);
 	

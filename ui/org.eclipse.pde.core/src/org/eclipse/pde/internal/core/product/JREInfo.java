@@ -206,6 +206,18 @@ public class JREInfo extends ProductObject implements IJREInfo {
 		return TYPE_JRE;
 	}
 
-
+	public int getJVMType(int platform) {
+		switch (platform) {
+		case LINUX:
+			return fJVMLinType;
+		case MACOS:
+			return fJVMMacType;
+		case SOLAR:
+			return fJVMSolType;
+		case WIN32:
+			return fJVMWinType;
+		}
+		return TYPE_JRE;
+	}
 
 }
