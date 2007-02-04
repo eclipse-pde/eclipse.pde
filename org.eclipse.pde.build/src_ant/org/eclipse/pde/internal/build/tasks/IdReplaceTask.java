@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,18 +32,22 @@ public class IdReplaceTask extends Task {
 	private static final String INCLUDES_START_TAG = "<includes"; //$NON-NLS-1$
 	private static final String COMMENT_START_TAG = "<!--"; //$NON-NLS-1$
 	private static final String COMMENT_END_TAG = "-->"; //$NON-NLS-1$
-	
+
 	//Path of the file where we are replacing the values
 	private String featureFilePath;
-	//Map of the plugin ids (key) and their version number (value)  
+	//Map of the plugin ids and version (key) and their version number (value)
+	//  the key is id:version  and the value is the actual version of the element
+	// the keys are such that a regular lookup will always return the appropriate value if available
 	private Map pluginIds = new HashMap(10);
-	//Map of the feature ids (key) and their version number (value)
+	//Map of the feature ids and version (key) and their version number (value)
+	//  the key is id:version  and the value is the actual version of the element
+	// the keys are such that a regular lookup will always return the appropriate value if available    
 	private Map featureIds = new HashMap(4);
 	//The new version number for this feature
 	private String selfVersion;
 
 	private boolean contentChanged = false;
-	
+
 	private final static String GENERIC_VERSION_NUMBER = "0.0.0"; //$NON-NLS-1$
 	private final static String DOT_QUALIFIER = ".qualifier"; //$NON-NLS-1$
 
@@ -72,7 +76,7 @@ public class IdReplaceTask extends Task {
 	 */
 	public void setPluginIds(String values) {
 		pluginIds = new HashMap(10);
-		for (StringTokenizer tokens = new StringTokenizer(values, COMMA); tokens.hasMoreTokens();) { 
+		for (StringTokenizer tokens = new StringTokenizer(values, COMMA); tokens.hasMoreTokens();) {
 			String token = tokens.nextToken().trim();
 			String id = EMPTY;
 			if (!token.equals(EMPTY))
@@ -94,7 +98,7 @@ public class IdReplaceTask extends Task {
 	 */
 	public void setFeatureIds(String values) {
 		featureIds = new HashMap(10);
-		for (StringTokenizer tokens = new StringTokenizer(values, COMMA); tokens.hasMoreTokens();) { 
+		for (StringTokenizer tokens = new StringTokenizer(values, COMMA); tokens.hasMoreTokens();) {
 			String token = tokens.nextToken().trim();
 			String id = EMPTY;
 			if (!token.equals(EMPTY))
@@ -220,10 +224,12 @@ public class IdReplaceTask extends Task {
 
 			startVersionId++;
 			String replacementVersion = null;
+			Version v = new Version(new String(versionId));
+			String lookupKey = new String(elementId) + ':' + v.getMajor() + '.' + v.getMinor() + '.' + v.getMicro();
 			if (isPlugin) {
-				replacementVersion = (String) pluginIds.get(new String(elementId));
+				replacementVersion = (String) pluginIds.get(lookupKey);
 			} else {
-				replacementVersion = (String) featureIds.get(new String(elementId));
+				replacementVersion = (String) featureIds.get(lookupKey);
 			}
 			if (replacementVersion == null) {
 				System.err.println("Could not find" + new String(elementId)); //$NON-NLS-1$
@@ -237,8 +243,8 @@ public class IdReplaceTask extends Task {
 
 		if (!contentChanged)
 			return;
-		
-		try {	
+
+		try {
 			OutputStreamWriter w = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(featureFilePath)), UTF_8);
 			w.write(buffer.toString());
 			w.close();
