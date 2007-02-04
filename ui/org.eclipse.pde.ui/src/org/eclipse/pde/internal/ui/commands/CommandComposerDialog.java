@@ -49,6 +49,7 @@ public class CommandComposerDialog extends FormDialog {
 	
 	protected void createFormContent(IManagedForm mform) {
 		ScrolledForm form = mform.getForm();
+		mform.getToolkit().decorateFormHeading(form.getForm());
 		initializeDialogUnits(form);
 		fCCP.createCC(form, mform.getToolkit(), new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {

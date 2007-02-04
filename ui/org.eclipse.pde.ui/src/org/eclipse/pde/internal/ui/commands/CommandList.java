@@ -178,7 +178,7 @@ public class CommandList {
 	private void createTree(Composite parent) {
 		Composite c = fCCP.createComposite(parent, GridData.FILL_BOTH, 1, true, 5);
 		
-		Section section = fToolkit.createSection(c, ExpandableComposite.SHORT_TITLE_BAR);
+		Section section = fToolkit.createSection(c, ExpandableComposite.TITLE_BAR);
 		section.setText(PDEUIMessages.CommandList_groupName);
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
@@ -199,6 +199,7 @@ public class CommandList {
 			}
 		});
 		fToolkit.adapt(toolbar, true, true);
+		toolbar.setBackground(null);
 		section.setTextClient(toolbar);
 		toolBarManager.update(true);
 		

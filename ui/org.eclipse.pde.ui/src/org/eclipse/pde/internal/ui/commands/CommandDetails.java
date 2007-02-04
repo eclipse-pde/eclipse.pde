@@ -88,7 +88,7 @@ public class CommandDetails {
 	private void createCommandDetails(Composite parent) {
 		Composite c = fCCP.createComposite(parent, GridData.FILL_BOTH, 1, true, 5);
 		
-		Section section = fToolkit.createSection(c, ExpandableComposite.SHORT_TITLE_BAR);
+		Section section = fToolkit.createSection(c, ExpandableComposite.TITLE_BAR);
 		section.setText(PDEUIMessages.CommandDetails_groupName);
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		

@@ -16,9 +16,11 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -57,6 +59,7 @@ public class CommandComposerPart implements ISelectionChangedListener {
 	private CommandDetails fCommandDetails;
 	private int fFilterType = F_FILTER_NOT_SET;
 	private ParameterizedCommand fPC;
+	private Image fCommandImage;
 	
 	private static ICommandService initCommandService() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
@@ -77,10 +80,14 @@ public class CommandComposerPart implements ISelectionChangedListener {
 	protected void createCC(ScrolledForm form, FormToolkit toolkit, ISelectionChangedListener listener) {
 		fToolkit = toolkit;
 		fScrolledForm = form;
-		fScrolledForm.setText(PDEUIMessages.CommandSerializerPart_name);
+		fScrolledForm.setText(PDEUIMessages.CommandComposerPart_formTitle);
+		fCommandImage = PDEPluginImages.DESC_BUILD_VAR_OBJ.createImage();
+		fScrolledForm.setImage(fCommandImage);
 		Composite body = fScrolledForm.getBody();
 		
-		body.setLayout(new GridLayout());
+		GridLayout layout = new GridLayout();
+		layout.marginTop = 10;
+		body.setLayout(layout);
 		body.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		SashForm sashForm = new SashForm(body, SWT.HORIZONTAL);
@@ -122,6 +129,10 @@ public class CommandComposerPart implements ISelectionChangedListener {
 	
 	public void dispose() {
 		fCommandDetails.dispose();
+		if (fCommandImage!=null) {
+			fCommandImage.dispose();
+			fCommandImage=null;
+		}
 	}
 	
 	protected String getSelectedCommandName() {

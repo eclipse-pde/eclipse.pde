@@ -43,6 +43,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String CheatSheetFileWizardPage_emptyNamePortion;
 
+	public static String CommandComposerPart_formTitle;
+
 	public static String CommandCopyFilter_cheatsheet;
 
 	public static String CommandCopyFilter_cheatsheetDesc;
