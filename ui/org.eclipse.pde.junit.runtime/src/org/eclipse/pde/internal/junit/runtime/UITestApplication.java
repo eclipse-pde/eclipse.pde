@@ -33,10 +33,11 @@ public class UITestApplication implements IApplication, ITestHarness {
 	private static final String DEFAULT_APP_3_0 = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 	
 	private TestableObject fTestableObject;
-	private IApplication application;
+	private IApplication fApplication;
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.equinox.app.IApplication#start(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
 	public Object start(IApplicationContext context) throws Exception {
 		String[] args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
@@ -47,18 +48,19 @@ public class UITestApplication implements IApplication, ITestHarness {
 		fTestableObject = PlatformUI.getTestableObject();
 		fTestableObject.setTestHarness(this);
 		if (app instanceof IApplication) {
-			application = (IApplication) app;
-			return application.start(context);
+			fApplication = (IApplication) app;
+			return fApplication.start(context);
 		}
 		return ((IPlatformRunnable) app).run(args);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.equinox.app.IApplication#stop()
 	 */
 	public void stop() {
-		if (application != null)
-			application.stop();
+		if (fApplication != null)
+			fApplication.stop();
 	}
 
 	/*
@@ -74,8 +76,7 @@ public class UITestApplication implements IApplication, ITestHarness {
 				Platform.PI_RUNTIME,
 				Platform.PT_APPLICATIONS,
 				getApplicationToRun(args));
-		
-		
+			
 		Assert.assertNotNull(extension);
 		
 		// If the extension does not have the correct grammar, return null.
@@ -110,7 +111,8 @@ public class UITestApplication implements IApplication, ITestHarness {
 		return DEFAULT_APP_3_0;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.testing.ITestHarness#runTests()
 	 */
 	public void runTests() {
