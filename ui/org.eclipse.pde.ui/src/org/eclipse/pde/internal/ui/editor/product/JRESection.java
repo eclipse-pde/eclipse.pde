@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.IJREInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
@@ -128,7 +129,8 @@ public class JRESection extends PDESection {
 			}
 		});
 
-		fInstalledJREsButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_browseJREs, SWT.PUSH); 
+		fInstalledJREsButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_browseJREs, SWT.PUSH);
+		GridDataFactory.fillDefaults().applyTo(fInstalledJREsButton);
 		fInstalledJREsButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				PreferencesUtil.createPreferenceDialogOn(
@@ -158,7 +160,8 @@ public class JRESection extends PDESection {
 			}
 		});
 		
-		fExecutionEnvironmentsButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_browseEEs, SWT.PUSH); 
+		fExecutionEnvironmentsButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_browseEEs, SWT.PUSH);
+		GridDataFactory.fillDefaults().applyTo(fExecutionEnvironmentsButton);
 		fExecutionEnvironmentsButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				PreferencesUtil.createPreferenceDialogOn(
