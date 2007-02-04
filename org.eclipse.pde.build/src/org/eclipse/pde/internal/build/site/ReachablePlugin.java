@@ -85,13 +85,45 @@ public class ReachablePlugin implements Comparable {
 			if (result != 0)
 				return result;
 			//We want the object with the widest version range to sort first
-			return substract(toCompare.range.getMaximum(), toCompare.range.getMinimum()).compareTo(substract(range.getMaximum(), range.getMinimum()));
+			result = substract(toCompare.range.getMaximum(), toCompare.range.getMinimum()).compareTo(substract(range.getMaximum(), range.getMinimum()));
+			if (result != 0)
+				return result;
+			if (this.equals(o))
+				return 0;
+			result = range.getMinimum().compareTo(toCompare.range.getMaximum());
+			if (result != 0)
+				return result;
+			//Give up
+			return -1;
 		}
 		return -1;
 	}
 
-	private Version substract(Version v1, Version v2) {
-		return new Version(v1.getMajor() - v2.getMajor(), v1.getMinor() - v2.getMinor(), v1.getMicro() - v2.getMicro());
+	private Version substract(Version v1, Version v2) { //v1 - v2 where v1 is always greater or equals to v2
+		int major, minor, micro = 0;
+		int carry = 0;
+		if (v1.getMicro() < v2.getMicro()) {
+			micro = Integer.MAX_VALUE - v2.getMicro() + v1.getMicro();
+			carry = 1;
+		} else {
+			micro = v1.getMicro() - v2.getMicro();
+			carry = 0;
+		}
+		if (v1.getMinor() < v2.getMinor() + carry) {
+			minor = Integer.MAX_VALUE - (v2.getMinor() + carry) + v1.getMinor();
+			carry = 1;
+		} else {
+			minor = v1.getMinor() - (v2.getMinor() + carry);
+			carry = 0;
+		}
+		if (v1.getMajor() < v2.getMajor() + carry) {
+			major = Integer.MAX_VALUE - (v2.getMajor() + carry) + v1.getMajor();
+			carry = 1;
+		} else {
+			major = v1.getMajor() - (v2.getMajor() + carry);
+			carry = 0;
+		}
+		return new Version(major, minor, micro);
 	}
 
 	public boolean equals(Object obj) {
