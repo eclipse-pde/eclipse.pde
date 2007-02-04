@@ -99,6 +99,9 @@
       <factory
             class="org.eclipse.pde.internal.build.fetch.COPYFetchTasksFactory"
             id="COPY"/>
+		<factory
+			class="org.eclipse.pde.internal.build.fetch.GETFetchFactory"
+			id="GET"/>
    </extension>
    
     <extension
