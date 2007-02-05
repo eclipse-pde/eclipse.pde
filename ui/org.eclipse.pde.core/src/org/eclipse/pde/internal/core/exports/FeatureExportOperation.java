@@ -654,7 +654,7 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
                         if (filterSpec == null|| context.createFilter(filterSpec).match(environment)) {
                         	Element plugin = doc.createElement("plugin"); //$NON-NLS-1$
                         	plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
-                            plugin.setAttribute("version", "0.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
+                            plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$ 
                             setAdditionalAttributes(plugin, bundle);
                             root.appendChild(plugin);
                          }

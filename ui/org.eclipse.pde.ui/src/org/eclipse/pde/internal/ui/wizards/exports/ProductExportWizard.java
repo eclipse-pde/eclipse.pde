@@ -19,6 +19,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
@@ -105,6 +107,21 @@ public class ProductExportWizard extends BaseExportWizard {
 			BundleDescription bundle = state.getBundle(plugins[i].getId(), null);
 			if (bundle != null)
 				list.add(bundle);
+		}
+		// implicitly add the new launcher plug-in/fragment if we are to use the
+		// new launching story and the launcher plug-in/fragment are not already included in the .product file
+		IPluginModelBase launcherPlugin = PluginRegistry.findModel("org.eclipse.equinox.launcher"); //$NON-NLS-1$
+		if (launcherPlugin != null) {
+			BundleDescription bundle = launcherPlugin.getBundleDescription();
+			if (bundle != null && !list.contains(bundle)) {
+				list.add(bundle);
+				BundleDescription[] fragments = bundle.getFragments();
+				for (int i = 0; i < fragments.length; i++) {
+					if (!list.contains(fragments[i])) {
+						list.add(fragments[i]);
+					}
+				}
+			}
 		}
 		return (BundleDescription[]) list.toArray(new BundleDescription[list.size()]);
 	}

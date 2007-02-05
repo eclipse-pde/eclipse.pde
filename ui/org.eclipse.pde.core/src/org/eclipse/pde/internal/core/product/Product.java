@@ -448,11 +448,11 @@ public class Product extends ProductObject implements IProduct {
 		fIntroInfo = introInfo;
 	}
 
-	public IJREInfo getJVMLocations() {
+	public IJREInfo getJREInfo() {
 		return fJVMInfo;
 	}
 
-	public void setJVMLocations(IJREInfo info) {
+	public void setJREInfo(IJREInfo info) {
 		fJVMInfo = info;
 	}
 

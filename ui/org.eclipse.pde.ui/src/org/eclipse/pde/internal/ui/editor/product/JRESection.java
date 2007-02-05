@@ -224,10 +224,10 @@ public class JRESection extends PDESection {
 	}
 
 	private IJREInfo getJVMLocations() {
-		IJREInfo info = getProduct().getJVMLocations();
+		IJREInfo info = getProduct().getJREInfo();
 		if (info == null) {
 			info = getModel().getFactory().createJVMInfo();
-			getProduct().setJVMLocations(info);
+			getProduct().setJREInfo(info);
 		}
 		return info;
 	}

@@ -52,6 +52,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
+import org.eclipse.pde.internal.core.iproduct.IJREInfo;
 import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
@@ -157,7 +158,8 @@ public class ProductExportOperation extends FeatureExportOperation {
 			}
 		}
 		
-		String vm = fProduct.getJVMLocations().getJVMLocation(config[0]);
+		IJREInfo jreInfo = fProduct.getJREInfo();
+		String vm = jreInfo != null ? jreInfo.getJVMLocation(config[0]) : null;
 		if(vm != null) {
 			properties.put("root."+config[0]+ //$NON-NLS-1$
 					"."+config[1]+ //$NON-NLS-1$
