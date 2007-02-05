@@ -20,6 +20,7 @@ import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
@@ -143,8 +144,13 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		if (dialog.open() == Window.OK) {
 			IPluginModel model = (IPluginModel) dialog.getFirstResult();
 			IPlugin plugin = model.getPlugin();
-			fPluginIdEntry.setValue(plugin.getId());
-			fPluginMinVersionEntry.setValue(plugin.getVersion());
+			try {
+				((IFragment) getPluginBase()).setPluginId(plugin.getId());
+				fPluginMinVersionEntry.setValue(plugin.getVersion());
+				((IFragment) getPluginBase()).setPluginVersion(getVersion());
+			} catch (CoreException e) {
+			}
+			
 		}
 	}
 
@@ -420,5 +426,24 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		fPluginMinVersionBound.select(minInclusive ? 0 : 1);
 		fPluginMaxVersionEntry.setValue(maxVersion, true);
 		fPluginMaxVersionBound.select(maxInclusive ? 0 : 1);
+	}
+	
+	// added for bug 172675
+	protected void addListeners() {
+		if (isBundle()) {
+			IBundleModel model = getBundle().getModel();
+			if (model != null)
+				model.addModelChangedListener(this);
+		}
+		super.addListeners();
+	}
+	
+	protected void removeListeners() {
+		if (isBundle()) {
+			IBundleModel model = getBundle().getModel();
+			if (model != null)
+				model.removeModelChangedListener(this);
+		}
+		super.removeListeners();
 	}
 }
