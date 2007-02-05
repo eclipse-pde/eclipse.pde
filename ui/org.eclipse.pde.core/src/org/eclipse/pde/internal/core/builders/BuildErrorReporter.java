@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,9 @@
 package org.eclipse.pde.internal.core.builders;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
@@ -83,6 +85,21 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				return false;
 			return true;
 		}
+	}
+
+	class WildcardFilenameFilter implements FilenameFilter {
+
+		private Pattern pattern;
+
+		public WildcardFilenameFilter(String file) {
+			pattern = PatternConstructor.createPattern(file, false);
+		}
+
+		public boolean accept(File dir, String name) {
+			Matcher matcher = pattern.matcher(name);
+			return matcher.matches();
+		}
+
 	}
 
 	private ArrayList fProblemList = new ArrayList();
@@ -210,15 +227,13 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				break;
 			}
 
-			// check for *. file extension entries
-			String[] matches = key.split("\\."); //$NON-NLS-1$
-			if(matches.length == 2) {
-				Pattern pattern = 
-					PatternConstructor.createPattern("*.".concat(matches[1]), false); //$NON-NLS-1$
-				if(pattern.matcher(tokens[i]).matches()) {
+			// check for wildcards
+			IPath project = fFile.getProject().getLocation();
+			if(project != null && tokens[i] != null) {
+				File file = project.toFile();
+				File[] files = file.listFiles(new WildcardFilenameFilter(tokens[i]));
+				if(files.length > 0)
 					exists = true;
-					break;
-				}
 			}
 		}
 
@@ -504,7 +519,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				prepareError(includes.getName(), token, message, fixId, PDEMarkerFactory.CAT_OTHER);
 		}
 	}
-	
+
 	private void validateDependencyManagement(IBuildEntry bundleList) {
 		String[] bundles = bundleList.getTokens();
 		for (int i = 0; i < bundles.length; i++) {
@@ -513,7 +528,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 						NLS.bind(PDECoreMessages.BuildErrorReporter_cannotFindBundle, bundles[i]), 
 						PDEMarkerFactory.NO_RESOLUTION, fClasspathSeverity, PDEMarkerFactory.CAT_OTHER);
 		}
-		
+
 	}
 
 	private BuildModel prepareTextBuildModel(IProgressMonitor monitor)  {
