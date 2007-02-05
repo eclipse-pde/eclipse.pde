@@ -59,11 +59,12 @@ public class ExtensionsPage extends PDEFormPage {
 		protected void registerPages(DetailsPart detailsPart) {
 			detailsPart.setPageLimit(10);
 			// register static page for the extensions
-			detailsPart.registerPage(IPluginExtension.class, new ExtensionDetails());
+			detailsPart.registerPage(IPluginExtension.class, 
+					new ExtensionDetails(fSection));
 			// Register a static page for the extension elements that contain 
 			// only body text (no child elements or attributes)
 			// (e.g. schema simple type)
-			fBodyTextDetails = new ExtensionElementBodyTextDetails();
+			fBodyTextDetails = new ExtensionElementBodyTextDetails(fSection);
 			detailsPart.registerPage(ExtensionElementBodyTextDetails.class,
 					fBodyTextDetails);
 			// register a dynamic provider for elements
@@ -106,9 +107,9 @@ public class ExtensionsPage extends PDEFormPage {
 		}
 		public IDetailsPage getPage(Object object) {
 			if (object instanceof ISchemaElement)
-				return new ExtensionElementDetails((ISchemaElement)object);
+				return new ExtensionElementDetails(fSection, (ISchemaElement)object);
 			if (object instanceof String)
-				return new ExtensionElementDetails(null);
+				return new ExtensionElementDetails(fSection, null);
 			return null;
 		}
 	}

@@ -79,6 +79,10 @@ public class CompCSDetails extends CSAbstractDetails {
 		int style = Section.DESCRIPTION | ExpandableComposite.TITLE_BAR;
 		fMainSection = getPage().createUISection(parent, PDEUIMessages.SimpleCSDetails_3, 
 			PDEUIMessages.CompCSDetails_sectionDescription, style);
+		// Align the master and details section headers (misalignment caused
+		// by section toolbar icons)
+		getPage().alignSectionHeaders(getMasterSection().getSection(), 
+				fMainSection);
 		// Create the container for the main section
 		Composite sectionClient = getPage().createUISectionContainer(fMainSection, 2);		
 		// Create the name widget

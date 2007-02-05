@@ -87,6 +87,10 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		fMainSection.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		fMainSection.setLayoutData(data);
+		// Align the master and details section headers (misalignment caused
+		// by section toolbar icons)
+		getPage().alignSectionHeaders(getMasterSection().getSection(), 
+				fMainSection);	
 		
 		// Create container for main section
 		Composite mainSectionClient = toolkit.createComposite(fMainSection);

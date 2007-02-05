@@ -54,7 +54,7 @@ public class CollapseAction extends Action {
 	 */
 	private void initialize(AbstractTreeViewer viewer, String tooltipText) {
 		setToolTipText(tooltipText);
-		setImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL_MINI);
+		setImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL);
 		fTreeViewer = viewer;
 	}
 	

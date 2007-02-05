@@ -142,7 +142,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		}
 	}
 	public ExtensionsSection(PDEFormPage page, Composite parent) {
-		super(page, parent, 0, new String[]{
+		super(page, parent, Section.DESCRIPTION, new String[]{
 				PDEUIMessages.ManifestEditor_DetailExtension_new, 
 				PDEUIMessages.ManifestEditor_DetailExtension_edit,
 				null,
@@ -202,6 +202,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		fDrillDownAdapter = new DrillDownAdapter(fExtensionTree);
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
+		section.setDescription(PDEUIMessages.ExtensionsSection_sectionDescExtensionsMaster);
 		// See Bug # 160554: Set text before text client
 		section.setText(PDEUIMessages.ManifestEditor_DetailExtension_title);
 		initialize((IPluginModelBase) getPage().getModel());
@@ -228,7 +229,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		});			
 		// Add sort action to the tool bar
 		fSortAction = new SortAction(fExtensionTree, 
-				PDEUIMessages.ExtensionsPage_sortAlpha, null, null, this, true);
+				PDEUIMessages.ExtensionsPage_sortAlpha, null, null, this);
 		toolBarManager.add(fSortAction);
 		// Add collapse action to the tool bar
 		fCollapseAction = new CollapseAction(fExtensionTree, 

@@ -108,6 +108,10 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		int style = Section.DESCRIPTION | ExpandableComposite.TITLE_BAR;
 		fDefinitionSection = getPage().createUISection(parent, PDEUIMessages.SimpleCSDetails_3, 
 			PDEUIMessages.CompCSTaskGroupDetails_SectionDescription, style);
+		// Align the master and details section headers (misalignment caused
+		// by section toolbar icons)
+		getPage().alignSectionHeaders(getMasterSection().getSection(), 
+				fDefinitionSection);			
 		// Create the container for the main section
 		Composite sectionClient = getPage().createUISectionContainer(fDefinitionSection, 2);		
 		// Create the name entry

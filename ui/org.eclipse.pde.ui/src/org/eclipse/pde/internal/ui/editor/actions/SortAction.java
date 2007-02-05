@@ -37,18 +37,13 @@ public class SortAction extends Action {
 	 */
 	public SortAction(StructuredViewer viewer, String tooltipText,
 			ViewerComparator sorter, ViewerComparator defaultSorter, 
-			IPropertyChangeListener listener,
-			boolean useMiniImage) {
+			IPropertyChangeListener listener) {
 		
 		super(tooltipText, IAction.AS_CHECK_BOX);
 		// Set the tooltip
 		setToolTipText(tooltipText);
 		// Set the image
-		if (useMiniImage) {
-			setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO_MINI);
-		} else {
-			setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO);
-		}
+		setImageDescriptor(PDEPluginImages.DESC_ALPHAB_SORT_CO);
 		// Set the default comparator
 		fDefaultComparator = defaultSorter;
 		// Set the viewer

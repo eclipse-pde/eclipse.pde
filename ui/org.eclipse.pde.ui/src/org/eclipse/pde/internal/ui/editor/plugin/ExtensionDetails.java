@@ -31,8 +31,8 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEDetails;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.actions.OpenSchemaAction;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.search.FindDeclarationsAction;
@@ -50,7 +50,7 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class ExtensionDetails extends PDEDetails {
+public class ExtensionDetails extends AbstractPluginElementDetails {
 	private IPluginExtension input;
 	private FormEntry id;
 	private FormEntry name;
@@ -58,11 +58,14 @@ public class ExtensionDetails extends PDEDetails {
 
 	private static final String RTEXT_DATA =
 		PDEUIMessages.ExtensionDetails_extensionPointLinks; 
+	
 	/**
-	 * 
+	 * @param masterSection
 	 */
-	public ExtensionDetails() {
+	public ExtensionDetails(PDESection masterSection) {
+		super(masterSection);
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
@@ -76,6 +79,11 @@ public class ExtensionDetails extends PDEDetails {
 		section.setDescription(PDEUIMessages.ExtensionDetails_desc);
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+		
+		// Align the master and details section headers (misalignment caused
+		// by section toolbar icons)
+		getPage().alignSectionHeaders(getMasterSection().getSection(), 
+				section);			
 		
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));

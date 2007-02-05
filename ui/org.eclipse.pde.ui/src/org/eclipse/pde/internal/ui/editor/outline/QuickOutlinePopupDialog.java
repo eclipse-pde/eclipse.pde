@@ -143,8 +143,7 @@ public class QuickOutlinePopupDialog extends PopupDialog implements
 		// Add sort action to dialog menu
 		fSortAction = new SortAction(fTreeViewer,
 				PDEUIMessages.PDEMultiPageContentOutline_SortingAction_tooltip,
-				fTreeViewerComparator, fTreeViewerDefaultComparator, null, 
-				false);
+				fTreeViewerComparator, fTreeViewerDefaultComparator, null);
 	}
 
 	/* (non-Javadoc)

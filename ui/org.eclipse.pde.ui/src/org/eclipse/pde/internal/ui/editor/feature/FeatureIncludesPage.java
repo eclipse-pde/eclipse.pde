@@ -79,6 +79,11 @@ public class FeatureIncludesPage extends PDEFormPage {
 				| GridData.VERTICAL_ALIGN_BEGINNING);
 		fIncludedDetailsSection.getSection().setLayoutData(gd);
 
+		// Align the master and details section headers (misalignment caused
+		// by section toolbar icons)
+		alignSectionHeaders(fIncludedSection.getSection(), 
+				fIncludedDetailsSection.getSection());			
+		
 		fIncludedPortabilitySection = new IncludedFeaturesPortabilitySection(
 				this, right);
 		gd = new GridData(GridData.FILL_HORIZONTAL

@@ -77,6 +77,11 @@ public class FeatureReferencePage extends PDEFormPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL
 				| GridData.VERTICAL_ALIGN_BEGINNING);
 		fPluginDetailsSection.getSection().setLayoutData(gd);
+		
+		// Align the master and details section headers (misalignment caused
+		// by section toolbar icons)
+		alignSectionHeaders(fPluginSection.getSection(), 
+				fPluginDetailsSection.getSection());		
 
 		fPluginPortabilitySection = new PluginPortabilitySection(this, right);
 		gd = new GridData(GridData.FILL_HORIZONTAL
@@ -94,7 +99,7 @@ public class FeatureReferencePage extends PDEFormPage {
 		fPluginSection.fireSelection();
 		super.createFormContent(managedForm);
 	}
-
+	
 	public void setFocus() {
 		fPluginSection.setFocus();
 	}

@@ -84,6 +84,11 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fSection.marginWidth = 5; 
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		fSection.setLayoutData(gd);
+		
+		// Align the master and details section headers (misalignment caused
+		// by section toolbar icons)
+		getPage().alignSectionHeaders(fElementSection.getSection(), fSection);
+		
 		Composite client = toolkit.createComposite(fSection);
 		GridLayout glayout = new GridLayout(3, false);
 		boolean paintedBorder = toolkit.getBorderStyle() != SWT.BORDER;

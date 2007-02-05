@@ -24,8 +24,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEDetails;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.text.IControlHoverContentProvider;
 import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
 import org.eclipse.pde.internal.ui.editor.text.TranslationHyperlink;
@@ -49,7 +49,7 @@ import org.eclipse.ui.forms.widgets.Section;
  * ExtensionElementBodyTextDetails
  *
  */
-public class ExtensionElementBodyTextDetails extends PDEDetails implements
+public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetails implements
 		IControlHoverContentProvider {
 
 	private IPluginElement fPluginElement;
@@ -69,8 +69,8 @@ public class ExtensionElementBodyTextDetails extends PDEDetails implements
 	/**
 	 * 
 	 */
-	public ExtensionElementBodyTextDetails() {
-		
+	public ExtensionElementBodyTextDetails(PDESection masterSection) {
+		super(masterSection);
 		fPluginElement = null;
 		fSchemaElement = null;
 		fTextBody = null;
@@ -284,6 +284,11 @@ public class ExtensionElementBodyTextDetails extends PDEDetails implements
 		int layout_style = GridData.FILL_HORIZONTAL;
 		GridData data = new GridData(layout_style);
 		fSectionElementDetails.setLayoutData(data);
+		
+		// Align the master and details section headers (misalignment caused
+		// by section toolbar icons)
+		getPage().alignSectionHeaders(getMasterSection().getSection(), 
+				fSectionElementDetails);		
 	}
 
 	/**

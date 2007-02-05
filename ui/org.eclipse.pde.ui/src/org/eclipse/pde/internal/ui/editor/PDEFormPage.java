@@ -462,6 +462,20 @@ public abstract class PDEFormPage extends FormPage {
     }
 	
 	/**
+	 * Used to align the section client / decriptions of two section headers 
+	 * horizontally adjacent to each other.  The misalignment is caused by one
+	 * section header containing toolbar icons and the other not.
+	 * 
+	 * @param masterSection
+	 * @param detailsSection
+	 */
+	public void alignSectionHeaders(Section masterSection,
+			Section detailsSection) {
+		detailsSection.descriptionVerticalSpacing += 
+			masterSection.getTextClientHeightDifference();
+	}	    
+    
+	/**
 	 * @param form
 	 * @param colors
 	 */

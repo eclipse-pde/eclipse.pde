@@ -75,6 +75,12 @@ public class FeatureDependenciesPage extends PDEFormPage {
 		fMatchSection = new MatchSection(this, right, false);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fMatchSection.getSection().setLayoutData(gd);
+		
+		// Align the master and details section headers (misalignment caused
+		// by section toolbar icons)
+		alignSectionHeaders(fRequiresSection.getSection(), 
+				fMatchSection.getSection());			
+		
 		managedForm.addPart(fRequiresSection);
 		managedForm.addPart(fMatchSection);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),IHelpContextIds.MANIFEST_FEATURE_DEPENDENCIES);

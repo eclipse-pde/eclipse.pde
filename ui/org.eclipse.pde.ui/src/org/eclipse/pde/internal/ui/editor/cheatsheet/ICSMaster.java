@@ -11,6 +11,8 @@
 
 package org.eclipse.pde.internal.ui.editor.cheatsheet;
 
+import org.eclipse.ui.forms.widgets.Section;
+
 /**
  * ICSMaster
  *
@@ -33,5 +35,10 @@ public interface ICSMaster {
 	 * section
 	 */
 	public void fireSelection();
+	
+	/**
+	 * @return
+	 */
+	public Section getSection();
 	
 }

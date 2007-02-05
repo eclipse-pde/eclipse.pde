@@ -139,8 +139,7 @@ public class IncludedFeaturesSection extends TableSection implements
 				PDEUIMessages.FeatureEditor_IncludedFeatures_sortAlpha, 
 				ListUtil.NAME_COMPARATOR,
 				null,
-				null,
-				true);
+				null);
 		
 		toolBarManager.add(fSortAction);
 

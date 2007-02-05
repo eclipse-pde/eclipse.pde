@@ -25,8 +25,8 @@ import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
-import org.eclipse.pde.internal.ui.editor.PDEDetails;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.plugin.rows.BooleanAttributeRow;
 import org.eclipse.pde.internal.ui.editor.plugin.rows.ChoiceAttributeRow;
 import org.eclipse.pde.internal.ui.editor.plugin.rows.ClassAttributeRow;
@@ -44,18 +44,24 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.SharedScrolledComposite;
 
 
-public class ExtensionElementDetails extends PDEDetails {
+public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	private IPluginElement input;
 	private ISchemaElement schemaElement;
 	private ArrayList rows;
 	private Section section;
+
+	
 	/**
-	 *  
+	 * @param masterSection
+	 * @param schemaElement
 	 */
-	public ExtensionElementDetails(ISchemaElement schemaElement) {
+	public ExtensionElementDetails(PDESection masterSection, 
+			ISchemaElement schemaElement) {
+		super(masterSection);
 		this.schemaElement = schemaElement;
 		rows = new ArrayList();
 	}
+	
 	public String getContextId() {
 		return PluginInputContext.CONTEXT_ID;
 	}
@@ -84,6 +90,11 @@ public class ExtensionElementDetails extends PDEDetails {
 		section.setDescription("");  //$NON-NLS-1$
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING));
+		
+		// Align the master and details section headers (misalignment caused
+		// by section toolbar icons)
+		getPage().alignSectionHeaders(getMasterSection().getSection(), 
+				section);		
 		
 		Composite client = toolkit.createComposite(section);
 		int span = 2;
