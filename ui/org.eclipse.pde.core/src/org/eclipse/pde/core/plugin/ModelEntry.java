@@ -88,6 +88,9 @@ public class ModelEntry extends PlatformObject {
 	private IPluginModelBase getBestCandidate(IPluginModelBase[] models) {
 		IPluginModelBase model = null;
 		for (int i = 0; i < models.length; i++) {
+			if (models[i].getBundleDescription() == null)
+				continue;
+			
 			if (model == null) {
 				model = models[i];
 				continue;
@@ -160,15 +163,20 @@ public class ModelEntry extends PlatformObject {
 	 * model exists.
 	 */
 	public IPluginModelBase getModel(BundleDescription desc) {
+		if (desc == null)
+			return null;
+		
 		long bundleId = desc.getBundleId();
 		for (int i = 0; i < fWorkspaceEntries.size(); i++) {
 			IPluginModelBase model = (IPluginModelBase)fWorkspaceEntries.get(i);
-			if (model.getBundleDescription().getBundleId() == bundleId)
+			BundleDescription bundle = model.getBundleDescription();
+			if (bundle != null && bundle.getBundleId() == bundleId)
 				return model;
 		}
 		for (int i = 0; i < fExternalEntries.size(); i++) {
 			IPluginModelBase model = (IPluginModelBase)fExternalEntries.get(i);
-			if (model.getBundleDescription().getBundleId() == bundleId)
+			BundleDescription bundle = model.getBundleDescription();
+			if (bundle != null && bundle.getBundleId() == bundleId)
 				return model;
 		}
 		return null;			
