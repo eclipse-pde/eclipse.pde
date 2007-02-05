@@ -29,6 +29,7 @@ import org.osgi.framework.Version;
  */
 public class FetchScriptGenerator extends AbstractScriptGenerator {
 	private static final String FETCH_TASK_FACTORY = "internal.factory"; //$NON-NLS-1$
+	private static final String MATCHED_VERSION = "internal.matchedVersion"; //$NON-NLS-1$
 
 	// flag saying if we want to recursively generate the scripts	
 	protected boolean recursiveGeneration = true;
@@ -249,7 +250,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		String currentElement = entry.substring(index + 1);
 
 		// read and validate the repository info for the entry
-		String repositoryInfo = getRepositoryInfo(entry, version);
+		Object[] match = getRepositoryInfo(entry, version);
+		String repositoryInfo = match == null ? null : (String) match[0];
 		if (repositoryInfo == null) {
 			if (IPDEBuildConstants.CONTAINER_FEATURE.equals(currentElement)) {
 				entryInfos.put(IFetchFactory.KEY_ELEMENT_TYPE, type);
@@ -296,7 +298,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 		// store builder
 		entryInfos.put(FETCH_TASK_FACTORY, fetchTaskFactory);
-
+		
+		// keep track of the version of the element as found in the map file
+		entryInfos.put(MATCHED_VERSION, match[1]);
 		return entryInfos;
 	}
 
@@ -339,7 +343,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		String elementToFetch = (String) mapFileEntry.get(IFetchFactory.KEY_ELEMENT_NAME);
 		String type = (String) mapFileEntry.get(IFetchFactory.KEY_ELEMENT_TYPE);
 		if (!manifestFileOnly)
-			factory.generateRetrieveElementCall(mapFileEntry, computeFinalLocation(type, elementToFetch), script);
+			factory.generateRetrieveElementCall(mapFileEntry, computeFinalLocation(type, elementToFetch, (Version) mapFileEntry.get(MATCHED_VERSION)), script);
 		else {
 			String[] files;
 			if (type.equals(IFetchFactory.ELEMENT_TYPE_FEATURE)) {
@@ -353,10 +357,10 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			} else {
 				files = new String[0];
 			}
-			factory.generateRetrieveFilesCall(mapFileEntry, computeFinalLocation(type, elementToFetch), files, script);
+			factory.generateRetrieveFilesCall(mapFileEntry, computeFinalLocation(type, elementToFetch, (Version) mapFileEntry.get(MATCHED_VERSION)), files, script);
 		}
 
-		//Keep track of the element that are being fetched
+		//Keep track of the element that are being fetched. To simplify the lookup in the qualifier replacer, the versioned that was initially looked up is used as key in the file
 		Properties tags = null;
 		if (type.equals(IFetchFactory.ELEMENT_TYPE_FEATURE))
 			tags = repositoryFeatureTags;
@@ -523,13 +527,13 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		return result;
 	}
 
-	protected IPath computeFinalLocation(String type, String elementName) {
+	protected IPath computeFinalLocation(String type, String elementName, Version version) {
 		IPath location = new Path(Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY));
 		if (type.equals(IFetchFactory.ELEMENT_TYPE_FEATURE))
 			location = location.append(DEFAULT_FEATURE_LOCATION);
 		else
 			location = location.append(DEFAULT_PLUGIN_LOCATION);
-		return location.append(elementName);
+		return location.append(elementName + (version.equals(Version.emptyVersion) ? "" : '_' + version.toString())); //$NON-NLS-1$
 	}
 
 	/**
@@ -548,20 +552,24 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	// The first two cases are straight lookup cases
 	// The third case is a "fallback case"
 	// The fourth is the backward compatibility case.
-	protected String getRepositoryInfo(String elementName, Version version) throws CoreException {
+	protected Object[] getRepositoryInfo(String elementName, Version version) throws CoreException {
 		//TODO Need to see if the element name contains plugin, bundle, etc...
 		if (directoryFile == null) {
 			directoryFile = readProperties(directoryLocation, "", IStatus.ERROR); //$NON-NLS-1$
 		}
 
 		String result = null;
+		Version matchedVersion = null;
 		//Here we deal with the simple cases: the looked up element exists as is in the map (cases 1 and 2).
-		if (Version.emptyVersion.equals(version))
+		if (Version.emptyVersion.equals(version)) {
 			result = (String) directoryFile.get(elementName);
-		else {
+			matchedVersion = Version.emptyVersion;
+		} else {
 			result = (String) directoryFile.get(elementName + ',' + version.getMajor() + '.' + version.getMinor() + '.' + version.getMicro());
+			matchedVersion = new Version(version.getMajor(), version.getMinor(), version.getMicro());
 			if (result == null) {
 				result = (String) directoryFile.get(elementName); //case 4
+				result = Version.emptyVersion.toString();
 				if (result != null && version.getQualifier().equalsIgnoreCase(IBuildPropertiesConstants.PROPERTY_QUALIFIER)) {
 					String message = NLS.bind(Messages.warning_fallBackVersion, elementName + ',' + version.toString(), elementName);
 					BundleHelper.getDefault().getLog().log(new Status(IStatus.WARNING, PI_PDEBUILD, EXCEPTION_ENTRY_MISSING, message, null));
@@ -569,7 +577,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			}
 		}
 		if (result != null)
-			return result;
+			return new Object[] {result, matchedVersion};
 
 		//Here we start dealing with the case #3.
 		initializeSortedDirectory();
@@ -584,7 +592,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			MapFileEntry aCandidate = (MapFileEntry) entry.getKey();
 			//Find the exact match
 			if (aCandidate.v.equals(version))
-				return (String) entry.getValue();
+				return new String[] {(String) entry.getValue(), version.toString()};
 
 			if (bestMatch != null) {
 				if (((MapFileEntry) bestMatch.getKey()).v.compareTo(((MapFileEntry) entry.getKey()).v) < 1) {
@@ -596,7 +604,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		}
 		if (!Version.emptyVersion.equals(version)) //The request was for a particular version number and it has not been found
 			return null;
-		return (String) bestMatch.getValue();
+		return new Object[] {(String) bestMatch.getValue(), ((MapFileEntry) bestMatch.getKey()).v};
 	}
 
 	private static final Version versionMax = new Version(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
