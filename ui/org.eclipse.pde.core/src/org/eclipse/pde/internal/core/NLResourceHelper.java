@@ -42,7 +42,7 @@ public class NLResourceHelper {
 	}
 
 	private InputStream getResourceStream(String name, URL[] locations) {
-		URLClassLoader resourceLoader = new URLClassLoader(locations);
+		URLClassLoader resourceLoader = new URLClassLoader(locations, null);
 		
 		StringTokenizer tokenizer = new StringTokenizer(Platform.getNL(), "_"); //$NON-NLS-1$
 		String language = tokenizer.nextToken();
