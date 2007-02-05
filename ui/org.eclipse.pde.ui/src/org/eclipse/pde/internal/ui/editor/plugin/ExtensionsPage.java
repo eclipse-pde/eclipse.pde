@@ -45,6 +45,9 @@ public class ExtensionsPage extends PDEFormPage {
 	private ExtensionsBlock fBlock;
 	
 	public class ExtensionsBlock extends PDEMasterDetailsBlock implements IDetailsPageProvider {
+		
+		private ExtensionElementBodyTextDetails fBodyTextDetails;
+		
 		public ExtensionsBlock() {
 			super(ExtensionsPage.this);
 		}
@@ -60,8 +63,9 @@ public class ExtensionsPage extends PDEFormPage {
 			// Register a static page for the extension elements that contain 
 			// only body text (no child elements or attributes)
 			// (e.g. schema simple type)
+			fBodyTextDetails = new ExtensionElementBodyTextDetails();
 			detailsPart.registerPage(ExtensionElementBodyTextDetails.class,
-					new ExtensionElementBodyTextDetails());
+					fBodyTextDetails);
 			// register a dynamic provider for elements
 			detailsPart.setPageProvider(this);
 		}
@@ -75,6 +79,9 @@ public class ExtensionsPage extends PDEFormPage {
 					// Use the body text page if the element has no child 
 					// elements or attributes
 					if (element.getType() instanceof ISchemaSimpleType) {
+						// Set the schema element (to provide hover text 
+						// content)
+						fBodyTextDetails.setSchemaElement(element);
 						return ExtensionElementBodyTextDetails.class;
 					}
 					return element;
@@ -86,6 +93,9 @@ public class ExtensionsPage extends PDEFormPage {
 				// elements or attributes
 				if ((pelement.getAttributeCount() == 0) &&
 						(pelement.getChildCount() == 0)) {
+					// Unset the previous schema element (no hover text 
+					// content)					
+					fBodyTextDetails.setSchemaElement(null);
 					return ExtensionElementBodyTextDetails.class;					
 				}
 				String ename = pelement.getName();

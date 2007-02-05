@@ -14,6 +14,7 @@ import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
+import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -35,17 +36,18 @@ public class TextAttributeRow extends ExtensionAttributeRow {
 		super(part, att);
 	}
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
+		super.createContents(parent, toolkit, span);
 		createLabel(parent, toolkit);
 		text = toolkit.createText(parent, "", SWT.SINGLE); //$NON-NLS-1$
 		text.setLayoutData(createGridData(span));
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (!blockNotification) markDirty();
-				updateHover(getDescription(text));
+				PDETextHover.updateHover(fIC, getHoverContent(text));
 			}
 		});
 		text.setEditable(part.isEditable());
-		addHoverListener(text);
+		PDETextHover.addHoverListenerToControl(fIC, text, this);
 	}
 	protected GridData createGridData(int span) {
 		GridData gd = new GridData(span == 2

@@ -12,34 +12,49 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEDetails;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.text.IControlHoverContentProvider;
+import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
+import org.eclipse.pde.internal.ui.editor.text.TranslationHyperlink;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IFormPart;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.Section;
 
 /**
  * ExtensionElementBodyTextDetails
  *
  */
-public class ExtensionElementBodyTextDetails extends PDEDetails {
+public class ExtensionElementBodyTextDetails extends PDEDetails implements
+		IControlHoverContentProvider {
 
 	private IPluginElement fPluginElement;
+	
+	private ISchemaElement fSchemaElement;
 	
 	private FormEntry fTextBody;
 	
@@ -47,12 +62,17 @@ public class ExtensionElementBodyTextDetails extends PDEDetails {
 	
 	private FormToolkit fToolkit;
 	
+	private Hyperlink fHyperlinkBody;
+	
+	private IInformationControl fInfoControlHover;
+	
 	/**
 	 * 
 	 */
 	public ExtensionElementBodyTextDetails() {
 		
 		fPluginElement = null;
+		fSchemaElement = null;
 		fTextBody = null;
 		fSectionElementDetails = null;
 	}
@@ -77,10 +97,61 @@ public class ExtensionElementBodyTextDetails extends PDEDetails {
 	private void createListeners() {
 		// Create the listeners for the body text field
 		createListenersTextBody();
-		// Create the modle listeners
+		// Create the listeners for the body text hyperlink
+		createListenersHyperlinkBody();
+		// Create the model listeners
 		createListenersModel();
 	}
 
+	/**
+	 * 
+	 */
+	private void createListenersHyperlinkBody() {
+		// Listen to hyperlink clicks
+		fHyperlinkBody.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				handleHyperlinkBodyLinkActivated();
+			}
+		});
+		// Listen to mouse hovers
+		PDETextHover.addHoverListenerToControl(fInfoControlHover,
+				fHyperlinkBody, this);				
+	}
+
+	/**
+	 * 
+	 */
+	private void handleHyperlinkBodyLinkActivated() {
+		boolean opened = false;
+		// Open the reference if this is not a reference model
+		if (isReferenceModel() == false) {
+			opened = openReference();
+		}
+		// If the reference was not opened, notify the user with a beep
+		if (opened == false) {
+			Display.getCurrent().beep();
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private boolean openReference() {
+		// Ensure a plugin element was specified
+		if (fPluginElement == null) {
+			return false;
+		}
+		// Create the link
+		TranslationHyperlink link = new TranslationHyperlink(
+				null, 
+				fTextBody.getValue(),
+				fPluginElement.getModel());		
+		// Open the link
+		link.open();
+		
+		return link.getOpened();
+	}	
+	
 	/**
 	 * 
 	 */
@@ -93,11 +164,15 @@ public class ExtensionElementBodyTextDetails extends PDEDetails {
 	 * 
 	 */
 	private void createListenersTextBody() {
+		// Listen for text input
 		fTextBody.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry entry) {
 				handleTextBodyValueChanged();
 			}
-		});		
+		});	
+		// Listen to mouse hovers
+		PDETextHover.addHoverListenerToControl(fInfoControlHover, fTextBody
+				.getText(), this);				
 	}
 
 	/**
@@ -139,6 +214,10 @@ public class ExtensionElementBodyTextDetails extends PDEDetails {
 		createUISectionElementDetails(parent);
 		// Create the client container for the section
 		Composite client = createUISectionContainer(fSectionElementDetails);
+		// Create the info hover control for the body text field and hyperlink
+		createUIInfoHoverControl(client);		
+		// Create the body text label
+		createUIHyperlinkBody(client);
 		// Create the body text field 
 		createUITextBody(client);
 		// Associate the client with the section
@@ -148,6 +227,39 @@ public class ExtensionElementBodyTextDetails extends PDEDetails {
 		markDetailsPart(fSectionElementDetails);
 	}
 
+	/**
+	 * @param client
+	 */
+	private void createUIInfoHoverControl(Composite client) {
+		// Shared between the body text field and body text hyperlink / label
+		fInfoControlHover = 
+			PDETextHover.getInformationControlCreator().createInformationControl(
+					client.getShell());
+		fInfoControlHover.setSizeConstraints(300, 600);
+	}
+	
+	/**
+	 * @param client
+	 */
+	private void createUIHyperlinkBody(Composite client) {
+		fHyperlinkBody = fToolkit.createHyperlink(client,
+				PDEUIMessages.ExtensionElementBodyTextDetails_labelBodyText,
+				SWT.NULL);
+	}
+	
+	/**
+	 * @return
+	 */
+	private boolean isReferenceModel() {
+		// If the model has no underlying resource, then it is a reference
+		// model
+		if ((fPluginElement == null) ||
+				(fPluginElement.getModel().getUnderlyingResource() == null)) {
+			return true;
+		}
+		return false;
+	}	
+	
 	/**
 	 * @param section
 	 * @return
@@ -330,6 +442,66 @@ public class ExtensionElementBodyTextDetails extends PDEDetails {
 	 */
 	public void setFocus() {
 		fTextBody.getText().setFocus();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.text.TextHoverDescriptionProvider#getDescription(org.eclipse.swt.widgets.Control)
+	 */
+	public String getHoverContent(Control control) {
+		// Retrieve either the hyperlink, label or text description as the 
+		// hover content
+		if ((control instanceof Hyperlink) ||
+				(control instanceof Label)) {
+			return getHyperlinkDescription();
+		} else if (control instanceof Text) {
+			return getTextDescription((Text)control);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * @return
+	 */
+	private String getHyperlinkDescription() {
+		// Ensure there is an associated schema
+		if (fSchemaElement == null) {
+			return null;
+		}
+		// Return the associated element description
+		return fSchemaElement.getDescription();
+	}
+
+	/**
+	 * @param text
+	 * @return
+	 */
+	private String getTextDescription(Text text) {
+		// Ensure there is an associated schema
+		if (fSchemaElement == null) {
+			return null;
+		}		
+		String bodyText = text.getText();
+		String translatedBodyText = null;
+		// If the text represents a translated string key, retrieve its 
+		// associated value
+		if ((bodyText.startsWith("%")) && //$NON-NLS-1$
+				fSchemaElement.hasTranslatableContent()) { 
+			translatedBodyText = fPluginElement.getResourceString(bodyText);
+			// If the value does not equal the key, a value was found
+			if (bodyText.equals(translatedBodyText) == false) {
+				return translatedBodyText;
+			}
+		}
+
+		return null;
+	}
+	
+	/**
+	 * @param schemaElement
+	 */
+	public void setSchemaElement(ISchemaElement schemaElement) {
+		fSchemaElement = schemaElement;
 	}
 	
 }

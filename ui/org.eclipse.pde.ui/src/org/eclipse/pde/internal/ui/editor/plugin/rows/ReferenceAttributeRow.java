@@ -18,6 +18,7 @@ package org.eclipse.pde.internal.ui.editor.plugin.rows;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
+import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -50,7 +51,7 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 				}
 			}
 		});
-		addHoverListener(link);
+		PDETextHover.addHoverListenerToControl(fIC, link, this);
 	}
 	
 	protected boolean isReferenceModel() {

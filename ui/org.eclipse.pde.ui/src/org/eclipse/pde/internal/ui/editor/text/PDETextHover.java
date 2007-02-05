@@ -12,6 +12,10 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.actions.PDEActionConstants;
 import org.eclipse.pde.internal.ui.editor.contentassist.display.HTMLTextPresenter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.keys.IBindingService;
@@ -46,4 +50,47 @@ public abstract class PDETextHover implements ITextHoverExtension, ITextHover {
 		
 		return NLS.bind(PDEUIMessages.PDETextHover_0, keySequence);
 	}
+	
+	/**
+	 * @param infoControl
+	 * @param control
+	 * @param provider
+	 */
+	public static void addHoverListenerToControl(
+			final IInformationControl infoControl, final Control control,
+			final IControlHoverContentProvider provider) {
+		
+		control.addMouseTrackListener(new MouseTrackListener() {
+			public void mouseEnter(MouseEvent e) {
+			}
+			public void mouseExit(MouseEvent e) {
+				if (infoControl instanceof PDEDefaultInformationControl && ((PDEDefaultInformationControl)infoControl).isDisposed())
+					return;
+				infoControl.setVisible(false);
+			}
+			public void mouseHover(MouseEvent e) {
+				if (infoControl instanceof PDEDefaultInformationControl && ((PDEDefaultInformationControl)infoControl).isDisposed())
+					return;
+				String text = provider.getHoverContent(control);
+				if (text == null || text.trim().length() == 0)
+					return;
+				updateHover(infoControl, text);
+				infoControl.setLocation(control.toDisplay(new Point(10, 25)));
+				infoControl.setVisible(true);
+			}
+		});
+	}
+	
+	/**
+	 * @param infoControl
+	 * @param text
+	 */
+	public static void updateHover(IInformationControl infoControl, String text) {
+		infoControl.setInformation(text);
+		Point p = infoControl.computeSizeHint();
+		infoControl.setSize(p.x, p.y);
+		if (text == null || text.trim().length() == 0)
+			infoControl.setVisible(false);
+	}
+	
 }

@@ -17,12 +17,9 @@ import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
-import org.eclipse.pde.internal.ui.editor.text.PDEDefaultInformationControl;
 import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
+import org.eclipse.pde.internal.ui.editor.text.IControlHoverContentProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -31,7 +28,7 @@ import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
-public abstract class ExtensionAttributeRow {
+public abstract class ExtensionAttributeRow implements IControlHoverContentProvider {
 	protected IContextPart part;
 	protected Object att;
 	protected IPluginElement input;
@@ -92,35 +89,18 @@ public abstract class ExtensionAttributeRow {
 	protected void createLabel(Composite parent, FormToolkit toolkit) {
 		Label label = toolkit.createLabel(parent, getPropertyLabel(), SWT.NULL);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-		addHoverListener(label);
+		PDETextHover.addHoverListenerToControl(fIC, label, this);	
 	}
 	
-	protected void addHoverListener(final Control control) {
+	/**
+	 * @param control
+	 */
+	protected void createTextHover(Control control) {
 		fIC = PDETextHover.getInformationControlCreator().createInformationControl(control.getShell());
 		fIC.setSizeConstraints(300, 600);
-		
-		control.addMouseTrackListener(new MouseTrackListener() {
-			public void mouseEnter(MouseEvent e) {
-			}
-			public void mouseExit(MouseEvent e) {
-				if (fIC instanceof PDEDefaultInformationControl && ((PDEDefaultInformationControl)fIC).isDisposed())
-					return;
-				fIC.setVisible(false);
-			}
-			public void mouseHover(MouseEvent e) {
-				if (fIC instanceof PDEDefaultInformationControl && ((PDEDefaultInformationControl)fIC).isDisposed())
-					return;
-				String text = getDescription(control);
-				if (text == null || text.trim().length() == 0)
-					return;
-				updateHover(text);
-				fIC.setLocation(control.toDisplay(new Point(10, 25)));
-				fIC.setVisible(true);
-			}
-		});
 	}
 	
-	protected String getDescription(Control c) {
+	public String getHoverContent(Control c) {
 		if (c instanceof Label || c instanceof Hyperlink)
 			return getDescription();
 		if (c instanceof Text) {
@@ -135,15 +115,14 @@ public abstract class ExtensionAttributeRow {
 		return null;
 	}
 	
-	protected void updateHover(String text) {
-		fIC.setInformation(text);
-		Point p = fIC.computeSizeHint();
-		fIC.setSize(p.x, p.y);
-		if (text == null || text.trim().length() == 0)
-			fIC.setVisible(false);
+	/**
+	 * @param parent
+	 * @param toolkit
+	 * @param span
+	 */
+	public void createContents(Composite parent, FormToolkit toolkit, int span) {
+		createTextHover(parent);
 	}
-	
-	public abstract void createContents(Composite parent, FormToolkit toolkit, int span);
 
 	protected abstract void update();	
 	public abstract void commit();

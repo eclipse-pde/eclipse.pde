@@ -207,6 +207,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExportPackageSection_uses;
 
+	public static String ExtensionElementBodyTextDetails_labelBodyText;
+
 	public static String ExtensionElementBodyTextDetails_sectionDescElementGeneral;
 
 	public static String ExtensionElementBodyTextDetails_sectionDescElementSpecific;

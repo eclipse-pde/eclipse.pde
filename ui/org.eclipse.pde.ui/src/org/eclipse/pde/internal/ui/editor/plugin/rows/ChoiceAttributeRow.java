@@ -42,6 +42,7 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 	}
 
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
+		super.createContents(parent, toolkit, span);
 		createLabel(parent, toolkit);
 		combo = new ComboPart();
 		combo.createControl(parent, toolkit, SWT.READ_ONLY);
