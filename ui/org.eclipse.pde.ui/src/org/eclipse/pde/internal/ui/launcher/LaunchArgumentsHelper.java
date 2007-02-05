@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +25,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -40,12 +43,13 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.TracingOptionsManager;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.ui.launcher.IPDELauncherConstants;
 
 public class LaunchArgumentsHelper {
 
 	public static String getWorkspaceLocation(ILaunchConfiguration configuration) 
-				throws CoreException {
+	throws CoreException {
 		String location = configuration.getAttribute(IPDELauncherConstants.LOCATION, (String)null);
 		if (location == null) {
 			// backward compatibility
@@ -69,7 +73,7 @@ public class LaunchArgumentsHelper {
 		String args = getUserProgramArguments(configuration);
 		return new ExecutionArguments("", args).getProgramArgumentsArray(); //$NON-NLS-1$
 	}
-	
+
 	public static String getUserProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		String args = configuration.getAttribute(
 				IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, 
@@ -91,7 +95,7 @@ public class LaunchArgumentsHelper {
 		}
 		return args == null ? "" : getSubstitutedString(args); //$NON-NLS-1$
 	}
-	
+
 	public static String getUserVMArguments(ILaunchConfiguration configuration) throws CoreException {
 		String args = configuration.getAttribute(
 				IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, 
@@ -111,15 +115,45 @@ public class LaunchArgumentsHelper {
 				wc.doSave();			
 			}
 		}
-		return args == null ? "" : getSubstitutedString(args); //$NON-NLS-1$
+
+		// hack on the args from eclipse.ini here
+		File installDirectory = new File(Platform.getInstallLocation().getURL().getFile());
+		File eclipseIniFile = new File(installDirectory, "eclipse.ini"); //$NON-NLS-1$
+		BufferedReader in = null;
+		StringBuffer buffer = new StringBuffer(args == null ? "" : args); //$NON-NLS-1$
+		if(eclipseIniFile.exists()) {
+			try {
+				in = new BufferedReader(new FileReader(eclipseIniFile));
+				String str;
+				boolean vmargs = false;
+				while ((str = in.readLine()) != null) {
+					if(vmargs) {
+						buffer.append(" "+str); //$NON-NLS-1$
+					}
+					// start concat'ng if we have vmargs
+					if(vmargs == false && str.equals("-vmargs")) //$NON-NLS-1$
+						vmargs = true;
+				}
+			} catch (IOException e) {
+				PDEPlugin.log(e);
+			} finally {
+				if(in != null)
+					try {
+						in.close();
+					} catch (IOException e) {
+						PDEPlugin.log(e);
+					}
+			}
+		}
+		return getSubstitutedString(buffer.toString());
 	}
-	
+
 	public static File getWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
 		String working;
 		try {
 			working = configuration.getAttribute(
-						IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, 
-						new File(".").getCanonicalPath()); //$NON-NLS-1$
+					IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, 
+					new File(".").getCanonicalPath()); //$NON-NLS-1$
 		} catch (IOException e) {
 			working = "${workspace_loc}/../"; //$NON-NLS-1$
 		}
@@ -128,7 +162,7 @@ public class LaunchArgumentsHelper {
 			dir.mkdirs();
 		return dir;			
 	}
-	
+
 	public static Map getVMSpecificAttributesMap(ILaunchConfiguration config) throws CoreException {
 		Map map = new HashMap(2);
 		String javaCommand = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, (String)null); 
@@ -138,9 +172,9 @@ public class LaunchArgumentsHelper {
 			if (entry != null) {
 				IPluginModelBase[] models = entry.getExternalModels();
 				for (int i = 0; i < models.length; i++) {
-                    File file = new File(models[i].getInstallLocation());
-                    if (!file.isFile())
-                        file = new File(file, "jdi.jar"); //$NON-NLS-1$
+					File file = new File(models[i].getInstallLocation());
+					if (!file.isFile())
+						file = new File(file, "jdi.jar"); //$NON-NLS-1$
 					if (file.exists()) {
 						map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND, new String[] {file.getAbsolutePath()});
 						break;
@@ -150,11 +184,11 @@ public class LaunchArgumentsHelper {
 		}
 		return map;
 	}
-	
+
 	public static String getTracingFileArgument(
 			ILaunchConfiguration config,
 			String optionsFileName)
-			throws CoreException {
+	throws CoreException {
 		try {
 			TracingOptionsManager mng = PDECore.getDefault().getTracingOptionsManager();
 			Map options =
@@ -175,22 +209,22 @@ public class LaunchArgumentsHelper {
 		}
 		return optionsFileName;
 	}
-	
+
 	public static String[] constructClasspath(ILaunchConfiguration configuration) throws CoreException {
 		String jarPath = TargetPlatformHelper.usesEquinoxStartup() ? getEquinoxStartupPath() : getStartupJarPath();
 		if (jarPath == null)
 			return null;
-		
+
 		ArrayList entries = new ArrayList();
 		entries.add(jarPath);
-		
+
 		String bootstrap = configuration.getAttribute(IPDELauncherConstants.BOOTSTRAP_ENTRIES, ""); //$NON-NLS-1$
 		StringTokenizer tok = new StringTokenizer(getSubstitutedString(bootstrap), ","); //$NON-NLS-1$
 		while (tok.hasMoreTokens())
 			entries.add(tok.nextToken().trim());
 		return (String[])entries.toArray(new String[entries.size()]);
 	}
-	
+
 	private static String getEquinoxStartupPath() throws CoreException {
 		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.equinox.launcher"); //$NON-NLS-1$
 		if (model != null) {
@@ -213,7 +247,7 @@ public class LaunchArgumentsHelper {
 									path = entries[i].getOutputLocation();
 									if (path == null)
 										path = jProject.getOutputLocation();
-								// else if is a library jar, then get the location of the jar itself
+									// else if is a library jar, then get the location of the jar itself
 								} else 
 									path = entries[i].getPath();
 								path = path.removeFirstSegments(1);
@@ -226,7 +260,7 @@ public class LaunchArgumentsHelper {
 		}
 		return null;
 	}
-		
+
 	private static String getStartupJarPath() throws CoreException {
 		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.platform"); //$NON-NLS-1$
 		if (model != null && model.getUnderlyingResource() != null) {
@@ -247,34 +281,34 @@ public class LaunchArgumentsHelper {
 		}
 		File startupJar =
 			new Path(TargetPlatform.getLocation()).append("startup.jar").toFile(); //$NON-NLS-1$
-		
+
 		// if something goes wrong with the preferences, fall back on the startup.jar 
 		// in the running eclipse.  
 		if (!startupJar.exists())
 			startupJar = new Path(TargetPlatform.getDefaultLocation()).append("startup.jar").toFile(); //$NON-NLS-1$
-		
+
 		return startupJar.exists() ? startupJar.getAbsolutePath() : null;
 	}
 
-		
+
 	private static String getSubstitutedString(String text) throws CoreException {
 		if (text == null)
 			return ""; //$NON-NLS-1$
 		IStringVariableManager mgr = VariablesPlugin.getDefault().getStringVariableManager();
 		return mgr.performStringSubstitution(text);
 	}
-	
+
 	public static String getDefaultWorkspaceLocation(String uniqueName) {
 		return "${workspace_loc}/../runtime-" + uniqueName.replaceAll("\\s", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
-	
+
 	public static String getDefaultJUnitWorkspaceLocation() {
 		return "${workspace_loc}/../junit-workspace"; //$NON-NLS-1$
 	}
-	
+
 	public static String getDefaultJUnitConfigurationLocation() {
 		return "${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/pde-junit"; //$NON-NLS-1$
 	}
-	
+
 
 }
