@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.pde.ui">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.pde.ui" id="launchShortcuts" name="Launch Shortcut"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+This extension point is used to register a launching shortcut in a PDE Editor. Shortcuts will be displayed in the Manifest Editor in the testing section.  This should allow for toolkits to easily extend the PDE&apos;s editor for launching runtimes.
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="shortcut" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="shortcut">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the id of the corresponding &lt;code&gt;org.eclipse.debug.ui.launchShortcuts&lt;/code&gt; extension which should be launched when the user selects the link.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  human-readable label to be displayed in the editor
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="mode" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the mode in which to launch the shortcut.  Only one should be specified and can be either run, debug, or profile.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="osgi" type="boolean">
+            <annotation>
+               <documentation>
+                  specified if this shortcut is applicable for osgi projects.  If the value is &lt;samp&gt;true&lt;/samp&gt;, the link will be displayed in the editor of OSGi project.  If the value is &lt;samp&gt;false&lt;/samp&gt;, the link will be displayed in the editor of Eclipse projects.  If not specified, the value is considered &lt;samp&gt;false&lt;/samp&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.3
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+The following is an example of the extension point:
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.pde.ui.launchShortcuts&quot;&gt;
+      &lt;shortcut
+            id=&quot;org.eclipse.pde.ui.runtimeWorkbenchShortcut&quot;
+            label=&quot;Launch an Eclipse Runtime&quot; 
+            mode=&quot;run&quot;
+            osgi=&quot;false&quot;/&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+The value of the attribute &lt;code&gt;id&lt;/code&gt; must be the id of a defined &lt;code&gt;org.eclipse.debug.ui.launchShortcuts&lt;/code&gt; extension.  The class specified in the matching &lt;code&gt;org.eclipse.debug.ui.launchShortcuts&lt;/code&gt; extension will be created and executed when the link is activated.
+&lt;/p&gt;
+&lt;p&gt;
+The value of the attribute &lt;code&gt;mode&lt;/code&gt; must either &quot;run&quot;, &quot;debug&quot;, or &quot;profile&quot;.  If the value does not match any of those, it will not be displayed.
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+PDE supplies shortcut extensions for Eclipse applications and OSGi frameworks.
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2007 IBM Corporation and others.
+&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Eclipse Public License v1.0 which 
+accompanies this distribution, and is available at 
+&lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;.
+      </documentation>
+   </annotation>
+
+</schema>

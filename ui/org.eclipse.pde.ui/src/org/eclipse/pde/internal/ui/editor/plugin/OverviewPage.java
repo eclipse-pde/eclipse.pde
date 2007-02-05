@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -40,8 +47,6 @@ import org.eclipse.pde.internal.ui.editor.build.BuildPage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsAction;
-import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
-import org.eclipse.pde.ui.launcher.OSGiLaunchShortcut;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Composite;
@@ -65,8 +70,6 @@ import org.osgi.service.prefs.BackingStoreException;
 
 public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	public static final String PAGE_ID = "overview"; //$NON-NLS-1$
-	private EclipseLaunchShortcut fLaunchShortcut;
-	private OSGiLaunchShortcut fOSGiShortcut;
 	private PluginExportAction fExportAction;
 	private GeneralInfoSection fInfoSection;
 	private boolean fDisposed = false;
@@ -186,13 +189,10 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		container.setLayout(FormLayoutFactory.createSectionClientTableWrapLayout(false, 1));
 		container.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		
-		FormText text;
-		if (!((ManifestEditor)getEditor()).showExtensionTabs())
-			text = createClient(container, PDEUIMessages.OverviewPage_OSGiTesting, toolkit);
-		else
-			text = createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fTesting : PDEUIMessages.OverviewPage_testing, toolkit);
+		FormText text = createClient(container, getLauncherText(!((ManifestEditor)getEditor()).showExtensionTabs()), toolkit);
 		text.setImage("run", lp.get(PDEPluginImages.DESC_RUN_EXC)); //$NON-NLS-1$
 		text.setImage("debug", lp.get(PDEPluginImages.DESC_DEBUG_EXC)); //$NON-NLS-1$
+		text.setImage("profile", lp.get(PDEPluginImages.DESC_PROFILE_EXC)); //$NON-NLS-1$
 		section.setClient(container);
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 	}
@@ -272,27 +272,33 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 				getPDEEditor().getContextManager().putContext(in, new BuildInputContext(getPDEEditor(), in, false));
 			} 
 			getEditor().setActivePage(BuildPage.PAGE_ID);	
-		} else if (href.equals("action.run")) { //$NON-NLS-1$ {
-			getEditor().doSave(null);
-			getLaunchShortcut().launch(selection, ILaunchManager.RUN_MODE);
-		} else if (href.equals("action.debug")) { //$NON-NLS-1$
-			getEditor().doSave(null);
-			getLaunchShortcut().launch(selection, ILaunchManager.DEBUG_MODE);
 		} else if (href.equals("export")) { //$NON-NLS-1$
 			getExportAction().run();
 		} else if (href.equals("action.convert")) { //$NON-NLS-1$
 			handleConvert();
-		} else if (href.equals("action.runEquinox")) { //$NON-NLS-1$ {
-			getEditor().doSave(null);
-			getOSGiShortcut().launch(selection, ILaunchManager.RUN_MODE);
-		} else if (href.equals("action.debugEquinox")) { //$NON-NLS-1$
-			getEditor().doSave(null);
-			getOSGiShortcut().launch(selection, ILaunchManager.DEBUG_MODE);
 		} else if (href.equals("organize")) { //$NON-NLS-1$
 			getEditor().doSave(null);
 			OrganizeManifestsAction organizeAction = new OrganizeManifestsAction();
 			organizeAction.selectionChanged(null, selection);
 			organizeAction.run(null);
+		} else if (href.startsWith("launchShortcut.")) { //$NON-NLS-1$
+			href = href.substring(15);
+			int index = href.indexOf('.');
+			if (index < 0)
+				return;  // error.  Format of href should be launchShortcut.<mode>.<launchShortcutId>
+			String mode = href.substring(0, index);
+			String id = href.substring(index + 1); 
+			getEditor().doSave(null);
+			IExtensionRegistry registry = Platform.getExtensionRegistry();
+			IConfigurationElement[] elements = registry.getConfigurationElementsFor("org.eclipse.debug.ui.launchShortcuts"); //$NON-NLS-1$
+			for (int i = 0; i < elements.length; i++) {
+				if (id.equals(elements[i].getAttribute("id"))) //$NON-NLS-1$
+					try {
+						ILaunchShortcut shortcut = (ILaunchShortcut)elements[i].createExecutableExtension("class"); //$NON-NLS-1$
+						shortcut.launch(selection, mode);
+					} catch (CoreException e1) {
+					}
+			}
 		}
 	}
 	
@@ -318,16 +324,65 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		mng.setMessage(null);
 	}
 	
-	private EclipseLaunchShortcut getLaunchShortcut() {
-		if (fLaunchShortcut == null)
-			fLaunchShortcut = new EclipseLaunchShortcut();
-		return fLaunchShortcut;
+	private String getLauncherText(boolean osgi) {
+		IConfigurationElement[] elements = getLaunchers(osgi);
+		
+		StringBuffer buffer = new StringBuffer(osgi ? PDEUIMessages.OverviewPage_OSGiTesting : 
+			isFragment() ? PDEUIMessages.OverviewPage_fTesting : PDEUIMessages.OverviewPage_testing);
+		
+		for (int i = 0; i < elements.length; i++) {
+			String mode = elements[i].getAttribute("mode"); //$NON-NLS-1$
+			buffer.append("<li style=\"image\" value=\""); //$NON-NLS-1$
+			buffer.append(mode);
+			buffer.append("\" bindent=\"5\"><a href=\"launchShortcut."); //$NON-NLS-1$
+			buffer.append(mode);
+			buffer.append('.');
+			buffer.append(elements[i].getAttribute("id")); //$NON-NLS-1$
+			buffer.append("\">"); //$NON-NLS-1$
+			buffer.append(elements[i].getAttribute("label")); //$NON-NLS-1$
+			buffer.append("</a></li>"); //$NON-NLS-1$
+		}
+		buffer.append("</form>"); //$NON-NLS-1$
+		return buffer.toString();
 	}
 	
-	private OSGiLaunchShortcut getOSGiShortcut() {
-		if (fOSGiShortcut == null)
-			fOSGiShortcut = new OSGiLaunchShortcut();
-		return fOSGiShortcut;
+	private IConfigurationElement[] getLaunchers(boolean osgi) {
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		IConfigurationElement[] elements = registry.getConfigurationElementsFor("org.eclipse.pde.ui.launchShortcuts"); //$NON-NLS-1$
+		// validate elements
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < elements.length; i++) {
+			String mode = elements[i].getAttribute("mode"); //$NON-NLS-1$
+			if (mode != null && (mode.equals(ILaunchManager.RUN_MODE) || mode.equals(ILaunchManager.DEBUG_MODE) || mode.equals(ILaunchManager.PROFILE_MODE)) 
+					&& elements[i].getAttribute("label") != null && elements[i].getAttribute("id") != null &&  //$NON-NLS-1$ //$NON-NLS-2$
+					osgi == "true".equals(elements[i].getAttribute("osgi"))) //$NON-NLS-1$ //$NON-NLS-2$
+				list.add(elements[i]);
+		}
+		
+		// sort elements based on criteria specified in bug 172703
+		elements = (IConfigurationElement[])list.toArray(new IConfigurationElement[list.size()]);
+		Arrays.sort(elements, new Comparator() {
+
+			public int compare(Object arg0, Object arg1) {
+				int mode1 = getModeValue(((IConfigurationElement)arg0).getAttribute("mode")); //$NON-NLS-1$
+				int mode2 = getModeValue(((IConfigurationElement)arg1).getAttribute("mode")); //$NON-NLS-1$
+				if (mode1 != mode2)
+					return mode1 - mode2;
+				String label1 = ((IConfigurationElement)arg0).getAttribute("label"); //$NON-NLS-1$
+				String label2 = ((IConfigurationElement)arg1).getAttribute("label"); //$NON-NLS-1$
+				return label1.compareTo(label2);
+			}
+			
+			private int getModeValue(String value) {
+				if (value.equals(ILaunchManager.RUN_MODE))
+					return 0;
+				else if (value.equals(ILaunchManager.DEBUG_MODE))
+					return 1;
+				return 2; // has to be ILaunchManager.PROFILE_MODE
+			}
+			
+		});
+		return elements;
 	}
 	
 	private PluginExportAction getExportAction() {

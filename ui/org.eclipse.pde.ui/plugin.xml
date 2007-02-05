@@ -10,6 +10,7 @@
    <extension-point id="samples" name="%expoint.samples.name" schema="schema/samples.exsd"/>
    <extension-point id="osgiFrameworks" name="%expoint.osgiLauncher.name" schema="schema/osgiFrameworks.exsd"/>
    <extension-point id="targetProvisioners" name="%extension-point.name.0" schema="schema/targetProvisioners.exsd"/>
+   <extension-point id="launchShortcuts" name="Launch Shortcut" schema="schema/launchShortcuts.exsd"/>
 
 <!-- Extensions -->
    <extension
@@ -1745,4 +1746,30 @@
          </part>
       </actionSetPartAssociation>
    </extension>
+       <extension
+             id="id1"
+             point="org.eclipse.pde.ui.launchShortcuts">
+          <shortcut
+                id="org.eclipse.pde.ui.runtimeWorkbenchShortcut"
+                label="%shortcut.run.eclipse"
+                mode="run">
+          </shortcut>
+          <shortcut
+                id="org.eclipse.pde.ui.runtimeWorkbenchShortcut"
+                label="%shortcut.debug.eclipse"
+                mode="debug">
+          </shortcut>
+          <shortcut
+                id="org.eclipse.pde.ui.EquinoxLaunchShortcut"
+                label="%shortcut.run.osgi"
+                mode="run"
+                osgi="true">
+          </shortcut>
+          <shortcut
+                id="org.eclipse.pde.ui.EquinoxLaunchShortcut"
+                label="%shortcut.debug.osgi"
+                mode="debug"
+                osgi="true">
+          </shortcut>
+       </extension>
 </plugin>
