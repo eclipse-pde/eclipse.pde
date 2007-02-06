@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.ui.IProvisionerWizard;
 import org.eclipse.update.configuration.IConfiguredSite;
@@ -108,6 +109,7 @@ IProvisionerWizard {
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setWindowTitle(PDEUIMessages.UpdateSiteProvisionerWizard_title); 
 		setNeedsProgressMonitor(true);
+		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWSITEPRJ_WIZ);
 	}
 
 	public void addPages() {
