@@ -9,8 +9,9 @@
    <extension
          point="org.eclipse.jdt.core.classpathVariableInitializer">
       <classpathVariableInitializer
-            variable="ECLIPSE_HOME"
-            class="org.eclipse.pde.internal.core.EclipseHomeInitializer">
+            class="org.eclipse.pde.internal.core.EclipseHomeInitializer"
+            readOnly="true"
+            variable="ECLIPSE_HOME">
       </classpathVariableInitializer>
    </extension>
    <extension
