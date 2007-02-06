@@ -10,7 +10,7 @@
    <extension-point id="samples" name="%expoint.samples.name" schema="schema/samples.exsd"/>
    <extension-point id="osgiFrameworks" name="%expoint.osgiLauncher.name" schema="schema/osgiFrameworks.exsd"/>
    <extension-point id="targetProvisioners" name="%extension-point.name.0" schema="schema/targetProvisioners.exsd"/>
-   <extension-point id="launchShortcuts" name="Launch Shortcut" schema="schema/launchShortcuts.exsd"/>
+   <extension-point id="launchShortcuts" name="%extension-point.name.1" schema="schema/launchShortcuts.exsd"/>
 
 <!-- Extensions -->
    <extension
