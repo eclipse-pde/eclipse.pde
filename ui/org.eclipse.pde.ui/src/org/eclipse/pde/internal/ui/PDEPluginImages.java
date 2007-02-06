@@ -246,6 +246,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_NEWFTRPRJ_WIZ = create(PATH_WIZBAN, "newftrprj_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWFTRPTCH_WIZ = create(PATH_WIZBAN, "newefix_wizban.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWSITEPRJ_WIZ = create(PATH_WIZBAN, "newsiteprj_wiz.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_FILESYSTEM_WIZARD = create(PATH_WIZBAN, "newfolder_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CONVJPPRJ_WIZ = create(PATH_WIZBAN, "convjpprj_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXT_POINT_SCHEMA_WIZ = create(PATH_WIZBAN, "schema_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PLUGIN_IMPORT_WIZ = create(PATH_WIZBAN, "imp_extplug_wiz.png"); //$NON-NLS-1$
