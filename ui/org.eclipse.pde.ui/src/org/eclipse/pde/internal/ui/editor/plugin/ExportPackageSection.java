@@ -341,6 +341,9 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
                         }
                     } else {
                         getBundle().setHeader(getExportedPackageHeader(), getValue(selected));
+                        // the way events get triggered, updateButtons isn't called
+                        if (selected.length > 0)
+                        	getTablePart().setButtonEnabled(CALCULATE_USE_INDEX, true);
                     }
                 }
                 labelProvider.dispose();
