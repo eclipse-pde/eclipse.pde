@@ -36,6 +36,7 @@ import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -390,6 +391,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements
 		fCategoryButton.setLayoutData(data);
 		fCategoryButton.setText(PDEUIMessages.RegisterCSWizardPage_buttonNew);
 		fCategoryButton.setToolTipText(PDEUIMessages.RegisterCSWizardPage_toolTipNewCategory);
+		SWTUtil.setButtonDimensionHint(fCategoryButton);
 	}
 
 	/**
