@@ -1748,7 +1748,6 @@
       </actionSetPartAssociation>
    </extension>
        <extension
-             id="id1"
              point="org.eclipse.pde.ui.launchShortcuts">
           <shortcut
                 id="org.eclipse.pde.ui.runtimeWorkbenchShortcut"

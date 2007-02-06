@@ -3,11 +3,11 @@
 <schema targetNamespace="org.eclipse.pde.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.pde.ui" id="launchShortcuts" name="Launch Shortcut"/>
+         <meta.schema plugin="org.eclipse.pde.ui" id="launchShortcuts" name="Launch Shortcuts"/>
       </appInfo>
       <documentation>
          &lt;p&gt;
-This extension point is used to register a launching shortcut in a PDE Editor. Shortcuts will be displayed in the Manifest Editor in the testing section.  This should allow for toolkits to easily extend the PDE&apos;s editor for launching runtimes.
+This extension point is used to register a launching shortcut in a PDE editor. Launch shortcuts appear in the Testing section on the Overview page of the plug-in manifest editor.  This allows clients to display in the editor shortcuts for their custom launch configurations or provide a shorcut to a profile mode for the existing &lt;code&gt;Eclipse Application&lt;/code&gt; and &lt;code&gt;OSGi Framework&lt;/code&gt; launch configurations.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -24,7 +24,7 @@ This extension point is used to register a launching shortcut in a PDE Editor. S
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="id" type="string" use="required">
+         <attribute name="id" type="string">
             <annotation>
                <documentation>
                   
@@ -49,31 +49,41 @@ This extension point is used to register a launching shortcut in a PDE Editor. S
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the id of the corresponding &lt;code&gt;org.eclipse.debug.ui.launchShortcuts&lt;/code&gt; extension which should be launched when the user selects the link.
+                  the id of the corresponding &lt;code&gt;org.eclipse.debug.ui.launchShortcuts&lt;/code&gt; extension which should be launched when the link is clicked.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
-                  human-readable label to be displayed in the editor
+                  human-readable label to be displayed in the editor.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="mode" type="string" use="required">
+         <attribute name="mode" use="required">
             <annotation>
                <documentation>
-                  the mode in which to launch the shortcut.  Only one should be specified and can be either run, debug, or profile.
+                  the mode in which to launch the shortcut.  Permitted values are &lt;code&gt;run&lt;/code&gt;, &lt;code&gt;debug&lt;/code&gt; and &lt;code&gt;profile&lt;/code&gt;.
                </documentation>
             </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="run">
+                  </enumeration>
+                  <enumeration value="debug">
+                  </enumeration>
+                  <enumeration value="profile">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
          <attribute name="osgi" type="boolean">
             <annotation>
                <documentation>
-                  specified if this shortcut is applicable for osgi projects.  If the value is &lt;samp&gt;true&lt;/samp&gt;, the link will be displayed in the editor of OSGi project.  If the value is &lt;samp&gt;false&lt;/samp&gt;, the link will be displayed in the editor of Eclipse projects.  If not specified, the value is considered &lt;samp&gt;false&lt;/samp&gt;.
+                  If set to &lt;samp&gt;true&lt;/samp&gt;, the link is displayed only if the plug-in manifest editor&apos;s presentation is set to show OSGi-related sections only, ie. when the Extensions and Extension Points pages are absent.  If not specified, the value is assumed to be &lt;samp&gt;false&lt;/samp&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -115,10 +125,10 @@ The following is an example of the extension point:
       </appInfo>
       <documentation>
          &lt;p&gt;
-The value of the attribute &lt;code&gt;id&lt;/code&gt; must be the id of a defined &lt;code&gt;org.eclipse.debug.ui.launchShortcuts&lt;/code&gt; extension.  The class specified in the matching &lt;code&gt;org.eclipse.debug.ui.launchShortcuts&lt;/code&gt; extension will be created and executed when the link is activated.
+The value of the attribute &lt;code&gt;id&lt;/code&gt; must be the id of a defined &lt;code&gt;org.eclipse.debug.ui.launchShortcuts&lt;/code&gt; extension.  The class specified in the matching &lt;code&gt;org.eclipse.debug.ui.launchShortcuts&lt;/code&gt; extension will be instantiated and its &lt;code&gt;launch(IEditorPart, String)&lt;/code&gt; will be called to launch.
 &lt;/p&gt;
 &lt;p&gt;
-The value of the attribute &lt;code&gt;mode&lt;/code&gt; must either &quot;run&quot;, &quot;debug&quot;, or &quot;profile&quot;.  If the value does not match any of those, it will not be displayed.
+The value of the attribute &lt;code&gt;mode&lt;/code&gt; must &lt;code&gt;run&lt;/code&gt;, &lt;code&gt;debug&lt;/code&gt;, or &lt;code&gt;profile&lt;/code&gt;.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -129,7 +139,7 @@ The value of the attribute &lt;code&gt;mode&lt;/code&gt; must either &quot;run&q
       </appInfo>
       <documentation>
          &lt;p&gt;
-PDE supplies shortcut extensions for Eclipse applications and OSGi frameworks.
+PDE supplies shortcut extensions to launch Eclipse applications and OSGi frameworks.
 &lt;/p&gt;
       </documentation>
    </annotation>
