@@ -51,7 +51,7 @@ IProvisionerWizard {
 		throws InvocationTargetException, InterruptedException {
 
 			try {
-				monitor.beginTask("downloading things", entries.length);
+				monitor.beginTask(PDEUIMessages.UpdateSiteDownloader_message, entries.length);
 				for(int i = 0; i < entries.length; i++) {
 					IUpdateSiteProvisionerEntry entry = entries[i];
 					File sitePath = new File(entry.getInstallLocation());

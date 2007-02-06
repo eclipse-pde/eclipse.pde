@@ -1671,14 +1671,15 @@
              %provisioner.file.description
           </description>
        </provisioner>
-<!--       
        <provisioner
              class="org.eclipse.pde.internal.ui.wizards.provisioner.update.UpdateSiteProvisionerWizard"
              icon="$nl$/icons/obj16/site_xml_obj.gif"
              id="org.eclipse.pde.ui.provisioner.update"
-             name="Update Site">
+             name="%provisioner.site.name">
+          <description>
+             %provisioner.site.description
+          </description>
        </provisioner>
--->       
     </extension>
     
     <!-- Search Menu Additions -->

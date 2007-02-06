@@ -129,7 +129,7 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 
 	protected void handleAdd() {
 		AddSiteDialog dialog = new AddSiteDialog(getShell());
-		dialog.setTitle("blah blah blah");
+		dialog.setTitle(PDEUIMessages.AddSiteDialog_title);
 		int status = dialog.open();
 		if (status == Window.OK) {
 			fElements.add(dialog.getEntry());
