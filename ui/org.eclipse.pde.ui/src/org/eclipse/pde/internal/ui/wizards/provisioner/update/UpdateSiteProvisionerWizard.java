@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -66,7 +65,7 @@ IProvisionerWizard {
 						csite = config.createConfiguredSite(sitePath);
 						csite.verifyUpdatableStatus();
 //						if (!status.isOK())
-//							System.out.println("status is not good");
+//						System.out.println("status is not good");
 
 					}
 
@@ -79,9 +78,9 @@ IProvisionerWizard {
 						IFeature feature = reference.getFeature(null);
 						IInstallFeatureOperation operation = 
 							OperationsManager.getOperationFactory().createInstallOperation(csite, feature, null, null, null);
-						operation.execute(new NullProgressMonitor(), this);
+						operation.execute(monitor, this);
 					}
-
+					monitor.worked(1);
 				}
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
@@ -114,7 +113,6 @@ IProvisionerWizard {
 	public void addPages() {
 		fPage = new UpdateSiteProvisionerPage("update site"); //$NON-NLS-1$
 		addPage(fPage);
-		super.addPages();
 	}
 
 	public boolean performFinish() {
