@@ -12,12 +12,11 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -41,14 +40,9 @@ public class InfoFormPage extends PDEFormPage {
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
-		GridLayout layout = new GridLayout();
-		form.getBody().setLayout(layout);
-		layout.marginWidth = 10;
-		GridData gd;
+		form.getBody().setLayout(FormLayoutFactory.createFormGridLayout(false, 1));
 		
 		infoSection = new InfoSection(this, form.getBody(), colorManager);
-		gd = new GridData(GridData.FILL_BOTH);
-		infoSection.getSection().setLayoutData(gd);
 		managedForm.addPart(infoSection);
 		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_FEATURE_INFO);

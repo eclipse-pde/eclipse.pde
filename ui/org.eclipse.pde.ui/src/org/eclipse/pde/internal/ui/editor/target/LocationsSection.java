@@ -62,6 +62,7 @@ public class LocationsSection extends TableSection {
 	}
 
 	protected void createClient(Section section, FormToolkit toolkit) {
+		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
 		client.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL));

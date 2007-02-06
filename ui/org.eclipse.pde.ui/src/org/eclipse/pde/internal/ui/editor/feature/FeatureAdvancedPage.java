@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.widgets.Composite;
@@ -19,7 +20,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class FeatureAdvancedPage extends PDEFormPage {
 	public static final String PAGE_ID = "advanced"; //$NON-NLS-1$
@@ -43,16 +43,7 @@ public class FeatureAdvancedPage extends PDEFormPage {
 		ScrolledForm form = managedForm.getForm();
 
 		Composite body = managedForm.getForm().getBody();
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.bottomMargin = 10;
-		layout.topMargin = 5;
-		layout.leftMargin = 10;
-		layout.rightMargin = 10;
-		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth = true;
-		layout.verticalSpacing = 15;
-		layout.horizontalSpacing = 15;
-		body.setLayout(layout);
+		body.setLayout(FormLayoutFactory.createFormTableWrapLayout(true, 2));
 
 		fInstallSection = new InstallSection(this, form.getBody());
 		fHandlerSection = new HandlerSection(this, form.getBody());

@@ -40,6 +40,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
@@ -54,7 +55,7 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
@@ -98,9 +99,12 @@ public class PluginSection extends TableSection implements
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
+		
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		section.setLayoutData(data);
+		
 		Composite container = createClientContainer(section, 2, toolkit);
-		GridLayout layout = (GridLayout) container.getLayout();
-		layout.verticalSpacing = 5;
 
 		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
 		TablePart tablePart = getTablePart();

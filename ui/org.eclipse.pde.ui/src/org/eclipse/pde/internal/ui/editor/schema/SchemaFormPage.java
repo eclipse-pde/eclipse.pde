@@ -26,7 +26,6 @@ import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 import org.eclipse.pde.internal.ui.editor.text.IColorManager;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.DetailsPart;
@@ -91,9 +90,6 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 		ScrolledForm form = managedForm.getForm();
 		fBlock.createContent(managedForm);
 		DescriptionSection descSection = new DescriptionSection(this, form.getBody(), fColorManager);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		descSection.getSection().setLayoutData(gd);
-		descSection.getSection().marginWidth = 10;
 		managedForm.addPart(descSection);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.SCHEMA_EDITOR_MAIN);
 		initialize();

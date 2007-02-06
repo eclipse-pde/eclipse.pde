@@ -74,14 +74,13 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	}
 	
 	public final void createContents(Composite parent) {
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = layout.marginWidth = 0;
-		parent.setLayout(layout);
+
+		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
 		FormToolkit toolkit = getManagedForm().getToolkit();
 		fSection = toolkit.createSection(parent, Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
 		fSection.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		fSection.marginHeight = 5;
-		fSection.marginWidth = 5; 
+		fSection.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		fSection.setLayoutData(gd);
 		
@@ -90,10 +89,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		getPage().alignSectionHeaders(fElementSection.getSection(), fSection);
 		
 		Composite client = toolkit.createComposite(fSection);
-		GridLayout glayout = new GridLayout(3, false);
-		boolean paintedBorder = toolkit.getBorderStyle() != SWT.BORDER;
-		if (paintedBorder) glayout.verticalSpacing = 7;
-		client.setLayout(glayout);
+		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 3));
 		
 		createDetails(client);
 		

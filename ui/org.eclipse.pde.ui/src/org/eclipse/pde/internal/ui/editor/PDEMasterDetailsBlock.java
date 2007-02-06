@@ -46,7 +46,6 @@ public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {
 	
 	public void createContent(IManagedForm managedForm) {
 		super.createContent(managedForm);
-		//
 		managedForm.getForm().getBody().setLayout(FormLayoutFactory.createFormGridLayout(false, 1));
 	}
 	

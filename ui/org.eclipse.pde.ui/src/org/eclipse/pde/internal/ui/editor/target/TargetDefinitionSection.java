@@ -60,6 +60,7 @@ public class TargetDefinitionSection extends PDESection {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
+		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, NUM_COLUMNS));
 

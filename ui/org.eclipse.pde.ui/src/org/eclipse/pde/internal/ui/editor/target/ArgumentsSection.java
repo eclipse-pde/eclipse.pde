@@ -59,6 +59,7 @@ public class ArgumentsSection extends PDESection {
 	}
 
 	protected void createClient(Section section, FormToolkit toolkit) {
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setText(PDEUIMessages.ArgumentsSection_editorTitle);
 		section.setDescription(PDEUIMessages.ArgumentsSection_description);
 		GridData data = new GridData(GridData.FILL_BOTH);

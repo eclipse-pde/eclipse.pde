@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.feature.Choice;
@@ -37,7 +38,6 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
@@ -91,7 +91,6 @@ public class PortabilitySection extends PDESection implements IFormPart,
 	public PortabilitySection(PDEFormPage page, Composite parent) {
 		this(page, parent, PDEUIMessages.SiteEditor_PortabilitySection_title,
 				PDEUIMessages.SiteEditor_PortabilitySection_desc, SWT.NULL);
-		getSection().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 
 	public PortabilitySection(PDEFormPage page, Composite parent, String title,
@@ -163,12 +162,14 @@ public class PortabilitySection extends PDESection implements IFormPart,
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
+
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		Composite container = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		layout.verticalSpacing = 9;
-		layout.horizontalSpacing = 6;
-		container.setLayout(layout);
+		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 3));
+		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		GridData data = new GridData(GridData.FILL_BOTH);
+		section.setLayoutData(data);
 
 		String editLabel = PDEUIMessages.SiteEditor_PortabilitySection_edit;
 

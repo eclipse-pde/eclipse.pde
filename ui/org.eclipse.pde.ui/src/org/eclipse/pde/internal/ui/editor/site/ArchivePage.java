@@ -12,10 +12,9 @@ package org.eclipse.pde.internal.ui.editor.site;
 
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -35,18 +34,11 @@ public class ArchivePage extends PDEFormPage {
 	}
 	protected void createFormContent(IManagedForm mform) {
 		ScrolledForm form = mform.getForm();
-		GridLayout layout = new GridLayout();
-		layout.verticalSpacing = 10;
-		form.getBody().setLayout(layout);
+		form.getBody().setLayout(FormLayoutFactory.createFormGridLayout(false, 1));
 		
 		fDescSection = new DescriptionSection(this, form.getBody());
-		fDescSection.getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
-		
 		fArchiveSection = new ArchiveSection(this, form.getBody());
-		fArchiveSection.getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
-		
 		fMirrorsSection = new MirrorsSection(this, form.getBody());
-		fMirrorsSection.getSection().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		mform.addPart(fDescSection);
 		mform.addPart(fMirrorsSection);

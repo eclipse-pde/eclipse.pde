@@ -57,6 +57,7 @@ public class ImplicitDependenciesSection extends TableSection {
 	}
 
 	protected void createClient(Section section, FormToolkit toolkit) {
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setText(PDEUIMessages.ImplicitDependenicesSection_Title);
 		section.setDescription(PDEUIMessages.TargetImplicitPluginsTab_desc);
 		Composite container = toolkit.createComposite(section);

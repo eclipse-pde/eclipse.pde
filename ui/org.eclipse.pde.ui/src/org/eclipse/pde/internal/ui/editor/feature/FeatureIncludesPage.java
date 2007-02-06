@@ -12,10 +12,10 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
@@ -46,38 +46,22 @@ public class FeatureIncludesPage extends PDEFormPage {
 	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		GridLayout layout = new GridLayout();
-		form.getBody().setLayout(layout);
-		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth = true;
-		layout.marginWidth = 10;
-		layout.horizontalSpacing = 15;
-		layout.verticalSpacing = 15;
+		form.getBody().setLayout(FormLayoutFactory.createFormGridLayout(true, 2));
 		GridData gd;
 
 		Composite left = toolkit.createComposite(form.getBody());
-		layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 0;
-		left.setLayout(layout);
+		left.setLayout(FormLayoutFactory.createFormPaneGridLayout(false, 1));
 		gd = new GridData(GridData.FILL_BOTH);
 		left.setLayoutData(gd);
 
 		Composite right = toolkit.createComposite(form.getBody());
-		layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 0;
-		right.setLayout(layout);
+		right.setLayout(FormLayoutFactory.createFormPaneGridLayout(false, 1));
 		gd = new GridData(GridData.FILL_BOTH);
 		right.setLayoutData(gd);
 
 		fIncludedSection = new IncludedFeaturesSection(this, left);
-		gd = new GridData(GridData.FILL_BOTH);
-		fIncludedSection.getSection().setLayoutData(gd);
-
 		fIncludedDetailsSection = new IncludedFeaturesDetailsSection(this,
 				right);
-		gd = new GridData(GridData.FILL_HORIZONTAL
-				| GridData.VERTICAL_ALIGN_BEGINNING);
-		fIncludedDetailsSection.getSection().setLayoutData(gd);
 
 		// Align the master and details section headers (misalignment caused
 		// by section toolbar icons)
@@ -86,9 +70,6 @@ public class FeatureIncludesPage extends PDEFormPage {
 		
 		fIncludedPortabilitySection = new IncludedFeaturesPortabilitySection(
 				this, right);
-		gd = new GridData(GridData.FILL_HORIZONTAL
-				| GridData.VERTICAL_ALIGN_BEGINNING);
-		fIncludedPortabilitySection.getSection().setLayoutData(gd);
 
 		managedForm.addPart(fIncludedSection);
 		managedForm.addPart(fIncludedDetailsSection);

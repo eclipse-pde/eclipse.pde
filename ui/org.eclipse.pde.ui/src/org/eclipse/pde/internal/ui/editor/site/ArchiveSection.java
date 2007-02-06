@@ -35,6 +35,7 @@ import org.eclipse.pde.internal.core.isite.ISite;
 import org.eclipse.pde.internal.core.isite.ISiteArchive;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
@@ -124,13 +125,17 @@ public class ArchiveSection extends PDESection {
 	public void createClient(Section section, FormToolkit toolkit) {
 		fModel = (ISiteModel) getPage().getModel();
 		fModel.addModelChangedListener(this);
+		
+		
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		Composite container = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
-		layout.horizontalSpacing = 9;
-		layout.numColumns = 2;
-		container.setLayout(layout);
+		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
+		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		section.setLayoutData(data);
+		
+		
 		createTable(container, toolkit);
 		createTableViewer();
 		createButtons(container, toolkit);

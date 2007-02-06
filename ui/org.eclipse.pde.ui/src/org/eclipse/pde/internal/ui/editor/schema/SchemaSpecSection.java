@@ -13,11 +13,11 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -51,10 +51,10 @@ public class SchemaSpecSection extends PDESection {
 	
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.verticalSpacing = 9;
-		container.setLayout(layout);
+		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		section.setLayoutData(data);
+		
 		final Schema schema = (Schema) getPage().getModel();
 		fPluginText = new FormEntry(container, toolkit, PDEUIMessages.SchemaEditor_SpecSection_plugin, null, false);
 		fPluginText.setFormEntryListener(new FormEntryAdapter(this) {
@@ -78,7 +78,6 @@ public class SchemaSpecSection extends PDESection {
 		
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
-		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		initialize();
 	}
 	

@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
 import org.eclipse.pde.internal.core.schema.SchemaObject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
@@ -36,7 +37,6 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.actions.ActionFactory;
@@ -68,11 +68,12 @@ public class DescriptionSection extends PDESection implements IPartSelectionList
 	public void createClient(
 		Section section,
 		FormToolkit toolkit) {
+		
 		Composite container = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginWidth = 2;
-		container.setLayout(layout);
+		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		section.setLayoutData(data);
+		
 		GridData gd;
 		fSourceViewer = new SourceViewer(container, null, SWT.MULTI|SWT.WRAP|SWT.V_SCROLL| SWT.H_SCROLL);
 		fSourceViewer.configure(new XMLConfiguration(fColorManager));

@@ -31,6 +31,7 @@ import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
@@ -43,11 +44,11 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.TableWrapData;
 
 public class FeatureSpecSection extends PDESection {
 	private FormEntry fIdText;
@@ -212,6 +213,12 @@ public class FeatureSpecSection extends PDESection {
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
+		
+		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
+		TableWrapData twd = new TableWrapData();
+		twd.grabHorizontal = true;
+		section.setLayoutData(twd);
+		
 		fPatch = ((FeatureEditor) getPage().getEditor()).isPatchEditor();
 
 		final IFeatureModel model = (IFeatureModel) getPage().getModel();
@@ -226,11 +233,8 @@ public class FeatureSpecSection extends PDESection {
 		}
 
 		Composite container = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		layout.verticalSpacing = 5;
-		layout.horizontalSpacing = 6;
-		container.setLayout(layout);
+		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 3));
+		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		fIdText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_id, null, false);
 		fIdText.setFormEntryListener(new FormEntryAdapter(this) {

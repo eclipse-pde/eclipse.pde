@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
 
@@ -32,9 +31,7 @@ public abstract class PDEDetailsSections extends PDEDetails {
 	 */
 	public void createContents(Composite parent) {
 		sections = createSections(getPage(), parent);
-		GridLayout layout = new GridLayout();
-		layout.verticalSpacing = 30;
-		parent.setLayout(layout);
+		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
 		for (int i = 0; i < sections.length; i++) {
 			getManagedForm().addPart(sections[i]);
 		}

@@ -17,6 +17,7 @@ import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
@@ -27,7 +28,6 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -54,11 +54,15 @@ public class DescriptionSection extends PDESection {
 		super.commit(onSave);
 	}
 	public void createClient(Section section, FormToolkit toolkit) {
+
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		Composite container = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.verticalSpacing = 10;
-		container.setLayout(layout);
+		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
+		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		GridData data = new GridData(GridData.FILL_BOTH);
+		section.setLayoutData(data);
+		
 		fURLEntry = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_DescriptionSection_urlLabel, 
 				null, false);
 		fURLEntry.setFormEntryListener(new FormEntryAdapter(this) {

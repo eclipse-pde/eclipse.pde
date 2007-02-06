@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
@@ -32,7 +33,6 @@ import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
@@ -56,7 +56,6 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 	public FeatureDetailsSection(PDEFormPage page, Composite parent) {
 		this(page, parent, PDEUIMessages.FeatureDetailsSection_title,
 				PDEUIMessages.FeatureDetailsSection_desc, SWT.NULL);
-		getSection().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 
 	public FeatureDetailsSection(PDEFormPage page, Composite parent,
@@ -121,13 +120,15 @@ public class FeatureDetailsSection extends PDESection implements IFormPart,
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
+		
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		Composite container = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.verticalSpacing = 9;
-		layout.horizontalSpacing = 6;
-		container.setLayout(layout);
+		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
+		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		section.setLayoutData(data);
+		
 		fUrlText = new FormEntry(container, toolkit, PDEUIMessages.FeatureDetailsSection_url, null, false);
 		fUrlText.setFormEntryListener(new FormEntryAdapter(this) {
 			public void textValueChanged(FormEntry text) {

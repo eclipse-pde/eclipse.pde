@@ -25,6 +25,7 @@ import org.eclipse.pde.internal.ui.editor.build.BuildPage;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
@@ -36,7 +37,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 /**
  * Feature page.
@@ -56,49 +56,22 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
-		TableWrapLayout layout = new TableWrapLayout();
-		form.getBody().setLayout(layout);
-		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth = true;
-		layout.leftMargin = 10;
-		layout.rightMargin = 10;
-		layout.topMargin = 5;
-		layout.bottomMargin = 5;
-		layout.horizontalSpacing = 15;
-		layout.verticalSpacing = 15;
+		form.getBody().setLayout(FormLayoutFactory.createFormTableWrapLayout(true, 2));
 		TableWrapData twd;
 
 		Composite left = toolkit.createComposite(form.getBody());
-		TableWrapLayout tableLayout = new TableWrapLayout();
-		tableLayout.bottomMargin = 0;
-		tableLayout.topMargin = 0;
-		tableLayout.leftMargin = 0;
-		tableLayout.rightMargin = 0;
-		tableLayout.verticalSpacing = 15;
-		tableLayout.horizontalSpacing = 15;
-		left.setLayout(tableLayout);
+		left.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
 
 		twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		left.setLayoutData(twd);
 
 		Composite right = toolkit.createComposite(form.getBody());
-		tableLayout = new TableWrapLayout();
-		tableLayout.bottomMargin = 0;
-		tableLayout.topMargin = 0;
-		tableLayout.leftMargin = 0;
-		tableLayout.rightMargin = 0;
-		tableLayout.verticalSpacing = 15;
-		tableLayout.horizontalSpacing = 15;
-		right.setLayout(tableLayout);
+		right.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
 
 		twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		right.setLayoutData(twd);
 
 		fSpecSection = new FeatureSpecSection(this, left);
-		twd = new TableWrapData();
-		twd.grabHorizontal = true;
-		fSpecSection.getSection().setLayoutData(twd);
-
 		fPortabilitySection = new PortabilitySection(this, left);
 		twd = new TableWrapData();
 		twd.grabHorizontal = true;
@@ -199,6 +172,9 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		Section section = toolkit.createSection(parent,
 				ExpandableComposite.TITLE_BAR);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		section.setLayoutData(data);
 		// toolkit.createCompositeSeparator(section);
 		return section;
 	}

@@ -41,6 +41,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
@@ -107,6 +108,11 @@ public class RequiresSection extends TableSection implements
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
+		
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		section.setLayoutData(data);
+		
 		Composite container = createClientContainer(section, 2, toolkit);
 
 		fSyncButton = toolkit.createButton(container, PDEUIMessages.FeatureEditor_RequiresSection_sync, SWT.CHECK);

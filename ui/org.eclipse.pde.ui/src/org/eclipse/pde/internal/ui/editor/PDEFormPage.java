@@ -427,8 +427,7 @@ public abstract class PDEFormPage extends FormPage {
 		Section section = 
 			getManagedForm().getToolkit().createSection(parent, style);
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		section.marginHeight = 5;
-		section.marginWidth = 5; 
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setText(text);
 		section.setDescription(description);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -443,8 +442,7 @@ public abstract class PDEFormPage extends FormPage {
 	 */
 	public Composite createUISectionContainer(Composite parent, int columns) {
 		Composite container = getManagedForm().getToolkit().createComposite(parent);
-		GridLayout layout = new GridLayout(columns, false);
-		container.setLayout(layout);
+		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, columns));
 		return container;		
 	}
 	

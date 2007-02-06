@@ -45,7 +45,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.progress.IProgressService;
 
 
@@ -72,16 +71,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.bottomMargin = 10;
-		layout.topMargin = 5;
-		layout.leftMargin = 6;
-		layout.rightMargin = 6;
-		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth =true;
-		layout.verticalSpacing = 15;
-		layout.horizontalSpacing = 10;
-		body.setLayout(layout);
+		body.setLayout(FormLayoutFactory.createFormTableWrapLayout(true, 2));
 
 		// sections
 		ProductInfoSection section = new ProductInfoSection(this, body);

@@ -75,6 +75,7 @@ public class OverviewPage extends AbstractTargetPage implements IHyperlinkListen
 	
 	private Section createSection(Composite parent, FormToolkit toolkit, String title) {
 		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR);
+		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText(title);
 		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
