@@ -111,7 +111,6 @@ public class AddTargetPluginsWizard extends NewWizard {
 			fWizard;
 		if (wizard == null)
 			return true;
-		wizard.performFinish();
 		fDirs = wizard.getLocations();
 		return super.performFinish();
 	}
