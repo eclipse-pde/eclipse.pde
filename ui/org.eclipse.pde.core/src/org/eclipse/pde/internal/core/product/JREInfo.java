@@ -102,8 +102,8 @@ public class JREInfo extends ProductObject implements IJREInfo {
 				}
 			}
 		}
-		// if we're broken somehow, let's use the default vm instead of bombing
-		return JavaRuntime.getDefaultVMInstall().getInstallLocation().getAbsolutePath();
+		// we can't find anything suitable
+		return null;
 	}
 
 	public void setJVM(String args, int platform, int type) {
