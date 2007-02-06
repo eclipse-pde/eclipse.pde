@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.provisioner.update;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -27,14 +31,28 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-public class UpdateSitePage extends WizardPage {
+public class UpdateSiteProvisionerPage extends WizardPage {
 
 	private List fElements = new ArrayList();
 	private Button fAddButton;
 	private Button fRemoveButton;
-	private TreeViewer fTreeViewer;
+	private ListViewer fListViewer;
 
-	protected UpdateSitePage(String pageName) {
+	class UpdateSiteContentProvider implements IStructuredContentProvider {
+
+		public Object[] getElements(Object inputElement) {
+			if(inputElement instanceof List)
+				return ((List) inputElement).toArray();
+			return null;
+		}
+
+		public void dispose() {}
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+
+	}
+
+	protected UpdateSiteProvisionerPage(String pageName) {
 		super(pageName);
 		setTitle(PDEUIMessages.UpdateSiteWizardPage_title);
 		setDescription(PDEUIMessages.UpdateSiteWizardPage_description);
@@ -55,12 +73,25 @@ public class UpdateSitePage extends WizardPage {
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 
-		fTreeViewer = new TreeViewer(client, SWT.VIRTUAL);
-		fTreeViewer.setInput(fElements);
+		fListViewer = new ListViewer(client, SWT.BORDER);
+		fListViewer.setContentProvider(new UpdateSiteContentProvider());
+		fListViewer.setLabelProvider(new LabelProvider() {
 
+			public String getText(Object element) {
+				IUpdateSiteProvisionerEntry entry =
+					(IUpdateSiteProvisionerEntry) element;
+				return entry.getSiteLocation();
+			}
 
-		// TODO Auto-generated method stub
+		});
+		fListViewer.setInput(fElements);
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.verticalSpan = 3;
+		fListViewer.getControl().setLayoutData(gd);
 
+		createButtons(client);
+
+		setControl(client);
 	}
 
 	protected void createButtons(Composite parent) {
@@ -87,24 +118,33 @@ public class UpdateSitePage extends WizardPage {
 	}
 
 	protected void handleRemove() {
-		// TODO Auto-generated method stub
+		Object[] elements = ((IStructuredSelection)fListViewer.getSelection()).toArray();
+		for (int i = 0; i < elements.length; i++)
+			fElements.remove(elements[i]);
 
+		fListViewer.refresh();
+		updateButtons();
+		setPageComplete(!fElements.isEmpty());
 	}
 
 	protected void handleAdd() {
-		// TODO Auto-generated method stub
-
+		AddSiteDialog dialog = new AddSiteDialog(getShell());
+		dialog.setTitle("blah blah blah");
+		int status = dialog.open();
+		if (status == Window.OK) {
+			fElements.add(dialog.getEntry());
+			fListViewer.refresh();
+			setPageComplete(true);
+		}
 	}
 
 	protected void updateButtons() {
-		int num = fTreeViewer.getTree().getSelectionCount();
+		int num = fListViewer.getList().getSelectionCount();
 		fRemoveButton.setEnabled(num > 0);
 	}
 
-	public File[] getLocations() {
-//		Preferences pref = PDECore.getDefault().getPluginPreferences();
-//		pref.setValue(LAST_LOCATION, fLastLocation);
-		return (File[]) fElements.toArray(new File[fElements.size()]);
+	public IUpdateSiteProvisionerEntry[] getEntries() {
+		return (IUpdateSiteProvisionerEntry[]) fElements.toArray(new UpdateSiteProvisionerEntry[fElements.size()]);
 	}
 
 }

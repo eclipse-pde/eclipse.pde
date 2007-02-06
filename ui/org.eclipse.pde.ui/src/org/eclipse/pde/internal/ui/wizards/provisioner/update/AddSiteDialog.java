@@ -12,10 +12,8 @@ package org.eclipse.pde.internal.ui.wizards.provisioner.update;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.StatusDialog;
-import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -35,29 +33,30 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class AddSiteDialog extends StatusDialog {
-	
-	private Text fPath;
-//	private String fSiteLocation;
-//	private String fTargetLocation;
-	private String fLocation;
+
+	private Text fInstallLocationText;
+	private Label fInstallLocationLabel;
+	private Text fSiteLocationText;
+	private Label fSiteLocationLabel;
+	private IUpdateSiteProvisionerEntry fEntry;
 	private IStatus fOkStatus;
 	private IStatus fErrorStatus;
 
-	public AddSiteDialog(Shell parent, String location) {
+	public AddSiteDialog(Shell parent) {
 		super(parent);
 		getEmptyErrorStatus();
 		//fLocation = location;
 	}
-	
+
 	protected Control createDialogArea(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 4;
+		layout.numColumns = 3;
 		layout.marginHeight = layout.marginWidth = 10;
 		container.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_BOTH);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		container.setLayoutData(gd);
-		
+
 		createEntry(container);
 
 		ModifyListener listener = new ModifyListener() {
@@ -65,34 +64,24 @@ public class AddSiteDialog extends StatusDialog {
 				dialogChanged();
 			}
 		};
-		fPath.addModifyListener(listener);
+		fInstallLocationText.addModifyListener(listener);
 		setTitle(PDEUIMessages.LocationDialog_title); 
 		Dialog.applyDialogFont(container);
-		
+
 		dialogChanged();
-		
+
 		return container;
 	}
-	
+
 	protected void createEntry(Composite container) {
-		Label label = new Label(container, SWT.NULL);
-		label.setText(PDEUIMessages.LocationDialog_path); 
-		label.setLayoutData(new GridData());
-		
-		fPath = new Text(container, SWT.SINGLE | SWT.BORDER);
+		fInstallLocationLabel = new Label(container, SWT.NULL);
+		fInstallLocationLabel.setText(PDEUIMessages.LocationDialog_path); 
+
+		fInstallLocationText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 3;
-		fPath.setLayoutData(gd);
-		
-		if (fLocation != null) {
-			fPath.setText(fLocation);
-		}
-		
-		label = new Label(container, SWT.NONE);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
-		
+		gd.widthHint = 250;
+		fInstallLocationText.setLayoutData(gd);
+
 		Button fs = new Button(container, SWT.PUSH);
 		fs.setText(PDEUIMessages.LocationDialog_fileSystem);
 		fs.setLayoutData(new GridData());
@@ -102,36 +91,32 @@ public class AddSiteDialog extends StatusDialog {
 			}
 		});
 		SWTUtil.setButtonDimensionHint(fs);
-		
-		Button var = new Button(container, SWT.PUSH);
-		var.setText(PDEUIMessages.LocationDialog_variables);
-		var.setLayoutData(new GridData());
-		var.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleInsertVariable();
-			}
-		});
-		SWTUtil.setButtonDimensionHint(var);
+
+		fSiteLocationLabel = new Label(container, SWT.NONE);
+		fSiteLocationLabel.setText("site:");
+
+		fSiteLocationText = new Text(container, SWT.SINGLE | SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		fSiteLocationText.setLayoutData(gd);
+
 	}
-	
+
 	private IStatus createErrorStatus(String message) {
 		return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK,
 				message, null);
 	}
-	
+
 	private void dialogChanged() {
 		IStatus status = null;
-//		if (fPath.getText().length() == 0)
-//			status = getEmptyErrorStatus();
-//		else {
-//			if (hasPath(fPath.getText()))
-//				status = createErrorStatus(PDEUIMessages.LocationDialog_locationExists); 
-//		}
+		if(fInstallLocationText.getText().length() == 0 && fSiteLocationText.getText().length() == 0)
+			status = getEmptyErrorStatus();
+
 		if (status == null)
 			status = getOKStatus();
 		updateStatus(status);
 	}
-	
+
 	private IStatus getOKStatus() {
 		if (fOkStatus == null)
 			fOkStatus = new Status(IStatus.OK, PDEPlugin.getPluginId(),
@@ -139,38 +124,33 @@ public class AddSiteDialog extends StatusDialog {
 					null);
 		return fOkStatus;
 	}
-	
+
 	private IStatus getEmptyErrorStatus() {
 		if (fErrorStatus == null)
-			fErrorStatus = createErrorStatus(PDEUIMessages.LocationDialog_emptyPath); 
+			fErrorStatus = createErrorStatus("Please enter a install location and update site"); 
 		return fErrorStatus;
 	}
-		
+
 	protected void handleBrowseFileSystem() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		dialog.setFilterPath(fPath.getText());
+		dialog.setFilterPath(fInstallLocationText.getText());
 		dialog.setText(PDEUIMessages.BaseBlock_dirSelection); 
 		dialog.setMessage(PDEUIMessages.BaseBlock_dirChoose); 
 		String result = dialog.open();
 		if (result != null) {
-			fPath.setText(result);
+			fInstallLocationText.setText(result);
 		}
 	}
-	
-	private void handleInsertVariable() {
-		StringVariableSelectionDialog dialog = 
-					new StringVariableSelectionDialog(getShell());
-		if (dialog.open() == Window.OK) {
-			fPath.insert(dialog.getVariableExpression());
-		}
-	}
-	
+
 	protected void okPressed() {
-		//fLocation = fPath.getText();
+		fEntry = new UpdateSiteProvisionerEntry(
+				fInstallLocationText.getText(), 
+				fSiteLocationText.getText());
 		super.okPressed();
 	}
-	
-	public String getLocation() {
-		return fLocation;
+
+	public IUpdateSiteProvisionerEntry getEntry() {
+		return fEntry;
 	}
+
 }
