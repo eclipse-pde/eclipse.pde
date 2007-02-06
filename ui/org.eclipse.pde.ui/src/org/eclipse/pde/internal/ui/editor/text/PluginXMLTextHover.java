@@ -43,7 +43,9 @@ public class PluginXMLTextHover extends PDETextHover {
 		ISchema schema = getExtensionSchema((IPluginObject)range);
 		if (schema != null) {
 			ISchemaObject sObj = getSchemaObject(schema, (IPluginObject)range);
-			if (range instanceof IPluginAttribute && sObj instanceof ISchemaElement) {
+			if (sObj == null) {
+				return null;
+			} else if (range instanceof IPluginAttribute && sObj instanceof ISchemaElement) {
 				IDocumentAttribute da = (IDocumentAttribute)range;
 				if (da.getNameOffset() <= offset && 
 						offset <= da.getNameOffset() + da.getNameLength() - 1)
@@ -154,6 +156,9 @@ public class PluginXMLTextHover extends PDETextHover {
 	}
 	
 	private String getElementText(ISchemaElement sEle) {
+		if (sEle == null) {
+			return null;
+		}
 		return sEle.getDescription();
 	}
 
