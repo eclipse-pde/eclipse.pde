@@ -119,7 +119,9 @@ public class PluginModelManager implements IModelProviderListener {
 			IModel[] removed = e.getRemovedModels();
 			for (int i = 0; i < removed.length; i++) {
 				IPluginModelBase model = (IPluginModelBase) removed[i];
-				handleRemove(model.getPluginBase().getId(), model, delta);	
+				String id = model.getPluginBase().getId();
+				if (id != null)
+					handleRemove(id, model, delta);	
 			}
 		}
 		
@@ -130,7 +132,9 @@ public class PluginModelManager implements IModelProviderListener {
 			IModel[] added = e.getAddedModels();
 			for (int i = 0; i < added.length; i++) {
 				IPluginModelBase model = (IPluginModelBase) added[i];
-				handleAdd(model.getPluginBase().getId(), model, delta);
+				String id = model.getPluginBase().getId();
+				if (id != null)
+					handleAdd(id, model, delta);
 			}
 		}
 		
