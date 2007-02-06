@@ -51,8 +51,7 @@ public class ProductExportWizard extends BaseExportWizard {
 		fPage = new ProductExportWizardPage(getSelection());
 		addPage(fPage);
 		
-		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
-		IFeatureModel model = manager.findFeatureModel("org.eclipse.platform.launchers"); //$NON-NLS-1$
+		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().getDeltaPackFeature();
 		if (model != null) {
 			fPage2 = new CrossPlatformExportPage("environment", model); //$NON-NLS-1$
 			addPage(fPage2);

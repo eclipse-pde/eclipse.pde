@@ -388,5 +388,12 @@ public class FeatureModelManager {
 	public void targetReloaded() {
 		fReloadExternalNeeded = true;
 	}
+	
+	public IFeatureModel getDeltaPackFeature() {
+		IFeatureModel model = findFeatureModel("org.eclipse.equinox.executable");
+		if (model == null)
+			model = findFeatureModel("org.eclipse.platform.launchers");
+		return model;
+	}
 
 }

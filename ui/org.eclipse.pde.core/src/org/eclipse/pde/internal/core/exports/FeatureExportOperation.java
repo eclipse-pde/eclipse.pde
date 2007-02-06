@@ -615,7 +615,7 @@ public class FeatureExportOperation implements IWorkspaceRunnable {
 			doc.appendChild(root);
 			
 			if (includeLauncher) {
-				IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel("org.eclipse.platform.launchers"); //$NON-NLS-1$
+				IFeatureModel model = PDECore.getDefault().getFeatureModelManager().getDeltaPackFeature();
 				if (model != null) {
 					IFeature feature = model.getFeature();
 					Element includes = doc.createElement("includes"); //$NON-NLS-1$

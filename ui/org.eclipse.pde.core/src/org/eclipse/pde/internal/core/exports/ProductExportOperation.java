@@ -144,7 +144,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 		if (!file.exists() || !file.isDirectory())
 			file.mkdirs();
 
-		boolean hasLaunchers = PDECore.getDefault().getFeatureModelManager().findFeatureModel("org.eclipse.platform.launchers") != null; //$NON-NLS-1$
+		boolean hasLaunchers = PDECore.getDefault().getFeatureModelManager().getDeltaPackFeature() != null;
 		Properties properties = new Properties();
 		properties.put(IBuildPropertiesConstants.ROOT, getRootFileLocations(hasLaunchers)); //To copy a folder
 		if (!hasLaunchers) {
