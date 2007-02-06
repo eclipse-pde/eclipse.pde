@@ -125,7 +125,9 @@ public class ExecutionEnvironmentSection extends TableSection {
 			section.setDescription(PDEUIMessages.RequiredExecutionEnvironmentSection_pluginDesc);		
 		
 		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
-		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+
+		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
+		section.setLayoutData(data);		
 		
 		Composite container = createClientContainer(section, 2, toolkit);
 		EditableTablePart tablePart = getTablePart();

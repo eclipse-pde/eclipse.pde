@@ -73,7 +73,9 @@ public abstract class GeneralInfoSection extends PDESection {
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.ManifestEditor_PluginSpecSection_title); 
 		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
-		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
+		section.setLayoutData(data);		
+		
 		section.setDescription(getSectionDescription()); 
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientTableWrapLayout(false, 3));

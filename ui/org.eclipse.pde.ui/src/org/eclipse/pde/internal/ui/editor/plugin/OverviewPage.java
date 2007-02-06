@@ -139,9 +139,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 							parent, 
 							sectionTitle);
 
-		Composite container = toolkit.createComposite(section, SWT.NONE);
-		container.setLayout(FormLayoutFactory.createSectionClientTableWrapLayout(false, 1));
-		container.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		Composite container = createStaticSectionClient(toolkit, section);
 		
 		FormText text = createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fContent : PDEUIMessages.OverviewPage_content, toolkit);
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
@@ -157,7 +155,6 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 			text = createClient(container, content, toolkit);
 		}
 		section.setClient(container);
-		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 	}
 	
 	private void createExtensionSection(IManagedForm managedForm,
@@ -168,16 +165,13 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 							parent, 
 							sectionTitle);
 
-		Composite container = toolkit.createComposite(section, SWT.NONE);
-		container.setLayout(FormLayoutFactory.createSectionClientTableWrapLayout(false, 1));
-		container.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		Composite container = createStaticSectionClient(toolkit, section);
 		
 		FormText text  = createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fExtensionContent : PDEUIMessages.OverviewPage_extensionContent, toolkit);
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, SharedLabelProvider.F_EDIT)); //$NON-NLS-1$
 		
 		section.setClient(container);
-		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 	}
 	
 	private void createTestingSection(IManagedForm managedForm,
@@ -185,27 +179,21 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		Section section = createStaticSection(toolkit, parent, PDEUIMessages.ManifestEditor_TestingSection_title); 
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		
-		Composite container = toolkit.createComposite(section, SWT.NONE);
-		container.setLayout(FormLayoutFactory.createSectionClientTableWrapLayout(false, 1));
-		container.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		Composite container = createStaticSectionClient(toolkit, section);
 		
 		FormText text = createClient(container, getLauncherText(!((ManifestEditor)getEditor()).showExtensionTabs()), toolkit);
 		text.setImage("run", lp.get(PDEPluginImages.DESC_RUN_EXC)); //$NON-NLS-1$
 		text.setImage("debug", lp.get(PDEPluginImages.DESC_DEBUG_EXC)); //$NON-NLS-1$
 		text.setImage("profile", lp.get(PDEPluginImages.DESC_PROFILE_EXC)); //$NON-NLS-1$
 		section.setClient(container);
-		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 	}
 	
 	private void createExportingSection(IManagedForm managedForm,
 			Composite parent, FormToolkit toolkit) {
 		Section section = createStaticSection(toolkit, parent, PDEUIMessages.ManifestEditor_DeployingSection_title); 
-		Composite container = toolkit.createComposite(section, SWT.NONE);
-		container.setLayout(FormLayoutFactory.createSectionClientTableWrapLayout(false, 1));
-		container.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		Composite container = createStaticSectionClient(toolkit, section);
 		createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fDeploying : PDEUIMessages.OverviewPage_deploying, toolkit);
 		section.setClient(container);
-		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 	}
 	
 	private Section createStaticSection(FormToolkit toolkit, Composite parent, String text) {
@@ -213,7 +201,24 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		section.setText(text);
 		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
+		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
+		data.maxWidth = 200;
+		section.setLayoutData(data);
 		return section;
+	}
+	
+	/**
+	 * @param toolkit
+	 * @param parent
+	 * @return
+	 */
+	private Composite createStaticSectionClient(FormToolkit toolkit, 
+			Composite parent) {
+		Composite container = toolkit.createComposite(parent, SWT.NONE);
+		container.setLayout(FormLayoutFactory.createSectionClientTableWrapLayout(false, 1));
+		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
+		container.setLayoutData(data);
+		return container;
 	}
 	
 	private FormText createClient(Composite section, String content, FormToolkit toolkit) {
@@ -223,7 +228,6 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		} catch (SWTException e) {
 			text.setText(e.getMessage(), false, false);
 		}
-		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		text.addHyperlinkListener(this);
 		return text;
 	}
