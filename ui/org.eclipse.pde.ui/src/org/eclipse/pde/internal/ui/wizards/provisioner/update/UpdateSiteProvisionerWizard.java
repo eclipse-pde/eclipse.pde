@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
@@ -65,10 +64,10 @@ IProvisionerWizard {
 						ILocalSite localSite = SiteManager.getLocalSite();
 						IInstallConfiguration config = localSite.getCurrentConfiguration();
 						csite = config.createConfiguredSite(sitePath);
-						IStatus status = csite.verifyUpdatableStatus();
-						if (status.isOK())
-							System.out.println("status is good");
-//						config.addConfiguredSite(csite);
+						csite.verifyUpdatableStatus();
+//						if (!status.isOK())
+//							System.out.println("status is not good");
+
 					}
 
 					ISite remoteSite = SiteManager.getSite(remoteSiteURL, null);
@@ -126,7 +125,7 @@ IProvisionerWizard {
 
 			for(int i = 0; i < entries.length; i++) {
 				IUpdateSiteProvisionerEntry entry = entries[i];
-				File file = new File(entry.getInstallLocation(), "eclipse");
+				File file = new File(entry.getInstallLocation(), "eclipse"); //$NON-NLS-1$
 				if(file.exists())
 					dirs.add(file);
 			}

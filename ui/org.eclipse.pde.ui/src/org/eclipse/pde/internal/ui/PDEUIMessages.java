@@ -2837,4 +2837,12 @@ public class PDEUIMessages extends NLS {
 	
 	public static String AddExportPackageResolution_Label;
 	
+	// add site dialog
+	public static String AddSiteDialog_title;
+	public static String AddSiteDialog_installLocation;
+	public static String AddSiteDialog_fileSystem;
+	public static String AddSiteDialog_siteLocation;
+	public static String AddSiteDialog_missBothErrorMessage;
+	
+	
 }

@@ -45,7 +45,6 @@ public class AddSiteDialog extends StatusDialog {
 	public AddSiteDialog(Shell parent) {
 		super(parent);
 		getEmptyErrorStatus();
-		//fLocation = location;
 	}
 
 	protected Control createDialogArea(Composite parent) {
@@ -65,7 +64,7 @@ public class AddSiteDialog extends StatusDialog {
 			}
 		};
 		fInstallLocationText.addModifyListener(listener);
-		setTitle(PDEUIMessages.LocationDialog_title); 
+		setTitle(PDEUIMessages.AddSiteDialog_title); 
 		Dialog.applyDialogFont(container);
 
 		dialogChanged();
@@ -75,7 +74,7 @@ public class AddSiteDialog extends StatusDialog {
 
 	protected void createEntry(Composite container) {
 		fInstallLocationLabel = new Label(container, SWT.NULL);
-		fInstallLocationLabel.setText(PDEUIMessages.LocationDialog_path); 
+		fInstallLocationLabel.setText(PDEUIMessages.AddSiteDialog_installLocation); 
 
 		fInstallLocationText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -83,7 +82,7 @@ public class AddSiteDialog extends StatusDialog {
 		fInstallLocationText.setLayoutData(gd);
 
 		Button fs = new Button(container, SWT.PUSH);
-		fs.setText(PDEUIMessages.LocationDialog_fileSystem);
+		fs.setText(PDEUIMessages.AddSiteDialog_fileSystem);
 		fs.setLayoutData(new GridData());
 		fs.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -93,7 +92,7 @@ public class AddSiteDialog extends StatusDialog {
 		SWTUtil.setButtonDimensionHint(fs);
 
 		fSiteLocationLabel = new Label(container, SWT.NONE);
-		fSiteLocationLabel.setText("site:");
+		fSiteLocationLabel.setText(PDEUIMessages.AddSiteDialog_siteLocation);
 
 		fSiteLocationText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -127,7 +126,7 @@ public class AddSiteDialog extends StatusDialog {
 
 	private IStatus getEmptyErrorStatus() {
 		if (fErrorStatus == null)
-			fErrorStatus = createErrorStatus("Please enter a install location and update site"); 
+			fErrorStatus = createErrorStatus(PDEUIMessages.AddSiteDialog_missBothErrorMessage); 
 		return fErrorStatus;
 	}
 
