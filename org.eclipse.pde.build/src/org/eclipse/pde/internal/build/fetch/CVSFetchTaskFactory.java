@@ -132,7 +132,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 			}
 			String tag = (String) entryInfos.get(IFetchFactory.KEY_ELEMENT_TAG);
 			String cvsRoot = (String) entryInfos.get(KEY_CVSROOT);
-			String dest = "true".equalsIgnoreCase((String) entryInfos.get(KEY_PREBUILT)) ? destination.toString() : destination.removeLastSegments(1).toString();
+			String dest = "true".equalsIgnoreCase((String) entryInfos.get(KEY_PREBUILT)) ? destination.removeLastSegments(1).toString() : destination.toString();
 			printCVSTask("export -r " + tag + ' ' + filePath.toString(), cvsRoot, dest, null, null, "true", null, null, script);  //$NON-NLS-1$//$NON-NLS-2$
 			script.println("<move file=\"" + destination + '/' + filePath + "\"" + " tofile=\"" + destination.append(file) + "\" failonerror=\"false\" />");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
