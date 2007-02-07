@@ -256,7 +256,7 @@ public class MailTemplate extends PDETemplateSection {
 		IPluginElement property = model.getFactory().createElement(element);
 		property.setName("property"); //$NON-NLS-1$
 		property.setAttribute("name", "aboutText"); //$NON-NLS-1$ //$NON-NLS-2$
-		property.setAttribute("value", "%aboutText"); //$NON-NLS-1$ //$NON-NLS-2$
+		property.setAttribute("value", "RCP Mail template created by PDE"); //$NON-NLS-1$ //$NON-NLS-2$
 		element.add(property);
 		
 		property = model.getFactory().createElement(element);
