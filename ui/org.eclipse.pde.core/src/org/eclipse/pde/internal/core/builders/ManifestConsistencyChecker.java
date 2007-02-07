@@ -144,7 +144,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			try {
 				IMarker marker = project.createMarker(PDEMarkerFactory.MARKER_ID);
 				marker.setAttribute(IMarker.SEVERITY, CompilerFlags.ERROR == severity ? IMarker.SEVERITY_ERROR : IMarker.SEVERITY_WARNING);
-				marker.setAttribute(IMarker.MESSAGE, "build.properties does not exist");
+				marker.setAttribute(IMarker.MESSAGE, PDECoreMessages.ManifestConsistencyChecker_buildDoesNotExist);
 			} catch (CoreException e) {
 			}
 			

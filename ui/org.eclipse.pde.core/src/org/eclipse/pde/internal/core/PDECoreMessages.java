@@ -174,6 +174,8 @@ public class PDECoreMessages extends NLS {
 
 	public static String ManifestConsistencyChecker_projectCheck;
 
+	public static String ManifestConsistencyChecker_buildDoesNotExist;
+
 	public static String BundleErrorReporter_lazyStart_unsupported;
 
 	public static String ManifestConsistencyChecker_buildPropertiesSubtask;
