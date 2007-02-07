@@ -101,7 +101,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
-		body.setLayout(FormLayoutFactory.createFormTableWrapLayout(false, 2));
+		body.setLayout(FormLayoutFactory.createFormTableWrapLayout(true, 2));
 
 		Composite left = toolkit.createComposite(body);
 		left.setLayout(FormLayoutFactory.createFormPaneTableWrapLayout(false, 1));
@@ -202,7 +202,6 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		section.setText(text);
 		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
 		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
-		data.maxWidth = 200;
 		section.setLayoutData(data);
 		return section;
 	}
