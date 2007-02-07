@@ -116,12 +116,14 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 		});
 
 		fEditButton = new Button(parent, SWT.PUSH);
-		fEditButton.setText(PDEUIMessages.UpdateSiteWizardPage_add);
+		fEditButton.setText(PDEUIMessages.UpdateSiteWizardPage_edit);
 		fEditButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-		SWTUtil.setButtonDimensionHint(fAddButton);
+		SWTUtil.setButtonDimensionHint(fEditButton);
 		fEditButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleEdit();
+				IUpdateSiteProvisionerEntry entry = 
+					(IUpdateSiteProvisionerEntry) ((IStructuredSelection) fListViewer.getSelection()).getFirstElement();
+				handleEdit(entry);
 			}
 		});
 
@@ -162,13 +164,27 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 		}
 	}
 
-	protected void handleEdit() {
-		// TODO
+	protected void handleEdit(IUpdateSiteProvisionerEntry entry) {
+		UpdateSiteProvisionerDialog dialog = new UpdateSiteProvisionerDialog(
+				getShell(),
+				entry.getInstallLocation(),
+				entry.getSiteLocation(),
+				PDEUIMessages.UpdateSiteProvisionerDialog_editTitle
+		);
+		int status = dialog.open();
+		if (status == Window.OK) {
+			fElements.remove(entry);
+			fElements.add(dialog.getEntry());
+			fListViewer.refresh();
+			setPageComplete(true);
+		}
+		updateButtons();
 	}
 
 	protected void updateButtons() {
 		int num = fListViewer.getTable().getSelectionCount();
 		fRemoveButton.setEnabled(num > 0);
+		fEditButton.setEnabled(num == 1);
 	}
 
 	public IUpdateSiteProvisionerEntry[] getEntries() {

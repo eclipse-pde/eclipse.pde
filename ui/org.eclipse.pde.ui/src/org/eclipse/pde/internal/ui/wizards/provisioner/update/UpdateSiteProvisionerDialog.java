@@ -87,7 +87,7 @@ public class UpdateSiteProvisionerDialog extends StatusDialog {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fSiteLocationText.setLayoutData(gd);
-		if(fSiteLocationText != null)
+		if(fSiteLocation != null)
 			fSiteLocationText.setText(fSiteLocation);
 
 		fInstallLocationLabel = new Label(container, SWT.NULL);
