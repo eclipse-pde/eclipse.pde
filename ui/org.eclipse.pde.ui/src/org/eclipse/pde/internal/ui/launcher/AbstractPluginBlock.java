@@ -455,6 +455,7 @@ public abstract class AbstractPluginBlock {
 				if (fPluginTreeViewer.getChecked(models[i]))
 					return models[i];
 			}
+			return entry.getModel();
 		}
 		return null;
 	}
