@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@ package org.eclipse.pde.internal.ui.editor.target;
 import java.io.File;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -107,6 +109,15 @@ public class TargetEditor extends PDEFormEditor {
 			addPage(new OverviewPage(this));
 			addPage(new ContentPage(this));
 			addPage(new EnvironmentPage(this));
+			addPageChangedListener(new IPageChangedListener() {
+
+				public void pageChanged(PageChangedEvent event) {
+					Object o = event.getSelectedPage();
+					if (o instanceof EnvironmentPage)
+						((EnvironmentPage)o).updateChoices();
+				}
+				
+			});
 		} catch (PartInitException e) {
 			PDEPlugin.log(e);
 		}

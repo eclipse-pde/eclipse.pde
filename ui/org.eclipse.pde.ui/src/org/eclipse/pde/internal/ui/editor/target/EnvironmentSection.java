@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.target;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -25,6 +29,8 @@ import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
@@ -33,6 +39,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -48,6 +55,7 @@ public class EnvironmentSection extends PDESection {
 	private TreeSet fOSChoices;
 	private TreeSet fWSChoices;
 	private TreeSet fArchChoices;
+	private boolean LOCALES_INITIALIZED = false;
 
 	public EnvironmentSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
@@ -133,13 +141,45 @@ public class EnvironmentSection extends PDESection {
 				getEnvironment().setArch(getText(fArchCombo));
 			}
 		});
-		fNLCombo.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				String value = getText(fNLCombo);
-				int index = value.indexOf("-"); //$NON-NLS-1$
-				if (index > 0)
-					value = value.substring(0, index);
-				getEnvironment().setNL(value.trim());
+		fNLCombo.getControl().addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent event) {
+				// if we haven't gotten all the values for the NL's, display a busy cursor to the user while we find them.
+				if (!LOCALES_INITIALIZED) {
+					try {
+						PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
+							public void run(IProgressMonitor monitor) {
+								initializeAllLocales();
+								LOCALES_INITIALIZED = true;
+							}
+						});
+					} catch (InvocationTargetException e) {
+						PDEPlugin.log(e);
+					} catch (InterruptedException e) {
+						PDEPlugin.log(e);
+					}
+				}
+				
+				// first time through, we should have a max item count of 1.
+				// On the first time through, we need to set the new values, and also attach the listener
+				// If we attached the listener initially, when we call setItems(..), it would make the editor dirty (when the user didn't change anything)
+				if (fNLCombo.getItemCount()  < 3) {
+					String current = fNLCombo.getSelection();
+					if (!fNLCombo.getControl().isDisposed()) {
+						fNLCombo.setItems((String[])fNLChoices.toArray(new String[fNLChoices.size()]));
+						fNLCombo.setText(current);
+					}
+					
+					fNLCombo.addModifyListener(new ModifyListener() {
+						public void modifyText(ModifyEvent e) {
+							String value = getText(fNLCombo);
+							int index = value.indexOf("-"); //$NON-NLS-1$
+							if (index > 0)
+								value = value.substring(0, index);
+							getEnvironment().setNL(value.trim());
+						}
+					});
+				}
+					
 			}
 		});
 		
@@ -176,7 +216,6 @@ public class EnvironmentSection extends PDESection {
 			fArchChoices.add(fileValue);
 		
 		fNLChoices = new TreeSet();
-		initializeAllLocales();
 		fNLChoices.add(""); //$NON-NLS-1$
 	}
 	
@@ -187,6 +226,7 @@ public class EnvironmentSection extends PDESection {
 		String fileValue = getEnvironment().getNL();
 		if (fileValue != null)
 			fNLChoices.add(expandLocaleName(fileValue));
+		LOCALES_INITIALIZED = true;
 	}
 	
 	private static String[] getLocales() {
@@ -256,6 +296,17 @@ public class EnvironmentSection extends PDESection {
 		fNLCombo.setText(presetValue);
 		
 		super.refresh();
+	}
+	
+	protected void updateChoices() {
+		if (LOCALES_INITIALIZED)
+			return;
+		// kick off thread in backgroud to find the NL values
+		new Thread(new Runnable() {
+			public void run() {
+				initializeAllLocales();
+			}
+		}).start();
 	}
 
 }
