@@ -386,9 +386,8 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 	private void getPluginIds(Map featureMap, FeatureModelManager manager, Set optionalPlugins, IProgressMonitor monitor) {
 		ITargetFeature[] targetFeatures = fTarget.getFeatures();
 		ITargetPlugin[] plugins = fTarget.getPlugins();
-		IPluginModelBase workspacePlugins[] = PluginRegistry.getWorkspaceModels();
 		
-		monitor.beginTask(PDECoreMessages.LoadTargetOperation_findPluginsTaskName, targetFeatures.length + plugins.length + workspacePlugins.length);
+		monitor.beginTask(PDECoreMessages.LoadTargetOperation_findPluginsTaskName, targetFeatures.length + plugins.length);
 		if (fTarget.useAllPlugins()) {
 			monitor.done();
 			return;
@@ -433,11 +432,6 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 			monitor.worked(1);
 		}
 		
-		for (int i = 0; i < workspacePlugins.length; i++) {
-			if (workspacePlugins[i].isEnabled())
-				fRequiredPlugins.remove(workspacePlugins[i].getBundleDescription().getSymbolicName());
-			monitor.worked(1);
-		}
 		monitor.done();
 	}
 }
