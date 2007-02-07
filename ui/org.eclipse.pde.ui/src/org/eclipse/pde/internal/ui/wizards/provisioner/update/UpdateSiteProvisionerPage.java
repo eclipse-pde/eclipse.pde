@@ -13,9 +13,11 @@ package org.eclipse.pde.internal.ui.wizards.provisioner.update;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
@@ -41,7 +43,7 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 	private Button fAddButton;
 	private Button fRemoveButton;
 	private Button fEditButton;
-	private TableViewer fListViewer;
+	private TableViewer fViewer;
 
 	class UpdateSiteContentProvider implements IStructuredContentProvider {
 
@@ -78,9 +80,9 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 
-		fListViewer = new TableViewer(client, SWT.BORDER);
-		fListViewer.setContentProvider(new UpdateSiteContentProvider());
-		fListViewer.setLabelProvider(new LabelProvider() {
+		fViewer = new TableViewer(client, SWT.BORDER);
+		fViewer.setContentProvider(new UpdateSiteContentProvider());
+		fViewer.setLabelProvider(new LabelProvider() {
 
 			public Image getImage(Object element) {
 				PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
@@ -94,10 +96,18 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 			}
 
 		});
-		fListViewer.setInput(fElements);
+		fViewer.setInput(fElements);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.verticalSpan = 3;
-		fListViewer.getControl().setLayoutData(gd);
+		fViewer.getControl().setLayoutData(gd);
+
+		fViewer.addSelectionChangedListener(new ISelectionChangedListener () {
+
+			public void selectionChanged(SelectionChangedEvent event) {
+				updateButtons();
+			}
+
+		});
 
 		createButtons(client);
 
@@ -122,7 +132,7 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 		fEditButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				IUpdateSiteProvisionerEntry entry = 
-					(IUpdateSiteProvisionerEntry) ((IStructuredSelection) fListViewer.getSelection()).getFirstElement();
+					(IUpdateSiteProvisionerEntry) ((IStructuredSelection) fViewer.getSelection()).getFirstElement();
 				handleEdit(entry);
 			}
 		});
@@ -140,12 +150,13 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 	}
 
 	protected void handleRemove() {
-		Object[] elements = ((IStructuredSelection)fListViewer.getSelection()).toArray();
+		Object[] elements = ((IStructuredSelection)fViewer.getSelection()).toArray();
 		for (int i = 0; i < elements.length; i++)
 			fElements.remove(elements[i]);
 
-		fListViewer.refresh();
+		fViewer.refresh();
 		updateButtons();
+		fViewer.getTable().select(fElements.size() - 1);
 		setPageComplete(!fElements.isEmpty());
 	}
 
@@ -159,8 +170,10 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 		int status = dialog.open();
 		if (status == Window.OK) {
 			fElements.add(dialog.getEntry());
-			fListViewer.refresh();
+			fViewer.refresh();
+			fViewer.getTable().select(fElements.indexOf(dialog.getEntry()));
 			setPageComplete(true);
+			updateButtons();
 		}
 	}
 
@@ -175,14 +188,15 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 		if (status == Window.OK) {
 			fElements.remove(entry);
 			fElements.add(dialog.getEntry());
-			fListViewer.refresh();
+			fViewer.refresh();
+			fViewer.getTable().select(fElements.indexOf(dialog.getEntry()));
 			setPageComplete(true);
 		}
 		updateButtons();
 	}
 
 	protected void updateButtons() {
-		int num = fListViewer.getTable().getSelectionCount();
+		int num = fViewer.getTable().getSelectionCount();
 		fRemoveButton.setEnabled(num > 0);
 		fEditButton.setEnabled(num == 1);
 	}
