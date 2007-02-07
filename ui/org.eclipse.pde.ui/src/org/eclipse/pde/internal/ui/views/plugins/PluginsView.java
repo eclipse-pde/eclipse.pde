@@ -594,14 +594,17 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 	private void handleDoubleClick() {
 		Object obj = getSelectedObject();
 		if (obj instanceof IPluginModelBase) {
-            boolean expanded = fTreeViewer.getExpandedState(obj);
-            fTreeViewer.setExpandedState(obj, !expanded);
+            boolean expanded = false;
+            // only expand target models
+            if (((IPluginModelBase)obj).getUnderlyingResource() == null) {
+            	expanded = fTreeViewer.getExpandedState(obj);
+            	fTreeViewer.setExpandedState(obj, !expanded);
+            }
             if (fTreeViewer.getExpandedState(obj) == expanded) {
                 // not expandable, open editor
                 ManifestEditor.openPluginEditor((IPluginModelBase)obj);
             }
-		}
-		if (obj instanceof FileAdapter) {
+		} else if (obj instanceof FileAdapter) {
 			FileAdapter adapter = (FileAdapter) obj;
 			if (adapter.isDirectory()) {
 				fTreeViewer.setExpandedState(
@@ -614,11 +617,9 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 				handleOpenSystemEditor(adapter);
 			else
 				handleOpenTextEditor(adapter, editorId);
-		}
-		if (obj instanceof IClassFile) {
+		} else if (obj instanceof IClassFile) {
 			fOpenClassFileAction.run();
-		}
-		if (obj instanceof IStorage) {
+		} else if (obj instanceof IStorage) {
 			handleOpenStorage((IStorage) obj);
 		}
 	}
