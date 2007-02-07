@@ -38,9 +38,15 @@ public class ManifestUtils {
 		else 
 			libs = header.getValue().split(","); //$NON-NLS-1$
 
+		IBuild build = getBuild(project);
+		if (build == null) {
+			try {
+				return javaProject.getPackageFragmentRoots();
+			} catch (JavaModelException e) {
+				return new IPackageFragmentRoot[0];
+			}
+		}
 		List pkgFragRoots = new LinkedList();
-		IBuild build = null;
-
 		for (int j = 0; j < libs.length; j++) {
 			String lib = libs[j];
 			IPackageFragmentRoot root = null;
@@ -49,22 +55,16 @@ public class ManifestUtils {
 			if (root != null && root.exists()) {
 				pkgFragRoots.add(root);
 			} else {
-				// Parse build.properties only once
-				if (build == null) 
-					build = getBuild(project);
-				// if valid build.properties exists.  Do NOT use else statement!  getBuild() could return null.
-				if (build != null) {  
-					IBuildEntry entry = build.getEntry("source." + lib); //$NON-NLS-1$
-					if (entry == null)
-						continue;
-					String[] tokens = entry.getTokens();
-					for (int i = 0; i < tokens.length; i++) {
-						IResource resource = project.findMember(tokens[i]);
-						if (resource == null) continue;
-						root = javaProject.getPackageFragmentRoot(resource);
-						if (root != null && root.exists())
-							pkgFragRoots.add(root);
-					}
+				IBuildEntry entry = build.getEntry("source." + lib); //$NON-NLS-1$
+				if (entry == null)
+					continue;
+				String[] tokens = entry.getTokens();
+				for (int i = 0; i < tokens.length; i++) {
+					IResource resource = project.findMember(tokens[i]);
+					if (resource == null) continue;
+					root = javaProject.getPackageFragmentRoot(resource);
+					if (root != null && root.exists())
+						pkgFragRoots.add(root);
 				}
 			}
 		}
@@ -73,7 +73,7 @@ public class ManifestUtils {
 
 	public final static IBuild getBuild(IProject project){
 		IFile buildProps = project.getFile("build.properties"); //$NON-NLS-1$
-		if (buildProps != null) {
+		if (buildProps.exists()) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(buildProps);
 			if (model != null) 
 				return model.getBuild();

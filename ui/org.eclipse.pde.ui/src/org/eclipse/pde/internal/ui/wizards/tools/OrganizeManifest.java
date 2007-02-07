@@ -130,7 +130,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		Set packages = new HashSet();
 		for (int i = 0; i < roots.length; i++) {
 			try {
-				if (isImmediateRoot(roots[i])) {
+				if (ManifestUtils.isImmediateRoot(roots[i])) {
 					IJavaElement[] elements = roots[i].getChildren();
 					for (int j = 0; j < elements.length; j++)
 						if (elements[j] instanceof IPackageFragment) {
@@ -155,12 +155,6 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 			for (int i = 0; i < currentPkgs.length; i++)
 				if (!packages.contains(currentPkgs[i].getName()))
 					header.removePackage(currentPkgs[i]);
-	}
-	
-	private static boolean isImmediateRoot(IPackageFragmentRoot root) throws JavaModelException {
-		int kind = root.getKind();
-		return kind == IPackageFragmentRoot.K_SOURCE
-				|| (kind == IPackageFragmentRoot.K_BINARY && !root.isExternal());
 	}
 
 	public static void markPackagesInternal(IBundle bundle, String packageFilter) {

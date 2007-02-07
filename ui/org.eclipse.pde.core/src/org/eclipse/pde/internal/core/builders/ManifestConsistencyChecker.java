@@ -131,9 +131,25 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		if (monitor.isCanceled())
 			return;
 		IProject project = getProject();
+		try {
+			project.deleteMarkers(PDEMarkerFactory.MARKER_ID, false, IResource.DEPTH_ZERO);
+		} catch (CoreException e) {
+		}
 		IFile file = project.getFile("build.properties"); //$NON-NLS-1$
-		if (!file.exists())
-			return;
+		if (!file.exists()) {
+			int severity = CompilerFlags.getFlag(project, CompilerFlags.P_BUILD);
+			if (severity == CompilerFlags.IGNORE)
+				return;
+			// if build.properties doesn't exist and build problems != IGNORE, create a marker on the project bug 172451
+			try {
+				IMarker marker = project.createMarker(PDEMarkerFactory.MARKER_ID);
+				marker.setAttribute(IMarker.SEVERITY, CompilerFlags.ERROR == severity ? IMarker.SEVERITY_ERROR : IMarker.SEVERITY_WARNING);
+				marker.setAttribute(IMarker.MESSAGE, "build.properties does not exist");
+			} catch (CoreException e) {
+			}
+			
+		}
+			
 
 		monitor.subTask(PDECoreMessages.ManifestConsistencyChecker_buildPropertiesSubtask);
 		BuildErrorReporter ber = new BuildErrorReporter(file);
