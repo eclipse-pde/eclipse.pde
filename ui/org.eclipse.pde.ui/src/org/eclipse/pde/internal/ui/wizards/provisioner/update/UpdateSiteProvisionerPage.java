@@ -28,6 +28,8 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -107,6 +109,17 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 				updateButtons();
 			}
 
+		});
+
+		fViewer.getControl().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				if (event.character == SWT.DEL && 
+						event.stateMask == 0) {
+					if(fViewer.getSelection() != null) {
+						handleRemove();
+					}
+				}
+			}
 		});
 
 		createButtons(client);
