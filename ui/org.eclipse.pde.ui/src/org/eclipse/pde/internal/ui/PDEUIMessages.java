@@ -217,6 +217,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String ExtensionsSection_sectionDescExtensionsMaster;
 
+	public static String JRESection_eePreference;
+
+	public static String JRESection_jrePreference;
+
 	public static String LauncherUtils_generateConfigIni;
 
 	public static String OrganizeManifestsWizardPage_calculateUses;

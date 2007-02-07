@@ -32,6 +32,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -44,6 +45,9 @@ public class JRESection extends PDESection {
 	private ComboPart fExecEnvsCombo;
 	private TreeSet fExecEnvChoices;
 	private boolean fBlockChanges;
+	
+	private static String JRE_PREF_PAGE_ID = "org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"; //$NON-NLS-1$
+	private static String EE_PREF_PAGE_ID = "org.eclipse.jdt.debug.ui.jreProfiles"; //$NON-NLS-1$
 
 	public JRESection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
@@ -60,13 +64,13 @@ public class JRESection extends PDESection {
 		section.setLayoutData(data);
 
 		Composite client = toolkit.createComposite(section);
-		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
+		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 3));
 		
 		initializeValues();
 		
 		fDefaultJREButton = toolkit.createButton(client, PDEUIMessages.JRESection_defaultJRE, SWT.RADIO);
 		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 3;
 		fDefaultJREButton.setLayoutData(gd);
 		fDefaultJREButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -97,6 +101,13 @@ public class JRESection extends PDESection {
 			}
 		});
 		
+		Button configureJREButton = toolkit.createButton(client, PDEUIMessages.JRESection_jrePreference, SWT.PUSH);
+		configureJREButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				openPreferencePage(JRE_PREF_PAGE_ID);
+			}
+		});
+		
 		fExecEnvButton = toolkit.createButton(client, PDEUIMessages.JRESection_ExecutionEnv, SWT.RADIO);
 		fExecEnvButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -110,13 +121,20 @@ public class JRESection extends PDESection {
 		fExecEnvsCombo.createControl(client, toolkit, SWT.SINGLE | SWT.BORDER );
 		fExecEnvsCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fExecEnvsCombo.setItems((String[])fExecEnvChoices.toArray(new String[fExecEnvChoices.size()]));
-		
 		fExecEnvsCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (!fBlockChanges)
 					getRuntimeInfo().setExecutionEnvJRE(fExecEnvsCombo.getSelection());
 			}
 		});
+		
+		Button configureEEButton = toolkit.createButton(client, PDEUIMessages.JRESection_eePreference, SWT.PUSH);
+		configureEEButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				openPreferencePage(EE_PREF_PAGE_ID);
+			}
+		});
+		configureEEButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
 		section.setClient(client);
 	}
@@ -179,6 +197,14 @@ public class JRESection extends PDESection {
 		
 		updateWidgets();
 		super.refresh();
+		fBlockChanges = false;
+	}
+	
+	private void openPreferencePage(String pageID) {
+		fBlockChanges = true;
+		PreferencesUtil.createPreferenceDialogOn(getPage().getEditor().getEditorSite().getShell(), pageID, new String[] { pageID }, null).open();
+		// reset JRE select because either JDT preference page allows user to add/remove JREs
+		fNamedJREsCombo.setItems(VMHelper.getVMInstallNames());
 		fBlockChanges = false;
 	}
 	
