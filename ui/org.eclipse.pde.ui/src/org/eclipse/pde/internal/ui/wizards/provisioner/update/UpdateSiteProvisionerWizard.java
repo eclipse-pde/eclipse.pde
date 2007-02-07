@@ -84,9 +84,9 @@ IProvisionerWizard {
 					monitor.worked(1);
 				}
 			} catch (MalformedURLException e) {
-				e.printStackTrace();
+				PDEPlugin.log(e);
 			} catch (CoreException e) {
-				e.printStackTrace();
+				PDEPlugin.log(e);
 			} finally {
 				monitor.done();
 			}
