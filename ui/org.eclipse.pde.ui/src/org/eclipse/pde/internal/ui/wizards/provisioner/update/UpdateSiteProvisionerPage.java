@@ -40,6 +40,7 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 	private List fElements = new ArrayList();
 	private Button fAddButton;
 	private Button fRemoveButton;
+	private Button fEditButton;
 	private TableViewer fListViewer;
 
 	class UpdateSiteContentProvider implements IStructuredContentProvider {
@@ -114,6 +115,16 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 			}
 		});
 
+		fEditButton = new Button(parent, SWT.PUSH);
+		fEditButton.setText(PDEUIMessages.UpdateSiteWizardPage_add);
+		fEditButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+		SWTUtil.setButtonDimensionHint(fAddButton);
+		fEditButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleEdit();
+			}
+		});
+
 		fRemoveButton = new Button(parent, SWT.PUSH);
 		fRemoveButton.setText(PDEUIMessages.UpdateSiteWizardPage_remove);
 		fRemoveButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
@@ -137,14 +148,22 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 	}
 
 	protected void handleAdd() {
-		AddSiteDialog dialog = new AddSiteDialog(getShell());
-		dialog.setTitle(PDEUIMessages.AddSiteDialog_title);
+		UpdateSiteProvisionerDialog dialog = new UpdateSiteProvisionerDialog(
+				getShell(),
+				null,
+				null,
+				PDEUIMessages.UpdateSiteProvisionerDialog_addTitle
+		);
 		int status = dialog.open();
 		if (status == Window.OK) {
 			fElements.add(dialog.getEntry());
 			fListViewer.refresh();
 			setPageComplete(true);
 		}
+	}
+
+	protected void handleEdit() {
+		// TODO
 	}
 
 	protected void updateButtons() {

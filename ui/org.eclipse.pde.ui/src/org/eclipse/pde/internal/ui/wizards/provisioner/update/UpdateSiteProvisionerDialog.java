@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class AddSiteDialog extends StatusDialog {
+public class UpdateSiteProvisionerDialog extends StatusDialog {
 
 	private Text fInstallLocationText;
 	private Label fInstallLocationLabel;
@@ -43,9 +43,14 @@ public class AddSiteDialog extends StatusDialog {
 	private IStatus fOkStatus;
 	private IStatus fErrorStatus;
 
-	public AddSiteDialog(Shell parent) {
+	private String fInstallLocation;
+	private String fSiteLocation;
+
+	public UpdateSiteProvisionerDialog(Shell parent, String installLocation, String siteLocation, String title) {
 		super(parent);
-		getEmptyErrorStatus();
+		fInstallLocation = installLocation;
+		fSiteLocation = siteLocation;
+		setTitle(title); 
 	}
 
 	protected Control createDialogArea(Composite parent) {
@@ -67,7 +72,6 @@ public class AddSiteDialog extends StatusDialog {
 		};
 		fInstallLocationText.addModifyListener(listener);
 		fSiteLocationText.addModifyListener(listener);
-		setTitle(PDEUIMessages.AddSiteDialog_title); 
 		Dialog.applyDialogFont(container);
 
 		dialogChanged();
@@ -77,23 +81,27 @@ public class AddSiteDialog extends StatusDialog {
 
 	protected void createEntry(Composite container) {
 		fSiteLocationLabel = new Label(container, SWT.NONE);
-		fSiteLocationLabel.setText(PDEUIMessages.AddSiteDialog_siteLocation);
+		fSiteLocationLabel.setText(PDEUIMessages.UpdateSiteProvisionerDialog_siteLocation);
 
 		fSiteLocationText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fSiteLocationText.setLayoutData(gd);
+		if(fSiteLocationText != null)
+			fSiteLocationText.setText(fSiteLocation);
 
 		fInstallLocationLabel = new Label(container, SWT.NULL);
-		fInstallLocationLabel.setText(PDEUIMessages.AddSiteDialog_installLocation); 
+		fInstallLocationLabel.setText(PDEUIMessages.UpdateSiteProvisionerDialog_installLocation); 
 
 		fInstallLocationText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 250;
 		fInstallLocationText.setLayoutData(gd);
+		if(fInstallLocation != null)
+			fInstallLocationText.setText(fInstallLocation);
 
 		Button fs = new Button(container, SWT.PUSH);
-		fs.setText(PDEUIMessages.AddSiteDialog_fileSystem);
+		fs.setText(PDEUIMessages.UpdateSiteProvisionerDialog_fileSystem);
 		fs.setLayoutData(new GridData());
 		fs.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -128,7 +136,7 @@ public class AddSiteDialog extends StatusDialog {
 
 	private IStatus getEmptyErrorStatus() {
 		if (fErrorStatus == null)
-			fErrorStatus = createErrorStatus(PDEUIMessages.AddSiteDialog_missBothErrorMessage); 
+			fErrorStatus = createErrorStatus(PDEUIMessages.UpdateSiteProvisionerDialog_missBothErrorMessage); 
 		return fErrorStatus;
 	}
 

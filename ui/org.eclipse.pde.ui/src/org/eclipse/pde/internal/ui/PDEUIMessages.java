@@ -248,6 +248,7 @@ public class PDEUIMessages extends NLS {
 	public static String UpdateSiteWizardPage_description;
 	public static String UpdateSiteWizardPage_label;
 	public static String UpdateSiteWizardPage_add;
+	public static String UpdateSiteWizardPage_edit;
 	public static String UpdateSiteWizardPage_remove;
 
 	public static String ExportOptionsTab_antReservedMessage;
@@ -2839,11 +2840,12 @@ public class PDEUIMessages extends NLS {
 	
 	// target provisioning stuff
 	public static String UpdateSiteDownloader_message;
-	public static String AddSiteDialog_title;
-	public static String AddSiteDialog_installLocation;
-	public static String AddSiteDialog_fileSystem;
-	public static String AddSiteDialog_siteLocation;
-	public static String AddSiteDialog_missBothErrorMessage;
+	public static String UpdateSiteProvisionerDialog_addTitle;
+	public static String UpdateSiteProvisionerDialog_editTitle;
+	public static String UpdateSiteProvisionerDialog_installLocation;
+	public static String UpdateSiteProvisionerDialog_fileSystem;
+	public static String UpdateSiteProvisionerDialog_siteLocation;
+	public static String UpdateSiteProvisionerDialog_missBothErrorMessage;
 	
 	
 }
