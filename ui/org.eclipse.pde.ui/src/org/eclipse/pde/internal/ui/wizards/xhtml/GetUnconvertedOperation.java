@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.xhtml;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
@@ -21,9 +23,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -44,11 +43,10 @@ import org.w3c.dom.NodeList;
 public class GetUnconvertedOperation implements IRunnableWithProgress {
 
 	private static final String F_TOC_EXTENSION = "org.eclipse.help.toc"; //$NON-NLS-1$
-	private static final String F_HTML_CONTENT = "org.eclipse.help.html"; //$NON-NLS-1$
-	
+	private static final String F_HTML_DOCTYPE_PREFIX = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML"; //$NON-NLS-1$
+
 	private IFile fBaseFile;
 	private TocReplaceTable fReplaceTable = new TocReplaceTable();
-	private IContentTypeManager fContentManager = Platform.getContentTypeManager();
 	
 	public GetUnconvertedOperation(ISelection selection) {
 		Object object = ((IStructuredSelection)selection).getFirstElement();
@@ -137,9 +135,11 @@ public class GetUnconvertedOperation implements IRunnableWithProgress {
 		InputStream stream = null;
 		try {
 			stream = htmlFile.getContents();
-			IContentType type = fContentManager.findContentTypeFor(stream, htmlFile.getName());
-			if (type != null && type.getId().equals(F_HTML_CONTENT))
+			BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "US-ASCII")); //$NON-NLS-1$
+			String firstLine = reader.readLine().toUpperCase();
+			if (firstLine.startsWith(F_HTML_DOCTYPE_PREFIX)) {
 				fReplaceTable.addToTable(htmlFile.getProjectRelativePath().toString(), label, tocFile); //$NON-NLS-1$
+			}
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
 		} catch (IOException e) {
