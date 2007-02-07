@@ -17,6 +17,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
@@ -27,13 +28,12 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class InstallSection extends PDESection {
 	private Button fExclusiveButton;
@@ -68,19 +68,21 @@ public class InstallSection extends PDESection {
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
+		
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		section.setLayoutData(data);
+		
 		Composite container = toolkit.createComposite(section);
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.numColumns = 2;
-		layout.verticalSpacing = 5;
-		layout.horizontalSpacing = 6;
-		container.setLayout(layout);
+		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
+		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		final IFeature feature = model.getFeature();
 
 		fExclusiveButton = toolkit.createButton(container, PDEUIMessages.FeatureEditor_InstallSection_exclusive, SWT.CHECK);
-		TableWrapData gd = new TableWrapData(TableWrapData.FILL);
-		gd.colspan = 2;
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
 		fExclusiveButton.setLayoutData(gd);
 		fExclusiveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -95,8 +97,9 @@ public class InstallSection extends PDESection {
 
 		Label colocationDescLabel = toolkit.createLabel(container,
 				PDEUIMessages.FeatureEditor_InstallSection_colocation_desc, SWT.WRAP);
-		gd = new TableWrapData(TableWrapData.FILL);
-		gd.colspan = 2;
+		gd = new GridData(GridData.FILL);
+		gd.horizontalSpan = 2;
+		gd.widthHint = 250;
 		colocationDescLabel.setLayoutData(gd);
 
 		fColocationText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_InstallSection_colocation, null, false);

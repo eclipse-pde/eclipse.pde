@@ -20,12 +20,12 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
@@ -67,12 +67,14 @@ public class DataDetailsSection extends PDESection implements IFormPart,
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
+		
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		section.setLayoutData(data);
+		
 		Composite container = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.verticalSpacing = 5;
-		layout.horizontalSpacing = 6;
-		container.setLayout(layout);
+		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));	
 
 		fdownloadSizeText = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_DataDetailsSection_downloadSize, null, false);
 		fdownloadSizeText.setFormEntryListener(new FormEntryAdapter(this) {

@@ -11,6 +11,9 @@
 package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -43,10 +46,21 @@ public class FeatureIncludesPage extends PDEFormPage {
 		super(editor, PAGE_ID, title);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
+	 */
+	protected String getHelpResource() {
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/feature_editor/included_features.htm"; //$NON-NLS-1$
+	}
+	
 	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.getBody().setLayout(FormLayoutFactory.createFormGridLayout(true, 2));
+		
+		// Set form header image
+		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ));
+
 		GridData gd;
 
 		Composite left = toolkit.createComposite(form.getBody());

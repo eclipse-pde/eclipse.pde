@@ -146,6 +146,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_PRODUCT_DEFINITION = create(PATH_OBJ, "product_xml_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PRODUCT_LAUNCHING = create(PATH_OBJ, "start_application.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PRODUCT_BRANDING = create(PATH_OBJ, "eclipse.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_PLUGINS_FRAGMENTS = create(PATH_OBJ, "plugins_and_fragments.gif"); //$NON-NLS-1$
 	
 	/**
 	 * OVR16

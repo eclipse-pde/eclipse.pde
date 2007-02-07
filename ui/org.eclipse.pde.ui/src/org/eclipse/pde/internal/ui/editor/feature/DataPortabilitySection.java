@@ -162,9 +162,14 @@ public class DataPortabilitySection extends PDESection implements IFormPart,
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {
+		
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		section.setLayoutData(data);		
+		
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 3));
-		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		String editLabel = PDEUIMessages.SiteEditor_PortabilitySection_edit;
 

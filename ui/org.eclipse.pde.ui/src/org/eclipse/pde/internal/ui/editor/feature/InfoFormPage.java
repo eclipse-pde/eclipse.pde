@@ -11,6 +11,9 @@
 package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -37,10 +40,21 @@ public class InfoFormPage extends PDEFormPage {
 	public InfoFormPage(PDEFormEditor editor, String title) {
 		super(editor, PAGE_ID, title);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
+	 */
+	protected String getHelpResource() {
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/feature_editor/information.htm"; //$NON-NLS-1$
+	}
+	
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		form.getBody().setLayout(FormLayoutFactory.createFormGridLayout(false, 1));
+		
+		// Set form header image
+		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_DOC_SECTION_OBJ));
 		
 		infoSection = new InfoSection(this, form.getBody(), colorManager);
 		managedForm.addPart(infoSection);

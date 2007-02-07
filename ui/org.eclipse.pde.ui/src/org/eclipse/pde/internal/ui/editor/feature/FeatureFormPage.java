@@ -14,6 +14,7 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -52,11 +53,21 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		super(editor, PAGE_ID, title);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
+	 */
+	protected String getHelpResource() {
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/feature_editor/overview.htm"; //$NON-NLS-1$
+	}
+	
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.getBody().setLayout(FormLayoutFactory.createFormTableWrapLayout(true, 2));
+		// Set form header image
+		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FTR_XML_OBJ));
+		
 		TableWrapData twd;
 
 		Composite left = toolkit.createComposite(form.getBody());
