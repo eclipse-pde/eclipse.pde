@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.EditorUtilities;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.validation.TextValidator;
@@ -27,7 +28,6 @@ import org.eclipse.pde.internal.ui.util.FileExtensionFilter;
 import org.eclipse.pde.internal.ui.util.FileValidator;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -66,11 +66,16 @@ public class WindowImagesSection extends PDESection {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		section.setLayoutData(data);			
+		
 		section.setText(PDEUIMessages.WindowImagesSection_title); 
 		section.setDescription(PDEUIMessages.WindowImagesSection_desc); 
 
 		Composite client = toolkit.createComposite(section);
-		client.setLayout(new GridLayout(3, false));
+		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 3));
+		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		// Store all image entry validators
@@ -104,7 +109,6 @@ public class WindowImagesSection extends PDESection {
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
-		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING));
 	}
 	
 	public void refresh() {

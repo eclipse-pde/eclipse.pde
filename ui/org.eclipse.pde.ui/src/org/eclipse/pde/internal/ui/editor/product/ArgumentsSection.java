@@ -17,6 +17,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
@@ -28,7 +29,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
@@ -59,12 +59,17 @@ public class ArgumentsSection extends PDESection {
 	}
 	
 	protected void createClient(Section section, FormToolkit toolkit) {
+		
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		section.setLayoutData(data);			
+		
 		section.setText(PDEUIMessages.ArgumentsSection_title); 
 		section.setDescription(PDEUIMessages.ArgumentsSection_desc); 
-		section.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		Composite client = toolkit.createComposite(section);
-		client.setLayout(new GridLayout());
+		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
+		client.setLayoutData(new GridData(GridData.FILL_BOTH));		
 		
 		fTabFolder = new CTabFolder(client, SWT.FLAT | SWT.TOP);
 		toolkit.adapt(fTabFolder, true, true);

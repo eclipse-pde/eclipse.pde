@@ -11,12 +11,12 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
@@ -34,6 +34,13 @@ public class BrandingPage extends PDEFormPage {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
+	 */
+	protected String getHelpResource() {
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/product_editor/branding.htm"; //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
 	protected void createFormContent(IManagedForm managedForm) {
@@ -48,27 +55,14 @@ public class BrandingPage extends PDEFormPage {
 	
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth = true;
-		layout.marginWidth = 6;
-		layout.verticalSpacing = 15;
-		layout.horizontalSpacing = 10;
-		body.setLayout(layout);
+		body.setLayout(FormLayoutFactory.createFormGridLayout(true, 2));
 
 		// sections
 		managedForm.addPart(new SplashSection(this, body));	
-		
-		Composite comp = toolkit.createComposite(body);
-		layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 0;
-		layout.verticalSpacing = 15;
-		comp.setLayout(layout);
-		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING));
-		managedForm.addPart(new WindowImagesSection(this, comp));
-		managedForm.addPart(new IntroSection(this, comp));
-
+		managedForm.addPart(new WindowImagesSection(this, body));
 		managedForm.addPart(new AboutSection(this, body));	
+		managedForm.addPart(new IntroSection(this, body));
+
 	}
 
 

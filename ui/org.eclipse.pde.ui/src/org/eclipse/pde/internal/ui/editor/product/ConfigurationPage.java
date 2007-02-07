@@ -11,11 +11,12 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
@@ -37,6 +38,13 @@ public class ConfigurationPage extends PDEFormPage {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
+	 */
+	protected String getHelpResource() {
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/product_editor/configuration.htm"; //$NON-NLS-1$
+	}	
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
 	protected void createFormContent(IManagedForm managedForm) {
@@ -51,11 +59,7 @@ public class ConfigurationPage extends PDEFormPage {
 
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = 6;
-		layout.verticalSpacing = 15;
-		layout.horizontalSpacing = 10;
-		body.setLayout(layout);
+		body.setLayout(FormLayoutFactory.createFormGridLayout(false, 1));
 
 		// sections
 		if (fUseFeatures)

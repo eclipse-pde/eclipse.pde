@@ -22,6 +22,7 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -57,6 +58,13 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
+	 */
+	protected String getHelpResource() {
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/product_editor/overview.htm"; //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
 	protected void createFormContent(IManagedForm managedForm) {
@@ -73,11 +81,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		Composite body = managedForm.getForm().getBody();
 		body.setLayout(FormLayoutFactory.createFormTableWrapLayout(true, 2));
 
-		// sections
 		ProductInfoSection section = new ProductInfoSection(this, body);
-		TableWrapData td = new TableWrapData();
-		td.colspan = 2;
-		section.getSection().setLayoutData(td);
 		
 		managedForm.addPart(section);
 		if (getModel().isEditable()) {
@@ -87,25 +91,35 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	}
 	
 	private void createTestingSection(Composite parent, FormToolkit toolkit) {
-		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR);
-		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		section.setText(PDEUIMessages.Product_OverviewPage_testing); 
+		Section section = createStaticSection(toolkit, parent, PDEUIMessages.Product_OverviewPage_testing);
 		FormText text = createClient(section, PDEUIMessages.Product_overview_testing, toolkit); 
 		text.setImage("run", getImage(PDEPluginImages.DESC_RUN_EXC)); //$NON-NLS-1$
 		text.setImage("debug", getImage(PDEPluginImages.DESC_DEBUG_EXC)); //$NON-NLS-1$
 		text.addHyperlinkListener(this);
 		section.setClient(text);
-		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 	}
 	
 	private void createExportingSection(Composite parent, FormToolkit toolkit) {
-		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR);
-		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
-		section.setText(PDEUIMessages.OverviewPage_exportingTitle); 
+		Section section = createStaticSection(toolkit, parent, PDEUIMessages.OverviewPage_exportingTitle);
 		FormText text = createClient(section, PDEUIMessages.Product_overview_exporting, toolkit); 
 		text.addHyperlinkListener(this);
 		section.setClient(text);
-		section.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));		
+	}
+	
+	/**
+	 * @param toolkit
+	 * @param parent
+	 * @param text
+	 * @return
+	 */
+	private Section createStaticSection(FormToolkit toolkit, Composite parent, String text) {
+		Section section = toolkit.createSection(parent, ExpandableComposite.TITLE_BAR);
+		section.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
+		section.setText(text);
+		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
+		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
+		section.setLayoutData(data);
+		return section;
 	}
 	
 	private FormText createClient(Section section, String content,

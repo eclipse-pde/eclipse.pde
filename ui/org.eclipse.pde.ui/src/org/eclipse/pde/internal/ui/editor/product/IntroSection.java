@@ -38,6 +38,7 @@ import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
@@ -48,7 +49,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -72,16 +72,19 @@ public class IntroSection extends PDESection {
 	}
 	
 	public void createClient(Section section, FormToolkit toolkit) {
+
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		section.setLayoutData(data);		
+		
 		section.setText(PDEUIMessages.IntroSection_sectionText); 
 		section.setDescription(PDEUIMessages.IntroSection_sectionDescription); 
 		
-		Composite client = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
 		boolean canCreateNew = TargetPlatformHelper.getTargetVersion() >= NEW_INTRO_SUPPORT_VERSION;
-		layout.numColumns = canCreateNew ? 3 : 2;
-		layout.marginHeight = 5;
-		client.setLayout(layout);
 		
+		Composite client = toolkit.createComposite(section);
+		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, canCreateNew ? 3 : 2));
+		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Label label = toolkit.createLabel(client, PDEUIMessages.IntroSection_introLabel, SWT.WRAP);
 		GridData td = new GridData();
@@ -119,7 +122,6 @@ public class IntroSection extends PDESection {
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
-		section.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_BEGINNING));
 	}
 	
 	private void handleSelection() {

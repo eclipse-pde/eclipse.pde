@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
@@ -45,6 +46,7 @@ import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.TableWrapData;
 
 
 public class ProductInfoSection extends PDESection {
@@ -68,12 +70,13 @@ public class ProductInfoSection extends PDESection {
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.ProductInfoSection_title); 
 		section.setDescription(PDEUIMessages.ProductInfoSection_desc); 
-
+		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
+		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
+		data.colspan = 2;
+		section.setLayoutData(data);
+		
 		Composite client = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
-		layout.marginLeft = layout.marginRight = toolkit.getBorderStyle() != SWT.NULL ? 0 : 2;
-		layout.numColumns = NUM_COLUMNS;
-		client.setLayout(layout);
+		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, NUM_COLUMNS));
 
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		

@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.EditorUtilities;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.validation.TextValidator;
@@ -28,7 +29,6 @@ import org.eclipse.pde.internal.ui.util.FileValidator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -58,13 +58,18 @@ public class AboutSection extends PDESection {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
+		
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.verticalSpan = 2;
+		section.setLayoutData(data);			
+		
 		section.setText(PDEUIMessages.AboutSection_title); 
 		section.setDescription(PDEUIMessages.AboutSection_desc); 
 		
 		Composite client = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout(3, false);
-		layout.marginTop = 5;
-		client.setLayout(layout);
+		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 3));
+		client.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		fImageEntry = new FormEntry(client, toolkit, PDEUIMessages.AboutSection_image, PDEUIMessages.AboutSection_browse, isEditable());
@@ -104,7 +109,7 @@ public class AboutSection extends PDESection {
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
-		section.setLayoutData(new GridData(GridData.FILL_BOTH));
+
 	}
 	
 	/**

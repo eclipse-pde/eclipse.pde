@@ -937,7 +937,6 @@ public class PDEUIMessages extends NLS {
 	public static String LauncherSection_title;
 	public static String LauncherSection_label;
 	public static String LauncherSection_bmpImages;
-	public static String LauncherSection_bmpImagesText;
 	public static String LauncherSection_Low16;
 	public static String LauncherSection_High16;
 	public static String LauncherSection_Low24;

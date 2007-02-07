@@ -32,6 +32,7 @@ import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.feature.FeatureEditor;
@@ -78,6 +79,12 @@ public class FeatureSection extends TableSection {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
+		
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		GridData sectionData = new GridData(GridData.FILL_BOTH);
+		sectionData.verticalSpan = 2;
+		section.setLayoutData(sectionData);
+		
 		Composite container = createClientContainer(section, 2, toolkit);
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -99,9 +106,6 @@ public class FeatureSection extends TableSection {
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.verticalSpan = 2;
-		section.setLayoutData(gd);
 		section.setText(PDEUIMessages.Product_FeatureSection_title); 
 		section.setDescription(PDEUIMessages.Product_FeatureSection_desc); //		
 

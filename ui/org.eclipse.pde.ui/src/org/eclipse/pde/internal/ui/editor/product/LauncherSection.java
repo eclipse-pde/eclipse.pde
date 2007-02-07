@@ -27,6 +27,7 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.EditorUtilities;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.editor.validation.TextValidator;
@@ -146,11 +147,17 @@ public class LauncherSection extends PDESection {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	public void createClient(Section section, FormToolkit toolkit) {
+		
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		section.setLayoutData(data);	
+		
 		section.setText(PDEUIMessages.LauncherSection_title); 
 		section.setDescription(PDEUIMessages.LauncherSection_desc); 
 		
 		Composite container = toolkit.createComposite(section);
-		container.setLayout(new GridLayout(2, false));
+		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
+		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		fNameEntry = new FormEntry(container, toolkit, PDEUIMessages.LauncherSection_launcherName, null, false); 
@@ -198,8 +205,7 @@ public class LauncherSection extends PDESection {
 		
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
-		section.setLayoutData(new GridData(
-				GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+
 	}
 	
 	private void createTabs() {
@@ -233,14 +239,9 @@ public class LauncherSection extends PDESection {
 	
 	private Composite addWin32Section(Composite parent, FormToolkit toolkit) {
 		Composite comp = createComposite(parent, toolkit);
-		
-		final Label label = toolkit.createLabel(comp, PDEUIMessages.LauncherSection_bmpImagesText, SWT.WRAP); 
-		TableWrapData td = new TableWrapData();
-		td.colspan = 3;
-		label.setLayoutData(td);
 
 		fBmpButton = toolkit.createButton(comp, PDEUIMessages.LauncherSection_bmpImages, SWT.RADIO); 
-		td = new TableWrapData();
+		TableWrapData td = new TableWrapData();
 		td.colspan = 3;
 		fBmpButton.setLayoutData(td);
 		fBmpButton.setEnabled(isEditable());		

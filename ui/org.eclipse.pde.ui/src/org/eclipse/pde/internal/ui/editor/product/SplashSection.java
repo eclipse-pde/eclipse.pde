@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
@@ -76,14 +77,18 @@ public class SplashSection extends PDESection {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
+		
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		section.setLayoutData(data);			
+		
 		section.setText(PDEUIMessages.SplashSection_title); 
 		section.setDescription(PDEUIMessages.SplashSection_desc); 
 
 		Composite client = toolkit.createComposite(section);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 10;
-		layout.marginHeight = 5;
-		client.setLayout(layout);
+		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 10));
+		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Label label = toolkit.createLabel(client, PDEUIMessages.SplashSection_label, SWT.WRAP); 
 		GridData gd = new GridData();
@@ -107,9 +112,7 @@ public class SplashSection extends PDESection {
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		section.setLayoutData(gd);
+
 	}
 	
 	private void createProgressBarConfig(Composite parent, FormToolkit toolkit) {

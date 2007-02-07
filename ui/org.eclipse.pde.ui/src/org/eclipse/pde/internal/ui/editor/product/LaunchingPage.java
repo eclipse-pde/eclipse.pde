@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
@@ -35,6 +34,13 @@ public class LaunchingPage extends PDEFormPage {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
+	 */
+	protected String getHelpResource() {
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/product_editor/launcher.htm"; //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
 	protected void createFormContent(IManagedForm managedForm) {
@@ -49,22 +55,9 @@ public class LaunchingPage extends PDEFormPage {
 	
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginWidth = 6;
-		layout.verticalSpacing = 15;
-		layout.horizontalSpacing = 10;
-		body.setLayout(layout);
+		body.setLayout(FormLayoutFactory.createFormGridLayout(false, 2));
 
-		layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 0;
-		layout.verticalSpacing = 15;
-		Composite comp = toolkit.createComposite(body);
-		comp.setLayout(layout);
-		GridDataFactory.fillDefaults().span(2, 1).grab(true, false).align(SWT.FILL, SWT.BEGINNING).applyTo(comp);
-		managedForm.addPart(new JRESection(this, comp));
-		
-		// sections
+		managedForm.addPart(new JRESection(this, body));
 		managedForm.addPart(new LauncherSection(this, body));
 		managedForm.addPart(new ArgumentsSection(this, body));
 

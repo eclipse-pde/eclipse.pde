@@ -46,6 +46,7 @@ import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
 import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
@@ -102,6 +103,12 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
+		
+		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
+		GridData sectionData = new GridData(GridData.FILL_BOTH);
+		sectionData.verticalSpan = 2;
+		section.setLayoutData(sectionData);		
+		
 		Composite container = createClientContainer(section, 2, toolkit);
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -133,9 +140,6 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.verticalSpan = 2;
-		section.setLayoutData(gd);
 		section.setText(PDEUIMessages.Product_PluginSection_title); 
 		section.setDescription(PDEUIMessages.Product_PluginSection_desc); 
 		getModel().addModelChangedListener(this);
