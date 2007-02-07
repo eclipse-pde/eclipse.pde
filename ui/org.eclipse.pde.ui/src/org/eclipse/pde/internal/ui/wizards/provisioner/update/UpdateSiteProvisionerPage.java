@@ -16,15 +16,19 @@ import java.util.List;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.internal.ui.PDELabelProvider;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -36,7 +40,7 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 	private List fElements = new ArrayList();
 	private Button fAddButton;
 	private Button fRemoveButton;
-	private ListViewer fListViewer;
+	private TableViewer fListViewer;
 
 	class UpdateSiteContentProvider implements IStructuredContentProvider {
 
@@ -73,9 +77,14 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 
-		fListViewer = new ListViewer(client, SWT.BORDER);
+		fListViewer = new TableViewer(client, SWT.BORDER);
 		fListViewer.setContentProvider(new UpdateSiteContentProvider());
 		fListViewer.setLabelProvider(new LabelProvider() {
+
+			public Image getImage(Object element) {
+				PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
+				return provider.get(PDEPluginImages.DESC_SITE_OBJ);
+			}
 
 			public String getText(Object element) {
 				IUpdateSiteProvisionerEntry entry =
@@ -139,7 +148,7 @@ public class UpdateSiteProvisionerPage extends WizardPage {
 	}
 
 	protected void updateButtons() {
-		int num = fListViewer.getList().getSelectionCount();
+		int num = fListViewer.getTable().getSelectionCount();
 		fRemoveButton.setEnabled(num > 0);
 	}
 

@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.StatusDialog;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -58,12 +59,14 @@ public class AddSiteDialog extends StatusDialog {
 
 		createEntry(container);
 
+		// add modify listeners
 		ModifyListener listener = new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				dialogChanged();
 			}
 		};
 		fInstallLocationText.addModifyListener(listener);
+		fSiteLocationText.addModifyListener(listener);
 		setTitle(PDEUIMessages.AddSiteDialog_title); 
 		Dialog.applyDialogFont(container);
 
@@ -73,11 +76,19 @@ public class AddSiteDialog extends StatusDialog {
 	}
 
 	protected void createEntry(Composite container) {
+		fSiteLocationLabel = new Label(container, SWT.NONE);
+		fSiteLocationLabel.setText(PDEUIMessages.AddSiteDialog_siteLocation);
+
+		fSiteLocationText = new Text(container, SWT.SINGLE | SWT.BORDER);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		fSiteLocationText.setLayoutData(gd);
+
 		fInstallLocationLabel = new Label(container, SWT.NULL);
 		fInstallLocationLabel.setText(PDEUIMessages.AddSiteDialog_installLocation); 
 
 		fInstallLocationText = new Text(container, SWT.SINGLE | SWT.BORDER);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 250;
 		fInstallLocationText.setLayoutData(gd);
 
@@ -90,15 +101,6 @@ public class AddSiteDialog extends StatusDialog {
 			}
 		});
 		SWTUtil.setButtonDimensionHint(fs);
-
-		fSiteLocationLabel = new Label(container, SWT.NONE);
-		fSiteLocationLabel.setText(PDEUIMessages.AddSiteDialog_siteLocation);
-
-		fSiteLocationText = new Text(container, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		fSiteLocationText.setLayoutData(gd);
-
 	}
 
 	private IStatus createErrorStatus(String message) {
@@ -132,7 +134,13 @@ public class AddSiteDialog extends StatusDialog {
 
 	protected void handleBrowseFileSystem() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		dialog.setFilterPath(fInstallLocationText.getText());
+
+		String text = fInstallLocationText.getText();
+		if(text == null || text.length() == 0) {
+			dialog.setFilterPath(TargetPlatform.getLocation());
+		} else {
+			dialog.setFilterPath(fInstallLocationText.getText());
+		}
 		dialog.setText(PDEUIMessages.BaseBlock_dirSelection); 
 		dialog.setMessage(PDEUIMessages.BaseBlock_dirChoose); 
 		String result = dialog.open();
