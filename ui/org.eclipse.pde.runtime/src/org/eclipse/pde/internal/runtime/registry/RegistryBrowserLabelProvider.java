@@ -111,6 +111,8 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 				return fActivePluginImage;
 			case Bundle.INSTALLED:
 				return fUnresolvedPluginImage;
+			case Bundle.UNINSTALLED:
+				return fUnresolvedPluginImage;
 			default:
 				return fPluginImage;
 			}
