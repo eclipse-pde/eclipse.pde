@@ -11,6 +11,8 @@
 package org.eclipse.pde.internal.ui.editor.site;
 import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEDetailsSections;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -66,14 +68,13 @@ public class FeaturesPage extends PDEFormPage {
 		fBlock = new SiteFeaturesBlock();
 	}
 	protected void createFormContent(IManagedForm managedForm) {
-		
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
 		form.setText(PDEUIMessages.FeaturesPage_header); 
+		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_SITE_XML_OBJ));
 		fBlock.createContent(managedForm);
 		fCategorySection.fireSelection();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_SITE_FEATURES);
-
 	}
 	/**
 	 * @return

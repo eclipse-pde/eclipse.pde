@@ -11,6 +11,8 @@
 package org.eclipse.pde.internal.ui.editor.site;
 
 import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -33,6 +35,7 @@ public class ArchivePage extends PDEFormPage {
 		super(editor, PAGE_ID, PDEUIMessages.ArchivePage_name);  
 	}
 	protected void createFormContent(IManagedForm mform) {
+		super.createFormContent(mform);
 		ScrolledForm form = mform.getForm();
 		form.getBody().setLayout(FormLayoutFactory.createFormGridLayout(false, 1));
 		
@@ -46,5 +49,6 @@ public class ArchivePage extends PDEFormPage {
 		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_SITE_ARCHIVES);
 		form.setText(PDEUIMessages.ArchivePage_title); 
+		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_JAVA_LIB_OBJ));
 	}
 }
