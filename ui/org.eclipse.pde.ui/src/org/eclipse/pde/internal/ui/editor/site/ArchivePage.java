@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.site;
 
 import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -50,5 +51,9 @@ public class ArchivePage extends PDEFormPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_SITE_ARCHIVES);
 		form.setText(PDEUIMessages.ArchivePage_title); 
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_JAVA_LIB_OBJ));
+	}
+	
+	protected String getHelpResource() {
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/site_editor/archives.htm"; //$NON-NLS-1$
 	}
 }

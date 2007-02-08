@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.site;
 import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -95,9 +96,7 @@ public class FeaturesPage extends PDEFormPage {
 			}
 		};
 	}
-	/**
-	 * @return
-	 */
+
 	private IDetailsPage createCategoryDetails() {
 		return new PDEDetailsSections() {
 			protected PDESection[] createSections(
@@ -110,5 +109,9 @@ public class FeaturesPage extends PDEFormPage {
 				return SiteInputContext.CONTEXT_ID;
 			}
 		};
+	}
+	
+	protected String getHelpResource() {
+		return IPDEUIConstants.PLUGIN_DOC_ROOT + "guide/tools/editors/site_editor/site_map.htm"; //$NON-NLS-1$
 	}
 }
