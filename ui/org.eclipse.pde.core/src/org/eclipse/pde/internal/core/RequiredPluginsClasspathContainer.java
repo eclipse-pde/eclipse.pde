@@ -45,6 +45,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 public class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements IClasspathContainer {
 
 	private IPluginModelBase fModel;
+	private IBuild fBuild;
 	
 	private static boolean DEBUG = false;
 	
@@ -59,7 +60,12 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	 * Constructor for RequiredPluginsClasspathContainer.
 	 */
 	public RequiredPluginsClasspathContainer(IPluginModelBase model) {
+		this(model, null);
+	}
+	
+	public RequiredPluginsClasspathContainer(IPluginModelBase model, IBuild build) {
 		fModel = model;
+		fBuild = build;
 	}
 
 	/*
@@ -143,9 +149,10 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				addDependency((BundleDescription)required[i].getSupplier(), added, map, entries);
 			}
 			
-			IBuild build = ClasspathUtilCore.getBuild(fModel);
-			if (build != null)
-				addSecondaryDependencies(desc, added, entries, build);
+			if (fBuild == null)
+				fBuild = ClasspathUtilCore.getBuild(fModel);
+			if (fBuild != null)
+				addSecondaryDependencies(desc, added, entries);
 			
 			// add Import-Package
 			Iterator iter = map.keySet().iterator();
@@ -156,8 +163,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 					addDependencyViaImportPackage(model.getBundleDescription(), added, map, entries);
 			}
 
-			if (build != null)
-				addExtraClasspathEntries(added, entries, build);
+			if (fBuild != null)
+				addExtraClasspathEntries(added, entries);
 
 		} catch (CoreException e) {
 		}
@@ -315,8 +322,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		return model != null ? ClasspathUtilCore.hasExtensibleAPI(model) : false;
 	}
 	
-	protected void addExtraClasspathEntries(HashSet added, ArrayList entries, IBuild build) throws CoreException {
-		IBuildEntry[] buildEntries = build.getBuildEntries();
+	protected void addExtraClasspathEntries(HashSet added, ArrayList entries) throws CoreException {
+		IBuildEntry[] buildEntries = fBuild.getBuildEntries();
 		for (int i = 0; i < buildEntries.length; i++) {
 			String name = buildEntries[i].getName();
 			if (name.equals(IBuildPropertiesConstants.PROPERTY_JAR_EXTRA_CLASSPATH) 
@@ -376,9 +383,9 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		}	
 	}
 	
-	private void addSecondaryDependencies(BundleDescription desc, HashSet added, ArrayList entries, IBuild build) {
+	private void addSecondaryDependencies(BundleDescription desc, HashSet added, ArrayList entries) {
 		try {
-		  IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
+		  IBuildEntry entry = fBuild.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
 		  if (entry != null) {
 			  String[] tokens = entry.getTokens();
 			  for (int i = 0; i < tokens.length; i++) {

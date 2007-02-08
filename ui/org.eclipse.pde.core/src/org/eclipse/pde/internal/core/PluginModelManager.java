@@ -32,6 +32,8 @@ import org.eclipse.osgi.service.resolver.StateDelta;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.IModelProviderListener;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
@@ -204,7 +206,23 @@ public class PluginModelManager implements IModelProviderListener {
 				} catch (CoreException e) {
 				}
 			}
-		}			
+			// do secondary dependencies
+			IPluginModelBase[] models = getWorkspaceModels();
+			for (int i = 0; i < models.length; i++) {
+				IProject project = models[i].getUnderlyingResource().getProject();
+				if (map.containsKey(project))
+					continue;			
+				try {
+					IBuild build = ClasspathUtilCore.getBuild(models[i]);
+					if (build != null && build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES) != null) {
+						map.put(JavaCore.create(project), 
+								new RequiredPluginsClasspathContainer(models[i], build));
+					}
+				} catch (CoreException e) {
+				}
+			}
+		}	
+		
 		if (map.size() > 0) {
 			try {
 				// update classpath for all affected workspace plug-ins in one operation
