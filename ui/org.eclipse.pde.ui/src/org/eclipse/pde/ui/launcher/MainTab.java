@@ -54,7 +54,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	private Image fImage;
 
 	public MainTab() {
-		fDataBlock = new WorkspaceDataBlock(this);
+		createWorkspaceDataBlock();
 		createProgramBlock();
 		fJreBlock = new JREBlock(this);
 		fImage = PDEPluginImages.DESC_MAIN_TAB.createImage();
@@ -163,6 +163,13 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	 */
 	public Image getImage() {
 		return fImage;
+	}
+	
+	/**
+	 * Creates the Workspace Data group on the tab
+	 */
+	protected void createWorkspaceDataBlock() {
+		fDataBlock = new WorkspaceDataBlock(this);		
 	}
 	
 	/**
