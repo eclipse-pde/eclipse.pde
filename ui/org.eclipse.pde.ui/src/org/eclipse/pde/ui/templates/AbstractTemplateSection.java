@@ -111,8 +111,21 @@ public abstract class AbstractTemplateSection
 	 * @see ITemplateSection#getReplacementString(String,String)
 	 */
 	public String getReplacementString(String fileName, String key) {
+		String result = getKeyValue(key);
+		return result != null ? result : key;
+	}
+
+	/**
+	 * @see IVariableProvider#getValue(String)
+	 */
+
+	public Object getValue(String key) {
+		return getKeyValue(key);
+	}
+	
+	private String getKeyValue(String key) {
 		if (model == null)
-			return key;
+			return null;
 		
 		if (key.equals(KEY_PLUGIN_CLASS) && model instanceof IPluginModel) {
 			IPlugin plugin = (IPlugin) model.getPluginBase();
@@ -144,14 +157,6 @@ public abstract class AbstractTemplateSection
 				return (lastDot != -1) ? qualified.substring(0, lastDot) : qualified;
 			}
 		}
-		return key;
-	}
-
-	/**
-	 * @see IVariableProvider#getValue(String)
-	 */
-
-	public Object getValue(String key) {
 		return null;
 	}
 	/**
