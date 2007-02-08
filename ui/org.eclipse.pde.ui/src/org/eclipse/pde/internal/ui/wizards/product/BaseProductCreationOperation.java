@@ -170,6 +170,16 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 		}
 	}
 	
+	protected void addPlugins(IProductModelFactory factory, IProduct product, IPluginModelBase[] plugins) {
+		IProductPlugin[] pplugins = new IProductPlugin[plugins.length];
+		for (int i = 0; i < plugins.length; i++) {
+			IProductPlugin pplugin = factory.createPlugin();
+			pplugin.setId(plugins[i].getPluginBase().getId());
+			pplugins[i] = pplugin;			
+		}		
+		product.addPlugins(pplugins);
+	}
+	
 	protected void addPlugins(IProductModelFactory factory, IProduct product, String[] plugins) {
 		IProductPlugin[] pplugins = new IProductPlugin[plugins.length];
 		for (int i = 0; i < plugins.length; i++) {
@@ -179,7 +189,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 		}		
 		product.addPlugins(pplugins);
 	}
-	
+
 	private void openFile() {
 		Display.getCurrent().asyncExec(new Runnable() {
 			public void run() {
