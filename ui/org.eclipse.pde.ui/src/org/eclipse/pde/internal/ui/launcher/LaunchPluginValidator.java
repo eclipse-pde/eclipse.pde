@@ -27,6 +27,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
@@ -127,6 +128,30 @@ public class LaunchPluginValidator {
 			wc.doSave();
 	}
 	
+	private static void addToMap(Map map, IPluginModelBase[] models) {
+		for (int i = 0; i < models.length; i++) {
+			addToMap(map, models[i]);
+		}		
+	}
+
+	private static void addToMap(Map map, IPluginModelBase model) {
+		BundleDescription desc = model.getBundleDescription();
+		if (desc != null) {
+			String id = desc.getSymbolicName();
+			// the reason that we are using a map is to easily check
+			// if a plug-in with a certain id is among the plug-ins we are launching with.
+			// Therefore, now that we support multiple plug-ins by the same ID,
+			// once a particular ID is used up as a key, the rest can be entered
+			// with key == id_version, for easy retrieval of values later on,
+			// and without the need to create complicated data structures for values.
+			if (!map.containsKey(id)) {
+				map.put(id, model);						
+			} else {
+				map.put(id + "_" + desc.getVersion(), model);
+			}
+		}
+	}
+
 	private static IPluginModelBase[] getSelectedWorkspacePlugins(ILaunchConfiguration configuration)
 			throws CoreException {
 		
@@ -178,50 +203,34 @@ public class LaunchPluginValidator {
 		return (IPluginModelBase[])map.values().toArray(new IPluginModelBase[map.size()]);
 	}
 	
-	public static String[] getPluginIdList(ILaunchConfiguration config) throws CoreException {
-		Map map = getPluginsToRun(config);
-		return (String[])map.keySet().toArray(new String[map.size()]);
-	}
-	
 	public static Map getPluginsToRun(ILaunchConfiguration config)
 			throws CoreException {
 
 		checkBackwardCompatibility(config, true);
-				
+			
 		TreeMap map = new TreeMap();
 		if (config.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
-			IPluginModelBase[] models = PluginRegistry.getActiveModels();
-			for (int i = 0; i < models.length; i++) {
-				String id = models[i].getPluginBase().getId();
-				if (id != null)
-					map.put(id, models[i]);
-			}
+			addToMap(map, PluginRegistry.getActiveModels());
 			return map;
 		}
 		
 		if (config.getAttribute(IPDELauncherConstants.USEFEATURES, false)) {
-			IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
-			for (int i = 0; i < models.length; i++) {
-				String id = models[i].getPluginBase().getId();
-				if (id != null)
-					map.put(id, models[i]);
-			}
+			addToMap(map, PluginRegistry.getWorkspaceModels());
 			return map;
 		}
 		
-		IPluginModelBase[] wsmodels = getSelectedWorkspacePlugins(config);
-		for (int i = 0; i < wsmodels.length; i++) {
-			String id = wsmodels[i].getPluginBase().getId();
-			if (id != null)
-				map.put(id, wsmodels[i]);
-		}
+		addToMap(map, getSelectedWorkspacePlugins(config));
 
 		Set exModels = parsePlugins(config, IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
 		IPluginModelBase[] exmodels = PluginRegistry.getExternalModels();
 		for (int i = 0; i < exmodels.length; i++) {
 			String id = exmodels[i].getPluginBase().getId();
-			if (id != null && exModels.contains(id) && !map.containsKey(id))
-				map.put(id, exmodels[i]);
+			if (id != null && exModels.contains(id)) {
+				IPluginModelBase existing = (IPluginModelBase)map.get(id);
+				// only allow dups if plug-in existing in map is not a workspace plug-in
+				if (existing == null || existing.getUnderlyingResource() == null)
+					addToMap(map, exmodels[i]);
+			}
 		}
 		return map;
 	}
