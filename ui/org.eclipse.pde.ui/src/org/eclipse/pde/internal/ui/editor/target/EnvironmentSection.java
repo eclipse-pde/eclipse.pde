@@ -301,6 +301,9 @@ public class EnvironmentSection extends PDESection {
 	protected void updateChoices() {
 		if (LOCALES_INITIALIZED)
 			return;
+		// prevent NPE Mike found, which we can't reproduce.  Somehow we call initializeAllLocales before the ITargetModel exists.
+		if (getModel() == null)
+			return;
 		// kick off thread in backgroud to find the NL values
 		new Thread(new Runnable() {
 			public void run() {
