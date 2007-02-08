@@ -109,10 +109,10 @@ public class RegistryBrowserLabelProvider extends LabelProvider {
 			switch (bundle.getState()) {
 			case Bundle.ACTIVE:
 				return fActivePluginImage;
-			case Bundle.RESOLVED:
-				return fPluginImage;
-			default:
+			case Bundle.INSTALLED:
 				return fUnresolvedPluginImage;
+			default:
+				return fPluginImage;
 			}
 		}
 		if (element instanceof IBundleFolder) {
