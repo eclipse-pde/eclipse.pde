@@ -25,8 +25,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String CalculateUsesOperation_calculatingDirective;
 
-	public static String CheatSheetFileWizardPage_0;
-
 	public static String CheatSheetFileWizardPage_1;
 
 	public static String CheatSheetFileWizardPage_2;
@@ -41,7 +39,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String CheatSheetFileWizardPage_8;
 
-	public static String CheatSheetFileWizardPage_emptyNamePortion;
+	public static String PDEWizardNewFileCreationPage_errorMsgStartsWithDot;
 
 	public static String CommandComposerPart_formTitle;
 
@@ -1839,7 +1837,6 @@ public class PDEUIMessages extends NLS {
 	public static String Product_FeatureSection_add;
 	public static String ProductFileWizadPage_title;
 	public static String ProductFileWizadPage_basic;
-	public static String ProductFileWizadPage_error;
 	public static String Product_overview_exporting;
 	public static String ProductInfoSection_desc;
 	public static String ProductInfoSection_id;
@@ -2371,8 +2368,6 @@ public class PDEUIMessages extends NLS {
 	public static String JavaArgumentsTab_description;
 
 	public static String TargetProfileWizardPage_title;
-
-	public static String TargetProfileWizardPage_error;
 
 	public static String ProductInfoSection_productname;
 

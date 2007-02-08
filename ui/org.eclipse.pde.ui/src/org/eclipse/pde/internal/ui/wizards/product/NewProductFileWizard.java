@@ -24,13 +24,13 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 public class NewProductFileWizard extends BasicNewResourceWizard {
 	
-	private ProductFileWizadPage fMainPage;
+	private ProductFileWizardPage fMainPage;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		fMainPage = new ProductFileWizadPage("product", getSelection()); //$NON-NLS-1$
+		fMainPage = new ProductFileWizardPage("product", getSelection()); //$NON-NLS-1$
 		addPage(fMainPage);
 	}
 
@@ -52,9 +52,9 @@ public class NewProductFileWizard extends BasicNewResourceWizard {
 	private IRunnableWithProgress getOperation() {
         IFile file = fMainPage.createNewFile();
 		int option = fMainPage.getInitializationOption();
-		if (option == ProductFileWizadPage.USE_LAUNCH_CONFIG)
+		if (option == ProductFileWizardPage.USE_LAUNCH_CONFIG)
 			return new ProductFromConfigOperation(file, fMainPage.getSelectedLaunchConfiguration());
-		if (option == ProductFileWizadPage.USE_PRODUCT)
+		if (option == ProductFileWizardPage.USE_PRODUCT)
 			return new ProductFromExtensionOperation(file, fMainPage.getSelectedProduct());
 		return new BaseProductCreationOperation(file);
 	}

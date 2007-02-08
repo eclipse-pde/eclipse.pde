@@ -147,7 +147,7 @@ public class LaunchPluginValidator {
 			if (!map.containsKey(id)) {
 				map.put(id, model);						
 			} else {
-				map.put(id + "_" + desc.getBundleId(), model);
+				map.put(id + "_" + desc.getBundleId(), model); //$NON-NLS-1$
 			}
 		}
 	}

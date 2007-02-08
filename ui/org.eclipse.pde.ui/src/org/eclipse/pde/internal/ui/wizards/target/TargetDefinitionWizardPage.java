@@ -30,6 +30,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.target.OpenTargetProfileAction;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -40,9 +41,8 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
-public class TargetDefinitionWizardPage extends WizardNewFileCreationPage {
+public class TargetDefinitionWizardPage extends PDEWizardNewFileCreationPage {
 	
 	protected static final int USE_DEFAULT = 0;
 	protected static final int USE_CURRENT_TP = 1;
@@ -55,17 +55,19 @@ public class TargetDefinitionWizardPage extends WizardNewFileCreationPage {
 	private String[] fTargetIds;
 	private Button fPreviewButton;
 	
-	private static String EXTENSION = ".target"; //$NON-NLS-1$
+	private static String EXTENSION = "target"; //$NON-NLS-1$
 	
 	public TargetDefinitionWizardPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
 		setTitle(PDEUIMessages.TargetProfileWizardPage_title);
 		setDescription(PDEUIMessages.TargetProfileWizardPage_description);
+		// Force the file extension to be 'target'
+		setFileExtension(EXTENSION);		
 	}
 	
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		setFileName(EXTENSION); 
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.TARGET_DEFINITION_PAGE );
 	}
 	
@@ -159,17 +161,6 @@ public class TargetDefinitionWizardPage extends WizardNewFileCreationPage {
     	}
     	if (elements.length > 0)
     		fTargets.select(0);
-    }
-    
-    protected boolean validatePage() {
-		if (!getFileName().trim().endsWith(EXTENSION)) { 
-			setErrorMessage(PDEUIMessages.TargetProfileWizardPage_error); 
-			return false;
-		}
-		if (getFileName().trim().length() <= EXTENSION.length()) {
-			return false;
-		}
-		return super.validatePage();
     }
     
     protected void createLinkTarget() {

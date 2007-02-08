@@ -32,6 +32,7 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -42,13 +43,14 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
-public class ProductFileWizadPage extends WizardNewFileCreationPage {
+public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 	
 	public final static int USE_DEFAULT = 0;
 	public final static int USE_PRODUCT = 1;
 	public final static int USE_LAUNCH_CONFIG = 2;
+	
+	private static final String F_FILE_EXTENSION = "product"; //$NON-NLS-1$	
 	
 	private Button fBasicButton;
 	private Button fProductButton;
@@ -59,10 +61,13 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	
 	private IPluginModelBase fModel;
 	
-	public ProductFileWizadPage(String pageName, IStructuredSelection selection) {
+	public ProductFileWizardPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
 		setDescription(PDEUIMessages.ProductFileWizadPage_title);
 		setTitle(PDEUIMessages.NewProductFileWizard_title);
+		// Force the file extension to be 'product'
+		setFileExtension(F_FILE_EXTENSION);	
+		
 		initializeModel(selection);
 	}
 	
@@ -151,20 +156,6 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validatePage()
-	 */
-	protected boolean validatePage() {
-		if (!getFileName().trim().endsWith(".product")) { //$NON-NLS-1$
-			setErrorMessage(PDEUIMessages.ProductFileWizadPage_error); 
-			return false;
-		}
-		if (getFileName().trim().length() <= 8) {
-			return false;
-		}
-		return super.validatePage();
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validateLinkedResource()
 	 */
 	protected IStatus validateLinkedResource() {
@@ -225,7 +216,6 @@ public class ProductFileWizadPage extends WizardNewFileCreationPage {
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		Dialog.applyDialogFont(fGroup);
-		setFileName(".product"); //$NON-NLS-1$
 		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.PRODUCT_FILE_PAGE );
 	}

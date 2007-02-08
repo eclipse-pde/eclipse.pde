@@ -49,9 +49,8 @@ public class SimpleCSFileWizardPage extends CSFileWizardPage {
 	protected void initialize() {
 		setTitle(PDEUIMessages.CheatSheetFileWizardPage_1);
 		setDescription(PDEUIMessages.SimpleCSFileWizardPage_simpleCSWizardDescription);
-		// Initialize the filename to contain an '.xml' extension
-		setFileName(F_FILE_EXTENSION);
-
+		// Force the file extension to be 'xml'
+		setFileExtension(F_FILE_EXTENSION);
 	}
 	
 	/* (non-Javadoc)

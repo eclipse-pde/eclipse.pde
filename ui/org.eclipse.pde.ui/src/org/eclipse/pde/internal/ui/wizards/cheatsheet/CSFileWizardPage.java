@@ -17,6 +17,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -26,13 +27,12 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
 /**
  * CheatSheetFileWizardPage
  *
  */
-public class CSFileWizardPage extends WizardNewFileCreationPage {
+public class CSFileWizardPage extends PDEWizardNewFileCreationPage {
 
 	private Button fSimpleCheatSheetButton;
 	
@@ -40,7 +40,7 @@ public class CSFileWizardPage extends WizardNewFileCreationPage {
 	
 	private Group fGroup;
 	
-	protected static final String F_FILE_EXTENSION = ".xml"; //$NON-NLS-1$
+	protected static final String F_FILE_EXTENSION = "xml"; //$NON-NLS-1$
 	
 	public static final int F_SIMPLE_CHEAT_SHEET = 0;
 	
@@ -63,8 +63,8 @@ public class CSFileWizardPage extends WizardNewFileCreationPage {
 	protected void initialize() {
 		setTitle(PDEUIMessages.CheatSheetFileWizardPage_1);
 		setDescription(PDEUIMessages.CheatSheetFileWizardPage_2);
-		// Initialize the filename to contain an '.xml' extension
-		setFileName(F_FILE_EXTENSION);		
+		// Force the file extension to be 'xml'
+		setFileExtension(F_FILE_EXTENSION);		
 	}
 	
 	/**
@@ -133,45 +133,6 @@ public class CSFileWizardPage extends WizardNewFileCreationPage {
 		data.horizontalIndent = 20;
 		compositeCSLabel.setLayoutData(data);
 		
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validatePage()
-	 */
-	protected boolean validatePage() {
-		String filename = getFileName().trim();
-		// Verify the filename is non-empty
-		if (filename.length() == 0) {
-			setErrorMessage(null);
-			return false;
-		}
-		// Check to see if the filename contains a '.'
-		String errorMessage = PDEUIMessages.CheatSheetFileWizardPage_0 +
-		' ' + "\'" + F_FILE_EXTENSION + "\'"; //$NON-NLS-1$ //$NON-NLS-2$
-		int dotIndex = filename.indexOf('.');
-		if (dotIndex == -1) {
-			// Filename contains no dot
-			setErrorMessage(errorMessage);
-			return false;
-		}
-		// Filename contains a dot
-		String name = filename.substring(0, dotIndex);
-		// Verify that the name portion of the file is non-empty
-		if (name.length() == 0) {
-			setErrorMessage(PDEUIMessages.CheatSheetFileWizardPage_emptyNamePortion);
-			return false;
-		}
-		// Include the dot
-		String extension = filename.substring(dotIndex, filename.length());
-		// Verify that the extension portion of the file equals the XML
-		// file extension
-		if ((extension.length() == 0) ||
-				(extension.compareTo(F_FILE_EXTENSION) != 0)) {
-			setErrorMessage(errorMessage);
-			return false;
-		}
-		// Perform default validation
-		return super.validatePage();
 	}
 	
 	/* (non-Javadoc)
