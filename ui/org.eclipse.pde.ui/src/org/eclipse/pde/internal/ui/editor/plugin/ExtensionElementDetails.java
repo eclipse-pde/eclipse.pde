@@ -134,6 +134,8 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 		}
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
+		IPluginModelBase model = (IPluginModelBase)getPage().getModel();
+		model.addModelChangedListener(this);
 		markDetailsPart(section);
 	}
 	private ExtensionAttributeRow createAttributeRow(ISchemaAttribute att,
