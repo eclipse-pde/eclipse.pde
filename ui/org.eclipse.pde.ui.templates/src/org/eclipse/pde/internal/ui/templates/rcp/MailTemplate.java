@@ -314,7 +314,7 @@ public class MailTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getNewFiles()
 	 */
 	public String[] getNewFiles() {
-		return new String[] {"icons/", "plugin.properties", "product_lg.gif", "splash.bmp"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		return new String[] {"icons/", "product_lg.gif", "splash.bmp"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	protected boolean copyBrandingDirectory() {
