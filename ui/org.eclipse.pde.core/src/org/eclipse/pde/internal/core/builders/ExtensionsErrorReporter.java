@@ -139,7 +139,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
 			ISchema schema = registry.getSchema(pointID);
 			if (schema != null) {
-				validateElement(element, schema);
+				validateElement(element, schema, true);
 			}
 		}
 	}
@@ -180,7 +180,8 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				PDEMarkerFactory.CAT_FATAL);
 	}	
 	
-	protected void validateElement(Element element, ISchema schema) {
+	protected void validateElement(Element element, ISchema schema, 
+			boolean isTopLevel) {
 		String elementName = element.getNodeName();
 		ISchemaElement schemaElement = schema.findElement(elementName);
 		
@@ -195,6 +196,16 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		if (!"extension".equals(elementName)) { //$NON-NLS-1$
 			Node parent = element.getParentNode();
 			parentSchema = schema.findElement(parent.getNodeName());
+		} else if (isTopLevel == false) {
+			// This is an "extension" element; but, not a top level one.  
+			// It is nested within another "extension" element somewhere
+			// e.g. "extension" element is a child element of another element
+			// that is not a "plugin" elment 
+			// element
+			// Report illegal element
+			int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_ELEMENT);
+			reportIllegalElement(element, severity);
+			return;
 		}
 		
 		if (parentSchema != null) {
@@ -232,7 +243,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			}
 			NodeList children = element.getChildNodes();
 			for (int i = 0; i < children.getLength(); i++) {
-				validateElement((Element)children.item(i), schema);
+				validateElement((Element)children.item(i), schema, false);
 			}
 		}
 	}

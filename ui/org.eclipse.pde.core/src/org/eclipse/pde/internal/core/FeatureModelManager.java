@@ -390,9 +390,9 @@ public class FeatureModelManager {
 	}
 	
 	public IFeatureModel getDeltaPackFeature() {
-		IFeatureModel model = findFeatureModel("org.eclipse.equinox.executable");
+		IFeatureModel model = findFeatureModel("org.eclipse.equinox.executable"); //$NON-NLS-1$
 		if (model == null)
-			model = findFeatureModel("org.eclipse.platform.launchers");
+			model = findFeatureModel("org.eclipse.platform.launchers"); //$NON-NLS-1$
 		return model;
 	}
 
