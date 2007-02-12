@@ -39,6 +39,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IWritable;
+import org.eclipse.pde.internal.core.IWorkspaceModel;
 import org.eclipse.pde.internal.core.util.XMLComponentRegistry;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -357,18 +358,58 @@ public abstract class PDEFormEditor extends FormEditor
 		fInputContextManager.save(monitor);
 		editorDirtyStateChanged();
 	}
+	
+	/**
+	 * 
+	 */
 	public void doRevert() {
-		IFormPage currentPage = getActivePageInstance();
-		if (currentPage != null && currentPage instanceof PDEFormPage)
-			((PDEFormPage) currentPage).cancelEdit();
+		// If the editor has source pages, revert them
+		// Reverting the source page fires events to the associated form pages
+		// which will cause all their values to be updated
+		boolean reverted = doRevertSourcePages();
+		// If the editor does not have any source pages, revert the form pages
+		// by directly reloading the underlying model
+		// Reloading the model fires a world changed event to all form pages
+		// causing them to update their values
+		if (reverted == false) {
+			reverted = doRevertFormPage();
+		}
+		// If the revert operation was performed disable the revert action and 
+		// fire the dirty event 
+		if (reverted) {
+			editorDirtyStateChanged();
+		}
+	}
+	
+	/**
+	 * @return
+	 */
+	private boolean doRevertFormPage() {
+		boolean reverted = false;
+		IBaseModel model = getAggregateModel();
+		if (model instanceof IWorkspaceModel) {
+			IWorkspaceModel workspaceModel = (IWorkspaceModel)model;
+			workspaceModel.reload();
+			reverted = true;
+		}
+		return reverted;
+	}
+	
+	/**
+	 * @return
+	 */
+	private boolean doRevertSourcePages() {
+		boolean reverted = false;
 		IFormPage[] pages = getPages();
 		for (int i = 0; i < pages.length; i++) {
 			if (pages[i] instanceof PDESourcePage) {
 				((PDESourcePage) pages[i]).doRevertToSaved();
+				reverted = true;
 			}
 		}
-		editorDirtyStateChanged();
+		return reverted;
 	}
+
 	public void doRevert(IEditorInput input) {
 		IFormPage currentPage = getActivePageInstance();
 		if (currentPage != null && currentPage instanceof PDEFormPage)

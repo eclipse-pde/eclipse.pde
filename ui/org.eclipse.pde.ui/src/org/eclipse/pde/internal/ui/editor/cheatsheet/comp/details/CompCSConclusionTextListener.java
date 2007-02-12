@@ -94,7 +94,7 @@ public class CompCSConclusionTextListener implements ModifyListener {
 	private void removeConclusionText(String text) {
 		ICompCSOnCompletion conclusion = fDataTaskObject.getFieldOnCompletion();
 		if (conclusion != null) {
-			fDataTaskObject.setFieldIntro(null);
+			fDataTaskObject.setFieldOnCompletion(null);
 		}
 	}	
 	

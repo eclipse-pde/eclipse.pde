@@ -38,6 +38,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TreeSection;
 import org.eclipse.pde.internal.ui.editor.actions.CollapseAction;
+import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSDetails;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.actions.CompCSAddGroupAction;
 import org.eclipse.pde.internal.ui.editor.cheatsheet.comp.actions.CompCSAddTaskAction;
@@ -53,6 +54,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.cheatsheets.OpenCheatSheetAction;
+import org.eclipse.ui.forms.IDetailsPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -119,13 +121,16 @@ public class CompCSMasterTreeSection extends TreeSection implements
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
+		// Get the model
+		fModel = (ICompCSModel)getPage().getModel();		
+		
 		Composite container = createClientContainer(section, 2, toolkit);
 		createTree(container, toolkit);
 		toolkit.paintBordersFor(container);
 		section.setText(PDEUIMessages.SimpleCSElementSection_4);
 		section.setDescription(PDEUIMessages.SimpleCSElementSection_5);
 		section.setClient(container);
-		initialize();
+		initializeTreeViewer();
 		createSectionToolbar(section, toolkit);
 	}
 
@@ -164,8 +169,8 @@ public class CompCSMasterTreeSection extends TreeSection implements
 	/**
 	 * 
 	 */
-	private void initialize() {
-		fModel = (ICompCSModel)getPage().getModel();
+	private void initializeTreeViewer() {
+
 		if (fModel == null) {
 			return;
 		}
@@ -423,7 +428,7 @@ public class CompCSMasterTreeSection extends TreeSection implements
 	public void modelChanged(IModelChangedEvent event) {
 		// No need to call super, world changed event handled here
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			markStale();
+			handleModelEventWorldChanged(event);
 		} else if (event.getChangeType() == IModelChangedEvent.INSERT) {
 			handleModelInsertType(event);
 		} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
@@ -439,6 +444,43 @@ public class CompCSMasterTreeSection extends TreeSection implements
 		updatePreviewButton(fGroupValidator.validate());
 	}	
 
+	/**
+	 * @param event
+	 */
+	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		
+		Object[] objects = event.getChangedObjects();
+		ICompCSObject object = (ICompCSObject) objects[0];		
+		if (object == null) {
+			// Ignore
+			return;
+		} else if (object.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET) {
+			// Get the form page
+			CompCSPage page = (CompCSPage)getPage();			
+			// Remember the currently selected page
+			IDetailsPage previousDetailsPage = 
+				page.getBlock().getDetailsPart().getCurrentPage();
+			// Replace the current dirty model with the model reloaded from
+			// file
+			fModel = ((ICompCS)object).getModel();
+			// Reset the treeviewer using the new model as input
+			fTreeViewer.setInput(fModel);
+			// Re-initialize the tree viewer.  Makes a details page selection
+			initializeTreeViewer();
+			// Get the current details page selection
+			IDetailsPage currentDetailsPage = 
+				page.getBlock().getDetailsPart().getCurrentPage();
+			// If the selected page before the revert is the same as the 
+			// selected page after the revert, then its fields will need to
+			// be updated
+			if (currentDetailsPage.equals(previousDetailsPage) && 
+					currentDetailsPage instanceof ICSDetails) {
+				((ICSDetails)currentDetailsPage).updateFields();
+			}
+		}		
+		
+	}	
+	
 	/**
 	 * @param event
 	 */

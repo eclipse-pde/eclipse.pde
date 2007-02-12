@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.AbstractModel;
+import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCS;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.comp.ICompCSObject;
@@ -23,6 +24,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -128,6 +130,8 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 									.getNewValue()));
 				}
 			}
+		} else if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			handleModelEventWorldChanged(event);
 		}
 		// Inform the block
 		fBlock.modelChanged(event);
@@ -139,5 +143,30 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 	public ISelection getSelection() {
 		return fBlock.getSelection();
 	}
+	
+	/**
+	 * @param event
+	 */
+	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		
+		Object[] objects = event.getChangedObjects();
+		ICompCSObject object = (ICompCSObject) objects[0];		
+		if (object == null) {
+			// Ignore
+			return;
+		} else if (object.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET) {
+			String newValue = ((ICompCS)object).getFieldName();
+			// Update page title
+			getManagedForm().getForm().setText(
+					PDETextHelper.translateReadText(newValue));
+		}
+	}
+	
+	/**
+	 * @return
+	 */
+	public PDEMasterDetailsBlock getBlock() {
+		return fBlock;
+	}	
 	
 }

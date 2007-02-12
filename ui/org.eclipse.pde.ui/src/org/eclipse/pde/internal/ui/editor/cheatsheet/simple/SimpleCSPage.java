@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.core.AbstractModel;
+import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCS;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSModel;
 import org.eclipse.pde.internal.core.icheatsheet.simple.ISimpleCSObject;
@@ -23,6 +24,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -125,9 +127,29 @@ public class SimpleCSPage extends PDEFormPage implements IModelChangedListener {
 									.getNewValue()));
 				}
 			}
+		} else if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			handleModelEventWorldChanged(event);
 		}
 		// Inform the block
 		fBlock.modelChanged(event);
+	}
+
+	/**
+	 * @param event
+	 */
+	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		
+		Object[] objects = event.getChangedObjects();
+		ISimpleCSObject object = (ISimpleCSObject) objects[0];		
+		if (object == null) {
+			// Ignore
+			return;
+		} else if (object.getType() == ISimpleCSConstants.TYPE_CHEAT_SHEET) {
+			String newValue = ((ISimpleCS)object).getTitle();
+			// Update page title
+			getManagedForm().getForm().setText(
+					PDETextHelper.translateReadText(newValue));
+		}
 	}
 
 	/**
@@ -135,6 +157,13 @@ public class SimpleCSPage extends PDEFormPage implements IModelChangedListener {
 	 */
 	public ISelection getSelection() {
 		return fBlock.getSelection();
+	}
+
+	/**
+	 * @return
+	 */
+	public PDEMasterDetailsBlock getBlock() {
+		return fBlock;
 	}
 	
 }
