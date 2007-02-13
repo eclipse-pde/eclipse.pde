@@ -160,6 +160,9 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 		}
 		rootBars.setGlobalActionHandler(PDEActionConstants.OPEN, active ? fHyperlinkAction : null);
 		rootBars.setGlobalActionHandler(PDEActionConstants.FORMAT, active ? fFormatAction : null);
+		// Register the revert action
+		rootBars.setGlobalActionHandler(ActionFactory.REVERT.getId(), getRevertAction());
+		
 		rootBars.updateActionBars();
 	}
 
@@ -172,8 +175,6 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 		registerGlobalAction(ActionFactory.PASTE.getId());
 		registerGlobalAction(ActionFactory.SELECT_ALL.getId());
 		registerGlobalAction(ActionFactory.FIND.getId());
-		// hook revert
-		getActionBars().setGlobalActionHandler(ActionFactory.REVERT.getId(), fRevertAction);
 	}
 
 	private void registerGlobalAction(String id) {

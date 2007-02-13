@@ -135,4 +135,14 @@ public class SimpleCSDetails extends CSAbstractDetails {
 		fRegisterCSArea.updateFields();			
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
+	 */
+	public void commit(boolean onSave) {
+		super.commit(onSave);
+		// Only required for form entries
+		fTitle.commit();
+		// No need to call for sub details, because they contain no form entries
+	}
+	
 }

@@ -363,12 +363,19 @@ public abstract class PDEFormEditor extends FormEditor
 	 * 
 	 */
 	public void doRevert() {
+		IFormPage formPage = getActivePageInstance();
+		// If the active page is a form page, commit all of its dirty field 
+		// values to the model
+		if ((formPage != null) && 
+				(formPage instanceof PDEFormPage)) {
+			formPage.getManagedForm().commit(true);
+		} 			
 		// If the editor has source pages, revert them
 		// Reverting the source page fires events to the associated form pages
 		// which will cause all their values to be updated
 		boolean reverted = doRevertSourcePages();
 		// If the editor does not have any source pages, revert the form pages
-		// by directly reloading the underlying model
+		// by directly reloading the underlying model.
 		// Reloading the model fires a world changed event to all form pages
 		// causing them to update their values
 		if (reverted == false) {
@@ -403,7 +410,17 @@ public abstract class PDEFormEditor extends FormEditor
 		IFormPage[] pages = getPages();
 		for (int i = 0; i < pages.length; i++) {
 			if (pages[i] instanceof PDESourcePage) {
-				((PDESourcePage) pages[i]).doRevertToSaved();
+				PDESourcePage sourcePage = (PDESourcePage)pages[i];
+				// Flush any pending editor operations into the document
+				// so that the revert operation executes (revert operation is
+				// aborted if the current document has not changed)
+				// This happens when a form page field is modified.
+				// The source page is not updated until a source operation is
+				// performed or the source page is made active and possibly
+				// in some other cases.
+				sourcePage.getInputContext().flushEditorInput();
+				// Revert the source page to the contents of the last save to file
+				sourcePage.doRevertToSaved();
 				reverted = true;
 			}
 		}

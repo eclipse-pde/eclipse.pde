@@ -12,8 +12,6 @@
 package org.eclipse.pde.internal.ui.editor.cheatsheet.comp;
 
 import org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.actions.ActionFactory;
 
 /**
  * CompCSEditorContributor
@@ -28,23 +26,4 @@ public class CompCSEditorContributor extends PDEFormEditorContributor {
 		super("compCSEditor"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor#setActivePage(org.eclipse.ui.IEditorPart)
-	 */
-	public void setActivePage(IEditorPart newEditor) {
-		super.setActivePage(newEditor);
-
-		registerGlobalActionHandlers();
-	}
-	
-	/**
-	 * 
-	 */
-	private void registerGlobalActionHandlers() {
-		// Register the revert action
-		getActionBars().setGlobalActionHandler(ActionFactory.REVERT.getId(), 
-				getRevertAction());		
-	}
-		
-	
 }

@@ -232,6 +232,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		fSaveAction.setText(PDEUIMessages.EditorActions_save);
 		fRevertAction = new RevertAction();
 		fRevertAction.setText(PDEUIMessages.EditorActions_revert);
+		addGlobalAction(ActionFactory.REVERT.getId(), fRevertAction);
 	}
 
 	public void setActiveEditor(IEditorPart targetEditor) {

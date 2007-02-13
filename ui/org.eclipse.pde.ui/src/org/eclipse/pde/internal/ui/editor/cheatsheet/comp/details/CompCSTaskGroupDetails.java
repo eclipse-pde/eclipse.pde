@@ -292,4 +292,14 @@ public class CompCSTaskGroupDetails extends CSAbstractDetails {
 		fSkip.setEnabled(editable);	
 	}	
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
+	 */
+	public void commit(boolean onSave) {
+		super.commit(onSave);
+		// Only required for form entries
+		fNameEntry.commit();
+		// No need to call for sub details, because they contain no form entries
+	}
+	
 }
