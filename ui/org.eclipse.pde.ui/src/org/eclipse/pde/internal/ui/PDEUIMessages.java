@@ -23,6 +23,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String BaseCheatSheetCreationOperation_0;
 
+	public static String BaseExtensionPointMainPage_errorMsgPluginNotFound;
+
 	public static String CalculateUsesOperation_calculatingDirective;
 
 	public static String CheatSheetFileWizardPage_1;

@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
@@ -415,7 +416,13 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		// For 3.2 or greater plug-ins verify that it is a valid composite ID
 		// and that it has a valid namespace
 		// For 3.1 and lower plug-ins verify that it is a valid simple ID
-		IPluginModelBase model = PluginRegistry.findModel(getPluginId());
+		String pluginID = getPluginId();
+		IPluginModelBase model = PluginRegistry.findModel(pluginID);
+		// Verify that the plugin was found
+		if (model == null) {
+			return NLS.bind(PDEUIMessages.BaseExtensionPointMainPage_errorMsgPluginNotFound, pluginID);
+		}
+		
 		String schemaVersion = model.getPluginBase().getSchemaVersion();
 		if (schemaVersion == null || Float.parseFloat(schemaVersion) >= 3.2) {
 			if (!IdUtil.isValidCompositeID(id))
