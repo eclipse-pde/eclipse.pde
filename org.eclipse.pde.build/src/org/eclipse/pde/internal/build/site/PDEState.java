@@ -329,48 +329,48 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 	public void resolveState() {
 		List configs = AbstractScriptGenerator.getConfigInfos();
-		String[] os = new String[configs.size()];
-		String[] ws = new String[configs.size()];
-		String[] archs = new String[configs.size()];
-		int i = 0;
-		for (Iterator iter = configs.iterator(); iter.hasNext();) {
-			Config aConfig = (Config) iter.next();
-			os[i] = aConfig.getOs();
-			ws[i] = aConfig.getWs();
-			archs[i] = aConfig.getArch();
-			i++;
-		}
-		Hashtable properties = new Hashtable(3);
-		if (ws.length == 1 && Config.ANY.equalsIgnoreCase(ws[0])) {
-			properties.put(OSGI_WS, CatchAllValue.singleton);
-		} else {
-			properties.put(OSGI_WS, ws);
-		}
+		Dictionary[] properties = new Dictionary[configs.size()];
 
-		if (os.length == 1 && Config.ANY.equalsIgnoreCase(os[0])) {
-			properties.put(OSGI_OS, CatchAllValue.singleton);
-		} else {
-			properties.put(OSGI_OS, os);
-		}
-
-		if (archs.length == 1 && Config.ANY.equalsIgnoreCase(archs[0])) {
-			properties.put(OSGI_ARCH, CatchAllValue.singleton);
-		} else {
-			properties.put(OSGI_ARCH, archs);
-		}
-
-		//Set the JRE profile
-		if (javaProfile == null) {
+		// Set the JRE profile
+		String systemPackages = null;
+		String ee = null;
+		if (javaProfile == null)
 			javaProfile = getDefaultJavaProfile();
-		}
 		Properties profileProps = getJavaProfileProperties();
 		if (profileProps != null) {
-			String systemPackages = profileProps.getProperty(SYSTEM_PACKAGES);
+			systemPackages = profileProps.getProperty(SYSTEM_PACKAGES);
+			ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
+		}
+
+		int i = 0;
+		for (Iterator iter = configs.iterator(); iter.hasNext(); i++) {
+			Config aConfig = (Config) iter.next();
+			Dictionary prop = new Hashtable();
+			String os = aConfig.getOs();
+			String ws = aConfig.getWs();
+			String arch = aConfig.getArch();
+			if (Config.ANY.equalsIgnoreCase(os))
+				prop.put(OSGI_OS, os);
+			else
+				prop.put(OSGI_OS, CatchAllValue.singleton);
+
+			if (Config.ANY.equalsIgnoreCase(ws))
+				prop.put(OSGI_WS, ws);
+			else
+				prop.put(OSGI_WS, CatchAllValue.singleton);
+
+			if (Config.ANY.equalsIgnoreCase(arch))
+				prop.put(OSGI_ARCH, arch);
+			else
+				prop.put(OSGI_ARCH, CatchAllValue.singleton);
+
+			// Set the JRE profile
 			if (systemPackages != null)
-				properties.put(SYSTEM_PACKAGES, systemPackages);
-			String ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
+				prop.put(SYSTEM_PACKAGES, systemPackages);
 			if (ee != null)
-				properties.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, ee);
+				prop.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, ee);
+
+			properties[i] = prop;
 		}
 		state.setPlatformProperties(properties);
 		state.resolve(false);
