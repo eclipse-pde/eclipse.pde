@@ -367,7 +367,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		else
 			tags = repositoryPluginTags;
 		if (mapFileEntry.get(IFetchFactory.KEY_ELEMENT_TAG) != null)
-			tags.put(entry + ',' + new Version(version.getMajor(), version.getMinor(), version.getMicro()), mapFileEntry.get(IFetchFactory.KEY_ELEMENT_TAG));
+			tags.put(elementToFetch + ',' + new Version(version.getMajor(), version.getMinor(), version.getMicro()), mapFileEntry.get(IFetchFactory.KEY_ELEMENT_TAG));
 
 		return true;
 	}
