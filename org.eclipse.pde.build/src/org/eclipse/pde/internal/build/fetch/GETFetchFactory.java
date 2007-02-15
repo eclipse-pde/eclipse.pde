@@ -161,6 +161,7 @@ public class GETFetchFactory implements IFetchFactory {
 			script.printAttribute(ATTRIBUTE_FILE, dest, true);
 			script.print(TAG_CLOSE);
 		}
+		script.println();
 	}
 
 }
