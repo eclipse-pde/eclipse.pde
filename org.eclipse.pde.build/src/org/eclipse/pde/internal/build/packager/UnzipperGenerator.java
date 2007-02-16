@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -189,16 +189,16 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 		for (Iterator iter = getMatchingConfig(entryDetail).iterator(); iter.hasNext();) {
 			Config config = (Config) iter.next();
 			List parameters = new ArrayList(4);
-			String rootFilesFolder = "${tempDirectory}/" + config.toString(".") + '/' +  entryDetail[FOLDER];
+			String rootFilesFolder = "${tempDirectory}/" + config.toString(".") + '/' + entryDetail[FOLDER]; //$NON-NLS-1$ //$NON-NLS-2$
 			script.printMkdirTask(rootFilesFolder);
 			parameters.add("-" + (entryDetail[ARCHIVE_NAME].endsWith(".gz") ? "z" : "") + "pxvf"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			parameters.add(Utils.getPropertyFormat("downloadDirectory") + '/' + entryDetail[ARCHIVE_NAME]); //$NON-NLS-1$ 
-			parameters.add("--exclude=" + (entryDetail[FOLDER].equals(".") ? "eclipse" : "") + "/features/*");
-			parameters.add("--exclude=" + (entryDetail[FOLDER].equals(".") ? "eclipse" : "") + "/plugins/*");			
-			script.printExecTask("tar", "${tempDirectory}/" + entryDetail[FOLDER], parameters, null); //$NON-NLS-1$//$NON-NLS-2$	
+			parameters.add("--exclude=" + (entryDetail[FOLDER].equals(".") ? "eclipse" : "") + "/features/*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			parameters.add("--exclude=" + (entryDetail[FOLDER].equals(".") ? "eclipse" : "") + "/plugins/*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			script.printExecTask("tar", rootFilesFolder, parameters, null); //$NON-NLS-1$
 		}
 	}
-	
+
 	public void setDirectoryLocation(String filename) {
 		directoryLocation = filename;
 	}
