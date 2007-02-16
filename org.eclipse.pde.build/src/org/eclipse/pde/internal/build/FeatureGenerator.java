@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,26 +110,37 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		this.includeLaunchers = includeLaunchers;
 	}
 	
-	private void initialize() throws CoreException{
+	private void initialize() throws CoreException {
 		//get rid of old feature that we will be overwriting, we don't want it in the state accidently.
 		File dir = new File(getWorkingDirectory(), IPDEBuildConstants.DEFAULT_FEATURE_LOCATION + '/' + featureId);
 		File xml = new File(dir, Constants.FEATURE_FILENAME_DESCRIPTOR);
-		if(xml.exists()){
+		if (xml.exists()) {
 			xml.delete();
 		}
-		
+
 		if (productFile != null && !productFile.startsWith("${") && productFile.length() > 0) { //$NON-NLS-1$
 			String productPath = findFile(productFile, false);
-			if (productPath == null)
-				productPath = productFile;
-			File f = new File(productPath);
+			File f = null;
+			if (productPath != null) {
+				f = new File(productPath);
+			} else {
+				// couldn't find productFile, try it as a path directly
+				f = new File(productFile);
+				if (!f.exists() || !f.isFile()) {
+					// doesn't exist, try it as a path relative to the working directory
+					f = new File(getWorkingDirectory(), productFile);
+					if (!f.exists() || !f.isFile()) {
+						f = new File(getWorkingDirectory() + "/" + DEFAULT_PLUGIN_LOCATION, productFile); //$NON-NLS-1$
+					}
+				}
+			} 
 			if (f.exists() && f.isFile()) {
-				product = new ProductFile(productPath, null);
+				product = new ProductFile(f.getAbsolutePath(), null);
 			} else {
 				IStatus error = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PRODUCT_FILE, NLS.bind(Messages.exception_missingElement, productFile), null);
 				throw new CoreException(error);
 			}
-		} 
+		}
 	}
 
 	/*

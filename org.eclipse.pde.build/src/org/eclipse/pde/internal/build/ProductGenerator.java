@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 	private static final String START_LEVEL_2 = "@2:start"; //$NON-NLS-1$
 	private static final String START_LEVEL_3 = "@3:start"; //$NON-NLS-1$
 	private static final String START = "@start"; //$NON-NLS-1$
-	
+
 	private String product = null;
 	private ProductFile productFile = null;
 	private String root = null;
@@ -97,12 +97,24 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			return;
 		}
 		String productPath = findFile(product, false);
-		if (productPath == null)
-			productPath = product;
+		File f = null;
+		if (productPath != null) {
+			f = new File(productPath);
+		} else {
+			// couldn't find productFile, try it as a path directly
+			f = new File(product);
+			if (!f.exists() || !f.isFile()) {
+				// doesn't exist, try it as a path relative to the working directory
+				f = new File(getWorkingDirectory(), product);
+				if (!f.exists() || !f.isFile()) {
+					f = new File(getWorkingDirectory() + "/" + DEFAULT_PLUGIN_LOCATION, product); //$NON-NLS-1$
+				}
+			}
+		}
 
 		//the ProductFile uses the OS to determine which icons to return, we don't care so can use null
 		//this is better since this generator may be used for multiple OS's
-		productFile = new ProductFile(productPath, null);
+		productFile = new ProductFile(f.getAbsolutePath(), null);
 	}
 
 	private void copyFile(String src, String dest) {
@@ -281,7 +293,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			}
 		}
 	}
-	
+
 	private String getBrandingPlugin() {
 		String id = productFile.getId();
 		if (id == null)
@@ -289,25 +301,25 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		int dot = id.lastIndexOf('.');
 		return (dot != -1) ? id.substring(0, dot) : null;
 	}
-	
+
 	private String getSplashLocation(Config config) throws CoreException {
 		String plugin = productFile.getSplashLocation();
 
 		if (plugin == null) {
 			plugin = getBrandingPlugin();
 		}
-		
+
 		if (plugin == null)
 			return null;
-		
+
 		StringBuffer buffer = new StringBuffer("platform:/base/plugins/"); //$NON-NLS-1$
 		buffer.append(plugin);
-		
+
 		Dictionary environment = new Hashtable(4);
 		environment.put("osgi.os", config.getOs()); //$NON-NLS-1$
 		environment.put("osgi.ws", config.getWs()); //$NON-NLS-1$
 		environment.put("osgi.arch", config.getArch()); //$NON-NLS-1$
-		
+
 		PDEState state = getSite(false).getRegistry();
 		BundleHelper helper = BundleHelper.getDefault();
 		BundleDescription bundle = state.getResolvedBundle(plugin);
@@ -331,7 +343,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		String launcher = getLauncherName();
 
 		if (os.equals(Platform.OS_MACOSX)) {
-				directory += "/" + launcher + ".app/Contents/MacOS"; //$NON-NLS-1$//$NON-NLS-2$
+			directory += "/" + launcher + ".app/Contents/MacOS"; //$NON-NLS-1$//$NON-NLS-2$
 		}
 		File dir = new File(directory);
 		if ((!dir.exists() && !dir.mkdirs()) || dir.isFile())
