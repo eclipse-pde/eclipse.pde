@@ -193,110 +193,114 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			//should not happen
 			return;
 		}
-		Map parameters = new HashMap();
-		Dictionary environment = new Hashtable(3);
-
-		parameters.put("id", feature); //$NON-NLS-1$
-		parameters.put("version", "1.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.startTag("feature", parameters, true); //$NON-NLS-1$
-
-		boolean fragment = false;
-		List configs = getConfigInfos();
-		//we do the generic config first as a special case
-		configs.remove(Config.genericConfig());
-		Iterator configIterator = configs.iterator();
-		Iterator listIter = plugins.iterator();
-		if(!listIter.hasNext()) {
-			// no plugins, do fragments
-			fragment = true;
-			listIter = fragments.iterator();
-		}
-		for (	Config currentConfig = Config.genericConfig(); currentConfig != null; currentConfig = (Config) configIterator.next()) {
-			environment.put("osgi.os", currentConfig.getOs()); //$NON-NLS-1$
-			environment.put("osgi.ws", currentConfig.getWs()); //$NON-NLS-1$
-			environment.put("osgi.arch", currentConfig.getArch()); //$NON-NLS-1$
-			for (; listIter.hasNext();) {
-				String name = (String) listIter.next();
-				boolean unpack = true;
-				boolean writeBundle = !verify;
-				if (verify) {
-					BundleDescription bundle = state.getResolvedBundle(name);
-					if (bundle != null) {
-						//Bundle resolved, write it out if it matches the current config
-						String filterSpec = bundle.getPlatformFilter();
-						if (filterSpec == null || helper.createFilter(filterSpec).match(environment)) {
-							writeBundle = true;
-							unpack = guessUnpack(bundle, (String[]) state.getExtraData().get(new Long(bundle.getBundleId())));
-							if(currentConfig.equals(Config.genericConfig())){
-								listIter.remove();
+		try {
+			Map parameters = new HashMap();
+			Dictionary environment = new Hashtable(3);
+	
+			parameters.put("id", feature); //$NON-NLS-1$
+			parameters.put("version", "1.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.startTag("feature", parameters, true); //$NON-NLS-1$
+	
+			boolean fragment = false;
+			List configs = getConfigInfos();
+			//we do the generic config first as a special case
+			configs.remove(Config.genericConfig());
+			Iterator configIterator = configs.iterator();
+			Iterator listIter = plugins.iterator();
+			if(!listIter.hasNext()) {
+				// no plugins, do fragments
+				fragment = true;
+				listIter = fragments.iterator();
+			}
+			for (	Config currentConfig = Config.genericConfig(); currentConfig != null; currentConfig = (Config) configIterator.next()) {
+				environment.put("osgi.os", currentConfig.getOs()); //$NON-NLS-1$
+				environment.put("osgi.ws", currentConfig.getWs()); //$NON-NLS-1$
+				environment.put("osgi.arch", currentConfig.getArch()); //$NON-NLS-1$
+				for (; listIter.hasNext();) {
+					String name = (String) listIter.next();
+					boolean unpack = true;
+					boolean writeBundle = !verify;
+					if (verify) {
+						BundleDescription bundle = state.getResolvedBundle(name);
+						if (bundle != null) {
+							//Bundle resolved, write it out if it matches the current config
+							String filterSpec = bundle.getPlatformFilter();
+							if (filterSpec == null || helper.createFilter(filterSpec).match(environment)) {
+								writeBundle = true;
+								unpack = guessUnpack(bundle, (String[]) state.getExtraData().get(new Long(bundle.getBundleId())));
+								if(currentConfig.equals(Config.genericConfig())){
+									listIter.remove();
+								}
+							} 
+						} else {
+							//Bundle did not resolve, only ok if it was because of the platform filter
+							BundleDescription [] bundles = state.getState().getBundles(name);
+							boolean error = true;
+							if(bundles != null && bundles.length > 0){	
+								ResolverError[] errors = state.getState().getResolverErrors(bundles[0]);
+								for (int i = 0; i < errors.length; i++) {
+									if((errors[i].getType() & ResolverError.PLATFORM_FILTER) != 0){
+										//didn't match config, this is ok
+										error = false;
+										break;
+									} 
+								}
 							}
-						} 
-					} else {
-						//Bundle did not resolve, only ok if it was because of the platform filter
-						BundleDescription [] bundles = state.getState().getBundles(name);
-						boolean error = true;
-						if(bundles != null && bundles.length > 0){	
-							ResolverError[] errors = state.getState().getResolverErrors(bundles[0]);
-							for (int i = 0; i < errors.length; i++) {
-								if((errors[i].getType() & ResolverError.PLATFORM_FILTER) != 0){
-									//didn't match config, this is ok
-									error = false;
-									break;
-								} 
+							if(error) {
+								//throw error
+								String message = NLS.bind(Messages.exception_missingPlugin, name);
+								throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
 							}
 						}
-						if(error) {
-							//throw error
-							String message = NLS.bind(Messages.exception_missingPlugin, name);
-							throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
+					}
+	
+					if(writeBundle) {
+						parameters.clear();
+						parameters.put("id", name); //$NON-NLS-1$
+						parameters.put("version", "0.0.0"); //$NON-NLS-1$//$NON-NLS-2$
+						parameters.put("unpack", unpack ? "true" : "false"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+						if(!currentConfig.equals(Config.genericConfig())){
+							parameters.put("os", currentConfig.getOs()); //$NON-NLS-1$
+							parameters.put("ws", currentConfig.getWs()); //$NON-NLS-1$
+							parameters.put("arch", currentConfig.getArch()); //$NON-NLS-1$
 						}
+						if (fragment)
+							parameters.put("fragment", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+						writer.printTag("plugin", parameters, true, true, true); //$NON-NLS-1$
+					}
+					
+					if (!fragment && !listIter.hasNext() && fragments.size() > 0) {
+						//finished the list of plugins, do the fragments now
+						fragment = true;
+						listIter = fragments.iterator();
 					}
 				}
-
-				if(writeBundle) {
-					parameters.clear();
-					parameters.put("id", name); //$NON-NLS-1$
-					parameters.put("version", "0.0.0"); //$NON-NLS-1$//$NON-NLS-2$
-					parameters.put("unpack", unpack ? "true" : "false"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-					if(!currentConfig.equals(Config.genericConfig())){
-						parameters.put("os", currentConfig.getOs()); //$NON-NLS-1$
-						parameters.put("ws", currentConfig.getWs()); //$NON-NLS-1$
-						parameters.put("arch", currentConfig.getArch()); //$NON-NLS-1$
-					}
-					if (fragment)
-						parameters.put("fragment", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-					writer.printTag("plugin", parameters, true, true, true); //$NON-NLS-1$
-				}
-				
-				if (!fragment && !listIter.hasNext() && fragments.size() > 0) {
-					//finished the list of plugins, do the fragments now
-					fragment = true;
+				if(!verify || !configIterator.hasNext()){
+					break;
+				} else if(plugins.size() > 0 ){
+					fragment = false;
+					listIter = plugins.iterator();
+				} else {
 					listIter = fragments.iterator();
 				}
 			}
-			if(!verify || !configIterator.hasNext()){
-				break;
-			} else if(plugins.size() > 0 ){
-				fragment = false;
-				listIter = plugins.iterator();
-			} else {
-				listIter = fragments.iterator();
+			
+			for (Iterator iter = features.iterator(); iter.hasNext();) {
+				String name = (String) iter.next();
+				if (verify) {
+					//this will throw an exception if the feature is not found.
+					getSite(false).findFeature(name, null, true);
+				}
+				parameters.clear();
+				parameters.put("id", name); //$NON-NLS-1$
+				parameters.put("version", "0.0.0");  //$NON-NLS-1$//$NON-NLS-2$
+				writer.printTag("includes", parameters, true, true, true); //$NON-NLS-1$
 			}
+			writer.endTag("feature"); //$NON-NLS-1$
+		} finally {
+			writer.close();
 		}
 		
-		for (Iterator iter = features.iterator(); iter.hasNext();) {
-			String name = (String) iter.next();
-			if (verify) {
-				//this will throw an exception if the feature is not found.
-				getSite(false).findFeature(name, null, true);
-			}
-			parameters.clear();
-			parameters.put("id", name); //$NON-NLS-1$
-			parameters.put("version", "0.0.0");  //$NON-NLS-1$//$NON-NLS-2$
-			writer.printTag("includes", parameters, true, true, true); //$NON-NLS-1$
-		}
-		writer.endTag("feature"); //$NON-NLS-1$
-		writer.close();
 		
 		//create build.properties
 		file = new File(directory, IPDEBuildConstants.PROPERTIES_FILE);
@@ -308,6 +312,8 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			prop.store(stream, "Marker File so that the file gets written");  //$NON-NLS-1$
 			stream.flush();
 		} catch (IOException e) {
+			// nothing for now
+		} finally {
 			if( stream != null) {					
 				try {
 					stream.close();
@@ -316,7 +322,6 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 				}
 			}
 		}
-		
 	}
 
 	public void setVerify(boolean verify) {
