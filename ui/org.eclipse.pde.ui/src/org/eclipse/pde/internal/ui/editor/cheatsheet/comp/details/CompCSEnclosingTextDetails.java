@@ -213,7 +213,10 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = 60;
 		fIntroductionText.setLayoutData(data);
-
+		// Note: Must paint border for parent composite; otherwise, the border
+		// goes missing on the text widget when using the Windows XP Classic
+		// theme
+		getToolkit().paintBordersFor(fIntroductionComposite);
 	}
 	
 	/**
@@ -240,6 +243,10 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = 60;
 		fConclusionText.setLayoutData(data);
+		// Note: Must paint border for parent composite; otherwise, the border
+		// goes missing on the text widget when using the Windows XP Classic
+		// theme
+		getToolkit().paintBordersFor(fCompositeConclusion);
 	}	
 
 	/**
