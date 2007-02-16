@@ -1242,7 +1242,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	protected void collectElementToAssemble(IFeature featureToCollect) throws CoreException {
-		if (scriptGeneration == true && (assemblyData == null || getBuildProperties().get(PROPERTY_BIN_INCLUDES) == null))
+		if ((scriptGeneration == true && (assemblyData == null || getBuildProperties().get(PROPERTY_BIN_INCLUDES) == null)) || sourceFeatureGeneration)
 			return;
 		List correctConfigs = selectConfigs(featureToCollect);
 		// Here, we could sort if the feature is a common one or not by
@@ -1776,7 +1776,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	protected void collectElementToAssemble(IPluginEntry entryToCollect) throws CoreException {
-		if (assemblyData == null)
+		if (assemblyData == null || sourceFeatureGeneration)
 			return;
 		List correctConfigs = selectConfigs(entryToCollect);
 		String versionRequested = entryToCollect.getVersionedIdentifier().getVersion().toString();
