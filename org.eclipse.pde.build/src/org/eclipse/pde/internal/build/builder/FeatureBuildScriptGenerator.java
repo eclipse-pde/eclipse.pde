@@ -234,24 +234,23 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		// if the feature defines its own custom script, we do not generate a
 		// new one but we do try to update the version number
-		String custom = (String) getBuildProperties().get(PROPERTY_CUSTOM);
-		if (TRUE.equalsIgnoreCase(custom)) {
-			File buildFile = new File(featureRootLocation, DEFAULT_BUILD_SCRIPT_FILENAME);
-			if (!buildFile.exists()) {
-				message = NLS.bind(Messages.error_missingCustomBuildFile, buildFile);
+		boolean custom = TRUE.equalsIgnoreCase((String) getBuildProperties().get(PROPERTY_CUSTOM));
+		File customBuildFile = null;
+		if (custom) {
+			customBuildFile = new File(featureRootLocation, DEFAULT_BUILD_SCRIPT_FILENAME);
+			if (!customBuildFile.exists()) {
+				message = NLS.bind(Messages.error_missingCustomBuildFile, customBuildFile);
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, message, null));
 			}
-			try {
-				updateVersion(buildFile, PROPERTY_FEATURE_VERSION_SUFFIX, feature.getVersionedIdentifier().getVersion().toString());
-			} catch (IOException e) {
-				message = NLS.bind(Messages.exception_writeScript, buildFile);
-				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, message, e));
-			}
+
+			//turn off script generation so we don't overwrite the custom script
+			scriptGeneration = false;
+			
+			/* need to do root files here because we won't be doing the gatherBinParts where it normally happens */
 			List configs = getConfigInfos();
 			for (Iterator iter = configs.iterator(); iter.hasNext();) {
 				assemblyData.addRootFileProvider((Config) iter.next(), feature);
 			}
-			return;
 		}
 		if (analyseIncludedFeatures)
 			generateIncludedFeatureBuildFile();
@@ -269,6 +268,18 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		// Do the recursive generation of build files for the features required by the current feature
 		if (sourceFeatureGeneration)
 			generateSourceFeatureScripts();
+			
+		if (custom) {
+			//Feature had a custom build script, we need to update the version in it.
+			//Do it here after generateChildrenScripts since there may have been a suffix generated.
+			try {
+				updateVersion(customBuildFile, PROPERTY_FEATURE_VERSION_SUFFIX, feature.getVersionedIdentifier().getVersion().toString());
+			} catch (IOException e) {
+				message = NLS.bind(Messages.exception_writeScript, customBuildFile);
+				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_SCRIPT, message, e));
+			}	
+		}
+
 		if (scriptGeneration) {
 			openScript(featureRootLocation, DEFAULT_BUILD_SCRIPT_FILENAME);
 			try {
@@ -1242,7 +1253,24 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	protected void collectElementToAssemble(IFeature featureToCollect) throws CoreException {
-		if ((scriptGeneration == true && (assemblyData == null || getBuildProperties().get(PROPERTY_BIN_INCLUDES) == null)) || sourceFeatureGeneration)
+		if (assemblyData == null)
+			return;
+
+		/* collect binary features */
+		if (featureToCollect instanceof BuildTimeFeature && ((BuildTimeFeature) featureToCollect).isBinary()) {
+			basicCollectElementToAssemble(featureToCollect);
+			return;
+		}
+
+		// don't collect if bin.includes is empty, or we are generating source;
+		if (getBuildProperties().get(PROPERTY_BIN_INCLUDES) == null || sourceFeatureGeneration)
+			return;
+
+		basicCollectElementToAssemble(featureToCollect);
+	}
+
+	private void basicCollectElementToAssemble(IFeature featureToCollect) {
+		if (assemblyData == null)
 			return;
 		List correctConfigs = selectConfigs(featureToCollect);
 		// Here, we could sort if the feature is a common one or not by
