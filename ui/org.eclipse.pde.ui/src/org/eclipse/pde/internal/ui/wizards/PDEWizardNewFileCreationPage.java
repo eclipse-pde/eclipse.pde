@@ -11,7 +11,10 @@
 
 package org.eclipse.pde.internal.ui.wizards;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
@@ -48,6 +51,21 @@ public class PDEWizardNewFileCreationPage extends WizardNewFileCreationPage {
 		}
 		// Perform default validation
 		return super.validatePage();
-	}	
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validateLinkedResource()
+	 */
+	protected IStatus validateLinkedResource() {
+		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createLinkTarget()
+	 */
+	protected void createLinkTarget() {
+		// NOOP
+	}
+
 	
 }

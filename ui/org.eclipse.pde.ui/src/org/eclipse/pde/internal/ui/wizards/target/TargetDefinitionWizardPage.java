@@ -17,8 +17,6 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.PDECore;
@@ -26,7 +24,6 @@ import org.eclipse.pde.internal.core.TargetDefinitionManager;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
 import org.eclipse.pde.internal.core.target.TargetModel;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.target.OpenTargetProfileAction;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -163,16 +160,6 @@ public class TargetDefinitionWizardPage extends PDEWizardNewFileCreationPage {
     		fTargets.select(0);
     }
     
-    protected void createLinkTarget() {
-    }
-        
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validateLinkedResource()
-	 */
-	protected IStatus validateLinkedResource() {
-		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
-	}
-	
 	protected int getInitializationOption() {
 		if (fDefaultButton.getSelection())
 			return USE_DEFAULT;

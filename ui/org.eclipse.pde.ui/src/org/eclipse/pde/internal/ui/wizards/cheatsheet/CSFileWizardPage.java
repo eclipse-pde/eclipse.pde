@@ -11,11 +11,8 @@
 
 package org.eclipse.pde.internal.ui.wizards.cheatsheet;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage;
 import org.eclipse.swt.SWT;
@@ -136,14 +133,6 @@ public class CSFileWizardPage extends PDEWizardNewFileCreationPage {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validateLinkedResource()
-	 */
-	protected IStatus validateLinkedResource() {
-		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK,
-				"", null); //$NON-NLS-1$
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
@@ -151,10 +140,4 @@ public class CSFileWizardPage extends PDEWizardNewFileCreationPage {
 		Dialog.applyDialogFont(fGroup);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createLinkTarget()
-	 */
-	protected void createLinkTarget() {
-		// NOOP
-	}
 }
