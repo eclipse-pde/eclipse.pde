@@ -535,4 +535,16 @@ public class SchemaAttributeDetails extends AbstractSchemaDetails {
 		if (oldPage != fNotebookLayout.topControl)
 			fNotebook.layout();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
+	 */
+	public void commit(boolean onSave) {
+		super.commit(onSave);
+		// Only required for form entries
+		fName.commit();
+		fClassEntry.commit();
+		fInterfaceEntry.commit();
+		fValue.commit();
+	}	
 }

@@ -179,4 +179,13 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		}
 		return labels;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
+	 */
+	public void commit(boolean onSave) {
+		super.commit(onSave);
+		// Only required for form entries
+		fName.commit();
+	}	
 }

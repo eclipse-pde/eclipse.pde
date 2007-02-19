@@ -38,6 +38,7 @@ import org.eclipse.pde.internal.ui.editor.context.XMLInputContext;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**
  *
@@ -129,6 +130,20 @@ public class SchemaInputContext extends XMLInputContext {
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#flushEditorInput()
+	 */
+	public void flushEditorInput() {
+		// Override parent, since this editor does not utilize edit operations
+		IDocumentProvider provider = getDocumentProvider();
+		IEditorInput input = getInput();
+		IDocument doc = provider.getDocument(input);
+		provider.aboutToChange(input);
+		flushModel(doc);
+		provider.changed(input);
+		setValidated(false);
 	}
 	
 	protected boolean synchronizeModel(IDocument doc) {

@@ -187,9 +187,7 @@ public class SchemaIncludesSection extends TableSection {
 	}
 	
 	private void initialize() {
-		getTablePart().setButtonEnabled(0, getSchema().isEditable());
-		getTablePart().setButtonEnabled(1, false);
-		fViewer.setInput(getSchema().getIncludes());
+		refresh();
 	}
 	
 	private String getIncludeLocation(IFile file) {
@@ -258,5 +256,15 @@ public class SchemaIncludesSection extends TableSection {
 						PDEUIMessages.SchemaIncludesSection_missingWarningTitle,
 						NLS.bind(PDEUIMessages.SchemaIncludesSection_missingWarningMessage, includePath.toString()));
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
+	 */
+	public void refresh() {
+		getTablePart().setButtonEnabled(0, getSchema().isEditable());
+		getTablePart().setButtonEnabled(1, false);
+		fViewer.setInput(getSchema().getIncludes());
+		super.refresh();
 	}
 }

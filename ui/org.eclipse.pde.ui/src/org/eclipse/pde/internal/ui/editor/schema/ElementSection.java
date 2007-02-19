@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
@@ -368,7 +369,7 @@ public class ElementSection extends TreeSection {
 				&& e.getChangedProperty().equals(ISchemaObject.P_DESCRIPTION))
 			return;
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			markStale();
+			handleModelEventWorldChanged(e);
 			return;
 		}
 		Object[] objects = e.getChangedObjects();
@@ -445,6 +446,26 @@ public class ElementSection extends TreeSection {
 					fTreeViewer.refresh();
 			}
 		}
+	}
+
+	/**
+	 * @param event
+	 */
+	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		// Note:  Cannot use event.  There are no changed objects within it
+		// This method acts like a refresh
+		initialize();
+		// TODO: MP: REVERT: LOW: Update initialize with this once Bug #171897 is fixed
+		ISchemaElement root = fSchema.getSchema().findElement(
+				ICoreConstants.EXTENSION_NAME);
+		// Ensure the root element is present
+		if (root == null) {
+			return;
+		}
+		// Select the root extension element
+		fTreeViewer.setSelection(new StructuredSelection(root), true);
+		// Collapse tree to the first level
+		fTreeViewer.expandToLevel(1);
 	}
 
 	protected void selectionChanged(IStructuredSelection selection) {

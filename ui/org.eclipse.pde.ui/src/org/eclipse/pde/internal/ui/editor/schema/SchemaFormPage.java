@@ -115,11 +115,27 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 				if (change.length > 0 && change[0] instanceof ISchema)
 					getManagedForm().getForm().setText(((ISchema)change[0]).getName());
 			}
+		} else if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			handleModelEventWorldChanged(event);
 		}
-		if (fSection != null)
+		// Update master section
+		if (fSection != null) {
 			fSection.handleModelChanged(event);
+		}
+		// Update details section
 		IDetailsPage page = fDetailsPart.getCurrentPage();
-		if (page instanceof IModelChangedListener)
+		if (page instanceof IModelChangedListener) {
 			((IModelChangedListener)page).modelChanged(event);
+		}
+	}
+	
+	/**
+	 * @param event
+	 */
+	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		// Note:  Cannot use event.  There are no changed objects within it
+		// This method acts like a refresh
+		ISchema schema = (ISchema)getModel();
+		getManagedForm().getForm().setText(schema.getName());
 	}
 }

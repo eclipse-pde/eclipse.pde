@@ -532,6 +532,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 			// If the selected page before the revert is the same as the 
 			// selected page after the revert, then its fields will need to
 			// be updated
+			// TODO: MP: REVERT: LOW: Revisit to see if updating details page is necessary - especially after making static
 			if (currentDetailsPage.equals(previousDetailsPage) && 
 					currentDetailsPage instanceof ICSDetails) {
 				((ICSDetails)currentDetailsPage).updateFields();

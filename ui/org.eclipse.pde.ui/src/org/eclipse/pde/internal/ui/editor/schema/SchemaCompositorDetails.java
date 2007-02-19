@@ -94,4 +94,13 @@ public class SchemaCompositorDetails extends AbstractSchemaDetails {
 			}
 		});
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
+	 */
+	public void commit(boolean onSave) {
+		super.commit(onSave);
+		// Only required for form entries
+		// NO-OP
+	}	
 }
