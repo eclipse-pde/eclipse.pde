@@ -103,7 +103,7 @@ public interface ICoreConstants {
 	
 	public static final String[] TRANSLATABLE_HEADERS = new String[] {
 		Constants.BUNDLE_VENDOR, Constants.BUNDLE_NAME,
-		Constants.BUNDLE_DESCRIPTION, Constants.BUNDLE_COPYRIGHT
+		Constants.BUNDLE_DESCRIPTION, Constants.BUNDLE_COPYRIGHT, Constants.BUNDLE_CATEGORY
 	};
 	
 	// EASTER EGG
