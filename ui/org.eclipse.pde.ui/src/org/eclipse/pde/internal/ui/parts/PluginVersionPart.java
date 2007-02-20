@@ -67,7 +67,7 @@ public class PluginVersionPart {
     private void createRangeField(Composite parent, boolean createGroup, boolean editable) {
     	if (createGroup) {
     		parent = new Group(parent, SWT.NONE);
-    		((Group)parent).setText(PDEUIMessages.DependencyPropertiesDialog_groupText);
+    		((Group)parent).setText(getGroupText());
     		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     		parent.setLayout(new GridLayout(3, false));
     	}
@@ -96,7 +96,7 @@ public class PluginVersionPart {
 	private void createSingleField(Composite parent, boolean createGroup, boolean editable) {
 		if (createGroup) {
 			parent = new Group(parent, SWT.NONE);
-			((Group)parent).setText(PDEUIMessages.DependencyPropertiesDialog_groupText);
+			((Group)parent).setText(getGroupText());
 			parent.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING|GridData.FILL_HORIZONTAL));
 			parent.setLayout(new GridLayout(2, false));
 		}
@@ -216,5 +216,9 @@ public class PluginVersionPart {
 			fMinVersionText.addModifyListener(minListener);
 		if (fRangeAllowed && fMaxVersionText != null && maxListener != null)
 			fMaxVersionText.addModifyListener(maxListener);
+	}
+	
+	protected String getGroupText() {
+		return PDEUIMessages.DependencyPropertiesDialog_groupText;
 	}
 }

@@ -54,14 +54,21 @@ public class DependencyPropertiesDialog extends StatusDialog {
         this (editable, false, false, false, object.getVersion(), false, false);
     }
 
-    public DependencyPropertiesDialog(boolean editable, boolean showReexport, boolean export, boolean optional, String version, boolean showOptional, boolean rangeAllowed) {
+    public DependencyPropertiesDialog(boolean editable, boolean showReexport, boolean export, boolean optional, String version, boolean showOptional, boolean isImport) {
         super(PDEPlugin.getActiveWorkbenchShell());
         fEditable = editable;
         fShowReexport = showReexport;
         fExported = export;
         fOptional = optional;
         fShowOptional = showOptional;
-        fVersionPart = new PluginVersionPart(rangeAllowed);
+        if (isImport)
+        	fVersionPart = new PluginVersionPart(true);
+        else 
+        	fVersionPart = new PluginVersionPart(false) {
+				protected String getGroupText() {
+					return PDEUIMessages.DependencyPropertiesDialog_exportGroupText;
+				}        		
+        	};
         fVersionPart.setVersion(version);
     }
 
