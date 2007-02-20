@@ -17,9 +17,11 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.ui.templates.AbstractNewPluginTemplateWizard;
 import org.eclipse.pde.ui.templates.ITemplateSection;
+import org.eclipse.swt.widgets.Composite;
 
 public class NewPluginTemplateChoiceWizard
 	extends AbstractNewPluginTemplateWizard {
@@ -56,6 +58,20 @@ public class NewPluginTemplateChoiceWizard
         return fCandiates;
 
     }
+	
+	// calculate canFinish only on selected templateSections and the status of their pages
+    public boolean canFinish() {
+		ITemplateSection[] sections = fSelectionPage.getSelectedTemplates();
+		for (int i = 0; i < sections.length; i++) {
+			int pageCount = sections[i].getPageCount();
+			for (int j =0; j < pageCount; j++) {
+				WizardPage page = sections[i].getPage(j);
+				if (page != null && !page.isPageComplete())
+					return false;
+			}
+		}
+		return true;
+	}
 
     private void createCandidates() {
         ArrayList candidates;
@@ -85,4 +101,10 @@ public class NewPluginTemplateChoiceWizard
             PDEPlugin.log(e);
         }
     }
+
+	// by default, all pages in wizard get created.  We add all the pages from the template sections and we don't want to initialize them yet
+    // Therefore, the createPageControls only initializes the first page, allowing the other to be created as needed.
+	public void createPageControls(Composite pageContainer) {
+		fSelectionPage.createControl(pageContainer);
+	}
 }

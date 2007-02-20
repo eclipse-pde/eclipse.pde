@@ -147,10 +147,20 @@ public class TemplateSelectionPage extends WizardPage {
 		//gd.horizontalSpan = 2;
 		c.setLayoutData(gd);
 		viewer.setInput(PDEPlugin.getDefault());
+		// add all wizard pages to wizard.  Just don't iniatilize them right away (bug 174457)
+		initializeWizardPages();
 		fTablePart.selectAll(true);
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.TEMPLATE_SELECTION);
+	}
+	
+	private void initializeWizardPages() {
+		for (int i = 0; i < fCandidates.length; i++) {
+			ITemplateSection section = fCandidates[i];
+			if (section.getPagesAdded() == false)
+				section.addPages((Wizard) getWizard());
+		}
 	}
 
 	public ITemplateSection[] getSelectedTemplates() {
@@ -194,8 +204,6 @@ public class TemplateSelectionPage extends WizardPage {
 
 		for (int i = 0; i < sections.length; i++) {
 			ITemplateSection section = sections[i];
-			if (section.getPagesAdded() == false)
-				section.addPages((Wizard) getWizard());
 
 			for (int j = 0; j < section.getPageCount(); j++) {
 				fVisiblePages.add(section.getPage(j));
