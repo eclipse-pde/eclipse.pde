@@ -50,7 +50,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		public void modifyText(ModifyEvent e) {
 			if (!fBlocked) {
 				fChanged = true;
-				validatePage();
+				setPageComplete(validatePage());
 			}
 		}
 
