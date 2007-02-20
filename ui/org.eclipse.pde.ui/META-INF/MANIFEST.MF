@@ -96,7 +96,8 @@ Require-Bundle:
  org.eclipse.pde.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ltk.core.refactoring;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.variables;bundle-version="[3.1.0,4.0.0)",
- org.eclipse.compare;bundle-version="[3.2.0,4.0.0)"
+ org.eclipse.compare;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.core.filesystem
 Eclipse-LazyStart: true
 Import-Package: org.apache.lucene.demo.html,
  org.eclipse.jdt.debug.core,

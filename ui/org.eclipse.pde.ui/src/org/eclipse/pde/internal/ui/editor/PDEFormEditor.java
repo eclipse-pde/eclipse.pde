@@ -15,11 +15,12 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -63,10 +64,10 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -224,9 +225,16 @@ public abstract class PDEFormEditor extends FormEditor
 					(SystemFileEditorInput) input);
 		} else if (input instanceof IStorageEditorInput) {
 			createStorageContexts(contextManager, (IStorageEditorInput) input);
-		} else if (input instanceof ILocationProvider) {
-			IPath path = ((ILocationProvider) input).getPath(input);
-			File file = path.toFile();
+		} else if (input instanceof IURIEditorInput) {
+            IURIEditorInput uriEditorInput= (IURIEditorInput) input;
+            try {
+            	IFileStore store= EFS.getStore(uriEditorInput.getURI());
+            	if (!EFS.SCHEME_FILE.equals(store.getFileSystem().getScheme()))
+            		return;
+            } catch (CoreException e) {
+            	return;
+            }
+            File file = new File(uriEditorInput.getURI());
 			SystemFileEditorInput sinput = new SystemFileEditorInput(file);
 			createSystemFileContexts(contextManager, sinput);
 		}
