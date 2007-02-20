@@ -147,12 +147,10 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				marker.setAttribute(IMarker.MESSAGE, PDECoreMessages.ManifestConsistencyChecker_buildDoesNotExist);
 			} catch (CoreException e) {
 			}
-			
+		} else {
+			monitor.subTask(PDECoreMessages.ManifestConsistencyChecker_buildPropertiesSubtask);
+			BuildErrorReporter ber = new BuildErrorReporter(file);
+			ber.validateContent(monitor);
 		}
-			
-
-		monitor.subTask(PDECoreMessages.ManifestConsistencyChecker_buildPropertiesSubtask);
-		BuildErrorReporter ber = new BuildErrorReporter(file);
-		ber.validateContent(monitor);
 	}
 }
