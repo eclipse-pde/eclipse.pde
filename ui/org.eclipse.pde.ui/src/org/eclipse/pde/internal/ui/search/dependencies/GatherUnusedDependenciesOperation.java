@@ -292,6 +292,8 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		while (!(plugins.isEmpty())) {
 			String pluginId = (String)plugins.pop();
 			IPluginModelBase base = PluginRegistry.findModel(pluginId);
+			if (base == null)
+				continue;
 			IPluginImport[] imports = base.getPluginBase().getImports();
 			
 			for (int j = 0; j < imports.length; j++) 
