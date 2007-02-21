@@ -311,7 +311,11 @@ public class FeatureSection extends TableSection {
 	 */
 	public void modelChanged(IModelChangedEvent e) {
 		Object[] objects = e.getChangedObjects();
-		if (e.getChangeType() == IModelChangedEvent.INSERT) {
+		// No need to call super, handling world changed event here
+ 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+ 			handleModelEventWorldChanged(e);
+ 			return;
+ 		} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
 			for (int i = 0; i < objects.length; i++) {
 				if (objects[i] instanceof IProductFeature)
 					fFeatureTable.add(objects[i]);
@@ -341,6 +345,14 @@ public class FeatureSection extends TableSection {
 		}
 		updateRemoveButtons(false, true);
 	}
+	
+	/**
+	 * @param event
+	 */
+	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		fFeatureTable.setInput(PDECore.getDefault().getFeatureModelManager());
+		refresh();
+	}	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()

@@ -14,6 +14,7 @@ import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.Window;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
@@ -112,7 +113,8 @@ public class SplashSection extends PDESection {
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
-
+		// Register to be notified when the model changes
+		getModel().addModelChangedListener(this);	
 	}
 	
 	private void createProgressBarConfig(Composite parent, FormToolkit toolkit) {
@@ -243,6 +245,15 @@ public class SplashSection extends PDESection {
 		return spinner;
 	}
 	
+	/**
+	 * @param spinners
+	 */
+	private void resetSpinnerGeometry(Spinner[] spinners) {
+		for (int i = 0; i < spinners.length; i++) {
+			spinners[i].setSelection(0);
+		}		
+	}
+	
 	public void refresh() {
 		ISplashInfo info = getSplashInfo();
 		fBlockNotification = true;
@@ -253,9 +264,13 @@ public class SplashSection extends PDESection {
 		int[] pgeo = info.getProgressGeometry();
 		boolean addProgress = pgeo != null;
 		info.addProgressBar(addProgress, fBlockNotification);
-		if (addProgress)
-			for (int i = 0; i < pgeo.length; i++)
+		if (addProgress) {
+			for (int i = 0; i < pgeo.length; i++) {
 				fBarSpinners[i].setSelection(pgeo[i]);
+			}
+		} else {
+			resetSpinnerGeometry(fBarSpinners);
+		}
 		
 		fAddBarButton.setSelection(addProgress);
 		for (int i = 0; i < fBarControls.length; i++)
@@ -264,9 +279,13 @@ public class SplashSection extends PDESection {
 		int[] mgeo = info.getMessageGeometry();
 		boolean addMessage = mgeo != null;
 		info.addProgressMessage(addMessage, fBlockNotification);
-		if (addMessage)
-			for (int i = 0; i < mgeo.length; i++)
+		if (addMessage) {
+			for (int i = 0; i < mgeo.length; i++) {
 				fMessageSpinners[i].setSelection(mgeo[i]);
+			}
+		} else {
+			resetSpinnerGeometry(fMessageSpinners);
+		}
 		fColorSelector.setColorValue(
 				addMessage ?
 						hexToRGB(info.getForegroundColor()) :
@@ -351,4 +370,33 @@ public class SplashSection extends PDESection {
 				Integer.parseInt(hexValue.substring(4,6),16)
 			);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
+	 */
+	public void modelChanged(IModelChangedEvent e) {
+		// No need to call super, handling world changed event here
+ 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+ 			handleModelEventWorldChanged(e);
+ 		}		
+	}
+
+	/**
+	 * @param event
+	 */
+	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		refresh();
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
+	 */
+	public void dispose() {
+		IProductModel model = getModel();
+		if (model != null) {
+			model.removeModelChangedListener(this);
+		}
+		super.dispose();
+	}		
+	
 }

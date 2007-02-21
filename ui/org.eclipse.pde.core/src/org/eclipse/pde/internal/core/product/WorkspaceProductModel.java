@@ -21,12 +21,12 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.pde.core.IEditableModel;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.IWorkspaceModel;
 import org.eclipse.pde.internal.core.PDECore;
 
 
-public class WorkspaceProductModel extends ProductModel implements IEditableModel {
+public class WorkspaceProductModel extends ProductModel implements IWorkspaceModel {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -152,5 +152,25 @@ public class WorkspaceProductModel extends ProductModel implements IEditableMode
 	public boolean isEditable() {
 		return fEditable;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.IWorkspaceModel#reload()
+	 */
+	public void reload() {
+		// Underlying file has to exist in order to reload the model
+		if (fFile.exists()) {
+			InputStream stream = null;
+			try {
+				// Get the file contents
+				stream = new BufferedInputStream(fFile.getContents(true));
+				// Load the model using the last saved file contents
+				reload(stream, false);
+				// Remove the dirty (*) indicator from the editor window
+				setDirty(false);
+			} catch (CoreException e) {
+				// Ignore
+			} 
+		} 		
+	}	
 	
 }

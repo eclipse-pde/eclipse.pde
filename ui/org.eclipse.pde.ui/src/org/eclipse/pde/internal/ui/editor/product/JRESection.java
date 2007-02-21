@@ -17,6 +17,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.IJREInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
@@ -179,8 +180,28 @@ public class JRESection extends PDESection {
 		createTabs();
 		toolkit.paintBordersFor(client);
 		section.setClient(client);	
+		// Register to be notified when the model changes
+		getProductModel().addModelChangedListener(this);		
 	}
 
+	/**
+	 * @return
+	 */
+	private IProductModel getProductModel() {
+		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
+	 */
+	public void dispose() {
+		IProductModel model = getProductModel();
+		if (model != null) {
+			model.removeModelChangedListener(this);
+		}
+		super.dispose();
+	}	
+	
 	private void createTabs() {
 		for (int i = 0; i < TAB_LABELS.length; i++) {
 			CTabItem item = new CTabItem(fTabFolder, SWT.NULL);
@@ -263,4 +284,20 @@ public class JRESection extends PDESection {
 			fEEChoices.add(envs[i].getId()); 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
+	 */
+	public void modelChanged(IModelChangedEvent e) {
+		// No need to call super, handling world changed event here
+ 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+ 			handleModelEventWorldChanged(e);
+ 		}
+	}
+
+	/**
+	 * @param event
+	 */
+	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		refresh();
+	}		
 }

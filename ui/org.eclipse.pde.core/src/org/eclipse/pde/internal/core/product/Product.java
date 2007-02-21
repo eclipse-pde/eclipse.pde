@@ -213,13 +213,20 @@ public class Product extends ProductObject implements IProduct {
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#reset()
 	 */
 	public void reset() {
-		fAboutInfo = null;
 		fApplication = null;
 		fId = null;
 		fName = null;
+		fUseFeatures = false;
+		fAboutInfo = null;
+		fPlugins.clear();
+		fFeatures.clear();
+		fConfigIniInfo = null;
+		fWindowImages = null;
+		fSplashInfo = null;
+		fLauncherInfo = null;
+		fLauncherArgs = null;
 		fIntroInfo = null;
 		fJVMInfo = null;
-		fPlugins.clear();
 	}
 	
 	/* (non-Javadoc)

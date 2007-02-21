@@ -445,10 +445,11 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
 	public void modelChanged(IModelChangedEvent e) {
-		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			markStale();
-			return;
-		}
+		// No need to call super, handling world changed event here
+ 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+ 			handleModelEventWorldChanged(e);
+ 			return;
+ 		}
 		Object[] objects = e.getChangedObjects();
 		if (e.getChangeType() == IModelChangedEvent.INSERT) {
 			for (int i = 0; i < objects.length; i++) {
@@ -480,7 +481,15 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 		}
 		updateRemoveButtons(false, true);
 	}
-	
+
+	/**
+	 * @param event
+	 */
+	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		fPluginTable.setInput(getProduct());
+		refresh();
+	}	
+		
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */

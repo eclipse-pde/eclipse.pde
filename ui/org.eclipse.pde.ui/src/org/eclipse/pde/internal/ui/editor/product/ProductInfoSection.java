@@ -88,11 +88,11 @@ public class ProductInfoSection extends PDESection {
 		toolkit.paintBordersFor(client);
 		section.setClient(client);	
 		
-		getProductModel().addModelChangedListener(this);
+		getModel().addModelChangedListener(this);
 	}
 	
 	public void dispose() {
-		IProductModel model = getProductModel();
+		IProductModel model = getModel();
 		if (model != null)
 			model.removeModelChangedListener(this);
 		super.dispose();
@@ -245,12 +245,12 @@ public class ProductInfoSection extends PDESection {
 		super.cancelEdit();
 	}
 	
-	private IProductModel getProductModel() {
+	private IProductModel getModel() {
 		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}
 	
 	private IProduct getProduct() {
-		return getProductModel().getProduct();
+		return getModel().getProduct();
 	}
 	
 	/* (non-Javadoc)
@@ -261,12 +261,26 @@ public class ProductInfoSection extends PDESection {
 		fNameEntry.setValue(product.getName(), true);
 		refreshProductCombo(product.getId());
 		fAppCombo.setText(product.getApplication());
+		// TODO: MP: REVERT: Problem with radio buttons and extraneous fired events
+		// There is a problem here.
+		// Setting the selection on a radio button should not fire a widget
+		// selected event; but, it does when switching from this page to 
+		// another page and then back to this page again.
+		// It is some type of deferred event that is probably a result of an
+		// obscure SWT bug.  Not setting the selection programatically stops
+		// the event from firing.
 		fPluginButton.setSelection(!product.useFeatures());
 		fFeatureButton.setSelection(product.useFeatures());
 		super.refresh();
 	}
 	
 	public void modelChanged(IModelChangedEvent e) {
+		// No need to call super, handling world changed event here
+ 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+ 			handleModelEventWorldChanged(e);
+ 			return;
+ 		}		
+		
 		String prop = e.getChangedProperty();
 		if (prop == null)
 			return;
@@ -277,8 +291,14 @@ public class ProductInfoSection extends PDESection {
 		} else  if (prop.equals(IProduct.P_APPLICATION)) {
 			fAppCombo.setText(e.getNewValue().toString());			
 		}
-		super.modelChanged(e);
 	}
+	
+	/**
+	 * @param event
+	 */
+	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		refresh();
+	}	
 	
 	private void refreshProductCombo(String productId) {
 		if (fProductCombo.indexOf(productId) == -1)

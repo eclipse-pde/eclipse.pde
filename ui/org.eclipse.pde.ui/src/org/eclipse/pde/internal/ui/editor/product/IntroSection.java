@@ -20,6 +20,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -122,6 +123,8 @@ public class IntroSection extends PDESection {
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
+		// Register to be notified when the model changes
+		getModel().addModelChangedListener(this);			
 	}
 	
 	private void handleSelection() {
@@ -188,7 +191,11 @@ public class IntroSection extends PDESection {
 
 	public void refresh() {
 		String introId = getIntroInfo().getId();
-		if (introId != null) fIntroCombo.setText(introId);
+		if (introId == null) {
+			fIntroCombo.setText(""); //$NON-NLS-1$
+		} else {
+			fIntroCombo.setText(introId);
+		}
 		super.refresh();
 	}
 	
@@ -247,5 +254,33 @@ public class IntroSection extends PDESection {
 		};
 		PDEModelUtility.modifyModel(mod, null);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
+	 */
+	public void modelChanged(IModelChangedEvent e) {
+		// No need to call super, handling world changed event here
+ 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+ 			handleModelEventWorldChanged(e);
+ 		}		
+	}
+
+	/**
+	 * @param event
+	 */
+	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		refresh();
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
+	 */
+	public void dispose() {
+		IProductModel model = getModel();
+		if (model != null) {
+			model.removeModelChangedListener(this);
+		}
+		super.dispose();
+	}		
 	
 }
