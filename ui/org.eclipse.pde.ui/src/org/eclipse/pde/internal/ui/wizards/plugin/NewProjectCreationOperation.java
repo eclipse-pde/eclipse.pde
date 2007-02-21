@@ -217,6 +217,16 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 				else 
 					bundle.setHeader(ICoreConstants.ECLIPSE_LAZYSTART, "true"); //$NON-NLS-1$
 			}
+			if (fContentWizard != null) {
+				String [] newFiles = fContentWizard.getNewFiles();
+				if (newFiles != null)
+					for (int i = 0; i < newFiles.length; i++) {
+						if ("plugin.properties".equals(newFiles[i])) { //$NON-NLS-1$
+							bundle.setHeader(Constants.BUNDLE_LOCALIZATION, "plugin"); //$NON-NLS-1$
+							break;
+						}
+					}
+			}
 		} 
 	}
 
