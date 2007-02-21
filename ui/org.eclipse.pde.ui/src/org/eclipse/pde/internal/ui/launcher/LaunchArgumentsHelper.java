@@ -97,6 +97,8 @@ public class LaunchArgumentsHelper {
 	}
 
 	public static String getUserVMArguments(ILaunchConfiguration configuration) throws CoreException {
+		StringBuffer buffer = getEclipseIniArguments();
+		
 		String args = configuration.getAttribute(
 				IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, 
 				(String)null);
@@ -115,12 +117,19 @@ public class LaunchArgumentsHelper {
 				wc.doSave();			
 			}
 		}
-
-		// hack on the args from eclipse.ini here
+		
+		if(args != null && args.length() > 0)
+			buffer.append(" ").append(args); //$NON-NLS-1$
+		
+		return getSubstitutedString(buffer.toString());
+	}
+	
+	private static StringBuffer getEclipseIniArguments() {
+		// hack on the args from eclipse.ini
 		File installDirectory = new File(Platform.getInstallLocation().getURL().getFile());
 		File eclipseIniFile = new File(installDirectory, "eclipse.ini"); //$NON-NLS-1$
 		BufferedReader in = null;
-		StringBuffer buffer = new StringBuffer(args == null ? "" : args); //$NON-NLS-1$
+		StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
 		if(eclipseIniFile.exists()) {
 			try {
 				in = new BufferedReader(new FileReader(eclipseIniFile));
@@ -145,7 +154,7 @@ public class LaunchArgumentsHelper {
 					}
 			}
 		}
-		return getSubstitutedString(buffer.toString());
+		return buffer;
 	}
 
 	public static File getWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
