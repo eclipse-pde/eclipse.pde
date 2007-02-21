@@ -26,15 +26,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	private static final String FEATURE_EXECUTABLE = "org.eclipse.equinox.executable"; //$NON-NLS-1$
 	private static final String BUNDLE_OSGI = "org.eclipse.osgi"; //$NON-NLS-1$
 	private static final String BUNDLE_LAUNCHER = "org.eclipse.equinox.launcher"; //$NON-NLS-1$
-	private static final String FRAGMENT_LAUNCHER_WIN32 = "org.eclipse.equinox.launcher.win32.win32.x86"; //$NON-NLS-1$
-	private static final String FRAGMENT_LAUNCHER_MACOSX = "org.eclipse.equinox.launcher.carbon.macosx"; //$NON-NLS-1$
-	private static final String FRAGMENT_LAUNCHER_AIX = "org.eclipse.equinox.launcher.motif.aix.ppc"; //$NON-NLS-1$
-	private static final String FRAGMENT_LAUNCHER_HPUX = "org.eclipse.equinox.launcher.motif.hpux.PA_RISC"; //$NON-NLS-1$
-	private static final String FRAGMENT_LAUNCHER_SOLARIS = "org.eclipse.equinox.launcher.gtk.solaris.sparc"; //$NON-NLS-1$
-	private static final String FRAGMENT_LAUNCHER_LINUX_PPC = "org.eclipse.equinox.launcher.gtk.linux.ppc"; //$NON-NLS-1$
-	private static final String FRAGMENT_LAUNCHER_LINUX = "org.eclipse.equinox.launcher.gtk.linux.x86"; //$NON-NLS-1$
-	private static final String FRAGMENT_LAUNCHER_LINUX64 = "org.eclipse.equinox.launcher.gtk.linux.x86_64"; //$NON-NLS-1$
-			
+
 	private String featureId = null;
 	private String productFile = null;
 	private String[] pluginList = null;
@@ -170,14 +162,18 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			} else {
 				// We don't have the executable feature, at least try and get the launcher jar and fragments 
 				plugins.add(BUNDLE_LAUNCHER);
-				fragments.add(FRAGMENT_LAUNCHER_WIN32);
-				fragments.add(FRAGMENT_LAUNCHER_MACOSX);
-				fragments.add(FRAGMENT_LAUNCHER_AIX);
-				fragments.add(FRAGMENT_LAUNCHER_HPUX);
-				fragments.add(FRAGMENT_LAUNCHER_SOLARIS);
-				fragments.add(FRAGMENT_LAUNCHER_LINUX_PPC);
-				fragments.add(FRAGMENT_LAUNCHER_LINUX);
-				fragments.add(FRAGMENT_LAUNCHER_LINUX64);
+				List configs = getConfigInfos();
+				// only include the fragments for the platforms we are attempting to build, since the others
+				// probably aren't around
+				for (Iterator iterator = configs.iterator(); iterator.hasNext();) {
+					Config config = (Config) iterator.next();
+					String fragment = BUNDLE_LAUNCHER + '.' + config.getWs() + '.' + config.getOs();
+					//macosx doesn't have the arch on its fragment 
+					if (config.getOs().compareToIgnoreCase("macosx") != 0) //$NON-NLS-1$
+						fragment +=  '.' + config.getArch();
+					
+					fragments.add(fragment);
+				}
 			}
 		}
 	}
@@ -344,6 +340,11 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		if (bundle == null)
 			return true;
 	
+		// launcher fragments are a special case, they have no bundle-classpath and they must
+		//be unpacked
+		if (bundle.getHost() != null && bundle.getName().startsWith(BUNDLE_LAUNCHER))
+			return true;
+		
 		if (new File(bundle.getLocation()).isFile()) 
 			return false;
 		
