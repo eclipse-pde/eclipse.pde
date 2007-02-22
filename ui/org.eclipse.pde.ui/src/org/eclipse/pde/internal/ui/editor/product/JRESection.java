@@ -299,5 +299,14 @@ public class JRESection extends PDESection {
 	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		refresh();
+		// Note:  A deferred selection event is fired from radio buttons when
+		// their value is toggled, the user switches to another page, and the
+		// user switches back to the same page containing the radio buttons
+		// This appears to be a result of a SWT bug.
+		// If the radio button is the last widget to have focus when leaving 
+		// the page, an event will be fired when entering the page again.
+		// An event is not fired if the radio button does not have focus.
+		// The solution is to redirect focus to a stable widget.
+		getPage().setLastFocusControl(fJREsCombo.getControl());			
 	}		
 }

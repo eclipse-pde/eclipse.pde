@@ -347,6 +347,20 @@ public abstract class PDEFormPage extends FormPage {
 	}
 	
 	/**
+	 * @return
+	 */
+	public Control getLastFocusControl() {
+		return fLastFocusControl;
+	}
+	
+	/**
+	 * @param control
+	 */
+	public void setLastFocusControl(Control control) {
+		fLastFocusControl = control;
+	}
+	
+	/**
 	 * @param managedForm
 	 * @param errorTitle
 	 * @param errorMessage

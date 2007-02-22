@@ -486,7 +486,16 @@ public class PluginSection extends TableSection implements IPluginModelListener{
 	 * @param event
 	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		// This section can get disposed if the configuration is changed from
+		// plugins to features or vice versa.  Subsequently, the configuration
+		// page is removed and readded.  In this circumstance, abort the
+		// refresh		
+		if (fPluginTable.getTable().isDisposed()) {
+			return;
+		}		
+		// Reload the input
 		fPluginTable.setInput(getProduct());
+		// Perform the refresh
 		refresh();
 	}	
 		

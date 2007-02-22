@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.forms.IFormColors;
+import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormText;
@@ -261,14 +262,6 @@ public class ProductInfoSection extends PDESection {
 		fNameEntry.setValue(product.getName(), true);
 		refreshProductCombo(product.getId());
 		fAppCombo.setText(product.getApplication());
-		// TODO: MP: REVERT: Problem with radio buttons and extraneous fired events
-		// There is a problem here.
-		// Setting the selection on a radio button should not fire a widget
-		// selected event; but, it does when switching from this page to 
-		// another page and then back to this page again.
-		// It is some type of deferred event that is probably a result of an
-		// obscure SWT bug.  Not setting the selection programatically stops
-		// the event from firing.
 		fPluginButton.setSelection(!product.useFeatures());
 		fFeatureButton.setSelection(product.useFeatures());
 		super.refresh();
@@ -297,8 +290,43 @@ public class ProductInfoSection extends PDESection {
 	 * @param event
 	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		// Store selection before refresh
+		boolean previousFeatureSelected = fFeatureButton.getSelection();
+		// Perform the refresh
 		refresh();
+		// Note:  A deferred selection event is fired from radio buttons when
+		// their value is toggled, the user switches to another page, and the
+		// user switches back to the same page containing the radio buttons
+		// This appears to be a result of a SWT bug.
+		// If the radio button is the last widget to have focus when leaving 
+		// the page, an event will be fired when entering the page again.
+		// An event is not fired if the radio button does not have focus.
+		// The solution is to redirect focus to a stable widget.
+		getPage().setLastFocusControl(fNameEntry.getText());		
+		// Revert the configuration page if necessary
+		revertConfigurationPage(previousFeatureSelected);			
 	}	
+	
+	/**
+	 * @param previousFeatureSelected
+	 */
+	private void revertConfigurationPage(boolean previousFeatureSelected) {
+		// Compare selection from before and after the refresh
+		boolean currentFeatureSelected = fFeatureButton.getSelection();
+		if (previousFeatureSelected == currentFeatureSelected) {
+			// No update required
+			return;
+		}
+		// The configuration page needs to be updated
+		IFormPage currentPage = getPage().getEditor().getActivePageInstance();
+		// If the current page is the configuration page, switch to the 
+		// overview page before doing the update; otherwise, widget disposed
+		// errors may result
+		if (currentPage instanceof ConfigurationPage) {
+			getPage().getEditor().setActivePage(OverviewPage.PAGE_ID);
+		}
+		((ProductEditor)getPage().getEditor()).updateConfigurationPage();
+	}
 	
 	private void refreshProductCombo(String productId) {
 		if (fProductCombo.indexOf(productId) == -1)

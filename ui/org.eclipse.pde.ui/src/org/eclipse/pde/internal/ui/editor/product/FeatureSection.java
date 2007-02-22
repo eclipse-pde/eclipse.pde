@@ -350,7 +350,16 @@ public class FeatureSection extends TableSection {
 	 * @param event
 	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		// This section can get disposed if the configuration is changed from
+		// plugins to features or vice versa.  Subsequently, the configuration
+		// page is removed and readded.  In this circumstance, abort the
+		// refresh		
+		if (fFeatureTable.getTable().isDisposed()) {
+			return;
+		}
+		// Reload the input
 		fFeatureTable.setInput(PDECore.getDefault().getFeatureModelManager());
+		// Perform the refresh
 		refresh();
 	}	
 	
