@@ -265,17 +265,18 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 			HashSet set = new HashSet();
 			IAdaptable[] elements = fWorkingSet.getElements();
 			for (int i = 0; i < elements.length; i++) {
-				set.add(((PersistablePluginObject)elements[i]).getPluginID());
+				if (elements[i] instanceof PersistablePluginObject)
+					set.add(((PersistablePluginObject)elements[i]).getPluginID());
 			}
 
-			for (int i = 0; i < fTree.getCheckboxTreeViewer().getTree().getItemCount(); i++) {
+			IPluginModelBase[] bases = PluginRegistry.getAllModels();
+			for (int i = 0; i < bases.length; i++) {
 
-				IPluginModelBase model = (IPluginModelBase)fTree.getCheckboxTreeViewer().getTree().getItem(i);
-				String id = model.getPluginBase().getId();
+				String id = bases[i].getPluginBase().getId();
 				if (id == null)
 					continue;
 				if (set.contains(id)) {
-					fTree.getCheckboxTreeViewer().setChecked(model, true);
+					fTree.getCheckboxTreeViewer().setChecked(bases[i], true);
 					set.remove(id);
 				}
 				if (set.isEmpty())
