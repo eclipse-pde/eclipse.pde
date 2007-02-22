@@ -102,4 +102,16 @@ public class PersistablePluginObject extends PlatformObject implements
 		return fgContainmentAdapter;
 	}
 
+	public boolean equals(Object arg0) {
+		if (arg0 instanceof PersistablePluginObject) {
+			String id = ((PersistablePluginObject)arg0).fPluginID;
+			return (fPluginID != null) ? fPluginID.equals(id) : id == null;
+		}
+		return false;
+	}
+
+	public int hashCode() {
+		return fPluginID.hashCode();
+	}
+
 }
