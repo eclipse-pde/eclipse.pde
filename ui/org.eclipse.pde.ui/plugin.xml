@@ -1299,6 +1299,7 @@
    <extension
          point="org.eclipse.ui.workingSets">
       <workingSet
+            elementAdapterClass="org.eclipse.pde.internal.ui.util.PluginAdapter"
             icon="$nl$/icons/obj16/plugin_obj.gif"
             name="%Plugin.WorkingSet"
             pageClass="org.eclipse.pde.internal.ui.util.PluginWorkingSet"
