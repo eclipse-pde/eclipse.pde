@@ -25,6 +25,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
@@ -248,8 +249,15 @@ public class ExtensionPointDetails extends PDEDetails {
 		fRichText.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				IBaseModel model = getPage().getPDEEditor().getAggregateModel();
-				String pluginID = ((IPluginModelBase)model).getPluginBase().getId();
-				String pointID = pluginID + "." + fInput.getId(); //$NON-NLS-1$
+				String pointID = null;
+				IPluginBase base = ((IPluginModelBase)model).getPluginBase();
+				String pluginID = base.getId();
+				if (Double.parseDouble(base.getSchemaVersion()) >= 3.2) {
+					if (fInput.getId().indexOf('.') != -1) 
+						pointID = fInput.getId();
+				}
+				if (pointID == null)
+					pointID = pluginID + "." + fInput.getId(); //$NON-NLS-1$
 				if (e.getHref().equals("search")) { //$NON-NLS-1$
 					new FindReferencesAction(fInput, pluginID).run();
 				} else if (e.getHref().equals("open")) { //$NON-NLS-1$
