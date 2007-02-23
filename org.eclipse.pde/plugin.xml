@@ -18,7 +18,7 @@
             content="$nl$/intro/samplesExtensionContent2.xml"/>
       <configExtension
             configId="org.eclipse.ui.intro.universalConfig"
-            content="$nl$/intro/newsExtensionContent.xml"/> 
+            content="$nl$/intro/whatsnewExtensionContent.xml"/> 
    </extension>
 
    <extension 

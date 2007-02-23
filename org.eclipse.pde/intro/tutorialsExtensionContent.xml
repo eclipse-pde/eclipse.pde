@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <introContent>
   <!-- Extension to the SDK Tutorial Page. -->
-  <extensionContent id="org.eclipse.pde" name="PDE" alt-style="css/swt.properties" style="css/tutorials.css" path="tutorials/@">
+  <extensionContent id="org.eclipse.pde" name="PDE" alt-style="css/tutorials.properties" style="css/tutorials.css" path="tutorials/@">
     <group label="Eclipse Plug-in Development" id="pde" style-id="content-group">
       <link url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&amp;input=org.eclipse.pde.helloworld" 
             label="Create an Eclipse plug-in" 

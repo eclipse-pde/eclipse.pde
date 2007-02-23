@@ -1,17 +1,11 @@
-#swt .content-link img {
-	background-image : url(graphics/obj_48/samplered_obj.gif);
-}
+a#swt-examples img { background-image : url(../../images/topiclabel/sa_samplecube48.gif); }
+a#swt-examples:hover img { background-image : url(../../images/topiclabel/sa_samplecube48_hov.gif); }
 
-#swt .content-link:hover img {
-	background-image : url(graphics/obj_48/sampleredhov_obj.gif);
-}
+a#multi-page-editor img { background-image : url(../../images/topiclabel/sa_sampleorb48.gif); }
+a#multi-page-editor:hover img { background-image : url(../../images/topiclabel/sa_sampleorb48_hov.gif); }
 
-#workbench .content-link img {
-	background-image : url(graphics/obj_48/samplepurp_obj.gif);
-}
+a#property-sheet img { background-image : url(../../images/topiclabel/sa_sampleorb48.gif); }
+a#property-sheet:hover img { background-image : url(../../images/topiclabel/sa_sampleorb48_hov.gif); }
 
-#workbench .content-link:hover img {
-	background-image : url(graphics/obj_48/samplepurphov_obj.gif);
-}
-
-
+a#readmetool img { background-image : url(../../images/topiclabel/sa_sampleorb48.gif); }
+a#readmetool:hover img { background-image : url(../../images/topiclabel/sa_sampleorb48_hov.gif); }
