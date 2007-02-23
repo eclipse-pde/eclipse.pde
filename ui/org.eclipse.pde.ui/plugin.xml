@@ -1016,11 +1016,14 @@
                <with variable="selection">
                   <count value="1"/>
                	  <iterate>
+               	     <and>
+               	  	 <test property="org.eclipse.debug.ui.projectNature" value="org.eclipse.pde.PluginNature"/>
                      <adapt type="org.eclipse.jdt.core.IJavaElement">
 		                <test property="org.eclipse.jdt.core.isInJavaProject"/>
 		                <test property="org.eclipse.jdt.core.hasTypeOnClasspath" value="junit.framework.Test"/>
 		                <test property="org.eclipse.jdt.junit.canLaunchAsJUnit" forcePluginActivation="true"/>
 		             </adapt>
+		             </and>
 		          </iterate>
                </with>
             </enablement>
@@ -1063,7 +1066,6 @@
 	                  <count value="1"/>
 	                  <iterate>
 		                  <test property="org.eclipse.debug.ui.projectNature" value="org.eclipse.pde.PluginNature"/>
-                   		  <adapt type="org.eclipse.core.resources.IProject"/>
 		              </iterate>
 		            </and>
 		            <count value="0"/>
