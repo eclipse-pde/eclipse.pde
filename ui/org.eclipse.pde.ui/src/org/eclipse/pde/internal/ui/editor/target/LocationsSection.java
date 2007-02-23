@@ -174,7 +174,7 @@ public class LocationsSection extends TableSection {
 	 */
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			markStale();
+			handleModelEventWorldChanged(e);
 			return;
 		}
 		Object[] objects = e.getChangedObjects();
@@ -195,6 +195,16 @@ public class LocationsSection extends TableSection {
 			fContentViewer.refresh();
 		}
 	}
+
+	/**
+	 * @param event
+	 */
+	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		// Reload input
+		fContentViewer.setInput(getTarget());
+		// Perform the refresh
+		refresh();
+	}		
 	
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {

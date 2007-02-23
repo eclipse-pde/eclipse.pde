@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.target;
 
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.itarget.IArgumentsInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
@@ -119,7 +120,28 @@ public class ArgumentsSection extends PDESection {
 		createTabs();
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
+		
+		// Register to be notified when the model changes
+		getModel().addModelChangedListener(this);		
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
+	 */
+	public void modelChanged(IModelChangedEvent e) {
+		// No need to call super, handling world changed event here
+ 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+ 			handleModelEventWorldChanged(e);
+ 		}
+	}
+	
+	/**
+	 * @param event
+	 */
+	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		// Perform the refresh
+		refresh();
+	}		
 	
 	private void createTabs() {
 		for (int i = 0; i < TAB_LABELS.length; i++) {
@@ -173,6 +195,10 @@ public class ArgumentsSection extends PDESection {
 	}
 	
 	public void dispose() {
+		ITargetModel model = getModel();
+		if (model != null) {
+			model.removeModelChangedListener(this);
+		}
 		if (fImage != null)
 			fImage.dispose();
 		super.dispose();

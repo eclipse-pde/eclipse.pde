@@ -18,6 +18,7 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.itarget.IEnvironmentInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
@@ -185,7 +186,39 @@ public class EnvironmentSection extends PDESection {
 		
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
+		
+		// Register to be notified when the model changes
+		getModel().addModelChangedListener(this);		
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
+	 */
+	public void modelChanged(IModelChangedEvent e) {
+		// No need to call super, handling world changed event here
+ 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+ 			handleModelEventWorldChanged(e);
+ 		}
+	}
+	
+	/**
+	 * @param event
+	 */
+	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		// Perform the refresh
+		refresh();
+	}		
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
+	 */
+	public void dispose() {
+		ITargetModel model = getModel();
+		if (model != null) {
+			model.removeModelChangedListener(this);
+		}
+		super.dispose();
+	}	
 	
 	private void initializeChoices(IEnvironmentInfo orgEnv) {
 		fOSChoices = new TreeSet();

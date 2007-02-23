@@ -15,6 +15,7 @@ import java.util.TreeSet;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetJRE;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
@@ -45,6 +46,7 @@ public class JRESection extends PDESection {
 	private ComboPart fExecEnvsCombo;
 	private TreeSet fExecEnvChoices;
 	private boolean fBlockChanges;
+	private Button fConfigureJREButton;
 	
 	private static String JRE_PREF_PAGE_ID = "org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"; //$NON-NLS-1$
 	private static String EE_PREF_PAGE_ID = "org.eclipse.jdt.debug.ui.jreProfiles"; //$NON-NLS-1$
@@ -101,8 +103,8 @@ public class JRESection extends PDESection {
 			}
 		});
 		
-		Button configureJREButton = toolkit.createButton(client, PDEUIMessages.JRESection_jrePreference, SWT.PUSH);
-		configureJREButton.addSelectionListener(new SelectionAdapter() {
+		fConfigureJREButton = toolkit.createButton(client, PDEUIMessages.JRESection_jrePreference, SWT.PUSH);
+		fConfigureJREButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				openPreferencePage(JRE_PREF_PAGE_ID);
 			}
@@ -137,7 +139,48 @@ public class JRESection extends PDESection {
 		configureEEButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
 		section.setClient(client);
+		
+		// Register to be notified when the model changes
+		getModel().addModelChangedListener(this);			
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
+	 */
+	public void modelChanged(IModelChangedEvent e) {
+		// No need to call super, handling world changed event here
+ 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+ 			handleModelEventWorldChanged(e);
+ 		}
+	}
+	
+	/**
+	 * @param event
+	 */
+	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		// Perform the refresh
+		refresh();
+		// Note:  A deferred selection event is fired from radio buttons when
+		// their value is toggled, the user switches to another page, and the
+		// user switches back to the same page containing the radio buttons
+		// This appears to be a result of a SWT bug.
+		// If the radio button is the last widget to have focus when leaving 
+		// the page, an event will be fired when entering the page again.
+		// An event is not fired if the radio button does not have focus.
+		// The solution is to redirect focus to a stable widget.
+		getPage().setLastFocusControl(fConfigureJREButton);			
+	}		
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
+	 */
+	public void dispose() {
+		ITargetModel model = getModel();
+		if (model != null) {
+			model.removeModelChangedListener(this);
+		}
+		super.dispose();
+	}	
 	
 	protected void initializeValues() {
 		fExecEnvChoices = new TreeSet();

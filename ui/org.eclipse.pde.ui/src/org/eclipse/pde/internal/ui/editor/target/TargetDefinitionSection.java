@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.editor.target;
 
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.window.Window;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.itarget.ILocationInfo;
 import org.eclipse.pde.internal.core.itarget.ITarget;
 import org.eclipse.pde.internal.core.itarget.ITargetModel;
@@ -76,7 +77,48 @@ public class TargetDefinitionSection extends PDESection {
 		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
 		data.colspan = 2;
 		section.setLayoutData(data);
+		
+		// Register to be notified when the model changes
+		getModel().addModelChangedListener(this);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
+	 */
+	public void dispose() {
+		ITargetModel model = getModel();
+		if (model != null) {
+			model.removeModelChangedListener(this);
+		}
+		super.dispose();
+	}		
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
+	 */
+	public void modelChanged(IModelChangedEvent e) {
+		// No need to call super, handling world changed event here
+ 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+ 			handleModelEventWorldChanged(e);
+ 		}
+	}
+	
+	/**
+	 * @param event
+	 */
+	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		// Perform the refresh
+		refresh();
+		// Note:  A deferred selection event is fired from radio buttons when
+		// their value is toggled, the user switches to another page, and the
+		// user switches back to the same page containing the radio buttons
+		// This appears to be a result of a SWT bug.
+		// If the radio button is the last widget to have focus when leaving 
+		// the page, an event will be fired when entering the page again.
+		// An event is not fired if the radio button does not have focus.
+		// The solution is to redirect focus to a stable widget.
+		getPage().setLastFocusControl(fNameEntry.getText());	
+	}		
 	
 	private void createNameEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
 		fNameEntry = new FormEntry(client, toolkit, PDEUIMessages.TargetDefinitionSection_name, null, false); 

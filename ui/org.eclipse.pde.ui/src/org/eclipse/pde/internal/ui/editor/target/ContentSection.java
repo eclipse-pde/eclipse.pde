@@ -531,7 +531,7 @@ public class ContentSection extends TableSection {
 	 */
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			markStale();
+			handleModelEventWorldChanged(e);
 			return;
 		}
 		Object[] objects = e.getChangedObjects();
@@ -570,6 +570,16 @@ public class ContentSection extends TableSection {
 		if (e.getChangedProperty() == ITarget.P_ALL_PLUGINS)
 			refresh();
 	}
+	
+	/**
+	 * @param event
+	 */
+	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		// Reload input
+		fContentViewer.setInput(PDECore.getDefault().getModelManager());
+		// Perform the refresh
+		refresh();
+	}		
 	
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {

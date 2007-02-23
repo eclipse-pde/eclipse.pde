@@ -212,7 +212,7 @@ public class ImplicitDependenciesSection extends TableSection {
 	 */
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			markStale();
+			handleModelEventWorldChanged(e);
 			return;
 		}
 		if (e.getChangeType() == IModelChangedEvent.CHANGE && 
@@ -225,6 +225,25 @@ public class ImplicitDependenciesSection extends TableSection {
 				fViewer.add(plugins[i]);
 		}
 	}
+	
+	/**
+	 * @param event
+	 */
+	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+		// Reload input
+		fViewer.setInput(getTarget());
+		// Perform the refresh
+		refresh();
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
+	 */
+	public void refresh() {
+		fViewer.refresh();
+		updateButtons();
+		super.refresh();
+	}	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.TableSection#handleDoubleClick(org.eclipse.jface.viewers.IStructuredSelection)
