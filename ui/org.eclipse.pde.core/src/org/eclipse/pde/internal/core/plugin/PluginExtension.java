@@ -13,11 +13,8 @@ package org.eclipse.pde.internal.core.plugin;
 import java.io.PrintWriter;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
@@ -40,21 +37,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 	public boolean isValid() {
 		return fPoint != null;
 	}
-	
-	public String getId() {
-		String pointId = fID;
-		IPluginModelBase modelBase = getPluginModel();
-		IPluginBase pluginBase = modelBase.getPluginBase();
-		if ("3.2".equals(pluginBase.getSchemaVersion())) { //$NON-NLS-1$
-			if (pointId.indexOf('.') > 0)
-				return pointId;
-		}
 		
-		if (pluginBase instanceof IFragment)
-			return ((IFragment) pluginBase).getPluginId() + '.' + pointId;
-		return pluginBase.getId() + '.' + pointId;
-	}
-	
 	public Object getSchema() {
 		if (schema == null) {
 			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();

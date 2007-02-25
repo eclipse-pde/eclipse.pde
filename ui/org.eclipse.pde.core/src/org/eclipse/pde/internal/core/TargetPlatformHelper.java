@@ -30,6 +30,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -176,12 +178,11 @@ public class TargetPlatformHelper {
 		for (int i = 0; i < plugins.length; i++) {
 			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
 			for (int j = 0; j < extensions.length; j++) {
-				String point = extensions[j].getPoint();
-				if (point != null && point.equals("org.eclipse.core.runtime.applications")) { //$NON-NLS-1$
-					String id = extensions[j].getId();
-					if (id != null && id.trim().length() > 0 
-							&& !id.startsWith("org.eclipse.pde.junit.runtime")) { //$NON-NLS-1$
-						result.add(id);		
+				if ("org.eclipse.core.runtime.applications".equals(extensions[j].getPoint())) { //$NON-NLS-1$
+					if (extensions[j].getId() != null) {
+						String id = getFullId(extensions[j]);
+					    if (!id.startsWith("org.eclipse.pde.junit.runtime"))  //$NON-NLS-1$
+					    	result.add(getFullId(extensions[j]));		
 					}
 				}
 			}
@@ -194,14 +195,26 @@ public class TargetPlatformHelper {
 		return (String[])result.toArray(new String[result.size()]);
 	}
 	
+	public static String getFullId(IPluginExtension extension) {
+		String id = extension.getId();
+		IPluginBase plugin = extension.getPluginBase();
+		if ("3.2".equals(plugin.getSchemaVersion())) { //$NON-NLS-1$
+			if (id.indexOf('.') > 0)
+				return id;
+		}
+		
+		if (plugin instanceof IFragment)
+			return ((IFragment) plugin).getPluginId() + '.' + id;
+		return plugin.getId() + '.' + id;
+	}
+
 	public static TreeSet getProductNameSet() {
 		TreeSet result = new TreeSet();
 		IPluginModelBase[] plugins = PluginRegistry.getAllModels();
 		for (int i = 0; i < plugins.length; i++) {
 			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
 			for (int j = 0; j < extensions.length; j++) {
-				String point = extensions[j].getPoint();
-				if (point != null && point.equals("org.eclipse.core.runtime.products")) {//$NON-NLS-1$
+				if ("org.eclipse.core.runtime.products".equals(extensions[j].getPoint())) {//$NON-NLS-1$
 					IPluginObject[] children = extensions[j].getChildren();
 					if (children.length != 1)
 						continue;
@@ -209,7 +222,7 @@ public class TargetPlatformHelper {
 						continue;
 					String id = extensions[j].getId();
 					if (id != null && id.trim().length() > 0) {
-						result.add(id);	
+						result.add(getFullId(extensions[j]));	
 					}
 				}
 			}
