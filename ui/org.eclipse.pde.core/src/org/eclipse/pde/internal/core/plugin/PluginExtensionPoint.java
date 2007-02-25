@@ -27,7 +27,7 @@ public class PluginExtensionPoint extends IdentifiablePluginObject
 	protected String fSchema;
 	
 	public boolean isValid() {
-		return id != null && fName != null;
+		return fID != null && fName != null;
 	}
 
 	public String getFullId() {
@@ -49,7 +49,7 @@ public class PluginExtensionPoint extends IdentifiablePluginObject
 	}
 	
 	void load(Node node) {
-		this.id = getNodeAttribute(node, "id"); //$NON-NLS-1$
+		this.fID = getNodeAttribute(node, "id"); //$NON-NLS-1$
 		fName = getNodeAttribute(node, "name"); //$NON-NLS-1$
 		fSchema = getNodeAttribute(node, "schema"); //$NON-NLS-1$
 		fStartLine = Integer.parseInt(getNodeAttribute(node, "line")); //$NON-NLS-1$

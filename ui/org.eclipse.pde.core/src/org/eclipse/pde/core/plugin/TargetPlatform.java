@@ -46,8 +46,7 @@ public class TargetPlatform {
 	private static String SDK_PRODUCT = "org.eclipse.sdk.ide"; //$NON-NLS-1$
 	private static String PLATFORM_PRODUCT = "org.eclipse.platform.ide"; //$NON-NLS-1$
 	
-	private static String IDE_APPLICATION_LEGACY = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
-	private static String IDE_APPLICATION = "org.eclipse.ui.ide.application.workbench"; //$NON-NLS-1$
+	private static String IDE_APPLICATION = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 	
 	/**
 	 * Returns the target platform's main location as specified on the <b>Environment</b>
@@ -178,11 +177,8 @@ public class TargetPlatform {
 	 * (<code>org.eclipse.core.runtime.applications</code> extension) for the current target
 	 * platform.  
 	 * <p>
-	 * If none could be determined, then <code>org.eclipse.ui.ide.application.workbench</code>
-	 * application is returned if the target platform uses the new application model.
-	 * </p>
-	 * <p>
-	 * As a last resort, the legacy <code>org.eclipse.ui.ide.workbench</code> application is returned.
+	 * If none could be determined, then <code>org.eclipse.ui.ide.workbench</code>
+	 * application is returned.
 	 * </p>
 	 * @return the default application to run when launching an Eclipse application
 	 */
@@ -195,10 +191,11 @@ public class TargetPlatform {
 				return application;
 		}
 
-		if (set.contains(IDE_APPLICATION))
-			return IDE_APPLICATION;
+		//TODO remove after 3.3M6
+		if (set.contains("org.eclipse.ui.ide.application.workbench")) //$NON-NLS-1$
+			return "org.eclipse.ui.ide.application.workbench"; //$NON-NLS-1$
 		
-		return IDE_APPLICATION_LEGACY;
+		return IDE_APPLICATION;
 	}
 	
 	/**

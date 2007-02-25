@@ -43,7 +43,7 @@ public class PluginImport
 		try {
 			setModel(model);
 			ensureModelEditable();
-			this.id = id;
+			this.fID = id;
 		} catch (CoreException e) {
 		}
 	}
@@ -69,11 +69,11 @@ public class PluginImport
 	}
 
 	public void load(BundleDescription description) {
-		this.id = description.getSymbolicName();
+		this.fID = description.getSymbolicName();
 	}
 	
 	public void load(ManifestElement element, int bundleManifestVersion) {
-		this.id = element.getValue();
+		this.fID = element.getValue();
 		if (bundleManifestVersion >= 2) {
 			this.optional = Constants.RESOLUTION_OPTIONAL.equals(element.getDirective(Constants.RESOLUTION_DIRECTIVE));
 			this.reexported = Constants.VISIBILITY_REEXPORT.equals(element.getDirective(Constants.VISIBILITY_DIRECTIVE));
@@ -94,7 +94,7 @@ public class PluginImport
 	}
 	
 	public void load(BundleSpecification importModel) {
-		this.id = importModel.getName();
+		this.fID = importModel.getName();
 		this.reexported = importModel.isExported();
 		this.optional = importModel.isOptional();
 		VersionRange versionRange = importModel.getVersionRange();
@@ -152,7 +152,7 @@ public class PluginImport
 			}
 		}
 		this.version = version;
-		this.id = id;
+		this.fID = id;
 		this.reexported = reexport;
 		this.optional = optional;
 	}

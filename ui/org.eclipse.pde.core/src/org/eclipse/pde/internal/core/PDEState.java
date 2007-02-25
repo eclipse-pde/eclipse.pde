@@ -235,6 +235,8 @@ public class PDEState extends MinimalState {
  	
  	private IPluginModelBase createWorkspaceModel(BundleDescription desc) {
  		String projectName = fAuxiliaryState.getProject(desc.getBundleId());
+ 		if (projectName == null)
+ 			return null;
  		IProject project = PDECore.getWorkspace().getRoot().getProject(projectName);
  		if (!project.exists())
  			return null;
