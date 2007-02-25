@@ -119,8 +119,8 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 			IPluginExtension extension = extensions[i];
 			if ("org.eclipse.core.runtime.applications".equals(extension.getPoint())) { //$NON-NLS-1$
 				String extensionID = extension.getId();
-				if (extensionID != null && extensionID.trim().length() > 0) {
-					result.add(id.trim() + "." + extensionID.trim()); //$NON-NLS-1$
+				if (extensionID != null) {
+					result.add(TargetPlatformHelper.getFullId(extensions[i]));
 				}
 			}
 		}
@@ -141,7 +141,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 						if (prod.getName().equals("product")) { //$NON-NLS-1$
 							IPluginAttribute attr = prod.getAttribute("application"); //$NON-NLS-1$
 							if (attr != null && appName.equals(attr.getValue())) {
-								return fModel.getPluginBase().getId() + "." + ext.getId(); //$NON-NLS-1$
+								return TargetPlatformHelper.getFullId(ext);
 							}
 						}
 					}
