@@ -1953,8 +1953,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String BaseImportWizardSecondPage_autobuild;
 
-	public static String CreateHelpIndexAction_creating;
-
 	public static String ExportPackageVisibilitySection_unconditional;
 
 	public static String ExportPackageSection_props;
@@ -2515,26 +2513,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String ProductExportWizardPage_exportOptionsGroup;
 
-	public static String XHTMLConversionWizard_title;
-
-	public static String GetUnconvertedAction_noAction;
-
-	public static String GetUnconvertedAction_message;
-
-	public static String XHTMLConversionOperation_taskName;
-
-	public static String XHTMLConversionWizardPage_title;
-
-	public static String XHTMLConversionWizardPage_desc;
-
-	public static String XHTMLConversionWizardPage_selectAll;
-
-	public static String XHTMLConversionWizardPage_deselectAll;
-
-	public static String XHTMLConversionWizardPage_viewerLabel;
-
-	public static String XHTMLConversionOperation_createXHTML;
-
 	public static String TargetProfileWizardPage_groupTitle;
 
 	public static String TargetProfileWizardPage_blankTarget;
@@ -2574,14 +2552,6 @@ public class PDEUIMessages extends NLS {
 	public static String TargetPluginsTab_groupPlugins;
 
 	public static String CompilersConfigurationTab_buildPropertiesErrors;
-
-	public static String XHTMLConversionOperation_failed;
-
-	public static String XHTMLConversionOperation_1prob;
-
-	public static String XHTMLConversionOperation_multiProb;
-
-	public static String XHTMLConversionOperation_title;
 
 	public static String PluginsView_description;
 
