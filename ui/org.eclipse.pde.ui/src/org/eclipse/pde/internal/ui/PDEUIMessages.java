@@ -1703,15 +1703,6 @@ public class PDEUIMessages extends NLS {
 	public static String SynchronizePropertiesWizardPage_allFeatures;
 	public static String SynchronizePropertiesWizardPage_synchronizing;
 
-	//Migration Wizard#############################
-	public static String MigrationWizard_title;
-	public static String MigrationAction_find;
-	public static String MigrationAction_none;
-	public static String MigrationWizard_progress;
-	public static String MigrationWizardPage_desc;
-	public static String MigrationWizardPage_label;
-	public static String MigrationWizard_update;
-
 	public static String PDEFormPage_help;
 	public static String GeneralInfoSection_id;
 	public static String GeneralInfoSection_name;
@@ -1763,7 +1754,6 @@ public class PDEUIMessages extends NLS {
 	public static String ShowSampleAction_msgDesc;
 	public static String SelfHostingPropertyPage_label;
 	public static String SelfHostingPropertyPage_viewerLabel;
-	public static String MigratePluginWizard_cleanProjects;
 	public static String RuntimePage_tabName;
 	public static String ApplicationSelectionDialog_debug;
 	public static String ApplicationSelectionDialog_run;

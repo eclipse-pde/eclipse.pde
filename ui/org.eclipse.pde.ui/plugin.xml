@@ -522,9 +522,6 @@
                   name="group0">
             </separator>
             <separator
-                  name="group1">
-            </separator>
-            <separator
                   name="group2">
             </separator>
          </menu>
@@ -551,14 +548,6 @@
                menubarPath="org.eclipse.pde.ui.plugin.tools/group0"
                enablesFor="+"
                id="org.eclipse.pde.ui.OrganizeManifest"> 
-         </action>
-         <action
-               label="%MigrationAction.label"
-               class="org.eclipse.pde.internal.ui.wizards.tools.MigrationAction"
-               helpContextId="org.eclipse.pde.doc.user.migrate_action"
-               menubarPath="org.eclipse.pde.ui.plugin.tools/group1"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.MigrationAction1">
          </action>
 
          <action
@@ -628,9 +617,6 @@
                   name="group0">
             </separator>
             <separator
-                  name="group1">
-            </separator>
-            <separator
                   name="group2">
             </separator>
          </menu>
@@ -650,14 +636,6 @@
                enablesFor="+"
                id="org.eclipse.pde.ui.ExternalizeStrings">
          </action> 
-         <action
-               label="%MigrationAction.label"
-               class="org.eclipse.pde.internal.ui.wizards.tools.MigrationAction"
-               helpContextId="org.eclipse.pde.doc.user.migrate_action"
-               menubarPath="org.eclipse.pde.ui.fragment.tools/group1"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.MigrationAction2">
-         </action>
          <action
                label="%popupMenus.buildFragment.label"
                helpContextId="org.eclipse.pde.doc.user.create_fragment_jars"
@@ -783,10 +761,7 @@
             <separator
                   name="group0">
             </separator>
-            <separator
-                  name="group1">
-            </separator>
-            <separator
+             <separator
                   name="group2">
             </separator>
          </menu>
@@ -834,14 +809,6 @@
                enablesFor="+"
                id="org.eclipse.pde.ui.OpenManifestAction"> 
          </action> 
-         <action
-               label="%MigrationAction.label"
-               class="org.eclipse.pde.internal.ui.wizards.tools.MigrationAction"
-               helpContextId="org.eclipse.pde.doc.user.migrate_action"
-               menubarPath="org.eclipse.pde.ui.project.tools/group1"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.MigrationAction3">
-         </action>
          <action
                label="%convert.html.xhtml"
                helpContextId="org.eclipse.pde.doc.user.xhtmlConverter"
