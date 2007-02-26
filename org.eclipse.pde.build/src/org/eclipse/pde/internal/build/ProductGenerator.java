@@ -360,18 +360,30 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		try {
 			writer = new PrintWriter(new FileWriter(new File(dir, launcher + ".ini"))); //$NON-NLS-1$
 			if (programArgs != null && programArgs.length() > 0) {
-				StringTokenizer tokenizer = new StringTokenizer(programArgs);
-				while (tokenizer.hasMoreTokens()) {
-					writer.print(tokenizer.nextToken());
+				StringReader reader = new StringReader(programArgs);
+				StreamTokenizer tokenizer = new StreamTokenizer(reader);
+				tokenizer.resetSyntax();
+				tokenizer.whitespaceChars(0,0x20);
+				tokenizer.wordChars(0x21, 0xFF);
+				tokenizer.quoteChar('"');
+				tokenizer.quoteChar('\'');
+				while (tokenizer.nextToken() != StreamTokenizer.TT_EOF){
+					writer.print(tokenizer.sval);
 					writer.print(lineDelimiter);
 				}
 			}
 			if (vmArgs != null && vmArgs.length() > 0) {
 				writer.print("-vmargs"); //$NON-NLS-1$
 				writer.print(lineDelimiter);
-				StringTokenizer tokenizer = new StringTokenizer(vmArgs);
-				while (tokenizer.hasMoreTokens()) {
-					writer.print(tokenizer.nextToken());
+				StringReader reader = new StringReader(vmArgs);
+				StreamTokenizer tokenizer = new StreamTokenizer(reader);
+				tokenizer.resetSyntax();
+				tokenizer.whitespaceChars(0,0x20);
+				tokenizer.wordChars(0x21, 0xFF);
+				tokenizer.quoteChar('"');
+				tokenizer.quoteChar('\'');
+				while (tokenizer.nextToken() != StreamTokenizer.TT_EOF){
+					writer.print(tokenizer.sval);
 					writer.print(lineDelimiter);
 				}
 			}
