@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.logview;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -31,6 +33,7 @@ public class LogViewLabelProvider
 	private Image errorImage;
 	private Image warningImage;
 	private Image errorWithStackImage;
+	ArrayList consumers = new ArrayList();
 
 	public LogViewLabelProvider() {
 		errorImage = PDERuntimePluginImages.DESC_ERROR_ST_OBJ.createImage();
@@ -40,12 +43,14 @@ public class LogViewLabelProvider
 		errorWithStackImage = PDERuntimePluginImages.DESC_ERROR_STACK_OBJ.createImage();
 	}
 	public void dispose() {
-		errorImage.dispose();
-		infoImage.dispose();
-		okImage.dispose();
-		warningImage.dispose();
-		errorWithStackImage.dispose();
-		super.dispose();
+		if (consumers.size() == 0){
+			errorImage.dispose();
+			infoImage.dispose();
+			okImage.dispose();
+			warningImage.dispose();
+			errorWithStackImage.dispose();
+			super.dispose();
+		}
 	}
 	public Image getColumnImage(Object element, int columnIndex) {
 		LogEntry entry = (LogEntry) element;
@@ -88,5 +93,17 @@ public class LogViewLabelProvider
 			}
 		}
 		return ""; //$NON-NLS-1$
+	}
+
+	public void connect(Object consumer) {
+		if (!consumers.contains(consumer))
+			consumers.add(consumer);
+	}
+	
+	public void disconnect(Object consumer) {
+		consumers.remove(consumer);
+		if (consumers.size() == 0) {
+			dispose();
+		}
 	}
 }

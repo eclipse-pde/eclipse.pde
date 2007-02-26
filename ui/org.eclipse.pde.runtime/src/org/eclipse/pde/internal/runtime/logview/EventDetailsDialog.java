@@ -97,8 +97,9 @@ public class EventDetailsDialog extends TrayDialog {
 	 */
 	protected EventDetailsDialog(Shell parentShell, IAdaptable selection, ISelectionProvider provider, Comparator comparator) {
 		super(parentShell);
-		labelProvider = new LogViewLabelProvider();
 		this.provider = (TreeViewer) provider;
+		labelProvider = (LogViewLabelProvider)this.provider.getLabelProvider();
+		labelProvider.connect(this);
 		this.entry = (LogEntry)selection;
 		this.comparator = comparator;
 		setShellStyle(SWT.MODELESS | SWT.MIN | SWT.MAX | SWT.RESIZE | SWT.CLOSE | SWT.BORDER | SWT.TITLE);
@@ -189,6 +190,7 @@ public class EventDetailsDialog extends TrayDialog {
 		imgCopyEnabled.dispose();
 		imgNextEnabled.dispose();
 		imgPrevEnabled.dispose();
+		labelProvider.disconnect(this);
 		return super.close();
 	}
 

@@ -146,6 +146,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 	private Tree fTree;
 	private TreeViewer fTreeViewer;
+	private LogViewLabelProvider fLabelProvider;
 
 	private Action fPropertiesAction;
 	private Action fDeleteLogAction;
@@ -392,7 +393,8 @@ public class LogView extends ViewPart implements ILogListener {
 		fTree.setLinesVisible(true);
 		createColumns(fTree);
 		fTreeViewer.setContentProvider(new LogViewContentProvider(this));
-		fTreeViewer.setLabelProvider(new LogViewLabelProvider());
+		fTreeViewer.setLabelProvider(fLabelProvider = new LogViewLabelProvider());
+		fLabelProvider.connect(this);
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
 				handleSelectionChanged(e.getSelection());
@@ -492,6 +494,7 @@ public class LogView extends ViewPart implements ILogListener {
 		if (fTextShell != null)
 			fTextShell.dispose();	
 		LogReader.reset();
+		fLabelProvider.disconnect(this);
 		super.dispose();
 	}
 
