@@ -23,13 +23,15 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class FormFilteredTree extends FilteredTree {
 	
+	private FormToolkit toolkit;
+	
 	public FormFilteredTree(Composite parent, int treeStyle,
 			PatternFilter filter) {
 		super(parent, treeStyle, filter);
 	}
 	
 	protected void createControl(Composite parent, int treeStyle) {
-		
+		toolkit = new FormToolkit(parent.getDisplay());
 		GridLayout layout = FormLayoutFactory.createClearGridLayout(false, 1);
 		// Space between filter text field and tree viewer
 		layout.verticalSpacing = 3;
@@ -52,8 +54,13 @@ public class FormFilteredTree extends FilteredTree {
         createTreeControl(treeComposite, treeStyle); 
 	}
 
+	public void dispose() {
+		toolkit.dispose();
+		toolkit = null;
+		super.dispose();
+	}
+
 	protected Text doCreateFilterText(Composite parent) {
-		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 		Text text = new Text(parent, SWT.SINGLE | toolkit.getBorderStyle());
 		toolkit.paintBordersFor(text.getParent());
 		setBackground(toolkit.getColors().getBackground());
@@ -61,7 +68,6 @@ public class FormFilteredTree extends FilteredTree {
 	}
 
 	protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
-		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
 		TreeViewer viewer = new TreeViewer(parent, toolkit.getBorderStyle());
 		toolkit.paintBordersFor(viewer.getTree().getParent());
 		return viewer;
