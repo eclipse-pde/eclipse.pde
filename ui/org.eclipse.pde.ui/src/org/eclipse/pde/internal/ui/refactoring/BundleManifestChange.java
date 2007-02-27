@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
@@ -32,11 +34,13 @@ import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BasePackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
+import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.PDEManifestElement;
 import org.eclipse.pde.internal.core.text.bundle.PackageObject;
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
@@ -146,6 +150,20 @@ public class BundleManifestChange {
 					renamePackage(bundle.getManifestHeader(Constants.IMPORT_PACKAGE), 
 							oldText, 
 							newText);
+				} else if (element instanceof IProject) {
+					BundleSymbolicNameHeader header = (BundleSymbolicNameHeader)bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
+					// can't check the id to the project name.  Must run Id calculation code incase project name has invalid OSGi chars
+					String calcProjectId = IdUtil.getValidId(((IProject)element).getName());
+					String oldText = header.getId();
+					if (!oldText.equals(calcProjectId))
+						continue;
+					// remember to create a valid OSGi Bundle-SymbolicName.  Project name does not have that garuntee
+					String newId = IdUtil.getValidId(newText);
+					header.setId(newId);
+					// at this point, neither the project or file will exist.  
+					// The project/resources get refactored before the TextChange is applied, therefore we need their future locations
+					IProject newProject = ((IWorkspaceRoot)file.getProject().getParent()).getProject(newText);
+					file = newProject.getFile("META-INF/MANIFEST.MF");
 				}
 			}
 			return createChange(listener, file);
