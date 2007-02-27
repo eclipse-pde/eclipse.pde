@@ -12,16 +12,29 @@ package org.eclipse.pde.internal.ui.refactoring;
 
 import java.util.HashMap;
 
+import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.text.bundle.BundleModel;
+import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
+import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.MultiTextEdit;
+import org.osgi.framework.Constants;
 
 public class ContainerRenameParticipant extends PDERenameParticipant {
 
@@ -50,11 +63,53 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 		if (fElements.size() == 1 && fElements.keySet().iterator().next() instanceof IProject) {
 			if (!getArguments().getUpdateReferences())
 				return null;
-			CompositeChange result = new CompositeChange(PDEUIMessages.ContainerRenameParticipant_renameBundleId);
-			addBundleManifestChange(result, pm);
-			return result;
+			return createManifestChange(pm);
 		}
 		return super.createChange(pm);
 	}
 
+	protected Change createManifestChange(IProgressMonitor monitor) throws CoreException {
+		IFile manifest = fProject.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+		if (manifest.exists()) {
+			monitor.beginTask("", 2); //$NON-NLS-1$
+			try {
+				String newText = (String)fElements.get(fProject);
+				CompositeChange result = new CompositeChange(PDEUIMessages.ContainerRenameParticipant_renameBundleId);
+				IBundle bundle = BundleManifestChange.getBundle(manifest, new SubProgressMonitor(monitor, 1));
+				if (bundle != null) {
+					BundleTextChangeListener listener = new BundleTextChangeListener(((BundleModel)bundle.getModel()).getDocument());
+					bundle.getModel().addModelChangedListener(listener);
+
+					BundleSymbolicNameHeader header = (BundleSymbolicNameHeader)bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
+					// can't check the id to the project name.  Must run Id calculation code incase project name has invalid OSGi chars
+					String calcProjectId = IdUtil.getValidId(fProject.getName());
+					String oldText = header.getId();
+					// don't update Bundle-SymbolicName if the id and project name don't match
+					if (!oldText.equals(calcProjectId))
+						return null;
+					// remember to create a valid OSGi Bundle-SymbolicName.  Project name does not have that garuntee
+					String newId = IdUtil.getValidId(newText);
+					header.setId(newId);
+					// at this point, neither the project or file will exist.  
+					// The project/resources get refactored before the TextChange is applied, therefore we need their future locations
+					IProject newProject = ((IWorkspaceRoot)manifest.getProject().getParent()).getProject(newText);
+
+					MovedTextFileChange change = new MovedTextFileChange("", newProject.getFile("META-INF/MANIFEST.MF"), manifest); //$NON-NLS-1$ //$NON-NLS-2$
+					MultiTextEdit edit = new MultiTextEdit();
+					edit.addChildren(listener.getTextOperations());
+					change.setEdit(edit);
+					result.add(change);
+					return result;
+				}
+			} catch (CoreException e) {
+			} catch (MalformedTreeException e) {
+			} catch (BadLocationException e) {
+			} finally {
+				FileBuffers.getTextFileBufferManager().disconnect(manifest.getFullPath(), new SubProgressMonitor(monitor, 1));
+				monitor.done();
+			}
+		}
+		return null;
+	}
+	
 }
