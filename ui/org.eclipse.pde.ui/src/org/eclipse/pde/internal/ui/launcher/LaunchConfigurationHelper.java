@@ -95,6 +95,9 @@ public class LaunchConfigurationHelper {
 			// if target's config.ini does not exist, lets try to fill in default values
 			if (properties == null)
 				properties = new Properties();
+			// keep properties only if we are launching the default product (bug 175437)
+			else if (productID == null || !productID.equals(properties.get("eclipse.product"))) //$NON-NLS-1$
+				properties.clear();
 			// if target's config.ini has the osgi.bundles header, then parse and compute the proper osgi.bundles value
 			String bundleList = properties.getProperty("osgi.bundles"); //$NON-NLS-1$
 			if (bundleList != null)
@@ -128,7 +131,7 @@ public class LaunchConfigurationHelper {
 			properties.setProperty("osgi.configuration.cascaded", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!properties.containsKey("osgi.framework")) //$NON-NLS-1$
 			properties.setProperty("osgi.framework", "org.eclipse.osgi"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (productID != null && !productID.equals(properties.get("eclipse.product"))) //$NON-NLS-1$
+		if (!properties.containsKey("osgi.splashPath") && productID != null) //$NON-NLS-1$
 			addSplashLocation(properties, productID, map);
 		// if osgi.splashPath is set, try to resolve relative paths to absolute paths
 		if (properties.containsKey("osgi.splashPath")) //$NON-NLS-1$
@@ -318,39 +321,39 @@ public class LaunchConfigurationHelper {
 		return index == -1 ? productID : productID.substring(0, index);
 	}
 	
-	public static String getProductID(ILaunchConfiguration configuration) throws CoreException {
-		String result = null;
+	public static String getProductID(ILaunchConfiguration configuration)
+			throws CoreException {
 		if (configuration.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
-			result = configuration.getAttribute(IPDELauncherConstants.PRODUCT, (String)null);
-		} else {
-			// find the product associated with the application, and return its contributing plug-in
-			String appID = configuration.getAttribute(IPDELauncherConstants.APPLICATION, TargetPlatform.getDefaultApplication());
-			IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
-			for (int i = 0; i < plugins.length; i++) {
-				String id = plugins[i].getPluginBase().getId();
-				IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
-				for (int j = 0; j < extensions.length; j++) {
-					String point = extensions[j].getPoint();
-					String extId = extensions[j].getId();
-					if ("org.eclipse.core.runtime.products".equals(point) && extId != null) {//$NON-NLS-1$
-						IPluginObject[] children = extensions[j].getChildren();
-						if (children.length != 1)
-							continue;
-						if (!"product".equals(children[0].getName())) //$NON-NLS-1$
-							continue;
-						if (appID.equals(((IPluginElement)children[0]).getAttribute("application").getValue())) { //$NON-NLS-1$
-							result = id + "." + extId; //$NON-NLS-1$
-							break;
-						}
+			return configuration.getAttribute(IPDELauncherConstants.PRODUCT,
+					(String) null);
+		}
+
+		// find the product associated with the application, and return its
+		// contributing plug-in
+		String appID = configuration.getAttribute(IPDELauncherConstants.APPLICATION,
+				TargetPlatform.getDefaultApplication());
+		IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
+		for (int i = 0; i < plugins.length; i++) {
+			String id = plugins[i].getPluginBase().getId();
+			IPluginExtension[] extensions = plugins[i].getPluginBase().getExtensions();
+			for (int j = 0; j < extensions.length; j++) {
+				String point = extensions[j].getPoint();
+				String extId = extensions[j].getId();
+				if ("org.eclipse.core.runtime.products".equals(point) && extId != null) {//$NON-NLS-1$
+					IPluginObject[] children = extensions[j].getChildren();
+					if (children.length != 1)
+						continue;
+					if (!"product".equals(children[0].getName())) //$NON-NLS-1$
+						continue;
+					if (appID.equals(((IPluginElement) children[0]).getAttribute(
+							"application").getValue())) { //$NON-NLS-1$
+						return id + "." + extId; //$NON-NLS-1$
 					}
 				}
 			}
 		}
-		if (result != null)
-			return result;
-		
-		Properties properties = TargetPlatformHelper.getConfigIniProperties();
-		return properties == null ? null : properties.getProperty("eclipse.product"); //$NON-NLS-1$
+		return null;
+
 	}
 
 }
