@@ -50,7 +50,7 @@ public class BuildTimeFeatureFactory extends BaseFeatureFactory implements IFeat
 			if (newVersion != null){
 				//a feature version ending in qualifier using context will be further modified based on its included plugins				
 				if (feature.getFeatureVersion().endsWith(PROPERTY_QUALIFIER) && (qualifier == null || qualifier.equalsIgnoreCase(PROPERTY_CONTEXT))) {
-					int idx = feature.getFeatureVersion().lastIndexOf(PROPERTY_QUALIFIER);
+					int idx = feature.getFeatureVersion().lastIndexOf("."); //$NON-NLS-1$
 					((BuildTimeFeature)feature).setContextQualifierLength(newVersion.length() - idx - 1);
 				}
 				((BuildTimeFeature) feature).setFeatureVersion(newVersion);
