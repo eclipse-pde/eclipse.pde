@@ -958,7 +958,7 @@ public class FeatureBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		Properties properties = getBuildProperties();
 		int significantDigits = getIntProperty((String) properties.get(PROPERTY_SIGNIFICANT_VERSION_DIGITS), Integer.MAX_VALUE);
-		int maxGeneratedLength = getIntProperty((String) properties.get(PROPERTY_GENERATED_VERSION_LENGTH), 30);
+		int maxGeneratedLength = getIntProperty((String) properties.get(PROPERTY_GENERATED_VERSION_LENGTH), 28);
 
 		long majorSum = 0L;
 		long minorSum = 0L;
