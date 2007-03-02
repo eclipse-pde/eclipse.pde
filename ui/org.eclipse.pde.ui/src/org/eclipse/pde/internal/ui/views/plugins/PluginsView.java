@@ -67,6 +67,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
 import org.eclipse.pde.internal.ui.editor.SystemFileEditorInput;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
+import org.eclipse.pde.internal.ui.refactoring.RenamePluginAction;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.pde.internal.ui.views.dependencies.OpenDependenciesAction;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -78,6 +79,7 @@ import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
@@ -115,6 +117,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 	private Action fSelectDependentAction;
 	private Action fSelectInJavaSearchAction;
 	private Action fSelectAllAction;
+	private RenamePluginAction fRefactorAction;
     private CollapseAllAction fCollapseAllAction;
 	private ShowInWorkspaceAction fShowInNavigatorAction;
 	private ShowInWorkspaceAction fShowInPackagesAction;
@@ -267,6 +270,21 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 	private void registerGlobalActions(IActionBars actionBars) {
 		actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(),
             fSelectAllAction);
+		actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(), 
+			new Action() {
+				public void run() {
+					IStructuredSelection selection = (IStructuredSelection)fTreeViewer.getSelection();
+					if (selection.size() == 1) {
+						Object element = selection.getFirstElement();
+						if (element instanceof IPluginModelBase) {
+							fRefactorAction.setPlugin((IPluginModelBase)element);
+							fRefactorAction.run();
+							return;
+						}
+					}
+					Display.getDefault().beep();
+				}
+		});
 	}
 	private void makeActions() {
 		fClipboard = new Clipboard(fTreeViewer.getTree().getDisplay());
@@ -394,6 +412,8 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
         fCollapseAllAction = new CollapseAllAction();
 
 		fOpenClassFileAction = new OpenAction(getViewSite());
+		
+		fRefactorAction = new RenamePluginAction();
 	}
 
 	private FileAdapter getSelectedFile() {
@@ -431,6 +451,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 		IStructuredSelection selection =
 			(IStructuredSelection) fTreeViewer.getSelection();
 
+		boolean allowRefactoring = false;
 		if (selection.size() == 1) {
 			Object sobj = selection.getFirstElement();
 			boolean addSeparator = false;
@@ -439,7 +460,9 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
                 File file = new File(model.getInstallLocation());
                 if (file.isFile() || model.getUnderlyingResource() != null) {
                     manager.add(fOpenAction);
-                }
+                } 
+                if (model.getUnderlyingResource() != null)
+                	allowRefactoring = true;
             }
 			if (sobj instanceof FileAdapter
 				&& ((FileAdapter) sobj).isDirectory() == false) {
@@ -504,6 +527,11 @@ public class PluginsView extends ViewPart implements IPluginModelListener{
 		selectionMenu.add(fSelectInJavaSearchAction);
 		selectionMenu.add(fSelectAllAction);
 		manager.add(new Separator());
+		if (allowRefactoring) {
+			fRefactorAction.setPlugin((IPluginModelBase)selection.getFirstElement());
+			manager.add(fRefactorAction);
+			manager.add(new Separator());
+		}
 		fDrillDownAdapter.addNavigationActions(manager);
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}

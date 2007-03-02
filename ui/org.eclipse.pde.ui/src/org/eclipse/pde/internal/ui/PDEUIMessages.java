@@ -241,6 +241,34 @@ public class PDEUIMessages extends NLS {
 
 	public static String PointSelectionPage_cannotFindTemplate;
 
+	public static String RenamePluginAction_label;
+
+	public static String RenamePluginProcessor_changeTitle;
+
+	public static String RenamePluginProcessor_externalBundleError;
+
+	public static String RenamePluginProcessor_noManifestError;
+
+	public static String RenamePluginProcessor_processorName;
+
+	public static String RenamePluginProcessor_renameProjectDesc;
+
+	public static String RenamePluginWizardPage_idNotSet;
+
+	public static String RenamePluginWizardPage_invalidId;
+
+	public static String RenamePluginWizardPage_newId;
+
+	public static String RenamePluginWizardPage_renameProject;
+
+	public static String RenamePluginWizardPage_updateReferences;
+
+	public static String RenameProjectChange_name;
+
+	public static String RenameProjectChange_projectDoesNotExist;
+
+	public static String RenameProjectChange_taskTitle;
+
 	public static String SimpleCSCommandDetails_msgFieldDisabledCommand;
 
 	public static String SimpleCSItemDetails_msgFieldDisabledOptional;
