@@ -134,7 +134,8 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 	public void removeAllSelectionChangedListeners() {
 		// Remove the tree listener added by our parent for our parent:
 		// org.eclipse.ui.views.contentoutline.ContentOutlinePage
-		viewer.removeSelectionChangedListener(this);
+		if (viewer != null)
+			viewer.removeSelectionChangedListener(this);
 		// Remove all current listeners
 		for (int i = 0; i < fListenerList.size(); i++) {
 			super.removeSelectionChangedListener(
