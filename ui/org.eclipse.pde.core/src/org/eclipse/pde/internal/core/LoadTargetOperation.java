@@ -307,11 +307,17 @@ public class LoadTargetOperation implements IWorkspaceRunnable {
 	
 	private URL[] getURLs(String targetLocation, List additionalLocations) {
 		int length = additionalLocations.size();
-		File[] locations = new File[length + 1];
+		File[] locations = new File[2 * length + 2];
 		ListIterator li = additionalLocations.listIterator();
-		while (li.hasNext()) 
-			locations[length--] = new File((String)li.next(), "plugins"); //$NON-NLS-1$
-		locations[0] = new File(targetLocation, "plugins"); //$NON-NLS-1$
+		while (li.hasNext())  {
+			File dir = new File((String)li.next());
+			locations[2 *length] = dir;
+			locations[2 * length + 1] = new File(dir, "plugins"); //$NON-NLS-1$
+			--length;
+		}
+		File targetDir = new File(targetLocation);
+		locations[0] = new File(targetLocation);
+		locations[1] = new File(targetDir, "plugins"); //$NON-NLS-1$
 		return PluginPathFinder.scanLocations(locations);
 	}
 	
