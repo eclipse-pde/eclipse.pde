@@ -25,7 +25,6 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.build.IBuild;
@@ -252,7 +251,6 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 	 */
 	public void linkActivated(HyperlinkEvent e) {
 		String href = (String) e.getHref();
-		IStructuredSelection selection = new StructuredSelection(getPDEEditor().getCommonProject());
 		// try page references
 		if (href.equals("dependencies")) //$NON-NLS-1$
 			getEditor().setActivePage(DependenciesPage.PAGE_ID);
@@ -282,7 +280,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 		} else if (href.equals("organize")) { //$NON-NLS-1$
 			getEditor().doSave(null);
 			OrganizeManifestsAction organizeAction = new OrganizeManifestsAction();
-			organizeAction.selectionChanged(null, selection);
+			organizeAction.selectionChanged(null, new StructuredSelection(getPDEEditor().getCommonProject()));
 			organizeAction.run(null);
 		} else if (href.startsWith("launchShortcut.")) { //$NON-NLS-1$
 			href = href.substring(15);
@@ -298,7 +296,7 @@ public class OverviewPage extends PDEFormPage implements IHyperlinkListener {
 				if (id.equals(elements[i].getAttribute("id"))) //$NON-NLS-1$
 					try {
 						ILaunchShortcut shortcut = (ILaunchShortcut)elements[i].createExecutableExtension("class"); //$NON-NLS-1$
-						shortcut.launch(selection, mode);
+						shortcut.launch(new StructuredSelection(getPDEEditor().getCommonProject()), mode);
 					} catch (CoreException e1) {
 					}
 			}
