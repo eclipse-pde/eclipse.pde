@@ -52,17 +52,12 @@ public class EditorUtilities {
 	static class ValidationMessage {
 		String fMessage;
 		int fSeverity = IMessageProvider.WARNING;
-		boolean fShowField = true;
 		ValidationMessage(String message) {
 			fMessage = message;
 		}
 		ValidationMessage(String message, int severity) {
 			this(message);
 			fSeverity = severity;
-		}
-		ValidationMessage(String message, int severity, boolean ignoreField) {
-			this(message, severity);
-			fShowField = ignoreField;
 		}
 	}
 	
@@ -93,7 +88,7 @@ public class EditorUtilities {
 		} catch (IOException e) {
 			message = PDEUIMessages.EditorUtilities_invalidFilePath;
 		}
-		handleMessage(validator, message, IMessageProvider.WARNING, true, provider);
+		validator.addMessage(message, IMessageProvider.WARNING);
 		return null;
 	}
 	
@@ -124,8 +119,9 @@ public class EditorUtilities {
 			break;
 		}
 		
-		if (ms != null)
-			handleMessage(validator, ms.fMessage, ms.fSeverity, ms.fShowField, provider);
+		if (ms != null) {
+			validator.addMessage(ms.fMessage, ms.fSeverity);
+		}
 		
 		return ms == null;
 	}
@@ -192,7 +188,7 @@ public class EditorUtilities {
 			}
 		}
 		if (sb.length() > 0)
-			return new ValidationMessage(sb.toString(), -1, false);
+			return new ValidationMessage(sb.toString(), -1);
 		return null;
 	}
 
@@ -296,26 +292,5 @@ public class EditorUtilities {
 		} catch (PartInitException e) {
 		}		
 	}
-	
-	/**
-	 * @param validator
-	 * @param message
-	 * @param severity
-	 * @param writeField
-	 * @param provider
-	 */
-	public static void handleMessage(IValidatorMessageHandler validator,
-			String message, int severity, boolean writeField, FormEntry provider) {
-		if (message != null) {
-			StringBuffer sb = new StringBuffer();
-			if (writeField) {
-				sb.append(provider.getText().getText());
-				sb.append(" - "); //$NON-NLS-1$
-			}
-			sb.append(message);
-			// Delegate message handling 
-			validator.addMessage(sb.toString(), severity);
-		}
-	}	
-	
+
 }

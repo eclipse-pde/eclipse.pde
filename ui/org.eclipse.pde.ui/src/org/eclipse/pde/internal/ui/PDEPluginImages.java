@@ -101,6 +101,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_CSITEM_OBJ = create(PATH_OBJ, "cheatsheet_item_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CSSUBITEM_OBJ = create(PATH_OBJ, "cheatsheet_subitem_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CSINTRO_OBJ = create(PATH_OBJ, "cheatsheet_intro_obj.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CSCONCLUSION_OBJ = create(PATH_OBJ, "cheatsheet_conclusion_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CSUNSUPPORTED_OBJ = create(PATH_OBJ, "cheatsheet_unsupported_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CHEATSHEET_OBJ = create(PATH_OBJ, "cheatsheet_obj.gif"); //$NON-NLS-1$
 	
