@@ -278,6 +278,7 @@ public abstract class SyntaxColorTab {
 	}
 	
 	public void dispose() {
+		fSourceViewerConfiguration.dispose();
 	}
 	
 	protected abstract IDocument getDocument();
