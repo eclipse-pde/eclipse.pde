@@ -55,10 +55,6 @@ public class EditorUtilities {
 		ValidationMessage(String message) {
 			fMessage = message;
 		}
-		ValidationMessage(String message, int severity) {
-			this(message);
-			fSeverity = severity;
-		}
 	}
 	
 	static class ValidationInfo {
@@ -188,7 +184,7 @@ public class EditorUtilities {
 			}
 		}
 		if (sb.length() > 0)
-			return new ValidationMessage(sb.toString(), -1);
+			return new ValidationMessage(sb.toString());
 		return null;
 	}
 
@@ -211,8 +207,7 @@ public class EditorUtilities {
 							getSizeString(width, height)));
 		else if (width > wwidth || height > wheight)
 			return new ValidationMessage(
-					NLS.bind(PDEUIMessages.EditorUtilities_imageTooLargeInfo, getSizeString(wwidth, wheight)),
-						IMessageProvider.INFORMATION);
+					NLS.bind(PDEUIMessages.EditorUtilities_imageTooLargeInfo, getSizeString(wwidth, wheight)));
 		return null;
 	}
 	
