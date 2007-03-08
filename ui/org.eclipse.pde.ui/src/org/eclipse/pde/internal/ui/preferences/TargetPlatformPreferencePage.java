@@ -409,6 +409,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			IFile file = (IFile)dialog.getFirstResult();
 			try {
 				addWorkspaceTarget(file);
+				fLoadProfileButton.setEnabled(!fProfileCombo.getText().equals("")); //$NON-NLS-1$
 			} catch (CoreException e) {
 			}
 		}
@@ -624,6 +625,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	
 	public void resetTargetProfile() {
 		fProfileCombo.select(0);
+		fLoadProfileButton.setEnabled(false);
 	}
 
 	public TargetSourceTab getSourceBlock() {
