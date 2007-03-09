@@ -94,8 +94,7 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 	
 	protected void generateFiles(IProgressMonitor monitor) throws CoreException {
 		super.generateFiles(monitor);
-		if (copyBrandingDirectory())
-			super.generateFiles(monitor, Activator.getDefault().getBundle().getEntry("branding/")); //$NON-NLS-1$
+		super.generateFiles(monitor, Activator.getDefault().getBundle().getEntry("branding/")); //$NON-NLS-1$
 	}
 	
 	protected boolean copyBrandingDirectory() {
