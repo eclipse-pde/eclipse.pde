@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.commands;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -20,7 +21,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.FormDialog;
 import org.eclipse.ui.forms.IManagedForm;
@@ -40,27 +40,70 @@ public class CommandComposerDialog extends FormDialog {
 		fCCP.setPresetCommand(preselectedCommand);
 	}
 	
-	protected Control createContents(Composite parent) {
-		Control control = super.createContents(parent);
-		fOKButton = getButton(IDialogConstants.OK_ID);
-		fOKButton.setEnabled(fCCP.getPresetCommand() != null);
-		return control;
-	}
-	
 	protected void createFormContent(IManagedForm mform) {
 		ScrolledForm form = mform.getForm();
 		mform.getToolkit().decorateFormHeading(form.getForm());
 		initializeDialogUnits(form);
 		fCCP.createCC(form, mform.getToolkit(), new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				if (fOKButton != null) {
-					Object obj = event.getSelection();
-					fOKButton.setEnabled(obj instanceof IStructuredSelection &&
-							((IStructuredSelection)obj).getFirstElement() instanceof Command);
-				}
+				updateOkButtonEnablement(event.getSelection());
 			}
 		});
 		applyDialogFont(form);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+	 */
+	protected void createButtonsForButtonBar(Composite parent) {
+		super.createButtonsForButtonBar(parent);
+		// Update the button enablement only after the button is created
+		fOKButton = getButton(IDialogConstants.OK_ID);
+		
+		CommandList list = fCCP.getCommandList();
+		// Ensure the tree viewer was created
+		if (list == null) {
+			updateOkButtonEnablement(false);
+			return;
+		}
+		// Retrieve the current selection
+		ISelection selection = list.getSelection();
+		// Update the OK button based on the current selection
+		updateOkButtonEnablement(selection);
+	}
+	
+	/**
+	 * @param selection
+	 */
+	private void updateOkButtonEnablement(Object selection) {
+		// Ensure there is a selection
+		if (selection == null) {
+			updateOkButtonEnablement(false);
+			return;
+		}
+		// Ensure the selection is structured
+		if ((selection instanceof IStructuredSelection) == false) {
+			updateOkButtonEnablement(false);
+			return;
+		}
+		IStructuredSelection sSelection = (IStructuredSelection)selection;
+		// Ensure the selection is a command
+		if (sSelection.getFirstElement() instanceof Command) {
+			// Enable button
+			updateOkButtonEnablement(true);
+			return;
+		}
+		// Disable button
+		updateOkButtonEnablement(false);		
+	}
+	
+	/**
+	 * @param enabled
+	 */
+	private void updateOkButtonEnablement(boolean enabled) {
+		if (fOKButton != null) {
+			fOKButton.setEnabled(enabled);
+		}
 	}
 	
 	protected void configureShell(Shell newShell) {

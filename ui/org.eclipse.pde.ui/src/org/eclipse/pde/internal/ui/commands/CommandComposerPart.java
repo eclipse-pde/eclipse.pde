@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.commands;
 import java.util.HashMap;
 
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -159,6 +160,10 @@ public class CommandComposerPart implements ISelectionChangedListener {
 	}
 
 	public void selectionChanged(SelectionChangedEvent event) {
+		// Clear the previous error message (if any)
+		// Field input value is lost on selection any way
+		setMessage(null, IMessageProvider.NONE);
+		
 		Object selectionObject = null;
 		// if preselection exists use that
 		if (fPC != null)
@@ -183,4 +188,10 @@ public class CommandComposerPart implements ISelectionChangedListener {
 		return fPC;
 	}
 
+	/**
+	 * @return
+	 */
+	public CommandList getCommandList() {
+		return fCommandList;
+	}
 }
