@@ -414,7 +414,8 @@ public class CompCSMasterTreeSection extends TreeSection implements
 					file.getName(),
 					file.getName(), 
 					swriter.toString(),
-					file.getLocationURI().toURL());
+					file.getLocationURI().toURL(),
+					false);
 			openAction.run();
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
