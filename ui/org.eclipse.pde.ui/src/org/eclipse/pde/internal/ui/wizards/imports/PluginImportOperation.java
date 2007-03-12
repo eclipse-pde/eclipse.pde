@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Stack;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IContainer;
@@ -849,8 +850,20 @@ public class PluginImportOperation extends JarImportOperation {
 			importArchive(project, srcFile, srcPath);
 		}
 	}
-	
 
-
+	protected void collectNonJavaResources(ZipFileStructureProvider provider,
+			Object element, ArrayList collected) {
+		super.collectNonJavaResources(provider, element, collected);
+		// filter the resources we get back to include only relevant resource files
+		ListIterator li = collected.listIterator();
+		while (li.hasNext()) {
+			ZipEntry ze = (ZipEntry)li.next();
+			String name = ze.getName();
+			// filter out signature files - bug 175756
+			if (name.startsWith("META-INF/") && (name.endsWith(".RSA") || name.endsWith(".DSA") || name.endsWith(".SF"))) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				li.remove(); 
+			// can remove .classpath and .project files if necessary
+		}
+	}
 	
 }
