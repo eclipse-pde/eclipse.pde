@@ -188,8 +188,18 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType()==IModelChangedEvent.CHANGE) {
 			Object obj = e.getChangedObjects()[0];
-			if (obj.equals(input))
-				refresh();
+			if (obj.equals(input)) {
+				// do smart update (update only the row whose property changed
+				String property = e.getChangedProperty();
+				if (property != null) {
+					for (int i = 0; i < rows.size(); i++) {
+						ExtensionAttributeRow row = (ExtensionAttributeRow) rows.get(i);
+						if (row.getAttribute().getName().equals(property) && !row.hasFocus())
+							row.setInput(input);
+					}
+				} else 
+					refresh();
+			}
 		}
 	}
 	
