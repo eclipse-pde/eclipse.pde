@@ -75,6 +75,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		// we want to put it right in the /plugins directory and not a sub-directory so strip off 2 segments
 		// to leave us with the build directory (/plugins will be added by the "element" attribute)
 		int remove = prebuilt ? 2 : 1;
+		String suggestedPath = destination.lastSegment();
 		params.put(PROP_DESTINATIONFOLDER, destination.removeLastSegments(remove).toString());
 		params.put(PROP_TAG, entryInfos.get(IFetchFactory.KEY_ELEMENT_TAG));
 		params.put(PROP_CVSROOT, entryInfos.get(KEY_CVSROOT));
@@ -86,6 +87,9 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 				element = IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION;
 			else if (type.equals(ELEMENT_TYPE_FEATURE))
 				element = IPDEBuildConstants.DEFAULT_FEATURE_LOCATION;
+		} else {
+			if (suggestedPath != null)
+				element = suggestedPath;
 		}
 		params.put(PROP_ELEMENTNAME, element);
 		String module = entryInfos.get(KEY_PATH) == null ? element : (String) entryInfos.get(KEY_PATH);
