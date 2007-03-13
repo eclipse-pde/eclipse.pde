@@ -1020,11 +1020,11 @@ public class LogView extends ViewPart implements ILogListener {
 		}
 		try {
 			fMemento.putString(P_USE_LIMIT, s.getBoolean(P_USE_LIMIT) ? "true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
-			fMemento.putInteger(P_LOG_LIMIT, s.getInt(P_LOG_LIMIT));
 			fMemento.putString(P_LOG_INFO, s.getBoolean(P_LOG_INFO) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			fMemento.putString(P_LOG_WARNING, s.getBoolean(P_LOG_WARNING) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			fMemento.putString(P_LOG_ERROR, s.getBoolean(P_LOG_ERROR) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			fMemento.putString(P_SHOW_ALL_SESSIONS, s.getBoolean(P_SHOW_ALL_SESSIONS) ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			fMemento.putInteger(P_LOG_LIMIT, s.getInt(P_LOG_LIMIT));
 			fMemento.putInteger(P_COLUMN_1, p.getInt(P_COLUMN_1) > 0 ? p.getInt(P_COLUMN_1) : 300);
 			fMemento.putInteger(P_COLUMN_2, p.getInt(P_COLUMN_2) > 0 ? p.getInt(P_COLUMN_2) : 150);
 			fMemento.putInteger(P_COLUMN_3, p.getInt(P_COLUMN_3) > 0 ? p.getInt(P_COLUMN_3) : 150);
