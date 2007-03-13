@@ -14,6 +14,7 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
@@ -22,6 +23,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -51,12 +53,15 @@ import org.eclipse.pde.internal.core.text.bundle.RequiredExecutionEnvironmentHea
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.KeyValueSourcePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.refactoring.RenamePluginAction;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.osgi.framework.Constants;
 
 public class BundleSourcePage extends KeyValueSourcePage {
@@ -79,6 +84,8 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	private int fCurrentHighlightRangeOffset;
 	
 	private final int F_NOT_SET = -1;
+	
+	private RenamePluginAction fRenameAction;
 	
 	/**
 	 * BundleOutlineContentProvider
@@ -747,6 +754,20 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		updateHighlightRange(rangeElement);
 		// Set the outline view selection
 		updateOutlinePageSelection(getTargetOutlineSelection()); 
+	}
+
+	protected void editorContextMenuAboutToShow(IMenuManager menu) {
+		super.editorContextMenuAboutToShow(menu);
+		if (fRenameAction == null) {
+			IBaseModel base = ((PDEFormEditor)getEditor()).getAggregateModel();
+			if (base instanceof IPluginModelBase) {
+				fRenameAction = new RenamePluginAction();
+				fRenameAction.setText(NLS.bind(PDEUIMessages.BundleSourcePage_renameActionText, Constants.BUNDLE_SYMBOLICNAME));
+				fRenameAction.setPlugin((IPluginModelBase)base);
+			}
+		}
+		if (fRenameAction != null)
+			menu.prependToGroup(ITextEditorActionConstants.GROUP_EDIT, fRenameAction);
 	}
 
 }

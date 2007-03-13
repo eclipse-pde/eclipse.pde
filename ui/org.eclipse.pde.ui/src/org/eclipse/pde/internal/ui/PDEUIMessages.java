@@ -25,6 +25,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String BaseExtensionPointMainPage_errorMsgPluginNotFound;
 
+	public static String BundleSourcePage_renameActionText;
+
 	public static String CalculateUsesOperation_calculatingDirective;
 
 	public static String CheatSheetFileWizardPage_1;
