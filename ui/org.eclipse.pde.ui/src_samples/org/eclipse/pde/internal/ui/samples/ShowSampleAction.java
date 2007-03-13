@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ import org.osgi.framework.Version;
 
 public class ShowSampleAction extends Action implements IIntroAction {
 	private static final String SAMPLE_FEATURE_ID = "org.eclipse.sdk.samples"; //$NON-NLS-1$
-	private static final String SAMPLE_FEATURE_VERSION = "3.2.0"; //$NON-NLS-1$
+	private static final String SAMPLE_FEATURE_VERSION = "3.3.0"; //$NON-NLS-1$
 	private static final String UPDATE_SITE = "http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/pde-ui-home/samples/"; //$NON-NLS-1$
 	private String sampleId;
 	/**

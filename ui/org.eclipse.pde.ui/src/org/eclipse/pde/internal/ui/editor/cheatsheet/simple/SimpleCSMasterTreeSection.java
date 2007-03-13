@@ -478,8 +478,7 @@ public class SimpleCSMasterTreeSection extends TreeSection implements
 					file.getName(),
 					file.getName(), 
 					swriter.toString(),
-					file.getLocationURI().toURL(),
-					false);
+					file.getLocationURI().toURL());
 			openAction.run();
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
