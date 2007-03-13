@@ -25,14 +25,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.ILogListener;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -75,7 +76,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -93,10 +93,12 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 
 public class LogView extends ViewPart implements ILogListener {
@@ -328,34 +330,16 @@ public class LogView extends ViewPart implements ILogListener {
 		Action action = new Action(PDERuntimeMessages.LogView_view_currentLog) {
 			public void run() {
 				if (fInputFile.exists()) {
-					final Program[] p = new Program[] { null };
-					final OpenLogDialog[] openDialog = new OpenLogDialog[] { null };
-					final Shell shell = getViewSite().getShell();
-					Job job = new Job(PDERuntimeMessages.OpenLogDialog_message) {
-						protected IStatus run(IProgressMonitor monitor) {
-							boolean failed = false;
-							if (fInputFile.length() <= LogReader.MAX_FILE_LENGTH) {
-								failed = !Program.launch(fInputFile.getAbsolutePath());
-								if (failed) {
-									p[0] = Program.findProgram(".txt"); //$NON-NLS-1$
-									if (p[0] != null) {
-										p[0].execute(fInputFile.getAbsolutePath());
-										return Status.OK_STATUS;
-									}
-								}
-							}
-							if (failed) {
-								openDialog[0] = new OpenLogDialog(shell, fInputFile);
-								openDialog[0].create();
-							}
-							return Status.OK_STATUS;
+					IPath logPath = Platform.getLogFileLocation();
+					IFileStore fileStore= EFS.getLocalFileSystem().getStore(logPath);
+					if (!fileStore.fetchInfo().isDirectory() && fileStore.fetchInfo().exists()) {
+						IWorkbenchWindow ww = PDERuntimePlugin.getActiveWorkbenchWindow();
+						IWorkbenchPage page = ww.getActivePage();
+						try {
+							IDE.openEditorOnFileStore(page, fileStore);
+						} catch (PartInitException e) {
 						}
-					};
-					job.setPriority(Job.SHORT);
-					job.schedule();
-					
-					if (openDialog[0] != null)
-						openDialog[0].open();
+					}
 				}
 			}
 		};
