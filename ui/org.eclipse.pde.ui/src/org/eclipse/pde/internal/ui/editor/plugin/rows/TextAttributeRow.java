@@ -81,7 +81,4 @@ public class TextAttributeRow extends ExtensionAttributeRow {
 	public void setFocus() {
 		text.setFocus();
 	}
-	public boolean hasFocus() {
-		return text.isFocusControl();
-	}
 }

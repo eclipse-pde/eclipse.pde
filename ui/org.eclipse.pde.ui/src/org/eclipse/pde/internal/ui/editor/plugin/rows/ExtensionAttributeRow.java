@@ -128,7 +128,6 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 	public abstract void commit();
 
 	public abstract void setFocus();
-	public abstract boolean hasFocus();
 	
 	public boolean isDirty() {
 		return dirty;

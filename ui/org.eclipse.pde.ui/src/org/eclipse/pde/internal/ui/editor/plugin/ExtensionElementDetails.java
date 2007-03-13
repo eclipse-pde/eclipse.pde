@@ -194,7 +194,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 				if (property != null) {
 					for (int i = 0; i < rows.size(); i++) {
 						ExtensionAttributeRow row = (ExtensionAttributeRow) rows.get(i);
-						if (row.getAttribute().getName().equals(property) && !row.hasFocus())
+						if (row.getAttribute().getName().equals(property))
 							row.setInput(input);
 					}
 				} else 

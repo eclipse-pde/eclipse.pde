@@ -122,7 +122,4 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 	public void setFocus() {
 		combo.getControl().setFocus();
 	}
-	public boolean hasFocus() {
-		return combo.getControl().isFocusControl();
-	}
 }
