@@ -173,9 +173,8 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 	private void createUIConclusionTab() {
 		CTabItem item = new CTabItem(fTabFolder, SWT.NULL);
 		item.setText(PDEUIMessages.CompCSEnclosingTextDetails_Conclusion);
-		// TODO: MP: LOW: CompCS:  Update image
 		item.setImage(PDEPlugin.getDefault().getLabelProvider().get(
-				PDEPluginImages.DESC_CSINTRO_OBJ));	
+				PDEPluginImages.DESC_CSCONCLUSION_OBJ));	
 	}		
 	
 	/**
