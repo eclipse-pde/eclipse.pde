@@ -854,6 +854,8 @@ public class PluginImportOperation extends JarImportOperation {
 	protected void collectNonJavaResources(ZipFileStructureProvider provider,
 			Object element, ArrayList collected) {
 		super.collectNonJavaResources(provider, element, collected);
+		if (fImportType != IMPORT_WITH_SOURCE)
+			return;
 		// filter the resources we get back to include only relevant resource files
 		ListIterator li = collected.listIterator();
 		while (li.hasNext()) {
@@ -862,7 +864,6 @@ public class PluginImportOperation extends JarImportOperation {
 			// filter out signature files - bug 175756
 			if (name.startsWith("META-INF/") && (name.endsWith(".RSA") || name.endsWith(".DSA") || name.endsWith(".SF"))) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				li.remove(); 
-			// can remove .classpath and .project files if necessary
 		}
 	}
 	
