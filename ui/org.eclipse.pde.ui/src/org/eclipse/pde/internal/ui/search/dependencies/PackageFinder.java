@@ -246,7 +246,7 @@ public class PackageFinder {
 					IResource[] children = ((IContainer)stack.pop()).members();
 					for (int i = 0; i < children.length; i++) 
 						if (children[i] instanceof IFile &&
-								children[i].getFileExtension().equals("class")) { //$NON-NLS-1$
+								"class".equals(children[i].getFileExtension())) { //$NON-NLS-1$
 							classFiles.add(JavaCore.createClassFileFrom((IFile)children[i]));
 						} else if (children[i] instanceof IContainer)
 							stack.push(children[i]);
