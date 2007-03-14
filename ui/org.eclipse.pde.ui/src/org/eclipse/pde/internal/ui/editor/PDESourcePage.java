@@ -83,6 +83,13 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage,
 		return fgBundleForConstructedKeys;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeKeyBindingScopes()
+	 */
+	protected void initializeKeyBindingScopes() {
+		setKeyBindingScopes(new String[] { "org.eclipse.pde.ui.pdeEditorContext" });  //$NON-NLS-1$
+	}
+	
 	/**
 	 * Updates the OutlinePage selection and this editor's range indicator.
 	 * 

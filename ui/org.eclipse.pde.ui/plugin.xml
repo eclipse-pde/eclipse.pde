@@ -1294,12 +1294,13 @@
             sequence="M1+M2+F"/>
       <key
             sequence="F2"
-            contextId="org.eclipse.ui.textEditorScope"
+            contextId="org.eclipse.pde.ui.pdeEditorContext"
             commandId="org.eclipse.pde.ui.showTooltip"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
       <key
             commandId="org.eclipse.pde.ui.quickOutline"
-            contextId="org.eclipse.ui.textEditorScope"
+            contextId="org.eclipse.pde.ui.pdeEditorContext"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+O">
       </key>
@@ -1712,5 +1713,14 @@
                 mode="debug"
                 osgi="true">
           </shortcut>
+       </extension>
+       <extension
+             point="org.eclipse.ui.contexts">
+          <context
+                description="%context.description.pde.editor"
+                id="org.eclipse.pde.ui.pdeEditorContext"
+                name="%context.name.pde.editor"
+                parentId="org.eclipse.ui.textEditorScope">
+          </context>
        </extension>
 </plugin>
