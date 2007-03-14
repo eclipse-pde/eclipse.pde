@@ -110,7 +110,7 @@ public class DependencyPropertiesDialog extends StatusDialog {
         fVersionPart.createVersionFields(comp, true, fEditable);
         ModifyListener ml = new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				updateStatus(fVersionPart.validateFullVersionRangeText());
+				updateStatus(fVersionPart.validateFullVersionRangeText(true));
 			}
         };
         fVersionPart.addListeners(ml, ml);

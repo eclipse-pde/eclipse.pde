@@ -13,8 +13,10 @@ package org.eclipse.pde.internal.ui.parts;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.VersionRange;
+import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
@@ -126,40 +128,92 @@ public class PluginVersionPart {
         fMinVersionText.setText((fVersionRange != null) ? fVersionRange.getMinimum().toString() : ""); //$NON-NLS-1$
 	}
 	
-	private IStatus validateVersion(String text) {
+	private IStatus validateVersion(String text, Text textWidget, boolean shortErrorMessage) {
     	if (text.length() == 0) return Status.OK_STATUS;
-        if (VersionUtil.validateVersion(text).getSeverity() != IStatus.OK)
-            return new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, PDEUIMessages.DependencyPropertiesDialog_invalidFormat, null); //$NON-NLS-1$
+        if (VersionUtil.validateVersion(text).getSeverity() != IStatus.OK) {
+        	String errorMessage = null;
+        	if (shortErrorMessage) {
+        		// For dialogs
+        		errorMessage = PDEUIMessages.DependencyPropertiesDialog_invalidFormat;
+        	} else {
+        		// For everything else:  Field assist, wizards
+        		errorMessage = PDECoreMessages.BundleErrorReporter_InvalidFormatInBundleVersion;
+        	}
+            return new Status(IStatus.ERROR, "org.eclipse.pde.ui", //$NON-NLS-1$
+					IStatus.ERROR,
+					PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(textWidget), 
+							errorMessage),
+					null);
+        }
+        
         return Status.OK_STATUS;
     }
     
-	private IStatus validateVersionRange() {
+	private IStatus validateVersionRange(boolean shortErrorMessage) {
 		if ((!fRangeAllowed && getMinVersion().length() == 0)
 				|| (fRangeAllowed && (getMinVersion().length() == 0 || getMaxVersion().length() == 0))) {
 			fIsRanged = false;
 			return Status.OK_STATUS;
 		}
+		
+    	String errorMessage = null;
+    	if (shortErrorMessage) {
+    		// For dialogs
+    		errorMessage = PDEUIMessages.DependencyPropertiesDialog_invalidFormat;
+    	} else {
+    		// For everything else:  Field assist, wizards
+    		errorMessage = PDECoreMessages.BundleErrorReporter_InvalidFormatInBundleVersion;
+    	}		
+		
 		Version v1;
 		Version v2;
-			try {
-				v1 = new Version(getMinVersion());
-				if (!fRangeAllowed) // version created fine
-					return Status.OK_STATUS;
-				v2 = new Version(getMaxVersion());
-			} catch (IllegalArgumentException e) {
-				return new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, PDEUIMessages.DependencyPropertiesDialog_invalidFormat, null); //$NON-NLS-1$;
-			}
+		try {
+			v1 = new Version(getMinVersion());
+		} catch (IllegalArgumentException e) {
+			return new Status(
+					IStatus.ERROR,
+					"org.eclipse.pde.ui",  //$NON-NLS-1$
+					IStatus.ERROR, 
+					PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(fMinVersionText), 
+							errorMessage), 
+					null);
+		}
+		if (!fRangeAllowed) // version created fine
+			return Status.OK_STATUS;
+
+		try {
+			v2 = new Version(getMaxVersion());
+		} catch (IllegalArgumentException e) {
+			return new Status(
+					IStatus.ERROR,
+					"org.eclipse.pde.ui",  //$NON-NLS-1$
+					IStatus.ERROR, 
+					PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(fMaxVersionText), 
+							errorMessage), 
+					null); //$NON-NLS-1$;
+		}
         if (v1.compareTo(v2) == 0 || v1.compareTo(v2) < 0) {
         	fIsRanged = true;
             return Status.OK_STATUS;
         }
-		return new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, PDEUIMessages.DependencyPropertiesDialog_versionRangeError, null); //$NON-NLS-1$;
+		return new Status(IStatus.ERROR, 
+				"org.eclipse.pde.ui",  //$NON-NLS-1$
+				IStatus.ERROR, 
+				PDEUIMessages.DependencyPropertiesDialog_versionRangeError, 
+				null);
 	}
     
-	public IStatus validateFullVersionRangeText() {
-    	IStatus status = validateVersion(getMinVersion());
-    	if (status.isOK()) status = validateVersion(getMaxVersion());
-    	if (status.isOK()) status = validateVersionRange();
+	/**
+	 * Short error messages are required for dialog status lines.  Long error
+	 * messages are truncated and are not decorated with a status image.
+	 * @param shortErrorMessage if <code>true</code>, a brief error message
+	 * will be used.
+	 * @return
+	 */
+	public IStatus validateFullVersionRangeText(boolean shortErrorMessage) {
+    	IStatus status = validateVersion(getMinVersion(), fMinVersionText, shortErrorMessage);
+    	if (status.isOK()) status = validateVersion(getMaxVersion(), fMaxVersionText, shortErrorMessage);
+    	if (status.isOK()) status = validateVersionRange(shortErrorMessage);
         return status;
 	}
 	

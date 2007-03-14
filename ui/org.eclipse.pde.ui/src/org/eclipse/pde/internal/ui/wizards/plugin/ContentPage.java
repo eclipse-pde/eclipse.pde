@@ -16,9 +16,11 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.swt.SWT;
@@ -72,30 +74,65 @@ public abstract class ContentPage extends WizardPage {
 	protected abstract void validatePage();
 
 	protected String validateProperties() {
+		
 		if (!fInitialized) {
-			if (!fIdText.getText().trim().equals(fProjectProvider.getProjectName())) 
+			if (!fIdText.getText().trim().equals(fProjectProvider.getProjectName())) { 
 				setMessage(PDEUIMessages.ContentPage_illegalCharactersInID, INFORMATION);
-			else
+			} else {
 				setMessage(null);
+			}
 			return null;
 		}
 		
 		setMessage(null);
-		String errorMessage = validateId();
-		if (errorMessage != null)
-			return errorMessage;
+		String errorMessage = null;
 		
-		if (fVersionText.getText().trim().length() == 0) {
-			errorMessage = PDEUIMessages.ContentPage_noversion; 
-		} else if (!isVersionValid(fVersionText.getText().trim())) {
-			errorMessage = PDEUIMessages.ContentPage_badversion; 
-		} else if (fNameText.getText().trim().length() == 0) {
-			errorMessage = PDEUIMessages.ContentPage_noname; 
+		// Validate ID
+		errorMessage = validateId();
+		if (errorMessage != null) {
+			return errorMessage;
 		}
 		
-		return errorMessage;
+		// Validate Version
+		errorMessage = validateVersion(fVersionText);
+		if (errorMessage != null) {
+			return errorMessage;
+		}
+		
+		// Validate Name
+		errorMessage = validateName();
+		if (errorMessage != null) {
+			return errorMessage;
+		}
+		
+		return null;
 	}
 
+	/**
+	 * @param text
+	 * @return
+	 */
+	protected String validateVersion(Text text) {
+		if (text.getText().trim().length() == 0) {
+			return PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(text), 
+				PDEUIMessages.ControlValidationUtility_errorMsgValueMustBeSpecified);
+		} else if (!isVersionValid(text.getText().trim())) {
+			return PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(text), 
+				PDECoreMessages.BundleErrorReporter_InvalidFormatInBundleVersion);
+		}
+		return null;
+	}
+
+	/**
+	 * @return
+	 */
+	private String validateName() {
+		if (fNameText.getText().trim().length() == 0) {
+			return PDEUIMessages.ContentPage_noname; 
+		}		
+		return null;
+	}
+	
 	private String validateId() {
 		String id = fIdText.getText().trim();
 		if (id.length() == 0)

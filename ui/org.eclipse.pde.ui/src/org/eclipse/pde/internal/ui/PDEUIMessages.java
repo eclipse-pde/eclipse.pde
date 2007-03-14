@@ -1068,13 +1068,10 @@ public class PDEUIMessages extends NLS {
 	public static String ContentPage_matchRule;
 	public static String ContentPage_noid;
 	public static String ContentPage_invalidId;
-	public static String ContentPage_noversion;
 	public static String ContentPage_badversion;
 	public static String ContentPage_noname;
 	public static String ContentPage_nopid;
 	public static String ContentPage_pluginNotFound;
-	public static String ContentPage_nopversion;
-	public static String ContentPage_badpversion;
 	public static String ContentPage_fragment;
 	public static String ContentPage_plugin;
 	public static String ContentPage_illegalCharactersInID;

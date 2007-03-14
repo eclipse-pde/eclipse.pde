@@ -247,6 +247,7 @@ public class FragmentContentPage extends ContentPage {
 	 */
 	protected void validatePage() {
 		String errorMessage = validateProperties();
+		
 		if (errorMessage == null) {
 			String pluginID = fNewVersion ? 
 					fPluginIdText_newV.getText().trim() : fPluginIdText_oldV.getText().trim();
@@ -256,17 +257,12 @@ public class FragmentContentPage extends ContentPage {
 				errorMessage = PDEUIMessages.ContentPage_pluginNotFound; 
 			} else {
 				if (fNewVersion) {
-					IStatus status = fVersionPart.validateFullVersionRangeText();
-					if (status.getSeverity() != IStatus.OK)
+					IStatus status = fVersionPart.validateFullVersionRangeText(false);
+					if (status.getSeverity() != IStatus.OK) {
 						errorMessage = status.getMessage(); 
-					else if (fVersionPart.getVersion().trim().length() == 0) 
-						errorMessage = PDEUIMessages.ContentPage_nopversion; 
-				} else {
-					if (fPluginVersion.getText().trim().length() == 0) {
-						errorMessage = PDEUIMessages.ContentPage_nopversion; 
-					} else if (!isVersionValid(fPluginVersion.getText().trim())) {
-						errorMessage = PDEUIMessages.ContentPage_badpversion; 
 					}
+				} else {
+					errorMessage = validateVersion(fPluginVersion);
 				}
 			}
 		}
