@@ -249,7 +249,7 @@ public class PointSelectionPage
 		this.fWizard= wizard;
 		this.fProject=project;
 		fWildCardFilter = new WildcardFilter();
-		fAvailableImports = PluginSelectionDialog.getExistingImports(model);
+		fAvailableImports = PluginSelectionDialog.getExistingImports(model, true);
 		setTitle(PDEUIMessages.NewExtensionWizard_PointSelectionPage_title); 
 		setDescription(PDEUIMessages.NewExtensionWizard_PointSelectionPage_desc); 
 	}

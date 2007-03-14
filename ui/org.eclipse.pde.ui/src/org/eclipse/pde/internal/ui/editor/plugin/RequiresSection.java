@@ -378,7 +378,7 @@ public class RequiresSection
 	
 	private IPluginModelBase[] getAvailablePlugins(IPluginModelBase model) {
 		IPluginModelBase[] plugins = PluginRegistry.getActiveModels(false);
-		HashSet existingImports = PluginSelectionDialog.getExistingImports(model);
+		HashSet existingImports = PluginSelectionDialog.getExistingImports(model, false);
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < plugins.length; i++) {
 			if (!existingImports.contains(plugins[i].getPluginBase().getId())) {

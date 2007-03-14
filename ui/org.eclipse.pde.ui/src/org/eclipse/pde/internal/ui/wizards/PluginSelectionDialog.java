@@ -10,18 +10,27 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
+import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.osgi.framework.Constants;
 
 public class PluginSelectionDialog extends ElementListSelectionDialog {
 
@@ -49,7 +58,7 @@ public class PluginSelectionDialog extends ElementListSelectionDialog {
 		return PluginRegistry.getActiveModels(includeFragments);
 	}
 
-	public static HashSet getExistingImports(IPluginModelBase model) {
+	public static HashSet getExistingImports(IPluginModelBase model, boolean includeImportPkg) {
 		HashSet existingImports = new HashSet();
 		addSelfAndDirectImports(existingImports, model);
 		if (model instanceof IFragmentModel) {
@@ -58,6 +67,9 @@ public class PluginSelectionDialog extends ElementListSelectionDialog {
 			if (host instanceof IPluginModel) {
 				addSelfAndDirectImports(existingImports, host);
 			}
+		}
+		if (includeImportPkg && model instanceof IBundlePluginModelBase) {
+			addImportedPackages((IBundlePluginModelBase)model, existingImports);
 		}
 		return existingImports;
 	}
@@ -83,5 +95,48 @@ public class PluginSelectionDialog extends ElementListSelectionDialog {
 				}
 			}
 		}
+	}
+	
+	private static void addImportedPackages(IBundlePluginModelBase base, HashSet existingImports) {
+		HashMap map = getImportPackages(base);
+		if (map == null)
+			return;
+					
+		ExportPackageDescription exported [] = PDECore.getDefault().getModelManager().getState().getState().getExportedPackages();
+		for (int i = 0; i < exported.length; i++) {
+			// iterate through all the exported packages
+			ImportPackageObject ipo = (ImportPackageObject)map.get(exported[i].getName());
+			// if we find an exported package that matches a pkg in the map, then the exported package matches a package on our import-package statement
+			if (ipo != null) {
+				// check version to make sure we only add bundles from valid packages
+				String version = ipo.getVersion();
+				if (version != null)
+					try {
+						if (!new VersionRange(version).isIncluded(exported[i].getVersion()))
+							continue;
+						// NFE if ImportPackageObject's version is improperly formatted - ignore any matching imported packages since version is invalid
+					} catch (NumberFormatException e){
+						continue;
+					}
+				existingImports.add(exported[i].getSupplier().getSymbolicName());
+			}
+		}
+	}
+	
+	// returns null instead of empty map so we know not to iterate through exported packages
+	private static HashMap getImportPackages(IBundlePluginModelBase base) {
+		IBundleModel bmodel = base.getBundleModel();
+		if (bmodel != null) {
+			ImportPackageHeader header = (ImportPackageHeader)bmodel.getBundle().getManifestHeader(Constants.IMPORT_PACKAGE);
+			if (header != null) {
+				// create a map of all the packages we import
+				HashMap map = new HashMap();
+				ImportPackageObject[] packages = header.getPackages();
+				for (int i = 0; i < packages.length; i++)
+					map.put(packages[i].getName(), packages[i]);
+				return map;
+			}
+		}
+		return null;
 	}
 }
