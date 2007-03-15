@@ -183,7 +183,6 @@ public class PDETemplateMessages extends NLS {
 	public static String DecoratorTemplate_decorateReadOnly;
 	public static String DecoratorTemplate_placementChoices;
 	public static String DecoratorTemplate_decoratorClass;
-	public static String DecoratorTemplate_decoratorClassName;
 	
 	public static String ImportWizardTemplate_title;
 	public static String ImportWizardTemplate_desc;

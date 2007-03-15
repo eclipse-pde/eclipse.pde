@@ -111,7 +111,7 @@ public class DecoratorTemplate extends PDETemplateSection {
 		classOption = addOption(
 				DECORATOR_CLASS_NAME,
 				PDETemplateMessages.DecoratorTemplate_decoratorClass,
-				PDETemplateMessages.DecoratorTemplate_decoratorClassName,
+				"ReadOnly", //$NON-NLS-1$
 				0);	
 	}
 
