@@ -47,14 +47,11 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 		}
 	}
 
-	ITreeContentProvider fContentProvider;
-
 	TreeViewer fTreeViewer;
 
 	public DependenciesViewTreePage(DependenciesView view,
 			ITreeContentProvider contentProvider) {
-		super(view);
-		fContentProvider = contentProvider;
+		super(view, contentProvider);
 	}
 
 	/*
@@ -96,4 +93,5 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 		else
 			toolBarManager.add(new CollapseAllAction());
 	}
+
 }

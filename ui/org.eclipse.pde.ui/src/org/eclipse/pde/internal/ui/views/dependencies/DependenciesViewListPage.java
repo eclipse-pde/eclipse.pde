@@ -21,15 +21,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 
 public class DependenciesViewListPage extends DependenciesViewPage {
-	private IContentProvider fContentProvider;
 
 	/**
 	 * 
 	 */
 	public DependenciesViewListPage(DependenciesView view,
 			IContentProvider contentProvider) {
-		super(view);
-		fContentProvider = contentProvider;
+		super(view, contentProvider);
 	}
 
 	/*
