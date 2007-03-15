@@ -190,6 +190,9 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	
 	public void refresh() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
+		// if we are refactoring, the Manifest moves before the editor closes.  This could cause the model to be null on a refresh()
+		if (model == null)
+			return;
 		IPlugin plugin = (IPlugin)model.getPluginBase();
 		// Only update this field if it already has not been modified
 		// This will prevent the cursor from being set to position 0 after
