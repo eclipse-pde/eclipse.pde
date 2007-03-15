@@ -526,11 +526,14 @@ public class DependenciesView extends PageBookView implements
 	protected void showPageRec(PageRec pageRec) {
 		IPage currPage = getCurrentPage();
 		IStructuredSelection selection = null;
-		if (currPage instanceof DependenciesViewPage)
+		if (currPage instanceof DependenciesViewPage) {
 			selection = ((DependenciesViewPage)currPage).getSelection();
+			((DependenciesViewPage)currPage).setActive(false);
+		}
 		IPage p = pageRec.page;
 		((DependenciesViewPage) p).setInput(fInput);
 		super.showPageRec(pageRec);
+		((DependenciesViewPage) p).setActive(true);
 		updateTitle(fInput);
 		((DependenciesViewPage) p).setSelection(selection);
 	}
