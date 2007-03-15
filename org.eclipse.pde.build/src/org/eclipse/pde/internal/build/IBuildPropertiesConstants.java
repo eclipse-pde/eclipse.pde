@@ -69,7 +69,7 @@ public interface IBuildPropertiesConstants {
 	
 	public static final String PROPERTY_SIGNIFICANT_VERSION_DIGITS = "significantVersionDigits";  //$NON-NLS-1$
 	public static final String PROPERTY_GENERATED_VERSION_LENGTH = "generatedVersionLength"; //$NON-NLS-1$
-	public static final String PROPERTY_GENERATE_VERSION_SUFFIX = "generateVersionSuffix"; //$NON-NLS-1$
+
 	//Internal usage only
 	public static final String SOURCE_PLUGIN = "sourcePlugin"; //$NON-NLS-1$
 }
