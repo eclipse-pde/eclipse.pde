@@ -21,6 +21,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -38,6 +39,7 @@ import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
+import org.eclipse.pde.internal.ui.refactoring.RenamePluginAction;
 import org.eclipse.pde.internal.ui.search.dependencies.DependencyExtentAction;
 import org.eclipse.pde.internal.ui.search.dependencies.UnusedDependenciesAction;
 import org.eclipse.pde.internal.ui.wizards.PluginSelectionDialog;
@@ -66,18 +68,23 @@ public abstract class DependenciesViewPage extends Page {
 	private FocusOnSelectionAction fFocusOnSelectionAction;
 
 	private Action fOpenAction;
+	
+	protected RenamePluginAction fRefactorAction;
 
 	private IPropertyChangeListener fPropertyListener;
 
 	private DependenciesView fView;
 
 	protected StructuredViewer fViewer;
+	
+	protected IContentProvider fContentProvider;
 
 	/**
 	 * 
 	 */
-	public DependenciesViewPage(DependenciesView view) {
+	public DependenciesViewPage(DependenciesView view, IContentProvider contentProvider) {
 		this.fView = view;
+		this.fContentProvider = contentProvider;
 		fPropertyListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				String property = event.getProperty();
@@ -153,6 +160,10 @@ public abstract class DependenciesViewPage extends Page {
 		if (model != null && model.getUnderlyingResource() != null) {
 			manager.add(new UnusedDependenciesAction(
 					(IPluginModelBase) model, true));
+		}
+		if (enableRename(selection)) {
+			manager.add(new Separator());
+			manager.add(fRefactorAction);
 		}
 		//
 		manager.add(new Separator());
@@ -267,6 +278,8 @@ public abstract class DependenciesViewPage extends Page {
 			}
 		};
 		fFocusOnAction.setText(PDEUIMessages.DependenciesViewPage_focusOn); 
+		
+		fRefactorAction = new RenamePluginAction();
 	}
 
 	/*
@@ -301,5 +314,37 @@ public abstract class DependenciesViewPage extends Page {
 	public void setInput(Object object) {
 		if (object != fViewer.getInput())
 			fViewer.setInput(object);
+	}
+	
+	// returns true if Rename Action is valid.
+	protected boolean enableRename(IStructuredSelection selection) {
+		if (selection.size() == 1) {
+			Object selectionElement = selection.getFirstElement();
+			IPluginModelBase base = null;
+			if (selectionElement instanceof IPluginImport) {
+				String id = ((IPluginImport)selectionElement).getId();
+				base = PluginRegistry.findModel(id);
+			} else if (selectionElement instanceof IPluginObject) {
+				base = (IPluginModelBase)((IPluginObject) selectionElement).getModel();
+			}
+			if (base != null && base.getUnderlyingResource() != null) {
+				fRefactorAction.setPlugin(base);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public void setActive(boolean active) {
+		if (fContentProvider instanceof DependenciesViewPageContentProvider) {
+			if (active) {
+				// when a page is activated, we need to have the content provider listen for changes and refresh the view to get current data
+				((DependenciesViewPageContentProvider)fContentProvider).attachModelListener();
+				fViewer.refresh();
+			} else
+				// when page is deactivated, we need to remove model listener from content manager.  Otherwise model changes will be sent to all 
+				// DependenciesViewPageContentProvider (including inactive ones).  This will cause problems with the content provider's logic!!
+				((DependenciesViewPageContentProvider)fContentProvider).removeModelListener();
+		}
 	}
 }
