@@ -157,18 +157,24 @@ public class ProductExportOperation extends FeatureExportOperation {
 				"${launcherName}.app/Contents/MacOS/${launcherName}"); //$NON-NLS-1$
 			}
 		}
-		
+
 		IJREInfo jreInfo = fProduct.getJREInfo();
 		String vm = jreInfo != null ? jreInfo.getJVMLocation(config[0]) : null;
 		if(vm != null) {
 			properties.put("root."+config[0]+ //$NON-NLS-1$
 					"."+config[1]+ //$NON-NLS-1$
 					"."+config[2]+ //$NON-NLS-1$
-			        ".folder.jre", //$NON-NLS-1$
+					".folder.jre", //$NON-NLS-1$
 					"absolute:" + vm); //$NON-NLS-1$
-			properties.put("root.permissions.755", "jre/bin/java"); //$NON-NLS-1$ //$NON-NLS-2$
+			String perms = (String) properties.get("root.permissions.755"); //$NON-NLS-1$
+			if(perms != null) {
+				StringBuffer buffer = new StringBuffer(perms);
+				buffer.append(","); //$NON-NLS-1$
+				buffer.append("jre/bin/java"); //$NON-NLS-1$
+				properties.put("root.permissions.755", buffer.toString()); //$NON-NLS-1$
+			}
 		}
-		
+
 		save(new File(file, "build.properties"), properties, "Build Configuration"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
