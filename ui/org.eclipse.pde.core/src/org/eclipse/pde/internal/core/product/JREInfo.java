@@ -97,8 +97,8 @@ public class JREInfo extends ProductObject implements IJREInfo {
 			for (int i = 0; i < types.length; i++) {
 				IVMInstall[] installs = types[i].getVMInstalls();
 				for (int k = 0; k < installs.length; k++) {
-					if (installs[i].getName().equals(name))
-						return installs[i].getInstallLocation().getAbsolutePath();
+					if (installs[k].getName().equals(name))
+						return installs[k].getInstallLocation().getAbsolutePath();
 				}
 			}
 		}
