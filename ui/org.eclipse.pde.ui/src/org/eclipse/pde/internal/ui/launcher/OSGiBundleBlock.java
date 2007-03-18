@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
@@ -64,8 +63,8 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		super(tab);
 	}
 	
-	protected void createPluginViewer(Composite composite) {
-		super.createPluginViewer(composite);
+	protected void createPluginViewer(Composite composite, int span, int indent) {
+		super.createPluginViewer(composite, span, indent);
     	Tree tree = fPluginTreeViewer.getTree();
  
     	TreeColumn column1 = new TreeColumn(tree, SWT.LEFT);
@@ -390,31 +389,12 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		}
 	}
 	
-	protected PluginValidationOperation createValidationOperation() {
-		return new PluginValidationOperation(getPluginsToValidate());
-	}
-	
-	protected IPluginModelBase[] getPluginsToValidate() {
-		if (!fPluginTreeViewer.getTree().isEnabled())
-			return PluginRegistry.getActiveModels();
-		
-		Map map = new HashMap();
-		Object[] objects = fPluginTreeViewer.getCheckedElements();
-		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof IPluginModelBase) {
-				IPluginModelBase model = (IPluginModelBase)objects[i];
-				String id = model.getPluginBase().getId();
-				if (id == null)
-					continue;
-				if (!map.containsKey(id) || model.getUnderlyingResource() != null)
-					map.put(id, model);
-			}
-		}
-		return (IPluginModelBase[])map.values().toArray(new IPluginModelBase[map.size()]);
-	}
-	
 	protected int getTreeViewerStyle() {
 		return super.getTreeViewerStyle() | SWT.FULL_SELECTION;
+	}
+	
+	protected boolean includeDefaultButton() {
+		return false;
 	}
 
 

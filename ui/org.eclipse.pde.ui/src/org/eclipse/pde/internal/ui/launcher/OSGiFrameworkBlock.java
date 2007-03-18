@@ -27,7 +27,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
 
@@ -58,20 +57,24 @@ public class OSGiFrameworkBlock {
 	}
 	
 	public void createControl(Composite parent) {
-		Group composite = new Group(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(6, false));
-		composite.setText(PDEUIMessages.OSGiFrameworkBlock_defaultGroup);
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(6, false);
+		layout.marginHeight = layout.marginWidth = 0;
+		composite.setLayout(layout);
 
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(PDEUIMessages.OSGiBundlesTab_frameworkLabel);
-
+		GridData gd = new GridData();
+		gd.horizontalIndent = 5;
+		label.setLayoutData(gd);
+		
 		fLauncherCombo = new Combo(composite, SWT.READ_ONLY);
 		for (int i = 0; i < fConfigElements.length; i++) 
 			fLauncherCombo.add(fConfigElements[i].getAttribute("name")); //$NON-NLS-1$
 		fLauncherCombo.addSelectionListener(fListener);
 		
 		label = new Label(composite, SWT.NONE);
-		GridData gd = new GridData();
+		gd = new GridData();
 		gd.horizontalIndent = 20;
 		label.setLayoutData(gd);
 		label.setText(PDEUIMessages.EquinoxPluginsTab_defaultStart);

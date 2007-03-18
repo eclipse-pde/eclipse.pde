@@ -25,15 +25,15 @@ public class PluginBlock extends AbstractPluginBlock {
 		super(tab);
 	}
 	
-	public void initializeFrom(ILaunchConfiguration config, boolean defaultSelection, boolean useList) throws CoreException {
+	public void initializeFrom(ILaunchConfiguration config, boolean customSelection) throws CoreException {
 		super.initializeFrom(config);
-		if (defaultSelection) {
-			handleRestoreDefaults();
-		} else {
+		if (customSelection) {
 			initWorkspacePluginsState(config);
 			initExternalPluginsState(config);
+		} else {
+			handleRestoreDefaults();
 		}
-		enableViewer(useList);
+		enableViewer(customSelection);
 		updateCounter();
 		fTab.updateLaunchConfigurationDialog();
 	}

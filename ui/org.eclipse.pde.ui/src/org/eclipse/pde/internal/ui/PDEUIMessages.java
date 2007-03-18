@@ -241,6 +241,22 @@ public class PDEUIMessages extends NLS {
 
 	public static String PackageFinder_taskName;
 
+	public static String PluginsTab_allPlugins;
+
+	public static String PluginsTab_featureMode;
+
+	public static String PluginsTab_launchWith;
+
+	public static String PluginsTab_selectedPlugins;
+
+	public static String PluginsTabToolBar_auto_validate;
+
+	public static String PluginsTabToolBar_filter_disabled;
+
+	public static String PluginsTabToolBar_filter_options;
+
+	public static String PluginsTabToolBar_validate;
+
 	public static String PointSelectionPage_cannotFindTemplate;
 
 	public static String RenamePluginAction_label;
@@ -342,8 +358,6 @@ public class PDEUIMessages extends NLS {
 	public static String OpenSchemaAction_msgUnknown;
 
 	public static String OpenSchemaAction_titleExtensionPointSchema;
-
-	public static String OSGiFrameworkBlock_defaultGroup;
 
 	public static String OSGiFrameworkPreferencePage_default;
 
@@ -890,10 +904,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String AdvancedLauncherTab_name;
 	public static String AdvancedLauncherTab_workspacePlugins;
-	public static String AdvancedLauncherTab_validatePlugins;
-	public static String AdvancedLauncherTab_useDefault;
-	public static String AdvancedLauncherTab_useFeatures;
-	public static String AdvancedLauncherTab_useList;
 	public static String AdvancedLauncherTab_selectAll;
 	public static String AdvancedLauncherTab_deselectAll;
 	public static String AdvancedFeatureExportPage_noSite;
@@ -2253,8 +2263,6 @@ public class PDEUIMessages extends NLS {
 	public static String PluginValidationOperation_import_uses;
 
 	public static String PluginValidationOperation_hostVersion;
-
-	public static String AbstractPluginBlock_auto_validate;
 
 	public static String LauncherUtils_title;
 

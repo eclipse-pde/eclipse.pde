@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeMap;
@@ -22,7 +21,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -88,10 +86,6 @@ public abstract class AbstractPluginBlock {
 
 	private Label fCounter;
 
-	private ILaunchConfiguration fLaunchConfiguration;
-
-	private Button fAutoValidate;
-	
 	class Listener extends SelectionAdapter {
 		public void widgetSelected(SelectionEvent e) {
 			Object source = e.getSource();
@@ -148,56 +142,32 @@ public abstract class AbstractPluginBlock {
 		}
 	}
 
-	public void createControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		createPluginViewer(composite);
-		createButtonContainer(composite);
+	public void createControl(Composite parent, int span, int indent) {
+		createPluginViewer(parent, span - 1, indent);
+		createButtonContainer(parent);
 		
-		fIncludeOptionalButton = new Button(composite, SWT.CHECK);
+		fIncludeOptionalButton = new Button(parent, SWT.CHECK);
 		fIncludeOptionalButton.setText(PDEUIMessages.AdvancedLauncherTab_includeOptional); 
 		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = span;
+		gd.horizontalIndent = indent;
 		fIncludeOptionalButton.setLayoutData(gd);
 		fIncludeOptionalButton.addSelectionListener(fListener);
 		
-		fAddWorkspaceButton = new Button(composite, SWT.CHECK);
+		fAddWorkspaceButton = new Button(parent, SWT.CHECK);
 		fAddWorkspaceButton.setText(PDEUIMessages.AdvancedLauncherTab_addNew); 
 		gd = new GridData();
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = span;
+		gd.horizontalIndent = indent;
 		fAddWorkspaceButton.setLayoutData(gd);
-		fAddWorkspaceButton.addSelectionListener(fListener);
-		
-		Label separator = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		separator.setLayoutData(gd);
-		
-		fAutoValidate = new Button(composite, SWT.CHECK);
-		fAutoValidate.setText(PDEUIMessages.AbstractPluginBlock_auto_validate);
-		fAutoValidate.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fAutoValidate.addSelectionListener(fListener);
-		
-		Button button = new Button(composite, SWT.PUSH);
-		button.setText(PDEUIMessages.AdvancedLauncherTab_validatePlugins); 
-		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleValidatePlugins();
-			}
-		});		
-		SWTUtil.setButtonDimensionHint(button);
+		fAddWorkspaceButton.addSelectionListener(fListener);		
 	}
 	
 	protected ILabelProvider getLabelProvider() {
 		return PDEPlugin.getDefault().getLabelProvider();
 	}
 	
-	protected void createPluginViewer(Composite composite) {
+	protected void createPluginViewer(Composite composite, int span, int indent) {
 		fPluginTreeViewer = new CheckboxTreeViewer(composite, getTreeViewerStyle());
 		fPluginTreeViewer.setContentProvider(new PluginContentProvider());
 		fPluginTreeViewer.setLabelProvider(getLabelProvider());
@@ -221,20 +191,23 @@ public abstract class AbstractPluginBlock {
 			}
 		});
 
-		fPluginTreeViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = span;
+		gd.horizontalIndent = indent;
+		fPluginTreeViewer.getTree().setLayoutData(gd);
 
-		Image pluginsImage =
+		Image siteImage =
 			PDEPlugin.getDefault().getLabelProvider().get(
-				PDEPluginImages.DESC_REQ_PLUGINS_OBJ);
+				PDEPluginImages.DESC_SITE_OBJ);
 
 		fWorkspacePlugins =
 			new NamedElement(
 				PDEUIMessages.AdvancedLauncherTab_workspacePlugins, 
-				pluginsImage);
+				siteImage);
 		fExternalPlugins =
 			new NamedElement(
 				PDEUIMessages.PluginsTab_target, 
-				pluginsImage);
+				siteImage);
 	}
 
 	private void createButtonContainer(Composite parent) {
@@ -244,15 +217,21 @@ public abstract class AbstractPluginBlock {
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 	
+		new Label(composite, SWT.NONE);
 		fSelectAllButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_selectAll); 		
 		fDeselectButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_deselectAll); 		
 		fWorkingSetButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_workingSet); 
 		fAddRequiredButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_subset); 
-		fDefaultsButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_defaults); 
+		if (includeDefaultButton())
+			fDefaultsButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_defaults); 
 		
 		fCounter = new Label(composite, SWT.NONE);
 		fCounter.setLayoutData(new GridData(GridData.FILL_BOTH|GridData.VERTICAL_ALIGN_END));
 		updateCounter();
+	}
+	
+	protected boolean includeDefaultButton() {
+		return true;
 	}
 	
 	protected int getTreeViewerStyle() {
@@ -296,25 +275,7 @@ public abstract class AbstractPluginBlock {
 			fNumExternalChecked = checked ? fExternalModels.length : 0;
 
 	}
-	
-	protected void handleValidatePlugins() {
-		PluginValidationOperation op = createValidationOperation();
-		try {
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
-		} catch (InvocationTargetException e) {
-		} catch (InterruptedException e) {
-		} finally {
-			if (op.hasErrors())
-				new PluginStatusDialog(getShell(), op).open();
-			else
-				MessageDialog.openInformation(getShell(), PDEUIMessages.AdvancedLauncherTab_pluginValidation, PDEUIMessages.AdvancedLauncherTab_noProblems); // 
-		}
-	}
-	
-	protected PluginValidationOperation createValidationOperation() {
-		return new PluginValidationOperation(fLaunchConfiguration);
-	}
-	
+			
 	protected void toggleGroups(boolean select) {
 		handleGroupStateChanged(fWorkspacePlugins, select);
 		handleGroupStateChanged(fExternalPlugins, select);
@@ -368,10 +329,8 @@ public abstract class AbstractPluginBlock {
 	}
 	
 	public void initializeFrom(ILaunchConfiguration config) throws CoreException {
-		fLaunchConfiguration = config;
 		fIncludeOptionalButton.setSelection(config.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true));
 		fAddWorkspaceButton.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true));
-		fAutoValidate.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false));
 		if (fPluginTreeViewer.getInput() == null) {
 			fPluginTreeViewer.setUseHashlookup(true);
 			fPluginTreeViewer.setInput(PDEPlugin.getDefault());
@@ -504,7 +463,6 @@ public abstract class AbstractPluginBlock {
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, fIncludeOptionalButton.getSelection());
 		config.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, fAddWorkspaceButton.getSelection());
-		config.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, fAutoValidate.getSelection());
 		savePluginState(config);
 		updateCounter();
 	}
@@ -519,7 +477,8 @@ public abstract class AbstractPluginBlock {
 	public void enableViewer(boolean enable) {
 		fPluginTreeViewer.getTree().setEnabled(enable);
 		fAddRequiredButton.setEnabled(enable);
-		fDefaultsButton.setEnabled(enable);
+		if (includeDefaultButton())
+			fDefaultsButton.setEnabled(enable);
 		fWorkingSetButton.setEnabled(enable);
 		fSelectAllButton.setEnabled(enable);
 		fDeselectButton.setEnabled(enable);

@@ -20,13 +20,16 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.PluginBlock;
+import org.eclipse.pde.internal.ui.launcher.PluginsTabToolBar;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -39,17 +42,22 @@ import org.eclipse.ui.PlatformUI;
  */
 public class PluginsTab extends AbstractLauncherTab {
 
-	private Button fUseDefaultRadio;
-	private Button fUseFeaturesRadio;
-	private Button fUseListRadio;
 	private Image fImage;
+	
 	private boolean fShowFeatures = true;
+	private Combo fSelectionCombo;
 	private PluginBlock fPluginBlock;
-	private Listener fListener = new Listener();
+	private PluginsTabToolBar fToolBar;
+	
+	private static final int DEFAULT_SELECTION = 0;
+	private static final int CUSTOM_SELECTION = 1;
+	private static final int FEATURE_SELECTION = 2;
 	
 	class Listener extends SelectionAdapter {
 		public void widgetSelected(SelectionEvent e) {
-			fPluginBlock.enableViewer(fUseListRadio.getSelection());
+			int index = fSelectionCombo.getSelectionIndex();
+			fPluginBlock.enableViewer(index == CUSTOM_SELECTION);
+			fToolBar.enableFiltering(index == CUSTOM_SELECTION);
 			updateLaunchConfigurationDialog();
 		}
 	}
@@ -74,6 +82,7 @@ public class PluginsTab extends AbstractLauncherTab {
 		fShowFeatures = showFeatures;
 		fImage = PDEPluginImages.DESC_REQ_PLUGINS_OBJ.createImage();
 		fPluginBlock = new PluginBlock(this);
+		fToolBar = new PluginsTabToolBar(this);
 	}
 
 	/*
@@ -82,6 +91,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	 */
 	public void dispose() {
 		fPluginBlock.dispose();
+		fToolBar.dispose();
 		fImage.dispose();
 		super.dispose();
 	}
@@ -92,24 +102,20 @@ public class PluginsTab extends AbstractLauncherTab {
 	 */
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout());
+		composite.setLayout(new GridLayout(3, false));
+			
+		Label label = new Label(composite, SWT.NONE);
+		label.setText(PDEUIMessages.PluginsTab_launchWith);
+		
+		fSelectionCombo = new Combo(composite, SWT.READ_ONLY|SWT.BORDER);
+		fSelectionCombo.setItems(new String[] {PDEUIMessages.PluginsTab_allPlugins, PDEUIMessages.PluginsTab_selectedPlugins, PDEUIMessages.PluginsTab_featureMode});
+		fSelectionCombo.setText(fSelectionCombo.getItem(0));
+		fSelectionCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fSelectionCombo.addSelectionListener(new Listener());
 
-		fUseDefaultRadio = new Button(composite, SWT.RADIO);
-		fUseDefaultRadio.setText(PDEUIMessages.AdvancedLauncherTab_useDefault);
-		fUseDefaultRadio.addSelectionListener(fListener);
-
-		if (fShowFeatures) {
-			fUseFeaturesRadio = new Button(composite, SWT.RADIO);
-			fUseFeaturesRadio.setText(PDEUIMessages.AdvancedLauncherTab_useFeatures); 
-			fUseFeaturesRadio.addSelectionListener(fListener);
-		}
-
-		fUseListRadio = new Button(composite, SWT.RADIO);
-		fUseListRadio.setText(PDEUIMessages.AdvancedLauncherTab_useList); 
-		fUseListRadio.addSelectionListener(fListener);
-
-		fPluginBlock.createControl(composite);
-
+		fToolBar.createContents(composite);	
+		fPluginBlock.createControl(composite, 3, 10);
+		
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.LAUNCHER_ADVANCED);
@@ -121,15 +127,16 @@ public class PluginsTab extends AbstractLauncherTab {
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			fUseDefaultRadio.setSelection(configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true));
-			if (fShowFeatures) {
-				fUseFeaturesRadio.setSelection(configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false));
-				fUseListRadio.setSelection(!fUseDefaultRadio.getSelection()
-											&& !fUseFeaturesRadio.getSelection());
-			} else {
-				fUseListRadio.setSelection(!fUseDefaultRadio.getSelection());
+			int index = DEFAULT_SELECTION;
+			if (fShowFeatures && configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false)) {
+				index = FEATURE_SELECTION;
+			} else if (!configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
+				index = CUSTOM_SELECTION;
 			}
-			fPluginBlock.initializeFrom(configuration, fUseDefaultRadio.getSelection(), fUseListRadio.getSelection());
+			fSelectionCombo.setText(fSelectionCombo.getItem(index));
+			boolean custom = fSelectionCombo.getSelectionIndex() == CUSTOM_SELECTION;
+			fToolBar.initializeFrom(configuration, custom);
+			fPluginBlock.initializeFrom(configuration, custom);
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
 		}
@@ -151,9 +158,11 @@ public class PluginsTab extends AbstractLauncherTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, fUseDefaultRadio.getSelection());
+		int index = fSelectionCombo.getSelectionIndex();
+		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, index == DEFAULT_SELECTION);
 		if (fShowFeatures)
-			configuration.setAttribute(IPDELauncherConstants.USEFEATURES, fUseFeaturesRadio.getSelection());
+			configuration.setAttribute(IPDELauncherConstants.USEFEATURES, index == FEATURE_SELECTION);
+		fToolBar.performApply(configuration);
 		fPluginBlock.performApply(configuration);
 	}
 
@@ -181,7 +190,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	 */
 	public void validateTab() {
 		String errorMessage = null;
-		if (fShowFeatures && fUseFeaturesRadio.getSelection()) {
+		if (fShowFeatures && fSelectionCombo.getSelectionIndex() == FEATURE_SELECTION) {
 			IPath workspacePath = PDEPlugin.getWorkspace().getRoot().getLocation();
 			IPath featurePath = workspacePath.removeLastSegments(1).append("features"); //$NON-NLS-1$
 			if (!workspacePath.lastSegment().equalsIgnoreCase("plugins") //$NON-NLS-1$

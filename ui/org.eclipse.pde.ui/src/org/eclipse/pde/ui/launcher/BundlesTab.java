@@ -20,6 +20,7 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.OSGiBundleBlock;
 import org.eclipse.pde.internal.ui.launcher.OSGiFrameworkBlock;
+import org.eclipse.pde.internal.ui.launcher.PluginsTabToolBar;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
@@ -37,11 +38,13 @@ import org.eclipse.ui.PlatformUI;
 public class BundlesTab extends AbstractLauncherTab {
 
 	private Image fImage;
+	private PluginsTabToolBar fToolBar;
 	private OSGiBundleBlock fPluginBlock;
 	private OSGiFrameworkBlock fFrameworkBlock;
 
 	public BundlesTab() {
 		fImage = PDEPluginImages.DESC_REQ_PLUGINS_OBJ.createImage();
+		fToolBar = new PluginsTabToolBar(this);
 		fPluginBlock = new OSGiBundleBlock(this);
 		fFrameworkBlock = new OSGiFrameworkBlock(this);
 	}
@@ -51,6 +54,7 @@ public class BundlesTab extends AbstractLauncherTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	public void dispose() {
+		fToolBar.dispose();
 		fPluginBlock.dispose();
 		fImage.dispose();
 		super.dispose();
@@ -62,10 +66,11 @@ public class BundlesTab extends AbstractLauncherTab {
 	 */
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout());
+		composite.setLayout(new GridLayout(2, false));
 
 		fFrameworkBlock.createControl(composite);
-		fPluginBlock.createControl(composite);
+		fToolBar.createContents(composite);	
+		fPluginBlock.createControl(composite, 2, 5);
 
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
@@ -80,6 +85,7 @@ public class BundlesTab extends AbstractLauncherTab {
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
 			fFrameworkBlock.initializeFrom(config);
+			fToolBar.initializeFrom(config, true);
 			fPluginBlock.initializeFrom(config);
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
@@ -100,6 +106,7 @@ public class BundlesTab extends AbstractLauncherTab {
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		fFrameworkBlock.performApply(config);
+		fToolBar.performApply(config);
 		fPluginBlock.performApply(config);
 	}
 	
