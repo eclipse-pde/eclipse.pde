@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -147,7 +148,8 @@ public abstract class AbstractPluginBlock {
 		createButtonContainer(parent);
 		
 		fIncludeOptionalButton = new Button(parent, SWT.CHECK);
-		fIncludeOptionalButton.setText(PDEUIMessages.AdvancedLauncherTab_includeOptional); 
+		fIncludeOptionalButton.setText(NLS.bind(PDEUIMessages.AdvancedLauncherTab_includeOptional, 
+											fTab.getName().toLowerCase(Locale.ENGLISH))); 
 		GridData gd = new GridData();
 		gd.horizontalSpan = span;
 		gd.horizontalIndent = indent;
@@ -155,7 +157,8 @@ public abstract class AbstractPluginBlock {
 		fIncludeOptionalButton.addSelectionListener(fListener);
 		
 		fAddWorkspaceButton = new Button(parent, SWT.CHECK);
-		fAddWorkspaceButton.setText(PDEUIMessages.AdvancedLauncherTab_addNew); 
+		fAddWorkspaceButton.setText(NLS.bind(PDEUIMessages.AdvancedLauncherTab_addNew, 
+											fTab.getName().toLowerCase(Locale.ENGLISH))); 
 		gd = new GridData();
 		gd.horizontalSpan = span;
 		gd.horizontalIndent = indent;
@@ -221,7 +224,7 @@ public abstract class AbstractPluginBlock {
 		fSelectAllButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_selectAll); 		
 		fDeselectButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_deselectAll); 		
 		fWorkingSetButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_workingSet); 
-		fAddRequiredButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_subset); 
+		fAddRequiredButton = createButton(composite, NLS.bind(PDEUIMessages.AdvancedLauncherTab_subset, fTab.getName())); 
 		if (includeDefaultButton())
 			fDefaultsButton = createButton(composite, PDEUIMessages.AdvancedLauncherTab_defaults); 
 		

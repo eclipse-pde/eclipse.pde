@@ -68,7 +68,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
     	Tree tree = fPluginTreeViewer.getTree();
  
     	TreeColumn column1 = new TreeColumn(tree, SWT.LEFT);
-    	column1.setText(PDEUIMessages.EquinoxPluginBlock_pluginsColumn); 
+    	column1.setText(fTab.getName()); 
     	column1.setWidth(300);
 
     	TreeColumn column2 = new TreeColumn(tree, SWT.CENTER);
