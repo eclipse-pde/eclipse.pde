@@ -287,6 +287,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String RenamePluginWizardPage_updateReferences;
 
+	public static String RenameProjectChange_destinationExists;
+
 	public static String RenameProjectChange_name;
 
 	public static String RenameProjectChange_projectDoesNotExist;

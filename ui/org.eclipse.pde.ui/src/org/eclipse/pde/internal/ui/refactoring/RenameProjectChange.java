@@ -78,6 +78,8 @@ public final class RenameProjectChange extends Change {
 		IResource resource= getResource();
 		if (resource == null || !resource.exists()) 
 			return RefactoringStatus.createFatalErrorStatus(MessageFormat.format(PDEUIMessages.RenameProjectChange_projectDoesNotExist, new String[] {fResourcePath.toString()}));
+		if (ResourcesPlugin.getWorkspace().getRoot().getProject(fNewName).exists())
+			return RefactoringStatus.createFatalErrorStatus(MessageFormat.format(PDEUIMessages.RenameProjectChange_destinationExists, new String[] {fResourcePath.lastSegment()}));
 		return new RefactoringStatus();
 	}
 
