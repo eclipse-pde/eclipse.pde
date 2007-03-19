@@ -45,9 +45,8 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 	public LaunchValidationOperation(ILaunchConfiguration configuration) {
 		fLaunchConfiguration = configuration;
 	}
-
+	
 	public void run(IProgressMonitor monitor) throws CoreException {
-		//fOperation = new BundleValidationOperation(getModels(), new Dictionary[] {BundleValidationOperation.getDefaultEnvironment()});
 		fOperation = new BundleValidationOperation(getModels(), getPlatformProperties());
 		fOperation.run(monitor);
 	}

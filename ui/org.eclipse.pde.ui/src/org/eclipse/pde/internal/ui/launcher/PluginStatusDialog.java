@@ -53,15 +53,18 @@ public class PluginStatusDialog extends TrayDialog {
 	
 	private boolean fShowCancelButton;
 	private Map fInput;
+	private TreeViewer treeViewer;
 
 	public PluginStatusDialog(Shell parentShell, int style) {
 		super(parentShell);
-		setShellStyle(getShellStyle() | style);
+		setShellStyle(style);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
 	public PluginStatusDialog(Shell parentShell) {
-		this(parentShell, SWT.RESIZE);
+		super(parentShell);
+		setShellStyle(getShellStyle()|SWT.RESIZE);
+		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 	
 	public void showCancelButton(boolean showCancel) {
@@ -90,8 +93,8 @@ public class PluginStatusDialog extends TrayDialog {
 
 		Label label = new Label(container, SWT.NONE);
 		label.setText(PDEUIMessages.PluginStatusDialog_label); 
-		
-		TreeViewer treeViewer = new TreeViewer(container);
+
+		treeViewer = new TreeViewer(container);
 		treeViewer.setContentProvider(new ContentProvider());
 		treeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		treeViewer.setComparator(new ViewerComparator());
@@ -106,6 +109,12 @@ public class PluginStatusDialog extends TrayDialog {
 	public boolean close() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		return super.close();
+	}
+	
+	public void refresh(Map input) {
+		fInput = input;
+		treeViewer.setInput(input);
+		treeViewer.refresh();
 	}
 
 }
