@@ -34,6 +34,7 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.launcher.EclipsePluginValidationOperation;
 import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
@@ -408,7 +409,8 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * @since 3.3
 	 */
 	protected void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		LaunchPluginValidator.validatePluginDependencies(configuration, monitor);
+		EclipsePluginValidationOperation op = new EclipsePluginValidationOperation(configuration);
+		LaunchPluginValidator.runValidationOperation(op, monitor);
 	}
 	
 }

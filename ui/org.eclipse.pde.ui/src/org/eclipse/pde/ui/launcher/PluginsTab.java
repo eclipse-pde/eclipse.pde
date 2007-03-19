@@ -20,7 +20,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.launcher.PluginBlock;
-import org.eclipse.pde.internal.ui.launcher.PluginsTabToolBar;
+import org.eclipse.pde.internal.ui.launcher.AbstractLauncherToolbar;
+import org.eclipse.pde.internal.ui.launcher.PluginsTabToolbar;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -47,7 +48,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	private boolean fShowFeatures = true;
 	private Combo fSelectionCombo;
 	private PluginBlock fPluginBlock;
-	private PluginsTabToolBar fToolBar;
+	private AbstractLauncherToolbar fToolBar;
 	
 	private static final int DEFAULT_SELECTION = 0;
 	private static final int CUSTOM_SELECTION = 1;
@@ -82,7 +83,7 @@ public class PluginsTab extends AbstractLauncherTab {
 		fShowFeatures = showFeatures;
 		fImage = PDEPluginImages.DESC_REQ_PLUGINS_OBJ.createImage();
 		fPluginBlock = new PluginBlock(this);
-		fToolBar = new PluginsTabToolBar(this);
+		fToolBar = new PluginsTabToolbar(this);
 	}
 
 	/*

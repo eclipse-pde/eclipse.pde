@@ -62,6 +62,12 @@ public class VMHelper {
 			return install.getInstallLocation().getAbsolutePath();
 		return null;
 	}
+	
+	public static IVMInstall getVMInstall(ILaunchConfiguration configuration) throws CoreException {
+		String vm = configuration.getAttribute(IPDELauncherConstants.VMINSTALL, (String) null);
+		return getVMInstall(vm);
+	}
+
 
 	public static IVMInstall getVMInstall(String name) {
 		if (name != null) {
@@ -79,7 +85,6 @@ public class VMHelper {
 	throws CoreException {
 		String vm = configuration.getAttribute(IPDELauncherConstants.VMINSTALL, (String) null);
 		IVMInstall launcher = getVMInstall(vm);
-
 		if (launcher == null) 
 			throw new CoreException(
 					createErrorStatus(NLS.bind(PDEUIMessages.WorkbenchLauncherConfigurationDelegate_noJRE, vm)));

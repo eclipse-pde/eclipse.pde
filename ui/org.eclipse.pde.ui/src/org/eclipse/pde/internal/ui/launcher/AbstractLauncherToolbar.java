@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.lang.reflect.InvocationTargetException;
+import java.util.Locale;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -35,9 +37,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.ui.PlatformUI;
 
-public class PluginsTabToolBar {
+public abstract class AbstractLauncherToolbar {
 	
 	private Image fValidateImage;
 	private Image fFilterImage;
@@ -47,9 +48,9 @@ public class PluginsTabToolBar {
 	
 	private MenuItem fAutoValidateItem;
 	private AbstractLauncherTab fTab;
-	private ILaunchConfiguration fLaunchConfiguration;
+	protected ILaunchConfiguration fLaunchConfiguration;
 
-	public PluginsTabToolBar(AbstractLauncherTab tab) { 
+	public AbstractLauncherToolbar(AbstractLauncherTab tab) { 
 		fTab = tab;
 		fValidateImage = PDEPluginImages.DESC_VALIDATE_TOOL.createImage();	
 		fFilterImage = PDEPluginImages.DESC_FILTER.createImage();
@@ -75,7 +76,7 @@ public class PluginsTabToolBar {
 
 		final Menu menu = new Menu (PDEPlugin.getActiveWorkbenchShell(), SWT.POP_UP);
 		MenuItem item = new MenuItem (menu, SWT.CHECK);
-		item.setText(PDEUIMessages.PluginsTabToolBar_filter_disabled);
+		item.setText(NLS.bind(PDEUIMessages.PluginsTabToolBar_filter_disabled, fTab.getName().toLowerCase(Locale.ENGLISH)));
 		item.setSelection(true);
 		
 		fFilterItem.addListener (SWT.Selection, new Listener() {
@@ -94,11 +95,11 @@ public class PluginsTabToolBar {
 	private void createValidateItem(final ToolBar bar) {
 		fValidateItem = new ToolItem(bar, SWT.DROP_DOWN);
 		fValidateItem.setImage(fValidateImage);
-		fValidateItem.setToolTipText(PDEUIMessages.PluginsTabToolBar_validate);
+		fValidateItem.setToolTipText(NLS.bind(PDEUIMessages.PluginsTabToolBar_validate, fTab.getName()));
 		fValidateItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				if (event.detail == 0)
-					handleValidatePlugins();
+					handleValidate();
 			}
 		});
 		
@@ -148,21 +149,27 @@ public class PluginsTabToolBar {
 		config.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, fAutoValidateItem.getSelection());
 	}
 	
-	protected PluginValidationOperation createValidationOperation() {
-		return new PluginValidationOperation(fLaunchConfiguration);
-	}
+	protected abstract LaunchValidationOperation createValidationOperation();
 	
-	public void handleValidatePlugins() {
-		PluginValidationOperation op = createValidationOperation();
+	public void handleValidate() {
+		LaunchValidationOperation op = createValidationOperation();
 		try {
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
-		} catch (InvocationTargetException e) {
-		} catch (InterruptedException e) {
-		} finally {
-			if (op.hasErrors())
-				new PluginStatusDialog(PDEPlugin.getActiveWorkbenchShell(), op).open();
-			else
-				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.AdvancedLauncherTab_pluginValidation, PDEUIMessages.AdvancedLauncherTab_noProblems); // 
+			op.run(new NullProgressMonitor());
+		} catch (CoreException e) {
+			PDEPlugin.log(e);
+		}
+		if (op.hasErrors()) {
+			PluginStatusDialog dialog = new PluginStatusDialog(PDEPlugin.getActiveWorkbenchShell());
+			dialog.setInput(op.getInput());
+			dialog.open();			
+		} else if (op.isEmpty()) {
+			MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), 
+										PDEUIMessages.PluginStatusDialog_pluginValidation, 
+										NLS.bind(PDEUIMessages.AbstractLauncherToolbar_noSelection, fTab.getName().toLowerCase(Locale.ENGLISH)));
+		} else {
+			MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), 
+					PDEUIMessages.PluginStatusDialog_pluginValidation, 
+					PDEUIMessages.AbstractLauncherToolbar_noProblems);
 		}
 	}
 

@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -45,6 +44,7 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.launcher.EclipsePluginValidationOperation;
 import org.eclipse.pde.internal.ui.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
@@ -447,8 +447,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 * 			a progress monitor
 	 */
 	protected void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		Assert.isNotNull(fPluginMap);
-		IPluginModelBase[] models = (IPluginModelBase[])fPluginMap.values().toArray(new IPluginModelBase[fPluginMap.size()]);
-		LaunchPluginValidator.validatePluginDependencies(models, monitor);
+		EclipsePluginValidationOperation op = new EclipsePluginValidationOperation(configuration);
+		LaunchPluginValidator.runValidationOperation(op, monitor);
 	}
 }

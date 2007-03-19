@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
@@ -254,30 +253,20 @@ public class LaunchPluginValidator {
 		return (IProject[]) projects.toArray(new IProject[projects.size()]);
 	}
 	
-	public static void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		runValidationOperation(new PluginValidationOperation(configuration), monitor);
-	}	
-	
-	public static void validatePluginDependencies(IPluginModelBase[] models, IProgressMonitor monitor) throws CoreException {
-		runValidationOperation(new PluginValidationOperation(models), monitor);
-	}
-
-	private static void runValidationOperation(final PluginValidationOperation op, IProgressMonitor monitor) throws CoreException{
-		try {
-			op.run(monitor);
-		} catch (InvocationTargetException e) {
-		} catch (InterruptedException e) {
-		} finally {
-			if (op.hasErrors()) {
-				final int[] result = new int[1];
-				final Display display = LauncherUtils.getDisplay();
-				display.syncExec(new Runnable() {
-					public void run() {
-						result[0] = new PluginValidationDialog(display.getActiveShell(), op).open();
-				}});
-				if (result[0] == IDialogConstants.CANCEL_ID)
-					throw new CoreException(Status.CANCEL_STATUS);
-			}
+	public static void runValidationOperation(final LaunchValidationOperation op, IProgressMonitor monitor) throws CoreException{
+		op.run(monitor);
+		if (op.hasErrors()) {
+			final int[] result = new int[1];
+			final Display display = LauncherUtils.getDisplay();
+			display.syncExec(new Runnable() {
+				public void run() {
+					PluginStatusDialog dialog = new PluginStatusDialog(display.getActiveShell());
+					dialog.showCancelButton(true);
+					dialog.setInput(op.getInput());
+					result[0] = dialog.open();			
+			}});
+			if (result[0] == IDialogConstants.CANCEL_ID)
+				throw new CoreException(Status.CANCEL_STATUS);
 		}
 	}
 

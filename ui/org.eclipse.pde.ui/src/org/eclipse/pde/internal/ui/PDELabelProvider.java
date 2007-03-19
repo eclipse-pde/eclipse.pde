@@ -17,6 +17,7 @@ import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
@@ -533,9 +534,32 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof ExecutionEnvironment) {
 			return getObjectImage((ExecutionEnvironment)obj);
 		}
+		if (obj instanceof ResolverError) {
+			return getObjectImage((ResolverError)obj);
+		}
 		return super.getImage(obj);
 	}
 
+	private Image getObjectImage(ResolverError obj) {
+		int type = obj.getType();
+		switch (type) {
+		case ResolverError.MISSING_IMPORT_PACKAGE:
+		case ResolverError.EXPORT_PACKAGE_PERMISSION:
+		case ResolverError.IMPORT_PACKAGE_PERMISSION:
+		case ResolverError.IMPORT_PACKAGE_USES_CONFLICT:
+			return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
+		case ResolverError.MISSING_EXECUTION_ENVIRONMENT:
+			return get(PDEPluginImages.DESC_JAVA_LIB_OBJ);
+		case ResolverError.MISSING_FRAGMENT_HOST:
+		case ResolverError.MISSING_REQUIRE_BUNDLE:
+		case ResolverError.PROVIDE_BUNDLE_PERMISSION:
+		case ResolverError.REQUIRE_BUNDLE_PERMISSION:
+		case ResolverError.REQUIRE_BUNDLE_USES_CONFLICT:
+		case ResolverError.HOST_BUNDLE_PERMISSION:
+			return get(PDEPluginImages.DESC_PLUGIN_OBJ);	
+		}
+		return null;
+	}
 	private Image getObjectImage(ExecutionEnvironment environment) {
 		return get(PDEPluginImages.DESC_JAVA_LIB_OBJ);
 	}

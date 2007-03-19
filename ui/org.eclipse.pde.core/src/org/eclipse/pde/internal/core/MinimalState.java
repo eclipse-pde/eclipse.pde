@@ -91,11 +91,6 @@ public class MinimalState {
 	protected MinimalState() {		
 	}
 	
-	public MinimalState(Dictionary properties) {
-		fState = stateObjectFactory.createState(true);
-        fState.setPlatformProperties(properties);		
-	}
-		
 	public void addBundle(IPluginModelBase model, boolean update) {
 		if (model == null)
 			return;

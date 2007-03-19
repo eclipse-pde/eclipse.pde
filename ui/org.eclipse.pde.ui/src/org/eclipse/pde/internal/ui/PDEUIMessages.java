@@ -15,6 +15,10 @@ import org.eclipse.osgi.util.NLS;
 public class PDEUIMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ui.pderesources";//$NON-NLS-1$
 
+	public static String AbstractLauncherToolbar_noProblems;
+
+	public static String AbstractLauncherToolbar_noSelection;
+
 	public static String AbstractTargetPage_setTarget;
 
 	public static String AddLibraryDialog_nospaces;
@@ -26,6 +30,8 @@ public class PDEUIMessages extends NLS {
 	public static String BaseExtensionPointMainPage_errorMsgPluginNotFound;
 
 	public static String BundleSourcePage_renameActionText;
+
+	public static String BundlesTab_title;
 
 	public static String CalculateUsesOperation_calculatingDirective;
 

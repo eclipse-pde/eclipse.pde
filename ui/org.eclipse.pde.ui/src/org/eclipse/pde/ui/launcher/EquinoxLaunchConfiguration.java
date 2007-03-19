@@ -34,6 +34,7 @@ import org.eclipse.pde.internal.ui.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.ui.launcher.LaunchPluginValidator;
 import org.eclipse.pde.internal.ui.launcher.LauncherUtils;
 import org.eclipse.pde.internal.ui.launcher.OSGiBundleBlock;
+import org.eclipse.pde.internal.ui.launcher.OSGiValidationOperation;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -181,8 +182,8 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 				}
 			});
 		}
-		IPluginModelBase[] models = (IPluginModelBase[])fAllBundles.values().toArray(new IPluginModelBase[fAllBundles.size()]);
-		LaunchPluginValidator.validatePluginDependencies(models, monitor);
+		OSGiValidationOperation op = new OSGiValidationOperation(configuration);
+		LaunchPluginValidator.runValidationOperation(op, monitor);
 	}	
 	
 	/**

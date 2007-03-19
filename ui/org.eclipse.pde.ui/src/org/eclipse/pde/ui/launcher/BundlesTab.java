@@ -18,9 +18,10 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.launcher.AbstractLauncherToolbar;
+import org.eclipse.pde.internal.ui.launcher.BundlesTabToolbar;
 import org.eclipse.pde.internal.ui.launcher.OSGiBundleBlock;
 import org.eclipse.pde.internal.ui.launcher.OSGiFrameworkBlock;
-import org.eclipse.pde.internal.ui.launcher.PluginsTabToolBar;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
@@ -38,13 +39,13 @@ import org.eclipse.ui.PlatformUI;
 public class BundlesTab extends AbstractLauncherTab {
 
 	private Image fImage;
-	private PluginsTabToolBar fToolBar;
+	private AbstractLauncherToolbar fToolBar;
 	private OSGiBundleBlock fPluginBlock;
 	private OSGiFrameworkBlock fFrameworkBlock;
 
 	public BundlesTab() {
 		fImage = PDEPluginImages.DESC_REQ_PLUGINS_OBJ.createImage();
-		fToolBar = new PluginsTabToolBar(this);
+		fToolBar = new BundlesTabToolbar(this);
 		fPluginBlock = new OSGiBundleBlock(this);
 		fFrameworkBlock = new OSGiFrameworkBlock(this);
 	}
@@ -115,7 +116,7 @@ public class BundlesTab extends AbstractLauncherTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return PDEUIMessages.AdvancedLauncherTab_name; 
+		return PDEUIMessages.BundlesTab_title; 
 	}
 
 	/*
