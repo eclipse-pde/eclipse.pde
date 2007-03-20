@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,10 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.ISelection;
@@ -97,6 +100,25 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	// function used to modify Manifest just before it is written out (after all project artifacts have been created.
 	protected void adjustManifests(IProgressMonitor monitor, IProject project, IPluginBase bundle)
 			throws CoreException {
+		// if libraries are exported, compute export package (173393)
+		IPluginLibrary[] libs = fModel.getPluginBase().getLibraries();
+		Set packages = new TreeSet();
+		for (int i = 0; i < libs.length; i++) {
+			String[] filters = libs[i].getContentFilters();
+			// if a library is fully exported, then export all source packages (since we don't know which source folders go with which library)
+			if (filters.length == 1 && filters[0].equals("**")) { //$NON-NLS-1$
+				addAllSourcePackages(project, packages);
+				break;
+			} 
+			for (int j = 0; j < filters.length; j++) {
+				if (filters[j].endsWith(".*")) //$NON-NLS-1$
+					packages.add(filters[j].substring(0, filters[j].length() - 2));
+			}
+		}
+		if (!packages.isEmpty()) {
+			IBundle iBundle = ((WorkspaceBundlePluginModelBase)fModel).getBundleModel().getBundle();
+			iBundle.setHeader(Constants.EXPORT_PACKAGE, getCommaValueFromSet(packages));
+		}
 	}
 	
 	private void createBuildPropertiesFile(IProject project)
@@ -494,6 +516,29 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			buffer.append(iter.next().toString());
 		}
 		return buffer.toString();
+	}
+	
+	private void addAllSourcePackages(IProject project, Set list) {
+		try {
+			IJavaProject javaProject = JavaCore.create(project);
+			IClasspathEntry[] classpath = javaProject.getRawClasspath();
+			for (int i = 0; i < classpath.length; i++) {
+				IClasspathEntry entry = classpath[i];
+				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+					IPath path = entry.getPath().removeFirstSegments(1);
+					if (path.segmentCount() > 0) {
+						IPackageFragmentRoot root = javaProject.getPackageFragmentRoot(project.getFolder(path));
+						IJavaElement[] children = root.getChildren();
+						for (int j = 0; j < children.length; j++) {
+							IPackageFragment frag = (IPackageFragment)children[j];
+							if (frag.getChildren().length > 0 || frag.getNonJavaResources().length > 0) 
+								list.add(children[j].getElementName());
+						}
+					}
+				}
+			}
+		} catch (JavaModelException e) {
+		}
 	}
 
 }
