@@ -26,6 +26,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
+import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
@@ -80,6 +81,10 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 		IConfigurationFileInfo info = factory.createConfigFileInfo();
 		info.setUse("default"); //$NON-NLS-1$
 		product.setConfigurationFileInfo(info);
+		// preset some common VM args for macosx (bug 174232 comment #4)
+		IArgumentsInfo args = factory.createLauncherArguments();
+		args.setVMArguments("-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts", IArgumentsInfo.L_ARGS_MACOS); //$NON-NLS-1$
+		product.setLauncherArguments(args);
 	}
 	
 	private Properties getProductProperties(IPluginElement element) {
